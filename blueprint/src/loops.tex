@@ -14,9 +14,9 @@ It can also freely be seen as $1$-periodic maps defined on $ℝ$.
   The average of a loop $γ$ is $\bar γ := \int_{𝕊^1} γ(s)\, ds$.
 \end{definition}
 
-In all this document, $E$ and $F$ will denote finite-dimensional
+In this document, $E$ and $F$ will denote finite-dimensional
 real vector spaces.
-All this chapter is devoted to proving the following proposition.
+All of this chapter is devoted to proving the following proposition.
 
 \begin{proposition}
   \label{prop:loops}
@@ -58,7 +58,7 @@ claim is that $g$ is the average value of $γ = γ_0 ∘ h$ for some
 self-diffeomorphism $h$ of $𝕊^1$. The idea is to choose $h$ such that
 $γ$ rushes to $p_1$, stays there during a time roughly $λ_1$, rushes to
 $p_2$, etc. But, in order to achieve average exactly $g$, it seems like $h$
-needs to be a discontinuous piecewise constant map. The assumption that $v$ is
+needs to be a discontinuous piecewise constant map. The assumption that $g$ is
 in the \emph{interior} of the convex hull gives enough slack to get away with
 a smooth $h$.  Actually the
 conclusion would be false without this interior assumption.
@@ -69,7 +69,7 @@ which is problematic when trying to do it consistently when $x$ varies.
 \section{Preliminaries}
 \label{sec:preliminaries}
 
-We'll need Caratheodory lemma:
+We'll need the Caratheodory lemma:
 
 \begin{lemma}
 \label{lem:caratheodory}
@@ -95,7 +95,7 @@ We'll need Caratheodory lemma:
 
   Or else replace the assumption of this lemma by its conclusion in
   every definition. This won't change anything since $P$ will always be
-  open
+  open.
 \end{proof}
 
 
@@ -222,9 +222,9 @@ Families of surrounding loops are easy to construct locally.
 The difficulty in constructing global families of surrounding loops is that
 there are plenty of surrounding loops and we need to choose them
 consistently.
-The key feature of the above definition is that the $t$ parameter,
-in addition to allowing to cut out the corrugation
-process in the next chapter, brings a satisfied or refund guarantee,
+The key feature of the above definition is that the $t$ parameter not only
+allows us to cut out the corrugation
+process in the next chapter, but also brings a "satisfied or refund" guarantee,
 as explained in the next lemma.
 
 \begin{lemma}
@@ -404,7 +404,7 @@ We finally assemble the ingredients from the previous two sections.
   This way each loop becomes constant near $0$, and a convolution
   smoothing will then keep the value at $0$.
   If the smoothing is sufficiently $C^0$ small then the new $γ$ is
-  still surrounding and taking value in $Ω$.
+  still surrounding and takes values in $Ω$.
 
   Then Lemma~\ref{lem:reparametrization} gives a family of circle
   diffeomorphisms $h_x$ such that $γ_x ∘ h_x$ has average $g(x)$.
@@ -414,7 +414,7 @@ We finally assemble the ingredients from the previous two sections.
   $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This
   operation does not change the average values of these loops, because
   it rescales them around their average value, but makes them constant
-  on $\Op{K}$. Also those loops stay in $Ω$ thanks to our choice of $ε$.
+  on $\Op{K}$. Also, those loops stay in $Ω$, thanks to our choice of $ε$.
 \end{proof}
 
 % vim: set expandtab sw=2 tabstop=2:
