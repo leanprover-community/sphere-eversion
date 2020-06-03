@@ -15,13 +15,13 @@ eversions as a corollary.
 The main motivations are:
 
 * Demonstrating the proof assistant can handle geometric topology, and
-  not only algebra or abstract non-sense. Note that Fabian Immler
-  already pionneered this direction by formalizing Poincaré-Bendixon,
+  not only algebra or abstract nonsense. Note that Fabian Immler
+  already pioneered this direction by formalizing Poincaré-Bendixon,
   but this project has much larger scale.
 * Exploring new infrastructure for collaborations on formalization
   projects, using the [interactive blueprint](blueprint/index.html).
-* Producing a bilingual informal/formal document by keeping in sync the
-  blueprint and the formalization.
+* Producing a bilingual informal/formal document by keeping the
+  blueprint and the formalization in sync.
 
 ### Exploring and helping
 
@@ -31,8 +31,8 @@ Then have a look at the [dependency graph](blueprint/dep_graph.html),
 paying special attention to blue items. 
 Blue items are items that are ready to be formalized because their
 dependencies are formalized.
-For lemmas, a blue border means the statement is ready, and a blue
-background means the proof is ready.
+For lemmas, a blue border means the statement is ready for formalization,
+and a blue background means the proof is ready for formalization.
 
 Once you spotted something to work on, make sure to discuss in on
 [Zulip](https://leanprover.zulipchat.com/) before writing code.
