@@ -1,0 +1,25 @@
+\documentclass{report}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.svg,.png,.jpg}
+\usepackage[capitalize]{cleveref}
+\usepackage[showmore, dep_graph, coverage]{blueprint}
+
+\usepackage{tikz-cd}
+\usepackage{tikz}
+
+\input{macros_common}
+\input{macros_web}
+
+\makeindex
+
+\title{The sphere eversion project}
+\author{Patrick Massot}
+
+\begin{document}
+\maketitle
+\input{content}
+\collectproofs
+\makegraph
+\end{document}

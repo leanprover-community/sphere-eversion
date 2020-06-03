@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The sphere eversion project: Introduction</title>
+<link rel="next" href="chap-loops.html" title="Loops" />
+<link rel="prev" href="index.html" title="The sphere eversion project" />
+<link rel="up" href="index.html" title="The sphere eversion project" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/dep_graph.css" />
+<link rel="stylesheet" href="styles/style_coverage.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<nav class="toc">
+<svg  class="icon icon-cross close-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+
+<ul class="sub-toc-0">
+<li class=" active current">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="chap-loops.html"><span class="toc_ref">1</span> <span class="toc_entry">Loops</span></a>
+ </li>
+<li class="">
+  <a href="chap-local.html"><span class="toc_ref">2</span> <span class="toc_entry">Local theory of convex integration</span></a>
+ </li>
+<li class="">
+  <a href="chap-global.html"><span class="toc_ref">3</span> <span class="toc_entry">Global theory of open and ample relations</span></a>
+ </li>
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+  <li>	
+  <a href="coverage.html">Progess report</a>
+  </li>
+</ul>
+</nav>
+
+<div class="wrapper with-toc">
+<header>
+<h1 id="doc_title">The sphere eversion project</h1>
+</header>
+
+<ul class="breadcrumbs">
+<li class="crumb"><a href="index.html" class="crumb">The sphere eversion project</a></li>
+  <li class="last_crumb">Introduction</li>
+</ul>
+
+<div class="content">
+
+<h1 id="a0000000002">Introduction</h1>
+
+<p>This project has two goals. First we want to check whether a proof assistant can do differential topology. Many people still think that formal mathematics are mostly suitable for algebra, combinatorics, or foundational studies. So we chose one of the most famous examples of geometric topology theorems associated to tricky geometric intuition: the existence of sphere eversions. Note however that we won’t focus on any of the many videos of explicit sphere eversions. We will prove a general theorem which immediately implies the existence of sphere eversions. </p>
+<p>The second goal of this project is to experiment using a formalization blueprint that evolves with the project until we get a proof that has very closely related formal and informal presentations. </p>
+<p>In this introduction, we will describe the mathematical context of this project, the main definitions and statements, and outline the proof strategy. </p>
+<p>Gromov observed that it’s often fruitful to distinguish two kinds of geometric construction problems. He says that a geometric construction problem satisfies the $h$-principle if the only obstructions to the existence of a solution come from algebraic topology. In this case, the construction is called flexible, otherwise it is called rigid. This definition is purposely vague. We will see a rather general way to give it a precise meaning, but one must keep in mind that such a precise meaning will fail to encompass a number of situations that can be illuminated by the $h$-principle dichotomy point of view. </p>
+<p>The easiest example of flexible construction problem which is not totally trivial and is algebraically obstructed is the deformation of immersions of circles into planes. Let $f_0$ and $f_1$ be two maps from $𝕊^1$ to $ℝ^2$ that are immersions. Since $𝕊^1$ has dimension one, this mean that both derivatives $f_0’$ and $f_1’$ are nowhere vanishing maps from $𝕊^1$ to $ℝ^2$. The geometric object we want to construct is a (smooth) homotopy of immersions from $f_0$ to $f_1$, ie a smooth map $F : 𝕊^1 × [0, 1] → ℝ^2$ such that $F|_{𝕊^1 × \{ 0\} } = f_0$, $F|_{𝕊^1 × \{ 1\} } = f_1$, and each $f_p := F|_{𝕊^1 × \{ p\} }$ is an immersion. If such a homotopy exists then, $(t, p) ↦ f_p’(t)$ is a homotopy from $f_0’$ to $f_1’$ among maps from $𝕊^1$ to $ℝ^2 ∖ \{ 0\} $. Such maps have a well defined winding number $w(f’_i) ∈ ℤ$ around the origin, the degree of the normalized map $f’_i/‖f’_i‖ : 𝕊^1 → 𝕊^1$. So $w(f_0’) = w(f_1’)$ is a necessary condition for the existence of $F$, which comes from algebraic topology. The Whitney-Graustein theorem states that this necessary condition is also sufficient. Hence this geometric construction problem is flexible. One can give a direct proof of this result, but it will also follow from general results proved in this project. </p>
+<p>An important lesson from the above example is that algebraic topology can give us more than a necessary condition. Indeed the (one-dimensional) Hopf degree theorem ensures that, provided $w(f’_0) = w(f’_1)$, there exists a homotopy $g_p$ of nowhere vanishing maps relating $f’_0$ and $f’_1$. We also know from the topology of $ℝ^2$ that $f_0$ and $f_1$ are homotopic, say using the straight-line homotopy $p ↦ f_p = (1-p)f_0 + pf_0$. But there is no a priori relation between $g_p$ and the derivative of $f_p$ for $p ∉ \{ 0, 1\} $. So we can restate the crucial part of the Whitney-Graustein theorem as: there is a homotopy of immersion from $f_0$ to $f_1$ as soon as there is (a homotopy from $f_0$ to $f_1$) and a homotopy from $f_0’$ to $f_1’$ among nowhere vanishing maps. The parenthesis in the previous sentence indicated that this condition is always satisfied, but it is important to keep in mind for generalizations. Gromov says that such a homotopy of uncoupled pairs $(f, g)$ is a formal solution of the original problem. </p>
+<p>One can generalize this discussion of uncoupled maps replacing a map and its derivative. This is pretty easy for maps from a manifold $M$ to a manifold $N$. The so called $1$-jet space $J^1(M, N)$ is the space of triples $(m, n, φ)$ with $m ∈ M$, $n ∈ N$, and $φ ∈ \operatorname{Hom}(T_mM, T_nN)$, the space of linear maps from $T_mM$ to $T_nN$. One can define a smooth manifold structure on $J^1(M, N)$, of dimension $\dim (M) + \dim (N) + \dim (M)\dim (N)$ which fibers over $M$, $N$ and their product $J^0(M, N) := M × N$. Beware that the notation $(m, n, φ)$ does not mean that $J^1(M, N)$ is a product of three manifolds, the space where $φ$ lives depends on $m$ and $n$. Any smooth map $f : M → N$ gives rise to a section $j^1f$ of $J^1(M, N) → M$ defined by $j^1f(m) = (m, f(m), T_m f)$. Such a section is called a <em>holonomic section</em> of $J^1(M, N)$. In the Whitney Graustein example, we use the canonical trivialization of $T𝕊^1$ and $Tℝ^2$ to represent $j^1f$ has a pair of maps $(f, f’)$. The role played by $(f, g)$ in this example is played in general by sections of $J^1(M, N) → M$ which are not necessarily holonomic. </p>
+<p>One can generalize this discussion to $J^r(M, N)$ which remembers derivatives of maps up to order $r$ for some give $r ≥ 0$. One can also consider section of an arbitrary bundle $E → M$ instead of functions from $M$ to $N$, which are sections of the trivial bundle $M × N → N$. But the case of $J^1(M, N)$ will be sufficient for this project. </p>
+<p><div class="definition-intro_thmwrapper" id="a0000000003">
+  <div class="definition-intro_thmheading">
+    <span class="definition-intro_thmcaption">
+    Definition
+    </span>
+    <div class="thm_icons">
+
+  </div>
+  </div>
+  <div class="definition-intro_thmcontent">
+  <p>A first order differential relation $\mathcal{R}$ for maps from $M$ to $N$ is a subset of $J^1(M, N)$. A solution of $\mathcal{R}$ is a function $f \! :M \to N$ such that $j^1f(m)$ is in $\mathcal{R}$ for all $m$. A <em>formal solution</em> of $\mathcal{R}$ is a non-necessarily holonomic section of $J^1(M, N) → M$ which takes value in $\mathcal{R}$. </p>
+<p>The partial differential relation $\mathcal{R}$ satisfies the $h$-principle if any formal solution $σ$ of $\mathcal{R}$ is homotopic, among formal solutions, to some holonomic one $j^1f$. </p>
+
+  </div>
+</div> </p>
+<p>For instance, an immersion of $M$ into $N$ is a solution of </p>
+<div class="displaymath" id="a0000000004">
+  \[  \mathcal{R}= \{ (m, n, φ) ∈ J^1(M, N) \; |\;  φ \text{ is injective}\} .  \]
+</div>
+<p> As we saw with the Whitney-Graustein problem, we are not only interested to individual solutions, but also in families of solutions. In differential topology, a smooth family of maps between manifolds $X$ and $Y$ is a smooth map $h : P × X → Y$ seen as the collection of maps $h_p : x ↦ h(p, x)$. Here $P$ stands for “parameter space”. A smooth family of sections of $E → X$ is a smooth family of maps $σ : P × X → E$ such that each $σ_p$ is a section. </p>
+<p>When the parameter space $P$ has boundary, we will typically assume that formal solutions $σ_p$ are holonomic for $p$ in $𝓝(∂P)$. This is an abreviation meaning: “there is an unspecified neighborhood $U$ of $∂P$ such that $σ_p$ is holonomic for $p$ in $U$”. Note that an unspecified neighborhood can change from invocation to invocation. For instance in the next definition, the second unspecified neighborhood is typically smaller than the first one. </p>
+<p><div class="definition-intro_thmwrapper" id="a0000000005">
+  <div class="definition-intro_thmheading">
+    <span class="definition-intro_thmcaption">
+    Definition
+    </span>
+    <div class="thm_icons">
+
+  </div>
+  </div>
+  <div class="definition-intro_thmcontent">
+  <p>A partial differential relation $\mathcal{R}$ satisfies the parametric $h$-principle if every family of formal solutions $σ : M × P → J^1(M, N)$ which are holonomic for $p$ in $𝓝(∂P)$ is homotopic, relative to $𝓝(∂P)$, to a family of holonomic sections. </p>
+
+  </div>
+</div> </p>
+<p>There are other variations on this definition. For instance a formal solution could be holonomic on $𝓝(A)$ for some subset $A$ of $M$, and we say that $\mathcal{R}$ satisfies the relative $h$-principle if $σ$ can be deformed to a holonomic solution without changing it on $𝓝(A)$. </p>
+<p>One can also insist on the deformed solution to be $C^0$-close to the original one. In this case one talks about a $C^0$-dense $h$-principle. We are now ready to state our main goal. </p>
+<p><div class="theorem-intro_thmwrapper" id="a0000000006">
+  <div class="theorem-intro_thmheading">
+    <span class="theorem-intro_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_icons">
+
+  </div>
+  </div>
+  <div class="theorem-intro_thmcontent">
+  <p>The relation of immersions in positive codimension (ie immersions of $M$ into $N$ with $\dim (N) > \dim (M)$) satisfies all forms of $h$-principles. </p>
+
+  </div>
+</div> </p>
+<p>This theorem covers the Whitney-Graustein theorem (in its second form, assuming the existence of a homotopy between derivatives). But there are much less intuitive applications. The most famous one is the existence of sphere eversions: one can “turn $𝕊^2$ inside-out among immersions of $𝕊^2$ into $ℝ^3$). </p>
+<p><div class="corollary-intro_thmwrapper" id="a0000000007">
+  <div class="corollary-intro_thmheading">
+    <span class="corollary-intro_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary-intro_thmtitle">Smale 1958</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#a0000000008"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="corollary-intro_thmcontent">
+  <p> There is a homotopy of immersion of $𝕊^2$ into $ℝ^3$ from the inclusion map to the antipodal map $a : q ↦ -q$. </p>
+
+  </div>
+</div> </p>
+<p>The reason why this is turning the sphere inside-out is that $a$ extends as a map from $ℝ^3 ∖ \{ 0\}  → ℝ^3 ∖ \{ 0\} $ by </p>
+<div class="displaymath" id="a0000000009">
+  \[  \hat{a} : q ↦ -\frac{1}{‖q‖^2}q  \]
+</div>
+<p> which exchanges the interior and exterior of $𝕊^2$. More abstractly, one can say the normal bundle of $𝕊^2$ is trivial, hence one can extend $a$ to a tubular neighborhood of $𝕊^2$ as an orientation preserving map. Since $a$ is orientation reversing, any such extension will be reversing coorientation. </p>
+<div class="proof_wrapper" id="a0000000008">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof of the sphere eversion corollary
+    </span>
+    <svg  class="icon icon-plus expand-proof"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+
+  </div>
+  <div class="proof_content">
+   We denote by $ι$ the inclusion of $𝕊^2$ into $ℝ^3$. We set $j_t = (1-t)ι + ta$. This is a homotopy from $ι$ to $a$ (but not an immersion for $t=1/2$). We need to check there is no obstruction to building a homotopy of formal solutions above those maps. One could show that the relevant homotopy group (replacing $π_1(𝕊^1)$ from the Whitney-Graustein example) is $\pi _2(\operatorname{SO}_3(ℝ))$. This group is trivial, hence there is no obstruction. But actually we can write an explicit homotopy here, without using any algebraic topology. Using the canonical trivialization of the tangent bundle of $ℝ^3$, we can set, for $(q, v) ∈ T𝕊^2$, $G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)$, the rotation around axis $Oq$ with angle $πt$. The family $σ : t ↦ (j_t, G_t)$ is a homotopy of formal immersions relating $j^1ι$ to $j^1a$. The above theorem ensures this family is homotopic, relative to $t = 0$ and $t = 1$, to a family of holonomic formal immersions, ie a family $t ↦ j^1f_t$ with $f_0 = ι$, $f_1 = a$, and each $f_t$ is an immersion. 
+  </div>
+</div>
+<p>The theorem above follows from a more general theorem which is slightly too technical for this introduction: the $h$-principle for open and ample first order differential relations. We will prove this theorem using a technique which is even more general: convex integration. For instance this technique also underlies the constructions of paradoxical isometric embeddings, which could be a nice follow-up project. </p>
+<p>We’ll end this introduction by describing the key construction of convex integration, since it is very nice and elementary. Convex integration was invented by Gromov around 1970, inspired in particular by the $C^1$ isometric embedding work of Nash and the original proof of flexibility of immersions. This term is pretty vague however, and there are several different implementations. The newest one, and by far the most efficient one, is Mélanie Theillière’s corrugation process from 2017. And this is what we will use. </p>
+<p>Let $f$ be a map from $ℝ^n$ to $ℝ^m$. Say we want to turn $f$ into a solution of some partial differential relation. For instance if we are interested in immersions, we want to make sure its differential (or equivalently its Jacobian matrix) is everywhere injective. We will ensure this by tackling each partial derivative in turn. In the immersion example, we first make sure $∂_1f(x) := ∂f(x)/∂x_1$ is non-zero for all $x$. Then we make sure $∂_2f(x)$ is not colinear to $∂_1f(x)$. Then we make sure $∂_3f(x)$ is not in the plane spanned by the two previous derivatives, etc…until we all $n$ partial derivatives are everywhere linearly independent. </p>
+<p>In general, what happens is that, for each number $j$ between $1$ and $n$, we wish $∂_jf(x)$ could live in some open subset $Ω_x ⊂ ℝ^m$. Assume there is a smooth compactly supported family of loops $γ \! :ℝ^n × 𝕊^1 → ℝ^m$ such that each $γ_x$ takes values in $Ω_x$, and has average value $\int _{𝕊^1} γ_x = ∂_j f(x)$. Obviously such loops can exist only if $∂_jf(x)$ is in the convex hull of $Ω_x$, hence the name convex integration, and we will see this condition is almost sufficient. In the immersion case, this convex hull condition will always be met because, from the above description, we see that $Ω_x$ will always be the complement of a linear subspace with codimension at least two. </p>
+<p>For some large positive $N$, we replace $f$ by the new map </p>
+<div class="displaymath" id="a0000000010">
+  \[  x ↦ f(x) + \frac1N ∫_0^{Nx_j} \left[γ_x(s) - ∂_jf(x)\right]ds.  \]
+</div>
+<p>A wonderfully easy exercise shows that, provided $N$ is large enough, we have achieved $∂_j f(x) ∈ Ω_x$, almost without modifying derivatives $∂_i f(x)$ for $i ≠ j$, and almost without moving $f(x)$. </p>
+<p>In addition, if we assume that $γ_x$ is constant (necessarily with value $∂_j f(x)$) for $x$ near some subset $K$ where $∂_j f(x)$ was already good, then nothing changed on $K$ since the integrand vanishes there. It is also easy to damp out this modification by multiplying the integral by a cut-off function. So this is a very local construction, and it isn’t obvious how the absence of homotopical obstruction, embodied by the existence of a formal solution, should enter the discussion. The answer is that is essentially provides a way to coherently choose base points for the $γ_x$ loops. </p>
+<p><a href="chap-loops.html">Chapter 1</a> provides the loops supply. <a href="chap-local.html">Chapter 2</a> then discusses the local theory, including the key construction above, and <a href="chap-global.html">chapter 3</a> finally moves to manifolds, and proves the main theorem and its sphere eversion corollary. </p>
+
+
+</div>
+
+<nav class="prev_up_next">
+  <a href="index.html" title="The sphere eversion project"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="The sphere eversion project"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-loops.html" title="Loops"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/d3.min.js"></script>
+<script type="text/javascript" src="js/hpcc.min.js"></script>
+<script type="text/javascript" src="js/d3-graphviz.js"></script>
+<script type="text/javascript" src="js/coverage.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+</div>
+</body>
+</html>

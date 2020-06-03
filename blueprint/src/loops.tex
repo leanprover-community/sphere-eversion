@@ -1,0 +1,420 @@
+\chapter{Loops}
+\label{chap:loops}
+
+\section{Introduction}
+\label{sec:loops_introduction}
+
+In this chapter, we explain how to construct families of loops to feed into the
+corrugation process explained at the end of the introduction.
+A loop is a map defined on the circle $𝕊^1 = ℝ/ℤ$.
+It can also freely be seen as $1$-periodic maps defined on $ℝ$.
+
+\begin{definition}
+  \label{def:average}
+  The average of a loop $γ$ is $\bar γ := \int_{𝕊^1} γ(s)\, ds$.
+\end{definition}
+
+In all this document, $E$ and $F$ will denote finite-dimensional
+real vector spaces.
+All this chapter is devoted to proving the following proposition.
+
+\begin{proposition}
+  \label{prop:loops}
+  \uses{def:average}
+  Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset.
+  Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$,
+  $Ω_x := Ω ∩ (\{x\} × F)$ is open and connected.
+
+  Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$.
+  Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$,
+  and $g(x) = β(x)$ near $K$.
+
+  If, for every $x$ in $U$, $g(x)$ is in the convex hull of $Ω_x$, then there
+  exists a smooth family of loops
+  \[
+    γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)
+  \]
+  such that, for all $x$ in $U$, and all $(t, s) ∈ [0, 1] × 𝕊^1$
+  \begin{itemize}
+    \item
+      $γ^t_x(s) ∈ Ω_x$
+    \item
+      $γ^0_x(s) = β(x)$
+    \item
+      $\bar γ^1_x = g(x)$
+    \item
+      $γ^t_x(s) = β(x)$ if $x$ is near $K$.
+  \end{itemize}
+\end{proposition}
+
+
+Let us briefly sketch the geometric idea behind the above proposition
+if we pretend there is only one point $x$, and drop it from the
+notation, and also focus only on $γ^1$.
+By assumption, there is a finite collection of points $p_i$ in $Ω$ and $λ_i ∈
+[0, 1]$ such that $g$ is the barycenter $\sum λ_i p_i$. Since $Ω$ is open and
+connected, there is a smooth loop $γ_0$ which goes through each $p_i$. The
+claim is that $g$ is the average value of $γ = γ_0 ∘ h$ for some
+self-diffeomorphism $h$ of $𝕊^1$. The idea is to choose $h$ such that
+$γ$ rushes to $p_1$, stays there during a time roughly $λ_1$, rushes to
+$p_2$, etc. But, in order to achieve average exactly $g$, it seems like $h$
+needs to be a discontinuous piecewise constant map. The assumption that $v$ is
+in the \emph{interior} of the convex hull gives enough slack to get away with
+a smooth $h$.  Actually the
+conclusion would be false without this interior assumption.
+
+In the previous proof sketch, there is a lot of freedom in constructing $γ$,
+which is problematic when trying to do it consistently when $x$ varies.
+
+\section{Preliminaries}
+\label{sec:preliminaries}
+
+We'll need Caratheodory lemma:
+
+\begin{lemma}
+\label{lem:caratheodory}
+  If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$,
+  then $x$ can be written as the convex combination of at most $d + 1$
+  points in $P$.
+\end{lemma}
+
+\begin{proof}
+  TODO\dots
+\end{proof}
+
+\begin{lemma}
+  \label{lem:int_cvx}
+  If a point $x$ of $ℝ^d$ lies in the interior of the convex hull of a set $P$,
+  then $x$ can be written as the convex combination of at most $d + 1$
+  points in $P$ with only positive coefficients.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:caratheodory}
+  TODO\dots
+
+  Or else replace the assumption of this lemma by its conclusion in
+  every definition. This won't change anything since $P$ will always be
+  open
+\end{proof}
+
+
+\begin{lemma}
+\label{lem:smooth_convex_hull}
+Let $x_0$ be a point in $ℝ^d$.
+Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near
+$x_0$. Assume that $x_0$ is in the interior of the convex hull of
+$p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and
+smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that
+\[
+  \sum_i w_i(x)p_i(x) = x \qquad \text{and}\qquad
+  \sum_i w_i(x) = 1.
+\]
+\end{lemma}
+
+\begin{proof}
+  TODO\dots using the implicit function theorem.
+\end{proof}
+
+\subsection{Surrounding families}
+\label{sub:surrounding_families}
+
+It will be convenient to introduce some more vocabulary.
+
+\begin{definition}
+  \label{def:surrounds}
+  We say a loop $γ$ surrounds a vector $v$ if $v$ is in the interior of
+  the convex hull of $γ(𝕊^1)$.
+  Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some
+  point $b$ if $0$ is sent to $b$.
+\end{definition}
+
+Constructing \emph{one} such loop is trivial.
+
+\begin{lemma}
+  \label{lem:loop_of_hull}
+  \uses{def:surrounds}
+  If a vector $v$ is in the convex hull of a connected open subset $O$
+  then, for every base point $b ∈ O$, there is a continuous
+  family of loops
+  $γ \co [0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)$ such that, for all $t$ and
+  $s$:
+  \begin{itemize}
+    \item
+      $γ^t$ is based at $b$
+    \item
+      $γ^0(s) = b$
+    \item
+      $γ^t(s) ∈ O$
+    \item
+      $γ^1$ surrounds $v$
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:int_cvx}
+  Since $O$ is open, its convex hull is its interior convex hull.
+  Hence \Cref{lem:int_cvx} gives points $p_i$ in $O$ such that
+  $v$ is in the interior of the convex hull of the $p_i$.
+  Since $O$ is open and connected, it is path connected.
+  Let $λ \co [0, 1] → Ω_x$ be a continuous path starting at $b$ and
+  going through these points.
+  We can concatenate $λ$ and its opposite to get $γ^1$,
+  say $γ^1(s) = λ((1-\cos 2πs)/2)$.
+  This is a round-trip loop: it back-tracks when it reaches $λ(1)$
+  at $s = 1/2$.
+  We then define $γ^t$ as the round-trip that stops at $s = t/2$, stays
+  still until $s = 1-t/2$ and then backtracks.
+\end{proof}
+
+
+The first main task in proving Proposition~\ref{prop:loops} is to construct
+suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local
+families of loops.
+Those will then be reparametrized to get the correct average in the next
+section.
+In this section, we will work only with \emph{continuous} loops.
+This will make constructions easier and we will smooth those loops
+in the end, taking advantage of the fact that $Ω$ and the surrounding
+condition are open.
+
+\begin{definition}
+  \label{def:family_surrounds}
+  \uses{def:surrounds}
+  A continuous family of loops $γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$
+  surrounds a map $g \co E → F$ with base $β \co E → F$
+  on $U ⊆ E$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every
+  $s ∈ 𝕊^1$,
+  \begin{itemize}
+    \item
+      $γ^t_x$ is based at $β(x)$
+    \item
+      $γ^0_x(s) = β(x)$
+    \item
+      $γ^1_x$ surrounds $g(x)$.
+  \end{itemize}
+  The space of such families will be denoted by
+  $\Loop(g, β, U)$.
+\end{definition}
+
+Families of surrounding loops are easy to construct locally.
+
+\begin{lemma}
+  \label{lem:local_loops}
+  \uses{def:family_surrounds}
+  Assume $Ω$ is open and connected over some neighborhood of $x_0$.
+  If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is
+  a continuous family of loops defined near $x_0$, based at $β$,
+  taking value in $Ω$ and surrounding $g$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:loop_of_hull}
+  In this proof we don't mention the $t$ parameter since it plays no
+  role, but it is still there.
+  \Cref{lem:loop_of_hull} gives a loop $γ$ based at $β(x_0)$,
+  taking values in $Ω_{x_0}$ and surrounding $g(x_0)$.
+  Since $g(x_0)$ is in the interior of the convex hull of $\im γ$,
+  we can set $γ_x(s) = β(x) + (γ(s) - β(x_0))$.
+  It takes values in $Ω$ because the later is open near $x_0$.
+\end{proof}
+
+The difficulty in constructing global families of surrounding loops is that
+there are plenty of surrounding loops and we need to choose them
+consistently.
+The key feature of the above definition is that the $t$ parameter,
+in addition to allowing to cut out the corrugation
+process in the next chapter, brings a satisfied or refund guarantee,
+as explained in the next lemma.
+
+\begin{lemma}
+  \label{lem:satisfied_or_refund}
+  \uses{def:family_surrounds}
+  Each $L(g, β, U)$ is path connected:
+  for every $γ_0$ and $γ_1$ in $\Loop(g, β, U)$,
+  there is a continuous map
+  $γ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$
+  which interpolates between $γ_0$ and $γ_1$ in
+  $L(g, β, U)$.
+\end{lemma}
+
+\begin{proof}
+  Let $ρ$ be the piecewise affine map from $ℝ$ to $ℝ$ such that
+  $ρ(τ) = 1$ if $τ ≤ 1/2$, $ρ$ is affine on $[1/2, 1]$,
+  $ρ(τ) = 0$ if $τ ≥ 1$.
+  We set
+  \[
+    γ_{τ, x}^t(s) =
+    \begin{cases}
+      γ_{0, x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) & \text{if $s < 1 - τ$ and $τ < 1$}\\
+      β(x)                & \text{if $s = 1 - τ$}\\
+      γ_{1, x}^{ρ(1-τ)t}\left(\frac1τ \big(s - (1- τ)\big)\right) & \text{if $s > 1 - τ$ and $τ > 0$}\\
+    \end{cases}
+  \]
+  There is no surprise and no fun in checking that this is a
+  well-defined continuous homotopy of families of loops based at $β$
+  interpolating between $γ_0$ and $γ_1$.
+
+  The beautiful observation motivating the above formula is why each
+  $γ^1_{τ, x}$ surrounds $g(x)$.
+  The key is that the image of $γ^1_{τ, x}$ contains the image of
+  $γ^1_{0, x}$ when $τ ≤ 1/2$, and contains  the image of
+  $γ^1_{1, x}$ when $τ ≥ 1/2$.
+  Hence the interior of the convex hull of the image always contains
+  $g(x)$.
+\end{proof}
+
+\begin{corollary}
+  \label{cor:extend_loops}
+  \uses{def:family_surrounds}
+  Let $U_0$ and $U_1$ be open sets in $E$.
+  Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets.
+  For any $γ_0 ∈ \Loop(U_0, g, β)$ and $γ_1 ∈ \Loop(U_1, g, β)$,
+  there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and
+  there exists $γ ∈ \Loop(U, g, β)$
+  which coincides with $γ_0$ near $K_0$.
+\end{corollary}
+
+\begin{proof}
+  \uses{lem:satisfied_or_refund}
+  Let $U_0'$ be an open neighborhood of $K_0$ whose closure
+  $\bar U_0'$ is compact in $U_0$.
+  Since $\bar U_0'$ and $K_1' := K_1 ∖ (K_1 ∩ U_0)$
+  are disjoint compact subsets of $E$, there is some continuous cut-off
+  $ρ \co E → [0, 1]$ which vanishes on $U_0'$ and equals one on some
+  neighborhood $U_1'$ of $K_1'$.
+
+  Lemma~\ref{lem:satisfied_or_refund} gives a homotopy of loops
+  $γ_τ$ from $γ_0$ to $γ_1$ on $U_0 ∩ U_1$.
+  On $U_0' ∪ (U_0 ∩ U_1) ∪ U_1'$, which is a
+  neighborhood of $K_0 ∪ K_1$, we set
+  \[
+      γ_x =
+      \begin{cases}
+        γ_{0, x}       & \text{for $x ∈ U_0'$} \\
+        γ_{ρ(x), x} & \text{for $x ∈ U_0 ∩ U_1$} \\
+        γ_{1, x}       & \text{for $x ∈ U_1'$}
+      \end{cases}
+  \]
+  which has the required properties.
+\end{proof}
+
+
+\begin{lemma}
+  \label{lem:∃_surrounding_loops}
+  In the setup of Proposition~\ref{prop:loops}, assume we have a
+  continuous family $γ$ of loops defined near $K$ which is based at $β$,
+  surrounds $g$ and such that each $γ_x^1$ takes values in $Ω_x$.
+  Then there such a family which is defined on all of $U$ and agrees
+  with $γ$ near $K$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:loop_of_hull, lem:local_loops, cor:extend_loops}
+  Let $U_0$ be an open set containing $K$ and
+  contained in the domain of $γ$. Let $U_0'$ be an open neighborhood of $K$
+  with compact closure in $U_0$. Let $U_i$, $i ≥ 1$ be a local finite covering of
+  $U ∖ U_0'$ by open subsets not intersecting $K$ and where the preceding
+  observations gives families of loops $γ^i$. We also set $γ^0 = \rst{γ}{U_0}$.
+  In particular the open sets $U_i$, $i ≥ 0$ cover the whole of $U$, and only
+  $U_0$ intersects $K$. Let $K_i$, $0 ≤ i ≤ N$, be a family of compact sets with
+  $K_i ⊂ U_i$ which covers $U$. We repeatedly apply
+  Corollary~\ref{cor:extend_loops} to $K_i$ and $K_{i+1}$, in this order, to
+  get a family $γ'$ defined over all $U$. Since each step preserves the
+  family on $\Op{K_i}$ and only $U_0$ intersects (in fact contains) $K$, we do
+  have $γ' = γ$ on $\Op{K}$.
+\end{proof}
+
+\subsection{The reparametrization lemma}
+\label{sub:the_reparametrization_lemma}
+
+The second ingredient needed to prove Proposition~\ref{prop:loops} is a
+parametric reparametrization lemma.
+
+\begin{lemma}
+\label{lem:reparametrization}
+Let $γ : X × 𝕊^1 → E$ be a family of loops in a vector bundle $E → X$ (ie. each
+$γ_x$ is a loop in $E_x$) and let $g$ be a section of $E$. If
+$γ_x$ strictly  surrounds $g(x)$ for all $x$, and $γ_x$ has average $g(x)$ when
+$x$ is outside some compact subset of $X$, then there is a family of circle
+diffeomorphisms $h : X × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:caratheodory, lem:int_cvx, lem:smooth_convex_hull}
+  For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points
+  $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is in the interior of the simplex
+  spanned by the corresponding points $γ_x(s_j)$, by
+  \Cref{lem:caratheodory}.
+  Let $μ_1, …, μ_{n+1}$ be smooth positive probability measures very
+  close to the Dirac measures on $s_j$ (ie. $μ_j = f_j\, ds$ for some
+  smooth positive function $f_j$ and, for any function $h$,
+  $\int h\,dμ_j$ is almost $h(s_j)$).  We set $p_j = \int γ_x\, d\mu_j$, which
+  is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights
+  $w_j$ in the open interval $(0, 1)$ according to \Cref{lem:int_cvx}.
+
+  If $x'$ is in a sufficiently small neighborhood of $x$, $g(x')$ is in
+  the interior of the simplex spanned by
+  $p_j(x') := \int γ_{x'}\, d\mu_j$.
+  In such a neighborhood, \Cref{lem:smooth_convex_hull} gives
+  smooth weight functions $w_j$
+  such that $g(x') = \sum w_j(x')p_j(x')$.
+  Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such
+  neighborhoods, with corresponding measures $μ_j^i$, moving points
+  $p_j^i$ and weight functions $w_j^i$.
+  Let $(ρ_i)$ be a partition of unity associated to this covering. For
+  every $x$, we set
+  \[
+    μ_x = \sum_{i=1}^∞ \sum_{j=1}^{n+1} ρ_i(x)w_j^i(x)\, μ_j^i
+  \]
+  so that:
+  \begin{align*}
+    \int γ_x\, dμ_x &=
+    \sum_i ρ_i(x)\sum_{j=1}^{n+1} w_j^i(x) \int γ_x\, dμ_j^i\\
+    &= \sum_i ρ_i(x)\sum_{j=1}^{n+1} w_j^i(x) p_j^i(x)\\
+    &= \sum_i ρ_i(x) g(x) = g(x).
+  \end{align*}
+  We now set $h_x^{-1}(t) = \int_0^tdμ_x$ so that
+  $g(x) = \overline{γ_x ∘ h_x}$ for all $x$.
+\end{proof}
+
+\subsection{Proof of the loop construction proposition}
+\label{sub:proof_of_the_loop_construction_proposition}
+
+We finally assemble the ingredients from the previous two sections.
+
+\begin{proof}[Proof of Proposition~\ref{prop:loops}]
+  \proves{prop:loops}
+  \uses{lem:∃_surrounding_loops, lem:reparametrization}
+  Let $γ^*$ be a family of loops surrounding the origin in $F$,
+  constructed using \Cref{lem:local_loops}.
+  For $x$ in some neighborhood $U^*$ of $K$ where $g = β$, we set
+  $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure
+  the image of $γ_x$ and its convex hull are contained in $Ω_x$ (recall $Ω$ is
+  open and $K$ is compact).
+  Lemma~\ref{lem:∃_surrounding_loops} extends this family to a continuous
+  family of surrounding loops $γ_x$ for all $x$ (this is not yet our
+  final $γ$).
+
+  We then need to approximate this continuous family by a smooth one.
+  Some care is needed to ensure that it stays based at $β$.
+  For instance, we can first compose each loop by some fixed surjective
+  continuous map from $𝕊^1$ to itself that sends a neighborhood of $0$
+  to $0$.
+  This way each loop becomes constant near $0$, and a convolution
+  smoothing will then keep the value at $0$.
+  If the smoothing is sufficiently $C^0$ small then the new $γ$ is
+  still surrounding and taking value in $Ω$.
+
+  Then Lemma~\ref{lem:reparametrization} gives a family of circle
+  diffeomorphisms $h_x$ such that $γ_x ∘ h_x$ has average $g(x)$.
+
+  Finally we choose a cut-off function function $χ$ which vanishes on
+  $\Op{K}$ and equals one on $\Op{U ∖ U^*}$.  In $U^*$, we replace
+  $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This
+  operation does not change the average values of these loops, because
+  it rescales them around their average value, but makes them constant
+  on $\Op{K}$. Also those loops stay in $Ω$ thanks to our choice of $ε$.
+\end{proof}
+
+% vim: set expandtab sw=2 tabstop=2:

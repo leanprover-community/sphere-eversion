@@ -1,0 +1,11 @@
+div.theoreme_thmcontent {
+	border-left: .15rem solid black;
+}
+
+div.proof_content {
+	border-left: .08rem solid grey;
+}
+
+figure.subfloat span.subref {
+	display: none;
+}

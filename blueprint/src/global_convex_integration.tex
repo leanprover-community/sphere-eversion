@@ -1,0 +1,358 @@
+\chapter{Global theory of open and ample relations}
+\label{chap:global}
+
+\section{Preliminaries}
+
+\subsection{Vector bundles operations}
+\label{sec:vector_bundles_operations}
+
+\begin{definition}
+\label{def:pull_back_bundle}
+For every bundle $p : E → B$ and every map $f \co B' → B$,
+the pull-back bundle $f^*E → B'$ is defined by
+$f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
+the obvious projection to $B'$.
+\end{definition}
+
+The case of vector bundles.
+
+\begin{definition}
+\label{def:hom_bundle}
+Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
+$B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
+$E_b$ to $F_b$ for some $b$ in $B$, with the obvious project map.
+\end{definition}
+
+Set-theoretically, one can define $\Hom(E, F)$ as the set of subsets
+$S$ of $E × F$ such that there exists $b$ such that $S ⊂ E_b × F_b$
+and $S$ is the graph of a linear map. But the type theory formalization
+will use other tricks here. The facts that really matter are listed in
+\cref{lem:one_jet_extension_prop}.
+
+
+\subsection{Jets spaces}
+
+\begin{definition}
+\label{def:one_jet_space}
+\uses{def:pull_back_bundle, def:hom_bundle}
+Let $M$ and $N$ be smooth manifolds. Denote by
+$p_1$ and $p_2$ the projections of $M × N$ to
+$M$ and $N$ respectively.
+
+The space $J^1(M, N)$ of $1$-jets of maps from $M$ to $N$ is
+$Hom(p_1^*TM, p_2^*TN)$
+\end{definition}
+
+We will use notations like $(m, n, φ)$ to denote an element
+of $J^1(M, N)$,
+but one should keep in mind that $J^1(M, N)$ is not a product,
+since $φ$ lives in $\Hom(T_mM, T_nN)$ which depends on $m$ and $n$.
+
+
+\begin{definition}
+\label{def:one_jet_extension}
+\uses{def:one_jet_space}
+The $1$-jet of a smooth map $f \co M → N$ is the map from
+$m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
+\end{definition}
+
+The composition of a section $\F \co M → J^1(M, N)$ with the projection
+onto $N$ will sometimes be denoted by $\bs \F \co M → N$ and called the
+base map of $\F$.
+
+\begin{lemma}
+\label{lem:one_jet_extension_prop}
+\uses{def:one_jet_extension}
+For every smooth map $f \co M → N$,
+\begin{enumerate}
+  \item
+    \label{lem:one_jet_smooth}\uses{def:one_jet_space, def:one_jet_extension}
+    $j^1f$ is smooth
+  \item
+    \label{lem:one_jet_section}\uses{def:one_jet_space, def:one_jet_extension}
+    $j^1f$ is a section of $J^1(M, N) → M$
+  \item
+    \label{lem:one_jet_zero_jet}\uses{def:one_jet_space, def:one_jet_extension}
+    $j^1f$ composed with $J^1(M, N) → N$ is $f$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  This is obvious by construction\dots
+\end{proof}
+
+\begin{definition}
+\label{def:holonomic_section}
+\uses{def:one_jet_space, lem:one_jet_extension_prop}
+A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
+$1$--jet of its base map.
+Equivalently, $\F$ is holonomic if there exists
+$f \co M → N$ such that $\F = j^1f$, since such a map is
+necessarily $\bs \F$.
+\end{definition}
+
+\section{First order differential relations}
+
+\begin{definition}
+  \label{def:rel}
+  \uses{def:one_jet_space}
+  A first order differential relation for maps from $M$ to $N$ is a
+  subset $\Rel$ of $J^1(M, N)$.
+\end{definition}
+
+\begin{definition}
+  \label{def:formal_sol}
+  \uses{def:rel, def:one_jet_extension}
+  A formal solution of a differential relation $\Rel ⊆ J^1(M, N)$ is a
+  section of $J^1(M, N) → M$ taking values in $\Rel$.
+  A solution of $\Rel$ is a map from $M$ to $N$ whose $1$--jet extension
+  is a formal solution.
+\end{definition}
+
+
+\begin{definition}
+  \label{def:htpy_formal_sol}
+  \uses{def:formal_sol}
+  A homotopy of formal solutions of $\Rel$ is a family of sections
+  $\F : ℝ × M → J^1(M, N)$ which is smooth over $[0, 1] × M$
+  and such that each $m ↦ \F(t, m)$ is a formal solution
+  when $t$ is in $[0, 1]$.
+\end{definition}
+
+\begin{definition}
+  \label{def:h-princ}
+  \uses{def:formal_sol, def:htpy_formal_sol}
+  A first order differential relation $\Rel ⊆ J^1(M, N)$ satisfies the
+  $h$-principle if every formal solution of $\Rel$ is homotopic to a
+  holonomic one.
+  It satisfies the parametric $h$-principle if, for every manifold with
+  boundary $P$, every family $\F : P × M → J^1(M, N)$ of formal
+  solutions which are holonomic for $p$ in $𝓝(∂P)$
+  is homotopic to a family of holonomic ones relative to $𝓝(∂P)$.
+  It satisfies the parametric $h$-principle if, for every manifold with
+  boundary $P$, every family $\F : P × M → J^1(M, N)$ of formal
+  solutions is homotopic to a family of holonomic ones.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:sol_chart}
+  \uses{def:h-princ}
+  The above definitions translate to the definitions of the previous
+  chapter in local charts. (We'll need more precise statements...)
+\end{lemma}
+
+
+\subsection*{Parametricity for free}
+
+In many cases, relative parametric $h$-principles can be deduced from relative
+non-parametric ones with a larger source manifold.
+Let $X$, $P$ and $Y$ be manifolds, with $P$ seen a parameter space.
+Denote by $Ψ$ the map from $J^1(X × P, Y)$ to $J^1(X, Y)$ sending $(x, p, y, ψ)$ to
+$(x, y, ψ ∘ ι_{x, p})$ where $ι_{x, p} : T_xX → T_xX × T_pP$ sends $v$ to $(v, 0)$.
+
+To any family of sections $F_p : x ↦ (f_p(x), φ_{p, x})$ of $J^1(X, Y)$, we
+associate the section $\bar F$ of $J^1(X × P, Y)$ sending $(x, p)$ to
+$\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
+
+\begin{lemma}
+  \label{lem:param_trick}
+  \uses{def:holonomic_section, def:formal_sol}
+  In the above setup, we have:
+  \begin{itemize}
+    \item
+      $\bar F$ is holonomic at $(x, p)$ if and only if $F_p$ is holonomic
+      at $x$.
+    \item
+      $F$ is a family of formal solutions of some $\Rel ⊂ J^1(X, Y)$ if and
+      only if $\bar F$ is a formal solution of $\Rel^P := Ψ^{-1}(\Rel)$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  TODO\dots
+\end{proof}
+
+\begin{lemma}
+  \label{lem:param_for_free}
+  \uses{def:h-princ}
+  Let $\Rel$ be a first order differential relation for maps from $M$ to
+  $N$.
+  If, for every manifold with boundary $P$, $\Rel^P$ satisfies the
+  $h$-principle then $\Rel$ satisfies the parametric $h$-principle.
+  Likewise, the $C^0$-dense and relative $h$-principle for all
+  $\Rel^P$ imply the parametric $C^0$-dense and relative $h$-principle for
+  $\Rel$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:param_trick}
+  This obviously follows from \cref{lem:param_trick}.
+\end{proof}
+
+
+\section{The $h$-principle for open and ample differential relations}
+\label{sec:general_theory}
+
+In this chapter, $X$ and $Y$ are smooth manifolds and $\Rel$ is a first order
+differential relation on maps from $X$ to $Y$: $\Rel ⊂ J^1(X, Y)$.
+For any $σ = (x, y, φ)$ in $\Rel$ and any dual pair
+$(λ, v) ∈ T^*_xV × T_xV$,
+we set:
+\[
+    \Rel_{σ, λ, v} =
+     \Conn_{φ(v)}\left\{w ∈ T_yY \;;\;
+       \big(x,\; y,\; φ + (w - φ(v))⊗λ\big) ∈ \Rel\right\}
+\]
+where $\Conn_a A$ is the connected component of $A$ containing $a$. In order to
+decipher this definition, it suffices to notice that $φ + (w - φ(v))⊗λ$ is the
+unique linear map from $T_xX$ to $T_yY$ which coincides with $φ$ on $\ker λ$
+and sends $v$ to $w$. In particular, $w = φ(v)$ gives back $φ$.
+
+Of course we will want to deal with more that one point, so we will consider a
+vector field $V$ and a $1$--form $λ$ such that $λ(V) = 1$ on some subset $U$ of
+$X$, a formal solution $F$ (defined at least on $U$), and get the corresponding
+$\Rel_{F, λ, v}$ over $U$.
+
+One easily checks that $\Rel_{σ, κ^{-1}λ, κv} = κ\Rel_{σ, λ, v}$ hence the above
+definition only depends on $\ker λ$ and the direction $ℝV$.
+
+\begin{definition}
+  \label{def:ample_relation}
+  \uses{def:ample_subset}
+  A relation $\Rel$ is ample if, for every $σ = (x, y, φ)$ in $\Rel$ and every
+  $(λ, v)$, the slice $\Rel_{σ, λ, v}$ is ample in $T_yY$.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:ample_iff_loc}
+  \uses{def:ample_relation, def:ample_relation_loc}
+  If a relation is ample then it is ample if the sense of
+  \Cref{def:ample_relation_loc} when seen in local charts.
+\end{lemma}
+
+\begin{proof}
+  This follows from the fundamental properties of the tangent bundle.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:open_ample_immersion}
+  The relation of immersions of $M$ into $N$ in positive codimension is open
+  and ample.
+\end{lemma}
+
+\begin{proof}
+  \proves{lem:open_ample_immersion}
+  \uses{lem:open_ample_immersion_loc}
+  This obviously follows from \cref{lem:open_ample_immersion_loc}.
+\end{proof}
+
+\begin{theorem}[Gromov]
+  \label{thm:open_ample}
+  \uses{def:h-princ}
+  If $\Rel$ is open and ample then it satisfies the relative and parametric
+  $C^0$-dense $h$-principle.
+\end{theorem}
+
+We first explain how to get rid of parameters, using the
+relation $\Rel^P$ for families of solutions parametrized by $P$.
+
+\begin{lemma}
+    \label{lem:ample_parameter}
+    \uses{def:ample_relation}
+    If $\Rel$ is ample then, for any parameter space $P$, $\Rel^P$ is also ample.
+\end{lemma}
+
+\begin{proof}
+  We fix $σ = (x, y, ψ)$ in $\Rel^P$.
+  For any $λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP$ and $v = (v_X, v_P) ∈ T_xX × T_pP$
+  such that $λ(v) = 1$, we need to prove that $\Conv\Rel^P_{σ, λ, v} = T_yY$.
+  Unfolding the definitions gives:
+  \[
+  \Rel^P_{σ, λ, v} = \Conn_{φ(v)}\left\{w ∈ T_yY \;;\;
+      \big(x,\; y,\; ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big) ∈ \Rel\right\}.
+  \]
+  A degenerate but easy case is when $λ_X = 0$. Then the condition on $w$
+  becomes $ψ ∘ ι_{x, p} ∈ \Rel$, which is true by definition of $\Rel^P$, so
+  $\Rel^P_{σ, λ, v} = T_yY$.
+
+  We now assume $λ_X$ is not zero and choose $u ∈ T_xX$ such that $λ_X(u) = 1$.
+  We then have $\Rel^P_{σ, λ, v} = \Rel_{Ψσ, λ_X, u} + ψ(v) - ψ∘ι_{x, p}(u)$.
+  Because $\Rel$ is ample and taking convex hull commutes with translation, we
+  get that $\Conv\Rel^P_{σ, λ, v} = T_yY$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:open_ample}]
+  \proves{thm:open_ample}
+  \uses{lem:param_for_free, lem:ample_parameter, lem:sol_chart,
+  lem:ample_iff_loc, lem:h_principle_open_ample_loc}
+  Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
+  assume there are no parameters. So we start with a single formal solution $F$
+  of $\Rel$, which is holonomic near some closed subset $A ⊂ X$.
+
+  We first assume $X$ is closed, and will then explain the proof
+  adjustments needed in the non-compact case.
+  By compactness, there are finite many compact subsets
+  $(K_i)_{1 ≤ i ≤ N}$ contained in coordinate charts $U_i$ and such that
+  $\bigcup K_i = X$.
+
+  We prove by induction on $i$ from $0$ to $N$ that there are formal solutions
+  $F_i$, starting with $F_0 = F$, that are homotopic to $F$ relative to $A$,
+  holonomic on $K_{≤ i} := \bigcup_{j ≤ i} K_j$ and whose base maps are
+  $(1-2^{-i})ε$-close to that of $F$ (this contrived bound will be convenient
+  for the non-compact case).
+
+  Assume $F_i$ has been constructed for some $i < N$.
+  We now want to construct it on $U_{i+1}$.
+  \Cref{lem:ample_iff_loc} ensures the pull-back of $\Rel$ in the chart
+  corresponding to $U_{i+1}$ is ample in the sense of the preceding
+  chapter.
+  Hence \Cref{lem:h_principle_open_ample_loc} can be applied to
+  construct $F_{i+1}$, using the image of $K_{i+1}$ as $K_0$ and
+  the image of $A ∩ K_{i+1} ∩ K_{≤ i}$ as $C$.
+  It is holonomic on $K_{≤ i+1}$ because it agrees with $F_i$ near
+  $K_{≤ i}$ and is holonomic near $K_{i+1}$.
+
+  Once all $F_i$ are constructed, we define $F^t$ to be the concatenation of all
+  homotopies relating $F_i$ to $F_{i+1}$.
+
+  If $X$ is not compact, then one can use a countable family of subsets
+  $(U_i, K_i)$ which is locally finite (ie. every point $x$ has a neighborhood
+  intersecting only finitely many $U_i$). The way we have chosen $C^0$-bounds
+  ensures that each $\bs F_i$ is still at distance at most $ε$ from $\bs F$. We
+  now have countably many homotopies to concatenate, so we need to reparametrize
+  the $i$-th homotopy by an interval of length $2^{-i}$. This give a family of
+  sections of $J^1(X, Y)$ parametrized by $t ∈ [0, 1)$. But our local finiteness
+  assumption implies that, for each each $x$, there is some $t_0 < 1$ and some
+  neighborhood $U$ of $x$ such that our family is $t$--independant on $U$ for
+  $t ≥ t_0$. So we can extend to $t = 1$.  The resulting family is smooth since
+  smoothness is a local condition in both $x$ and $t$.
+\end{proof}
+
+\begin{theorem}[Smale 1958]
+  \label{thm:sphere_eversion}
+	There is a homotopy of immersions of $𝕊^2$ into $ℝ^3$ from the inclusion map to
+	the antipodal map $a : q ↦ -q$.
+\end{theorem}
+
+\begin{proof}
+  \uses{thm:open_ample, lem:open_ample_immersion}
+	We denote by $ι$ the inclusion of $𝕊^2$ into $ℝ^3$.
+	We set $j_t = (1-t)ι	+ ta$.
+  This is a homotopy from $ι$ to $a$ (but not animmersion for $t=1/2$).
+  Using the canonical trivialization of the tangent
+	bundle of $ℝ^3$, we can set, for $(q, v) ∈ T𝕊^2$,
+	$G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)$, the rotation around axis $Oq$ with
+	angle $πt$.
+  The family $σ : t ↦ (j_t, G_t)$ is a homotopy of formal immersions
+  relating $j^1ι$ to $j^1a$.
+  It is homotopic by reparametrization to a homotopy of formal immersions
+  relating $j^1ι$ to $j^1a$ which are holonomic for $t$ near the
+  $0$ and $1$.
+
+  The above theorem ensures this family is homotopic,
+	relative to $t = 0$ and $t = 1$, to a family of holonomic formal immersions,
+	ie a family $t ↦ j^1f_t$ with $f_0 = ι$, $f_1 = a$, and each $f_t$ is an
+	immersion.
+\end{proof}
+
+% vim: set expandtab sw=2 tabstop=2:

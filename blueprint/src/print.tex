@@ -1,0 +1,36 @@
+\documentclass[a4paper]{report}
+
+\usepackage[textwidth=14cm]{geometry}
+\usepackage{xfrac}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+
+\usepackage{amsmath}
+\usepackage{enumitem}
+
+\usepackage{tikz-cd}
+
+\usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
+\usepackage{fontspec}
+\setmathfont{Latin Modern Math}
+\setmathfont[range=\varnothing]{Asana Math}
+\setmathfont[range=\pitchfork]{Asana Math}
+\setmathfont[range=\intprod]{Asana Math}
+\setmathfont[range=\int]{Latin Modern Math}
+
+\usepackage[nameinlink, capitalize]{cleveref}
+
+\input{macros_common}
+
+\usepackage{amsthm}
+\usepackage{thmtools}
+
+\input{macros_print}
+
+\title{The sphere eversion project}
+\author{Patrick Massot}
+
+\begin{document}
+\maketitle
+\input{content}
+\end{document}
