@@ -28,21 +28,21 @@ will see a rather general way to give it a precise meaning, but one must keep
 in mind that such a precise meaning will fail to encompass a number of
 situations that can be illuminated by the $h$-principle dichotomy point of view.
 
-The easiest example of flexible construction problem which is not totally
+The easiest example of a flexible construction problem which is not totally
 trivial and is algebraically obstructed is the deformation of immersions
 of circles into planes. Let $f_0$ and $f_1$ be two maps from $𝕊^1$ to $ℝ^2$
 that are immersions. Since $𝕊^1$ has dimension one, this mean that both
 derivatives $f_0'$ and $f_1'$ are nowhere vanishing maps from $𝕊^1$ to
 $ℝ^2$. The geometric object we want to construct is a (smooth) homotopy
-of immersions from $f_0$ to $f_1$, ie a smooth map $F : 𝕊^1 × [0, 1] → ℝ^2$
+of immersions from $f_0$ to $f_1$, ie a smooth map $F \co 𝕊^1 × [0, 1] → ℝ^2$
 such that $\rst{F}{𝕊^1 × \{0\}} = f_0$, $\rst{F}{𝕊^1 × \{1\}} = f_1$, and
 each $f_p := \rst{F}{𝕊^1 × \{p\}}$ is an immersion. If such a homotopy
 exists then, $(t, p) ↦ f_p'(t)$ is a homotopy from $f_0'$ to $f_1'$ among
 maps from $𝕊^1$ to $ℝ^2 ∖ \{0\}$. Such maps have a well defined winding
 number $w(f'_i) ∈ ℤ$ around the origin, the degree of the normalized map
-$f'_i/‖f'_i‖ : 𝕊^1 → 𝕊^1$. So $w(f_0') = w(f_1')$ is a necessary condition
+$f'_i/‖f'_i‖ \co 𝕊^1 → 𝕊^1$. So $w(f_0') = w(f_1')$ is a necessary condition
 for the existence of $F$, which comes from algebraic topology.  The
-Whitney-Graustein theorem states that this necessary condition is also
+Whitney--Graustein theorem states that this necessary condition is also
 sufficient. Hence this geometric construction problem is flexible.  One
 can give a direct proof of this result, but it will also
 follow from general results proved in this project.
@@ -56,7 +56,7 @@ homotopic, say using the straight-line homotopy
 $p ↦ f_p = (1-p)f_0 + pf_0$. But there is no a priori relation
 between $g_p$ and the derivative of $f_p$ for $p ∉ \{0, 1\}$.
 So we can restate the crucial part of the
-Whitney-Graustein theorem as: there is a homotopy of immersion from
+Whitney--Graustein theorem as: there is a homotopy of immersion from
 $f_0$ to $f_1$ as soon as there is (a homotopy from $f_0$ to $f_1$) and
 a homotopy from $f_0'$ to $f_1'$ among nowhere vanishing maps. The
 parenthesis in the previous sentence indicated that this condition is
@@ -74,17 +74,17 @@ $\dim(M) + \dim(N) + \dim(M)\dim(N)$ which fibers over $M$, $N$ and
 their product $J^0(M, N) := M × N$. Beware that the notation $(m, n, φ)$
 does not mean that $J^1(M, N)$ is a product of three manifolds, the space
 where $φ$ lives depends on $m$ and $n$.
-Any smooth map $f : M → N$ gives rise to a section $j^1f$ of
+Any smooth map $f \co M → N$ gives rise to a section $j^1f$ of
 $J^1(M, N) → M$ defined by $j^1f(m) = (m, f(m), T_m f)$. Such a section is
 called a \emph{holonomic section} of $J^1(M, N)$.
-In the Whitney Graustein example, we use the canonical trivialization of
+In the Whitney--Graustein example, we use the canonical trivialization of
 $T𝕊^1$ and $Tℝ^2$ to represent $j^1f$ has a pair of maps $(f, f')$. The
 role played by $(f, g)$ in this example is played in general by sections
 of $J^1(M, N) → M$ which are not necessarily holonomic.
 
 One can generalize this discussion to $J^r(M, N)$ which remembers
-derivatives of maps up to order $r$ for some give $r ≥ 0$. One can also
-consider section of an arbitrary bundle $E → M$ instead of functions
+derivatives of maps up to order $r$ for some given $r ≥ 0$. One can also
+consider sections of an arbitrary bundle $E → M$ instead of functions
 from $M$ to $N$, which are sections of the trivial bundle $M × N → N$.
 But the case of $J^1(M, N)$ will be sufficient for this project.
 
@@ -105,12 +105,12 @@ For instance, an immersion of $M$ into $N$ is a solution of
 \Rel = \{(m, n, φ) ∈ J^1(M, N) \;|\; φ \text{ is injective}\}.
 \]
 As we saw with
-the Whitney-Graustein problem, we are not only interested to individual
+the Whitney--Graustein problem, we are not only interested to individual
 solutions, but also in families of solutions. In differential
 topology, a smooth family of maps between manifolds $X$ and $Y$ is a smooth map
-$h : P × X → Y$ seen as the collection of maps $h_p : x ↦ h(p, x)$. Here $P$
+$h \co P × X → Y$ seen as the collection of maps $h_p \co x ↦ h(p, x)$. Here $P$
 stands for ``parameter space''. A smooth family of sections of $E → X$ is a
-smooth family of maps $σ : P × X → E$ such that each $σ_p$ is a section.
+smooth family of maps $σ \co P × X → E$ such that each $σ_p$ is a section.
 
 When the parameter space $P$ has boundary, we will typically assume that formal
 solutions $σ_p$ are holonomic for $p$ in $𝓝(∂P)$. This is an abreviation
@@ -124,7 +124,7 @@ than the first one.
 \begin{definition-intro}
 	A partial differential relation $\Rel$ satisfies the parametric
   $h$-principle if every family of formal solutions
-  $σ : M × P → J^1(M, N)$ which are holonomic for $p$ in $𝓝(∂P)$ is
+  $σ \co M × P → J^1(M, N)$ which are holonomic for $p$ in $𝓝(∂P)$ is
   homotopic, relative to $𝓝(∂P)$, to a family of holonomic sections.
 \end{definition-intro}
 
@@ -142,7 +142,7 @@ We are now ready to state our main goal.
 	into $N$ with $\dim(N) > \dim(M)$) satisfies all forms of $h$-principles.
 \end{theorem-intro}
 
-This theorem covers the Whitney-Graustein theorem (in its second
+This theorem covers the Whitney--Graustein theorem (in its second
 form, assuming the existence of a homotopy between derivatives). But there are
 much less intuitive applications. The most famous one is the existence of
 sphere eversions: one can ``turn $𝕊^2$ inside-out among immersions of $𝕊^2$ into
@@ -150,13 +150,13 @@ $ℝ^3$).
 
 \begin{corollary-intro}[Smale 1958]
 	There is a homotopy of immersion of $𝕊^2$ into $ℝ^3$ from the inclusion map to
-	the antipodal map $a : q ↦ -q$.
+	the antipodal map $a \co q ↦ -q$.
 \end{corollary-intro}
 
 The reason why this is turning the sphere inside-out is that $a$ extends as
 a map from $ℝ^3 ∖ \{0\} → ℝ^3 ∖ \{0\}$ by
 \[
-	\hat{a} : q ↦ -\frac{1}{‖q‖^2}q
+	\hat{a} \co q ↦ -\frac{1}{‖q‖^2}q
 \]
 which exchanges the interior and exterior of $𝕊^2$. More abstractly, one can say
 the normal bundle of $𝕊^2$ is trivial, hence one can extend $a$ to a tubular
@@ -170,14 +170,14 @@ reversing, any such extension will be reversing coorientation.
         We need to check there is no obstruction to building a homotopy of
         formal solutions above those maps.
         One could show that the relevant homotopy group (replacing $π_1(𝕊^1)$
-        from the Whitney-Graustein example) is $\pi_2(\SO_3(ℝ))$.
+        from the Whitney--Graustein example) is $\pi_2(\SO_3(ℝ))$.
         This group is trivial, hence there is no obstruction.
         But actually we can write an explicit homotopy here, without using any
         algebraic topology.
         Using the canonical trivialization of the tangent
 	bundle of $ℝ^3$, we can set, for $(q, v) ∈ T𝕊^2$,
 	$G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)$, the rotation around axis $Oq$ with
-	angle $πt$. The family $σ : t ↦ (j_t, G_t)$ is a homotopy of formal immersions
+	angle $πt$. The family $σ \co t ↦ (j_t, G_t)$ is a homotopy of formal immersions
 	relating $j^1ι$ to $j^1a$. The above theorem ensures this family is homotopic,
 	relative to $t = 0$ and $t = 1$, to a family of holonomic formal immersions,
 	ie a family $t ↦ j^1f_t$ with $f_0 = ι$, $f_1 = a$, and each $f_t$ is an
@@ -208,8 +208,8 @@ this by tackling each partial derivative in turn. In the immersion
 example, we first make sure $∂_1f(x) := ∂f(x)/∂x_1$ is non-zero for all $x$.
 Then we make sure $∂_2f(x)$ is not colinear to
 $∂_1f(x)$. Then we make sure $∂_3f(x)$ is not in the
-plane spanned by the two previous derivatives, etc\dots until
-we all $n$ partial derivatives are everywhere linearly independent.
+plane spanned by the two previous derivatives, etc\dots\ until
+all $n$ partial derivatives are everywhere linearly independent.
 
 In general, what happens is that, for each number $j$ between $1$ and
 $n$, we wish $∂_jf(x)$ could live in some open subset
