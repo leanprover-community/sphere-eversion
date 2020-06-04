@@ -9,7 +9,7 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The sphere eversion project: Loops</title>
+<title>Loops</title>
 <link rel="next" href="chap-local.html" title="Local theory of convex integration" />
 <link rel="prev" href="sect0001.html" title="Introduction" />
 <link rel="up" href="index.html" title="The sphere eversion project" />
@@ -37,11 +37,15 @@
 <li class="">
   <a href="chap-global.html"><span class="toc_ref">3</span> <span class="toc_entry">Global theory of open and ample relations</span></a>
  </li>
+  <li></li>	
   <li>	
   <a href="dep_graph.html">Dependency graph</a>
   </li>
   <li>	
   <a href="coverage.html">Progess report</a>
+  </li>
+  <li>	
+  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
   </li>
 </ul>
 </nav>
@@ -78,7 +82,7 @@
 
   </div>
 </div> </p>
-<p>In all this document, $E$ and $F$ will denote finite-dimensional real vector spaces. All this chapter is devoted to proving the following proposition. </p>
+<p>Throughout this document, $E$ and $F$ will denote finite-dimensional real vector spaces. All of this chapter is devoted to proving the following proposition. </p>
 <p><div class="proposition_thmwrapper" id="prop:loops">
   <div class="proposition_thmheading">
     <span class="proposition_thmcaption">
@@ -127,11 +131,11 @@
 
   </div>
 </div> </p>
-<p>Let us briefly sketch the geometric idea behind the above proposition if we pretend there is only one point $x$, and drop it from the notation, and also focus only on $γ^1$. By assumption, there is a finite collection of points $p_i$ in $Ω$ and $λ_i ∈ [0, 1]$ such that $g$ is the barycenter $\sum λ_i p_i$. Since $Ω$ is open and connected, there is a smooth loop $γ_0$ which goes through each $p_i$. The claim is that $g$ is the average value of $γ = γ_0 ∘ h$ for some self-diffeomorphism $h$ of $𝕊^1$. The idea is to choose $h$ such that $γ$ rushes to $p_1$, stays there during a time roughly $λ_1$, rushes to $p_2$, etc. But, in order to achieve average exactly $g$, it seems like $h$ needs to be a discontinuous piecewise constant map. The assumption that $v$ is in the <em>interior</em> of the convex hull gives enough slack to get away with a smooth $h$. Actually the conclusion would be false without this interior assumption. </p>
+<p>Let us briefly sketch the geometric idea behind the above proposition if we pretend there is only one point $x$, and drop it from the notation, and also focus only on $γ^1$. By assumption, there is a finite collection of points $p_i$ in $Ω$ and $λ_i ∈ [0, 1]$ such that $g$ is the barycenter $\sum λ_i p_i$. Since $Ω$ is open and connected, there is a smooth loop $γ_0$ which goes through each $p_i$. The claim is that $g$ is the average value of $γ = γ_0 ∘ h$ for some self-diffeomorphism $h$ of $𝕊^1$. The idea is to choose $h$ such that $γ$ rushes to $p_1$, stays there during a time roughly $λ_1$, rushes to $p_2$, etc. But, in order to achieve average exactly $g$, it seems like $h$ needs to be a discontinuous piecewise constant map. The assumption that $g$ is in the <em>interior</em> of the convex hull gives enough slack to get away with a smooth $h$. Actually the conclusion would be false without this interior assumption. </p>
 <p>In the previous proof sketch, there is a lot of freedom in constructing $γ$, which is problematic when trying to do it consistently when $x$ varies. </p>
 <h1 id="sec:preliminaries">1.2 Preliminaries</h1>
 
-<p>We’ll need Caratheodory lemma: </p>
+<p>We’ll need the Caratheodory lemma: </p>
 <p><div class="lemma_thmwrapper" id="lem:caratheodory">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -188,7 +192,7 @@
   </div>
   <div class="proof_content">
   <p> TODO…</p>
-<p>Or else replace the assumption of this lemma by its conclusion in every definition. This won’t change anything since $P$ will always be open </p>
+<p>Or else replace the assumption of this lemma by its conclusion in every definition. This won’t change anything since $P$ will always be open. </p>
 
   </div>
 </div>
@@ -382,7 +386,7 @@
    In this proof we don’t mention the $t$ parameter since it plays no role, but it is still there. <a href="chap-loops.html#lem:loop_of_hull">Lemma 1.7</a> gives a loop $γ$ based at $β(x_0)$, taking values in $Ω_{x_0}$ and surrounding $g(x_0)$. Since $g(x_0)$ is in the interior of the convex hull of $\operatorname{im}γ$, we can set $γ_x(s) = β(x) + (γ(s) - β(x_0))$. It takes values in $Ω$ because the later is open near $x_0$. 
   </div>
 </div>
-<p>The difficulty in constructing global families of surrounding loops is that there are plenty of surrounding loops and we need to choose them consistently. The key feature of the above definition is that the $t$ parameter, in addition to allowing to cut out the corrugation process in the next chapter, brings a satisfied or refund guarantee, as explained in the next lemma. </p>
+<p>The difficulty in constructing global families of surrounding loops is that there are plenty of surrounding loops and we need to choose them consistently. The key feature of the above definition is that the $t$ parameter not only allows us to cut out the corrugation process in the next chapter, but also brings a “satisfied or refund” guarantee, as explained in the next lemma. </p>
 <p><div class="lemma_thmwrapper" id="lem:satisfied_or_refund">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -565,9 +569,9 @@
   </div>
   <div class="proof_content">
   <p>   Let $γ^*$ be a family of loops surrounding the origin in $F$, constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.9</a>. For $x$ in some neighborhood $U^*$ of $K$ where $g = β$, we set $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure the image of $γ_x$ and its convex hull are contained in $Ω_x$ (recall $Ω$ is open and $K$ is compact). Lemma&#160;<a href="chap-loops.html#lem:∃_surrounding_loops">1.12</a> extends this family to a continuous family of surrounding loops $γ_x$ for all $x$ (this is not yet our final $γ$). </p>
-<p>We then need to approximate this continuous family by a smooth one. Some care is needed to ensure that it stays based at $β$. For instance, we can first compose each loop by some fixed surjective continuous map from $𝕊^1$ to itself that sends a neighborhood of $0$ to $0$. This way each loop becomes constant near $0$, and a convolution smoothing will then keep the value at $0$. If the smoothing is sufficiently $C^0$ small then the new $γ$ is still surrounding and taking value in $Ω$. </p>
+<p>We then need to approximate this continuous family by a smooth one. Some care is needed to ensure that it stays based at $β$. For instance, we can first compose each loop by some fixed surjective continuous map from $𝕊^1$ to itself that sends a neighborhood of $0$ to $0$. This way each loop becomes constant near $0$, and a convolution smoothing will then keep the value at $0$. If the smoothing is sufficiently $C^0$ small then the new $γ$ is still surrounding and takes values in $Ω$. </p>
 <p>Then Lemma&#160;<a href="chap-loops.html#lem:reparametrization">1.13</a> gives a family of circle diffeomorphisms $h_x$ such that $γ_x ∘ h_x$ has average $g(x)$. </p>
-<p>Finally we choose a cut-off function function $χ$ which vanishes on $\operatorname{Op}{K}$ and equals one on $\operatorname{Op}{U ∖ U^*}$. In $U^*$, we replace $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This operation does not change the average values of these loops, because it rescales them around their average value, but makes them constant on $\operatorname{Op}{K}$. Also those loops stay in $Ω$ thanks to our choice of $ε$. </p>
+<p>Finally we choose a cut-off function function $χ$ which vanishes on $\operatorname{Op}{K}$ and equals one on $\operatorname{Op}{U ∖ U^*}$. In $U^*$, we replace $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This operation does not change the average values of these loops, because it rescales them around their average value, but makes them constant on $\operatorname{Op}{K}$. Also, those loops stay in $Ω$, thanks to our choice of $ε$. </p>
 
   </div>
 </div>
