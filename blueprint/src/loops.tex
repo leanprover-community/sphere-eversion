@@ -69,10 +69,12 @@ which is problematic when trying to do it consistently when $x$ varies.
 \section{Preliminaries}
 \label{sec:preliminaries}
 
-We'll need the Caratheodory lemma:
+We'll need the Carathéodory lemma:
 
 \begin{lemma}
 \label{lem:caratheodory}
+\leanok
+\lean{analysis.convex.caratheodory, https://github.com/leanprover-community/mathlib/blob/caratheodory2/src/analysis/convex/caratheodory.lean#L159}
   If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$,
   then $x$ can be written as the convex combination of at most $d + 1$
   points in $P$.
