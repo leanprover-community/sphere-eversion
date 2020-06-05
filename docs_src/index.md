@@ -15,9 +15,9 @@ eversions as a corollary.
 The main motivations are:
 
 * Demonstrating the proof assistant can handle geometric topology, and
-  not only algebra or abstract nonsense. Note that Fabian Immler
-  already pioneered this direction by formalizing Poincaré-Bendixon,
-  but this project has much larger scale.
+  not only algebra or abstract nonsense. Note that Fabian Immler and
+  Yong Kiam Tan already pioneered this direction by formalizing
+  Poincaré-Bendixon, but this project has much larger scale.
 * Exploring new infrastructure for collaborations on formalization
   projects, using the [interactive blueprint](blueprint/index.html).
 * Producing a bilingual informal/formal document by keeping the
