@@ -77,7 +77,7 @@ We'll need the Carathéodory lemma:
 \lean{analysis.convex.caratheodory, https://github.com/leanprover-community/mathlib/blob/caratheodory2/src/analysis/convex/caratheodory.lean#L159}
   If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$,
   then $x$ can be written as the convex combination of at most $d + 1$
-  points in $P$.
+  affinely independant points in $P$ with positive coefficients.
 \end{lemma}
 
 \begin{proof}
@@ -86,18 +86,39 @@ We'll need the Carathéodory lemma:
 
 \begin{lemma}
   \label{lem:int_cvx}
-  If a point $x$ of $ℝ^d$ lies in the interior of the convex hull of a set $P$,
-  then $x$ can be written as the convex combination of at most $d + 1$
-  points in $P$ with only positive coefficients.
+  If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$,
+  then $x$ can be written as the convex combination of exactly $d + 1$
+  affinely independant points in $P$ with only positive coefficients.
 \end{lemma}
 
 \begin{proof}
   \uses{lem:caratheodory}
-  TODO\dots
+  \Cref{lem:caratheodory} gives affinely independant points
+  $p_0, \dots, p_k$ in $P$ such that $x$ is the convex combination of
+  these points with positive weights $w_i$ (here $k \ge 0$).
+  In particular, the family of vectors $p_i - p_0$, $1 ≤ i ≤ k$ is free.
+  So we can complete it to a basis by appending vectors
+  $f_{k+1}, \dots, f_d$.
+  We set $p_i = p_0 + εf_i$ for $i \ge k+1$.
+  This belongs to $P$ for $ε > 0$ small enough since $p_0$ is in $P$
+  and $P$ is open.
+  Note that the extend family of points is still affinely independant
+  since the vectors $p_i - p_0$ are non-zero multiple of our basis
+  elements.
 
-  Or else replace the assumption of this lemma by its conclusion in
-  every definition. This won't change anything since $P$ will always be
-  open.
+  The next idea is to expand the simplex spanned by the $p_i$'s around its
+  center of mass $b = 1/(d+1)\sum p_i$. So we set:
+  \[
+    p'_i = b + (1 + ε)(p_i - b).
+  \]
+  Those point are all in $P$ for $ε$ small enough because $P$ is open,
+  and there are still affinely independant since they are the image of
+  our original points by a homothety.
+  Then we have:
+  \[
+    x = \sum_i w_i p_i = \sum_i \frac{w_i + ε/(d+1)}{1 + ε} p'_i
+  \]
+  where all coefficients are positive
 \end{proof}
 
 
