@@ -51,7 +51,15 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.10 (lem:satisfied_or_refund)</div>
+      <div class="thm_thmheading">Lemma 1.10 (lem:local_loops)</div>
+      <div class="thm_thm_content"><p>  Assume $Ω$ is open and connected over some neighborhood of $x_0$. If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is a continuous family of loops defined near $x_0$, based at $β$, taking value in $Ω$ and surrounding $g$. </p>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.11 (lem:satisfied_or_refund)</div>
       <div class="thm_thm_content"><p>  Each $L(g, β, U)$ is path connected: for every $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$, there is a continuous map $γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$ which interpolates between $γ_0$ and $γ_1$ in $L(g, β, U)$. </p>
 </div>
     </li>
@@ -59,7 +67,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Corollary 1.11 (cor:extend_loops)</div>
+      <div class="thm_thmheading">Corollary 1.12 (cor:extend_loops)</div>
       <div class="thm_thm_content"><p>  Let $U_0$ and $U_1$ be open sets in $E$. Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets. For any $γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)$ and $γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)$, there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and there exists $γ ∈ \operatorname{\mathcal{L}}(U, g, β)$ which coincides with $γ_0$ near $K_0$. </p>
 </div>
     </li>
@@ -67,7 +75,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.12 (lem:∃_surrounding_loops)</div>
+      <div class="thm_thmheading">Lemma 1.13 (lem:∃_surrounding_loops)</div>
       <div class="thm_thm_content"><p> In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family $γ$ of loops defined near $K$ which is based at $β$, surrounds $g$ and such that each $γ_x^1$ takes values in $Ω_x$. Then there such a family which is defined on all of $U$ and agrees with $γ$ near $K$. </p>
 </div>
     </li>
@@ -75,8 +83,8 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.13 (lem:reparametrization)</div>
-      <div class="thm_thm_content"><p> Let $γ : X × 𝕊^1 → E$ be a family of loops in a vector bundle $E → X$ (ie. each $γ_x$ is a loop in $E_x$) and let $g$ be a section of $E$. If $γ_x$ strictly surrounds $g(x)$ for all $x$, and $γ_x$ has average $g(x)$ when $x$ is outside some compact subset of $X$, then there is a family of circle diffeomorphisms $h : X × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$. </p>
+      <div class="thm_thmheading">Lemma 1.14 (lem:reparametrization)</div>
+      <div class="thm_thm_content"><p>  Let $γ \! :E × 𝕊^1 → F$ be a smooth family of loops surrounding a map $g$ with base $β$ over some $U ⊆ E$. There is a family of circle diffeomorphisms $h : U × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$ and $h_x(0) = 0$. </p>
 </div>
     </li>
     
@@ -108,41 +116,54 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.3 (lem:caratheodory)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
+      <div class="thm_thm_content"><p>  If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.4 (lem:int_cvx)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$, then $x$ can be written as the convex combination of exactly $d + 1$ affinely independant points in $P$ with only positive coefficients. </p>
+      <div class="thm_thmheading">Definition 1.4 (def:surrounds_points)</div>
+      <div class="thm_thm_content"><p> Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$ is surrounded by points $p_0$, …, $p_d$ if those points are affinely independant and there exist weights $w_i ∈ (0, 1)$ such that $x = \sum _i w_i p_i$. </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.5 (lem:smooth_convex_hull)</div>
-      <div class="thm_thm_content"><p> Let $x_0$ be a point in $ℝ^d$. Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near $x_0$. Assume that $x_0$ is in the interior of the convex hull of $p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that </p>
-<div class="displaymath" id="a0000000020">
-  \[  \sum _i w_i(x)p_i(x) = x \qquad \text{and}\qquad \sum _i w_i(x) = 1.  \]
-</div>
+      <div class="thm_thmheading">Lemma 1.5 (lem:int_cvx)</div>
+      <div class="thm_thm_content"><p> If a point $x$ of $E$ lies in the convex hull of an open set $P$, then it is surrounded by some collection of points belonging to $P$. </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Definition 1.6 (def:surrounds)</div>
-      <div class="thm_thm_content"><p> We say a loop $γ$ surrounds a vector $v$ if $v$ is in the interior of the convex hull of $γ(𝕊^1)$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
+      <div class="thm_thmheading">Lemma 1.6 (lem:smooth_convex_hull)</div>
+      <div class="thm_thm_content"><p>  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$ surrounding $x$, there is a positive $ε$ and a function $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every $(y, q)$ in $B_ε(x) × Π_i B_ε(p_i)$, </p>
+<ul class="itemize">
+  <li><p>$w$ is smooth at $(y, q)$ </p>
+</li>
+  <li><p>$w(y, q) ∈ (0, 1)$ </p>
+</li>
+  <li><p>$y = \sum _{i=0}^d w_i(y, q)q_i$ </p>
+</li>
+</ul>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.7 (lem:loop_of_hull)</div>
+      <div class="thm_thmheading">Definition 1.7 (def:surrounds)</div>
+      <div class="thm_thm_content"><p>  We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded by a collection of points belonging to the image of $γ$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.8 (lem:loop_of_hull)</div>
       <div class="thm_thm_content"><p>  If a vector $v$ is in the convex hull of a connected open subset $O$ then, for every base point $b ∈ O$, there is a continuous family of loops $γ \! :[0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)$ such that, for all $t$ and $s$: </p>
 <ul class="itemize">
   <li><p>$γ^t$ is based at $b$ </p>
@@ -160,7 +181,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Definition 1.8 (def:family_surrounds)</div>
+      <div class="thm_thmheading">Definition 1.9 (def:family_surrounds)</div>
       <div class="thm_thm_content"><p>  A continuous family of loops $γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$ surrounds a map $g \! :E → F$ with base $β \! :E → F$ on $U ⊆ E$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every $s ∈ 𝕊^1$, </p>
 <ul class="itemize">
   <li><p>$γ^t_x$ is based at $β(x)$ </p>
@@ -171,14 +192,6 @@ Click chapter titles to see missing items.
 </li>
 </ul>
 <p> The space of such families will be denoted by $\operatorname{\mathcal{L}}(g, β, U)$. </p>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Lemma 1.9 (lem:local_loops)</div>
-      <div class="thm_thm_content"><p>  Assume $Ω$ is open and connected over some neighborhood of $x_0$. If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is a continuous family of loops defined near $x_0$, based at $β$, taking value in $Ω$ and surrounding $g$. </p>
 </div>
     </li>
     
@@ -578,13 +591,15 @@ Click chapter titles to see missing items.
     
     
     
-    
-    
     <li>
-      <div class="thm_thmheading">Definition 1.6 (def:surrounds)</div>
-      <div class="thm_thm_content"><p> We say a loop $γ$ surrounds a vector $v$ if $v$ is in the interior of the convex hull of $γ(𝕊^1)$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
+      <div class="thm_thmheading">Definition 1.4 (def:surrounds_points)</div>
+      <div class="thm_thm_content"><p> Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$ is surrounded by points $p_0$, …, $p_d$ if those points are affinely independant and there exist weights $w_i ∈ (0, 1)$ such that $x = \sum _i w_i p_i$. </p>
 </div>
     </li>
+    
+    
+    
+    
     
     
     
@@ -762,19 +777,15 @@ Click chapter titles to see missing items.
     
     
     
+    
+    
     <li>
-      <div class="thm_thmheading">Lemma 1.12 (lem:∃_surrounding_loops)</div>
+      <div class="thm_thmheading">Lemma 1.13 (lem:∃_surrounding_loops)</div>
       <div class="thm_thm_content"><p> In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family $γ$ of loops defined near $K$ which is based at $β$, surrounds $g$ and such that each $γ_x^1$ takes values in $Ω_x$. Then there such a family which is defined on all of $U$ and agrees with $γ$ near $K$. </p>
 </div>
     </li>
     
     
-    
-    <li>
-      <div class="thm_thmheading">Lemma 1.13 (lem:reparametrization)</div>
-      <div class="thm_thm_content"><p> Let $γ : X × 𝕊^1 → E$ be a family of loops in a vector bundle $E → X$ (ie. each $γ_x$ is a loop in $E_x$) and let $g$ be a section of $E$. If $γ_x$ strictly surrounds $g(x)$ for all $x$, and $γ_x$ has average $g(x)$ when $x$ is outside some compact subset of $X$, then there is a family of circle diffeomorphisms $h : X × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$. </p>
-</div>
-    </li>
     
     
     
@@ -782,36 +793,27 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.3 (lem:caratheodory)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
+      <div class="thm_thm_content"><p>  If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.4 (lem:int_cvx)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$, then $x$ can be written as the convex combination of exactly $d + 1$ affinely independant points in $P$ with only positive coefficients. </p>
+      <div class="thm_thmheading">Definition 1.4 (def:surrounds_points)</div>
+      <div class="thm_thm_content"><p> Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$ is surrounded by points $p_0$, …, $p_d$ if those points are affinely independant and there exist weights $w_i ∈ (0, 1)$ such that $x = \sum _i w_i p_i$. </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.5 (lem:smooth_convex_hull)</div>
-      <div class="thm_thm_content"><p> Let $x_0$ be a point in $ℝ^d$. Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near $x_0$. Assume that $x_0$ is in the interior of the convex hull of $p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that </p>
-<div class="displaymath" id="a0000000020">
-  \[  \sum _i w_i(x)p_i(x) = x \qquad \text{and}\qquad \sum _i w_i(x) = 1.  \]
-</div>
+      <div class="thm_thmheading">Lemma 1.5 (lem:int_cvx)</div>
+      <div class="thm_thm_content"><p> If a point $x$ of $E$ lies in the convex hull of an open set $P$, then it is surrounded by some collection of points belonging to $P$. </p>
 </div>
     </li>
     
     
-    
-    <li>
-      <div class="thm_thmheading">Definition 1.6 (def:surrounds)</div>
-      <div class="thm_thm_content"><p> We say a loop $γ$ surrounds a vector $v$ if $v$ is in the interior of the convex hull of $γ(𝕊^1)$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
-</div>
-    </li>
     
     
     
@@ -1005,6 +1007,8 @@ Click chapter titles to see missing items.
   
   <h3>1 Loops</h3>
   <ul class="coverage">
+    
+    
     
     
     
