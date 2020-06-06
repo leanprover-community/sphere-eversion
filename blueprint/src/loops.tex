@@ -69,24 +69,35 @@ which is problematic when trying to do it consistently when $x$ varies.
 \section{Preliminaries}
 \label{sec:preliminaries}
 
+In this section, $E$ is a real vector space with (finite) dimension $d$.
 We'll need the Carathéodory lemma:
 
-\begin{lemma}
+\begin{lemma}[Carathéodory's lemma]
 \label{lem:caratheodory}
-  If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$,
-  then $x$ can be written as the convex combination of at most $d + 1$
-  affinely independant points in $P$ with positive coefficients.
+  If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
+  can be written as the convex combination of at most $d + 1$ affinely
+  independant points in $P$ with positive coefficients.
 \end{lemma}
 
 \begin{proof}
   TODO\dots
 \end{proof}
 
+\begin{definition}
+  \label{def:surrounds_points}
+  Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$
+  is surrounded by points $p_0$, \dots, $p_d$ if those points are
+  affinely independant and there exist weights $w_i ∈ (0, 1)$ such
+  that $x = \sum_i w_i p_i$.
+\end{definition}
+
+Note that, in the above definition, the number of points $p_i$ is fixed
+by the dimension $d$ of $E$.
+
 \begin{lemma}
   \label{lem:int_cvx}
-  If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$,
-  then $x$ can be written as the convex combination of exactly $d + 1$
-  affinely independant points in $P$ with only positive coefficients.
+  If a point $x$ of $E$ lies in the convex hull of an open set $P$,
+  then it is surrounded by some collection of points belonging to $P$.
 \end{lemma}
 
 \begin{proof}
@@ -121,20 +132,61 @@ We'll need the Carathéodory lemma:
 
 
 \begin{lemma}
-\label{lem:smooth_convex_hull}
-Let $x_0$ be a point in $ℝ^d$.
-Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near
-$x_0$. Assume that $x_0$ is in the interior of the convex hull of
-$p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and
-smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that
-\[
-  \sum_i w_i(x)p_i(x) = x \qquad \text{and}\qquad
-  \sum_i w_i(x) = 1.
-\]
+  \label{lem:smooth_convex_hull}
+  \uses{def:surrounds_points}
+  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
+  surrounding $x$, there is a positive $ε$ and a function
+  $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every
+  $(y, q)$ in $B_ε(x) × Π_i B_ε(p_i)$,
+  \begin{itemize}
+    \item
+      $w$ is smooth at $(y, q)$
+    \item
+      $w(y, q) ∈ (0, 1)$
+    \item
+      $y = \sum_{i=0}^d w_i(y, q)q_i$
+  \end{itemize}
 \end{lemma}
 
 \begin{proof}
-  TODO\dots using the implicit function theorem.
+  If $d = 0$ then there is nothing to prove.
+  Hence we will assume $d ≥ 1$.
+  Components of elements of $E^{d+1}$ or $ℝ^{d+1}$ will always be
+  numbered from $0$ to $d$.
+  By assumption, the family of points $p_i$ is affinely independant and
+  there are weights $w_0, \dots, w_d$ such that $x = \sum_i w_i p_i$
+  where each $w_i$ is in $(0, 1)$ and their sum is one.
+  In particular
+
+  \begin{align*}
+    x - p_0 &= \sum_{i=0}^d w_i p_i - \sum_{i=0}^d w_i p_0 \\
+            & = \sum_{i=0}^d w_i (p_i - p_0) \\
+            & = \sum_{i=1}^d w_i (p_i - p_0).
+  \end{align*}
+
+  For $q$ in $E^{d+1}$ and $i ∈ \{1, \dots, d\}$, we set
+  $e_i(q) = q_i - q_0$.
+  Since $p$ is a collection of $d+1$ affinely independant points,
+  the family $e_i(p)$ is a basis of $e$.
+  By continuity of the determinant, this stays true
+  for $q$ in $Π_i B_δ(p_i)$ for some positive $δ$.
+  Let $e^*_i(q)$ denote the elements of the dual basis.
+  The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$ because this can't
+  be false.
+  We set $w_i(y, q) = e^*_i(q)(y - q_0)$.
+  The computation of $x - p_0$ above proves that
+  $w_i(x, p) = w_i$.
+  We have $y - q_0 = \sum_{i = 1}^d w_i(y, q)(q_i - q_0)$.
+  Hence
+  \[
+    y = \left(1 - \sum_{i = 1}^d w_i(y, q)\right)q_0 +
+        \sum_{i = 1}^d w_i(y, q)q_i.
+  \]
+  We denote by $w_0(y, q)$ the coefficient in front of $q_0$ in the
+  above formula.
+  Hence we have $y = \sum_{i=0}^d w_i(y, q)q_i$ with
+  $w_i(x, p) = w_i$ hence each $w_i(y, q)$ is in $(0, 1)$
+  if $(y, q)$ is sufficiently close to $(x₀, p)$.
 \end{proof}
 
 \subsection{Surrounding families}
@@ -144,13 +196,16 @@ It will be convenient to introduce some more vocabulary.
 
 \begin{definition}
   \label{def:surrounds}
-  We say a loop $γ$ surrounds a vector $v$ if $v$ is in the interior of
-  the convex hull of $γ(𝕊^1)$.
+  \uses{def:surrounds_points}
+  We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded
+  by a collection of points belonging to the image of $γ$.
   Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some
   point $b$ if $0$ is sent to $b$.
 \end{definition}
 
-Constructing \emph{one} such loop is trivial.
+Thanks to Carathéodory's lemma, constructing \emph{one} such loop
+with values in some open $O$ is easy as soon as $v$ belongs to the
+convex hull of $O$.
 
 \begin{lemma}
   \label{lem:loop_of_hull}
@@ -174,12 +229,11 @@ Constructing \emph{one} such loop is trivial.
 
 \begin{proof}
   \uses{lem:int_cvx}
-  Since $O$ is open, its convex hull is its interior convex hull.
-  Hence \Cref{lem:int_cvx} gives points $p_i$ in $O$ such that
-  $v$ is in the interior of the convex hull of the $p_i$.
+  Since $O$ is open, \Cref{lem:int_cvx} gives points $p_i$ in $O$
+  surrounding $x$.
   Since $O$ is open and connected, it is path connected.
   Let $λ \co [0, 1] → Ω_x$ be a continuous path starting at $b$ and
-  going through these points.
+  going through the points $p_i$.
   We can concatenate $λ$ and its opposite to get $γ^1$,
   say $γ^1(s) = λ((1-\cos 2πs)/2)$.
   This is a round-trip loop: it back-tracks when it reaches $λ(1)$
@@ -230,14 +284,16 @@ Families of surrounding loops are easy to construct locally.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:loop_of_hull}
+  \uses{lem:loop_of_hull, lem:smooth_convex_hull}
   In this proof we don't mention the $t$ parameter since it plays no
   role, but it is still there.
   \Cref{lem:loop_of_hull} gives a loop $γ$ based at $β(x_0)$,
   taking values in $Ω_{x_0}$ and surrounding $g(x_0)$.
-  Since $g(x_0)$ is in the interior of the convex hull of $\im γ$,
-  we can set $γ_x(s) = β(x) + (γ(s) - β(x_0))$.
-  It takes values in $Ω$ because the later is open near $x_0$.
+  We set $γ_x(s) = β(x) + (γ(s) - β(x_0))$.
+  Each $γ_x$ takes values in $Ω_x$ because $Ω$ is open over some
+  neighborhood of $x_0$.
+  \Cref{lem:smooth_convex_hull} guarantees that this loop surrounds $g(x)$
+  for $x$ close enough to $x_0$.
 \end{proof}
 
 The difficulty in constructing global families of surrounding loops is that
@@ -354,31 +410,29 @@ parametric reparametrization lemma.
 
 \begin{lemma}
 \label{lem:reparametrization}
-Let $γ : X × 𝕊^1 → E$ be a family of loops in a vector bundle $E → X$ (ie. each
-$γ_x$ is a loop in $E_x$) and let $g$ be a section of $E$. If
-$γ_x$ strictly  surrounds $g(x)$ for all $x$, and $γ_x$ has average $g(x)$ when
-$x$ is outside some compact subset of $X$, then there is a family of circle
-diffeomorphisms $h : X × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$.
+\uses{def:surrounds}
+Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
+a map $g$ with base $β$ over some $U ⊆ E$.
+There is a family of circle diffeomorphisms $h : U × 𝕊^1 → 𝕊^1$ such
+that each $γ_x ∘ h_x$ has average $g(x)$ and $h_x(0) = 0$.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:caratheodory, lem:int_cvx, lem:smooth_convex_hull}
+  \uses{lem:caratheodory, lem:smooth_convex_hull}
   For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points
-  $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is in the interior of the simplex
-  spanned by the corresponding points $γ_x(s_j)$, by
-  \Cref{lem:caratheodory}.
+  $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is surrounded
+  by the corresponding points $γ_x(s_j)$.
+
   Let $μ_1, …, μ_{n+1}$ be smooth positive probability measures very
   close to the Dirac measures on $s_j$ (ie. $μ_j = f_j\, ds$ for some
   smooth positive function $f_j$ and, for any function $h$,
   $\int h\,dμ_j$ is almost $h(s_j)$).  We set $p_j = \int γ_x\, d\mu_j$, which
   is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights
-  $w_j$ in the open interval $(0, 1)$ according to \Cref{lem:int_cvx}.
+  $w_j$ in the open interval $(0, 1)$ according to
+  \Cref{lem:smooth_convex_hull}.
 
-  If $x'$ is in a sufficiently small neighborhood of $x$, $g(x')$ is in
-  the interior of the simplex spanned by
-  $p_j(x') := \int γ_{x'}\, d\mu_j$.
-  In such a neighborhood, \Cref{lem:smooth_convex_hull} gives
-  smooth weight functions $w_j$
+  If $x'$ is in a sufficiently small neighborhood of $x$,
+  \Cref{lem:smooth_convex_hull} gives smooth weight functions $w_j$
   such that $g(x') = \sum w_j(x')p_j(x')$.
   Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such
   neighborhoods, with corresponding measures $μ_j^i$, moving points
@@ -428,7 +482,7 @@ We finally assemble the ingredients from the previous two sections.
   still surrounding and takes values in $Ω$.
 
   Then Lemma~\ref{lem:reparametrization} gives a family of circle
-  diffeomorphisms $h_x$ such that $γ_x ∘ h_x$ has average $g(x)$.
+  diffeomorphisms $h_x$ such that $γ^1_x ∘ h_x$ has average $g(x)$.
 
   Finally we choose a cut-off function function $χ$ which vanishes on
   $\Op{K}$ and equals one on $\Op{U ∖ U^*}$.  In $U^*$, we replace

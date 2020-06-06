@@ -172,13 +172,14 @@
 <p>In the previous proof sketch, there is a lot of freedom in constructing $γ$, which is problematic when trying to do it consistently when $x$ varies. </p>
 <h1 id="sec:preliminaries">1.2 Preliminaries</h1>
 
-<p>We’ll need the Carathéodory lemma: </p>
+<p>In this section, $E$ is a real vector space with (finite) dimension $d$. We’ll need the Carathéodory lemma: </p>
 <p><div class="lemma_thmwrapper" id="lem:caratheodory">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">1.3</span>
+    <span class="lemma_thmtitle">Carathéodory’s lemma</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:caratheodory">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000015"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -187,7 +188,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
+  <p>  If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
 
   </div>
 </div> </p>
@@ -203,12 +204,29 @@
   TODO…
   </div>
 </div>
+<p><div class="definition_thmwrapper" id="def:surrounds_points">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">1.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-loops.html#def:surrounds_points">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$ is surrounded by points $p_0$, …, $p_d$ if those points are affinely independant and there exist weights $w_i ∈ (0, 1)$ such that $x = \sum _i w_i p_i$. </p>
+
+  </div>
+</div> </p>
+<p>Note that, in the above definition, the number of points $p_i$ is fixed by the dimension $d$ of $E$. </p>
 <p><div class="lemma_thmwrapper" id="lem:int_cvx">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.4</span>
+    <span class="lemma_thmlabel">1.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:int_cvx">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000016"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -217,7 +235,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$, then $x$ can be written as the convex combination of exactly $d + 1$ affinely independant points in $P$ with only positive coefficients. </p>
+  <p> If a point $x$ of $E$ lies in the convex hull of an open set $P$, then it is surrounded by some collection of points belonging to $P$. </p>
 
   </div>
 </div> </p>
@@ -248,19 +266,39 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.5</span>
+    <span class="lemma_thmlabel">1.6</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:smooth_convex_hull">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000019"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-loops.html#def:surrounds_points">Definition 1.4</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> Let $x_0$ be a point in $ℝ^d$. Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near $x_0$. Assume that $x_0$ is in the interior of the convex hull of $p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that </p>
-<div class="displaymath" id="a0000000020">
-  \[  \sum _i w_i(x)p_i(x) = x \qquad \text{and}\qquad \sum _i w_i(x) = 1.  \]
-</div>
+  <p>  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$ surrounding $x$, there is a positive $ε$ and a function $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every $(y, q)$ in $B_ε(x) × Π_i B_ε(p_i)$, </p>
+<ul class="itemize">
+  <li><p>$w$ is smooth at $(y, q)$ </p>
+</li>
+  <li><p>$w(y, q) ∈ (0, 1)$ </p>
+</li>
+  <li><p>$y = \sum _{i=0}^d w_i(y, q)q_i$ </p>
+</li>
+</ul>
 
   </div>
 </div> </p>
@@ -273,7 +311,14 @@
 
   </div>
   <div class="proof_content">
-  TODO…using the implicit function theorem. 
+  <p>If $d = 0$ then there is nothing to prove. Hence we will assume $d ≥ 1$. Components of elements of $E^{d+1}$ or $ℝ^{d+1}$ will always be numbered from $0$ to $d$. By assumption, the family of points $p_i$ is affinely independant and there are weights $w_0, \dots , w_d$ such that $x = \sum _i w_i p_i$ where each $w_i$ is in $(0, 1)$ and their sum is one. In particular </p>
+<span>\begin{align*}  x - p_0 & = \sum _{i=0}^d w_i p_i - \sum _{i=0}^d w_i p_0 \\ &  = \sum _{i=0}^d w_i (p_i - p_0) \\ &  = \sum _{i=1}^d w_i (p_i - p_0). \end{align*}</span>
+<p>For $q$ in $E^{d+1}$ and $i ∈ \{ 1, \dots , d\} $, we set $e_i(q) = q_i - q_0$. Since $p$ is a collection of $d+1$ affinely independant points, the family $e_i(p)$ is a basis of $e$. By continuity of the determinant, this stays true for $q$ in $Π_i B_δ(p_i)$ for some positive $δ$. Let $e^*_i(q)$ denote the elements of the dual basis. The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$ because this can’t be false. We set $w_i(y, q) = e^*_i(q)(y - q_0)$. The computation of $x - p_0$ above proves that $w_i(x, p) = w_i$. We have $y - q_0 = \sum _{i = 1}^d w_i(y, q)(q_i - q_0)$. Hence </p>
+<div class="displaymath" id="a0000000020">
+  \[  y = \left(1 - \sum _{i = 1}^d w_i(y, q)\right)q_0 + \sum _{i = 1}^d w_i(y, q)q_i.  \]
+</div>
+<p> We denote by $w_0(y, q)$ the coefficient in front of $q_0$ in the above formula. Hence we have $y = \sum _{i=0}^d w_i(y, q)q_i$ with $w_i(x, p) = w_i$ hence each $w_i(y, q)$ is in $(0, 1)$ if $(y, q)$ is sufficiently close to $(x₀, p)$. </p>
+
   </div>
 </div>
 <h2 id="sub:surrounding_families">1.2.1 Surrounding families</h2>
@@ -284,24 +329,39 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">1.6</span>
+    <span class="definition_thmlabel">1.7</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:surrounds">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-loops.html#def:surrounds_points">Definition 1.4</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> We say a loop $γ$ surrounds a vector $v$ if $v$ is in the interior of the convex hull of $γ(𝕊^1)$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
+  <p>  We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded by a collection of points belonging to the image of $γ$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
 
   </div>
 </div> </p>
-<p>Constructing <em>one</em> such loop is trivial. </p>
+<p>Thanks to Carathéodory’s lemma, constructing <em>one</em> such loop with values in some open $O$ is easy as soon as $v$ belongs to the convex hull of $O$. </p>
 <p><div class="lemma_thmwrapper" id="lem:loop_of_hull">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.7</span>
+    <span class="lemma_thmlabel">1.8</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000021"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -316,7 +376,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds">Definition 1.6</a></li>
+          <li><a href="chap-loops.html#def:surrounds">Definition 1.7</a></li>
         </ul>
 
       </div>
@@ -348,7 +408,7 @@
 
   </div>
   <div class="proof_content">
-   Since $O$ is open, its convex hull is its interior convex hull. Hence <a href="chap-loops.html#lem:int_cvx">Lemma 1.4</a> gives points $p_i$ in $O$ such that $v$ is in the interior of the convex hull of the $p_i$. Since $O$ is open and connected, it is path connected. Let $λ \! :[0, 1] → Ω_x$ be a continuous path starting at $b$ and going through these points. We can concatenate $λ$ and its opposite to get $γ^1$, say $γ^1(s) = λ((1-\cos 2πs)/2)$. This is a round-trip loop: it back-tracks when it reaches $λ(1)$ at $s = 1/2$. We then define $γ^t$ as the round-trip that stops at $s = t/2$, stays still until $s = 1-t/2$ and then backtracks. 
+   Since $O$ is open, <a href="chap-loops.html#lem:int_cvx">Lemma 1.5</a> gives points $p_i$ in $O$ surrounding $x$. Since $O$ is open and connected, it is path connected. Let $λ \! :[0, 1] → Ω_x$ be a continuous path starting at $b$ and going through the points $p_i$. We can concatenate $λ$ and its opposite to get $γ^1$, say $γ^1(s) = λ((1-\cos 2πs)/2)$. This is a round-trip loop: it back-tracks when it reaches $λ(1)$ at $s = 1/2$. We then define $γ^t$ as the round-trip that stops at $s = t/2$, stays still until $s = 1-t/2$ and then backtracks. 
   </div>
 </div>
 <p>The first main task in proving Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a> is to construct suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that $Ω$ and the surrounding condition are open. </p>
@@ -357,7 +417,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">1.8</span>
+    <span class="definition_thmlabel">1.9</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:family_surrounds">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -370,7 +430,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds">Definition 1.6</a></li>
+          <li><a href="chap-loops.html#def:surrounds">Definition 1.7</a></li>
         </ul>
 
       </div>
@@ -398,7 +458,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.9</span>
+    <span class="lemma_thmlabel">1.10</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:local_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000022"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -413,7 +473,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.8</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.9</a></li>
         </ul>
 
       </div>
@@ -435,7 +495,7 @@
 
   </div>
   <div class="proof_content">
-   In this proof we don’t mention the $t$ parameter since it plays no role, but it is still there. <a href="chap-loops.html#lem:loop_of_hull">Lemma 1.7</a> gives a loop $γ$ based at $β(x_0)$, taking values in $Ω_{x_0}$ and surrounding $g(x_0)$. Since $g(x_0)$ is in the interior of the convex hull of $\operatorname{im}γ$, we can set $γ_x(s) = β(x) + (γ(s) - β(x_0))$. It takes values in $Ω$ because the later is open near $x_0$. 
+   In this proof we don’t mention the $t$ parameter since it plays no role, but it is still there. <a href="chap-loops.html#lem:loop_of_hull">Lemma 1.8</a> gives a loop $γ$ based at $β(x_0)$, taking values in $Ω_{x_0}$ and surrounding $g(x_0)$. We set $γ_x(s) = β(x) + (γ(s) - β(x_0))$. Each $γ_x$ takes values in $Ω_x$ because $Ω$ is open over some neighborhood of $x_0$. <a href="chap-loops.html#lem:smooth_convex_hull">Lemma 1.6</a> guarantees that this loop surrounds $g(x)$ for $x$ close enough to $x_0$. 
   </div>
 </div>
 <p>The difficulty in constructing global families of surrounding loops is that there are plenty of surrounding loops and we need to choose them consistently. The key feature of the above definition is that the $t$ parameter not only allows us to cut out the corrugation process in the next chapter, but also brings a “satisfied or refund” guarantee, as explained in the next lemma. </p>
@@ -444,7 +504,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.10</span>
+    <span class="lemma_thmlabel">1.11</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:satisfied_or_refund">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000023"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -459,7 +519,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.8</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.9</a></li>
         </ul>
 
       </div>
@@ -495,7 +555,7 @@
     <span class="corollary_thmcaption">
     Corollary
     </span>
-    <span class="corollary_thmlabel">1.11</span>
+    <span class="corollary_thmlabel">1.12</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000025"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -510,7 +570,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.8</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.9</a></li>
         </ul>
 
       </div>
@@ -533,7 +593,7 @@
   </div>
   <div class="proof_content">
   <p> Let $U_0’$ be an open neighborhood of $K_0$ whose closure $\bar U_0’$ is compact in $U_0$. Since $\bar U_0’$ and $K_1’ := K_1 ∖ (K_1 ∩ U_0)$ are disjoint compact subsets of $E$, there is some continuous cut-off $ρ \! :E → [0, 1]$ which vanishes on $U_0’$ and equals one on some neighborhood $U_1’$ of $K_1’$. </p>
-<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.10</a> gives a homotopy of loops $γ_τ$ from $γ_0$ to $γ_1$ on $U_0 ∩ U_1$. On $U_0’ ∪ (U_0 ∩ U_1) ∪ U_1’$, which is a neighborhood of $K_0 ∪ K_1$, we set </p>
+<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.11</a> gives a homotopy of loops $γ_τ$ from $γ_0$ to $γ_1$ on $U_0 ∩ U_1$. On $U_0’ ∪ (U_0 ∩ U_1) ∪ U_1’$, which is a neighborhood of $K_0 ∪ K_1$, we set </p>
 <div class="displaymath" id="a0000000026">
   \[  γ_x = \begin{cases}  γ_{0, x} &  \text{for $x ∈ U_0'$} \\ γ_{ρ(x), x} &  \text{for $x ∈ U_0 ∩ U_1$} \\ γ_{1, x} &  \text{for $x ∈ U_1'$} \end{cases}  \]
 </div>
@@ -546,7 +606,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.12</span>
+    <span class="lemma_thmlabel">1.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000027"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -568,7 +628,7 @@
 
   </div>
   <div class="proof_content">
-   Let $U_0$ be an open set containing $K$ and contained in the domain of $γ$. Let $U_0’$ be an open neighborhood of $K$ with compact closure in $U_0$. Let $U_i$, $i ≥ 1$ be a local finite covering of $U ∖ U_0’$ by open subsets not intersecting $K$ and where the preceding observations gives families of loops $γ^i$. We also set $γ^0 = γ|_{U_0}$. In particular the open sets $U_i$, $i ≥ 0$ cover the whole of $U$, and only $U_0$ intersects $K$. Let $K_i$, $0 ≤ i ≤ N$, be a family of compact sets with $K_i ⊂ U_i$ which covers $U$. We repeatedly apply Corollary&#160;<a href="chap-loops.html#cor:extend_loops">1.11</a> to $K_i$ and $K_{i+1}$, in this order, to get a family $γ’$ defined over all $U$. Since each step preserves the family on $\operatorname{Op}{K_i}$ and only $U_0$ intersects (in fact contains) $K$, we do have $γ’ = γ$ on $\operatorname{Op}{K}$. 
+   Let $U_0$ be an open set containing $K$ and contained in the domain of $γ$. Let $U_0’$ be an open neighborhood of $K$ with compact closure in $U_0$. Let $U_i$, $i ≥ 1$ be a local finite covering of $U ∖ U_0’$ by open subsets not intersecting $K$ and where the preceding observations gives families of loops $γ^i$. We also set $γ^0 = γ|_{U_0}$. In particular the open sets $U_i$, $i ≥ 0$ cover the whole of $U$, and only $U_0$ intersects $K$. Let $K_i$, $0 ≤ i ≤ N$, be a family of compact sets with $K_i ⊂ U_i$ which covers $U$. We repeatedly apply Corollary&#160;<a href="chap-loops.html#cor:extend_loops">1.12</a> to $K_i$ and $K_{i+1}$, in this order, to get a family $γ’$ defined over all $U$. Since each step preserves the family on $\operatorname{Op}{K_i}$ and only $U_0$ intersects (in fact contains) $K$, we do have $γ’ = γ$ on $\operatorname{Op}{K}$. 
   </div>
 </div>
 <h2 id="sub:the_reparametrization_lemma">1.2.2 The reparametrization lemma</h2>
@@ -579,16 +639,31 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.13</span>
+    <span class="lemma_thmlabel">1.14</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:reparametrization">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000028"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-loops.html#def:surrounds">Definition 1.7</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> Let $γ : X × 𝕊^1 → E$ be a family of loops in a vector bundle $E → X$ (ie. each $γ_x$ is a loop in $E_x$) and let $g$ be a section of $E$. If $γ_x$ strictly surrounds $g(x)$ for all $x$, and $γ_x$ has average $g(x)$ when $x$ is outside some compact subset of $X$, then there is a family of circle diffeomorphisms $h : X × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$. </p>
+  <p>  Let $γ \! :E × 𝕊^1 → F$ be a smooth family of loops surrounding a map $g$ with base $β$ over some $U ⊆ E$. There is a family of circle diffeomorphisms $h : U × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$ and $h_x(0) = 0$. </p>
 
   </div>
 </div> </p>
@@ -601,8 +676,9 @@
 
   </div>
   <div class="proof_content">
-  <p> For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is in the interior of the simplex spanned by the corresponding points $γ_x(s_j)$, by <a href="chap-loops.html#lem:caratheodory">Lemma 1.3</a>. Let $μ_1, …, μ_{n+1}$ be smooth positive probability measures very close to the Dirac measures on $s_j$ (ie. $μ_j = f_j\,  ds$ for some smooth positive function $f_j$ and, for any function $h$, $\int h\, dμ_j$ is almost $h(s_j)$). We set $p_j = \int γ_x\,  d\mu _j$, which is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights $w_j$ in the open interval $(0, 1)$ according to <a href="chap-loops.html#lem:int_cvx">Lemma 1.4</a>. </p>
-<p>If $x’$ is in a sufficiently small neighborhood of $x$, $g(x’)$ is in the interior of the simplex spanned by $p_j(x’) := \int γ_{x'}\,  d\mu _j$. In such a neighborhood, <a href="chap-loops.html#lem:smooth_convex_hull">Lemma 1.5</a> gives smooth weight functions $w_j$ such that $g(x’) = \sum w_j(x’)p_j(x’)$. Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such neighborhoods, with corresponding measures $μ_j^i$, moving points $p_j^i$ and weight functions $w_j^i$. Let $(ρ_i)$ be a partition of unity associated to this covering. For every $x$, we set </p>
+  <p> For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is surrounded by the corresponding points $γ_x(s_j)$. </p>
+<p>Let $μ_1, …, μ_{n+1}$ be smooth positive probability measures very close to the Dirac measures on $s_j$ (ie. $μ_j = f_j\,  ds$ for some smooth positive function $f_j$ and, for any function $h$, $\int h\, dμ_j$ is almost $h(s_j)$). We set $p_j = \int γ_x\,  d\mu _j$, which is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights $w_j$ in the open interval $(0, 1)$ according to <a href="chap-loops.html#lem:smooth_convex_hull">Lemma 1.6</a>. </p>
+<p>If $x’$ is in a sufficiently small neighborhood of $x$, <a href="chap-loops.html#lem:smooth_convex_hull">Lemma 1.6</a> gives smooth weight functions $w_j$ such that $g(x’) = \sum w_j(x’)p_j(x’)$. Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such neighborhoods, with corresponding measures $μ_j^i$, moving points $p_j^i$ and weight functions $w_j^i$. Let $(ρ_i)$ be a partition of unity associated to this covering. For every $x$, we set </p>
 <div class="displaymath" id="a0000000029">
   \[  μ_x = \sum _{i=1}^∞ \sum _{j=1}^{n+1} ρ_i(x)w_j^i(x)\,  μ_j^i  \]
 </div>
@@ -624,9 +700,9 @@
 
   </div>
   <div class="proof_content">
-  <p>   Let $γ^*$ be a family of loops surrounding the origin in $F$, constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.9</a>. For $x$ in some neighborhood $U^*$ of $K$ where $g = β$, we set $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure the image of $γ_x$ and its convex hull are contained in $Ω_x$ (recall $Ω$ is open and $K$ is compact). Lemma&#160;<a href="chap-loops.html#lem:∃_surrounding_loops">1.12</a> extends this family to a continuous family of surrounding loops $γ_x$ for all $x$ (this is not yet our final $γ$). </p>
+  <p>   Let $γ^*$ be a family of loops surrounding the origin in $F$, constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.10</a>. For $x$ in some neighborhood $U^*$ of $K$ where $g = β$, we set $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure the image of $γ_x$ and its convex hull are contained in $Ω_x$ (recall $Ω$ is open and $K$ is compact). Lemma&#160;<a href="chap-loops.html#lem:∃_surrounding_loops">1.13</a> extends this family to a continuous family of surrounding loops $γ_x$ for all $x$ (this is not yet our final $γ$). </p>
 <p>We then need to approximate this continuous family by a smooth one. Some care is needed to ensure that it stays based at $β$. For instance, we can first compose each loop by some fixed surjective continuous map from $𝕊^1$ to itself that sends a neighborhood of $0$ to $0$. This way each loop becomes constant near $0$, and a convolution smoothing will then keep the value at $0$. If the smoothing is sufficiently $C^0$ small then the new $γ$ is still surrounding and takes values in $Ω$. </p>
-<p>Then Lemma&#160;<a href="chap-loops.html#lem:reparametrization">1.13</a> gives a family of circle diffeomorphisms $h_x$ such that $γ_x ∘ h_x$ has average $g(x)$. </p>
+<p>Then Lemma&#160;<a href="chap-loops.html#lem:reparametrization">1.14</a> gives a family of circle diffeomorphisms $h_x$ such that $γ^1_x ∘ h_x$ has average $g(x)$. </p>
 <p>Finally we choose a cut-off function function $χ$ which vanishes on $\operatorname{Op}{K}$ and equals one on $\operatorname{Op}{U ∖ U^*}$. In $U^*$, we replace $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This operation does not change the average values of these loops, because it rescales them around their average value, but makes them constant on $\operatorname{Op}{K}$. Also, those loops stay in $Ω$, thanks to our choice of $ε$. </p>
 
   </div>
