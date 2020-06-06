@@ -108,7 +108,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.3 (lem:caratheodory)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ points in $P$. </p>
+      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
 </div>
     </li>
     
@@ -116,7 +116,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.4 (lem:int_cvx)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the interior of the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ points in $P$ with only positive coefficients. </p>
+      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$, then $x$ can be written as the convex combination of exactly $d + 1$ affinely independant points in $P$ with only positive coefficients. </p>
 </div>
     </li>
     
@@ -125,7 +125,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 1.5 (lem:smooth_convex_hull)</div>
       <div class="thm_thm_content"><p> Let $x_0$ be a point in $ℝ^d$. Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near $x_0$. Assume that $x_0$ is in the interior of the convex hull of $p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that </p>
-<div class="displaymath" id="a0000000018">
+<div class="displaymath" id="a0000000020">
   \[  \sum _i w_i(x)p_i(x) = x \qquad \text{and}\qquad \sum _i w_i(x) = 1.  \]
 </div>
 </div>
@@ -286,7 +286,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 2.2 (def:corrugation)</div>
       <div class="thm_thm_content"><p> The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$ with oscillation number $N$ is </p>
-<div class="displaymath" id="a0000000028">
+<div class="displaymath" id="a0000000030">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
 </div>
 </div>
@@ -347,7 +347,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 2.8 (def:rel_slice)</div>
       <div class="thm_thm_content"><p>  For every $σ = (x, y, φ)$, the slice of $\mathcal{R}$ at $σ$ with respect to $(π, v)$ is: </p>
-<div class="displaymath" id="a0000000030">
+<div class="displaymath" id="a0000000032">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 </div>
@@ -634,7 +634,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 2.2 (def:corrugation)</div>
       <div class="thm_thm_content"><p> The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$ with oscillation number $N$ is </p>
-<div class="displaymath" id="a0000000028">
+<div class="displaymath" id="a0000000030">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
 </div>
 </div>
@@ -782,7 +782,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.3 (lem:caratheodory)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ points in $P$. </p>
+      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independant points in $P$ with positive coefficients. </p>
 </div>
     </li>
     
@@ -790,7 +790,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.4 (lem:int_cvx)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the interior of the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ points in $P$ with only positive coefficients. </p>
+      <div class="thm_thm_content"><p> If a point $x$ of $ℝ^d$ lies in the convex hull of an open set $P$, then $x$ can be written as the convex combination of exactly $d + 1$ affinely independant points in $P$ with only positive coefficients. </p>
 </div>
     </li>
     
@@ -799,7 +799,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 1.5 (lem:smooth_convex_hull)</div>
       <div class="thm_thm_content"><p> Let $x_0$ be a point in $ℝ^d$. Let $p_0, …, p_d$ be functions from $ℝ^d$ to $ℝ^d$ that are smooth near $x_0$. Assume that $x_0$ is in the interior of the convex hull of $p_0(x_0), …, p_d(x_0)$. Then there is a neighborhood $U$ of $x_0$ and smooth functions $w_0, …, w_d$ from $U$ to $(0, 1)$ such that </p>
-<div class="displaymath" id="a0000000018">
+<div class="displaymath" id="a0000000020">
   \[  \sum _i w_i(x)p_i(x) = x \qquad \text{and}\qquad \sum _i w_i(x) = 1.  \]
 </div>
 </div>
@@ -873,7 +873,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 2.2 (def:corrugation)</div>
       <div class="thm_thm_content"><p> The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$ with oscillation number $N$ is </p>
-<div class="displaymath" id="a0000000028">
+<div class="displaymath" id="a0000000030">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
 </div>
 </div>
