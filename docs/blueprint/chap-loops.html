@@ -37,6 +37,9 @@
 <li class="">
   <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
+<li class="">
+  <a href="chap-loops.html#a0000000011"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
+ </li>
 
   </ul>
  </li>
@@ -61,10 +64,10 @@
 <svg  class="icon icon-plus expand-toc"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="chap-global.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
+  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
+  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
  </li>
 <li class="">
   <a href="chap-global.html#sec:general_theory"><span class="toc_ref">3.3</span> <span class="toc_entry">The $h$-principle for open and ample differential relations</span></a>
@@ -127,7 +130,7 @@
     <span class="proposition_thmlabel">1.2</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#prop:loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000013"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000014"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -151,7 +154,7 @@
   <p>  Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset. Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$, $Ω_x := Ω ∩ (\{ x\}  × F)$ is open and connected. </p>
 <p>Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$. Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$, and $g(x) = β(x)$ near $K$. </p>
 <p>If, for every $x$ in $U$, $g(x)$ is in the convex hull of $Ω_x$, then there exists a smooth family of loops </p>
-<div class="displaymath" id="a0000000014">
+<div class="displaymath" id="a0000000015">
   \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
 </div>
 <p> such that, for all $x$ in $U$, and all $(t, s) ∈ [0, 1] × 𝕊^1$ </p>
@@ -182,7 +185,7 @@
     <span class="lemma_thmtitle">Carathéodory’s lemma</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:caratheodory">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000015"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000016"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -192,7 +195,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000015">
+<div class="proof_wrapper" id="a0000000016">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -229,7 +232,7 @@
     <span class="lemma_thmlabel">1.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:int_cvx">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000016"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000017"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -239,7 +242,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000016">
+<div class="proof_wrapper" id="a0000000017">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -250,11 +253,11 @@
   <div class="proof_content">
   <p> <a href="chap-loops.html#lem:caratheodory">Lemma 1.3</a> gives affinely independent points $p_0, \dots , p_k$ in $P$ such that $x$ is the convex combination of these points with positive weights $w_i$ (here $k \ge 0$). In particular, the family of vectors $p_i - p_0$, $1 ≤ i ≤ k$ is free. So we can complete it to a basis by appending vectors $f_{k+1}, \dots , f_d$. We set $p_i = p_0 + εf_i$ for $i \ge k+1$. This belongs to $P$ for $ε > 0$ small enough since $p_0$ is in $P$ and $P$ is open. Note that the extend family of points is still affinely independent since the vectors $p_i - p_0$ are non-zero multiple of our basis elements. </p>
 <p>The next idea is to expand the simplex spanned by the $p_i$’s around its center of mass $b = 1/(d+1)\sum p_i$. So we set: </p>
-<div class="displaymath" id="a0000000017">
+<div class="displaymath" id="a0000000018">
   \[  p’_i = b + (1 + ε)(p_i - b).  \]
 </div>
 <p> Those point are all in $P$ for $ε$ small enough because $P$ is open, and there are still affinely independent since they are the image of our original points by a homothety. Then we have: </p>
-<div class="displaymath" id="a0000000018">
+<div class="displaymath" id="a0000000019">
   \[  x = \sum _i w_i p_i = \sum _i \frac{w_i + ε/(d+1)}{1 + ε} p’_i  \]
 </div>
 <p> where all coefficients are positive </p>
@@ -269,7 +272,7 @@
     <span class="lemma_thmlabel">1.6</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:smooth_convex_hull">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000019"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000020"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -302,7 +305,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000019">
+<div class="proof_wrapper" id="a0000000020">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -314,18 +317,19 @@
   <p>If $d = 0$ then there is nothing to prove. Hence we will assume $d ≥ 1$. Components of elements of $E^{d+1}$ or $ℝ^{d+1}$ will always be numbered from $0$ to $d$. By assumption, the family of points $p_i$ is affinely independent and there are weights $w_0, \dots , w_d$ such that $x = \sum _i w_i p_i$ where each $w_i$ is in $(0, 1)$ and their sum is one. In particular </p>
 <span>\begin{align*}  x - p_0 & = \sum _{i=0}^d w_i p_i - \sum _{i=0}^d w_i p_0 \\ &  = \sum _{i=0}^d w_i (p_i - p_0) \\ &  = \sum _{i=1}^d w_i (p_i - p_0). \end{align*}</span>
 <p>For $q$ in $E^{d+1}$ and $i ∈ \{ 1, \dots , d\} $, we set $e_i(q) = q_i - q_0$. Since $p$ is a collection of $d+1$ affinely independent points, the family $e_i(p)$ is a basis of $e$. By continuity of the determinant, this stays true for $q$ in $Π_i B_δ(p_i)$ for some positive $δ$. Let $e^*_i(q)$ denote the elements of the dual basis. In order to prove smoothness of these maps and define them for every $q$, we fix a basis $B$ of $E$ and the corresponding determinant $\det _B : E^d → ℝ$. We set $δ(q) = \det _B(e(q))$ and define </p>
-<div class="displaymath" id="a0000000020">
+<div class="displaymath" id="a0000000021">
   \[  e^*_i(q) = v ↦ \det _B(e_1(q), \dots , e_{i-1}(q), v, e_{i+1}(q), \dots , e_d(q))/δ(q).  \]
 </div>
 <p> which should be interpreted as the zero linear form if $δ(q) = 0$ (this interpretation is automatic if division by zero in $ℝ$ is defined as zero, as it should be). The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$ where $δ$ does not vanish since the determinant is polynomial. We set $w_i(y, q) = e^*_i(q)(y - q_0)$. The computation of $x - p_0$ above proves that $w_i(x, p) = w_i$. We have $y - q_0 = \sum _{i = 1}^d w_i(y, q)(q_i - q_0)$. Hence </p>
-<div class="displaymath" id="a0000000021">
+<div class="displaymath" id="a0000000022">
   \[  y = \left(1 - \sum _{i = 1}^d w_i(y, q)\right)q_0 + \sum _{i = 1}^d w_i(y, q)q_i.  \]
 </div>
 <p> We denote by $w_0(y, q)$ the coefficient in front of $q_0$ in the above formula. Hence we have $y = \sum _{i=0}^d w_i(y, q)q_i$ with $w_i(x, p) = w_i$ hence each $w_i(y, q)$ is in $(0, 1)$ if $(y, q)$ is sufficiently close to $(x₀, p)$. </p>
 
   </div>
 </div>
-<h2 id="sub:surrounding_families">1.2.1 Surrounding families</h2>
+<h1 id="a0000000011">1.3 Constructing loops</h1>
+<h2 id="sub:surrounding_families">1.3.1 Surrounding families</h2>
 
 <p>It will be convenient to introduce some more vocabulary. </p>
 <p><div class="definition_thmwrapper" id="def:surrounds">
@@ -368,7 +372,7 @@
     <span class="lemma_thmlabel">1.8</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000022"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000023"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -403,7 +407,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000022">
+<div class="proof_wrapper" id="a0000000023">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -465,7 +469,7 @@
     <span class="lemma_thmlabel">1.10</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:local_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000023"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000024"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -490,7 +494,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000023">
+<div class="proof_wrapper" id="a0000000024">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -511,7 +515,7 @@
     <span class="lemma_thmlabel">1.11</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:satisfied_or_refund">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000024"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000025"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -536,7 +540,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000024">
+<div class="proof_wrapper" id="a0000000025">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -546,7 +550,7 @@
   </div>
   <div class="proof_content">
   <p>Let $ρ$ be the piecewise affine map from $ℝ$ to $ℝ$ such that $ρ(τ) = 1$ if $τ ≤ 1/2$, $ρ$ is affine on $[1/2, 1]$, $ρ(τ) = 0$ if $τ ≥ 1$. We set </p>
-<div class="displaymath" id="a0000000025">
+<div class="displaymath" id="a0000000026">
   \[  γ_{τ, x}^t(s) = \begin{cases}  γ_{0, x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) &  \text{if $s < 1 - τ$ and $τ < 1$}\\ β(x) &  \text{if $s = 1 - τ$}\\ γ_{1, x}^{ρ(1-τ)t}\left(\frac1τ \big (s - (1- τ)\big )\right) &  \text{if $s > 1 - τ$ and $τ > 0$}\\ \end{cases}  \]
 </div>
 <p> There is no surprise and no fun in checking that this is a well-defined continuous homotopy of families of loops based at $β$ interpolating between $γ_0$ and $γ_1$. </p>
@@ -562,7 +566,7 @@
     <span class="corollary_thmlabel">1.12</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000026"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000027"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -587,7 +591,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000026">
+<div class="proof_wrapper" id="a0000000027">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -598,7 +602,7 @@
   <div class="proof_content">
   <p> Let $U_0’$ be an open neighborhood of $K_0$ whose closure $\bar U_0’$ is compact in $U_0$. Since $\bar U_0’$ and $K_1’ := K_1 ∖ (K_1 ∩ U_0)$ are disjoint compact subsets of $E$, there is some continuous cut-off $ρ \! :E → [0, 1]$ which vanishes on $U_0’$ and equals one on some neighborhood $U_1’$ of $K_1’$. </p>
 <p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.11</a> gives a homotopy of loops $γ_τ$ from $γ_0$ to $γ_1$ on $U_0 ∩ U_1$. On $U_0’ ∪ (U_0 ∩ U_1) ∪ U_1’$, which is a neighborhood of $K_0 ∪ K_1$, we set </p>
-<div class="displaymath" id="a0000000027">
+<div class="displaymath" id="a0000000028">
   \[  γ_x = \begin{cases}  γ_{0, x} &  \text{for $x ∈ U_0'$} \\ γ_{ρ(x), x} &  \text{for $x ∈ U_0 ∩ U_1$} \\ γ_{1, x} &  \text{for $x ∈ U_1'$} \end{cases}  \]
 </div>
 <p> which has the required properties. </p>
@@ -613,7 +617,7 @@
     <span class="lemma_thmlabel">1.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000028"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000029"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -623,7 +627,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000028">
+<div class="proof_wrapper" id="a0000000029">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -635,7 +639,7 @@
    Let $U_0$ be an open set containing $K$ and contained in the domain of $γ$. Let $U_0’$ be an open neighborhood of $K$ with compact closure in $U_0$. Let $U_i$, $i ≥ 1$ be a local finite covering of $U ∖ U_0’$ by open subsets not intersecting $K$ and where the preceding observations gives families of loops $γ^i$. We also set $γ^0 = γ|_{U_0}$. In particular the open sets $U_i$, $i ≥ 0$ cover the whole of $U$, and only $U_0$ intersects $K$. Let $K_i$, $0 ≤ i ≤ N$, be a family of compact sets with $K_i ⊂ U_i$ which covers $U$. We repeatedly apply Corollary&#160;<a href="chap-loops.html#cor:extend_loops">1.12</a> to $K_i$ and $K_{i+1}$, in this order, to get a family $γ’$ defined over all $U$. Since each step preserves the family on $\operatorname{Op}{K_i}$ and only $U_0$ intersects (in fact contains) $K$, we do have $γ’ = γ$ on $\operatorname{Op}{K}$. 
   </div>
 </div>
-<h2 id="sub:the_reparametrization_lemma">1.2.2 The reparametrization lemma</h2>
+<h2 id="sub:the_reparametrization_lemma">1.3.2 The reparametrization lemma</h2>
 
 <p>The second ingredient needed to prove Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a> is a parametric reparametrization lemma. </p>
 <p><div class="lemma_thmwrapper" id="lem:reparametrization">
@@ -646,7 +650,7 @@
     <span class="lemma_thmlabel">1.14</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:reparametrization">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000029"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000030"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -671,7 +675,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000029">
+<div class="proof_wrapper" id="a0000000030">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -683,7 +687,7 @@
   <p> For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is surrounded by the corresponding points $γ_x(s_j)$. </p>
 <p>Let $μ_1, …, μ_{n+1}$ be smooth positive probability measures very close to the Dirac measures on $s_j$ (ie. $μ_j = f_j\,  ds$ for some smooth positive function $f_j$ and, for any function $h$, $\int h\, dμ_j$ is almost $h(s_j)$). We set $p_j = \int γ_x\,  d\mu _j$, which is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights $w_j$ in the open interval $(0, 1)$ according to <a href="chap-loops.html#lem:smooth_convex_hull">Lemma 1.6</a>. </p>
 <p>If $x’$ is in a sufficiently small neighborhood of $x$, <a href="chap-loops.html#lem:smooth_convex_hull">Lemma 1.6</a> gives smooth weight functions $w_j$ such that $g(x’) = \sum w_j(x’)p_j(x’)$. Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such neighborhoods, with corresponding measures $μ_j^i$, moving points $p_j^i$ and weight functions $w_j^i$. Let $(ρ_i)$ be a partition of unity associated to this covering. For every $x$, we set </p>
-<div class="displaymath" id="a0000000030">
+<div class="displaymath" id="a0000000031">
   \[  μ_x = \sum _{i=1}^∞ \sum _{j=1}^{n+1} ρ_i(x)w_j^i(x)\,  μ_j^i  \]
 </div>
 <p> so that: </p>
@@ -692,10 +696,10 @@
 
   </div>
 </div>
-<h2 id="sub:proof_of_the_loop_construction_proposition">1.2.3 Proof of the loop construction proposition</h2>
+<h2 id="sub:proof_of_the_loop_construction_proposition">1.3.3 Proof of the loop construction proposition</h2>
 
 <p>We finally assemble the ingredients from the previous two sections. </p>
-<div class="proof_wrapper" id="a0000000013">
+<div class="proof_wrapper" id="a0000000014">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>

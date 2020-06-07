@@ -36,6 +36,9 @@
 <li class="">
   <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
+<li class="">
+  <a href="chap-loops.html#a0000000011"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
+ </li>
 
   </ul>
  </li>
@@ -60,10 +63,10 @@
 <svg  class="icon icon-cross expand-toc"><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
   <ul class="sub-toc-1 active">
      <li class="">
-  <a href="chap-global.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
+  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
+  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
  </li>
 <li class="">
   <a href="chap-global.html#sec:general_theory"><span class="toc_ref">3.3</span> <span class="toc_entry">The $h$-principle for open and ample differential relations</span></a>
@@ -98,7 +101,7 @@
 
 <h1 id="chap:global">3 Global theory of open and ample relations</h1>
 
-<h1 id="a0000000011">3.1 Preliminaries</h1>
+<h1 id="a0000000012">3.1 Preliminaries</h1>
 <h2 id="sec:vector_bundles_operations">3.1.1 Vector bundles operations</h2>
 
 <p><div class="definition_thmwrapper" id="def:pull_back_bundle">
@@ -135,7 +138,7 @@
   </div>
 </div> </p>
 <p>Set-theoretically, one can define $\operatorname{Hom}(E, F)$ as the set of subsets $S$ of $E × F$ such that there exists $b$ such that $S ⊂ E_b × F_b$ and $S$ is the graph of a linear map. But the type theory formalization will use other tricks here. The facts that really matter are listed in <a href="chap-global.html#lem:one_jet_extension_prop">lemma 3.5</a>. </p>
-<h2 id="a0000000046">3.1.2 Jets spaces</h2>
+<h2 id="a0000000047">3.1.2 Jets spaces</h2>
 <p><div class="definition_thmwrapper" id="def:one_jet_space">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -210,7 +213,7 @@
     <span class="lemma_thmlabel">3.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:one_jet_extension_prop">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000047"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -243,7 +246,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000047">
+<div class="proof_wrapper" id="a0000000048">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -287,7 +290,7 @@
 
   </div>
 </div> </p>
-<h1 id="a0000000012">3.2 First order differential relations</h1>
+<h1 id="a0000000013">3.2 First order differential relations</h1>
 <p><div class="definition_thmwrapper" id="def:rel">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -445,7 +448,7 @@
 
   </div>
 </div> </p>
-<h2 id="a0000000048">Parametricity for free</h2>
+<h2 id="a0000000049">Parametricity for free</h2>
 <p>In many cases, relative parametric $h$-principles can be deduced from relative non-parametric ones with a larger source manifold. Let $X$, $P$ and $Y$ be manifolds, with $P$ seen a parameter space. Denote by $Ψ$ the map from $J^1(X × P, Y)$ to $J^1(X, Y)$ sending $(x, p, y, ψ)$ to $(x, y, ψ ∘ ι_{x, p})$ where $ι_{x, p} : T_xX → T_xX × T_pP$ sends $v$ to $(v, 0)$. </p>
 <p>To any family of sections $F_p : x ↦ (f_p(x), φ_{p, x})$ of $J^1(X, Y)$, we associate the section $\bar F$ of $J^1(X × P, Y)$ sending $(x, p)$ to $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$. </p>
 <p><div class="lemma_thmwrapper" id="lem:param_trick">
@@ -456,7 +459,7 @@
     <span class="lemma_thmlabel">3.12</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000049"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000050"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -488,7 +491,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000049">
+<div class="proof_wrapper" id="a0000000050">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -508,7 +511,7 @@
     <span class="lemma_thmlabel">3.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000050"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000051"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -533,7 +536,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000050">
+<div class="proof_wrapper" id="a0000000051">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -548,7 +551,7 @@
 <h1 id="sec:general_theory">3.3 The $h$-principle for open and ample differential relations</h1>
 
 <p>In this chapter, $X$ and $Y$ are smooth manifolds and $\mathcal{R}$ is a first order differential relation on maps from $X$ to $Y$: $\mathcal{R}⊂ J^1(X, Y)$. For any $σ = (x, y, φ)$ in $\mathcal{R}$ and any dual pair $(λ, v) ∈ T^*_xV × T_xV$, we set: </p>
-<div class="displaymath" id="a0000000051">
+<div class="displaymath" id="a0000000052">
   \[  \mathcal{R}_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  φ + (w - φ(v))⊗λ\big ) ∈ \mathcal{R}\right\}   \]
 </div>
 <p> where $\operatorname{Conn}_a A$ is the connected component of $A$ containing $a$. In order to decipher this definition, it suffices to notice that $φ + (w - φ(v))⊗λ$ is the unique linear map from $T_xX$ to $T_yY$ which coincides with $φ$ on $\ker λ$ and sends $v$ to $w$. In particular, $w = φ(v)$ gives back $φ$. </p>
@@ -593,7 +596,7 @@
     <span class="lemma_thmlabel">3.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000052"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -619,7 +622,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000052">
+<div class="proof_wrapper" id="a0000000053">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -639,7 +642,7 @@
     <span class="lemma_thmlabel">3.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000054"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -649,7 +652,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000053">
+<div class="proof_wrapper" id="a0000000054">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -670,7 +673,7 @@
     <span class="theorem_thmtitle">Gromov</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000054"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -704,7 +707,7 @@
     <span class="lemma_thmlabel">3.18</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000056"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -729,7 +732,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000055">
+<div class="proof_wrapper" id="a0000000056">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -739,7 +742,7 @@
   </div>
   <div class="proof_content">
   <p>We fix $σ = (x, y, ψ)$ in $\mathcal{R}^P$. For any $λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP$ and $v = (v_X, v_P) ∈ T_xX × T_pP$ such that $λ(v) = 1$, we need to prove that $\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY$. Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000056">
+<div class="displaymath" id="a0000000057">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when $λ_X = 0$. Then the condition on $w$ becomes $ψ ∘ ι_{x, p} ∈ \mathcal{R}$, which is true by definition of $\mathcal{R}^P$, so $\mathcal{R}^P_{σ, λ, v} = T_yY$. </p>
@@ -747,7 +750,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000054">
+<div class="proof_wrapper" id="a0000000055">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.17</a>
@@ -774,7 +777,7 @@
     <span class="theorem_thmtitle">Smale 1958</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000057"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -784,7 +787,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000057">
+<div class="proof_wrapper" id="a0000000058">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
