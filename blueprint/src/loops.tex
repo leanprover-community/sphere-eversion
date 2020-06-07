@@ -76,7 +76,7 @@ We'll need the Carathéodory lemma:
 \label{lem:caratheodory}
   If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
   can be written as the convex combination of at most $d + 1$ affinely
-  independant points in $P$ with positive coefficients.
+  independent points in $P$ with positive coefficients.
 \end{lemma}
 
 \begin{proof}
@@ -87,7 +87,7 @@ We'll need the Carathéodory lemma:
   \label{def:surrounds_points}
   Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$
   is surrounded by points $p_0$, \dots, $p_d$ if those points are
-  affinely independant and there exist weights $w_i ∈ (0, 1)$ such
+  affinely independent and there exist weights $w_i ∈ (0, 1)$ such
   that $x = \sum_i w_i p_i$.
 \end{definition}
 
@@ -102,7 +102,7 @@ by the dimension $d$ of $E$.
 
 \begin{proof}
   \uses{lem:caratheodory}
-  \Cref{lem:caratheodory} gives affinely independant points
+  \Cref{lem:caratheodory} gives affinely independent points
   $p_0, \dots, p_k$ in $P$ such that $x$ is the convex combination of
   these points with positive weights $w_i$ (here $k \ge 0$).
   In particular, the family of vectors $p_i - p_0$, $1 ≤ i ≤ k$ is free.
@@ -111,7 +111,7 @@ by the dimension $d$ of $E$.
   We set $p_i = p_0 + εf_i$ for $i \ge k+1$.
   This belongs to $P$ for $ε > 0$ small enough since $p_0$ is in $P$
   and $P$ is open.
-  Note that the extend family of points is still affinely independant
+  Note that the extend family of points is still affinely independent
   since the vectors $p_i - p_0$ are non-zero multiple of our basis
   elements.
 
@@ -121,7 +121,7 @@ by the dimension $d$ of $E$.
     p'_i = b + (1 + ε)(p_i - b).
   \]
   Those point are all in $P$ for $ε$ small enough because $P$ is open,
-  and there are still affinely independant since they are the image of
+  and there are still affinely independent since they are the image of
   our original points by a homothety.
   Then we have:
   \[
@@ -153,7 +153,7 @@ by the dimension $d$ of $E$.
   Hence we will assume $d ≥ 1$.
   Components of elements of $E^{d+1}$ or $ℝ^{d+1}$ will always be
   numbered from $0$ to $d$.
-  By assumption, the family of points $p_i$ is affinely independant and
+  By assumption, the family of points $p_i$ is affinely independent and
   there are weights $w_0, \dots, w_d$ such that $x = \sum_i w_i p_i$
   where each $w_i$ is in $(0, 1)$ and their sum is one.
   In particular
@@ -166,7 +166,7 @@ by the dimension $d$ of $E$.
 
   For $q$ in $E^{d+1}$ and $i ∈ \{1, \dots, d\}$, we set
   $e_i(q) = q_i - q_0$.
-  Since $p$ is a collection of $d+1$ affinely independant points,
+  Since $p$ is a collection of $d+1$ affinely independent points,
   the family $e_i(p)$ is a basis of $e$.
   By continuity of the determinant, this stays true
   for $q$ in $Π_i B_δ(p_i)$ for some positive $δ$.
