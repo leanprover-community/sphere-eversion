@@ -171,8 +171,19 @@ by the dimension $d$ of $E$.
   By continuity of the determinant, this stays true
   for $q$ in $Π_i B_δ(p_i)$ for some positive $δ$.
   Let $e^*_i(q)$ denote the elements of the dual basis.
-  The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$ because this can't
-  be false.
+  In order to prove smoothness of these maps and define them
+  for every $q$, we fix a basis $B$ of $E$ and the corresponding
+  determinant $\det_B : E^d → ℝ$.
+  We set $δ(q) = \det_B(e(q))$ and define
+  \[
+    e^*_i(q) = v ↦
+    \det_B(e_1(q), \dots, e_{i-1}(q), v, e_{i+1}(q), \dots, e_d(q))/δ(q).
+  \]
+  which should be interpreted as the zero linear form if $δ(q) = 0$
+  (this interpretation is automatic if division by zero in $ℝ$
+  is defined as zero, as it should be).
+  The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$ where $δ$
+  does not vanish since the determinant is polynomial.
   We set $w_i(y, q) = e^*_i(q)(y - q_0)$.
   The computation of $x - p_0$ above proves that
   $w_i(x, p) = w_i$.
