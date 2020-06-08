@@ -52,9 +52,6 @@ lemma dilation.continuous {c : V} {r : ℝ} : continuous (dilation c r) := sorry
 
 lemma foo {c x : V} {s : set V} (h : is_open s) (hx : x ∈ s) :  ∃ ε > (0:ℝ), dilation c (1+ε) x ∈ s := sorry
 
--- TODO if a finset is contained in an open set, then for any center `c` there is some ε > 0
--- so its dilation by (1+ε) is still in that open set.
-
 def barycenter (s : finset V) : V := sorry
 lemma barycenter_mem {s : finset V} : barycenter s ∈ convex_hull (↑s : set V) := sorry
 
