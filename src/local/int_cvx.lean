@@ -11,6 +11,8 @@ import analysis.convex.basic
 -- it is a longer sequence of lemmas, facts, and constructions, for now all sorried.
 
 -- TODO everything in this file could be generalised to arbitrary affine spaces over ℝ.
+-- The development of convexity in mathlib is being ported to the affine setting,
+-- and work on this could either occur in parallel, or wait under that is settled.
 variables {V : Type*} [add_comm_group V] [vector_space ℝ V]
 
 /-- The dilation about `c` with scale factor `r`. -/
