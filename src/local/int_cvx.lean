@@ -32,7 +32,7 @@ def dilation.equiv (c : V) (r : ℝ) (h : r ≠ 0) : V ≃ V := sorry
 
 open_locale big_operators
 
-/-- 
+/--
 Given a formula for `x` as a weighted center of mass of a finset `t`,
 we give the formula for `x` as a weighted center of mass of `t` dilated by `r` about `c`,
 plus a multiple of `c`.
@@ -56,47 +56,91 @@ lemma foo {c x : V} {s : set V} (h : is_open s) (hx : x ∈ s) :  ∃ ε > (0:�
 def barycenter (s : finset V) : V := sorry
 lemma barycenter_mem {s : finset V} : barycenter s ∈ convex_hull (↑s : set V) := sorry
 
-lemma aa (s : finset V) (r : ℝ) (h : r ≠ 0) : 
+lemma aa (s : finset V) (r : ℝ) (h : r ≠ 0) :
   barycenter (s.map (dilation.equiv (barycenter s) r h).to_embedding) = barycenter s :=
 sorry
 
 /--
 Given a formula for `x` as a weighted center of mass of a finset `t`,
-we give the formula for `x` as a weighted center of mass of 
+we give the formula for `x` as a weighted center of mass of
 the finset `t` dilated by `r` about its barycenter.
 -/
 lemma quux' (x : V) (t : finset V) (f : V → ℝ) (w : t.sum f = 1) (h : t.center_mass f id = x) (r : ℝ) :
   t.center_mass (λ x, r⁻¹ * f x + (1 - r⁻¹) / (t.card)) (λ x, dilation (barycenter t) r x) = x :=
 sorry
 
-def affine_independent (s : finset V) : Prop := sorry
+def affine_independent (ι : Type*) (f : ι → V) : Prop := sorry
+def set.affine_independent (s : set V) : Prop := sorry
 
--- TODO if a finset is affine_independent, then its dilation about any center with `r ≠ 0` is too.
+-- TODO if a set is affine_independent, then its dilation about any center with `r ≠ 0` is too.
 
 variables [finite_dimensional ℝ V]
 open finite_dimensional
 
--- TODO the lemma characterising 
+-- TODO the lemma characterising
 -- the interior of the convex hull of a finset of size `d + 1`
 -- as the strictly positive affine combinations of the points, if the finset is affine independent,
 -- or empty otherwise
 
-lemma convex_hull_subset_int_convex_hull_dilation 
-  (s : finset V) (w : affine_independent s) (ε : ℝ) (h : 0 < ε) :
-  convex_hull (↑s : set V) ⊆ 
-    interior (convex_hull 
-      (↑(s.map (dilation.equiv (barycenter s) (1+ε) sorry).to_embedding) : set V)) := 
--- This is now hopefully just plumbing the previous lemmas together.      
+lemma interior_convex_hull_empty_of_card_le_dim
+  (s : finset V) (b : s.card ≤ findim ℝ V) :
+  interior (convex_hull (↑s : set V)) = ∅ :=
 sorry
 
-lemma int_cvx (s : set V) (h : is_open s) :
-  convex_hull s = 
+section
+open_locale classical
+
+lemma interior_convex_hull_eq_of_card_eq_dim_add_one
+  (s : finset V) (b : s.card = findim ℝ V + 1) :
+  interior (convex_hull (↑s : set V)) =
+  if (↑s : set V).affine_independent then
+    {x : V | ∃ (f : V → ℝ) (hw₀ : ∀ y ∈ s, 0 < f y) (hw₁ : s.sum f = 1),
+      s.center_mass f id = x}
+  else ∅ :=
+sorry
+
+end
+
+lemma convex_hull_subset_int_convex_hull_dilation
+  (s : finset V) (w : (↑s : set V).affine_independent) (ε : ℝ) (h : 0 < ε) :
+  convex_hull (↑s : set V) ⊆
+    interior (convex_hull
+      (↑(s.map (dilation.equiv (barycenter s) (1+ε) sorry).to_embedding) : set V)) :=
+-- This is now hopefully just plumbing the previous lemmas together.
+sorry
+
+lemma convex_hull_eq_union_interior {s : set V} (h : is_open s) :
+  convex_hull s =
     ⋃ (t : finset V) (h : ↑t ⊆ s) (b : t.card = findim ℝ V + 1), interior (convex_hull (↑t : set V)) :=
 -- We write `convex_hull s` as the union of convex hulls of finsets with cardinality at most dim V + 1.
 -- Given a point `x ∈ convex_hull s`, by Caratheodory `x` is in the convex hull of some finset in `s`
--- with cardinality at most `dim V + 1`. 
--- Discard any unused points, 
--- replacing them to make an affine independent set of size exactly `dim V + 1`, still in `s`. 
--- Pick an epsilon so the dilation of this set around its barycenter is still in `s`. 
+-- with cardinality at most `dim V + 1`.
+-- Discard any unused points,
+-- replacing them to make an affine independent set of size exactly `dim V + 1`, still in `s`.
+-- Pick an epsilon so the dilation of this set around its barycenter is still in `s`.
 -- By the previous lemma `x` is in the interior of the convex hull of this dilated set.
 sorry
+
+/--
+This is the explicit version of `convex_hull_eq_union_interior`,
+unfolding the definitions to give an explicit formula for `x`
+with positive coefficients.
+
+This is `lem:int_cvx` from the blueprint.
+-/
+theorem eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open
+  {s : set V} (o : is_open s) {x : V} (h : x ∈ convex_hull s) :
+  ∃ (t : finset V) (w : ↑t ⊆ s) (b : t.card = findim ℝ V + 1)
+    (f : V → ℝ), (∀ y ∈ t, 0 < f y) ∧ t.sum f = 1 ∧ t.center_mass f id = x :=
+begin
+  classical,
+  rw convex_hull_eq_union_interior o at h,
+  simp only [exists_prop, set.mem_Union] at h,
+  obtain ⟨t, w, b, m⟩ := h,
+  rw interior_convex_hull_eq_of_card_eq_dim_add_one _ b at m,
+  split_ifs at m,
+  { simp only [exists_prop, set.mem_set_of_eq] at m,
+    obtain ⟨f, c⟩ := m,
+    exact ⟨t, w, b, f, c⟩, },
+  { simpa using m, },
+end
