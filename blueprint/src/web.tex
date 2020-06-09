@@ -4,7 +4,7 @@
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.svg,.png,.jpg}
 \usepackage[capitalize]{cleveref}
-\usepackage[showmore, dep_graph, coverage]{blueprint}
+\usepackage[showmore, dep_graph, coverage, project=../../]{blueprint}
 
 \usepackage{tikz-cd}
 \usepackage{tikz}
@@ -13,6 +13,7 @@
 \input{macros_web}
 
 \home{https://leanprover-community.github.io/sphere-eversion/}
+\github{https://github.com/leanprover-community/sphere-eversion/}
 
 \title{The sphere eversion project}
 \author{Patrick Massot}
@@ -20,6 +21,4 @@
 \begin{document}
 \maketitle
 \input{content}
-\collectproofs
-\makegraph
 \end{document}
