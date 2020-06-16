@@ -74,14 +74,60 @@ We'll need the Carathéodory lemma:
 
 \begin{lemma}[Carathéodory's lemma]
 \label{lem:caratheodory}
+\leanok
+\lean{eq_center_mass_card_le_dim_succ_of_mem_convex_hull}
+  If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
+  can be written as the convex combination of at most $d + 1$ points in
+  $P$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  By assumption, there is a finite set of points $t_i$ in $P$ and
+  weights $f_i$ such that $x = \sum f_i t_i$, each $f_i$ is non-negative
+  and $\sum f_i = 1$.
+  The goal it to reduce the number of these points until reaching at most
+  $d+1$.
+  It suffices to prove that one can get rid of one point as long as
+  there are at least $d+2$ points.
+  In this case there is some vanishing combination $\sum g_i t_i$ with
+  $\sum g_i = 0$ and not all $g_i$ vanish.
+  Let $S = \{i | g_i > 0\}$.
+  Let $i_0$ in $S$ be an index minimizing $f_i/g_i$.
+  We define new weights $k_i = f_i - g_i f_{i_0}/g_{i_0}$.
+  Those weights sum to $\sum f_i - (\sum g_i)f_{i_0}/g_{i_0} = 1$
+  and $k_{i_0} = 0$.
+  Each $k_i$ is non-negative, thanks to the choice of $i_0$ if
+  $i$ is in $S$ or using that $f_i$, $-g_i$ and $f_{i_0}/g_{i_0}$
+  are all non-negative when $i$ is not in $S$.
+  It remain to compute
+  \begin{align*}
+    \sum_{i ≠ i_0} k_i t_i &= \sum_i k_i t_i \\
+      &= \sum_i (f_i - g_i f_{i_0}/g_{i_0}) t_i  \\
+      &= \sum_i f_i t_i - \left(\sum_i g_i t_i\right)f_{i_0}/g_{i_0})   \\
+      &= x
+  \end{align*}
+  where we use $k_{i_0} = 0$ in the first equality.
+\end{proof}
+
+\begin{lemma}
+\label{lem:refined_caratheodory}
   If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
   can be written as the convex combination of at most $d + 1$ affinely
   independent points in $P$ with positive coefficients.
 \end{lemma}
 
 \begin{proof}
-  TODO\dots
+  \uses{lem:caratheodory}
+  \cref{lem:caratheodory} gives points $p_i$ in $P$ and non-negative
+  weights $w_i$ such that $x = \sum w_i p_i$ for $0 ≤ i ≤ k$ where
+  $k ≤ d$. We first discard every point with vanishing weights.
+  Now suppose the $p_i$'s are not affinely independent. Then there is
+  some relation $p_{i_0} = \sum λ_j p_j$ with positive weights
+  $λ_j$. We can then discard $p_{i_0}$ and replace each remaining
+  $w_j$ by $w_j + w_{i_0}λ _j$.
 \end{proof}
+
 
 \begin{definition}
   \label{def:surrounds_points}
@@ -102,8 +148,8 @@ by the dimension $d$ of $E$.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:caratheodory}
-  \Cref{lem:caratheodory} gives affinely independent points
+  \uses{lem:refined_caratheodory}
+  \Cref{lem:refined_caratheodory} gives affinely independent points
   $p_0, \dots, p_k$ in $P$ such that $x$ is the convex combination of
   these points with positive weights $w_i$ (here $k \ge 0$).
   In particular, the family of vectors $p_i - p_0$, $1 ≤ i ≤ k$ is free.
