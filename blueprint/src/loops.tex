@@ -11,6 +11,8 @@ It can also freely be seen as $1$-periodic maps defined on $ℝ$.
 
 \begin{definition}
   \label{def:average}
+  \lean{loop.average}
+  \leanok
   The average of a loop $γ$ is $\bar γ := \int_{𝕊^1} γ(s)\, ds$.
 \end{definition}
 
@@ -21,6 +23,8 @@ All of this chapter is devoted to proving the following proposition.
 \begin{proposition}
   \label{prop:loops}
   \uses{def:average}
+  \lean{exists_loops}
+  \leanok
   Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset.
   Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$,
   $Ω_x := Ω ∩ (\{x\} × F)$ is open and connected.
@@ -74,8 +78,8 @@ We'll need the Carathéodory lemma:
 
 \begin{lemma}[Carathéodory's lemma]
 \label{lem:caratheodory}
-\leanok
 \lean{eq_center_mass_card_le_dim_succ_of_mem_convex_hull}
+\leanok
   If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
   can be written as the convex combination of at most $d + 1$ points in
   $P$.
@@ -131,14 +135,16 @@ We'll need the Carathéodory lemma:
 
 \begin{definition}
   \label{def:surrounds_points}
-  Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$
+  \lean{surrounding_pts}
+  \leanok
+  Let $F$ be a real vector space with dimension $d$. A point $x$ in $E$
   is surrounded by points $p_0$, \dots, $p_d$ if those points are
   affinely independent and there exist weights $w_i ∈ (0, 1)$ such
   that $x = \sum_i w_i p_i$.
 \end{definition}
 
 Note that, in the above definition, the number of points $p_i$ is fixed
-by the dimension $d$ of $E$.
+by the dimension $d$ of $F$.
 
 \begin{lemma}
   \label{lem:int_cvx}
@@ -257,6 +263,8 @@ It will be convenient to introduce some more vocabulary.
 \begin{definition}
   \label{def:surrounds}
   \uses{def:surrounds_points}
+  \lean{loop.surrounds}
+  \leanok
   We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded
   by a collection of points belonging to the image of $γ$.
   Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some
@@ -270,6 +278,8 @@ convex hull of $O$.
 \begin{lemma}
   \label{lem:loop_of_hull}
   \uses{def:surrounds}
+  \lean{surrounding_loop_of_convex_hull}
+  \leanok
   If a vector $v$ is in the convex hull of a connected open subset $O$
   then, for every base point $b ∈ O$, there is a continuous
   family of loops
@@ -316,6 +326,8 @@ condition are open.
 \begin{definition}
   \label{def:family_surrounds}
   \uses{def:surrounds}
+  \lean{surrounding_family}
+  \leanok
   A continuous family of loops $γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$
   surrounds a map $g \co E → F$ with base $β \co E → F$
   on $U ⊆ E$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every
@@ -337,6 +349,8 @@ Families of surrounding loops are easy to construct locally.
 \begin{lemma}
   \label{lem:local_loops}
   \uses{def:family_surrounds}
+  \lean{local_loops}
+  \leanok
   Assume $Ω$ is open and connected over some neighborhood of $x_0$.
   If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is
   a continuous family of loops defined near $x_0$, based at $β$,
@@ -367,12 +381,14 @@ as explained in the next lemma.
 \begin{lemma}
   \label{lem:satisfied_or_refund}
   \uses{def:family_surrounds}
-  Each $L(g, β, U)$ is path connected:
+  \lean{satisfied_or_refund}
+  \leanok
+  Each $\Loop(g, β, U)$ is path connected:
   for every $γ_0$ and $γ_1$ in $\Loop(g, β, U)$,
   there is a continuous map
   $γ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$
   which interpolates between $γ_0$ and $γ_1$ in
-  $L(g, β, U)$.
+  $\Loop(g, β, U)$.
 \end{lemma}
 
 \begin{proof}
@@ -397,13 +413,14 @@ as explained in the next lemma.
   The key is that the image of $γ^1_{τ, x}$ contains the image of
   $γ^1_{0, x}$ when $τ ≤ 1/2$, and contains  the image of
   $γ^1_{1, x}$ when $τ ≥ 1/2$.
-  Hence the interior of the convex hull of the image always contains
-  $g(x)$.
+  Hence $γ^1_{τ, x}$ always surrounds $g(x)$.
 \end{proof}
 
 \begin{corollary}
   \label{cor:extend_loops}
   \uses{def:family_surrounds}
+  \lean{extends_loops}
+  \leanok
   Let $U_0$ and $U_1$ be open sets in $E$.
   Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets.
   For any $γ_0 ∈ \Loop(U_0, g, β)$ and $γ_1 ∈ \Loop(U_1, g, β)$,
@@ -439,9 +456,12 @@ as explained in the next lemma.
 
 \begin{lemma}
   \label{lem:∃_surrounding_loops}
+  \uses{def:family_surrounds}
+  \lean{exists_surrounding_loops}
+  \leanok
   In the setup of Proposition~\ref{prop:loops}, assume we have a
   continuous family $γ$ of loops defined near $K$ which is based at $β$,
-  surrounds $g$ and such that each $γ_x^1$ takes values in $Ω_x$.
+  surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$.
   Then there such a family which is defined on all of $U$ and agrees
   with $γ$ near $K$.
 \end{lemma}
@@ -471,10 +491,12 @@ parametric reparametrization lemma.
 \begin{lemma}
 \label{lem:reparametrization}
 \uses{def:surrounds}
+\lean{reparametrization}
+\leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
 a map $g$ with base $β$ over some $U ⊆ E$.
-There is a family of circle diffeomorphisms $h : U × 𝕊^1 → 𝕊^1$ such
-that each $γ_x ∘ h_x$ has average $g(x)$ and $h_x(0) = 0$.
+There is a family of circle diffeomorphisms $φ : U × 𝕊^1 → 𝕊^1$ such
+that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
 \begin{proof}
@@ -509,8 +531,8 @@ that each $γ_x ∘ h_x$ has average $g(x)$ and $h_x(0) = 0$.
     &= \sum_i ρ_i(x)\sum_{j=1}^{n+1} w_j^i(x) p_j^i(x)\\
     &= \sum_i ρ_i(x) g(x) = g(x).
   \end{align*}
-  We now set $h_x^{-1}(t) = \int_0^tdμ_x$ so that
-  $g(x) = \overline{γ_x ∘ h_x}$ for all $x$.
+  We now set $φ_x^{-1}(t) = \int_0^tdμ_x$ so that
+  $g(x) = \overline{γ_x ∘ φ_x}$ for all $x$.
 \end{proof}
 
 \subsection{Proof of the loop construction proposition}
