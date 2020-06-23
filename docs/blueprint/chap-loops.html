@@ -111,13 +111,28 @@
     Definition
     </span>
     <span class="definition_thmlabel">1.1</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:average">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/basic.lean#L79">loop.average</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> The average of a loop $γ$ is $\barγ := \int _{𝕊^1} γ(s)\,  ds$. </p>
+  <p>  The average of a loop $γ$ is $\barγ := \int _{𝕊^1} γ(s)\,  ds$. </p>
 
   </div>
 </div> </p>
@@ -128,6 +143,7 @@
     Proposition
     </span>
     <span class="proposition_thmlabel">1.2</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#prop:loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000014"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -147,11 +163,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/reparametrization.lean#L51">exists_loops</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>  Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset. Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$, $Ω_x := Ω ∩ (\{ x\}  × F)$ is open and connected. </p>
+  <p>   Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset. Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$, $Ω_x := Ω ∩ (\{ x\}  × F)$ is open and connected. </p>
 <p>Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$. Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$, and $g(x) = β(x)$ near $K$. </p>
 <p>If, for every $x$ in $U$, $g(x)$ is in the convex hull of $Ω_x$, then there exists a smooth family of loops </p>
 <div class="displaymath" id="a0000000015">
@@ -197,7 +227,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/a432a3a193aac390d347835881f48a5e5bac6ed9/src/analysis/convex/caratheodory.lean#L190">eq_center_mass_card_le_dim_succ_of_mem_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/421ed70350b1fc1adb7ac14f4b11e733a59178fb/src/analysis/convex/caratheodory.lean#L190">eq_center_mass_card_le_dim_succ_of_mem_convex_hull</a></li>
         </ul>
 
       </div>
@@ -260,15 +290,29 @@
     <span class="definition_thmlabel">1.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:surrounds_points">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/basic.lean#L32">surrounding_pts</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> Let $E$ be a real vector space with dimension $d$. A point $x$ in $E$ is surrounded by points $p_0$, …, $p_d$ if those points are affinely independent and there exist weights $w_i ∈ (0, 1)$ such that $x = \sum _i w_i p_i$. </p>
+  <p>  Let $F$ be a real vector space with dimension $d$. A point $x$ in $E$ is surrounded by points $p_0$, …, $p_d$ if those points are affinely independent and there exist weights $w_i ∈ (0, 1)$ such that $x = \sum _i w_i p_i$. </p>
 
   </div>
 </div> </p>
-<p>Note that, in the above definition, the number of points $p_i$ is fixed by the dimension $d$ of $E$. </p>
+<p>Note that, in the above definition, the number of points $p_i$ is fixed by the dimension $d$ of $F$. </p>
 <p><div class="lemma_thmwrapper" id="lem:int_cvx">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -288,7 +332,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e9a8890590a2d2b93d9e36923d8d724ca88ec86f/src/local/int_cvx.lean#L130">eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/int_cvx.lean#L130">eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open</a></li>
         </ul>
 
       </div>
@@ -397,6 +441,7 @@
     Definition
     </span>
     <span class="definition_thmlabel">1.8</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:surrounds">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -414,11 +459,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L17">loop.surrounds</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded by a collection of points belonging to the image of $γ$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
+  <p>   We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded by a collection of points belonging to the image of $γ$. Also, we fix a base point $0$ in $𝕊^1$ and say a loop is based at some point $b$ if $0$ is sent to $b$. </p>
 
   </div>
 </div> </p>
@@ -429,6 +488,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.9</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000024"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -448,11 +508,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L21">surrounding_loop_of_convex_hull</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  If a vector $v$ is in the convex hull of a connected open subset $O$ then, for every base point $b ∈ O$, there is a continuous family of loops $γ \! :[0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)$ such that, for all $t$ and $s$: </p>
+  <p>   If a vector $v$ is in the convex hull of a connected open subset $O$ then, for every base point $b ∈ O$, there is a continuous family of loops $γ \! :[0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)$ such that, for all $t$ and $s$: </p>
 <ul class="itemize">
   <li><p>$γ^t$ is based at $b$ </p>
 </li>
@@ -485,6 +559,7 @@
     Definition
     </span>
     <span class="definition_thmlabel">1.10</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:family_surrounds">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -502,11 +577,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L30">surrounding_family</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A continuous family of loops $γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$ surrounds a map $g \! :E → F$ with base $β \! :E → F$ on $U ⊆ E$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every $s ∈ 𝕊^1$, </p>
+  <p>   A continuous family of loops $γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$ surrounds a map $g \! :E → F$ with base $β \! :E → F$ on $U ⊆ E$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every $s ∈ 𝕊^1$, </p>
 <ul class="itemize">
   <li><p>$γ^t_x$ is based at $β(x)$ </p>
 </li>
@@ -526,6 +615,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.11</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:local_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000025"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -545,11 +635,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L42">local_loops</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Assume $Ω$ is open and connected over some neighborhood of $x_0$. If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is a continuous family of loops defined near $x_0$, based at $β$, taking value in $Ω$ and surrounding $g$. </p>
+  <p>   Assume $Ω$ is open and connected over some neighborhood of $x_0$. If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is a continuous family of loops defined near $x_0$, based at $β$, taking value in $Ω$ and surrounding $g$. </p>
 
   </div>
 </div> </p>
@@ -572,6 +676,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.12</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:satisfied_or_refund">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000026"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -591,11 +696,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L56">satisfied_or_refund</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Each $L(g, β, U)$ is path connected: for every $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$, there is a continuous map $γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$ which interpolates between $γ_0$ and $γ_1$ in $L(g, β, U)$. </p>
+  <p>   Each $\operatorname{\mathcal{L}}(g, β, U)$ is path connected: for every $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$, there is a continuous map $γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$ which interpolates between $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$. </p>
 
   </div>
 </div> </p>
@@ -613,7 +732,7 @@
   \[  γ_{τ, x}^t(s) = \begin{cases}  γ_{0, x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) &  \text{if $s < 1 - τ$ and $τ < 1$}\\ β(x) &  \text{if $s = 1 - τ$}\\ γ_{1, x}^{ρ(1-τ)t}\left(\frac1τ \big (s - (1- τ)\big )\right) &  \text{if $s > 1 - τ$ and $τ > 0$}\\ \end{cases}  \]
 </div>
 <p> There is no surprise and no fun in checking that this is a well-defined continuous homotopy of families of loops based at $β$ interpolating between $γ_0$ and $γ_1$. </p>
-<p>The beautiful observation motivating the above formula is why each $γ^1_{τ, x}$ surrounds $g(x)$. The key is that the image of $γ^1_{τ, x}$ contains the image of $γ^1_{0, x}$ when $τ ≤ 1/2$, and contains the image of $γ^1_{1, x}$ when $τ ≥ 1/2$. Hence the interior of the convex hull of the image always contains $g(x)$. </p>
+<p>The beautiful observation motivating the above formula is why each $γ^1_{τ, x}$ surrounds $g(x)$. The key is that the image of $γ^1_{τ, x}$ contains the image of $γ^1_{0, x}$ when $τ ≤ 1/2$, and contains the image of $γ^1_{1, x}$ when $τ ≥ 1/2$. Hence $γ^1_{τ, x}$ always surrounds $g(x)$. </p>
 
   </div>
 </div>
@@ -623,6 +742,7 @@
     Corollary
     </span>
     <span class="corollary_thmlabel">1.13</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000028"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -642,11 +762,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L65">extends_loops</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="corollary_thmcontent">
-  <p>  Let $U_0$ and $U_1$ be open sets in $E$. Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets. For any $γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)$ and $γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)$, there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and there exists $γ ∈ \operatorname{\mathcal{L}}(U, g, β)$ which coincides with $γ_0$ near $K_0$. </p>
+  <p>   Let $U_0$ and $U_1$ be open sets in $E$. Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets. For any $γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)$ and $γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)$, there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and there exists $γ ∈ \operatorname{\mathcal{L}}(U, g, β)$ which coincides with $γ_0$ near $K_0$. </p>
 
   </div>
 </div> </p>
@@ -674,15 +808,45 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.14</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000030"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.10</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/surrounding.lean#L75">exists_surrounding_loops</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family $γ$ of loops defined near $K$ which is based at $β$, surrounds $g$ and such that each $γ_x^1$ takes values in $Ω_x$. Then there such a family which is defined on all of $U$ and agrees with $γ$ near $K$. </p>
+  <p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family $γ$ of loops defined near $K$ which is based at $β$, surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$. Then there such a family which is defined on all of $U$ and agrees with $γ$ near $K$. </p>
 
   </div>
 </div> </p>
@@ -707,6 +871,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.15</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:reparametrization">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000031"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -726,11 +891,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/9a96f2e2c4d11d6c38ec2d1e0759a2f701c6f838/src/loops/reparametrization.lean#L43">reparametrization</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Let $γ \! :E × 𝕊^1 → F$ be a smooth family of loops surrounding a map $g$ with base $β$ over some $U ⊆ E$. There is a family of circle diffeomorphisms $h : U × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ h_x$ has average $g(x)$ and $h_x(0) = 0$. </p>
+  <p>   Let $γ \! :E × 𝕊^1 → F$ be a smooth family of loops surrounding a map $g$ with base $β$ over some $U ⊆ E$. There is a family of circle diffeomorphisms $φ : U × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$. </p>
 
   </div>
 </div> </p>
@@ -751,7 +930,7 @@
 </div>
 <p> so that: </p>
 <span>\begin{align*}  \int γ_x\,  dμ_x & = \sum _i ρ_i(x)\sum _{j=1}^{n+1} w_j^i(x) \int γ_x\,  dμ_j^i\\ & = \sum _i ρ_i(x)\sum _{j=1}^{n+1} w_j^i(x) p_j^i(x)\\ & = \sum _i ρ_i(x) g(x) = g(x). \end{align*}</span>
-<p> We now set $h_x^{-1}(t) = \int _0^tdμ_x$ so that $g(x) = \overline{γ_x ∘ h_x}$ for all $x$. </p>
+<p> We now set $φ_x^{-1}(t) = \int _0^tdμ_x$ so that $g(x) = \overline{γ_x ∘ φ_x}$ for all $x$. </p>
 
   </div>
 </div>
