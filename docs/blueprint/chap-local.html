@@ -526,7 +526,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/464b467ab8a2026718d0442a0385a76952306919/src/local/ample.lean#L20">ample_set</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/local/ample.lean#L20">ample_set</a></li>
         </ul>
 
       </div>
@@ -547,6 +547,8 @@
     <span class="lemma_thmlabel">2.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:ample_codim_two">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000046"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -570,6 +572,20 @@
 
   </div>
 </div> </p>
+<div class="proof_wrapper" id="a0000000046">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <svg  class="icon icon-plus expand-proof"><use xlink:href="symbol-defs.svg#icon-plus"></use></svg>
+
+  </div>
+  <div class="proof_content">
+  <p>Let $F$ be subspace of $E$ with codimension at least $2$. Let $F’$ be a complement subspace. Its dimension is at least $2$ since it is isomorphic to $E/F$ and $\dim (E/F) = \operatorname{codim}(F) ≥ 2$. First note the complement of $F$ is path-connected. Indeed let $x$ and $y$ be points outside $F$. Decomposing on $F ⊕ F’$, we get $x = u + u’$ and $y = v + v’$ with $u’ ≠ 0$ and $v’ ≠ 0$. The segments from $x$ to $u’$ and $y$ to $v’$ stay outside $F$, so it suffices to connect $u’$ and $v’$ in $F’ ∖ \{ 0\} $. If the segment from $u’$ to $v’$ doesn’t contains the origin then we are done. Otherwise $v’ = μu’$ for some (negative) $u’$. Since $\dim (F’) ≥ 2$ and $u’ ≠ 0$, there exists $f ∈ F’$ which is linearly independent from $u’$, hence from $v’$. We can then connect both $u’$ and $v’$ to $f$ by a segment away from zero. </p>
+<p>We now turn to ampleness. The connectedness result reduces to prove that every $e$ in $E$ is in the convex hull of $E ∖ F$. If $e$ is not in $F$ then it is the convex combination of itself with coefficient $1$ and we are done. Now assume $e$ is in $F$. The codimension assumption guarantees the existence of a subspace $G$ such that $\dim (G) = 2$ and $G ∩ F = \{ 0\} $. Let $(g_1, g_2)$ be a basis of $G$. We set $p_1 = e + g_1$, $p_2 = e + g_2$, $p_3 = e - g_1 - g_2$. All these points are in $E ∖ F$ and $e = p_1/3 + p_2/3 + p_3/3$. </p>
+
+  </div>
+</div>
 <p><div class="definition_thmwrapper" id="def:ample_relation_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -611,7 +627,7 @@
     <span class="lemma_thmlabel">2.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:open_ample_immersion_loc">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000046"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000047"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -636,7 +652,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000046">
+<div class="proof_wrapper" id="a0000000047">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -656,7 +672,7 @@
     <span class="lemma_thmlabel">2.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:h_principle_open_ample_loc">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000047"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -694,7 +710,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000047">
+<div class="proof_wrapper" id="a0000000048">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
