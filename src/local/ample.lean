@@ -59,7 +59,7 @@ end
 open submodule
 
 theorem codim_two_complement_is_pc (F : subspace ℝ E) (cd : 2 ≤ vector_space.dim ℝ F.quotient) :
-  path_connected_set (- F.carrier) :=
+  path_connected_set (- (↑F : set E)) :=
 begin
   obtain ⟨F', compl⟩ := exists_is_compl F,
   have : 2 ≤ vector_space.dim ℝ F',
@@ -79,8 +79,20 @@ begin
     rw prod_equiv_of_is_compl_symm_apply_snd_eq_zero at z,
     apply y.2,
     apply z,
-  have : segment (x : E) (u' : E) ∩ F = ∅,
+  have : disjoint (segment (x : E) (u' : E)) F,
+    rw disjoint_left,
+    rintros _ ⟨t₁, t₂, ht₁, ht₂, sum_eq_one, rfl⟩ memF,
+    have z := linear_proj_of_is_compl_apply_left compl ⟨_, memF⟩,
+    dsimp at z,
+    rw [linear_map.map_add, linear_map.map_smul, linear_map.map_smul,
+        linear_proj_of_is_compl_apply_right, smul_zero, add_zero] at z,
+    rw le_iff_lt_or_eq at ht₁,
+    rcases ht₁ with ht₁ | rfl,
+      apply x.2,
+      sorry,
     sorry,
+  sorry,
+    -- simp only [add_zero, linear_proj_of_is_compl_apply_right, linear_map.map_smul, linear_map.map_add, smul_zero] at z,
 end
 
 
