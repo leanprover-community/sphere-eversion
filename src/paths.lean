@@ -1,4 +1,5 @@
 import gluing
+import analysis.convex.basic
 /-!
 # Continuous paths and path connectedness.
 -/
@@ -159,3 +160,108 @@ begin
   { rintros ⟨⟨b, b_in⟩, h⟩,
     exact ⟨b, b_in, λ x x_in, h b x b_in x_in⟩ },
 end
+
+-- attempts at some lemmas.
+
+lemma zero_mem_I : (0 : ℝ) ∈ I := left_mem_Icc.2 zero_le_one
+lemma one_mem_I : (1 : ℝ) ∈ I := right_mem_Icc.2 zero_le_one
+lemma convex_I {t₁ t₂ s : ℝ} (ht₁ : t₁ ∈ I) (ht₂ : t₂ ∈ I) (hs : s ∈ I) :
+  (1 - s) * t₁ + s * t₂ ∈ I :=
+have h   : _, from convex_iff_segment_subset.mp (convex_Icc _ _) ht₁ ht₂,
+have hs' : _, from Icc_zero_one_refl.mp hs,
+  h ⟨_, _, hs'.1, hs.1, by linarith, rfl⟩
+
+def path.image (γ : path x y) : set X := γ '' I
+
+lemma path.image_src (γ : path x y) : x ∈ γ.image := ⟨0, zero_mem_I, γ.src⟩
+lemma path.image_tgt (γ : path x y) : y ∈ γ.image := ⟨1,  one_mem_I, γ.tgt⟩
+
+/-- the image of a path is connected. -/
+lemma is_connected_path_image {γ : path x y} : is_connected γ.image :=
+is_connected.image ⟨nonempty_Icc.2 zero_le_one, is_preconnected_Icc⟩ _ γ.2
+
+/-- definition on a pair of points being joined in a set, in terms of the image of a path. -/
+def joined_in_iff_path_image_subset {F : set X} : joined_in F x y ↔ ∃ γ : path x y, γ.image ⊆ F :=
+iff.intro
+  (λ ⟨γ, hγ⟩, ⟨γ, λ y ⟨t, ht, hy⟩, hy ▸ (hγ t ht)⟩)
+  (λ ⟨γ, hγ⟩, ⟨γ, λ t ht, hγ ⟨t, ht, rfl⟩⟩)
+
+/-- a path connected set is connected.-/
+lemma is_connected_of_is_path_connected {F : set X} (h : is_path_connected F) : is_connected F :=
+let ⟨x, hx, hj⟩ := h in ⟨⟨x, hx⟩, is_preconnected_of_forall x (λ y hy,
+let ⟨γ, hγ⟩ := joined_in_iff_path_image_subset.1 (hj hy) in
+  ⟨γ.image, hγ, γ.image_src, γ.image_tgt, is_connected_path_image.2⟩)⟩
+
+/-- truncation of a path. -/
+def path.trunc (γ : path x y) {t₁ t₂ : ℝ} (ht₁ : t₁ ∈ I) (ht₂ : t₂ ∈ I) : path (γ t₁) (γ t₂) :=
+{ to_fun := λ t, γ ((1 - t) * t₁ + t * t₂),
+  cont'  := begin
+apply continuous_on.comp,
+{ exact γ.cont' },
+{ exact continuous_on.add
+    (continuous_on.mul (continuous_on.sub continuous_on_const continuous_on_id) continuous_on_const)
+    (continuous_on.mul continuous_on_id continuous_on_const) },
+{ intros s hs, apply mem_preimage.mpr, exact convex_I ht₁ ht₂ hs }
+end,
+  src'   := congr_arg _ (by linarith),
+  tgt'   := congr_arg _ (by linarith),
+}
+
+-- in hingsight, maybe path.trunc should more preferably be 'stay at x
+-- until t₁ then stay at y after t₂' rather than what is defined here,
+
+lemma path.trunc_interval (γ : path x y) {t₁ t₂ t : ℝ} (ht₁ : t₁ ∈ I) (ht₂ : t₂ ∈ I)
+  (ht : t ∈ I) : γ.trunc ht₁ ht₂ t = γ ((1 - t) * t₁ + t * t₂) := rfl
+
+def path.trunc_left (γ : path x y) {t : ℝ} (ht : t ∈ I) : path x (γ t) :=
+let γ' := γ.trunc zero_mem_I ht in
+  ⟨γ', γ'.cont', by { rw γ.trunc_interval _ _ zero_mem_I, simp [γ.src] }, γ'.tgt⟩
+
+def path.trunc_right (γ : path x y) {t : ℝ} (ht : t ∈ I) : path (γ t) y :=
+let γ' := γ.trunc ht one_mem_I in
+  ⟨γ', γ'.cont, γ'.src, by { rw γ.trunc_interval _ _ one_mem_I, simp [γ.tgt] }⟩
+
+lemma path.trunc_image (γ : path x y) {t₁ t₂ t : ℝ} {ht₁ : t₁ ∈ I} {ht₂ : t₂ ∈ I} :
+  (γ.trunc ht₁ ht₂).image ⊆ γ.image :=
+λ x ⟨t, ht, hx⟩, ⟨_, convex_I ht₁ ht₂ ht, by rwa ←γ.trunc_interval ht₁ ht₂ ht⟩
+
+lemma path.trunc_left_image (γ : path x y) {t : ℝ} {ht : t ∈ I} : (γ.trunc_left ht).image ⊆ γ.image :=
+λ x ⟨s, hs, hx⟩, ⟨_, convex_I zero_mem_I ht hs, by rwa ←γ.trunc_interval zero_mem_I ht hs⟩
+
+lemma path.trunc_right_image (γ : path x y) {t : ℝ} {ht : t ∈ I} : (γ.trunc_right ht).image ⊆ γ.image :=
+λ x ⟨s, hs, hx⟩, ⟨_, convex_I ht one_mem_I hs, by rwa ←γ.trunc_interval ht one_mem_I hs⟩
+
+-- also in hindsight: maybe truncation should just be done in terms of
+-- images?  the following operations come up frequently enough that I
+-- feel the need for an easy way to get to them, but I suspect there's
+-- a more straightforward way than explicitly defining the following:
+
+def path.replace_endpoints (γ : path x y) {x' y' : X} (hx : x = x') (hy : y = y') : path x' y' :=
+⟨γ, γ.cont, hx ▸ γ.src, hy ▸ γ.tgt⟩
+
+def path.replace_src (γ : path x y) {x' : X} (hx : x = x') : path x' y := γ.replace_endpoints hx rfl
+def path.replace_tgt (γ : path x y) {y' : X} (hy : y = y') : path x y' := γ.replace_endpoints rfl hy
+
+/-- the image of a path is path connected. -/
+lemma is_path_connected_path_image {γ: path x y} : is_path_connected γ.image :=
+⟨x, γ.image_src, λ w ⟨t, ht, hw⟩,
+  joined_in_iff_path_image_subset.mpr ⟨(γ.trunc_left ht).replace_tgt hw, by { apply γ.trunc_left_image, assumption }⟩⟩
+
+lemma joined_in.mono {F G : set X} (h : G ⊆ F) : joined_in G x y → joined_in F x y :=
+λ ⟨γ, hγ⟩, ⟨γ, λ t ht, h (hγ t ht)⟩
+
+lemma path_component_subset {F : set X} : path_component x F ⊆ F :=
+λ y ⟨γ, hγ⟩, γ.tgt ▸ (hγ _ (right_mem_Icc.2 zero_le_one))
+
+lemma subset_path_component {F G : set X} (hG : G ⊆ F) (h : is_path_connected G) :
+  ∀ x ∈ G, G ⊆ path_component x F :=
+λ x hx y hy, joined_in.mono hG (joined_in_of_is_path_connected h _ _ hx hy)
+
+lemma path_component_idem {F : set X} : path_component x (path_component x F) = path_component x F :=
+subset.antisymm
+  path_component_subset
+  (λ y ⟨γ, hγ⟩, joined_in_iff_path_image_subset.mpr
+    ⟨γ, subset_path_component (λ w ⟨t, ht, hw⟩, hw ▸ (hγ t ht)) is_path_connected_path_image _ γ.image_src⟩)
+
+lemma is_path_connected_path_component {F : set X} (hx : x ∈ F): is_path_connected (path_component x F) :=
+⟨x, joined_in.refl hx, λ y hy, show y ∈ path_component x _, by rwa path_component_idem⟩
