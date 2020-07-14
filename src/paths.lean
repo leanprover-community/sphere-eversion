@@ -253,15 +253,176 @@ lemma joined_in.mono {F G : set X} (h : G ⊆ F) : joined_in G x y → joined_in
 lemma path_component_subset {F : set X} : path_component x F ⊆ F :=
 λ y ⟨γ, hγ⟩, γ.tgt ▸ (hγ _ (right_mem_Icc.2 zero_le_one))
 
-lemma subset_path_component {F G : set X} (hG : G ⊆ F) (h : is_path_connected G) :
-  ∀ x ∈ G, G ⊆ path_component x F :=
-λ x hx y hy, joined_in.mono hG (joined_in_of_is_path_connected h _ _ hx hy)
+lemma subset_path_component {F G : set X} (hG : G ⊆ F) (h : is_path_connected G) (hx : x ∈ G) : G ⊆ path_component x F :=
+λ y hy, joined_in.mono hG (joined_in_of_is_path_connected h _ _ hx hy)
 
 lemma path_component_idem {F : set X} : path_component x (path_component x F) = path_component x F :=
 subset.antisymm
   path_component_subset
   (λ y ⟨γ, hγ⟩, joined_in_iff_path_image_subset.mpr
-    ⟨γ, subset_path_component (λ w ⟨t, ht, hw⟩, hw ▸ (hγ t ht)) is_path_connected_path_image _ γ.image_src⟩)
+    ⟨γ, subset_path_component (λ w ⟨t, ht, hw⟩, hw ▸ hγ t ht) is_path_connected_path_image γ.image_src⟩)
 
 lemma is_path_connected_path_component {F : set X} (hx : x ∈ F): is_path_connected (path_component x F) :=
 ⟨x, joined_in.refl hx, λ y hy, show y ∈ path_component x _, by rwa path_component_idem⟩
+
+lemma path_components_eq {F : set X} (h : joined_in F x y) : path_component x F = path_component y F :=
+subset.antisymm (λ z hz, h.symm.trans hz) (λ z hz, h.trans hz)
+
+section locally_path_connected
+
+/-- a top. space is locally path connected if it has a neighbourhood base of connected sets. -/
+class locally_path_connected_space (α : Type*) [topological_space α] :=
+(local_path_connected_nhds : ∀ (x : α) (n ∈ 𝓝 x), ∃ (u ∈ 𝓝 x), u ⊆ n ∧ is_path_connected u)
+
+-- in an experiement in adhering to the don't-descend-into-subtypes
+-- theme, we define the following, modelled after is_preconnected /
+-- is_preconnected_space in mathlib:
+
+variables {α : Type*} [topological_space α] {a : α}
+
+def is_locally_path_connected (s : set α) : Prop :=
+∀ (x ∈ s) (n ∈ nhds_within x s), ∃ (u ∈ nhds_within x s), u ⊆ n ∧ is_path_connected u
+
+-- the big awful brittle blob two lemmas down is analogous to
+-- is_open_iff_mem_nhds in the subtype. it's written down like that
+-- because I was eager to move on to the more immediately relevant
+-- results, but if we expect to develop a body of lemmas about
+-- relatively open sets, this bears refactoring.
+
+/-- u is (relatively) open within s if it is open in s with the subspace topology. -/
+def is_open_within (s u : set α) : Prop := ∃ v, is_open v ∧ u = v ∩ s
+
+lemma is_open_within_univ {u : set α} : is_open_within univ u ↔ is_open u :=
+⟨λ ⟨v, hvo, huv⟩, huv.symm ▸ is_open_inter hvo is_open_univ, λ huo, ⟨u, huo, (inter_univ _).symm⟩⟩
+
+lemma is_open_within_iff_mem_nhds_within {s u : set α} :
+  is_open_within s u ↔ u ⊆ s ∧ ∀ a ∈ u, u ∈ nhds_within a s :=
+iff.intro
+(λ ⟨_, hvo, hvi⟩, and.intro
+  (hvi.symm ▸ inter_subset_right _ s)
+  (λ a ha, mem_nhds_within.mpr ⟨_, hvo, by { rw hvi at ha, exact ha.left }, by rw hvi⟩))
+(λ ⟨hu, h⟩, exists.intro (⋃₀ {v : set α | is_open v ∧ v ∩ s ⊆ u })
+(and.intro
+  (is_open_sUnion (λ _ ⟨ht, _⟩, ht))
+  (subset.antisymm
+    (λ _ ha,
+      let ⟨_, hvo, hav, hvi⟩ := mem_nhds_within.1 (h _ ha) in
+      mem_inter
+        (mem_sUnion.2 ⟨_, ⟨hvo, hvi⟩, hav⟩) (hu ha))
+    (λ _ ⟨hxu, hxs⟩, let ⟨_, ⟨_, hwi⟩, hxw⟩ := mem_sUnion.2 hxu in
+      hwi ⟨hxw, hxs⟩))))
+
+-- likewise; this is analogous to is_open_bUnion.
+
+lemma is_open_within_bUnion {s : set α} {β : Type*} {J : set β} {f : β → set α}
+  (h : ∀ i ∈ J, is_open_within s (f i)) : is_open_within s ⋃ i ∈ J, f i :=
+sorry
+
+lemma path_component_mem_nhds_within {s : set α} (h : is_locally_path_connected s) (ha : a ∈ s) :
+  path_component a s ∈ nhds_within a s :=
+let ⟨_, hun, hus, hup⟩ := h _ ha _ self_mem_nhds_within in
+let ⟨_, hvo, hav, hvs⟩ := mem_nhds_within.mp hun in
+  (nhds_within a s).sets_of_superset hun (subset_path_component hus hup (hvs (mem_inter hav ha)))
+
+lemma is_open_within_path_component {s : set α} (h : is_locally_path_connected s) (ha : a ∈ s) :
+  is_open_within s (path_component a s) :=
+let ⟨u, hun, hus, hup⟩ := h _ ha _ self_mem_nhds_within in
+  is_open_within_iff_mem_nhds_within.mpr ⟨path_component_subset, λ b hb,
+    path_components_eq hb.symm ▸ path_component_mem_nhds_within h (path_component_subset hb)⟩
+
+-- ... and the analogous statements for a locally_path_connected_space
+-- are retried by replacing s with the appropriate univ:
+
+variable [locally_path_connected_space α]
+
+/-- opens sets in a locally path connected space is locally path connected. -/
+lemma is_locally_path_connected_of_open {s : set α} (hs : is_open s) : is_locally_path_connected s :=
+λ x hx n hn, let ⟨u, hu, hun, hup⟩ := locally_path_connected_space.local_path_connected_nhds x n
+                                      (nhds_of_nhds_within_of_nhds (mem_nhds_sets hs hx) hn) in
+let ⟨t, htu, hto, hxt⟩ := mem_nhds_sets_iff.mp hu in
+  ⟨u, mem_nhds_within.mpr ⟨t, hto, hxt, subset.trans (inter_subset_left _ _) htu⟩, hun, hup⟩
+
+lemma is_locally_path_connected_univ : is_locally_path_connected (univ : set α) :=
+is_locally_path_connected_of_open (is_open_univ)
+
+lemma path_component_mem_nhds : path_component a univ ∈ nhds a :=
+by { rw ←nhds_within_univ, exact path_component_mem_nhds_within is_locally_path_connected_univ (mem_univ _)}
+
+-- the next proof is very verbose
+
+/-- path components of a locally connected space are open. -/
+lemma is_open_path_component : is_open (path_component a univ) :=
+by { rw ←is_open_within_univ, exact is_open_within_path_component is_locally_path_connected_univ (mem_univ _)}
+
+lemma is_path_connected_iff_is_connected {s : set α} (hs : is_open s) : is_path_connected s ↔ is_connected s :=
+iff.intro
+  (λ hp, is_connected_of_is_path_connected hp)
+  (λ hc,
+let ⟨a, ha⟩ := hc.1 in
+let h := is_preconnected_iff_subset_of_disjoint.mp hc.2 in
+begin
+  by_contradiction a₁, suffices h : ¬ is_preconnected s, exact h hc.2,
+
+  have hp, from is_locally_path_connected_of_open hs, -- s is locally path connected.
+
+  -- u = U ∩ s is the path component of a, relatively open in s.
+  let u := path_component a s,
+  have huo : is_open_within s u, from
+    is_open_within_path_component hp ha,
+  rcases huo with ⟨U, hUo, hUi⟩,
+
+  have hupc : is_path_connected u, from is_path_connected_path_component ha,
+
+  --have hus : u ⊆ s, from path_component_subset,
+
+  -- v = V ∩ s is the union of all the other path components, likewise
+  -- relatively open in s.
+  let v := ⋃ (b ∈ s \ u), (path_component b s),
+  have hvo : is_open_within s v, from
+    is_open_within_bUnion (λ b ⟨hbs, hhbu⟩, is_open_within_path_component hp hbs),
+  rcases hvo with ⟨V, hVo, hVi⟩,
+
+  -- u and v together cover s :
+  have huvc : s ⊆ u ∪ v, from λ x hxs, classical.by_cases
+    (λ hxu : x ∈ u, or.intro_left _ hxu)
+    (λ hxn, or.intro_right _ (mem_bUnion_iff.2 ⟨x, ⟨hxs, hxn⟩, joined_in.refl hxs⟩)),
+
+  -- (a different formulation that is useful elsewhere: i am not very
+  -- good at wrangling sets.)
+  have huvc₂ : ∀ x ∈ s, x ∉ u → x ∈ v, from λ x hxs hxu, or.elim
+    ((mem_union _ _ _).1 (huvc hxs)) (λ hxu', absurd hxu' hxu) id,
+
+  -- none of the other path components intersect u ...
+  have hvi: ∀ (b ∈ s \ u) (x ∈ u), x ∉ path_component b s , from
+    λ m ⟨hms, hmu⟩ x hxu hjmx, hmu (hxu.trans hjmx.symm),
+
+  -- ... so their union is disoint from u.
+  have huve : u ∩ v = ∅, from
+    eq_empty_iff_forall_not_mem.mpr (λ _ ⟨hxu, hxv⟩,
+    let ⟨_, hb, hjbx⟩ := mem_bUnion_iff.1 hxv in hvi _ hb _ hxu hjbx),
+
+  have huU : u ⊆ U, from hUi.symm ▸ inter_subset_left _ _,
+  have hvV : v ⊆ V, from hVi.symm ▸ inter_subset_left _ _,
+
+  have hUVc: s ⊆ U ∪ V, from subset.trans huvc (union_subset_union huU hvV),
+
+  have hUne : (s ∩ U).nonempty, from nonempty_of_mem ⟨ha, huU $ joined_in.refl ha⟩,
+
+  -- why the frick is this the hardest part of the proof?
+  have : ∃ b, b ∈ s \ u, from sorry,
+  rcases this with ⟨b, hbs, hbu⟩,
+
+  have hVne : (s ∩ V).nonempty, from nonempty_of_mem ⟨hbs, hvV (huvc₂ _ hbs hbu)⟩,
+
+  have huvUV : u ∩ v = s ∩ (U ∩ V), by rw [hUi, hVi, inter_comm V s, inter_assoc, ←inter_assoc s,
+                                           inter_self, inter_comm, inter_assoc, inter_comm U],
+
+  -- assuming preconnectedness, arrive at contradiction.
+  have hUVe : (s ∩ (U ∩ V)) = ∅, from huvUV ▸ huve,
+  intro hsc,
+  have hUVne : (s ∩ (U ∩ V)).nonempty, from hsc _ _ hUo hVo hUVc hUne hVne,
+
+  exact not_nonempty_iff_eq_empty.2 hUVe hUVne,
+end)
+
+end locally_path_connected
