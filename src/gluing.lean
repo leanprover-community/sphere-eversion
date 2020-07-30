@@ -52,7 +52,7 @@ begin
   split ; assumption,
 end
 
-lemma Icc_inter_Ici {a b c : ℝ} : Icc a b ∩ Ici c = Icc (a ⊔ c) b :=
+lemma Icc_inter_Ici {α : Type*} [semilattice_sup α] {a b c : α} : Icc a b ∩ Ici c = Icc (a ⊔ c) b :=
 begin
   ext x,
   change (a ≤ x ∧ x ≤ b) ∧ c ≤ x ↔ a ⊔ c ≤ x ∧ x ≤ b,
@@ -60,8 +60,7 @@ begin
   tauto
 end
 
-@[simp] lemma Ici_inter_Iic  {α : Type*} [preorder α] (a b : α) : Ici a ∩ Iic b = Icc a b :=
-by { ext, simp }
+attribute [simp] Ici_inter_Iic
 
 end
 
