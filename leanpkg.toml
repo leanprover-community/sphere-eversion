@@ -1,8 +1,8 @@
 [package]
 name = "sphere_eversion"
 version = "0.1"
-lean_version = "leanprover-community/lean:3.17.1"
+lean_version = "leanprover-community/lean:3.18.4"
 path = "src"
 
 [dependencies]
-mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "29d5f110fa87056d9f46090bf48cebaa22794299"}
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "545186ca49a574ea01df6b65892c76b4c3142ad5"}
