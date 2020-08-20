@@ -90,15 +90,15 @@ end linear_algebra
 section affine
 
 variables  {k : Type*}  [field k] {V : Type*} [add_comm_group V] [vector_space k V]
-           {P : Type*} [affine_space k V P]
+           {P : Type*} [affine_space k P]
 
 -- This will turn out to be useless, but could still go to mathlib
-lemma affine_independent_rescale {ι : Type*} {p : ι → P} (hp : affine_independent k V p) {w : ι → k}
-  (hw : ∀ i, w i ≠ 0) (i₀ : ι) : affine_independent k V (λ i, (w i) • (p i -ᵥ p i₀ : V) +ᵥ p i₀) :=
+lemma affine_independent_rescale {ι : Type*} {p : ι → P} (hp : affine_independent k p) {w : ι → k}
+  (hw : ∀ i, w i ≠ 0) (i₀ : ι) : affine_independent k (λ i, (w i) • (p i -ᵥ p i₀) +ᵥ p i₀) :=
 begin
   suffices : linear_independent k (λ (i : {x // x ≠ i₀}), w i • (p i -ᵥ p i₀)),
-    by simpa [affine_independent_iff_linear_independent_vsub k V _ i₀],
-  rw affine_independent_iff_linear_independent_vsub k V _ i₀ at hp,
+    by simpa [affine_independent_iff_linear_independent_vsub k _ i₀],
+  rw affine_independent_iff_linear_independent_vsub k _ i₀ at hp,
   apply hp.rescale,
   tauto
 end
