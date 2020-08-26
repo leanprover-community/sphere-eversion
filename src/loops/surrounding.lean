@@ -1,5 +1,6 @@
 import loops.basic
 import data.real.pi
+import to_mathlib
 import tactic.fin_cases
 /-!
 # Surrounding families of loops
@@ -8,6 +9,29 @@ import tactic.fin_cases
 open set function finite_dimensional
 open_locale topological_space
 
+example {F : Type*} (hproj : (proj_I 1 : ℝ) = 1) (x : ℝ)
+  [normed_group F]
+  [normed_space ℝ F]
+  [finite_dimensional ℝ F] :
+  ∀ x, (x ∈ range (λ (s : ℝ), (1 - real.cos (2 * real.pi * s)) / 2) ↔
+        x ∈ Icc (0 : ℝ) 1) :=
+begin
+  intro x,
+  split,
+  { rintros ⟨y, hxy⟩,
+    simp only [← hxy],
+    have h₀ := (2*real.pi*y).neg_one_le_cos, 
+    have h₁ := (2*real.pi*y).cos_le_one,
+    split; linarith },
+  { rintros ⟨h₀, h₁⟩,
+    rw mem_range,
+    rcases @real.exists_cos_eq (1-2*x) ⟨by linarith, by linarith⟩ with ⟨y, ⟨hy₀, hy₁⟩, hxy⟩,
+    use (2*real.pi)⁻¹ * y,
+    rw mul_inv_cancel_left';
+    linarith [real.pi_pos] }
+end
+
+#check subset.refl
 #check path.target
 #check fin.coe_val_eq_self
 #check fin.coe_coe_eq_self
@@ -39,6 +63,7 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
+/-
 lemma maybe {A B C : Type*} [metric_space A] [metric_space B] [metric_space C] 
   (f : A × B → C) (hA : ∀ a, continuous (λ b, f ⟨a, b⟩)) (hB : ∀ b, continuous (λ a, f ⟨a, b⟩)) :
   continuous f :=
@@ -55,6 +80,7 @@ begin
   specialize hδ₀ y hxy.2.1,
   specialize hδ₁ x hxy.1.2,
   rcases hA a y (ε/2) (by linarith) with ⟨δ₂, δ₂pos, hδ₂⟩,
+  specialize hδ₂ y hxy.2.1,
   refine ⟨_, _, hB, hA, _, _, _⟩,
   sorry,
   sorry,
@@ -63,22 +89,21 @@ begin
   rw mem_preimage at *,
 end
 
-lemma maybe {A B C : Type*} [topological_space A] [topological_space B] [topological_space C] 
+lemma maybe' {A B C : Type*} [topological_space A] [topological_space B] [topological_space C] 
   (f : A × B → C) (hA : ∀ a, continuous (λ b, f ⟨a, b⟩)) (hB : ∀ b, continuous (λ a, f ⟨a, b⟩)) :
   continuous f :=
 begin
   intros s hs,
   rw is_open_prod_iff,
   intros a b hab,
-  specialize hA a s hs,
-  specialize hB b s hs,
-  refine ⟨_, _, hB, hA, _, _, _⟩,
+  refine ⟨_, _, hB b s hs, hA a s hs, _, _, _⟩,
   sorry,
   sorry,
   rw prod_subset_iff,
   intros x hx y hy,
   rw mem_preimage at *,
 end
+-/
 
 set_option profiler true
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
@@ -109,14 +134,19 @@ begin
   use γ,
   split,
   { apply continuous.continuous_on,
-    simp [γ, has_uncurry.uncurry],
+    have h₁ : continuous (λ (s : ℝ × ℝ), (1 - real.cos (2 * real.pi * s.snd)) / 2) :=
+      (continuous_mul_right _).comp ((continuous_const.sub continuous_id).comp $ 
+        real.continuous_cos.comp $ (continuous_mul_left _).comp continuous_snd),
+    have h₂ : continuous (λ (a : ℝ × ℝ), ↑(proj_I a.fst)) :=
+      continuous_subtype_coe.comp (continuous_proj_I.comp continuous_fst),
+    simp only [γ, has_uncurry.uncurry],
     unfold_coes,
-    simp only [comp_app],
-    intros u hu,
-    rw is_open_prod_iff,
-    intros x y hxy,
-    apply continuous_if,
-    sorry },
+    simp only [mul_one, comp_app, subtype.val_eq_coe],
+    refine continuous_if _ (Ω.continuous_extend.comp h₁) (Ω.continuous_extend.comp h₂),
+    rintros ⟨a, b⟩ hab,
+    have := frontier_le_subset_eq h₁ h₂ hab,
+    simp only [mem_set_of_eq] at this,
+    rw this },
   split,
   { unfold_coes,
     intros t,
@@ -146,18 +176,33 @@ begin
     rw range_subset_iff,
     intro i,
     unfold_coes,
-    suffices h : p i ∈ range Ω.extend, { sorry },
+    suffices h : p i ∈ range Ω.extend, 
+    { have hproj : (proj_I 1 : ℝ) = 1,
+      { simp [proj_I, not_le_of_lt zero_lt_one, le_refl 1] },
+      have hcos : range (λ (s : ℝ), (1 - real.cos (2 * real.pi * s)) / 2) = I,
+      { ext,
+        split,
+        { rintros ⟨y, hxy⟩,
+          simp only [← hxy],
+          have h₀ := (2*real.pi*y).neg_one_le_cos, 
+          have h₁ := (2*real.pi*y).cos_le_one,
+          split; linarith },
+        { rintros ⟨h₀, h₁⟩,
+          rw mem_range,
+          rcases @real.exists_cos_eq (1-2*x) ⟨by linarith, by linarith⟩ with ⟨y, ⟨hy₀, hy₁⟩, hxy⟩,
+          use (2*real.pi)⁻¹ * y,
+          rw mul_inv_cancel_left';
+          linarith [real.pi_pos] } },
+      simp only [γ, range_comp, hcos, hproj, mem_image, path.extend_one],
+      rcases h with ⟨x, hx⟩,
+      use proj_I x,
+      use (proj_I x).2,
+      have : (proj_I x : ℝ) ∈ I := (proj_I x).2,
+      simpa [this.2, Ω.extend_extends this] },
     simp only [Ω.extend_range, Ω, path.trans_range],
     right,
     exact hΩ₀.1 i }
 end
-
-#check is_open_prod_iff
-#check range_ite_subset
-#check range_comp_subset_range
-#check real.cos_eq_one_iff
-#check subtype.val_eq_coe
-#check real.two_pi_pos
 
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
 (base : ∀ x t, γ x t 0 = b x)
