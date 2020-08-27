@@ -9,36 +9,6 @@ import tactic.fin_cases
 open set function finite_dimensional
 open_locale topological_space
 
-example {F : Type*} (hproj : (proj_I 1 : ℝ) = 1) (x : ℝ)
-  [normed_group F]
-  [normed_space ℝ F]
-  [finite_dimensional ℝ F] :
-  ∀ x, (x ∈ range (λ (s : ℝ), (1 - real.cos (2 * real.pi * s)) / 2) ↔
-        x ∈ Icc (0 : ℝ) 1) :=
-begin
-  intro x,
-  split,
-  { rintros ⟨y, hxy⟩,
-    simp only [← hxy],
-    have h₀ := (2*real.pi*y).neg_one_le_cos, 
-    have h₁ := (2*real.pi*y).cos_le_one,
-    split; linarith },
-  { rintros ⟨h₀, h₁⟩,
-    rw mem_range,
-    rcases @real.exists_cos_eq (1-2*x) ⟨by linarith, by linarith⟩ with ⟨y, ⟨hy₀, hy₁⟩, hxy⟩,
-    use (2*real.pi)⁻¹ * y,
-    rw mul_inv_cancel_left';
-    linarith [real.pi_pos] }
-end
-
-#check subset.refl
-#check path.target
-#check fin.coe_val_eq_self
-#check fin.coe_coe_eq_self
-#check joined_in.some_path_mem
-#check path.extend_one
-#check joined_in.some_path_mem
-
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 
@@ -54,6 +24,7 @@ lemma loop.surrounds_iff_range_subset_range (γ : loop F) (x : F) :
   γ.surrounds x ↔ ∃ (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ), 
   surrounding_pts x p w ∧ range p ⊆ range γ :=
 begin
+
   split,
   { exact λ ⟨t, w, h⟩, ⟨(γ ∘ t), w, h, range_comp_subset_range _ _⟩ },
   { rintros ⟨p, w, h₀, h₁⟩,
@@ -62,48 +33,6 @@ begin
     have hpt : γ ∘ t = p := funext ht,
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
-
-/-
-lemma maybe {A B C : Type*} [metric_space A] [metric_space B] [metric_space C] 
-  (f : A × B → C) (hA : ∀ a, continuous (λ b, f ⟨a, b⟩)) (hB : ∀ b, continuous (λ a, f ⟨a, b⟩)) :
-  continuous f :=
-begin
-  simp_rw metric.continuous_iff at *,
-  rintros ⟨a, b⟩ ε hε,
-  rcases hA a b (ε/2) (by linarith) with ⟨δ₀, δ₀pos, hδ₀⟩,
-  rcases hB b a (ε/2) (by linarith) with ⟨δ₁, δ₁pos, hδ₁⟩,
-  use min δ₀ δ₁,
-  use lt_min δ₀pos δ₁pos,
-  rintros ⟨x, y⟩ hxy,
-  rw [prod.dist_eq, max_lt_iff, lt_min_iff, lt_min_iff] at hxy,
-  simp only at hxy,
-  specialize hδ₀ y hxy.2.1,
-  specialize hδ₁ x hxy.1.2,
-  rcases hA a y (ε/2) (by linarith) with ⟨δ₂, δ₂pos, hδ₂⟩,
-  specialize hδ₂ y hxy.2.1,
-  refine ⟨_, _, hB, hA, _, _, _⟩,
-  sorry,
-  sorry,
-  rw prod_subset_iff,
-  intros x hx y hy,
-  rw mem_preimage at *,
-end
-
-lemma maybe' {A B C : Type*} [topological_space A] [topological_space B] [topological_space C] 
-  (f : A × B → C) (hA : ∀ a, continuous (λ b, f ⟨a, b⟩)) (hB : ∀ b, continuous (λ a, f ⟨a, b⟩)) :
-  continuous f :=
-begin
-  intros s hs,
-  rw is_open_prod_iff,
-  intros a b hab,
-  refine ⟨_, _, hB b s hs, hA a s hs, _, _, _⟩,
-  sorry,
-  sorry,
-  rw prod_subset_iff,
-  intros x hx y hy,
-  rw mem_preimage at *,
-end
--/
 
 set_option profiler true
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
@@ -128,8 +57,7 @@ begin
       suffices h : (λ s, (1 - real.cos (2*real.pi*s))/2) (s+1) = (λ s, (1 - real.cos (2*real.pi*s))/2) s,
       { delta function.comp,
         rw h },
-      simp only,
-      rw [mul_add, mul_one, real.cos_add_two_pi]
+      simp only [mul_add, mul_one, real.cos_add_two_pi],
     end },
   use γ,
   split,
@@ -139,9 +67,7 @@ begin
         real.continuous_cos.comp $ (continuous_mul_left _).comp continuous_snd),
     have h₂ : continuous (λ (a : ℝ × ℝ), ↑(proj_I a.fst)) :=
       continuous_subtype_coe.comp (continuous_proj_I.comp continuous_fst),
-    simp only [γ, has_uncurry.uncurry],
-    unfold_coes,
-    simp only [mul_one, comp_app, subtype.val_eq_coe],
+    simp only [γ, has_uncurry.uncurry, coe_fn, has_coe_to_fun.coe, mul_one, comp_app],
     refine continuous_if _ (Ω.continuous_extend.comp h₁) (Ω.continuous_extend.comp h₂),
     rintros ⟨a, b⟩ hab,
     have := frontier_le_subset_eq h₁ h₂ hab,
@@ -154,10 +80,10 @@ begin
   split,
   { unfold_coes,
     intros s,
-    simp [γ, proj_I],
+    simp only [γ, proj_I, dif_pos, path.extend_zero, comp_app, subtype.coe_mk],
     split_ifs with h,
     { have : real.cos (2 * real.pi * s) = 1 := le_antisymm (real.cos_le_one _) (by linarith [h]),
-      simp [this] },
+      simp only [this, path.extend_zero, zero_div, sub_self]},
     { refl } },
   split,
   { rintros t ht,
@@ -168,9 +94,9 @@ begin
     apply' (range_comp_subset_range _ _).trans,
     apply' range_ite_subset.trans,
     have : range Ω.extend ⊆ O,
-    { simp [Ω, Ω.extend_range, Ω₁.trans_range, hΩ₀.2, range_subset_iff.mpr hΩ₁] },
+    { simp only [Ω.extend_range, Ω₁.trans_range, hΩ₀.right, range_subset_iff.mpr hΩ₁, union_subset_iff, and_self]},
     rw union_subset_iff, 
-    simp [this, range_subset_iff.mp this] },
+    simp only [this, range_subset_iff.mp this, range_const, singleton_subset_iff, and_self] },
   { rw loop.surrounds_iff_range_subset_range,
     refine ⟨p, w, h, _⟩,
     rw range_subset_iff,
@@ -198,7 +124,7 @@ begin
       use proj_I x,
       use (proj_I x).2,
       have : (proj_I x : ℝ) ∈ I := (proj_I x).2,
-      simpa [this.2, Ω.extend_extends this] },
+      simpa only [this.right, Ω.extend_extends this, if_true, subtype.coe_eta], },
     simp only [Ω.extend_range, Ω, path.trans_range],
     right,
     exact hΩ₀.1 i }
