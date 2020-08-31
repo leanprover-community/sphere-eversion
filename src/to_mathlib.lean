@@ -94,8 +94,8 @@ begin
       { rintros i hi, rw nat.le_zero_iff.mp hi, exact ⟨0, rfl⟩ },
       { rw range_subset_iff, rintros x, exact hp 0 (le_refl _) } } },
   { rcases hn (λ i hi, hp i $ nat.le_succ_of_le hi) with ⟨γ₀, hγ₀⟩,
-    rcases h.joined_in (p n) (p n.succ) (hp n n.le_succ) (hp n.succ $ le_refl _) with ⟨γ₁, hγ₁⟩,
-    let γ : path (p 0) (p n.succ) := γ₀.trans γ₁,
+    rcases h.joined_in (p n) (p $ n+1) (hp n n.le_succ) (hp (n+1) $ le_refl _) with ⟨γ₁, hγ₁⟩,
+    let γ : path (p 0) (p $ n+1) := γ₀.trans γ₁,
     use γ,
     have range_eq : range γ = range γ₀ ∪ range γ₁ := γ₀.trans_range γ₁,
     split, 
@@ -119,8 +119,8 @@ lemma is_path_connected.exists_path_through_family
   {X : Type*} [topological_space X] {n : ℕ} {s : set X} (h : is_path_connected s) 
   (p : fin (n+1) → X) (hp : ∀ i, p i ∈ s) : ∃ γ : path (p 0) (p n), (∀ i, p i ∈ range γ) ∧ (range γ ⊆ s) :=
 begin
-  let p' : ℕ → X := λ k, if h : k < n.succ then p ⟨k, h⟩ else p ⟨0, n.zero_lt_succ⟩,
-  have hpp' : ∀ k < n.succ, p k = p' k,
+  let p' : ℕ → X := λ k, if h : k < n+1 then p ⟨k, h⟩ else p ⟨0, n.zero_lt_succ⟩,
+  have hpp' : ∀ k < n+1, p k = p' k,
   { intros k hk, simp only [p', hk, dif_pos], congr, ext, rw fin.coe_val_of_lt hk },
   have := exists_path_through_family_aux h n p'
   begin
