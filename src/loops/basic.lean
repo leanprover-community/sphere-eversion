@@ -79,8 +79,8 @@ loop.per' γ
 noncomputable
 def average [measurable_space F] [borel_space F] (γ : loop F) : F := ∫ x in Icc 0 1, (γ x)
 
-#check fract_nonneg
-
+/-- Create a loop from a path whose source and target are the same.
+    This is currently *not* used. -/
 noncomputable
 def of_path {x : F} (γ : path x x) : loop F :=
 { to_fun := λ t, γ.extend (fract t),
@@ -92,8 +92,6 @@ def of_path {x : F} (γ : path x x) : loop F :=
     use 1,
     norm_num
   end }
-
-#check subtype.ext_iff
 
 lemma of_path_range {x : F} (γ : path x x) : range (of_path γ) = range γ :=
 begin
