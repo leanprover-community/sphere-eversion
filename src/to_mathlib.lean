@@ -30,7 +30,7 @@ begin
 end
 
 lemma path.extend_extends {X : Type*} [topological_space X] {a b : X}
-  (γ : path a b) {t : ℝ} (ht : t ∈ Icc (0:ℝ) 1) : γ.extend t = γ ⟨t, ht⟩ :=
+  (γ : path a b) {t : ℝ} (ht : t ∈ (Icc 0 1 : set ℝ)) : γ.extend t = γ ⟨t, ht⟩ :=
 I_extend_extends γ.to_fun ht
 
 lemma path.extend_extends' {X : Type*} [topological_space X] {a b : X}
