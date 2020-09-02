@@ -32,99 +32,7 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
-/- Slower and less clear... I guess ?
-lemma surrounding_loop_of_convex_hull2 {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
-  (hsf : f ∈ convex_hull O) (hb : b ∈ O) : 
-  ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧ 
-                    (∀ t, γ t 0 = b) ∧
-                    (∀ s, γ 0 s = b) ∧
-                    (∀ (t ∈ I) s, γ t s ∈ O) ∧
-                    (γ 1).surrounds f :=
-begin
-  rcases surrounded_of_convex_hull O_op hsf with ⟨p, w, h, hp⟩,
-  rw ← O_op.is_connected_iff_is_path_connected at O_conn,
-  rcases (O_conn.exists_path_through_family' p hp) with ⟨Ω₀, t, hΩ₀⟩,
-  rcases O_conn.joined_in b (p 0) hb (hp 0) with ⟨Ω₁, hΩ₁⟩,
-  let Ω := Ω₁.trans Ω₀,
-  let γ : ℝ → loop F := λ t, let t' := proj_I t in
-  { to_fun :=
-      (λ s' : ℝ, if s'≤t' then Ω.extend s' else Ω.extend t') ∘ (λ s, (1 - real.cos (2*real.pi*s))/2),
-    per' :=
-    begin
-      intros s,
-      suffices h : (λ s, (1 - real.cos (2*real.pi*s))/2) (s+1) = (λ s, (1 - real.cos (2*real.pi*s))/2) s,
-      { delta function.comp,
-        rw h },
-      simp only [mul_add, mul_one, real.cos_add_two_pi],
-    end },
-  use γ,
-  split,
-  { apply continuous.continuous_on,
-    have h₁ : continuous (λ (s : ℝ × ℝ), (1 - real.cos (2 * real.pi * s.snd)) / 2) :=
-      (continuous_mul_right _).comp ((continuous_const.sub continuous_id).comp $ 
-        real.continuous_cos.comp $ (continuous_mul_left _).comp continuous_snd),
-    have h₂ : continuous (λ (a : ℝ × ℝ), ↑(proj_I a.fst)) :=
-      continuous_subtype_coe.comp (continuous_proj_I.comp continuous_fst),
-    simp only [γ, has_uncurry.uncurry, coe_fn, has_coe_to_fun.coe, mul_one, comp_app],
-    refine continuous_if _ (Ω.continuous_extend.comp h₁) (Ω.continuous_extend.comp h₂),
-    rintros ⟨a, b⟩ hab,
-    have := frontier_le_subset_eq h₁ h₂ hab,
-    simp only [mem_set_of_eq] at this,
-    rw this },
-  split,
-  { unfold_coes,
-    intros t,
-    simp [γ, ← subtype.val_eq_coe, (proj_I t).2.1] },
-  split,
-  { unfold_coes,
-    intros s,
-    simp only [γ, proj_I, dif_pos, path.extend_zero, comp_app, subtype.coe_mk],
-    split_ifs with h,
-    { have : real.cos (2 * real.pi * s) = 1 := le_antisymm (real.cos_le_one _) (by linarith [h]),
-      simp only [this, path.extend_zero, zero_div, sub_self] },
-    { refl } },
-  split,
-  { have : ∀ t, Ω.extend t ∈ O,
-    { rw ← range_subset_iff,
-      simp [Ω.extend_range, Ω₁.trans_range, range_subset_iff.mpr hΩ₀.left, range_subset_iff.mpr hΩ₁] },
-    rintros t ⟨ht₀, ht₁⟩ s,
-    simp only [has_coe_to_fun.coe, coe_fn, γ],
-    rw [comp_app, ← apply_ite],
-    refine this _ },
-  { use [(λ i, (2*real.pi)⁻¹ * (real.arccos (- t i))), w],
-    simp only [has_coe_to_fun.coe, coe_fn, γ, comp],
-    convert h,
-    ext i,
-    have hproj : (proj_I 1 : ℝ) = 1,
-    { simp [proj_I, not_le_of_lt zero_lt_one, le_refl 1] },
-    have hmem : (1 + (t i : ℝ))/2 ∈ (Icc (1/2) 1 : set ℝ),
-    { split; unfold_coes; linarith [(t i).2.1, (t i).2.2] },
-    have hmem' : (1 + (t i : ℝ))/2 ∈ (Icc 0 1 : set ℝ),
-    { split; [linarith [hmem.1], exact hmem.2] },
-    rw [hproj, Ω.extend_one, mul_inv_cancel_left', real.cos_arccos, sub_neg_eq_add,
-        Ω.extend_extends hmem'],
-    simp only [has_coe_to_fun.coe, coe_fn, eq_true_intro hmem.2, Ω, if_true, path.trans, comp_app],
-    split_ifs with h',
-    { have : t i = 0,
-      { have : (1 + (t i : ℝ))/2 = 1/2 := le_antisymm h' hmem.1,
-        rw div_eq_div_iff at this,
-        { rw [subtype.ext_iff, coe_I_zero], 
-          linarith },
-        { norm_num },
-        { norm_num } },
-      have key := hΩ₀.2 i,
-      rw [this, path.source] at key,
-      simpa [this, @mul_inv_cancel _ _ (2 : ℝ) two_ne_zero] },
-    { convert hΩ₀.2 i,
-      rw ← Ω₀.extend_extends',
-      congr,
-      unfold_coes,
-      field_simp,
-      ring },
-    all_goals {try {unfold_coes}, linarith [(t i).2.2, (t i).2.1, real.pi_pos]} }
-end
--/
-
+set_option profiler true
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
   (hsf : f ∈ convex_hull O) (hb : b ∈ O) : 
   ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧ 
@@ -137,68 +45,26 @@ begin
   rw ← O_op.is_connected_iff_is_path_connected at O_conn,
   rcases (O_conn.exists_path_through_family p hp) with ⟨Ω₀, hΩ₀⟩,
   rcases O_conn.joined_in b (p 0) hb (hp 0) with ⟨Ω₁, hΩ₁⟩,
-  let Ω := Ω₁.trans Ω₀,
-  let γ : ℝ → loop F := λ t, let t' := proj_I t in
-  { to_fun :=
-      (λ s' : ℝ, if s'≤t' then Ω.extend s' else Ω.extend t') ∘ (λ s, (1 - real.cos (2*real.pi*s))/2),
-    per' :=
-    begin
-      intros s,
-      suffices h : (λ s, (1 - real.cos (2*real.pi*s))/2) (s+1) = (λ s, (1 - real.cos (2*real.pi*s))/2) s,
-      { delta function.comp,
-        rw h },
-      simp only [mul_add, mul_one, real.cos_add_two_pi],
-    end },
+  let γ := loop.round_trip_family (Ω₁.trans Ω₀),
   refine ⟨γ, _, _, _, _, _⟩,
-  { apply continuous.continuous_on,
-    have h₁ : continuous (λ (s : ℝ × ℝ), (1 - real.cos (2 * real.pi * s.snd)) / 2) :=
-      (continuous_mul_right _).comp ((continuous_const.sub continuous_id).comp $ 
-        real.continuous_cos.comp $ (continuous_mul_left _).comp continuous_snd),
-    have h₂ : continuous (λ (a : ℝ × ℝ), ↑(proj_I a.fst)) :=
-      continuous_subtype_coe.comp (continuous_proj_I.comp continuous_fst),
-    simp only [γ, has_uncurry.uncurry, coe_fn, has_coe_to_fun.coe, mul_one, comp_app],
-    refine continuous_if _ (Ω.continuous_extend.comp h₁) (Ω.continuous_extend.comp h₂),
-    rintros ⟨a, b⟩ hab,
-    have := frontier_le_subset_eq h₁ h₂ hab,
-    simp only [mem_set_of_eq] at this,
-    rw this },
-  { intros t,
-    simp [γ, has_coe_to_fun.coe, coe_fn, ← subtype.val_eq_coe, (proj_I t).2.1] },
-  { unfold_coes,
-    intros s,
-    simp only [γ, proj_I, dif_pos, path.extend_zero, comp_app, subtype.coe_mk],
-    split_ifs with h,
-    { have : real.cos (2 * real.pi * s) = 1 := le_antisymm (real.cos_le_one _) (by linarith [h]),
-      simp only [this, path.extend_zero, zero_div, sub_self]},
-    { refl } },
-  { rintros t ⟨ht₀, ht₁⟩ s,
-    simp only [has_coe_to_fun.coe, coe_fn, γ],
-    rw [comp_app, ← apply_ite],
-    have : ∀ t, Ω.extend t ∈ O,
-    { rwa [← range_subset_iff, Ω.extend_range, Ω₁.trans_range, union_subset_iff, 
-            eq_true_intro hΩ₀.right, and_true, range_subset_iff] },
-    refine this _ },
+  { exact loop.round_trip_family_continuous.continuous_on },
+  { exact loop.round_trip_family_based_at },
+  { intro s,
+    simp only [γ, loop.round_trip_family_zero],
+    refl },
+  { have : range (Ω₁.trans Ω₀) ⊆ O,
+    { rw path.trans_range,
+      refine union_subset _ hΩ₀.2,
+      rwa range_subset_iff },
+    rintros t ⟨ht₀, ht₁⟩,
+    rw ← range_subset_iff,
+    apply trans _ this,
+    simp only [γ, loop.round_trip_family, loop.round_trip_range, path.portion_range] },
   { rw loop.surrounds_iff_range_subset_range,
     refine ⟨p, w, h, _⟩,
+    simp only [γ, loop.round_trip_family_one, loop.round_trip_range, path.trans_range],
     rw range_subset_iff,
     intro i,
-    unfold_coes,
-    suffices h : p i ∈ range Ω.extend, 
-    { have hproj : (proj_I 1 : ℝ) = 1,
-      { simp [proj_I, not_le_of_lt zero_lt_one, le_refl 1] },
-      have hcos : I ⊆ range (λ (s : ℝ), (1 - real.cos (2 * real.pi * s)) / 2),
-      { rintros x ⟨h₀, h₁⟩,
-        rw mem_range,
-        rcases @real.exists_cos_eq (1-2*x) ⟨by linarith, by linarith⟩ with ⟨y, ⟨hy₀, hy₁⟩, hxy⟩,
-        use (2*real.pi)⁻¹ * y,
-        rw mul_inv_cancel_left';
-        linarith [real.pi_pos] },
-      simp only [γ, range_comp, hproj, mem_image, path.extend_one],
-      rcases h with ⟨x, hx⟩,
-      use [proj_I x, hcos (proj_I x).2],
-      have : (proj_I x : ℝ) ∈ I := (proj_I x).2,
-      simpa only [this.right, Ω.extend_extends this, if_true, subtype.coe_eta], },
-    simp only [Ω.extend_range, Ω, path.trans_range],
     right,
     exact hΩ₀.1 i }
 end

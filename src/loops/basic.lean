@@ -2,6 +2,7 @@ import analysis.normed_space.finite_dimension
 import analysis.calculus.times_cont_diff
 import measure_theory.set_integral
 import to_mathlib
+import path_manip
 
 import has_uncurry
 
@@ -71,6 +72,9 @@ variables {E F}
 
 namespace loop
 
+@[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop F}, (γ₁ : ℝ → F) = γ₂ → γ₁ = γ₂
+| ⟨x, h1⟩ ⟨.(x), h2⟩ rfl := rfl
+
 /-- Periodicity of loops restated in terms of the function coercion. -/
 lemma per (γ : loop F) : ∀ t, γ (t + 1) = γ t :=
 loop.per' γ
@@ -79,8 +83,6 @@ loop.per' γ
 noncomputable
 def average [measurable_space F] [borel_space F] (γ : loop F) : F := ∫ x in Icc 0 1, (γ x)
 
-/-- Create a loop from a path whose source and target are the same.
-    This is currently *not* used. -/
 noncomputable
 def of_path {x : F} (γ : path x x) : loop F :=
 { to_fun := λ t, γ.extend (fract t),
@@ -116,6 +118,71 @@ begin
       simp only [this, γ.extend_extends t.2],
       congr',
       rw subtype.ext_iff_val } }
-end 
+end
+
+lemma of_path_continuous {x : F} (γ : path x x) : continuous (of_path γ) :=
+begin
+  simp only [has_coe_to_fun.coe, coe_fn, of_path],
+  apply γ.continuous_extend.continuous_on.comp_fract,
+  rw [γ.extend_zero, γ.extend_one]
+end
+
+lemma of_path_continuous_family {x : F} (γ : ℝ → path x x) (h : continuous ↿γ) : 
+  continuous ↿(λ s, of_path $ γ s) :=
+begin
+  simp only [of_path, has_uncurry.uncurry, has_coe_to_fun.coe, coe_fn],
+  suffices key : continuous (λ (p : ℝ × ℝ), γ p.fst ⟨fract p.snd, _⟩),
+  { convert key,
+    ext p,
+    exact (γ p.fst).extend_extends ⟨fract_nonneg p.snd, (fract_lt_one p.snd).le⟩ },
+  change continuous ((λ (p : ℝ × I), γ p.1 p.2) ∘ (λ (p : ℝ × ℝ), ⟨p.1, ⟨fract p.2, _⟩⟩)),
+  sorry,
+
+  -- This seems trivial but I'm struggling :(
+end
+
+noncomputable
+def round_trip {x y : F} (γ : path x y) : loop F :=
+of_path (γ.trans γ.symm)
+
+lemma round_trip_range {x y : F} {γ : path x y} : range (round_trip γ) = range γ :=
+by simp [round_trip, of_path_range, path.trans_range, path.symm_range]
+
+lemma round_trip_based_at {x y : F} {γ : path x y} : round_trip γ 0 = x :=
+begin
+  unfold_coes, 
+  rw [round_trip, of_path], 
+  simp [fract_zero]
+end
+
+lemma round_trip_continuous {x y : F} (γ : path x y) : continuous (round_trip γ) :=
+of_path_continuous _
+
+noncomputable
+def round_trip_family {x y : F} (γ : path x y) : ℝ → loop F :=
+λ t, round_trip (γ.portion t)
+
+lemma round_trip_family_continuous {x y : F} {γ : path x y} : continuous ↿(round_trip_family γ) :=
+of_path_continuous_family _ 
+  (path.trans_continuous_family _ γ.portion_continuous_family _ $
+    path.symm_continuous_family _ γ.portion_continuous_family)
+
+lemma round_trip_family_based_at {x y : F} {γ : path x y} : ∀ t, (round_trip_family γ) t 0 = x :=
+λ t, round_trip_based_at
+
+lemma round_trip_family_zero {x y : F} {γ : path x y} : (round_trip_family γ) 0 = of_path (path.refl x) :=
+begin
+  simp only [round_trip_family, round_trip, path.portion_zero, of_path],
+  ext z,
+  congr,
+  ext t,
+  simp [path.refl_symm]
+end
+
+lemma round_trip_family_one {x y : F} {γ : path x y} : (round_trip_family γ) 1 = round_trip γ :=
+begin
+  simp only [round_trip_family, round_trip, path.portion_one],
+  refl
+end
 
 end loop

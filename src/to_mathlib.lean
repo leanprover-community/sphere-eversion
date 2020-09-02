@@ -1,4 +1,5 @@
 import data.real.pi
+import has_uncurry
 
 open set function finite_dimensional real
 open_locale topological_space
@@ -29,126 +30,59 @@ begin
     exact ⟨y, hy⟩ }
 end
 
-lemma path.extend_extends {X : Type*} [topological_space X] {a b : X}
-  (γ : path a b) {t : ℝ} (ht : t ∈ (Icc 0 1 : set ℝ)) : γ.extend t = γ ⟨t, ht⟩ :=
-I_extend_extends γ.to_fun ht
+lemma floor_eq_on_Ico (n : ℤ) : ∀ x ∈ (Ico n (n+1) : set ℝ), (n : ℝ) = floor x :=
+λ x ⟨h₀, h₁⟩, by exact_mod_cast (floor_eq_iff.mpr ⟨h₀, h₁⟩).symm
 
-lemma path.extend_extends' {X : Type*} [topological_space X] {a b : X}
-  (γ : path a b) (t : (Icc 0 1 : set ℝ)) : γ.extend ↑t = γ t :=
-by {convert γ.extend_extends t.2, rw subtype.ext_iff_val}
+lemma continuous_on_floor (n : ℤ) : continuous_on (λ x, floor x : ℝ → ℝ) (Ico n (n+1) : set ℝ) :=
+(continuous_on_congr $ floor_eq_on_Ico n).mp continuous_on_const
 
-lemma path.extend_range {X : Type*} [topological_space X] {a b : X}
-  (γ : path a b) : range γ.extend = range γ :=
-I_extend_range γ.to_fun 
-
-lemma path.trans_range {X : Type*} [topological_space X] {a b c : X}
-  (γ₁ : path a b) (γ₂ : path b c) : range (γ₁.trans γ₂) = range γ₁ ∪ range γ₂ :=
+lemma tendsto_floor_left (n : ℤ) : filter.tendsto (λ x, floor x : ℝ → ℝ) (𝓝[Iio n] n) (𝓝[Iic (n-1)] (n-1)) :=
 begin
-  rw path.trans,
-  apply eq_of_subset_of_subset,
-  { rintros x ⟨⟨t, ht0, ht1⟩, hxt⟩,
-    by_cases h : t ≤ 1/2,
-    { left,
-      use [2*t, ⟨by linarith, by linarith⟩],
-      rw ← γ₁.extend_extends,
-      unfold_coes at hxt,
-      simp only [h, comp_app, if_true] at hxt,
-      exact hxt },
-    { right,
-      use [2*t-1, ⟨by linarith, by linarith⟩],
-      rw ← γ₂.extend_extends,
-      unfold_coes at hxt,
-      simp only [h, comp_app, if_false] at hxt,
-      exact hxt } },
-  { rintros x (⟨⟨t, ht0, ht1⟩, hxt⟩ | ⟨⟨t, ht0, ht1⟩, hxt⟩),
-    { use ⟨t/2, ⟨by linarith, by linarith⟩⟩,
-      unfold_coes,
-      have : t/2 ≤ 1/2 := by linarith,
-      simp only [this, comp_app, if_true],
-      ring,
-      rwa γ₁.extend_extends },
-    { by_cases h : t = 0,
-      { use ⟨1/2, ⟨by linarith, by linarith⟩⟩,
-        unfold_coes,
-        simp only [h, comp_app, if_true, le_refl, mul_one_div_cancel (@two_ne_zero ℝ _)],
-        rw γ₁.extend_one,
-        rwa [← γ₂.extend_extends, h, γ₂.extend_zero] at hxt },
-      { use ⟨(t+1)/2, ⟨by linarith, by linarith⟩⟩,
-        unfold_coes,
-        change t ≠ 0 at h,
-        have ht0 := lt_of_le_of_ne ht0 h.symm,
-        have : ¬ (t+1)/2 ≤ 1/2 := by {rw not_le, linarith},
-        simp only [comp_app, if_false, this],
-        ring,
-        rwa γ₂.extend_extends } } }
+  rw ← nhds_within_Ico_eq_nhds_within_Iio (sub_one_lt (n : ℝ)),
+  convert (tendsto_nhds_within_congr $ floor_eq_on_Ico (n-1)) 
+    (tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ tendsto_const_nhds 
+      (filter.eventually_of_forall (λ _, mem_Iic.mpr $ le_refl _)));
+  norm_cast,
+  ring
 end
 
-private lemma exists_path_through_family_aux
-  {X : Type*} [topological_space X] {s : set X} (h : is_path_connected s) (n : ℕ)
-  (p : ℕ → X) (hp : ∀ i ≤ n, p i ∈ s) : ∃ γ : path (p 0) (p n), (∀ i ≤ n, p i ∈ range γ) ∧ (range γ ⊆ s) :=
+lemma tendsto_floor_left' (n : ℤ) : filter.tendsto (λ x, floor x : ℝ → ℝ) (𝓝[Iio n] n) (𝓝 (n-1)) :=
 begin
-  induction n with n hn,
-  { use (λ _, p 0),
-    { continuity },
-    { split,
-      { rintros i hi, rw nat.le_zero_iff.mp hi, exact ⟨0, rfl⟩ },
-      { rw range_subset_iff, rintros x, exact hp 0 (le_refl _) } } },
-  { rcases hn (λ i hi, hp i $ nat.le_succ_of_le hi) with ⟨γ₀, hγ₀⟩,
-    rcases h.joined_in (p n) (p $ n+1) (hp n n.le_succ) (hp (n+1) $ le_refl _) with ⟨γ₁, hγ₁⟩,
-    let γ : path (p 0) (p $ n+1) := γ₀.trans γ₁,
-    use γ,
-    have range_eq : range γ = range γ₀ ∪ range γ₁ := γ₀.trans_range γ₁,
-    split, 
-    { rintros i hi,
-      by_cases hi' : i ≤ n,
-      { rw range_eq,  
-        left,
-        exact hγ₀.1 i hi' },
-      { rw [not_le, ← nat.succ_le_iff] at hi',
-        have : i = n.succ := by linarith,
-        rw this,
-        use 1,
-        exact γ.target } },
-    { rw range_eq,
-      apply union_subset hγ₀.2,
-      rw range_subset_iff,
-      exact hγ₁ } }
+  rw ← nhds_within_univ,
+  exact tendsto_nhds_within_mono_right (subset_univ _) (tendsto_floor_left n),
 end
 
-lemma is_path_connected.exists_path_through_family
-  {X : Type*} [topological_space X] {n : ℕ} {s : set X} (h : is_path_connected s) 
-  (p : fin (n+1) → X) (hp : ∀ i, p i ∈ s) : ∃ γ : path (p 0) (p n), (∀ i, p i ∈ range γ) ∧ (range γ ⊆ s) :=
+lemma continuous_on_fract (n : ℤ) : continuous_on (fract : ℝ → ℝ) (Ico n (n+1) : set ℝ) :=
+continuous_on_id.sub (continuous_on_floor n)
+
+lemma tendsto_fract_left (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Iio n] n) (𝓝[Iio 1] 1) :=
 begin
-  let p' : ℕ → X := λ k, if h : k < n+1 then p ⟨k, h⟩ else p ⟨0, n.zero_lt_succ⟩,
-  have hpp' : ∀ k < n+1, p k = p' k,
-  { intros k hk, simp only [p', hk, dif_pos], congr, ext, rw fin.coe_val_of_lt hk },
-  have := exists_path_through_family_aux h n p'
-  begin
-    intros i hi,
-    simp [p', nat.lt_succ_of_le hi, hp]
-  end,
-  rcases this with ⟨γ, hγ⟩,
-  use γ.cast (hpp' 0 n.zero_lt_succ) (hpp' n n.lt_succ_self),
-  simp only [γ.cast_coe],
-  refine and.intro _ hγ.2,
-  rintros ⟨i, hi⟩,
-  convert hγ.1 i (nat.le_of_lt_succ hi), rw ← hpp' i hi,
-  congr,
-  ext,
-  rw fin.coe_val_of_lt hi
+  refine tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ _ (filter.eventually_of_forall fract_lt_one),
+  convert (tendsto_nhds_within_of_tendsto_nhds filter.tendsto_id).sub (tendsto_floor_left' n),
+  norm_cast,
+  ring
 end
 
-notation `I` := (Icc 0 1 : set ℝ)
-
-lemma is_path_connected.exists_path_through_family'
-  {X : Type*} [topological_space X] {n : ℕ} {s : set X} (h : is_path_connected s) 
-  (p : fin (n+1) → X) (hp : ∀ i, p i ∈ s) :
-  ∃ (γ : path (p 0) (p n)) (t : fin (n + 1) → I), (∀ t, γ t ∈ s) ∧ ∀ i, γ (t i) = p i :=
+lemma continuous_on.comp_fract {α : Type*} [topological_space α] {f : ℝ → α} 
+  (h : continuous_on f (Icc 0 1)) (hf : f 0 = f 1) : continuous (f ∘ fract) :=
 begin
-  rcases h.exists_path_through_family p hp with ⟨γ, hγ⟩,
-  rcases hγ with ⟨h₁, h₂⟩,
-  simp only [range, mem_set_of_eq] at h₁,
-  rw range_subset_iff at h₂,
-  choose! t ht using h₁,
-  exact ⟨γ, t, h₂, ht⟩
+  rw continuous_iff_continuous_at,
+  intro x,
+  by_cases hx : x = floor x,
+  { rw [hx,continuous_at_iff_continuous_left'_right', 
+        ← continuous_within_at_Ioo_iff_Ioi (lt_add_one (floor x : ℝ))],
+    split,
+    { simp only [continuous_within_at, hf, fract_coe, comp_app],
+      refine filter.tendsto.comp _ (tendsto_fract_left _), 
+      rw ← nhds_within_Ioo_eq_nhds_within_Iio real.zero_lt_one,
+      exact tendsto_nhds_within_mono_left (Ioo_subset_Icc_self) (h 1 ⟨zero_le_one, le_refl _⟩) },
+    { exact (h (fract _) ⟨fract_nonneg _, (fract_lt_one _).le⟩).comp 
+        ((continuous_on_fract _ _ (left_mem_Ico.mpr $ lt_add_one _)).mono Ioo_subset_Ico_self) 
+        (λ x hx, ⟨fract_nonneg _, (fract_lt_one _).le⟩) } },
+  { have : x ∈ Ioo (floor x : ℝ) ((floor x : ℝ) + 1),
+      from ⟨lt_of_le_of_ne (floor_le x) (ne.symm hx), lt_floor_add_one _⟩,
+    exact ((h _ ⟨fract_nonneg _, (fract_lt_one _).le⟩).comp 
+              ((continuous_on_fract _ _ (Ioo_subset_Ico_self this)).mono Ioo_subset_Ico_self)
+              (λ x hx, ⟨fract_nonneg _, (fract_lt_one _).le⟩)).continuous_at 
+            (Ioo_mem_nhds this.1 this.2) }
 end
