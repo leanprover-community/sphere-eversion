@@ -36,6 +36,25 @@ lemma floor_eq_on_Ico (n : ℤ) : ∀ x ∈ (Ico n (n+1) : set ℝ), (n : ℝ) =
 lemma continuous_on_floor (n : ℤ) : continuous_on (λ x, floor x : ℝ → ℝ) (Ico n (n+1) : set ℝ) :=
 (continuous_on_congr $ floor_eq_on_Ico n).mp continuous_on_const
 
+lemma tendsto_floor_right' (n : ℤ) : filter.tendsto (λ x, floor x : ℝ → ℝ) (𝓝[Ici n] n) (𝓝 n) :=
+begin
+  rw ← nhds_within_Ico_eq_nhds_within_Ici (lt_add_one (n : ℝ)),
+  convert ← (continuous_on_floor _ _ (left_mem_Ico.mpr $ lt_add_one _)).tendsto,
+  rw floor_eq_iff,
+  split; linarith
+end
+
+lemma tendsto_floor_right (n : ℤ) : filter.tendsto (λ x, floor x : ℝ → ℝ) (𝓝[Ici n] n) (𝓝[Ici n] n) :=
+tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ (tendsto_floor_right' _) 
+begin
+  refine (eventually_nhds_with_of_forall $ λ x (hx : ↑n ≤ x), _),
+  change ↑n ≤ _,
+  norm_cast,
+  convert ← floor_mono hx,
+  rw floor_eq_iff,
+  split; linarith
+end
+
 lemma tendsto_floor_left (n : ℤ) : filter.tendsto (λ x, floor x : ℝ → ℝ) (𝓝[Iio n] n) (𝓝[Iic (n-1)] (n-1)) :=
 begin
   rw ← nhds_within_Ico_eq_nhds_within_Iio (sub_one_lt (n : ℝ)),
@@ -55,13 +74,24 @@ end
 lemma continuous_on_fract (n : ℤ) : continuous_on (fract : ℝ → ℝ) (Ico n (n+1) : set ℝ) :=
 continuous_on_id.sub (continuous_on_floor n)
 
-lemma tendsto_fract_left (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Iio n] n) (𝓝[Iio 1] 1) :=
+lemma tendsto_fract_left' (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Iio n] n) (𝓝 1) :=
 begin
-  refine tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ _ (filter.eventually_of_forall fract_lt_one),
   convert (tendsto_nhds_within_of_tendsto_nhds filter.tendsto_id).sub (tendsto_floor_left' n),
   norm_cast,
   ring
 end
+
+lemma tendsto_fract_left (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Iio n] n) (𝓝[Iio 1] 1) :=
+tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ (tendsto_fract_left' _) (filter.eventually_of_forall fract_lt_one)
+
+lemma tendsto_fract_right' (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Ici n] n) (𝓝 0) :=
+begin
+  convert (tendsto_nhds_within_of_tendsto_nhds filter.tendsto_id).sub (tendsto_floor_right' n),
+  ring
+end
+
+lemma tendsto_fract_right (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Ici n] n) (𝓝[Ici 0] 0) :=
+tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ (tendsto_fract_right' _) (filter.eventually_of_forall fract_nonneg)
 
 lemma continuous_on.comp_fract {α : Type*} [topological_space α] {f : ℝ → α} 
   (h : continuous_on f (Icc 0 1)) (hf : f 0 = f 1) : continuous (f ∘ fract) :=

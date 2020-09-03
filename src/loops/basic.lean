@@ -131,15 +131,41 @@ lemma of_path_continuous_family {x : F} (γ : ℝ → path x x) (h : continuous 
   continuous ↿(λ s, of_path $ γ s) :=
 begin
   simp only [of_path, has_uncurry.uncurry, has_coe_to_fun.coe, coe_fn],
-  suffices key : continuous (λ (p : ℝ × ℝ), γ p.fst ⟨fract p.snd, _⟩),
-  { convert key,
-    ext p,
-    exact (γ p.fst).extend_extends ⟨fract_nonneg p.snd, (fract_lt_one p.snd).le⟩ },
-  change continuous ((λ (p : ℝ × I), γ p.1 p.2) ∘ (λ (p : ℝ × ℝ), ⟨p.1, ⟨fract p.2, _⟩⟩)),
-  sorry,
-
-  -- This seems trivial but I'm struggling :(
+  change continuous ((↿γ) ∘ (prod.map id (proj_I ∘ fract))),
+  rw continuous_iff_continuous_at at ⊢ h,
+  rintro ⟨s, t⟩,
+  by_cases ht : t = floor t,
+  { rw ht,
+    rw ← continuous_within_at_univ,
+    have : (univ : set (ℝ × ℝ)) ⊆ (set.prod univ (Iio $ floor t)) ∪ (set.prod univ (Ici $ floor t)),
+    { rintros p _,
+      rw ← prod_union,
+      exact ⟨true.intro, lt_or_le _ _⟩ },
+    refine continuous_within_at.mono _ this,
+    refine continuous_within_at.union _ _,
+    { simp only [continuous_within_at, fract_coe, proj_I_zero, nhds_within_prod_eq, 
+                  nhds_within_univ, id.def, comp_app, prod.map_mk],
+      have : ↿γ (s, 0) = ↿γ (s, (1:I)),
+        by simp [has_uncurry.uncurry],
+      rw this,
+      refine (h _).tendsto.comp _,
+      rw [nhds_prod_eq,← proj_I_one],
+      exact filter.tendsto_id.prod_map
+              (continuous_proj_I.continuous_at.tendsto.comp (tendsto_fract_left' _)) },
+    { simp only [continuous_within_at, fract_coe, proj_I_zero, nhds_within_prod_eq,
+                  nhds_within_univ, id.def, comp_app, prod.map_mk],
+      refine (h _).tendsto.comp _,
+      rw [nhds_prod_eq,← proj_I_zero],
+      exact filter.tendsto_id.prod_map
+              (continuous_proj_I.continuous_at.tendsto.comp (tendsto_fract_right' _)) } },
+  { have : t ∈ Ioo (floor t : ℝ) ((floor t : ℝ) + 1),
+      from ⟨lt_of_le_of_ne (floor_le t) (ne.symm ht), lt_floor_add_one _⟩,
+    exact (h _).comp (continuous_at_id.prod_map $ continuous_proj_I.continuous_at.comp $
+            ((continuous_on_fract (floor t) t (Ioo_subset_Ico_self this)).mono 
+              Ioo_subset_Ico_self).continuous_at (Ioo_mem_nhds this.1 this.2)) }
 end
+
+#check filter.tendsto.prod_map
 
 noncomputable
 def round_trip {x y : F} (γ : path x y) : loop F :=

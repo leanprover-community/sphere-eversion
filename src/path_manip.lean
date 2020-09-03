@@ -6,6 +6,10 @@ open_locale topological_space
 
 notation `I` := (Icc 0 1 : set ℝ)
 
+lemma proj_I_zero : proj_I 0 = 0 := proj_I_I (⟨le_refl 0, zero_le_one⟩)
+
+lemma proj_I_one : proj_I 1 = 1 := proj_I_I (⟨zero_le_one, le_refl 1⟩)
+
 @[ext] protected lemma path.ext {X : Type*} [topological_space X] {x y : X} : ∀ {γ₁ γ₂ : path x y}, (γ₁ : I → X) = γ₂ → γ₁ = γ₂
 | ⟨x, h11, h12, h13⟩ ⟨.(x), h21, h22, h23⟩ rfl := rfl
 
