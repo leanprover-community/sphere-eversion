@@ -245,19 +245,20 @@ begin
   simp [this.2, proj_I_I this]
 end
 
-lemma path.symm_continuous_family {X : Type*} [topological_space X] {a b : ℝ → X}
-  (γ : Π (t : ℝ), path (a t) (b t)) (h : continuous ↿γ) :
+lemma path.symm_continuous_family {X ι : Type*} [topological_space X] [topological_space ι] 
+  {a b : ι → X} (γ : Π (t : ι), path (a t) (b t)) (h : continuous ↿γ) :
   continuous ↿(λ t, (γ t).symm) :=
 h.comp (continuous_id.prod_map continuous_I_symm)
 
-lemma path.continuous_uncurry_extend_of_continuous_family {X : Type*} [topological_space X] 
-  {a b : ℝ → X}  (γ : Π (t : ℝ), path (a t) (b t)) (h : continuous ↿γ) :
+lemma path.continuous_uncurry_extend_of_continuous_family {X ι : Type*} [topological_space X] 
+  [topological_space ι] {a b : ι → X}  (γ : Π (t : ι), path (a t) (b t)) (h : continuous ↿γ) :
   continuous ↿(λ t, (γ t).extend) :=
 h.comp (continuous_id.prod_map continuous_proj_I)
 
-lemma path.trans_continuous_family {X : Type*} [topological_space X] {a b c : ℝ → X}
-  (γ₁ : Π (t : ℝ), path (a t) (b t)) (h₁ : continuous ↿γ₁)
-  (γ₂ : Π (t : ℝ), path (b t) (c t)) (h₂ : continuous ↿γ₂) :
+lemma path.trans_continuous_family {X ι : Type*} [topological_space X] [topological_space ι]
+  {a b c : ι → X} 
+  (γ₁ : Π (t : ι), path (a t) (b t)) (h₁ : continuous ↿γ₁)
+  (γ₂ : Π (t : ι), path (b t) (c t)) (h₂ : continuous ↿γ₂) :
   continuous ↿(λ t, (γ₁ t).trans (γ₂ t)) :=
 begin
   have h₁' := path.continuous_uncurry_extend_of_continuous_family γ₁ h₁,
@@ -269,9 +270,9 @@ begin
       continuous_const hst,
     simp only [mem_set_of_eq, comp_app] at this,
     simp [this, mul_inv_cancel (@two_ne_zero ℝ _)] },
-  { change continuous ((λ p : ℝ × ℝ, (γ₁ p.1).extend p.2) ∘ (prod.map id (λ x, 2*x : I → ℝ))),
+  { change continuous ((λ p : ι × ℝ, (γ₁ p.1).extend p.2) ∘ (prod.map id (λ x, 2*x : I → ℝ))),
     exact h₁'.comp (continuous_id.prod_map $ continuous_const.mul continuous_subtype_coe) },
-  { change continuous ((λ p : ℝ × ℝ, (γ₂ p.1).extend p.2) ∘ (prod.map id (λ x, 2*x - 1 : I → ℝ))),
+  { change continuous ((λ p : ι × ℝ, (γ₂ p.1).extend p.2) ∘ (prod.map id (λ x, 2*x - 1 : I → ℝ))),
     exact h₂'.comp (continuous_id.prod_map $ 
       (continuous_const.mul continuous_subtype_coe).sub continuous_const) },
 end

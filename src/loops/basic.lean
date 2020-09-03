@@ -156,10 +156,10 @@ begin
   rw [γ.extend_zero, γ.extend_one]
 end
 
-lemma of_path_continuous_family {x : F} (γ : ℝ → path x x) (h : continuous ↿γ) :
-  continuous ↿(λ s, of_path $ γ s) :=
+lemma of_path_continuous_family {ι : Type*} [topological_space ι] {x : F} (γ : ι → path x x)
+  (h : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
 begin
-  change continuous (λ p : ℝ × ℝ, (λ s, (γ s).extend) p.1 (fract p.2)),
+  change continuous (λ p : ι × ℝ, (λ s, (γ s).extend) p.1 (fract p.2)),
   apply continuous_on.comp_fract',
   { exact (h.comp (continuous_id.prod_map continuous_proj_I)).continuous_on },
   simp
