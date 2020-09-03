@@ -32,7 +32,6 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
-set_option profiler true
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
   (hsf : f ∈ convex_hull O) (hb : b ∈ O) : 
   ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧ 

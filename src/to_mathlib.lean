@@ -93,8 +93,10 @@ end
 lemma tendsto_fract_right (n : ℤ) : filter.tendsto (fract : ℝ → ℝ) (𝓝[Ici n] n) (𝓝[Ici 0] 0) :=
 tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ (tendsto_fract_right' _) (filter.eventually_of_forall fract_nonneg)
 
+local notation `I` := (Icc 0 1 : set ℝ)
+
 lemma continuous_on.comp_fract {α : Type*} [topological_space α] {f : ℝ → α} 
-  (h : continuous_on f (Icc 0 1)) (hf : f 0 = f 1) : continuous (f ∘ fract) :=
+  (h : continuous_on f I) (hf : f 0 = f 1) : continuous (f ∘ fract) :=
 begin
   rw continuous_iff_continuous_at,
   intro x,
@@ -115,4 +117,46 @@ begin
               ((continuous_on_fract _ _ (Ioo_subset_Ico_self this)).mono Ioo_subset_Ico_self)
               (λ x hx, ⟨fract_nonneg _, (fract_lt_one _).le⟩)).continuous_at 
             (Ioo_mem_nhds this.1 this.2) }
+end
+
+lemma continuous_on.comp_fract' {α β : Type*} [topological_space α] [topological_space β] {f : β → ℝ → α}
+  (h : continuous_on ↿f $ (univ : set β).prod I) (hf : ∀ s, f s 0 = f s 1) : continuous (λ st : β × ℝ, f st.1 $ fract st.2) :=
+begin
+  change continuous ((↿f) ∘ (prod.map id (fract))),
+  rw continuous_iff_continuous_at,
+  rintro ⟨s, t⟩,
+  by_cases ht : t = floor t,
+  { rw ht,
+    rw ← continuous_within_at_univ,
+    have : (univ : set (β × ℝ)) ⊆ (set.prod univ (Iio $ floor t)) ∪ (set.prod univ (Ici $ floor t)),
+    { rintros p _,
+      rw ← prod_union,
+      exact ⟨true.intro, lt_or_le _ _⟩ },
+    refine continuous_within_at.mono _ this,
+    refine continuous_within_at.union _ _,
+    { simp only [continuous_within_at, fract_coe, nhds_within_prod_eq, 
+                  nhds_within_univ, id.def, comp_app, prod.map_mk],
+      have : ↿f (s, 0) = ↿f (s, (1:I)),
+        by simp [has_uncurry.uncurry, hf],
+      rw this,
+      refine (h _ ⟨true.intro, by exact_mod_cast right_mem_Icc.mpr zero_le_one⟩).tendsto.comp _,
+      rw [nhds_within_prod_eq, nhds_within_univ],
+      norm_cast,
+      rw nhds_within_Icc_eq_nhds_within_Iic real.zero_lt_one,
+      exact filter.tendsto_id.prod_map 
+        (tendsto_nhds_within_mono_right Iio_subset_Iic_self $ tendsto_fract_left _) },
+    { simp only [continuous_within_at, fract_coe, nhds_within_prod_eq,
+                  nhds_within_univ, id.def, comp_app, prod.map_mk],
+      refine (h _ ⟨true.intro, by exact_mod_cast left_mem_Icc.mpr zero_le_one⟩).tendsto.comp _,
+      rw [nhds_within_prod_eq, nhds_within_univ, nhds_within_Icc_eq_nhds_within_Ici real.zero_lt_one],
+      exact filter.tendsto_id.prod_map (tendsto_fract_right _) } },
+  { have : t ∈ Ioo (floor t : ℝ) ((floor t : ℝ) + 1),
+      from ⟨lt_of_le_of_ne (floor_le t) (ne.symm ht), lt_floor_add_one _⟩,
+    refine (h ((prod.map _ fract) _) ⟨trivial, ⟨fract_nonneg _, (fract_lt_one _).le⟩⟩).tendsto.comp _,
+    simp only [nhds_prod_eq, nhds_within_prod_eq, nhds_within_univ, id.def, prod.map_mk],
+    exact continuous_at_id.tendsto.prod_map 
+            (tendsto_nhds_within_of_tendsto_nhds_of_eventually_within _ 
+              (((continuous_on_fract _ _ (Ioo_subset_Ico_self this)).mono 
+                  Ioo_subset_Ico_self).continuous_at (Ioo_mem_nhds this.1 this.2)) 
+              (filter.eventually_of_forall (λ x, ⟨fract_nonneg _, (fract_lt_one _).le⟩)) ) }
 end

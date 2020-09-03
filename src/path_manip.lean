@@ -17,19 +17,19 @@ lemma proj_I_one : proj_I 1 = 1 := proj_I_I (⟨zero_le_one, le_refl 1⟩)
 instance has_uncurry_path {X α : Type*} [topological_space X] {x y : α → X} : 
 has_uncurry (Π (a : α), path (x a) (y a)) (α × I) X := ⟨λ φ p, φ p.1 p.2⟩
 
-lemma path.extend_extends {X : Type*} [topological_space X] {a b : X}
+@[simp] lemma path.extend_extends {X : Type*} [topological_space X] {a b : X}
   (γ : path a b) {t : ℝ} (ht : t ∈ (Icc 0 1 : set ℝ)) : γ.extend t = γ ⟨t, ht⟩ :=
 I_extend_extends γ.to_fun ht
 
-lemma path.extend_extends' {X : Type*} [topological_space X] {a b : X}
+@[simp] lemma path.extend_extends' {X : Type*} [topological_space X] {a b : X}
   (γ : path a b) (t : (Icc 0 1 : set ℝ)) : γ.extend ↑t = γ t :=
 by {convert γ.extend_extends t.2, rw subtype.ext_iff_val}
 
-lemma path.extend_range {X : Type*} [topological_space X] {a b : X}
+@[simp] lemma path.extend_range {X : Type*} [topological_space X] {a b : X}
   (γ : path a b) : range γ.extend = range γ :=
 I_extend_range γ.to_fun 
 
-lemma path.refl_range {X : Type*} [topological_space X] {a : X} :
+@[simp] lemma path.refl_range {X : Type*} [topological_space X] {a : X} :
   range (path.refl a) = {a} :=
 by simp [path.refl, has_coe_to_fun.coe, coe_fn]
 
