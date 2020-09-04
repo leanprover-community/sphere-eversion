@@ -4,32 +4,6 @@ import has_uncurry
 open set function finite_dimensional real
 open_locale topological_space
 
-lemma real.exists_cos_eq : (Icc (-1) 1 : set ℝ) ⊆ real.cos '' Icc 0 (real.pi) :=
-by convert intermediate_value_Icc' (le_of_lt real.pi_pos)
-  real.continuous_cos.continuous_on; simp only [real.cos_pi, real.cos_zero]
-
-lemma real.cos_range : range cos = (Icc (-1) 1 : set ℝ) :=
-begin
-  ext,
-  split,
-  { rintros ⟨y, hxy⟩,
-    exact hxy ▸ ⟨y.neg_one_le_cos, y.cos_le_one⟩ },
-  { rintros h,
-    rcases real.exists_cos_eq h with ⟨y, _, hy⟩,
-    exact ⟨y, hy⟩ }
-end
-
-lemma real.sin_range : range sin = (Icc (-1) 1 : set ℝ) :=
-begin
-  ext,
-  split,
-  { rintros ⟨y, hxy⟩,
-    exact hxy ▸ ⟨y.neg_one_le_sin, y.sin_le_one⟩ },
-  { rintros h,
-    rcases real.exists_sin_eq h with ⟨y, _, hy⟩,
-    exact ⟨y, hy⟩ }
-end
-
 section floor_fract
 
 variables {α : Type*} [linear_ordered_ring α] [floor_ring α]
@@ -145,7 +119,7 @@ begin
   { rw ht,
     rw ← continuous_within_at_univ,
     have : (univ : set (β × α)) ⊆ (set.prod univ (Iio $ floor t)) ∪ (set.prod univ (Ici $ floor t)),
-    { rintros p _,
+    { rintros p -,
       rw ← prod_union,
       exact ⟨true.intro, lt_or_le _ _⟩ },
     refine continuous_within_at.mono _ this,

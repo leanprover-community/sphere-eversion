@@ -123,7 +123,7 @@ lemma is_path_connected.exists_path_through_family
 begin
   let p' : ℕ → X := λ k, if h : k < n+1 then p ⟨k, h⟩ else p ⟨0, n.zero_lt_succ⟩,
   have hpp' : ∀ k < n+1, p k = p' k,
-  { intros k hk, simp only [p', hk, dif_pos], congr, ext, rw fin.coe_val_of_lt hk },
+  { intros k hk, simp only [p', hk, dif_pos], congr, ext, rw fin.coe_coe_of_lt hk, norm_cast },
   have := exists_path_through_family_aux h n p'
   begin
     intros i hi,
@@ -137,7 +137,8 @@ begin
   convert hγ.1 i (nat.le_of_lt_succ hi), rw ← hpp' i hi,
   congr,
   ext,
-  rw fin.coe_val_of_lt hi
+  rw fin.coe_coe_of_lt hi,
+  norm_cast
 end
 
 lemma is_path_connected.exists_path_through_family'
@@ -265,7 +266,7 @@ begin
   have h₂' := path.continuous_uncurry_extend_of_continuous_family γ₂ h₂,
   simp [has_uncurry.uncurry, has_coe_to_fun.coe, coe_fn, path.trans],
   apply continuous_if _ _ _,
-  { rintros ⟨s, t⟩ hst,
+  { rintros st hst,
     have := frontier_le_subset_eq (continuous_subtype_coe.comp continuous_snd) 
       continuous_const hst,
     simp only [mem_set_of_eq, comp_app] at this,
