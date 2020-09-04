@@ -1,4 +1,6 @@
 import loops.basic
+import data.real.pi
+import tactic.fin_cases
 /-!
 # Surrounding families of loops
 -/
@@ -17,15 +19,54 @@ local notation `I` := Icc (0 : ℝ) 1
 def loop.surrounds (γ : loop F) (x : F) : Prop := 
   ∃ t w : fin (d + 1) → ℝ, surrounding_pts x (γ ∘ t) w
 
+lemma loop.surrounds_iff_range_subset_range (γ : loop F) (x : F) : 
+  γ.surrounds x ↔ ∃ (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ), 
+  surrounding_pts x p w ∧ range p ⊆ range γ :=
+begin
+  split,
+  { exact λ ⟨t, w, h⟩, ⟨(γ ∘ t), w, h, range_comp_subset_range _ _⟩ },
+  { rintros ⟨p, w, h₀, h₁⟩,
+    rw range_subset_iff at h₁,
+    choose t ht using h₁,
+    have hpt : γ ∘ t = p := funext ht,
+    exact ⟨t, w, hpt.symm ▸ h₀⟩ }
+end
 
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
   (hsf : f ∈ convex_hull O) (hb : b ∈ O) : 
   ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧ 
-                    ∀ t, γ t 0 = b ∧
-                    ∀ s, γ 0 s = b ∧
-                    ∀ (t ∈ I) s, γ t s ∈ O ∧
+                    (∀ t, γ t 0 = b) ∧
+                    (∀ s, γ 0 s = b) ∧
+                    (∀ (t ∈ I) s, γ t s ∈ O) ∧
                     (γ 1).surrounds f :=
-sorry
+begin
+  rcases surrounded_of_convex_hull O_op hsf with ⟨p, w, h, hp⟩,
+  rw ← O_op.is_connected_iff_is_path_connected at O_conn,
+  rcases (O_conn.exists_path_through_family p hp) with ⟨Ω₀, hΩ₀⟩,
+  rcases O_conn.joined_in b (p 0) hb (hp 0) with ⟨Ω₁, hΩ₁⟩,
+  let γ := loop.round_trip_family (Ω₁.trans Ω₀),
+  refine ⟨γ, _, _, _, _, _⟩,
+  { exact loop.round_trip_family_continuous.continuous_on },
+  { exact loop.round_trip_family_based_at },
+  { intro s,
+    simp only [γ, loop.round_trip_family_zero],
+    refl },
+  { have : range (Ω₁.trans Ω₀) ⊆ O,
+    { rw path.trans_range,
+      refine union_subset _ hΩ₀.2,
+      rwa range_subset_iff },
+    rintros t ⟨ht₀, ht₁⟩,
+    rw ← range_subset_iff,
+    apply trans _ this,
+    simp only [γ, loop.round_trip_family, loop.round_trip_range, path.portion_range] },
+  { rw loop.surrounds_iff_range_subset_range,
+    refine ⟨p, w, h, _⟩,
+    simp only [γ, loop.round_trip_family_one, loop.round_trip_range, path.trans_range],
+    rw range_subset_iff,
+    intro i,
+    right,
+    exact hΩ₀.1 i }
+end
 
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
 (base : ∀ x t, γ x t 0 = b x)
