@@ -53,19 +53,19 @@ begin
     refl },
   { have : range (Ω₁.trans Ω₀) ⊆ O,
     { rw path.trans_range,
-      refine union_subset _ hΩ₀.2,
+      refine union_subset _ hΩ₀.1,
       rwa range_subset_iff },
     rintros t ⟨ht₀, ht₁⟩,
     rw ← range_subset_iff,
     apply trans _ this,
-    simp only [γ, loop.round_trip_family, loop.round_trip_range, path.portion_range] },
+    simp only [γ, loop.round_trip_family, loop.round_trip_range, path.truncate_range, path.cast_coe] },
   { rw loop.surrounds_iff_range_subset_range,
     refine ⟨p, w, h, _⟩,
     simp only [γ, loop.round_trip_family_one, loop.round_trip_range, path.trans_range],
     rw range_subset_iff,
     intro i,
     right,
-    exact hΩ₀.1 i }
+    exact hΩ₀.2 i }
 end
 
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
