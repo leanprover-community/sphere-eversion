@@ -1,17 +1,16 @@
 import analysis.normed_space.finite_dimension
 import analysis.calculus.times_cont_diff
 import measure_theory.set_integral
-import to_mathlib
-import path_manip
-
-import has_uncurry
+import topology.algebra.floor_ring
 
 /-!
 # Basic definitions and properties of loops
 -/
 
 open set function finite_dimensional
-open_locale big_operators topological_space
+open_locale big_operators topological_space topological_space
+
+local notation `I` := (Icc 0 1 : set ℝ)
 
 def nhds_set {α : Type*} [topological_space α] (s : set α) : filter α :=
 Sup (nhds '' s)
@@ -184,19 +183,20 @@ of_path_continuous _
 
 noncomputable
 def round_trip_family {x y : F} (γ : path x y) : ℝ → loop F :=
-λ t, round_trip (γ.portion t)
+have key : ∀ {t}, x = γ.extend (min 0 t) := λ t, (γ.extend_le_zero $ min_le_left _ _).symm,
+λ t, round_trip ((γ.truncate 0 t).cast key rfl)
 
 lemma round_trip_family_continuous {x y : F} {γ : path x y} : continuous ↿(round_trip_family γ) :=
 of_path_continuous_family _ 
-  (path.trans_continuous_family _ γ.portion_continuous_family _ $
-    path.symm_continuous_family _ γ.portion_continuous_family)
+  (path.trans_continuous_family _ (γ.truncate_const_continuous_family 0) _ $ 
+    path.symm_continuous_family _ $ γ.truncate_const_continuous_family 0)
 
 lemma round_trip_family_based_at {x y : F} {γ : path x y} : ∀ t, (round_trip_family γ) t 0 = x :=
 λ t, round_trip_based_at
 
 lemma round_trip_family_zero {x y : F} {γ : path x y} : (round_trip_family γ) 0 = of_path (path.refl x) :=
 begin
-  simp only [round_trip_family, round_trip, path.portion_zero, of_path],
+  simp only [round_trip_family, round_trip, path.truncate_zero_zero, of_path],
   ext z,
   congr,
   ext t,
@@ -205,7 +205,7 @@ end
 
 lemma round_trip_family_one {x y : F} {γ : path x y} : (round_trip_family γ) 1 = round_trip γ :=
 begin
-  simp only [round_trip_family, round_trip, path.portion_one],
+  simp only [round_trip_family, round_trip, path.truncate_zero_one, of_path],
   refl
 end
 
