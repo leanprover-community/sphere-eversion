@@ -271,6 +271,16 @@ It will be convenient to introduce some more vocabulary.
   point $b$ if $0$ is sent to $b$.
 \end{definition}
 
+The first main task in proving Proposition~\ref{prop:loops} is to construct
+suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local
+families of loops.
+Those will then be reparametrized to get the correct average in the next
+section.
+In this section, we will work only with \emph{continuous} loops.
+This will make constructions easier and we will smooth those loops
+in the end, taking advantage of the fact that $Ω$ and the surrounding
+condition are open.
+
 Thanks to Carathéodory's lemma, constructing \emph{one} such loop
 with values in some open $O$ is easy as soon as $v$ belongs to the
 convex hull of $O$.
@@ -299,6 +309,7 @@ convex hull of $O$.
 
 \begin{proof}
   \uses{lem:int_cvx}
+  \leanok
   Since $O$ is open, \Cref{lem:int_cvx} gives points $p_i$ in $O$
   surrounding $x$.
   Since $O$ is open and connected, it is path connected.
@@ -312,16 +323,6 @@ convex hull of $O$.
   still until $s = 1-t/2$ and then backtracks.
 \end{proof}
 
-
-The first main task in proving Proposition~\ref{prop:loops} is to construct
-suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local
-families of loops.
-Those will then be reparametrized to get the correct average in the next
-section.
-In this section, we will work only with \emph{continuous} loops.
-This will make constructions easier and we will smooth those loops
-in the end, taking advantage of the fact that $Ω$ and the surrounding
-condition are open.
 
 \begin{definition}
   \label{def:family_surrounds}
