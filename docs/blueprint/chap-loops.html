@@ -122,7 +122,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/basic.lean#L79">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/basic.lean#L84">loop.average</a></li>
         </ul>
 
       </div>
@@ -170,7 +170,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/reparametrization.lean#L51">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/reparametrization.lean#L51">exists_loops</a></li>
         </ul>
 
       </div>
@@ -225,7 +225,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/421ed70350b1fc1adb7ac14f4b11e733a59178fb/src/analysis/convex/caratheodory.lean#L190">eq_center_mass_card_le_dim_succ_of_mem_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/92c012574081ec932b7e4f0bf7678612110ce6a6/src/analysis/convex/caratheodory.lean#L190">eq_center_mass_card_le_dim_succ_of_mem_convex_hull</a></li>
         </ul>
 
       </div>
@@ -298,7 +298,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/basic.lean#L32">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/basic.lean#L34">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -331,7 +331,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/int_cvx.lean#L130">eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/int_cvx.lean#L129">eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open</a></li>
         </ul>
 
       </div>
@@ -467,7 +467,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L17">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L19">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -480,6 +480,7 @@
 
   </div>
 </div> </p>
+<p>The first main task in proving Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a> is to construct suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that $Ω$ and the surrounding condition are open. </p>
 <p>Thanks to Carathéodory’s lemma, constructing <em>one</em> such loop with values in some open $O$ is easy as soon as $v$ belongs to the convex hull of $O$. </p>
 <p><div class="lemma_thmwrapper" id="lem:loop_of_hull">
   <div class="lemma_thmheading">
@@ -487,6 +488,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.9</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000024"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -515,7 +517,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L21">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L35">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -550,7 +552,6 @@
    Since $O$ is open, <a href="chap-loops.html#lem:int_cvx">Lemma 1.6</a> gives points $p_i$ in $O$ surrounding $x$. Since $O$ is open and connected, it is path connected. Let $λ \! :[0, 1] → Ω_x$ be a continuous path starting at $b$ and going through the points $p_i$. We can concatenate $λ$ and its opposite to get $γ^1$, say $γ^1(s) = λ((1-\cos 2πs)/2)$. This is a round-trip loop: it back-tracks when it reaches $λ(1)$ at $s = 1/2$. We then define $γ^t$ as the round-trip that stops at $s = t/2$, stays still until $s = 1-t/2$ and then backtracks. 
   </div>
 </div>
-<p>The first main task in proving Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a> is to construct suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that $Ω$ and the surrounding condition are open. </p>
 <p><div class="definition_thmwrapper" id="def:family_surrounds">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -584,7 +585,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L30">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L71">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -641,7 +642,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L42">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L83">local_loops</a></li>
         </ul>
 
       </div>
@@ -701,7 +702,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L56">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L97">satisfied_or_refund</a></li>
         </ul>
 
       </div>
@@ -766,7 +767,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L65">extends_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L106">extends_loops</a></li>
         </ul>
 
       </div>
@@ -831,7 +832,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/surrounding.lean#L75">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/surrounding.lean#L116">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -893,7 +894,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/77d81fd4a13c785fa319e78f7b6232cb01edb20c/src/loops/reparametrization.lean#L43">reparametrization</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0dc6b983f82c761af959c7376f8d927f335b68fe/src/loops/reparametrization.lean#L43">reparametrization</a></li>
         </ul>
 
       </div>
@@ -946,7 +947,6 @@
 
   </div>
 </div>
-
 
 </div>
 
