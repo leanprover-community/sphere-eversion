@@ -68,7 +68,6 @@ lemma quux' (x : V) (t : finset V) (f : V → ℝ) (w : t.sum f = 1) (h : t.cent
   t.center_mass (λ x, r⁻¹ * f x + (1 - r⁻¹) / (t.card)) (λ x, dilation (barycenter t) r x) = x :=
 sorry
 
-def affine_independent (ι : Type*) (f : ι → V) : Prop := sorry
 def set.affine_independent (s : set V) : Prop := sorry
 
 -- TODO if a set is affine_independent, then its dilation about any center with `r ≠ 0` is too.
