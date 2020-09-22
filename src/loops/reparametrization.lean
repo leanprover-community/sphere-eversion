@@ -49,7 +49,7 @@ lemma reparametrization [measurable_space F] [borel_space F]
 sorry
 
 lemma exists_loops [measurable_space F] [borel_space F] 
-  (hU : is_open U) (hK : compact K) (hKU : K ⊆ U) 
+  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U) 
   (hΩ_op : ∀ x ∈ U, is_open (prod.mk x ⁻¹' Ω))
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω)) 
   (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω) 

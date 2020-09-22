@@ -104,7 +104,7 @@ lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
 sorry
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
-  (hK₀ : compact K₀) (hK₁ : compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
+  (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
   {γ₀ γ₁ : E → ℝ → loop F} 
   (h₀ : surrounding_family g b γ₀ U₀) (h₁ : surrounding_family g b γ₁ U₁) :
   ∃ U ∈ nhds_set (K₀ ∪ K₁), ∃ γ : E → ℝ → loop F, 
@@ -114,7 +114,7 @@ sorry
 
 
 lemma exists_surrounding_loops 
-  (hU : is_open U) (hK : compact K) (hKU : K ⊆ U) 
+  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U) 
   (hΩ_op : ∀ x ∈ U, is_open (prod.mk x ⁻¹' Ω))
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω)) 
   (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω) 
