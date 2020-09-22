@@ -70,6 +70,9 @@ instance has_uncurry_loop {α : Type*} : has_uncurry (α → loop F) (α × ℝ)
 
 variables {E F}
 
+def const_loop (f : F) : loop F :=
+⟨λ t, f, by simp⟩
+
 namespace loop
 
 @[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop F}, (γ₁ : ℝ → F) = γ₂ → γ₁ = γ₂
@@ -82,6 +85,9 @@ loop.per' γ
 /-- The average value of a loop. -/
 noncomputable
 def average [measurable_space F] [borel_space F] (γ : loop F) : F := ∫ x in Icc 0 1, (γ x)
+
+def support {X : Type*} [topological_space X] [measurable_space F] [borel_space F] (γ : X → loop F) : set X :=
+closure {x | γ x ≠ const_loop (γ x).average}
 
 lemma add_nat_eq (γ : loop F) (t : ℝ) : ∀ (n : ℕ), γ (t+n) = γ t
 | 0 := (add_zero t).symm ▸ rfl
