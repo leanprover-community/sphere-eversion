@@ -33,6 +33,34 @@ end
 
 end
 
+section interval_integrable
+open set
+
+variables {α : Type*} [decidable_linear_order α] {P : α → Prop} {a b : α}
+
+def interval_oc : α → α → set α := λ a b, Ioc (min a b) (max a b)
+
+lemma forall_interval_oc_iff : 
+  (∀ x ∈ interval_oc a b, P x) ↔ (∀ x ∈ Ioc a b, P x) ∧ (∀ x ∈ Ioc b a, P x) :=
+by { dsimp [interval_oc], cases le_total a b with hab hab ; simp [hab] }
+
+variables {E : Type*} [measurable_space α] {μ : measure α} [normed_group E] 
+
+lemma ae_interval_oc__iff : 
+  (∀ᵐ x ∂μ, x ∈ interval_oc a b → P x) ↔ (∀ᵐ x ∂μ, x ∈ Ioc a b → P x) ∧ (∀ᵐ x ∂μ, x ∈ Ioc b a → P x) :=
+by { dsimp [interval_oc], cases le_total a b with hab hab ; simp [hab] }
+
+variables  [topological_space α] [opens_measurable_space α] [order_closed_topology α]
+
+lemma ae_interval_oc__iff' : (∀ᵐ x ∂μ, x ∈ interval_oc a b → P x) ↔ 
+  (∀ᵐ x ∂ (μ.restrict $ Ioc a b), P x) ∧ (∀ᵐ x ∂ (μ.restrict $ Ioc b a), P x) :=
+begin
+  simp_rw ae_interval_oc__iff,
+  rw [ae_restrict_eq, eventually_inf_principal, ae_restrict_eq, eventually_inf_principal] ;   
+  exact is_measurable_Ioc
+end
+
+end interval_integrable
 
 variables {α : Type*} [measurable_space α] {μ : measure α}
 
@@ -250,6 +278,35 @@ begin
   exact (has_fderiv_at_of_dominated_loc_of_lip ε_pos hF_meas hF_int hF'_meas this
         bound_measurable bound_integrable diff_x₀).2
 end
+
+open set
+
+variables (ν : measure ℝ)
+
+local notation `I` := interval_oc
+
+lemma has_fderiv_at_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H → ℝ → (H →L[ℝ] E)} {x₀ : H}
+  {a b : ℝ}  
+  {bound : ℝ → ℝ}
+  {ε : ℝ}
+  (ε_pos : 0 < ε)
+  (hF_meas : ∀ᶠ x in 𝓝 x₀, measurable (F x))
+  (hF_int : interval_integrable (F x₀) ν a b)
+  (hF'_meas : measurable (F' x₀))
+  (h_bound : ∀ᵐ t ∂ν, t ∈ I a b → ∀ x ∈ ball x₀ ε, ∥F' x t∥ ≤ bound t)
+  (bound_measurable : measurable bound)
+  (bound_integrable : interval_integrable bound ν a b)
+  (h_diff : ∀ᵐ t ∂ν, t ∈ I a b → ∀ x ∈ ball x₀ ε, has_fderiv_at (λ x, F x t) (F' x t) x) :
+  has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ :=
+begin
+  erw ae_interval_oc__iff' at h_diff h_bound,
+  exact has_fderiv_at.sub
+    (has_fderiv_at_of_dominated_of_fderiv_le ε_pos hF_meas hF_int.1 hF'_meas 
+      h_bound.1 bound_measurable bound_integrable.1 h_diff.1)
+    (has_fderiv_at_of_dominated_of_fderiv_le ε_pos hF_meas hF_int.2 hF'_meas 
+      h_bound.2 bound_measurable bound_integrable.2 h_diff.2)
+end
+
 
 instance : measurable_space (ℝ →L[ℝ] E) := borel _
 
