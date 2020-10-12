@@ -5,6 +5,54 @@ import loops.basic
 
 noncomputable theory
 
+section interval_integral
+
+open topological_space (second_countable_topology)
+open measure_theory set classical filter
+
+open_locale classical topological_space filter
+
+variables {α β E F : Type*} [measurable_space α] {μ : measure α} [normed_group E]
+          [second_countable_topology E] [complete_space E] [normed_space ℝ E] [measurable_space E] [borel_space E]
+
+namespace measure_theory
+lemma ae_restrict_eq_iff {s : set α} {f g : α → β} (h : is_measurable {x | f x = g x}) :
+  f =ᵐ[μ.restrict s] g ↔ ∀ᵐ x ∂μ, x ∈ s → f x = g x :=
+ae_restrict_iff h
+
+lemma set_integral_eq_zero_of_ae {s : set α} {f : α → E} (hf : measurable f) 
+  (h : ∀ᵐ x ∂μ, x ∈ s → f x = 0) : ∫ x in s, f x ∂ μ = 0 :=
+begin
+  rw measure_theory.integral_eq_zero_of_ae, 
+  rw ae_restrict_eq_iff,
+  { simpa using h },
+  exact hf (is_measurable_singleton (0 : E))
+end
+
+variables  [decidable_linear_order α] 
+
+lemma interval_integral_eq_zero_of_ae {a b : α} {f : α → E} (hf : measurable f) 
+  (h : ∀ᵐ x ∂μ, x ∈ Ioc a b → f x = 0) (h' : ∀ᵐ x ∂μ, x ∈ Ioc b a → f x = 0) :
+∫ x in a..b, f x ∂ μ = 0 :=
+begin
+  unfold interval_integral,
+  rw [measure_theory.set_integral_eq_zero_of_ae hf, measure_theory.set_integral_eq_zero_of_ae hf, sub_zero];
+  assumption
+end
+
+-- This lemma is silly, `hf` shouldn't be needed
+lemma interval_integral_eq_zero_of_zero {a b : α} {f : α → E} (hf : measurable f) 
+  (h : ∀ x ∈ Ioc a b, f x = 0) (h' : ∀ x ∈ Ioc b a, f x = 0) :
+∫ x in a..b, f x ∂ μ = 0 :=
+begin
+  apply interval_integral_eq_zero_of_ae hf;
+  { apply ae_of_all, assumption }
+end
+
+end measure_theory
+
+end interval_integral
+
 local notation `D` := fderiv ℝ
 
 open set function finite_dimensional asymptotics filter
@@ -185,18 +233,59 @@ variables {E : Type*}
 def corrugation (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
 λ x, (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
 
-variables (π : E → ℝ) (N : ℝ) (γ : E → loop F)
+lemma per_corrugation (γ : loop F) : one_periodic (λ s, ∫ t in 0..s, γ t - γ.average) :=
+begin
+  
+  sorry
+end
 
-lemma corrugation.support [topological_space E] : support (corrugation π N γ) ⊆ loop.support γ :=
-sorry
+variables (π : E → ℝ) (N : ℝ) (γ : E → loop F) [topological_space E] 
+
+lemma support_aux {γ : loop F} (h : γ = const_loop (γ.average)) (b : ℝ) :
+  ∫ t in 0..b, γ t - γ.average = 0  :=
+begin
+  
+  sorry
+end
+
+lemma corrugation.support (hγ : ∀ x, continuous (γ x)) :
+  support (corrugation π N γ) ⊆ loop.support γ :=
+begin
+  intros x x_in,
+  apply subset_closure,
+  intro h,
+  apply x_in,
+  simp [corrugation],
+  rw [measure_theory.interval_integral_eq_zero_of_zero ((hγ x).sub continuous_const).measurable, smul_zero],
+  all_goals { intros t t_in,
+    change γ x t - (γ x).average = 0,
+    conv_lhs { congr, rw h },
+    simp }
+end
 
 /-- If a loop family has compact support then the corresponding corrugation is
 `O(1/N)` uniformly in the source point. -/
-lemma corrugation.c0_small [topological_space E] (hγ : is_compact (loop.support γ)) :
+lemma corrugation.c0_small [topological_space E] (hγ : is_compact (loop.support γ)) 
+  (hγ_cont : continuous ↿γ) : 
   ∃ C, ∀ x, is_O_with C (λ N, corrugation π N γ x) (λ N, 1/N) at_top :=
 begin
-
-  sorry
+  obtain ⟨C, hC⟩ : ∃ C, ∀ x b, ∥∫ t in 0..b, (γ x t - (γ x).average)∥ ≤ C,
+  { apply continuous.bounded_of_one_periodic_of_compact _ _ hγ, 
+    { intros x hx,
+      ext t,
+      exact support_aux (loop.const_of_not_mem_support hx) t },
+    { change continuous ↿(λ (x : E) (t : ℝ), ∫ s in 0..t, (γ x) s - (γ x).average),
+      sorry },
+    { intro x,
+      apply per_corrugation } }, 
+  use C,
+  intro x, -- TODO: learn is_O API better to get nicer proof below
+  rw is_O_with_iff,
+  apply eventually_of_forall,
+  intro N,
+  rw [corrugation, norm_smul, mul_comm],
+  specialize hC x (N*π x),
+  exact mul_le_mul hC (le_refl _) (norm_nonneg _) (le_trans (norm_nonneg _) hC),
 end
 
 variables [normed_group E] [normed_space ℝ E]

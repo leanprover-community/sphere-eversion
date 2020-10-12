@@ -73,6 +73,8 @@ variables {E F}
 def const_loop (f : F) : loop F :=
 ⟨λ t, f, by simp⟩
 
+@[simp] lemma const_loop_apply (f : F) : ∀ t, const_loop f t = f := λ t, rfl
+
 namespace loop
 
 @[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop F}, (γ₁ : ℝ → F) = γ₂ → γ₁ = γ₂
@@ -88,6 +90,24 @@ def average [measurable_space F] [borel_space F] (γ : loop F) : F := ∫ x in I
 
 def support {X : Type*} [topological_space X] [measurable_space F] [borel_space F] (γ : X → loop F) : set X :=
 closure {x | γ x ≠ const_loop (γ x).average}
+
+lemma const_of_not_mem_support {X : Type*} [topological_space X] [measurable_space F] [borel_space F] {γ : X → loop F} {x : X}
+  (hx : x ∉ support γ) : γ x = const_loop (γ x).average :=
+begin
+  classical,
+  by_contradiction H,
+  apply hx,
+  apply subset_closure,
+  exact H
+end
+
+lemma continuous_of_family {α : Type*} [topological_space α] {γ : α → loop F} (h : continuous ↿γ) :
+  ∀ a, continuous (γ a) :=
+begin
+  intro a,
+  rw show (γ a : ℝ → F) = ↿γ ∘ (λ t, (a, t)), from rfl,
+  exact h.comp (continuous_const.prod_mk continuous_id')
+end
 
 lemma add_nat_eq (γ : loop F) (t : ℝ) : ∀ (n : ℕ), γ (t+n) = γ t
 | 0 := (add_zero t).symm ▸ rfl
