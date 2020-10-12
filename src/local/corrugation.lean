@@ -88,7 +88,10 @@ def 𝕊₁ := quotient trans_one
 
 lemma trans_one_rel_iff {a b : ℝ} : trans_one.rel a b ↔ ∃ k : ℤ, b = a + k :=
 begin
-  sorry
+  apply exists_congr,
+  intro k,
+  change (k : ℝ) = _ ↔ _,
+  split ; intro h ; linarith [h]
 end
 
 section
