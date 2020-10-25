@@ -154,16 +154,10 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>2 Local theory of convex integration <span class="partial">6%</span></h3>
+  <h3>2 Local theory of convex integration <span class="partial">37%</span></h3>
   
   <ul class="coverage">
     
-    
-    <li>
-      <div class="thm_thmheading">Definition 2.1 (def:dual_pair)</div>
-      <div class="thm_thm_content"><p> A dual pair on $E$ is a pair $(π, v)$ where $π$ is a linear form on $E$ and $v$ a vector in $E$ such that $π(v) = 1$. </p>
-</div>
-    </li>
     
     
     
@@ -243,15 +237,6 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Definition 2.2 (def:corrugation)</div>
-      <div class="thm_thm_content"><p> The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$ with oscillation number $N$ is </p>
-<div class="displaymath" id="a0000000033">
-  \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
-</div>
-</div>
-    </li>
-    
     
     
     <li>
@@ -272,27 +257,9 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Definition 2.4 (def:hol_partial)</div>
-      <div class="thm_thm_content"><p> Let $E’$ be a linear subspace of $E$. A map $\mathcal{F}= (f, φ) : E → F × \operatorname{Hom}(E, F)$ is $E’$–holonomic if, for every $v$ in $E’$ and every $x$, $Df(x)v = φ(x)v$. </p>
-</div>
-    </li>
     
     
     
-    <li>
-      <div class="thm_thmheading">Definition 2.5 (def:rel_loc)</div>
-      <div class="thm_thm_content"><p> A first order differential relation for maps from $E$ to $F$ is a subset $\mathcal{R}$ of $E × F × \operatorname{Hom}(E, F)$. </p>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Definition 2.6 (def:formal_sol_loc)</div>
-      <div class="thm_thm_content"><p>  A formal solution of a differential relation $\mathcal{R}$ over $U ⊂ E$ is a map $\mathcal{F}= (f, φ) \! :E → F × \operatorname{Hom}(E, F)$ such that, for every $x$ in $U$, $(x, f(x), φ(x))$ is in $\mathcal{R}$. </p>
-</div>
-    </li>
     
     
     
@@ -520,29 +487,23 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Definition 2.1 (def:dual_pair)</div>
-      <div class="thm_thm_content"><p> A dual pair on $E$ is a pair $(π, v)$ where $π$ is a linear form on $E$ and $v$ a vector in $E$ such that $π(v) = 1$. </p>
+      <div class="thm_thmheading">Definition 2.10 (def:short_formal_sol)</div>
+      <div class="thm_thm_content"><p>  A formal solution $\mathcal{F}$ of $\mathcal{R}$ over $U$ is $(π, v)$–short if, for every $x$ in $U$, $Df(x)v$ belonds to the interior of the convex hull of $\mathcal{R}((x, f(x), φ(x)), π, v)$. </p>
 </div>
     </li>
     
     <li>
-      <div class="thm_thmheading">Definition 2.2 (def:corrugation)</div>
-      <div class="thm_thm_content"><p> The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$ with oscillation number $N$ is </p>
-<div class="displaymath" id="a0000000033">
-  \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
-</div>
+      <div class="thm_thmheading">Definition 2.7 (def:htpy_formal_sol_loc)</div>
+      <div class="thm_thm_content"><p>  A homotopy of formal solutions over $U$ is a map $\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)$ which is smooth over $[0, 1] × U$ and such that each $x ↦ \mathcal{F}(t, x)$ is a formal solution over $U$ when $t$ is in $[0, 1]$. </p>
 </div>
     </li>
     
     <li>
-      <div class="thm_thmheading">Definition 2.4 (def:hol_partial)</div>
-      <div class="thm_thm_content"><p> Let $E’$ be a linear subspace of $E$. A map $\mathcal{F}= (f, φ) : E → F × \operatorname{Hom}(E, F)$ is $E’$–holonomic if, for every $v$ in $E’$ and every $x$, $Df(x)v = φ(x)v$. </p>
+      <div class="thm_thmheading">Definition 2.8 (def:rel_slice)</div>
+      <div class="thm_thm_content"><p>  For every $σ = (x, y, φ)$, the slice of $\mathcal{R}$ at $σ$ with respect to $(π, v)$ is: </p>
+<div class="displaymath" id="a0000000035">
+  \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 2.5 (def:rel_loc)</div>
-      <div class="thm_thm_content"><p> A first order differential relation for maps from $E$ to $F$ is a subset $\mathcal{R}$ of $E × F × \operatorname{Hom}(E, F)$. </p>
 </div>
     </li>
     
@@ -634,6 +595,22 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 2.15 (lem:open_ample_immersion_loc)</div>
       <div class="thm_thm_content"><p>  The relation of immersions in positive codimension is open and ample. </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.3 (prop:theilliere)</div>
+      <div class="thm_thm_content"><p>   The corrugated function $f’$ satisfies, uniformly in $x$: </p>
+<ol class="enumerate">
+  <li><p> $Df’(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)$, and the error vanishes whenever $γ_x$ is constant. </p>
+</li>
+  <li><p> $Df’(x)w = Df(x)w + O\left(\frac1N\right)$ for $w ∈ \ker π$ </p>
+</li>
+  <li><p> $f’(x) = f(x) + O\left(\frac1N\right)$ </p>
+</li>
+  <li><p> $f’(x) = f(x)$ whenever $γ_x$ is constant. </p>
+</li>
+</ol>
 </div>
     </li>
     

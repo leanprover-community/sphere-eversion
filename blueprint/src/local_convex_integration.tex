@@ -14,6 +14,8 @@ Let $f \co E → F$ be a smooth map with compact support.
 
 \begin{definition}
   \label{def:dual_pair}
+  \leanok
+  \lean{dual_pair'}
   A dual pair on $E$ is a pair $(π, v)$ where $π$ is a linear form on
   $E$ and $v$ a vector in $E$ such that $π(v) = 1$.
 \end{definition}
@@ -28,6 +30,8 @@ sufficiently almost sufficient for our purposes).
 
 \begin{definition}
   \label{def:corrugation}
+  \leanok
+  \lean{corrugate}
   The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$
   with oscillation number $N$ is
   \[
@@ -85,6 +89,8 @@ modification is relative to $K$.
 
 \begin{definition}
   \label{def:hol_partial}
+  \leanok
+  \lean{is_part_holonomic_on}
   Let $E'$ be a linear subspace of $E$.
   A map $\F = (f, φ) : E → F × \Hom(E, F)$ is $E'$--holonomic if,
   for every $v$ in $E'$ and every $x$, $Df(x)v = φ(x)v$.
@@ -92,6 +98,8 @@ modification is relative to $K$.
 
 \begin{definition}
   \label{def:rel_loc}
+  \leanok
+  \lean{rel_loc}
   A first order differential relation for maps from $E$ to $F$ is a
   subset $\Rel$ of $E × F × \Hom(E, F)$.
 \end{definition}
@@ -101,6 +109,8 @@ differential relation for maps from $E$ to $F$.
 
 \begin{definition}
   \label{def:formal_sol_loc}
+  \leanok
+  \lean{is_formal_solution_on}
   \uses{def:rel_loc}
   A formal solution of a differential relation $\Rel$ over $U ⊂ E$ is a map
   $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$ in $U$,
@@ -157,8 +167,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{lemma}
   \label{lem:integration_step}
-  \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial,
-        def:htdef:htpy_formal_sol_loc}
+  \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_formal_sol_loc}
   Let $\F$ be a formal solution of $\Rel$ over an open set $U$.
   Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of
   the interior of $K_1$. Let $C$ be a subset of $U$.
