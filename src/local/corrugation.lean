@@ -1,4 +1,5 @@
 import analysis.asymptotics
+import linear_algebra.dual
 
 import parametric_integral
 import loops.basic
@@ -233,6 +234,9 @@ variables {E : Type*}
 def corrugation (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
 λ x, (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
 
+def corrugate (f : E → F) (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
+λ x, f x + (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
+
 lemma per_corrugation (γ : loop F) : one_periodic (λ s, ∫ t in 0..s, γ t - γ.average) :=
 begin
   
@@ -307,3 +311,14 @@ lemma corrugation.fderiv_u {u : E} (hu : ∀ x, fderiv ℝ π x u = 1) :
   ∃ C, ∀ x, is_O_with C
   (λ N, D (corrugation π N γ) x u - (γ x (N*π u) - (γ x).average)) (λ N, ∥u∥/N) at_top :=
 sorry
+
+open module (dual)
+
+variables (E)
+
+-- TODO: move mathlib's dual_pair out of the root namespace!
+
+structure dual_pair'
+(π : dual ℝ E)
+(v : E)
+(pairing : π v = 1)
