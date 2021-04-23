@@ -1,5 +1,6 @@
 import analysis.convex.caratheodory
 import analysis.convex.topology
+
 import linear_algebra.affine_space.independent
 import tactic.equiv_rw
 
@@ -12,7 +13,7 @@ This file gathers variations on Caratheodory's theorem for convex hulls.
 -/
 
 open set finset finite_dimensional
-open_locale big_operators
+open_locale big_operators affine
 
 section linear_algebra
 open submodule
@@ -149,11 +150,11 @@ begin
       apply is_open_iff_mem_nhds.mp hP,
       convert p₀_in,
       simp [f] },
-    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets_of_fintype this) },
+    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this) },
   let v'' := (λ i', ε • v' i'),
   refine ⟨sum.elim v v'' ∘ g, sum.elim w (λ i, 0) ∘ g, _, _, _, _⟩,
   { change x = p₀ + ∑ i, ((λ x, (sum.elim w (λ (i : ι), 0) x) • (sum.elim v v'' x)) ∘ g) i,
-    rw [sum_equiv g, fintype.sum_sum_type],
+    rw [equiv.sum_comp, fintype.sum_sum_type],
     simp [h] },
   { suffices : is_basis ℝ (sum.elim v v''), from this.comp _ g.bijective,
     let s : fin n ⊕ ι → ℝ := sum.elim (λ i, 1) (λ i, ε),
