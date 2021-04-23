@@ -1,4 +1,4 @@
-import analysis.asymptotics
+import analysis.asymptotics.asymptotics
 import linear_algebra.dual
 
 import parametric_integral
@@ -17,7 +17,7 @@ variables {α β E F : Type*} [measurable_space α] {μ : measure α} [normed_gr
           [second_countable_topology E] [complete_space E] [normed_space ℝ E] [measurable_space E] [borel_space E]
 
 namespace measure_theory
-lemma ae_restrict_eq_iff {s : set α} {f g : α → β} (h : is_measurable {x | f x = g x}) :
+lemma ae_restrict_eq_iff {s : set α} {f g : α → β} (h : measurable_set {x | f x = g x}) :
   f =ᵐ[μ.restrict s] g ↔ ∀ᵐ x ∂μ, x ∈ s → f x = g x :=
 ae_restrict_iff h
 
@@ -27,10 +27,10 @@ begin
   rw measure_theory.integral_eq_zero_of_ae, 
   rw ae_restrict_eq_iff,
   { simpa using h },
-  exact hf (is_measurable_singleton (0 : E))
+  exact hf (measurable_set_singleton (0 : E))
 end
 
-variables  [decidable_linear_order α] 
+variables  [linear_order α] 
 
 lemma interval_integral_eq_zero_of_ae {a b : α} {f : α → E} (hf : measurable f) 
   (h : ∀ᵐ x ∂μ, x ∈ Ioc a b → f x = 0) (h' : ∀ᵐ x ∂μ, x ∈ Ioc b a → f x = 0) :
@@ -183,7 +183,7 @@ eq_univ_of_subset (image_subset proj_𝕊₁ Ico_subset_Icc_self) image_proj_�
 lemma continuous_proj_𝕊₁ : continuous proj_𝕊₁ := continuous_quotient_mk
 
 lemma is_open_map_proj_𝕊₁ : is_open_map proj_𝕊₁ :=
-quotient_add_group.open_coe ℤ_sub_ℝ
+quotient_add_group.is_open_map_coe ℤ_sub_ℝ
 
 lemma quotient_map_id_proj_𝕊₁ {X : Type*} [topological_space X] :
   quotient_map (λ p : X × ℝ, (p.1, proj_𝕊₁ p.2)) :=
@@ -259,8 +259,9 @@ begin
   apply subset_closure,
   intro h,
   apply x_in,
-  simp [corrugation],
-  rw [measure_theory.interval_integral_eq_zero_of_zero ((hγ x).sub continuous_const).measurable, smul_zero],
+  simp only [corrugation, one_div, inv_eq_zero, smul_eq_zero],
+  rw [measure_theory.interval_integral_eq_zero_of_zero ((hγ x).sub continuous_const).measurable],
+  { simp },
   all_goals { intros t t_in,
     change γ x t - (γ x).average = 0,
     conv_lhs { congr, rw h },

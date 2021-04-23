@@ -3,6 +3,7 @@ import analysis.calculus.times_cont_diff
 import measure_theory.set_integral
 import measure_theory.lebesgue_measure
 import topology.algebra.floor_ring
+import topology.path_connected
 
 /-!
 # Basic definitions and properties of loops
@@ -10,6 +11,20 @@ import topology.algebra.floor_ring
 
 open set function finite_dimensional
 open_locale big_operators topological_space topological_space
+
+-- The next two instances work around a current mathlib issue.
+
+/-- non-dependent version of `is_noetherian_pi`, because typeclass inference struggles to infer `M` in the non-dependent case. -/
+instance is_noetherian_pi' {R ι : Type*} {M : Type*} [ring R]
+  [add_comm_group M] [semimodule R M] [fintype ι]
+  [is_noetherian R M] : is_noetherian R (ι → M) :=
+is_noetherian_pi
+
+instance {m : ℕ} : finite_dimensional ℝ (fin m → ℝ) :=
+by apply_instance  -- works fine
+
+--instance {m : ℕ} : finite_dimensional ℝ (fin m → ℝ) :=
+--by apply_instance  -- works fine
 
 local notation `I` := (Icc 0 1 : set ℝ)
 
@@ -47,10 +62,10 @@ sorry
 
 -- lem:smooth_convex_hull
 lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) : 
-  ∃ w : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ y in 𝓝 x, ∀ᶠ q in  𝓝 p, smooth_at (uncurry w) (y, q) ∧ 
-                              ∀ i, w y q i ∈ Ioo (0 : ℝ) 1 ∧ 
-                              ∑ i, w y q i • q i = y :=
+  ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
+  ∀ᶠ y in 𝓝 x, ∀ᶠ q in  𝓝 p, smooth_at (uncurry W) (y, q) ∧ 
+                              ∀ i, W y q i ∈ Ioo (0 : ℝ) 1 ∧ 
+                              ∑ i, W y q i • q i = y := 
 sorry
 
 end surrounding_points
@@ -187,8 +202,8 @@ lemma of_path_continuous_family {ι : Type*} [topological_space ι] {x : F} (γ 
 begin
   change continuous (λ p : ι × ℝ, (λ s, (γ s).extend) p.1 (fract p.2)),
   apply continuous_on.comp_fract',
-  { exact (h.comp (continuous_id.prod_map continuous_proj_I)).continuous_on },
-  simp
+  { exact (h.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
+  { simp }
 end
 
 noncomputable
@@ -210,7 +225,7 @@ of_path_continuous _
 
 noncomputable
 def round_trip_family {x y : F} (γ : path x y) : ℝ → loop F :=
-have key : ∀ {t}, x = γ.extend (min 0 t) := λ t, (γ.extend_le_zero $ min_le_left _ _).symm,
+have key : ∀ {t}, x = γ.extend (min 0 t) := λ t, (γ.extend_of_le_zero $ min_le_left _ _).symm,
 λ t, round_trip ((γ.truncate 0 t).cast key rfl)
 
 lemma round_trip_family_continuous {x y : F} {γ : path x y} : continuous ↿(round_trip_family γ) :=
