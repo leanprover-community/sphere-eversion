@@ -18,21 +18,6 @@ begin
   { simp [nnreal.of_real, h, le_abs_self, abs_nonneg] }
 end
 
-section
-variables (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-          {E : Type*} [normed_group E] [normed_space 𝕜 E]
-          (F : Type*) [normed_group F] [normed_space 𝕜 F]
-
-lemma continuous_linear_map.continuous_apply (v : E) : continuous (continuous_linear_map.apply 𝕜 F v) :=
-begin
-  apply linear_map.continuous_of_bound,
-  intro f,
-  rw mul_comm,
-  exact f.le_op_norm v,
-end
-
-end
-
 section loc_integrable
 
 variables {α : Type*} [measurable_space α] [topological_space α]
@@ -193,11 +178,11 @@ variables
 
 lemma measurable.apply_continuous_linear_map {φ : α → H →L[ℝ] E} (hφ : measurable φ) (v : H) :
   measurable (λ a, φ a v) :=
-(continuous_linear_map.continuous_apply _ _ v).measurable.comp hφ
+(continuous_linear_map.apply ℝ E v).measurable.comp hφ
 
 lemma ae_measurable.apply_continuous_linear_map {φ : α → H →L[ℝ] E} (hφ : ae_measurable φ μ) (v : H) :
   ae_measurable (λ a, φ a v) μ :=
-(continuous_linear_map.continuous_apply _ _ v).measurable.comp_ae_measurable hφ
+(continuous_linear_map.apply ℝ E v).measurable.comp_ae_measurable hφ
 end
 
 variables [second_countable_topology E] [normed_space ℝ E] [complete_space E]
