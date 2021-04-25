@@ -17,7 +17,7 @@ open_locale big_operators affine
 
 section linear_algebra
 open submodule
-variables  {K : Type*}  [field K] {V : Type*} [add_comm_group V] [vector_space K V] -- [finite_dimensional K V] 
+variables  {K : Type*}  [field K] {V : Type*} [add_comm_group V] [module K V] -- [finite_dimensional K V] 
            {n : ℕ} {v : fin n → V} {ι : Type*}
 
 lemma fintype.of_cardinal_lt {α : Type*} (h : cardinal.mk α < cardinal.omega) : fintype α :=
@@ -26,12 +26,12 @@ classical.choice $ cardinal.lt_omega_iff_fintype.mp h
 protected lemma finite_dimensional.fintype [finite_dimensional K V] {v : ι → V} (hv : is_basis K v) : fintype ι :=
 begin
   apply fintype.of_cardinal_lt,
-  rw ← finite_dimensional.findim_eq_card_basis' hv,
+  rw ← finite_dimensional.finrank_eq_card_basis' hv,
   exact cardinal.nat_lt_omega _  
  end
 
 /- -- useless here, but a big hole in the API
-lemma finite_dimensional.linear_equiv_fin [finite_dimensional K V] : ((fin $ findim K V) → K) ≃ₗ[K] V :=
+lemma finite_dimensional.linear_equiv_fin [finite_dimensional K V] : ((fin $ finrank K V) → K) ≃ₗ[K] V :=
 begin
   
   sorry
@@ -81,7 +81,7 @@ end linear_algebra
 
 section affine
 
-variables  {k : Type*}  [field k] {V : Type*} [add_comm_group V] [vector_space k V]
+variables  {k : Type*}  [field k] {V : Type*} [add_comm_group V] [module k V]
            {P : Type*} [affine_space k P]
 
 -- This will turn out to be useless, but could still go to mathlib
@@ -99,7 +99,7 @@ end
 end affine
 
 section linear_algebra
-variables {F : Type*} [add_comm_group F] [vector_space ℝ F] 
+variables {F : Type*} [add_comm_group F] [module ℝ F] 
 
 lemma caratheodory' {P : set F} {x : F} (h : x ∈ convex_hull P) : 
   ∃ (p₀ ∈ P) (n : ℕ) (v : fin n → F) (w : fin n → ℝ), 
@@ -124,7 +124,7 @@ begin
 end
 
 variables {F : Type*} [normed_group F] [normed_space ℝ F]  [finite_dimensional ℝ F]
-local notation `d` := findim ℝ F
+local notation `d` := finrank ℝ F
 
 lemma eq_center_mass_basis_of_mem_convex_hull {P : set F} {x : F}
   (hP : is_open P)
