@@ -16,7 +16,7 @@ open_locale big_operators topological_space topological_space
 
 /-- non-dependent version of `is_noetherian_pi`, because typeclass inference struggles to infer `M` in the non-dependent case. -/
 instance is_noetherian_pi' {R ι : Type*} {M : Type*} [ring R]
-  [add_comm_group M] [semimodule R M] [fintype ι]
+  [add_comm_group M] [module R M] [fintype ι]
   [is_noetherian R M] : is_noetherian R (ι → M) :=
 is_noetherian_pi
 
@@ -34,7 +34,7 @@ Sup (nhds '' s)
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 
-local notation `d` := findim ℝ F
+local notation `d` := finrank ℝ F
 
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
 

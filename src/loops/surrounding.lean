@@ -11,7 +11,7 @@ open_locale topological_space
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 
-local notation `d` := findim ℝ F
+local notation `d` := finrank ℝ F
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
 local notation `I` := Icc (0 : ℝ) 1
 

@@ -13,7 +13,7 @@ vector spaces with their natural topology.
 
 open set
 
-variables {F : Type*} [add_comm_group F] [vector_space ℝ F] [topological_space F]
+variables {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F]
 
 /-- A subset of a topological real vector space is ample if the convex hull of each of its 
 connected components is the full space. -/

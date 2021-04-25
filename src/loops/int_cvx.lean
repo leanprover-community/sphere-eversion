@@ -13,7 +13,7 @@ import analysis.convex.caratheodory
 -- TODO everything in this file could be generalised to arbitrary affine spaces over ℝ.
 -- The development of convexity in mathlib is being ported to the affine setting,
 -- and work on this could either occur in parallel, or wait under that is settled.
-variables {V : Type*} [add_comm_group V] [vector_space ℝ V]
+variables {V : Type*} [add_comm_group V] [module ℝ V]
 
 /-- The dilation about `c` with scale factor `r`. -/
 def dilation (c : V) (r : ℝ) : V → V := sorry
@@ -46,7 +46,7 @@ lemma quux (x : V) (t : finset V) (f : V → ℝ) (h : t.center_mass f id = x) (
 sorry
 
 variables [topological_space V]
-  [topological_add_group V] [topological_vector_space ℝ V]
+  [topological_add_group V] [has_continuous_smul ℝ V]
 
 lemma dilation.continuous {c : V} {r : ℝ} : continuous (dilation c r) := sorry
 
@@ -81,7 +81,7 @@ open finite_dimensional
 -- or empty otherwise
 
 lemma interior_convex_hull_empty_of_card_le_dim
-  (s : finset V) (b : s.card ≤ findim ℝ V) :
+  (s : finset V) (b : s.card ≤ finrank ℝ V) :
   interior (convex_hull (↑s : set V)) = ∅ :=
 sorry
 
@@ -89,7 +89,7 @@ section
 open_locale classical
 
 lemma interior_convex_hull_eq_of_card_eq_dim_add_one
-  (s : finset V) (b : s.card = findim ℝ V + 1) :
+  (s : finset V) (b : s.card = finrank ℝ V + 1) :
   interior (convex_hull (↑s : set V)) =
   if (↑s : set V).affine_independent then
     {x : V | ∃ (f : V → ℝ) (hw₀ : ∀ y ∈ s, 0 < f y) (hw₁ : s.sum f = 1),
@@ -109,7 +109,7 @@ sorry
 
 lemma convex_hull_eq_union_interior {s : set V} (h : is_open s) :
   convex_hull s =
-    ⋃ (t : finset V) (h : ↑t ⊆ s) (b : t.card = findim ℝ V + 1), interior (convex_hull (↑t : set V)) :=
+    ⋃ (t : finset V) (h : ↑t ⊆ s) (b : t.card = finrank ℝ V + 1), interior (convex_hull (↑t : set V)) :=
 -- We write `convex_hull s` as the union of convex hulls of finsets with cardinality at most dim V + 1.
 -- Given a point `x ∈ convex_hull s`, by Caratheodory `x` is in the convex hull of some finset in `s`
 -- with cardinality at most `dim V + 1`.
@@ -128,7 +128,7 @@ This is `lem:int_cvx` from the blueprint.
 -/
 theorem eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open
   {s : set V} (o : is_open s) {x : V} (h : x ∈ convex_hull s) :
-  ∃ (t : finset V) (w : ↑t ⊆ s) (b : t.card = findim ℝ V + 1)
+  ∃ (t : finset V) (w : ↑t ⊆ s) (b : t.card = finrank ℝ V + 1)
     (f : V → ℝ), (∀ y ∈ t, 0 < f y) ∧ t.sum f = 1 ∧ t.center_mass f id = x :=
 begin
   classical,
