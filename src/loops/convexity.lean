@@ -157,8 +157,8 @@ lemma eq_center_mass_basis_of_mem_convex_hull {P : set F} {x : F} (hP : is_open 
 begin
   rcases caratheodory' h with ⟨p₀, p₀_in, n, v, w, hv, hw, h_in, h⟩,
   use p₀,
-  let v' := basis.sum_extend hv, --replacement for `exists_sum_is_basis`
-  letI := (fintype.or_right $ is_noetherian.fintype_basis_index v'), -- this was `letI` originally!
+  let v' := basis.sum_extend hv,
+  haveI := (is_noetherian.fintype_basis_index v').or_right,
   have g := fintype.equiv_fin_of_card_eq (finrank_eq_card_basis v').symm,
   obtain ⟨ε, ε_pos, hε⟩ : ∃ ε : ℝ, ε > 0 ∧ ∀ i, p₀ + ε • v' i ∈ P,
   { let f : _ → ℝ → F := λ i t, p₀ + t • v' i,
@@ -171,11 +171,11 @@ begin
       apply is_open_iff_mem_nhds.mp hP,
       convert p₀_in,
       simp [f] },
-    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this)
-  },
+    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this) },
   refine ⟨basis.reindex (basis.rescale v' (sum.elim 1 (λ _, ε)) (by simp [ne_of_gt ε_pos])) g,
           sum.elim w (λ _, 0) ∘ g.symm, _, _, _⟩,
-  { sorry },
+  { rw ←equiv.sum_comp g, --why is this in `fintype.card`?!
+    simpa [fintype.sum_sum_type, basis.sum_extend_inl_apply] using h },
   { equiv_rw g.symm,
     rintro (a|_),
     replace hw := λ i, Ioc_subset_Icc_self (hw i),
