@@ -3,6 +3,7 @@ import analysis.convex.topology
 
 import linear_algebra.affine_space.independent
 import tactic.equiv_rw
+import tactic.derive_fintype
 
 noncomputable theory
 
@@ -17,23 +18,16 @@ open_locale big_operators affine
 
 section linear_algebra
 open submodule
-variables  {K : Type*}  [field K] {V : Type*} [add_comm_group V] [module K V] -- [finite_dimensional K V] 
+variables  {K : Type*}  [field K] {V : Type*} [add_comm_group V] [module K V] -- [finite_dimensional K V]
            {n : ℕ} {v : fin n → V} {ι : Type*}
 
 lemma fintype.of_cardinal_lt {α : Type*} (h : cardinal.mk α < cardinal.omega) : fintype α :=
 classical.choice $ cardinal.lt_omega_iff_fintype.mp h
 
-protected lemma finite_dimensional.fintype [finite_dimensional K V] {v : ι → V} (hv : is_basis K v) : fintype ι :=
-begin
-  apply fintype.of_cardinal_lt,
-  rw ← finite_dimensional.finrank_eq_card_basis' hv,
-  exact cardinal.nat_lt_omega _  
- end
-
 /- -- useless here, but a big hole in the API
 lemma finite_dimensional.linear_equiv_fin [finite_dimensional K V] : ((fin $ finrank K V) → K) ≃ₗ[K] V :=
 begin
-  
+
   sorry
 end -/
 
@@ -71,11 +65,11 @@ begin
      suffices : w i • v i ∈ span K (range $ λ i, w i • v i),
      { have fact : (w i)⁻¹ • w i • v i ∈ span K (range $ λ i, w i • v i) := smul_mem _ _ (mem_span_range _ i),
        simpa [smul_smul, hw i] using fact, },
-     exact mem_span_range _ i }  
+     exact mem_span_range _ i }
 end
 
-lemma is_basis.rescale {v : ι → V} (h : is_basis K v) {w : ι → K} (hw : ∀ i, w i ≠ 0) : is_basis K (λ i, w i • v i) :=
-⟨h.1.rescale hw, by { rw span_rescale hw, exact h.2 }⟩
+lemma basis.rescale (v : basis ι K V) {w : ι → K} (hw : ∀ i, w i ≠ 0) : basis ι K V :=
+basis.mk (v.linear_independent.rescale hw) (by rw span_rescale hw; exact v.span_eq)
 
 end linear_algebra
 
@@ -95,14 +89,13 @@ begin
   tauto
 end
 
-
 end affine
 
 section linear_algebra
-variables {F : Type*} [add_comm_group F] [module ℝ F] 
+variables {F : Type*} [add_comm_group F] [module ℝ F]
 
-lemma caratheodory' {P : set F} {x : F} (h : x ∈ convex_hull P) : 
-  ∃ (p₀ ∈ P) (n : ℕ) (v : fin n → F) (w : fin n → ℝ), 
+lemma caratheodory' {P : set F} {x : F} (h : x ∈ convex_hull P) :
+  ∃ (p₀ ∈ P) (n : ℕ) (v : fin n → F) (w : fin n → ℝ),
     linear_independent ℝ v ∧
     (∀ i, w i ∈ (Ioc 0 1 : set ℝ)) ∧
     (∀ i, p₀ + v i ∈ P) ∧
@@ -123,24 +116,26 @@ begin
   simp ; split ; linarith
 end
 
-variables {F : Type*} [normed_group F] [normed_space ℝ F]  [finite_dimensional ℝ F]
+variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 local notation `d` := finrank ℝ F
 
-lemma eq_center_mass_basis_of_mem_convex_hull {P : set F} {x : F}
-  (hP : is_open P)
-  (h : x ∈ convex_hull P) : ∃ (p₀ : F) (v : fin d → F) (w : fin d → ℝ), 
-  x = p₀ + ∑ i, w i • v i ∧ is_basis ℝ v ∧ (∀ i, w i ∈ (Icc 0 1 : set ℝ)) ∧ ∀ i, p₀ + v i ∈ P :=
+-- will PR something like this into `mathlib` as soon as a computable way is found
+
+def fintype.or_left {α β} (h : fintype (α ⊕ β)) := @fintype.of_injective _ _ _ (sum.inl : α → α ⊕ β) (λ _ _, sum.inl.inj)
+
+def fintype.or_right {α β} (h : fintype (α ⊕ β)) := @fintype.of_injective _ _ _ (sum.inr : β → α ⊕ β) (λ _ _, sum.inr.inj)
+
+lemma eq_center_mass_basis_of_mem_convex_hull {P : set F} {x : F} (hP : is_open P)
+  (h : x ∈ convex_hull P) : ∃ (p₀ : F) (v : basis (fin d) ℝ F) (w : fin d → ℝ),
+  x = p₀ + ∑ i, w i • v i ∧ (∀ i, w i ∈ (Icc 0 1 : set ℝ)) ∧ ∀ i, p₀ + v i ∈ P :=
 begin
   rcases caratheodory' h with ⟨p₀, p₀_in, n, v, w, hv, hw, h_in, h⟩,
   use p₀,
-  rcases exists_sum_is_basis hv with ⟨ι, v', hvv'⟩,
-  letI : fintype ι := begin
-    letI : fintype (fin n ⊕ ι) := finite_dimensional.fintype hvv',
-    exact fintype.of_injective (sum.inr : ι → fin n ⊕ ι) (λ _ _, sum.inr.inj)
-  end,
-  rcases finite_dimensional.equiv_fin hvv' with ⟨g, hg⟩,
+  let v' := basis.sum_extend hv, --replacement for `exists_sum_is_basis`
+  haveI := (fintype.or_right $ is_noetherian.fintype_basis_index v'), -- this was `letI` originally!
+  have g := fintype.equiv_fin_of_card_eq (finrank_eq_card_basis v').symm,
   obtain ⟨ε, ε_pos, hε⟩ : ∃ ε : ℝ, ε > 0 ∧ ∀ i, p₀ + ε • v' i ∈ P,
-  { let f : ι → ℝ → F := λ i t, p₀ + t • v' i,
+  { let f : _ → ℝ → F := λ i t, p₀ + t • v' i,
     have cont : ∀ i, continuous (f i),
     { intros i,
       exact continuous_const.add (continuous_id.smul continuous_const) },
@@ -152,22 +147,10 @@ begin
       simp [f] },
     simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this) },
   let v'' := (λ i', ε • v' i'),
-  refine ⟨sum.elim v v'' ∘ g, sum.elim w (λ i, 0) ∘ g, _, _, _, _⟩,
-  { change x = p₀ + ∑ i, ((λ x, (sum.elim w (λ (i : ι), 0) x) • (sum.elim v v'' x)) ∘ g) i,
-    rw [equiv.sum_comp, fintype.sum_sum_type],
-    simp [h] },
-  { suffices : is_basis ℝ (sum.elim v v''), from this.comp _ g.bijective,
-    let s : fin n ⊕ ι → ℝ := sum.elim (λ i, 1) (λ i, ε),
-    have hs : ∀ x, s x ≠ 0, by rintros ⟨x⟩ ; simp [s, ne_of_gt ε_pos],
-    convert hvv'.rescale hs,
-    ext ⟨x⟩ ; simp [s, v''] },
-  { simp_rw mem_Ioc at hw,
-    equiv_rw g,
-    simp,
-    split,
-    intro i, split ; linarith [(hw i).1, (hw i).2],
-    norm_num },
-  { equiv_rw g,
-    simp [h_in],
-    exact hε },
+  refine ⟨_, _, _, _, _⟩,
+  {sorry},
+  {sorry},
+  {sorry},
+  {sorry},
+  {sorry}
 end
