@@ -1,5 +1,5 @@
 import measure_theory.interval_integral
-import parametric_integral
+import analysis.calculus.parametric_integral
 
 noncomputable theory
 
@@ -87,7 +87,7 @@ begin
    { rw interval_oc_of_lt hab at *,
      simp_rw interval_integral.integral_of_ge (le_of_lt hab),
      refine tendsto.neg _ }];
-  apply tendsto_integral_filter_of_dominated_convergence bound gc hF_meas (mem_of_nhds hF_meas : _) h_bound,
+  apply tendsto_integral_filter_of_dominated_convergence bound gc hF_meas (mem_of_mem_nhds hF_meas : _) h_bound,
   exact bound_integrable_left,
   exact h_cont,
   exact bound_integrable_right,
