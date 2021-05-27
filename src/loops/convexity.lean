@@ -68,8 +68,34 @@ begin
      exact mem_span_range _ i }
 end
 
-lemma basis.rescale (v : basis ι K V) {w : ι → K} (hw : ∀ i, w i ≠ 0) : basis ι K V :=
-basis.mk (v.linear_independent.rescale hw) (by rw span_rescale hw; exact v.span_eq)
+namespace basis
+
+section rescale
+
+variables (b : basis ι K V) (w : ι → K) (hw : ∀ i, w i ≠ 0)
+
+def rescale : basis ι K V :=
+basis.mk (b.linear_independent.rescale hw) (by rw span_rescale hw; exact b.span_eq)
+
+set_option pp.proofs true
+
+lemma rescale_apply (i : ι) : b.rescale w hw i = w i • b i := by rw [rescale, coe_mk]
+
+@[simp] lemma coe_rescale : (b.rescale w hw : ι → V) = λ i, w i • b i :=
+funext (b.rescale_apply w hw)
+
+-- this needs `repr` lemmas but I don't think they're necessary for the rewrite
+
+end rescale
+
+section sum_extend
+
+lemma sum_extend_inl_apply {v : ι → V} (hs : linear_independent K v) {i : ι} :
+(sum_extend hs) (sum.inl i) = v i := by simp [basis.sum_extend]
+
+end sum_extend
+
+end basis
 
 end linear_algebra
 
@@ -132,7 +158,7 @@ begin
   rcases caratheodory' h with ⟨p₀, p₀_in, n, v, w, hv, hw, h_in, h⟩,
   use p₀,
   let v' := basis.sum_extend hv, --replacement for `exists_sum_is_basis`
-  haveI := (fintype.or_right $ is_noetherian.fintype_basis_index v'), -- this was `letI` originally!
+  letI := (fintype.or_right $ is_noetherian.fintype_basis_index v'), -- this was `letI` originally!
   have g := fintype.equiv_fin_of_card_eq (finrank_eq_card_basis v').symm,
   obtain ⟨ε, ε_pos, hε⟩ : ∃ ε : ℝ, ε > 0 ∧ ∀ i, p₀ + ε • v' i ∈ P,
   { let f : _ → ℝ → F := λ i t, p₀ + t • v' i,
@@ -145,12 +171,17 @@ begin
       apply is_open_iff_mem_nhds.mp hP,
       convert p₀_in,
       simp [f] },
-    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this) },
-  let v'' := (λ i', ε • v' i'),
-  refine ⟨_, _, _, _, _⟩,
-  {sorry},
-  {sorry},
-  {sorry},
-  {sorry},
-  {sorry}
+    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this)
+  },
+  refine ⟨basis.reindex (basis.rescale v' (sum.elim 1 (λ _, ε)) (by simp [ne_of_gt ε_pos])) g,
+          sum.elim w (λ _, 0) ∘ g.symm, _, _, _⟩,
+  { sorry },
+  { equiv_rw g.symm,
+    rintro (a|_),
+    replace hw := λ i, Ioc_subset_Icc_self (hw i),
+    simp_rw mem_Icc at hw,
+    simp [hw],
+    simpa using zero_le_one },
+  { equiv_rw g.symm,
+    simp [hε, h_in, basis.sum_extend_inl_apply] }
 end
