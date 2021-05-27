@@ -5,6 +5,7 @@ import category_theory.endomorphism
 import topology.algebra.module
 import topology.instances.real
 import analysis.convex.caratheodory
+import algebra.category.Module.basic
 
 -- This is intended as a Lean roadmap for the `int_cvx` lemma, currently Lemma 1.5 of loops.tex.
 -- Rather than a "human readable" proof of a single lemma,
