@@ -178,10 +178,10 @@ begin
     simpa [fintype.sum_sum_type, basis.sum_extend_inl_apply] using h },
   { equiv_rw g.symm,
     rintro (a|_),
-    replace hw := λ i, Ioc_subset_Icc_self (hw i),
-    simp_rw mem_Icc at hw,
-    simp [hw],
-    simpa using zero_le_one },
+    { replace hw := λ i, Ioc_subset_Icc_self (hw i),
+      simp_rw mem_Icc at hw,
+      simp [hw] },
+    { simp } },
   { equiv_rw g.symm,
     simp [hε, h_in, basis.sum_extend_inl_apply] }
 end
