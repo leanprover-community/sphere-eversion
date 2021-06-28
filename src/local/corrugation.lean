@@ -3,7 +3,6 @@ import linear_algebra.dual
 import measure_theory.interval_integral
 import analysis.calculus.parametric_integral
 
-import parametric_interval_integral
 import loops.basic
 
 noncomputable theory
@@ -178,7 +177,7 @@ end
 local notation `π` := proj_𝕊₁
 
 instance : compact_space 𝕊₁ :=
-⟨by { rw ← image_proj_𝕊₁_Icc,exact compact_Icc.image continuous_proj_𝕊₁ }⟩
+⟨by { rw ← image_proj_𝕊₁_Icc, exact is_compact_Icc.image continuous_proj_𝕊₁ }⟩
 
 variables {X E : Type*} [topological_space X] [normed_group E]
 
