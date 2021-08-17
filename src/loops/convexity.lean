@@ -171,7 +171,7 @@ begin
       apply is_open_iff_mem_nhds.mp hP,
       convert p₀_in,
       simp [f] },
-    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem_sets.mpr this) },
+    simpa using real.exists_pos_of_mem_nhds_zero (filter.Inter_mem.mpr this) },
   refine ⟨basis.reindex (basis.rescale v' (sum.elim 1 (λ _, ε)) (by simp [ne_of_gt ε_pos])) g,
           sum.elim w (λ _, 0) ∘ g.symm, _, _, _⟩,
   { rw ←equiv.sum_comp g, --why is this in `fintype.card`?!

@@ -1,6 +1,6 @@
 import analysis.asymptotics.asymptotics
 import linear_algebra.dual
-import measure_theory.interval_integral
+import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
 import loops.basic
