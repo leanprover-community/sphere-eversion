@@ -1,7 +1,7 @@
 import analysis.normed_space.finite_dimension
 import analysis.calculus.times_cont_diff
-import measure_theory.set_integral
-import measure_theory.lebesgue_measure
+import measure_theory.integral.set_integral
+import measure_theory.measure.lebesgue
 import topology.algebra.floor_ring
 import topology.path_connected
 
@@ -61,11 +61,11 @@ lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f �
 sorry
 
 -- lem:smooth_convex_hull
-lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) : 
+lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ y in 𝓝 x, ∀ᶠ q in  𝓝 p, smooth_at (uncurry W) (y, q) ∧ 
-                              ∀ i, W y q i ∈ Ioo (0 : ℝ) 1 ∧ 
-                              ∑ i, W y q i • q i = y := 
+  ∀ᶠ y in 𝓝 x, ∀ᶠ q in  𝓝 p, smooth_at (uncurry W) (y, q) ∧
+                              ∀ i, W y q i ∈ Ioo (0 : ℝ) 1 ∧
+                              ∑ i, W y q i • q i = y :=
 sorry
 
 end surrounding_points
@@ -159,7 +159,7 @@ end
 noncomputable
 def of_path {x : F} (γ : path x x) : loop F :=
 { to_fun := λ t, γ.extend (fract t),
-  per' := 
+  per' :=
   begin
     intros t,
     congr' 1,
@@ -215,8 +215,8 @@ by simp [round_trip, of_path_range, path.trans_range, path.symm_range]
 
 lemma round_trip_based_at {x y : F} {γ : path x y} : round_trip γ 0 = x :=
 begin
-  unfold_coes, 
-  rw [round_trip, of_path], 
+  unfold_coes,
+  rw [round_trip, of_path],
   simp [fract_zero]
 end
 
@@ -229,8 +229,8 @@ have key : ∀ {t}, x = γ.extend (min 0 t) := λ t, (γ.extend_of_le_zero $ min
 λ t, round_trip ((γ.truncate 0 t).cast key rfl)
 
 lemma round_trip_family_continuous {x y : F} {γ : path x y} : continuous ↿(round_trip_family γ) :=
-of_path_continuous_family _ 
-  (path.trans_continuous_family _ (γ.truncate_const_continuous_family 0) _ $ 
+of_path_continuous_family _
+  (path.trans_continuous_family _ (γ.truncate_const_continuous_family 0) _ $
     path.symm_continuous_family _ $ γ.truncate_const_continuous_family 0)
 
 lemma round_trip_family_based_at {x y : F} {γ : path x y} : ∀ t, (round_trip_family γ) t 0 = x :=

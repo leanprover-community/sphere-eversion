@@ -1,10 +1,10 @@
-import measure_theory.interval_integral
+import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
 noncomputable theory
 
 open topological_space measure_theory filter first_countable_topology metric
-open_locale topological_space filter nnreal big_operators 
+open_locale topological_space filter nnreal big_operators
 
 
 -- Below is a capital iota
