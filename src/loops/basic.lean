@@ -4,6 +4,7 @@ import measure_theory.integral.set_integral
 import measure_theory.measure.lebesgue
 import topology.algebra.floor_ring
 import topology.path_connected
+import linear_algebra.affine_space.independent
 
 /-!
 # Basic definitions and properties of loops
@@ -42,12 +43,9 @@ def smooth_at (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
 
 section surrounding_points
 
-def affinely_independent {n : ℕ} (p : fin n → F) : Prop :=
-sorry
-
 -- def:surrounds_points
 structure surrounding_pts (f : F) (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ) : Prop :=
-(indep : affinely_independent p)
+(indep : affine_independent ℝ p)
 (w_pos : ∀ i, 0 < w i)
 (w_sum : ∑ i, w i = 1)
 (avg : ∑ i, (w i) • (p i) = f)
