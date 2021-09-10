@@ -13,20 +13,6 @@ import linear_algebra.affine_space.independent
 open set function finite_dimensional
 open_locale big_operators topological_space topological_space
 
--- The next two instances work around a current mathlib issue.
-
-/-- non-dependent version of `is_noetherian_pi`, because typeclass inference struggles to infer `M` in the non-dependent case. -/
-instance is_noetherian_pi' {R ι : Type*} {M : Type*} [ring R]
-  [add_comm_group M] [module R M] [fintype ι]
-  [is_noetherian R M] : is_noetherian R (ι → M) :=
-is_noetherian_pi
-
-instance {m : ℕ} : finite_dimensional ℝ (fin m → ℝ) :=
-by apply_instance  -- works fine
-
---instance {m : ℕ} : finite_dimensional ℝ (fin m → ℝ) :=
---by apply_instance  -- works fine
-
 local notation `I` := (Icc 0 1 : set ℝ)
 
 def nhds_set {α : Type*} [topological_space α] (s : set α) : filter α :=
