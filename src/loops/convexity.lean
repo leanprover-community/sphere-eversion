@@ -120,7 +120,7 @@ end affine
 section linear_algebra
 variables {F : Type*} [add_comm_group F] [module ℝ F]
 
-lemma caratheodory' {P : set F} {x : F} (h : x ∈ convex_hull P) :
+lemma caratheodory' {P : set F} {x : F} (h : x ∈ convex_hull ℝ P) :
   ∃ (p₀ ∈ P) (n : ℕ) (v : fin n → F) (w : fin n → ℝ),
     linear_independent ℝ v ∧
     (∀ i, w i ∈ (Ioc 0 1 : set ℝ)) ∧
@@ -152,7 +152,7 @@ def fintype.or_left {α β} (h : fintype (α ⊕ β)) := @fintype.of_injective _
 def fintype.or_right {α β} (h : fintype (α ⊕ β)) := @fintype.of_injective _ _ _ (sum.inr : β → α ⊕ β) (λ _ _, sum.inr.inj)
 
 lemma eq_center_mass_basis_of_mem_convex_hull {P : set F} {x : F} (hP : is_open P)
-  (h : x ∈ convex_hull P) : ∃ (p₀ : F) (v : basis (fin d) ℝ F) (w : fin d → ℝ),
+  (h : x ∈ convex_hull ℝ P) : ∃ (p₀ : F) (v : basis (fin d) ℝ F) (w : fin d → ℝ),
   x = p₀ + ∑ i, w i • v i ∧ (∀ i, w i ∈ (Icc 0 1 : set ℝ)) ∧ ∀ i, p₀ + v i ∈ P :=
 begin
   rcases caratheodory' h with ⟨p₀, p₀_in, n, v, w, hv, hw, h_in, h⟩,

@@ -54,7 +54,7 @@ lemma dilation.continuous {c : V} {r : ℝ} : continuous (dilation c r) := sorry
 lemma foo {c x : V} {s : set V} (h : is_open s) (hx : x ∈ s) :  ∃ ε > (0:ℝ), dilation c (1+ε) x ∈ s := sorry
 
 def barycenter (s : finset V) : V := sorry
-lemma barycenter_mem {s : finset V} : barycenter s ∈ convex_hull (↑s : set V) := sorry
+lemma barycenter_mem {s : finset V} : barycenter s ∈ convex_hull ℝ (↑s : set V) := sorry
 
 lemma aa (s : finset V) (r : ℝ) (h : r ≠ 0) :
   barycenter (s.map (dilation.equiv (barycenter s) r h).to_embedding) = barycenter s :=
@@ -83,7 +83,7 @@ open finite_dimensional
 
 lemma interior_convex_hull_empty_of_card_le_dim
   (s : finset V) (b : s.card ≤ finrank ℝ V) :
-  interior (convex_hull (↑s : set V)) = ∅ :=
+  interior (convex_hull ℝ (↑s : set V)) = ∅ :=
 sorry
 
 section
@@ -91,7 +91,7 @@ open_locale classical
 
 lemma interior_convex_hull_eq_of_card_eq_dim_add_one
   (s : finset V) (b : s.card = finrank ℝ V + 1) :
-  interior (convex_hull (↑s : set V)) =
+  interior (convex_hull ℝ (↑s : set V)) =
   if (↑s : set V).affine_independent then
     {x : V | ∃ (f : V → ℝ) (hw₀ : ∀ y ∈ s, 0 < f y) (hw₁ : s.sum f = 1),
       s.center_mass f id = x}
@@ -102,17 +102,17 @@ end
 
 lemma convex_hull_subset_int_convex_hull_dilation
   (s : finset V) (w : (↑s : set V).affine_independent) (ε : ℝ) (h : 0 < ε) :
-  convex_hull (↑s : set V) ⊆
-    interior (convex_hull
+  convex_hull ℝ (↑s : set V) ⊆
+    interior (convex_hull ℝ
       (↑(s.map (dilation.equiv (barycenter s) (1+ε) sorry).to_embedding) : set V)) :=
 -- This is now hopefully just plumbing the previous lemmas together.
 sorry
 
 lemma convex_hull_eq_union_interior {s : set V} (h : is_open s) :
-  convex_hull s =
-    ⋃ (t : finset V) (h : ↑t ⊆ s) (b : t.card = finrank ℝ V + 1), interior (convex_hull (↑t : set V)) :=
--- We write `convex_hull s` as the union of convex hulls of finsets with cardinality at most dim V + 1.
--- Given a point `x ∈ convex_hull s`, by Caratheodory `x` is in the convex hull of some finset in `s`
+  convex_hull ℝ s =
+    ⋃ (t : finset V) (h : ↑t ⊆ s) (b : t.card = finrank ℝ V + 1), interior (convex_hull ℝ (↑t : set V)) :=
+-- We write `convex_hull ℝ s` as the union of convex hulls of finsets with cardinality at most dim V + 1.
+-- Given a point `x ∈ convex_hull ℝ s`, by Caratheodory `x` is in the convex hull of some finset in `s`
 -- with cardinality at most `dim V + 1`.
 -- Discard any unused points,
 -- replacing them to make an affine independent set of size exactly `dim V + 1`, still in `s`.
@@ -128,7 +128,7 @@ with positive coefficients.
 This is `lem:int_cvx` from the blueprint.
 -/
 theorem eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open
-  {s : set V} (o : is_open s) {x : V} (h : x ∈ convex_hull s) :
+  {s : set V} (o : is_open s) {x : V} (h : x ∈ convex_hull ℝ s) :
   ∃ (t : finset V) (w : ↑t ⊆ s) (b : t.card = finrank ℝ V + 1)
     (f : V → ℝ), (∀ y ∈ t, 0 < f y) ∧ t.sum f = 1 ∧ t.center_mass f id = x :=
 begin

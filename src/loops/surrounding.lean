@@ -1,5 +1,6 @@
+
+
 import loops.basic
-import data.real.pi
 import tactic.fin_cases
 /-!
 # Surrounding families of loops
@@ -33,7 +34,7 @@ begin
 end
 
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
-  (hsf : f ∈ convex_hull O) (hb : b ∈ O) : 
+  (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) : 
   ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧ 
                     (∀ t, γ t 0 = b) ∧
                     (∀ s, γ 0 s = b) ∧
@@ -85,7 +86,7 @@ lemma local_loops
   (hΩ_op : ∀ᶠ x in 𝓝 x₀, is_open (prod.mk x ⁻¹' Ω)) 
   (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : ∀ᶠ x in 𝓝 x₀, continuous_at b x)
   (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω) 
-  (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull (prod.mk x ⁻¹' Ω)) :
+  (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
 ∃ γ : E → ℝ → loop F, ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, 
   (x, γ x t s) ∈ Ω ∧
   γ x 0 s = b x ∧
@@ -119,7 +120,7 @@ lemma exists_surrounding_loops
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω)) 
   (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω) 
   (hgK : ∀ᶠ x in nhds_set K, g x = b x) 
-  (hconv : ∀ x ∈ U, g x ∈ convex_hull (prod.mk x ⁻¹' Ω)) 
+  (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) 
   {γ₀ :  E → ℝ → loop F} 
   (hγ₀_surr : ∃ V ∈ nhds_set K, surrounding_family_in g b γ₀ V Ω) :
   ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧ 
