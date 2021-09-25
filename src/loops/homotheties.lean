@@ -3,13 +3,6 @@ import analysis.normed_space.basic
 
 open affine_map
 
--- TODO Drop this lemma once bump Mathlib since it contains
--- https://github.com/leanprover-community/mathlib/pull/9360
-@[simp] lemma affine_map.homothety_apply_same
-  {k V P : Type*} [comm_ring k] [add_comm_group V] [module k V] [add_torsor V P]
-  (c : P) (r : k) : homothety c r c = c :=
-line_map_same_apply c r
-
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
 
 notation `|`x`|` := abs x

@@ -41,7 +41,7 @@ def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
 
 -- lem:int_cvx alternative formulation, compare int_cvx.lean
-lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull s) : surrounded f s :=
+lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) : surrounded f s :=
 sorry
 
 -- lem:smooth_convex_hull

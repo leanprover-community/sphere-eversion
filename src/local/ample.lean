@@ -1,4 +1,6 @@
 import analysis.convex.basic
+import data.real.basic
+import topology.connected
 import topology.subset_properties
 
 /-!
@@ -18,4 +20,4 @@ variables {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F]
 /-- A subset of a topological real vector space is ample if the convex hull of each of its 
 connected components is the full space. -/
 def ample_set (s : set F) := 
-∀ x : s, convex_hull (subtype.val '' (connected_component x)) = univ
+∀ x : s, convex_hull ℝ (subtype.val '' (connected_component x)) = univ
