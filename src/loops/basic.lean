@@ -41,7 +41,8 @@ def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
 
 -- lem:int_cvx alternative formulation, compare int_cvx.lean
-lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) : surrounded f s :=
+lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) : 
+  surrounded f s :=
 sorry
 
 -- lem:smooth_convex_hull
@@ -64,15 +65,16 @@ structure loop :=
 
 instance : has_coe_to_fun (loop F) := ⟨_, λ γ, γ.to_fun⟩
 
+initialize_simps_projections loop (to_fun → apply)
+
 /-- Any function `φ : α → loop F` can be seen as a function `α × ℝ → F`. -/
 instance has_uncurry_loop {α : Type*} : has_uncurry (α → loop F) (α × ℝ) F := ⟨λ φ p, φ p.1 p.2⟩
 
 variables {E F}
 
+@[simps]
 def const_loop (f : F) : loop F :=
 ⟨λ t, f, by simp⟩
-
-@[simp] lemma const_loop_apply (f : F) : ∀ t, const_loop f t = f := λ t, rfl
 
 namespace loop
 
