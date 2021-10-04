@@ -1,4 +1,4 @@
-import analysis.convex.basic
+import analysis.convex.hull
 import data.real.basic
 import topology.connected
 import topology.subset_properties
