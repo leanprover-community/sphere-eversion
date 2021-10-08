@@ -1,10 +1,12 @@
-import analysis.normed_space.finite_dimension
+import analysis.normed_space.add_torsor_bases
+import analysis.convex.caratheodory
 import analysis.calculus.times_cont_diff
 import measure_theory.integral.set_integral
 import measure_theory.measure.lebesgue
 import topology.algebra.floor_ring
 import topology.path_connected
 import linear_algebra.affine_space.independent
+import loops.homotheties
 import to_mathlib.topology.misc
 import to_mathlib.topology.algebra.group
 
@@ -42,10 +44,64 @@ structure surrounding_pts (f : F) (p : fin (d + 1) → F) (w : fin (d + 1) → �
 def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
 
--- lem:int_cvx alternative formulation, compare int_cvx.lean
-lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
+lemma surrounded_iff_mem_interior_convex_hull_aff_basis {f : F} {s : set F} :
+  surrounded f s ↔ ∃ (b : set F)
+                     (h₀ : b ⊆ s)
+                     (h₁ : affine_independent ℝ (coe : b → F))
+                     (h₂ : affine_span ℝ b = ⊤),
+                     f ∈ interior (convex_hull ℝ b) :=
+begin
+  split,
+  { rintros ⟨p, w, ⟨⟨indep, w_pos, w_sum, rfl⟩, h_mem⟩⟩,
+    have h_tot : affine_span ℝ (range p) = ⊤ :=
+      indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
+    refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
+    rw interior_convex_hull_aff_basis indep h_tot,
+    intros i,
+    rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
+      barycentric_coord_apply_combination_of_mem _ _ (finset.mem_univ i) w_sum],
+    exact w_pos i, },
+  { rintros ⟨b, h₀, h₁, h₂, h₃⟩,
+    haveI : fintype b := (finite_of_fin_dim_affine_independent ℝ h₁).fintype,
+    have hb : fintype.card b = d + 1,
+    { rw [← h₁.affine_span_eq_top_iff_card_eq_finrank_add_one, subtype.range_coe_subtype,
+        set_of_mem_eq, h₂], },
+    let p := (coe : _ → F) ∘ (fintype.equiv_fin_of_card_eq hb).symm,
+    have hp : b = range p,
+    { ext x,
+      exact ⟨by { intros h, use fintype.equiv_fin_of_card_eq hb ⟨x, h⟩, simp [p], },
+             by { rintros ⟨y, rfl⟩, apply subtype.coe_prop, }⟩, },
+    rw hp at h₀ h₂ h₃,
+    replace h₁ : affine_independent ℝ p :=
+      h₁.comp_embedding (fintype.equiv_fin_of_card_eq hb).symm.to_embedding,
+    rw [interior_convex_hull_aff_basis h₁ h₂, mem_set_of_eq] at h₃,
+    refine ⟨p, λ i, barycentric_coord h₁ h₂ i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
+    { exact sum_barycentric_coord_apply_eq_one h₁ h₂ f, },
+    { rw [← finset.univ.affine_combination_eq_linear_combination p _
+        (sum_barycentric_coord_apply_eq_one h₁ h₂ f),
+        affine_combination_barycentric_coord_eq_self], }, },
+end
+
+--- lem:int_cvx
+lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) : 
   surrounded f s :=
-sorry
+begin
+  rw surrounded_iff_mem_interior_convex_hull_aff_basis,
+  obtain ⟨t, hts, hai, hf⟩ := (by simpa only [exists_prop, mem_Union] using convex_hull_eq_union.subst hsf :
+    ∃ (t : finset F), (t : set F) ⊆ s ∧ affine_independent ℝ (coe : t → F) ∧ f ∈ convex_hull ℝ (t : set F)),
+  have htne : (t : set F).nonempty := (@convex_hull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩,
+  obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := exists_subset_affine_independent_span_eq_top_of_open hs hts htne hai,
+  have hb₀ : b.finite, { exact finite_of_fin_dim_affine_independent ℝ hb₃, },
+  obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_aff_span_eq_top.mpr hb₄,
+  obtain ⟨ε, hε, hcs⟩ := homothety_image_subset_of_open c hs hb₂ hb₀,
+  have hbε := convex.subset_interior_image_homothety_of_one_lt
+    (convex_convex_hull ℝ _) hc (1 + ε) (lt_add_of_pos_right 1 hε),
+  rw affine_map.image_convex_hull at hbε,
+  let t : units ℝ := units.mk0 (1 + ε) (by linarith),
+  refine ⟨affine_map.homothety c (t : ℝ) '' b, hcs, _, _, hbε (convex_hull_mono hb₁ hf)⟩,
+  { rwa (affine_equiv.homothety_units_mul_hom c t).affine_independent_set_of_eq_iff, },
+  { exact (affine_equiv.homothety_units_mul_hom c t).span_eq_top_iff.mp hb₄, },
+end
 
 -- lem:smooth_convex_hull
 lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) :
