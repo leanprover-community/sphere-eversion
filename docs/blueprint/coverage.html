@@ -37,7 +37,7 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>1 Loops <span class="partial">26%</span></h3>
+  <h3>1 Loops <span class="partial">40%</span></h3>
   
   <ul class="coverage">
     
@@ -110,12 +110,6 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Lemma 1.3 (lem:caratheodory)</div>
-      <div class="thm_thm_content"><p>   If a point \(x\) of \(E\) lies in the convex hull of a set \(P\), then \(x\) can be written as the convex combination of at most \(d + 1\) points in \(P\). </p>
-</div>
-    </li>
-    
     
     
     <li>
@@ -153,22 +147,6 @@ Click chapter titles to see missing items.
     
     
     
-    
-    <li>
-      <div class="thm_thmheading">Lemma 1.9 (lem:loop_of_hull)</div>
-      <div class="thm_thm_content"><p>   If a vector \(v\) is in the convex hull of a connected open subset \(O\) then, for every base point \(b ∈ O\), there is a continuous family of loops \(γ \! :[0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)\) such that, for all \(t\) and \(s\): </p>
-<ul class="itemize">
-  <li><p>\(γ^t\) is based at \(b\) </p>
-</li>
-  <li><p>\(γ^0(s) = b\) </p>
-</li>
-  <li><p>\(γ^t(s) ∈ O\) </p>
-</li>
-  <li><p>\(γ^1\) surrounds \(v\) </p>
-</li>
-</ul>
-</div>
-    </li>
     
     
   </ul>
@@ -296,7 +274,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 2.8 (def:rel_slice)</div>
       <div class="thm_thm_content"><p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
-<div class="displaymath" id="a0000000048">
+<div class="displaymath" id="a0000000035">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 </div>
@@ -523,7 +501,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 2.8 (def:rel_slice)</div>
       <div class="thm_thm_content"><p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
-<div class="displaymath" id="a0000000048">
+<div class="displaymath" id="a0000000035">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 </div>
@@ -679,6 +657,24 @@ Click chapter titles to see missing items.
   
   <h3>1 Loops</h3>
   <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.12 (lem:satisfied_or_refund)</div>
+      <div class="thm_thm_content"><p>   Each \(\operatorname{\mathcal{L}}(g, β, U)\) is path connected: for every \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U)\), there is a continuous map \(γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)\) which interpolates between \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U)\). </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Corollary 1.13 (cor:extend_loops)</div>
+      <div class="thm_thm_content"><p>   Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊆ U_0\) and \(K_1 ⊆ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)\), there exists \(U ∈ 𝓝(K_0 ∪ K_1)\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β)\) which coincides with \(γ_0\) near \(K_0\). </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.14 (lem:∃_surrounding_loops)</div>
+      <div class="thm_thm_content"><p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
+</div>
+    </li>
     
     <li>
       <div class="thm_thmheading">Proposition 1.2 (prop:loops)</div>

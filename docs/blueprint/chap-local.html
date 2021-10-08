@@ -14,6 +14,7 @@
 <link rel="prev" href="chap-loops.html" title="Loops" />
 <link rel="up" href="index.html" title="The sphere eversion project" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
@@ -41,7 +42,7 @@
   <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-loops.html#a0000000012"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
+  <a href="chap-loops.html#a0000000011"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
  </li>
 
   </ul>
@@ -67,10 +68,10 @@
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
+  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-global.html#a0000000014"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
+  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
  </li>
 <li class="">
   <a href="chap-global.html#sec:general_theory"><span class="toc_ref">3.3</span> <span class="toc_entry">The \(h\)-principle for open and ample differential relations</span></a>
@@ -117,7 +118,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d8dad890e9bb733ff8d17dda4e32a12efbc0b053/src/local/corrugation.lean#L300">dual_pair'</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/5ee82f3e2135451ed732502848b6fdb331bee8fe/src/local/corrugation.lean#L300">dual_pair'</a></li>
         </ul>
 
       </div>
@@ -149,7 +150,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d8dad890e9bb733ff8d17dda4e32a12efbc0b053/src/local/corrugation.lean#L215">corrugate</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/5ee82f3e2135451ed732502848b6fdb331bee8fe/src/local/corrugation.lean#L215">corrugate</a></li>
         </ul>
 
       </div>
@@ -159,7 +160,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
-<div class="displaymath" id="a0000000045">
+<div class="displaymath" id="a0000000033">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
 </div>
 
@@ -176,6 +177,8 @@
     <span class="lemma_thmtitle">Theillière 2018</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#prop:theilliere">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000034"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -209,7 +212,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000046">
+<div class="proof_wrapper" id="a0000000034">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -217,21 +220,12 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
-  </div>
-</div> We set \(Γ_x(t) = ∫_0^t \left(γ_x(s) - Df(x)v\right)ds\), so that \(f'(x) = f(x) + Γ_x(Nπ(x))/N\). Because each \(Γ_x\) is \(1\)-periodic, and everything has compact support in \(E\), all derivatives of \(Γ\) are uniformly bounded. Item&#160;<a href="chap-local.html#CP:C0">3</a> in the statement is then obvious. Item&#160;<a href="chap-local.html#CP:kerpi">2</a> also follows since \(∂_if'(x) = ∂_if(x) + ∂_iΓ(x, Nπ(x))/N\). In order to prove Item&#160;<a href="chap-local.html#CP:v">1</a>, we compute: </p>
+  <p>We set \(Γ_x(t) = ∫_0^t \left(γ_x(s) - Df(x)v\right)ds\), so that \(f'(x) = f(x) + Γ_x(Nπ(x))/N\). Because each \(Γ_x\) is \(1\)-periodic, and everything has compact support in \(E\), all derivatives of \(Γ\) are uniformly bounded. Item&#160;<a href="chap-local.html#CP:C0">3</a> in the statement is then obvious. Item&#160;<a href="chap-local.html#CP:kerpi">2</a> also follows since \(∂_if'(x) = ∂_if(x) + ∂_iΓ(x, Nπ(x))/N\). In order to prove Item&#160;<a href="chap-local.html#CP:v">1</a>, we compute: </p>
 <span>\begin{align*}  Df’(x)v & = Df(x)v + \frac1N ∂_jΓ(x, Nπ(x)) + \frac NN ∂_tΓ(x, Nπ(x))\\ & = Df(x)v + O\left(\frac1N\right) + γ(x, Nπ(x)) - Df(x)v\\ & = γ(x, Nπ(x)) + O\left(\frac1N\right). \end{align*}</span>
-<p> Item&#160;<a href="chap-local.html#CP:relative">4</a> is obvious since \(Γ_x\) vanishes identically when \(γ_x\) is constant. <div class="proof_wrapper" id="a0000000047">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
+<p> Item&#160;<a href="chap-local.html#CP:relative">4</a> is obvious since \(Γ_x\) vanishes identically when \(γ_x\) is constant. </p>
+
   </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <h1 id="sec:inductive_step">2.2 The main inductive step</h1>
 
 <p><div class="definition_thmwrapper" id="def:hol_partial">
@@ -252,7 +246,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d8dad890e9bb733ff8d17dda4e32a12efbc0b053/src/local/relation.lean#L23">is_part_holonomic_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/5ee82f3e2135451ed732502848b6fdb331bee8fe/src/local/relation.lean#L23">is_part_holonomic_on</a></li>
         </ul>
 
       </div>
@@ -283,7 +277,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d8dad890e9bb733ff8d17dda4e32a12efbc0b053/src/local/relation.lean#L10">rel_loc</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/5ee82f3e2135451ed732502848b6fdb331bee8fe/src/local/relation.lean#L10">rel_loc</a></li>
         </ul>
 
       </div>
@@ -330,7 +324,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d8dad890e9bb733ff8d17dda4e32a12efbc0b053/src/local/relation.lean#L17">is_formal_solution_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/5ee82f3e2135451ed732502848b6fdb331bee8fe/src/local/relation.lean#L17">is_formal_solution_on</a></li>
         </ul>
 
       </div>
@@ -405,7 +399,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
-<div class="displaymath" id="a0000000048">
+<div class="displaymath" id="a0000000035">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 
@@ -419,6 +413,8 @@
     <span class="lemma_thmlabel">2.9</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:update_lin_map">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000036"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
 
   </div>
   </div>
@@ -427,7 +423,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000049">
+<div class="proof_wrapper" id="a0000000036">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -435,19 +431,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p>This is direct check. </p>
+
   </div>
-</div> This is direct check. <div class="proof_wrapper" id="a0000000050">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="definition_thmwrapper" id="def:short_formal_sol">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -488,6 +475,8 @@
     <span class="lemma_thmlabel">2.11</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:integration_step">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000037"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -527,7 +516,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000051">
+<div class="proof_wrapper" id="a0000000037">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -535,9 +524,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
-  </div>
-</div>   We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.2</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
+  <p>  We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.2</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
 <ul class="itemize">
   <li><p>\(∀ t\,  s,\;  γ^t_x(s) ∈ \mathcal{R}(\mathcal{F}(x), π, v)\) </p>
 </li>
@@ -550,16 +537,16 @@
 </ul>
 <p> Let \(ρ: E → ℝ\) be a smooth cut-off function which equals one on a neighborhood of \(K_0\) and whose support is contained in \(K_1\). </p>
 <p>Let \(N\) be a positive real number. Let \(\bar f\) be the corrugated map constructed from \(f\), \(γ^1\) and \(N\). <a href="chap-local.html#prop:theilliere">Lemma 2.3</a> ensures that, for all \(x\) in \(U\), </p>
-<div class="displaymath" id="a0000000052">
+<div class="displaymath" id="a0000000038">
   \[  D\bar f(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x  \]
 </div>
 <p> for some bounded map \(B\) which vanishes whenever \(γ_x\) is constant, hence vanishes near \(C\). </p>
 <p>We set \(\mathcal{F}_t(x) = \big (f_t(x), φ_t(x)\big )\) where: </p>
-<div class="displaymath" id="a0000000053">
+<div class="displaymath" id="a0000000039">
   \[  f_t(x) = f(x) + \frac{tρ(x)}N \int _0^{Nπ(x)} \left[γ^t_x(s) - Df(x)v\right]\,  ds  \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000054">
+<div class="displaymath" id="a0000000040">
   \[  φ_t(x) = φ(x) + \left[γ^{tρ(x)}_x(Nπ(x)) - φ(x)v\right] ⊗ π + \frac{tρ(x)}N B_x.  \]
 </div>
 <p>We now prove that \(\mathcal{F}_t\) has the announced properties, starting with he obvious ones. The fact that \(\mathcal{F}_0 = \mathcal{F}\) is obvious since \(γ^0_x(s) = φ(x)v\) for all \(s\). </p>
@@ -567,37 +554,30 @@
 <p>Outside of \(K_1\), \(ρ\) vanishes. Hence \(f_t(x) = f(x)\) for all \(t\), and \(γ^{tρ(x)}_x(s) = φ(x)v\) for all \(s\) and \(t\), and \(φ_t(x) = φ(x)\). </p>
 <p>The distance between \(f(x)\) and \(f_t(x)\) is zero outside of \(K_1\) which is compact, and \(O\left(1/N\right)\), so it is less than \(ε\) for \(N\) large enough. </p>
 <p>We now turn to the interesting parts. The first one is that each \(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) over \(U\). We already now that \(\mathcal{F}_t\) coincides with \(\mathcal{F}\), which is a formal solution, outside of the compact set \(K_1\). We set </p>
-<div class="displaymath" id="a0000000055">
+<div class="displaymath" id="a0000000041">
   \[  \mathcal{F}'_t(x) = \left(f(x), φ(x) + \left[γ^{tρ(x)}_x(Nπ(x)) - φ(x)v\right] ⊗ π\right).  \]
 </div>
 <p> Since \(\mathcal{R}\) is open over \(U\), and \(K_1 × [0, 1]\) is compact and \(\mathcal{F}_t\) is within \(O\left(1/N\right)\) of \(\mathcal{F}'_t\), it suffices to prove that \(\mathcal{F}'_t\) is a formal solution for all \(t\). This is guaranteed by the definition of the slice \(\mathcal{R}(\mathcal{F}(x), π, v)\) to which \(γ^{tρ(x)}_x(Nπ(x))\) belongs. </p>
 <p>Finally, let’s prove that \(\mathcal{F}_1\) is \(E' ⊕ ℝv\)–holonomic near \(K_0\). Since \(ρ = 1\) near \(K_0\), we have, for \(x\) near \(K_0\), </p>
-<div class="displaymath" id="a0000000056">
+<div class="displaymath" id="a0000000042">
   \[  Df_1(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x,  \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000057">
+<div class="displaymath" id="a0000000043">
   \[  φ_1(x) = φ(x) + \left[γ^1_x(Nπ(x)) - φ(x)v\right] ⊗ π + \frac{1}N B_x.  \]
 </div>
 <p> Let \(p\) be the projection of \(E\) onto \(\ker π\) along \(v\), so that \(\operatorname{Id}_E = p + v ⊗ π\). We can rewrite the above formulas as </p>
-<div class="displaymath" id="a0000000058">
+<div class="displaymath" id="a0000000044">
   \[  Df_1(x) = Df(x) ∘ p + γ^1_x(Nπ(x)) ⊗ π + \frac1N B_x,  \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000059">
+<div class="displaymath" id="a0000000045">
   \[  φ_1(x) = φ(x) ∘ p + γ^1_x(Nπ(x)) ⊗ π + \frac{1}N B_x.  \]
 </div>
-<p> So we see the difference is \(Df(x) ∘ p - φ(x) ∘ p\) which vanishes on \(E'\) since \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), and vanishes on \(v\) since \(p(v) = 0\). <div class="proof_wrapper" id="a0000000060">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
+<p> So we see the difference is \(Df(x) ∘ p - φ(x) ∘ p\) which vanishes on \(E'\) since \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), and vanishes on \(v\) since \(p(v) = 0\). </p>
+
   </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <h1 id="sec:ample_differential_relations">2.3 Ample differential relations</h1>
 
 <p><div class="definition_thmwrapper" id="def:ample_subset">
@@ -618,7 +598,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d8dad890e9bb733ff8d17dda4e32a12efbc0b053/src/local/ample.lean#L22">ample_set</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/5ee82f3e2135451ed732502848b6fdb331bee8fe/src/local/ample.lean#L22">ample_set</a></li>
         </ul>
 
       </div>
@@ -639,6 +619,8 @@
     <span class="lemma_thmlabel">2.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:ample_codim_two">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000046"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -662,7 +644,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000061">
+<div class="proof_wrapper" id="a0000000046">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -670,20 +652,11 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p>Let \(F\) be subspace of \(E\) with codimension at least \(2\). Let \(F'\) be a complement subspace. Its dimension is at least \(2\) since it is isomorphic to \(E/F\) and \(\dim (E/F) = \operatorname{codim}(F) ≥ 2\). First note the complement of \(F\) is path-connected. Indeed let \(x\) and \(y\) be points outside \(F\). Decomposing on \(F ⊕ F'\), we get \(x = u + u'\) and \(y = v + v'\) with \(u' ≠ 0\) and \(v' ≠ 0\). The segments from \(x\) to \(u'\) and \(y\) to \(v'\) stay outside \(F\), so it suffices to connect \(u'\) and \(v'\) in \(F' ∖ \{ 0\} \). If the segment from \(u'\) to \(v'\) doesn’t contains the origin then we are done. Otherwise \(v' = μu'\) for some (negative) \(u'\). Since \(\dim (F') ≥ 2\) and \(u' ≠ 0\), there exists \(f ∈ F'\) which is linearly independent from \(u'\), hence from \(v'\). We can then connect both \(u'\) and \(v'\) to \(f\) by a segment away from zero. </p>
+<p>We now turn to ampleness. The connectedness result reduces to prove that every \(e\) in \(E\) is in the convex hull of \(E ∖ F\). If \(e\) is not in \(F\) then it is the convex combination of itself with coefficient \(1\) and we are done. Now assume \(e\) is in \(F\). The codimension assumption guarantees the existence of a subspace \(G\) such that \(\dim (G) = 2\) and \(G ∩ F = \{ 0\} \). Let \((g_1, g_2)\) be a basis of \(G\). We set \(p_1 = e + g_1\), \(p_2 = e + g_2\), \(p_3 = e - g_1 - g_2\). All these points are in \(E ∖ F\) and \(e = p_1/3 + p_2/3 + p_3/3\). </p>
+
   </div>
-</div> Let \(F\) be subspace of \(E\) with codimension at least \(2\). Let \(F'\) be a complement subspace. Its dimension is at least \(2\) since it is isomorphic to \(E/F\) and \(\dim (E/F) = \operatorname{codim}(F) ≥ 2\). First note the complement of \(F\) is path-connected. Indeed let \(x\) and \(y\) be points outside \(F\). Decomposing on \(F ⊕ F'\), we get \(x = u + u'\) and \(y = v + v'\) with \(u' ≠ 0\) and \(v' ≠ 0\). The segments from \(x\) to \(u'\) and \(y\) to \(v'\) stay outside \(F\), so it suffices to connect \(u'\) and \(v'\) in \(F' ∖ \{ 0\} \). If the segment from \(u'\) to \(v'\) doesn’t contains the origin then we are done. Otherwise \(v' = μu'\) for some (negative) \(u'\). Since \(\dim (F') ≥ 2\) and \(u' ≠ 0\), there exists \(f ∈ F'\) which is linearly independent from \(u'\), hence from \(v'\). We can then connect both \(u'\) and \(v'\) to \(f\) by a segment away from zero. </p>
-<p>We now turn to ampleness. The connectedness result reduces to prove that every \(e\) in \(E\) is in the convex hull of \(E ∖ F\). If \(e\) is not in \(F\) then it is the convex combination of itself with coefficient \(1\) and we are done. Now assume \(e\) is in \(F\). The codimension assumption guarantees the existence of a subspace \(G\) such that \(\dim (G) = 2\) and \(G ∩ F = \{ 0\} \). Let \((g_1, g_2)\) be a basis of \(G\). We set \(p_1 = e + g_1\), \(p_2 = e + g_2\), \(p_3 = e - g_1 - g_2\). All these points are in \(E ∖ F\) and \(e = p_1/3 + p_2/3 + p_3/3\). <div class="proof_wrapper" id="a0000000062">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="definition_thmwrapper" id="def:ample_relation_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -725,6 +698,8 @@
     <span class="lemma_thmlabel">2.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:open_ample_immersion_loc">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000047"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -748,7 +723,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000063">
+<div class="proof_wrapper" id="a0000000047">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -756,19 +731,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p> For every \(σ = (x, y, φ)\) in the immersion relation \(\mathcal{R}\), and for every dual pair \((π, v)\), the slice \(\mathcal{R}(σ, π, v)\) is the set of \(w\) which do not belong to the image of \(\ker π\) under \(φ\). Since \(\dim F {\gt} \dim E\), this image has codimension at least \(2\) in \(F\), and <a href="chap-local.html#lem:ample_codim_two">lemma 2.13</a> concludes. </p>
+
   </div>
-</div>  For every \(σ = (x, y, φ)\) in the immersion relation \(\mathcal{R}\), and for every dual pair \((π, v)\), the slice \(\mathcal{R}(σ, π, v)\) is the set of \(w\) which do not belong to the image of \(\ker π\) under \(φ\). Since \(\dim F {\gt} \dim E\), this image has codimension at least \(2\) in \(F\), and <a href="chap-local.html#lem:ample_codim_two">lemma 2.13</a> concludes. <div class="proof_wrapper" id="a0000000064">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="lemma_thmwrapper" id="lem:h_principle_open_ample_loc">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -777,6 +743,8 @@
     <span class="lemma_thmlabel">2.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:h_principle_open_ample_loc">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -813,7 +781,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000065">
+<div class="proof_wrapper" id="a0000000048">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -821,21 +789,12 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
-  </div>
-</div>  This is a straightforward induction using <a href="chap-local.html#lem:integration_step">lemma 2.11</a>. Let \((e_1, \dots , e_n)\) be a basis of \(E\), and let \((π_1, \dots , π_n)\) be the dual basis. Let \(E'_i\) be the linear subspace of \(E\) spanned by \((e_1, \dots , e_i)\), for \(1 ≤ i ≤ n\), and let \(E'_0\) be the zero subspace of \(E\). Each \((π_i, e_i)\) is a dual pair and the kernel of \(π_i\) contains \(E'_{i - 1}\). </p>
+  <p> This is a straightforward induction using <a href="chap-local.html#lem:integration_step">lemma 2.11</a>. Let \((e_1, \dots , e_n)\) be a basis of \(E\), and let \((π_1, \dots , π_n)\) be the dual basis. Let \(E'_i\) be the linear subspace of \(E\) spanned by \((e_1, \dots , e_i)\), for \(1 ≤ i ≤ n\), and let \(E'_0\) be the zero subspace of \(E\). Each \((π_i, e_i)\) is a dual pair and the kernel of \(π_i\) contains \(E'_{i - 1}\). </p>
 <p><a href="chap-local.html#lem:integration_step">Lemma 2.11</a> allows to build a sequence of homotopies of formal solutions, each homotopy relating a formal solution which is \(E'_i\)–holonomic to one which is \(E'_{i+1}\)–holonomic (always near \(K_0\)). The shortness condition is always satisfies because \(\mathcal{R}\) is ample over \(U\). Each homotopy starts where the previous one stopped, stay at \(C^0\) distance at most \(ε/n\), and is relative to \(C\) and the complement of \(K_1\). </p>
-<p>It then suffices to do a smooth concatenation of theses homotopies. We first pre-compose with a smooth map from \([0, 1]\) to itself that fixes \(0\) and \(1\) and has vanishing derivative to all orders at \(0\) and \(1\). Then we precompose by affine isomorphisms from \([0, 1]\) to \([i/n, (i + 1)/n]\) before joining them. <div class="proof_wrapper" id="a0000000066">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
+<p>It then suffices to do a smooth concatenation of theses homotopies. We first pre-compose with a smooth map from \([0, 1]\) to itself that fixes \(0\) and \(1\) and has vanishing derivative to all orders at \(0\) and \(1\). Then we precompose by affine isomorphisms from \([0, 1]\) to \([i/n, (i + 1)/n]\) before joining them. </p>
+
   </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
@@ -858,7 +817,7 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
 <script type="text/javascript" src="js/showmore.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
 </body>
 </html>

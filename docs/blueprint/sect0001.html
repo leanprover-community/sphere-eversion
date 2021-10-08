@@ -14,6 +14,7 @@
 <link rel="prev" href="index.html" title="The sphere eversion project" />
 <link rel="up" href="index.html" title="The sphere eversion project" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
@@ -41,7 +42,7 @@
   <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-loops.html#a0000000012"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
+  <a href="chap-loops.html#a0000000011"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
  </li>
 
   </ul>
@@ -67,10 +68,10 @@
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
+  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-global.html#a0000000014"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
+  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
  </li>
 <li class="">
   <a href="chap-global.html#sec:general_theory"><span class="toc_ref">3.3</span> <span class="toc_entry">The \(h\)-principle for open and ample differential relations</span></a>
@@ -166,6 +167,8 @@
     <span class="corollary-intro_thmtitle">Smale 1958</span>
     <div class="thm_icons">
     <a class="icon proof" href="sect0001.html#a0000000007">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000008"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
 
   </div>
   </div>
@@ -175,37 +178,28 @@
   </div>
 </div> </p>
 <p>The reason why this is turning the sphere inside-out is that \(a\) extends as a map from \(ℝ^3 ∖ \{ 0\}  → ℝ^3 ∖ \{ 0\} \) by </p>
-<div class="displaymath" id="a0000000008">
+<div class="displaymath" id="a0000000009">
   \[  \hat{a} \! :q ↦ -\frac{1}{‖q‖^2}q  \]
 </div>
 <p> which exchanges the interior and exterior of \(𝕊^2\). More abstractly, one can say the normal bundle of \(𝕊^2\) is trivial, hence one can extend \(a\) to a tubular neighborhood of \(𝕊^2\) as an orientation preserving map. Since \(a\) is orientation reversing, any such extension will be reversing coorientation. </p>
-<p><div class="proof_wrapper" id="a0000000009">
+<div class="proof_wrapper" id="a0000000008">
   <div class="proof_heading">
     <span class="proof_caption">
-    Proof
+    Proof of the sphere eversion corollary
     </span>
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p> We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not an immersion for \(t=1/2\)). We need to check there is no obstruction to building a homotopy of formal solutions above those maps. One could show that the relevant homotopy group (replacing \(π_1(𝕊^1)\) from the Whitney–Graustein example) is \(\pi _2(\operatorname{SO}_3(ℝ))\). This group is trivial, hence there is no obstruction. But actually we can write an explicit homotopy here, without using any algebraic topology. Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ \! :t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). The above theorem ensures this family is homotopic, relative to \(t = 0\) and \(t = 1\), to a family of holonomic formal immersions, ie a family \(t ↦ j^1f_t\) with \(f_0 = ι\), \(f_1 = a\), and each \(f_t\) is an immersion. </p>
+
   </div>
-</div>[Proof of the sphere eversion corollary] We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not an immersion for \(t=1/2\)). We need to check there is no obstruction to building a homotopy of formal solutions above those maps. One could show that the relevant homotopy group (replacing \(π_1(𝕊^1)\) from the Whitney–Graustein example) is \(\pi _2(\operatorname{SO}_3(ℝ))\). This group is trivial, hence there is no obstruction. But actually we can write an explicit homotopy here, without using any algebraic topology. Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ \! :t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). The above theorem ensures this family is homotopic, relative to \(t = 0\) and \(t = 1\), to a family of holonomic formal immersions, ie a family \(t ↦ j^1f_t\) with \(f_0 = ι\), \(f_1 = a\), and each \(f_t\) is an immersion. <div class="proof_wrapper" id="a0000000010">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p>The theorem above follows from a more general theorem which is slightly too technical for this introduction: the \(h\)-principle for open and ample first order differential relations. We will prove this theorem using a technique which is even more general: convex integration. For instance this technique also underlies the constructions of paradoxical isometric embeddings, which could be a nice follow-up project. </p>
 <p>We’ll end this introduction by describing the key construction of convex integration, since it is very nice and elementary. Convex integration was invented by Gromov around 1970, inspired in particular by the \(C^1\) isometric embedding work of Nash and the original proof of flexibility of immersions. This term is pretty vague however, and there are several different implementations. The newest one, and by far the most efficient one, is Mélanie Theillière’s corrugation process from 2017. And this is what we will use. </p>
 <p>Let \(f\) be a map from \(ℝ^n\) to \(ℝ^m\). Say we want to turn \(f\) into a solution of some partial differential relation. For instance if we are interested in immersions, we want to make sure its differential (or equivalently its Jacobian matrix) is everywhere injective. We will ensure this by tackling each partial derivative in turn. In the immersion example, we first make sure \(∂_1f(x) := ∂f(x)/∂x_1\) is non-zero for all \(x\). Then we make sure \(∂_2f(x)\) is not colinear to \(∂_1f(x)\). Then we make sure \(∂_3f(x)\) is not in the plane spanned by the two previous derivatives, etc… until all \(n\) partial derivatives are everywhere linearly independent. </p>
 <p>In general, what happens is that, for each number \(j\) between \(1\) and \(n\), we wish \(∂_jf(x)\) could live in some open subset \(Ω_x ⊂ ℝ^m\). Assume there is a smooth compactly supported family of loops \(γ \! :ℝ^n × 𝕊^1 → ℝ^m\) such that each \(γ_x\) takes values in \(Ω_x\), and has average value \(\int _{𝕊^1} γ_x = ∂_j f(x)\). Obviously such loops can exist only if \(∂_jf(x)\) is in the convex hull of \(Ω_x\), hence the name convex integration, and we will see this condition is almost sufficient. In the immersion case, this convex hull condition will always be met because, from the above description, we see that \(Ω_x\) will always be the complement of a linear subspace with codimension at least two. </p>
 <p>For some large positive \(N\), we replace \(f\) by the new map </p>
-<div class="displaymath" id="a0000000011">
+<div class="displaymath" id="a0000000010">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nx_j} \left[γ_x(s) - ∂_jf(x)\right]ds.  \]
 </div>
 <p>A wonderfully easy exercise shows that, provided \(N\) is large enough, we have achieved \(∂_j f(x) ∈ Ω_x\), almost without modifying derivatives \(∂_i f(x)\) for \(i ≠ j\), and almost without moving \(f(x)\). </p>
@@ -233,7 +227,7 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
 <script type="text/javascript" src="js/showmore.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
 </body>
 </html>
