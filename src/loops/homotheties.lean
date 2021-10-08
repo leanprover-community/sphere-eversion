@@ -23,10 +23,12 @@ begin
 end
 
 lemma homothety_image_subset_of_open
-  (x : E) {s : set E} (hs : is_open s) {t : finset E} (h : ↑t ⊆ s) :
+  (x : E) {s : set E} (hs : is_open s) {t : set E} (h : t ⊆ s) (ht : t.finite) :
   ∃ ε > (0 : ℝ), homothety x (1 + ε) '' t ⊆ s :=
 begin
   rcases t.eq_empty_or_nonempty with rfl | hne, { use 1, simp, },
+  haveI : fintype t := ht.fintype,
+  rw [← t.nonempty_coe_sort, ← finset.univ_nonempty_iff] at hne,
   have h' : ∀ y : t, (y : E) ∈ interior s,
   { rw interior_eq_iff_open.mpr hs,
     exact λ y, h y.property },
@@ -43,5 +45,5 @@ begin
   apply hf ⟨z, hz⟩,
   calc abs (ε / 2) = ε / 2 : abs_of_pos (half_pos hε)
    ... < ε : half_lt_self hε
-   ... ≤ f ⟨z, hz⟩ :  ft.min'_le (f ⟨z, hz⟩) (by simp)
+   ... ≤ f ⟨z, hz⟩ : ft.min'_le (f ⟨z, hz⟩) (finset.mem_image.mpr ⟨⟨z, hz⟩, finset.mem_univ _, rfl⟩)
 end
