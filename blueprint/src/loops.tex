@@ -185,7 +185,7 @@ by the dimension $d$ of $F$.
 
 
 \begin{lemma}
-  \label{lem:cont_convex_hull}
+  \label{lem:smooth_barycentric_coord}
   \uses{def:surrounds_points}
   For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
   surrounding $x$, there is a neighborhood $U$ of $\{(x, p)\}$
@@ -193,7 +193,7 @@ by the dimension $d$ of $F$.
   $(y, q)$ in $U$,
   \begin{itemize}
     \item
-      $w$ is continuous at $(y, q)$
+      $w$ is smooth at $(y, q)$
     \item
       $w(y, q) ∈ (0, 1)$
     \item
@@ -235,7 +235,7 @@ by the dimension $d$ of $F$.
   which should be interpreted as the zero linear form if $δ(q) = 0$
   (this interpretation is automatic if division by zero in $ℝ$
   is defined as zero, as it should be).
-  The map $q ↦ e^*_i(q)$ is continuous (actually smooth) on $Π_i B_δ(p_i)$
+  The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$
   where $δ$ does not vanish since the determinant is polynomial.
   We set $w_i(y, q) = e^*_i(q)(y - q_0)$.
   The computation of $x - p_0$ above proves that
@@ -359,7 +359,7 @@ Families of surrounding loops are easy to construct locally.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:loop_of_hull, lem:cont_convex_hull}
+  \uses{lem:loop_of_hull, lem:smooth_barycentric_coord}
   In this proof we don't mention the $t$ parameter since it plays no
   role, but it is still there.
   \Cref{lem:loop_of_hull} gives a loop $γ$ based at $β(x_0)$,
@@ -367,7 +367,7 @@ Families of surrounding loops are easy to construct locally.
   We set $γ_x(s) = β(x) + (γ(s) - β(x_0))$.
   Each $γ_x$ takes values in $Ω_x$ because $Ω$ is open over some
   neighborhood of $x_0$.
-  \Cref{lem:cont_convex_hull} guarantees that this loop surrounds $g(x)$
+  \Cref{lem:smooth_barycentric_coord} guarantees that this loop surrounds $g(x)$
   for $x$ close enough to $x_0$.
 \end{proof}
 
@@ -501,7 +501,7 @@ that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:caratheodory, lem:cont_convex_hull}
+  \uses{lem:caratheodory, lem:smooth_barycentric_coord}
   For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points
   $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is surrounded
   by the corresponding points $γ_x(s_j)$.
@@ -512,10 +512,10 @@ that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
   $\int h\,dμ_j$ is almost $h(s_j)$).  We set $p_j = \int γ_x\, d\mu_j$, which
   is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights
   $w_j$ in the open interval $(0, 1)$ according to
-  \Cref{lem:cont_convex_hull}.
+  \Cref{lem:smooth_barycentric_coord}.
 
   If $x'$ is in a sufficiently small neighborhood of $x$,
-  \Cref{lem:cont_convex_hull} gives smooth weight functions $w_j$
+  \Cref{lem:smooth_barycentric_coord} gives smooth weight functions $w_j$
   such that $g(x') = \sum w_j(x')p_j(x')$.
   Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such
   neighborhoods, with corresponding measures $μ_j^i$, moving points
