@@ -11,7 +11,7 @@
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 
 <title>Formalization status</title>
@@ -37,7 +37,7 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>1 Loops <span class="partial">40%</span></h3>
+  <h3>1 Loops <span class="partial">26%</span></h3>
   
   <ul class="coverage">
     
@@ -48,7 +48,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.11 (lem:local_loops)</div>
-      <div class="thm_thm_content"><p>   Assume $Ω$ is open and connected over some neighborhood of $x_0$. If $g(x)$ is the convex hull of $Ω_x$ for $x$ near $x_0$ then there is a continuous family of loops defined near $x_0$, based at $β$, taking value in $Ω$ and surrounding $g$. </p>
+      <div class="thm_thm_content"><p>   Assume \(Ω\) is open and connected over some neighborhood of \(x_0\). If \(g(x)\) is the convex hull of \(Ω_x\) for \(x\) near \(x_0\) then there is a continuous family of loops defined near \(x_0\), based at \(β\), taking value in \(Ω\) and surrounding \(g\). </p>
 </div>
     </li>
     
@@ -56,7 +56,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.12 (lem:satisfied_or_refund)</div>
-      <div class="thm_thm_content"><p>   Each $\operatorname{\mathcal{L}}(g, β, U)$ is path connected: for every $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$, there is a continuous map $γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$ which interpolates between $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$. </p>
+      <div class="thm_thm_content"><p>   Each \(\operatorname{\mathcal{L}}(g, β, U)\) is path connected: for every \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U)\), there is a continuous map \(γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)\) which interpolates between \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U)\). </p>
 </div>
     </li>
     
@@ -64,7 +64,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Corollary 1.13 (cor:extend_loops)</div>
-      <div class="thm_thm_content"><p>   Let $U_0$ and $U_1$ be open sets in $E$. Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets. For any $γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)$ and $γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)$, there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and there exists $γ ∈ \operatorname{\mathcal{L}}(U, g, β)$ which coincides with $γ_0$ near $K_0$. </p>
+      <div class="thm_thm_content"><p>   Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊆ U_0\) and \(K_1 ⊆ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)\), there exists \(U ∈ 𝓝(K_0 ∪ K_1)\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β)\) which coincides with \(γ_0\) near \(K_0\). </p>
 </div>
     </li>
     
@@ -72,7 +72,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.14 (lem:∃_surrounding_loops)</div>
-      <div class="thm_thm_content"><p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family $γ$ of loops defined near $K$ which is based at $β$, surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$. Then there such a family which is defined on all of $U$ and agrees with $γ$ near $K$. </p>
+      <div class="thm_thm_content"><p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
 </div>
     </li>
     
@@ -80,7 +80,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.15 (lem:reparametrization)</div>
-      <div class="thm_thm_content"><p>   Let $γ \! :E × 𝕊^1 → F$ be a smooth family of loops surrounding a map $g$ with base $β$ over some $U ⊆ E$. There is a family of circle diffeomorphisms $φ : U × 𝕊^1 → 𝕊^1$ such that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$. </p>
+      <div class="thm_thm_content"><p>   Let \(γ \! :E × 𝕊^1 → F\) be a smooth family of loops surrounding a map \(g\) with base \(β\) over some \(U ⊆ E\). There is a family of circle diffeomorphisms \(φ : U × 𝕊^1 → 𝕊^1\) such that each \(γ_x ∘ φ_x\) has average \(g(x)\) and \(φ_x(0) = 0\). </p>
 </div>
     </li>
     
@@ -88,21 +88,21 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Proposition 1.2 (prop:loops)</div>
-      <div class="thm_thm_content"><p>   Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset. Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$, $Ω_x := Ω ∩ (\{ x\}  × F)$ is open and connected. </p>
-<p>Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$. Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$, and $g(x) = β(x)$ near $K$. </p>
-<p>If, for every $x$ in $U$, $g(x)$ is in the convex hull of $Ω_x$, then there exists a smooth family of loops </p>
+      <div class="thm_thm_content"><p>   Let \(U\) be an open set in \(E\) and \(K ⊆ U\) a compact subset. Let \(Ω\) be a set in \(E × F\) such that, for each \(x\) in \(U\), \(Ω_x := Ω ∩ (\{ x\}  × F)\) is open and connected. </p>
+<p>Let \(β\) and \(g\) be maps from \(E\) to \(F\) that are smooth on \(U\). Assume that \(β(x) ∈ Ω_x\) for all \(x\) in \(U\), and \(g(x) = β(x)\) near \(K\). </p>
+<p>If, for every \(x\) in \(U\), \(g(x)\) is in the convex hull of \(Ω_x\), then there exists a smooth family of loops </p>
 <div class="displaymath" id="a0000000015">
   \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
 </div>
-<p> such that, for all $x$ in $U$, and all $(t, s) ∈ [0, 1] × 𝕊^1$ </p>
+<p> such that, for all \(x\) in \(U\), and all \((t, s) ∈ [0, 1] × 𝕊^1\) </p>
 <ul class="itemize">
-  <li><p>$γ^t_x(s) ∈ Ω_x$ </p>
+  <li><p>\(γ^t_x(s) ∈ Ω_x\) </p>
 </li>
-  <li><p>$γ^0_x(s) = β(x)$ </p>
+  <li><p>\(γ^0_x(s) = β(x)\) </p>
 </li>
-  <li><p>$\barγ^1_x = g(x)$ </p>
+  <li><p>\(\barγ^1_x = g(x)\) </p>
 </li>
-  <li><p>$γ^t_x(s) = β(x)$ if $x$ is near $K$. </p>
+  <li><p>\(γ^t_x(s) = β(x)\) if \(x\) is near \(K\). </p>
 </li>
 </ul>
 </div>
@@ -110,11 +110,17 @@ Click chapter titles to see missing items.
     
     
     
+    <li>
+      <div class="thm_thmheading">Lemma 1.3 (lem:caratheodory)</div>
+      <div class="thm_thm_content"><p>   If a point \(x\) of \(E\) lies in the convex hull of a set \(P\), then \(x\) can be written as the convex combination of at most \(d + 1\) points in \(P\). </p>
+</div>
+    </li>
+    
     
     
     <li>
       <div class="thm_thmheading">Lemma 1.4 (lem:refined_caratheodory)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independent points in $P$ with positive coefficients. </p>
+      <div class="thm_thm_content"><p> If a point \(x\) of \(E\) lies in the convex hull of a set \(P\), then \(x\) can be written as the convex combination of at most \(d + 1\) affinely independent points in \(P\) with positive coefficients. </p>
 </div>
     </li>
     
@@ -124,21 +130,21 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.6 (lem:int_cvx)</div>
-      <div class="thm_thm_content"><p>  If a point $x$ of $E$ lies in the convex hull of an open set $P$, then it is surrounded by some collection of points belonging to $P$. </p>
+      <div class="thm_thm_content"><p>  If a point \(x\) of \(E\) lies in the convex hull of an open set \(P\), then it is surrounded by some collection of points belonging to \(P\). </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 1.7 (lem:cont_convex_hull)</div>
-      <div class="thm_thm_content"><p>  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$ surrounding $x$, there is a neighborhood $U$ of $\{ (x, p)\} $ and a function $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every $(y, q)$ in $U$, </p>
+      <div class="thm_thmheading">Lemma 1.7 (lem:smooth_barycentric_coord)</div>
+      <div class="thm_thm_content"><p>  For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a neighborhood \(U\) of \(\{ (x, p)\} \) and a function \(w : E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in \(U\), </p>
 <ul class="itemize">
-  <li><p>$w$ is continuous at $(y, q)$ </p>
+  <li><p>\(w\) is smooth at \((y, q)\) </p>
 </li>
-  <li><p>$w(y, q) ∈ (0, 1)$ </p>
+  <li><p>\(w(y, q) ∈ (0, 1)\) </p>
 </li>
-  <li><p>$y = \sum _{i=0}^d w_i(y, q)q_i$ </p>
+  <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\) </p>
 </li>
 </ul>
 </div>
@@ -147,6 +153,22 @@ Click chapter titles to see missing items.
     
     
     
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.9 (lem:loop_of_hull)</div>
+      <div class="thm_thm_content"><p>   If a vector \(v\) is in the convex hull of a connected open subset \(O\) then, for every base point \(b ∈ O\), there is a continuous family of loops \(γ \! :[0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)\) such that, for all \(t\) and \(s\): </p>
+<ul class="itemize">
+  <li><p>\(γ^t\) is based at \(b\) </p>
+</li>
+  <li><p>\(γ^0(s) = b\) </p>
+</li>
+  <li><p>\(γ^t(s) ∈ O\) </p>
+</li>
+  <li><p>\(γ^1\) surrounds \(v\) </p>
+</li>
+</ul>
+</div>
+    </li>
     
     
   </ul>
@@ -163,7 +185,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 2.10 (def:short_formal_sol)</div>
-      <div class="thm_thm_content"><p>  A formal solution $\mathcal{F}$ of $\mathcal{R}$ over $U$ is $(π, v)$–short if, for every $x$ in $U$, $Df(x)v$ belonds to the interior of the convex hull of $\mathcal{R}((x, f(x), φ(x)), π, v)$. </p>
+      <div class="thm_thm_content"><p>  A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
 </div>
     </li>
     
@@ -171,18 +193,18 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 2.11 (lem:integration_step)</div>
-      <div class="thm_thm_content"><p>  Let $\mathcal{F}$ be a formal solution of $\mathcal{R}$ over an open set $U$. Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of the interior of $K_1$. Let $C$ be a subset of $U$. Let $E’$ be a linear subspace of $E$ contained in $\ker π$. Let $ε$ be a positive real number. </p>
-<p>Assume $\mathcal{R}$ is open over $U$. Assume that $\mathcal{F}$ is $E’$–holonomic near $K_0$, $(π, v)$–short over $U$, and holonomic near $C$. Then there is a homotopy $\mathcal{F}_t$ such that: </p>
+      <div class="thm_thm_content"><p>  Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a subset of \(U\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
+<p>Assume \(\mathcal{R}\) is open over \(U\). Assume that \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), \((π, v)\)–short over \(U\), and holonomic near \(C\). Then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
-  <li><p>$\mathcal{F}_0 = \mathcal{F}$&#160;; </p>
+  <li><p>\(\mathcal{F}_0 = \mathcal{F}\)&#160;; </p>
 </li>
-  <li><p>$\mathcal{F}_t$ is a formal solution of $\mathcal{R}$ over $U$ for all $t$&#160;; </p>
+  <li><p>\(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) over \(U\) for all \(t\)&#160;; </p>
 </li>
-  <li><p>$\mathcal{F}_t(x) = \mathcal{F}(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$&#160;; </p>
+  <li><p>\(\mathcal{F}_t(x) = \mathcal{F}(x)\) for all \(t\) when \(x\) is near \(C\) or outside \(K_1\)&#160;; </p>
 </li>
-  <li><p>$d(\operatorname{bs}\mathcal{F}_t(x), \operatorname{bs}\mathcal{F}(x)) ≤ ε$ for all $t$ and all $x$&#160;; </p>
+  <li><p>\(d(\operatorname{bs}\mathcal{F}_t(x), \operatorname{bs}\mathcal{F}(x)) ≤ ε\) for all \(t\) and all \(x\)&#160;; </p>
 </li>
-  <li><p>$\mathcal{F}_1$ is $E’ ⊕ ℝv$–holonomic near $K_0$. </p>
+  <li><p>\(\mathcal{F}_1\) is \(E' ⊕ ℝv\)–holonomic near \(K_0\). </p>
 </li>
 </ol>
 </div>
@@ -202,7 +224,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 2.14 (def:ample_relation_loc)</div>
-      <div class="thm_thm_content"><p>  A first order differential relation $\mathcal{R}$ is ample if all it slices are ample. </p>
+      <div class="thm_thm_content"><p>  A first order differential relation \(\mathcal{R}\) is ample if all its slices are ample. </p>
 </div>
     </li>
     
@@ -218,18 +240,18 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 2.16 (lem:h_principle_open_ample_loc)</div>
-      <div class="thm_thm_content"><p>  Let $\mathcal{F}$ be a formal solution of $\mathcal{R}$ over an open set $U$. Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of the interior of $K_1$. Assume $\mathcal{F}$ is holonomic near a subset $C$ of $U$. Let $ε$ be a positive real number. </p>
-<p>If $\mathcal{R}$ is open and ample over $U$ then there is a homotopy $\mathcal{F}_t$ such that: </p>
+      <div class="thm_thm_content"><p>  Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset \(C\) of \(U\). Let \(ε\) be a positive real number. </p>
+<p>If \(\mathcal{R}\) is open and ample over \(U\) then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
-  <li><p>$\mathcal{F}_0 = \mathcal{F}$ </p>
+  <li><p>\(\mathcal{F}_0 = \mathcal{F}\) </p>
 </li>
-  <li><p>$\mathcal{F}_t$ is a formal solution of $\mathcal{R}$ over $U$ for all $t$&#160;; </p>
+  <li><p>\(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) over \(U\) for all \(t\)&#160;; </p>
 </li>
-  <li><p>$\mathcal{F}_t(x) = \mathcal{F}(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$. </p>
+  <li><p>\(\mathcal{F}_t(x) = \mathcal{F}(x)\) for all \(t\) when \(x\) is near \(C\) or outside \(K_1\). </p>
 </li>
-  <li><p>$d(\operatorname{bs}\mathcal{F}_t(x), \operatorname{bs}\mathcal{F}(x)) ≤ ε$ for all $t$ and all $x$&#160;; </p>
+  <li><p>\(d(\operatorname{bs}\mathcal{F}_t(x), \operatorname{bs}\mathcal{F}(x)) ≤ ε\) for all \(t\) and all \(x\)&#160;; </p>
 </li>
-  <li><p>$\mathcal{F}_1$ is holonomic near $K_0$. </p>
+  <li><p>\(\mathcal{F}_1\) is holonomic near \(K_0\). </p>
 </li>
 </ol>
 </div>
@@ -241,15 +263,15 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 2.3 (prop:theilliere)</div>
-      <div class="thm_thm_content"><p>   The corrugated function $f’$ satisfies, uniformly in $x$: </p>
+      <div class="thm_thm_content"><p>   The corrugated function \(f'\) satisfies, uniformly in \(x\): </p>
 <ol class="enumerate">
-  <li><p> $Df’(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)$, and the error vanishes whenever $γ_x$ is constant. </p>
+  <li><p> \(Df'(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)\), and the error vanishes whenever \(γ_x\) is constant. </p>
 </li>
-  <li><p> $Df’(x)w = Df(x)w + O\left(\frac1N\right)$ for $w ∈ \ker π$ </p>
+  <li><p> \(Df'(x)w = Df(x)w + O\left(\frac1N\right)\) for \(w ∈ \ker π\) </p>
 </li>
-  <li><p> $f’(x) = f(x) + O\left(\frac1N\right)$ </p>
+  <li><p> \(f'(x) = f(x) + O\left(\frac1N\right)\) </p>
 </li>
-  <li><p> $f’(x) = f(x)$ whenever $γ_x$ is constant. </p>
+  <li><p> \(f'(x) = f(x)\) whenever \(γ_x\) is constant. </p>
 </li>
 </ol>
 </div>
@@ -265,7 +287,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 2.7 (def:htpy_formal_sol_loc)</div>
-      <div class="thm_thm_content"><p>  A homotopy of formal solutions over $U$ is a map $\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)$ which is smooth over $[0, 1] × U$ and such that each $x ↦ \mathcal{F}(t, x)$ is a formal solution over $U$ when $t$ is in $[0, 1]$. </p>
+      <div class="thm_thm_content"><p>  A homotopy of formal solutions over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\) and such that each \(x ↦ \mathcal{F}(t, x)\) is a formal solution over \(U\) when \(t\) is in \([0, 1]\). </p>
 </div>
     </li>
     
@@ -273,8 +295,8 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 2.8 (def:rel_slice)</div>
-      <div class="thm_thm_content"><p>  For every $σ = (x, y, φ)$, the slice of $\mathcal{R}$ at $σ$ with respect to $(π, v)$ is: </p>
-<div class="displaymath" id="a0000000035">
+      <div class="thm_thm_content"><p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
+<div class="displaymath" id="a0000000048">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 </div>
@@ -284,7 +306,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 2.9 (lem:update_lin_map)</div>
-      <div class="thm_thm_content"><p> The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$ and sends $v$ to $w$. If $\sigma $ belongs to $\mathcal{R}$ then $φ(v)$ belongs to $\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} $. </p>
+      <div class="thm_thm_content"><p> The linear map \(φ + (w - φ(v)) ⊗ π)\) coincides with \(φ\) on \(\ker π\) and sends \(v\) to \(w\). If \(\sigma \) belongs to \(\mathcal{R}\) then \(φ(v)\) belongs to \(\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} \). </p>
 </div>
     </li>
     
@@ -301,7 +323,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.1 (def:pull_back_bundle)</div>
-      <div class="thm_thm_content"><p> For every bundle $p : E → B$ and every map $f \! :B’ → B$, the pull-back bundle $f^*E → B’$ is defined by $f^*E = \{ (b’, e) ∈ B’ × E \; |\;  p(e) = f(b’)\} $ with the obvious projection to $B’$. </p>
+      <div class="thm_thm_content"><p> For every bundle \(p : E → B\) and every map \(f \! :B' → B\), the pull-back bundle \(f^*E → B'\) is defined by \(f^*E = \{ (b', e) ∈ B' × E \; |\;  p(e) = f(b')\} \) with the obvious projection to \(B'\). </p>
 </div>
     </li>
     
@@ -309,7 +331,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.10 (def:h-princ)</div>
-      <div class="thm_thm_content"><p>  A first order differential relation $\mathcal{R}⊆ J^1(M, N)$ satisfies the $h$-principle if every formal solution of $\mathcal{R}$ is homotopic to a holonomic one. It satisfies the parametric $h$-principle if, for every manifold with boundary $P$, every family $\mathcal{F}: P × M → J^1(M, N)$ of formal solutions which are holonomic for $p$ in $𝓝(∂P)$ is homotopic to a family of holonomic ones relative to $𝓝(∂P)$. It satisfies the parametric $h$-principle if, for every manifold with boundary $P$, every family $\mathcal{F}: P × M → J^1(M, N)$ of formal solutions is homotopic to a family of holonomic ones. </p>
+      <div class="thm_thm_content"><p>  A first order differential relation \(\mathcal{R}⊆ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions is homotopic to a family of holonomic ones. </p>
 </div>
     </li>
     
@@ -327,9 +349,9 @@ Click chapter titles to see missing items.
       <div class="thm_thmheading">Lemma 3.12 (lem:param_trick)</div>
       <div class="thm_thm_content"><p>  In the above setup, we have: </p>
 <ul class="itemize">
-  <li><p>$\bar F$ is holonomic at $(x, p)$ if and only if $F_p$ is holonomic at $x$. </p>
+  <li><p>\(\bar F\) is holonomic at \((x, p)\) if and only if \(F_p\) is holonomic at \(x\). </p>
 </li>
-  <li><p>$F$ is a family of formal solutions of some $\mathcal{R}⊂ J^1(X, Y)$ if and only if $\bar F$ is a formal solution of $\mathcal{R}^P := Ψ^{-1}(\mathcal{R})$. </p>
+  <li><p>\(F\) is a family of formal solutions of some \(\mathcal{R}⊂ J^1(X, Y)\) if and only if \(\bar F\) is a formal solution of \(\mathcal{R}^P := Ψ^{-1}(\mathcal{R})\). </p>
 </li>
 </ul>
 </div>
@@ -339,7 +361,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 3.13 (lem:param_for_free)</div>
-      <div class="thm_thm_content"><p>  Let $\mathcal{R}$ be a first order differential relation for maps from $M$ to $N$. If, for every manifold with boundary $P$, $\mathcal{R}^P$ satisfies the $h$-principle then $\mathcal{R}$ satisfies the parametric $h$-principle. Likewise, the $C^0$-dense and relative $h$-principle for all $\mathcal{R}^P$ imply the parametric $C^0$-dense and relative $h$-principle for $\mathcal{R}$. </p>
+      <div class="thm_thm_content"><p>  Let \(\mathcal{R}\) be a first order differential relation for maps from \(M\) to \(N\). If, for every manifold with boundary \(P\), \(\mathcal{R}^P\) satisfies the \(h\)-principle then \(\mathcal{R}\) satisfies the parametric \(h\)-principle. Likewise, the \(C^0\)-dense and relative \(h\)-principle for all \(\mathcal{R}^P\) imply the parametric \(C^0\)-dense and relative \(h\)-principle for \(\mathcal{R}\). </p>
 </div>
     </li>
     
@@ -347,7 +369,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.14 (def:ample_relation)</div>
-      <div class="thm_thm_content"><p>  A relation $\mathcal{R}$ is ample if, for every $σ = (x, y, φ)$ in $\mathcal{R}$ and every $(λ, v)$, the slice $\mathcal{R}_{σ, λ, v}$ is ample in $T_yY$. </p>
+      <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
 </div>
     </li>
     
@@ -363,7 +385,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 3.16 (lem:open_ample_immersion)</div>
-      <div class="thm_thm_content"><p> The relation of immersions of $M$ into $N$ in positive codimension is open and ample. </p>
+      <div class="thm_thm_content"><p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
 </div>
     </li>
     
@@ -371,7 +393,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Theorem 3.17 (thm:open_ample)</div>
-      <div class="thm_thm_content"><p>   If $\mathcal{R}$ is open and ample then it satisfies the relative and parametric $C^0$-dense $h$-principle. </p>
+      <div class="thm_thm_content"><p>   If \(\mathcal{R}\) is open and ample then it satisfies the relative and parametric \(C^0\)-dense \(h\)-principle. </p>
 </div>
     </li>
     
@@ -379,7 +401,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 3.18 (lem:ample_parameter)</div>
-      <div class="thm_thm_content"><p>  If $\mathcal{R}$ is ample then, for any parameter space $P$, $\mathcal{R}^P$ is also ample. </p>
+      <div class="thm_thm_content"><p>  If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
 </div>
     </li>
     
@@ -387,7 +409,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Theorem 3.19 (thm:sphere_eversion)</div>
-      <div class="thm_thm_content"><p>  There is a homotopy of immersions of $𝕊^2$ into $ℝ^3$ from the inclusion map to the antipodal map $a : q ↦ -q$. </p>
+      <div class="thm_thm_content"><p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
 </div>
     </li>
     
@@ -395,7 +417,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.2 (def:hom_bundle)</div>
-      <div class="thm_thm_content"><p> Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold $B$. The bundle $\operatorname{Hom}(E, F) → B$ is the set of linear maps from $E_b$ to $F_b$ for some $b$ in $B$, with the obvious project map. </p>
+      <div class="thm_thm_content"><p> Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious project map. </p>
 </div>
     </li>
     
@@ -403,8 +425,8 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.3 (def:one_jet_space)</div>
-      <div class="thm_thm_content"><p>  Let $M$ and $N$ be smooth manifolds. Denote by $p_1$ and $p_2$ the projections of $M × N$ to $M$ and $N$ respectively. </p>
-<p>The space $J^1(M, N)$ of $1$-jets of maps from $M$ to $N$ is $Hom(p_1^*TM, p_2^*TN)$ </p>
+      <div class="thm_thm_content"><p>  Let \(M\) and \(N\) be smooth manifolds. Denote by \(p_1\) and \(p_2\) the projections of \(M × N\) to \(M\) and \(N\) respectively. </p>
+<p>The space \(J^1(M, N)\) of \(1\)-jets of maps from \(M\) to \(N\) is \(Hom(p_1^*TM, p_2^*TN)\) </p>
 </div>
     </li>
     
@@ -412,7 +434,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.4 (def:one_jet_extension)</div>
-      <div class="thm_thm_content"><p>  The $1$-jet of a smooth map $f \! :M → N$ is the map from $m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$. </p>
+      <div class="thm_thm_content"><p>  The \(1\)-jet of a smooth map \(f \! :M → N\) is the map from \(m\) to \(J^1(M, N)\) defined by \(j^1f(m) = (m, f(m), T_mf)\). </p>
 </div>
     </li>
     
@@ -420,13 +442,13 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 3.5 (lem:one_jet_extension_prop)</div>
-      <div class="thm_thm_content"><p>  For every smooth map $f \! :M → N$, </p>
+      <div class="thm_thm_content"><p>  For every smooth map \(f \! :M → N\), </p>
 <ol class="enumerate">
-  <li><p> $j^1f$ is smooth </p>
+  <li><p> \(j^1f\) is smooth </p>
 </li>
-  <li><p> $j^1f$ is a section of $J^1(M, N) → M$ </p>
+  <li><p> \(j^1f\) is a section of \(J^1(M, N) → M\) </p>
 </li>
-  <li><p> $j^1f$ composed with $J^1(M, N) → N$ is $f$. </p>
+  <li><p> \(j^1f\) composed with \(J^1(M, N) → N\) is \(f\). </p>
 </li>
 </ol>
 </div>
@@ -436,7 +458,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.6 (def:holonomic_section)</div>
-      <div class="thm_thm_content"><p>  A section $\mathcal{F}$ of $J^1(M, N) → M$ is called holonomic if it is the $1$–jet of its base map. Equivalently, $\mathcal{F}$ is holonomic if there exists $f \! :M → N$ such that $\mathcal{F}= j^1f$, since such a map is necessarily $\operatorname{bs}\mathcal{F}$. </p>
+      <div class="thm_thm_content"><p>  A section \(\mathcal{F}\) of \(J^1(M, N) → M\) is called holonomic if it is the \(1\)–jet of its base map. Equivalently, \(\mathcal{F}\) is holonomic if there exists \(f \! :M → N\) such that \(\mathcal{F}= j^1f\), since such a map is necessarily \(\operatorname{bs}\mathcal{F}\). </p>
 </div>
     </li>
     
@@ -444,7 +466,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.7 (def:rel)</div>
-      <div class="thm_thm_content"><p>  A first order differential relation for maps from $M$ to $N$ is a subset $\mathcal{R}$ of $J^1(M, N)$. </p>
+      <div class="thm_thm_content"><p>  A first order differential relation for maps from \(M\) to \(N\) is a subset \(\mathcal{R}\) of \(J^1(M, N)\). </p>
 </div>
     </li>
     
@@ -452,7 +474,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.8 (def:formal_sol)</div>
-      <div class="thm_thm_content"><p>  A formal solution of a differential relation $\mathcal{R}⊆ J^1(M, N)$ is a section of $J^1(M, N) → M$ taking values in $\mathcal{R}$. A solution of $\mathcal{R}$ is a map from $M$ to $N$ whose $1$–jet extension is a formal solution. </p>
+      <div class="thm_thm_content"><p>  A formal solution of a differential relation \(\mathcal{R}⊆ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
 </div>
     </li>
     
@@ -460,7 +482,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.9 (def:htpy_formal_sol)</div>
-      <div class="thm_thm_content"><p>  A homotopy of formal solutions of $\mathcal{R}$ is a family of sections $\mathcal{F}: ℝ × M → J^1(M, N)$ which is smooth over $[0, 1] × M$ and such that each $m ↦ \mathcal{F}(t, m)$ is a formal solution when $t$ is in $[0, 1]$. </p>
+      <div class="thm_thm_content"><p>  A homotopy of formal solutions of \(\mathcal{R}\) is a family of sections \(\mathcal{F}: ℝ × M → J^1(M, N)\) which is smooth over \([0, 1] × M\) and such that each \(m ↦ \mathcal{F}(t, m)\) is a formal solution when \(t\) is in \([0, 1]\). </p>
 </div>
     </li>
     
@@ -488,20 +510,20 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 2.10 (def:short_formal_sol)</div>
-      <div class="thm_thm_content"><p>  A formal solution $\mathcal{F}$ of $\mathcal{R}$ over $U$ is $(π, v)$–short if, for every $x$ in $U$, $Df(x)v$ belonds to the interior of the convex hull of $\mathcal{R}((x, f(x), φ(x)), π, v)$. </p>
+      <div class="thm_thm_content"><p>  A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Definition 2.7 (def:htpy_formal_sol_loc)</div>
-      <div class="thm_thm_content"><p>  A homotopy of formal solutions over $U$ is a map $\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)$ which is smooth over $[0, 1] × U$ and such that each $x ↦ \mathcal{F}(t, x)$ is a formal solution over $U$ when $t$ is in $[0, 1]$. </p>
+      <div class="thm_thm_content"><p>  A homotopy of formal solutions over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\) and such that each \(x ↦ \mathcal{F}(t, x)\) is a formal solution over \(U\) when \(t\) is in \([0, 1]\). </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Definition 2.8 (def:rel_slice)</div>
-      <div class="thm_thm_content"><p>  For every $σ = (x, y, φ)$, the slice of $\mathcal{R}$ at $σ$ with respect to $(π, v)$ is: </p>
-<div class="displaymath" id="a0000000035">
+      <div class="thm_thm_content"><p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
+<div class="displaymath" id="a0000000048">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 </div>
@@ -518,19 +540,19 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Definition 3.1 (def:pull_back_bundle)</div>
-      <div class="thm_thm_content"><p> For every bundle $p : E → B$ and every map $f \! :B’ → B$, the pull-back bundle $f^*E → B’$ is defined by $f^*E = \{ (b’, e) ∈ B’ × E \; |\;  p(e) = f(b’)\} $ with the obvious projection to $B’$. </p>
+      <div class="thm_thm_content"><p> For every bundle \(p : E → B\) and every map \(f \! :B' → B\), the pull-back bundle \(f^*E → B'\) is defined by \(f^*E = \{ (b', e) ∈ B' × E \; |\;  p(e) = f(b')\} \) with the obvious projection to \(B'\). </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Definition 3.14 (def:ample_relation)</div>
-      <div class="thm_thm_content"><p>  A relation $\mathcal{R}$ is ample if, for every $σ = (x, y, φ)$ in $\mathcal{R}$ and every $(λ, v)$, the slice $\mathcal{R}_{σ, λ, v}$ is ample in $T_yY$. </p>
+      <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Definition 3.2 (def:hom_bundle)</div>
-      <div class="thm_thm_content"><p> Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold $B$. The bundle $\operatorname{Hom}(E, F) → B$ is the set of linear maps from $E_b$ to $F_b$ for some $b$ in $B$, with the obvious project map. </p>
+      <div class="thm_thm_content"><p> Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious project map. </p>
 </div>
     </li>
     
@@ -553,25 +575,25 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 1.4 (lem:refined_caratheodory)</div>
-      <div class="thm_thm_content"><p> If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$ can be written as the convex combination of at most $d + 1$ affinely independent points in $P$ with positive coefficients. </p>
+      <div class="thm_thm_content"><p> If a point \(x\) of \(E\) lies in the convex hull of a set \(P\), then \(x\) can be written as the convex combination of at most \(d + 1\) affinely independent points in \(P\) with positive coefficients. </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Lemma 1.6 (lem:int_cvx)</div>
-      <div class="thm_thm_content"><p>  If a point $x$ of $E$ lies in the convex hull of an open set $P$, then it is surrounded by some collection of points belonging to $P$. </p>
+      <div class="thm_thm_content"><p>  If a point \(x\) of \(E\) lies in the convex hull of an open set \(P\), then it is surrounded by some collection of points belonging to \(P\). </p>
 </div>
     </li>
     
     <li>
-      <div class="thm_thmheading">Lemma 1.7 (lem:cont_convex_hull)</div>
-      <div class="thm_thm_content"><p>  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$ surrounding $x$, there is a neighborhood $U$ of $\{ (x, p)\} $ and a function $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every $(y, q)$ in $U$, </p>
+      <div class="thm_thmheading">Lemma 1.7 (lem:smooth_barycentric_coord)</div>
+      <div class="thm_thm_content"><p>  For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a neighborhood \(U\) of \(\{ (x, p)\} \) and a function \(w : E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in \(U\), </p>
 <ul class="itemize">
-  <li><p>$w$ is continuous at $(y, q)$ </p>
+  <li><p>\(w\) is smooth at \((y, q)\) </p>
 </li>
-  <li><p>$w(y, q) ∈ (0, 1)$ </p>
+  <li><p>\(w(y, q) ∈ (0, 1)\) </p>
 </li>
-  <li><p>$y = \sum _{i=0}^d w_i(y, q)q_i$ </p>
+  <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\) </p>
 </li>
 </ul>
 </div>
@@ -600,15 +622,15 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 2.3 (prop:theilliere)</div>
-      <div class="thm_thm_content"><p>   The corrugated function $f’$ satisfies, uniformly in $x$: </p>
+      <div class="thm_thm_content"><p>   The corrugated function \(f'\) satisfies, uniformly in \(x\): </p>
 <ol class="enumerate">
-  <li><p> $Df’(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)$, and the error vanishes whenever $γ_x$ is constant. </p>
+  <li><p> \(Df'(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)\), and the error vanishes whenever \(γ_x\) is constant. </p>
 </li>
-  <li><p> $Df’(x)w = Df(x)w + O\left(\frac1N\right)$ for $w ∈ \ker π$ </p>
+  <li><p> \(Df'(x)w = Df(x)w + O\left(\frac1N\right)\) for \(w ∈ \ker π\) </p>
 </li>
-  <li><p> $f’(x) = f(x) + O\left(\frac1N\right)$ </p>
+  <li><p> \(f'(x) = f(x) + O\left(\frac1N\right)\) </p>
 </li>
-  <li><p> $f’(x) = f(x)$ whenever $γ_x$ is constant. </p>
+  <li><p> \(f'(x) = f(x)\) whenever \(γ_x\) is constant. </p>
 </li>
 </ol>
 </div>
@@ -616,7 +638,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 2.9 (lem:update_lin_map)</div>
-      <div class="thm_thm_content"><p> The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$ and sends $v$ to $w$. If $\sigma $ belongs to $\mathcal{R}$ then $φ(v)$ belongs to $\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} $. </p>
+      <div class="thm_thm_content"><p> The linear map \(φ + (w - φ(v)) ⊗ π)\) coincides with \(φ\) on \(\ker π\) and sends \(v\) to \(w\). If \(\sigma \) belongs to \(\mathcal{R}\) then \(φ(v)\) belongs to \(\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} \). </p>
 </div>
     </li>
     
@@ -631,13 +653,13 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 3.16 (lem:open_ample_immersion)</div>
-      <div class="thm_thm_content"><p> The relation of immersions of $M$ into $N$ in positive codimension is open and ample. </p>
+      <div class="thm_thm_content"><p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Theorem 3.19 (thm:sphere_eversion)</div>
-      <div class="thm_thm_content"><p>  There is a homotopy of immersions of $𝕊^2$ into $ℝ^3$ from the inclusion map to the antipodal map $a : q ↦ -q$. </p>
+      <div class="thm_thm_content"><p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
 </div>
     </li>
     
@@ -659,40 +681,22 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Lemma 1.12 (lem:satisfied_or_refund)</div>
-      <div class="thm_thm_content"><p>   Each $\operatorname{\mathcal{L}}(g, β, U)$ is path connected: for every $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$, there is a continuous map $γ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$ which interpolates between $γ_0$ and $γ_1$ in $\operatorname{\mathcal{L}}(g, β, U)$. </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Corollary 1.13 (cor:extend_loops)</div>
-      <div class="thm_thm_content"><p>   Let $U_0$ and $U_1$ be open sets in $E$. Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets. For any $γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β)$ and $γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β)$, there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and there exists $γ ∈ \operatorname{\mathcal{L}}(U, g, β)$ which coincides with $γ_0$ near $K_0$. </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 1.14 (lem:∃_surrounding_loops)</div>
-      <div class="thm_thm_content"><p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family $γ$ of loops defined near $K$ which is based at $β$, surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$. Then there such a family which is defined on all of $U$ and agrees with $γ$ near $K$. </p>
-</div>
-    </li>
-    
-    <li>
       <div class="thm_thmheading">Proposition 1.2 (prop:loops)</div>
-      <div class="thm_thm_content"><p>   Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset. Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$, $Ω_x := Ω ∩ (\{ x\}  × F)$ is open and connected. </p>
-<p>Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$. Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$, and $g(x) = β(x)$ near $K$. </p>
-<p>If, for every $x$ in $U$, $g(x)$ is in the convex hull of $Ω_x$, then there exists a smooth family of loops </p>
+      <div class="thm_thm_content"><p>   Let \(U\) be an open set in \(E\) and \(K ⊆ U\) a compact subset. Let \(Ω\) be a set in \(E × F\) such that, for each \(x\) in \(U\), \(Ω_x := Ω ∩ (\{ x\}  × F)\) is open and connected. </p>
+<p>Let \(β\) and \(g\) be maps from \(E\) to \(F\) that are smooth on \(U\). Assume that \(β(x) ∈ Ω_x\) for all \(x\) in \(U\), and \(g(x) = β(x)\) near \(K\). </p>
+<p>If, for every \(x\) in \(U\), \(g(x)\) is in the convex hull of \(Ω_x\), then there exists a smooth family of loops </p>
 <div class="displaymath" id="a0000000015">
   \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
 </div>
-<p> such that, for all $x$ in $U$, and all $(t, s) ∈ [0, 1] × 𝕊^1$ </p>
+<p> such that, for all \(x\) in \(U\), and all \((t, s) ∈ [0, 1] × 𝕊^1\) </p>
 <ul class="itemize">
-  <li><p>$γ^t_x(s) ∈ Ω_x$ </p>
+  <li><p>\(γ^t_x(s) ∈ Ω_x\) </p>
 </li>
-  <li><p>$γ^0_x(s) = β(x)$ </p>
+  <li><p>\(γ^0_x(s) = β(x)\) </p>
 </li>
-  <li><p>$\barγ^1_x = g(x)$ </p>
+  <li><p>\(\barγ^1_x = g(x)\) </p>
 </li>
-  <li><p>$γ^t_x(s) = β(x)$ if $x$ is near $K$. </p>
+  <li><p>\(γ^t_x(s) = β(x)\) if \(x\) is near \(K\). </p>
 </li>
 </ul>
 </div>

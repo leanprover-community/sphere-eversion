@@ -1,11 +1,17 @@
 header {
   height: 3rem;
+  justify-content: center;
+  display: flex;
 }
 
 header a {
   margin-right: auto;
   text-decoration: none;
-  color: white;
+  color: #24292e;
+}
+
+header a:visited {
+  color: #24292e;
 }
 
 header h1 {
