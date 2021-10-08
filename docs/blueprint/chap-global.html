@@ -13,6 +13,7 @@
 <link rel="prev" href="chap-local.html" title="Local theory of convex integration" />
 <link rel="up" href="index.html" title="The sphere eversion project" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
@@ -40,7 +41,7 @@
   <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-loops.html#a0000000012"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
+  <a href="chap-loops.html#a0000000011"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
  </li>
 
   </ul>
@@ -66,10 +67,10 @@
   <span class="expand-toc">▼</span>
   <ul class="sub-toc-1 active">
      <li class="">
-  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
+  <a href="chap-global.html#a0000000012"><span class="toc_ref">3.1</span> <span class="toc_entry">Preliminaries</span></a>
  </li>
 <li class="">
-  <a href="chap-global.html#a0000000014"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
+  <a href="chap-global.html#a0000000013"><span class="toc_ref">3.2</span> <span class="toc_entry">First order differential relations</span></a>
  </li>
 <li class="">
   <a href="chap-global.html#sec:general_theory"><span class="toc_ref">3.3</span> <span class="toc_entry">The \(h\)-principle for open and ample differential relations</span></a>
@@ -94,7 +95,7 @@
 <div class="main-text">
 <h1 id="chap:global">3 Global theory of open and ample relations</h1>
 
-<h1 id="a0000000013">3.1 Preliminaries</h1>
+<h1 id="a0000000012">3.1 Preliminaries</h1>
 <h2 id="sec:vector_bundles_operations">3.1.1 Vector bundles operations</h2>
 
 <p><div class="definition_thmwrapper" id="def:pull_back_bundle">
@@ -131,7 +132,7 @@
   </div>
 </div> </p>
 <p>Set-theoretically, one can define \(\operatorname{Hom}(E, F)\) as the set of subsets \(S\) of \(E × F\) such that there exists \(b\) such that \(S ⊂ E_b × F_b\) and \(S\) is the graph of a linear map. But the type theory formalization will use other tricks here. The facts that really matter are listed in <a href="chap-global.html#lem:one_jet_extension_prop">lemma 3.5</a>. </p>
-<h2 id="a0000000067">3.1.2 Jets spaces</h2>
+<h2 id="a0000000049">3.1.2 Jets spaces</h2>
 <p><div class="definition_thmwrapper" id="def:one_jet_space">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -206,6 +207,8 @@
     <span class="lemma_thmlabel">3.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:one_jet_extension_prop">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000050"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -237,7 +240,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000068">
+<div class="proof_wrapper" id="a0000000050">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -245,19 +248,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p>This is obvious by construction…</p>
+
   </div>
-</div> This is obvious by construction…<div class="proof_wrapper" id="a0000000069">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="definition_thmwrapper" id="def:holonomic_section">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -290,7 +284,7 @@
 
   </div>
 </div> </p>
-<h1 id="a0000000014">3.2 First order differential relations</h1>
+<h1 id="a0000000013">3.2 First order differential relations</h1>
 <p><div class="definition_thmwrapper" id="def:rel">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -448,7 +442,7 @@
 
   </div>
 </div> </p>
-<h2 id="a0000000070">Parametricity for free</h2>
+<h2 id="a0000000051">Parametricity for free</h2>
 <p>In many cases, relative parametric \(h\)-principles can be deduced from relative non-parametric ones with a larger source manifold. Let \(X\), \(P\) and \(Y\) be manifolds, with \(P\) seen a parameter space. Denote by \(Ψ\) the map from \(J^1(X × P, Y)\) to \(J^1(X, Y)\) sending \((x, p, y, ψ)\) to \((x, y, ψ ∘ ι_{x, p})\) where \(ι_{x, p} : T_xX → T_xX × T_pP\) sends \(v\) to \((v, 0)\). </p>
 <p>To any family of sections \(F_p : x ↦ (f_p(x), φ_{p, x})\) of \(J^1(X, Y)\), we associate the section \(\bar F\) of \(J^1(X × P, Y)\) sending \((x, p)\) to \(\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))\). </p>
 <p><div class="lemma_thmwrapper" id="lem:param_trick">
@@ -459,6 +453,8 @@
     <span class="lemma_thmlabel">3.12</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000052"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -489,7 +485,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000071">
+<div class="proof_wrapper" id="a0000000052">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -497,19 +493,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p>TODO…</p>
+
   </div>
-</div> TODO…<div class="proof_wrapper" id="a0000000072">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="lemma_thmwrapper" id="lem:param_for_free">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -518,6 +505,8 @@
     <span class="lemma_thmlabel">3.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -541,7 +530,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000073">
+<div class="proof_wrapper" id="a0000000053">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -549,23 +538,14 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p> This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.12</a>. </p>
+
   </div>
-</div>  This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.12</a>. <div class="proof_wrapper" id="a0000000074">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <h1 id="sec:general_theory">3.3 The \(h\)-principle for open and ample differential relations</h1>
 
 <p>In this chapter, \(X\) and \(Y\) are smooth manifolds and \(\mathcal{R}\) is a first order differential relation on maps from \(X\) to \(Y\): \(\mathcal{R}⊂ J^1(X, Y)\). For any \(σ = (x, y, φ)\) in \(\mathcal{R}\) and any dual pair \((λ, v) ∈ T^*_xV × T_xV\), we set: </p>
-<div class="displaymath" id="a0000000075">
+<div class="displaymath" id="a0000000054">
   \[  \mathcal{R}_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  φ + (w - φ(v))⊗λ\big ) ∈ \mathcal{R}\right\}   \]
 </div>
 <p> where \(\operatorname{Conn}_a A\) is the connected component of \(A\) containing \(a\). In order to decipher this definition, it suffices to notice that \(φ + (w - φ(v))⊗λ\) is the unique linear map from \(T_xX\) to \(T_yY\) which coincides with \(φ\) on \(\ker λ\) and sends \(v\) to \(w\). In particular, \(w = φ(v)\) gives back \(φ\). </p>
@@ -610,6 +590,8 @@
     <span class="lemma_thmlabel">3.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -634,7 +616,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000076">
+<div class="proof_wrapper" id="a0000000055">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -642,19 +624,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p>This follows from the fundamental properties of the tangent bundle. </p>
+
   </div>
-</div> This follows from the fundamental properties of the tangent bundle. <div class="proof_wrapper" id="a0000000077">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="lemma_thmwrapper" id="lem:open_ample_immersion">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -663,6 +636,8 @@
     <span class="lemma_thmlabel">3.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000056"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
 
   </div>
   </div>
@@ -671,7 +646,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000078">
+<div class="proof_wrapper" id="a0000000056">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -679,19 +654,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p>  This obviously follows from <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a>. </p>
+
   </div>
-</div>   This obviously follows from <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a>. <div class="proof_wrapper" id="a0000000079">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="theorem_thmwrapper" id="thm:open_ample">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
@@ -701,7 +667,7 @@
     <span class="theorem_thmtitle">Gromov</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
-    <a class="icon proof" href="chap-global.html#sec:general_theory"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000057"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -735,6 +701,8 @@
     <span class="lemma_thmlabel">3.18</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
     <div class="modal-container">
@@ -758,7 +726,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000080">
+<div class="proof_wrapper" id="a0000000058">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -766,50 +734,32 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
-  </div>
-</div> We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000081">
+  <p>We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
+<div class="displaymath" id="a0000000059">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when \(λ_X = 0\). Then the condition on \(w\) becomes \(ψ ∘ ι_{x, p} ∈ \mathcal{R}\), which is true by definition of \(\mathcal{R}^P\), so \(\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
-<p>We now assume \(λ_X\) is not zero and choose \(u ∈ T_xX\) such that \(λ_X(u) = 1\). We then have \(\mathcal{R}^P_{σ, λ, v} = \mathcal{R}_{Ψσ, λ_X, u} + ψ(v) - ψ∘ι_{x, p}(u)\). Because \(\mathcal{R}\) is ample and taking convex hull commutes with translation, we get that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). <div class="proof_wrapper" id="a0000000082">
+<p>We now assume \(λ_X\) is not zero and choose \(u ∈ T_xX\) such that \(λ_X(u) = 1\). We then have \(\mathcal{R}^P_{σ, λ, v} = \mathcal{R}_{Ψσ, λ_X, u} + ψ(v) - ψ∘ι_{x, p}(u)\). Because \(\mathcal{R}\) is ample and taking convex hull commutes with translation, we get that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000057">
   <div class="proof_heading">
     <span class="proof_caption">
-    Proof
+    Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.17</a>
     </span>
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
-  </div>
-</div> </p>
-<p><div class="proof_wrapper" id="a0000000083">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div>[Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.17</a>]   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.13</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.18</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
+  <p>   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.13</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.18</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
 <p>We first assume \(X\) is closed, and will then explain the proof adjustments needed in the non-compact case. By compactness, there are finite many compact subsets \((K_i)_{1 ≤ i ≤ N}\) contained in coordinate charts \(U_i\) and such that \(\bigcup K_i = X\). </p>
 <p>We prove by induction on \(i\) from \(0\) to \(N\) that there are formal solutions \(F_i\), starting with \(F_0 = F\), that are homotopic to \(F\) relative to \(A\), holonomic on \(K_{≤ i} := \bigcup _{j ≤ i} K_j\) and whose base maps are \((1-2^{-i})ε\)-close to that of \(F\) (this contrived bound will be convenient for the non-compact case). </p>
 <p>Assume \(F_i\) has been constructed for some \(i {\lt} N\). We now want to construct it on \(U_{i+1}\). <a href="chap-global.html#lem:ample_iff_loc">Lemma 3.15</a> ensures the pull-back of \(\mathcal{R}\) in the chart corresponding to \(U_{i+1}\) is ample in the sense of the preceding chapter. Hence <a href="chap-local.html#lem:h_principle_open_ample_loc">Lemma 2.16</a> can be applied to construct \(F_{i+1}\), using the image of \(K_{i+1}\) as \(K_0\) and the image of \(A ∩ K_{i+1} ∩ K_{≤ i}\) as \(C\). It is holonomic on \(K_{≤ i+1}\) because it agrees with \(F_i\) near \(K_{≤ i}\) and is holonomic near \(K_{i+1}\). </p>
 <p>Once all \(F_i\) are constructed, we define \(F^t\) to be the concatenation of all homotopies relating \(F_i\) to \(F_{i+1}\). </p>
-<p>If \(X\) is not compact, then one can use a countable family of subsets \((U_i, K_i)\) which is locally finite (ie. every point \(x\) has a neighborhood intersecting only finitely many \(U_i\)). The way we have chosen \(C^0\)-bounds ensures that each \(\operatorname{bs}F_i\) is still at distance at most \(ε\) from \(\operatorname{bs}F\). We now have countably many homotopies to concatenate, so we need to reparametrize the \(i\)-th homotopy by an interval of length \(2^{-i}\). This give a family of sections of \(J^1(X, Y)\) parametrized by \(t ∈ [0, 1)\). But our local finiteness assumption implies that, for each each \(x\), there is some \(t_0 {\lt} 1\) and some neighborhood \(U\) of \(x\) such that our family is \(t\)–independent on \(U\) for \(t ≥ t_0\). So we can extend to \(t = 1\). The resulting family is smooth since smoothness is a local condition in both \(x\) and \(t\). <div class="proof_wrapper" id="a0000000084">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
+<p>If \(X\) is not compact, then one can use a countable family of subsets \((U_i, K_i)\) which is locally finite (ie. every point \(x\) has a neighborhood intersecting only finitely many \(U_i\)). The way we have chosen \(C^0\)-bounds ensures that each \(\operatorname{bs}F_i\) is still at distance at most \(ε\) from \(\operatorname{bs}F\). We now have countably many homotopies to concatenate, so we need to reparametrize the \(i\)-th homotopy by an interval of length \(2^{-i}\). This give a family of sections of \(J^1(X, Y)\) parametrized by \(t ∈ [0, 1)\). But our local finiteness assumption implies that, for each each \(x\), there is some \(t_0 {\lt} 1\) and some neighborhood \(U\) of \(x\) such that our family is \(t\)–independent on \(U\) for \(t ≥ t_0\). So we can extend to \(t = 1\). The resulting family is smooth since smoothness is a local condition in both \(x\) and \(t\). </p>
+
   </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 <p><div class="theorem_thmwrapper" id="thm:sphere_eversion">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
@@ -819,6 +769,8 @@
     <span class="theorem_thmtitle">Smale 1958</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000060"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
 
   </div>
   </div>
@@ -827,7 +779,7 @@
 
   </div>
 </div> </p>
-<p><div class="proof_wrapper" id="a0000000085">
+<div class="proof_wrapper" id="a0000000060">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -835,20 +787,11 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
+  <p> We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not animmersion for \(t=1/2\)). Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ : t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). It is homotopic by reparametrization to a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\) which are holonomic for \(t\) near the \(0\) and \(1\). </p>
+<p>The above theorem ensures this family is homotopic, relative to \(t = 0\) and \(t = 1\), to a family of holonomic formal immersions, ie a family \(t ↦ j^1f_t\) with \(f_0 = ι\), \(f_1 = a\), and each \(f_t\) is an immersion. </p>
+
   </div>
-</div>  We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not animmersion for \(t=1/2\)). Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ : t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). It is homotopic by reparametrization to a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\) which are holonomic for \(t\) near the \(0\) and \(1\). </p>
-<p>The above theorem ensures this family is homotopic, relative to \(t = 0\) and \(t = 1\), to a family of holonomic formal immersions, ie a family \(t ↦ j^1f_t\) with \(f_0 = ι\), \(f_1 = a\), and each \(f_t\) is an immersion. <div class="proof_wrapper" id="a0000000086">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  
-  </div>
-</div> </p>
+</div>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
@@ -869,7 +812,7 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
 <script type="text/javascript" src="js/showmore.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
 </body>
 </html>
