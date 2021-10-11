@@ -179,7 +179,7 @@ begin
   { equiv_rw g.symm,
     rintro (a|_),
     { replace hw := λ i, Ioc_subset_Icc_self (hw i),
-      simp_rw mem_Icc at hw,
+      simp_rw set.mem_Icc at hw,
       simp [hw] },
     { simp } },
   { equiv_rw g.symm,
