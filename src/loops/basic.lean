@@ -20,6 +20,7 @@ Sup (nhds '' s)
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+          {F' : Type*} [normed_group F'] [normed_space ℝ F'] [finite_dimensional ℝ F']
 
 local notation `d` := finrank ℝ F
 
@@ -85,6 +86,15 @@ namespace loop
 lemma per (γ : loop F) : ∀ t, γ (t + 1) = γ t :=
 loop.per' γ
 
+/-- Transforming a loop by applying function `f`. -/
+@[simps]
+def transform (γ : loop F) (f : F → F') : loop F' := 
+⟨λ t, f (γ t), λ t, by rw γ.per⟩
+
+/-- Shifting a loop, or equivalently, adding a constant value to a loop -/
+@[simps]
+def shift (γ : loop F) (x : F) : loop F := γ.transform (+ x)
+
 /-- The average value of a loop. -/
 noncomputable
 def average [measurable_space F] [borel_space F] (γ : loop F) : F := ∫ x in Icc 0 1, (γ x)
@@ -142,6 +152,7 @@ begin
     exact ⟨x, hxy⟩ },
 end
 
+@[simps]
 noncomputable
 def of_path {x : F} (γ : path x x) : loop F :=
 { to_fun := λ t, γ.extend (fract t),
