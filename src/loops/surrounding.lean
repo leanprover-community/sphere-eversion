@@ -1,7 +1,8 @@
-
-
 import loops.basic
 import tactic.fin_cases
+import to_mathlib.topology.algebra.group
+import to_mathlib.topology.constructions
+
 /-!
 # Surrounding families of loops
 -/
@@ -17,11 +18,11 @@ local notation `smooth_on` := times_cont_diff_on ℝ ⊤
 local notation `I` := Icc (0 : ℝ) 1
 
 /-- A loop `γ` surrounds a point `x` if `x` is surrounded by values of `γ`. -/
-def loop.surrounds (γ : loop F) (x : F) : Prop := 
+def loop.surrounds (γ : loop F) (x : F) : Prop :=
   ∃ t w : fin (d + 1) → ℝ, surrounding_pts x (γ ∘ t) w
 
-lemma loop.surrounds_iff_range_subset_range (γ : loop F) (x : F) : 
-  γ.surrounds x ↔ ∃ (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ), 
+lemma loop.surrounds_iff_range_subset_range (γ : loop F) (x : F) :
+  γ.surrounds x ↔ ∃ (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ),
   surrounding_pts x p w ∧ range p ⊆ range γ :=
 begin
   split,
@@ -33,9 +34,9 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
-lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O) 
-  (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) : 
-  ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧ 
+lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O)
+  (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) :
+  ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧
                     (∀ t, γ t 0 = b) ∧
                     (∀ s, γ 0 s = b) ∧
                     (∀ (t ∈ I) s, γ t s ∈ O) ∧
@@ -75,30 +76,53 @@ structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : se
 (surrounds : ∀ x, (γ x 1).surrounds $ g x)
 (cont : continuous ↿γ)
 
-structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $E × F) 
+structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $E × F)
   extends surrounding_family g b γ U : Prop :=
 (val_in : ∀ x ∈ U, ∀ (t ∈ I) s, (x, γ x t s) ∈ Ω)
 
 variables {g b : E → F} {Ω : set (E × F)} {U K : set E}
-
 lemma local_loops
   {x₀ : E}
-  (hΩ_op : ∀ᶠ x in 𝓝 x₀, is_open (prod.mk x ⁻¹' Ω)) 
+  (hΩ_op : ∀ᶠ x in 𝓝 x₀, is_open (prod.mk x ⁻¹' Ω))
+  (hΩ_conn : ∀ᶠ x in 𝓝 x₀, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : ∀ᶠ x in 𝓝 x₀, continuous_at b x)
-  (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω) 
+  (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω)
   (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-∃ γ : E → ℝ → loop F, ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, 
+∃ γ : E → ℝ → loop F, ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s,
   (x, γ x t s) ∈ Ω ∧
   γ x 0 s = b x ∧
   (γ x 1).surrounds (g x) ∧
   continuous_at ↿γ ((x, t, s) : E × ℝ × ℝ) :=
-sorry
+begin
+  have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := hΩ_op.self_of_nhds,
+  have hΩ_conn_x₀ : is_connected (prod.mk x₀ ⁻¹' Ω) := hΩ_conn.self_of_nhds,
+  have hb_in_x₀ : b x₀ ∈ prod.mk x₀ ⁻¹' Ω := hb_in.self_of_nhds,
+  rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn_x₀ hconv.self_of_nhds hb_in_x₀ with
+    ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
+  let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
+  use δ,
+  have h1δ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
+  { filter_upwards [hΩ_op], intros x hΩx_op t ht s, sorry }, -- do we need a stronger assumption?
+  have h2δ : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
+  { sorry }, -- need lemma 1.7
+  filter_upwards [/-hΩ_op, hΩ_conn, hg, hb_in, hconv,-/ hb, h1δ, h2δ],
+  rintro x hbx h1δx h2δx t ht s,
+  refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx, _⟩,
+  dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
+  have h1'γ : continuous_at (↿γ ∘ prod.snd) (x, t, s),
+  { refine continuous_at.comp _ continuous_at_snd, refine h1γ.continuous_at _, sorry },
+  -- this sorry needs a reformulation of either this or surrounding_loop_of_convex_hull
+  -- there is a mismatch between the continuous_at here and the continuous_on there
+  refine h1'γ.add _,
+  refine continuous_at.sub _ continuous_at_const,
+  exact continuous_at.comp hbx continuous_at_fst
+end
 
 
-lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F} 
+lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
-  ∃ γ : ℝ → E → ℝ → loop F, 
-    (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧ 
+  ∃ γ : ℝ → E → ℝ → loop F,
+    (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
     (∀ (τ ∈ I) (x ∈ U) (t ∈ I) s, continuous_at ↿γ (τ, x, t, s)) :=
@@ -106,23 +130,23 @@ sorry
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
-  {γ₀ γ₁ : E → ℝ → loop F} 
+  {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U₀) (h₁ : surrounding_family g b γ₁ U₁) :
-  ∃ U ∈ nhds_set (K₀ ∪ K₁), ∃ γ : E → ℝ → loop F, 
-    surrounding_family g b γ U ∧ 
+  ∃ U ∈ nhds_set (K₀ ∪ K₁), ∃ γ : E → ℝ → loop F,
+    surrounding_family g b γ U ∧
     ∀ᶠ x in nhds_set K₀, γ x = γ₀ x :=
 sorry
 
 
-lemma exists_surrounding_loops 
-  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U) 
+lemma exists_surrounding_loops
+  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
   (hΩ_op : ∀ x ∈ U, is_open (prod.mk x ⁻¹' Ω))
-  (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω)) 
-  (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω) 
-  (hgK : ∀ᶠ x in nhds_set K, g x = b x) 
-  (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) 
-  {γ₀ :  E → ℝ → loop F} 
+  (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
+  (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω)
+  (hgK : ∀ᶠ x in nhds_set K, g x = b x)
+  (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω))
+  {γ₀ :  E → ℝ → loop F}
   (hγ₀_surr : ∃ V ∈ nhds_set K, surrounding_family_in g b γ₀ V Ω) :
-  ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧ 
+  ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧
                         (∀ᶠ x in nhds_set K, ∀ (t ∈ I), γ x t = γ₀ x t)  :=
 sorry
