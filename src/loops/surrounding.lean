@@ -71,6 +71,7 @@ begin
     exact hΩ₀.2 i }
 end
 
+/-- `γ` forms a family of loops surrounding `g` with base `b` -/
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
 (base : ∀ x t, γ x t 0 = b x)
 (t₀ : ∀ x s, γ x 0 s = b x)
@@ -97,9 +98,15 @@ protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) : path (b
   source' := h.base x t,
   target' := h.one x t }
 
+@[simp]
+lemma path_extend (h : surrounding_family g b γ U) (x : E) (t s : ℝ) :
+  (h.path x t).extend (fract s) = γ x t s :=
+sorry
+
 end surrounding_family
 
-structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $E × F)
+/-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
+structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $ E × F)
   extends surrounding_family g b γ U : Prop :=
 (val_in : ∀ x ∈ U, ∀ (t ∈ I) s, (x, γ x t s) ∈ Ω)
 
@@ -148,20 +155,31 @@ begin
   refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx⟩,
 end
 
+/-- Function used in `satisfied_or_refund`. Rename. -/
+def ρ (t : ℝ) : ℝ := max 0 $ min 1 $ 2 * (1 - t)
+
+@[simp] lemma ρ_zero : ρ 0 = 1 := by norm_num [ρ]
+@[simp] lemma ρ_half : ρ 2⁻¹ = 1 := by norm_num [ρ]
+@[simp] lemma ρ_one : ρ 1 = 0 := by norm_num [ρ]
+
 lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
     (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
-    (∀ (τ ∈ I) (x ∈ U) (t ∈ I) s, continuous_at ↿γ (τ, x, t, s)) :=
+    continuous_on ↿γ (set.prod I $ U.prod $ set.prod I univ) :=
 begin
-  let ρ : ℝ → ℝ := λ t, max 0 $ min 1 $ 2 * (1 - t),
   let γ : ℝ → E → ℝ → loop F :=
   λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).trans' (h₁.path x $ ρ (1 - τ) * t)
-    (set.proj_Icc 0 1 zero_le_one τ),
-  sorry --refine ⟨γ, _, _, _, _⟩,
-
+    (set.proj_Icc 0 1 zero_le_one (1 - τ)),
+  refine ⟨γ, _, _, _, _⟩,
+  { sorry },
+  { ext x t s, sorry; simp only [one_mul, ρ_zero, surrounding_family.path_extend, sub_zero,
+      loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.trans'_one] },
+  { ext x t s, sorry; simp only [path.trans'_zero, unit_interval.mk_zero, one_mul, ρ_zero,
+      surrounding_family.path_extend, proj_Icc_left, loop.of_path_apply, sub_self] },
+  { apply continuous.continuous_on, dsimp [γ],  }
 end
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
@@ -186,3 +204,4 @@ lemma exists_surrounding_loops
   ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧
                         (∀ᶠ x in nhds_set K, ∀ (t ∈ I), γ x t = γ₀ x t)  :=
 sorry
+-- #lint
