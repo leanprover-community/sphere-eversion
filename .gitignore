@@ -3,3 +3,5 @@ decls.pickle
 *.olean
 /_target
 /leanpkg.path
+.python-version
+.vscode
