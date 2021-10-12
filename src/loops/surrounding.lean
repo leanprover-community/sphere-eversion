@@ -113,11 +113,11 @@ lemma local_loops
   (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : ∀ᶠ x in 𝓝 x₀, continuous_at b x)
   (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω)
   (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-∃ γ : E → ℝ → loop F, ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ unit_interval) s,
+∃ (γ : E → ℝ → loop F), (∃ (U ∈ 𝓝 x₀), continuous_on ↿γ (set.prod U $ set.prod I univ)) ∧
+  ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s,
   (x, γ x t s) ∈ Ω ∧
   γ x 0 s = b x ∧
-  (γ x 1).surrounds (g x) ∧
-  continuous_at ↿γ ((x, t, s) : E × ℝ × ℝ) :=
+  (γ x 1).surrounds (g x) :=
 begin
   have hb_in_x₀ : b x₀ ∈ prod.mk x₀ ⁻¹' Ω := hb_in.self_of_nhds,
   -- let Ωx₀ : set F := connected_component_in (prod.mk x₀ ⁻¹' Ω) ⟨b x₀, hb_in_x₀⟩,
@@ -129,21 +129,23 @@ begin
   let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
   use δ,
   have h1δ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
-  { filter_upwards [hΩ_op], intros x hΩx_op t ht s, dsimp only [δ, loop.shift_apply], sorry },
+  { /-filter_upwards [hΩ_op], intros x hΩx_op t ht s, dsimp only [δ, loop.shift_apply],-/ sorry },
   -- do we need a stronger assumption?
   have h2δ : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
   { sorry }, -- need lemma 1.7
+  split,
+  { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
+    sorry
+    /- have h1'γ : continuous_at (↿γ ∘ prod.snd) (x, t, s),
+    { refine continuous_at.comp _ continuous_at_snd, refine h1γ.continuous_at _, sorry },
+    -- this sorry needs a reformulation of either this or surrounding_loop_of_convex_hull
+    -- there is a mismatch between the continuous_at here and the continuous_on there
+    refine h1'γ.add _,
+    refine continuous_at.sub _ continuous_at_const,
+    exact continuous_at.comp hbx continuous_at_fst -/ },
   filter_upwards [/-hΩ_op, hΩ_conn, hg, hb_in, hconv,-/ hb, h1δ, h2δ],
   rintro x hbx h1δx h2δx t ht s,
-  refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx, _⟩,
-  dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
-  have h1'γ : continuous_at (↿γ ∘ prod.snd) (x, t, s),
-  { refine continuous_at.comp _ continuous_at_snd, refine h1γ.continuous_at _, sorry },
-  -- this sorry needs a reformulation of either this or surrounding_loop_of_convex_hull
-  -- there is a mismatch between the continuous_at here and the continuous_on there
-  refine h1'γ.add _,
-  refine continuous_at.sub _ continuous_at_const,
-  exact continuous_at.comp hbx continuous_at_fst
+  refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx⟩,
 end
 
 lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
