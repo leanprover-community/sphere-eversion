@@ -10,6 +10,8 @@ import to_mathlib.topology.constructions
 open set function finite_dimensional
 open_locale topological_space
 
+noncomputable theory
+
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 
@@ -76,6 +78,28 @@ structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : se
 (surrounds : ∀ x, (γ x 1).surrounds $ g x)
 (cont : continuous ↿γ)
 
+namespace surrounding_family
+
+variables {g b : E → F} {γ : E → ℝ → loop F} {U : set E}
+
+protected lemma one (h : surrounding_family g b γ U) (x : E) (t : ℝ) : γ x t 1 = b x :=
+by rw [loop.one, h.base]
+
+/-- A surrounding family induces a family of paths from `b x` to `b x`.
+Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
+family into the family of paths. -/
+protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) : path (b x) (b x) :=
+{ to_fun := λ s, γ x t s,
+  continuous_to_fun := begin
+    refine continuous.comp _ continuous_subtype_coe,
+    refine loop.continuous_of_family _ t,
+    refine loop.continuous_of_family_step h.cont x
+  end,
+  source' := h.base x t,
+  target' := h.one x t }
+
+end surrounding_family
+
 structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $E × F)
   extends surrounding_family g b γ U : Prop :=
 (val_in : ∀ x ∈ U, ∀ (t ∈ I) s, (x, γ x t s) ∈ Ω)
@@ -102,7 +126,8 @@ begin
   let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
   use δ,
   have h1δ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
-  { filter_upwards [hΩ_op], intros x hΩx_op t ht s, sorry }, -- do we need a stronger assumption?
+  { filter_upwards [hΩ_op], intros x hΩx_op t ht s, dsimp only [δ, loop.shift_apply], sorry },
+  -- do we need a stronger assumption?
   have h2δ : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
   { sorry }, -- need lemma 1.7
   filter_upwards [/-hΩ_op, hΩ_conn, hg, hb_in, hconv,-/ hb, h1δ, h2δ],
@@ -118,7 +143,6 @@ begin
   exact continuous_at.comp hbx continuous_at_fst
 end
 
-
 lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
@@ -126,7 +150,14 @@ lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
     (∀ (τ ∈ I) (x ∈ U) (t ∈ I) s, continuous_at ↿γ (τ, x, t, s)) :=
-sorry
+begin
+  let ρ : ℝ → ℝ := λ t, max 0 $ min 1 $ 2 * (1 - t),
+  let γ : ℝ → E → ℝ → loop F :=
+  λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).trans' (h₁.path x $ ρ (1 - τ) * t)
+    (set.proj_Icc 0 1 zero_le_one τ),
+  sorry --refine ⟨γ, _, _, _, _⟩,
+
+end
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
