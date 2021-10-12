@@ -59,6 +59,9 @@ namespace unit_interval
 
 lemma nonneg' {t : I} : 0 ≤ t := t.prop.1
 lemma le_one' {t : I} : t ≤ 1 := t.prop.2
+lemma coe_eq_zero {x : I} : (x : ℝ) = 0 ↔ x = 0 :=
+by { symmetry, exact subtype.ext_iff }
+
 
 end unit_interval
 
@@ -75,9 +78,9 @@ function is also well-defined for `t₀ ∈ {0, 1}`. -/
 { to_fun := λ t, if t ≤ t₀ then γ.extend (t / t₀) else γ'.extend ((t - t₀) / (1 - t₀)),
   continuous_to_fun :=
   begin
-    refine (continuous.if_le _ _ continuous_id continuous_const (by simp only [extend_div_self,
+    refine continuous.if_le _ _ continuous_id continuous_const (by simp only [extend_div_self,
       unit_interval.mk_zero, zero_le_one, id.def, zero_div, forall_eq, extend_extends, path.source,
-      left_mem_Icc, sub_self])),
+      left_mem_Icc, sub_self]),
     -- TODO: the following are provable by `continuity` but it is too slow
     exacts [γ.continuous_extend.comp continuous_subtype_coe.div_const,
       γ'.continuous_extend.comp (continuous_subtype_coe.sub continuous_const).div_const]
@@ -89,19 +92,92 @@ function is also well-defined for `t₀ ∈ {0, 1}`. -/
     unit_interval.coe_one, implies_true_iff, eq_self_iff_true, comp_app, ite_eq_right_iff]
     {contextual := tt}}
 
-lemma trans'_zero {x : F} (γ γ' : path x x) : γ.trans' γ' 0 = γ' :=
+@[simp] lemma trans'_zero {x : F} (γ γ' : path x x) : γ.trans' γ' 0 = γ' :=
 by { ext t, simp only [trans', path.coe_mk, if_pos, unit_interval.coe_zero,
   div_one, extend_extends',
   unit_interval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero, ite_eq_right_iff,
   show (t : ℝ) = 0 ↔ t = 0, from (@subtype.ext_iff _ _ t 0).symm, path.source, eq_self_iff_true,
   implies_true_iff] {contextual := tt} }
 
-lemma trans'_one {x : F} (γ γ' : path x x) : γ.trans' γ' 1 = γ :=
+@[simp] lemma trans'_one {x : F} (γ γ' : path x x) : γ.trans' γ' 1 = γ :=
 by { ext t, simp only [trans', unit_interval.le_one', path.coe_mk, if_pos, div_one,
   extend_extends', unit_interval.coe_one] }
 
-lemma trans'_self {x : F} (γ γ' : path x x) (t₀ : I) : γ.trans' γ' t₀ t₀ = x :=
+@[simp] lemma trans'_self {x : F} (γ γ' : path x x) (t₀ : I) : γ.trans' γ' t₀ t₀ = x :=
 by { simp only [trans', path.coe_mk, extend_div_self, if_pos, le_rfl], }
+
+-- move
+lemma _root_.continuous.Icc_extend' {α β γ : Type*}
+  [topological_space α] [linear_order α] [order_topology α] [topological_space β]
+   [topological_space γ] {a b : α} {h : a ≤ b} {f : γ → Icc a b → β}
+  (hf : continuous ↿f) : continuous ↿(Icc_extend h ∘ f) :=
+hf.comp (continuous_fst.prod_mk $ continuous_proj_Icc.comp continuous_snd)
+
+-- move
+lemma _root_.continuous_at.Icc_extend {α β γ : Type*}
+  [topological_space α] [linear_order α] [order_topology α] [topological_space β]
+   [topological_space γ] {a b c : α} {x : γ} {h : a ≤ b} (f : γ → Icc a b → β)
+  (hf : continuous_at ↿f (x, proj_Icc a b h c)) : continuous_at ↿(Icc_extend h ∘ f) (x, c) :=
+show continuous_at (↿f ∘ (λ p : γ × α, (p.1, proj_Icc a b h p.2))) (x, c), from
+continuous_at.comp hf
+  (continuous_fst.prod_mk $ continuous_proj_Icc.comp continuous_snd).continuous_at
+
+-- move
+lemma _root_.continuous.extend' {X Y : Type*} [topological_space X] [topological_space Y] {x y : X}
+  {γ : Y → path x y} (hγ : continuous ↿γ) :
+  continuous ↿(λ t, (γ t).extend) :=
+continuous.Icc_extend' hγ
+
+-- move
+lemma _root_.continuous.extend {X Y Z : Type*} [topological_space X] [topological_space Y]
+  [topological_space Z] {x y : X} {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} (hγ : continuous ↿γ)
+  (hf : continuous f) (hg : continuous g) :
+  continuous (λ i, (γ (f i)).extend (g i)) :=
+(continuous.extend' hγ).comp $ hf.prod_mk hg
+
+-- move
+lemma _root_.continuous_at.extend {X Y Z : Type*} [topological_space X] [topological_space Y]
+  [topological_space Z] {x y : X} {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} {z : Z}
+  (hγ : continuous_at ↿γ (f z, proj_Icc 0 1 zero_le_one (g z))) (hf : continuous_at f z) (hg : continuous_at g z) :
+  continuous_at (λ i, (γ (f i)).extend (g i)) z :=
+show continuous_at ((λ p : Y × ℝ, (Icc_extend (@zero_le_one ℝ _) (γ p.1) p.2)) ∘ (λ i, (f i, g i))) z, from
+continuous_at.comp (continuous_at.Icc_extend (λ x y, γ x y) hγ) $ hf.prod hg
+
+lemma continuous_at.comp_div_zero {α G₀ β γ : Type*} [group_with_zero G₀] [topological_space G₀]
+  [has_continuous_inv₀ G₀] [has_continuous_mul G₀] {f g : α → G₀} {k : α → γ} (h : γ → G₀ → β)
+  [topological_space α] [topological_space β] [topological_space γ] {a : α} (c : γ)
+  (hk : continuous_at k a) (hf : continuous_at f a) (hg : continuous_at g a)
+  (hh : g a ≠ 0 → continuous_at ↿h (k a, f a / g a))
+  (h2h : filter.tendsto ↿h ((𝓝 c).prod ⊤) (𝓝 (h c 0)))
+  (hgk : ∀ {a}, g a = 0 → k a = c) :
+  continuous_at (λ x, h (k x) (f x / g x)) a :=
+begin
+  show continuous_at (↿h ∘ (λ x, (k x, f x / g x))) a,
+  by_cases hga : g a = 0,
+  { rw [continuous_at], simp_rw [comp_app, hga, div_zero, hgk hga],
+    refine h2h.comp _, rw [← hgk hga], exact hk.prod_mk filter.tendsto_top },
+  { exact continuous_at.comp (hh hga) (hk.prod (hf.div hg hga)) }
+end
+
+lemma _root_.continuous.trans' {x : F} (γ γ' : I → path x x)
+  (hγ : continuous ↿γ)
+  (hγ' : continuous ↿γ')
+  (hγ0 : filter.tendsto ↿γ ((𝓝 (0 : I)).prod ⊤) (𝓝 (γ 0 0)))
+  (hγ'1 : filter.tendsto ↿γ' ((𝓝 (1 : I)).prod ⊤) (𝓝 (γ' 1 0))) :
+  continuous ↿(λ t s, trans' (γ t) (γ' t) t s) :=
+begin
+  refine continuous.if_le _ _ continuous_snd continuous_fst _,
+  { rw [continuous_iff_continuous_at],
+    rintro ⟨t, s⟩,
+    apply continuous_at.comp_div_zero (λ (t : I) s, (γ t).extend s) 0
+      continuous_at_fst (continuous_at_subtype_coe.comp continuous_at_snd)
+      (continuous_at_subtype_coe.comp continuous_at_fst) _ _ _,
+    { intro h, refine continuous_at.extend hγ.continuous_at continuous_at_fst continuous_at_snd },
+    { dsimp, sorry },
+    { intros p hp, exact subtype.ext hp } },
+  { sorry },
+  { rintro x h, rw [h, sub_self, zero_div, extend_div_self, extend_zero] },
+end
 
 end path
 
