@@ -11,9 +11,8 @@ import linear_algebra.affine_space.independent
 -/
 
 open set function finite_dimensional
-open_locale big_operators topological_space topological_space
-
-local notation `I` := (Icc 0 1 : set ℝ)
+open_locale big_operators topological_space topological_space unit_interval
+noncomputable theory
 
 def nhds_set {α : Type*} [topological_space α] (s : set α) : filter α :=
 Sup (nhds '' s)
@@ -42,7 +41,7 @@ def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
 
 -- lem:int_cvx alternative formulation, compare int_cvx.lean
-lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) : 
+lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
   surrounded f s :=
 sorry
 
@@ -55,6 +54,56 @@ lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) :
 sorry
 
 end surrounding_points
+
+namespace unit_interval
+
+lemma nonneg' {t : I} : 0 ≤ t := t.prop.1
+lemma le_one' {t : I} : t ≤ 1 := t.prop.2
+
+end unit_interval
+
+namespace path
+
+/-- A loop evaluated at `t / t` is equal to its endpoint. Note that `t / t = 0` for `t = 0`. -/
+@[simp] lemma extend_div_self {x : F} (γ : path x x) (t : ℝ) : γ.extend (t / t) = x :=
+by by_cases h : t = 0; simp [h]
+
+/-- Concatenation of two loops which moves through the first loop on `[0, t₀]` and
+through the second one on `[t₀, 1]`. All endpoints are assumed to be the same so that this
+function is also well-defined for `t₀ ∈ {0, 1}`. -/
+@[trans] def trans' {x : F} (γ γ' : path x x) (t₀ : I) : path x x :=
+{ to_fun := λ t, if t ≤ t₀ then γ.extend (t / t₀) else γ'.extend ((t - t₀) / (1 - t₀)),
+  continuous_to_fun :=
+  begin
+    refine (continuous.if_le _ _ continuous_id continuous_const (by simp only [extend_div_self,
+      unit_interval.mk_zero, zero_le_one, id.def, zero_div, forall_eq, extend_extends, path.source,
+      left_mem_Icc, sub_self])),
+    -- TODO: the following are provable by `continuity` but it is too slow
+    exacts [γ.continuous_extend.comp continuous_subtype_coe.div_const,
+      γ'.continuous_extend.comp (continuous_subtype_coe.sub continuous_const).div_const]
+  end,
+  source' := by simp only [unit_interval.nonneg', unit_interval.coe_zero,
+    unit_interval.mk_zero, zero_le_one,
+    if_true, zero_div, comp_app, extend_extends, path.source, left_mem_Icc],
+  target' := by simp only [unit_interval.le_one'.le_iff_eq.trans eq_comm, extend_div_self,
+    unit_interval.coe_one, implies_true_iff, eq_self_iff_true, comp_app, ite_eq_right_iff]
+    {contextual := tt}}
+
+lemma trans'_zero {x : F} (γ γ' : path x x) : γ.trans' γ' 0 = γ' :=
+by { ext t, simp only [trans', path.coe_mk, if_pos, unit_interval.coe_zero,
+  div_one, extend_extends',
+  unit_interval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero, ite_eq_right_iff,
+  show (t : ℝ) = 0 ↔ t = 0, from (@subtype.ext_iff _ _ t 0).symm, path.source, eq_self_iff_true,
+  implies_true_iff] {contextual := tt} }
+
+lemma trans'_one {x : F} (γ γ' : path x x) : γ.trans' γ' 1 = γ :=
+by { ext t, simp only [trans', unit_interval.le_one', path.coe_mk, if_pos, div_one,
+  extend_extends', unit_interval.coe_one] }
+
+lemma trans'_self {x : F} (γ γ' : path x x) (t₀ : I) : γ.trans' γ' t₀ t₀ = x :=
+by { simp only [trans', path.coe_mk, extend_div_self, if_pos, le_rfl], }
+
+end path
 
 set_option old_structure_cmd true
 
@@ -86,9 +135,12 @@ namespace loop
 lemma per (γ : loop F) : ∀ t, γ (t + 1) = γ t :=
 loop.per' γ
 
+protected lemma one (γ : loop F) : γ 1 = γ 0 :=
+by { convert γ.per 0, rw [zero_add] }
+
 /-- Transforming a loop by applying function `f`. -/
 @[simps]
-def transform (γ : loop F) (f : F → F') : loop F' := 
+def transform (γ : loop F) (f : F → F') : loop F' :=
 ⟨λ t, f (γ t), λ t, by rw γ.per⟩
 
 /-- Shifting a loop, or equivalently, adding a constant value to a loop -/
@@ -117,6 +169,14 @@ lemma continuous_of_family {α : Type*} [topological_space α] {γ : α → loop
 begin
   intro a,
   rw show (γ a : ℝ → F) = ↿γ ∘ (λ t, (a, t)), from rfl,
+  exact h.comp (continuous_const.prod_mk continuous_id')
+end
+
+lemma continuous_of_family_step {α β : Type*} [topological_space α] [topological_space β]
+  {γ : α → β → loop F} (h : continuous ↿γ) : ∀ a, continuous ↿(γ a) :=
+begin
+  intro a,
+  rw show ↿(γ a : β → loop F) = ↿γ ∘ (λ t, (a, t)), from rfl,
   exact h.comp (continuous_const.prod_mk continuous_id')
 end
 
