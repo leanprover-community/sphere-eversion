@@ -8,7 +8,7 @@ import to_mathlib.topology.constructions
 -/
 
 open set function finite_dimensional
-open_locale topological_space
+open_locale classical topological_space unit_interval
 
 noncomputable theory
 
@@ -17,7 +17,6 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
 
 local notation `d` := finrank ℝ F
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
-local notation `I` := Icc (0 : ℝ) 1
 
 /-- A loop `γ` surrounds a point `x` if `x` is surrounded by values of `γ`. -/
 def loop.surrounds (γ : loop F) (x : F) : Prop :=
@@ -105,22 +104,26 @@ structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U :
 (val_in : ∀ x ∈ U, ∀ (t ∈ I) s, (x, γ x t s) ∈ Ω)
 
 variables {g b : E → F} {Ω : set (E × F)} {U K : set E}
+
+
 lemma local_loops
   {x₀ : E}
-  (hΩ_op : ∀ᶠ x in 𝓝 x₀, is_open (prod.mk x ⁻¹' Ω))
+  (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ prod.fst ⁻¹' U))
   (hΩ_conn : ∀ᶠ x in 𝓝 x₀, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : ∀ᶠ x in 𝓝 x₀, continuous_at b x)
   (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω)
   (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-∃ γ : E → ℝ → loop F, ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s,
+∃ γ : E → ℝ → loop F, ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ unit_interval) s,
   (x, γ x t s) ∈ Ω ∧
   γ x 0 s = b x ∧
   (γ x 1).surrounds (g x) ∧
   continuous_at ↿γ ((x, t, s) : E × ℝ × ℝ) :=
 begin
-  have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := hΩ_op.self_of_nhds,
-  have hΩ_conn_x₀ : is_connected (prod.mk x₀ ⁻¹' Ω) := hΩ_conn.self_of_nhds,
   have hb_in_x₀ : b x₀ ∈ prod.mk x₀ ⁻¹' Ω := hb_in.self_of_nhds,
+  -- let Ωx₀ : set F := connected_component_in (prod.mk x₀ ⁻¹' Ω) ⟨b x₀, hb_in_x₀⟩,
+  have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := is_open_slice_of_is_open_over hΩ_op,
+  -- have hΩx₀_op : is_open Ωx₀ := sorry,
+  have hΩ_conn_x₀ : is_connected (prod.mk x₀ ⁻¹' Ω) := hΩ_conn.self_of_nhds,
   rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn_x₀ hconv.self_of_nhds hb_in_x₀ with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
   let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
