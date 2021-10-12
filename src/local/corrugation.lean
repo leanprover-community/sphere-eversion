@@ -3,6 +3,7 @@ import linear_algebra.dual
 import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
+import parametric_interval_integral
 import loops.basic
 
 noncomputable theory
@@ -34,7 +35,7 @@ end interval_integral
 
 local notation `D` := fderiv ℝ
 
-open set function finite_dimensional asymptotics filter
+open set function finite_dimensional asymptotics filter topological_space
 open_locale topological_space
 
 section topological_support
@@ -221,7 +222,7 @@ begin
   sorry
 end
 
-variables (π : E → ℝ) (N : ℝ) (γ : E → loop F) [topological_space E]
+variables (π : E → ℝ) (N : ℝ) {γ : E → loop F} [topological_space E]
 
 lemma support_aux {γ : loop F} (h : γ = const_loop (γ.average)) (b : ℝ) :
   ∫ t in 0..b, γ t - γ.average = 0  :=
@@ -246,9 +247,14 @@ begin
   simp
 end
 
+lemma continuous_average [topological_space E] [first_countable_topology E] [locally_compact_space E]
+  (hγ_cont : continuous ↿γ) : continuous (λ x, (γ x).average) :=
+continuous_parametric_integral_of_continuous hγ_cont is_compact_Icc measurable_set_Icc
+
 /-- If a loop family has compact support then the corresponding corrugation is
 `O(1/N)` uniformly in the source point. -/
-lemma corrugation.c0_small [topological_space E] (hγ : is_compact (loop.support γ))
+lemma corrugation.c0_small [topological_space E] [first_countable_topology E]
+  [locally_compact_space E] (hγ : is_compact (loop.support γ))
   (hγ_cont : continuous ↿γ) :
   ∃ C, ∀ x, is_O_with C (λ N, corrugation π N γ x) (λ N, 1/N) at_top :=
 begin
@@ -257,8 +263,10 @@ begin
     { intros x hx,
       ext t,
       exact support_aux (loop.const_of_not_mem_support hx) t },
-    { change continuous ↿(λ (x : E) (t : ℝ), ∫ s in 0..t, (γ x) s - (γ x).average),
-      sorry },
+    { let φ : E → ℝ → F := λ x s, (γ x) s - (γ x).average,
+      have cont_φ : continuous (λ p : E × ℝ, φ p.1 p.2),
+        from hγ_cont.sub ((continuous_average hγ_cont).comp continuous_fst),
+      exact continuous_parametric_primitive_of_continuous cont_φ },
     { intro x,
       apply per_corrugation } },
   use C,
