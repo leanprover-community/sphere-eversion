@@ -10,7 +10,7 @@ open_locale topological_space filter nnreal big_operators
 -- Below is a capital iota
 local notation `Ι` := set.interval_oc
 
-
+section
 variables {E : Type*} [normed_group E] [second_countable_topology E] [normed_space ℝ E]
   [complete_space E] [measurable_space E] [borel_space E]
   {H : Type*} [normed_group H] [normed_space ℝ H]
@@ -37,6 +37,8 @@ begin
          bound_integrable.1 h_diff.1).sub
         (has_fderiv_at_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
          bound_integrable.2 h_diff.2)
+end
+
 end
 
 section
@@ -105,49 +107,194 @@ end
 
 section
 
-variables {α : Type*} [linear_order α] [measurable_space α] [topological_space α]
-          [order_topology α] [opens_measurable_space α] [first_countable_topology α] {μ : measure α}
-          {X : Type*} [topological_space X] [first_countable_topology X]
+variables {α E : Type*} [linear_order α] [measurable_space α]
+  [measurable_space E] [normed_group E]
 
-lemma continuous_at_parametric_primitive_of_dominated {F : X → α → E} {bound : α → ℝ} {a b b₀ : α} {x₀ : X}
-  (hF_meas : ∀ x, ae_measurable (F x) (μ.restrict $ Ι a b))
-  (h_bound : ∀ᶠ x in 𝓝 x₀, ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥F x t∥ ≤ bound t)
-  (bound_integrable : interval_integrable bound μ a b)
-  (h_cont : ∀ᵐ t ∂(μ.restrict $ Ι a b), continuous_at (λ x, F x t) x₀)
-  (hb₀ : b₀ ∈ Ioo a b) :
-  continuous_at (λ p : X × α, ∫ (t : α) in a..p.2, F p.1 t ∂μ) (x₀, b₀) :=
+lemma interval_integrable_iff_norm {f : α → E} {μ : measure α} {a b : α} :
+  interval_integrable f μ a b ↔ interval_integrable (λ t, ∥f t∥) μ a b :=
+sorry
+
+lemma interval_integrable_of_le {f : α → E} {bound : α → ℝ} {μ : measure α} {a b : α}
+  (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) (hbound : interval_integrable bound μ a b) :
+  interval_integrable f μ a b :=
 begin
 
   sorry
 end
 
-lemma continuous_parametric_primitive_of_continuous [locally_compact_space X]
-  {F : X → α → E} {a : α}
+variables [second_countable_topology E]
+  [complete_space E] [normed_space ℝ E] [borel_space E] {a b : α} {f : α → E} {bound : α → ℝ}
+  {μ : measure α}
+
+lemma interval_integral.norm_integral_le_of_norm_le (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) :
+  ∥∫ t in a..b, f t ∂μ∥ ≤ |∫ t in a..b, bound t ∂μ| :=
+begin
+  apply interval_integral.norm_integral_le_abs_integral_norm.trans,
+  cases le_total a b with hab hab,
+  { apply (interval_integral.abs_integral_le_integral_abs hab).trans,
+    sorry },
+  { rw [interval_integral.integral_of_ge hab, interval_integral.integral_of_ge hab,
+      abs_neg, abs_neg, abs_of_nonneg, abs_of_nonneg],
+    {
+      sorry },
+
+    {
+      sorry },
+    {
+      sorry } }
+end
+
+
+
+
+end
+
+section
+
+variables {α : Type*} [linear_order α] [measurable_space α] [topological_space α]
+          [order_topology α] [opens_measurable_space α] [first_countable_topology α] {μ : measure α}
+          {X : Type*} [topological_space X] [first_countable_topology X]
+          {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
+          [second_countable_topology E] [complete_space E]
+
+lemma continuous_at_parametric_primitive_of_dominated
+  {F : X → α → E} (bound : α → ℝ) (a b : α) {a₀ b₀ : α} {x₀ : X}
+  (hF_meas : ∀ x, ae_measurable (F x) (μ.restrict $ Ι a b))
+  (h_bound : ∀ᶠ x in 𝓝 x₀, ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥F x t∥ ≤ bound t)
+  (bound_integrable : interval_integrable bound μ a b)
+  (h_cont : ∀ᵐ t ∂(μ.restrict $ Ι a b), continuous_at (λ x, F x t) x₀)
+  (ha₀ : a₀ ∈ Ioo a b) (hb₀ : b₀ ∈ Ioo a b) (hμb₀ : μ {b₀} = 0) :
+  continuous_at (λ p : X × α, ∫ (t : α) in a₀..p.2, F p.1 t ∂μ) (x₀, b₀) :=
+begin
+  have Ioo_nhds : Ioo a b ∈ 𝓝 b₀,
+  {
+    sorry },
+  have Icc_nhds : Icc a b ∈ 𝓝 b₀,
+  {
+    sorry },
+  have hx₀ : ∀ᵐ (t : α) ∂μ.restrict (Ι a b), ∥F x₀ t∥ ≤ bound t := (mem_of_mem_nhds h_bound : _),
+  have : ∀ᶠ (p : X × α) in 𝓝 (x₀, b₀),
+    ∫ s in a₀..p.2, F p.1 s ∂μ = ∫ s in a₀..b₀, F p.1 s ∂μ + ∫ s in b₀..p.2, F x₀ s ∂μ +
+                                 ∫ s in b₀..p.2, (F p.1 s - F x₀ s) ∂μ,
+  { rw nhds_prod_eq,
+    apply mem_of_superset (prod_mem_prod h_bound Ioo_nhds),
+    rintros ⟨x, t⟩ ⟨hx : ∀ᵐ (t : α) ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t, ht : t ∈ Ioo a b⟩,
+    dsimp,
+    rw [interval_integral.integral_sub, add_assoc, add_sub_cancel'_right,
+        interval_integral.integral_add_adjacent_intervals],
+    {
+      sorry },
+    {
+      sorry },
+    {
+      sorry },
+    {
+      sorry } },
+  rw continuous_at_congr this, clear this,
+  refine continuous_at.add (continuous_at.add _ _) _,
+  { change continuous_at ((λ x, ∫ (s : α) in a₀..b₀, F x s ∂μ) ∘ prod.fst) (x₀, b₀),
+    apply continuous_at.comp _ continuous_at_fst,
+    change continuous_at (λ x, ∫ s in a₀..b₀, F x s ∂μ) x₀,
+    sorry },
+  { change continuous_at ((λ t, ∫ (s : α) in b₀..t, F x₀ s ∂μ) ∘ prod.snd) (x₀, b₀),
+    apply continuous_at.comp _ continuous_at_snd,
+    apply continuous_within_at.continuous_at _ Icc_nhds,
+    apply interval_integral.continuous_within_at_primitive hμb₀,
+    have  : interval (min b₀ a) (max b₀ b) ⊆ interval a b,
+    {
+      sorry },
+    apply interval_integrable.mono_set _ this,
+    exact interval_integrable_of_le hx₀ bound_integrable },
+  { suffices : tendsto (λ (x : X × α), ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0),
+      by simpa [continuous_at],
+    have : ∀ᶠ p : X × α in 𝓝 (x₀, b₀),
+      ∥∫ s in b₀..p.2, F p.1 s - F x₀ s ∂μ∥ ≤ |∫ (s : α) in b₀..p.2, 2* bound s ∂μ|,
+    { rw nhds_prod_eq,
+      apply mem_of_superset (prod_mem_prod h_bound Ioo_nhds),
+      rintros ⟨x, t⟩ ⟨hx : ∀ᵐ t ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t, ht : t ∈ Ioo a b⟩,
+      have H : ∀ᵐ (t : α) ∂μ.restrict (Ι b₀ t), ∥F x t - F x₀ t∥ ≤ 2*bound t,
+      {
+        sorry },
+      exact interval_integral.norm_integral_le_of_norm_le H },
+    apply squeeze_zero_norm' this,
+    have : tendsto (λ t, ∫ (s : α) in b₀..t, 2 * bound s ∂μ) (𝓝 b₀) (𝓝 0),
+    { suffices : continuous_at (λ t, ∫ (s : α) in b₀..t, 2 * bound s ∂μ) b₀,
+      { convert this,
+        simp },
+      apply continuous_within_at.continuous_at _ Icc_nhds,
+      apply interval_integral.continuous_within_at_primitive hμb₀,
+      suffices : interval_integrable bound μ (min b₀ a) (max b₀ b),
+      {
+        sorry },
+      apply bound_integrable.mono_set,
+      sorry },
+    change tendsto (abs ∘ (λ t, ∫ (s : α) in b₀..t, 2*bound s ∂μ) ∘ prod.snd) (𝓝 (x₀, b₀)) _,
+    have lim_abs : tendsto abs (𝓝 (0 : ℝ)) (𝓝 0),
+    { conv { congr, skip, skip, rw ← abs_zero },
+      exact continuous_abs.continuous_at },
+    apply lim_abs.comp (this.comp _),
+    rw nhds_prod_eq, apply tendsto_snd },
+end
+end
+
+section
+variables {α : Type*} [conditionally_complete_linear_order α]
+          [measurable_space α] [topological_space α]
+          [order_topology α]
+          {G : Type*} [normed_group G] [measurable_space G]
+          (μ : measure α) [is_locally_finite_measure μ]
+          (c : G) (a b : α)
+
+@[simp]
+lemma interval_integrable_const : interval_integrable (λ t : α, c) μ a b:=
+begin
+  split ;
+  exact integrable_on.mono_set (is_compact_Icc.integrable_const _ _)  Ioc_subset_Icc_self
+end
+
+end
+
+section
+variables {α : Type*} [conditionally_complete_linear_order α] [no_bot_order α] [no_top_order α]
+          [measurable_space α] [topological_space α]
+          [order_topology α] [opens_measurable_space α] [first_countable_topology α] {μ : measure α}
+          [is_locally_finite_measure μ] [has_no_atoms μ]
+          {X : Type*} [topological_space X] [first_countable_topology X]
+          {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
+          [second_countable_topology E] [complete_space E]
+
+lemma continuous_parametric_primitive_of_continuous
+  [locally_compact_space X]
+  {F : X → α → E} {a₀ : α}
   (hF : continuous (λ p : X × α, F p.1 p.2)) :
-  continuous (λ p : X × α, ∫ t in a..p.2, F p.1 t ∂μ) :=
+  continuous (λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) :=
 begin
   rw continuous_iff_continuous_at,
   rintros ⟨x₀, b₀⟩,
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩,
-  apply continuous_at_parametric_primitive_of_dominated,
+  cases no_bot (min a₀ b₀) with a a_lt,
+  cases no_top (max a₀ b₀) with b lt_b,
+  rw lt_min_iff at a_lt,
+  rw max_lt_iff at lt_b,
+  have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩,
+  have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
+  obtain ⟨M : ℝ, M_pos : M > 0,
+          hM : ∀ (x : X × α), x ∈ U.prod (Icc a b) → ∥(λ (p : X × α), F p.fst p.snd) x∥ ≤ M⟩ :=
+    (U_cpct.prod (is_compact_Icc : is_compact $ Icc a b)).bdd_above_norm hF,
+  refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in b₀_in
+    (measure_singleton b₀),
   { intro x,
     apply (hF.comp (continuous.prod.mk x)).ae_measurable _ },
-  { apply eventually.mono U_nhds (λ x x_in, _),
-    /- have H : is_compact (Icc a $ b₀ + 1), sorry,
-    rcases (U_cpct.prod H).bdd_above_norm hF with ⟨M, M_pos, hM⟩,
-    apply ae_restrict_of_forall_mem,
-    intros t t_in, -/
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
+  { apply eventually.mono U_nhds (λ x (x_in : x ∈ U), _),
+    refine ae_restrict_of_forall_mem measurable_set_Ioc _,
+    intros t t_in,
+    refine hM (x, t) ⟨x_in, (_ : t ∈ Icc a b)⟩,
+    rw interval_oc_of_le (a_lt.1.trans lt_b.1).le at t_in,
+    exact mem_Icc_of_Ioc t_in },
+  { apply interval_integrable_const },
+  { apply ae_of_all,
+    intros a,
+    apply (hF.comp $ continuous_id.prod_mk continuous_const).continuous_at }
 end
 
 end
