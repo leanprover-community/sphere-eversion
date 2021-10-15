@@ -108,12 +108,15 @@ by { ext t, simp only [trans', unit_interval.le_one', path.coe_mk, if_pos, div_o
 by { simp only [trans', path.coe_mk, extend_div_self, if_pos, le_rfl], }
 
 lemma _root_.continuous.trans' {x : F} (γ γ' : I → path x x)
-  (hγ : continuous ↿γ)
-  (hγ' : continuous ↿γ')
-  (hγ0 : tendsto_uniformly (λ t, γ t) (λ _, x) (𝓝 (0 : I)))
-  (hγ'0 : tendsto_uniformly (λ t, γ' t) (λ _, x) (𝓝 (1 : I))) :
+  (hγ : continuous ↿γ) (hγ' : continuous ↿γ') (hγ0 : ∀ s, γ 0 s = x) (hγ'1 : ∀ s, γ' 1 s = x) :
   continuous ↿(λ t s, trans' (γ t) (γ' t) t s) :=
 begin
+  have hγ0 : tendsto_uniformly (λ t, γ t) (λ _, x) (𝓝 (0 : I)),
+  { have : uniform_continuous₂ (λ x, γ x) := compact_space.uniform_continuous_of_continuous hγ,
+    convert this.tendsto_uniformly, ext s, rw hγ0 },
+  have hγ'1 : tendsto_uniformly (λ t, γ' t) (λ _, x) (𝓝 (1 : I)),
+  { have : uniform_continuous₂ (λ x, γ' x) := compact_space.uniform_continuous_of_continuous hγ',
+    convert this.tendsto_uniformly, ext s, rw hγ'1 },
   refine continuous.if_le _ _ continuous_snd continuous_fst _,
   { rw [continuous_iff_continuous_at],
     rintro ⟨t, s⟩,
@@ -132,7 +135,7 @@ begin
       (continuous_at_const.sub $ continuous_at_subtype_coe.comp continuous_at_fst) _ _ _,
     { intro h, refine hγ'.continuous_at.extend continuous_at_fst continuous_at_snd },
     { dsimp only, apply filter.tendsto.extend, rw [(proj_Icc_surjective _).map_top, extend_zero],
-      exact tendsto_prod_top_iff.mpr hγ'0 },
+      exact tendsto_prod_top_iff.mpr hγ'1 },
     { intros p hp, exact subtype.ext (sub_eq_zero.mp hp).symm } },
   { rintro x h, rw [h, sub_self, zero_div, extend_div_self, extend_zero] },
 end
