@@ -14,6 +14,8 @@ TODO Use mathlib new algebra/periodic.lean
 
 -/
 
+open int (hiding range)
+
 section interval_integral
 
 open topological_space (second_countable_topology)
