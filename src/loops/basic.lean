@@ -6,6 +6,7 @@ import topology.algebra.floor_ring
 import topology.path_connected
 import linear_algebra.affine_space.independent
 import to_mathlib.topology.misc
+import to_mathlib.topology.algebra.group
 
 /-!
 # Basic definitions and properties of loops
@@ -109,22 +110,30 @@ by { simp only [trans', path.coe_mk, extend_div_self, if_pos, le_rfl], }
 lemma _root_.continuous.trans' {x : F} (γ γ' : I → path x x)
   (hγ : continuous ↿γ)
   (hγ' : continuous ↿γ')
-  (hγ0 : tendsto_uniformly (λ t, γ t) (λ _, γ 0 0) (𝓝 (0 : I)))
-  (hγ'1 : tendsto_uniformly (λ t, γ' t) (λ _, γ' 1 0) (𝓝 (1 : I))) :
+  (hγ0 : tendsto_uniformly (λ t, γ t) (λ _, x) (𝓝 (0 : I)))
+  (hγ'0 : tendsto_uniformly (λ t, γ' t) (λ _, x) (𝓝 (1 : I))) :
   continuous ↿(λ t s, trans' (γ t) (γ' t) t s) :=
 begin
-  have : filter.tendsto ↿γ ((𝓝 (0 : I)).prod ⊤) (𝓝 (γ 0 0)),
-  { rwa [← tendsto_prod_top_iff] at hγ0 },
   refine continuous.if_le _ _ continuous_snd continuous_fst _,
   { rw [continuous_iff_continuous_at],
     rintro ⟨t, s⟩,
-    apply continuous_at.comp_div_zero (λ (t : I) s, (γ t).extend s) 0
+    apply continuous_at.comp_div_cases (λ (t : I) s, (γ t).extend s) 0
       continuous_at_fst (continuous_at_subtype_coe.comp continuous_at_snd)
       (continuous_at_subtype_coe.comp continuous_at_fst) _ _ _,
-    { intro h, refine continuous_at.extend hγ.continuous_at continuous_at_fst continuous_at_snd },
-    { dsimp, sorry },
+    { intro h, refine hγ.continuous_at.extend continuous_at_fst continuous_at_snd },
+    { dsimp only, apply filter.tendsto.extend, rw [(proj_Icc_surjective _).map_top, extend_zero],
+      exact tendsto_prod_top_iff.mpr hγ0 },
     { intros p hp, exact subtype.ext hp } },
-  { sorry },
+  { rw [continuous_iff_continuous_at],
+    rintro ⟨t, s⟩,
+    apply continuous_at.comp_div_cases (λ (t : I) s, (γ' t).extend s) 1
+      continuous_at_fst ((continuous_at_subtype_coe.comp continuous_at_snd).sub
+        (continuous_at_subtype_coe.comp continuous_at_fst))
+      (continuous_at_const.sub $ continuous_at_subtype_coe.comp continuous_at_fst) _ _ _,
+    { intro h, refine hγ'.continuous_at.extend continuous_at_fst continuous_at_snd },
+    { dsimp only, apply filter.tendsto.extend, rw [(proj_Icc_surjective _).map_top, extend_zero],
+      exact tendsto_prod_top_iff.mpr hγ'0 },
+    { intros p hp, exact subtype.ext (sub_eq_zero.mp hp).symm } },
   { rintro x h, rw [h, sub_self, zero_div, extend_div_self, extend_zero] },
 end
 

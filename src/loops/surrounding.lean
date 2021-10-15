@@ -7,7 +7,7 @@ import to_mathlib.topology.constructions
 # Surrounding families of loops
 -/
 
-open set function finite_dimensional
+open set function finite_dimensional int (hiding range)
 open_locale classical topological_space unit_interval
 
 noncomputable theory
@@ -179,7 +179,7 @@ begin
       loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.trans'_one] },
   { ext x t s, sorry; simp only [path.trans'_zero, unit_interval.mk_zero, one_mul, ρ_zero,
       surrounding_family.path_extend, proj_Icc_left, loop.of_path_apply, sub_self] },
-  { apply continuous.continuous_on, dsimp [γ],  }
+  { apply continuous.continuous_on, dsimp [γ], sorry }
 end
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
