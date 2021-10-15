@@ -3,7 +3,7 @@ import topology.path_connected
 noncomputable theory
 
 open set function
-open_locale unit_interval topological_space
+open_locale unit_interval topological_space uniformity
 
 section -- to topology.algebra.ordered.proj_Icc
 
@@ -67,6 +67,42 @@ begin
   { rw [continuous_at], simp_rw [comp_app, hga, div_zero, hgk hga],
     refine h2h.comp _, rw [← hgk hga], exact hk.prod_mk filter.tendsto_top },
   { exact continuous_at.comp (hh hga) (hk.prod (hf.div hg hga)) }
+end
+
+end
+
+section
+
+open filter
+
+section
+variables {α : Type*} [uniform_space α]
+-- to uniform_space/basic
+
+-- `uniformity_eq_symm` should probably be reformulated in the library
+lemma symm_eq_uniformity : map (@prod.swap α α) (𝓤 α) = 𝓤 α :=
+uniformity_eq_symm.symm
+
+lemma nhds_eq_comap_uniformity_rev {y : α} : 𝓝 y = (𝓤 α).comap (λ x, (x, y)) :=
+by { rw [uniformity_eq_symm, map_swap_eq_comap_swap, comap_comap], exact nhds_eq_comap_uniformity }
+
+end
+
+-- to uniform_convergence
+lemma tendsto_prod_top_iff {α β ι : Type*} [uniform_space β] (F : ι → α → β) (c : β)
+  (p : filter ι) : tendsto ↿F (p.prod ⊤) (𝓝 c) ↔ tendsto_uniformly F (λ _, c) p :=
+begin
+  rw [tendsto_prod_iff],
+  split,
+  { intros h u hu, dsimp, specialize @h ((λ x, (c, x)) ⁻¹' u) _,
+    { rw [nhds_eq_comap_uniformity], exact preimage_mem_comap hu },
+    rcases h with ⟨U, hU, V, hV, h⟩,
+    rw [mem_top] at hV, subst hV,
+    refine eventually_of_mem hU _,
+    intros i hiU x, exact h i x hiU (mem_univ x) },
+  { intros h s hs,
+    specialize h _ (mem_nhds_uniformity_iff_right.mp hs),
+    refine ⟨_, h, univ, univ_mem, λ i x h _, h x rfl⟩ }
 end
 
 end

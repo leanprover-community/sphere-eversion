@@ -109,10 +109,12 @@ by { simp only [trans', path.coe_mk, extend_div_self, if_pos, le_rfl], }
 lemma _root_.continuous.trans' {x : F} (γ γ' : I → path x x)
   (hγ : continuous ↿γ)
   (hγ' : continuous ↿γ')
-  (hγ0 : filter.tendsto ↿γ ((𝓝 (0 : I)).prod ⊤) (𝓝 (γ 0 0)))
-  (hγ'1 : filter.tendsto ↿γ' ((𝓝 (1 : I)).prod ⊤) (𝓝 (γ' 1 0))) :
+  (hγ0 : tendsto_uniformly (λ t, γ t) (λ _, γ 0 0) (𝓝 (0 : I)))
+  (hγ'1 : tendsto_uniformly (λ t, γ' t) (λ _, γ' 1 0) (𝓝 (1 : I))) :
   continuous ↿(λ t s, trans' (γ t) (γ' t) t s) :=
 begin
+  have : filter.tendsto ↿γ ((𝓝 (0 : I)).prod ⊤) (𝓝 (γ 0 0)),
+  { rwa [← tendsto_prod_top_iff] at hγ0 },
   refine continuous.if_le _ _ continuous_snd continuous_fst _,
   { rw [continuous_iff_continuous_at],
     rintro ⟨t, s⟩,
