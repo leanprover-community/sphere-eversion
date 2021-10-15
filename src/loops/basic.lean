@@ -10,7 +10,7 @@ import linear_algebra.affine_space.independent
 # Basic definitions and properties of loops
 -/
 
-open set function finite_dimensional
+open set function finite_dimensional int (hiding range)
 open_locale big_operators topological_space topological_space unit_interval
 noncomputable theory
 
