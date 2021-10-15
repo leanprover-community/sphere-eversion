@@ -7,7 +7,7 @@ import to_mathlib.topology.constructions
 # Surrounding families of loops
 -/
 
-open set function finite_dimensional int (hiding range)
+open set function finite_dimensional int (hiding range) prod
 open_locale classical topological_space unit_interval
 
 noncomputable theory
@@ -115,7 +115,7 @@ variables {g b : E → F} {Ω : set (E × F)} {U K : set E}
 
 lemma local_loops
   {x₀ : E}
-  (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ prod.fst ⁻¹' U))
+  (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
   (hΩ_conn : ∀ᶠ x in 𝓝 x₀, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : ∀ᶠ x in 𝓝 x₀, continuous_at b x)
   (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω)
@@ -143,7 +143,7 @@ begin
   split,
   { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
     sorry
-    /- have h1'γ : continuous_at (↿γ ∘ prod.snd) (x, t, s),
+    /- have h1'γ : continuous_at (↿γ ∘ prod.2) (x, t, s),
     { refine continuous_at.comp _ continuous_at_snd, refine h1γ.continuous_at _, sorry },
     -- this sorry needs a reformulation of either this or surrounding_loop_of_convex_hull
     -- there is a mismatch between the continuous_at here and the continuous_on there
@@ -179,7 +179,17 @@ begin
       loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.trans'_one] },
   { ext x t s, sorry; simp only [path.trans'_zero, unit_interval.mk_zero, one_mul, ρ_zero,
       surrounding_family.path_extend, proj_Icc_left, loop.of_path_apply, sub_self] },
-  { apply continuous.continuous_on, dsimp [γ], sorry }
+  {
+    sorry -- todo: generalize loop.of_path_continuous_family so that base point can vary
+    -- apply continuous.continuous_on, dsimp [γ],
+    -- refine continuous_uncurry_uncurry.mp _,
+    -- refine continuous_uncurry_uncurry1.mp _,
+    -- rw [← continuous_uncurry_uncurry, ← continuous_uncurry_uncurry],
+    -- refine loop.of_path_continuous_family (λ (p : (ℝ × E) × ℝ),
+
+    --        ((h₀.path p.1.2 (ρ p.1.1 * p.2)).trans' (h₁.path p.1.2 (ρ (1 - p.1.1) * p.2))
+    --           (proj_Icc 0 1 zero_le_one (1 - p.1.1)))) _, sorry
+              }
 end
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
