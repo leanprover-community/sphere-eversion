@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
-<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -13,6 +13,7 @@
 <link rel="next" href="sect0001.html" title="Introduction" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -75,6 +76,13 @@
 
   </ul>
  </li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+  <li>	
+  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
+  </li>
 </ul>
 </nav>
 
@@ -147,6 +155,10 @@
 </div> <!-- wrapper -->
 
 <nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
   <a href="sect0001.html" title="Introduction"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
 </nav>
@@ -154,5 +166,7 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
 </body>
 </html>

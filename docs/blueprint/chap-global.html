@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
@@ -14,6 +14,7 @@
 <link rel="up" href="index.html" title="The sphere eversion project" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -77,6 +78,13 @@
 
   </ul>
  </li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+  <li>	
+  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
+  </li>
 </ul>
 </nav>
 
@@ -90,12 +98,16 @@
 <h1 id="a0000000012">3.1 Preliminaries</h1>
 <h2 id="sec:vector_bundles_operations">3.1.1 Vector bundles operations</h2>
 
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:pull_back_bundle">
+<p><div class="definition_thmwrapper" id="def:pull_back_bundle">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.1</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:pull_back_bundle">#</a>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
   <p> For every bundle \(p : E → B\) and every map \(f \! :B' → B\), the pull-back bundle \(f^*E → B'\) is defined by \(f^*E = \{ (b', e) ∈ B' × E \; |\;  p(e) = f(b')\} \) with the obvious projection to \(B'\). </p>
@@ -103,12 +115,16 @@
   </div>
 </div> </p>
 <p>The case of vector bundles. </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:hom_bundle">
+<p><div class="definition_thmwrapper" id="def:hom_bundle">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:hom_bundle">#</a>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
   <p> Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious project map. </p>
@@ -117,48 +133,108 @@
 </div> </p>
 <p>Set-theoretically, one can define \(\operatorname{Hom}(E, F)\) as the set of subsets \(S\) of \(E × F\) such that there exists \(b\) such that \(S ⊂ E_b × F_b\) and \(S\) is the graph of a linear map. But the type theory formalization will use other tricks here. The facts that really matter are listed in <a href="chap-global.html#lem:one_jet_extension_prop">lemma 3.5</a>. </p>
 <h2 id="a0000000049">3.1.2 Jets spaces</h2>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:one_jet_space">
+<p><div class="definition_thmwrapper" id="def:one_jet_space">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.3</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:one_jet_space">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:pull_back_bundle">Definition 3.1</a></li>
+          <li><a href="chap-global.html#def:hom_bundle">Definition 3.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:pull_back_bundle, def:hom_bundle Let \(M\) and \(N\) be smooth manifolds. Denote by \(p_1\) and \(p_2\) the projections of \(M × N\) to \(M\) and \(N\) respectively. </p>
+  <p>  Let \(M\) and \(N\) be smooth manifolds. Denote by \(p_1\) and \(p_2\) the projections of \(M × N\) to \(M\) and \(N\) respectively. </p>
 <p>The space \(J^1(M, N)\) of \(1\)-jets of maps from \(M\) to \(N\) is \(Hom(p_1^*TM, p_2^*TN)\) </p>
 
   </div>
 </div> </p>
 <p>We will use notations like \((m, n, φ)\) to denote an element of \(J^1(M, N)\), but one should keep in mind that \(J^1(M, N)\) is not a product, since \(φ\) lives in \(\operatorname{Hom}(T_mM, T_nN)\) which depends on \(m\) and \(n\). </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:one_jet_extension">
+<p><div class="definition_thmwrapper" id="def:one_jet_extension">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:one_jet_extension">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:one_jet_space">Definition 3.3</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:one_jet_space The \(1\)-jet of a smooth map \(f \! :M → N\) is the map from \(m\) to \(J^1(M, N)\) defined by \(j^1f(m) = (m, f(m), T_mf)\). </p>
+  <p>  The \(1\)-jet of a smooth map \(f \! :M → N\) is the map from \(m\) to \(J^1(M, N)\) defined by \(j^1f(m) = (m, f(m), T_mf)\). </p>
 
   </div>
 </div> </p>
 <p>The composition of a section \(\mathcal{F}\! :M → J^1(M, N)\) with the projection onto \(N\) will sometimes be denoted by \(\operatorname{bs}\mathcal{F}\! :M → N\) and called the base map of \(\mathcal{F}\). </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:one_jet_extension_prop">
+<p><div class="lemma_thmwrapper" id="lem:one_jet_extension_prop">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.5</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:one_jet_extension_prop">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000050"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:one_jet_extension">Definition 3.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:one_jet_extension For every smooth map \(f \! :M → N\), </p>
+  <p>  For every smooth map \(f \! :M → N\), </p>
 <ol class="enumerate">
-  <li><p>def:one_jet_space, def:one_jet_extension \(j^1f\) is smooth </p>
+  <li><p> \(j^1f\) is smooth </p>
 </li>
-  <li><p>def:one_jet_space, def:one_jet_extension \(j^1f\) is a section of \(J^1(M, N) → M\) </p>
+  <li><p> \(j^1f\) is a section of \(J^1(M, N) → M\) </p>
 </li>
-  <li><p>def:one_jet_space, def:one_jet_extension \(j^1f\) composed with \(J^1(M, N) → N\) is \(f\). </p>
+  <li><p> \(j^1f\) composed with \(J^1(M, N) → N\) is \(f\). </p>
 </li>
 </ol>
 
@@ -176,91 +252,230 @@
 
   </div>
 </div>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:holonomic_section">
+<p><div class="definition_thmwrapper" id="def:holonomic_section">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.6</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:holonomic_section">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:one_jet_space">Definition 3.3</a></li>
+          <li><a href="chap-global.html#lem:one_jet_extension_prop">Lemma 3.5</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:one_jet_space, lem:one_jet_extension_prop A section \(\mathcal{F}\) of \(J^1(M, N) → M\) is called holonomic if it is the \(1\)–jet of its base map. Equivalently, \(\mathcal{F}\) is holonomic if there exists \(f \! :M → N\) such that \(\mathcal{F}= j^1f\), since such a map is necessarily \(\operatorname{bs}\mathcal{F}\). </p>
+  <p>  A section \(\mathcal{F}\) of \(J^1(M, N) → M\) is called holonomic if it is the \(1\)–jet of its base map. Equivalently, \(\mathcal{F}\) is holonomic if there exists \(f \! :M → N\) such that \(\mathcal{F}= j^1f\), since such a map is necessarily \(\operatorname{bs}\mathcal{F}\). </p>
 
   </div>
 </div> </p>
 <h1 id="a0000000013">3.2 First order differential relations</h1>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:rel">
+<p><div class="definition_thmwrapper" id="def:rel">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.7</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:rel">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:one_jet_space">Definition 3.3</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:one_jet_space A first order differential relation for maps from \(M\) to \(N\) is a subset \(\mathcal{R}\) of \(J^1(M, N)\). </p>
+  <p>  A first order differential relation for maps from \(M\) to \(N\) is a subset \(\mathcal{R}\) of \(J^1(M, N)\). </p>
 
   </div>
 </div> </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:formal_sol">
+<p><div class="definition_thmwrapper" id="def:formal_sol">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.8</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:formal_sol">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:rel">Definition 3.7</a></li>
+          <li><a href="chap-global.html#def:one_jet_extension">Definition 3.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:rel, def:one_jet_extension A formal solution of a differential relation \(\mathcal{R}⊆ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
+  <p>  A formal solution of a differential relation \(\mathcal{R}⊆ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
 
   </div>
 </div> </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:htpy_formal_sol">
+<p><div class="definition_thmwrapper" id="def:htpy_formal_sol">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.9</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:htpy_formal_sol">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:formal_sol">Definition 3.8</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:formal_sol A homotopy of formal solutions of \(\mathcal{R}\) is a family of sections \(\mathcal{F}: ℝ × M → J^1(M, N)\) which is smooth over \([0, 1] × M\) and such that each \(m ↦ \mathcal{F}(t, m)\) is a formal solution when \(t\) is in \([0, 1]\). </p>
+  <p>  A homotopy of formal solutions of \(\mathcal{R}\) is a family of sections \(\mathcal{F}: ℝ × M → J^1(M, N)\) which is smooth over \([0, 1] × M\) and such that each \(m ↦ \mathcal{F}(t, m)\) is a formal solution when \(t\) is in \([0, 1]\). </p>
 
   </div>
 </div> </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:h-princ">
+<p><div class="definition_thmwrapper" id="def:h-princ">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:h-princ">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:formal_sol">Definition 3.8</a></li>
+          <li><a href="chap-global.html#def:htpy_formal_sol">Definition 3.9</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:formal_sol, def:htpy_formal_sol A first order differential relation \(\mathcal{R}⊆ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions is homotopic to a family of holonomic ones. </p>
+  <p>  A first order differential relation \(\mathcal{R}⊆ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions is homotopic to a family of holonomic ones. </p>
 
   </div>
 </div> </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:sol_chart">
+<p><div class="lemma_thmwrapper" id="lem:sol_chart">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.11</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:sol_chart">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:h-princ">Definition 3.10</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:h-princ The above definitions translate to the definitions of the previous chapter in local charts. (We’ll need more precise statements...) </p>
+  <p>  The above definitions translate to the definitions of the previous chapter in local charts. (We’ll need more precise statements...) </p>
 
   </div>
 </div> </p>
 <h2 id="a0000000051">Parametricity for free</h2>
 <p>In many cases, relative parametric \(h\)-principles can be deduced from relative non-parametric ones with a larger source manifold. Let \(X\), \(P\) and \(Y\) be manifolds, with \(P\) seen a parameter space. Denote by \(Ψ\) the map from \(J^1(X × P, Y)\) to \(J^1(X, Y)\) sending \((x, p, y, ψ)\) to \((x, y, ψ ∘ ι_{x, p})\) where \(ι_{x, p} : T_xX → T_xX × T_pP\) sends \(v\) to \((v, 0)\). </p>
 <p>To any family of sections \(F_p : x ↦ (f_p(x), φ_{p, x})\) of \(J^1(X, Y)\), we associate the section \(\bar F\) of \(J^1(X × P, Y)\) sending \((x, p)\) to \(\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))\). </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:param_trick">
+<p><div class="lemma_thmwrapper" id="lem:param_trick">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.12</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000052"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:holonomic_section">Definition 3.6</a></li>
+          <li><a href="chap-global.html#def:formal_sol">Definition 3.8</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:holonomic_section, def:formal_sol In the above setup, we have: </p>
+  <p>  In the above setup, we have: </p>
 <ul class="itemize">
   <li><p>\(\bar F\) is holonomic at \((x, p)\) if and only if \(F_p\) is holonomic at \(x\). </p>
 </li>
@@ -282,15 +497,36 @@
 
   </div>
 </div>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:param_for_free">
+<p><div class="lemma_thmwrapper" id="lem:param_for_free">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.13</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:h-princ">Definition 3.10</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:h-princ Let \(\mathcal{R}\) be a first order differential relation for maps from \(M\) to \(N\). If, for every manifold with boundary \(P\), \(\mathcal{R}^P\) satisfies the \(h\)-principle then \(\mathcal{R}\) satisfies the parametric \(h\)-principle. Likewise, the \(C^0\)-dense and relative \(h\)-principle for all \(\mathcal{R}^P\) imply the parametric \(C^0\)-dense and relative \(h\)-principle for \(\mathcal{R}\). </p>
+  <p>  Let \(\mathcal{R}\) be a first order differential relation for maps from \(M\) to \(N\). If, for every manifold with boundary \(P\), \(\mathcal{R}^P\) satisfies the \(h\)-principle then \(\mathcal{R}\) satisfies the parametric \(h\)-principle. Likewise, the \(C^0\)-dense and relative \(h\)-principle for all \(\mathcal{R}^P\) imply the parametric \(C^0\)-dense and relative \(h\)-principle for \(\mathcal{R}\). </p>
 
   </div>
 </div> </p>
@@ -302,7 +538,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>lem:param_trick This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.12</a>. </p>
+  <p> This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.12</a>. </p>
 
   </div>
 </div>
@@ -315,27 +551,68 @@
 <p> where \(\operatorname{Conn}_a A\) is the connected component of \(A\) containing \(a\). In order to decipher this definition, it suffices to notice that \(φ + (w - φ(v))⊗λ\) is the unique linear map from \(T_xX\) to \(T_yY\) which coincides with \(φ\) on \(\ker λ\) and sends \(v\) to \(w\). In particular, \(w = φ(v)\) gives back \(φ\). </p>
 <p>Of course we will want to deal with more that one point, so we will consider a vector field \(V\) and a \(1\)–form \(λ\) such that \(λ(V) = 1\) on some subset \(U\) of \(X\), a formal solution \(F\) (defined at least on \(U\)), and get the corresponding \(\mathcal{R}_{F, λ, v}\) over \(U\). </p>
 <p>One easily checks that \(\mathcal{R}_{σ, κ^{-1}λ, κv} = κ\mathcal{R}_{σ, λ, v}\) hence the above definition only depends on \(\ker λ\) and the direction \(ℝV\). </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:ample_relation">
+<p><div class="definition_thmwrapper" id="def:ample_relation">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.14</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:ample_relation">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:ample_subset">Definition 2.12</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:ample_subset A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
+  <p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
 
   </div>
 </div> </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:ample_iff_loc">
+<p><div class="lemma_thmwrapper" id="lem:ample_iff_loc">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.15</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:ample_relation">Definition 3.14</a></li>
+          <li><a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:ample_relation, def:ample_relation_loc If a relation is ample then it is ample if the sense of <a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a> when seen in local charts. </p>
+  <p>  If a relation is ample then it is ample if the sense of <a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a> when seen in local charts. </p>
 
   </div>
 </div> </p>
@@ -351,12 +628,18 @@
 
   </div>
 </div>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:open_ample_immersion">
+<p><div class="lemma_thmwrapper" id="lem:open_ample_immersion">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.16</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000056"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
   <p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
@@ -371,37 +654,79 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>lem:open_ample_immersion lem:open_ample_immersion_loc This obviously follows from <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a>. </p>
+  <p>  This obviously follows from <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a>. </p>
 
   </div>
 </div>
-<p><div class="theorem_thmwrapper theorem-style-plain" id="thm:open_ample">
+<p><div class="theorem_thmwrapper" id="thm:open_ample">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
     <span class="theorem_thmlabel">3.17</span>
     <span class="theorem_thmtitle">Gromov</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000057"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:h-princ">Definition 3.10</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>  def:h-princ If \(\mathcal{R}\) is open and ample then it satisfies the relative and parametric \(C^0\)-dense \(h\)-principle. </p>
+  <p>   If \(\mathcal{R}\) is open and ample then it satisfies the relative and parametric \(C^0\)-dense \(h\)-principle. </p>
 
   </div>
 </div> </p>
 <p>We first explain how to get rid of parameters, using the relation \(\mathcal{R}^P\) for families of solutions parametrized by \(P\). </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:ample_parameter">
+<p><div class="lemma_thmwrapper" id="lem:ample_parameter">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">3.18</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:ample_relation">Definition 3.14</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:ample_relation If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
+  <p>  If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000057">
+<div class="proof_wrapper" id="a0000000058">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -410,7 +735,7 @@
   </div>
   <div class="proof_content">
   <p>We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000058">
+<div class="displaymath" id="a0000000059">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when \(λ_X = 0\). Then the condition on \(w\) becomes \(ψ ∘ ι_{x, p} ∈ \mathcal{R}\), which is true by definition of \(\mathcal{R}^P\), so \(\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
@@ -418,7 +743,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000059">
+<div class="proof_wrapper" id="a0000000057">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.17</a>
@@ -426,7 +751,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> thm:open_ample lem:param_for_free, lem:ample_parameter, lem:sol_chart, lem:ample_iff_loc, lem:h_principle_open_ample_loc Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.13</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.18</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
+  <p>   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.13</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.18</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
 <p>We first assume \(X\) is closed, and will then explain the proof adjustments needed in the non-compact case. By compactness, there are finite many compact subsets \((K_i)_{1 ≤ i ≤ N}\) contained in coordinate charts \(U_i\) and such that \(\bigcup K_i = X\). </p>
 <p>We prove by induction on \(i\) from \(0\) to \(N\) that there are formal solutions \(F_i\), starting with \(F_0 = F\), that are homotopic to \(F\) relative to \(A\), holonomic on \(K_{≤ i} := \bigcup _{j ≤ i} K_j\) and whose base maps are \((1-2^{-i})ε\)-close to that of \(F\) (this contrived bound will be convenient for the non-compact case). </p>
 <p>Assume \(F_i\) has been constructed for some \(i {\lt} N\). We now want to construct it on \(U_{i+1}\). <a href="chap-global.html#lem:ample_iff_loc">Lemma 3.15</a> ensures the pull-back of \(\mathcal{R}\) in the chart corresponding to \(U_{i+1}\) is ample in the sense of the preceding chapter. Hence <a href="chap-local.html#lem:h_principle_open_ample_loc">Lemma 2.16</a> can be applied to construct \(F_{i+1}\), using the image of \(K_{i+1}\) as \(K_0\) and the image of \(A ∩ K_{i+1} ∩ K_{≤ i}\) as \(C\). It is holonomic on \(K_{≤ i+1}\) because it agrees with \(F_i\) near \(K_{≤ i}\) and is holonomic near \(K_{i+1}\). </p>
@@ -435,13 +760,19 @@
 
   </div>
 </div>
-<p><div class="theorem_thmwrapper theorem-style-plain" id="thm:sphere_eversion">
+<p><div class="theorem_thmwrapper" id="thm:sphere_eversion">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
     <span class="theorem_thmlabel">3.19</span>
     <span class="theorem_thmtitle">Smale 1958</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000060"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
   </div>
   <div class="theorem_thmcontent">
   <p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
@@ -456,7 +787,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>thm:open_ample, lem:open_ample_immersion We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not animmersion for \(t=1/2\)). Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ : t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). It is homotopic by reparametrization to a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\) which are holonomic for \(t\) near the \(0\) and \(1\). </p>
+  <p> We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not animmersion for \(t=1/2\)). Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ : t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). It is homotopic by reparametrization to a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\) which are holonomic for \(t\) near the \(0\) and \(1\). </p>
 <p>The above theorem ensures this family is homotopic, relative to \(t = 0\) and \(t = 1\), to a family of holonomic formal immersions, ie a family \(t ↦ j^1f_t\) with \(f_0 = ι\), \(f_1 = a\), and each \(f_t\) is an immersion. </p>
 
   </div>
@@ -468,6 +799,10 @@
 </div> <!-- wrapper -->
 
 <nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
   <a href="chap-local.html" title="Local theory of convex integration"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
   <a href="index.html" title="The sphere eversion project"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
@@ -477,5 +812,7 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
 </body>
 </html>
