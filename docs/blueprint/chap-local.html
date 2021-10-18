@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
@@ -15,6 +15,7 @@
 <link rel="up" href="index.html" title="The sphere eversion project" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -78,6 +79,13 @@
 
   </ul>
  </li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+  <li>	
+  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
+  </li>
 </ul>
 </nav>
 
@@ -92,28 +100,66 @@
 
 <p>The goal of this chapter is to explain the local aspects of (Theillière’s implementation of) convex integration, the next chapter will cover global aspects. </p>
 <p>The elementary step of convex integration modifies the derivative of a map in one direction. Let \(E\) and \(F\) be finite dimensional real normed vector spaces. Let \(f \! :E → F\) be a smooth map with compact support. </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:dual_pair">
+<p><div class="definition_thmwrapper" id="def:dual_pair">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.1</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:dual_pair">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e52a98dfed2787306da877dea4a9755f60e40753/src/local/corrugation.lean#L310">dual_pair'</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> dual_pair’ A dual pair on \(E\) is a pair \((π, v)\) where \(π\) is a linear form on \(E\) and \(v\) a vector in \(E\) such that \(π(v) = 1\). </p>
+  <p>  A dual pair on \(E\) is a pair \((π, v)\) where \(π\) is a linear form on \(E\) and \(v\) a vector in \(E\) such that \(π(v) = 1\). </p>
 
   </div>
 </div> </p>
 <p>Say we wish \(Df(x)v\) could live in some open subset \(Ω_x ⊂ F\). Assume there is a smooth compactly supported family of loops \(γ \! :E × 𝕊^1 → F\) such that each \(γ_x\) takes values in \(Ω_x\), and has average value \(\int _{𝕊^1} γ_x = Df(x)v\). Obviously such loops can exist only if \(Df(x)v\) is in the convex hull of \(Ω_x\), and we saw in the previous chapter that this is almost sufficient (and we’ll see this is sufficiently almost sufficient for our purposes). </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:corrugation">
+<p><div class="definition_thmwrapper" id="def:corrugation">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.2</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:corrugation">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e52a98dfed2787306da877dea4a9755f60e40753/src/local/corrugation.lean#L218">corrugate</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> corrugate The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
+  <p>  The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
 <div class="displaymath" id="a0000000033">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
 </div>
@@ -122,16 +168,37 @@
 </div> </p>
 <p>In the above definition, we mostly think of \(N\) as a large natural number. But we don’t actually requireit, any positive real number will do. </p>
 <p>The next proposition implies that, provided \(N\) is large enough, we have achieved \(Df'(x)v ∈ Ω_x\), almost without modifying derivatives in the other directions of \(\ker π\), and almost without moving \(f(x)\). In addition, if we assume that \(γ_x\) is constant (necessarily with value \(Df(x)v\)) for \(x\) in some closed subset \(K\) where \(Df(x)v\) was already good, then the modification is relative to \(K\). </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="prop:theilliere">
+<p><div class="lemma_thmwrapper" id="prop:theilliere">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.3</span>
     <span class="lemma_thmtitle">Theillière 2018</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#prop:theilliere">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000034"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:corrugation">Definition 2.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  def:corrugation The corrugated function \(f'\) satisfies, uniformly in \(x\): </p>
+  <p>   The corrugated function \(f'\) satisfies, uniformly in \(x\): </p>
 <ol class="enumerate">
   <li><p> \(Df'(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)\), and the error vanishes whenever \(γ_x\) is constant. </p>
 </li>
@@ -161,79 +228,195 @@
 </div>
 <h1 id="sec:inductive_step">2.2 The main inductive step</h1>
 
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:hol_partial">
+<p><div class="definition_thmwrapper" id="def:hol_partial">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.4</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:hol_partial">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e52a98dfed2787306da877dea4a9755f60e40753/src/local/relation.lean#L23">is_part_holonomic_on</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> is_part_holonomic_on Let \(E'\) be a linear subspace of \(E\). A map \(\mathcal{F}= (f, φ) : E → F × \operatorname{Hom}(E, F)\) is \(E'\)–holonomic if, for every \(v\) in \(E'\) and every \(x\), \(Df(x)v = φ(x)v\). </p>
+  <p>  Let \(E'\) be a linear subspace of \(E\). A map \(\mathcal{F}= (f, φ) : E → F × \operatorname{Hom}(E, F)\) is \(E'\)–holonomic if, for every \(v\) in \(E'\) and every \(x\), \(Df(x)v = φ(x)v\). </p>
 
   </div>
 </div> </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:rel_loc">
+<p><div class="definition_thmwrapper" id="def:rel_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.5</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:rel_loc">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e52a98dfed2787306da877dea4a9755f60e40753/src/local/relation.lean#L10">rel_loc</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> rel_loc A first order differential relation for maps from \(E\) to \(F\) is a subset \(\mathcal{R}\) of \(E × F × \operatorname{Hom}(E, F)\). </p>
+  <p>  A first order differential relation for maps from \(E\) to \(F\) is a subset \(\mathcal{R}\) of \(E × F × \operatorname{Hom}(E, F)\). </p>
 
   </div>
 </div> </p>
 <p>Until the end of this section, \(\mathcal{R}\) will always denote a first order differential relation for maps from \(E\) to \(F\). </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:formal_sol_loc">
+<p><div class="definition_thmwrapper" id="def:formal_sol_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.6</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:formal_sol_loc">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:rel_loc">Definition 2.5</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e52a98dfed2787306da877dea4a9755f60e40753/src/local/relation.lean#L17">is_formal_solution_on</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> is_formal_solution_on def:rel_loc A formal solution of a differential relation \(\mathcal{R}\) over \(U ⊂ E\) is a map \(\mathcal{F}= (f, φ) \! :E → F × \operatorname{Hom}(E, F)\) such that, for every \(x\) in \(U\), \((x, f(x), φ(x))\) is in \(\mathcal{R}\). </p>
+  <p>   A formal solution of a differential relation \(\mathcal{R}\) over \(U ⊂ E\) is a map \(\mathcal{F}= (f, φ) \! :E → F × \operatorname{Hom}(E, F)\) such that, for every \(x\) in \(U\), \((x, f(x), φ(x))\) is in \(\mathcal{R}\). </p>
 
   </div>
 </div> </p>
 <p>The first component of a map \(\mathcal{F}\! :E → F × \operatorname{Hom}(E, F)\) will sometimes be denoted by \(\operatorname{bs}\mathcal{F}\! :E → F\) and called the base map of \(\mathcal{F}\). </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:htpy_formal_sol_loc">
+<p><div class="definition_thmwrapper" id="def:htpy_formal_sol_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.7</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:htpy_formal_sol_loc">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:formal_sol_loc">Definition 2.6</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:formal_sol_loc A homotopy of formal solutions over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\) and such that each \(x ↦ \mathcal{F}(t, x)\) is a formal solution over \(U\) when \(t\) is in \([0, 1]\). </p>
+  <p>  A homotopy of formal solutions over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\) and such that each \(x ↦ \mathcal{F}(t, x)\) is a formal solution over \(U\) when \(t\) is in \([0, 1]\). </p>
 
   </div>
 </div> </p>
 <p>Typically, \(x ↦ \mathcal{F}(t, x)\) will be denoted by \(\mathcal{F}_t\). </p>
 <p>We’ll use the notation \(\operatorname{Conn}_w A\) to denote the connected component of \(A\) that contains \(w\), or the empty set if \(w\) doesn’t belong to \(A\). </p>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:rel_slice">
+<p><div class="definition_thmwrapper" id="def:rel_slice">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.8</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:rel_slice">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:rel_loc">Definition 2.5</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:rel_loc For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
+  <p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
 <div class="displaymath" id="a0000000035">
   \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 
   </div>
 </div> </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:update_lin_map">
+<p><div class="lemma_thmwrapper" id="lem:update_lin_map">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.9</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#lem:update_lin_map">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000036"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
   <p> The linear map \(φ + (w - φ(v)) ⊗ π)\) coincides with \(φ\) on \(\ker π\) and sends \(v\) to \(w\). If \(\sigma \) belongs to \(\mathcal{R}\) then \(φ(v)\) belongs to \(\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} \). </p>
@@ -252,27 +435,71 @@
 
   </div>
 </div>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:short_formal_sol">
+<p><div class="definition_thmwrapper" id="def:short_formal_sol">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:short_formal_sol">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:formal_sol_loc">Definition 2.6</a></li>
+          <li><a href="chap-local.html#def:dual_pair">Definition 2.1</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:formal_sol_loc, def:dual_pair A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
+  <p>  A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
 
   </div>
 </div> </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:integration_step">
+<p><div class="lemma_thmwrapper" id="lem:integration_step">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.11</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#lem:integration_step">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000037"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:formal_sol_loc">Definition 2.6</a></li>
+          <li><a href="chap-local.html#def:short_formal_sol">Definition 2.10</a></li>
+          <li><a href="chap-local.html#def:hol_partial">Definition 2.4</a></li>
+          <li><a href="chap-local.html#def:htpy_formal_sol_loc">Definition 2.7</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_formal_sol_loc Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a subset of \(U\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
+  <p>  Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a subset of \(U\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
 <p>Assume \(\mathcal{R}\) is open over \(U\). Assume that \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), \((π, v)\)–short over \(U\), and holonomic near \(C\). Then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
   <li><p>\(\mathcal{F}_0 = \mathcal{F}\)&#160;; </p>
@@ -297,7 +524,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>lem:integration_step prop:loops, prop:theilliere, lem:update_lin_map We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.2</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
+  <p>  We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.2</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
 <ul class="itemize">
   <li><p>\(∀ t\,  s,\;  γ^t_x(s) ∈ \mathcal{R}(\mathcal{F}(x), π, v)\) </p>
 </li>
@@ -353,27 +580,67 @@
 </div>
 <h1 id="sec:ample_differential_relations">2.3 Ample differential relations</h1>
 
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:ample_subset">
+<p><div class="definition_thmwrapper" id="def:ample_subset">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.12</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:ample_subset">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e52a98dfed2787306da877dea4a9755f60e40753/src/local/ample.lean#L22">ample_set</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> ample_set A subset \(Ω\) of a real vector space \(E\) is ample if the convex hull of each connected component of \(Ω\) is the whole \(E\). </p>
+  <p>  A subset \(Ω\) of a real vector space \(E\) is ample if the convex hull of each connected component of \(Ω\) is the whole \(E\). </p>
 
   </div>
 </div> </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:ample_codim_two">
+<p><div class="lemma_thmwrapper" id="lem:ample_codim_two">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.13</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#lem:ample_codim_two">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000046"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:ample_subset">Definition 2.12</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:ample_subset The complement of a linear subspace of codimension at least 2 is ample. </p>
+  <p>  The complement of a linear subspace of codimension at least 2 is ample. </p>
 
   </div>
 </div> </p>
@@ -390,27 +657,69 @@
 
   </div>
 </div>
-<p><div class="definition_thmwrapper theorem-style-plain" id="def:ample_relation_loc">
+<p><div class="definition_thmwrapper" id="def:ample_relation_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.14</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#def:ample_relation_loc">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:ample_subset">Definition 2.12</a></li>
+          <li><a href="chap-local.html#def:rel_loc">Definition 2.5</a></li>
+          <li><a href="chap-local.html#def:rel_slice">Definition 2.8</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="definition_thmcontent">
-  <p> def:ample_subset, def:rel_loc, def:rel_slice A first order differential relation \(\mathcal{R}\) is ample if all its slices are ample. </p>
+  <p>  A first order differential relation \(\mathcal{R}\) is ample if all its slices are ample. </p>
 
   </div>
 </div> </p>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:open_ample_immersion_loc">
+<p><div class="lemma_thmwrapper" id="lem:open_ample_immersion_loc">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.15</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#lem:open_ample_immersion_loc">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000047"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:ample_subset">Definition 2.12</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:ample_subset The relation of immersions in positive codimension is open and ample. </p>
+  <p>  The relation of immersions in positive codimension is open and ample. </p>
 
   </div>
 </div> </p>
@@ -422,19 +731,40 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>lem:ample_codim_two For every \(σ = (x, y, φ)\) in the immersion relation \(\mathcal{R}\), and for every dual pair \((π, v)\), the slice \(\mathcal{R}(σ, π, v)\) is the set of \(w\) which do not belong to the image of \(\ker π\) under \(φ\). Since \(\dim F {\gt} \dim E\), this image has codimension at least \(2\) in \(F\), and <a href="chap-local.html#lem:ample_codim_two">lemma 2.13</a> concludes. </p>
+  <p> For every \(σ = (x, y, φ)\) in the immersion relation \(\mathcal{R}\), and for every dual pair \((π, v)\), the slice \(\mathcal{R}(σ, π, v)\) is the set of \(w\) which do not belong to the image of \(\ker π\) under \(φ\). Since \(\dim F {\gt} \dim E\), this image has codimension at least \(2\) in \(F\), and <a href="chap-local.html#lem:ample_codim_two">lemma 2.13</a> concludes. </p>
 
   </div>
 </div>
-<p><div class="lemma_thmwrapper theorem-style-plain" id="lem:h_principle_open_ample_loc">
+<p><div class="lemma_thmwrapper" id="lem:h_principle_open_ample_loc">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.16</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-local.html#lem:h_principle_open_ample_loc">#</a>
+    <a class="icon proof" href="chap-local.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> def:ample_relation_loc, def:holonomic_loc Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset \(C\) of \(U\). Let \(ε\) be a positive real number. </p>
+  <p>  Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset \(C\) of \(U\). Let \(ε\) be a positive real number. </p>
 <p>If \(\mathcal{R}\) is open and ample over \(U\) then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
   <li><p>\(\mathcal{F}_0 = \mathcal{F}\) </p>
@@ -459,7 +789,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>lem:integration_step This is a straightforward induction using <a href="chap-local.html#lem:integration_step">lemma 2.11</a>. Let \((e_1, \dots , e_n)\) be a basis of \(E\), and let \((π_1, \dots , π_n)\) be the dual basis. Let \(E'_i\) be the linear subspace of \(E\) spanned by \((e_1, \dots , e_i)\), for \(1 ≤ i ≤ n\), and let \(E'_0\) be the zero subspace of \(E\). Each \((π_i, e_i)\) is a dual pair and the kernel of \(π_i\) contains \(E'_{i - 1}\). </p>
+  <p> This is a straightforward induction using <a href="chap-local.html#lem:integration_step">lemma 2.11</a>. Let \((e_1, \dots , e_n)\) be a basis of \(E\), and let \((π_1, \dots , π_n)\) be the dual basis. Let \(E'_i\) be the linear subspace of \(E\) spanned by \((e_1, \dots , e_i)\), for \(1 ≤ i ≤ n\), and let \(E'_0\) be the zero subspace of \(E\). Each \((π_i, e_i)\) is a dual pair and the kernel of \(π_i\) contains \(E'_{i - 1}\). </p>
 <p><a href="chap-local.html#lem:integration_step">Lemma 2.11</a> allows to build a sequence of homotopies of formal solutions, each homotopy relating a formal solution which is \(E'_i\)–holonomic to one which is \(E'_{i+1}\)–holonomic (always near \(K_0\)). The shortness condition is always satisfies because \(\mathcal{R}\) is ample over \(U\). Each homotopy starts where the previous one stopped, stay at \(C^0\) distance at most \(ε/n\), and is relative to \(C\) and the complement of \(K_1\). </p>
 <p>It then suffices to do a smooth concatenation of theses homotopies. We first pre-compose with a smooth map from \([0, 1]\) to itself that fixes \(0\) and \(1\) and has vanishing derivative to all orders at \(0\) and \(1\). Then we precompose by affine isomorphisms from \([0, 1]\) to \([i/n, (i + 1)/n]\) before joining them. </p>
 
@@ -472,6 +802,10 @@
 </div> <!-- wrapper -->
 
 <nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
   <a href="chap-loops.html" title="Loops"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
   <a href="index.html" title="The sphere eversion project"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
@@ -483,5 +817,7 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
 </body>
 </html>
