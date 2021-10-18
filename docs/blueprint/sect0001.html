@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  MathJax.Hub.Config({tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -15,7 +15,6 @@
 <link rel="up" href="index.html" title="The sphere eversion project" />
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
-<link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -79,13 +78,6 @@
 
   </ul>
  </li>
-  <li></li>	
-  <li>	
-  <a href="dep_graph.html">Dependency graph</a>
-  </li>
-  <li>	
-  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
-  </li>
 </ul>
 </nav>
 
@@ -104,15 +96,11 @@
 <p>An important lesson from the above example is that algebraic topology can give us more than a necessary condition. Indeed the (one-dimensional) Hopf degree theorem ensures that, provided \(w(f'_0) = w(f'_1)\), there exists a homotopy \(g_p\) of nowhere vanishing maps relating \(f'_0\) and \(f'_1\). We also know from the topology of \(ℝ^2\) that \(f_0\) and \(f_1\) are homotopic, say using the straight-line homotopy \(p ↦ f_p = (1-p)f_0 + pf_0\). But there is no a priori relation between \(g_p\) and the derivative of \(f_p\) for \(p ∉ \{ 0, 1\} \). So we can restate the crucial part of the Whitney–Graustein theorem as: there is a homotopy of immersion from \(f_0\) to \(f_1\) as soon as there is (a homotopy from \(f_0\) to \(f_1\)) and a homotopy from \(f_0'\) to \(f_1'\) among nowhere vanishing maps. The parenthesis in the previous sentence indicated that this condition is always satisfied, but it is important to keep in mind for generalizations. Gromov says that such a homotopy of uncoupled pairs \((f, g)\) is a formal solution of the original problem. </p>
 <p>One can generalize this discussion of uncoupled maps replacing a map and its derivative. This is pretty easy for maps from a manifold \(M\) to a manifold \(N\). The so called \(1\)-jet space \(J^1(M, N)\) is the space of triples \((m, n, φ)\) with \(m ∈ M\), \(n ∈ N\), and \(φ ∈ \operatorname{Hom}(T_mM, T_nN)\), the space of linear maps from \(T_mM\) to \(T_nN\). One can define a smooth manifold structure on \(J^1(M, N)\), of dimension \(\dim (M) + \dim (N) + \dim (M)\dim (N)\) which fibers over \(M\), \(N\) and their product \(J^0(M, N) := M × N\). Beware that the notation \((m, n, φ)\) does not mean that \(J^1(M, N)\) is a product of three manifolds, the space where \(φ\) lives depends on \(m\) and \(n\). Any smooth map \(f \! :M → N\) gives rise to a section \(j^1f\) of \(J^1(M, N) → M\) defined by \(j^1f(m) = (m, f(m), T_m f)\). Such a section is called a <em>holonomic section</em> of \(J^1(M, N)\). In the Whitney–Graustein example, we use the canonical trivialization of \(T𝕊^1\) and \(Tℝ^2\) to represent \(j^1f\) has a pair of maps \((f, f')\). The role played by \((f, g)\) in this example is played in general by sections of \(J^1(M, N) → M\) which are not necessarily holonomic. </p>
 <p>One can generalize this discussion to \(J^r(M, N)\) which remembers derivatives of maps up to order \(r\) for some given \(r ≥ 0\). One can also consider sections of an arbitrary bundle \(E → M\) instead of functions from \(M\) to \(N\), which are sections of the trivial bundle \(M × N → N\). But the case of \(J^1(M, N)\) will be sufficient for this project. </p>
-<p><div class="definition-intro_thmwrapper" id="a0000000003">
+<p><div class="definition-intro_thmwrapper theorem-style-plain" id="a0000000003">
   <div class="definition-intro_thmheading">
     <span class="definition-intro_thmcaption">
     Definition
     </span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000003">#</a>
-
-  </div>
   </div>
   <div class="definition-intro_thmcontent">
   <p>A first order differential relation \(\mathcal{R}\) for maps from \(M\) to \(N\) is a subset of \(J^1(M, N)\). A solution of \(\mathcal{R}\) is a function \(f \! :M \to N\) such that \(j^1f(m)\) is in \(\mathcal{R}\) for all \(m\). A <em>formal solution</em> of \(\mathcal{R}\) is a non-necessarily holonomic section of \(J^1(M, N) → M\) which takes value in \(\mathcal{R}\). </p>
@@ -126,15 +114,11 @@
 </div>
 <p> As we saw with the Whitney–Graustein problem, we are not only interested to individual solutions, but also in families of solutions. In differential topology, a smooth family of maps between manifolds \(X\) and \(Y\) is a smooth map \(h \! :P × X → Y\) seen as the collection of maps \(h_p \! :x ↦ h(p, x)\). Here \(P\) stands for “parameter space”. A smooth family of sections of \(E → X\) is a smooth family of maps \(σ \! :P × X → E\) such that each \(σ_p\) is a section. </p>
 <p>When the parameter space \(P\) has boundary, we will typically assume that formal solutions \(σ_p\) are holonomic for \(p\) in \(𝓝(∂P)\). This is an abreviation meaning: “there is an unspecified neighborhood \(U\) of \(∂P\) such that \(σ_p\) is holonomic for \(p\) in \(U\)”. Note that an unspecified neighborhood can change from invocation to invocation. For instance in the next definition, the second unspecified neighborhood is typically smaller than the first one. </p>
-<p><div class="definition-intro_thmwrapper" id="a0000000005">
+<p><div class="definition-intro_thmwrapper theorem-style-plain" id="a0000000005">
   <div class="definition-intro_thmheading">
     <span class="definition-intro_thmcaption">
     Definition
     </span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000005">#</a>
-
-  </div>
   </div>
   <div class="definition-intro_thmcontent">
   <p>A partial differential relation \(\mathcal{R}\) satisfies the parametric \(h\)-principle if every family of formal solutions \(σ \! :M × P → J^1(M, N)\) which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic, relative to \(𝓝(∂P)\), to a family of holonomic sections. </p>
@@ -143,15 +127,11 @@
 </div> </p>
 <p>There are other variations on this definition. For instance a formal solution could be holonomic on \(𝓝(A)\) for some subset \(A\) of \(M\), and we say that \(\mathcal{R}\) satisfies the relative \(h\)-principle if \(σ\) can be deformed to a holonomic solution without changing it on \(𝓝(A)\). </p>
 <p>One can also insist on the deformed solution to be \(C^0\)-close to the original one. In this case one talks about a \(C^0\)-dense \(h\)-principle. We are now ready to state our main goal. </p>
-<p><div class="theorem-intro_thmwrapper" id="a0000000006">
+<p><div class="theorem-intro_thmwrapper theorem-style-plain" id="a0000000006">
   <div class="theorem-intro_thmheading">
     <span class="theorem-intro_thmcaption">
     Theorem
     </span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000006">#</a>
-
-  </div>
   </div>
   <div class="theorem-intro_thmcontent">
   <p>The relation of immersions in positive codimension (ie immersions of \(M\) into \(N\) with \(\dim (N) {\gt} \dim (M)\)) satisfies all forms of \(h\)-principles. </p>
@@ -159,18 +139,12 @@
   </div>
 </div> </p>
 <p>This theorem covers the Whitney–Graustein theorem (in its second form, assuming the existence of a homotopy between derivatives). But there are much less intuitive applications. The most famous one is the existence of sphere eversions: one can “turn \(𝕊^2\) inside-out among immersions of \(𝕊^2\) into \(ℝ^3\)). </p>
-<p><div class="corollary-intro_thmwrapper" id="a0000000007">
+<p><div class="corollary-intro_thmwrapper theorem-style-plain" id="a0000000007">
   <div class="corollary-intro_thmheading">
     <span class="corollary-intro_thmcaption">
     Corollary
     </span>
     <span class="corollary-intro_thmtitle">Smale 1958</span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000007">#</a>
-    <a class="icon proof" href="sect0001.html#a0000000008"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
-</a>
-
-  </div>
   </div>
   <div class="corollary-intro_thmcontent">
   <p> There is a homotopy of immersion of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a \! :q ↦ -q\). </p>
@@ -178,11 +152,11 @@
   </div>
 </div> </p>
 <p>The reason why this is turning the sphere inside-out is that \(a\) extends as a map from \(ℝ^3 ∖ \{ 0\}  → ℝ^3 ∖ \{ 0\} \) by </p>
-<div class="displaymath" id="a0000000009">
+<div class="displaymath" id="a0000000008">
   \[  \hat{a} \! :q ↦ -\frac{1}{‖q‖^2}q  \]
 </div>
 <p> which exchanges the interior and exterior of \(𝕊^2\). More abstractly, one can say the normal bundle of \(𝕊^2\) is trivial, hence one can extend \(a\) to a tubular neighborhood of \(𝕊^2\) as an orientation preserving map. Since \(a\) is orientation reversing, any such extension will be reversing coorientation. </p>
-<div class="proof_wrapper" id="a0000000008">
+<div class="proof_wrapper" id="a0000000009">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof of the sphere eversion corollary
@@ -212,10 +186,6 @@
 </div> <!-- wrapper -->
 
 <nav class="prev_up_next">
-  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
-
-  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
-
   <a href="index.html" title="The sphere eversion project"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
   <a href="index.html" title="The sphere eversion project"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
@@ -227,7 +197,5 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/plastex.js"></script>
 <script type="text/javascript" src="js/svgxuse.js"></script>
-<script type="text/javascript" src="js/js.cookie.min.js"></script>
-<script type="text/javascript" src="js/showmore.js"></script>
 </body>
 </html>

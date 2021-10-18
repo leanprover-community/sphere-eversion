@@ -1,13 +1,13 @@
 $(document).ready(function() {
 	showmore_update = function(showmore_level) {
-		Cookies.set('showmore_level', showmore_level, { expires : 10, SameSite: "Lax" });
+		$.cookie('showmore_level', showmore_level, { expires : 10 });
 		console.log('update', showmore_level);
 		switch(showmore_level) {
 			case 0:
 			 $("svg#showmore-minus").hide();
 			 $("figure").hide();
 			 $("svg#showmore-plus").show();
-			 $("div.main-text > p").each(
+			 $("div.content > p").each(
 					 function(){
 						 $(this).hide();
 					 });
@@ -20,12 +20,8 @@ $(document).ready(function() {
 			case 1:
 			 $("svg#showmore-minus").show();
 			 $("figure").show();
-			 $("div.proof_wrapper").each(
-					 function(){
-						 $(this).show();
-					 });
 			 $("svg#showmore-plus").show();
-			 $("div.main-text > p").each(
+			 $("div.content > p").each(
 					 function(){
 						 $(this).show();
 					 });
@@ -39,11 +35,7 @@ $(document).ready(function() {
 			case 2:
 			 $("svg#showmore-minus").show();
 			 $("svg#showmore-plus").hide();
-			 $("div.main-text > p").each(
-					 function(){
-						 $(this).show();
-					 });
-			 $("div.proof_wrapper").each(
+			 $("div.content > p").each(
 					 function(){
 						 $(this).show();
 					 });
@@ -56,8 +48,7 @@ $(document).ready(function() {
 	};
 
 	cookie_level = function(){
-          var showmore_level = parseInt(Cookies.get('showmore_level'));
-
+      var showmore_level = parseInt($.cookie('showmore_level'));
 	  if (isNaN(showmore_level)) {
 		  return 1;
 	  } else {
