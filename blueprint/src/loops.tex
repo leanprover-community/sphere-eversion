@@ -148,12 +148,13 @@ by the dimension $d$ of $F$.
 
 \begin{lemma}
   \label{lem:int_cvx}
-  \lean{eq_strict_center_mass_card_eq_dim_succ_of_mem_convex_hull_open}
+  \lean{surrounded_of_convex_hull}\leanok
   If a point $x$ of $E$ lies in the convex hull of an open set $P$,
   then it is surrounded by some collection of points belonging to $P$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   \uses{lem:refined_caratheodory}
   \Cref{lem:refined_caratheodory} gives affinely independent points
   $p_0, \dots, p_k$ in $P$ such that $x$ is the convex combination of
