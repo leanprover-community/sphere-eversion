@@ -74,7 +74,7 @@ section -- to topology.algebra.group_with_zero
 variables {α G₀ β γ : Type*} [group_with_zero G₀] [topological_space G₀]
   [has_continuous_inv₀ G₀] [has_continuous_mul G₀]
 
-lemma continuous_at.comp_div_cases  {f g : α → G₀} {k : α → γ} (h : γ → G₀ → β)
+lemma continuous_at.comp_div_cases {f g : α → G₀} {k : α → γ} (h : γ → G₀ → β)
   [topological_space α] [topological_space β] [topological_space γ] {a : α} (c : γ)
   (hk : continuous_at k a) (hf : continuous_at f a) (hg : continuous_at g a)
   (hh : g a ≠ 0 → continuous_at ↿h (k a, f a / g a))

@@ -83,7 +83,7 @@ begin
 end
 
 --- lem:int_cvx
-lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) : 
+lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
   surrounded f s :=
 begin
   rw surrounded_iff_mem_interior_convex_hull_aff_basis,
@@ -347,16 +347,24 @@ begin
   rw [γ.extend_zero, γ.extend_one]
 end
 
-lemma of_path_continuous_family {ι : Type*} [topological_space ι] {x : F} (γ : ι → path x x)
-  (h : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
+/-- `loop.of_path` is continuous, general version. -/
+lemma _root_.continuous.of_path {ι : Type*} [topological_space ι] {x : ι → F}
+  (γ : ∀ (i : ι), path (x i) (x i)) (hx : continuous x)
+  (hγ : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
 begin
   change continuous (λ p : ι × ℝ, (λ s, (γ s).extend) p.1 (fract p.2)),
   apply continuous_on.comp_fract',
-  { exact (h.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
-  { simp }
+  { exact (hγ.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
+  { simp only [unit_interval.mk_zero, zero_le_one, path.target, path.extend_extends,
+      implies_true_iff, eq_self_iff_true, path.source, right_mem_Icc, left_mem_Icc,
+      unit_interval.mk_one] }
 end
 
-noncomputable
+/-- `loop.of_path` is continuous, where the endpoints of `γ` are fixed. -/
+lemma of_path_continuous_family {ι : Type*} [topological_space ι] {x : F} (γ : ι → path x x)
+  (h : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
+continuous_const.of_path γ h
+
 def round_trip {x y : F} (γ : path x y) : loop F :=
 of_path (γ.trans γ.symm)
 

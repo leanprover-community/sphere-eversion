@@ -162,7 +162,8 @@ def ρ (t : ℝ) : ℝ := max 0 $ min 1 $ 2 * (1 - t)
 @[simp] lemma ρ_half : ρ 2⁻¹ = 1 := by norm_num [ρ]
 @[simp] lemma ρ_one : ρ 1 = 0 := by norm_num [ρ]
 
-lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
+-- Should we change the type of `γ` (and `surrounding_family` to user `I` instead of `ℝ` everywhere?
+lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F} (hb : continuous b)
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
     (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧
@@ -180,10 +181,14 @@ begin
   { ext x t s, sorry; simp only [path.trans'_zero, unit_interval.mk_zero, one_mul, ρ_zero,
       surrounding_family.path_extend, proj_Icc_left, loop.of_path_apply, sub_self] },
   {
-    sorry -- todo: generalize loop.of_path_continuous_family so that base point can vary
-    -- apply continuous.continuous_on, dsimp [γ],
-    -- refine continuous_uncurry_uncurry.mp _,
-    -- refine continuous_uncurry_uncurry1.mp _,
+    apply continuous.continuous_on, dsimp [γ],
+    refine continuous_uncurry_uncurry.mp _,
+    refine continuous_uncurry_uncurry1.mp _,
+    refine continuous.of_path _ _ _,
+    refine hb.comp continuous_fst.snd,
+    have := λ p : (ℝ × E) × ℝ, continuous.trans' (h₀.path p.1.2 $ ρ p.1.1 * p.2),
+    -- sorry -- todo: generalize loop.of_path_continuous_family so that base point can vary
+
     -- rw [← continuous_uncurry_uncurry, ← continuous_uncurry_uncurry],
     -- refine loop.of_path_continuous_family (λ (p : (ℝ × E) × ℝ),
 
