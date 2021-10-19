@@ -81,8 +81,8 @@ We'll need the Carathéodory lemma:
 \lean{eq_pos_convex_span_of_mem_convex_hull}
 \leanok
   If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
-  can be written as the convex combination of at most $d + 1$ points in
-  $P$.
+  belongs to the convex hull of a finite set of affinely independent points
+  of $P$.
 \end{lemma}
 
 \begin{proof}
@@ -90,16 +90,19 @@ We'll need the Carathéodory lemma:
   By assumption, there is a finite set of points $t_i$ in $P$ and
   weights $f_i$ such that $x = \sum f_i t_i$, each $f_i$ is non-negative
   and $\sum f_i = 1$.
-  The goal it to reduce the number of these points until reaching at most
-  $d+1$.
-  It suffices to prove that one can get rid of one point as long as
-  there are at least $d+2$ points.
-  In this case there is some vanishing combination $\sum g_i t_i$ with
+  Choose such a set of points of minimum cardinality. We argue by
+  contradiction that such a set must be affinely independent.
+
+  Thus suppose that there is some vanishing combination $\sum g_i t_i$ with
   $\sum g_i = 0$ and not all $g_i$ vanish.
   Let $S = \{i | g_i > 0\}$.
-  Let $i_0$ in $S$ be an index minimizing $f_i/g_i$.
-  We define new weights $k_i = f_i - g_i f_{i_0}/g_{i_0}$.
-  Those weights sum to $\sum f_i - (\sum g_i)f_{i_0}/g_{i_0} = 1$
+  Let $i_0$ in $S$ be an index minimizing $f_i/g_i$. We shall obtain our
+  contradiction by showing that $x$ belongs to the convex hull of the set
+  $\{t_i| i \ne i_0\}$, which has cardinality strictly smaller than
+  $\{t_i\}$.
+
+  We thus define new weights $k_i = f_i - g_i f_{i_0}/g_{i_0}$.
+  These weights sum to $\sum f_i - (\sum g_i)f_{i_0}/g_{i_0} = 1$
   and $k_{i_0} = 0$.
   Each $k_i$ is non-negative, thanks to the choice of $i_0$ if
   $i$ is in $S$ or using that $f_i$, $-g_i$ and $f_{i_0}/g_{i_0}$
@@ -114,37 +117,45 @@ We'll need the Carathéodory lemma:
   where we use $k_{i_0} = 0$ in the first equality.
 \end{proof}
 
-\begin{lemma}
-\label{lem:refined_caratheodory}
-  If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
-  can be written as the convex combination of at most $d + 1$ affinely
-  independent points in $P$ with positive coefficients.
-\end{lemma}
-
-\begin{proof}
-  \uses{lem:caratheodory}
-  \cref{lem:caratheodory} gives points $p_i$ in $P$ and non-negative
-  weights $w_i$ such that $x = \sum w_i p_i$ for $0 ≤ i ≤ k$ where
-  $k ≤ d$. We first discard every point with vanishing weights.
-  Now suppose the $p_i$'s are not affinely independent. Then there is
-  some relation $p_{i_0} = \sum λ_j p_j$ with positive weights
-  $λ_j$. We can then discard $p_{i_0}$ and replace each remaining
-  $w_j$ by $w_j + w_{i_0}λ _j$.
-\end{proof}
-
 
 \begin{definition}
   \label{def:surrounds_points}
   \lean{surrounding_pts}
   \leanok
-  Let $F$ be a real vector space with dimension $d$. A point $x$ in $E$
+  A point $x$ in $E$
   is surrounded by points $p_0$, \dots, $p_d$ if those points are
   affinely independent and there exist weights $w_i ∈ (0, 1)$ such
   that $x = \sum_i w_i p_i$.
 \end{definition}
 
 Note that, in the above definition, the number of points $p_i$ is fixed
-by the dimension $d$ of $F$.
+by the dimension $d$ of $E$, and that the weights $w_i$ are the barycentric
+coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
+The following lemma provides a convenient alternate characterisation of
+being surrounded.
+
+\begin{lemma}
+  \label{lem:interior_chab}
+  \lean{interior_convex_hull_aff_basis}\leanok
+  Given an affine basis $b$ of $E$, the interior of the convex hull of
+  $b$ is the set of points with strictly positive barycentric coordinates.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  This follows because:
+  \begin{itemize}
+    \item the convex hull of an affine basis is the intersection of the
+    preimages of $[0, \infty)$ over the corresponding $d+1$ barycentric
+    coordinate maps,
+    \item barycentric coordinates are continuous open maps,
+    \item for a continuous open map, the preimage of the interior is the
+    interior of the preimage,
+    \item the interior of a finite intersection is the intersection of the
+    interiors,
+    \item the interior of the interval $[0, \infty)$ is $(0, \infty)$.
+  \end{itemize}
+\end{proof}
 
 \begin{lemma}
   \label{lem:int_cvx}
@@ -155,33 +166,41 @@ by the dimension $d$ of $F$.
 
 \begin{proof}
   \leanok
-  \uses{lem:refined_caratheodory}
-  \Cref{lem:refined_caratheodory} gives affinely independent points
-  $p_0, \dots, p_k$ in $P$ such that $x$ is the convex combination of
-  these points with positive weights $w_i$ (here $k \ge 0$).
-  In particular, the family of vectors $p_i - p_0$, $1 ≤ i ≤ k$ is free.
-  So we can complete it to a basis by appending vectors
-  $f_{k+1}, \dots, f_d$.
-  We set $p_i = p_0 + εf_i$ for $i \ge k+1$.
-  This belongs to $P$ for $ε > 0$ small enough since $p_0$ is in $P$
-  and $P$ is open.
-  Note that the extend family of points is still affinely independent
-  since the vectors $p_i - p_0$ are non-zero multiple of our basis
-  elements.
+  \uses{lem:interior_chab}
+  It follows from \Cref{lem:interior_chab} that we need only show that $E$
+  has an affine basis $b$ of points belonging to $P$ such that $x$ lies in
+  the interior of the convex hull of $b$.
 
-  The next idea is to expand the simplex spanned by the $p_i$'s around its
-  center of mass $b = 1/(d+1)\sum p_i$. So we set:
+  Carathéodory's lemma \Cref{lem:caratheodory} gives affinely independent
+  points $p_0, \dots, p_k$ in $P$ such that $x$ belongs to their convex
+  hull. Since $P$ is open, we may extend $p_i$ to an affine basis
   \[
-    p'_i = b + (1 + ε)(p_i - b).
+    \hat b = \{p_0, \ldots, p_d\},
   \]
-  Those point are all in $P$ for $ε$ small enough because $P$ is open,
-  and there are still affinely independent since they are the image of
-  our original points by a homothety.
-  Then we have:
+  where all points still belong to $P$.
+  Note that $x$ belongs to the convex hull of $\hat b$.
+
+  Now let $c$ be a point in the interior of the convex hull of $\hat b$
+  (e.g., the centroid) and for each $\epsilon > 0$, consider the homothety
   \[
-    x = \sum_i w_i p_i = \sum_i \frac{w_i + ε/(d+1)}{1 + ε} p'_i
+    h_\epsilon : E \to E,
   \]
-  where all coefficients are positive
+  which dilates about $c$ by a scale of $1 + \epsilon$.
+
+  Since $\hat b$ is finite and contained in $P$, and $P$ is open, there exists
+  $\epsilon > 0$ such that
+  \[
+    h_\epsilon (\hat b) \subseteq P.
+  \]
+  Since $c$ belongs to the interior
+  of the convex hull of $\hat b$ and since $\epsilon > 0$, we have:
+  \[
+    \Conv(\hat b) \subseteq \IntConv (h_\epsilon (\hat b))
+  \]
+  where $\Conv$ and $\IntConv$ denote the convex hull and its interior
+  respectively.
+
+  The required basis is thus $b = h_\epsilon (\hat b)$.
 \end{proof}
 
 
