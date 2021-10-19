@@ -1,4 +1,5 @@
 import topology.constructions
+import topology.homeomorph
 
 noncomputable theory
 open_locale topological_space classical
@@ -15,6 +16,14 @@ continuous_at_fst.comp hf
 lemma continuous_at.snd {f : α → β × γ} (hf : continuous_at f x) :
   continuous_at (λ a : α, (f a).2) x :=
 continuous_at_snd.comp hf
+
+lemma continuous.fst {f : α → β × γ} (hf : continuous f) :
+  continuous (λ a : α, (f a).1) :=
+continuous_fst.comp hf
+
+lemma continuous.snd {f : α → β × γ} (hf : continuous f) :
+  continuous (λ a : α, (f a).2) :=
+continuous_snd.comp hf
 
 lemma is_open_slice_of_is_open_over {Ω : set (α × β)} {x₀ : α}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ prod.fst ⁻¹' U)) : is_open (prod.mk x₀ ⁻¹' Ω) :=
@@ -45,3 +54,7 @@ lemma continuous_uncurry_uncurry {f : α → β → ι} [has_uncurry ι γ δ] :
 begin
   sorry
 end
+
+lemma continuous₃_iff {f : α → β → γ → δ} :
+  continuous (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ↔ continuous ↿f :=
+by { convert (homeomorph.prod_assoc α β γ).comp_continuous_iff', refl }
