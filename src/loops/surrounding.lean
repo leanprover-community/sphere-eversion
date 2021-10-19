@@ -186,7 +186,8 @@ begin
     refine continuous_uncurry_uncurry1.mp _,
     refine continuous.of_path _ _ _,
     refine hb.comp continuous_fst.snd,
-    have := λ p : (ℝ × E) × ℝ, continuous.trans' (h₀.path p.1.2 $ ρ p.1.1 * p.2),
+    --have := λ p : (ℝ × E) × ℝ, continuous.trans' (h₀.path p.1.2 $ ρ p.1.1 * p.2),
+    sorry
     -- sorry -- todo: generalize loop.of_path_continuous_family so that base point can vary
 
     -- rw [← continuous_uncurry_uncurry, ← continuous_uncurry_uncurry],
