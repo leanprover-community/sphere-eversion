@@ -131,8 +131,6 @@ We'll need the Carathéodory lemma:
 Note that, in the above definition, the number of points $p_i$ is fixed
 by the dimension $d$ of $E$, and that the weights $w_i$ are the barycentric
 coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
-The following lemma provides a convenient alternate characterisation of
-being surrounded.
 
 \begin{lemma}
   \label{lem:interior_chab}
@@ -143,18 +141,42 @@ being surrounded.
 
 \begin{proof}
   \leanok
-  This follows because:
-  \begin{itemize}
-    \item the convex hull of an affine basis is the intersection of the
-    preimages of $[0, \infty)$ over the corresponding $d+1$ barycentric
-    coordinate maps,
-    \item barycentric coordinates are continuous open maps,
-    \item for a continuous open map, the preimage of the interior is the
-    interior of the preimage,
-    \item the interior of a finite intersection is the intersection of the
-    interiors,
-    \item the interior of the interval $[0, \infty)$ is $(0, \infty)$.
-  \end{itemize}
+  For each $i$, let:
+  \[
+    w_i : E \to ℝ
+  \]
+  be the $i^{\rm th}$ barycentric coordinate with respect to the basis $b$.
+  Since $E$ is finite-dimensional, each $w_i$ is a continuous open map. For
+  such a map, the operation of taking interior commutes with preimage, and so
+  we have:
+  \begin{align*}
+    \IntConv(b) &= \Int\left(\bigcap_i w_i^{-1}([0, \infty))\right)\\
+                &= \bigcap_i \Int(w_i^{-1}([0, \infty))\\
+                &= \bigcap_i w_i^{-1}(\Int([0, \infty))\\
+                &= \bigcap_i w_i^{-1}((0, \infty))
+  \end{align*}
+  as required.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:int_homothety_cvx}
+  \lean{convex.subset_interior_image_homothety_of_one_lt}\leanok
+  Given a point $c$ of $E$ and a real number $t$, let:
+  \[
+    h_t : E \to E
+  \]
+  be the homothety which dilates about $c$ by a scale of $t$.
+
+  Suppose $c$ belongs to the interior of a convex subset $C$ of $E$
+  and $t > 1$, then
+  \[
+    C \subseteq \Int(h_t(C))
+  \]
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  TODO
 \end{proof}
 
 \begin{lemma}
@@ -166,12 +188,12 @@ being surrounded.
 
 \begin{proof}
   \leanok
-  \uses{lem:interior_chab}
-  It follows from \Cref{lem:interior_chab} that we need only show that $E$
+  \uses{lem:interior_chab,lem:int_homothety_cvx}
+  It follows from lemma \Cref{lem:interior_chab} that we need only show that $E$
   has an affine basis $b$ of points belonging to $P$ such that $x$ lies in
   the interior of the convex hull of $b$.
 
-  Carathéodory's lemma \Cref{lem:caratheodory} gives affinely independent
+  Carathéodory's lemma \Cref{lem:caratheodory} provides affinely independent
   points $p_0, \dots, p_k$ in $P$ such that $x$ belongs to their convex
   hull. Since $P$ is open, we may extend $p_i$ to an affine basis
   \[
@@ -183,24 +205,26 @@ being surrounded.
   Now let $c$ be a point in the interior of the convex hull of $\hat b$
   (e.g., the centroid) and for each $\epsilon > 0$, consider the homothety
   \[
-    h_\epsilon : E \to E,
+    h_{1+\epsilon} : E \to E,
   \]
   which dilates about $c$ by a scale of $1 + \epsilon$.
 
   Since $\hat b$ is finite and contained in $P$, and $P$ is open, there exists
   $\epsilon > 0$ such that
   \[
-    h_\epsilon (\hat b) \subseteq P.
+    h_{1+\epsilon} (\hat b) \subseteq P.
   \]
-  Since $c$ belongs to the interior
-  of the convex hull of $\hat b$ and since $\epsilon > 0$, we have:
+  We claim the required basis is:
   \[
-    \Conv(\hat b) \subseteq \IntConv (h_\epsilon (\hat b))
+    b = h_{1+\epsilon} (\hat b)
   \]
-  where $\Conv$ and $\IntConv$ denote the convex hull and its interior
-  respectively.
-
-  The required basis is thus $b = h_\epsilon (\hat b)$.
+  for any such $\epsilon$. Indeed, applying
+  lemma \Cref{lem:int_homothety_cvx} to $\Conv(\hat b)$ we see:
+  \begin{align*}
+    x \in \Conv(\hat b) &\subseteq \Int (h_{1+\epsilon} (\Conv(\hat b)))\\
+                  &= \Int (\Conv(h_{1+\epsilon} (\hat b)))
+  \end{align*}
+  as required.
 \end{proof}
 
 
