@@ -46,22 +46,24 @@ section -- to topology.path_connected
 variables {X Y Z : Type*} [topological_space X] [topological_space Y]
   [topological_space Z] {x y : X}
 
-lemma continuous.extend'{γ : Y → path x y} (hγ : continuous ↿γ) :
+lemma continuous.extend' {γ : Y → path x y} (hγ : continuous ↿γ) :
   continuous ↿(λ t, (γ t).extend) :=
 continuous.Icc_extend' hγ
 
-lemma filter.tendsto.extend {X Y : Type*} [topological_space X] [topological_space Y] {x₁ x₂ : X}
-  {y : Y} {l : filter ℝ} {l' : filter X} {γ : Y → path x₁ x₂}
-  (hγ : tendsto ↿γ (𝓝 y ×ᶠ l.map (proj_Icc 0 1 zero_le_one)) l') :
-  tendsto ↿(λ t, (γ t).extend) (𝓝 y ×ᶠ l) l' :=
+lemma filter.tendsto.extend {X Y : Type*} [topological_space X] [topological_space Y]
+  {l r : Y → X}
+  {y : Y} {l₁ : filter ℝ} {l₂ : filter X} {γ : ∀ y, path (l y) (r y)}
+  (hγ : tendsto ↿γ (𝓝 y ×ᶠ l₁.map (proj_Icc 0 1 zero_le_one)) l₂) :
+  tendsto ↿(λ t, (γ t).extend) (𝓝 y ×ᶠ l₁) l₂ :=
 filter.tendsto.Icc_extend _ hγ
 
-lemma continuous.extend  {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} (hγ : continuous ↿γ)
+lemma continuous.extend {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} (hγ : continuous ↿γ)
   (hf : continuous f) (hg : continuous g) :
   continuous (λ i, (γ (f i)).extend (g i)) :=
 (continuous.extend' hγ).comp $ hf.prod_mk hg
 
-lemma continuous_at.extend {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} {z : Z}
+lemma continuous_at.extend {f : Z → Y} {g : Z → ℝ} {l r : Y → X} (γ : ∀ y, path (l y) (r y))
+  {z : Z}
   (hγ : continuous_at ↿γ (f z, proj_Icc 0 1 zero_le_one (g z))) (hf : continuous_at f z)
   (hg : continuous_at g z) : continuous_at (λ i, (γ (f i)).extend (g i)) z :=
 show continuous_at
@@ -122,7 +124,7 @@ begin
 end
 
 -- to uniform_convergence
-lemma tendsto_prod_top_iff {α β ι : Type*} [uniform_space β] {F : ι → α → β} {c : β}
+lemma tendsto_prod_top_iff {α β ι : Type*} [uniform_space β] (F : ι → α → β) {c : β}
   {p : filter ι} : tendsto ↿F (p ×ᶠ ⊤) (𝓝 c) ↔ tendsto_uniformly F (λ _, c) p :=
 let j : β → β × β := prod.mk c in
 calc tendsto ↿F (p ×ᶠ ⊤) (𝓝 c)
