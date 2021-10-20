@@ -41,7 +41,7 @@ end
 -- instance has_uncurry_induction [has_uncurry β γ δ] : has_uncurry (α → β) (α × γ) δ :=
 -- ⟨λ f p, ↿(f p.1) p.2⟩
 
-
+/- TODO: reformulate these lemmas so that they are true -/
 lemma continuous_uncurry_uncurry1 {f : α → β → ι} [has_uncurry (β → ι) (β × γ) δ]
   [has_uncurry (α × β → ι) ((α × β) × γ) δ] :
   continuous ↿(λ p : α × β, f p.1 p.2) ↔ continuous ↿f :=
@@ -55,6 +55,27 @@ begin
   sorry
 end
 
-lemma continuous₃_iff {f : α → β → γ → δ} :
+lemma inducing.continuous_at_iff {f : α → β} {g : β → γ} (hg : inducing g) {x : α} :
+  continuous_at f x ↔ continuous_at (g ∘ f) x :=
+by simp_rw [continuous_at, inducing.tendsto_nhds_iff hg]
+
+lemma homeomorph.comp_continuous_at_iff (h : α ≃ₜ β) (f : γ → α) (x : γ) :
+  continuous_at (h ∘ f) x ↔ continuous_at f x :=
+h.inducing.continuous_at_iff.symm
+
+lemma inducing.continuous_at_iff' {f : α → β} {g : β → γ} (hf : inducing f) {x : α}
+  (h : range f ∈ 𝓝 (f x)) :
+  continuous_at (g ∘ f) x ↔ continuous_at g (f x) :=
+by { simp_rw [continuous_at, filter.tendsto, ← hf.map_nhds_of_mem _ h, filter.map_map],  }
+
+lemma homeomorph.comp_continuous_at_iff' (h : α ≃ₜ β) (f : β → γ) (x : α) :
+  continuous_at (f ∘ h) x ↔ continuous_at f (h x) :=
+h.inducing.continuous_at_iff' (by simp)
+
+lemma continuous₃_iff (f : α → β → γ → δ) :
   continuous (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ↔ continuous ↿f :=
 by { convert (homeomorph.prod_assoc α β γ).comp_continuous_iff', refl }
+
+lemma continuous_at₃_iff (f : α → β → γ → δ) {x : α} {y : β} {z : γ} :
+  continuous_at (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ((x, y), z) ↔ continuous_at ↿f (x, y, z) :=
+(homeomorph.prod_assoc α β γ).comp_continuous_at_iff' ↿f ((x, y), z)
