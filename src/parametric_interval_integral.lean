@@ -197,7 +197,42 @@ begin
     rwa [interval_oc_comm, interval_oc_of_lt hab] }
 end
 
+lemma integral_antimono_of_le_of_nonneg {α : Type*} [linear_order α] [measurable_space α]
+  {f g : α → ℝ} {a b : α} {μ : measure α} (hab : b ≤ a)
+  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (hfnonneg : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t)
+  (hg : interval_integrable g μ a b)
+  (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
+  ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ :=
+begin
+  apply integral_antimono_of_le hab _ hg hfg,
+  have : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t ∧ f t ≤ g t,
+  from hfnonneg.and hfg,
+  apply interval_integrable_of_nonneg_of_le hf this hg,
+end
 end interval_integral
+
+/- This should replace interval_integrable.mono_set in mathlib -/
+lemma interval_integrable.mono_set' {α E : Type*} [linear_order α] [measurable_space α]
+  [measurable_space E] [normed_group E] {f : α → E} {a b c d : α} {μ : measure α}
+  (hf : interval_integrable f μ a b) (hsub : Ι c d ⊆ Ι a b) : interval_integrable f μ c d :=
+interval_integrable_iff.mpr (hf.def.mono hsub le_rfl)
+
+lemma interval_integrable.const_mul {α : Type*} [linear_order α] [measurable_space α]
+  {f : α → ℝ} {a b : α} {μ : measure α}
+  (hf : interval_integrable f μ a b) (c : ℝ) : interval_integrable (λ x, c*f x) μ a b :=
+begin
+  rw interval_integrable_iff at *,
+  exact hf.const_mul c
+end
+
+lemma interval_integrable.mul_const {α : Type*} [linear_order α] [measurable_space α]
+  {f : α → ℝ} {a b : α} {μ : measure α}
+  (hf : interval_integrable f μ a b) (c : ℝ) : interval_integrable (λ x, (f x)*c) μ a b :=
+begin
+  rw interval_integrable_iff at *,
+  exact hf.mul_const c
+end
 
 lemma abs_le_abs_of_nonneg {α : Type*} [add_comm_group α] [linear_order α]
    [covariant_class α α (+) (≤)] {a b : α}
@@ -229,13 +264,17 @@ begin
     { rw [← neg_nonneg, ← interval_integral.integral_symm],
       apply interval_integral.integral_nonneg_of_forall hab,
       exact λ t, norm_nonneg _ },
-    { apply interval_integral.integral_antimono_of_le hab _ hbound h,
-      sorry } }
+    { apply interval_integral.integral_antimono_of_le_of_nonneg hab hf.norm _ hbound h,
+      simp } }
 end
 
+end
 
-
-
+lemma interval_oc_subset_of_mem_Ioc {α : Type*} [linear_order α] {a b c d : α} (ha : a ∈ Ioc c d) (hb : b ∈ Ioc c d) :
+  Ι a b ⊆ Ι c d :=
+begin
+   rw interval_oc_of_le (ha.1.le.trans ha.2),
+   exact Ioc_subset_Ioc (le_min ha.1.le hb.1.le) (max_le ha.2 hb.2)
 end
 
 section
@@ -255,12 +294,9 @@ lemma continuous_at_parametric_primitive_of_dominated
   (ha₀ : a₀ ∈ Ioo a b) (hb₀ : b₀ ∈ Ioo a b) (hμb₀ : μ {b₀} = 0) :
   continuous_at (λ p : X × α, ∫ (t : α) in a₀..p.2, F p.1 t ∂μ) (x₀, b₀) :=
 begin
-  have Ioo_nhds : Ioo a b ∈ 𝓝 b₀,
-  {
-    sorry },
-  have Icc_nhds : Icc a b ∈ 𝓝 b₀,
-  {
-    sorry },
+  have hsub₀ : Ι a₀ b₀ ⊆ Ι a b, from interval_oc_subset_of_mem_Ioc (mem_Ioc_of_Ioo ha₀) (mem_Ioc_of_Ioo hb₀),
+  have Ioo_nhds : Ioo a b ∈ 𝓝 b₀, from Ioo_mem_nhds hb₀.1 hb₀.2,
+  have Icc_nhds : Icc a b ∈ 𝓝 b₀, from Icc_mem_nhds hb₀.1 hb₀.2,
   have hx₀ : ∀ᵐ (t : α) ∂μ.restrict (Ι a b), ∥F x₀ t∥ ≤ bound t := (mem_of_mem_nhds h_bound : _),
   have : ∀ᶠ (p : X × α) in 𝓝 (x₀, b₀),
     ∫ s in a₀..p.2, F p.1 s ∂μ = ∫ s in a₀..b₀, F p.1 s ∂μ + ∫ s in b₀..p.2, F x₀ s ∂μ +
@@ -271,28 +307,28 @@ begin
     dsimp,
     rw [interval_integral.integral_sub, add_assoc, add_sub_cancel'_right,
         interval_integral.integral_add_adjacent_intervals],
-    {
-      sorry },
-    {
-      sorry },
-    {
-      sorry },
-    {
-      sorry } },
+    { exact interval_integrable_of_norm_le ((hF_meas x).mono_set hsub₀)
+            (ae_restrict_of_ae_restrict_of_subset hsub₀ hx)
+            (bound_integrable.mono_set' hsub₀) },
+    all_goals { 
+      have hsub : Ι b₀ t ⊆ Ι a b, from interval_oc_subset_of_mem_Ioc (mem_Ioc_of_Ioo hb₀) (mem_Ioc_of_Ioo ht),
+      exact interval_integrable_of_norm_le ((hF_meas _).mono_set hsub) 
+            (ae_restrict_of_ae_restrict_of_subset hsub ‹_›) (bound_integrable.mono_set' hsub) } },
+      
   rw continuous_at_congr this, clear this,
   refine continuous_at.add (continuous_at.add _ _) _,
   { change continuous_at ((λ x, ∫ (s : α) in a₀..b₀, F x s ∂μ) ∘ prod.fst) (x₀, b₀),
     apply continuous_at.comp _ continuous_at_fst,
-    change continuous_at (λ x, ∫ s in a₀..b₀, F x s ∂μ) x₀,
-    sorry },
+    exact interval_integral.continuous_at_of_dominated_interval
+            (eventually_of_forall $ λ x, (hF_meas x).mono_set hsub₀) 
+            (h_bound.mono $ λ  x, ae_restrict_of_ae_restrict_of_subset hsub₀)
+            (bound_integrable.mono_set' hsub₀)
+            (ae_restrict_of_ae_restrict_of_subset hsub₀ h_cont) },
   { change continuous_at ((λ t, ∫ (s : α) in b₀..t, F x₀ s ∂μ) ∘ prod.snd) (x₀, b₀),
     apply continuous_at.comp _ continuous_at_snd,
-    apply continuous_within_at.continuous_at _ Icc_nhds,
+    apply continuous_within_at.continuous_at _ (Icc_mem_nhds hb₀.1 hb₀.2),
     apply interval_integral.continuous_within_at_primitive hμb₀,
-    have  : interval (min b₀ a) (max b₀ b) ⊆ interval a b,
-    {
-      sorry },
-    apply interval_integrable.mono_set _ this,
+    rw [min_eq_right hb₀.1.le, max_eq_right hb₀.2.le],
     exact interval_integrable_of_norm_le (hF_meas x₀) hx₀ bound_integrable },
   { suffices : tendsto (λ (x : X × α), ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0),
       by simpa [continuous_at],
@@ -301,14 +337,15 @@ begin
     { rw nhds_prod_eq,
       apply mem_of_superset (prod_mem_prod h_bound Ioo_nhds),
       rintros ⟨x, t⟩ ⟨hx : ∀ᵐ t ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t, ht : t ∈ Ioo a b⟩,
+      have hsub : Ι b₀ t ⊆ Ι a b, from interval_oc_subset_of_mem_Ioc (mem_Ioc_of_Ioo hb₀) (mem_Ioc_of_Ioo ht),
       have H : ∀ᵐ (t : α) ∂μ.restrict (Ι b₀ t), ∥F x t - F x₀ t∥ ≤ 2*bound t,
-      {
-        sorry },
-      apply interval_integral.norm_integral_le_of_norm_le H,
-      {
-        sorry },
-      {
-        sorry } },
+      { apply (ae_restrict_of_ae_restrict_of_subset hsub (hx.and hx₀)).mono,
+        rintros s ⟨hs₁, hs₂⟩,
+        calc ∥F x s - F x₀ s∥ ≤ ∥F x s∥ + ∥F x₀ s∥ : norm_sub_le _ _ 
+        ... ≤ 2 * bound s : by linarith only [hs₁, hs₂] },
+      exact interval_integral.norm_integral_le_of_norm_le H 
+        (((hF_meas x).mono_set hsub).sub ((hF_meas x₀).mono_set hsub))
+        ((bound_integrable.mono_set' hsub).const_mul 2) },
     apply squeeze_zero_norm' this,
     have : tendsto (λ t, ∫ (s : α) in b₀..t, 2 * bound s ∂μ) (𝓝 b₀) (𝓝 0),
     { suffices : continuous_at (λ t, ∫ (s : α) in b₀..t, 2 * bound s ∂μ) b₀,
@@ -316,11 +353,9 @@ begin
         simp },
       apply continuous_within_at.continuous_at _ Icc_nhds,
       apply interval_integral.continuous_within_at_primitive hμb₀,
-      suffices : interval_integrable bound μ (min b₀ a) (max b₀ b),
-      {
-        sorry },
-      apply bound_integrable.mono_set,
-      sorry },
+      apply interval_integrable.const_mul,
+      apply bound_integrable.mono_set',
+      rw [min_eq_right hb₀.1.le, max_eq_right hb₀.2.le] },
     change tendsto (abs ∘ (λ t, ∫ (s : α) in b₀..t, 2*bound s ∂μ) ∘ prod.snd) (𝓝 (x₀, b₀)) _,
     have lim_abs : tendsto abs (𝓝 (0 : ℝ)) (𝓝 0),
     { conv { congr, skip, skip, rw ← abs_zero },
