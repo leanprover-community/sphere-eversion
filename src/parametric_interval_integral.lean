@@ -108,39 +108,128 @@ end
 section
 
 variables {α E : Type*} [linear_order α] [measurable_space α]
-  [measurable_space E] [normed_group E]
+  [measurable_space E] [normed_group E] [opens_measurable_space E]
 
-lemma interval_integrable_iff_norm {f : α → E} {μ : measure α} {a b : α} :
-  interval_integrable f μ a b ↔ interval_integrable (λ t, ∥f t∥) μ a b :=
-sorry
+lemma interval_integrable_norm_iff {f : α → E} {μ : measure α} {a b : α}
+  (hf : ae_measurable f (μ.restrict (Ι a b))) :
+  interval_integrable (λ t, ∥f t∥) μ a b ↔ interval_integrable f μ a b :=
+begin
+  repeat { rw [interval_integrable_iff, integrable_on] },
+  exact integrable_norm_iff hf
+end
 
-lemma interval_integrable_of_le {f : α → E} {bound : α → ℝ} {μ : measure α} {a b : α}
+lemma interval_oc_comm {α : Type*} [linear_order α] (a b : α) : Ι a b = Ι b a :=
+begin
+  dsimp [interval_oc],
+  rw [min_comm, max_comm]
+end
+
+lemma interval_integrable_of_nonneg_of_le {f g : α → ℝ} {μ : measure α} {a b : α}
+  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t ∧ f t ≤ g t)
+  (hg : interval_integrable g μ a b) :
+  interval_integrable f μ a b :=
+begin
+  rw interval_integrable_iff at *,
+  apply integrable.mono' hg hf (h.mono _),
+  rintro t ⟨H, H'⟩,
+  change abs ( f t) ≤ _,
+  rwa abs_of_nonneg H
+end
+
+lemma interval_integrable_of_norm_le {f : α → E} {bound : α → ℝ} {μ : measure α} {a b : α}
+  (hf : ae_measurable f $ μ.restrict (Ι a b))
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) (hbound : interval_integrable bound μ a b) :
   interval_integrable f μ a b :=
 begin
-
-  sorry
+  rw ← interval_integrable_norm_iff hf,
+  apply interval_integrable_of_nonneg_of_le hf.norm (h.mono _) hbound,
+  simp,
 end
+
 
 variables [second_countable_topology E]
   [complete_space E] [normed_space ℝ E] [borel_space E] {a b : α} {f : α → E} {bound : α → ℝ}
   {μ : measure α}
 
-lemma interval_integral.norm_integral_le_of_norm_le (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) :
+namespace interval_integral
+
+lemma integral_mono_of_le {α : Type*} [linear_order α] [measurable_space α]
+  {f g : α → ℝ} {a b : α} {μ : measure α} (hab : a ≤ b)
+  (hf : interval_integrable f μ a b)
+  (hg : interval_integrable g μ a b)
+  (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
+  ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ :=
+begin
+  rw interval_oc_of_le hab at hfg,
+  let H := hfg.filter_mono (ae_mono le_rfl),
+  simpa only [integral_of_le hab] using set_integral_mono_ae_restrict hf.1 hg.1 H
+end
+
+lemma integral_mono_of_le_of_nonneg {α : Type*} [linear_order α] [measurable_space α]
+  {f g : α → ℝ} {a b : α} {μ : measure α} (hab : a ≤ b)
+  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (hfnonneg : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t)
+  (hg : interval_integrable g μ a b)
+  (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
+  ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ :=
+begin
+  apply integral_mono_of_le hab _ hg hfg,
+  have : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t ∧ f t ≤ g t,
+  from hfnonneg.and hfg,
+  apply interval_integrable_of_nonneg_of_le hf this hg,
+end
+
+lemma integral_antimono_of_le {α : Type*} [linear_order α] [measurable_space α]
+  {f g : α → ℝ} {a b : α} {μ : measure α} (hab : b ≤ a)
+  (hf : interval_integrable f μ a b)
+  (hg : interval_integrable g μ a b)
+  (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
+  ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ :=
+begin
+  cases eq_or_lt_of_le hab with hab hab,
+  { simp [hab] },
+  { rw interval_oc_of_lt hab at hfg,
+    rw integral_symm b a,
+    rw integral_symm b a,
+    apply neg_le_neg,
+    apply integral_mono_of_le hab.le hf.symm hg.symm,
+    rwa [interval_oc_comm, interval_oc_of_lt hab] }
+end
+
+end interval_integral
+
+lemma abs_le_abs_of_nonneg {α : Type*} [add_comm_group α] [linear_order α]
+   [covariant_class α α (+) (≤)] {a b : α}
+  (ha : 0 ≤ a) (hab : a ≤ b) :
+  |a| ≤ |b| :=
+by rwa [abs_of_nonneg ha, abs_of_nonneg (ha.trans hab)]
+
+lemma abs_le_abs_of_nonpos {α : Type*} [add_comm_group α] [linear_order α]
+   [covariant_class α α (+) (≤)] {a b : α}
+  (ha : a ≤ 0) (hab : b ≤ a) :
+  |a| ≤ |b| :=
+by { rw [abs_of_nonpos ha, abs_of_nonpos (hab.trans ha)], exact neg_le_neg_iff.mpr hab }
+
+
+lemma interval_integral.norm_integral_le_of_norm_le
+  (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t)
+  (hf : ae_measurable f (μ.restrict (Ι a b)) )
+  (hbound : interval_integrable bound μ a b) :
   ∥∫ t in a..b, f t ∂μ∥ ≤ |∫ t in a..b, bound t ∂μ| :=
 begin
   apply interval_integral.norm_integral_le_abs_integral_norm.trans,
   cases le_total a b with hab hab,
-  { apply (interval_integral.abs_integral_le_integral_abs hab).trans,
-    sorry },
-  { rw [interval_integral.integral_of_ge hab, interval_integral.integral_of_ge hab,
-      abs_neg, abs_neg, abs_of_nonneg, abs_of_nonneg],
-    {
-      sorry },
-
-    {
-      sorry },
-    {
+  { apply abs_le_abs_of_nonneg,
+    { apply interval_integral.integral_nonneg_of_forall hab,
+      exact λ t, norm_nonneg _ },
+    apply interval_integral.integral_mono_of_le_of_nonneg hab hf.norm _ hbound h,
+    simp },
+  { apply abs_le_abs_of_nonpos,
+    { rw [← neg_nonneg, ← interval_integral.integral_symm],
+      apply interval_integral.integral_nonneg_of_forall hab,
+      exact λ t, norm_nonneg _ },
+    { apply interval_integral.integral_antimono_of_le hab _ hbound h,
       sorry } }
 end
 
@@ -204,7 +293,7 @@ begin
     {
       sorry },
     apply interval_integrable.mono_set _ this,
-    exact interval_integrable_of_le hx₀ bound_integrable },
+    exact interval_integrable_of_norm_le (hF_meas x₀) hx₀ bound_integrable },
   { suffices : tendsto (λ (x : X × α), ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0),
       by simpa [continuous_at],
     have : ∀ᶠ p : X × α in 𝓝 (x₀, b₀),
@@ -215,7 +304,11 @@ begin
       have H : ∀ᵐ (t : α) ∂μ.restrict (Ι b₀ t), ∥F x t - F x₀ t∥ ≤ 2*bound t,
       {
         sorry },
-      exact interval_integral.norm_integral_le_of_norm_le H },
+      apply interval_integral.norm_integral_le_of_norm_le H,
+      {
+        sorry },
+      {
+        sorry } },
     apply squeeze_zero_norm' this,
     have : tendsto (λ t, ∫ (s : α) in b₀..t, 2 * bound s ∂μ) (𝓝 b₀) (𝓝 0),
     { suffices : continuous_at (λ t, ∫ (s : α) in b₀..t, 2 * bound s ∂μ) b₀,
