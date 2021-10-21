@@ -1,4 +1,5 @@
 import topology.path_connected
+import topology.uniform_space.compact_separated
 
 noncomputable theory
 
@@ -19,8 +20,7 @@ end
 
 section -- to topology.algebra.ordered.proj_Icc
 
-variables {α β γ : Type*} [linear_order α]
-  [topological_space β] [topological_space γ] {a b c : α} {h : a ≤ b}
+variables {α β γ : Type*} [linear_order α] [topological_space γ] {a b c : α} {h : a ≤ b}
 
 lemma filter.tendsto.Icc_extend (f : γ → Icc a b → β) {z : γ} {l : filter α} {l' : filter β}
   (hf : tendsto ↿f (𝓝 z ×ᶠ l.map (proj_Icc a b h)) l') :
@@ -28,7 +28,7 @@ lemma filter.tendsto.Icc_extend (f : γ → Icc a b → β) {z : γ} {l : filter
 show tendsto (↿f ∘ prod.map id (proj_Icc a b h)) (𝓝 z ×ᶠ l) l', from
 hf.comp $ tendsto_id.prod_map tendsto_map
 
-variables [topological_space α] [order_topology α]
+variables [topological_space α] [order_topology α] [topological_space β]
 
 lemma continuous.Icc_extend' {f : γ → Icc a b → β}
   (hf : continuous ↿f) : continuous ↿(Icc_extend h ∘ f) :=
@@ -77,17 +77,16 @@ variables {α G₀ β γ : Type*} [group_with_zero G₀] [topological_space G₀
   [has_continuous_inv₀ G₀] [has_continuous_mul G₀]
 
 lemma continuous_at.comp_div_cases {f g : α → G₀} {k : α → γ} (h : γ → G₀ → β)
-  [topological_space α] [topological_space β] [topological_space γ] {a : α} (c : γ)
+  [topological_space α] [topological_space β] [topological_space γ] {a : α}
   (hk : continuous_at k a) (hf : continuous_at f a) (hg : continuous_at g a)
   (hh : g a ≠ 0 → continuous_at ↿h (k a, f a / g a))
-  (h2h : filter.tendsto ↿h (𝓝 c ×ᶠ ⊤) (𝓝 (h c 0)))
-  (hgk : ∀ {a}, g a = 0 → k a = c) :
+  (h2h : g a = 0 → tendsto ↿h (𝓝 (k a) ×ᶠ ⊤) (𝓝 (h (k a) 0))) :
   continuous_at (λ x, h (k x) (f x / g x)) a :=
 begin
   show continuous_at (↿h ∘ (λ x, (k x, f x / g x))) a,
   by_cases hga : g a = 0,
-  { rw [continuous_at], simp_rw [comp_app, hga, div_zero, hgk hga],
-    refine h2h.comp _, rw [← hgk hga], exact hk.prod_mk filter.tendsto_top },
+  { rw [continuous_at], simp_rw [comp_app, hga, div_zero],
+    exact (h2h hga).comp (hk.prod_mk tendsto_top) },
   { exact continuous_at.comp (hh hga) (hk.prod (hf.div hg hga)) }
 end
 
@@ -136,22 +135,73 @@ calc tendsto ↿F (p ×ᶠ ⊤) (𝓝 c)
 ... ↔ ∀ V ∈ 𝓤 β, {i | ∀ a, (c, F i a) ∈ V} ∈ p : by simpa [filter.mem_prod_top]
 
 -- can this be shorter?
+lemma uniform_continuous_on.tendsto_uniformly {α β γ : Type*}
+  [uniform_space α] [uniform_space β] [uniform_space γ] {x : α} {U : set α} (hU : U ∈ 𝓝 x)
+  {f : α → β → γ} (h : uniform_continuous_on ↿f (U.prod univ)) :
+  tendsto_uniformly f (f x) (𝓝 x) :=
+begin
+  intros V hV,
+  rw [uniform_continuous_on, uniformity_prod_eq_prod] at h,
+  specialize h hV,
+  rw [mem_map, mem_inf_iff] at h,
+  rcases h with ⟨s, hs, t, ht, hst⟩,
+  rw [mem_map, mem_prod_iff] at hs, rcases hs with ⟨u, hu, v, hv, huvs⟩,
+  rw [mem_principal] at ht,
+  rw [← image_subset_iff] at huvs,
+  have hU' := mem_nhds_uniformity_iff_right.mp hU,
+  rw [nhds_eq_comap_uniformity, eventually_comap],
+  apply eventually_of_mem (inter_mem hu hU'),
+  rintro ⟨x', y'⟩ ⟨hxyu, hxyU⟩ y hxy b,
+  cases hxy,
+  show ((x, b), (y, b)) ∈ (λ p : _ × _, (↿f p.1, ↿f p.2)) ⁻¹' V,
+  rw [hst],
+  refine ⟨huvs ⟨((x, y), (b, b)), _, rfl⟩, ht _⟩,
+  exact ⟨hxyu, refl_mem_uniformity hv⟩,
+  refine ⟨⟨mem_of_mem_nhds hU, mem_univ b⟩, ⟨hxyU rfl, mem_univ b⟩⟩
+end
+
 lemma uniform_continuous₂.tendsto_uniformly {α β γ : Type*}
   [uniform_space α] [uniform_space β] [uniform_space γ]
   {f : α → β → γ} (h : uniform_continuous₂ f) {x : α} : tendsto_uniformly f (f x) (𝓝 x) :=
+uniform_continuous_on.tendsto_uniformly univ_mem $
+  by rwa [univ_prod_univ, uniform_continuous_on_univ]
+
+local attribute [instance] uniform_space.separation_setoid
+
+lemma is_separated.eq_of_uniform_continuous {α β : Type*} [uniform_space α] [uniform_space β]
+  {f : α → β} {x y : α} {s : set β} (hs : is_separated s) (hxs : f x ∈ s) (hys : f y ∈ s)
+  (H : uniform_continuous f) (h : x ≈ y) : f x = f y :=
+(is_separated_def _).mp hs _ _ hxs hys $ λ _ h', h _ (H h')
+
+lemma is_separated.prod {α β : Type*} [uniform_space α] [uniform_space β] {s : set α} {t : set β}
+  (hs : is_separated s) (ht : is_separated t) : is_separated (s.prod t) :=
+(is_separated_def _).mpr $ assume x y hx hy H, prod.ext
+  (hs.eq_of_uniform_continuous hx.1 hy.1 uniform_continuous_fst H)
+  (ht.eq_of_uniform_continuous hx.2 hy.2 uniform_continuous_snd H)
+
+lemma is_separated.mono {α : Type*} [uniform_space α] {s t : set α}
+  (hs : is_separated s) (hts : t ⊆ s) : is_separated t :=
+λ x y hx hy, hs x y (hts hx) (hts hy)
+
+lemma continuous_on.tendsto_uniformly {α β γ : Type*}
+  [uniform_space α] [uniform_space β] [uniform_space γ] [locally_compact_space α] [compact_space β]
+  [separated_space β]
+  {f : α → β → γ} {x : α} {U : set α} (hxU : U ∈ 𝓝 x) (hU : is_separated U)
+  (h : continuous_on ↿f (U.prod univ)) :
+  tendsto_uniformly f (f x) (𝓝 x) :=
 begin
-  intros U hU,
-  rw [uniform_continuous₂, uniform_continuous, uniformity_prod_eq_prod, tendsto_map'_iff, (∘)] at h,
-  dsimp at h,
-  rcases mem_map_iff_exists_image.1 (h hU) with ⟨t, ht, hts⟩, clear h,
-  rcases mem_prod_iff.1 ht with ⟨u, hu, v, hv, huvt⟩, clear ht,
-  rw [nhds_eq_comap_uniformity, eventually_comap],
-  apply eventually_of_mem hu,
-  rintro ⟨x', y'⟩ hxyu y hxy b,
-  simp_rw [prod.ext_iff] at hxy,
-  rcases hxy with ⟨rfl, rfl⟩,
-  refine hts ⟨⟨⟨x, y⟩, ⟨b, b⟩⟩, huvt _, rfl⟩,
-  exact ⟨hxyu, refl_mem_uniformity hv⟩
+  rcases locally_compact_space.local_compact_nhds _ _ hxU with ⟨K, hxK, hKU, hK⟩,
+  have : uniform_continuous_on ↿f (K.prod univ),
+  { refine is_compact.uniform_continuous_on_of_continuous' (hK.prod compact_univ) _
+      (h.mono $ prod_mono hKU subset.rfl),
+    exact (hU.mono hKU).prod (is_separated_of_separated_space _) },
+  exact this.tendsto_uniformly hxK
 end
+
+lemma continuous.tendsto_uniformly {α β γ : Type*}
+  [uniform_space α] [separated_space α] [locally_compact_space α] [uniform_space β]
+  [compact_space β] [separated_space β] [uniform_space γ]
+  (f : α → β → γ) (h : continuous ↿f) (x : α) : tendsto_uniformly f (f x) (𝓝 x) :=
+h.continuous_on.tendsto_uniformly univ_mem $ is_separated_of_separated_space _
 
 end
