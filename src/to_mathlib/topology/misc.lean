@@ -6,6 +6,30 @@ noncomputable theory
 open set function filter
 open_locale unit_interval topological_space uniformity filter
 
+section -- logic.function
+
+-- move
+-- @[simp] lemma base_apply {α β : Type*} (f : α → β) (x : α) : ↿f x = f x := rfl
+-- @[simp] lemma induction_apply {α β γ δ : Type*} {h : has_uncurry β γ δ} (f : α → β) (x : α)
+--   (c : γ) : ↿f (x, c) = ↿(f x) c :=
+-- rfl
+
+-- @[simp] lemma uncurry_loop_apply {F : Type*} [normed_group F] [normed_space ℝ F]
+--   [finite_dimensional ℝ F] {α : Type*} (f : α → loop F) (x : α) (t : ℝ) :
+--   ↿f (x, t) = f x t :=
+-- rfl
+
+-- @[simp] lemma uncurry_path_apply {X α : Type*} [topological_space X] {x y : α → X}
+--   (f : Π a, path (x a) (y a)) (a : α) (t : I) : ↿f (a, t) = f a t :=
+-- rfl
+mk_simp_attribute uncurry_simps "unfold all `↿`."
+attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_induction
+  path.has_uncurry_path
+
+
+
+end
+
 section -- algebra.order.group
 
 variables {α : Type*} [group α] [has_le α] [covariant_class α α (*) (≤)]
@@ -33,12 +57,20 @@ section -- to data.set.intervals.proj_Icc
 
 variables {α β : Type*} [linear_order α] {a b : α} {h : a ≤ b} {x : α}
 
-lemma proj_Icc_eq_left : proj_Icc a b h x = ⟨a, left_mem_Icc.mpr h⟩ ↔ x ≤ a :=
-sorry
+lemma proj_Icc_eq_left (h : a < b) : proj_Icc a b h.le x = ⟨a, left_mem_Icc.mpr h.le⟩ ↔ x ≤ a :=
+begin
+  refine ⟨λ h', _, proj_Icc_of_le_left _⟩,
+  simp_rw [subtype.ext_iff_val, proj_Icc, max_eq_left_iff, min_le_iff, h.not_le, false_or] at h',
+  exact h'
+end
 
-
-lemma proj_Icc_eq_right : proj_Icc a b h x = ⟨b, right_mem_Icc.mpr h⟩ ↔ b ≤ x :=
-sorry
+lemma proj_Icc_eq_right (h : a < b) : proj_Icc a b h.le x = ⟨b, right_mem_Icc.mpr h.le⟩ ↔ b ≤ x :=
+begin
+  refine ⟨λ h', _, proj_Icc_of_right_le _⟩,
+  simp_rw [subtype.ext_iff_val, proj_Icc] at h',
+  have := ((max_choice _ _).resolve_left (by simp [h.ne', h'])).symm.trans h',
+  exact min_eq_left_iff.mp this
+end
 
 end
 
@@ -46,10 +78,45 @@ end
 section -- to unit_interval
 
 @[simp] lemma proj_Icc_eq_zero {x : ℝ} : proj_Icc (0 : ℝ) 1 zero_le_one x = 0 ↔ x ≤ 0 :=
-proj_Icc_eq_left
+proj_Icc_eq_left zero_lt_one
 
 @[simp] lemma proj_Icc_eq_one {x : ℝ} : proj_Icc (0 : ℝ) 1 zero_le_one x = 1 ↔ 1 ≤ x :=
-proj_Icc_eq_right
+proj_Icc_eq_right zero_lt_one
+
+namespace unit_interval
+
+lemma nonneg' {t : I} : 0 ≤ t := t.2.1
+lemma le_one' {t : I} : t ≤ 1 := t.2.2
+lemma coe_eq_zero {x : I} : (x : ℝ) = 0 ↔ x = 0 :=
+by { symmetry, exact subtype.ext_iff }
+
+open int
+lemma fract_mem (x : ℝ) : fract x ∈ I := ⟨fract_nonneg _, (fract_lt_one _).le⟩
+
+lemma coe_ne_zero {x : I} : (x : ℝ) ≠ 0 ↔ x ≠ 0 :=
+not_iff_not.mpr coe_eq_zero
+
+lemma coe_eq_one {x : I} : (x : ℝ) = 1 ↔ x = 1 :=
+by { symmetry, exact subtype.ext_iff }
+
+lemma coe_ne_one {x : I} : (x : ℝ) ≠ 1 ↔ x ≠ 1 :=
+not_iff_not.mpr coe_eq_one
+
+lemma mul_mem (x y : I) : (x : ℝ) * y ∈ I :=
+⟨mul_nonneg x.2.1 y.2.1, (mul_le_mul x.2.2 y.2.2 y.2.1 zero_le_one).trans_eq $ one_mul 1⟩
+
+instance : has_mul I := ⟨λ x y, ⟨x * y, mul_mem x y⟩⟩
+
+@[simp, norm_cast] lemma coe_mul {x y : I} : ((x * y : I) : ℝ) = x * y := rfl
+-- todo: linear_ordered_comm_monoid_with_zero
+
+lemma mul_le_left {x y : I} : x * y ≤ x :=
+subtype.coe_le_coe.mp $ (mul_le_mul_of_nonneg_left y.2.2 x.2.1).trans_eq $ mul_one x
+
+lemma mul_le_right {x y : I} : x * y ≤ y :=
+subtype.coe_le_coe.mp $ (mul_le_mul_of_nonneg_right x.2.2 y.2.1).trans_eq $ one_mul y
+
+end unit_interval
 
 end
 
@@ -99,13 +166,13 @@ lemma continuous.extend {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} (hγ
   continuous (λ i, (γ (f i)).extend (g i)) :=
 (continuous.extend' hγ).comp $ hf.prod_mk hg
 
-lemma continuous_at.extend {f : Z → Y} {g : Z → ℝ} {l r : Y → X} (γ : ∀ y, path (l y) (r y))
-  {z : Z}
-  (hγ : continuous_at ↿γ (f z, proj_Icc 0 1 zero_le_one (g z))) (hf : continuous_at f z)
-  (hg : continuous_at g z) : continuous_at (λ i, (γ (f i)).extend (g i)) z :=
+lemma continuous_at.extend {g : Y → ℝ} {l r : Y → X} (γ : ∀ y, path (l y) (r y))
+  {y : Y}
+  (hγ : continuous_at ↿γ (y, proj_Icc 0 1 zero_le_one (g y)))
+  (hg : continuous_at g y) : continuous_at (λ i, (γ i).extend (g i)) y :=
 show continuous_at
-  ((λ p : Y × ℝ, (Icc_extend (@zero_le_one ℝ _) (γ p.1) p.2)) ∘ (λ i, (f i, g i))) z, from
-continuous_at.comp (continuous_at.Icc_extend (λ x y, γ x y) hγ) $ hf.prod hg
+  ((λ p : Y × ℝ, (Icc_extend (@zero_le_one ℝ _) (γ p.1) p.2)) ∘ (λ i, (i, g i))) y, from
+continuous_at.comp (continuous_at.Icc_extend (λ x y, γ x y) hγ) $ continuous_at_id.prod hg
 
 end
 section -- to topology.algebra.group_with_zero
@@ -113,18 +180,18 @@ section -- to topology.algebra.group_with_zero
 variables {α G₀ β γ : Type*} [group_with_zero G₀] [topological_space G₀]
   [has_continuous_inv₀ G₀] [has_continuous_mul G₀]
 
-lemma continuous_at.comp_div_cases {f g : α → G₀} {k : α → γ} (h : γ → G₀ → β)
-  [topological_space α] [topological_space β] [topological_space γ] {a : α}
-  (hk : continuous_at k a) (hf : continuous_at f a) (hg : continuous_at g a)
-  (hh : g a ≠ 0 → continuous_at ↿h (k a, f a / g a))
-  (h2h : g a = 0 → tendsto ↿h (𝓝 (k a) ×ᶠ ⊤) (𝓝 (h (k a) 0))) :
-  continuous_at (λ x, h (k x) (f x / g x)) a :=
+lemma continuous_at.comp_div_cases [topological_space α] [topological_space β] {a : α}
+  {f g : α → G₀} (h : α → G₀ → β)
+  (hf : continuous_at f a) (hg : continuous_at g a)
+  (hh : g a ≠ 0 → continuous_at ↿h (a, f a / g a))
+  (h2h : g a = 0 → tendsto ↿h (𝓝 a ×ᶠ ⊤) (𝓝 (h a 0))) :
+  continuous_at (λ x, h x (f x / g x)) a :=
 begin
-  show continuous_at (↿h ∘ (λ x, (k x, f x / g x))) a,
+  show continuous_at (↿h ∘ (λ x, (x, f x / g x))) a,
   by_cases hga : g a = 0,
   { rw [continuous_at], simp_rw [comp_app, hga, div_zero],
-    exact (h2h hga).comp (hk.prod_mk tendsto_top) },
-  { exact continuous_at.comp (hh hga) (hk.prod (hf.div hg hga)) }
+    exact (h2h hga).comp (continuous_at_id.prod_mk tendsto_top) },
+  { exact continuous_at.comp (hh hga) (continuous_at_id.prod (hf.div hg hga)) }
 end
 
 end

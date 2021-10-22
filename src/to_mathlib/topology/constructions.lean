@@ -42,18 +42,18 @@ end
 -- ⟨λ f p, ↿(f p.1) p.2⟩
 
 /- TODO: reformulate these lemmas so that they are true -/
-lemma continuous_uncurry_uncurry1 {f : α → β → ι} [has_uncurry (β → ι) (β × γ) δ]
-  [has_uncurry (α × β → ι) ((α × β) × γ) δ] :
-  continuous ↿(λ p : α × β, f p.1 p.2) ↔ continuous ↿f :=
-begin
-  sorry
-end
+-- lemma continuous_uncurry_uncurry1 {f : α → β → ι} [has_uncurry (β → ι) (β × γ) δ]
+--   [has_uncurry (α × β → ι) ((α × β) × γ) δ] :
+--   continuous ↿(λ p : α × β, f p.1 p.2) ↔ continuous ↿f :=
+-- begin
+--   sorry
+-- end
 
-lemma continuous_uncurry_uncurry {f : α → β → ι} [has_uncurry ι γ δ] :
-  continuous ↿(λ p : α × β, f p.1 p.2) ↔ continuous ↿f :=
-begin
-  sorry
-end
+-- lemma continuous_uncurry_uncurry {f : α → β → ι} [has_uncurry ι γ δ] :
+--   continuous ↿(λ p : α × β, f p.1 p.2) ↔ continuous ↿f :=
+-- begin
+--   sorry
+-- end
 
 lemma inducing.continuous_at_iff {f : α → β} {g : β → γ} (hg : inducing g) {x : α} :
   continuous_at f x ↔ continuous_at (g ∘ f) x :=
