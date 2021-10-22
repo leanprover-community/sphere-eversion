@@ -241,7 +241,7 @@ structure loop :=
 (to_fun : ℝ → F)
 (per' : ∀ t, to_fun (t + 1) = to_fun t)
 
-instance : has_coe_to_fun (loop F) := ⟨_, λ γ, γ.to_fun⟩
+instance : has_coe_to_fun (loop F) (λ _, ℝ → F) := ⟨λ γ, γ.to_fun⟩
 
 initialize_simps_projections loop (to_fun → apply)
 

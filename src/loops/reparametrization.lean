@@ -24,7 +24,7 @@ namespace circle_diffeo
 
 variable (φ : circle_diffeo)
 
-instance : has_coe_to_fun circle_diffeo := ⟨_, circle_diffeo.to_fun⟩
+instance : has_coe_to_fun circle_diffeo (λ _, ℝ → ℝ) := ⟨circle_diffeo.to_fun⟩
 
 lemma eqv : ∀ t, φ (t + 1) = φ t + 1 := φ.eqv'
 
@@ -42,17 +42,17 @@ def loop.reparam (γ : loop F) (φ : circle_diffeo) : loop F :=
 
 lemma reparametrization [measurable_space F] [borel_space F]
   (γ : E → ℝ → loop F) (h_surr : surrounding_family g b γ U)
-  (h_smooth : ∀ (x ∈ U) (t ∈ I) s, smooth_at ↿γ ((x, t, s) : E × ℝ × ℝ)) : 
+  (h_smooth : ∀ (x ∈ U) (t ∈ I) s, smooth_at ↿γ ((x, t, s) : E × ℝ × ℝ)) :
   ∃ φ : E → circle_diffeo, ∀ (x ∈ U), (∀ s, smooth_at ↿φ (x, s)) ∧
                                       φ x 0 = 0 ∧
                                       ((γ x 1).reparam (φ x)).average = g x :=
 sorry
 
-lemma exists_loops [measurable_space F] [borel_space F] 
-  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U) 
+lemma exists_loops [measurable_space F] [borel_space F]
+  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
   (hΩ_op : ∀ x ∈ U, is_open (prod.mk x ⁻¹' Ω))
-  (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω)) 
-  (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω) 
+  (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
+  (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω)
   (hgK : ∀ᶠ x in nhds_set K, g x = b x) (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
   ∃ γ : E → ℝ → loop F, (∀ (x ∈ U) (t ∈ I) s, (x, γ x t s) ∈ Ω ∧
                                               γ x 0 s = b x ∧
