@@ -162,8 +162,17 @@ def ρ (t : ℝ) : ℝ := max 0 $ min 1 $ 2 * (1 - t)
 @[simp] lemma ρ_half : ρ 2⁻¹ = 1 := by norm_num [ρ]
 @[simp] lemma ρ_one : ρ 1 = 0 := by norm_num [ρ]
 
+-- move
+@[simp] lemma base_apply {α β : Type*} (f : α → β) (x : α) : ↿f x = f x := rfl
+@[simp] lemma induction_apply {α β γ δ : Type*} [has_uncurry β γ δ] (f : α → β) (x : α × γ) :
+  ↿f x = ↿(f x.1) x.2 :=
+rfl
+@[simp] lemma induction_apply_mk {α β γ δ : Type*} {h : has_uncurry β γ δ} (f : α → β) (x : α)
+  (c : γ) : ↿f (x, c) = ↿(f x) c :=
+rfl
+
 -- Should we change the type of `γ` (and `surrounding_family` to user `I` instead of `ℝ` everywhere?
-lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F} (hb : continuous b)
+lemma satisfied_or_refund [locally_compact_space E] {γ₀ γ₁ : E → ℝ → loop F} (hb : continuous b)
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
     (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧
@@ -171,6 +180,17 @@ lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F} (hb : continuous 
     γ 1 = γ₁ ∧
     continuous_on ↿γ (set.prod I $ U.prod $ set.prod I univ) :=
 begin
+  let γ : ℝ → ∀ x, I → path (b x) (b x) :=
+  λ τ x t, (h₀.path x $ ρ τ * t).trans' (h₁.path x $ ρ (1 - τ) * t)
+    (set.proj_Icc 0 1 zero_le_one (1 - τ)),
+  have : continuous (λ p : ((ℝ × E) × I) × I, γ p.1.1.1 p.1.1.2 p.1.2 p.2),
+  {
+    -- have := continuous.path_trans'
+    --   (λ (p : ℝ × E) t, h₀.path _ $ ρ p.1 * t) (λ (p : ℝ × E) t, h₁.path _ $ ρ (1 - p.1) * t),
+    sorry
+    -- convert this.comp _, ext ⟨⟨⟨τ, x⟩, t⟩, s⟩,
+    -- dsimp [γ, function.has_uncurry_induction, function.has_uncurry_base],
+  },
   let γ : ℝ → E → ℝ → loop F :=
   λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).trans' (h₁.path x $ ρ (1 - τ) * t)
     (set.proj_Icc 0 1 zero_le_one (1 - τ)),
@@ -181,12 +201,14 @@ begin
   { ext x t s, sorry; simp only [path.trans'_zero, unit_interval.mk_zero, one_mul, ρ_zero,
       surrounding_family.path_extend, proj_Icc_left, loop.of_path_apply, sub_self] },
   {
+      --rw [continuous_on_iff_continuous_restrict],
     apply continuous.continuous_on, dsimp [γ],
     refine continuous_uncurry_uncurry.mp _,
     refine continuous_uncurry_uncurry1.mp _,
     refine continuous.of_path _ _ _,
     refine hb.comp continuous_fst.snd,
-    --have := λ p : (ℝ × E) × ℝ, continuous.trans' (h₀.path p.1.2 $ ρ p.1.1 * p.2),
+    -- have := λ τ, continuous.path_trans' (λ x t, h₀.path x $ ρ τ * t) _ _ _ _ _,
+    -- have := λ p : (ℝ × E) × ℝ, continuous.path_trans' (h₀.path p.1.2 $ ρ p.1.1 * p.2),
     sorry
     -- sorry -- todo: generalize loop.of_path_continuous_family so that base point can vary
 
