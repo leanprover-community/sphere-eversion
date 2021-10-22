@@ -166,6 +166,19 @@ by { simp only [trans', path.coe_mk, extend_div_self, if_pos, le_rfl], }
 
 -- this lemma is easier if we reorder/reassociate the arguments
 lemma _root_.continuous.path_trans' {X : Type*} [uniform_space X] [separated_space X]
+  [locally_compact_space X] {f : X → F} {t : X → I} {s : X → I}
+  {γ γ' : ∀ x, path (f x) (f x)}
+  (hγ : continuous ↿γ)
+  (hγ' : continuous ↿γ')
+  (hγ0 : ∀ x s, t x = 0 → γ x s = f x)
+  (hγ'1 : ∀ x s, t x = 1 → γ' x s = f x)
+  (ht : continuous t)
+  (hs : continuous s) :
+  continuous (λ x, trans' (γ x) (γ' x) (t x) (s x)) :=
+sorry
+
+-- this lemma is easier if we reorder/reassociate the arguments
+lemma _root_.continuous.path_trans'' {X : Type*} [uniform_space X] [separated_space X]
   [locally_compact_space X] {f : X → F}
   (γ γ' : ∀ x, I → path (f x) (f x))
   (hγ : continuous ↿(λ p s, γ p.1 p.2 s : X × I → I → F))
@@ -362,13 +375,25 @@ begin
   rw [γ.extend_zero, γ.extend_one]
 end
 
+-- move
+lemma continuous_on.comp_fract'' {α β γ : Type*} [linear_ordered_ring α] [floor_ring α]
+  [topological_space α] [order_topology α]
+  [topological_add_group α] [topological_space β] [topological_space γ]
+  {s : β → α}
+  {f : β → α → γ}
+  (h : continuous_on (uncurry f) $ (univ : set β).prod (Icc 0 1 : set α))
+  (hs : continuous s)
+  (hf : ∀ s, f s 0 = f s 1) :
+  continuous (λ x : β, f x $ fract (s x)) :=
+(h.comp_fract' hf).comp (continuous_id.prod_mk hs)
+
 /-- `loop.of_path` is continuous, general version. -/
-lemma _root_.continuous.of_path {ι : Type*} [topological_space ι] {x : ι → F}
-  (γ : ∀ (i : ι), path (x i) (x i)) (hx : continuous x)
-  (hγ : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
+lemma _root_.continuous.of_path {ι : Type*} [topological_space ι] (x : ι → F) (t : ι → ℝ)
+  (γ : ∀ (i : ι), path (x i) (x i)) (hγ : continuous ↿γ) (ht : continuous t) :
+  continuous (λ i, of_path (γ i) (t i)) :=
 begin
-  change continuous (λ p : ι × ℝ, (λ s, (γ s).extend) p.1 (fract p.2)),
-  apply continuous_on.comp_fract',
+  change continuous (λ i : ι, (λ s, (γ s).extend) i (fract (t i))),
+  refine continuous_on.comp_fract'' _ ht _,
   { exact (hγ.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
   { simp only [unit_interval.mk_zero, zero_le_one, path.target, path.extend_extends,
       implies_true_iff, eq_self_iff_true, path.source, right_mem_Icc, left_mem_Icc,
@@ -378,7 +403,8 @@ end
 /-- `loop.of_path` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 lemma of_path_continuous_family {ι : Type*} [topological_space ι] {x : F} (γ : ι → path x x)
   (h : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
-continuous_const.of_path γ h
+continuous.of_path _ _ (λ i : ι × ℝ, γ i.1) (h.comp $ continuous_fst.prod_map continuous_id)
+  continuous_snd
 
 def round_trip {x y : F} (γ : path x y) : loop F :=
 of_path (γ.trans γ.symm)

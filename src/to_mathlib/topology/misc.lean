@@ -6,6 +6,17 @@ noncomputable theory
 open set function filter
 open_locale unit_interval topological_space uniformity filter
 
+section -- algebra.order.group
+
+variables {α : Type*} [group α] [has_le α] [covariant_class α α (*) (≤)]
+  [covariant_class α α (swap (*)) (≤)]
+
+@[to_additive]
+lemma le_div_self_iff (a : α) {b : α} : a ≤ a / b ↔ b ≤ 1 :=
+by simp [div_eq_mul_inv]
+
+end
+
 section -- to bounded_lattice
 
 variables {α β : Type*}
@@ -17,6 +28,32 @@ begin
 end
 
 end
+
+section -- to data.set.intervals.proj_Icc
+
+variables {α β : Type*} [linear_order α] {a b : α} {h : a ≤ b} {x : α}
+
+lemma proj_Icc_eq_left : proj_Icc a b h x = ⟨a, left_mem_Icc.mpr h⟩ ↔ x ≤ a :=
+sorry
+
+
+lemma proj_Icc_eq_right : proj_Icc a b h x = ⟨b, right_mem_Icc.mpr h⟩ ↔ b ≤ x :=
+sorry
+
+end
+
+
+section -- to unit_interval
+
+@[simp] lemma proj_Icc_eq_zero {x : ℝ} : proj_Icc (0 : ℝ) 1 zero_le_one x = 0 ↔ x ≤ 0 :=
+proj_Icc_eq_left
+
+@[simp] lemma proj_Icc_eq_one {x : ℝ} : proj_Icc (0 : ℝ) 1 zero_le_one x = 1 ↔ 1 ≤ x :=
+proj_Icc_eq_right
+
+end
+
+
 
 section -- to topology.algebra.ordered.proj_Icc
 
