@@ -7,29 +7,10 @@ import to_mathlib.topology.constructions
 # Surrounding families of loops
 -/
 
-open set function finite_dimensional int (hiding range) prod function
+open set function finite_dimensional int (hiding range) prod function path
 open_locale classical topological_space unit_interval
 
 noncomputable theory
-
--- move
-@[simp] lemma base_apply {α β : Type*} (f : α → β) (x : α) : ↿f x = f x := rfl
-@[simp] lemma induction_apply {α β γ δ : Type*} {h : has_uncurry β γ δ} (f : α → β) (x : α)
-  (c : γ) : ↿f (x, c) = ↿(f x) c :=
-rfl
-
-@[simp] lemma uncurry_loop_apply {F : Type*} [normed_group F] [normed_space ℝ F]
-  [finite_dimensional ℝ F] {α : Type*} (f : α → loop F) (x : α) (t : ℝ) :
-  ↿f (x, t) = f x t :=
-rfl
-
-@[simp] lemma uncurry_path_apply {X α : Type*} [topological_space X] {x y : α → X}
-  (f : Π a, path (x a) (y a)) (a : α) (t : I) : ↿f (a, t) = f a t :=
-rfl
-mk_simp_attribute uncurry_simps "unfold all `↿`."
-attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_induction
-  path.has_uncurry_path has_uncurry_loop
-
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
@@ -54,6 +35,15 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
+lemma loop.surrounds.mono {γ γ' : loop F} {x : F} (h : γ.surrounds x)
+  (h2 : range γ ⊆ range γ') : γ'.surrounds x :=
+begin
+  revert h, simp_rw [loop.surrounds_iff_range_subset_range],
+  refine exists_imp_exists (λ t, _),
+  refine exists_imp_exists (λ w, _),
+  exact and.imp_right (λ h3, subset.trans h3 h2),
+end
+
 lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O)
   (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) :
   ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧
@@ -74,16 +64,16 @@ begin
     simp only [γ, loop.round_trip_family_zero],
     refl },
   { have : range (Ω₁.trans Ω₀) ⊆ O,
-    { rw path.trans_range,
+    { rw trans_range,
       refine union_subset _ hΩ₀.1,
       rwa range_subset_iff },
     rintros t ⟨ht₀, ht₁⟩,
     rw ← range_subset_iff,
     apply trans _ this,
-    simp only [γ, loop.round_trip_family, loop.round_trip_range, path.truncate_range, path.cast_coe] },
+    simp only [γ, loop.round_trip_family, loop.round_trip_range, truncate_range, cast_coe] },
   { rw loop.surrounds_iff_range_subset_range,
     refine ⟨p, w, h, _⟩,
-    simp only [γ, loop.round_trip_family_one, loop.round_trip_range, path.trans_range],
+    simp only [γ, loop.round_trip_family_one, loop.round_trip_range, trans_range],
     rw range_subset_iff,
     intro i,
     right,
@@ -124,9 +114,20 @@ protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) : path (b
   target' := h.one x t }
 
 @[simp]
-lemma path_extend (h : surrounding_family g b γ U) (x : E) (t s : ℝ) :
+lemma path_extend_fract (h : surrounding_family g b γ U) (x : E) (t s : ℝ) :
   (h.path x t).extend (fract s) = γ x t s :=
-sorry
+by { rw [extend_extends _ (unit_interval.fract_mem s), ← loop.fract_eq], refl }
+
+@[simp]
+lemma range_path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
+  range (h.path x t) = range (γ x t) :=
+by simp only [path.coe_mk, surrounding_family.path, range_comp _ coe, subtype.range_coe,
+    loop.range_eq_image]
+
+@[simp]
+lemma path_t₀ (h : surrounding_family g b γ U) (x : E) :
+  h.path x 0 = refl (b x) :=
+by { ext t, exact h.t₀ x t }
 
 end surrounding_family
 
@@ -186,14 +187,41 @@ def ρ (t : ℝ) : ℝ := max 0 $ min 1 $ 2 * (1 - t)
 @[simp] lemma ρ_zero : ρ 0 = 1 := by norm_num [ρ]
 @[simp] lemma ρ_half : ρ 2⁻¹ = 1 := by norm_num [ρ]
 @[simp] lemma ρ_one : ρ 1 = 0 := by norm_num [ρ]
-@[simp] lemma continuous_ρ : continuous ρ := sorry
+lemma continuous_ρ : continuous ρ :=
+continuous_const.max $ continuous_const.min $ continuous_const.mul $ continuous_const.sub
+  continuous_id
 
-@[simp] lemma ρ_eq_one_of_le {x : ℝ} (h : x ≤ 1 / 2) : ρ x = 1 := sorry
+@[simp] lemma ρ_eq_one_of_le {x : ℝ} (h : x ≤ 1 / 2) : ρ x = 1 :=
+begin
+  rw [ρ, max_eq_right, min_eq_left],
+  { linarith },
+  rw [le_min_iff],
+  suffices : x ≤ 1, { simpa },
+  exact h.trans (by norm_num)
+end
+
 @[simp] lemma ρ_eq_one_of_nonpos {x : ℝ} (h : x ≤ 0) : ρ x = 1 :=
 ρ_eq_one_of_le $ h.trans (by norm_num)
-@[simp] lemma ρ_eq_zero_of_le {x : ℝ} (h : 1 ≤ x) : ρ x = 0 := sorry
-@[simp] lemma ρ_eq_one {x : ℝ} : ρ x = 1 ↔ x ≤ 1 / 2 := sorry
-@[simp] lemma ρ_eq_zero {x : ℝ} : ρ x = 0 ↔ 1 ≤ x := sorry
+
+@[simp] lemma ρ_eq_zero_of_le {x : ℝ} (h : 1 ≤ x) : ρ x = 0 :=
+by { rw [ρ, max_eq_left], refine (min_le_right _ _).trans (by linarith) }
+
+@[simp] lemma ρ_eq_one {x : ℝ} : ρ x = 1 ↔ x ≤ 1 / 2 :=
+begin
+  refine ⟨λ h, _, ρ_eq_one_of_le⟩,
+  rw [ρ] at h,
+  have := ((max_choice _ _).resolve_left (by norm_num [h])).symm.trans h,
+  rw [min_eq_left_iff] at this,
+  linarith
+end
+
+@[simp] lemma ρ_eq_zero {x : ℝ} : ρ x = 0 ↔ 1 ≤ x :=
+begin
+  refine ⟨λ h, _, ρ_eq_zero_of_le⟩,
+  rw [ρ, max_eq_left_iff, min_le_iff] at h,
+  have := h.resolve_left (by norm_num),
+  linarith
+end
 
 lemma satisfied_or_refund [locally_compact_space E] {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
@@ -204,16 +232,11 @@ lemma satisfied_or_refund [locally_compact_space E] {γ₀ γ₁ : E → ℝ →
     continuous ↿γ :=
 begin
   let γ : ℝ → E → ℝ → loop F :=
-  λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).trans' (h₁.path x $ ρ (1 - τ) * t)
+  λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).strans (h₁.path x $ ρ (1 - τ) * t)
     (set.proj_Icc 0 1 zero_le_one (1 - τ)),
-  refine ⟨γ, _, _, _, _⟩,
-  { sorry },
-  { ext x t, simp only [one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend, sub_zero,
-      loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.trans'_one] },
-  { ext x t, simp only [path.trans'_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
-      surrounding_family.path_extend, proj_Icc_left, loop.of_path_apply, sub_self] },
+  have hγ : continuous ↿γ,
   { refine continuous.of_path _ _ _ _ continuous_snd.snd.snd,
-    apply continuous.path_trans',
+    apply continuous.path_strans,
     { refine h₀.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
       exact (continuous_ρ.comp continuous_fst.fst.fst).mul continuous_fst.fst.snd.snd.fst,
       exact continuous_subtype_coe.comp continuous_snd },
@@ -226,7 +249,27 @@ begin
     { intros x s hs, simp only [proj_Icc_eq_one] at hs,
       simp only [hs, h₁.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
     { refine continuous_proj_Icc.comp (continuous_const.sub continuous_fst.fst) },
-    { exact continuous_snd } }
+    { exact continuous_snd } },
+  refine ⟨γ, _, _, _, hγ⟩,
+  { intros τ hτ, constructor,
+    { intros x t, simp only [unit_interval.mk_zero, zero_le_one, extend_extends, path.source,
+        loop.of_path_apply, left_mem_Icc, fract_zero] },
+    { intros x s, simp [γ] },
+    { intros x, cases le_total τ (1 / 2) with h h,
+      { have : τ < 1 := h.trans_lt (by norm_num),
+        refine (h₀.surrounds x).mono _,
+        simp [γ],
+        refine subset.trans (by simp [h]) (range_strans_left $ by simp [this]) },
+      { have : 0 < τ := lt_of_lt_of_le (by norm_num) h,
+        have h : 1 - τ ≤ 1 / 2, { linarith },
+        refine (h₁.surrounds x).mono _,
+        simp [γ],
+        refine subset.trans (by simp [h]) (range_strans_right $ by simp [this]) }, },
+    { exact hγ.comp (continuous_const.prod_mk continuous_id) } },
+  { ext x t, simp only [one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend_fract, sub_zero,
+      loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one] },
+  { ext x t, simp only [path.strans_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
+      surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self] }
 end
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
@@ -237,7 +280,6 @@ lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ 
     surrounding_family g b γ U ∧
     ∀ᶠ x in nhds_set K₀, γ x = γ₀ x :=
 sorry
-
 
 lemma exists_surrounding_loops
   (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
@@ -251,4 +293,6 @@ lemma exists_surrounding_loops
   ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧
                         (∀ᶠ x in nhds_set K, ∀ (t ∈ I), γ x t = γ₀ x t)  :=
 sorry
+
+-- #print axioms satisfied_or_refund
 -- #lint
