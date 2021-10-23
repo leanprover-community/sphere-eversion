@@ -66,7 +66,7 @@ h.inducing.continuous_at_iff.symm
 lemma inducing.continuous_at_iff' {f : α → β} {g : β → γ} (hf : inducing f) {x : α}
   (h : range f ∈ 𝓝 (f x)) :
   continuous_at (g ∘ f) x ↔ continuous_at g (f x) :=
-by { simp_rw [continuous_at, filter.tendsto, ← hf.map_nhds_of_mem _ h, filter.map_map],  }
+by { simp_rw [continuous_at, filter.tendsto, ← hf.map_nhds_of_mem _ h, filter.map_map] }
 
 lemma homeomorph.comp_continuous_at_iff' (h : α ≃ₜ β) (f : β → γ) (x : α) :
   continuous_at (f ∘ h) x ↔ continuous_at f (h x) :=

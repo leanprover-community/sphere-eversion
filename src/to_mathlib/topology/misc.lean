@@ -135,9 +135,9 @@ hf.comp $ tendsto_id.prod_map tendsto_map
 
 variables [topological_space α] [order_topology α] [topological_space β]
 
-lemma continuous.Icc_extend' {f : γ → Icc a b → β}
-  (hf : continuous ↿f) : continuous ↿(Icc_extend h ∘ f) :=
-hf.comp $ continuous_id.prod_map continuous_proj_Icc
+lemma continuous.Icc_extend' {f : γ → Icc a b → β} {g : γ → α}
+  (hf : continuous ↿f) (hg : continuous g) : continuous (λ a, Icc_extend h (f a) (g a)) :=
+hf.comp $ continuous_id.prod_mk (continuous_proj_Icc.comp hg)
 
 lemma continuous_at.Icc_extend {x : γ} (f : γ → Icc a b → β)
   (hf : continuous_at ↿f (x, proj_Icc a b h c)) : continuous_at ↿(Icc_extend h ∘ f) (x, c) :=
@@ -151,9 +151,9 @@ section -- to topology.path_connected
 variables {X Y Z : Type*} [topological_space X] [topological_space Y]
   [topological_space Z] {x y : X}
 
-lemma continuous.extend' {γ : Y → path x y} (hγ : continuous ↿γ) :
-  continuous ↿(λ t, (γ t).extend) :=
-continuous.Icc_extend' hγ
+lemma continuous.extend {γ : Y → path x y} {f : Y → ℝ} (hγ : continuous ↿γ) (hf : continuous f) :
+  continuous (λ t, (γ t).extend (f t)) :=
+continuous.Icc_extend' hγ hf
 
 lemma filter.tendsto.extend {X Y : Type*} [topological_space X] [topological_space Y]
   {l r : Y → X}
@@ -161,11 +161,6 @@ lemma filter.tendsto.extend {X Y : Type*} [topological_space X] [topological_spa
   (hγ : tendsto ↿γ (𝓝 y ×ᶠ l₁.map (proj_Icc 0 1 zero_le_one)) l₂) :
   tendsto ↿(λ t, (γ t).extend) (𝓝 y ×ᶠ l₁) l₂ :=
 filter.tendsto.Icc_extend _ hγ
-
-lemma continuous.extend {f : Z → Y} {g : Z → ℝ} {γ : Y → path x y} (hγ : continuous ↿γ)
-  (hf : continuous f) (hg : continuous g) :
-  continuous (λ i, (γ (f i)).extend (g i)) :=
-(continuous.extend' hγ).comp $ hf.prod_mk hg
 
 lemma continuous_at.extend {g : Y → ℝ} {l r : Y → X} (γ : ∀ y, path (l y) (r y))
   {y : Y}
