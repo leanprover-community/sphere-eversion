@@ -72,10 +72,10 @@ lemma homeomorph.comp_continuous_at_iff' (h : α ≃ₜ β) (f : β → γ) (x :
   continuous_at (f ∘ h) x ↔ continuous_at f (h x) :=
 h.inducing.continuous_at_iff' (by simp)
 
-lemma continuous₃_iff (f : α → β → γ → δ) :
-  continuous (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ↔ continuous ↿f :=
-by { convert (homeomorph.prod_assoc α β γ).comp_continuous_iff', refl }
+-- lemma continuous₃_iff (f : α → β → γ → δ) :
+--   continuous (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ↔ continuous ↿f :=
+-- by { convert (homeomorph.prod_assoc α β γ).comp_continuous_iff', refl }
 
-lemma continuous_at₃_iff (f : α → β → γ → δ) {x : α} {y : β} {z : γ} :
-  continuous_at (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ((x, y), z) ↔ continuous_at ↿f (x, y, z) :=
-(homeomorph.prod_assoc α β γ).comp_continuous_at_iff' ↿f ((x, y), z)
+-- lemma continuous_at₃_iff (f : α → β → γ → δ) {x : α} {y : β} {z : γ} :
+--   continuous_at (λ p : (α × β) × γ, f p.1.1 p.1.2 p.2) ((x, y), z) ↔ continuous_at ↿f (x, y, z) :=
+-- (homeomorph.prod_assoc α β γ).comp_continuous_at_iff' ↿f ((x, y), z)

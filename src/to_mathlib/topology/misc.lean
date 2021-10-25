@@ -22,7 +22,7 @@ section -- logic.function
 -- @[simp] lemma uncurry_path_apply {X α : Type*} [topological_space X] {x y : α → X}
 --   (f : Π a, path (x a) (y a)) (a : α) (t : I) : ↿f (a, t) = f a t :=
 -- rfl
-mk_simp_attribute uncurry_simps "unfold all `↿`."
+mk_simp_attribute uncurry_simps "unfolds all occurrences of the uncurry operation `↿`."
 attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_induction
   path.has_uncurry_path
 
@@ -45,11 +45,8 @@ section -- to bounded_lattice
 
 variables {α β : Type*}
 
-lemma function.surjective.map_top {f : α → β} (hf : surjective f) : filter.map f ⊤ = ⊤ :=
-begin
-  ext, simp only [mem_map, mem_top, eq_univ_iff_forall, mem_preimage],
-  exact (@surjective.forall _ _ _ hf (∈ s)).symm,
-end
+lemma function.surjective.map_top {f : α → β} (hf : surjective f) : map f ⊤ = ⊤ :=
+by { ext, simp only [mem_map, mem_top, eq_univ_iff_forall, mem_preimage, iff.comm, hf.forall] }
 
 end
 
@@ -85,8 +82,11 @@ proj_Icc_eq_right zero_lt_one
 
 namespace unit_interval
 
+/-- Similar to `unit_interval.nonneg`, except that the inequality is in `I`. -/
 lemma nonneg' {t : I} : 0 ≤ t := t.2.1
+/-- Similar to `unit_interval.le_one`, except that the inequality is in `I`. -/
 lemma le_one' {t : I} : t ≤ 1 := t.2.2
+
 lemma coe_eq_zero {x : I} : (x : ℝ) = 0 ↔ x = 0 :=
 by { symmetry, exact subtype.ext_iff }
 
@@ -108,7 +108,8 @@ lemma mul_mem (x y : I) : (x : ℝ) * y ∈ I :=
 instance : has_mul I := ⟨λ x y, ⟨x * y, mul_mem x y⟩⟩
 
 @[simp, norm_cast] lemma coe_mul {x y : I} : ((x * y : I) : ℝ) = x * y := rfl
--- todo: linear_ordered_comm_monoid_with_zero
+
+-- todo: provide linear_ordered_comm_monoid_with_zero instance
 
 lemma mul_le_left {x y : I} : x * y ≤ x :=
 subtype.coe_le_coe.mp $ (mul_le_mul_of_nonneg_left y.2.2 x.2.1).trans_eq $ mul_one x
