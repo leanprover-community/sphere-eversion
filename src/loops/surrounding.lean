@@ -1,7 +1,5 @@
 import loops.basic
 import tactic.fin_cases
-import to_mathlib.topology.algebra.group
-import to_mathlib.topology.constructions
 
 /-!
 # Surrounding families of loops
