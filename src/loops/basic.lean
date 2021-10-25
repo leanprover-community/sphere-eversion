@@ -8,8 +8,6 @@ import topology.path_connected
 import linear_algebra.affine_space.independent
 import loops.homotheties
 import to_mathlib.topology.misc
-import to_mathlib.topology.algebra.group
-import to_mathlib.topology.constructions
 
 /-!
 # Basic definitions and properties of loops
