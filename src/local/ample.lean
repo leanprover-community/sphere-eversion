@@ -172,6 +172,16 @@ begin
   ring
 end
 
+lemma joined_in_compl_zero_of_not_mem_span [topological_add_group F] [has_continuous_smul ℝ F] 
+  {x y : F} (hx : x ≠ 0) (hy : y ∉ submodule.span ℝ ({x} : set F)) : 
+  joined_in ({0}ᶜ : set F) x y :=
+begin
+  refine joined_in.of_line (continuous_line_map _ _).continuous_on 
+    (line_map_apply_zero _ _) (line_map_apply_one _ _) _,
+  rw ← segment_eq_image_line_map,
+  exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
+end
+
 lemma is_path_connected_compl_zero_of_two_le_dim [topological_add_group F] [has_continuous_smul ℝ F] 
   (hdim : 2 ≤ module.rank ℝ F) : is_path_connected ({0}ᶜ : set F) :=
 begin
@@ -180,11 +190,23 @@ begin
   { sorry },
   { intros x y hx hy,
     by_cases h : y ∈ submodule.span ℝ ({x} : set F),
-    { sorry },
-    { refine joined_in.of_line (continuous_line_map _ _).continuous_on 
-        (line_map_apply_zero _ _) (line_map_apply_one _ _) _,
-      rw ← segment_eq_image_line_map,
-      exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) h) (h' ▸ ht) } }
+    { suffices : ∃ z, z ∉ submodule.span ℝ ({x} : set F),
+      { rcases this with ⟨z, hzx⟩, 
+        suffices hzy : z ∉ submodule.span ℝ ({y} : set F),
+          from (joined_in_compl_zero_of_not_mem_span hx hzx).trans
+            (joined_in_compl_zero_of_not_mem_span hy hzy).symm,
+        rw submodule.mem_span_singleton at ⊢ hzx h,
+        rcases h with ⟨a, ha⟩,
+        exact λ ⟨b, hb⟩, hzx ⟨b * a, by rwa [mul_smul, ha]⟩ },
+      by_contra h',
+      push_neg at h',
+      rw ← submodule.eq_top_iff' at h',
+      rw [← dim_top ℝ, ← h'] at hdim,
+      suffices : (2 : cardinal) ≤ 1,
+      { sorry },
+      have := hdim.trans (dim_span_le _),
+      rwa cardinal.mk_singleton at this },
+    { exact joined_in_compl_zero_of_not_mem_span hx h } }
 end
 
 lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
