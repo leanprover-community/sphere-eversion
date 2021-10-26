@@ -51,7 +51,7 @@ section -- algebra.order.group
 variables {α : Type*} [group α] [has_le α] [covariant_class α α (*) (≤)]
   [covariant_class α α (swap (*)) (≤)]
 
-@[to_additive]
+@[simp, to_additive]
 lemma le_div_self_iff (a : α) {b : α} : a ≤ a / b ↔ b ≤ 1 :=
 by simp [div_eq_mul_inv]
 
@@ -225,7 +225,7 @@ by { rw [uniformity_eq_symm, map_swap_eq_comap_swap, comap_comap], exact nhds_eq
 end
 
 -- to logic/basic
-/-- We intentionally restrict the type of `α` here so that this is a safer for simp. -/
+/-- We intentionally restrict the type of `α` here so that this is a safer to use in simp. -/
 lemma imp_forall_iff {α : Type*} {p : Prop} {q : α → Prop} : (p → ∀ x, q x) ↔ (∀ x, p → q x) :=
 forall_swap
 
@@ -233,13 +233,13 @@ forall_swap
 lemma filter.mem_prod_top {α β : Type*} {f : filter α} {s : set (α × β)} :
   s ∈ f ×ᶠ (⊤ : filter β) ↔ {a | ∀ b, (a, b) ∈ s} ∈ f :=
 begin
-  nth_rewrite 1 [← exists_mem_subset_iff],
+  rw [← @exists_mem_subset_iff _ f],
   simp only [mem_prod_iff, exists_prop, exists_eq_left, mem_top, prod_univ, mem_preimage,
     prod.forall, subset_def, mem_set_of_eq, imp_forall_iff]
 end
 
 -- to uniform_convergence
-lemma tendsto_prod_top_iff {α β ι : Type*} [uniform_space β] (F : ι → α → β) {c : β}
+lemma tendsto_prod_top_iff {α β ι : Type*} [uniform_space β] {F : ι → α → β} {c : β}
   {p : filter ι} : tendsto ↿F (p ×ᶠ ⊤) (𝓝 c) ↔ tendsto_uniformly F (λ _, c) p :=
 let j : β → β × β := prod.mk c in
 calc tendsto ↿F (p ×ᶠ ⊤) (𝓝 c)
