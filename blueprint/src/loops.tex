@@ -452,10 +452,13 @@ as explained in the next lemma.
   Each $\Loop(g, β, U)$ is path connected:
   for every $γ_0$ and $γ_1$ in $\Loop(g, β, U)$,
   there is a continuous map
-  $γ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ γ^t_{τ, x}(s)$
+  $δ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)$
   which interpolates between $γ_0$ and $γ_1$ in
   $\Loop(g, β, U)$.
 \end{lemma}
+
+% I (Floris) renamed $γ_{τ, x}^t$ to $δ_{τ, x}^t$ so that we don't have a clash of notation where
+% $γ_{0, x}^t(s)$ is defined to be $γ_{0, x}^{ρ(τ)t}left(\frac1{1 - τ} s\right)$
 
 \begin{proof}
   \leanok
@@ -464,23 +467,32 @@ as explained in the next lemma.
   $ρ(τ) = 0$ if $τ ≥ 1$.
   We set
   \[
-    γ_{τ, x}^t(s) =
+    δ_{τ, x}^t(s) =
     \begin{cases}
-      γ_{0, x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) & \text{if $s < 1 - τ$ and $τ < 1$}\\
-      β(x)                & \text{if $s = 1 - τ$}\\
-      γ_{1, x}^{ρ(1-τ)t}\left(\frac1τ \big(s - (1- τ)\big)\right) & \text{if $s > 1 - τ$ and $τ > 0$}\\
+      γ_{0,x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) & \text{if $s ≤ 1 - τ$ and $τ < 1$}\\
+      γ_{1,x}^{ρ(1-τ)t}\left(\frac1τ \big(s - (1- τ)\big)\right) &
+      \text{if $s ≥ 1 - τ$ and $τ > 0$}\\
     \end{cases}
   \]
-  There is no surprise and no fun in checking that this is a
-  well-defined continuous homotopy of families of loops based at $β$
-  interpolating between $γ_0$ and $γ_1$.
+  It is clear that if $s = 1 - τ$ then both branches agree and are equal to $β(x)$.
+  Therefore it is easy to see that $δ$ is continuous at $(τ, x, t, s)$
+  except when $(τ,s)=(1,0)$ or $(τ,s)=(0,1)$.
+
+  To show the continuity for $(τ,s)=(1,0)$, let $K$ be a compact neighborhood of $x$ in $E$.
+  Then $γ_0$ is uniformly continuous on the compact set $K × [0, 1] × 𝕊^1$, which means that
+  $γ_{0,x'}^t$ tends uniformly to the constant function $s ↦ β(x)$ as $(x', t)$ tends to
+  $(x, 0)$.
+  This means that $γ{0,x'}^{ρ(τ)t'}$ tends uniformly to the constant function $s ↦ β(x)$
+  as $(τ, x', t')$ tends to $(1, x, t)$. This means that $δ$ is continuous at $(τ,s)=(1,0)$
+  (it is clear that the other branch also tends to $β(x)$). The continuity at $(τ,s)=(0,1)$ is
+  entirely analogous.
 
   The beautiful observation motivating the above formula is why each
-  $γ^1_{τ, x}$ surrounds $g(x)$.
-  The key is that the image of $γ^1_{τ, x}$ contains the image of
-  $γ^1_{0, x}$ when $τ ≤ 1/2$, and contains  the image of
-  $γ^1_{1, x}$ when $τ ≥ 1/2$.
-  Hence $γ^1_{τ, x}$ always surrounds $g(x)$.
+  $δ_{τ, x}^1$ surrounds $g(x)$.
+  The key is that the image of $δ_{τ, x}^1$ contains the image of
+  $γ_{0,x}^1$ when $τ ≤ 1/2$, and contains  the image of
+  $γ_{1,x}^1$ when $τ ≥ 1/2$.
+  Hence $δ_{τ, x}^1$ always surrounds $g(x)$.
 \end{proof}
 
 \begin{corollary}
