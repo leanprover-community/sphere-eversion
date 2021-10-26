@@ -212,7 +212,7 @@ begin
       have ht : t x = 0 := subtype.ext h,
       apply filter.tendsto.extend,
       dsimp only, rw [(proj_Icc_surjective _).map_top, extend_zero],
-      refine (tendsto_prod_top_iff $ λ x, γ x).mpr (hγ0 ht) } },
+      refine tendsto_prod_top_iff.mpr (hγ0 ht) } },
   { rw [continuous_iff_continuous_at],
     intro x,
     refine ((continuous_subtype_coe.comp hs).sub (continuous_subtype_coe.comp ht))
@@ -225,7 +225,7 @@ begin
       have ht : t x = 1 := subtype.ext (sub_eq_zero.mp h).symm,
       apply filter.tendsto.extend,
       dsimp only, rw [(proj_Icc_surjective _).map_top, extend_zero],
-      refine (tendsto_prod_top_iff $ λ x, γ' x).mpr (hγ'1 ht) } },
+      refine tendsto_prod_top_iff.mpr (hγ'1 ht) } },
   { rintro x h, rw [h, sub_self, zero_div, extend_div_self, extend_zero] },
 end
 
