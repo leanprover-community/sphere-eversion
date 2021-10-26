@@ -5,6 +5,7 @@ import topology.path_connected
 import topology.algebra.affine
 import linear_algebra.dimension
 import data.matrix.notation
+import ..to_mathlib.topology.algebra.instances
 
 /-!
 # Ample subsets of real vector spaces
@@ -127,12 +128,13 @@ begin
   { rw set.nonempty_compl,
     intro h,
     sorry },
-  { haveI : topological_add_group p := sorry,
-    haveI : has_continuous_smul ℝ p := sorry,
-    haveI : topological_add_group q := sorry,
-    haveI : has_continuous_smul ℝ q := sorry,
-    intros x y hx hy, 
-    rcases hpc.2 (π hpq x) (π hpq y) sorry sorry with ⟨γ₁, hγ₁⟩,
+  { intros x y hx hy, 
+    have : π hpq x ≠ 0 ∧ π hpq y ≠ 0,
+    { split;
+      intro h;
+      rw submodule.linear_proj_of_is_compl_apply_eq_zero_iff hpq at h;
+      [exact hx h, exact hy h] },
+    rcases hpc.2 (π hpq x) (π hpq y) this.1 this.2 with ⟨γ₁, hγ₁⟩,
     let γ₂ := path_connected_space.some_path (π hpq.symm x) (π hpq.symm y),
     let γ₁' : path (_ : F) _ := γ₁.map continuous_subtype_coe,
     let γ₂' : path (_ : F) _ := γ₂.map continuous_subtype_coe,
@@ -150,9 +152,25 @@ begin
     exact hγ₁ t ht }
 end
 
-lemma zero_mem_segment_iff_mem_span {x y : F} : 
-  (0 : F) ∈ [x -[ℝ] y] ↔ y ∈ submodule.span ℝ ({x} : set F) :=
-sorry
+lemma mem_span_of_zero_mem_segment {x y : F} (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) : 
+  y ∈ submodule.span ℝ ({x} : set F) :=
+begin
+  rw segment_eq_image at h,
+  rcases h with ⟨t, ht, htxy⟩,
+  rw submodule.mem_span_singleton,
+  dsimp only at htxy,
+  use (t-1)/t,
+  have : t ≠ 0,
+  { intro h,
+    rw h at htxy,
+    refine hx _,
+    simpa using htxy },
+  rw [← smul_eq_zero_iff_eq' (neg_ne_zero.mpr $ inv_ne_zero this),
+      smul_add, smul_smul, smul_smul, ← neg_one_mul, mul_assoc, mul_assoc, 
+      inv_mul_cancel this, mul_one, neg_one_smul, add_neg_eq_zero] at htxy,
+  convert htxy,
+  ring
+end
 
 lemma is_path_connected_compl_zero_of_two_le_dim [topological_add_group F] [has_continuous_smul ℝ F] 
   (hdim : 2 ≤ module.rank ℝ F) : is_path_connected ({0}ᶜ : set F) :=
@@ -161,13 +179,12 @@ begin
   split,
   { sorry },
   { intros x y hx hy,
-    by_cases h : y ∈ submodule.span ℝ ({x} : set F);
-    rw ← zero_mem_segment_iff_mem_span at h,
+    by_cases h : y ∈ submodule.span ℝ ({x} : set F),
     { sorry },
     { refine joined_in.of_line (continuous_line_map _ _).continuous_on 
         (line_map_apply_zero _ _) (line_map_apply_one _ _) _,
       rw ← segment_eq_image_line_map,
-      exact λ t ht (h' : t = 0), h (h' ▸ ht) } }
+      exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) h) (h' ▸ ht) } }
 end
 
 lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
@@ -176,9 +193,8 @@ lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_con
 begin
   rcases E.exists_is_compl with ⟨E', hE'⟩,  
   refine is_path_connected_compl_of_is_path_connected_compl_zero hE'.symm _,
-  haveI : topological_add_group E' := sorry,
-    haveI : has_continuous_smul ℝ E' := sorry,
   refine is_path_connected_compl_zero_of_two_le_dim _,
+  rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
 
 --lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
