@@ -106,29 +106,6 @@ begin
   exact ha h''
 end
 
---lemma submodule.linear_proj_add_linear_proj_eq_id_of_is_compl {p q : submodule ℝ F} 
---  (hpq : is_compl p q) : p.subtype.comp (π hpq) + q.subtype.comp (π hpq.symm) = linear_map.id :=
---begin
---  ext x,
---  exact submodule.
---end
-
---lemma joined_in_of_is_compl [topological_add_group F] {p q : submodule ℝ F} (hpq : is_compl p q) 
---  (x y : F) (S : set F) (hp : joined_in (p.subtype ⁻¹' S) (π hpq x) (π hpq y)) 
---  (hq : joined_in (q.subtype ⁻¹' S) (π hpq.symm x) (π hpq.symm y)) :
---  joined_in S x y :=
---begin
---  rcases hp with ⟨γ₁, hγ₁⟩,
---  rcases hq with ⟨γ₂, hγ₂⟩,
---  let γ₁' : path (_ : F) _ := γ₁.map continuous_subtype_coe,
---  let γ₂' : path (_ : F) _ := γ₂.map continuous_subtype_coe,
---  refine ⟨(γ₁'.add γ₂').cast (submodule.eq_linear_proj_add_linear_proj_of_is_compl hpq x)
---    (submodule.eq_linear_proj_add_linear_proj_of_is_compl hpq y), _⟩,
---  intro t,
---  rw [path.cast_coe, path.add_apply], 
---  sorry
---end
-
 lemma is_path_connected_compl_of_is_path_connected_compl_zero [topological_add_group F] 
   [has_continuous_smul ℝ F] {p q : submodule ℝ F} (hpq : is_compl p q) 
   (hpc : is_path_connected ({0}ᶜ : set p)) : is_path_connected (qᶜ : set F) :=
@@ -228,73 +205,5 @@ begin
   refine is_path_connected_compl_zero_of_two_le_dim _,
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
-
---lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
---  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
---  is_path_connected (Eᶜ : set F) := 
---begin
---  rcases E.exists_is_compl with ⟨E', hE'⟩,
---  rw is_path_connected_iff,
---  split,
---  { rw set.nonempty_compl,
---    intro h,
---    sorry },
---  { haveI : topological_add_group E := sorry,
---    haveI : has_continuous_smul ℝ E := sorry,
---    haveI : topological_add_group E' := sorry,
---    haveI : has_continuous_smul ℝ E' := sorry,
---    intros x y hx hy,
---    suffices : joined_in ({0}ᶜ : set E') (π hE'.symm x) (π hE'.symm y),
---    { rcases this with ⟨γ₁, hγ₁⟩,
---      let γ₂ := path_connected_space.some_path (π hE' x) (π hE' y),
---      let γ₁' : path (_ : F) _ := γ₁.map continuous_subtype_coe,
---      let γ₂' : path (_ : F) _ := γ₂.map continuous_subtype_coe,
---      refine ⟨(γ₁'.add γ₂').cast (submodule.eq_linear_proj_add_linear_proj_of_is_compl hE'.symm x)
---        (submodule.eq_linear_proj_add_linear_proj_of_is_compl hE'.symm y), _⟩,
---      intros t ht,
---      rw [path.cast_coe, path.add_apply] at ht,
---      change (γ₁ t : F) + γ₂ t ∈ E at ht,
---      rw [← submodule.linear_proj_of_is_compl_apply_eq_zero_iff hE'.symm, linear_map.map_add,
---          submodule.linear_proj_of_is_compl_apply_right hE'.symm, add_zero, 
---          submodule.linear_proj_of_is_compl_apply_eq_zero_iff hE'.symm] at ht,
---      have ht' : (γ₁ t : F) ∈ E' := submodule.coe_mem (γ₁ t),
---      have ht : (γ₁ t : F) ∈ E ⊓ E' := submodule.mem_inf.mpr ⟨ht, ht'⟩,
---      rw hE'.inf_eq_bot at ht,
---      change γ₁ t = 0 at ht, } }
---end
-
---lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
---  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
---  is_path_connected (Eᶜ : set F) := 
---begin
---  rcases E.exists_is_compl with ⟨E', hE'⟩,
---  rw is_path_connected_iff,
---  split,
---  { rw set.nonempty_compl,
---    intro h,
---    sorry },
---  { intros x y hx hy,
---    rcases submodule.exists_unique_add_of_is_compl hE' x with ⟨u, u', huu', -⟩,
---    rcases submodule.exists_unique_add_of_is_compl hE' y with ⟨v, v', hvv', -⟩,
---    have : u' ≠ 0,
---    { intro h,
---      rw h at huu',
---      rw [submodule.coe_zero, add_zero] at huu',
---      rw ← huu' at hx,
---      exact hx u.2 },
---    have : v' ≠ 0,
---    { intro h,
---      rw h at hvv',
---      rw [submodule.coe_zero, add_zero] at hvv',
---      rw ← hvv' at hy,
---      exact hy v.2 },
---    suffices : joined_in (Eᶜ : set F) (u' : F) (v' : F),
---    { refine joined_in.trans _ (this.trans _);
---      { refine joined_in.of_line line_map_continuous.continuous_on 
---          (line_map_apply_zero _ _) (line_map_apply_one _ _) _,
---        rw ← segment_eq_image_line_map,
---        intros x hx, }, },
---    by_cases hz : (0 : F) ∈ [x -[ℝ] y], }
---end
 
 end lemma_2_13
