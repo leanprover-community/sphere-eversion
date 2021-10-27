@@ -4,6 +4,7 @@ import topology.connected
 import topology.path_connected
 import topology.algebra.affine
 import linear_algebra.dimension
+import linear_algebra.affine_space.midpoint
 import data.matrix.notation
 import ..to_mathlib.topology.algebra.instances
 
@@ -38,7 +39,8 @@ begin
   continuity
 end
 
-lemma segment_eq_image_line_map {a b : F} : [a -[ℝ] b] = line_map a b '' unit_interval :=
+lemma segment_eq_image_line_map {α : Type*} [add_comm_group α] [module ℝ α] {a b : α} : 
+  [a -[ℝ] b] = line_map a b '' unit_interval :=
 begin
   convert segment_eq_image ℝ a b,
   ext,
@@ -200,10 +202,83 @@ lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_con
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
   is_path_connected (Eᶜ : set F) := 
 begin
-  rcases E.exists_is_compl with ⟨E', hE'⟩,  
+  rcases E.exists_is_compl with ⟨E', hE'⟩,
   refine is_path_connected_compl_of_is_path_connected_compl_zero hE'.symm _,
   refine is_path_connected_compl_zero_of_two_le_dim _,
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
+end
+
+lemma is_path_connected.is_connected {X : Type*} [topological_space X] {S : set X} 
+  (hS : is_path_connected S) : is_connected S :=
+begin
+  rw is_connected_iff_connected_space,
+  rw is_path_connected_iff_path_connected_space at hS,
+  exact @path_connected_space.connected_space _ _ hS
+end
+
+lemma connected_space.connected_component_eq_univ {X : Type*} [topological_space X] 
+  [h : connected_space X] (x : X) : connected_component x = univ :=
+begin
+  rw connected_space_iff_connected_component at h,
+  rcases h with ⟨y, hy⟩,
+  rw ← hy,
+  exact (connected_component_eq $ by rw hy; exact mem_univ x).symm
+end
+
+lemma is_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  is_connected (Eᶜ : set F) := 
+(is_path_connected_compl_of_two_le_codim hcodim).is_connected
+
+lemma connected_space_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  connected_space (Eᶜ : set F) := 
+is_connected_iff_connected_space.mp (is_connected_compl_of_two_le_codim hcodim)
+
+lemma midpoint_mem_segment {α : Type*} [add_comm_group α] [module ℝ α] (x y : α) : 
+  midpoint ℝ x y ∈ [x -[ℝ] y] :=
+begin
+  rw segment_eq_image_line_map,
+  exact ⟨1/2, ⟨one_half_pos.le, one_half_lt_one.le⟩, line_map_one_half _ _⟩
+end
+
+lemma midpoint_neg {α : Type*} [add_comm_group α] [module ℝ α] (x : α) : 
+  midpoint ℝ x (-x) = 0 :=
+by rw [midpoint_eq_smul_add, add_neg_self, smul_zero]
+
+lemma self_mem_segment_add_sub {α : Type*} [add_comm_group α] [module ℝ α] (x y : α) : 
+  x ∈ [x-y -[ℝ] x+y] := 
+begin
+  convert midpoint_mem_segment _ _,
+  rw [sub_eq_add_neg, ← vadd_eq_add, ← vadd_eq_add, ← midpoint_vadd_midpoint, vadd_eq_add,
+      midpoint_self, midpoint_comm, midpoint_neg, add_zero]
+end
+
+lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  ample_set (Eᶜ : set F) := 
+begin
+  haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
+  intro x,
+  rw [connected_space.connected_component_eq_univ, image_univ, subtype.range_val, 
+      eq_univ_iff_forall],
+  intro y,
+  by_cases h : y ∈ E,
+  { rcases E.exists_is_compl with ⟨E', hE'⟩,
+    rw (E.quotient_equiv_of_is_compl E' hE').dim_eq at hcodim,
+    have hcodim' : 0 < module.rank ℝ E' := lt_of_lt_of_le (by norm_num) hcodim,
+    rw dim_pos_iff_exists_ne_zero at hcodim',
+    rcases hcodim' with ⟨z, hz⟩,
+    suffices : y ∈ [y+(-z) -[ℝ] y+z],
+    { refine (convex_convex_hull ℝ (Eᶜ : set F)).segment_subset _ _ this;
+      refine subset_convex_hull ℝ (Eᶜ : set F) _;
+      change _ ∉ E; 
+      rw submodule.add_mem_iff_right _ h;
+      try {rw submodule.neg_mem_iff};
+      exact submodule.not_mem_of_is_compl_of_ne_zero hE'.symm hz },
+    rw ← sub_eq_add_neg, 
+    exact self_mem_segment_add_sub y z },
+  { exact subset_convex_hull ℝ (Eᶜ : set F) h }
 end
 
 end lemma_2_13
