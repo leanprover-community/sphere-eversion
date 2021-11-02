@@ -46,17 +46,6 @@ attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_inducti
 
 end
 
-section -- algebra.order.group
-
-variables {α : Type*} [group α] [has_le α] [covariant_class α α (*) (≤)]
-  [covariant_class α α (swap (*)) (≤)]
-
-@[simp, to_additive]
-lemma le_div_self_iff (a : α) {b : α} : a ≤ a / b ↔ b ≤ 1 :=
-by simp [div_eq_mul_inv]
-
-end
-
 section -- to bounded_lattice
 
 variables {α β : Type*}
