@@ -8,6 +8,7 @@ import topology.path_connected
 import linear_algebra.affine_space.independent
 import loops.homotheties
 import to_mathlib.topology.misc
+import lint
 
 /-!
 # Basic definitions and properties of loops
@@ -38,7 +39,6 @@ structure surrounding_pts (f : F) (p : fin (d + 1) → F) (w : fin (d + 1) → �
 (w_pos : ∀ i, 0 < w i)
 (w_sum : ∑ i, w i = 1)
 (avg : ∑ i, (w i) • (p i) = f)
-
 
 def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
