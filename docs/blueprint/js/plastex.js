@@ -17,10 +17,10 @@ $(document).ready(function() {
             function() {
                 $(this).siblings("ul").slideToggle('fast');
 
-                if ($(this).html() == "⌄") {
-                  $(this).html("›");
+                if ($(this).html() == "▼") {
+                  $(this).html("▶");
                 } else {
-                  $(this).html("⌄");
+                  $(this).html("▼");
                 };
 
             })
