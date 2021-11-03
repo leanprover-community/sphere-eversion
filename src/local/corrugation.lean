@@ -113,7 +113,7 @@ begin
 end
 
 /-- The circle `𝕊₁ := ℝ/ℤ`. -/
-@[derive topological_space]
+@[derive [topological_space, inhabited]]
 def 𝕊₁ := quotient trans_one
 
 lemma trans_one_rel_iff {a b : ℝ} : trans_one.rel a b ↔ ∃ k : ℤ, b = a + k :=
@@ -249,13 +249,13 @@ begin
   simp
 end
 
-lemma continuous_average [topological_space E] [first_countable_topology E] [locally_compact_space E]
+lemma continuous_average [first_countable_topology E] [locally_compact_space E]
   (hγ_cont : continuous ↿γ) : continuous (λ x, (γ x).average) :=
 continuous_parametric_integral_of_continuous hγ_cont is_compact_Icc measurable_set_Icc
 
 /-- If a loop family has compact support then the corresponding corrugation is
 `O(1/N)` uniformly in the source point. -/
-lemma corrugation.c0_small [topological_space E] [first_countable_topology E]
+lemma corrugation.c0_small [first_countable_topology E]
   [locally_compact_space E] (hγ : is_compact (loop.support γ))
   (hγ_cont : continuous ↿γ) :
   ∃ C, ∀ x, is_O_with C (λ N, corrugation π N γ x) (λ N, 1/N) at_top :=
@@ -311,3 +311,4 @@ structure dual_pair'
 (π : dual ℝ E)
 (v : E)
 (pairing : π v = 1)
+

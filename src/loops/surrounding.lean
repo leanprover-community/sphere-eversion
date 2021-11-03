@@ -182,9 +182,6 @@ end
 /-- Function used in `satisfied_or_refund`. Rename. -/
 def ρ (t : ℝ) : ℝ := max 0 $ min 1 $ 2 * (1 - t)
 
-@[simp] lemma ρ_zero : ρ 0 = 1 := by norm_num [ρ]
-@[simp] lemma ρ_half : ρ 2⁻¹ = 1 := by norm_num [ρ]
-@[simp] lemma ρ_one : ρ 1 = 0 := by norm_num [ρ]
 lemma continuous_ρ : continuous ρ :=
 continuous_const.max $ continuous_const.min $ continuous_const.mul $ continuous_const.sub
   continuous_id
@@ -220,6 +217,10 @@ begin
   have := h.resolve_left (by norm_num),
   linarith
 end
+
+lemma ρ_zero : ρ 0 = 1 := by simp
+lemma ρ_half : ρ 2⁻¹ = 1 := by simp
+lemma ρ_one : ρ 1 = 0 := by simp
 
 lemma satisfied_or_refund [locally_compact_space E] {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
