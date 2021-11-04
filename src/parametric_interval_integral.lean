@@ -80,7 +80,7 @@ end
 theorem continuous_parametric_integral_of_continuous
   {E : Type*} [normed_group E] [topological_space.second_countable_topology E] [normed_space ℝ E]
   [complete_space E] [measurable_space E] [borel_space E]
-  {α : Type*} [topological_space α] [measurable_space α] [opens_measurable_space α] [t2_space α]
+  {α : Type*} [topological_space α] [measurable_space α] [opens_measurable_space α]
   {μ : measure_theory.measure α} [is_locally_finite_measure μ]
   {X : Type*} [topological_space X] [first_countable_topology X] [locally_compact_space X]
   {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2))
@@ -310,17 +310,17 @@ begin
     { exact interval_integrable_of_norm_le ((hF_meas x).mono_set hsub₀)
             (ae_restrict_of_ae_restrict_of_subset hsub₀ hx)
             (bound_integrable.mono_set' hsub₀) },
-    all_goals { 
+    all_goals {
       have hsub : Ι b₀ t ⊆ Ι a b, from interval_oc_subset_of_mem_Ioc (mem_Ioc_of_Ioo hb₀) (mem_Ioc_of_Ioo ht),
-      exact interval_integrable_of_norm_le ((hF_meas _).mono_set hsub) 
+      exact interval_integrable_of_norm_le ((hF_meas _).mono_set hsub)
             (ae_restrict_of_ae_restrict_of_subset hsub ‹_›) (bound_integrable.mono_set' hsub) } },
-      
+
   rw continuous_at_congr this, clear this,
   refine continuous_at.add (continuous_at.add _ _) _,
   { change continuous_at ((λ x, ∫ (s : α) in a₀..b₀, F x s ∂μ) ∘ prod.fst) (x₀, b₀),
     apply continuous_at.comp _ continuous_at_fst,
     exact interval_integral.continuous_at_of_dominated_interval
-            (eventually_of_forall $ λ x, (hF_meas x).mono_set hsub₀) 
+            (eventually_of_forall $ λ x, (hF_meas x).mono_set hsub₀)
             (h_bound.mono $ λ  x, ae_restrict_of_ae_restrict_of_subset hsub₀)
             (bound_integrable.mono_set' hsub₀)
             (ae_restrict_of_ae_restrict_of_subset hsub₀ h_cont) },
@@ -341,9 +341,9 @@ begin
       have H : ∀ᵐ (t : α) ∂μ.restrict (Ι b₀ t), ∥F x t - F x₀ t∥ ≤ 2*bound t,
       { apply (ae_restrict_of_ae_restrict_of_subset hsub (hx.and hx₀)).mono,
         rintros s ⟨hs₁, hs₂⟩,
-        calc ∥F x s - F x₀ s∥ ≤ ∥F x s∥ + ∥F x₀ s∥ : norm_sub_le _ _ 
+        calc ∥F x s - F x₀ s∥ ≤ ∥F x s∥ + ∥F x₀ s∥ : norm_sub_le _ _
         ... ≤ 2 * bound s : by linarith only [hs₁, hs₂] },
-      exact interval_integral.norm_integral_le_of_norm_le H 
+      exact interval_integral.norm_integral_le_of_norm_le H
         (((hF_meas x).mono_set hsub).sub ((hF_meas x₀).mono_set hsub))
         ((bound_integrable.mono_set' hsub).const_mul 2) },
     apply squeeze_zero_norm' this,
@@ -428,7 +428,7 @@ end
 end
 
 section
-open continuous_linear_map 
+open continuous_linear_map
 
 lemma coprod_eq_add {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
   [add_comm_monoid M₁] {M₂ : Type*} [topological_space M₂] [add_comm_monoid M₂]
@@ -443,15 +443,34 @@ section
 
 open asymptotics continuous_linear_map
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E]
-   [normed_space 𝕜 E] {F : Type*} [normed_group F] [normed_space 𝕜 F]
+variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+          {E : Type*}  {F : Type*} [normed_group F]
+
+lemma filter.eventually_le.is_O {f g h : E → F} {l : filter E} (hfg : (λ x, ∥f x∥) ≤ᶠ[l] (λ x, ∥g x∥)) (hh : is_O g h l) : is_O f h l :=
+(is_O_iff.mpr ⟨1, by  simpa using hfg⟩).trans hh
+
+lemma filter.eventually.is_O {f g h : E → F} {l : filter E} (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : is_O g h l) : is_O f h l :=
+filter.eventually_le.is_O hfg hh
+
+lemma filter.eventually.is_O' {f : E → F} {g : E → ℝ} {l : filter E}
+  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ g x) : is_O f g l :=
+sorry
+
+/-
+lemma filter.eventually.is_O'' {f : E → F} {g h : E → ℝ} {l : filter E}
+  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ g x) (hh : is_O g h l) : is_O f h l :=
+sorry
+ -/
+
+variables [normed_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
+          {G : Type*} [normed_group G] [normed_space 𝕜 G]
 
 lemma asymptotics.is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ} (h : is_O f (λ x, ∥x - x₀∥^n) (𝓝 x₀)) (hn : 0 < n) :
   f x₀ = 0 :=
 begin
   cases h.is_O_with with c hc,
   have:= mem_of_mem_nhds (is_O_with_iff.mp hc),
-  simpa [zero_pow hn]        
+  simpa [zero_pow hn]
 end
 
 lemma is_o_pow_sub_pow_sub (x₀ : E) {n m : ℕ} (h : n < m) :
@@ -466,17 +485,49 @@ end
 
 lemma is_o_pow_sub_sub (x₀ : E) {m : ℕ} (h : 1 < m) :
     is_o (λ (x : E), ∥x - x₀∥^m) (λ (x : E), x - x₀) (𝓝 x₀) :=
+by simpa only [is_o_norm_right, pow_one] using is_o_pow_sub_pow_sub x₀ h
+
+lemma asymptotics.is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
+  is_O (λ p : E × F, p.1 - e₀) (λ p : E × F, p - (e₀, f₀)) l :=
+is_O_of_le l (λ p, le_max_left _ _)
+
+lemma asymptotics.is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
+  is_O (λ p : E × F, p.2 - f₀) (λ p : E × F, p - (e₀, f₀)) l :=
+is_O_of_le l (λ p, le_max_right _ _)
+
+lemma asymptotics.is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
+  is_O (λ p : E × F, ∥p.1 - e₀∥^n) (λ p : E × F, ∥p - (e₀, f₀)∥^n) l :=
+(is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_left e₀ f₀ l).pow n
+
+lemma asymptotics.is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
+  is_O (λ p : E × F, ∥p.2 - f₀∥^n) (λ p : E × F, ∥p - (e₀, f₀)∥^n) l :=
+(is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_right e₀ f₀ l).pow n
+
+lemma asymptotics.is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
+  (h : is_O f (λ e, ∥e - e₀∥^n) l) (g₀ : G) (l' : filter G) :
+  is_O (λ p : E × G, f p.1) (λ p, ∥p - (e₀, g₀)∥^n) (l ×ᶠ l') :=
+(h.comp_tendsto tendsto_fst).trans (asymptotics.is_O_pow_sub_prod_left _ _ _ _)
+
+lemma asymptotics.is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
+  (h : is_O f (λ e, ∥e - e₀∥) l) (g₀ : G) (l' : filter G) :
+  is_O (λ p : E × G, f p.1) (λ p, ∥p - (e₀, g₀)∥) (l ×ᶠ l') :=
 begin
-  have := is_o_pow_sub_pow_sub x₀ h,  
-  simp only [pow_one] at this,
-  exact is_o_norm_right.mp this
+  rw show (λ e, ∥e - e₀∥) = (λ e, ∥e - e₀∥^1), by { ext e, simp } at h,
+  simpa using h.comp_fst g₀ l'
 end
 
-lemma eventually_le.is_O {f g h : E → F} {l : filter E} (hfg : (λ x, ∥f x∥) ≤ᶠ[l] (λ x, ∥g x∥)) (hh : is_O g h l) : is_O f h l :=
-(is_O_iff.mpr ⟨1, by  simpa using hfg⟩).trans hh
+lemma asymptotics.is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
+  (h : is_O f (λ g, ∥g - g₀∥^n) l') (e₀ : E) (l : filter E) :
+  is_O (λ p : E × G, f p.2) (λ p, ∥p - (e₀, g₀)∥^n) (l ×ᶠ l') :=
+(h.comp_tendsto tendsto_snd).trans (asymptotics.is_O_pow_sub_prod_right _ _ _ _)
 
-lemma eventually.is_O {f g h : E → F} {l : filter E} (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : is_O g h l) : is_O f h l :=
-eventually_le.is_O hfg hh
+lemma asymptotics.is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
+  (h : is_O f (λ g, ∥g - g₀∥) l') (e₀ : E) (l : filter E) :
+  is_O (λ p : E × G, f p.2) (λ p, ∥p - (e₀, g₀)∥) (l ×ᶠ l') :=
+begin
+  rw show (λ g, ∥g - g₀∥) = (λ g, ∥g - g₀∥^1), by { ext g, simp } at h,
+  simpa using h.comp_snd e₀ l
+end
 
 lemma asymptotics.is_O.has_fderiv_at {f : E → F} {x₀ : E} {n : ℕ} (h : is_O f (λ x, ∥x - x₀∥^n) (𝓝 x₀)) (hn : 1 < n) :
   has_fderiv_at f (0 : E →L[𝕜] F) x₀ :=
@@ -492,9 +543,6 @@ by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
 
 end
 
-/- notation `∫_` a `..` b `, ` f ` ∂` μ:70 := interval_integral f a b μ
-notation `∫_` a `..` b `, ` f:70 := interval_integral f a b measure_theory.measure_space.volume
- -/
 section
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
@@ -514,38 +562,40 @@ lemma foo {F : H → ℝ → E} {F' : ℝ → (H →L[ℝ] E)} {x₀ : H}
   (h_lipsch : ∀ᵐ a, lipschitz_on_with (nnabs $ bound a) (λ x, F x a) (ball x₀ ε))
   (bound_integrable : ∀ s t, integrable_on bound (Ι s t))
   (bound_cont : continuous_at bound t₀)
+  (bound_nonneg : ∀ t, 0 ≤ bound t) -- this is not really needed, but much more convenient
   (h_diff : ∀ᵐ a, has_fderiv_at (λ x, F x a) (F' a) x₀)
   (a : ℝ) :
-  integrable F' ∧ 
-  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) (coprod (∫ t in a..t₀, F' t) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
+  integrable F' ∧
+  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t)
+    (coprod (∫ t in a..t₀, F' t) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
 begin
   let φ : H → ℝ → E := λ x t, ∫ s in a..t, F x s,
   let ψ : H →L[ℝ] E := ∫ t in a..t₀, F' t,
   let p₁ := fst ℝ H ℝ,
   let p₂ := snd ℝ H ℝ,
   split,
-  { 
+  {
     sorry },
   { /-have D₁ : has_fderiv_at (λ x : H × ℝ, φ x.1 t₀) ((∫ t in a..t₀, F' t).comp p₁) (x₀, t₀),
     { rw show (λ x : H × ℝ, φ x.1 t₀) = (λ x, ∫ t in a..t₀, F x t) ∘ p₁, by { ext, refl },
       apply has_fderiv_at.comp,
       { replace hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) (volume.restrict (Ι a t₀)),
-        { 
+        {
           sorry },
         replace hF_int : interval_integrable (F x₀) volume a t₀,
-        { 
+        {
           sorry },
         replace hF'_meas: ae_measurable F' (volume.restrict $ Ι a t₀),
-        { 
+        {
           sorry },
         replace h_lipsch : ∀ᵐ (t : ℝ), t ∈ Ι a t₀ → ∀ (x : H), x ∈ ball x₀ ε → ∥F' t∥ ≤ bound t,
-        { 
+        {
           sorry },
         replace bound_integrable : interval_integrable bound volume a t₀,
-        { 
+        {
           sorry },
         replace h_diff : ∀ᵐ (t : ℝ), t ∈ Ι a t₀ → ∀ (x : H), x ∈ ball x₀ ε → has_fderiv_at (λ (x : H), F x t) (F' t) x,
-        { 
+        {
           sorry },
         rw [coe_fst'],
         exact has_fderiv_at_of_dominated_of_fderiv_le'' volume ε_pos hF_meas hF_int hF'_meas h_lipsch bound_integrable h_diff },
@@ -556,34 +606,18 @@ begin
       rw [has_fderiv_at_iff_has_deriv_at, to_span_singleton_apply, one_smul, coe_snd'],
       dsimp only,
       apply interval_integral.integral_has_deriv_at_right,
-      { 
+      {
         sorry },
       { exact (hF_meas x₀ (mem_ball_self ε_pos)).measurable_at_filter,
-        --exact ae_measurable.measurable_at_filter hF_int.1 
+        --exact ae_measurable.measurable_at_filter hF_int.1
         },
       { exact hF_cont },
       exact p₂.has_fderiv_at }, -/
     have D₃ : has_fderiv_at (λ x : H × ℝ, ∫ t in t₀..x.2, F x.fst t - F x₀ t) (0 : H × ℝ →L[ℝ] E) (x₀, t₀),
     { apply is_O.has_fderiv_at _ one_lt_two,
-      have : ∀ x ∈ ball x₀ ε, ∀ t, ∥∫ s in t₀..t, F x s - F x₀ s∥ ≤ |∫ s in t₀..t, |bound s| |* ∥x - x₀∥,
-      /- { intros x x_in t,
-        rw  [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul],
-        have : (∫ s in t₀..t, |bound s|) * ∥x - x₀∥ = (∫ s in t₀..t, |bound s| * ∥x - x₀∥),
-        { 
-          sorry },
-        rw this,
-        apply interval_integral.norm_integral_le_of_norm_le,
-        apply measure_theory.ae_restrict_of_ae,
-        apply h_lipsch.mono,
-        intros t ht,
-        rw lipschitz_on_with_iff_norm_sub_le at ht,
-        simp only [coe_nnabs] at ht,
-        exact ht x x_in x₀ (mem_ball_self ε_pos),
-        sorry,
-        sorry } -/sorry,
-      have : is_O (λ t, ∫ s in t₀..t, bound s) (λ t, t - t₀) (𝓝 t₀),
-      /- { have bound_integrable' : interval_integrable bound volume a t₀,
-        { 
+      have O₁ : is_O (λ t, ∫ s in t₀..t, bound s) (λ t, t - t₀) (𝓝 t₀),
+      { have bound_integrable' : interval_integrable bound volume a t₀,
+        {
           sorry },
         have M : measurable_at_filter bound (𝓝 t₀) volume,
         { specialize bound_integrable (t₀ - 1) (t₀ + 1),
@@ -592,19 +626,48 @@ begin
         convert (interval_integral.integral_has_deriv_at_right bound_integrable' M bound_cont).is_O,
         ext t,
         rw interval_integral.integral_interval_sub_left,
-        all_goals { sorry } } -/sorry,
-      
-      
+        all_goals { sorry } },
+      replace O₁ := (is_O_norm_right.mpr O₁).comp_snd_one x₀ (𝓝 x₀),
+      rw ← nhds_prod_eq at O₁,
 
+      have O₂ : is_O (λ p : H × ℝ, ∥p.1 - x₀∥) (λ p : H × ℝ, ∥p - (x₀, t₀)∥) (𝓝 (x₀, t₀)),
+        from is_O_norm_norm.mpr (asymptotics.is_O_sub_prod_left x₀ t₀ _),
 
-      
-      sorry },
+      have O₃ : is_O (λ (x : H × ℝ), ∫ (t : ℝ) in t₀..x.2, F x.1 t - F x₀ t)
+             (λ (x : H × ℝ), (∫ s in t₀..x.2, bound s)* ∥x.1 - x₀∥)
+             (𝓝 (x₀, t₀)),
+      { have bdd : ∀ᶠ (p : H × ℝ) in 𝓝 (x₀, t₀), ∥∫ s in t₀..p.2, F p.1 s - F x₀ s∥ ≤ |∫ s in t₀..p.2, bound s |* ∥p.1 - x₀∥,
+        { have : (ball x₀ ε).prod univ ∈ 𝓝 (x₀, t₀),
+          { rw nhds_prod_eq,
+            exact prod_mem_prod (ball_mem_nhds x₀ ε_pos) univ_mem },
+          apply eventually.mono this,
+          rintros ⟨x, t⟩ ⟨hx : x ∈ _, -⟩,
+          rw  [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul],
+          have : (∫ s in t₀..t, bound s) * ∥x - x₀∥ = (∫ s in t₀..t, bound s * ∥x - x₀∥),
+          {
+            sorry },
+          rw this,
+          apply interval_integral.norm_integral_le_of_norm_le,
+          apply measure_theory.ae_restrict_of_ae,
+          apply h_lipsch.mono,
+          intros t ht,
+          rw lipschitz_on_with_iff_norm_sub_le at ht,
+          simp only [coe_nnabs] at ht,
+          rw ← abs_of_nonneg (bound_nonneg t),
+          exact ht x hx x₀ (mem_ball_self ε_pos),
+          sorry,
+          sorry },
+        rw ← is_O_norm_right,
+        simp only [norm_eq_abs, abs_mul, abs_norm_eq_norm],
+        exact bdd.is_O' },
+      simp_rw pow_two,
+      exact O₃.trans (O₁.mul O₂) },
     /- have D₄ : has_fderiv_at (λ x : H × ℝ, φ x₀ t₀) (0 : H × ℝ →L[ℝ] E) (x₀, t₀),
     { exact has_fderiv_at_const (φ x₀ t₀) (x₀, t₀) },
      have : ∀ p : H × ℝ, ∫ t in a..p.2, F p.1 t = φ p.1 t₀ + φ x₀ p.2 + (∫ t in t₀..p.2, (F p.1 t - F x₀ t)) - φ x₀ t₀,
     { rintros ⟨x, t⟩,
       dsimp [φ],
-      rw [interval_integral.integral_sub, add_sub, 
+      rw [interval_integral.integral_sub, add_sub,
           add_right_comm, sub_sub, interval_integral.integral_add_adjacent_intervals],
       conv_rhs { congr, skip, rw add_comm },
       rw interval_integral.integral_add_adjacent_intervals,
