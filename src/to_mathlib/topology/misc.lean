@@ -57,27 +57,6 @@ end unit_interval
 
 end
 
-section -- to topology.algebra.group_with_zero
-
-variables {α G₀ β γ : Type*} [group_with_zero G₀] [topological_space G₀]
-  [has_continuous_inv₀ G₀] [has_continuous_mul G₀]
-
-lemma continuous_at.comp_div_cases [topological_space α] [topological_space β] {a : α}
-  {f g : α → G₀} (h : α → G₀ → β)
-  (hf : continuous_at f a) (hg : continuous_at g a)
-  (hh : g a ≠ 0 → continuous_at ↿h (a, f a / g a))
-  (h2h : g a = 0 → tendsto ↿h (𝓝 a ×ᶠ ⊤) (𝓝 (h a 0))) :
-  continuous_at (λ x, h x (f x / g x)) a :=
-begin
-  show continuous_at (↿h ∘ (λ x, (x, f x / g x))) a,
-  by_cases hga : g a = 0,
-  { rw [continuous_at], simp_rw [comp_app, hga, div_zero],
-    exact (h2h hga).comp (continuous_at_id.prod_mk tendsto_top) },
-  { exact continuous_at.comp (hh hga) (continuous_at_id.prod (hf.div hg hga)) }
-end
-
-end
-
 section
 
 section
