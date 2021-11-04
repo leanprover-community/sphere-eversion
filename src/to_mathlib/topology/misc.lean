@@ -42,39 +42,8 @@ mk_simp_attribute uncurry_simps "unfolds all occurrences of the uncurry operatio
 attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_induction
   path.has_uncurry_path
 
-
-
 end
 
-section -- to bounded_lattice
-
-variables {α β : Type*}
-
-lemma function.surjective.map_top {f : α → β} (hf : surjective f) : map f ⊤ = ⊤ :=
-by { ext, simp only [mem_map, mem_top, eq_univ_iff_forall, mem_preimage, iff.comm, hf.forall] }
-
-end
-
-section -- to data.set.intervals.proj_Icc
-
-variables {α β : Type*} [linear_order α] {a b : α} {h : a ≤ b} {x : α}
-
-lemma proj_Icc_eq_left (h : a < b) : proj_Icc a b h.le x = ⟨a, left_mem_Icc.mpr h.le⟩ ↔ x ≤ a :=
-begin
-  refine ⟨λ h', _, proj_Icc_of_le_left _⟩,
-  simp_rw [subtype.ext_iff_val, proj_Icc, max_eq_left_iff, min_le_iff, h.not_le, false_or] at h',
-  exact h'
-end
-
-lemma proj_Icc_eq_right (h : a < b) : proj_Icc a b h.le x = ⟨b, right_mem_Icc.mpr h.le⟩ ↔ b ≤ x :=
-begin
-  refine ⟨λ h', _, proj_Icc_of_right_le _⟩,
-  simp_rw [subtype.ext_iff_val, proj_Icc] at h',
-  have := ((max_choice _ _).resolve_left (by simp [h.ne', h'])).symm.trans h',
-  exact min_eq_left_iff.mp this
-end
-
-end
 
 
 section -- to unit_interval
@@ -88,29 +57,6 @@ end unit_interval
 
 end
 
-section -- to topology.path_connected
-
-variables {X Y Z : Type*} [topological_space X] [topological_space Y]
-  [topological_space Z] {x y : X}
-
-lemma continuous.extend {γ : Y → path x y} {f : Y → ℝ} (hγ : continuous ↿γ) (hf : continuous f) :
-  continuous (λ t, (γ t).extend (f t)) :=
-continuous.Icc_extend hγ hf
-
-lemma filter.tendsto.extend {X Y : Type*} [topological_space X] [topological_space Y]
-  {l r : Y → X}
-  {y : Y} {l₁ : filter ℝ} {l₂ : filter X} {γ : ∀ y, path (l y) (r y)}
-  (hγ : tendsto ↿γ (𝓝 y ×ᶠ l₁.map (proj_Icc 0 1 zero_le_one)) l₂) :
-  tendsto ↿(λ t, (γ t).extend) (𝓝 y ×ᶠ l₁) l₂ :=
-filter.tendsto.Icc_extend _ hγ
-
-lemma continuous_at.extend {g : Y → ℝ} {l r : Y → X} (γ : ∀ y, path (l y) (r y))
-  {y : Y}
-  (hγ : continuous_at ↿γ (y, proj_Icc 0 1 zero_le_one (g y)))
-  (hg : continuous_at g y) : continuous_at (λ i, (γ i).extend (g i)) y :=
-continuous_at.path_extend _ hγ hg
-
-end
 section -- to topology.algebra.group_with_zero
 
 variables {α G₀ β γ : Type*} [group_with_zero G₀] [topological_space G₀]
