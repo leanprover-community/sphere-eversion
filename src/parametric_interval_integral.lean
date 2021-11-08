@@ -739,4 +739,29 @@ begin
     apply has_fderiv_at.congr_of_eventually_eq _ this,
     simpa using ((D₁.add D₂).add D₃).sub (has_fderiv_at_const (φ x₀ t₀) (x₀, t₀)) }
 end
+
+lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F) 
+  [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
+  (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a t₀) ∧ 
+  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) (coprod (∫ t in a..t₀, (fderiv ℝ $ λ x, F x t) x₀) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
+begin
+  set a₀ :=  min a t₀ - 1,
+  set b₀ :=  max a t₀ + 1,
+  have ha : a ∈ Ioo a₀ b₀, sorry,
+  have ht₀ : t₀ ∈ Ioo a₀ b₀, sorry,
+  obtain ⟨M, M_nonneg, F_bound⟩ : ∃ M : ℝ, 0 ≤ M ∧ ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
+  { 
+    sorry },
+  have cont_x : ∀ x, continuous (F x),
+    from λ x, hF.continuous.comp (continuous.prod.mk x),
+  have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀),
+    from λ x, (cont_x x).integrable_on_compact is_compact_Icc,
+  have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
+    from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
+  apply has_fderiv_at_parametric_primitive_of_lip zero_lt_one ha ht₀ (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀),
+  exact (cont_x x₀).continuous_at,
+  apply continuous.ae_measurable,
+  
+  all_goals { sorry }
+end
 end
