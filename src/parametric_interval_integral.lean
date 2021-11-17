@@ -747,25 +747,14 @@ begin
   have bound_int : ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ → interval_integrable bound volume s u,
   { intros s u hs hu,
     exact (bound_integrable.mono_set $ interval_subset_Ioo hs hu).interval_integrable },
-  /- We need to shrink `ε` so that `s` maps a ball around `x₀` to the interval `(a₀, b₀)`. -/
-  obtain ⟨ε', ε'_pos : 0 < ε', hs : maps_to s (ball x₀ ε') (Ioo a₀ b₀)⟩ :=
-  s_diff.continuous_at.basis_left metric.nhds_basis_ball _ Ioo_nhds,
-  let ε₀ := min ε ε',
-  have ε₀_pos : 0 < ε₀ := lt_min ε_pos ε'_pos,
-  have mem_nhds : ball x₀ ε₀ ∈ 𝓝 x₀ := ball_mem_nhds x₀ ε₀_pos,
-  have x₀_in : x₀ ∈ ball x₀ ε₀ := mem_ball_self ε₀_pos,
-  have hF_meas : ∀ x ∈ ball x₀ ε₀, ae_measurable (F x) (volume.restrict (Ioo a₀ b₀)) :=
-  λ x hx, hF_meas x (ball_subset_ball (min_le_left _ _) hx),
-  have h_lipsch : ∀ᵐ t ∂(volume.restrict $ Ioo a₀ b₀),
-    lipschitz_on_with (nnabs $ bound t) (λ x, F x t) (ball x₀ ε₀) :=
-  h_lipsch.mono (λ t ht, ht.mono (ball_subset_ball (min_le_left _ _))),
-  have hs : maps_to s (ball x₀ ε₀) (Ioo a₀ b₀) :=
-  λ x hx, hs (ball_subset_ball (min_le_right _ _) hx),
-  have hF_meas_ball : ∀ {x}, x ∈ ball x₀ ε₀ → ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
+  have mem_nhds : ball x₀ ε ∩ (s ⁻¹' Ioo a₀ b₀) ∈ 𝓝 x₀ :=
+  filter.inter_mem (ball_mem_nhds x₀ ε_pos) (s_diff.continuous_at.preimage_mem_nhds Ioo_nhds),
+  have x₀_in : x₀ ∈ ball x₀ ε := mem_ball_self ε_pos,
+  have hF_meas_ball : ∀ {x}, x ∈ ball x₀ ε → ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
     ae_measurable (F x) (volume.restrict $ Ι s u),
   { intros x hx s u hs hu,
     exact (hF_meas x hx).mono_set (interval_oc_subset_Ioo hs hu) },
-  have hF_int_ball : ∀ x ∈ ball x₀ ε₀, ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
+  have hF_int_ball : ∀ x ∈ ball x₀ ε, ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
     interval_integrable (F x) volume s u,
   { intros x hx s u hs hu,
     have : integrable_on (F x) (Ioo a₀ b₀),
@@ -779,17 +768,17 @@ begin
   split,
   { apply interval_integrable_of_norm_le hF'_meas _ (bound_int ha hsx₀),
     replace h_lipsch : ∀ᵐ t ∂volume.restrict (Ι a (s x₀)),
-      lipschitz_on_with (nnabs (bound t)) (λ (x : H), F x t) (ball x₀ ε₀),
+      lipschitz_on_with (nnabs (bound t)) (λ (x : H), F x t) (ball x₀ ε),
       from ae_restrict_of_ae_restrict_of_subset (interval_oc_subset_Ioo ha hsx₀) h_lipsch,
     filter_upwards [h_lipsch, h_diff],
     intros t ht_lip ht_diff,
     rw show bound t = nnabs (bound t), by simp [bound_nonneg t],
-    exact ht_diff.le_of_lip (ball_mem_nhds x₀ ε₀_pos) ht_lip },
+    exact ht_diff.le_of_lip (ball_mem_nhds x₀ ε_pos) ht_lip },
   { have D₁ : has_fderiv_at (λ x, φ x (s x₀)) (∫ t in a..s x₀, F' t) x₀,
     { replace hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) (volume.restrict (Ι a (s x₀))),
-        from eventually.mono (ball_mem_nhds x₀ ε₀_pos) (λ x hx, hF_meas_ball hx ha hsx₀),
+        from eventually.mono (ball_mem_nhds x₀ ε_pos) (λ x hx, hF_meas_ball hx ha hsx₀),
       replace hF_int : interval_integrable (F x₀) volume a (s x₀), from hF_int_ball x₀ x₀_in ha hsx₀,
-      exact (has_fderiv_at_of_dominated_loc_of_lip_interval _ ε₀_pos hF_meas hF_int hF'_meas
+      exact (has_fderiv_at_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
               (ae_restrict_of_ae_restrict_of_subset (interval_oc_subset_Ioo ha hsx₀) h_lipsch)
               (bound_int ha hsx₀) h_diff).2 },
     have D₂ : has_fderiv_at (λ x, φ x₀ (s x)) ((to_span_singleton ℝ (F x₀ (s x₀))).comp s') x₀,
@@ -819,8 +808,7 @@ begin
       { have bdd : ∀ᶠ x in 𝓝 x₀,
           ∥∫ s in s x₀..s x, F x s - F x₀ s∥ ≤ |∫ s in s x₀..s x, bound s |* ∥x - x₀∥,
         { apply eventually.mono mem_nhds,
-          rintros x (hx : x ∈ ball x₀ ε₀),
-          have hsx : s x ∈ Ioo a₀ b₀ := hs hx,
+          rintros x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩,
           rw [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul, ← interval_integral.mul_const],
           apply interval_integral.norm_integral_le_of_norm_le _ ((hF_meas_ball hx hsx₀ hsx).sub
             (hF_meas_ball x₀_in hsx₀ hsx))
@@ -831,7 +819,7 @@ begin
           rw lipschitz_on_with_iff_norm_sub_le at ht,
           simp only [coe_nnabs] at ht,
           rw ← abs_of_nonneg (bound_nonneg t),
-          exact ht x hx x₀ (mem_ball_self ε₀_pos) },
+          exact ht x hx x₀ (mem_ball_self ε_pos) },
         rw ← is_O_norm_right,
         simp only [norm_eq_abs, abs_mul, abs_norm_eq_norm],
         exact bdd.is_O' },
@@ -840,8 +828,7 @@ begin
     have : ∀ᶠ x in 𝓝 x₀, ∫ t in a..s x, F x t =
       φ x (s x₀) + φ x₀ (s x) + (∫ t in s x₀..s x, F x t - F x₀ t) - φ x₀ (s x₀),
     { apply eventually.mono mem_nhds,
-      rintros x (hx : x ∈ ball x₀ ε₀),
-      have hsx : s x ∈ Ioo a₀ b₀ := hs hx,
+      rintros x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩,
       have int₁ : interval_integrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀,
       have int₂ : interval_integrable (F x₀) volume (s x₀) (s x) := hF_int_ball x₀ x₀_in hsx₀ hsx,
       have int₃ : interval_integrable (F x) volume a (s x₀) := hF_int_ball x hx ha hsx₀,
