@@ -3,7 +3,7 @@ import analysis.calculus.parametric_integral
 
 noncomputable theory
 
-open topological_space measure_theory filter first_countable_topology metric set
+open topological_space measure_theory filter first_countable_topology metric set function
 open_locale topological_space filter nnreal big_operators interval
 
 section
@@ -610,6 +610,80 @@ by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
 
 end
 
+section calculus
+open continuous_linear_map
+variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+          {E : Type*} [normed_group E] [normed_space 𝕜 E]
+          {F : Type*} [normed_group F] [normed_space 𝕜 F]
+          {G : Type*} [normed_group G] [normed_space 𝕜 G]
+
+lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
+  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
+  has_fderiv_at (λ e, φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
+begin
+  rw show (λ e, φ e f₀) = (uncurry φ) ∘ (λ e, (e, f₀)), by { ext e, simp },
+  refine h.comp e₀ _,
+  rw has_fderiv_at_iff_is_o_nhds_zero,
+  simp [asymptotics.is_o_zero]
+end
+
+lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
+  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
+  fderiv 𝕜 (λ e, φ e f₀) e₀ = φ'.comp (inl 𝕜 E F) :=
+h.partial_fst.fderiv
+
+lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
+  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
+  has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
+begin
+  rw show (λ f, φ e₀ f) = (uncurry φ) ∘ (λ f, (e₀, f)), by { ext e, simp },
+  refine h.comp f₀ _,
+  rw has_fderiv_at_iff_is_o_nhds_zero,
+  simp [asymptotics.is_o_zero]
+end
+
+lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
+  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
+  fderiv 𝕜 (λ f, φ e₀ f) f₀ = φ'.comp (inr 𝕜 E F) :=
+h.partial_snd.fderiv
+
+/-- Precomposition by a continuous linear map as a continuous linear map between spaces of
+continuous linear maps. -/
+def continuous_linear_map.comp_rightL (φ  : E →L[𝕜] F) : (F →L[𝕜] G) →L[𝕜] (E →L[𝕜] G) :=
+{ to_fun := λ ψ, ψ.comp φ,
+  map_add' := λ x y, add_comp _ _ _,
+  map_smul' := λ r x, by rw [smul_comp, ring_hom.id_apply],
+  cont := begin
+    dsimp only,
+    apply @continuous_of_linear_of_bound 𝕜,
+    { intros x y,
+      apply add_comp },
+    { intros c ψ,
+      rw smul_comp },
+    { intros ψ,
+      change ∥ψ.comp φ∥ ≤ ∥φ∥ * ∥ψ∥,
+      rw mul_comm,
+      apply op_norm_comp_le }
+  end }
+
+/-- Postcomposition by a continuous linear map as a continuous linear map between spaces of
+continuous linear maps. -/
+def continuous_linear_map.comp_leftL (φ  : F →L[𝕜] G) : (E →L[𝕜] F) →L[𝕜] (E →L[𝕜] G) :=
+{ to_fun := φ.comp,
+  map_add' := λ x y, comp_add _ _ _,
+  map_smul' := λ r x, by rw [comp_smul, ring_hom.id_apply],
+  cont := begin
+    dsimp only,
+    apply @continuous_of_linear_of_bound 𝕜,
+    { intros x y,
+      apply comp_add },
+    { intros c ψ,
+      rw comp_smul },
+    { intros ψ,
+      apply op_norm_comp_le }
+  end }
+end calculus
+
 -- TODO: change argument order in ae_measurable.mono_set to allow dot notation
 
 section
@@ -644,7 +718,7 @@ lemma has_fderiv_at_parametric_primitive_of_lip {F : H → ℝ → E} {F' : ℝ 
   interval_integrable F' volume a t₀ ∧
   has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t)
     (coprod (∫ t in a..t₀, F' t) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
-begin
+/- begin
   let φ : H → ℝ → E := λ x t, ∫ s in a..t, F x s,
   let ψ : H →L[ℝ] E := ∫ t in a..t₀, F' t,
   let p₁ : H × ℝ →L[ℝ] H := fst ℝ H ℝ,
@@ -751,7 +825,7 @@ begin
       abel },
     apply has_fderiv_at.congr_of_eventually_eq _ this,
     simpa using ((D₁.add D₂).add D₃).sub (has_fderiv_at_const (φ x₀ t₀) (x₀, t₀)) }
-end
+end -/sorry
 
 /--
 This statement is a new version using the continuity note in mathlib.
@@ -886,12 +960,11 @@ begin
     simpa using ((D₁.add D₂).add D₃).sub (has_fderiv_at_const (φ x₀ (s x₀)) x₀) }
 end
 
-lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E}
-  (hF : times_cont_diff ℝ 1 ↿F)
+
+lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
   [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
   (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a t₀) ∧
-  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t)
-    (coprod (∫ t in a..t₀, (fderiv ℝ $ λ x, F x t) x₀) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
+  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) (coprod (∫ t in a..t₀, (fderiv ℝ $ λ x, F x t) x₀) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
 begin
   set a₀ :=  min a t₀ - 1,
   set b₀ :=  max a t₀ + 1,
@@ -911,6 +984,15 @@ begin
   exact (cont_x x₀).continuous_at,
   apply continuous.ae_measurable,
 
+  /- { have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
+      ((λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (fderiv ℝ $ uncurry F) ∘ (λ t, (x₀, t))),
+    { ext t,
+      have : has_fderiv_at (λ e, F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀,
+      { exact has_fderiv_at.partial_fst (hF.has_strict_fderiv_at le_rfl).has_fderiv_at },
+      rw [this.fderiv] },
+    rw this, clear this,
+    exact (inl ℝ H ℝ).comp_rightL.continuous.comp ((hF.continuous_fderiv le_rfl).comp $
+      continuous.prod.mk x₀) } -/sorry,
   all_goals { sorry }
 end
 end
