@@ -627,14 +627,19 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
           {F : Type*} [normed_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_group G] [normed_space 𝕜 G]
 
+lemma has_fderiv_at_prod_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
+begin
+  rw has_fderiv_at_iff_is_o_nhds_zero,
+  simp [asymptotics.is_o_zero]
+end
+
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ e, φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
 begin
   rw show (λ e, φ e f₀) = (uncurry φ) ∘ (λ e, (e, f₀)), by { ext e, simp },
   refine h.comp e₀ _,
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
+  apply has_fderiv_at_prod_left
 end
 
 lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
@@ -642,20 +647,49 @@ lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ 
   fderiv 𝕜 (λ e, φ e f₀) e₀ = φ'.comp (inl 𝕜 E F) :=
 h.partial_fst.fderiv
 
+lemma times_cont_diff_prod_left (f₀ : F) : times_cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
+begin
+  rw times_cont_diff_top_iff_fderiv,
+  split,
+  { intro e₀,
+    exact (has_fderiv_at_prod_left e₀ f₀).differentiable_at },
+  { dsimp only,
+    rw show fderiv 𝕜 (λ (e : E), (e, f₀)) = λ (e : E), inl 𝕜 E F,
+      from  funext (λ e : E, (has_fderiv_at_prod_left e f₀).fderiv),
+    exact times_cont_diff_const }
+end
+
+lemma has_fderiv_at_prod_mk (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
+begin
+  rw has_fderiv_at_iff_is_o_nhds_zero,
+  simp [asymptotics.is_o_zero]
+end
+
 lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
 begin
   rw show (λ f, φ e₀ f) = (uncurry φ) ∘ (λ f, (e₀, f)), by { ext e, simp },
   refine h.comp f₀ _,
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
+  apply has_fderiv_at_prod_mk
 end
 
 lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   fderiv 𝕜 (λ f, φ e₀ f) f₀ = φ'.comp (inr 𝕜 E F) :=
 h.partial_snd.fderiv
+
+lemma times_cont_diff_prod_mk (e₀ : E) : times_cont_diff 𝕜 ⊤ (λ f : F, (e₀, f)) :=
+begin
+  rw times_cont_diff_top_iff_fderiv,
+  split,
+  { intro f₀,
+    exact (has_fderiv_at_prod_mk e₀ f₀).differentiable_at },
+  { dsimp only,
+    rw show fderiv 𝕜 (λ (f : F), (e₀, f)) = λ (f : F), inr 𝕜 E F,
+      from  funext (λ f : F, (has_fderiv_at_prod_mk e₀ f).fderiv),
+    exact times_cont_diff_const }
+end
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
@@ -693,6 +727,21 @@ def continuous_linear_map.comp_leftL (φ  : F →L[𝕜] G) : (E →L[𝕜] F) �
       apply op_norm_comp_le }
   end }
 end calculus
+
+section real_calculus
+open continuous_linear_map
+variables {E : Type*} [normed_group E] [normed_space ℝ E]
+          {F : Type*} [normed_group F] [normed_space ℝ F]
+
+lemma times_cont_diff.lipschitz_on_with {s : set E} {f : E → F} (hf : times_cont_diff ℝ 1 f)
+  (hs : convex ℝ s) (hs' : is_compact s) : ∃ K, lipschitz_on_with K f s :=
+begin
+  rcases hs'.bdd_above_norm (hf.continuous_fderiv le_rfl) with ⟨M, M_pos : 0 < M, hM⟩,
+  use ⟨M, M_pos.le⟩,
+  exact convex.lipschitz_on_with_of_nnnorm_fderiv_le (λ x x_in, hf.differentiable le_rfl x) hM hs
+end
+
+end real_calculus
 
 section
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
@@ -896,6 +945,7 @@ begin
   { sorry },
 end
 
+lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
 
 
 lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
@@ -907,29 +957,49 @@ begin
   set b₀ :=  max a t₀ + 1,
   have ha : a ∈ Ioo a₀ b₀, sorry,
   have ht₀ : t₀ ∈ Ioo a₀ b₀, sorry,
+  have cpct : is_compact ((closed_ball x₀ 1).prod $ Icc a₀ b₀),
+      from (proper_space.is_compact_closed_ball x₀ 1).prod is_compact_Icc,
   obtain ⟨M, M_nonneg, F_bound⟩ : ∃ M : ℝ, 0 ≤ M ∧ ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
-  {
+  { rcases cpct.bdd_above_norm hF.continuous with ⟨M, M_pos : 0 < M, hM⟩,
+    use [M, M_pos.le],
+    exact λ x x_in t t_in, hM (x, t) ⟨ball_subset_closed_ball x_in, mem_Icc_of_Ioo t_in⟩ },
+  obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, lipschitz_on_with K (λ x, F x t) (ball x₀ 1),
+  { have conv : convex ℝ ((closed_ball x₀ 1).prod $ Icc  a₀ b₀),
+    {
+      sorry },
+    rcases hF.lipschitz_on_with conv cpct with ⟨K, hK⟩,
+    use K,
+    intros t t_in,
     sorry },
-  have cont_x : ∀ x, continuous (F x),
+  /- have cont_x : ∀ x, continuous (F x),
     from λ x, hF.continuous.comp (continuous.prod.mk x),
   have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀),
     from λ x, (cont_x x).integrable_on_compact is_compact_Icc,
   have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
     from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
   apply has_fderiv_at_parametric_primitive_of_lip zero_lt_one ha ht₀
-    (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀),
-  exact (cont_x x₀).continuous_at,
-  apply continuous.ae_measurable,
-
-  /- { have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
+    (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀) (cont_x x₀).continuous_at
+    _ _ _ (continuous_at_const : continuous_at (λ (t : ℝ), (K : ℝ)) t₀) (λ t, nnreal.coe_nonneg K),
+  { apply ae_of_all,
+    intro t,
+    apply (times_cont_diff.has_strict_fderiv_at _ le_rfl).has_fderiv_at,
+    rw show (λ x, F x t) = (uncurry F) ∘ (λ x, (x, t)), by { ext, simp },
+    exact hF.comp ((times_cont_diff_prod_left t).of_le le_top) },
+  { apply continuous.ae_measurable,
+    have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
       ((λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (fderiv ℝ $ uncurry F) ∘ (λ t, (x₀, t))),
     { ext t,
       have : has_fderiv_at (λ e, F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀,
-      { exact has_fderiv_at.partial_fst (hF.has_strict_fderiv_at le_rfl).has_fderiv_at },
+        from has_fderiv_at.partial_fst (hF.has_strict_fderiv_at le_rfl).has_fderiv_at,
       rw [this.fderiv] },
     rw this, clear this,
     exact (inl ℝ H ℝ).comp_rightL.continuous.comp ((hF.continuous_fderiv le_rfl).comp $
-      continuous.prod.mk x₀) } -/sorry,
-  all_goals { sorry }
+      continuous.prod.mk x₀) },
+  { refine ae_restrict_of_forall_mem measurable_set_Ioo _,
+    swap,
+    intros t t_in,
+    rw nnabs_coe K,
+    exact F_lip t t_in },
+  { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }   -/sorry
 end
 end
