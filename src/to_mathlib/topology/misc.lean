@@ -1,4 +1,5 @@
 import topology.path_connected
+import topology.urysohns_lemma
 import topology.uniform_space.compact_separated
 
 noncomputable theory
@@ -72,6 +73,41 @@ uniformity_eq_symm.symm
 lemma nhds_eq_comap_uniformity_rev {y : α} : 𝓝 y = (𝓤 α).comap (λ x, (x, y)) :=
 by { rw [uniformity_eq_symm, map_swap_eq_comap_swap, comap_comap], exact nhds_eq_comap_uniformity }
 
+end
+
+end
+
+
+section
+
+variables {α β : Type*} [topological_space α] [topological_space β]
+
+lemma continuous.congr {f g : α → β} (h : continuous f) (h' : ∀ x, f x = g x) : continuous g :=
+by { convert h, ext, rw h' }
+
+end
+
+section -- to separation
+
+variables {α : Type*} [topological_space α]
+
+lemma exists_open_superset_and_is_compact_closure [locally_compact_space α] [t2_space α]
+  {K : set α} (hK : is_compact K) : ∃ V, is_open V ∧ K ⊆ V ∧ is_compact (closure V) :=
+begin
+  rcases exists_compact_superset hK with ⟨K', hK', hKK'⟩,
+  refine ⟨interior K', is_open_interior, hKK',
+    compact_closure_of_subset_compact hK' interior_subset⟩,
+end
+
+-- TODO: wrong proof
+lemma exists_open_between_and_is_compact_closure [locally_compact_space α] [t2_space α]
+  {K U : set α} (hK : is_compact K) (hU : is_open U) (hKU : K ⊆ U) :
+  ∃ V, is_open V ∧ K ⊆ V ∧ closure V ⊆ U ∧ is_compact (closure V) :=
+begin
+  rcases exists_open_superset_and_is_compact_closure hK with ⟨V, hV, hKV, h2V⟩,
+  refine ⟨U ∩ V, hU.inter hV, subset_inter hKU hKV, _,
+    compact_closure_of_subset_compact h2V $ (inter_subset_right _ _).trans subset_closure⟩,
+  sorry
 end
 
 end

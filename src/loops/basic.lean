@@ -18,8 +18,33 @@ open set function finite_dimensional int (hiding range)
 open_locale big_operators topological_space topological_space unit_interval
 noncomputable theory
 
-def nhds_set {α : Type*} [topological_space α] (s : set α) : filter α :=
+section
+variables {α : Type*} [topological_space α]
+def nhds_set (s : set α) : filter α :=
 Sup (nhds '' s)
+
+lemma mem_nhds_set {s t : set α} : s ∈ nhds_set t ↔
+  ∃ U ⊆ s, t ⊆ U ∧ is_open U :=
+begin
+  simp only [nhds_set, filter.mem_Sup, forall_apply_eq_imp_iff₂, mem_image, and_imp,
+    exists_prop, forall_exists_index, mem_nhds_iff],
+  split,
+  { intros h, choose f h1f h2f h3f using h,
+    refine ⟨⋃ (x : α) (h : x ∈ t), f x h, _, _, _⟩,
+    { simpa only [Union_subset_iff] },
+    { intros x hxt, simp only [mem_Union], exact ⟨x, hxt, h3f x hxt⟩ },
+    { exact is_open_Union (λ x, is_open_Union (h2f x)) } },
+  { rintro ⟨U, hUs, htU, hU⟩ x hxt, exact ⟨U, hUs, hU, htU hxt⟩ }
+end
+
+lemma is_open.mem_nhds_set {U s : set α} (hU : is_open U) : U ∈ nhds_set s ↔ s ⊆ U :=
+begin
+  rw [mem_nhds_set], split,
+  { rintro ⟨V, hVU, htV, hV⟩, exact htV.trans hVU },
+  { intro hsU, exact ⟨U, subset.rfl, hsU, hU⟩ }
+end
+
+end
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]

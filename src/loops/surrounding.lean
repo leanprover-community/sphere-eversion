@@ -1,5 +1,6 @@
 import loops.basic
 import tactic.fin_cases
+import topology.metric_space.emetric_paracompact
 
 /-!
 # Surrounding families of loops
@@ -78,11 +79,12 @@ begin
     exact hΩ₀.2 i }
 end
 
-/-- `γ` forms a family of loops surrounding `g` with base `b` -/
+/-- `γ` forms a family of loops surrounding `g` with base `b`.
+In contrast to the notes (TODO: fix) we assume that `base` and `t₀` hold universally. -/
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
-(base : ∀ x t, γ x t 0 = b x)
-(t₀ : ∀ x s, γ x 0 s = b x)
-(surrounds : ∀ x, (γ x 1).surrounds $ g x)
+(base : ∀ (x : E) (t : ℝ), γ x t 0 = b x)
+(t₀ : ∀ (x : E) (s : ℝ), γ x 0 s = b x)
+(surrounds : ∀ x ∈ U, (γ x 1).surrounds $ g x)
 (cont : continuous ↿γ)
 
 namespace surrounding_family
@@ -93,39 +95,43 @@ protected lemma one (h : surrounding_family g b γ U) (x : E) (t : ℝ) : γ x t
 by rw [loop.one, h.base]
 
 protected lemma continuous_b (h : surrounding_family g b γ U) : continuous b :=
-by { rw [← show _  = b, from funext (λ x, h.base x 0)],
-  exact h.cont.comp (continuous_id.prod_mk
-    (continuous_const : continuous (λ _, (0, 0) : _ → ℝ × ℝ))) }
+by { refine continuous.congr _ (λ x, (h.base x 0).symm),
+     exact (h.cont.comp (continuous_id.prod_mk
+      (continuous_const : continuous (λ _, ((0, 0) : ℝ × ℝ))))).continuous_on }
+
+protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ U) :
+  surrounding_family g b γ V :=
+⟨λ x hx, h.base x (hVU hx), λ x hx, h.t₀ x (hVU hx), λ x hx, h.surrounds x (hVU hx), h.cont⟩
 
 /-- A surrounding family induces a family of paths from `b x` to `b x`.
 Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
 family into the family of paths. -/
 @[simps]
-protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) : path (b x) (b x) :=
+protected def path (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) (t : ℝ) :
+  path (b x) (b x) :=
 { to_fun := λ s, γ x t s,
   continuous_to_fun := begin
     refine continuous.comp _ continuous_subtype_coe,
     refine loop.continuous_of_family _ t,
     refine loop.continuous_of_family_step h.cont x
   end,
-  source' := h.base x t,
-  target' := h.one x t }
+  source' := h.base x hx t,
+  target' := h.one hx t }
 
 @[simp]
-lemma path_extend_fract (h : surrounding_family g b γ U) (x : E) (t s : ℝ) :
-  (h.path x t).extend (fract s) = γ x t s :=
+lemma path_extend_fract (h : surrounding_family g b γ U) (t s : ℝ) {x : E} (hx : x ∈ U) :
+  (h.path hx t).extend (fract s) = γ x t s :=
 by { rw [extend_extends _ (unit_interval.fract_mem s), ← loop.fract_eq], refl }
 
 @[simp]
-lemma range_path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
-  range (h.path x t) = range (γ x t) :=
+lemma range_path (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) (t : ℝ) :
+  range (h.path hx t) = range (γ x t) :=
 by simp only [path.coe_mk, surrounding_family.path, range_comp _ coe, subtype.range_coe,
     loop.range_eq_image]
 
 @[simp]
-lemma path_t₀ (h : surrounding_family g b γ U) (x : E) :
-  h.path x 0 = refl (b x) :=
-by { ext t, exact h.t₀ x t }
+lemma path_t₀ (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) : h.path hx 0 = refl (b x) :=
+by { ext t, exact h.t₀ x hx t }
 
 end surrounding_family
 
@@ -222,7 +228,10 @@ lemma ρ_zero : ρ 0 = 1 := by simp
 lemma ρ_half : ρ 2⁻¹ = 1 := by simp
 lemma ρ_one : ρ 1 = 0 := by simp
 
-lemma satisfied_or_refund [locally_compact_space E] {γ₀ γ₁ : E → ℝ → loop F}
+variable [finite_dimensional ℝ E]
+-- I think this is needed because I want to use that `E` is locally compact
+
+lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
     (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧
@@ -230,7 +239,8 @@ lemma satisfied_or_refund [locally_compact_space E] {γ₀ γ₁ : E → ℝ →
     γ 1 = γ₁ ∧
     continuous ↿γ :=
 begin
-  let γ : ℝ → E → ℝ → loop F :=
+  sorry -- need to adapt proof to redefinition of `surrounding_family`.
+  /-let γ : ℝ → E → ℝ → loop F :=
   λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).strans (h₁.path x $ ρ (1 - τ) * t)
     (set.proj_Icc 0 1 zero_le_one (1 - τ)),
   have hγ : continuous ↿γ,
@@ -271,8 +281,9 @@ begin
   { ext x t, simp only [one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend_fract, sub_zero,
       loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one] },
   { ext x t, simp only [path.strans_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
-      surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self] }
+      surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self] }-/
 end
+
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
@@ -281,7 +292,24 @@ lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ 
   ∃ U ∈ nhds_set (K₀ ∪ K₁), ∃ γ : E → ℝ → loop F,
     surrounding_family g b γ U ∧
     ∀ᶠ x in nhds_set K₀, γ x = γ₀ x :=
-sorry
+begin
+  obtain ⟨V₀, hV₀, hKV₀, hVU₀, hcV₀⟩ := exists_open_between_and_is_compact_closure hK₀ hU₀ hKU₀,
+  let L₁ := K₁ \ U₀,
+  have hL₁ : is_compact L₁ := hK₁.diff hU₀,
+  have hV₀L₁ : disjoint (closure V₀) L₁ := disjoint_diff.mono hVU₀ subset.rfl,
+  obtain ⟨V₁, hV₁, hLV₁, hV₁V₀, hcV₁⟩ := exists_open_between_and_is_compact_closure hL₁
+    (hcV₀.is_closed.is_open_compl) (disjoint_iff_subset_compl_left.mp hV₀L₁),
+  rw [← disjoint_iff_subset_compl_left] at hV₁V₀,
+  refine ⟨V₀ ∪ (U₁ ∩ U₀) ∪ V₁, ((hV₀.union $ hU₁.inter hU₀).union hV₁).mem_nhds_set.mpr _, _⟩,
+  { refine union_subset (hKV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
+    rw [← inter_union_diff K₁], exact
+      union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
+  obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
+    exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₁V₀,
+  obtain ⟨γ, hsγ, h0γ, h1γ, hγ⟩ :=
+    satisfied_or_refund (h₀.mono $ inter_subset_right _ _) (h₁.mono $ inter_subset_left _ _),
+  refine ⟨λ x t, γ (ρ x) x t, _, _⟩,
+end
 
 lemma exists_surrounding_loops
   (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
