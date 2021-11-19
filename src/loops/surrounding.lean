@@ -12,7 +12,7 @@ open_locale classical topological_space unit_interval
 noncomputable theory
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+          {F : Type*} [normed_group F] [normed_space ℝ F]
 
 local notation `d` := finrank ℝ F
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
@@ -43,7 +43,8 @@ begin
   exact and.imp_right (λ h3, subset.trans h3 h2),
 end
 
-lemma surrounding_loop_of_convex_hull {f b : F} {O : set F} (O_op : is_open O) (O_conn : is_connected O)
+lemma surrounding_loop_of_convex_hull [finite_dimensional ℝ F] {f b : F} {O : set F}
+  (O_op : is_open O) (O_conn : is_connected O)
   (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) :
   ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧
                     (∀ t, γ t 0 = b) ∧
@@ -126,9 +127,7 @@ protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
   source' := h.base x t,
   target' := h.one x t }
 
-set_option pp.all true
-def continuous_path {X : Type*} [uniform_space X]
-  [separated_space X] [locally_compact_space X] (h : surrounding_family g b γ U)
+lemma continuous_path {X : Type*} [topological_space X] (h : surrounding_family g b γ U)
   {t : X → ℝ} {f : X → E} {s : X → I} (hf : continuous f) (ht : continuous t)
   (hs : continuous s) : continuous (λ x, h.path (f x) (t x) (s x)) :=
 h.cont.comp (hf.prod_mk $ ht.prod_mk hs.subtype_coe)
@@ -158,7 +157,7 @@ structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U :
 variables {g b : E → F} {Ω : set (E × F)} {U K : set E}
 
 
-lemma local_loops
+lemma local_loops [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
   (hΩ_conn : ∀ᶠ x in 𝓝 x₀, is_connected (prod.mk x ⁻¹' Ω))
@@ -243,9 +242,6 @@ lemma ρ_zero : ρ 0 = 1 := by simp
 lemma ρ_half : ρ 2⁻¹ = 1 := by simp
 lemma ρ_one : ρ 1 = 0 := by simp
 
-variable [finite_dimensional ℝ E]
--- I think this is needed because I want to use that `E` is locally compact
-
 section satisfied_or_refund
 
 variables {γ₀ γ₁ : E → ℝ → loop F}
@@ -293,11 +289,13 @@ begin
   { refine continuous_proj_Icc.comp (continuous_const.sub (hτ.comp continuous_fst)) }
 end
 
-lemma continuous_sf_homotopy : continuous ↿(sf_homotopy h₀ h₁) :=
+/-- In this lemmas and the lemmas below we add `finite_dimensional ℝ E` so that we can conclude
+ `locally_compact_space E`. -/
+lemma continuous_sf_homotopy [finite_dimensional ℝ E] : continuous ↿(sf_homotopy h₀ h₁) :=
 continuous.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
   continuous_snd.snd.snd
 
-lemma surrounding_family_sf_homotopy ⦃τ : ℝ⦄ (h : τ ∈ I) :
+lemma surrounding_family_sf_homotopy [finite_dimensional ℝ E] (τ : ℝ) :
   surrounding_family g b (sf_homotopy h₀ h₁ τ) U :=
 begin
   constructor,
@@ -320,10 +318,10 @@ begin
   { exact continuous_const.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd }
 end
 
-lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
+lemma satisfied_or_refund [finite_dimensional ℝ E] {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
-    (∀ τ ∈ I, surrounding_family g b (γ τ) U) ∧
+    (∀ τ, surrounding_family g b (γ τ) U) ∧
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
     continuous ↿γ :=
@@ -332,8 +330,8 @@ lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
 
 end satisfied_or_refund
 
-lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
-  (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
+lemma extends_loops [finite_dimensional ℝ E] {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀)
+  (hU₁ : is_open U₁) (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
   {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U₀) (h₁ : surrounding_family g b γ₁ U₁) :
   ∃ U ∈ nhds_set (K₀ ∪ K₁), ∃ γ : E → ℝ → loop F,
@@ -359,13 +357,13 @@ begin
   let h₀' : surrounding_family g b γ₀ (U₁ ∩ U₀) := h₀.mono (inter_subset_right _ _),
   let h₁' : surrounding_family g b γ₁ (U₁ ∩ U₀) := h₁.mono (inter_subset_left _ _),
   let γ := sf_homotopy h₀' h₁',
-  have hγ : ∀ (τ ∈ I), surrounding_family g b (γ τ) (U₁ ∩ U₀) := surrounding_family_sf_homotopy,
+  have hγ : ∀ τ, surrounding_family g b (γ τ) (U₁ ∩ U₀) := surrounding_family_sf_homotopy,
   refine ⟨λ x t, γ (ρ x) x t, _, _⟩,
-  { refine ⟨λ x, (hγ (ρ x) (hρ x)).base x, λ x, (hγ (ρ x) (hρ x)).t₀ x, _, _⟩,
+  { refine ⟨λ x, (hγ $ ρ x).base x, λ x, (hγ $ ρ x).t₀ x, _, _⟩,
     { rintro x ((hx|hx)|hx),
       { simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero,
           h₀.surrounds x (hVU₀ $ subset_closure hx)] },
-      { simp_rw [γ, (hγ (ρ x) (hρ x)).surrounds x hx] },
+      { simp_rw [γ, (hγ $ ρ x).surrounds x hx] },
       { simp_rw [γ, h1ρ (subset_closure hx), pi.one_apply, sf_homotopy_one,
           h₁.surrounds x (hV₁U₁ $ subset_closure hx)] } },
     { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
@@ -374,7 +372,7 @@ begin
     simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
 end
 
-lemma exists_surrounding_loops
+lemma exists_surrounding_loops [finite_dimensional ℝ E]
   (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
   (hΩ_op : ∀ x ∈ U, is_open (prod.mk x ⁻¹' Ω))
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
@@ -388,4 +386,5 @@ lemma exists_surrounding_loops
 sorry
 
 -- #print axioms satisfied_or_refund
+-- #print axioms extends_loops
 -- #lint
