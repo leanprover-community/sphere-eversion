@@ -126,6 +126,13 @@ protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
   source' := h.base x t,
   target' := h.one x t }
 
+set_option pp.all true
+def continuous_path {X : Type*} [uniform_space X]
+  [separated_space X] [locally_compact_space X] (h : surrounding_family g b γ U)
+  {t : X → ℝ} {f : X → E} {s : X → I} (hf : continuous f) (ht : continuous t)
+  (hs : continuous s) : continuous (λ x, h.path (f x) (t x) (s x)) :=
+h.cont.comp (hf.prod_mk $ ht.prod_mk hs.subtype_coe)
+
 @[simp]
 lemma path_extend_fract (h : surrounding_family g b γ U) (t s : ℝ) (x : E) :
   (h.path x t).extend (fract s) = γ x t s :=
@@ -251,6 +258,8 @@ def sf_homotopy (τ : ℝ) (x : E) (t : ℝ) :=
 loop.of_path $ (h₀.path x $ ρ τ * t).strans (h₁.path x $ ρ (1 - τ) * t)
   (set.proj_Icc 0 1 zero_le_one (1 - τ))
 
+variables {h₀ h₁}
+
 @[simp] lemma sf_homotopy_zero : sf_homotopy h₀ h₁ 0 = γ₀ :=
 begin
   ext x t s,
@@ -265,25 +274,28 @@ begin
     surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self]
 end
 
-
-lemma continuous_sf_homotopy : continuous ↿(sf_homotopy h₀ h₁) :=
+lemma _root_.continuous.sf_homotopy {X : Type*} [uniform_space X]
+  [separated_space X] [locally_compact_space X]
+  {τ t s : X → ℝ} {f : X → E} (hτ : continuous τ) (hf : continuous f) (ht : continuous t)
+  (hs : continuous s) : continuous (λ x, sf_homotopy h₀ h₁ (τ x) (f x) (t x) (s x)) :=
 begin
-  refine continuous.of_path _ _ _ _ continuous_snd.snd.snd,
-  apply continuous.path_strans,
-  { refine h₀.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
-    exact (continuous_ρ.comp continuous_fst.fst.fst).mul continuous_fst.fst.snd.snd.fst,
-    exact continuous_subtype_coe.comp continuous_snd },
-  { refine h₁.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
-    refine (continuous_ρ.comp _).mul continuous_fst.fst.snd.snd.fst,
-    exact continuous_const.sub continuous_fst.fst.fst,
-    exact continuous_subtype_coe.comp continuous_snd },
+  refine continuous.of_path _ _ _ _ hs,
+  refine continuous.path_strans _ _ _ _ _ continuous_snd,
+  { refine h₀.continuous_path (hf.comp continuous_fst.fst) _ continuous_snd,
+    exact (continuous_ρ.comp $ hτ.comp continuous_fst.fst).mul (ht.comp continuous_fst.fst) },
+  { refine h₁.continuous_path (hf.comp continuous_fst.fst) _ continuous_snd,
+    refine (continuous_ρ.comp _).mul (ht.comp continuous_fst.fst),
+    exact continuous_const.sub (hτ.comp continuous_fst.fst) },
   { intros x s hs, simp only [proj_Icc_eq_zero, sub_nonpos] at hs,
     simp only [hs, h₀.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
   { intros x s hs, simp only [proj_Icc_eq_one] at hs,
     simp only [hs, h₁.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
-  { refine continuous_proj_Icc.comp (continuous_const.sub continuous_fst.fst) },
-  { exact continuous_snd }
+  { refine continuous_proj_Icc.comp (continuous_const.sub (hτ.comp continuous_fst)) }
 end
+
+lemma continuous_sf_homotopy : continuous ↿(sf_homotopy h₀ h₁) :=
+continuous.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
+  continuous_snd.snd.snd
 
 lemma surrounding_family_sf_homotopy ⦃τ : ℝ⦄ (h : τ ∈ I) :
   surrounding_family g b (sf_homotopy h₀ h₁ τ) U :=
@@ -305,8 +317,7 @@ begin
       simp only [mul_one, loop.range_of_path, sf_homotopy],
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
         (range_strans_right $ by simp [this]) } },
-  -- `apply` is *much* faster than `exact` on the next line
-  { apply (continuous_sf_homotopy h₀ h₁).comp (continuous_const.prod_mk continuous_id) }
+  { exact continuous_const.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd }
 end
 
 lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
@@ -316,8 +327,8 @@ lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
     continuous ↿γ :=
-⟨sf_homotopy h₀ h₁, surrounding_family_sf_homotopy h₀ h₁, sf_homotopy_zero h₀ h₁,
-  sf_homotopy_one h₀ h₁, continuous_sf_homotopy h₀ h₁⟩
+⟨sf_homotopy h₀ h₁, surrounding_family_sf_homotopy, sf_homotopy_zero, sf_homotopy_one,
+  continuous_sf_homotopy⟩
 
 end satisfied_or_refund
 
@@ -333,25 +344,34 @@ begin
   let L₁ := K₁ \ U₀,
   have hL₁ : is_compact L₁ := hK₁.diff hU₀,
   have hV₀L₁ : disjoint (closure V₀) L₁ := disjoint_diff.mono hVU₀ subset.rfl,
-  obtain ⟨V₁, hV₁, hLV₁, hV₁V₀, hcV₁⟩ := exists_open_between_and_is_compact_closure hL₁
-    (hcV₀.is_closed.is_open_compl) (disjoint_iff_subset_compl_left.mp hV₀L₁),
-  rw [← disjoint_iff_subset_compl_left] at hV₁V₀,
+  obtain ⟨V₁, hV₁, hLV₁, h2V₁, hcV₁⟩ :=
+  exists_open_between_and_is_compact_closure hL₁
+    (hcV₀.is_closed.is_open_compl.inter hU₁)
+    (subset_inter (disjoint_iff_subset_compl_left.mp hV₀L₁) $ (diff_subset _ _).trans hKU₁),
+  rw [subset_inter_iff, ← disjoint_iff_subset_compl_left] at h2V₁,
+  rcases h2V₁ with ⟨hV₀V₁, hV₁U₁⟩,
   refine ⟨V₀ ∪ (U₁ ∩ U₀) ∪ V₁, ((hV₀.union $ hU₁.inter hU₀).union hV₁).mem_nhds_set.mpr _, _⟩,
   { refine union_subset (hKV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
     rw [← inter_union_diff K₁], exact
       union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
   obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
-    exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₁V₀,
+    exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₀V₁,
   let h₀' : surrounding_family g b γ₀ (U₁ ∩ U₀) := h₀.mono (inter_subset_right _ _),
   let h₁' : surrounding_family g b γ₁ (U₁ ∩ U₀) := h₁.mono (inter_subset_left _ _),
   let γ := sf_homotopy h₀' h₁',
-  have hγ : ∀ (τ ∈ I), surrounding_family g b (γ τ) (U₁ ∩ U₀) :=
-  surrounding_family_sf_homotopy h₀' h₁',
+  have hγ : ∀ (τ ∈ I), surrounding_family g b (γ τ) (U₁ ∩ U₀) := surrounding_family_sf_homotopy,
   refine ⟨λ x t, γ (ρ x) x t, _, _⟩,
-  { refine ⟨λ x, (hγ (ρ x) (hρ x)).base x, λ x, (hγ (ρ x) (hρ x)).t₀ x, _, _⟩,  },
+  { refine ⟨λ x, (hγ (ρ x) (hρ x)).base x, λ x, (hγ (ρ x) (hρ x)).t₀ x, _, _⟩,
+    { rintro x ((hx|hx)|hx),
+      { simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero,
+          h₀.surrounds x (hVU₀ $ subset_closure hx)] },
+      { simp_rw [γ, (hγ (ρ x) (hρ x)).surrounds x hx] },
+      { simp_rw [γ, h1ρ (subset_closure hx), pi.one_apply, sf_homotopy_one,
+          h₁.surrounds x (hV₁U₁ $ subset_closure hx)] } },
+    { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
+        continuous_snd.fst continuous_snd.snd } },
   { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
-    have h2x : x ∈ closure V₀ := subset_closure hx,
-    simp only [γ, h0ρ h2x, pi.zero_apply, sf_homotopy_zero] },
+    simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
 end
 
 lemma exists_surrounding_loops

@@ -14,7 +14,7 @@ import lint
 # Basic definitions and properties of loops
 -/
 
-open set function finite_dimensional int (hiding range)
+open set function finite_dimensional int (hiding range) topological_space
 open_locale big_operators topological_space topological_space unit_interval
 noncomputable theory
 
@@ -47,8 +47,8 @@ end
 end
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
-          {F' : Type*} [normed_group F'] [normed_space ℝ F'] [finite_dimensional ℝ F']
+          {F : Type*} [normed_group F] [normed_space ℝ F] --[finite_dimensional ℝ F]
+          {F' : Type*} [normed_group F'] [normed_space ℝ F'] --[finite_dimensional ℝ F']
 
 local notation `d` := finrank ℝ F
 
@@ -68,7 +68,8 @@ structure surrounding_pts (f : F) (p : fin (d + 1) → F) (w : fin (d + 1) → �
 def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
 
-lemma surrounded_iff_mem_interior_convex_hull_aff_basis {f : F} {s : set F} :
+lemma surrounded_iff_mem_interior_convex_hull_aff_basis [finite_dimensional ℝ F]
+  {f : F} {s : set F} :
   surrounded f s ↔ ∃ (b : set F)
                      (h₀ : b ⊆ s)
                      (h₁ : affine_independent ℝ (coe : b → F))
@@ -107,7 +108,8 @@ begin
 end
 
 --- lem:int_cvx
-lemma surrounded_of_convex_hull {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
+lemma surrounded_of_convex_hull [finite_dimensional ℝ F]
+  {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
   surrounded f s :=
 begin
   rw surrounded_iff_mem_interior_convex_hull_aff_basis,
@@ -299,14 +301,19 @@ def transform (γ : loop F) (f : F → F') : loop F' :=
 @[simps]
 def shift (γ : loop F) (x : F) : loop F := γ.transform (+ x)
 
+section integral
+variables [measurable_space F] [borel_space F] [second_countable_topology F] [complete_space F]
+
 /-- The average value of a loop. -/
 noncomputable
-def average [measurable_space F] [borel_space F] (γ : loop F) : F := ∫ x in Icc 0 1, (γ x)
+def average
+  (γ : loop F) : F :=
+∫ x in Icc 0 1, (γ x)
 
-def support {X : Type*} [topological_space X] [measurable_space F] [borel_space F] (γ : X → loop F) : set X :=
+def support {X : Type*} [topological_space X] (γ : X → loop F) : set X :=
 closure {x | γ x ≠ const_loop (γ x).average}
 
-lemma const_of_not_mem_support {X : Type*} [topological_space X] [measurable_space F] [borel_space F] {γ : X → loop F} {x : X}
+lemma const_of_not_mem_support {X : Type*} [topological_space X] {γ : X → loop F} {x : X}
   (hx : x ∉ support γ) : γ x = const_loop (γ x).average :=
 begin
   classical,
@@ -315,6 +322,8 @@ begin
   apply subset_closure,
   exact H
 end
+
+end integral
 
 lemma continuous_of_family {α : Type*} [topological_space α] {γ : α → loop F} (h : continuous ↿γ) :
   ∀ a, continuous (γ a) :=
