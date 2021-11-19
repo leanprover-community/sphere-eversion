@@ -84,8 +84,16 @@ section
 
 variables {α β : Type*} [topological_space α] [topological_space β]
 
+-- basic
 lemma continuous.congr {f g : α → β} (h : continuous f) (h' : ∀ x, f x = g x) : continuous g :=
 by { convert h, ext, rw h' }
+
+-- TODO: rename `finset.closure_Union` to `finset.closure_bUnion`
+
+-- constructions
+lemma continuous.subtype_coe {p : β → Prop} {f : α → subtype p} (hf : continuous f) :
+  continuous (λ x, (f x : β)) :=
+continuous_subtype_coe.comp hf
 
 end
 
@@ -101,15 +109,32 @@ begin
     compact_closure_of_subset_compact hK' interior_subset⟩,
 end
 
--- TODO: wrong proof
-lemma exists_open_between_and_is_compact_closure [locally_compact_space α] [t2_space α]
+lemma exists_compact_between [locally_compact_space α] [regular_space α]
+  {K U : set α} (hK : is_compact K) (hU : is_open U) (hKU : K ⊆ U) :
+  ∃ K', is_compact K' ∧ K ⊆ interior K' ∧ closure K' ⊆ U :=
+begin
+  choose C hxC hCU hC using λ x : K, nhds_is_closed (hU.mem_nhds $ hKU x.2),
+  choose L hL hxL using λ x : K, exists_compact_mem_nhds (x : α),
+  have : K ⊆ ⋃ x, interior (L x) ∩ interior (C x), from
+  λ x hx, mem_Union.mpr ⟨⟨x, hx⟩,
+    ⟨mem_interior_iff_mem_nhds.mpr (hxL _), mem_interior_iff_mem_nhds.mpr (hxC _)⟩⟩,
+  rcases hK.elim_finite_subcover _ _ this with ⟨t, ht⟩,
+  { refine ⟨⋃ x ∈ t, L x ∩ C x, t.compact_bUnion (λ x _, (hL x).inter_right (hC x)), λ x hx, _, _⟩,
+    { obtain ⟨y, hyt, hy : x ∈ interior (L y) ∩ interior (C y)⟩ := mem_bUnion_iff.mp (ht hx),
+      rw [← interior_inter] at hy,
+      refine interior_mono (subset_bUnion_of_mem hyt) hy },
+    { simp_rw [t.closure_Union, Union_subset_iff, ((hL _).is_closed.inter (hC _)).closure_eq],
+      rintro x -, exact (inter_subset_right _ _).trans (hCU _) } },
+  { exact λ _, is_open_interior.inter is_open_interior }
+end
+
+lemma exists_open_between_and_is_compact_closure [locally_compact_space α] [regular_space α]
   {K U : set α} (hK : is_compact K) (hU : is_open U) (hKU : K ⊆ U) :
   ∃ V, is_open V ∧ K ⊆ V ∧ closure V ⊆ U ∧ is_compact (closure V) :=
 begin
-  rcases exists_open_superset_and_is_compact_closure hK with ⟨V, hV, hKV, h2V⟩,
-  refine ⟨U ∩ V, hU.inter hV, subset_inter hKU hKV, _,
-    compact_closure_of_subset_compact h2V $ (inter_subset_right _ _).trans subset_closure⟩,
-  sorry
+  rcases exists_compact_between hK hU hKU with ⟨V, hV, hKV, hVU⟩,
+  refine ⟨interior V, is_open_interior, hKV, (closure_mono interior_subset).trans hVU,
+    compact_closure_of_subset_compact hV interior_subset⟩,
 end
 
 end
