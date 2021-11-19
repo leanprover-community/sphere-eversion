@@ -53,6 +53,8 @@ namespace unit_interval
 
 open int
 lemma fract_mem (x : ℝ) : fract x ∈ I := ⟨fract_nonneg _, (fract_lt_one _).le⟩
+lemma zero_mem : (0 : ℝ) ∈ I := ⟨le_rfl, zero_le_one⟩
+lemma one_mem : (1 : ℝ) ∈ I := ⟨zero_le_one, le_rfl⟩
 
 end unit_interval
 
