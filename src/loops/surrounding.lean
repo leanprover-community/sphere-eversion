@@ -6,7 +6,7 @@ import topology.metric_space.emetric_paracompact
 # Surrounding families of loops
 -/
 
-open set function finite_dimensional int (hiding range) prod function path
+open set function finite_dimensional int (hiding range) prod function path filter
 open_locale classical topological_space unit_interval
 
 noncomputable theory
@@ -95,19 +95,27 @@ protected lemma one (h : surrounding_family g b γ U) (x : E) (t : ℝ) : γ x t
 by rw [loop.one, h.base]
 
 protected lemma continuous_b (h : surrounding_family g b γ U) : continuous b :=
-by { refine continuous.congr _ (λ x, (h.base x 0).symm),
-     exact (h.cont.comp (continuous_id.prod_mk
-      (continuous_const : continuous (λ _, ((0, 0) : ℝ × ℝ))))).continuous_on }
+by { refine continuous.congr _ (λ x, h.base x 0),
+     exact h.cont.comp (continuous_id.prod_mk
+      (continuous_const : continuous (λ _, ((0, 0) : ℝ × ℝ)))) }
+
+protected lemma change_set (h : surrounding_family g b γ U) {V : set E}
+  (hV : ∀ x ∈ V \ U, (γ x 1).surrounds $ g x) :
+  surrounding_family g b γ V :=
+begin
+  refine ⟨h.base, h.t₀, λ x hx, _, h.cont⟩,
+  by_cases h2x : x ∈ U, exact h.surrounds x h2x, exact hV x ⟨hx, h2x⟩
+end
 
 protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ U) :
   surrounding_family g b γ V :=
-⟨λ x hx, h.base x (hVU hx), λ x hx, h.t₀ x (hVU hx), λ x hx, h.surrounds x (hVU hx), h.cont⟩
+⟨h.base, h.t₀, λ x hx, h.surrounds x (hVU hx), h.cont⟩
 
 /-- A surrounding family induces a family of paths from `b x` to `b x`.
 Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
 family into the family of paths. -/
 @[simps]
-protected def path (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) (t : ℝ) :
+protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
   path (b x) (b x) :=
 { to_fun := λ s, γ x t s,
   continuous_to_fun := begin
@@ -115,23 +123,23 @@ protected def path (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) (t :
     refine loop.continuous_of_family _ t,
     refine loop.continuous_of_family_step h.cont x
   end,
-  source' := h.base x hx t,
-  target' := h.one hx t }
+  source' := h.base x t,
+  target' := h.one x t }
 
 @[simp]
-lemma path_extend_fract (h : surrounding_family g b γ U) (t s : ℝ) {x : E} (hx : x ∈ U) :
-  (h.path hx t).extend (fract s) = γ x t s :=
+lemma path_extend_fract (h : surrounding_family g b γ U) (t s : ℝ) (x : E) :
+  (h.path x t).extend (fract s) = γ x t s :=
 by { rw [extend_extends _ (unit_interval.fract_mem s), ← loop.fract_eq], refl }
 
 @[simp]
-lemma range_path (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) (t : ℝ) :
-  range (h.path hx t) = range (γ x t) :=
+lemma range_path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
+  range (h.path x t) = range (γ x t) :=
 by simp only [path.coe_mk, surrounding_family.path, range_comp _ coe, subtype.range_coe,
     loop.range_eq_image]
 
 @[simp]
-lemma path_t₀ (h : surrounding_family g b γ U) {x : E} (hx : x ∈ U) : h.path hx 0 = refl (b x) :=
-by { ext t, exact h.t₀ x hx t }
+lemma path_t₀ (h : surrounding_family g b γ U) (x : E) : h.path x 0 = refl (b x) :=
+by { ext t, exact h.t₀ x t }
 
 end surrounding_family
 
@@ -231,6 +239,76 @@ lemma ρ_one : ρ 1 = 0 := by simp
 variable [finite_dimensional ℝ E]
 -- I think this is needed because I want to use that `E` is locally compact
 
+section satisfied_or_refund
+
+variables {γ₀ γ₁ : E → ℝ → loop F}
+  (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U)
+
+/-- The homotopy of surrounding families of loops used in lemma `satisfied_or_refund`.
+  Having this as a separate definition is useful, because the construction actually gives some
+  more information about the homotopy than the theorem `satisfied_or_refund` gives. -/
+def sf_homotopy (τ : ℝ) (x : E) (t : ℝ) :=
+loop.of_path $ (h₀.path x $ ρ τ * t).strans (h₁.path x $ ρ (1 - τ) * t)
+  (set.proj_Icc 0 1 zero_le_one (1 - τ))
+
+@[simp] lemma sf_homotopy_zero : sf_homotopy h₀ h₁ 0 = γ₀ :=
+begin
+  ext x t s,
+  simp only [sf_homotopy, one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend_fract,
+    sub_zero, loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one]
+end
+
+@[simp] lemma sf_homotopy_one : sf_homotopy h₀ h₁ 1 = γ₁ :=
+begin
+  ext x t s,
+  simp only [sf_homotopy, path.strans_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
+    surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self]
+end
+
+
+lemma continuous_sf_homotopy : continuous ↿(sf_homotopy h₀ h₁) :=
+begin
+  refine continuous.of_path _ _ _ _ continuous_snd.snd.snd,
+  apply continuous.path_strans,
+  { refine h₀.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
+    exact (continuous_ρ.comp continuous_fst.fst.fst).mul continuous_fst.fst.snd.snd.fst,
+    exact continuous_subtype_coe.comp continuous_snd },
+  { refine h₁.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
+    refine (continuous_ρ.comp _).mul continuous_fst.fst.snd.snd.fst,
+    exact continuous_const.sub continuous_fst.fst.fst,
+    exact continuous_subtype_coe.comp continuous_snd },
+  { intros x s hs, simp only [proj_Icc_eq_zero, sub_nonpos] at hs,
+    simp only [hs, h₀.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
+  { intros x s hs, simp only [proj_Icc_eq_one] at hs,
+    simp only [hs, h₁.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
+  { refine continuous_proj_Icc.comp (continuous_const.sub continuous_fst.fst) },
+  { exact continuous_snd }
+end
+
+lemma surrounding_family_sf_homotopy ⦃τ : ℝ⦄ (h : τ ∈ I) :
+  surrounding_family g b (sf_homotopy h₀ h₁ τ) U :=
+begin
+  constructor,
+  { intros x t, simp only [sf_homotopy, unit_interval.mk_zero, zero_le_one, extend_extends,
+      path.source, loop.of_path_apply, left_mem_Icc, fract_zero] },
+  { intros x s, simp only [sf_homotopy, surrounding_family.path_t₀, path.refl_strans_refl,
+      path.refl_extend, loop.of_path_apply, mul_zero] },
+  { intros x hx, cases le_total τ (1 / 2) with h h,
+    { have : τ < 1 := h.trans_lt (by norm_num),
+      refine (h₀.surrounds x hx).mono _,
+      simp only [mul_one, loop.range_of_path, sf_homotopy],
+      refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
+        (range_strans_left $ by simp [this]) },
+    { have : 0 < τ := lt_of_lt_of_le (by norm_num) h,
+      have h : 1 - τ ≤ 1 / 2, { linarith },
+      refine (h₁.surrounds x hx).mono _,
+      simp only [mul_one, loop.range_of_path, sf_homotopy],
+      refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
+        (range_strans_right $ by simp [this]) } },
+  -- `apply` is *much* faster than `exact` on the next line
+  { apply (continuous_sf_homotopy h₀ h₁).comp (continuous_const.prod_mk continuous_id) }
+end
+
 lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
   ∃ γ : ℝ → E → ℝ → loop F,
@@ -238,52 +316,10 @@ lemma satisfied_or_refund {γ₀ γ₁ : E → ℝ → loop F}
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
     continuous ↿γ :=
-begin
-  sorry -- need to adapt proof to redefinition of `surrounding_family`.
-  /-let γ : ℝ → E → ℝ → loop F :=
-  λ τ x t, loop.of_path $ (h₀.path x $ ρ τ * t).strans (h₁.path x $ ρ (1 - τ) * t)
-    (set.proj_Icc 0 1 zero_le_one (1 - τ)),
-  have hγ : continuous ↿γ,
-  { refine continuous.of_path _ _ _ _ continuous_snd.snd.snd,
-    apply continuous.path_strans,
-    { refine h₀.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
-      exact (continuous_ρ.comp continuous_fst.fst.fst).mul continuous_fst.fst.snd.snd.fst,
-      exact continuous_subtype_coe.comp continuous_snd },
-    { refine h₁.cont.comp (continuous_fst.fst.snd.fst.prod_mk (continuous.prod_mk _ _)),
-      refine (continuous_ρ.comp _).mul continuous_fst.fst.snd.snd.fst,
-      exact continuous_const.sub continuous_fst.fst.fst,
-      exact continuous_subtype_coe.comp continuous_snd },
-    { intros x s hs, simp only [proj_Icc_eq_zero, sub_nonpos] at hs,
-      simp only [hs, h₀.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
-    { intros x s hs, simp only [proj_Icc_eq_one] at hs,
-      simp only [hs, h₁.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
-    { refine continuous_proj_Icc.comp (continuous_const.sub continuous_fst.fst) },
-    { exact continuous_snd } },
-  refine ⟨γ, _, _, _, hγ⟩,
-  { intros τ hτ, constructor,
-    { intros x t, simp only [unit_interval.mk_zero, zero_le_one, extend_extends, path.source,
-        loop.of_path_apply, left_mem_Icc, fract_zero] },
-    { intros x s, simp only [surrounding_family.path_t₀, path.refl_strans_refl, path.refl_extend,
-        loop.of_path_apply, mul_zero, γ]},
-    { intros x, cases le_total τ (1 / 2) with h h,
-      { have : τ < 1 := h.trans_lt (by norm_num),
-        refine (h₀.surrounds x).mono _,
-        simp only [mul_one, loop.range_of_path, γ],
-        refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
-          (range_strans_left $ by simp [this]) },
-      { have : 0 < τ := lt_of_lt_of_le (by norm_num) h,
-        have h : 1 - τ ≤ 1 / 2, { linarith },
-        refine (h₁.surrounds x).mono _,
-        simp only [mul_one, loop.range_of_path, γ],
-        refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
-          (range_strans_right $ by simp [this]) } },
-    { exact hγ.comp (continuous_const.prod_mk continuous_id) } },
-  { ext x t, simp only [one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend_fract, sub_zero,
-      loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one] },
-  { ext x t, simp only [path.strans_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
-      surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self] }-/
-end
+⟨sf_homotopy h₀ h₁, surrounding_family_sf_homotopy h₀ h₁, sf_homotopy_zero h₀ h₁,
+  sf_homotopy_one h₀ h₁, continuous_sf_homotopy h₀ h₁⟩
 
+end satisfied_or_refund
 
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
@@ -306,9 +342,16 @@ begin
       union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
   obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
     exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₁V₀,
-  obtain ⟨γ, hsγ, h0γ, h1γ, hγ⟩ :=
-    satisfied_or_refund (h₀.mono $ inter_subset_right _ _) (h₁.mono $ inter_subset_left _ _),
+  let h₀' : surrounding_family g b γ₀ (U₁ ∩ U₀) := h₀.mono (inter_subset_right _ _),
+  let h₁' : surrounding_family g b γ₁ (U₁ ∩ U₀) := h₁.mono (inter_subset_left _ _),
+  let γ := sf_homotopy h₀' h₁',
+  have hγ : ∀ (τ ∈ I), surrounding_family g b (γ τ) (U₁ ∩ U₀) :=
+  surrounding_family_sf_homotopy h₀' h₁',
   refine ⟨λ x t, γ (ρ x) x t, _, _⟩,
+  { refine ⟨λ x, (hγ (ρ x) (hρ x)).base x, λ x, (hγ (ρ x) (hρ x)).t₀ x, _, _⟩,  },
+  { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
+    have h2x : x ∈ closure V₀ := subset_closure hx,
+    simp only [γ, h0ρ h2x, pi.zero_apply, sf_homotopy_zero] },
 end
 
 lemma exists_surrounding_loops
