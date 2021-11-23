@@ -14,7 +14,7 @@ TODO Use mathlib new algebra/periodic.lean
 
 -/
 
-open int (hiding range)
+open int
 
 section interval_integral
 

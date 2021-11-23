@@ -14,7 +14,7 @@ import lint
 # Basic definitions and properties of loops
 -/
 
-open set function finite_dimensional int (hiding range) topological_space
+open set function finite_dimensional int topological_space
 open_locale big_operators topological_space topological_space unit_interval
 noncomputable theory
 
@@ -81,10 +81,11 @@ begin
     have h_tot : affine_span ℝ (range p) = ⊤ :=
       indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
     refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
-    rw interior_convex_hull_aff_basis indep h_tot,
+    let basis : affine_basis (fin (finrank ℝ F + 1)) ℝ F := ⟨p, indep, h_tot⟩, 
+    rw interior_convex_hull_aff_basis basis,
     intros i,
     rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
-      barycentric_coord_apply_combination_of_mem _ _ (finset.mem_univ i) w_sum],
+      basis.coord_apply_combination_of_mem (finset.mem_univ i) w_sum],
     exact w_pos i, },
   { rintros ⟨b, h₀, h₁, h₂, h₃⟩,
     haveI : fintype b := (finite_of_fin_dim_affine_independent ℝ h₁).fintype,
@@ -99,12 +100,13 @@ begin
     rw hp at h₀ h₂ h₃,
     replace h₁ : affine_independent ℝ p :=
       h₁.comp_embedding (fintype.equiv_fin_of_card_eq hb).symm.to_embedding,
-    rw [interior_convex_hull_aff_basis h₁ h₂, mem_set_of_eq] at h₃,
-    refine ⟨p, λ i, barycentric_coord h₁ h₂ i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
-    { exact sum_barycentric_coord_apply_eq_one h₁ h₂ f, },
+    let basis : affine_basis (fin (finrank ℝ F + 1)) ℝ F := ⟨_, h₁, h₂⟩,
+    rw [interior_convex_hull_aff_basis basis, mem_set_of_eq] at h₃,
+    refine ⟨p, λ i, basis.coord i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
+    { exact basis.sum_coord_apply_eq_one f, },
     { rw [← finset.univ.affine_combination_eq_linear_combination p _
-        (sum_barycentric_coord_apply_eq_one h₁ h₂ f),
-        affine_combination_barycentric_coord_eq_self], }, },
+        (basis.sum_coord_apply_eq_one f),
+        basis.affine_combination_coord_eq_self] } }
 end
 
 --- lem:int_cvx
