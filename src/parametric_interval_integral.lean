@@ -40,9 +40,9 @@ lemma has_fderiv_at_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
 begin
   erw ae_interval_oc_iff' at h_diff h_bound,
   simp_rw [ae_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
-  exact (has_fderiv_at_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
+  exact (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
          bound_integrable.1 h_diff.1).sub
-        (has_fderiv_at_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
+        (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
          bound_integrable.2 h_diff.2)
 end
 
@@ -72,9 +72,9 @@ lemma has_fderiv_at_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
 begin
   simp_rw [ae_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
   rw ae_interval_oc at h_lip h_diff,
-  have H₁ := has_fderiv_at_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1
+  have H₁ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1
     h_lip.1 bound_integrable.1 h_diff.1,
-  have H₂ := has_fderiv_at_of_dominated_loc_of_lip ε_pos hF_meas.2 hF_int.2 hF'_meas.2
+  have H₂ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.2 hF_int.2 hF'_meas.2
     h_lip.2 bound_integrable.2 h_diff.2,
   exact ⟨⟨H₁.1, H₂.1⟩, H₁.2.sub H₂.2⟩
 end
@@ -445,13 +445,6 @@ variables {α : Type*} [conditionally_complete_linear_order α]
           {G : Type*} [normed_group G] [measurable_space G]
           (μ : measure α) [is_locally_finite_measure μ]
           (c : G) (a b : α)
-
-@[simp]
-lemma interval_integrable_const : interval_integrable (λ t : α, c) μ a b:=
-begin
-  split ;
-  exact integrable_on.mono_set (is_compact_Icc.integrable_const _ _)  Ioc_subset_Icc_self
-end
 
 end
 

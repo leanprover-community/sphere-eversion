@@ -6,7 +6,7 @@ import topology.metric_space.emetric_paracompact
 # Surrounding families of loops
 -/
 
-open set function finite_dimensional int (hiding range) prod function path filter
+open set function finite_dimensional int prod function path filter
 open_locale classical topological_space unit_interval
 
 noncomputable theory
