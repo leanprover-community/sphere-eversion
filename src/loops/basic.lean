@@ -123,10 +123,13 @@ lemma surrounded_of_convex_hull [finite_dimensional ℝ F]
   surrounded f s :=
 begin
   rw surrounded_iff_mem_interior_convex_hull_aff_basis,
-  obtain ⟨t, hts, hai, hf⟩ := (by simpa only [exists_prop, mem_Union] using convex_hull_eq_union.subst hsf :
-    ∃ (t : finset F), (t : set F) ⊆ s ∧ affine_independent ℝ (coe : t → F) ∧ f ∈ convex_hull ℝ (t : set F)),
+  obtain ⟨t, hts, hai, hf⟩ :=
+    (by simpa only [exists_prop, mem_Union] using convex_hull_eq_union.subst hsf :
+    ∃ (t : finset F), (t : set F) ⊆ s ∧ affine_independent ℝ (coe : t → F) ∧
+      f ∈ convex_hull ℝ (t : set F)),
   have htne : (t : set F).nonempty := (@convex_hull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩,
-  obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := exists_subset_affine_independent_span_eq_top_of_open hs hts htne hai,
+  obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ :=
+    exists_subset_affine_independent_span_eq_top_of_open hs hts htne hai,
   have hb₀ : b.finite, { exact finite_of_fin_dim_affine_independent ℝ hb₃, },
   obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_aff_span_eq_top.mpr hb₄,
   obtain ⟨ε, hε, hcs⟩ := homothety_image_subset_of_open c hs hb₂ hb₀,
@@ -488,7 +491,8 @@ of_path_continuous_family _
 lemma round_trip_family_based_at {x y : X} {γ : path x y} : ∀ t, (round_trip_family γ) t 0 = x :=
 λ t, round_trip_based_at
 
-lemma round_trip_family_zero {x y : X} {γ : path x y} : (round_trip_family γ) 0 = of_path (path.refl x) :=
+lemma round_trip_family_zero {x y : X} {γ : path x y} :
+  (round_trip_family γ) 0 = of_path (path.refl x) :=
 begin
   simp only [round_trip_family, round_trip, path.truncate_zero_zero, of_path],
   ext z,
