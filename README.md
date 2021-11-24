@@ -30,6 +30,7 @@ cd sphere-eversion
 To actually build the blueprint, run
 ```
 leanproject get-mathlib-cache
+leanproject build
 inv all
 ```
 
