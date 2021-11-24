@@ -383,7 +383,12 @@ lemma exists_surrounding_loops [finite_dimensional ℝ E]
   (hγ₀_surr : ∃ V ∈ nhds_set K, surrounding_family_in g b γ₀ V Ω) :
   ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧
                         (∀ᶠ x in nhds_set K, ∀ (t ∈ I), γ x t = γ₀ x t)  :=
-sorry
+begin
+  rcases hγ₀_surr with ⟨V, hV, hγ₀⟩,
+  rw [mem_nhds_set] at hV, rcases hV with ⟨U₀, hU₀, hKU₀, hU₀V⟩,
+  obtain ⟨V₀, hV₀, hKV₀, hVU₀, hcV₀⟩ := exists_open_between_and_is_compact_closure hK hU₀ hKU₀,
+  sorry
+end
 
 -- #print axioms satisfied_or_refund
 -- #print axioms extends_loops
