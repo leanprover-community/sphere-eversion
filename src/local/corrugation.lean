@@ -226,7 +226,7 @@ end
 
 variables (π : E → ℝ) (N : ℝ) {γ : E → loop F} [topological_space E]
 
-lemma support_aux {γ : loop F} (h : γ = const_loop (γ.average)) (b : ℝ) :
+lemma support_aux {γ : loop F} (h : γ = loop.const (γ.average)) (b : ℝ) :
   ∫ t in 0..b, γ t - γ.average = 0  :=
 begin
 
