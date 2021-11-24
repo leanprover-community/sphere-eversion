@@ -18,12 +18,22 @@ open set function finite_dimensional int topological_space
 open_locale big_operators topological_space topological_space unit_interval
 noncomputable theory
 
+variables {X X' Y Z : Type*} [topological_space X]
+variables [topological_space X'] [topological_space Y] [topological_space Z]
+variables {E : Type*} [normed_group E] [normed_space ℝ E]
+          {F : Type*} [normed_group F] [normed_space ℝ F] --[finite_dimensional ℝ F]
+          {F' : Type*} [normed_group F'] [normed_space ℝ F'] --[finite_dimensional ℝ F']
+
+local notation `d` := finrank ℝ F
+
+local notation `smooth_on` := times_cont_diff_on ℝ ⊤
+
 section
-variables {α : Type*} [topological_space α]
-def nhds_set (s : set α) : filter α :=
+/-- The filter of neighborhoods of a set in a topological space. -/
+def nhds_set (s : set X) : filter X :=
 Sup (nhds '' s)
 
-lemma mem_nhds_set {s t : set α} : s ∈ nhds_set t ↔
+lemma mem_nhds_set {s t : set X} : s ∈ nhds_set t ↔
   ∃ U ⊆ s, t ⊆ U ∧ is_open U :=
 begin
   simp only [nhds_set, filter.mem_Sup, forall_apply_eq_imp_iff₂, mem_image, and_imp,
@@ -37,7 +47,7 @@ begin
   { rintro ⟨U, hUs, htU, hU⟩ x hxt, exact ⟨U, hUs, hU, htU hxt⟩ }
 end
 
-lemma is_open.mem_nhds_set {U s : set α} (hU : is_open U) : U ∈ nhds_set s ↔ s ⊆ U :=
+lemma is_open.mem_nhds_set {U s : set X} (hU : is_open U) : U ∈ nhds_set s ↔ s ⊆ U :=
 begin
   rw [mem_nhds_set], split,
   { rintro ⟨V, hVU, htV, hV⟩, exact htV.trans hVU },
@@ -46,25 +56,23 @@ end
 
 end
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] --[finite_dimensional ℝ F]
-          {F' : Type*} [normed_group F'] [normed_space ℝ F'] --[finite_dimensional ℝ F']
-
-local notation `d` := finrank ℝ F
-
-local notation `smooth_on` := times_cont_diff_on ℝ ⊤
-
+/-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
 def smooth_at (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
 
 section surrounding_points
 
 -- def:surrounds_points
+/-- `p` is a collection of points surrounding `f` with weights `w` (that are positive and sum to 1)
+if the weighted average of the points `p` is `f` and the points `p` form an affine basis of the
+space. -/
 structure surrounding_pts (f : F) (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ) : Prop :=
 (indep : affine_independent ℝ p)
 (w_pos : ∀ i, 0 < w i)
 (w_sum : ∑ i, w i = 1)
-(avg : ∑ i, (w i) • (p i) = f)
+(avg : ∑ i, w i • p i = f)
 
+/-- `f` is surrounded by a set `s` if there is an affine basis `p` in `s` with weighted average `f`.
+-/
 def surrounded (f : F) (s : set F) : Prop :=
 ∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
 
@@ -81,7 +89,7 @@ begin
     have h_tot : affine_span ℝ (range p) = ⊤ :=
       indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
     refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
-    let basis : affine_basis (fin (finrank ℝ F + 1)) ℝ F := ⟨p, indep, h_tot⟩, 
+    let basis : affine_basis (fin (finrank ℝ F + 1)) ℝ F := ⟨p, indep, h_tot⟩,
     rw interior_convex_hull_aff_basis basis,
     intros i,
     rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
@@ -144,14 +152,15 @@ end surrounding_points
 namespace path
 
 /-- A loop evaluated at `t / t` is equal to its endpoint. Note that `t / t = 0` for `t = 0`. -/
-@[simp] lemma extend_div_self {x : F} (γ : path x x) (t : ℝ) : γ.extend (t / t) = x :=
+@[simp] lemma extend_div_self {x : X} (γ : path x x) (t : ℝ) :
+  γ.extend (t / t) = x :=
 by by_cases h : t = 0; simp [h]
 
 /-- Concatenation of two loops which moves through the first loop on `[0, t₀]` and
 through the second one on `[t₀, 1]`. All endpoints are assumed to be the same so that this
 function is also well-defined for `t₀ ∈ {0, 1}`.
 `strans` stands either for a *s*kewed transitivity, or a transitivity with different *s*peeds. -/
-def strans {x : F} (γ γ' : path x x) (t₀ : I) : path x x :=
+def strans {x : X} (γ γ' : path x x) (t₀ : I) : path x x :=
 { to_fun := λ t, if t ≤ t₀ then γ.extend (t / t₀) else γ'.extend ((t - t₀) / (1 - t₀)),
   continuous_to_fun :=
   begin
@@ -169,36 +178,36 @@ def strans {x : F} (γ γ' : path x x) (t₀ : I) : path x x :=
     unit_interval.coe_one, implies_true_iff, eq_self_iff_true, comp_app, ite_eq_right_iff]
     {contextual := tt}}
 
-@[simp] lemma strans_zero {x : F} (γ γ' : path x x) : γ.strans γ' 0 = γ' :=
+@[simp] lemma strans_zero {x : X} (γ γ' : path x x) : γ.strans γ' 0 = γ' :=
 by { ext t, simp only [strans, path.coe_mk, if_pos, unit_interval.coe_zero,
   div_one, extend_extends',
   unit_interval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero, ite_eq_right_iff,
   show (t : ℝ) = 0 ↔ t = 0, from (@subtype.ext_iff _ _ t 0).symm, path.source, eq_self_iff_true,
   implies_true_iff] {contextual := tt} }
 
-@[simp] lemma strans_one {x : F} (γ γ' : path x x) : γ.strans γ' 1 = γ :=
+@[simp] lemma strans_one {x : X} (γ γ' : path x x) : γ.strans γ' 1 = γ :=
 by { ext t, simp only [strans, unit_interval.le_one', path.coe_mk, if_pos, div_one,
   extend_extends', unit_interval.coe_one] }
 
-@[simp] lemma strans_of_ge {x : F} (γ γ' : path x x) {t₀ t : I} (h : t₀ ≤ t) :
+@[simp] lemma strans_of_ge {x : X} (γ γ' : path x x) {t₀ t : I} (h : t₀ ≤ t) :
   γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) :=
 begin
   simp only [path.coe_mk, path.strans, ite_eq_right_iff],
   intro h2, obtain rfl := le_antisymm h h2, simp
 end
 
-@[simp] lemma strans_self {x : F} (γ γ' : path x x) (t₀ : I) : γ.strans γ' t₀ t₀ = x :=
+@[simp] lemma strans_self {x : X} (γ γ' : path x x) (t₀ : I) : γ.strans γ' t₀ t₀ = x :=
 by { simp only [strans, path.coe_mk, extend_div_self, if_pos, le_rfl], }
 
-@[simp] lemma refl_strans_refl {x : F} {t₀ : I} : (refl x).strans (refl x) t₀ = refl x :=
+@[simp] lemma refl_strans_refl {x : X} {t₀ : I} : (refl x).strans (refl x) t₀ = refl x :=
 by { ext s, simp [strans] }
 
-lemma range_strans_left {x : F} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 0) :
+lemma range_strans_left {x : X} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 0) :
   range γ ⊆ range (γ.strans γ' t₀) :=
 by { rintro _ ⟨t, rfl⟩, use t * t₀,
   simp [strans, unit_interval.mul_le_right, unit_interval.coe_ne_zero.mpr h] }
 
-lemma range_strans_right {x : F} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 1) :
+lemma range_strans_right {x : X} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 1) :
   range γ' ⊆ range (γ.strans γ' t₀) :=
 begin
   rintro _ ⟨t, rfl⟩,
@@ -212,8 +221,8 @@ begin
 end
 
 -- this lemma is easier if we reorder/reassociate the arguments
-lemma _root_.continuous.path_strans {X : Type*} [uniform_space X] [separated_space X]
-  [locally_compact_space X] {f : X → F} {t : X → I} {s : X → I}
+lemma _root_.continuous.path_strans {X Y : Type*} [uniform_space X] [separated_space X]
+  [locally_compact_space X] [uniform_space Y] {f : X → Y} {t : X → I} {s : X → I}
   {γ γ' : ∀ x, path (f x) (f x)}
   (hγ : continuous ↿γ)
   (hγ' : continuous ↿γ')
@@ -262,61 +271,72 @@ end path
 
 set_option old_structure_cmd true
 
-variables (E F)
+variables (X)
 
+/-- A loop is a function with domain `ℝ` and is periodic with period 1. -/
 structure loop :=
-(to_fun : ℝ → F)
+(to_fun : ℝ → X)
 (per' : ∀ t, to_fun (t + 1) = to_fun t)
 
-instance : has_coe_to_fun (loop F) (λ _, ℝ → F) := ⟨λ γ, γ.to_fun⟩
+instance : has_coe_to_fun (loop X) (λ _, ℝ → X) := ⟨λ γ, γ.to_fun⟩
 
 initialize_simps_projections loop (to_fun → apply)
 
-/-- Any function `φ : α → loop F` can be seen as a function `α × ℝ → F`. -/
+/-- Any function `φ : α → loop X` can be seen as a function `α × ℝ → X`. -/
 @[uncurry_simps]
-instance has_uncurry_loop {α : Type*} : has_uncurry (α → loop F) (α × ℝ) F := ⟨λ φ p, φ p.1 p.2⟩
+instance has_uncurry_loop {α : Type*} : has_uncurry (α → loop X) (α × ℝ) X := ⟨λ φ p, φ p.1 p.2⟩
 
-variables {E F}
-
-@[simps]
-def const_loop (f : F) : loop F :=
-⟨λ t, f, by simp⟩
+variables {X}
 
 namespace loop
 
-@[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop F}, (γ₁ : ℝ → F) = γ₂ → γ₁ = γ₂
+/-- The constant loop. -/
+@[simps]
+def const (f : X) : loop X :=
+⟨λ t, f, by simp⟩
+
+instance [inhabited X] : inhabited (loop X) :=
+⟨loop.const (default X)⟩
+
+@[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
 | ⟨x, h1⟩ ⟨.(x), h2⟩ rfl := rfl
 
 /-- Periodicity of loops restated in terms of the function coercion. -/
-lemma per (γ : loop F) : ∀ t, γ (t + 1) = γ t :=
+lemma per (γ : loop X) : ∀ t, γ (t + 1) = γ t :=
 loop.per' γ
 
-protected lemma one (γ : loop F) : γ 1 = γ 0 :=
+protected lemma one (γ : loop X) : γ 1 = γ 0 :=
 by { convert γ.per 0, rw [zero_add] }
 
 /-- Transforming a loop by applying function `f`. -/
 @[simps]
-def transform (γ : loop F) (f : F → F') : loop F' :=
+def transform (γ : loop X) (f : X → X') : loop X' :=
 ⟨λ t, f (γ t), λ t, by rw γ.per⟩
 
 /-- Shifting a loop, or equivalently, adding a constant value to a loop -/
 @[simps]
-def shift (γ : loop F) (x : F) : loop F := γ.transform (+ x)
+def shift {F : Type*} [add_group F] [topological_space F] (γ : loop F) (x : F) : loop F :=
+γ.transform (+ x)
 
 section integral
 variables [measurable_space F] [borel_space F] [second_countable_topology F] [complete_space F]
 
 /-- The average value of a loop. -/
-noncomputable
-def average
-  (γ : loop F) : F :=
+noncomputable def average (γ : loop F) : F :=
 ∫ x in Icc 0 1, (γ x)
 
-def support {X : Type*} [topological_space X] (γ : X → loop F) : set X :=
-closure {x | γ x ≠ const_loop (γ x).average}
+/-- The support of a family of loops `γ` is the closure of the set all points `x` where `γ x` is not
+constant.
 
-lemma const_of_not_mem_support {X : Type*} [topological_space X] {γ : X → loop F} {x : X}
-  (hx : x ∉ support γ) : γ x = const_loop (γ x).average :=
+Suggestion (Floris): there is probably an easier definition to say "loop `l` is constant" than
+`l = loop.const l.average`. For example `∀ x y, l x = l y`.
+-/
+
+def support (γ : X → loop F) : set X :=
+closure {x | γ x ≠ loop.const (γ x).average}
+
+lemma const_of_not_mem_support {γ : X → loop F} {x : X}
+  (hx : x ∉ support γ) : γ x = loop.const (γ x).average :=
 begin
   classical,
   by_contradiction H,
@@ -327,27 +347,18 @@ end
 
 end integral
 
-lemma continuous_of_family {α : Type*} [topological_space α] {γ : α → loop F} (h : continuous ↿γ) :
-  ∀ a, continuous (γ a) :=
-begin
-  intro a,
-  rw show (γ a : ℝ → F) = ↿γ ∘ (λ t, (a, t)), from rfl,
-  exact h.comp (continuous_const.prod_mk continuous_id')
-end
+lemma continuous_of_family {γ : X → loop X'} (h : continuous ↿γ) (x : X) : continuous (γ x) :=
+h.comp $ continuous_const.prod_mk continuous_id
 
-lemma continuous_of_family_step {α β : Type*} [topological_space α] [topological_space β]
-  {γ : α → β → loop F} (h : continuous ↿γ) : ∀ a, continuous ↿(γ a) :=
-begin
-  intro a,
-  rw show ↿(γ a : β → loop F) = ↿γ ∘ (λ t, (a, t)), from rfl,
-  exact h.comp (continuous_const.prod_mk continuous_id')
-end
+lemma continuous_of_family_step {γ : X → Y → loop Z} (h : continuous ↿γ) (x : X) :
+  continuous ↿(γ x) :=
+h.comp $ continuous_const.prod_mk continuous_id
 
-lemma add_nat_eq (γ : loop F) (t : ℝ) : ∀ (n : ℕ), γ (t+n) = γ t
+lemma add_nat_eq (γ : loop X) (t : ℝ) : ∀ (n : ℕ), γ (t+n) = γ t
 | 0 := (add_zero t).symm ▸ rfl
 | (nat.succ n) := by rw [← add_nat_eq n, nat.cast_succ, ← add_assoc, γ.per]
 
-lemma add_int_eq (γ : loop F) (t : ℝ) (n : ℤ) : γ (t+n) = γ t :=
+lemma add_int_eq (γ : loop X) (t : ℝ) (n : ℤ) : γ (t+n) = γ t :=
 begin
   induction n using int.induction_on with n hn n hn,
   { norm_cast, rw add_zero },
@@ -355,7 +366,7 @@ begin
   { rw [← hn, int.cast_sub, add_sub, int.cast_one, ← γ.per, sub_add_cancel] }
 end
 
-lemma fract_eq (γ : loop F) : ∀ t, γ (fract t) = γ t :=
+lemma fract_eq (γ : loop X) : ∀ t, γ (fract t) = γ t :=
 begin
   intro t,
   unfold fract,
@@ -363,10 +374,10 @@ begin
   exact γ.add_int_eq _ _
 end
 
-lemma comp_fract_eq (γ : loop F) : γ ∘ fract = γ :=
+lemma comp_fract_eq (γ : loop X) : γ ∘ fract = γ :=
 funext γ.fract_eq
 
-lemma range_eq_image (γ : loop F) : range γ = γ '' I :=
+lemma range_eq_image (γ : loop X) : range γ = γ '' I :=
 begin
   apply eq_of_subset_of_subset,
   { rw range_subset_iff,
@@ -375,21 +386,19 @@ begin
     exact ⟨x, hxy⟩ },
 end
 
+/-- Turn a path into a loop. -/
 @[simps]
-noncomputable
-def of_path {x : F} (γ : path x x) : loop F :=
+noncomputable def of_path {x : X} (γ : path x x) : loop X :=
 { to_fun := λ t, γ.extend (fract t),
   per' :=
   begin
     intros t,
     congr' 1,
-    rw fract_eq_fract,
-    use 1,
-    norm_num
+    exact_mod_cast fract_add_int t 1
   end }
 
 @[simp]
-lemma range_of_path {x : F} (γ : path x x) : range (of_path γ) = range γ :=
+lemma range_of_path {x : X} (γ : path x x) : range (of_path γ) = range γ :=
 begin
   rw loop.range_eq_image,
   unfold_coes,
@@ -411,7 +420,7 @@ begin
     rw subtype.ext_iff_val }
 end
 
-lemma of_path_continuous {x : F} (γ : path x x) : continuous (of_path γ) :=
+lemma of_path_continuous {x : X} (γ : path x x) : continuous (of_path γ) :=
 begin
   simp only [has_coe_to_fun.coe, coe_fn, of_path],
   apply γ.continuous_extend.continuous_on.comp_fract,
@@ -431,11 +440,11 @@ lemma continuous_on.comp_fract'' {α β γ : Type*} [linear_ordered_ring α] [fl
 (h.comp_fract' hf).comp (continuous_id.prod_mk hs)
 
 /-- `loop.of_path` is continuous, general version. -/
-lemma _root_.continuous.of_path {ι : Type*} [topological_space ι] (x : ι → F) (t : ι → ℝ)
-  (γ : ∀ (i : ι), path (x i) (x i)) (hγ : continuous ↿γ) (ht : continuous t) :
+lemma _root_.continuous.of_path (x : X → Y) (t : X → ℝ)
+  (γ : ∀ i, path (x i) (x i)) (hγ : continuous ↿γ) (ht : continuous t) :
   continuous (λ i, of_path (γ i) (t i)) :=
 begin
-  change continuous (λ i : ι, (λ s, (γ s).extend) i (fract (t i))),
+  change continuous (λ i, (λ s, (γ s).extend) i (fract (t i))),
   refine continuous_on.comp_fract'' _ ht _,
   { exact (hγ.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
   { simp only [unit_interval.mk_zero, zero_le_one, path.target, path.extend_extends,
@@ -444,41 +453,42 @@ begin
 end
 
 /-- `loop.of_path` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
-lemma of_path_continuous_family {ι : Type*} [topological_space ι] {x : F} (γ : ι → path x x)
+lemma of_path_continuous_family {x : Y} (γ : X → path x x)
   (h : continuous ↿γ) : continuous ↿(λ s, of_path $ γ s) :=
-continuous.of_path _ _ (λ i : ι × ℝ, γ i.1) (h.comp $ continuous_fst.prod_map continuous_id)
+continuous.of_path _ _ (λ i : X × ℝ, γ i.1) (h.comp $ continuous_fst.prod_map continuous_id)
   continuous_snd
 
-def round_trip {x y : F} (γ : path x y) : loop F :=
+/-- The round-trip defined by `γ` is `γ` followed by `γ⁻¹`. -/
+def round_trip {x y : X} (γ : path x y) : loop X :=
 of_path (γ.trans γ.symm)
 
-lemma round_trip_range {x y : F} {γ : path x y} : range (round_trip γ) = range γ :=
+lemma round_trip_range {x y : X} {γ : path x y} : range (round_trip γ) = range γ :=
 by simp [round_trip, range_of_path, path.trans_range, path.symm_range]
 
-lemma round_trip_based_at {x y : F} {γ : path x y} : round_trip γ 0 = x :=
+lemma round_trip_based_at {x y : X} {γ : path x y} : round_trip γ 0 = x :=
 begin
   unfold_coes,
   rw [round_trip, of_path],
   simp [fract_zero]
 end
 
-lemma round_trip_continuous {x y : F} (γ : path x y) : continuous (round_trip γ) :=
+lemma round_trip_continuous {x y : X} (γ : path x y) : continuous (round_trip γ) :=
 of_path_continuous _
 
 noncomputable
-def round_trip_family {x y : F} (γ : path x y) : ℝ → loop F :=
+def round_trip_family {x y : X} (γ : path x y) : ℝ → loop X :=
 have key : ∀ {t}, x = γ.extend (min 0 t) := λ t, (γ.extend_of_le_zero $ min_le_left _ _).symm,
 λ t, round_trip ((γ.truncate 0 t).cast key rfl)
 
-lemma round_trip_family_continuous {x y : F} {γ : path x y} : continuous ↿(round_trip_family γ) :=
+lemma round_trip_family_continuous {x y : X} {γ : path x y} : continuous ↿(round_trip_family γ) :=
 of_path_continuous_family _
   (path.trans_continuous_family _ (γ.truncate_const_continuous_family 0) _ $
     path.symm_continuous_family _ $ γ.truncate_const_continuous_family 0)
 
-lemma round_trip_family_based_at {x y : F} {γ : path x y} : ∀ t, (round_trip_family γ) t 0 = x :=
+lemma round_trip_family_based_at {x y : X} {γ : path x y} : ∀ t, (round_trip_family γ) t 0 = x :=
 λ t, round_trip_based_at
 
-lemma round_trip_family_zero {x y : F} {γ : path x y} : (round_trip_family γ) 0 = of_path (path.refl x) :=
+lemma round_trip_family_zero {x y : X} {γ : path x y} : (round_trip_family γ) 0 = of_path (path.refl x) :=
 begin
   simp only [round_trip_family, round_trip, path.truncate_zero_zero, of_path],
   ext z,
@@ -487,7 +497,7 @@ begin
   simp [path.refl_symm]
 end
 
-lemma round_trip_family_one {x y : F} {γ : path x y} : (round_trip_family γ) 1 = round_trip γ :=
+lemma round_trip_family_one {x y : X} {γ : path x y} : (round_trip_family γ) 1 = round_trip γ :=
 begin
   simp only [round_trip_family, round_trip, path.truncate_zero_one, of_path],
   refl
