@@ -36,6 +36,7 @@ lemma deriv : ∀ t, deriv φ t ≠ 0 := φ.deriv'
 instance {α : Type*} : has_uncurry (α → circle_diffeo) (α × ℝ) ℝ := ⟨λ φ p, φ p.1 p.2⟩
 end circle_diffeo
 
+@[simps {simp_rhs := tt}]
 def loop.reparam (γ : loop F) (φ : circle_diffeo) : loop F :=
 { to_fun := γ ∘ φ,
   per' := λ t, by rw [comp_apply, φ.eqv, γ.per] }
