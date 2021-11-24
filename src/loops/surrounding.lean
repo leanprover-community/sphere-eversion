@@ -46,7 +46,7 @@ end
 lemma surrounding_loop_of_convex_hull [finite_dimensional ℝ F] {f b : F} {O : set F}
   (O_op : is_open O) (O_conn : is_connected O)
   (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) :
-  ∃ γ : ℝ → loop F, continuous_on ↿γ (set.prod I univ) ∧
+  ∃ γ : ℝ → loop F, continuous ↿γ ∧
                     (∀ t, γ t 0 = b) ∧
                     (∀ s, γ 0 s = b) ∧
                     (∀ (t ∈ I) s, γ t s ∈ O) ∧
@@ -58,7 +58,7 @@ begin
   rcases O_conn.joined_in b (p 0) hb (hp 0) with ⟨Ω₁, hΩ₁⟩,
   let γ := loop.round_trip_family (Ω₁.trans Ω₀),
   refine ⟨γ, _, _, _, _, _⟩,
-  { exact loop.round_trip_family_continuous.continuous_on },
+  { exact loop.round_trip_family_continuous },
   { exact loop.round_trip_family_based_at },
   { intro s,
     simp only [γ, loop.round_trip_family_zero],
@@ -156,21 +156,23 @@ structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U :
 
 variables {g b : E → F} {Ω : set (E × F)} {U K : set E}
 
-
+/-- Todo(Floris): reformulate using `surrounding_family_in`. Also define `γ` in a separate
+definition. -/
 lemma local_loops [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
   (hΩ_conn : ∀ᶠ x in 𝓝 x₀, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : ∀ᶠ x in 𝓝 x₀, continuous_at b x)
+  (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : continuous b)
   (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω)
   (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-∃ (γ : E → ℝ → loop F), (∃ (U ∈ 𝓝 x₀), continuous_on ↿γ (set.prod U $ set.prod I univ)) ∧
+∃ (γ : E → ℝ → loop F), continuous ↿γ ∧
   ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s,
   (x, γ x t s) ∈ Ω ∧
   γ x 0 s = b x ∧
   (γ x 1).surrounds (g x) :=
 begin
   have hb_in_x₀ : b x₀ ∈ prod.mk x₀ ⁻¹' Ω := hb_in.self_of_nhds,
+  have hbx₀ : continuous_at b x₀ := hb.continuous_at,
   -- let Ωx₀ : set F := connected_component_in (prod.mk x₀ ⁻¹' Ω) ⟨b x₀, hb_in_x₀⟩,
   have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := is_open_slice_of_is_open_over hΩ_op,
   -- have hΩx₀_op : is_open Ωx₀ := sorry,
@@ -180,22 +182,17 @@ begin
   let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
   use δ,
   have h1δ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
-  { /-filter_upwards [hΩ_op], intros x hΩx_op t ht s, dsimp only [δ, loop.shift_apply],-/ sorry },
-  -- do we need a stronger assumption?
+  { rcases hΩ_op with ⟨U, hUx₀, hU⟩,
+    filter_upwards [hUx₀], intros x hΩx_op t ht s, dsimp only [δ, loop.shift_apply], sorry },
   have h2δ : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
   { sorry }, -- need lemma 1.7
   split,
   { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
-    sorry
-    /- have h1'γ : continuous_at (↿γ ∘ prod.2) (x, t, s),
-    { refine continuous_at.comp _ continuous_at_snd, refine h1γ.continuous_at _, sorry },
-    -- this sorry needs a reformulation of either this or surrounding_loop_of_convex_hull
-    -- there is a mismatch between the continuous_at here and the continuous_on there
-    refine h1'γ.add _,
-    refine continuous_at.sub _ continuous_at_const,
-    exact continuous_at.comp hbx continuous_at_fst -/ },
-  filter_upwards [/-hΩ_op, hΩ_conn, hg, hb_in, hconv,-/ hb, h1δ, h2δ],
-  rintro x hbx h1δx h2δx t ht s,
+    refine (h1γ.comp continuous_snd).add _,
+    refine continuous.sub _ continuous_const,
+    exact hb.comp  continuous_fst },
+  filter_upwards [/-hΩ_op, hΩ_conn, hg, hb_in, hconv,-/ h1δ, h2δ],
+  rintro x h1δx h2δx t ht s,
   refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx⟩,
 end
 
