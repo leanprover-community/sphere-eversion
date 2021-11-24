@@ -14,7 +14,8 @@ To build the repo, run `leanproject build`.
 
 # Build the blueprint
 
-To build the web version of the blue print, you need some packages:
+To build the web version of the blue print, you need a working LaTeX installation.
+Furthermore, you need some packages:
 ```
 sudo apt install graphviz libgraphviz-dev
 pip3 install invoke pandoc
