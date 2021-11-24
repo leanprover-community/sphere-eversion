@@ -1026,4 +1026,26 @@ begin
     exact F_lip t t_in },
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
 end
+
+lemma times_cont_diff_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
+  [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
+  times_cont_diff ℝ n (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) :=
+begin
+  revert F,
+  induction n with n ih,
+  {
+    sorry },
+  { intros F hF,
+    have hF₁ : times_cont_diff ℝ 1 (↿F),
+    /- { apply hF.of_le,
+      norm_cast,
+      exact le_add_self } -/sorry,
+    rw times_cont_diff_succ_iff_fderiv,
+    split,
+    { rintros ⟨x₀, t₀⟩,
+      exact ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff hF₁ x₀ a t₀).2⟩ },
+    { rw times_cont_diff_succ_iff_fderiv at hF,
+      sorry } },
+end
+
 end
