@@ -1,5 +1,6 @@
 import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
+import algebra.module.ulift
 
 noncomputable theory
 
@@ -19,11 +20,14 @@ end
 namespace continuous_linear_map
 
 open interval_integral
-variables {α 𝕜 E H : Type*}
+variables {α 𝕜 E H F : Type*}
 variables [measurable_space α] [is_R_or_C 𝕜] {μ : measure α}
 variables [measurable_space E] [normed_group E] [normed_space 𝕜 E] [borel_space E]
 variables [second_countable_topology E] [complete_space E]
 variables [normed_space ℝ E] [is_scalar_tower ℝ 𝕜 E]
+variables [measurable_space F] [normed_group F] [normed_space 𝕜 F] [borel_space F]
+variables [second_countable_topology F] [complete_space F]
+variables [normed_space ℝ F] [is_scalar_tower ℝ 𝕜 F]
 variables [normed_group H] [normed_space 𝕜 H] [second_countable_topology (H →L[𝕜] E)]
 
 -- lemma set_integral_apply {s : set α} {φ : α → H →L[𝕜] E} (φ_int : integrable_on φ s μ)
@@ -38,6 +42,24 @@ by simp_rw [interval_integral_eq_integral_interval_oc, ← integral_apply φ_int
   continuous_linear_map.coe_smul', pi.smul_apply]
 
 end continuous_linear_map
+
+namespace continuous_linear_equiv
+
+variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_group F] [normed_space 𝕜 F] {G : Type*} [normed_group G] [normed_space 𝕜 G]
+  {f : E → F} {n : with_top ℕ}
+
+--todo: protect `continuous_linear_map.times_cont_diff`/`continuous_linear_equiv.times_cont_diff`
+
+lemma times_cont_diff_comp_iff (e : G ≃L[𝕜] E) :
+  _root_.times_cont_diff 𝕜 n (f ∘ e) ↔ _root_.times_cont_diff 𝕜 n f :=
+by simp_rw [← times_cont_diff_on_univ, ← e.times_cont_diff_on_comp_iff, preimage_univ]
+
+lemma comp_times_cont_diff_iff (e : F ≃L[𝕜] G) :
+  _root_.times_cont_diff 𝕜 n (e ∘ f) ↔ _root_.times_cont_diff 𝕜 n f :=
+by simp_rw [← times_cont_diff_on_univ, ← e.comp_times_cont_diff_on_iff]
+
+end continuous_linear_equiv
 
 section
 variables {E : Type*} [normed_group E] [second_countable_topology E] [normed_space ℝ E]
@@ -1152,8 +1174,8 @@ end
 end
 
 section
-universe u
-variables {E : Type u} [normed_group E] [normed_space ℝ E]
+universe variables u v
+variables {E : Type (max u v)} [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
           {H : Type u} [normed_group H] [normed_space ℝ H]
@@ -1165,7 +1187,10 @@ local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  (to_span_singleton ℝ u).comp φ
 
 
-lemma times_cont_diff_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
+/-- In this version the universe levels have a restriction.
+Use `times_cont_diff_parametric_primitive_of_times_cont_diff'` instead. -/
+lemma times_cont_diff_parametric_primitive_of_times_cont_diff'' {F : H → ℝ → E} {n : ℕ}
+  (hF : times_cont_diff ℝ n ↿F)
   {s : H → ℝ} (hs : times_cont_diff ℝ n s)
   [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
   times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
@@ -1188,11 +1213,123 @@ begin
     { rw times_cont_diff_succ_iff_fderiv at hF,
       rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x a).2.fderiv),
       apply times_cont_diff.add,
-      { apply ih (hs.of_le hn'),
+      { refine ih (hs.of_le hn') _,
         sorry },
       {
         sorry } } },
 
+end
+
+end
+
+section
+
+universe variables v u
+
+variables {E : Type u}
+
+-- set_option pp.universes true
+-- note: we can almost certainly remove all `.{v}` below
+open ulift
+
+@[to_additive, simps apply] def monoid_hom.up [mul_one_class E] : E →* ulift E :=
+⟨up, rfl, λ x y, rfl⟩
+@[to_additive, simps] def monoid_hom.down [mul_one_class E] : ulift E →* E :=
+⟨down, rfl, λ x y, rfl⟩
+
+instance [normed_group E] : normed_group (ulift.{v} E) :=
+normed_group.induced add_monoid_hom.down equiv.ulift.injective
+
+instance {F} [normed_field F] [normed_group E] [normed_space F E] : normed_space F (ulift.{v} E) :=
+{ norm_smul_le := by { rintro x ⟨y⟩, exact normed_space.norm_smul_le x y },
+  ..ulift.module' }
+
+instance {X} [topological_space X] [second_countable_topology X] :
+  second_countable_topology (ulift.{v} X) :=
+homeomorph.ulift.second_countable_topology
+
+instance {X} [uniform_space X] : uniform_space (ulift.{v} X) :=
+uniform_space.comap down ‹_›
+
+lemma uniformity.ulift {X} [uniform_space X] :
+  uniformity (ulift X) = comap (prod.map down down) (uniformity X) :=
+uniformity_comap rfl
+
+lemma uniform_continuous.ulift {X} [uniform_space X] :
+  uniform_continuous (@homeomorph.ulift X _) :=
+by { rw [uniform_continuous, uniformity.ulift], exact tendsto_comap }
+
+lemma homeomorph.complete_space {X Y} [uniform_space X] [uniform_space Y] [complete_space Y]
+  (φ : X ≃ₜ Y) (hφ : uniform_continuous φ) : complete_space X :=
+begin
+  constructor,
+  intros f hf,
+  obtain ⟨y, hy⟩ := complete_space.complete (hf.map hφ),
+  refine ⟨φ.symm y, _⟩,
+  rw [← φ.symm.map_nhds_eq],
+  rw [map_le_iff_le_comap] at hy,
+  convert hy,
+  -- better lemma here would be useful
+  exact map_eq_comap_of_inverse (funext φ.left_inv) (funext φ.right_inv)
+end
+
+instance {X} [uniform_space X] [complete_space X] : complete_space (ulift.{v} X) :=
+homeomorph.complete_space homeomorph.ulift uniform_continuous.ulift
+
+instance {E} [measurable_space E] : measurable_space (ulift.{v} E) :=
+measurable_space.comap down ‹_›
+
+instance {X} [measurable_space X] [topological_space X] [borel_space X] :
+  borel_space (ulift.{v} X) :=
+⟨by { rw [← borel_comap.symm, (borel_space.measurable_eq.symm : borel X = _)], refl }⟩
+
+attribute [simps] mul_equiv.ulift
+
+/-- `ulift M → M` is a linear equivalence. -/
+@[simps {simp_rhs := tt}] def linear_equiv.ulift (R M : Type*)
+  [semiring R] [add_comm_monoid M] [module R M] : ulift.{v} M ≃ₗ[R] M :=
+{ map_smul' := λ x m, rfl, ..add_equiv.ulift }
+
+/-- `ulift M → M` is a continuous linear equivalence -/
+@[simps apply symm_apply {simp_rhs := tt}]
+def continuous_linear_equiv.ulift (R M : Type*) [semiring R] [topological_space M]
+  [add_comm_monoid M] [module R M] : ulift.{v} M ≃L[R] M :=
+{ ..linear_equiv.ulift R M, ..homeomorph.ulift }
+
+lemma times_cont_diff_up {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@up X) :=
+(continuous_linear_equiv.ulift F X).symm.times_cont_diff
+
+lemma times_cont_diff_down {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@down X) :=
+(continuous_linear_equiv.ulift F X).times_cont_diff
+
+lemma times_cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] [normed_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
+  times_cont_diff F n (λ x, up (f x)) ↔ times_cont_diff F n f :=
+(continuous_linear_equiv.ulift F Y).symm.comp_times_cont_diff_iff
+
+variables [normed_group E] [normed_space ℝ E]
+          [complete_space E] [second_countable_topology E]
+          [measurable_space E] [borel_space E]
+          {H : Type v} [normed_group H] [normed_space ℝ H]
+          [finite_dimensional ℝ H]
+
+lemma times_cont_diff_parametric_primitive_of_times_cont_diff'
+  {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
+  {s : H → ℝ} (hs : times_cont_diff ℝ n s)
+  [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
+  times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
+begin
+  have : times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, up.{v} (F x t)) :=
+    times_cont_diff_parametric_primitive_of_times_cont_diff''.{v u} (times_cont_diff_up.comp hF)
+      hs x₀ a,
+  change times_cont_diff ℝ n (λ x : H, ∫ t in a..s x,
+    (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (F x t)) at this,
+  have hFi : ∀ x, interval_integrable (F x) volume a (s x), sorry, -- how to easily get this?
+  simp_rw [continuous_linear_map.interval_integral_comp_comm
+    (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (hFi _)] at this,
+  simpa [times_cont_diff_up_iff] using this,
 end
 
 end
