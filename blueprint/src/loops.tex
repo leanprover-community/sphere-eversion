@@ -27,7 +27,7 @@ All of this chapter is devoted to proving the following proposition.
   \leanok
   Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset.
   Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$,
-  $Ω_x := Ω ∩ (\{x\} × F)$ is open and connected.
+  $Ω_x := Ω ∩ (\{x\} × F)$ is open and connected in $\{x\} × F$.
 
   Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$.
   Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$,
@@ -252,6 +252,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
 \begin{lemma}
   \label{lem:smooth_barycentric_coord}
   \uses{def:surrounds_points}
+  \lean{smooth_surrounding}
   For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
   surrounding $x$, there is a neighborhood $U$ of $\{(x, p)\}$
   and a function $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every
@@ -396,7 +397,7 @@ convex hull of $O$.
   \leanok
   A continuous family of loops $γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$
   surrounds a map $g \co E → F$ with base $β \co E → F$
-  on $U ⊆ E$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every
+  on $U ⊆ E$ in $Ω ⊆ E × F$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every
   $s ∈ 𝕊^1$,
   \begin{itemize}
     \item
@@ -404,10 +405,12 @@ convex hull of $O$.
     \item
       $γ^0_x(s) = β(x)$
     \item
-      $γ^1_x$ surrounds $g(x)$.
+      $γ^1_x$ surrounds $g(x)$
+    \item
+      $(x,γ^t_x(s)) ∈ Ω$.
   \end{itemize}
   The space of such families will be denoted by
-  $\Loop(g, β, U)$.
+  $\Loop(g, β, U, Ω)$.
 \end{definition}
 
 Families of surrounding loops are easy to construct locally.
@@ -449,12 +452,12 @@ as explained in the next lemma.
   \uses{def:family_surrounds}
   \lean{satisfied_or_refund}
   \leanok
-  Each $\Loop(g, β, U)$ is path connected:
-  for every $γ_0$ and $γ_1$ in $\Loop(g, β, U)$,
+  Each $\Loop(g, β, U, Ω)$ is path connected:
+  for every $γ_0$ and $γ_1$ in $\Loop(g, β, U, Ω)$,
   there is a continuous map
   $δ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)$
   which interpolates between $γ_0$ and $γ_1$ in
-  $\Loop(g, β, U)$.
+  $\Loop(g, β, U, Ω)$.
 \end{lemma}
 
 % I (Floris) renamed $γ_{τ, x}^t$ to $δ_{τ, x}^t$ so that we don't have a clash of notation where
@@ -502,9 +505,9 @@ as explained in the next lemma.
   \leanok
   Let $U_0$ and $U_1$ be open sets in $E$.
   Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets.
-  For any $γ_0 ∈ \Loop(U_0, g, β)$ and $γ_1 ∈ \Loop(U_1, g, β)$,
+  For any $γ_0 ∈ \Loop(U_0, g, β, Ω)$ and $γ_1 ∈ \Loop(U_1, g, β, Ω)$,
   there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and
-  there exists $γ ∈ \Loop(U, g, β)$
+  there exists $γ ∈ \Loop(U, g, β, Ω)$
   which coincides with $γ_0$ near $K_0$.
 \end{corollary}
 
