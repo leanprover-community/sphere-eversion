@@ -526,25 +526,6 @@ Click chapter titles to see missing items.
 
 <section>
   
-  <h3>1 Loops</h3>
-  <ul class="coverage">
-    
-    <li>
-      <div class="thm_thmheading">Lemma 1.8 (lem:smooth_barycentric_coord)</div>
-      <div class="thm_thm_content"><p>   For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a neighborhood \(U\) of \(\{ (x, p)\} \) and a function \(w : E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in \(U\), </p>
-<ul class="itemize">
-  <li><p>\(w\) is smooth at \((y, q)\) </p>
-</li>
-  <li><p>\(w(y, q) ∈ (0, 1)\) </p>
-</li>
-  <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\) </p>
-</li>
-</ul>
-</div>
-    </li>
-    
-  </ul>
-  
 </section>
 
 <section>
@@ -625,8 +606,20 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
+      <div class="thm_thmheading">Lemma 1.12 (lem:local_loops)</div>
+      <div class="thm_thm_content"><p>   Assume \(Ω\) is open and connected over some neighborhood of \(x_0\). If \(g(x)\) is in the convex hull of \(Ω_x\) for \(x\) near \(x_0\) then there is a continuous family of loops defined near \(x_0\), based at \(β\), taking value in \(Ω\) and surrounding \(g\). </p>
+</div>
+    </li>
+    
+    <li>
       <div class="thm_thmheading">Lemma 1.15 (lem:∃_surrounding_loops)</div>
       <div class="thm_thm_content"><p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.16 (lem:reparametrization)</div>
+      <div class="thm_thm_content"><p>   Let \(γ \! :E × 𝕊^1 → F\) be a smooth family of loops surrounding a map \(g\) with base \(β\) over some \(U ⊆ E\). There is a family of circle diffeomorphisms \(φ : U × 𝕊^1 → 𝕊^1\) such that each \(γ_x ∘ φ_x\) has average \(g(x)\) and \(φ_x(0) = 0\). </p>
 </div>
     </li>
     
@@ -647,6 +640,20 @@ Click chapter titles to see missing items.
   <li><p>\(\barγ^1_x = g(x)\) </p>
 </li>
   <li><p>\(γ^t_x(s) = β(x)\) if \(x\) is near \(K\). </p>
+</li>
+</ul>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 1.8 (lem:smooth_barycentric_coord)</div>
+      <div class="thm_thm_content"><p>   For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a neighborhood \(U\) of \(\{ (x, p)\} \) and a function \(w : E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in \(U\), </p>
+<ul class="itemize">
+  <li><p>\(w\) is smooth at \((y, q)\) </p>
+</li>
+  <li><p>\(w(y, q) ∈ (0, 1)\) </p>
+</li>
+  <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\) </p>
 </li>
 </ul>
 </div>
