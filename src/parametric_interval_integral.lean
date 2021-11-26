@@ -1051,6 +1051,83 @@ begin
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
 end
 
+local notation `D` := fderiv ℝ
+local notation u ` ⬝ `:70 φ :=  (to_span_singleton ℝ u).comp φ
+
+/-
+A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
+-/
+
+lemma has_fderiv_at_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
+  {s : H → ℝ} (hs : times_cont_diff ℝ 1 s)
+  [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
+  (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a $ s x₀) ∧
+  has_fderiv_at (λ x : H, ∫ t in a..s x, F x t) 
+    ((∫ t in a..s x₀, D (λ x, F x t) x₀) + (F x₀ (s x₀)) ⬝ (D s x₀)) 
+    x₀ :=
+begin
+  set a₀ :=  min a (s x₀) - 1,
+  set b₀ :=  max a (s x₀) + 1,
+  have ha : a ∈ Ioo a₀ b₀,
+  { dsimp [a₀, b₀],
+    split,
+    linarith [min_le_left a (s x₀)],
+    linarith [le_max_left a (s x₀)] },
+  have ht₀ : s x₀ ∈ Ioo a₀ b₀,
+  { dsimp [a₀, b₀],
+    split,
+    linarith [min_le_right a (s x₀)],
+    linarith [le_max_right a (s x₀)] },
+  have cpct : is_compact ((closed_ball x₀ 1).prod $ Icc a₀ b₀),
+      from (proper_space.is_compact_closed_ball x₀ 1).prod is_compact_Icc,
+  obtain ⟨M, M_nonneg, F_bound⟩ : ∃ M : ℝ, 0 ≤ M ∧ ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
+  { rcases cpct.bdd_above_norm hF.continuous with ⟨M, M_pos : 0 < M, hM⟩,
+    use [M, M_pos.le],
+    exact λ x x_in t t_in, hM (x, t) ⟨ball_subset_closed_ball x_in, mem_Icc_of_Ioo t_in⟩ },
+  obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, lipschitz_on_with K (λ x, F x t) (ball x₀ 1),
+  { have conv : convex ℝ ((closed_ball x₀ 1).prod $ Icc  a₀ b₀),
+      from (convex_closed_ball x₀ 1).prod (convex_Icc a₀ b₀),
+    rcases hF.lipschitz_on_with conv cpct with ⟨K, hK⟩,
+    use K,
+    intros t t_in,
+    rw [show (λ (x : H), F x t) = (uncurry F) ∘ (λ x : H, (x, t)), by { ext, simp }, ← mul_one K],
+    apply hK.comp ((lipschitz_with_prod_mk_right t).lipschitz_on_with $ ball x₀ 1),
+    rintros ⟨x, s⟩ ⟨x', hx, h⟩, cases h,
+    refine ⟨ball_subset_closed_ball hx, mem_Icc_of_Ioo t_in⟩ },
+  have cont_x : ∀ x, continuous (F x),
+    from λ x, hF.continuous.comp (continuous.prod.mk x),
+  have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀),
+    from λ x, (cont_x x).integrable_on_compact is_compact_Icc,
+  have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
+    from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
+  apply has_fderiv_at_parametric_primitive_of_lip' zero_lt_one ha ht₀
+    (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀) (cont_x x₀).continuous_at
+    _ _ _ (continuous_at_const : continuous_at (λ (t : ℝ), (K : ℝ)) $ s x₀) (λ t, nnreal.coe_nonneg K),
+  { apply ae_of_all,
+    intro t,
+    apply (times_cont_diff.has_strict_fderiv_at _ le_rfl).has_fderiv_at,
+    rw show (λ x, F x t) = (uncurry F) ∘ (λ x, (x, t)), by { ext, simp },
+    exact hF.comp ((times_cont_diff_prod_left t).of_le le_top) },
+  { exact (times_cont_diff.has_strict_fderiv_at hs le_rfl).has_fderiv_at },
+  { refl },
+  { apply continuous.ae_measurable,
+    have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
+      ((λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (fderiv ℝ $ uncurry F) ∘ (λ t, (x₀, t))),
+    { ext t,
+      have : has_fderiv_at (λ e, F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀,
+        from has_fderiv_at.partial_fst (hF.has_strict_fderiv_at le_rfl).has_fderiv_at,
+      rw [this.fderiv] },
+    rw this, clear this,
+    exact (inl ℝ H ℝ).comp_rightL.continuous.comp ((hF.continuous_fderiv le_rfl).comp $
+      continuous.prod.mk x₀) },
+  { refine ae_restrict_of_forall_mem measurable_set_Ioo _,
+    swap,
+    intros t t_in,
+    rw nnabs_coe K,
+    exact F_lip t t_in },
+  { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
+end
+
 lemma times_cont_diff_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
   [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
   times_cont_diff ℝ n (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) :=
@@ -1070,6 +1147,52 @@ begin
       exact ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff hF₁ x₀ a t₀).2⟩ },
     { rw times_cont_diff_succ_iff_fderiv at hF,
       sorry } },
+end
+
+end
+
+section
+universe u
+variables {E : Type u} [normed_group E] [normed_space ℝ E]
+          [complete_space E] [second_countable_topology E]
+          [measurable_space E] [borel_space E]
+          {H : Type u} [normed_group H] [normed_space ℝ H]
+          [finite_dimensional ℝ H]
+
+open real continuous_linear_map asymptotics
+
+local notation `D` := fderiv ℝ
+local notation u ` ⬝ `:70 φ :=  (to_span_singleton ℝ u).comp φ
+
+
+lemma times_cont_diff_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
+  {s : H → ℝ} (hs : times_cont_diff ℝ n s)
+  [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
+  times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
+begin
+  tactic.unfreeze_local_instances,
+  revert E F,
+  induction n with n ih,
+  {
+    sorry },
+  { have hn : (1 : with_top ℕ) ≤ (n + 1 : ℕ),
+    sorry, --{ exact_mod_cast le_add_self },
+    have hn' : (n : with_top ℕ) ≤ n+1,
+    sorry,
+    introsI E F i₁ i₂ i₃ i₄ i₅ i₆ hF,
+    have hF₁ : times_cont_diff ℝ 1 (↿F),
+      from hF.of_le hn,
+    rw times_cont_diff_succ_iff_fderiv,
+    split,
+    sorry, --{ exact λ x₀, ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x₀ a).2⟩ },
+    { rw times_cont_diff_succ_iff_fderiv at hF,
+      rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x a).2.fderiv),
+      apply times_cont_diff.add,
+      { apply ih (hs.of_le hn'),
+        sorry },
+      { 
+        sorry } } },  
+  
 end
 
 end
