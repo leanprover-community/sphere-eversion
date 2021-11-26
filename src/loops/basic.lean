@@ -142,7 +142,7 @@ begin
   { exact (affine_equiv.homothety_units_mul_hom c t).span_eq_top_iff.mp hb₄, },
 end
 
--- lem:smooth_convex_hull
+-- lem:smooth_barycentric_coord
 lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
   ∀ᶠ y in 𝓝 x, ∀ᶠ q in  𝓝 p, smooth_at (uncurry W) (y, q) ∧
@@ -181,6 +181,15 @@ def strans {x : X} (γ γ' : path x x) (t₀ : I) : path x x :=
     unit_interval.coe_one, implies_true_iff, eq_self_iff_true, comp_app, ite_eq_right_iff]
     {contextual := tt}}
 
+/-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
+  arguments to `γ` lie in `I` after this. -/
+lemma strans_def {x : X} (γ γ' : path x x) {t₀ t : I} :
+  γ.strans γ' t₀ t =
+  if h : t ≤ t₀ then γ ⟨t / t₀, unit_interval.div_mem t.2.1 t₀.2.1 h⟩ else
+  γ' ⟨(t - t₀) / (1 - t₀), unit_interval.div_mem (sub_nonneg.mpr $ le_of_not_le h)
+    (sub_nonneg.mpr t₀.2.2) (sub_le_sub_right t.2.2 t₀)⟩ :=
+by split_ifs; simp [strans, h, ← extend_extends]
+
 @[simp] lemma strans_zero {x : X} (γ γ' : path x x) : γ.strans γ' 0 = γ' :=
 by { ext t, simp only [strans, path.coe_mk, if_pos, unit_interval.coe_zero,
   div_one, extend_extends',
@@ -205,12 +214,12 @@ by { simp only [strans, path.coe_mk, extend_div_self, if_pos, le_rfl], }
 @[simp] lemma refl_strans_refl {x : X} {t₀ : I} : (refl x).strans (refl x) t₀ = refl x :=
 by { ext s, simp [strans] }
 
-lemma range_strans_left {x : X} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 0) :
+lemma subset_range_strans_left {x : X} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 0) :
   range γ ⊆ range (γ.strans γ' t₀) :=
 by { rintro _ ⟨t, rfl⟩, use t * t₀,
   simp [strans, unit_interval.mul_le_right, unit_interval.coe_ne_zero.mpr h] }
 
-lemma range_strans_right {x : X} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 1) :
+lemma subset_range_strans_right {x : X} {γ γ' : path x x} {t₀ : I} (h : t₀ ≠ 1) :
   range γ' ⊆ range (γ.strans γ' t₀) :=
 begin
   rintro _ ⟨t, rfl⟩,
@@ -221,6 +230,15 @@ begin
   have h3 := sub_ne_zero.mpr (unit_interval.coe_ne_one.mpr h).symm,
   use t',
   simp [h2, unit_interval.coe_ne_one.mpr h, h3],
+end
+
+lemma range_strans_subset {x : X} {γ γ' : path x x} {t₀ : I} :
+  range (γ.strans γ' t₀) ⊆ range γ ∪ range γ' :=
+begin
+  rintro _ ⟨t, rfl⟩,
+  by_cases h : t ≤ t₀,
+  { rw [strans_def, dif_pos h], exact or.inl (mem_range_self _) },
+  { rw [strans_def, dif_neg h], exact or.inr (mem_range_self _) }
 end
 
 -- this lemma is easier if we reorder/reassociate the arguments

@@ -49,7 +49,7 @@ lemma surrounding_loop_of_convex_hull [finite_dimensional ℝ F] {f b : F} {O : 
   ∃ γ : ℝ → loop F, continuous ↿γ ∧
                     (∀ t, γ t 0 = b) ∧
                     (∀ s, γ 0 s = b) ∧
-                    (∀ (t ∈ I) s, γ t s ∈ O) ∧
+                    (∀ t s, γ t s ∈ O) ∧
                     (γ 1).surrounds f :=
 begin
   rcases surrounded_of_convex_hull O_op hsf with ⟨p, w, h, hp⟩,
@@ -67,7 +67,7 @@ begin
     { rw trans_range,
       refine union_subset _ hΩ₀.1,
       rwa range_subset_iff },
-    rintros t ⟨ht₀, ht₁⟩,
+    rintros t,
     rw ← range_subset_iff,
     apply trans _ this,
     simp only [γ, loop.round_trip_family, loop.round_trip_range, truncate_range, cast_coe] },
@@ -81,12 +81,17 @@ begin
 end
 
 /-- `γ` forms a family of loops surrounding `g` with base `b`.
-In contrast to the notes (TODO: fix) we assume that `base` and `t₀` hold universally. -/
+In contrast to the notes we assume that `base` and `t₀` hold universally. -/
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
 (base : ∀ (x : E) (t : ℝ), γ x t 0 = b x)
 (t₀ : ∀ (x : E) (s : ℝ), γ x 0 s = b x)
 (surrounds : ∀ x ∈ U, (γ x 1).surrounds $ g x)
 (cont : continuous ↿γ)
+
+/-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
+structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $ E × F)
+  extends surrounding_family g b γ U : Prop :=
+(val_in : ∀ (x : E) (t s : ℝ), (x, γ x t s) ∈ Ω)
 
 namespace surrounding_family
 
@@ -149,12 +154,19 @@ by { ext t, exact h.t₀ x t }
 
 end surrounding_family
 
-/-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
-structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $ E × F)
-  extends surrounding_family g b γ U : Prop :=
-(val_in : ∀ x ∈ U, ∀ (t ∈ I) s, (x, γ x t s) ∈ Ω)
+variables {g b : E → F} {γ : E → ℝ → loop F} {U K : set E} {Ω : set (E × F)}
 
-variables {g b : E → F} {Ω : set (E × F)} {U K : set E}
+namespace surrounding_family_in
+
+/-- Abbreviation for `to_surrounding_family` -/
+abbreviation to_sf (h : surrounding_family_in g b γ U Ω) : surrounding_family g b γ U :=
+h.to_surrounding_family
+
+protected lemma mono (h : surrounding_family_in g b γ U Ω) {V : set E} (hVU : V ⊆ U) :
+  surrounding_family_in g b γ V Ω :=
+⟨h.to_sf.mono hVU, h.val_in⟩
+
+end surrounding_family_in
 
 /-- Todo(Floris): reformulate using `surrounding_family_in`. Also define `γ` in a separate
 definition. -/
@@ -242,7 +254,7 @@ lemma ρ_one : ρ 1 = 0 := by simp
 section satisfied_or_refund
 
 variables {γ₀ γ₁ : E → ℝ → loop F}
-  (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U)
+variables (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U)
 
 /-- The homotopy of surrounding families of loops used in lemma `satisfied_or_refund`.
   Having this as a separate definition is useful, because the construction actually gives some
@@ -305,34 +317,52 @@ begin
       refine (h₀.surrounds x hx).mono _,
       simp only [mul_one, loop.range_of_path, sf_homotopy],
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
-        (range_strans_left $ by simp [this]) },
+        (subset_range_strans_left $ by simp [this]) },
     { have : 0 < τ := lt_of_lt_of_le (by norm_num) h,
       have h : 1 - τ ≤ 1 / 2, { linarith },
       refine (h₁.surrounds x hx).mono _,
       simp only [mul_one, loop.range_of_path, sf_homotopy],
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
-        (range_strans_right $ by simp [this]) } },
+        (subset_range_strans_right $ by simp [this]) } },
   { exact continuous_const.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd }
 end
 
+lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω)
+  (τ : ℝ) (x : E) (t s : ℝ) :
+  (x, sf_homotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
+begin
+  generalize hy : sf_homotopy h₀.to_sf h₁.to_sf τ x t s = y,
+  have h2y : y ∈ range (sf_homotopy h₀.to_sf h₁.to_sf τ x t), { rw [← hy], exact mem_range_self _},
+  rw [sf_homotopy, loop.range_of_path] at h2y,
+  replace h2y := range_strans_subset h2y,
+  rcases h2y with ⟨s', rfl⟩|⟨s', rfl⟩,
+  { exact h₀.val_in _ _ _ },
+  { exact h₁.val_in _ _ _ }
+end
+
+lemma surrounding_family_in_sf_homotopy [finite_dimensional ℝ E]
+  (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω) (τ : ℝ) :
+  surrounding_family_in g b (sf_homotopy h₀.to_sf h₁.to_sf τ) U Ω :=
+⟨surrounding_family_sf_homotopy _, sf_homotopy_in _ _ _⟩
+
 lemma satisfied_or_refund [finite_dimensional ℝ E] {γ₀ γ₁ : E → ℝ → loop F}
-  (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U) :
+  (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω) :
   ∃ γ : ℝ → E → ℝ → loop F,
-    (∀ τ, surrounding_family g b (γ τ) U) ∧
+    (∀ τ, surrounding_family_in g b (γ τ) U Ω) ∧
     γ 0 = γ₀ ∧
     γ 1 = γ₁ ∧
     continuous ↿γ :=
-⟨sf_homotopy h₀ h₁, surrounding_family_sf_homotopy, sf_homotopy_zero, sf_homotopy_one,
-  continuous_sf_homotopy⟩
+⟨sf_homotopy h₀.to_sf h₁.to_sf, surrounding_family_in_sf_homotopy h₀ h₁, sf_homotopy_zero,
+  sf_homotopy_one, continuous_sf_homotopy⟩
 
 end satisfied_or_refund
 
 lemma extends_loops [finite_dimensional ℝ E] {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀)
   (hU₁ : is_open U₁) (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
   {γ₀ γ₁ : E → ℝ → loop F}
-  (h₀ : surrounding_family g b γ₀ U₀) (h₁ : surrounding_family g b γ₁ U₁) :
+  (h₀ : surrounding_family_in g b γ₀ U₀ Ω) (h₁ : surrounding_family_in g b γ₁ U₁ Ω) :
   ∃ U ∈ nhds_set (K₀ ∪ K₁), ∃ γ : E → ℝ → loop F,
-    surrounding_family g b γ U ∧
+    surrounding_family_in g b γ U Ω ∧
     ∀ᶠ x in nhds_set K₀, γ x = γ₀ x :=
 begin
   obtain ⟨V₀, hV₀, hKV₀, hVU₀, hcV₀⟩ := exists_open_between_and_is_compact_closure hK₀ hU₀ hKU₀,
@@ -351,12 +381,13 @@ begin
       union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
   obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
     exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₀V₁,
-  let h₀' : surrounding_family g b γ₀ (U₁ ∩ U₀) := h₀.mono (inter_subset_right _ _),
-  let h₁' : surrounding_family g b γ₁ (U₁ ∩ U₀) := h₁.mono (inter_subset_left _ _),
-  let γ := sf_homotopy h₀' h₁',
-  have hγ : ∀ τ, surrounding_family g b (γ τ) (U₁ ∩ U₀) := surrounding_family_sf_homotopy,
+  let h₀' : surrounding_family_in g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _),
+  let h₁' : surrounding_family_in g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono (inter_subset_left _ _),
+  let γ := sf_homotopy h₀'.to_sf h₁'.to_sf,
+  have hγ : ∀ τ, surrounding_family_in g b (γ τ) (U₁ ∩ U₀) Ω :=
+    surrounding_family_in_sf_homotopy _ _,
   refine ⟨λ x t, γ (ρ x) x t, _, _⟩,
-  { refine ⟨λ x, (hγ $ ρ x).base x, λ x, (hγ $ ρ x).t₀ x, _, _⟩,
+  { refine ⟨⟨λ x, (hγ $ ρ x).base x, λ x, (hγ $ ρ x).t₀ x, _, _⟩, _⟩,
     { rintro x ((hx|hx)|hx),
       { simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero,
           h₀.surrounds x (hVU₀ $ subset_closure hx)] },
@@ -364,7 +395,8 @@ begin
       { simp_rw [γ, h1ρ (subset_closure hx), pi.one_apply, sf_homotopy_one,
           h₁.surrounds x (hV₁U₁ $ subset_closure hx)] } },
     { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
-        continuous_snd.fst continuous_snd.snd } },
+        continuous_snd.fst continuous_snd.snd },
+    { intro x, exact sf_homotopy_in _ _ _ _ } },
   { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
     simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
 end
