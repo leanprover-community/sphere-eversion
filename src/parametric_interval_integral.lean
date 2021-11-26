@@ -1062,8 +1062,8 @@ lemma has_fderiv_at_parametric_primitive_of_times_cont_diff' {F : H → ℝ → 
   {s : H → ℝ} (hs : times_cont_diff ℝ 1 s)
   [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
   (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a $ s x₀) ∧
-  has_fderiv_at (λ x : H, ∫ t in a..s x, F x t) 
-    ((∫ t in a..s x₀, D (λ x, F x t) x₀) + (F x₀ (s x₀)) ⬝ (D s x₀)) 
+  has_fderiv_at (λ x : H, ∫ t in a..s x, F x t)
+    ((∫ t in a..s x₀, D (λ x, F x t) x₀) + (F x₀ (s x₀)) ⬝ (D s x₀))
     x₀ :=
 begin
   set a₀ :=  min a (s x₀) - 1,
@@ -1100,7 +1100,7 @@ begin
     from λ x, (cont_x x).integrable_on_compact is_compact_Icc,
   have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
     from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
-  apply has_fderiv_at_parametric_primitive_of_lip' zero_lt_one ha ht₀
+  apply has_fderiv_at_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀
     (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀) (cont_x x₀).continuous_at
     _ _ _ (continuous_at_const : continuous_at (λ (t : ℝ), (K : ℝ)) $ s x₀) (λ t, nnreal.coe_nonneg K),
   { apply ae_of_all,
@@ -1190,9 +1190,9 @@ begin
       apply times_cont_diff.add,
       { apply ih (hs.of_le hn'),
         sorry },
-      { 
-        sorry } } },  
-  
+      {
+        sorry } } },
+
 end
 
 end
