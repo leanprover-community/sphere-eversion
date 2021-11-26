@@ -1174,7 +1174,7 @@ end
 end
 
 section
-universe variables u v
+universes u v
 variables {E : Type (max u v)} [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
@@ -1213,7 +1213,7 @@ begin
     { rw times_cont_diff_succ_iff_fderiv at hF,
       rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x a).2.fderiv),
       apply times_cont_diff.add,
-      { refine ih (hs.of_le hn') _,
+      { apply ih (hs.of_le hn'),
         sorry },
       {
         sorry } } },
@@ -1224,7 +1224,7 @@ end
 
 section
 
-universe variables v u
+universes v u
 
 variables {E : Type u}
 
