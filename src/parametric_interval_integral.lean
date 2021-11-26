@@ -16,6 +16,29 @@ by { cases x₀, simp [← ball_prod_same] }
 
 end
 
+namespace continuous_linear_map
+
+open interval_integral
+variables {α 𝕜 E H : Type*}
+variables [measurable_space α] [is_R_or_C 𝕜] {μ : measure α}
+variables [measurable_space E] [normed_group E] [normed_space 𝕜 E] [borel_space E]
+variables [second_countable_topology E] [complete_space E]
+variables [normed_space ℝ E] [is_scalar_tower ℝ 𝕜 E]
+variables [normed_group H] [normed_space 𝕜 H] [second_countable_topology (H →L[𝕜] E)]
+
+-- lemma set_integral_apply {s : set α} {φ : α → H →L[𝕜] E} (φ_int : integrable_on φ s μ)
+--   (v : H) : (∫ a in s, φ a ∂μ) v = ∫ a in s, φ a v ∂μ :=
+-- integral_apply φ_int v
+
+variables [linear_order α]
+
+lemma interval_integral_apply {a b : α} {φ : α → H →L[𝕜] E} (φ_int : interval_integrable φ μ a b)
+  (v : H) : (∫ a in a..b, φ a ∂μ) v = ∫ a in a..b, φ a v ∂μ :=
+by simp_rw [interval_integral_eq_integral_interval_oc, ← integral_apply φ_int.def v,
+  continuous_linear_map.coe_smul', pi.smul_apply]
+
+end continuous_linear_map
+
 section
 variables {E : Type*} [normed_group E] [second_countable_topology E] [normed_space ℝ E]
   [complete_space E] [measurable_space E] [borel_space E]
@@ -779,7 +802,7 @@ This statement is a new version using the continuity note in mathlib.
 See commit `39e3f3f` for an older version
 Maybe todo: let `a` depend on `x`.
 -/
-lemma has_fderiv_at_parametric_primitive_of_lip' {F : H → ℝ → E} {F' : ℝ → (H →L[ℝ] E)} {x₀ : H}
+lemma has_fderiv_at_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ → (H →L[ℝ] E)) {x₀ : H}
   {G' : H →L[ℝ] E}
   {bound : ℝ → ℝ}
   {s : H → ℝ}
@@ -927,11 +950,12 @@ lemma has_fderiv_at_parametric_primitive_of_lip {F : H → ℝ → E} {F' : ℝ 
   has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t)
     (coprod (∫ t in a..t₀, F' t) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
 begin
-  split, sorry, -- ignoring this part for now
-  apply (has_fderiv_at_parametric_primitive_of_lip' ε_pos ha _ _ _ _ _ _
-    bound_integrable _ bound_nonneg _ _ _).2,
-  { exact λ t, (F' t).comp (fst ℝ H ℝ) },
-  { apply_instance },
+  have hF' : interval_integrable F' volume a t₀ := sorry, -- ignoring this part for now
+  have h2F' : interval_integrable (λ t, (F' t).comp (fst ℝ H ℝ)) volume a t₀ := sorry,
+  obtain ⟨h₁, h₂⟩ :=
+    has_fderiv_at_parametric_primitive_of_lip' (λ (p : H × ℝ) t, F p.1 t)
+      (λ t, (F' t).comp (fst ℝ H ℝ)) ε_pos ha _ _ _ _ _ _ bound_integrable _ bound_nonneg _ _ _,
+  refine ⟨hF', h₂⟩,
   { exact snd ℝ H ℝ },
   { exact ht₀ },
   { exact λ p hp, hF_meas p.1 (mem_ball_prod.mp hp).1 },
@@ -955,8 +979,8 @@ begin
     continuous_linear_map.add_apply,
     continuous_linear_map.map_zero,
     add_left_eq_self],
-  { sorry }, -- need some form of `continuous_linear_map.interval_integral_apply`
-  { sorry },
+  { simp [continuous_linear_map.interval_integral_apply, hF', h2F'] },
+  { simp [continuous_linear_map.interval_integral_apply, h2F'] }
 end
 
 lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
