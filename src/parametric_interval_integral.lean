@@ -1174,7 +1174,7 @@ end
 end
 
 section
-universes u v
+universe variables u v
 variables {E : Type (max u v)} [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
@@ -1224,7 +1224,7 @@ end
 
 section
 
-universes v u
+universe variables v u
 
 variables {E : Type u}
 
