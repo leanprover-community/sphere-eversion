@@ -6,7 +6,7 @@ import topology.algebra.affine
 import linear_algebra.dimension
 import linear_algebra.affine_space.midpoint
 import data.matrix.notation
-import ..to_mathlib.topology.algebra.instances
+import ..to_mathlib.topology.algebra.module
 
 /-!
 # Ample subsets of real vector spaces
@@ -30,34 +30,6 @@ def ample_set (s : set F) :=
 ∀ x : s, convex_hull ℝ (subtype.val '' (connected_component x)) = univ
 
 section lemma_2_13
-
-lemma continuous_line_map [topological_add_group F] [has_continuous_smul ℝ F] (a b : F) : 
-  continuous (line_map a b : ℝ → F) := 
-begin
-  change continuous (λ x, line_map a b x),
-  conv {congr, funext, rw line_map_apply_module},
-  continuity
-end
-
-lemma segment_eq_image_line_map {α : Type*} [add_comm_group α] [module ℝ α] {a b : α} : 
-  [a -[ℝ] b] = line_map a b '' unit_interval :=
-begin
-  convert segment_eq_image ℝ a b,
-  ext,
-  exact line_map_apply_module _ _ _
-end
-
-lemma convex.is_path_connected' [topological_add_group F] [has_continuous_smul ℝ F] {s : set F} 
-  (hconv : convex ℝ s) (hne : s.nonempty) :
-  is_path_connected s :=
-begin
-  refine is_path_connected_iff.mpr ⟨hne, _⟩,
-  intros x y x_in y_in,
-  have H := hconv.segment_subset x_in y_in,
-  rw segment_eq_image_line_map at H,
-  exact joined_in.of_line (continuous_line_map x y).continuous_on (line_map_apply_zero _ _) 
-    (line_map_apply_one _ _) H
-end
 
 instance foo [topological_add_group F] [has_continuous_smul ℝ F] : path_connected_space F :=
 path_connected_space_iff_univ.mpr $ convex_univ.is_path_connected' ⟨(0 : F), trivial⟩
