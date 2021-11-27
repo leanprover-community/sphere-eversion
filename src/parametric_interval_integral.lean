@@ -523,26 +523,28 @@ variables {α : Type*} [conditionally_complete_linear_order α] [no_bot_order α
           {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
           [second_countable_topology E] [complete_space E]
 
-lemma continuous_parametric_primitive_of_continuous
-  [locally_compact_space X]
-  {F : X → α → E} {a₀ : α}
-  (hF : continuous (λ p : X × α, F p.1 p.2)) :
-  continuous (λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) :=
+theorem continuous_parametric_interval_integral_of_continuous
+  [locally_compact_space X] {a₀ : α}
+  {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2)) 
+  {s : X → α} (hs : continuous s) :
+  continuous (λ x, ∫ t in a₀..s x, F x t ∂μ) :=
 begin
   rw continuous_iff_continuous_at,
-  rintros ⟨x₀, b₀⟩,
+  rintros x₀,
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩,
-  cases no_bot (min a₀ b₀) with a a_lt,
-  cases no_top (max a₀ b₀) with b lt_b,
+  cases no_bot (min a₀ $ s x₀) with a a_lt,
+  cases no_top (max a₀ $ s x₀) with b lt_b,
   rw lt_min_iff at a_lt,
   rw max_lt_iff at lt_b,
   have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩,
-  have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
+  have sx₀_in : s x₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
   obtain ⟨M : ℝ, M_pos : M > 0,
           hM : ∀ (x : X × α), x ∈ U.prod (Icc a b) → ∥(λ (p : X × α), F p.fst p.snd) x∥ ≤ M⟩ :=
     (U_cpct.prod (is_compact_Icc : is_compact $ Icc a b)).bdd_above_norm hF,
-  refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in b₀_in
-    (measure_singleton b₀),
+  change continuous_at ((λ p : X × α, ∫ (t : α) in a₀..p.2, F p.1 t ∂μ) ∘ λ x, (x, s x)) x₀,
+  apply continuous_at.comp _ (continuous_at_id.prod hs.continuous_at),
+  refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in sx₀_in
+    (measure_singleton $s x₀),
   { intro x,
     apply (hF.comp (continuous.prod.mk x)).ae_measurable _ },
   { apply eventually.mono U_nhds (λ x (x_in : x ∈ U), _),
@@ -554,7 +556,7 @@ begin
   { apply interval_integrable_const },
   { apply ae_of_all,
     intros a,
-    apply (hF.comp $ continuous_id.prod_mk continuous_const).continuous_at }
+    apply (hF.comp $ continuous_id.prod_mk continuous_const).continuous_at } 
 end
 
 end
@@ -814,6 +816,14 @@ with_top.coe_le_coe.mpr le_mul_self
 lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] [has_one α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
 with_top.coe_le_coe.mpr le_self_mul
 
+lemma times_cont_diff.of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) : 
+  times_cont_diff 𝕜 n φ :=
+h.of_le (with_top.le_self_add n 1)
+
+lemma times_cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) : 
+  times_cont_diff 𝕜 1 φ :=
+h.of_le (with_top.le_add_self 1 n)
+
 lemma times_cont_diff.times_cont_diff_partial_fst {φ : E → F → G} {n : ℕ} (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) : 
   times_cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
 begin
@@ -1027,7 +1037,11 @@ begin
   { exact hF_int },
   { exact hF_cont },
   { exact (fst ℝ H ℝ).comp_rightL.continuous.measurable.comp_ae_measurable hF'_meas },
-  { filter_upwards [h_lipsch], intros t ht, sorry }, -- cannot find lipschitz_on_with.comp,
+  { filter_upwards [h_lipsch], intros t, generalize : nnabs (bound t) = K, intros ht,
+    rw [show (λ x : H × ℝ, F x.1 t) = (λ x, F x t) ∘ prod.fst, by { ext, simp }, ← mul_one K],
+    apply ht.comp (lipschitz_with.prod_fst.lipschitz_on_with _),
+    rintros _ ⟨p, p_in, rfl⟩,
+    exact (mem_ball_prod.mp p_in).1 },
   exact bound_cont,
   { filter_upwards [h_diff],
     rintros t (ht : has_fderiv_at (λ (x : H), F x t) (F' t) (x₀, t₀).1),
@@ -1118,6 +1132,7 @@ end
 
 local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
+local notation `∂₁` := partial_fderiv_fst ℝ
 
 /-
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
@@ -1128,7 +1143,7 @@ lemma has_fderiv_at_parametric_primitive_of_times_cont_diff' {F : H → ℝ → 
   [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
   (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a $ s x₀) ∧
   has_fderiv_at (λ x : H, ∫ t in a..s x, F x t)
-    ((∫ t in a..s x₀, D (λ x, F x t) x₀) + (F x₀ (s x₀)) ⬝ (D s x₀))
+    ((∫ t in a..s x₀, ∂₁F x₀ t) + (F x₀ (s x₀)) ⬝ (D s x₀))
     x₀ :=
 begin
   set a₀ :=  min a (s x₀) - 1,
@@ -1193,6 +1208,8 @@ begin
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
 end
 
+/- 
+/- The WIP version below is not Florised, it should probably be dropped. Do not work on it unless the other version fails. -/
 lemma times_cont_diff_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
   [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
   times_cont_diff ℝ n (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) :=
@@ -1212,7 +1229,7 @@ begin
       exact ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff hF₁ x₀ a t₀).2⟩ },
     { rw times_cont_diff_succ_iff_fderiv at hF,
       sorry } },
-end
+end -/
 
 end
 
@@ -1228,7 +1245,7 @@ open real continuous_linear_map asymptotics
 
 local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
-
+local notation `∂₁` := partial_fderiv_fst ℝ
 
 /-- In this version the universe levels have a restriction.
 Use `times_cont_diff_parametric_primitive_of_times_cont_diff'` instead. -/
@@ -1240,35 +1257,21 @@ lemma times_cont_diff_parametric_primitive_of_times_cont_diff'' {F : H → ℝ �
 begin
   tactic.unfreeze_local_instances,
   revert E F,
-  induction n with n ih,
-  {
-    sorry },
-  { have hn : (1 : with_top ℕ) ≤ (n + 1 : ℕ),
-    sorry, --{ exact_mod_cast le_add_self },
-    have hn' : (n : with_top ℕ) ≤ n+1,
-    sorry,
-    introsI E F i₁ i₂ i₃ i₄ i₅ i₆ hF,
-    have hF₁ : times_cont_diff ℝ 1 (↿F),
-      from hF.of_le hn,
+  induction n with n ih; introsI E F i₁ i₂ i₃ i₄ i₅ i₆ hF,
+  { rw [with_top.coe_zero, times_cont_diff_zero] at *,
+    exact continuous_parametric_interval_integral_of_continuous hF hs },
+  { have hF₁ : times_cont_diff ℝ 1 (↿F), from hF.one_of_succ,
+    have hs₁ : times_cont_diff ℝ 1 s, from hs.one_of_succ,
     rw times_cont_diff_succ_iff_fderiv,
     split,
-    sorry, --{ exact λ x₀, ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x₀ a).2⟩ },
-    { rw times_cont_diff_succ_iff_fderiv at hF,
-      rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x a).2.fderiv),
+    { exact λ x₀, ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x₀ a).2⟩ },
+    { rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x a).2.fderiv),
       apply times_cont_diff.add,
-      { apply ih (hs.of_le hn'),
-        dsimp only at hF,
-        have : ↿(λ x t, D (λ x, F x t) x) = (λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (D $ uncurry F),
-        /- { have : ∀ p : H × ℝ, has_fderiv_at (uncurry F) _ p := λ p, (hF.1 p).has_fderiv_at,
-          rw funext (λ x : H , funext $ λ t : ℝ, (this (x, t)).partial_fst.fderiv),
-          ext ⟨y, t⟩, 
-          refl } -/sorry,
-        rw this,
-        apply times_cont_diff.comp _ hF.2,
-        exact ((inl ℝ H ℝ).comp_rightL : (H × ℝ →L[ℝ] E) →L[ℝ] H →L[ℝ] E).times_cont_diff },
-      {
-        sorry } } },
-
+      { apply ih hs.of_succ,
+        apply times_cont_diff.times_cont_diff_partial_fst,
+        exact hF },
+      { exact is_bounded_bilinear_map_smul_right.times_cont_diff.comp 
+          ((times_cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $ times_cont_diff_id.prod hs.of_succ) } } }
 end
 
 end
@@ -1377,7 +1380,8 @@ begin
       hs x₀ a,
   change times_cont_diff ℝ n (λ x : H, ∫ t in a..s x,
     (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (F x t)) at this,
-  have hFi : ∀ x, interval_integrable (F x) volume a (s x), sorry, -- how to easily get this?
+  have hFi : ∀ x, interval_integrable (F x) volume a (s x),
+    from λ x, continuous.interval_integrable (hF.continuous.comp $ continuous.prod.mk x) _ _,
   simp_rw [continuous_linear_map.interval_integral_comp_comm
     (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (hFi _)] at this,
   simpa [times_cont_diff_up_iff] using this,
