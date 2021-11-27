@@ -272,13 +272,11 @@ begin
     { intro x,
       apply per_corrugation } },
   use C,
-  intro x, -- TODO: learn is_O API better to get nicer proof below
-  rw is_O_with_iff,
-  apply eventually_of_forall,
+  intro x, 
+  apply is_O_with_of_le',
   intro N,
   rw [corrugation, norm_smul, mul_comm],
-  specialize hC x (N*π x),
-  exact mul_le_mul hC (le_refl _) (norm_nonneg _) (le_trans (norm_nonneg _) hC),
+  exact mul_le_mul_of_nonneg_right (hC x (N*π x)) (norm_nonneg _)
 end
 
 variables [normed_group E] [normed_space ℝ E]
