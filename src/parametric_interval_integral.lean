@@ -523,28 +523,26 @@ variables {α : Type*} [conditionally_complete_linear_order α] [no_bot_order α
           {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
           [second_countable_topology E] [complete_space E]
 
-theorem continuous_parametric_interval_integral_of_continuous
-  [locally_compact_space X] {a₀ : α}
-  {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2)) 
-  {s : X → α} (hs : continuous s) :
-  continuous (λ x, ∫ t in a₀..s x, F x t ∂μ) :=
+lemma continuous_parametric_primitive_of_continuous
+  [locally_compact_space X]
+  {F : X → α → E} {a₀ : α}
+  (hF : continuous (λ p : X × α, F p.1 p.2)) :
+  continuous (λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) :=
 begin
   rw continuous_iff_continuous_at,
-  rintros x₀,
+  rintros ⟨x₀, b₀⟩,
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩,
-  cases no_bot (min a₀ $ s x₀) with a a_lt,
-  cases no_top (max a₀ $ s x₀) with b lt_b,
+  cases no_bot (min a₀ b₀) with a a_lt,
+  cases no_top (max a₀ b₀) with b lt_b,
   rw lt_min_iff at a_lt,
   rw max_lt_iff at lt_b,
   have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩,
-  have sx₀_in : s x₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
+  have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
   obtain ⟨M : ℝ, M_pos : M > 0,
           hM : ∀ (x : X × α), x ∈ U.prod (Icc a b) → ∥(λ (p : X × α), F p.fst p.snd) x∥ ≤ M⟩ :=
     (U_cpct.prod (is_compact_Icc : is_compact $ Icc a b)).bdd_above_norm hF,
-  change continuous_at ((λ p : X × α, ∫ (t : α) in a₀..p.2, F p.1 t ∂μ) ∘ λ x, (x, s x)) x₀,
-  apply continuous_at.comp _ (continuous_at_id.prod hs.continuous_at),
-  refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in sx₀_in
-    (measure_singleton $s x₀),
+  refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in b₀_in
+    (measure_singleton b₀),
   { intro x,
     apply (hF.comp (continuous.prod.mk x)).ae_measurable _ },
   { apply eventually.mono U_nhds (λ x (x_in : x ∈ U), _),
@@ -556,8 +554,17 @@ begin
   { apply interval_integrable_const },
   { apply ae_of_all,
     intros a,
-    apply (hF.comp $ continuous_id.prod_mk continuous_const).continuous_at } 
+    apply (hF.comp $ continuous_id.prod_mk continuous_const).continuous_at }
 end
+
+theorem continuous_parametric_interval_integral_of_continuous
+  [locally_compact_space X] {a₀ : α}
+  {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2)) 
+  {s : X → α} (hs : continuous s) :
+  continuous (λ x, ∫ t in a₀..s x, F x t ∂μ) :=
+show continuous ((λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) ∘ (λ x, (x, s x))), 
+from (continuous_parametric_primitive_of_continuous hF).comp (continuous_id.prod_mk hs)
+
 
 end
 
