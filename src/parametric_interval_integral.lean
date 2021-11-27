@@ -701,9 +701,17 @@ begin
   apply has_fderiv_at_prod_left
 end
 
+variable (𝕜)
+
+def partial_fderiv_fst (φ : E → F → G) := λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
+
+local notation `∂₁` := partial_fderiv_fst 
+
+variable {𝕜}
+
 lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  fderiv 𝕜 (λ e, φ e f₀) e₀ = φ'.comp (inl 𝕜 E F) :=
+  ∂₁ 𝕜 φ e₀ f₀ = φ'.comp (inl 𝕜 E F) :=
 h.partial_fst.fderiv
 
 lemma times_cont_diff_prod_left (f₀ : F) : times_cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
@@ -785,6 +793,41 @@ def continuous_linear_map.comp_leftL (φ  : F →L[𝕜] G) : (E →L[𝕜] F) �
     { intros ψ,
       apply op_norm_comp_le }
   end }
+
+lemma differentiable.fderiv_partial_fst {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) : 
+  ↿(∂₁ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
+begin
+  have : ∀ p : E × F, has_fderiv_at (uncurry φ) _ p,
+  { intro p,
+    exact (hF p).has_fderiv_at },
+  dsimp [partial_fderiv_fst],
+  rw funext (λ x : E , funext $ λ t : F, (this (x, t)).partial_fst.fderiv),
+  ext ⟨y, t⟩, 
+  refl
+end
+
+@[to_additive]
+lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] [has_one α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
+with_top.coe_le_coe.mpr le_mul_self
+
+@[to_additive]
+lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] [has_one α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
+with_top.coe_le_coe.mpr le_self_mul
+
+lemma times_cont_diff.times_cont_diff_partial_fst {φ : E → F → G} {n : ℕ} (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) : 
+  times_cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
+begin
+  cases times_cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
+  rw (hF.differentiable $ with_top.le_add_self 1 n).fderiv_partial_fst,
+  apply times_cont_diff.comp _ hF₂,
+  exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).times_cont_diff
+end
+
+lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF : times_cont_diff 𝕜 ⊤ (uncurry φ)) : 
+  times_cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
+times_cont_diff_top.mpr (λ n, (times_cont_diff_top.mp hF (n + 1)).times_cont_diff_partial_fst)
+
+
 end calculus
 
 section real_calculus
@@ -1074,7 +1117,7 @@ begin
 end
 
 local notation `D` := fderiv ℝ
-local notation u ` ⬝ `:70 φ :=  (to_span_singleton ℝ u).comp φ
+local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 
 /-
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
@@ -1184,7 +1227,7 @@ variables {E : Type (max u v)} [normed_group E] [normed_space ℝ E]
 open real continuous_linear_map asymptotics
 
 local notation `D` := fderiv ℝ
-local notation u ` ⬝ `:70 φ :=  (to_span_singleton ℝ u).comp φ
+local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 
 
 /-- In this version the universe levels have a restriction.
@@ -1214,7 +1257,15 @@ begin
       rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ (hs.of_le hn) x a).2.fderiv),
       apply times_cont_diff.add,
       { apply ih (hs.of_le hn'),
-        sorry },
+        dsimp only at hF,
+        have : ↿(λ x t, D (λ x, F x t) x) = (λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (D $ uncurry F),
+        /- { have : ∀ p : H × ℝ, has_fderiv_at (uncurry F) _ p := λ p, (hF.1 p).has_fderiv_at,
+          rw funext (λ x : H , funext $ λ t : ℝ, (this (x, t)).partial_fst.fderiv),
+          ext ⟨y, t⟩, 
+          refl } -/sorry,
+        rw this,
+        apply times_cont_diff.comp _ hF.2,
+        exact ((inl ℝ H ℝ).comp_rightL : (H × ℝ →L[ℝ] E) →L[ℝ] H →L[ℝ] E).times_cont_diff },
       {
         sorry } } },
 
