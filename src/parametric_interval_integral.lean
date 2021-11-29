@@ -559,10 +559,10 @@ end
 
 theorem continuous_parametric_interval_integral_of_continuous
   [locally_compact_space X] {a₀ : α}
-  {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2)) 
+  {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2))
   {s : X → α} (hs : continuous s) :
   continuous (λ x, ∫ t in a₀..s x, F x t ∂μ) :=
-show continuous ((λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) ∘ (λ x, (x, s x))), 
+show continuous ((λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) ∘ (λ x, (x, s x))),
 from (continuous_parametric_primitive_of_continuous hF).comp (continuous_id.prod_mk hs)
 
 
@@ -712,9 +712,10 @@ end
 
 variable (𝕜)
 
-def partial_fderiv_fst (φ : E → F → G) := λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
+def partial_fderiv_fst {F : Type*} (φ : E → F → G) :=
+λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
 
-local notation `∂₁` := partial_fderiv_fst 
+local notation `∂₁` := partial_fderiv_fst
 
 variable {𝕜}
 
@@ -803,7 +804,7 @@ def continuous_linear_map.comp_leftL (φ  : F →L[𝕜] G) : (E →L[𝕜] F) �
       apply op_norm_comp_le }
   end }
 
-lemma differentiable.fderiv_partial_fst {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) : 
+lemma differentiable.fderiv_partial_fst {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) :
   ↿(∂₁ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
 begin
   have : ∀ p : E × F, has_fderiv_at (uncurry φ) _ p,
@@ -811,27 +812,27 @@ begin
     exact (hF p).has_fderiv_at },
   dsimp [partial_fderiv_fst],
   rw funext (λ x : E , funext $ λ t : F, (this (x, t)).partial_fst.fderiv),
-  ext ⟨y, t⟩, 
+  ext ⟨y, t⟩,
   refl
 end
 
 @[to_additive]
-lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] [has_one α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
+lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
 with_top.coe_le_coe.mpr le_mul_self
 
 @[to_additive]
-lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] [has_one α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
+lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
 with_top.coe_le_coe.mpr le_self_mul
 
-lemma times_cont_diff.of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) : 
+lemma times_cont_diff.of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) :
   times_cont_diff 𝕜 n φ :=
 h.of_le (with_top.le_self_add n 1)
 
-lemma times_cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) : 
+lemma times_cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) :
   times_cont_diff 𝕜 1 φ :=
 h.of_le (with_top.le_add_self 1 n)
 
-lemma times_cont_diff.times_cont_diff_partial_fst {φ : E → F → G} {n : ℕ} (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) : 
+lemma times_cont_diff.times_cont_diff_partial_fst {φ : E → F → G} {n : ℕ} (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) :
   times_cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
 begin
   cases times_cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
@@ -840,7 +841,7 @@ begin
   exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).times_cont_diff
 end
 
-lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF : times_cont_diff 𝕜 ⊤ (uncurry φ)) : 
+lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF : times_cont_diff 𝕜 ⊤ (uncurry φ)) :
   times_cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
 times_cont_diff_top.mpr (λ n, (times_cont_diff_top.mp hF (n + 1)).times_cont_diff_partial_fst)
 
@@ -1073,7 +1074,7 @@ lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
 
 
 lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
-  [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
+  (x₀ : H) (a t₀ : ℝ) :
   (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a t₀) ∧
   has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) (coprod (∫ t in a..t₀, (fderiv ℝ $ λ x, F x t) x₀) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
 begin
@@ -1147,7 +1148,7 @@ A version of the above lemma using Floris' style statement. This does not reuse 
 
 lemma has_fderiv_at_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
   {s : H → ℝ} (hs : times_cont_diff ℝ 1 s)
-  [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
+  (x₀ : H) (a : ℝ) :
   (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a $ s x₀) ∧
   has_fderiv_at (λ x : H, ∫ t in a..s x, F x t)
     ((∫ t in a..s x₀, ∂₁F x₀ t) + (F x₀ (s x₀)) ⬝ (D s x₀))
@@ -1215,7 +1216,7 @@ begin
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
 end
 
-/- 
+/-
 /- The WIP version below is not Florised, it should probably be dropped. Do not work on it unless the other version fails. -/
 lemma times_cont_diff_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
   [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
@@ -1259,7 +1260,7 @@ Use `times_cont_diff_parametric_primitive_of_times_cont_diff'` instead. -/
 lemma times_cont_diff_parametric_primitive_of_times_cont_diff'' {F : H → ℝ → E} {n : ℕ}
   (hF : times_cont_diff ℝ n ↿F)
   {s : H → ℝ} (hs : times_cont_diff ℝ n s)
-  [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
+  (a : ℝ) :
   times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
 begin
   tactic.unfreeze_local_instances,
@@ -1277,7 +1278,7 @@ begin
       { apply ih hs.of_succ,
         apply times_cont_diff.times_cont_diff_partial_fst,
         exact hF },
-      { exact is_bounded_bilinear_map_smul_right.times_cont_diff.comp 
+      { exact is_bounded_bilinear_map_smul_right.times_cont_diff.comp
           ((times_cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $ times_cont_diff_id.prod hs.of_succ) } } }
 end
 
@@ -1379,12 +1380,12 @@ variables [normed_group E] [normed_space ℝ E]
 lemma times_cont_diff_parametric_primitive_of_times_cont_diff'
   {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
   {s : H → ℝ} (hs : times_cont_diff ℝ n s)
-  [finite_dimensional ℝ H] (x₀ : H) (a : ℝ) :
+  (a : ℝ) :
   times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
 begin
   have : times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, up.{v} (F x t)) :=
     times_cont_diff_parametric_primitive_of_times_cont_diff''.{v u} (times_cont_diff_up.comp hF)
-      hs x₀ a,
+      hs a,
   change times_cont_diff ℝ n (λ x : H, ∫ t in a..s x,
     (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (F x t)) at this,
   have hFi : ∀ x, interval_integrable (F x) volume a (s x),
@@ -1392,6 +1393,24 @@ begin
   simp_rw [continuous_linear_map.interval_integral_comp_comm
     (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (hFi _)] at this,
   simpa [times_cont_diff_up_iff] using this,
+end
+
+end
+
+section
+variables {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
+          [second_countable_topology E] [complete_space E]
+
+lemma interval_integral_translate {f : ℝ → E} (hf : continuous f) (a b c : ℝ) :
+  ∫ t in (a + c)..(b + c), f t = ∫ t in a..b, f (t + c) :=
+begin
+  change ∫ t in ((λ x, x +c) a)..((λ x, x + c) b), f t = ∫ t in a..b, f (t + c),
+  have hg : continuous_on (λ x: ℝ, (1 : ℝ)) [a, b] := continuous_on_const,
+  rw ← interval_integral.integral_comp_smul_deriv _ hg hf,
+  { simp },
+  { intros,
+    rw ← add_zero (1 : ℝ),
+    exact (has_deriv_at_id' x).add (has_deriv_at_const x c) }
 end
 
 end
