@@ -565,6 +565,12 @@ theorem continuous_parametric_interval_integral_of_continuous
 show continuous ((λ p : X × α, ∫ t in a₀..p.2, F p.1 t ∂μ) ∘ (λ x, (x, s x))),
 from (continuous_parametric_primitive_of_continuous hF).comp (continuous_id.prod_mk hs)
 
+theorem continuous_parametric_interval_integral_of_continuous'
+  [locally_compact_space X]
+  {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2)) (a₀ b₀ : α) :
+  continuous (λ x, ∫ t in a₀..b₀, F x t ∂μ) :=
+continuous_parametric_interval_integral_of_continuous hF continuous_const
+
 
 end
 
