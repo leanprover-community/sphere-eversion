@@ -2,6 +2,7 @@ import analysis.asymptotics.asymptotics
 import linear_algebra.dual
 import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
+import algebra.periodic
 
 import parametric_interval_integral
 import loops.basic
@@ -10,7 +11,7 @@ noncomputable theory
 
 /-
 
-TODO Use mathlib new algebra/periodic.lean
+TODO generalize many lemmas to any period and add to algebra/periodic.lean
 
 -/
 
@@ -92,7 +93,7 @@ def ℤ_sub_ℝ : add_subgroup ℝ := add_monoid_hom.range (int.cast_add_hom ℝ
 
 def trans_one : setoid ℝ := quotient_add_group.left_rel ℤ_sub_ℝ
 
-def one_periodic (f : ℝ → α) : Prop := ∀ x, f (x + 1) = f x
+def one_periodic (f : ℝ → α) : Prop := periodic f 1
 
 lemma one_periodic.add_nat {f : ℝ → α} (h : one_periodic f) : ∀ k : ℕ, ∀ x, f (x + k) = f x :=
 begin
@@ -211,6 +212,8 @@ variables {E : Type*}
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
 
+open measure_theory
+
 /-- Theillière's corrugations. -/
 def corrugation (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
 λ x, (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
@@ -218,19 +221,36 @@ def corrugation (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
 def corrugate (f : E → F) (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
 λ x, f x + (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
 
-lemma per_corrugation (γ : loop F) : one_periodic (λ s, ∫ t in 0..s, γ t - γ.average) :=
+lemma per_corrugation (γ : loop F) (hγ : ∀ s t, interval_integrable γ volume s t) :
+  one_periodic (λ s, ∫ t in 0..s, γ t - γ.average) :=
 begin
-
-  sorry
+  have int_avg : ∀ s t,  interval_integrable (λ u : ℝ, γ.average) volume s t,
+    from λ s t, interval_integrable_const,
+  intros s,
+  have int₁ : interval_integrable (λ t, γ t - γ.average) volume 0 s,
+    from (hγ _ _).sub (int_avg _ _),
+  have int₂ : interval_integrable (λ t, γ t - γ.average) volume s (s + 1),
+    from (hγ _ _).sub (int_avg _ _),
+  have int₃ : interval_integrable γ volume s (s + 1), from hγ _ _,
+  have int₄ : interval_integrable (λ t, γ.average) volume s (s + 1), from int_avg _ _,
+  dsimp only,
+  /- Rmk: Lean doesn't want to rewrite using `interval_integral.integral_sub` without being
+    given the integrability assumptions :-( -/
+  rw [← interval_integral.integral_add_adjacent_intervals int₁ int₂,
+      interval_integral.integral_sub int₃ int₄, interval_integral_periodic γ.per hγ, loop.average],
+  simp only [add_zero, add_tsub_cancel_left, interval_integral.integral_const, one_smul, sub_self]
 end
 
 variables (π : E → ℝ) (N : ℝ) {γ : E → loop F} [topological_space E]
 
+@[simp] lemma loop.average_const {f : F} : (loop.const f).average = f :=
+by simp [loop.average]
+
 lemma support_aux {γ : loop F} (h : γ = loop.const (γ.average)) (b : ℝ) :
   ∫ t in 0..b, γ t - γ.average = 0  :=
 begin
-
-  sorry
+  rw h,
+  simp -- Note: one cannot use `simp [h]` because `γ` appears on both side.
 end
 
 lemma corrugation.support (hγ : ∀ x, continuous (γ x)) :
@@ -251,7 +271,7 @@ end
 
 lemma continuous_average [first_countable_topology E] [locally_compact_space E]
   (hγ_cont : continuous ↿γ) : continuous (λ x, (γ x).average) :=
-continuous_parametric_integral_of_continuous hγ_cont is_compact_Icc measurable_set_Icc
+continuous_parametric_interval_integral_of_continuous' hγ_cont _ _
 
 /-- If a loop family has compact support then the corresponding corrugation is
 `O(1/N)` uniformly in the source point. -/
@@ -270,9 +290,9 @@ begin
         from hγ_cont.sub ((continuous_average hγ_cont).comp continuous_fst),
       exact continuous_parametric_primitive_of_continuous cont_φ },
     { intro x,
-      apply per_corrugation } },
+      exact per_corrugation _ (loop.continuous_of_family hγ_cont x).interval_integrable } },
   use C,
-  intro x, 
+  intro x,
   apply is_O_with_of_le',
   intro N,
   rw [corrugation, norm_smul, mul_comm],
@@ -309,4 +329,3 @@ structure dual_pair'
 (π : dual ℝ E)
 (v : E)
 (pairing : π v = 1)
-

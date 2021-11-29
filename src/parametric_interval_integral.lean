@@ -1398,19 +1398,36 @@ end
 end
 
 section
+
 variables {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
           [second_countable_topology E] [complete_space E]
 
-lemma interval_integral_translate {f : ℝ → E} (hf : continuous f) (a b c : ℝ) :
-  ∫ t in (a + c)..(b + c), f t = ∫ t in a..b, f (t + c) :=
-begin
-  change ∫ t in ((λ x, x +c) a)..((λ x, x + c) b), f t = ∫ t in a..b, f (t + c),
-  have hg : continuous_on (λ x: ℝ, (1 : ℝ)) [a, b] := continuous_on_const,
-  rw ← interval_integral.integral_comp_smul_deriv _ hg hf,
-  { simp },
-  { intros,
-    rw ← add_zero (1 : ℝ),
-    exact (has_deriv_at_id' x).add (has_deriv_at_const x c) }
-end
+open interval_integral
 
+lemma integral_comp_add_right' {f : ℝ → E} (a b : ℝ) :
+  ∫ t in a..(b + a), f t = ∫ t in 0..b, f (t + a) :=
+by simp [← integral_comp_add_right]
+
+
+lemma integral_comp_add_left' {f : ℝ → E} (a b : ℝ) :
+  ∫ t in a..(a + b), f t = ∫ t in 0..b, f (t + a) :=
+by simp [← integral_comp_add_left, add_comm]
+
+/- TODO : in interval_integral.integral_add_adjacent_intervals, turn the middle point into an
+  explicit parameter so that we don't have to state integrability before rewriting.
+
+  In the next lemma, the assumption on `f` is a bit lazy but we will need it only for continuous
+  functions anyway.
+  -/
+
+lemma interval_integral_periodic {f : ℝ → E} {T : ℝ} (hf_per : periodic f T)
+  (hf : ∀ s t, interval_integrable f volume s t)
+  (a : ℝ) : ∫ t in a..(a + T), f t = ∫ t in 0..T, f t :=
+begin
+  rw [← interval_integral.integral_add_adjacent_intervals (hf a 0) (hf 0 $ a + T),
+      ← interval_integral.integral_add_adjacent_intervals (hf 0 T) (hf T $ a+T),
+      integral_comp_add_right',
+      interval_integral.integral_symm, funext (λ t, hf_per t)],
+  abel
+end
 end

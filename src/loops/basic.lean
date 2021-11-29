@@ -1,14 +1,15 @@
 import analysis.normed_space.add_torsor_bases
 import analysis.convex.caratheodory
 import analysis.calculus.times_cont_diff
-import measure_theory.integral.set_integral
+import measure_theory.integral.interval_integral
 import measure_theory.measure.lebesgue
 import topology.algebra.floor_ring
 import topology.path_connected
 import linear_algebra.affine_space.independent
+
 import loops.homotheties
 import to_mathlib.topology.misc
-import lint
+
 
 /-!
 # Basic definitions and properties of loops
@@ -344,7 +345,7 @@ variables [measurable_space F] [borel_space F] [second_countable_topology F] [co
 
 /-- The average value of a loop. -/
 noncomputable def average (γ : loop F) : F :=
-∫ x in Icc 0 1, (γ x)
+∫ x in 0..1, (γ x)
 
 /-- The support of a family of loops `γ` is the closure of the set all points `x` where `γ x` is not
 constant.
