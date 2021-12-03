@@ -144,13 +144,31 @@ begin
 end
 
 -- lem:smooth_barycentric_coord
-lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) :
+lemma smooth_surrounding {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
+  (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
   ∀ᶠ y in 𝓝 x, ∀ᶠ q in 𝓝 p, smooth_at (uncurry W) (y, q) ∧
-                             ∀ i, W y q i > 0 ∧
+                             (∀ i, 0 < W y q i) ∧
                              ∑ i, W y q i = 1 ∧
                              ∑ i, W y q i • q i = y :=
 sorry
+
+lemma eventually_nhds_affine_independent {p : fin (d + 1) → F} (h : affine_independent ℝ p) :
+  ∀ᶠ q in 𝓝 p, affine_independent ℝ q :=
+sorry
+
+lemma smooth_surrounding_pts {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
+  (h : surrounding_pts x p w) :
+  ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
+  ∀ᶠ y in 𝓝 x, ∀ᶠ q in 𝓝 p, smooth_at (uncurry W) (y, q) ∧
+    surrounding_pts y q (W y q) :=
+begin
+  refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),
+  filter_upwards [hW], intros z hz,
+  filter_upwards [hz, eventually_nhds_affine_independent h.indep], rintro q ⟨hW, h2W, h3W, hq⟩ h2q,
+  exact ⟨hW, h2q, h2W, h3W, hq⟩
+end
+
 
 end surrounding_points
 
