@@ -73,6 +73,10 @@ lemma one_mem : (1 : ℝ) ∈ I := ⟨zero_le_one, le_rfl⟩
 lemma div_mem {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hxy : x ≤ y) : x / y ∈ I :=
 ⟨div_nonneg hx hy, div_le_one_of_le hxy hy⟩
 
+lemma mul_mem' {x y : ℝ} (hx : x ∈ I) (hy : y ∈ I) : x * y ∈ I :=
+⟨mul_nonneg hx.1 hy.1, (mul_le_mul hx.2 hy.2 hy.1 zero_le_one).trans_eq $ one_mul 1⟩
+
+
 end unit_interval
 
 end
