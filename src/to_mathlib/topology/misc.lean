@@ -23,6 +23,21 @@ end
 
 end
 
+namespace filter
+
+variables {α β : Type*} {f : filter α} {g : filter β}
+
+lemma eventually_eventually_of_eventually_prod {p : α → β → Prop}
+  (h : ∀ᶠ (z : α × β) in f ×ᶠ g, p z.1 z.2) : ∀ᶠ x in f, ∀ᶠ y in g, p x y :=
+begin
+  rw [filter.eventually_prod_iff] at h, rcases h with ⟨pa, hpa, pb, hpb, h⟩,
+  filter_upwards [hpa], intros a ha,
+  filter_upwards [hpb], intros b hb, exact h ha hb
+end
+
+
+end filter
+
 section -- logic.function
 
 -- move

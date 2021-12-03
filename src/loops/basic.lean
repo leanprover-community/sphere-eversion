@@ -147,10 +147,10 @@ end
 lemma smooth_surrounding {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ y in 𝓝 x, ∀ᶠ q in 𝓝 p, smooth_at (uncurry W) (y, q) ∧
-                             (∀ i, 0 < W y q i) ∧
-                             ∑ i, W y q i = 1 ∧
-                             ∑ i, W y q i • q i = y :=
+  ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) (yq.1, yq.2) ∧
+                             (∀ i, 0 < W yq.1 yq.2 i) ∧
+                             ∑ i, W yq.1 yq.2 i = 1 ∧
+                             ∑ i, W yq.1 yq.2 i • yq.2 i = y :=
 sorry
 
 lemma eventually_nhds_affine_independent {p : fin (d + 1) → F} (h : affine_independent ℝ p) :
@@ -160,12 +160,13 @@ sorry
 lemma smooth_surrounding_pts {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ y in 𝓝 x, ∀ᶠ q in 𝓝 p, smooth_at (uncurry W) (y, q) ∧
-    surrounding_pts y q (W y q) :=
+  ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+    surrounding_pts yq.1 yq.2 (W yq.1 yq.2) :=
 begin
   refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),
-  filter_upwards [hW], intros z hz,
-  filter_upwards [hz, eventually_nhds_affine_independent h.indep], rintro q ⟨hW, h2W, h3W, hq⟩ h2q,
+  rw [nhds_prod_eq] at hW ⊢,
+  have := (eventually_nhds_affine_independent h.indep).prod_inr (𝓝 x),
+  filter_upwards [hW, this], rintro ⟨y, q⟩ ⟨hW, h2W, h3W, hq⟩ h2q,
   exact ⟨hW, h2q, h2W, h3W, hq⟩
 end
 
