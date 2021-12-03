@@ -117,7 +117,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/basic.lean#L346">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/basic.lean#L348">loop.average</a></li>
         </ul>
 
       </div>
@@ -165,7 +165,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/reparametrization.lean#L52">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/reparametrization.lean#L52">exists_loops</a></li>
         </ul>
 
       </div>
@@ -267,7 +267,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/basic.lean#L68">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/basic.lean#L69">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -422,7 +422,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/basic.lean#L121">surrounded_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/basic.lean#L122">surrounded_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -502,7 +502,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/basic.lean#L146">smooth_surrounding</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/basic.lean#L147">smooth_surrounding</a></li>
         </ul>
 
       </div>
@@ -515,7 +515,9 @@
 <ul class="itemize">
   <li><p>\(w\) is smooth at \((y, q)\) </p>
 </li>
-  <li><p>\(w(y, q) ∈ (0, 1)\) </p>
+  <li><p>\(w(y, q) {\gt} 0\) </p>
+</li>
+  <li><p>\(\sum _{i=0}^d w_i(y, q) = 1\) </p>
 </li>
   <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\) </p>
 </li>
@@ -541,7 +543,7 @@
 <div class="displaymath" id="a0000000033">
   \[  y = \left(1 - \sum _{i = 1}^d w_i(y, q)\right)q_0 + \sum _{i = 1}^d w_i(y, q)q_i.  \]
 </div>
-<p> We denote by \(w_0(y, q)\) the coefficient in front of \(q_0\) in the above formula. Hence we have \(y = \sum _{i=0}^d w_i(y, q)q_i\) with \(w_i(x, p) = w_i\) hence each \(w_i(y, q)\) is in \((0, 1)\) if \((y, q)\) is sufficiently close to \((x, p)\). </p>
+<p> We denote by \(w_0(y, q)\) the coefficient in front of \(q_0\) in the above formula. Hence we have \(y = \sum _{i=0}^d w_i(y, q)q_i\) with \(w_i(x, p) = w_i\) hence \(\sum _{i=0}^d w_i(y, q) = 1\) and each \(w_i(y, q) {\gt} 0\) if \((y, q)\) is sufficiently close to \((x, p)\). </p>
 
   </div>
 </div>
@@ -582,7 +584,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L21">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L21">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -632,7 +634,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L46">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L46">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -700,7 +702,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L85">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L85">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -759,7 +761,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L173">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L173">local_loops</a></li>
         </ul>
 
       </div>
@@ -820,7 +822,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L348">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L348">satisfied_or_refund</a></li>
         </ul>
 
       </div>
@@ -886,7 +888,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L360">extends_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L360">extends_loops</a></li>
         </ul>
 
       </div>
@@ -950,7 +952,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/surrounding.lean#L404">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/surrounding.lean#L404">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -1012,7 +1014,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/593faadbfdbe2b09d8ee2e48d7ef492e966cfc4c/src/loops/reparametrization.lean#L44">reparametrization</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/1a995efff3508e52fe1ca68116a7200b6bc3f646/src/loops/reparametrization.lean#L44">reparametrization</a></li>
         </ul>
 
       </div>
