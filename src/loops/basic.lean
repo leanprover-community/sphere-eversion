@@ -150,7 +150,7 @@ lemma smooth_surrounding {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → �
   ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) (yq.1, yq.2) ∧
                              (∀ i, 0 < W yq.1 yq.2 i) ∧
                              ∑ i, W yq.1 yq.2 i = 1 ∧
-                             ∑ i, W yq.1 yq.2 i • yq.2 i = y :=
+                             ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
 sorry
 
 lemma eventually_nhds_affine_independent {p : fin (d + 1) → F} (h : affine_independent ℝ p) :
