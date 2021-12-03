@@ -168,28 +168,27 @@ protected lemma mono (h : surrounding_family_in g b γ U Ω) {V : set E} (hVU : 
 
 end surrounding_family_in
 
--- #check @smooth_surrounding
-#print loop.shift
 /-- This returns almost a `surrounding_family_in`, except that the `γ` need not be based at `b x`.
+
+Note: The conditions in this lemma are currently quite a bit weaker than the ones mentioned in the
+blueprint.
 -/
 lemma local_loops [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
-  (hΩ_conn : ∀ᶠ x in 𝓝 x₀, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : ∀ᶠ x in 𝓝 x₀, continuous_at g x) (hb : continuous b)
-  (hb_in : ∀ᶠ x in 𝓝 x₀, (x, b x) ∈ Ω)
-  (hconv : ∀ᶠ x in 𝓝 x₀, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
+  (hΩ_conn : is_connected (prod.mk x₀ ⁻¹' Ω))
+  (hg : continuous_at g x₀) (hb : continuous b)
+  (hb_in : (x₀, b x₀) ∈ Ω)
+  (hconv : g x₀ ∈ convex_hull ℝ (prod.mk x₀ ⁻¹' Ω)) :
 ∃ (γ : E → ℝ → loop F), continuous ↿γ ∧
   ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s,
   (x, γ x t s) ∈ Ω ∧
   γ x 0 s = b x ∧
   (γ x 1).surrounds (g x) :=
 begin
-  have hb_in_x₀ : b x₀ ∈ prod.mk x₀ ⁻¹' Ω := hb_in.self_of_nhds,
   have hbx₀ : continuous_at b x₀ := hb.continuous_at,
   have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := is_open_slice_of_is_open_over hΩ_op,
-  have hΩ_conn_x₀ : is_connected (prod.mk x₀ ⁻¹' Ω) := hΩ_conn.self_of_nhds,
-  rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn_x₀ hconv.self_of_nhds hb_in_x₀ with
+  rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn hconv hb_in with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
   let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s,
@@ -208,18 +207,17 @@ begin
       rw [← hδx₀] at hΩx₀,
       exact hc.eventually hΩx₀ },
     sorry /- This is similar to `this`, except that we need to move two quantifiers out of the
-    "for `x` close enough to `x₀`. This should be fine, since `t` ranges over `I`, which is compact
+    "for `x` close enough to `x₀`". This should be fine, since `t` ranges over `I`, which is compact
     and `s` ranges over `ℝ`, but it is only applied in a periodic function, so it also essentially
     ranges over a compact interval.
     I think it's good to wait before filling out this proof, because maybe it's more/equally
     convenient to restate the theorem so that `t` and/or `s` are actually outside the eventually. -/
     },
   have h2δ : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
-  { have hgx₀ := hg.self_of_nhds,
-    rcases h5γ with ⟨p, w, h⟩,
+  { rcases h5γ with ⟨p, w, h⟩,
     obtain ⟨W, hW⟩ := smooth_surrounding_pts h,
     let c : E → F × (fin (d+1) → F) := λ x, (g x, δ x 1 ∘ p),
-    have hc : continuous_at c x₀ := hgx₀.prod
+    have hc : continuous_at c x₀ := hg.prod
       (continuous_at_const.add $ (continuous_at_pi.2 (λ _, hbx₀)).sub continuous_at_const),
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p),
     { simp only [c, hδx₀, function.comp, prod.mk.inj_iff, eq_self_iff_true, and_self] },
@@ -230,7 +228,7 @@ begin
   { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
     refine (h1γ.comp continuous_snd).add _,
     refine continuous.sub _ continuous_const,
-    exact hb.comp  continuous_fst },
+    exact hb.comp continuous_fst },
   filter_upwards [h1δ, h2δ],
   rintro x h1δx h2δx t ht s,
   refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx⟩,
