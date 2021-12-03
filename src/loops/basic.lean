@@ -146,9 +146,10 @@ end
 -- lem:smooth_barycentric_coord
 lemma smooth_surrounding {x : F} {p w} (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ y in 𝓝 x, ∀ᶠ q in  𝓝 p, smooth_at (uncurry W) (y, q) ∧
-                              ∀ i, W y q i ∈ Ioo (0 : ℝ) 1 ∧
-                              ∑ i, W y q i • q i = y :=
+  ∀ᶠ y in 𝓝 x, ∀ᶠ q in 𝓝 p, smooth_at (uncurry W) (y, q) ∧
+                             ∀ i, W y q i > 0 ∧
+                             ∑ i, W y q i = 1 ∧
+                             ∑ i, W y q i • q i = y :=
 sorry
 
 end surrounding_points
