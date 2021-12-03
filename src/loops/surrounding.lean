@@ -91,7 +91,7 @@ structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : se
 /-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
 structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $ E × F)
   extends surrounding_family g b γ U : Prop :=
-(val_in : ∀ (x : E) (t s : ℝ), (x, γ x t s) ∈ Ω)
+(val_in : ∀ (x ∈ U) (t ∈ I) (s : ℝ), (x, γ x t s) ∈ Ω)
 
 namespace surrounding_family
 
@@ -164,12 +164,11 @@ h.to_surrounding_family
 
 protected lemma mono (h : surrounding_family_in g b γ U Ω) {V : set E} (hVU : V ⊆ U) :
   surrounding_family_in g b γ V Ω :=
-⟨h.to_sf.mono hVU, h.val_in⟩
+⟨h.to_sf.mono hVU, λ x hx, h.val_in x (hVU hx)⟩
 
 end surrounding_family_in
 
-/-- This returns almost a `surrounding_family_in`, except that the `γ` need not be based at `b x`.
-
+/--
 Note: The conditions in this lemma are currently quite a bit weaker than the ones mentioned in the
 blueprint.
 -/
@@ -180,28 +179,31 @@ lemma local_loops [finite_dimensional ℝ F]
   (hg : continuous_at g x₀) (hb : continuous b)
   (hb_in : (x₀, b x₀) ∈ Ω)
   (hconv : g x₀ ∈ convex_hull ℝ (prod.mk x₀ ⁻¹' Ω)) :
-∃ (γ : E → ℝ → loop F), continuous ↿γ ∧
-  ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s,
-  (x, γ x t s) ∈ Ω ∧
-  γ x 0 s = b x ∧
-  (γ x 1).surrounds (g x) :=
+  ∃ (γ : E → ℝ → loop F) (U ∈ 𝓝 x₀), surrounding_family_in g b γ U Ω :=
 begin
   have hbx₀ : continuous_at b x₀ := hb.continuous_at,
   have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := is_open_slice_of_is_open_over hΩ_op,
   rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn hconv hb_in with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
   let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
+  have hδ : continuous ↿δ,
+  { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
+    refine (h1γ.comp continuous_snd).add _,
+    refine continuous.sub _ continuous_const,
+    exact hb.comp continuous_fst },
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s,
   { intros t s, simp only [add_zero, loop.shift_apply, sub_self] },
-  have h2δx₀ : ∀ t s, continuous_at (λ x, δ x t s) x₀ :=
-  λ t s, continuous_at_const.add (hbx₀.sub continuous_at_const),
-  use δ,
-  have h1δ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
+  have hδs0 : ∀ x t, δ x t 0 = b x,
+  { intros x t, simp only [h2γ, loop.shift_apply, add_sub_cancel'_right] },
+  have hδt0 : ∀ x s, δ x 0 s = b x,
+  { intros x t, simp only [h3γ, loop.shift_apply, add_sub_cancel'_right] },
+  have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
   { rcases hΩ_op with ⟨U, hUx₀, hU⟩,
     have : ∀ (t ∈ I) s, ∀ᶠ (x : E) in 𝓝 x₀, (x, δ x t s) ∈ Ω,
     { intros t ht s,
       let c : E → E × F := λ x, (x, δ x t s),
-      have hc : continuous_at c x₀ := continuous_at_id.prod (h2δx₀ t s),
+      have hc : continuous_at c x₀ :=
+        continuous_at_id.prod (continuous_at_const.add (hbx₀.sub continuous_at_const)),
       have hΩx₀ : Ω ∈ 𝓝 (x₀, γ t s) := mem_nhds_iff.mpr
         ⟨_, inter_subset_left _ _, hU, ⟨h4γ t s, show x₀ ∈ U, from mem_of_mem_nhds hUx₀⟩⟩,
       rw [← hδx₀] at hΩx₀,
@@ -213,7 +215,7 @@ begin
     I think it's good to wait before filling out this proof, because maybe it's more/equally
     convenient to restate the theorem so that `t` and/or `s` are actually outside the eventually. -/
     },
-  have h2δ : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
+  have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
   { rcases h5γ with ⟨p, w, h⟩,
     obtain ⟨W, hW⟩ := smooth_surrounding_pts h,
     let c : E → F × (fin (d+1) → F) := λ x, (g x, δ x 1 ∘ p),
@@ -224,14 +226,7 @@ begin
     rw [← hcx₀] at hW,
     filter_upwards [hc.eventually hW], rintro x ⟨hW, hx⟩,
     exact ⟨_, _, hx⟩ },
-  split,
-  { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
-    refine (h1γ.comp continuous_snd).add _,
-    refine continuous.sub _ continuous_const,
-    exact hb.comp continuous_fst },
-  filter_upwards [h1δ, h2δ],
-  rintro x h1δx h2δx t ht s,
-  refine ⟨h1δx t ht s, by simp only [h3γ, loop.shift_apply, add_sub_cancel'_right], h2δx⟩,
+  exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, λ x, and.right, hδ⟩, λ x, and.left⟩⟩
 end
 
 /-- Function used in `satisfied_or_refund`. Rename. -/
@@ -276,6 +271,8 @@ end
 lemma ρ_zero : ρ 0 = 1 := by simp
 lemma ρ_half : ρ 2⁻¹ = 1 := by simp
 lemma ρ_one : ρ 1 = 0 := by simp
+lemma ρ_mem_I {x : ℝ} : ρ x ∈ I :=
+⟨le_max_left _ _, max_le zero_le_one $ min_le_left _ _⟩
 
 section satisfied_or_refund
 
@@ -354,7 +351,7 @@ begin
 end
 
 lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω)
-  (τ : ℝ) (x : E) (t s : ℝ) :
+  (τ : ℝ) ⦃x : E⦄ (hx : x ∈ U) {t : ℝ} (ht : t ∈ I) {s : ℝ} :
   (x, sf_homotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
 begin
   generalize hy : sf_homotopy h₀.to_sf h₁.to_sf τ x t s = y,
@@ -362,8 +359,8 @@ begin
   rw [sf_homotopy, loop.range_of_path] at h2y,
   replace h2y := range_strans_subset h2y,
   rcases h2y with ⟨s', rfl⟩|⟨s', rfl⟩,
-  { exact h₀.val_in _ _ _ },
-  { exact h₁.val_in _ _ _ }
+  { exact h₀.val_in _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ },
+  { exact h₁.val_in _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ }
 end
 
 lemma surrounding_family_in_sf_homotopy [finite_dimensional ℝ E]
@@ -422,7 +419,7 @@ begin
           h₁.surrounds x (hV₁U₁ $ subset_closure hx)] } },
     { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
         continuous_snd.fst continuous_snd.snd },
-    { intro x, exact sf_homotopy_in _ _ _ _ } },
+    { intros x hx t ht s, refine sf_homotopy_in _ _ _ _ _,  } },
   { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
     simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
 end
