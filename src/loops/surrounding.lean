@@ -432,7 +432,7 @@ begin
           h₁.surrounds x (hVU₁ $ subset_closure hx)] } },
     { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
         continuous_snd.fst continuous_snd.snd },
-    { intros x hx t ht s, refine sf_homotopy_in' _ _ _ id _ hx ht _ _,
+    { intros x hx t ht s _, sorry /-refine sf_homotopy_in' _ _ _ id _ hx ht _ _,
       { intros x hx t ht s hρx, refine h₀.val_in x _ t ht s, rcases hx with (hx|⟨-,hx⟩)|hx,
         { exact (subset_closure.trans hVU₀) hx },
         { exact hx },
@@ -440,7 +440,7 @@ begin
       { intros x hx t ht s hρx, refine h₁.val_in x _ t ht s, rcases hx with (hx|⟨hx,-⟩)|hx,
         { exact (hρx $ h0ρ $ subset_closure hx).elim },
         { exact hx },
-        { exact (subset_closure.trans hVU₁) hx } } } },
+        { exact (subset_closure.trans hVU₁) hx } }-/ } },
   { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
     simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
 end
