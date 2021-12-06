@@ -118,6 +118,34 @@ continuous_subtype_coe.comp hf
 
 end
 
+section -- to subset_properties
+
+variables {α β γ : Type*} [topological_space α] [topological_space β] [topological_space γ]
+
+lemma is_compact.eventually_forall_of_forall_eventually {x₀ : α} {K : set β} (hK : is_compact K)
+  {P : α → β → Prop} (hP : ∀ y ∈ K, ∀ᶠ (z : α × β) in 𝓝 (x₀, y), P z.1 z.2):
+  ∀ᶠ x in 𝓝 x₀, ∀ y ∈ K, P x y :=
+begin
+  refine hK.induction_on _ _ _ _,
+  { exact eventually_of_forall (λ x y, false.elim) },
+  { intros s t hst ht, refine ht.mono (λ x h y hys, h y $ hst hys) },
+  { intros s t hs ht, filter_upwards [hs, ht], rintro x h1 h2 y (hys|hyt),
+    exacts [h1 y hys, h2 y hyt] },
+  { intros y hyK,
+    specialize hP y hyK,
+    rw [nhds_prod_eq, eventually_prod_iff] at hP,
+    rcases hP with ⟨p, hp, q, hq, hpq⟩,
+    exact ⟨{y | q y}, mem_nhds_within_of_mem_nhds hq, eventually_of_mem hp @hpq⟩ }
+end
+
+lemma is_compact.eventually_forall_mem {x₀ : α} {K : set β} (hK : is_compact K)
+  {f : α → β → γ} (hf : continuous ↿f) {U : set γ} (hU : ∀ y ∈ K, U ∈ 𝓝 (f x₀ y)) :
+  ∀ᶠ x in 𝓝 x₀, ∀ y ∈ K, f x y ∈ U :=
+hK.eventually_forall_of_forall_eventually $ λ y hy, hf.continuous_at.eventually $
+  show U ∈ 𝓝 (↿f (x₀, y)), from hU y hy
+
+end
+
 section -- to separation
 
 variables {α : Type*} [topological_space α]
