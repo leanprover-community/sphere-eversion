@@ -153,7 +153,7 @@ lemma smooth_surrounding {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → �
                              ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
 sorry
 
-lemma is_open_affine_independent : is_open {p : fin (d + 1) → F | affine_independent ℝ p} :=
+lemma is_open_affine_independent {ι} : is_open {p : ι → F | affine_independent ℝ p} :=
 sorry
 
 lemma eventually_nhds_affine_independent {p : fin (d + 1) → F} (h : affine_independent ℝ p) :
