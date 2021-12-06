@@ -24,8 +24,8 @@ noncomputable theory
 variables {X X' Y Z : Type*} [topological_space X]
 variables [topological_space X'] [topological_space Y] [topological_space Z]
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] 
-          {F' : Type*} [normed_group F'] [normed_space ℝ F'] 
+          {F : Type*} [normed_group F] [normed_space ℝ F]
+          {F' : Type*} [normed_group F'] [normed_space ℝ F']
 
 set_option old_structure_cmd true
 
@@ -124,7 +124,7 @@ def shift {F : Type*} [add_group F] [topological_space F] (γ : loop F) (x : F) 
 
 /-! ## Support of a loop family -/
 
-/-- A loop is constant if it takes the same value at every time. 
+/-- A loop is constant if it takes the same value at every time.
 See also `loop.is_const_iff_forall_avg` and `loop.is_const_iff_const_avg` for characterizations in
 terms of average values. -/
 def is_const (γ : loop X) := ∀ t s, γ t = γ s
@@ -279,7 +279,7 @@ begin
     { ext s,
       rw h s t,
       refl },
-    rw this, 
+    rw this,
     simp only [average, const_apply, interval_integral.integral_const, one_smul, sub_zero], },
   { intros t s,
     rw [h, h] }
@@ -290,7 +290,7 @@ by simp [loop.average]
 
 lemma is_const_iff_const_avg {γ : loop F} : γ.is_const ↔ γ = loop.const γ.average :=
 begin
-  rw loop.is_const_iff_forall_avg,  
+  rw loop.is_const_iff_forall_avg,
   split,
   { intro h,
     ext s,
@@ -391,7 +391,7 @@ lemma loop.compact_support_diff {γ : E → loop F}  (h' : is_compact (loop.supp
 compact_of_is_closed_subset h' is_closed_closure loop.support_diff
 
 variables [finite_dimensional ℝ E]
-          
+
 lemma loop.average_diff {γ : E → loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
 (loop.diff γ e).average = D (λ e, (γ e).average) e :=
 begin
