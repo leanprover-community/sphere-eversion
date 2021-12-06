@@ -1,6 +1,8 @@
 import topology.path_connected
 import topology.urysohns_lemma
 import topology.uniform_space.compact_separated
+import linear_algebra.affine_space.independent
+import analysis.normed_space.finite_dimension
 
 noncomputable theory
 
@@ -184,6 +186,27 @@ begin
   rcases exists_compact_between hK hU hKU with ⟨V, hV, hKV, hVU⟩,
   refine ⟨interior V, is_open_interior, hKV, (closure_mono interior_subset).trans hVU,
     compact_closure_of_subset_compact hV interior_subset⟩,
+end
+
+/-
+needs
+import linear_algebra.affine_space.independent
+import analysis.normed_space.finite_dimension
+-/
+lemma is_open_set_of_affine_independent (𝕜 E : Type*) {ι : Type*} [nondiscrete_normed_field 𝕜]
+  [normed_group E] [normed_space 𝕜 E] [complete_space 𝕜] [fintype ι] :
+  is_open {p : ι → E | affine_independent 𝕜 p} :=
+begin
+  classical,
+  cases is_empty_or_nonempty ι, { resetI, exact is_open_discrete _ },
+  obtain ⟨i₀⟩ := h,
+  simp_rw [affine_independent_iff_linear_independent_vsub 𝕜 _ i₀],
+  let ι' := {x // x ≠ i₀},
+  haveI : fintype ι' := subtype.fintype _,
+  convert_to
+    is_open ((λ (p : ι → E) (i : ι'), p i -ᵥ p i₀) ⁻¹' {p : ι' → E | linear_independent 𝕜 p}),
+  refine is_open.preimage _ is_open_set_of_linear_independent,
+  refine continuous_pi (λ i', continuous.vsub (continuous_apply i') $ continuous_apply i₀),
 end
 
 end

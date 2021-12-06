@@ -153,13 +153,6 @@ lemma smooth_surrounding {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → �
                              ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
 sorry
 
-lemma is_open_affine_independent {ι} : is_open {p : ι → F | affine_independent ℝ p} :=
-sorry
-
-lemma eventually_nhds_affine_independent {p : fin (d + 1) → F} (h : affine_independent ℝ p) :
-  ∀ᶠ q in 𝓝 p, affine_independent ℝ q :=
-is_open.eventually_mem is_open_affine_independent h
-
 lemma smooth_surrounding_pts {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
@@ -168,11 +161,10 @@ lemma smooth_surrounding_pts {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) �
 begin
   refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),
   rw [nhds_prod_eq] at hW ⊢,
-  have := (eventually_nhds_affine_independent h.indep).prod_inr (𝓝 x),
+  have := (is_open.eventually_mem (is_open_set_of_affine_independent ℝ F) h.indep).prod_inr (𝓝 x),
   filter_upwards [hW, this], rintro ⟨y, q⟩ ⟨hW, h2W, h3W, hq⟩ h2q,
   exact ⟨hW, h2q, h2W, h3W, hq⟩
 end
-
 
 end surrounding_points
 
