@@ -3,7 +3,13 @@ import topology.urysohns_lemma
 import topology.uniform_space.compact_separated
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
+<<<<<<< HEAD
 import topology.algebra.floor_ring
+||||||| merged common ancestors
+=======
+import topology.paracompact
+import topology.shrinking_lemma
+>>>>>>> some work on lem 1.15
 
 noncomputable theory
 
@@ -106,11 +112,24 @@ end
 
 section
 
-variables {α β : Type*} [topological_space α] [topological_space β]
+variables {α β γ : Type*} [topological_space α] [topological_space β]
 
 -- basic
 lemma continuous.congr {f g : α → β} (h : continuous f) (h' : ∀ x, f x = g x) : continuous g :=
 by { convert h, ext, rw h' }
+
+-- false
+-- lemma locally_finite_image [topological_space γ] {f : β → set α} {g : α → γ}
+--   (hf : locally_finite f) (hg : open_embedding g) : locally_finite (λ i, g '' (f i)) :=
+-- begin
+--   intro y,
+--   by_cases hy : y ∈ range g,
+--   { rcases hy with ⟨x, rfl⟩,
+--     obtain ⟨t, ht, hft⟩ := hf x,
+--     refine ⟨g '' t, hg.is_open_map.image_mem_nhds ht, _⟩,
+--     simp_rw [image_inter hg.to_embedding.inj, nonempty_image_iff, hft] },
+--   { }
+-- end
 
 -- TODO: rename `finset.closure_Union` to `finset.closure_bUnion`
 
@@ -232,3 +251,122 @@ a set in `α`. This definition does not make sense if `x` is not in `F` so we re
 empty set in this case. -/
 def connected_comp_in {α : Type*} [topological_space α] (F : set α) (x : α) : set α :=
 if h : x ∈ F then coe '' (connected_component (⟨x, h⟩ : F)) else ∅
+
+namespace topological_space -- to topology.bases
+lemma cover_nat_nhds_within {α} [topological_space α] [second_countable_topology α] {f : α → set α}
+  {s : set α} (hf : ∀ x ∈ s, f x ∈ 𝓝[s] x) (hs : s.nonempty) :
+  ∃ x : ℕ → α, range x ⊆ s ∧ s ⊆ ⋃ n, f (x n) :=
+begin
+  obtain ⟨t, hts, ht, hsf⟩ := topological_space.countable_cover_nhds_within hf,
+  have hnt : t.nonempty,
+  { by_contra,
+    rw [not_nonempty_iff_eq_empty] at h,
+    rw [h, bUnion_empty, subset_empty_iff] at hsf,
+    exact hs.ne_empty hsf },
+  obtain ⟨x, rfl⟩ := ht.exists_surjective hnt,
+  rw [bUnion_range] at hsf,
+  exact ⟨x, hts, hsf⟩
+end
+
+/-- A version of `topological_space.cover_nat_nhds_within` where `f` is only defined on `s`. -/
+lemma cover_nat_nhds_within' {α} [topological_space α] [second_countable_topology α] {s : set α}
+  {f : ∀ x ∈ s, set α} (hf : ∀ x (hx : x ∈ s), f x hx ∈ 𝓝[s] x) (hs : s.nonempty) :
+  ∃ (x : ℕ → α) (hx : range x ⊆ s), s ⊆ ⋃ n, f (x n) (range_subset_iff.mp hx n) :=
+begin
+  let g := λ x, if hx : x ∈ s then f x hx else ∅,
+  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x, { intros x hx, simp_rw [g, dif_pos hx], exact hf x hx },
+  obtain ⟨x, hx, h⟩ := topological_space.cover_nat_nhds_within hg hs,
+  simp_rw [g, dif_pos (range_subset_iff.mp hx _)] at h,
+  refine ⟨x, hx, h⟩,
+end
+
+end topological_space
+
+namespace set
+namespace subtype
+open _root_.subtype
+variables {α : Type*}
+
+lemma image_coe_eq_iff_eq_univ {s : set α} {t : set s} : (coe : s → α) '' t = s ↔ t = univ :=
+by { convert coe_injective.image_injective.eq_iff, rw coe_image_univ }
+
+@[simp] lemma preimage_coe_eq_univ {s t : set α} : (coe : s → α) ⁻¹' t = univ ↔ s ⊆ t :=
+by rw [← inter_eq_right_iff_subset, ← image_preimage_coe, image_coe_eq_iff_eq_univ]
+
+end subtype
+end set
+open set
+
+section paracompact_space
+
+/-- When `s : set X` is open and paracompact, we can find a precise refinement on `s`. Note that
+ in this case we only get the locally finiteness condition on `s`, which is weaker than the local
+ finiteness condition on all of `X` (the collection might not be locally finite on the boundary of
+ `s`). -/
+theorem precise_refinement_set' {ι X : Type*} [topological_space X] {s : set X}
+  [paracompact_space s] (hs : is_open s)
+  (u : ι → set X) (uo : ∀ i, is_open (u i)) (us : s ⊆ ⋃ i, u i) :
+  ∃ (v : ι → set X), (∀ i, is_open (v i)) ∧ (s ⊆ ⋃ i, v i) ∧
+  locally_finite (λ i, (coe : s → X) ⁻¹' v i) ∧ (∀ i, v i ⊆ s) ∧ (∀ i, v i ⊆ u i) :=
+begin
+  obtain ⟨v, vo, vs, vl, vu⟩ := precise_refinement (λ i, (coe : s → X) ⁻¹' u i)
+    (λ i, (uo i).preimage continuous_subtype_coe)
+    (by rwa [← preimage_Union, subtype.preimage_coe_eq_univ]),
+  refine ⟨λ i, coe '' v i, λ i, hs.is_open_map_subtype_coe _ (vo i),
+    by rw [← image_Union, vs, subtype.coe_image_univ],
+    by simp_rw [preimage_image_eq _ subtype.coe_injective, vl],
+    λ i, subtype.coe_image_subset _ _,
+    by { intro i, rw [image_subset_iff], exact vu i }⟩,
+end
+
+lemma point_finite_of_locally_finite_coe_preimage {ι X : Type*} [topological_space X] {s : set X}
+  {f : ι → set X} (hf : locally_finite (λ i, (coe : s → X) ⁻¹' f i)) (hfs : ∀ i, f i ⊆ s) {x : X} :
+  finite {i | x ∈ f i} :=
+begin
+  by_cases hx : x ∈ s,
+  { exact hf.point_finite ⟨x, hx⟩ },
+  { have : ∀ i, x ∉ f i := λ i hxf, hx (hfs i hxf),
+    simp only [this, set_of_false, finite_empty] }
+end
+
+
+end paracompact_space
+
+section shrinking_lemma
+
+variables {ι X : Type*} [topological_space X]
+variables {u : ι → set X} {s : set X} [normal_space s]
+/-
+-- the last condition is false and should be replaced by something like `closure (v i) ∩ s ⊆ u i`
+lemma exists_Union_eq_closure_subset_of_is_open (hs : is_open s) (uo : ∀ i, is_open (u i))
+  (uf : ∀ x, finite {i | x ∈ u i}) (uU : s ⊆ ⋃ i, u i) :
+  ∃ v : ι → set X, s ⊆ Union v ∧ (∀ i, is_open (v i)) ∧ ∀ i, closure (v i) ⊆ u i :=
+begin
+  obtain ⟨v, vU, vo, hv⟩ := exists_Union_eq_closure_subset
+    (λ i, (uo i).preimage (continuous_subtype_coe : continuous (coe : s → X)))
+    (λ x, uf x)
+    (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU]),
+  refine ⟨λ i, coe '' (v i), by simp_rw [← image_Union, vU, subtype.coe_image_univ],
+    λ i, hs.is_open_map_subtype_coe _ (vo i), _⟩,
+  simp_rw [hs.open_embedding_subtype_coe.to_embedding.closure_eq_preimage_closure_image] at hv,
+  refine λ i, (preimage_subset_preimage_iff _).mp (hv i),
+  sorry,
+end
+
+-- the last condition is false and should be replaced by something like `closure (v i) ∩ s ⊆ u i`
+lemma exists_Union_eq_closure_subset_of_is_open (hs : is_open s) (uo : ∀ i, is_open (u i))
+  (uf : ∀ x, finite {i | x ∈ u i}) (uU : s ⊆ ⋃ i, u i) :
+  ∃ v : ι → set X, s ⊆ Union v ∧ (∀ i, is_closed (v i)) ∧ ∀ i, v i ⊆ u i :=
+begin
+  obtain ⟨v, vU, vo, hv⟩ := exists_Union_eq_closure_subset
+    (λ i, (uo i).preimage (continuous_subtype_coe : continuous (coe : s → X)))
+    (λ x, uf x)
+    (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU]),
+  refine ⟨λ i, coe '' (v i), by simp_rw [← image_Union, vU, subtype.coe_image_univ],
+    λ i, hs.is_open_map_subtype_coe _ (vo i), _⟩,
+  simp_rw [hs.open_embedding_subtype_coe.to_embedding.closure_eq_preimage_closure_image] at hv,
+  refine λ i, (preimage_subset_preimage_iff _).mp (hv i),
+  sorry,
+end-/
+
+end shrinking_lemma
