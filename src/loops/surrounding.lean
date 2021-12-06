@@ -91,7 +91,7 @@ structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : se
 /-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
 structure surrounding_family_in (g b : E → F) (γ : E → ℝ → loop F) (U : set E) (Ω : set $ E × F)
   extends surrounding_family g b γ U : Prop :=
-(val_in : ∀ (x ∈ U) (t ∈ I) (s : ℝ), (x, γ x t s) ∈ Ω)
+(val_in' : ∀ (x ∈ U) (t ∈ I) (s ∈ I), (x, γ x t s) ∈ Ω)
 
 namespace surrounding_family
 
@@ -162,15 +162,21 @@ namespace surrounding_family_in
 abbreviation to_sf (h : surrounding_family_in g b γ U Ω) : surrounding_family g b γ U :=
 h.to_surrounding_family
 
+lemma val_in (h : surrounding_family_in g b γ U Ω) {x : E} (hx : x ∈ U) {t : ℝ} (ht : t ∈ I)
+  {s : ℝ} : (x, γ x t s) ∈ Ω :=
+by { rw [← loop.fract_eq], exact h.val_in' x hx t ht (fract s) (unit_interval.fract_mem s) }
+
 protected lemma mono (h : surrounding_family_in g b γ U Ω) {V : set E} (hVU : V ⊆ U) :
   surrounding_family_in g b γ V Ω :=
-⟨h.to_sf.mono hVU, λ x hx, h.val_in x (hVU hx)⟩
+⟨h.to_sf.mono hVU, λ x hx, h.val_in' x (hVU hx)⟩
 
 end surrounding_family_in
 
 /--
 Note: The conditions in this lemma are currently a bit weaker than the ones mentioned in the
 blueprint.
+
+It would be nice if we work with `def`s and lemmas instead of these existential statements.
 -/
 lemma local_loops [finite_dimensional ℝ F]
   {x₀ : E}
@@ -197,24 +203,19 @@ begin
   { intros x t, simp only [h2γ, loop.shift_apply, add_sub_cancel'_right] },
   have hδt0 : ∀ x s, δ x 0 s = b x,
   { intros x t, simp only [h3γ, loop.shift_apply, add_sub_cancel'_right] },
-  have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) s, (x, δ x t s) ∈ Ω,
+  have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) (s ∈ I), (x, δ x t s) ∈ Ω,
   { rcases hΩ_op with ⟨U, hUx₀, hU⟩,
-    have : ∀ (t ∈ I) s, ∀ᶠ (x : E) in 𝓝 x₀, (x, δ x t s) ∈ Ω,
-    { intros t ht s,
-      let c : E → E × F := λ x, (x, δ x t s),
-      have hc : continuous_at c x₀ :=
-        continuous_at_id.prod (continuous_at_const.add (hbx₀.sub continuous_at_const)),
-      have hΩx₀ : Ω ∈ 𝓝 (x₀, γ t s) := mem_nhds_iff.mpr
-        ⟨_, inter_subset_left _ _, hU, ⟨h4γ t s, show x₀ ∈ U, from mem_of_mem_nhds hUx₀⟩⟩,
-      rw [← hδx₀] at hΩx₀,
-      exact hc.eventually hΩx₀ },
-    sorry /- This is similar to `this`, except that we need to move two quantifiers out of the
-    "for `x` close enough to `x₀`". This should be fine, since `t` ranges over `I`, which is compact
-    and `s` ranges over `ℝ`, but it is only applied in a periodic function, so it also essentially
-    ranges over a compact interval.
-    I think it's good to wait before filling out this proof, because maybe it's more/equally
-    convenient to restate the theorem so that `t` and/or `s` are actually outside the eventually. -/
-    },
+    -- todo: this is nicer with `is_compact.eventually_forall_of_forall_eventually` twice, but then
+    -- we need the continuity of `δ` with the arguments reassociated differently.
+    have : ∀ᶠ (x : E) in 𝓝 x₀, ∀ (ts : ℝ × ℝ), ts ∈ set.prod I I → (x, δ x ts.1 ts.2) ∈ Ω,
+    { refine is_compact.eventually_forall_mem (is_compact_Icc.prod is_compact_Icc)
+        (continuous_fst.prod_mk hδ) _,
+      rintro ⟨t, s⟩ ⟨ht, hs⟩,
+      rw [hδx₀],
+      show Ω ∈ 𝓝 (x₀, γ t s),
+      exact mem_nhds_iff.mpr
+        ⟨_, inter_subset_left _ _, hU, ⟨h4γ t s, show x₀ ∈ U, from mem_of_mem_nhds hUx₀⟩⟩ },
+    refine this.mono _, intros x h t ht s hs, exact h (t, s) ⟨ht, hs⟩ },
   have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
   { rcases h5γ with ⟨p, w, h⟩,
     obtain ⟨W, hW⟩ := smooth_surrounding_pts h,
@@ -372,13 +373,13 @@ lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surro
   (τ : ℝ) ⦃x : E⦄ (hx : x ∈ U) {t : ℝ} (ht : t ∈ I) {s : ℝ} :
   (x, sf_homotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
 sf_homotopy_in' h₀.to_sf h₁.to_sf (λ _, τ) (λ _, x) () hx ht
-  (λ i hx t ht s _, h₀.val_in x hx t ht s)
-  (λ i hx t ht s _, h₁.val_in x hx t ht s)
+  (λ i hx t ht s _, h₀.val_in hx ht)
+  (λ i hx t ht s _, h₁.val_in hx ht)
 
 lemma surrounding_family_in_sf_homotopy [finite_dimensional ℝ E]
   (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω) (τ : ℝ) :
   surrounding_family_in g b (sf_homotopy h₀.to_sf h₁.to_sf τ) U Ω :=
-⟨surrounding_family_sf_homotopy _, sf_homotopy_in _ _ _⟩
+⟨surrounding_family_sf_homotopy _, λ x hx t ht s hs, sf_homotopy_in _ _ _ hx ht⟩
 
 lemma satisfied_or_refund [finite_dimensional ℝ E] {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω) :
