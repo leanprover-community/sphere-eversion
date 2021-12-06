@@ -169,7 +169,7 @@ protected lemma mono (h : surrounding_family_in g b γ U Ω) {V : set E} (hVU : 
 end surrounding_family_in
 
 /--
-Note: The conditions in this lemma are currently quite a bit weaker than the ones mentioned in the
+Note: The conditions in this lemma are currently a bit weaker than the ones mentioned in the
 blueprint.
 -/
 lemma local_loops [finite_dimensional ℝ F]
@@ -350,18 +350,30 @@ begin
   { exact continuous_const.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd }
 end
 
-lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω)
-  (τ : ℝ) ⦃x : E⦄ (hx : x ∈ U) {t : ℝ} (ht : t ∈ I) {s : ℝ} :
-  (x, sf_homotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
+/-- A more precise version of `sf_homotopy_in`. -/
+lemma sf_homotopy_in' {ι} (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b γ₁ U)
+  (τ : ι → ℝ) (x : ι → E) (i : ι) {V : set E} (hx : x i ∈ V) {t : ℝ} (ht : t ∈ I) {s : ℝ}
+  (h_in₀ : ∀ i (hx : x i ∈ V) (t ∈ I) (s : ℝ), τ i ≠ 1 → (x i, γ₀ (x i) t s) ∈ Ω)
+  (h_in₁ : ∀ i (hx : x i ∈ V) (t ∈ I) (s : ℝ), τ i ≠ 0 → (x i, γ₁ (x i) t s) ∈ Ω) :
+  (x i, sf_homotopy h₀ h₁ (τ i) (x i) t s) ∈ Ω :=
 begin
-  generalize hy : sf_homotopy h₀.to_sf h₁.to_sf τ x t s = y,
-  have h2y : y ∈ range (sf_homotopy h₀.to_sf h₁.to_sf τ x t), { rw [← hy], exact mem_range_self _},
+  by_cases hτ0 : τ i = 0, { simp [hτ0], exact h_in₀ i hx t ht s (by norm_num [hτ0]) },
+  by_cases hτ1 : τ i = 1, { simp [hτ1], exact h_in₁ i hx t ht s (by norm_num [hτ1]) },
+  generalize hy : sf_homotopy h₀ h₁ (τ i) (x i) t s = y,
+  have h2y : y ∈ range (sf_homotopy h₀ h₁ (τ i) (x i) t), { rw [← hy], exact mem_range_self _},
   rw [sf_homotopy, loop.range_of_path] at h2y,
   replace h2y := range_strans_subset h2y,
   rcases h2y with ⟨s', rfl⟩|⟨s', rfl⟩,
-  { exact h₀.val_in _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ },
-  { exact h₁.val_in _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ }
+  { exact h_in₀ _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ hτ1 },
+  { exact h_in₁ _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ hτ0 }
 end
+
+lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω)
+  (τ : ℝ) ⦃x : E⦄ (hx : x ∈ U) {t : ℝ} (ht : t ∈ I) {s : ℝ} :
+  (x, sf_homotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
+sf_homotopy_in' h₀.to_sf h₁.to_sf (λ _, τ) (λ _, x) () hx ht
+  (λ i hx t ht s _, h₀.val_in x hx t ht s)
+  (λ i hx t ht s _, h₁.val_in x hx t ht s)
 
 lemma surrounding_family_in_sf_homotopy [finite_dimensional ℝ E]
   (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω) (τ : ℝ) :
@@ -397,13 +409,13 @@ begin
     (hcV₀.is_closed.is_open_compl.inter hU₁)
     (subset_inter (disjoint_iff_subset_compl_left.mp hV₀L₁) $ (diff_subset _ _).trans hKU₁),
   rw [subset_inter_iff, ← disjoint_iff_subset_compl_left] at h2V₁,
-  rcases h2V₁ with ⟨hV₀V₁, hV₁U₁⟩,
+  rcases h2V₁ with ⟨hV₀₁, hVU₁⟩,
   refine ⟨V₀ ∪ (U₁ ∩ U₀) ∪ V₁, ((hV₀.union $ hU₁.inter hU₀).union hV₁).mem_nhds_set.mpr _, _⟩,
   { refine union_subset (hKV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
     rw [← inter_union_diff K₁], exact
       union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
   obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
-    exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₀V₁,
+    exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₀₁,
   let h₀' : surrounding_family_in g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _),
   let h₁' : surrounding_family_in g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono (inter_subset_left _ _),
   let γ := sf_homotopy h₀'.to_sf h₁'.to_sf,
@@ -416,10 +428,18 @@ begin
           h₀.surrounds x (hVU₀ $ subset_closure hx)] },
       { simp_rw [γ, (hγ $ ρ x).surrounds x hx] },
       { simp_rw [γ, h1ρ (subset_closure hx), pi.one_apply, sf_homotopy_one,
-          h₁.surrounds x (hV₁U₁ $ subset_closure hx)] } },
+          h₁.surrounds x (hVU₁ $ subset_closure hx)] } },
     { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
         continuous_snd.fst continuous_snd.snd },
-    { intros x hx t ht s, refine sf_homotopy_in _ _ _ _ _,  } },
+    { intros x hx t ht s, refine sf_homotopy_in' _ _ _ id _ hx ht _ _,
+      { intros x hx t ht s hρx, refine h₀.val_in x _ t ht s, rcases hx with (hx|⟨-,hx⟩)|hx,
+        { exact (subset_closure.trans hVU₀) hx },
+        { exact hx },
+        { exact (hρx $ h1ρ $ subset_closure hx).elim } },
+      { intros x hx t ht s hρx, refine h₁.val_in x _ t ht s, rcases hx with (hx|⟨hx,-⟩)|hx,
+        { exact (hρx $ h0ρ $ subset_closure hx).elim },
+        { exact hx },
+        { exact (subset_closure.trans hVU₁) hx } } } },
   { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
     simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
 end
