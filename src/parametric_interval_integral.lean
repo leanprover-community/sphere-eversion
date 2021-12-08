@@ -1401,6 +1401,19 @@ begin
   simpa [times_cont_diff_up_iff] using this,
 end
 
+/- Should we directly prove the version below?-/
+
+lemma times_cont_diff_parametric_primitive_of_times_cont_diff
+  {F : H → ℝ → E} {n : with_top ℕ} (hF : times_cont_diff ℝ n ↿F)
+  {s : H → ℝ} (hs : times_cont_diff ℝ n s)
+  (a : ℝ) :
+  times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
+begin
+  induction n using with_top.rec_top_coe,
+  { rw times_cont_diff_top at *,
+    exact λ n, times_cont_diff_parametric_primitive_of_times_cont_diff' (hF n) (hs n) a },
+  { exact times_cont_diff_parametric_primitive_of_times_cont_diff' hF hs a },
+end
 end
 
 section
