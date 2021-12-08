@@ -6,7 +6,7 @@ import topology.algebra.affine
 import linear_algebra.dimension
 import linear_algebra.affine_space.midpoint
 import data.matrix.notation
-import ..to_mathlib.topology.algebra.module
+import analysis.convex.topology
 
 /-!
 # Ample subsets of real vector spaces
@@ -31,35 +31,7 @@ def ample_set (s : set F) :=
 
 section lemma_2_13
 
-instance foo [topological_add_group F] [has_continuous_smul ℝ F] : path_connected_space F :=
-path_connected_space_iff_univ.mpr $ convex_univ.is_path_connected' ⟨(0 : F), trivial⟩
-
 local notation `π` := submodule.linear_proj_of_is_compl _ _
-
-def continuous_map.prod_mk {α β₁ β₂ : Type*} [topological_space α] [topological_space β₁] 
-  [topological_space β₂] (f : C(α, β₁)) (g : C(α, β₂)) : 
-  C(α, β₁ × β₂) :=
-{ to_fun := (λ x, (f x, g x)),
-  continuous_to_fun := continuous.prod_mk f.continuous g.continuous }
-
-def continuous_map.prod_map {α₁ α₂ β₁ β₂ : Type*} [topological_space α₁] [topological_space α₂] 
-  [topological_space β₁] [topological_space β₂] (f : C(α₁, α₂)) (g : C(β₁, β₂)) : 
-  C(α₁ × β₁, α₂ × β₂) :=
-{ to_fun := prod.map f g,
-  continuous_to_fun := continuous.prod_map f.continuous g.continuous }
-
-noncomputable def path.prod {α β : Type*} [topological_space α] [topological_space β] 
-  {x₁ y₁ : α} {x₂ y₂ : β} (γ₁ : path x₁ y₁) (γ₂ : path x₂ y₂) :  path (x₁, x₂) (y₁, y₂) :=
-{ to_continuous_map := continuous_map.prod_mk γ₁.to_continuous_map γ₂.to_continuous_map,
-  source' := by dsimp [continuous_map.prod_mk]; rwa [γ₁.source, γ₂.source],
-  target' := by dsimp [continuous_map.prod_mk]; rwa [γ₁.target, γ₂.target] }
-
-noncomputable def path.add [topological_add_group F] {x₁ x₂ y₁ y₂ : F} (γ₁ : path x₁ y₁) 
-  (γ₂ : path x₂ y₂) : path (x₁ + x₂) (y₁ + y₂) :=
-(γ₁.prod γ₂).map continuous_add
-
-lemma path.add_apply [topological_add_group F] {x₁ x₂ y₁ y₂ : F} (γ₁ : path x₁ y₁) 
-  (γ₂ : path x₂ y₂) (t : unit_interval) : (γ₁.add γ₂) t = γ₁ t + γ₂ t := rfl
 
 lemma submodule.eq_linear_proj_add_linear_proj_of_is_compl {p q : submodule ℝ F} 
   (hpq : is_compl p q) (x : F) : 
@@ -133,7 +105,7 @@ lemma joined_in_compl_zero_of_not_mem_span [topological_add_group F] [has_contin
   {x y : F} (hx : x ≠ 0) (hy : y ∉ submodule.span ℝ ({x} : set F)) : 
   joined_in ({0}ᶜ : set F) x y :=
 begin
-  refine joined_in.of_line (continuous_line_map _ _).continuous_on 
+  refine joined_in.of_line line_map_continuous.continuous_on 
     (line_map_apply_zero _ _) (line_map_apply_one _ _) _,
   rw ← segment_eq_image_line_map,
   exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
@@ -171,7 +143,7 @@ begin
 end
 
 lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
-  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) : 
   is_path_connected (Eᶜ : set F) := 
 begin
   rcases E.exists_is_compl with ⟨E', hE'⟩,
@@ -198,12 +170,12 @@ begin
 end
 
 lemma is_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
-  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) : 
   is_connected (Eᶜ : set F) := 
 (is_path_connected_compl_of_two_le_codim hcodim).is_connected
 
 lemma connected_space_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
-  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) : 
   connected_space (Eᶜ : set F) := 
 is_connected_iff_connected_space.mp (is_connected_compl_of_two_le_codim hcodim)
 
@@ -227,7 +199,7 @@ begin
 end
 
 lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
-  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ E.quotient) : 
+  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) : 
   ample_set (Eᶜ : set F) := 
 begin
   haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
