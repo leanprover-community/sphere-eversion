@@ -372,10 +372,15 @@ begin
               continuous_linear_map.comp_smul]
 end
 
+lemma remainder_c0_small (hγ : is_compact (loop.support γ))
+  (hγ_cont : 𝒞 1 ↿γ) :
+  ∃ C, ∀ x, is_O_with C (λ N, R N γ x) (λ N, 1/N) at_top :=
+sorry
+
 lemma corrugation.fderiv (hγ_diff : 𝒞 1 ↿γ) :
   ∃ C, ∀ x, ∀ v, is_O_with C
   (λ N, D (𝒯 N γ) x v - (D π x v) • (γ x (N*π v) - (γ x).average)) (λ N, ∥v∥/N) at_top :=
-sorry
+  sorry
 
 lemma corrugation.fderiv_ker (hγ_diff : 𝒞 1 ↿γ) :
   ∃ C, ∀ x, ∀ w ∈ ker (D π x : E →ₗ[ℝ] ℝ),
