@@ -207,7 +207,7 @@ end
 
 end one_periodic
 
-
+section c0
 variables {E : Type*}
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
@@ -299,29 +299,99 @@ begin
   exact mul_le_mul_of_nonneg_right (hC x (N*π x)) (norm_nonneg _)
 end
 
-variables [normed_group E] [normed_space ℝ E]
-          (hγ : is_compact (loop.support γ)) (hγ_diff : times_cont_diff ℝ 1 ↿γ)
+end c0
+
+section c1
+
+variables {E : Type*} [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+          {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
+          [finite_dimensional ℝ F]
+
+
+variables (π : E → ℝ) (N : ℝ) (γ : E → loop F)
+          (hγ : is_compact (loop.support γ))
 
 open linear_map
 
-lemma corrugation.fderiv  :
+local notation `∂₁` := partial_fderiv_fst ℝ
+
+def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → (E →L[ℝ] F) :=
+λ x, (1/N) • ∫ t in 0..(N*π x), ∂₁ (λ x t, γ x t - (γ x).average) x t
+
+local notation `R` := corrugation.remainder π
+local notation `𝒯` := corrugation π
+local notation `𝒞` := times_cont_diff ℝ
+local notation u ` ⬝ `:70 φ:65 :=
+  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
+
+/- Move this next to times_cont_diff_smul, and think about how to mkae such things much
+less painful. -/
+lemma times_cont_diff.const_smul {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+  {f : E → F} {n : with_top ℕ} (h : times_cont_diff 𝕜 n f) (a : 𝕜) :
+  times_cont_diff 𝕜 n (λ x, a • f x) :=
+begin
+  change times_cont_diff 𝕜 n ((λ p : 𝕜 × F, p.1 • p.2) ∘ (λ y : F, (a, y)) ∘ f),
+  apply times_cont_diff.comp,
+  exact times_cont_diff_smul,
+  apply times_cont_diff.comp _ h,
+  exact (times_cont_diff_prod_mk a).of_le le_top
+end
+
+variable {γ}
+
+lemma times_cont_diff_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (λ x, (γ x).average) :=
+times_cont_diff_parametric_primitive_of_times_cont_diff hγ_diff times_cont_diff_const 0
+
+lemma times_cont_diff_sub_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+  𝒞 n ↿(λ (x : E) (t : ℝ), (γ x) t - (γ x).average) :=
+hγ_diff.sub ((times_cont_diff_average hγ_diff).comp times_cont_diff_fst)
+
+lemma corrugation.times_cont_diff {n : with_top ℕ} (hπ_diff : 𝒞 n π) (hγ_diff : 𝒞 n ↿γ) :
+  𝒞 n (𝒯 N γ) :=
+begin
+  apply times_cont_diff.const_smul,
+  apply times_cont_diff_parametric_primitive_of_times_cont_diff _ (hπ_diff.const_smul N) 0,
+  exact times_cont_diff_sub_average hγ_diff
+end
+
+lemma corrugation.fderiv_eq (hN : N ≠ 0) (hπ_diff : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) :
+  D (𝒯 N γ) = λ x : E, (γ x (N*π x) - (γ x).average) ⬝ (D π x) + R N γ x :=
+begin
+  ext1 x₀,
+  have diff := times_cont_diff_sub_average hγ_diff,
+  have key :=
+    (has_fderiv_at_parametric_primitive_of_times_cont_diff' diff (hπ_diff.const_smul N) x₀ 0).2,
+  erw [fderiv_const_smul key.differentiable_at,
+       key.fderiv,
+       smul_add, add_comm],
+  congr' 1,
+  rw fderiv_const_smul (hπ_diff.differentiable le_rfl).differentiable_at N,
+  simp only [smul_smul, inv_mul_cancel hN, one_div, algebra.id.smul_eq_mul, one_smul,
+              continuous_linear_map.comp_smul]
+end
+
+lemma corrugation.fderiv (hγ_diff : 𝒞 1 ↿γ) :
   ∃ C, ∀ x, ∀ v, is_O_with C
-  (λ N, D (corrugation π N γ) x v - (D π x v) • (γ x (N*π v) - (γ x).average)) (λ N, ∥v∥/N) at_top :=
+  (λ N, D (𝒯 N γ) x v - (D π x v) • (γ x (N*π v) - (γ x).average)) (λ N, ∥v∥/N) at_top :=
 sorry
 
-lemma corrugation.fderiv_ker :
+lemma corrugation.fderiv_ker (hγ_diff : 𝒞 1 ↿γ) :
   ∃ C, ∀ x, ∀ w ∈ ker (D π x : E →ₗ[ℝ] ℝ),
-  is_O_with C (λ N, D (corrugation π N γ) x w) (λ N, ∥w∥/N) at_top :=
+  is_O_with C (λ N, D (𝒯 N γ) x w) (λ N, ∥w∥/N) at_top :=
 sorry
 
-lemma corrugation.fderiv_u {u : E} (hu : ∀ x, fderiv ℝ π x u = 1) :
+lemma corrugation.fderiv_u (hγ_diff : 𝒞 1 ↿γ) {u : E} (hu : ∀ x, fderiv ℝ π x u = 1) :
   ∃ C, ∀ x, is_O_with C
-  (λ N, D (corrugation π N γ) x u - (γ x (N*π u) - (γ x).average)) (λ N, ∥u∥/N) at_top :=
+  (λ N, D (𝒯 N γ) x u - (γ x (N*π u) - (γ x).average)) (λ N, ∥u∥/N) at_top :=
 sorry
+
+end c1
 
 open module (dual)
 
-variables (E)
+variables (E : Type*) [normed_group E] [normed_space ℝ E]
 
 -- TODO: move mathlib's dual_pair out of the root namespace!
 
