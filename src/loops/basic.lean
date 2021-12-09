@@ -8,6 +8,7 @@ import topology.path_connected
 import linear_algebra.affine_space.independent
 
 import loops.homotheties
+import loops.smooth_barycentric
 import to_mathlib.topology.misc
 
 
@@ -144,16 +145,31 @@ begin
 end
 
 -- lem:smooth_barycentric_coord
-lemma smooth_surrounding {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
+lemma smooth_surrounding [finite_dimensional ℝ F] {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) (yq.1, yq.2) ∧
+  ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
                              (∀ i, 0 < W yq.1 yq.2 i) ∧
                              ∑ i, W yq.1 yq.2 i = 1 ∧
                              ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
-sorry
+begin
+  classical,
+  use eval_barycentric_coords (fin (d + 1)) ℝ F,
+  let U : set (F × (fin (finrank ℝ F + 1) → F)) := sorry, -- Small enough to ensure coords always positive
+  have hU : U ∈ 𝓝 (x, p), { sorry, },
+  apply filter.eventually_of_mem hU,
+  intros yq hyq,
+  refine ⟨⟨U, _, (smooth_barycentric (fin (d + 1)) ℝ F (fintype.card_fin _)).mono _⟩, _, _, _⟩,
+  { sorry, },
+  { sorry, },
+  { sorry, },
+  { -- affine_basis.sum_coord_apply_eq_one,
+    sorry, },
+  { -- affine_basis.affine_combination_coord_eq_self,
+    sorry, },
+end
 
-lemma smooth_surrounding_pts {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
+lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
   ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
