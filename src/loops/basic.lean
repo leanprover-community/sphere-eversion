@@ -27,6 +27,7 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F' : Type*} [normed_group F'] [normed_space ℝ F'] --[finite_dimensional ℝ F']
 
 local notation `d` := finrank ℝ F
+local notation `ι` := fin (d + 1)
 
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
 
@@ -154,19 +155,52 @@ lemma smooth_surrounding [finite_dimensional ℝ F] {x : F} {p : fin (d + 1) →
                              ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
 begin
   classical,
-  use eval_barycentric_coords (fin (d + 1)) ℝ F,
-  let U : set (F × (fin (finrank ℝ F + 1) → F)) := sorry, -- Small enough to ensure coords always positive
-  have hU : U ∈ 𝓝 (x, p), { sorry, },
-  apply filter.eventually_of_mem hU,
-  intros yq hyq,
-  refine ⟨⟨U, _, (smooth_barycentric (fin (d + 1)) ℝ F (fintype.card_fin _)).mono _⟩, _, _, _⟩,
-  { sorry, },
-  { sorry, },
-  { sorry, },
-  { -- affine_basis.sum_coord_apply_eq_one,
-    sorry, },
-  { -- affine_basis.affine_combination_coord_eq_self,
-    sorry, },
+  use eval_barycentric_coords ι ℝ F,
+  let V : set (ι → ℝ) := set.pi set.univ (λ i : ι, Ioi (0 : ℝ)),
+  have hV : is_open V := is_open_set_pi finite_univ (λ _ _, is_open_Ioi),
+  let W' := uncurry (eval_barycentric_coords ι ℝ F),
+  have hW' : continuous_on W' (set.prod univ (affine_bases ι ℝ F)),
+  { exact (smooth_barycentric ι ℝ F (fintype.card_fin _)).continuous_on, },
+  have hWV : W' (x, p) ∈ V,
+  { obtain ⟨indep, w_pos, w_sum, rfl⟩ := h,
+    have tot : affine_span ℝ (range p) = ⊤,
+    { rw indep.affine_span_eq_top_iff_card_eq_finrank_add_one,
+      simp, },
+    have hp : p ∈ affine_bases ι ℝ F := ⟨indep, tot⟩,
+    simp only [mem_Ioi, mem_univ_pi],
+    intros i,
+    convert w_pos i,
+    rw ← finset.univ.affine_combination_eq_linear_combination _ w w_sum,
+    simp only [W', eval_barycentric_coords, hp, dif_pos, uncurry_apply_pair, affine_basis.coords_apply],
+    exact affine_basis.coord_apply_combination_of_mem _ (finset.mem_univ i) w_sum, },
+  have h_open_bases : is_open (set.prod (univ : set F) (affine_bases ι ℝ F)),
+  { apply is_open_univ.prod,
+    suffices : affine_bases ι ℝ F = {q : ι → F | affine_independent ℝ q},
+    { rw this, exact is_open_set_of_affine_independent ℝ F, },
+    ext q,
+    simp only [affine_bases, mem_set_of_eq, and_iff_left_iff_imp],
+    intros h_ind,
+    rw [h_ind.affine_span_eq_top_iff_card_eq_finrank_add_one, fintype.card_fin], },
+  let U : set (F × (fin (finrank ℝ F + 1) → F)) := W' ⁻¹' V,
+  have hU₁ : U ⊆ set.prod univ (affine_bases ι ℝ F),
+  { rintros ⟨y, q⟩ hyq,
+    simp only [true_and, prod_mk_mem_set_prod_eq, mem_univ],
+    by_contra hq,
+    simpa only [W', eval_barycentric_coords, hq, lt_self_iff_false, forall_const, pi.zero_apply,
+      uncurry_apply_pair, mem_Ioi, mem_univ_pi, mem_preimage, dif_neg, not_false_iff] using hyq, },
+  have hU₂ : is_open U := hW'.is_open_preimage h_open_bases hU₁ hV,
+  have hU₃ : U ∈ 𝓝 (x, p) := mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, mem_preimage.mpr hWV⟩,
+  apply filter.eventually_of_mem hU₃,
+  rintros ⟨y, q⟩ hyq,
+  have hq : q ∈ affine_bases ι ℝ F, { simpa using hU₁ hyq, },
+  refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩, (smooth_barycentric ι ℝ F (fintype.card_fin _)).mono hU₁⟩,
+          (maps_univ_to (λ i, W' (y, q) i) (Ioi 0)).mp (set.mem_pi.mp hyq), _, _⟩,
+  { simp [eval_barycentric_coords, hq], },
+  { simp only [eval_barycentric_coords, hq, dif_pos, affine_basis.coords_apply],
+    rw ← finset.univ.affine_combination_eq_linear_combination,
+    { convert affine_basis.affine_combination_coord_eq_self _ y,
+      simp, },
+    { simp, }, },
 end
 
 lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
