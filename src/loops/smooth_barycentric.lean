@@ -1,7 +1,5 @@
-import analysis.calculus.affine_map
-import analysis.normed_space.add_torsor_bases
-
--- TODO Sort out this file: total mess.
+import to_mathlib.analysis.normed_space.add_torsor_bases
+import to_mathlib.analysis.calculus.times_cont_diff
 
 noncomputable theory
 
@@ -41,15 +39,6 @@ by simp only [eval_barycentric_coords, h, dif_pos]
 
 variables {ι R P}
 
-/-- A variant of `affine_basis.affine_combination_coord_eq_self` for the special case when the
-affine space is a module so we can talk about linear combinations. -/
-lemma affine_basis.linear_combination_coord_eq_self (b : affine_basis ι R M) (m : M) :
-  ∑ i, (b.coord i m) • (b.points i) = m :=
-begin
-  have hb := b.affine_combination_coord_eq_self m,
-  rwa finset.univ.affine_combination_eq_linear_combination _ _ (b.sum_coord_apply_eq_one m) at hb,
-end
-
 lemma eval_barycentric_coords_eq_det
   (S : Type*) [field S] [module S M] [∀ v, decidable (v ∈ affine_bases ι S P)]
   (b : affine_basis ι S P) (p : P) (v : ι → P) :
@@ -74,20 +63,9 @@ end
 
 end barycentric_det
 
-section smooth_det
-
-variables (ι k : Type*) [fintype ι] [decidable_eq ι]
-variables [nondiscrete_normed_field k] {Z : Type*} [normed_group Z] [normed_space k Z]
-
-lemma times_cont_diff_apply {ι : Type*} [fintype ι] {m : with_top ℕ} (i : ι) :
-  times_cont_diff k m (λ (f : ι → Z), f i) :=
-(continuous_linear_map.proj i : (ι → Z) →L[k] Z).times_cont_diff
-
-lemma times_cont_diff_apply_apply {ι : Type*} [fintype ι] {m : with_top ℕ} (i j : ι) :
-  times_cont_diff k m (λ (f : ι → ι → Z), f j i) :=
-(@times_cont_diff_apply k _ Z _ _ ι _ m i).comp (@times_cont_diff_apply k _ (ι → Z) _ _ ι _ m j)
-
 namespace matrix
+
+variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nondiscrete_normed_field k]
 
 -- Exists in Mathlib but needs bump (looks like #10398 was breakage).
 @[simp] lemma coe_det_is_empty {n R : Type*} [comm_ring R] [is_empty n] [decidable_eq n] :
@@ -104,7 +82,7 @@ begin
     { ext, simp, },
     rw h,
     apply (this (fintype.card ι)).comp,
-    exact times_cont_diff_pi.mpr (λ i, times_cont_diff_pi.mpr (λ j, times_cont_diff_apply_apply _ _ _)), },
+    exact times_cont_diff_pi.mpr (λ i, times_cont_diff_pi.mpr (λ j, times_cont_diff_apply_apply _ _)), },
   intros n,
   induction n with n ih,
   { rw coe_det_is_empty,
@@ -123,8 +101,6 @@ end
 
 end matrix
 
-end smooth_det
-
 section smooth_barycentric
 
 open set function
@@ -132,10 +108,6 @@ open set function
 variables (ι 𝕜 F : Type*)
 variables [fintype ι] [decidable_eq ι] [nondiscrete_normed_field 𝕜] [complete_space 𝕜]
 variables [normed_group F] [normed_space 𝕜 F]
-
-lemma smooth_barycentric' [finite_dimensional 𝕜 F] (b : affine_basis ι 𝕜 F) (i : ι) :
-  times_cont_diff 𝕜 ⊤ (b.coord i) :=
-(⟨b.coord i, continuous_barycentric_coord b i⟩ : F →A[𝕜] 𝕜).times_cont_diff
 
 -- Particularly horrendous proof
 lemma smooth_barycentric [∀ v, decidable (v ∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
@@ -149,7 +121,7 @@ begin
   have h_snd : times_cont_diff 𝕜 ⊤ (λ (x : F × (ι → F)), b.to_matrix x.snd),
   { refine times_cont_diff.comp _ times_cont_diff_snd,
     refine times_cont_diff_pi.mpr (λ j, times_cont_diff_pi.mpr (λ j', _)),
-    exact (smooth_barycentric' ι 𝕜 F b j').comp (times_cont_diff_apply 𝕜 j), },
+    exact (smooth_barycentric_coord b j').comp (times_cont_diff_apply j), },
   apply times_cont_diff_on.mul,
   { apply ((matrix.smooth_det ι 𝕜 ⊤).comp h_snd).times_cont_diff_on.inv,
     rintros ⟨p, v⟩ h,
@@ -161,9 +133,9 @@ begin
     simp only [matrix.update_row_apply, affine_basis.to_matrix_apply, affine_basis.coords_apply],
     by_cases hij : j = i,
     { simp only [hij, if_true, eq_self_iff_true],
-      exact (smooth_barycentric' ι 𝕜 F b j').comp times_cont_diff_fst, },
+      exact (smooth_barycentric_coord b j').comp times_cont_diff_fst, },
     { simp only [hij, if_false],
-      exact (smooth_barycentric' ι 𝕜 F b j').comp (times_cont_diff_pi.mp times_cont_diff_snd j), }, },
+      exact (smooth_barycentric_coord b j').comp (times_cont_diff_pi.mp times_cont_diff_snd j), }, },
 end
 
 end smooth_barycentric
