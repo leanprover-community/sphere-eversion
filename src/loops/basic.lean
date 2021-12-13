@@ -68,7 +68,7 @@ section surrounding_points
 /-- `p` is a collection of points surrounding `f` with weights `w` (that are positive and sum to 1)
 if the weighted average of the points `p` is `f` and the points `p` form an affine basis of the
 space. -/
-structure surrounding_pts (f : F) (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ) : Prop :=
+structure surrounding_pts (f : F) (p : ι → F) (w : ι → ℝ) : Prop :=
 (indep : affine_independent ℝ p)
 (w_pos : ∀ i, 0 < w i)
 (w_sum : ∑ i, w i = 1)
@@ -97,7 +97,7 @@ begin
     have h_tot : affine_span ℝ (range p) = ⊤ :=
       indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
     refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
-    let basis : affine_basis (fin (finrank ℝ F + 1)) ℝ F := ⟨p, indep, h_tot⟩,
+    let basis : affine_basis ι ℝ F := ⟨p, indep, h_tot⟩,
     rw interior_convex_hull_aff_basis basis,
     intros i,
     rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
@@ -116,7 +116,7 @@ begin
     rw hp at h₀ h₂ h₃,
     replace h₁ : affine_independent ℝ p :=
       h₁.comp_embedding (fintype.equiv_fin_of_card_eq hb).symm.to_embedding,
-    let basis : affine_basis (fin (finrank ℝ F + 1)) ℝ F := ⟨_, h₁, h₂⟩,
+    let basis : affine_basis ι ℝ F := ⟨_, h₁, h₂⟩,
     rw [interior_convex_hull_aff_basis basis, mem_set_of_eq] at h₃,
     refine ⟨p, λ i, basis.coord i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
     { exact basis.sum_coord_apply_eq_one f, },
@@ -151,10 +151,10 @@ begin
 end
 
 -- lem:smooth_barycentric_coord
-lemma smooth_surrounding [finite_dimensional ℝ F] {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
+lemma smooth_surrounding [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
   (h : surrounding_pts x p w) :
-  ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+  ∃ W : F → (ι → F) → (ι → ℝ),
+  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
                              (∀ i, 0 < W yq.1 yq.2 i) ∧
                              ∑ i, W yq.1 yq.2 i = 1 ∧
                              ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
@@ -177,7 +177,7 @@ begin
   have h_open_bases : is_open (set.prod (univ : set F) (affine_bases ι ℝ F)),
   { rw affine_bases_findim ι ℝ F (fintype.card_fin _),
     exact is_open_univ.prod (is_open_set_of_affine_independent ℝ F), },
-  let U : set (F × (fin (finrank ℝ F + 1) → F)) := W' ⁻¹' V,
+  let U : set (F × (ι → F)) := W' ⁻¹' V,
   have hU₁ : U ⊆ set.prod univ (affine_bases ι ℝ F),
   { rintros ⟨y, q⟩ hyq,
     simp only [true_and, prod_mk_mem_set_prod_eq, mem_univ],
@@ -199,10 +199,10 @@ begin
     { simp, }, },
 end
 
-lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : fin (d + 1) → F} {w : fin (d + 1) → ℝ}
+lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
   (h : surrounding_pts x p w) :
-  ∃ W : F → (fin (d+1) → F) → (fin (d+1) → ℝ),
-  ∀ᶠ (yq : F × (fin (d + 1) → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+  ∃ W : F → (ι → F) → (ι → ℝ),
+  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
     surrounding_pts yq.1 yq.2 (W yq.1 yq.2) :=
 begin
   refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),
