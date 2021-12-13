@@ -10,7 +10,7 @@ import linear_algebra.affine_space.independent
 import loops.homotheties
 import loops.smooth_barycentric
 import to_mathlib.topology.misc
-
+import to_mathlib.linear_algebra.affine_space.basis
 
 /-!
 # Basic definitions and properties of loops
