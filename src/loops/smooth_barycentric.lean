@@ -2,11 +2,10 @@ import to_mathlib.analysis.normed_space.add_torsor_bases
 import to_mathlib.analysis.calculus.times_cont_diff
 
 noncomputable theory
-
-section barycentric_det
-
 open set function
 open_locale affine matrix big_operators
+
+section barycentric_det
 
 variables (ι R k P : Type*) {M : Type*} [ring R] [add_comm_group M] [module R M] [affine_space M P]
 include M
@@ -51,10 +50,10 @@ begin
     convert (one_mul _).symm,
     have hu := b.is_unit_to_matrix ⟨v, h.1, h.2⟩,
     rw matrix.is_unit_iff_is_unit_det at hu,
-    simp at hu,
     rw ← ring.inverse_eq_inv,
     exact ring.inverse_mul_cancel _ hu, },
-  { simp only [eval_barycentric_coords, h, algebra.id.smul_eq_mul, pi.zero_apply, inv_eq_zero,
+  { -- Both sides are "junk values". It's only slightly evil to take advantage of this.
+    simp only [eval_barycentric_coords, h, algebra.id.smul_eq_mul, pi.zero_apply, inv_eq_zero,
       dif_neg, not_false_iff, zero_eq_mul, pi.smul_apply],
     left,
     rwa [mem_affine_bases_iff ι S P b v, matrix.is_unit_iff_is_unit_det,
@@ -65,15 +64,16 @@ end barycentric_det
 
 namespace matrix
 
-variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nondiscrete_normed_field k]
-
--- Exists in Mathlib but needs bump (looks like #10398 was breakage).
+-- This lemma already exists in Mathlib but we need a bump to pick it up.
 @[simp] lemma coe_det_is_empty {n R : Type*} [comm_ring R] [is_empty n] [decidable_eq n] :
   (det : matrix n n R → R) = function.const _ 1 :=
 by { ext, exact det_is_empty, }
 
+variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nondiscrete_normed_field k]
+
 attribute [instance] normed_group normed_space
 
+-- This should really be deduced from general results about continuous multilinear maps.
 lemma smooth_det (m : with_top ℕ) :
   times_cont_diff k m (det : matrix ι ι k → k) :=
 begin
@@ -103,13 +103,10 @@ end matrix
 
 section smooth_barycentric
 
-open set function
-
 variables (ι 𝕜 F : Type*)
 variables [fintype ι] [decidable_eq ι] [nondiscrete_normed_field 𝕜] [complete_space 𝕜]
 variables [normed_group F] [normed_space 𝕜 F]
 
--- Particularly horrendous proof
 lemma smooth_barycentric [∀ v, decidable (v ∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
   (h : fintype.card ι = finite_dimensional.finrank 𝕜 F + 1) :
   times_cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (set.prod univ (affine_bases ι 𝕜 F)) :=
