@@ -8,7 +8,7 @@ noncomputable theory
 section barycentric_det
 
 open set function
-open_locale affine matrix
+open_locale affine matrix big_operators
 
 variables (ι R k P : Type*) {M : Type*} [ring R] [add_comm_group M] [module R M] [affine_space M P]
 include M
@@ -34,7 +34,21 @@ lemma mem_affine_bases_iff [nontrivial R] (b : affine_basis ι R P) (v : ι → 
 def eval_barycentric_coords [∀ v, decidable (v ∈ affine_bases ι R P)] (p : P) (v : ι → P) : ι → R :=
 if h : v ∈ affine_bases ι R P then ((affine_basis.mk v h.1 h.2).coords p : ι → R) else 0
 
+@[simp] lemma eval_barycentric_coords_apply_of_mem_bases [∀ v, decidable (v ∈ affine_bases ι R P)]
+  (p : P) {v : ι → P} (h : v ∈ affine_bases ι R P) :
+  eval_barycentric_coords ι R P p v = (affine_basis.mk v h.1 h.2).coords p :=
+by simp only [eval_barycentric_coords, h, dif_pos]
+
 variables {ι R P}
+
+/-- A variant of `affine_basis.affine_combination_coord_eq_self` for the special case when the
+affine space is a module so we can talk about linear combinations. -/
+lemma affine_basis.linear_combination_coord_eq_self (b : affine_basis ι R M) (m : M) :
+  ∑ i, (b.coord i m) • (b.points i) = m :=
+begin
+  have hb := b.affine_combination_coord_eq_self m,
+  rwa finset.univ.affine_combination_eq_linear_combination _ _ (b.sum_coord_apply_eq_one m) at hb,
+end
 
 lemma eval_barycentric_coords_eq_det
   (S : Type*) [field S] [module S M] [∀ v, decidable (v ∈ affine_bases ι S P)]
