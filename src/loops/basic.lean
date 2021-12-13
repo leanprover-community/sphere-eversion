@@ -75,9 +75,19 @@ structure surrounding_pts (f : F) (p : ι → F) (w : ι → ℝ) : Prop :=
 (avg : ∑ i, w i • p i = f)
 
 lemma surrounding_pts.tot [finite_dimensional ℝ F]
-  {f : F} {p : ι → F} {w : ι → ℝ} (x : surrounding_pts f p w) :
+  {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
   affine_span ℝ (range p) = ⊤ :=
-x.indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _)
+h.indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _)
+
+lemma surrounding_pts.coord_eq_w [finite_dimensional ℝ F]
+  {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
+  (⟨p, h.indep, h.tot⟩ : affine_basis ι ℝ F).coords f = w :=
+begin
+  ext i,
+  conv_lhs { congr, skip, rw ← h.avg, },
+  rw [← finset.univ.affine_combination_eq_linear_combination _ w h.w_sum, affine_basis.coords_apply],
+  exact affine_basis.coord_apply_combination_of_mem _ (finset.mem_univ i) h.w_sum,
+end
 
 /-- `f` is surrounded by a set `s` if there is an affine basis `p` in `s` with weighted average `f`.
 -/
@@ -168,12 +178,9 @@ begin
   { exact (smooth_barycentric ι ℝ F (fintype.card_fin _)).continuous_on, },
   have hWV : W' (x, p) ∈ V,
   { have hp : p ∈ affine_bases ι ℝ F := ⟨h.indep, h.tot⟩,
-    simp only [mem_Ioi, mem_univ_pi],
-    intros i,
-    convert h.w_pos i,
-    rw [← h.avg, ← finset.univ.affine_combination_eq_linear_combination _ w h.w_sum],
-    simp only [W', eval_barycentric_coords, hp, dif_pos, uncurry_apply_pair, affine_basis.coords_apply],
-    exact affine_basis.coord_apply_combination_of_mem _ (finset.mem_univ i) h.w_sum, },
+    simp only [mem_Ioi, mem_univ_pi, W', eval_barycentric_coords, hp, dif_pos, uncurry_apply_pair,
+      h.coord_eq_w],
+    exact h.w_pos, },
   have h_open_bases : is_open (set.prod (univ : set F) (affine_bases ι ℝ F)),
   { rw affine_bases_findim ι ℝ F (fintype.card_fin _),
     exact is_open_univ.prod (is_open_set_of_affine_independent ℝ F), },
