@@ -192,10 +192,9 @@ begin
   have hq : q ∈ affine_bases ι ℝ F, { simpa using hU₁ hyq, },
   have hyq' : (y, q) ∈ W' ⁻¹' V := (set.inter_subset_right _ _) hyq,
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩, (smooth_barycentric ι ℝ F hι).mono hU₁⟩, _, _, _⟩,
-  { simpa only [mem_Ioi, mem_univ_pi, mem_preimage] using hyq', },
+  { simpa using hyq', },
   { simp [hq], },
-  { simp only [hq, eval_barycentric_coords_apply_of_mem_bases, affine_basis.coords_apply,
-      affine_basis.linear_combination_coord_eq_self _ y], },
+  { simp [hq, affine_basis.linear_combination_coord_eq_self _ y], },
 end
 
 lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
