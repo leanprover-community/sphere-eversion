@@ -10,13 +10,22 @@ section barycentric_det
 open set function
 open_locale affine matrix
 
-variables (ι R P : Type*) {M : Type*} [ring R] [add_comm_group M] [module R M] [affine_space M P]
+variables (ι R k P : Type*) {M : Type*} [ring R] [add_comm_group M] [module R M] [affine_space M P]
 include M
 
 def affine_bases : set (ι → P) :=
 { v | affine_independent R v ∧ affine_span R (range v) = ⊤ }
 
 variables [fintype ι] [decidable_eq ι]
+
+lemma affine_bases_findim [field k] [module k M] [finite_dimensional k M]
+  (h : fintype.card ι = finite_dimensional.finrank k M + 1) :
+  affine_bases ι k P = { v | affine_independent k v } :=
+begin
+  ext v,
+  simp only [affine_bases, mem_set_of_eq, and_iff_left_iff_imp],
+  exact λ h_ind, h_ind.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr h,
+end
 
 lemma mem_affine_bases_iff [nontrivial R] (b : affine_basis ι R P) (v : ι → P) :
   v ∈ affine_bases ι R P ↔ is_unit (b.to_matrix v) :=
