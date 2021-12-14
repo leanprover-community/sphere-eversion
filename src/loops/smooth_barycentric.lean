@@ -10,6 +10,9 @@ section barycentric_det
 variables (ι R k P : Type*) {M : Type*} [ring R] [add_comm_group M] [module R M] [affine_space M P]
 include M
 
+-- On reflection, it might be better to drop this definition and just write
+-- `affine_independent R v ∧ affine_span R (range v) = ⊤` everywhere instead of
+-- `v ∈ affine_bases ι R P`.
 def affine_bases : set (ι → P) :=
 { v | affine_independent R v ∧ affine_span R (range v) = ⊤ }
 
@@ -38,6 +41,11 @@ by simp only [eval_barycentric_coords, h, dif_pos]
 
 variables {ι R P}
 
+-- This could be stated and proved without having to assume a choice of affine basis if we
+-- had a sufficiently-developed theory of exterior algebras. Two key results which are missing
+-- are that the top exterior power is one-dimensional (and thus its non-zero elements are a
+-- multiplicative torsor for the scalar units) and that linear independence corresponds to
+-- exterior product being non-zero.
 lemma eval_barycentric_coords_eq_det
   (S : Type*) [field S] [module S M] [∀ v, decidable (v ∈ affine_bases ι S P)]
   (b : affine_basis ι S P) (p : P) (v : ι → P) :
@@ -107,6 +115,9 @@ variables (ι 𝕜 F : Type*)
 variables [fintype ι] [decidable_eq ι] [nondiscrete_normed_field 𝕜] [complete_space 𝕜]
 variables [normed_group F] [normed_space 𝕜 F]
 
+-- An alternative approach would be to prove the affine version of `times_cont_diff_at_map_inverse`
+-- and prove that barycentric coordinates give a continuous affine equivalence to
+-- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 lemma smooth_barycentric [∀ v, decidable (v ∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
   (h : fintype.card ι = finite_dimensional.finrank 𝕜 F + 1) :
   times_cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (set.prod univ (affine_bases ι 𝕜 F)) :=
