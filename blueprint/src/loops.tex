@@ -271,55 +271,41 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
 \end{lemma}
 
 \begin{proof}
-  If $d = 0$ then there is nothing to prove.
-  Hence we will assume $d ≥ 1$.
-  Components of elements of $E^{d+1}$ or $ℝ^{d+1}$ will always be
-  numbered from $0$ to $d$.
-  By assumption, the family of points $p_i$ is affinely independent and
-  there are weights $w_0, \dots, w_d$ such that $x = \sum_i w_i p_i$
-  where each $w_i$ is in $(0, 1)$ and their sum is one.
-  In particular
-
+  \leanok
+  Let:
   \begin{align*}
-    x - p_0 &= \sum_{i=0}^d w_i p_i - \sum_{i=0}^d w_i p_0 \\
-            & = \sum_{i=0}^d w_i (p_i - p_0) \\
-            & = \sum_{i=1}^d w_i (p_i - p_0).
+    A = E \times \{ q \in E^{d+1} ~|~ \mbox{$q$ is an affine basis for $E$} \},
+  \end{align*}
+  and define:
+  \begin{align*}
+    w : A &\to ℝ^{d+1}\\
+    (y, q) &\mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}.
   \end{align*}
 
-  For $q$ in $E^{d+1}$ and $i ∈ \{1, \dots, d\}$, we set
-  $e_i(q) = q_i - q_0$.
-  Since $p$ is a collection of $d+1$ affinely independent points,
-  the family $e_i(p)$ is a basis of $e$.
-  By continuity of the determinant, this stays true
-  for $q$ in $Π_i B_δ(p_i)$ for some positive $δ$.
-  Let $e^*_i(q)$ denote the elements of the dual basis.
-  In order to prove continuity of these maps and define them
-  for every $q$, we fix a basis $B$ of $E$ and the corresponding
-  determinant $\det_B : E^d → ℝ$.
-  We set $δ(q) = \det_B(e(q))$ and define
-  \[
-    e^*_i(q) = v ↦
-    \det_B(e_1(q), \dots, e_{i-1}(q), v, e_{i+1}(q), \dots, e_d(q))/δ(q).
-  \]
-  which should be interpreted as the zero linear form if $δ(q) = 0$
-  (this interpretation is automatic if division by zero in $ℝ$
-  is defined as zero, as it should be).
-  The map $q ↦ e^*_i(q)$ is smooth on $Π_i B_δ(p_i)$
-  where $δ$ does not vanish since the determinant is polynomial.
-  We set $w_i(y, q) = e^*_i(q)(y - q_0)$.
-  The computation of $x - p_0$ above proves that
-  $w_i(x, p) = w_i$.
-  We have $y - q_0 = \sum_{i = 1}^d w_i(y, q)(q_i - q_0)$.
-  Hence
-  \[
-    y = \left(1 - \sum_{i = 1}^d w_i(y, q)\right)q_0 +
-        \sum_{i = 1}^d w_i(y, q)q_i.
-  \]
-  We denote by $w_0(y, q)$ the coefficient in front of $q_0$ in the
-  above formula.
-  Hence we have $y = \sum_{i=0}^d w_i(y, q)q_i$ with
-  $w_i(x, p) = w_i$ hence $\sum_{i=0}^d w_i(y, q) = 1$ and each $w_i(y, q) > 0$
-  if $(y, q)$ is sufficiently close to $(x, p)$.
+  If we fix an affine basis $b$ of $E$, we may express $w$ as a
+  ratio of determinants in terms of coordinates relative to $b$. More precisely,
+  by Cramer's rule, if $0 \le i \le d$ and $w_i$ is the $i^{\rm th}$ component of $w$,
+  then:
+  \begin{align*}
+    w_i (y, q) = \det M_i (y, q) / \det N (q)
+  \end{align*}
+  where $N(q)$ is the $(d+1)\times (d+1)$ matrix whose columns are the barycentric
+  coordinates of the components of $q$ relative to $b$, and $M_i (y, q)$ is $N(q)$
+  except with column $i$ replaced by the barycentric coordinates of $y$ relative
+  to $b$.
+
+  Since determinants are smooth functions and $(y, q) \mapsto \det N(q)$ is
+  non-vanishing on $A$, $w$ is smooth on $A$.
+
+  Finally define:
+  \begin{align*}
+    U = w^{-1}((0, \infty)^{d+1}),
+  \end{align*}
+  and note that $U$ is open in $A$, since it is the preimage of an open set under the
+  continuous map $w$. In fact since $A$ is open, $U$ is open as a subset of $E \times E^{d+1}$.
+  Note that $(x, p) \in U$ since $p$ surrounds $x$.
+
+  We may extend $w$ to $E \times E^{d+1}$ by giving it any values at all outside $A$.
 \end{proof}
 
 \section{Constructing loops}
