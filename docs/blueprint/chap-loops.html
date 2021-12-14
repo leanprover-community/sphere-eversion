@@ -117,7 +117,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/basic.lean#L362">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/basic.lean#L406">loop.average</a></li>
         </ul>
 
       </div>
@@ -165,7 +165,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/reparametrization.lean#L52">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/reparametrization.lean#L52">exists_loops</a></li>
         </ul>
 
       </div>
@@ -267,7 +267,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/basic.lean#L69">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/basic.lean#L71">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -422,7 +422,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/basic.lean#L122">surrounded_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/basic.lean#L139">surrounded_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -474,6 +474,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">1.8</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:smooth_barycentric_coord">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000031"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -502,7 +503,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/basic.lean#L147">smooth_surrounding</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/basic.lean#L164">smooth_surrounding</a></li>
         </ul>
 
       </div>
@@ -533,17 +534,18 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>If \(d = 0\) then there is nothing to prove. Hence we will assume \(d ≥ 1\). Components of elements of \(E^{d+1}\) or \(ℝ^{d+1}\) will always be numbered from \(0\) to \(d\). By assumption, the family of points \(p_i\) is affinely independent and there are weights \(w_0, \dots , w_d\) such that \(x = \sum _i w_i p_i\) where each \(w_i\) is in \((0, 1)\) and their sum is one. In particular </p>
-<span>\begin{align*}  x - p_0 & = \sum _{i=0}^d w_i p_i - \sum _{i=0}^d w_i p_0 \\ &  = \sum _{i=0}^d w_i (p_i - p_0) \\ &  = \sum _{i=1}^d w_i (p_i - p_0). \end{align*}</span>
-<p>For \(q\) in \(E^{d+1}\) and \(i ∈ \{ 1, \dots , d\} \), we set \(e_i(q) = q_i - q_0\). Since \(p\) is a collection of \(d+1\) affinely independent points, the family \(e_i(p)\) is a basis of \(e\). By continuity of the determinant, this stays true for \(q\) in \(Π_i B_δ(p_i)\) for some positive \(δ\). Let \(e^*_i(q)\) denote the elements of the dual basis. In order to prove continuity of these maps and define them for every \(q\), we fix a basis \(B\) of \(E\) and the corresponding determinant \(\det _B : E^d → ℝ\). We set \(δ(q) = \det _B(e(q))\) and define </p>
-<div class="displaymath" id="a0000000032">
-  \[  e^*_i(q) = v ↦ \det _B(e_1(q), \dots , e_{i-1}(q), v, e_{i+1}(q), \dots , e_d(q))/δ(q).  \]
-</div>
-<p> which should be interpreted as the zero linear form if \(δ(q) = 0\) (this interpretation is automatic if division by zero in \(ℝ\) is defined as zero, as it should be). The map \(q ↦ e^*_i(q)\) is smooth on \(Π_i B_δ(p_i)\) where \(δ\) does not vanish since the determinant is polynomial. We set \(w_i(y, q) = e^*_i(q)(y - q_0)\). The computation of \(x - p_0\) above proves that \(w_i(x, p) = w_i\). We have \(y - q_0 = \sum _{i = 1}^d w_i(y, q)(q_i - q_0)\). Hence </p>
-<div class="displaymath" id="a0000000033">
-  \[  y = \left(1 - \sum _{i = 1}^d w_i(y, q)\right)q_0 + \sum _{i = 1}^d w_i(y, q)q_i.  \]
-</div>
-<p> We denote by \(w_0(y, q)\) the coefficient in front of \(q_0\) in the above formula. Hence we have \(y = \sum _{i=0}^d w_i(y, q)q_i\) with \(w_i(x, p) = w_i\) hence \(\sum _{i=0}^d w_i(y, q) = 1\) and each \(w_i(y, q) {\gt} 0\) if \((y, q)\) is sufficiently close to \((x, p)\). </p>
+  <p>Let: </p>
+<span>\begin{align*}  A = E \times \{  q \in E^{d+1} ~ |~  \mbox{$q$ is an affine basis for $E$} \} , \end{align*}</span>
+<p> and define: </p>
+<span>\begin{align*}  w : A & \to ℝ^{d+1}\\ (y, q) & \mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}. \end{align*}</span>
+<p>If we fix an affine basis \(b\) of \(E\), we may express \(w\) as a ratio of determinants in terms of coordinates relative to \(b\). More precisely, by Cramer’s rule, if \(0 \le i \le d\) and \(w_i\) is the \(i^{\rm th}\) component of \(w\), then: </p>
+<span>\begin{align*}  w_i (y, q) = \det M_i (y, q) / \det N (q) \end{align*}</span>
+<p> where \(N(q)\) is the \((d+1)\times (d+1)\) matrix whose columns are the barycentric coordinates of the components of \(q\) relative to \(b\), and \(M_i (y, q)\) is \(N(q)\) except with column \(i\) replaced by the barycentric coordinates of \(y\) relative to \(b\). </p>
+<p>Since determinants are smooth functions and \((y, q) \mapsto \det N(q)\) is non-vanishing on \(A\), \(w\) is smooth on \(A\). </p>
+<p>Finally define: </p>
+<span>\begin{align*}  U = w^{-1}((0, \infty )^{d+1}), \end{align*}</span>
+<p> and note that \(U\) is open in \(A\), since it is the preimage of an open set under the continuous map \(w\). In fact since \(A\) is open, \(U\) is open as a subset of \(E \times E^{d+1}\). Note that \((x, p) \in U\) since \(p\) surrounds \(x\). </p>
+<p>We may extend \(w\) to \(E \times E^{d+1}\) by giving it any values at all outside \(A\). </p>
 
   </div>
 </div>
@@ -584,7 +586,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L21">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L21">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -608,7 +610,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000034"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000032"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -634,7 +636,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L46">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L46">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -657,7 +659,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000034">
+<div class="proof_wrapper" id="a0000000032">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -702,7 +704,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L85">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L85">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -736,7 +738,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:local_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000035"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000033"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -762,7 +764,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L181">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L181">local_loops</a></li>
         </ul>
 
       </div>
@@ -775,7 +777,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000035">
+<div class="proof_wrapper" id="a0000000033">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -797,6 +799,72 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:satisfied_or_refund">#</a>
+    <a class="icon proof" href="chap-loops.html#a0000000034"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.11</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L384">satisfied_or_refund</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Each \(\operatorname{\mathcal{L}}(g, β, U, Ω)\) is path connected: for every \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\), there is a continuous map \(δ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)\) which interpolates between \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000034">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Let \(ρ\) be the piecewise affine map from \(ℝ\) to \(ℝ\) such that \(ρ(τ) = 1\) if \(τ ≤ 1/2\), \(ρ\) is affine on \([1/2, 1]\), \(ρ(τ) = 0\) if \(τ ≥ 1\). We set </p>
+<div class="displaymath" id="a0000000035">
+  \[  δ_{τ, x}^t(s) = \begin{cases}  γ_{0,x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) &  \text{if $s ≤ 1 - τ$ and $τ {\lt} 1$}\\ γ_{1,x}^{ρ(1-τ)t}\left(\frac1τ \big (s - (1- τ)\big )\right) &  \text{if $s ≥ 1 - τ$ and $τ {\gt} 0$}\\ \end{cases}  \]
+</div>
+<p> It is clear that if \(s = 1 - τ\) then both branches agree and are equal to \(β(x)\). Therefore it is easy to see that \(δ\) is continuous at \((τ, x, t, s)\) except when \((τ,s)=(1,0)\) or \((τ,s)=(0,1)\). </p>
+<p>To show the continuity for \((τ,s)=(1,0)\), let \(K\) be a compact neighborhood of \(x\) in \(E\). Then \(γ_0\) is uniformly continuous on the compact set \(K × [0, 1] × 𝕊^1\), which means that \(γ_{0,x'}^t\) tends uniformly to the constant function \(s ↦ β(x)\) as \((x', t)\) tends to \((x, 0)\). This means that \(γ_{0,x'}^{ρ(τ)t'}\) tends uniformly to the constant function \(s ↦ β(x)\) as \((τ, x', t')\) tends to \((1, x, t)\). This means that \(δ\) is continuous at \((τ,s)=(1,0)\) (it is clear that the other branch also tends to \(β(x)\)). The continuity at \((τ,s)=(0,1)\) is entirely analogous. </p>
+<p>The beautiful observation motivating the above formula is why each \(δ_{τ, x}^1\) surrounds \(g(x)\). The key is that the image of \(δ_{τ, x}^1\) contains the image of \(γ_{0,x}^1\) when \(τ ≤ 1/2\), and contains the image of \(γ_{1,x}^1\) when \(τ ≥ 1/2\). Hence \(δ_{τ, x}^1\) always surrounds \(g(x)\). </p>
+
+  </div>
+</div>
+<p><div class="corollary_thmwrapper" id="cor:extend_loops">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">1.14</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000036"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -823,7 +891,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L384">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L396">extends_loops</a></li>
         </ul>
 
       </div>
@@ -831,8 +899,8 @@
 
   </div>
   </div>
-  <div class="lemma_thmcontent">
-  <p>   Each \(\operatorname{\mathcal{L}}(g, β, U, Ω)\) is path connected: for every \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\), there is a continuous map \(δ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)\) which interpolates between \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\). </p>
+  <div class="corollary_thmcontent">
+  <p>   Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊆ U_0\) and \(K_1 ⊆ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β, Ω)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β, Ω)\), there exists \(U ∈ 𝓝(K_0 ∪ K_1)\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β, Ω)\) which coincides with \(γ_0\) near \(K_0\). </p>
 
   </div>
 </div> </p>
@@ -844,25 +912,23 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Let \(ρ\) be the piecewise affine map from \(ℝ\) to \(ℝ\) such that \(ρ(τ) = 1\) if \(τ ≤ 1/2\), \(ρ\) is affine on \([1/2, 1]\), \(ρ(τ) = 0\) if \(τ ≥ 1\). We set </p>
+  <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\bar U_0'\) is compact in \(U_0\). Since \(\bar U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
+<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.13</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
 <div class="displaymath" id="a0000000037">
-  \[  δ_{τ, x}^t(s) = \begin{cases}  γ_{0,x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) &  \text{if $s ≤ 1 - τ$ and $τ {\lt} 1$}\\ γ_{1,x}^{ρ(1-τ)t}\left(\frac1τ \big (s - (1- τ)\big )\right) &  \text{if $s ≥ 1 - τ$ and $τ {\gt} 0$}\\ \end{cases}  \]
+  \[  γ_x = \begin{cases}  γ_{0, x} &  \text{for $x ∈ U_0'$} \\ γ_{ρ(x), x} &  \text{for $x ∈ U_0 ∩ U_1$} \\ γ_{1, x} &  \text{for $x ∈ U_1'$} \end{cases}  \]
 </div>
-<p> It is clear that if \(s = 1 - τ\) then both branches agree and are equal to \(β(x)\). Therefore it is easy to see that \(δ\) is continuous at \((τ, x, t, s)\) except when \((τ,s)=(1,0)\) or \((τ,s)=(0,1)\). </p>
-<p>To show the continuity for \((τ,s)=(1,0)\), let \(K\) be a compact neighborhood of \(x\) in \(E\). Then \(γ_0\) is uniformly continuous on the compact set \(K × [0, 1] × 𝕊^1\), which means that \(γ_{0,x'}^t\) tends uniformly to the constant function \(s ↦ β(x)\) as \((x', t)\) tends to \((x, 0)\). This means that \(γ_{0,x'}^{ρ(τ)t'}\) tends uniformly to the constant function \(s ↦ β(x)\) as \((τ, x', t')\) tends to \((1, x, t)\). This means that \(δ\) is continuous at \((τ,s)=(1,0)\) (it is clear that the other branch also tends to \(β(x)\)). The continuity at \((τ,s)=(0,1)\) is entirely analogous. </p>
-<p>The beautiful observation motivating the above formula is why each \(δ_{τ, x}^1\) surrounds \(g(x)\). The key is that the image of \(δ_{τ, x}^1\) contains the image of \(γ_{0,x}^1\) when \(τ ≤ 1/2\), and contains the image of \(γ_{1,x}^1\) when \(τ ≥ 1/2\). Hence \(δ_{τ, x}^1\) always surrounds \(g(x)\). </p>
+<p> which has the required properties. </p>
 
   </div>
 </div>
-<p><div class="corollary_thmwrapper" id="cor:extend_loops">
-  <div class="corollary_thmheading">
-    <span class="corollary_thmcaption">
-    Corollary
+<p><div class="lemma_thmwrapper" id="lem:∃_surrounding_loops">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
     </span>
-    <span class="corollary_thmlabel">1.14</span>
-    ✓
+    <span class="lemma_thmlabel">1.15</span>
     <div class="thm_icons">
-    <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
+    <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000038"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -889,71 +955,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L396">extends_loops</a></li>
-        </ul>
-
-      </div>
-    </div>
-
-  </div>
-  </div>
-  <div class="corollary_thmcontent">
-  <p>   Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊆ U_0\) and \(K_1 ⊆ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β, Ω)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β, Ω)\), there exists \(U ∈ 𝓝(K_0 ∪ K_1)\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β, Ω)\) which coincides with \(γ_0\) near \(K_0\). </p>
-
-  </div>
-</div> </p>
-<div class="proof_wrapper" id="a0000000038">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\bar U_0'\) is compact in \(U_0\). Since \(\bar U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
-<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.13</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
-<div class="displaymath" id="a0000000039">
-  \[  γ_x = \begin{cases}  γ_{0, x} &  \text{for $x ∈ U_0'$} \\ γ_{ρ(x), x} &  \text{for $x ∈ U_0 ∩ U_1$} \\ γ_{1, x} &  \text{for $x ∈ U_1'$} \end{cases}  \]
-</div>
-<p> which has the required properties. </p>
-
-  </div>
-</div>
-<p><div class="lemma_thmwrapper" id="lem:∃_surrounding_loops">
-  <div class="lemma_thmheading">
-    <span class="lemma_thmcaption">
-    Lemma
-    </span>
-    <span class="lemma_thmlabel">1.15</span>
-    <div class="thm_icons">
-    <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000040"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
-</a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.11</a></li>
-        </ul>
-
-      </div>
-    </div>
-    <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Lean declarations</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/surrounding.lean#L448">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/surrounding.lean#L448">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -966,7 +968,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000040">
+<div class="proof_wrapper" id="a0000000038">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -989,7 +991,7 @@
     <span class="lemma_thmlabel">1.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:reparametrization">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000041"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000039"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1015,7 +1017,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/719018148ecece89e7ff948909418a584a7911ab/src/loops/reparametrization.lean#L44">reparametrization</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7ed5fc103a57d0f57fa37eba0945a7e19aa6ef6a/src/loops/reparametrization.lean#L44">reparametrization</a></li>
         </ul>
 
       </div>
@@ -1028,7 +1030,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000041">
+<div class="proof_wrapper" id="a0000000039">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1039,7 +1041,7 @@
   <p> For any fixed \(x\), since \(γ_x\) strictly surrounds \(g(x)\), there are points \(s_1, …, s_{n+1}\) in \(𝕊^1\) such that \(g(x)\) is surrounded by the corresponding points \(γ_x(s_j)\). </p>
 <p>Let \(μ_1, …, μ_{n+1}\) be smooth positive probability measures very close to the Dirac measures on \(s_j\) (ie. \(μ_j = f_j\,  ds\) for some smooth positive function \(f_j\) and, for any function \(h\), \(\int h\, dμ_j\) is almost \(h(s_j)\)). We set \(p_j = \int γ_x\,  d\mu _j\), which is almost \(γ_x(s_j)\) so that \(g(x) = \sum w_j p_j\) for some weights \(w_j\) in the open interval \((0, 1)\) according to <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.8</a>. </p>
 <p>If \(x'\) is in a sufficiently small neighborhood of \(x\), <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.8</a> gives smooth weight functions \(w_j\) such that \(g(x') = \sum w_j(x')p_j(x')\). Let \(U^i\), \(i ≥ 1\) be a locally finite cover of \(U\) by such neighborhoods, with corresponding measures \(μ_j^i\), moving points \(p_j^i\) and weight functions \(w_j^i\). Let \((ρ_i)\) be a partition of unity associated to this covering. For every \(x\), we set </p>
-<div class="displaymath" id="a0000000042">
+<div class="displaymath" id="a0000000040">
   \[  μ_x = \sum _{i=1}^∞ \sum _{j=1}^{n+1} ρ_i(x)w_j^i(x)\,  μ_j^i  \]
 </div>
 <p> so that: </p>
