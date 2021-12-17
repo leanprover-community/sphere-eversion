@@ -774,6 +774,14 @@ begin
     exact times_cont_diff_const }
 end
 
+lemma times_cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
+  (h : times_cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : times_cont_diff 𝕜 n (λ e, φ e f₀) :=
+h.comp ((times_cont_diff_prod_left f₀).of_le le_top)
+
+lemma times_cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
+  (h : times_cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : times_cont_diff 𝕜 n (λ f, φ e₀ f) :=
+h.comp ((times_cont_diff_prod_mk e₀).of_le le_top)
+
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
 def continuous_linear_map.comp_rightL (φ  : E →L[𝕜] F) : (F →L[𝕜] G) →L[𝕜] (E →L[𝕜] G) :=
@@ -1414,6 +1422,27 @@ begin
     exact λ n, times_cont_diff_parametric_primitive_of_times_cont_diff' (hF n) (hs n) a },
   { exact times_cont_diff_parametric_primitive_of_times_cont_diff' hF hs a },
 end
+
+local notation `∂₁` := partial_fderiv_fst ℝ
+
+lemma times_cont_diff_parametric_integral_of_times_cont_diff
+  {F : H → ℝ → E} {n : with_top ℕ} (hF : times_cont_diff ℝ n ↿F)
+  (a b : ℝ) :
+  times_cont_diff ℝ n (λ x : H, ∫ t in a..b, F x t) :=
+times_cont_diff_parametric_primitive_of_times_cont_diff hF times_cont_diff_const a
+
+lemma times_cont_diff.fderiv_parametric_integral
+  {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
+  (a b : ℝ) :
+  fderiv ℝ (λ x : H, ∫ t in a..b, F x t) = λ x : H, (∫ t in a..b, ∂₁F x t) :=
+begin
+  ext x₀,
+  cases has_fderiv_at_parametric_primitive_of_times_cont_diff' hF times_cont_diff_const x₀ a with int h,
+  rw h.fderiv,
+
+  sorry
+end
+
 end
 
 section
