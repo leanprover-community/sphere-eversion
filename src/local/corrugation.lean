@@ -314,15 +314,101 @@ variables (π : E → ℝ) (N : ℝ) (γ : E → loop F)
 open linear_map
 
 local notation `∂₁` := partial_fderiv_fst ℝ
+local notation `𝒞` := times_cont_diff ℝ
+
+def loop.diff (γ : E → loop F) (e : E) : loop (E →L[ℝ] F) :=
+{ to_fun := λ t, ∂₁ (λ e t, γ e t) e t,
+  per' := λ t, by simp only [partial_fderiv_fst, loop.per] }
+
+@[simp]
+lemma loop.diff_apply (γ : E → loop F) (e : E) (t : ℝ) : loop.diff γ e t = ∂₁ (λ e t, γ e t) e t :=
+rfl
+
+lemma loop.average_diff (γ : E → loop F) (e : E) :
+(loop.diff γ e).average = D (λ e, (γ e).average) e :=
+begin
+
+  sorry
+end
+
+lemma loop.continuous_diff {γ : E → loop F} (h : 𝒞 1 ↿γ) : continuous (↿(loop.diff γ)) :=
+begin
+
+  sorry
+end
+
+def loop.normalize (γ : loop F) : loop F :=
+{ to_fun := λ t, γ t - γ.average,
+  per' := λ t, by simp [γ.per] }
+
+@[simp]
+lemma loop.normalize_apply (γ : loop F) (t : ℝ) : loop.normalize γ t = γ t - γ.average :=
+rfl
+
+lemma times_cont_diff.partial_loop {γ : E → loop F} (e : E) (hγ_diff : 𝒞 1 ↿γ) :
+  ∀ t, 𝒞 1 (λ e, γ e t) :=
+λ t, hγ_diff.comp ((times_cont_diff_prod_left t).of_le le_top)
+
+lemma times_cont_diff.loop_average {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+  𝒞 n (λ e, (γ e).average) :=
+times_cont_diff_parametric_integral_of_times_cont_diff hγ_diff _ _
+
+lemma loop.diff_normalize {γ : E → loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
+  (loop.diff γ e).normalize = loop.diff (λ e, (γ e).normalize) e :=
+begin
+  ext t x,
+  simp only [loop.diff_apply, loop.normalize_apply, partial_fderiv_fst],
+  rw [fderiv_sub ((hγ_diff.partial_loop e t).differentiable le_rfl).differentiable_at,
+      loop.average_diff],
+  exact hγ_diff.loop_average.differentiable le_rfl e,
+end
+
+lemma loop.support_diff {γ : E → loop F} (h : 𝒞 1 ↿γ) :
+  loop.support (loop.diff γ) ⊆ loop.support γ :=
+begin
+  unfold loop.support,
+  erw [closure_compl, closure_compl],
+  rw compl_subset_compl,
+  intros x hx,
+  rw mem_interior_iff_mem_nhds at *,
+  rcases mem_nhds_iff.mp hx with ⟨U, hU, U_op, hxU⟩,
+  have U_nhds : U ∈ 𝓝 x, from is_open.mem_nhds U_op hxU,
+  apply mem_of_superset U_nhds,
+  intros y hy,
+  have Hy : ∀ t, (λ z, γ z t) =ᶠ[𝓝 y] (λ z, (γ z).average),
+  { intro t,
+    apply mem_of_superset (U_op.mem_nhds hy),
+    intros z hz,
+    change γ z t = (γ z).average,
+    rw show γ z = _, from hU hz,
+    simp only [loop.const_apply, loop.average_const] },
+  have : ∀ (t : ℝ), loop.diff γ y t = D (λ (z : E), (γ z).average) y := λ t, (Hy t).fderiv_eq,
+  ext t z,
+  simp [this, loop.average_diff]
+end
+
+lemma loop.compact_support_diff {γ : E → loop F} (h : 𝒞 1 ↿γ) (h' : is_compact (loop.support γ)):
+  is_compact (loop.support $ loop.diff γ) :=
+compact_of_is_closed_subset h' is_closed_closure (loop.support_diff h)
 
 def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → (E →L[ℝ] F) :=
-λ x, (1/N) • ∫ t in 0..(N*π x), ∂₁ (λ x t, γ x t - (γ x).average) x t
+λ x, (1/N) • ∫ t in 0..(N*π x), ∂₁ (λ x t, (γ x).normalize t) x t
 
 local notation `R` := corrugation.remainder π
 local notation `𝒯` := corrugation π
-local notation `𝒞` := times_cont_diff ℝ
 local notation u ` ⬝ `:70 φ:65 :=
   continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
+
+lemma remainder_eq (N : ℝ) {γ : E → loop F} (h : 𝒞 1 ↿γ) :
+R N γ = λ x, (1/N) • ∫ t in 0..(N*π x), (loop.diff γ x).normalize t :=
+by { simp_rw loop.diff_normalize h, refl }
+
+lemma remainder_eq' (x : E) {γ : E → loop F} (h : 𝒞 1 ↿γ) :
+(λ (N : ℝ), R N γ x) = λ N, (1/N) • ∫ t in 0..(N*π x), (loop.diff γ x).normalize t :=
+begin
+  ext N,
+  rw remainder_eq π _ h
+end
 
 /- Move this next to times_cont_diff_smul, and think about how to mkae such things much
 less painful. -/
@@ -375,7 +461,23 @@ end
 lemma remainder_c0_small (hγ : is_compact (loop.support γ))
   (hγ_cont : 𝒞 1 ↿γ) :
   ∃ C, ∀ x, is_O_with C (λ N, R N γ x) (λ N, 1/N) at_top :=
-sorry
+begin
+  have : is_compact (loop.support $ loop.diff γ),
+  { have := loop.support_diff hγ_cont,
+    sorry },
+
+  rcases corrugation.c0_small π this _ with ⟨C, hC⟩,
+  use C,
+  intro e,
+  rw remainder_eq' π e hγ_cont,
+  exact hC e,
+  /- convert hC e,
+  ext N,
+  congr,
+  ext t,
+  erw funext (loop.diff_normalize γ hγ_cont), -/
+  sorry
+end
 
 lemma corrugation.fderiv (hγ_diff : 𝒞 1 ↿γ) :
   ∃ C, ∀ x, ∀ v, is_O_with C

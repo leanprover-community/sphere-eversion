@@ -371,16 +371,24 @@ variables {X}
 
 namespace loop
 
+@[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
+| ⟨x, h1⟩ ⟨.(x), h2⟩ rfl := rfl
+
+instance : has_zero (loop F) := ⟨{ to_fun := λ t, 0, per' := λ t, rfl }⟩
+
 /-- The constant loop. -/
 @[simps]
 def const (f : X) : loop X :=
 ⟨λ t, f, by simp⟩
 
+@[simp] lemma const_zero : const (0 : F) = (0 : loop F) :=
+begin
+  ext t,
+  refl
+end
+
 instance [inhabited X] : inhabited (loop X) :=
 ⟨loop.const (default X)⟩
-
-@[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
-| ⟨x, h1⟩ ⟨.(x), h2⟩ rfl := rfl
 
 /-- Periodicity of loops restated in terms of the function coercion. -/
 lemma per (γ : loop X) : ∀ t, γ (t + 1) = γ t :=
@@ -406,6 +414,10 @@ variables [measurable_space F] [borel_space F] [second_countable_topology F] [co
 noncomputable def average (γ : loop F) : F :=
 ∫ x in 0..1, (γ x)
 
+@[simp]
+lemma loop.zero_average : average (0 : loop F) = 0 :=
+interval_integral.integral_zero
+
 /-- The support of a family of loops `γ` is the closure of the set all points `x` where `γ x` is not
 constant.
 
@@ -415,6 +427,9 @@ Suggestion (Floris): there is probably an easier definition to say "loop `l` is 
 
 def support (γ : X → loop F) : set X :=
 closure {x | γ x ≠ loop.const (γ x).average}
+
+lemma is_closed_support (γ : X → loop F) : is_closed (loop.support γ) :=
+is_closed_closure
 
 lemma const_of_not_mem_support {γ : X → loop F} {x : X}
   (hx : x ∉ support γ) : γ x = loop.const (γ x).average :=
