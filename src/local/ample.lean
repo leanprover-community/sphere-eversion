@@ -33,7 +33,7 @@ section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _
 
--- PR-ed in #10709
+-- PR'd in #10709
 lemma submodule.eq_linear_proj_add_linear_proj_of_is_compl {p q : submodule ℝ F} 
   (hpq : is_compl p q) (x : F) : 
   x = π hpq x + π hpq.symm x :=
@@ -43,7 +43,7 @@ begin
               zero_add, submodule.linear_proj_of_is_compl_apply_left ],
 end
 
--- PR-ed in #10709
+-- PR'd in #10709
 lemma submodule.not_mem_of_is_compl_of_ne_zero {p q : submodule ℝ F} (hpq : is_compl p q)
   {a : p} (ha : a ≠ 0) : (a : F) ∉ q :=
 begin
@@ -163,7 +163,7 @@ begin
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
 
--- PR-ed in #10932
+-- PR'd in #10932
 lemma is_path_connected.is_connected {X : Type*} [topological_space X] {S : set X} 
   (hS : is_path_connected S) : is_connected S :=
 begin
@@ -172,7 +172,7 @@ begin
   exact @path_connected_space.connected_space _ _ hS
 end
 
--- PR-ed in #10932
+-- PR'd in #10932
 lemma connected_space.connected_component_eq_univ {X : Type*} [topological_space X] 
   [h : connected_space X] (x : X) : connected_component x = univ :=
 begin
