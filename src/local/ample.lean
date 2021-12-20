@@ -33,7 +33,7 @@ section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _
 
--- PR'd in #10709
+-- #10709
 lemma submodule.eq_linear_proj_add_linear_proj_of_is_compl {p q : submodule ℝ F} 
   (hpq : is_compl p q) (x : F) : 
   x = π hpq x + π hpq.symm x :=
@@ -43,7 +43,7 @@ begin
               zero_add, submodule.linear_proj_of_is_compl_apply_left ],
 end
 
--- PR'd in #10709
+-- #10709
 lemma submodule.not_mem_of_is_compl_of_ne_zero {p q : submodule ℝ F} (hpq : is_compl p q)
   {a : p} (ha : a ≠ 0) : (a : F) ∉ q :=
 begin
@@ -113,16 +113,19 @@ begin
   exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 end
 
+-- #10943
 lemma galois_connection.le_u_l_trans {α β : Type*} [preorder α] [preorder β] {l : α → β} {u : β → α}
   (hgc : galois_connection l u) {x y z : α} (hxy : x ≤ u (l y)) (hyz : y ≤ u (l z)) :
   x ≤ u (l z) :=
 hxy.trans (hgc.monotone_u $ hgc.l_le hyz)
 
+-- #10943
 lemma submodule.subset_span_trans {U V W : set F} (hUV : U ⊆ submodule.span ℝ V) 
   (hVW : V ⊆ submodule.span ℝ W) :
   U ⊆ submodule.span ℝ W :=
 (submodule.gi ℝ F).gc.le_u_l_trans hUV hVW
 
+-- #10943
 lemma submodule.mem_span_trans {x y z : F} (hxy : x ∈ submodule.span ℝ ({y} : set F)) 
   (hyz : y ∈ submodule.span ℝ ({z} : set F)) :
   x ∈ submodule.span ℝ ({z} : set F) :=
@@ -168,25 +171,6 @@ begin
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
 
--- PR'd in #10932
-lemma is_path_connected.is_connected {X : Type*} [topological_space X] {S : set X} 
-  (hS : is_path_connected S) : is_connected S :=
-begin
-  rw is_connected_iff_connected_space,
-  rw is_path_connected_iff_path_connected_space at hS,
-  exact @path_connected_space.connected_space _ _ hS
-end
-
--- PR'd in #10932
-lemma connected_space.connected_component_eq_univ {X : Type*} [topological_space X] 
-  [h : connected_space X] (x : X) : connected_component x = univ :=
-begin
-  rw connected_space_iff_connected_component at h,
-  rcases h with ⟨y, hy⟩,
-  rw ← hy,
-  exact (connected_component_eq $ by rw hy; exact mem_univ x).symm
-end
-
 lemma is_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) : 
   is_connected (Eᶜ : set F) := 
@@ -203,7 +187,7 @@ lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F
 begin
   haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
   intro x,
-  rw [connected_space.connected_component_eq_univ, image_univ, subtype.range_val, 
+  rw [preconnected_space.connected_component_eq_univ, image_univ, subtype.range_val, 
       eq_univ_iff_forall],
   intro y,
   by_cases h : y ∈ E,
