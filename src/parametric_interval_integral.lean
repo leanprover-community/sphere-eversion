@@ -1031,7 +1031,7 @@ begin
     simpa using ((D₁.add D₂).add D₃).sub (has_fderiv_at_const (φ x₀ (s x₀)) x₀) }
 end
 
-/- Sketch of an ugly proof of the old version from the new version -/
+/- /- Sketch of an ugly proof of the old version from the new version -/
 lemma has_fderiv_at_parametric_primitive_of_lip {F : H → ℝ → E} {F' : ℝ → (H →L[ℝ] E)} {x₀ : H}
   {bound : ℝ → ℝ} {t₀ : ℝ}
   {ε : ℝ} (ε_pos : 0 < ε)
@@ -1087,11 +1087,11 @@ begin
     add_left_eq_self],
   { simp [continuous_linear_map.interval_integral_apply, hF', h2F'] },
   { simp [continuous_linear_map.interval_integral_apply, h2F'] }
-end
+end -/
 
 lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
 
-/-
+/- /-
 FIXME: the lemma below still uses `has_fderiv_at_parametric_primitive_of_lip` instead of 
 the newer `has_fderiv_at_parametric_primitive_of_lip'`, so it technically is sorried.
 -/
@@ -1159,7 +1159,7 @@ begin
     rw nnabs_coe K,
     exact F_lip t t_in },
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
-end
+end -/
 
 local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
