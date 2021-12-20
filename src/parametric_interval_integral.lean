@@ -855,9 +855,14 @@ begin
   exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).times_cont_diff
 end
 
+lemma times_cont_diff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
+  (h : times_cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₁ 𝕜 φ) :=
+h.times_cont_diff_partial_fst.continuous
+
 lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF : times_cont_diff 𝕜 ⊤ (uncurry φ)) :
   times_cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
 times_cont_diff_top.mpr (λ n, (times_cont_diff_top.mp hF (n + 1)).times_cont_diff_partial_fst)
+
 
 
 end calculus
@@ -1086,6 +1091,10 @@ end
 
 lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
 
+/-
+FIXME: the lemma below still uses `has_fderiv_at_parametric_primitive_of_lip` instead of 
+the newer `has_fderiv_at_parametric_primitive_of_lip'`, so it technically is sorried.
+-/
 
 lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
   (x₀ : H) (a t₀ : ℝ) :
@@ -1438,9 +1447,8 @@ lemma times_cont_diff.fderiv_parametric_integral
 begin
   ext x₀,
   cases has_fderiv_at_parametric_primitive_of_times_cont_diff' hF times_cont_diff_const x₀ a with int h,
-  rw h.fderiv,
-
-  sorry
+  rw [h.fderiv, fderiv_const],
+  simp only [continuous_linear_map.comp_zero, add_zero, pi.zero_apply]
 end
 
 end
