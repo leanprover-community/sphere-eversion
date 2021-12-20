@@ -33,6 +33,7 @@ section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _
 
+-- PR-ed in #10709
 lemma submodule.eq_linear_proj_add_linear_proj_of_is_compl {p q : submodule ℝ F} 
   (hpq : is_compl p q) (x : F) : 
   x = π hpq x + π hpq.symm x :=
@@ -42,6 +43,7 @@ begin
               zero_add, submodule.linear_proj_of_is_compl_apply_left ],
 end
 
+-- PR-ed in #10709
 lemma submodule.not_mem_of_is_compl_of_ne_zero {p q : submodule ℝ F} (hpq : is_compl p q)
   {a : p} (ha : a ≠ 0) : (a : F) ∉ q :=
 begin
@@ -111,32 +113,41 @@ begin
   exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 end
 
+lemma submodule.subset_span_trans {U V W : set F} (hUV : U ⊆ submodule.span ℝ V) 
+  (hVW : V ⊆ submodule.span ℝ W) :
+  U ⊆ submodule.span ℝ W :=
+hUV.trans (submodule.span_le.mpr hVW)
+
+lemma submodule.mem_span_trans {x y z : F} (hxy : x ∈ submodule.span ℝ ({y} : set F)) 
+  (hyz : y ∈ submodule.span ℝ ({z} : set F)) :
+  x ∈ submodule.span ℝ ({z} : set F) :=
+begin
+  rw [← set_like.mem_coe, ← singleton_subset_iff] at *,
+  exact submodule.subset_span_trans hxy hyz
+end
+
 lemma is_path_connected_compl_zero_of_two_le_dim [topological_add_group F] [has_continuous_smul ℝ F] 
   (hdim : 2 ≤ module.rank ℝ F) : is_path_connected ({0}ᶜ : set F) :=
 begin
-  have fact₁ : (1 : cardinal) < 2 := by norm_num,
-  have fact₀ : (0 : cardinal) < 2 := cardinal.zero_lt_one.trans fact₁,
   rw is_path_connected_iff,
   split,
   { suffices : 0 < module.rank ℝ F,
       by rwa dim_pos_iff_exists_ne_zero at this,
-    exact lt_of_lt_of_le fact₀ hdim },
+    exact lt_of_lt_of_le (by norm_num) hdim },
   { intros x y hx hy,
     by_cases h : y ∈ submodule.span ℝ ({x} : set F),
     { suffices : ∃ z, z ∉ submodule.span ℝ ({x} : set F),
       { rcases this with ⟨z, hzx⟩, 
-        suffices hzy : z ∉ submodule.span ℝ ({y} : set F),
-          from (joined_in_compl_zero_of_not_mem_span hx hzx).trans
-            (joined_in_compl_zero_of_not_mem_span hy hzy).symm,
-        rw submodule.mem_span_singleton at ⊢ hzx h,
-        rcases h with ⟨a, ha⟩,
-        exact λ ⟨b, hb⟩, hzx ⟨b * a, by rwa [mul_smul, ha]⟩ },
+        have hzy : z ∉ submodule.span ℝ ({y} : set F),
+          from λ h', hzx (submodule.mem_span_trans h' h),
+        exact (joined_in_compl_zero_of_not_mem_span hx hzx).trans
+          (joined_in_compl_zero_of_not_mem_span hy hzy).symm },
       by_contra h',
       push_neg at h',
       rw ← submodule.eq_top_iff' at h',
       rw [← dim_top ℝ, ← h'] at hdim,
       suffices : (2 : cardinal) ≤ 1,
-        from not_le_of_lt fact₁ this,
+        from not_le_of_lt (by norm_num) this,
       have := hdim.trans (dim_span_le _),
       rwa cardinal.mk_singleton at this },
     { exact joined_in_compl_zero_of_not_mem_span hx h } }
@@ -152,6 +163,7 @@ begin
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
 
+-- PR-ed in #10932
 lemma is_path_connected.is_connected {X : Type*} [topological_space X] {S : set X} 
   (hS : is_path_connected S) : is_connected S :=
 begin
@@ -160,6 +172,7 @@ begin
   exact @path_connected_space.connected_space _ _ hS
 end
 
+-- PR-ed in #10932
 lemma connected_space.connected_component_eq_univ {X : Type*} [topological_space X] 
   [h : connected_space X] (x : X) : connected_component x = univ :=
 begin
@@ -179,25 +192,6 @@ lemma connected_space_compl_of_two_le_codim [topological_add_group F] [has_conti
   connected_space (Eᶜ : set F) := 
 is_connected_iff_connected_space.mp (is_connected_compl_of_two_le_codim hcodim)
 
-lemma midpoint_mem_segment {α : Type*} [add_comm_group α] [module ℝ α] (x y : α) : 
-  midpoint ℝ x y ∈ [x -[ℝ] y] :=
-begin
-  rw segment_eq_image_line_map,
-  exact ⟨1/2, ⟨one_half_pos.le, one_half_lt_one.le⟩, line_map_one_half _ _⟩
-end
-
-lemma midpoint_neg {α : Type*} [add_comm_group α] [module ℝ α] (x : α) : 
-  midpoint ℝ x (-x) = 0 :=
-by rw [midpoint_eq_smul_add, add_neg_self, smul_zero]
-
-lemma self_mem_segment_add_sub {α : Type*} [add_comm_group α] [module ℝ α] (x y : α) : 
-  x ∈ [x-y -[ℝ] x+y] := 
-begin
-  convert midpoint_mem_segment _ _,
-  rw [sub_eq_add_neg, ← vadd_eq_add, ← vadd_eq_add, ← midpoint_vadd_midpoint, vadd_eq_add,
-      midpoint_self, midpoint_comm, midpoint_neg, add_zero]
-end
-
 lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F] 
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) : 
   ample_set (Eᶜ : set F) := 
@@ -213,15 +207,15 @@ begin
     have hcodim' : 0 < module.rank ℝ E' := lt_of_lt_of_le (by norm_num) hcodim,
     rw dim_pos_iff_exists_ne_zero at hcodim',
     rcases hcodim' with ⟨z, hz⟩,
-    suffices : y ∈ [y+(-z) -[ℝ] y+z],
-    { refine (convex_convex_hull ℝ (Eᶜ : set F)).segment_subset _ _ this;
-      refine subset_convex_hull ℝ (Eᶜ : set F) _;
-      change _ ∉ E; 
-      rw submodule.add_mem_iff_right _ h;
-      try {rw submodule.neg_mem_iff};
-      exact submodule.not_mem_of_is_compl_of_ne_zero hE'.symm hz },
-    rw ← sub_eq_add_neg, 
-    exact self_mem_segment_add_sub y z },
+    have : y ∈ [y+(-z) -[ℝ] y+z],
+    { rw ← sub_eq_add_neg, 
+      exact mem_segment_sub_add y z },
+    refine (convex_convex_hull ℝ (Eᶜ : set F)).segment_subset _ _ this;
+    refine subset_convex_hull ℝ (Eᶜ : set F) _;
+    change _ ∉ E; 
+    rw submodule.add_mem_iff_right _ h;
+    try {rw submodule.neg_mem_iff};
+    exact submodule.not_mem_of_is_compl_of_ne_zero hE'.symm hz },
   { exact subset_convex_hull ℝ (Eᶜ : set F) h }
 end
 
