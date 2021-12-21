@@ -72,11 +72,6 @@ end barycentric_det
 
 namespace matrix
 
--- This lemma already exists in Mathlib but we need a bump to pick it up.
-@[simp] lemma coe_det_is_empty {n R : Type*} [comm_ring R] [is_empty n] [decidable_eq n] :
-  (det : matrix n n R → R) = function.const _ 1 :=
-by { ext, exact det_is_empty, }
-
 variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nondiscrete_normed_field k]
 
 attribute [instance] normed_group normed_space
