@@ -4,6 +4,10 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 import algebra.periodic
 
+import to_mathlib.topology.tsupport
+import to_mathlib.measure_theory
+import to_mathlib.calculus
+import to_mathlib.filter
 import parametric_interval_integral
 import loops.basic
 
@@ -15,75 +19,13 @@ TODO generalize many lemmas to any period and add to algebra/periodic.lean
 
 -/
 
-open int
-
-section interval_integral
-
-open topological_space (second_countable_topology)
-open measure_theory set classical filter
-
-open_locale classical topological_space filter
-
-variables {α β E F : Type*} [measurable_space α] {μ : measure α} [normed_group E]
-          [second_countable_topology E] [complete_space E] [normed_space ℝ E] [measurable_space E] [borel_space E]
-
-namespace measure_theory
-lemma ae_restrict_eq_iff {s : set α} {f g : α → β} (h : measurable_set {x | f x = g x}) :
-  f =ᵐ[μ.restrict s] g ↔ ∀ᵐ x ∂μ, x ∈ s → f x = g x :=
-ae_restrict_iff h
-
-end measure_theory
-
-end interval_integral
-
 local notation `D` := fderiv ℝ
+local notation `∂₁` := partial_fderiv_fst ℝ
+local notation `𝒞` := times_cont_diff ℝ
 
-open set function finite_dimensional asymptotics filter topological_space
+open set function finite_dimensional asymptotics filter topological_space int
 open_locale topological_space
 
-section topological_support
-
-variables {X α : Type*} [has_zero α]
-
-lemma support_empty_iff {f : X → α} : support f = ∅ ↔ ∀ x, f x = 0 :=
-by simp_rw [← nmem_support, eq_empty_iff_forall_not_mem]
-
-variables [topological_space X]
-
-/-- The topological support of a function, is the closure of its support. -/
-def tsupport (f : X → α) : set X := closure (support f)
-
-lemma support_subset_tsupport (f : X → α) : support f ⊆ tsupport f :=
-subset_closure
-
-lemma tsupport_empty_iff {f : X → α} : tsupport f = ∅ ↔ ∀ x, f x = 0 :=
-by erw [closure_empty_iff, support_empty_iff]
-
-lemma image_eq_zero_of_nmem_tsupport {f : X → α} {x : X} (hx : x ∉ tsupport f) : f x = 0 :=
-support_subset_iff'.mp (support_subset_tsupport f) x hx
-
-variables {E : Type*} [normed_group E]
-
-lemma continuous.bounded_of_vanishing_outside_compact {f : X → E} (hf : continuous f)
-  {K : set X} (hK : is_compact K) (hfK : ∀ x ∉ K, f x = 0) : ∃ C, ∀ x, ∥f x∥ ≤ C :=
-begin
-  rcases eq_empty_or_nonempty K with h|h,
-  { use 0,
-    simp [h, hfK, le_refl] },
-  { obtain ⟨x, x_in, hx⟩ : ∃ x ∈ K, ∀ y ∈ K, ∥f y∥ ≤ ∥f x∥ :=
-      hK.exists_forall_ge h (continuous_norm.comp hf).continuous_on,
-    use ∥f x∥,
-    intros y,
-    by_cases hy : y ∈ K,
-    { exact hx y hy },
-    { simp [hfK y hy] } }
-end
-
-lemma continuous.bounded_of_compact_support {f : X → E} (hf : continuous f)
-  (hsupp : is_compact (tsupport f)) : ∃ C, ∀ x, ∥f x∥ ≤ C :=
-hf.bounded_of_vanishing_outside_compact hsupp (λ x, image_eq_zero_of_nmem_tsupport)
-
-end topological_support
 
 section one_periodic
 
@@ -331,8 +273,7 @@ variables (π : E → ℝ) (N : ℝ) (γ : E → loop F)
 
 open linear_map
 
-local notation `∂₁` := partial_fderiv_fst ℝ
-local notation `𝒞` := times_cont_diff ℝ
+
 
 def loop.diff (γ : E → loop F) (e : E) : loop (E →L[ℝ] F) :=
 { to_fun := λ t, ∂₁ (λ e t, γ e t) e t,
@@ -423,21 +364,6 @@ begin
   rw remainder_eq π _ h
 end
 
-/- Move this next to times_cont_diff_smul, and think about how to mkae such things much
-less painful. -/
-lemma times_cont_diff.const_smul {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {f : E → F} {n : with_top ℕ} (h : times_cont_diff 𝕜 n f) (a : 𝕜) :
-  times_cont_diff 𝕜 n (λ x, a • f x) :=
-begin
-  change times_cont_diff 𝕜 n ((λ p : 𝕜 × F, p.1 • p.2) ∘ (λ y : F, (a, y)) ∘ f),
-  apply times_cont_diff.comp,
-  exact times_cont_diff_smul,
-  apply times_cont_diff.comp _ h,
-  exact (times_cont_diff_prod_mk a).of_le le_top
-end
-
 variable {γ}
 
 lemma times_cont_diff_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (λ x, (γ x).average) :=
@@ -488,11 +414,6 @@ begin
 end
 
 
-/- Move next to `eventually_gt_at_top` in `at_top_bot.lean` -/
-lemma eventually_ne_at_top {α : Type*} [preorder α] [no_top_order α] (a : α) :
-  ∀ᶠ x in at_top, x ≠ a :=
-(eventually_gt_at_top a).mono (λ x hx, hx.ne.symm)
-
 variables {π}
 
 
@@ -534,8 +455,6 @@ begin
     by simp [φ, hu, continuous_linear_map.to_span_singleton_apply],
   exact le_of_op_norm_le φ (hN x).le u
 end
-
-open module
 
 structure corrugation_data (f : E → F) (U : set E):=
 (π : E →L[ℝ] ℝ)
