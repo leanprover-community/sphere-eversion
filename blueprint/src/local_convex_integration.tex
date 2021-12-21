@@ -304,11 +304,14 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{lemma}
   \label{lem:ample_codim_two}
   \uses{def:ample_subset}
+  \lean{ample_of_two_le_codim}
+  \leanok
   The complement of a linear subspace of codimension at least 2 is
   ample.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Let $F$ be subspace of $E$ with codimension at least $2$.
   Let $F'$ be a complement subspace.
   Its dimension is at least $2$ since it is isomorphic to $E/F$

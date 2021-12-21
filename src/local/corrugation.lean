@@ -277,7 +277,7 @@ continuous_parametric_interval_integral_of_continuous' hγ_cont _ _
 /-
 The lemma below is ridiculously painful, but Patrick isn't patient enough.
 -/
-lemma foo {ε : ℝ} (ε_pos : 0 < ε) (C : ℝ) : ∀ᶠ (N : ℝ) in at_top, C*∥1/N∥ < ε :=
+lemma foo' {ε : ℝ} (ε_pos : 0 < ε) (C : ℝ) : ∀ᶠ (N : ℝ) in at_top, C*∥1/N∥ < ε :=
 begin
   have : tendsto (λ N : ℝ, 1/N) at_top (𝓝 0), 
   { rw show (λ N : ℝ, 1/N) = λ N, N^(-(1 : ℤ)), by simp,
@@ -311,7 +311,7 @@ begin
       exact continuous_parametric_primitive_of_continuous cont_φ },
     { intro x,
       exact per_corrugation _ (loop.continuous_of_family hγ_cont x).interval_integrable } },
-  apply (foo ε_pos C).mono,
+  apply (foo' ε_pos C).mono,
   intros N hN x,
   rw [corrugation, norm_smul, mul_comm],
   exact lt_of_le_of_lt (mul_le_mul_of_nonneg_right (hC x (N*π x)) (norm_nonneg $ 1/N)) hN,
