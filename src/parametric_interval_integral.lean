@@ -415,6 +415,16 @@ lemma interval_oc_subset_Ioo  {α : Type*} [linear_order α] {a b c d : α}
 
 section
 
+/-
+MOVE next to ae_restrict_of_ae_restrict_of_subset
+-/
+lemma measure_theory.ae_mem_imp_of_ae_restrict_of_subset {α : Type*} {m0 : measurable_space α} 
+  {μ : measure α} {s t : set α} {p : α → Prop} (hst : s ⊆ t) (hp : ∀ᵐ (x : α) ∂μ.restrict t, p x) :
+  (∀ᵐ x ∂μ, x ∈ s → p x) :=
+ae_imp_of_ae_restrict (ae_restrict_of_ae_restrict_of_subset hst hp)
+
+open measure_theory
+
 variables {α : Type*} [linear_order α] [measurable_space α] [topological_space α]
           [order_topology α] [opens_measurable_space α] [first_countable_topology α] {μ : measure α}
           {X : Type*} [topological_space X] [first_countable_topology X]
@@ -452,16 +462,15 @@ begin
         interval_oc_subset_of_mem_Ioc (mem_Ioc_of_Ioo hb₀) (mem_Ioc_of_Ioo ht),
       exact interval_integrable_of_norm_le ((hF_meas _).mono_set hsub)
             (ae_restrict_of_ae_restrict_of_subset hsub ‹_›) (bound_integrable.mono_set' hsub) } },
-
   rw continuous_at_congr this, clear this,
   refine continuous_at.add (continuous_at.add _ _) _,
   { change continuous_at ((λ x, ∫ (s : α) in a₀..b₀, F x s ∂μ) ∘ prod.fst) (x₀, b₀),
     apply continuous_at.comp _ continuous_at_fst,
-    exact interval_integral.continuous_at_of_dominated_interval
+    apply interval_integral.continuous_at_of_dominated_interval
             (eventually_of_forall $ λ x, (hF_meas x).mono_set hsub₀)
-            (h_bound.mono $ λ  x, ae_restrict_of_ae_restrict_of_subset hsub₀)
+            (h_bound.mono $ λ  x, ae_mem_imp_of_ae_restrict_of_subset hsub₀)
             (bound_integrable.mono_set' hsub₀)
-            (ae_restrict_of_ae_restrict_of_subset hsub₀ h_cont) },
+            (ae_mem_imp_of_ae_restrict_of_subset hsub₀ h_cont) },
   { change continuous_at ((λ t, ∫ (s : α) in b₀..t, F x₀ s ∂μ) ∘ prod.snd) (x₀, b₀),
     apply continuous_at.comp _ continuous_at_snd,
     apply continuous_within_at.continuous_at _ (Icc_mem_nhds hb₀.1 hb₀.2),

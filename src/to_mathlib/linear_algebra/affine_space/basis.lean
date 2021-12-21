@@ -1,4 +1,4 @@
-import linear_algebra.affine_space.barycentric_coords
+import linear_algebra.affine_space.basis
 
 open_locale big_operators
 
