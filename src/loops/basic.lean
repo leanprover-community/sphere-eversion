@@ -418,15 +418,43 @@ noncomputable def average (γ : loop F) : F :=
 lemma loop.zero_average : average (0 : loop F) = 0 :=
 interval_integral.integral_zero
 
-/-- The support of a family of loops `γ` is the closure of the set all points `x` where `γ x` is not
-constant.
+@[simp]
+lemma loop.const_average (f : F) : average (const f) = f :=
+show ∫ (x : ℝ) in 0..1, f = f, by simp only [interval_integral.integral_const, one_smul, sub_zero]
 
-Suggestion (Floris): there is probably an easier definition to say "loop `l` is constant" than
-`l = loop.const l.average`. For example `∀ x y, l x = l y`.
--/
+/-- A loop is constant if it takes the same value at every time. 
+See also `loop.is_const_iff_forall_avg` and `loop.is_const_iff_const_avg` for characterizations in
+terms of average values. -/
+def is_const (γ : loop F) := ∀ t s, γ t = γ s
+
+lemma is_const_iff_forall_avg {γ : loop F} : γ.is_const ↔ ∀ t, γ t = γ.average :=
+begin
+  split ; intro h,
+  { intro t,
+    have : γ = loop.const (γ t),
+    { ext s,
+      rw h s t,
+      refl },
+    rw this, 
+    simp only [average, const_apply, interval_integral.integral_const, one_smul, sub_zero], },
+  { intros t s,
+    rw [h, h] }
+end
+
+lemma is_const_iff_const_avg {γ : loop F} : γ.is_const ↔ γ = loop.const γ.average :=
+begin
+  rw loop.is_const_iff_forall_avg,  
+  split,
+  { intro h,
+    ext s,
+    apply h },
+  { intros h t,
+    rw h,
+    simp }
+end
 
 def support (γ : X → loop F) : set X :=
-closure {x | γ x ≠ loop.const (γ x).average}
+closure {x | ¬ (γ x).is_const}
 
 lemma is_closed_support (γ : X → loop F) : is_closed (loop.support γ) :=
 is_closed_closure
@@ -438,6 +466,7 @@ begin
   by_contradiction H,
   apply hx,
   apply subset_closure,
+  simp_rw loop.is_const_iff_const_avg,
   exact H
 end
 
