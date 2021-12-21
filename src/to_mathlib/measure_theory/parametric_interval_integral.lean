@@ -2,7 +2,7 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 import algebra.module.ulift
 
-import to_mathlib.calculus
+import to_mathlib.analysis.calculus
 import to_mathlib.measure_theory.interval_integral
 import to_mathlib.topology.metric_space
 import to_mathlib.misc

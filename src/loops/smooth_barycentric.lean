@@ -1,5 +1,5 @@
 import to_mathlib.analysis.normed_space.add_torsor_bases
-import to_mathlib.analysis.calculus.times_cont_diff
+import to_mathlib.analysis.calculus
 
 noncomputable theory
 open set function
