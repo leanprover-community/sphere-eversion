@@ -274,32 +274,6 @@ lemma continuous_average [first_countable_topology E] [locally_compact_space E]
   (hγ_cont : continuous ↿γ) : continuous (λ x, (γ x).average) :=
 continuous_parametric_interval_integral_of_continuous' hγ_cont _ _
 
-/-- If a loop family has compact support then the corresponding corrugation is
-`O(1/N)` uniformly in the source point. -/
-lemma corrugation.c0_small [first_countable_topology E]
-  [locally_compact_space E] (hγ : is_compact (loop.support γ))
-  (hγ_cont : continuous ↿γ) :
-  ∃ C, ∀ x, is_O_with C (λ N, corrugation π N γ x) (λ N, 1/N) at_top :=
-begin
-  obtain ⟨C, hC⟩ : ∃ C, ∀ x b, ∥∫ t in 0..b, (γ x t - (γ x).average)∥ ≤ C,
-  { apply continuous.bounded_of_one_periodic_of_compact _ _ hγ,
-    { intros x hx,
-      ext t,
-      exact support_aux (loop.const_of_not_mem_support hx) t },
-    { let φ : E → ℝ → F := λ x s, (γ x) s - (γ x).average,
-      have cont_φ : continuous (λ p : E × ℝ, φ p.1 p.2),
-        from hγ_cont.sub ((continuous_average hγ_cont).comp continuous_fst),
-      exact continuous_parametric_primitive_of_continuous cont_φ },
-    { intro x,
-      exact per_corrugation _ (loop.continuous_of_family hγ_cont x).interval_integrable } },
-  use C,
-  intro x,
-  apply is_O_with_of_le',
-  intro N,
-  rw [corrugation, norm_smul, mul_comm],
-  exact mul_le_mul_of_nonneg_right (hC x (N*π x)) (norm_nonneg _)
-end
-
 /-
 The lemma below is ridiculously painful, but Patrick isn't patient enough.
 -/
@@ -321,7 +295,7 @@ end
 
 /-- If a loop family has compact support then the corresponding corrugation is
 `O(1/N)` uniformly in the source point. -/
-lemma corrugation.c0_small' [first_countable_topology E]
+lemma corrugation.c0_small [first_countable_topology E]
   [locally_compact_space E] (hγ : is_compact (loop.support γ))
   (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∥corrugation π N γ x∥ < ε :=
@@ -500,25 +474,12 @@ begin
 end
 
 lemma remainder_c0_small (hγ : is_compact (loop.support γ))
-  (hγ_diff : 𝒞 1 ↿γ) :
-  ∃ C, ∀ x, is_O_with C (λ N, R N γ x) (λ N, 1/N) at_top :=
-begin
-  have : is_compact (loop.support $ loop.diff γ),
-    from loop.compact_support_diff hγ_diff hγ,
-  rcases corrugation.c0_small π this (loop.continuous_diff hγ_diff) with ⟨C, hC⟩,
-  use C,
-  intro e,
-  rw remainder_eq' π e hγ_diff,
-  exact hC e
-end
-
-lemma remainder_c0_small' (hγ : is_compact (loop.support γ))
   (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∥R N γ x∥ < ε :=
 begin
   have : is_compact (loop.support $ loop.diff γ),
     from loop.compact_support_diff hγ_diff hγ,
-  apply (corrugation.c0_small' π this (loop.continuous_diff hγ_diff) ε_pos).mono,
+  apply (corrugation.c0_small π this (loop.continuous_diff hγ_diff) ε_pos).mono,
   intros N H x,
   have key := congr_fun (remainder_eq' π x hγ_diff) N,
   dsimp only at key,
@@ -532,85 +493,22 @@ lemma eventually_ne_at_top {α : Type*} [preorder α] [no_top_order α] (a : α)
   ∀ᶠ x in at_top, x ≠ a :=
 (eventually_gt_at_top a).mono (λ x hx, hx.ne.symm)
 
-section calculus
-open continuous_linear_map
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-          {α : Type*}
-          {G : Type*} [normed_group G] [normed_space 𝕜 G]
-          {H : Type*} [normed_group H] [normed_space 𝕜 H]
-
-/-
-FIXME: the lemma below is stupid, the conclusion is stupidly weaker than the assumption.
-We need to fix the statement of lemmas using that one in order to have strong 
-conclusiosn everywhere.
-
-The stupid part of the conclusion is that the member of `l` where things are controlled
-is allowed to depend on `v`.
--/
-
-lemma is_O_with_into_linear_map {l : filter α} {f : α → G →L[𝕜] H} {g : α → ℝ} {C : ℝ} : 
-is_O_with C f g l → ∀ v, is_O_with C (λ a, f a v) (λ a, g a * ∥v∥) l :=
-begin
-  simp_rw is_O_with_iff,
-  intros h v,
-  apply h.mono,
-  intros a ha,
-  calc ∥f a v∥ ≤ ∥f a∥*∥v∥ : le_op_norm (f a) v
-  ... ≤ (C*∥g a∥)*∥v∥ : mul_le_mul_of_nonneg_right ha (norm_nonneg _)
-  ... = C * ∥g a * ∥v∥∥ : by simp [mul_assoc]
-end
-
-end calculus
-
 variables {π}
 
-lemma corrugation.fderiv (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ)) :
-  ∃ C, ∀ x, is_O_with C
-  (λ N, D (𝒯 N γ) x - (γ x (N*π x) - (γ x).average) ⬝ (D π x)) (λ N, 1/N) at_top :=
-begin
-  rcases remainder_c0_small π hγ_supp hγ_diff with ⟨C, hC⟩,
-  use C,
-  intros x,
-  have : (λ N, D (corrugation π N γ) x - (γ x (N * π x) - (γ x).average) ⬝ (D π x)) =ᶠ[at_top] 
-    λ N, corrugation.remainder π N γ x,
-  { apply (eventually_ne_at_top (0 : ℝ)).mono,
-    intros N N_ne,
-    simp only [corrugation.fderiv_eq N N_ne hπ hγ_diff, add_sub_cancel'] },
-  exact is_O_with.congr' rfl this.symm eventually_eq.rfl (hC x)
-end
 
-lemma corrugation.fderiv' (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ)) {ε : ℝ} (ε_pos : 0 < ε) :
+lemma corrugation.fderiv (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ)) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∥D (𝒯 N γ) x - (γ x (N*π x) - (γ x).average) ⬝ (D π x)∥ < ε :=
 begin
-  apply ((remainder_c0_small' π hγ_supp hγ_diff ε_pos).and (eventually_ne_at_top (0 : ℝ))).mono,
+  apply ((remainder_c0_small π hγ_supp hγ_diff ε_pos).and (eventually_ne_at_top (0 : ℝ))).mono,
   rintros N ⟨hN, N_ne⟩ x,
   simpa only [corrugation.fderiv_eq N N_ne hπ hγ_diff, add_sub_cancel'] using hN x
 end
 
-
-/-
-FIXME: the lemma below is not optimal, the member of `at_top` where things are controlled
-is allowed to depend on `w` whearas `corrugation.fderiv` is stronger.
--/
-lemma corrugation.fderiv_ker (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ)) :
-  ∃ C, ∀ x, ∀ w ∈ ker (D π x : E →ₗ[ℝ] ℝ),
-  is_O_with C (λ N, D (𝒯 N γ) x w) (λ N, ∥w∥/N) at_top :=
-begin
-  rcases corrugation.fderiv hπ hγ_diff hγ_supp with ⟨C, hC⟩,
-  use C,
-  intros x w hw,
-  convert is_O_with_into_linear_map (hC x) w ; ext N,
-  { rw mem_ker at hw,
-    change D π x w = 0 at hw,
-    simp only [hw, continuous_linear_map.coe_comp', continuous_linear_map.coe_sub', sub_zero, 
-               comp_app, pi.sub_apply, continuous_linear_map.map_zero] },
-  { rw [mul_comm, mul_one_div] },
-end
-lemma corrugation.fderiv_ker' (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ)) {ε : ℝ} (ε_pos : 0 < ε) :
+lemma corrugation.fderiv_ker (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ)) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∀ w ∈ ker (D π x : E →ₗ[ℝ] ℝ),
   ∥D (𝒯 N γ) x w∥ ≤ ε*∥w∥ :=
 begin
-  apply (corrugation.fderiv' hπ hγ_diff hγ_supp ε_pos).mono,
+  apply (corrugation.fderiv hπ hγ_diff hγ_supp ε_pos).mono,
   intros N hN x w hw,
   let φ := D (corrugation π N γ) x - (γ x (N * π x) - (γ x).average) ⬝ D π x,
   rw mem_ker at hw,
@@ -625,29 +523,11 @@ end
 
 open continuous_linear_map
 
-/-
-FIXME: the lemma below is not optimal, the member of `at_top` where things are controlled
-is allowed to depend on `w` whearas `corrugation.fderiv` is stronger.
--/
 lemma corrugation.fderiv_u (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ))
-  {u : E} (hu : ∀ x, D π x u = 1) :
-  ∃ C, ∀ x, is_O_with C
-  (λ N, D (𝒯 N γ) x u - (γ x (N*π x) - (γ x).average)) (λ N, ∥u∥/N) at_top :=
-begin
-  rcases corrugation.fderiv hπ hγ_diff hγ_supp with ⟨C, hC⟩,
-  use C,
-  intros x,
-  convert is_O_with_into_linear_map (hC x) u ; ext N,
-  { simp only [hu x, continuous_linear_map.to_span_singleton_apply, coe_comp', coe_sub',
-               one_smul, comp_app, pi.sub_apply] },
-  { rw [mul_comm, mul_one_div] },
-end
-
-lemma corrugation.fderiv_u' (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ))
   {u : E} (hu : ∀ x, D π x u = 1) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∥D (𝒯 N γ) x u - (γ x (N*π x) - (γ x).average)∥ ≤  ε*∥u∥ :=
 begin
-  apply (corrugation.fderiv' hπ hγ_diff hγ_supp ε_pos).mono,
+  apply (corrugation.fderiv hπ hγ_diff hγ_supp ε_pos).mono,
   intros N hN x,
   let φ := D (corrugation π N γ) x - (γ x (N * π x) - (γ x).average) ⬝ D π x,
   rw show (D (corrugation π N γ) x) u - (γ x (N * π x) - (γ x).average) = φ u,
@@ -701,7 +581,7 @@ hf.add (d.C1_corrugation N)
 lemma corrugation_data.c0_close {f : E → F} {U : set E} (d : corrugation_data f U) {ε : ℝ} (ε_pos : 0 < ε)  :
   ∀ᶠ N in at_top, ∀ x, ∥d.fun N x - f x∥ < ε :=
 begin
-  apply (corrugation.c0_small' d.π d.hγ_supp d.hγ_diff.continuous ε_pos).mono,
+  apply (corrugation.c0_small d.π d.hγ_supp d.hγ_diff.continuous ε_pos).mono,
   intros N hN x,
   simpa [corrugation_data.fun] using hN x
 end
@@ -709,7 +589,7 @@ end
 lemma corrugation_data.deriv_ker_π {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) {ε : ℝ} (ε_pos : 0 < ε)  :
   ∀ᶠ N in at_top, ∀ x ∈ U, ∀ w ∈ d.π.ker, ∥D (d.fun N) x w - D f x w∥ ≤ ε*∥w∥ :=
 begin
-  apply (corrugation.fderiv_ker' d.C1_π d.C1_γ d.hγ_supp ε_pos).mono,
+  apply (corrugation.fderiv_ker d.C1_π d.C1_γ d.hγ_supp ε_pos).mono,
   simp_rw d.π.fderiv,
   intros N hN x x_in w w_in,
   simpa [d.Dfun hf] using hN x w w_in  
@@ -718,7 +598,7 @@ end
 lemma corrugation_data.deriv_u {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) {ε : ℝ} (ε_pos : 0 < ε)  :
   ∀ᶠ N in at_top, ∀ x ∈ U, ∥D (d.fun N) x d.u -  d.γ x (N*d.π x)∥ ≤ ε :=
 begin
-  apply (corrugation.fderiv_u' d.C1_π d.C1_γ d.hγ_supp d.Dπu ε_pos).mono,
+  apply (corrugation.fderiv_u d.C1_π d.C1_γ d.hγ_supp d.Dπu ε_pos).mono,
   intros N hN x x_in,
   specialize hN x,
   rw [d.hγ_avg x_in, d.hu, mul_one] at hN,
@@ -734,7 +614,6 @@ begin
   apply ((d.c0_close ε_pos).and ((d.deriv_ker_π hf ε_pos).and (d.deriv_u hf ε_pos))).mono,
   tauto
 end
-
 
 lemma corrugation_data.relative {f : E → F} {U : set E} (d : corrugation_data f U) :
 ∀ x, (d.γ x).is_const → d.fun N x = f x :=
