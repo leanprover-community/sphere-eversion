@@ -2,20 +2,15 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 import algebra.module.ulift
 
+import to_mathlib.calculus
+import to_mathlib.measure_theory
+import to_mathlib.topology.metric_space
+import to_mathlib.misc
+
 noncomputable theory
 
 open topological_space measure_theory filter first_countable_topology metric set function
 open_locale topological_space filter nnreal big_operators interval
-
-section
-open metric
-variables {α β : Type*} [pseudo_metric_space α] [pseudo_metric_space β]
-
-lemma mem_ball_prod {x x₀ : α × β} {r : ℝ} :
-  x ∈ ball x₀ r ↔ x.1 ∈ ball x₀.1 r ∧ x.2 ∈ ball x₀.2 r :=
-by { cases x₀, simp [← ball_prod_same] }
-
-end
 
 namespace continuous_linear_map
 
@@ -30,10 +25,6 @@ variables [second_countable_topology F] [complete_space F]
 variables [normed_space ℝ F] [is_scalar_tower ℝ 𝕜 F]
 variables [normed_group H] [normed_space 𝕜 H] [second_countable_topology (H →L[𝕜] E)]
 
--- lemma set_integral_apply {s : set α} {φ : α → H →L[𝕜] E} (φ_int : integrable_on φ s μ)
---   (v : H) : (∫ a in s, φ a ∂μ) v = ∫ a in s, φ a v ∂μ :=
--- integral_apply φ_int v
-
 variables [linear_order α]
 
 lemma interval_integral_apply {a b : α} {φ : α → H →L[𝕜] E} (φ_int : interval_integrable φ μ a b)
@@ -42,24 +33,6 @@ by simp_rw [interval_integral_eq_integral_interval_oc, ← integral_apply φ_int
   continuous_linear_map.coe_smul', pi.smul_apply]
 
 end continuous_linear_map
-
-namespace continuous_linear_equiv
-
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F] {G : Type*} [normed_group G] [normed_space 𝕜 G]
-  {f : E → F} {n : with_top ℕ}
-
---todo: protect `continuous_linear_map.times_cont_diff`/`continuous_linear_equiv.times_cont_diff`
-
-lemma times_cont_diff_comp_iff (e : G ≃L[𝕜] E) :
-  _root_.times_cont_diff 𝕜 n (f ∘ e) ↔ _root_.times_cont_diff 𝕜 n f :=
-by simp_rw [← times_cont_diff_on_univ, ← e.times_cont_diff_on_comp_iff, preimage_univ]
-
-lemma comp_times_cont_diff_iff (e : F ≃L[𝕜] G) :
-  _root_.times_cont_diff 𝕜 n (e ∘ f) ↔ _root_.times_cont_diff 𝕜 n f :=
-by simp_rw [← times_cont_diff_on_univ, ← e.comp_times_cont_diff_on_iff]
-
-end continuous_linear_equiv
 
 section
 variables {E : Type*} [normed_group E] [second_countable_topology E] [normed_space ℝ E]
@@ -91,14 +64,7 @@ begin
          bound_integrable.2 h_diff.2)
 end
 
-lemma ae_interval_oc {P : ℝ → Prop} {a b : ℝ} :
-  (∀ᵐ t ∂(ν.restrict $ Ι a b), P t) ↔
-  (∀ᵐ t ∂(ν.restrict $ Ioc a b), P t) ∧ ∀ᵐ t ∂(ν.restrict $ Ioc b a), P t :=
-begin
-  cases le_or_lt a b with h h,
-  { simp [interval_oc_of_le h, Ioc_eq_empty_of_le h] },
-  { simp [interval_oc_of_lt h, Ioc_eq_empty_of_le h.le] }
-end
+
 
 /-- Interval version of `has_fderiv_at_of_dominated_loc_of_lip` -/
 lemma has_fderiv_at_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' : ℝ → (H →L[ℝ] E)} {x₀ : H}
@@ -130,31 +96,6 @@ section
 
 open function
 
-lemma is_compact.bdd_above_norm {X : Type*} [topological_space X] {E : Type*} [normed_group E]
-  {s : set X} (hs : is_compact s) {f : X → E} (hf : continuous f) : ∃ M > 0, ∀ x ∈ s, ∥f x∥ ≤ M :=
-begin
-  cases (hs.image (continuous_norm.comp hf)).bdd_above with M hM,
-  rcases s.eq_empty_or_nonempty with rfl | ⟨⟨x₀, x₀_in⟩⟩,
-  { use [1, zero_lt_one],
-    simp },
-  { use M + 1,
-    split,
-    { linarith [(norm_nonneg (f x₀)).trans (hM (set.mem_image_of_mem (norm ∘ f) x₀_in))] },
-    { intros x x_in,
-      linarith [hM (set.mem_image_of_mem (norm ∘ f) x_in)] } }
-end
-
-
-lemma ae_restrict_of_forall_mem {α : Type*} [measurable_space α] {μ : measure α} {s : set α}
-  {p : α → Prop} (hs : measurable_set s) (h : ∀ x ∈ s, p x) : ∀ᵐ (x : α) ∂μ.restrict s, p x :=
-by { rw ae_restrict_iff' hs, exact ae_of_all _ h }
-
-lemma is_compact.integrable_const {α : Type*} [measurable_space α] [topological_space α]
-  {E : Type*} [normed_group E] [measurable_space E]
-  {s : set α} (hs : is_compact s) (c : E) (μ : measure α) [is_locally_finite_measure μ] :
-  integrable (λ (x : α), c) (μ.restrict s) :=
-by simp_rw [integrable_const_iff, measure.restrict_apply_univ, hs.measure_lt_top, or_true]
-
 theorem continuous_parametric_integral_of_continuous
   {E : Type*} [normed_group E] [topological_space.second_countable_topology E] [normed_space ℝ E]
   [complete_space E] [measurable_space E] [borel_space E]
@@ -182,27 +123,6 @@ begin
 end
 
 end
-
-section lipschitz
-
-variables {α β γ : Type*} [pseudo_emetric_space α] [pseudo_emetric_space β] [pseudo_emetric_space γ]
-
-protected lemma lipschitz_on_with.comp {Kf Kg : ℝ≥0} {f : β → γ} {g : α → β} {s : set α} {t : set β}
-  (hf : lipschitz_on_with Kf f t) (hg : lipschitz_on_with Kg g s) (hst : g '' s ⊆ t) :
-  lipschitz_on_with (Kf * Kg) (f ∘ g) s :=
-assume x x_in y y_in,
-calc edist (f (g x)) (f (g y))
-    ≤ Kf * edist (g x) (g y) : hf (hst $ mem_image_of_mem g x_in) (hst $ mem_image_of_mem g y_in)
-... ≤ Kf * (Kg * edist x y) : ennreal.mul_left_mono (hg x_in y_in)
-... = (Kf * Kg : ℝ≥0) * edist x y : by rw [← mul_assoc, ennreal.coe_mul]
-
-lemma lipschitz_with_prod_mk_left (a : α) : lipschitz_with 1 (prod.mk a : β → α × β) :=
-λ x y, show max _ _ ≤ _, by simp
-
-lemma lipschitz_with_prod_mk_right (b : β) : lipschitz_with 1 (λ a : α, (a, b)) :=
-λ x y, show max _ _ ≤ _, by simp
-
-end lipschitz
 
 section
 
@@ -344,18 +264,6 @@ lemma interval_integral.mul_const {α : Type*} [linear_order α] [measurable_spa
   ∫ x in a..b, f x * c ∂μ = (∫ x in a..b, f x ∂μ) * c :=
 by simp_rw [mul_comm, ← interval_integral.const_mul]
 
-lemma abs_le_abs_of_nonneg {α : Type*} [add_comm_group α] [linear_order α]
-   [covariant_class α α (+) (≤)] {a b : α}
-  (ha : 0 ≤ a) (hab : a ≤ b) :
-  |a| ≤ |b| :=
-by rwa [abs_of_nonneg ha, abs_of_nonneg (ha.trans hab)]
-
-lemma abs_le_abs_of_nonpos {α : Type*} [add_comm_group α] [linear_order α]
-   [covariant_class α α (+) (≤)] {a b : α}
-  (ha : a ≤ 0) (hab : b ≤ a) :
-  |a| ≤ |b| :=
-by { rw [abs_of_nonpos ha, abs_of_nonpos (hab.trans ha)], exact neg_le_neg_iff.mpr hab }
-
 
 lemma interval_integral.norm_integral_le_of_norm_le
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t)
@@ -398,30 +306,7 @@ end
 
 end
 
-lemma interval_oc_subset_of_mem_Ioc {α : Type*} [linear_order α] {a b c d : α}
-  (ha : a ∈ Ioc c d) (hb : b ∈ Ioc c d) : Ι a b ⊆ Ι c d :=
-begin
-   rw interval_oc_of_le (ha.1.le.trans ha.2),
-   exact Ioc_subset_Ioc (le_min ha.1.le hb.1.le) (max_le ha.2 hb.2)
-end
-
-lemma interval_subset_Ioo  {α : Type*} [linear_order α] {a b c d : α}
-  (ha : a ∈ Ioo c d) (hb : b ∈ Ioo c d) : interval a b ⊆ Ioo c d :=
-λ t ⟨ht, ht'⟩, ⟨(lt_min ha.1 hb.1).trans_le ht, ht'.trans_lt (max_lt ha.2 hb.2)⟩
-
-lemma interval_oc_subset_Ioo  {α : Type*} [linear_order α] {a b c d : α}
-  (ha : a ∈ Ioo c d) (hb : b ∈ Ioo c d) : Ι a b ⊆ Ioo c d :=
-λ t ⟨ht, ht'⟩, ⟨(lt_min ha.1 hb.1).trans ht, ht'.trans_lt (max_lt ha.2 hb.2)⟩
-
 section
-
-/-
-MOVE next to ae_restrict_of_ae_restrict_of_subset
--/
-lemma measure_theory.ae_mem_imp_of_ae_restrict_of_subset {α : Type*} {m0 : measurable_space α} 
-  {μ : measure α} {s t : set α} {p : α → Prop} (hst : s ⊆ t) (hp : ∀ᵐ (x : α) ∂μ.restrict t, p x) :
-  (∀ᵐ x ∂μ, x ∈ s → p x) :=
-ae_imp_of_ae_restrict (ae_restrict_of_ae_restrict_of_subset hst hp)
 
 open measure_theory
 
@@ -514,16 +399,6 @@ end
 end
 
 section
-variables {α : Type*} [conditionally_complete_linear_order α]
-          [measurable_space α] [topological_space α]
-          [order_topology α]
-          {G : Type*} [normed_group G] [measurable_space G]
-          (μ : measure α) [is_locally_finite_measure μ]
-          (c : G) (a b : α)
-
-end
-
-section
 variables {α : Type*} [conditionally_complete_linear_order α] [no_bot_order α] [no_top_order α]
           [measurable_space α] [topological_space α]
           [order_topology α] [opens_measurable_space α] [first_countable_topology α] {μ : measure α}
@@ -583,313 +458,6 @@ continuous_parametric_interval_integral_of_continuous hF continuous_const
 
 end
 
-section
-open continuous_linear_map
-
-lemma coprod_eq_add {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
-  [add_comm_monoid M₁] {M₂ : Type*} [topological_space M₂] [add_comm_monoid M₂]
-  {M₃ : Type*} [topological_space M₃] [add_comm_monoid M₃] [module R₁ M₁]
-  [module R₁ M₂] [module R₁ M₃] [has_continuous_add M₃]
-  (f : M₁ →L[R₁] M₃) (g : M₂ →L[R₁] M₃) :
-  f.coprod g = (f.comp $ fst R₁ M₁ M₂) + (g.comp $ snd R₁ M₁ M₂) :=
-by { ext ; refl }
-
-end
-
-section
-
-open asymptotics continuous_linear_map
-
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-          {E : Type*}  {F : Type*} [normed_group F]
-
-lemma filter.eventually_le.is_O {f g h : E → F} {l : filter E}
-  (hfg : (λ x, ∥f x∥) ≤ᶠ[l] (λ x, ∥g x∥)) (hh : is_O g h l) : is_O f h l :=
-(is_O_iff.mpr ⟨1, by  simpa using hfg⟩).trans hh
-
-lemma filter.eventually.is_O {f g h : E → F} {l : filter E}
-  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : is_O g h l) : is_O f h l :=
-filter.eventually_le.is_O hfg hh
-
-lemma filter.eventually.is_O' {f : E → F} {g : E → ℝ} {l : filter E}
-  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ g x) : is_O f g l :=
-begin
-  rw is_O_iff,
-  use 1,
-  apply hfg.mono,
-  intros x h,
-  rwa [real.norm_eq_abs, abs_of_nonneg ((norm_nonneg $ f x).trans h), one_mul]
-end
-
-variables [normed_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
-          {G : Type*} [normed_group G] [normed_space 𝕜 G]
-
-lemma asymptotics.is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ}
-  (h : is_O f (λ x, ∥x - x₀∥^n) (𝓝 x₀)) (hn : 0 < n) : f x₀ = 0 :=
-begin
-  cases h.is_O_with with c hc,
-  have:= mem_of_mem_nhds (is_O_with_iff.mp hc),
-  simpa [zero_pow hn]
-end
-
-lemma is_o_pow_sub_pow_sub (x₀ : E) {n m : ℕ} (h : n < m) :
-    is_o (λ (x : E), ∥x - x₀∥^m) (λ (x : E), ∥x - x₀∥^n) (𝓝 x₀) :=
-begin
-  have : tendsto (λ x, ∥x - x₀∥) (𝓝 x₀) (𝓝 0),
-  { apply tendsto_norm_zero.comp,
-    rw ← sub_self x₀,
-    exact tendsto_id.sub tendsto_const_nhds },
-  exact (is_o_pow_pow h).comp_tendsto this
-end
-
-lemma is_o_pow_sub_sub (x₀ : E) {m : ℕ} (h : 1 < m) :
-    is_o (λ (x : E), ∥x - x₀∥^m) (λ (x : E), x - x₀) (𝓝 x₀) :=
-by simpa only [is_o_norm_right, pow_one] using is_o_pow_sub_pow_sub x₀ h
-
-lemma asymptotics.is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
-  is_O (λ p : E × F, p.1 - e₀) (λ p : E × F, p - (e₀, f₀)) l :=
-is_O_of_le l (λ p, le_max_left _ _)
-
-lemma asymptotics.is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
-  is_O (λ p : E × F, p.2 - f₀) (λ p : E × F, p - (e₀, f₀)) l :=
-is_O_of_le l (λ p, le_max_right _ _)
-
-lemma asymptotics.is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
-  is_O (λ p : E × F, ∥p.1 - e₀∥^n) (λ p : E × F, ∥p - (e₀, f₀)∥^n) l :=
-(is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_left e₀ f₀ l).pow n
-
-lemma asymptotics.is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
-  is_O (λ p : E × F, ∥p.2 - f₀∥^n) (λ p : E × F, ∥p - (e₀, f₀)∥^n) l :=
-(is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_right e₀ f₀ l).pow n
-
-lemma asymptotics.is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
-  (h : is_O f (λ e, ∥e - e₀∥^n) l) (g₀ : G) (l' : filter G) :
-  is_O (λ p : E × G, f p.1) (λ p, ∥p - (e₀, g₀)∥^n) (l ×ᶠ l') :=
-(h.comp_tendsto tendsto_fst).trans (asymptotics.is_O_pow_sub_prod_left _ _ _ _)
-
-lemma asymptotics.is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
-  (h : is_O f (λ e, ∥e - e₀∥) l) (g₀ : G) (l' : filter G) :
-  is_O (λ p : E × G, f p.1) (λ p, ∥p - (e₀, g₀)∥) (l ×ᶠ l') :=
-begin
-  rw show (λ e, ∥e - e₀∥) = (λ e, ∥e - e₀∥^1), by { ext e, simp } at h,
-  simpa using h.comp_fst g₀ l'
-end
-
-lemma asymptotics.is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
-  (h : is_O f (λ g, ∥g - g₀∥^n) l') (e₀ : E) (l : filter E) :
-  is_O (λ p : E × G, f p.2) (λ p, ∥p - (e₀, g₀)∥^n) (l ×ᶠ l') :=
-(h.comp_tendsto tendsto_snd).trans (asymptotics.is_O_pow_sub_prod_right _ _ _ _)
-
-lemma asymptotics.is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
-  (h : is_O f (λ g, ∥g - g₀∥) l') (e₀ : E) (l : filter E) :
-  is_O (λ p : E × G, f p.2) (λ p, ∥p - (e₀, g₀)∥) (l ×ᶠ l') :=
-begin
-  rw show (λ g, ∥g - g₀∥) = (λ g, ∥g - g₀∥^1), by { ext g, simp } at h,
-  simpa using h.comp_snd e₀ l
-end
-
-lemma asymptotics.is_O.has_fderiv_at {f : E → F} {x₀ : E} {n : ℕ}
-  (h : is_O f (λ x, ∥x - x₀∥^n) (𝓝 x₀)) (hn : 1 < n) :
-  has_fderiv_at f (0 : E →L[𝕜] F) x₀ :=
-begin
-  change is_o _ _ _,
-  simp only [h.eq_zero (zero_lt_one.trans hn), sub_zero, zero_apply],
-  exact h.trans_is_o (is_o_pow_sub_sub x₀ hn)
-end
-
-lemma has_deriv_at.is_O {f : E → F} {x₀ : E} {f' : E →L[𝕜] F} (h : has_fderiv_at f f' x₀) :
-  is_O (λ x, f x - f x₀) (λ x, x - x₀) (𝓝 x₀) :=
-by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
-
-end
-
-section calculus
-open continuous_linear_map
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-          {E : Type*} [normed_group E] [normed_space 𝕜 E]
-          {F : Type*} [normed_group F] [normed_space 𝕜 F]
-          {G : Type*} [normed_group G] [normed_space 𝕜 G]
-
-lemma has_fderiv_at_prod_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
-begin
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
-end
-
-lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
-  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  has_fderiv_at (λ e, φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
-begin
-  rw show (λ e, φ e f₀) = (uncurry φ) ∘ (λ e, (e, f₀)), by { ext e, simp },
-  refine h.comp e₀ _,
-  apply has_fderiv_at_prod_left
-end
-
-variable (𝕜)
-
-def partial_fderiv_fst {F : Type*} (φ : E → F → G) :=
-λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
-
-local notation `∂₁` := partial_fderiv_fst
-
-variable {𝕜}
-
-lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
-  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  ∂₁ 𝕜 φ e₀ f₀ = φ'.comp (inl 𝕜 E F) :=
-h.partial_fst.fderiv
-
-lemma times_cont_diff_prod_left (f₀ : F) : times_cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
-begin
-  rw times_cont_diff_top_iff_fderiv,
-  split,
-  { intro e₀,
-    exact (has_fderiv_at_prod_left e₀ f₀).differentiable_at },
-  { dsimp only,
-    rw show fderiv 𝕜 (λ (e : E), (e, f₀)) = λ (e : E), inl 𝕜 E F,
-      from  funext (λ e : E, (has_fderiv_at_prod_left e f₀).fderiv),
-    exact times_cont_diff_const }
-end
-
-lemma has_fderiv_at_prod_mk (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
-begin
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
-end
-
-lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
-  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
-begin
-  rw show (λ f, φ e₀ f) = (uncurry φ) ∘ (λ f, (e₀, f)), by { ext e, simp },
-  refine h.comp f₀ _,
-  apply has_fderiv_at_prod_mk
-end
-
-lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
-  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  fderiv 𝕜 (λ f, φ e₀ f) f₀ = φ'.comp (inr 𝕜 E F) :=
-h.partial_snd.fderiv
-
-lemma times_cont_diff_prod_mk (e₀ : E) : times_cont_diff 𝕜 ⊤ (λ f : F, (e₀, f)) :=
-begin
-  rw times_cont_diff_top_iff_fderiv,
-  split,
-  { intro f₀,
-    exact (has_fderiv_at_prod_mk e₀ f₀).differentiable_at },
-  { dsimp only,
-    rw show fderiv 𝕜 (λ (f : F), (e₀, f)) = λ (f : F), inr 𝕜 E F,
-      from  funext (λ f : F, (has_fderiv_at_prod_mk e₀ f).fderiv),
-    exact times_cont_diff_const }
-end
-
-lemma times_cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
-  (h : times_cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : times_cont_diff 𝕜 n (λ e, φ e f₀) :=
-h.comp ((times_cont_diff_prod_left f₀).of_le le_top)
-
-lemma times_cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
-  (h : times_cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : times_cont_diff 𝕜 n (λ f, φ e₀ f) :=
-h.comp ((times_cont_diff_prod_mk e₀).of_le le_top)
-
-/-- Precomposition by a continuous linear map as a continuous linear map between spaces of
-continuous linear maps. -/
-def continuous_linear_map.comp_rightL (φ  : E →L[𝕜] F) : (F →L[𝕜] G) →L[𝕜] (E →L[𝕜] G) :=
-{ to_fun := λ ψ, ψ.comp φ,
-  map_add' := λ x y, add_comp _ _ _,
-  map_smul' := λ r x, by rw [smul_comp, ring_hom.id_apply],
-  cont := begin
-    dsimp only,
-    apply @continuous_of_linear_of_bound 𝕜,
-    { intros x y,
-      apply add_comp },
-    { intros c ψ,
-      rw smul_comp },
-    { intros ψ,
-      change ∥ψ.comp φ∥ ≤ ∥φ∥ * ∥ψ∥,
-      rw mul_comm,
-      apply op_norm_comp_le }
-  end }
-
-/-- Postcomposition by a continuous linear map as a continuous linear map between spaces of
-continuous linear maps. -/
-def continuous_linear_map.comp_leftL (φ  : F →L[𝕜] G) : (E →L[𝕜] F) →L[𝕜] (E →L[𝕜] G) :=
-{ to_fun := φ.comp,
-  map_add' := λ x y, comp_add _ _ _,
-  map_smul' := λ r x, by rw [comp_smul, ring_hom.id_apply],
-  cont := begin
-    dsimp only,
-    apply @continuous_of_linear_of_bound 𝕜,
-    { intros x y,
-      apply comp_add },
-    { intros c ψ,
-      rw comp_smul },
-    { intros ψ,
-      apply op_norm_comp_le }
-  end }
-
-lemma differentiable.fderiv_partial_fst {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) :
-  ↿(∂₁ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
-begin
-  have : ∀ p : E × F, has_fderiv_at (uncurry φ) _ p,
-  { intro p,
-    exact (hF p).has_fderiv_at },
-  dsimp [partial_fderiv_fst],
-  rw funext (λ x : E , funext $ λ t : F, (this (x, t)).partial_fst.fderiv),
-  ext ⟨y, t⟩,
-  refl
-end
-
-@[to_additive]
-lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
-with_top.coe_le_coe.mpr le_mul_self
-
-@[to_additive]
-lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
-with_top.coe_le_coe.mpr le_self_mul
-
-lemma times_cont_diff.of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) :
-  times_cont_diff 𝕜 n φ :=
-h.of_le (with_top.le_self_add n 1)
-
-lemma times_cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) :
-  times_cont_diff 𝕜 1 φ :=
-h.of_le (with_top.le_add_self 1 n)
-
-lemma times_cont_diff.times_cont_diff_partial_fst {φ : E → F → G} {n : ℕ} (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) :
-  times_cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
-begin
-  cases times_cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
-  rw (hF.differentiable $ with_top.le_add_self 1 n).fderiv_partial_fst,
-  apply times_cont_diff.comp _ hF₂,
-  exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).times_cont_diff
-end
-
-lemma times_cont_diff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
-  (h : times_cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₁ 𝕜 φ) :=
-h.times_cont_diff_partial_fst.continuous
-
-lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF : times_cont_diff 𝕜 ⊤ (uncurry φ)) :
-  times_cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
-times_cont_diff_top.mpr (λ n, (times_cont_diff_top.mp hF (n + 1)).times_cont_diff_partial_fst)
-
-
-
-end calculus
-
-section real_calculus
-open continuous_linear_map
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F]
-
-lemma times_cont_diff.lipschitz_on_with {s : set E} {f : E → F} (hf : times_cont_diff ℝ 1 f)
-  (hs : convex ℝ s) (hs' : is_compact s) : ∃ K, lipschitz_on_with K f s :=
-begin
-  rcases hs'.bdd_above_norm (hf.continuous_fderiv le_rfl) with ⟨M, M_pos : 0 < M, hM⟩,
-  use ⟨M, M_pos.le⟩,
-  exact convex.lipschitz_on_with_of_nnnorm_fderiv_le (λ x x_in, hf.differentiable le_rfl x) hM hs
-end
-
-end real_calculus
 
 section
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
@@ -903,10 +471,6 @@ but that is less convenient to work with.
 -/
 
 open real continuous_linear_map asymptotics
-
-lemma of_eventually_nhds {X : Type*} [topological_space X] {P : X → Prop} {x₀ : X}
-  (h : ∀ᶠ x in 𝓝 x₀, P x) : P x₀ :=
-mem_of_mem_nhds h
 
 /--
 This statement is a new version using the continuity note in mathlib.
@@ -1040,135 +604,7 @@ begin
     simpa using ((D₁.add D₂).add D₃).sub (has_fderiv_at_const (φ x₀ (s x₀)) x₀) }
 end
 
-/- /- Sketch of an ugly proof of the old version from the new version -/
-lemma has_fderiv_at_parametric_primitive_of_lip {F : H → ℝ → E} {F' : ℝ → (H →L[ℝ] E)} {x₀ : H}
-  {bound : ℝ → ℝ} {t₀ : ℝ}
-  {ε : ℝ} (ε_pos : 0 < ε)
-  {a a₀ b₀ : ℝ}
-  (ha :  a ∈ Ioo a₀ b₀)
-  (ht₀ : t₀ ∈ Ioo a₀ b₀)
-  (hF_meas : ∀ x ∈ ball x₀ ε, ae_measurable (F x) (volume.restrict (Ioo a₀ b₀)))
-  (hF_int : integrable_on (F x₀) (Ioo a₀ b₀))
-  (hF_cont : continuous_at (F x₀) t₀)
-  (hF'_meas : ae_measurable F' (volume.restrict $ Ι a t₀))
-  (h_lipsch : ∀ᵐ t ∂(volume.restrict $ Ioo a₀ b₀),
-    lipschitz_on_with (nnabs $ bound t) (λ x, F x t) (ball x₀ ε))
-  (bound_integrable : integrable_on bound (Ioo a₀ b₀))
-  (bound_cont : continuous_at bound t₀)
-  (bound_nonneg : ∀ t, 0 ≤ bound t) -- this is not really needed, but much more convenient
-  (h_diff : ∀ᵐ a ∂volume.restrict (Ι a t₀), has_fderiv_at (λ x, F x a) (F' a) x₀) :
-  interval_integrable F' volume a t₀ ∧
-  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t)
-    (coprod (∫ t in a..t₀, F' t) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
-begin
-  have hF' : interval_integrable F' volume a t₀ := sorry, -- ignoring this part for now
-  have h2F' : interval_integrable (λ t, (F' t).comp (fst ℝ H ℝ)) volume a t₀ := sorry,
-  obtain ⟨h₁, h₂⟩ :=
-    has_fderiv_at_parametric_primitive_of_lip' (λ (p : H × ℝ) t, F p.1 t)
-      (λ t, (F' t).comp (fst ℝ H ℝ)) ε_pos ha _ _ _ _ _ _ bound_integrable _ bound_nonneg _ _ _,
-  refine ⟨hF', h₂⟩,
-  { exact snd ℝ H ℝ },
-  { exact ht₀ },
-  { exact λ p hp, hF_meas p.1 (mem_ball_prod.mp hp).1 },
-  { exact hF_int },
-  { exact hF_cont },
-  { exact (fst ℝ H ℝ).comp_rightL.continuous.measurable.comp_ae_measurable hF'_meas },
-  { filter_upwards [h_lipsch], intros t, generalize : nnabs (bound t) = K, intros ht,
-    rw [show (λ x : H × ℝ, F x.1 t) = (λ x, F x t) ∘ prod.fst, by { ext, simp }, ← mul_one K],
-    apply ht.comp (lipschitz_with.prod_fst.lipschitz_on_with _),
-    rintros _ ⟨p, p_in, rfl⟩,
-    exact (mem_ball_prod.mp p_in).1 },
-  exact bound_cont,
-  { filter_upwards [h_diff],
-    rintros t (ht : has_fderiv_at (λ (x : H), F x t) (F' t) (x₀, t₀).1),
-    exact ht.comp _ has_fderiv_at_fst },
-  { exact has_fderiv_at_snd },
-  ext; simp only [continuous_linear_map.add_comp,
-    continuous_linear_map.coprod_apply,
-    continuous_linear_map.inl_apply,
-    continuous_linear_map.inr_apply,
-    add_zero, zero_add,
-    continuous_linear_map.coe_comp',
-    function.comp_app,
-    continuous_linear_map.coe_snd',
-    continuous_linear_map.add_apply,
-    continuous_linear_map.map_zero,
-    add_left_eq_self],
-  { simp [continuous_linear_map.interval_integral_apply, hF', h2F'] },
-  { simp [continuous_linear_map.interval_integral_apply, h2F'] }
-end -/
 
-lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
-
-/- /-
-FIXME: the lemma below still uses `has_fderiv_at_parametric_primitive_of_lip` instead of 
-the newer `has_fderiv_at_parametric_primitive_of_lip'`, so it technically is sorried.
--/
-
-lemma has_fderiv_at_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
-  (x₀ : H) (a t₀ : ℝ) :
-  (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a t₀) ∧
-  has_fderiv_at (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) (coprod (∫ t in a..t₀, (fderiv ℝ $ λ x, F x t) x₀) (to_span_singleton ℝ $ F x₀ t₀)) (x₀, t₀) :=
-begin
-  set a₀ :=  min a t₀ - 1,
-  set b₀ :=  max a t₀ + 1,
-  have ha : a ∈ Ioo a₀ b₀,
-  { dsimp [a₀, b₀],
-    split,
-    linarith [min_le_left a t₀],
-    linarith [le_max_left a t₀] },
-  have ht₀ : t₀ ∈ Ioo a₀ b₀,
-  { dsimp [a₀, b₀],
-    split,
-    linarith [min_le_right a t₀],
-    linarith [le_max_right a t₀] },
-  have cpct : is_compact ((closed_ball x₀ 1).prod $ Icc a₀ b₀),
-      from (proper_space.is_compact_closed_ball x₀ 1).prod is_compact_Icc,
-  obtain ⟨M, M_nonneg, F_bound⟩ : ∃ M : ℝ, 0 ≤ M ∧ ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
-  { rcases cpct.bdd_above_norm hF.continuous with ⟨M, M_pos : 0 < M, hM⟩,
-    use [M, M_pos.le],
-    exact λ x x_in t t_in, hM (x, t) ⟨ball_subset_closed_ball x_in, mem_Icc_of_Ioo t_in⟩ },
-  obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, lipschitz_on_with K (λ x, F x t) (ball x₀ 1),
-  { have conv : convex ℝ ((closed_ball x₀ 1).prod $ Icc  a₀ b₀),
-      from (convex_closed_ball x₀ 1).prod (convex_Icc a₀ b₀),
-    rcases hF.lipschitz_on_with conv cpct with ⟨K, hK⟩,
-    use K,
-    intros t t_in,
-    rw [show (λ (x : H), F x t) = (uncurry F) ∘ (λ x : H, (x, t)), by { ext, simp }, ← mul_one K],
-    apply hK.comp ((lipschitz_with_prod_mk_right t).lipschitz_on_with $ ball x₀ 1),
-    rintros ⟨x, s⟩ ⟨x', hx, h⟩, cases h,
-    refine ⟨ball_subset_closed_ball hx, mem_Icc_of_Ioo t_in⟩ },
-  have cont_x : ∀ x, continuous (F x),
-    from λ x, hF.continuous.comp (continuous.prod.mk x),
-  have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀),
-    from λ x, (cont_x x).integrable_on_compact is_compact_Icc,
-  have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
-    from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
-  apply has_fderiv_at_parametric_primitive_of_lip zero_lt_one ha ht₀
-    (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀) (cont_x x₀).continuous_at
-    _ _ _ (continuous_at_const : continuous_at (λ (t : ℝ), (K : ℝ)) t₀) (λ t, nnreal.coe_nonneg K),
-  { apply ae_of_all,
-    intro t,
-    apply (times_cont_diff.has_strict_fderiv_at _ le_rfl).has_fderiv_at,
-    rw show (λ x, F x t) = (uncurry F) ∘ (λ x, (x, t)), by { ext, simp },
-    exact hF.comp ((times_cont_diff_prod_left t).of_le le_top) },
-  { apply continuous.ae_measurable,
-    have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
-      ((λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (fderiv ℝ $ uncurry F) ∘ (λ t, (x₀, t))),
-    { ext t,
-      have : has_fderiv_at (λ e, F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀,
-        from has_fderiv_at.partial_fst (hF.has_strict_fderiv_at le_rfl).has_fderiv_at,
-      rw [this.fderiv] },
-    rw this, clear this,
-    exact (inl ℝ H ℝ).comp_rightL.continuous.comp ((hF.continuous_fderiv le_rfl).comp $
-      continuous.prod.mk x₀) },
-  { refine ae_restrict_of_forall_mem measurable_set_Ioo _,
-    swap,
-    intros t t_in,
-    rw nnabs_coe K,
-    exact F_lip t t_in },
-  { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
-end -/
 
 local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
@@ -1247,29 +683,6 @@ begin
     exact F_lip t t_in },
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
 end
-
-/-
-/- The WIP version below is not Florised, it should probably be dropped. Do not work on it unless the other version fails. -/
-lemma times_cont_diff_parametric_primitive_of_times_cont_diff {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
-  [finite_dimensional ℝ H] (x₀ : H) (a t₀ : ℝ) :
-  times_cont_diff ℝ n (λ p : H × ℝ, ∫ t in a..p.2, F p.1 t) :=
-begin
-  revert F,
-  induction n with n ih,
-  {
-    sorry },
-  { intros F hF,
-    have hF₁ : times_cont_diff ℝ 1 (↿F),
-    /- { apply hF.of_le,
-      norm_cast,
-      exact le_add_self } -/sorry,
-    rw times_cont_diff_succ_iff_fderiv,
-    split,
-    { rintros ⟨x₀, t₀⟩,
-      exact ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff hF₁ x₀ a t₀).2⟩ },
-    { rw times_cont_diff_succ_iff_fderiv at hF,
-      sorry } },
-end -/
 
 end
 
