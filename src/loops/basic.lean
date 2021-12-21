@@ -83,9 +83,10 @@ lemma surrounding_pts.coord_eq_w [finite_dimensional ℝ F]
   {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
   (⟨p, h.indep, h.tot⟩ : affine_basis ι ℝ F).coords f = w :=
 begin
+  let b : affine_basis ι ℝ F := ⟨p, h.indep, h.tot⟩,
+  change b.coords f = w,
   ext i,
-  conv_lhs { congr, skip, rw ← h.avg, },
-  rw [← finset.univ.affine_combination_eq_linear_combination _ w h.w_sum, affine_basis.coords_apply],
+  rw [← h.avg, ← finset.univ.affine_combination_eq_linear_combination _ w h.w_sum, affine_basis.coords_apply],
   exact affine_basis.coord_apply_combination_of_mem _ (finset.mem_univ i) h.w_sum,
 end
 
