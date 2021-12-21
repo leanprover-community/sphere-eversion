@@ -33,27 +33,6 @@ section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _
 
--- #10709
-lemma submodule.eq_linear_proj_add_linear_proj_of_is_compl {p q : submodule ℝ F} 
-  (hpq : is_compl p q) (x : F) : 
-  x = π hpq x + π hpq.symm x :=
-begin
-  rcases submodule.exists_unique_add_of_is_compl hpq x with ⟨u, v, rfl, -⟩,
-  simp only [ linear_map.map_add, add_zero, submodule.linear_proj_of_is_compl_apply_right, 
-              zero_add, submodule.linear_proj_of_is_compl_apply_left ],
-end
-
--- #10709
-lemma submodule.not_mem_of_is_compl_of_ne_zero {p q : submodule ℝ F} (hpq : is_compl p q)
-  {a : p} (ha : a ≠ 0) : (a : F) ∉ q :=
-begin
-  intro h,
-  have h' : (a : F) ∈ p := submodule.coe_mem a,
-  have h'' : (a : F) ∈ p ⊓ q := submodule.mem_inf.mpr ⟨h', h⟩,
-  rw [hpq.inf_eq_bot, submodule.mem_bot, submodule.coe_eq_zero] at h'',
-  exact ha h''
-end
-
 lemma is_path_connected_compl_of_is_path_connected_compl_zero [topological_add_group F] 
   [has_continuous_smul ℝ F] {p q : submodule ℝ F} (hpq : is_compl p q) 
   (hpc : is_path_connected ({0}ᶜ : set p)) : is_path_connected (qᶜ : set F) :=
@@ -61,7 +40,7 @@ begin
   rw is_path_connected_iff at ⊢ hpc,
   split,
   { rcases hpc.1 with ⟨a, ha⟩,
-    exact ⟨a, submodule.not_mem_of_is_compl_of_ne_zero hpq ha⟩ },
+    exact ⟨a, mt (submodule.eq_zero_of_coe_mem_of_disjoint hpq.disjoint) ha⟩ },
   { intros x y hx hy, 
     have : π hpq x ≠ 0 ∧ π hpq y ≠ 0,
     { split;
@@ -72,15 +51,16 @@ begin
     let γ₂ := path_connected_space.some_path (π hpq.symm x) (π hpq.symm y),
     let γ₁' : path (_ : F) _ := γ₁.map continuous_subtype_coe,
     let γ₂' : path (_ : F) _ := γ₂.map continuous_subtype_coe,
-    refine ⟨(γ₁'.add γ₂').cast (submodule.eq_linear_proj_add_linear_proj_of_is_compl hpq x)
-      (submodule.eq_linear_proj_add_linear_proj_of_is_compl hpq y), _⟩,
+    refine ⟨(γ₁'.add γ₂').cast 
+      (submodule.linear_proj_add_linear_proj_of_is_compl_eq_self hpq x).symm 
+      (submodule.linear_proj_add_linear_proj_of_is_compl_eq_self hpq y).symm, _⟩,
     intros t,
     rw [path.cast_coe, path.add_apply],
     change (γ₁ t : F) + (γ₂ t : F) ∉ q,
     rw [← submodule.linear_proj_of_is_compl_apply_eq_zero_iff hpq, linear_map.map_add,
         submodule.linear_proj_of_is_compl_apply_right hpq, add_zero, 
         submodule.linear_proj_of_is_compl_apply_eq_zero_iff hpq],
-    exact submodule.not_mem_of_is_compl_of_ne_zero hpq (hγ₁ t) }
+    exact mt (submodule.eq_zero_of_coe_mem_of_disjoint hpq.disjoint) (hγ₁ t) }
 end
 
 lemma mem_span_of_zero_mem_segment {x y : F} (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) : 
@@ -113,15 +93,6 @@ begin
   exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 end
 
--- #10943
-lemma submodule.mem_span_trans {x y z : F} (hxy : x ∈ submodule.span ℝ ({y} : set F)) 
-  (hyz : y ∈ submodule.span ℝ ({z} : set F)) :
-  x ∈ submodule.span ℝ ({z} : set F) :=
-begin
-  rw [← set_like.mem_coe, ← singleton_subset_iff] at *,
-  exact submodule.subset_span_trans hxy hyz
-end
-
 lemma is_path_connected_compl_zero_of_two_le_dim [topological_add_group F] [has_continuous_smul ℝ F] 
   (hdim : 2 ≤ module.rank ℝ F) : is_path_connected ({0}ᶜ : set F) :=
 begin
@@ -135,7 +106,7 @@ begin
     { suffices : ∃ z, z ∉ submodule.span ℝ ({x} : set F),
       { rcases this with ⟨z, hzx⟩, 
         have hzy : z ∉ submodule.span ℝ ({y} : set F),
-          from λ h', hzx (submodule.mem_span_trans h' h),
+          from λ h', hzx (submodule.mem_span_singleton_trans h' h),
         exact (joined_in_compl_zero_of_not_mem_span hx hzx).trans
           (joined_in_compl_zero_of_not_mem_span hy hzy).symm },
       by_contra h',
@@ -192,7 +163,7 @@ begin
     change _ ∉ E; 
     rw submodule.add_mem_iff_right _ h;
     try {rw submodule.neg_mem_iff};
-    exact submodule.not_mem_of_is_compl_of_ne_zero hE'.symm hz },
+    exact mt (submodule.eq_zero_of_coe_mem_of_disjoint hE'.symm.disjoint) hz },
   { exact subset_convex_hull ℝ (Eᶜ : set F) h }
 end
 
