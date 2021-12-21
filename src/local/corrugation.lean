@@ -5,7 +5,7 @@ import analysis.calculus.parametric_integral
 import algebra.periodic
 
 import to_mathlib.topology.tsupport
-import to_mathlib.calculus
+import to_mathlib.analysis.calculus
 import to_mathlib.filter
 import to_mathlib.measure_theory.parametric_interval_integral
 
