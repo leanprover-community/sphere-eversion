@@ -114,18 +114,6 @@ begin
 end
 
 -- #10943
-lemma galois_connection.le_u_l_trans {α β : Type*} [preorder α] [preorder β] {l : α → β} {u : β → α}
-  (hgc : galois_connection l u) {x y z : α} (hxy : x ≤ u (l y)) (hyz : y ≤ u (l z)) :
-  x ≤ u (l z) :=
-hxy.trans (hgc.monotone_u $ hgc.l_le hyz)
-
--- #10943
-lemma submodule.subset_span_trans {U V W : set F} (hUV : U ⊆ submodule.span ℝ V) 
-  (hVW : V ⊆ submodule.span ℝ W) :
-  U ⊆ submodule.span ℝ W :=
-(submodule.gi ℝ F).gc.le_u_l_trans hUV hVW
-
--- #10943
 lemma submodule.mem_span_trans {x y z : F} (hxy : x ∈ submodule.span ℝ ({y} : set F)) 
   (hyz : y ∈ submodule.span ℝ ({z} : set F)) :
   x ∈ submodule.span ℝ ({z} : set F) :=
