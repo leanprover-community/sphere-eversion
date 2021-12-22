@@ -85,7 +85,7 @@ begin
   { apply continuous.bounded_of_one_periodic_of_compact _ _ hγ,
     { intros x hx,
       ext t,
-      rw loop.const_of_not_mem_support hx,
+      rw loop.eq_const_of_not_mem_support hx,
       simp },
     { let φ : E → ℝ → F := λ x s, (γ x) s - (γ x).average,
       have cont_φ : continuous (λ p : E × ℝ, φ p.1 p.2),
@@ -128,6 +128,14 @@ begin
   rw remainder_eq π _ h
 end
 
+@[simp]
+lemma remainder_eq_zero (N : ℝ) {γ : E → loop F} (h : 𝒞 1 ↿γ) {x : E} (hx : x ∉ loop.support γ) :
+  R N γ x = 0 :=
+begin
+  have hx' : x ∉ loop.support (loop.diff γ), from (λ h, hx $ loop.support_diff h),
+  simp [remainder_eq π N h, loop.normalize_of_is_const (loop.is_const_of_not_mem_support hx')]
+end
+
 variables {π} {γ}
 
 lemma corrugation.times_cont_diff {n : with_top ℕ} (hπ_diff : 𝒞 n π) (hγ_diff : 𝒞 n ↿γ) :
@@ -153,6 +161,12 @@ begin
   simp only [smul_smul, inv_mul_cancel hN, one_div, algebra.id.smul_eq_mul, one_smul,
               continuous_linear_map.comp_smul]
 end
+
+lemma corrugation.fderiv_apply (hN : N ≠ 0) (hπ_diff : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (x v : E) :
+  D (𝒯 N γ) x v = (D π x v) • (γ x (N*π x) - (γ x).average) + R N γ x v :=
+by simp only [corrugation.fderiv_eq N hN hπ_diff hγ_diff, to_span_singleton_apply, add_apply,
+              coe_comp', comp_app]
+
 
 lemma remainder_c0_small (hγ : is_compact (loop.support γ))
   (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
@@ -256,11 +270,11 @@ begin
 end
 
 lemma corrugation_data.deriv_ker_π {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) {ε : ℝ} (ε_pos : 0 < ε)  :
-  ∀ᶠ N in at_top, ∀ x ∈ U, ∀ w ∈ d.π.ker, ∥D (d.fun N) x w - D f x w∥ ≤ ε*∥w∥ :=
+  ∀ᶠ N in at_top, ∀ x, ∀ w ∈ d.π.ker, ∥D (d.fun N) x w - D f x w∥ ≤ ε*∥w∥ :=
 begin
   apply (corrugation.fderiv_ker d.C1_π d.C1_γ d.hγ_supp ε_pos).mono,
   simp_rw d.π.fderiv,
-  intros N hN x x_in w w_in,
+  intros N hN x w w_in,
   simpa [d.Dfun hf] using hN x w w_in  
 end
 
@@ -278,18 +292,32 @@ end
 
 lemma theilliere {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) {ε : ℝ} (ε_pos : 0 < ε)  :
   ∀ᶠ N in at_top, ∀ x, 
-∥d.fun N x - f x∥ < ε ∧ (x ∈ U → ((∀ w ∈ d.π.ker, ∥D (d.fun N) x w - D f x w∥ ≤ ε*∥w∥) ∧ ∥D (d.fun N) x d.u -  d.γ x (N*d.π x)∥ ≤ ε)) :=
+∥d.fun N x - f x∥ < ε ∧ (((∀ w ∈ d.π.ker, ∥D (d.fun N) x w - D f x w∥ ≤ ε*∥w∥) ∧ x ∈ U → ∥D (d.fun N) x d.u -  d.γ x (N*d.π x)∥ ≤ ε)) :=
 begin
   apply ((d.c0_close ε_pos).and ((d.deriv_ker_π hf ε_pos).and (d.deriv_u hf ε_pos))).mono,
   tauto
 end
 
-lemma corrugation_data.relative {f : E → F} {U : set E} (d : corrugation_data f U) :
-∀ x, (d.γ x).is_const → d.fun N x = f x :=
+lemma corrugation_data.relative {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) 
+  {x : E} (hx : x ∉ loop.support d.γ) (hN : N ≠ 0) :
+  d.fun N x = f x ∧ 
+  (∀ w ∈ d.π.ker, D (d.fun N) x w = D f x w) ∧
+  (x ∈ U → D (d.fun N) x d.u = d.γ x (N*d.π x)) :=
 begin
-  intros x hx,
-  change f x + corrugation d.π N d.γ x = _,
-  simp only [hx, add_zero, corrugation_const]  
+  have hx' := loop.is_const_of_not_mem_support hx,
+  refine ⟨_, _, _⟩,
+  { change f x + corrugation d.π N d.γ x = _,
+    rw [corrugation_const d.π N hx', add_zero] },
+  { intros w w_in,
+    rw [d.Dfun hf, corrugation.fderiv_eq N hN d.C1_π d.C1_γ],
+    simp only [add_zero, continuous_linear_map.coe_comp', pi.add_apply, map_zero, 
+               eq_self_iff_true, function.comp_app, continuous_linear_map.add_apply,
+               d.π.fderiv, continuous_linear_map.mem_ker.mp w_in, remainder_eq_zero d.π N d.C1_γ hx] },
+  { intros x_in,
+    simp [d.Dfun hf, corrugation.fderiv_apply N hN d.C1_π d.C1_γ,
+     remainder_eq_zero d.π N d.C1_γ hx,
+     d.Dπu, d.hπu,
+     d.hγ_avg x_in, smul_sub] }
 end
 
 end c1
