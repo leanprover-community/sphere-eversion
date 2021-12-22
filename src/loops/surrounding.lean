@@ -2,12 +2,14 @@ import loops.basic
 import tactic.fin_cases
 import topology.metric_space.emetric_paracompact
 
+import to_mathlib.topology.nhds_set
+
 /-!
 # Surrounding families of loops
 -/
 
 open set function finite_dimensional int prod function path filter
-open_locale classical topological_space unit_interval
+open_locale classical topological_space unit_interval big_operators
 
 noncomputable theory
 
@@ -16,6 +18,163 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
 
 local notation `d` := finrank ℝ F
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
+
+/-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
+def smooth_at (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
+
+section surrounding_points
+
+local notation `ι` := fin (d + 1)
+
+-- def:surrounds_points
+/-- `p` is a collection of points surrounding `f` with weights `w` (that are positive and sum to 1)
+if the weighted average of the points `p` is `f` and the points `p` form an affine basis of the
+space. -/
+structure surrounding_pts (f : F) (p : ι → F) (w : ι → ℝ) : Prop :=
+(indep : affine_independent ℝ p)
+(w_pos : ∀ i, 0 < w i)
+(w_sum : ∑ i, w i = 1)
+(avg : ∑ i, w i • p i = f)
+
+lemma surrounding_pts.tot [finite_dimensional ℝ F]
+  {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
+  affine_span ℝ (range p) = ⊤ :=
+h.indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _)
+
+lemma surrounding_pts.coord_eq_w [finite_dimensional ℝ F]
+  {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
+  (⟨p, h.indep, h.tot⟩ : affine_basis ι ℝ F).coords f = w :=
+begin
+  let b : affine_basis ι ℝ F := ⟨p, h.indep, h.tot⟩,
+  change b.coords f = w,
+  ext i,
+  rw [← h.avg, ← finset.univ.affine_combination_eq_linear_combination _ w h.w_sum, affine_basis.coords_apply],
+  exact affine_basis.coord_apply_combination_of_mem _ (finset.mem_univ i) h.w_sum,
+end
+
+/-- `f` is surrounded by a set `s` if there is an affine basis `p` in `s` with weighted average `f`.
+-/
+def surrounded (f : F) (s : set F) : Prop :=
+∃ p w, surrounding_pts f p w ∧ ∀ i, p i ∈ s
+
+lemma surrounded_iff_mem_interior_convex_hull_aff_basis [finite_dimensional ℝ F]
+  {f : F} {s : set F} :
+  surrounded f s ↔ ∃ (b : set F)
+                     (h₀ : b ⊆ s)
+                     (h₁ : affine_independent ℝ (coe : b → F))
+                     (h₂ : affine_span ℝ b = ⊤),
+                     f ∈ interior (convex_hull ℝ b) :=
+begin
+  split,
+  { rintros ⟨p, w, ⟨⟨indep, w_pos, w_sum, rfl⟩, h_mem⟩⟩,
+    have h_tot : affine_span ℝ (range p) = ⊤ :=
+      indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
+    refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
+    let basis : affine_basis ι ℝ F := ⟨p, indep, h_tot⟩,
+    rw interior_convex_hull_aff_basis basis,
+    intros i,
+    rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
+      basis.coord_apply_combination_of_mem (finset.mem_univ i) w_sum],
+    exact w_pos i, },
+  { rintros ⟨b, h₀, h₁, h₂, h₃⟩,
+    haveI : fintype b := (finite_of_fin_dim_affine_independent ℝ h₁).fintype,
+    have hb : fintype.card b = d + 1,
+    { rw [← h₁.affine_span_eq_top_iff_card_eq_finrank_add_one, subtype.range_coe_subtype,
+        set_of_mem_eq, h₂], },
+    let p := (coe : _ → F) ∘ (fintype.equiv_fin_of_card_eq hb).symm,
+    have hp : b = range p,
+    { ext x,
+      exact ⟨by { intros h, use fintype.equiv_fin_of_card_eq hb ⟨x, h⟩, simp [p], },
+             by { rintros ⟨y, rfl⟩, apply subtype.coe_prop, }⟩, },
+    rw hp at h₀ h₂ h₃,
+    replace h₁ : affine_independent ℝ p :=
+      h₁.comp_embedding (fintype.equiv_fin_of_card_eq hb).symm.to_embedding,
+    let basis : affine_basis ι ℝ F := ⟨_, h₁, h₂⟩,
+    rw [interior_convex_hull_aff_basis basis, mem_set_of_eq] at h₃,
+    refine ⟨p, λ i, basis.coord i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
+    { exact basis.sum_coord_apply_eq_one f, },
+    { rw [← finset.univ.affine_combination_eq_linear_combination p _
+        (basis.sum_coord_apply_eq_one f),
+        basis.affine_combination_coord_eq_self] } }
+end
+
+--- lem:int_cvx
+lemma surrounded_of_convex_hull [finite_dimensional ℝ F]
+  {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
+  surrounded f s :=
+begin
+  rw surrounded_iff_mem_interior_convex_hull_aff_basis,
+  obtain ⟨t, hts, hai, hf⟩ :=
+    (by simpa only [exists_prop, mem_Union] using convex_hull_eq_union.subst hsf :
+    ∃ (t : finset F), (t : set F) ⊆ s ∧ affine_independent ℝ (coe : t → F) ∧
+      f ∈ convex_hull ℝ (t : set F)),
+  have htne : (t : set F).nonempty := (@convex_hull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩,
+  obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ :=
+    exists_subset_affine_independent_span_eq_top_of_open hs hts htne hai,
+  have hb₀ : b.finite, { exact finite_of_fin_dim_affine_independent ℝ hb₃, },
+  obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_aff_span_eq_top.mpr hb₄,
+  obtain ⟨ε, hε, hcs⟩ := homothety_image_subset_of_open c hs hb₂ hb₀,
+  have hbε := convex.subset_interior_image_homothety_of_one_lt
+    (convex_convex_hull ℝ _) hc (1 + ε) (lt_add_of_pos_right 1 hε),
+  rw affine_map.image_convex_hull at hbε,
+  let t : units ℝ := units.mk0 (1 + ε) (by linarith),
+  refine ⟨affine_map.homothety c (t : ℝ) '' b, hcs, _, _, hbε (convex_hull_mono hb₁ hf)⟩,
+  { rwa (affine_equiv.homothety_units_mul_hom c t).affine_independent_set_of_eq_iff, },
+  { exact (affine_equiv.homothety_units_mul_hom c t).span_eq_top_iff.mp hb₄, },
+end
+
+-- lem:smooth_barycentric_coord
+lemma smooth_surrounding [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
+  (h : surrounding_pts x p w) :
+  ∃ W : F → (ι → F) → (ι → ℝ),
+  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+                             (∀ i, 0 < W yq.1 yq.2 i) ∧
+                             ∑ i, W yq.1 yq.2 i = 1 ∧
+                             ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
+begin
+  classical,
+  use eval_barycentric_coords ι ℝ F,
+  let V : set (ι → ℝ) := set.pi set.univ (λ i, Ioi (0 : ℝ)),
+  let W' : F × (ι → F) → (ι → ℝ) := uncurry (eval_barycentric_coords ι ℝ F),
+  let A : set (F × (ι → F)) := set.prod univ (affine_bases ι ℝ F),
+  let U : set (F × (ι → F)) := A ∩ (W' ⁻¹' V),
+  have hι : fintype.card ι = d + 1 := fintype.card_fin _,
+  have hp : p ∈ affine_bases ι ℝ F := ⟨h.indep, h.tot⟩,
+  have hV : is_open V := is_open_set_pi finite_univ (λ _ _, is_open_Ioi),
+  have hW' : continuous_on W' A := (smooth_barycentric ι ℝ F hι).continuous_on,
+  have hxp : W' (x, p) ∈ V, { simp [W', hp, h.coord_eq_w, h.w_pos], },
+  have hA : is_open A,
+  { simp only [A, affine_bases_findim ι ℝ F hι],
+    exact is_open_univ.prod (is_open_set_of_affine_independent ℝ F), },
+  have hU₁ : U ⊆ A := set.inter_subset_left _ _,
+  have hU₂ : is_open U := hW'.preimage_open_of_open hA hV,
+  have hU₃ : U ∈ 𝓝 (x, p) :=
+    mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, set.mem_inter (by simp [hp]) (mem_preimage.mpr hxp)⟩,
+  apply filter.eventually_of_mem hU₃,
+  rintros ⟨y, q⟩ hyq,
+  have hq : q ∈ affine_bases ι ℝ F, { simpa using hU₁ hyq, },
+  have hyq' : (y, q) ∈ W' ⁻¹' V := (set.inter_subset_right _ _) hyq,
+  refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩, (smooth_barycentric ι ℝ F hι).mono hU₁⟩, _, _, _⟩,
+  { simpa using hyq', },
+  { simp [hq], },
+  { simp [hq, affine_basis.linear_combination_coord_eq_self _ y], },
+end
+
+lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
+  (h : surrounding_pts x p w) :
+  ∃ W : F → (ι → F) → (ι → ℝ),
+  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+    surrounding_pts yq.1 yq.2 (W yq.1 yq.2) :=
+begin
+  refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),
+  rw [nhds_prod_eq] at hW ⊢,
+  have := (is_open.eventually_mem (is_open_set_of_affine_independent ℝ F) h.indep).prod_inr (𝓝 x),
+  filter_upwards [hW, this], rintro ⟨y, q⟩ ⟨hW, h2W, h3W, hq⟩ h2q,
+  exact ⟨hW, h2q, h2W, h3W, hq⟩
+end
+
+end surrounding_points
+
 
 /-- A loop `γ` surrounds a point `x` if `x` is surrounded by values of `γ`. -/
 def loop.surrounds (γ : loop F) (x : F) : Prop :=
