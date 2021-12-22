@@ -98,7 +98,7 @@
 
 <h1 id="sec:loops_introduction">1.1 Introduction</h1>
 
-<p>In this chapter, we explain how to construct families of loops to feed into the corrugation process explained at the end of the introduction. A loop is a map defined on the circle \(𝕊^1 = ℝ/ℤ\). It can also freely be seen as \(1\)-periodic maps defined on \(ℝ\). </p>
+<p>In this chapter, we explain how to construct families of loops to feed into the corrugation process explained at the end of the introduction. A loop is a map defined on the circle \(𝕊^1 = ℝ/ℤ\) with values in a finite-dimensional vector space. It can also freely be seen as \(1\)-periodic maps defined on \(ℝ\). </p>
 <p><div class="definition_thmwrapper" id="def:average">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -117,7 +117,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/basic.lean#L415">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/basic.lean#L267">loop.average</a></li>
         </ul>
 
       </div>
@@ -130,13 +130,45 @@
 
   </div>
 </div> </p>
-<p>Throughout this document, \(E\) and \(F\) will denote finite-dimensional real vector spaces. All of this chapter is devoted to proving the following proposition. </p>
+<p>Throughout this document, \(E\) and \(F\) will denote finite-dimensional real vector spaces. </p>
+<p><div class="definition_thmwrapper" id="def:loop_family_support">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">1.2</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-loops.html#def:loop_family_support">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/basic.lean#L134">loop.support</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> The <em>support</em> of a family \(γ\) of loops in \(F\) parametrized by \(E\) is the closure of the set of \(x\) in \(E\) such that \(γ_x\) is a constant loop. </p>
+
+  </div>
+</div> </p>
+<p>All of this chapter is devoted to proving the following proposition. </p>
 <p><div class="proposition_thmwrapper" id="prop:loops">
   <div class="proposition_thmheading">
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">1.2</span>
+    <span class="proposition_thmlabel">1.3</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#prop:loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000014"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -165,7 +197,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/reparametrization.lean#L52">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/reparametrization.lean#L52">exists_loops</a></li>
         </ul>
 
       </div>
@@ -204,7 +236,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.3</span>
+    <span class="lemma_thmlabel">1.4</span>
     <span class="lemma_thmtitle">Carathéodory’s lemma</span>
     ✓
     <div class="thm_icons">
@@ -220,7 +252,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/8dafccc18103ae3bec914fda5d233e58237cafd7/src/analysis/convex/caratheodory.lean#L159">eq_pos_convex_span_of_mem_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/fc66d88c16a10f72936a6b41c5d2739838e72dd9/src/analysis/convex/caratheodory.lean#L159">eq_pos_convex_span_of_mem_convex_hull</a></li>
         </ul>
 
       </div>
@@ -254,7 +286,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">1.4</span>
+    <span class="definition_thmlabel">1.5</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:surrounds_points">#</a>
@@ -267,7 +299,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/basic.lean#L71">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L33">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -286,7 +318,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.5</span>
+    <span class="lemma_thmlabel">1.6</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:interior_chab">#</a>
@@ -301,7 +333,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/8dafccc18103ae3bec914fda5d233e58237cafd7/src/analysis/normed_space/add_torsor_bases.lean#L53">interior_convex_hull_aff_basis</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/fc66d88c16a10f72936a6b41c5d2739838e72dd9/src/analysis/normed_space/add_torsor_bases.lean#L53">interior_convex_hull_aff_basis</a></li>
         </ul>
 
       </div>
@@ -337,7 +369,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.6</span>
+    <span class="lemma_thmlabel">1.7</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:int_homothety_cvx">#</a>
@@ -352,7 +384,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/8dafccc18103ae3bec914fda5d233e58237cafd7/src/analysis/convex/topology.lean#L148">convex.subset_interior_image_homothety_of_one_lt</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/fc66d88c16a10f72936a6b41c5d2739838e72dd9/src/analysis/convex/topology.lean#L148">convex.subset_interior_image_homothety_of_one_lt</a></li>
         </ul>
 
       </div>
@@ -407,7 +439,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.7</span>
+    <span class="lemma_thmlabel">1.8</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:int_cvx">#</a>
@@ -422,7 +454,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/basic.lean#L140">surrounded_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L102">surrounded_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -443,8 +475,8 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> It follows from lemma <a href="chap-loops.html#lem:interior_chab">Lemma 1.5</a> that we need only show that \(E\) has an affine basis \(b\) of points belonging to \(P\) such that \(x\) lies in the interior of the convex hull of \(b\). </p>
-<p>Carathéodory’s lemma <a href="chap-loops.html#lem:caratheodory">Lemma 1.3</a> provides affinely independent points \(p_0, \dots , p_k\) in \(P\) such that \(x\) belongs to their convex hull. Since \(P\) is open, we may extend \(p_i\) to an affine basis </p>
+  <p> It follows from lemma <a href="chap-loops.html#lem:interior_chab">Lemma 1.6</a> that we need only show that \(E\) has an affine basis \(b\) of points belonging to \(P\) such that \(x\) lies in the interior of the convex hull of \(b\). </p>
+<p>Carathéodory’s lemma <a href="chap-loops.html#lem:caratheodory">Lemma 1.4</a> provides affinely independent points \(p_0, \dots , p_k\) in \(P\) such that \(x\) belongs to their convex hull. Since \(P\) is open, we may extend \(p_i\) to an affine basis </p>
 <div class="displaymath" id="a0000000027">
   \[  \hat b = \{ p_0, \ldots , p_d\} ,  \]
 </div>
@@ -462,7 +494,7 @@
 <div class="displaymath" id="a0000000030">
   \[  b = h_{1+\epsilon } (\hat b)  \]
 </div>
-<p> for any such \(\epsilon \). Indeed, applying lemma <a href="chap-loops.html#lem:int_homothety_cvx">Lemma 1.6</a> to \(\operatorname{Conv}(\hat b)\) we see: </p>
+<p> for any such \(\epsilon \). Indeed, applying lemma <a href="chap-loops.html#lem:int_homothety_cvx">Lemma 1.7</a> to \(\operatorname{Conv}(\hat b)\) we see: </p>
 <span>\begin{align*}  x \in \operatorname{Conv}(\hat b) & \subseteq \operatorname{Int}(h_{1+\epsilon } (\operatorname{Conv}(\hat b)))\\ & = \operatorname{Int}(\operatorname{Conv}(h_{1+\epsilon } (\hat b))) \end{align*}</span>
 <p> as required. </p>
 
@@ -473,7 +505,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.8</span>
+    <span class="lemma_thmlabel">1.9</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:smooth_barycentric_coord">#</a>
@@ -489,7 +521,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds_points">Definition 1.4</a></li>
+          <li><a href="chap-loops.html#def:surrounds_points">Definition 1.5</a></li>
         </ul>
 
       </div>
@@ -503,7 +535,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/basic.lean#L165">smooth_surrounding</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L127">smooth_surrounding</a></li>
         </ul>
 
       </div>
@@ -558,7 +590,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">1.9</span>
+    <span class="definition_thmlabel">1.10</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:surrounds">#</a>
@@ -572,7 +604,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds_points">Definition 1.4</a></li>
+          <li><a href="chap-loops.html#def:surrounds_points">Definition 1.5</a></li>
         </ul>
 
       </div>
@@ -586,7 +618,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L21">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L180">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -599,14 +631,14 @@
 
   </div>
 </div> </p>
-<p>The first main task in proving Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a> is to construct suitable families of loops \(γ_x\) surrounding \(g(x)\), by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that \(Ω\) and the surrounding condition are open. </p>
+<p>The first main task in proving Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a> is to construct suitable families of loops \(γ_x\) surrounding \(g(x)\), by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that \(Ω\) and the surrounding condition are open. </p>
 <p>Thanks to Carathéodory’s lemma, constructing <em>one</em> such loop with values in some open \(O\) is easy as soon as \(v\) belongs to the convex hull of \(O\). </p>
 <p><div class="lemma_thmwrapper" id="lem:loop_of_hull">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.10</span>
+    <span class="lemma_thmlabel">1.11</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
@@ -622,7 +654,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds">Definition 1.9</a></li>
+          <li><a href="chap-loops.html#def:surrounds">Definition 1.10</a></li>
         </ul>
 
       </div>
@@ -636,7 +668,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L46">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L205">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -667,7 +699,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> Since \(O\) is open, <a href="chap-loops.html#lem:int_cvx">Lemma 1.7</a> gives points \(p_i\) in \(O\) surrounding \(x\). Since \(O\) is open and connected, it is path connected. Let \(λ \! :[0, 1] → Ω_x\) be a continuous path starting at \(b\) and going through the points \(p_i\). We can concatenate \(λ\) and its opposite to get \(γ^1\), say \(γ^1(s) = λ((1-\cos 2πs)/2)\). This is a round-trip loop: it back-tracks when it reaches \(λ(1)\) at \(s = 1/2\). We then define \(γ^t\) as the round-trip that stops at \(s = t/2\), stays still until \(s = 1-t/2\) and then backtracks. </p>
+  <p> Since \(O\) is open, <a href="chap-loops.html#lem:int_cvx">Lemma 1.8</a> gives points \(p_i\) in \(O\) surrounding \(x\). Since \(O\) is open and connected, it is path connected. Let \(λ \! :[0, 1] → Ω_x\) be a continuous path starting at \(b\) and going through the points \(p_i\). We can concatenate \(λ\) and its opposite to get \(γ^1\), say \(γ^1(s) = λ((1-\cos 2πs)/2)\). This is a round-trip loop: it back-tracks when it reaches \(λ(1)\) at \(s = 1/2\). We then define \(γ^t\) as the round-trip that stops at \(s = t/2\), stays still until \(s = 1-t/2\) and then backtracks. </p>
 
   </div>
 </div>
@@ -676,7 +708,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">1.11</span>
+    <span class="definition_thmlabel">1.12</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#def:family_surrounds">#</a>
@@ -690,7 +722,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds">Definition 1.9</a></li>
+          <li><a href="chap-loops.html#def:surrounds">Definition 1.10</a></li>
         </ul>
 
       </div>
@@ -704,7 +736,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L85">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L244">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -734,7 +766,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.12</span>
+    <span class="lemma_thmlabel">1.13</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:local_loops">#</a>
@@ -750,7 +782,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.11</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.12</a></li>
         </ul>
 
       </div>
@@ -764,7 +796,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L181">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L340">local_loops</a></li>
         </ul>
 
       </div>
@@ -785,7 +817,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> In this proof we don’t mention the \(t\) parameter since it plays no role, but it is still there. <a href="chap-loops.html#lem:loop_of_hull">Lemma 1.10</a> gives a loop \(γ\) based at \(β(x_0)\), taking values in \(Ω_{x_0}\) and surrounding \(g(x_0)\). We set \(γ_x(s) = β(x) + (γ(s) - β(x_0))\). Each \(γ_x\) takes values in \(Ω_x\) because \(Ω\) is open over some neighborhood of \(x_0\). <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.8</a> guarantees that this loop surrounds \(g(x)\) for \(x\) close enough to \(x_0\). </p>
+  <p> In this proof we don’t mention the \(t\) parameter since it plays no role, but it is still there. <a href="chap-loops.html#lem:loop_of_hull">Lemma 1.11</a> gives a loop \(γ\) based at \(β(x_0)\), taking values in \(Ω_{x_0}\) and surrounding \(g(x_0)\). We set \(γ_x(s) = β(x) + (γ(s) - β(x_0))\). Each \(γ_x\) takes values in \(Ω_x\) because \(Ω\) is open over some neighborhood of \(x_0\). <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.9</a> guarantees that this loop surrounds \(g(x)\) for \(x\) close enough to \(x_0\). </p>
 
   </div>
 </div>
@@ -795,7 +827,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.13</span>
+    <span class="lemma_thmlabel">1.14</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:satisfied_or_refund">#</a>
@@ -811,7 +843,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.11</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.12</a></li>
         </ul>
 
       </div>
@@ -825,7 +857,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L384">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L543">satisfied_or_refund</a></li>
         </ul>
 
       </div>
@@ -861,7 +893,7 @@
     <span class="corollary_thmcaption">
     Corollary
     </span>
-    <span class="corollary_thmlabel">1.14</span>
+    <span class="corollary_thmlabel">1.15</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
@@ -877,7 +909,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.11</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.12</a></li>
         </ul>
 
       </div>
@@ -891,7 +923,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L396">extends_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L555">extends_loops</a></li>
         </ul>
 
       </div>
@@ -913,7 +945,7 @@
   </div>
   <div class="proof_content">
   <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\bar U_0'\) is compact in \(U_0\). Since \(\bar U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
-<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.13</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
+<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.14</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
 <div class="displaymath" id="a0000000037">
   \[  γ_x = \begin{cases}  γ_{0, x} &  \text{for $x ∈ U_0'$} \\ γ_{ρ(x), x} &  \text{for $x ∈ U_0 ∩ U_1$} \\ γ_{1, x} &  \text{for $x ∈ U_1'$} \end{cases}  \]
 </div>
@@ -926,7 +958,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.15</span>
+    <span class="lemma_thmlabel">1.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000038"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -941,7 +973,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.11</a></li>
+          <li><a href="chap-loops.html#def:family_surrounds">Definition 1.12</a></li>
         </ul>
 
       </div>
@@ -955,7 +987,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/surrounding.lean#L448">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/surrounding.lean#L607">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -964,7 +996,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
+  <p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
 
   </div>
 </div> </p>
@@ -976,19 +1008,19 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> Let \(U_0\) be an open set containing \(K\) and contained in the domain of \(γ\). Let \(U_0'\) be an open neighborhood of \(K\) with compact closure in \(U_0\). Let \(U_i\), \(i ≥ 1\) be a local finite covering of \(U ∖ U_0'\) by open subsets not intersecting \(K\) and where the preceding observations gives families of loops \(γ^i\). We also set \(γ^0 = γ|_{U_0}\). In particular the open sets \(U_i\), \(i ≥ 0\) cover the whole of \(U\), and only \(U_0\) intersects \(K\). Let \(K_i\), \(0 ≤ i ≤ N\), be a family of compact sets with \(K_i ⊂ U_i\) which covers \(U\). We repeatedly apply Corollary&#160;<a href="chap-loops.html#cor:extend_loops">1.14</a> to \(K_i\) and \(K_{i+1}\), in this order, to get a family \(γ'\) defined over all \(U\). Since each step preserves the family on \(\operatorname{Op}{K_i}\) and only \(U_0\) intersects (in fact contains) \(K\), we do have \(γ' = γ\) on \(\operatorname{Op}{K}\). </p>
+  <p> Let \(U_0\) be an open set containing \(K\) and contained in the domain of \(γ\). Let \(U_0'\) be an open neighborhood of \(K\) with compact closure in \(U_0\). Let \(U_i\), \(i ≥ 1\) be a local finite covering of \(U ∖ U_0'\) by open subsets not intersecting \(K\) and where the preceding observations gives families of loops \(γ^i\). We also set \(γ^0 = γ|_{U_0}\). In particular the open sets \(U_i\), \(i ≥ 0\) cover the whole of \(U\), and only \(U_0\) intersects \(K\). Let \(K_i\), \(0 ≤ i ≤ N\), be a family of compact sets with \(K_i ⊂ U_i\) which covers \(U\). We repeatedly apply Corollary&#160;<a href="chap-loops.html#cor:extend_loops">1.15</a> to \(K_i\) and \(K_{i+1}\), in this order, to get a family \(γ'\) defined over all \(U\). Since each step preserves the family on \(\operatorname{Op}{K_i}\) and only \(U_0\) intersects (in fact contains) \(K\), we do have \(γ' = γ\) on \(\operatorname{Op}{K}\). </p>
 
   </div>
 </div>
 <h2 id="sub:the_reparametrization_lemma">1.3.2 The reparametrization lemma</h2>
 
-<p>The second ingredient needed to prove Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a> is a parametric reparametrization lemma. </p>
+<p>The second ingredient needed to prove Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a> is a parametric reparametrization lemma. </p>
 <p><div class="lemma_thmwrapper" id="lem:reparametrization">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">1.16</span>
+    <span class="lemma_thmlabel">1.17</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:reparametrization">#</a>
     <a class="icon proof" href="chap-loops.html#a0000000039"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -1003,7 +1035,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-loops.html#def:surrounds">Definition 1.9</a></li>
+          <li><a href="chap-loops.html#def:surrounds">Definition 1.10</a></li>
         </ul>
 
       </div>
@@ -1017,7 +1049,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/loops/reparametrization.lean#L44">reparametrization</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/loops/reparametrization.lean#L44">reparametrization</a></li>
         </ul>
 
       </div>
@@ -1039,8 +1071,8 @@
   </div>
   <div class="proof_content">
   <p> For any fixed \(x\), since \(γ_x\) strictly surrounds \(g(x)\), there are points \(s_1, …, s_{n+1}\) in \(𝕊^1\) such that \(g(x)\) is surrounded by the corresponding points \(γ_x(s_j)\). </p>
-<p>Let \(μ_1, …, μ_{n+1}\) be smooth positive probability measures very close to the Dirac measures on \(s_j\) (ie. \(μ_j = f_j\,  ds\) for some smooth positive function \(f_j\) and, for any function \(h\), \(\int h\, dμ_j\) is almost \(h(s_j)\)). We set \(p_j = \int γ_x\,  d\mu _j\), which is almost \(γ_x(s_j)\) so that \(g(x) = \sum w_j p_j\) for some weights \(w_j\) in the open interval \((0, 1)\) according to <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.8</a>. </p>
-<p>If \(x'\) is in a sufficiently small neighborhood of \(x\), <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.8</a> gives smooth weight functions \(w_j\) such that \(g(x') = \sum w_j(x')p_j(x')\). Let \(U^i\), \(i ≥ 1\) be a locally finite cover of \(U\) by such neighborhoods, with corresponding measures \(μ_j^i\), moving points \(p_j^i\) and weight functions \(w_j^i\). Let \((ρ_i)\) be a partition of unity associated to this covering. For every \(x\), we set </p>
+<p>Let \(μ_1, …, μ_{n+1}\) be smooth positive probability measures very close to the Dirac measures on \(s_j\) (ie. \(μ_j = f_j\,  ds\) for some smooth positive function \(f_j\) and, for any function \(h\), \(\int h\, dμ_j\) is almost \(h(s_j)\)). We set \(p_j = \int γ_x\,  d\mu _j\), which is almost \(γ_x(s_j)\) so that \(g(x) = \sum w_j p_j\) for some weights \(w_j\) in the open interval \((0, 1)\) according to <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.9</a>. </p>
+<p>If \(x'\) is in a sufficiently small neighborhood of \(x\), <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.9</a> gives smooth weight functions \(w_j\) such that \(g(x') = \sum w_j(x')p_j(x')\). Let \(U^i\), \(i ≥ 1\) be a locally finite cover of \(U\) by such neighborhoods, with corresponding measures \(μ_j^i\), moving points \(p_j^i\) and weight functions \(w_j^i\). Let \((ρ_i)\) be a partition of unity associated to this covering. For every \(x\), we set </p>
 <div class="displaymath" id="a0000000040">
   \[  μ_x = \sum _{i=1}^∞ \sum _{j=1}^{n+1} ρ_i(x)w_j^i(x)\,  μ_j^i  \]
 </div>
@@ -1056,14 +1088,14 @@
 <div class="proof_wrapper" id="a0000000014">
   <div class="proof_heading">
     <span class="proof_caption">
-    Proof of Proposition&#160;<a href="chap-loops.html#prop:loops">1.2</a>
+    Proof of Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a>
     </span>
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>   Let \(γ^*\) be a family of loops surrounding the origin in \(F\), constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.12</a>. For \(x\) in some neighborhood \(U^*\) of \(K\) where \(g = β\), we set \(γ_x = g(x) + εγ^*\) where \(ε {\gt} 0\) is sufficiently small to ensure the image of \(γ_x\) and its convex hull are contained in \(Ω_x\) (recall \(Ω\) is open and \(K\) is compact). Lemma&#160;<a href="chap-loops.html#lem:∃_surrounding_loops">1.15</a> extends this family to a continuous family of surrounding loops \(γ_x\) for all \(x\) (this is not yet our final \(γ\)). </p>
+  <p>   Let \(γ^*\) be a family of loops surrounding the origin in \(F\), constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.13</a>. For \(x\) in some neighborhood \(U^*\) of \(K\) where \(g = β\), we set \(γ_x = g(x) + εγ^*\) where \(ε {\gt} 0\) is sufficiently small to ensure the image of \(γ_x\) and its convex hull are contained in \(Ω_x\) (recall \(Ω\) is open and \(K\) is compact). Lemma&#160;<a href="chap-loops.html#lem:∃_surrounding_loops">1.16</a> extends this family to a continuous family of surrounding loops \(γ_x\) for all \(x\) (this is not yet our final \(γ\)). </p>
 <p>We then need to approximate this continuous family by a smooth one. Some care is needed to ensure that it stays based at \(β\). For instance, we can first compose each loop by some fixed surjective continuous map from \(𝕊^1\) to itself that sends a neighborhood of \(0\) to \(0\). This way each loop becomes constant near \(0\), and a convolution smoothing will then keep the value at \(0\). If the smoothing is sufficiently \(C^0\) small then the new \(γ\) is still surrounding and takes values in \(Ω\). </p>
-<p>Then Lemma&#160;<a href="chap-loops.html#lem:reparametrization">1.16</a> gives a family of circle diffeomorphisms \(h_x\) such that \(γ^1_x ∘ h_x\) has average \(g(x)\). </p>
+<p>Then Lemma&#160;<a href="chap-loops.html#lem:reparametrization">1.17</a> gives a family of circle diffeomorphisms \(h_x\) such that \(γ^1_x ∘ h_x\) has average \(g(x)\). </p>
 <p>Finally we choose a cut-off function function \(χ\) which vanishes on \(\operatorname{Op}{K}\) and equals one on \(\operatorname{Op}{U ∖ U^*}\). In \(U^*\), we replace \(γ_x ∘ h_x = g(x) + γ^* ∘ h_x\) by \(g(x) + χ(x)γ^* ∘ h_x\). This operation does not change the average values of these loops, because it rescales them around their average value, but makes them constant on \(\operatorname{Op}{K}\). Also, those loops stay in \(Ω\), thanks to our choice of \(ε\). </p>
 
   </div>

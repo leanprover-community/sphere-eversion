@@ -99,7 +99,7 @@
 <h1 id="sec:convex_integration_intro">2.1 Key construction</h1>
 
 <p>The goal of this chapter is to explain the local aspects of (Theillière’s implementation of) convex integration, the next chapter will cover global aspects. </p>
-<p>The elementary step of convex integration modifies the derivative of a map in one direction. Let \(E\) and \(F\) be finite dimensional real normed vector spaces. Let \(f \! :E → F\) be a smooth map with compact support. </p>
+<p>The elementary step of convex integration modifies the derivative of a map in one direction. The precise meaning of “one direction” rely on the following definition. </p>
 <p><div class="definition_thmwrapper" id="def:dual_pair">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -118,7 +118,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/corrugation.lean#L634">dual_pair'</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L331">dual_pair'</a></li>
         </ul>
 
       </div>
@@ -127,11 +127,11 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A dual pair on \(E\) is a pair \((π, v)\) where \(π\) is a linear form on \(E\) and \(v\) a vector in \(E\) such that \(π(v) = 1\). </p>
+  <p>  A dual pair on a vector space \(E\) is a pair \((π, v)\) where \(π\) is a linear form on \(E\) and \(v\) a vector in \(E\) such that \(π(v) = 1\). </p>
 
   </div>
 </div> </p>
-<p>Say we wish \(Df(x)v\) could live in some open subset \(Ω_x ⊂ F\). Assume there is a smooth compactly supported family of loops \(γ \! :E × 𝕊^1 → F\) such that each \(γ_x\) takes values in \(Ω_x\), and has average value \(\int _{𝕊^1} γ_x = Df(x)v\). Obviously such loops can exist only if \(Df(x)v\) is in the convex hull of \(Ω_x\), and we saw in the previous chapter that this is almost sufficient (and we’ll see this is sufficiently almost sufficient for our purposes). </p>
+<p>Let \(E\) and \(F\) be finite dimensional real normed vector spaces. Let \(f \! :E → F\) be a smooth map, and let \((π, v)\) be a dual pair on \(E\). We want to modify \(Df\) in the direction of \(v\) while almost preserving it on \(\ker π\). Say we wish \(Df(x)v\) could live in some open subset \(Ω_x ⊂ F\). Assume there is a smooth compactly supported family of loops \(γ \! :E × 𝕊^1 → F\) such that each \(γ_x\) takes values in \(Ω_x\), and its average value \(\overline{γ}_x = \int _{𝕊^1} γ_x\) is \(Df(x)v\) for all \(x\) is some set \(U\). Obviously such loops can exist only if \(Df(x)v\) is in the convex hull of \(Ω_x\), and we saw in the previous chapter that this is almost sufficient (and we’ll see this is sufficiently almost sufficient for our purposes). Then we can modify \(f\) to fulfil our wish on \(U\) using the following construction. </p>
 <p><div class="definition_thmwrapper" id="def:corrugation">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -150,7 +150,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/corrugation.lean#L221">corrugate</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L35">corrugate</a></li>
         </ul>
 
       </div>
@@ -161,20 +161,21 @@
   <div class="definition_thmcontent">
   <p>  The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
 <div class="displaymath" id="a0000000041">
-  \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.  \]
+  \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - \overline{γ}_x\right]ds.  \]
 </div>
 
   </div>
 </div> </p>
-<p>In the above definition, we mostly think of \(N\) as a large natural number. But we don’t actually requireit, any positive real number will do. </p>
-<p>The next proposition implies that, provided \(N\) is large enough, we have achieved \(Df'(x)v ∈ Ω_x\), almost without modifying derivatives in the other directions of \(\ker π\), and almost without moving \(f(x)\). In addition, if we assume that \(γ_x\) is constant (necessarily with value \(Df(x)v\)) for \(x\) in some closed subset \(K\) where \(Df(x)v\) was already good, then the modification is relative to \(K\). </p>
-<p><div class="lemma_thmwrapper" id="prop:theilliere">
-  <div class="lemma_thmheading">
-    <span class="lemma_thmcaption">
-    Lemma
+<p>In the above definition, we mostly think of \(N\) as a large natural number. But we don’t actually require it, any positive real number will do. </p>
+<p>The next proposition implies that, provided \(N\) is large enough, we have achieved \(Df'(x)v ∈ Ω_x\), almost without modifying derivatives in the directions of \(\ker π\), and almost without moving \(f(x)\). </p>
+<p><div class="proposition_thmwrapper" id="prop:theilliere">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
     </span>
-    <span class="lemma_thmlabel">2.3</span>
-    <span class="lemma_thmtitle">Theillière 2018</span>
+    <span class="proposition_thmlabel">2.3</span>
+    <span class="proposition_thmtitle">Theillière 2018</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#prop:theilliere">#</a>
     <a class="icon proof" href="chap-local.html#a0000000042"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -194,21 +195,36 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L293">theilliere</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L301">corrugation_data.relative</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
-  <div class="lemma_thmcontent">
-  <p>   The corrugated function \(f'\) satisfies, uniformly in \(x\): </p>
+  <div class="proposition_thmcontent">
+  <p>   Let \(f\) be a \(\mathcal{C}^1\) function from \(E\) to \(F\). Let \((π, v)\) be a dual pair on \(E\). Let \(γ \! :E × 𝕊^1 → F\) be a compactly supported \(\mathcal{C}^1\) family of loops. Assume that \(\overline{γ_x} = Df(x)v\) for all \(x\) in some set \(U\). </p>
+<p>For any positive \(ε\), the function \(f'\) obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with large enough oscillation number \(N\) satisfies: </p>
 <ol class="enumerate">
-  <li><p> \(Df'(x)v = γ(x, Nπ(x)) + O\left(\frac1N\right)\), and the error vanishes whenever \(γ_x\) is constant. </p>
+  <li><p> \(∀ x, ‖f'(x) - f(x)‖ ≤ ε\) </p>
 </li>
-  <li><p> \(Df'(x)w = Df(x)w + O\left(\frac1N\right)\) for \(w ∈ \ker π\) </p>
+  <li><p> \(∀ x, ‖(Df'(x) - Df(x))_{|\ker π}‖ ≤ ε\). </p>
 </li>
-  <li><p> \(f'(x) = f(x) + O\left(\frac1N\right)\) </p>
-</li>
-  <li><p> \(f'(x) = f(x)\) whenever \(γ_x\) is constant. </p>
+  <li><p> \(∀ x ∈ U, ‖Df'(x)v - γ(x, Nπ(x))‖ ≤ ε\) </p>
 </li>
 </ol>
+<p> In addition, all the differences estimated above vanish if \(x\) is outside the support of \(γ\) (in addition to being in \(U\) in the last estimate). </p>
 
   </div>
 </div> </p>
@@ -220,9 +236,9 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>We set \(Γ_x(t) = ∫_0^t \left(γ_x(s) - Df(x)v\right)ds\), so that \(f'(x) = f(x) + Γ_x(Nπ(x))/N\). Because each \(Γ_x\) is \(1\)-periodic, and everything has compact support in \(E\), all derivatives of \(Γ\) are uniformly bounded. Item&#160;<a href="chap-local.html#CP:C0">3</a> in the statement is then obvious. Item&#160;<a href="chap-local.html#CP:kerpi">2</a> also follows since \(∂_if'(x) = ∂_if(x) + ∂_iΓ(x, Nπ(x))/N\). In order to prove Item&#160;<a href="chap-local.html#CP:v">1</a>, we compute: </p>
+  <p>We set \(Γ_x(t) = ∫_0^t \left(γ_x(s) - \overline{γ}_x\right)ds\), so that \(f'(x) = f(x) + Γ_x(Nπ(x))/N\). Because each \(Γ_x\) is \(1\)-periodic, and everything has compact support in \(E\), all derivatives of \(Γ\) are uniformly bounded. Item&#160;<a href="chap-local.html#CP:C0">1</a> in the statement is then obvious. Item&#160;<a href="chap-local.html#CP:kerpi">2</a> also follows since \(∂_if'(x) = ∂_if(x) + ∂_iΓ(x, Nπ(x))/N\). In order to prove Item&#160;<a href="chap-local.html#CP:v">3</a>, we compute: </p>
 <span>\begin{align*}  Df’(x)v & = Df(x)v + \frac1N ∂_jΓ(x, Nπ(x)) + \frac NN ∂_tΓ(x, Nπ(x))\\ & = Df(x)v + O\left(\frac1N\right) + γ(x, Nπ(x)) - Df(x)v\\ & = γ(x, Nπ(x)) + O\left(\frac1N\right). \end{align*}</span>
-<p> Item&#160;<a href="chap-local.html#CP:relative">4</a> is obvious since \(Γ_x\) vanishes identically when \(γ_x\) is constant. </p>
+<p> Outside the support of \(γ\), \(Γ_x\) and its derivative with respect to \(x\) vanish identically (for the derivative computation, it is important that the support of \(γ\) is the <em>closure</em> of the set of \(x\) where \(γ_x\) is not constant). </p>
 
   </div>
 </div>
@@ -246,7 +262,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/relation.lean#L23">is_part_holonomic_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/relation.lean#L23">is_part_holonomic_on</a></li>
         </ul>
 
       </div>
@@ -277,7 +293,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/relation.lean#L10">rel_loc</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/relation.lean#L10">rel_loc</a></li>
         </ul>
 
       </div>
@@ -324,7 +340,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/relation.lean#L17">is_formal_solution_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/relation.lean#L17">is_formal_solution_on</a></li>
         </ul>
 
       </div>
@@ -524,7 +540,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>  We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.2</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
+  <p>  We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.3</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
 <ul class="itemize">
   <li><p>\(∀ t\,  s,\;  γ^t_x(s) ∈ \mathcal{R}(\mathcal{F}(x), π, v)\) </p>
 </li>
@@ -536,7 +552,7 @@
 </li>
 </ul>
 <p> Let \(ρ: E → ℝ\) be a smooth cut-off function which equals one on a neighborhood of \(K_0\) and whose support is contained in \(K_1\). </p>
-<p>Let \(N\) be a positive real number. Let \(\bar f\) be the corrugated map constructed from \(f\), \(γ^1\) and \(N\). <a href="chap-local.html#prop:theilliere">Lemma 2.3</a> ensures that, for all \(x\) in \(U\), </p>
+<p>Let \(N\) be a positive real number. Let \(\bar f\) be the corrugated map constructed from \(f\), \(γ^1\) and \(N\). <a href="chap-local.html#prop:theilliere">Proposition 2.3</a> ensures that, for all \(x\) in \(U\), </p>
 <div class="displaymath" id="a0000000046">
   \[  D\bar f(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x  \]
 </div>
@@ -598,7 +614,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/ample.lean#L29">ample_set</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/ample.lean#L29">ample_set</a></li>
         </ul>
 
       </div>
@@ -646,7 +662,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d0eb66b14ae51fc4103db603ad5ea06e1dbc05ba/src/local/ample.lean#L143">ample_of_two_le_codim</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/ample.lean#L143">ample_of_two_le_codim</a></li>
         </ul>
 
       </div>
