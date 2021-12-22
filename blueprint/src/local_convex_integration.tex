@@ -8,25 +8,29 @@ The goal of this chapter is to explain the local aspects of
 cover global aspects.
 
 The elementary step of convex integration modifies the derivative of a
-map in one direction.
-Let $E$ and $F$ be finite dimensional real normed vector spaces.
-Let $f \co E → F$ be a smooth map with compact support.
+map in one direction. The precise meaning of ``one direction'' rely on the
+following definition.
 
 \begin{definition}
   \label{def:dual_pair}
   \leanok
   \lean{dual_pair'}
-  A dual pair on $E$ is a pair $(π, v)$ where $π$ is a linear form on
-  $E$ and $v$ a vector in $E$ such that $π(v) = 1$.
+  A dual pair on a vector space $E$ is a pair $(π, v)$ where $π$ is a linear
+  form on $E$ and $v$ a vector in $E$ such that $π(v) = 1$.
 \end{definition}
 
-Say we wish $Df(x)v$ could live in some open subset $Ω_x ⊂ F$. Assume there is a
-smooth compactly supported family of loops $γ \co E × 𝕊^1 → F$ such
-that each $γ_x$ takes values in $Ω_x$, and has average value
-$\int_{𝕊^1} γ_x = Df(x)v$.  Obviously such loops can exist only if
-$Df(x)v$ is in the convex hull of $Ω_x$, and we saw in the previous
-chapter that this is almost sufficient (and we'll see this is
-sufficiently almost sufficient for our purposes).
+Let $E$ and $F$ be finite dimensional real normed vector spaces.
+Let $f \co E → F$ be a smooth map, and let $(π, v)$ be a dual pair on $E$.
+We want to modify $Df$ in the direction of $v$ while almost preserving it
+on $\ker π$.
+Say we wish $Df(x)v$ could live in some open subset $Ω_x ⊂ F$. Assume there is
+a smooth compactly supported family of loops $γ \co E × 𝕊^1 → F$ such that each
+$γ_x$ takes values in $Ω_x$, and its average value $\overline{γ}_x = \int_{𝕊^1}
+γ_x$ is $Df(x)v$ for all $x$ is some set $U$. Obviously such loops can exist
+only if $Df(x)v$ is in the convex hull of $Ω_x$, and we saw in the previous
+chapter that this is almost sufficient (and we'll see this is sufficiently
+almost sufficient for our purposes). Then we can modify $f$ to fulfil our wish
+on $U$ using the following construction.
 
 \begin{definition}
   \label{def:corrugation}
@@ -35,40 +39,45 @@ sufficiently almost sufficient for our purposes).
   The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$
   with oscillation number $N$ is
   \[
-    x ↦ f(x) + \frac1N  ∫_0^{Nπ(x)} \left[γ_x(s) - Df(x)v\right]ds.
+    x ↦ f(x) + \frac1N  ∫_0^{Nπ(x)} \left[γ_x(s) - \overline{γ}_x\right]ds.
   \]
 \end{definition}
 
 In the above definition, we mostly think of $N$ as a large natural
 number.
-But we don't actually requireit, any positive real number will do.
+But we don't actually require it, any positive real number will do.
 
 The next proposition implies that, provided $N$ is large enough, we have
 achieved $Df'(x)v ∈ Ω_x$, almost without modifying derivatives in the
-other directions of $\ker π$, and almost without moving $f(x)$. In addition, if we
-assume that $γ_x$ is constant (necessarily with value $Df(x)v$) for $x$
-in some closed subset $K$ where $Df(x)v$ was already good, then the
-modification is relative to $K$.
+directions of $\ker π$, and almost without moving $f(x)$.
 
-\begin{lemma}[Theillière 2018]
+\begin{proposition}[Theillière 2018]
   \label{prop:theilliere}
+  \lean{theilliere, corrugation_data.relative}\leanok
   \uses{def:corrugation}
-  The corrugated function $f'$ satisfies, uniformly in $x$:
+  Let $f$ be a $\mathcal{C}^1$ function from $E$ to $F$. Let $(π, v)$ be a dual
+  pair on $E$. Let $γ \co E × 𝕊^1 → F$ be a compactly
+  supported $\mathcal{C}^1$ family of loops.
+  Assume that $\overline{γ_x} = Df(x)v$ for all $x$ in some set $U$.
+
+  For any positive $ε$, the function $f'$ obtained by corrugation of $f$ in
+  direction $(π, v)$ using $γ$ with large enough oscillation number $N$
+  satisfies:
   \begin{enumerate}
-    \item\label{CP:v}
-      $Df'(x)v = γ(x, Nπ(x)) + \bigO{\frac1N}$, and the error vanishes
-      whenever $γ_x$ is constant.
-    \item\label{CP:kerpi}
-      $Df'(x)w = Df(x)w + \bigO{\frac1N}$ for $w ∈ \ker π$
     \item\label{CP:C0}
-      $f'(x) = f(x) + \bigO{\frac1N}$
-    \item\label{CP:relative}
-      $f'(x) = f(x)$ whenever $γ_x$ is constant.
+      $∀ x, ‖f'(x) - f(x)‖ ≤ ε$
+    \item\label{CP:kerpi}
+      $∀ x, ‖(Df'(x) - Df(x))_{|\ker π}‖ ≤ ε$.
+    \item\label{CP:v}
+      $∀ x ∈ U, ‖Df'(x)v - γ(x, Nπ(x))‖ ≤ ε$
   \end{enumerate}
-\end{lemma}
+  In addition, all the differences estimated above vanish if $x$ is outside the
+  support of $γ$ (in addition to being in $U$ in the last estimate).
+\end{proposition}
 
 \begin{proof}
-  We set $Γ_x(t) = ∫_0^t \left(γ_x(s) - Df(x)v\right)ds$, so that
+  \leanok
+  We set $Γ_x(t) = ∫_0^t \left(γ_x(s) - \overline{γ}_x\right)ds$, so that
   $f'(x) = f(x) + Γ_x(Nπ(x))/N$.  Because each $Γ_x$ is $1$-periodic, and
   everything has compact support in $E$, all derivatives of $Γ$ are uniformly
   bounded.  Item~\ref{CP:C0} in the statement is then obvious.
@@ -80,8 +89,10 @@ modification is relative to $K$.
                        &= Df(x)v + \bigO{\frac1N} + γ(x, Nπ(x)) - Df(x)v\\
                        &= γ(x, Nπ(x)) + \bigO{\frac1N}.
   \end{align*}
-  Item~\ref{CP:relative} is obvious since $Γ_x$ vanishes identically when $γ_x$
-  is constant.
+  Outside the support of $γ$, $Γ_x$ and its derivative with respect to $x$
+  vanish identically (for the derivative computation, it is important that the
+  support of $γ$ is the \emph{closure} of the set of $x$ where $γ_x$ is not
+  constant).
 \end{proof}
 
 \section{The main inductive step}
