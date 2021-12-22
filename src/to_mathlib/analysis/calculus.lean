@@ -388,3 +388,23 @@ by { ext ; refl }
 
 end
 
+open filter
+
+/-
+The lemma below is ridiculously painful, but Patrick isn't patient enough.
+-/
+lemma const_mul_one_div_lt {ε : ℝ} (ε_pos : 0 < ε) (C : ℝ) : ∀ᶠ (N : ℝ) in at_top, C*∥1/N∥ < ε :=
+begin
+  have : tendsto (λ N : ℝ, 1/N) at_top (𝓝 0), 
+  { rw show (λ N : ℝ, 1/N) = λ N, N^(-(1 : ℤ)), by simp,
+    exact tendsto_pow_neg_at_top le_rfl },
+  rw tendsto_iff_norm_tendsto_zero at this,
+  simp only [sub_zero] at this,
+  have key := this.const_mul C,
+  rw mul_zero at key,
+  apply (normed_group.tendsto_nhds_zero.mp key ε ε_pos).mono,
+  intros N hN,
+  cases le_or_lt (C * ∥1 / N∥) 0 with h h,
+  { exact lt_of_le_of_lt h ε_pos },
+  { rwa real.norm_of_nonneg h.le at hN },
+end

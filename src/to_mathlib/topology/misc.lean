@@ -3,6 +3,7 @@ import topology.urysohns_lemma
 import topology.uniform_space.compact_separated
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
+import topology.algebra.floor_ring
 
 noncomputable theory
 
@@ -210,3 +211,15 @@ begin
 end
 
 end
+
+-- move
+lemma continuous_on.comp_fract'' {α β γ : Type*} [linear_ordered_ring α] [floor_ring α]
+  [topological_space α] [order_topology α]
+  [topological_add_group α] [topological_space β] [topological_space γ]
+  {s : β → α}
+  {f : β → α → γ}
+  (h : continuous_on (uncurry f) $ (univ : set β).prod (Icc 0 1 : set α))
+  (hs : continuous s)
+  (hf : ∀ s, f s 0 = f s 1) :
+  continuous (λ x : β, f x $ int.fract (s x)) :=
+(h.comp_fract' hf).comp (continuous_id.prod_mk hs)
