@@ -6,7 +6,8 @@
 
 In this chapter, we explain how to construct families of loops to feed into the
 corrugation process explained at the end of the introduction.
-A loop is a map defined on the circle $𝕊^1 = ℝ/ℤ$.
+A loop is a map defined on the circle $𝕊^1 = ℝ/ℤ$ with values in a
+finite-dimensional vector space.
 It can also freely be seen as $1$-periodic maps defined on $ℝ$.
 
 \begin{definition}
@@ -18,6 +19,14 @@ It can also freely be seen as $1$-periodic maps defined on $ℝ$.
 
 Throughout this document, $E$ and $F$ will denote finite-dimensional
 real vector spaces.
+
+\begin{definition}
+  \label{def:loop_family_support}
+  \lean{loop.support}\leanok
+  The \emph{support} of a family $γ$ of loops in $F$ parametrized by $E$ is
+  the closure of the set of $x$ in $E$ such that $γ_x$ is a constant loop.
+\end{definition}
+
 All of this chapter is devoted to proving the following proposition.
 
 \begin{proposition}
