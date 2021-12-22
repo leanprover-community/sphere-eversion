@@ -56,6 +56,9 @@ namespace loop
 instance [has_zero X] : has_zero (loop X) :=
 ⟨{ to_fun := λ t, 0, per' := λ t, rfl }⟩
 
+@[simp] lemma zero_fun [has_zero X] : ((0 : loop X) : ℝ → X) = (0 : ℝ → X) :=
+rfl
+
 /-- The constant loop. -/
 @[simps]
 def const (f : X) : loop X :=
@@ -297,16 +300,16 @@ begin
     simp }
 end
 
-lemma const_of_not_mem_support {γ : X → loop F} {x : X}
-  (hx : x ∉ support γ) : γ x = loop.const (γ x).average :=
+lemma is_const_of_not_mem_support {γ : X → loop F} {x : X}
+  (hx : x ∉ support γ) : (γ x).is_const :=
 begin
   classical,
-  by_contradiction H,
-  apply hx,
-  apply subset_closure,
-  simp_rw loop.is_const_iff_const_avg,
-  exact H
+  exact decidable.by_contradiction (λ H, hx (subset_closure H)),
 end
+
+lemma eq_const_of_not_mem_support {γ : X → loop F} {x : X}
+  (hx : x ∉ support γ) : γ x = loop.const (γ x).average :=
+loop.is_const_iff_const_avg.mp (is_const_of_not_mem_support hx)
 
 lemma continuous_average {E : Type*} [topological_space E] [first_countable_topology E] [locally_compact_space E] {γ : E → loop F}
   (hγ_cont : continuous ↿γ) : continuous (λ x, (γ x).average) :=
@@ -320,6 +323,13 @@ def normalize (γ : loop F) : loop F :=
 @[simp]
 lemma normalize_apply (γ : loop F) (t : ℝ) : loop.normalize γ t = γ t - γ.average :=
 rfl
+
+@[simp]
+lemma normalize_of_is_const {γ : loop F} (h : γ.is_const) : γ.normalize = 0 :=
+begin
+  ext t,
+  simp [is_const_iff_forall_avg.mp h]
+end
 
 end average
 
