@@ -4,11 +4,13 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
 import to_mathlib.topology.periodic
+import to_mathlib.topology.nhds_set
 import to_mathlib.analysis.calculus
 import to_mathlib.filter
 import to_mathlib.measure_theory.parametric_interval_integral
 
 import loops.basic
+import local.relation
 
 noncomputable theory
 
@@ -322,13 +324,65 @@ end
 
 end c1
 
-open module (dual)
+section integration_step
 
-variables (E : Type*) [normed_group E] [normed_space ℝ E]
+-- This section proves lem:integration_step
 
--- TODO: move mathlib's dual_pair out of the root namespace!
+variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+          {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
+          [finite_dimensional ℝ F]
 
-structure dual_pair'
-(π : dual ℝ E)
-(v : E)
-(pairing : π v = 1)
+open_locale unit_interval
+
+structure landscape :=
+(U C K₀ K₁ : set E)
+(hU : is_open U)
+(hC : is_closed C)
+(hK₀ : is_compact K₀)
+(hK₁ : is_compact K₁)
+(h₀₁ : K₀ ⊆ interior K₁)
+
+structure step_landscape extends landscape E :=
+(E' : submodule ℝ E)
+(p : dual_pair' E)
+(hEp : E' ≤ p.π.ker)
+
+variables {E}
+
+open_locale classical
+
+def formal_sol.improve_step {R : rel_loc E F} (L : step_landscape E) (N : ℝ) (𝓕 : formal_sol R L.U) : htpy_formal_sol R L.U :=
+if h : R.is_open_over L.U ∧ 
+       (∀ᶠ x in nhds_set L.K₀, 𝓕.is_part_holonomic_at L.E' x) ∧ 
+       (∀ x ∈ L.U, 𝓕.is_short_at L.p x) ∧
+       (∀ᶠ x in nhds_set L.C, 𝓕.is_holonomic_at x)
+then 
+  sorry 
+else 
+  𝓕.const_htpy
+
+variables {R : rel_loc E F} (L : step_landscape E) {𝓕 : formal_sol R L.U} 
+  (h_op : R.is_open_over L.U)  
+  (h_part_hol : ∀ᶠ x in nhds_set L.K₀, 𝓕.is_part_holonomic_at L.E' x) 
+  (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x) 
+  (h_hol : ∀ᶠ x in nhds_set L.C, 𝓕.is_holonomic_at x)
+
+include h_op h_part_hol h_short h_hol
+
+lemma integration_step_rel_t_eq_0 (N : ℝ) : 𝓕.improve_step L N 0 = 𝓕 :=
+sorry
+
+lemma integration_step_rel_C (N : ℝ) : ∀ᶠ x in nhds_set L.C, ∀ t, 𝓕.improve_step L N t x = 𝓕 x :=
+sorry
+
+lemma integration_step_rel_compl_K₁ (N : ℝ) : ∀ x ∉ L.K₁, ∀ t, 𝓕.improve_step L N t x = 𝓕 x :=
+sorry
+
+lemma integration_step_c0_close {ε : ℝ} (ε_pos : 0 < ε) : ∀ᶠ N in at_top, ∀ x t, ∥𝓕.improve_step L N t x - 𝓕 x∥ ≤ ε :=
+sorry
+
+lemma integration_step_hol (N : ℝ) : ∀ᶠ x in nhds_set L.C, (𝓕.improve_step L N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
+sorry
+
+
+end integration_step
