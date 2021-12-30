@@ -223,3 +223,12 @@ lemma continuous_on.comp_fract'' {α β γ : Type*} [linear_ordered_ring α] [fl
   (hf : ∀ s, f s 0 = f s 1) :
   continuous (λ x : β, f x $ int.fract (s x)) :=
 (h.comp_fract' hf).comp (continuous_id.prod_mk hs)
+
+-- TODO: replace mathlib's `connected_component_in`, which is never used, by the following.
+
+/-- Given a set `F` in a topological space `α` and a point `x : α`, the connected
+component of `x` in `F` is the connected component of `x` in the subtype `F` seen as
+a set in `α`. This definition does not make sense if `x` is not in `F` so we return the
+empty set in this case. -/
+def connected_comp_in {α : Type*} [topological_space α] (F : set α) (x : α) : set α :=
+if h : x ∈ F then coe '' (connected_component (⟨x, h⟩ : F)) else ∅
