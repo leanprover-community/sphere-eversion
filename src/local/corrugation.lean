@@ -10,7 +10,6 @@ import to_mathlib.filter
 import to_mathlib.measure_theory.parametric_interval_integral
 
 import loops.basic
-import local.relation
 
 noncomputable theory
 
@@ -204,12 +203,12 @@ begin
   rw linear_map.mem_ker at hw,
   change D π x w = 0 at hw,
   have : D (corrugation π N γ) x w = φ w,
-  { simp only [φ, hw, continuous_linear_map.coe_comp', continuous_linear_map.coe_sub', sub_zero, 
+  { simp only [φ, hw, continuous_linear_map.coe_comp', continuous_linear_map.coe_sub', sub_zero,
                comp_app, pi.sub_apply, continuous_linear_map.map_zero] },
   rw this,
   exact φ.le_of_op_norm_le (hN x).le w
 end
- 
+
 lemma corrugation.fderiv_u (hπ : 𝒞 1 π) (hγ_diff : 𝒞 1 ↿γ) (hγ_supp : is_compact (loop.support γ))
   {u : E} (hu : ∀ x, D π x u = 1) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∥D (𝒯 N γ) x u - (γ x (N*π x) - (γ x).average)∥ ≤  ε*∥u∥ :=
@@ -241,7 +240,7 @@ d.π.times_cont_diff
 lemma corrugation_data.C1_γ {f : E → F} {U : set E} (d : corrugation_data f U) : 𝒞 1 ↿d.γ :=
 d.hγ_diff.of_le le_top
 
-lemma corrugation_data.Dπu {f : E → F} {U : set E} (d : corrugation_data f U) : 
+lemma corrugation_data.Dπu {f : E → F} {U : set E} (d : corrugation_data f U) :
   ∀ x, D d.π x d.u = 1  :=
 λ x, by { rw d.π.fderiv, exact d.hπu }
 
@@ -277,7 +276,7 @@ begin
   apply (corrugation.fderiv_ker d.C1_π d.C1_γ d.hγ_supp ε_pos).mono,
   simp_rw d.π.fderiv,
   intros N hN x w w_in,
-  simpa [d.Dfun hf] using hN x w w_in  
+  simpa [d.Dfun hf] using hN x w w_in
 end
 
 lemma corrugation_data.deriv_u {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) {ε : ℝ} (ε_pos : 0 < ε)  :
@@ -293,16 +292,16 @@ begin
 end
 
 lemma theilliere {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) {ε : ℝ} (ε_pos : 0 < ε)  :
-  ∀ᶠ N in at_top, ∀ x, 
+  ∀ᶠ N in at_top, ∀ x,
 ∥d.fun N x - f x∥ < ε ∧ (((∀ w ∈ d.π.ker, ∥D (d.fun N) x w - D f x w∥ ≤ ε*∥w∥) ∧ x ∈ U → ∥D (d.fun N) x d.u -  d.γ x (N*d.π x)∥ ≤ ε)) :=
 begin
   apply ((d.c0_close ε_pos).and ((d.deriv_ker_π hf ε_pos).and (d.deriv_u hf ε_pos))).mono,
   tauto
 end
 
-lemma corrugation_data.relative {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) 
+lemma corrugation_data.relative {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f)
   {x : E} (hx : x ∉ loop.support d.γ) (hN : N ≠ 0) :
-  d.fun N x = f x ∧ 
+  d.fun N x = f x ∧
   (∀ w ∈ d.π.ker, D (d.fun N) x w = D f x w) ∧
   (x ∈ U → D (d.fun N) x d.u = d.γ x (N*d.π x)) :=
 begin
@@ -312,7 +311,7 @@ begin
     rw [corrugation_const d.π N hx', add_zero] },
   { intros w w_in,
     rw [d.Dfun hf, corrugation.fderiv_eq N hN d.C1_π d.C1_γ],
-    simp only [add_zero, continuous_linear_map.coe_comp', pi.add_apply, map_zero, 
+    simp only [add_zero, continuous_linear_map.coe_comp', pi.add_apply, map_zero,
                eq_self_iff_true, function.comp_app, continuous_linear_map.add_apply,
                d.π.fderiv, continuous_linear_map.mem_ker.mp w_in, remainder_eq_zero d.π N d.C1_γ hx] },
   { intros x_in,
@@ -323,66 +322,3 @@ begin
 end
 
 end c1
-
-section integration_step
-
--- This section proves lem:integration_step
-
-variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
-          [finite_dimensional ℝ F]
-
-open_locale unit_interval
-
-structure landscape :=
-(U C K₀ K₁ : set E)
-(hU : is_open U)
-(hC : is_closed C)
-(hK₀ : is_compact K₀)
-(hK₁ : is_compact K₁)
-(h₀₁ : K₀ ⊆ interior K₁)
-
-structure step_landscape extends landscape E :=
-(E' : submodule ℝ E)
-(p : dual_pair' E)
-(hEp : E' ≤ p.π.ker)
-
-variables {E}
-
-open_locale classical
-
-def formal_sol.improve_step {R : rel_loc E F} (L : step_landscape E) (N : ℝ) (𝓕 : formal_sol R L.U) : htpy_formal_sol R L.U :=
-if h : R.is_open_over L.U ∧ 
-       (∀ᶠ x in nhds_set L.K₀, 𝓕.is_part_holonomic_at L.E' x) ∧ 
-       (∀ x ∈ L.U, 𝓕.is_short_at L.p x) ∧
-       (∀ᶠ x in nhds_set L.C, 𝓕.is_holonomic_at x)
-then 
-  sorry 
-else 
-  𝓕.const_htpy
-
-variables {R : rel_loc E F} (L : step_landscape E) {𝓕 : formal_sol R L.U} 
-  (h_op : R.is_open_over L.U)  
-  (h_part_hol : ∀ᶠ x in nhds_set L.K₀, 𝓕.is_part_holonomic_at L.E' x) 
-  (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x) 
-  (h_hol : ∀ᶠ x in nhds_set L.C, 𝓕.is_holonomic_at x)
-
-include h_op h_part_hol h_short h_hol
-
-lemma integration_step_rel_t_eq_0 (N : ℝ) : 𝓕.improve_step L N 0 = 𝓕 :=
-sorry
-
-lemma integration_step_rel_C (N : ℝ) : ∀ᶠ x in nhds_set L.C, ∀ t, 𝓕.improve_step L N t x = 𝓕 x :=
-sorry
-
-lemma integration_step_rel_compl_K₁ (N : ℝ) : ∀ x ∉ L.K₁, ∀ t, 𝓕.improve_step L N t x = 𝓕 x :=
-sorry
-
-lemma integration_step_c0_close {ε : ℝ} (ε_pos : 0 < ε) : ∀ᶠ N in at_top, ∀ x t, ∥𝓕.improve_step L N t x - 𝓕 x∥ ≤ ε :=
-sorry
-
-lemma integration_step_hol (N : ℝ) : ∀ᶠ x in nhds_set L.C, (𝓕.improve_step L N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
-sorry
-
-
-end integration_step
