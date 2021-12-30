@@ -118,7 +118,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L331">dual_pair'</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L53">dual_pair'</a></li>
         </ul>
 
       </div>
@@ -150,7 +150,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L35">corrugate</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/corrugation.lean#L36">corrugate</a></li>
         </ul>
 
       </div>
@@ -204,8 +204,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L293">theilliere</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/corrugation.lean#L301">corrugation_data.relative</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/corrugation.lean#L294">theilliere</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/corrugation.lean#L302">corrugation_data.relative</a></li>
         </ul>
 
       </div>
@@ -262,7 +262,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/relation.lean#L23">is_part_holonomic_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L176">rel_loc.formal_sol.is_part_holonomic_at</a></li>
         </ul>
 
       </div>
@@ -293,7 +293,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/relation.lean#L10">rel_loc</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L96">rel_loc</a></li>
         </ul>
 
       </div>
@@ -340,7 +340,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/relation.lean#L17">is_formal_solution_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L124">rel_loc.formal_sol</a></li>
         </ul>
 
       </div>
@@ -360,6 +360,7 @@
     Definition
     </span>
     <span class="definition_thmlabel">2.7</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#def:htpy_formal_sol_loc">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -377,22 +378,36 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L196">htpy_formal_sol</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A homotopy of formal solutions over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\) and such that each \(x ↦ \mathcal{F}(t, x)\) is a formal solution over \(U\) when \(t\) is in \([0, 1]\). </p>
+  <p>   A homotopy of formal solutions over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\) and such that each \(x ↦ \mathcal{F}(t, x)\) is a formal solution over \(U\) when \(t\) is in \([0, 1]\). </p>
 
   </div>
 </div> </p>
 <p>Typically, \(x ↦ \mathcal{F}(t, x)\) will be denoted by \(\mathcal{F}_t\). </p>
-<p>We’ll use the notation \(\operatorname{Conn}_w A\) to denote the connected component of \(A\) that contains \(w\), or the empty set if \(w\) doesn’t belong to \(A\). </p>
 <p><div class="definition_thmwrapper" id="def:rel_slice">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.8</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#def:rel_slice">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -410,13 +425,27 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L106">rel_loc.slice</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
+  <p>   For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
 <div class="displaymath" id="a0000000043">
-  \[  \mathcal{R}(σ, π, v) = \operatorname{Conn}_{φ(v)}\{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
+  \[  \mathcal{R}(σ, π, v) = \{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 
   </div>
@@ -427,15 +456,32 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">2.9</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:update_lin_map">#</a>
     <a class="icon proof" href="chap-local.html#a0000000044"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L72">dual_pair'.update_ker_pi</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L81">dual_pair'.update_v</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L179">rel_loc.formal_sol.mem_slice</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> The linear map \(φ + (w - φ(v)) ⊗ π)\) coincides with \(φ\) on \(\ker π\) and sends \(v\) to \(w\). If \(\sigma \) belongs to \(\mathcal{R}\) then \(φ(v)\) belongs to \(\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} \). </p>
+  <p>  The linear map \(φ + (w - φ(v)) ⊗ π)\) coincides with \(φ\) on \(\ker π\) and sends \(v\) to \(w\). If \(\sigma \) belongs to \(\mathcal{R}\) then \(φ(v)\) belongs to \(\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} \). </p>
 
   </div>
 </div> </p>
@@ -447,16 +493,18 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>This is direct check. </p>
+  <p>These are direct checks. </p>
 
   </div>
 </div>
+<p>We’ll use the notation \(\operatorname{Conn}_w A\) to denote the connected component of \(A\) that contains \(w\), or the empty set if \(w\) doesn’t belong to \(A\). </p>
 <p><div class="definition_thmwrapper" id="def:short_formal_sol">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.10</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#def:short_formal_sol">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -475,11 +523,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L186">rel_loc.formal_sol.is_short_at</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
+  <p>   A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\operatorname{Conn}_{φ(v)}\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
 
   </div>
 </div> </p>
@@ -511,11 +573,29 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L84">rel_loc.formal_sol.improve_step_rel_t_eq_0</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L87">rel_loc.formal_sol.improve_step_rel_C</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L90">rel_loc.formal_sol.improve_step_rel_compl_K₁</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L95">rel_loc.formal_sol.improve_step_c0_close</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L99">rel_loc.formal_sol.improve_step_hol</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a subset of \(U\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
+  <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a subset of \(U\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
 <p>Assume \(\mathcal{R}\) is open over \(U\). Assume that \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), \((π, v)\)–short over \(U\), and holonomic near \(C\). Then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
   <li><p>\(\mathcal{F}_0 = \mathcal{F}\)&#160;; </p>
@@ -614,7 +694,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/ample.lean#L29">ample_set</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/ample.lean#L29">ample_set</a></li>
         </ul>
 
       </div>
@@ -662,7 +742,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/c076cb063d850fd73edfc6ce98b7bf39ea0b43d6/src/local/ample.lean#L143">ample_of_two_le_codim</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/ample.lean#L143">ample_of_two_le_codim</a></li>
         </ul>
 
       </div>
@@ -694,6 +774,7 @@
     Definition
     </span>
     <span class="definition_thmlabel">2.14</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#def:ample_relation_loc">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -713,11 +794,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/relation.lean#L114">rel_loc.is_ample</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A first order differential relation \(\mathcal{R}\) is ample if all its slices are ample. </p>
+  <p>   A first order differential relation \(\mathcal{R}\) is ample if all its slices are ample. </p>
 
   </div>
 </div> </p>
@@ -791,11 +886,29 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L144">rel_loc.formal_sol.improve_rel_t_eq_0</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L147">rel_loc.formal_sol.improve_rel_C</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L150">rel_loc.formal_sol.improve_rel_compl_K₁</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L153">rel_loc.formal_sol.improve_c0_close</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/718e0d5a6c7f7ed04e22948bf6426ef2c34ab8ce/src/local/h_principle.lean#L156">rel_loc.formal_sol.improve_hol</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset \(C\) of \(U\). Let \(ε\) be a positive real number. </p>
+  <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset \(C\) of \(U\). Let \(ε\) be a positive real number. </p>
 <p>If \(\mathcal{R}\) is open and ample over \(U\) then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
   <li><p>\(\mathcal{F}_0 = \mathcal{F}\) </p>
