@@ -101,7 +101,7 @@ directions of $\ker π$, and almost without moving $f(x)$.
 \begin{definition}
   \label{def:hol_partial}
   \leanok
-  \lean{is_part_holonomic_on}
+  \lean{rel_loc.formal_sol.is_part_holonomic_at}
   Let $E'$ be a linear subspace of $E$.
   A map $\F = (f, φ) : E → F × \Hom(E, F)$ is $E'$--holonomic if,
   for every $v$ in $E'$ and every $x$, $Df(x)v = φ(x)v$.
@@ -121,7 +121,7 @@ differential relation for maps from $E$ to $F$.
 \begin{definition}
   \label{def:formal_sol_loc}
   \leanok
-  \lean{is_formal_solution_on}
+  \lean{rel_loc.formal_sol}
   \uses{def:rel_loc}
   A formal solution of a differential relation $\Rel$ over $U ⊂ E$ is a map
   $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$ in $U$,
@@ -133,6 +133,8 @@ be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
 
 \begin{definition}
   \label{def:htpy_formal_sol_loc}
+  \leanok
+  \lean{htpy_formal_sol}
   \uses{def:formal_sol_loc}
   A homotopy of formal solutions over $U$ is a map
   $\F : ℝ × E → F × \Hom(E, F)$ which is smooth over $[0, 1] × U$
@@ -142,42 +144,52 @@ be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
 
 Typically, $x ↦ \F(t, x)$ will be denoted by $\F_t$.
 
-We'll use the notation $\Conn_w A$ to denote the connected component of $A$
-that contains $w$, or the empty set if $w$ doesn't belong to $A$.
-
-
 \begin{definition}
   \label{def:rel_slice}
+  \leanok
+  \lean{rel_loc.slice}
   \uses{def:rel_loc}
   For every $σ = (x, y, φ)$, the slice of $\Rel$ at $σ$ with respect to $(π, v)$
   is:
   \[
-    \Rel(σ, π, v) = \Conn_{φ(v)}\{w ∈ F \;|\; (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}.
+    \Rel(σ, π, v) = \{w ∈ F \;|\; (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}.
   \]
 \end{definition}
 
 \begin{lemma}
   \label{lem:update_lin_map}
+  \leanok
+  \lean{dual_pair'.update_ker_pi, dual_pair'.update_v, rel_loc.formal_sol.mem_slice}
   The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$
   and sends $v$ to $w$.
   If $\sigma$ belongs to $\Rel$ then $φ(v)$ belongs to
   $\{w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}$.
 \end{lemma}
 
-\begin{proof}
-  This is direct check.
+\begin{proof}\leanok
+  These are direct checks.
 \end{proof}
+
+
+We'll use the notation $\Conn_w A$ to denote the connected component of $A$
+that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{definition}
   \label{def:short_formal_sol}
+  \leanok
+  \lean{rel_loc.formal_sol.is_short_at}
   \uses{def:formal_sol_loc, def:dual_pair}
   A formal solution $\F$ of $\Rel$ over $U$ is $(π, v)$--short if,
   for every $x$ in $U$, $Df(x)v$ belonds to the interior of the convex hull of
-  $\Rel((x, f(x), φ(x)), π, v)$.
+  $\Conn_{φ(v)}\Rel((x, f(x), φ(x)), π, v)$.
 \end{definition}
 
 \begin{lemma}
   \label{lem:integration_step}
+  \leanok
+  \lean{rel_loc.formal_sol.improve_step_rel_t_eq_0, rel_loc.formal_sol.improve_step_rel_C,%
+    rel_loc.formal_sol.improve_step_rel_compl_K₁, rel_loc.formal_sol.improve_step_c0_close,%
+    rel_loc.formal_sol.improve_step_hol}
   \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_formal_sol_loc}
   Let $\F$ be a formal solution of $\Rel$ over an open set $U$.
   Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of
@@ -356,6 +368,8 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{definition}
   \label{def:ample_relation_loc}
+  \leanok
+  \lean{rel_loc.is_ample}
   \uses{def:ample_subset, def:rel_loc, def:rel_slice}
   A first order differential relation $\Rel$ is ample if all its slices
   are ample.
@@ -379,6 +393,10 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{lemma}
   \label{lem:h_principle_open_ample_loc}
+  \leanok
+  \lean{rel_loc.formal_sol.improve_rel_t_eq_0, rel_loc.formal_sol.improve_rel_C,%
+    rel_loc.formal_sol.improve_rel_compl_K₁, rel_loc.formal_sol.improve_c0_close,%
+    rel_loc.formal_sol.improve_hol}
   \uses{def:ample_relation_loc, def:holonomic_loc}
   Let $\F$ be a formal solution of $\Rel$ over an open set $U$.
   Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of
