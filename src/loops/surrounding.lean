@@ -780,7 +780,6 @@ def loop_data.extend (l₀ l₁ : loop_data g b Ω) : loop_data g b Ω :=
 ⟨l₀.K ∪ l₁.K, extended_domain l₀ l₁, extended_loops l₀ l₁, l₀.hK.union (l₁.hK),
   is_open_extended_domain, subset_extended_domain, surrounding_family_extended_loops⟩
 
-
 end extends_loops
 
 example [nontrivial E] : noncompact_space E := by apply_instance
@@ -879,6 +878,9 @@ begin
   ⟨closure V₀, U₀, γ₀, hcV₀, hU₀, hV₀UU₀.trans $ inter_subset_left _ _, hγ₀.mono hU₀V⟩,
   let l : ℕ → loop_data g b Ω := λ n, ⟨L n, W n, γ n, hL n, hW n, hLW n, hγ n⟩,
   let lnew : ℕ → loop_data g b Ω := λ n, nat.rec l₀ (λ k ih, ih.extend $ l k) n,
+  let γ' : E → ℝ → loop F :=
+  λ x t, ⟨λ s, lim at_top (λ n, (lnew n).γ x t s), λ t, by simp_rw [loop.per]⟩,
+  refine ⟨γ', _, _⟩,
   -- have
   -- have hW₂ : ∀ x, is_open (W₂ x) := λ x, ((hW₁ x).sdiff is_closed_closure).inter is_open_ball,
   -- have hUW₂ : U \ closure V₀ ⊆ ⋃ x, W₂ x :=
