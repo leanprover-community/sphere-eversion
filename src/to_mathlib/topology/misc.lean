@@ -295,6 +295,7 @@ open set
 
 section paracompact_space
 
+-- a version of `precise_refinement_set` for open `s`.
 /-- When `s : set X` is open and paracompact, we can find a precise refinement on `s`. Note that
  in this case we only get the locally finiteness condition on `s`, which is weaker than the local
  finiteness condition on all of `X` (the collection might not be locally finite on the boundary of
@@ -333,46 +334,13 @@ section shrinking_lemma
 variables {ι X : Type*} [topological_space X]
 variables {u : ι → set X} {s : set X} [normal_space s]
 
--- the last condition is false and should be replaced by something like `closure (v i) ∩ s ⊆ u i`
--- lemma exists_subset_Union_closure_subset_of_is_open [t2_space X] (hs : is_open s)
---   (uo : ∀ i, is_open (u i))
---   (uc : ∀ i, is_compact (closure (u i)))
---   (uf : ∀ x, finite {i | x ∈ u i}) (uU : s ⊆ ⋃ i, u i) :
---   ∃ v : ι → set X, s ⊆ Union v ∧ (∀ i, is_open (v i)) ∧ ∀ i, closure (v i) ⊆ u i :=
--- begin
---   obtain ⟨v, vU, vo, hv⟩ := exists_Union_eq_closure_subset
---     (λ i, (uo i).preimage (continuous_subtype_coe : continuous (coe : s → X)))
---     (λ x, uf x)
---     (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU]),
---   refine ⟨λ i, coe '' (v i), by simp_rw [← image_Union, vU, subtype.coe_image_univ],
---     λ i, hs.is_open_map_subtype_coe _ (vo i), _⟩,
---   simp_rw [hs.open_embedding_subtype_coe.to_embedding.closure_eq_preimage_closure_image] at hv,
---   refine λ i, (preimage_subset_preimage_iff _).mp (hv i),
---   rw [is_closed.closure_eq], { apply image_subset_range },
---   refine ((compact_of_is_closed_subset _ _ _).image continuous_subtype_coe).is_closed,
--- end
-
--- lemma exists_subset_Union_interior_of_is_open (hs : is_open s)
---   {K : ι → set X}
---   (Kc : ∀ i, is_compact (K i))
---   (uf : ∀ x ∈ s, finite {i | x ∈ interior (K i)}) (uU : s ⊆ ⋃ i, interior (K i)) :
---   ∃ L : ι → set X, s ⊆ (⋃ i, interior (L i)) ∧ (∀ i, is_compact (L i)) ∧ ∀ i, L i ⊆ K i :=
--- begin
---   obtain ⟨v, vU, vo, hv⟩ := exists_Union_eq_closure_subset
---     (λ i, (uo i).preimage (continuous_subtype_coe : continuous (coe : s → X)))
---     (λ x, uf x x.prop)
---     (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU]),
---   refine ⟨λ i, coe '' (v i), by simp_rw [← image_Union, vU, subtype.coe_image_univ],
---     λ i, hs.is_open_map_subtype_coe _ (vo i), _⟩,
---   simp_rw [hs.open_embedding_subtype_coe.to_embedding.closure_eq_preimage_closure_image] at hv,
---   refine λ i, (preimage_subset_preimage_iff _).mp (hv i),
---   sorry,
--- end
-
--- lemma foo (hs : is_open s) {K : set s} (hK : is_compact (coe '' K))
-
+-- this lemma is currently formulated a little weirdly, since we have a collection of open sets
+-- as the input and a collection of closed/compact sets as output.
+-- Perhaps we can formulate it so that the input is a collection of compact sets whose interiors
+-- cover s.
 lemma exists_subset_Union_interior_of_is_open (hs : is_open s) (uo : ∀ i, is_open (u i))
   (uc : ∀ i, is_compact (closure (u i)))
+  (us : ∀ i, closure (u i) ⊆ s)
   (uf : ∀ x ∈ s, finite {i | x ∈ u i}) (uU : s ⊆ ⋃ i, u i) :
   ∃ v : ι → set X, s ⊆ (⋃ i, interior (v i)) ∧ (∀ i, is_compact (v i)) ∧ ∀ i, v i ⊆ u i :=
 begin
@@ -387,10 +355,14 @@ begin
   { refine subset.trans _ (Union_subset_Union $
       λ i, interior_maximal subset_closure (hs.is_open_map_subtype_coe _ (vo i))),
     simp_rw [← image_Union, vU, subtype.coe_image_univ] },
-  { intro i, sorry },
-  -- simp_rw [hs.open_embedding_subtype_coe.to_embedding.closure_eq_preimage_closure_image] at hv,
-  -- refine λ i, (preimage_subset_preimage_iff _).mp (hv i),
-  -- sorry,
+  { intro i,
+    have : coe '' v i ⊆ u i,
+    { rintro _ ⟨x, hx, rfl⟩, exact hv i (subset_closure hx) },
+    intros x hx,
+    have hxs : x ∈ s := us i (closure_mono this hx),
+    have : (⟨x, hxs⟩ : s) ∈ closure (v i),
+    { rw embedding_subtype_coe.closure_eq_preimage_closure_image (v i), exact hx },
+    exact hv i this }
 end
 
 end shrinking_lemma
