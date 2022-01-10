@@ -809,7 +809,8 @@ variables [finite_dimensional ℝ E]
 
 -- I think that any open set in a finite dimensional real vector space satisfies the assumptions below.
 variables {X : Type*} [topological_space X]
-  [locally_compact_space X] [sigma_compact_space X] [t2_space X]
+  [locally_compact_space X] [sigma_compact_space X] [normal_space X]
+  [second_countable_topology X]
 
 lemma foo {P : set X → Prop} (hP : antitone P) (hX : ∀ x : X, ∃ U ∈ 𝓝 x, P U) (h0 : P ∅) :
 ∃ (u : ℕ → set X) (v : ℕ → set X), ∀ n,
@@ -817,11 +818,62 @@ lemma foo {P : set X → Prop} (hP : antitone P) (hX : ∀ x : X, ∃ U ∈ 𝓝
   u n ⊆ v n ∧ locally_finite v ∧ (⋃ n, u n) = univ :=
 sorry
 
+open encodable
+@[simp]
+lemma decode₂_encode {α} [encodable α] (x : α) : decode₂ α (encode x) = some x :=
+by simp [decode₂]
+
+-- this proof strategy doesn't get locally finiteness of W on the closure of U.
 lemma foo2 {U : set X} (hU : is_open U) {P : set X → Prop} (hP : antitone P) (h0 : P ∅)
-  (hX : ∀ x ∈ U, ∃ V ∈ 𝓝 x, P V) :
-∃ (u : ℕ → set X) (v : ℕ → set X), (∀ n, is_compact (u n)) ∧ (∀ n, is_open (v n)) ∧
-  (∀ n, P (v n)) ∧ (∀ n, u n ⊆ v n) ∧ locally_finite v ∧ U ⊆ ⋃ n, u n :=
-sorry
+  (hX : ∀ x ∈ U, ∃ V ∈ 𝓝 (x : X), P V) :
+∃ (K : ℕ → set X) (W : ℕ → set X), (∀ n, is_compact (K n)) ∧ (∀ n, is_open (W n)) ∧
+  (∀ n, P (W n)) ∧ (∀ n, K n ⊆ W n) ∧ locally_finite W ∧ U ⊆ ⋃ n, K n :=
+begin
+  haveI := hU.locally_compact_space,
+  haveI : sigma_compact_space U := sorry,
+  haveI : normal_space U := sorry,
+  choose V' hV' hPV' using set_coe.forall'.mp hX,
+  choose V hV hVV' hcV using λ x : U, locally_compact_space.local_compact_nhds
+    ↑x (V' x ∩ U) (inter_mem (hV' x) $ hU.mem_nhds x.prop),
+  simp_rw [← mem_interior_iff_mem_nhds] at hV,
+  have : U ⊆ (⋃ x : U, interior (V x)) :=
+  λ x hx, by { rw [mem_Union], exact ⟨⟨x, hx⟩, hV _⟩ },
+  obtain ⟨s, hs, hsW₂⟩ := is_open_Union_countable (λ x, interior (V x)) (λ x, is_open_interior),
+  rw [← hsW₂, bUnion_eq_Union] at this, clear hsW₂,
+  obtain ⟨W, hW, hUW, hlW, hWU, hWV⟩ :=
+    precise_refinement_set' hU (λ x : s, interior (V x)) (λ x, is_open_interior) this,
+  obtain ⟨K, hUK, hK, hKW⟩ :=
+    exists_subset_Union_interior_of_is_open hU (λ x : s, hW x)
+    (λ x, compact_of_is_closed_subset (hcV x) is_closed_closure $
+      closure_minimal ((hWV x).trans $ interior_subset) (hcV x).is_closed)
+    _
+    (λ x hx, point_finite_of_locally_finite_coe_preimage hlW hWU) hUW,
+    swap,
+    { intro x, refine (closure_minimal ((hWV x).trans interior_subset) (hcV x).is_closed).trans _,
+      exact (hVV' x).trans (inter_subset_right _ _) },
+  haveI : encodable s := hs.to_encodable,
+  let K' : ℕ → set X := λ n, (K <$> (decode₂ s n)).get_or_else ∅,
+  let W' : ℕ → set X := λ n, (W <$> (decode₂ s n)).get_or_else ∅,
+  refine ⟨K', W', _, _, _, _, _, _⟩,
+  { intro n, cases h : decode₂ s n,
+    { simp_rw [K', h, option.map_none, option.get_or_else_none, is_compact_empty] },
+    { simp_rw [K', h, option.map_some, option.get_or_else_some, hK] }},
+  { intro n, cases h : decode₂ s n,
+    { simp_rw [W', h, option.map_none, option.get_or_else_none, is_open_empty] },
+    { simp_rw [W', h, option.map_some, option.get_or_else_some, hW] }},
+  { intro n, cases h : decode₂ s n with x,
+    { simp_rw [W', h, option.map_none, option.get_or_else_none, h0] },
+    { simp_rw [W', h, option.map_some, option.get_or_else_some], refine hP _ (hPV' x),
+      refine (hWV x).trans (interior_subset.trans $ (hVV' x).trans $ inter_subset_left _ _) }},
+  { intro n, cases h : decode₂ s n,
+    { simp_rw [K', W', h, option.map_none] },
+    { simp_rw [K', W', h, option.map_some, option.get_or_else_some, hKW] }},
+  { intro x, sorry, },
+  { intros x hx, obtain ⟨i, hi⟩ := mem_Union.mp (hUK hx),
+    refine mem_Union.mpr ⟨encode i, _⟩,
+    simp_rw [K', decode₂_encode, option.map_some, option.get_or_else_some],
+    exact interior_subset hi }
+end
 
 lemma foo3 {U : set X} (hU : is_open U) (V : U → set X) (hV : ∀ x, V x ∈ 𝓝 (x : X)) :
 ∃ (u : ℕ → set X) (v : ℕ → set X) (f : ℕ → U), (∀ n, is_compact (u n)) ∧ (∀ n, is_open (v n)) ∧
@@ -877,7 +929,7 @@ continuous_subtype_is_closed_cover (λ i, (∈ c i)) h_lf h_is_closed
 #check @exists_Union_eq_closure_subset
 #check @locally_finite.countable_univ
 
-open metric encodable
+open metric
 lemma exists_surrounding_loops [finite_dimensional ℝ F]
   (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
   (hΩ_op : is_open (Ω ∩ fst ⁻¹' U))
