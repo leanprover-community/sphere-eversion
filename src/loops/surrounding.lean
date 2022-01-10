@@ -3,6 +3,7 @@ import tactic.fin_cases
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
 
+import to_mathlib.order.filter.eventually_constant
 import to_mathlib.topology.nhds_set
 
 /-!
@@ -669,13 +670,20 @@ structure loop_data (g b : E → F) (Ω : set (E × F)) :=
 (hKU : K ⊆ U)
 (hγ : surrounding_family_in g b γ U Ω)
 
+/-
+Note: we also want add the condition that `γ = γ₀` outside `U₀ ∪ U₁`.
+This makes it easier to find the limit of a sequence of these constructions.
+Todo: we might need that `γ = γ₀` on a neighborhood of `(U₀ ∪ U₁)ᶜ` to ensure that
+`(U₀ ∪ U₁)ᶜ ⊆ extended_invariant ...`
+-/
 lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
   {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family_in g b γ₀ U₀ Ω) (h₁ : surrounding_family_in g b γ₁ U₁ Ω) :
   ∃ (U ∈ nhds_set (K₀ ∪ K₁)) (γ : E → ℝ → loop F),
     surrounding_family_in g b γ U Ω ∧
-    ∀ᶠ x in nhds_set K₀, γ x = γ₀ x :=
+    (∀ᶠ x in nhds_set K₀, γ x = γ₀ x) ∧
+    ∀ x ∉ U₀ ∪ U₁, γ x = γ₀ x :=
 begin
   obtain ⟨V₀, hV₀, hKV₀, hVU₀, hcV₀⟩ := exists_open_between_and_is_compact_closure hK₀ hU₀ hKU₀,
   let L₁ := K₁ \ U₀,
@@ -687,22 +695,28 @@ begin
     (subset_inter (disjoint_iff_subset_compl_left.mp hV₀L₁) $ (diff_subset _ _).trans hKU₁),
   rw [subset_inter_iff, ← disjoint_iff_subset_compl_left] at h2V₁,
   rcases h2V₁ with ⟨hV₀₁, hVU₁⟩,
+  have hdisj : disjoint (closure V₀ ∪ (U₀ ∪ U₁)ᶜ) (closure V₁),
+  { refine hV₀₁.union_left _, rw [disjoint_iff_subset_compl_left, compl_compl],
+    exact hVU₁.trans (subset_union_right _ _) },
   refine ⟨V₀ ∪ (U₁ ∩ U₀) ∪ V₁, ((hV₀.union $ hU₁.inter hU₀).union hV₁).mem_nhds_set.mpr _, _⟩,
   { refine union_subset (hKV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
     rw [← inter_union_diff K₁], exact
       union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
-  obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
-    exists_continuous_zero_one_of_closed hcV₀.is_closed hcV₁.is_closed hV₀₁,
+  obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ := exists_continuous_zero_one_of_closed
+    (is_closed_closure.union (hU₀.union hU₁).is_closed_compl) is_closed_closure hdisj,
   let h₀' : surrounding_family_in g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _),
   let h₁' : surrounding_family_in g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono (inter_subset_left _ _),
   let γ := sf_homotopy h₀'.to_sf h₁'.to_sf,
   have hγ : ∀ τ, surrounding_family_in g b (γ τ) (U₁ ∩ U₀) Ω :=
     surrounding_family_in_sf_homotopy _ _,
-  refine ⟨λ x t, γ (ρ x) x t, _, _⟩,
+  have heq1 : ∀ x ∈ closure V₀ ∪ (U₀ ∪ U₁)ᶜ, γ (ρ x) x = γ₀ x,
+  { intros x hx, simp_rw [γ, h0ρ hx, pi.zero_apply, sf_homotopy_zero] },
+  have heq2 : ∀ x ∈ V₀, γ (ρ x) x = γ₀ x :=
+  λ x hx, heq1 x (subset_closure.trans (subset_union_left _ _) hx),
+  refine ⟨λ x t, γ (ρ x) x t, _, _, _⟩,
   { refine ⟨⟨λ x, (hγ $ ρ x).base x, λ x, (hγ $ ρ x).t₀ x, _, _⟩, _⟩,
     { rintro x ((hx|hx)|hx),
-      { simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero,
-          h₀.surrounds x (hVU₀ $ subset_closure hx)] },
+      { simp_rw [heq2 x hx, h₀.surrounds x (hVU₀ $ subset_closure hx)] },
       { simp_rw [γ, (hγ $ ρ x).surrounds x hx] },
       { simp_rw [γ, h1ρ (subset_closure hx), pi.one_apply, sf_homotopy_one,
           h₁.surrounds x (hVU₁ $ subset_closure hx)] } },
@@ -714,11 +728,11 @@ begin
         { exact hx },
         { exact (hρx $ h1ρ $ subset_closure hx).elim } },
       { intros x hx t ht s hρx, refine h₁.val_in _ ht, rcases hx with (hx|⟨hx,-⟩)|hx,
-        { exact (hρx $ h0ρ $ subset_closure hx).elim },
+        { exact (hρx $ h0ρ $ subset_closure.trans (subset_union_left _ _) hx).elim },
         { exact hx },
         { exact (subset_closure.trans hVU₁) hx } } } },
-  { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) (λ x (hx : x ∈ V₀), _),
-    simp_rw [γ, h0ρ (subset_closure hx), pi.zero_apply, sf_homotopy_zero] },
+  { refine eventually.mono (hV₀.mem_nhds_set.mpr hKV₀) heq2 },
+  { intros x hx, rw heq1, exact mem_union_right _ hx },
 end
 
 /-! We now extract all components of this theorem, which makes them easier to use in the recursion
@@ -758,13 +772,20 @@ lemma surrounding_family_extended_loops :
 lemma extended_loops_eventually_eq_left : ∀ᶠ x in nhds_set l₀.K,
   extended_loops l₀ l₁ x = l₀.γ x :=
 (classical.some_spec $ classical.some_spec $ classical.some_spec $
-  extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2
+  extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.1
 
 lemma is_open_extended_invariant : is_open (extended_invariant l₀ l₁) :=
 is_open_interior
 
 lemma subset_extended_invariant : l₀.K ⊆ extended_invariant l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr extended_loops_eventually_eq_left
+
+lemma compl_subset_extended_invariant : interior (l₀.U ∪ l₁.U)ᶜ ⊆ extended_invariant l₀ l₁ :=
+begin
+  refine interior_mono _,
+  exact (classical.some_spec $ classical.some_spec $ classical.some_spec $
+    extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.2
+end
 
 lemma extended_invariant_mem_nhds_set :
   extended_invariant l₀ l₁ ∈ nhds_set l₀.K :=
@@ -784,6 +805,7 @@ end extends_loops
 
 example [nontrivial E] : noncompact_space E := by apply_instance
 section surrounding_loops
+variables [finite_dimensional ℝ E]
 
 -- I think that any open set in a finite dimensional real vector space satisfies the assumptions below.
 variables {X : Type*} [topological_space X]
@@ -806,6 +828,40 @@ lemma foo3 {U : set X} (hU : is_open U) (V : U → set X) (hV : ∀ x, V x ∈ �
   (∀ n, v n ⊆ U ∩ V (f n)) ∧ (∀ n, u n ⊆ v n) ∧ locally_finite v ∧ U ⊆ ⋃ n, u n :=
 sorry
 
+@[simp] noncomputable def loop_data_seq (l₀ : loop_data g b Ω) (l : ℕ → loop_data g b Ω) :
+  ℕ → loop_data g b Ω
+| 0     := l₀
+| (n+1) := (loop_data_seq n).extend $ l n
+
+lemma loop_data_seq_K_mono {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω} :
+  monotone (λ n, (loop_data_seq l₀ l n).K) :=
+by { refine monotone_nat_of_le_succ _, intro n, rw [loop_data_seq], apply subset_union_left, }
+
+lemma subset_loop_data_seq_K {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω} {n : ℕ} :
+  (l n).K ⊆ (loop_data_seq l₀ l (n+1)).K :=
+subset_union_right _ _
+
+lemma loop_data_seq_locally_eventually_constant {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω}
+  (hl : locally_finite (λ n, (l n).U)) : locally_eventually_constant_on
+    (λ n, (loop_data_seq l₀ l n).γ) at_top (interior $ ⋃ n, (l n).K) :=
+begin
+  intros x hx,
+  rw [mem_interior_iff_mem_nhds] at hx,
+  obtain ⟨O, hO, hWO⟩ := hl x,
+  simp_rw [← eventually_constant_at_top_nat],
+  use [O ∩ (⋃ n, (l n).K), inter_mem hO hx, hWO.to_finset.sup id + 1],
+  intros m hm, ext1 ⟨y, hy⟩,
+  simp_rw [set.restrict_apply, subtype.coe_mk, loop_data_seq],
+  apply extended_loops_eq_left,
+  obtain ⟨n, hn⟩ := mem_Union.mp (inter_subset_right _ _ hy),
+  refine mem_of_mem_of_subset hn _,
+  refine subset_loop_data_seq_K.trans
+    (subset.trans (loop_data_seq_K_mono _) subset_extended_invariant),
+  refine (nat.succ_le_succ $ finset.le_sup _).trans hm,
+  simp_rw [hWO.mem_to_finset, mem_set_of_eq],
+  exact ⟨y, mem_inter ((l n).hKU hn) (inter_subset_left _ _ hy)⟩
+end
+
 -- useful / better reformulation of existing lemma (unused in mathlib)
 lemma continuous_subtype_is_closed_cover' {α β : Type*} [topological_space α] [topological_space β]
   {ι : Sort*} {f : α → β} (c : ι → set α)
@@ -814,14 +870,15 @@ lemma continuous_subtype_is_closed_cover' {α β : Type*} [topological_space α]
   (h_cover : (⋃ i, c i) = univ)
   (f_cont  : ∀ i, continuous (λ(x : c i), f x)) :
   continuous f :=
-continuous_subtype_is_closed_cover (λ i x, x ∈ c i) h_lf h_is_closed
+continuous_subtype_is_closed_cover (λ i, (∈ c i)) h_lf h_is_closed
   (by simpa [eq_univ_iff_forall] using h_cover) f_cont
 
 -- needed at the end
 #check @exists_Union_eq_closure_subset
+#check @locally_finite.countable_univ
 
 open metric encodable
-lemma exists_surrounding_loops [finite_dimensional ℝ E] [finite_dimensional ℝ F]
+lemma exists_surrounding_loops [finite_dimensional ℝ F]
   (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
   (hΩ_op : is_open (Ω ∩ fst ⁻¹' U))
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
@@ -877,7 +934,7 @@ begin
   let l₀ : loop_data g b Ω :=
   ⟨closure V₀, U₀, γ₀, hcV₀, hU₀, hV₀UU₀.trans $ inter_subset_left _ _, hγ₀.mono hU₀V⟩,
   let l : ℕ → loop_data g b Ω := λ n, ⟨L n, W n, γ n, hL n, hW n, hLW n, hγ n⟩,
-  let lnew : ℕ → loop_data g b Ω := λ n, nat.rec l₀ (λ k ih, ih.extend $ l k) n,
+  let lnew : ℕ → loop_data g b Ω := loop_data_seq l₀ l,
   let γ' : E → ℝ → loop F :=
   λ x t, ⟨λ s, lim at_top (λ n, (lnew n).γ x t s), λ t, by simp_rw [loop.per]⟩,
   refine ⟨γ', _, _⟩,
@@ -904,7 +961,7 @@ begin
   -- let δ : ℕ → Σ' (L' U' : set E) (γ' : E → ℝ → loop F), is_compact L' ∧ is_open U' ∧ L' ⊆ U' ∧
   --   surrounding_family_in g b γ' U' Ω :=
   -- surrounding_loops_data hK hγ₀ hU₀ hKU₀ hU₀V hKV₀ hW hγ hLW hL hf,
-  sorry
+  sorry, sorry
 end
 
 end surrounding_loops
