@@ -50,6 +50,10 @@ variables {X}
 
 namespace loop
 
+@[simp]
+protected lemma coe_mk {γ : ℝ → X} (h : ∀ t, γ (t + 1) = γ t) : ⇑(⟨γ, h⟩ : loop X) = γ :=
+rfl
+
 @[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
 | ⟨x, h1⟩ ⟨.(x), h2⟩ rfl := rfl
 

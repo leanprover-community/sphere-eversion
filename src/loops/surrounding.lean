@@ -201,7 +201,7 @@ begin
   have hU₂ : is_open U := hW'.preimage_open_of_open hA hV,
   have hU₃ : U ∈ 𝓝 (x, p) :=
     mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, set.mem_inter (by simp [hp]) (mem_preimage.mpr hxp)⟩,
-  apply filter.eventually_of_mem hU₃,
+  apply eventually_of_mem hU₃,
   rintros ⟨y, q⟩ hyq,
   have hq : q ∈ affine_bases ι ℝ F, { simpa using hU₁ hyq, },
   have hyq' : (y, q) ∈ W' ⁻¹' V := (set.inter_subset_right _ _) hyq,
@@ -880,38 +880,92 @@ lemma foo3 {U : set X} (hU : is_open U) (V : U → set X) (hV : ∀ x, V x ∈ �
   (∀ n, v n ⊆ U ∩ V (f n)) ∧ (∀ n, u n ⊆ v n) ∧ locally_finite v ∧ U ⊆ ⋃ n, u n :=
 sorry
 
+/-- Given a initial `loop_data` and a sequence of them, repeatedly extend `l₀` using `l`. -/
 @[simp] noncomputable def loop_data_seq (l₀ : loop_data g b Ω) (l : ℕ → loop_data g b Ω) :
   ℕ → loop_data g b Ω
 | 0     := l₀
 | (n+1) := (loop_data_seq n).extend $ l n
 
-lemma loop_data_seq_K_mono {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω} :
-  monotone (λ n, (loop_data_seq l₀ l n).K) :=
+variables {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω} {n : ℕ} {x y : E}
+
+lemma loop_data_seq_succ_γ :
+  (loop_data_seq l₀ l (n + 1)).γ = extended_loops (loop_data_seq l₀ l n) (l n) :=
+by rw [loop_data_seq, loop_data.extend]
+
+lemma loop_data_seq_K_mono : monotone (λ n, (loop_data_seq l₀ l n).K) :=
 by { refine monotone_nat_of_le_succ _, intro n, rw [loop_data_seq], apply subset_union_left, }
 
-lemma subset_loop_data_seq_K {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω} {n : ℕ} :
-  (l n).K ⊆ (loop_data_seq l₀ l (n+1)).K :=
+lemma subset_loop_data_seq_K0 (n : ℕ) : l₀.K ⊆ (loop_data_seq l₀ l n).K :=
+loop_data_seq_K_mono (zero_le n)
+
+lemma subset_loop_data_seq_K : (l n).K ⊆ (loop_data_seq l₀ l (n+1)).K :=
 subset_union_right _ _
 
-lemma loop_data_seq_locally_eventually_constant {l₀ : loop_data g b Ω} {l : ℕ → loop_data g b Ω}
-  (hl : locally_finite (λ n, (l n).U)) : locally_eventually_constant_on
-    (λ n, (loop_data_seq l₀ l n).γ) at_top (interior $ ⋃ n, (l n).K) :=
+lemma loop_data_seq_locally_eventually_constant (l₀ : loop_data g b Ω)
+  (hl : locally_finite (λ n, (l n).U)) :
+  locally_eventually_constant_on (λ n, (loop_data_seq l₀ l n).γ) at_top
+    (interior $ l₀.K ∪ ⋃ n, (l n).K) :=
 begin
   intros x hx,
   rw [mem_interior_iff_mem_nhds] at hx,
   obtain ⟨O, hO, hWO⟩ := hl x,
   simp_rw [← eventually_constant_at_top_nat],
-  use [O ∩ (⋃ n, (l n).K), inter_mem hO hx, hWO.to_finset.sup id + 1],
+  use [O ∩ (l₀.K ∪ ⋃ n, (l n).K), inter_mem hO hx, hWO.to_finset.sup id + 1],
   intros m hm, ext1 ⟨y, hy⟩,
   simp_rw [set.restrict_apply, subtype.coe_mk, loop_data_seq],
   apply extended_loops_eq_left,
-  obtain ⟨n, hn⟩ := mem_Union.mp (inter_subset_right _ _ hy),
-  refine mem_of_mem_of_subset hn _,
-  refine subset_loop_data_seq_K.trans
-    (subset.trans (loop_data_seq_K_mono _) subset_extended_invariant),
+  refine subset_extended_invariant _,
+  obtain h2y|h2y := hy.2, { exact subset_loop_data_seq_K0 m h2y },
+  obtain ⟨n, hn⟩ := mem_Union.mp h2y,
+  refine subset_loop_data_seq_K.trans (loop_data_seq_K_mono _) hn,
   refine (nat.succ_le_succ $ finset.le_sup _).trans hm,
   simp_rw [hWO.mem_to_finset, mem_set_of_eq],
-  exact ⟨y, mem_inter ((l n).hKU hn) (inter_subset_left _ _ hy)⟩
+  exact ⟨y, mem_inter ((l n).hKU hn) hy.1⟩
+end
+
+lemma loop_data_seq_eq0 : ∀ᶠ x in nhds_set l₀.K, (loop_data_seq l₀ l n).γ x = l₀.γ x :=
+begin
+  have : ∀ᶠ x in nhds_set l₀.K, ∀ m ∈ Iio n,
+    (loop_data_seq l₀ l (m + 1)).γ x = (loop_data_seq l₀ l m).γ x,
+  { rw [eventually_all_finite (finite_Iio n)], rintro m (hm : m < n),
+    have : extended_invariant (loop_data_seq l₀ l m) (l m) ∈ nhds_set l₀.K,
+    { refine is_open_extended_invariant.mem_nhds_set.mpr _,
+      refine (loop_data_seq_K_mono (zero_le m)).trans subset_extended_invariant },
+    refine eventually_of_mem this _,
+    intros x hx, convert extended_loops_eq_left hx, rw [loop_data_seq_succ_γ] },
+  refine this.mono (λ x hx, _), clear this,
+  induction n with n ih,
+  { refl, },
+  { refine (hx _ $ lt_add_one n).trans (ih $ λ m hm, hx m $ lt_trans hm $ lt_add_one n) }
+end
+
+/-- The eventual value of the sequence `λ n, (loop_data_seq l₀ l).γ`. -/
+def lim_loop (l₀ : loop_data g b Ω) (l : ℕ → loop_data g b Ω) (x : E) : ℝ → loop F :=
+eventual_value (λ n, (loop_data_seq l₀ l n).γ x) at_top
+-- ⟨λ s, eventual_value (λ n, (loop_data_seq l₀ l n).γ x t s) at_top, λ t, by simp_rw [loop.per]⟩
+
+lemma lim_loop_eq_loop_data_seq {hl : locally_finite (λ n, (l n).U)}
+  (hx : x ∈ interior (l₀.K ∪ ⋃ n, (l n).K)) :
+  lim_loop l₀ l x = (loop_data_seq l₀ l $ eventual_index $ λ n, (loop_data_seq l₀ l n).γ x).γ x :=
+begin
+  refine (eventually_constant.fn_eventual_index _).symm,
+  refine (loop_data_seq_locally_eventually_constant l₀ hl).eventually_constant hx,
+end
+
+lemma lim_loop_eq0 (hl : locally_finite (λ n, (l n).U))
+  {K : set E} (hK : is_compact K) (h2K : K ⊆ interior (l₀.K ∪ ⋃ n, (l n).K)) :
+  ∀ᶠ x in nhds_set K, lim_loop l₀ l x = l₀.γ x :=
+begin
+  -- have := (loop_data_seq_locally_eventually_constant hl).eventually_constant,
+  obtain ⟨O, hO, h⟩ :=
+    (loop_data_seq_locally_eventually_constant l₀ hl).exists_nhds_set_of_is_compact hK h2K,
+  obtain ⟨n, hn⟩ := h.exists_eventual_value_eq,
+  rw [function.funext_iff] at hn,
+  refine eventually_of_mem hO _,
+  intros x hx,
+  refine eq.trans _ ((hn ⟨x, hx⟩).trans _),
+  swap, simp,
+
 end
 
 -- useful / better reformulation of existing lemma (unused in mathlib)
@@ -940,7 +994,7 @@ lemma exists_surrounding_loops [finite_dimensional ℝ F]
   {γ₀ :  E → ℝ → loop F}
   (hγ₀_surr : ∃ V ∈ nhds_set K, surrounding_family_in g b γ₀ V Ω) :
   ∃ γ : E → ℝ → loop F, (surrounding_family_in g b γ U Ω) ∧
-                        (∀ᶠ x in nhds_set K, ∀ (t ∈ I), γ x t = γ₀ x t)  :=
+                        (∀ᶠ x in nhds_set K, γ x = γ₀ x)  :=
 begin
   /-
   Translation
@@ -986,10 +1040,15 @@ begin
   let l₀ : loop_data g b Ω :=
   ⟨closure V₀, U₀, γ₀, hcV₀, hU₀, hV₀UU₀.trans $ inter_subset_left _ _, hγ₀.mono hU₀V⟩,
   let l : ℕ → loop_data g b Ω := λ n, ⟨L n, W n, γ n, hL n, hW n, hLW n, hγ n⟩,
-  let lnew : ℕ → loop_data g b Ω := loop_data_seq l₀ l,
-  let γ' : E → ℝ → loop F :=
-  λ x t, ⟨λ s, lim at_top (λ n, (lnew n).γ x t s), λ t, by simp_rw [loop.per]⟩,
+  let lseq : ℕ → loop_data g b Ω := loop_data_seq l₀ l,
+  let γseq : ℕ → E → ℝ → loop F := λ n, (lseq n).γ,
+  have : locally_eventually_constant_on γseq at_top (interior $ ⋃ n, (l n).K) :=
+  loop_data_seq_locally_eventually_constant hlW,
+  let γ' : E → ℝ → loop F := lim_loop l₀ l,
   refine ⟨γ', _, _⟩,
+  { sorry },
+  { refine eventually_of_mem (hU₀.mem_nhds_set.mpr hKU₀) _,
+    intros x hx, ext t s, simp_rw [γ'],  }
   -- have
   -- have hW₂ : ∀ x, is_open (W₂ x) := λ x, ((hW₁ x).sdiff is_closed_closure).inter is_open_ball,
   -- have hUW₂ : U \ closure V₀ ⊆ ⋃ x, W₂ x :=
