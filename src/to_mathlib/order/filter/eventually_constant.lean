@@ -7,7 +7,10 @@ Authors: Floris van Doorn
 -- import order.filter.at_top_bot
 -- and topology.separation should import this
 -- import topology.basic
+
+import data.nat.lattice
 import topology.separation
+import to_mathlib.topology.nhds_set
 /-!
 # Eventually constant sequences
 
@@ -15,6 +18,44 @@ Related: `monotonic_sequence_limit_index`
 -/
 
 open_locale topological_space
+-- move
+lemma continuous_within_at.congr_nhds {α β} [topological_space α] [topological_space β]
+  {f f₁ : α → β} {s : set α} {x : α} (h : continuous_within_at f s x)
+  (h₁ : f₁ =ᶠ[𝓝 x] f) : continuous_within_at f₁ s x :=
+h.congr_of_eventually_eq (nhds_within_le_nhds h₁) h₁.self_of_nhds
+
+namespace set
+-- move
+variables {α β γ : Type*} {s t : set α} {f : s → β} {g : t → β} {x : α}
+/-- The union `f ∪ g` of two functions `f : s → β` and `g : t → β`.
+  On the intersection `s ∩ t`, the function `f ∪ g` corresponds to `f`. -/
+def union_elim [decidable_pred (∈ s)] (f : s → β) (g : t → β) (x : s ∪ t) : β :=
+if h : (x : α) ∈ s then f ⟨x, h⟩ else g ⟨x, x.prop.resolve_left h⟩
+
+lemma union_elim_eq_left [decidable_pred (∈ s)] (hx : x ∈ s) :
+  union_elim f g ⟨x, mem_union_left _ hx⟩ = f ⟨x, hx⟩ :=
+dif_pos hx
+
+lemma union_elim_eq_right [decidable_pred (∈ s)] (h1x : x ∈ s ∪ t) (h2x : x ∉ s) :
+  union_elim f g ⟨x, h1x⟩ = g ⟨x, h1x.resolve_left h2x⟩ :=
+dif_neg h2x
+
+lemma union_elim_eq_right_of_eq [decidable_pred (∈ s)] (hxt : x ∈ t)
+  (hfg : ∀ x (hxs : x ∈ s) (hxt : x ∈ t), f ⟨x, hxs⟩ = g ⟨x, hxt⟩) :
+  union_elim f g ⟨x, mem_union_right _ hxt⟩ = g ⟨x, hxt⟩ :=
+if hxs : x ∈ s then (union_elim_eq_left hxs).trans (hfg x hxs hxt) else union_elim_eq_right _ hxs
+
+lemma union_elim_restrict [decidable_pred (∈ s)] (f : α → β) :
+  union_elim (restrict f s) (restrict f t) = restrict f (s ∪ t) :=
+begin
+  ext ⟨x, hx⟩,
+  cases (mem_union _ _ _).mp hx; simp [union_elim_eq_left, union_elim_eq_right_of_eq, h]
+end
+
+end set
+
+open_locale classical
+open set
 
 namespace filter
 
@@ -31,6 +72,9 @@ nonempty_of_exists h
 
 lemma eventually_constant_const (y₀ : β) : eventually_constant (λ x, y₀) f :=
 ⟨y₀, eventually_of_forall $ λ x, rfl⟩
+
+lemma eventually_constant_of_unique [unique β] : eventually_constant g f :=
+⟨default β, eventually_of_forall $ λ x, unique.uniq _ _⟩
 
 lemma eventually_constant_at_top [semilattice_sup α] [nonempty α] :
   (∃ x, ∀ y ≥ x, g y = g x) ↔ eventually_constant g at_top :=
@@ -70,6 +114,14 @@ lemma eventual_value_unique [f.ne_bot] {y : β} (hy : ∀ᶠ i in f, g i = y) :
   y = @eventual_value _ _ ⟨y⟩ g f :=
 by { obtain ⟨x, rfl, hx⟩ := (hy.and $ eventually_eq_eventual_value ⟨y, hy⟩).exists, exact hx }
 
+lemma eventually_constant.exists_eventual_value_eq [f.ne_bot] (h : eventually_constant g f) :
+  ∃ x, @eventual_value _ _ h.nonempty g f = g x :=
+begin
+  obtain ⟨y, hy⟩ := h,
+  obtain ⟨x, rfl⟩ := hy.exists,
+  exact ⟨x, (eventual_value_unique hy).symm⟩
+end
+
 lemma eventually_constant.tendsto [nonempty β] (h : eventually_constant g f) :
   tendsto g f (pure (eventual_value g f)) :=
 by { rw [tendsto_pure], exact eventually_eq_eventual_value h }
@@ -92,6 +144,27 @@ lemma eventual_value_eq_lim [f.ne_bot] [nonempty β] [topological_space β] [t2_
   (h : eventually_constant g f) : eventual_value g f = lim f g :=
 h.tendsto_nhds.lim_eq.symm
 
+/-- The index from where a function `g : ℕ → α` is eventually constant. Equals `0` if `g` is not
+  eventually constant. -/
+noncomputable def eventual_index (g : ℕ → α) : ℕ :=
+Inf {n : ℕ | ∀ m, n ≤ m → g m = g n}
+
+lemma eventually_constant.eq_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) {n : ℕ}
+  (hn : eventual_index g ≤ n) : g n = g (eventual_index g) :=
+nat.Inf_mem (eventually_constant_at_top.mpr hg) n hn
+
+lemma eventually_constant.fn_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) :
+  g (eventual_index g) = @eventual_value _ _ ⟨g 0⟩ g at_top :=
+eventual_value_unique $ eventually_of_mem (mem_at_top _) $ λ n hn, hg.eq_eventual_index hn
+
+lemma eventually_constant.eq_eventual_value_of_eventual_index_le {g : ℕ → α}
+  (hg : eventually_constant g at_top) {n : ℕ}
+  (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g at_top :=
+(hg.eq_eventual_index hn).trans hg.fn_eventual_index
+
+lemma foo {g : α → β → γ} {s : set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
+  (hy : y ∈ s) :
+
 end filter
 open filter
 
@@ -100,16 +173,21 @@ variables {α β γ δ : Type*} [topological_space β] {g : α → β → γ}
 
 section locally_eventually_constant
 
-
+/--
+  A sequence of functions `g` is locally eventually constant on `U` w.r.t. filter `f` if
+  every point in `U` has a neighborhood `O` such that `g` restricted to `O` is eventually constant.
+-/
 def locally_eventually_constant_on (g : α → β → γ) (f : filter α) (U : set β) : Prop :=
 ∀ x ∈ U, ∃ (O ∈ 𝓝 x), eventually_constant (λ n, (O : set β).restrict (g n)) f
 
--- def locally_eventually_constant_on (g : α → β → γ) (f : filter α) (U : set β) (x : β) : Prop
-
-lemma continuous_within_at.congr_nhds {α β} [topological_space α] [topological_space β]
-  {f f₁ : α → β} {s : set α} {x : α} (h : continuous_within_at f s x)
-  (h₁ : f₁ =ᶠ[𝓝 x] f) : continuous_within_at f₁ s x :=
-h.congr_of_eventually_eq (nhds_within_le_nhds h₁) h₁.self_of_nhds
+lemma locally_eventually_constant_on.eventually_constant
+  (hgf : locally_eventually_constant_on g f U) (hx : x ∈ U) :
+  eventually_constant (λ n, g n x) f :=
+begin
+  obtain ⟨O, hO, y, hg⟩ := hgf x hx,
+  refine ⟨y ⟨x, mem_of_mem_nhds hO⟩, hg.mono $ λ n hn, _⟩,
+  apply function.funext_iff.mp hn ⟨x, mem_of_mem_nhds hO⟩
+end
 
 lemma locally_eventually_constant_on.continuous_within_at
   [topological_space δ] [f.ne_bot] [nonempty δ]
@@ -121,10 +199,40 @@ begin
   obtain ⟨O, hO, hgO⟩ := hgf x hxU,
   obtain ⟨i, hi⟩ := (eventually_eq_eventual_value hgO).exists,
   simp_rw [function.funext_iff, eventual_value_apply hgO] at hi,
-  refine (hg i).congr_nhds (eventually_of_mem hO $ λ y hy, _),
+  refine (hg i).congr_nhds (eventually_of_mem hO $ λ y (hy : y ∈ O), _),
   refine eq.trans _ (congr_arg F $ hi ⟨y, hy⟩).symm,
   apply eventual_value_compose,
 end
+
+lemma locally_eventually_constant_on.exists_nhds_set_of_is_compact
+  (hgf : locally_eventually_constant_on g f U)
+  {K : set β} (hK : is_compact K) (hKU : K ⊆ U) :
+  ∃ O ∈ nhds_set K, eventually_constant (λ n, (O : set β).restrict (g n)) f :=
+begin
+  refine is_compact.induction_on hK ⟨∅, mem_nhds_set_empty, eventually_constant_of_unique⟩ _ _ _,
+  { rintro s t hst ⟨O, hO, hgO⟩, refine ⟨O, _, hgO⟩, exact monotone_nhds_set hst hO },
+  { rintro s t ⟨O, hO, y, hgO⟩ ⟨O', hO', y', hgO'⟩,
+    refine ⟨O ∪ O', union_mem_nhds_set hO hO', union_elim y y', _⟩,
+    filter_upwards [hgO, hgO'], rintro x rfl rfl,
+    rw union_elim_restrict },
+  { intros x hx, rcases hgf x (hKU hx) with ⟨O, hO, hgO⟩,
+    exact ⟨interior O, mem_nhds_within_of_mem_nhds $ interior_mem_nhds.mpr hO, O,
+      mem_nhds_interior, hgO⟩ }
+end
+
+/-- A neighborhood around `x` where `g` is locally constant. -/
+def locally_eventually_constant_on.nhd (hgf : locally_eventually_constant_on g f U) (hx : x ∈ U) :
+  set β :=
+classical.some $ hgf x hx
+
+lemma locally_eventually_constant_on.nhd_mem_nhds (hgf : locally_eventually_constant_on g f U)
+  (hx : x ∈ U) : hgf.nhd hx ∈ 𝓝 x :=
+classical.some $ classical.some_spec $ hgf x hx
+
+lemma locally_eventually_constant_on.eventually_constant_nhd
+  (hgf : locally_eventually_constant_on g f U) (hx : x ∈ U) :
+  eventually_constant (λ n, (hgf.nhd hx).restrict (g n)) f :=
+classical.some_spec $ classical.some_spec $ hgf x hx
 
 end locally_eventually_constant
 
