@@ -26,7 +26,7 @@ variables {X : Type*} [topological_space X] {F : set X}
 /-- An arbitrary path joining `x` and `y` in `F`. -/
 noncomputable def some_path (hF : is_path_connected F) {x y : X} (hx : x ∈ F) (hy : y ∈ F) :
   path x y :=
-(hF.joined_in x y hx hy).some_path
+(hF.joined_in x hx y hy).some_path
 
 lemma some_path_mem (hF : is_path_connected F) {x y : X} (hx : x ∈ F) (hy : y ∈ F)
   (t : I) : hF.some_path hx hy t ∈ F :=
@@ -308,7 +308,7 @@ begin
   rcases surrounded_of_convex_hull O_op hsf with ⟨p, w, h, hp⟩,
   rw ← O_op.is_connected_iff_is_path_connected at O_conn,
   rcases (O_conn.exists_path_through_family p hp) with ⟨Ω₀, hΩ₀⟩,
-  rcases O_conn.joined_in b (p 0) hb (hp 0) with ⟨Ω₁, hΩ₁⟩,
+  rcases O_conn.joined_in b hb (p 0) (hp 0) with ⟨Ω₁, hΩ₁⟩,
   exact ⟨surrounding_loop O_conn hp hb, continuous_surrounding_loop, surrounding_loop_zero_right,
     surrounding_loop_zero_left, surrounding_loop_mem, surrounding_loop_surrounds h⟩
 end
