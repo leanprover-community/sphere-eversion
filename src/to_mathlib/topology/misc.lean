@@ -226,14 +226,14 @@ begin
 end
 
 end
-
+#print union_comm
 -- move
 lemma continuous_on.comp_fract'' {α β γ : Type*} [linear_ordered_ring α] [floor_ring α]
   [topological_space α] [order_topology α]
   [topological_add_group α] [topological_space β] [topological_space γ]
   {s : β → α}
   {f : β → α → γ}
-  (h : continuous_on (uncurry f) $ (univ : set β).prod (Icc 0 1 : set α))
+  (h : continuous_on (uncurry f) $ (univ : set β) ×ˢ (Icc 0 1 : set α))
   (hs : continuous s)
   (hf : ∀ s, f s 0 = f s 1) :
   continuous (λ x : β, f x $ int.fract (s x)) :=

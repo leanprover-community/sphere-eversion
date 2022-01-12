@@ -108,7 +108,8 @@ def slice (R : rel_loc E F) (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)) 
 
 /-- A local relation `R` is open over a set `U` if the part of `R` lying over `U`
 (for the obvious projection `(E × F × (E →L[ℝ] F)) → E`) is open. -/
-def is_open_over (R : rel_loc E F) (U : set E) : Prop := is_open (R ∩ U.prod univ)
+def is_open_over (R : rel_loc E F) (U : set E) : Prop :=
+is_open (R ∩ U ×ˢ @univ (F × (E →L[ℝ] F)))
 
 /-- A relation is ample if all its slices are ample. -/
 def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
@@ -195,9 +196,9 @@ open rel_loc
 /-- A homotopy of formal solutions to `R` over a set `U`. -/
 structure htpy_formal_sol (R : rel_loc E F) (U : set E) :=
 (f : ℝ → E → F)
-(f_diff : smooth_on (uncurry f) (set.prod univ U))
+(f_diff : smooth_on (uncurry f) (@univ ℝ ×ˢ U))
 (φ : ℝ → E → E →L[ℝ] F)
-(φ_diff : smooth_on (uncurry φ) (set.prod univ U))
+(φ_diff : smooth_on (uncurry φ) (@univ ℝ ×ˢ U))
 (is_sol : ∀ t, ∀ x ∈ U, (x, f t x, φ t x) ∈ R)
 
 variables {U : set E} {R : rel_loc E F}

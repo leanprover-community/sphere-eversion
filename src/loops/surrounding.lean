@@ -187,7 +187,7 @@ begin
   use eval_barycentric_coords ι ℝ F,
   let V : set (ι → ℝ) := set.pi set.univ (λ i, Ioi (0 : ℝ)),
   let W' : F × (ι → F) → (ι → ℝ) := uncurry (eval_barycentric_coords ι ℝ F),
-  let A : set (F × (ι → F)) := set.prod univ (affine_bases ι ℝ F),
+  let A : set (F × (ι → F)) := univ ×ˢ affine_bases ι ℝ F,
   let U : set (F × (ι → F)) := A ∩ (W' ⁻¹' V),
   have hι : fintype.card ι = d + 1 := fintype.card_fin _,
   have hp : p ∈ affine_bases ι ℝ F := ⟨h.indep, h.tot⟩,
@@ -453,7 +453,7 @@ begin
   { rcases hΩ_op with ⟨U, hUx₀, hU⟩,
     -- todo: this is nicer with `is_compact.eventually_forall_of_forall_eventually` twice, but then
     -- we need the continuity of `δ` with the arguments reassociated differently.
-    have : ∀ᶠ (x : E) in 𝓝 x₀, ∀ (ts : ℝ × ℝ), ts ∈ set.prod I I → (x, δ x ts.1 ts.2) ∈ Ω,
+    have : ∀ᶠ (x : E) in 𝓝 x₀, ∀ (ts : ℝ × ℝ), ts ∈ I ×ˢ I → (x, δ x ts.1 ts.2) ∈ Ω,
     { refine is_compact.eventually_forall_mem (is_compact_Icc.prod is_compact_Icc)
         (continuous_fst.prod_mk hδ) _,
       rintro ⟨t, s⟩ ⟨ht, hs⟩,

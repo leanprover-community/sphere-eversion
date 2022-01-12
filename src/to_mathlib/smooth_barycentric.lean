@@ -115,7 +115,7 @@ variables [normed_group F] [normed_space 𝕜 F]
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 lemma smooth_barycentric [∀ v, decidable (v ∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
   (h : fintype.card ι = finite_dimensional.finrank 𝕜 F + 1) :
-  times_cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (set.prod univ (affine_bases ι 𝕜 F)) :=
+  times_cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (@univ F ×ˢ (affine_bases ι 𝕜 F)) :=
 begin
   obtain ⟨b : affine_basis ι 𝕜 F⟩ := affine_basis.exists_affine_basis_of_finite_dimensional h,
   simp_rw [uncurry_def, times_cont_diff_on_pi, eval_barycentric_coords_eq_det 𝕜 b],

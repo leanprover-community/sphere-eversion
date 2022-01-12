@@ -194,7 +194,7 @@ end
 end
 
 section
-variables {α : Type*} [conditionally_complete_linear_order α] [no_bot_order α] [no_top_order α]
+variables {α : Type*} [conditionally_complete_linear_order α] [no_min_order α] [no_max_order α]
           [measurable_space α] [topological_space α]
           [order_topology α] [opens_measurable_space α] [first_countable_topology α] {μ : measure α}
           [is_locally_finite_measure μ] [has_no_atoms μ]
@@ -211,14 +211,14 @@ begin
   rw continuous_iff_continuous_at,
   rintros ⟨x₀, b₀⟩,
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩,
-  cases no_bot (min a₀ b₀) with a a_lt,
-  cases no_top (max a₀ b₀) with b lt_b,
+  cases exists_lt (min a₀ b₀) with a a_lt,
+  cases exists_gt (max a₀ b₀) with b lt_b,
   rw lt_min_iff at a_lt,
   rw max_lt_iff at lt_b,
   have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩,
   have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
   obtain ⟨M : ℝ, M_pos : M > 0,
-          hM : ∀ (x : X × α), x ∈ U.prod (Icc a b) → ∥(λ (p : X × α), F p.fst p.snd) x∥ ≤ M⟩ :=
+          hM : ∀ (x : X × α), x ∈ U ×ˢ Icc a b → ∥(λ (p : X × α), F p.fst p.snd) x∥ ≤ M⟩ :=
     (U_cpct.prod (is_compact_Icc : is_compact $ Icc a b)).bdd_above_norm hF,
   refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in b₀_in
     (measure_singleton b₀),
@@ -429,14 +429,14 @@ begin
     split,
     linarith [min_le_right a (s x₀)],
     linarith [le_max_right a (s x₀)] },
-  have cpct : is_compact ((closed_ball x₀ 1).prod $ Icc a₀ b₀),
+  have cpct : is_compact (closed_ball x₀ 1 ×ˢ Icc a₀ b₀),
       from (proper_space.is_compact_closed_ball x₀ 1).prod is_compact_Icc,
   obtain ⟨M, M_nonneg, F_bound⟩ : ∃ M : ℝ, 0 ≤ M ∧ ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
   { rcases cpct.bdd_above_norm hF.continuous with ⟨M, M_pos : 0 < M, hM⟩,
     use [M, M_pos.le],
     exact λ x x_in t t_in, hM (x, t) ⟨ball_subset_closed_ball x_in, mem_Icc_of_Ioo t_in⟩ },
   obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, lipschitz_on_with K (λ x, F x t) (ball x₀ 1),
-  { have conv : convex ℝ ((closed_ball x₀ 1).prod $ Icc  a₀ b₀),
+  { have conv : convex ℝ (closed_ball x₀ 1 ×ˢ Icc a₀ b₀),
       from (convex_closed_ball x₀ 1).prod (convex_Icc a₀ b₀),
     rcases hF.lipschitz_on_with conv cpct with ⟨K, hK⟩,
     use K,
@@ -669,4 +669,3 @@ begin
 end
 
 end
-
