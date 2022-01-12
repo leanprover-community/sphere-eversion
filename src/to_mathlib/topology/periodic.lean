@@ -138,7 +138,7 @@ begin
     have : φ = F ∘ (λ p : X × ℝ, (p.1, π p.2)), by { ext p, refl },
     dsimp [φ] at this,
     rwa [this,  ← qm.continuous_iff] at cont },
-  have hFK : ∀ x : X × 𝕊₁, x ∉ (K.prod (univ : set 𝕊₁)) → F x = 0,
+  have hFK : ∀ x : X × 𝕊₁, x ∉ (K ×ˢ (univ : set 𝕊₁)) → F x = 0,
   { rintros ⟨x, ⟨t⟩⟩ hxt,
     have : ∀ a, f x a = 0, by simpa using congr_fun (hfK x $ λ hx, hxt (by simp [hx])),
     apply this },
