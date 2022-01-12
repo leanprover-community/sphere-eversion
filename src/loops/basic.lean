@@ -71,7 +71,7 @@ begin
 end
 
 instance [inhabited X] : inhabited (loop X) :=
-⟨loop.const (default X)⟩
+⟨loop.const default⟩
 
 /-- Periodicity of loops restated in terms of the function coercion. -/
 lemma per (γ : loop X) : ∀ t, γ (t + 1) = γ t :=
