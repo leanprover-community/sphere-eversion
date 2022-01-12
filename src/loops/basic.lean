@@ -57,6 +57,9 @@ rfl
 @[ext] protected lemma ext : ∀ {γ₁ γ₂ : loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
 | ⟨x, h1⟩ ⟨.(x), h2⟩ rfl := rfl
 
+protected lemma ext_iff {γ₁ γ₂ : loop X} : γ₁ = γ₂ ↔ (γ₁ : ℝ → X) = γ₂ :=
+⟨λ h, by rw h, loop.ext⟩
+
 instance [has_zero X] : has_zero (loop X) :=
 ⟨{ to_fun := λ t, 0, per' := λ t, rfl }⟩
 

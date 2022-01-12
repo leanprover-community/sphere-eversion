@@ -91,7 +91,7 @@ lemma eventually_constant_of_unique [unique β] : eventually_constant g f :=
 ⟨default, eventually_of_forall $ λ x, unique.uniq _ _⟩
 
 lemma eventually_constant_at_top [semilattice_sup α] [nonempty α] :
-  (∃ i, ∀ j ≥ i, g j = g i) ↔ eventually_constant g at_top :=
+  (∃ i, ∀ j, i ≤ j → g j = g i) ↔ eventually_constant g at_top :=
 begin
   simp_rw [eventually_constant, eventually_at_top],
   split,
@@ -100,7 +100,7 @@ begin
 end
 
 lemma eventually_constant_at_top_nat {g : ℕ → α} :
-  (∃ n, ∀ m ≥ n, g (m + 1) = g m) ↔ eventually_constant g at_top :=
+  (∃ n, ∀ m, n ≤ m → g (m + 1) = g m) ↔ eventually_constant g at_top :=
 begin
   rw [← eventually_constant_at_top],
   apply exists_congr, intro n,
@@ -139,7 +139,7 @@ lemma eventual_value_eq_fn {g : ℕ → β} {hβ : nonempty β} {n : ℕ} (h : �
 eventual_value_unique' $ eventually_of_mem (mem_at_top _) h
 
 lemma eventually_constant.exists_eventual_value_eq [f.ne_bot] (h : eventually_constant g f) :
-  ∃ x, @eventual_value _ _ h.nonempty g f = g x :=
+  ∃ i, @eventual_value _ _ h.nonempty g f = g i :=
 begin
   obtain ⟨y, hy⟩ := h,
   obtain ⟨x, rfl⟩ := hy.exists,
@@ -218,7 +218,7 @@ lemma eventually_constant_on.nonempty (hg : eventually_constant_on g f O) (hx : 
 (hg.eventually_constant hx).nonempty
 
 lemma eventually_constant_on_at_top [semilattice_sup α] [nonempty α] :
-  (∃ x, ∀ x' ≥ x, ∀ y ∈ O, g x' y = g x y) ↔ eventually_constant_on g at_top O :=
+  (∃ x, ∀ x', x ≤ x' → ∀ y ∈ O, g x' y = g x y) ↔ eventually_constant_on g at_top O :=
 by simp_rw [eventually_constant_on, ← eventually_constant_at_top, restrict_eq_restrict_iff]
 
 lemma eventually_constant_on.exists_eventual_value_eq [f.ne_bot]
