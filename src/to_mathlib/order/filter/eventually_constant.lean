@@ -27,6 +27,20 @@ h.congr_of_eventually_eq (nhds_within_le_nhds h₁) h₁.self_of_nhds
 namespace set
 -- move
 variables {α β γ : Type*} {s t : set α} {f : s → β} {g : t → β} {x : α}
+
+@[simp]
+lemma restrict_eq_iff {f : α → β} {g : s → β} :
+  restrict f s = g ↔ ∀ x (hx : x ∈ s), f x = g ⟨x, hx⟩ :=
+by simp_rw [function.funext_iff, set_coe.forall, restrict_apply, subtype.coe_mk]
+
+@[simp]
+lemma eq_restrict_iff {g : α → β} : f = restrict g s ↔ ∀ x (hx : x ∈ s), f ⟨x, hx⟩ = g x :=
+by simp_rw [@eq_comm _ f, restrict_eq_iff, eq_comm]
+
+@[simp]
+lemma restrict_eq_restrict_iff {f g : α → β} : restrict f s = restrict g s ↔ ∀ x ∈ s, f x = g x :=
+by simp_rw [restrict_eq_iff, restrict_apply, subtype.coe_mk]
+
 /-- The union `f ∪ g` of two functions `f : s → β` and `g : t → β`.
   On the intersection `s ∩ t`, the function `f ∪ g` corresponds to `f`. -/
 def union_elim [decidable_pred (∈ s)] (f : s → β) (g : t → β) (x : s ∪ t) : β :=
@@ -74,15 +88,15 @@ lemma eventually_constant_const (y₀ : β) : eventually_constant (λ x, y₀) f
 ⟨y₀, eventually_of_forall $ λ x, rfl⟩
 
 lemma eventually_constant_of_unique [unique β] : eventually_constant g f :=
-⟨default β, eventually_of_forall $ λ x, unique.uniq _ _⟩
+⟨default, eventually_of_forall $ λ x, unique.uniq _ _⟩
 
 lemma eventually_constant_at_top [semilattice_sup α] [nonempty α] :
-  (∃ x, ∀ y ≥ x, g y = g x) ↔ eventually_constant g at_top :=
+  (∃ i, ∀ j ≥ i, g j = g i) ↔ eventually_constant g at_top :=
 begin
   simp_rw [eventually_constant, eventually_at_top],
   split,
-  { rintro ⟨x, hx⟩, refine ⟨g x, x, hx⟩ },
-  { rintro ⟨y, x, hx⟩, use x, simp_rw [hx x le_rfl], exact hx },
+  { rintro ⟨i, hi⟩, refine ⟨g i, i, hi⟩ },
+  { rintro ⟨y, i, hi⟩, use i, simp_rw [hi i le_rfl], exact hi },
 end
 
 lemma eventually_constant_at_top_nat {g : ℕ → α} :
@@ -114,6 +128,16 @@ lemma eventual_value_unique [f.ne_bot] {y : β} (hy : ∀ᶠ i in f, g i = y) :
   y = @eventual_value _ _ ⟨y⟩ g f :=
 by { obtain ⟨x, rfl, hx⟩ := (hy.and $ eventually_eq_eventual_value ⟨y, hy⟩).exists, exact hx }
 
+/-- This lemma is sometimes useful if the elaborator uses the nonempty instance in
+  `eventual_value_unique` to find the implicit argument `y`. -/
+lemma eventual_value_unique' [f.ne_bot] {hβ : nonempty β} {y : β} (hy : ∀ᶠ i in f, g i = y) :
+  eventual_value g f = y  :=
+(eventual_value_unique hy).symm
+
+lemma eventual_value_eq_fn {g : ℕ → β} {hβ : nonempty β} {n : ℕ} (h : ∀ m, n ≤ m → g m = g n) :
+  eventual_value g at_top = g n :=
+eventual_value_unique' $ eventually_of_mem (mem_at_top _) h
+
 lemma eventually_constant.exists_eventual_value_eq [f.ne_bot] (h : eventually_constant g f) :
   ∃ x, @eventual_value _ _ h.nonempty g f = g x :=
 begin
@@ -144,32 +168,75 @@ lemma eventual_value_eq_lim [f.ne_bot] [nonempty β] [topological_space β] [t2_
   (h : eventually_constant g f) : eventual_value g f = lim f g :=
 h.tendsto_nhds.lim_eq.symm
 
-/-- The index from where a function `g : ℕ → α` is eventually constant. Equals `0` if `g` is not
-  eventually constant. -/
-noncomputable def eventual_index (g : ℕ → α) : ℕ :=
-Inf {n : ℕ | ∀ m, n ≤ m → g m = g n}
+-- the following can be generalized a lot using `eventually_constant.exists_eventual_value_eq`.
+-- /-- The index from where a function `g : ℕ → α` is eventually constant. Equals `0` if `g` is not
+--   eventually constant. -/
+-- noncomputable def eventual_index (g : ℕ → α) : ℕ :=
+-- Inf {n : ℕ | ∀ m, n ≤ m → g m = g n}
 
-lemma eventually_constant.eq_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) {n : ℕ}
-  (hn : eventual_index g ≤ n) : g n = g (eventual_index g) :=
-nat.Inf_mem (eventually_constant_at_top.mpr hg) n hn
+-- lemma eventually_constant.eq_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) {n : ℕ}
+--   (hn : eventual_index g ≤ n) : g n = g (eventual_index g) :=
+-- nat.Inf_mem (eventually_constant_at_top.mpr hg) n hn
 
-lemma eventually_constant.fn_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) :
-  g (eventual_index g) = @eventual_value _ _ ⟨g 0⟩ g at_top :=
-eventual_value_unique $ eventually_of_mem (mem_at_top _) $ λ n hn, hg.eq_eventual_index hn
+-- lemma eventually_constant.fn_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) :
+--   g (eventual_index g) = @eventual_value _ _ ⟨g 0⟩ g at_top :=
+-- (eventual_value_eq_fn $ λ n hn, (hg.eq_eventual_index hn : _)).symm
 
-lemma eventually_constant.eq_eventual_value_of_eventual_index_le {g : ℕ → α}
-  (hg : eventually_constant g at_top) {n : ℕ}
-  (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g at_top :=
-(hg.eq_eventual_index hn).trans hg.fn_eventual_index
+-- lemma eventually_constant.eq_eventual_value_of_eventual_index_le {g : ℕ → α}
+--   (hg : eventually_constant g at_top) {n : ℕ}
+--   (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g at_top :=
+-- (hg.eq_eventual_index hn).trans hg.fn_eventual_index
 
-lemma foo {g : α → β → γ} {s : set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
-  (hy : y ∈ s) :
+
+-- lemma foo {g : α → β → γ} {s : set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
+--   (hy : y ∈ s) :
+-- sorry := sorry
 
 end filter
 open filter
 
-variables {α β γ δ : Type*} [topological_space β] {g : α → β → γ}
-  {f : filter α} {U : set β} {i : α} {x : β}
+variables {α β γ δ : Type*} {g : α → β → γ}
+  {f : filter α} {O U : set β} {i : α} {x : β}
+
+section eventually_constant_on
+
+/--
+  A sequence of functions `g` is eventually constant on `O` w.r.t. filter `f` if
+  `g` restricted to `O` is eventually constant.
+-/
+def eventually_constant_on (g : α → β → γ) (f : filter α) (O : set β) : Prop :=
+eventually_constant (λ n, O.restrict (g n)) f
+
+lemma eventually_constant_on.eventually_constant (hg : eventually_constant_on g f O) (hx : x ∈ O) :
+  eventually_constant (λ n, g n x) f :=
+begin
+  cases hg with y hg, exact ⟨y ⟨x, hx⟩, hg.mono $ λ n hn, (function.funext_iff.mp hn ⟨x, hx⟩ : _)⟩
+end
+
+lemma eventually_constant_on.nonempty (hg : eventually_constant_on g f O) (hx : x ∈ O) :
+  nonempty γ :=
+(hg.eventually_constant hx).nonempty
+
+lemma eventually_constant_on_at_top [semilattice_sup α] [nonempty α] :
+  (∃ x, ∀ x' ≥ x, ∀ y ∈ O, g x' y = g x y) ↔ eventually_constant_on g at_top O :=
+by simp_rw [eventually_constant_on, ← eventually_constant_at_top, restrict_eq_restrict_iff]
+
+lemma eventually_constant_on.exists_eventual_value_eq [f.ne_bot]
+  (hg : eventually_constant_on g f O) :
+  ∃ i, ∀ x (hx : x ∈ O), @eventual_value _ _ (hg.nonempty hx) (λ n, g n x) f = g i x :=
+by simpa only [eq_restrict_iff, eventual_value_apply hg] using hg.exists_eventual_value_eq
+
+-- lemma eventually_constant_on.exists_eventual_value_eq [f.ne_bot] (h : eventually_constant g f) :
+--   ∃ x, @eventual_value _ _ h.nonempty g f = g x :=
+-- begin
+--   obtain ⟨y, hy⟩ := h,
+--   obtain ⟨x, rfl⟩ := hy.exists,
+--   exact ⟨x, (eventual_value_unique hy).symm⟩
+-- end
+
+end eventually_constant_on
+
+variables [topological_space β]
 
 section locally_eventually_constant
 
@@ -178,16 +245,16 @@ section locally_eventually_constant
   every point in `U` has a neighborhood `O` such that `g` restricted to `O` is eventually constant.
 -/
 def locally_eventually_constant_on (g : α → β → γ) (f : filter α) (U : set β) : Prop :=
-∀ x ∈ U, ∃ (O ∈ 𝓝 x), eventually_constant (λ n, (O : set β).restrict (g n)) f
+∀ x ∈ U, ∃ O ∈ 𝓝 x, eventually_constant_on g f O
 
 lemma locally_eventually_constant_on.eventually_constant
   (hgf : locally_eventually_constant_on g f U) (hx : x ∈ U) :
   eventually_constant (λ n, g n x) f :=
-begin
-  obtain ⟨O, hO, y, hg⟩ := hgf x hx,
-  refine ⟨y ⟨x, mem_of_mem_nhds hO⟩, hg.mono $ λ n hn, _⟩,
-  apply function.funext_iff.mp hn ⟨x, mem_of_mem_nhds hO⟩
-end
+by { obtain ⟨O, hO, hg⟩ := hgf x hx, exact hg.eventually_constant (mem_of_mem_nhds hO) }
+
+lemma locally_eventually_constant_on.nonempty (hg : locally_eventually_constant_on g f U)
+  (hx : x ∈ U) : nonempty γ :=
+(hg.eventually_constant hx).nonempty
 
 lemma locally_eventually_constant_on.continuous_within_at
   [topological_space δ] [f.ne_bot] [nonempty δ]
@@ -207,7 +274,7 @@ end
 lemma locally_eventually_constant_on.exists_nhds_set_of_is_compact
   (hgf : locally_eventually_constant_on g f U)
   {K : set β} (hK : is_compact K) (hKU : K ⊆ U) :
-  ∃ O ∈ nhds_set K, eventually_constant (λ n, (O : set β).restrict (g n)) f :=
+  ∃ O ∈ nhds_set K, eventually_constant_on g f O :=
 begin
   refine is_compact.induction_on hK ⟨∅, mem_nhds_set_empty, eventually_constant_of_unique⟩ _ _ _,
   { rintro s t hst ⟨O, hO, hgO⟩, refine ⟨O, _, hgO⟩, exact monotone_nhds_set hst hO },
@@ -231,7 +298,7 @@ classical.some $ classical.some_spec $ hgf x hx
 
 lemma locally_eventually_constant_on.eventually_constant_nhd
   (hgf : locally_eventually_constant_on g f U) (hx : x ∈ U) :
-  eventually_constant (λ n, (hgf.nhd hx).restrict (g n)) f :=
+  eventually_constant_on g f (hgf.nhd hx) :=
 classical.some_spec $ classical.some_spec $ hgf x hx
 
 end locally_eventually_constant
