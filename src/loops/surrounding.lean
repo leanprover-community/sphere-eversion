@@ -827,6 +827,14 @@ lemma decode₂_encode {α} [encodable α] (x : α) : decode₂ α (encode x) = 
 by simp [decode₂]
 
 -- this proof strategy doesn't get locally finiteness of W on the closure of U.
+
+-- Proof sketch that might be useful:
+-- * Find an increasing sequence of compact sets `L i` in `U` covering `U`, such that
+--   `L i ⊆ interior (L (i + 1))` and `L 0 = L (-1) = ∅`.
+-- * Get a finite set of the `K x` covering `L (i + 1) \ interior (L i)`, and restrict the
+--   corresponding `W₂ x` to `L (i + 2) \ interior (L (i - 1))`.
+-- * Now the collection of all these `K x` will cover all of `U` and be countable and locally finite.
+
 lemma foo2 {U : set X} (hU : is_open U) {P : set X → Prop} (hP : antitone P) (h0 : P ∅)
   (hX : ∀ x ∈ U, ∃ V ∈ 𝓝 (x : X), P V) :
 ∃ (K : ℕ → set X) (W : ℕ → set X), (∀ n, is_compact (K n)) ∧ (∀ n, is_open (W n)) ∧
@@ -1042,56 +1050,31 @@ lemma exists_surrounding_loops [finite_dimensional ℝ F]
                         (∀ᶠ x in nhds_set K, γ x = γ₀ x)  :=
 begin
   /-
-  Translation
+  Translation:
   Notes | Formalization
   ------+--------------
   γ     | γ₀
   U₀'   | V₀
-  Uᵢ    | W
-  Kᵢ    | L
-  successive stages of γ' | γ' = δ.2.2.1
-
-  Other sets:
-  W₁ x: a set around x where we can locally find a `γ`
-  W₂ x := (W₁ x \ closure V₀) ∩ ball x 1: make the set bounded and not intersecting `V₀`
-  `s` a countable collection of `x`'s such that `{ W₂ x | x ∈ s }` covers `U`
-  We also ensure that V₀ is a subset of U, but that is probably not needed.
-
-  Note: getting the Uᵢ and Kᵢ correctly is tricky. Proof sketch that might be useful:
-  * get W₂ x as a above, and get a compact subneighborhood `K x`
-  * Find an increasing sequence of compact sets `L i` in `U` covering `U`, such that
-    `L i ⊆ interior(L (i + 1))` and `L 0 = L (-1) = ∅`.
-  * Get a finite set of the `K x` covering `L (i + 1) \ interior (L i)`, and restrict the
-    corresponding `W₂ x` to `L (i + 2) \ interior (L (i - 1))`.
-  * Now the collection of all these `K x` will cover all of `U` and be countable and locally finite.
+  Uᵢ    | W i
+  Kᵢ    | L i
   -/
   rcases hγ₀_surr with ⟨V, hV, hγ₀⟩,
   rw [mem_nhds_set] at hV, rcases hV with ⟨U₀, hU₀, hKU₀, hU₀V⟩,
-  obtain ⟨V₀, hV₀, hKV₀, hV₀UU₀, hcV₀⟩ :=
-    exists_open_between_and_is_compact_closure hK (hU₀.inter hU) (subset_inter hKU₀ hKU),
-  have hUV₀ : is_open (U \ closure V₀) := hU.sdiff is_closed_closure,
-  let P := λ N : set E, N ⊆ U \ closure V₀ ∧ ∃ γ : E → ℝ → loop F,
-    surrounding_family_in g b γ N Ω,
-  have hP : antitone P, { rintro s t hst ⟨ht, γ, hγ⟩, exact ⟨hst.trans ht, γ, hγ.mono hst⟩ },
-  have h0P : P ∅ := ⟨empty_subset _, γ₀, hγ₀.mono (empty_subset _)⟩,
-  have h2P : ∀ x ∈ U \ closure V₀, ∃ V ∈ 𝓝 x, P V,
+  let P := λ N : set E, ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ N Ω,
+  have hP : antitone P, { rintro s t hst ⟨γ, hγ⟩, exact ⟨γ, hγ.mono hst⟩ },
+  have h0P : P ∅ := ⟨γ₀, hγ₀.mono (empty_subset _)⟩,
+  have h2P : ∀ x ∈ U, ∃ V ∈ 𝓝 x, P V,
   { intros x hx,
-    obtain ⟨γ, W, hW, hxW, hγ⟩ := local_loops_open ⟨U, hU.mem_nhds hx.left, hΩ_op⟩
-     (hΩ_conn x hx.left) (hg x hx.left) hb (hb_in x hx.left) (hconv x hx.left),
-    refine ⟨W ∩ (U \ closure V₀), (hW.inter $ hU.sdiff is_closed_closure).mem_nhds ⟨hxW, hx⟩, inter_subset_right _ _, γ, hγ.mono $ inter_subset_left _ _⟩ },
-  obtain ⟨L, W, hL, hW, hPW, hLW, hlW, hUL⟩ := foo2 hUV₀ hP h0P h2P,
-  choose hWU γ hγ using hPW,
-  rw diff_subset_iff at hUL,
+    obtain ⟨γ, W, hW, hxW, hγ⟩ := local_loops_open ⟨U, hU.mem_nhds hx, hΩ_op⟩
+     (hΩ_conn x hx) (hg x hx) hb (hb_in x hx) (hconv x hx),
+    refine ⟨W, hW.mem_nhds hxW, γ, hγ⟩ },
+  obtain ⟨L, W, hL, hW, hPW, hLW, hlW, hUL⟩ := foo2 hU hP h0P h2P,
+  choose γ hγ using hPW,
   let l₀ : loop_data g b Ω :=
-  ⟨closure V₀, U₀, γ₀, hcV₀, hU₀, hV₀UU₀.trans $ inter_subset_left _ _, hγ₀.mono hU₀V⟩,
+  ⟨K, U₀, γ₀, hK, hU₀, hKU₀, hγ₀.mono hU₀V⟩,
   let l : ℕ → loop_data g b Ω := λ n, ⟨L n, W n, γ n, hL n, hW n, hLW n, hγ n⟩,
-  let lseq : ℕ → loop_data g b Ω := loop_data_seq l₀ l,
-  let γseq : ℕ → E → ℝ → loop F := λ n, (lseq n).γ,
-  have : locally_eventually_constant_on γseq at_top univ :=
-  loop_data_seq_locally_eventually_constant l₀ hlW,
-  let γ' : E → ℝ → loop F := lim_loop l₀ l,
-  refine ⟨γ', lim_surrounding_family_in l₀ hlW hUL,
-    lim_loop_eq0 (hlW : _) hK (hKV₀.trans subset_closure)⟩
+  refine ⟨lim_loop l₀ l, lim_surrounding_family_in l₀ hlW (hUL.trans $ subset_union_right _ _),
+    lim_loop_eq0 (hlW : _) hK subset.rfl⟩,
 end
 
 end surrounding_loops
