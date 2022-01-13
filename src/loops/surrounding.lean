@@ -196,7 +196,7 @@ begin
   have hxp : W' (x, p) ∈ V, { simp [W', hp, h.coord_eq_w, h.w_pos], },
   have hA : is_open A,
   { simp only [A, affine_bases_findim ι ℝ F hι],
-    exact is_open_univ.prod (is_open_set_of_affine_independent ℝ F), },
+    exact is_open_univ.prod (is_open_set_affine_independent ℝ F), },
   have hU₁ : U ⊆ A := set.inter_subset_left _ _,
   have hU₂ : is_open U := hW'.preimage_open_of_open hA hV,
   have hU₃ : U ∈ 𝓝 (x, p) :=
@@ -219,7 +219,7 @@ lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : ι → F} {
 begin
   refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),
   rw [nhds_prod_eq] at hW ⊢,
-  have := (is_open.eventually_mem (is_open_set_of_affine_independent ℝ F) h.indep).prod_inr (𝓝 x),
+  have := (is_open.eventually_mem (is_open_set_affine_independent ℝ F) h.indep).prod_inr (𝓝 x),
   filter_upwards [hW, this], rintro ⟨y, q⟩ ⟨hW, h2W, h3W, hq⟩ h2q,
   exact ⟨hW, h2q, h2W, h3W, hq⟩
 end
