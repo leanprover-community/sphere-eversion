@@ -25,47 +25,7 @@ begin
     inter_univ]
 end
 
-
 end
-
-namespace filter
-
-variables {α β : Type*} {f : filter α} {g : filter β}
-
-lemma eventually_eventually_of_eventually_prod {p : α → β → Prop}
-  (h : ∀ᶠ (z : α × β) in f ×ᶠ g, p z.1 z.2) : ∀ᶠ x in f, ∀ᶠ y in g, p x y :=
-begin
-  rw [filter.eventually_prod_iff] at h, rcases h with ⟨pa, hpa, pb, hpb, h⟩,
-  filter_upwards [hpa], intros a ha,
-  filter_upwards [hpb], intros b hb, exact h ha hb
-end
-
-
-end filter
-
-section -- logic.function
-
--- move
--- @[simp] lemma base_apply {α β : Type*} (f : α → β) (x : α) : ↿f x = f x := rfl
--- @[simp] lemma induction_apply {α β γ δ : Type*} {h : has_uncurry β γ δ} (f : α → β) (x : α)
---   (c : γ) : ↿f (x, c) = ↿(f x) c :=
--- rfl
-
--- @[simp] lemma uncurry_loop_apply {F : Type*} [normed_group F] [normed_space ℝ F]
---   [finite_dimensional ℝ F] {α : Type*} (f : α → loop F) (x : α) (t : ℝ) :
---   ↿f (x, t) = f x t :=
--- rfl
-
--- @[simp] lemma uncurry_path_apply {X α : Type*} [topological_space X] {x y : α → X}
---   (f : Π a, path (x a) (y a)) (a : α) (t : I) : ↿f (a, t) = f a t :=
--- rfl
-mk_simp_attribute uncurry_simps "unfolds all occurrences of the uncurry operation `↿`."
-attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_induction
-  path.has_uncurry_path
-
-end
-
-
 
 section -- to unit_interval
 
@@ -88,29 +48,9 @@ end
 
 section
 
-section
-variables {α : Type*} [uniform_space α]
--- to uniform_space/basic
-
--- `uniformity_eq_symm` should probably be reformulated in the library
--- UNUSED
-lemma symm_eq_uniformity : map (@prod.swap α α) (𝓤 α) = 𝓤 α :=
-uniformity_eq_symm.symm
-
--- UNUSED
-lemma nhds_eq_comap_uniformity_rev {y : α} : 𝓝 y = (𝓤 α).comap (λ x, (x, y)) :=
-by { rw [uniformity_eq_symm, map_swap_eq_comap_swap, comap_comap], exact nhds_eq_comap_uniformity }
-
-end
-
-end
-
-
-section
-
 variables {α β γ : Type*} [topological_space α] [topological_space β]
 
--- basic
+-- basic -- moved
 lemma continuous.congr {f g : α → β} (h : continuous f) (h' : ∀ x, f x = g x) : continuous g :=
 by { convert h, ext, rw h' }
 
@@ -127,9 +67,7 @@ by { convert h, ext, rw h' }
 --   { }
 -- end
 
--- TODO: rename `finset.closure_Union` to `finset.closure_bUnion`
-
--- constructions
+-- constructions -- moved
 lemma continuous.subtype_coe {p : β → Prop} {f : α → subtype p} (hf : continuous f) :
   continuous (λ x, (f x : β)) :=
 continuous_subtype_coe.comp hf
@@ -140,6 +78,12 @@ section -- to subset_properties
 
 variables {α β γ : Type*} [topological_space α] [topological_space β] [topological_space γ]
 
+/--
+To show that `∀ y ∈ K, P x y` holds for `x` close enough to `x₀` when `K` is compact,
+it is sufficient to show that for all `y₀ ∈ K` there `P x y` holds for `(x, y)` close enough
+to `(x₀, y₀)`.
+-/
+-- moved
 lemma is_compact.eventually_forall_of_forall_eventually {x₀ : α} {K : set β} (hK : is_compact K)
   {P : α → β → Prop} (hP : ∀ y ∈ K, ∀ᶠ (z : α × β) in 𝓝 (x₀, y), P z.1 z.2):
   ∀ᶠ x in 𝓝 x₀, ∀ y ∈ K, P x y :=
@@ -168,6 +112,7 @@ section -- to separation
 
 variables {α : Type*} [topological_space α]
 
+-- moved
 lemma exists_open_superset_and_is_compact_closure [locally_compact_space α] [t2_space α]
   {K : set α} (hK : is_compact K) : ∃ V, is_open V ∧ K ⊆ V ∧ is_compact (closure V) :=
 begin
@@ -176,9 +121,10 @@ begin
     compact_closure_of_subset_compact hK' interior_subset⟩,
 end
 
+-- moved
 lemma exists_compact_between [locally_compact_space α] [regular_space α]
   {K U : set α} (hK : is_compact K) (hU : is_open U) (hKU : K ⊆ U) :
-  ∃ K', is_compact K' ∧ K ⊆ interior K' ∧ closure K' ⊆ U :=
+  ∃ K', is_compact K' ∧ K ⊆ interior K' ∧ K' ⊆ U :=
 begin
   choose C hxC hCU hC using λ x : K, nhds_is_closed (hU.mem_nhds $ hKU x.2),
   choose L hL hxL using λ x : K, exists_compact_mem_nhds (x : α),
@@ -190,17 +136,18 @@ begin
     { obtain ⟨y, hyt, hy : x ∈ interior (L y) ∩ interior (C y)⟩ := mem_bUnion_iff.mp (ht hx),
       rw [← interior_inter] at hy,
       refine interior_mono (subset_bUnion_of_mem hyt) hy },
-    { simp_rw [t.closure_Union, Union_subset_iff, ((hL _).is_closed.inter (hC _)).closure_eq],
-      rintro x -, exact (inter_subset_right _ _).trans (hCU _) } },
+    { simp_rw [Union_subset_iff], rintro x -, exact (inter_subset_right _ _).trans (hCU _) } },
   { exact λ _, is_open_interior.inter is_open_interior }
 end
 
+-- moved
 lemma exists_open_between_and_is_compact_closure [locally_compact_space α] [regular_space α]
   {K U : set α} (hK : is_compact K) (hU : is_open U) (hKU : K ⊆ U) :
   ∃ V, is_open V ∧ K ⊆ V ∧ closure V ⊆ U ∧ is_compact (closure V) :=
 begin
   rcases exists_compact_between hK hU hKU with ⟨V, hV, hKV, hVU⟩,
-  refine ⟨interior V, is_open_interior, hKV, (closure_mono interior_subset).trans hVU,
+  refine ⟨interior V, is_open_interior, hKV,
+    (closure_minimal interior_subset hV.is_closed).trans hVU,
     compact_closure_of_subset_compact hV interior_subset⟩,
 end
 
@@ -209,7 +156,7 @@ needs
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 -/
-lemma is_open_set_of_affine_independent (𝕜 E : Type*) {ι : Type*} [nondiscrete_normed_field 𝕜]
+lemma is_open_set_affine_independent (𝕜 E : Type*) {ι : Type*} [nondiscrete_normed_field 𝕜]
   [normed_group E] [normed_space 𝕜 E] [complete_space 𝕜] [fintype ι] :
   is_open {p : ι → E | affine_independent 𝕜 p} :=
 begin
@@ -226,8 +173,8 @@ begin
 end
 
 end
-#print union_comm
--- move
+
+-- move -- moved
 lemma continuous_on.comp_fract'' {α β γ : Type*} [linear_ordered_ring α] [floor_ring α]
   [topological_space α] [order_topology α]
   [topological_add_group α] [topological_space β] [topological_space γ]
