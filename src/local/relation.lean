@@ -152,6 +152,10 @@ variables {U : set E} {R : rel_loc E F}
 def slice_at (𝓕 : formal_sol R U) (p : dual_pair' E) (x : E) : set F :=
 R.slice p (x, 𝓕.f x, 𝓕.φ x)
 
+-- This probably won't stay stated like this
+def slices (𝓕 : formal_sol R U) (p : dual_pair' E) : set (E × F) :=
+⋃ x ∈ U, ({x} : set E) ×ˢ (R.slice p (x, 𝓕.f x, 𝓕.φ x))
+
 /-- A formal solution `𝓕` of `R` is holonomic if its linear map part at `x`
 is the derivative of its function part at `x`. -/
 def is_holonomic_at (𝓕 : formal_sol R U) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
