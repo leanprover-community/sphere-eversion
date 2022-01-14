@@ -1,3 +1,5 @@
+import loops.reparametrization
+
 import local.corrugation
 import local.relation
 
@@ -14,6 +16,9 @@ open filter set rel_loc
 
 -- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
 local notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ 𝓝ˢ s) := r
+
+local notation `D` := fderiv ℝ
+local notation `hull` := convex_hull ℝ
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
@@ -62,6 +67,57 @@ structure step_landscape.accepts (L : step_landscape E) (𝓕 : formal_sol R U) 
 (hK₀ : ∀ᶠ x near L.K₀, 𝓕.is_part_holonomic_at L.E' x)
 (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x)
 (hC : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x)
+
+def step_landscape.Ω (L : step_landscape E) (𝓕 : formal_sol R L.U) : set (E × F) :=
+⋃ x ∈ L.U, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at L.p x) $ 𝓕.φ x L.p.v)
+
+def step_landscape.K (L : step_landscape E) : set E := L.K₁ ∩ L.C
+
+def step_landscape.b (L : step_landscape E) (𝓕 : formal_sol R L.U) : E → F := λ x, 𝓕.φ x L.p.v
+
+def step_landscape.g (L : step_landscape E) (𝓕 : formal_sol R L.U) : E → F := λ x, D 𝓕.f x L.p.v
+
+lemma step_landscape.is_compact_K (L : step_landscape E) : is_compact L.K :=
+L.hK₁.inter_right L.hC
+
+lemma step_landscape.hKU (L : step_landscape E) : L.K ⊆ L.U :=
+((inter_subset_left _ _).trans L.hK₁U)
+
+
+lemma step_landscape.accepts.open {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  is_open (L.Ω 𝓕 ∩ (L.U ×ˢ (univ : set F))) :=
+sorry
+
+lemma step_landscape.accepts.connected {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  ∀ x ∈ L.U, is_connected (prod.mk x ⁻¹' (L.Ω 𝓕)) :=
+begin
+
+  sorry
+end
+
+lemma step_landscape.accepts.smooth_b {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  ∀ x ∈ L.U, smooth_at (L.b 𝓕) x :=
+sorry
+
+lemma step_landscape.accepts.smooth_g {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  ∀ x ∈ L.U, smooth_at (L.g 𝓕) x :=
+sorry
+
+lemma step_landscape.accepts.mem {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  ∀ x ∈ L.U, (x, L.b 𝓕 x) ∈ L.Ω 𝓕 :=
+sorry
+
+lemma step_landscape.accepts.rel {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  ∀ᶠ (x : E) near L.K, (L.g 𝓕) x = (L.b 𝓕) x :=
+sorry
+
+lemma step_landscape.accepts.hull {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+  ∀ x ∈ L.U, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω 𝓕) :=
+sorry
+
+def step_landscape.loop (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+E → ℝ → loop F :=
+classical.some (exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g h.smooth_b h.mem h.rel h.hull)
 
 variables {L : step_landscape E}
 
