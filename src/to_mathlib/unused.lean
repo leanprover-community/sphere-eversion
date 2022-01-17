@@ -16,7 +16,7 @@ This file should *not* be imported in any other file (and this file can import a
 -/
 
 open_locale filter unit_interval topological_space uniformity
-open function filter
+open function filter set
 
 namespace filter
 
@@ -72,3 +72,14 @@ lemma nhds_eq_comap_uniformity_rev {y : α} : 𝓝 y = (𝓤 α).comap (λ x, (x
 by { rw [uniformity_eq_symm, map_swap_eq_comap_swap, comap_comap], exact nhds_eq_comap_uniformity }
 
 end
+
+-- useful / better reformulation of existing lemma (unused in mathlib)
+lemma continuous_subtype_is_closed_cover' {α β : Type*} [topological_space α] [topological_space β]
+  {ι : Sort*} {f : α → β} (c : ι → set α)
+  (h_lf : locally_finite c)
+  (h_is_closed : ∀ i, is_closed (c i))
+  (h_cover : (⋃ i, c i) = univ)
+  (f_cont  : ∀ i, continuous (λ(x : c i), f x)) :
+  continuous f :=
+continuous_subtype_is_closed_cover (λ i, (∈ c i)) h_lf h_is_closed
+  (by simpa [eq_univ_iff_forall] using h_cover) f_cont

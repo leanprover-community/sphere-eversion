@@ -4,8 +4,9 @@ import topology.uniform_space.compact_separated
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 import topology.algebra.floor_ring
-import topology.paracompact
 import topology.shrinking_lemma
+import topology.metric_space.emetric_paracompact
+import to_mathlib.misc
 
 noncomputable theory
 
@@ -48,20 +49,75 @@ end
 
 section
 
+open encodable option
 variables {α β γ : Type*} [topological_space α] [topological_space β]
+-- can we restate this nicely?
 
--- false
--- lemma locally_finite_image [topological_space γ] {f : β → set α} {g : α → γ}
---   (hf : locally_finite f) (hg : open_embedding g) : locally_finite (λ i, g '' (f i)) :=
--- begin
---   intro y,
---   by_cases hy : y ∈ range g,
---   { rcases hy with ⟨x, rfl⟩,
---     obtain ⟨t, ht, hft⟩ := hf x,
---     refine ⟨g '' t, hg.is_open_map.image_mem_nhds ht, _⟩,
---     simp_rw [image_inter hg.to_embedding.inj, nonempty_image_iff, hft] },
---   { }
--- end
+/-- Given a locally finite sequence of sets indexed by an encodable type, we can naturally reindex
+  this sequence to get a sequence indexed by `ℕ` (by adding some `∅` values).
+  This new sequence is still locally finite. -/
+lemma decode₂_locally_finite {ι} [encodable ι] [topological_space α] {s : ι → set α}
+  (hs : locally_finite s) : locally_finite (λ i, (s <$> decode₂ ι i).get_or_else ∅) :=
+begin
+  intro x,
+  obtain ⟨U, hxU, hU⟩ := hs x,
+  refine ⟨U, hxU, _⟩,
+  have : encode ⁻¹' {i : ℕ | ((s <$> decode₂ ι i).get_or_else ∅ ∩ U).nonempty} =
+     {i : ι | (s i ∩ U).nonempty},
+  { simp_rw [preimage_set_of_eq, decode₂_encode, map_some, get_or_else_some] },
+  rw [← this] at hU,
+  refine finite_of_finite_preimage hU _,
+  intros n hn,
+  rw [← decode₂_ne_none_iff],
+  intro h,
+  simp_rw [mem_set_of_eq, h, map_none, get_or_else_none, empty_inter] at hn,
+  exact (not_nonempty_empty hn).elim
+end
+
+open topological_space
+
+variables {X : Type*} [emetric_space X] [locally_compact_space X] [second_countable_topology X]
+
+lemma exists_locally_finite_subcover_of_locally {C : set X} (hC : is_closed C) {P : set X → Prop}
+  (hP : antitone P) (h0 : P ∅) (hX : ∀ x ∈ C, ∃ V ∈ 𝓝 (x : X), P V) :
+∃ (K : ℕ → set X) (W : ℕ → set X), (∀ n, is_compact (K n)) ∧ (∀ n, is_open (W n)) ∧
+  (∀ n, P (W n)) ∧ (∀ n, K n ⊆ W n) ∧ locally_finite W ∧ C ⊆ ⋃ n, K n :=
+begin
+  choose V' hV' hPV' using set_coe.forall'.mp hX,
+  choose V hV hVV' hcV using λ x : C, locally_compact_space.local_compact_nhds ↑x (V' x) (hV' x),
+  simp_rw [← mem_interior_iff_mem_nhds] at hV,
+  have : C ⊆ (⋃ x : C, interior (V x)) :=
+  λ x hx, by { rw [mem_Union], exact ⟨⟨x, hx⟩, hV _⟩ },
+  obtain ⟨s, hs, hsW₂⟩ := is_open_Union_countable (λ x, interior (V x)) (λ x, is_open_interior),
+  rw [← hsW₂, bUnion_eq_Union] at this, clear hsW₂,
+  obtain ⟨W, hW, hUW, hlW, hWV⟩ :=
+    precise_refinement_set hC (λ x : s, interior (V x)) (λ x, is_open_interior) this,
+  obtain ⟨K, hCK, hK, hKW⟩ :=
+    exists_subset_Union_closed_subset hC (λ x : s, hW x) (λ x _, hlW.point_finite x) hUW,
+  haveI : encodable s := hs.to_encodable,
+  let K' : ℕ → set X := λ n, (K <$> (decode₂ s n)).get_or_else ∅,
+  let W' : ℕ → set X := λ n, (W <$> (decode₂ s n)).get_or_else ∅,
+  refine ⟨K', W', _, _, _, _, _, _⟩,
+  { intro n, cases h : decode₂ s n with i,
+    { simp_rw [K', h, map_none, get_or_else_none, is_compact_empty] },
+    { simp_rw [K', h, map_some, get_or_else_some],
+      exact compact_of_is_closed_subset (hcV i) (hK i)
+        ((hKW i).trans $ (hWV i).trans interior_subset) }},
+  { intro n, cases h : decode₂ s n,
+    { simp_rw [W', h, map_none, get_or_else_none, is_open_empty] },
+    { simp_rw [W', h, map_some, get_or_else_some, hW] }},
+  { intro n, cases h : decode₂ s n with i,
+    { simp_rw [W', h, map_none, get_or_else_none, h0] },
+    { simp_rw [W', h, map_some, get_or_else_some], refine hP _ (hPV' i),
+      refine (hWV i).trans (interior_subset.trans $ hVV' i) }},
+  { intro n, cases h : decode₂ s n,
+    { simp_rw [K', W', h, map_none] },
+    { simp_rw [K', W', h, map_some, get_or_else_some, hKW] }},
+  { exact decode₂_locally_finite hlW },
+  { intros x hx, obtain ⟨i, hi⟩ := mem_Union.mp (hCK hx),
+    refine mem_Union.mpr ⟨encode i, _⟩,
+    simp_rw [K', decode₂_encode, map_some, get_or_else_some, hi] }
+end
 
 end
 
