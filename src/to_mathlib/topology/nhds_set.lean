@@ -46,14 +46,14 @@ lemma is_open.mem_nhds_set (hU : is_open U) : U ∈ 𝓝ˢ s ↔ s ⊆ U :=
 by rw [← subset_interior_iff_mem_nhds_set, interior_eq_iff_open.mpr hU]
 
 @[simp] lemma nhds_set_singleton : 𝓝ˢ {x} = 𝓝 x :=
-by { ext, rw [← subset_interior_iff_mem_nhds_set, ← mem_interior_iff_mem_nhds,
-  singleton_subset_iff] }
-
-lemma mem_nhds_set_empty : U ∈ 𝓝ˢ (∅ : set X) :=
-subset_interior_iff_mem_nhds_set.mp $ empty_subset _
+by { ext,
+     rw [← subset_interior_iff_mem_nhds_set, ← mem_interior_iff_mem_nhds, singleton_subset_iff] }
 
 lemma mem_nhds_set_interior : s ∈ 𝓝ˢ (interior s) :=
 subset_interior_iff_mem_nhds_set.mp subset.rfl
+
+lemma mem_nhds_set_empty : U ∈ 𝓝ˢ (∅ : set X) :=
+subset_interior_iff_mem_nhds_set.mp $ empty_subset _
 
 lemma nhds_set_empty : 𝓝ˢ (∅ : set X) = ⊥ :=
 by { ext, simp [mem_nhds_set_empty] }
