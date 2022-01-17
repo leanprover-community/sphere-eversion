@@ -54,6 +54,8 @@ rfl
 mk_simp_attribute uncurry_simps "unfolds all occurrences of the uncurry operation `↿`."
 attribute [uncurry_simps] function.has_uncurry_base function.has_uncurry_induction
   path.has_uncurry_path
+-- attribute [uncurry_simps] has_uncurry_loop
+
 
 end
 
