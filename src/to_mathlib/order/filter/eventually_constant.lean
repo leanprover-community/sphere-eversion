@@ -274,7 +274,7 @@ end
 lemma locally_eventually_constant_on.exists_nhds_set_of_is_compact
   (hgf : locally_eventually_constant_on g f U)
   {K : set β} (hK : is_compact K) (hKU : K ⊆ U) :
-  ∃ O ∈ nhds_set K, eventually_constant_on g f O :=
+  ∃ O ∈ 𝓝ˢ K, eventually_constant_on g f O :=
 begin
   refine is_compact.induction_on hK ⟨∅, mem_nhds_set_empty, eventually_constant_of_unique⟩ _ _ _,
   { rintro s t hst ⟨O, hO, hgO⟩, refine ⟨O, _, hgO⟩, exact monotone_nhds_set hst hO },

@@ -9,11 +9,11 @@ This file proves lem:h_principle_open_ample_loc
 
 noncomputable theory
 
-open_locale unit_interval classical filter
+open_locale unit_interval classical filter topological_space
 open filter set rel_loc
 
 -- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
-local notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ nhds_set s) := r
+local notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ 𝓝ˢ s) := r
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
