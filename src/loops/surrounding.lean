@@ -822,9 +822,6 @@ variables {X : Type*} [emetric_space X] [locally_compact_space X] [second_counta
 -- sorry
 
 open encodable
-@[simp]
-lemma decode₂_encode {α} [encodable α] (x : α) : decode₂ α (encode x) = some x :=
-by simp [decode₂]
 
 -- this proof strategy doesn't get locally finiteness of W on the closure of U.
 
@@ -834,7 +831,6 @@ by simp [decode₂]
 -- * Get a finite set of the `K x` covering `L (i + 1) \ interior (L i)`, and restrict the
 --   corresponding `W₂ x` to `L (i + 2) \ interior (L (i - 1))`.
 -- * Now the collection of all these `K x` will cover all of `U` and be countable and locally finite.
-
 lemma foo2 {U : set X} (hU : is_open U) {P : set X → Prop} (hP : antitone P) (h0 : P ∅)
   (hX : ∀ x ∈ U, ∃ V ∈ 𝓝 (x : X), P V) :
 ∃ (K : ℕ → set X) (W : ℕ → set X), (∀ n, is_compact (K n)) ∧ (∀ n, is_open (W n)) ∧

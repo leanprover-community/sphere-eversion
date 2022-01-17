@@ -43,7 +43,6 @@ instance : has_coe_to_fun (loop X) (λ _, ℝ → X) := ⟨λ γ, γ.to_fun⟩
 initialize_simps_projections loop (to_fun → apply)
 
 /-- Any function `φ : α → loop X` can be seen as a function `α × ℝ → X`. -/
-@[uncurry_simps]
 instance has_uncurry_loop {α : Type*} : has_uncurry (α → loop X) (α × ℝ) X := ⟨λ φ p, φ p.1 p.2⟩
 
 variables {X}
@@ -190,7 +189,7 @@ end
 lemma of_path_continuous {x : X} (γ : path x x) : continuous (of_path γ) :=
 begin
   simp only [has_coe_to_fun.coe, coe_fn, of_path],
-  apply γ.continuous_extend.continuous_on.comp_fract,
+  apply γ.continuous_extend.continuous_on.comp_fract'',
   rw [γ.extend_zero, γ.extend_one]
 end
 
@@ -200,7 +199,7 @@ lemma _root_.continuous.of_path (x : X → Y) (t : X → ℝ)
   continuous (λ i, of_path (γ i) (t i)) :=
 begin
   change continuous (λ i, (λ s, (γ s).extend) i (fract (t i))),
-  refine continuous_on.comp_fract'' _ ht _,
+  refine continuous_on.comp_fract _ ht _,
   { exact (hγ.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
   { simp only [unit_interval.mk_zero, zero_le_one, path.target, path.extend_extends,
       implies_true_iff, eq_self_iff_true, path.source, right_mem_Icc, left_mem_Icc,
