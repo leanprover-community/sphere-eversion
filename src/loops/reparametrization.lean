@@ -54,10 +54,10 @@ lemma exists_loops [measurable_space F] [borel_space F]
   (hΩ_op : ∀ x ∈ U, is_open (prod.mk x ⁻¹' Ω))
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω)
-  (hgK : ∀ᶠ x in nhds_set K, g x = b x) (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
+  (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
   ∃ γ : E → ℝ → loop F, (∀ (x ∈ U) (t ∈ I) s, (x, γ x t s) ∈ Ω ∧
                                               γ x 0 s = b x ∧
                                               (γ x 1).average = g x ∧
                                               smooth_at ↿γ ((x, t, s) : E × ℝ × ℝ)) ∧
-                        (∀ᶠ x in nhds_set K, ∀ (t ∈ I) s, γ x t s = b x)  :=
+                        (∀ᶠ x in 𝓝ˢ K, ∀ (t ∈ I) s, γ x t s = b x)  :=
 sorry
