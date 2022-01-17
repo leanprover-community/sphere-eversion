@@ -284,7 +284,7 @@ begin
     rw union_elim_restrict },
   { intros x hx, rcases hgf x (hKU hx) with ⟨O, hO, hgO⟩,
     exact ⟨interior O, mem_nhds_within_of_mem_nhds $ interior_mem_nhds.mpr hO, O,
-      mem_nhds_interior, hgO⟩ }
+      mem_nhds_set_interior, hgO⟩ }
 end
 
 /-- A neighborhood around `x` where `g` is locally constant. -/
