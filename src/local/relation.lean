@@ -90,6 +90,15 @@ lemma update_self (p : dual_pair' E) (φ : E →L[ℝ] F)  :
 by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
               continuous_linear_map.zero_comp, sub_self]
 
+/-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair' i`
+is given by the `i`th basis element and its dual. -/
+def _root_.basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι]
+  (e : basis ι ℝ E) (i : ι) : dual_pair' E :=
+{ π := (e.dual_basis i).to_continuous_linear_map,
+  v := e i,
+  pairing := by simp only [basis.coord_apply, finsupp.single_eq_same, basis.repr_self,
+                           linear_map.coe_to_continuous_linear_map', basis.coe_dual_basis] }
+
 end dual_pair'
 
 /-- A first order relation for maps between real vector spaces. -/
@@ -181,6 +190,15 @@ if its linear map part at `x` is the derivative of its function part at `x` in r
 def is_part_holonomic_at (𝓕 : formal_sol R U) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
+lemma _root_.is_part_holonomic_top {𝓕 : formal_sol R U} {x : E} :
+  is_part_holonomic_at 𝓕 ⊤ x ↔ is_holonomic_at 𝓕 x :=
+sorry
+
+@[simp] lemma is_part_holonomic_bot (𝓕 : formal_sol R U) :
+  is_part_holonomic_at 𝓕 ⊥ = λ x, true :=
+sorry
+
+
 lemma mem_slice (𝓕 : formal_sol R U) (p : dual_pair' E) {x : E} (hx : x ∈ U) :
   𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
 by simp [slice_at, rel_loc.slice, 𝓕.is_sol x hx]
@@ -216,7 +234,8 @@ instance : has_coe_to_fun (htpy_formal_sol R U) (λ S, ℝ → formal_sol R U) :
    is_sol := λ x hx, S.is_sol t x hx }⟩
 
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
-as junk value for constructions of formal homotopies that need additional assumptions. -/
+as junk value for constructions of formal homotopies that need additional assumptions and also
+for trivial induction initialization. -/
 def rel_loc.formal_sol.const_htpy (𝓕 : formal_sol R U) : htpy_formal_sol R U :=
 { f := λ t, 𝓕.f,
   f_diff := sorry,
@@ -224,6 +243,9 @@ def rel_loc.formal_sol.const_htpy (𝓕 : formal_sol R U) : htpy_formal_sol R U 
   φ_diff := sorry,
   is_sol := λ t, 𝓕.is_sol }
 
+@[simp] lemma rel_loc.formal_sol.const_htpy_apply (𝓕 : formal_sol R U) :
+  ∀ t, 𝓕.const_htpy t = 𝓕 :=
+λ t, by ext x ; refl
 
 -- The next gadget is probably already in mathlib somewhere (the precise values 1/4 and 3/4 are
 -- not important)
@@ -242,11 +264,19 @@ sorry
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
-def rel_loc.htpy_formal_sol.comp (𝓕 𝓖 : htpy_formal_sol R U) : htpy_formal_sol R U :=
+def htpy_formal_sol.comp (𝓕 𝓖 : htpy_formal_sol R U) : htpy_formal_sol R U :=
 { f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else  𝓖.f (smooth_step $ 2*t - 1) x,
   f_diff := sorry,
   φ := λ t x, if t ≤ 1/2 then 𝓕.φ (smooth_step $ 2*t) x else  𝓖.φ (smooth_step $ 2*t - 1) x,
   φ_diff := sorry,
   is_sol := sorry }
+
+@[simp]
+lemma htpy_formal_sol.comp_0 (𝓕 𝓖 : htpy_formal_sol R U) : 𝓕.comp 𝓖 0 = 𝓕 0 :=
+sorry
+
+@[simp]
+lemma htpy_formal_sol.comp_1 (𝓕 𝓖 : htpy_formal_sol R U) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
+sorry
 
 end htpy_formal_sol
