@@ -13,8 +13,10 @@ variables [topological_space X'] [topological_space Y] [topological_space Z]
 
 namespace path
 
+variables {x : X} {γ γ' : path x x} {t₀ t : I}
+
 /-- A loop evaluated at `t / t` is equal to its endpoint. Note that `t / t = 0` for `t = 0`. -/
-@[simp] lemma extend_div_self {x : X} (γ : path x x) (t : ℝ) :
+@[simp] lemma extend_div_self (γ : path x x) (t : ℝ) :
   γ.extend (t / t) = x :=
 by by_cases h : t = 0; simp [h]
 
@@ -22,7 +24,7 @@ by by_cases h : t = 0; simp [h]
 through the second one on `[t₀, 1]`. All endpoints are assumed to be the same so that this
 function is also well-defined for `t₀ ∈ {0, 1}`.
 `strans` stands either for a *s*kewed transitivity, or a transitivity with different *s*peeds. -/
-def strans {x : X} (γ γ' : path x x) (t₀ : I) : path x x :=
+def strans (γ γ' : path x x) (t₀ : I) : path x x :=
 { to_fun := λ t, if t ≤ t₀ then γ.extend (t / t₀) else γ'.extend ((t - t₀) / (1 - t₀)),
   continuous_to_fun :=
   begin
@@ -42,15 +44,22 @@ def strans {x : X} (γ γ' : path x x) (t₀ : I) : path x x :=
 
 /-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
   arguments to `γ` lie in `I` after this. -/
-lemma strans_def {x : X} (γ γ' : path x x) {t₀ t : I} :
-  γ.strans γ' t₀ t =
+lemma strans_def (γ γ' : path x x) : γ.strans γ' t₀ t =
   if h : t ≤ t₀ then γ ⟨t / t₀, unit_interval.div_mem t.2.1 t₀.2.1 h⟩ else
   γ' ⟨(t - t₀) / (1 - t₀), unit_interval.div_mem (sub_nonneg.mpr $ le_of_not_le h)
     (sub_nonneg.mpr t₀.2.2) (sub_le_sub_right t.2.2 t₀)⟩ :=
 by split_ifs; simp [strans, h, ← extend_extends]
 
-@[simp] lemma strans_zero {x : X} (γ γ' : path x x) : γ.strans γ' 0 = γ' :=
-by { ext t, simp only [strans, path.coe_mk, if_pos, unit_interval.coe_zero,
+@[simp] lemma strans_of_ge (h : t₀ ≤ t) : γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) :=
+begin
+  simp only [path.coe_mk, path.strans, ite_eq_right_iff],
+  intro h2, obtain rfl := le_antisymm h h2, simp
+end
+
+lemma unit_interval.zero_le (x : I) : 0 ≤ x := x.prop.1
+
+@[simp] lemma strans_zero (γ γ' : path x x) : γ.strans γ' 0 = γ' :=
+by { ext t, simp only [strans_of_ge (unit_interval.zero_le t), unit_interval.coe_zero,
   div_one, extend_extends',
   unit_interval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero, ite_eq_right_iff,
   show (t : ℝ) = 0 ↔ t = 0, from (@subtype.ext_iff _ _ t 0).symm, path.source, eq_self_iff_true,
@@ -59,13 +68,6 @@ by { ext t, simp only [strans, path.coe_mk, if_pos, unit_interval.coe_zero,
 @[simp] lemma strans_one {x : X} (γ γ' : path x x) : γ.strans γ' 1 = γ :=
 by { ext t, simp only [strans, unit_interval.le_one', path.coe_mk, if_pos, div_one,
   extend_extends', unit_interval.coe_one] }
-
-@[simp] lemma strans_of_ge {x : X} (γ γ' : path x x) {t₀ t : I} (h : t₀ ≤ t) :
-  γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) :=
-begin
-  simp only [path.coe_mk, path.strans, ite_eq_right_iff],
-  intro h2, obtain rfl := le_antisymm h h2, simp
-end
 
 @[simp] lemma strans_self {x : X} (γ γ' : path x x) (t₀ : I) : γ.strans γ' t₀ t₀ = x :=
 by { simp only [strans, path.coe_mk, extend_div_self, if_pos, le_rfl], }
@@ -100,7 +102,6 @@ begin
   { rw [strans_def, dif_neg h], exact or.inr (mem_range_self _) }
 end
 
--- this lemma is easier if we reorder/reassociate the arguments
 lemma _root_.continuous.path_strans {X Y : Type*} [uniform_space X] [separated_space X]
   [locally_compact_space X] [uniform_space Y] {f : X → Y} {t : X → I} {s : X → I}
   {γ γ' : ∀ x, path (f x) (f x)}
