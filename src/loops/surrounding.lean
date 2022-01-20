@@ -651,7 +651,7 @@ lemma satisfied_or_refund [finite_dimensional ℝ E] {γ₀ γ₁ : E → ℝ �
 
 end satisfied_or_refund
 
-section extends_loops
+section extend_loops
 
 variables [finite_dimensional ℝ E]
 
@@ -672,7 +672,7 @@ This makes it easier to find the limit of a sequence of these constructions.
 Todo: we might need that `γ = γ₀` on a neighborhood of `(U₀ ∪ U₁)ᶜ` to ensure that
 `(U₀ ∪ U₁)ᶜ ⊆ extended_invariant ...`
 -/
-lemma extends_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
+lemma extend_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
   {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family_in g b γ₀ U₀ Ω) (h₁ : surrounding_family_in g b γ₁ U₁ Ω) :
@@ -739,14 +739,14 @@ end
 /-! We now extract all components of this theorem, which makes them easier to use in the recursion
   in `exists_surrounding_loops` -/
 
-/-- The domain of an arbitrary witness of `extends_loops`. -/
+/-- The domain of an arbitrary witness of `extend_loops`. -/
 def extended_domain (l₀ l₁ : loop_data g b Ω) : set E :=
-interior $ classical.some $ extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
+interior $ classical.some $ extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
 
-/-- An arbitrary witness of `extends_loops` with domain specified by `extended_domain`. -/
+/-- An arbitrary witness of `extend_loops` with domain specified by `extended_domain`. -/
 def extended_loops (l₀ l₁ : loop_data g b Ω) : E → ℝ → loop F :=
 classical.some $ classical.some_spec $ classical.some_spec $
-  extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
+  extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
 
 /-- The (interior of the) set where `extended_loops` didn't change -/
 def extended_invariant (l₀ l₁ : loop_data g b Ω) : set E :=
@@ -759,7 +759,7 @@ is_open_interior
 
 lemma subset_extended_domain : l₀.K ∪ l₁.K ⊆ extended_domain l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr $ classical.some $ classical.some_spec $
-  extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
+  extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
 
 lemma extended_domain_mem_nhds_set :
   extended_domain l₀ l₁ ∈ 𝓝ˢ (l₀.K ∪ l₁.K) :=
@@ -768,7 +768,7 @@ is_open_extended_domain.mem_nhds_set.mpr subset_extended_domain
 lemma surrounding_family_extended_loops :
    surrounding_family_in g b (extended_loops l₀ l₁) (extended_domain l₀ l₁) Ω :=
 (classical.some_spec $ classical.some_spec $ classical.some_spec $
-  extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).1.mono interior_subset
+  extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).1.mono interior_subset
 
 lemma is_open_extended_invariant : is_open (extended_invariant l₀ l₁) :=
 is_open_interior
@@ -776,12 +776,12 @@ is_open_interior
 lemma subset_extended_invariant : l₀.K ⊆ extended_invariant l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr
   (classical.some_spec $ classical.some_spec $ classical.some_spec $
-    extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.1
+    extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.1
 
 lemma compl_subset_extended_invariant : l₁.Uᶜ ⊆ extended_invariant l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr
   (classical.some_spec $ classical.some_spec $ classical.some_spec $
-    extends_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.2
+    extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.2
 
 lemma extended_invariant_mem_nhds_set :
   extended_invariant l₀ l₁ ∈ 𝓝ˢ l₀.K :=
@@ -797,7 +797,7 @@ def loop_data.extend (l₀ l₁ : loop_data g b Ω) : loop_data g b Ω :=
 ⟨l₀.K ∪ l₁.K, extended_domain l₀ l₁, extended_loops l₀ l₁, l₀.hK.union (l₁.hK),
   is_open_extended_domain, subset_extended_domain, surrounding_family_extended_loops⟩
 
-end extends_loops
+end extend_loops
 
 section surrounding_loops
 variables [finite_dimensional ℝ E]
@@ -947,7 +947,7 @@ begin
   Notes | Formalization
   ------+--------------
   γ     | γ₀
-  U₀'   | V₀
+  U₀    | V
   Uᵢ    | W i
   Kᵢ    | L i
   cl(U) | C  -- C is the closure of U in the blueprint
@@ -977,5 +977,5 @@ end surrounding_loops
 
 -- #lint
 -- #print axioms satisfied_or_refund
--- #print axioms extends_loops
+-- #print axioms extend_loops
 -- #print axioms exists_surrounding_loops
