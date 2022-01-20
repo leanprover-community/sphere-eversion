@@ -34,15 +34,18 @@ All of this chapter is devoted to proving the following proposition.
   \uses{def:average}
   \lean{exists_loops}
   \leanok
-  Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset.
-  Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U$,
+  Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset
+  and $U'$ an open neighborhood of $\overline U$.
+  % Note: we make all assumptions on $U'$ larger than $U$ so that the $γ$ in
+  % `exists_surrounding_loops` is continuous everywhere (also on the boundary of $U$ in $E$)
+  Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U'$,
   $Ω_x := Ω ∩ (\{x\} × F)$ is open and connected in $\{x\} × F$.
 
-  Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U$.
-  Assume that $β(x) ∈ Ω_x$ for all $x$ in $U$,
+  Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U'$.
+  Assume that $β(x) ∈ Ω_x$ for all $x$ in $U'$,
   and $g(x) = β(x)$ near $K$.
 
-  If, for every $x$ in $U$, $g(x)$ is in the convex hull of $Ω_x$, then there
+  If, for every $x$ in $U'$, $g(x)$ is in the convex hull of $Ω_x$, then there
   exists a smooth family of loops
   \[
     γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)
@@ -59,7 +62,6 @@ All of this chapter is devoted to proving the following proposition.
       $γ^t_x(s) = β(x)$ if $x$ is near $K$.
   \end{itemize}
 \end{proposition}
-
 
 Let us briefly sketch the geometric idea behind the above proposition
 if we pretend there is only one point $x$, and drop it from the
@@ -152,7 +154,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   \leanok
   For each $i$, let:
   \[
-    w_i : E \to ℝ
+    w_i \co E \to ℝ
   \]
   be the $i^{\rm th}$ barycentric coordinate with respect to the basis $b$.
   Since $E$ is finite-dimensional, each $w_i$ is a continuous open map. For
@@ -172,7 +174,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   \lean{convex.subset_interior_image_homothety_of_one_lt}\leanok
   Given a point $c$ of $E$ and a real number $t$, let:
   \[
-    h^c_t : E \to E
+    h^c_t \co E \to E
   \]
   be the homothety which dilates about $c$ by a scale of $t$.
 
@@ -192,7 +194,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   \]
   where $s \in (0, 1)$.
 
-  Let $x$ be a point of $C$, we must show there exists an open neighbourhood $U$
+  Let $x$ be a point of $C$, we must show there exists an open neighborhood $U$
   of $h^c_s(x)$, contained in $C$. In fact we claim:
   \[
     U = h^x_{1-s}(\Int(C))
@@ -219,11 +221,11 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
 \begin{proof}
   \leanok
   \uses{lem:caratheodory,lem:interior_chab,lem:int_homothety_cvx}
-  It follows from lemma \Cref{lem:interior_chab} that we need only show that $E$
+  It follows from \Cref{lem:interior_chab} that we need only show that $E$
   has an affine basis $b$ of points belonging to $P$ such that $x$ lies in
   the interior of the convex hull of $b$.
 
-  Carathéodory's lemma \Cref{lem:caratheodory} provides affinely independent
+  Carathéodory's lemma~\ref{lem:caratheodory} provides affinely independent
   points $p_0, \dots, p_k$ in $P$ such that $x$ belongs to their convex
   hull. Since $P$ is open, we may extend $p_i$ to an affine basis
   \[
@@ -235,7 +237,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   Now let $c$ be a point in the interior of the convex hull of $\hat b$
   (e.g., the centroid) and for each $\epsilon > 0$, consider the homothety
   \[
-    h_{1+\epsilon} : E \to E,
+    h_{1+\epsilon} \co E \to E,
   \]
   which dilates about $c$ by a scale of $1 + \epsilon$.
 
@@ -249,7 +251,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
     b = h_{1+\epsilon} (\hat b)
   \]
   for any such $\epsilon$. Indeed, applying
-  lemma \Cref{lem:int_homothety_cvx} to $\Conv(\hat b)$ we see:
+  \Cref{lem:int_homothety_cvx} to $\Conv(\hat b)$ we see:
   \begin{align*}
     x \in \Conv(\hat b) &\subseteq \Int (h_{1+\epsilon} (\Conv(\hat b)))\\
                   &= \Int (\Conv(h_{1+\epsilon} (\hat b)))
@@ -265,7 +267,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   \leanok
   For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
   surrounding $x$, there is a neighborhood $U$ of $\{(x, p)\}$
-  and a function $w : E × E^{d+1} → ℝ^{d+1}$ such that, for every
+  and a function $w \co E × E^{d+1} → ℝ^{d+1}$ such that, for every
   $(y, q)$ in $U$,
   \begin{itemize}
     \item
@@ -287,7 +289,7 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   \end{align*}
   and define:
   \begin{align*}
-    w : A &\to ℝ^{d+1}\\
+    w \co A &\to ℝ^{d+1}\\
     (y, q) &\mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}.
   \end{align*}
 
@@ -335,7 +337,7 @@ It will be convenient to introduce some more vocabulary.
   point $b$ if $0$ is sent to $b$.
 \end{definition}
 
-The first main task in proving Proposition~\ref{prop:loops} is to construct
+The first main task in proving \Cref{prop:loops} is to construct
 suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local
 families of loops.
 Those will then be reparametrized to get the correct average in the next
@@ -459,6 +461,7 @@ as explained in the next lemma.
   $\Loop(g, β, U, Ω)$.
 \end{lemma}
 
+
 % I (Floris) renamed $γ_{τ, x}^t$ to $δ_{τ, x}^t$ so that we don't have a clash of notation where
 % $γ_{0, x}^t(s)$ is defined to be $γ_{0, x}^{ρ(τ)t}left(\frac1{1 - τ} s\right)$
 
@@ -500,37 +503,32 @@ as explained in the next lemma.
 \begin{corollary}
   \label{cor:extend_loops}
   \uses{def:family_surrounds}
-  \lean{extends_loops}
+  \lean{extend_loops}
   \leanok
   Let $U_0$ and $U_1$ be open sets in $E$.
   Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets.
   For any $γ_0 ∈ \Loop(U_0, g, β, Ω)$ and $γ_1 ∈ \Loop(U_1, g, β, Ω)$,
   there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and
   there exists $γ ∈ \Loop(U, g, β, Ω)$
-  which coincides with $γ_0$ near $K_0$.
+  which coincides with $γ_0$ near $K_0\cup U_1^c$.
 \end{corollary}
 
 \begin{proof}
   \leanok
   \uses{lem:satisfied_or_refund}
   Let $U_0'$ be an open neighborhood of $K_0$ whose closure
-  $\bar U_0'$ is compact in $U_0$.
-  Since $\bar U_0'$ and $K_1' := K_1 ∖ (K_1 ∩ U_0)$
+  $\overline U_0'$ is compact in $U_0$.
+  Since $\overline U_0'$ and $K_1' := K_1 ∖ (K_1 ∩ U_0)$
   are disjoint compact subsets of $E$, there is some continuous cut-off
   $ρ \co E → [0, 1]$ which vanishes on $U_0'$ and equals one on some
   neighborhood $U_1'$ of $K_1'$.
 
-  Lemma~\ref{lem:satisfied_or_refund} gives a homotopy of loops
+  \Cref{lem:satisfied_or_refund} gives a homotopy of loops
   $γ_τ$ from $γ_0$ to $γ_1$ on $U_0 ∩ U_1$.
   On $U_0' ∪ (U_0 ∩ U_1) ∪ U_1'$, which is a
   neighborhood of $K_0 ∪ K_1$, we set
   \[
-      γ_x =
-      \begin{cases}
-        γ_{0, x}       & \text{for $x ∈ U_0'$} \\
-        γ_{ρ(x), x} & \text{for $x ∈ U_0 ∩ U_1$} \\
-        γ_{1, x}       & \text{for $x ∈ U_1'$}
-      \end{cases}
+      γ_x = γ_{ρ(x), x}
   \]
   which has the required properties.
 \end{proof}
@@ -541,7 +539,7 @@ as explained in the next lemma.
   \uses{def:family_surrounds}
   \lean{exists_surrounding_loops}
   \leanok
-  In the setup of Proposition~\ref{prop:loops}, assume we have a
+  In the setup of \Cref{prop:loops}, assume we have a
   continuous family $γ$ of loops defined near $K$ which is based at $β$,
   surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$.
   Then there such a family which is defined on all of $U$ and agrees
@@ -550,24 +548,37 @@ as explained in the next lemma.
 
 \begin{proof}
   \uses{lem:local_loops, cor:extend_loops}
-  Let $U_0$ be an open set containing $K$ and
-  contained in the domain of $γ$. Let $U_0'$ be an open neighborhood of $K$
-  with compact closure in $U_0$. Let $U_i$, $i ≥ 1$ be a local finite covering of
-  $U ∖ U_0'$ by open subsets not intersecting $K$ and where the preceding
-  observations gives families of loops $γ^i$. We also set $γ^0 = \rst{γ}{U_0}$.
-  In particular the open sets $U_i$, $i ≥ 0$ cover the whole of $U$, and only
-  $U_0$ intersects $K$. Let $K_i$, $0 ≤ i ≤ N$, be a family of compact sets with
-  $K_i ⊂ U_i$ which covers $U$. We repeatedly apply
-  Corollary~\ref{cor:extend_loops} to $K_i$ and $K_{i+1}$, in this order, to
-  get a family $γ'$ defined over all $U$. Since each step preserves the
-  family on $\Op{K_i}$ and only $U_0$ intersects (in fact contains) $K$, we do
-  have $γ' = γ$ on $\Op{K}$.
+  Let $U_0$ be an open set containing $K$ such that $γ$ forms a surrounding family
+  of loops on $U_0$.
+  Let $U_i$, $i ≥ 1$ be a locally finite family of open sets with local
+  surrounding families of loops $γ^i$ and compact subsets $K_i ⊂ U_i$ covering $\overline U$.
+
+  % \begin{explanation} % I am imagining that eventually this will be hidden until clicked
+    This is possible, since by \Cref{lem:local_loops} there is a local surrounding family
+    of loops around each point in $\overline U$. Since $E$ is locally compact we may pick
+    a compact neighborhood around each point in $\overline U$ with such a local family of loops.
+    Since $\overline U$ is paracompact second countable, we can pick a countable refinement $U_i$
+    which is locally finite and still covers $\overline U$.
+    By the shrinking lemma we can pick closed (and hence compact) subsets $K_i ⊂ U_i$ that
+    also cover $\overline U$.
+  % \end{explanation}
+
+  Now we define a family $(δ^i)_{i \in NN}$ by $δ^0 = \rst{γ}{U_0}$ and
+  $δ^{i+1}$ is obtained by extending $δ^i$ using $γ^i$ via
+  \Cref{cor:extend_loops}.
+  Since $δ^{i+1}$ equals $δ^i$ on $U_i^c$, this sequence is locally eventually constant.
+  Therefore it has a well-defined limit $δ$ which is defined on continuous on all $U$.
+  Since $δ^{i+1}$ equals $δ^i$ on a neighborhood of $K\cup\bigcup_{j<i} K_i,$
+  we know in particular that $δ^i$ equals $γ$ on a neighborhood of $K$.
+  Since $K$ is compact, it has some neighborhood $O$
+  such that $\rst{δ^i}{O}$ is eventually constant with eventual value $\rst{δ}{O}$.
+  Hence $δ=γ$ on a neighborhood of $K$.
 \end{proof}
 
 \subsection{The reparametrization lemma}
 \label{sub:the_reparametrization_lemma}
 
-The second ingredient needed to prove Proposition~\ref{prop:loops} is a
+The second ingredient needed to prove \Cref{prop:loops} is a
 parametric reparametrization lemma.
 
 \begin{lemma}
@@ -577,7 +588,7 @@ parametric reparametrization lemma.
 \leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
 a map $g$ with base $β$ over some $U ⊆ E$.
-There is a family of circle diffeomorphisms $φ : U × 𝕊^1 → 𝕊^1$ such
+There is a family of circle diffeomorphisms $φ \co U × 𝕊^1 → 𝕊^1$ such
 that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
@@ -622,7 +633,7 @@ that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 
 We finally assemble the ingredients from the previous two sections.
 
-\begin{proof}[Proof of Proposition~\ref{prop:loops}]
+\begin{proof}[Proof of \Cref{prop:loops}]
   \proves{prop:loops}
   \uses{lem:∃_surrounding_loops, lem:reparametrization}
   Let $γ^*$ be a family of loops surrounding the origin in $F$,
@@ -631,7 +642,7 @@ We finally assemble the ingredients from the previous two sections.
   $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure
   the image of $γ_x$ and its convex hull are contained in $Ω_x$ (recall $Ω$ is
   open and $K$ is compact).
-  Lemma~\ref{lem:∃_surrounding_loops} extends this family to a continuous
+  \Cref{lem:∃_surrounding_loops} extends this family to a continuous
   family of surrounding loops $γ_x$ for all $x$ (this is not yet our
   final $γ$).
 
@@ -645,7 +656,7 @@ We finally assemble the ingredients from the previous two sections.
   If the smoothing is sufficiently $C^0$ small then the new $γ$ is
   still surrounding and takes values in $Ω$.
 
-  Then Lemma~\ref{lem:reparametrization} gives a family of circle
+  Then \Cref{lem:reparametrization} gives a family of circle
   diffeomorphisms $h_x$ such that $γ^1_x ∘ h_x$ has average $g(x)$.
 
   Finally we choose a cut-off function function $χ$ which vanishes on

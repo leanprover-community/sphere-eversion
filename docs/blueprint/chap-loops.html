@@ -117,7 +117,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/basic.lean#L267">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/basic.lean#L273">loop.average</a></li>
         </ul>
 
       </div>
@@ -149,7 +149,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/basic.lean#L134">loop.support</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/basic.lean#L140">loop.support</a></li>
         </ul>
 
       </div>
@@ -197,7 +197,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/reparametrization.lean#L52">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/reparametrization.lean#L52">exists_loops</a></li>
         </ul>
 
       </div>
@@ -206,9 +206,9 @@
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>   Let \(U\) be an open set in \(E\) and \(K ⊆ U\) a compact subset. Let \(Ω\) be a set in \(E × F\) such that, for each \(x\) in \(U\), \(Ω_x := Ω ∩ (\{ x\}  × F)\) is open and connected in \(\{ x\}  × F\). </p>
-<p>Let \(β\) and \(g\) be maps from \(E\) to \(F\) that are smooth on \(U\). Assume that \(β(x) ∈ Ω_x\) for all \(x\) in \(U\), and \(g(x) = β(x)\) near \(K\). </p>
-<p>If, for every \(x\) in \(U\), \(g(x)\) is in the convex hull of \(Ω_x\), then there exists a smooth family of loops </p>
+  <p>   Let \(U\) be an open set in \(E\) and \(K ⊆ U\) a compact subset and \(U'\) an open neighborhood of \(\overline U\). Let \(Ω\) be a set in \(E × F\) such that, for each \(x\) in \(U'\), \(Ω_x := Ω ∩ (\{ x\}  × F)\) is open and connected in \(\{ x\}  × F\). </p>
+<p>Let \(β\) and \(g\) be maps from \(E\) to \(F\) that are smooth on \(U'\). Assume that \(β(x) ∈ Ω_x\) for all \(x\) in \(U'\), and \(g(x) = β(x)\) near \(K\). </p>
+<p>If, for every \(x\) in \(U'\), \(g(x)\) is in the convex hull of \(Ω_x\), then there exists a smooth family of loops </p>
 <div class="displaymath" id="a0000000015">
   \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
 </div>
@@ -252,7 +252,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/4f3e99a6cd37d4c535c7331323aa26f6c214ecb8/src/analysis/convex/caratheodory.lean#L159">eq_pos_convex_span_of_mem_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/447928c9110e3749155aecdcc5ad86a9f26aba55/src/analysis/convex/caratheodory.lean#L159">eq_pos_convex_span_of_mem_convex_hull</a></li>
         </ul>
 
       </div>
@@ -299,7 +299,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L33">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L79">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -333,7 +333,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/4f3e99a6cd37d4c535c7331323aa26f6c214ecb8/src/analysis/normed_space/add_torsor_bases.lean#L53">interior_convex_hull_aff_basis</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/447928c9110e3749155aecdcc5ad86a9f26aba55/src/analysis/normed_space/add_torsor_bases.lean#L53">interior_convex_hull_aff_basis</a></li>
         </ul>
 
       </div>
@@ -356,7 +356,7 @@
   <div class="proof_content">
   <p>For each \(i\), let: </p>
 <div class="displaymath" id="a0000000018">
-  \[  w_i : E \to ℝ  \]
+  \[  w_i \! :E \to ℝ  \]
 </div>
 <p> be the \(i^{\rm th}\) barycentric coordinate with respect to the basis \(b\). Since \(E\) is finite-dimensional, each \(w_i\) is a continuous open map. For such a map, the operation of taking interior commutes with preimage, and so we have: </p>
 <span>\begin{align*}  \operatorname{IntConv}(b) & = \operatorname{Int}\left(\bigcap _i w_i^{-1}([0, \infty ))\right)\\ & = \bigcap _i \operatorname{Int}(w_i^{-1}([0, \infty ))\\ & = \bigcap _i w_i^{-1}(\operatorname{Int}([0, \infty ))\\ & = \bigcap _i w_i^{-1}((0, \infty )) \end{align*}</span>
@@ -384,7 +384,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/4f3e99a6cd37d4c535c7331323aa26f6c214ecb8/src/analysis/convex/topology.lean#L148">convex.subset_interior_image_homothety_of_one_lt</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/447928c9110e3749155aecdcc5ad86a9f26aba55/src/analysis/convex/topology.lean#L148">convex.subset_interior_image_homothety_of_one_lt</a></li>
         </ul>
 
       </div>
@@ -395,7 +395,7 @@
   <div class="lemma_thmcontent">
   <p> Given a point \(c\) of \(E\) and a real number \(t\), let: </p>
 <div class="displaymath" id="a0000000020">
-  \[  h^c_t : E \to E  \]
+  \[  h^c_t \! :E \to E  \]
 </div>
 <p> be the homothety which dilates about \(c\) by a scale of \(t\). </p>
 <p>Suppose \(c\) belongs to the interior of a convex subset \(C\) of \(E\) and \(t {\gt} 1\), then </p>
@@ -418,7 +418,7 @@
   \[  h^c_s(C) \subseteq \operatorname{Int}(C)  \]
 </div>
 <p> where \(s \in (0, 1)\). </p>
-<p>Let \(x\) be a point of \(C\), we must show there exists an open neighbourhood \(U\) of \(h^c_s(x)\), contained in \(C\). In fact we claim: </p>
+<p>Let \(x\) be a point of \(C\), we must show there exists an open neighborhood \(U\) of \(h^c_s(x)\), contained in \(C\). In fact we claim: </p>
 <div class="displaymath" id="a0000000023">
   \[  U = h^x_{1-s}(\operatorname{Int}(C))  \]
 </div>
@@ -454,7 +454,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L102">surrounded_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L148">surrounded_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -475,15 +475,15 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> It follows from lemma <a href="chap-loops.html#lem:interior_chab">Lemma 1.6</a> that we need only show that \(E\) has an affine basis \(b\) of points belonging to \(P\) such that \(x\) lies in the interior of the convex hull of \(b\). </p>
-<p>Carathéodory’s lemma <a href="chap-loops.html#lem:caratheodory">Lemma 1.4</a> provides affinely independent points \(p_0, \dots , p_k\) in \(P\) such that \(x\) belongs to their convex hull. Since \(P\) is open, we may extend \(p_i\) to an affine basis </p>
+  <p> It follows from <a href="chap-loops.html#lem:interior_chab">Lemma 1.6</a> that we need only show that \(E\) has an affine basis \(b\) of points belonging to \(P\) such that \(x\) lies in the interior of the convex hull of \(b\). </p>
+<p>Carathéodory’s lemma&#160;<a href="chap-loops.html#lem:caratheodory">1.4</a> provides affinely independent points \(p_0, \dots , p_k\) in \(P\) such that \(x\) belongs to their convex hull. Since \(P\) is open, we may extend \(p_i\) to an affine basis </p>
 <div class="displaymath" id="a0000000027">
   \[  \hat b = \{ p_0, \ldots , p_d\} ,  \]
 </div>
 <p> where all points still belong to \(P\). Note that \(x\) belongs to the convex hull of \(\hat b\). </p>
 <p>Now let \(c\) be a point in the interior of the convex hull of \(\hat b\) (e.g., the centroid) and for each \(\epsilon {\gt} 0\), consider the homothety </p>
 <div class="displaymath" id="a0000000028">
-  \[  h_{1+\epsilon } : E \to E,  \]
+  \[  h_{1+\epsilon } \! :E \to E,  \]
 </div>
 <p> which dilates about \(c\) by a scale of \(1 + \epsilon \). </p>
 <p>Since \(\hat b\) is finite and contained in \(P\), and \(P\) is open, there exists \(\epsilon {\gt} 0\) such that </p>
@@ -494,7 +494,7 @@
 <div class="displaymath" id="a0000000030">
   \[  b = h_{1+\epsilon } (\hat b)  \]
 </div>
-<p> for any such \(\epsilon \). Indeed, applying lemma <a href="chap-loops.html#lem:int_homothety_cvx">Lemma 1.7</a> to \(\operatorname{Conv}(\hat b)\) we see: </p>
+<p> for any such \(\epsilon \). Indeed, applying <a href="chap-loops.html#lem:int_homothety_cvx">Lemma 1.7</a> to \(\operatorname{Conv}(\hat b)\) we see: </p>
 <span>\begin{align*}  x \in \operatorname{Conv}(\hat b) & \subseteq \operatorname{Int}(h_{1+\epsilon } (\operatorname{Conv}(\hat b)))\\ & = \operatorname{Int}(\operatorname{Conv}(h_{1+\epsilon } (\hat b))) \end{align*}</span>
 <p> as required. </p>
 
@@ -535,7 +535,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L127">smooth_surrounding</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L173">smooth_surrounding</a></li>
         </ul>
 
       </div>
@@ -544,7 +544,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a neighborhood \(U\) of \(\{ (x, p)\} \) and a function \(w : E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in \(U\), </p>
+  <p>   For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a neighborhood \(U\) of \(\{ (x, p)\} \) and a function \(w \! :E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in \(U\), </p>
 <ul class="itemize">
   <li><p>\(w\) is smooth at \((y, q)\) </p>
 </li>
@@ -569,7 +569,7 @@
   <p>Let: </p>
 <span>\begin{align*}  A = E \times \{  q \in E^{d+1} ~ |~  \mbox{$q$ is an affine basis for $E$} \} , \end{align*}</span>
 <p> and define: </p>
-<span>\begin{align*}  w : A & \to ℝ^{d+1}\\ (y, q) & \mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}. \end{align*}</span>
+<span>\begin{align*}  w \! :A & \to ℝ^{d+1}\\ (y, q) & \mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}. \end{align*}</span>
 <p>If we fix an affine basis \(b\) of \(E\), we may express \(w\) as a ratio of determinants in terms of coordinates relative to \(b\). More precisely, by Cramer’s rule, if \(0 \le i \le d\) and \(w_i\) is the \(i^{\rm th}\) component of \(w\), then: </p>
 <span>\begin{align*}  w_i (y, q) = \det M_i (y, q) / \det N (q) \end{align*}</span>
 <p> where \(N(q)\) is the \((d+1)\times (d+1)\) matrix whose columns are the barycentric coordinates of the components of \(q\) relative to \(b\), and \(M_i (y, q)\) is \(N(q)\) except with column \(i\) replaced by the barycentric coordinates of \(y\) relative to \(b\). </p>
@@ -618,7 +618,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L180">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L226">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -631,7 +631,7 @@
 
   </div>
 </div> </p>
-<p>The first main task in proving Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a> is to construct suitable families of loops \(γ_x\) surrounding \(g(x)\), by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that \(Ω\) and the surrounding condition are open. </p>
+<p>The first main task in proving <a href="chap-loops.html#prop:loops">Proposition 1.3</a> is to construct suitable families of loops \(γ_x\) surrounding \(g(x)\), by assembling local families of loops. Those will then be reparametrized to get the correct average in the next section. In this section, we will work only with <em>continuous</em> loops. This will make constructions easier and we will smooth those loops in the end, taking advantage of the fact that \(Ω\) and the surrounding condition are open. </p>
 <p>Thanks to Carathéodory’s lemma, constructing <em>one</em> such loop with values in some open \(O\) is easy as soon as \(v\) belongs to the convex hull of \(O\). </p>
 <p><div class="lemma_thmwrapper" id="lem:loop_of_hull">
   <div class="lemma_thmheading">
@@ -668,7 +668,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L205">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L294">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -736,7 +736,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L244">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L315">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -796,7 +796,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L340">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L422">local_loops</a></li>
         </ul>
 
       </div>
@@ -857,7 +857,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L543">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L642">satisfied_or_refund</a></li>
         </ul>
 
       </div>
@@ -923,7 +923,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L555">extends_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L675">extend_loops</a></li>
         </ul>
 
       </div>
@@ -932,7 +932,7 @@
   </div>
   </div>
   <div class="corollary_thmcontent">
-  <p>   Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊆ U_0\) and \(K_1 ⊆ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β, Ω)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β, Ω)\), there exists \(U ∈ 𝓝(K_0 ∪ K_1)\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β, Ω)\) which coincides with \(γ_0\) near \(K_0\). </p>
+  <p>   Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊆ U_0\) and \(K_1 ⊆ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β, Ω)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β, Ω)\), there exists \(U ∈ 𝓝(K_0 ∪ K_1)\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β, Ω)\) which coincides with \(γ_0\) near \(K_0\cup U_1^c\). </p>
 
   </div>
 </div> </p>
@@ -944,10 +944,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\bar U_0'\) is compact in \(U_0\). Since \(\bar U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
-<p>Lemma&#160;<a href="chap-loops.html#lem:satisfied_or_refund">1.14</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
+  <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\overline U_0'\) is compact in \(U_0\). Since \(\overline U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
+<p><a href="chap-loops.html#lem:satisfied_or_refund">Lemma 1.14</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
 <div class="displaymath" id="a0000000037">
-  \[  γ_x = \begin{cases}  γ_{0, x} &  \text{for $x ∈ U_0'$} \\ γ_{ρ(x), x} &  \text{for $x ∈ U_0 ∩ U_1$} \\ γ_{1, x} &  \text{for $x ∈ U_1'$} \end{cases}  \]
+  \[  γ_x = γ_{ρ(x), x}  \]
 </div>
 <p> which has the required properties. </p>
 
@@ -987,7 +987,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/surrounding.lean#L607">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/surrounding.lean#L934">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -996,7 +996,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   In the setup of Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
+  <p>   In the setup of <a href="chap-loops.html#prop:loops">Proposition 1.3</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(U\) and agrees with \(γ\) near \(K\). </p>
 
   </div>
 </div> </p>
@@ -1008,13 +1008,15 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> Let \(U_0\) be an open set containing \(K\) and contained in the domain of \(γ\). Let \(U_0'\) be an open neighborhood of \(K\) with compact closure in \(U_0\). Let \(U_i\), \(i ≥ 1\) be a local finite covering of \(U ∖ U_0'\) by open subsets not intersecting \(K\) and where the preceding observations gives families of loops \(γ^i\). We also set \(γ^0 = γ|_{U_0}\). In particular the open sets \(U_i\), \(i ≥ 0\) cover the whole of \(U\), and only \(U_0\) intersects \(K\). Let \(K_i\), \(0 ≤ i ≤ N\), be a family of compact sets with \(K_i ⊂ U_i\) which covers \(U\). We repeatedly apply Corollary&#160;<a href="chap-loops.html#cor:extend_loops">1.15</a> to \(K_i\) and \(K_{i+1}\), in this order, to get a family \(γ'\) defined over all \(U\). Since each step preserves the family on \(\operatorname{Op}{K_i}\) and only \(U_0\) intersects (in fact contains) \(K\), we do have \(γ' = γ\) on \(\operatorname{Op}{K}\). </p>
+  <p> Let \(U_0\) be an open set containing \(K\) such that \(γ\) forms a surrounding family of loops on \(U_0\). Let \(U_i\), \(i ≥ 1\) be a locally finite family of open sets with local surrounding families of loops \(γ^i\) and compact subsets \(K_i ⊂ U_i\) covering \(\overline U\). </p>
+<p>This is possible, since by <a href="chap-loops.html#lem:local_loops">Lemma 1.13</a> there is a local surrounding family of loops around each point in \(\overline U\). Since \(E\) is locally compact we may pick a compact neighborhood around each point in \(\overline U\) with such a local family of loops. Since \(\overline U\) is paracompact second countable, we can pick a countable refinement \(U_i\) which is locally finite and still covers \(\overline U\). By the shrinking lemma we can pick closed (and hence compact) subsets \(K_i ⊂ U_i\) that also cover \(\overline U\). </p>
+<p>Now we define a family \((δ^i)_{i \in NN}\) by \(δ^0 = γ|_{U_0}\) and \(δ^{i+1}\) is obtained by extending \(δ^i\) using \(γ^i\) via <a href="chap-loops.html#cor:extend_loops">Corollary 1.15</a>. Since \(δ^{i+1}\) equals \(δ^i\) on \(U_i^c\), this sequence is locally eventually constant. Therefore it has a well-defined limit \(δ\) which is defined on continuous on all \(U\). Since \(δ^{i+1}\) equals \(δ^i\) on a neighborhood of \(K\cup \bigcup _{j{\lt}i} K_i,\) we know in particular that \(δ^i\) equals \(γ\) on a neighborhood of \(K\). Since \(K\) is compact, it has some neighborhood \(O\) such that \(δ^i|_{O}\) is eventually constant with eventual value \(δ|_{O}\). Hence \(δ=γ\) on a neighborhood of \(K\). </p>
 
   </div>
 </div>
 <h2 id="sub:the_reparametrization_lemma">1.3.2 The reparametrization lemma</h2>
 
-<p>The second ingredient needed to prove Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a> is a parametric reparametrization lemma. </p>
+<p>The second ingredient needed to prove <a href="chap-loops.html#prop:loops">Proposition 1.3</a> is a parametric reparametrization lemma. </p>
 <p><div class="lemma_thmwrapper" id="lem:reparametrization">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -1049,7 +1051,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/420e21334505c5bcc6423acbb264eb0469eacfa4/src/loops/reparametrization.lean#L44">reparametrization</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/435a1d37e8a2d2782ae62b96d4b7ef516b167997/src/loops/reparametrization.lean#L44">reparametrization</a></li>
         </ul>
 
       </div>
@@ -1058,7 +1060,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   Let \(γ \! :E × 𝕊^1 → F\) be a smooth family of loops surrounding a map \(g\) with base \(β\) over some \(U ⊆ E\). There is a family of circle diffeomorphisms \(φ : U × 𝕊^1 → 𝕊^1\) such that each \(γ_x ∘ φ_x\) has average \(g(x)\) and \(φ_x(0) = 0\). </p>
+  <p>   Let \(γ \! :E × 𝕊^1 → F\) be a smooth family of loops surrounding a map \(g\) with base \(β\) over some \(U ⊆ E\). There is a family of circle diffeomorphisms \(φ \! :U × 𝕊^1 → 𝕊^1\) such that each \(γ_x ∘ φ_x\) has average \(g(x)\) and \(φ_x(0) = 0\). </p>
 
   </div>
 </div> </p>
@@ -1088,14 +1090,14 @@
 <div class="proof_wrapper" id="a0000000014">
   <div class="proof_heading">
     <span class="proof_caption">
-    Proof of Proposition&#160;<a href="chap-loops.html#prop:loops">1.3</a>
+    Proof of <a href="chap-loops.html#prop:loops">Proposition 1.3</a>
     </span>
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>   Let \(γ^*\) be a family of loops surrounding the origin in \(F\), constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.13</a>. For \(x\) in some neighborhood \(U^*\) of \(K\) where \(g = β\), we set \(γ_x = g(x) + εγ^*\) where \(ε {\gt} 0\) is sufficiently small to ensure the image of \(γ_x\) and its convex hull are contained in \(Ω_x\) (recall \(Ω\) is open and \(K\) is compact). Lemma&#160;<a href="chap-loops.html#lem:∃_surrounding_loops">1.16</a> extends this family to a continuous family of surrounding loops \(γ_x\) for all \(x\) (this is not yet our final \(γ\)). </p>
+  <p>   Let \(γ^*\) be a family of loops surrounding the origin in \(F\), constructed using <a href="chap-loops.html#lem:local_loops">Lemma 1.13</a>. For \(x\) in some neighborhood \(U^*\) of \(K\) where \(g = β\), we set \(γ_x = g(x) + εγ^*\) where \(ε {\gt} 0\) is sufficiently small to ensure the image of \(γ_x\) and its convex hull are contained in \(Ω_x\) (recall \(Ω\) is open and \(K\) is compact). <a href="chap-loops.html#lem:∃_surrounding_loops">Lemma 1.16</a> extends this family to a continuous family of surrounding loops \(γ_x\) for all \(x\) (this is not yet our final \(γ\)). </p>
 <p>We then need to approximate this continuous family by a smooth one. Some care is needed to ensure that it stays based at \(β\). For instance, we can first compose each loop by some fixed surjective continuous map from \(𝕊^1\) to itself that sends a neighborhood of \(0\) to \(0\). This way each loop becomes constant near \(0\), and a convolution smoothing will then keep the value at \(0\). If the smoothing is sufficiently \(C^0\) small then the new \(γ\) is still surrounding and takes values in \(Ω\). </p>
-<p>Then Lemma&#160;<a href="chap-loops.html#lem:reparametrization">1.17</a> gives a family of circle diffeomorphisms \(h_x\) such that \(γ^1_x ∘ h_x\) has average \(g(x)\). </p>
+<p>Then <a href="chap-loops.html#lem:reparametrization">Lemma 1.17</a> gives a family of circle diffeomorphisms \(h_x\) such that \(γ^1_x ∘ h_x\) has average \(g(x)\). </p>
 <p>Finally we choose a cut-off function function \(χ\) which vanishes on \(\operatorname{Op}{K}\) and equals one on \(\operatorname{Op}{U ∖ U^*}\). In \(U^*\), we replace \(γ_x ∘ h_x = g(x) + γ^* ∘ h_x\) by \(g(x) + χ(x)γ^* ∘ h_x\). This operation does not change the average values of these loops, because it rescales them around their average value, but makes them constant on \(\operatorname{Op}{K}\). Also, those loops stay in \(Ω\), thanks to our choice of \(ε\). </p>
 
   </div>
