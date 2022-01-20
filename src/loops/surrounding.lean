@@ -10,11 +10,6 @@ import to_mathlib.topology.nhds_set
 # Surrounding families of loops
 -/
 
-namespace filter
-lemma diff_mem {α} {f : filter α} {s t : set α} (hs : s ∈ f) (ht : tᶜ ∈ f) : s \ t ∈ f :=
-inter_mem hs ht
-end filter
-
 open set function finite_dimensional int prod function path filter topological_space
 open_locale classical topological_space unit_interval big_operators
 
