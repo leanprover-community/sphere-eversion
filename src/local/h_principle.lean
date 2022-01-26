@@ -18,7 +18,12 @@ open filter set rel_loc
 local notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ 𝓝ˢ s) := r
 
 local notation `D` := fderiv ℝ
+local notation `𝒞` := times_cont_diff ℝ
+local notation `∞` := ⊤
 local notation `hull` := convex_hull ℝ
+local notation u ` ⬝ `:70 φ:65 :=
+  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
+
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
@@ -73,11 +78,15 @@ structure accepts (L : step_landscape E) (𝓕 : formal_sol R U) : Prop :=
 def Ω (L : step_landscape E) (𝓕 : formal_sol R L.U) : set (E × F) :=
 ⋃ x ∈ L.U, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at L.p x) $ 𝓕.φ x L.p.v)
 
+def π (L : step_landscape E) : E →L[ℝ] ℝ := L.p.π
+
+def v (L : step_landscape E) : E := L.p.v
+
 def K (L : step_landscape E) : set E := L.K₁ ∩ L.C
 
-def b (L : step_landscape E) (𝓕 : formal_sol R L.U) : E → F := λ x, 𝓕.φ x L.p.v
+def b (L : step_landscape E) (𝓕 : formal_sol R L.U) : E → F := λ x, 𝓕.φ x L.v
 
-def g (L : step_landscape E) (𝓕 : formal_sol R L.U) : E → F := λ x, D 𝓕.f x L.p.v
+def g (L : step_landscape E) (𝓕 : formal_sol R L.U) : E → F := λ x, D 𝓕.f x L.v
 
 lemma is_compact_K (L : step_landscape E) : is_compact L.K :=
 L.hK₁.inter_right L.hC
@@ -117,11 +126,30 @@ lemma accepts.hull {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accep
   ∀ x ∈ L.U, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω 𝓕) :=
 sorry
 
+/-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
-E → ℝ → loop F :=
-classical.some (exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g h.smooth_b h.mem h.rel h.hull)
+ℝ → E → loop F :=
+classical.some (exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+                             h.smooth_b h.mem h.rel h.hull)
 
 variables (L : step_landscape E)
+
+-- This should be large enough to make everything true
+def N (L : step_landscape E) {𝓕 : formal_sol R L.U} {ε : ℝ} (h : L.accepts 𝓕 ∧ 0 < ε) : ℝ :=
+sorry
+
+-- Cut-off function which needs to satisfies the next three lemmas
+def ρ (L : step_landscape E) : E → ℝ :=
+sorry
+
+lemma ρ_smooth (L : step_landscape E) : 𝒞 ∞ L.ρ :=
+sorry
+
+lemma hρ₀ (L : step_landscape E) : ∀ᶠ x near L.K₀, L.ρ x = 1 :=
+sorry
+
+lemma hρ₁ (L : step_landscape E) : closure {x | L.ρ x ≠ 0} ⊆ L.K₁ :=
+sorry
 
 /--
 Homotopy of formal solutions obtained by corrugation in the direction of `p : dual_pair' E`
@@ -131,7 +159,12 @@ in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomi
 def improve_step (𝓕 : formal_sol R L.U) (ε : ℝ) : htpy_formal_sol R L.U :=
 if h : L.accepts 𝓕 ∧ 0 < ε
 then
-  sorry
+  { f := λ t, 𝓕.f +  corrugation L.p.π (L.N h) (L.loop h.1 t),
+    f_diff := sorry,
+    φ := λ t x , 𝓕.φ x + ((L.loop h.1 (t*L.ρ x) x $ (L.N h) * L.π x) - 𝓕.φ x L.v) ⬝ L.π +
+                 (t*L.ρ x) • (corrugation.remainder L.p.π (L.N h) (L.loop h.1 1) x),
+    φ_diff := sorry,
+    is_sol := sorry }
 else
   𝓕.const_htpy
 
