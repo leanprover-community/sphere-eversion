@@ -273,7 +273,7 @@ begin
   { intro i, refine compact_of_is_closed_subset (uc i) is_closed_closure _,
     apply closure_mono, rw image_subset_iff, refine subset_closure.trans (hv i) },
   refine ⟨λ i, closure (coe '' (v i)), _, this, _⟩,
-  { refine subset.trans _ (Union_subset_Union $
+  { refine subset.trans _ (Union_mono $
       λ i, interior_maximal subset_closure (hs.is_open_map_subtype_coe _ (vo i))),
     simp_rw [← image_Union, vU, subtype.coe_image_univ] },
   { intro i,
