@@ -13,6 +13,15 @@ noncomputable theory
 open set function filter
 open_locale unit_interval topological_space uniformity filter classical
 
+section
+ -- to connected
+
+variables {α : Type*} [topological_space α] [connected_space α]
+lemma is_connected_univ : is_connected (univ : set α) :=
+⟨univ_nonempty, is_preconnected_univ⟩
+
+end
+
 section -- to ???
 
 -- needs classical
