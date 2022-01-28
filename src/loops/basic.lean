@@ -21,8 +21,8 @@ open set function finite_dimensional int topological_space
 open_locale big_operators topological_space topological_space unit_interval
 noncomputable theory
 
-variables {X X' Y Z : Type*} [topological_space X]
-variables [topological_space X'] [topological_space Y] [topological_space Z]
+variables {K X X' Y Z : Type*}
+-- variables [topological_space X'] [topological_space Y] [topological_space Z]
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F]
           {F' : Type*} [normed_group F'] [normed_space ℝ F']
@@ -123,10 +123,19 @@ end
 def transform (γ : loop X) (f : X → X') : loop X' :=
 ⟨λ t, f (γ t), λ t, by rw γ.per⟩
 
-/-- Shifting a loop, or equivalently, adding a constant value to a loop -/
-@[simps]
-def shift {F : Type*} [add_group F] [topological_space F] (γ : loop F) (x : F) : loop F :=
-γ.transform (+ x)
+/-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
+instance [has_add X] : has_vadd X (loop X) :=
+⟨λ x γ, γ.transform (λ y, x + y)⟩
+
+@[simp] lemma vadd_apply [has_add X] {x : X} {γ : loop X} {t : ℝ} : (x +ᵥ γ) t = x + γ t :=
+rfl
+
+/-- Multiplying a loop by a scalar value. -/
+instance [has_scalar K X] : has_scalar K (loop X) :=
+⟨λ k γ, γ.transform (λ y, k • y)⟩
+
+@[simp] lemma smul_apply [has_scalar K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
+rfl
 
 /-! ## Support of a loop family -/
 
@@ -134,6 +143,9 @@ def shift {F : Type*} [add_group F] [topological_space F] (γ : loop F) (x : F) 
 See also `loop.is_const_iff_forall_avg` and `loop.is_const_iff_const_avg` for characterizations in
 terms of average values. -/
 def is_const (γ : loop X) := ∀ t s, γ t = γ s
+
+variables [topological_space X] [topological_space X']
+variables [topological_space Y] [topological_space Z]
 
 /-- The support of a loop family is the closure of the set of parameters where
 the loop is not constant. -/

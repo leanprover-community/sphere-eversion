@@ -68,6 +68,9 @@ local notation `smooth_on` := times_cont_diff_on ℝ ⊤
 /-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
 def smooth_at (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
 
+lemma smooth_at.continuous_at {f : E → F} {x : E} (h : smooth_at f x) : continuous_at f x :=
+by { obtain ⟨s, hs, h⟩ := h, exact h.continuous_on.continuous_at hs }
+
 section surrounding_points
 
 local notation `ι` := fin (d + 1)
@@ -221,12 +224,15 @@ end
 
 end surrounding_points
 
+namespace loop
+
+variables {γ γ' : loop F} {x y : F} {t : ℝ}
 
 /-- A loop `γ` surrounds a point `x` if `x` is surrounded by values of `γ`. -/
-def loop.surrounds (γ : loop F) (x : F) : Prop :=
+def surrounds (γ : loop F) (x : F) : Prop :=
   ∃ t w : fin (d + 1) → ℝ, surrounding_pts x (γ ∘ t) w
 
-lemma loop.surrounds_iff_range_subset_range (γ : loop F) (x : F) :
+lemma surrounds_iff_range_subset_range :
   γ.surrounds x ↔ ∃ (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ),
   surrounding_pts x p w ∧ range p ⊆ range γ :=
 begin
@@ -239,14 +245,27 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
-lemma loop.surrounds.mono {γ γ' : loop F} {x : F} (h : γ.surrounds x)
-  (h2 : range γ ⊆ range γ') : γ'.surrounds x :=
+lemma vadd_surrounds : γ.surrounds x ↔ (y +ᵥ γ).surrounds (y + x) :=
+sorry
+
+lemma surrounds.vadd (h : γ.surrounds x) : (y +ᵥ γ).surrounds (y + x) :=
+sorry
+
+lemma surrounds.vadd0 (h : γ.surrounds 0) : (y +ᵥ γ).surrounds y :=
+by { convert h.vadd, rw [add_zero] }
+
+lemma surrounds.smul0 (h : γ.surrounds 0) : (t • γ).surrounds 0 :=
+sorry
+
+lemma surrounds.mono (h : γ.surrounds x) (h2 : range γ ⊆ range γ') : γ'.surrounds x :=
 begin
   revert h, simp_rw [loop.surrounds_iff_range_subset_range],
   refine exists_imp_exists (λ t, _),
   refine exists_imp_exists (λ w, _),
   exact and.imp_right (λ h3, subset.trans h3 h2),
 end
+
+end loop
 
 section surrounding_loop
 
@@ -384,7 +403,7 @@ by { ext t, exact h.t₀ x t }
 
 end surrounding_family
 
-variables {g b : E → F} {U K : set E} {Ω : set (E × F)}
+variables {g b : E → F} {U K C : set E} {Ω : set (E × F)}
 
 namespace surrounding_family_in
 
@@ -412,7 +431,7 @@ variables {x₀ : E} (hΩ_conn : is_path_connected (prod.mk x₀ ⁻¹' Ω))
 
 /-- The witness of `local_loops`. -/
 def local_loops_def (x : E) (t : ℝ) : loop F :=
-(surrounding_loop hΩ_conn hp hb_in t).shift (b x - b x₀)
+b x - b x₀ +ᵥ surrounding_loop hΩ_conn hp hb_in t
 
 /--
 Note: The conditions in this lemma are currently a bit weaker than the ones mentioned in the
@@ -432,18 +451,18 @@ begin
   have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := is_open_slice_of_is_open_over hΩ_op,
   rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn hconv hb_in with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
-  let δ : E → ℝ → loop F := λ x t, (γ t).shift (b x - b x₀),
+  let δ : E → ℝ → loop F := λ x t, b x - b x₀ +ᵥ γ t,
   have hδ : continuous ↿δ,
-  { dsimp only [δ, has_uncurry.uncurry, loop.shift_apply],
-    refine (h1γ.comp continuous_snd).add _,
+  { dsimp only [δ, has_uncurry.uncurry, loop.vadd_apply],
+    refine continuous.add _ (h1γ.comp continuous_snd),
     refine continuous.sub _ continuous_const,
     exact hb.comp continuous_fst },
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s,
-  { intros t s, simp only [add_zero, loop.shift_apply, sub_self] },
+  { intros t s, simp only [zero_add, loop.vadd_apply, sub_self] },
   have hδs0 : ∀ x t, δ x t 0 = b x,
-  { intros x t, simp only [h2γ, loop.shift_apply, add_sub_cancel'_right] },
+  { intros x t, simp only [h2γ, loop.vadd_apply, sub_add_cancel] },
   have hδt0 : ∀ x s, δ x 0 s = b x,
-  { intros x t, simp only [h3γ, loop.shift_apply, add_sub_cancel'_right] },
+  { intros x t, simp only [h3γ, loop.vadd_apply, sub_add_cancel] },
   have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) (s ∈ I), (x, δ x t s) ∈ Ω,
   { rcases hΩ_op with ⟨U, hUx₀, hU⟩,
     -- todo: this is nicer with `is_compact.eventually_forall_of_forall_eventually` twice, but then
@@ -462,7 +481,7 @@ begin
     obtain ⟨W, hW⟩ := smooth_surrounding_pts h,
     let c : E → F × (fin (d+1) → F) := λ x, (g x, δ x 1 ∘ p),
     have hc : continuous_at c x₀ := hg.prod
-      (continuous_at_const.add $ (continuous_at_pi.2 (λ _, hbx₀)).sub continuous_at_const),
+      (((continuous_at_pi.2 (λ _, hbx₀)).sub continuous_at_const).add continuous_at_const),
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p),
     { simp only [c, hδx₀, function.comp, prod.mk.inj_iff, eq_self_iff_true, and_self] },
     rw [← hcx₀] at hW,
@@ -931,7 +950,7 @@ begin
     rw [← h1n], refine (loop_data_seq l₀ l n).hγ.val_in' x ((loop_data_seq l₀ l n).hKU h2n) },
 end
 
-lemma exists_surrounding_loops [finite_dimensional ℝ F] {C U : set E}
+lemma exists_surrounding_loops [finite_dimensional ℝ F]
   (hK : is_compact K) (hC : is_closed C) (hU : is_open U) (hCU : C ⊆ U)
   (hΩ_op : is_open (Ω ∩ fst ⁻¹' U))
   (hΩ_conn : ∀ x ∈ C, is_connected (prod.mk x ⁻¹' Ω))
