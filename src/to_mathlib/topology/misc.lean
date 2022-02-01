@@ -178,6 +178,13 @@ empty set in this case. -/
 def connected_comp_in {α : Type*} [topological_space α] (F : set α) (x : α) : set α :=
 if h : x ∈ F then coe '' (connected_component (⟨x, h⟩ : F)) else ∅
 
+lemma connected_comp_in_subset {α : Type*} [topological_space α] (F : set α) (x : α) :
+  connected_comp_in F x ⊆ F :=
+begin
+  dsimp [connected_comp_in],
+  split_ifs ; simp
+end
+
 namespace topological_space -- to topology.bases
 lemma cover_nat_nhds_within {α} [topological_space α] [second_countable_topology α] {f : α → set α}
   {s : set α} (hf : ∀ x ∈ s, f x ∈ 𝓝[s] x) (hs : s.nonempty) :
