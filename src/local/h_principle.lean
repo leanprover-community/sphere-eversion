@@ -94,6 +94,14 @@ L.hK₁.inter_right L.hC
 lemma hKU (L : step_landscape E) : L.K ⊆ L.U :=
 ((inter_subset_left _ _).trans L.hK₁U)
 
+lemma mem_Ω {L : step_landscape E} {𝓕 : formal_sol R L.U} {x : E} {w : F} (H : (x, w) ∈ L.Ω 𝓕) :
+  (x, 𝓕.f x, L.p.update (𝓕.φ x) w) ∈ R :=
+begin
+  obtain ⟨x, -, h, rfl⟩ : ∃ x', x' ∈ L.U ∧
+                                w ∈ connected_comp_in (𝓕.slice_at L.p x') (𝓕.φ x' L.p.v) ∧ x' = x,
+  by simpa [step_landscape.Ω] using H,
+  exact (connected_comp_in_subset _ _ h : _)
+end
 
 lemma accepts.open {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
   is_open (L.Ω 𝓕 ∩ (L.U ×ˢ (univ : set F))) :=
@@ -126,11 +134,43 @@ lemma accepts.hull {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accep
   ∀ x ∈ L.U, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω 𝓕) :=
 sorry
 
+-- The next lemma uses compactnes of K₁, openness of R above U and continuity of 𝓕
+lemma mem_of_c0_close (L : step_landscape E) {𝓕 : formal_sol R L.U}
+  (h_op : R.is_open_over L.U) :
+  ∃ ε > 0, ∀ (x : E) (z : F) (ψ : E →L[ℝ] F),
+           x ∈ L.K₁ → ∥z - 𝓕.f x∥ < ε → ∥ψ - 𝓕.φ x∥ < ε → (x, z, ψ) ∈ R :=
+sorry
+
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
 ℝ → E → loop F :=
 classical.some (exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
                              h.smooth_b h.mem h.rel h.hull)
+
+lemma loop_mem (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+∀ (x ∈ L.U) t s, L.loop h t x s ∈ (prod.mk x ⁻¹' L.Ω 𝓕) :=
+λ x x_in t s,
+(((classical.some_spec $ exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+                             h.smooth_b h.mem h.rel h.hull).2.2.1 x x_in).2.2 t s).1
+
+lemma loop_base (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+∀ (x ∈ L.U) s, L.loop h 0 x s = L.b 𝓕 x :=
+λ x x_in s,
+  ((classical.some_spec (exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+                             h.smooth_b h.mem h.rel h.hull)).2.2.1 x x_in).1 s
+
+lemma loop_smooth (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+∀ (x ∈ L.U) t s, smooth_at ↿(L.loop h) ((t, x, s) : ℝ × E × ℝ) :=
+λ x x_in t s,
+(((classical.some_spec $ exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+                             h.smooth_b h.mem h.rel h.hull).2.2.1 x x_in).2.2 t s).2
+
+lemma loop_avg (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts 𝓕) :
+ ∀ (x ∈ L.U), (L.loop h 1 x).average = L.g 𝓕 x :=
+λ x x_in,
+((classical.some_spec $ exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+                             h.smooth_b h.mem h.rel h.hull).2.2.1 x x_in).2.1
+
 
 variables (L : step_landscape E)
 
@@ -159,12 +199,26 @@ in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomi
 def improve_step (𝓕 : formal_sol R L.U) (ε : ℝ) : htpy_formal_sol R L.U :=
 if h : L.accepts 𝓕 ∧ 0 < ε
 then
-  { f := λ t, 𝓕.f +  corrugation L.p.π (L.N h) (L.loop h.1 t),
+  { f := λ t, 𝓕.f +  corrugation L.π (L.N h) (L.loop h.1 t),
     f_diff := sorry,
-    φ := λ t x , 𝓕.φ x + ((L.loop h.1 (t*L.ρ x) x $ (L.N h) * L.π x) - 𝓕.φ x L.v) ⬝ L.π +
+    φ := λ t x , L.p.update (𝓕.φ x) (L.loop h.1 (t*L.ρ x) x $ (L.N h) * L.π x) +
                  (t*L.ρ x) • (corrugation.remainder L.p.π (L.N h) (L.loop h.1 1) x),
     φ_diff := sorry,
-    is_sol := sorry }
+    is_sol := begin
+      intros t x x_in,
+      rcases h with ⟨h, ε_pos⟩,
+      have := L.loop_mem h x x_in (t*L.ρ x),
+      have := step_landscape.mem_Ω (this $ L.N ⟨h, ε_pos⟩ * L.π x),
+      dsimp only,
+      by_cases h : x ∈ L.K₁,
+      { rcases L.mem_of_c0_close _ with ⟨δ, δ_pos, hδ⟩,
+
+        all_goals { sorry } },
+      {
+        sorry },
+
+      all_goals { sorry },
+    end }
 else
   𝓕.const_htpy
 

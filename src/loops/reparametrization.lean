@@ -127,11 +127,12 @@ lemma exists_loops
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω)
   (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-  ∃ γ : ℝ → E → loop F, (∀ (x ∈ U) (t ∈ I) s, (x, γ t x s) ∈ Ω ∧
-                                              γ 0 x s = b x ∧
-                                              (γ 1 x).average = g x ∧
-                                              smooth_at ↿γ ((t, x, s) : ℝ × E × ℝ)) ∧
-                        (∀ᶠ x in 𝓝ˢ K, ∀ (t ∈ I) s, γ t x s = b x) :=
+  ∃ γ : ℝ → E → loop F, (∀ t ≤ 0, γ t = γ 0) ∧ (∀ t ≥ 1, γ t = γ 1) ∧
+                        (∀ (x ∈ U), (∀ s, γ 0 x s = b x) ∧
+                                    (γ 1 x).average = g x ∧
+                                    ∀ t s, (x, γ t x s) ∈ Ω ∧
+                                          smooth_at ↿γ ((t, x, s) : ℝ × E × ℝ)) ∧
+                        (∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)  :=
 sorry
 
 -- #lint
