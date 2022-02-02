@@ -481,6 +481,28 @@ end
 
 end
 
+-- is this true?
+section
+variables {𝕜 E F H : Type*} [nondiscrete_normed_field 𝕜] [normed_group E] [normed_space 𝕜 E]
+  [normed_group F] [normed_space 𝕜 F] [normed_group H] [normed_space 𝕜 H]
+  {f : E → F} {n : with_top ℕ}
+
+lemma times_cont_diff_clm_apply {f : E → F →L[𝕜] H} :
+  times_cont_diff 𝕜 n f ↔ ∀ y, times_cont_diff 𝕜 n (λ x, f x y) :=
+begin
+  split,
+  { intros h y,
+    exact (continuous_linear_map.apply 𝕜 H y).times_cont_diff.comp h },
+  sorry
+end
+
+lemma times_cont_diff_succ_iff_fderiv_apply {n : ℕ} :
+  times_cont_diff 𝕜 ((n + 1) : ℕ) f ↔
+  differentiable 𝕜 f ∧ ∀ y, times_cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
+by rw [times_cont_diff_succ_iff_fderiv, times_cont_diff_clm_apply]
+
+end
+
 section
 universe variables u v
 variables {E : Type (max u v)} [normed_group E] [normed_space ℝ E]
@@ -503,23 +525,28 @@ lemma times_cont_diff_parametric_primitive_of_times_cont_diff'' {F : H → ℝ �
   (a : ℝ) :
   times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
 begin
-  tactic.unfreeze_local_instances,
-  revert E F,
+  unfreezingI { revert E F },
   induction n with n ih; introsI E F i₁ i₂ i₃ i₄ i₅ i₆ hF,
   { rw [with_top.coe_zero, times_cont_diff_zero] at *,
     exact continuous_parametric_interval_integral_of_continuous hF hs },
   { have hF₁ : times_cont_diff ℝ 1 (↿F), from hF.one_of_succ,
     have hs₁ : times_cont_diff ℝ 1 s, from hs.one_of_succ,
+    have h : ∀ x, has_fderiv_at (λ x, ∫ t in a..s x, F x t)
+      ((∫ t in a..s x, ∂₁F x t) + F x (s x) ⬝ D s x) x :=
+    λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x a).2,
     rw times_cont_diff_succ_iff_fderiv,
     split,
-    { exact λ x₀, ⟨_, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x₀ a).2⟩ },
-    { rw funext (λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x a).2.fderiv),
+    { exact λ x₀, ⟨_, h x₀⟩ },
+    { rw funext (λ x, (h x).fderiv),
       apply times_cont_diff.add,
       { apply ih hs.of_succ,
         apply times_cont_diff.times_cont_diff_partial_fst,
         exact hF },
-      { exact is_bounded_bilinear_map_smul_right.times_cont_diff.comp
-          ((times_cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $ times_cont_diff_id.prod hs.of_succ) } } }
+      { -- giving the following implicit type arguments speeds up elaboration significantly
+        exact (@is_bounded_bilinear_map_smul_right ℝ _ H _ _ E _ _).times_cont_diff.comp
+          ((times_cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $
+            times_cont_diff_id.prod hs.of_succ)
+            } } }
 end
 
 end
