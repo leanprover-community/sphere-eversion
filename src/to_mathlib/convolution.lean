@@ -851,6 +851,8 @@ variables {f f' : ℝ → ℝ} {g g' : ℝ → E} {x x' : ℝ}
 variables [normed_space ℝ E]
 variables {n : with_top ℕ}
 
+-- todo: replace `continuous g` by `locally_integrable g`.
+-- (todo: define `locally_integable`)
 lemma has_compact_support.has_fderiv_at_convolution_left
   (hf : times_cont_diff ℝ 1 f) (hcf : has_compact_support f)
   (hg : continuous g) (x₀ : ℝ) : has_deriv_at (f ⋆ g) ((deriv f ⋆ g) x₀) x₀ :=
@@ -869,7 +871,7 @@ begin
   simp_rw [convolution_fn_eq_swap],
   refine has_deriv_at_integral_of_dominated_of_deriv_le zero_lt_one
     (eventually_of_forall h1) _ (h2 x₀) _ _ _,
-  { exact L.indicator (λ t, (⨆ x, ∥deriv f x∥) * ∥ g t∥) },
+  { exact L.indicator (λ t, (⨆ x, ∥deriv f x∥) * ∥g t∥) },
   { exact (hcf.convolution_exists_left
       (hf.continuous.integrable_of_compact_closure_support hcf) hg x₀).integrable_swap },
   { refine eventually_of_forall (λ t x hx, _),
