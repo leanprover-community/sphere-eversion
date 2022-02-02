@@ -2,30 +2,12 @@ import measure_theory.integral.interval_integral
 import measure_theory.group.action
 import measure_theory.measure.haar_lebesgue
 import to_mathlib.measure_theory.parametric_interval_integral
+import to_mathlib.topology.tsupport
 import analysis.calculus.fderiv_measurable
 
 noncomputable theory
 open topological_space measure_theory measure_theory.measure function set
 open_locale pointwise topological_space nnreal measure_theory
-
-lemma iff.not {p q : Prop} (h : p ↔ q) : ¬ p ↔ ¬ q :=
-not_iff_not.mpr h
-
-namespace set
-
-variables {α β : Type*} {s : set α} {x : α}
-
-lemma compl_ne_univ : sᶜ ≠ univ ↔ s.nonempty :=
-compl_univ_iff.not.trans ne_empty_iff_nonempty
-
-lemma not_mem_compl_iff  : x ∉ sᶜ ↔ x ∈ s := not_not
-
-lemma antitone_ball {P : α → Prop} : antitone (λ s : set α, ∀ x ∈ s, P x) :=
-λ s t hst h x hx, h x $ hst hx
-
-
-end set
-open set
 
 section
 
@@ -46,27 +28,6 @@ lemma bdd_above.exists_ge {s : set α} (hs : bdd_above s) (x₀ : α) : ∃ x, x
 
 end
 
-section
-
-variables {α M : Type*} {s : set α} [has_one M]
-
-@[to_additive] lemma mul_support_disjoint_iff {f : α → M} {s : set α} :
-  disjoint (mul_support f) s ↔ ∀ x ∈ s, f x = 1 :=
-by simp_rw [disjoint_iff_subset_compl_right, mul_support_subset_iff', not_mem_compl_iff]
-
-@[to_additive] lemma disjoint_mul_support_iff {f : α → M} {s : set α} :
-  disjoint s (mul_support f) ↔ ∀ x ∈ s, f x = 1 :=
-by rw [disjoint.comm, mul_support_disjoint_iff]
-
-@[to_additive] lemma mul_support_disjoint_iff_eq_on {f : α → M} {s : set α} :
-  disjoint (mul_support f) s ↔ eq_on f 1 s :=
-mul_support_disjoint_iff
-
-@[to_additive] lemma disjoint_mul_support_iff_eq_on {f : α → M} {s : set α} :
-  disjoint s (mul_support f) ↔ eq_on f 1 s :=
-disjoint_mul_support_iff
-
-end
 
 namespace filter
 
@@ -92,215 +53,8 @@ lemma antitone_continuous_on : antitone (continuous_on f) :=
 
 end
 
-section
-
-variables {α α' β γ δ : Type*} [topological_space α] [topological_space α']
-variables [has_one β] [has_one γ] [has_one δ]
-variables {g : β → γ} {f : α → β} {f₂ : α → γ} {m : β → γ → δ} {x : α}
-
-@[to_additive]
-lemma not_mem_closure_mul_support_iff_eventually_eq : x ∉ closure (mul_support f) ↔ f =ᶠ[𝓝 x] 1 :=
-by simp_rw [mem_closure_iff_nhds, not_forall, not_nonempty_iff_eq_empty,
-    ← disjoint_iff_inter_eq_empty, disjoint_mul_support_iff_eq_on, eventually_eq_iff_exists_mem]
-
-/-- A function `f` *has compact multiplicative support* or is *compactly supported* if the closure
-of the multiplicative support of `f` is compact. In other words: `f` is equal to `1` outside a
-compact set. -/
-@[to_additive
-/-" A function `f` *has compact support* or is *compactly supported* if the closure of the support
-of `f` is compact. In other words: `f` is equal to `0` outside a compact set. "-/]
-def has_compact_mul_support (f : α → β) : Prop :=
-is_compact (closure (mul_support f))
-
-@[to_additive]
-lemma has_compact_mul_support_def :
-  has_compact_mul_support f ↔ is_compact (closure (mul_support f)) :=
-by refl
-
-@[to_additive]
-lemma has_compact_mul_support.is_compact (hf : has_compact_mul_support f) :
-  is_compact (closure (mul_support f)) :=
-hf
-
-@[to_additive]
-lemma has_compact_mul_support.mono' {f' : α → γ} (hf : has_compact_mul_support f)
-  (hff' : mul_support f' ⊆ closure (mul_support f)) : has_compact_mul_support f' :=
-compact_of_is_closed_subset hf is_closed_closure $ closure_minimal hff' is_closed_closure
-
-@[to_additive]
-lemma has_compact_mul_support.mono {f' : α → γ} (hf : has_compact_mul_support f)
-  (hff' : mul_support f' ⊆ mul_support f) : has_compact_mul_support f' :=
-hf.mono' $ hff'.trans subset_closure
-
-@[to_additive]
-lemma has_compact_mul_support.comp_left (hf : has_compact_mul_support f) (hg : g 1 = 1) :
-  has_compact_mul_support (g ∘ f) :=
-hf.mono $ mul_support_comp_subset hg f
-
-@[to_additive]
-lemma has_compact_mul_support_comp_left (hg : ∀ {x}, g x = 1 ↔ x = 1) :
-  has_compact_mul_support (g ∘ f) ↔ has_compact_mul_support f :=
-by simp_rw [has_compact_mul_support, mul_support_comp_eq g @hg f]
-
-@[to_additive]
-lemma has_compact_mul_support.comp₂_left (hf : has_compact_mul_support f)
-  (hf₂ : has_compact_mul_support f₂) (hm : m 1 1 = 1) :
-  has_compact_mul_support (λ x, m (f x) (f₂ x)) :=
-begin
-  refine compact_of_is_closed_subset (hf.union hf₂) is_closed_closure _,
-  refine closure_minimal (λ x h2x, _) (is_closed_closure.union is_closed_closure) ,
-  refine union_subset_union subset_closure subset_closure _,
-  by_contra hx,
-  simp_rw [mem_union, not_or_distrib, nmem_mul_support] at hx,
-  apply h2x,
-  simp_rw [hx.1, hx.2, hm]
-end
-
-@[to_additive]
-lemma has_compact_mul_support.comp_homeomorph (hf : has_compact_mul_support f) (φ : α' ≃ₜ α) :
-  has_compact_mul_support (f ∘ φ) :=
-begin
-  rw [has_compact_mul_support, mul_support_comp_eq_preimage, ← φ.preimage_closure],
-  exact φ.compact_preimage.mpr hf
-end
-
-end
-
-section monoid
-
-variables {α β γ : Type*} [topological_space α] [monoid β]
-variables {f f' : α → β} {x : α}
 
 
-@[to_additive]
-lemma has_compact_mul_support.mul (hf : has_compact_mul_support f)
-  (hf' : has_compact_mul_support f') : has_compact_mul_support (f * f') :=
-by apply hf.comp₂_left hf' (mul_one 1) -- `by apply` speeds up elaboration
-
-end monoid
-
-section monoid
-
-variables {α β γ : Type*} [topological_space α] [monoid_with_zero β] [add_monoid γ]
-  [distrib_mul_action β γ]
-variables {f : α → β} {f' : α → γ} {x : α}
-
-
-lemma has_compact_support.smul (hf : has_compact_support f)
-  (hf' : has_compact_support f') : has_compact_support (f • f') :=
-by apply hf.comp₂_left hf' (smul_zero 0) -- `by apply` speeds up elaboration
-
-end monoid
-
-section monoid_with_zero
-
-variables {α β γ : Type*} [topological_space α] [mul_zero_class β]
-variables {f f' : α → β} {x : α}
-
-@[to_additive]
-lemma has_compact_support.mul (hf : has_compact_support f)
-  (hf' : has_compact_support f') : has_compact_support (f * f') :=
-by apply hf.comp₂_left hf' (mul_zero 0) -- `by apply` speeds up elaboration
-
-end monoid_with_zero
-
-section semigroup
-variables {α : Type*} [semigroup α] [topological_space α] [has_continuous_mul α]
-
-@[to_additive]
-lemma is_compact.mul {s t : set α} (hs : is_compact s) (ht : is_compact t) : is_compact (s * t) :=
-by { rw [← image_mul_prod], exact (hs.prod ht).image continuous_mul }
-
-end semigroup
-
-section
-
-variables {α β : Type*} [topological_space α] [normed_group β]
-variables {f : α → β} {x : α}
-
-lemma has_compact_support_norm_iff : has_compact_support (λ x, ∥ f x ∥) ↔ has_compact_support f :=
-has_compact_support_comp_left $ λ x, norm_eq_zero
-
-alias has_compact_support_norm_iff ↔ _ has_compact_support.norm
-
-end
-
-section
-
-variables {α β : Type*} [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space β]
-
--- topology.algebra.ordered.compact
-/-- The **extreme value theorem**: if a continuous function `f` is larger than a value in its range
-away from compact sets, then it has a global minimum. -/
-lemma continuous.exists_forall_le' {f : β → α} (hf : continuous f) (x₀ : β)
-  (h : ∀ᶠ x in cocompact β, f x₀ ≤ f x) : ∃ (x : β), ∀ (y : β), f x ≤ f y :=
-begin
-  obtain ⟨K : set β, hK : is_compact K, hKf : ∀ x ∉ K, f x₀ ≤ f x⟩ :=
-  (has_basis_cocompact.eventually_iff).mp h,
-  obtain ⟨x, -, hx⟩ : ∃ x ∈ insert x₀ K, ∀ y ∈ insert x₀ K, f x ≤ f y :=
-  (hK.insert x₀).exists_forall_le (nonempty_insert _ _) hf.continuous_on,
-  refine ⟨x, λ y, _⟩,
-  by_cases hy : y ∈ K,
-  exacts [hx y (or.inr hy), (hx _ (or.inl rfl)).trans (hKf y hy)]
-end
-
--- better proof
-lemma continuous.exists_forall_le'' [nonempty β] {f : β → α}
-  (hf : continuous f) (hlim : tendsto f (cocompact β) at_top) :
-  ∃ x, ∀ y, f x ≤ f y :=
-by { inhabit β, exact hf.exists_forall_le' default (hlim.eventually $ eventually_ge_at_top _) }
-
-@[to_additive]
-lemma continuous.exists_forall_le_of_has_compact_mul_support [nonempty β] [has_one α]
-  {f : β → α} (hf : continuous f) (h : has_compact_mul_support f) :
-  ∃ (x : β), ∀ (y : β), f x ≤ f y :=
-begin
-  -- we use `continuous.exists_forall_le'` with as `x₀` any element outside the support of `f`,
-  -- if such an element exists (and otherwise an arbitrary element).
-  refine hf.exists_forall_le' (classical.epsilon $ λ x, f x = 1)
-    (eventually_of_mem h.compl_mem_cocompact $ λ x hx, _),
-  have : f x = 1 := nmem_mul_support.mp (mt (λ h2x, subset_closure h2x) hx),
-  exact ((classical.epsilon_spec ⟨x, this⟩).trans this.symm).le
-end
-
-@[to_additive]
-lemma continuous.exists_forall_ge_of_has_compact_mul_support [nonempty β] [has_one α]
-  {f : β → α} (hf : continuous f) (h : has_compact_mul_support f) :
-  ∃ (x : β), ∀ (y : β), f y ≤ f x :=
-@continuous.exists_forall_le_of_has_compact_mul_support (order_dual α) _ _ _ _ _ _ _ _ hf h
-
-@[to_additive]
-lemma continuous.bdd_below_range_of_has_compact_mul_support [has_one α]
-  {f : β → α} (hf : continuous f) (h : has_compact_mul_support f) :
-  bdd_below (range f) :=
-begin
-  casesI is_empty_or_nonempty β with hβ hβ,
-  { rw range_eq_empty_iff.mpr, exact bdd_below_empty, exact hβ },
-  obtain ⟨x, hx⟩ := hf.exists_forall_le_of_has_compact_mul_support h,
-  refine ⟨f x, _⟩, rintro _ ⟨x', rfl⟩, exact hx x'
-end
-
-@[to_additive]
-lemma continuous.bdd_above_range_of_has_compact_mul_support [has_one α]
-  {f : β → α} (hf : continuous f) (h : has_compact_mul_support f) :
-  bdd_above (range f) :=
-@continuous.bdd_below_range_of_has_compact_mul_support (order_dual α) _ _ _ _ _ _ _ hf h
-
-lemma is_compact.bdd_below_image {f : β → α} {K : set β}
-  (hK : is_compact K) (hf : continuous_on f K) : bdd_below (f '' K) :=
-begin
-  rcases eq_empty_or_nonempty K with rfl|h, { rw [image_empty], exact bdd_below_empty },
-  obtain ⟨c, -, hc⟩ := hK.exists_forall_le h hf,
-  refine ⟨f c, _⟩, rintro _ ⟨x, hx, rfl⟩, exact hc x hx
-end
-
-lemma is_compact.bdd_above_image {f : β → α} {K : set β}
-  (hK : is_compact K) (hf : continuous_on f K) : bdd_above (f '' K) :=
-@is_compact.bdd_below_image (order_dual α) _ _ _ _ _ _ _ hK hf
-
-
-end
 
 section deriv_integral
 open metric
@@ -353,7 +107,8 @@ end
 
 section
 variables {𝕜 E F : Type*} [nondiscrete_normed_field 𝕜] [normed_group E]
-  [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F] {f : E → F} {x : E} {f₂ : 𝕜 → F}
+  [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F] {f : E → F} {x : E} {f₂ f₂' : 𝕜 → F}
+  {f' : E → E →L[𝕜] F}
 
 theorem times_cont_diff_one_iff_fderiv :
   times_cont_diff 𝕜 1 f ↔ differentiable 𝕜 f ∧ continuous (fderiv 𝕜 f) :=
@@ -376,7 +131,7 @@ lemma times_cont_diff.continuous_deriv {n : with_top ℕ} (h : times_cont_diff �
 --   continuous_at (fderiv 𝕜 f) x :=
 -- sorry
 
-lemma support_fderiv_subset : support (fderiv 𝕜 f) ⊆ closure (support f) :=
+lemma support_fderiv_subset : support (fderiv 𝕜 f) ⊆ tsupport f :=
 begin
   intros x,
   rw [← not_imp_not],
@@ -388,7 +143,7 @@ end
 lemma has_compact_support.fderiv (hf : has_compact_support f) : has_compact_support (fderiv 𝕜 f) :=
 hf.mono' support_fderiv_subset
 
-lemma support_deriv_subset : support (deriv f₂) ⊆ closure (support f₂) :=
+lemma support_deriv_subset : support (deriv f₂) ⊆ tsupport f₂ :=
 begin
   intros x,
   rw [← not_imp_not],
@@ -399,6 +154,12 @@ end
 
 lemma has_compact_support.deriv (hf : has_compact_support f₂) : has_compact_support (deriv f₂) :=
 hf.mono' support_deriv_subset
+
+lemma fderiv_eq (h : ∀ x, has_fderiv_at f (f' x) x) : fderiv 𝕜 f = f' :=
+funext $ λ x, (h x).fderiv
+
+lemma deriv_eq (h : ∀ x, has_deriv_at f₂ (f₂' x) x) : deriv f₂ = f₂' :=
+funext $ λ x, (h x).deriv
 
 end
 
@@ -551,7 +312,7 @@ end
 --   -- { refine eventually_of_forall (λ a, _),
 --   --   -- have := (h_diff a).times_cont_diff_at,
 --   --   have := (h_diff a).times_cont_diff_at.exists_lipschitz_on_with_of_nnnorm_lt (_ + ⟨f a, (h2f a).le⟩)
---   --     (lt_add_of_pos_right _ _), sorry }
+--   --     (lt_of_pos_right _ _), sorry }
 --   all_goals { sorry },
 -- end
 -- #print is_compact.exists_forall_ge
@@ -939,6 +700,7 @@ lemma continuous.convolution_integrand_fst (hg : continuous g) (t : G) :
   continuous (λ x, f t • g (x - t)) :=
 continuous_const.smul (hg.comp $ continuous_id.sub continuous_const)
 
+-- probably not that useful
 lemma integrable.convolution_exists_of_bounded_range_left [is_neg_invariant μ]
   (hbf : bounded (range f)) (hf : ae_measurable f μ) (hg : integrable g μ) :
   convolution_exists f g μ :=
@@ -953,6 +715,7 @@ begin
   exact hC ⟨t, rfl⟩,
 end
 
+-- probably not that useful
 lemma integrable.convolution_exists_of_bounded_range_right [normed_space ℝ 𝕜] (hf : integrable f μ)
   (hbg : bounded (range g)) (hg : ae_measurable g μ) : convolution_exists f g μ :=
 begin
@@ -969,7 +732,7 @@ lemma has_compact_support.convolution_exists_left [normed_space ℝ 𝕜] (hcf :
   (hf : integrable f μ) (hg : continuous g) : convolution_exists f g μ :=
 begin
   intro x,
-  have : is_compact ((λ t, x - t) ⁻¹' closure (support f)),
+  have : is_compact ((λ t, x - t) ⁻¹' tsupport f),
   { simp_rw [sub_eq_add_neg],
     exact ((homeomorph.neg G).trans $ homeomorph.add_left x).compact_preimage.mpr hcf },
   obtain ⟨c, h0c, hc⟩ := (this.bdd_above_image hg.norm.continuous_on).exists_ge 0,
@@ -986,15 +749,15 @@ lemma has_compact_support.convolution_exists_right (hf : continuous f)
   (hcg : has_compact_support g) (hg : integrable g μ) : convolution_exists f g μ :=
 begin
   intro x,
-  have : is_compact ((λ t, x - t) ⁻¹' closure (support g)),
+  have : is_compact ((λ t, x - t) ⁻¹' tsupport g),
   { simp_rw [sub_eq_add_neg],
     exact ((homeomorph.neg G).trans $ homeomorph.add_left x).compact_preimage.mpr hcg },
   obtain ⟨c, h0c, hc⟩ := (this.bdd_above_image hf.norm.continuous_on).exists_ge 0,
   simp_rw [mem_upper_bounds, ball_image_iff, mem_preimage] at hc,
   rw [← indicator_eq_self.2 (@subset_closure _ _ (support g))],
   sorry
-  -- have : support (λ (t : G), f t • (closure (support g)).indicator g (x - t)) ⊆
-  --   closure (support g),
+  -- have : support (λ (t : G), f t • (tsupport g).indicator g (x - t)) ⊆
+  --   tsupport g,
   -- sorry,
   -- rw [convolution_exists_at,
   --   ← integrable_on_iff_integable_of_support_subset _ this.is_closed],
@@ -1005,23 +768,59 @@ begin
   -- refine mul_le_mul_of_nonneg_left _ (norm_nonneg _),
   -- apply hc, rw [sub_sub_cancel], exact subset_closure ht
 end
--- todo: replace `hg` by locally integrable
--- (how to use the Dominated convergence theorem in that case?)
-lemma has_compact_support.continuous_convolution_left [is_neg_invariant μ]
-  (hcf : has_compact_support f) (hf : continuous f) (hg : integrable g μ) :
+
+lemma bdd_above.continuous_convolution_left_of_integrable [is_neg_invariant μ]
+  (hbf : bdd_above (range (λ x, ∥f x∥))) (hf : continuous f) (hg : integrable g μ) :
     continuous (f ⋆[μ] g) :=
 begin
   have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥f (x - t) • g t∥ ≤ (⨆ i, ∥f i∥) * ∥g t∥,
   { refine λ x, eventually_of_forall (λ t, _),
     rw [norm_smul],
-    refine mul_le_mul_of_nonneg_right
-      (le_csupr (hf.norm.bdd_above_range_of_has_compact_support hcf.norm) $ x - t)
-      (norm_nonneg _) },
+    refine mul_le_mul_of_nonneg_right (le_csupr hbf $ x - t) (norm_nonneg _) },
   rw [convolution_fn_eq_swap],
   refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
   { exact (hf.ae_measurable μ).convolution_integrand_swap_snd hg.ae_measurable },
   exact eventually_of_forall (λ t,
     (hf.comp (continuous_id.sub continuous_const)).smul continuous_const),
+end
+
+-- todo: replace `hg` by locally integrable
+-- (how to use the Dominated convergence theorem in that case?)
+/-- A version of `has_compact_support.continuous_convolution_left` that works if `G` is
+  not locally compact but requires that `g` is integrable. -/
+lemma has_compact_support.continuous_convolution_left_of_integrable [is_neg_invariant μ]
+  (hcf : has_compact_support f) (hf : continuous f) (hg : integrable g μ) :
+    continuous (f ⋆[μ] g) :=
+(hf.norm.bdd_above_range_of_has_compact_support hcf.norm).continuous_convolution_left_of_integrable
+  hf hg
+
+lemma has_compact_support.continuous_convolution_left [locally_compact_space G] [t2_space G]
+  [is_neg_invariant μ]
+  (hcf : has_compact_support f) (hf : continuous f) (hg : ∀ K, is_compact K → integrable_on g K μ)
+  (hmg : ae_measurable g μ) : continuous (f ⋆[μ] g) :=
+begin
+  rw [convolution_fn_eq_swap, continuous_iff_continuous_at],
+  intro x₀,
+  obtain ⟨K, hK, h2K⟩ := exists_compact_mem_nhds x₀,
+  let L := K + - tsupport f,
+  have hL : is_compact L := hK.add hcf.neg,
+  have : ∀ᶠ x in 𝓝 x₀, ∀ᵐ (t : G) ∂μ,
+    ∥f (x - t) • g t∥ ≤ L.indicator (λ t, (⨆ i, ∥f i∥) * ∥g t∥) t,
+  { refine eventually_of_mem h2K (λ x hx, eventually_of_forall _),
+    refine le_indicator (λ t ht, _) (λ t ht, _),
+    { rw [norm_smul],
+      refine mul_le_mul_of_nonneg_right
+        (le_csupr (hf.norm.bdd_above_range_of_has_compact_support hcf.norm) $ x - t)
+        (norm_nonneg _) },
+    { have : x - t ∉ support f,
+      { refine mt (λ hxt, _) ht, refine ⟨_, _, hx, neg_mem_neg.mpr (subset_closure hxt), _⟩,
+        rw [neg_sub, add_sub_cancel'_right] },
+      rw [nmem_support.mp this, zero_smul, norm_zero] } },
+  refine continuous_at_of_dominated _ this _ _,
+  { exact eventually_of_forall ((hf.ae_measurable μ).convolution_integrand_swap_snd hmg) },
+  { rw [integrable_indicator_iff hL.measurable_set], exact (hg L hL).norm.const_mul _ },
+  { exact eventually_of_forall (λ t,
+      ((hf.comp (continuous_id.sub continuous_const)).smul continuous_const).continuous_at) }
 end
 
 lemma has_compact_support.convolution [t2_space G] (hcf : has_compact_support f)
@@ -1052,38 +851,40 @@ variables {f f' : ℝ → ℝ} {g g' : ℝ → E} {x x' : ℝ}
 variables [normed_space ℝ E]
 variables {n : with_top ℕ}
 
-
--- lemma continuous_supr {α β} [topological_space α] [compact_space α] [topological_space β]
---   {f : α → β → ℝ} (hf : continuous (uncurry f)) : continuous (⨆ i, f i) :=
--- begin
---   sorry
--- end
-
-lemma has_fderiv_at_left
+lemma has_compact_support.has_fderiv_at_convolution_left
   (hf : times_cont_diff ℝ 1 f) (hcf : has_compact_support f)
-  (hg : continuous g)
-  (hig : integrable g) (x₀ : ℝ) : has_deriv_at (f ⋆ g) ((deriv f ⋆ g) x₀) x₀ :=
+  (hg : continuous g) (x₀ : ℝ) : has_deriv_at (f ⋆ g) ((deriv f ⋆ g) x₀) x₀ :=
 begin
   have h1 : ∀ x, ae_measurable (λ t, f (x - t) • g t) volume :=
-  (hf.continuous.ae_measurable _).convolution_integrand_swap_snd hig.ae_measurable,
+  (hf.continuous.ae_measurable _).convolution_integrand_swap_snd (hg.ae_measurable _),
   have h2 : ∀ x, ae_measurable (λ t, deriv f (x - t) • g t) volume :=
-  ((hf.continuous_deriv le_rfl).ae_measurable _).convolution_integrand_swap_snd hig.ae_measurable,
+  ((hf.continuous_deriv le_rfl).ae_measurable _).convolution_integrand_swap_snd
+    (hg.ae_measurable _),
   have h3 : ∀ x t, has_deriv_at (λ x, f (x - t)) (deriv f (x - t)) x,
   { intros x t,
     simpa using (hf.differentiable le_rfl).differentiable_at.has_deriv_at.comp x
       ((has_deriv_at_id x).sub (has_deriv_at_const x t)) },
+  let L := closed_ball x₀ 1 + - tsupport (deriv f),
+  have hL : is_compact L := (is_compact_closed_ball x₀ 1).add hcf.deriv.neg,
   simp_rw [convolution_fn_eq_swap],
   refine has_deriv_at_integral_of_dominated_of_deriv_le zero_lt_one
     (eventually_of_forall h1) _ (h2 x₀) _ _ _,
-  { exact λ t, (⨆ x, ∥deriv f x∥) * ∥ g t∥ },
+  { exact L.indicator (λ t, (⨆ x, ∥deriv f x∥) * ∥ g t∥) },
   { exact (hcf.convolution_exists_left
       (hf.continuous.integrable_of_compact_closure_support hcf) hg x₀).integrable_swap },
   { refine eventually_of_forall (λ t x hx, _),
-    rw [norm_smul],
-    refine mul_le_mul_of_nonneg_right _ (norm_nonneg _),
-    exact le_csupr ((hf.continuous_deriv le_rfl).norm.bdd_above_range_of_has_compact_support
-      hcf.deriv.norm) (x - t) },
-  { exact hig.norm.const_mul _ },
+    refine le_indicator (λ t ht, _) (λ t ht, _) t,
+    { rw [norm_smul],
+      refine mul_le_mul_of_nonneg_right _ (norm_nonneg _),
+      exact le_csupr ((hf.continuous_deriv le_rfl).norm.bdd_above_range_of_has_compact_support
+        hcf.deriv.norm) (x - t) },
+    { have : x - t ∉ support (deriv f),
+      { refine mt (λ hxt, _) ht,
+        refine ⟨_, _, ball_subset_closed_ball hx, neg_mem_neg.mpr (subset_closure hxt), _⟩,
+        rw [neg_sub, add_sub_cancel'_right] },
+      rw [nmem_support.mp this, zero_smul, norm_zero] } },
+  { rw [integrable_indicator_iff hL.measurable_set],
+    exact (hg.integrable_on_compact hL).norm.const_mul _ },
   { exact eventually_of_forall (λ t x hx, (h3 x t).smul_const _) },
 end
 
@@ -1107,15 +908,27 @@ begin
   sorry,
   -- exact (hf.smul $ (hg.continuous_fderiv le_rfl).comp $ continuous_const.sub continuous_id).ae_measurable _,
 end
--- continuous.integrable_on_compact
 
-lemma times_cont_diff_convolution_right (hf : continuous f) (hg : times_cont_diff ℝ n g) :
+lemma times_cont_diff_convolution_left (hf : times_cont_diff ℝ n f)
+  (hcf : has_compact_support f) (hg : continuous g) :
   times_cont_diff ℝ n (f ⋆ g) :=
+begin
+  induction n using with_top.nat_induction with n ih ih generalizing f,
+  { rw [times_cont_diff_zero] at hf ⊢,
+    exact hcf.continuous_convolution_left hf (λ K hK, hg.integrable_on_compact hK)
+      (hg.ae_measurable _) },
+  { have h : ∀ x, has_deriv_at (f ⋆ g) ((deriv f ⋆ g) x) x :=
+      hcf.has_fderiv_at_convolution_left hf.one_of_succ hg,
+    rw times_cont_diff_succ_iff_deriv,
+    split,
+    { exact λ x₀, ⟨_, h x₀⟩ },
+    { rw deriv_eq h, exact ih (times_cont_diff_succ_iff_deriv.mp hf).2 hcf.deriv } },
+  { rw [times_cont_diff_top] at hf ⊢, exact λ n, ih n (hf n) hcf }
+end
+
+lemma times_cont_diff_convolution_right (hf : continuous f) (hg : times_cont_diff ℝ n g)
+  (hcg : has_compact_support g) : times_cont_diff ℝ n (f ⋆ g) :=
 -- have : times_cont_diff ℝ n ↿(λ x t, _)
-sorry
-
-lemma times_cont_diff_convolution_left (hf : times_cont_diff ℝ n f) (hg : continuous g) :
-  times_cont_diff ℝ n (f ⋆ g) :=
 sorry
 
 -- lemma times_cont_diff_convolution_right (hf : continuous f) (hg : times_cont_diff 𝕜 n g) :
