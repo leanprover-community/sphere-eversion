@@ -9,26 +9,6 @@ noncomputable theory
 open topological_space measure_theory measure_theory.measure function set
 open_locale pointwise topological_space nnreal measure_theory
 
-section
-
-variables {α : Type*} [semilattice_sup α]
-
-lemma exists_le_and_iff_exists {P : α → Prop} {x₀ : α} (hP : monotone P) :
-  (∃ x, x₀ ≤ x ∧ P x) ↔ ∃ x, P x :=
-⟨λ h, h.imp $ λ x h, h.2, λ ⟨x, hx⟩, ⟨x ⊔ x₀, le_sup_right, hP le_sup_left hx⟩⟩
-
-lemma bdd_above_iff_exists_ge {s : set α} (x₀ : α) :
-  bdd_above s ↔ ∃ x, x₀ ≤ x ∧ ∀ y ∈ s, y ≤ x :=
-by { rw [exists_le_and_iff_exists], simp [bdd_above, upper_bounds, set.nonempty],
-  exact λ x x' hxx' h y hy, (h y hy).trans hxx' }
-
-lemma bdd_above.exists_ge {s : set α} (hs : bdd_above s) (x₀ : α) : ∃ x, x₀ ≤ x ∧ ∀ y ∈ s, y ≤ x :=
-(bdd_above_iff_exists_ge x₀).mp hs
-
-
-end
-
-
 namespace filter
 
 variables {α : Type*} {f : filter α}

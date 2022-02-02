@@ -142,9 +142,11 @@ begin
   { rintros ⟨x, ⟨t⟩⟩ hxt,
     have : ∀ a, f x a = 0, by simpa using congr_fun (hfK x $ λ hx, hxt (by simp [hx])),
     apply this },
+  have : has_compact_support F :=
+  sorry,
   obtain ⟨C, hC⟩ : ∃ C, ∀ (x : X × 𝕊₁), ∥F x∥ ≤ C :=
-    Fcont.bounded_of_vanishing_outside_compact (hK.prod compact_univ) hFK,
+    Fcont.bounded_above_of_compact_support this,
   exact ⟨C, λ x t, hC (x, π t)⟩,
 end
-
+--bounded_above_of_compact_support
 end one_periodic

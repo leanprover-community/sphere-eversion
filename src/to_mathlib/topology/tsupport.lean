@@ -8,7 +8,7 @@ This file should be split between the topology and the analysis folders.
 open function set filter
 open_locale pointwise topological_space
 
-variables {X α α' β γ δ M : Type*}
+variables {X α α' β γ δ M E : Type*}
 
 -- todo: move
 lemma iff.not {p q : Prop} (h : p ↔ q) : ¬ p ↔ ¬ q :=
@@ -29,6 +29,27 @@ lemma antitone_ball {P : α → Prop} : antitone (λ s : set α, ∀ x ∈ s, P 
 
 end set
 open set
+
+-- todo: move
+section
+
+variables [semilattice_sup α]
+
+lemma exists_le_and_iff_exists {P : α → Prop} {x₀ : α} (hP : monotone P) :
+  (∃ x, x₀ ≤ x ∧ P x) ↔ ∃ x, P x :=
+⟨λ h, h.imp $ λ x h, h.2, λ ⟨x, hx⟩, ⟨x ⊔ x₀, le_sup_right, hP le_sup_left hx⟩⟩
+
+lemma bdd_above_def {s : set α} : bdd_above s ↔ ∃ x, ∀ y ∈ s, y ≤ x :=
+by simp [bdd_above, upper_bounds, set.nonempty]
+
+lemma bdd_above_iff_exists_ge {s : set α} (x₀ : α) :
+  bdd_above s ↔ ∃ x, x₀ ≤ x ∧ ∀ y ∈ s, y ≤ x :=
+by { rw [bdd_above_def, exists_le_and_iff_exists], exact λ x x' hxx' h y hy, (h y hy).trans hxx' }
+
+lemma bdd_above.exists_ge {s : set α} (hs : bdd_above s) (x₀ : α) : ∃ x, x₀ ≤ x ∧ ∀ y ∈ s, y ≤ x :=
+(bdd_above_iff_exists_ge x₀).mp hs
+
+end
 
 -- some properties about mul_support
 section
@@ -114,28 +135,6 @@ by erw [closure_empty_iff, mul_support_empty_iff]
 @[to_additive]
 lemma image_eq_zero_of_nmem_mul_tsupport {f : X → α} {x : X} (hx : x ∉ mul_tsupport f) : f x = 1 :=
 mul_support_subset_iff'.mp (subset_mul_tsupport f) x hx
-
-variables {E : Type*} [normed_group E]
-
-lemma continuous.bounded_of_vanishing_outside_compact {f : X → E} (hf : continuous f)
-  {K : set X} (hK : is_compact K) (hfK : ∀ x ∉ K, f x = 0) : ∃ C, ∀ x, ∥f x∥ ≤ C :=
-begin
-  rcases eq_empty_or_nonempty K with h|h,
-  { use 1,
-    simp [h, hfK, le_refl] },
-  { obtain ⟨x, x_in, hx⟩ : ∃ x ∈ K, ∀ y ∈ K, ∥f y∥ ≤ ∥f x∥ :=
-      hK.exists_forall_ge h (continuous_norm.comp hf).continuous_on,
-    use ∥f x∥,
-    intros y,
-    by_cases hy : y ∈ K,
-    { exact hx y hy },
-    { simp [hfK y hy] } }
-end
-
--- todo: remove this in favor of `continuous.bdd_above_range_of_has_compact_mul_support`
-lemma continuous.bounded_of_compact_mul_support {f : X → E} (hf : continuous f)
-  (hsupp : is_compact (tsupport f)) : ∃ C, ∀ x, ∥f x∥ ≤ C :=
-hf.bounded_of_vanishing_outside_compact hsupp (λ x, image_eq_zero_of_nmem_add_tsupport)
 
 end one
 
@@ -336,5 +335,12 @@ end
 lemma is_compact.bdd_above_image {f : β → α} {K : set β}
   (hK : is_compact K) (hf : continuous_on f K) : bdd_above (f '' K) :=
 @is_compact.bdd_below_image (order_dual α) _ _ _ _ _ _ _ hK hf
+
+
+variables [topological_space X] [normed_group E]
+
+lemma continuous.bounded_above_of_compact_support {f : X → E} (hf : continuous f)
+  (hsupp : has_compact_support f) : ∃ C, ∀ x, ∥f x∥ ≤ C :=
+by simpa [bdd_above_def] using hf.norm.bdd_above_range_of_has_compact_support hsupp.norm
 
 end order
