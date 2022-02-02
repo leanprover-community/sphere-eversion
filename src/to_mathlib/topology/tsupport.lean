@@ -132,6 +132,7 @@ begin
     { simp [hfK y hy] } }
 end
 
+-- todo: remove this in favor of `continuous.bdd_above_range_of_has_compact_mul_support`
 lemma continuous.bounded_of_compact_mul_support {f : X → E} (hf : continuous f)
   (hsupp : is_compact (tsupport f)) : ∃ C, ∀ x, ∥f x∥ ≤ C :=
 hf.bounded_of_vanishing_outside_compact hsupp (λ x, image_eq_zero_of_nmem_add_tsupport)
