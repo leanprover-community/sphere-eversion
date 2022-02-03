@@ -125,7 +125,13 @@ local notation `π` := proj_𝕊₁
 instance : compact_space 𝕊₁ :=
 ⟨by { rw ← image_proj_𝕊₁_Icc, exact is_compact_Icc.image continuous_proj_𝕊₁ }⟩
 
-variables {X E : Type*} [topological_space X] [normed_group E]
+-- todo
+-- related: `t2_space_of_properly_discontinuous_smul_of_t2_space`
+-- or more general: https://math.stackexchange.com/questions/91639/x-sim-is-hausdorff-if-and-only-if-sim-is-closed-in-x-times-x?noredirect=1&lq=1
+instance : t2_space 𝕊₁ :=
+sorry
+
+variables {X E : Type*} [topological_space X] [normed_group E] [t2_space X]
 
 lemma continuous.bounded_of_one_periodic_of_compact {f : X → ℝ → E} (cont : continuous ↿f)
   (hper : ∀ x, one_periodic (f x)) {K : set X} (hK : is_compact K) (hfK : ∀ x ∉ K, f x = 0) :
@@ -138,15 +144,14 @@ begin
     have : φ = F ∘ (λ p : X × ℝ, (p.1, π p.2)), by { ext p, refl },
     dsimp [φ] at this,
     rwa [this,  ← qm.continuous_iff] at cont },
-  have hFK : ∀ x : X × 𝕊₁, x ∉ (K ×ˢ (univ : set 𝕊₁)) → F x = 0,
-  { rintros ⟨x, ⟨t⟩⟩ hxt,
+  have : has_compact_support F,
+  { refine has_compact_support.intro (hK.prod compact_univ) _,
+    rintros ⟨x, ⟨t⟩⟩ hxt,
     have : ∀ a, f x a = 0, by simpa using congr_fun (hfK x $ λ hx, hxt (by simp [hx])),
     apply this },
-  have : has_compact_support F :=
-  sorry,
   obtain ⟨C, hC⟩ : ∃ C, ∀ (x : X × 𝕊₁), ∥F x∥ ≤ C :=
     Fcont.bounded_above_of_compact_support this,
   exact ⟨C, λ x t, hC (x, π t)⟩,
 end
---bounded_above_of_compact_support
+
 end one_periodic
