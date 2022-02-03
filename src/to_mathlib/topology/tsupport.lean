@@ -75,6 +75,18 @@ disjoint_mul_support_iff
 end
 
 -- some properties of compact sets
+section
+variables [topological_space α] [t2_space α]
+
+@[simp]
+lemma exists_compact_superset_iff {s : set α} :
+  (∃ K, is_compact K ∧ s ⊆ K) ↔ is_compact (closure s) :=
+⟨λ ⟨K, hK, hsK⟩, compact_of_is_closed_subset hK is_closed_closure
+  (closure_minimal hsK hK.is_closed),
+  λ h, ⟨closure s, h, subset_closure⟩⟩
+
+end
+
 section semigroup
 variables [semigroup α] [topological_space α] [has_continuous_mul α]
 
@@ -162,6 +174,17 @@ is_compact (mul_tsupport f)
 lemma has_compact_mul_support_def :
   has_compact_mul_support f ↔ is_compact (closure (mul_support f)) :=
 by refl
+
+@[to_additive]
+lemma exists_compact_iff_has_compact_mul_support [t2_space α] :
+  (∃ K : set α, is_compact K ∧ ∀ x ∉ K, f x = 1) ↔ has_compact_mul_support f :=
+by simp_rw [← nmem_mul_support, ← mem_compl_iff, ← subset_def, compl_subset_compl,
+    has_compact_mul_support_def, exists_compact_superset_iff]
+
+@[to_additive]
+lemma has_compact_mul_support.intro [t2_space α] {K : set α}
+  (hK : is_compact K) (hfK : ∀ x ∉ K, f x = 1) : has_compact_mul_support f :=
+exists_compact_iff_has_compact_mul_support.mp ⟨K, hK, hfK⟩
 
 @[to_additive]
 lemma has_compact_mul_support.is_compact (hf : has_compact_mul_support f) :

@@ -76,7 +76,7 @@ end
 
 /-- If a loop family has compact support then the corresponding corrugation is
 `O(1/N)` uniformly in the source point. -/
-lemma corrugation.c0_small [first_countable_topology E]
+lemma corrugation.c0_small [first_countable_topology E] [t2_space E]
   [locally_compact_space E] (hγ : is_compact (loop.support γ))
   (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x, ∥corrugation π N γ x∥ < ε :=
