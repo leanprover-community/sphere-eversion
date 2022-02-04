@@ -3,6 +3,7 @@ import linear_algebra.dual
 
 import to_mathlib.analysis.normed_space.operator_norm
 import to_mathlib.topology.misc
+import to_mathlib.topology.nhds_set
 
 import local.ample
 
@@ -16,7 +17,7 @@ To any `R : rel_loc E F` and `U : set E` we associate the type `sol R U` of maps
 solutions of `R` over `U`, and its formal counterpart `formal_sol R U`.
 
 The h-principle question is whether we can deform any formal solution into a solution.
-The type of deformations is `htpy_formal_sol R U` (homotopies of formal solutions of `R` over
+The type of deformations is `htpy_jet_sec R U` (homotopies of formal solutions of `R` over
 `U`). Implementation note: the time parameter `t` is any real number, but all the homotopies we will
 construct will be constant for `t ≤ 0` and `t ≥ 1`. It looks like this imposes more smoothness
 constraints at `t = 0` and `t = 1` (requiring flat functions), but this is needed for smooth
@@ -28,7 +29,8 @@ this will guarantee the h-principle (in some other file).
 
 noncomputable theory
 
-open set function
+open set function module (dual)
+open_locale unit_interval classical topological_space
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] (F : Type*)
                         [normed_group F] [normed_space ℝ F]
@@ -37,10 +39,8 @@ local notation `D` := fderiv ℝ
 local notation `hull` := convex_hull ℝ
 local notation `smooth_on` := times_cont_diff_on ℝ ⊤
 
-open_locale unit_interval
-
-open module (dual)
-open_locale classical
+-- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
+local notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ 𝓝ˢ s) := r
 
 local notation u ` ⬝ `:70 φ:65 :=
   continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
@@ -130,13 +130,26 @@ ample_set (R.slice p θ)
 (f_diff : smooth_on f U)
 (is_sol : ∀ x ∈ U, (x, f x, D f x) ∈ R)
 
-/-- A formal solution to a local relation `R` over a set `U`. -/
-@[ext] structure formal_sol (R : rel_loc E F) (U : set E) :=
+@[ext] structure jet_sec (U : set E) (F : Type*) [normed_group F] [normed_space ℝ F] :=
 (f : E → F)
 (f_diff : smooth_on f U)
 (φ : E → E →L[ℝ] F)
 (φ_diff : smooth_on φ U)
+
+def jet_sec.is_formal_sol {U : set E} (𝓕 : jet_sec U F) (R : rel_loc E F) : Prop :=
+∀ x ∈ U, (x, 𝓕.f x, 𝓕.φ x) ∈ R
+
+/-- A formal solution to a local relation `R` over a set `U`. -/
+@[ext] structure formal_sol (R : rel_loc E F) (U : set E) extends jet_sec U F :=
 (is_sol : ∀ x ∈ U, (x, f x, φ x) ∈ R)
+
+instance (R : rel_loc E F) (U : set E) : has_coe (formal_sol R U) (jet_sec U F):=
+⟨formal_sol.to_jet_sec⟩
+--rel_loc.jet_sec.is_formal_sol.formal_sol
+
+def jet_sec.is_formal_sol.formal_sol {U : set E} {𝓕 : jet_sec U F} {R : rel_loc E F}
+  (h : 𝓕.is_formal_sol R) : formal_sol R U :=
+{is_sol := h, ..𝓕}
 
 /-- Inclusion of solutions into formal solutions. -/
 def sol.to_formal_sol {R : rel_loc E F} {U : set E} (𝓕 : sol R U) (hU : is_open U) : formal_sol R U :=
@@ -148,34 +161,47 @@ def sol.to_formal_sol {R : rel_loc E F} {U : set E} (𝓕 : sol R U) (hU : is_op
 
 end rel_loc
 
-namespace rel_loc.formal_sol
+namespace rel_loc.jet_sec
 
 open rel_loc
+
+instance (U : set E) : has_coe_to_fun (jet_sec U F) (λ S, E → F × (E →L[ℝ] F)) :=
+⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
 
 instance (R : rel_loc E F) (U : set E) : has_coe_to_fun (formal_sol R U) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
 
 variables {U : set E} {R : rel_loc E F}
 
+/-- The slice associated to a jet section and a dual pair at some point. -/
+def slice_at (𝓕 : jet_sec U F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : set F :=
+R.slice p (x, 𝓕.f x, 𝓕.φ x)
+
 /-- The slice associated to a formal solution and a dual pair at some point. -/
-def slice_at (𝓕 : formal_sol R U) (p : dual_pair' E) (x : E) : set F :=
+def _root_.rel_loc.formal_sol.slice_at (𝓕 : formal_sol R U) (p : dual_pair' E) (x : E) : set F :=
 R.slice p (x, 𝓕.f x, 𝓕.φ x)
 
 -- This probably won't stay stated like this
-def slices (𝓕 : formal_sol R U) (p : dual_pair' E) : set (E × F) :=
+def slices (𝓕 : jet_sec U F) (R : rel_loc E F) (p : dual_pair' E) : set (E × F) :=
 ⋃ x ∈ U, ({x} : set E) ×ˢ (R.slice p (x, 𝓕.f x, 𝓕.φ x))
 
-/-- A formal solution `𝓕` of `R` is holonomic if its linear map part at `x`
+/-- A jet section `𝓕` is holonomic if its linear map part at `x`
 is the derivative of its function part at `x`. -/
-def is_holonomic_at (𝓕 : formal_sol R U) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
+def is_holonomic_at (𝓕 : jet_sec U F) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
 
-lemma _root_.rel_loc.sol.is_holonomic (𝓕 : sol R U) (hU : is_open U) (x : E) :
+def _root_.rel_loc.formal_sol.is_holonomic_at (𝓕 : formal_sol R U) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
+
+lemma _root_.rel_loc.formal_sol.is_holonomic_at_congr (𝓕 𝓕' : formal_sol R U) {s : set E}
+  (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) : ∀ᶠ x near s, 𝓕.is_holonomic_at x ↔ 𝓕'.is_holonomic_at x :=
+sorry
+
+lemma _root_.rel_loc.sol.is_holonomic {R : rel_loc E F} (𝓕 : sol R U) (hU : is_open U) (x : E) :
   (𝓕.to_formal_sol hU).is_holonomic_at x :=
-by simp [rel_loc.sol.to_formal_sol, is_holonomic_at]
+by simp [rel_loc.sol.to_formal_sol, rel_loc.formal_sol.is_holonomic_at]
 
 /-- A formal solution of `R` over `U` that is holonomic at every point of `U`
 comes from a genuine solution. -/
-def to_sol (𝓕 : formal_sol R U) (h : ∀ x ∈ U, 𝓕.is_holonomic_at x) : sol R U :=
+def _root_.rel_loc.formal_sol.to_sol (𝓕 : formal_sol R U) (h : ∀ x ∈ U, 𝓕.to_jet_sec.is_holonomic_at x) : sol R U :=
 { f := 𝓕.f,
   f_diff := 𝓕.f_diff,
   is_sol := λ x hx, ((h x hx).symm ▸ (𝓕.is_sol x hx)) }
@@ -187,63 +213,66 @@ by { ext x, refl }
 /-- A formal solution `𝓕` of `R` is partially holonomic in the direction of some subspace `E'`
 if its linear map part at `x` is the derivative of its function part at `x` in restriction to
 `E'`. -/
-def is_part_holonomic_at (𝓕 : formal_sol R U) (E' : submodule ℝ E) (x : E) :=
+def is_part_holonomic_at (𝓕 : jet_sec U F) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
-lemma _root_.is_part_holonomic_top {𝓕 : formal_sol R U} {x : E} :
+def _root_.rel_loc.formal_sol.is_part_holonomic_at (𝓕 : formal_sol R U) (E' : submodule ℝ E) (x : E) :=
+∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
+
+
+lemma _root_.is_part_holonomic_top {𝓕 : jet_sec U F} {x : E} :
   is_part_holonomic_at 𝓕 ⊤ x ↔ is_holonomic_at 𝓕 x :=
 sorry
 
-@[simp] lemma is_part_holonomic_bot (𝓕 : formal_sol R U) :
+@[simp] lemma is_part_holonomic_bot (𝓕 : jet_sec U F) :
   is_part_holonomic_at 𝓕 ⊥ = λ x, true :=
 sorry
 
-
 lemma mem_slice (𝓕 : formal_sol R U) (p : dual_pair' E) {x : E} (hx : x ∈ U) :
   𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
-by simp [slice_at, rel_loc.slice, 𝓕.is_sol x hx]
+by simp [rel_loc.formal_sol.slice_at, rel_loc.slice, 𝓕.is_sol x hx]
 
 /-- A formal solution `𝓕` is short for a dual pair `p` at a point `x` if the derivative of
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
 corresponding slice. -/
-def is_short_at (𝓕 : formal_sol R U) (p : dual_pair' E) (x : E) : Prop :=
+def is_short_at (𝓕 : jet_sec U F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : Prop :=
+D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v)
+
+def _root_.rel_loc.formal_sol.is_short_at (𝓕 : formal_sol R U)(p : dual_pair' E) (x : E) : Prop :=
 D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
 
-end rel_loc.formal_sol
+end rel_loc.jet_sec
 
-section htpy_formal_sol
+section htpy_jet_sec
 
 open rel_loc
 
 /-- A homotopy of formal solutions to `R` over a set `U`. -/
-structure htpy_formal_sol (R : rel_loc E F) (U : set E) :=
+structure htpy_jet_sec (U : set E) (F : Type*) [normed_group F] [normed_space ℝ F] :=
 (f : ℝ → E → F)
 (f_diff : smooth_on (uncurry f) (@univ ℝ ×ˢ U))
 (φ : ℝ → E → E →L[ℝ] F)
 (φ_diff : smooth_on (uncurry φ) (@univ ℝ ×ˢ U))
-(is_sol : ∀ t, ∀ x ∈ U, (x, f t x, φ t x) ∈ R)
 
 variables {U : set E} {R : rel_loc E F}
 
-instance : has_coe_to_fun (htpy_formal_sol R U) (λ S, ℝ → formal_sol R U) :=
+instance : has_coe_to_fun (htpy_jet_sec U F) (λ S, ℝ → jet_sec U F) :=
 ⟨λ S t,
  { f := S.f t,
    f_diff := sorry,
    φ := S.φ t,
-   φ_diff := sorry,
-   is_sol := λ x hx, S.is_sol t x hx }⟩
+   φ_diff := sorry }⟩
 
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
 for trivial induction initialization. -/
-def rel_loc.formal_sol.const_htpy (𝓕 : formal_sol R U) : htpy_formal_sol R U :=
+def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec U F) : htpy_jet_sec U F :=
 { f := λ t, 𝓕.f,
   f_diff := sorry,
   φ := λ t, 𝓕.φ,
-  φ_diff := sorry,
-  is_sol := λ t, 𝓕.is_sol }
+  φ_diff := sorry }
 
-@[simp] lemma rel_loc.formal_sol.const_htpy_apply (𝓕 : formal_sol R U) :
+@[simp] lemma rel_loc.jet_sec.const_htpy_apply (𝓕 : jet_sec U F) :
   ∀ t, 𝓕.const_htpy t = 𝓕 :=
 λ t, by ext x ; refl
 
@@ -264,19 +293,18 @@ sorry
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
-def htpy_formal_sol.comp (𝓕 𝓖 : htpy_formal_sol R U) : htpy_formal_sol R U :=
+def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec U F) : htpy_jet_sec U F :=
 { f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else  𝓖.f (smooth_step $ 2*t - 1) x,
   f_diff := sorry,
   φ := λ t x, if t ≤ 1/2 then 𝓕.φ (smooth_step $ 2*t) x else  𝓖.φ (smooth_step $ 2*t - 1) x,
-  φ_diff := sorry,
-  is_sol := sorry }
+  φ_diff := sorry }
 
 @[simp]
-lemma htpy_formal_sol.comp_0 (𝓕 𝓖 : htpy_formal_sol R U) : 𝓕.comp 𝓖 0 = 𝓕 0 :=
+lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec U F) : 𝓕.comp 𝓖 0 = 𝓕 0 :=
 sorry
 
 @[simp]
-lemma htpy_formal_sol.comp_1 (𝓕 𝓖 : htpy_formal_sol R U) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
+lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec U F) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
 sorry
 
-end htpy_formal_sol
+end htpy_jet_sec
