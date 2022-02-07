@@ -3,7 +3,6 @@ import linear_algebra.dual
 
 import to_mathlib.analysis.normed_space.operator_norm
 import to_mathlib.topology.misc
-import to_mathlib.topology.nhds_set
 
 import local.ample
 
