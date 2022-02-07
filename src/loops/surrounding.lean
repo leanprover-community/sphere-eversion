@@ -4,7 +4,6 @@ import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
 
 import to_mathlib.order.filter.eventually_constant
-import to_mathlib.topology.nhds_set
 
 /-!
 # Surrounding families of loops

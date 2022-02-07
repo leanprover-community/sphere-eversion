@@ -10,7 +10,6 @@ Authors: Floris van Doorn
 
 import data.nat.lattice
 import topology.separation
-import to_mathlib.topology.nhds_set
 /-!
 # Eventually constant sequences
 

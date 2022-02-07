@@ -4,7 +4,6 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
 import to_mathlib.topology.periodic
-import to_mathlib.topology.nhds_set
 import to_mathlib.analysis.calculus
 import to_mathlib.measure_theory.parametric_interval_integral
 
