@@ -10,9 +10,6 @@ open_locale pointwise topological_space
 
 variables {X α α' β γ δ M E : Type*}
 
--- todo: move
-lemma iff.not {p q : Prop} (h : p ↔ q) : ¬ p ↔ ¬ q :=
-not_iff_not.mpr h
 
 -- todo: move
 namespace set

@@ -973,7 +973,7 @@ begin
   (-)   | U' -- an open neighborhood of C
   -/
   rcases hγ₀_surr with ⟨V, hV, hγ₀⟩,
-  rw [mem_nhds_set] at hV, rcases hV with ⟨U₀, hU₀, hKU₀, hU₀V⟩,
+  rw [mem_nhds_set_iff_exists] at hV, rcases hV with ⟨U₀, hU₀, hKU₀, hU₀V⟩,
   let P := λ N : set E, ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ N Ω,
   have hP : antitone P, { rintro s t hst ⟨γ, hγ⟩, exact ⟨γ, hγ.mono hst⟩ },
   have h0P : P ∅ := ⟨γ₀, hγ₀.mono (empty_subset _)⟩,
