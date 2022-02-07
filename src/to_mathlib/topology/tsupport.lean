@@ -19,10 +19,32 @@ namespace set
 
 variables {s : set α} {x : α}
 
+@[simp]
 lemma compl_ne_univ : sᶜ ≠ univ ↔ s.nonempty :=
 compl_univ_iff.not.trans ne_empty_iff_nonempty
 
 lemma not_mem_compl_iff  : x ∉ sᶜ ↔ x ∈ s := not_not
+
+lemma monotone.ball [preorder β] {P : α → β → Prop} (hP : ∀ x ∈ s, monotone (P x)) :
+  monotone (λ y, ∀ x ∈ s, P x y) :=
+λ y y' hy h x hx, hP x hx hy (h x hx)
+
+lemma monotone_le [preorder β] {x : β} : monotone ((≤) x) :=
+λ y z h' h, h.trans h'
+
+lemma monotone_lt [preorder β] {x : β} : monotone ((<) x) :=
+λ y z h' h, h.trans_le h'
+
+lemma antitone_le [preorder β] {x : β} : antitone (≤ x) :=
+λ y z h' h, h'.trans h
+
+lemma antitone_lt [preorder β] {x : β} : antitone (< x) :=
+λ y z h' h, h'.trans_lt h
+
+lemma antitone.ball [preorder β] {P : α → β → Prop} (hP : ∀ x, antitone (P x)) :
+  antitone (λ y, ∀ x ∈ s, P x y) :=
+λ y y' hy h x hx, hP x hy (h x hx)
+-- λ s t hst h x hx, h x $ hst hx
 
 lemma antitone_ball {P : α → Prop} : antitone (λ s : set α, ∀ x ∈ s, P x) :=
 λ s t hst h x hx, h x $ hst hx
@@ -32,19 +54,26 @@ open set
 
 -- todo: move
 section
-
-variables [semilattice_sup α]
-
-lemma exists_le_and_iff_exists {P : α → Prop} {x₀ : α} (hP : monotone P) :
-  (∃ x, x₀ ≤ x ∧ P x) ↔ ∃ x, P x :=
-⟨λ h, h.imp $ λ x h, h.2, λ ⟨x, hx⟩, ⟨x ⊔ x₀, le_sup_right, hP le_sup_left hx⟩⟩
+variables [preorder α]
 
 lemma bdd_above_def {s : set α} : bdd_above s ↔ ∃ x, ∀ y ∈ s, y ≤ x :=
 by simp [bdd_above, upper_bounds, set.nonempty]
 
+lemma bdd_below_def {s : set α} : bdd_below s ↔ ∃ x, ∀ y ∈ s, x ≤ y :=
+@bdd_above_def (order_dual α) _ _
+
+end
+
+section
+variables [semilattice_sup α]
+
+lemma exists_ge_and_iff_exists {P : α → Prop} {x₀ : α} (hP : monotone P) :
+  (∃ x, x₀ ≤ x ∧ P x) ↔ ∃ x, P x :=
+⟨λ h, h.imp $ λ x h, h.2, λ ⟨x, hx⟩, ⟨x ⊔ x₀, le_sup_right, hP le_sup_left hx⟩⟩
+
 lemma bdd_above_iff_exists_ge {s : set α} (x₀ : α) :
   bdd_above s ↔ ∃ x, x₀ ≤ x ∧ ∀ y ∈ s, y ≤ x :=
-by { rw [bdd_above_def, exists_le_and_iff_exists], exact λ x x' hxx' h y hy, (h y hy).trans hxx' }
+by { rw [bdd_above_def, exists_ge_and_iff_exists], exact monotone.ball (λ x hx, monotone_le), }
 
 lemma bdd_above.exists_ge {s : set α} (hs : bdd_above s) (x₀ : α) : ∃ x, x₀ ≤ x ∧ ∀ y ∈ s, y ≤ x :=
 (bdd_above_iff_exists_ge x₀).mp hs
@@ -57,20 +86,13 @@ section
 variables {s : set α} [has_one M]
 
 @[to_additive] lemma mul_support_disjoint_iff {f : α → M} {s : set α} :
-  disjoint (mul_support f) s ↔ ∀ x ∈ s, f x = 1 :=
-by simp_rw [disjoint_iff_subset_compl_right, mul_support_subset_iff', not_mem_compl_iff]
+  disjoint (mul_support f) s ↔ eq_on f 1 s :=
+by simp_rw [disjoint_iff_subset_compl_right, mul_support_subset_iff', not_mem_compl_iff, eq_on,
+  pi.one_apply]
 
 @[to_additive] lemma disjoint_mul_support_iff {f : α → M} {s : set α} :
-  disjoint s (mul_support f) ↔ ∀ x ∈ s, f x = 1 :=
-by rw [disjoint.comm, mul_support_disjoint_iff]
-
-@[to_additive] lemma mul_support_disjoint_iff_eq_on {f : α → M} {s : set α} :
-  disjoint (mul_support f) s ↔ eq_on f 1 s :=
-mul_support_disjoint_iff
-
-@[to_additive] lemma disjoint_mul_support_iff_eq_on {f : α → M} {s : set α} :
   disjoint s (mul_support f) ↔ eq_on f 1 s :=
-disjoint_mul_support_iff
+by rw [disjoint.comm, mul_support_disjoint_iff]
 
 end
 
@@ -81,9 +103,7 @@ variables [topological_space α] [t2_space α]
 @[simp]
 lemma exists_compact_superset_iff {s : set α} :
   (∃ K, is_compact K ∧ s ⊆ K) ↔ is_compact (closure s) :=
-⟨λ ⟨K, hK, hsK⟩, compact_of_is_closed_subset hK is_closed_closure
-  (closure_minimal hsK hK.is_closed),
-  λ h, ⟨closure s, h, subset_closure⟩⟩
+⟨λ ⟨K, hK, hsK⟩, compact_closure_of_subset_compact hK hsK, λ h, ⟨closure s, h, subset_closure⟩⟩
 
 end
 
@@ -104,23 +124,16 @@ variables [group α] [topological_space α] [topological_group α]
 lemma is_compact.inv {s : set α} (hs : is_compact s) : is_compact (s⁻¹) :=
 by { rw [← image_inv], exact hs.image continuous_inv }
 
-/-- We currently don't have division on sets yet, so the conclusion is not quite what the name
-promises. -/
-@[to_additive]
-lemma is_compact.div {s t : set α} (hs : is_compact s) (ht : is_compact t) : is_compact (s * t⁻¹) :=
-hs.mul ht.inv
+-- /-- We currently don't have division on sets yet, so the conclusion is not quite what the name
+-- promises. -/
+-- @[to_additive]
+-- lemma is_compact.div {s t : set α} (hs : is_compact s) (ht : is_compact t) : is_compact (s * t⁻¹) :=
+-- hs.mul ht.inv
 
 end group
 
-
-
 section one
 variables [has_one α]
-
-@[to_additive]
-lemma mul_support_empty_iff {f : X → α} : mul_support f = ∅ ↔ ∀ x, f x = 1 :=
-by simp_rw [← nmem_mul_support, eq_empty_iff_forall_not_mem]
-
 variables [topological_space X]
 
 -- todo: add mul_tsupport -> tsupport to to_additive dictionary
@@ -141,8 +154,8 @@ lemma is_closed_mul_tsupport (f : X → α) : is_closed (mul_tsupport f) :=
 is_closed_closure
 
 @[to_additive]
-lemma mul_tsupport_empty_iff {f : X → α} : mul_tsupport f = ∅ ↔ ∀ x, f x = 1 :=
-by erw [closure_empty_iff, mul_support_empty_iff]
+lemma mul_tsupport_eq_empty_iff {f : X → α} : mul_tsupport f = ∅ ↔ f = 1 :=
+by rw [mul_tsupport, closure_empty_iff, mul_support_eq_empty_iff]
 
 @[to_additive]
 lemma image_eq_zero_of_nmem_mul_tsupport {f : X → α} {x : X} (hx : x ∉ mul_tsupport f) : f x = 1 :=
@@ -159,7 +172,7 @@ variables {g : β → γ} {f : α → β} {f₂ : α → γ} {m : β → γ → 
 @[to_additive]
 lemma not_mem_closure_mul_support_iff_eventually_eq : x ∉ mul_tsupport f ↔ f =ᶠ[𝓝 x] 1 :=
 by simp_rw [mul_tsupport, mem_closure_iff_nhds, not_forall, not_nonempty_iff_eq_empty,
-    ← disjoint_iff_inter_eq_empty, disjoint_mul_support_iff_eq_on, eventually_eq_iff_exists_mem]
+    ← disjoint_iff_inter_eq_empty, disjoint_mul_support_iff, eventually_eq_iff_exists_mem]
 
 /-- A function `f` *has compact multiplicative support* or is *compactly supported* if the closure
 of the multiplicative support of `f` is compact. In other words: `f` is equal to `1` outside a
