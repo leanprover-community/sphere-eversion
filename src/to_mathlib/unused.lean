@@ -1,11 +1,6 @@
-import topology.path_connected
-import topology.urysohns_lemma
-import topology.uniform_space.compact_separated
-import linear_algebra.affine_space.independent
-import analysis.normed_space.finite_dimension
-import topology.algebra.floor_ring
-import topology.paracompact
-import topology.shrinking_lemma
+import algebra.module.ulift
+import measure_theory.constructions.borel_space
+import to_mathlib.analysis.calculus
 
 /-!
 Lemmas that are unused in the sphere-eversion project, but were formulated for one reason or another
@@ -83,3 +78,97 @@ lemma continuous_subtype_is_closed_cover' {α β : Type*} [topological_space α]
   continuous f :=
 continuous_subtype_is_closed_cover (λ i, (∈ c i)) h_lf h_is_closed
   (by simpa [eq_univ_iff_forall] using h_cover) f_cont
+
+section lift
+
+open topological_space
+/-! We used the below lemmas about ulift to remove a universe restriction in
+`times_cont_diff_parametric_primitive_of_times_cont_diff`.
+Due to a new proof that is not necessary anymore. -/
+
+universe variables v u
+
+variables {E : Type u}
+
+-- set_option pp.universes true
+-- note: we can almost certainly remove all `.{v}` below
+open ulift
+
+@[to_additive, simps apply] def monoid_hom.up [mul_one_class E] : E →* ulift E :=
+⟨up, rfl, λ x y, rfl⟩
+@[to_additive, simps] def monoid_hom.down [mul_one_class E] : ulift E →* E :=
+⟨down, rfl, λ x y, rfl⟩
+
+instance [normed_group E] : normed_group (ulift.{v} E) :=
+normed_group.induced add_monoid_hom.down equiv.ulift.injective
+
+instance {F} [normed_field F] [normed_group E] [normed_space F E] : normed_space F (ulift.{v} E) :=
+{ norm_smul_le := by { rintro x ⟨y⟩, exact normed_space.norm_smul_le x y },
+  ..ulift.module' }
+
+instance {X} [topological_space X] [second_countable_topology X] :
+  second_countable_topology (ulift.{v} X) :=
+homeomorph.ulift.second_countable_topology
+
+instance {X} [uniform_space X] : uniform_space (ulift.{v} X) :=
+uniform_space.comap down ‹_›
+
+lemma uniformity.ulift {X} [uniform_space X] :
+  uniformity (ulift X) = comap (prod.map down down) (uniformity X) :=
+uniformity_comap rfl
+
+lemma uniform_continuous.ulift {X} [uniform_space X] :
+  uniform_continuous (@homeomorph.ulift X _) :=
+by { rw [uniform_continuous, uniformity.ulift], exact tendsto_comap }
+
+lemma homeomorph.complete_space {X Y} [uniform_space X] [uniform_space Y] [complete_space Y]
+  (φ : X ≃ₜ Y) (hφ : uniform_continuous φ) : complete_space X :=
+begin
+  constructor,
+  intros f hf,
+  obtain ⟨y, hy⟩ := complete_space.complete (hf.map hφ),
+  refine ⟨φ.symm y, _⟩,
+  rw [← φ.symm.map_nhds_eq],
+  rw [map_le_iff_le_comap] at hy,
+  convert hy,
+  -- better lemma here would be useful
+  exact map_eq_comap_of_inverse (funext φ.left_inv) (funext φ.right_inv)
+end
+
+instance {X} [uniform_space X] [complete_space X] : complete_space (ulift.{v} X) :=
+homeomorph.complete_space homeomorph.ulift uniform_continuous.ulift
+
+instance {E} [measurable_space E] : measurable_space (ulift.{v} E) :=
+measurable_space.comap down ‹_›
+
+instance {X} [measurable_space X] [topological_space X] [borel_space X] :
+  borel_space (ulift.{v} X) :=
+⟨by { rw [← borel_comap.symm, (borel_space.measurable_eq.symm : borel X = _)], refl }⟩
+
+attribute [simps] mul_equiv.ulift
+
+/-- `ulift M → M` is a linear equivalence. -/
+@[simps {simp_rhs := tt}] def linear_equiv.ulift (R M : Type*)
+  [semiring R] [add_comm_monoid M] [module R M] : ulift.{v} M ≃ₗ[R] M :=
+{ map_smul' := λ x m, rfl, ..add_equiv.ulift }
+
+/-- `ulift M → M` is a continuous linear equivalence -/
+@[simps apply symm_apply {simp_rhs := tt}]
+def continuous_linear_equiv.ulift (R M : Type*) [semiring R] [topological_space M]
+  [add_comm_monoid M] [module R M] : ulift.{v} M ≃L[R] M :=
+{ ..linear_equiv.ulift R M, ..homeomorph.ulift }
+
+lemma times_cont_diff_up {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@up X) :=
+(continuous_linear_equiv.ulift F X).symm.times_cont_diff
+
+lemma times_cont_diff_down {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@down X) :=
+(continuous_linear_equiv.ulift F X).times_cont_diff
+
+lemma times_cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] [normed_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
+  times_cont_diff F n (λ x, up (f x)) ↔ times_cont_diff F n f :=
+(continuous_linear_equiv.ulift F Y).symm.comp_times_cont_diff_iff
+
+end lift

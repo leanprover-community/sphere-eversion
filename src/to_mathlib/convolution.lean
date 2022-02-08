@@ -8,69 +8,33 @@ import analysis.calculus.fderiv_measurable
 noncomputable theory
 open topological_space measure_theory measure_theory.measure function set
 open_locale pointwise topological_space nnreal measure_theory
-
-namespace filter
-
-variables {α : Type*} {f : filter α}
-
-lemma exists_mem_and_iff {P : set α → Prop} {Q : set α → Prop} (hP : antitone P) (hQ : antitone Q) :
-  (∃ u ∈ f, P u) ∧ (∃ u ∈ f, Q u) ↔ (∃ u ∈ f, P u ∧ Q u) :=
-begin
-  split,
-  { rintro ⟨⟨u, huf, hPu⟩, v, hvf, hQv⟩, exact ⟨u ∩ v, inter_mem huf hvf,
-    hP (inter_subset_left _ _) hPu, hQ (inter_subset_right _ _) hQv⟩ },
-  { rintro ⟨u, huf, hPu, hQu⟩, exact ⟨⟨u, huf, hPu⟩, u, huf, hQu⟩ }
-end
-
-end filter
 open filter (hiding map_map map_id map map_id')
 
-section
-
-variables {α β γ : Type*} [topological_space α] [topological_space β] {f : α → β}
-lemma antitone_continuous_on : antitone (continuous_on f) :=
-λ s t hst hf, hf.mono hst
-
-end
 
 
 
+-- section deriv_integral
+-- open metric
 
-section deriv_integral
-open metric
+-- variables {α : Type*} [measurable_space α] {μ : measure α} {𝕜 : Type*} [is_R_or_C 𝕜]
+--           {E : Type*} [normed_group E] [normed_space ℝ E] [normed_space 𝕜 E]
+--           [complete_space E] [second_countable_topology E]
+--           [measurable_space E] [borel_space E]
 
-variables {α : Type*} [measurable_space α] {μ : measure α} {𝕜 : Type*} [is_R_or_C 𝕜]
-          {E : Type*} [normed_group E] [normed_space ℝ E] [normed_space 𝕜 E]
-          [complete_space E] [second_countable_topology E]
-          [measurable_space E] [borel_space E]
+-- lemma has_deriv_at_integral_of_dominated_of_deriv_le {F : 𝕜 → α → E} {F' : 𝕜 → α → E}
+--   {x₀ : 𝕜} {bound : α → ℝ}
+--   {ε : ℝ} (ε_pos : 0 < ε)
+--   (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ)
+--   (hF_int : integrable (F x₀) μ)
+--   (hF'_meas : ae_measurable (F' x₀) μ)
+--   (h_bound : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, ∥F' x a∥ ≤ bound a)
+--   (bound_integrable : integrable bound μ)
+--   (h_diff : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, has_deriv_at (λ x, F x a) (F' x a) x) :
+--   has_deriv_at (λ x, ∫ a, F x a ∂μ) (∫ a, F' x₀ a ∂μ) x₀ :=
+-- (has_deriv_at_integral_of_dominated_loc_of_deriv_le ε_pos hF_meas hF_int hF'_meas h_bound
+--   bound_integrable h_diff).2
 
-lemma has_deriv_at_integral_of_dominated_of_deriv_le {F : 𝕜 → α → E} {F' : 𝕜 → α → E}
-  {x₀ : 𝕜} {bound : α → ℝ}
-  {ε : ℝ} (ε_pos : 0 < ε)
-  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ)
-  (hF_int : integrable (F x₀) μ)
-  (hF'_meas : ae_measurable (F' x₀) μ)
-  (h_bound : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, ∥F' x a∥ ≤ bound a)
-  (bound_integrable : integrable (bound : α → ℝ) μ)
-  (h_diff : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, has_deriv_at (λ x, F x a) (F' x a) x) :
-  has_deriv_at (λ x, ∫ a, F x a ∂μ) (∫ a, F' x₀ a ∂μ) x₀ :=
-begin
-  have x₀_in : x₀ ∈ ball x₀ ε := mem_ball_self ε_pos,
-  have diff_x₀ : ∀ᵐ a ∂μ, has_deriv_at (λ x, F x a) (F' x₀ a) x₀ :=
-    h_diff.mono (λ a ha, ha x₀ x₀_in),
-  have : ∀ᵐ a ∂μ, lipschitz_on_with (real.nnabs (bound a)) (λ x, F x a) (ball x₀ ε),
-  { apply (h_diff.and h_bound).mono,
-    rintros a ⟨ha_deriv, ha_bound⟩,
-    refine (convex_ball _ _).lipschitz_on_with_of_nnnorm_has_fderiv_within_le
-      (λ x x_in, (ha_deriv x x_in).has_deriv_within_at) (λ x x_in, _),
-    rw [← nnreal.coe_le_coe, coe_nnnorm, real.coe_nnabs],
-    simp only [continuous_linear_map.norm_smul_right_apply, norm_one, one_mul],
-    exact (ha_bound x x_in).trans (le_abs_self _) },
-  exact (has_deriv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas hF_int
-                                               hF'_meas this bound_integrable diff_x₀).2
-end
-
-end deriv_integral
+-- end deriv_integral
 
 section
 
@@ -106,6 +70,13 @@ lemma times_cont_diff.continuous_deriv {n : with_top ℕ} (h : times_cont_diff �
   continuous (deriv f₂) :=
 (times_cont_diff_succ_iff_deriv.mp (h.of_le hn)).2.continuous
 
+
+lemma fderiv_eq (h : ∀ x, has_fderiv_at f (f' x) x) : fderiv 𝕜 f = f' :=
+funext $ λ x, (h x).fderiv
+
+lemma deriv_eq (h : ∀ x, has_deriv_at f₂ (f₂' x) x) : deriv f₂ = f₂' :=
+funext $ λ x, (h x).deriv
+
 -- lemma times_cont_diff_at.continuous_at_fderiv {n : with_top ℕ}
 --   (h : times_cont_diff_at 𝕜 n f x) (hn : 1 ≤ n) :
 --   continuous_at (fderiv 𝕜 f) x :=
@@ -135,12 +106,6 @@ end
 lemma has_compact_support.deriv (hf : has_compact_support f₂) : has_compact_support (deriv f₂) :=
 hf.mono' support_deriv_subset
 
-lemma fderiv_eq (h : ∀ x, has_fderiv_at f (f' x) x) : fderiv 𝕜 f = f' :=
-funext $ λ x, (h x).fderiv
-
-lemma deriv_eq (h : ∀ x, has_deriv_at f₂ (f₂' x) x) : deriv f₂ = f₂' :=
-funext $ λ x, (h x).deriv
-
 end
 
 section
@@ -160,7 +125,7 @@ lemma integral_norm_eq_lintegral_nnnorm {f : α → G} (hf : ae_measurable f μ)
 begin
   rw integral_eq_lintegral_of_nonneg_ae _ hf.norm,
   { simp_rw [of_real_norm_eq_coe_nnnorm], },
-  { refine ae_of_all _ _, simp, },
+  { refine ae_of_all _ _, simp_rw [pi.zero_apply, norm_nonneg, imp_true_iff] },
 end
 
 
@@ -176,47 +141,9 @@ end
 
 end
 
--- section
--- variables {α γ : Type*} [topological_space α] [measurable_space α] [opens_measurable_space α]
---   [topological_space γ] [measurable_space γ] [borel_space γ] {f : α → γ} {μ : measure α}
-
--- lemma ae_measurable_of_ae_continuous_at (h : ∀ᵐ x ∂μ, continuous_at f x) :
---   ae_measurable f μ :=
--- begin
-
--- end
--- end
 
 open metric
 section
-
-
-variables
-{𝕂 : Type*} [is_R_or_C 𝕂]
-{E' : Type*} [normed_group E'] [normed_space 𝕂 E']
-{F' : Type*} [normed_group F'] [normed_space 𝕂 F']
-
--- todo: reformulate using times_cont_diff_on
--- lemma times_cont_diff_on.exists_lipschitz_on_with {f : E' → F'}
---   {t : set E'} (ht : is_compact t) (hf : ∀ x ∈ t, times_cont_diff_at 𝕂 1 f x) :
---   ∃ K, lipschitz_on_with K f t :=
--- begin
---   have hf_cont : continuous_on (λ x, ∥fderiv 𝕂 f x∥₊) t :=
---   λ x hx, ((hf x hx).continuous_at_fderiv le_rfl).continuous_within_at.nnnorm,
---   rcases t.eq_empty_or_nonempty with rfl|h2t, { simp },
---   resetI,
---   obtain ⟨x, hxt, hfx⟩ := ht.exists_forall_le h2t hf_cont,
---   refine ⟨∥fderiv 𝕂 f x∥₊, _⟩,
---   sorry
--- end
-
--- lemma times_cont_diff_integral {F : H → α → E} {n : with_top ℕ}
---   (hF_int : ∀ x, integrable (F x) μ)
---   (h_diff : ∀ᵐ a ∂μ, times_cont_diff ℝ n (λ x, F x a)) :
---   times_cont_diff ℝ n (λ x, ∫ a, F x a ∂μ) :=
--- begin
---   sorry
--- end
 
 variables {α : Type*} [measurable_space α]
 [topological_space α] [opens_measurable_space α] {μ : measure α}
@@ -849,11 +776,12 @@ begin
   let L := closed_ball x₀ 1 + - tsupport (deriv f),
   have hL : is_compact L := (is_compact_closed_ball x₀ 1).add hcf.deriv.neg,
   simp_rw [convolution_fn_eq_swap],
-  refine has_deriv_at_integral_of_dominated_of_deriv_le zero_lt_one
-    (eventually_of_forall h1) _ (h2 x₀) _ _ _,
-  { exact L.indicator (λ t, (⨆ x, ∥deriv f x∥) * ∥g t∥) },
+  refine (has_deriv_at_integral_of_dominated_loc_of_deriv_le zero_lt_one
+    (eventually_of_forall h1) _ _ _ _ _).2,
   { exact (hcf.convolution_exists_left
       (hf.continuous.integrable_of_compact_closure_support hcf) hg x₀).integrable_swap },
+  { exact h2 x₀ },
+  { exact L.indicator (λ t, (⨆ x, ∥deriv f x∥) * ∥g t∥) },
   { refine eventually_of_forall (λ t x hx, _),
     refine le_indicator (λ t ht, _) (λ t ht, _) t,
     { rw [norm_smul],
