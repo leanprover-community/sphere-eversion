@@ -1,3 +1,6 @@
+import to_mathlib.analysis.normed_group
+import to_mathlib.linear_algebra.basis
+
 import loops.reparametrization
 
 import local.corrugation
@@ -251,7 +254,7 @@ lemma improve_step_sol
   (h_part_hol : ∀ᶠ x near L.K₀, 𝓕.is_part_holonomic_at L.E' x)
   (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
-  ∀ᶠ N in at_top, (L.improve_step 𝓕 N 1).is_formal_sol R :=
+  ∀ᶠ N in at_top, ∀ t, (L.improve_step 𝓕 N t).is_formal_sol R :=
 sorry
 
 
@@ -263,6 +266,17 @@ lemma finite_dimensional.fin_succ_basis (K V : Type*) [division_ring K] [add_com
   [finite_dimensional K V] [nontrivial V] : ∃ (n : ℕ), nonempty (basis (fin (n + 1)) K V) :=
 sorry
 
+section
+
+@[simp]lemma linear_map.ker_to_continuous_linear_map {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+  {E : Type*} [normed_group E]
+  [normed_space 𝕜 E] {F' : Type*} [add_comm_group F'] [module 𝕜 F']
+  [topological_space F'] [topological_add_group F'] [has_continuous_smul 𝕜 F']
+  [complete_space 𝕜] [finite_dimensional 𝕜 E] (f : E →ₗ[𝕜] F') :
+  f.to_continuous_linear_map.ker = f.ker := rfl
+
+end
+
 section improve
 /-!
 ## Full improvement
@@ -273,88 +287,125 @@ This section proves lem:h_principle_open_ample_loc.
 open finite_dimensional submodule
 
 variables {E}
+.
 
 /--
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
 -/
 lemma rel_loc.formal_sol.improve {R : rel_loc E F} {L : landscape E} {𝓕 : formal_sol R L.U} {ε : ℝ}
-(ε_pos : 0 < ε) (h_op : R.is_open_over L.U) (h_ample : R.is_ample)
-(h_hol :∀ᶠ x near L.C, 𝓕.is_holonomic_at x) : ∃ H : htpy_jet_sec L.U F,
- (H 0 = 𝓕) ∧
- (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
- (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
- (∀ x t, ∥H t x - 𝓕 x∥ ≤ ε) ∧
- (∀ t, (H t).is_formal_sol R) ∧
- (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
+  (ε_pos : 0 < ε) (h_op : R.is_open_over L.U) (h_ample : R.is_ample)
+  (h_hol :∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
+  ∃ H : htpy_jet_sec L.U F,
+    (H 0 = 𝓕) ∧
+    (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
+    (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+    (∀ x t, ∥H t x - 𝓕 x∥ ≤ ε) ∧
+    (∀ t, (H t).is_formal_sol R) ∧
+    (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
 begin
-  by_cases hE : nontrivial E,
-  { haveI := hE,
-    rcases fin_succ_basis ℝ E with ⟨n, ⟨e⟩⟩,
-
-    let E' : fin (n+1) → submodule ℝ E := λ k, span ℝ $ e '' {j : fin (n+1) | j < k},
-    suffices : ∀ k : fin (n + 1), ∃ H : htpy_jet_sec L.U F,
-      (H 0 = 𝓕) ∧
-      (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
-      (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
-      (∀ x t, ∥H t x - 𝓕 x∥ ≤ ε) ∧
-      (∀ t, (H t).is_formal_sol R) ∧
-      (∀ᶠ x near L.K₀, (H 1).is_part_holonomic_at (E' k) x),
-    sorry ; { have eq_top : E' (fin.last n) = ⊤,
-      {
-        sorry },
-      have key := this (fin.last n),
-      rw [eq_top] at key,
-      simp_rw is_part_holonomic_top at key,
-      exact key },
-    intro k,
-    apply fin.induction_on k ; clear k,
-    { use 𝓕.to_jet_sec.const_htpy,
-      have eq_bot : E' 0 = ⊥,
-      {
-        sorry },
-      sorry ; simp [eq_bot, ε_pos.le] },
-    { rintros k ⟨H, hH₀, hHC, hHK₁, hHc0, hH_sol, hH_hol⟩,
-      let S : step_landscape E :=
-      { E' := E' k,
-        p := e.dual_pair' k,
-        hEp := sorry,
-        ..L},
-      set H₁ : formal_sol R L.U := (hH_sol 1).formal_sol,
-      have h_span : S.E' ⊔ S.p.span_v = E' k.succ,
-      {
-        sorry },
-      have acc : S.accepts R H₁ :=
-      { h_op := sorry,
-        hK₀ := sorry,
-        h_short := sorry,
-        hC := sorry  },
-      let N : ℝ := _,
-      refine ⟨H.comp (S.improve_step H₁ N), _, _, _, _, _, _⟩,
-      sorry;{ simp [hH₀] }, -- t = 0
-      { -- rel C
-        sorry },
-      { -- rel K₁
-        sorry },
-      { -- C⁰-close
-        sorry },
-      { -- formal solution
-
-        sorry },
-      {  -- part-hol E' (k + 1)
-        rw [← h_span, htpy_jet_sec.comp_1],
-        apply S.improve_step_hol H₁ h_op,
-        sorry ; { -- part-hol E'
-          simpa only [← fin.coe_eq_cast_succ] using hH_hol },
-        { -- short  Needs the lemma that ample implies short
-          sorry },
-        sorry ; { -- hol near C
-          apply h_hol.congr (formal_sol.is_holonomic_at_congr _ _ _),
-          apply hHC.mono (λ x hx, (hx 1).symm) } },
-      sorry -- def N
-      } },
-  {
-    sorry },
+  let n := finrank ℝ E,
+  let e := fin_basis ℝ E,
+  let E' := e.flag,
+  suffices : ∀ k : fin (n + 1), ∀ δ: ℝ, 0 < δ → ∃ H : htpy_jet_sec L.U F,
+    (H 0 = 𝓕) ∧
+    (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
+    (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+    (∀ x t, ∥H t x - 𝓕 x∥ ≤ δ) ∧
+    (∀ t, (H t).is_formal_sol R) ∧
+    (∀ᶠ x near L.K₀, (H 1).is_part_holonomic_at (E' k) x),
+  { simpa only [show E' (fin.last n) = ⊤, from e.flag_last, is_part_holonomic_top] using
+      this (fin.last n) ε ε_pos },
+  clear ε_pos ε,
+  intro k,
+  apply fin.induction_on k ; clear k,
+  { intros δ δ_pos,
+    use 𝓕.to_jet_sec.const_htpy,
+    simp [show E' 0 = ⊥, from e.flag_zero, δ_pos.le] },
+  { rintros k HH δ δ_pos,
+    rcases HH (δ/2) (half_pos δ_pos) with ⟨H, hH₀, hHC, hHK₁, hHc0, hH_sol, hH_hol⟩, clear HH,
+    let S : step_landscape E :=
+    { E' := E' k,
+      p := e.dual_pair' k,
+      hEp := by simp only [E', basis.dual_pair', linear_map.ker_to_continuous_linear_map,
+                            e.flag_le_ker_dual],
+      ..L},
+    set H₁ : formal_sol R L.U := (hH_sol 1).formal_sol,
+    have h_span : S.E' ⊔ S.p.span_v = E' k.succ := e.flag_span_succ k,
+    have acc : S.accepts R H₁ :=
+    { h_op := h_op,
+      hK₀ := begin
+        apply hH_hol.mono,
+        intros x hx,
+        dsimp [S],
+        convert hx,
+        norm_cast
+      end,
+      h_short := λ x _, h_ample.is_short_at_jet_sec H₁ S.p x,
+      hC := begin
+        apply h_hol.congr (formal_sol.is_holonomic_at_congr _ _ _),
+        apply hHC.mono,
+        tauto,
+      end  },
+    have hH₁_K₀ : ∀ᶠ (x : E) near S.to_landscape.K₀, H₁.is_part_holonomic_at S.E' x,
+    { apply hH_hol.mono,
+      intros x hx,
+      apply hx.mono,
+      apply e.flag_mono,
+      norm_cast },
+    have hH₁_short : ∀ (x : E), x ∈ S.to_landscape.U → H₁.is_short_at S.p x,
+    { intros,
+      apply h_ample.is_short_at },
+    have hH₁_rel_C : ∀ᶠ (x : E) near S.C, H₁ x = 𝓕 x,
+    { apply hHC.mono,
+      intros x hx,
+      apply hx },
+    have hH₁_C : ∀ᶠ (x : E) near S.to_landscape.C, H₁.is_holonomic_at x,
+    { apply h_hol.congr (formal_sol.is_holonomic_at_congr _ _ _),
+      exact (h_hol.and hH₁_rel_C).mono (λ x hx, hx.2.symm) },
+    have hH₁_K₁ : ∀ x ∉ L.K₁, H₁ x = 𝓕 x,
+    { intros x hx,
+      apply hHK₁ x hx },
+    obtain ⟨N, hN_close, hN_sol⟩ :=
+      ((S.improve_step_c0_close H₁ $ half_pos δ_pos).and
+      (S.improve_step_sol H₁ h_op hH₁_K₀ hH₁_short hH₁_C)).exists,
+    refine ⟨H.comp (S.improve_step H₁ N), _, _, _, _, _, _⟩,
+    { simp [hH₀], }, -- t = 0
+    { -- rel C
+      apply (hHC.and $ hH₁_rel_C.and $ S.improve_step_rel_C H₁ N).mono,
+      rintros x ⟨hx, hx', hx''⟩ t,
+      by_cases ht : t ≤ 1/2,
+      { simp [ht, hx] },
+      { simp [ht, hx', hx''] } },
+    { -- rel K₁
+      intros x hx t,
+      by_cases ht : t ≤ 1/2,
+      { simp [ht, hx, hHK₁] },
+      { simp [ht, hx, hH₁_K₁, S.improve_step_rel_compl_K₁] } },
+    { -- C⁰-close
+      intros x t,
+      by_cases ht : t ≤ 1/2,
+      { apply le_trans _ (half_le_self δ_pos.le),
+        simp [ht, hHc0] },
+      { simp only [ht, htpy_jet_sec.comp_of_not_le, not_false_iff],
+        rw ← add_halves δ,
+        exact norm_sub_le_add_of_le (hN_close _ _) (hHc0 _ _) } },
+    { -- formal solution
+      intros t,
+      by_cases ht : t ≤ 1/2,
+      { simp [ht, hH_sol] },
+      { simp [ht, hN_sol] } },
+    {  -- part-hol E' (k + 1)
+      rw [← h_span, htpy_jet_sec.comp_1],
+      apply S.improve_step_hol H₁ h_op,
+      { -- part-hol E'
+        simpa only [← fin.coe_eq_cast_succ] using hH_hol },
+      { -- short
+        intros,
+        apply h_ample.is_short_at },
+      { -- hol near C
+        apply h_hol.congr (formal_sol.is_holonomic_at_congr _ _ _),
+        apply hHC.mono (λ x hx, (hx 1).symm) } } }
 end
 
 
