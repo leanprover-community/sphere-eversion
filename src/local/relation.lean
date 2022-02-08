@@ -29,7 +29,7 @@ this will guarantee the h-principle (in some other file).
 noncomputable theory
 
 open set function module (dual)
-open_locale unit_interval classical topological_space
+open_locale unit_interval topological_space
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] (F : Type*)
                         [normed_group F] [normed_space ℝ F]
@@ -91,7 +91,7 @@ by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
 
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair' i`
 is given by the `i`th basis element and its dual. -/
-def _root_.basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι]
+def _root_.basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι] [decidable_eq ι]
   (e : basis ι ℝ E) (i : ι) : dual_pair' E :=
 { π := (e.dual_basis i).to_continuous_linear_map,
   v := e i,
@@ -144,7 +144,12 @@ def jet_sec.is_formal_sol {U : set E} (𝓕 : jet_sec U F) (R : rel_loc E F) : P
 
 instance (R : rel_loc E F) (U : set E) : has_coe (formal_sol R U) (jet_sec U F):=
 ⟨formal_sol.to_jet_sec⟩
---rel_loc.jet_sec.is_formal_sol.formal_sol
+
+@[simp] lemma formal_sol.to_jet_sec_eq_coe {U : set E} {R : rel_loc E F} (𝓕 : formal_sol R U) :
+𝓕.to_jet_sec = (𝓕 : jet_sec U F) := rfl
+
+@[simp] lemma formal_sol.coe_is_formal_sol {U : set E} {R : rel_loc E F} (𝓕 : formal_sol R U) :
+  (𝓕 : jet_sec U F).is_formal_sol R := 𝓕.is_sol
 
 def jet_sec.is_formal_sol.formal_sol {U : set E} {𝓕 : jet_sec U F} {R : rel_loc E F}
   (h : 𝓕.is_formal_sol R) : formal_sol R U :=
@@ -169,6 +174,9 @@ instance (U : set E) : has_coe_to_fun (jet_sec U F) (λ S, E → F × (E →L[�
 
 instance (R : rel_loc E F) (U : set E) : has_coe_to_fun (formal_sol R U) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
+
+@[simp] lemma formal_sol.coe_apply {U : set E} {R : rel_loc E F} (𝓕 : formal_sol R U) (x : E) :
+(𝓕 : jet_sec U F) x = 𝓕 x := rfl
 
 variables {U : set E} {R : rel_loc E F}
 
@@ -215,9 +223,18 @@ if its linear map part at `x` is the derivative of its function part at `x` in r
 def is_part_holonomic_at (𝓕 : jet_sec U F) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
+lemma _root_.rel_loc.jet_sec.is_part_holonomic_at.mono {𝓕 : jet_sec U F}
+  {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
+  𝓕.is_part_holonomic_at E'' x :=
+λ v v_in, h v $ set_like.coe_subset_coe.mpr h' v_in
+
 def _root_.rel_loc.formal_sol.is_part_holonomic_at (𝓕 : formal_sol R U) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
+lemma _root_.rel_loc.formal_sol.is_part_holonomic_at.mono {𝓕 : formal_sol R U}
+  {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
+  𝓕.is_part_holonomic_at E'' x :=
+λ v v_in, h v $ set_like.coe_subset_coe.mpr h' v_in
 
 lemma _root_.is_part_holonomic_top {𝓕 : jet_sec U F} {x : E} :
   is_part_holonomic_at 𝓕 ⊤ x ↔ is_holonomic_at 𝓕 x :=
@@ -229,7 +246,7 @@ sorry
 
 lemma mem_slice (𝓕 : formal_sol R U) (p : dual_pair' E) {x : E} (hx : x ∈ U) :
   𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
-by simp [rel_loc.formal_sol.slice_at, rel_loc.slice, 𝓕.is_sol x hx]
+by simpa [rel_loc.formal_sol.slice_at, rel_loc.slice] using  𝓕.is_sol x hx
 
 /-- A formal solution `𝓕` is short for a dual pair `p` at a point `x` if the derivative of
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
@@ -239,6 +256,15 @@ D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v
 
 def _root_.rel_loc.formal_sol.is_short_at (𝓕 : formal_sol R U)(p : dual_pair' E) (x : E) : Prop :=
 D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
+
+lemma _root_.rel_loc.is_ample.is_short_at_jet_sec {R : rel_loc E F} (hR : is_ample R) (𝓕 : jet_sec U F) (p : dual_pair' E)
+  (x : E) : 𝓕.is_short_at R p x :=
+sorry
+
+
+lemma _root_.rel_loc.is_ample.is_short_at {R : rel_loc E F} (hR : is_ample R) (𝓕 : formal_sol R U) (p : dual_pair' E)
+  (x : E) : 𝓕.is_short_at p x :=
+sorry
 
 end rel_loc.jet_sec
 
@@ -287,8 +313,20 @@ sorry
 lemma smooth_step.of_lt {t : ℝ} (h : t < 1/4) : smooth_step t = 0 :=
 sorry
 
+@[simp]
+lemma smooth_step.zero : smooth_step 0 = 0 :=
+sorry
+
+@[simp]
+lemma smooth_step.one : smooth_step 1 = 1 :=
+sorry
+
 lemma smooth_step.of_gt {t : ℝ} (h : 3/4 < t) : smooth_step t = 1 :=
 sorry
+
+lemma smooth_step.mem (t : ℝ) : smooth_step t ∈ I :=
+sorry
+
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
@@ -304,6 +342,16 @@ sorry
 
 @[simp]
 lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec U F) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
+sorry
+
+@[simp]
+lemma htpy_jet_sec.comp_of_le (𝓕 𝓖 : htpy_jet_sec U F) {t : ℝ} (ht : t ≤ 1/2) :
+  𝓕.comp 𝓖 t = 𝓕 (smooth_step $ 2*t) :=
+sorry
+
+@[simp]
+lemma htpy_jet_sec.comp_of_not_le (𝓕 𝓖 : htpy_jet_sec U F) {t : ℝ} (ht : ¬ t ≤ 1/2) :
+  𝓕.comp 𝓖 t = 𝓖 (smooth_step $ 2*t - 1) :=
 sorry
 
 end htpy_jet_sec
