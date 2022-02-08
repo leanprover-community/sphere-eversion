@@ -481,34 +481,12 @@ end
 
 end
 
--- is this true?
 section
-variables {𝕜 E F H : Type*} [nondiscrete_normed_field 𝕜] [normed_group E] [normed_space 𝕜 E]
-  [normed_group F] [normed_space 𝕜 F] [normed_group H] [normed_space 𝕜 H]
-  {f : E → F} {n : with_top ℕ}
-
-lemma times_cont_diff_clm_apply {f : E → F →L[𝕜] H} :
-  times_cont_diff 𝕜 n f ↔ ∀ y, times_cont_diff 𝕜 n (λ x, f x y) :=
-begin
-  split,
-  { intros h y,
-    exact (continuous_linear_map.apply 𝕜 H y).times_cont_diff.comp h },
-  sorry
-end
-
-lemma times_cont_diff_succ_iff_fderiv_apply {n : ℕ} :
-  times_cont_diff 𝕜 ((n + 1) : ℕ) f ↔
-  differentiable 𝕜 f ∧ ∀ y, times_cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
-by rw [times_cont_diff_succ_iff_fderiv, times_cont_diff_clm_apply]
-
-end
-
-section
-universe variables u v
-variables {E : Type (max u v)} [normed_group E] [normed_space ℝ E]
+-- universe variables u? v
+variables {E : Type*} [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
-          {H : Type u} [normed_group H] [normed_space ℝ H]
+          {H : Type*} [normed_group H] [normed_space ℝ H]
           [finite_dimensional ℝ H]
 
 open real continuous_linear_map asymptotics
@@ -517,16 +495,13 @@ local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 local notation `∂₁` := partial_fderiv_fst ℝ
 
-/-- In this version the universe levels have a restriction.
-Use `times_cont_diff_parametric_primitive_of_times_cont_diff'` instead. -/
-lemma times_cont_diff_parametric_primitive_of_times_cont_diff'' {F : H → ℝ → E} {n : ℕ}
+lemma times_cont_diff_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} {n : ℕ}
   (hF : times_cont_diff ℝ n ↿F)
   {s : H → ℝ} (hs : times_cont_diff ℝ n s)
   (a : ℝ) :
   times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
 begin
-  unfreezingI { revert E F },
-  induction n with n ih; introsI E F i₁ i₂ i₃ i₄ i₅ i₆ hF,
+  induction n with n ih generalizing F,
   { rw [with_top.coe_zero, times_cont_diff_zero] at *,
     exact continuous_parametric_interval_integral_of_continuous hF hs },
   { have hF₁ : times_cont_diff ℝ 1 (↿F), from hF.one_of_succ,
@@ -534,19 +509,26 @@ begin
     have h : ∀ x, has_fderiv_at (λ x, ∫ t in a..s x, F x t)
       ((∫ t in a..s x, ∂₁F x t) + F x (s x) ⬝ D s x) x :=
     λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x a).2,
-    rw times_cont_diff_succ_iff_fderiv,
+    rw times_cont_diff_succ_iff_fderiv_apply,
     split,
     { exact λ x₀, ⟨_, h x₀⟩ },
-    { rw funext (λ x, (h x).fderiv),
+    { intro x,
+      rw fderiv_eq h,
       apply times_cont_diff.add,
-      { apply ih hs.of_succ,
-        apply times_cont_diff.times_cont_diff_partial_fst,
-        exact hF },
+      { simp only [continuous_linear_map.coe_coe],
+      --times_cont_diff ℝ ↑n ↿(λ (x' : H) (a : ℝ), ⇑(D (λ (e : H), F e a) x') x)
+        have hD : times_cont_diff ℝ n ↿(λ x' a, (D (λ e, F e a) x') x),
+        { apply times_cont_diff.times_cont_diff_partial_fst_apply, exact hF },
+        have hD' : times_cont_diff ℝ n ↿(∂₁ F),
+        { apply times_cont_diff.times_cont_diff_partial_fst, exact hF },
+        convert ih hs.of_succ hD, ext x', refine continuous_linear_map.interval_integral_apply _ x,
+        exact (continuous_curry x' hD'.continuous).interval_integrable _ _, },
       { -- giving the following implicit type arguments speeds up elaboration significantly
-        exact (@is_bounded_bilinear_map_smul_right ℝ _ H _ _ E _ _).times_cont_diff.comp
+        have := (@is_bounded_bilinear_map_smul_right ℝ _ H _ _ E _ _).times_cont_diff.comp
           ((times_cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $
-            times_cont_diff_id.prod hs.of_succ)
-            } } }
+            times_cont_diff_id.prod hs.of_succ),
+        rw [times_cont_diff_clm_apply] at this,
+        exact this x } } }
 end
 
 end
@@ -556,111 +538,11 @@ section
 universe variables v u
 
 variables {E : Type u}
-
--- set_option pp.universes true
--- note: we can almost certainly remove all `.{v}` below
-open ulift
-
-@[to_additive, simps apply] def monoid_hom.up [mul_one_class E] : E →* ulift E :=
-⟨up, rfl, λ x y, rfl⟩
-@[to_additive, simps] def monoid_hom.down [mul_one_class E] : ulift E →* E :=
-⟨down, rfl, λ x y, rfl⟩
-
-instance [normed_group E] : normed_group (ulift.{v} E) :=
-normed_group.induced add_monoid_hom.down equiv.ulift.injective
-
-instance {F} [normed_field F] [normed_group E] [normed_space F E] : normed_space F (ulift.{v} E) :=
-{ norm_smul_le := by { rintro x ⟨y⟩, exact normed_space.norm_smul_le x y },
-  ..ulift.module' }
-
-instance {X} [topological_space X] [second_countable_topology X] :
-  second_countable_topology (ulift.{v} X) :=
-homeomorph.ulift.second_countable_topology
-
-instance {X} [uniform_space X] : uniform_space (ulift.{v} X) :=
-uniform_space.comap down ‹_›
-
-lemma uniformity.ulift {X} [uniform_space X] :
-  uniformity (ulift X) = comap (prod.map down down) (uniformity X) :=
-uniformity_comap rfl
-
-lemma uniform_continuous.ulift {X} [uniform_space X] :
-  uniform_continuous (@homeomorph.ulift X _) :=
-by { rw [uniform_continuous, uniformity.ulift], exact tendsto_comap }
-
-lemma homeomorph.complete_space {X Y} [uniform_space X] [uniform_space Y] [complete_space Y]
-  (φ : X ≃ₜ Y) (hφ : uniform_continuous φ) : complete_space X :=
-begin
-  constructor,
-  intros f hf,
-  obtain ⟨y, hy⟩ := complete_space.complete (hf.map hφ),
-  refine ⟨φ.symm y, _⟩,
-  rw [← φ.symm.map_nhds_eq],
-  rw [map_le_iff_le_comap] at hy,
-  convert hy,
-  -- better lemma here would be useful
-  exact map_eq_comap_of_inverse (funext φ.left_inv) (funext φ.right_inv)
-end
-
-instance {X} [uniform_space X] [complete_space X] : complete_space (ulift.{v} X) :=
-homeomorph.complete_space homeomorph.ulift uniform_continuous.ulift
-
-instance {E} [measurable_space E] : measurable_space (ulift.{v} E) :=
-measurable_space.comap down ‹_›
-
-instance {X} [measurable_space X] [topological_space X] [borel_space X] :
-  borel_space (ulift.{v} X) :=
-⟨by { rw [← borel_comap.symm, (borel_space.measurable_eq.symm : borel X = _)], refl }⟩
-
-attribute [simps] mul_equiv.ulift
-
-/-- `ulift M → M` is a linear equivalence. -/
-@[simps {simp_rhs := tt}] def linear_equiv.ulift (R M : Type*)
-  [semiring R] [add_comm_monoid M] [module R M] : ulift.{v} M ≃ₗ[R] M :=
-{ map_smul' := λ x m, rfl, ..add_equiv.ulift }
-
-/-- `ulift M → M` is a continuous linear equivalence -/
-@[simps apply symm_apply {simp_rhs := tt}]
-def continuous_linear_equiv.ulift (R M : Type*) [semiring R] [topological_space M]
-  [add_comm_monoid M] [module R M] : ulift.{v} M ≃L[R] M :=
-{ ..linear_equiv.ulift R M, ..homeomorph.ulift }
-
-lemma times_cont_diff_up {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
-  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@up X) :=
-(continuous_linear_equiv.ulift F X).symm.times_cont_diff
-
-lemma times_cont_diff_down {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
-  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@down X) :=
-(continuous_linear_equiv.ulift F X).times_cont_diff
-
-lemma times_cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_group X]
-  [normed_space F X] [normed_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
-  times_cont_diff F n (λ x, up (f x)) ↔ times_cont_diff F n f :=
-(continuous_linear_equiv.ulift F Y).symm.comp_times_cont_diff_iff
-
 variables [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
           {H : Type v} [normed_group H] [normed_space ℝ H]
           [finite_dimensional ℝ H]
-
-lemma times_cont_diff_parametric_primitive_of_times_cont_diff'
-  {F : H → ℝ → E} {n : ℕ} (hF : times_cont_diff ℝ n ↿F)
-  {s : H → ℝ} (hs : times_cont_diff ℝ n s)
-  (a : ℝ) :
-  times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
-begin
-  have : times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, up.{v} (F x t)) :=
-    times_cont_diff_parametric_primitive_of_times_cont_diff''.{v u} (times_cont_diff_up.comp hF)
-      hs a,
-  change times_cont_diff ℝ n (λ x : H, ∫ t in a..s x,
-    (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (F x t)) at this,
-  have hFi : ∀ x, interval_integrable (F x) volume a (s x),
-    from λ x, continuous.interval_integrable (hF.continuous.comp $ continuous.prod.mk x) _ _,
-  simp_rw [continuous_linear_map.interval_integral_comp_comm
-    (continuous_linear_equiv.ulift ℝ E).symm.to_continuous_linear_map (hFi _)] at this,
-  simpa [times_cont_diff_up_iff] using this,
-end
 
 /- Should we directly prove the version below?-/
 
