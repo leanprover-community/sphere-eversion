@@ -1,5 +1,6 @@
 import analysis.calculus.times_cont_diff
 import linear_algebra.dual
+import topology.metric_space.hausdorff_distance
 
 import to_mathlib.analysis.normed_space.operator_norm
 import to_mathlib.topology.misc
@@ -100,10 +101,14 @@ def _root_.basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι]
 
 end dual_pair'
 
+@[derive metric_space]
+def one_jet := E × F × (E →L[ℝ] F)
+
 /-- A first order relation for maps between real vector spaces. -/
-def rel_loc := set (E × F × (E →L[ℝ] F))
+def rel_loc := set (one_jet E F)
 
 instance : has_mem (E × F × (E →L[ℝ] F)) (rel_loc E F) := set.has_mem
+
 
 variables {E F}
 
@@ -118,6 +123,14 @@ def slice (R : rel_loc E F) (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)) 
 (for the obvious projection `(E × F × (E →L[ℝ] F)) → E`) is open. -/
 def is_open_over (R : rel_loc E F) (U : set E) : Prop :=
 is_open (R ∩ U ×ˢ @univ (F × (E →L[ℝ] F)))
+
+lemma is_open_over.exists_thickening {R : rel_loc E F} {U : set E} (h : R.is_open_over U)
+  {K : set $ one_jet E F} (hK : is_compact K) (hK' : K ⊆ R ∩ U ×ˢ @univ (F × (E →L[ℝ] F))) :
+∃ ε > 0, metric.thickening ε K ⊆ R :=
+begin
+
+  sorry
+end
 
 /-- A relation is ample if all its slices are ample. -/
 def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
@@ -223,6 +236,14 @@ if its linear map part at `x` is the derivative of its function part at `x` in r
 def is_part_holonomic_at (𝓕 : jet_sec U F) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
+lemma is_part_holonomic_at.sup (𝓕 : jet_sec U F) {E' E'' : submodule ℝ E} {x : E}
+  (h' : 𝓕.is_part_holonomic_at E' x) (h'' : 𝓕.is_part_holonomic_at E'' x) :
+  𝓕.is_part_holonomic_at (E' ⊔ E'') x :=
+begin
+
+  sorry
+end
+
 lemma _root_.rel_loc.jet_sec.is_part_holonomic_at.mono {𝓕 : jet_sec U F}
   {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
   𝓕.is_part_holonomic_at E'' x :=
@@ -325,6 +346,9 @@ lemma smooth_step.of_gt {t : ℝ} (h : 3/4 < t) : smooth_step t = 1 :=
 sorry
 
 lemma smooth_step.mem (t : ℝ) : smooth_step t ∈ I :=
+sorry
+
+lemma smooth_step.abs_le (t : ℝ) : |smooth_step t| ≤ 1 :=
 sorry
 
 
