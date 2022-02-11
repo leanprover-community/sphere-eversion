@@ -1,23 +1,21 @@
 import analysis.calculus.times_cont_diff
 import to_mathlib.topology.tsupport
-import to_mathlib.order.filter.basic
 
 noncomputable theory
 
 open set function filter
 open_locale topological_space
 
-section --this doesn't belong here, but I already PRd it to mathlib
-variables {α β γ : Type*} [topological_space α] [topological_space β] {f : α → β}
-lemma antitone_continuous_on : antitone (continuous_on f) :=
-λ s t hst hf, hf.mono hst
-end
-
 -- stuff about fderiv
 section
 
 
 section
+
+-- forgot to move this lemma
+lemma antitone_ball {α} {P : α → Prop} : antitone (λ s : set α, ∀ x ∈ s, P x) :=
+λ s t hst h x hx, h x $ hst hx
+
 variables {𝕜 E F H : Type*} [nondiscrete_normed_field 𝕜] [normed_group E]
   [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
   {f : E → F} {x : E} {f₂ f₂' : 𝕜 → F} {f' : E → E →L[𝕜] F}
