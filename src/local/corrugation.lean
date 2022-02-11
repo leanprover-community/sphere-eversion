@@ -74,7 +74,7 @@ begin
 end
 
 /-- If a loop family has compact support then the corresponding corrugation is
-`O(1/N)` uniformly in the source point. -/
+small uniformly in the source point. -/
 lemma corrugation.c0_small [first_countable_topology E] [t2_space E]
   [locally_compact_space E] (hγ : is_compact (loop.support γ))
   (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
@@ -97,6 +97,16 @@ begin
   rw [corrugation, norm_smul, mul_comm],
   exact lt_of_le_of_lt (mul_le_mul_of_nonneg_right (hC x (N*π x)) (norm_nonneg $ 1/N)) hN,
 end
+
+-- We also need this variation... TODO: think of a common case
+lemma corrugation.c0_small' [first_countable_topology E] [t2_space E]
+  [locally_compact_space E] {γ : ℝ → E → loop F} {K : set E} (hK : is_compact K)
+  (h_supp : ∀ x ∉ K, ∀ t, (γ t x).is_const)
+  (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x) (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
+  (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
+  ∀ᶠ N in at_top, ∀ x t, ∥corrugation π N (γ t) x∥ < ε :=
+sorry
+
 
 end c0
 

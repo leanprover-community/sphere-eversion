@@ -1,4 +1,5 @@
 import to_mathlib.analysis.normed_group
+import to_mathlib.analysis.normed_space.finite_dimension
 import to_mathlib.linear_algebra.basis
 
 import loops.reparametrization
@@ -139,13 +140,6 @@ lemma accepts.hull {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts 
   ∀ x ∈ L.U, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω R 𝓕) :=
 sorry
 
--- The next lemma uses compactnes of K₁, openness of R above U and continuity of 𝓕
-lemma mem_of_c0_close (L : step_landscape E) (𝓕 : htpy_jet_sec L.U F)
-  (h_op : R.is_open_over L.U) (h_sol : ∀ t, (𝓕 t).is_formal_sol R) :
-  ∃ ε > 0, ∀ (x : E) (z : F) (ψ : E →L[ℝ] F) (t : ℝ),
-           x ∈ L.K₁ → ∥z - (𝓕 t).f x∥ < ε → ∥ψ - (𝓕 t).φ x∥ < ε → (x, z, ψ) ∈ R :=
-sorry
-
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
 ℝ → E → loop F :=
@@ -186,6 +180,9 @@ sorry
 lemma ρ_smooth (L : step_landscape E) : 𝒞 ∞ L.ρ :=
 sorry
 
+lemma ρ_le (L : step_landscape E) (x : E) : |L.ρ x| ≤ 1 :=
+sorry
+
 lemma hρ₀ (L : step_landscape E) : ∀ᶠ x near L.K₀, L.ρ x = 1 :=
 sorry
 
@@ -203,30 +200,33 @@ then
   { f := λ t, 𝓕.f +  corrugation L.π N (L.loop h t),
     f_diff := sorry,
     φ := λ t x , L.p.update (𝓕.φ x) (L.loop h (t*L.ρ x) x $ N * L.π x) +
-                 (t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
+                 (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
     φ_diff := sorry }
 else
   𝓕.to_jet_sec.const_htpy
 
-/-
-is_sol := begin
-      intros t x x_in,
-      rcases h with ⟨h, ε_pos⟩,
-      have := L.loop_mem h x x_in (t*L.ρ x),
-      have := step_landscape.mem_Ω (this $ L.N ⟨h, ε_pos⟩ * L.π x),
-      dsimp only,
-      by_cases h : x ∈ L.K₁,
-      { rcases L.mem_of_c0_close _ with ⟨δ, δ_pos, hδ⟩,
+variables {𝓕 : formal_sol R L.U}
 
-        all_goals { sorry } },
-      {
-        sorry },
+@[simp]
+lemma improve_step_apply (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) (x : E) :
+  L.improve_step 𝓕 N t x = (𝓕.f x +  corrugation L.π N (L.loop h t) x,
+  L.p.update (𝓕.φ x) (L.loop h (t*L.ρ x) x $ N * L.π x) +
+                 (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x)) :=
+by { simp [improve_step, h], refl }
 
-      all_goals { sorry },
-    end
--/
+@[simp]
+lemma improve_step_apply_f (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) (x : E) :
+  (L.improve_step 𝓕 N t).f x = 𝓕.f x +  corrugation L.π N (L.loop h t) x :=
+by { simp [improve_step, h], refl }
 
-variables (𝓕 : formal_sol R L.U) (N : ℝ)
+@[simp]
+lemma improve_step_apply_φ (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) (x : E) :
+  (L.improve_step 𝓕 N t).φ x = L.p.update (𝓕.φ x) (L.loop h (t*L.ρ x) x $ N * L.π x) +
+                 (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x) :=
+by { simp [improve_step, h], refl }
+
+
+variables (𝓕) (N : ℝ)
 
 lemma improve_step_rel_t_eq_0 : L.improve_step 𝓕 N 0 = 𝓕 :=
 sorry
@@ -239,7 +239,11 @@ sorry
 
 lemma improve_step_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
   ∀ᶠ N in at_top, ∀ x t, ∥L.improve_step 𝓕 N t x - 𝓕 x∥ ≤ ε :=
-sorry
+begin
+
+
+  sorry
+end
 
 lemma improve_step_hol
   (h_op : R.is_open_over L.U)
@@ -247,7 +251,9 @@ lemma improve_step_hol
   (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∀ N, ∀ᶠ x near L.K₀, (L.improve_step 𝓕 N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
+-- use is_part_holonomic_at.sup
 sorry
+
 
 lemma improve_step_sol
   (h_op : R.is_open_over L.U)
@@ -255,27 +261,69 @@ lemma improve_step_sol
   (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∀ᶠ N in at_top, ∀ t, (L.improve_step 𝓕 N t).is_formal_sol R :=
-sorry
+begin
+  have h : L.accepts R 𝓕, from ⟨h_op, h_part_hol, h_short, h_hol⟩,
+  set γ := L.loop h,
+  have cst  : ∀ x ∉ L.K₁, ∀ t, (γ t x).is_const,
+  {
+    sorry },
+  have le_zero : ∀ x t, t ≤ 0 → γ t x = γ 0 x,
+  {
+    sorry },
+  have ge_one : ∀ x t, t ≥ 1 → γ t x = γ 1 x,
+  {
+    sorry },
+  have γ_cpt : is_compact (loop.support $ γ 1),
+  {
+    sorry },
+  have γ_cont : continuous ↿(λ t x, γ t x),
+  {
+    sorry },
+  have γ_C1 : 𝒞 1 ↿(γ 1),
+  {
+    sorry },
+  set K := {q : one_jet E F | q.1 ∈ L.K₁ ∧ q.2.1 = 𝓕.f q.1 ∧
+                                       ∃ t s, q.2.2 = L.p.update (𝓕.φ q.1) (L.loop h t q.1 s)},
+  have K_cpt : is_compact K,
+  {
+    sorry },
+  have K_sub : K ⊆ R ∩ L.U ×ˢ univ,
+  {
+    sorry },
+  obtain ⟨ε, ε_pos : 0 < ε, hε : metric.thickening ε K ⊆ R⟩ :=
+    h_op.exists_thickening K_cpt K_sub,
 
+  apply ((corrugation.c0_small' L.π L.hK₁ cst le_zero ge_one γ_cont ε_pos).and $
+         remainder_c0_small L.π γ_cpt γ_C1 ε_pos).mono,
+  rintros N ⟨H, H'⟩ t x x_in,
+  by_cases hxK₁ : x ∈ L.K₁,
+  { apply hε,
+    rw metric.mem_thickening_iff,
+    refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) $ L.loop h (t*L.ρ x) x $ N * L.π x), _, _⟩,
+    { simp [K, hxK₁],
+      use [t * L.ρ x, N * L.π x] },
+    { simp only [h, improve_step_apply_f, formal_sol.to_jet_sec_eq_coe, improve_step_apply_φ],
+      rw [prod.dist_eq, max_lt_iff, prod.dist_eq, max_lt_iff],
+      refine ⟨by simp [ε_pos], _, _⟩ ; dsimp only ; rw dist_add',
+      { apply H },
+      { calc ∥(smooth_step t * L.ρ x) • corrugation.remainder (L.p.π) N (γ 1) x∥ =
+        |smooth_step t| * |L.ρ x| * ∥corrugation.remainder (L.p.π) N (γ 1) x∥ : by
+          rw [norm_smul, real.norm_eq_abs, abs_mul]
+        ... ≤ ∥corrugation.remainder (L.p.π) N (γ 1) x∥ : mul_le_of_le_one_left (norm_nonneg _)
+                                                         (mul_le_one (smooth_step.abs_le t)
+                                                          (abs_nonneg _) (L.ρ_le x))
+        ... < ε : H' x } } },
+  { rw [show ((L.improve_step 𝓕 N) t).f x = 𝓕.f x,
+          from congr_arg prod.fst $ L.improve_step_rel_compl_K₁ 𝓕 N x hxK₁ t,
+        show ((L.improve_step 𝓕 N) t).φ x = 𝓕.φ x,
+          from congr_arg prod.snd $ L.improve_step_rel_compl_K₁ 𝓕 N x hxK₁ t],
+    exact 𝓕.is_sol _ x_in }
+end
 
 end step_landscape
 
 end improve_step
 
-lemma finite_dimensional.fin_succ_basis (K V : Type*) [division_ring K] [add_comm_group V] [module K V]
-  [finite_dimensional K V] [nontrivial V] : ∃ (n : ℕ), nonempty (basis (fin (n + 1)) K V) :=
-sorry
-
-section
-
-@[simp]lemma linear_map.ker_to_continuous_linear_map {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E]
-  [normed_space 𝕜 E] {F' : Type*} [add_comm_group F'] [module 𝕜 F']
-  [topological_space F'] [topological_add_group F'] [has_continuous_smul 𝕜 F']
-  [complete_space 𝕜] [finite_dimensional 𝕜 E] (f : E →ₗ[𝕜] F') :
-  f.to_continuous_linear_map.ker = f.ker := rfl
-
-end
 
 section improve
 /-!
