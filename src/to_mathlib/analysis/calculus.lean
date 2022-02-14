@@ -280,16 +280,72 @@ lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF :
   times_cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
 times_cont_diff_top.mpr (λ n, (times_cont_diff_top.mp hF (n + 1)).times_cont_diff_partial_fst)
 
+@[simp] lemma linear_equiv.trans_symm {R M₁ M₂ M₃ : Type*} [semiring R]
+  [add_comm_group M₁] [add_comm_group M₂] [add_comm_group M₃]
+  [module R M₁] [module R M₂] [module R M₃] (e₁ : M₁ ≃ₗ[R] M₂) (e₂ : M₂ ≃ₗ[R] M₃) :
+  (e₁.trans e₂).symm = e₂.symm.trans e₁.symm :=
+rfl
+
+@[simp] lemma continuous_linear_equiv.coe_one : (⇑(1 : E ≃L[𝕜] E) : E → E) = id := rfl
+
+@[simp] lemma continuous_linear_equiv.one_symm : (1 : E ≃L[𝕜] E).symm = 1 := rfl
+
+variables {H : Type*} [normed_group H] [normed_space 𝕜 H]
+
+@[simps] def continuous_linear_equiv.arrow_congr_equiv' (e₁ : E ≃L[𝕜] G) (e₂ : F ≃L[𝕜] H) :
+  (E →L[𝕜] F) ≃L[𝕜] (G →L[𝕜] H) :=
+{ map_add' := λ f g, by simp only [equiv.to_fun_as_coe, add_comp, comp_add,
+    continuous_linear_equiv.arrow_congr_equiv_apply],
+  map_smul' := λ t f, by simp only [equiv.to_fun_as_coe, smul_comp, comp_smulₛₗ,
+    continuous_linear_equiv.arrow_congr_equiv_apply],
+  continuous_to_fun := (continuous_linear_map.compL 𝕜 G F H (e₂ : F →L[𝕜] H)).continuous.comp
+    ((continuous_linear_map.compL 𝕜 G E F).flip (e₁.symm : G →L[𝕜] E)).continuous,
+  continuous_inv_fun := (continuous_linear_map.compL 𝕜 E H F (e₂.symm : H →L[𝕜] F)).continuous.comp
+    ((continuous_linear_map.compL 𝕜 E G H).flip (e₁ : E →L[𝕜] G)).continuous,
+  .. e₁.arrow_congr_equiv e₂, }
+
+variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜] [finite_dimensional 𝕜 G]
+
+instance : finite_dimensional 𝕜 (ι → G) :=
+begin
+  letI : is_noetherian 𝕜 G := is_noetherian.iff_fg.2 (by apply_instance),
+  apply_instance,
+end
+
+@[simps] def continuous_linear_equiv.pi_ring : ((ι → 𝕜) →L[𝕜] G) ≃L[𝕜] (ι → G) :=
+{ continuous_to_fun := by
+  { continuity,
+    simp only [linear_equiv.to_fun_eq_coe, linear_equiv.trans_apply,
+      linear_map.coe_to_continuous_linear_map_symm, linear_equiv.pi_ring_apply,
+      continuous_linear_map.coe_coe],
+    exact (continuous_linear_map.apply 𝕜 G (pi.single i 1)).continuous, },
+  continuous_inv_fun := by
+  { simp only [linear_equiv.inv_fun_eq_symm, linear_equiv.trans_symm, linear_equiv.symm_symm],
+    apply linear_map.continuous_of_finite_dimensional, },
+  .. linear_map.to_continuous_linear_map.symm.trans (linear_equiv.pi_ring 𝕜 G ι 𝕜) }
+
 -- maybe we can do this without finite dimensionality of `F`?
 lemma times_cont_diff_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G} [finite_dimensional 𝕜 F] :
   times_cont_diff 𝕜 n f ↔ ∀ y, times_cont_diff 𝕜 n (λ x, f x y) :=
 begin
-  split,
-  { intros h y, exact (continuous_linear_map.apply 𝕜 G y).times_cont_diff.comp h },
-  sorry
+  refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).times_cont_diff.comp h, λ h, _⟩,
+  let d := finite_dimensional.finrank 𝕜 F,
+  have hd : finite_dimensional.finrank 𝕜 (fin d → 𝕜) = d :=
+    finite_dimensional.finrank_fin_fun 𝕜,
+  obtain ⟨e₁⟩ := finite_dimensional.nonempty_continuous_linear_equiv_iff_finrank_eq.mpr hd,
+  let e₂ := (e₁.arrow_congr_equiv' (1 : G ≃L[𝕜] G)).symm.trans
+    (continuous_linear_equiv.pi_ring (fin d)),
+  have he₂ : ∀ i x, e₂ (f x) i = f x (e₁ (pi.single i (1 : 𝕜))), { simp, },
+  suffices :  times_cont_diff 𝕜 n (e₂ ∘ f),
+  { rw [← comp.left_id f, ← e₂.symm_comp_self, function.comp.assoc],
+    exact e₂.symm.times_cont_diff.comp this, },
+  refine times_cont_diff_pi.mpr (λ i, _),
+  simp only [he₂, comp_app],
+  apply h,
 end
 
-lemma times_cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F} :
+lemma times_cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 F] [finite_dimensional 𝕜 E]
+  {n : ℕ} {f : E → F} :
   times_cont_diff 𝕜 ((n + 1) : ℕ) f ↔
   differentiable 𝕜 f ∧ ∀ y, times_cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
 by rw [times_cont_diff_succ_iff_fderiv, times_cont_diff_clm_apply]
