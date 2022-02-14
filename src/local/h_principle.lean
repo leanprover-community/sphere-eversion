@@ -1,5 +1,4 @@
 import to_mathlib.analysis.normed_group
-import to_mathlib.analysis.normed_space.finite_dimension
 import to_mathlib.linear_algebra.basis
 
 import loops.reparametrization
@@ -375,8 +374,8 @@ begin
     let S : step_landscape E :=
     { E' := E' k,
       p := e.dual_pair' k,
-      hEp := by simp only [E', basis.dual_pair', linear_map.ker_to_continuous_linear_map,
-                            e.flag_le_ker_dual],
+      hEp := by simp only [E', basis.dual_pair', ← continuous_linear_map.ker_coe,
+        linear_map.coe_to_continuous_linear_map, e.flag_le_ker_dual],
       ..L},
     set H₁ : formal_sol R L.U := (hH_sol 1).formal_sol,
     have h_span : S.E' ⊔ S.p.span_v = E' k.succ := e.flag_span_succ k,
