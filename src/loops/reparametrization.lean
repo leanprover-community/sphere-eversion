@@ -110,7 +110,8 @@ begin
   let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- γₓ
   have hγ₁ : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₁ V Ω,
   { refine ⟨_, hgK, ⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩,
-    { intros x hx, rw [mem_set_of_eq] at hx, rw [hx], exact hγ₀_surr.smul0.vadd0 },
+    { intros x hx, rw [mem_set_of_eq] at hx, rw [hx],
+      exact (hγ₀_surr.smul0 one_ne_zero).vadd0, },
     { refine (hb.continuous.comp continuous_fst).add
         (continuous_const.smul $ hγ₀_cont.comp continuous_snd) },
     sorry }, -- choose ε sufficiently small, and perhaps V smaller
