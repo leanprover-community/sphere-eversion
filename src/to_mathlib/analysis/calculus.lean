@@ -308,7 +308,7 @@ variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
 @[simps] def continuous_linear_equiv.pi_ring : ((ι → 𝕜) →L[𝕜] G) ≃L[𝕜] (ι → G) :=
 { continuous_to_fun :=
   begin
-    continuity,
+    refine continuous_pi (λ i, _),
     simp only [linear_equiv.to_fun_eq_coe, linear_equiv.trans_apply,
       linear_map.coe_to_continuous_linear_map_symm, linear_equiv.pi_ring_apply,
       continuous_linear_map.coe_coe],
