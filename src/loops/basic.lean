@@ -144,6 +144,9 @@ See also `loop.is_const_iff_forall_avg` and `loop.is_const_iff_const_avg` for ch
 terms of average values. -/
 def is_const (γ : loop X) := ∀ t s, γ t = γ s
 
+lemma is_const_of_eq {γ : loop X} {f : X} (H : ∀ t, γ t = f) : γ.is_const :=
+λ t t', by rw [H, H]
+
 variables [topological_space X] [topological_space X']
 variables [topological_space Y] [topological_space Z]
 
@@ -151,6 +154,15 @@ variables [topological_space Y] [topological_space Z]
 the loop is not constant. -/
 def support (γ : X → loop X') : set X :=
 closure {x | ¬ (γ x).is_const}
+
+lemma not_mem_support {γ : X → loop X'} {x : X} (h : ∀ᶠ y in 𝓝 x, (γ y).is_const) :
+  x ∉ loop.support γ :=
+begin
+  intro hx,
+  rw [support, mem_closure_iff_nhds] at hx,
+  rcases hx _ h with ⟨z, hz, hz'⟩,
+  exact hz' hz
+end
 
 lemma is_closed_support (γ : X → loop X') : is_closed (loop.support γ) :=
 is_closed_closure
@@ -299,8 +311,7 @@ begin
       refl },
     rw this,
     simp only [average, const_apply, interval_integral.integral_const, one_smul, sub_zero], },
-  { intros t s,
-    rw [h, h] }
+  { exact is_const_of_eq h }
 end
 
 @[simp] lemma average_const {f : F} : (loop.const f).average = f :=

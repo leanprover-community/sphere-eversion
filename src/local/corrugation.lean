@@ -73,6 +73,9 @@ begin
   simp [h]
 end
 
+lemma corrugation_eq_zero (x ∉ loop.support γ) : corrugation π N γ x = 0 :=
+nmem_support.mp (λ hx, H (corrugation.support π N hx))
+
 /-- If a loop family has compact support then the corresponding corrugation is
 small uniformly in the source point. -/
 lemma corrugation.c0_small [first_countable_topology E] [t2_space E]
