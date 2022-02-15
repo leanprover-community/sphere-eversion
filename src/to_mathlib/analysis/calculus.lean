@@ -290,9 +290,8 @@ rfl
 
 @[simp] lemma continuous_linear_equiv.one_symm : (1 : E ≃L[𝕜] E).symm = 1 := rfl
 
-variables {H : Type*} [normed_group H] [normed_space 𝕜 H]
-
-@[simps] def continuous_linear_equiv.arrow_congr_equiv' (e₁ : E ≃L[𝕜] G) (e₂ : F ≃L[𝕜] H) :
+@[simps] def continuous_linear_equiv.arrow_congr_equiv'
+  {H : Type*} [normed_group H] [normed_space 𝕜 H] (e₁ : E ≃L[𝕜] G) (e₂ : F ≃L[𝕜] H) :
   (E →L[𝕜] F) ≃L[𝕜] (G →L[𝕜] H) :=
 { map_add' := λ f g, by simp only [equiv.to_fun_as_coe, add_comp, comp_add,
     continuous_linear_equiv.arrow_congr_equiv_apply],
@@ -307,14 +306,17 @@ variables {H : Type*} [normed_group H] [normed_space 𝕜 H]
 variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
 
 @[simps] def continuous_linear_equiv.pi_ring : ((ι → 𝕜) →L[𝕜] G) ≃L[𝕜] (ι → G) :=
-{ continuous_to_fun := by
-  { continuity,
+{ continuous_to_fun :=
+  begin
+    continuity,
     simp only [linear_equiv.to_fun_eq_coe, linear_equiv.trans_apply,
       linear_map.coe_to_continuous_linear_map_symm, linear_equiv.pi_ring_apply,
       continuous_linear_map.coe_coe],
-    exact (continuous_linear_map.apply 𝕜 G (pi.single i 1)).continuous, },
-  continuous_inv_fun := by
-  { simp only [linear_equiv.inv_fun_eq_symm, linear_equiv.trans_symm, linear_equiv.symm_symm],
+    exact (continuous_linear_map.apply 𝕜 G (pi.single i 1)).continuous,
+  end,
+  continuous_inv_fun :=
+  begin
+    simp only [linear_equiv.inv_fun_eq_symm, linear_equiv.trans_symm, linear_equiv.symm_symm],
     apply linear_map.continuous_of_bound _ (fintype.card ι : ℝ) (λ g, _),
     rw ← nsmul_eq_mul,
     apply op_norm_le_bound _ (nsmul_nonneg (norm_nonneg g) (fintype.card ι)) (λ t, _),
@@ -324,7 +326,8 @@ variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
     rw smul_mul_assoc,
     refine finset.sum_le_of_forall_le _ _ _ (λ i hi, _),
     rw [norm_smul, mul_comm],
-    exact mul_le_mul (norm_le_pi_norm g i) (norm_le_pi_norm t i) (norm_nonneg _) (norm_nonneg g), },
+    exact mul_le_mul (norm_le_pi_norm g i) (norm_le_pi_norm t i) (norm_nonneg _) (norm_nonneg g),
+  end,
   .. linear_map.to_continuous_linear_map.symm.trans (linear_equiv.pi_ring 𝕜 G ι 𝕜) }
 
 -- maybe we can do this without finite dimensionality of `F`?
@@ -333,8 +336,7 @@ lemma times_cont_diff_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G} [f
 begin
   refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).times_cont_diff.comp h, λ h, _⟩,
   let d := finite_dimensional.finrank 𝕜 F,
-  have hd : finite_dimensional.finrank 𝕜 (fin d → 𝕜) = d :=
-    finite_dimensional.finrank_fin_fun 𝕜,
+  have hd : finite_dimensional.finrank 𝕜 (fin d → 𝕜) = d := finite_dimensional.finrank_fin_fun 𝕜,
   obtain ⟨e₁⟩ := finite_dimensional.nonempty_continuous_linear_equiv_iff_finrank_eq.mpr hd,
   let e₂ := (e₁.arrow_congr_equiv' (1 : G ≃L[𝕜] G)).symm.trans
     (continuous_linear_equiv.pi_ring (fin d)),
@@ -343,8 +345,7 @@ begin
   { rw [← comp.left_id f, ← e₂.symm_comp_self, function.comp.assoc],
     exact e₂.symm.times_cont_diff.comp this, },
   refine times_cont_diff_pi.mpr (λ i, _),
-  simp only [he₂, comp_app],
-  apply h,
+  simp only [he₂, comp_app, h _],
 end
 
 lemma times_cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F} :
