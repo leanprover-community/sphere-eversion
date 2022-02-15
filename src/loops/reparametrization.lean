@@ -120,6 +120,20 @@ begin
   sorry
 end
 
+variables (g b Ω U K)
+
+structure nice_loop (γ : ℝ → E → loop F) : Prop :=
+(t_le_zero : ∀ t ≤ 0, γ t = γ 0)
+(t_ge_one : ∀ t ≥ 1, γ t = γ 1)
+(t_zero : ∀ x s, γ 0 x s = b x)
+(s_zero : ∀ x t, γ t x 0 = b x)
+(avg : ∀ x ∈ U, (γ 1 x).average = g x)
+(mem_Ω : ∀ (x ∈ U) t s, (x, γ t x s) ∈ Ω)
+(smooth : ∀ (x ∈ U) t s, smooth_at ↿γ ((t, x, s) : ℝ × E × ℝ))
+(rel_K : ∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)
+
+variables {g b Ω U K}
+
 /- We probably don't get quite this statement after weakening `exists_surrounding_loops` -/
 lemma exists_loops
   (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
@@ -127,12 +141,7 @@ lemma exists_loops
   (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω)
   (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-  ∃ γ : ℝ → E → loop F, (∀ t ≤ 0, γ t = γ 0) ∧ (∀ t ≥ 1, γ t = γ 1) ∧
-                        (∀ (x ∈ U), (∀ s, γ 0 x s = b x) ∧
-                                    (γ 1 x).average = g x ∧
-                                    ∀ t s, (x, γ t x s) ∈ Ω ∧
-                                          smooth_at ↿γ ((t, x, s) : ℝ × E × ℝ)) ∧
-                        (∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)  :=
+  ∃ γ : ℝ → E → loop F, nice_loop g b Ω U K γ  :=
 sorry
 
 -- #lint
