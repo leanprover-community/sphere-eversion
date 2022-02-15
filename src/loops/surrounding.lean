@@ -277,9 +277,8 @@ by { convert h.vadd, rw [add_zero] }
 
 lemma surrounds.smul0 (h : γ.surrounds 0) (ht : t ≠ 0) : (t • γ).surrounds 0 :=
 begin
-  rw affine_equiv_surrounds_iff (affine_equiv.homothety_units_mul_hom (0 : F) (units.mk0 t ht)⁻¹),
-  simp only [affine_equiv.coe_homothety_units_mul_hom_apply, units.coe_mk0,
-    affine_map.homothety_apply_same],
+  rw [affine_equiv_surrounds_iff (affine_equiv.homothety_units_mul_hom (0 : F) (units.mk0 t ht)⁻¹),
+    affine_equiv.coe_homothety_units_mul_hom_apply, affine_map.homothety_apply_same],
   convert h,
   ext u,
   simp [affine_map.homothety_apply, smul_smul, inv_mul_cancel ht],
