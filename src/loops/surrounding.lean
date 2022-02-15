@@ -244,17 +244,46 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
+lemma affine_equiv_surrounds_iff (e : F ≃ᵃ[ℝ] F) :
+  γ.surrounds x ↔ (γ.transform e).surrounds (e x) :=
+begin
+  suffices : ∀ (γ : loop F) x (e : F ≃ᵃ[ℝ] F), γ.surrounds x → (γ.transform e).surrounds (e x),
+  { refine ⟨this γ x e, λ h, _⟩,
+    specialize this (γ.transform e) (e x) e.symm h,
+    rw affine_equiv.symm_apply_apply at this,
+    convert this,
+    ext,
+    simp, },
+  rintros γ x e ⟨t, w, indep, w_pos, w_sum, rfl⟩,
+  refine ⟨t, w, ⟨e.affine_independent_iff.mpr indep, w_pos, w_sum, _⟩⟩,
+  simp only [← finset.affine_combination_eq_linear_combination _ _ _ w_sum],
+  erw finset.map_affine_combination _ (γ ∘ t) _ w_sum (e : F →ᵃ[ℝ] F),
+  congr,
+end
+
 lemma vadd_surrounds : γ.surrounds x ↔ (y +ᵥ γ).surrounds (y + x) :=
-sorry
+begin
+  rw add_comm,
+  convert affine_equiv_surrounds_iff (affine_equiv.vadd_const ℝ y),
+  ext u,
+  simp [add_comm y],
+end
 
 lemma surrounds.vadd (h : γ.surrounds x) : (y +ᵥ γ).surrounds (y + x) :=
-sorry
+vadd_surrounds.mp h
 
 lemma surrounds.vadd0 (h : γ.surrounds 0) : (y +ᵥ γ).surrounds y :=
 by { convert h.vadd, rw [add_zero] }
 
-lemma surrounds.smul0 (h : γ.surrounds 0) : (t • γ).surrounds 0 :=
-sorry
+lemma surrounds.smul0 (h : γ.surrounds 0) (ht : t ≠ 0) : (t • γ).surrounds 0 :=
+begin
+  rw affine_equiv_surrounds_iff (affine_equiv.homothety_units_mul_hom (0 : F) (units.mk0 t ht)⁻¹),
+  simp only [affine_equiv.coe_homothety_units_mul_hom_apply, units.coe_mk0,
+    affine_map.homothety_apply_same],
+  convert h,
+  ext u,
+  simp [affine_map.homothety_apply, smul_smul, inv_mul_cancel ht],
+end
 
 lemma surrounds.mono (h : γ.surrounds x) (h2 : range γ ⊆ range γ') : γ'.surrounds x :=
 begin
