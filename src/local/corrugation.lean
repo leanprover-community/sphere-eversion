@@ -152,7 +152,6 @@ lemma corrugation.times_cont_diff {n : with_top ℕ} (hπ_diff : 𝒞 n π) (hγ
 begin
   apply times_cont_diff.const_smul,
   apply times_cont_diff_parametric_primitive_of_times_cont_diff _ (hπ_diff.const_smul N) 0,
-  apply_instance,
   exact times_cont_diff_sub_average hγ_diff
 end
 

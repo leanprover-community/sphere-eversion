@@ -244,7 +244,6 @@ begin
     exact ⟨t, w, hpt.symm ▸ h₀⟩ }
 end
 
-/-
 lemma vadd_surrounds : γ.surrounds x ↔ (y +ᵥ γ).surrounds (y + x) :=
 sorry
 
@@ -256,7 +255,6 @@ by { convert h.vadd, rw [add_zero] }
 
 lemma surrounds.smul0 (h : γ.surrounds 0) : (t • γ).surrounds 0 :=
 sorry
--/
 
 lemma surrounds.mono (h : γ.surrounds x) (h2 : range γ ⊆ range γ') : γ'.surrounds x :=
 begin

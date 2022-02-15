@@ -304,13 +304,7 @@ variables {H : Type*} [normed_group H] [normed_space 𝕜 H]
     ((continuous_linear_map.compL 𝕜 E G H).flip (e₁ : E →L[𝕜] G)).continuous,
   .. e₁.arrow_congr_equiv e₂, }
 
-variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜] [finite_dimensional 𝕜 G]
-
-instance : finite_dimensional 𝕜 (ι → G) :=
-begin
-  letI : is_noetherian 𝕜 G := is_noetherian.iff_fg.2 (by apply_instance),
-  apply_instance,
-end
+variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
 
 @[simps] def continuous_linear_equiv.pi_ring : ((ι → 𝕜) →L[𝕜] G) ≃L[𝕜] (ι → G) :=
 { continuous_to_fun := by
@@ -321,7 +315,16 @@ end
     exact (continuous_linear_map.apply 𝕜 G (pi.single i 1)).continuous, },
   continuous_inv_fun := by
   { simp only [linear_equiv.inv_fun_eq_symm, linear_equiv.trans_symm, linear_equiv.symm_symm],
-    apply linear_map.continuous_of_finite_dimensional, },
+    apply linear_map.continuous_of_bound _ (fintype.card ι : ℝ) (λ g, _),
+    rw ← nsmul_eq_mul,
+    apply op_norm_le_bound _ (nsmul_nonneg (norm_nonneg g) (fintype.card ι)) (λ t, _),
+    simp only [linear_map.coe_comp, linear_equiv.coe_to_linear_map, comp_app,
+      linear_map.coe_to_continuous_linear_map', linear_equiv.pi_ring_symm_apply],
+    apply le_trans (norm_sum_le _ _),
+    rw smul_mul_assoc,
+    refine finset.sum_le_of_forall_le _ _ _ (λ i hi, _),
+    rw [norm_smul, mul_comm],
+    exact mul_le_mul (norm_le_pi_norm g i) (norm_le_pi_norm t i) (norm_nonneg _) (norm_nonneg g), },
   .. linear_map.to_continuous_linear_map.symm.trans (linear_equiv.pi_ring 𝕜 G ι 𝕜) }
 
 -- maybe we can do this without finite dimensionality of `F`?
@@ -344,8 +347,7 @@ begin
   apply h,
 end
 
-lemma times_cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 F] [finite_dimensional 𝕜 E]
-  {n : ℕ} {f : E → F} :
+lemma times_cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F} :
   times_cont_diff 𝕜 ((n + 1) : ℕ) f ↔
   differentiable 𝕜 f ∧ ∀ y, times_cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
 by rw [times_cont_diff_succ_iff_fderiv, times_cont_diff_clm_apply]

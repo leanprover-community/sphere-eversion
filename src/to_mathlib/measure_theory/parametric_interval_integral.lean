@@ -487,7 +487,7 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
           {H : Type*} [normed_group H] [normed_space ℝ H]
-          [finite_dimensional ℝ H] [finite_dimensional ℝ E]
+          [finite_dimensional ℝ H]
 
 open real continuous_linear_map asymptotics
 
@@ -542,7 +542,7 @@ variables [normed_group E] [normed_space ℝ E]
           [complete_space E] [second_countable_topology E]
           [measurable_space E] [borel_space E]
           {H : Type v} [normed_group H] [normed_space ℝ H]
-          [finite_dimensional ℝ H] [finite_dimensional ℝ E]
+          [finite_dimensional ℝ H]
 
 /- Should we directly prove the version below?-/
 
