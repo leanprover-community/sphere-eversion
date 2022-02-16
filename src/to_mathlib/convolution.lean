@@ -103,27 +103,27 @@ variables {α : Type*} [measurable_space α]
 
 -- version similar to https://encyclopediaofmath.org/wiki/Parameter-dependent_integral#References
 -- probably not useful
-lemma has_fderiv_at_integral' {F : H → α → E} {bound : α → ℝ}
-  {x₀ : H}
-  -- (hF_int : integrable (F x₀) μ) -- we only need this for one value(!?)
-  (hF_int : ∀ᶠ x in 𝓝 x₀, integrable (F x) μ)
-  -- (h_diff : ∀ x, ∀ᵐ a ∂μ, times_cont_diff_at ℝ 1 (λ x, F x a) x)
-  (hF_bound : ∀ᵐ a ∂μ, ∀ x, ∥partial_fderiv_fst ℝ F x a∥ ≤ bound a)
-  (h_bound : integrable bound μ)
-  (h_diff : ∀ a, differentiable ℝ (λ x, F x a))
-  (h_cont : continuous (partial_fderiv_fst ℝ F x₀)) : -- is this assumption needed?
-  has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x₀ a ∂μ) x₀ :=
-begin
-  have h_fderiv : ∀ᵐ a ∂μ, ∀ x ∈ metric.ball x₀ 1,
-    has_fderiv_at (λ x, F x a) (partial_fderiv_fst ℝ F x a) x :=
-  eventually_of_forall (λ a x hx, (h_diff a).differentiable_at.has_fderiv_at),
-  have hf_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ :=
-  hF_int.mono (λ x h, h.ae_measurable),
-  have h_meas: ae_measurable (λ a, fderiv ℝ (λ (x : H), F x a) x₀) μ :=
-  continuous.ae_measurable h_cont μ,
-  refine has_fderiv_at_integral_of_dominated_of_fderiv_le zero_lt_one hf_meas hF_int.self_of_nhds
-    h_meas (hF_bound.mono $ λ a h x hx, h x) h_bound h_fderiv
-end
+-- lemma has_fderiv_at_integral' {F : H → α → E} {bound : α → ℝ}
+--   {x₀ : H}
+--   -- (hF_int : integrable (F x₀) μ) -- we only need this for one value(!?)
+--   (hF_int : ∀ᶠ x in 𝓝 x₀, integrable (F x) μ)
+--   -- (h_diff : ∀ x, ∀ᵐ a ∂μ, times_cont_diff_at ℝ 1 (λ x, F x a) x)
+--   (hF_bound : ∀ᵐ a ∂μ, ∀ x, ∥partial_fderiv_fst ℝ F x a∥ ≤ bound a)
+--   (h_bound : integrable bound μ)
+--   (h_diff : ∀ a, differentiable ℝ (λ x, F x a))
+--   (h_cont : continuous (partial_fderiv_fst ℝ F x₀)) : -- is this assumption needed?
+--   has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x₀ a ∂μ) x₀ :=
+-- begin
+--   have h_fderiv : ∀ᵐ a ∂μ, ∀ x ∈ metric.ball x₀ 1,
+--     has_fderiv_at (λ x, F x a) (partial_fderiv_fst ℝ F x a) x :=
+--   eventually_of_forall (λ a x hx, (h_diff a).differentiable_at.has_fderiv_at),
+--   have hf_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ :=
+--   hF_int.mono (λ x h, h.ae_measurable),
+--   have h_meas: ae_measurable (λ a, fderiv ℝ (λ (x : H), F x a) x₀) μ :=
+--   continuous.ae_measurable h_cont μ,
+--   refine has_fderiv_at_integral_of_dominated_of_fderiv_le zero_lt_one hf_meas hF_int.self_of_nhds
+--     h_meas (hF_bound.mono $ λ a h x hx, h x) h_bound h_fderiv
+-- end
 
 -- lemma times_cont_diff_one_integral {F : H → α → E}
 --   (hF_int : ∀ x, integrable (F x) μ)
@@ -488,10 +488,9 @@ def convolution_exists [has_sub G] (f : G → 𝕜) (g : G → E) (μ : measure 
 def convolution [has_sub G] (f : G → 𝕜) (g : G → E) (μ : measure G . volume_tac) : G → E :=
 λ x, ∫ t, f t • g (x - t) ∂μ
 
-notation f ` ⋆[`:67 μ:67 `] `:0 g:66 := convolution f g μ
-notation f ` ⋆ `:67 g:11 := f ⋆[volume] g
--- localized "notation f ` ⋆[`:67 μ `] `:67 g := convolution f g μ" in convolution
--- localized "notation f ` ⋆ `:67 g := convolution f g (volume _)" in convolution
+localized "notation f ` ⋆[`:67 μ:67 `] `:0 g:66 := convolution f g μ" in convolution
+localized "notation f ` ⋆ `:67 g:11 := convolution f g measure_theory.measure_space.volume"
+  in convolution
 
 lemma convolution_exists_at.integrable [has_sub G] {x : G} (h : convolution_exists_at f g x μ) :
   integrable (λ t, f t • g (x - t)) μ :=
@@ -827,6 +826,8 @@ end
 
 end noncomm
 
+open_locale convolution
+
 section real
 /-! The one-variable case -/
 
@@ -950,9 +951,6 @@ section comm_group
 
 variables  [nondiscrete_normed_field 𝕜] [measurable_space 𝕜] [borel_space 𝕜] [complete_space 𝕜]
   [normed_space ℝ 𝕜] [second_countable_topology 𝕜] [smul_comm_class ℝ 𝕜 𝕜]
---[normed_space 𝕜 E]
--- [normed_comm_ring R] [second_countable_topology R] [normed_space ℝ R]
---   [complete_space R] [measurable_space R] [borel_space R]
   [add_comm_group G] [topological_space G] [topological_add_group G] [borel_space G]
   [second_countable_topology G] [sigma_finite μ]
   [is_neg_invariant μ] [is_add_left_invariant μ]
@@ -961,9 +959,20 @@ variables  [nondiscrete_normed_field 𝕜] [measurable_space 𝕜] [borel_space 
 lemma convolution_comm : f ⋆[μ] g = g ⋆[μ] f :=
 by { ext, rw [convolution_eq_swap, convolution_def], simp_rw [smul_eq_mul, mul_comm] }
 
-lemma convolution_assoc : (f ⋆[μ] g) ⋆[μ] h = f ⋆[μ] (g ⋆[μ] h) :=
-by { ext, simp [convolution_def], sorry }
-
 end comm_group
+
+section is_R_or_C
+
+variables [is_R_or_C 𝕜] --[measurable_space 𝕜] [borel_space 𝕜] [complete_space 𝕜]
+  [normed_space ℝ 𝕜] [second_countable_topology 𝕜] [smul_comm_class ℝ 𝕜 𝕜]
+  [add_comm_group G] [topological_space G] [topological_add_group G] [borel_space G]
+  [second_countable_topology G] [sigma_finite μ]
+  [is_neg_invariant μ] [is_add_left_invariant μ]
+  {f g h : G → 𝕜} {x x' : G} {y y' : R}
+
+lemma convolution_assoc : (f ⋆[μ] g) ⋆[μ] h = f ⋆[μ] (g ⋆[μ] h) :=
+by { ext, simp_rw [convolution_def, ← integral_smul/-, ← integral_smul_const-/], sorry  }
+
+end is_R_or_C
 
 -- end measure_theory
