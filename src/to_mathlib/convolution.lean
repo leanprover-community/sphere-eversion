@@ -1,6 +1,7 @@
 import measure_theory.integral.interval_integral
 import measure_theory.group.action
 import measure_theory.measure.haar_lebesgue
+import measure_theory.group.integration
 import to_mathlib.measure_theory.parametric_interval_integral
 import to_mathlib.topology.tsupport
 import analysis.calculus.fderiv_measurable
@@ -191,6 +192,46 @@ end
 -- end
 
 end
+
+namespace measure_theory
+section locally_integrable
+variables {X E : Type*} [measurable_space X] [topological_space X]
+variables [normed_group E] [measurable_space E] {f : X → E} {μ : measure X}
+
+/-- A function `f : X → E` is locally integrable if it is integrable on all compact sets.
+  See `measure_theory.locally_integrable_iff` for the justification of this name. -/
+def locally_integrable (f : X → E) (μ : measure X . volume_tac) : Prop :=
+∀ ⦃K⦄, is_compact K → integrable_on f K μ
+
+lemma integrable.locally_integrable (hf : integrable f μ) : locally_integrable f μ :=
+λ K hK, hf.integrable_on
+
+lemma locally_integrable.ae_measurable [sigma_compact_space X] (hf : locally_integrable f μ) :
+  ae_measurable f μ :=
+begin
+  rw [← @restrict_univ _ _ μ, ← Union_compact_covering, ae_measurable_Union_iff],
+  exact λ i, (hf $ is_compact_compact_covering X i).ae_measurable
+end
+
+lemma locally_integrable_iff [locally_compact_space X] :
+  locally_integrable f μ ↔ ∀ x : X, ∃ U ∈ 𝓝 x, integrable_on f U μ :=
+begin
+  refine ⟨λ hf x, _, λ hf K hK, _⟩,
+  { obtain ⟨K, hK, h2K⟩ := exists_compact_mem_nhds x, exact ⟨K, h2K, hf hK⟩ },
+  { refine is_compact.induction_on hK integrable_on_empty (λ s t hst h, h.mono_set hst)
+      (λ s t hs ht, integrable_on_union.mpr ⟨hs, ht⟩) (λ x hx, _),
+    obtain ⟨K, hK, h2K⟩ := hf x, exact ⟨K, nhds_within_le_nhds hK, h2K⟩ }
+end
+
+lemma continuous.locally_integrable [opens_measurable_space X] [t2_space X] [borel_space E]
+  [is_locally_finite_measure μ] (hf : continuous f) : locally_integrable f μ :=
+λ K hK, hf.integrable_on_compact hK
+
+
+end locally_integrable
+end measure_theory
+
+
 variables {𝕜 G G₀ X M R E F : Type*}
   [measurable_space G] [measurable_space G] [measurable_space G₀] [measurable_space X]
   [normed_group E] [second_countable_topology E] [normed_space ℝ E]
@@ -424,6 +465,7 @@ by simp_rw [div_eq_mul_inv, integral_inv_eq_self (λ x, f (x' * x)) μ,
 end measure_theory
 open measure_theory measure_theory.measure
 
+
 section noncomm
 
 variables {f f' : G → 𝕜} {g g' : G → E}
@@ -644,8 +686,8 @@ lemma has_compact_support.continuous_convolution_left_of_integrable [is_neg_inva
 
 lemma has_compact_support.continuous_convolution_left [locally_compact_space G] [t2_space G]
   [is_neg_invariant μ]
-  (hcf : has_compact_support f) (hf : continuous f) (hg : ∀ K, is_compact K → integrable_on g K μ)
-  (hmg : ae_measurable g μ) : continuous (f ⋆[μ] g) :=
+  (hcf : has_compact_support f) (hf : continuous f) (hg : locally_integrable g μ) :
+    continuous (f ⋆[μ] g) :=
 begin
   rw [convolution_fn_eq_swap, continuous_iff_continuous_at],
   intro x₀,
@@ -665,8 +707,8 @@ begin
         rw [neg_sub, add_sub_cancel'_right] },
       rw [nmem_support.mp this, zero_smul, norm_zero] } },
   refine continuous_at_of_dominated _ this _ _,
-  { exact eventually_of_forall ((hf.ae_measurable μ).convolution_integrand_swap_snd hmg) },
-  { rw [integrable_indicator_iff hL.measurable_set], exact (hg L hL).norm.const_mul _ },
+  { exact eventually_of_forall ((hf.ae_measurable μ).convolution_integrand_swap_snd hg.ae_measurable) },
+  { rw [integrable_indicator_iff hL.measurable_set], exact (hg hL).norm.const_mul _ },
   { exact eventually_of_forall (λ t,
       ((hf.comp (continuous_id.sub continuous_const)).smul continuous_const).continuous_at) }
 end
@@ -700,7 +742,6 @@ variables [normed_space ℝ E]
 variables {n : with_top ℕ}
 
 -- todo: replace `continuous g` by `locally_integrable g`.
--- (todo: define `locally_integable`)
 lemma has_compact_support.has_fderiv_at_convolution_left
   (hf : times_cont_diff ℝ 1 f) (hcf : has_compact_support f)
   (hg : continuous g) (x₀ : ℝ) : has_deriv_at (f ⋆ g) ((deriv f ⋆ g) x₀) x₀ :=
@@ -766,8 +807,7 @@ lemma times_cont_diff_convolution_left (hf : times_cont_diff ℝ n f)
 begin
   induction n using with_top.nat_induction with n ih ih generalizing f,
   { rw [times_cont_diff_zero] at hf ⊢,
-    exact hcf.continuous_convolution_left hf (λ K hK, hg.integrable_on_compact hK)
-      (hg.ae_measurable _) },
+    exact hcf.continuous_convolution_left hf (λ K hK, hg.integrable_on_compact hK) },
   { have h : ∀ x, has_deriv_at (f ⋆ g) ((deriv f ⋆ g) x) x :=
       hcf.has_fderiv_at_convolution_left hf.one_of_succ hg,
     rw times_cont_diff_succ_iff_deriv,
