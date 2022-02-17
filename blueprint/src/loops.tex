@@ -578,11 +578,11 @@ parametric reparametrization lemma.
 \begin{lemma}
 \label{lem:reparametrization}
 \uses{def:surrounds, def:average}
-\lean{reparametrization}
+\lean{smooth_surrounding_family.reparametrize_average}
 \leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
-a map $g$ with base $β$.
-There is a family of circle diffeomorphisms $φ \co E × 𝕊^1 → 𝕊^1$ such
+a map $g$.
+There is a smooth family of equivalences $φ \co E × 𝕊^1 → 𝕊^1$ such
 that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
