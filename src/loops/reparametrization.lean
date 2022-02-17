@@ -1,7 +1,7 @@
 import notations
 import loops.surrounding
 import analysis.calculus.specific_functions
-import to_mathlib.convolution
+import to_mathlib.order.hom.basic
 
 /-!
 # The reparametrization lemma
@@ -9,159 +9,194 @@ import to_mathlib.convolution
 
 noncomputable theory
 
-open set function finite_dimensional prod int
-open_locale topological_space unit_interval convolution
+open set function
+open_locale topological_space unit_interval
 
-
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F]
-          {g b : E → F} {Ω : set (E × F)} {U K C : set E}
+set_option old_structure_cmd true
 
 /-- Equivariant maps from `ℝ` to itself are functions `f : ℝ → ℝ` with `f (t + 1) = f t + 1`. -/
-structure equivariant_map :=
-(to_fun : ℝ → ℝ)
+structure equivariant_equiv extends ℝ ≃ ℝ :=
+(map_zero' : to_fun 0 = 0)
 (eqv' : ∀ t, to_fun (t + 1) = to_fun t + 1)
 
-namespace equivariant_map
+namespace equivariant_equiv
 
-variable (φ : equivariant_map)
+variable (φ : equivariant_equiv)
 
-instance : has_coe_to_fun equivariant_map (λ _, ℝ → ℝ) := ⟨equivariant_map.to_fun⟩
+instance : has_coe_to_fun equivariant_equiv (λ _, ℝ → ℝ) := ⟨equivariant_equiv.to_fun⟩
 
-lemma eqv : ∀ t, φ (t + 1) = φ t + 1 := φ.eqv'
-
-end equivariant_map
-
-/-- Circle diffeomorphisms seen as equivariant maps from `ℝ` to itself. -/
-structure circle_diffeo extends equivariant_map :=
-(smooth' : ∀ t, smooth_at to_fun t)
-(deriv' : ∀ t, deriv to_fun t ≠ 0)
-
-namespace circle_diffeo
-
-variable (φ : circle_diffeo)
-
-instance : has_coe circle_diffeo equivariant_map := ⟨circle_diffeo.to_equivariant_map⟩
-instance : has_coe_to_fun circle_diffeo (λ _, ℝ → ℝ) := ⟨λ f x, f x⟩ -- see Note [function coercion]
+instance has_coe_to_equiv : has_coe equivariant_equiv (ℝ ≃ ℝ) := ⟨to_equiv⟩
 
 lemma eqv : ∀ t, φ (t + 1) = φ t + 1 := φ.eqv'
 
-lemma smooth : ∀ t, smooth_at φ t := φ.smooth'
+@[simp] lemma map_zero : φ 0 = 0 := φ.map_zero'
 
-lemma deriv : ∀ t, deriv φ t ≠ 0 := φ.deriv'
+@[simp] lemma map_one : φ 1 = 1 :=
+by conv_lhs { rw [← zero_add (1 : ℝ), eqv, map_zero, zero_add], }
 
-/-- Any function `φ : α → circle_diffeo` can be seen as a function `α × ℝ → ℝ`. -/
-instance {α : Type*} : has_uncurry (α → circle_diffeo) (α × ℝ) ℝ := ⟨λ φ p, φ p.1 p.2⟩
-end circle_diffeo
+instance {α : Type*} : has_uncurry (α → equivariant_equiv) (α × ℝ) ℝ := ⟨λ φ p, φ p.1 p.2⟩
+
+@[simp] lemma coe_mk (f : ℝ → ℝ) (g : ℝ → ℝ) (h₀ h₁ h₂ h₃) :
+  ⇑(⟨f, g, h₀, h₁, h₂, h₃⟩ : equivariant_equiv) = f :=
+rfl
+
+def symm (e : equivariant_equiv) : equivariant_equiv :=
+{ map_zero' := sorry,
+  eqv' := λ t,
+  begin
+    let f := (e : ℝ ≃ ℝ),
+    let g := (e : ℝ ≃ ℝ).symm,
+    change g (t + 1) = g t + 1,
+    calc g (t + 1) = g (f (g t) + 1) : by rw (e : ℝ ≃ ℝ).apply_symm_apply
+               ... = g (f (g t + 1)) : by { erw e.eqv, refl, }
+               ... = g t + 1 : (e : ℝ ≃ ℝ).symm_apply_apply _,
+  end,
+  .. (e : ℝ ≃ ℝ).symm }
+
+@[simp] lemma symm_symm (e : equivariant_equiv) : e.symm.symm = e :=
+sorry
+
+@[simp] lemma apply_symm_apply (e : equivariant_equiv) : ∀ x, e (e.symm x) = x :=
+(e : ℝ ≃ ℝ).apply_symm_apply
+
+@[simp] lemma symm_apply_apply (e : equivariant_equiv) : ∀ x, e.symm (e x) = x :=
+(e : ℝ ≃ ℝ).symm_apply_apply
+
+end equivariant_equiv
+
+variables {E F : Type*}
+variables [normed_group E] [normed_space ℝ E]
+variables [normed_group F] [normed_space ℝ F]
+variables [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
+variables {g b : E → F}
 
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
 @[simps {simp_rhs := tt}]
-def loop.reparam (γ : loop F) (φ : equivariant_map) : loop F :=
+def loop.reparam (γ : loop F) (φ : equivariant_equiv) : loop F :=
 { to_fun := γ ∘ φ,
   per' := λ t, by rw [comp_apply, φ.eqv, γ.per] }
 
-variables [normed_space ℝ F] [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
+section smooth_surrounding_family
 
-lemma reparametrization
-  (γ : E → ℝ → loop F) (h_surr : surrounding_family g b γ U)
-  (h_smooth : ∀ (x ∈ U) (t ∈ I) s, smooth_at ↿γ ((x, t, s) : E × ℝ × ℝ)) :
-  ∃ φ : E → circle_diffeo, ∀ (x ∈ U), (∀ s, smooth_at ↿φ (x, s)) ∧
-                                      φ x 0 = 0 ∧
-                                      ((γ x 1).reparam (φ x)).average = g x :=
+variables (g)
+
+structure smooth_surrounding_family :=
+(to_fun : E → loop F)
+(smooth : ∀ x s, smooth_at ↿to_fun (x, s))
+(surrounds : ∀ x, (to_fun x).surrounds $ g x)
+
+variables {g}
+
+namespace smooth_surrounding_family
+
+instance : has_coe_to_fun (smooth_surrounding_family g) (λ _, E → loop F) := ⟨to_fun⟩
+
+variables (γ : smooth_surrounding_family g) (x : E)
+include γ
+
+protected lemma continuous : continuous (γ x) :=
 sorry
 
-@[simp] lemma fract_add_one {α} [linear_ordered_ring α] [floor_ring α] (a : α) :
-  fract (a + 1) = fract a :=
-by exact_mod_cast fract_add_int a 1
+def centering_density : E → ℝ → ℝ :=
+sorry
 
-/-- continuous equivariant reparametrization that is locally constant around `0`.
-  It linearly connects `(0, 0)`, `(1/4, 0)` and `(3/4, 1)` and `(1, 1)` and is extended to an
-  equivariant function. -/
-def linear_reparam : equivariant_map :=
-⟨λ x, ⌊ x ⌋ + max 0 (min 1 $ 2 * fract (x - 4⁻¹)), λ t,
-  by simp [floor_add_one, add_sub, ← sub_add_eq_add_sub _ _ (1 : ℝ), fract_add_one, add_right_comm]⟩
+lemma centering_density_pos (t : ℝ) :
+  0 < γ.centering_density x t :=
+sorry
 
-variables (g b Ω U K)
+@[simp] lemma integral_centering_density_eq_one (t : ℝ) :
+  ∫ s in t..(t+1), γ.centering_density x s = 1 :=
+sorry
 
-structure nice_loop (γ : ℝ → E → loop F) : Prop :=
-(t_le_zero : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
-(t_ge_one : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
-(t_zero : ∀ x s, γ 0 x s = b x)
-(s_zero : ∀ x t, γ t x 0 = b x)
-(avg : ∀ x, (γ 1 x).average = g x)
-(mem_Ω : ∀ x t s, (x, γ t x s) ∈ Ω)
-(smooth : 𝒞 ∞ ↿γ)
-(rel_K : ∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)
+lemma centering_density_smooth (t : ℝ) :
+  smooth_at ↿γ.centering_density ⟨x, t⟩ :=
+sorry
 
-variables {g b Ω U K}
+lemma centering_density_continuous (t : ℝ) :
+  continuous_at (γ.centering_density x) t :=
+sorry
 
-open measure_theory measure_theory.measure
-/- lemma exists_loops' [finite_dimensional ℝ E]
-  --todo: obtain the measure structure on `E` in the proof
-  [measure_space E] [is_add_haar_measure (volume : measure E)]
-  (hK : is_compact K) (hC : is_closed C) (hU : is_open U) (hKC : K ⊆ C) (hCU : C ⊆ U)
-  (hΩ_op : is_open $ Ω ∩ fst ⁻¹' U)
-  (hΩ_conn : ∀ x ∈ C, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : ∀ x ∈ U, smooth_at g x) (hb : times_cont_diff ℝ ⊤ b) (hb_in : ∀ x ∈ C, (x, b x) ∈ Ω)
-  (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x ∈ C, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-  ∃ γ : ℝ → E → loop F, nice_loop g b Ω C K γ :=
+lemma centering_density_interval_integrable (t₁ t₂ : ℝ) :
+  interval_integrable (γ.centering_density x) measure_theory.measure_space.volume t₁ t₂ :=
+sorry
+
+@[simp] lemma average_centering_density :
+  ∫ s in 0..1, (γ.centering_density x s) • (γ x s) = g x :=
+sorry
+
+-- Prove for any measure `μ` with `[is_finite_measure_on_compacts μ] [is_open_pos_measure μ]`?
+lemma strict_mono_integral_centering_density :
+  strict_mono $ λ t, ∫ s in 0..t, γ.centering_density x s :=
+sorry
+
+lemma surjective_integral_centering_density :
+  surjective $ λ t, ∫ s in 0..t, γ.centering_density x s :=
+sorry
+
+def reparametrize : E → equivariant_equiv := λ x,
+({ to_fun := λ t, ∫ s in 0..t, γ.centering_density x s,
+  inv_fun := (strict_mono.order_iso_of_surjective _
+    (γ.strict_mono_integral_centering_density x)
+    (γ.surjective_integral_centering_density x)).symm,
+  left_inv := strict_mono.order_iso_of_surjective_symm_apply_self _ _ _,
+  right_inv := λ t, strict_mono.order_iso_of_surjective_self_symm_apply _ _ _ t,
+  map_zero' := interval_integral.integral_same,
+  eqv' := λ t,
+  begin
+    have h₁ := γ.centering_density_interval_integrable x 0 t,
+    have h₂ := γ.centering_density_interval_integrable x t (t + 1),
+    simp [← interval_integral.integral_add_adjacent_intervals h₁ h₂],
+  end, } : equivariant_equiv).symm
+
+lemma coe_reparametrize_symm :
+  ((γ.reparametrize x).symm : ℝ → ℝ) = λ t, ∫ s in 0..t, γ.centering_density x s :=
+rfl
+
+lemma coe_reparametrize_symm_apply (t : ℝ) :
+  (γ.reparametrize x).symm t = ∫ s in 0..t, γ.centering_density x s :=
+rfl
+
+@[simp] lemma reparametrize_map_zero :
+  γ.reparametrize x 0 = 0 :=
+equivariant_equiv.map_zero _
+
+@[simp] lemma reparametrize_map_one :
+  γ.reparametrize x 1 = 1 :=
+equivariant_equiv.map_one _
+
+lemma has_deriv_at_reparametrize_symm (s : ℝ) :
+  has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
 begin
-  -- we could probably get away with something simpler to get γ₀.
-  obtain ⟨γ₀, hγ₀_cont, hγ₀0, h2γ₀0, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
-    surrounding_loop_of_convex_hull is_open_univ is_connected_univ
-    (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
-  have := λ x (hx : x ∈ C),
-    local_loops_open ⟨U, hU.mem_nhds $ hCU hx, hΩ_op⟩ (hΩ_conn x hx) (hg x $ hCU hx).continuous_at
-    hb.continuous (hb_in x hx) (hconv x hx),
-  -- let γ₀ : loop F := sorry, -- γ* in notes
-  -- have hγ₀ : γ₀.surrounds 0,
-  -- { sorry },
-  -- have h0γ₀ : γ₀ 0 = 0 := sorry,
-  -- have hγ₀_cont : continuous γ₀ := sorry,
-  obtain ⟨ε, hε⟩ : { x : ℝ // 0 < x } := ⟨1, zero_lt_one⟩, -- todo
-  -- let γ₁ : E → ℝ → loop F := λ x t, γ₀.transform (λ y, b x + t • ε • y),
-  let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- γₓ
-  have hγ₁ : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₁ V Ω,
-  { refine ⟨_, hgK, ⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩,
-    { intros x hx, rw [mem_set_of_eq] at hx, rw [hx],
-      exact (hγ₀_surr.smul0 hε.ne').vadd0, },
-    { refine (hb.continuous.comp continuous_fst).add
-        (continuous_const.smul $ hγ₀_cont.comp continuous_snd) },
-    sorry }, -- choose ε sufficiently small, and perhaps V smaller
-  obtain ⟨γ₂, hγ₂, hγ₂₁⟩ := exists_surrounding_loops hK hC hU hCU hΩ_op hΩ_conn
-    (λ x hx, (hg x (hCU hx)).continuous_at) hb.continuous hb_in hconv hγ₁,
-  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
-  let φ : E × ℝ × ℝ → ℝ :=
-  (⟨⟨1 / 8, 1 / 4, by norm_num, by norm_num⟩⟩ : times_cont_diff_bump (0 : E × ℝ × ℝ)),
-  let γ₄ := ↿γ₃,
-  let γ₅ : E × ℝ × ℝ → F := φ ⋆ γ₄,
-  let γ₆ : ℝ → E → loop F,
-  { refine λ s x, ⟨λ t, γ₅ (x, s, t), λ t, _⟩,
-    change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
-      ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
-    simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
-  -- todo: apply reparametrization
-  refine ⟨γ₆, _, _, _, _, _, _, _, _⟩,
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-end -/
+  simp only [coe_reparametrize_symm],
+  convert interval_integral.integral_has_deriv_at_right
+    (γ.centering_density_interval_integrable x 0 s) _ (γ.centering_density_continuous x s),
+  sorry,
+end
 
-
-
-/- We probably don't get quite this statement after weakening `exists_surrounding_loops` -/
-lemma exists_loops
-  (hK : is_compact K)
-  (hΩ_op : is_open Ω)
-  (hΩ_conn : ∀ x, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b) (hb_in : ∀ x, (x, b x) ∈ Ω)
-  (hgK : ∀ᶠ x near K, g x = b x) (hconv : ∀ x, g x ∈ hull (prod.mk x ⁻¹' Ω)) :
-  ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ  :=
+lemma reparametrize_smooth_at (s : ℝ) :
+  smooth_at ↿γ.reparametrize (x, s) :=
 sorry
 
--- #lint
+lemma reparametrize_continuous :
+  continuous (γ.reparametrize x : ℝ → ℝ) :=
+sorry
+
+@[simp] lemma reparametrize_average :
+  ((γ x).reparam $ γ.reparametrize x).average = g x :=
+begin
+  change ∫ (s : ℝ) in 0..1, γ x (γ.reparametrize x s) = g x,
+  have h₁ : ∀ s,
+    s ∈ interval 0 (1 : ℝ) → has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
+    λ s hs, γ.has_deriv_at_reparametrize_symm x s,
+  have h₂ : continuous_on (λ s, γ.centering_density x s) (interval 0 1) :=
+    λ s hs, (γ.centering_density_continuous x s).continuous_within_at,
+  have h₃ : continuous (λ s, γ x (γ.reparametrize x s)) :=
+    (γ.continuous x).comp (γ.reparametrize_continuous x),
+  rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one,
+    ← interval_integral.integral_comp_smul_deriv h₁ h₂ h₃],
+  simp,
+end
+
+end smooth_surrounding_family
+
+end smooth_surrounding_family
