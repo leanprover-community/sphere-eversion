@@ -3,7 +3,7 @@ import to_mathlib.analysis.normed_space.finite_dimension
 import to_mathlib.linear_algebra.basis
 import to_mathlib.topology.nhds_set
 
-import loops.reparametrization
+import loops.exists
 
 import local.corrugation
 import local.relation
