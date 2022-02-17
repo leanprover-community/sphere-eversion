@@ -15,6 +15,11 @@ begin
   rw [filter.le_principal_iff, h.mem_nhds_set]
 end
 
+/-
+In the next lemma, the inequality cannot be improved to an equality. For instance,
+if α has two elements and the coarse topology and s and t are distinct singletons then
+𝓝ˢ (s ∩ t) = ⊥ while 𝓝ˢ s ⊓ 𝓝ˢ t = ⊤ and those are different.
+-/
 lemma nhds_set_inter_le (s t : set α) : 𝓝ˢ (s ∩ t) ≤  𝓝ˢ s ⊓ 𝓝ˢ t :=
 (@monotone_nhds_set α _).map_inf_le s t
 
