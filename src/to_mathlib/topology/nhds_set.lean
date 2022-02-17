@@ -15,17 +15,17 @@ begin
   rw [filter.le_principal_iff, h.mem_nhds_set]
 end
 
-lemma nhds_set_inter (s t : set α) : 𝓝ˢ (s ∩ t) =  𝓝ˢ s ⊓ 𝓝ˢ t :=
-begin
+lemma nhds_set_inter_le (s t : set α) : 𝓝ˢ (s ∩ t) ≤  𝓝ˢ s ⊓ 𝓝ˢ t :=
+(@monotone_nhds_set α _).map_inf_le s t
 
-  sorry
-end
+lemma sup_Sup {α : Type*} [complete_lattice α] {s : set α} {a : α} : a ⊔ (Sup s) = Sup (s ∪ {a}) :=
+by simp only [set.union_singleton, Sup_insert]
+
+lemma Sup_sup {α : Type*} [complete_lattice α] {s : set α} {a : α} : (Sup s) ⊔ a = Sup (s ∪ {a}) :=
+by simp only [sup_Sup, sup_comm]
 
 lemma nhds_set_union (s t : set α) : 𝓝ˢ (s ∪ t) =  𝓝ˢ s ⊔ 𝓝ˢ t :=
-begin
-
-  sorry
-end
+by simp only [nhds_set, Sup_eq_supr, supr_sup, set.image_union, supr_union]
 
 lemma is_closed.nhds_set_le_sup {t : set α} (h : is_closed t) (s : set α) :
   𝓝ˢ s ≤ 𝓝ˢ (s ∩ t) ⊔ 𝓟 tᶜ :=
