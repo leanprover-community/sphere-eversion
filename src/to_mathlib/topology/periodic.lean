@@ -133,9 +133,9 @@ sorry
 
 variables {X E : Type*} [topological_space X] [normed_group E] [t2_space X]
 
-lemma continuous.bounded_of_one_periodic_of_compact {f : X → ℝ → E} (cont : continuous ↿f)
-  (hper : ∀ x, one_periodic (f x)) {K : set X} (hK : is_compact K) (hfK : ∀ x ∉ K, f x = 0) :
-  ∃ C, ∀ x t, ∥f x t∥ ≤ C :=
+lemma continuous.bounded_on_compact_of_one_periodic {f : X → ℝ → E} (cont : continuous ↿f)
+  (hper : ∀ x, one_periodic (f x)) {K : set X} (hK : is_compact K) :
+  ∃ C, ∀ x ∈ K, ∀ t, ∥f x t∥ ≤ C :=
 begin
   let F : X × 𝕊₁ → E := λ p : X × 𝕊₁, (hper p.1).lift p.2,
   have Fcont : continuous F,
@@ -144,14 +144,21 @@ begin
     have : φ = F ∘ (λ p : X × ℝ, (p.1, π p.2)), by { ext p, refl },
     dsimp [φ] at this,
     rwa [this,  ← qm.continuous_iff] at cont },
-  have : has_compact_support F,
-  { refine has_compact_support.intro (hK.prod compact_univ) _,
-    rintros ⟨x, ⟨t⟩⟩ hxt,
-    have : ∀ a, f x a = 0, by simpa using congr_fun (hfK x $ λ hx, hxt (by simp [hx])),
-    apply this },
-  obtain ⟨C, hC⟩ : ∃ C, ∀ (x : X × 𝕊₁), ∥F x∥ ≤ C :=
-    Fcont.bounded_above_of_compact_support this,
-  exact ⟨C, λ x t, hC (x, π t)⟩,
+  obtain ⟨C, hC⟩ := (hK.prod compact_univ).bdd_above_image (continuous_norm.comp Fcont).continuous_on,
+  exact ⟨C, λ x x_in t, hC ⟨(x, π t), ⟨x_in, mem_univ _⟩, rfl⟩⟩
 end
+
+lemma continuous.bounded_of_one_periodic_of_compact {f : X → ℝ → E} (cont : continuous ↿f)
+  (hper : ∀ x, one_periodic (f x)) {K : set X} (hK : is_compact K) (hfK : ∀ x ∉ K, f x = 0) :
+  ∃ C, ∀ x t, ∥f x t∥ ≤ C :=
+begin
+  obtain ⟨C, hC⟩ := cont.bounded_on_compact_of_one_periodic hper hK,
+  use max C 0,
+  intros x t,
+  by_cases hx : x ∈ K,
+  { exact le_max_of_le_left (hC x hx t) },
+  { simp [hfK, hx] },
+end
+
 
 end one_periodic

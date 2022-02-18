@@ -83,8 +83,8 @@ def linear_reparam : equivariant_map :=
 variables (g b Ω U K)
 
 structure nice_loop (γ : ℝ → E → loop F) : Prop :=
-(t_le_zero : ∀ t ≤ 0, γ t = γ 0)
-(t_ge_one : ∀ t ≥ 1, γ t = γ 1)
+(t_le_zero : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
+(t_ge_one : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
 (t_zero : ∀ x s, γ 0 x s = b x)
 (s_zero : ∀ x t, γ t x 0 = b x)
 (avg : ∀ x ∈ U, (γ 1 x).average = g x)

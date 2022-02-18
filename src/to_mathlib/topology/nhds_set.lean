@@ -39,6 +39,10 @@ calc 𝓝ˢ s = 𝓝ˢ ((s ∩ t) ∪ (s ∩ tᶜ)) : by rw set.inter_union_comp
 ... ≤ 𝓝ˢ (s ∩ t) ⊔ 𝓝ˢ tᶜ : sup_le_sup_left (monotone_nhds_set (s.inter_subset_right tᶜ)) _
 ... = 𝓝ˢ (s ∩ t) ⊔ 𝓟 tᶜ : by rw (is_open_compl_iff.mpr h).nhds_set_eq_principal
 
+lemma is_closed.nhds_set_le_sup' {t : set α} (h : is_closed t) (s : set α) :
+  𝓝ˢ s ≤ 𝓝ˢ (t ∩ s) ⊔ 𝓟 tᶜ :=
+by {rw set.inter_comm, exact h.nhds_set_le_sup s }
+
 lemma eventually_nhds_set_iff {p : α → Prop} : (∀ᶠ x in 𝓝ˢ s, p x) ↔ (∀ x ∈ s, ∀ᶠ y in 𝓝 x, p y) :=
 by rw [nhds_set, eventually_Sup, set.ball_image_iff]
 
