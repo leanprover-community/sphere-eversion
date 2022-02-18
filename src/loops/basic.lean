@@ -437,6 +437,7 @@ lemma loop.diff_normalize {γ : E → loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) 
 begin
   ext t x,
   simp only [loop.diff_apply, loop.normalize_apply, partial_fderiv_fst],
+
   rw [fderiv_sub ((hγ_diff.partial_loop t).differentiable le_rfl).differentiable_at,
       loop.average_diff hγ_diff],
   exact (hγ_diff.loop_average.differentiable le_rfl).differentiable_at

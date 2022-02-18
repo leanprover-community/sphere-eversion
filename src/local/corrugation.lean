@@ -76,6 +76,20 @@ end
 lemma corrugation_eq_zero (x ∉ loop.support γ) : corrugation π N γ x = 0 :=
 nmem_support.mp (λ hx, H (corrugation.support π N hx))
 
+
+
+
+lemma corrugation.c0_small_on [first_countable_topology E] [t2_space E]
+  [locally_compact_space E] {γ : ℝ → E → loop F} {K : set E} (hK : is_compact K)
+  (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x) (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
+  (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
+  ∀ᶠ N in at_top, ∀ (x ∈ K) t, ∥corrugation π N (γ t) x∥ < ε :=
+begin
+  --continuous.bounded_on_compact_of_one_periodic
+  sorry
+end
+
+
 /-- If a loop family has compact support then the corresponding corrugation is
 small uniformly in the source point. -/
 lemma corrugation.c0_small [first_countable_topology E] [t2_space E]
@@ -179,6 +193,12 @@ lemma corrugation.fderiv_apply (hN : N ≠ 0) (hπ_diff : 𝒞 1 π) (hγ_diff :
 by simp only [corrugation.fderiv_eq N hN hπ_diff hγ_diff, to_span_singleton_apply, add_apply,
               coe_comp', comp_app]
 
+lemma remainder_c0_small_on {K : set E} (hK : is_compact K)
+  (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
+  ∀ᶠ N in at_top, ∀ x ∈ K, ∥R N γ x∥ < ε :=
+begin
+  sorry
+end
 
 lemma remainder_c0_small (hγ : is_compact (loop.support γ))
   (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
