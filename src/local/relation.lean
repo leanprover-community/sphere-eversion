@@ -325,13 +325,13 @@ def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec U F) : htpy_jet_sec U F :=
 -- The next gadget is probably already in mathlib somewhere (the precise values 1/4 and 3/4 are
 -- not important)
 
-/-- A smooth step function on `ℝ`, equal to `0` before `1/4` and `1` after `3/4`. -/
+/-- A smooth step function on `ℝ`.
+
+TODO: check that `real.smooth_transition` from mathlib already fits the bill
+-/
 def smooth_step : ℝ → ℝ := sorry
 
 lemma smooth_step.smooth : times_cont_diff ℝ ⊤ smooth_step :=
-sorry
-
-lemma smooth_step.of_lt {t : ℝ} (h : t < 1/4) : smooth_step t = 0 :=
 sorry
 
 @[simp]
@@ -340,9 +340,6 @@ sorry
 
 @[simp]
 lemma smooth_step.one : smooth_step 1 = 1 :=
-sorry
-
-lemma smooth_step.of_gt {t : ℝ} (h : 3/4 < t) : smooth_step t = 1 :=
 sorry
 
 lemma smooth_step.mem (t : ℝ) : smooth_step t ∈ I :=
