@@ -26,11 +26,11 @@ on $\ker π$.
 Say we wish $Df(x)v$ could live in some open subset $Ω_x ⊂ F$. Assume there is
 a smooth compactly supported family of loops $γ \co E × 𝕊^1 → F$ such that each
 $γ_x$ takes values in $Ω_x$, and its average value $\overline{γ}_x = \int_{𝕊^1}
-γ_x$ is $Df(x)v$ for all $x$ is some set $U$. Obviously such loops can exist
+γ_x$ is $Df(x)v$ for all $x$. Obviously such loops can exist
 only if $Df(x)v$ is in the convex hull of $Ω_x$, and we saw in the previous
 chapter that this is almost sufficient (and we'll see this is sufficiently
 almost sufficient for our purposes). Then we can modify $f$ to fulfil our wish
-on $U$ using the following construction.
+using the following construction.
 
 \begin{definition}
   \label{def:corrugation}
@@ -56,23 +56,22 @@ directions of $\ker π$, and almost without moving $f(x)$.
   \lean{theilliere, corrugation_data.relative}\leanok
   \uses{def:corrugation,def:loop_family_support}
   Let $f$ be a $\mathcal{C}^1$ function from $E$ to $F$. Let $(π, v)$ be a dual
-  pair on $E$. Let $γ \co E × 𝕊^1 → F$ be a compactly
-  supported $\mathcal{C}^1$ family of loops.
-  Assume that $\overline{γ_x} = Df(x)v$ for all $x$ in some set $U$.
+  pair on $E$. Let $γ \co E × 𝕊^1 → F$ be a $\mathcal{C}^1$ family of loops
+  such that $\overline{γ_x} = Df(x)v$ for all $x$.
 
-  For any positive $ε$, the function $f'$ obtained by corrugation of $f$ in
-  direction $(π, v)$ using $γ$ with large enough oscillation number $N$
-  satisfies:
+  For any compact set $K ⊂ E$ and any positive $ε$, the function $f'$ obtained
+  by corrugation of $f$ in direction $(π, v)$ using $γ$ with large enough
+  oscillation number $N$ satisfies:
   \begin{enumerate}
     \item\label{CP:C0}
-      $∀ x, ‖f'(x) - f(x)‖ ≤ ε$
+      $∀ x ∈ K, ‖f'(x) - f(x)‖ ≤ ε$
     \item\label{CP:kerpi}
-      $∀ x, ‖(Df'(x) - Df(x))_{|\ker π}‖ ≤ ε$.
+      $∀ x ∈ K, ‖(Df'(x) - Df(x))_{|\ker π}‖ ≤ ε$.
     \item\label{CP:v}
-      $∀ x ∈ U, ‖Df'(x)v - γ(x, Nπ(x))‖ ≤ ε$
+      $∀ x ∈ K, ‖Df'(x)v - γ(x, Nπ(x))‖ ≤ ε$
   \end{enumerate}
   In addition, all the differences estimated above vanish if $x$ is outside the
-  support of $γ$ (in addition to being in $U$ in the last estimate).
+  support of $γ$.
 \end{proposition}
 
 \begin{proof}
@@ -123,8 +122,8 @@ differential relation for maps from $E$ to $F$.
   \leanok
   \lean{rel_loc.formal_sol}
   \uses{def:rel_loc}
-  A formal solution of a differential relation $\Rel$ over $U ⊂ E$ is a map
-  $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$ in $U$,
+  A formal solution of a differential relation $\Rel$ is a map
+  $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$,
   $(x, f(x), φ(x))$ is in $\Rel$.
 \end{definition}
 
@@ -135,11 +134,15 @@ be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
   \label{def:htpy_jet_sec_loc}
   \leanok
   \lean{htpy_jet_sec}
-  A homotopy of $1$-jet sections over $U$ is a map
-  $\F : ℝ × E → F × \Hom(E, F)$ which is smooth over $[0, 1] × U$.
+  A $1$-jet section from $E$ to $F$ is a function from $E$ to $F × \Hom(E, F)$.
+  A homotopy of $1$-jet sections is a smooth map
+  $\F : ℝ × E → F × \Hom(E, F)$.
 \end{definition}
 
-Typically, $x ↦ \F(t, x)$ will be denoted by $\F_t$.
+Typically, $x ↦ \F(t, x)$ will be denoted by $\F_t$. It could seem more natural to take
+$[0, 1] × E$ as the source of a homotopy but this would be less convenient for
+formalization and wouldn't change anything since any map from $ℝ × E$ can be restricted to
+$[0, 1] × E$ and every map from $[0, 1] × E$ could be extended.
 
 \begin{definition}
   \label{def:rel_slice}
@@ -176,8 +179,8 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   \leanok
   \lean{rel_loc.formal_sol.is_short_at}
   \uses{def:formal_sol_loc, def:dual_pair}
-  A formal solution $\F$ of $\Rel$ over $U$ is $(π, v)$--short if,
-  for every $x$ in $U$, $Df(x)v$ belonds to the interior of the convex hull of
+  A formal solution $\F$ of $\Rel$ is $(π, v)$--short if,
+  for every $x$, $Df(x)v$ belonds to the interior of the convex hull of
   $\Conn_{φ(v)}\Rel((x, f(x), φ(x)), π, v)$.
 \end{definition}
 
@@ -188,21 +191,21 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
     step_landscape.improve_step_rel_compl_K₁, step_landscape.improve_step_c0_close,%
     step_landscape.improve_step_hol}
   \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_jet_sec_loc}
-  Let $\F$ be a formal solution of $\Rel$ over an open set $U$.
-  Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of
-  the interior of $K_1$. Let $C$ be a subset of $U$.
+  Let $\F$ be a formal solution of $\Rel$.
+  Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
+  the interior of $K_1$. Let $C$ be a closed subset of $E$.
   Let $E'$ be a linear subspace of $E$ contained in $\ker π$.
   Let $ε$ be a positive real number.
 
-  Assume $\Rel$ is open over $U$.
-  Assume that $\F$ is $E'$--holonomic near $K_0$, $(π, v)$--short over $U$,
+  Assume $\Rel$ is open.
+  Assume that $\F$ is $E'$--holonomic near $K_0$, $(π, v)$--short,
   and holonomic near $C$.
   Then there is a homotopy $\F_t$ such that:
   \begin{enumerate}
     \item
       $\F_0 = \F$~;
     \item
-      $\F_t$ is a formal solution of $\Rel$ over $U$ for all $t$~;
+      $\F_t$ is a formal solution of $\Rel$ for all $t$~;
     \item
       $\F_t(x) = \F(x)$ for all $t$ when $x$ is near $C$ or outside
       $K_1$~;
@@ -217,10 +220,10 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   \proves{lem:integration_step}
   \uses{prop:loops, prop:theilliere, lem:update_lin_map}
   We denote the components of $F$ by $f$ and $φ$.
-  Since $\F$ is short over $U$, \cref{prop:loops} applied to
+  Since $\F$ is short, \cref{prop:loops} applied to
   $g \co x ↦ Df(x)v$, $β \co x ↦ φ(x)v$,
   $Ω_x = \Rel(\F(x), π, v)$, and $K = C ∩ K_1$ gives us a smooth family of loops
-  $γ \co E × [0, 1] × 𝕊^1 → F$ such that, for all $x$ in $U$:
+  $γ \co E × [0, 1] × 𝕊^1 → F$ such that, for all $x$:
   \begin{itemize}
     \item $∀ t\, s,\; γ^t_x(s) ∈ \Rel(\F(x), π, v)$
     \item $∀ s,\; γ^0_x(s) = φ(x)v$
@@ -232,7 +235,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
   Let $N$ be a positive real number.
   Let $\bar f$ be the corrugated map constructed from $f$, $γ^1$ and $N$.
-  \Cref{prop:theilliere} ensures that, for all $x$ in $U$,
+  \Cref{prop:theilliere} ensures that, for all $x$,
   \[
     D\bar f(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π +
              \frac1N B_x
@@ -269,8 +272,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   enough.
 
   We now turn to the interesting parts.
-  The first one is that each $\F_t$ is a formal solution of $\Rel$ over
-  $U$.
+  The first one is that each $\F_t$ is a formal solution of $\Rel$.
   We already now that $\F_t$ coincides with $\F$, which is a formal
   solution, outside of the compact set $K_1$.
   We set
@@ -278,7 +280,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
     \F'_t(x) = \left(f(x),
                      φ(x) + \left[γ^{tρ(x)}_x(Nπ(x)) - φ(x)v\right] ⊗ π\right).
   \]
-  Since $\Rel$ is open over $U$, and $K_1 × [0, 1]$ is compact and $\F_t$ is
+  Since $\Rel$ is open, and $K_1 × [0, 1]$ is compact and $\F_t$ is
   within $\bigO{1/N}$ of $\F'_t$, it suffices to prove that $\F'_t$ is a formal
   solution for all $t$.
   This is guaranteed by the definition of the slice $\Rel(\F(x), π, v)$
@@ -395,18 +397,18 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   step_landscape.improve_step_rel_compl_K₁, step_landscape.improve_step_c0_close,%
   step_landscape.improve_step_hol}
   \uses{def:ample_relation_loc, def:holonomic_loc}
-  Let $\F$ be a formal solution of $\Rel$ over an open set $U$.
-  Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of
+  Let $\F$ be a formal solution of $\Rel$.
+  Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
   the interior of $K_1$.
-  Assume $\F$ is holonomic near a subset $C$ of $U$.
+  Assume $\F$ is holonomic near a subset closed $C$ of $E$.
   Let $ε$ be a positive real number.
 
-  If $\Rel$ is open and ample over $U$ then there is a homotopy $\F_t$ such that:
+  If $\Rel$ is open and ample then there is a homotopy $\F_t$ such that:
   \begin{enumerate}
     \item
       $\F_0 = \F$
     \item
-      $\F_t$ is a formal solution of $\Rel$ over $U$ for all $t$~;
+      $\F_t$ is a formal solution of $\Rel$ for all $t$~;
     \item
       $\F_t(x) = \F(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$.
     \item
@@ -432,7 +434,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   each homotopy relating a formal solution which is $E'_i$--holonomic to
   one which is $E'_{i+1}$--holonomic (always near $K_0$).
   The shortness condition is always satisfies because $\Rel$ is
-  ample over $U$.
+  ample.
   Each homotopy starts where the previous one stopped, stay at
   $C^0$ distance at most $ε/n$, and is relative to $C$ and
   the complement of $K_1$.
