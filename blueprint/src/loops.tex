@@ -33,23 +33,18 @@ All of this chapter is devoted to proving the following proposition.
   \label{prop:loops}
   \lean{exists_loops}
   \leanok
-  Let $U$ be an open set in $E$ and $K ⊆ U$ a compact subset
-  and $U'$ an open neighborhood of $\overline U$.
-  % Note: we make all assumptions on $U'$ larger than $U$ so that the $γ$ in
-  % `exists_surrounding_loops` is continuous everywhere (also on the boundary of $U$ in $E$)
-  Let $Ω$ be a set in $E × F$ such that, for each $x$ in $U'$,
-  $Ω_x := Ω ∩ (\{x\} × F)$ is open and connected in $\{x\} × F$.
+  Let $K$ a compact setin $E$. Let $Ω$ be an open set in $E × F$ such that, for each $x$,
+  $Ω_x := Ω ∩ (\{x\} × F)$ is connected in $\{x\} × F$.
 
-  Let $β$ and $g$ be maps from $E$ to $F$ that are smooth on $U'$.
-  Assume that $β(x) ∈ Ω_x$ for all $x$ in $U'$,
-  and $g(x) = β(x)$ near $K$.
+  Let $β$ and $g$ be smooth maps from $E$ to $F$.
+  Assume that $β(x) ∈ Ω_x$ for all $x$, and $g(x) = β(x)$ near $K$.
 
-  If, for every $x$ in $U'$, $g(x)$ is in the convex hull of $Ω_x$, then there
+  If, for every $x$, $g(x)$ is in the convex hull of $Ω_x$, then there
   exists a smooth family of loops
   \[
     γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)
   \]
-  such that, for all $x$ in $U$, and all $(t, s) ∈ [0, 1] × 𝕊^1$
+  such that, for all $x ∈ $, all $t ∈ ℝ$ and all  $s ∈ 𝕊^1$,
   \begin{itemize}
     \item
       $γ^t_x(s) ∈ Ω_x$
@@ -265,9 +260,8 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   \lean{smooth_surrounding}
   \leanok
   For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
-  surrounding $x$, there is a neighborhood $U$ of $\{(x, p)\}$
-  and a function $w \co E × E^{d+1} → ℝ^{d+1}$ such that, for every
-  $(y, q)$ in $U$,
+  surrounding $x$, there is a function $w \co E × E^{d+1} → ℝ^{d+1}$ such that,
+  for every $(y, q)$ in a neighborhood of $(x, p)$,
   \begin{itemize}
     \item
       $w$ is smooth at $(y, q)$
@@ -396,7 +390,7 @@ convex hull of $O$.
   \leanok
   A continuous family of loops $γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$
   surrounds a map $g \co E → F$ with base $β \co E → F$
-  on $U ⊆ E$ in $Ω ⊆ E × F$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every
+  on $U ⊂ E$ in $Ω ⊂ E × F$ if, for every $x$ in $U$, every $t ∈ [0, 1]$ and every
   $s ∈ 𝕊^1$,
   \begin{itemize}
     \item
@@ -452,7 +446,7 @@ as explained in the next lemma.
   \uses{def:family_surrounds}
   \lean{satisfied_or_refund}
   \leanok
-  Each $\Loop(g, β, U, Ω)$ is path connected:
+  For every set $U ⊂ E$,  $\Loop(g, β, U, Ω)$ is path connected:
   for every $γ_0$ and $γ_1$ in $\Loop(g, β, U, Ω)$,
   there is a continuous map
   $δ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)$
@@ -505,7 +499,7 @@ as explained in the next lemma.
   \lean{extend_loops}
   \leanok
   Let $U_0$ and $U_1$ be open sets in $E$.
-  Let $K_0 ⊆ U_0$ and $K_1 ⊆ U_1$ be compact subsets.
+  Let $K_0 ⊂ U_0$ and $K_1 ⊂ U_1$ be compact subsets.
   For any $γ_0 ∈ \Loop(U_0, g, β, Ω)$ and $γ_1 ∈ \Loop(U_1, g, β, Ω)$,
   there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and
   there exists $γ ∈ \Loop(U, g, β, Ω)$
@@ -541,7 +535,7 @@ as explained in the next lemma.
   In the setup of \Cref{prop:loops}, assume we have a
   continuous family $γ$ of loops defined near $K$ which is based at $β$,
   surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$.
-  Then there such a family which is defined on all of $U$ and agrees
+  Then there such a family which is defined on all of $E$ and agrees
   with $γ$ near $K$.
 \end{lemma}
 
@@ -551,23 +545,23 @@ as explained in the next lemma.
   Let $U_0$ be an open set containing $K$ such that $γ$ forms a surrounding family
   of loops on $U_0$.
   Let $U_i$, $i ≥ 1$ be a locally finite family of open sets with local
-  surrounding families of loops $γ^i$ and compact subsets $K_i ⊂ U_i$ covering $\overline U$.
+  surrounding families of loops $γ^i$ and compact subsets $K_i ⊂ U_i$ covering $E$.
 
   % \begin{explanation} % I am imagining that eventually this will be hidden until clicked
     This is possible, since by \Cref{lem:local_loops} there is a local surrounding family
-    of loops around each point in $\overline U$. Since $E$ is locally compact we may pick
-    a compact neighborhood around each point in $\overline U$ with such a local family of loops.
-    Since $\overline U$ is paracompact second countable, we can pick a countable refinement $U_i$
-    which is locally finite and still covers $\overline U$.
+    of loops around each point in $E$. Since $E$ is locally compact we may pick
+    a compact neighborhood around each point in $E$ with such a local family of loops.
+    Since $E$ is paracompact second countable, we can pick a countable refinement $U_i$
+    which is locally finite and still covers $E$.
     By the shrinking lemma we can pick closed (and hence compact) subsets $K_i ⊂ U_i$ that
-    also cover $\overline U$.
+    also cover $E$.
   % \end{explanation}
 
   Now we define a family $(δ^i)_{i \in NN}$ by $δ^0 = \rst{γ}{U_0}$ and
   $δ^{i+1}$ is obtained by extending $δ^i$ using $γ^i$ via
   \Cref{cor:extend_loops}.
   Since $δ^{i+1}$ equals $δ^i$ on $U_i^c$, this sequence is locally eventually constant.
-  Therefore it has a well-defined limit $δ$ which is defined on continuous on all $U$.
+  Therefore it has a well-defined limit $δ$ which is defined on continuous on all $E$.
   Since $δ^{i+1}$ equals $δ^i$ on a neighborhood of $K\cup\bigcup_{j<i} K_i,$
   we know in particular that $δ^i$ equals $γ$ on a neighborhood of $K$.
   Since $K$ is compact, it has some neighborhood $O$
@@ -587,8 +581,8 @@ parametric reparametrization lemma.
 \lean{reparametrization}
 \leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
-a map $g$ with base $β$ over some $U ⊆ E$.
-There is a family of circle diffeomorphisms $φ \co U × 𝕊^1 → 𝕊^1$ such
+a map $g$ with base $β$.
+There is a family of circle diffeomorphisms $φ \co E × 𝕊^1 → 𝕊^1$ such
 that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
@@ -609,7 +603,7 @@ that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
   If $x'$ is in a sufficiently small neighborhood of $x$,
   \Cref{lem:smooth_barycentric_coord} gives smooth weight functions $w_j$
   such that $g(x') = \sum w_j(x')p_j(x')$.
-  Let $U^i$, $i ≥ 1$ be a locally finite cover of $U$ by such
+  Let $U^i$, $i ≥ 1$ be a locally finite cover of $E$ by such
   neighborhoods, with corresponding measures $μ_j^i$, moving points
   $p_j^i$ and weight functions $w_j^i$.
   Let $(ρ_i)$ be a partition of unity associated to this covering. For
@@ -659,8 +653,8 @@ We finally assemble the ingredients from the previous two sections.
   Then \Cref{lem:reparametrization} gives a family of circle
   diffeomorphisms $h_x$ such that $γ^1_x ∘ h_x$ has average $g(x)$.
 
-  Finally we choose a cut-off function function $χ$ which vanishes on
-  $\Op{K}$ and equals one on $\Op{U ∖ U^*}$.  In $U^*$, we replace
+  Finally we choose a cut-off function function $χ$ which vanishes near
+  $K$ and equals one near $E ∖ U^*$.  In $U^*$, we replace
   $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This
   operation does not change the average values of these loops, because
   it rescales them around their average value, but makes them constant
