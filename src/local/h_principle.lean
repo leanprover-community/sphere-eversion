@@ -19,17 +19,6 @@ noncomputable theory
 open_locale unit_interval classical filter topological_space
 open filter set rel_loc
 
--- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
-local notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ 𝓝ˢ s) := r
-
-local notation `D` := fderiv ℝ
-local notation `𝒞` := times_cont_diff ℝ
-local notation `∞` := ⊤
-local notation `hull` := convex_hull ℝ
-local notation u ` ⬝ `:70 φ:65 :=
-  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
-
-
 variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
@@ -40,13 +29,11 @@ The setup for local h-principle is three nested subsets `K₀ ⊆ K₁ ⊆ U` wi
 `K₀` and `K₁` compact, `K₀ ⊆ interior K₁` and a closed subset `C`.
 -/
 structure landscape :=
-(U C K₀ K₁ : set E)
-(hU : is_open U)
+(C K₀ K₁ : set E)
 (hC : is_closed C)
 (hK₀ : is_compact K₀)
 (hK₁ : is_compact K₁)
 (h₀₁ : K₀ ⊆ interior K₁)
-(hK₁U : K₁ ⊆ U)
 
 section improve_step
 /-!
@@ -69,19 +56,19 @@ variables {E}
 
 open_locale classical
 
-variables (R : rel_loc E F) --{U : set E}
+variables (R : rel_loc E F)
 
 namespace step_landscape
 
 /-- A one-step improvement landscape accepts a formal solution if it can improve it. -/
-structure accepts (L : step_landscape E) (𝓕 : jet_sec L.U F) : Prop :=
-(h_op : R.is_open_over L.U)
+structure accepts (L : step_landscape E) (𝓕 : jet_sec E F) : Prop :=
+(h_op : is_open R)
 (hK₀ : ∀ᶠ x near L.K₀, 𝓕.is_part_holonomic_at L.E' x)
-(h_short : ∀ x ∈ L.U, 𝓕.is_short_at R L.p x)
+(h_short : ∀ x, 𝓕.is_short_at R L.p x)
 (hC : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x)
 
-def Ω (L : step_landscape E) (𝓕 : jet_sec L.U F) : set (E × F) :=
-⋃ x ∈ L.U, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
+def Ω (L : step_landscape E) (𝓕 : jet_sec E F) : set (E × F) :=
+⋃ x, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
 
 def π (L : step_landscape E) : E →L[ℝ] ℝ := L.p.π
 
@@ -89,121 +76,108 @@ def v (L : step_landscape E) : E := L.p.v
 
 def K (L : step_landscape E) : set E := L.K₁ ∩ L.C
 
-def b (L : step_landscape E) (𝓕 : jet_sec L.U F) : E → F := λ x, 𝓕.φ x L.v
+def b (L : step_landscape E) (𝓕 : jet_sec E F) : E → F := λ x, 𝓕.φ x L.v
 
-def g (L : step_landscape E) (𝓕 : jet_sec L.U F) : E → F := λ x, D 𝓕.f x L.v
+def g (L : step_landscape E) (𝓕 : jet_sec E F) : E → F := λ x, D 𝓕.f x L.v
 
 lemma is_compact_K (L : step_landscape E) : is_compact L.K :=
 L.hK₁.inter_right L.hC
 
-lemma hKU (L : step_landscape E) : L.K ⊆ L.U :=
-((inter_subset_left _ _).trans L.hK₁U)
-
 variables {R}
 
-lemma mem_Ω {L : step_landscape E} {𝓕 : jet_sec L.U F} {x : E} {w : F} (H : (x, w) ∈ L.Ω R 𝓕) :
+lemma mem_Ω {L : step_landscape E} {𝓕 : jet_sec E F} {x : E} {w : F} (H : (x, w) ∈ L.Ω R 𝓕) :
   (x, 𝓕.f x, L.p.update (𝓕.φ x) w) ∈ R :=
 begin
-  obtain ⟨x, -, h, rfl⟩ : ∃ x', x' ∈ L.U ∧
-                                w ∈ connected_comp_in (𝓕.slice_at R L.p x') (𝓕.φ x' L.p.v) ∧ x' = x,
-  by simpa [step_landscape.Ω] using H,
-  exact (connected_comp_in_subset _ _ h : _)
+  sorry
 end
 
-lemma accepts.open {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts R 𝓕) :
-  is_open (L.Ω R 𝓕 ∩ (L.U ×ˢ (univ : set F))) :=
+lemma accepts.open {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+  is_open (L.Ω R 𝓕) :=
 sorry
 
-lemma accepts.connected {L : step_landscape E} {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
-  ∀ x ∈ L.U, is_connected (prod.mk x ⁻¹' (L.Ω R 𝓕)) :=
+lemma accepts.connected {L : step_landscape E} {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
+  ∀ x, is_connected (prod.mk x ⁻¹' (L.Ω R 𝓕)) :=
 begin
 
   sorry
 end
 
-lemma accepts.smooth_b {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts R 𝓕) :
-  ∀ x ∈ L.U, smooth_at (L.b 𝓕) x :=
+lemma accepts.smooth_b {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+  𝒞 ∞ (L.b 𝓕) :=
 sorry
 
-lemma accepts.smooth_g {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts R 𝓕) :
-  ∀ x ∈ L.U, smooth_at (L.g 𝓕) x :=
+lemma accepts.smooth_g {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+  𝒞 ∞ (L.g 𝓕) :=
 sorry
 
-lemma accepts.mem {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts R 𝓕) :
-  ∀ x ∈ L.U, (x, L.b 𝓕 x) ∈ L.Ω R 𝓕 :=
+lemma accepts.mem {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+  ∀ x, (x, L.b 𝓕 x) ∈ L.Ω R 𝓕 :=
 sorry
 
-lemma accepts.rel {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts R 𝓕) :
+lemma accepts.rel {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   ∀ᶠ (x : E) near L.K, (L.g 𝓕) x = (L.b 𝓕) x :=
 sorry
 
-lemma accepts.hull {L : step_landscape E} {𝓕 : jet_sec L.U F} (h : L.accepts R 𝓕) :
-  ∀ x ∈ L.U, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω R 𝓕) :=
+lemma accepts.hull {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+  ∀ x, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω R 𝓕) :=
 sorry
 
 /-- The loop family to use in some landscape to improve a formal solution. -/
-def loop (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
+def loop (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ℝ → E → loop F :=
-classical.some (exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+classical.some (exists_loops L.is_compact_K h.open h.connected h.smooth_g
                              h.smooth_b h.mem h.rel h.hull)
 
-lemma nice (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
-  nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L ↑𝓕) L.U L.K (L.loop h) :=
-classical.some_spec $ exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
+lemma nice (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
+  nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L ↑𝓕) L.K (L.loop h) :=
+classical.some_spec $ exists_loops L.is_compact_K h.open h.connected h.smooth_g
                              h.smooth_b h.mem h.rel h.hull
 
-lemma loop_mem (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
-  ∀ (x ∈ L.U) t s, L.loop h t x s ∈ (prod.mk x ⁻¹' L.Ω R 𝓕) :=
-λ x x_in t s, (L.nice h).mem_Ω x x_in t s
+/- TODO: There are now many lemmas whose proofs are (L.nice h).whatever
+They could be removed and inlined.
+-/
 
-lemma loop_t_zero_eq (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
+lemma loop_mem (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
+  ∀ x t s, L.loop h t x s ∈ (prod.mk x ⁻¹' L.Ω R 𝓕) :=
+(L.nice h).mem_Ω
+
+lemma loop_t_zero_eq (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ∀ x s, L.loop h 0 x s = L.b 𝓕 x :=
 λ x s, (L.nice h).t_zero x s
 
-lemma loop_s_zero_eq (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
+lemma loop_s_zero_eq (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ∀ x t, L.loop h t x 0 = L.b 𝓕 x :=
 λ x t, (L.nice h).s_zero x t
 
-lemma loop_t_zero_is_const (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) (x : E) :
+lemma loop_t_zero_is_const (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (x : E) :
   (L.loop h 0 x).is_const :=
 begin
   intros s s',
   simp only [L.loop_t_zero_eq h x]
 end
 
-lemma update_zero (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) (x : E) (s : ℝ) :
+lemma update_zero (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (x : E) (s : ℝ) :
 L.p.update (𝓕.φ x) ((L.loop h 0 x) s) = 𝓕.φ x :=
 begin
   rw L.loop_t_zero_eq h x s,
   exact L.p.update_self _,
 end
 
-lemma loop_smooth (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
-∀ (x ∈ L.U) t s, smooth_at ↿(L.loop h) ((t, x, s) : ℝ × E × ℝ) :=
-λ x x_in t s,
-(L.nice h).smooth x x_in t s
+lemma loop_smooth (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
+  𝒞 ∞ ↿(L.loop h) :=
+(L.nice h).smooth
 
-lemma loop_C1 (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
-∀ (x ∈ L.U) t, 𝒞 1 ↿(L.loop h t) :=
+lemma loop_C1 (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
+∀ t, 𝒞 1 ↿(L.loop h t) :=
 sorry
 
-/-
-Le lemme ci-dessus est trop optimiste, on ne va avoir que :
-lemma loop_C1 (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
-∀ t, times_cont_diff_on ℝ 1 ↿(L.loop h t) (L.U ×ˢ (univ : set ℝ)) :=
+lemma loop_avg (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
+ ∀ x, (L.loop h 1 x).average = L.g 𝓕 x :=
+(L.nice h).avg
 
-Cela va nécessiter de nombreux changement, jusque dans loop.basic
- -/
-lemma loop_avg (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
- ∀ (x ∈ L.U), (L.loop h 1 x).average = L.g 𝓕 x :=
-λ x x_in,
-(classical.some_spec $ exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
-                             h.smooth_b h.mem h.rel h.hull).avg x x_in
-
-lemma loop_K (L : step_landscape E) {𝓕 : formal_sol R L.U} (h : L.accepts R 𝓕) :
+lemma loop_K (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
   ∀ᶠ x in 𝓝ˢ L.K, ∀ t s, L.loop h t x s = L.b 𝓕 x :=
-(classical.some_spec $ exists_loops L.hU L.is_compact_K L.hKU h.open h.connected h.smooth_g
-                             h.smooth_b h.mem h.rel h.hull).rel_K
+(L.nice h).rel_K
 
 variables (L : step_landscape E)
 
@@ -226,15 +200,12 @@ sorry
 lemma hρ_compl_K₁ (L : step_landscape E) {x : E} : x ∉ L.K₁ → L.ρ x = 0 :=
 sorry
 
-lemma hρ_compl_U (L : step_landscape E) {x : E} : x ∉ L.U → L.ρ x = 0 :=
-λ hx, hρ_compl_K₁ _ (λ hx', hx $ L.hK₁U hx')
-
 /--
 Homotopy of formal solutions obtained by corrugation in the direction of `p : dual_pair' E`
 in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomic to
 `L.E' ⊔ span {p.v}`-holonomic near `L.K₀`.
 -/
-def improve_step (𝓕 : formal_sol R L.U) (N : ℝ) : htpy_jet_sec L.U F :=
+def improve_step (𝓕 : formal_sol R) (N : ℝ) : htpy_jet_sec E F :=
 if h : L.accepts R 𝓕
 then
   { f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
@@ -245,7 +216,7 @@ then
 else
   𝓕.to_jet_sec.const_htpy
 
-variables {𝓕 : formal_sol R L.U}
+variables {𝓕 : formal_sol R}
 
 /-
 The next three lemmas are three versions of saying that if L doesn't accept 𝓕 then
@@ -312,17 +283,11 @@ begin
         rw loop.is_const_of_not_mem_support (H t) s 0,
         apply L.loop_s_zero_eq h x },
   refine L.improve_step_rel (λ h, _),
-  rw L.improve_step_apply h,
-  by_cases x_in : x ∈ L.U,
-  { rw [corrugation_eq_zero _ _ _ (H t),
-        remainder_eq_zero _ _ (L.loop_C1 h x x_in 1) (H 1)],
-    simp only [formal_sol.to_jet_sec_eq_coe, smul_zero, add_zero, this],
-    erw L.p.update_self,
-    refl },
-  { simp only [L.hρ_compl_U x_in, formal_sol.to_jet_sec_eq_coe, mul_zero, zero_smul, add_zero],
-    rw L.loop_t_zero_eq h x,
-    erw L.p.update_self,
-    refl, }
+  rw [L.improve_step_apply h, corrugation_eq_zero _ _ _ (H t),
+      remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)],
+  simp only [formal_sol.to_jet_sec_eq_coe, smul_zero, add_zero, this],
+  erw L.p.update_self,
+  refl
 end
 
 variables (L) (𝓕) (N : ℝ)
@@ -410,9 +375,9 @@ begin
 end
 
 lemma improve_step_hol
-  (h_op : R.is_open_over L.U)
+  (h_op : is_open R)
   (h_part_hol : ∀ᶠ x near L.K₀, 𝓕.is_part_holonomic_at L.E' x)
-  (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x)
+  (h_short : ∀ x, 𝓕.is_short_at L.p x)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∀ N, ∀ᶠ x near L.K₀, (L.improve_step 𝓕 N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
 -- use is_part_holonomic_at.sup
@@ -420,9 +385,9 @@ sorry
 
 
 lemma improve_step_sol
-  (h_op : R.is_open_over L.U)
+  (h_op : is_open R)
   (h_part_hol : ∀ᶠ x near L.K₀, 𝓕.is_part_holonomic_at L.E' x)
-  (h_short : ∀ x ∈ L.U, 𝓕.is_short_at L.p x)
+  (h_short : ∀ x, 𝓕.is_short_at L.p x)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∀ᶠ N in at_top, ∀ t, (L.improve_step 𝓕 N t).is_formal_sol R :=
 begin
@@ -439,7 +404,7 @@ begin
   have K_cpt : is_compact K,
   {
     sorry },
-  have K_sub : K ⊆ R ∩ L.U ×ˢ univ,
+  have K_sub : K ⊆ R,
   {
     sorry },
   obtain ⟨ε, ε_pos : 0 < ε, hε : metric.thickening ε K ⊆ R⟩ :=
@@ -447,7 +412,7 @@ begin
 
   apply ((corrugation.c0_small_on L.π L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
          remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
-  rintros N ⟨H, H'⟩ t x x_in,
+  rintros N ⟨H, H'⟩ t x,
   by_cases hxK₁ : x ∈ L.K₁,
   { apply hε,
     rw metric.mem_thickening_iff,
@@ -463,7 +428,7 @@ begin
           from congr_arg prod.fst $ L.improve_step_rel_compl_K₁ 𝓕 N hxK₁ t,
         show ((L.improve_step 𝓕 N) t).φ x = 𝓕.φ x,
           from congr_arg prod.snd $ L.improve_step_rel_compl_K₁ 𝓕 N hxK₁ t],
-    exact 𝓕.is_sol _ x_in }
+    exact 𝓕.is_sol _ }
 end
 
 end step_landscape
@@ -487,10 +452,10 @@ variables {E}
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
 -/
-lemma rel_loc.formal_sol.improve {R : rel_loc E F} {L : landscape E} {𝓕 : formal_sol R L.U} {ε : ℝ}
-  (ε_pos : 0 < ε) (h_op : R.is_open_over L.U) (h_ample : R.is_ample)
+lemma rel_loc.formal_sol.improve {R : rel_loc E F} {L : landscape E} {𝓕 : formal_sol R} {ε : ℝ}
+  (ε_pos : 0 < ε) (h_op : is_open R) (h_ample : R.is_ample)
   (h_hol :∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
-  ∃ H : htpy_jet_sec L.U F,
+  ∃ H : htpy_jet_sec E F,
     (H 0 = 𝓕) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
@@ -501,7 +466,7 @@ begin
   let n := finrank ℝ E,
   let e := fin_basis ℝ E,
   let E' := e.flag,
-  suffices : ∀ k : fin (n + 1), ∀ δ: ℝ, 0 < δ → ∃ H : htpy_jet_sec L.U F,
+  suffices : ∀ k : fin (n + 1), ∀ δ: ℝ, 0 < δ → ∃ H : htpy_jet_sec E F,
     (H 0 = 𝓕) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
@@ -524,7 +489,7 @@ begin
       hEp := by simp only [E', basis.dual_pair', linear_map.ker_to_continuous_linear_map,
                             e.flag_le_ker_dual],
       ..L},
-    set H₁ : formal_sol R L.U := (hH_sol 1).formal_sol,
+    set H₁ : formal_sol R := (hH_sol 1).formal_sol,
     have h_span : S.E' ⊔ S.p.span_v = E' k.succ := e.flag_span_succ k,
     have acc : S.accepts R H₁ :=
     { h_op := h_op,
@@ -535,7 +500,7 @@ begin
         convert hx,
         rw [← fin.coe_eq_cast_succ, coe_coe]
       end,
-      h_short := λ x _, h_ample.is_short_at_jet_sec H₁ S.p x,
+      h_short := λ x, h_ample.is_short_at_jet_sec H₁ S.p x,
       hC := begin
         apply h_hol.congr (formal_sol.is_holonomic_at_congr _ _ _),
         apply hHC.mono,
@@ -547,7 +512,7 @@ begin
       apply hx.mono,
       apply e.flag_mono,
       rw fin.coe_eq_cast_succ },
-    have hH₁_short : ∀ (x : E), x ∈ S.to_landscape.U → H₁.is_short_at S.p x,
+    have hH₁_short : ∀ (x : E), H₁.is_short_at S.p x,
     { intros,
       apply h_ample.is_short_at },
     have hH₁_rel_C : ∀ᶠ (x : E) near S.C, H₁ x = 𝓕 x,
