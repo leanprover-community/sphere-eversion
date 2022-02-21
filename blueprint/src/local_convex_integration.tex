@@ -132,14 +132,11 @@ The first component of a map $\F \co E → F × \Hom(E, F)$ will sometimes
 be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
 
 \begin{definition}
-  \label{def:htpy_formal_sol_loc}
+  \label{def:htpy_jet_sec_loc}
   \leanok
-  \lean{htpy_formal_sol}
-  \uses{def:formal_sol_loc}
-  A homotopy of formal solutions over $U$ is a map
-  $\F : ℝ × E → F × \Hom(E, F)$ which is smooth over $[0, 1] × U$
-  and such that each $x ↦ \F(t, x)$ is a formal solution over $U$
-  when $t$ is in $[0, 1]$.
+  \lean{htpy_jet_sec}
+  A homotopy of $1$-jet sections over $U$ is a map
+  $\F : ℝ × E → F × \Hom(E, F)$ which is smooth over $[0, 1] × U$.
 \end{definition}
 
 Typically, $x ↦ \F(t, x)$ will be denoted by $\F_t$.
@@ -159,7 +156,7 @@ Typically, $x ↦ \F(t, x)$ will be denoted by $\F_t$.
 \begin{lemma}
   \label{lem:update_lin_map}
   \leanok
-  \lean{dual_pair'.update_ker_pi, dual_pair'.update_v, rel_loc.formal_sol.mem_slice}
+  \lean{dual_pair'.update_ker_pi, dual_pair'.update_v, rel_loc.jet_sec.mem_slice}
   The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$
   and sends $v$ to $w$.
   If $\sigma$ belongs to $\Rel$ then $φ(v)$ belongs to
@@ -190,7 +187,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   \lean{step_landscape.improve_step_rel_t_eq_0, step_landscape.improve_step_rel_C,%
     step_landscape.improve_step_rel_compl_K₁, step_landscape.improve_step_c0_close,%
     step_landscape.improve_step_hol}
-  \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_formal_sol_loc}
+  \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_jet_sec_loc}
   Let $\F$ be a formal solution of $\Rel$ over an open set $U$.
   Let $K_1 ⊂ U$ be a compact subset, and let $K_0$ be a compact subset of
   the interior of $K_1$. Let $C$ be a subset of $U$.

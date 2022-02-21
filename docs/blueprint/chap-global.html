@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -78,13 +81,7 @@
 
   </ul>
  </li>
-  <li></li>	
-  <li>	
-  <a href="dep_graph.html">Dependency graph</a>
-  </li>
-  <li>	
-  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
-  </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
 </ul>
 </nav>
 
@@ -132,7 +129,7 @@
   </div>
 </div> </p>
 <p>Set-theoretically, one can define \(\operatorname{Hom}(E, F)\) as the set of subsets \(S\) of \(E × F\) such that there exists \(b\) such that \(S ⊂ E_b × F_b\) and \(S\) is the graph of a linear map. But the type theory formalization will use other tricks here. The facts that really matter are listed in <a href="chap-global.html#lem:one_jet_extension_prop">lemma 3.5</a>. </p>
-<h2 id="a0000000057">3.1.2 Jets spaces</h2>
+<h2 id="a0000000066">3.1.2 Jets spaces</h2>
 <p><div class="definition_thmwrapper" id="def:one_jet_space">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -207,7 +204,7 @@
     <span class="lemma_thmlabel">3.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:one_jet_extension_prop">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000067"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -240,7 +237,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000058">
+<div class="proof_wrapper" id="a0000000067">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -344,7 +341,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A formal solution of a differential relation \(\mathcal{R}⊆ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
+  <p>  A formal solution of a differential relation \(\mathcal{R}⊂ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
 
   </div>
 </div> </p>
@@ -407,7 +404,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A first order differential relation \(\mathcal{R}⊆ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions is homotopic to a family of holonomic ones. </p>
+  <p>  A first order differential relation \(\mathcal{R}⊂ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions is homotopic to a family of holonomic ones. </p>
 
   </div>
 </div> </p>
@@ -442,7 +439,7 @@
 
   </div>
 </div> </p>
-<h2 id="a0000000059">Parametricity for free</h2>
+<h2 id="a0000000068">Parametricity for free</h2>
 <p>In many cases, relative parametric \(h\)-principles can be deduced from relative non-parametric ones with a larger source manifold. Let \(X\), \(P\) and \(Y\) be manifolds, with \(P\) seen a parameter space. Denote by \(Ψ\) the map from \(J^1(X × P, Y)\) to \(J^1(X, Y)\) sending \((x, p, y, ψ)\) to \((x, y, ψ ∘ ι_{x, p})\) where \(ι_{x, p} : T_xX → T_xX × T_pP\) sends \(v\) to \((v, 0)\). </p>
 <p>To any family of sections \(F_p : x ↦ (f_p(x), φ_{p, x})\) of \(J^1(X, Y)\), we associate the section \(\bar F\) of \(J^1(X × P, Y)\) sending \((x, p)\) to \(\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))\). </p>
 <p><div class="lemma_thmwrapper" id="lem:param_trick">
@@ -453,7 +450,7 @@
     <span class="lemma_thmlabel">3.12</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000060"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -485,7 +482,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000060">
+<div class="proof_wrapper" id="a0000000069">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -505,7 +502,7 @@
     <span class="lemma_thmlabel">3.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000061"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -530,7 +527,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000061">
+<div class="proof_wrapper" id="a0000000070">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -545,7 +542,7 @@
 <h1 id="sec:general_theory">3.3 The \(h\)-principle for open and ample differential relations</h1>
 
 <p>In this chapter, \(X\) and \(Y\) are smooth manifolds and \(\mathcal{R}\) is a first order differential relation on maps from \(X\) to \(Y\): \(\mathcal{R}⊂ J^1(X, Y)\). For any \(σ = (x, y, φ)\) in \(\mathcal{R}\) and any dual pair \((λ, v) ∈ T^*_xV × T_xV\), we set: </p>
-<div class="displaymath" id="a0000000062">
+<div class="displaymath" id="a0000000071">
   \[  \mathcal{R}_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  φ + (w - φ(v))⊗λ\big ) ∈ \mathcal{R}\right\}   \]
 </div>
 <p> where \(\operatorname{Conn}_a A\) is the connected component of \(A\) containing \(a\). In order to decipher this definition, it suffices to notice that \(φ + (w - φ(v))⊗λ\) is the unique linear map from \(T_xX\) to \(T_yY\) which coincides with \(φ\) on \(\ker λ\) and sends \(v\) to \(w\). In particular, \(w = φ(v)\) gives back \(φ\). </p>
@@ -590,7 +587,7 @@
     <span class="lemma_thmlabel">3.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000063"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -616,7 +613,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000063">
+<div class="proof_wrapper" id="a0000000072">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -636,7 +633,7 @@
     <span class="lemma_thmlabel">3.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000064"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -646,7 +643,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000064">
+<div class="proof_wrapper" id="a0000000073">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -667,7 +664,7 @@
     <span class="theorem_thmtitle">Gromov</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000065"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -701,7 +698,7 @@
     <span class="lemma_thmlabel">3.18</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000066"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -726,7 +723,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000066">
+<div class="proof_wrapper" id="a0000000075">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -735,7 +732,7 @@
   </div>
   <div class="proof_content">
   <p>We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000067">
+<div class="displaymath" id="a0000000076">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when \(λ_X = 0\). Then the condition on \(w\) becomes \(ψ ∘ ι_{x, p} ∈ \mathcal{R}\), which is true by definition of \(\mathcal{R}^P\), so \(\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
@@ -743,7 +740,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000065">
+<div class="proof_wrapper" id="a0000000074">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.17</a>
@@ -769,7 +766,7 @@
     <span class="theorem_thmtitle">Smale 1958</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000068"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000077"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -779,7 +776,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000068">
+<div class="proof_wrapper" id="a0000000077">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
