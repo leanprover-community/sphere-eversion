@@ -397,11 +397,11 @@ measure_preimage_inv μ A
 
 lemma measure_preimage_inv₀ [group_with_zero G₀] [has_measurable_inv G₀] (μ : measure G₀)
   [is_inv_invariant μ] (A : set G₀) : μ (has_inv.inv ⁻¹' A) = μ A :=
-by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv₀ G₀).map_apply A).symm }
+by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv G₀).map_apply A).symm }
 
 lemma measure_inv₀ [group_with_zero G₀] [has_measurable_inv G₀] (μ : measure G₀)
   [is_inv_invariant μ] (A : set G₀) : μ A⁻¹ = μ A :=
-by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv₀ G₀).map_apply A).symm }
+by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv G₀).map_apply A).symm }
 
 -- @[to_additive]
 -- lemma integral_inv_eq_self [smul_invariant_measure _ _ μ] (f : G → E) : ∫ x, f (x⁻¹) ∂μ = ∫ x, f x ∂μ :=
