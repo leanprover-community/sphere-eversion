@@ -1,3 +1,4 @@
+import notations
 import loops.surrounding
 import analysis.calculus.specific_functions
 import to_mathlib.convolution
@@ -10,7 +11,7 @@ noncomputable theory
 
 open set function finite_dimensional prod int
 open_locale topological_space unit_interval convolution
-local notation `I` := Icc (0 : ℝ) 1
+
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F]
@@ -87,15 +88,15 @@ structure nice_loop (γ : ℝ → E → loop F) : Prop :=
 (t_ge_one : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
 (t_zero : ∀ x s, γ 0 x s = b x)
 (s_zero : ∀ x t, γ t x 0 = b x)
-(avg : ∀ x ∈ U, (γ 1 x).average = g x)
-(mem_Ω : ∀ (x ∈ U) t s, (x, γ t x s) ∈ Ω)
-(smooth : ∀ (x ∈ U) t s, smooth_at ↿γ ((t, x, s) : ℝ × E × ℝ))
+(avg : ∀ x, (γ 1 x).average = g x)
+(mem_Ω : ∀ x t s, (x, γ t x s) ∈ Ω)
+(smooth : 𝒞 ∞ ↿γ)
 (rel_K : ∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)
 
 variables {g b Ω U K}
 
 open measure_theory measure_theory.measure
-lemma exists_loops' [finite_dimensional ℝ E]
+/- lemma exists_loops' [finite_dimensional ℝ E]
   --todo: obtain the measure structure on `E` in the proof
   [measure_space E] [is_add_haar_measure (volume : measure E)]
   (hK : is_compact K) (hC : is_closed C) (hU : is_open U) (hKC : K ⊆ C) (hCU : C ⊆ U)
@@ -149,18 +150,18 @@ begin
   { sorry },
   { sorry },
   { sorry },
-end
+end -/
 
 
 
 /- We probably don't get quite this statement after weakening `exists_surrounding_loops` -/
 lemma exists_loops
-  (hU : is_open U) (hK : is_compact K) (hKU : K ⊆ U)
-  (hΩ_op : is_open $ Ω ∩ (U ×ˢ (univ : set F)))
-  (hΩ_conn : ∀ x ∈ U, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : ∀ x ∈ U, smooth_at g x) (hb : ∀ x ∈ U, smooth_at b x) (hb_in : ∀ x ∈ U, (x, b x) ∈ Ω)
-  (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x ∈ U, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-  ∃ γ : ℝ → E → loop F, nice_loop g b Ω U K γ  :=
+  (hK : is_compact K)
+  (hΩ_op : is_open Ω)
+  (hΩ_conn : ∀ x, is_connected (prod.mk x ⁻¹' Ω))
+  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b) (hb_in : ∀ x, (x, b x) ∈ Ω)
+  (hgK : ∀ᶠ x near K, g x = b x) (hconv : ∀ x, g x ∈ hull (prod.mk x ⁻¹' Ω)) :
+  ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ  :=
 sorry
 
 -- #lint
