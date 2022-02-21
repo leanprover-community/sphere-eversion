@@ -25,8 +25,8 @@ variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional 
 
 open_locale unit_interval
 /--
-The setup for local h-principle is three nested subsets `K₀ ⊆ K₁ ⊆ U` with `U` open,
-`K₀` and `K₁` compact, `K₀ ⊆ interior K₁` and a closed subset `C`.
+The setup for local h-principle is two compact subsets `K₀ ⊆ K₁` in `E` with
+`K₀ ⊆ interior K₁` and a closed subset `C`.
 -/
 structure landscape :=
 (C K₀ K₁ : set E)
@@ -43,8 +43,8 @@ This section proves lem:integration_step.
 -/
 
 /--
-The setup for a one-step improvement towards a local h-principle is three nested subsets
-`K₀ ⊆ K₁ ⊆ U` with `U` open, `K₀` and `K₁` compact, `K₀ ⊆ interior K₁` and a closed subset `C`
+The setup for a one-step improvement towards a local h-principle is two compact subsets
+`K₀ ⊆ K₁` in `E` with `K₀ ⊆ interior K₁` and a closed subset `C`
 together with a dual pair `p` and a subspace `E'` of the corresponding hyperplane `ker p.π`.
 -/
 structure step_landscape extends landscape E :=
