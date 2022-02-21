@@ -115,7 +115,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L53">dual_pair'</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L53">dual_pair'</a></li>
         </ul>
 
       </div>
@@ -128,7 +128,7 @@
 
   </div>
 </div> </p>
-<p>Let \(E\) and \(F\) be finite dimensional real normed vector spaces. Let \(f \! :E → F\) be a smooth map, and let \((π, v)\) be a dual pair on \(E\). We want to modify \(Df\) in the direction of \(v\) while almost preserving it on \(\ker π\). Say we wish \(Df(x)v\) could live in some open subset \(Ω_x ⊂ F\). Assume there is a smooth compactly supported family of loops \(γ \! :E × 𝕊^1 → F\) such that each \(γ_x\) takes values in \(Ω_x\), and its average value \(\overline{γ}_x = \int _{𝕊^1} γ_x\) is \(Df(x)v\) for all \(x\) is some set \(U\). Obviously such loops can exist only if \(Df(x)v\) is in the convex hull of \(Ω_x\), and we saw in the previous chapter that this is almost sufficient (and we’ll see this is sufficiently almost sufficient for our purposes). Then we can modify \(f\) to fulfil our wish on \(U\) using the following construction. </p>
+<p>Let \(E\) and \(F\) be finite dimensional real normed vector spaces. Let \(f \! :E → F\) be a smooth map, and let \((π, v)\) be a dual pair on \(E\). We want to modify \(Df\) in the direction of \(v\) while almost preserving it on \(\ker π\). Say we wish \(Df(x)v\) could live in some open subset \(Ω_x ⊂ F\). Assume there is a smooth compactly supported family of loops \(γ \! :E × 𝕊^1 → F\) such that each \(γ_x\) takes values in \(Ω_x\), and its average value \(\overline{γ}_x = \int _{𝕊^1} γ_x\) is \(Df(x)v\) for all \(x\). Obviously such loops can exist only if \(Df(x)v\) is in the convex hull of \(Ω_x\), and we saw in the previous chapter that this is almost sufficient (and we’ll see this is sufficiently almost sufficient for our purposes). Then we can modify \(f\) to fulfil our wish using the following construction. </p>
 <p><div class="definition_thmwrapper" id="def:corrugation">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -147,7 +147,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/corrugation.lean#L34">corrugate</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/corrugation.lean#L34">corrugate</a></li>
         </ul>
 
       </div>
@@ -202,8 +202,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/corrugation.lean#L325">theilliere</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/corrugation.lean#L333">corrugation_data.relative</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/corrugation.lean#L325">theilliere</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/corrugation.lean#L333">corrugation_data.relative</a></li>
         </ul>
 
       </div>
@@ -212,17 +212,17 @@
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>   Let \(f\) be a \(\mathcal{C}^1\) function from \(E\) to \(F\). Let \((π, v)\) be a dual pair on \(E\). Let \(γ \! :E × 𝕊^1 → F\) be a compactly supported \(\mathcal{C}^1\) family of loops. Assume that \(\overline{γ_x} = Df(x)v\) for all \(x\) in some set \(U\). </p>
-<p>For any positive \(ε\), the function \(f'\) obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with large enough oscillation number \(N\) satisfies: </p>
+  <p>   Let \(f\) be a \(\mathcal{C}^1\) function from \(E\) to \(F\). Let \((π, v)\) be a dual pair on \(E\). Let \(γ \! :E × 𝕊^1 → F\) be a \(\mathcal{C}^1\) family of loops such that \(\overline{γ_x} = Df(x)v\) for all \(x\). </p>
+<p>For any compact set \(K ⊂ E\) and any positive \(ε\), the function \(f'\) obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with large enough oscillation number \(N\) satisfies: </p>
 <ol class="enumerate">
-  <li><p> \(∀ x, ‖f'(x) - f(x)‖ ≤ ε\) </p>
+  <li><p> \(∀ x ∈ K, ‖f'(x) - f(x)‖ ≤ ε\) </p>
 </li>
-  <li><p> \(∀ x, ‖(Df'(x) - Df(x))_{|\ker π}‖ ≤ ε\). </p>
+  <li><p> \(∀ x ∈ K, ‖(Df'(x) - Df(x))_{|\ker π}‖ ≤ ε\). </p>
 </li>
-  <li><p> \(∀ x ∈ U, ‖Df'(x)v - γ(x, Nπ(x))‖ ≤ ε\) </p>
+  <li><p> \(∀ x ∈ K, ‖Df'(x)v - γ(x, Nπ(x))‖ ≤ ε\) </p>
 </li>
 </ol>
-<p> In addition, all the differences estimated above vanish if \(x\) is outside the support of \(γ\) (in addition to being in \(U\) in the last estimate). </p>
+<p> In addition, all the differences estimated above vanish if \(x\) is outside the support of \(γ\). </p>
 
   </div>
 </div> </p>
@@ -262,7 +262,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L252">rel_loc.formal_sol.is_part_holonomic_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L252">rel_loc.formal_sol.is_part_holonomic_at</a></li>
         </ul>
 
       </div>
@@ -293,7 +293,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L108">rel_loc</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L108">rel_loc</a></li>
         </ul>
 
       </div>
@@ -340,7 +340,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L155">rel_loc.formal_sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L155">rel_loc.formal_sol</a></li>
         </ul>
 
       </div>
@@ -349,7 +349,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   A formal solution of a differential relation \(\mathcal{R}\) over \(U ⊂ E\) is a map \(\mathcal{F}= (f, φ) \! :E → F × \operatorname{Hom}(E, F)\) such that, for every \(x\) in \(U\), \((x, f(x), φ(x))\) is in \(\mathcal{R}\). </p>
+  <p>   A formal solution of a differential relation \(\mathcal{R}\) is a map \(\mathcal{F}= (f, φ) \! :E → F × \operatorname{Hom}(E, F)\) such that, for every \(x\), \((x, f(x), φ(x))\) is in \(\mathcal{R}\). </p>
 
   </div>
 </div> </p>
@@ -372,7 +372,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L297">htpy_jet_sec</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L297">htpy_jet_sec</a></li>
         </ul>
 
       </div>
@@ -381,11 +381,11 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A homotopy of \(1\)-jet sections over \(U\) is a map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\) which is smooth over \([0, 1] × U\). </p>
+  <p>  A \(1\)-jet section from \(E\) to \(F\) is a function from \(E\) to \(F × \operatorname{Hom}(E, F)\). A homotopy of \(1\)-jet sections is a smooth map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\). </p>
 
   </div>
 </div> </p>
-<p>Typically, \(x ↦ \mathcal{F}(t, x)\) will be denoted by \(\mathcal{F}_t\). </p>
+<p>Typically, \(x ↦ \mathcal{F}(t, x)\) will be denoted by \(\mathcal{F}_t\). It could seem more natural to take \([0, 1] × E\) as the source of a homotopy but this would be less convenient for formalization and wouldn’t change anything since any map from \(ℝ × E\) can be restricted to \([0, 1] × E\) and every map from \([0, 1] × E\) could be extended. </p>
 <p><div class="definition_thmwrapper" id="def:rel_slice">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
@@ -419,7 +419,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L119">rel_loc.slice</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L119">rel_loc.slice</a></li>
         </ul>
 
       </div>
@@ -455,9 +455,9 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L72">dual_pair'.update_ker_pi</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L81">dual_pair'.update_v</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L268">rel_loc.jet_sec.mem_slice</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L72">dual_pair'.update_ker_pi</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L81">dual_pair'.update_v</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L268">rel_loc.jet_sec.mem_slice</a></li>
         </ul>
 
       </div>
@@ -517,7 +517,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L278">rel_loc.formal_sol.is_short_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L278">rel_loc.formal_sol.is_short_at</a></li>
         </ul>
 
       </div>
@@ -526,7 +526,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) over \(U\) is \((π, v)\)–short if, for every \(x\) in \(U\), \(Df(x)v\) belonds to the interior of the convex hull of \(\operatorname{Conn}_{φ(v)}\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
+  <p>   A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) is \((π, v)\)–short if, for every \(x\), \(Df(x)v\) belonds to the interior of the convex hull of \(\operatorname{Conn}_{φ(v)}\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
 
   </div>
 </div> </p>
@@ -567,11 +567,11 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L330">step_landscape.improve_step_rel_t_eq_0</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L367">step_landscape.improve_step_rel_C</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L342">step_landscape.improve_step_rel_compl_K₁</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L385">step_landscape.improve_step_c0_close</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L412">step_landscape.improve_step_hol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L330">step_landscape.improve_step_rel_t_eq_0</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L367">step_landscape.improve_step_rel_C</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L342">step_landscape.improve_step_rel_compl_K₁</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L385">step_landscape.improve_step_c0_close</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L412">step_landscape.improve_step_hol</a></li>
         </ul>
 
       </div>
@@ -580,12 +580,12 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a subset of \(U\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
-<p>Assume \(\mathcal{R}\) is open over \(U\). Assume that \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), \((π, v)\)–short over \(U\), and holonomic near \(C\). Then there is a homotopy \(\mathcal{F}_t\) such that: </p>
+  <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\). Let \(K_1 ⊂ E\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a closed subset of \(E\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
+<p>Assume \(\mathcal{R}\) is open. Assume that \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), \((π, v)\)–short, and holonomic near \(C\). Then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
   <li><p>\(\mathcal{F}_0 = \mathcal{F}\)&#160;; </p>
 </li>
-  <li><p>\(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) over \(U\) for all \(t\)&#160;; </p>
+  <li><p>\(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) for all \(t\)&#160;; </p>
 </li>
   <li><p>\(\mathcal{F}_t(x) = \mathcal{F}(x)\) for all \(t\) when \(x\) is near \(C\) or outside \(K_1\)&#160;; </p>
 </li>
@@ -605,7 +605,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>  We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short over \(U\), <a href="chap-loops.html#prop:loops">proposition 1.3</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\) in \(U\): </p>
+  <p>  We denote the components of \(F\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short, <a href="chap-loops.html#prop:loops">proposition 1.3</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\): </p>
 <ul class="itemize">
   <li><p>\(∀ t\,  s,\;  γ^t_x(s) ∈ \mathcal{R}(\mathcal{F}(x), π, v)\) </p>
 </li>
@@ -617,7 +617,7 @@
 </li>
 </ul>
 <p> Let \(ρ: E → ℝ\) be a smooth cut-off function which equals one on a neighborhood of \(K_0\) and whose support is contained in \(K_1\). </p>
-<p>Let \(N\) be a positive real number. Let \(\bar f\) be the corrugated map constructed from \(f\), \(γ^1\) and \(N\). <a href="chap-local.html#prop:theilliere">Proposition 2.3</a> ensures that, for all \(x\) in \(U\), </p>
+<p>Let \(N\) be a positive real number. Let \(\bar f\) be the corrugated map constructed from \(f\), \(γ^1\) and \(N\). <a href="chap-local.html#prop:theilliere">Proposition 2.3</a> ensures that, for all \(x\), </p>
 <div class="displaymath" id="a0000000055">
   \[  D\bar f(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x  \]
 </div>
@@ -634,11 +634,11 @@
 <p>When \(x\) is near \(C\), \(Df(x) = φ(x)\) since \(\mathcal{F}\) is holonomic near \(C\). In addition, \(γ^t_x(s) = φ(x)v\) for all \(s\) and \(t\), hence \(B_x\) vanishes. Hence \(\mathcal{F}_t(x) = \mathcal{F}(x)\) for all \(t\) when \(x\) is near \(C\). </p>
 <p>Outside of \(K_1\), \(ρ\) vanishes. Hence \(f_t(x) = f(x)\) for all \(t\), and \(γ^{tρ(x)}_x(s) = φ(x)v\) for all \(s\) and \(t\), and \(φ_t(x) = φ(x)\). </p>
 <p>The distance between \(f(x)\) and \(f_t(x)\) is zero outside of \(K_1\) which is compact, and \(O\left(1/N\right)\), so it is less than \(ε\) for \(N\) large enough. </p>
-<p>We now turn to the interesting parts. The first one is that each \(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) over \(U\). We already now that \(\mathcal{F}_t\) coincides with \(\mathcal{F}\), which is a formal solution, outside of the compact set \(K_1\). We set </p>
+<p>We now turn to the interesting parts. The first one is that each \(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\). We already now that \(\mathcal{F}_t\) coincides with \(\mathcal{F}\), which is a formal solution, outside of the compact set \(K_1\). We set </p>
 <div class="displaymath" id="a0000000058">
   \[  \mathcal{F}'_t(x) = \left(f(x), φ(x) + \left[γ^{tρ(x)}_x(Nπ(x)) - φ(x)v\right] ⊗ π\right).  \]
 </div>
-<p> Since \(\mathcal{R}\) is open over \(U\), and \(K_1 × [0, 1]\) is compact and \(\mathcal{F}_t\) is within \(O\left(1/N\right)\) of \(\mathcal{F}'_t\), it suffices to prove that \(\mathcal{F}'_t\) is a formal solution for all \(t\). This is guaranteed by the definition of the slice \(\mathcal{R}(\mathcal{F}(x), π, v)\) to which \(γ^{tρ(x)}_x(Nπ(x))\) belongs. </p>
+<p> Since \(\mathcal{R}\) is open, and \(K_1 × [0, 1]\) is compact and \(\mathcal{F}_t\) is within \(O\left(1/N\right)\) of \(\mathcal{F}'_t\), it suffices to prove that \(\mathcal{F}'_t\) is a formal solution for all \(t\). This is guaranteed by the definition of the slice \(\mathcal{R}(\mathcal{F}(x), π, v)\) to which \(γ^{tρ(x)}_x(Nπ(x))\) belongs. </p>
 <p>Finally, let’s prove that \(\mathcal{F}_1\) is \(E' ⊕ ℝv\)–holonomic near \(K_0\). Since \(ρ = 1\) near \(K_0\), we have, for \(x\) near \(K_0\), </p>
 <div class="displaymath" id="a0000000059">
   \[  Df_1(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x,  \]
@@ -679,7 +679,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/ample.lean#L29">ample_set</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/ample.lean#L29">ample_set</a></li>
         </ul>
 
       </div>
@@ -727,7 +727,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/ample.lean#L143">ample_of_two_le_codim</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/ample.lean#L143">ample_of_two_le_codim</a></li>
         </ul>
 
       </div>
@@ -788,7 +788,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/relation.lean#L136">rel_loc.is_ample</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/relation.lean#L136">rel_loc.is_ample</a></li>
         </ul>
 
       </div>
@@ -880,11 +880,11 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L330">step_landscape.improve_step_rel_t_eq_0</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L367">step_landscape.improve_step_rel_C</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L342">step_landscape.improve_step_rel_compl_K₁</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L385">step_landscape.improve_step_c0_close</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e7898fbea5a01099948116d8da67ef35b34efd4a/src/local/h_principle.lean#L412">step_landscape.improve_step_hol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L330">step_landscape.improve_step_rel_t_eq_0</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L367">step_landscape.improve_step_rel_C</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L342">step_landscape.improve_step_rel_compl_K₁</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L385">step_landscape.improve_step_c0_close</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/e95f385ec2f60c29f0dd78138ca0459a6894b2b6/src/local/h_principle.lean#L412">step_landscape.improve_step_hol</a></li>
         </ul>
 
       </div>
@@ -893,12 +893,12 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\) over an open set \(U\). Let \(K_1 ⊂ U\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset \(C\) of \(U\). Let \(ε\) be a positive real number. </p>
-<p>If \(\mathcal{R}\) is open and ample over \(U\) then there is a homotopy \(\mathcal{F}_t\) such that: </p>
+  <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\). Let \(K_1 ⊂ E\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a subset closed \(C\) of \(E\). Let \(ε\) be a positive real number. </p>
+<p>If \(\mathcal{R}\) is open and ample then there is a homotopy \(\mathcal{F}_t\) such that: </p>
 <ol class="enumerate">
   <li><p>\(\mathcal{F}_0 = \mathcal{F}\) </p>
 </li>
-  <li><p>\(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) over \(U\) for all \(t\)&#160;; </p>
+  <li><p>\(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\) for all \(t\)&#160;; </p>
 </li>
   <li><p>\(\mathcal{F}_t(x) = \mathcal{F}(x)\) for all \(t\) when \(x\) is near \(C\) or outside \(K_1\). </p>
 </li>
@@ -919,7 +919,7 @@
   </div>
   <div class="proof_content">
   <p> This is a straightforward induction using <a href="chap-local.html#lem:integration_step">lemma 2.11</a>. Let \((e_1, \dots , e_n)\) be a basis of \(E\), and let \((π_1, \dots , π_n)\) be the dual basis. Let \(E'_i\) be the linear subspace of \(E\) spanned by \((e_1, \dots , e_i)\), for \(1 ≤ i ≤ n\), and let \(E'_0\) be the zero subspace of \(E\). Each \((π_i, e_i)\) is a dual pair and the kernel of \(π_i\) contains \(E'_{i - 1}\). </p>
-<p><a href="chap-local.html#lem:integration_step">Lemma 2.11</a> allows to build a sequence of homotopies of formal solutions, each homotopy relating a formal solution which is \(E'_i\)–holonomic to one which is \(E'_{i+1}\)–holonomic (always near \(K_0\)). The shortness condition is always satisfies because \(\mathcal{R}\) is ample over \(U\). Each homotopy starts where the previous one stopped, stay at \(C^0\) distance at most \(ε/n\), and is relative to \(C\) and the complement of \(K_1\). </p>
+<p><a href="chap-local.html#lem:integration_step">Lemma 2.11</a> allows to build a sequence of homotopies of formal solutions, each homotopy relating a formal solution which is \(E'_i\)–holonomic to one which is \(E'_{i+1}\)–holonomic (always near \(K_0\)). The shortness condition is always satisfies because \(\mathcal{R}\) is ample. Each homotopy starts where the previous one stopped, stay at \(C^0\) distance at most \(ε/n\), and is relative to \(C\) and the complement of \(K_1\). </p>
 <p>It then suffices to do a smooth concatenation of theses homotopies. We first pre-compose with a smooth map from \([0, 1]\) to itself that fixes \(0\) and \(1\) and has vanishing derivative to all orders at \(0\) and \(1\). Then we precompose by affine isomorphisms from \([0, 1]\) to \([i/n, (i + 1)/n]\) before joining them. </p>
 
   </div>
