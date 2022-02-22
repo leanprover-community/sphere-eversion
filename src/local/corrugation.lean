@@ -11,6 +11,8 @@ import notations
 
 import loops.basic
 
+notation `∂₁` := partial_fderiv_fst ℝ
+
 noncomputable theory
 
 
