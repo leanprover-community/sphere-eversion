@@ -40,8 +40,11 @@ instance {α : Type*} : has_uncurry (α → equivariant_equiv) (α × ℝ) ℝ :
   ⇑(⟨f, g, h₀, h₁, h₂, h₃⟩ : equivariant_equiv) = f :=
 rfl
 
+@[simp] lemma coe_to_equiv (e : equivariant_equiv) : (⇑(e : ℝ ≃ ℝ) : ℝ → ℝ) = e := rfl
+
 def symm (e : equivariant_equiv) : equivariant_equiv :=
-{ map_zero' := sorry,
+{ map_zero' := by rw [← (e : ℝ ≃ ℝ).apply_eq_iff_eq, equiv.to_fun_as_coe, equiv.apply_symm_apply,
+    coe_to_equiv, map_zero],
   eqv' := λ t,
   begin
     let f := (e : ℝ ≃ ℝ),
@@ -53,8 +56,15 @@ def symm (e : equivariant_equiv) : equivariant_equiv :=
   end,
   .. (e : ℝ ≃ ℝ).symm }
 
-@[simp] lemma symm_symm (e : equivariant_equiv) : e.symm.symm = e :=
+@[ext] lemma ext {e₁ e₂ : equivariant_equiv} (h : ∀ x, e₁ x = e₂ x) : e₁ = e₂ :=
 sorry
+
+@[simp] lemma symm_symm (e : equivariant_equiv) : e.symm.symm = e :=
+begin
+  ext x,
+  change (e : ℝ ≃ ℝ).symm.symm x = e x,
+  simp only [equiv.symm_symm, coe_to_equiv],
+end
 
 @[simp] lemma apply_symm_apply (e : equivariant_equiv) : ∀ x, e (e.symm x) = x :=
 (e : ℝ ≃ ℝ).apply_symm_apply
