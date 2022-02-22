@@ -83,6 +83,17 @@ lemma update_self (p : dual_pair' E) (φ : E →L[ℝ] F)  :
 by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
               continuous_linear_map.zero_comp, sub_self]
 
+lemma smooth_update (p : dual_pair' E) {G : Type*} [normed_group G] [normed_space ℝ G]
+  {φ : G → (E →L[ℝ] F)} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
+  𝒞 ∞ (λ g, p.update (φ g) (w g)) :=
+sorry
+
+lemma continuous_update (p : dual_pair' E) {X : Type*} [topological_space X]
+  {φ : X → (E →L[ℝ] F)} (hφ : continuous φ) {w : X → F} (hw : continuous w) :
+  continuous (λ g, p.update (φ g) (w g)) :=
+sorry
+
+
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair' i`
 is given by the `i`th basis element and its dual. -/
 def _root_.basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι] [decidable_eq ι]
@@ -229,6 +240,12 @@ if its linear map part at `x` is the derivative of its function part at `x` in r
 `E'`. -/
 def is_part_holonomic_at (𝓕 : jet_sec E F) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
+
+lemma _root_.filter.eventually.is_part_holonomic_at_congr {𝓕 𝓕' : jet_sec E F} {s : set E}
+  (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) (E' : submodule ℝ E) :
+  ∀ᶠ x near s, 𝓕.is_part_holonomic_at E' x ↔ 𝓕'.is_part_holonomic_at E' x :=
+sorry
+
 
 lemma is_part_holonomic_at.sup (𝓕 : jet_sec E F) {E' E'' : submodule ℝ E} {x : E}
   (h' : 𝓕.is_part_holonomic_at E' x) (h'' : 𝓕.is_part_holonomic_at E'' x) :

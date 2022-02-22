@@ -387,8 +387,8 @@ rfl
 lemma loop.continuous_diff {γ : E → loop F} (h : 𝒞 1 ↿γ) : continuous (↿(loop.diff γ)) :=
 times_cont_diff.continuous_partial_fst (h : _)
 
-lemma times_cont_diff.partial_loop {γ : E → loop F} (hγ_diff : 𝒞 1 ↿γ) :
-  ∀ t, 𝒞 1 (λ e, γ e t) :=
+lemma times_cont_diff.partial_loop {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+  ∀ t, 𝒞 n (λ e, γ e t) :=
 λ t, hγ_diff.comp ((times_cont_diff_prod_left t).of_le le_top)
 
 variables [measurable_space F] [borel_space F] [finite_dimensional ℝ F]

@@ -41,3 +41,18 @@ lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : finite (f ⁻�
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }
 
 end set
+
+lemma has_mem.mem.mul {a b : ℝ} (ha : a ∈ (set.Icc 0 1 : set ℝ)) (hb : b ∈ (set.Icc 0 1 : set ℝ)) :
+  a*b ∈ (set.Icc 0 1 : set ℝ) :=
+begin
+  rw mem_Icc at *,
+  split ; nlinarith
+end
+
+lemma int.fract.mem_Ico {α : Type*} [linear_ordered_ring α] [floor_ring α] (a : α) :
+  int.fract a ∈ (set.Ico 0 1 : set α) :=
+⟨int.fract_nonneg a, int.fract_lt_one a⟩
+
+lemma int.fract.mem_Icc {α : Type*} [linear_ordered_ring α] [floor_ring α] (a : α) :
+  int.fract a ∈ (set.Icc 0 1 : set α) :=
+Ico_subset_Icc_self (int.fract.mem_Ico a)
