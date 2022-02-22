@@ -134,7 +134,7 @@ variable (𝕜)
 def partial_fderiv_fst {F : Type*} (φ : E → F → G) :=
 λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
 
-local notation `∂₁` := partial_fderiv_fst
+notation `∂₁` := partial_fderiv_fst
 
 variable {𝕜}
 

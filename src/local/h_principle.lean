@@ -22,6 +22,7 @@ open filter set rel_loc
 variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
+          {G : Type*} [normed_group G] [normed_space ℝ G]
 
 open_locale unit_interval
 /--
@@ -167,6 +168,11 @@ lemma loop_smooth (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 
   𝒞 ∞ ↿(L.loop h) :=
 (L.nice h).smooth
 
+lemma loop_smooth' (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕)
+  {t : G → ℝ} (ht : 𝒞 ∞ t) {s : G → ℝ} (ht : 𝒞 ∞ s) {x : G → E} (hx : 𝒞 ∞ x) :
+  𝒞 ∞ (λ g, L.loop h (t g) (x g) (s g)) :=
+sorry
+
 lemma loop_C1 (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ∀ t, 𝒞 1 ↿(L.loop h t) :=
 sorry
@@ -212,10 +218,23 @@ def improve_step (𝓕 : formal_sol R) (N : ℝ) : htpy_jet_sec E F :=
 if h : L.accepts R 𝓕
 then
   { f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
-    f_diff := sorry,
-    φ := λ t x , L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
+    f_diff :=  (𝓕.f_diff.comp times_cont_diff_snd).add $
+    ((smooth_step.smooth.comp times_cont_diff_fst).mul $ L.ρ_smooth.comp times_cont_diff_snd).smul $
+    corrugation.times_cont_diff' L.π N (L.loop_smooth h) times_cont_diff_snd times_cont_diff_fst,
+    φ := λ t x, L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
                  (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
-    φ_diff := sorry }
+    φ_diff := begin
+      apply times_cont_diff.add,
+      apply L.p.smooth_update,
+      apply 𝓕.φ_diff.comp times_cont_diff_snd,
+      apply L.loop_smooth',
+      exact (smooth_step.smooth.comp times_cont_diff_fst).mul (L.ρ_smooth.comp times_cont_diff_snd),
+      apply times_cont_diff_const.mul (L.π.times_cont_diff.comp times_cont_diff_snd),
+      exact times_cont_diff_snd,
+      apply times_cont_diff.smul,
+      exact (smooth_step.smooth.comp times_cont_diff_fst).mul (L.ρ_smooth.comp times_cont_diff_snd),
+      exact remainder.smooth _ _ (L.loop_smooth h) times_cont_diff_snd times_cont_diff_const
+    end }
 else
   𝓕.to_jet_sec.const_htpy
 
@@ -373,24 +392,46 @@ begin
                sub_self, norm_zero, ε_pos.le] },
 end
 
+
 lemma improve_step_hol {N : ℝ} (hN : N ≠ 0)
   (h_op : is_open R)
   (h_part_hol : ∀ᶠ x near L.K₀, 𝓕.is_part_holonomic_at L.E' x)
   (h_short : ∀ x, 𝓕.is_short_at L.p x)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∀ᶠ x near L.K₀, (L.improve_step 𝓕 N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
--- use is_part_holonomic_at.sup
 begin
   -- FIXME: why not assuming `L.accepts R 𝓕` in all those lemmmas?
   have h : L.accepts R 𝓕, from ⟨h_op, h_part_hol, h_short, h_hol⟩,
+  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (times_cont_diff_prod_mk 1)).of_le le_top,
   let 𝓕' : jet_sec E F :=
   { f := λ x, 𝓕.f x + corrugation L.π N (L.loop h 1) x,
-    f_diff := sorry,
+    f_diff := 𝓕.f_diff.add
+     (corrugation.times_cont_diff' _ _ (L.loop_smooth h) times_cont_diff_id times_cont_diff_const),
     φ := λ x , L.p.update (𝓕.φ x) (L.loop h 1 x $ N * L.π x) +
                corrugation.remainder L.p.π N (L.loop h 1) x,
-    φ_diff := sorry },
+    φ_diff := begin
+      apply times_cont_diff.add,
+      apply L.p.smooth_update,
+      apply 𝓕.φ_diff,
+      apply L.loop_smooth',
+      apply times_cont_diff_const,
+      apply times_cont_diff_const.mul L.π.times_cont_diff,
+      exact times_cont_diff_id,
+      exact remainder.smooth _ _ (L.loop_smooth h) times_cont_diff_id times_cont_diff_const
+    end },
   have H : ∀ᶠ x near L.K₀, L.improve_step 𝓕 N 1 x = 𝓕' x,
-  sorry,
+  { apply L.hρ₀.mono,
+    intros x hx,
+    simp [L.improve_step_apply h, hx],
+    refl },
+  have fderiv_𝓕' : ∀ x u, D 𝓕'.f x u = D 𝓕.f x u +
+  ((L.π u) • (L.loop h 1 x (N * L.π x) - (L.loop h 1 x).average)  +
+     corrugation.remainder L.π N (L.loop h 1) x u),
+  { intros x u,
+    dsimp [𝓕'],
+    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.times_cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply,
+         corrugation.fderiv_eq L.π N hN γ_C1, continuous_linear_map.add_apply],
+    refl },
   rw eventually_congr (H.is_part_holonomic_at_congr (L.E' ⊔ L.p.span_v)),
   apply h_part_hol.mono,
   intros x hx,
@@ -399,18 +440,20 @@ begin
     have hu_ker := L.hEp hu,
     specialize hx u hu,
     dsimp [𝓕'],
-    erw [fderiv_add, continuous_linear_map.add_apply, hx, L.p.update_ker_pi _ _ hu_ker,
-         corrugation.fderiv_eq N hN, continuous_linear_map.add_apply],
-    have : (((L.loop h 1 x) (N * L.π x) - (L.loop h 1 x).average) ⬝ D L.π x) u = 0,
-    sorry ; { simp [show (L.π) u = 0, from linear_map.mem_ker.mp hu_ker] },
+    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.times_cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply, hx, L.p.update_ker_pi _ _ hu_ker,
+         corrugation.fderiv_eq L.π N hN γ_C1, continuous_linear_map.add_apply],
+    have : (((L.loop h 1 x) (N * L.π x) - (L.loop h 1 x).average) ⬝ L.π) u = 0,
+    { simp [show (L.π) u = 0, from linear_map.mem_ker.mp hu_ker] },
     rw [this, zero_add],
-    refl,
-    all_goals { sorry } },
-  sorry ; { intros u hu,
+    refl },
+  { intros u hu,
     rcases submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩,
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul],
     congr' 1,
-    sorry },
+    erw [fderiv_𝓕', L.p.pairing, one_smul],
+    dsimp [𝓕'],
+    rw [L.p.update_v, L.loop_avg h, step_landscape.g, step_landscape.v],
+    abel }
 end
 
 lemma improve_step_sol
