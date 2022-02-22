@@ -57,8 +57,11 @@ begin
   exact nmem_support.mpr (h2x.fderiv_eq.trans $ fderiv_const_apply 0),
 end
 
+variables (𝕜)
 lemma has_compact_support.fderiv (hf : has_compact_support f) : has_compact_support (fderiv 𝕜 f) :=
 hf.mono' support_fderiv_subset
+variables {𝕜}
+
 
 lemma support_deriv_subset : support (deriv f₂) ⊆ tsupport f₂ :=
 begin
