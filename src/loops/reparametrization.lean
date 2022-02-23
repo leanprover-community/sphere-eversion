@@ -124,6 +124,10 @@ lemma centering_density_smooth :
   𝒞 ∞ ↿γ.centering_density :=
 sorry
 
+@[simp] lemma average_centering_density :
+  ∫ s in 0..1, (γ.centering_density x s) • (γ x s) = g x :=
+sorry
+
 lemma centering_density_continuous :
   continuous (γ.centering_density x) :=
 begin
@@ -133,11 +137,7 @@ end
 
 lemma centering_density_interval_integrable (t₁ t₂ : ℝ) :
   interval_integrable (γ.centering_density x) measure_theory.measure_space.volume t₁ t₂ :=
-sorry
-
-@[simp] lemma average_centering_density :
-  ∫ s in 0..1, (γ.centering_density x s) • (γ x s) = g x :=
-sorry
+(γ.centering_density_continuous x).interval_integrable t₁ t₂
 
 -- Prove for any measure `μ` with `[is_finite_measure_on_compacts μ] [is_open_pos_measure μ]`?
 lemma strict_mono_integral_centering_density :
