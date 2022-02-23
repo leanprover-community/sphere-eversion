@@ -56,8 +56,12 @@ def symm (e : equivariant_equiv) : equivariant_equiv :=
   end,
   .. (e : ℝ ≃ ℝ).symm }
 
+instance : equiv_like equivariant_equiv ℝ ℝ :=
+{ coe := to_fun, inv := inv_fun, left_inv := left_inv, right_inv := right_inv,
+  coe_injective' := λ e₁ e₂ h₁ h₂, by { cases e₁, cases e₂, congr', } }
+
 @[ext] lemma ext {e₁ e₂ : equivariant_equiv} (h : ∀ x, e₁ x = e₂ x) : e₁ = e₂ :=
-sorry
+fun_like.ext e₁ e₂ h
 
 @[simp] lemma symm_symm (e : equivariant_equiv) : e.symm.symm = e :=
 begin
