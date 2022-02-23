@@ -201,14 +201,6 @@ rfl
   ∫ s in 0..(γ.reparametrize x t), γ.centering_density x s = t :=
 by simp [← reparametrize_symm_apply]
 
-@[simp] lemma reparametrize_map_zero :
-  γ.reparametrize x 0 = 0 :=
-equivariant_equiv.map_zero _
-
-@[simp] lemma reparametrize_map_one :
-  γ.reparametrize x 1 = 1 :=
-equivariant_equiv.map_one _
-
 lemma has_deriv_at_reparametrize_symm (s : ℝ) :
   has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
 integral_has_deriv_at_right
