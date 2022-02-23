@@ -77,41 +77,40 @@ end
 
 end equivariant_equiv
 
+/-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
+@[simps {simp_rhs := tt}]
+def loop.reparam {F : Type*} (γ : loop F) (φ : equivariant_equiv) : loop F :=
+{ to_fun := γ ∘ φ,
+  per' := λ t, by rw [comp_apply, φ.eqv, γ.per] }
+
 variables {E F : Type*}
 variables [normed_group E] [normed_space ℝ E]
 variables [normed_group F] [normed_space ℝ F]
 variables [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
-variables {g b : E → F}
-
-/-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
-@[simps {simp_rhs := tt}]
-def loop.reparam (γ : loop F) (φ : equivariant_equiv) : loop F :=
-{ to_fun := γ ∘ φ,
-  per' := λ t, by rw [comp_apply, φ.eqv, γ.per] }
 
 section smooth_surrounding_family
 
-variables (g)
-
-structure smooth_surrounding_family :=
+structure smooth_surrounding_family (g : E → F) :=
 (to_fun : E → loop F)
 (smooth : 𝒞 ∞ ↿to_fun)
 (surrounds : ∀ x, (to_fun x).surrounds $ g x)
 
-variables {g}
-
 namespace smooth_surrounding_family
+
+variables {g : E → F} (γ : smooth_surrounding_family g) (x : E)
 
 instance : has_coe_to_fun (smooth_surrounding_family g) (λ _, E → loop F) := ⟨to_fun⟩
 
-variables (γ : smooth_surrounding_family g) (x : E)
-include γ
-
 protected lemma continuous : continuous (γ x) :=
-sorry
+begin
+  apply continuous_uncurry_left x,
+  exact γ.smooth.continuous,
+end
 
+include γ
 def centering_density : E → ℝ → ℝ :=
 sorry
+omit γ
 
 lemma centering_density_pos (t : ℝ) :
   0 < γ.centering_density x t :=
@@ -125,9 +124,12 @@ lemma centering_density_smooth :
   𝒞 ∞ ↿γ.centering_density :=
 sorry
 
-lemma centering_density_continuous (t : ℝ) :
-  continuous_at (γ.centering_density x) t :=
-sorry
+lemma centering_density_continuous :
+  continuous (γ.centering_density x) :=
+begin
+  apply continuous_uncurry_left x,
+  exact γ.centering_density_smooth.continuous,
+end
 
 lemma centering_density_interval_integrable (t₁ t₂ : ℝ) :
   interval_integrable (γ.centering_density x) measure_theory.measure_space.volume t₁ t₂ :=
@@ -182,7 +184,8 @@ lemma has_deriv_at_reparametrize_symm (s : ℝ) :
 begin
   simp only [coe_reparametrize_symm],
   convert interval_integral.integral_has_deriv_at_right
-    (γ.centering_density_interval_integrable x 0 s) _ (γ.centering_density_continuous x s),
+    (γ.centering_density_interval_integrable x 0 s) _
+    (γ.centering_density_continuous x).continuous_at,
   sorry,
 end
 
@@ -199,7 +202,7 @@ begin
     s ∈ interval 0 (1 : ℝ) → has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
     λ s hs, γ.has_deriv_at_reparametrize_symm x s,
   have h₂ : continuous_on (λ s, γ.centering_density x s) (interval 0 1) :=
-    λ s hs, (γ.centering_density_continuous x s).continuous_within_at,
+    (γ.centering_density_continuous x).continuous_on,
   have h₃ : continuous (λ s, γ x (γ.reparametrize x s)) :=
     (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous),
   rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one,
