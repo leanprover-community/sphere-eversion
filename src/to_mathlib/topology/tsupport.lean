@@ -10,44 +10,10 @@ open_locale pointwise topological_space
 
 variables {X α α' β γ δ M E : Type*}
 
-section monoid
-
-variables [topological_space α] [monoid_with_zero β] [add_monoid γ] [distrib_mul_action β γ]
-variables {f : α → β} {f' : α → γ} {x : α}
-
-lemma has_compact_support.smul (hf : has_compact_support f)
-  (hf' : has_compact_support f') : has_compact_support (f • f') :=
-by apply hf.comp₂_left hf' (smul_zero 0) -- `by apply` speeds up elaboration
-
-end monoid
-
-section monoid_with_zero
-
-variables [topological_space α] [mul_zero_class β]
-variables {f f' : α → β} {x : α}
-
-@[to_additive]
-lemma has_compact_support.mul (hf : has_compact_support f)
-  (hf' : has_compact_support f') : has_compact_support (f * f') :=
-by apply hf.comp₂_left hf' (mul_zero 0) -- `by apply` speeds up elaboration
-
-end monoid_with_zero
-
 section order
 
 variables [conditionally_complete_linear_order α] [topological_space α]
   [order_topology α] [topological_space β]
-
--- topology.algebra.ordered.compact
-
--- better proof
-lemma continuous.exists_forall_le'' [nonempty β] {f : β → α}
-  (hf : continuous f) (hlim : tendsto f (cocompact β) at_top) :
-  ∃ x, ∀ y, f x ≤ f y :=
-by { inhabit β, exact hf.exists_forall_le' default (hlim.eventually $ eventually_ge_at_top _) }
-
-
-
 variables [topological_space X] [normed_group E]
 
 
