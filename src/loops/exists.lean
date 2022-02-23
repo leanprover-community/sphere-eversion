@@ -63,7 +63,7 @@ open measure_theory measure_theory.measure
   (hK : is_compact K) (hC : is_closed C) (hU : is_open U) (hKC : K ⊆ C) (hCU : C ⊆ U)
   (hΩ_op : is_open $ Ω ∩ fst ⁻¹' U)
   (hΩ_conn : ∀ x ∈ C, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : ∀ x ∈ U, smooth_at g x) (hb : times_cont_diff ℝ ⊤ b) (hb_in : ∀ x ∈ C, (x, b x) ∈ Ω)
+  (hg : ∀ x ∈ U, smooth_at g x) (hb : cont_diff ℝ ⊤ b) (hb_in : ∀ x ∈ C, (x, b x) ∈ Ω)
   (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x ∈ C, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
   ∃ γ : ℝ → E → loop F, nice_loop g b Ω C K γ :=
 begin
@@ -93,7 +93,7 @@ begin
     (λ x hx, (hg x (hCU hx)).continuous_at) hb.continuous hb_in hconv hγ₁,
   let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
   let φ : E × ℝ × ℝ → ℝ :=
-  (⟨⟨1 / 8, 1 / 4, by norm_num, by norm_num⟩⟩ : times_cont_diff_bump (0 : E × ℝ × ℝ)),
+  (⟨⟨1 / 8, 1 / 4, by norm_num, by norm_num⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)),
   let γ₄ := ↿γ₃,
   let γ₅ : E × ℝ × ℝ → F := φ ⋆ γ₄,
   let γ₆ : ℝ → E → loop F,

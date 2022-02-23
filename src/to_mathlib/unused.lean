@@ -83,7 +83,7 @@ section lift
 
 open topological_space
 /-! We used the below lemmas about ulift to remove a universe restriction in
-`times_cont_diff_parametric_primitive_of_times_cont_diff`.
+`cont_diff_parametric_primitive_of_cont_diff`.
 Due to a new proof that is not necessary anymore. -/
 
 universe variables v u
@@ -158,17 +158,17 @@ def continuous_linear_equiv.ulift (R M : Type*) [semiring R] [topological_space 
   [add_comm_monoid M] [module R M] : ulift.{v} M ≃L[R] M :=
 { ..linear_equiv.ulift R M, ..homeomorph.ulift }
 
-lemma times_cont_diff_up {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
-  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@up X) :=
-(continuous_linear_equiv.ulift F X).symm.times_cont_diff
+lemma cont_diff_up {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] {n : with_top ℕ} : cont_diff F n (@up X) :=
+(continuous_linear_equiv.ulift F X).symm.cont_diff
 
-lemma times_cont_diff_down {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
-  [normed_space F X] {n : with_top ℕ} : times_cont_diff F n (@down X) :=
-(continuous_linear_equiv.ulift F X).times_cont_diff
+lemma cont_diff_down {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+  [normed_space F X] {n : with_top ℕ} : cont_diff F n (@down X) :=
+(continuous_linear_equiv.ulift F X).cont_diff
 
-lemma times_cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_group X]
+lemma cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_group X]
   [normed_space F X] [normed_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
-  times_cont_diff F n (λ x, up (f x)) ↔ times_cont_diff F n f :=
-(continuous_linear_equiv.ulift F Y).symm.comp_times_cont_diff_iff
+  cont_diff F n (λ x, up (f x)) ↔ cont_diff F n f :=
+(continuous_linear_equiv.ulift F Y).symm.comp_cont_diff_iff
 
 end lift

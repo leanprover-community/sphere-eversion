@@ -164,21 +164,21 @@ end
 
 variables {π} {γ}
 
-lemma corrugation.times_cont_diff {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+lemma corrugation.cont_diff {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
   𝒞 n (𝒯 N γ) :=
 begin
-  apply times_cont_diff.const_smul,
-  apply times_cont_diff_parametric_primitive_of_times_cont_diff _ (π.times_cont_diff.const_smul N) 0,
-  exact times_cont_diff_sub_average hγ_diff
+  apply cont_diff.const_smul,
+  apply cont_diff_parametric_primitive_of_cont_diff _ (π.cont_diff.const_smul N) 0,
+  exact cont_diff_sub_average hγ_diff
 end
 
-lemma corrugation.times_cont_diff' {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 n ↿γ)
+lemma corrugation.cont_diff' {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 n ↿γ)
   {x : H → E} (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) :
   𝒞 n (λ h, 𝒯 N (γ $ g h) $ x h) :=
 sorry
 
 -- The next lemma is probably useless except maybe for the following one
-lemma remainder.times_cont_diff {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 (n+1) ↿γ)
+lemma remainder.cont_diff {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 (n+1) ↿γ)
   {x : H → E} (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 (n+1) g) :
   𝒞 n (λ h, R N (γ $ g h) $ x h) :=
 sorry
@@ -192,10 +192,10 @@ lemma corrugation.fderiv_eq (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) :
   D (𝒯 N γ) = λ x : E, (γ x (N*π x) - (γ x).average) ⬝ π + R N γ x :=
 begin
   ext1 x₀,
-  have hπ_diff := π.times_cont_diff,
-  have diff := times_cont_diff_sub_average hγ_diff,
+  have hπ_diff := π.cont_diff,
+  have diff := cont_diff_sub_average hγ_diff,
   have key :=
-    (has_fderiv_at_parametric_primitive_of_times_cont_diff' diff (hπ_diff.const_smul N) x₀ 0).2,
+    (has_fderiv_at_parametric_primitive_of_cont_diff' diff (hπ_diff.const_smul N) x₀ 0).2,
   erw [fderiv_const_smul key.differentiable_at,
        key.fderiv,
        smul_add, add_comm],
@@ -287,7 +287,7 @@ d.hγ_diff.of_le le_top
 
 lemma corrugation_data.C1_corrugation {f : E → F} {U : set E} (d : corrugation_data f U) (N : ℝ) :
   𝒞 1 (corrugation d.π N d.γ) :=
-corrugation.times_cont_diff d.π N d.C1_γ
+corrugation.cont_diff d.π N d.C1_γ
 
 lemma corrugation_data.Dfun {f : E → F} {U : set E} (d : corrugation_data f U) (hf : 𝒞 1 f) (N : ℝ) :
   D(d.fun N) = D f + D (corrugation d.π N d.γ) :=

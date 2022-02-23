@@ -218,22 +218,22 @@ def improve_step (𝓕 : formal_sol R) (N : ℝ) : htpy_jet_sec E F :=
 if h : L.accepts R 𝓕
 then
   { f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
-    f_diff :=  (𝓕.f_diff.comp times_cont_diff_snd).add $
-    ((smooth_step.smooth.comp times_cont_diff_fst).mul $ L.ρ_smooth.comp times_cont_diff_snd).smul $
-    corrugation.times_cont_diff' L.π N (L.loop_smooth h) times_cont_diff_snd times_cont_diff_fst,
+    f_diff :=  (𝓕.f_diff.comp cont_diff_snd).add $
+    ((smooth_step.smooth.comp cont_diff_fst).mul $ L.ρ_smooth.comp cont_diff_snd).smul $
+    corrugation.cont_diff' L.π N (L.loop_smooth h) cont_diff_snd cont_diff_fst,
     φ := λ t x, L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
                  (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
     φ_diff := begin
-      apply times_cont_diff.add,
+      apply cont_diff.add,
       apply L.p.smooth_update,
-      apply 𝓕.φ_diff.comp times_cont_diff_snd,
+      apply 𝓕.φ_diff.comp cont_diff_snd,
       apply L.loop_smooth',
-      exact (smooth_step.smooth.comp times_cont_diff_fst).mul (L.ρ_smooth.comp times_cont_diff_snd),
-      apply times_cont_diff_const.mul (L.π.times_cont_diff.comp times_cont_diff_snd),
-      exact times_cont_diff_snd,
-      apply times_cont_diff.smul,
-      exact (smooth_step.smooth.comp times_cont_diff_fst).mul (L.ρ_smooth.comp times_cont_diff_snd),
-      exact remainder.smooth _ _ (L.loop_smooth h) times_cont_diff_snd times_cont_diff_const
+      exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
+      apply cont_diff_const.mul (L.π.cont_diff.comp cont_diff_snd),
+      exact cont_diff_snd,
+      apply cont_diff.smul,
+      exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
+      exact remainder.smooth _ _ (L.loop_smooth h) cont_diff_snd cont_diff_const
     end }
 else
   𝓕.to_jet_sec.const_htpy
@@ -375,7 +375,7 @@ begin
   by_cases h : L.accepts R 𝓕,
   { set γ := L.loop h,
     have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
-    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (times_cont_diff_prod_mk 1)).of_le le_top,
+    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
     apply ((corrugation.c0_small_on L.π L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
          remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
     rintros N ⟨H, H'⟩ x t,
@@ -402,22 +402,22 @@ lemma improve_step_hol {N : ℝ} (hN : N ≠ 0)
 begin
   -- FIXME: why not assuming `L.accepts R 𝓕` in all those lemmmas?
   have h : L.accepts R 𝓕, from ⟨h_op, h_part_hol, h_short, h_hol⟩,
-  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (times_cont_diff_prod_mk 1)).of_le le_top,
+  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
   let 𝓕' : jet_sec E F :=
   { f := λ x, 𝓕.f x + corrugation L.π N (L.loop h 1) x,
     f_diff := 𝓕.f_diff.add
-     (corrugation.times_cont_diff' _ _ (L.loop_smooth h) times_cont_diff_id times_cont_diff_const),
+     (corrugation.cont_diff' _ _ (L.loop_smooth h) cont_diff_id cont_diff_const),
     φ := λ x , L.p.update (𝓕.φ x) (L.loop h 1 x $ N * L.π x) +
                corrugation.remainder L.p.π N (L.loop h 1) x,
     φ_diff := begin
-      apply times_cont_diff.add,
+      apply cont_diff.add,
       apply L.p.smooth_update,
       apply 𝓕.φ_diff,
       apply L.loop_smooth',
-      apply times_cont_diff_const,
-      apply times_cont_diff_const.mul L.π.times_cont_diff,
-      exact times_cont_diff_id,
-      exact remainder.smooth _ _ (L.loop_smooth h) times_cont_diff_id times_cont_diff_const
+      apply cont_diff_const,
+      apply cont_diff_const.mul L.π.cont_diff,
+      exact cont_diff_id,
+      exact remainder.smooth _ _ (L.loop_smooth h) cont_diff_id cont_diff_const
     end },
   have H : ∀ᶠ x near L.K₀, L.improve_step 𝓕 N 1 x = 𝓕' x,
   { apply L.hρ₀.mono,
@@ -429,7 +429,7 @@ begin
      corrugation.remainder L.π N (L.loop h 1) x u),
   { intros x u,
     dsimp [𝓕'],
-    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.times_cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply,
+    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply,
          corrugation.fderiv_eq L.π N hN γ_C1, continuous_linear_map.add_apply],
     refl },
   rw eventually_congr (H.is_part_holonomic_at_congr (L.E' ⊔ L.p.span_v)),
@@ -440,7 +440,7 @@ begin
     have hu_ker := L.hEp hu,
     specialize hx u hu,
     dsimp [𝓕'],
-    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.times_cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply, hx, L.p.update_ker_pi _ _ hu_ker,
+    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply, hx, L.p.update_ker_pi _ _ hu_ker,
          corrugation.fderiv_eq L.π N hN γ_C1, continuous_linear_map.add_apply],
     have : (((L.loop h 1 x) (N * L.π x) - (L.loop h 1 x).average) ⬝ L.π) u = 0,
     { simp [show (L.π) u = 0, from linear_map.mem_ker.mp hu_ker] },
@@ -466,7 +466,7 @@ begin
   have h : L.accepts R 𝓕, from ⟨h_op, h_part_hol, h_short, h_hol⟩,
   set γ := L.loop h,
   have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
-    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (times_cont_diff_prod_mk 1)).of_le le_top,
+    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
   set K := (λ p : E × ℝ × ℝ, (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) '' (L.K₁ ×ˢ (I ×ˢ I)),
   have K_cpt : is_compact K,
   { refine (L.hK₁.prod (is_compact_Icc.prod is_compact_Icc)).image _,

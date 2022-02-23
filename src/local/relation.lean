@@ -1,4 +1,4 @@
-import analysis.calculus.times_cont_diff
+import analysis.calculus.cont_diff
 import linear_algebra.dual
 import topology.metric_space.hausdorff_distance
 
@@ -178,7 +178,7 @@ def sol.to_formal_sol {R : rel_loc E F}  (𝓕 : sol R) : formal_sol R :=
 { f := 𝓕.f,
   f_diff := 𝓕.f_diff,
   φ := D 𝓕.f,
-  φ_diff := (times_cont_diff_top_iff_fderiv.mp 𝓕.f_diff).2,
+  φ_diff := (cont_diff_top_iff_fderiv.mp 𝓕.f_diff).2,
   is_sol := 𝓕.is_sol }
 
 end rel_loc
@@ -341,7 +341,7 @@ TODO: check that `real.smooth_transition` from mathlib already fits the bill
 -/
 def smooth_step : ℝ → ℝ := sorry
 
-lemma smooth_step.smooth : times_cont_diff ℝ ⊤ smooth_step :=
+lemma smooth_step.smooth : cont_diff ℝ ⊤ smooth_step :=
 sorry
 
 @[simp]

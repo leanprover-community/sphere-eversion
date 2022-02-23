@@ -1,6 +1,6 @@
 import analysis.normed_space.add_torsor_bases
 import analysis.convex.caratheodory
-import analysis.calculus.times_cont_diff
+import analysis.calculus.cont_diff
 import measure_theory.integral.interval_integral
 import measure_theory.measure.lebesgue
 import topology.algebra.floor_ring
@@ -370,7 +370,7 @@ section c1
 
 local notation `D` := fderiv ℝ
 local notation `∂₁` := partial_fderiv_fst ℝ
-local notation `𝒞` := times_cont_diff ℝ
+local notation `𝒞` := cont_diff ℝ
 
 variables (π : E → ℝ) (N : ℝ) (γ : E → loop F)
           (hγ : is_compact (loop.support γ))
@@ -385,11 +385,11 @@ lemma loop.diff_apply (γ : E → loop F) (e : E) (t : ℝ) : loop.diff γ e t =
 rfl
 
 lemma loop.continuous_diff {γ : E → loop F} (h : 𝒞 1 ↿γ) : continuous (↿(loop.diff γ)) :=
-times_cont_diff.continuous_partial_fst (h : _)
+cont_diff.continuous_partial_fst (h : _)
 
-lemma times_cont_diff.partial_loop {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+lemma cont_diff.partial_loop {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
   ∀ t, 𝒞 n (λ e, γ e t) :=
-λ t, hγ_diff.comp ((times_cont_diff_prod_left t).of_le le_top)
+λ t, hγ_diff.comp ((cont_diff_prod_left t).of_le le_top)
 
 variables [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
 
@@ -428,9 +428,9 @@ begin
   simpa only [loop.average, hγ_diff.fderiv_parametric_integral]
 end
 
-lemma times_cont_diff.loop_average {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+lemma cont_diff.loop_average {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
   𝒞 n (λ e, (γ e).average) :=
-times_cont_diff_parametric_integral_of_times_cont_diff hγ_diff _ _
+cont_diff_parametric_integral_of_cont_diff hγ_diff _ _
 
 lemma loop.diff_normalize {γ : E → loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
   (loop.diff γ e).normalize = loop.diff (λ e, (γ e).normalize) e :=
@@ -445,11 +445,11 @@ end
 
 variable {γ}
 
-lemma times_cont_diff_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (λ x, (γ x).average) :=
-times_cont_diff_parametric_primitive_of_times_cont_diff hγ_diff times_cont_diff_const 0
+lemma cont_diff_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (λ x, (γ x).average) :=
+cont_diff_parametric_primitive_of_cont_diff hγ_diff cont_diff_const 0
 
-lemma times_cont_diff_sub_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+lemma cont_diff_sub_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
   𝒞 n ↿(λ (x : E) (t : ℝ), (γ x) t - (γ x).average) :=
-hγ_diff.sub ((times_cont_diff_average hγ_diff).comp times_cont_diff_fst)
+hγ_diff.sub ((cont_diff_average hγ_diff).comp cont_diff_fst)
 
 end c1

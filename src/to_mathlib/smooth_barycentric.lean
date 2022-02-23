@@ -78,28 +78,28 @@ attribute [instance] normed_group normed_space
 
 -- This should really be deduced from general results about continuous multilinear maps.
 lemma smooth_det (m : with_top ℕ) :
-  times_cont_diff k m (det : matrix ι ι k → k) :=
+  cont_diff k m (det : matrix ι ι k → k) :=
 begin
-  suffices : ∀ (n : ℕ), times_cont_diff k m (det : matrix (fin n) (fin n) k → k),
+  suffices : ∀ (n : ℕ), cont_diff k m (det : matrix (fin n) (fin n) k → k),
   { have h : (det : matrix ι ι k → k) = det ∘ reindex (fintype.equiv_fin ι) (fintype.equiv_fin ι),
     { ext, simp, },
     rw h,
     apply (this (fintype.card ι)).comp,
-    exact times_cont_diff_pi.mpr (λ i, times_cont_diff_pi.mpr (λ j, times_cont_diff_apply_apply _ _)), },
+    exact cont_diff_pi.mpr (λ i, cont_diff_pi.mpr (λ j, cont_diff_apply_apply _ _)), },
   intros n,
   induction n with n ih,
   { rw coe_det_is_empty,
-    exact times_cont_diff_const, },
-  change times_cont_diff k m (λ (A : matrix (fin n.succ) (fin n.succ) k), A.det),
+    exact cont_diff_const, },
+  change cont_diff k m (λ (A : matrix (fin n.succ) (fin n.succ) k), A.det),
   simp_rw det_succ_column_zero,
-  apply times_cont_diff.sum (λ l _, _),
-  apply times_cont_diff.mul,
-  { refine times_cont_diff_const.mul _,
-    apply times_cont_diff_apply_apply, },
+  apply cont_diff.sum (λ l _, _),
+  apply cont_diff.mul,
+  { refine cont_diff_const.mul _,
+    apply cont_diff_apply_apply, },
   { apply ih.comp,
-    refine times_cont_diff_pi.mpr (λ i, times_cont_diff_pi.mpr (λ j, _)),
+    refine cont_diff_pi.mpr (λ i, cont_diff_pi.mpr (λ j, _)),
     simp only [minor_apply],
-    apply times_cont_diff_apply_apply, },
+    apply cont_diff_apply_apply, },
 end
 
 end matrix
@@ -110,35 +110,35 @@ variables (ι 𝕜 F : Type*)
 variables [fintype ι] [decidable_eq ι] [nondiscrete_normed_field 𝕜] [complete_space 𝕜]
 variables [normed_group F] [normed_space 𝕜 F]
 
--- An alternative approach would be to prove the affine version of `times_cont_diff_at_map_inverse`
+-- An alternative approach would be to prove the affine version of `cont_diff_at_map_inverse`
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 lemma smooth_barycentric [∀ v, decidable (v ∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
   (h : fintype.card ι = finite_dimensional.finrank 𝕜 F + 1) :
-  times_cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (@univ F ×ˢ (affine_bases ι 𝕜 F)) :=
+  cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (@univ F ×ˢ (affine_bases ι 𝕜 F)) :=
 begin
   obtain ⟨b : affine_basis ι 𝕜 F⟩ := affine_basis.exists_affine_basis_of_finite_dimensional h,
-  simp_rw [uncurry_def, times_cont_diff_on_pi, eval_barycentric_coords_eq_det 𝕜 b],
+  simp_rw [uncurry_def, cont_diff_on_pi, eval_barycentric_coords_eq_det 𝕜 b],
   intros i,
   simp only [algebra.id.smul_eq_mul, pi.smul_apply, matrix.cramer_transpose_apply],
-  have h_snd : times_cont_diff 𝕜 ⊤ (λ (x : F × (ι → F)), b.to_matrix x.snd),
-  { refine times_cont_diff.comp _ times_cont_diff_snd,
-    refine times_cont_diff_pi.mpr (λ j, times_cont_diff_pi.mpr (λ j', _)),
-    exact (smooth_barycentric_coord b j').comp (times_cont_diff_apply j), },
-  apply times_cont_diff_on.mul,
-  { apply ((matrix.smooth_det ι 𝕜 ⊤).comp h_snd).times_cont_diff_on.inv,
+  have h_snd : cont_diff 𝕜 ⊤ (λ (x : F × (ι → F)), b.to_matrix x.snd),
+  { refine cont_diff.comp _ cont_diff_snd,
+    refine cont_diff_pi.mpr (λ j, cont_diff_pi.mpr (λ j', _)),
+    exact (smooth_barycentric_coord b j').comp (cont_diff_apply j), },
+  apply cont_diff_on.mul,
+  { apply ((matrix.smooth_det ι 𝕜 ⊤).comp h_snd).cont_diff_on.inv,
     rintros ⟨p, v⟩ hpv,
     have hv : is_unit (b.to_matrix v), { simpa [mem_affine_bases_iff ι 𝕜 F b v] using hpv, },
     rw [← is_unit_iff_ne_zero, ← matrix.is_unit_iff_is_unit_det],
     exact hv, },
-  { refine ((matrix.smooth_det ι 𝕜 ⊤).comp _).times_cont_diff_on,
-    refine times_cont_diff_pi.mpr (λ j, times_cont_diff_pi.mpr (λ j', _)),
+  { refine ((matrix.smooth_det ι 𝕜 ⊤).comp _).cont_diff_on,
+    refine cont_diff_pi.mpr (λ j, cont_diff_pi.mpr (λ j', _)),
     simp only [matrix.update_row_apply, affine_basis.to_matrix_apply, affine_basis.coords_apply],
     by_cases hij : j = i,
     { simp only [hij, if_true, eq_self_iff_true],
-      exact (smooth_barycentric_coord b j').comp times_cont_diff_fst, },
+      exact (smooth_barycentric_coord b j').comp cont_diff_fst, },
     { simp only [hij, if_false],
-      exact (smooth_barycentric_coord b j').comp (times_cont_diff_pi.mp times_cont_diff_snd j), }, },
+      exact (smooth_barycentric_coord b j').comp (cont_diff_pi.mp cont_diff_snd j), }, },
 end
 
 end smooth_barycentric

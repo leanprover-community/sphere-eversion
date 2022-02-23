@@ -59,14 +59,14 @@ TODO:
 
 section
 
--- lemma times_cont_diff_primitive_of_times_cont_diff
---   {F : H → ℝ → E} {n : with_top ℕ} (hF : times_cont_diff ℝ n ↿F) (h2F : ∀ x, integrable (F x)) :
---   times_cont_diff ℝ n (λ x : H, ∫ t, F x t) :=
+-- lemma cont_diff_primitive_of_cont_diff
+--   {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F) (h2F : ∀ x, integrable (F x)) :
+--   cont_diff ℝ n (λ x : H, ∫ t, F x t) :=
 -- sorry
 
 -- lemma fderiv_parametric_integral
---   {F : H → ℝ → E} {n : with_top ℕ} (hF : times_cont_diff ℝ n ↿F) (h2F : ∀ x, integrable (F x)) :
---   times_cont_diff ℝ n (λ x : H, ∫ t, F x t) :=
+--   {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F) (h2F : ∀ x, integrable (F x)) :
+--   cont_diff ℝ n (λ x : H, ∫ t, F x t) :=
 -- sorry
 end
 
@@ -137,7 +137,7 @@ has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas hF_int hF'_meas 
 --   {x₀ : H}
 --   -- (hF_int : integrable (F x₀) μ) -- we only need this for one value(!?)
 --   (hF_int : ∀ᶠ x in 𝓝 x₀, integrable (F x) μ)
---   -- (h_diff : ∀ x, ∀ᵐ a ∂μ, times_cont_diff_at ℝ 1 (λ x, F x a) x)
+--   -- (h_diff : ∀ x, ∀ᵐ a ∂μ, cont_diff_at ℝ 1 (λ x, F x a) x)
 --   (hF_bound : ∀ᵐ a ∂μ, ∀ x, ∥partial_fderiv_fst ℝ F x a∥ ≤ bound a)
 --   (h_bound : integrable bound μ)
 --   (h_diff : ∀ a, differentiable ℝ (λ x, F x a))
@@ -155,14 +155,14 @@ has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas hF_int hF'_meas 
 --     h_meas (hF_bound.mono $ λ a h x hx, h x) h_bound h_fderiv
 -- end
 
--- lemma times_cont_diff_one_integral {F : H → α → E}
+-- lemma cont_diff_one_integral {F : H → α → E}
 --   (hF_int : ∀ x, integrable (F x) μ)
 --   (hF'_int : ∀ x, integrable (λ a, partial_fderiv_fst ℝ F x a) μ)
 --   (h_diff : ∀ a, differentiable ℝ (λ x, F x a))
 --   (h_cont : continuous ↿(partial_fderiv_fst ℝ F)) :
---   times_cont_diff ℝ 1 (λ x, ∫ a, F x a ∂μ) :=
+--   cont_diff ℝ 1 (λ x, ∫ a, F x a ∂μ) :=
 -- begin
---   simp_rw [times_cont_diff_one_iff_fderiv],
+--   simp_rw [cont_diff_one_iff_fderiv],
 --   -- have : ∀ x, has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x a ∂μ) x,
 --   -- { intro x, refine has_fderiv_at_integral' hF_int },
 --   -- refine ⟨λ x, ∫ a, partial_fderiv_fst ℝ F x a ∂μ, _, _⟩,
@@ -189,17 +189,17 @@ has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas hF_int hF'_meas 
 --   --     (hF'_int x₀).ae_measurable _ ((hF'_int x₀).norm.add h1f) h_fderiv,
 --   -- { sorry },
 --   -- { refine eventually_of_forall (λ a, _),
---   --   -- have := (h_diff a).times_cont_diff_at,
---   --   have := (h_diff a).times_cont_diff_at.exists_lipschitz_on_with_of_nnnorm_lt (_ + ⟨f a, (h2f a).le⟩)
+--   --   -- have := (h_diff a).cont_diff_at,
+--   --   have := (h_diff a).cont_diff_at.exists_lipschitz_on_with_of_nnnorm_lt (_ + ⟨f a, (h2f a).le⟩)
 --   --     (lt_of_pos_right _ _), sorry }
 --   all_goals { sorry },
 -- end
 -- #print is_compact.exists_forall_ge
 -- version similar to https://encyclopediaofmath.org/wiki/Parameter-dependent_integral#References
--- lemma times_cont_diff_one_integral_compact
+-- lemma cont_diff_one_integral_compact
 --  [topological_space α] [t2_space α] [opens_measurable_space α] [is_locally_finite_measure μ]
 --   {F : H → α → E} {x₀ : H}
---   (h_diff : ∀ᵐ a ∂μ, times_cont_diff ℝ 1 (λ x, F x a))
+--   (h_diff : ∀ᵐ a ∂μ, cont_diff ℝ 1 (λ x, F x a))
 --   (h_supp : ∀ a, has_compact_support (λ x, F x a))
 --   (h2_supp : ∀ x, has_compact_support (F x)) :
 --   has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x₀ a ∂μ) x₀ :=
@@ -1011,7 +1011,7 @@ variables [is_add_left_invariant μ] [sigma_finite μ]
 variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
 
 lemma has_compact_support.has_fderiv_at_convolution_right [finite_dimensional 𝕜 G]
-  (hf : locally_integrable f μ) (hcg : has_compact_support g) (hg : times_cont_diff 𝕜 1 g)
+  (hf : locally_integrable f μ) (hcg : has_compact_support g) (hg : cont_diff 𝕜 1 g)
   (x₀ : G) : has_fderiv_at (f ⋆[L; μ] g) ((f ⋆[L.precompR G; μ] fderiv 𝕜 g) x₀) x₀ :=
 begin
   set L' := L.precompR G,
@@ -1038,7 +1038,7 @@ end
 
 lemma has_compact_support.has_fderiv_at_convolution_left [finite_dimensional 𝕜 G]
   [is_neg_invariant μ]
-  (hcf : has_compact_support f) (hf : times_cont_diff 𝕜 1 f)
+  (hcf : has_compact_support f) (hf : cont_diff 𝕜 1 f)
   (hg : locally_integrable g μ) (x₀ : G) :
   has_fderiv_at (f ⋆[L; μ] g) ((fderiv 𝕜 f ⋆[L.precompL G; μ] g) x₀) x₀ :=
 begin
@@ -1059,16 +1059,16 @@ begin
   refl,
 end
 
-lemma has_compact_support.times_cont_diff_convolution_right [finite_dimensional 𝕜 G]
+lemma has_compact_support.cont_diff_convolution_right [finite_dimensional 𝕜 G]
   (hf : locally_integrable f μ) (hcg : has_compact_support g)
-  (hg : times_cont_diff 𝕜 n g) : times_cont_diff 𝕜 n (f ⋆[L; μ] g) :=
+  (hg : cont_diff 𝕜 n g) : cont_diff 𝕜 n (f ⋆[L; μ] g) :=
 begin
   induction n using with_top.nat_induction with n ih ih generalizing g,
-  { rw [times_cont_diff_zero] at hg ⊢,
+  { rw [cont_diff_zero] at hg ⊢,
     exact hcg.continuous_convolution_right L hf hg },
   { have h : ∀ x, has_fderiv_at (f ⋆[L; μ] g) ((f ⋆[L.precompR G; μ] fderiv 𝕜 g) x) x :=
       hcg.has_fderiv_at_convolution_right L hf hg.one_of_succ,
-    rw times_cont_diff_succ_iff_fderiv_apply,
+    rw cont_diff_succ_iff_fderiv_apply,
     split,
     { exact λ x₀, ⟨_, h x₀⟩ },
     { simp_rw [fderiv_eq h, convolution_precompR_apply L hf (hcg.fderiv 𝕜)
@@ -1077,19 +1077,19 @@ begin
       refine ih _ _,
       { refine @has_compact_support.comp_left _ _ _ _ _ _ (λ (G : _ →L[𝕜] _), G x) _
           (hcg.fderiv 𝕜) (continuous_linear_map.zero_apply x) },
-      { revert x, rw [← times_cont_diff_clm_apply],
-        exact (times_cont_diff_succ_iff_fderiv.mp hg).2 } } },
-  { rw [times_cont_diff_top] at hg ⊢, exact λ n, ih n hcg (hg n) }
+      { revert x, rw [← cont_diff_clm_apply],
+        exact (cont_diff_succ_iff_fderiv.mp hg).2 } } },
+  { rw [cont_diff_top] at hg ⊢, exact λ n, ih n hcg (hg n) }
 end
 
-lemma has_compact_support.times_cont_diff_convolution_left [finite_dimensional 𝕜 G]
+lemma has_compact_support.cont_diff_convolution_left [finite_dimensional 𝕜 G]
   [is_neg_invariant μ]
-  (hcf : has_compact_support f) (hf : times_cont_diff 𝕜 n f)
+  (hcf : has_compact_support f) (hf : cont_diff 𝕜 n f)
   (hg : locally_integrable g μ) (x₀ : G) :
-  times_cont_diff 𝕜 n (f ⋆[L; μ] g) :=
+  cont_diff 𝕜 n (f ⋆[L; μ] g) :=
 begin
   rw [← convolution_flip],
-  exact hcf.times_cont_diff_convolution_right L.flip hg hf,
+  exact hcf.cont_diff_convolution_right L.flip hg hf,
 end
 
 -- associativity is quite tedious to write down in full generality
@@ -1125,7 +1125,7 @@ variables [is_add_left_invariant μ] [sigma_finite μ]
 variables [is_locally_finite_measure μ]
 
 lemma has_compact_support.has_deriv_at_convolution_right
-  (hf : locally_integrable f μ) (hcg : has_compact_support g) (hg : times_cont_diff 𝕜 1 g)
+  (hf : locally_integrable f μ) (hcg : has_compact_support g) (hg : cont_diff 𝕜 1 g)
   (x₀ : 𝕜) :
   has_deriv_at (f ⋆[L; μ] g) ((f ⋆[L; μ] deriv g) x₀) x₀ :=
 begin
@@ -1135,7 +1135,7 @@ begin
 end
 
 lemma has_compact_support.has_deriv_at_convolution_left [is_neg_invariant μ]
-  (hcf : has_compact_support f) (hf : times_cont_diff 𝕜 1 f)
+  (hcf : has_compact_support f) (hf : cont_diff 𝕜 1 f)
   (hg : locally_integrable g μ) (x₀ : 𝕜) :
   has_deriv_at (f ⋆[L; μ] g) ((deriv f ⋆[L; μ] g) x₀) x₀ :=
 begin
