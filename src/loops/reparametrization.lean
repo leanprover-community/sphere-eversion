@@ -9,7 +9,7 @@ import to_mathlib.order.hom.basic
 
 noncomputable theory
 
-open set function
+open set function measure_theory interval_integral
 open_locale topological_space unit_interval
 
 set_option old_structure_cmd true
@@ -112,7 +112,7 @@ def centering_density : E → ℝ → ℝ :=
 sorry
 omit γ
 
-lemma centering_density_pos (t : ℝ) :
+@[simp] lemma centering_density_pos (t : ℝ) :
   0 < γ.centering_density x t :=
 sorry
 
@@ -140,7 +140,7 @@ begin
 end
 
 lemma centering_density_interval_integrable (t₁ t₂ : ℝ) :
-  interval_integrable (γ.centering_density x) measure_theory.measure_space.volume t₁ t₂ :=
+  interval_integrable (γ.centering_density x) measure_space.volume t₁ t₂ :=
 (γ.centering_density_continuous x).interval_integrable t₁ t₂
 
 @[simp] lemma centering_density_integral_eq_one' (t : ℝ) :
@@ -151,16 +151,24 @@ begin
   have h₃ := γ.centering_density_interval_integrable x 1 (t + 1),
   have h₄ : ∫ s in 1..t+1, γ.centering_density x s = ∫ s in 0..t, γ.centering_density x s,
   { nth_rewrite 0 ← zero_add (1 : ℝ),
-    simp_rw [← interval_integral.integral_comp_add_right (γ.centering_density x) 1,
+    simp_rw [← integral_comp_add_right (γ.centering_density x) 1,
       centering_density_periodic], },
-  rw [← interval_integral.integral_add_adjacent_intervals h₂ h₃, h₄, add_comm,
-    interval_integral.integral_add_adjacent_intervals h₁ h₂, centering_density_integral_eq_one],
+  rw [← integral_add_adjacent_intervals h₂ h₃, h₄, add_comm,
+    integral_add_adjacent_intervals h₁ h₂, centering_density_integral_eq_one],
 end
 
--- Prove for any measure `μ` with `[is_finite_measure_on_compacts μ] [is_open_pos_measure μ]`?
 lemma strict_mono_integral_centering_density :
   strict_mono $ λ t, ∫ s in 0..t, γ.centering_density x s :=
-sorry
+begin
+  intros t₁ t₂ ht₁₂,
+  have h := γ.centering_density_interval_integrable x,
+  rw [← sub_pos, integral_interval_sub_left (h 0 t₂) (h 0 t₁)],
+  have hK : is_compact (Icc t₁ t₂) := is_compact_Icc,
+  have hK' : (Icc t₁ t₂).nonempty := nonempty_Icc.mpr ht₁₂.le,
+  obtain ⟨u, hu₁, hu₂⟩ := hK.exists_forall_le hK' (γ.centering_density_continuous x).continuous_on,
+  refine lt_of_lt_of_le _ (integral_mono_on ht₁₂.le interval_integrable_const (h t₁ t₂) hu₂),
+  simp [ht₁₂],
+end
 
 lemma surjective_integral_centering_density :
   surjective $ λ t, ∫ s in 0..t, γ.centering_density x s :=
@@ -173,12 +181,12 @@ def reparametrize : E → equivariant_equiv := λ x,
     (γ.surjective_integral_centering_density x)).symm,
   left_inv := strict_mono.order_iso_of_surjective_symm_apply_self _ _ _,
   right_inv := λ t, strict_mono.order_iso_of_surjective_self_symm_apply _ _ _ t,
-  map_zero' := interval_integral.integral_same,
+  map_zero' := integral_same,
   eqv' := λ t,
   begin
     have h₁ := γ.centering_density_interval_integrable x 0 t,
     have h₂ := γ.centering_density_interval_integrable x t (t + 1),
-    simp [← interval_integral.integral_add_adjacent_intervals h₁ h₂],
+    simp [← integral_add_adjacent_intervals h₁ h₂],
   end, } : equivariant_equiv).symm
 
 lemma coe_reparametrize_symm :
@@ -203,7 +211,7 @@ equivariant_equiv.map_one _
 
 lemma has_deriv_at_reparametrize_symm (s : ℝ) :
   has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
-interval_integral.integral_has_deriv_at_right
+integral_has_deriv_at_right
   (γ.centering_density_interval_integrable x 0 s)
   ((γ.centering_density_continuous x).measurable_at_filter _ _)
   (γ.centering_density_continuous x).continuous_at
@@ -225,7 +233,7 @@ begin
   have h₃ : continuous (λ s, γ x (γ.reparametrize x s)) :=
     (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous),
   rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one,
-    ← interval_integral.integral_comp_smul_deriv h₁ h₂ h₃],
+    ← integral_comp_smul_deriv h₁ h₂ h₃],
   simp,
 end
 
