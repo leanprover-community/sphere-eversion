@@ -167,9 +167,18 @@ lemma coe_reparametrize_symm :
   ((γ.reparametrize x).symm : ℝ → ℝ) = λ t, ∫ s in 0..t, γ.centering_density x s :=
 rfl
 
-lemma coe_reparametrize_symm_apply (t : ℝ) :
+lemma reparametrize_symm_apply (t : ℝ) :
   (γ.reparametrize x).symm t = ∫ s in 0..t, γ.centering_density x s :=
 rfl
+
+@[simp] lemma integral_reparametrize (t : ℝ) :
+  ∫ s in 0..(γ.reparametrize x t), γ.centering_density x s = t :=
+begin
+  let t' := γ.reparametrize x t,
+  change ∫ s in 0..t', γ.centering_density x s = _,
+  have ht : t = (γ.reparametrize x).symm t', { simp, },
+  rw [ht, reparametrize_symm_apply],
+end
 
 @[simp] lemma reparametrize_map_zero :
   γ.reparametrize x 0 = 0 :=
