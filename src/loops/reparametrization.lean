@@ -14,7 +14,6 @@ open_locale topological_space unit_interval
 
 set_option old_structure_cmd true
 
-/-- Equivariant maps from `ℝ` to itself are functions `f : ℝ → ℝ` with `f (t + 1) = f t + 1`. -/
 structure equivariant_equiv extends ℝ ≃ ℝ :=
 (map_zero' : to_fun 0 = 0)
 (eqv' : ∀ t, to_fun (t + 1) = to_fun t + 1)
@@ -96,7 +95,7 @@ variables (g)
 
 structure smooth_surrounding_family :=
 (to_fun : E → loop F)
-(smooth : ∀ x s, smooth_at ↿to_fun (x, s))
+(smooth : 𝒞 ∞ ↿to_fun)
 (surrounds : ∀ x, (to_fun x).surrounds $ g x)
 
 variables {g}
@@ -122,8 +121,8 @@ sorry
   ∫ s in t..(t+1), γ.centering_density x s = 1 :=
 sorry
 
-lemma centering_density_smooth (t : ℝ) :
-  smooth_at ↿γ.centering_density ⟨x, t⟩ :=
+lemma centering_density_smooth :
+  𝒞 ∞ ↿γ.centering_density :=
 sorry
 
 lemma centering_density_continuous (t : ℝ) :
@@ -187,12 +186,9 @@ begin
   sorry,
 end
 
-lemma reparametrize_smooth_at (s : ℝ) :
-  smooth_at ↿γ.reparametrize (x, s) :=
-sorry
-
-lemma reparametrize_continuous :
-  continuous (γ.reparametrize x : ℝ → ℝ) :=
+lemma reparametrize_smooth :
+  -- 𝒞 ∞ ↿γ.reparametrize :=
+  𝒞 ∞ $ uncurry (λ x t, γ.reparametrize x t) :=
 sorry
 
 @[simp] lemma reparametrize_average :
@@ -205,7 +201,7 @@ begin
   have h₂ : continuous_on (λ s, γ.centering_density x s) (interval 0 1) :=
     λ s hs, (γ.centering_density_continuous x s).continuous_within_at,
   have h₃ : continuous (λ s, γ x (γ.reparametrize x s)) :=
-    (γ.continuous x).comp (γ.reparametrize_continuous x),
+    (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous),
   rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one,
     ← interval_integral.integral_comp_smul_deriv h₁ h₂ h₃],
   simp,
