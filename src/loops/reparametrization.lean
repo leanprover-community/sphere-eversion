@@ -120,12 +120,12 @@ lemma centering_density_periodic (t : ℝ) :
   γ.centering_density x (t + 1) = γ.centering_density x t :=
 sorry
 
-lemma centering_density_integral_eq_one :
-  ∫ s in 0..1, γ.centering_density x s = 1 :=
-sorry
-
 lemma centering_density_smooth :
   𝒞 ∞ ↿γ.centering_density :=
+sorry
+
+lemma centering_density_integral_eq_one :
+  ∫ s in 0..1, γ.centering_density x s = 1 :=
 sorry
 
 @[simp] lemma centering_density_average :
