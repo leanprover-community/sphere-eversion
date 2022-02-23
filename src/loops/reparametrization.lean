@@ -116,15 +116,19 @@ lemma centering_density_pos (t : ℝ) :
   0 < γ.centering_density x t :=
 sorry
 
-@[simp] lemma integral_centering_density_eq_one (t : ℝ) :
-  ∫ s in t..(t+1), γ.centering_density x s = 1 :=
+lemma centering_density_periodic (t : ℝ) :
+  γ.centering_density x (t + 1) = γ.centering_density x t :=
+sorry
+
+lemma centering_density_integral_eq_one :
+  ∫ s in 0..1, γ.centering_density x s = 1 :=
 sorry
 
 lemma centering_density_smooth :
   𝒞 ∞ ↿γ.centering_density :=
 sorry
 
-@[simp] lemma average_centering_density :
+@[simp] lemma centering_density_average :
   ∫ s in 0..1, (γ.centering_density x s) • (γ x s) = g x :=
 sorry
 
@@ -138,6 +142,20 @@ end
 lemma centering_density_interval_integrable (t₁ t₂ : ℝ) :
   interval_integrable (γ.centering_density x) measure_theory.measure_space.volume t₁ t₂ :=
 (γ.centering_density_continuous x).interval_integrable t₁ t₂
+
+@[simp] lemma centering_density_integral_eq_one' (t : ℝ) :
+  ∫ s in t..t+1, γ.centering_density x s = 1 :=
+begin
+  have h₁ := γ.centering_density_interval_integrable x 0 t,
+  have h₂ := γ.centering_density_interval_integrable x t 1,
+  have h₃ := γ.centering_density_interval_integrable x 1 (t + 1),
+  have h₄ : ∫ s in 1..t+1, γ.centering_density x s = ∫ s in 0..t, γ.centering_density x s,
+  { nth_rewrite 0 ← zero_add (1 : ℝ),
+    simp_rw [← interval_integral.integral_comp_add_right (γ.centering_density x) 1,
+      centering_density_periodic], },
+  rw [← interval_integral.integral_add_adjacent_intervals h₂ h₃, h₄, add_comm,
+    interval_integral.integral_add_adjacent_intervals h₁ h₂, centering_density_integral_eq_one],
+end
 
 -- Prove for any measure `μ` with `[is_finite_measure_on_compacts μ] [is_open_pos_measure μ]`?
 lemma strict_mono_integral_centering_density :
