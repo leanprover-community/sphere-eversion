@@ -1,4 +1,4 @@
-import analysis.calculus.times_cont_diff
+import analysis.calculus.cont_diff
 import to_mathlib.topology.tsupport
 
 noncomputable theory
@@ -20,21 +20,21 @@ variables {𝕜 E F H : Type*} [nondiscrete_normed_field 𝕜] [normed_group E]
   [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
   {f : E → F} {x : E} {f₂ f₂' : 𝕜 → F} {f' : E → E →L[𝕜] F}
 
-theorem times_cont_diff_one_iff_fderiv :
-  times_cont_diff 𝕜 1 f ↔ differentiable 𝕜 f ∧ continuous (fderiv 𝕜 f) :=
+theorem cont_diff_one_iff_fderiv :
+  cont_diff 𝕜 1 f ↔ differentiable 𝕜 f ∧ continuous (fderiv 𝕜 f) :=
 by simp_rw [show (1 : with_top ℕ) = (0 + 1 : ℕ), from (zero_add 1).symm,
-  times_cont_diff_succ_iff_fderiv, show ((0 : ℕ) : with_top ℕ) = 0, from rfl, times_cont_diff_zero]
+  cont_diff_succ_iff_fderiv, show ((0 : ℕ) : with_top ℕ) = 0, from rfl, cont_diff_zero]
 
-theorem times_cont_diff_at_one_iff :
-  times_cont_diff_at 𝕜 1 f x
+theorem cont_diff_at_one_iff :
+  cont_diff_at 𝕜 1 f x
   ↔ ∃ f' : E → (E →L[𝕜] F), ∃ u ∈ 𝓝 x, continuous_on f' u ∧ ∀ x ∈ u, has_fderiv_at f (f' x) x :=
 by simp_rw [show (1 : with_top ℕ) = (0 + 1 : ℕ), from (zero_add 1).symm,
-  times_cont_diff_at_succ_iff_has_fderiv_at, show ((0 : ℕ) : with_top ℕ) = 0, from rfl,
-  times_cont_diff_at_zero, exists_mem_and_iff antitone_ball antitone_continuous_on, and_comm]
+  cont_diff_at_succ_iff_has_fderiv_at, show ((0 : ℕ) : with_top ℕ) = 0, from rfl,
+  cont_diff_at_zero, exists_mem_and_iff antitone_ball antitone_continuous_on, and_comm]
 
-lemma times_cont_diff.continuous_deriv {n : with_top ℕ} (h : times_cont_diff 𝕜 n f₂) (hn : 1 ≤ n) :
+lemma cont_diff.continuous_deriv {n : with_top ℕ} (h : cont_diff 𝕜 n f₂) (hn : 1 ≤ n) :
   continuous (deriv f₂) :=
-(times_cont_diff_succ_iff_deriv.mp (h.of_le hn)).2.continuous
+(cont_diff_succ_iff_deriv.mp (h.of_le hn)).2.continuous
 
 
 lemma fderiv_eq (h : ∀ x, has_fderiv_at f (f' x) x) : fderiv 𝕜 f = f' :=
@@ -43,8 +43,8 @@ funext $ λ x, (h x).fderiv
 lemma deriv_eq (h : ∀ x, has_deriv_at f₂ (f₂' x) x) : deriv f₂ = f₂' :=
 funext $ λ x, (h x).deriv
 
--- lemma times_cont_diff_at.continuous_at_fderiv {n : with_top ℕ}
---   (h : times_cont_diff_at 𝕜 n f x) (hn : 1 ≤ n) :
+-- lemma cont_diff_at.continuous_at_fderiv {n : with_top ℕ}
+--   (h : cont_diff_at 𝕜 n f x) (hn : 1 ≤ n) :
 --   continuous_at (fderiv 𝕜 f) x :=
 -- sorry
 
@@ -85,13 +85,13 @@ variables {ι k : Type*} [fintype ι]
 variables [nondiscrete_normed_field k] {Z : Type*} [normed_group Z] [normed_space k Z]
 variables {m : with_top ℕ}
 
-lemma times_cont_diff_apply (i : ι) :
-  times_cont_diff k m (λ (f : ι → Z), f i) :=
-(continuous_linear_map.proj i : (ι → Z) →L[k] Z).times_cont_diff
+lemma cont_diff_apply (i : ι) :
+  cont_diff k m (λ (f : ι → Z), f i) :=
+(continuous_linear_map.proj i : (ι → Z) →L[k] Z).cont_diff
 
-lemma times_cont_diff_apply_apply (i j : ι) :
-  times_cont_diff k m (λ (f : ι → ι → Z), f j i) :=
-(@times_cont_diff_apply _ _ _ _ Z _ _ m i).comp (@times_cont_diff_apply _ _ _ _ (ι → Z) _ _ m j)
+lemma cont_diff_apply_apply (i j : ι) :
+  cont_diff k m (λ (f : ι → ι → Z), f j i) :=
+(@cont_diff_apply _ _ _ _ Z _ _ m i).comp (@cont_diff_apply _ _ _ _ (ι → Z) _ _ m j)
 
 end
 
@@ -146,16 +146,16 @@ lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ 
   ∂₁ 𝕜 φ e₀ f₀ = φ'.comp (inl 𝕜 E F) :=
 h.partial_fst.fderiv
 
-lemma times_cont_diff_prod_left (f₀ : F) : times_cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
+lemma cont_diff_prod_left (f₀ : F) : cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
 begin
-  rw times_cont_diff_top_iff_fderiv,
+  rw cont_diff_top_iff_fderiv,
   split,
   { intro e₀,
     exact (has_fderiv_at_prod_left e₀ f₀).differentiable_at },
   { dsimp only,
     rw show fderiv 𝕜 (λ (e : E), (e, f₀)) = λ (e : E), inl 𝕜 E F,
       from  funext (λ e : E, (has_fderiv_at_prod_left e f₀).fderiv),
-    exact times_cont_diff_const }
+    exact cont_diff_const }
 end
 
 lemma has_fderiv_at_prod_mk (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
@@ -178,25 +178,25 @@ lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ 
   fderiv 𝕜 (λ f, φ e₀ f) f₀ = φ'.comp (inr 𝕜 E F) :=
 h.partial_snd.fderiv
 
-lemma times_cont_diff_prod_mk (e₀ : E) : times_cont_diff 𝕜 ⊤ (λ f : F, (e₀, f)) :=
+lemma cont_diff_prod_mk (e₀ : E) : cont_diff 𝕜 ⊤ (λ f : F, (e₀, f)) :=
 begin
-  rw times_cont_diff_top_iff_fderiv,
+  rw cont_diff_top_iff_fderiv,
   split,
   { intro f₀,
     exact (has_fderiv_at_prod_mk e₀ f₀).differentiable_at },
   { dsimp only,
     rw show fderiv 𝕜 (λ (f : F), (e₀, f)) = λ (f : F), inr 𝕜 E F,
       from  funext (λ f : F, (has_fderiv_at_prod_mk e₀ f).fderiv),
-    exact times_cont_diff_const }
+    exact cont_diff_const }
 end
 
-lemma times_cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
-  (h : times_cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : times_cont_diff 𝕜 n (λ e, φ e f₀) :=
-h.comp ((times_cont_diff_prod_left f₀).of_le le_top)
+lemma cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
+  (h : cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : cont_diff 𝕜 n (λ e, φ e f₀) :=
+h.comp ((cont_diff_prod_left f₀).of_le le_top)
 
-lemma times_cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
-  (h : times_cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : times_cont_diff 𝕜 n (λ f, φ e₀ f) :=
-h.comp ((times_cont_diff_prod_mk e₀).of_le le_top)
+lemma cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
+  (h : cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : cont_diff 𝕜 n (λ f, φ e₀ f) :=
+h.comp ((cont_diff_prod_mk e₀).of_le le_top)
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
@@ -254,34 +254,34 @@ with_top.coe_le_coe.mpr le_mul_self
 lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
 with_top.coe_le_coe.mpr le_self_mul
 
-lemma times_cont_diff.of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) :
-  times_cont_diff 𝕜 n φ :=
+lemma cont_diff.of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
+  cont_diff 𝕜 n φ :=
 h.of_le (with_top.le_self_add n 1)
 
-lemma times_cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : times_cont_diff 𝕜 (n + 1) φ) :
-  times_cont_diff 𝕜 1 φ :=
+lemma cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
+  cont_diff 𝕜 1 φ :=
 h.of_le (with_top.le_add_self 1 n)
 
-lemma times_cont_diff.times_cont_diff_partial_fst {φ : E → F → G} {n : ℕ}
-  (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) : times_cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
+lemma cont_diff.cont_diff_partial_fst {φ : E → F → G} {n : ℕ}
+  (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
 begin
-  cases times_cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
+  cases cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
   rw (hF.differentiable $ with_top.le_add_self 1 n).fderiv_partial_fst,
-  apply times_cont_diff.comp _ hF₂,
-  exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).times_cont_diff
+  apply cont_diff.comp _ hF₂,
+  exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).cont_diff
 end
 
-lemma times_cont_diff.times_cont_diff_partial_fst_apply {φ : E → F → G} {n : ℕ}
-  (hF : times_cont_diff 𝕜 (n + 1) (uncurry φ)) {x : E} : times_cont_diff 𝕜 n ↿(λ x' y, ∂₁ 𝕜 φ x' y x) :=
-(continuous_linear_map.apply 𝕜 G x).times_cont_diff.comp hF.times_cont_diff_partial_fst
+lemma cont_diff.cont_diff_partial_fst_apply {φ : E → F → G} {n : ℕ}
+  (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) {x : E} : cont_diff 𝕜 n ↿(λ x' y, ∂₁ 𝕜 φ x' y x) :=
+(continuous_linear_map.apply 𝕜 G x).cont_diff.comp hF.cont_diff_partial_fst
 
-lemma times_cont_diff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
-  (h : times_cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₁ 𝕜 φ) :=
-h.times_cont_diff_partial_fst.continuous
+lemma cont_diff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
+  (h : cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₁ 𝕜 φ) :=
+h.cont_diff_partial_fst.continuous
 
-lemma times_cont_diff.times_cont_diff_top_partial_fst {φ : E → F → G} (hF : times_cont_diff 𝕜 ⊤ (uncurry φ)) :
-  times_cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
-times_cont_diff_top.mpr (λ n, (times_cont_diff_top.mp hF (n + 1)).times_cont_diff_partial_fst)
+lemma cont_diff.cont_diff_top_partial_fst {φ : E → F → G} (hF : cont_diff 𝕜 ⊤ (uncurry φ)) :
+  cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
+cont_diff_top.mpr (λ n, (cont_diff_top.mp hF (n + 1)).cont_diff_partial_fst)
 
 @[simp] lemma linear_equiv.trans_symm {R M₁ M₂ M₃ : Type*} [semiring R]
   [add_comm_group M₁] [add_comm_group M₂] [add_comm_group M₃]
@@ -334,27 +334,27 @@ variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
   .. linear_map.to_continuous_linear_map.symm.trans (linear_equiv.pi_ring 𝕜 G ι 𝕜) }
 
 -- maybe we can do this without finite dimensionality of `F`?
-lemma times_cont_diff_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G} [finite_dimensional 𝕜 F] :
-  times_cont_diff 𝕜 n f ↔ ∀ y, times_cont_diff 𝕜 n (λ x, f x y) :=
+lemma cont_diff_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G} [finite_dimensional 𝕜 F] :
+  cont_diff 𝕜 n f ↔ ∀ y, cont_diff 𝕜 n (λ x, f x y) :=
 begin
-  refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).times_cont_diff.comp h, λ h, _⟩,
+  refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).cont_diff.comp h, λ h, _⟩,
   let d := finite_dimensional.finrank 𝕜 F,
   have hd : finite_dimensional.finrank 𝕜 (fin d → 𝕜) = d := finite_dimensional.finrank_fin_fun 𝕜,
   obtain ⟨e₁⟩ := finite_dimensional.nonempty_continuous_linear_equiv_iff_finrank_eq.mpr hd,
   let e₂ := (e₁.arrow_congr_equiv' (1 : G ≃L[𝕜] G)).symm.trans
     (continuous_linear_equiv.pi_ring (fin d)),
   have he₂ : ∀ i x, e₂ (f x) i = f x (e₁ (pi.single i (1 : 𝕜))), { simp, },
-  suffices :  times_cont_diff 𝕜 n (e₂ ∘ f),
+  suffices :  cont_diff 𝕜 n (e₂ ∘ f),
   { rw [← comp.left_id f, ← e₂.symm_comp_self, function.comp.assoc],
-    exact e₂.symm.times_cont_diff.comp this, },
-  refine times_cont_diff_pi.mpr (λ i, _),
+    exact e₂.symm.cont_diff.comp this, },
+  refine cont_diff_pi.mpr (λ i, _),
   simp only [he₂, comp_app, h _],
 end
 
-lemma times_cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F} :
-  times_cont_diff 𝕜 ((n + 1) : ℕ) f ↔
-  differentiable 𝕜 f ∧ ∀ y, times_cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
-by rw [times_cont_diff_succ_iff_fderiv, times_cont_diff_clm_apply]
+lemma cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F} :
+  cont_diff 𝕜 ((n + 1) : ℕ) f ↔
+  differentiable 𝕜 f ∧ ∀ y, cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
+by rw [cont_diff_succ_iff_fderiv, cont_diff_clm_apply]
 
 
 end calculus
@@ -364,7 +364,7 @@ open continuous_linear_map
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F]
 
-lemma times_cont_diff.lipschitz_on_with {s : set E} {f : E → F} (hf : times_cont_diff ℝ 1 f)
+lemma cont_diff.lipschitz_on_with {s : set E} {f : E → F} (hf : cont_diff ℝ 1 f)
   (hs : convex ℝ s) (hs' : is_compact s) : ∃ K, lipschitz_on_with K f s :=
 begin
   rcases hs'.bdd_above_norm (hf.continuous_fderiv le_rfl) with ⟨M, M_pos : 0 < M, hM⟩,
@@ -384,19 +384,19 @@ mem_of_mem_nhds h
 
 
 
-/- Move this next to times_cont_diff_smul, and think about how to mkae such things much
+/- Move this next to cont_diff_smul, and think about how to mkae such things much
 less painful. -/
-lemma times_cont_diff.const_smul {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+lemma cont_diff.const_smul {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
   {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {f : E → F} {n : with_top ℕ} (h : times_cont_diff 𝕜 n f) (a : 𝕜) :
-  times_cont_diff 𝕜 n (λ x, a • f x) :=
+  {f : E → F} {n : with_top ℕ} (h : cont_diff 𝕜 n f) (a : 𝕜) :
+  cont_diff 𝕜 n (λ x, a • f x) :=
 begin
-  change times_cont_diff 𝕜 n ((λ p : 𝕜 × F, p.1 • p.2) ∘ (λ y : F, (a, y)) ∘ f),
-  apply times_cont_diff.comp,
-  exact times_cont_diff_smul,
-  apply times_cont_diff.comp _ h,
-  exact (times_cont_diff_prod_mk a).of_le le_top
+  change cont_diff 𝕜 n ((λ p : 𝕜 × F, p.1 • p.2) ∘ (λ y : F, (a, y)) ∘ f),
+  apply cont_diff.comp,
+  exact cont_diff_smul,
+  apply cont_diff.comp _ h,
+  exact (cont_diff_prod_mk a).of_le le_top
 end
 
 section
@@ -513,15 +513,15 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_gro
   {F : Type*} [normed_group F] [normed_space 𝕜 F] {G : Type*} [normed_group G] [normed_space 𝕜 G]
   {f : E → F} {n : with_top ℕ}
 
---todo: protect `continuous_linear_map.times_cont_diff`/`continuous_linear_equiv.times_cont_diff`
+--todo: protect `continuous_linear_map.cont_diff`/`continuous_linear_equiv.cont_diff`
 
-lemma times_cont_diff_comp_iff (e : G ≃L[𝕜] E) :
-  _root_.times_cont_diff 𝕜 n (f ∘ e) ↔ _root_.times_cont_diff 𝕜 n f :=
-by simp_rw [← times_cont_diff_on_univ, ← e.times_cont_diff_on_comp_iff, preimage_univ]
+lemma cont_diff_comp_iff (e : G ≃L[𝕜] E) :
+  _root_.cont_diff 𝕜 n (f ∘ e) ↔ _root_.cont_diff 𝕜 n f :=
+by simp_rw [← cont_diff_on_univ, ← e.cont_diff_on_comp_iff, preimage_univ]
 
-lemma comp_times_cont_diff_iff (e : F ≃L[𝕜] G) :
-  _root_.times_cont_diff 𝕜 n (e ∘ f) ↔ _root_.times_cont_diff 𝕜 n f :=
-by simp_rw [← times_cont_diff_on_univ, ← e.comp_times_cont_diff_on_iff]
+lemma comp_cont_diff_iff (e : F ≃L[𝕜] G) :
+  _root_.cont_diff 𝕜 n (e ∘ f) ↔ _root_.cont_diff 𝕜 n f :=
+by simp_rw [← cont_diff_on_univ, ← e.comp_cont_diff_on_iff]
 
 end continuous_linear_equiv
 

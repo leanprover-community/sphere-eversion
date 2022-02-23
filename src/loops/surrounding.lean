@@ -62,7 +62,7 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F] [normed_space ℝ F]
 
 local notation `d` := finrank ℝ F
-local notation `smooth_on` := times_cont_diff_on ℝ ⊤
+local notation `smooth_on` := cont_diff_on ℝ ⊤
 
 /-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
 def smooth_at (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s

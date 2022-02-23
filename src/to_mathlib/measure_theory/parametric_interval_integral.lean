@@ -409,8 +409,8 @@ local notation `∂₁` := partial_fderiv_fst ℝ
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
 -/
 
-lemma has_fderiv_at_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
-  {s : H → ℝ} (hs : times_cont_diff ℝ 1 s)
+lemma has_fderiv_at_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF : cont_diff ℝ 1 ↿F)
+  {s : H → ℝ} (hs : cont_diff ℝ 1 s)
   (x₀ : H) (a : ℝ) :
   (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a $ s x₀) ∧
   has_fderiv_at (λ x : H, ∫ t in a..s x, F x t)
@@ -456,10 +456,10 @@ begin
     _ _ _ (continuous_at_const : continuous_at (λ (t : ℝ), (K : ℝ)) $ s x₀) (λ t, nnreal.coe_nonneg K),
   { apply ae_of_all,
     intro t,
-    apply (times_cont_diff.has_strict_fderiv_at _ le_rfl).has_fderiv_at,
+    apply (cont_diff.has_strict_fderiv_at _ le_rfl).has_fderiv_at,
     rw show (λ x, F x t) = (uncurry F) ∘ (λ x, (x, t)), by { ext, simp },
-    exact hF.comp ((times_cont_diff_prod_left t).of_le le_top) },
-  { exact (times_cont_diff.has_strict_fderiv_at hs le_rfl).has_fderiv_at },
+    exact hF.comp ((cont_diff_prod_left t).of_le le_top) },
+  { exact (cont_diff.has_strict_fderiv_at hs le_rfl).has_fderiv_at },
   { refl },
   { apply continuous.ae_measurable,
     have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
@@ -495,39 +495,39 @@ local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 local notation `∂₁` := partial_fderiv_fst ℝ
 
-lemma times_cont_diff_parametric_primitive_of_times_cont_diff' {F : H → ℝ → E} {n : ℕ}
-  (hF : times_cont_diff ℝ n ↿F)
-  {s : H → ℝ} (hs : times_cont_diff ℝ n s)
+lemma cont_diff_parametric_primitive_of_cont_diff' {F : H → ℝ → E} {n : ℕ}
+  (hF : cont_diff ℝ n ↿F)
+  {s : H → ℝ} (hs : cont_diff ℝ n s)
   (a : ℝ) :
-  times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
+  cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t)  :=
 begin
   induction n with n ih generalizing F,
-  { rw [with_top.coe_zero, times_cont_diff_zero] at *,
+  { rw [with_top.coe_zero, cont_diff_zero] at *,
     exact continuous_parametric_interval_integral_of_continuous hF hs },
-  { have hF₁ : times_cont_diff ℝ 1 (↿F), from hF.one_of_succ,
-    have hs₁ : times_cont_diff ℝ 1 s, from hs.one_of_succ,
+  { have hF₁ : cont_diff ℝ 1 (↿F), from hF.one_of_succ,
+    have hs₁ : cont_diff ℝ 1 s, from hs.one_of_succ,
     have h : ∀ x, has_fderiv_at (λ x, ∫ t in a..s x, F x t)
       ((∫ t in a..s x, ∂₁F x t) + F x (s x) ⬝ D s x) x :=
-    λ x, (has_fderiv_at_parametric_primitive_of_times_cont_diff' hF₁ hs₁ x a).2,
-    rw times_cont_diff_succ_iff_fderiv_apply,
+    λ x, (has_fderiv_at_parametric_primitive_of_cont_diff' hF₁ hs₁ x a).2,
+    rw cont_diff_succ_iff_fderiv_apply,
     split,
     { exact λ x₀, ⟨_, h x₀⟩ },
     { intro x,
       rw fderiv_eq h,
-      apply times_cont_diff.add,
+      apply cont_diff.add,
       { simp only [continuous_linear_map.coe_coe],
-      --times_cont_diff ℝ ↑n ↿(λ (x' : H) (a : ℝ), ⇑(D (λ (e : H), F e a) x') x)
-        have hD : times_cont_diff ℝ n ↿(λ x' a, (D (λ e, F e a) x') x),
-        { apply times_cont_diff.times_cont_diff_partial_fst_apply, exact hF },
-        have hD' : times_cont_diff ℝ n ↿(∂₁ F),
-        { apply times_cont_diff.times_cont_diff_partial_fst, exact hF },
+      --cont_diff ℝ ↑n ↿(λ (x' : H) (a : ℝ), ⇑(D (λ (e : H), F e a) x') x)
+        have hD : cont_diff ℝ n ↿(λ x' a, (D (λ e, F e a) x') x),
+        { apply cont_diff.cont_diff_partial_fst_apply, exact hF },
+        have hD' : cont_diff ℝ n ↿(∂₁ F),
+        { apply cont_diff.cont_diff_partial_fst, exact hF },
         convert ih hs.of_succ hD, ext x', refine continuous_linear_map.interval_integral_apply _ x,
         exact (continuous_curry x' hD'.continuous).interval_integrable _ _, },
       { -- giving the following implicit type arguments speeds up elaboration significantly
-        have := (@is_bounded_bilinear_map_smul_right ℝ _ H _ _ E _ _).times_cont_diff.comp
-          ((times_cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $
-            times_cont_diff_id.prod hs.of_succ),
-        rw [times_cont_diff_clm_apply] at this,
+        have := (@is_bounded_bilinear_map_smul_right ℝ _ H _ _ E _ _).cont_diff.comp
+          ((cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $
+            cont_diff_id.prod hs.of_succ),
+        rw [cont_diff_clm_apply] at this,
         exact this x } } }
 end
 
@@ -546,33 +546,33 @@ variables [normed_group E] [normed_space ℝ E]
 
 /- Should we directly prove the version below?-/
 
-lemma times_cont_diff_parametric_primitive_of_times_cont_diff
-  {F : H → ℝ → E} {n : with_top ℕ} (hF : times_cont_diff ℝ n ↿F)
-  {s : H → ℝ} (hs : times_cont_diff ℝ n s)
+lemma cont_diff_parametric_primitive_of_cont_diff
+  {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F)
+  {s : H → ℝ} (hs : cont_diff ℝ n s)
   (a : ℝ) :
-  times_cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
+  cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
 begin
   induction n using with_top.rec_top_coe,
-  { rw times_cont_diff_top at *,
-    exact λ n, times_cont_diff_parametric_primitive_of_times_cont_diff' (hF n) (hs n) a },
-  { exact times_cont_diff_parametric_primitive_of_times_cont_diff' hF hs a },
+  { rw cont_diff_top at *,
+    exact λ n, cont_diff_parametric_primitive_of_cont_diff' (hF n) (hs n) a },
+  { exact cont_diff_parametric_primitive_of_cont_diff' hF hs a },
 end
 
 local notation `∂₁` := partial_fderiv_fst ℝ
 
-lemma times_cont_diff_parametric_integral_of_times_cont_diff
-  {F : H → ℝ → E} {n : with_top ℕ} (hF : times_cont_diff ℝ n ↿F)
+lemma cont_diff_parametric_integral_of_cont_diff
+  {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F)
   (a b : ℝ) :
-  times_cont_diff ℝ n (λ x : H, ∫ t in a..b, F x t) :=
-times_cont_diff_parametric_primitive_of_times_cont_diff hF times_cont_diff_const a
+  cont_diff ℝ n (λ x : H, ∫ t in a..b, F x t) :=
+cont_diff_parametric_primitive_of_cont_diff hF cont_diff_const a
 
-lemma times_cont_diff.fderiv_parametric_integral
-  {F : H → ℝ → E} (hF : times_cont_diff ℝ 1 ↿F)
+lemma cont_diff.fderiv_parametric_integral
+  {F : H → ℝ → E} (hF : cont_diff ℝ 1 ↿F)
   (a b : ℝ) :
   fderiv ℝ (λ x : H, ∫ t in a..b, F x t) = λ x : H, (∫ t in a..b, ∂₁F x t) :=
 begin
   ext x₀,
-  cases has_fderiv_at_parametric_primitive_of_times_cont_diff' hF times_cont_diff_const x₀ a with int h,
+  cases has_fderiv_at_parametric_primitive_of_cont_diff' hF cont_diff_const x₀ a with int h,
   rw [h.fderiv, fderiv_const],
   simp only [continuous_linear_map.comp_zero, add_zero, pi.zero_apply]
 end
