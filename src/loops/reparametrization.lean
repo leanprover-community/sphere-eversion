@@ -116,8 +116,8 @@ omit γ
   0 < γ.centering_density x t :=
 sorry
 
-lemma centering_density_periodic (t : ℝ) :
-  γ.centering_density x (t + 1) = γ.centering_density x t :=
+lemma centering_density_periodic :
+  periodic (γ.centering_density x) 1 :=
 sorry
 
 lemma centering_density_smooth :
@@ -151,8 +151,8 @@ begin
   have h₃ := γ.centering_density_interval_integrable x 1 (t + 1),
   have h₄ : ∫ s in 1..t+1, γ.centering_density x s = ∫ s in 0..t, γ.centering_density x s,
   { nth_rewrite 0 ← zero_add (1 : ℝ),
-    simp_rw [← integral_comp_add_right (γ.centering_density x) 1,
-      centering_density_periodic], },
+    rw [← integral_comp_add_right (γ.centering_density x) 1,
+      (γ.centering_density_periodic x).funext], },
   rw [← integral_add_adjacent_intervals h₂ h₃, h₄, add_comm,
     integral_add_adjacent_intervals h₁ h₂, centering_density_integral_eq_one],
 end
