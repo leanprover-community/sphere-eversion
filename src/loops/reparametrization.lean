@@ -1,6 +1,7 @@
 import notations
 import loops.surrounding
 import analysis.calculus.specific_functions
+import measure_theory.integral.periodic
 import to_mathlib.order.hom.basic
 
 /-!
@@ -124,7 +125,7 @@ lemma centering_density_smooth :
   𝒞 ∞ ↿γ.centering_density :=
 sorry
 
-lemma centering_density_integral_eq_one :
+@[simp] lemma centering_density_integral_eq_one :
   ∫ s in 0..1, γ.centering_density x s = 1 :=
 sorry
 
@@ -143,18 +144,13 @@ lemma centering_density_interval_integrable (t₁ t₂ : ℝ) :
   interval_integrable (γ.centering_density x) measure_space.volume t₁ t₂ :=
 (γ.centering_density_continuous x).interval_integrable t₁ t₂
 
-@[simp] lemma centering_density_integral_eq_one' (t : ℝ) :
-  ∫ s in t..t+1, γ.centering_density x s = 1 :=
+@[simp] lemma integral_add_one_centering_density (t : ℝ) :
+  ∫ s in 0..t+1, γ.centering_density x s = (∫ s in 0..t, γ.centering_density x s) + 1 :=
 begin
   have h₁ := γ.centering_density_interval_integrable x 0 t,
-  have h₂ := γ.centering_density_interval_integrable x t 1,
-  have h₃ := γ.centering_density_interval_integrable x 1 (t + 1),
-  have h₄ : ∫ s in 1..t+1, γ.centering_density x s = ∫ s in 0..t, γ.centering_density x s,
-  { nth_rewrite 0 ← zero_add (1 : ℝ),
-    rw [← integral_comp_add_right (γ.centering_density x) 1,
-      (γ.centering_density_periodic x).funext], },
-  rw [← integral_add_adjacent_intervals h₂ h₃, h₄, add_comm,
-    integral_add_adjacent_intervals h₁ h₂, centering_density_integral_eq_one],
+  have h₂ := γ.centering_density_interval_integrable x t (t + 1),
+  simp [← integral_add_adjacent_intervals h₁ h₂,
+    (γ.centering_density_periodic x).interval_integral_add_eq t 0],
 end
 
 lemma strict_mono_integral_centering_density :
@@ -182,12 +178,7 @@ def reparametrize : E → equivariant_equiv := λ x,
   left_inv := strict_mono.order_iso_of_surjective_symm_apply_self _ _ _,
   right_inv := λ t, strict_mono.order_iso_of_surjective_self_symm_apply _ _ _ t,
   map_zero' := integral_same,
-  eqv' := λ t,
-  begin
-    have h₁ := γ.centering_density_interval_integrable x 0 t,
-    have h₂ := γ.centering_density_interval_integrable x t (t + 1),
-    simp [← integral_add_adjacent_intervals h₁ h₂],
-  end, } : equivariant_equiv).symm
+  eqv' := γ.integral_add_one_centering_density x, } : equivariant_equiv).symm
 
 lemma coe_reparametrize_symm :
   ((γ.reparametrize x).symm : ℝ → ℝ) = λ t, ∫ s in 0..t, γ.centering_density x s :=
