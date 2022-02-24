@@ -109,6 +109,20 @@ begin
 end
 
 include γ
+/-- This the key construction. It represents a smooth probability distribution on the circle with
+the property that:
+`∫ s in 0..1, (γ.centering_density x s) • (γ x s) = g x`
+(see `centering_density_average` below).
+
+The above property, which is global in `x`, is obtained from the corresponding local property via
+a standard paritition of unity argument. The local property is obtained by combining smoothness
+of barycentric coordinates with the fact that `g x` lies in the _interior_ of a convex hull.
+
+The _pointwise_ statement is at least intuitive: for a given `x : E`, since `γ.to_fun x` surrounds
+`g x`, there are real numbers `t₁,` ..., `tₙ` such that `g x` is in the interior of the convex hull
+of `γ.to_fun x tᵢ`, which are an affine basis. One defines `centering_density` so that
+`centering_density x t` has almost all of its mass concentrated at the values `t = tᵢ` with each
+value getting a share of the total mass proportional to the barycentric coordinate of `g x`. -/
 def centering_density : E → ℝ → ℝ :=
 sorry
 omit γ
