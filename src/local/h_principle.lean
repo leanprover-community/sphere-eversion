@@ -68,8 +68,10 @@ structure accepts (L : step_landscape E) (𝓕 : jet_sec E F) : Prop :=
 (h_short : ∀ x, 𝓕.is_short_at R L.p x)
 (hC : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x)
 
+/-- The union of all slices of `R` corresponding to `𝓕`. -/
 def Ω (L : step_landscape E) (𝓕 : jet_sec E F) : set (E × F) :=
-⋃ x, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
+{p | p.2 ∈ connected_comp_in (𝓕.slice_at R L.p p.1) (𝓕.φ p.1 L.p.v)}
+--⋃ x, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
 
 def π (L : step_landscape E) : E →L[ℝ] ℝ := L.p.π
 
@@ -88,9 +90,7 @@ variables {R}
 
 lemma mem_Ω {L : step_landscape E} {𝓕 : jet_sec E F} {x : E} {w : F} (H : (x, w) ∈ L.Ω R 𝓕) :
   (x, 𝓕.f x, L.p.update (𝓕.φ x) w) ∈ R :=
-begin
-  sorry
-end
+(connected_comp_in_subset _ _ H : _)
 
 lemma accepts.open {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   is_open (L.Ω R 𝓕) :=
@@ -137,10 +137,6 @@ classical.some_spec $ exists_loops L.is_compact_K h.open h.connected h.smooth_g
 /- TODO: There are now many lemmas whose proofs are (L.nice h).whatever
 They could be removed and inlined.
 -/
-
-lemma loop_mem (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
-  ∀ x t s, L.loop h t x s ∈ (prod.mk x ⁻¹' L.Ω R 𝓕) :=
-(L.nice h).mem_Ω
 
 lemma loop_t_zero_eq (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ∀ x s, L.loop h 0 x s = L.b 𝓕 x :=
