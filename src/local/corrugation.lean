@@ -29,8 +29,8 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
 def corrugation (π : E →L[ℝ] ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
 λ x, (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
 
-def corrugate (f : E → F) (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
-λ x, f x + (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)
+/- def corrugate (f : E → F) (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → F :=
+λ x, f x + (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average) -/
 
 lemma per_corrugation (γ : loop F) (hγ : ∀ s t, interval_integrable γ volume s t) :
   one_periodic (λ s, ∫ t in 0..s, γ t - γ.average) :=
