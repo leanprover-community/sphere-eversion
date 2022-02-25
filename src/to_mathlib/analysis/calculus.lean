@@ -1,5 +1,4 @@
 import analysis.calculus.cont_diff
-import to_mathlib.topology.tsupport
 
 noncomputable theory
 
