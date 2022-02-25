@@ -1,7 +1,6 @@
 import algebra.periodic
 import analysis.normed_space.basic
 
-import to_mathlib.topology.tsupport
 /-!
 
 # Boundedness property of periodic function

@@ -3,7 +3,6 @@ import measure_theory.group.action
 import measure_theory.measure.haar_lebesgue
 import measure_theory.group.integration
 import to_mathlib.measure_theory.parametric_interval_integral
-import to_mathlib.topology.tsupport
 import analysis.calculus.fderiv_measurable
 
 noncomputable theory
