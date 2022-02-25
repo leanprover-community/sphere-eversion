@@ -421,15 +421,37 @@ section
 variables [has_measurable_mul₂ G] [has_measurable_inv G]
 variables (μ) [sigma_finite μ]
 
+lemma quasi_measure_preserving.prod_of_right {α β γ} [measurable_space α] [measurable_space β]
+  [measurable_space γ] {f : α × β → γ} {μ : measure α} {ν : measure β} {τ : measure γ}
+  (hf : measurable f) [sigma_finite ν]
+  (h2f : ∀ x, quasi_measure_preserving (λ y, f (x, y)) ν τ) :
+  quasi_measure_preserving f (μ.prod ν) τ :=
+begin
+  refine ⟨hf, _⟩,
+  refine absolutely_continuous.mk (λ s hs h2s, _),
+  simp_rw [map_apply hf hs, prod_apply (hf hs), preimage_preimage, (h2f _).preimage_null h2s,
+    lintegral_zero],
+end
+
+lemma quasi_measure_preserving.prod_of_left {α β γ} [measurable_space α] [measurable_space β]
+  [measurable_space γ] {f : α × β → γ} {μ : measure α} {ν : measure β} {τ : measure γ}
+  (hf : measurable f) [sigma_finite μ] [sigma_finite ν]
+  (h2f : ∀ y, quasi_measure_preserving (λ x, f (x, y)) μ τ) :
+  quasi_measure_preserving f (μ.prod ν) τ :=
+begin
+  refine ⟨hf, _⟩,
+  refine absolutely_continuous.mk (λ s hs h2s, _),
+  simp_rw [map_apply hf hs, prod_apply_symm (hf hs), preimage_preimage, (h2f _).preimage_null h2s,
+    lintegral_zero],
+end
 
 @[to_additive]
 lemma quasi_measure_preserving_div [is_mul_right_invariant μ] :
   quasi_measure_preserving (λ (p : G × G), p.1 / p.2) (μ.prod μ) μ :=
 begin
-  refine ⟨measurable_fst.div measurable_snd, _⟩,
-  refine absolutely_continuous.mk (λ s hs h2s, _),
-  simp_rw [map_apply measurable_div hs, prod_apply_symm (measurable_div hs), preimage_preimage,
-    div_eq_mul_inv, measure_preimage_mul_right, show μ s = 0, from h2s, lintegral_zero]
+  refine quasi_measure_preserving.prod_of_left measurable_div _,
+  simp_rw [div_eq_mul_inv],
+  refine λ y, ⟨measurable_mul_const y⁻¹, (map_mul_right_eq_self μ y⁻¹).absolutely_continuous⟩
 end
 
 variables [is_mul_left_invariant μ]
