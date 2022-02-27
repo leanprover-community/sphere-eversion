@@ -171,19 +171,43 @@ end
 
 -- TODO: replace mathlib's `connected_component_in`, which is never used, by the following.
 
+section connected_comp_in
+
+variables {α : Type*} [topological_space α]
+
 /-- Given a set `F` in a topological space `α` and a point `x : α`, the connected
 component of `x` in `F` is the connected component of `x` in the subtype `F` seen as
 a set in `α`. This definition does not make sense if `x` is not in `F` so we return the
 empty set in this case. -/
-def connected_comp_in {α : Type*} [topological_space α] (F : set α) (x : α) : set α :=
+def connected_comp_in (F : set α) (x : α) : set α :=
 if h : x ∈ F then coe '' (connected_component (⟨x, h⟩ : F)) else ∅
 
-lemma connected_comp_in_subset {α : Type*} [topological_space α] (F : set α) (x : α) :
+lemma connected_comp_in_subset (F : set α) (x : α) :
   connected_comp_in F x ⊆ F :=
 begin
   dsimp [connected_comp_in],
   split_ifs ; simp
 end
+
+lemma mem_connected_comp_in_self {F : set α} {x : α} (h : x ∈ F) :
+  x ∈ connected_comp_in F x :=
+begin
+  simp [connected_comp_in, h],
+  exact mem_connected_component
+end
+
+lemma connected_comp_in_nonempty_iff {α : Type*} [topological_space α] {F : set α} {x : α} :
+  (connected_comp_in F x).nonempty ↔ x ∈ F :=
+begin
+  split,
+  { dsimp [connected_comp_in],
+    rintros ⟨y, hy⟩,
+    split_ifs at hy ; tauto },
+  { intros hx,
+    exact ⟨_, mem_connected_comp_in_self hx⟩ }
+end
+
+end connected_comp_in
 
 namespace topological_space -- to topology.bases
 lemma cover_nat_nhds_within {α} [topological_space α] [second_countable_topology α] {f : α → set α}
