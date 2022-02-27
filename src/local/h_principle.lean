@@ -563,7 +563,7 @@ begin
         convert hx,
         rw [← fin.coe_eq_cast_succ, coe_coe]
       end,
-      h_short := λ x, h_ample.is_short_at_jet_sec H₁ S.p x,
+      h_short := λ x, h_ample.is_short_at H₁ S.p x,
       hC := begin
         apply h_hol.congr (formal_sol.is_holonomic_at_congr _ _ _),
         apply hHC.mono,

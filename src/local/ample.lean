@@ -8,6 +8,8 @@ import linear_algebra.affine_space.midpoint
 import data.matrix.notation
 import analysis.convex.topology
 
+import to_mathlib.topology.misc
+
 /-!
 # Ample subsets of real vector spaces
 
@@ -27,7 +29,7 @@ variables {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F]
 /-- A subset of a topological real vector space is ample if the convex hull of each of its
 connected components is the full space. -/
 def ample_set (s : set F) :=
-∀ x : s, convex_hull ℝ (subtype.val '' (connected_component x)) = univ
+∀ x ∈ s, convex_hull ℝ (connected_comp_in s x) = univ
 
 section lemma_2_13
 
@@ -145,9 +147,10 @@ lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F
   ample_set (Eᶜ : set F) :=
 begin
   haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
-  intro x,
-  rw [preconnected_space.connected_component_eq_univ, image_univ, subtype.range_val,
-      eq_univ_iff_forall],
+  intros x hx,
+  have : connected_comp_in (↑E)ᶜ x = (↑E)ᶜ,
+    from is_preconnected.connected_comp_in (is_connected_compl_of_two_le_codim hcodim).2 hx,
+  rw [this, eq_univ_iff_forall],
   intro y,
   by_cases h : y ∈ E,
   { rcases E.exists_is_compl with ⟨E', hE'⟩,
@@ -158,7 +161,7 @@ begin
     have : y ∈ [y+(-z) -[ℝ] y+z],
     { rw ← sub_eq_add_neg,
       exact mem_segment_sub_add y z },
-    refine (convex_convex_hull ℝ (Eᶜ : set F)).segment_subset _ _ this;
+    refine (convex_convex_hull ℝ (Eᶜ : set F)).segment_subset _ _ this ;
     refine subset_convex_hull ℝ (Eᶜ : set F) _;
     change _ ∉ E;
     rw submodule.add_mem_iff_right _ h;
