@@ -70,7 +70,7 @@ structure accepts (L : step_landscape E) (𝓕 : jet_sec E F) : Prop :=
 
 /-- The union of all slices of `R` corresponding to `𝓕`. -/
 def Ω (L : step_landscape E) (𝓕 : jet_sec E F) : set (E × F) :=
-{p | p.2 ∈ connected_comp_in (𝓕.slice_at R L.p p.1) (𝓕.φ p.1 L.p.v)}
+{p | p.2 ∈ 𝓕.slice_at R L.p p.1}
 --⋃ x, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
 
 def π (L : step_landscape E) : E →L[ℝ] ℝ := L.p.π
@@ -87,10 +87,6 @@ lemma is_compact_K (L : step_landscape E) : is_compact L.K :=
 L.hK₁.inter_right L.hC
 
 variables {R}
-
-lemma mem_Ω {L : step_landscape E} {𝓕 : jet_sec E F} {x : E} {w : F} (H : (x, w) ∈ L.Ω R 𝓕) :
-  (x, 𝓕.f x, L.p.update (𝓕.φ x) w) ∈ R :=
-(connected_comp_in_subset _ _ H : _)
 
 lemma accepts.open {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   is_open (L.Ω R 𝓕) :=
@@ -120,19 +116,17 @@ lemma accepts.rel {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R �
 sorry
 
 lemma accepts.hull {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
-  ∀ x, L.g 𝓕 x ∈ hull (prod.mk x ⁻¹' L.Ω R 𝓕) :=
+  ∀ x, L.g 𝓕 x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω R L 𝓕) (L.b 𝓕 x)) :=
 sorry
 
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ℝ → E → loop F :=
-classical.some (exists_loops L.is_compact_K h.open h.connected h.smooth_g
-                             h.smooth_b h.mem h.rel h.hull)
+classical.some (exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.hull)
 
 lemma nice (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
-  nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L ↑𝓕) L.K (L.loop h) :=
-classical.some_spec $ exists_loops L.is_compact_K h.open h.connected h.smooth_g
-                             h.smooth_b h.mem h.rel h.hull
+  nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L 𝓕) L.K (L.loop h) :=
+classical.some_spec $ exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.hull
 
 /- TODO: There are now many lemmas whose proofs are (L.nice h).whatever
 They could be removed and inlined.
@@ -445,7 +439,7 @@ begin
   { intros u hu,
     rcases submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩,
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul],
-    congr' 1,
+    apply congr_arg,
     erw [fderiv_𝓕', L.p.pairing, one_smul],
     dsimp [𝓕'],
     rw [L.p.update_v, L.loop_avg h, step_landscape.g, step_landscape.v],
@@ -475,8 +469,6 @@ begin
           (continuous_fst.prod_mk (continuous_snd.comp continuous_snd)) },
   have K_sub : K ⊆ R,
   { rintros _ ⟨⟨x, t, s⟩, ⟨x_in, t_in, s_in⟩, rfl⟩,
-    dsimp only,
-    apply mem_Ω,
     exact (L.nice h).mem_Ω x t s },
   obtain ⟨ε, ε_pos, hε⟩ : ∃ ε > 0, metric.thickening ε K ⊆ R,
     from  h_op.exists_thickening K_cpt K_sub,

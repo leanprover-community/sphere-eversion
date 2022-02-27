@@ -113,14 +113,20 @@ begin
   { sorry },
 end -/
 
-
-
-/- We probably don't get quite this statement after weakening `exists_surrounding_loops` -/
 lemma exists_loops
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
-  (hΩ_conn : ∀ x, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b) (hb_in : ∀ x, (x, b x) ∈ Ω)
-  (hgK : ∀ᶠ x near K, g x = b x) (hconv : ∀ x, g x ∈ hull (prod.mk x ⁻¹' Ω)) :
+  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
+  (hgK : ∀ᶠ x near K, g x = b x)
+  (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ  :=
-sorry
+begin
+  have b_in : ∀ x, (x, b x) ∈ Ω,
+  { intros x,
+    have : (hull $ connected_comp_in (prod.mk x ⁻¹' Ω) $ b x).nonempty := ⟨g x, hconv x⟩,
+    exact (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp this) : _) },
+  have op : ∀ x, is_open (prod.mk x ⁻¹' Ω),
+   from λ x, hΩ_op.preimage (continuous.prod.mk x),
+
+  sorry
+end
