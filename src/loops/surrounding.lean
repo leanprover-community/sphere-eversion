@@ -64,10 +64,15 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E]
 local notation `d` := finrank ℝ F
 local notation `smooth_on` := cont_diff_on ℝ ⊤
 
-/-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
-def smooth_at (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
+/-
+FIXME: the definition below gets a prime because it clashes with a manifold definition
+in mathlib which is in the root namespace.
+-/
 
-lemma smooth_at.continuous_at {f : E → F} {x : E} (h : smooth_at f x) : continuous_at f x :=
+/-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
+def smooth_at' (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
+
+lemma smooth_at'.continuous_at {f : E → F} {x : E} (h : smooth_at' f x) : continuous_at f x :=
 by { obtain ⟨s, hs, h⟩ := h, exact h.continuous_on.continuous_at hs }
 
 section surrounding_points
@@ -175,7 +180,7 @@ end
 lemma smooth_surrounding [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (ι → F) → (ι → ℝ),
-  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at' (uncurry W) yq ∧
                              (∀ i, 0 < W yq.1 yq.2 i) ∧
                              ∑ i, W yq.1 yq.2 i = 1 ∧
                              ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
@@ -211,7 +216,7 @@ end
 lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
   (h : surrounding_pts x p w) :
   ∃ W : F → (ι → F) → (ι → ℝ),
-  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at (uncurry W) yq ∧
+  ∀ᶠ (yq : F × (ι → F)) in 𝓝 (x, p), smooth_at' (uncurry W) yq ∧
     surrounding_pts yq.1 yq.2 (W yq.1 yq.2) :=
 begin
   refine exists_imp_exists (λ W hW, _) (smooth_surrounding h),

@@ -49,3 +49,6 @@ by rw [nhds_set, eventually_Sup, set.ball_image_iff]
 lemma filter.eventually.eventually_nhds_set {p : α → Prop} (h : ∀ᶠ y in 𝓝ˢ s, p y) :
   ∀ᶠ y in 𝓝ˢ s, ∀ᶠ x in 𝓝 y, p x :=
 eventually_nhds_set_iff.mpr (λ x x_in, (eventually_nhds_set_iff.mp h x x_in).eventually_nhds)
+
+lemma filter.eventually.on_set {p : α → Prop} (h : ∀ᶠ y in 𝓝ˢ s, p y) : ∀ x ∈ s, p x :=
+eventually_principal.mp $ eventually.filter_mono (principal_le_nhds_set s) h

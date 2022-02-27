@@ -2,6 +2,7 @@ import to_mathlib.analysis.normed_group
 import to_mathlib.analysis.normed_space.finite_dimension
 import to_mathlib.linear_algebra.basis
 import to_mathlib.topology.nhds_set
+import to_mathlib.analysis.cut_off
 
 import loops.exists
 
@@ -156,13 +157,13 @@ lemma loop_smooth (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 
 (L.nice h).smooth
 
 lemma loop_smooth' (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕)
-  {t : G → ℝ} (ht : 𝒞 ∞ t) {s : G → ℝ} (ht : 𝒞 ∞ s) {x : G → E} (hx : 𝒞 ∞ x) :
+  {t : G → ℝ} (ht : 𝒞 ∞ t) {s : G → ℝ} (hs : 𝒞 ∞ s) {x : G → E} (hx : 𝒞 ∞ x) :
   𝒞 ∞ (λ g, L.loop h (t g) (x g) (s g)) :=
-sorry
+(L.loop_smooth h).comp (ht.prod $ hx.prod hs)
 
 lemma loop_C1 (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ∀ t, 𝒞 1 ↿(L.loop h t) :=
-sorry
+λ t, (L.loop_smooth' h cont_diff_const cont_diff_snd cont_diff_fst).of_le le_top
 
 lemma loop_avg (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
  ∀ x, (L.loop h 1 x).average = L.g 𝓕 x :=
@@ -176,25 +177,27 @@ variables (L : step_landscape E)
 
 -- Cut-off function which needs to satisfies the next three lemmas
 def ρ (L : step_landscape E) : E → ℝ :=
-sorry
+(exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some
 
 lemma ρ_smooth (L : step_landscape E) : 𝒞 ∞ L.ρ :=
-sorry
-
-lemma ρ_le (L : step_landscape E) (x : E) : |L.ρ x| ≤ 1 :=
-sorry
+(exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some_spec.1
 
 lemma ρ_mem (L : step_landscape E) (x : E) : L.ρ x ∈ I :=
-sorry
+(exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some_spec.2.2.2 x
+
+lemma ρ_le (L : step_landscape E) (x : E) : |L.ρ x| ≤ 1 :=
+begin
+  cases L.ρ_mem x with h h',
+  rw abs_le,
+  refine ⟨_, h'⟩,
+  linarith
+end
 
 lemma hρ₀ (L : step_landscape E) : ∀ᶠ x near L.K₀, L.ρ x = 1 :=
-sorry
-
-lemma hρ₁ (L : step_landscape E) : closure {x | L.ρ x ≠ 0} ⊆ L.K₁ :=
-sorry
+(exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some_spec.2.1
 
 lemma hρ_compl_K₁ (L : step_landscape E) {x : E} : x ∉ L.K₁ → L.ρ x = 0 :=
-sorry
+(exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some_spec.2.2.1 x
 
 /--
 Homotopy of formal solutions obtained by corrugation in the direction of `p : dual_pair' E`
