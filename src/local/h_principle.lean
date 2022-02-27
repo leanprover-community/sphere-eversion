@@ -90,43 +90,40 @@ variables {R}
 
 lemma accepts.open {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   is_open (L.Ω R 𝓕) :=
-sorry
-
-lemma accepts.connected {L : step_landscape E} {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
-  ∀ x, is_connected (prod.mk x ⁻¹' (L.Ω R 𝓕)) :=
 begin
-
-  sorry
+  set ψ : E × F → one_jet E F := λ p, (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2),
+  change is_open {p : E × F | ψ p ∈ R},
+  apply is_open.preimage _ h.h_op,
+  apply continuous_fst.prod_mk ((𝓕.f_diff.continuous.comp continuous_fst).prod_mk _),
+  exact L.p.continuous_update (𝓕.φ_diff.continuous.comp continuous_fst) continuous_snd
 end
 
 lemma accepts.smooth_b {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   𝒞 ∞ (L.b 𝓕) :=
-sorry
+(continuous_linear_map.apply ℝ F L.v).cont_diff.comp 𝓕.φ_diff
 
 lemma accepts.smooth_g {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   𝒞 ∞ (L.g 𝓕) :=
-sorry
-
-lemma accepts.mem {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
-  ∀ x, (x, L.b 𝓕 x) ∈ L.Ω R 𝓕 :=
-sorry
+(continuous_linear_map.apply ℝ F L.v).cont_diff.comp (cont_diff_top_iff_fderiv.mp 𝓕.f_diff).2
 
 lemma accepts.rel {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   ∀ᶠ (x : E) near L.K, (L.g 𝓕) x = (L.b 𝓕) x :=
-sorry
-
-lemma accepts.hull {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
-  ∀ x, L.g 𝓕 x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω R L 𝓕) (L.b 𝓕 x)) :=
-sorry
+begin
+  apply (h.hC.filter_mono $ monotone_nhds_set (inter_subset_right L.K₁ L.C)).mono,
+  intros x hx,
+  dsimp [jet_sec.is_holonomic_at] at hx,
+  dsimp [step_landscape.g, step_landscape.b],
+  rw hx
+end
 
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ℝ → E → loop F :=
-classical.some (exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.hull)
+classical.some (exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.h_short)
 
 lemma nice (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
   nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L 𝓕) L.K (L.loop h) :=
-classical.some_spec $ exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.hull
+classical.some_spec $ exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.h_short
 
 /- TODO: There are now many lemmas whose proofs are (L.nice h).whatever
 They could be removed and inlined.
