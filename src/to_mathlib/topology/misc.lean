@@ -207,6 +207,16 @@ begin
     exact ⟨_, mem_connected_comp_in_self hx⟩ }
 end
 
+lemma is_preconnected.connected_comp_in {F : set α} {x : α} (h : is_preconnected F) (hx : x ∈ F) :
+  connected_comp_in F x  = F :=
+begin
+  dsimp [connected_comp_in],
+  have := (is_preconnected_iff_preconnected_space.mp h).is_preconnected_univ,
+  rw [dif_pos hx, eq_univ_of_univ_subset (this.subset_connected_component (mem_univ ⟨x, hx⟩)),
+      image_univ],
+  exact subtype.range_coe
+end
+
 end connected_comp_in
 
 namespace topological_space -- to topology.bases

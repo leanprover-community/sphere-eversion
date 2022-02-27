@@ -4,7 +4,7 @@ open_locale topological_space
 
 notation `I` := set.Icc (0 : ℝ) 1
 notation `𝒞` := cont_diff ℝ
-notation `∞` := ⊤
+notation `∞` := (⊤ : with_top ℕ)
 notation `hull` := convex_hull ℝ
 notation `D` := fderiv ℝ
 notation `hull` := convex_hull ℝ

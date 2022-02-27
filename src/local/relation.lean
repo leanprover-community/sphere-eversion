@@ -1,4 +1,5 @@
 import analysis.calculus.cont_diff
+import analysis.calculus.specific_functions
 import linear_algebra.dual
 import topology.metric_space.hausdorff_distance
 
@@ -137,6 +138,19 @@ end
 def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
 ample_set (R.slice p θ)
 
+/- FIXME: the proof below is awful. -/
+lemma is_ample.mem_hull {R : rel_loc E F} (h : is_ample R) {θ : E × F × (E →L[ℝ] F)}
+  (hθ : θ ∈ R) (v : F) (p) : v ∈ hull (connected_comp_in (R.slice p θ) (θ.2.2 p.v)) :=
+begin
+  rw h p θ (θ.2.2 p.v) _,
+  exact mem_univ _,
+  dsimp [rel_loc.slice],
+  rw p.update_self,
+  cases θ,
+  cases θ_snd,
+  exact hθ
+end
+
 /-- A solution to a local relation `R`. -/
 @[ext] structure sol (R : rel_loc E F) :=
 (f : E → F)
@@ -270,11 +284,18 @@ lemma _root_.rel_loc.formal_sol.is_part_holonomic_at.mono {𝓕 : formal_sol R}
 
 lemma _root_.is_part_holonomic_top {𝓕 : jet_sec E F} {x : E} :
   is_part_holonomic_at 𝓕 ⊤ x ↔ is_holonomic_at 𝓕 x :=
-sorry
+begin
+  simp only [is_part_holonomic_at, submodule.mem_top, forall_true_left, is_holonomic_at],
+  rw [← funext_iff, continuous_linear_map.coe_fn_injective.eq_iff]
+end
 
 @[simp] lemma is_part_holonomic_bot (𝓕 : jet_sec E F) :
   is_part_holonomic_at 𝓕 ⊥ = λ x, true :=
-sorry
+begin
+  ext x,
+  simp only [is_part_holonomic_at, submodule.mem_bot, forall_eq, map_zero, eq_self_iff_true]
+end
+
 
 lemma mem_slice (𝓕 : formal_sol R) (p : dual_pair' E) {x : E} :
   𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
@@ -289,14 +310,9 @@ D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v
 def _root_.rel_loc.formal_sol.is_short_at (𝓕 : formal_sol R)(p : dual_pair' E) (x : E) : Prop :=
 D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
 
-lemma _root_.rel_loc.is_ample.is_short_at_jet_sec {R : rel_loc E F} (hR : is_ample R) (𝓕 : jet_sec E F) (p : dual_pair' E)
-  (x : E) : 𝓕.is_short_at R p x :=
-sorry
-
-
 lemma _root_.rel_loc.is_ample.is_short_at {R : rel_loc E F} (hR : is_ample R) (𝓕 : formal_sol R) (p : dual_pair' E)
   (x : E) : 𝓕.is_short_at p x :=
-sorry
+hR.mem_hull (𝓕.is_sol x) _ p
 
 end rel_loc.jet_sec
 
@@ -318,46 +334,42 @@ variables  {E F} {R : rel_loc E F}
 instance : has_coe_to_fun (htpy_jet_sec E F) (λ S, ℝ → jet_sec E F) :=
 ⟨λ S t,
  { f := S.f t,
-   f_diff := sorry,
+   f_diff := S.f_diff.comp (cont_diff_const.prod cont_diff_id),
    φ := S.φ t,
-   φ_diff := sorry }⟩
+   φ_diff := S.φ_diff.comp (cont_diff_const.prod cont_diff_id) }⟩
 
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
 for trivial induction initialization. -/
 def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 { f := λ t, 𝓕.f,
-  f_diff := sorry,
+  f_diff := 𝓕.f_diff.comp cont_diff_snd,
   φ := λ t, 𝓕.φ,
-  φ_diff := sorry }
+  φ_diff := 𝓕.φ_diff.comp cont_diff_snd }
 
 @[simp] lemma rel_loc.jet_sec.const_htpy_apply (𝓕 : jet_sec E F) :
   ∀ t, 𝓕.const_htpy t = 𝓕 :=
 λ t, by ext x ; refl
 
-
-/-- A smooth step function on `ℝ`.
-TODO: check that `real.smooth_transition` from mathlib already fits the bill
--/
-def smooth_step : ℝ → ℝ := sorry
+/-- A smooth step function on `ℝ`. -/
+def smooth_step : ℝ → ℝ := real.smooth_transition
 
 lemma smooth_step.smooth : cont_diff ℝ ⊤ smooth_step :=
-sorry
+real.smooth_transition.cont_diff
 
 @[simp]
 lemma smooth_step.zero : smooth_step 0 = 0 :=
-sorry
+real.smooth_transition.zero_of_nonpos le_rfl
 
 @[simp]
 lemma smooth_step.one : smooth_step 1 = 1 :=
-sorry
+real.smooth_transition.one_of_one_le le_rfl
 
 lemma smooth_step.mem (t : ℝ) : smooth_step t ∈ I :=
-sorry
+⟨real.smooth_transition.nonneg t, real.smooth_transition.le_one t⟩
 
 lemma smooth_step.abs_le (t : ℝ) : |smooth_step t| ≤ 1 :=
-sorry
-
+abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], real.smooth_transition.le_one t⟩
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
@@ -368,21 +380,48 @@ def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) : htpy_jet_sec E F :=
   φ_diff := sorry }
 
 @[simp]
-lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec E F) : 𝓕.comp 𝓖 0 = 𝓕 0 :=
-sorry
-
-@[simp]
-lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec E F) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
-sorry
-
-@[simp]
 lemma htpy_jet_sec.comp_of_le (𝓕 𝓖 : htpy_jet_sec E F) {t : ℝ} (ht : t ≤ 1/2) :
   𝓕.comp 𝓖 t = 𝓕 (smooth_step $ 2*t) :=
-sorry
+begin
+  dsimp [htpy_jet_sec.comp],
+  ext x,
+  change (if t ≤ 1/2 then _ else  _) = _,
+  rw if_pos ht,
+  refl,
+  ext1 x,
+  change (if t ≤ 1 / 2 then _ else _) = (𝓕 _).φ x,
+  rw if_pos ht,
+  refl
+end
+
+
+@[simp]
+lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec E F) : 𝓕.comp 𝓖 0 = 𝓕 0 :=
+begin
+  rw htpy_jet_sec.comp_of_le _ _ (by norm_num : (0 : ℝ) ≤ 1/2),
+  simp
+end
 
 @[simp]
 lemma htpy_jet_sec.comp_of_not_le (𝓕 𝓖 : htpy_jet_sec E F) {t : ℝ} (ht : ¬ t ≤ 1/2) :
   𝓕.comp 𝓖 t = 𝓖 (smooth_step $ 2*t - 1) :=
-sorry
+begin
+  dsimp [htpy_jet_sec.comp],
+  ext x,
+  change (if t ≤ 1/2 then _ else  _) = _,
+  rw if_neg ht,
+  refl,
+  ext1 x,
+  change (if t ≤ 1 / 2 then _ else _) = (𝓖 _).φ x,
+  rw if_neg ht,
+  refl
+end
+
+@[simp]
+lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec E F) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
+begin
+  rw htpy_jet_sec.comp_of_not_le _ _ (by norm_num : ¬ (1 : ℝ) ≤ 1/2),
+  norm_num
+end
 
 end htpy_jet_sec
