@@ -13,34 +13,7 @@ open_locale topological_space unit_interval convolution
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F]
           {g b : E → F} {Ω : set (E × F)} {U K C : set E}
-
-/-- Equivariant maps from `ℝ` to itself are functions `f : ℝ → ℝ` with `f (t + 1) = f t + 1`. -/
-structure equivariant_map :=
-(to_fun : ℝ → ℝ)
-(eqv' : ∀ t, to_fun (t + 1) = to_fun t + 1)
-
-namespace equivariant_map
-
-variable (φ : equivariant_map)
-
-instance : has_coe_to_fun equivariant_map (λ _, ℝ → ℝ) := ⟨equivariant_map.to_fun⟩
-
-lemma eqv : ∀ t, φ (t + 1) = φ t + 1 := φ.eqv'
-
-end equivariant_map
-
 variables [normed_space ℝ F] [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
-
-@[simp] lemma fract_add_one {α} [linear_ordered_ring α] [floor_ring α] (a : α) :
-  fract (a + 1) = fract a :=
-by exact_mod_cast fract_add_int a 1
-
-/-- continuous equivariant reparametrization that is locally constant around `0`.
-  It linearly connects `(0, 0)`, `(1/4, 0)` and `(3/4, 1)` and `(1, 1)` and is extended to an
-  equivariant function. -/
-def linear_reparam : equivariant_map :=
-⟨λ x, ⌊ x ⌋ + max 0 (min 1 $ 2 * fract (x - 4⁻¹)), λ t,
-  by simp [floor_add_one, add_sub, ← sub_add_eq_add_sub _ _ (1 : ℝ), fract_add_one, add_right_comm]⟩
 
 variables (g b Ω U K)
 

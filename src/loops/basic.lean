@@ -12,6 +12,7 @@ import to_mathlib.smooth_barycentric
 import to_mathlib.topology.path
 import to_mathlib.linear_algebra.affine_space.basis
 import to_mathlib.measure_theory.parametric_interval_integral
+import to_mathlib.equivariant
 
 /-!
 # Basic definitions and properties of loops
@@ -136,6 +137,12 @@ instance [has_scalar K X] : has_scalar K (loop X) :=
 
 @[simp] lemma smul_apply [has_scalar K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
 rfl
+
+/-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
+@[simps {simp_rhs := tt}]
+def reparam {F : Type*} (γ : loop F) (φ : equivariant_map) : loop F :=
+{ to_fun := γ ∘ φ,
+  per' := λ t, by rw [comp_apply, φ.eqv, γ.per] }
 
 /-! ## Support of a loop family -/
 
