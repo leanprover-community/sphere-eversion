@@ -350,6 +350,23 @@ begin
   simp only [he₂, comp_app, h _],
 end
 
+lemma continuous_clm_apply {X : Type*} [topological_space X] {f : X → F →L[𝕜] G}
+  [finite_dimensional 𝕜 F] :  continuous f ↔ ∀ y, continuous (λ x, f x y) :=
+begin
+  refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).continuous.comp h, λ h, _⟩,
+  let d := finite_dimensional.finrank 𝕜 F,
+  have hd : finite_dimensional.finrank 𝕜 (fin d → 𝕜) = d := finite_dimensional.finrank_fin_fun 𝕜,
+  obtain ⟨e₁⟩ := finite_dimensional.nonempty_continuous_linear_equiv_iff_finrank_eq.mpr hd,
+  let e₂ := (e₁.arrow_congr_equiv' (1 : G ≃L[𝕜] G)).symm.trans
+    (continuous_linear_equiv.pi_ring (fin d)),
+  have he₂ : ∀ i x, e₂ (f x) i = f x (e₁ (pi.single i (1 : 𝕜))), { simp, },
+  suffices :  continuous (e₂ ∘ f),
+  { rw [← comp.left_id f, ← e₂.symm_comp_self, function.comp.assoc],
+    exact e₂.symm.continuous.comp this },
+  refine continuous_pi (λ i, _),
+  simp only [he₂, comp_app, h _],
+end
+
 lemma cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F} :
   cont_diff 𝕜 ((n + 1) : ℕ) f ↔
   differentiable 𝕜 f ∧ ∀ y, cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=

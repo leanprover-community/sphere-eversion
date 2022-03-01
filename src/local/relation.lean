@@ -4,8 +4,9 @@ import linear_algebra.dual
 import topology.metric_space.hausdorff_distance
 
 import to_mathlib.analysis.normed_space.operator_norm
+import to_mathlib.analysis.calculus
 import to_mathlib.topology.misc
-
+import to_mathlib.topology.hausdorff_distance
 import local.ample
 import notations
 
@@ -84,16 +85,28 @@ lemma update_self (p : dual_pair' E) (φ : E →L[ℝ] F)  :
 by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
               continuous_linear_map.zero_comp, sub_self]
 
-lemma smooth_update (p : dual_pair' E) {G : Type*} [normed_group G] [normed_space ℝ G]
+/- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
+to use `cont_diff_clm_apply` and ` continuous_clm_apply`. -/
+
+lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair' E) {G : Type*} [normed_group G] [normed_space ℝ G]
   {φ : G → (E →L[ℝ] F)} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
   𝒞 ∞ (λ g, p.update (φ g) (w g)) :=
-sorry
+begin
+  apply hφ.add,
+  rw cont_diff_clm_apply,
+  intro y,
+  exact (hw.sub (cont_diff_clm_apply.mp hφ p.v)).const_smul _,
+end
 
-lemma continuous_update (p : dual_pair' E) {X : Type*} [topological_space X]
+lemma continuous_update [finite_dimensional ℝ E] (p : dual_pair' E) {X : Type*} [topological_space X]
   {φ : X → (E →L[ℝ] F)} (hφ : continuous φ) {w : X → F} (hw : continuous w) :
   continuous (λ g, p.update (φ g) (w g)) :=
-sorry
-
+begin
+  apply hφ.add,
+  rw continuous_clm_apply,
+  intro y,
+  exact (hw.sub (continuous_clm_apply.mp hφ p.v)).const_smul _
+end
 
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair' i`
 is given by the `i`th basis element and its dual. -/
@@ -123,16 +136,6 @@ namespace rel_loc
 the set of `w` in `F` such that updating `θ` using `p` and `w` leads to a jet in `R`. -/
 def slice (R : rel_loc E F) (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)) : set F :=
 {w | (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R}
-
--- FIXME: now that there is no longer a U, this should be a more general lemma for a compact set
--- inside an open one in a metric space. This may already exist
-lemma _root_.is_open.exists_thickening {R : rel_loc E F} (h : is_open R)
-  {K : set $ one_jet E F} (hK : is_compact K) (hK' : K ⊆ R) :
-∃ ε > 0, metric.thickening ε K ⊆ R :=
-begin
-
-  sorry
-end
 
 /-- A relation is ample if all its slices are ample. -/
 def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
