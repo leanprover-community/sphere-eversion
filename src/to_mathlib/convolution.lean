@@ -29,7 +29,7 @@ scalar-valued and `g` is vector-valued)
 TODO:
 * Generalize abelian groups to groups, where possible
 * [maybe] generalize bilinear map to special bilinear map
-* Currently the definition of convolution works better with measures that are right-invariant.
+* Currently the definition of `convolution` works better with measures that are right-invariant.
   Perhaps we should reverse this.
 
 -/
@@ -57,52 +57,6 @@ TODO:
 
 -- end deriv_integral
 
-section
-
--- lemma cont_diff_primitive_of_cont_diff
---   {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F) (h2F : ∀ x, integrable (F x)) :
---   cont_diff ℝ n (λ x : H, ∫ t, F x t) :=
--- sorry
-
--- lemma fderiv_parametric_integral
---   {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F) (h2F : ∀ x, integrable (F x)) :
---   cont_diff ℝ n (λ x : H, ∫ t, F x t) :=
--- sorry
-end
-
-section
-
-variables {α : Type*} [measurable_space α]
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-variables {E : Type*} [normed_group E] [normed_space 𝕜 E] [measurable_space E] [borel_space E]
-variables {F : Type*} [normed_group F] [normed_space 𝕜 F]
-variables {G : Type*} [normed_group G] [measurable_space G] [opens_measurable_space G]
-variables {μ : measure α}
-
-@[simp] lemma map_id' : map (λ x, x) μ = μ :=
-map_id
-
-lemma integral_norm_eq_lintegral_nnnorm {f : α → G} (hf : ae_measurable f μ) :
-  ∫ x, ∥f x∥ ∂μ = ennreal.to_real ∫⁻ x, ∥f x∥₊ ∂μ :=
-begin
-  rw integral_eq_lintegral_of_nonneg_ae _ hf.norm,
-  { simp_rw [of_real_norm_eq_coe_nnnorm], },
-  { refine ae_of_all _ _, simp_rw [pi.zero_apply, norm_nonneg, imp_true_iff] },
-end
-
-
--- lemma measurable_continuous_linear_map  {φ : α → F →L[𝕜] E} :
---   measurable φ ↔ ∀ v : F, measurable (λ a, φ a v) :=
--- begin
---   refine ⟨λ h, h.apply_continuous_linear_map, _⟩,
---   intro h,
---   refine measurable_generate_from _,
---   intros t ht, dsimp at ht,
---   -- have := continuous_linear_map.apply 𝕜 F E,
--- end
-
-end
-
 
 open metric
 section
@@ -121,7 +75,7 @@ variables {α : Type*} [measurable_space α]
           [second_countable_topology $ H →L[𝕜] E]
           -- [proper_space H]
 
--- make F' explicit
+-- maybe: make F' explicit
 lemma has_fderiv_at_integral_of_dominated_of_fderiv_le' {F : H → α → E} (F' : H → α → (H →L[𝕜] E))
   {x₀ : H} {bound : α → ℝ}
   {ε : ℝ} (ε_pos : 0 < ε)
@@ -290,12 +244,12 @@ end
 
 variables (E'')
 
-/--  -/
+/--  Apply the bilinear map pointwise on the second argument -/
 @[simps apply]
 def precompR (L : E →L[𝕜] E' →L[𝕜] F) : E →L[𝕜] (E'' →L[𝕜] E') →L[𝕜] (E'' →L[𝕜] F) :=
 (continuous_linear_map.compL 𝕜 E'' E' F).comp L
 
-/--  -/
+/--  Apply the bilinear map pointwise on the second argument -/
 def precompL (L : E →L[𝕜] E' →L[𝕜] F) : (E'' →L[𝕜] E) →L[𝕜] E' →L[𝕜] (E'' →L[𝕜] F) :=
 (precompR E'' (flip L)).flip
 
@@ -307,11 +261,31 @@ section general_measure
 variables
   [measurable_space G] [measurable_space G₀] [measurable_space X] [measurable_space Y]
   [normed_group E] [normed_group E'] [normed_group E''] [normed_group F]
-  [normed_space ℝ E] [normed_space ℝ E'] [normed_space ℝ E''] [normed_space ℝ F]
+  [normed_space ℝ E] [normed_space ℝ E'] [normed_space ℝ E'']
   {μ : measure G}
 
 namespace measure_theory
 
+section integrable
+open measure topological_space
+-- variables {f : G → E} {g : G} [measurable_space G] [normed_group E] [second_countable_topology E] [normed_space ℝ E] [complete_space E] [measurable_space E] [borel_space E] [normed_group F] [measurable_space F] [opens_measurable_space F] [group G] [has_measurable_mul G] [has_measurable_inv G]
+variables [group G] [has_measurable_mul G] [has_measurable_inv G] [measurable_space F]
+  [opens_measurable_space F]
+
+variables (μ)
+@[to_additive]
+lemma integrable_comp_div_left (f : G → F)
+  [is_inv_invariant μ] [is_mul_left_invariant μ] (g : G) :
+  integrable (λ t, f (g / t)) μ ↔ integrable f μ :=
+begin
+  refine ⟨λ h, _, λ h, h.comp_div_left g⟩,
+  convert h.comp_inv.comp_mul_left g⁻¹,
+  simp_rw [div_inv_eq_mul, mul_inv_cancel_left]
+end
+
+end integrable
+
+variables [normed_space ℝ F]
 variables [second_countable_topology E] [complete_space E] [measurable_space E] [borel_space E]
 
 
@@ -464,15 +438,54 @@ end
 
 end measure_theory
 
+
+
 end general_measure
 
 open measure_theory measure_theory.measure
 
-section noncomm
+section preparation
+
+variables [nondiscrete_normed_field 𝕜]
+variables [normed_group E] [normed_group E'] [normed_group E''] [normed_group F]
+variables [normed_space 𝕜 E] [normed_space 𝕜 E'] [normed_space 𝕜 E''] [normed_space 𝕜 F]
+variables {f f' : G → E} {g g' : G → E'}
+variables {L : E →L[𝕜] E' →L[𝕜] F}
+
+section
+variables [add_group G] [topological_space G] [has_continuous_sub G]
+lemma continuous.convolution_integrand_snd (hf : continuous f) (hg : continuous g) (x : G) :
+  continuous (λ t, L (f t) (g (x - t))) :=
+L.continuous_comp₂ hf (hg.comp $ continuous_const.sub continuous_id)
+
+lemma continuous.convolution_integrand_swap_snd (hf : continuous f) (hg : continuous g) (x : G) :
+  continuous (λ t, L (f (x - t)) (g t)) :=
+L.continuous_comp₂ (hf.comp $ continuous_const.sub continuous_id) hg
+end
+
+section
+variables [measurable_space G] {μ : measure G}
+variables [measurable_space E'] [opens_measurable_space E']
+
+lemma integral_norm_bilinear_le_right (g : G → E') (c : E) (hg : integrable g μ) :
+  ∥∫ x, ∥L c (g x)∥ ∂μ∥ ≤ ∥L∥ * ∥c∥ * ∫ x, ∥g x∥ ∂μ :=
+begin
+  simp_rw [← integral_mul_left],
+  rw [real.norm_of_nonneg],
+  { exact integral_mono_of_nonneg (eventually_of_forall $ λ t, norm_nonneg _) (hg.norm.const_mul _)
+      (eventually_of_forall $ λ t, L.le_op_norm₂ _ _) },
+  exact integral_nonneg (λ x, norm_nonneg _),
+end
+
+end
+
+end preparation
+
+section before_diff
+
 variables [nondiscrete_normed_field 𝕜]
   [measurable_space G] [measurable_space G₀] [measurable_space X]
   [normed_group E] [normed_group E'] [normed_group E''] [normed_group F]
-  [normed_space ℝ E] [normed_space ℝ E'] [normed_space ℝ E''] [normed_space ℝ F]
   [normed_space 𝕜 E] [normed_space 𝕜 E'] [normed_space 𝕜 E''] [normed_space 𝕜 F]
   {μ : measure G}
 
@@ -497,88 +510,25 @@ def convolution_exists [has_sub G] (f : G → E) (g : G → E') (L : E →L[𝕜
   (μ : measure G . volume_tac) : Prop :=
 ∀ x : G, convolution_exists_at f g x L μ
 
-variables [second_countable_topology F] [borel_space F] [complete_space F]
-
-/-- The convolution of two functions `f` and `g`. -/
-def convolution [has_sub G] (f : G → E) (g : G → E') (L : E →L[𝕜] E' →L[𝕜] F)
-  (μ : measure G . volume_tac) : G → F :=
-λ x, ∫ t, L (f t) (g (x - t)) ∂μ
-
-localized "notation f ` ⋆[`:67 L:67 `; `:67 μ:67 `] `:0 g:66 := convolution f g L μ" in convolution
-localized "notation f ` ⋆[`:67 L:67 `]`:0 g:66 := convolution f g L
-  measure_theory.measure_space.volume" in convolution
-localized "notation f ` ⋆ `:67 g:66 := convolution f g (function.uncurry has_scalar.smul)
-  measure_theory.measure_space.volume" in convolution
+section
 
 lemma convolution_exists_at.integrable [has_sub G] {x : G} (h : convolution_exists_at f g x L μ) :
   integrable (λ t, L (f t) (g (x - t))) μ :=
 h
 
-lemma convolution_def [has_sub G] : (f ⋆[L; μ] g) x = ∫ t, L (f t) (g (x - t)) ∂μ := rfl
-
-
--- todo: reduce type-class constraints
-variables [add_comm_group G] [topological_space G] [topological_add_group G] [borel_space G]
-  [second_countable_topology G]
-  [is_add_left_invariant μ] [sigma_finite μ]
--- variables [measurable_space 𝕜] [borel_space 𝕜] [has_measurable_smul₂ 𝕜 E]
-
-lemma convolution_exists_at.integrable_swap [is_neg_invariant μ] (h : convolution_exists_at f g x L μ) :
-  integrable (λ t, L (f (x - t)) (g t)) μ :=
-by { convert h.comp_sub_left x, simp_rw [sub_sub_self], }
-
-lemma convolution_exists_at_flip [is_neg_invariant μ] :
-  convolution_exists_at g f x L.flip μ ↔ convolution_exists_at f g x L μ :=
-by { refine ⟨λ h, h.integrable_swap, λ h, _⟩, convert h.comp_sub_left x, simp_rw [sub_sub_self], refl }
-
--- todo: make `comp_sub_left` an iff
-lemma convolution_exists_at_iff_integrable_swap [is_neg_invariant μ] :
-  convolution_exists_at f g x L μ ↔ integrable (λ t, L (f (x - t)) (g t)) μ :=
-convolution_exists_at_flip.symm
-
-variable (L)
-/- commutativity of convolution -/
-lemma convolution_flip [is_neg_invariant μ] : g ⋆[L.flip; μ] f = f ⋆[L; μ] g :=
-by { ext1 x, simp_rw [convolution_def], rw [← integral_sub_left_eq_self _ μ x],
-  simp_rw [sub_sub_self], refl }
-variable {L}
-
-lemma convolution_eq_swap [is_neg_invariant μ] : (f ⋆[L; μ] g) x = ∫ t, L (f (x - t)) (g t) ∂μ :=
-by { rw [← convolution_flip], refl }
-
-lemma smul_convolution [smul_comm_class ℝ 𝕜 F] [measurable_space 𝕜] [opens_measurable_space 𝕜]
-  {y : 𝕜} : (y • f) ⋆[L; μ] g = y • (f ⋆[L; μ] g) :=
-by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_left] }
-
-lemma convolution_smul [smul_comm_class ℝ 𝕜 F] [measurable_space 𝕜] [opens_measurable_space 𝕜]
-  {y : 𝕜} : f ⋆[L; μ] (y • g) = y • (f ⋆[L; μ] g) :=
-by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_right] }
-
-lemma convolution_exists_at.distrib_add {x : G} (hfg : convolution_exists_at f g x L μ)
-  (hfg' : convolution_exists_at f g' x L μ) : (f ⋆[L; μ] (g + g')) x = (f ⋆[L; μ] g) x + (f ⋆[L; μ] g') x :=
-by { simp only [convolution_def, L.map_add_right, pi.add_apply, integral_add hfg hfg'] }
-
-lemma convolution_exists.distrib_add (hfg : convolution_exists f g L μ)
-  (hfg' : convolution_exists f g' L μ) : f ⋆[L; μ] (g + g') = f ⋆[L; μ] g + f ⋆[L; μ] g' :=
-by { ext, exact (hfg x).distrib_add (hfg' x) }
-
-lemma convolution_exists.add_distrib (hfg : convolution_exists f g L μ)
-  (hfg' : convolution_exists f' g L μ) : (f + f') ⋆[L; μ] g = f ⋆[L; μ] g + f' ⋆[L; μ] g :=
-by { ext, simp only [convolution_def, L.map_add_left, pi.add_apply, integral_add (hfg x) (hfg' x)] }
+variables [add_group G]
+-- variables [opens_measurable_space F]
 
 variables (L)
-lemma continuous.convolution_integrand_snd (hf : continuous f) (hg : continuous g) (x : G) :
-  continuous (λ t, L (f t) (g (x - t))) :=
-L.continuous_comp₂ hf (hg.comp $ continuous_const.sub continuous_id)
-
-lemma continuous.convolution_integrand_swap_snd (hf : continuous f) (hg : continuous g) (x : G) :
-  continuous (λ t, L (f (x - t)) (g t)) :=
-L.continuous_comp₂ (hf.comp $ continuous_const.sub continuous_id) hg
 
 variables [measurable_space E] [measurable_space E'] [borel_space E] [borel_space E']
   [second_countable_topology E] [second_countable_topology E']
+variables [has_measurable_add₂ G] [has_measurable_neg G]
+variables [sigma_finite μ] [is_add_left_invariant μ]
+variables [borel_space F]
 
-lemma ae_measurable.convolution_integrand_snd (hf : ae_measurable f μ) (hg : ae_measurable g μ)
+lemma ae_measurable.convolution_integrand_snd
+  (hf : ae_measurable f μ) (hg : ae_measurable g μ)
   (x : G) : ae_measurable (λ t, L (f t) (g (x - t))) μ :=
 begin
   refine L.ae_measurable_comp₂ hf (ae_measurable.comp_measurable _ $ measurable_id.const_sub x),
@@ -594,19 +544,102 @@ end
 
 variables {L}
 
-lemma integral_norm_bilinear_le_right (g : G → E') (c : E) (hg : integrable g μ) :
-  ∥∫ x, ∥L c (g x)∥ ∂μ∥ ≤ ∥L∥ * ∥c∥ * ∫ x, ∥g x∥ ∂μ :=
-begin
-  simp_rw [← integral_mul_left],
-  rw [real.norm_of_nonneg],
-  { exact integral_mono_of_nonneg (eventually_of_forall $ λ t, norm_nonneg _) (hg.norm.const_mul _)
-      (eventually_of_forall $ λ t, L.le_op_norm₂ _ _) },
-  exact integral_nonneg (λ x, norm_nonneg _),
+
+
 end
 
-variables (L) [complete_space E] [complete_space E']
+variables [normed_space ℝ F]
+variables [second_countable_topology F] [borel_space F] [complete_space F]
 
-section sorries -- the lemmas in this section are not used elsewhere
+/-- The convolution of two functions `f` and `g`. -/
+def convolution [has_sub G] (f : G → E) (g : G → E') (L : E →L[𝕜] E' →L[𝕜] F)
+  (μ : measure G . volume_tac) : G → F :=
+λ x, ∫ t, L (f t) (g (x - t)) ∂μ
+
+localized "notation f ` ⋆[`:67 L:67 `; `:67 μ:67 `] `:0 g:66 := convolution f g L μ" in convolution
+localized "notation f ` ⋆[`:67 L:67 `]`:0 g:66 := convolution f g L
+  measure_theory.measure_space.volume" in convolution
+localized "notation f ` ⋆ `:67 g:66 := convolution f g (function.uncurry has_scalar.smul)
+  measure_theory.measure_space.volume" in convolution
+
+lemma convolution_def [has_sub G] : (f ⋆[L; μ] g) x = ∫ t, L (f t) (g (x - t)) ∂μ := rfl
+
+section noncomm
+
+variables [add_group G]
+
+lemma smul_convolution [smul_comm_class ℝ 𝕜 F] [measurable_space 𝕜] [opens_measurable_space 𝕜]
+  {y : 𝕜} : (y • f) ⋆[L; μ] g = y • (f ⋆[L; μ] g) :=
+by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_left] }
+
+lemma convolution_smul [smul_comm_class ℝ 𝕜 F] [measurable_space 𝕜] [opens_measurable_space 𝕜]
+  {y : 𝕜} : f ⋆[L; μ] (y • g) = y • (f ⋆[L; μ] g) :=
+by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_right] }
+
+lemma convolution_exists_at.distrib_add {x : G} (hfg : convolution_exists_at f g x L μ)
+  (hfg' : convolution_exists_at f g' x L μ) :
+  (f ⋆[L; μ] (g + g')) x = (f ⋆[L; μ] g) x + (f ⋆[L; μ] g') x :=
+by simp only [convolution_def, L.map_add_right, pi.add_apply, integral_add hfg hfg']
+
+lemma convolution_exists.distrib_add (hfg : convolution_exists f g L μ)
+  (hfg' : convolution_exists f g' L μ) : f ⋆[L; μ] (g + g') = f ⋆[L; μ] g + f ⋆[L; μ] g' :=
+by { ext, exact (hfg x).distrib_add (hfg' x) }
+
+lemma convolution_exists_at.add_distrib {x : G} (hfg : convolution_exists_at f g x L μ)
+  (hfg' : convolution_exists_at f' g x L μ) :
+  ((f + f') ⋆[L; μ] g) x = (f ⋆[L; μ] g) x + (f' ⋆[L; μ] g) x :=
+by simp only [convolution_def, L.map_add_left, pi.add_apply, integral_add hfg hfg']
+
+lemma convolution_exists.add_distrib (hfg : convolution_exists f g L μ)
+  (hfg' : convolution_exists f' g L μ) : (f + f') ⋆[L; μ] g = f ⋆[L; μ] g + f' ⋆[L; μ] g :=
+by { ext, exact (hfg x).add_distrib (hfg' x) }
+
+end noncomm
+
+section comm
+
+variables [add_comm_group G] [topological_space G] [topological_add_group G]
+variables [borel_space G]
+variables [is_add_left_invariant μ]
+variables [opens_measurable_space F]
+
+
+lemma convolution_exists_at_flip  [is_neg_invariant μ] :
+  convolution_exists_at g f x L.flip μ ↔ convolution_exists_at f g x L μ :=
+begin
+  convert integrable_comp_sub_left μ (λ t, L (f t) (g (x - t))) x,
+  ext t,
+  simp_rw [sub_sub_cancel],
+  refl,
+end
+
+lemma convolution_exists_at.integrable_swap [is_neg_invariant μ] (h : convolution_exists_at f g x L μ) :
+  integrable (λ t, L (f (x - t)) (g t)) μ :=
+by { convert h.comp_sub_left x, simp_rw [sub_sub_self], }
+
+lemma convolution_exists_at_iff_integrable_swap [is_neg_invariant μ] :
+  convolution_exists_at f g x L μ ↔ integrable (λ t, L (f (x - t)) (g t)) μ :=
+convolution_exists_at_flip.symm
+
+variable (L)
+/- commutativity of convolution -/
+lemma convolution_flip [is_neg_invariant μ] : g ⋆[L.flip; μ] f = f ⋆[L; μ] g :=
+by { ext1 x, simp_rw [convolution_def], rw [← integral_sub_left_eq_self _ μ x],
+  simp_rw [sub_sub_self], refl }
+variable {L}
+
+lemma convolution_eq_swap [is_neg_invariant μ] : (f ⋆[L; μ] g) x = ∫ t, L (f (x - t)) (g t) ∂μ :=
+by { rw [← convolution_flip], refl }
+
+
+variables [measurable_space E] [measurable_space E'] [borel_space E] [borel_space E']
+  [second_countable_topology E] [second_countable_topology E']
+
+variables (L) [complete_space E] [complete_space E']
+variables [second_countable_topology G] [sigma_finite μ]
+
+section sigma_finite
+
 lemma ae_measurable.convolution_integrand (hf : ae_measurable f μ) (hg : ae_measurable g μ) :
   ae_measurable (λ p : G × G, L (f p.2) (g (p.1 - p.2))) (μ.prod μ) :=
 begin
@@ -641,7 +674,7 @@ lemma integrable.integrable_convolution (hf : integrable f μ) (hg : integrable 
   integrable (f ⋆[L; μ] g) μ :=
 (hf.convolution_integrand L hg).integral_prod_left
 
-end sorries
+end sigma_finite
 
 lemma continuous.convolution_integrand_fst (hg : continuous g) (t : G) :
   continuous (λ x, L (f t) (g (x - t))) :=
@@ -867,7 +900,10 @@ begin
   { simp_rw [add_sub_cancel'_right] at h, exact (h rfl).elim }
 end
 
-end noncomm
+end comm
+
+end before_diff
+
 
 open_locale convolution
 
@@ -875,8 +911,8 @@ open_locale convolution
 section normed_space
 
 variables [is_R_or_C 𝕜] --[complete_space 𝕜]
-variables [normed_group E] [normed_space ℝ E] [normed_space 𝕜 E] [smul_comm_class 𝕜 ℝ E]
-variables [normed_group E'] [normed_space ℝ E'] [normed_space 𝕜 E'] [smul_comm_class 𝕜 ℝ E']
+variables [normed_group E] [normed_space 𝕜 E]
+variables [normed_group E'] [normed_space 𝕜 E']
 variables [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] [smul_comm_class 𝕜 ℝ F]
 variables [normed_group G] [normed_space ℝ G] [normed_space 𝕜 G] [smul_comm_class 𝕜 ℝ G]
 variables {f f' : G → E} {g g' : G → E'} {x x' : 𝕜}
@@ -906,10 +942,10 @@ begin
   have hK' : is_compact K' := (is_compact_closed_ball x₀ 1).add (hcg.fderiv 𝕜).neg,
   refine has_fderiv_at_integral_of_dominated_of_fderiv_le
     zero_lt_one h1 _ (h2 x₀) _ _ _,
-  { exact K'.indicator (λ t, ∥L.precompR G∥ * ∥f t∥ * (⨆ x, ∥fderiv 𝕜 g x∥)) },
+  { exact K'.indicator (λ t, ∥L'∥ * ∥f t∥ * (⨆ x, ∥fderiv 𝕜 g x∥)) },
   { exact hcg.convolution_exists_right L hf hg.continuous x₀ },
   { refine eventually_of_forall (λ t x hx, _),
-    exact (hcg.fderiv 𝕜).convolution_integrand_bound_right (L.precompR G)
+    exact (hcg.fderiv 𝕜).convolution_integrand_bound_right L'
       (hg.continuous_fderiv le_rfl) (ball_subset_closed_ball hx) },
   { rw [integrable_indicator_iff hK'.measurable_set], exact ((hf hK').norm.const_mul _).mul_const _ },
   { refine eventually_of_forall (λ t x hx, L.has_fderiv_at_const_left x (h3 x t)) },
