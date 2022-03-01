@@ -448,7 +448,7 @@ begin
   have cont_x : ∀ x, continuous (F x),
     from λ x, hF.continuous.comp (continuous.prod.mk x),
   have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀),
-    from λ x, (cont_x x).integrable_on_compact is_compact_Icc,
+    from λ x, (cont_x x).locally_integrable is_compact_Icc,
   have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
     from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
   apply has_fderiv_at_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀

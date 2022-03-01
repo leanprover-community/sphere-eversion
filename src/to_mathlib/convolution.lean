@@ -6,7 +6,7 @@ import to_mathlib.measure_theory.parametric_interval_integral
 import analysis.calculus.fderiv_measurable
 
 noncomputable theory
-open topological_space measure_theory measure_theory.measure function set
+open topological_space measure_theory function set measure_theory.measure
 open_locale pointwise topological_space nnreal measure_theory
 open filter (hiding map_map map_id map map_id')
 
@@ -226,53 +226,6 @@ has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas hF_int hF'_meas 
 
 end
 
-namespace measure_theory
-
-section integrable
-
-variables {α β γ : Type*} [measurable_space α] [measurable_space β] [measurable_space γ]
-  [normed_group γ] [normed_group β] {μ : measure α} [has_le β]
-
-end integrable
-
-section locally_integrable
-variables {X E : Type*} [measurable_space X] [topological_space X]
-variables [normed_group E] [measurable_space E] {f : X → E} {μ : measure X}
-
-/-- A function `f : X → E` is locally integrable if it is integrable on all compact sets.
-  See `measure_theory.locally_integrable_iff` for the justification of this name. -/
-def locally_integrable (f : X → E) (μ : measure X . volume_tac) : Prop :=
-∀ ⦃K⦄, is_compact K → integrable_on f K μ
-
-lemma integrable.locally_integrable (hf : integrable f μ) : locally_integrable f μ :=
-λ K hK, hf.integrable_on
-
-lemma locally_integrable.ae_measurable [sigma_compact_space X] (hf : locally_integrable f μ) :
-  ae_measurable f μ :=
-begin
-  rw [← @restrict_univ _ _ μ, ← Union_compact_covering, ae_measurable_Union_iff],
-  exact λ i, (hf $ is_compact_compact_covering X i).ae_measurable
-end
-
-lemma locally_integrable_iff [locally_compact_space X] :
-  locally_integrable f μ ↔ ∀ x : X, ∃ U ∈ 𝓝 x, integrable_on f U μ :=
-begin
-  refine ⟨λ hf x, _, λ hf K hK, _⟩,
-  { obtain ⟨K, hK, h2K⟩ := exists_compact_mem_nhds x, exact ⟨K, h2K, hf hK⟩ },
-  { refine is_compact.induction_on hK integrable_on_empty (λ s t hst h, h.mono_set hst)
-      (λ s t hs ht, integrable_on_union.mpr ⟨hs, ht⟩) (λ x hx, _),
-    obtain ⟨K, hK, h2K⟩ := hf x, exact ⟨K, nhds_within_le_nhds hK, h2K⟩ }
-end
-
-lemma continuous.locally_integrable [opens_measurable_space X] [t2_space X] [borel_space E]
-  [is_locally_finite_measure μ] (hf : continuous f) : locally_integrable f μ :=
-λ K hK, hf.integrable_on_compact hK
-
-
-end locally_integrable
-end measure_theory
-
-
 variables {𝕜 G G₀ X Y M R E E' E'' F : Type*}
 
 section continuous_bilinear_map
@@ -287,7 +240,7 @@ variables {f f' : G → E} {g g' : G → E'}
 namespace continuous_linear_map
 
 lemma map_add_left (L : E →L[𝕜] E' →L[𝕜] F) {x x' : E} {y : E'} : L (x + x') y = L x y + L x' y :=
-by rw [L.map_add, add_apply]
+by rw [L.map_add, continuous_linear_map.add_apply]
 
 lemma map_add_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} {y y' : E'} : L x (y + y') = L x y + L x y' :=
 (L x).map_add y y'
@@ -359,15 +312,6 @@ variables
 
 namespace measure_theory
 
--- usable in `continuous.integrable_of_compact_closure_support`
-lemma integrable_on_iff_integable_of_support_subset [normed_group Y] {μ : measure X} {f : X → Y} {s : set X}
-  (h1s : support f ⊆ s) (h2s : measurable_set s) :
-  integrable_on f s μ ↔ integrable f μ :=
-begin
-  refine ⟨λ h, _, λ h, h.integrable_on⟩,
-  rwa [← indicator_eq_self.2 h1s, integrable_indicator_iff h2s]
-end
-
 variables [second_countable_topology E] [complete_space E] [measurable_space E] [borel_space E]
 
 
@@ -399,20 +343,6 @@ lemma integral_div_right_eq_self
   (f : G → E) (μ : measure G) [is_mul_right_invariant μ] (x' : G) :
   ∫ x, f (x / x') ∂μ = ∫ x, f x ∂μ :=
 by simp_rw [div_eq_mul_inv, integral_mul_right_eq_self f x'⁻¹]
-
-@[to_additive]
-lemma integrable.comp_div_right [has_measurable_inv G] [is_mul_right_invariant μ]
-  (hf : integrable f μ)
-  (g : G) : integrable (λ t, f (t / g)) μ :=
-begin
-  rw [← map_mul_right_eq_self μ g, integrable_map_measure, function.comp],
-  { simp_rw [mul_div_cancel''], exact hf },
-  { refine ae_measurable.comp_measurable _ (measurable_id.div_const g),
-    simp_rw [map_map (measurable_id'.div_const g) (measurable_id'.mul_const g),
-      function.comp, mul_div_cancel'', map_id'],
-    exact hf.ae_measurable },
-  exact measurable_mul_const g
-end
 
 end has_measurable_mul
 
@@ -512,72 +442,6 @@ end
 
 end mul
 
-namespace measure
-
-/-- A measure is invariant under negation if `- μ = μ`. Equivalently, this means that for all
-measurable `A` we have `μ (- A) = μ A`, where `- A` is the pointwise negation of `A`. -/
-class is_neg_invariant [has_neg G] (μ : measure G) : Prop :=
-(neg_eq_self : μ.neg = μ)
-
-/-- A measure is invariant under inversion if `μ⁻¹ = μ`. Equivalently, this means that for all
-measurable `A` we have `μ (A⁻¹) = μ A`, where `A⁻¹` is the pointwise inverse of `A`. -/
-@[to_additive] class is_inv_invariant [has_inv G] (μ : measure G) : Prop :=
-(inv_eq_self : μ.inv = μ)
-
-@[simp, to_additive]
-lemma inv_eq_self [has_inv G] (μ : measure G) [is_inv_invariant μ] : μ.inv = μ :=
-is_inv_invariant.inv_eq_self
-
-@[simp, to_additive]
-lemma map_inv_eq_self [has_inv G] (μ : measure G) [is_inv_invariant μ] :
-  map has_inv.inv μ = μ :=
-is_inv_invariant.inv_eq_self
-
-instance : is_neg_invariant (volume : measure ℝ) := ⟨real.map_volume_neg⟩
-
-/-
-@[to_additive]
-lemma measure_preimage_inv' [has_inv G] [has_measurable_inv G] (μ : measure G)
-  [is_inv_invariant μ] (hA : measurable_set A) : μ (has_inv.inv ⁻¹' A) = μ A :=
-by rw [← map_apply measurable_inv hA, map_inv_eq_self μ]
-
-@[to_additive]
-lemma measure_inv' [has_inv G] [has_measurable_inv G] (μ : measure G) [is_inv_invariant μ]
-  (hA : measurable_set A) : μ A⁻¹ = μ A :=
-measure_preimage_inv' μ hA
--/
-
-variables [group G] [has_measurable_mul G] [has_measurable_inv G] {A : set G} [is_inv_invariant μ]
-  {f : G → E}
-
-@[to_additive]
-lemma measure_preimage_inv (μ : measure G) [is_inv_invariant μ] (A : set G) :
-  μ (has_inv.inv ⁻¹' A) = μ A :=
-by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv G).map_apply A).symm }
-
-@[to_additive]
-lemma measure_inv (μ : measure G) [is_inv_invariant μ]
-  (A : set G) : μ A⁻¹ = μ A :=
-measure_preimage_inv μ A
-
-lemma measure_preimage_inv₀ [group_with_zero G₀] [has_measurable_inv G₀] (μ : measure G₀)
-  [is_inv_invariant μ] (A : set G₀) : μ (has_inv.inv ⁻¹' A) = μ A :=
-by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv G₀).map_apply A).symm }
-
-lemma measure_inv₀ [group_with_zero G₀] [has_measurable_inv G₀] (μ : measure G₀)
-  [is_inv_invariant μ] (A : set G₀) : μ A⁻¹ = μ A :=
-by { conv_rhs { rw [← map_inv_eq_self μ] }, exact ((measurable_equiv.inv G₀).map_apply A).symm }
-
--- @[to_additive]
--- lemma integral_inv_eq_self [smul_invariant_measure _ _ μ] (f : G → E) : ∫ x, f (x⁻¹) ∂μ = ∫ x, f x ∂μ :=
--- begin
---   have h : measurable_embedding (λ x : G, x⁻¹) :=
---   (measurable_equiv.inv G).measurable_embedding,
---   rw [← h.integral_map, map_inv_eq_self]
--- end
-
-end measure
-open measure
 variables [group G] [has_measurable_mul G] [has_measurable_inv G] {f : G → E}
 
 -- div_inv_monoid
@@ -597,35 +461,6 @@ begin
   conv_rhs { rw [← map_inv_eq_self μ, ← map_mul_left_eq_self μ g] },
   exact (map_map measurable_inv (measurable_const_mul g)).symm
 end
-
-@[to_additive]
-lemma integrable.comp_div_left [is_inv_invariant μ] [is_mul_left_invariant μ] (hf : integrable f μ)
-  (g : G) : integrable (λ t, f (g / t)) μ :=
-begin
-  rw [← map_mul_right_inv_eq_self μ g⁻¹, integrable_map_measure, function.comp],
-  { simp_rw [div_inv_eq_mul, mul_inv_cancel_left], exact hf },
-  { refine ae_measurable.comp_measurable _ (measurable_id.const_div g),
-    simp_rw [map_map (measurable_id'.const_div g) (measurable_id'.const_mul g⁻¹).inv,
-      function.comp, div_inv_eq_mul, mul_inv_cancel_left, map_id'],
-    exact hf.ae_measurable },
-  exact (measurable_id'.const_mul g⁻¹).inv
-end
-
-@[to_additive]
-lemma integral_inv_eq_self (f : G → E) (μ : measure G) [is_inv_invariant μ] :
-  ∫ x, f (x⁻¹) ∂μ = ∫ x, f x ∂μ :=
-begin
-  have h : measurable_embedding (λ x : G, x⁻¹) :=
-  (measurable_equiv.inv G).measurable_embedding,
-  rw [← h.integral_map, map_inv_eq_self]
-end
-
-@[to_additive]
-lemma integral_div_left_eq_self (f : G → E) (μ : measure G) [is_inv_invariant μ]
-  [is_mul_left_invariant μ] (x' : G) : ∫ x, f (x' / x) ∂μ = ∫ x, f x ∂μ :=
-by simp_rw [div_eq_mul_inv, integral_inv_eq_self (λ x, f (x' * x)) μ,
-  integral_mul_left_eq_self f x']
-
 
 end measure_theory
 
