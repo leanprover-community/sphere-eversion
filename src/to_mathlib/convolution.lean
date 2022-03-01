@@ -4,6 +4,7 @@ import measure_theory.measure.haar_lebesgue
 import measure_theory.group.integration
 import to_mathlib.measure_theory.parametric_interval_integral
 import analysis.calculus.fderiv_measurable
+import analysis.calculus.specific_functions
 
 noncomputable theory
 open topological_space measure_theory function set measure_theory.measure
@@ -559,7 +560,7 @@ def convolution [has_sub G] (f : G → E) (g : G → E') (L : E →L[𝕜] E' �
 localized "notation f ` ⋆[`:67 L:67 `; `:67 μ:67 `] `:0 g:66 := convolution f g L μ" in convolution
 localized "notation f ` ⋆[`:67 L:67 `]`:0 g:66 := convolution f g L
   measure_theory.measure_space.volume" in convolution
-localized "notation f ` ⋆ `:67 g:66 := convolution f g (function.uncurry has_scalar.smul)
+localized "notation f ` ⋆ `:67 g:66 := convolution f g (continuous_linear_map.lsmul ℝ ℝ)
   measure_theory.measure_space.volume" in convolution
 
 lemma convolution_def [has_sub G] : (f ⋆[L; μ] g) x = ∫ t, L (f t) (g (x - t)) ∂μ := rfl
@@ -882,11 +883,9 @@ lemma has_compact_support.continuous_convolution_left [locally_compact_space G] 
     continuous (f ⋆[L; μ] g) :=
 by { rw [← convolution_flip], exact hcf.continuous_convolution_right L.flip hg hf }
 
-lemma has_compact_support.convolution [t2_space G] (hcf : has_compact_support f)
-  (hcg : has_compact_support g) : has_compact_support (f ⋆[L; μ] g) :=
+lemma support_convolution_subset : support (f ⋆[L; μ] g) ⊆ tsupport f + tsupport g :=
 begin
-  refine compact_of_is_closed_subset (hcf.is_compact.add hcg) is_closed_closure _,
-  refine closure_minimal (λ x h2x, _) (hcf.is_compact.add hcg).is_closed,
+  intros x h2x,
   refine set.add_subset_add subset_closure subset_closure _,
   by_contra hx,
   simp_rw [set.mem_add, not_exists, not_and_distrib, nmem_support] at hx,
@@ -900,6 +899,13 @@ begin
   { simp_rw [add_sub_cancel'_right] at h, exact (h rfl).elim }
 end
 
+lemma has_compact_support.convolution [t2_space G] (hcf : has_compact_support f)
+  (hcg : has_compact_support g) : has_compact_support (f ⋆[L; μ] g) :=
+begin
+  refine compact_of_is_closed_subset (hcf.is_compact.add hcg) is_closed_closure _,
+  exact closure_minimal (support_convolution_subset L) (hcf.is_compact.add hcg).is_closed
+end
+
 end comm
 
 end before_diff
@@ -907,6 +913,74 @@ end before_diff
 
 open_locale convolution
 
+section normed_space
+
+variables [is_R_or_C 𝕜] --[complete_space 𝕜]
+variables [normed_group E] [normed_space 𝕜 E]
+variables [normed_group E'] [normed_space 𝕜 E']
+variables [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] [smul_comm_class 𝕜 ℝ F]
+variables [normed_group G] [normed_space ℝ G] [normed_space 𝕜 G] [smul_comm_class 𝕜 ℝ G]
+variables {f f' : G → E} {g g' : G → E'} {x x' : 𝕜}
+variables {n : with_top ℕ}
+variables (L : E →L[𝕜] E' →L[𝕜] F)
+variables [complete_space E] [second_countable_topology E] [measurable_space E] [borel_space E]
+variables [complete_space E'] [second_countable_topology E'] [measurable_space E'] [borel_space E']
+variables [complete_space F] [second_countable_topology F] [measurable_space F] [borel_space F]
+variables [measurable_space G] [borel_space G] {μ : measure G} [second_countable_topology G]
+variables [is_add_left_invariant μ] [sigma_finite μ]
+variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
+
+-- lemma convolution_mem_convex_hull [normed_space ℝ E'] {x₀ : G} :
+--   (f ⋆[L; μ] g) x₀ ∈ convex_hull ℝ ((λ x, g '' support f) :=
+-- sorry
+
+lemma dist_convolution [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
+  (hf : support f ⊆ ball (0 : G) R)
+  (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) < ε) : dist ((f ⋆[L; μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) < ε :=
+sorry
+
+
+/-- We can only simplify the RHS further if we assume `f` is integrable, but also if `L = (•)`. -/
+lemma convolution_eq_right' [normed_space ℝ E] {x₀ : G} {R : ℝ}
+  (hf : support f ⊆ ball (0 : G) R)
+  (hg : ∀ x ∈ ball x₀ R, g x = g x₀) : (f ⋆[L; μ] g) x₀ = ∫ (t : G), (L (f t)) (g x₀) ∂μ :=
+begin
+  have h2 : ∀ t, L (f t) (g (x₀ - t)) = L (f t) (g x₀),
+  { intro t, by_cases ht : t ∈ support f,
+    { have h2t := hf ht,
+      rw [mem_ball_zero_iff] at h2t,
+      specialize hg (x₀ - t),
+      rw [sub_eq_add_neg, add_mem_ball_iff_norm, norm_neg, ← sub_eq_add_neg] at hg,
+      rw [hg h2t] },
+    { rw [nmem_support] at ht,
+      simp_rw [ht, L.map_zero_left] } },
+  simp_rw [convolution_def, h2],
+end
+
+end normed_space
+
+
+section inner_product_space
+open finite_dimensional
+variables {f' f : G → E} {g' g : G → E'} {x' x : 𝕜} {n : with_top ℕ} [is_R_or_C 𝕜] [normed_group E] [normed_space 𝕜 E] [normed_group E'] [normed_space ℝ E'] [normed_space 𝕜 E'] [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] [smul_comm_class 𝕜 ℝ F] [inner_product_space ℝ G] [normed_space 𝕜 G] [smul_comm_class 𝕜 ℝ G] [complete_space E] [second_countable_topology E] [measurable_space E] [borel_space E] [complete_space E'] [second_countable_topology E'] [measurable_space E'] [borel_space E'] [complete_space F] [second_countable_topology F] [measurable_space F] [borel_space F] [measurable_space G] [borel_space G] [second_countable_topology G] [normed_group E''] [normed_space ℝ E''] [normed_space 𝕜 E''] [smul_comm_class 𝕜 ℝ E''] [complete_space E''] [second_countable_topology E''] [measurable_space E''] [borel_space E''] {μ : measure G} (L : E →L[𝕜] E' →L[𝕜] F)
+[is_add_left_invariant μ] [sigma_finite μ] [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
+variables [finite_dimensional ℝ G]
+variables [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
+variables (φ : cont_diff_bump_of_inner (0 : G))
+
+open continuous_linear_map
+lemma cont_diff_bump_of_inner.convolution_eq_right {x₀ : G}
+  (h : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
+by simp_rw [convolution_eq_right' _ φ.support_eq.subset h, lsmul_apply, integral_smul_const]
+
+lemma cont_diff_bump_of_inner.tendsto {x₀ : G} (hf : continuous f) :
+  tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ (N • x)) ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀)
+    at_top (𝓝 (g x₀)) :=
+begin
+  sorry
+end
+
+end inner_product_space
 
 section normed_space
 
@@ -1018,8 +1092,28 @@ end
 -- lemma convolution_assoc : (f ⋆[L; μ] g) ⋆[L'; μ] h = f ⋆[L; μ] (g ⋆[L; μ] h) :=
 -- by { ext, simp_rw [convolution_def, ← integral_smul/-, ← integral_smul_const-/], sorry  }
 
+section bump
+
+variables [finite_dimensional ℝ G]
+variables [normed_space ℝ E'] [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
+variables (φ : cont_diff_bump (0 : G))
+open continuous_linear_map
+
+lemma cont_diff_bump.convolution_eq_right {x₀ : G}
+  (h : ∀ x ∈ euclidean.ball x₀ φ.R, g x = g x₀) :
+  (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
+begin
+  have := φ.to_cont_diff_bump_of_inner,
+  rw [to_euclidean.map_zero] at this,
+  -- refine this.convolution_eq_right,
+  sorry
+end
+
+
+end bump
 
 end normed_space
+
 
 
 section real

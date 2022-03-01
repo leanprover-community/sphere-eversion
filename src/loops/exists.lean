@@ -48,14 +48,9 @@ begin
   have := λ x,
     local_loops_open ⟨univ, filter.univ_mem, h2Ω⟩ (hΩ_conn x) hg.continuous.continuous_at
     hb.continuous (hb_in x) (hconv x),
-  -- let γ₀ : loop F := sorry, -- γ* in notes
-  -- have hγ₀ : γ₀.surrounds 0,
-  -- { sorry },
-  -- have h0γ₀ : γ₀ 0 = 0 := sorry,
-  -- have hγ₀_cont : continuous γ₀ := sorry,
   obtain ⟨ε, hε⟩ : { x : ℝ // 0 < x } := ⟨1, zero_lt_one⟩, -- todo
   -- let γ₁ : E → ℝ → loop F := λ x t, γ₀.transform (λ y, b x + t • ε • y),
-  let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- γₓ
+  let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
   have hγ₁ : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₁ V Ω,
   { refine ⟨_, hgK, ⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩,
     { intros x hx, rw [mem_set_of_eq] at hx, rw [hx],
@@ -66,27 +61,26 @@ begin
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω (λ x _, hΩ_conn x)
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hb_in x) (λ x _, hconv x) hγ₁,
-  sorry,
-  -- let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
-  -- let φ : E × ℝ × ℝ → ℝ :=
-  -- (⟨⟨1 / 8, 1 / 4, by norm_num, by norm_num⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)),
-  -- let γ₄ := ↿γ₃,
-  -- let γ₅ : E × ℝ × ℝ → F := φ ⋆ γ₄,
-  -- let γ₆ : ℝ → E → loop F,
-  -- { refine λ s x, ⟨λ t, γ₅ (x, s, t), λ t, _⟩,
-  --   change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
-  --     ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
-  --   simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
+  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
+  let φ : E × ℝ × ℝ → ℝ :=
+  (⟨⟨ε / 2, ε, half_pos hε, half_lt_self hε⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)),
+  let γ₄ := ↿γ₃,
+  let γ₅ : E × ℝ × ℝ → F := φ ⋆ γ₄,
+  let γ₆ : ℝ → E → loop F,
+  { refine λ s x, ⟨λ t, γ₅ (x, s, t), λ t, _⟩,
+    change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
+      ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
+    simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
   -- -- todo: apply reparametrization
-  -- refine ⟨γ₆, _, _, _, _, _, _, _, _⟩,
-  -- { sorry },
-  -- { sorry },
-  -- { sorry },
-  -- { sorry },
-  -- { sorry },
-  -- { sorry },
-  -- { sorry },
-  -- { sorry },
+  refine ⟨γ₆, _, _, _, _, _, _, _, _⟩,
+  { sorry },
+  { sorry },
+  { sorry },
+  { sorry },
+  { sorry },
+  { sorry },
+  { sorry },
+  { sorry },
 end
 
 lemma exists_loops
