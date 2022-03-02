@@ -4,7 +4,7 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
 import to_mathlib.topology.periodic
-import to_mathlib.analysis.calculus
+import to_mathlib.smoothness
 import to_mathlib.measure_theory.parametric_interval_integral
 
 import notations
@@ -87,7 +87,7 @@ begin
   sorry
 end
 
-
+-- FIXME: The next lemma isn't used anywhere
 /-- If a loop family has compact support then the corresponding corrugation is
 small uniformly in the source point. -/
 lemma corrugation.c0_small [first_countable_topology E] [t2_space E]
@@ -112,16 +112,6 @@ begin
   rw [corrugation, norm_smul, mul_comm],
   exact lt_of_le_of_lt (mul_le_mul_of_nonneg_right (hC x (N*π x)) (norm_nonneg $ 1/N)) hN,
 end
-
--- We also need this variation... TODO: think of a common case
-lemma corrugation.c0_small' [first_countable_topology E] [t2_space E]
-  [locally_compact_space E] {γ : ℝ → E → loop F} {K : set E} (hK : is_compact K)
-  (h_supp : ∀ x ∉ K, ∀ t, (γ t x).is_const)
-  (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x) (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
-  (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
-  ∀ᶠ N in at_top, ∀ x t, ∥corrugation π N (γ t) x∥ < ε :=
-sorry
-
 
 end c0
 
@@ -175,18 +165,36 @@ end
 lemma corrugation.cont_diff' {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 n ↿γ)
   {x : H → E} (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) :
   𝒞 n (λ h, 𝒯 N (γ $ g h) $ x h) :=
-sorry
-
--- The next lemma is probably useless except maybe for the following one
-lemma remainder.cont_diff {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 (n+1) ↿γ)
-  {x : H → E} (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 (n+1) g) :
-  𝒞 n (λ h, R N (γ $ g h) $ x h) :=
-sorry
+begin
+  apply cont_diff.const_smul,
+  apply cont_diff_parametric_primitive_of_cont_diff,
+  { apply cont_diff.sub,
+    { exact hγ_diff.comp₃ (hg.comp cont_diff_fst) (hx.comp cont_diff_fst) cont_diff_snd },
+    { apply cont_diff_average,
+      exact hγ_diff.comp₃ (hg.comp (cont_diff_fst.comp cont_diff_fst))
+        (hx.comp $ cont_diff_fst.comp cont_diff_fst) cont_diff_snd } },
+  { apply (π.cont_diff.comp hx).const_smul },
+end
 
 lemma remainder.smooth {γ : G → E → loop F} (hγ_diff : 𝒞 ∞ ↿γ)
   {x : H → E} (hx : 𝒞 ∞ x) {g : H → G} (hg : 𝒞 ∞ g) :
   𝒞 ∞ (λ h, R N (γ $ g h) $ x h) :=
-sorry
+begin
+  apply cont_diff.const_smul,
+  apply cont_diff_parametric_primitive_of_cont_diff,
+  { let ψ : E → (H × ℝ) → F := λ x q, (γ (g q.1) x).normalize q.2,
+    change 𝒞 ⊤ (λ (q : H × ℝ), ∂₁ ψ (x q.1) (q.1, q.2)),
+    refine (cont_diff.cont_diff_top_partial_fst _).comp₂ (hx.comp cont_diff_fst)
+      (cont_diff_fst.prod cont_diff_snd),
+    dsimp [ψ, loop.normalize],
+    apply cont_diff.sub,
+    apply hγ_diff.comp₃ (hg.comp $ cont_diff_fst.comp cont_diff_snd) cont_diff_fst
+      (cont_diff_snd.comp cont_diff_snd),
+    apply cont_diff_average,
+    exact hγ_diff.comp₃ (hg.comp $ cont_diff_fst.comp $ cont_diff_snd.comp cont_diff_fst)
+      (cont_diff_fst.comp cont_diff_fst) cont_diff_snd },
+  { apply (π.cont_diff.comp hx).const_smul },
+end
 
 lemma corrugation.fderiv_eq (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) :
   D (𝒯 N γ) = λ x : E, (γ x (N*π x) - (γ x).average) ⬝ π + R N γ x :=
