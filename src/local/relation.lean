@@ -409,15 +409,15 @@ abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], real.smooth_transition.le_one
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
-def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) : htpy_jet_sec E F :=
+def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) (h : 𝓕 1 = 𝓖 0) : htpy_jet_sec E F :=
 { f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else  𝓖.f (smooth_step $ 2*t - 1) x,
   f_diff := sorry,
   φ := λ t x, if t ≤ 1/2 then 𝓕.φ (smooth_step $ 2*t) x else  𝓖.φ (smooth_step $ 2*t - 1) x,
   φ_diff := sorry }
 
 @[simp]
-lemma htpy_jet_sec.comp_of_le (𝓕 𝓖 : htpy_jet_sec E F) {t : ℝ} (ht : t ≤ 1/2) :
-  𝓕.comp 𝓖 t = 𝓕 (smooth_step $ 2*t) :=
+lemma htpy_jet_sec.comp_of_le (𝓕 𝓖 : htpy_jet_sec E F) (h) {t : ℝ} (ht : t ≤ 1/2) :
+  𝓕.comp 𝓖 h t = 𝓕 (smooth_step $ 2*t) :=
 begin
   dsimp [htpy_jet_sec.comp],
   ext x,
@@ -432,15 +432,15 @@ end
 
 
 @[simp]
-lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec E F) : 𝓕.comp 𝓖 0 = 𝓕 0 :=
+lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec E F) (h) : 𝓕.comp 𝓖 h 0 = 𝓕 0 :=
 begin
-  rw htpy_jet_sec.comp_of_le _ _ (by norm_num : (0 : ℝ) ≤ 1/2),
+  rw htpy_jet_sec.comp_of_le _ _ h (by norm_num : (0 : ℝ) ≤ 1/2),
   simp
 end
 
 @[simp]
-lemma htpy_jet_sec.comp_of_not_le (𝓕 𝓖 : htpy_jet_sec E F) {t : ℝ} (ht : ¬ t ≤ 1/2) :
-  𝓕.comp 𝓖 t = 𝓖 (smooth_step $ 2*t - 1) :=
+lemma htpy_jet_sec.comp_of_not_le (𝓕 𝓖 : htpy_jet_sec E F) (h) {t : ℝ} (ht : ¬ t ≤ 1/2) :
+  𝓕.comp 𝓖 h t = 𝓖 (smooth_step $ 2*t - 1) :=
 begin
   dsimp [htpy_jet_sec.comp],
   ext x,
@@ -454,9 +454,9 @@ begin
 end
 
 @[simp]
-lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec E F) : 𝓕.comp 𝓖 1 = 𝓖 1 :=
+lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec E F) (h) : 𝓕.comp 𝓖 h 1 = 𝓖 1 :=
 begin
-  rw htpy_jet_sec.comp_of_not_le _ _ (by norm_num : ¬ (1 : ℝ) ≤ 1/2),
+  rw htpy_jet_sec.comp_of_not_le _ _ h (by norm_num : ¬ (1 : ℝ) ≤ 1/2),
   norm_num
 end
 
