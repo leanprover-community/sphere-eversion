@@ -1,6 +1,8 @@
 import algebra.periodic
 import analysis.normed_space.basic
 
+import to_mathlib.topology.separation
+
 /-!
 
 # Boundedness property of periodic function
@@ -124,11 +126,31 @@ local notation `π` := proj_𝕊₁
 instance : compact_space 𝕊₁ :=
 ⟨by { rw ← image_proj_𝕊₁_Icc, exact is_compact_Icc.image continuous_proj_𝕊₁ }⟩
 
--- todo
--- related: `t2_space_of_properly_discontinuous_smul_of_t2_space`
--- or more general: https://math.stackexchange.com/questions/91639/x-sim-is-hausdorff-if-and-only-if-sim-is-closed-in-x-times-x?noredirect=1&lq=1
+lemma is_closed_int : is_closed (range (coe : ℤ → ℝ)) :=
+begin
+  refine is_closed_of_spaced_out (metric.uniformity_basis_dist.mem_of_mem $ zero_lt_one) _,
+  rintros - ⟨p, rfl⟩ - ⟨q, rfl⟩ h (H : dist p q < 1),
+  rw [int.dist_eq] at H,
+  norm_cast at *,
+  exact h (eq_of_sub_eq_zero $ int.eq_zero_iff_abs_lt_one.mp H)
+end
+
 instance : t2_space 𝕊₁ :=
-sorry
+begin
+  have πcont : continuous π, from continuous_quotient_mk,
+  rw t2_space_iff_of_continuous_surjective_open πcont quotient.surjective_quotient_mk' is_open_map_proj_𝕊₁,
+  have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k},
+  { ext ⟨a, b⟩,
+    simp only [proj_𝕊₁, quotient.eq, mem_set_of_eq],
+    exact trans_one_rel_iff },
+  have : {q : ℝ × ℝ | π q.fst = π q.snd} = (λ q : ℝ × ℝ , q.2 - q.1) ⁻¹' (range $ (coe : ℤ → ℝ)),
+  { rw this,
+    ext ⟨a, b⟩,
+    apply exists_congr (λ k, _),
+    conv_rhs {rw [eq_comm, sub_eq_iff_eq_add'] } },
+  rw this,
+  exact is_closed.preimage (continuous_snd.sub continuous_fst) is_closed_int
+end
 
 variables {X E : Type*} [topological_space X] [normed_group E] [t2_space X]
 
