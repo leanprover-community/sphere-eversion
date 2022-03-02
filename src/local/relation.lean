@@ -36,7 +36,7 @@ this will guarantee the h-principle (in some other file).
 
 noncomputable theory
 
-open set function module (dual)
+open set function module (dual) real
 open_locale unit_interval topological_space
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] (F : Type*)
@@ -375,6 +375,16 @@ instance : has_coe_to_fun (htpy_jet_sec E F) (λ S, ℝ → jet_sec E F) :=
    φ := S.φ t,
    φ_diff := S.φ_diff.comp (cont_diff_const.prod cont_diff_id) }⟩
 
+namespace htpy_jet_sec
+
+lemma cont_diff_f (𝓕 : htpy_jet_sec E F) {n : with_top ℕ} : 𝒞 n ↿𝓕.f :=
+𝓕.f_diff.of_le le_top
+
+lemma cont_diff_φ (𝓕 : htpy_jet_sec E F) {n : with_top ℕ} : 𝒞 n ↿𝓕.φ :=
+𝓕.φ_diff.of_le le_top
+
+end htpy_jet_sec
+
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
 for trivial induction initialization. -/
@@ -389,44 +399,76 @@ def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 λ t, by ext x ; refl
 
 /-- A smooth step function on `ℝ`. -/
-def smooth_step : ℝ → ℝ := real.smooth_transition
+def smooth_step : ℝ → ℝ := smooth_transition
 
 lemma smooth_step.smooth : 𝒞 ∞ smooth_step :=
-real.smooth_transition.cont_diff
+smooth_transition.cont_diff
 
 @[simp]
 lemma smooth_step.zero : smooth_step 0 = 0 :=
-real.smooth_transition.zero_of_nonpos le_rfl
+smooth_transition.zero_of_nonpos le_rfl
 
 @[simp]
 lemma smooth_step.one : smooth_step 1 = 1 :=
-real.smooth_transition.one_of_one_le le_rfl
+smooth_transition.one_of_one_le le_rfl
 
 lemma smooth_step.mem (t : ℝ) : smooth_step t ∈ I :=
-⟨real.smooth_transition.nonneg t, real.smooth_transition.le_one t⟩
+⟨smooth_transition.nonneg t, smooth_transition.le_one t⟩
 
 lemma smooth_step.abs_le (t : ℝ) : |smooth_step t| ≤ 1 :=
-abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], real.smooth_transition.le_one t⟩
+abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], smooth_transition.le_one t⟩
+
+lemma htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : ∀ {n}, 𝒞 n ↿f) (hg : ∀ {n}, 𝒞 n ↿g)
+  (hfg : f 1 = g 0) :
+  𝒞 ∞ ↿(λ t x, if t ≤ 1/2 then f (smooth_step $ 2*t) x else g (smooth_step $ 2*t - 1) x : ℝ → E → F) :=
+begin
+  have c3 : ∀ {n}, 𝒞 n (λ t : ℝ, 2 * t) :=
+  λ n, cont_diff_const.mul cont_diff_id,
+  have c4 : ∀ {n}, 𝒞 n ↿(λ t : ℝ, 2 * t - 1) :=
+  λ n, (cont_diff_const.mul cont_diff_id).sub cont_diff_const,
+  have c5 : ∀ {n}, 𝒞 n (λ t, smooth_step $ 2 * t) :=
+  λ n, smooth_transition.cont_diff.comp c3,
+  have c6 : ∀ {n}, 𝒞 n ↿(λ t, smooth_step $ 2*t - 1) :=
+  λ n, smooth_transition.cont_diff.comp c4,
+  have h1 : ∀ {n}, 𝒞 n ↿(λ t, f (smooth_step $ 2*t)) :=
+  λ n, hf.comp₂ (c5.comp cont_diff_fst) cont_diff_snd,
+  have h2 : ∀ {n}, 𝒞 n ↿(λ t, g (smooth_step $ 2*t - 1)) :=
+  λ n, hg.comp₂ (c6.comp cont_diff_fst) cont_diff_snd,
+  refine h1.if_le_of_fderiv h2 cont_diff_fst cont_diff_const _,
+  rintro ⟨t, x⟩ n ht,
+  dsimp only at ht,
+  subst ht,
+  simp [has_uncurry.uncurry],
+  rcases nat.eq_zero_or_pos n with rfl|hn,
+  { simp [iterated_fderiv_zero_eq_comp, hfg], },
+  rw [iterated_fderiv_of_partial, iterated_fderiv_of_partial],
+  { simp [has_uncurry.uncurry, hfg],
+    congr' 1,
+    refine (iterated_fderiv_comp (hf.comp₂ cont_diff_id cont_diff_const) c5 _).trans _,
+    convert continuous_multilinear_map.comp_zero _,
+    { ext1 i, refine (iterated_fderiv_comp smooth_transition.cont_diff c3 _).trans _,
+      convert continuous_multilinear_map.zero_comp _, simp [hn] },
+    refine (iterated_fderiv_comp (hg.comp₂ cont_diff_id cont_diff_const) c6 _).trans _,
+    convert continuous_multilinear_map.comp_zero _,
+    { ext1 i, refine (iterated_fderiv_comp smooth_transition.cont_diff c4 _).trans _,
+      convert continuous_multilinear_map.zero_comp _, simp [has_uncurry.uncurry, hn] } },
+  { exact λ x, h2.comp₂ cont_diff_const cont_diff_id },
+  { exact λ y, h2.comp₂ cont_diff_id cont_diff_const },
+  { exact hn.nat_succ_le },
+  { exact λ x, h1.comp₂ cont_diff_const cont_diff_id },
+  { exact λ y, h1.comp₂ cont_diff_id cont_diff_const },
+  { exact hn.nat_succ_le },
+end
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
 def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) (h : 𝓕 1 = 𝓖 0) : htpy_jet_sec E F :=
 { f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else 𝓖.f (smooth_step $ 2*t - 1) x,
   f_diff :=
-    begin
-      have h1 : 𝒞 ∞ ↿(λ t, 𝓕.f (smooth_step $ 2*t)) :=
-      (𝓕.f_diff.comp₂ (smooth_step.smooth.comp $ cont_diff_const.mul cont_diff_fst) cont_diff_snd),
-      have h2 : 𝒞 ∞ ↿(λ t, 𝓖.f (smooth_step $ 2*t - 1)) :=
-      (𝓖.f_diff.comp₂ (smooth_step.smooth.comp $
-        (cont_diff_const.mul cont_diff_fst).sub cont_diff_const) cont_diff_snd),
-      refine h1.if_le_of_fderiv h2 cont_diff_fst cont_diff_const _,
-      rintro ⟨t, x⟩ n ht,
-      dsimp only at ht,
-      subst ht,
-      sorry
-    end,
+  htpy_jet_sec_comp_aux (λ n, 𝓕.cont_diff_f) (λ n, 𝓖.cont_diff_f) (show (𝓕 1).f = (𝓖 0).f, by rw h),
   φ := λ t x, if t ≤ 1/2 then 𝓕.φ (smooth_step $ 2*t) x else  𝓖.φ (smooth_step $ 2*t - 1) x,
-  φ_diff := sorry }
+  φ_diff :=
+  htpy_jet_sec_comp_aux (λ n, 𝓕.cont_diff_φ) (λ n, 𝓖.cont_diff_φ) (show (𝓕 1).φ = (𝓖 0).φ, by rw h) }
 
 @[simp]
 lemma htpy_jet_sec.comp_of_le (𝓕 𝓖 : htpy_jet_sec E F) (h) {t : ℝ} (ht : t ≤ 1/2) :
