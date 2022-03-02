@@ -45,7 +45,7 @@ funext $ λ x, (h x).deriv
 -- lemma cont_diff_at.continuous_at_fderiv {n : with_top ℕ}
 --   (h : cont_diff_at 𝕜 n f x) (hn : 1 ≤ n) :
 --   continuous_at (fderiv 𝕜 f) x :=
--- sorry
+-- not proved
 
 lemma support_fderiv_subset : support (fderiv 𝕜 f) ⊆ tsupport f :=
 begin

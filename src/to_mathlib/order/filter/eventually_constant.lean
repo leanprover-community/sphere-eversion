@@ -189,7 +189,7 @@ h.tendsto_nhds.lim_eq.symm
 
 -- lemma foo {g : α → β → γ} {s : set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
 --   (hy : y ∈ s) :
--- sorry := sorry
+-- unproved
 
 end filter
 open filter
