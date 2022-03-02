@@ -510,7 +510,7 @@ This section proves lem:h_principle_open_ample_loc.
 open finite_dimensional submodule
 
 variables {E}
-
+.
 /--
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
@@ -591,7 +591,10 @@ begin
     obtain ⟨N, ⟨hN_close, hN_sol⟩, hNneq⟩ :=
       (((S.improve_step_c0_close H₁ $ half_pos δ_pos).and
       (S.improve_step_sol H₁ h_op hH₁_K₀ hH₁_short hH₁_C)).and $ eventually_ne_at_top (0 :ℝ)).exists,
-    refine ⟨H.comp (S.improve_step H₁ N), _, _, _, _, _, _⟩,
+    have glue : H 1 = S.improve_step H₁ N 0,
+    { rw S.improve_step_rel_t_eq_0,
+      refl  },
+    refine ⟨H.comp (S.improve_step H₁ N) glue, _, _, _, _, _, _⟩,
     { simp only [hH₀, htpy_jet_sec.comp_of_le, one_div, inv_nonneg, zero_le_bit0, zero_le_one,
                  mul_zero, smooth_step.zero], }, -- t = 0
     { -- rel C
