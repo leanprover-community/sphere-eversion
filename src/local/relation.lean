@@ -6,7 +6,10 @@ import topology.metric_space.hausdorff_distance
 import to_mathlib.analysis.normed_space.operator_norm
 import to_mathlib.analysis.calculus
 import to_mathlib.topology.misc
+import to_mathlib.topology.nhds_set
 import to_mathlib.topology.hausdorff_distance
+import to_mathlib.linear_algebra.basic
+
 import local.ample
 import notations
 
@@ -213,7 +216,22 @@ instance (R : rel_loc E F) (U : set E) : has_coe_to_fun (formal_sol R) (λ S, E 
 @[simp] lemma formal_sol.coe_apply  {R : rel_loc E F} (𝓕 : formal_sol R) (x : E) :
 (𝓕 : jet_sec E F) x = 𝓕 x := rfl
 
+lemma jet_sec.eq_iff {𝓕 𝓕' : jet_sec E F} {x : E} :
+  𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
+begin
+  split,
+  { intro h,
+    exact ⟨congr_arg prod.fst h, congr_arg prod.snd h⟩ },
+  { rintros ⟨h, h'⟩,
+    ext1,
+    exacts [h, h'] }
+end
+
 variables  {R : rel_loc E F}
+
+lemma formal_sol.eq_iff {𝓕 𝓕' : formal_sol R} {x : E} :
+  𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
+jet_sec.eq_iff
 
 /-- The slice associated to a jet section and a dual pair at some point. -/
 def slice_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : set F :=
@@ -235,7 +253,16 @@ def _root_.rel_loc.formal_sol.is_holonomic_at (𝓕 : formal_sol R) (x : E) : Pr
 
 lemma _root_.rel_loc.formal_sol.is_holonomic_at_congr (𝓕 𝓕' : formal_sol R) {s : set E}
   (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) : ∀ᶠ x near s, 𝓕.is_holonomic_at x ↔ 𝓕'.is_holonomic_at x :=
-sorry
+begin
+  apply h.eventually_nhds_set.mono,
+  intros x hx,
+  have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f,
+  { apply hx.mono,
+    simp_rw formal_sol.eq_iff,
+    tauto },
+  unfold rel_loc.formal_sol.is_holonomic_at,
+  rw [hf.fderiv_eq, (formal_sol.eq_iff.mp hx.self_of_nhds).2]
+end
 
 lemma _root_.rel_loc.sol.is_holonomic {R : rel_loc E F} (𝓕 : sol R) (x : E) :
   𝓕.to_formal_sol.is_holonomic_at x :=
@@ -261,16 +288,22 @@ def is_part_holonomic_at (𝓕 : jet_sec E F) (E' : submodule ℝ E) (x : E) :=
 lemma _root_.filter.eventually.is_part_holonomic_at_congr {𝓕 𝓕' : jet_sec E F} {s : set E}
   (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) (E' : submodule ℝ E) :
   ∀ᶠ x near s, 𝓕.is_part_holonomic_at E' x ↔ 𝓕'.is_part_holonomic_at E' x :=
-sorry
-
+begin
+  apply h.eventually_nhds_set.mono,
+  intros x hx,
+  have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f,
+  { apply hx.mono,
+    dsimp only,
+    simp_rw jet_sec.eq_iff,
+    tauto },
+  unfold rel_loc.jet_sec.is_part_holonomic_at,
+  rw [hf.fderiv_eq, (jet_sec.eq_iff.mp hx.self_of_nhds).2]
+end
 
 lemma is_part_holonomic_at.sup (𝓕 : jet_sec E F) {E' E'' : submodule ℝ E} {x : E}
   (h' : 𝓕.is_part_holonomic_at E' x) (h'' : 𝓕.is_part_holonomic_at E'' x) :
   𝓕.is_part_holonomic_at (E' ⊔ E'') x :=
-begin
-
-  sorry
-end
+λ v : E, linear_map.eq_on_sup h' h''
 
 lemma _root_.rel_loc.jet_sec.is_part_holonomic_at.mono {𝓕 : jet_sec E F}
   {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
