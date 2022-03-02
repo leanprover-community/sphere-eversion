@@ -9,6 +9,7 @@ import to_mathlib.topology.misc
 import to_mathlib.topology.nhds_set
 import to_mathlib.topology.hausdorff_distance
 import to_mathlib.linear_algebra.basic
+import to_mathlib.smoothness
 
 import local.ample
 import notations
@@ -374,6 +375,16 @@ instance : has_coe_to_fun (htpy_jet_sec E F) (λ S, ℝ → jet_sec E F) :=
    φ := S.φ t,
    φ_diff := S.φ_diff.comp (cont_diff_const.prod cont_diff_id) }⟩
 
+lemma htpy_jet_sec.f_diff_comp {X} [normed_group X] [normed_space ℝ X]
+  (𝓕 : htpy_jet_sec E F) {f : X → ℝ} {g : X → E} (hf : 𝒞 ∞ f) (hg : 𝒞 ∞ g) :
+  𝒞 ∞ (λ x, 𝓕.f (f x) (g x)) :=
+𝓕.f_diff.comp $ hf.prod hg
+
+lemma htpy_jet_sec.φ_diff_comp {X} [normed_group X] [normed_space ℝ X]
+  (𝓕 : htpy_jet_sec E F) {f : X → ℝ} {g : X → E} (hf : 𝒞 ∞ f) (hg : 𝒞 ∞ g) :
+  𝒞 ∞ (λ x, 𝓕.φ (f x) (g x)) :=
+𝓕.φ_diff.comp $ hf.prod hg
+
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
 for trivial induction initialization. -/
@@ -390,7 +401,7 @@ def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 /-- A smooth step function on `ℝ`. -/
 def smooth_step : ℝ → ℝ := real.smooth_transition
 
-lemma smooth_step.smooth : cont_diff ℝ ⊤ smooth_step :=
+lemma smooth_step.smooth : 𝒞 ∞ smooth_step :=
 real.smooth_transition.cont_diff
 
 @[simp]
@@ -410,8 +421,20 @@ abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], real.smooth_transition.le_one
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
 def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) (h : 𝓕 1 = 𝓖 0) : htpy_jet_sec E F :=
-{ f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else  𝓖.f (smooth_step $ 2*t - 1) x,
-  f_diff := sorry,
+{ f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else 𝓖.f (smooth_step $ 2*t - 1) x,
+  f_diff :=
+    begin
+      have h1 : 𝒞 ∞ ↿(λ t, 𝓕.f (smooth_step $ 2*t)) :=
+      (𝓕.f_diff_comp (smooth_step.smooth.comp $ cont_diff_const.mul cont_diff_fst) cont_diff_snd),
+      have h2 : 𝒞 ∞ ↿(λ t, 𝓖.f (smooth_step $ 2*t - 1)) :=
+      (𝓖.f_diff_comp (smooth_step.smooth.comp $
+        (cont_diff_const.mul cont_diff_fst).sub cont_diff_const) cont_diff_snd),
+      refine h1.if_le_of_fderiv h2 cont_diff_fst cont_diff_const _,
+      rintro ⟨t, x⟩ n ht,
+      dsimp only at ht,
+      subst ht,
+      sorry
+    end,
   φ := λ t x, if t ≤ 1/2 then 𝓕.φ (smooth_step $ 2*t) x else  𝓖.φ (smooth_step $ 2*t - 1) x,
   φ_diff := sorry }
 
