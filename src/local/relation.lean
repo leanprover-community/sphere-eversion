@@ -375,16 +375,6 @@ instance : has_coe_to_fun (htpy_jet_sec E F) (λ S, ℝ → jet_sec E F) :=
    φ := S.φ t,
    φ_diff := S.φ_diff.comp (cont_diff_const.prod cont_diff_id) }⟩
 
-lemma htpy_jet_sec.f_diff_comp {X} [normed_group X] [normed_space ℝ X]
-  (𝓕 : htpy_jet_sec E F) {f : X → ℝ} {g : X → E} (hf : 𝒞 ∞ f) (hg : 𝒞 ∞ g) :
-  𝒞 ∞ (λ x, 𝓕.f (f x) (g x)) :=
-𝓕.f_diff.comp $ hf.prod hg
-
-lemma htpy_jet_sec.φ_diff_comp {X} [normed_group X] [normed_space ℝ X]
-  (𝓕 : htpy_jet_sec E F) {f : X → ℝ} {g : X → E} (hf : 𝒞 ∞ f) (hg : 𝒞 ∞ g) :
-  𝒞 ∞ (λ x, 𝓕.φ (f x) (g x)) :=
-𝓕.φ_diff.comp $ hf.prod hg
-
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
 for trivial induction initialization. -/
@@ -425,9 +415,9 @@ def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) (h : 𝓕 1 = 𝓖 0) : htp
   f_diff :=
     begin
       have h1 : 𝒞 ∞ ↿(λ t, 𝓕.f (smooth_step $ 2*t)) :=
-      (𝓕.f_diff_comp (smooth_step.smooth.comp $ cont_diff_const.mul cont_diff_fst) cont_diff_snd),
+      (𝓕.f_diff.comp₂ (smooth_step.smooth.comp $ cont_diff_const.mul cont_diff_fst) cont_diff_snd),
       have h2 : 𝒞 ∞ ↿(λ t, 𝓖.f (smooth_step $ 2*t - 1)) :=
-      (𝓖.f_diff_comp (smooth_step.smooth.comp $
+      (𝓖.f_diff.comp₂ (smooth_step.smooth.comp $
         (cont_diff_const.mul cont_diff_fst).sub cont_diff_const) cont_diff_snd),
       refine h1.if_le_of_fderiv h2 cont_diff_fst cont_diff_const _,
       rintro ⟨t, x⟩ n ht,
