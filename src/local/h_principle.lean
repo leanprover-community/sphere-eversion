@@ -210,7 +210,7 @@ then
   { f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
     f_diff :=  (𝓕.f_diff.comp cont_diff_snd).add $
     ((smooth_step.smooth.comp cont_diff_fst).mul $ L.ρ_smooth.comp cont_diff_snd).smul $
-    corrugation.cont_diff' L.π N (L.loop_smooth h) cont_diff_snd cont_diff_fst,
+    corrugation.cont_diff' N (L.loop_smooth h) cont_diff_snd cont_diff_fst,
     φ := λ t x, L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
                  (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
     φ_diff := begin
@@ -295,7 +295,7 @@ begin
         rw loop.is_const_of_not_mem_support (H t) s 0,
         apply L.loop_s_zero_eq h x },
   refine L.improve_step_rel (λ h, _),
-  rw [L.improve_step_apply h, corrugation_eq_zero _ _ _ (H t),
+  rw [L.improve_step_apply h, corrugation_eq_zero _ _ _ _ (H t),
       remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)],
   simp only [formal_sol.to_jet_sec_eq_coe, smul_zero, add_zero, this],
   erw L.p.update_self,
@@ -366,7 +366,7 @@ begin
   { set γ := L.loop h,
     have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
     have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
-    apply ((corrugation.c0_small_on L.π L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
+    apply ((corrugation.c0_small_on L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
          remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
     rintros N ⟨H, H'⟩ x t,
     by_cases hx : x ∈ L.K₁,
@@ -396,7 +396,7 @@ begin
   let 𝓕' : jet_sec E F :=
   { f := λ x, 𝓕.f x + corrugation L.π N (L.loop h 1) x,
     f_diff := 𝓕.f_diff.add
-     (corrugation.cont_diff' _ _ (L.loop_smooth h) cont_diff_id cont_diff_const),
+     (corrugation.cont_diff' _ (L.loop_smooth h) cont_diff_id cont_diff_const),
     φ := λ x , L.p.update (𝓕.φ x) (L.loop h 1 x $ N * L.π x) +
                corrugation.remainder L.p.π N (L.loop h 1) x,
     φ_diff := begin
@@ -419,8 +419,8 @@ begin
      corrugation.remainder L.π N (L.loop h 1) x u),
   { intros x u,
     dsimp [𝓕'],
-    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply,
-         corrugation.fderiv_eq L.π N hN γ_C1, continuous_linear_map.add_apply],
+    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.cont_diff N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply,
+         corrugation.fderiv_eq hN γ_C1, continuous_linear_map.add_apply],
     refl },
   rw eventually_congr (H.is_part_holonomic_at_congr (L.E' ⊔ L.p.span_v)),
   apply h_part_hol.mono,
@@ -430,8 +430,8 @@ begin
     have hu_ker := L.hEp hu,
     specialize hx u hu,
     dsimp [𝓕'],
-    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.cont_diff L.π N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply, hx, L.p.update_ker_pi _ _ hu_ker,
-         corrugation.fderiv_eq L.π N hN γ_C1, continuous_linear_map.add_apply],
+    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at ((corrugation.cont_diff N γ_C1).differentiable le_rfl).differentiable_at, continuous_linear_map.add_apply, hx, L.p.update_ker_pi _ _ hu_ker,
+         corrugation.fderiv_eq hN γ_C1, continuous_linear_map.add_apply],
     have : (((L.loop h 1 x) (N * L.π x) - (L.loop h 1 x).average) ⬝ L.π) u = 0,
     { simp [show (L.π) u = 0, from linear_map.mem_ker.mp hu_ker] },
     rw [this, zero_add],
@@ -473,7 +473,7 @@ begin
   obtain ⟨ε, ε_pos, hε⟩ : ∃ ε > 0, metric.thickening ε K ⊆ R,
     from  h_op.exists_thickening K_cpt K_sub,
 
-  apply ((corrugation.c0_small_on L.π L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
+  apply ((corrugation.c0_small_on L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
          remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
   rintros N ⟨H, H'⟩ t x,
   by_cases hxK₁ : x ∈ L.K₁,
