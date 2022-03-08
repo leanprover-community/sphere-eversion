@@ -111,7 +111,15 @@ end
 
 lemma surjective_integral_centering_density :
   surjective $ λ t, ∫ s in 0..t, γ.centering_density x s :=
-sorry
+begin
+  have : continuous (λ t, ∫ s in 0..t, γ.centering_density x s),
+  { exact continuous_primitive (γ.centering_density_interval_integrable x) 0, },
+  apply this.surjective,
+  { exact (γ.centering_density_periodic x).tendsto_at_top_interval_integral_of_pos'
+      (γ.centering_density_interval_integrable x) (γ.centering_density_pos x) one_pos, },
+  { exact (γ.centering_density_periodic x).tendsto_at_bot_interval_integral_of_pos'
+      (γ.centering_density_interval_integrable x) (γ.centering_density_pos x) one_pos, },
+end
 
 def reparametrize : E → equivariant_equiv := λ x,
 ({ to_fun := λ t, ∫ s in 0..t, γ.centering_density x s,
