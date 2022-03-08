@@ -18,8 +18,6 @@ variables [normed_group E] [normed_space ℝ E]
 variables [normed_group F] [normed_space ℝ F]
 variables [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
 
-section smooth_surrounding_family
-
 structure smooth_surrounding_family (g : E → F) :=
 (to_fun : E → loop F)
 (smooth : 𝒞 ∞ ↿to_fun)
@@ -44,7 +42,7 @@ the property that:
 (see `centering_density_average` below).
 
 The above property, which is global in `x`, is obtained from the corresponding local property via
-a standard paritition of unity argument. The local property is obtained by combining smoothness
+a standard partition of unity argument. The local property is obtained by combining smoothness
 of barycentric coordinates with the fact that `g x` lies in the _interior_ of a convex hull.
 
 The _pointwise_ statement is at least intuitive: for a given `x : E`, since `γ.to_fun x` surrounds
@@ -170,7 +168,5 @@ begin
     ← integral_comp_smul_deriv h₁ h₂ h₃],
   simp,
 end
-
-end smooth_surrounding_family
 
 end smooth_surrounding_family
