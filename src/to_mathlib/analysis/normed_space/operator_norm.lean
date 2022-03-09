@@ -11,3 +11,9 @@ begin
   simp only [continuous_linear_map.to_span_singleton_apply, continuous_linear_map.zero_apply,
              linear_map.to_span_singleton_apply, linear_map.mk_continuous_apply, smul_zero]
 end
+
+@[simp]
+lemma continuous_linear_map.comp_to_span_singleton_apply {E : Type*} [normed_group E] [normed_space ℝ E]
+  {F : Type*} [normed_group F] [normed_space ℝ F]
+  (φ : E →L[ℝ] ℝ) (v : E) (u : F) : (u ⬝ φ) v = (φ v) • u:=
+rfl

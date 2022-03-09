@@ -12,6 +12,7 @@ import to_mathlib.measure_theory.parametric_interval_integral
 import notations
 
 import loops.basic
+import local.dual_pair
 
 notation `∂₁` := partial_fderiv_fst ℝ
 
@@ -143,6 +144,9 @@ begin
   { apply (π.cont_diff.comp hx).const_smul },
 end
 
+/--
+The remainder appearing when differentiating a corrugation.
+-/
 def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E → (E →L[ℝ] F) :=
 λ x, (1/N) • ∫ t in 0..(N*π x), ∂₁ (λ x t, (γ x).normalize t) x t
 
@@ -187,6 +191,17 @@ lemma corrugation.fderiv_apply (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) (x v : E
   D (𝒯 N γ) x v = (π v) • (γ x (N*π x) - (γ x).average) + R N γ x v :=
 by simp only [corrugation.fderiv_eq hN hγ_diff, to_span_singleton_apply, add_apply,
               coe_comp', comp_app]
+
+lemma fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E → F} (hf : 𝒞 1 f)
+  (p : dual_pair' E) {x} (hfγ : (γ x).average = D f x p.v) :
+D (f + corrugation p.π N γ) x = p.update (D f x) (γ x (N*p.π x)) + corrugation.remainder p.π N γ x :=
+begin
+  ext v,
+  erw fderiv_add (hf.differentiable le_rfl).differentiable_at
+      ((corrugation.cont_diff N hγ_diff).differentiable le_rfl).differentiable_at,
+  simp_rw [continuous_linear_map.add_apply, corrugation.fderiv_eq hN hγ_diff, hfγ, dual_pair'.update,
+  continuous_linear_map.add_apply,p.π.comp_to_span_singleton_apply, add_assoc],
+end
 
 lemma remainder.smooth {γ : G → E → loop F} (hγ_diff : 𝒞 ∞ ↿γ)
   {x : H → E} (hx : 𝒞 ∞ x) {g : H → G} (hg : 𝒞 ∞ g) :
