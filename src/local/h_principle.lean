@@ -384,37 +384,23 @@ begin
     intros x hx,
     simp [L.improve_step_apply h, hx],
     refl },
-  have fderiv_𝓕' : ∀ x u, D 𝓕'.f x u = D 𝓕.f x u +
-  ((L.π u) • (L.loop h 1 x (N * L.π x) - (L.loop h 1 x).average)  +
-     corrugation.remainder L.π N (L.loop h 1) x u),
-  { intros x u,
-    dsimp [𝓕'],
-    erw [fderiv_add (𝓕.f_diff.differentiable le_top).differentiable_at
-      ((corrugation.cont_diff N γ_C1).differentiable le_rfl).differentiable_at,
-      continuous_linear_map.add_apply, corrugation.fderiv_eq hN γ_C1,
-      continuous_linear_map.add_apply],
-    refl },
+  have fderiv_𝓕' := λ x, fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x),
   rw eventually_congr (H.is_part_holonomic_at_congr (L.E' ⊔ L.p.span_v)),
   apply h.hK₀.mono,
   intros x hx,
   apply rel_loc.jet_sec.is_part_holonomic_at.sup,
   { intros u hu,
     have hu_ker := L.hEp hu,
-    rw [fderiv_𝓕'],
     dsimp [𝓕'],
-    rw [hx u hu, L.p.update_ker_pi _ _ hu_ker],
-    have : (L.π u) • (L.loop h 1 x (N * L.π x) - (L.loop h 1 x).average) = 0,
-    { simp [show L.π u = 0, from linear_map.mem_ker.mp $ L.hEp hu] },
-    rw [this, zero_add],
-    refl },
+    erw [fderiv_𝓕', continuous_linear_map.add_apply, L.p.update_ker_pi _ _ hu_ker,
+         L.p.update_ker_pi _ _ hu_ker, hx u hu] },
   { intros u hu,
     rcases submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩,
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul],
     apply congr_arg,
-    erw [fderiv_𝓕', L.p.pairing, one_smul],
     dsimp [𝓕'],
-    rw [L.p.update_v, (L.nice h).avg, step_landscape.g, step_landscape.v],
-    abel }
+    erw [fderiv_𝓕', L.p.update_v, continuous_linear_map.add_apply, L.p.update_v],
+    refl }
 end
 
 lemma improve_step_formal_sol (h : L.accepts R 𝓕) :
