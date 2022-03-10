@@ -199,8 +199,8 @@ begin
   ext v,
   erw fderiv_add (hf.differentiable le_rfl).differentiable_at
       ((corrugation.cont_diff N hγ_diff).differentiable le_rfl).differentiable_at,
-  simp_rw [continuous_linear_map.add_apply, corrugation.fderiv_eq hN hγ_diff, hfγ, dual_pair'.update,
-  continuous_linear_map.add_apply,p.π.comp_to_span_singleton_apply, add_assoc],
+  simp_rw [continuous_linear_map.add_apply, corrugation.fderiv_apply N hN hγ_diff, hfγ,
+    dual_pair'.update, continuous_linear_map.add_apply,p.π.comp_to_span_singleton_apply, add_assoc],
 end
 
 lemma remainder.smooth {γ : G → E → loop F} (hγ_diff : 𝒞 ∞ ↿γ)
