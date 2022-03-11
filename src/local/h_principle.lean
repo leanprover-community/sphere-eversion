@@ -126,10 +126,6 @@ lemma nice (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
   nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L 𝓕) L.K (L.loop h) :=
 classical.some_spec $ exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.h_short
 
-/- TODO: There are now many lemmas whose proofs are (L.nice h).whatever
-They could be removed and inlined.
--/
-
 lemma update_zero (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (x : E) (s : ℝ) :
 L.p.update (𝓕.φ x) ((L.loop h 0 x) s) = 𝓕.φ x :=
 begin
@@ -181,109 +177,64 @@ Homotopy of formal solutions obtained by corrugation in the direction of `p : du
 in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomic to
 `L.E' ⊔ span {p.v}`-holonomic near `L.K₀`.
 -/
-def improve_step (𝓕 : formal_sol R) (N : ℝ) : htpy_jet_sec E F :=
-if h : L.accepts R 𝓕
-then
-  { f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
-    f_diff :=  (𝓕.f_diff.comp cont_diff_snd).add $
+def improve_step {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (N : ℝ) : htpy_jet_sec E F :=
+{ f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
+  f_diff :=  (𝓕.f_diff.comp cont_diff_snd).add $
     ((smooth_step.smooth.comp cont_diff_fst).mul $ L.ρ_smooth.comp cont_diff_snd).smul $
     corrugation.cont_diff' N (L.loop_smooth h) cont_diff_snd cont_diff_fst,
-    φ := λ t x, L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
-                 (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
-    φ_diff := begin
-      apply cont_diff.add,
-      apply L.p.smooth_update,
-      apply 𝓕.φ_diff.comp cont_diff_snd,
-      apply L.loop_smooth',
-      exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
-      apply cont_diff_const.mul (L.π.cont_diff.comp cont_diff_snd),
-      exact cont_diff_snd,
-      apply cont_diff.smul,
-      exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
-      exact remainder.smooth _ _ (L.loop_smooth h) cont_diff_snd cont_diff_const
-    end }
-else
-  𝓕.to_jet_sec.const_htpy
+  φ := λ t x, L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
+                (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
+  φ_diff := begin
+    apply cont_diff.add,
+    apply L.p.smooth_update,
+    apply 𝓕.φ_diff.comp cont_diff_snd,
+    apply L.loop_smooth',
+    exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
+    apply cont_diff_const.mul (L.π.cont_diff.comp cont_diff_snd),
+    exact cont_diff_snd,
+    apply cont_diff.smul,
+    exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
+    exact remainder.smooth _ _ (L.loop_smooth h) cont_diff_snd cont_diff_const
+  end }
 
-variables {𝓕 : formal_sol R}
-
-/-
-The next three lemmas are three versions of saying that if L doesn't accept 𝓕 then
-the improved section will be the constant homotopy with value 𝓕.
--/
-
-lemma improve_step_rel {N t : ℝ} {x} (H : L.accepts R 𝓕 → L.improve_step 𝓕 N t x = 𝓕 x) :
-  L.improve_step 𝓕 N t x = 𝓕 x :=
-begin
-  by_cases h : L.accepts R 𝓕,
-  { exact H h },
-  rw [improve_step, dif_neg h],
-  refl
-end
-
-lemma improve_step_rel' {N t : ℝ} (H : L.accepts R 𝓕 → L.improve_step 𝓕 N t = 𝓕) :
-  L.improve_step 𝓕 N t = 𝓕 :=
-begin
-  by_cases h : L.accepts R 𝓕,
-  { exact H h },
-  rw [improve_step, dif_neg h],
-  ext x; refl
-end
-
-lemma improve_step_rel'' {N : ℝ} {a : filter E}
-  (H : L.accepts R 𝓕 → ∀ᶠ x in a, ∀ t, L.improve_step 𝓕 N t x = 𝓕 x) :
-  ∀ᶠ x in a, ∀ t, L.improve_step 𝓕 N t x = 𝓕 x :=
-begin
-  by_cases h : L.accepts R 𝓕,
-  { exact H h },
-  { apply eventually_of_forall (λ x, _),
-    rw [improve_step, dif_neg h],
-    intro t,
-    refl }
-end
+variables {L} {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (N : ℝ)
 
 @[simp]
-lemma improve_step_apply (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) (x : E) :
-  L.improve_step 𝓕 N t x = (𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
+lemma improve_step_apply (t : ℝ) (x : E) :
+  L.improve_step h N t x = (𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
   L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
                  (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x)) :=
 by { simp [improve_step, h], refl }
 
-variable {L}
+@[simp]
+lemma improve_step_apply_f (t : ℝ) (x : E) :
+  (L.improve_step h N t).f x = 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x :=
+rfl
 
 @[simp]
-lemma improve_step_apply_f (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) (x : E) :
-  (L.improve_step 𝓕 N t).f x = 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x :=
-by { simp [improve_step, h], refl }
-
-@[simp]
-lemma improve_step_apply_φ (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) (x : E) :
-  (L.improve_step 𝓕 N t).φ x = L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
+lemma improve_step_apply_φ (t : ℝ) (x : E) :
+  (L.improve_step h N t).φ x = L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
                  (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x) :=
-by { simp [improve_step, h], refl }
+rfl
 
 @[simp]
-lemma improve_step_of_support (h : L.accepts R 𝓕) (N : ℝ) (t : ℝ) {x : E}
+lemma improve_step_of_support (t : ℝ) {x : E}
   (H : ∀ t, x ∉ loop.support (L.loop h t)) :
-  L.improve_step 𝓕 N t x = 𝓕 x :=
+  L.improve_step h N t x = 𝓕 x :=
 begin
   have : ∀ t s, L.loop h t x s = 𝓕.φ x L.v,
       { intros t s,
         rw loop.is_const_of_not_mem_support (H t) s 0,
         apply (L.nice h).s_zero x t },
-  refine L.improve_step_rel (λ h, _),
-  rw [L.improve_step_apply h, corrugation_eq_zero _ _ _ _ (H t),
+  rw [improve_step_apply h, corrugation_eq_zero _ _ _ _ (H t),
       remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)],
   simp only [formal_sol.to_jet_sec_eq_coe, smul_zero, add_zero, this],
   erw L.p.update_self,
   refl
 end
 
-variables (L) (𝓕) (N : ℝ)
-
-lemma improve_step_rel_t_eq_0 : L.improve_step 𝓕 N 0 = 𝓕 :=
+lemma improve_step_rel_t_eq_0 : L.improve_step h N 0 = 𝓕 :=
 begin
-  refine L.improve_step_rel' (λ h, _),
   ext x,
   { rw improve_step_apply_f h,
     simp [(L.nice h).t_zero x] },
@@ -293,19 +244,16 @@ begin
     erw L.update_zero h, refl }
 end
 
-lemma improve_step_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improve_step 𝓕 N t x = 𝓕 x :=
+lemma improve_step_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improve_step h N t x = 𝓕 x :=
 begin
-  refine L.improve_step_rel (λ h, _),
-  rw L.improve_step_apply h,
-  rw L.hρ_compl_K₁ hx,
+  rw [improve_step_apply h, L.hρ_compl_K₁ hx],
   simp only [formal_sol.to_jet_sec_eq_coe, mul_zero, zero_smul, add_zero],
   erw L.update_zero h,
   refl
 end
 
-lemma improve_step_rel_K : ∀ᶠ x near L.K, ∀ t, L.improve_step 𝓕 N t x = 𝓕 x :=
+lemma improve_step_rel_K : ∀ᶠ x near L.K, ∀ t, L.improve_step h N t x = 𝓕 x :=
 begin
-  refine L.improve_step_rel'' (λ h, _),
   have : ∀ᶠ x near L.K, ∀ t, x ∉ loop.support (L.loop h t),
   { apply (L.nice h).rel_K.eventually_nhds_set.mono,
     intros x hx t,
@@ -318,14 +266,14 @@ begin
   exact improve_step_of_support _ _ _ hx
 end
 
-lemma improve_step_rel_C : ∀ᶠ x near L.C, ∀ t, L.improve_step 𝓕 N t x = 𝓕 x :=
+lemma improve_step_rel_C : ∀ᶠ x near L.C, ∀ t, L.improve_step h N t x = 𝓕 x :=
 begin
-  refine L.improve_step_rel'' (λ h, eventually.filter_mono (L.hK₁.is_closed.nhds_set_le_sup' L.C) _),
+  apply eventually.filter_mono (L.hK₁.is_closed.nhds_set_le_sup' L.C),
   rw eventually_sup,
   split,
   { apply improve_step_rel_K },
   { rw eventually_principal,
-    exact λ x, L.improve_step_rel_compl_K₁ 𝓕 N }
+    exact λ x, improve_step_rel_compl_K₁ h N }
 end
 
 lemma bu_lt (t : ℝ) (x : E) {v : F} {ε : ℝ} (hv : ∥v∥ < ε) :
@@ -337,30 +285,24 @@ calc ∥(smooth_step t * L.ρ x) • v∥ = |smooth_step t| * |L.ρ x| * ∥v∥
 ... < ε : hv
 
 lemma improve_step_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
-  ∀ᶠ N in at_top, ∀ x t, ∥(L.improve_step 𝓕 N t).f x - 𝓕.f x∥ ≤ ε :=
+  ∀ᶠ N in at_top, ∀ x t, ∥(L.improve_step h N t).f x - 𝓕.f x∥ ≤ ε :=
 begin
-  by_cases h : L.accepts R 𝓕,
-  { set γ := L.loop h,
-    have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
-    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
-    apply ((corrugation.c0_small_on L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
-         remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
-    rintros N ⟨H, H'⟩ x t,
-    by_cases hx : x ∈ L.K₁,
-    { rw [improve_step_apply_f h],
-      suffices : ∥(smooth_step t * L.ρ x) • corrugation L.π N (L.loop h t) x∥ ≤ ε, by simpa,
-      exact (L.bu_lt _ _ $ H _ hx t).le },
-    { rw show (L.improve_step 𝓕 N t).f x = 𝓕.f x, from congr_arg prod.fst (L.improve_step_rel_compl_K₁ 𝓕 N hx t),
-      simp [ε_pos.le] } },
-  { apply eventually_of_forall,
-    intros N x t,
-    rw [improve_step, dif_neg h],
-    simp only [formal_sol.to_jet_sec_eq_coe, jet_sec.const_htpy_apply, jet_sec.formal_sol.coe_apply,
-               sub_self, norm_zero, ε_pos.le] },
+  set γ := L.loop h,
+  have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
+  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
+  apply ((corrugation.c0_small_on L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
+        remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
+  rintros N ⟨H, H'⟩ x t,
+  by_cases hx : x ∈ L.K₁,
+  { rw [improve_step_apply_f h],
+    suffices : ∥(smooth_step t * L.ρ x) • corrugation L.π N (L.loop h t) x∥ ≤ ε, by simpa,
+    exact (bu_lt _ _ $ H _ hx t).le },
+  { rw show (L.improve_step h N t).f x = 𝓕.f x, from congr_arg prod.fst (improve_step_rel_compl_K₁ h N hx t),
+    simp [ε_pos.le] }
 end
 
-lemma improve_step_part_hol {N : ℝ} (hN : N ≠ 0) (h : L.accepts R 𝓕) :
-  ∀ᶠ x near L.K₀, (L.improve_step 𝓕 N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
+lemma improve_step_part_hol {N : ℝ} (hN : N ≠ 0) :
+  ∀ᶠ x near L.K₀, (L.improve_step h N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
 begin
   have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
   let 𝓕' : jet_sec E F :=
@@ -379,10 +321,10 @@ begin
       exact cont_diff_id,
       exact remainder.smooth _ _ (L.loop_smooth h) cont_diff_id cont_diff_const
     end },
-  have H : ∀ᶠ x near L.K₀, L.improve_step 𝓕 N 1 x = 𝓕' x,
+  have H : ∀ᶠ x near L.K₀, L.improve_step h N 1 x = 𝓕' x,
   { apply L.hρ₀.mono,
     intros x hx,
-    simp [L.improve_step_apply h, hx],
+    simp [improve_step_apply h, hx],
     refl },
   have fderiv_𝓕' := λ x, fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x),
   rw eventually_congr (H.is_part_holonomic_at_congr (L.E' ⊔ L.p.span_v)),
@@ -403,8 +345,8 @@ begin
     refl }
 end
 
-lemma improve_step_formal_sol (h : L.accepts R 𝓕) :
-  ∀ᶠ N in at_top, ∀ t, (L.improve_step 𝓕 N t).is_formal_sol R :=
+lemma improve_step_formal_sol :
+  ∀ᶠ N in at_top, ∀ t, (L.improve_step h N t).is_formal_sol R :=
 begin
   set γ := L.loop h,
   have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
@@ -439,12 +381,12 @@ begin
     { simp only [h, improve_step_apply_f, formal_sol.to_jet_sec_eq_coe, improve_step_apply_φ],
       rw [prod.dist_eq, max_lt_iff, prod.dist_eq, max_lt_iff],
       refine ⟨by simpa using ε_pos, _, _⟩ ; dsimp only ; rw dist_add',
-      { exact (L.bu_lt _ _ $ H _ hxK₁ _) },
-      { exact (L.bu_lt _ _ $ H' _ hxK₁) } } },
-  { rw [show ((L.improve_step 𝓕 N) t).f x = 𝓕.f x,
-          from congr_arg prod.fst $ L.improve_step_rel_compl_K₁ 𝓕 N hxK₁ t,
-        show ((L.improve_step 𝓕 N) t).φ x = 𝓕.φ x,
-          from congr_arg prod.snd $ L.improve_step_rel_compl_K₁ 𝓕 N hxK₁ t],
+      { exact (bu_lt _ _ $ H _ hxK₁ _) },
+      { exact (bu_lt _ _ $ H' _ hxK₁) } } },
+  { rw [show ((L.improve_step h N) t).f x = 𝓕.f x,
+          from congr_arg prod.fst $ improve_step_rel_compl_K₁ h N hxK₁ t,
+        show ((L.improve_step h N) t).φ x = 𝓕.φ x,
+          from congr_arg prod.snd $ improve_step_rel_compl_K₁ h N hxK₁ t],
     exact 𝓕.is_sol _ }
 end
 
@@ -459,7 +401,7 @@ section improve
 This section proves lem:h_principle_open_ample_loc.
 -/
 
-open finite_dimensional submodule
+open finite_dimensional submodule step_landscape
 
 variables {E}
 .
@@ -532,16 +474,16 @@ begin
     { intros x hx,
       apply hHK₁ x hx },
     obtain ⟨N, ⟨hN_close, hN_sol⟩, hNneq⟩ :=
-      (((S.improve_step_c0_close H₁ $ half_pos δ_pos).and
-      (S.improve_step_formal_sol H₁ acc)).and $ eventually_ne_at_top (0 :ℝ)).exists,
-    have glue : H 1 = S.improve_step H₁ N 0,
-    { rw S.improve_step_rel_t_eq_0,
+      (((improve_step_c0_close acc $ half_pos δ_pos).and
+      (improve_step_formal_sol acc)).and $ eventually_ne_at_top (0 :ℝ)).exists,
+    have glue : H 1 = S.improve_step acc N 0,
+    { rw improve_step_rel_t_eq_0,
       refl  },
-    refine ⟨H.comp (S.improve_step H₁ N) glue, _, _, _, _, _, _⟩,
+    refine ⟨H.comp (S.improve_step acc N) glue, _, _, _, _, _, _⟩,
     { simp only [hH₀, htpy_jet_sec.comp_of_le, one_div, inv_nonneg, zero_le_bit0, zero_le_one,
                  mul_zero, smooth_step.zero], }, -- t = 0
     { -- rel C
-      apply (hHC.and $ hH₁_rel_C.and $ S.improve_step_rel_C H₁ N).mono,
+      apply (hHC.and $ hH₁_rel_C.and $ improve_step_rel_C acc N).mono,
       rintros x ⟨hx, hx', hx''⟩ t,
       by_cases ht : t ≤ 1/2,
       { simp only [ht, hx, htpy_jet_sec.comp_of_le]},
@@ -550,7 +492,7 @@ begin
       intros x hx t,
       by_cases ht : t ≤ 1/2,
       { simp only [ht, hx, hHK₁, htpy_jet_sec.comp_of_le, not_false_iff]},
-      { simp only [ht, hx, hH₁_K₁, S.improve_step_rel_compl_K₁, htpy_jet_sec.comp_of_not_le,
+      { simp only [ht, hx, hH₁_K₁, improve_step_rel_compl_K₁, htpy_jet_sec.comp_of_not_le,
                    not_false_iff] } },
     { -- C⁰-close
       intros x t,
@@ -567,7 +509,7 @@ begin
       { simp only [ht, hN_sol, htpy_jet_sec.comp_of_not_le, not_false_iff] } },
     {  -- part-hol E' (k + 1)
       rw [← h_span, htpy_jet_sec.comp_1],
-      apply S.improve_step_part_hol H₁ hNneq acc, } }
+      apply improve_step_part_hol acc hNneq } }
 end
 
 
