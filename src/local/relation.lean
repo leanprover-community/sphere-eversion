@@ -338,7 +338,8 @@ abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], smooth_transition.le_one t⟩
 lemma htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : ∀ {n}, 𝒞 n ↿f) (hg : ∀ {n}, 𝒞 n ↿g)
   (hfg : f 1 = g 0) :
   𝒞 ∞ ↿(λ t x, if t ≤ 1/2 then f (smooth_step $ 2*t) x else g (smooth_step $ 2*t - 1) x : ℝ → E → F) :=
-begin
+sorry
+/- begin
   have c3 : ∀ {n}, 𝒞 n (λ t : ℝ, 2 * t) :=
   λ n, cont_diff_const.mul cont_diff_id,
   have c4 : ∀ {n}, 𝒞 n ↿(λ t : ℝ, 2 * t - 1) :=
@@ -356,7 +357,7 @@ begin
   dsimp only at ht,
   subst ht,
   simp [has_uncurry.uncurry],
-  rcases nat.eq_zero_or_pos n with rfl|hn,
+  cases n,
   { simp [iterated_fderiv_zero_eq_comp, hfg], },
   rw [iterated_fderiv_of_partial, iterated_fderiv_of_partial],
   { simp [has_uncurry.uncurry, hfg],
@@ -364,18 +365,16 @@ begin
     refine (iterated_fderiv_comp (hf.comp₂ cont_diff_id cont_diff_const) c5 _).trans _,
     convert continuous_multilinear_map.comp_zero _,
     { ext1 i, refine (iterated_fderiv_comp smooth_transition.cont_diff c3 _).trans _,
-      convert continuous_multilinear_map.zero_comp _, simp [hn] },
+      convert continuous_multilinear_map.zero_comp _, simp },
     refine (iterated_fderiv_comp (hg.comp₂ cont_diff_id cont_diff_const) c6 _).trans _,
     convert continuous_multilinear_map.comp_zero _,
     { ext1 i, refine (iterated_fderiv_comp smooth_transition.cont_diff c4 _).trans _,
-      convert continuous_multilinear_map.zero_comp _, simp [has_uncurry.uncurry, hn] } },
+      convert continuous_multilinear_map.zero_comp _, simp [has_uncurry.uncurry] } },
   { exact λ x, h2.comp₂ cont_diff_const cont_diff_id },
   { exact λ y, h2.comp₂ cont_diff_id cont_diff_const },
-  { exact hn.nat_succ_le },
   { exact λ x, h1.comp₂ cont_diff_const cont_diff_id },
   { exact λ y, h1.comp₂ cont_diff_id cont_diff_const },
-  { exact hn.nat_succ_le },
-end
+end -/
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
