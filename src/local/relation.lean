@@ -5,7 +5,6 @@ import to_mathlib.topology.misc
 import to_mathlib.topology.nhds_set
 import to_mathlib.topology.hausdorff_distance
 import to_mathlib.linear_algebra.basic
-import to_mathlib.smoothness
 
 import local.dual_pair
 import local.ample
@@ -33,7 +32,7 @@ this will guarantee the h-principle (in some other file).
 
 noncomputable theory
 
-open set function module (dual) real
+open set function module (dual) real filter
 open_locale unit_interval topological_space
 
 variables (E : Type*) [normed_group E] [normed_space ℝ E] (F : Type*)
@@ -316,29 +315,105 @@ def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 λ t, by ext x ; refl
 
 /-- A smooth step function on `ℝ`. -/
-def smooth_step : ℝ → ℝ := smooth_transition
+def smooth_step : ℝ → ℝ := λ t, smooth_transition (2*t-1/2)
 
 lemma smooth_step.smooth : 𝒞 ∞ smooth_step :=
-smooth_transition.cont_diff
+begin
+  apply smooth_transition.cont_diff.comp,
+  apply cont_diff.sub,
+  refine cont_diff.const_smul _ 2,
+  apply cont_diff_id,
+  apply cont_diff_const,
+end
 
 @[simp]
 lemma smooth_step.zero : smooth_step 0 = 0 :=
-smooth_transition.zero_of_nonpos le_rfl
+begin
+  apply smooth_transition.zero_of_nonpos,
+  norm_num
+end
 
 @[simp]
 lemma smooth_step.one : smooth_step 1 = 1 :=
-smooth_transition.one_of_one_le le_rfl
+begin
+  apply smooth_transition.one_of_one_le,
+  norm_num
+end
 
 lemma smooth_step.mem (t : ℝ) : smooth_step t ∈ I :=
-⟨smooth_transition.nonneg t, smooth_transition.le_one t⟩
+⟨smooth_transition.nonneg _, smooth_transition.le_one _⟩
 
 lemma smooth_step.abs_le (t : ℝ) : |smooth_step t| ≤ 1 :=
-abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], smooth_transition.le_one t⟩
+abs_le.mpr ⟨by linarith [(smooth_step.mem t).1], smooth_transition.le_one _⟩
 
-lemma htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : ∀ {n}, 𝒞 n ↿f) (hg : ∀ {n}, 𝒞 n ↿g)
+lemma smooth_step.of_lt {t : ℝ} (h : t < 1/4) : smooth_step t = 0 :=
+begin
+  apply smooth_transition.zero_of_nonpos,
+  linarith
+end
+
+
+lemma smooth_step.of_gt {t : ℝ} (h : 3/4 < t) : smooth_step t = 1 :=
+begin
+  apply smooth_transition.one_of_one_le,
+  linarith
+end
+
+lemma htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg : 𝒞 ∞ ↿g)
   (hfg : f 1 = g 0) :
   𝒞 ∞ ↿(λ t x, if t ≤ 1/2 then f (smooth_step $ 2*t) x else g (smooth_step $ 2*t - 1) x : ℝ → E → F) :=
-sorry
+begin
+  have s₁ : 𝒞 ∞ (λ p : ℝ × E, (smooth_step $ 2*p.1, p.2)),
+  { change 𝒞 ∞ ((prod.map smooth_step id) ∘ (λ p : ℝ × E, (2*p.1, p.2))),
+    apply (smooth_step.smooth.prod_map cont_diff_id).comp,
+    apply cont_diff.prod,
+    apply cont_diff_fst.const_smul,
+    apply cont_diff_snd },
+  replace hf := hf.comp s₁,
+  have s₂ : 𝒞 ∞ (λ p : ℝ × E, (smooth_step $ 2*p.1 - 1, p.2)),
+  { change 𝒞 ∞ ((prod.map smooth_step id) ∘ (λ p : ℝ × E, (2*p.1 - 1, p.2))),
+    apply (smooth_step.smooth.prod_map cont_diff_id).comp,
+    apply cont_diff.prod,
+    apply cont_diff.sub,
+    apply cont_diff_fst.const_smul,
+    apply cont_diff_const,
+    apply cont_diff_snd },
+  replace hg := hg.comp s₂,
+  rw cont_diff_iff_cont_diff_at at *,
+  rintros ⟨t₀ , x₀⟩,
+  rcases lt_trichotomy t₀ (1/2) with ht|rfl|ht,
+  { apply (hf (t₀, x₀)).congr_of_eventually_eq,
+    have : (Iio (1/2) : set ℝ) ×ˢ univ ∈ 𝓝 (t₀, x₀),
+      from prod_mem_nhds_iff.mpr ⟨Iio_mem_nhds ht, univ_mem⟩,
+    filter_upwards [this] with p hp,
+    cases p with t x,
+    replace hp : t < 1/2 := (prod_mk_mem_set_prod_eq.mp hp).1,
+    change ite (t ≤ 1 / 2) (f (smooth_step (2 * t)) x) (g (smooth_step (2 * t - 1)) x) = _,
+    rw if_pos hp.le,
+    refl },
+  { apply (hf (1/2, x₀)).congr_of_eventually_eq,
+    have : (Ioo (3/8) (5/8) : set ℝ) ×ˢ univ ∈ 𝓝 (1/(2 : ℝ), x₀),
+    { refine prod_mem_nhds_iff.mpr ⟨Ioo_mem_nhds _ _, univ_mem⟩ ; norm_num },
+    filter_upwards [this] with p hp,
+    cases p with t x,
+    cases (prod_mk_mem_set_prod_eq.mp hp).1 with lt_t t_lt,
+    change ite (t ≤ 1 / 2) (f (smooth_step (2 * t)) x) (g (smooth_step (2 * t - 1)) x) = _,
+    split_ifs,
+    { refl },
+    { change g _ x = f (smooth_step $ 2*t) x,
+      apply congr_fun,
+      rw [show smooth_step (2 * t - 1) = 0, by { apply smooth_step.of_lt, linarith },
+          show smooth_step (2 * t) = 1, by { apply smooth_step.of_gt, linarith }, hfg] }, },
+  { apply (hg (t₀, x₀)).congr_of_eventually_eq,
+    have : (Ioi (1/2) : set ℝ) ×ˢ univ ∈ 𝓝 (t₀, x₀),
+      from prod_mem_nhds_iff.mpr ⟨Ioi_mem_nhds ht, univ_mem⟩,
+    filter_upwards [this] with p hp,
+    cases p with t x,
+    replace hp : ¬ (t ≤ 1/2) := by push_neg ; exact (prod_mk_mem_set_prod_eq.mp hp).1,
+    change ite (t ≤ 1 / 2) (f (smooth_step (2 * t)) x) (g (smooth_step (2 * t - 1)) x) = _,
+    rw if_neg hp,
+    refl }
+end
 /- begin
   have c3 : ∀ {n}, 𝒞 n (λ t : ℝ, 2 * t) :=
   λ n, cont_diff_const.mul cont_diff_id,
@@ -381,10 +456,10 @@ a smooth step function in order to keep smoothness with respect to the time para
 def htpy_jet_sec.comp (𝓕 𝓖 : htpy_jet_sec E F) (h : 𝓕 1 = 𝓖 0) : htpy_jet_sec E F :=
 { f := λ t x, if t ≤ 1/2 then 𝓕.f (smooth_step $ 2*t) x else 𝓖.f (smooth_step $ 2*t - 1) x,
   f_diff :=
-  htpy_jet_sec_comp_aux (λ n, 𝓕.cont_diff_f) (λ n, 𝓖.cont_diff_f) (show (𝓕 1).f = (𝓖 0).f, by rw h),
+  htpy_jet_sec_comp_aux 𝓕.f_diff 𝓖.f_diff (show (𝓕 1).f = (𝓖 0).f, by rw h),
   φ := λ t x, if t ≤ 1/2 then 𝓕.φ (smooth_step $ 2*t) x else  𝓖.φ (smooth_step $ 2*t - 1) x,
   φ_diff :=
-  htpy_jet_sec_comp_aux (λ n, 𝓕.cont_diff_φ) (λ n, 𝓖.cont_diff_φ) (show (𝓕 1).φ = (𝓖 0).φ, by rw h) }
+  htpy_jet_sec_comp_aux 𝓕.φ_diff 𝓖.φ_diff (show (𝓕 1).φ = (𝓖 0).φ, by rw h) }
 
 @[simp]
 lemma htpy_jet_sec.comp_of_le (𝓕 𝓖 : htpy_jet_sec E F) (h) {t : ℝ} (ht : t ≤ 1/2) :
