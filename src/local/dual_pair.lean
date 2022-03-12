@@ -28,6 +28,13 @@ variables {E F}
 
 local attribute [simp] continuous_linear_map.to_span_singleton_apply
 
+lemma ker_pi_ne_top (p : dual_pair' E) : p.π.ker ≠ ⊤ :=
+begin
+  intro H,
+  have : (p.π : E →ₗ[ℝ]  ℝ) p.v = 1 := p.pairing,
+  simpa [linear_map.ker_eq_top.mp H]
+end
+
 /-- Given a dual pair `p`, `p.span_v` is the line spanned by `p.v`. -/
 def span_v (p : dual_pair' E) : submodule ℝ E := submodule.span ℝ {p.v}
 
@@ -57,6 +64,19 @@ lemma update_self (p : dual_pair' E) (φ : E →L[ℝ] F)  :
   p.update φ (φ p.v) = φ :=
 by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
               continuous_linear_map.zero_comp, sub_self]
+
+-- meant for use in the next lemma
+lemma sum_eq_top (p : dual_pair' E) : p.π.ker ⊔ p.span_v = ⊤ :=
+begin
+
+  sorry
+end
+
+lemma decomp (p : dual_pair' E) (e : E) : ∃ u ∈ p.π.ker, ∃ t : ℝ, e = u + t•p.v :=
+begin
+
+  sorry
+end
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
 to use `cont_diff_clm_apply` and ` continuous_clm_apply`. -/
