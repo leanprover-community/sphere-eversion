@@ -158,10 +158,6 @@ R.slice p (x, 𝓕.f x, 𝓕.φ x)
 def _root_.rel_loc.formal_sol.slice_at (𝓕 : formal_sol R) (p : dual_pair' E) (x : E) : set F :=
 R.slice p (x, 𝓕.f x, 𝓕.φ x)
 
--- This probably won't stay stated like this
-def slices (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) : set (E × F) :=
-⋃ x, ({x} : set E) ×ˢ (R.slice p (x, 𝓕.f x, 𝓕.φ x))
-
 /-- A jet section `𝓕` is holonomic if its linear map part at `x`
 is the derivative of its function part at `x`. -/
 def is_holonomic_at (𝓕 : jet_sec E F) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
@@ -507,3 +503,73 @@ begin
 end
 
 end htpy_jet_sec
+
+section immersions
+
+open rel_loc submodule finite_dimensional
+
+local notation `dim` := finrank ℝ
+
+variables (E F)
+
+def rel_immersion_loc : rel_loc E F :=
+{p | injective p.2.2}
+
+variables {E F} [finite_dimensional ℝ E] [finite_dimensional ℝ F]
+
+-- TODO: cleanup the next proof
+
+lemma rel_immersion_loc.ample (h : finrank ℝ E < finrank ℝ F): is_ample (rel_immersion_loc E F) :=
+begin
+  rintros p ⟨e, f, φ⟩ w hw,
+  have : (rel_immersion_loc E F).slice p (e, f, φ) = (map φ.to_linear_map p.π.ker)ᶜ,
+  { ext w',
+    change injective (p.update φ w') ↔ w' ∉ φ '' p.π.ker,
+    split,
+    { rintros h ⟨u, hu, rfl⟩,
+      have : p.update φ (φ u) p.v = φ u,
+      exact p.update_v φ (φ u),
+      conv_rhs at this { rw ←  p.update_ker_pi φ (φ u) hu },
+      rw ←  h this at hu,
+      simp only [set_like.mem_coe, continuous_linear_map.mem_ker] at hu,
+      rw p.pairing at hu,
+      linarith},
+    { intros h u u' huu',
+      rcases p.decomp u with ⟨a, ha, t, rfl⟩,
+      rcases p.decomp u' with ⟨a', ha', t', rfl⟩,
+      suffices : (t - t') • p.v = a' - a,
+      { rw [sub_smul] at this,
+        rw eq_add_of_sub_eq' this,
+        abel },
+      have : φ a + t • w' = φ a' + t' • w',
+        by simpa [(p.update φ w').map_add, ha, ha'] using huu',
+      have hw' : (t -t') • w' = φ (a' - a),
+      { rw [sub_smul, φ.map_sub],
+        rw eq_sub_of_add_eq this,
+        abel },
+      have haa' : a' - a ∈ p.π.ker := p.π.ker.sub_mem ha' ha,
+      have ht : t - t' = 0,
+      { by_contra' ht,
+        apply h,
+        refine ⟨(t - t')⁻¹ • (a' - a), p.π.ker.smul_mem _ haa', _⟩,
+        have := congr_arg (λ u : F, (t - t')⁻¹ • u) hw',
+        simp [ht] at this,
+        rwa [← φ.map_sub, ← φ.map_smul, eq_comm] at this },
+      rw [eq_comm, ht, zero_smul] at hw' ⊢,
+      rw [← p.update_ker_pi φ w haa', ← (p.update φ w).map_zero] at hw',
+      exact hw hw' } },
+  rw this at *,
+  apply ample_of_two_le_codim _ _ hw,
+  suffices : 2 ≤ dim (F ⧸ map φ.to_linear_map p.π.ker),
+  { rw ← finrank_eq_dim,
+    exact_mod_cast this },
+  have := finrank_quotient_add_finrank (map φ.to_linear_map p.π.ker),
+  apply le_of_add_le_add_right,
+  rw this,
+  have := calc
+    dim (map φ.to_linear_map p.π.ker) ≤ dim p.π.ker : finrank_map_le ℝ φ.to_linear_map p.π.ker
+                                 ...  < dim E : finrank_lt (lt_of_le_of_ne le_top p.ker_pi_ne_top),
+  linarith
+end
+
+end immersions
