@@ -502,3 +502,29 @@ begin
   { exact lt_of_le_of_lt h ε_pos },
   { rwa real.norm_of_nonneg h.le at hN },
 end
+
+
+
+section smooth
+variables {𝕜 E E' F F' G H K : Type*}
+variables [nondiscrete_normed_field 𝕜]
+variables [normed_group E] [normed_space 𝕜 E]
+variables [normed_group E'] [normed_space 𝕜 E']
+variables [normed_group F] [normed_space 𝕜 F]
+variables [normed_group G] [normed_space 𝕜 G]
+variables [normed_group H] [normed_space 𝕜 H]
+variables [normed_group K] [normed_space 𝕜 K]
+variables [normed_linear_ordered_field F'] [normed_space 𝕜 F']
+variables {n : with_top ℕ}
+
+
+lemma cont_diff.comp₂ {g : E × F → G} (hg : cont_diff 𝕜 n g) {e : H → E} (he : cont_diff 𝕜 n e)
+  {f : H → F} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ h, g (e h, f h)) :=
+hg.comp $ he.prod hf
+
+lemma cont_diff.comp₃ {g : E × F × K → G} (hg : cont_diff 𝕜 n g)
+  {e : H → E} (he : cont_diff 𝕜 n e) {f : H → F} (hf : cont_diff 𝕜 n f)
+  {k : H → K} (hk : cont_diff 𝕜 n k) : cont_diff 𝕜 n (λ h, g (e h, f h, k h)) :=
+hg.comp $ he.prod $ hf.prod hk
+
+end smooth
