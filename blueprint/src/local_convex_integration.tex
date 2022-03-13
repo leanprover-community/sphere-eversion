@@ -377,11 +377,13 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{lemma}
   \label{lem:open_ample_immersion_loc}
+  \lean{rel_immersion_loc.ample}\leanok
   \uses{def:ample_subset}
   The relation of immersions in positive codimension is open and ample.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   \uses{lem:ample_codim_two}
   For every $σ = (x, y, φ)$ in the immersion relation $\Rel$,
   and for every dual pair $(π, v)$, the slice
