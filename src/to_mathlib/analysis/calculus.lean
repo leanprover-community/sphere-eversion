@@ -253,7 +253,7 @@ variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
       linear_map.coe_to_continuous_linear_map', linear_equiv.pi_ring_symm_apply],
     apply le_trans (norm_sum_le _ _),
     rw smul_mul_assoc,
-    refine finset.sum_le_of_forall_le _ _ _ (λ i hi, _),
+    refine finset.sum_le_card_nsmul _ _ _ (λ i hi, _),
     rw [norm_smul, mul_comm],
     exact mul_le_mul (norm_le_pi_norm g i) (norm_le_pi_norm t i) (norm_nonneg _) (norm_nonneg g),
   end,
