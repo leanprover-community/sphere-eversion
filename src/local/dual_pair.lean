@@ -4,6 +4,7 @@ import linear_algebra.dual
 import notations
 import to_mathlib.analysis.normed_space.operator_norm
 import to_mathlib.analysis.calculus
+import to_mathlib.linear_algebra.basic
 
 
 
@@ -38,6 +39,9 @@ end
 /-- Given a dual pair `p`, `p.span_v` is the line spanned by `p.v`. -/
 def span_v (p : dual_pair' E) : submodule ℝ E := submodule.span ℝ {p.v}
 
+lemma mem_span_v (p : dual_pair' E) {u : E} : u ∈ p.span_v ↔ ∃ t : ℝ, u = t • p.v :=
+by simp [dual_pair'.span_v, submodule.mem_span_singleton, eq_comm]
+
 /-- Update a continuous linear map `φ : E →L[ℝ] F` using a dual pair `p` on `E` and a
 vector `w : F`. The new map coincides with `φ` on `ker p.π` and sends `p.v` to `w`. -/
 def update (p : dual_pair' E) (φ : E →L[ℝ] F) (w : F) : E →L[ℝ] F :=
@@ -65,17 +69,33 @@ lemma update_self (p : dual_pair' E) (φ : E →L[ℝ] F)  :
 by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
               continuous_linear_map.zero_comp, sub_self]
 
--- meant for use in the next lemma
-lemma sum_eq_top (p : dual_pair' E) : p.π.ker ⊔ p.span_v = ⊤ :=
+lemma inf_eq_bot (p : dual_pair' E) : p.π.ker ⊓ p.span_v = ⊥ :=
 begin
+  rw eq_bot_iff,
+  intros x hx,
+  have : p.π x = 0 ∧ ∃ a : ℝ, a • p.v = x,
+    by simpa [dual_pair'.span_v, submodule.mem_span_singleton] using hx,
+  rcases this with ⟨H, t, rfl⟩,
+  rw [p.π.map_smul, p.pairing, algebra.id.smul_eq_mul, mul_one] at H,
+  simp [H]
+end
 
-  sorry
+lemma sup_eq_top (p : dual_pair' E) : p.π.ker ⊔ p.span_v = ⊤ :=
+begin
+  rw submodule.sup_eq_top_iff,
+  intro x,
+  refine ⟨x - p.π x • p.v, _, p.π x • p.v, _, _⟩;
+  simp [dual_pair'.span_v, submodule.mem_span_singleton, p.pairing]
 end
 
 lemma decomp (p : dual_pair' E) (e : E) : ∃ u ∈ p.π.ker, ∃ t : ℝ, e = u + t•p.v :=
 begin
-
-  sorry
+  have : e ∈ p.π.ker ⊔ p.span_v,
+  { rw p.sup_eq_top,
+    exact submodule.mem_top },
+  simp_rw [submodule.mem_sup, dual_pair'.mem_span_v] at this,
+  rcases this with ⟨u, hu, -, ⟨t, rfl⟩, rfl⟩,
+  use [u, hu, t, rfl]
 end
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
