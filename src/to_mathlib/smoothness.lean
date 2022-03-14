@@ -9,7 +9,10 @@ go into mathlib in some form.
 -/
 
 /- arguments about smoothness -/
-/-
+
+/-- Ability to `sorry` things without getting warning messages. This should only be used in declarations we are not using in the project. -/
+axiom sorry_ax {α : Sort*} : α
+
 open exp_neg_inv_glue real
 lemma iterated_deriv_exp_neg_inv_glue (n : ℕ) : iterated_deriv n exp_neg_inv_glue = f_aux n :=
 by simp_rw [← f_aux_zero_eq, f_aux_iterated_deriv]
@@ -21,29 +24,36 @@ by simp_rw [iterated_deriv_exp_neg_inv_glue, f_aux, le_rfl, if_true]
 @[simp]
 lemma iterated_deriv_smooth_transition_zero (n : ℕ) :
   iterated_deriv n smooth_transition 0 = 0 :=
-admit
+sorry_ax
 
 @[simp]
-lemma iterated_deriv_smooth_transition_one {n : ℕ} (hn : 0 < n) :
+lemma iterated_deriv_smooth_transition_one {n : ℕ} (hn : 1 ≤ n) :
   iterated_deriv n smooth_transition 1 = 0 :=
-by { admit }
+sorry_ax
 
 @[simp]
 lemma iterated_fderiv_smooth_transition_zero (n : ℕ) :
   iterated_fderiv ℝ n smooth_transition 0 = 0 :=
-admit
+sorry_ax
 
 @[simp]
-lemma iterated_fderiv_smooth_transition_one {n : ℕ} (hn : 0 < n) :
+lemma iterated_fderiv_smooth_transition_one {n : ℕ} (hn : 1 ≤ n) :
   iterated_fderiv ℝ n smooth_transition 1 = 0 :=
-admit
- -/
+sorry_ax
 
 namespace function
-variables {ι α β : Sort*} [decidable_eq ι] (f : α → β) (g : ι → α) (i : ι) (v : α) (j : ι)
+variables {ι : Sort*} [decidable_eq ι] {α β : ι → Type*}
 
-lemma apply_update' : f (update g i v j) = update (f ∘ g) i (f v) j :=
-apply_update _ _ _ _ _
+/-- Special case of `function.apply_update`. Useful for `rw`/`simp`. -/
+lemma update_fst (g : Π i, α i × β i) (i : ι) (v : α i × β i) (j : ι) :
+  (update g i v j).fst = update (λ k, (g k).fst) i v.fst j :=
+apply_update (λ _, prod.fst) g i v j
+
+/-- Special case of `function.apply_update`. Useful for `rw`/`simp`. -/
+lemma update_snd (g : Π i, α i × β i) (i : ι) (v : α i × β i) (j : ι) :
+  (update g i v j).snd = update (λ k, (g k).snd) i v.snd j :=
+apply_update (λ _, prod.snd) g i v j
+
 
 end function
 
@@ -284,3 +294,41 @@ begin
   exact continuous_linear_map.coprodL.continuous.comp (hφ₁.prod_mk hφ₂)
 end
 end  C1_real
+
+/- The lemmas below are maybe-true lemmas about iterated derivatives, that are useful to have (though we probably don't need them in this project) -/
+section smooth
+variables {𝕜 E E' F F' G H K : Type*}
+variables [nondiscrete_normed_field 𝕜]
+variables [normed_group E] [normed_space 𝕜 E]
+variables [normed_group E'] [normed_space 𝕜 E']
+variables [normed_group F] [normed_space 𝕜 F]
+variables [normed_group G] [normed_space 𝕜 G]
+variables [normed_group H] [normed_space 𝕜 H]
+variables [normed_group K] [normed_space 𝕜 K]
+variables [normed_linear_ordered_field F'] [normed_space 𝕜 F']
+variables {n : with_top ℕ}
+
+lemma iterated_fderiv_comp_eq_zero_right {g : F → G} {f : E → F} {n : ℕ} (hg : cont_diff 𝕜 n g)
+  (hf : cont_diff 𝕜 n f) (x : E) (hn : 1 ≤ n) (h : ∀ m ≤ n, 1 ≤ m → iterated_fderiv 𝕜 m f x = 0) :
+    iterated_fderiv 𝕜 n (g ∘ f) x = 0 :=
+sorry_ax
+
+lemma iterated_fderiv_comp_eq_zero_left {g : F → G} {f : E → F} {n : ℕ} (hg : cont_diff 𝕜 n g)
+  (hf : cont_diff 𝕜 n f) (x : E) (hn : 1 ≤ n)
+  (h : ∀ m ≤ n, 1 ≤ m → iterated_fderiv 𝕜 m g (f x) = 0) :
+    iterated_fderiv 𝕜 n (g ∘ f) x = 0 :=
+sorry_ax
+
+lemma cont_diff.if_le_of_fderiv {f g : E → F} {a b : E → F'}
+  (hf : cont_diff 𝕜 n f) (hg : cont_diff 𝕜 n g) (ha : cont_diff 𝕜 n a) (hb : cont_diff 𝕜 n b)
+  (h : ∀ x n, a x = b x → iterated_fderiv 𝕜 n f x = iterated_fderiv 𝕜 n g x) :
+  cont_diff 𝕜 n (λ x, if a x ≤ b x then f x else g x) :=
+sorry_ax
+
+lemma cont_diff.if_le_of_deriv {n : with_top ℕ} {f g : 𝕜 → F} {a b : 𝕜 → F'}
+  (hf : cont_diff 𝕜 n f) (hg : cont_diff 𝕜 n g) (ha : cont_diff 𝕜 n a) (hb : cont_diff 𝕜 n b)
+  (h : ∀ x n, a x = b x → iterated_deriv n f x = iterated_deriv n g x) :
+  cont_diff 𝕜 n (λ x, if a x ≤ b x then f x else g x) :=
+sorry_ax
+
+end smooth
