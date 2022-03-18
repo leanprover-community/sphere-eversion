@@ -968,13 +968,25 @@ variables [finite_dimensional ℝ G]
 variables [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
 variables (φ : cont_diff_bump_of_inner (0 : G))
 
+def _root_.cont_diff_bump_of_inner.normed {a : G} (φ : cont_diff_bump_of_inner a) (μ : measure G)
+  (x : G) : ℝ :=
+φ x / ∫ x, φ x ∂μ
+
+lemma _root_.cont_diff_bump_of_inner.integral_normed {a : G} (φ : cont_diff_bump_of_inner a) :
+  ∫ x, φ.normed μ x ∂μ = 1 :=
+sorry
+
+lemma _root_.cont_diff_bump_of_inner.normed.has_compact_support {a : G}
+  (φ : cont_diff_bump_of_inner a) : has_compact_support (φ.normed μ) :=
+sorry
+
 open continuous_linear_map
 lemma cont_diff_bump_of_inner.convolution_eq_right {x₀ : G}
   (h : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
 by simp_rw [convolution_eq_right' _ φ.support_eq.subset h, lsmul_apply, integral_smul_const]
 
 lemma cont_diff_bump_of_inner.tendsto {x₀ : G} (hf : continuous f) :
-  tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ (N • x)) ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀)
+  tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ.normed μ (N • x)) ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀)
     at_top (𝓝 (g x₀)) :=
 begin
   sorry
