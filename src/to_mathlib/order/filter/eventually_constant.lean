@@ -163,6 +163,7 @@ lemma eventually_constant.tendsto_nhds [nonempty β] [topological_space β]
   (h : eventually_constant g f) : tendsto g f (𝓝 (eventual_value g f)) :=
 h.tendsto.mono_right $ pure_le_nhds _
 
+/-- todo: generalize to `t1_space`. -/
 lemma eventual_value_eq_lim [f.ne_bot] [nonempty β] [topological_space β] [t2_space β]
   (h : eventually_constant g f) : eventual_value g f = lim f g :=
 h.tendsto_nhds.lim_eq.symm
@@ -301,11 +302,3 @@ lemma locally_eventually_constant_on.eventually_constant_nhd
 classical.some_spec $ classical.some_spec $ hgf x hx
 
 end locally_eventually_constant
-
-/-
-A bunch of lemmas formulated for t2_space also hold for t1_space.
-tendsto_const_nhds_iff'
-eventual_value_eq_lim
-nhds_eq_nhds_iff
-nhds_le_nhds_iff
--/
