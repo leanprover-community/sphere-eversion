@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-  MathJax = { 
-    tex: {
-		    inlineMath: [['$','$'], ['\\(','\\)']]
-	} }
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -82,7 +79,13 @@
 
   </ul>
  </li>
-<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+  <li>	
+  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
+  </li>
 </ul>
 </nav>
 
@@ -115,7 +118,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/dual_pair.lean#L22">dual_pair'</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/dual_pair.lean#L22">dual_pair'</a></li>
         </ul>
 
       </div>
@@ -147,7 +150,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/corrugation.lean#L35">corrugation</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/corrugation.lean#L35">corrugation</a></li>
         </ul>
 
       </div>
@@ -157,7 +160,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
-<div class="displaymath" id="a0000000049">
+<div class="displaymath" id="a0000000041">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - \overline{γ}_x\right]ds.  \]
 </div>
 
@@ -175,7 +178,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#prop:theilliere">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000050"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000042"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -202,10 +205,10 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/corrugation.lean#L195">fderiv_corrugated_map</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/corrugation.lean#L82">corrugation.c0_small_on</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/corrugation.lean#L226">remainder_c0_small_on</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/corrugation.lean#L70">corrugation.support</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/corrugation.lean#L195">fderiv_corrugated_map</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/corrugation.lean#L82">corrugation.c0_small_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/corrugation.lean#L226">remainder_c0_small_on</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/corrugation.lean#L70">corrugation.support</a></li>
         </ul>
 
       </div>
@@ -228,7 +231,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000050">
+<div class="proof_wrapper" id="a0000000042">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -237,9 +240,7 @@
   </div>
   <div class="proof_content">
   <p>We set \(Γ_x(t) = ∫_0^t \left(γ_x(s) - \overline{γ}_x\right)ds\), so that \(f'(x) = f(x) + Γ_x(Nπ(x))/N\). Because each \(Γ_x\) is \(1\)-periodic, and everything has compact support in \(E\), all derivatives of \(Γ\) are uniformly bounded. Item&#160;<a href="chap-local.html#CP:C0">1</a> in the statement is then obvious. Item&#160;<a href="chap-local.html#CP:kerpi">2</a> also follows since \(∂_if'(x) = ∂_if(x) + ∂_iΓ(x, Nπ(x))/N\). In order to prove Item&#160;<a href="chap-local.html#CP:v">3</a>, we compute: </p>
-<div class="displaymath" id="a0000000051">
-  \begin{align*}  Df’(x)v & = Df(x)v + \frac1N ∂_jΓ(x, Nπ(x)) + \frac NN ∂_tΓ(x, Nπ(x))\\ & = Df(x)v + O\left(\frac1N\right) + γ(x, Nπ(x)) - Df(x)v\\ & = γ(x, Nπ(x)) + O\left(\frac1N\right). \end{align*}
-</div>
+<span>\begin{align*}  Df’(x)v & = Df(x)v + \frac1N ∂_jΓ(x, Nπ(x)) + \frac NN ∂_tΓ(x, Nπ(x))\\ & = Df(x)v + O\left(\frac1N\right) + γ(x, Nπ(x)) - Df(x)v\\ & = γ(x, Nπ(x)) + O\left(\frac1N\right). \end{align*}</span>
 <p> Outside the support of \(γ\), \(Γ_x\) and its derivative with respect to \(x\) vanish identically (for the derivative computation, it is important that the support of \(γ\) is the <em>closure</em> of the set of \(x\) where \(γ_x\) is not constant). </p>
 
   </div>
@@ -264,7 +265,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L226">rel_loc.formal_sol.is_part_holonomic_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L226">rel_loc.formal_sol.is_part_holonomic_at</a></li>
         </ul>
 
       </div>
@@ -295,7 +296,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L46">rel_loc</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L46">rel_loc</a></li>
         </ul>
 
       </div>
@@ -342,7 +343,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L97">rel_loc.formal_sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L97">rel_loc.formal_sol</a></li>
         </ul>
 
       </div>
@@ -374,7 +375,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L275">htpy_jet_sec</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L275">htpy_jet_sec</a></li>
         </ul>
 
       </div>
@@ -421,7 +422,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L57">rel_loc.slice</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L57">rel_loc.slice</a></li>
         </ul>
 
       </div>
@@ -431,7 +432,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>   For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
-<div class="displaymath" id="a0000000052">
+<div class="displaymath" id="a0000000043">
   \[  \mathcal{R}(σ, π, v) = \{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 
@@ -446,7 +447,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:update_lin_map">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000044"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -457,9 +458,9 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/dual_pair.lean#L51">dual_pair'.update_ker_pi</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/dual_pair.lean#L60">dual_pair'.update_v</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L249">rel_loc.jet_sec.mem_slice</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/dual_pair.lean#L51">dual_pair'.update_ker_pi</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/dual_pair.lean#L60">dual_pair'.update_v</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L249">rel_loc.jet_sec.mem_slice</a></li>
         </ul>
 
       </div>
@@ -472,7 +473,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000053">
+<div class="proof_wrapper" id="a0000000044">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -519,7 +520,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L259">rel_loc.formal_sol.is_short_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L259">rel_loc.formal_sol.is_short_at</a></li>
         </ul>
 
       </div>
@@ -541,7 +542,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:integration_step">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000054"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000045"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -570,11 +571,11 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/h_principle.lean#L236">step_landscape.improve_step_rel_t_eq_0</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/h_principle.lean#L269">step_landscape.improve_step_rel_C</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/h_principle.lean#L247">step_landscape.improve_step_rel_compl_K₁</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/h_principle.lean#L287">step_landscape.improve_step_c0_close</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/h_principle.lean#L304">step_landscape.improve_step_part_hol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/h_principle.lean#L236">step_landscape.improve_step_rel_t_eq_0</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/h_principle.lean#L269">step_landscape.improve_step_rel_C</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/h_principle.lean#L247">step_landscape.improve_step_rel_compl_K₁</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/h_principle.lean#L287">step_landscape.improve_step_c0_close</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/h_principle.lean#L304">step_landscape.improve_step_part_hol</a></li>
         </ul>
 
       </div>
@@ -600,7 +601,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000054">
+<div class="proof_wrapper" id="a0000000045">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -621,16 +622,16 @@
 </ul>
 <p> Let \(ρ: E → ℝ\) be a smooth cut-off function which equals one on a neighborhood of \(K_0\) and whose support is contained in \(K_1\). </p>
 <p>Let \(N\) be a positive real number. Let \(\bar f\) be the corrugated map constructed from \(f\), \(γ^1\) and \(N\). <a href="chap-local.html#prop:theilliere">Proposition 2.3</a> ensures that, for all \(x\), </p>
-<div class="displaymath" id="a0000000055">
+<div class="displaymath" id="a0000000046">
   \[  D\bar f(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x  \]
 </div>
 <p> for some bounded map \(B\) which vanishes whenever \(γ_x\) is constant, hence vanishes near \(C\). </p>
 <p>We set \(\mathcal{F}_t(x) = \big (f_t(x), φ_t(x)\big )\) where: </p>
-<div class="displaymath" id="a0000000056">
+<div class="displaymath" id="a0000000047">
   \[  f_t(x) = f(x) + \frac{tρ(x)}N \int _0^{Nπ(x)} \left[γ^t_x(s) - Df(x)v\right]\,  ds  \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000057">
+<div class="displaymath" id="a0000000048">
   \[  φ_t(x) = φ(x) + \left[γ^{tρ(x)}_x(Nπ(x)) - φ(x)v\right] ⊗ π + \frac{tρ(x)}N B_x.  \]
 </div>
 <p>We now prove that \(\mathcal{F}_t\) has the announced properties, starting with he obvious ones. The fact that \(\mathcal{F}_0 = \mathcal{F}\) is obvious since \(γ^0_x(s) = φ(x)v\) for all \(s\). </p>
@@ -638,24 +639,24 @@
 <p>Outside of \(K_1\), \(ρ\) vanishes. Hence \(f_t(x) = f(x)\) for all \(t\), and \(γ^{tρ(x)}_x(s) = φ(x)v\) for all \(s\) and \(t\), and \(φ_t(x) = φ(x)\). </p>
 <p>The distance between \(f(x)\) and \(f_t(x)\) is zero outside of \(K_1\) which is compact, and \(O\left(1/N\right)\), so it is less than \(ε\) for \(N\) large enough. </p>
 <p>We now turn to the interesting parts. The first one is that each \(\mathcal{F}_t\) is a formal solution of \(\mathcal{R}\). We already now that \(\mathcal{F}_t\) coincides with \(\mathcal{F}\), which is a formal solution, outside of the compact set \(K_1\). We set </p>
-<div class="displaymath" id="a0000000058">
+<div class="displaymath" id="a0000000049">
   \[  \mathcal{F}'_t(x) = \left(f(x), φ(x) + \left[γ^{tρ(x)}_x(Nπ(x)) - φ(x)v\right] ⊗ π\right).  \]
 </div>
 <p> Since \(\mathcal{R}\) is open, and \(K_1 × [0, 1]\) is compact and \(\mathcal{F}_t\) is within \(O\left(1/N\right)\) of \(\mathcal{F}'_t\), it suffices to prove that \(\mathcal{F}'_t\) is a formal solution for all \(t\). This is guaranteed by the definition of the slice \(\mathcal{R}(\mathcal{F}(x), π, v)\) to which \(γ^{tρ(x)}_x(Nπ(x))\) belongs. </p>
 <p>Finally, let’s prove that \(\mathcal{F}_1\) is \(E' ⊕ ℝv\)–holonomic near \(K_0\). Since \(ρ = 1\) near \(K_0\), we have, for \(x\) near \(K_0\), </p>
-<div class="displaymath" id="a0000000059">
+<div class="displaymath" id="a0000000050">
   \[  Df_1(x) = Df(x) + \left[γ^1_x(Nπ(x)) - Df(x)v\right] ⊗ π + \frac1N B_x,  \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000060">
+<div class="displaymath" id="a0000000051">
   \[  φ_1(x) = φ(x) + \left[γ^1_x(Nπ(x)) - φ(x)v\right] ⊗ π + \frac{1}N B_x.  \]
 </div>
 <p> Let \(p\) be the projection of \(E\) onto \(\ker π\) along \(v\), so that \(\operatorname{Id}_E = p + v ⊗ π\). We can rewrite the above formulas as </p>
-<div class="displaymath" id="a0000000061">
+<div class="displaymath" id="a0000000052">
   \[  Df_1(x) = Df(x) ∘ p + γ^1_x(Nπ(x)) ⊗ π + \frac1N B_x,  \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000062">
+<div class="displaymath" id="a0000000053">
   \[  φ_1(x) = φ(x) ∘ p + γ^1_x(Nπ(x)) ⊗ π + \frac{1}N B_x.  \]
 </div>
 <p> So we see the difference is \(Df(x) ∘ p - φ(x) ∘ p\) which vanishes on \(E'\) since \(\mathcal{F}\) is \(E'\)–holonomic near \(K_0\), and vanishes on \(v\) since \(p(v) = 0\). </p>
@@ -682,7 +683,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/ample.lean#L31">ample_set</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/ample.lean#L31">ample_set</a></li>
         </ul>
 
       </div>
@@ -704,7 +705,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:ample_codim_two">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000063"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000054"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -730,7 +731,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/ample.lean#L145">ample_of_two_le_codim</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/ample.lean#L145">ample_of_two_le_codim</a></li>
         </ul>
 
       </div>
@@ -743,7 +744,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000063">
+<div class="proof_wrapper" id="a0000000054">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -791,7 +792,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L61">rel_loc.is_ample</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L61">rel_loc.is_ample</a></li>
         </ul>
 
       </div>
@@ -813,7 +814,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:open_ample_immersion_loc">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000064"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -839,7 +840,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/relation.lean#L522">rel_immersion_loc.ample</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/relation.lean#L522">rel_immersion_loc.ample</a></li>
         </ul>
 
       </div>
@@ -852,7 +853,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000064">
+<div class="proof_wrapper" id="a0000000055">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -873,7 +874,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-local.html#lem:h_principle_open_ample_loc">#</a>
-    <a class="icon proof" href="chap-local.html#a0000000065"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-local.html#a0000000056"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -899,7 +900,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/7b18dea0fdf3db0587228660392221a9b160dddd/src/local/h_principle.lean#L412">rel_loc.formal_sol.improve</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/38cda44643898cd1faf90d1015be4594152b4c02/src/local/h_principle.lean#L412">rel_loc.formal_sol.improve</a></li>
         </ul>
 
       </div>
@@ -925,7 +926,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000065">
+<div class="proof_wrapper" id="a0000000056">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
