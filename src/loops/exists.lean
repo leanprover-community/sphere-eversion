@@ -6,7 +6,8 @@ import to_mathlib.convolution
 
 noncomputable theory
 
-open set function finite_dimensional prod int
+open set function finite_dimensional prod int topological_space metric
+open measure_theory measure_theory.measure
 open_locale topological_space unit_interval convolution
 
 
@@ -29,25 +30,37 @@ structure nice_loop (γ : ℝ → E → loop F) : Prop :=
 
 variables {g b Ω U K}
 
-open measure_theory measure_theory.measure
-lemma exists_loops' [finite_dimensional ℝ E]
-  --todo: obtain the measure structure on `E` in the proof
-  [measure_space E] [is_add_haar_measure (volume : measure E)]
+lemma exists_loops [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
-  (hΩ_conn : ∀ x, is_connected (prod.mk x ⁻¹' Ω))
-  (hg : cont_diff ℝ ⊤ g) (hb : cont_diff ℝ ⊤ b) (hb_in : ∀ x, (x, b x) ∈ Ω)
-  (hgK : ∀ᶠ x in 𝓝ˢ K, g x = b x) (hconv : ∀ x, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω)) :
-  ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ :=
+  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
+  (hgK : ∀ᶠ x near K, g x = b x)
+  (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
+  ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ  :=
 begin
+  let Om := λ x, hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x),
+  have b_in : ∀ x, (x, b x) ∈ Ω :=
+    λ x, (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x, hconv x⟩) : _),
+  have op : ∀ x, is_open (prod.mk x ⁻¹' Ω),
+   from λ x, hΩ_op.preimage (continuous.prod.mk x),
+
+  -- choose a volume on E
+  letI : measurable_space E := borel E,
+  haveI : borel_space E := ⟨rfl⟩,
+  letI K₀ : positive_compacts E,
+  { refine ⟨⟨closed_ball 0 1, is_compact_closed_ball 0 1⟩, _⟩,
+    rw [interior_closed_ball, nonempty_ball], all_goals { norm_num } },
+  letI : measure_space E := ⟨add_haar_measure K₀⟩,
+  -- haveI : is_add_haar_measure (volume : measure E) :=
+  --   infer_instance,
+
   -- we could probably get away with something simpler to get γ₀.
   obtain ⟨γ₀, hγ₀_cont, hγ₀0, h2γ₀0, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
     surrounding_loop_of_convex_hull is_open_univ is_connected_univ
     (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
-  have := λ x,
-    local_loops_open ⟨univ, filter.univ_mem, h2Ω⟩ (hΩ_conn x) hg.continuous.continuous_at
-    hb.continuous (hb_in x) (hconv x),
+  have := λ x, local_loops_open ⟨univ, filter.univ_mem, h2Ω⟩ hg.continuous.continuous_at
+    hb.continuous (hconv x),
   obtain ⟨ε, hε⟩ : { x : ℝ // 0 < x } := ⟨1, zero_lt_one⟩, -- todo
   -- let γ₁ : E → ℝ → loop F := λ x t, γ₀.transform (λ y, b x + t • ε • y),
   let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
@@ -59,8 +72,8 @@ begin
         (continuous_const.smul $ hγ₀_cont.comp continuous_snd) },
     sorry }, -- choose ε sufficiently small, and perhaps V smaller
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
-    exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω (λ x _, hΩ_conn x)
-    (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hb_in x) (λ x _, hconv x) hγ₁,
+    exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
+    (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) hγ₁,
   let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
   let φ : E × ℝ × ℝ → ℝ :=
   (⟨⟨ε / 2, ε, half_pos hε, half_lt_self hε⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)),
@@ -72,31 +85,6 @@ begin
       ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
     simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
   -- -- todo: apply reparametrization
-  refine ⟨γ₆, _, _, _, _, _, _, _, _⟩,
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-  { sorry },
-end
-
-lemma exists_loops
-  (hK : is_compact K)
-  (hΩ_op : is_open Ω)
-  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
-  (hgK : ∀ᶠ x near K, g x = b x)
-  (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
-  ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ  :=
-begin
-  have b_in : ∀ x, (x, b x) ∈ Ω,
-  { intros x,
-    have : (hull $ connected_comp_in (prod.mk x ⁻¹' Ω) $ b x).nonempty := ⟨g x, hconv x⟩,
-    exact (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp this) : _) },
-  have op : ∀ x, is_open (prod.mk x ⁻¹' Ω),
-   from λ x, hΩ_op.preimage (continuous.prod.mk x),
 
   sorry
 end
