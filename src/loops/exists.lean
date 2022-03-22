@@ -30,6 +30,15 @@ structure nice_loop (γ : ℝ → E → loop F) : Prop :=
 
 variables {g b Ω U K}
 
+/-- For every continuous positive function there is a smaller smooth positive function.
+
+proof sketch: choose locally constant functions on compact sets, and patch them using a partition
+of unity. -/
+lemma exists_smooth_pos {f : E → ℝ} {U : set E} (hU : is_open U) (hf : continuous f)
+  (h2f : ∀ x ∈ U, 0 < f x) :
+  ∃ φ : E → ℝ, cont_diff ℝ ⊤ φ ∧ ∀ x ∈ U, 0 < φ x :=
+sorry -- proof sketch:
+
 lemma exists_loops [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
@@ -62,21 +71,25 @@ begin
   have := λ x, local_loops_open ⟨univ, filter.univ_mem, h2Ω⟩ hg.continuous.continuous_at
     hb.continuous (hconv x),
   obtain ⟨ε, hε⟩ : { x : ℝ // 0 < x } := ⟨1, zero_lt_one⟩, -- todo
-  -- let γ₁ : E → ℝ → loop F := λ x t, γ₀.transform (λ y, b x + t • ε • y),
   let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
   have hγ₁ : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₁ V Ω,
   { refine ⟨_, hgK, ⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩,
     { intros x hx, rw [mem_set_of_eq] at hx, rw [hx],
-      exact (hγ₀_surr.smul0 hε.ne').vadd0, },
+      exact (hγ₀_surr.smul0 hε.ne').vadd0 },
     { refine (hb.continuous.comp continuous_fst).add
         (continuous_const.smul $ hγ₀_cont.comp continuous_snd) },
-    sorry }, -- choose ε sufficiently small, and perhaps V smaller
+    sorry }, -- choose ε sufficiently small, and pick V smaller
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) hγ₁,
   let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
+  let ε₁ : E → ℝ := λ x, ⨅ y : ℝ × ℝ, inf_dist (x, γ₂ x y.1 y.2) Ωᶜ, -- todo
+  have hε₁ : continuous ε₁ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
+  have h2ε₁ : ∀ {x}, 0 < ε₁ x, sorry,
+  obtain ⟨ε₂, hε₂, h2ε₂⟩ := exists_smooth_pos is_open_univ hε₁ (λ x _, h2ε₁),
+  have h2ε₂ : ∀ {x}, 0 < ε₂ x := λ x, h2ε₂ x (mem_univ _),
   let φ : E × ℝ × ℝ → ℝ :=
-  (⟨⟨ε / 2, ε, half_pos hε, half_lt_self hε⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)),
+  λ x, (⟨⟨ε₂ x.1 / 2, ε₂ x.1, half_pos h2ε₂, half_lt_self h2ε₂⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)) x,
   let γ₄ := ↿γ₃,
   let γ₅ : E × ℝ × ℝ → F := φ ⋆ γ₄,
   let γ₆ : ℝ → E → loop F,
@@ -84,7 +97,7 @@ begin
     change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
       ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
     simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
-  -- -- todo: apply reparametrization
+  -- todo: apply reparametrization
 
   sorry
 end
