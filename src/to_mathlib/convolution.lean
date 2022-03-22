@@ -59,6 +59,17 @@ TODO:
 -- end deriv_integral
 
 
+section op_norm
+
+theorem continuous_linear_map.dist_le_op_norm {𝕜 𝕜₂ E F : Type*}
+  [semi_normed_group E] [semi_normed_group F]
+  [nondiscrete_normed_field 𝕜] [nondiscrete_normed_field 𝕜₂] [normed_space 𝕜 E] [normed_space 𝕜₂ F]
+  {σ₁₂ : 𝕜 →+* 𝕜₂} [ring_hom_isometric σ₁₂]
+  (f : E →SL[σ₁₂] F) (x y : E) : dist (f x) (f y) ≤ ∥f∥ * dist x y :=
+by simp_rw [dist_eq_norm, ← map_sub, f.le_op_norm]
+
+end op_norm
+
 open metric
 section
 
@@ -794,47 +805,47 @@ end
 -- end
 
 
-lemma bdd_above.continuous_convolution_right_of_integrable
-  (hf : integrable f μ) (hbg : bdd_above (range (λ x, ∥g x∥))) (hg : continuous g) :
-    continuous (f ⋆[L; μ] g) :=
-begin
-  sorry
-  -- have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥L (f t) (g (x - t))∥ ≤ ∥f (⨆ i, ∥f i∥) * ∥g t∥,
-  -- { refine λ x, eventually_of_forall (λ t, _),
-  --   have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
-  --   rw [hL],
-  --   refine mul_le_mul_of_nonneg_left (le_csupr hbg $ x - t) (norm_nonneg _) },
-  -- rw [← convolution_flip],
-  -- refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
-  -- { exact (hf.ae_measurable μ).convolution_integrand_swap_snd L hg.ae_measurable },
-  -- exact eventually_of_forall (λ t,
-  --   L.continuous_comp₂ (hf.comp (continuous_id.sub continuous_const)) continuous_const),
-end
+-- lemma bdd_above.continuous_convolution_right_of_integrable
+--   (hf : integrable f μ) (hbg : bdd_above (range (λ x, ∥g x∥))) (hg : continuous g) :
+--     continuous (f ⋆[L; μ] g) :=
+-- begin
+--   sorry
+--   -- have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥L (f t) (g (x - t))∥ ≤ ∥f (⨆ i, ∥f i∥) * ∥g t∥,
+--   -- { refine λ x, eventually_of_forall (λ t, _),
+--   --   have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
+--   --   rw [hL],
+--   --   refine mul_le_mul_of_nonneg_left (le_csupr hbg $ x - t) (norm_nonneg _) },
+--   -- rw [← convolution_flip],
+--   -- refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
+--   -- { exact (hf.ae_measurable μ).convolution_integrand_swap_snd L hg.ae_measurable },
+--   -- exact eventually_of_forall (λ t,
+--   --   L.continuous_comp₂ (hf.comp (continuous_id.sub continuous_const)) continuous_const),
+-- end
 
 -- not useful?
-lemma bdd_above.continuous_convolution_left_of_integrable [is_neg_invariant μ]
-  (hbf : bdd_above (range (λ x, ∥f x∥))) (hf : continuous f) (hg : integrable g μ) :
-    continuous (f ⋆[L; μ] g) :=
-begin
-  have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥L (f (x - t)) (g t)∥ ≤ (⨆ i, ∥f i∥) * ∥g t∥,
-  { refine λ x, eventually_of_forall (λ t, _),
-    have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
-    rw [hL],
-    refine mul_le_mul_of_nonneg_right (le_csupr hbf $ x - t) (norm_nonneg _) },
-  rw [← convolution_flip],
-  refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
-  { exact (hf.ae_measurable μ).convolution_integrand_swap_snd L hg.ae_measurable },
-  exact eventually_of_forall (λ t,
-    L.continuous_comp₂ (hf.comp (continuous_id.sub continuous_const)) continuous_const),
-end
+-- lemma bdd_above.continuous_convolution_left_of_integrable [is_neg_invariant μ]
+--   (hbf : bdd_above (range (λ x, ∥f x∥))) (hf : continuous f) (hg : integrable g μ) :
+--     continuous (f ⋆[L; μ] g) :=
+-- begin
+--   have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥L (f (x - t)) (g t)∥ ≤ (⨆ i, ∥f i∥) * ∥g t∥,
+--   { refine λ x, eventually_of_forall (λ t, _),
+--     have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
+--     rw [hL],
+--     refine mul_le_mul_of_nonneg_right (le_csupr hbf $ x - t) (norm_nonneg _) },
+--   rw [← convolution_flip],
+--   refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
+--   { exact (hf.ae_measurable μ).convolution_integrand_swap_snd L hg.ae_measurable },
+--   exact eventually_of_forall (λ t,
+--     L.continuous_comp₂ (hf.comp (continuous_id.sub continuous_const)) continuous_const),
+-- end
 
-/-- A version of `has_compact_support.continuous_convolution_left` that works if `G` is
-  not locally compact but requires that `g` is integrable. -/
-lemma has_compact_support.continuous_convolution_left_of_integrable [is_neg_invariant μ]
-  (hcf : has_compact_support f) (hf : continuous f) (hg : integrable g μ) :
-    continuous (f ⋆[L; μ] g) :=
-(hf.norm.bdd_above_range_of_has_compact_support hcf.norm).continuous_convolution_left_of_integrable L
-  hf hg
+-- /-- A version of `has_compact_support.continuous_convolution_left` that works if `G` is
+--   not locally compact but requires that `g` is integrable. -/
+-- lemma has_compact_support.continuous_convolution_left_of_integrable [is_neg_invariant μ]
+--   (hcf : has_compact_support f) (hf : continuous f) (hg : integrable g μ) :
+--     continuous (f ⋆[L; μ] g) :=
+-- (hf.norm.bdd_above_range_of_has_compact_support hcf.norm).continuous_convolution_left_of_integrable L
+--   hf hg
 
 lemma has_compact_support.convolution_integrand_bound_right (hcg : has_compact_support g)
   (hg : continuous g) {x t : G} {s : set G} (hx : x ∈ s) :
@@ -934,13 +945,26 @@ variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ
 --   (f ⋆[L; μ] g) x₀ ∈ convex_hull ℝ ((λ x, g '' support f) :=
 -- sorry
 
-lemma dist_convolution [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
+lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
   (hf : support f ⊆ ball (0 : G) R)
-  (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) < ε) : dist ((f ⋆[L; μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) < ε :=
-sorry
+  (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
+  dist ((f ⋆[L; μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∥∫ x, f x ∂μ∥ * ε :=
+begin
+  have h2 : ∀ t, dist (L (f t) (g (x₀ - t))) (L (f t) (g x₀)) ≤ ∥L (f t)∥ * ε,
+  { intro t, by_cases ht : t ∈ support f,
+    { have h2t := hf ht,
+      rw [mem_ball_zero_iff] at h2t,
+      specialize hg (x₀ - t),
+      rw [sub_eq_add_neg, add_mem_ball_iff_norm, norm_neg, ← sub_eq_add_neg] at hg,
+      refine ((L (f t)).dist_le_op_norm _ _).trans _,
+      refine mul_le_mul_of_nonneg_left (hg h2t) (norm_nonneg _) },
+    { rw [nmem_support] at ht,
+      simp_rw [ht, L.map_zero_left, L.map_zero, norm_zero, zero_mul, dist_self] } },
+  simp_rw [convolution_def], sorry,
+end
 
 
-/-- We can only simplify the RHS further if we assume `f` is integrable, but also if `L = (•)`. -/
+/-- We can simplify the RHS further if we assume `f` is integrable, but also if `L = (•)`. -/
 lemma convolution_eq_right' [normed_space ℝ E] {x₀ : G} {R : ℝ}
   (hf : support f ⊆ ball (0 : G) R)
   (hg : ∀ x ∈ ball x₀ R, g x = g x₀) : (f ⋆[L; μ] g) x₀ = ∫ (t : G), (L (f t)) (g x₀) ∂μ :=
@@ -991,6 +1015,7 @@ begin
   refine is_open_ball.measure_pos _ (nonempty_ball.mpr φ.R_pos)
 end
 
+/-- A bump function normed so that `∫ x, φ.normed μ x ∂μ = 1`. -/
 protected def normed (φ : cont_diff_bump_of_inner a) (μ : measure G) : G → ℝ :=
 λ x, φ x / ∫ x, φ x ∂μ
 
@@ -1004,6 +1029,12 @@ begin
     integral_smul],
   exact inv_mul_cancel (φ.integral_pos.ne')
 end
+
+variable (μ)
+lemma integral_normed_smul (φ : cont_diff_bump_of_inner a) (c : E') :
+  ∫ x, φ.normed μ x • c ∂μ = c :=
+by simp_rw [integral_smul_const, φ.integral_normed, one_smul]
+variable {μ}
 
 lemma support_normed_eq (φ : cont_diff_bump_of_inner a) :
   support (φ.normed μ) = metric.ball a φ.R :=
@@ -1019,11 +1050,35 @@ lemma has_compact_support_normed (φ : cont_diff_bump_of_inner a) :
 by simp_rw [has_compact_support, φ.tsupport_normed_eq, is_compact_closed_ball]
 
 open continuous_linear_map
-lemma cont_diff_bump_of_inner.convolution_eq_right {x₀ : G}
-  (h : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
-by simp_rw [convolution_eq_right' _ φ.support_eq.subset h, lsmul_apply, integral_smul_const]
 
-lemma cont_diff_bump_of_inner.tendsto {x₀ : G} (hf : continuous f) :
+lemma convolution_eq_right {x₀ : G}
+  (hg : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
+by simp_rw [convolution_eq_right' _ φ.support_eq.subset hg, lsmul_apply, integral_smul_const]
+
+lemma normed_convolution_eq_right {x₀ : G}
+  (hg : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ.normed μ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = g x₀ :=
+by simp_rw [convolution_eq_right' _ φ.support_normed_eq.subset hg, lsmul_apply,
+  integral_normed_smul]
+
+lemma dist_normed_convolution_le {x₀ : G} {ε : ℝ}
+  (hg : ∀ x ∈ ball x₀ φ.R, dist (g x) (g x₀) ≤ ε) :
+  dist ((φ.normed μ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀) (g x₀) ≤ ε :=
+begin
+  rw [← φ.integral_normed_smul μ (g x₀)],
+  refine (dist_convolution_le' _ φ.support_normed_eq.subset hg).trans_eq _,
+  rw [integral_normed, norm_one, mul_one],
+  convert one_mul _,
+  sorry
+end
+
+lemma cont_diff_bump_of_inner.tendsto {ι} (φ : ι → cont_diff_bump_of_inner (0 : G)) (l : filter ι)
+  (hφ : tendsto (λ i, (φ i).R) l (𝓝 0)) (x₀ : G) :
+  tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
+begin
+  sorry
+end
+
+lemma cont_diff_bump_of_inner.tendsto' {x₀ : G} :
   tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ.normed μ (N • x)) ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀)
     at_top (𝓝 (g x₀)) :=
 begin
@@ -1143,25 +1198,25 @@ end
 -- lemma convolution_assoc : (f ⋆[L; μ] g) ⋆[L'; μ] h = f ⋆[L; μ] (g ⋆[L; μ] h) :=
 -- by { ext, simp_rw [convolution_def, ← integral_smul/-, ← integral_smul_const-/], sorry  }
 
-section bump
+-- section bump
 
-variables [finite_dimensional ℝ G]
-variables [normed_space ℝ E'] [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
-variables (φ : cont_diff_bump (0 : G))
-open continuous_linear_map
+-- variables [finite_dimensional ℝ G]
+-- variables [normed_space ℝ E'] [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
+-- variables (φ : cont_diff_bump (0 : G))
+-- open continuous_linear_map
 
-lemma cont_diff_bump.convolution_eq_right {x₀ : G}
-  (h : ∀ x ∈ euclidean.ball x₀ φ.R, g x = g x₀) :
-  (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
-begin
-  have := φ.to_cont_diff_bump_of_inner,
-  rw [to_euclidean.map_zero] at this,
-  -- refine this.convolution_eq_right,
-  sorry
-end
+-- lemma cont_diff_bump.convolution_eq_right {x₀ : G}
+--   (h : ∀ x ∈ euclidean.ball x₀ φ.R, g x = g x₀) :
+--   (φ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀ = integral μ φ • g x₀ :=
+-- begin
+--   have := φ.to_cont_diff_bump_of_inner,
+--   rw [to_euclidean.map_zero] at this,
+--   -- refine this.convolution_eq_right,
+--   sorry
+-- end
 
 
-end bump
+-- end bump
 
 end normed_space
 
