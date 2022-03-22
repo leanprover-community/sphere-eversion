@@ -248,10 +248,13 @@ if h : x ∈ F then coe '' (connected_component (⟨x, h⟩ : F)) else ∅
 
 lemma connected_comp_in_subset (F : set α) (x : α) :
   connected_comp_in F x ⊆ F :=
-begin
-  dsimp [connected_comp_in],
-  split_ifs ; simp
-end
+by { rw [connected_comp_in], split_ifs; simp }
+
+lemma mem_connected_comp_in_self (h : x ∈ F) : x ∈ connected_comp_in F x :=
+by simp [connected_comp_in, mem_connected_component, h]
+
+lemma connected_comp_in_nonempty_iff : (connected_comp_in F x).nonempty ↔ x ∈ F :=
+by { rw [connected_comp_in], split_ifs; simp [is_connected_connected_component.nonempty, h] }
 
 lemma is_preconnected.subset_connected_comp_in (hs : is_preconnected s) (hxs : x ∈ s)
   (hsF : s ⊆ F) : s ⊆ connected_comp_in F x :=
@@ -266,31 +269,21 @@ begin
   rw [subtype.image_preimage_coe, inter_eq_left_iff_subset.mpr hsF]
 end
 
-lemma mem_connected_comp_in_self (h : x ∈ F) : x ∈ connected_comp_in F x :=
+lemma is_preconnected_connected_comp_in : is_preconnected (connected_comp_in F x) :=
 begin
-  simp [connected_comp_in, h],
-  exact mem_connected_component
+  rw [connected_comp_in], split_ifs,
+  { refine embedding_subtype_coe.to_inducing.is_preconnected_image.mpr
+      is_preconnected_connected_component },
+  { exact is_preconnected_empty },
 end
 
-lemma connected_comp_in_nonempty_iff : (connected_comp_in F x).nonempty ↔ x ∈ F :=
-begin
-  split,
-  { dsimp [connected_comp_in],
-    rintros ⟨y, hy⟩,
-    split_ifs at hy ; tauto },
-  { intros hx,
-    exact ⟨_, mem_connected_comp_in_self hx⟩ }
-end
+lemma is_connected_connected_comp_in : is_connected (connected_comp_in F x) ↔ x ∈ F :=
+by simp_rw [← connected_comp_in_nonempty_iff, is_connected, is_preconnected_connected_comp_in,
+  and_true]
 
 lemma is_preconnected.connected_comp_in (h : is_preconnected F) (hx : x ∈ F) :
   connected_comp_in F x = F :=
-begin
-  dsimp [connected_comp_in],
-  have := (is_preconnected_iff_preconnected_space.mp h).is_preconnected_univ,
-  rw [dif_pos hx, eq_univ_of_univ_subset (this.subset_connected_component (mem_univ ⟨x, hx⟩)),
-      image_univ],
-  exact subtype.range_coe
-end
+(connected_comp_in_subset F x).antisymm (h.subset_connected_comp_in hx subset_rfl)
 
 lemma connected_comp_in_eq (h : y ∈ connected_comp_in F x) :
   connected_comp_in F x = connected_comp_in F y :=

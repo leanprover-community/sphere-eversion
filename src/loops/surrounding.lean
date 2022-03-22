@@ -473,16 +473,22 @@ TODO: use `local_loops_def`
 lemma local_loops [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
-  (hΩ_conn : is_connected (prod.mk x₀ ⁻¹' Ω))
   (hg : continuous_at g x₀) (hb : continuous b)
-  (hb_in : (x₀, b x₀) ∈ Ω)
-  (hconv : g x₀ ∈ convex_hull ℝ (prod.mk x₀ ⁻¹' Ω)) :
+  (hconv : g x₀ ∈ convex_hull ℝ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀)) :
   ∃ (γ : E → ℝ → loop F) (U ∈ 𝓝 x₀), surrounding_family_in g b γ U Ω :=
 begin
   have hbx₀ : continuous_at b x₀ := hb.continuous_at,
-  have hΩ_op_x₀ : is_open (prod.mk x₀ ⁻¹' Ω) := is_open_slice_of_is_open_over hΩ_op,
+  have hΩ_op_x₀ : is_open (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
+    (is_open_slice_of_is_open_over hΩ_op).connected_comp_in,
+  have b_in : b x₀ ∈ prod.mk x₀ ⁻¹' Ω :=
+    connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x₀, hconv⟩),
+  have hΩ_conn : is_connected (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
+  is_connected_connected_comp_in.mpr b_in,
+  have hb_in : b x₀ ∈ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
+    mem_connected_comp_in_self b_in,
   rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn hconv hb_in with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
+  have h4γ : ∀ (t s : ℝ), γ t s ∈ mk x₀ ⁻¹' Ω := λ t s, connected_comp_in_subset _ _ (h4γ t s),
   let δ : E → ℝ → loop F := λ x t, b x - b x₀ +ᵥ γ t,
   have hδ : continuous ↿δ,
   { dsimp only [δ, has_uncurry.uncurry, loop.vadd_apply],
@@ -526,13 +532,11 @@ end
 lemma local_loops_open [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
-  (hΩ_conn : is_connected (prod.mk x₀ ⁻¹' Ω))
   (hg : continuous_at g x₀) (hb : continuous b)
-  (hb_in : (x₀, b x₀) ∈ Ω)
-  (hconv : g x₀ ∈ convex_hull ℝ (prod.mk x₀ ⁻¹' Ω)) :
+  (hconv : g x₀ ∈ convex_hull ℝ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀)) :
   ∃ (γ : E → ℝ → loop F) (U : set E), is_open U ∧ x₀ ∈ U ∧ surrounding_family_in g b γ U Ω :=
 begin
-  obtain ⟨γ, U, hU, hγ⟩ := local_loops hΩ_op hΩ_conn hg hb hb_in hconv,
+  obtain ⟨γ, U, hU, hγ⟩ := local_loops hΩ_op hg hb hconv,
   obtain ⟨V, hVU, hV, hx₀V⟩ := mem_nhds_iff.mp hU,
   exact ⟨γ, V, hV, hx₀V, hγ.mono hVU⟩
 end
@@ -985,10 +989,8 @@ end
 lemma exists_surrounding_loops [finite_dimensional ℝ F]
   (hK : is_compact K) (hC : is_closed C) (hU : is_open U) (hCU : C ⊆ U)
   (hΩ_op : is_open (Ω ∩ fst ⁻¹' U))
-  (hΩ_conn : ∀ x ∈ C, is_connected (prod.mk x ⁻¹' Ω))
   (hg : ∀ x ∈ C, continuous_at g x) (hb : continuous b)
-  (hb_in : ∀ x ∈ C, (x, b x) ∈ Ω)
-  (hconv : ∀ x ∈ C, g x ∈ convex_hull ℝ (prod.mk x ⁻¹' Ω))
+  (hconv : ∀ x ∈ C, g x ∈ convex_hull ℝ (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x))
   {γ₀ :  E → ℝ → loop F}
   (hγ₀_surr : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₀ V Ω) :
   ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ C Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x :=
@@ -1011,8 +1013,8 @@ begin
   have h0P : P ∅ := ⟨γ₀, hγ₀.mono (empty_subset _)⟩,
   have h2P : ∀ x ∈ C, ∃ V ∈ 𝓝 x, P V,
   { intros x hx,
-    obtain ⟨γ, W, hW, hxW, hγ⟩ := local_loops_open ⟨U, hU.mem_nhds $ hCU hx, hΩ_op⟩
-     (hΩ_conn x hx) (hg x hx) hb (hb_in x hx) (hconv x hx),
+    obtain ⟨γ, W, hW, hxW, hγ⟩ :=
+      local_loops_open ⟨U, hU.mem_nhds $ hCU hx, hΩ_op⟩ (hg x hx) hb (hconv x hx),
     refine ⟨W, hW.mem_nhds hxW, γ, hγ⟩ },
   obtain ⟨L, W, hL, hW, hPW, hLW, hlW, hCL⟩ :=
     exists_locally_finite_subcover_of_locally hC hP h0P h2P,
