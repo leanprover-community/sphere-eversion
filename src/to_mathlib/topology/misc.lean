@@ -6,6 +6,7 @@ import analysis.normed_space.finite_dimension
 import topology.algebra.floor_ring
 import topology.shrinking_lemma
 import topology.metric_space.emetric_paracompact
+import analysis.convex.topology
 import to_mathlib.misc
 
 noncomputable theory
@@ -170,7 +171,8 @@ end
 end
 
 section
-
+/-- A locally connected space is a space where every neighborhood filter has a basis of open
+  connected sets. -/
 class locally_connected_space (α : Type*) [topological_space α] : Prop :=
 (has_basis : ∀ x, (𝓝 x).has_basis (λ s : set α, is_open s ∧ x ∈ s ∧ is_connected s) id)
 
@@ -181,7 +183,7 @@ class locally_connected_space (α : Type*) [topological_space α] : Prop :=
 variables {α : Type*} [topological_space α]
 
 lemma locally_connected_space_of_connected_subsets
-  (h : ∀ U : set α, ∀ x ∈ U, is_open U → ∃ V ⊆ U, is_open V ∧ x ∈ V ∧ is_connected V) :
+  (h : ∀ (x : α) (U ∈ 𝓝 x), ∃ V ⊆ U, is_open V ∧ x ∈ V ∧ is_connected V) :
   locally_connected_space α :=
 begin
   constructor,
@@ -189,13 +191,47 @@ begin
   constructor,
   intro t,
   split,
-  { intro ht,
-    obtain ⟨V, hVU, hV⟩ := h (interior t) x (mem_interior_iff_mem_nhds.mpr ht) is_open_interior,
-    exact ⟨V, hV, hVU.trans interior_subset⟩ },
+  { intro ht, obtain ⟨V, hVU, hV⟩ := h x t ht, exact ⟨V, hV, hVU⟩ },
   { rintro ⟨V, ⟨hV, hxV, -⟩, hVU⟩, refine mem_nhds_iff.mpr ⟨V, hVU, hV, hxV⟩ }
 end
 
 end
+
+section convex
+
+variables {E : Type*} [add_comm_group E] [module ℝ E] [topological_space E]
+  [topological_add_group E] [has_continuous_smul ℝ E] {s : set E}
+
+lemma convex.is_preconnected' (hs : convex ℝ s) : is_preconnected s :=
+by { rcases s.eq_empty_or_nonempty with rfl|h, exact is_preconnected_empty,
+     exact (hs.is_path_connected h).is_connected.is_preconnected }
+
+end convex
+
+section normed_space
+open metric
+
+variables {E : Type*} [normed_group E] [normed_space ℝ E]
+
+lemma is_preconnected_ball (x : E) (r : ℝ) : is_preconnected (ball x r) :=
+(convex_ball x r).is_preconnected'
+
+lemma is_connected_ball {x : E} {r : ℝ} : is_connected (ball x r) ↔ 0 < r :=
+begin
+  rw [← @nonempty_ball _ _ x],
+  refine ⟨λ h, h.nonempty, λ h, ((convex_ball x r).is_path_connected $ h).is_connected⟩
+end
+
+-- make metric.mem_nhds_iff protected
+instance normed_space.locally_connected_space : locally_connected_space E :=
+begin
+  apply locally_connected_space_of_connected_subsets,
+  intros x U hU,
+  obtain ⟨ε, hε, hU⟩ := metric.mem_nhds_iff.mp hU,
+  refine ⟨_, hU, is_open_ball, mem_ball_self hε, is_connected_ball.mpr hε⟩
+end
+
+end normed_space
 
 -- TODO: replace mathlib's `connected_component_in`, which is never used, by the following.
 
