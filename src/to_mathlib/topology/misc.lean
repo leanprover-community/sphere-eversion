@@ -10,7 +10,7 @@ import to_mathlib.misc
 
 noncomputable theory
 
-open set function filter
+open set function filter topological_space
 open_locale unit_interval topological_space uniformity filter classical
 
 section
@@ -169,11 +169,39 @@ end
 
 end
 
+section
+
+class locally_connected_space (α : Type*) [topological_space α] : Prop :=
+(has_basis : ∀ x, (𝓝 x).has_basis (λ s : set α, is_open s ∧ x ∈ s ∧ is_connected s) id)
+
+-- class locally_connected_space (α : Type*) [topological_space α] : Prop :=
+-- (exists_connected_neihborhoods : ∃ (b : set (set α)), is_topological_basis b ∧
+--   ∀ s ∈ b, is_connected s)
+
+variables {α : Type*} [topological_space α]
+
+lemma locally_connected_space_of_connected_subsets
+  (h : ∀ U : set α, ∀ x ∈ U, is_open U → ∃ V ⊆ U, is_open V ∧ x ∈ V ∧ is_connected V) :
+  locally_connected_space α :=
+begin
+  constructor,
+  intro x,
+  constructor,
+  intro t,
+  split,
+  { intro ht,
+    obtain ⟨V, hVU, hV⟩ := h (interior t) x (mem_interior_iff_mem_nhds.mpr ht) is_open_interior,
+    exact ⟨V, hV, hVU.trans interior_subset⟩ },
+  { rintro ⟨V, ⟨hV, hxV, -⟩, hVU⟩, refine mem_nhds_iff.mpr ⟨V, hVU, hV, hxV⟩ }
+end
+
+end
+
 -- TODO: replace mathlib's `connected_component_in`, which is never used, by the following.
 
 section connected_comp_in
 
-variables {α : Type*} [topological_space α]
+variables {α : Type*} [topological_space α] {F s : set α} {x y : α}
 
 /-- Given a set `F` in a topological space `α` and a point `x : α`, the connected
 component of `x` in `F` is the connected component of `x` in the subtype `F` seen as
@@ -189,15 +217,26 @@ begin
   split_ifs ; simp
 end
 
-lemma mem_connected_comp_in_self {F : set α} {x : α} (h : x ∈ F) :
-  x ∈ connected_comp_in F x :=
+lemma is_preconnected.subset_connected_comp_in (hs : is_preconnected s) (hxs : x ∈ s)
+  (hsF : s ⊆ F) : s ⊆ connected_comp_in F x :=
+begin
+  have : is_preconnected ((coe : F → α) ⁻¹' s),
+  { refine embedding_subtype_coe.to_inducing.is_preconnected_image.mp _,
+    rwa [subtype.image_preimage_coe, inter_eq_left_iff_subset.mpr hsF] },
+  have h2xs : (⟨x, hsF hxs⟩ : F) ∈ coe ⁻¹' s := by { rw [mem_preimage], exact hxs },
+  have := this.subset_connected_component h2xs,
+  rw [connected_comp_in, dif_pos (hsF hxs)],
+  refine subset.trans _ (image_subset _ this),
+  rw [subtype.image_preimage_coe, inter_eq_left_iff_subset.mpr hsF]
+end
+
+lemma mem_connected_comp_in_self (h : x ∈ F) : x ∈ connected_comp_in F x :=
 begin
   simp [connected_comp_in, h],
   exact mem_connected_component
 end
 
-lemma connected_comp_in_nonempty_iff {α : Type*} [topological_space α] {F : set α} {x : α} :
-  (connected_comp_in F x).nonempty ↔ x ∈ F :=
+lemma connected_comp_in_nonempty_iff : (connected_comp_in F x).nonempty ↔ x ∈ F :=
 begin
   split,
   { dsimp [connected_comp_in],
@@ -207,14 +246,44 @@ begin
     exact ⟨_, mem_connected_comp_in_self hx⟩ }
 end
 
-lemma is_preconnected.connected_comp_in {F : set α} {x : α} (h : is_preconnected F) (hx : x ∈ F) :
-  connected_comp_in F x  = F :=
+lemma is_preconnected.connected_comp_in (h : is_preconnected F) (hx : x ∈ F) :
+  connected_comp_in F x = F :=
 begin
   dsimp [connected_comp_in],
   have := (is_preconnected_iff_preconnected_space.mp h).is_preconnected_univ,
   rw [dif_pos hx, eq_univ_of_univ_subset (this.subset_connected_component (mem_univ ⟨x, hx⟩)),
       image_univ],
   exact subtype.range_coe
+end
+
+lemma connected_comp_in_eq (h : y ∈ connected_comp_in F x) :
+  connected_comp_in F x = connected_comp_in F y :=
+begin
+  have hx : x ∈ F := connected_comp_in_nonempty_iff.mp ⟨y, h⟩,
+  simp_rw [connected_comp_in, dif_pos hx] at h ⊢,
+  obtain ⟨⟨y, hy⟩, h2y, rfl⟩ := h,
+  simp_rw [subtype.coe_mk, dif_pos hy, connected_component_eq h2y]
+end
+
+lemma connected_comp_in_mem_nhds [locally_connected_space α] (h : F ∈ 𝓝 x) :
+  connected_comp_in F x ∈ 𝓝 x :=
+begin
+  rw (locally_connected_space.has_basis x).mem_iff at h,
+  obtain ⟨s, ⟨h1s, hxs, h2s⟩, hsF⟩ := h,
+  exact mem_nhds_iff.mpr ⟨s, h2s.is_preconnected.subset_connected_comp_in hxs hsF, h1s, hxs⟩
+end
+
+-- lemma interior_connected_comp_in {F : set α} {x : α} (h : x ∉ frontier F) :
+--   interior (connected_comp_in F x) = connected_comp_in (interior F) x :=
+-- sorry
+
+lemma is_open.connected_comp_in [locally_connected_space α] {F : set α} {x : α} (hF : is_open F) :
+  is_open (connected_comp_in F x) :=
+begin
+  rw [is_open_iff_mem_nhds],
+  intros y hy,
+  rw [connected_comp_in_eq hy],
+  exact connected_comp_in_mem_nhds (is_open_iff_mem_nhds.mp hF y $ connected_comp_in_subset F x hy),
 end
 
 end connected_comp_in
