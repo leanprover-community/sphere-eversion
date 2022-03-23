@@ -2,11 +2,11 @@ import notations
 import loops.reparametrization
 import analysis.calculus.specific_functions
 import to_mathlib.convolution
-
+import to_mathlib.topology.hausdorff_distance
 
 noncomputable theory
 
-open set function finite_dimensional prod int topological_space metric
+open set function finite_dimensional prod int topological_space metric filter
 open measure_theory measure_theory.measure
 open_locale topological_space unit_interval convolution
 
@@ -50,6 +50,7 @@ begin
   let Om := λ x, hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x),
   have b_in : ∀ x, (x, b x) ∈ Ω :=
     λ x, (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x, hconv x⟩) : _),
+  have bK_im : (λ x, (x, b x)) '' K ⊆ Ω := image_subset_iff.mpr (λ x _, b_in x),
   have op : ∀ x, is_open (prod.mk x ⁻¹' Ω),
    from λ x, hΩ_op.preimage (continuous.prod.mk x),
 
@@ -68,17 +69,20 @@ begin
     surrounding_loop_of_convex_hull is_open_univ is_connected_univ
     (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
-  have := λ x, local_loops_open ⟨univ, filter.univ_mem, h2Ω⟩ hg.continuous.continuous_at
+  have := λ x, local_loops_open ⟨univ, univ_mem, h2Ω⟩ hg.continuous.continuous_at
     hb.continuous (hconv x),
-  obtain ⟨ε, hε⟩ : { x : ℝ // 0 < x } := ⟨1, zero_lt_one⟩, -- todo
+  obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ := hΩ_op.exists_thickening_image hK (continuous_id.prod_mk hb.continuous) bK_im,
+  let ε := ε₀ / ⨆ i : unit_interval × unit_interval, ∥γ₀ i.1 i.2∥,
+  have hε : 0 < ε := sorry,
   let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
   have hγ₁ : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₁ V Ω,
-  { refine ⟨_, hgK, ⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩,
-    { intros x hx, rw [mem_set_of_eq] at hx, rw [hx],
+  { have hbV : ∀ᶠ x near K, x ∈ V, sorry,
+    refine ⟨_, hgK.and hbV, ⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩,
+    { rintro x ⟨hx, -⟩, rw [hx],
       exact (hγ₀_surr.smul0 hε.ne').vadd0 },
     { refine (hb.continuous.comp continuous_fst).add
         (continuous_const.smul $ hγ₀_cont.comp continuous_snd) },
-    sorry }, -- choose ε sufficiently small, and pick V smaller
+    rintro x ⟨hx, h2x⟩ t ht s hs, sorry },
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) hγ₁,
