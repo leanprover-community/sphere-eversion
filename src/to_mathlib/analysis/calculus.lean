@@ -42,12 +42,25 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
           {E : Type*} [normed_group E] [normed_space 𝕜 E]
           {F : Type*} [normed_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_group G] [normed_space 𝕜 G]
+          {n : with_top ℕ}
 
 lemma has_fderiv_at_prod_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
 begin
   rw has_fderiv_at_iff_is_o_nhds_zero,
   simp [asymptotics.is_o_zero]
 end
+
+lemma cont_diff.fst {f : E → F × G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x, (f x).fst) :=
+cont_diff_fst.comp hf
+
+lemma cont_diff.snd {f : E → F × G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x, (f x).snd) :=
+cont_diff_snd.comp hf
+
+lemma cont_diff.fst' {f : E → G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x : E × F, f x.fst) :=
+hf.comp cont_diff_fst
+
+lemma cont_diff.snd' {f : F → G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x : E × F, f x.snd) :=
+hf.comp cont_diff_snd
 
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :

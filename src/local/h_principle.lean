@@ -359,8 +359,8 @@ begin
     change continuous (↿(L.loop h) ∘ (λ (g : E × ℝ × ℝ), (g.snd.fst, g.fst, g.snd.snd))),
     apply (L.loop_smooth h).continuous.comp,
     -- continuity says:
-    exact (continuous_fst.comp continuous_snd).prod_mk
-          (continuous_fst.prod_mk (continuous_snd.comp continuous_snd)) },
+    exact (continuous_fst.snd').prod_mk
+          (continuous_fst.prod_mk continuous_snd.snd') },
   have K_sub : K ⊆ R,
   { rintros _ ⟨⟨x, t, s⟩, ⟨x_in, t_in, s_in⟩, rfl⟩,
     exact (L.nice h).mem_Ω x t s },

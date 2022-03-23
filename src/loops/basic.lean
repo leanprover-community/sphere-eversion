@@ -60,22 +60,19 @@ rfl
 protected lemma ext_iff {γ₁ γ₂ : loop X} : γ₁ = γ₂ ↔ (γ₁ : ℝ → X) = γ₂ :=
 ⟨λ h, by rw h, loop.ext⟩
 
+/-- The constant loop. -/
+@[simps]
+def const (f : X) : loop X :=
+⟨λ t, f, λ t, rfl⟩
+
 instance [has_zero X] : has_zero (loop X) :=
-⟨{ to_fun := λ t, 0, per' := λ t, rfl }⟩
+⟨const 0⟩
 
 @[simp] lemma zero_fun [has_zero X] : ((0 : loop X) : ℝ → X) = (0 : ℝ → X) :=
 rfl
 
-/-- The constant loop. -/
-@[simps]
-def const (f : X) : loop X :=
-⟨λ t, f, by simp⟩
-
 @[simp] lemma const_zero [has_zero X] : const (0 : X) = (0 : loop X) :=
-begin
-  ext t,
-  refl
-end
+rfl
 
 instance [inhabited X] : inhabited (loop X) :=
 ⟨loop.const default⟩
@@ -124,6 +121,26 @@ end
 def transform (γ : loop X) (f : X → X') : loop X' :=
 ⟨λ t, f (γ t), λ t, by rw γ.per⟩
 
+/-- Adding two loops pointwise. -/
+@[simps]
+instance [has_add X] : has_add (loop X) :=
+⟨λ γ₁ γ₂, ⟨λ t, γ₁ t + γ₂ t, λ t, by simp_rw [loop.per]⟩⟩
+
+@[simps]
+instance [has_neg X] : has_neg (loop X) :=
+⟨λ γ, ⟨λ t, - γ t, λ t, by simp_rw [loop.per]⟩⟩
+
+instance [add_comm_group X] : add_comm_group (loop X) :=
+{ add_assoc := λ γ₁ γ₂ γ₃, by { ext t, apply add_assoc },
+  add_comm := λ γ₁ γ₂, by { ext t, apply add_comm },
+  add_comm := λ γ₁ γ₂, by { ext t, apply add_comm },
+  zero_add := λ γ, by { ext t, apply zero_add },
+  add_zero := λ γ, by { ext t, apply add_zero },
+  add_left_neg := λ γ, by { ext t, apply add_left_neg },
+  ..loop.has_add,
+  ..loop.has_zero,
+  ..loop.has_neg }
+
 /-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
 instance [has_add X] : has_vadd X (loop X) :=
 ⟨λ x γ, γ.transform (λ y, x + y)⟩
@@ -134,6 +151,14 @@ rfl
 /-- Multiplying a loop by a scalar value. -/
 instance [has_scalar K X] : has_scalar K (loop X) :=
 ⟨λ k γ, γ.transform (λ y, k • y)⟩
+
+instance [semiring K] [add_comm_group X] [module K X] : module K (loop X) :=
+{ one_smul := λ γ, by { ext t, apply one_smul },
+  mul_smul := λ k₁ k₂ γ, by { ext t, apply mul_smul },
+  smul_zero := λ k, by { ext t, apply smul_zero },
+  smul_add := λ k γ₁ γ₂, by { ext t, apply smul_add },
+  add_smul := λ k₁ k₂ γ, by { ext t, apply add_smul },
+  zero_smul := λ γ, by { ext t, apply zero_smul } }
 
 @[simp] lemma smul_apply [has_scalar K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
 rfl
@@ -321,20 +346,19 @@ begin
   { exact is_const_of_eq h }
 end
 
-@[simp] lemma average_const {f : F} : (loop.const f).average = f :=
+@[simp] lemma average_const {f : F} : (const f).average = f :=
 by simp [loop.average]
 
-lemma is_const_iff_const_avg {γ : loop F} : γ.is_const ↔ γ = loop.const γ.average :=
-begin
-  rw loop.is_const_iff_forall_avg,
-  split,
-  { intro h,
-    ext s,
-    apply h },
-  { intros h t,
-    rw h,
-    simp }
-end
+open measure_theory
+@[simp] lemma average_add {γ₁ γ₂ : loop F} (hγ₁ : interval_integrable γ₁ volume 0 1)
+  (hγ₂ : interval_integrable γ₂ volume 0 1) : (γ₁ + γ₂).average = γ₁.average + γ₂.average :=
+by simp [loop.average, interval_integral.integral_add hγ₁ hγ₂]
+
+@[simp] lemma average_smul {γ : loop F} {c : ℝ} : (c • γ).average = c • γ.average :=
+by simp [loop.average, interval_integral.integral_smul]
+
+lemma is_const_iff_const_avg {γ : loop F} : γ.is_const ↔ γ = const γ.average :=
+by { rw [loop.is_const_iff_forall_avg, loop.ext_iff, funext_iff], refl }
 
 lemma is_const_of_not_mem_support {γ : X → loop F} {x : X}
   (hx : x ∉ support γ) : (γ x).is_const :=
@@ -347,7 +371,8 @@ lemma eq_const_of_not_mem_support {γ : X → loop F} {x : X}
   (hx : x ∉ support γ) : γ x = loop.const (γ x).average :=
 loop.is_const_iff_const_avg.mp (is_const_of_not_mem_support hx)
 
-lemma continuous_average {E : Type*} [topological_space E] [first_countable_topology E] [locally_compact_space E] {γ : E → loop F}
+lemma continuous_average {E : Type*} [topological_space E] [first_countable_topology E]
+  [locally_compact_space E] {γ : E → loop F}
   (hγ_cont : continuous ↿γ) : continuous (λ x, (γ x).average) :=
 continuous_parametric_interval_integral_of_continuous' hγ_cont _ _
 
