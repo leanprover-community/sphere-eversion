@@ -482,6 +482,6 @@ cont_diff_parametric_primitive_of_cont_diff hγ_diff cont_diff_const 0
 
 lemma cont_diff_sub_average {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
   𝒞 n ↿(λ (x : E) (t : ℝ), (γ x) t - (γ x).average) :=
-hγ_diff.sub ((cont_diff_average hγ_diff).comp cont_diff_fst)
+hγ_diff.sub (cont_diff_average hγ_diff).fst'
 
 end c1
