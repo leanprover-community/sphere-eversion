@@ -302,9 +302,9 @@ as junk value for constructions of formal homotopies that need additional assump
 for trivial induction initialization. -/
 def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 { f := λ t, 𝓕.f,
-  f_diff := 𝓕.f_diff.comp cont_diff_snd,
+  f_diff := 𝓕.f_diff.snd',
   φ := λ t, 𝓕.φ,
-  φ_diff := 𝓕.φ_diff.comp cont_diff_snd }
+  φ_diff := 𝓕.φ_diff.snd' }
 
 @[simp] lemma rel_loc.jet_sec.const_htpy_apply (𝓕 : jet_sec E F) :
   ∀ t, 𝓕.const_htpy t = 𝓕 :=
