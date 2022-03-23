@@ -492,9 +492,9 @@ begin
   let δ : E → ℝ → loop F := λ x t, b x - b x₀ +ᵥ γ t,
   have hδ : continuous ↿δ,
   { dsimp only [δ, has_uncurry.uncurry, loop.vadd_apply],
-    refine continuous.add _ (h1γ.comp continuous_snd),
+    refine continuous.add _ h1γ.snd',
     refine continuous.sub _ continuous_const,
-    exact hb.comp continuous_fst },
+    exact hb.fst' },
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s,
   { intros t s, simp only [zero_add, loop.vadd_apply, sub_self] },
   have hδs0 : ∀ x t, δ x t 0 = b x,
@@ -623,16 +623,16 @@ lemma _root_.continuous.sf_homotopy {X : Type*} [uniform_space X]
 begin
   refine continuous.of_path _ _ _ _ hs,
   refine continuous.path_strans _ _ _ _ _ continuous_snd,
-  { refine h₀.continuous_path (hf.comp continuous_fst.fst) _ continuous_snd,
-    exact (continuous_ρ.comp $ hτ.comp continuous_fst.fst).mul (ht.comp continuous_fst.fst) },
-  { refine h₁.continuous_path (hf.comp continuous_fst.fst) _ continuous_snd,
-    refine (continuous_ρ.comp _).mul (ht.comp continuous_fst.fst),
-    exact continuous_const.sub (hτ.comp continuous_fst.fst) },
+  { refine h₀.continuous_path hf.fst'.fst' _ continuous_snd,
+    exact (continuous_ρ.comp hτ.fst'.fst').mul ht.fst'.fst' },
+  { refine h₁.continuous_path hf.fst'.fst' _ continuous_snd,
+    refine (continuous_ρ.comp _).mul ht.fst'.fst',
+    exact continuous_const.sub hτ.fst'.fst' },
   { intros x s hs, simp only [proj_Icc_eq_zero, sub_nonpos] at hs,
     simp only [hs, h₀.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
   { intros x s hs, simp only [proj_Icc_eq_one] at hs,
     simp only [hs, h₁.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
-  { refine continuous_proj_Icc.comp (continuous_const.sub (hτ.comp continuous_fst)) }
+  { refine continuous_proj_Icc.comp (continuous_const.sub hτ.fst') }
 end
 
 /-- In this lemmas and the lemmas below we add `finite_dimensional ℝ E` so that we can conclude
@@ -774,7 +774,7 @@ begin
       { simp_rw [γ, (hγ $ ρ x).surrounds x hx] },
       { simp_rw [γ, h1ρ (subset_closure hx), pi.one_apply, sf_homotopy_one,
           h₁.surrounds x (hVU₁ hx)] } },
-    { exact continuous.sf_homotopy (ρ.continuous.comp continuous_fst) continuous_fst
+    { exact continuous.sf_homotopy ρ.continuous.fst' continuous_fst
         continuous_snd.fst continuous_snd.snd },
     { intros x hx t ht s _, refine sf_homotopy_in' _ _ _ id _ hx ht _ _,
       { intros x hx t ht s hρx, refine h₀.val_in _ ht, rcases hx with (hx|⟨-,hx⟩)|hx,

@@ -38,6 +38,18 @@ end
 
 end
 
+section -- to constructions
+
+variables {X Y Z : Type*} [topological_space X] [topological_space Y] [topological_space Z]
+
+lemma continuous.fst' {f : X → Z} (hf : continuous f) : continuous (λ x : X × Y, f x.fst) :=
+hf.comp continuous_fst
+
+lemma continuous.snd' {f : Y → Z} (hf : continuous f) : continuous (λ x : X × Y, f x.snd) :=
+hf.comp continuous_snd
+
+end
+
 section -- to unit_interval
 
 namespace unit_interval
