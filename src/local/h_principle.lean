@@ -95,8 +95,8 @@ begin
   set ψ : E × F → one_jet E F := λ p, (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2),
   change is_open {p : E × F | ψ p ∈ R},
   apply is_open.preimage _ h.h_op,
-  apply continuous_fst.prod_mk ((𝓕.f_diff.continuous.comp continuous_fst).prod_mk _),
-  exact L.p.continuous_update (𝓕.φ_diff.continuous.comp continuous_fst) continuous_snd
+  apply continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _),
+  exact L.p.continuous_update 𝓕.φ_diff.continuous.fst' continuous_snd
 end
 
 lemma accepts.smooth_b {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
@@ -179,21 +179,21 @@ in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomi
 -/
 def improve_step {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (N : ℝ) : htpy_jet_sec E F :=
 { f := λ t x, 𝓕.f x + (smooth_step t*L.ρ x) • corrugation L.π N (L.loop h t) x,
-  f_diff :=  (𝓕.f_diff.comp cont_diff_snd).add $
-    ((smooth_step.smooth.comp cont_diff_fst).mul $ L.ρ_smooth.comp cont_diff_snd).smul $
+  f_diff :=  𝓕.f_diff.snd'.add $
+    (smooth_step.smooth.fst'.mul L.ρ_smooth.snd').smul $
     corrugation.cont_diff' N (L.loop_smooth h) cont_diff_snd cont_diff_fst,
   φ := λ t x, L.p.update (𝓕.φ x) (L.loop h (smooth_step t*L.ρ x) x $ N * L.π x) +
                 (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x),
   φ_diff := begin
     apply cont_diff.add,
     apply L.p.smooth_update,
-    apply 𝓕.φ_diff.comp cont_diff_snd,
+    apply 𝓕.φ_diff.snd',
     apply L.loop_smooth',
-    exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
-    apply cont_diff_const.mul (L.π.cont_diff.comp cont_diff_snd),
+    exact smooth_step.smooth.fst'.mul L.ρ_smooth.snd',
+    apply cont_diff_const.mul L.π.cont_diff.snd',
     exact cont_diff_snd,
     apply cont_diff.smul,
-    exact (smooth_step.smooth.comp cont_diff_fst).mul (L.ρ_smooth.comp cont_diff_snd),
+    exact smooth_step.smooth.fst'.mul L.ρ_smooth.snd',
     exact remainder.smooth _ _ (L.loop_smooth h) cont_diff_snd cont_diff_const
   end }
 
@@ -354,8 +354,8 @@ begin
   set K := (λ p : E × ℝ × ℝ, (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) '' (L.K₁ ×ˢ (I ×ˢ I)),
   have K_cpt : is_compact K,
   { refine (L.hK₁.prod (is_compact_Icc.prod is_compact_Icc)).image _,
-    refine continuous_fst.prod_mk ((𝓕.f_diff.continuous.comp continuous_fst).prod_mk _ ),
-    apply L.p.continuous_update (𝓕.φ_diff.continuous.comp continuous_fst),
+    refine continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _ ),
+    apply L.p.continuous_update 𝓕.φ_diff.continuous.fst',
     change continuous (↿(L.loop h) ∘ (λ (g : E × ℝ × ℝ), (g.snd.fst, g.fst, g.snd.snd))),
     apply (L.loop_smooth h).continuous.comp,
     -- continuity says:

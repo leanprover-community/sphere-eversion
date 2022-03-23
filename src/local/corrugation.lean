@@ -88,16 +88,14 @@ begin
   have cont' : continuous ↿(λ (q : ℝ × E)  t, ∫ t in 0..t, (γ q.1 q.2) t - (γ q.1 q.2).average),
   { change continuous ((λ q : ℝ × E × ℝ, ∫ t in 0..q.2.2, (γ q.1 q.2.1) t - (γ q.1 q.2.1).average) ∘ (homeomorph.prod_assoc ℝ  E ℝ)),
     apply continuous.comp _ (homeomorph.prod_assoc ℝ  E ℝ).continuous,
-    refine continuous_parametric_interval_integral_of_continuous _ (continuous_snd.comp continuous_snd),
+    refine continuous_parametric_interval_integral_of_continuous _ (continuous_snd.snd),
     apply continuous.sub,
     change continuous (↿γ ∘ (λ (x : (ℝ × E × ℝ) × ℝ), (x.1.1, x.1.2.1, x.2))),
     apply hγ_cont.comp,
-    exact (continuous_fst.comp continuous_fst).prod_mk
-          ((continuous_fst.comp $ continuous_snd.comp continuous_fst).prod_mk continuous_snd),
+    exact (continuous_fst.fst).prod_mk
+          ((continuous_fst.snd'.fst').prod_mk continuous_snd),
     apply loop.continuous_average,
-    apply hγ_cont.comp₃ (continuous_fst.comp $  continuous_fst.comp continuous_fst)
-      (continuous_fst.comp $ continuous_snd.comp (continuous_fst.comp continuous_fst))
-      continuous_snd },
+    apply hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.snd'.fst'.fst' continuous_snd },
   rcases cont'.bounded_on_compact_of_one_periodic _ ((is_compact_Icc : is_compact I).prod hK) with ⟨C, hC⟩,
   { apply (const_mul_one_div_lt ε_pos C).mono,
     intros N hN x hx t,
@@ -137,10 +135,9 @@ begin
   apply cont_diff.const_smul,
   apply cont_diff_parametric_primitive_of_cont_diff,
   { apply cont_diff.sub,
-    { exact hγ_diff.comp₃ (hg.comp cont_diff_fst) (hx.comp cont_diff_fst) cont_diff_snd },
+    { exact hγ_diff.comp₃ hg.fst' hx.fst' cont_diff_snd },
     { apply cont_diff_average,
-      exact hγ_diff.comp₃ (hg.comp (cont_diff_fst.comp cont_diff_fst))
-        (hx.comp $ cont_diff_fst.comp cont_diff_fst) cont_diff_snd } },
+      exact hγ_diff.comp₃ hg.fst'.fst' hx.fst'.fst' cont_diff_snd } },
   { apply (π.cont_diff.comp hx).const_smul },
 end
 
@@ -211,15 +208,13 @@ begin
   apply cont_diff_parametric_primitive_of_cont_diff,
   { let ψ : E → (H × ℝ) → F := λ x q, (γ (g q.1) x).normalize q.2,
     change 𝒞 ⊤ (λ (q : H × ℝ), ∂₁ ψ (x q.1) (q.1, q.2)),
-    refine (cont_diff.cont_diff_top_partial_fst _).comp₂ (hx.comp cont_diff_fst)
+    refine (cont_diff.cont_diff_top_partial_fst _).comp₂ hx.fst'
       (cont_diff_fst.prod cont_diff_snd),
     dsimp [ψ, loop.normalize],
     apply cont_diff.sub,
-    apply hγ_diff.comp₃ (hg.comp $ cont_diff_fst.comp cont_diff_snd) cont_diff_fst
-      (cont_diff_snd.comp cont_diff_snd),
+    apply hγ_diff.comp₃ hg.fst'.snd' cont_diff_fst cont_diff_snd.snd,
     apply cont_diff_average,
-    exact hγ_diff.comp₃ (hg.comp $ cont_diff_fst.comp $ cont_diff_snd.comp cont_diff_fst)
-      (cont_diff_fst.comp cont_diff_fst) cont_diff_snd },
+    exact hγ_diff.comp₃ hg.fst'.snd'.fst' cont_diff_fst.fst' cont_diff_snd },
   { apply (π.cont_diff.comp hx).const_smul },
 end
 
@@ -234,7 +229,7 @@ begin
   let g : ℝ → E → loop (E →L[ℝ] F) := λ t, (loop.diff γ),
   have g_le : ∀ x (t : ℝ), t ≤ 0 → g t x = g 0 x, from λ _ _ _, rfl,
   have g_ge : ∀ x (t : ℝ), t ≥ 1 → g t x = g 1 x, from λ _ _ _, rfl,
-  have g_cont : continuous ↿g, from (loop.continuous_diff hγ_diff).comp continuous_snd,
+  have g_cont : continuous ↿g, from (loop.continuous_diff hγ_diff).snd',
   apply (corrugation.c0_small_on hK g_le g_ge g_cont ε_pos).mono,
   intros N H x x_in,
   exact H x x_in 0

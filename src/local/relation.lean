@@ -420,9 +420,9 @@ end
   have c6 : ∀ {n}, 𝒞 n ↿(λ t, smooth_step $ 2*t - 1) :=
   λ n, smooth_transition.cont_diff.comp c4,
   have h1 : ∀ {n}, 𝒞 n ↿(λ t, f (smooth_step $ 2*t)) :=
-  λ n, hf.comp₂ (c5.comp cont_diff_fst) cont_diff_snd,
+  λ n, hf.comp₂ c5.fst' cont_diff_snd,
   have h2 : ∀ {n}, 𝒞 n ↿(λ t, g (smooth_step $ 2*t - 1)) :=
-  λ n, hg.comp₂ (c6.comp cont_diff_fst) cont_diff_snd,
+  λ n, hg.comp₂ c6.fst' cont_diff_snd,
   refine h1.if_le_of_fderiv h2 cont_diff_fst cont_diff_const _,
   rintro ⟨t, x⟩ n ht,
   dsimp only at ht,

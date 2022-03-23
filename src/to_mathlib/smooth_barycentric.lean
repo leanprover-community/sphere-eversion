@@ -136,7 +136,7 @@ begin
     simp only [matrix.update_row_apply, affine_basis.to_matrix_apply, affine_basis.coords_apply],
     by_cases hij : j = i,
     { simp only [hij, if_true, eq_self_iff_true],
-      exact (smooth_barycentric_coord b j').comp cont_diff_fst, },
+      exact (smooth_barycentric_coord b j').fst', },
     { simp only [hij, if_false],
       exact (smooth_barycentric_coord b j').comp (cont_diff_pi.mp cont_diff_snd j), }, },
 end
