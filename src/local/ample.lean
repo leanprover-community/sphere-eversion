@@ -34,6 +34,7 @@ def ample_set (s : set F) :=
 section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _
+local attribute [instance, priority 100] topological_add_group.path_connected
 
 lemma is_path_connected_compl_of_is_path_connected_compl_zero [topological_add_group F]
   [has_continuous_smul ℝ F] {p q : submodule ℝ F} (hpq : is_compl p q)

@@ -29,15 +29,15 @@ variables {α β γ : Type*} {s t : set α} {f : s → β} {g : t → β} {x : �
 
 @[simp]
 lemma restrict_eq_iff {f : α → β} {g : s → β} :
-  restrict f s = g ↔ ∀ x (hx : x ∈ s), f x = g ⟨x, hx⟩ :=
+  s.restrict f = g ↔ ∀ x (hx : x ∈ s), f x = g ⟨x, hx⟩ :=
 by simp_rw [function.funext_iff, set_coe.forall, restrict_apply, subtype.coe_mk]
 
 @[simp]
-lemma eq_restrict_iff {g : α → β} : f = restrict g s ↔ ∀ x (hx : x ∈ s), f ⟨x, hx⟩ = g x :=
+lemma eq_restrict_iff {g : α → β} : f = s.restrict g ↔ ∀ x (hx : x ∈ s), f ⟨x, hx⟩ = g x :=
 by simp_rw [@eq_comm _ f, restrict_eq_iff, eq_comm]
 
 @[simp]
-lemma restrict_eq_restrict_iff {f g : α → β} : restrict f s = restrict g s ↔ ∀ x ∈ s, f x = g x :=
+lemma restrict_eq_restrict_iff {f g : α → β} : s.restrict f = s.restrict g ↔ ∀ x ∈ s, f x = g x :=
 by simp_rw [restrict_eq_iff, restrict_apply, subtype.coe_mk]
 
 /-- The union `f ∪ g` of two functions `f : s → β` and `g : t → β`.
@@ -59,7 +59,7 @@ lemma union_elim_eq_right_of_eq [decidable_pred (∈ s)] (hxt : x ∈ t)
 if hxs : x ∈ s then (union_elim_eq_left hxs).trans (hfg x hxs hxt) else union_elim_eq_right _ hxs
 
 lemma union_elim_restrict [decidable_pred (∈ s)] (f : α → β) :
-  union_elim (restrict f s) (restrict f t) = restrict f (s ∪ t) :=
+  union_elim (s.restrict f) (t.restrict f) = (s ∪ t).restrict f :=
 begin
   ext ⟨x, hx⟩,
   cases (mem_union _ _ _).mp hx; simp [union_elim_eq_left, union_elim_eq_right_of_eq, h]
