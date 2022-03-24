@@ -4,145 +4,13 @@ import analysis.calculus.specific_functions
 import measure_theory.integral.periodic
 import geometry.manifold.partition_of_unity
 import to_mathlib.order.hom.basic
+import to_mathlib.geometry.manifold.partition_of_unity
 
 /-!
 # The reparametrization lemma
 -/
 
 noncomputable theory
-
-section finprod
-
-open_locale big_operators
-open function
-
-variables {α M : Type*} [comm_monoid M]
-
--- Better version of `finprod_eq_prod_of_mul_support_to_finset_subset`
-@[to_additive] lemma finprod_eq_prod_of_mul_support_to_finset_subset'
-  (f : α → M) {s : finset α} (h : mul_support f ⊆ (s : set α)) :
-  ∏ᶠ i, f i = ∏ i in s, f i :=
-begin
-  have h' : (s.finite_to_set.subset h).to_finset ⊆ s,
-  { erw [← finset.coe_subset, set.coe_to_finset],
-    exact h, },
-  exact finprod_eq_prod_of_mul_support_to_finset_subset _ _ h',
-end
-
-end finprod
-
-namespace partition_of_unity
-
-open_locale big_operators
-
-variables {ι X F : Type*} {U : ι → set X} {s : set X} [topological_space X]
-variables (p : partition_of_unity ι X s) (hp : p.is_subordinate U)
-variables (f : ι → X → F) (g : X → F)
-include hp
-
-lemma finsum_smul_eq [add_comm_group F] [module ℝ F]
-  (hfg : ∀ i x, x ∈ s ∩ U i → f i x = g x) {x : X} (hx : x ∈ s) :
-  ∑ᶠ i, p i x • f i x = g x :=
-begin
-  suffices : ∀ i, p i x • f i x = p i x • g x,
-  { simp_rw [this, ← finsum_smul, p.sum_eq_one hx, one_smul], },
-  intros i,
-  by_cases hxi : x ∈ U i,
-  { rw hfg i x (set.mem_inter hx hxi), },
-  { suffices : x ∉ function.support (p i),
-    { simp only [function.mem_support, not_not] at this,
-      simp [this], },
-    exact λ contra, hxi (hp i (subset_tsupport _ contra)), },
-end
-
-end partition_of_unity
-
-namespace smooth_partition_of_unity
-
-open_locale big_operators
-
-variables {ι E H M F : Type*} {U : ι → set M} {s : set M}
-variables [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-variables [topological_space H] {J : model_with_corners ℝ E H}
-variables [topological_space M] [charted_space H M] [smooth_manifold_with_corners J M]
-variables (p : smooth_partition_of_unity ι J M s) (hp : p.is_subordinate U)
-variables (f : ι → M → F) (g : M → F)
-
-lemma finsum_smul_eq [add_comm_group F] [module ℝ F]
-  (hfg : ∀ i x, x ∈ s ∩ U i → f i x = g x) {x : M} (hx : x ∈ s) :
-  ∑ᶠ i, p i x • f i x = g x :=
-p.to_partition_of_unity.finsum_smul_eq hp f g hfg hx
-
-end smooth_partition_of_unity
-
-namespace interval_integral
-
-open_locale big_operators
-open function
-
-variables {α E : Type*} {a b : α}
-variables [linear_order α] [measurable_space α] [measurable_space E] [normed_group E]
-variables [topological_space.second_countable_topology E] [complete_space E] [normed_space ℝ E]
-variables [borel_space E] {μ : measure_theory.measure α}
-
-variables [topological_space α] [compact_Icc_space α] [measure_theory.is_locally_finite_measure μ]
-
-lemma _root_.interval_integrable.sum {ι : Type*} (s : finset ι) {f : ι → α → E}
-  (hf : ∀ i ∈ s, interval_integrable (f i) μ a b) :
-  interval_integrable (∑ i in s, f i) μ a b :=
-begin
-  classical,
-  revert hf,
-  refine s.induction _ (λ i t hi ih, _),
-  { simp [pi.zero_def],
-    exact @interval_integrable_const α E _ _ _ _ _ _ μ _ a b 0, },
-  { intros hf,
-    simp only [finset.sum_insert hi],
-    refine interval_integrable.add (hf i _) (ih (λ j hj, hf j _)),
-    exacts [finset.mem_insert.mpr (or.inl rfl), finset.mem_insert.mpr (or.inr hj)], },
-end
-
-lemma integral_sum {ι : Type*} (s : finset ι) {f : ι → α → E}
-  (hf : ∀ i ∈ s, interval_integrable (f i) μ a b) :
-  ∫ x in a..b, (∑ i in s, f i x) ∂μ = ∑ i in s, ∫ x in a..b, f i x ∂μ :=
-begin
-  classical,
-  revert hf,
-  refine s.induction _ (λ i t hi ih, _),
-  { simp, },
-  { intros hf,
-    simp only [finset.sum_insert hi],
-    have : interval_integrable (λ x, ∑ j in t, f j x) μ a b,
-    { simp_rw ← finset.sum_apply,
-      exact interval_integrable.sum t (λ i hi, hf i (finset.mem_insert.mpr (or.inr hi))), },
-    rw [integral_add (hf i _) this, ih (λ j hj, hf j _)],
-    exacts [finset.mem_insert.mpr (or.inr hj), finset.mem_insert.mpr (or.inl rfl)], },
-end
-
-lemma integral_finsum {ι : Type*} {f : ι → α → E}
-  (hf : ∀ i, interval_integrable (f i) μ a b)
-  (hf' : (support f).finite) :
-  ∫ x in a..b, (∑ᶠ i, f i x) ∂μ = ∑ᶠ i, ∫ x in a..b, f i x ∂μ :=
-begin
-  haveI : fintype (support f) := hf'.fintype,
-  let s := (support f).to_finset,
-  have h₁ : ∀ x, ∑ᶠ i, f i x = ∑ i in s, f i x,
-  { intros x,
-    suffices : support (λ i, f i x) ⊆ s,
-    { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
-    intros i hi,
-    simp only [set.coe_to_finset, mem_support] at hi ⊢,
-    exact λ contra, by simpa [congr_fun contra x] using hi, },
-  suffices : support (λ i, ∫ x in a..b, f i x ∂μ) ⊆ s,
-  { simp_rw [h₁, integral_sum s (λ i _, hf i), finsum_eq_sum_of_support_to_finset_subset' _ this] },
-  intros i hi,
-  simp only [set.coe_to_finset, mem_support] at hi ⊢,
-  intros contra,
-  erw [contra, interval_integral.integral_zero] at hi,
-  contradiction,
-end
-
-end interval_integral
 
 open set function measure_theory interval_integral
 open_locale topological_space unit_interval manifold big_operators
@@ -172,18 +40,19 @@ end
 include γ x
 /- This is an auxiliary definition to help construct `centering_density` below.
 
-It represents a smooth probability distribution on the circle with the property that:
+Given `x : E`, it represents a smooth probability distribution on the circle with the property that:
 `∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y`
 for all `y` in a neighbourhood of `x` (see `local_centering_density_average` below).
 
 This property is obtained by combining smoothness of barycentric coordinates with the fact that
 `g x` lies in the _interior_ of a convex hull.
 
-The intuition is that given `x : E`, since `γ x` surrounds `g x`, there are real numbers
-`t₁`, ..., `tₙ` such that `g x` is in the interior of the convex hull of `γ x tᵢ`, which are an
-affine basis. One defines `local_centering_density x y`, for `y` in a neighbourhood of `x`, so that
-`local_centering_density x y t` has almost all of its mass concentrated at the values `t = tᵢ` with
-each value getting a share of the total mass proportional to the barycentric coordinate of `g y`. -/
+The intuition is that given `y : E` in a neighbourhood of `x`, since `γ y` surrounds `g y`, there
+are real numbers `t₁`, ..., `tₙ` (depending on `y`) such that `g y` is in the interior of the convex
+hull of `γ y tᵢ`, which are an affine basis. One defines `local_centering_density x y`, for `y` in a
+neighbourhood of `x`, so that `local_centering_density x y t` has almost all of its mass
+concentrated at the values `t = tᵢ` with each value getting a share of the total mass proportional
+to the barycentric coordinate of `g y`. -/
 def local_centering_density : E → ℝ → ℝ :=
 sorry
 
@@ -238,7 +107,7 @@ sorry
 /-- This the key construction. It represents a smooth probability distribution on the circle with
 the property that:
 `∫ s in 0..1, γ.centering_density x s • γ x s = g x`
-(see `centering_density_average` below).
+for all `x : E` (see `centering_density_average` below).
 
 It is constructed from `local_centering_density` using a partition of unity
 (see `centering_density_eq_exists_pou` below). -/

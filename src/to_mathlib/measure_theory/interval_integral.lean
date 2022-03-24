@@ -2,6 +2,7 @@ import measure_theory.integral.interval_integral
 
 import to_mathlib.measure_theory.basic
 import to_mathlib.misc
+import to_mathlib.algebra.big_operators.finprod
 
 noncomputable theory
 
@@ -244,4 +245,77 @@ begin
       interval_integral.integral_symm, funext (λ t, hf_per t)],
   abel
 end
+
 end
+
+section interval_integral
+
+open_locale big_operators
+open function
+
+variables {α E : Type*} {a b : α}
+variables [linear_order α] [measurable_space α] [topological_space α] [compact_Icc_space α]
+variables {μ : measure_theory.measure α} [measure_theory.is_locally_finite_measure μ]
+variables [normed_group E] [normed_space ℝ E] [topological_space.second_countable_topology E]
+variables [complete_space E] [measurable_space E] [borel_space E]
+
+lemma interval_integrable.sum {ι : Type*} (s : finset ι) {f : ι → α → E}
+  (hf : ∀ i ∈ s, interval_integrable (f i) μ a b) :
+  interval_integrable (∑ i in s, f i) μ a b :=
+begin
+  classical,
+  revert hf,
+  refine s.induction _ (λ i t hi ih, _),
+  { simp [pi.zero_def],
+    exact @interval_integrable_const α E _ _ _ _ _ _ μ _ a b 0, },
+  { intros hf,
+    simp only [finset.sum_insert hi],
+    refine interval_integrable.add (hf i _) (ih (λ j hj, hf j _)),
+    exacts [finset.mem_insert.mpr (or.inl rfl), finset.mem_insert.mpr (or.inr hj)], },
+end
+
+namespace interval_integral
+
+lemma integral_sum {ι : Type*} (s : finset ι) {f : ι → α → E}
+  (hf : ∀ i ∈ s, interval_integrable (f i) μ a b) :
+  ∫ x in a..b, (∑ i in s, f i x) ∂μ = ∑ i in s, ∫ x in a..b, f i x ∂μ :=
+begin
+  classical,
+  revert hf,
+  refine s.induction _ (λ i t hi ih, _),
+  { simp, },
+  { intros hf,
+    simp only [finset.sum_insert hi],
+    have : interval_integrable (λ x, ∑ j in t, f j x) μ a b,
+    { simp_rw ← finset.sum_apply,
+      exact interval_integrable.sum t (λ i hi, hf i (finset.mem_insert.mpr (or.inr hi))), },
+    rw [integral_add (hf i _) this, ih (λ j hj, hf j _)],
+    exacts [finset.mem_insert.mpr (or.inr hj), finset.mem_insert.mpr (or.inl rfl)], },
+end
+
+lemma integral_finsum {ι : Type*} {f : ι → α → E}
+  (hf : ∀ i, interval_integrable (f i) μ a b)
+  (hf' : (support f).finite) :
+  ∫ x in a..b, (∑ᶠ i, f i x) ∂μ = ∑ᶠ i, ∫ x in a..b, f i x ∂μ :=
+begin
+  haveI : fintype (support f) := hf'.fintype,
+  let s := (support f).to_finset,
+  have h₁ : ∀ x, ∑ᶠ i, f i x = ∑ i in s, f i x,
+  { intros x,
+    suffices : support (λ i, f i x) ⊆ s,
+    { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
+    intros i hi,
+    simp only [set.coe_to_finset, mem_support] at hi ⊢,
+    exact λ contra, by simpa [congr_fun contra x] using hi, },
+  suffices : support (λ i, ∫ x in a..b, f i x ∂μ) ⊆ s,
+  { simp_rw [h₁, integral_sum s (λ i _, hf i), finsum_eq_sum_of_support_to_finset_subset' _ this] },
+  intros i hi,
+  simp only [set.coe_to_finset, mem_support] at hi ⊢,
+  intros contra,
+  erw [contra, interval_integral.integral_zero] at hi,
+  contradiction,
+end
+
+end interval_integral
+
+end interval_integral
