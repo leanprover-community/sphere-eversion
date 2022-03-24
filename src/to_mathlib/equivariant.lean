@@ -18,6 +18,8 @@ instance : has_coe_to_fun equivariant_map (λ _, ℝ → ℝ) := ⟨equivariant_
 
 lemma eqv : ∀ t, φ (t + 1) = φ t + 1 := φ.eqv'
 
+@[simp] lemma coe_mk (f : ℝ → ℝ) {eqv} : ((⟨f, eqv⟩ : equivariant_map) : ℝ → ℝ) = f := rfl
+
 end equivariant_map
 
 @[simp] lemma fract_add_one {α} [linear_ordered_ring α] [floor_ring α] (a : α) :
@@ -28,8 +30,32 @@ by exact_mod_cast fract_add_int a 1
   It linearly connects `(0, 0)`, `(1/4, 0)` and `(3/4, 1)` and `(1, 1)` and is extended to an
   equivariant function. -/
 def linear_reparam : equivariant_map :=
-⟨λ x, ⌊ x ⌋ + max 0 (min 1 $ 2 * fract (x - 4⁻¹)), λ t,
+⟨λ x, ⌊ x ⌋ + max 0 (min 1 $ 2 * (fract x - 4⁻¹)), λ t,
   by simp [floor_add_one, add_sub, ← sub_add_eq_add_sub _ _ (1 : ℝ), fract_add_one, add_right_comm]⟩
+
+lemma linear_reparam_eq_zero {t : ℝ} (h1 : 0 ≤ t) (h2 : t ≤ 4⁻¹) : linear_reparam t = 0 :=
+begin
+  have : ⌊ t ⌋ = 0 := floor_eq_iff.mpr ⟨h1, h2.trans_lt $ by norm_num⟩,
+  simp [linear_reparam, fract, -self_sub_floor, mul_nonpos_iff, *],
+end
+
+lemma linear_reparam_zero : linear_reparam 0 = 0 :=
+linear_reparam_eq_zero le_rfl $ by norm_num
+
+lemma max_eq_of_lt_left {a b c : ℝ} (h : a < c) : max a b = c ↔ b = c :=
+by simp [max_eq_iff, h.ne, h.le] {contextual := tt}
+
+lemma linear_reparam_eq_one {t : ℝ} (h1 : 3 / 4 ≤ t) (h2 : t ≤ 1) : linear_reparam t = 1 :=
+begin
+  rcases h2.lt_or_eq with h2|rfl,
+  { have : ⌊ t ⌋ = 0 := floor_eq_iff.mpr ⟨le_trans (by norm_num) h1, h2.trans_le (by norm_num)⟩,
+    simp [linear_reparam, fract, -self_sub_floor, max_eq_of_lt_left, this], field_simp, linarith },
+  { have : fract (1 : ℝ) = 0 := by { convert fract_coe 1, norm_cast },
+    norm_num [linear_reparam, this] }
+end
+
+lemma linear_reparam_one : linear_reparam 1 = 1 :=
+linear_reparam_eq_one (by norm_num) le_rfl
 
 set_option old_structure_cmd true
 
