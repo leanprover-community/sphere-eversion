@@ -1,5 +1,7 @@
-import linear_algebra.basic
+import linear_algebra.span
 
+
+/-! Note: some results should go to `linear_algebra.span`. -/
 open submodule function
 
 section

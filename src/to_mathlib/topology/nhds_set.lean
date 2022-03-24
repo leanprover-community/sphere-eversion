@@ -29,9 +29,6 @@ by simp only [set.union_singleton, Sup_insert]
 lemma Sup_sup {α : Type*} [complete_lattice α] {s : set α} {a : α} : (Sup s) ⊔ a = Sup (s ∪ {a}) :=
 by simp only [sup_Sup, sup_comm]
 
-lemma nhds_set_union (s t : set α) : 𝓝ˢ (s ∪ t) =  𝓝ˢ s ⊔ 𝓝ˢ t :=
-by simp only [nhds_set, Sup_eq_supr, supr_sup, set.image_union, supr_union]
-
 lemma is_closed.nhds_set_le_sup {t : set α} (h : is_closed t) (s : set α) :
   𝓝ˢ s ≤ 𝓝ˢ (s ∩ t) ⊔ 𝓟 tᶜ :=
 calc 𝓝ˢ s = 𝓝ˢ ((s ∩ t) ∪ (s ∩ tᶜ)) : by rw set.inter_union_compl s t
