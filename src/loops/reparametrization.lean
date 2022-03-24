@@ -10,20 +10,6 @@ import to_mathlib.geometry.manifold.partition_of_unity
 # The reparametrization lemma
 -/
 
-section to_mathlib
-
-open_locale topological_space
-
-variables {𝕜 E F : Type*} [nondiscrete_normed_field 𝕜]
-variables [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
-
-lemma cont_diff_on_iff_of_eq_on
-  {n : with_top ℕ} {s : set E} (hs : is_open s) (f g : E → F) (h : ∀ x ∈ s, f x = g x) :
-  cont_diff_on 𝕜 n f s ↔ cont_diff_on 𝕜 n g s :=
-sorry
-
-end to_mathlib
-
 noncomputable theory
 
 open set function measure_theory interval_integral
@@ -181,11 +167,11 @@ begin
     simp only [prod_mk_mem_set_prod_eq, mem_univ, and_true] at hz,
     simp [hn₃ z hz s], },
   replace hn₀ : is_open (n ×ˢ (univ : set ℝ)) := hn₀.prod is_open_univ,
-  rw cont_diff_on_iff_of_eq_on hn₀ _ f hf,
+  apply cont_diff_on.congr _ hf,
   refine cont_diff_on.sum (λ y hy, cont_diff_on.mul (cont_diff.cont_diff_on _) _),
   { refine cont_diff.comp _ cont_diff_fst,
     rw ← cont_mdiff_iff_cont_diff,
-    exact (p y).cont_mdiff, },
+    exact (p y).cont_mdiff },
   { suffices : n ×ˢ (univ : set ℝ) ⊆ (γ.local_centering_density_nhd y) ×ˢ (univ : set ℝ),
     { exact (γ.local_centering_density_smooth_on y).mono this, },
     simp only [subset_Inter₂_iff] at hn₂,
