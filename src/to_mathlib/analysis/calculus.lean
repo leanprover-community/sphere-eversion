@@ -73,6 +73,7 @@ end
 
 variable (𝕜)
 
+/-- The first partial derivative of a binary function. -/
 def partial_fderiv_fst {F : Type*} (φ : E → F → G) :=
 λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
 
@@ -539,5 +540,16 @@ lemma cont_diff.comp₃ {g : E × F × K → G} (hg : cont_diff 𝕜 n g)
   {e : H → E} (he : cont_diff 𝕜 n e) {f : H → F} (hf : cont_diff 𝕜 n f)
   {k : H → K} (hk : cont_diff 𝕜 n k) : cont_diff 𝕜 n (λ h, g (e h, f h, k h)) :=
 hg.comp $ he.prod $ hf.prod hk
+
+
+/-- For every continuous positive function there is a smaller smooth positive function.
+
+proof sketch: choose locally constant functions on compact sets, and patch them using a partition
+of unity. -/
+lemma exists_smooth_pos [normed_space ℝ E]
+  {f : E → ℝ} {U : set E} (hU : is_open U) (hf : continuous f)
+  (h2f : ∀ x ∈ U, 0 < f x) :
+  ∃ φ : E → ℝ, cont_diff ℝ ⊤ φ ∧ ∀ x ∈ U, 0 < φ x :=
+sorry
 
 end smooth

@@ -23,6 +23,24 @@ lemma is_connected_univ : is_connected (univ : set α) :=
 
 end
 
+section
+-- to metric space
+variables {E F : Type*} [metric_space E] [metric_space F]
+@[simp] lemma dist_prod_same_left {x : E} {y₁ y₂ : F} : dist (x, y₁) (x, y₂) = dist y₁ y₂ :=
+by simp [prod.dist_eq, dist_nonneg]
+
+end
+
+section
+-- to normed_space
+variables {E F : Type*} [normed_group E] [normed_group F]
+variables [normed_space ℝ E] [normed_space ℝ F]
+lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
+  dist (r • x + (1 - r) • y) x ≤ dist y x :=
+by sorry
+
+end
+
 section -- to ???
 
 -- needs classical

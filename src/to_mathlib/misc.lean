@@ -3,6 +3,11 @@ import data.real.nnreal
 open real set
 open_locale nnreal interval
 
+/-- to algebra.ring.basic or something -/
+@[simp] lemma smul_add_one_sub_smul {R M : Type*} [ring R] [add_comm_monoid M] [module R M]
+  {r : R} {m : M} : r • m + (1 - r) • m = m :=
+by rw [← add_smul, add_sub_cancel'_right, one_smul]
+
 lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
 
 lemma abs_le_abs_of_nonneg {α : Type*} [add_comm_group α] [linear_order α]
