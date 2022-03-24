@@ -10,6 +10,20 @@ import to_mathlib.geometry.manifold.partition_of_unity
 # The reparametrization lemma
 -/
 
+section to_mathlib
+
+open_locale topological_space
+
+variables {𝕜 E F : Type*} [nondiscrete_normed_field 𝕜]
+variables [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
+
+lemma cont_diff_on_iff_of_eq_on
+  {n : with_top ℕ} {s : set E} (hs : is_open s) (f g : E → F) (h : ∀ x ∈ s, f x = g x) :
+  cont_diff_on 𝕜 n f s ↔ cont_diff_on 𝕜 n g s :=
+sorry
+
+end to_mathlib
+
 noncomputable theory
 
 open set function measure_theory interval_integral
@@ -80,7 +94,7 @@ lemma local_centering_density_periodic (hy : y ∈ γ.local_centering_density_nh
   periodic (γ.local_centering_density x y) 1 :=
 sorry
 
-lemma local_centering_density_smooth :
+lemma local_centering_density_smooth_on :
   cont_diff_on ℝ ∞ ↿(γ.local_centering_density x) $
     (γ.local_centering_density_nhd x) ×ˢ (univ : set ℝ) :=
 sorry
@@ -92,7 +106,7 @@ begin
   have hyt : γ.local_centering_density_nhd x ×ˢ univ ∈ 𝓝 (y, t) :=
     mem_nhds_prod_iff'.mpr ⟨γ.local_centering_density_nhd x, univ,
       γ.local_centering_density_nhd_is_open x, hy, is_open_univ, mem_univ t, rfl.subset⟩,
-  exact ((γ.local_centering_density_smooth x).continuous_on.continuous_at hyt).comp
+  exact ((γ.local_centering_density_smooth_on x).continuous_on.continuous_at hyt).comp
     (continuous.prod.mk y).continuous_at,
 end
 
@@ -130,6 +144,16 @@ let h := @smooth_partition_of_unity.exists_is_subordinate _ _ _ _ _ _ _ 𝓘(ℝ
   γ.local_centering_density_nhd_covers in
 ⟨classical.some h, classical.some_spec h, λ x y, rfl⟩
 
+lemma centering_density_eq_exists_pou_nhd_finset_sum :
+  ∃ (p : smooth_partition_of_unity E 𝓘(ℝ, E) E)
+    (hp : p.is_subordinate γ.local_centering_density_nhd),
+    ∀ (x : E), ∃ (ys : finset E) {n : set E} (hn₀ : is_open n) (hn₁ : n ∈ 𝓝 x)
+      (hn₂ : n ⊆ ⋂ y ∈ ys, γ.local_centering_density_nhd y),
+      ∀ (z ∈ n) t, γ.centering_density z t = ∑ y in ys, p y z * γ.local_centering_density y z t :=
+begin
+  sorry,
+end
+
 @[simp] lemma centering_density_pos (t : ℝ) :
   0 < γ.centering_density x t :=
 sorry
@@ -139,8 +163,34 @@ lemma centering_density_periodic :
 sorry
 
 lemma centering_density_smooth :
-  𝒞 ∞ ↿γ.centering_density :=
-sorry
+  -- 𝒞 ∞ ↿γ.centering_density :=
+  𝒞 ∞ $ uncurry (λ x t, γ.centering_density x t) :=
+begin
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou,
+  rw cont_diff_iff_cont_diff_at,
+  rintros ⟨x, t⟩,
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
+  obtain ⟨ys, n, hn₀, hn₁, hn₂, hn₃⟩ := hp' x,
+  have hn₄ : n ×ˢ (univ : set ℝ) ∈ 𝓝 (x, t) :=
+    mem_nhds_prod_iff.mpr ⟨n, hn₁, univ, filter.univ_mem, rfl.subset⟩,
+  refine cont_diff_within_at.cont_diff_at
+    (cont_diff_on.cont_diff_within_at _ (mem_of_mem_nhds hn₄)) hn₄,
+  let f : E × ℝ → ℝ := λ zt, ∑ y in ys, p y zt.1 * γ.local_centering_density y zt.1 zt.2,
+  have hf : ∀ zs ∈ n ×ˢ (univ : set ℝ), (uncurry γ.centering_density) zs = f zs,
+  { rintros ⟨z, s⟩ hz,
+    simp only [prod_mk_mem_set_prod_eq, mem_univ, and_true] at hz,
+    simp [hn₃ z hz s], },
+  replace hn₀ : is_open (n ×ˢ (univ : set ℝ)) := hn₀.prod is_open_univ,
+  rw cont_diff_on_iff_of_eq_on hn₀ _ f hf,
+  refine cont_diff_on.sum (λ y hy, cont_diff_on.mul (cont_diff.cont_diff_on _) _),
+  { refine cont_diff.comp _ cont_diff_fst,
+    rw ← cont_mdiff_iff_cont_diff,
+    exact (p y).cont_mdiff, },
+  { suffices : n ×ˢ (univ : set ℝ) ⊆ (γ.local_centering_density_nhd y) ×ˢ (univ : set ℝ),
+    { exact (γ.local_centering_density_smooth_on y).mono this, },
+    simp only [subset_Inter₂_iff] at hn₂,
+    exact prod_mono (hn₂ y hy) rfl.subset, },
+end
 
 @[simp] lemma centering_density_integral_eq_one :
   ∫ s in 0..1, γ.centering_density x s = 1 :=
