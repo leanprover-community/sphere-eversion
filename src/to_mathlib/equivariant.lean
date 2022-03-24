@@ -1,4 +1,5 @@
 import notations
+import topology.algebra.floor_ring
 
 noncomputable theory
 
@@ -39,7 +40,7 @@ begin
   simp [linear_reparam, fract, -self_sub_floor, mul_nonpos_iff, *],
 end
 
-lemma linear_reparam_zero : linear_reparam 0 = 0 :=
+@[simp] lemma linear_reparam_zero : linear_reparam 0 = 0 :=
 linear_reparam_eq_zero le_rfl $ by norm_num
 
 lemma max_eq_of_lt_left {a b c : ℝ} (h : a < c) : max a b = c ↔ b = c :=
@@ -54,8 +55,12 @@ begin
     norm_num [linear_reparam, this] }
 end
 
-lemma linear_reparam_one : linear_reparam 1 = 1 :=
+@[simp] lemma linear_reparam_one : linear_reparam 1 = 1 :=
 linear_reparam_eq_one (by norm_num) le_rfl
+
+lemma continuous_linear_reparam : continuous linear_reparam :=
+sorry
+-- continuous_on.comp_fract _ _ _
 
 set_option old_structure_cmd true
 

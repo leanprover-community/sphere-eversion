@@ -3,6 +3,7 @@ import loops.reparametrization
 import to_mathlib.analysis.cut_off
 import to_mathlib.convolution
 import to_mathlib.topology.hausdorff_distance
+import to_mathlib.topology.constructions
 
 noncomputable theory
 
@@ -37,6 +38,7 @@ lemma exists_loops_aux1 [finite_dimensional ℝ E]
   (hgK : ∀ᶠ x near K, g x = b x)
   (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ (γ : E → ℝ → loop F) (V ∈ 𝓝ˢ K), surrounding_family_in g b γ V Ω ∧
+  (∀ x (t ≤ 0), γ x t = γ x 0) ∧ (∀ x (t ≥ 1), γ x t = γ x 1) ∧
   ∀ (x ∈ V) t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
   have b_in : ∀ x, (x, b x) ∈ Ω :=
@@ -55,25 +57,39 @@ begin
   let range_γ₀ := (λ i : ℝ × ℝ, ∥γ₀ i.1 i.2∥) '' (I ×ˢ I),
   have h3γ₀ : bdd_above range_γ₀ :=
   (is_compact_Icc.prod is_compact_Icc).bdd_above_image (hγ₀_cont.norm.continuous_on),
-  let ε := ε₀ / (1 + Sup range_γ₀),
-  have hε : 0 < ε := div_pos hε₀ (add_pos_of_pos_of_nonneg zero_lt_one $ le_cSup_of_le h3γ₀
+  have h0 : 0 < 1 + Sup range_γ₀ := add_pos_of_pos_of_nonneg zero_lt_one (le_cSup_of_le h3γ₀
     (mem_image_of_mem _ $ mk_mem_prod unit_interval.zero_mem unit_interval.zero_mem) $
     norm_nonneg _),
-  have h2ε : ∀ t s : ℝ, ∥ε • γ₀ t s∥ < ε₀,
-  { sorry }, -- need `γ₀` to not depends on `t` outside `[0,1]`
-  let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
+  let ε := ε₀ / (1 + Sup range_γ₀),
+  have hε : 0 < ε := div_pos hε₀ h0,
+  have h2ε : ∀ t s : ℝ, ∥ε • γ₀ (proj_Icc (0 : ℝ) 1 zero_le_one t) s∥ < ε₀,
+  { intros t s, simp [norm_smul, mul_comm_div', real.norm_eq_abs, abs_eq_self.mpr, hε.le],
+    refine lt_of_lt_of_le _ (mul_one _).le,
+    rw [mul_lt_mul_left hε₀, div_lt_one h0],
+    refine (zero_add _).symm.le.trans_lt _,
+    refine add_lt_add_of_lt_of_le zero_lt_one (le_cSup h3γ₀ _),
+    rw [← loop.fract_eq],
+    refine mem_image_of_mem _ (mk_mem_prod _ $ unit_interval.fract_mem _),
+    convert subtype.mem _ },
+  let γ₁ : E → ℝ → loop F := -- `γ₁ x` is `γₓ` in notes
+    λ x t, (γ₀ $ proj_Icc (0 : ℝ) 1 zero_le_one t).transform (λ y, b x + ε • y),
   refine ⟨γ₁, _⟩,
   have hbV : ∀ᶠ x near K, x ∈ V := hV,
-  have : ∀ (x ∈ V) (t s : ℝ), closed_ball (x, b x) (dist (γ₁ x t s) (b x)) ⊆ Ω,
+  have h1 : ∀ (x ∈ V) (t s : ℝ), closed_ball (x, b x) (dist (γ₁ x t s) (b x)) ⊆ Ω,
   { intros x hx t s,
-    simp, -- [norm_smul, -norm_div],
+    simp,
+    refine (closed_ball_subset_ball $ h2ε _ _).trans _,
+    refine (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ,
   },
-  refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _⟩, _⟩, _⟩,
-  { rintro x ⟨hx, -⟩, rw [hx],
+  refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _⟩, _⟩, _, _, _⟩,
+  { rintro x ⟨hx, -⟩, simp_rw [hx, γ₁, proj_Icc_right],
     exact (hγ₀_surr.smul0 hε.ne').vadd0 },
-  { refine hb.continuous.fst'.add (continuous_const.smul hγ₀_cont.snd') },
-  { rintro x ⟨hx, h2x⟩ t ht s hs, sorry },
-  { sorry, }
+  { refine hb.continuous.fst'.add (continuous_const.smul $ hγ₀_cont.comp₂ _ continuous_snd.snd),
+    refine continuous_proj_Icc.fst'.snd'.subtype_coe, exact zero_le_one },
+  { rintro x ⟨-, hx⟩ t ht s hs, refine h1 x hx t s (by simp) },
+  { intros x t ht, ext s, simp [ht, proj_Icc_of_le_left] },
+  { intros x t ht, ext s, simp [ht.le, proj_Icc_of_right_le] },
+  { rintro x ⟨-, hx⟩ t s, exact h1 x hx t s }
 end
 
 lemma exists_loops_aux2 [finite_dimensional ℝ E]
@@ -103,11 +119,11 @@ begin
   -- haveI : is_add_haar_measure (volume : measure E) :=
   --   infer_instance,
 
-  obtain ⟨γ₁, V, hV, hγ₁, h2γ₁⟩ := exists_loops_aux1 hK hΩ_op hg hb hgK hconv,
+  obtain ⟨γ₁, V, hV, hγ₁, h2γ₁, h3γ₁, h4γ₁⟩ := exists_loops_aux1 hK hΩ_op hg hb hgK hconv,
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) ⟨V, hV, hγ₁⟩,
-  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x (linear_reparam t)).reparam linear_reparam,
+  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x t).reparam linear_reparam,
   let ε₁ : E → ℝ := λ x, ⨅ y : ℝ × ℝ, inf_dist (x, γ₂ x y.1 y.2) Ωᶜ, -- todo
   have hε₁ : continuous ε₁ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
   have h2ε₁ : ∀ {x}, 0 < ε₁ x, sorry,
@@ -127,7 +143,7 @@ begin
   sorry
 end
 
-lemma exists_loops [finite_dimensional ℝ E]
+theorem exists_loops [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
   (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
