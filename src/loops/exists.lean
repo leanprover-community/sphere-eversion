@@ -59,9 +59,15 @@ begin
   have hε : 0 < ε := div_pos hε₀ (add_pos_of_pos_of_nonneg zero_lt_one $ le_cSup_of_le h3γ₀
     (mem_image_of_mem _ $ mk_mem_prod unit_interval.zero_mem unit_interval.zero_mem) $
     norm_nonneg _),
+  have h2ε : ∀ t s : ℝ, ∥ε • γ₀ t s∥ < ε₀,
+  { sorry }, -- need `γ₀` to not depends on `t` outside `[0,1]`
   let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
   refine ⟨γ₁, _⟩,
-  have hbV : ∀ᶠ x near K, x ∈ V, sorry,
+  have hbV : ∀ᶠ x near K, x ∈ V := hV,
+  have : ∀ (x ∈ V) (t s : ℝ), closed_ball (x, b x) (dist (γ₁ x t s) (b x)) ⊆ Ω,
+  { intros x hx t s,
+    simp, -- [norm_smul, -norm_div],
+  },
   refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _⟩, _⟩, _⟩,
   { rintro x ⟨hx, -⟩, rw [hx],
     exact (hγ₀_surr.smul0 hε.ne').vadd0 },

@@ -32,6 +32,21 @@ by simp [prod.dist_eq, dist_nonneg]
 end
 
 section
+-- to normed.group.basic
+
+
+section
+variables {E : Type*} [semi_normed_group E]
+@[simp] theorem dist_self_add_right (g h : E) : dist g (g + h) = ∥h∥ :=
+by rw [← dist_zero_left, ← dist_add_left g 0 h, add_zero]
+
+@[simp] theorem dist_self_add_left (g h : E) : dist (g + h) g = ∥h∥ :=
+by rw [dist_comm, dist_self_add_right]
+end
+
+end
+
+section
 -- to normed_space
 variables {E F : Type*} [normed_group E] [normed_group F]
 variables [normed_space ℝ E] [normed_space ℝ F]
