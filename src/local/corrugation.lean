@@ -53,7 +53,8 @@ begin
   /- Rmk: Lean doesn't want to rewrite using `interval_integral.integral_sub` without being
     given the integrability assumptions :-( -/
   rw [← interval_integral.integral_add_adjacent_intervals int₁ int₂,
-      interval_integral.integral_sub int₃ int₄, interval_integral_periodic γ.per hγ, loop.average],
+      interval_integral.integral_sub int₃ int₄, γ.periodic.interval_integral_add_eq s 0,
+      zero_add, loop.average],
   simp only [add_zero, add_tsub_cancel_left, interval_integral.integral_const, one_smul, sub_self]
 end
 
