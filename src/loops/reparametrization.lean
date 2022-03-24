@@ -133,7 +133,7 @@ let h := @smooth_partition_of_unity.exists_is_subordinate _ _ _ _ _ _ _ 𝓘(ℝ
 lemma centering_density_eq_exists_pou_nhd_finset_sum :
   ∃ (p : smooth_partition_of_unity E 𝓘(ℝ, E) E)
     (hp : p.is_subordinate γ.local_centering_density_nhd),
-    ∀ (x : E), ∃ (ys : finset E) {n : set E} (hn₀ : is_open n) (hn₁ : n ∈ 𝓝 x)
+    ∀ (x : E), ∃ (ys : finset E) {n : set E} (hn₁ : n ∈ 𝓝 x)
       (hn₂ : n ⊆ ⋂ y ∈ ys, γ.local_centering_density_nhd y),
       ∀ (z ∈ n) t, γ.centering_density z t = ∑ y in ys, p y z * γ.local_centering_density y z t :=
 begin
@@ -156,7 +156,7 @@ begin
   rw cont_diff_iff_cont_diff_at,
   rintros ⟨x, t⟩,
   obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
-  obtain ⟨ys, n, hn₀, hn₁, hn₂, hn₃⟩ := hp' x,
+  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := hp' x,
   have hn₄ : n ×ˢ (univ : set ℝ) ∈ 𝓝 (x, t) :=
     mem_nhds_prod_iff.mpr ⟨n, hn₁, univ, filter.univ_mem, rfl.subset⟩,
   refine cont_diff_within_at.cont_diff_at
@@ -166,7 +166,6 @@ begin
   { rintros ⟨z, s⟩ hz,
     simp only [prod_mk_mem_set_prod_eq, mem_univ, and_true] at hz,
     simp [hn₃ z hz s], },
-  replace hn₀ : is_open (n ×ˢ (univ : set ℝ)) := hn₀.prod is_open_univ,
   apply cont_diff_on.congr _ hf,
   refine cont_diff_on.sum (λ y hy, cont_diff_on.mul (cont_diff.cont_diff_on _) _),
   { refine cont_diff.comp _ cont_diff_fst,
