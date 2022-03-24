@@ -30,15 +30,6 @@ structure nice_loop (γ : ℝ → E → loop F) : Prop :=
 
 variables {g b Ω U K}
 
-/-- For every continuous positive function there is a smaller smooth positive function.
-
-proof sketch: choose locally constant functions on compact sets, and patch them using a partition
-of unity. -/
-lemma exists_smooth_pos {f : E → ℝ} {U : set E} (hU : is_open U) (hf : continuous f)
-  (h2f : ∀ x ∈ U, 0 < f x) :
-  ∃ φ : E → ℝ, cont_diff ℝ ⊤ φ ∧ ∀ x ∈ U, 0 < φ x :=
-sorry
-
 lemma exists_loops_aux1 [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
@@ -125,17 +116,6 @@ begin
   sorry
 end
 
-@[simp] lemma smul_add_one_sub_smul {R M : Type*} [ring R] [add_comm_monoid M] [module R M]
-  {r : R} {m : M} : r • m + (1 - r) • m = m :=
-by rw [← add_smul, add_sub_cancel'_right, one_smul]
-
-@[simp] lemma dist_prod_same_left {x : E} {y₁ y₂ : F} : dist (x, y₁) (x, y₂) = dist y₁ y₂ :=
-by simp [prod.dist_eq, dist_nonneg]
-
-lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
-  dist (r • x + (1 - r) • y) x ≤ dist y x :=
-by sorry
-
 lemma exists_loops [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
@@ -143,7 +123,7 @@ lemma exists_loops [finite_dimensional ℝ E]
   (hgK : ∀ᶠ x near K, g x = b x)
   (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ :=
-begin
+by sorry begin
   obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁, h3γ₁, h4γ₁⟩ := exists_loops_aux2 hK hΩ_op hg hb hgK hconv,
   let γ₂ : smooth_surrounding_family g :=
     ⟨λ x, γ₁ x 1, hsγ₁.comp₃ cont_diff_fst cont_diff_const cont_diff_snd,
