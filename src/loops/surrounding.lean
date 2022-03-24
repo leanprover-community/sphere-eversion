@@ -2,6 +2,7 @@ import loops.basic
 import tactic.fin_cases
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
+import to_mathlib.topology.constructions
 
 import to_mathlib.order.filter.eventually_constant
 
@@ -342,12 +343,27 @@ begin
     range_subset_iff, mem_union, O_conn.mem_range_path_through, or_true, forall_true_iff]
 end
 
+lemma surrounding_loop_proj_I (t : ℝ) :
+  surrounding_loop O_conn hp hb (proj_I t) = surrounding_loop O_conn hp hb t :=
+loop.round_trip_eq $ λ s, by simp_rw [path.cast_coe, truncate_proj_I_right]
+
+-- unused
+lemma surrounding_loop_of_le_zero (s : ℝ) {t : ℝ} (ht : t ≤ 0) :
+  surrounding_loop O_conn hp hb t s = b :=
+by rw [← surrounding_loop_proj_I, proj_I_eq_zero.mpr ht, surrounding_loop_zero_left]
+
+-- unused
+lemma surrounding_loop_of_ge_one (s : ℝ) {t : ℝ} (ht : 1 ≤ t) :
+  surrounding_loop O_conn hp hb t s = surrounding_loop O_conn hp hb 1 s :=
+by rw [← surrounding_loop_proj_I t, proj_I_eq_one.mpr ht]
+
 lemma surrounding_loop_of_convex_hull [finite_dimensional ℝ F] {f b : F} {O : set F}
   (O_op : is_open O) (O_conn : is_connected O)
   (hsf : f ∈ convex_hull ℝ O) (hb : b ∈ O) :
   ∃ γ : ℝ → loop F, continuous ↿γ ∧
                     (∀ t, γ t 0 = b) ∧
                     (∀ s, γ 0 s = b) ∧
+                    (∀ s t, γ (proj_I t) s = γ t s) ∧
                     (∀ t s, γ t s ∈ O) ∧
                     (γ 1).surrounds f :=
 begin
@@ -356,16 +372,19 @@ begin
   rcases (O_conn.exists_path_through_family p hp) with ⟨Ω₀, hΩ₀⟩,
   rcases O_conn.joined_in b hb (p 0) (hp 0) with ⟨Ω₁, hΩ₁⟩,
   exact ⟨surrounding_loop O_conn hp hb, continuous_surrounding_loop, surrounding_loop_zero_right,
-    surrounding_loop_zero_left, surrounding_loop_mem, surrounding_loop_surrounds h⟩
+    surrounding_loop_zero_left, λ s t, by rw surrounding_loop_proj_I,
+    surrounding_loop_mem, surrounding_loop_surrounds h⟩
 end
 
 end surrounding_loop
 
 /-- `γ` forms a family of loops surrounding `g` with base `b`.
 In contrast to the notes we assume that `base` and `t₀` hold universally. -/
+@[protect_proj]
 structure surrounding_family (g b : E → F) (γ : E → ℝ → loop F) (U : set E) : Prop :=
 (base : ∀ (x : E) (t : ℝ), γ x t 0 = b x)
 (t₀ : ∀ (x : E) (s : ℝ), γ x 0 s = b x)
+(proj_I : ∀ (x : E) (t : ℝ) (s : ℝ), γ x (proj_I t) s = γ x t s)
 (surrounds : ∀ x ∈ U, (γ x 1).surrounds $ g x)
 (cont : continuous ↿γ)
 
@@ -381,6 +400,14 @@ variables {g b : E → F} {γ : E → ℝ → loop F} {U : set E}
 protected lemma one (h : surrounding_family g b γ U) (x : E) (t : ℝ) : γ x t 1 = b x :=
 by rw [loop.one, h.base]
 
+protected lemma t_le_zero (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t : ℝ} (ht : t ≤ 0) :
+  γ x t s = γ x 0 s :=
+by rw [← h.proj_I, proj_I_eq_zero.mpr ht]
+
+protected lemma t_ge_one (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t : ℝ} (ht : 1 ≤ t) :
+  γ x t s = γ x 1 s :=
+by rw [← h.proj_I, proj_I_eq_one.mpr ht]
+
 protected lemma continuous_b (h : surrounding_family g b γ U) : continuous b :=
 by { refine continuous.congr _ (λ x, h.base x 0),
      exact h.cont.comp (continuous_id.prod_mk
@@ -390,13 +417,13 @@ protected lemma change_set (h : surrounding_family g b γ U) {V : set E}
   (hV : ∀ x ∈ V \ U, (γ x 1).surrounds $ g x) :
   surrounding_family g b γ V :=
 begin
-  refine ⟨h.base, h.t₀, λ x hx, _, h.cont⟩,
+  refine ⟨h.base, h.t₀, h.proj_I, λ x hx, _, h.cont⟩,
   by_cases h2x : x ∈ U, exact h.surrounds x h2x, exact hV x ⟨hx, h2x⟩
 end
 
 protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ U) :
   surrounding_family g b γ V :=
-⟨h.base, h.t₀, λ x hx, h.surrounds x (hVU hx), h.cont⟩
+⟨h.base, h.t₀, h.proj_I, λ x hx, h.surrounds x (hVU hx), h.cont⟩
 
 /-- A surrounding family induces a family of paths from `b x` to `b x`.
 Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
@@ -432,6 +459,10 @@ by simp only [path.coe_mk, surrounding_family.path, range_comp _ coe, subtype.ra
 @[simp]
 lemma path_t₀ (h : surrounding_family g b γ U) (x : E) : h.path x 0 = refl (b x) :=
 by { ext t, exact h.t₀ x t }
+
+@[simp] lemma path_proj_I (h : surrounding_family g b γ U) (t : ℝ) (x : E) :
+  h.path x (proj_I t) = h.path x t :=
+by { ext s, exact h.proj_I x t s }
 
 end surrounding_family
 
@@ -487,18 +518,20 @@ begin
   have hb_in : b x₀ ∈ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
     mem_connected_comp_in_self b_in,
   rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn hconv hb_in with
-    ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ⟩,
-  have h4γ : ∀ (t s : ℝ), γ t s ∈ mk x₀ ⁻¹' Ω := λ t s, connected_comp_in_subset _ _ (h4γ t s),
+    ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ, h6γ⟩,
+  have h5γ : ∀ (t s : ℝ), γ t s ∈ mk x₀ ⁻¹' Ω := λ t s, connected_comp_in_subset _ _ (h5γ t s),
   let δ : E → ℝ → loop F := λ x t, b x - b x₀ +ᵥ γ t,
   have hδ : continuous ↿δ,
   { dsimp only [δ, has_uncurry.uncurry, loop.vadd_apply],
-    exact (hb.fst'.sub continuous_const).add h1γ.snd' },
+    refine (hb.fst'.sub continuous_const).add h1γ.snd' },
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s,
   { intros t s, simp only [zero_add, loop.vadd_apply, sub_self] },
   have hδs0 : ∀ x t, δ x t 0 = b x,
   { intros x t, simp only [h2γ, loop.vadd_apply, sub_add_cancel] },
   have hδt0 : ∀ x s, δ x 0 s = b x,
-  { intros x t, simp only [h3γ, loop.vadd_apply, sub_add_cancel] },
+  { intros x s, simp [h3γ, sub_add_cancel] },
+  have hδt1 : ∀ x t s, δ x (proj_I t) s = δ x t s,
+  { intros x t s, simp [h4γ] },
   have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ (t ∈ I) (s ∈ I), (x, δ x t s) ∈ Ω,
   { rcases hΩ_op with ⟨U, hUx₀, hU⟩,
     -- todo: this is nicer with `is_compact.eventually_forall_of_forall_eventually` twice, but then
@@ -510,10 +543,10 @@ begin
       rw [hδx₀],
       show Ω ∈ 𝓝 (x₀, γ t s),
       exact mem_nhds_iff.mpr
-        ⟨_, inter_subset_left _ _, hU, ⟨h4γ t s, show x₀ ∈ U, from mem_of_mem_nhds hUx₀⟩⟩ },
+        ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U, from mem_of_mem_nhds hUx₀⟩⟩ },
     refine this.mono _, intros x h t ht s hs, exact h (t, s) ⟨ht, hs⟩ },
   have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).surrounds (g x),
-  { rcases h5γ with ⟨p, w, h⟩,
+  { rcases h6γ with ⟨p, w, h⟩,
     obtain ⟨W, hW⟩ := smooth_surrounding_pts h,
     let c : E → F × (fin (d+1) → F) := λ x, (g x, δ x 1 ∘ p),
     have hc : continuous_at c x₀ := hg.prod
@@ -523,7 +556,7 @@ begin
     rw [← hcx₀] at hW,
     filter_upwards [hc.eventually hW], rintro x ⟨hW, hx⟩,
     exact ⟨_, _, hx⟩ },
-  exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, λ x, and.right, hδ⟩, λ x, and.left⟩⟩
+  exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, hδt1, λ x, and.right, hδ⟩, λ x, and.left⟩⟩
 end
 
 /-- A tiny reformulation of `local_loops` where the existing `U` is open. -/
@@ -542,49 +575,31 @@ end
 end local_loops
 
 /-- Function used in `satisfied_or_refund`. Rename. -/
-def ρ (t : ℝ) : ℝ := max 0 $ min 1 $ 2 * (1 - t)
+def ρ (t : ℝ) : ℝ := proj_I $ 2 * (1 - t)
 
 lemma continuous_ρ : continuous ρ :=
-continuous_const.max $ continuous_const.min $ continuous_const.mul $ continuous_const.sub
-  continuous_id
-
-@[simp] lemma ρ_eq_one_of_le {x : ℝ} (h : x ≤ 1 / 2) : ρ x = 1 :=
-begin
-  rw [ρ, max_eq_right, min_eq_left],
-  { linarith },
-  rw [le_min_iff],
-  suffices : x ≤ 1, { simpa },
-  exact h.trans (by norm_num)
-end
-
-@[simp] lemma ρ_eq_one_of_nonpos {x : ℝ} (h : x ≤ 0) : ρ x = 1 :=
-ρ_eq_one_of_le $ h.trans (by norm_num)
-
-@[simp] lemma ρ_eq_zero_of_le {x : ℝ} (h : 1 ≤ x) : ρ x = 0 :=
-by { rw [ρ, max_eq_left], refine (min_le_right _ _).trans (by linarith) }
+continuous_proj_I.comp $ continuous_const.mul $ continuous_const.sub continuous_id
 
 @[simp] lemma ρ_eq_one {x : ℝ} : ρ x = 1 ↔ x ≤ 1 / 2 :=
-begin
-  refine ⟨λ h, _, ρ_eq_one_of_le⟩,
-  rw [ρ] at h,
-  have := ((max_choice _ _).resolve_left (by norm_num [h])).symm.trans h,
-  rw [min_eq_left_iff] at this,
-  linarith
-end
+by { rw [ρ, proj_I_eq_one], split; intros; linarith }
+
+@[simp] lemma ρ_eq_one_of_le {x : ℝ} (h : x ≤ 1 / 2) : ρ x = 1 :=
+ρ_eq_one.mpr h
+
+@[simp] lemma ρ_eq_one_of_nonpos {x : ℝ} (h : x ≤ 0) : ρ x = 1 :=
+ρ_eq_one_of_le $ h.trans $ by norm_num
 
 @[simp] lemma ρ_eq_zero {x : ℝ} : ρ x = 0 ↔ 1 ≤ x :=
-begin
-  refine ⟨λ h, _, ρ_eq_zero_of_le⟩,
-  rw [ρ, max_eq_left_iff, min_le_iff] at h,
-  have := h.resolve_left (by norm_num),
-  linarith
-end
+by { rw [ρ, proj_I_eq_zero], split; intros; linarith }
+
+@[simp] lemma ρ_eq_zero_of_le {x : ℝ} (h : 1 ≤ x) : ρ x = 0 :=
+ρ_eq_zero.mpr h
 
 lemma ρ_zero : ρ 0 = 1 := by simp
 lemma ρ_half : ρ 2⁻¹ = 1 := by simp
 lemma ρ_one : ρ 1 = 0 := by simp
-lemma ρ_mem_I {x : ℝ} : ρ x ∈ I :=
-⟨le_max_left _ _, max_le zero_le_one $ min_le_left _ _⟩
+lemma ρ_mem_I {x : ℝ} : ρ x ∈ I := proj_I_mem_Icc
+lemma ρ_nonneg (x : ℝ) : 0 ≤ ρ x := ρ_mem_I.1
 
 section satisfied_or_refund
 
@@ -595,8 +610,8 @@ variables (h₀ : surrounding_family g b γ₀ U) (h₁ : surrounding_family g b
   Having this as a separate definition is useful, because the construction actually gives some
   more information about the homotopy than the theorem `satisfied_or_refund` gives. -/
 def sf_homotopy (τ : ℝ) (x : E) (t : ℝ) :=
-loop.of_path $ (h₀.path x $ ρ τ * t).strans (h₁.path x $ ρ (1 - τ) * t)
-  (set.proj_Icc 0 1 zero_le_one (1 - τ))
+loop.of_path $ (h₀.path x $ ρ τ * proj_I t).strans (h₁.path x $ ρ (1 - τ) * proj_I t) $
+  proj_Icc 0 1 zero_le_one (1 - τ)
 
 variables {h₀ h₁}
 
@@ -604,14 +619,15 @@ variables {h₀ h₁}
 begin
   ext x t s,
   simp only [sf_homotopy, one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend_fract,
-    sub_zero, loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one]
+    sub_zero, loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one, h₀.proj_I]
 end
 
 @[simp] lemma sf_homotopy_one : sf_homotopy h₀ h₁ 1 = γ₁ :=
 begin
   ext x t s,
   simp only [sf_homotopy, path.strans_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
-    surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self]
+    surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self,
+    h₁.proj_I]
 end
 
 lemma _root_.continuous.sf_homotopy {X : Type*} [uniform_space X]
@@ -622,9 +638,9 @@ begin
   refine continuous.of_path _ _ _ _ hs,
   refine continuous.path_strans _ _ _ _ _ continuous_snd,
   { refine h₀.continuous_path hf.fst'.fst' _ continuous_snd,
-    exact (continuous_ρ.comp hτ.fst'.fst').mul ht.fst'.fst' },
+    exact (continuous_ρ.comp hτ.fst'.fst').mul (continuous_proj_I.comp ht.fst'.fst') },
   { refine h₁.continuous_path hf.fst'.fst' _ continuous_snd,
-    refine (continuous_ρ.comp _).mul ht.fst'.fst',
+    refine (continuous_ρ.comp _).mul (continuous_proj_I.comp ht.fst'.fst'),
     exact continuous_const.sub hτ.fst'.fst' },
   { intros x s hs, simp only [proj_Icc_eq_zero, sub_nonpos] at hs,
     simp only [hs, h₀.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
@@ -645,18 +661,24 @@ begin
   constructor,
   { intros x t, simp only [sf_homotopy, unit_interval.mk_zero, zero_le_one, extend_extends,
       path.source, loop.of_path_apply, left_mem_Icc, fract_zero] },
-  { intros x s, simp only [sf_homotopy, surrounding_family.path_t₀, path.refl_strans_refl,
-      path.refl_extend, loop.of_path_apply, mul_zero] },
+  { intros x s,
+    -- have h2t : ρ τ * t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (ρ_nonneg τ) ht,
+    -- have h3t : ρ (1 - τ) * t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (ρ_nonneg _) ht,
+    -- have h4t : t ≤ 1 := ht.trans zero_le_one,
+    simp only [sf_homotopy, path.refl_strans_refl, path.refl_extend, loop.of_path_apply,
+      proj_I_zero, mul_zero, surrounding_family.path_t₀] },
+  { intros x t s, simp only [sf_homotopy, proj_I_proj_I] },
+  -- { intros x t s ht, simp only [sf_homotopy, min_eq_left ht, min_self] },
   { intros x hx, cases le_total τ (1 / 2) with h h,
     { have : τ < 1 := h.trans_lt (by norm_num),
       refine (h₀.surrounds x hx).mono _,
-      simp only [mul_one, loop.range_of_path, sf_homotopy],
+      simp only [mul_one, loop.range_of_path, sf_homotopy, proj_I_one],
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
         (subset_range_strans_left $ by simp [this]) },
     { have : 0 < τ := lt_of_lt_of_le (by norm_num) h,
       have h : 1 - τ ≤ 1 / 2, { rw [sub_le], convert h, norm_num },
       refine (h₁.surrounds x hx).mono _,
-      simp only [mul_one, loop.range_of_path, sf_homotopy],
+      simp only [mul_one, loop.range_of_path, sf_homotopy, proj_I_one],
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
         (subset_range_strans_right $ by simp [this]) } },
   { exact continuous_const.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd }
@@ -673,7 +695,7 @@ begin
   by_cases hτ1 : τ i = 1, { simp [hτ1], exact h_in₁ i hx t ht s (by norm_num [hτ1]) },
   generalize hy : sf_homotopy h₀ h₁ (τ i) (x i) t s = y,
   have h2y : y ∈ range (sf_homotopy h₀ h₁ (τ i) (x i) t), { rw [← hy], exact mem_range_self _},
-  rw [sf_homotopy, loop.range_of_path] at h2y,
+  rw [sf_homotopy, loop.range_of_path, proj_I_eq_self.mpr ht] at h2y,
   replace h2y := range_strans_subset h2y,
   rcases h2y with ⟨s', rfl⟩|⟨s', rfl⟩,
   { exact h_in₀ _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ hτ1 },
@@ -766,7 +788,8 @@ begin
   have heq2 : ∀ x ∈ V₀, γ (ρ x) x = γ₀ x :=
   λ x hx, heq1 x (subset_closure.trans (subset_union_left _ _) hx),
   refine ⟨λ x t, γ (ρ x) x t, _, _, _⟩,
-  { refine ⟨⟨λ x, (hγ $ ρ x).base x, λ x, (hγ $ ρ x).t₀ x, _, _⟩, _⟩,
+  { refine ⟨⟨λ x, (hγ $ ρ x).base x, λ x, (hγ $ ρ x).t₀ x,
+      λ x, (hγ $ ρ x).proj_I x, _, _⟩, _⟩,
     { rintro x ((hx|hx)|hx),
       { simp_rw [heq2 x hx, h₀.surrounds x (hVU₀ $ subset_closure hx)] },
       { simp_rw [γ, (hγ $ ρ x).surrounds x hx] },
@@ -955,11 +978,13 @@ lemma lim_surrounding_family_in (l₀ : loop_data g b Ω) (hl : locally_finite (
   surrounding_family_in g b (lim_loop l₀ l) U Ω :=
 begin
   have := loop_data_seq_locally_eventually_constant l₀ hl,
-  refine ⟨⟨_, _, _, _⟩, _⟩,
+  refine ⟨⟨_, _, _, _, _⟩, _⟩,
   { intro x, obtain ⟨n, hn⟩ := exists_lim_loop_eq l₀ l hl x,
     simp_rw [hn], exact (loop_data_seq l₀ l n).hγ.base x },
-  { intro x, obtain ⟨n, hn⟩ := exists_lim_loop_eq l₀ l hl x,
-    simp_rw [hn], exact (loop_data_seq l₀ l n).hγ.t₀ x },
+  { intros x s, obtain ⟨n, hn⟩ := exists_lim_loop_eq l₀ l hl x,
+    simp_rw [hn], exact (loop_data_seq l₀ l n).hγ.t₀ x s },
+  { intros x t s, obtain ⟨n, hn⟩ := exists_lim_loop_eq l₀ l hl x,
+    simp_rw [hn], exact (loop_data_seq l₀ l n).hγ.proj_I x t s },
   { intros x hx,
     obtain ⟨n, h1n : (loop_data_seq l₀ l n).γ x = lim_loop l₀ l x,
       h2n : x ∈ (loop_data_seq l₀ l n).K⟩ :=
