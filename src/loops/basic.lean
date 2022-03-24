@@ -81,6 +81,9 @@ instance [inhabited X] : inhabited (loop X) :=
 lemma per (γ : loop X) : ∀ t, γ (t + 1) = γ t :=
 loop.per' γ
 
+lemma periodic (γ : loop X) : function.periodic γ 1 :=
+loop.per' γ
+
 protected lemma one (γ : loop X) : γ 1 = γ 0 :=
 by { convert γ.per 0, rw [zero_add] }
 

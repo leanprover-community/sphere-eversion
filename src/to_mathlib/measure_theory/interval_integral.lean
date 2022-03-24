@@ -1,4 +1,5 @@
 import measure_theory.integral.interval_integral
+import measure_theory.integral.periodic
 
 import to_mathlib.measure_theory.basic
 import to_mathlib.misc
@@ -227,24 +228,6 @@ by simp [← integral_comp_add_right]
 lemma integral_comp_add_left' {f : ℝ → E} (a b : ℝ) :
   ∫ t in a..(a + b), f t = ∫ t in 0..b, f (t + a) :=
 by simp [← integral_comp_add_left, add_comm]
-
-/- TODO : in interval_integral.integral_add_adjacent_intervals, turn the middle point into an
-  explicit parameter so that we don't have to state integrability before rewriting.
-
-  In the next lemma, the assumption on `f` is a bit lazy but we will need it only for continuous
-  functions anyway.
-  -/
-
-lemma interval_integral_periodic {f : ℝ → E} {T : ℝ} (hf_per : periodic f T)
-  (hf : ∀ s t, interval_integrable f volume s t)
-  (a : ℝ) : ∫ t in a..(a + T), f t = ∫ t in 0..T, f t :=
-begin
-  rw [← interval_integral.integral_add_adjacent_intervals (hf a 0) (hf 0 $ a + T),
-      ← interval_integral.integral_add_adjacent_intervals (hf 0 T) (hf T $ a+T),
-      integral_comp_add_right',
-      interval_integral.integral_symm, funext (λ t, hf_per t)],
-  abel
-end
 
 end
 
