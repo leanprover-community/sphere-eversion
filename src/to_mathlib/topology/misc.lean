@@ -100,6 +100,98 @@ lemma mul_mem' {x y : ℝ} (hx : x ∈ I) (hy : y ∈ I) : x * y ∈ I :=
 
 end unit_interval
 
+
+section
+variables {α β : Type*} [linear_order α] {a b x c : α} (h : a ≤ b)
+
+-- @[simp] lemma proj_Icc_eq_min : proj_Icc x = min 1 x ↔ 0 ≤ x :=
+-- by simp_rw [proj_I_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and]
+
+-- lemma min_proj_I (h2 : a ≤ c) : min c (proj_Icc x) = proj_I (min c x) :=
+-- by { cases le_total c x with h3 h3; simp [h2, h3, proj_I_le_iff, proj_I_eq_min.mpr],
+--      simp [proj_I_eq_min.mpr, h2.trans h3, min_left_comm c, h3] }
+end
+
+variables {α β : Type*} [linear_ordered_semiring α] {x c : α}
+
+def proj_I : α → α := λ x, proj_Icc (0 : α) 1 zero_le_one x
+
+lemma proj_I_def : proj_I x = max 0 (min 1 x) := rfl
+
+lemma proj_Icc_eq_proj_I : (proj_Icc (0 : α) 1 zero_le_one x : α) = proj_I x := rfl
+
+lemma proj_I_of_le_zero (hx : x ≤ 0) : proj_I x = 0 :=
+congr_arg coe $ proj_Icc_of_le_left _ hx
+
+@[simp] lemma proj_I_zero : proj_I (0 : α) = 0 :=
+congr_arg coe $ proj_Icc_left _
+
+lemma proj_I_of_one_le (hx : 1 ≤ x) : proj_I x = 1 :=
+congr_arg coe $ proj_Icc_of_right_le _ hx
+
+@[simp] lemma proj_I_one : proj_I (1 : α) = 1 :=
+congr_arg coe $ proj_Icc_right _
+
+@[simp] lemma proj_I_eq_zero [nontrivial α] : proj_I x = 0 ↔ x ≤ 0 :=
+by { rw [← proj_Icc_eq_left (@zero_lt_one α _ _), subtype.ext_iff], refl }
+
+@[simp] lemma proj_I_eq_one : proj_I x = 1 ↔ 1 ≤ x :=
+by { rw [← proj_Icc_eq_right (@zero_lt_one α _ _), subtype.ext_iff], refl }
+
+lemma proj_I_mem_Icc : proj_I x ∈ Icc (0 : α) 1 :=
+(proj_Icc (0 : α) 1 zero_le_one x).prop
+
+lemma proj_I_eq_self : proj_I x = x ↔ x ∈ Icc (0 : α) 1 :=
+⟨λ h, h ▸ proj_I_mem_Icc, λ h, congr_arg coe $ proj_Icc_of_mem _ h⟩
+
+@[simp] lemma proj_I_proj_I : proj_I (proj_I x) = proj_I x :=
+proj_I_eq_self.mpr proj_I_mem_Icc
+
+@[simp] lemma proj_Icc_proj_I :
+  proj_Icc (0 : α) 1 zero_le_one (proj_I x) = proj_Icc 0 1 zero_le_one x :=
+proj_Icc_of_mem _ proj_I_mem_Icc
+
+@[simp] lemma range_proj_I : range (proj_I) = Icc 0 1 :=
+by rw [proj_I, range_comp, range_proj_Icc, image_univ, subtype.range_coe]
+
+lemma monotone_proj_I : monotone (proj_I : α → α) :=
+monotone_proj_Icc _
+
+lemma strict_mono_on_proj_I : strict_mono_on proj_I (Icc (0 : α) 1) :=
+strict_mono_on_proj_Icc _
+
+lemma proj_I_le_max : proj_I x ≤ max 0 x :=
+max_le_max le_rfl $ min_le_right _ _
+
+lemma min_le_proj_I : min 1 x ≤ proj_I x :=
+le_max_right _ _
+
+lemma proj_I_le_iff : proj_I x ≤ c ↔ 0 ≤ c ∧ (1 ≤ c ∨ x ≤ c) :=
+by simp_rw [proj_I_def, max_le_iff, min_le_iff]
+
+@[simp] lemma proj_I_eq_min : proj_I x = min 1 x ↔ 0 ≤ x :=
+by simp_rw [proj_I_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and]
+
+lemma min_proj_I (h2 : 0 ≤ c) : min c (proj_I x) = proj_I (min c x) :=
+by { cases le_total c x with h3 h3; simp [h2, h3, proj_I_le_iff, proj_I_eq_min.mpr],
+     simp [proj_I_eq_min.mpr, h2.trans h3, min_left_comm c, h3] }
+
+lemma continuous_proj_I [topological_space α] [order_topology α] :
+  continuous (proj_I : α → α) :=
+continuous_proj_Icc.subtype_coe
+
+-- about path.truncate
+
+lemma truncate_proj_I_right {X : Type*} [topological_space X] {a b : X}
+  (γ : path a b) (t₀ t₁ : ℝ) (s : I) :
+  γ.truncate t₀ (proj_I t₁) s = γ.truncate t₀ t₁ s :=
+begin
+  simp_rw [path.truncate, path.coe_mk, path.extend, Icc_extend, function.comp],
+  rw [min_proj_I (s.prop.1.trans $ le_max_left _ _), proj_Icc_proj_I],
+end
+
+
+
 end
 
 section

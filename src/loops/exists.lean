@@ -3,7 +3,6 @@ import loops.reparametrization
 import to_mathlib.analysis.cut_off
 import to_mathlib.convolution
 import to_mathlib.topology.hausdorff_distance
-import to_mathlib.topology.constructions
 
 noncomputable theory
 
@@ -38,7 +37,6 @@ lemma exists_loops_aux1 [finite_dimensional ℝ E]
   (hgK : ∀ᶠ x near K, g x = b x)
   (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ (γ : E → ℝ → loop F) (V ∈ 𝓝ˢ K), surrounding_family_in g b γ V Ω ∧
-  (∀ x (t ≤ 0), γ x t = γ x 0) ∧ (∀ x (t ≥ 1), γ x t = γ x 1) ∧
   ∀ (x ∈ V) t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
   have b_in : ∀ x, (x, b x) ∈ Ω :=
@@ -47,7 +45,7 @@ begin
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
 
   -- we could probably get away with something simpler to get γ₀.
-  obtain ⟨γ₀, hγ₀_cont, hγ₀, h2γ₀, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
+  obtain ⟨γ₀, hγ₀_cont, hγ₀, h2γ₀, h3γ₀, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
     surrounding_loop_of_convex_hull is_open_univ is_connected_univ
     (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
   have := λ x, local_loops_open ⟨univ, univ_mem, h2Ω⟩ hg.continuous.continuous_at
@@ -55,40 +53,35 @@ begin
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
     hΩ_op.exists_thickening_image hK (continuous_id.prod_mk hb.continuous) bK_im,
   let range_γ₀ := (λ i : ℝ × ℝ, ∥γ₀ i.1 i.2∥) '' (I ×ˢ I),
-  have h3γ₀ : bdd_above range_γ₀ :=
+  have h4γ₀ : bdd_above range_γ₀ :=
   (is_compact_Icc.prod is_compact_Icc).bdd_above_image (hγ₀_cont.norm.continuous_on),
-  have h0 : 0 < 1 + Sup range_γ₀ := add_pos_of_pos_of_nonneg zero_lt_one (le_cSup_of_le h3γ₀
+  have h0 : 0 < 1 + Sup range_γ₀ := add_pos_of_pos_of_nonneg zero_lt_one (le_cSup_of_le h4γ₀
     (mem_image_of_mem _ $ mk_mem_prod unit_interval.zero_mem unit_interval.zero_mem) $
     norm_nonneg _),
   let ε := ε₀ / (1 + Sup range_γ₀),
   have hε : 0 < ε := div_pos hε₀ h0,
-  have h2ε : ∀ t s : ℝ, ∥ε • γ₀ (proj_Icc (0 : ℝ) 1 zero_le_one t) s∥ < ε₀,
+  have h2ε : ∀ t s : ℝ, ∥ε • γ₀ t s∥ < ε₀,
   { intros t s, simp [norm_smul, mul_comm_div', real.norm_eq_abs, abs_eq_self.mpr, hε.le],
     refine lt_of_lt_of_le _ (mul_one _).le,
     rw [mul_lt_mul_left hε₀, div_lt_one h0],
     refine (zero_add _).symm.le.trans_lt _,
-    refine add_lt_add_of_lt_of_le zero_lt_one (le_cSup h3γ₀ _),
-    rw [← loop.fract_eq],
-    refine mem_image_of_mem _ (mk_mem_prod _ $ unit_interval.fract_mem _),
-    convert subtype.mem _ },
-  let γ₁ : E → ℝ → loop F := -- `γ₁ x` is `γₓ` in notes
-    λ x t, (γ₀ $ proj_Icc (0 : ℝ) 1 zero_le_one t).transform (λ y, b x + ε • y),
+    refine add_lt_add_of_lt_of_le zero_lt_one (le_cSup h4γ₀ _),
+    rw [← loop.fract_eq, ← h3γ₀],
+    refine mem_image_of_mem _ (mk_mem_prod proj_I_mem_Icc $ unit_interval.fract_mem _) },
+  let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
   refine ⟨γ₁, _⟩,
   have hbV : ∀ᶠ x near K, x ∈ V := hV,
   have h1 : ∀ (x ∈ V) (t s : ℝ), closed_ball (x, b x) (dist (γ₁ x t s) (b x)) ⊆ Ω,
   { intros x hx t s,
     simp,
     refine (closed_ball_subset_ball $ h2ε _ _).trans _,
-    refine (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ,
-  },
-  refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _⟩, _⟩, _, _, _⟩,
-  { rintro x ⟨hx, -⟩, simp_rw [hx, γ₁, proj_Icc_right],
+    refine (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ },
+  refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _, _⟩, _⟩, _⟩,
+  { intros x t s, simp [γ₁, h3γ₀] },
+  { rintro x ⟨hx, -⟩, simp_rw [hx, γ₁],
     exact (hγ₀_surr.smul0 hε.ne').vadd0 },
-  { refine hb.continuous.fst'.add (continuous_const.smul $ hγ₀_cont.comp₂ _ continuous_snd.snd),
-    refine continuous_proj_Icc.fst'.snd'.subtype_coe, exact zero_le_one },
+  { refine hb.continuous.fst'.add (continuous_const.smul $ hγ₀_cont.snd') },
   { rintro x ⟨-, hx⟩ t ht s hs, refine h1 x hx t s (by simp) },
-  { intros x t ht, ext s, simp [ht, proj_Icc_of_le_left] },
-  { intros x t ht, ext s, simp [ht.le, proj_Icc_of_right_le] },
   { rintro x ⟨-, hx⟩ t s, exact h1 x hx t s }
 end
 
@@ -99,7 +92,6 @@ lemma exists_loops_aux2 [finite_dimensional ℝ E]
   (hgK : ∀ᶠ x near K, g x = b x)
   (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ (γ : E → ℝ → loop F), surrounding_family_in g b γ univ Ω ∧ 𝒞 ∞ ↿γ ∧
-  (∀ x (t ≤ 0), γ x t = γ x 0) ∧ (∀ x (t ≥ 1), γ x t = γ x 1) ∧
   ∀ᶠ x near K, ∀ t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
   have b_in : ∀ x, (x, b x) ∈ Ω :=
@@ -119,7 +111,7 @@ begin
   -- haveI : is_add_haar_measure (volume : measure E) :=
   --   infer_instance,
 
-  obtain ⟨γ₁, V, hV, hγ₁, h2γ₁, h3γ₁, h4γ₁⟩ := exists_loops_aux1 hK hΩ_op hg hb hgK hconv,
+  obtain ⟨γ₁, V, hV, hγ₁, h2γ₁⟩ := exists_loops_aux1 hK hΩ_op hg hb hgK hconv,
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) ⟨V, hV, hγ₁⟩,
@@ -150,8 +142,8 @@ theorem exists_loops [finite_dimensional ℝ E]
   (hgK : ∀ᶠ x near K, g x = b x)
   (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ :=
-by sorry begin
-  obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁, h3γ₁, h4γ₁⟩ := exists_loops_aux2 hK hΩ_op hg hb hgK hconv,
+begin
+  obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁⟩ := exists_loops_aux2 hK hΩ_op hg hb hgK hconv,
   let γ₂ : smooth_surrounding_family g :=
     ⟨λ x, γ₁ x 1, hsγ₁.comp₃ cont_diff_fst cont_diff_const cont_diff_snd,
       λ x, hγ₁.surrounds x (mem_univ _)⟩,
@@ -160,14 +152,14 @@ by sorry begin
   have hγ₃ : 𝒞 ∞ ↿γ₃ :=
     hsγ₁.comp₃ cont_diff_snd.fst cont_diff_fst (γ₂.reparametrize_smooth.snd'),
   obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ := exists_cont_diff_one_nhds_of_interior hK.is_closed
-    (subset_interior_iff_mem_nhds_set.mpr $ hgK.and h4γ₁),
+    (subset_interior_iff_mem_nhds_set.mpr $ hgK.and h2γ₁),
   simp_rw [← or_iff_not_imp_left] at h0χ,
   let γ : ℝ → E → loop F :=
   λ t x, χ x • loop.const (b x) + (1 - χ x) • γ₃ t x,
   have h1γ : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x,
-  { intros x t ht, ext s, simp [h2γ₁ _ _ ht] },
+  { intros x t ht, ext s, simp [hγ₁.to_surrounding_family.t_le_zero _ _ ht] },
   have h2γ : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x,
-  { intros x t ht, ext s, simp [h3γ₁ _ _ ht] },
+  { intros x t ht, ext s, simp [hγ₁.to_surrounding_family.t_ge_one _ _ ht] },
   refine ⟨γ, h1γ, h2γ, _, _, _, _, _, _⟩,
   { intros x t, simp [hγ₁.t₀] },
   { intros x t, simp [hγ₁.base] },

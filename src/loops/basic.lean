@@ -290,6 +290,16 @@ end
 lemma round_trip_continuous {x y : X} (γ : path x y) : continuous (round_trip γ) :=
 of_path_continuous _
 
+lemma round_trip_eq {x y x' y' : X} {γ : path x y} {γ' : path x' y'} (h : ∀ s, γ s = γ' s) :
+  round_trip γ = round_trip γ' :=
+begin
+  obtain rfl : x = x' := γ.source.symm.trans ((h 0).trans γ'.source),
+  obtain rfl : y = y' := γ.target.symm.trans ((h 1).trans γ'.target),
+  obtain rfl : γ = γ', { ext, apply h },
+  refl,
+end
+
+
 /-- The round trip loop family associated to a path `γ`. For each parameter `t`,
 the loop `round_trip_family γ t` backtracks at `γ t`. -/
 noncomputable
