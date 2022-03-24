@@ -45,19 +45,24 @@ begin
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
 
   -- we could probably get away with something simpler to get γ₀.
-  obtain ⟨γ₀, hγ₀_cont, hγ₀0, h2γ₀0, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
+  obtain ⟨γ₀, hγ₀_cont, hγ₀, h2γ₀, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
     surrounding_loop_of_convex_hull is_open_univ is_connected_univ
     (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
   have := λ x, local_loops_open ⟨univ, univ_mem, h2Ω⟩ hg.continuous.continuous_at
     hb.continuous (hconv x),
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
     hΩ_op.exists_thickening_image hK (continuous_id.prod_mk hb.continuous) bK_im,
-  let ε := ε₀ / ⨆ i : unit_interval × unit_interval, ∥γ₀ i.1 i.2∥,
-  have hε : 0 < ε := sorry,
+  let range_γ₀ := (λ i : ℝ × ℝ, ∥γ₀ i.1 i.2∥) '' (I ×ˢ I),
+  have h3γ₀ : bdd_above range_γ₀ :=
+  (is_compact_Icc.prod is_compact_Icc).bdd_above_image (hγ₀_cont.norm.continuous_on),
+  let ε := ε₀ / (1 + Sup range_γ₀),
+  have hε : 0 < ε := div_pos hε₀ (add_pos_of_pos_of_nonneg zero_lt_one $ le_cSup_of_le h3γ₀
+    (mem_image_of_mem _ $ mk_mem_prod unit_interval.zero_mem unit_interval.zero_mem) $
+    norm_nonneg _),
   let γ₁ : E → ℝ → loop F := λ x t, (γ₀ t).transform (λ y, b x + ε • y), -- `γ₁ x` is `γₓ` in notes
   refine ⟨γ₁, _⟩,
   have hbV : ∀ᶠ x near K, x ∈ V, sorry,
-  refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀0], by simp [γ₁, h2γ₀0], _, _⟩, _⟩, _⟩,
+  refine ⟨_, hgK.and hbV, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _⟩, _⟩, _⟩,
   { rintro x ⟨hx, -⟩, rw [hx],
     exact (hγ₀_surr.smul0 hε.ne').vadd0 },
   { refine hb.continuous.fst'.add (continuous_const.smul hγ₀_cont.snd') },
