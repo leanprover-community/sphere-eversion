@@ -178,13 +178,23 @@ sorry
 
 lemma centering_density_periodic :
   periodic (γ.centering_density x) 1 :=
-sorry
+begin
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
+  have : ∀ y t,
+    p y x * γ.local_centering_density y x (t + 1) = p y x * γ.local_centering_density y x t,
+  { intros,
+    by_cases h : x ∈ γ.local_centering_density_nhd y,
+    { rw γ.local_centering_density_periodic y x h, },
+    { suffices : x ∉ support (p y), { simp [nmem_support.mp this], },
+      exact set.not_mem_subset (subset_tsupport _) (set.not_mem_subset (hp y) h), }, },
+  intros t,
+  simp_rw [hp', this],
+end
 
 lemma centering_density_smooth :
   -- 𝒞 ∞ ↿γ.centering_density :=
   𝒞 ∞ $ uncurry (λ x t, γ.centering_density x t) :=
 begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   rw cont_diff_iff_cont_diff_at,
   rintros ⟨x, t⟩,
   obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
