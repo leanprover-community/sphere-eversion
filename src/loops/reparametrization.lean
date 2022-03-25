@@ -121,7 +121,7 @@ begin
 end
 omit γ
 
-lemma centering_density_eq_exists_pou :
+lemma centering_density_def :
   ∃ (p : smooth_partition_of_unity E 𝓘(ℝ, E) E)
     (hp : p.is_subordinate γ.local_centering_density_nhd),
     ∀ x t, γ.centering_density x t = ∑ᶠ y, (p y x) * γ.local_centering_density y x t :=
@@ -140,7 +140,7 @@ lemma centering_density_eq_exists_pou_nhd_finset_sum :
       (hn₂ : n ⊆ ⋂ y ∈ ys, γ.local_centering_density_nhd y),
       ∀ (z ∈ n) t, γ.centering_density z t = ∑ y in ys, p y z * γ.local_centering_density y z t :=
 begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou,
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   refine ⟨p, hp, λ x, _⟩,
   obtain ⟨n, hn, hn'⟩ := p.locally_finite x,
   classical,
@@ -184,7 +184,7 @@ lemma centering_density_smooth :
   -- 𝒞 ∞ ↿γ.centering_density :=
   𝒞 ∞ $ uncurry (λ x t, γ.centering_density x t) :=
 begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou,
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   rw cont_diff_iff_cont_diff_at,
   rintros ⟨x, t⟩,
   obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
@@ -216,7 +216,7 @@ sorry
 @[simp] lemma centering_density_average :
   ∫ s in 0..1, γ.centering_density x s • γ x s = g x :=
 begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou,
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   have h_int : ∀ y, interval_integrable
     (λ t, p y x • γ.local_centering_density y x t • γ x t) volume 0 1,
   { intros y,
