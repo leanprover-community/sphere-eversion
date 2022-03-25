@@ -221,7 +221,30 @@ end
 
 @[simp] lemma centering_density_integral_eq_one :
   ∫ s in 0..1, γ.centering_density x s = 1 :=
-sorry
+begin
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
+  have h_int : ∀ y, interval_integrable
+    (λ t, p y x • γ.local_centering_density y x t) volume 0 1,
+  { intros y,
+    by_cases hy : x ∈ γ.local_centering_density_nhd y,
+    { refine continuous.interval_integrable (continuous.const_smul _ (p y x)) _ _,
+      exact γ.local_centering_density_continuous _ _ hy, },
+    { suffices : x ∉ support (p y), { simp [nmem_support.mp this], },
+      exact λ contra, hy (hp _ (subset_tsupport _ contra)), }, },
+  have h_supp : (support (λ y t, p y x • γ.local_centering_density y x t)).finite,
+  { refine set.finite.subset (p.locally_finite.point_finite x) (λ y hy, _),
+    simp only [ne.def, mem_set_of_eq, mem_support],
+    intros contra,
+    simpa only [mem_support, contra, zero_smul, ne.def, pi.zero_def] using hy, },
+  simp_rw [hp', ← smul_eq_mul, integral_finsum h_int h_supp, interval_integral.integral_smul],
+  suffices : ∀ y z, z ∈ univ ∩ γ.local_centering_density_nhd y →
+    ∫ t in 0..1, γ.local_centering_density y z t = 1,
+  { let f := λ y z, ∫ t in 0..1, γ.local_centering_density y z t,
+    exact p.finsum_smul_eq hp f 1 this (mem_univ x), },
+  intros y z hyz,
+  simp only [univ_inter] at hyz,
+  exact γ.local_centering_density_integral_eq_one y z hyz,
+end
 
 @[simp] lemma centering_density_average :
   ∫ s in 0..1, γ.centering_density x s • γ x s = g x :=
