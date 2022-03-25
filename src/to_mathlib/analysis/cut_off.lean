@@ -45,3 +45,85 @@ begin
     exact h0.on_set _ (λ hx', hx $ interior_subset hx') },
   rwa [disjoint_iff_subset_compl_left, compl_compl]
 end
+
+
+section zulip
+
+open_locale topological_space filter big_operators
+open set function filter
+
+variables
+  {E : Type*} [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {F : Type*} [normed_group F] [normed_space ℝ F]
+
+
+lemma partition_induction_on
+  {P : E → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
+  {n : with_top ℕ}
+  (hP' : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
+  ∃ f : E → F, cont_diff ℝ n f ∧ ∀ x, P x (f x) :=
+begin
+  choose U hU hU' using hP',
+  choose φ hφ using hU',
+  rcases smooth_bump_covering.exists_is_subordinate 𝓘(ℝ, E) is_closed_univ (λ x h, hU x) with
+    ⟨ι, b, hb⟩,
+  let ρ := b.to_smooth_partition_of_unity,
+  have sum_ρ := λ x, ρ.sum_eq_one (mem_univ x),
+  have nonneg_ρ := ρ.nonneg,
+  have lf : locally_finite (λ (i : ι), support (λ x, ρ i x • φ (b.c i) x)),
+  { refine ρ.locally_finite.subset (λ i x hx hx', hx _),
+    dsimp only,
+    rw [hx', zero_smul] },
+  refine ⟨λ x : E, (∑ᶠ i, (ρ i x) • φ (b.c i) x), cont_diff_iff_cont_diff_at.mpr _, _⟩,
+  all_goals {
+    intros x,
+    rcases lf x with ⟨V, V_in : V ∈ 𝓝 x,
+                      hV : {i : ι | (support (λ x, ρ i x • φ (b.c i) x) ∩ V).nonempty}.finite⟩},
+  { sorry },
+  { have := λ i, (hφ $ b.c i).2,
+    sorry },
+end
+
+lemma convex_set_of_imp_eq (P : Prop) (y : F) : convex ℝ {x : F | P → x = y } :=
+by by_cases hP : P; simp [hP, convex_singleton, convex_univ]
+
+-- lemma exists_smooth_and_eq_on_aux1 {f : E → F} {ε : E → ℝ} (hf : continuous f)
+--   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x) (x₀ : E) :
+--   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
+-- begin
+--   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
+--   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
+-- end
+
+-- lemma exists_smooth_and_eq_on_aux2 {n : with_top ℕ} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+--   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
+--   {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U)
+--   (x₀ : E) :
+--   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
+-- begin
+--   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
+--   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
+-- end
+
+lemma exists_smooth_and_eq_on {n : with_top ℕ} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+  (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
+  {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U) :
+  ∃ f' : E → F, cont_diff ℝ n f' ∧ (∀ x, dist (f' x) (f x) < ε x) ∧ eq_on f' f s :=
+begin
+  have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
+  let P : E → F → Prop := λ x t, dist t (f x) < ε x ∧ (x ∈ s → t = f x),
+  have hP : ∀ x, convex ℝ {y | P x y} :=
+    λ x, (convex_ball (f x) (ε x)).inter (convex_set_of_imp_eq _ _),
+  obtain ⟨f', hf', hPf'⟩ := partition_induction_on hP _,
+  { exact ⟨f', hf', λ x, (hPf' x).1, λ x, (hPf' x).2⟩ },
+  { intros x,
+    obtain ⟨U, hU, hfU⟩ := hfs,
+    by_cases hx : x ∈ s,
+    { refine ⟨U, mem_nhds_set_iff_forall.mp hU x hx, _⟩,
+      refine ⟨f, hfU, λ y _, ⟨h0 y, λ _, rfl⟩⟩ },
+    { have : is_open {y : E | dist (f x) (f y) < ε y} := is_open_lt (continuous_const.dist hf) hε,
+      exact ⟨_, (this.sdiff hs).mem_nhds ⟨h0 x, hx⟩, λ _, f x, cont_diff_on_const,
+        λ y hy, ⟨hy.1, λ h2y, (hy.2 h2y).elim⟩⟩ } },
+end
+
+end zulip

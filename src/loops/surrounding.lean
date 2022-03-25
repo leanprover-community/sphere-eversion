@@ -3,6 +3,7 @@ import tactic.fin_cases
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
 import to_mathlib.topology.constructions
+import to_mathlib.analysis.cut_off -- where-ever `partition_induction_on` will live
 
 import to_mathlib.order.filter.eventually_constant
 
@@ -235,7 +236,7 @@ variables {γ γ' : loop F} {x y : F} {t : ℝ}
 
 /-- A loop `γ` surrounds a point `x` if `x` is surrounded by values of `γ`. -/
 def surrounds (γ : loop F) (x : F) : Prop :=
-  ∃ t w : fin (d + 1) → ℝ, surrounding_pts x (γ ∘ t) w
+∃ t w : fin (d + 1) → ℝ, surrounding_pts x (γ ∘ t) w
 
 lemma surrounds_iff_range_subset_range :
   γ.surrounds x ↔ ∃ (p : fin (d + 1) → F) (w : fin (d + 1) → ℝ),
@@ -297,6 +298,21 @@ begin
   refine exists_imp_exists (λ w, _),
   exact and.imp_right (λ h3, subset.trans h3 h2),
 end
+
+/-- This is only a stepping stone potentially useful for `surrounding_family.surrounds_of_close`,
+  but not needed by itself. -/
+lemma surrounds.eventually_surrounds [finite_dimensional ℝ F] (h : γ.surrounds x) :
+  ∃ ε > 0, ∀ (γ' : loop F) (y : F), (∀ z, dist (γ' z) (γ z) < ε) → dist y x < ε → γ'.surrounds y :=
+begin
+  obtain ⟨t, w, h⟩ := h,
+  obtain ⟨W, hW⟩ := smooth_surrounding_pts h,
+  obtain ⟨ε, hε, h⟩ := metric.eventually_nhds_iff.mp hW,
+  refine ⟨ε, hε, λ γ' y hγ' hy, ⟨t, W y (γ' ∘ t), _⟩⟩,
+  refine (@h ⟨y, γ' ∘ t⟩ _).2,
+  simp_rw [prod.dist_eq, max_lt_iff, dist_pi_lt_iff hε],
+  exact ⟨hy, λ b, hγ' (t b)⟩
+end
+
 
 end loop
 
@@ -424,6 +440,68 @@ end
 protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ U) :
   surrounding_family g b γ V :=
 ⟨h.base, h.t₀, h.proj_I, λ x hx, h.surrounds x (hVU hx), h.cont⟩
+
+lemma _root_.is_compact.continuous_Sup {α β γ : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
+    continuous (λ x, Sup (f x '' K)) :=
+sorry
+
+lemma _root_.is_compact.Sup_lt_of_continuous {α β : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space β] {f : β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
+    Sup (f '' K) < y ↔ ∀ x ∈ K, f x < y :=
+sorry
+
+protected lemma surrounds_of_close [finite_dimensional ℝ E] [finite_dimensional ℝ F]
+  (hg : continuous g)
+  (h : surrounding_family g b γ U) :
+  ∃ ε : E → ℝ, (∀ x, 0 < ε x) ∧ continuous ε ∧ -- continuous_on ε U
+  ∀ (x ∈ U) (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < ε x) → γ'.surrounds (g x) :=
+begin
+  let P : E → ℝ → Prop := λ x t, 0 < t ∧
+    (x ∈ U → ∀ (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < t) → γ'.surrounds (g x)),
+  have hP : ∀ x, convex ℝ {t | P x t} :=
+  begin
+    intro x,
+    rw [convex_iff_ord_connected],
+    constructor,
+    rintro ε₁ hε₁ ε₂ hε₂ ε₃ ⟨hε₁₃, hε₃₂⟩,
+    refine ⟨hε₁.1.trans_le hε₁₃, λ hx γ hγ, hε₂.2 hx γ $ λ z, (hγ z).trans_le hε₃₂⟩
+  end,
+  obtain ⟨ε, hε, hPε⟩ := partition_induction_on hP _,
+  { refine ⟨ε, λ x, (hPε x).1, cont_diff_zero.mp hε, λ x, (hPε x).2⟩ },
+  { intro x,
+    by_cases hx : x ∈ U,
+    { obtain ⟨ε, hε, h2⟩ := (h.surrounds x hx).eventually_surrounds,
+      have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=
+        (metric.is_open_ball.preimage hg).mem_nhds
+        (by simp_rw [mem_preimage, metric.mem_ball, dist_self, hε.lt]),
+      have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x,
+      { refine is_open.mem_nhds _ (λ z, by simp_rw [dist_self, half_pos hε]),
+        have hc : continuous ↿(λ y s, dist (γ y 1 s) (γ x 1 s)) :=
+        (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
+          (h.cont.comp₃ continuous_const continuous_const continuous_snd),
+        have : is_open {y : E | Sup ((λ z, dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2},
+        { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
+        have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
+        λ y, hc.comp₂ continuous_const continuous_id,
+        simp_rw [is_compact_Icc.Sup_lt_of_continuous (hc _)] at this,
+        convert this,
+        ext y,
+        refine ⟨λ h z hz, h z, λ h z, _⟩,
+        rw [← (γ y 1).fract_eq, ← (γ x 1).fract_eq],
+        exact h _ (unit_interval.fract_mem _) },
+      refine ⟨_, inter_mem h4 h3, λ _, ε / 2, cont_diff_on_const,
+        λ y hy, ⟨half_pos hε, λ h2y γ' hγ', h2 _ _ (λ z, _) hy.2⟩⟩,
+      refine (dist_triangle _ _ _).trans_lt
+        ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le) },
+    { sorry -- need the bonus version of partition_induction_on, with global smoothness
+    } }
+end
+
 
 /-- A surrounding family induces a family of paths from `b x` to `b x`.
 Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
