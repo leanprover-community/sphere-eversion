@@ -135,18 +135,20 @@ lemma centering_density_eq_exists_pou_nhd_finset_sum :
     (hp : p.is_subordinate γ.local_centering_density_nhd),
     ∀ (x : E), ∃ (ys : finset E) {n : set E} (hn₁ : n ∈ 𝓝 x)
       (hn₂ : n ⊆ ⋂ y ∈ ys, γ.local_centering_density_nhd y),
-      ∀ (z ∈ n) t, γ.centering_density z t = ∑ y in ys, p y z * γ.local_centering_density y z t :=
+      ∀ (z ∈ n) t, ∑ y in ys, p y z = 1 ∧
+      γ.centering_density z t = ∑ y in ys, p y z * γ.local_centering_density y z t :=
 begin
   obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   refine ⟨p, hp, λ x, _⟩,
   obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := p.exists_finset_nhd hp x (γ.local_centering_density_nhd_is_open),
-  refine ⟨ys, n, hn₁, hn₂, λ z hz t, _⟩,
-  rw hp',
-  suffices : support (λ y, p y z * γ.local_centering_density y z t) ⊆ ys,
-  { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
-  refine subset.trans (λ y hy, _) (hn₃ z hz),
-  rintros (contra : p y z = 0),
-  simpa [contra] using hy,
+  refine ⟨ys, n, hn₁, hn₂, λ z hz t, ⟨_, _⟩⟩,
+  { rw [← finsum_eq_sum_of_support_to_finset_subset' _ (hn₃ z hz), p.sum_eq_one (mem_univ z)], },
+  { rw hp',
+    suffices : support (λ y, p y z * γ.local_centering_density y z t) ⊆ ys,
+    { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
+    refine subset.trans (λ y hy, _) (hn₃ z hz),
+    rintros (contra : p y z = 0),
+    simpa [contra] using hy, },
 end
 
 @[simp] lemma centering_density_pos (t : ℝ) :
