@@ -153,7 +153,16 @@ end
 
 @[simp] lemma centering_density_pos (t : ℝ) :
   0 < γ.centering_density x t :=
-sorry
+begin
+  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
+  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := hp' x,
+  obtain ⟨hx₁, hx₂⟩ := hn₃ x (mem_of_mem_nhds hn₁) t,
+  rw hx₂,
+  have hx₀ : ∀ y ∈ ys, 0 ≤ p y x  := λ y hy, p.nonneg y x,
+  refine (convex_Ioi (0 : ℝ)).sum_mem hx₀ hx₁ (λ y hy, _),
+  simp only [subset_Inter₂_iff] at hn₂,
+  exact γ.local_centering_density_pos y x t (hn₂ y hy (mem_of_mem_nhds hn₁)),
+end
 
 lemma centering_density_periodic :
   periodic (γ.centering_density x) 1 :=
