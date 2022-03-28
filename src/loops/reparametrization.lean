@@ -130,9 +130,6 @@ let h := @smooth_partition_of_unity.exists_is_subordinate _ _ _ _ _ _ _ 𝓘(ℝ
   γ.local_centering_density_nhd_covers in
 ⟨classical.some h, classical.some_spec h, λ x y, rfl⟩
 
-/- TODO Generalise and Mathlibify this: really just basic fact about partitions of unity.
-
-Also, tidy up this utterly gross proof. -/
 lemma centering_density_eq_exists_pou_nhd_finset_sum :
   ∃ (p : smooth_partition_of_unity E 𝓘(ℝ, E) E)
     (hp : p.is_subordinate γ.local_centering_density_nhd),
@@ -142,34 +139,14 @@ lemma centering_density_eq_exists_pou_nhd_finset_sum :
 begin
   obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   refine ⟨p, hp, λ x, _⟩,
-  obtain ⟨n, hn, hn'⟩ := p.locally_finite x,
-  classical,
-  let ys := hn'.to_finset.filter (λ y, x ∈ γ.local_centering_density_nhd y),
-  let ws := hn'.to_finset.filter (λ w, x ∉ γ.local_centering_density_nhd w),
-  refine ⟨ys, n ∩ (⋂ w ∈ ws, (tsupport (p w))ᶜ) ∩ (⋂ y ∈ ys, γ.local_centering_density_nhd y),
-    filter.inter_mem (filter.inter_mem hn _) _, inter_subset_right _ _, λ z hz t, _⟩,
-  { refine (filter.bInter_finset_mem ws).mpr (λ w hw, is_closed.compl_mem_nhds
-      (is_closed_tsupport _) _),
-    simp only [finset.mem_filter, finite.mem_to_finset, mem_set_of_eq] at hw,
-    exact set.not_mem_subset (hp w) hw.2, },
-  { refine (filter.bInter_finset_mem ys).mpr (λ y hy, _),
-    simp only [finset.mem_filter, finite.mem_to_finset, mem_set_of_eq] at hy,
-    exact (γ.local_centering_density_nhd_is_open y).mem_nhds hy.2, },
-  { rw hp',
-    have h_supp : support (λ i, p i z * γ.local_centering_density i z t) ⊆ (hn'.to_finset : set E),
-    { simp only [support_mul, finite.coe_to_finset],
-      refine subset.trans (inter_subset_left _ _) (λ i hi, _),
-      rw inter_assoc at hz,
-      exact ⟨z, mem_inter hi (mem_of_mem_inter_left hz)⟩, },
-    rw [finsum_eq_sum_of_support_to_finset_subset' _ h_supp,
-      ← hn'.to_finset.sum_filter_add_sum_filter_not (λ y, x ∈ γ.local_centering_density_nhd y)],
-    simp only [finset.filter_congr_decidable, add_right_eq_self],
-    refine finset.sum_eq_zero (λ w hw, _),
-    convert zero_mul _,
-    change w ∈ ws at hw,
-    replace hz := mem_of_mem_inter_right (mem_of_mem_inter_left hz),
-    simp only [mem_Inter] at hz,
-    simpa using set.not_mem_subset (subset_tsupport _) (hz w hw), },
+  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := p.exists_finset_nhd hp x (γ.local_centering_density_nhd_is_open),
+  refine ⟨ys, n, hn₁, hn₂, λ z hz t, _⟩,
+  rw hp',
+  suffices : support (λ y, p y z * γ.local_centering_density y z t) ⊆ ys,
+  { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
+  refine subset.trans (λ y hy, _) (hn₃ z hz),
+  rintros (contra : p y z = 0),
+  simpa [contra] using hy,
 end
 
 @[simp] lemma centering_density_pos (t : ℝ) :
