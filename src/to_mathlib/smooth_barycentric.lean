@@ -74,7 +74,7 @@ namespace matrix
 
 variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nondiscrete_normed_field k]
 
-attribute [instance] normed_group normed_space
+attribute [instance] matrix.normed_group matrix.normed_space
 
 -- This should really be deduced from general results about continuous multilinear maps.
 lemma smooth_det (m : with_top ℕ) :

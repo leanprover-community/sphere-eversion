@@ -999,7 +999,7 @@ protected lemma continuous (φ : cont_diff_bump_of_inner a) : continuous φ :=
 cont_diff_zero.mp φ.cont_diff
 
 lemma tsupport_eq (φ : cont_diff_bump_of_inner a) : tsupport φ = closed_ball a φ.R :=
-by simp_rw [tsupport, φ.support_eq, closure_ball _ φ.R_pos]
+by simp_rw [tsupport, φ.support_eq, closure_ball _ φ.R_pos.ne']
 
 protected lemma has_compact_support (φ : cont_diff_bump_of_inner a) :
   has_compact_support φ :=
@@ -1043,7 +1043,7 @@ by simp_rw [cont_diff_bump_of_inner.normed, support_div, φ.support_eq,
 
 lemma tsupport_normed_eq (φ : cont_diff_bump_of_inner a) :
   tsupport (φ.normed μ) = metric.closed_ball a φ.R :=
-by simp_rw [tsupport, φ.support_normed_eq, closure_ball _ φ.R_pos]
+by simp_rw [tsupport, φ.support_normed_eq, closure_ball _ φ.R_pos.ne']
 
 lemma has_compact_support_normed (φ : cont_diff_bump_of_inner a) :
   has_compact_support (φ.normed μ) :=
