@@ -6,20 +6,30 @@ open_locale topological_space filter manifold big_operators
 open set function filter
 
 section
--- TODO: put reasonnable assumptions
-lemma tsupport_smul {𝕜 : Type*} {X : Type*} {F : Type*} [nondiscrete_normed_field 𝕜]
-  [topological_space X] [normed_group F] [normed_space 𝕜 F]
-  (f : X → F) (s : X → 𝕜) : tsupport (λ x, s x • f x) ⊆ tsupport s :=
+
+lemma tsupport_smul_left
+  {α : Type*} [topological_space α] {M : Type*} {R : Type*} [semiring R] [add_comm_monoid M]
+  [module R M] [no_zero_smul_divisors R M] (f : α → R) (g : α → M) :
+  tsupport (f • g) ⊆ tsupport f :=
 begin
   apply closure_mono,
   erw support_smul,
   exact inter_subset_left _ _
 end
 
--- TODO: put reasonnable assumptions
-lemma locally_finite.smul {ι : Type*} {𝕜 : Type*} {X : Type*} {F : Type*} [nondiscrete_normed_field 𝕜]
-  [topological_space X] [normed_group F] [normed_space 𝕜 F]
-  {s : ι → X → 𝕜} (h : locally_finite $ λ i, support $ s i) (f : ι → X → F) :
+lemma tsupport_smul_right
+   {α : Type*} [topological_space α] {M : Type*} {R : Type*} [semiring R] [add_comm_monoid M]
+  [module R M] [no_zero_smul_divisors R M] (f : α → R) (g : α → M) :
+    tsupport (f • g) ⊆ tsupport g :=
+begin
+  apply closure_mono,
+  erw support_smul,
+  exact inter_subset_right _ _
+end
+
+lemma locally_finite.smul_left {ι : Type*} {α : Type*} [topological_space α] {M : Type*}
+  {R : Type*} [semiring R] [add_comm_monoid M] [module R M] [no_zero_smul_divisors R M]
+  {s : ι → α → R} (h : locally_finite $ λ i, support $ s i) (f : ι → α → M) :
   locally_finite (λ i, support $ s i • f i) :=
 begin
   apply h.subset (λ i, _),
@@ -27,13 +37,24 @@ begin
   exact inter_subset_left _ _
 end
 
+lemma locally_finite.smul_right {ι : Type*} {α : Type*} [topological_space α] {M : Type*}
+  {R : Type*} [semiring R] [add_comm_monoid M] [module R M] [no_zero_smul_divisors R M]
+   {f : ι → α → M} (h : locally_finite $ λ i, support $ f i) (s : ι → α → R) :
+  locally_finite (λ i, support $ s i • f i) :=
+begin
+  apply h.subset (λ i, _),
+  rw support_smul,
+  exact inter_subset_right _ _
+end
+
+
 end
 
 section
 variables {ι X : Type*} [topological_space X]
 
 @[to_additive]
-lemma locally_finite_mul_support_iff [has_zero X] {M : Type*} [comm_monoid M] {f : ι → X → M} :
+lemma locally_finite_mul_support_iff {M : Type*} [comm_monoid M] {f : ι → X → M} :
 locally_finite (λi, mul_support $ f i) ↔ locally_finite (λ i, mul_tsupport $ f i) :=
 ⟨locally_finite.closure, λ H, H.subset $ λ i, subset_closure⟩
 
@@ -46,6 +67,16 @@ begin
   refine ⟨hUf.to_finset, mem_of_superset hxU $ λ y hy i hi, _⟩,
   rw [hUf.coe_to_finset],
   exact ⟨y, hi, hy⟩
+end
+
+@[to_additive]
+lemma locally_finite.exists_finset_mul_support_eq {M : Type*} [comm_monoid M] {ρ : ι → X → M}
+  (hρ : locally_finite (λ i, mul_support $ ρ i)) (x₀ : X) :
+  ∃ I : finset ι, mul_support (λ i, ρ i x₀) = I :=
+begin
+  use (hρ.point_finite x₀).to_finset,
+  rw [finite.coe_to_finset],
+  refl
 end
 
 @[to_additive] lemma finprod_eventually_eq_prod {M : Type*} [comm_monoid M]
@@ -70,6 +101,45 @@ begin
   rcases ρ.exists_finset_nhd' x₀ with ⟨I, H⟩,
   use I,
   rwa [nhds_within_univ , ← eventually_and] at H
+end
+
+/-- The support of a partition of unity at a point as a `finset`. -/
+def partition_of_unity.finsupport {s : set X} (ρ : partition_of_unity ι X s) (x₀ : X) : finset ι :=
+(ρ.locally_finite.point_finite x₀).to_finset
+
+@[simp] lemma partition_of_unity.coe_finsupport {s : set X} (ρ : partition_of_unity ι X s) (x₀ : X) :
+(ρ.finsupport x₀ : set ι) = support (λ i, ρ i x₀) :=
+begin
+  dsimp only [partition_of_unity.finsupport],
+  rw finite.coe_to_finset,
+  refl
+end
+
+@[simp] lemma partition_of_unity.mem_finsupport {s : set X} (ρ : partition_of_unity ι X s)
+  (x₀ : X) {i} : i ∈ ρ.finsupport x₀ ↔ i ∈ support (λ i, ρ i x₀) :=
+by simp only [partition_of_unity.finsupport, mem_support, finite.mem_to_finset, mem_set_of_eq]
+
+/-- Try to prove something is in a set by applying `set.mem_univ`. -/
+meta def tactic.mem_univ : tactic unit := `[apply set.mem_univ]
+
+lemma partition_of_unity.sum_finsupport {s : set X} (ρ : partition_of_unity ι X s) {x₀ : X}
+  (hx₀ : x₀ ∈ s . tactic.mem_univ) :
+  ∑ i in ρ.finsupport x₀, ρ i x₀ = 1 :=
+begin
+  have := ρ.sum_eq_one hx₀,
+  rwa finsum_eq_sum_of_support_subset at this,
+  rw [ρ.coe_finsupport],
+  exact subset.rfl
+end
+
+lemma partition_of_unity.sum_finsupport_smul {s : set X} (ρ : partition_of_unity ι X s) {x₀ : X}
+  {M : Type*} [add_comm_group M] [module ℝ M]
+  (φ : ι → X → M) :
+  ∑ i in ρ.finsupport x₀, ρ i x₀ • φ i x₀ = ∑ᶠ i, ρ i x₀ • φ i x₀ :=
+begin
+  apply (finsum_eq_sum_of_support_subset _ _).symm,
+  erw [ρ.coe_finsupport x₀, support_smul],
+  exact inter_subset_left _ _
 end
 
 end
@@ -98,10 +168,25 @@ end
 
 section
 variables
-  {ι : Type*} {E : Type*} [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {ι : Type*} {E : Type*} [normed_group E] [normed_space ℝ E]
   {H : Type*} [topological_space H] {I : model_with_corners ℝ E H} {M : Type*}
-  [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+  [topological_space M] [charted_space H M]
   {s : set M} {F : Type*} [normed_group F] [normed_space ℝ F]
+
+
+lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ)
+  (s : set M) :
+  cont_mdiff_within_at I 𝓘(ℝ, F) n f s x :=
+(cont_mdiff_within_at_const : cont_mdiff_within_at I 𝓘(ℝ, F) n (λ x, (0 : F)) s x)
+  .congr_of_eventually_eq
+  (eventually_nhds_within_of_eventually_nhds $ not_mem_closure_support_iff_eventually_eq.mp hx)
+  (image_eq_zero_of_nmem_tsupport hx)
+
+
+lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ) :
+  cont_mdiff_at I 𝓘(ℝ, F) n f  x :=
+cont_mdiff_within_at_of_not_mem hx n univ
+
 
 lemma cont_mdiff_within_at.smul {f : M → F} {r : M → ℝ}
   {n : with_top ℕ} {s : set M} {x₀ : M}
@@ -157,17 +242,20 @@ lemma cont_mdiff_at_finsum {ι : Type*} {f : ι → M → F} (lf : locally_finit
   cont_mdiff_at I 𝓘(ℝ, F) n (λ x, ∑ᶠ i, f i x) x₀ :=
 cont_mdiff_within_at_finsum lf h
 
+variables [finite_dimensional ℝ E] [smooth_manifold_with_corners I M]
+
 lemma smooth_partition_of_unity.cont_diff_at_sum (ρ : smooth_partition_of_unity ι I M s)
-  {n : with_top ℕ} {x₀ : M} {φ : ι → M → F} (hφ : ∀ i, cont_mdiff_at I 𝓘(ℝ, F) n (φ i) x₀) :
+  {n : with_top ℕ} {x₀ : M} {φ : ι → M → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → cont_mdiff_at I 𝓘(ℝ, F) n (φ i) x₀) :
   cont_mdiff_at I 𝓘(ℝ, F) n (λ x, ∑ᶠ i, ρ i x • φ i x) x₀ :=
 begin
-  refine cont_mdiff_at_finsum (ρ.locally_finite.smul _) _,
-  intro i,
-  apply (hφ i).smul ((ρ i).smooth.of_le le_top).cont_mdiff_at
+  refine cont_mdiff_at_finsum (ρ.locally_finite.smul_left _) (λ i, _),
+  by_cases hx : x₀ ∈ tsupport (ρ i),
+  { exact (hφ i hx).smul ((ρ i).smooth.of_le le_top).cont_mdiff_at },
+  { exact cont_mdiff_at_of_not_mem (compl_subset_compl.mpr (tsupport_smul_left (ρ i) (φ i)) hx) n }
 end
 
 lemma smooth_partition_of_unity.cont_diff_at_sum' {s : set E} (ρ : smooth_partition_of_unity ι 𝓘(ℝ, E) E s)
-  {n : with_top ℕ} {x₀ : E} {φ : ι → E → F} (hφ : ∀ i, cont_diff_at ℝ n (φ i) x₀) :
+  {n : with_top ℕ} {x₀ : E} {φ : ι → E → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → cont_diff_at ℝ n (φ i) x₀) :
   cont_diff_at ℝ n (λ x, ∑ᶠ i, ρ i x • φ i x) x₀ :=
 begin
   rw ← cont_mdiff_at_iff_cont_diff_at,
@@ -178,7 +266,6 @@ begin
 end
 
 end
-
 
 variables
   {E : Type*} [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
@@ -191,13 +278,12 @@ lemma has_fderiv_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscre
 (has_fderiv_at_const (0 : F)  x).congr_of_eventually_eq
   (not_mem_closure_support_iff_eventually_eq.mp hx)
 
+-- Not used here, but should be in mathlib
 lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscrete_normed_field 𝕜]
   [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
   {f : E → F} {x} (hx : x ∉ tsupport f) (n : with_top ℕ) : cont_diff_at 𝕜 n f x :=
 (cont_diff_at_const : cont_diff_at 𝕜 n (λ x, (0 : F)) x).congr_of_eventually_eq
    (not_mem_closure_support_iff_eventually_eq.mp hx)
-
-
 
 lemma partition_induction_on
   {P : E → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
@@ -220,46 +306,15 @@ begin
   { intro i,
     exact subset_closure.trans (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i) },
   refine ⟨λ x : E, (∑ᶠ i, (ρ i x) • φ (b.c i) x), cont_diff_iff_cont_diff_at.mpr _, _⟩,
-  all_goals {
-    intros x₀,
-    rcases ρ.to_partition_of_unity.exists_finset_nhd x₀ with ⟨s, hs⟩,
-    have hsum' : ∀ᶠ x in 𝓝 x₀,
-      ∑ᶠ i, ρ i x • φ (b.c i) x = ∑ i in s, ρ i x • φ (b.c i) x,
-    { apply hs.mono,
-      intros x hx,
-      apply finsum_eq_sum_of_support_subset,
-      apply subset.trans _ hx.2,
-      erw function.support_smul,
-      exact inter_subset_left _ _ },
-    rcases eventually_and.mp hs with ⟨hsum, hsupp⟩,
-    clear hs },
-  { apply cont_diff_at_finsum (ρ.locally_finite.smul _),
-    intro i,
-    by_cases hx₀ : x₀ ∈ U (b.c i),
-    { exact (((ρ i).smooth.cont_diff.cont_diff_at).of_le le_top).smul
-      (((hφ $ b.c i).1 x₀ hx₀).cont_diff_at $ (U_op $ b.c i).mem_nhds hx₀)  },
-    { apply cont_diff_at_of_not_mem,
-      intros Hx₀,
-      have : x₀ ∉ tsupport (ρ i) := λ h, hx₀ (hb.to_smooth_partition_of_unity i h),
-      exact this (tsupport_smul (φ (b.c i)) (ρ i) Hx₀) } },
-  { have : ∀ (i : ι) , ∀ x ∈ support (ρ i), P x (φ (b.c i) x) :=
-      λ i x hx, (hφ $ b.c i).2 _ (subf i hx),
-    have Hfin : finite (support (λ i, ρ i x₀)),
-    { exact ρ.locally_finite.point_finite x₀ },
-    have : ∑ᶠ i, ρ i x₀ • φ (b.c i) x₀ = ∑ i in Hfin.to_finset, ρ i x₀ • φ (b.c i) x₀,
-    { apply finsum_eq_sum_of_support_subset,
-      rw [finite.coe_to_finset],
-      erw function.support_smul,
-      exact inter_subset_left _ _ },
-    rw this,
-    apply (hP x₀).sum_mem (λ i hi, (ρ.nonneg i x₀ : _)),
-    { rw [eq_comm, ← ρ.sum_eq_one (mem_univ x₀)],
-      apply finsum_eq_sum_of_support_subset,
-      rw [finite.coe_to_finset],
-      exact subset_rfl },
-    { rintros i hi,
-      rw [finite.mem_to_finset] at hi,
-      exact (hφ $ b.c i).2 _ (subf _ hi) } },
+  { refine λ x₀, ρ.cont_diff_at_sum' (λ i hx₀, _),
+    have := smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i hx₀,
+    exact ((hφ $ b.c i).1 x₀ this).cont_diff_at ((U_op $ b.c i).mem_nhds this) },
+  { intros x₀,
+    erw ← ρ.to_partition_of_unity.sum_finsupport_smul,
+    apply (hP x₀).sum_mem (λ i hi, (ρ.nonneg i x₀ : _)) ρ.to_partition_of_unity.sum_finsupport,
+    rintros i hi,
+    rw [partition_of_unity.mem_finsupport] at hi,
+    exact (hφ $ b.c i).2 _ (subf _ hi) },
 end
 
 /-
