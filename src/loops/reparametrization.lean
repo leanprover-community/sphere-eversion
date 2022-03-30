@@ -1,5 +1,6 @@
 import notations
 import loops.surrounding
+import loops.delta_mollifier
 import analysis.calculus.specific_functions
 import measure_theory.integral.periodic
 import geometry.manifold.partition_of_unity
@@ -20,6 +21,8 @@ variables [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
 variables [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
 
+local notation `d` := finite_dimensional.finrank ℝ F
+
 structure smooth_surrounding_family (g : E → F) :=
 (to_fun : E → loop F)
 (smooth : 𝒞 ∞ ↿to_fun)
@@ -38,6 +41,28 @@ begin
 end
 
 include γ x
+
+def surrounding_parameters_at : fin (d + 1) → ℝ := classical.some (γ.surrounds x)
+
+def surrounding_points_at : fin (d + 1) → F := γ x ∘ γ.surrounding_parameters_at x
+
+def surrounding_weights_at : fin (d + 1) → ℝ := classical.some (classical.some_spec (γ.surrounds x))
+
+lemma surround_pts_points_weights_at :
+  surrounding_pts (g x) (γ.surrounding_points_at x) (γ.surrounding_weights_at x) :=
+classical.some_spec _
+
+/-- Because `delta_mollifier η` approximates the Dirac delta function,
+`γ.approx_surrounding_points_at x x η` tends to `γ.surrounding_points_at x` as `η` tends to `0`. -/
+def approx_surrounding_points_at (η : ℝ) (i : fin (d + 1)) : F :=
+∫ s in 0..1, delta_mollifier η (γ.surrounding_parameters_at x i) s • γ y s
+
+/-- The key property from which it should be easy to construct `local_centering_density`,
+`local_centering_density_nhd` etc below. -/
+lemma eventually_surrounded_approx_surrounding_points_at : ∀ᶠ (yt : E × ℝ) in 𝓝 (x, 0),
+  surrounded (g yt.1) (range $ γ.approx_surrounding_points_at x yt.1 yt.2) :=
+sorry
+
 /- This is an auxiliary definition to help construct `centering_density` below.
 
 Given `x : E`, it represents a smooth probability distribution on the circle with the property that:
