@@ -2,13 +2,14 @@ import notations
 import loops.basic
 import measure_theory.integral.interval_integral
 
+noncomputable theory
 open set function
 
 /-- A stictly positive, smooth approximation to the Dirac delta function on the circle, centered at
 `t` (regarded as a point of the circle) and converging to the Dirac delta function as `η → 0`.
 
 TODO: When constructing these, we can just do `t = 0` case and then translate. -/
-def delta_mollifier (η : ℝ) (t : ℝ) : ℝ → ℝ := sorry
+def delta_mollifier (η t : ℝ) : ℝ → ℝ := sorry
 
 variables {η : ℝ} (hη : 0 < η) (t : ℝ)
 include hη
@@ -27,12 +28,16 @@ variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional 
 variables [measurable_space F] [borel_space F]
 
 -- TODO Relocate to `src/loops/basic.lean` if this turns out to be useful.
-noncomputable instance : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
+instance : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
+
+-- TODO Come up with a better name for this.
+def loop.mollify (γ : loop F) (η t : ℝ) : F :=
+∫ s in 0..1, delta_mollifier η t s • γ s
 
 /-- I doubt this is exactly the right property and I think we may be able to get away with something
 a good deal weaker. The plan is to try finishing the reparametrization lemma and see what
 convergence property it requires. -/
 lemma delta_mollifier_converges {ε : ℝ} (hε : 0 < ε) :
   ∃ δ > (0 : ℝ), ∀ (γ : loop F) (hf : continuous γ) η, η ∈ Ioo 0 δ →
-  ∥γ t - ∫ s in 0..1, delta_mollifier η t s • γ s∥ < ε * ∥γ∥ :=
+  ∥γ t - γ.mollify η t∥ < ε * ∥γ∥ :=
 sorry
