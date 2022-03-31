@@ -1,5 +1,6 @@
 import notations
 import topology.algebra.floor_ring
+import to_mathlib.topology.misc
 
 noncomputable theory
 
@@ -19,7 +20,33 @@ instance : has_coe_to_fun equivariant_map (λ _, ℝ → ℝ) := ⟨equivariant_
 
 lemma eqv : ∀ t, φ (t + 1) = φ t + 1 := φ.eqv'
 
+lemma sub_one (t : ℝ) : φ (t - 1) = φ t - 1 :=
+by rw [eq_sub_iff_add_eq, ← eqv, sub_add_cancel]
+
+lemma add_coe (t : ℝ) (n : ℤ) : φ (t + n) = φ t + n :=
+begin
+  refine int.induction_on' n 0 _ _ _,
+  { simp_rw [cast_zero, add_zero] },
+  { intros k hk h, simp_rw [cast_add, cast_one, ← add_assoc, eqv, h] },
+  { intros k hk h, simp_rw [cast_sub, cast_one, ← add_sub_assoc, sub_one, h] }
+end
+
+lemma coe_int (n : ℤ) : φ n = φ 0 + n :=
+by { convert add_coe φ 0 n, rw [zero_add] }
+
+protected lemma not_bounded_above (y : ℝ) : ∃ (x : ℝ), y ≤ φ x  :=
+by { use int.ceil (y - φ 0), simp_rw [φ.coe_int, ← sub_le_iff_le_add', le_ceil] }
+
+protected lemma not_bounded_below (y : ℝ) : ∃ (x : ℝ), φ x ≤ y  :=
+by { use int.floor (y - φ 0), simp_rw [φ.coe_int, ← le_sub_iff_add_le', floor_le] }
+
 @[simp] lemma coe_mk (f : ℝ → ℝ) {eqv} : ((⟨f, eqv⟩ : equivariant_map) : ℝ → ℝ) = f := rfl
+
+protected lemma surjective (h : continuous φ) : surjective φ :=
+begin
+  rw [← range_iff_surjective, eq_univ_iff_forall],
+  exact λ y, mem_range_of_exists_le_of_exists_ge h (φ.not_bounded_below y) (φ.not_bounded_above y)
+end
 
 end equivariant_map
 
@@ -57,6 +84,10 @@ end
 
 @[simp] lemma linear_reparam_one : linear_reparam 1 = 1 :=
 linear_reparam_eq_one (by norm_num) le_rfl
+
+@[simp] lemma linear_reparam_proj_I (t : ℝ) :
+  linear_reparam (proj_I t) = proj_I (linear_reparam t) :=
+sorry
 
 lemma continuous_linear_reparam : continuous linear_reparam :=
 sorry

@@ -9,7 +9,6 @@ open set function finite_dimensional prod int topological_space metric filter
 open measure_theory measure_theory.measure
 open_locale topological_space unit_interval
 
-
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           {F : Type*} [normed_group F]
           {g b : E → F} {Ω : set (E × F)} {U K C : set E}
@@ -97,40 +96,27 @@ begin
 end
 
 /- Some remarks about `exists_loops_aux2`:
-  `γ₅`: loop after smoothing
-  `γ₃`: loop before smoothing (defined on all of `E`)
+  `δ`: loop after smoothing
+  `γ`: loop before smoothing (defined on all of `E`)
   Requirements:
-  (1) `γ₅` lands in `Ω`
-  (2) `γ₅` has the correct values: for `s = 0` and `t = 0` it should be `b`
-  (3) `γ₅` should be constant on `t ≤ 0` and for `t ≥ 1`.
-  (4) `γ₅ x 1` surrounds `g x`.
-  (5) Near `K`, the line connecting `b` and `γ₅` lies in `Ω`
+  (1) `δ` lands in `Ω`
+  (2) `δ` has the correct values: for `s = 0` and `t = 0` it should be `b`
+  (3) `δ` should be constant on `t ≤ 0` and for `t ≥ 1`.
+  (4) `δ x 1` surrounds `g x`.
+  (5) Near `K`, the line connecting `b` and `δ` lies in `Ω`
 
   Strategy:
   (a) We need `ε₁` satisfying the following conditions:
-  (a1) [DONE] We need to ensure that an `ε₁ x`-ball around `(x, γ x s t)` lies in `Ω` for some
+  (a1) We need to ensure that an `ε₁ x`-ball around `(x, δ x s t)` lies in `Ω` for some
     continuous `ε₁`.
   (a4) Furthermore, `ε₁` should be small enough so that any function with that
-    distance from `γ` still surrounds `g`. This requires a strengthening of
-    `surrounds.eventually_surrounds` where we can also ensure that `ε₁` is continuous
-    Q: how?
-  (a5): [DONE] `ε₁ x < ε₀`
-  (c) We want a continuous `ε₂` such that if `φ.R < ε₂` we get `dist (γ₅ x) (γ₃ x) < ε₁ x`.
-    Something like
-    `ε₂ x = ε₁ x / supr { 1 + ∥ γ x t s - γ x t' s'∥  | t s t' s' ∈ [0,1]}`. (Q: how exactly?)
-  (d) Choose `φ.R x` as a smooth positive function below `ε₂ x` (using `exists_smooth_pos`) and let
-    `φ.r = φ.R / 2`.
-  (e) Let `γ₅ = γ₃ ⋆ φ`
-  (f) Using (b), (a1) gives (1) and (a4) gives (4) and (a5) gives (5).
-  (g) We ensure (3) by applying a smooth transition on `t`. To help (g) we furthermore
-    make sure `γ` is constant for `t ≤ 1/4` and `t ≥ 3/4`.
-  (h) To ensure (2), *after* the convolution we can use a partition of unity to interpolate between
-    `γ` to `b`. We should be equal to `b` for `s ∈ ℤ` and for `t = 0` and for `x` near `K`
-    (we currently do the last part after reparametrization, but we can just as well do it here).
-    On all these values `γ₃ = b`
-    This interpolation lies in `Ω` by (a1) and (a5), since `γ₃ = b` on `s ∈ ℤ` and `t = 0` and
-      close to `b` by `exists_loops_aux1`.
-    We can ensure that this preserves (4) using (g)
+    distance from `γ` still surrounds `g`, using `surrounding_family.surrounds_of_close`.
+  (a5): `ε₁ x < ε₀` (obtained from `exists_loops_aux1`)
+  (b) Replace `γ x t s` by `γ x (linear_reparam t) (linear_reparam s)`.
+  (e) Let `δ x` be a family of loop that is at most `ε₁` away from `γ` using
+    `exists_smooth_and_eq_on`. Since `γ` is smooth near `s ∈ ℤ` and `t ≤ 0` and `t ≥ 1` we can also
+    ensure that `δ = γ` for those values. This gives (2) and (3).
+  (f) (a1) gives (1), (a4) gives (4) and (a5) gives (5).
 
   Note: to ensure (2) the reparamerization strategy  from the blueprint
   (ensuring that `γ` is locally constant in the `t` and `s` directions)
@@ -148,64 +134,66 @@ lemma exists_loops_aux2 [finite_dimensional ℝ E]
   ∃ (γ : E → ℝ → loop F), surrounding_family_in g b γ univ Ω ∧ 𝒞 ∞ ↿γ ∧
   ∀ᶠ x near K, ∀ t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
-  have b_in : ∀ x, (x, b x) ∈ Ω :=
-    λ x, (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x, hconv x⟩) : _),
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
-  -- have bK_im : (λ x, (x, b x)) '' K ⊆ Ω := image_subset_iff.mpr (λ x _, b_in x),
-  -- have h2Ω_op : ∀ x, is_open (prod.mk x ⁻¹' Ω),
-  --  from λ x, hΩ_op.preimage (continuous.prod.mk x),
-  borelize E,
-  letI K₀ : positive_compacts E,
-  { refine ⟨⟨closed_ball 0 1, is_compact_closed_ball 0 1⟩, _⟩,
-    rw [interior_closed_ball, nonempty_ball], all_goals { norm_num } },
-  letI : measure_space E := ⟨add_haar_measure K₀⟩,
-  -- haveI : is_add_haar_measure (volume : measure E) :=
-  --   infer_instance,
-
   obtain ⟨γ₁, V, hV, ε₀, hε₀, hγ₁, hΩ, h2γ₁⟩ := exists_loops_aux1 hK hΩ_op hg hb hgK hconv,
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) ⟨V, hV, hγ₁⟩,
-  obtain ⟨ε₁, hε₁, hcε₁, hγε₁⟩ := hγ₂.to_sf.surrounds_of_close_univ hg.continuous,
-  let ε₂ : E → ℝ := λ x, min (min ε₀ (ε₁ x)) (⨅ y : I × I, inf_dist (x, γ₂ x y.1 y.2) Ωᶜ), -- todo
+  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x (linear_reparam t)).reparam linear_reparam,
+  have hγ₃ : surrounding_family_in g b γ₃ univ Ω := hγ₂.reparam,
+  obtain ⟨ε₁, hε₁, hcε₁, hγε₁⟩ := hγ₃.to_sf.surrounds_of_close_univ hg.continuous,
+  let f : E → ℝ × ℝ → ℝ := λ x y, inf_dist (x, γ₃ x y.1 y.2) Ωᶜ,
+  have hcont : ∀ x : E, continuous (f x) :=
+    λ x, (continuous_inf_dist_pt _).comp (continuous_const.prod_mk $
+      hγ₃.cont.comp₃ continuous_const continuous_fst continuous_snd),
+  let ε₂ : E → ℝ := λ x, min (min ε₀ (ε₁ x)) (Inf (f x '' (I ×ˢ I))),
   have hcε₂ : continuous ε₂ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
   have hε₂ : ∀ {x}, 0 < ε₂ x, sorry,
-  -- let ε₂ : E → ℝ := λ x, ε₁ x / ⨆ y z : I × I, dist (γ₂ x y.1 y.2) (γ₂ x z.1 z.2), -- todo
-  -- have hε₂ : continuous ε₂ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
-  -- have h2ε₂ : ∀ {x}, 0 < ε₂ x, sorry,
-  -- obtain ⟨ε₃, hε₃, h2ε₃⟩ := exists_smooth_pos is_open_univ hε₁ (λ x _, h2ε₁),
-  -- have h2ε₃ : ∀ {x}, 0 < ε₃ x := λ x, h2ε₃ x (mem_univ _),
-  -- let φ : E × ℝ × ℝ → ℝ :=
-  -- λ x, (⟨⟨ε₃ x.1 / 2, ε₃ x.1, half_pos h2ε₃, half_lt_self h2ε₃⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)) x,
-  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x (linear_reparam t)).reparam linear_reparam,
   let γ₄ := ↿γ₃,
-  have hγ₄ : continuous γ₄,
+  have hγ₄ : continuous γ₄ := hγ₃.cont,
+  let C₁ : set ℝ := Iic (1 / 5 : ℝ) ∪ Ici (4 / 5),
+  have h0C₁ : (0 : ℝ) ∈ C₁ := or.inl (by { rw [mem_Iic], norm_num1 }),
+  have h1C₁ : (1 : ℝ) ∈ C₁ := or.inr (by { rw [mem_Ici], norm_num1 }),
+  have hC₁ : ∀ t, proj_I t = t ∨ t ∈ C₁,
+  { simp_rw [proj_I_eq_self, ← mem_union, ← eq_univ_iff_forall, C₁, ← union_assoc],
+    rw [union_comm (Icc _ _), Iic_union_Icc', Iic_union_Ici'],
+    refine le_trans _ (le_max_right _ _),
+    all_goals { norm_num1 }  },
+  let C : set (E × ℝ × ℝ) := { x : E × ℝ × ℝ | x.2.1 ∈ C₁ ∨ fract x.2.2 ∈ C₁ },
+  have hC : is_closed C := sorry,
+  let U₁ : set ℝ := Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4),
+  let U : set (E × ℝ × ℝ) :=
+  { x : E × ℝ × ℝ | x.2.1 ∈ U₁ ∨ fract x.2.2 ∈ U₁ },
+  have hUC : U ∈ 𝓝ˢ C := sorry,
+  have hγ₄U : smooth_on γ₄ U,
   { sorry },
-  -- let γ₅ : E × ℝ × ℝ → F := γ₄,
-  -- let γ₆ : E → ℝ → loop F := γ₃,
-  -- { refine λ s x, ⟨λ t, γ₅ (x, s, t), λ t, _⟩,
-  --   change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
-  --     ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
-  --   simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
-  -- let γ₇ : E → ℝ → loop F := λ x t, γ₆ x (real.smooth_transition $ 2 * t - 1 / 2),
-  let s : set (E × ℝ × ℝ) := { x : E × ℝ × ℝ | x.2.1 = 0 ∨ fract x.2.2 = 0 },
-    -- (K : set E) ×ˢ ((univ : set ℝ) ×ˢ (univ : set ℝ)) ∪
-    -- (univ : set E) ×ˢ (({0} : set ℝ) ×ˢ (univ : set ℝ)) ∪
-    -- (univ : set E) ×ˢ ((univ : set ℝ) ×ˢ (range (coe : ℤ → ℝ))),
-  have hs : is_closed s := sorry,
-  let U : set ℝ := (Icc (1 / 4 : ℝ) (3 / 4))ᶜ,
-  let t : set (E × ℝ × ℝ) :=
-  { x : E × ℝ × ℝ | x.2.1 ∈ U ∨ fract x.2.2 ∈ U },
-  have hts : t ∈ 𝓝ˢ s := sorry,
-  have hsγ₄ : smooth_on γ₄ t,
+  obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅C⟩ := exists_smooth_and_eq_on hγ₄ hcε₂.fst' (λ x, hε₂) hC ⟨U, hUC, hγ₄U⟩,
+  let γ : E → ℝ → loop F := λ x t, ⟨λ s, γ₅ (x, t, fract s), λ s, by rw [fract_add_one s]⟩,
+  have hγ : 𝒞 ∞ ↿γ,
   { sorry },
-  obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅s⟩ := exists_smooth_and_eq_on hγ₄ hcε₂.fst' (λ x, hε₂) hs ⟨t, hts, hsγ₄⟩,
-  let γ : E → ℝ → loop F := λ x t, ⟨λ s, γ₅ (x, t, fract s), sorry⟩,
-  -- obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ := exists_cont_diff_one_nhds_of_interior hs hst,
-  -- let γ :  ℝ → E → ℝ → F :=
-
-  -- λ t x s, χ (t, x, s) • b x + (1 - χ (t, x, s)) • γ₇ x t s,
-  sorry
+  refine ⟨γ, ⟨⟨_, _, _, _, hγ.continuous⟩, _⟩, hγ, _⟩,
+  { intros x t, simp_rw [γ, loop.coe_mk, fract_zero], rw [hγ₅C], exact hγ₃.base x t,
+    exact or.inr (by { rw [fract_zero], exact h0C₁ }) },
+  { intros x s, simp_rw [γ, loop.coe_mk], rw [hγ₅C], exact hγ₃.t₀ x (fract s),
+    exact or.inl h0C₁ },
+  { intros x t s, simp_rw [γ, loop.coe_mk], rcases hC₁ t with ht|ht, rw [ht],
+    rw [hγ₅C, hγ₅C], exact hγ₃.proj_I x t (fract s), exact or.inl ht,
+    exact or.inl (proj_I_mapsto h0C₁ h1C₁ ht) },
+  { rintro x -, apply hγε₁, intro s, rw [← (γ₃ x 1).fract_eq s],
+    exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans $ min_le_right _ _) },
+  { rintro x - t - s -, rw [← not_mem_compl_iff], refine not_mem_of_dist_lt_inf_dist _,
+    exact (x, γ₃ x t (fract s)),
+    rw [dist_comm, dist_prod_same_left],
+    refine (hγ₅₄ (x, t, fract s)).trans_le ((min_le_right _ _).trans $ cInf_le _ _),
+    refine (is_compact_Icc.prod is_compact_Icc).bdd_below_image (hcont x).continuous_on,
+    rw [← hγ₃.proj_I],
+    apply mem_image_of_mem (f x) (mk_mem_prod proj_I_mem_Icc (unit_interval.fract_mem s)) },
+  { refine eventually_of_mem (filter.inter_mem hV hγ₂₁) (λ x hx t s, _),
+    refine (closed_ball_subset_closed_ball _).trans (hΩ x hx.1),
+    refine (dist_triangle _ _ _).trans
+      (add_le_add ((hγ₅₄ (x, t, fract s)).le.trans $ (min_le_left _ _).trans $ min_le_left _ _) _),
+    simp_rw [γ₄, has_uncurry.uncurry, γ₃, loop.reparam_apply, show γ₂ x = γ₁ x, from hx.2],
+    exact (h2γ₁ x hx.1 _ _).le }
 end
 
 theorem exists_loops [finite_dimensional ℝ E]

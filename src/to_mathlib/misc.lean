@@ -37,10 +37,15 @@ lemma interval_oc_subset_Ioo  {α : Type*} [linear_order α] {a b c d : α}
   (ha : a ∈ Ioo c d) (hb : b ∈ Ioo c d) : Ι a b ⊆ Ioo c d :=
 λ t ⟨ht, ht'⟩, ⟨(lt_min ha.1 hb.1).trans ht, ht'.trans_lt (max_lt ha.2 hb.2)⟩
 
-/- to data.set.finite -/
 namespace set
 variables {α β : Type*}
 
+/- near `set.Iic_union_Ici` -/
+lemma Iic_union_Ici' {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :
+  Iic a ∪ Ici b = univ :=
+eq_univ_of_forall $ λ x, (le_total x a).imp id $ le_trans h
+
+/- to data.set.finite -/
 lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : finite (f ⁻¹' s))
   (hs : s ⊆ range f) : finite s :=
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }

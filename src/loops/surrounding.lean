@@ -299,6 +299,15 @@ begin
   exact and.imp_right (λ h3, subset.trans h3 h2),
 end
 
+protected lemma surrounds.reparam (h : γ.surrounds x) {φ : equivariant_map}
+  (hφ : continuous φ) : (γ.reparam φ).surrounds x :=
+begin
+  refine h.mono _,
+  convert subset_of_eq (range_comp γ φ).symm,
+  rw [(φ.surjective hφ).range_eq, image_univ]
+end
+
+
 /-- This is only a stepping stone potentially useful for `surrounding_family.surrounds_of_close`,
   but not needed by itself. -/
 lemma surrounds.eventually_surrounds [finite_dimensional ℝ F] (h : γ.surrounds x) :
@@ -562,13 +571,30 @@ variables {γ : E → ℝ → loop F}
 lemma to_sf (h : surrounding_family_in g b γ U Ω) : surrounding_family g b γ U :=
 h.to_surrounding_family
 
-lemma val_in (h : surrounding_family_in g b γ U Ω) {x : E} (hx : x ∈ U) {t : ℝ} (ht : t ∈ I)
-  {s : ℝ} : (x, γ x t s) ∈ Ω :=
-by { rw [← loop.fract_eq], exact h.val_in' x hx t ht (fract s) (unit_interval.fract_mem s) }
+lemma val_in (h : surrounding_family_in g b γ U Ω) {x : E} (hx : x ∈ U) {t : ℝ} {s : ℝ} :
+  (x, γ x t s) ∈ Ω :=
+by { rw [← loop.fract_eq, ← h.proj_I],
+  exact h.val_in' x hx (proj_I t) proj_I_mem_Icc (fract s) (unit_interval.fract_mem s) }
 
 protected lemma mono (h : surrounding_family_in g b γ U Ω) {V : set E} (hVU : V ⊆ U) :
   surrounding_family_in g b γ V Ω :=
 ⟨h.to_sf.mono hVU, λ x hx, h.val_in' x (hVU hx)⟩
+
+/-- Continuously reparameterize a `surrounding_family_in` so that it is constant near
+  `s ∈ {0,1}` and `t ∈ {0,1}` -/
+protected lemma reparam (h : surrounding_family_in g b γ U Ω) :
+  surrounding_family_in g b (λ x t, (γ x (linear_reparam t)).reparam linear_reparam) U Ω :=
+begin
+  refine ⟨⟨_, _, _, _, _⟩, _⟩,
+  { intros x t, simp_rw [loop.reparam_apply, linear_reparam_zero, h.base] },
+  { intros x s, simp_rw [loop.reparam_apply, linear_reparam_zero, h.t₀] },
+  { intros x t s, simp_rw [loop.reparam_apply, linear_reparam_proj_I, h.proj_I] },
+  { intros x hx, simp_rw [linear_reparam_one],
+    exact (h.surrounds x hx).reparam continuous_linear_reparam },
+  { exact h.cont.comp₃ continuous_fst continuous_linear_reparam.fst'.snd'
+      continuous_linear_reparam.snd'.snd' },
+  { intros x hx t ht s hs, exact h.val_in hx },
+end
 
 end surrounding_family_in
 
@@ -792,8 +818,8 @@ lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surro
   (τ : ℝ) ⦃x : E⦄ (hx : x ∈ U) {t : ℝ} (ht : t ∈ I) {s : ℝ} :
   (x, sf_homotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
 sf_homotopy_in' h₀.to_sf h₁.to_sf (λ _, τ) (λ _, x) () hx ht
-  (λ i hx t ht s _, h₀.val_in hx ht)
-  (λ i hx t ht s _, h₁.val_in hx ht)
+  (λ i hx t ht s _, h₀.val_in hx)
+  (λ i hx t ht s _, h₁.val_in hx)
 
 lemma surrounding_family_in_sf_homotopy [finite_dimensional ℝ E]
   (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω) (τ : ℝ) :
@@ -884,11 +910,11 @@ begin
     { exact continuous.sf_homotopy ρ.continuous.fst' continuous_fst
         continuous_snd.fst continuous_snd.snd },
     { intros x hx t ht s _, refine sf_homotopy_in' _ _ _ id _ hx ht _ _,
-      { intros x hx t ht s hρx, refine h₀.val_in _ ht, rcases hx with (hx|⟨-,hx⟩)|hx,
+      { intros x hx t ht s hρx, refine h₀.val_in _, rcases hx with (hx|⟨-,hx⟩)|hx,
         { exact (subset_closure.trans hVU₀) hx },
         { exact hx },
         { exact (hρx $ h1ρ $ subset_closure hx).elim } },
-      { intros x hx t ht s hρx, refine h₁.val_in _ ht, rcases hx with (hx|⟨hx,-⟩)|hx,
+      { intros x hx t ht s hρx, refine h₁.val_in _, rcases hx with (hx|⟨hx,-⟩)|hx,
         { exact (hρx $ h0ρ $ subset_closure.trans (subset_union_left _ _) hx).elim },
         { exact hx },
         { exact hVU₁ hx } } } },
