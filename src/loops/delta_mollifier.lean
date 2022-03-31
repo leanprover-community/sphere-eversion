@@ -11,7 +11,7 @@ open set function
 TODO: When constructing these, we can just do `t = 0` case and then translate. -/
 def delta_mollifier (η t : ℝ) : ℝ → ℝ := sorry
 
-variables {η : ℝ} (hη : 0 < η) (t : ℝ)
+variables {η : ℝ} (hη : η ≠ 0) (t : ℝ)
 include hη
 
 lemma delta_mollifier_periodic : periodic (delta_mollifier η t) 1 := sorry
@@ -28,16 +28,16 @@ variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional 
 variables [measurable_space F] [borel_space F]
 
 -- TODO Relocate to `src/loops/basic.lean` if this turns out to be useful.
-instance : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
+instance loop.has_norm : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
 
 -- TODO Come up with a better name for this.
 def loop.mollify (γ : loop F) (η t : ℝ) : F :=
-∫ s in 0..1, delta_mollifier η t s • γ s
+if η = 0 then γ t else ∫ s in 0..1, delta_mollifier η t s • γ s
 
 /-- I doubt this is exactly the right property and I think we may be able to get away with something
 a good deal weaker. The plan is to try finishing the reparametrization lemma and see what
 convergence property it requires. -/
-lemma delta_mollifier_converges {ε : ℝ} (hε : 0 < ε) :
+lemma loop.eval_at_sub_mollify_lt {ε : ℝ} (hε : 0 < ε) :
   ∃ δ > (0 : ℝ), ∀ (γ : loop F) (hf : continuous γ) η, η ∈ Ioo 0 δ →
   ∥γ t - γ.mollify η t∥ < ε * ∥γ∥ :=
 sorry
