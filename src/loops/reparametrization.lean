@@ -22,6 +22,7 @@ variables [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
 
 local notation `d` := finite_dimensional.finrank ℝ F
+local notation `ι` := fin (d + 1)
 
 structure smooth_surrounding_family (g : E → F) :=
 (to_fun : E → loop F)
@@ -42,11 +43,11 @@ end
 
 include γ x
 
-def surrounding_parameters_at : fin (d + 1) → ℝ := classical.some (γ.surrounds x)
+def surrounding_parameters_at : ι → ℝ := classical.some (γ.surrounds x)
 
-def surrounding_points_at : fin (d + 1) → F := γ x ∘ γ.surrounding_parameters_at x
+def surrounding_points_at : ι → F := γ x ∘ γ.surrounding_parameters_at x
 
-def surrounding_weights_at : fin (d + 1) → ℝ := classical.some (classical.some_spec (γ.surrounds x))
+def surrounding_weights_at : ι → ℝ := classical.some (classical.some_spec (γ.surrounds x))
 
 lemma surround_pts_points_weights_at :
   surrounding_pts (g x) (γ.surrounding_points_at x) (γ.surrounding_weights_at x) :=
@@ -54,7 +55,7 @@ classical.some_spec _
 
 /-- Because `delta_mollifier η` approximates the Dirac delta function,
 `γ.approx_surrounding_points_at x x η` tends to `γ.surrounding_points_at x` as `η` tends to `0`. -/
-def approx_surrounding_points_at (η : ℝ) (i : fin (d + 1)) : F :=
+def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
 ∫ s in 0..1, delta_mollifier η (γ.surrounding_parameters_at x i) s • γ y s
 
 /-- The key property from which it should be easy to construct `local_centering_density`,

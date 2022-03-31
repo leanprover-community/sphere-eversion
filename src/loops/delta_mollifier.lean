@@ -23,12 +23,16 @@ lemma delta_mollifier_integral_eq_one : ∫ s in 0..1, delta_mollifier η t s = 
 
 omit hη
 
+variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+variables [measurable_space F] [borel_space F]
+
+-- TODO Relocate to `src/loops/basic.lean` if this turns out to be useful.
+noncomputable instance : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
+
 /-- I doubt this is exactly the right property and I think we may be able to get away with something
 a good deal weaker. The plan is to try finishing the reparametrization lemma and see what
 convergence property it requires. -/
-lemma delta_mollifier_converges {F : Type*}
-  [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F] [measurable_space F] [borel_space F]
-  {ε : ℝ} (hε : 0 < ε) :
+lemma delta_mollifier_converges {ε : ℝ} (hε : 0 < ε) :
   ∃ δ > (0 : ℝ), ∀ (γ : loop F) (hf : continuous γ) η, η ∈ Ioo 0 δ →
-  ∥γ t - ∫ s in 0..1, delta_mollifier η t s • γ s∥ < ε * Sup ((norm ∘ γ) '' (Icc 0 1)) :=
+  ∥γ t - ∫ s in 0..1, delta_mollifier η t s • γ s∥ < ε * ∥γ∥ :=
 sorry
