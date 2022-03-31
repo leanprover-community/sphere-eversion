@@ -4,6 +4,7 @@ import measure_theory.integral.interval_integral
 
 noncomputable theory
 open set function
+open_locale topological_space
 
 /-- A stictly positive, smooth approximation to the Dirac delta function on the circle, centered at
 `t` (regarded as a point of the circle) and converging to the Dirac delta function as `η → 0`.
@@ -38,6 +39,5 @@ if η = 0 then γ t else ∫ s in 0..1, delta_mollifier η t s • γ s
 a good deal weaker. The plan is to try finishing the reparametrization lemma and see what
 convergence property it requires. -/
 lemma loop.eval_at_sub_mollify_lt {ε : ℝ} (hε : 0 < ε) :
-  ∃ δ > (0 : ℝ), ∀ (γ : loop F) (hf : continuous γ) η, η ∈ Ioo 0 δ →
-  ∥γ t - γ.mollify η t∥ < ε * ∥γ∥ :=
+  ∀ᶠ η in 𝓝 0, ∀ (γ : loop F) (hf : continuous γ), ∥γ t - γ.mollify η t∥ < ε * ∥γ∥ :=
 sorry
