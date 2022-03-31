@@ -59,39 +59,50 @@ def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
-lemma eventually_surrounded_approx_surrounding_points_at : ∀ᶠ (yt : E × ℝ) in 𝓝 (x, 0),
-  surrounded (g yt.1) (range $ γ.approx_surrounding_points_at x yt.1 yt.2) :=
+lemma eventually_surrounded_approx_surrounding_points_at : ∀ᶠ (yη : E × ℝ) in 𝓝 (x, 0),
+  surrounded (g yη.1) (range $ γ.approx_surrounding_points_at x yη.1 yη.2) :=
 sorry
 
 /- This is an auxiliary definition to help construct `centering_density` below.
 
 Given `x : E`, it represents a smooth probability distribution on the circle with the property that:
 `∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y`
-for all `y` in a neighbourhood of `x` (see `local_centering_density_average` below).
-
-This property is obtained by combining smoothness of barycentric coordinates with the fact that
-`g x` lies in the _interior_ of a convex hull.
-
-The intuition is that given `y : E` in a neighbourhood of `x`, since `γ y` surrounds `g y`, there
-are real numbers `t₁`, ..., `tₙ` (depending on `y`) such that `g y` is in the interior of the convex
-hull of `γ y tᵢ`, which are an affine basis. One defines `local_centering_density x y`, for `y` in a
-neighbourhood of `x`, so that `local_centering_density x y t` has almost all of its mass
-concentrated at the values `t = tᵢ` with each value getting a share of the total mass proportional
-to the barycentric coordinate of `g y`. -/
-def local_centering_density : E → ℝ → ℝ :=
-sorry
+for all `y` in a neighbourhood of `x` (see `local_centering_density_average` below). -/
+def local_centering_density : E → ℝ → ℝ := λ y,
+begin
+  classical,
+  choose n hn₁ hn₂ using
+    filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
+  choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
+  choose η hη hηv using metric.mem_nhds_iff.mp hv,
+  exact ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y η) i) •
+    (delta_mollifier η (γ.surrounding_parameters_at x i)),
+end
 
 def local_centering_density_nhd : set E :=
-sorry
+begin
+  choose n hn₁ hn₂ using
+    filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
+  choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
+  exact (interior u),
+end
+
 omit x
 
 lemma local_centering_density_nhd_is_open :
   is_open $ γ.local_centering_density_nhd x :=
-sorry
+is_open_interior
 
 lemma local_centering_density_nhd_self_mem :
   x ∈ γ.local_centering_density_nhd x :=
-sorry
+begin
+  -- TODO What is the right way to prove this?
+  rw [local_centering_density_nhd, mem_interior_iff_mem_nhds],
+  let h := filter.eventually_iff_exists_mem.mp
+    (γ.eventually_surrounded_approx_surrounding_points_at x),
+  exact classical.some (classical.some_spec (mem_nhds_prod_iff.mp (classical.some
+    (classical.some_spec h)))),
+end
 
 lemma local_centering_density_nhd_covers :
   univ ⊆ ⋃ x, γ.local_centering_density_nhd x :=
