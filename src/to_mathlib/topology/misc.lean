@@ -180,6 +180,11 @@ lemma continuous_proj_I [topological_space α] [order_topology α] :
   continuous (proj_I : α → α) :=
 continuous_proj_Icc.subtype_coe
 
+lemma proj_I_mapsto {α : Type*} [linear_ordered_semiring α] {s : set α} (h0s : (0 : α) ∈ s)
+  (h1s : (1 : α) ∈ s) : maps_to proj_I s s :=
+λ x hx, (le_total 1 x).elim (λ h2x, by rwa [proj_I_eq_one.mpr h2x]) $
+  λ h2x, (le_total 0 x).elim (λ h3x, by rwa [proj_I_eq_self.mpr ⟨h3x, h2x⟩]) $
+  λ h3x, by rwa [proj_I_eq_zero.mpr h3x]
 -- about path.truncate
 
 lemma truncate_proj_I_right {X : Type*} [topological_space X] {a b : X}
@@ -190,11 +195,6 @@ begin
   rw [min_proj_I (s.prop.1.trans $ le_max_left _ _), proj_Icc_proj_I],
 end
 
-lemma proj_I_mapsto {α : Type*} [linear_ordered_semiring α] {s : set α} (h0s : (0 : α) ∈ s)
-  (h1s : (1 : α) ∈ s) : maps_to proj_I s s :=
-λ x hx, (le_total 1 x).elim (λ h2x, by rwa [proj_I_eq_one.mpr h2x]) $
-  λ h2x, (le_total 0 x).elim (λ h3x, by rwa [proj_I_eq_self.mpr ⟨h3x, h2x⟩]) $
-  λ h3x, by rwa [proj_I_eq_zero.mpr h3x]
 
 
 

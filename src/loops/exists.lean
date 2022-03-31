@@ -246,7 +246,7 @@ begin
     refine this (λ y, (x, y) ∈ Ω) t (λ t ht, _),
     rcases h0χ x with ⟨hx, h2x⟩|hx,
     { refine h2x t (γ₂.reparametrize x s) _, simp [γ, dist_smul_add_one_sub_smul_le (h2χ x)] },
-    { simp [hx], exact hγ₁.val_in (mem_univ _) ht } },
+    { simp [hx], apply hγ₁.val_in (mem_univ _) } },
   { exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((cont_diff_const.sub hχ.fst'.snd').smul hγ₃) },
   { exact h1χ.mono (λ x (hx : χ x = 1), by simp [hx]), }
 end
