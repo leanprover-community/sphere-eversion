@@ -9,7 +9,8 @@ variables {ι X : Type*} {U : ι → set X} {s : set X} [topological_space X]
 variables (p : partition_of_unity ι X s) (hp : p.is_subordinate U)
 include hp
 
-lemma exists_finset_nhd (ho : ∀ i, is_open (U i)) (x : X) :
+-- there was a name clash with `partition`.
+lemma exists_finset_nhd'' (ho : ∀ i, is_open (U i)) (x : X) :
   ∃ (is : finset ι) {n : set X} (hn₁ : n ∈ 𝓝 x) (hn₂ : n ⊆ ⋂ i ∈ is, U i), ∀ (z ∈ n),
     support (λ i, p i z) ⊆ is :=
 begin

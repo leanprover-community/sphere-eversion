@@ -317,16 +317,13 @@ begin
     exact (hφ $ b.c i).2 _ (subf _ hi) },
 end
 
-/-
 -- Extra credit for a version in an open set:
-
-lemma partition_induction_on {s : set E} (hs : is_open s)
+lemma partition_induction_on_of_is_open {s : set E} (hs : is_open s)
   {P : E → F → Prop} (hP : ∀ x ∈ s, convex ℝ {y | P x y})
   {n : with_top ℕ}
   (hP' : ∀ x ∈ s, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
   ∃ f : E → F, cont_diff_on ℝ n f s ∧ ∀ x ∈ s, P x (f x) :=
--/
-
+sorry
 
 example {f : E → ℝ} (h : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ ε : ℝ, ∀ x' ∈ U, 0 < ε ∧ ε ≤ f x') :
   ∃ f' : E → ℝ, cont_diff ℝ ⊤ f' ∧ ∀ x, (0 < f' x ∧ f' x ≤ f x) :=
@@ -337,4 +334,46 @@ begin
   intros x,
   rcases h x with ⟨U, U_in, ε, hU⟩,
   exact ⟨U, U_in, λ x, ε, cont_diff_on_const, hU⟩
+end
+
+lemma convex_set_of_imp_eq (P : Prop) (y : F) : convex ℝ {x : F | P → x = y } :=
+by by_cases hP : P; simp [hP, convex_singleton, convex_univ]
+
+-- lemma exists_smooth_and_eq_on_aux1 {f : E → F} {ε : E → ℝ} (hf : continuous f)
+--   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x) (x₀ : E) :
+--   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
+-- begin
+--   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
+--   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
+-- end
+
+-- lemma exists_smooth_and_eq_on_aux2 {n : with_top ℕ} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+--   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
+--   {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U)
+--   (x₀ : E) :
+--   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
+-- begin
+--   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
+--   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
+-- end
+
+lemma exists_smooth_and_eq_on {n : with_top ℕ} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+  (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
+  {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U) :
+  ∃ f' : E → F, cont_diff ℝ n f' ∧ (∀ x, dist (f' x) (f x) < ε x) ∧ eq_on f' f s :=
+begin
+  have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
+  let P : E → F → Prop := λ x t, dist t (f x) < ε x ∧ (x ∈ s → t = f x),
+  have hP : ∀ x, convex ℝ {y | P x y} :=
+    λ x, (convex_ball (f x) (ε x)).inter (convex_set_of_imp_eq _ _),
+  obtain ⟨f', hf', hPf'⟩ := partition_induction_on hP _,
+  { exact ⟨f', hf', λ x, (hPf' x).1, λ x, (hPf' x).2⟩ },
+  { intros x,
+    obtain ⟨U, hU, hfU⟩ := hfs,
+    by_cases hx : x ∈ s,
+    { refine ⟨U, mem_nhds_set_iff_forall.mp hU x hx, _⟩,
+      refine ⟨f, hfU, λ y _, ⟨h0 y, λ _, rfl⟩⟩ },
+    { have : is_open {y : E | dist (f x) (f y) < ε y} := is_open_lt (continuous_const.dist hf) hε,
+      exact ⟨_, (this.sdiff hs).mem_nhds ⟨h0 x, hx⟩, λ _, f x, cont_diff_on_const,
+        λ y hy, ⟨hy.1, λ h2y, (hy.2 h2y).elim⟩⟩ } },
 end
