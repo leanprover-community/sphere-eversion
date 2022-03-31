@@ -53,10 +53,9 @@ lemma surround_pts_points_weights_at :
   surrounding_pts (g x) (γ.surrounding_points_at x) (γ.surrounding_weights_at x) :=
 classical.some_spec _
 
-/-- Because `delta_mollifier η` approximates the Dirac delta function,
-`γ.approx_surrounding_points_at x x η` tends to `γ.surrounding_points_at x` as `η` tends to `0`. -/
+/-- Note that we are mollifying the loop `γ y` at the surrounding parameters for `γ x`. -/
 def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
-∫ s in 0..1, delta_mollifier η (γ.surrounding_parameters_at x i) s • γ y s
+(γ y).mollify η (γ.surrounding_parameters_at x i)
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
