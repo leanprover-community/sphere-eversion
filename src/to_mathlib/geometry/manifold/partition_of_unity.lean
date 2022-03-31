@@ -16,7 +16,7 @@ variables (f : ι → M → F) (g : M → F)
 lemma exists_finset_nhd (x : M) (ho : ∀ i, is_open (U i)) :
   ∃ (is : finset ι) {n : set M} (hn₁ : n ∈ 𝓝 x) (hn₂ : n ⊆ ⋂ i ∈ is, U i), ∀ (z ∈ n),
     support (λ i, p i z) ⊆ is :=
-p.to_partition_of_unity.exists_finset_nhd hp ho x
+p.to_partition_of_unity.exists_finset_nhd'' hp ho x
 
 lemma finsum_smul_eq [add_comm_group F] [module ℝ F]
   (hfg : ∀ i x, x ∈ s ∩ U i → f i x = g x) {x : M} (hx : x ∈ s) :
