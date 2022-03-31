@@ -154,10 +154,7 @@ begin
   -- have bK_im : (λ x, (x, b x)) '' K ⊆ Ω := image_subset_iff.mpr (λ x _, b_in x),
   -- have h2Ω_op : ∀ x, is_open (prod.mk x ⁻¹' Ω),
   --  from λ x, hΩ_op.preimage (continuous.prod.mk x),
-
-  -- choose a volume on E
-  letI : measurable_space E := borel E,
-  haveI : borel_space E := ⟨rfl⟩, -- we can use `borelize` once it is in mathlib
+  borelize E,
   letI K₀ : positive_compacts E,
   { refine ⟨⟨closed_ball 0 1, is_compact_closed_ball 0 1⟩, _⟩,
     rw [interior_closed_ball, nonempty_ball], all_goals { norm_num } },
@@ -169,38 +166,45 @@ begin
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) ⟨V, hV, hγ₁⟩,
-  let γ₃ : E → ℝ → loop F := γ₂, --λ x t, (γ₂ x (linear_reparam t)).reparam linear_reparam,
-  -- ε₁ is the maximum variation we allow `dist γ
-  let ε₁ : E → ℝ := λ x, min ε₀ (⨅ y : I × I, inf_dist (x, γ₂ x y.1 y.2) Ωᶜ), -- todo
-  have hε₁ : continuous ε₁ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
-  have h2ε₁ : ∀ {x}, 0 < ε₁ x, sorry,
-  let ε₂ : E → ℝ := λ x, ε₁ x / ⨆ y z : I × I, dist (γ₂ x y.1 y.2) (γ₂ x z.1 z.2), -- todo
-  have hε₂ : continuous ε₂ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
-  have h2ε₂ : ∀ {x}, 0 < ε₂ x, sorry,
-  obtain ⟨ε₃, hε₃, h2ε₃⟩ := exists_smooth_pos is_open_univ hε₁ (λ x _, h2ε₁),
-  have h2ε₃ : ∀ {x}, 0 < ε₃ x := λ x, h2ε₃ x (mem_univ _),
-  let φ : E × ℝ × ℝ → ℝ :=
-  λ x, (⟨⟨ε₃ x.1 / 2, ε₃ x.1, half_pos h2ε₃, half_lt_self h2ε₃⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)) x,
+  obtain ⟨ε₁, hε₁, hcε₁, hγε₁⟩ := hγ₂.to_sf.surrounds_of_close_univ hg.continuous,
+  let ε₂ : E → ℝ := λ x, min (min ε₀ (ε₁ x)) (⨅ y : I × I, inf_dist (x, γ₂ x y.1 y.2) Ωᶜ), -- todo
+  have hcε₂ : continuous ε₂ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
+  have hε₂ : ∀ {x}, 0 < ε₂ x, sorry,
+  -- let ε₂ : E → ℝ := λ x, ε₁ x / ⨆ y z : I × I, dist (γ₂ x y.1 y.2) (γ₂ x z.1 z.2), -- todo
+  -- have hε₂ : continuous ε₂ := sorry, -- (continuous_inf_dist_pt _).comp (continuous_id.prod_mk hg.continuous),
+  -- have h2ε₂ : ∀ {x}, 0 < ε₂ x, sorry,
+  -- obtain ⟨ε₃, hε₃, h2ε₃⟩ := exists_smooth_pos is_open_univ hε₁ (λ x _, h2ε₁),
+  -- have h2ε₃ : ∀ {x}, 0 < ε₃ x := λ x, h2ε₃ x (mem_univ _),
+  -- let φ : E × ℝ × ℝ → ℝ :=
+  -- λ x, (⟨⟨ε₃ x.1 / 2, ε₃ x.1, half_pos h2ε₃, half_lt_self h2ε₃⟩⟩ : cont_diff_bump (0 : E × ℝ × ℝ)) x,
+  let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x (linear_reparam t)).reparam linear_reparam,
   let γ₄ := ↿γ₃,
-  let γ₅ : E × ℝ × ℝ → F := γ₄,
-  let γ₆ : ℝ → E → loop F,
-  { refine λ s x, ⟨λ t, γ₅ (x, s, t), λ t, _⟩,
-    change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
-      ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
-    simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
-  let γ₇ :  ℝ → E → loop F := λ t x, γ₆ (real.smooth_transition $ 2 * t - 1 / 2) x,
-  let s : set (ℝ × E × ℝ) := { x : ℝ × E × ℝ | x.1 = 0 ∨ x.2.1 ∈ K ∨ fract x.2.2 = 0 },
-    -- ({0} : set ℝ) ×ˢ ((univ : set E) ×ˢ (univ : set ℝ)) ∪
-    -- (univ : set ℝ) ×ˢ ((univ : set E) ×ˢ (range (coe : ℤ → ℝ))) ∪
-    -- (univ : set ℝ) ×ˢ (K ×ˢ (univ : set ℝ)),
+  have hγ₄ : continuous γ₄,
+  { sorry },
+  -- let γ₅ : E × ℝ × ℝ → F := γ₄,
+  -- let γ₆ : E → ℝ → loop F := γ₃,
+  -- { refine λ s x, ⟨λ t, γ₅ (x, s, t), λ t, _⟩,
+  --   change ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t + 1 - u.2.2) =
+  --     ∫ u, φ u • γ₃ (x - u.1) (s - u.2.1) (t - u.2.2),
+  --   simp_rw [← sub_add_eq_add_sub, (γ₃ _ _).per] },
+  -- let γ₇ : E → ℝ → loop F := λ x t, γ₆ x (real.smooth_transition $ 2 * t - 1 / 2),
+  let s : set (E × ℝ × ℝ) := { x : E × ℝ × ℝ | x.2.1 = 0 ∨ fract x.2.2 = 0 },
+    -- (K : set E) ×ˢ ((univ : set ℝ) ×ˢ (univ : set ℝ)) ∪
+    -- (univ : set E) ×ˢ (({0} : set ℝ) ×ˢ (univ : set ℝ)) ∪
+    -- (univ : set E) ×ˢ ((univ : set ℝ) ×ˢ (range (coe : ℤ → ℝ))),
   have hs : is_closed s := sorry,
   let U : set ℝ := (Icc (1 / 4 : ℝ) (3 / 4))ᶜ,
-  let t : set (ℝ × E × ℝ) :=
-  { x : ℝ × E × ℝ | x.1 ∈ U ∨ x.2.1 ∈ V ∩ { x | g x = b x} ∨ fract x.2.2 ∈ U },
-  have hst : s ⊆ interior t := sorry,
-  obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ := exists_cont_diff_one_nhds_of_interior hs hst,
-  let γ :  ℝ → E → ℝ → F :=
-  λ t x s, χ (t, x, s) • b x + (1 - χ (t, x, s)) • γ₇ t x s,
+  let t : set (E × ℝ × ℝ) :=
+  { x : E × ℝ × ℝ | x.2.1 ∈ U ∨ fract x.2.2 ∈ U },
+  have hts : t ∈ 𝓝ˢ s := sorry,
+  have hsγ₄ : smooth_on γ₄ t,
+  { sorry },
+  obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅s⟩ := exists_smooth_and_eq_on hγ₄ hcε₂.fst' (λ x, hε₂) hs ⟨t, hts, hsγ₄⟩,
+  let γ : E → ℝ → loop F := λ x t, ⟨λ s, γ₅ (x, t, fract s), sorry⟩,
+  -- obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ := exists_cont_diff_one_nhds_of_interior hs hst,
+  -- let γ :  ℝ → E → ℝ → F :=
+
+  -- λ t x s, χ (t, x, s) • b x + (1 - χ (t, x, s)) • γ₇ x t s,
   sorry
 end
 

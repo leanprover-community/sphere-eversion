@@ -3,7 +3,7 @@ import tactic.fin_cases
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
 import to_mathlib.topology.constructions
-import to_mathlib.analysis.cut_off -- where-ever `partition_induction_on` will live
+import to_mathlib.partition
 
 import to_mathlib.order.filter.eventually_constant
 
@@ -457,51 +457,59 @@ sorry
 
 protected lemma surrounds_of_close [finite_dimensional ℝ E] [finite_dimensional ℝ F]
   (hg : continuous g)
+  (hU : is_open U)
   (h : surrounding_family g b γ U) :
-  ∃ ε : E → ℝ, (∀ x, 0 < ε x) ∧ continuous ε ∧ -- continuous_on ε U
+  ∃ ε : E → ℝ, (∀ x ∈ U, 0 < ε x) ∧ continuous_on ε U ∧
   ∀ (x ∈ U) (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < ε x) → γ'.surrounds (g x) :=
 begin
   let P : E → ℝ → Prop := λ x t, 0 < t ∧
-    (x ∈ U → ∀ (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < t) → γ'.surrounds (g x)),
-  have hP : ∀ x, convex ℝ {t | P x t} :=
+    ∀ (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < t) → γ'.surrounds (g x),
+  have hP : ∀ x ∈ U, convex ℝ {t | P x t} :=
   begin
-    intro x,
+    intros x hx,
     rw [convex_iff_ord_connected],
     constructor,
     rintro ε₁ hε₁ ε₂ hε₂ ε₃ ⟨hε₁₃, hε₃₂⟩,
-    refine ⟨hε₁.1.trans_le hε₁₃, λ hx γ hγ, hε₂.2 hx γ $ λ z, (hγ z).trans_le hε₃₂⟩
+    refine ⟨hε₁.1.trans_le hε₁₃, λ γ hγ, hε₂.2 γ $ λ z, (hγ z).trans_le hε₃₂⟩
   end,
-  obtain ⟨ε, hε, hPε⟩ := partition_induction_on hP _,
-  { refine ⟨ε, λ x, (hPε x).1, cont_diff_zero.mp hε, λ x, (hPε x).2⟩ },
-  { intro x,
-    by_cases hx : x ∈ U,
-    { obtain ⟨ε, hε, h2⟩ := (h.surrounds x hx).eventually_surrounds,
-      have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=
-        (metric.is_open_ball.preimage hg).mem_nhds
-        (by simp_rw [mem_preimage, metric.mem_ball, dist_self, hε.lt]),
-      have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x,
-      { refine is_open.mem_nhds _ (λ z, by simp_rw [dist_self, half_pos hε]),
-        have hc : continuous ↿(λ y s, dist (γ y 1 s) (γ x 1 s)) :=
-        (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
-          (h.cont.comp₃ continuous_const continuous_const continuous_snd),
-        have : is_open {y : E | Sup ((λ z, dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2},
-        { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
-        have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
-        λ y, hc.comp₂ continuous_const continuous_id,
-        simp_rw [is_compact_Icc.Sup_lt_of_continuous (hc _)] at this,
-        convert this,
-        ext y,
-        refine ⟨λ h z hz, h z, λ h z, _⟩,
-        rw [← (γ y 1).fract_eq, ← (γ x 1).fract_eq],
-        exact h _ (unit_interval.fract_mem _) },
-      refine ⟨_, inter_mem h4 h3, λ _, ε / 2, cont_diff_on_const,
-        λ y hy, ⟨half_pos hε, λ h2y γ' hγ', h2 _ _ (λ z, _) hy.2⟩⟩,
-      refine (dist_triangle _ _ _).trans_lt
-        ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le) },
-    { sorry -- need the bonus version of partition_induction_on, with global smoothness
-    } }
+  obtain ⟨ε, hε, hPε⟩ := partition_induction_on_of_is_open hU hP _,
+  { refine ⟨ε, λ x hx, (hPε x hx).1, cont_diff_on_zero.mp hε, λ x hx, (hPε x hx).2⟩ },
+  intros x hx,
+  obtain ⟨ε, hε, h2⟩ := (h.surrounds x hx).eventually_surrounds,
+  have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=
+    (metric.is_open_ball.preimage hg).mem_nhds
+    (by simp_rw [mem_preimage, metric.mem_ball, dist_self, hε.lt]),
+  have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x,
+  { refine is_open.mem_nhds _ (λ z, by simp_rw [dist_self, half_pos hε]),
+    have hc : continuous ↿(λ y s, dist (γ y 1 s) (γ x 1 s)) :=
+    (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
+      (h.cont.comp₃ continuous_const continuous_const continuous_snd),
+    have : is_open {y : E | Sup ((λ z, dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2},
+    { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
+    have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
+    λ y, hc.comp₂ continuous_const continuous_id,
+    simp_rw [is_compact_Icc.Sup_lt_of_continuous (hc _)] at this,
+    convert this,
+    ext y,
+    refine ⟨λ h z hz, h z, λ h z, _⟩,
+    rw [← (γ y 1).fract_eq, ← (γ x 1).fract_eq],
+    exact h _ (unit_interval.fract_mem _) },
+  refine ⟨_, inter_mem h4 h3, λ _, ε / 2, cont_diff_on_const,
+    λ y hy, ⟨half_pos hε, λ γ' hγ', h2 _ _ (λ z, _) hy.2⟩⟩,
+  refine (dist_triangle _ _ _).trans_lt
+    ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le)
 end
 
+protected lemma surrounds_of_close_univ [finite_dimensional ℝ E] [finite_dimensional ℝ F]
+  (hg : continuous g)
+  (h : surrounding_family g b γ univ) :
+  ∃ ε : E → ℝ, (∀ x, 0 < ε x) ∧ continuous ε ∧
+  ∀ x (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < ε x) → γ'.surrounds (g x) :=
+begin
+  obtain ⟨ε, hε, hcε, hγε⟩ := h.surrounds_of_close hg is_open_univ,
+  exact ⟨ε, λ x, hε x (mem_univ _), continuous_iff_continuous_on_univ.mpr hcε,
+    λ x, hγε x (mem_univ _)⟩
+end
 
 /-- A surrounding family induces a family of paths from `b x` to `b x`.
 Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
