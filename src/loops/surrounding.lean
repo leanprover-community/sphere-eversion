@@ -481,7 +481,7 @@ begin
     rintro ε₁ hε₁ ε₂ hε₂ ε₃ ⟨hε₁₃, hε₃₂⟩,
     refine ⟨hε₁.1.trans_le hε₁₃, λ γ hγ, hε₂.2 γ $ λ z, (hγ z).trans_le hε₃₂⟩
   end,
-  obtain ⟨ε, hε, hPε⟩ := partition_induction_on_of_is_open hU hP _,
+  obtain ⟨ε, hε, hPε⟩ := exists_cont_diff_of_convex_of_is_open hU hP _,
   { refine ⟨ε, λ x hx, (hPε x hx).1, cont_diff_on_zero.mp hε, λ x hx, (hPε x hx).2⟩ },
   intros x hx,
   obtain ⟨ε, hε, h2⟩ := (h.surrounds x hx).eventually_surrounds,
