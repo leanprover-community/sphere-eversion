@@ -285,13 +285,22 @@ lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscret
 (cont_diff_at_const : cont_diff_at 𝕜 n (λ x, (0 : F)) x).congr_of_eventually_eq
    (not_mem_closure_support_iff_eventually_eq.mp hx)
 
-lemma partition_induction_on
-  {P : E → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
+universes uH uM
+
+variables {H : Type uH} [topological_space H] (I : model_with_corners ℝ E H)
+  {M : Type uM} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+  [sigma_compact_space M] [t2_space M]
+
+local notation `𝓒` := cont_mdiff I 𝓘(ℝ, F)
+local notation `𝓒_on` := cont_mdiff_on I 𝓘(ℝ, F)
+
+lemma exists_cont_mdiff_of_convex
+  {P : M → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
   {n : with_top ℕ}
-  (hP' : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
-  ∃ f : E → F, cont_diff ℝ n f ∧ ∀ x, P x (f x) :=
+  (hP' : ∀ x : M, ∃ U ∈ 𝓝 x, ∃ f : M → F, 𝓒_on n f U ∧ ∀ x ∈ U, P x (f x)) :
+  ∃ f : M → F, 𝓒 n f ∧ ∀ x, P x (f x) :=
 begin
-  replace hP' : ∀ x : E, ∃ U ∈ 𝓝 x, is_open U ∧ ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x),
+  replace hP' : ∀ x : M, ∃ U ∈ 𝓝 x, is_open U ∧ ∃ f : M → F, 𝓒_on n f U ∧ ∀ x ∈ U, P x (f x),
   { intros x,
     rcases ((nhds_basis_opens x).exists_iff _).mp (hP' x) with ⟨U, ⟨x_in, U_op⟩, f, hf, hfP⟩,
     exact ⟨U, U_op.mem_nhds x_in, U_op, f, hf, hfP⟩,
@@ -299,16 +308,16 @@ begin
     exact ⟨f, hf.mono hst, λ x hx, hf' x (hst hx)⟩ },
   choose U hU U_op hU' using hP',
   choose φ hφ using hU',
-  rcases smooth_bump_covering.exists_is_subordinate 𝓘(ℝ, E) is_closed_univ (λ x h, hU x) with
+  rcases smooth_bump_covering.exists_is_subordinate I is_closed_univ (λ x h, hU x) with
     ⟨ι, b, hb⟩,
   let ρ := b.to_smooth_partition_of_unity,
   have subf : ∀ i, support (ρ i) ⊆ U (b.c i),
   { intro i,
     exact subset_closure.trans (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i) },
-  refine ⟨λ x : E, (∑ᶠ i, (ρ i x) • φ (b.c i) x), cont_diff_iff_cont_diff_at.mpr _, _⟩,
-  { refine λ x₀, ρ.cont_diff_at_sum' (λ i hx₀, _),
+  refine ⟨λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x), _, _⟩,
+  { refine λ x₀, ρ.cont_diff_at_sum (λ i hx₀, _),
     have := smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i hx₀,
-    exact ((hφ $ b.c i).1 x₀ this).cont_diff_at ((U_op $ b.c i).mem_nhds this) },
+    exact ((hφ $ b.c i).1 x₀ this).cont_mdiff_at ((U_op $ b.c i).mem_nhds this) },
   { intros x₀,
     erw ← ρ.to_partition_of_unity.sum_finsupport_smul,
     apply (hP x₀).sum_mem (λ i hi, (ρ.nonneg i x₀ : _)) ρ.to_partition_of_unity.sum_finsupport,
@@ -317,20 +326,71 @@ begin
     exact (hφ $ b.c i).2 _ (subf _ hi) },
 end
 
--- Extra credit for a version in an open set:
-lemma partition_induction_on_of_is_open {s : set E} (hs : is_open s)
+
+lemma exists_cont_diff_of_convex
+  {P : E → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
+  {n : with_top ℕ}
+  (hP' : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
+  ∃ f : E → F, cont_diff ℝ n f ∧ ∀ x, P x (f x) :=
+begin
+  simp_rw ← cont_mdiff_iff_cont_diff,
+  simp_rw ← cont_mdiff_on_iff_cont_diff_on  at ⊢ hP',
+  exact exists_cont_mdiff_of_convex 𝓘(ℝ, E) hP hP'
+end
+
+open topological_space
+
+lemma cont_mdiff_iff_cont_diff_on {s : opens E}  {f : E → F} {n : with_top ℕ} :
+  cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) ↔ cont_diff_on ℝ n f s :=
+sorry
+
+lemma cont_mdiff_iff_cont_diff_on' {s : opens E} [decidable_pred (λ x, x ∈ s)]
+  {f : s → F} {n : with_top ℕ} :
+  cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n f ↔ cont_diff_on ℝ n (λ x : E, if hx : x ∈ s then f ⟨x, hx⟩ else 0) s :=
+sorry
+
+lemma cont_mdiff_on_iff_cont_diff_on' {s : opens E} {t : set E} {f : E → F} {n : with_top ℕ} :
+  cont_mdiff_on 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) (coe ⁻¹' t) ↔ cont_diff_on ℝ n f (s ∩ t) :=
+sorry
+
+lemma exists_cont_diff_of_convex_of_is_open {s : set E} (hs : is_open s)
   {P : E → F → Prop} (hP : ∀ x ∈ s, convex ℝ {y | P x y})
   {n : with_top ℕ}
   (hP' : ∀ x ∈ s, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
   ∃ f : E → F, cont_diff_on ℝ n f s ∧ ∀ x ∈ s, P x (f x) :=
-sorry
+begin
+  classical,
+  let S : opens E := ⟨s, hs⟩,
+  suffices : ∃ f : S → F, cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n f ∧ ∀ (x : ↥S), P x (f x),
+  { rcases this with ⟨f, hf, hf'⟩,
+    refine ⟨λ x, if hx : x ∈ s then f ⟨x, hx⟩ else 0, cont_mdiff_iff_cont_diff_on'.mp hf, _⟩,
+    intros x hx,
+    rw dif_pos hx,
+    exact hf' ⟨x, hx⟩ },
+  let PS : S → F → Prop := λ s y, P s y,
+  change ∃ f : S → F, cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n f ∧ ∀ (x : ↥S), PS x (f x),
+  haveI : locally_compact_space S := hs.locally_compact_space,
+  haveI : t2_space S := subtype.t2_space,
+  apply exists_cont_mdiff_of_convex,
+  { rintros ⟨x, hx⟩,
+    exact hP x hx },
+  { rintros ⟨x, hx : x ∈ S⟩,
+    rcases hP' x hx with ⟨U, U_in, f, hf, hf'⟩,
+    refine ⟨coe ⁻¹' U, _, f ∘ coe, _, _⟩,
+    { rw nhds_subtype_eq_comap,
+      exact preimage_mem_comap U_in },
+    { rw cont_mdiff_on_iff_cont_diff_on',
+      exact hf.mono (s.inter_subset_right U) },
+    { rintros ⟨x, hx : x ∈ s⟩ (hx' : x ∈ U),
+      exact hf' x hx' } }
+end
 
 example {f : E → ℝ} (h : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ ε : ℝ, ∀ x' ∈ U, 0 < ε ∧ ε ≤ f x') :
   ∃ f' : E → ℝ, cont_diff ℝ ⊤ f' ∧ ∀ x, (0 < f' x ∧ f' x ≤ f x) :=
 begin
   let P : E → ℝ → Prop := λ x t, 0 < t ∧ t ≤ f x,
   have hP : ∀ x, convex ℝ {y | P x y}, from λ x, convex_Ioc _ _,
-  apply partition_induction_on hP,
+  apply exists_cont_diff_of_convex hP,
   intros x,
   rcases h x with ⟨U, U_in, ε, hU⟩,
   exact ⟨U, U_in, λ x, ε, cont_diff_on_const, hU⟩
@@ -366,7 +426,7 @@ begin
   let P : E → F → Prop := λ x t, dist t (f x) < ε x ∧ (x ∈ s → t = f x),
   have hP : ∀ x, convex ℝ {y | P x y} :=
     λ x, (convex_ball (f x) (ε x)).inter (convex_set_of_imp_eq _ _),
-  obtain ⟨f', hf', hPf'⟩ := partition_induction_on hP _,
+  obtain ⟨f', hf', hPf'⟩ := exists_cont_diff_of_convex hP _,
   { exact ⟨f', hf', λ x, (hPf' x).1, λ x, (hPf' x).2⟩ },
   { intros x,
     obtain ⟨U, hU, hfU⟩ := hfs,
