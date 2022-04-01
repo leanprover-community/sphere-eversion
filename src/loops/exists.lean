@@ -208,6 +208,7 @@ begin
   let γ₂ : smooth_surrounding_family g :=
     ⟨λ x, γ₁ x 1, hsγ₁.comp₃ cont_diff_fst cont_diff_const cont_diff_snd,
       λ x, hγ₁.surrounds x (mem_univ _)⟩,
+  classical,
   let γ₃ : ℝ → E → loop F :=
   λ t x, (γ₁ x t).reparam $ (γ₂.reparametrize x).equivariant_map,
   have hγ₃ : 𝒞 ∞ ↿γ₃ :=
