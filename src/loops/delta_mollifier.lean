@@ -21,7 +21,7 @@ lemma delta_mollifier_pos (s : ℝ) : 0 < delta_mollifier η t s := sorry
 
 lemma delta_mollifier_smooth : 𝒞 ∞ ↿(delta_mollifier η) := sorry
 
-lemma delta_mollifier_integral_eq_one : ∫ s in 0..1, delta_mollifier η t s = 1 := sorry
+@[simp] lemma delta_mollifier_integral_eq_one : ∫ s in 0..1, delta_mollifier η t s = 1 := sorry
 
 omit hη
 
@@ -34,6 +34,10 @@ instance loop.has_norm : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
 -- TODO Come up with a better name for this.
 def loop.mollify (γ : loop F) (η t : ℝ) : F :=
 if η = 0 then γ t else ∫ s in 0..1, delta_mollifier η t s • γ s
+
+lemma loop.mollify_eq_of_ne_zero (γ : loop F) (η t : ℝ) (hη : η ≠ 0) :
+  γ.mollify η t = ∫ s in 0..1, delta_mollifier η t s • γ s :=
+if_neg hη
 
 /-- I doubt this is exactly the right property and I think we may be able to get away with something
 a good deal weaker. The plan is to try finishing the reparametrization lemma and see what

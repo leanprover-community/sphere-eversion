@@ -68,15 +68,30 @@ sorry
 Given `x : E`, it represents a smooth probability distribution on the circle with the property that:
 `∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y`
 for all `y` in a neighbourhood of `x` (see `local_centering_density_average` below). -/
-def local_centering_density : E → ℝ → ℝ := λ y,
+def local_centering_density [decidable_pred (∈ affine_bases ι ℝ F)] : E → ℝ → ℝ := λ y,
 begin
-  classical,
   choose n hn₁ hn₂ using
     filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
   choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
   choose η hη hηv using metric.mem_nhds_iff.mp hv,
   exact ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y η) i) •
     (delta_mollifier η (γ.surrounding_parameters_at x i)),
+end
+
+lemma local_centering_density_spec [decidable_pred (∈ affine_bases ι ℝ F)] : ∃ η ≠ (0 : ℝ), ∀ y,
+  γ.local_centering_density x y =
+  ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y η) i) •
+    (delta_mollifier η (γ.surrounding_parameters_at x i)) :=
+begin
+  let h :=
+    filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
+  let v := classical.some ((classical.some_spec
+    (classical.some_spec (mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)))))),
+  let hv : v ∈ 𝓝 (0 : ℝ) := classical.some (classical.some_spec (classical.some_spec
+    (classical.some_spec (mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)))))),
+  let η := classical.some (metric.mem_nhds_iff.mp hv),
+  let hη : 0 < η := classical.some (classical.some_spec (metric.mem_nhds_iff.mp hv)),
+  exact ⟨η, ne_of_gt hη, λ y, rfl⟩,
 end
 
 def local_centering_density_nhd : set E :=
@@ -96,17 +111,17 @@ is_open_interior
 lemma local_centering_density_nhd_self_mem :
   x ∈ γ.local_centering_density_nhd x :=
 begin
-  -- TODO What is the right way to prove this?
-  rw [local_centering_density_nhd, mem_interior_iff_mem_nhds],
   let h := filter.eventually_iff_exists_mem.mp
     (γ.eventually_surrounded_approx_surrounding_points_at x),
-  exact classical.some (classical.some_spec (mem_nhds_prod_iff.mp (classical.some
-    (classical.some_spec h)))),
+  exact mem_interior_iff_mem_nhds.mpr (classical.some (classical.some_spec (mem_nhds_prod_iff.mp
+    (classical.some (classical.some_spec h))))),
 end
 
 lemma local_centering_density_nhd_covers :
   univ ⊆ ⋃ x, γ.local_centering_density_nhd x :=
 λ x hx, mem_Union.mpr ⟨x, γ.local_centering_density_nhd_self_mem x⟩
+
+variables [decidable_pred (∈ affine_bases ι ℝ F)]
 
 @[simp] lemma local_centering_density_pos (t : ℝ) (hy : y ∈ γ.local_centering_density_nhd x) :
   0 < γ.local_centering_density x y t :=
@@ -138,7 +153,25 @@ sorry
 
 @[simp] lemma local_centering_density_average (hy : y ∈ γ.local_centering_density_nhd x) :
   ∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y :=
-sorry
+begin
+  obtain ⟨η, hη₁, hη₂⟩ := γ.local_centering_density_spec x,
+  simp only [hη₂, prod.forall, exists_prop, gt_iff_lt, fintype.sum_apply,
+    pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
+  rw interval_integral.integral_sum,
+  { simp_rw [mul_smul, interval_integral.integral_smul,
+      ← (γ y).mollify_eq_of_ne_zero η (γ.surrounding_parameters_at x _) hη₁],
+    change ∑ i, _ • (γ.approx_surrounding_points_at x y η i) = _,
+    have h : γ.approx_surrounding_points_at x y η ∈ affine_bases ι ℝ F,
+    {
+      sorry, },
+    erw [eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h],
+    simpa using affine_basis.affine_combination_coord_eq_self (affine_basis.mk _ h.1 h.2) (g y), },
+  { simp_rw mul_smul,
+    refine λ i hi, continuous.interval_integrable
+      (continuous.const_smul (continuous.smul _ (γ.continuous y)) _) 0 1,
+    exact (delta_mollifier_smooth hη₁).continuous.comp (continuous.prod.mk
+      (γ.surrounding_parameters_at x i)), },
+end
 
 /-- This the key construction. It represents a smooth probability distribution on the circle with
 the property that:
