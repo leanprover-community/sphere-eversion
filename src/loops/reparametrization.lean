@@ -21,8 +21,7 @@ variables [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
 variables [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
 
-local notation `d` := finite_dimensional.finrank ℝ F
-local notation `ι` := fin (d + 1)
+local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
 
 structure smooth_surrounding_family (g : E → F) :=
 (to_fun : E → loop F)
@@ -59,8 +58,8 @@ def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
-lemma eventually_surrounded_approx_surrounding_points_at : ∀ᶠ (yη : E × ℝ) in 𝓝 (x, 0),
-  surrounded (g yη.1) (range $ γ.approx_surrounding_points_at x yη.1 yη.2) :=
+lemma eventually_exists_surrounding_pts_approx_surrounding_points_at : ∀ᶠ (yη : E × ℝ) in 𝓝 (x, 0),
+  ∃ w, surrounding_pts (g yη.1) (γ.approx_surrounding_points_at x yη.1 yη.2) w :=
 sorry
 
 /- This is an auxiliary definition to help construct `centering_density` below.
@@ -70,34 +69,45 @@ Given `x : E`, it represents a smooth probability distribution on the circle wit
 for all `y` in a neighbourhood of `x` (see `local_centering_density_average` below). -/
 def local_centering_density [decidable_pred (∈ affine_bases ι ℝ F)] : E → ℝ → ℝ := λ y,
 begin
-  choose n hn₁ hn₂ using
-    filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
+  choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
+    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
   choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
-  choose η hη hηv using metric.mem_nhds_iff.mp hv,
+  choose η hη hηv using metric.mem_nhds_iff'.mp hv,
   exact ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y η) i) •
     (delta_mollifier η (γ.surrounding_parameters_at x i)),
 end
 
-lemma local_centering_density_spec [decidable_pred (∈ affine_bases ι ℝ F)] : ∃ η ≠ (0 : ℝ), ∀ y,
-  γ.local_centering_density x y =
-  ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y η) i) •
-    (delta_mollifier η (γ.surrounding_parameters_at x i)) :=
+def local_centering_density_mp : ℝ :=
 begin
-  let h :=
-    filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
+  choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
+    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
+  choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
+  choose η hη hηv using metric.mem_nhds_iff'.mp hv,
+  exact η,
+end
+
+lemma local_centering_density_mp_ne_zero : γ.local_centering_density_mp x ≠ 0 :=
+begin
+  let h := filter.eventually_iff_exists_mem.mp
+    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
   let v := classical.some ((classical.some_spec
     (classical.some_spec (mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)))))),
   let hv : v ∈ 𝓝 (0 : ℝ) := classical.some (classical.some_spec (classical.some_spec
     (classical.some_spec (mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)))))),
-  let η := classical.some (metric.mem_nhds_iff.mp hv),
-  let hη : 0 < η := classical.some (classical.some_spec (metric.mem_nhds_iff.mp hv)),
-  exact ⟨η, ne_of_gt hη, λ y, rfl⟩,
+  exact ne_of_gt (classical.some (classical.some_spec (metric.mem_nhds_iff'.mp hv))),
 end
+
+lemma local_centering_density_spec [decidable_pred (∈ affine_bases ι ℝ F)] :
+  γ.local_centering_density x y =
+  ∑ i, (eval_barycentric_coords ι ℝ F (g y)
+    (γ.approx_surrounding_points_at x y (γ.local_centering_density_mp x)) i) •
+    (delta_mollifier (γ.local_centering_density_mp x) (γ.surrounding_parameters_at x i)) :=
+rfl
 
 def local_centering_density_nhd : set E :=
 begin
-  choose n hn₁ hn₂ using
-    filter.eventually_iff_exists_mem.mp (γ.eventually_surrounded_approx_surrounding_points_at x),
+  choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
+    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
   choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
   exact (interior u),
 end
@@ -112,7 +122,7 @@ lemma local_centering_density_nhd_self_mem :
   x ∈ γ.local_centering_density_nhd x :=
 begin
   let h := filter.eventually_iff_exists_mem.mp
-    (γ.eventually_surrounded_approx_surrounding_points_at x),
+    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
   exact mem_interior_iff_mem_nhds.mpr (classical.some (classical.some_spec (mem_nhds_prod_iff.mp
     (classical.some (classical.some_spec h))))),
 end
@@ -120,6 +130,38 @@ end
 lemma local_centering_density_nhd_covers :
   univ ⊆ ⋃ x, γ.local_centering_density_nhd x :=
 λ x hx, mem_Union.mpr ⟨x, γ.local_centering_density_nhd_self_mem x⟩
+
+lemma approx_surrounding_points_at_of_local_centering_density_nhd
+  (hy : y ∈ γ.local_centering_density_nhd x) : ∃ w,
+  surrounding_pts (g y) (γ.approx_surrounding_points_at x y (γ.local_centering_density_mp x)) w :=
+begin
+  -- Another ludicrous proof 🙄
+  let h := filter.eventually_iff_exists_mem.mp
+    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
+  let nη := classical.some h,
+  let hnη := mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)),
+  let n := classical.some hnη,
+  let hn := classical.some_spec hnη,
+  change y ∈ interior n at hy,
+  let v := classical.some (classical.some_spec hn),
+  let hv : v ∈ 𝓝 (0 : ℝ) := classical.some (classical.some_spec (classical.some_spec hn)),
+  let η := classical.some (metric.mem_nhds_iff'.mp hv),
+  let hη₁ : 0 < η := classical.some (classical.some_spec (metric.mem_nhds_iff'.mp hv)),
+  let hη₂ := classical.some_spec (classical.some_spec (metric.mem_nhds_iff'.mp hv)),
+  change ∃ w, surrounding_pts (g y) (γ.approx_surrounding_points_at x y η) w,
+  suffices : (y, η) ∈ nη,
+  { exact classical.some_spec (classical.some_spec h) _ this, },
+  apply classical.some_spec (classical.some_spec (classical.some_spec hn)),
+  change y ∈ n ∧ η ∈ v,
+  refine ⟨interior_subset hy, hη₂ _⟩,
+  change η ∈ metric.closed_ball (0 : ℝ) η,
+  rw [mem_closed_ball_zero_iff, real.norm_eq_abs, abs_eq_self.mpr hη₁.le],
+end
+
+lemma approx_surrounding_points_at_mem_affine_bases (hy : y ∈ γ.local_centering_density_nhd x) :
+  γ.approx_surrounding_points_at x y (γ.local_centering_density_mp x) ∈ affine_bases ι ℝ F :=
+(classical.some_spec
+  (γ.approx_surrounding_points_at_of_local_centering_density_nhd x y hy)).mem_affine_bases
 
 variables [decidable_pred (∈ affine_bases ι ℝ F)]
 
@@ -154,16 +196,16 @@ sorry
 @[simp] lemma local_centering_density_average (hy : y ∈ γ.local_centering_density_nhd x) :
   ∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y :=
 begin
-  obtain ⟨η, hη₁, hη₂⟩ := γ.local_centering_density_spec x,
-  simp only [hη₂, prod.forall, exists_prop, gt_iff_lt, fintype.sum_apply,
-    pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
+  let η := γ.local_centering_density_mp x,
+  let hη₁ := γ.local_centering_density_mp_ne_zero x,
+  simp only [γ.local_centering_density_spec x, prod.forall, exists_prop, gt_iff_lt,
+    fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
   rw interval_integral.integral_sum,
   { simp_rw [mul_smul, interval_integral.integral_smul,
       ← (γ y).mollify_eq_of_ne_zero η (γ.surrounding_parameters_at x _) hη₁],
     change ∑ i, _ • (γ.approx_surrounding_points_at x y η i) = _,
-    have h : γ.approx_surrounding_points_at x y η ∈ affine_bases ι ℝ F,
-    {
-      sorry, },
+    have h : γ.approx_surrounding_points_at x y η ∈ affine_bases ι ℝ F :=
+      γ.approx_surrounding_points_at_mem_affine_bases x y hy,
     erw [eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h],
     simpa using affine_basis.affine_combination_coord_eq_self (affine_basis.mk _ h.1 h.2) (g y), },
   { simp_rw mul_smul,

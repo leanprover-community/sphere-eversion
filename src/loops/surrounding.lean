@@ -96,6 +96,11 @@ lemma surrounding_pts.tot [finite_dimensional ℝ F]
   affine_span ℝ (range p) = ⊤ :=
 h.indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _)
 
+lemma surrounding_pts.mem_affine_bases [finite_dimensional ℝ F]
+  {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
+  p ∈ affine_bases ι ℝ F :=
+⟨h.indep, h.tot⟩
+
 lemma surrounding_pts.coord_eq_w [finite_dimensional ℝ F]
   {f : F} {p : ι → F} {w : ι → ℝ} (h : surrounding_pts f p w) :
   (⟨p, h.indep, h.tot⟩ : affine_basis ι ℝ F).coords f = w :=
@@ -194,7 +199,7 @@ begin
   let A : set (F × (ι → F)) := univ ×ˢ affine_bases ι ℝ F,
   let U : set (F × (ι → F)) := A ∩ (W' ⁻¹' V),
   have hι : fintype.card ι = d + 1 := fintype.card_fin _,
-  have hp : p ∈ affine_bases ι ℝ F := ⟨h.indep, h.tot⟩,
+  have hp : p ∈ affine_bases ι ℝ F := h.mem_affine_bases,
   have hV : is_open V := is_open_set_pi finite_univ (λ _ _, is_open_Ioi),
   have hW' : continuous_on W' A := (smooth_barycentric ι ℝ F hι).continuous_on,
   have hxp : W' (x, p) ∈ V, { simp [W', hp, h.coord_eq_w, h.w_pos], },

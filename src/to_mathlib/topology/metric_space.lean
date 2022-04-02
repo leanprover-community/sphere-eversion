@@ -32,3 +32,14 @@ lemma lipschitz_with_prod_mk_right (b : β) : lipschitz_with 1 (λ a : α, (a, b
 λ x y, show max _ _ ≤ _, by simp
 
 end lipschitz
+
+namespace metric
+
+open_locale topological_space
+
+variables {α : Type*} [pseudo_metric_space α] {x : α} {s : set α}
+
+theorem mem_nhds_iff' : s ∈ 𝓝 x ↔ ∃ε>0, closed_ball x ε ⊆ s :=
+nhds_basis_closed_ball.mem_iff
+
+end metric
