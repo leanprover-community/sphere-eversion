@@ -1,4 +1,5 @@
-import analysis.calculus.cont_diff
+import analysis.calculus.specific_functions
+import to_mathlib.topology.misc
 
 noncomputable theory
 
@@ -35,6 +36,23 @@ begin
       linarith [hM (set.mem_image_of_mem (norm ∘ f) x_in)] } }
 end
 
+section
+
+open real
+
+lemma smooth_transition_proj_I {x : ℝ} :
+  smooth_transition (proj_I x) = smooth_transition x :=
+begin
+  cases le_total (0 : ℝ) x with hx hx,
+  cases le_total (1 : ℝ) x with h2x h2x,
+  { rw [proj_I_eq_one.mpr h2x, smooth_transition.one_of_one_le h2x,
+      smooth_transition.one_of_one_le le_rfl], },
+  { rw [proj_I_eq_self.mpr ⟨hx, h2x⟩] },
+  { rw [proj_I_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx,
+      smooth_transition.zero_of_nonpos le_rfl], }
+end
+
+end
 
 section calculus
 open continuous_linear_map

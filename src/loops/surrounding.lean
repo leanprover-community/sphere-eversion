@@ -434,6 +434,10 @@ protected lemma t_le_zero (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t
   γ x t s = γ x 0 s :=
 by rw [← h.proj_I, proj_I_eq_zero.mpr ht]
 
+protected lemma t_le_zero_eq_b (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t : ℝ}
+  (ht : t ≤ 0) : γ x t s = b x :=
+by rw [h.t_le_zero x s ht, h.t₀]
+
 protected lemma t_ge_one (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t : ℝ} (ht : 1 ≤ t) :
   γ x t s = γ x 1 s :=
 by rw [← h.proj_I, proj_I_eq_one.mpr ht]
@@ -462,12 +466,26 @@ lemma _root_.is_compact.continuous_Sup {α β γ : Type*}
     continuous (λ x, Sup (f x '' K)) :=
 sorry
 
+lemma _root_.is_compact.continuous_Inf {α β γ : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
+    continuous (λ x, Inf (f x '' K)) :=
+@is_compact.continuous_Sup (order_dual α) β γ _ _ _ _ _ _ _ hK hf
+
 lemma _root_.is_compact.Sup_lt_of_continuous {α β : Type*}
   [conditionally_complete_linear_order α] [topological_space α]
   [order_topology α] [topological_space β] {f : β → α}
   {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
     Sup (f '' K) < y ↔ ∀ x ∈ K, f x < y :=
 sorry
+
+lemma _root_.is_compact.lt_Inf_of_continuous {α β : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space β] {f : β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
+    y < Inf (f '' K) ↔ ∀ x ∈ K, y < f x :=
+@is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK hf y
 
 protected lemma surrounds_of_close [finite_dimensional ℝ E] [finite_dimensional ℝ F]
   (hg : continuous g)
