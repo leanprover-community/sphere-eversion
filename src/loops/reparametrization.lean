@@ -6,6 +6,7 @@ import measure_theory.integral.periodic
 import geometry.manifold.partition_of_unity
 import to_mathlib.order.hom.basic
 import to_mathlib.geometry.manifold.partition_of_unity
+import to_mathlib.algebra.periodic
 
 /-!
 # The reparametrization lemma
@@ -180,7 +181,8 @@ end
 
 lemma local_centering_density_periodic (hy : y ∈ γ.local_centering_density_nhd x) :
   periodic (γ.local_centering_density x y) 1 :=
-sorry
+periodic.sum $
+  λ i, periodic.smul (delta_mollifier_periodic (γ.local_centering_density_mp_ne_zero x) _) _
 
 lemma local_centering_density_smooth_on :
   cont_diff_on ℝ ∞ ↿(γ.local_centering_density x) $
