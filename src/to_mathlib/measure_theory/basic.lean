@@ -8,7 +8,7 @@ open measure_theory set classical filter
 open_locale classical topological_space filter interval
 
 variables {α β E F : Type*} [measurable_space α] {μ : measure α} [normed_group E]
-          [second_countable_topology E] [complete_space E] [normed_space ℝ E] [measurable_space E] [borel_space E]
+          [complete_space E] [normed_space ℝ E]
 
 namespace measure_theory
 lemma ae_restrict_eq_iff {s : set α} {f g : α → β} (h : measurable_set {x | f x = g x}) :
@@ -18,7 +18,7 @@ ae_restrict_iff h
 /-
 MOVE next to ae_restrict_of_ae_restrict_of_subset
 -/
-lemma ae_mem_imp_of_ae_restrict_of_subset {α : Type*} {m0 : measurable_space α} 
+lemma ae_mem_imp_of_ae_restrict_of_subset {α : Type*} {m0 : measurable_space α}
   {μ : measure α} {s t : set α} {p : α → Prop} (hst : s ⊆ t) (hp : ∀ᵐ (x : α) ∂μ.restrict t, p x) :
   (∀ᵐ x ∂μ, x ∈ s → p x) :=
 ae_imp_of_ae_restrict (ae_restrict_of_ae_restrict_of_subset hst hp)

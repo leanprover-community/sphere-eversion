@@ -14,7 +14,7 @@ open filter (hiding map_map map_id map map_id')
 
 
 /-!
-This file defines the convolution on two vector values functions, with as domain a group `G` with a
+This file defines the convolution on two vector valued functions, with as domain a group `G` with a
 Haar measure. These functions are "multiplied" in the integrand using some continuous bilinear map.
 
 This seems to not be a common version in math (In Bourbaki and various other books on analysis the
@@ -81,20 +81,19 @@ variables {α : Type*} [measurable_space α]
 -- [is_locally_finite_measure μ]
   {𝕜 : Type*} [is_R_or_C 𝕜]
           {E : Type*} [normed_group E] [normed_space ℝ E] [normed_space 𝕜 E]
-          [complete_space E] [second_countable_topology E]
-          [measurable_space E] [borel_space E]
+          [complete_space E]
           {H : Type*} [normed_group H] --[normed_space ℝ H]
           [normed_space 𝕜 H]
-          [second_countable_topology $ H →L[𝕜] E]
+
           -- [proper_space H]
 
 -- maybe: make F' explicit
 lemma has_fderiv_at_integral_of_dominated_of_fderiv_le' {F : H → α → E} (F' : H → α → (H →L[𝕜] E))
   {x₀ : H} {bound : α → ℝ}
   {ε : ℝ} (ε_pos : 0 < ε)
-  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ)
+  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) μ)
   (hF_int : integrable (F x₀) μ)
-  (hF'_meas : ae_measurable (F' x₀) μ)
+  (hF'_meas : ae_strongly_measurable (F' x₀) μ)
   (h_bound : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, ∥F' x a∥ ≤ bound a)
   (bound_integrable : integrable (bound : α → ℝ) μ)
   (h_diff : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, has_fderiv_at (λ x, F x a) (F' x a) x) :
@@ -244,13 +243,12 @@ lemma has_fderiv_at_const_right [normed_group X] [normed_space 𝕜 X]
 
 section
 
-variables [measurable_space E] [measurable_space E'] [measurable_space F] [measurable_space X]
-  [opens_measurable_space E] [opens_measurable_space E'] [second_countable_topology E]
-  [second_countable_topology E'] [borel_space F]
+variables [measurable_space X]
 
-lemma ae_measurable_comp₂ {μ : measure X} (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {g : X → E'}
-  (hf : ae_measurable f μ) (hg : ae_measurable g μ) : ae_measurable (λ x, L (f x) (g x)) μ :=
-L.continuous₂.measurable.comp_ae_measurable $ hf.prod_mk hg
+lemma ae_strongly_measurable_comp₂ {μ : measure X} (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {g : X → E'}
+  (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ) :
+  ae_strongly_measurable (λ x, L (f x) (g x)) μ :=
+L.continuous₂.comp_ae_strongly_measurable $ hf.prod_mk hg
 
 end
 
@@ -282,8 +280,7 @@ namespace measure_theory
 section integrable
 open measure topological_space
 -- variables {f : G → E} {g : G} [measurable_space G] [normed_group E] [second_countable_topology E] [normed_space ℝ E] [complete_space E] [measurable_space E] [borel_space E] [normed_group F] [measurable_space F] [opens_measurable_space F] [group G] [has_measurable_mul G] [has_measurable_inv G]
-variables [group G] [has_measurable_mul G] [has_measurable_inv G] [measurable_space F]
-  [opens_measurable_space F]
+variables [group G] [has_measurable_mul G] [has_measurable_inv G]
 
 variables (μ)
 @[to_additive]
@@ -298,9 +295,7 @@ end
 
 end integrable
 
-variables [normed_space ℝ F]
-variables [second_countable_topology E] [complete_space E] [measurable_space E] [borel_space E]
-
+variables [normed_space ℝ F] [complete_space E]
 
 section smul
 variables [group G] [mul_action G X] [has_measurable_smul G X]
@@ -478,7 +473,6 @@ end
 
 section
 variables [measurable_space G] {μ : measure G}
-variables [measurable_space E'] [opens_measurable_space E']
 
 lemma integral_norm_bilinear_le_right (g : G → E') (c : E) (hg : integrable g μ) :
   ∥∫ x, ∥L c (g x)∥ ∂μ∥ ≤ ∥L∥ * ∥c∥ * ∫ x, ∥g x∥ ∂μ :=
@@ -509,8 +503,6 @@ variables {L : E →L[𝕜] E' →L[𝕜] F}
 
 local notation x ` ◾ `:67 y := L x y -- maybe
 
-variables [measurable_space F]
-
 /-- The convolution of `f` and `g` exists at `x` when the function `t ↦ f t * g (x - t)` is
   integrable. There are various conditions on `f` and `g` to prove this. -/
 def convolution_exists_at [has_sub G] (f : G → E) (g : G → E') (x : G) (L : E →L[𝕜] E' →L[𝕜] F)
@@ -530,39 +522,35 @@ lemma convolution_exists_at.integrable [has_sub G] {x : G} (h : convolution_exis
 h
 
 variables [add_group G]
--- variables [opens_measurable_space F]
 
 variables (L)
 
-variables [measurable_space E] [measurable_space E'] [borel_space E] [borel_space E']
-  [second_countable_topology E] [second_countable_topology E']
 variables [has_measurable_add₂ G] [has_measurable_neg G]
 variables [sigma_finite μ] [is_add_left_invariant μ]
-variables [borel_space F]
 
-lemma ae_measurable.convolution_integrand_snd
-  (hf : ae_measurable f μ) (hg : ae_measurable g μ)
-  (x : G) : ae_measurable (λ t, L (f t) (g (x - t))) μ :=
+lemma ae_strongly_measurable.convolution_integrand_snd
+  (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ)
+  (x : G) : ae_strongly_measurable (λ t, L (f t) (g (x - t))) μ :=
 begin
-  refine L.ae_measurable_comp₂ hf (ae_measurable.comp_measurable _ $ measurable_id.const_sub x),
+  refine L.ae_strongly_measurable_comp₂ hf
+    (ae_strongly_measurable.comp_measurable _ $ measurable_id.const_sub x),
   exact hg.mono' (map_sub_left_absolutely_continuous μ x)
 end
 
-lemma ae_measurable.convolution_integrand_swap_snd (hf : ae_measurable f μ) (hg : ae_measurable g μ)
-  (x : G) : ae_measurable (λ t, L (f (x - t)) (g t)) μ :=
+lemma ae_strongly_measurable.convolution_integrand_swap_snd
+  (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ)
+  (x : G) : ae_strongly_measurable (λ t, L (f (x - t)) (g t)) μ :=
 begin
-  refine L.ae_measurable_comp₂ (ae_measurable.comp_measurable _ $ measurable_id.const_sub x) hg,
+  refine L.ae_strongly_measurable_comp₂
+    (ae_strongly_measurable.comp_measurable _ $ measurable_id.const_sub x) hg,
   exact hf.mono' (map_sub_left_absolutely_continuous μ x)
 end
 
 variables {L}
 
-
-
 end
 
-variables [normed_space ℝ F]
-variables [second_countable_topology F] [borel_space F] [complete_space F]
+variables [normed_space ℝ F] [complete_space F]
 
 /-- The convolution of two functions `f` and `g`. -/
 def convolution [has_sub G] (f : G → E) (g : G → E') (L : E →L[𝕜] E' →L[𝕜] F)
@@ -581,11 +569,11 @@ section noncomm
 
 variables [add_group G]
 
-lemma smul_convolution [smul_comm_class ℝ 𝕜 F] [measurable_space 𝕜] [opens_measurable_space 𝕜]
+lemma smul_convolution [smul_comm_class ℝ 𝕜 F]
   {y : 𝕜} : (y • f) ⋆[L; μ] g = y • (f ⋆[L; μ] g) :=
 by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_left] }
 
-lemma convolution_smul [smul_comm_class ℝ 𝕜 F] [measurable_space 𝕜] [opens_measurable_space 𝕜]
+lemma convolution_smul [smul_comm_class ℝ 𝕜 F]
   {y : 𝕜} : f ⋆[L; μ] (y • g) = y • (f ⋆[L; μ] g) :=
 by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_right] }
 
@@ -614,8 +602,6 @@ section comm
 variables [add_comm_group G] [topological_space G] [topological_add_group G]
 variables [borel_space G]
 variables [is_add_left_invariant μ]
-variables [opens_measurable_space F]
-
 
 lemma convolution_exists_at_flip  [is_neg_invariant μ] :
   convolution_exists_at g f x L.flip μ ↔ convolution_exists_at f g x L μ :=
@@ -644,20 +630,17 @@ variable {L}
 lemma convolution_eq_swap [is_neg_invariant μ] : (f ⋆[L; μ] g) x = ∫ t, L (f (x - t)) (g t) ∂μ :=
 by { rw [← convolution_flip], refl }
 
-
-variables [measurable_space E] [measurable_space E'] [borel_space E] [borel_space E']
-  [second_countable_topology E] [second_countable_topology E']
-
 variables (L) [complete_space E] [complete_space E']
 variables [second_countable_topology G] [sigma_finite μ]
 
 section sigma_finite
 
-lemma ae_measurable.convolution_integrand (hf : ae_measurable f μ) (hg : ae_measurable g μ) :
-  ae_measurable (λ p : G × G, L (f p.2) (g (p.1 - p.2))) (μ.prod μ) :=
+lemma _root_.measure_theory.ae_strongly_measurable.convolution_integrand
+  (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ) :
+  ae_strongly_measurable (λ p : G × G, L (f p.2) (g (p.1 - p.2))) (μ.prod μ) :=
 begin
-  refine L.ae_measurable_comp₂ hf.snd
-    (ae_measurable.comp_measurable _ $ measurable_fst.sub measurable_snd),
+  refine L.ae_strongly_measurable_comp₂ _,
+    (ae_strongly_measurable.comp_measurable _ $ measurable_fst.sub measurable_snd),
   refine hg.mono' (quasi_measure_preserving_sub μ).absolutely_continuous,
 end
 
@@ -666,11 +649,12 @@ lemma measure_theory.integrable.convolution_integrand (hf : integrable f μ) (hg
 begin
   -- We can also do this for nonabelian groups, but this exact proof doesn't work
   -- for that case (we use that `μ` is right invariant here)
-  have h_meas : ae_measurable (λ (p : G × G), (L (f p.2)) (g (p.1 - p.2))) (μ.prod μ) :=
-  hf.ae_measurable.convolution_integrand L hg.ae_measurable,
-  have h2_meas : ae_measurable (λ (y : G), ∫ (x : G), ∥(L (f y)) (g (x - y))∥ ∂μ) μ :=
-  h_meas.prod_swap.norm.integral_prod_right',
-  simp_rw [integrable_prod_iff' (hf.ae_measurable.convolution_integrand L hg.ae_measurable)],
+  have h_meas : ae_strongly_measurable (λ (p : G × G), (L (f p.2)) (g (p.1 - p.2))) (μ.prod μ) :=
+    hf.ae_strongly_measurable.convolution_integrand L hg.ae_strongly_measurable,
+  have h2_meas : ae_strongly_measurable (λ (y : G), ∫ (x : G), ∥(L (f y)) (g (x - y))∥ ∂μ) μ :=
+    h_meas.prod_swap.norm.integral_prod_right',
+  simp_rw [integrable_prod_iff'
+    (hf.ae_strongly_measurable.convolution_integrand L hg.ae_strongly_measurable)],
   refine ⟨eventually_of_forall (λ t, (L (f t)).integrable_comp (hg.comp_sub_right t)), _⟩,
   refine integrable.mono' _ h2_meas (eventually_of_forall $
     λ t, integral_norm_bilinear_le_right (λ x, g (x - t)) (f t) (hg.comp_sub_right t)),
@@ -680,7 +664,7 @@ end
 
 lemma integrable.ae_convolution_exists [sigma_finite μ]
   (hf : integrable f μ) (hg : integrable g μ) : ∀ᵐ x ∂μ, convolution_exists_at f g x L μ :=
-((integrable_prod_iff $ hf.ae_measurable.convolution_integrand L hg.ae_measurable).mp $
+((integrable_prod_iff $ hf.ae_strongly_measurable.convolution_integrand L hg.ae_strongly_measurable).mp $
   hf.convolution_integrand L hg).1
 
 lemma integrable.integrable_convolution (hf : integrable f μ) (hg : integrable g μ) :
@@ -732,9 +716,9 @@ L.continuous_comp₂ continuous_const $ hg.comp $ continuous_id.sub continuous_c
 
 lemma bdd_above.convolution_exists_at [sigma_compact_space G] {x₀ : G}
   (hf : integrable_on f (tsupport (λ t, L (f t) (g (x₀ - t)))) μ)
-  (hmf : ae_measurable f μ)
+  (hmf : ae_strongly_measurable f μ)
   (hbg : bdd_above ((λ i, ∥g i∥) '' ((λ t, x₀ - t) ⁻¹' tsupport (λ t, L (f t) (g (x₀ - t))))))
-  (hmg : ae_measurable g μ) :
+  (hmg : ae_strongly_measurable g μ) :
     convolution_exists_at f g x₀ L μ :=
 begin
   simp at hbg,
@@ -761,7 +745,7 @@ lemma has_compact_support.convolution_exists_at [sigma_compact_space G] {x₀ : 
   (h : has_compact_support (λ t, L (f t) (g (x₀ - t)))) (hf : locally_integrable f μ)
   (hg : continuous g) : convolution_exists_at f g x₀ L μ :=
 (((homeomorph.sub_left x₀).compact_preimage.mpr h).bdd_above_image hg.norm.continuous_on)
-  .convolution_exists_at L (hf h) hf.ae_measurable (hg.ae_measurable μ)
+  .convolution_exists_at L (hf h) hf.ae_strongly_measurable (hg.ae_strongly_measurable)
 
 lemma has_compact_support.convolution_exists_right [sigma_compact_space G]
   (hf : locally_integrable f μ) (hcg : has_compact_support g) (hg : continuous g) :
@@ -883,7 +867,7 @@ begin
   eventually_of_mem h2K (λ x hx, eventually_of_forall $
     λ t, hcg.convolution_integrand_bound_right L hg hx),
   refine continuous_at_of_dominated _ this _ _,
-  { exact eventually_of_forall (hf.ae_measurable.convolution_integrand_snd L (hg.ae_measurable μ)) },
+  { exact eventually_of_forall (hf.ae_strongly_measurable.convolution_integrand_snd L (hg.ae_measurable μ)) },
   { rw [integrable_indicator_iff hK'.measurable_set], exact ((hf hK').norm.const_mul _).mul_const _ },
   { exact eventually_of_forall (λ t, (L.continuous_comp₂ continuous_const $
       hg.comp $ continuous_id.sub $ by apply continuous_const).continuous_at) }

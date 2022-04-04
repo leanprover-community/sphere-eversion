@@ -15,16 +15,14 @@ namespace continuous_linear_map
 open interval_integral
 variables {𝕜 E H F : Type*}
 variables [is_R_or_C 𝕜] {μ : measure ℝ}
-variables [measurable_space E] [normed_group E] [normed_space 𝕜 E] [borel_space E]
-variables [second_countable_topology E] [complete_space E]
+variables [normed_group E] [normed_space 𝕜 E] [complete_space E]
 variables [normed_space ℝ E] [is_scalar_tower ℝ 𝕜 E]
-variables [measurable_space F] [normed_group F] [normed_space 𝕜 F] [borel_space F]
-variables [second_countable_topology F] [complete_space F]
+variables [normed_group F] [normed_space 𝕜 F] [complete_space F]
 variables [normed_space ℝ F] [is_scalar_tower ℝ 𝕜 F]
-variables [normed_group H] [normed_space 𝕜 H] [second_countable_topology (H →L[𝕜] E)]
+variables [normed_group H] [normed_space 𝕜 H]
 
 lemma interval_integral_apply {a b : ℝ} {φ : ℝ → H →L[𝕜] E} (φ_int : interval_integrable φ μ a b)
-  (v : H) : (∫ a in a..b, φ a ∂μ) v = ∫ a in a..b, φ a v ∂μ :=
+  (v : H) : (∫ x in a..b, φ x ∂μ) v = ∫ x in a..b, φ x v ∂μ :=
 by simp_rw [interval_integral_eq_integral_interval_oc, ← integral_apply φ_int.def v,
   continuous_linear_map.coe_smul', pi.smul_apply]
 
@@ -32,10 +30,10 @@ end continuous_linear_map
 
 section
 
-variables {E : Type*} [measurable_space E] [normed_group E] [opens_measurable_space E]
+variables {E : Type*} [normed_group E]
 
 lemma interval_integrable_norm_iff {f : ℝ → E} {μ : measure ℝ} {a b : ℝ}
-  (hf : ae_measurable f (μ.restrict (Ι a b))) :
+  (hf : ae_strongly_measurable f (μ.restrict (Ι a b))) :
   interval_integrable (λ t, ∥f t∥) μ a b ↔ interval_integrable f μ a b :=
 begin
   simp_rw [interval_integrable_iff, integrable_on],
@@ -49,7 +47,7 @@ begin
 end
 
 lemma interval_integrable_of_nonneg_of_le {f g : ℝ → ℝ} {μ : measure ℝ} {a b : ℝ}
-  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t ∧ f t ≤ g t)
   (hg : interval_integrable g μ a b) :
   interval_integrable f μ a b :=
@@ -62,7 +60,7 @@ begin
 end
 
 lemma interval_integrable_of_norm_le {f : ℝ → E} {bound : ℝ → ℝ} {μ : measure ℝ} {a b : ℝ}
-  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) (hbound : interval_integrable bound μ a b) :
   interval_integrable f μ a b :=
 begin
@@ -71,8 +69,8 @@ begin
   simp,
 end
 
-variables [second_countable_topology E]
-  [complete_space E] [normed_space ℝ E] [borel_space E] {a b : ℝ} {f : ℝ → E} {bound : ℝ → ℝ}
+variables
+  [complete_space E] [normed_space ℝ E]  {a b : ℝ} {f : ℝ → E} {bound : ℝ → ℝ}
   {μ : measure ℝ}
 
 namespace interval_integral
@@ -91,7 +89,7 @@ end
 
 lemma integral_mono_of_le_of_nonneg
   {f g : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ} (hab : a ≤ b)
-  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
   (hfnonneg : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t)
   (hg : interval_integrable g μ a b)
   (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
@@ -122,7 +120,7 @@ end
 
 lemma integral_antimono_of_le_of_nonneg
   {f g : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ} (hab : b ≤ a)
-  (hf : ae_measurable f $ μ.restrict (Ι a b))
+  (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
   (hfnonneg : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t)
   (hg : interval_integrable g μ a b)
   (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
@@ -137,7 +135,7 @@ end interval_integral
 
 /- This should replace interval_integrable.mono_set in mathlib -/
 lemma interval_integrable.mono_set' {E : Type*}
-  [measurable_space E] [normed_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
+  [normed_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
   (hf : interval_integrable f μ a b) (hsub : Ι c d ⊆ Ι a b) : interval_integrable f μ c d :=
 interval_integrable_iff.mpr (hf.def.mono hsub le_rfl)
 
@@ -172,7 +170,7 @@ by simp_rw [mul_comm, ← interval_integral.const_mul]
 
 lemma interval_integral.norm_integral_le_of_norm_le
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t)
-  (hf : ae_measurable f (μ.restrict (Ι a b)) )
+  (hf : ae_strongly_measurable f (μ.restrict (Ι a b)) )
   (hbound : interval_integrable bound μ a b) :
   ∥∫ t in a..b, f t ∂μ∥ ≤ |∫ t in a..b, bound t ∂μ| :=
 begin
@@ -191,11 +189,10 @@ begin
       simp } }
 end
 
-lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_group β] [measurable_space β]
-  [opens_measurable_space β]
+lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_group β]
   {f₀ f₁ : ℝ → β} {g : ℝ → ℝ}
   {a b : ℝ}
-  (hf₁_m : ae_measurable f₁ (μ.restrict $ Ι a b))
+  (hf₁_m : ae_strongly_measurable f₁ (μ.restrict $ Ι a b))
   (hf₀_i : interval_integrable f₀ μ a b)
   (hg_i : interval_integrable g μ a b)
   (h : ∀ᵐ a ∂(μ.restrict $ Ι a b), ∥f₀ a - f₁ a∥ ≤ g a) :
@@ -213,8 +210,7 @@ end
 
 section
 
-variables {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
-          [second_countable_topology E] [complete_space E]
+variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
 
 open interval_integral
 
@@ -235,8 +231,7 @@ open function
 
 variables {E : Type*} {a b : ℝ}
 variables {μ : measure ℝ} [is_locally_finite_measure μ]
-variables [normed_group E] [normed_space ℝ E] [second_countable_topology E]
-variables [complete_space E] [measurable_space E] [borel_space E]
+variables [normed_group E]
 
 lemma interval_integrable.sum {ι : Type*} (s : finset ι) {f : ι → ℝ → E}
   (hf : ∀ i ∈ s, interval_integrable (f i) μ a b) :
@@ -246,7 +241,7 @@ begin
   revert hf,
   refine s.induction _ (λ i t hi ih, _),
   { simp [pi.zero_def],
-    exact @interval_integrable_const _ _ _ _ _ _ _ 0, },
+    exact @interval_integrable_const _ _ _ _ _ _ (0 : E), },
   { intros hf,
     simp only [finset.sum_insert hi],
     refine interval_integrable.add (hf i _) (ih (λ j hj, hf j _)),
@@ -254,6 +249,8 @@ begin
 end
 
 namespace interval_integral
+
+variables [normed_space ℝ E] [complete_space E]
 
 lemma integral_sum {ι : Type*} (s : finset ι) {f : ι → ℝ → E}
   (hf : ∀ i ∈ s, interval_integrable (f i) μ a b) :
