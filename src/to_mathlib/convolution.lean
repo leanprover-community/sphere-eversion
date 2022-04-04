@@ -59,6 +59,30 @@ TODO:
 
 -- end deriv_integral
 
+namespace measure_theory
+
+lemma ae_strongly_measurable.comp_measurable'
+  {α β γ : Type*} [topological_space β]
+  {mγ : measurable_space γ} {mα : measurable_space α} {f : γ → α} {g : α → β}
+  {μ : measure γ} {ν : measure α}
+  (hg : ae_strongly_measurable g ν) (hf : measurable f)
+  (h : μ.map f ≪ ν) :
+  ae_strongly_measurable (g ∘ f) μ :=
+(hg.mono' h).comp_measurable hf
+
+lemma ae_strongly_measurable.fst {α β γ : Type*} [measurable_space α] [measurable_space β]
+  [topological_space γ] {μ : measure α} {ν : measure β}
+  [sigma_finite ν] {f : α → γ}
+  (hf : ae_strongly_measurable f μ) : ae_strongly_measurable (λ (z : α × β), f z.1) (μ.prod ν) :=
+hf.comp_measurable' measurable_fst prod_fst_absolutely_continuous
+
+lemma ae_strongly_measurable.snd {α β γ : Type*} [measurable_space α] [measurable_space β]
+  [topological_space γ] {μ : measure α} {ν : measure β}
+  [sigma_finite ν] {f : β → γ}
+  (hf : ae_strongly_measurable f ν) : ae_strongly_measurable (λ (z : α × β), f z.2) (μ.prod ν) :=
+hf.comp_measurable' measurable_snd prod_snd_absolutely_continuous
+
+end measure_theory
 
 section op_norm
 
@@ -528,7 +552,7 @@ variables (L)
 variables [has_measurable_add₂ G] [has_measurable_neg G]
 variables [sigma_finite μ] [is_add_left_invariant μ]
 
-lemma ae_strongly_measurable.convolution_integrand_snd
+lemma measure_theory.ae_strongly_measurable.convolution_integrand_snd
   (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ)
   (x : G) : ae_strongly_measurable (λ t, L (f t) (g (x - t))) μ :=
 begin
@@ -537,7 +561,7 @@ begin
   exact hg.mono' (map_sub_left_absolutely_continuous μ x)
 end
 
-lemma ae_strongly_measurable.convolution_integrand_swap_snd
+lemma measure_theory.ae_strongly_measurable.convolution_integrand_swap_snd
   (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ)
   (x : G) : ae_strongly_measurable (λ t, L (f (x - t)) (g t)) μ :=
 begin
@@ -635,11 +659,11 @@ variables [second_countable_topology G] [sigma_finite μ]
 
 section sigma_finite
 
-lemma _root_.measure_theory.ae_strongly_measurable.convolution_integrand
+lemma measure_theory.ae_strongly_measurable.convolution_integrand
   (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ) :
   ae_strongly_measurable (λ p : G × G, L (f p.2) (g (p.1 - p.2))) (μ.prod μ) :=
 begin
-  refine L.ae_strongly_measurable_comp₂ _,
+  refine L.ae_strongly_measurable_comp₂ hf.snd
     (ae_strongly_measurable.comp_measurable _ $ measurable_fst.sub measurable_snd),
   refine hg.mono' (quasi_measure_preserving_sub μ).absolutely_continuous,
 end
@@ -867,7 +891,8 @@ begin
   eventually_of_mem h2K (λ x hx, eventually_of_forall $
     λ t, hcg.convolution_integrand_bound_right L hg hx),
   refine continuous_at_of_dominated _ this _ _,
-  { exact eventually_of_forall (hf.ae_strongly_measurable.convolution_integrand_snd L (hg.ae_measurable μ)) },
+  { exact eventually_of_forall
+      (hf.ae_strongly_measurable.convolution_integrand_snd L hg.ae_strongly_measurable) },
   { rw [integrable_indicator_iff hK'.measurable_set], exact ((hf hK').norm.const_mul _).mul_const _ },
   { exact eventually_of_forall (λ t, (L.continuous_comp₂ continuous_const $
       hg.comp $ continuous_id.sub $ by apply continuous_const).continuous_at) }
@@ -919,9 +944,9 @@ variables [normed_group G] [normed_space ℝ G] [normed_space 𝕜 G] [smul_comm
 variables {f f' : G → E} {g g' : G → E'} {x x' : 𝕜}
 variables {n : with_top ℕ}
 variables (L : E →L[𝕜] E' →L[𝕜] F)
-variables [complete_space E] [second_countable_topology E] [measurable_space E] [borel_space E]
-variables [complete_space E'] [second_countable_topology E'] [measurable_space E'] [borel_space E']
-variables [complete_space F] [second_countable_topology F] [measurable_space F] [borel_space F]
+variables [complete_space E]
+variables [complete_space E']
+variables [complete_space F]
 variables [measurable_space G] [borel_space G] {μ : measure G} [second_countable_topology G]
 variables [is_add_left_invariant μ] [sigma_finite μ]
 variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
@@ -1024,9 +1049,9 @@ variables [normed_group G] [normed_space ℝ G] [normed_space 𝕜 G] [smul_comm
 variables {f f' : G → E} {g g' : G → E'} {x x' : 𝕜}
 variables {n : with_top ℕ}
 variables (L : E →L[𝕜] E' →L[𝕜] F)
-variables [complete_space E] [second_countable_topology E] [measurable_space E] [borel_space E]
-variables [complete_space E'] [second_countable_topology E'] [measurable_space E'] [borel_space E']
-variables [complete_space F] [second_countable_topology F] [measurable_space F] [borel_space F]
+variables [complete_space E]
+variables [complete_space E']
+variables [complete_space F]
 variables [measurable_space G] [borel_space G] {μ : measure G} [second_countable_topology G]
 variables [is_add_left_invariant μ] [sigma_finite μ]
 variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
@@ -1036,10 +1061,12 @@ lemma has_compact_support.has_fderiv_at_convolution_right [finite_dimensional �
   (x₀ : G) : has_fderiv_at (f ⋆[L; μ] g) ((f ⋆[L.precompR G; μ] fderiv 𝕜 g) x₀) x₀ :=
 begin
   set L' := L.precompR G,
-  have h1 : ∀ᶠ x in 𝓝 x₀, ae_measurable (λ t, L (f t) (g (x - t))) μ :=
-  eventually_of_forall (hf.ae_measurable.convolution_integrand_snd L (hg.continuous.ae_measurable _)),
-  have h2 : ∀ x, ae_measurable (λ t, L' (f t) (fderiv 𝕜 g (x - t))) μ,
-  { exact hf.ae_measurable.convolution_integrand_snd L' ((hg.continuous_fderiv le_rfl).ae_measurable _) },
+  have h1 : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (λ t, L (f t) (g (x - t))) μ :=
+  eventually_of_forall
+    (hf.ae_strongly_measurable.convolution_integrand_snd L hg.continuous.ae_strongly_measurable),
+  have h2 : ∀ x, ae_strongly_measurable (λ t, L' (f t) (fderiv 𝕜 g (x - t))) μ,
+  { exact hf.ae_strongly_measurable.convolution_integrand_snd L'
+      (hg.continuous_fderiv le_rfl).ae_strongly_measurable },
   have h3 : ∀ x t, has_fderiv_at (λ x, g (x - t)) (fderiv 𝕜 g (x - t)) x,
   { intros x t,
     simpa using (hg.differentiable le_rfl).differentiable_at.has_fderiv_at.comp x
@@ -1068,7 +1095,7 @@ begin
 end
 
 variables [normed_group E''] [normed_space ℝ E''] [normed_space 𝕜 E''] [smul_comm_class 𝕜 ℝ E'']
-variables [complete_space E''] [second_countable_topology E''] [measurable_space E''] [borel_space E'']
+variables [complete_space E'']
 
 lemma convolution_precompR_apply [finite_dimensional 𝕜 G] [finite_dimensional 𝕜 E'']
   {g : G → E'' →L[𝕜] E'}
@@ -1158,9 +1185,9 @@ variables [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] [smul_comm
 variables {f f' : 𝕜 → E} {g g' : 𝕜 → E'} {x x' : 𝕜}
 variables {n : with_top ℕ}
 variables (L : E →L[𝕜] E' →L[𝕜] F)
-variables [complete_space E] [second_countable_topology E] [measurable_space E] [borel_space E]
-variables [complete_space E'] [second_countable_topology E'] [measurable_space E'] [borel_space E']
-variables [complete_space F] [second_countable_topology F] [measurable_space F] [borel_space F]
+variables [complete_space E]
+variables [complete_space E']
+variables [complete_space F]
 variables {μ : measure 𝕜}
 variables [is_add_left_invariant μ] [sigma_finite μ]
 variables [is_locally_finite_measure μ]
