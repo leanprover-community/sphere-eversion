@@ -202,7 +202,23 @@ end
 
 @[simp] lemma local_centering_density_integral_eq_one (hy : y ∈ γ.local_centering_density_nhd x) :
   ∫ s in 0..1, γ.local_centering_density x y s = 1 :=
-sorry
+begin
+  let η := γ.local_centering_density_mp x,
+  let hη₁ := γ.local_centering_density_mp_ne_zero x,
+  simp only [γ.local_centering_density_spec x, prod.forall, exists_prop, gt_iff_lt,
+    fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
+  rw interval_integral.integral_sum,
+  { have h : γ.approx_surrounding_points_at x y η ∈ affine_bases ι ℝ F :=
+      γ.approx_surrounding_points_at_mem_affine_bases x y hy,
+    simp_rw [← smul_eq_mul, interval_integral.integral_smul,
+      delta_mollifier_integral_eq_one (γ.local_centering_density_mp_ne_zero x),
+      algebra.id.smul_eq_mul, mul_one, eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h,
+      affine_basis.coords_apply, affine_basis.sum_coord_apply_eq_one], },
+  { simp_rw ← smul_eq_mul,
+    refine λ i hi, continuous.interval_integrable (continuous.const_smul _ _) 0 1,
+    exact (delta_mollifier_smooth hη₁).continuous.comp (continuous.prod.mk
+      (γ.surrounding_parameters_at x i)), },
+end
 
 @[simp] lemma local_centering_density_average (hy : y ∈ γ.local_centering_density_nhd x) :
   ∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y :=
