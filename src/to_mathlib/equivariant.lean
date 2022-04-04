@@ -67,6 +67,9 @@ begin
   simp [linear_reparam, fract, -self_sub_floor, mul_nonpos_iff, *],
 end
 
+lemma linear_reparam_nonpos {t : ℝ} : linear_reparam t ≤ 0 ↔ t ≤ 4⁻¹ :=
+sorry
+
 @[simp] lemma linear_reparam_zero : linear_reparam 0 = 0 :=
 linear_reparam_eq_zero le_rfl $ by norm_num
 
@@ -85,8 +88,12 @@ end
 @[simp] lemma linear_reparam_one : linear_reparam 1 = 1 :=
 linear_reparam_eq_one (by norm_num) le_rfl
 
-@[simp] lemma linear_reparam_proj_I (t : ℝ) :
+@[simp] lemma linear_reparam_proj_I {t : ℝ} :
   linear_reparam (proj_I t) = proj_I (linear_reparam t) :=
+sorry
+
+@[simp] lemma fract_linear_reparam_eq_zero {t : ℝ} :
+  fract (linear_reparam t) = 0 ↔ fract t ≤ 4⁻¹ ∨ 3 / 4 ≤ fract t :=
 sorry
 
 lemma continuous_linear_reparam : continuous linear_reparam :=

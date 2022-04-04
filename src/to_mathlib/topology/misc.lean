@@ -46,6 +46,22 @@ end
 
 end
 
+section fract
+
+lemma is_closed.preimage_fract {s : set ℝ} (hs : is_closed s)
+  (h2s : s ∈ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : is_closed (int.fract ⁻¹' s) :=
+sorry
+
+lemma is_open.preimage_fract {s : set ℝ} (hs : is_open s)
+  (h2s : 0 ∈ s → s ∈ 𝓝[<] (1 : ℝ)) : is_open (int.fract ⁻¹' s) :=
+sorry
+
+lemma is_open.preimage_fract' {s : set ℝ} (hs : is_open s)
+  (h2s : (0 : ℝ) ∈ s → (1 : ℝ) ∈ s) : is_open (int.fract ⁻¹' s) :=
+hs.preimage_fract $ λ h, nhds_within_le_nhds $ hs.mem_nhds (h2s h)
+
+end fract
+
 section
 -- to normed_space
 variables {E F : Type*} [normed_group E] [normed_group F]
@@ -350,6 +366,16 @@ by { rcases s.eq_empty_or_nonempty with rfl|h, exact is_preconnected_empty,
      exact (hs.is_path_connected h).is_connected.is_preconnected }
 
 end convex
+
+section
+
+open metric
+
+lemma continuous.inf_dist {α β : Type*} [topological_space α] [pseudo_metric_space β] {s : set β}
+  {f : α → β} (hf : continuous f) : continuous (λ x, inf_dist (f x) s) :=
+(continuous_inf_dist_pt _).comp hf
+
+end
 
 section normed_space
 open metric
