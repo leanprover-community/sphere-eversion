@@ -541,15 +541,4 @@ lemma cont_diff.comp₃ {g : E × F × K → G} (hg : cont_diff 𝕜 n g)
   {k : H → K} (hk : cont_diff 𝕜 n k) : cont_diff 𝕜 n (λ h, g (e h, f h, k h)) :=
 hg.comp $ he.prod $ hf.prod hk
 
-
-/-- For every continuous positive function there is a smaller smooth positive function.
-
-proof sketch: choose locally constant functions on compact sets, and patch them using a partition
-of unity. -/
-lemma exists_smooth_pos [normed_space ℝ E]
-  {f : E → ℝ} {U : set E} (hU : is_open U) (hf : continuous f)
-  (h2f : ∀ x ∈ U, 0 < f x) :
-  ∃ φ : E → ℝ, cont_diff ℝ ⊤ φ ∧ ∀ x ∈ U, 0 < φ x :=
-sorry
-
 end smooth
