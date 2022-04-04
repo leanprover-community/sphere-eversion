@@ -59,17 +59,6 @@ locally_finite (λi, mul_support $ f i) ↔ locally_finite (λ i, mul_tsupport $
 ⟨locally_finite.closure, λ H, H.subset $ λ i, subset_closure⟩
 
 @[to_additive]
-lemma locally_finite.exists_finset_mul_support {M : Type*} [comm_monoid M] {ρ : ι → X → M}
-  (hρ : locally_finite (λ i, mul_support $ ρ i)) (x₀ : X) :
-  ∃ I : finset ι, ∀ᶠ x in 𝓝 x₀, mul_support (λ i, ρ i x) ⊆ I :=
-begin
-  rcases hρ x₀ with ⟨U, hxU, hUf⟩,
-  refine ⟨hUf.to_finset, mem_of_superset hxU $ λ y hy i hi, _⟩,
-  rw [hUf.coe_to_finset],
-  exact ⟨y, hi, hy⟩
-end
-
-@[to_additive]
 lemma locally_finite.exists_finset_mul_support_eq {M : Type*} [comm_monoid M] {ρ : ι → X → M}
   (hρ : locally_finite (λ i, mul_support $ ρ i)) (x₀ : X) :
   ∃ I : finset ι, mul_support (λ i, ρ i x₀) = I :=
@@ -78,12 +67,6 @@ begin
   rw [finite.coe_to_finset],
   refl
 end
-
-@[to_additive] lemma finprod_eventually_eq_prod {M : Type*} [comm_monoid M]
-  {f : ι → X → M} (hf : locally_finite (λ i, mul_support (f i))) (x : X) :
-  ∃ s : finset ι, ∀ᶠ y in 𝓝 x, (∏ᶠ i, f i y) = ∏ i in s, f i y :=
-let ⟨I, hI⟩ := hf.exists_finset_mul_support x in
-  ⟨I, hI.mono (λ y hy, finprod_eq_prod_of_mul_support_subset _ $ λ i hi, hy hi)⟩
 
 lemma partition_of_unity.exists_finset_nhd' {s : set X} (ρ : partition_of_unity ι X s) (x₀ : X) :
   ∃ I : finset ι, (∀ᶠ x in 𝓝[s] x₀, ∑ i in I, ρ i x = 1) ∧ ∀ᶠ x in 𝓝 x₀, support (λ i, ρ i x) ⊆ I  :=
