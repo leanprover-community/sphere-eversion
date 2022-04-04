@@ -402,7 +402,7 @@ lemma has_deriv_at_reparametrize_symm (s : ℝ) :
   has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
 integral_has_deriv_at_right
   (γ.centering_density_interval_integrable x 0 s)
-  ((γ.centering_density_continuous x).measurable_at_filter _ _)
+  ((γ.centering_density_continuous x).strongly_measurable_at_filter _ _)
   (γ.centering_density_continuous x).continuous_at
 
 lemma reparametrize_smooth :
