@@ -10,12 +10,17 @@ import to_mathlib.misc
 open topological_space measure_theory filter first_countable_topology metric set function
 open_locale topological_space filter nnreal big_operators interval
 
+lemma ae_strongly_measurable_interval_oc_iff {α β : Type*} [measurable_space α] [linear_order α]
+  [topological_space β] [metrizable_space β] {μ : measure α}
+  {f : α → β} {a b : α} :
+  (ae_strongly_measurable f $ μ.restrict $ Ι a b) ↔
+    (ae_strongly_measurable f $ μ.restrict $ Ioc a b)
+      ∧ (ae_strongly_measurable f $ μ.restrict $ Ioc b a) :=
+by rw [interval_oc_eq_union, ae_strongly_measurable_union_iff]
+
 section
-variables {E : Type*} [normed_group E] [second_countable_topology E] [normed_space ℝ E]
-  [complete_space E] [measurable_space E] [borel_space E]
+variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
   {H : Type*} [normed_group H] [normed_space ℝ H]
-  [second_countable_topology $ H →L[ℝ] E]
-  [borel_space $ H →L[ℝ] E]
   (ν : measure ℝ)
 
 /-- Interval version of `has_fderiv_at_of_dominated_of_fderiv_le` -/
@@ -24,16 +29,16 @@ lemma has_fderiv_at_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
   {bound : ℝ → ℝ}
   {ε : ℝ}
   (ε_pos : 0 < ε)
-  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) $ ν.restrict (Ι a b))
+  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) $ ν.restrict (Ι a b))
   (hF_int : interval_integrable (F x₀) ν a b)
-  (hF'_meas : ae_measurable (F' x₀) $ ν.restrict (Ι a b))
+  (hF'_meas : ae_strongly_measurable (F' x₀) $ ν.restrict (Ι a b))
   (h_bound : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, ∥F' x t∥ ≤ bound t)
   (bound_integrable : interval_integrable bound ν a b)
   (h_diff : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, has_fderiv_at (λ x, F x t) (F' x t) x) :
   has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ :=
 begin
   erw ae_restrict_interval_oc_iff at h_diff h_bound,
-  simp_rw [ae_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
+  simp_rw [ae_strongly_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
   exact (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
          bound_integrable.1 h_diff.1).sub
         (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
@@ -47,9 +52,9 @@ lemma has_fderiv_at_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
   {a b : ℝ}
   {bound : ℝ → ℝ}
   {ε : ℝ} (ε_pos : 0 < ε)
-  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) $ ν.restrict (Ι a b))
+  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) $ ν.restrict (Ι a b))
   (hF_int : interval_integrable (F x₀) ν a b)
-  (hF'_meas : ae_measurable F' $ ν.restrict (Ι a b))
+  (hF'_meas : ae_strongly_measurable F' $ ν.restrict (Ι a b))
   (h_lip : ∀ᵐ t ∂(ν.restrict (Ι a b)),
     lipschitz_on_with (real.nnabs $ bound t) (λ x, F x t) (ball x₀ ε))
   (bound_integrable : interval_integrable bound ν a b)
@@ -57,7 +62,7 @@ lemma has_fderiv_at_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
   interval_integrable F' ν a b ∧
   has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' t ∂ν) x₀ :=
 begin
-  simp_rw [ae_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
+  simp_rw [ae_strongly_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
   rw ae_interval_oc at h_lip h_diff,
   have H₁ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1
     h_lip.1 bound_integrable.1 h_diff.1,
@@ -73,9 +78,10 @@ section
 open function
 
 theorem continuous_parametric_integral_of_continuous
-  {E : Type*} [normed_group E] [topological_space.second_countable_topology E] [normed_space ℝ E]
-  [complete_space E] [measurable_space E] [borel_space E]
+  {E : Type*} [normed_group E] [normed_space ℝ E]
+  [complete_space E]
   {α : Type*} [topological_space α] [measurable_space α] [opens_measurable_space α]
+  [second_countable_topology_either α E]
   {μ : measure_theory.measure α} [is_locally_finite_measure μ]
   {X : Type*} [topological_space X] [first_countable_topology X] [locally_compact_space X]
   {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2))
@@ -87,12 +93,12 @@ begin
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩,
   rcases (U_cpct.prod hs).bdd_above_norm hF with ⟨M, M_pos, hM⟩,
   apply continuous_at_of_dominated,
-  { exact eventually_of_forall (λ x, (hF.comp (continuous.prod.mk x)).ae_measurable _) },
+  { exact eventually_of_forall (λ x, (hF.comp (continuous.prod.mk x)).ae_strongly_measurable) },
   { apply eventually.mono U_nhds (λ x x_in, _),
     apply ae_restrict_of_forall_mem hs',
     intros t t_in,
     exact hM (x, t) (set.mk_mem_prod x_in t_in) },
-  { apply hs.integrable_const },
+  { exact hs.integrable_const _ _, },
   { apply ae_of_all,
     intros a,
     apply (hF.comp $ continuous_id.prod_mk continuous_const).continuous_at }
@@ -107,12 +113,11 @@ open measure_theory
 
 variables {μ : measure ℝ}
           {X : Type*} [topological_space X] [first_countable_topology X]
-          {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
-          [second_countable_topology E] [complete_space E]
+          {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
 
 lemma continuous_at_parametric_primitive_of_dominated
   {F : X → ℝ → E} (bound : ℝ → ℝ) (a b : ℝ) {a₀ b₀ : ℝ} {x₀ : X}
-  (hF_meas : ∀ x, ae_measurable (F x) (μ.restrict $ Ι a b))
+  (hF_meas : ∀ x, ae_strongly_measurable (F x) (μ.restrict $ Ι a b))
   (h_bound : ∀ᶠ x in 𝓝 x₀, ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥F x t∥ ≤ bound t)
   (bound_integrable : interval_integrable bound μ a b)
   (h_cont : ∀ᵐ t ∂(μ.restrict $ Ι a b), continuous_at (λ x, F x t) x₀)
@@ -196,8 +201,7 @@ section
 variables {μ : measure ℝ}
           [is_locally_finite_measure μ] [has_no_atoms μ]
           {X : Type*} [topological_space X] [first_countable_topology X]
-          {E : Type*} [measurable_space E] [normed_group E] [normed_space ℝ E] [borel_space E]
-          [second_countable_topology E] [complete_space E]
+          {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
 
 lemma continuous_parametric_primitive_of_continuous
   [locally_compact_space X]
@@ -220,7 +224,7 @@ begin
   refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in b₀_in
     (measure_singleton b₀),
   { intro x,
-    apply (hF.comp (continuous.prod.mk x)).ae_measurable _ },
+    exact (hF.comp (continuous.prod.mk x)).ae_strongly_measurable, },
   { apply eventually.mono U_nhds (λ x (x_in : x ∈ U), _),
     refine ae_restrict_of_forall_mem measurable_set_Ioc _,
     intros t t_in,
@@ -253,10 +257,9 @@ end
 
 section
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          [complete_space E] [second_countable_topology E]
-          [measurable_space E] [borel_space E]
+          [complete_space E]
           {H : Type*} [normed_group H] [normed_space ℝ H]
-          [finite_dimensional ℝ H]
+
 /-!
 We could weaken `finite_dimensional ℝ H` with `second_countable (H →L[ℝ] E)` if needed,
 but that is less convenient to work with.
@@ -278,10 +281,10 @@ lemma has_fderiv_at_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
   {s' : H →L[ℝ] ℝ}
   (ha :  a ∈ Ioo a₀ b₀)
   (hsx₀ : s x₀ ∈ Ioo a₀ b₀)
-  (hF_meas : ∀ x ∈ ball x₀ ε, ae_measurable (F x) (volume.restrict (Ioo a₀ b₀)))
+  (hF_meas : ∀ x ∈ ball x₀ ε, ae_strongly_measurable (F x) (volume.restrict (Ioo a₀ b₀)))
   (hF_int : integrable_on (F x₀) (Ioo a₀ b₀))
   (hF_cont : continuous_at (F x₀) (s x₀))
-  (hF'_meas : ae_measurable F' (volume.restrict $ Ι a (s x₀)))
+  (hF'_meas : ae_strongly_measurable F' (volume.restrict $ Ι a (s x₀)))
   (h_lipsch : ∀ᵐ t ∂(volume.restrict $ Ioo a₀ b₀),
     lipschitz_on_with (nnabs $ bound t) (λ x, F x t) (ball x₀ ε))
   (bound_integrable : integrable_on bound (Ioo a₀ b₀))
@@ -304,7 +307,7 @@ begin
   filter.inter_mem (ball_mem_nhds x₀ ε_pos) (s_diff.continuous_at.preimage_mem_nhds Ioo_nhds),
   have x₀_in : x₀ ∈ ball x₀ ε := mem_ball_self ε_pos,
   have hF_meas_ball : ∀ {x}, x ∈ ball x₀ ε → ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
-    ae_measurable (F x) (volume.restrict $ Ι s u),
+    ae_strongly_measurable (F x) (volume.restrict $ Ι s u),
   { intros x hx s u hs hu,
     exact (hF_meas x hx).mono_set (interval_oc_subset_Ioo hs hu) },
   have hF_int_ball : ∀ x ∈ ball x₀ ε, ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
@@ -328,7 +331,7 @@ begin
     rw show bound t = nnabs (bound t), by simp [bound_nonneg t],
     exact ht_diff.le_of_lip (ball_mem_nhds x₀ ε_pos) ht_lip },
   { have D₁ : has_fderiv_at (λ x, φ x (s x₀)) (∫ t in a..s x₀, F' t) x₀,
-    { replace hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) (volume.restrict (Ι a (s x₀))),
+    { replace hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) (volume.restrict (Ι a (s x₀))),
         from eventually.mono (ball_mem_nhds x₀ ε_pos) (λ x hx, hF_meas_ball hx ha hsx₀),
       replace hF_int : interval_integrable (F x₀) volume a (s x₀), from hF_int_ball x₀ x₀_in ha hsx₀,
       exact (has_fderiv_at_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
@@ -346,7 +349,7 @@ begin
         refine is_O.trans _ this,
         show is_O ((λ t, ∫ s in s x₀..t, bound s) ∘ s) ((λ t, t - s x₀) ∘ s) (𝓝 x₀),
         refine is_O.comp_tendsto _ s_diff.continuous_at,
-        have M : measurable_at_filter bound (𝓝 (s x₀)) volume,
+        have M : strongly_measurable_at_filter bound (𝓝 (s x₀)) volume,
         { use [Ioo a₀ b₀, Ioo_nhds, bound_integrable.1] },
         apply is_O.congr' _ eventually_eq.rfl
           (interval_integral.integral_has_deriv_at_right (bound_int ha hsx₀) M bound_cont).is_O,
@@ -402,6 +405,8 @@ local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 local notation `∂₁` := partial_fderiv_fst ℝ
 
+variable [finite_dimensional ℝ H]
+
 /-
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
 -/
@@ -449,7 +454,7 @@ begin
   have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
     from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
   apply has_fderiv_at_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀
-    (λ x hx, (cont_x x).ae_measurable _) (int_Ioo x₀) (cont_x x₀).continuous_at
+    (λ x hx, (cont_x x).ae_strongly_measurable) (int_Ioo x₀) (cont_x x₀).continuous_at
     _ _ _ (continuous_at_const : continuous_at (λ (t : ℝ), (K : ℝ)) $ s x₀) (λ t, nnreal.coe_nonneg K),
   { apply ae_of_all,
     intro t,
@@ -458,7 +463,7 @@ begin
     exact hF.comp ((cont_diff_prod_left t).of_le le_top) },
   { exact (cont_diff.has_strict_fderiv_at hs le_rfl).has_fderiv_at },
   { refl },
-  { apply continuous.ae_measurable,
+  { apply continuous.ae_strongly_measurable,
     have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
       ((λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (fderiv ℝ $ uncurry F) ∘ (λ t, (x₀, t))),
     { ext t,
@@ -481,8 +486,7 @@ end
 section
 -- universe variables u? v
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          [complete_space E] [second_countable_topology E]
-          [measurable_space E] [borel_space E]
+          [complete_space E]
           {H : Type*} [normed_group H] [normed_space ℝ H]
           [finite_dimensional ℝ H]
 
@@ -536,8 +540,7 @@ universe variables v u
 
 variables {E : Type u}
 variables [normed_group E] [normed_space ℝ E]
-          [complete_space E] [second_countable_topology E]
-          [measurable_space E] [borel_space E]
+          [complete_space E]
           {H : Type v} [normed_group H] [normed_space ℝ H]
           [finite_dimensional ℝ H]
 
