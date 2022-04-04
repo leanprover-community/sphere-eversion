@@ -167,7 +167,16 @@ variables [decidable_pred (∈ affine_bases ι ℝ F)]
 
 @[simp] lemma local_centering_density_pos (t : ℝ) (hy : y ∈ γ.local_centering_density_nhd x) :
   0 < γ.local_centering_density x y t :=
-sorry
+begin
+  simp only [γ.local_centering_density_spec x, fintype.sum_apply, pi.smul_apply,
+    algebra.id.smul_eq_mul],
+  refine finset.sum_pos (λ i hi, _) finset.univ_nonempty,
+  refine mul_pos _ (delta_mollifier_pos (γ.local_centering_density_mp_ne_zero x) _ _),
+  obtain ⟨w, hw⟩ := γ.approx_surrounding_points_at_of_local_centering_density_nhd x y hy,
+  convert hw.w_pos i,
+  rw ← hw.coord_eq_w,
+  simp [eval_barycentric_coords, γ.approx_surrounding_points_at_mem_affine_bases x y hy],
+end
 
 lemma local_centering_density_periodic (hy : y ∈ γ.local_centering_density_nhd x) :
   periodic (γ.local_centering_density x y) 1 :=
