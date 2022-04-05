@@ -76,7 +76,18 @@ def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
 
 lemma approx_surrounding_points_at_smooth (η : ℝ) :
   𝒞 ∞ (λ y, γ.approx_surrounding_points_at x y η) :=
-sorry
+begin
+  refine cont_diff_pi.mpr (λ i, _),
+  by_cases hη : η = 0,
+  { suffices : 𝒞 ∞ (λ y, γ y (γ.surrounding_parameters_at x i)),
+    { simpa [approx_surrounding_points_at, loop.mollify, hη], },
+    exact γ.smooth.comp (cont_diff_prod_left (γ.surrounding_parameters_at x i)), },
+  { suffices : 𝒞 ∞ (λy, ∫ s in 0..1, delta_mollifier η (γ.surrounding_parameters_at x i) s • γ y s),
+    { simpa [approx_surrounding_points_at, loop.mollify, hη], },
+    refine cont_diff_parametric_integral_of_cont_diff (cont_diff.smul _ γ.smooth) 0 1,
+    refine cont_diff.comp _ cont_diff_snd,
+    exact delta_mollifier_smooth' hη _, },
+end
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
@@ -231,8 +242,7 @@ begin
     { intros y hy,
       simp [z, γ.approx_surrounding_points_at_mem_affine_bases x y hy], }, },
   { refine cont_diff.comp _ cont_diff_snd,
-    exact (delta_mollifier_smooth (γ.local_centering_density_mp_ne_zero x)).comp
-      (cont_diff_prod_mk (γ.surrounding_parameters_at x i)), },
+    exact delta_mollifier_smooth' (γ.local_centering_density_mp_ne_zero x) _, },
 end
 
 lemma local_centering_density_continuous (hy : y ∈ γ.local_centering_density_nhd x) :

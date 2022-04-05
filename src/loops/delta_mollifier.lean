@@ -19,7 +19,11 @@ lemma delta_mollifier_periodic : periodic (delta_mollifier η t) 1 := sorry
 
 lemma delta_mollifier_pos (s : ℝ) : 0 < delta_mollifier η t s := sorry
 
+-- TODO Maybe just drop this, we'll probably only ever need `delta_mollifier_smooth'`.
 lemma delta_mollifier_smooth : 𝒞 ∞ ↿(delta_mollifier η) := sorry
+
+lemma delta_mollifier_smooth' : 𝒞 ∞ (delta_mollifier η t) :=
+(delta_mollifier_smooth hη).comp (cont_diff_prod_mk t)
 
 @[simp] lemma delta_mollifier_integral_eq_one : ∫ s in 0..1, delta_mollifier η t s = 1 := sorry
 
