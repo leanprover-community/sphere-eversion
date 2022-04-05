@@ -48,17 +48,42 @@ end
 
 section fract
 
-lemma is_closed.preimage_fract {s : set ℝ} (hs : is_closed s)
-  (h2s : s ∈ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : is_closed (int.fract ⁻¹' s) :=
-sorry
+open int
+/- properties of the (dis)continuity of `int.fract` on `ℝ`. -/
 
-lemma is_open.preimage_fract {s : set ℝ} (hs : is_open s)
-  (h2s : 0 ∈ s → s ∈ 𝓝[<] (1 : ℝ)) : is_open (int.fract ⁻¹' s) :=
+lemma fract_eventually_eq {x : ℝ}
+  (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] (λ x', x' - floor x) :=
 sorry
 
 lemma is_open.preimage_fract' {s : set ℝ} (hs : is_open s)
-  (h2s : (0 : ℝ) ∈ s → (1 : ℝ) ∈ s) : is_open (int.fract ⁻¹' s) :=
-hs.preimage_fract $ λ h, nhds_within_le_nhds $ hs.mem_nhds (h2s h)
+  (h2s : 0 ∈ s → s ∈ 𝓝[<] (1 : ℝ)) : is_open (fract ⁻¹' s) :=
+sorry
+
+lemma is_open.preimage_fract {s : set ℝ} (hs : is_open s)
+  (h2s : (0 : ℝ) ∈ s → (1 : ℝ) ∈ s) : is_open (fract ⁻¹' s) :=
+hs.preimage_fract' $ λ h, nhds_within_le_nhds $ hs.mem_nhds (h2s h)
+
+-- is `sᶜ ∉ 𝓝[<] (1 : ℝ)` equivalent to something like `cluster_pt (𝓝[Iio (1 : ℝ) ∩ s] (1 : ℝ)` ?
+lemma is_closed.preimage_fract {s : set ℝ} (hs : is_closed s)
+  (h2s : sᶜ ∉ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : is_closed (fract ⁻¹' s) :=
+is_open_compl_iff.mp $ hs.is_open_compl.preimage_fract' $ λ h, by_contra $ λ h', h $ h2s h'
+
+lemma fract_preimage_mem_nhds' {s : set ℝ} {x : ℝ} (h1 : fract x ≠ 0 → s ∈ 𝓝 (fract x))
+  (h2 : fract x = 0 → s ∈ 𝓝[<] (1 : ℝ))
+  (h3 : fract x = 0 → s ∈ 𝓝[>] (0 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
+sorry
+
+lemma fract_preimage_mem_nhds {s : set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract x))
+  (h2 : fract x = 0 → s ∈ 𝓝 (1 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
+fract_preimage_mem_nhds' (λ _, h1) (λ hx, nhds_within_le_nhds (h2 hx))
+  (λ hx, by { rw [hx] at h1, exact nhds_within_le_nhds h1 })
+
+-- lemma comp_fract_preimage_mem_nhds {α β : Type*} [topological_space α] [topological_space β]
+--   {f : α → ℝ → β} {g : α → ℝ} {s : set β} {x : α} (hf : continuous_at ↿f (x, fract (g x)))
+--   (hg : continuous_at g x) (hs : s ∈ 𝓝 (f x (fract (g x))))
+--   (h : fract (g x) = 0 → g '' ((λ x, f x (fract (g x))) ⁻¹' s) ∈ 𝓝[<] (1 : ℝ)) /- or something -/ :
+--     (λ x, f x (fract (g x))) ⁻¹' s ∈ 𝓝 x :=
+-- sorry
 
 end fract
 
@@ -96,6 +121,22 @@ hf.comp continuous_fst
 
 lemma continuous.snd' {f : Y → Z} (hf : continuous f) : continuous (λ x : X × Y, f x.snd) :=
 hf.comp continuous_snd
+
+lemma continuous_at.fst' {f : X → Z} {x : X} {y : Y} (hf : continuous_at f x) :
+  continuous_at (λ x : X × Y, f x.fst) (x, y) :=
+continuous_at.comp hf continuous_at_fst
+
+lemma continuous_at.fst'' {f : X → Z} {x : X × Y} (hf : continuous_at f x.fst) :
+  continuous_at (λ x : X × Y, f x.fst) x :=
+hf.comp continuous_at_fst
+
+lemma continuous_at.snd' {f : Y → Z} {x : X} {y : Y} (hf : continuous_at f y) :
+  continuous_at (λ x : X × Y, f x.snd) (x, y) :=
+continuous_at.comp hf continuous_at_snd
+
+lemma continuous_at.snd'' {f : Y → Z} {x : X × Y} (hf : continuous_at f x.snd) :
+  continuous_at (λ x : X × Y, f x.snd) x :=
+hf.comp continuous_at_snd
 
 end
 
@@ -211,7 +252,38 @@ begin
   rw [min_proj_I (s.prop.1.trans $ le_max_left _ _), proj_Icc_proj_I],
 end
 
+end
 
+section
+-- consequences of the extreme value theorem
+
+lemma is_compact.continuous_Sup {α β γ : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
+    continuous (λ x, Sup (f x '' K)) :=
+sorry
+
+lemma is_compact.continuous_Inf {α β γ : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
+    continuous (λ x, Inf (f x '' K)) :=
+@is_compact.continuous_Sup (order_dual α) β γ _ _ _ _ _ _ _ hK hf
+
+lemma is_compact.Sup_lt_of_continuous {α β : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space β] {f : β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
+    Sup (f '' K) < y ↔ ∀ x ∈ K, f x < y :=
+sorry
+
+lemma is_compact.lt_Inf_of_continuous {α β : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space β] {f : β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
+    y < Inf (f '' K) ↔ ∀ x ∈ K, y < f x :=
+@is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK hf y
 
 
 end

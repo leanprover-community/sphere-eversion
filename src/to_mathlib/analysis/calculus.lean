@@ -36,9 +36,7 @@ begin
       linarith [hM (set.mem_image_of_mem (norm ∘ f) x_in)] } }
 end
 
-section
-
-open real
+namespace real
 
 lemma smooth_transition_proj_I {x : ℝ} :
   smooth_transition (proj_I x) = smooth_transition x :=
@@ -52,7 +50,13 @@ begin
       smooth_transition.zero_of_nonpos le_rfl], }
 end
 
-end
+lemma smooth_transition.continuous : continuous smooth_transition :=
+(@smooth_transition.cont_diff 0).continuous
+
+lemma smooth_transition.continuous_at {x : ℝ} : continuous_at smooth_transition x :=
+smooth_transition.continuous.continuous_at
+
+end real
 
 section calculus
 open continuous_linear_map
