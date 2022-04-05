@@ -72,6 +72,12 @@ begin
   simp [asymptotics.is_o_zero]
 end
 
+lemma has_fderiv_at_prod_right (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
+begin
+  rw has_fderiv_at_iff_is_o_nhds_zero,
+  simp [asymptotics.is_o_zero]
+end
+
 lemma cont_diff.fst {f : E → F × G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x, (f x).fst) :=
 cont_diff_fst.comp hf
 
@@ -93,13 +99,27 @@ begin
   apply has_fderiv_at_prod_left
 end
 
+lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
+  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
+  has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
+begin
+  rw show (λ f, φ e₀ f) = (uncurry φ) ∘ (λ f, (e₀, f)), by { ext f, simp },
+  refine h.comp _ _,
+  exact has_fderiv_at_prod_right e₀ f₀
+end
+
 variable (𝕜)
 
 /-- The first partial derivative of a binary function. -/
 def partial_fderiv_fst {F : Type*} (φ : E → F → G) :=
 λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
 
+/-- The second partial derivative of a binary function. -/
+def partial_fderiv_snd {E : Type*} (φ : E → F → G) :=
+λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ f, φ e₀ f) f₀
+
 local notation `∂₁` := partial_fderiv_fst
+local notation `∂₂` := partial_fderiv_snd
 
 variable {𝕜}
 
@@ -107,6 +127,20 @@ lemma fderiv_partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ 
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   ∂₁ 𝕜 φ e₀ f₀ = φ'.comp (inl 𝕜 E F) :=
 h.partial_fst.fderiv
+
+lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
+  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
+  ∂₂ 𝕜 φ e₀ f₀ = φ'.comp (inr 𝕜 E F) :=
+h.partial_snd.fderiv
+
+
+lemma differentiable_at.has_fderiv_at_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
+  (h : differentiable_at 𝕜 (uncurry φ) (e₀, f₀)) :
+has_fderiv_at (λ e, φ e f₀) (partial_fderiv_fst 𝕜 φ e₀ f₀) e₀ :=
+begin
+  rw fderiv_partial_fst h.has_fderiv_at,
+  exact h.has_fderiv_at.partial_fst
+end
 
 lemma cont_diff_prod_left (f₀ : F) : cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
 begin
@@ -126,19 +160,13 @@ begin
   simp [asymptotics.is_o_zero]
 end
 
-lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
-  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
+lemma differentiable_at.has_fderiv_at_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
+  (h : differentiable_at 𝕜 (uncurry φ) (e₀, f₀)) :
+has_fderiv_at (λ f, φ e₀ f) (partial_fderiv_snd 𝕜 φ e₀ f₀) f₀ :=
 begin
-  rw show (λ f, φ e₀ f) = (uncurry φ) ∘ (λ f, (e₀, f)), by { ext e, simp },
-  refine h.comp f₀ _,
-  apply has_fderiv_at_prod_mk
+  rw fderiv_partial_snd h.has_fderiv_at,
+  exact h.has_fderiv_at.partial_snd
 end
-
-lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
-  (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
-  fderiv 𝕜 (λ f, φ e₀ f) f₀ = φ'.comp (inr 𝕜 E F) :=
-h.partial_snd.fderiv
 
 lemma cont_diff_prod_mk (e₀ : E) : cont_diff 𝕜 ⊤ (λ f : F, (e₀, f)) :=
 begin
@@ -208,6 +236,18 @@ begin
   refl
 end
 
+lemma differentiable.fderiv_partial_snd {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) :
+  ↿(∂₂ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inr 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
+begin
+  have : ∀ p : E × F, has_fderiv_at (uncurry φ) _ p,
+  { intro p,
+    exact (hF p).has_fderiv_at },
+  dsimp [partial_fderiv_snd],
+  rw funext (λ x : E , funext $ λ t : F, (this (x, t)).partial_snd.fderiv),
+  ext ⟨y, t⟩,
+  refl
+end
+
 @[to_additive]
 lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
 with_top.coe_le_coe.mpr le_mul_self
@@ -244,6 +284,27 @@ h.cont_diff_partial_fst.continuous
 lemma cont_diff.cont_diff_top_partial_fst {φ : E → F → G} (hF : cont_diff 𝕜 ⊤ (uncurry φ)) :
   cont_diff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
 cont_diff_top.mpr (λ n, (cont_diff_top.mp hF (n + 1)).cont_diff_partial_fst)
+
+lemma cont_diff.cont_diff_partial_snd {φ : E → F → G} {n : ℕ}
+  (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₂ 𝕜 φ) :=
+begin
+  cases cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
+  rw (hF.differentiable $ with_top.le_add_self 1 n).fderiv_partial_snd,
+  apply cont_diff.comp _ hF₂,
+  exact ((inr 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] F →L[𝕜] G).cont_diff
+end
+
+lemma cont_diff.cont_diff_partial_snd_apply {φ : E → F → G} {n : ℕ}
+  (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) {y : F} : cont_diff 𝕜 n ↿(λ x y', ∂₂ 𝕜 φ x y' y) :=
+(continuous_linear_map.apply 𝕜 G y).cont_diff.comp hF.cont_diff_partial_snd
+
+lemma cont_diff.continuous_partial_snd {φ : E → F → G} {n : ℕ}
+  (h : cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₂ 𝕜 φ) :=
+h.cont_diff_partial_snd.continuous
+
+lemma cont_diff.cont_diff_top_partial_snd {φ : E → F → G} (hF : cont_diff 𝕜 ⊤ (uncurry φ)) :
+  cont_diff 𝕜 ⊤ ↿(∂₂ 𝕜 φ) :=
+cont_diff_top.mpr (λ n, (cont_diff_top.mp hF (n + 1)).cont_diff_partial_snd)
 
 @[simp] lemma linear_equiv.trans_symm {R M₁ M₂ M₃ : Type*} [semiring R]
   [add_comm_group M₁] [add_comm_group M₂] [add_comm_group M₃]
