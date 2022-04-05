@@ -12,6 +12,22 @@ import to_mathlib.algebra.periodic
 # The reparametrization lemma
 -/
 
+namespace set
+
+-- TODO Check again if these exist and `to_mathlib` them if not.
+
+variables {α : Type*} (s t : set α)
+
+@[simp] lemma diag_preimage_prod :
+  (λ (a : α), (a, a))⁻¹' (s ×ˢ t) = s ∩ t :=
+by { ext, simp, }
+
+lemma diag_preimage_prod_self :
+  (λ (a : α), (a, a))⁻¹' (s ×ˢ s) = s :=
+by rw [diag_preimage_prod, inter_self]
+
+end set
+
 noncomputable theory
 
 open set function measure_theory interval_integral
@@ -25,6 +41,7 @@ variables [measurable_space F] [borel_space F]
 local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
 
 structure smooth_surrounding_family (g : E → F) :=
+(smooth_surrounded : 𝒞 ∞ g)
 (to_fun : E → loop F)
 (smooth : 𝒞 ∞ ↿to_fun)
 (surrounds : ∀ x, (to_fun x).surrounds $ g x)
@@ -56,6 +73,10 @@ classical.some_spec _
 /-- Note that we are mollifying the loop `γ y` at the surrounding parameters for `γ x`. -/
 def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
 (γ y).mollify η (γ.surrounding_parameters_at x i)
+
+lemma approx_surrounding_points_at_smooth (η : ℝ) :
+  𝒞 ∞ (λ y, γ.approx_surrounding_points_at x y η) :=
+sorry
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
@@ -185,9 +206,34 @@ periodic.sum $
   λ i, periodic.smul (delta_mollifier_periodic (γ.local_centering_density_mp_ne_zero x) _) _
 
 lemma local_centering_density_smooth_on :
-  cont_diff_on ℝ ∞ ↿(γ.local_centering_density x) $
+  smooth_on ↿(γ.local_centering_density x) $
     (γ.local_centering_density_nhd x) ×ˢ (univ : set ℝ) :=
-sorry
+begin
+  let h₀ := (λ (yt : E × ℝ) (hyt : yt ∈ (γ.local_centering_density_nhd x) ×ˢ (univ : set ℝ)),
+    congr_fun (γ.local_centering_density_spec x yt.fst) yt.snd),
+  refine cont_diff_on.congr _ h₀,
+  simp only [fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul],
+  refine cont_diff_on.sum (λ i hi, cont_diff_on.mul _ (cont_diff.cont_diff_on _)),
+  { let w : F × (ι → F) → ℝ := λ z, eval_barycentric_coords ι ℝ F z.1 z.2 i,
+    let z : E → F × (ι → F) :=
+      (prod.map g (λ y, γ.approx_surrounding_points_at x y (γ.local_centering_density_mp x))) ∘
+      (λ x, (x, x)),
+    change smooth_on ((w ∘ z) ∘ prod.fst) (γ.local_centering_density_nhd x ×ˢ univ),
+    rw prod_univ,
+    refine cont_diff_on.comp _ cont_diff_fst.cont_diff_on subset.rfl,
+    have h₁ := smooth_barycentric ι ℝ F (fintype.card_fin _),
+    have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := cont_diff_apply i,
+    refine (h₂.comp_cont_diff_on h₁).comp _ _,
+    { have h₃ := eq.subset (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm,
+      refine cont_diff_on.comp _ (cont_diff_id.prod cont_diff_id).cont_diff_on h₃,
+      refine (γ.smooth_surrounded).cont_diff_on.prod_map (cont_diff.cont_diff_on _),
+      exact γ.approx_surrounding_points_at_smooth x _, },
+    { intros y hy,
+      simp [z, γ.approx_surrounding_points_at_mem_affine_bases x y hy], }, },
+  { refine cont_diff.comp _ cont_diff_snd,
+    exact (delta_mollifier_smooth (γ.local_centering_density_mp_ne_zero x)).comp
+      (cont_diff_prod_mk (γ.surrounding_parameters_at x i)), },
+end
 
 lemma local_centering_density_continuous (hy : y ∈ γ.local_centering_density_nhd x) :
   continuous (λ t, γ.local_centering_density x y t) :=
