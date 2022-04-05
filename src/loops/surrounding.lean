@@ -459,34 +459,6 @@ protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ 
   surrounding_family g b γ V :=
 ⟨h.base, h.t₀, h.proj_I, λ x hx, h.surrounds x (hVU hx), h.cont⟩
 
-lemma _root_.is_compact.continuous_Sup {α β γ : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
-    continuous (λ x, Sup (f x '' K)) :=
-sorry
-
-lemma _root_.is_compact.continuous_Inf {α β γ : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
-    continuous (λ x, Inf (f x '' K)) :=
-@is_compact.continuous_Sup (order_dual α) β γ _ _ _ _ _ _ _ hK hf
-
-lemma _root_.is_compact.Sup_lt_of_continuous {α β : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space β] {f : β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
-    Sup (f '' K) < y ↔ ∀ x ∈ K, f x < y :=
-sorry
-
-lemma _root_.is_compact.lt_Inf_of_continuous {α β : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space β] {f : β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
-    y < Inf (f '' K) ↔ ∀ x ∈ K, y < f x :=
-@is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK hf y
-
 protected lemma surrounds_of_close [finite_dimensional ℝ E] [finite_dimensional ℝ F]
   (hg : continuous g)
   (hU : is_open U)

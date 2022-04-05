@@ -28,12 +28,6 @@ structure nice_loop (γ : ℝ → E → loop F) : Prop :=
 
 variables {g b Ω U K}
 
--- /--
--- `ε = wiggle_room` is the amount of wiggle room we have, with the property that
--- `ball (x, b x) (ε + ε) ⊆ Ω` for all `x` in V.
--- -/
--- def wiggle_room
-
 lemma exists_loops_aux1 [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
@@ -68,7 +62,7 @@ begin
   let ε := ε₁ / (1 + Sup range_γ₀),
   have hε : 0 < ε := div_pos hε₁ h0,
   have h2ε : ∀ t s : ℝ, ∥ε • γ₀ t s∥ < ε₁,
-  { intros t s, simp [norm_smul, mul_comm_div', norm_eq_abs, abs_eq_self.mpr, hε.le],
+  { intros t s, simp [norm_smul, mul_comm_div', real.norm_eq_abs, abs_eq_self.mpr, hε.le],
     refine lt_of_lt_of_le _ (mul_one _).le,
     rw [mul_lt_mul_left hε₁, div_lt_one h0],
     refine (zero_add _).symm.le.trans_lt _,
@@ -81,7 +75,6 @@ begin
   have h1 : ∀ (x ∈ V) (t s : ℝ), ball (x, b x) (ε₁ + ε₁) ⊆ Ω,
   { intros x hx t s,
     simp [← h0ε₁],
-    -- refine (closed_ball_subset_ball $ h2ε _ _).trans _,
     refine (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ },
   refine ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀], _, _, _⟩, _⟩, _, _⟩,
   { intros x t s, simp [γ₁, h3γ₀] },
@@ -132,10 +125,6 @@ end
 
   -/
 
-lemma int.fract_eventually_eq {x : ℝ}
-  (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] (λ x', x' - floor x) :=
-sorry
-
 lemma exists_loops_aux2 [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
@@ -173,21 +162,25 @@ begin
   let γ₄ := ↿γ₃,
   have h0γ₄ : ∀ x t s, γ₄ (x, t, s) = γ₃ x t s := λ x t s, rfl,
   have hγ₄ : continuous γ₄ := hγ₃.cont,
-  let C₁ : set ℝ := Iic (1 / 5 : ℝ) ∪ Ici (4 / 5),
+  let C₁ : set ℝ := Iic (5⁻¹  : ℝ) ∪ Ici (4 / 5),
   have h0C₁ : (0 : ℝ) ∈ C₁ := or.inl (by { rw [mem_Iic], norm_num1 }),
   have h1C₁ : (1 : ℝ) ∈ C₁ := or.inr (by { rw [mem_Ici], norm_num1 }),
-  let C : set (E × ℝ × ℝ) := { x : E × ℝ × ℝ | x.2.1 ∈ Iic (5⁻¹ : ℝ) ∨ fract x.2.2 ∈ C₁ },
+  have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s,
+  { intros s hs,
+    refine fract_preimage_mem_nhds _ (λ _, _),
+    { rw [hs], refine mem_of_superset (Iic_mem_nhds $ by norm_num) (subset_union_left _ _) },
+    { refine mem_of_superset (Ici_mem_nhds $ by norm_num) (subset_union_right _ _) } },
+  let C : set (E × ℝ × ℝ) := (λ x, x.2.1) ⁻¹' Iic (5⁻¹ : ℝ) ∪ (λ x, fract x.2.2) ⁻¹' C₁,
   have hC : is_closed C,
   { refine (is_closed_Iic.preimage continuous_snd.fst).union _,
     refine ((is_closed_Iic.union is_closed_Ici).preimage_fract _).preimage continuous_snd.snd,
-    exact λ x, or.inl (show (0 : ℝ) ≤ 1/5, by norm_num) },
+    exact λ x, or.inl (show (0 : ℝ) ≤ 5⁻¹, by norm_num) },
   let U₁ : set ℝ := Iio (4⁻¹ : ℝ) ∪ Ioi (3 / 4),
-  let U : set (E × ℝ × ℝ) :=
-  { x : E × ℝ × ℝ | x.2.1 ∈ Iio (4⁻¹ : ℝ) ∨ fract x.2.2 ∈ U₁ },
+  let U : set (E × ℝ × ℝ) := (λ x, x.2.1) ⁻¹' Iio (4⁻¹ : ℝ) ∪ (λ x, fract x.2.2) ⁻¹' U₁,
   have hUC : U ∈ 𝓝ˢ C,
   { have hU : is_open U,
     { refine (is_open_Iio.preimage continuous_snd.fst).union _,
-      refine ((is_open_Iio.union is_open_Ioi).preimage_fract' _).preimage continuous_snd.snd,
+      refine ((is_open_Iio.union is_open_Ioi).preimage_fract _).preimage continuous_snd.snd,
       exact λ x, or.inr (show (3/4 : ℝ) < 1, by norm_num) },
     exact hU.mem_nhds_set.mpr (union_subset_union (λ x hx, lt_of_le_of_lt hx (by norm_num)) $
       union_subset_union (λ x hx, lt_of_le_of_lt hx (by norm_num))
@@ -210,23 +203,23 @@ begin
   { rw [cont_diff_iff_cont_diff_at],
     rintro ⟨x, t, s⟩, by_cases hs : fract s = 0,
     { have : (λ x, γ x.1 x.2.1 x.2.2) =ᶠ[𝓝 (x, t, s)] λ x, b x.1,
-      { have : C ∈ 𝓝 (x, t, s), -- maybe change because `γ` manipulates `t`, `s`
-        { sorry, },
+      { have : (λ x : E × ℝ × ℝ, (x.1, smooth_transition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s),
+        { simp_rw [C, @preimage_union _ _ _ (_ ⁻¹' _), preimage_preimage, fract_fract],
+          refine mem_of_superset _ (subset_union_right _ _),
+          refine continuous_at_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs) },
         refine eventually_of_mem this _,
         intros x hx,
-        sorry -- refine (hγ₅C hx).trans _,
-         },
+        simp_rw [γ, loop.coe_mk],
+        refine (hγ₅C hx).trans
+          (h2γ₄ $ (subset_interior_iff_mem_nhds_set.mpr hUC).trans interior_subset hx) },
       exact hb.fst'.cont_diff_at.congr_of_eventually_eq this },
-    { have := ((int.fract_eventually_eq hs).fun_comp $ λ s, γ₅ (x, smooth_transition t, s)),
-      sorry --refine cont_diff_at.congr_of_eventually_eq _ _,
-
-
-
-    } }, -- requires reasoning around `fract s` and using `smooth_transition.cont_diff`.
-    -- (also use `h2γ₄`)
+    { exact (hγ₅.comp₃ cont_diff_fst smooth_transition.cont_diff.fst'.snd' $ cont_diff_snd.snd'.sub
+        cont_diff_const).cont_diff_at.congr_of_eventually_eq
+        ((eventually_eq.rfl.prod_mk $ eventually_eq.rfl.prod_mk $
+        (fract_eventually_eq hs).comp_tendsto continuous_at_id.snd'.snd').fun_comp ↿γ₅) } },
   refine ⟨γ, ⟨⟨_, _, _, _, hγ.continuous⟩, _⟩, hγ, _⟩,
   { intros x t, simp_rw [γ, loop.coe_mk, fract_zero], rw [hγ₅C], exact hγ₃.base x _,
-    exact or.inr (by { rw [fract_zero], exact h0C₁ }) },
+    exact or.inr (by { rw [mem_preimage, fract_zero], exact h0C₁ }) },
   { intros x s, simp_rw [γ, loop.coe_mk, smooth_transition.zero_of_nonpos le_rfl], rw [hγ₅C],
     exact hγ₃.t₀ x (fract s),
     exact or.inl (show (0 : ℝ) ≤ 5⁻¹, by norm_num) },
