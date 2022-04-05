@@ -161,15 +161,29 @@ fract_preimage_mem_nhds' (λ _, h1) (λ hx, nhds_within_le_nhds (h2 hx))
 --     (λ x, f x (fract (g x))) ⁻¹' s ∈ 𝓝 x :=
 -- sorry
 
+lemma fract_one : fract (1 : ℝ) = 0 :=
+by simp_rw [← fract_coe 1, int.cast_one]
+
 end fract
 
 section
 -- to normed_space
 variables {E F : Type*} [normed_group E] [normed_group F]
 variables [normed_space ℝ E] [normed_space ℝ F]
+
+-- is this really not in the library?
+lemma add_sub_left_comm {α : Type*} [add_comm_group α] {x y z : α} : x + (y - z) = y + (x - z) :=
+by abel
+
 lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
   dist (r • x + (1 - r) • y) x ≤ dist y x :=
-by sorry
+calc
+  dist (r • x + (1 - r) • y) x = ∥1 - r∥ * ∥x - y∥ : by simp_rw [dist_eq_norm', ← norm_smul,
+    sub_smul, one_smul, smul_sub, ← sub_sub, ← sub_add, sub_right_comm]
+  ... = (1 - r) * dist y x :
+    by rw [real.norm_eq_abs, abs_eq_self.mpr (sub_nonneg.mpr h.2), dist_eq_norm']
+  ... ≤ (1 - 0) * dist y x : mul_le_mul_of_nonneg_right (sub_le_sub_left h.1 _) dist_nonneg
+  ... = dist y x : by rw [sub_zero, one_mul]
 
 end
 
@@ -350,16 +364,21 @@ lemma is_compact.continuous_Inf {α β γ : Type*}
 lemma is_compact.Sup_lt_of_continuous {α β : Type*}
   [conditionally_complete_linear_order α] [topological_space α]
   [order_topology α] [topological_space β] {f : β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
+  {K : set β} (hK : is_compact K) (h0K : K.nonempty) (hf : continuous_on f K) (y : α) :
     Sup (f '' K) < y ↔ ∀ x ∈ K, f x < y :=
-sorry
+begin
+  refine ⟨λ h x hx, (le_cSup (hK.bdd_above_image hf) $ mem_image_of_mem f hx).trans_lt h, λ h, _⟩,
+  obtain ⟨x, hx, h2x⟩ := hK.exists_forall_ge h0K hf,
+  refine (cSup_le (h0K.image f) _).trans_lt (h x hx),
+  rintro _ ⟨x', hx', rfl⟩, exact h2x x' hx'
+end
 
 lemma is_compact.lt_Inf_of_continuous {α β : Type*}
   [conditionally_complete_linear_order α] [topological_space α]
   [order_topology α] [topological_space β] {f : β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous f) (y : α) :
+  {K : set β} (hK : is_compact K) (h0K : K.nonempty) (hf : continuous_on f K) (y : α) :
     y < Inf (f '' K) ↔ ∀ x ∈ K, y < f x :=
-@is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK hf y
+@is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK h0K hf y
 
 
 end

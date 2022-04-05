@@ -13,6 +13,11 @@ This file should *not* be imported in any other file (and this file can import a
 open_locale filter unit_interval topological_space uniformity
 open function filter set
 
+section order
+lemma max_eq_of_lt_left {a b c : ℝ} (h : a < c) : max a b = c ↔ b = c :=
+by simp [max_eq_iff, h.ne, h.le] {contextual := tt}
+end order
+
 namespace filter
 
 variables {α β : Type*} {f : filter α} {g : filter β}
