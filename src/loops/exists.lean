@@ -256,7 +256,7 @@ theorem exists_loops [finite_dimensional ℝ E]
 begin
   obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁⟩ := exists_loops_aux2 hK hΩ_op hg hb hgK hconv,
   let γ₂ : smooth_surrounding_family g :=
-    ⟨λ x, γ₁ x 1, hsγ₁.comp₃ cont_diff_fst cont_diff_const cont_diff_snd,
+    ⟨hg, λ x, γ₁ x 1, hsγ₁.comp₃ cont_diff_fst cont_diff_const cont_diff_snd,
       λ x, hγ₁.surrounds x (mem_univ _)⟩,
   classical,
   let γ₃ : ℝ → E → loop F :=
