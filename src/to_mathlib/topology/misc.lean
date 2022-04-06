@@ -49,15 +49,91 @@ end
 section fract
 
 open int
-/- properties of the (dis)continuity of `int.fract` on `ℝ`. -/
+/- properties of the (dis)continuity of `int.fract` on `ℝ`.
+To be PRed to topology.algebra.floor_ring
+-/
+
+lemma floor_eq_self_iff {x : ℝ} : (⌊x⌋ : ℝ) = x ↔ ∃ n : ℤ, x = n :=
+begin
+  split,
+  { intro h,
+    exact ⟨⌊x⌋, h.symm⟩ },
+  { rintros ⟨n, rfl⟩,
+    rw floor_coe }
+end
+
+lemma fract_eq_zero_iff {x : ℝ} : fract x = 0 ↔ ∃ n : ℤ, x = n :=
+begin
+  unfold fract,
+  rw [sub_eq_zero, eq_comm, floor_eq_self_iff]
+end
+
+lemma fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n :=
+by rw [← not_exists, not_iff_not, fract_eq_zero_iff]
+
+lemma Ioo_floor_mem_nhds {x : ℝ} (h : ∀ (n : ℤ), x ≠ n) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
+Ioo_mem_nhds ((eq_or_lt_of_le (floor_le x)).elim (λ H, (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
+
+lemma loc_constant_floor {x : ℝ} (h : ∀ (n : ℤ), x ≠ n) : floor =ᶠ[𝓝 x] (λ x', ⌊x⌋) :=
+begin
+  filter_upwards [Ioo_floor_mem_nhds h],
+  intros y hy,
+  rw floor_eq_on_Ico,
+  exact mem_Ico_of_Ioo hy
+end
 
 lemma fract_eventually_eq {x : ℝ}
   (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] (λ x', x' - floor x) :=
-sorry
+begin
+  rw fract_ne_zero_iff at h,
+  exact eventually_eq.rfl.sub ((loc_constant_floor h).fun_comp _)
+end
 
 lemma is_open.preimage_fract' {s : set ℝ} (hs : is_open s)
   (h2s : 0 ∈ s → s ∈ 𝓝[<] (1 : ℝ)) : is_open (fract ⁻¹' s) :=
-sorry
+begin
+  rw is_open_iff_mem_nhds,
+  rintros x (hx : fract x ∈ s),
+  rcases eq_or_ne (fract x)  0 with hx' | hx',
+  { have H : (0 : ℝ) ∈ s, by rwa hx' at hx,
+    specialize h2s H,
+    rcases fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩, clear hx hx',
+    have s_mem_0 := hs.mem_nhds H,
+    rcases (nhds_basis_zero_abs_sub_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩,
+    rcases (nhds_within_has_basis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩,
+    have : Ioo (1 - ε) (1 + ε) ∩ Iio 1 = Ioo (1 - ε) 1,
+    {
+      sorry },
+    rw this at hε, clear this,
+    set ε' := min ε (1/2),
+    have ε'_pos : 0 < ε',
+      from lt_min ε_pos (by norm_num : (0 : ℝ) < 1/2),
+    have hε' : Ioo (1 - ε') 1 ⊆ s,
+    { apply subset.trans _ hε,
+      apply Ioo_subset_Ioo_left,
+      linarith [min_le_left ε (1/2)] },
+    have mem : Ioo ((n : ℝ)-ε') (n+δ) ∈ 𝓝 (n : ℝ),
+    { apply Ioo_mem_nhds ; linarith },
+    apply mem_of_superset mem,
+    rintros x ⟨hx, hx'⟩,
+    cases le_or_gt (n : ℝ) x with hx'' hx'',
+    { apply hδ,
+      change |fract x| < δ,
+      clear_dependent s ε,
+      sorry },
+    { apply hε',
+      split,
+      { rw ← fract_sub_int x (n-1),
+        have I₁ : 1 - ε' < x - (n-1), by linarith,
+        have I₂ : x - (n-1) < 1, by linarith,
+        clear_dependent s δ,
+        sorry },
+      { exact fract_lt_one x }, } },
+  { rw fract_ne_zero_iff at hx',
+    have H : Ico (⌊x⌋ : ℝ) (⌊x⌋ + 1) ∈ 𝓝 x,
+      from mem_of_superset (Ioo_floor_mem_nhds hx') Ioo_subset_Ico_self,
+    exact (continuous_on_fract ⌊x⌋).continuous_at H (hs.mem_nhds hx) },
+end
 
 lemma is_open.preimage_fract {s : set ℝ} (hs : is_open s)
   (h2s : (0 : ℝ) ∈ s → (1 : ℝ) ∈ s) : is_open (fract ⁻¹' s) :=
