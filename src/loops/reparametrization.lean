@@ -1,12 +1,15 @@
-import notations
-import loops.surrounding
-import loops.delta_mollifier
 import analysis.calculus.specific_functions
 import measure_theory.integral.periodic
 import geometry.manifold.partition_of_unity
+
+import notations
+import loops.surrounding
+import loops.delta_mollifier
+
 import to_mathlib.order.hom.basic
 import to_mathlib.geometry.manifold.partition_of_unity
 import to_mathlib.algebra.periodic
+import to_mathlib.analysis.cont_diff
 
 /-!
 # The reparametrization lemma
@@ -460,18 +463,18 @@ begin
     (γ.centering_density_periodic x).interval_integral_add_eq t 0],
 end
 
+lemma deriv_integral_centering_density_pos (t : ℝ) :
+  0 < deriv (λ t, ∫ s in 0..t, γ.centering_density x s) t :=
+begin
+  rw interval_integral.deriv_integral_right (γ.centering_density_interval_integrable _ _ _)
+    ((γ.centering_density_continuous x).strongly_measurable_at_filter volume (𝓝 t))
+    (centering_density_continuous γ x).continuous_at,
+  exact centering_density_pos γ x t
+end
+
 lemma strict_mono_integral_centering_density :
   strict_mono $ λ t, ∫ s in 0..t, γ.centering_density x s :=
-begin
-  intros t₁ t₂ ht₁₂,
-  have h := γ.centering_density_interval_integrable x,
-  rw [← sub_pos, integral_interval_sub_left (h 0 t₂) (h 0 t₁)],
-  have hK : is_compact (Icc t₁ t₂) := is_compact_Icc,
-  have hK' : (Icc t₁ t₂).nonempty := nonempty_Icc.mpr ht₁₂.le,
-  obtain ⟨u, hu₁, hu₂⟩ := hK.exists_forall_le hK' (γ.centering_density_continuous x).continuous_on,
-  refine lt_of_lt_of_le _ (integral_mono_on ht₁₂.le interval_integrable_const (h t₁ t₂) hu₂),
-  simp [ht₁₂],
-end
+strict_mono_of_deriv_pos (γ.deriv_integral_centering_density_pos x)
 
 lemma surjective_integral_centering_density :
   surjective $ λ t, ∫ s in 0..t, γ.centering_density x s :=
@@ -517,7 +520,13 @@ integral_has_deriv_at_right
 lemma reparametrize_smooth :
   -- 𝒞 ∞ ↿γ.reparametrize :=
   𝒞 ∞ $ uncurry (λ x t, γ.reparametrize x t) :=
-sorry
+begin
+  let f : E → ℝ → ℝ := λ x t, ∫ s in 0..t, γ.centering_density x s,
+  change 𝒞 ⊤ (λ p : E × ℝ, (strict_mono.order_iso_of_surjective (f p.1) _ _).symm p.2),
+  apply cont_diff_parametric_symm_of_deriv_pos,
+  { exact cont_diff_parametric_primitive_of_cont_diff'' γ.centering_density_smooth 0 },
+  { exact λ x, deriv_integral_centering_density_pos γ x }
+end
 
 @[simp] lemma reparametrize_average :
   ((γ x).reparam $ (γ.reparametrize x).equivariant_map).average = g x :=

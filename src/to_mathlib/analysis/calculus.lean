@@ -248,6 +248,27 @@ begin
   refl
 end
 
+/-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G`-/
+def partial_deriv_fst (φ : 𝕜 → F → G) := λ k f, ∂₁ 𝕜 φ k f 1
+
+/-- The second partial derivative of `φ : E → 𝕜 → G` seen as a function from `E → 𝕜 → G`-/
+def partial_deriv_snd (φ : E → 𝕜 → G) := λ e k, ∂₂ 𝕜 φ e k 1
+
+lemma partial_fderiv_fst_eq_smul_right (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
+  ∂₁ 𝕜 φ k f = smul_right (1 : 𝕜 →L[𝕜] 𝕜) (partial_deriv_fst φ k f) := deriv_fderiv.symm
+
+@[simp]
+lemma partial_fderiv_fst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
+  ∂₁ 𝕜 φ k f 1 = partial_deriv_fst φ k f :=
+by simp only [partial_fderiv_fst_eq_smul_right, smul_right_apply, one_apply, one_smul]
+
+lemma partial_fderiv_snd_eq_smul_right (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
+  ∂₂ 𝕜 φ e k  = smul_right (1 : 𝕜 →L[𝕜] 𝕜) (partial_deriv_snd φ e k) := deriv_fderiv.symm
+
+lemma partial_fderiv_snd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
+  ∂₂ 𝕜 φ e k 1 = partial_deriv_snd φ e k :=
+by simp only [partial_fderiv_snd_eq_smul_right, smul_right_apply, one_apply, one_smul]
+
 @[to_additive]
 lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
 with_top.coe_le_coe.mpr le_mul_self
