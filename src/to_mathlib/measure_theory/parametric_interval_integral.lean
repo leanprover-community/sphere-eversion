@@ -558,6 +558,12 @@ begin
   { exact cont_diff_parametric_primitive_of_cont_diff' hF hs a },
 end
 
+lemma cont_diff_parametric_primitive_of_cont_diff''
+  {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F) (a : ℝ) :
+  cont_diff ℝ n (λ x : H × ℝ, ∫ t in a..x.2, F x.1 t) :=
+cont_diff_parametric_primitive_of_cont_diff (hF.comp (cont_diff_fst.prod_map cont_diff_id))
+cont_diff_snd a
+
 local notation `∂₁` := partial_fderiv_fst ℝ
 
 lemma cont_diff_parametric_integral_of_cont_diff

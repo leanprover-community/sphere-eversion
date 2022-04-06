@@ -128,7 +128,7 @@ def equiv.to_homeomorph_of_cont_diff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
 end
 
 section
-variables (𝕜 : Type*) [is_R_or_C 𝕜]
+variables {𝕜 : Type*} [is_R_or_C 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
   {F : Type*} [normed_group F] [normed_space 𝕜 F]
   {G : Type*} [normed_group G] [normed_space 𝕜 G]
@@ -139,7 +139,7 @@ local notation `∂₁` := partial_fderiv_fst 𝕜
 local notation `∂₂` := partial_fderiv_snd 𝕜
 
 lemma cont_diff_parametric_symm [complete_space E] [complete_space F]
-  {f : E → F ≃ₜ G} {f' : E → F → F ≃L[𝕜] G}
+  {f : E → F ≃ G} {f' : E → F → F ≃L[𝕜] G}
   (hf : cont_diff 𝕜 ⊤ (λ p : E × F, f p.1 p.2))
   (hf' : ∀ x y, ∂₂ (λ x y, f x y) x y = f' x y) :
   cont_diff 𝕜 ⊤ (λ p : E × G, (f p.1).symm p.2) :=
@@ -180,6 +180,29 @@ begin
   let φ := φ₀.to_homeomorph_of_cont_diff hderiv,
   exact cont_diff_snd.comp (φ.cont_diff_symm (λ x, (hderiv x).has_fderiv_at)
     (cont_diff_fst.prod hf)),
+end
+
+end
+
+section
+variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
+
+lemma cont_diff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : cont_diff ℝ ⊤ ↿f)
+  (hderiv : ∀ x t, partial_deriv_snd f x t > 0) (hsurj : ∀ x, surjective $ f x) :
+  cont_diff ℝ ⊤  (λ p : E × ℝ, (strict_mono.order_iso_of_surjective (f p.1)
+                                (strict_mono_of_deriv_pos $ hderiv p.1) (hsurj p.1)).symm p.2) :=
+begin
+  have hmono := λ x, strict_mono_of_deriv_pos (hderiv x),
+  let F := λ x, (strict_mono.order_iso_of_surjective (f x) (hmono x) $ hsurj x).to_equiv,
+  change cont_diff ℝ ⊤ (λ (p : E × ℝ), (F p.1).symm p.snd),
+  refine cont_diff_parametric_symm hf _,
+  exact λ x t, continuous_linear_equiv.units_equiv_aut ℝ (units.mk0 (deriv (f x) t) $ ne_of_gt (hderiv x t)) ,
+  intros x t,
+  suffices : partial_fderiv_snd ℝ f x t 1 = partial_deriv_snd f x t,
+  { ext v,
+    simpa only [rel_iso.coe_fn_to_equiv, continuous_linear_equiv.coe_coe,
+      continuous_linear_equiv.units_equiv_aut_apply, units.coe_mk0, one_mul] },
+  apply partial_fderiv_snd_one
 end
 
 end
