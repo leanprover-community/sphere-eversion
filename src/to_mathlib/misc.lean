@@ -50,6 +50,14 @@ lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : finite (f ⁻�
   (hs : s ⊆ range f) : finite s :=
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }
 
+@[simp] lemma mk_diag_preimage_prod (s t : set α) :
+  (λ (a : α), (a, a))⁻¹' (s ×ˢ t) = s ∩ t :=
+rfl
+
+@[simp] lemma mk_diag_preimage_prod_self (s : set α) :
+  (λ (a : α), (a, a))⁻¹' (s ×ˢ s) = s :=
+s.inter_self
+
 end set
 
 lemma has_mem.mem.mul {a b : ℝ} (ha : a ∈ (set.Icc 0 1 : set ℝ)) (hb : b ∈ (set.Icc 0 1 : set ℝ)) :
