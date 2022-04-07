@@ -1,5 +1,7 @@
 import geometry.manifold.partition_of_unity
 
+import to_mathlib.geometry.manifold.cont_mdiff
+
 noncomputable theory
 
 open_locale topological_space filter manifold big_operators
@@ -345,19 +347,6 @@ begin
 end
 
 open topological_space
-
-lemma cont_mdiff_iff_cont_diff_on {s : opens E}  {f : E → F} {n : with_top ℕ} :
-  cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) ↔ cont_diff_on ℝ n f s :=
-by { rw [← cont_mdiff_on_iff_cont_diff_on], sorry }
-
-lemma cont_mdiff_iff_cont_diff_on' {s : opens E} [decidable_pred (λ x, x ∈ s)]
-  {f : s → F} {n : with_top ℕ} :
-  cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n f ↔ cont_diff_on ℝ n (λ x : E, if hx : x ∈ s then f ⟨x, hx⟩ else 0) s :=
-sorry
-
-lemma cont_mdiff_on_iff_cont_diff_on' {s : opens E} {t : set E} {f : E → F} {n : with_top ℕ} :
-  cont_mdiff_on 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) (coe ⁻¹' t) ↔ cont_diff_on ℝ n f (s ∩ t) :=
-sorry
 
 lemma exists_cont_diff_of_convex_of_is_open {s : set E} (hs : is_open s)
   {P : E → F → Prop} (hP : ∀ x ∈ s, convex ℝ {y | P x y})
