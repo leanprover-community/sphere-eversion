@@ -233,7 +233,87 @@ begin
   exact ⟨hW, h2q, h2W, h3W, hq⟩
 end
 
+lemma surrounding_pts_eval_barycentric_coords_iff
+  (q : F) (v : ι → F) [decidable_pred (∈ affine_bases ι ℝ F)] :
+  surrounding_pts q v (eval_barycentric_coords ι ℝ F q v) ↔
+  ∀ i, 0 < eval_barycentric_coords ι ℝ F q v i :=
+begin
+  refine ⟨λ h, h.w_pos, λ h, _⟩,
+  have hv : v ∈ affine_bases ι ℝ F,
+  { by_contra contra,
+    simpa [eval_barycentric_coords_apply_of_not_mem_bases ι ℝ F q contra] using h 0, },
+  have hv' : ∑ i, eval_barycentric_coords ι ℝ F q v i = 1,
+  { simp [eval_barycentric_coords_apply_of_mem_bases ι ℝ F q hv], },
+  refine ⟨hv.1, h, hv', _⟩,
+  simp_rw [← finset.univ.affine_combination_eq_linear_combination v _ hv',
+    eval_barycentric_coords_apply_of_mem_bases ι ℝ F q hv],
+  convert affine_basis.affine_combination_coord_eq_self _ q,
+  refl,
+end
+
 end surrounding_points
+
+section surrounding_points_limits
+
+variables {X Y : Type*} [topological_space X] [topological_space Y] [finite_dimensional ℝ F]
+
+local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
+
+lemma eventually_surrounding_pts_of_tendsto_of_tendsto {x : X} {y : Y}
+  {v : ι → F} {q : F} {p : ι → X → F} {f : Y → F}
+  (hq : ∃ w, surrounding_pts q v w)
+  (hp : ∀ i, tendsto (p i) (𝓝 x) (𝓝 (v i)))
+  (hf : tendsto f (𝓝 y) (𝓝 q)) :
+  ∀ᶠ (z : X × Y) in 𝓝 (x, y), ∃ w, surrounding_pts (f z.2) (λ i, p i z.1) w :=
+begin
+  classical,
+  obtain ⟨w, hw⟩ := hq,
+  let V : set (ι → ℝ) := set.pi set.univ (λ i, Ioi (0 : ℝ)),
+  let W' : F × (ι → F) → (ι → ℝ) := uncurry (eval_barycentric_coords ι ℝ F),
+  let A : set (F × (ι → F)) := (univ : set F) ×ˢ affine_bases ι ℝ F,
+  let S : set (F × (ι → F)) := W' ⁻¹' V,
+  have hι : fintype.card ι = finite_dimensional.finrank ℝ F + 1 := fintype.card_fin _,
+  have hq' : v ∈ affine_bases ι ℝ F := hw.mem_affine_bases,
+  have hqv : (q, v) ∈ A, { simp [hq'], },
+  have hxp : W' (q, v) ∈ V, { simp [W', hq', hw.coord_eq_w, hw.w_pos], },
+  have hV' : V ∈ 𝓝 (W' (q, v)) := (is_open_set_pi finite_univ (λ _ _, is_open_Ioi)).mem_nhds hxp,
+  have hA : is_open A,
+  { simp only [A, affine_bases_findim ι ℝ F hι],
+    exact is_open_univ.prod (is_open_set_affine_independent ℝ F), },
+  have hW' : continuous_at W' (q, v) := (smooth_barycentric ι ℝ F hι).continuous_on.continuous_at
+    (mem_nhds_iff.mpr ⟨A, subset.rfl, hA, hqv⟩),
+  have hS : S ∈ 𝓝 (q, v) := hW'.preimage_mem_nhds hV',
+  obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS,
+  have hn₁' := tendsto_def.mp hf _ hn₁,
+  have hn₂' := tendsto_def.mp (tendsto_pi_nhds.mpr hp) _ hn₂,
+  have come_on : ((swap p)⁻¹' n₂) ×ˢ (f⁻¹' n₁) ∈ 𝓝 (x, y) :=
+    mem_nhds_prod_iff.mpr ⟨_, hn₂', _, hn₁', subset.rfl⟩,
+  refine eventually_of_mem come_on _,
+  rintros ⟨y₂, y₁⟩ ⟨hy₂ : swap p y₂ ∈ n₂, hy₁ : f y₁ ∈ n₁⟩,
+  refine ⟨W' (f y₁, swap p y₂), (surrounding_pts_eval_barycentric_coords_iff
+    (f y₁) (swap p y₂)).mpr (λ i, _)⟩,
+  change W' (f y₁, swap p y₂) i ∈ Ioi (0 : ℝ),
+  suffices : (f y₁, swap p y₂) ∈ S,
+  { rw [set.mem_preimage] at this, exact set.mem_pi.mp this i (mem_univ _), },
+  apply hS',
+  simp [hy₁, hy₂],
+end
+
+lemma eventually_surrounding_pts_of_tendsto_of_tendsto'
+  {v : ι → F} {q : F} {p : ι → X → F} {x : X} {f : X → F}
+  (hq : ∃ w, surrounding_pts q v w)
+  (hp : ∀ i, tendsto (p i) (𝓝 x) (𝓝 (v i)))
+  (hf : tendsto f (𝓝 x) (𝓝 q)) :
+  ∀ᶠ y in 𝓝 x, ∃ w, surrounding_pts (f y) (λ i, p i y) w :=
+begin
+  have := eventually_surrounding_pts_of_tendsto_of_tendsto hq hp hf,
+  simp_rw [eventually_iff_exists_mem, mem_nhds_prod_iff] at this,
+  obtain ⟨nnn, ⟨n₁, hn₁, n₂, hn₂, hh⟩, h⟩ := this,
+  rw eventually_iff_exists_mem,
+  exact ⟨n₁ ∩ n₂, inter_mem hn₁ hn₂, λ y hy, h (y, y) (by { apply hh, simpa using hy, })⟩,
+end
+
+end surrounding_points_limits
 
 namespace loop
 
