@@ -170,20 +170,32 @@ lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n 
   cont_mdiff_at I 𝓘(ℝ, F) n f  x :=
 cont_mdiff_within_at_of_not_mem hx n univ
 
+lemma model_with_corners_self_prod : 𝓘(ℝ, E × F) = 𝓘(ℝ, E).prod 𝓘(ℝ, F) :=
+sorry
+
+lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
+sorry
+
 
 lemma cont_mdiff_within_at.smul {f : M → F} {r : M → ℝ}
   {n : with_top ℕ} {s : set M} {x₀ : M}
   (hf : cont_mdiff_within_at I 𝓘(ℝ, F) n f s x₀)
   (hs : cont_mdiff_within_at I 𝓘(ℝ, ℝ) n r s x₀) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n (r • f) s x₀ :=
-sorry
+begin
+  have : cont_mdiff_within_at I 𝓘(ℝ, ℝ × F) n (λ x, (r x, f x)) s x₀,
+  { rw [model_with_corners_self_prod, ← charted_space_self_prod],
+    exact cont_mdiff_within_at.prod_mk hs hf },
+  exact (cont_mdiff_iff_cont_diff.mpr cont_diff_smul).cont_mdiff_at.cont_mdiff_within_at.comp
+    _ this (maps_to_univ _ _)
+end
 
 lemma cont_mdiff_at.smul {f : M → F} {r : M → ℝ}
   {n : with_top ℕ} {x₀ : M}
   (hf : cont_mdiff_at I 𝓘(ℝ, F) n f x₀)
   (hs : cont_mdiff_at I 𝓘(ℝ, ℝ) n r x₀) :
   cont_mdiff_at I 𝓘(ℝ, F) n (r • f) x₀ :=
-cont_mdiff_within_at.smul hf hs
+hf.cont_mdiff_within_at.smul hs.cont_mdiff_within_at
 
 lemma cont_mdiff_within_at.add {f g : M → F}
   {n : with_top ℕ} {s : set M} {x₀ : M}
@@ -192,10 +204,10 @@ lemma cont_mdiff_within_at.add {f g : M → F}
   cont_mdiff_within_at I 𝓘(ℝ, F) n (f + g) s x₀ :=
 begin
   have : cont_mdiff_within_at I 𝓘(ℝ, F × F) n (λ x, (f x, g x)) s x₀,
-  {
-    sorry },
-
-  sorry
+  { rw [model_with_corners_self_prod, ← charted_space_self_prod],
+    exact cont_mdiff_within_at.prod_mk hf hg },
+  exact (cont_mdiff_iff_cont_diff.mpr cont_diff_add).cont_mdiff_at.cont_mdiff_within_at.comp
+    _ this (maps_to_univ _ _)
 end
 
 lemma cont_mdiff_within_at.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
@@ -325,7 +337,7 @@ open topological_space
 
 lemma cont_mdiff_iff_cont_diff_on {s : opens E}  {f : E → F} {n : with_top ℕ} :
   cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) ↔ cont_diff_on ℝ n f s :=
-sorry
+by { rw [← cont_mdiff_on_iff_cont_diff_on], sorry }
 
 lemma cont_mdiff_iff_cont_diff_on' {s : opens E} [decidable_pred (λ x, x ∈ s)]
   {f : s → F} {n : with_top ℕ} :
