@@ -492,7 +492,8 @@ begin
     { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
     have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
     λ y, hc.comp₂ continuous_const continuous_id,
-    simp_rw [is_compact_Icc.Sup_lt_of_continuous (hc _)] at this,
+    simp_rw [is_compact_Icc.Sup_lt_of_continuous
+      (nonempty_Icc.mpr zero_le_one) (hc _).continuous_on] at this,
     convert this,
     ext y,
     refine ⟨λ h z hz, h z, λ h z, _⟩,

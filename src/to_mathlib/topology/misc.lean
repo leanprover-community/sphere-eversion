@@ -146,7 +146,7 @@ is_open_compl_iff.mp $ hs.is_open_compl.preimage_fract' $ λ h, by_contra $ λ h
 
 lemma fract_preimage_mem_nhds' {s : set ℝ} {x : ℝ} (h1 : fract x ≠ 0 → s ∈ 𝓝 (fract x))
   (h2 : fract x = 0 → s ∈ 𝓝[<] (1 : ℝ))
-  (h3 : fract x = 0 → s ∈ 𝓝[>] (0 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
+  (h3 : fract x = 0 → s ∈ 𝓝[≥] (0 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
 sorry
 
 lemma fract_preimage_mem_nhds {s : set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract x))
