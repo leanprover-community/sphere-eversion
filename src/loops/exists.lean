@@ -158,7 +158,9 @@ begin
   have hcε₂ : continuous ε₂ :=
     (continuous_const.min hcε₁).min (hI.continuous_Inf h1f),
   have hε₂ : ∀ {x}, 0 < ε₂ x := λ x, lt_min (lt_min hε₀ (hε₁ x))
-    ((hI.lt_Inf_of_continuous (h2f x) _).mpr $ λ x hx, h3f),
+    ((hI.lt_Inf_of_continuous
+      ((nonempty_Icc.mpr zero_le_one).prod (nonempty_Icc.mpr zero_le_one))
+      (h2f x).continuous_on _).mpr $ λ x hx, h3f),
   let γ₄ := ↿γ₃,
   have h0γ₄ : ∀ x t s, γ₄ (x, t, s) = γ₃ x t s := λ x t s, rfl,
   have hγ₄ : continuous γ₄ := hγ₃.cont,
@@ -189,10 +191,8 @@ begin
   { rintro ⟨x, t, s⟩ hxts,
     simp_rw [h0γ₄, γ₃, loop.reparam_apply],
     cases hxts with ht hs,
-    { refine hγ₂.to_sf.t_le_zero_eq_b x (linear_reparam s) _,
-      rw [linear_reparam_nonpos],
-      exact le_of_lt ht },
-    { rw [← loop.fract_eq, fract_linear_reparam_eq_zero.mpr, hγ₂.base],
+    { refine hγ₂.to_sf.t_le_zero_eq_b x (linear_reparam s) (linear_reparam_nonpos (le_of_lt ht)) },
+    { rw [← loop.fract_eq, fract_linear_reparam_eq_zero, hγ₂.base],
       exact or.imp le_of_lt le_of_lt hs } },
   have h3γ₄ : smooth_on γ₄ U := hb.fst'.cont_diff_on.congr h2γ₄,
   obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅C⟩ :=
