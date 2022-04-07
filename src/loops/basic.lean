@@ -144,6 +144,9 @@ instance [add_comm_group X] : add_comm_group (loop X) :=
   ..loop.has_zero,
   ..loop.has_neg }
 
+@[simp] lemma sub_apply (γ₁ γ₂ : loop F) (t : ℝ) : (γ₁ - γ₂) t = γ₁ t - γ₂ t :=
+by simp [sub_eq_add_neg]
+
 /-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
 instance [has_add X] : has_vadd X (loop X) :=
 ⟨λ x γ, γ.transform (λ y, x + y)⟩
@@ -165,6 +168,18 @@ instance [semiring K] [add_comm_group X] [module K X] : module K (loop X) :=
 
 @[simp] lemma smul_apply [has_scalar K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
 rfl
+
+lemma norm_at_le_supr_norm_Icc (γ : loop F) (hγ : continuous γ) (t : ℝ) :
+  ∥γ t∥ ≤ ⨆ (s : I), ∥γ s∥ :=
+begin
+  obtain ⟨u, hu, ht⟩ := γ.periodic.exists_mem_Ico₀ zero_lt_one t,
+  replace hu := mem_Icc_of_Ico hu,
+  rw ht,
+  have h₁ : set.nonempty (range (λ (s : I), ∥γ s∥)) := ⟨∥γ 0∥, 0, rfl⟩,
+  have h₂ : bdd_above (range (λ (s : I), ∥γ s∥)),
+  { convert is_compact_Icc.bdd_above_image (continuous_norm.comp hγ).continuous_on, ext, simp, },
+  exact (real.is_lub_Sup _ h₁ h₂).1 ⟨⟨u, hu⟩, rfl⟩,
+end
 
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
 @[simps {simp_rhs := tt}]
@@ -208,6 +223,11 @@ h.comp $ continuous_const.prod_mk continuous_id
 lemma continuous_of_family_step {γ : X → Y → loop Z} (h : continuous ↿γ) (x : X) :
   continuous ↿(γ x) :=
 h.comp $ continuous_const.prod_mk continuous_id
+
+@[simps] def as_continuous_family {γ : X → loop X'} (h : continuous ↿γ) : C(X, C(I, X')) :=
+continuous_map.curry
+{ to_fun := λ z, γ z.1 z.2,
+  continuous_to_fun := h.comp (continuous_id.prod_map continuous_induced_dom) }
 
 /-! ## From paths to loops -/
 
