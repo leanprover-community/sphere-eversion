@@ -8,6 +8,7 @@ import topology.shrinking_lemma
 import topology.metric_space.emetric_paracompact
 import analysis.convex.topology
 import to_mathlib.misc
+import to_mathlib.topology.constructions
 
 noncomputable theory
 
@@ -63,10 +64,7 @@ begin
 end
 
 lemma fract_eq_zero_iff {x : ℝ} : fract x = 0 ↔ ∃ n : ℤ, x = n :=
-begin
-  unfold fract,
-  rw [sub_eq_zero, eq_comm, floor_eq_self_iff]
-end
+by rw [fract, sub_eq_zero, eq_comm, floor_eq_self_iff]
 
 lemma fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n :=
 by rw [← not_exists, not_iff_not, fract_eq_zero_iff]
@@ -347,19 +345,18 @@ end
 section
 -- consequences of the extreme value theorem
 
-lemma is_compact.continuous_Sup {α β γ : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
-    continuous (λ x, Sup (f x '' K)) :=
-sorry
-
-lemma is_compact.continuous_Inf {α β γ : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
-    continuous (λ x, Inf (f x '' K)) :=
-@is_compact.continuous_Sup (order_dual α) β γ _ _ _ _ _ _ _ hK hf
+lemma is_compact.exists_Sup_image_eq_and_ge {α β : Type*} [conditionally_complete_linear_order α]
+  [topological_space α] [order_topology α] [topological_space β] {s : set β}
+  (hs : is_compact s) (h0s : s.nonempty) {f : β → α} (hf : continuous_on f s) :
+  ∃ x ∈ s, Sup (f '' s) = f x ∧ ∀ y ∈ s, f y ≤ f x :=
+begin
+  obtain ⟨x, hxs, hx⟩ := hs.exists_forall_ge h0s hf,
+  refine ⟨x, hxs, _, hx⟩,
+  refine le_antisymm (cSup_le (h0s.image f) _)
+    (le_cSup (hs.bdd_above_image hf) $ mem_image_of_mem f hxs),
+  rintro _ ⟨x', hx', rfl⟩,
+  exact hx x' hx'
+end
 
 lemma is_compact.Sup_lt_of_continuous {α β : Type*}
   [conditionally_complete_linear_order α] [topological_space α]
@@ -379,6 +376,43 @@ lemma is_compact.lt_Inf_of_continuous {α β : Type*}
   {K : set β} (hK : is_compact K) (h0K : K.nonempty) (hf : continuous_on f K) (y : α) :
     y < Inf (f '' K) ↔ ∀ x ∈ K, y < f x :=
 @is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK h0K hf y
+
+lemma is_compact.continuous_Sup {α β γ : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
+    continuous (λ x, Sup (f x '' K)) :=
+begin
+  rcases eq_empty_or_nonempty K with rfl|h0K,
+  { simp_rw [image_empty], exact continuous_const },
+  rw [continuous_iff_continuous_at],
+  intro x,
+  obtain ⟨y, hyK, h2y, hy⟩ :=
+    hK.exists_Sup_image_eq_and_ge h0K
+      (show continuous (λ y, f x y), from hf.comp $ continuous.prod.mk x).continuous_on,
+  rw [continuous_at, h2y, tendsto_order],
+  have := tendsto_order.mp
+    ((show continuous (λ x, f x y), from hf.comp₂ continuous_id continuous_const).tendsto x),
+  refine ⟨λ z hz, _, λ z hz, _⟩,
+  { refine (this.1 z hz).mono (λ x' hx', hx'.trans_le $ le_cSup _ $ mem_image_of_mem (f x') hyK),
+    refine hK.bdd_above_image (hf.comp $ continuous.prod.mk x').continuous_on },
+  { have h : ({x} : set γ) ×ˢ K ⊆ ↿f ⁻¹' (Iio z),
+    { rintro ⟨x', y'⟩ ⟨hx', hy'⟩, cases hx', exact (hy y' hy').trans_lt hz },
+    obtain ⟨u, v, hu, hv, hxu, hKv, huv⟩ :=
+      generalized_tube_lemma is_compact_singleton hK (is_open_Iio.preimage hf) h,
+    refine eventually_of_mem (hu.mem_nhds (singleton_subset_iff.mp hxu)) (λ x' hx', _),
+    rw [hK.Sup_lt_of_continuous h0K
+      (show continuous (f x'), from (hf.comp $ continuous.prod.mk x')).continuous_on],
+    intros y' hy',
+    refine huv (mk_mem_prod hx' (hKv hy')) }
+end
+
+lemma is_compact.continuous_Inf {α β γ : Type*}
+  [conditionally_complete_linear_order α] [topological_space α]
+  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
+  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
+    continuous (λ x, Inf (f x '' K)) :=
+@is_compact.continuous_Sup (order_dual α) β γ _ _ _ _ _ _ _ hK hf
 
 
 end
