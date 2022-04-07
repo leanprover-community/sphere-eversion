@@ -87,6 +87,33 @@ begin
   exact eventually_eq.rfl.sub ((loc_constant_floor h).fun_comp _)
 end
 
+-- todo: make iff
+lemma continuous_at_fract {x : ℝ} (h : fract x ≠ 0) : continuous_at fract x :=
+(continuous_at_id.sub continuous_at_const).congr (fract_eventually_eq h).symm
+
+lemma Ioo_inter_Iio {α : Type*} [linear_order α] {a b c : α} : Ioo a b ∩ Iio c = Ioo a (min b c) :=
+by { ext, simp [and_assoc] }
+
+lemma fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y :=
+begin
+  cases le_total y 1 with hy hy,
+  { rw [← fract_sub_int x n, fract_eq_self.mpr],
+    linarith,
+    split; linarith },
+  { exact (fract_lt_one x).trans_le hy }
+end
+
+lemma one_sub_lt_fract {x y : ℝ} {n : ℤ} (hy : y ≤ 1) (h1 : (n : ℝ) - y < x) (h2 : x < n) :
+  1 - y < fract x :=
+begin
+  have I₁ : 1 - y < x - (n-1), by linarith,
+  have I₂ : x - (n-1) < 1, by linarith,
+  norm_cast at I₁ I₂,
+  rw [← fract_sub_int x (n-1), fract_eq_self.mpr],
+  exact I₁,
+  split; linarith,
+end
+
 lemma is_open.preimage_fract' {s : set ℝ} (hs : is_open s)
   (h2s : 0 ∈ s → s ∈ 𝓝[<] (1 : ℝ)) : is_open (fract ⁻¹' s) :=
 begin
@@ -99,10 +126,7 @@ begin
     have s_mem_0 := hs.mem_nhds H,
     rcases (nhds_basis_zero_abs_sub_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩,
     rcases (nhds_within_has_basis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩,
-    have : Ioo (1 - ε) (1 + ε) ∩ Iio 1 = Ioo (1 - ε) 1,
-    {
-      sorry },
-    rw this at hε, clear this,
+    rw [Ioo_inter_Iio, min_eq_right (le_add_of_nonneg_right ε_pos.le)] at hε,
     set ε' := min ε (1/2),
     have ε'_pos : 0 < ε',
       from lt_min ε_pos (by norm_num : (0 : ℝ) < 1/2),
@@ -116,16 +140,11 @@ begin
     rintros x ⟨hx, hx'⟩,
     cases le_or_gt (n : ℝ) x with hx'' hx'',
     { apply hδ,
-      change |fract x| < δ,
-      clear_dependent s ε,
-      sorry },
+      rw [mem_set_of_eq, abs_eq_self.mpr (fract_nonneg x)],
+      exact fract_lt hx'' hx' },
     { apply hε',
       split,
-      { rw ← fract_sub_int x (n-1),
-        have I₁ : 1 - ε' < x - (n-1), by linarith,
-        have I₂ : x - (n-1) < 1, by linarith,
-        clear_dependent s δ,
-        sorry },
+      { refine one_sub_lt_fract (by linarith [min_le_right ε (1/2)]) (by linarith) hx'' },
       { exact fract_lt_one x }, } },
   { rw fract_ne_zero_iff at hx',
     have H : Ico (⌊x⌋ : ℝ) (⌊x⌋ + 1) ∈ 𝓝 x,
@@ -142,15 +161,30 @@ lemma is_closed.preimage_fract {s : set ℝ} (hs : is_closed s)
   (h2s : sᶜ ∉ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : is_closed (fract ⁻¹' s) :=
 is_open_compl_iff.mp $ hs.is_open_compl.preimage_fract' $ λ h, by_contra $ λ h', h $ h2s h'
 
+/- unused generalization of `fract_preimage_mem_nhds` -/
 lemma fract_preimage_mem_nhds' {s : set ℝ} {x : ℝ} (h1 : fract x ≠ 0 → s ∈ 𝓝 (fract x))
   (h2 : fract x = 0 → s ∈ 𝓝[<] (1 : ℝ))
   (h3 : fract x = 0 → s ∈ 𝓝[≥] (0 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
-sorry
+begin
+  by_cases hx : fract x = 0,
+  { sorry, },
+  { exact (continuous_at_fract hx).preimage_mem_nhds (h1 hx) }
+end
 
 lemma fract_preimage_mem_nhds {s : set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract x))
   (h2 : fract x = 0 → s ∈ 𝓝 (1 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
-fract_preimage_mem_nhds' (λ _, h1) (λ hx, nhds_within_le_nhds (h2 hx))
-  (λ hx, by { rw [hx] at h1, exact nhds_within_le_nhds h1 })
+begin
+  by_cases hx : fract x = 0,
+  { obtain ⟨u, hus, hu, hxu⟩ := mem_nhds_iff.mp h1,
+    obtain ⟨v, hvs, hv, h1v⟩ := mem_nhds_iff.mp (h2 hx),
+    rw [mem_nhds_iff],
+    refine ⟨fract ⁻¹' (u ∪ v), preimage_mono (union_subset hus hvs),
+      (hu.union hv).preimage_fract (λ _, subset_union_right _ _ h1v), subset_union_left _ _ hxu⟩ },
+  { exact (continuous_at_fract hx).preimage_mem_nhds h1 }
+end
+/- THE FOLLOWING IS A DERIVATION FROM `fract_preimage_mem_nhds'` -/
+-- fract_preimage_mem_nhds' (λ _, h1) (λ hx, nhds_within_le_nhds (h2 hx))
+--   (λ hx, by { rw [hx] at h1, exact nhds_within_le_nhds h1 })
 
 -- lemma comp_fract_preimage_mem_nhds {α β : Type*} [topological_space α] [topological_space β]
 --   {f : α → ℝ → β} {g : α → ℝ} {s : set β} {x : α} (hf : continuous_at ↿f (x, fract (g x)))
