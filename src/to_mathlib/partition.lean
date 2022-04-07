@@ -170,11 +170,22 @@ lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n 
   cont_mdiff_at I 𝓘(ℝ, F) n f  x :=
 cont_mdiff_within_at_of_not_mem hx n univ
 
+@[simp]
+lemma local_equiv.refl_prod_refl {α β : Type*} :
+  (local_equiv.refl α).prod (local_equiv.refl β) = local_equiv.refl (α × β) :=
+by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
+
+@[simp]
+lemma local_homeomorph.refl_prod_refl {α β : Type*} [topological_space α] [topological_space β] :
+  (local_homeomorph.refl α).prod (local_homeomorph.refl β) = local_homeomorph.refl (α × β) :=
+by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
+
+attribute [ext] model_with_corners charted_space
 lemma model_with_corners_self_prod : 𝓘(ℝ, E × F) = 𝓘(ℝ, E).prod 𝓘(ℝ, F) :=
-sorry
+by { ext1, simp }
 
 lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
-sorry
+by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
 
 
 lemma cont_mdiff_within_at.smul {f : M → F} {r : M → ℝ}
