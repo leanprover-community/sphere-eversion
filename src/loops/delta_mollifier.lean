@@ -1,6 +1,8 @@
 import measure_theory.integral.interval_integral
 import measure_theory.group.integration
 import analysis.calculus.specific_functions
+import to_mathlib.analysis.cont_diff_bump
+
 
 import notations
 import loops.basic
@@ -8,14 +10,14 @@ import loops.basic
 import to_mathlib.partition -- get our finsum stuff
 
 noncomputable theory
-open set function
+open set function measure_theory.measure_space
 open_locale topological_space big_operators filter
 
 section
 /-! ## Bump family
 
 In this section we construct `bump (n : ℕ)`, a bump function with support in
-`Ioo -1/(n+1) 1/(n+2)`.
+`Ioo (-1/(n+2)) (1/(n+2))`.
 -/
 
 lemma aux (n : ℕ) : Ioo (-(1/(n+2 : ℝ))) (1/(n+2)) ∈ 𝓝 (0 : ℝ) :=
@@ -35,13 +37,6 @@ begin
   exact_mod_cast (n + 1).succ_pos
 end
 
-lemma cont_diff_bump_of_inner.has_compact_support {E : Type*} [inner_product_space ℝ E]
-  [finite_dimensional ℝ E]{c : E} (f : cont_diff_bump_of_inner c) : has_compact_support f :=
-begin
-  simp_rw [has_compact_support, tsupport, f.support_eq, closure_ball c f.R_pos.ne.symm],
-  apply proper_space.is_compact_closed_ball
-end
-
 /-- `bump n` is a bump function on `ℝ` which has support `Ioo (-(1/(n+2))) (1/(n+2))`
 and equals one on `Icc (-(1/(n+3))) (1/(n+3))`.
 -/
@@ -59,55 +54,37 @@ def bump (n : ℕ) : cont_diff_bump_of_inner (0 : ℝ) :=
   end }
 
 lemma support_bump (n : ℕ) : support (bump n) = Ioo (-(1/(n+2))) (1/(n+2)) :=
-begin
-  rw [(bump n).support_eq, real.ball_eq_Ioo, zero_sub, zero_add],
-  refl
-end
+by rw [(bump n).support_eq, real.ball_eq_Ioo, zero_sub, zero_add, bump]
 
 lemma tsupport_bump (n : ℕ) : tsupport (bump n) = Icc (-(1/(n+2))) (1/(n+2)) :=
-begin
-  rw [tsupport, support_bump],
-  exact closure_Ioo (neg_one_div_succ_lt n).ne,
-end
+by rw [(bump n).tsupport_eq, real.closed_ball_eq_Icc, zero_sub, zero_add, bump]
 
-lemma tsupport_bump_subset (n : ℕ) : tsupport (bump n) ⊆ Icc (-(1/2)) (1/2) :=
+lemma support_bump_subset (n : ℕ) : support (bump n) ⊆ Ioc (-(1/2)) (1/2) :=
 begin
   have ineg : 1 / (n + 2 : ℝ) ≤ 1 / 2,
   { apply one_div_le_one_div_of_le ; norm_num },
-  rw tsupport_bump n,
-  exact (Icc_subset_Icc (neg_le_neg ineg) ineg)
+  rw support_bump n,
+  exact Ioo_subset_Ioc_self.trans (Ioc_subset_Ioc (neg_le_neg ineg) ineg)
 end
+
+lemma tsupport_bump_subset (n : ℕ) : tsupport (bump n) ⊆ Icc (-(1/2)) (1/2) :=
+by { rw [tsupport, ← closure_Ioc], exact closure_mono (support_bump_subset n), norm_num }
 
 lemma bump_nonneg (n : ℕ) (x : ℝ) : 0 ≤ bump n x :=
-cont_diff_bump_of_inner.nonneg _
+(bump n).nonneg
 
 lemma continuous_bump (n : ℕ) : continuous (bump n) :=
-((bump n).cont_diff : cont_diff ℝ ⊤ _).continuous
+(bump n).continuous
 
-def integral_bump (n : ℕ) := ∫ t in -(1/2)..1/2, bump n t
+-- def integral_bump (n : ℕ) : ℝ := ∫ t in -(1/2)..1/2, bump n t
 
-open measure_theory.measure_space
-
-lemma integral_bump_pos (n : ℕ) : 0 < integral_bump n :=
-begin
-  have ineq : -(1/2 : ℝ) < 1/2, by norm_num,
-  dsimp [integral_bump],
-  rw interval_integral.integral_pos_iff_support_of_nonneg_ae,
-  { split,
-  { exact ineq },
-  { rw support_bump,
-    apply lt_of_lt_of_le,
-    show 0 < volume (Ioo (-(1 / (n + 2 : ℝ))) (1 / (n + 2))),
-    apply volume.measure_Ioo_pos.mpr (neg_one_div_succ_lt n),
-    apply volume.mono,
-    apply subset_inter subset.rfl,
-    refine Ioo_subset_Ioc_self.trans _,
-    apply Ioc_subset_Ioc,
-    apply neg_le_neg,
-    all_goals { apply one_div_le_one_div_of_le ; norm_num } } },
-  { exact filter.eventually_of_forall (bump_nonneg n) },
-  { exact (continuous_bump n).continuous_on.interval_integrable_of_Icc ineq.le },
-end
+-- lemma integral_bump_pos (n : ℕ) : 0 < integral_bump n :=
+-- begin
+--   have ineq : -(1/2 : ℝ) < 1/2, by norm_num,
+--   dsimp [integral_bump],
+--   rw [interval_integral.integral_eq_integral_of_support_subset (support_bump_subset n)],
+--   exact (bump n).integral_pos
+-- end
 
 end
 
@@ -175,17 +152,15 @@ In this section we turn any function `f : ℝ → E` into a 1-periodic function
 
 variables {M : Type*} [add_comm_monoid M]
 
-def periodize (f : ℝ → M) (t : ℝ) := ∑ᶠ n : ℤ, f (t + n)
+def periodize (f : ℝ → M) (t : ℝ) : M :=
+∑ᶠ n : ℤ, f (t + n)
 
 lemma periodic_periodize (f : ℝ → M) : periodic (periodize f) 1 :=
 begin
   intros t,
   unfold periodize,
   have : (λ n : ℤ, f (t + 1 + ↑n)) = λ n, f (t + (n+1 : ℤ)),
-  { ext n,
-    rw add_assoc,
-    congr' 2,
-    simp [add_comm] },
+  { ext n, simp_rw [int.cast_add, int.cast_one, add_assoc, add_comm] },
   simp_rw this,
   let e := equiv.add_right (1 : ℤ),
   let F : ℤ → M := λ n, f (t + n),
@@ -204,7 +179,6 @@ begin
 end
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
-
 
 lemma cont_diff.periodize {f : ℝ → E} {n : with_top ℕ} (h : cont_diff ℝ n f)
   (h' : has_compact_support f) : cont_diff ℝ n (periodize f) :=
@@ -251,7 +225,7 @@ open_locale filter
 open filter
 variables {α ι : Type*}
 
-def filter.small_sets (f : filter α) : filter (set α):=
+def filter.small_sets (f : filter α) : filter (set α) :=
 ⨅ t ∈ f, 𝓟 {s | s ⊆ t}
 
 lemma filter.has_basis_small_sets (f : filter α) :
@@ -311,7 +285,7 @@ section
 variables {α E : Type*} [normed_group E]
 
 lemma support_norm (f : α → E) : support (λ a, ∥f a∥) = support f :=
-by { ext a, simp }
+function.support_comp_eq norm (λ x, norm_eq_zero) f
 
 end
 
@@ -330,11 +304,7 @@ variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
 lemma has_compact_mul_support_of_subset {α β : Type*} [topological_space α] [t2_space α]
   [has_one β] {f : α → β} {K : set α} (hK : is_compact K) (hf : mul_support f ⊆ K) :
   has_compact_mul_support f :=
-begin
-  apply compact_of_is_closed_subset hK (is_closed_mul_tsupport f),
-  rw ← hK.is_closed.closure_eq,
-  exact closure_mono hf
-end
+compact_of_is_closed_subset hK (is_closed_mul_tsupport f) (closure_minimal hf hK.is_closed)
 
 lemma tendsto_truc {δ : ℕ → ℝ → ℝ} (δ_nonneg : ∀ n x, 0 ≤ δ n x) (int_δ : ∀ n, ∫ s, δ n s = 1)
   (supp_δ : tendsto (λ n, support (δ n)) at_top (𝓝 0).small_sets) (δ_cont : ∀ n, continuous (δ n))
@@ -399,7 +369,7 @@ section delta_approx
 /-- ## An approximate Dirac "on the circle". -/
 
 def approx_dirac (n : ℕ) : ℝ → ℝ :=
-λ t, 1/(integral_bump n)*(periodize (bump n) t)
+periodize $ (bump n).normed volume
 
 lemma periodic_const {α β : Type*} [has_add α] {a : α} {b : β} : periodic (λ x, b) a :=
 λ x, rfl
@@ -412,11 +382,10 @@ begin
 end
 
 lemma approx_dirac_nonneg (n : ℕ) (t : ℝ): 0 ≤ approx_dirac n t :=
-mul_nonneg (one_div_nonneg.mpr (integral_bump_pos n).le)(periodize_nonneg (bump_nonneg n) t)
-
+periodize_nonneg (bump n).nonneg_normed t
 
 lemma approx_dirac_smooth (n : ℕ) : 𝒞 ∞ (approx_dirac n) :=
-((bump n).cont_diff.periodize (bump n).has_compact_support).const_smul _
+(bump n).cont_diff_normed.periodize (bump n).has_compact_support_normed
 
 end delta_approx
 
