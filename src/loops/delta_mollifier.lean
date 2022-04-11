@@ -1,4 +1,5 @@
 import measure_theory.integral.interval_integral
+import measure_theory.group.integration
 import analysis.calculus.specific_functions
 
 import notations
@@ -26,27 +27,86 @@ begin
   rwa neg_lt_zero
 end
 
-def bump (n : ℕ) := (cont_diff_bump.exists_tsupport_subset (aux n)).some
+lemma neg_one_div_succ_lt (n : ℕ) : -(1/(n+2 : ℝ)) < 1/(n+2) :=
+begin
+  rw neg_lt_iff_pos_add,
+  field_simp,
+  apply div_pos (zero_lt_two : (0 : ℝ) < 2),
+  exact_mod_cast (n + 1).succ_pos
+end
 
-lemma tsupport_bump (n : ℕ) : tsupport (bump n) ⊆ Ioo (-(1/(n+2))) (1/(n+2)) :=
-(cont_diff_bump.exists_tsupport_subset (aux n)).some_spec
+lemma cont_diff_bump_of_inner.has_compact_support {E : Type*} [inner_product_space ℝ E]
+  [finite_dimensional ℝ E]{c : E} (f : cont_diff_bump_of_inner c) : has_compact_support f :=
+begin
+  simp_rw [has_compact_support, tsupport, f.support_eq, closure_ball c f.R_pos.ne.symm],
+  apply proper_space.is_compact_closed_ball
+end
 
-lemma tsupport_bump' (n : ℕ) : tsupport (bump n) ⊆ Ioo (-(1/2)) (1/2) :=
+/-- `bump n` is a bump function on `ℝ` which has support `Ioo (-(1/(n+2))) (1/(n+2))`
+and equals one on `Icc (-(1/(n+3))) (1/(n+3))`.
+-/
+def bump (n : ℕ) : cont_diff_bump_of_inner (0 : ℝ) :=
+{ r := 1/(n+3),
+  R := 1/(n+2),
+  r_pos := begin
+    apply one_div_pos.mpr,
+    exact_mod_cast (nat.succ_pos _)
+  end,
+  r_lt_R := begin
+    apply one_div_lt_one_div_of_lt,
+    exact_mod_cast (nat.succ_pos _),
+    exact_mod_cast lt_add_one (n + 2)
+  end }
+
+lemma support_bump (n : ℕ) : support (bump n) = Ioo (-(1/(n+2))) (1/(n+2)) :=
+begin
+  rw [(bump n).support_eq, real.ball_eq_Ioo, zero_sub, zero_add],
+  refl
+end
+
+lemma tsupport_bump (n : ℕ) : tsupport (bump n) = Icc (-(1/(n+2))) (1/(n+2)) :=
+begin
+  rw [tsupport, support_bump],
+  exact closure_Ioo (neg_one_div_succ_lt n).ne,
+end
+
+lemma tsupport_bump_subset (n : ℕ) : tsupport (bump n) ⊆ Icc (-(1/2)) (1/2) :=
 begin
   have ineg : 1 / (n + 2 : ℝ) ≤ 1 / 2,
   { apply one_div_le_one_div_of_le ; norm_num },
-  exact (tsupport_bump n).trans (Ioo_subset_Ioo (neg_le_neg ineg) ineg)
+  rw tsupport_bump n,
+  exact (Icc_subset_Icc (neg_le_neg ineg) ineg)
 end
 
 lemma bump_nonneg (n : ℕ) (x : ℝ) : 0 ≤ bump n x :=
-cont_diff_bump.nonneg _
+cont_diff_bump_of_inner.nonneg _
+
+lemma continuous_bump (n : ℕ) : continuous (bump n) :=
+((bump n).cont_diff : cont_diff ℝ ⊤ _).continuous
 
 def integral_bump (n : ℕ) := ∫ t in -(1/2)..1/2, bump n t
 
+open measure_theory.measure_space
+
 lemma integral_bump_pos (n : ℕ) : 0 < integral_bump n :=
 begin
-
-  sorry
+  have ineq : -(1/2 : ℝ) < 1/2, by norm_num,
+  dsimp [integral_bump],
+  rw interval_integral.integral_pos_iff_support_of_nonneg_ae,
+  { split,
+  { exact ineq },
+  { rw support_bump,
+    apply lt_of_lt_of_le,
+    show 0 < volume (Ioo (-(1 / (n + 2 : ℝ))) (1 / (n + 2))),
+    apply volume.measure_Ioo_pos.mpr (neg_one_div_succ_lt n),
+    apply volume.mono,
+    apply subset_inter subset.rfl,
+    refine Ioo_subset_Ioc_self.trans _,
+    apply Ioc_subset_Ioc,
+    apply neg_le_neg,
+    all_goals { apply one_div_le_one_div_of_le ; norm_num } } },
+  { exact filter.eventually_of_forall (bump_nonneg n) },
+  { exact (continuous_bump n).continuous_on.interval_integrable_of_Icc ineq.le },
 end
 
 end
@@ -176,6 +236,7 @@ begin
     exact (h.cont_diff_at).comp _ (cont_diff_at_id.add cont_diff_at_const) },
 end
 
+-- This isn't quite the right statement. We'll need something more general.
 lemma integral_periodize (f : ℝ → ℝ) (hf : support f ⊆ Ioo (-(1/2)) (1/2)) :
   ∫ t in (-(1/2))..(1/2), periodize f t = ∫ t in (-(1/2))..(1/2), f t :=
 begin
@@ -246,6 +307,14 @@ end
 
 end
 
+section
+variables {α E : Type*} [normed_group E]
+
+lemma support_norm (f : α → E) : support (λ a, ∥f a∥) = support f :=
+by { ext a, simp }
+
+end
+
 section mollify_on_real
 
 /-! ## Mollifiers on ℝ -/
@@ -256,13 +325,6 @@ variables {δ : ℕ → ℝ → ℝ} (δ_nonneg : ∀ n x, 0 ≤ δ n x) (int_δ
   (supp_δ : tendsto (λ n, support (δ n)) at_top (𝓝 0).small_sets)
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
-
-lemma continuous.integrable_of_tsupport {f : ℝ → E} (h : continuous f) (h' : has_compact_support f) :
-integrable f :=
-begin
-
-  sorry
-end
 
 @[to_additive]
 lemma has_compact_mul_support_of_subset {α β : Type*} [topological_space α] [t2_space α]
@@ -276,15 +338,17 @@ end
 
 lemma tendsto_truc {δ : ℕ → ℝ → ℝ} (δ_nonneg : ∀ n x, 0 ≤ δ n x) (int_δ : ∀ n, ∫ s, δ n s = 1)
   (supp_δ : tendsto (λ n, support (δ n)) at_top (𝓝 0).small_sets) (δ_cont : ∀ n, continuous (δ n))
+  (δ_meas_supp : ∀ n, measurable_set $ support (δ n))
   {f : ℝ → E} {t : ℝ} (h : continuous f) :
   tendsto (λ n, ∫ s, δ n (t - s) • f s) at_top (𝓝 $ f t) :=
 begin
   have : ∀ n, ∫ s, δ n (t - s) • f s = ∫ s, δ n s  • f (t - s),
-  {
-    sorry },
+  sorry { intros n,
+    rw ← measure_theory.integral_sub_left_eq_self _ volume t,
+    simp_rw [sub_sub_self] },
   rw funext this,
   have : tendsto (λ n, ⨆ x ∈ support (δ n), ∥f (t - x) - f t∥) at_top (𝓝 0),
-  { set F := λ x, f (t - x),
+  sorry { set F := λ x, f (t - x),
     suffices : tendsto (λ n, ⨆ x ∈ support (δ n), ∥F x - F 0∥) at_top (𝓝 0),
     { simp_rw [F, sub_zero t] at this, exact this },
     simp_rw ← dist_eq_norm,
@@ -292,29 +356,26 @@ begin
   rw tendsto_iff_norm_tendsto_zero,
   apply squeeze_zero_norm' _ this,
   have : ∀ᶠ n in at_top, support (δ n) ⊆ Icc (-1) 1,
-  { have : Icc (-(1 : ℝ)) 1 ∈ 𝓝 (0 : ℝ),
+  sorry { have : Icc (-(1 : ℝ)) 1 ∈ 𝓝 (0 : ℝ),
     apply Icc_mem_nhds ; norm_num,
     exact (𝓝 (0 : ℝ)).has_basis_small_sets.tendsto_right_iff.mp supp_δ _ this },
   apply this.mono,
   intros n hn,
   have cpct₁ : has_compact_support (δ n),
-  { apply has_compact_support_of_subset is_compact_Icc hn },
+  sorry { apply has_compact_support_of_subset is_compact_Icc hn },
   rw norm_norm,
   have : (∫ (s : ℝ), δ n s • f (t - s)) - f t = ∫ (s : ℝ), δ n s • (f (t - s) - f t),
-  { conv_lhs { rw [show f t = (1 : ℝ) • f t, by simp only [one_smul], ← int_δ n] },
+  sorry { conv_lhs { rw [show f t = (1 : ℝ) • f t, by simp only [one_smul], ← int_δ n] },
     have δ_integrable : integrable (δ n),
-    { apply (δ_cont n).integrable_of_tsupport cpct₁ },
-    have : (∫ (s : ℝ), δ n s) • f t = (∫ (s : ℝ), δ n s • f t),
-    {
-      sorry },
-    rw [this, ← measure_theory.integral_sub],
+    { exact (δ_cont n).integrable_of_has_compact_support cpct₁, },
+    rw [← integral_smul_const, ← measure_theory.integral_sub],
     simp [smul_sub],
-    { apply continuous.integrable_of_tsupport,
-      sorry,
-      sorry },
-    { apply continuous.integrable_of_tsupport,
-      sorry,
-      sorry } },
+    { apply continuous.integrable_of_has_compact_support,
+      exact (δ_cont n).smul (h.comp (continuous_const.sub continuous_id')),
+      exact has_compact_support.smul_right cpct₁, },
+    { apply continuous.integrable_of_has_compact_support,
+      exact (δ_cont n).smul continuous_const,
+      exact has_compact_support.smul_right cpct₁ } },
   rw this,
   calc ∥∫ (s : ℝ), δ n s • (f (t - s) - f t)∥ ≤ ∫ s, ∥δ n s • (f (t - s) - f t)∥ : _
   ... = ∫ s, ∥δ n s∥ * ∥(f (t - s) - f t)∥ : by simp_rw norm_smul
@@ -322,6 +383,12 @@ begin
   ... ≤ ∫ s in support (δ n), ∥δ n s∥ * ⨆ s ∈ support (δ n), ∥(f (t - s) - f t)∥ : _
   ... = (∫ s in support (δ n), ∥δ n s∥) * ⨆ s ∈ support (δ n), ∥(f (t - s) - f t)∥ : _
   ... = ⨆ (x : ℝ) (H : x ∈ support (δ n)), ∥f (t - x) - f t∥ : _,
+  exact norm_integral_le_integral_norm _,
+  { have : support (λ s, ∥δ n s∥ * ∥f (t - s) - f t∥) ⊆ support (δ n),
+    { rw ← support_norm (δ n),
+      apply support_mul_subset_left },
+    conv_lhs { rw ← indicator_eq_self.mpr this },
+    rw integral_indicator (δ_meas_supp n) },
   all_goals { sorry }
 end
 
