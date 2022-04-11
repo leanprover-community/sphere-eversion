@@ -258,7 +258,7 @@ L.is_bounded_bilinear_map.continuous
 
 lemma continuous_comp₂ [topological_space X] (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {g : X → E'}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, L (f x) (g x)) :=
-L.continuous₂.comp $ hf.prod_mk hg
+L.continuous₂.comp₂ hf hg
 
 lemma has_fderiv_at_const_left [normed_group X] [normed_space 𝕜 X]
   (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E'} {f' : X →L[𝕜] E'}
@@ -455,26 +455,6 @@ end
 
 end mul
 
-variables [group G] [has_measurable_mul G] [has_measurable_inv G] {f : G → E}
-
--- div_inv_monoid
-@[to_additive]
-lemma map_div_left_eq_self (μ : measure G) [is_inv_invariant μ] [is_mul_left_invariant μ] (g : G) :
-  map (λ t, g / t) μ = μ :=
-begin
-  simp_rw [div_eq_mul_inv],
-  conv_rhs { rw [← map_mul_left_eq_self μ g, ← map_inv_eq_self μ] },
-  exact (map_map (measurable_const_mul g) measurable_inv).symm
-end
-
-@[to_additive]
-lemma map_mul_right_inv_eq_self (μ : measure G) [is_inv_invariant μ] [is_mul_left_invariant μ] (g : G) :
-  map (λ t, (g * t)⁻¹) μ = μ :=
-begin
-  conv_rhs { rw [← map_inv_eq_self μ, ← map_mul_left_eq_self μ g] },
-  exact (map_map measurable_inv (measurable_const_mul g)).symm
-end
-
 end measure_theory
 
 
@@ -608,6 +588,12 @@ lemma convolution_smul [smul_comm_class ℝ 𝕜 F]
   {y : 𝕜} : f ⋆[L; μ] (y • g) = y • (f ⋆[L; μ] g) :=
 by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_right] }
 
+lemma zero_convolution : 0 ⋆[L; μ] g = 0 :=
+by { ext, simp_rw [convolution_def, pi.zero_apply, L.map_zero_left, integral_zero] }
+
+lemma convolution_zero : f ⋆[L; μ] 0 = 0 :=
+by { ext, simp_rw [convolution_def, pi.zero_apply, L.map_zero_right, integral_zero] }
+
 lemma convolution_exists_at.distrib_add {x : G} (hfg : convolution_exists_at f g x L μ)
   (hfg' : convolution_exists_at f g' x L μ) :
   (f ⋆[L; μ] (g + g')) x = (f ⋆[L; μ] g) x + (f ⋆[L; μ] g') x :=
@@ -626,6 +612,60 @@ lemma convolution_exists.add_distrib (hfg : convolution_exists f g L μ)
   (hfg' : convolution_exists f' g L μ) : (f + f') ⋆[L; μ] g = f ⋆[L; μ] g + f' ⋆[L; μ] g :=
 by { ext, exact (hfg x).add_distrib (hfg' x) }
 
+-- begin move
+lemma measurable_equiv.map_ae {α β : Type*} [measurable_space α] [measurable_space β]
+  (f : α ≃ᵐ β) {μ : measure α} : filter.map f μ.ae = (map f μ).ae :=
+by { ext s, simp_rw [mem_map, mem_ae_iff, ← preimage_compl, f.map_apply] }
+
+@[to_additive]
+lemma measurable_div_const {G : Type*} [measurable_space G] [group G]
+  [has_measurable_mul G] (g : G) : measurable (λ h, h / g) :=
+by simp_rw [div_eq_mul_inv, measurable_mul_const]
+
+@[to_additive]
+def measurable_equiv.div_right {G : Type*} [measurable_space G] [group G]
+  [has_measurable_mul G] (g : G) : G ≃ᵐ G :=
+{ to_equiv := equiv.div_right g,
+  measurable_to_fun := measurable_div_const g,
+  measurable_inv_fun := measurable_mul_const g }
+
+@[to_additive]
+def measurable_equiv.div_left {G : Type*} [measurable_space G] [group G]
+  [has_measurable_mul G] [has_measurable_inv G] (g : G) : G ≃ᵐ G :=
+{ to_equiv := equiv.div_left g,
+  measurable_to_fun := measurable_id.const_div g,
+  measurable_inv_fun := measurable_inv.mul_const g }
+
+lemma map_add_left_ae [has_measurable_add G] [is_add_left_invariant μ] :
+  filter.map (λ t, x + t) μ.ae = μ.ae :=
+(measurable_equiv.add_left x).map_ae.trans $ congr_arg ae $ map_add_left_eq_self μ x
+
+lemma map_sub_left_ae [has_measurable_add G] [has_measurable_neg G] [is_add_left_invariant μ]
+  [is_neg_invariant μ] :
+  filter.map (λ t, x - t) μ.ae = μ.ae :=
+(measurable_equiv.sub_left x).map_ae.trans $ congr_arg ae $ map_sub_left_eq_self μ x
+
+lemma tendsto_add_left_ae_ae [has_measurable_add G] [is_add_left_invariant μ] :
+  tendsto (λ t, x + t) μ.ae μ.ae :=
+map_add_left_ae.le
+
+lemma tendsto_sub_left_ae_ae [has_measurable_add G] [has_measurable_neg G] [is_add_left_invariant μ]
+  [is_neg_invariant μ] :
+  tendsto (λ t, x - t) μ.ae μ.ae :=
+map_sub_left_ae.le
+
+-- end move
+
+lemma convolution_congr [has_measurable_add G] [has_measurable_neg G] [is_add_left_invariant μ]
+  [is_neg_invariant μ] (h1 : f =ᵐ[μ] f') (h2 : g =ᵐ[μ] g') :
+  f ⋆[L; μ] g = f' ⋆[L; μ] g' :=
+begin
+  ext,
+  apply integral_congr_ae,
+  exact (h1.prod_mk $ h2.comp_tendsto map_sub_left_ae.le).fun_comp ↿(λ x y, L x y)
+end
+
+
 end noncomm
 
 section comm
@@ -643,8 +683,8 @@ begin
   refl,
 end
 
-lemma convolution_exists_at.integrable_swap [is_neg_invariant μ] (h : convolution_exists_at f g x L μ) :
-  integrable (λ t, L (f (x - t)) (g t)) μ :=
+lemma convolution_exists_at.integrable_swap [is_neg_invariant μ]
+  (h : convolution_exists_at f g x L μ) : integrable (λ t, L (f (x - t)) (g t)) μ :=
 by { convert h.comp_sub_left x, simp_rw [sub_sub_self], }
 
 lemma convolution_exists_at_iff_integrable_swap [is_neg_invariant μ] :
@@ -964,16 +1004,22 @@ variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ
 
 lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
   (hif : integrable f μ)
-  (hig : integrable g μ)
+  (h : convolution_exists_at f g x₀ L μ)
   (hf : support f ⊆ ball (0 : G) R)
   (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
   dist ((f ⋆[L; μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∫ x, ∥f x∥ ∂μ * ε :=
 begin
-  cases le_or_lt R 0 with hR hR, { sorry },
+  cases le_or_lt R 0 with hR hR,
+  { have : f =ᵐ[μ] 0,
+    { sorry },
+    sorry
+    -- rw [convolution_congr this eventually_eq.rfl],
+    -- convolution_congr wants more type-class arguments, but maybe that's not a problem
+    },
   have hε : 0 ≤ ε,
   { convert hg x₀ (mem_ball_self hR), rw dist_self },
   have h2 : ∀ t, dist (L (f t) (g (x₀ - t))) (L (f t) (g x₀)) ≤ ∥L (f t)∥ * ε,
-  sorry { intro t, by_cases ht : t ∈ support f,
+  { intro t, by_cases ht : t ∈ support f,
     { have h2t := hf ht,
       rw [mem_ball_zero_iff] at h2t,
       specialize hg (x₀ - t),
@@ -984,16 +1030,14 @@ begin
       simp_rw [ht, L.map_zero_left, L.map_zero, norm_zero, zero_mul, dist_self] } },
   simp_rw [convolution_def],
   simp_rw [dist_eq_norm] at h2 ⊢,
-  rw [← integral_sub],
+  rw [← integral_sub h.integrable], swap, { exact (L.flip (g x₀)).integrable_comp hif },
   refine (norm_integral_le_of_norm_le ((L.integrable_comp hif).norm.mul_const ε)
     (eventually_of_forall h2)).trans _,
   rw [integral_mul_right],
   refine mul_le_mul_of_nonneg_right _ hε,
   have h3 : ∀ t, ∥L (f t)∥ ≤ ∥L∥ * ∥f t∥ := λ t, L.le_op_norm (f t),
   refine (integral_mono (L.integrable_comp hif).norm (hif.norm.const_mul _) h3).trans_eq _,
-  rw [integral_mul_left],
-  refine (L.integrable_comp₂ hif _),
-  -- simp_rw [← L.map_sub_right],
+  rw [integral_mul_left]
 end
 
 
@@ -1039,8 +1083,10 @@ lemma dist_normed_convolution_le {x₀ : G} {ε : ℝ}
   dist ((φ.normed μ ⋆[lsmul ℝ ℝ; μ] g : G → E') x₀) (g x₀) ≤ ε :=
 begin
   rw [← φ.integral_normed_smul μ (g x₀)],
-  refine (dist_convolution_le' _ φ.support_normed_eq.subset hg).trans_eq _,
-  rw [integral_normed, norm_one, mul_one],
+  refine (dist_convolution_le' _ _ _ φ.support_normed_eq.subset hg).trans_eq _,
+  sorry,
+  sorry,
+  simp_rw [real.norm_eq_abs, abs_eq_self.mpr (φ.nonneg_normed _), integral_normed, mul_one],
   convert one_mul _,
   sorry
 end
