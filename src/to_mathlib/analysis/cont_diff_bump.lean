@@ -92,6 +92,14 @@ variables [borel_space G] [finite_dimensional ℝ G] [is_locally_finite_measure 
 protected lemma integrable (φ : cont_diff_bump_of_inner a) : integrable φ μ :=
 φ.continuous.integrable_of_has_compact_support φ.has_compact_support
 
+lemma cont_diff_normed (φ : cont_diff_bump_of_inner a) {n : with_top ℕ} :
+  cont_diff ℝ n (φ.normed μ) :=
+φ.cont_diff.div_const
+
+lemma continuous_normed (φ : cont_diff_bump_of_inner a) :
+  continuous (φ.normed μ) :=
+φ.continuous.div_const
+
 variables [μ .is_open_pos_measure]
 
 lemma integral_pos (φ : cont_diff_bump_of_inner a) : 0 < ∫ x, φ x ∂μ :=
