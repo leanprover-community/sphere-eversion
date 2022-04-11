@@ -235,6 +235,12 @@ by rw [L.map_add, continuous_linear_map.add_apply]
 lemma map_add_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} {y y' : E'} : L x (y + y') = L x y + L x y' :=
 (L x).map_add y y'
 
+lemma map_sub_left (L : E →L[𝕜] E' →L[𝕜] F) {x x' : E} {y : E'} : L (x - x') y = L x y - L x' y :=
+by rw [L.map_sub, continuous_linear_map.sub_apply]
+
+lemma map_sub_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} {y y' : E'} : L x (y - y') = L x y - L x y' :=
+(L x).map_sub y y'
+
 lemma map_smul_left (L : E →L[𝕜] E' →L[𝕜] F) {c : 𝕜} {x : E} {y : E'} : L (c • x) y = c • L x y :=
 by rw [L.map_smul, smul_apply]
 
@@ -265,11 +271,12 @@ lemma has_fderiv_at_const_right [normed_group X] [normed_space 𝕜 X]
   (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L (f x) c) ((flip L c).comp f') x :=
 (flip L).has_fderiv_at_const_left x hf
 
+
 section
 
-variables [measurable_space X]
+variables [measurable_space X] {μ : measure X}
 
-lemma ae_strongly_measurable_comp₂ {μ : measure X} (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {g : X → E'}
+lemma ae_strongly_measurable_comp₂ (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {g : X → E'}
   (hf : ae_strongly_measurable f μ) (hg : ae_strongly_measurable g μ) :
   ae_strongly_measurable (λ x, L (f x) (g x)) μ :=
 L.continuous₂.comp_ae_strongly_measurable $ hf.prod_mk hg
@@ -956,12 +963,17 @@ variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ
 -- sorry
 
 lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
+  (hif : integrable f μ)
+  (hig : integrable g μ)
   (hf : support f ⊆ ball (0 : G) R)
   (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
-  dist ((f ⋆[L; μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∥∫ x, f x ∂μ∥ * ε :=
+  dist ((f ⋆[L; μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∫ x, ∥f x∥ ∂μ * ε :=
 begin
+  cases le_or_lt R 0 with hR hR, { sorry },
+  have hε : 0 ≤ ε,
+  { convert hg x₀ (mem_ball_self hR), rw dist_self },
   have h2 : ∀ t, dist (L (f t) (g (x₀ - t))) (L (f t) (g x₀)) ≤ ∥L (f t)∥ * ε,
-  { intro t, by_cases ht : t ∈ support f,
+  sorry { intro t, by_cases ht : t ∈ support f,
     { have h2t := hf ht,
       rw [mem_ball_zero_iff] at h2t,
       specialize hg (x₀ - t),
@@ -970,7 +982,18 @@ begin
       refine mul_le_mul_of_nonneg_left (hg h2t) (norm_nonneg _) },
     { rw [nmem_support] at ht,
       simp_rw [ht, L.map_zero_left, L.map_zero, norm_zero, zero_mul, dist_self] } },
-  simp_rw [convolution_def], sorry,
+  simp_rw [convolution_def],
+  simp_rw [dist_eq_norm] at h2 ⊢,
+  rw [← integral_sub],
+  refine (norm_integral_le_of_norm_le ((L.integrable_comp hif).norm.mul_const ε)
+    (eventually_of_forall h2)).trans _,
+  rw [integral_mul_right],
+  refine mul_le_mul_of_nonneg_right _ hε,
+  have h3 : ∀ t, ∥L (f t)∥ ≤ ∥L∥ * ∥f t∥ := λ t, L.le_op_norm (f t),
+  refine (integral_mono (L.integrable_comp hif).norm (hif.norm.const_mul _) h3).trans_eq _,
+  rw [integral_mul_left],
+  refine (L.integrable_comp₂ hif _),
+  -- simp_rw [← L.map_sub_right],
 end
 
 
