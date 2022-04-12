@@ -617,7 +617,7 @@ begin
   apply (normed_group.tendsto_nhds_zero.mp key ε ε_pos).mono,
   intros N hN,
   cases le_or_lt (C * ∥1 / N∥) 0 with h h,
-  { exact lt_of_le_of_lt h ε_pos },
+  { exact h.trans_lt ε_pos },
   { rwa real.norm_of_nonneg h.le at hN },
 end
 

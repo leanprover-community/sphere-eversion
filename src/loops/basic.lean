@@ -239,7 +239,7 @@ begin
   { change (t : ℝ) ≠ 1 at ht1,
     have : fract ↑t = t.val,
     { rw fract_eq_iff,
-      exact ⟨t.2.1, lt_of_le_of_ne t.2.2 ht1, ⟨0, sub_self _⟩⟩ },
+      exact ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, sub_self _⟩⟩ },
     simp only [this, γ.extend_extends t.2],
     congr',
     rw subtype.ext_iff_val }

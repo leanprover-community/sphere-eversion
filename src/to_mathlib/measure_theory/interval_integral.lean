@@ -108,7 +108,7 @@ lemma integral_antimono_of_le
   (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
   ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ :=
 begin
-  cases eq_or_lt_of_le hab with hab hab,
+  cases hab.eq_or_lt with hab hab,
   { simp [hab] },
   { rw interval_oc_of_lt hab at hfg,
     rw integral_symm b a,
