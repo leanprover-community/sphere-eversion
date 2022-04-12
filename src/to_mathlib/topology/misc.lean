@@ -15,6 +15,20 @@ noncomputable theory
 open set function filter topological_space
 open_locale unit_interval topological_space uniformity filter classical
 
+section to_specific_limits
+
+lemma tendsto_self_div_add_at_top_nhds_1_nat :
+  tendsto (λ n : ℕ, (n : ℝ) / (n + 1)) at_top (𝓝 1) :=
+begin
+  suffices : tendsto (λ n : ℕ, (1 : ℝ) - 1 / (n + 1)) at_top (𝓝 (1 - 0)),
+  { have hn : ∀ n : ℕ, (n : ℝ) + 1 ≠ 0 := λ n, n.cast_add_one_pos.ne',
+    simp_rw [one_sub_div (hn _), add_sub_cancel, sub_zero] at this, exact this },
+  exact tendsto_const_nhds.sub tendsto_one_div_add_at_top_nhds_0_nat
+end
+
+
+end to_specific_limits
+
 section
  -- to connected
 
