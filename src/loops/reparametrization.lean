@@ -72,8 +72,7 @@ begin
   { suffices : 𝒞 ∞ (λy, ∫ s in 0..1, delta_mollifier η (γ.surrounding_parameters_at x i) s • γ y s),
     { simpa [approx_surrounding_points_at, loop.mollify, hη], },
     refine cont_diff_parametric_integral_of_cont_diff (cont_diff.smul _ γ.smooth) 0 1,
-    refine cont_diff.comp _ cont_diff_snd,
-    exact delta_mollifier_smooth' hη _, },
+    exact (delta_mollifier_smooth' hη _).snd', },
 end
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
@@ -258,9 +257,8 @@ begin
       algebra.id.smul_eq_mul, mul_one, eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h,
       affine_basis.coords_apply, affine_basis.sum_coord_apply_eq_one], },
   { simp_rw ← smul_eq_mul,
-    refine λ i hi, continuous.interval_integrable (continuous.const_smul _ _) 0 1,
-    exact (delta_mollifier_smooth hη₁).continuous.comp (continuous.prod.mk
-      (γ.surrounding_parameters_at x i)), },
+    refine λ i hi, (continuous.const_smul _ _).interval_integrable 0 1,
+    exact (delta_mollifier_smooth' hη₁ (γ.surrounding_parameters_at x i)).continuous },
 end
 
 @[simp] lemma local_centering_density_average (hy : y ∈ γ.local_centering_density_nhd x) :
@@ -279,10 +277,8 @@ begin
     erw [eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h],
     simpa using affine_basis.affine_combination_coord_eq_self (affine_basis.mk _ h.1 h.2) (g y), },
   { simp_rw mul_smul,
-    refine λ i hi, continuous.interval_integrable
-      (continuous.const_smul (continuous.smul _ (γ.continuous y)) _) 0 1,
-    exact (delta_mollifier_smooth hη₁).continuous.comp (continuous.prod.mk
-      (γ.surrounding_parameters_at x i)), },
+    refine λ i hi, ((continuous.smul _ (γ.continuous y)).const_smul _).interval_integrable 0 1,
+    exact (delta_mollifier_smooth' hη₁ (γ.surrounding_parameters_at x i)).continuous },
 end
 
 /-- This the key construction. It represents a smooth probability distribution on the circle with
@@ -481,11 +477,8 @@ lemma surjective_integral_centering_density :
 begin
   have : continuous (λ t, ∫ s in 0..t, γ.centering_density x s),
   { exact continuous_primitive (γ.centering_density_interval_integrable x) 0, },
-  apply this.surjective,
-  { exact (γ.centering_density_periodic x).tendsto_at_top_interval_integral_of_pos'
-      (γ.centering_density_interval_integrable x) (γ.centering_density_pos x) one_pos, },
-  { exact (γ.centering_density_periodic x).tendsto_at_bot_interval_integral_of_pos'
-      (γ.centering_density_interval_integrable x) (γ.centering_density_pos x) one_pos, },
+  exact equivariant_map.surjective
+    ⟨λ t, ∫ s in 0..t, γ.centering_density x s, γ.integral_add_one_centering_density x⟩ this
 end
 
 def reparametrize : E → equivariant_equiv := λ x,
