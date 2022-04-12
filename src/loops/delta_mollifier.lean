@@ -318,9 +318,6 @@ section
 open filter
 open_locale filter
 
-lemma pred_of_mem_set_of {α : Type*} {p : α → Prop} {x} (h : x ∈ {y | p y}) : p x :=
-h
-
 lemma tendsto_sup_dist {X Y : Type*} [topological_space X] [metric_space Y]
   {f : X → Y} {t : X} (h : continuous_at f t)
   {s : ℕ → set X} (hs : tendsto s at_top (𝓝 t).small_sets) :
@@ -334,7 +331,7 @@ begin
   apply ((𝓝 t).has_basis_small_sets.tendsto_right_iff.mp hs _ $
          metric.tendsto_nhds.mp h (ε/2) (half_pos ε_pos)).mono (λ n hn, _),
   apply lt_of_le_of_lt _ (half_lt_self ε_pos),
-  exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (pred_of_mem_set_of (hn hx)).le),
+  exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (hn hx).out.le),
 end
 
 end

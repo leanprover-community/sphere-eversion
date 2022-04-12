@@ -1112,7 +1112,7 @@ begin
   rcases hcg (ε / 2) (half_pos hε) with ⟨δ, hδ, hgδ⟩,
   refine (hφ δ hδ).mono (λ i hi, _),
   refine (dist_normed_convolution_le hlg (λ x hx, _)).trans_lt (half_lt_self hε),
-  exact (hgδ $ lt_trans hx hi).le,
+  exact (hgδ $ hx.out.trans hi).le,
 end
 
 lemma convolution_tendsto [is_neg_invariant μ] {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
