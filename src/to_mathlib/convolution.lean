@@ -124,96 +124,6 @@ lemma has_fderiv_at_integral_of_dominated_of_fderiv_le' {F : H → α → E} (F'
   has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, F' x₀ a ∂μ) x₀ :=
 has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas hF_int hF'_meas h_bound bound_integrable h_diff
 
--- version similar to https://encyclopediaofmath.org/wiki/Parameter-dependent_integral#References
--- probably not useful
--- lemma has_fderiv_at_integral' {F : H → α → E} {bound : α → ℝ}
---   {x₀ : H}
---   -- (hF_int : integrable (F x₀) μ) -- we only need this for one value(!?)
---   (hF_int : ∀ᶠ x in 𝓝 x₀, integrable (F x) μ)
---   -- (h_diff : ∀ x, ∀ᵐ a ∂μ, cont_diff_at ℝ 1 (λ x, F x a) x)
---   (hF_bound : ∀ᵐ a ∂μ, ∀ x, ∥partial_fderiv_fst ℝ F x a∥ ≤ bound a)
---   (h_bound : integrable bound μ)
---   (h_diff : ∀ a, differentiable ℝ (λ x, F x a))
---   (h_cont : continuous (partial_fderiv_fst ℝ F x₀)) : -- is this assumption needed?
---   has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x₀ a ∂μ) x₀ :=
--- begin
---   have h_fderiv : ∀ᵐ a ∂μ, ∀ x ∈ metric.ball x₀ 1,
---     has_fderiv_at (λ x, F x a) (partial_fderiv_fst ℝ F x a) x :=
---   eventually_of_forall (λ a x hx, (h_diff a).differentiable_at.has_fderiv_at),
---   have hf_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ :=
---   hF_int.mono (λ x h, h.ae_measurable),
---   have h_meas: ae_measurable (λ a, fderiv ℝ (λ (x : H), F x a) x₀) μ :=
---   continuous.ae_measurable h_cont μ,
---   refine has_fderiv_at_integral_of_dominated_of_fderiv_le zero_lt_one hf_meas hF_int.self_of_nhds
---     h_meas (hF_bound.mono $ λ a h x hx, h x) h_bound h_fderiv
--- end
-
--- lemma cont_diff_one_integral {F : H → α → E}
---   (hF_int : ∀ x, integrable (F x) μ)
---   (hF'_int : ∀ x, integrable (λ a, partial_fderiv_fst ℝ F x a) μ)
---   (h_diff : ∀ a, differentiable ℝ (λ x, F x a))
---   (h_cont : continuous ↿(partial_fderiv_fst ℝ F)) :
---   cont_diff ℝ 1 (λ x, ∫ a, F x a ∂μ) :=
--- begin
---   simp_rw [cont_diff_one_iff_fderiv],
---   -- have : ∀ x, has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x a ∂μ) x,
---   -- { intro x, refine has_fderiv_at_integral' hF_int },
---   -- refine ⟨λ x, ∫ a, partial_fderiv_fst ℝ F x a ∂μ, _, _⟩,
---   -- have h_fderiv : ∀ᵐ a ∂μ, ∀ x ∈ metric.ball x₀ 1,
---   --   has_fderiv_at (λ x, F x a) (partial_fderiv_fst ℝ F x a) x,
---   -- { exact eventually_of_forall
---   --     (λ a x hx, ((h_diff a).differentiable le_rfl).differentiable_at.has_fderiv_at) },
---   -- have hf_cont : ∀ a, continuous_on (λ x, ∥partial_fderiv_fst ℝ F x a∥) (closed_ball x₀ 1) :=
---   -- λ a x hx, ((h_diff a).continuous_fderiv le_rfl).continuous_within_at.norm,
---   -- -- probably need sigma-finiteness for this
---   -- obtain ⟨f, h1f, h2f⟩ : ∃ f : α → ℝ, integrable f μ ∧ ∀ a, 0 < f a := sorry,
---   -- have hf_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ :=
---   -- eventually_of_forall (λ x, (hF_int x).ae_measurable),
---   -- have :=
---   -- λ a, (is_compact_closed_ball x₀ 1).exists_forall_ge (nonempty_closed_ball.mpr zero_le_one)
---   --   (hf_cont a),
---   -- choose y hy h2y using this,
---   -- have := has_fderiv_at_integral_of_dominated_of_fderiv_le zero_lt_one hf_meas (hF_int x₀)
---   --   (hF'_int x₀).ae_measurable
---   --   (eventually_of_forall $ λ a x hx, h2y a x $ ball_subset_closed_ball hx) _ h_fderiv,
-
---   -- obtain ⟨h1, h2⟩ :=
---   --   has_fderiv_at_integral_of_dominated_loc_of_lip zero_lt_one hf_meas (hF_int x₀)
---   --     (hF'_int x₀).ae_measurable _ ((hF'_int x₀).norm.add h1f) h_fderiv,
---   -- { sorry },
---   -- { refine eventually_of_forall (λ a, _),
---   --   -- have := (h_diff a).cont_diff_at,
---   --   have := (h_diff a).cont_diff_at.exists_lipschitz_on_with_of_nnnorm_lt (_ + ⟨f a, (h2f a).le⟩)
---   --     (lt_of_pos_right _ _), sorry }
---   all_goals { sorry },
--- end
--- #print is_compact.exists_forall_ge
--- version similar to https://encyclopediaofmath.org/wiki/Parameter-dependent_integral#References
--- lemma cont_diff_one_integral_compact
---  [topological_space α] [t2_space α] [opens_measurable_space α] [is_locally_finite_measure μ]
---   {F : H → α → E} {x₀ : H}
---   (h_diff : ∀ᵐ a ∂μ, cont_diff ℝ 1 (λ x, F x a))
---   (h_supp : ∀ a, has_compact_support (λ x, F x a))
---   (h2_supp : ∀ x, has_compact_support (F x)) :
---   has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, partial_fderiv_fst ℝ F x₀ a ∂μ) x₀ :=
--- begin
---   have hF'_supp : ∀ a, has_compact_support (λ x, partial_fderiv_fst ℝ F x a) :=
---   λ a, (h_supp a).fderiv,
---   have hnF'_supp : ∀ a, has_compact_support (λ x, ∥ partial_fderiv_fst ℝ F x a ∥) :=
---   λ a, (hF'_supp a).norm,
---   have hF_cont : ∀ᶠ x in 𝓝 x₀, continuous (F x),
---   { sorry, },
---   have hF_int : ∀ᶠ x in 𝓝 x₀, integrable (F x) μ,
---   { exact hF_cont.mono (λ x h, h.integrable_of_compact_closure_support (h2_supp x)) },
---   let bound : α → ℝ := λ a, ⨆ x, ∥ partial_fderiv_fst ℝ F x a ∥,
---   have h_int : integrable bound μ,
---   { sorry },
---   sorry,
---   -- refine has_fderiv_at_integral' hF_int _ h_int h_diff,
---   -- refine h_diff.mono (λ a h x, _),
---   -- exact le_csupr (((h.continuous_fderiv le_rfl).norm).bdd_above_range_of_has_compact_support $ hnF'_supp a) x,
--- end
-
 end
 
 variables {𝕜 G G₀ X Y M R E E' E'' F : Type*}
@@ -748,43 +658,6 @@ lemma continuous.convolution_integrand_fst (hg : continuous g) (t : G) :
   continuous (λ x, L (f t) (g (x - t))) :=
 L.continuous_comp₂ continuous_const $ hg.comp $ continuous_id.sub continuous_const
 
--- -- probably not that useful
--- lemma integrable.convolution_exists_of_bounded_range_left [sigma_compact_space G]
---   [is_neg_invariant μ]
---   (hbf : bounded (range f)) (hf : ae_measurable f μ)
---   (hcf : has_compact_support f) (hg : locally_integrable g μ) :
---   convolution_exists f g L μ :=
--- begin
---   intro x₀,
---   -- let K := (λ t, x₀ - t) '' tsupport f,
---   -- have hK : is_compact K := sorry,
---   have h2f : bdd_above (range (norm ∘ f)) := sorry,
---   have : ∀ᵐ (t : G) ∂μ, ∥f t ◾ g (x₀ - t)∥ ≤ (tsupport f).indicator (λ t, (⨆ i, ∥f i∥) * ∥g (x₀ - t)∥) t,
---   { refine eventually_of_forall _,
---     refine le_indicator (λ t ht, _) (λ t ht, _),
---     { have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry, rw [hL],
---       refine mul_le_mul_of_nonneg_right (le_csupr h2f t) (norm_nonneg _) },
---     { have : t ∉ support f := mt (λ h, subset_closure h) ht,
---       rw [nmem_support.mp this, L.map_zero_left, norm_zero] } },
---   refine integrable.mono' _ (hf.convolution_integrand_snd hg.ae_measurable x₀) this,
---   { rw [integrable_indicator_iff (is_closed_add_tsupport f).measurable_set],
---   refine (integrable.norm _).const_mul _, sorry }
--- end
-
--- probably not that useful
--- lemma integrable.convolution_exists_of_bounded_range_right [normed_space ℝ 𝕜] (hf : integrable f μ)
---   (hbg : bounded (range g)) (hg : ae_measurable g μ) : convolution_exists f g L μ :=
--- begin
---   rcases hbg.subset_ball_lt 0 0 with ⟨C, h0C, hC⟩,
---   refine λ x, (hf.smul C).mono (hf.ae_measurable.convolution_integrand_snd hg x) _,
---   refine eventually_of_forall (λ t, _),
---   have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
---   simp_rw [pi.smul_apply, hL, real.norm_of_nonneg h0C.le, mul_comm C],
---   refine mul_le_mul_of_nonneg_left _ (norm_nonneg _),
---   rw [← dist_zero_right],
---   exact hC ⟨x - t, rfl⟩
--- end
-
 lemma bdd_above.convolution_exists_at [sigma_compact_space G] {x₀ : G}
   (hf : integrable_on f (tsupport (λ t, L (f t) (g (x₀ - t)))) μ)
   (hmf : ae_strongly_measurable f μ)
@@ -847,61 +720,6 @@ begin
   intro x₀, rw [← convolution_exists_at_flip],
   exact hcf.convolution_exists_right L.flip hg hf x₀
 end
-
--- lemma has_compact_support.convolution_exists_right_of_continuous_left
---   [is_neg_invariant μ] [sigma_compact_space G]
---   (hf : continuous f) (hcg : has_compact_support g) (hg : locally_integrable g μ) :
---   convolution_exists f g L μ :=
--- begin
---   intro x₀,
---   refine has_compact_support.convolution_exists_at L _ hf hg,
---   refine hcf.mono _,
---   refine λ t, mt (λ ht : f t = 0, _),
---   simp [ht]
--- end
-
-
--- lemma bdd_above.continuous_convolution_right_of_integrable
---   (hf : integrable f μ) (hbg : bdd_above (range (λ x, ∥g x∥))) (hg : continuous g) :
---     continuous (f ⋆[L, μ] g) :=
--- begin
---   sorry
---   -- have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥L (f t) (g (x - t))∥ ≤ ∥f (⨆ i, ∥f i∥) * ∥g t∥,
---   -- { refine λ x, eventually_of_forall (λ t, _),
---   --   have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
---   --   rw [hL],
---   --   refine mul_le_mul_of_nonneg_left (le_csupr hbg $ x - t) (norm_nonneg _) },
---   -- rw [← convolution_flip],
---   -- refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
---   -- { exact (hf.ae_measurable μ).convolution_integrand_swap_snd L hg.ae_measurable },
---   -- exact eventually_of_forall (λ t,
---   --   L.continuous_comp₂ (hf.comp (continuous_id.sub continuous_const)) continuous_const),
--- end
-
--- not useful?
--- lemma bdd_above.continuous_convolution_left_of_integrable [is_neg_invariant μ]
---   (hbf : bdd_above (range (λ x, ∥f x∥))) (hf : continuous f) (hg : integrable g μ) :
---     continuous (f ⋆[L, μ] g) :=
--- begin
---   have : ∀ (x : G), ∀ᵐ (t : G) ∂μ, ∥L (f (x - t)) (g t)∥ ≤ (⨆ i, ∥f i∥) * ∥g t∥,
---   { refine λ x, eventually_of_forall (λ t, _),
---     have hL : ∀ x y, ∥L x y∥ = ∥x∥ * ∥y∥ := sorry,
---     rw [hL],
---     refine mul_le_mul_of_nonneg_right (le_csupr hbf $ x - t) (norm_nonneg _) },
---   rw [← convolution_flip],
---   refine continuous_of_dominated _ this (hg.norm.const_mul _) _,
---   { exact (hf.ae_measurable μ).convolution_integrand_swap_snd L hg.ae_measurable },
---   exact eventually_of_forall (λ t,
---     L.continuous_comp₂ (hf.comp (continuous_id.sub continuous_const)) continuous_const),
--- end
-
--- /-- A version of `has_compact_support.continuous_convolution_left` that works if `G` is
---   not locally compact but requires that `g` is integrable. -/
--- lemma has_compact_support.continuous_convolution_left_of_integrable [is_neg_invariant μ]
---   (hcf : has_compact_support f) (hf : continuous f) (hg : integrable g μ) :
---     continuous (f ⋆[L, μ] g) :=
--- (hf.norm.bdd_above_range_of_has_compact_support hcf.norm).continuous_convolution_left_of_integrable L
---   hf hg
 
 lemma has_compact_support.convolution_integrand_bound_right (hcg : has_compact_support g)
   (hg : continuous g) {x t : G} {s : set G} (hx : x ∈ s) :
@@ -998,10 +816,6 @@ variables [measurable_space G] [borel_space G] {μ : measure G} [second_countabl
 variables [is_add_left_invariant μ] [sigma_finite μ]
 variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
 
--- lemma convolution_mem_convex_hull [normed_space ℝ E'] {x₀ : G} :
---   (f ⋆[L, μ] g) x₀ ∈ convex_hull ℝ ((λ x, g '' support f) :=
--- sorry
-
 lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
   (hif : integrable f μ)
   (h : convolution_exists_at f g x₀ L μ)
@@ -1010,13 +824,6 @@ lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
   (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
   dist ((f ⋆[L, μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∫ x, ∥f x∥ ∂μ * ε :=
 begin
-  -- cases le_or_lt R 0 with hR hR,
-  -- { have : f =ᵐ[μ] 0,
-  --   { sorry },
-  --   sorry
-  --   -- rw [convolution_congr this eventually_eq.rfl],
-  --   -- convolution_congr wants more type-class arguments, but maybe that's not a problem
-  --   },
   have hε : 0 ≤ ε,
   { convert hg x₀ (mem_ball_self hR), rw dist_self },
   have h2 : ∀ t, dist (L (f t) (g (x₀ - t))) (L (f t) (g x₀)) ≤ ∥L (f t)∥ * ε,
@@ -1121,13 +928,6 @@ lemma convolution_tendsto [is_neg_invariant μ] {ι} {φ : ι → cont_diff_bump
   tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
 convolution_tendsto' hφ hg.locally_integrable hg.continuous_at
 
--- lemma convolution_tendsto' {x₀ : G} :
---   tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ.normed μ (N • x)) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀)
---     at_top (𝓝 (g x₀)) :=
--- begin
---   sorry
--- end
-
 end inner_product_space
 end cont_diff_bump_of_inner
 
@@ -1231,37 +1031,6 @@ begin
   rw [← convolution_flip],
   exact hcf.cont_diff_convolution_right L.flip hg hf,
 end
-
--- associativity is quite tedious to write down in full generality
-
--- variables [normed_group E''] [normed_space ℝ E''] [normed_space 𝕜 E''] [smul_comm_class 𝕜 ℝ E'']
--- variables [complete_space E''] [second_countable_topology E''] [measurable_space E''] [borel_space E'']
--- variables {h : G → E''}
--- variables {L₂ : F →L[𝕜] E'' →L[𝕜] F'}
-
-
--- lemma convolution_assoc : (f ⋆[L, μ] g) ⋆[L', μ] h = f ⋆[L, μ] (g ⋆[L, μ] h) :=
--- by { ext, simp_rw [convolution_def, ← integral_smul/-, ← integral_smul_const-/], sorry  }
-
--- section bump
-
--- variables [finite_dimensional ℝ G]
--- variables [normed_space ℝ E'] [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
--- variables (φ : cont_diff_bump (0 : G))
--- open continuous_linear_map
-
--- lemma cont_diff_bump.convolution_eq_right {x₀ : G}
---   (h : ∀ x ∈ euclidean.ball x₀ φ.R, g x = g x₀) :
---   (φ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀ = integral μ φ • g x₀ :=
--- begin
---   have := φ.to_cont_diff_bump_of_inner,
---   rw [to_euclidean.map_zero] at this,
---   -- refine this.convolution_eq_right,
---   sorry
--- end
-
-
--- end bump
 
 end normed_space
 
