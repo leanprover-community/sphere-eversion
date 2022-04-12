@@ -77,13 +77,39 @@ lemma strict_differentiable_at.differentiable_at {f : E → F} {x : E}
   (h : strict_differentiable_at 𝕜 f x) : differentiable_at 𝕜 f x :=
 exists.elim h (λ φ hφ, ⟨φ, hφ.has_fderiv_at⟩)
 
-lemma differentiable_at.has_fderiv_at_coprod {f : E × F → G} {x : E × F}
-  (hf : differentiable_at 𝕜 f x) {φ : E →L[𝕜] G} {ψ : F →L[𝕜] G}
-  (hφ : has_fderiv_at (λ p, f (p, x.2)) φ x.1) (hψ : has_fderiv_at (λ q, f (x.1, q)) ψ x.2) :
-  has_fderiv_at f (φ.coprod ψ) x :=
-begin
+-- PR to linear_algebra.prod
+@[simp]
+lemma linear_map.coprod_comp_inl_inr {R : Type*} {M : Type*} {M₂ : Type*} {M₃ : Type*} [semiring R]
+  [add_comm_monoid M] [add_comm_monoid M₂] [add_comm_monoid M₃] [module R M]
+  [module R M₂] [module R M₃] (f : M × M₂ →ₗ[R] M₃) :
+  (f.comp (linear_map.inl R M M₂)).coprod (f.comp (linear_map.inr R M M₂)) = f :=
+by rw [← linear_map.comp_coprod, linear_map.coprod_inl_inr, linear_map.comp_id]
 
-  sorry
+-- PR to topology.algebra.module.basic
+@[simp]
+lemma continuous_linear_map.coprod_comp_inl_inr {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
+  [add_comm_monoid M₁] {M₂ : Type*} [topological_space M₂] [add_comm_monoid M₂]
+  {M₃ : Type*} [topological_space M₃] [add_comm_monoid M₃] [module R₁ M₁]
+  [module R₁ M₂] [module R₁ M₃] [has_continuous_add M₃] (f : M₁ × M₂ →L[R₁] M₃) :
+  (f.comp (continuous_linear_map.inl R₁ M₁ M₂)).coprod (f.comp (continuous_linear_map.inr R₁ M₁ M₂)) = f :=
+continuous_linear_map.coe_injective (f : M₁ × M₂ →ₗ[R₁] M₃).coprod_comp_inl_inr
+
+lemma differentiable_at.has_fderiv_at_coprod_partial {f : E → F → G} {x : E} {y : F}
+  (hf : differentiable_at 𝕜 (uncurry f) (x, y)) :
+  has_fderiv_at (uncurry f)
+                ((partial_fderiv_fst 𝕜 f x y).coprod (partial_fderiv_snd 𝕜 f x y)) (x, y) :=
+begin
+  rcases hf with ⟨θ, hθ⟩,
+  rwa [fderiv_partial_fst hθ, fderiv_partial_snd hθ, θ.coprod_comp_inl_inr]
+end
+
+lemma differentiable_at.has_fderiv_at_coprod {f : E → F → G} {x : E} {y : F}
+  (hf : differentiable_at 𝕜 (uncurry f) (x, y)) {φ : E →L[𝕜] G} {ψ : F →L[𝕜] G}
+  (hφ : has_fderiv_at (λ p, f p y) φ x) (hψ : has_fderiv_at (f x) ψ y) :
+  has_fderiv_at (uncurry f) (φ.coprod ψ) (x, y) :=
+begin
+  rw [hφ.unique hf.has_fderiv_at_partial_fst, hψ.unique hf.has_fderiv_at_partial_snd],
+  exact hf.has_fderiv_at_coprod_partial
 end
 
 variables [complete_space E]
@@ -162,6 +188,7 @@ begin
       { simp only [continuous_linear_equiv.coe_refl, continuous_linear_map.id_comp,
         has_fderiv_at_fst] },
       have diff : differentiable 𝕜 (uncurry $ λ x y, f x y) := hf.differentiable le_top,
+      rw show (λ (x : E × F), (f x.fst) x.snd) = uncurry (λ x y, f x y), by { ext, refl },
       apply differentiable_at.has_fderiv_at_coprod,
       { apply (hf.differentiable le_top) },
       { dsimp [d₁f],
