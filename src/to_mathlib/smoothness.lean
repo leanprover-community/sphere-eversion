@@ -1,5 +1,7 @@
 import analysis.calculus.specific_functions
 
+import to_mathlib.analysis.normed_space.operator_norm
+
 /-
 Work toward gluing smooth function. This includes proving that a function
 which has continuous partial derivatives on E × F is C¹.
@@ -134,72 +136,6 @@ begin
   rw prod_mem_ball_iff,
   exact ⟨hx, hy⟩
 end
-
-def linear_map.coprodₗ (R M M₂ M₃ : Type*) [comm_ring R]
-  [add_comm_monoid M] [add_comm_monoid M₂] [add_comm_monoid M₃] [module R M]
-  [module R M₂] [module R M₃] : ((M →ₗ[R] M₃) × (M₂ →ₗ[R] M₃)) →ₗ[R] (M × M₂ →ₗ[R] M₃) :=
-{ to_fun := λ p, p.1.coprod p.2,
-  map_add' := begin
-    intros p q,
-    apply linear_map.coe_injective,
-    ext x,
-    simp only [prod.fst_add, linear_map.coprod_apply, linear_map.add_apply, prod.snd_add],
-    ac_refl
-  end,
-  map_smul' := begin
-    intros r p,
-    apply linear_map.coe_injective,
-    ext x,
-    simp only [prod.smul_fst, prod.smul_snd, linear_map.coprod_apply, linear_map.smul_apply,
-               ring_hom.id_apply, smul_add]
-  end }
-
-lemma add_le_twice_max (a b : ℝ) : a + b ≤ 2*max a b :=
-calc a + b ≤ max a b + max a b : add_le_add (le_max_left a b) (le_max_right a b)
-... = _ : by ring
-
-lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nondiscrete_normed_field 𝕜] (E : Type*) [normed_group E]
-  [normed_space 𝕜 E] (F : Type*) [normed_group F] [normed_space 𝕜 F]
-  (G : Type*) [normed_group G] [normed_space 𝕜 G] : is_bounded_linear_map 𝕜
-  (λ p : (E →L[𝕜] G) × (F →L[𝕜] G), p.1.coprod p.2) :=
-{ map_add := begin
-    intros,
-    apply continuous_linear_map.coe_fn_injective,
-    ext u,
-    simp only [prod.fst_add, prod.snd_add, continuous_linear_map.coprod_apply,
-               continuous_linear_map.add_apply],
-    ac_refl
-  end,
-  map_smul := begin
-    intros r p,
-    apply continuous_linear_map.coe_fn_injective,
-    ext x,
-    simp only [prod.smul_fst, prod.smul_snd, continuous_linear_map.coprod_apply,
-               continuous_linear_map.coe_smul', pi.smul_apply, smul_add],
-  end,
-  bound := begin
-    refine ⟨2, zero_lt_two, _⟩,
-    rintros ⟨φ, ψ⟩,
-    apply continuous_linear_map.op_norm_le_bound,
-    apply mul_nonneg zero_le_two, apply norm_nonneg,
-    rintros ⟨e, f⟩,
-    calc ∥φ e + ψ f∥ ≤ ∥φ e∥ + ∥ψ f∥ : norm_add_le _ _
-    ... ≤  ∥φ∥ * ∥e∥ + ∥ψ∥ * ∥f∥ : add_le_add (φ.le_op_norm e) (ψ.le_op_norm f)
-    ... ≤ (max ∥φ∥ ∥ψ∥) * ∥e∥ + (max ∥φ∥ ∥ψ∥) * ∥f∥ : _
-    ... ≤ (2*(max ∥φ∥ ∥ψ∥)) * (max ∥e∥ ∥f∥) : _,
-    apply add_le_add,
-    exact mul_le_mul_of_nonneg_right (le_max_left ∥φ∥ ∥ψ∥) (norm_nonneg e),
-    exact mul_le_mul_of_nonneg_right (le_max_right ∥φ∥ ∥ψ∥) (norm_nonneg f),
-    rw [← mul_add, mul_comm (2 : ℝ), mul_assoc],
-    apply mul_le_mul_of_nonneg_left (add_le_twice_max _ _) (le_max_of_le_left $ norm_nonneg _)
-  end }
-
-noncomputable
-def continuous_linear_map.coprodL {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_group G] [normed_space 𝕜 G] :
-  ((E →L[𝕜] G) × (F →L[𝕜] G)) →L[𝕜] (E × F →L[𝕜] G) :=
-(is_bounded_linear_map_coprod 𝕜 E F G).to_continuous_linear_map
 
 
 
