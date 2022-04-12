@@ -27,16 +27,10 @@ lemma tendsto.of_norm_le {E F : Type*} [metric_space E] [normed_group F]
   (h₀ : tendsto g (𝓝 x) (𝓝 0)) (h₁ : ∀ x, ∥f x∥ ≤ g x) :
   tendsto f (𝓝 x) (𝓝 0) :=
 begin
-  -- TODO Please golf me!
-  rw metric.tendsto_nhds_nhds at h₀ ⊢,
-  intros ε hε,
-  obtain ⟨δ, hδ₁, hδ₂⟩ := h₀ ε hε,
-  refine ⟨δ, hδ₁, λ y hy, _⟩,
-  simp * at *,
-  specialize h₁ y,
-  have hgy : 0 ≤ g y := (norm_nonneg (f y)).trans h₁,
-  rw ← real.norm_of_nonneg hgy at h₁,
-  exact lt_of_le_of_lt h₁ (hδ₂ hy),
+  rw normed_group.tendsto_nhds_zero at h₀ ⊢,
+  refine λ ε hε, (h₀ ε hε).mono (λ x hx, (h₁ x).trans_lt $ _),
+  rw [real.norm_eq_abs] at hx,
+  refine (le_abs_self _).trans_lt hx,
 end
 
 end filter
