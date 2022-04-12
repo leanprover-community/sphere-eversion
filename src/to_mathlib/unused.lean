@@ -177,3 +177,59 @@ lemma cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_grou
 (continuous_linear_equiv.ulift F Y).symm.comp_cont_diff_iff
 
 end lift
+
+section
+open filter
+
+lemma mem_closure_inter_of_mem_nhds_of_mem_closure {X : Type*} [topological_space X] {x : X}
+  {u v : set X} (hu : u ∈ 𝓝 x) (hv : x ∈ closure v) : x ∈ closure (u ∩ v) :=
+begin
+  rcases mem_nhds_iff.mp hu with ⟨w, w_sub, w_op, hw⟩,
+  exact closure_mono (v.inter_subset_inter_left w_sub) (closure_inter_open w_op ⟨hw, hv⟩)
+end
+
+lemma continuous.symm {X Y : Type*} [topological_space X]
+  [topological_space Y] [locally_compact_space Y] [t2_space Y]
+  {f : X ≃ Y} (hf : continuous f) (hf' : ∀ K, is_compact K → is_compact (f ⁻¹' K)) :
+  continuous f.symm :=
+begin
+  rw continuous_iff_is_closed,
+  intros F hF,
+  rw ← f.image_eq_preimage,
+  apply is_closed_of_closure_subset,
+  intros y hy,
+  obtain ⟨K, K_cpct, K_in⟩ := exists_compact_mem_nhds y,
+  have hy' : y ∈ closure (K ∩ f '' F),
+  { exact mem_closure_inter_of_mem_nhds_of_mem_closure K_in hy },
+  have : K ∩ f '' F = f '' (f ⁻¹' K ∩ F),
+  { rw ← set.image_inter (f.injective),
+    rw f.image_preimage },
+  have : is_compact (K ∩ f '' F),
+  { rw this,
+    apply is_compact.image _ hf,
+    specialize hf' K K_cpct,
+    exact hf'.inter_right hF },
+  have := this.is_closed,
+  rw this.closure_eq at hy',
+  exact hy'.2
+end
+
+lemma continuous_parametric_symm {X Y Z : Type*} [topological_space X]
+  [t2_space X] [locally_compact_space X]
+  [topological_space Y] [t2_space Y]
+  [topological_space Z] [t2_space Z] [locally_compact_space Z]
+  {f : X → Y ≃ Z}
+  (hf : continuous (λ p : X × Y, f p.1 p.2))
+  (hf' : ∀ K, is_compact K → is_compact ((λ p : X × Y, (p.1, f p.1 p.2)) ⁻¹' K)) :
+  continuous (λ p : X × Z, (f p.1).symm p.2) :=
+begin
+  let φ₀ : (X × Y) ≃ (X × Z) :=
+  { to_fun := λ p : X × Y, (p.1, f p.1 p.2),
+    inv_fun := λ p : X × Z, (p.1, (f p.1).symm p.2),
+    left_inv := λ x, by simp,
+    right_inv := λ x, by simp },
+  have φ₀_cont : continuous φ₀, from continuous_fst.prod_mk hf,
+  exact continuous_snd.comp (φ₀_cont.symm hf')
+end
+
+end
