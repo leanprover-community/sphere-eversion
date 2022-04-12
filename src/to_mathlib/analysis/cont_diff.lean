@@ -2,6 +2,7 @@ import analysis.calculus.inverse
 import analysis.calculus.cont_diff
 
 import to_mathlib.analysis.calculus
+import to_mathlib.analysis.normed_space.operator_norm
 
 noncomputable theory
 
@@ -52,10 +53,7 @@ lemma continuous_linear_equiv.continuous_lower_triangular {X : Type*} [topologic
   (hA : continuous (λ x, (A x : M₁ →L[𝕜] M₃))) (hC : continuous C)
   (hD : continuous (λ x, (D x : M₂ →L[𝕜] M₄))) :
   continuous (λ x, ((A x).lower_triangular (C x) (D x) : (M₁ × M₂) →L[𝕜] (M₃ × M₄))) :=
-begin
-  change continuous (λ x, (((A x: M₁ →L[𝕜] M₃).comp (fst 𝕜 M₁ M₂)).prod ((C x).coprod $ D x))),
-  sorry
-end
+(hA.compL continuous_const).prodL (hC.coprodL hD)
 
 end
 
