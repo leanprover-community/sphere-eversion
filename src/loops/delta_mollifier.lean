@@ -5,6 +5,7 @@ import analysis.calculus.specific_functions
 import to_mathlib.convolution
 import to_mathlib.analysis.cont_diff_bump
 import to_mathlib.data.real_basic
+import to_mathlib.topology.periodic
 
 import notations
 import loops.basic
@@ -248,21 +249,42 @@ lemma periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
   periodize (λ x', f (x' - t)) x = periodize f (x - t) :=
 by simp_rw [periodize, sub_add_eq_add_sub]
 
+lemma periodize_smul_periodic (f : ℝ → ℝ) {g : ℝ → E} (hg : periodic g 1) (t : ℝ) :
+  (periodize f t) • g t = periodize (λ x, f x • g x) t :=
+begin
+  dsimp only [periodize],
+  rw finsum_smul,
+  congr' 1,
+  ext n,
+  rw one_periodic.add_int hg
+end
+
+open measure_theory
+
+lemma integral_periodize [complete_space E] (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a + 1)) :
+  ∫ t in a..a+1, periodize f t = ∫ t in a..a+1, f t :=
+begin
+
+  sorry
+end
+
 -- if convenient we could set `[c,d] = [0,1]`
 lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop F)
   {a b c d : ℝ} (h : b ≤ a + 1) (h2 : d = c + 1)
   (hf : support f ⊆ Ioc a b) :
   ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t :=
 begin
-  sorry
-end
+  rw h2,
+  have : support (λ t, f t • γ t) ⊆ Ioc a (a+1),
+  { erw support_smul,
+    exact ((inter_subset_left _ _).trans hf).trans (Ioc_subset_Ioc_right h) },
+  conv_rhs { rw ← indicator_eq_self.mpr this },
+  rw integral_indicator (measurable_set_Ioc : measurable_set $ Ioc a $ a+1),
+  simp_rw [periodize_smul_periodic _ γ.periodic,
+   ← interval_integral.integral_of_le (le_add_of_nonneg_right zero_le_one),
 
--- This isn't quite the right statement. We'll need something more general.
-lemma integral_periodize (f : ℝ → ℝ) (hf : support f ⊆ Ioo (-(1/2)) (1/2)) :
-  ∫ t in (-(1/2))..(1/2), periodize f t = ∫ t in (-(1/2))..(1/2), f t :=
-begin
-
-  sorry
+   function.periodic.interval_integral_add_eq (periodic_periodize (λ (x : ℝ), f x • γ x)) c a],
+  exact integral_periodize _ this
 end
 
 end
