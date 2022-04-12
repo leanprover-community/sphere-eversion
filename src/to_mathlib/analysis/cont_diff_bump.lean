@@ -1,6 +1,7 @@
 import analysis.calculus.specific_functions
 import measure_theory.function.locally_integrable
 import measure_theory.integral.interval_integral
+import to_mathlib.topology.misc
 
 noncomputable theory
 open metric measure_theory function topological_space set filter
@@ -77,12 +78,26 @@ lemma _root_.cont_diff.cont_diff_bump {c g : X → G} {φ : ∀ x, cont_diff_bum
   (hg : cont_diff ℝ n g) : cont_diff ℝ n (λ x, φ x (g x)) :=
 by { rw [cont_diff_iff_cont_diff_at] at *, exact λ x, (hc x).cont_diff_bump (hr x) (hR x) (hg x) }
 
+protected lemma «def» (φ : cont_diff_bump_of_inner a) (x : G) : φ x =
+  real.smooth_transition ((φ.R - dist x a) / (φ.R - φ.r)) :=
+rfl
+
+protected lemma sub (φ : cont_diff_bump_of_inner a) (x : G) : φ (a - x) = φ (a + x) :=
+by simp_rw [φ.def, dist_self_sub_left, dist_self_add_left]
+
+protected lemma neg (φ : cont_diff_bump_of_inner (0 : G)) (x : G) : φ (- x) = φ x :=
+by simp_rw [← zero_sub, φ.sub, zero_add]
+
 
 variables [measurable_space G] {μ : measure G}
 
 /-- A bump function normed so that `∫ x, φ.normed μ x ∂μ = 1`. -/
 protected def normed (φ : cont_diff_bump_of_inner a) (μ : measure G) : G → ℝ :=
 λ x, φ x / ∫ x, φ x ∂μ
+
+lemma normed_def (φ : cont_diff_bump_of_inner a) {μ : measure G} (x : G) :
+  φ.normed μ x = φ x / ∫ x, φ x ∂μ :=
+rfl
 
 lemma nonneg_normed (φ : cont_diff_bump_of_inner a) (x : G) : 0 ≤ φ.normed μ x :=
 div_nonneg φ.nonneg $ integral_nonneg φ.nonneg'
@@ -129,6 +144,13 @@ by simp_rw [tsupport, φ.support_normed_eq, closure_ball _ φ.R_pos.ne']
 lemma has_compact_support_normed (φ : cont_diff_bump_of_inner a) :
   has_compact_support (φ.normed μ) :=
 by simp_rw [has_compact_support, φ.tsupport_normed_eq, is_compact_closed_ball]
+
+lemma normed_sub (φ : cont_diff_bump_of_inner a) (x : G) : φ.normed μ (a - x) = φ.normed μ (a + x) :=
+by simp_rw [φ.normed_def, φ.sub]
+
+lemma normed_neg (φ : cont_diff_bump_of_inner (0 : G)) (x : G) : φ.normed μ (- x) = φ.normed μ x :=
+by simp_rw [φ.normed_def, φ.neg]
+
 
 variable (μ)
 lemma integral_normed_smul (φ : cont_diff_bump_of_inner a) (c : E) :

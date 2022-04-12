@@ -1,7 +1,7 @@
 import measure_theory.integral.interval_integral
 import measure_theory.group.integration
 import analysis.calculus.specific_functions
-import to_mathlib.analysis.cont_diff_bump
+import to_mathlib.convolution
 
 
 import notations
@@ -10,8 +10,9 @@ import loops.basic
 import to_mathlib.partition -- get our finsum stuff
 
 noncomputable theory
-open set function measure_theory.measure_space
-open_locale topological_space big_operators filter
+open set function measure_theory.measure_space continuous_linear_map filter
+open_locale topological_space big_operators filter convolution
+
 
 
 variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
@@ -69,6 +70,15 @@ begin
   { apply one_div_le_one_div_of_le ; norm_num },
   rw support_bump n,
   exact Ioo_subset_Ioc_self.trans (Ioc_subset_Ioc (neg_le_neg ineg) ineg)
+end
+
+lemma support_shifted_normed_bump_subset (n : ℕ) (t : ℝ) :
+  support (λ x, (bump n).normed volume (x - t)) ⊆ Ioc (t - 1/2) (t + 1/2) :=
+begin
+  rw [function.support_comp_eq_preimage],
+  simp_rw [(bump n).support_normed_eq, ← (bump n).support_eq],
+  refine (preimage_mono (support_bump_subset n)).trans _,
+  simp_rw [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]
 end
 
 lemma tsupport_bump_subset (n : ℕ) : tsupport (bump n) ⊆ Icc (-(1/2)) (1/2) :=
@@ -232,10 +242,14 @@ begin
     exact (h.cont_diff_at).comp _ (cont_diff_at_id.add cont_diff_at_const) },
 end
 
+lemma periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
+  periodize (λ x', f (x' - t)) x = periodize f (x - t) :=
+by simp_rw [periodize, sub_add_eq_add_sub]
+
 -- if convenient we could set `a = c = -(1/2)` and `b = d = 1/2`
 lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop F)
   {a b c d : ℝ} (h : b ≤ a + 1) (h2 : d = c + 1)
-  (hf : support f ⊆ Ioo a b) :
+  (hf : support f ⊆ Ioc a b) :
   ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t :=
 begin
   sorry
@@ -462,10 +476,36 @@ end
 def loop.mollify' (γ : loop F) (n : ℕ) (t : ℝ) : F :=
 ∫ s in 0..1, delta_mollifier' n t s • γ s
 
-open filter
-lemma loop.tendsto_mollify' (γ : loop F) (hf : continuous γ) (t : ℝ) :
+lemma loop.mollify'_eq_convolution (γ : loop F) (hγ : continuous γ) (t : ℝ) :
+  γ.mollify' n t = ((n : ℝ) / (n+1)) • ((bump n).normed volume ⋆[lsmul ℝ ℝ] γ) t +
+    ((1 : ℝ) / (n+1)) • ∫ t in 0..1, γ t :=
+begin
+  simp_rw [loop.mollify', delta_mollifier', add_smul, mul_smul],
+  rw [integral_add],
+  simp_rw [integral_smul, approx_dirac, ← periodize_comp_sub],
+  rw [interval_integral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)],
+  simp_rw [convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply],
+  { linarith },
+  { rw [zero_add] },
+  { sorry },
+  { sorry }
+end
+
+
+lemma loop.tendsto_mollify' (γ : loop F) (hγ : continuous γ) (t : ℝ) :
   tendsto (λ n, γ.mollify' n t) at_top (𝓝 (γ t)) :=
-sorry
+begin
+  simp_rw [γ.mollify'_eq_convolution hγ],
+  rw [← add_zero (γ t)],
+  refine tendsto.add _ _,
+  { rw [← one_smul ℝ (γ t)],
+    refine tendsto.smul _ _,
+    sorry,
+    sorry },
+  { rw [← zero_smul ℝ (_ : F)],
+    refine tendsto.smul _ tendsto_const_nhds,
+    sorry }
+end
 
 end version_of_delta_mollifier_using_n
 
