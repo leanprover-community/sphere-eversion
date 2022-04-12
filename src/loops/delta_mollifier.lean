@@ -13,6 +13,10 @@ noncomputable theory
 open set function measure_theory.measure_space
 open_locale topological_space big_operators filter
 
+
+variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+variables [measurable_space F] [borel_space F]
+
 section
 /-! ## Bump family
 
@@ -210,6 +214,14 @@ begin
     exact (h.cont_diff_at).comp _ (cont_diff_at_id.add cont_diff_at_const) },
 end
 
+lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop F)
+  {a b c d : ℝ} (h : b ≤ a + 1) (h2 : d = c + 1)
+  (hf : support f ⊆ Ioo a b) :
+  ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t :=
+begin
+  sorry
+end
+
 -- This isn't quite the right statement. We'll need something more general.
 lemma integral_periodize (f : ℝ → ℝ) (hf : support f ⊆ Ioo (-(1/2)) (1/2)) :
   ∫ t in (-(1/2))..(1/2), periodize f t = ∫ t in (-(1/2))..(1/2), f t :=
@@ -387,7 +399,56 @@ periodize_nonneg (bump n).nonneg_normed t
 lemma approx_dirac_smooth (n : ℕ) : 𝒞 ∞ (approx_dirac n) :=
 (bump n).cont_diff_normed.periodize (bump n).has_compact_support_normed
 
+lemma approx_dirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
+  ∫ s in a..b, approx_dirac n s = 1 :=
+begin
+  sorry
+end
+
+
 end delta_approx
+
+
+section version_of_delta_mollifier_using_n
+def delta_mollifier' (n : ℕ) (t : ℝ) : ℝ → ℝ :=
+λ x, n / (n+1) * approx_dirac n (x - t) + 1 / (n+1)
+
+variables {n : ℕ} {t : ℝ}
+lemma delta_mollifier'_periodic : periodic (delta_mollifier' n t) 1 :=
+λ x, by simp_rw [delta_mollifier', ← sub_add_eq_add_sub, periodic_approx_dirac n (x - t)]
+
+lemma delta_mollifier'_pos (s : ℝ) : 0 < delta_mollifier' n t s :=
+add_pos_of_nonneg_of_pos
+  (mul_nonneg (div_nonneg n.cast_nonneg (add_nonneg n.cast_nonneg zero_le_one))
+    (approx_dirac_nonneg n _))
+  (div_pos zero_lt_one $ add_pos_of_nonneg_of_pos n.cast_nonneg zero_lt_one)
+
+lemma delta_mollifier'_smooth : 𝒞 ∞ (delta_mollifier' n t) :=
+(cont_diff_const.mul $ (approx_dirac_smooth n).comp $
+  (cont_diff_id.sub cont_diff_const : 𝒞 ∞ (λ x : ℝ, x - t))).add cont_diff_const
+
+open interval_integral
+@[simp] lemma delta_mollifier'_integral_eq_one : ∫ s in 0..1, delta_mollifier' n t s = 1 :=
+begin
+  simp_rw [delta_mollifier'],
+  rw [integral_comp_sub_right (λ x, (n : ℝ) / (n+1) * approx_dirac n x + 1 / (n+1)) t, integral_add,
+    const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel, one_smul,
+    approx_dirac_integral_eq_one, mul_one, div_add_div_same, div_self],
+  { exact ne_of_gt (add_pos_of_nonneg_of_pos n.cast_nonneg zero_lt_one) },
+  { rw [sub_eq_add_neg, add_comm] },
+  { exact ((approx_dirac_smooth n).continuous.interval_integrable _ _).const_mul _ },
+  { exact interval_integrable_const }
+end
+
+def loop.mollify' (γ : loop F) (n : ℕ) (t : ℝ) : F :=
+∫ s in 0..1, delta_mollifier' n t s • γ s
+
+open filter
+lemma loop.tendsto_mollify' (γ : loop F) (hf : continuous γ) (t : ℝ) :
+  tendsto (λ n, γ.mollify' n t) at_top (𝓝 (γ t)) :=
+sorry
+
+end version_of_delta_mollifier_using_n
 
 /-- A stictly positive, smooth approximation to the Dirac delta function on the circle, centered at
 `t` (regarded as a point of the circle) and converging to the Dirac delta function as `η → 0`.
@@ -412,9 +473,6 @@ lemma delta_mollifier_smooth' : 𝒞 ∞ (delta_mollifier η t) :=
 
 omit hη
 
-variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
-variables [measurable_space F] [borel_space F]
-
 -- TODO Relocate to `src/loops/basic.lean` if this turns out to be useful.
 instance loop.has_norm : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
 
@@ -423,6 +481,10 @@ def loop.mollify (γ : loop F) (η t : ℝ) : F :=
 if η = 0 then γ t else ∫ s in 0..1, delta_mollifier η t s • γ s
 
 lemma loop.mollify_eq_of_ne_zero (γ : loop F) (η t : ℝ) (hη : η ≠ 0) :
+  γ.mollify η t = ∫ s in 0..1, delta_mollifier η t s • γ s :=
+if_neg hη
+
+lemma loop.mollify_eq_integral (γ : loop F) (η t : ℝ) (hη : η ≠ 0) :
   γ.mollify η t = ∫ s in 0..1, delta_mollifier η t s • γ s :=
 if_neg hη
 
