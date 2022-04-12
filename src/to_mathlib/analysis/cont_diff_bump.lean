@@ -7,19 +7,19 @@ noncomputable theory
 open metric measure_theory function topological_space set filter
 open_locale topological_space
 
-section graph_nhd
+-- section graph_nhd
 
-variables {X Y : Type*} [metric_space Y] {c : X → Y} {ε : X → ℝ}
+-- variables {X Y : Type*} [metric_space Y] {c : X → Y} {ε : X → ℝ}
 
-/-- is this useful? (currently unused) -/
-def graph_nhd (c : X → Y) (ε : X → ℝ) : set (X × Y) :=
-{x : X × Y | dist (c x.1) x.2 < ε x.1 }
+-- /-- is this useful? (currently unused) -/
+-- def graph_nhd (c : X → Y) (ε : X → ℝ) : set (X × Y) :=
+-- {x : X × Y | dist (c x.1) x.2 < ε x.1 }
 
-variables [topological_space X]
-lemma is_open_graph_nhd (hc : continuous c) (hε : continuous ε) : is_open (graph_nhd c ε) :=
-sorry
+-- variables [topological_space X]
+-- lemma is_open_graph_nhd (hc : continuous c) (hε : continuous ε) : is_open (graph_nhd c ε) :=
+-- sorry
 
-end graph_nhd
+-- end graph_nhd
 
 -- move to topology.algebra.order.basic
 lemma continuous_at.eventually_lt {X Y : Type*} [topological_space X] [topological_space Y]
