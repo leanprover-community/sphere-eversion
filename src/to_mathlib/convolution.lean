@@ -1091,14 +1091,14 @@ begin
   sorry
 end
 
-lemma cont_diff_bump_of_inner.tendsto {ι} (φ : ι → cont_diff_bump_of_inner (0 : G)) (l : filter ι)
-  (hφ : tendsto (λ i, (φ i).R) l (𝓝 0)) (x₀ : G) :
+lemma convolution_tendsto {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
+  {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0)) (x₀ : G) :
   tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
 begin
   sorry
 end
 
-lemma cont_diff_bump_of_inner.tendsto' {x₀ : G} :
+lemma convolution_tendsto' {x₀ : G} :
   tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ.normed μ (N • x)) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀)
     at_top (𝓝 (g x₀)) :=
 begin

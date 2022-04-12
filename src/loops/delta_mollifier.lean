@@ -452,9 +452,8 @@ lemma delta_mollifier'_periodic : periodic (delta_mollifier' n t) 1 :=
 
 lemma delta_mollifier'_pos (s : ℝ) : 0 < delta_mollifier' n t s :=
 add_pos_of_nonneg_of_pos
-  (mul_nonneg (div_nonneg n.cast_nonneg (add_nonneg n.cast_nonneg zero_le_one))
-    (approx_dirac_nonneg n _))
-  (div_pos zero_lt_one $ add_pos_of_nonneg_of_pos n.cast_nonneg zero_lt_one)
+  (mul_nonneg (div_nonneg n.cast_nonneg n.cast_add_one_pos.le) (approx_dirac_nonneg n _))
+  (div_pos zero_lt_one n.cast_add_one_pos)
 
 lemma delta_mollifier'_smooth : 𝒞 ∞ (delta_mollifier' n t) :=
 (cont_diff_const.mul $ (approx_dirac_smooth n).comp $
@@ -467,7 +466,7 @@ begin
   rw [integral_comp_sub_right (λ x, (n : ℝ) / (n+1) * approx_dirac n x + 1 / (n+1)) t, integral_add,
     const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel, one_smul,
     approx_dirac_integral_eq_one, mul_one, div_add_div_same, div_self],
-  { exact ne_of_gt (add_pos_of_nonneg_of_pos n.cast_nonneg zero_lt_one) },
+  { exact n.cast_add_one_pos.ne' },
   { rw [sub_eq_add_neg, add_comm] },
   { exact ((approx_dirac_smooth n).continuous.interval_integrable _ _).const_mul _ },
   { exact interval_integrable_const }
@@ -487,10 +486,10 @@ begin
   simp_rw [convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply],
   { linarith },
   { rw [zero_add] },
-  { sorry },
-  { sorry }
+  { exact (continuous_const.smul (((approx_dirac_smooth n).continuous.comp
+      (continuous_id.sub continuous_const)).smul hγ)).interval_integrable _ _ },
+  { exact (continuous_const.smul hγ).interval_integrable _ _ }
 end
-
 
 lemma loop.tendsto_mollify' (γ : loop F) (hγ : continuous γ) (t : ℝ) :
   tendsto (λ n, γ.mollify' n t) at_top (𝓝 (γ t)) :=
@@ -499,12 +498,12 @@ begin
   rw [← add_zero (γ t)],
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ t)],
-    refine tendsto.smul _ _,
-    sorry,
-    sorry },
+    refine tendsto_self_div_add_at_top_nhds_1_nat.smul _,
+    refine cont_diff_bump_of_inner.convolution_tendsto _ t,
+    simp_rw [bump], norm_cast,
+    exact (tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1) },
   { rw [← zero_smul ℝ (_ : F)],
-    refine tendsto.smul _ tendsto_const_nhds,
-    sorry }
+    exact tendsto_one_div_add_at_top_nhds_0_nat.smul tendsto_const_nhds }
 end
 
 end version_of_delta_mollifier_using_n
