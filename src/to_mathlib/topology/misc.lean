@@ -125,7 +125,7 @@ lemma fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n :=
 by rw [← not_exists, not_iff_not, fract_eq_zero_iff]
 
 lemma Ioo_floor_mem_nhds {x : ℝ} (h : ∀ (n : ℤ), x ≠ n) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
-Ioo_mem_nhds ((eq_or_lt_of_le (floor_le x)).elim (λ H, (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
+Ioo_mem_nhds ((floor_le x).eq_or_lt.elim (λ H, (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
 
 lemma loc_constant_floor {x : ℝ} (h : ∀ (n : ℤ), x ≠ n) : floor =ᶠ[𝓝 x] (λ x', ⌊x⌋) :=
 begin

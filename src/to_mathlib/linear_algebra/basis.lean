@@ -40,7 +40,7 @@ begin
   dsimp [basis.flag],
   mono*,
   rintros l (hl : ↑↑l < j),
-  exact lt_of_lt_of_le hl h
+  exact hl.trans_le h
 end
 
 lemma fin.coe_succ_le_iff_le {n : ℕ} {j k : fin n} : (j : fin $ n+1) ≤ k ↔ j ≤ k :=

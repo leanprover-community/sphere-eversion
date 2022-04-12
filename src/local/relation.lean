@@ -568,7 +568,7 @@ begin
   rw this,
   have := calc
     dim (map φ.to_linear_map p.π.ker) ≤ dim p.π.ker : finrank_map_le ℝ φ.to_linear_map p.π.ker
-                                 ...  < dim E : finrank_lt (lt_of_le_of_ne le_top p.ker_pi_ne_top),
+                                 ...  < dim E : finrank_lt (le_top.lt_of_ne p.ker_pi_ne_top),
   linarith
 end
 

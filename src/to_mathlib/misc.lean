@@ -3,6 +3,9 @@ import data.real.nnreal
 open real set
 open_locale nnreal interval
 
+lemma has_mem.mem.out {α : Type*} {p : α → Prop} {x} (h : x ∈ {y | p y}) : p x :=
+h
+
 /-- to algebra.ring.basic or something -/
 @[simp] lemma smul_add_one_sub_smul {R M : Type*} [ring R] [add_comm_monoid M] [module R M]
   {r : R} {m : M} : r • m + (1 - r) • m = m :=
