@@ -264,8 +264,28 @@ open measure_theory
 lemma integral_periodize [complete_space E] (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a + 1)) :
   ∫ t in a..a+1, periodize f t = ∫ t in a..a+1, f t :=
 begin
-
-  sorry
+  apply interval_integral.integral_congr_ae,
+  have : ∀ᵐ (x : ℝ), x ∈ interval_oc a (a + 1) → x ∈ Ioo a (a+1),
+  {
+    sorry },
+  apply this.mono,
+  intros t ht ht',
+  specialize ht ht', clear ht',
+  dsimp only [periodize],
+  --rw interval_of_le (le_add_of_nonneg_right (zero_le_one : (0 :ℝ) ≤ 1)) at ht,
+  have : support (λ n : ℤ, f (t + n)) ⊆ ({0} : finset ℤ),
+  { intros n hn,
+    suffices : n = 0, by simpa,
+    replace hn : t + n ∈ Ioc a (a + 1) := hf (mem_support.mpr hn),
+    cases ht,
+    cases hn,
+    have : -(1 : ℝ) < n, by linarith,
+    have : -1 < n,
+    exact_mod_cast this,
+    have : (n : ℝ) < 1, by linarith,
+    norm_cast at this,
+    linarith },
+  simp [finsum_eq_sum_of_support_subset _ this]
 end
 
 -- if convenient we could set `[c,d] = [0,1]`
