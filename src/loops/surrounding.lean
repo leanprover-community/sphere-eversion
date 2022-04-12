@@ -539,6 +539,9 @@ protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ 
   surrounding_family g b γ V :=
 ⟨h.base, h.t₀, h.proj_I, λ x hx, h.surrounds x (hVU hx), h.cont⟩
 
+/-
+-- The version below depends on `exists_cont_diff_of_convex_of_is_open` which is not yet proven
+-- and we don't need it anyway.
 protected lemma surrounds_of_close [finite_dimensional ℝ E] [finite_dimensional ℝ F]
   (hg : continuous g)
   (hU : is_open U)
@@ -583,9 +586,8 @@ begin
     λ y hy, ⟨half_pos hε, λ γ' hγ', h2 _ _ (λ z, _) hy.2⟩⟩,
   refine (dist_triangle _ _ _).trans_lt
     ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le)
-end
+end -/
 
-/- special case of `surrounds_of_close` that does not currently depend on `sorry`. -/
 protected lemma surrounds_of_close_univ [finite_dimensional ℝ E] [finite_dimensional ℝ F]
   (hg : continuous g)
   (h : surrounding_family g b γ univ) :

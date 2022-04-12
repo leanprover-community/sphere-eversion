@@ -216,16 +216,6 @@ lemma is_closed.preimage_fract {s : set ℝ} (hs : is_closed s)
   (h2s : sᶜ ∉ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : is_closed (fract ⁻¹' s) :=
 is_open_compl_iff.mp $ hs.is_open_compl.preimage_fract' $ λ h, by_contra $ λ h', h $ h2s h'
 
-/- unused generalization of `fract_preimage_mem_nhds` -/
-lemma fract_preimage_mem_nhds' {s : set ℝ} {x : ℝ} (h1 : fract x ≠ 0 → s ∈ 𝓝 (fract x))
-  (h2 : fract x = 0 → s ∈ 𝓝[<] (1 : ℝ))
-  (h3 : fract x = 0 → s ∈ 𝓝[≥] (0 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
-begin
-  by_cases hx : fract x = 0,
-  { sorry, },
-  { exact (continuous_at_fract hx).preimage_mem_nhds (h1 hx) }
-end
-
 lemma fract_preimage_mem_nhds {s : set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract x))
   (h2 : fract x = 0 → s ∈ 𝓝 (1 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
 begin
@@ -237,16 +227,6 @@ begin
       (hu.union hv).preimage_fract (λ _, subset_union_right _ _ h1v), subset_union_left _ _ hxu⟩ },
   { exact (continuous_at_fract hx).preimage_mem_nhds h1 }
 end
-/- THE FOLLOWING IS A DERIVATION FROM `fract_preimage_mem_nhds'` -/
--- fract_preimage_mem_nhds' (λ _, h1) (λ hx, nhds_within_le_nhds (h2 hx))
---   (λ hx, by { rw [hx] at h1, exact nhds_within_le_nhds h1 })
-
--- lemma comp_fract_preimage_mem_nhds {α β : Type*} [topological_space α] [topological_space β]
---   {f : α → ℝ → β} {g : α → ℝ} {s : set β} {x : α} (hf : continuous_at ↿f (x, fract (g x)))
---   (hg : continuous_at g x) (hs : s ∈ 𝓝 (f x (fract (g x))))
---   (h : fract (g x) = 0 → g '' ((λ x, f x (fract (g x))) ⁻¹' s) ∈ 𝓝[<] (1 : ℝ)) /- or something -/ :
---     (λ x, f x (fract (g x))) ⁻¹' s ∈ 𝓝 x :=
--- sorry
 
 lemma fract_one : fract (1 : ℝ) = 0 :=
 by simp_rw [← fract_coe 1, int.cast_one]
@@ -760,10 +740,6 @@ begin
   obtain ⟨s, ⟨h1s, hxs, h2s⟩, hsF⟩ := h,
   exact mem_nhds_iff.mpr ⟨s, h2s.is_preconnected.subset_connected_comp_in hxs hsF, h1s, hxs⟩
 end
-
--- lemma interior_connected_comp_in {F : set α} {x : α} (h : x ∉ frontier F) :
---   interior (connected_comp_in F x) = connected_comp_in (interior F) x :=
--- sorry
 
 lemma is_open.connected_comp_in [locally_connected_space α] {F : set α} {x : α} (hF : is_open F) :
   is_open (connected_comp_in F x) :=
