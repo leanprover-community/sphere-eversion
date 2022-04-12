@@ -1005,17 +1005,18 @@ variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ
 lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
   (hif : integrable f μ)
   (h : convolution_exists_at f g x₀ L μ)
+  (hR : 0 < R) -- todo: remove this assumption(?)
   (hf : support f ⊆ ball (0 : G) R)
   (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
   dist ((f ⋆[L, μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∫ x, ∥f x∥ ∂μ * ε :=
 begin
-  cases le_or_lt R 0 with hR hR,
-  { have : f =ᵐ[μ] 0,
-    { sorry },
-    sorry
-    -- rw [convolution_congr this eventually_eq.rfl],
-    -- convolution_congr wants more type-class arguments, but maybe that's not a problem
-    },
+  -- cases le_or_lt R 0 with hR hR,
+  -- { have : f =ᵐ[μ] 0,
+  --   { sorry },
+  --   sorry
+  --   -- rw [convolution_congr this eventually_eq.rfl],
+  --   -- convolution_congr wants more type-class arguments, but maybe that's not a problem
+  --   },
   have hε : 0 ≤ ε,
   { convert hg x₀ (mem_ball_self hR), rw dist_self },
   have h2 : ∀ t, dist (L (f t) (g (x₀ - t))) (L (f t) (g x₀)) ≤ ∥L (f t)∥ * ε,
@@ -1067,7 +1068,7 @@ variables {f' f : G → E} {g' g : G → E'} {x' x : 𝕜} {n : with_top ℕ} [i
 [is_add_haar_measure μ] [sigma_compact_space G] [proper_space G]
 variables [finite_dimensional ℝ G]
 variables [second_countable_topology E'] [is_scalar_tower ℝ 𝕜 E']
-variables {a : G} (φ : cont_diff_bump_of_inner (0 : G))
+variables {a : G} {φ : cont_diff_bump_of_inner (0 : G)}
 
 lemma convolution_eq_right {x₀ : G}
   (hg : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀ = integral μ φ • g x₀ :=
@@ -1078,32 +1079,54 @@ lemma normed_convolution_eq_right {x₀ : G}
 by { simp_rw [convolution_eq_right' _ φ.support_normed_eq.subset hg, lsmul_apply],
   exact integral_normed_smul μ φ (g x₀) }
 
-lemma dist_normed_convolution_le {x₀ : G} {ε : ℝ}
+lemma dist_normed_convolution_le' {x₀ : G} {ε : ℝ}
+  (h : convolution_exists_at (φ.normed μ) g x₀ (lsmul ℝ ℝ : ℝ →L[ℝ] E' →L[ℝ] E') μ)
   (hg : ∀ x ∈ ball x₀ φ.R, dist (g x) (g x₀) ≤ ε) :
   dist ((φ.normed μ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) (g x₀) ≤ ε :=
 begin
+  have hε : 0 ≤ ε,
+  { convert hg x₀ (mem_ball_self φ.R_pos), rw dist_self },
   rw [← φ.integral_normed_smul μ (g x₀)],
-  refine (dist_convolution_le' _ _ _ φ.support_normed_eq.subset hg).trans_eq _,
-  sorry,
-  sorry,
-  simp_rw [real.norm_eq_abs, abs_eq_self.mpr (φ.nonneg_normed _), integral_normed, mul_one],
-  convert one_mul _,
-  sorry
+  refine (dist_convolution_le' _ φ.integrable_normed h φ.R_pos
+    φ.support_normed_eq.subset hg).trans _,
+  { simp_rw [real.norm_eq_abs, abs_eq_self.mpr (φ.nonneg_normed _), integral_normed, mul_one],
+    convert (mul_le_mul_of_nonneg_right op_norm_lsmul_le hε).trans_eq (one_mul ε) }
 end
 
-lemma convolution_tendsto {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
-  {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0)) (x₀ : G) :
+lemma dist_normed_convolution_le [is_neg_invariant μ] {x₀ : G} {ε : ℝ}
+  (hlg : locally_integrable g μ)
+  (hg : ∀ x ∈ ball x₀ φ.R, dist (g x) (g x₀) ≤ ε) :
+  dist ((φ.normed μ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) (g x₀) ≤ ε :=
+dist_normed_convolution_le'
+  (φ.has_compact_support_normed.convolution_exists_left _ φ.continuous_normed hlg x₀) hg
+
+lemma convolution_tendsto' [is_neg_invariant μ] {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
+  {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
+  (hlg : locally_integrable g μ) {x₀ : G} (hcg : continuous_at g x₀) :
   tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
 begin
-  sorry
+  simp_rw [normed_group.tendsto_nhds_zero, real.norm_eq_abs, abs_eq_self.mpr (φ _).R_pos.le] at hφ,
+  rw [metric.continuous_at_iff] at hcg,
+  rw [metric.tendsto_nhds],
+  intros ε hε,
+  rcases hcg (ε / 2) (half_pos hε) with ⟨δ, hδ, hgδ⟩,
+  refine (hφ δ hδ).mono (λ i hi, _),
+  refine (dist_normed_convolution_le hlg (λ x hx, _)).trans_lt (half_lt_self hε),
+  exact (hgδ $ lt_trans hx hi).le,
 end
 
-lemma convolution_tendsto' {x₀ : G} :
-  tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ.normed μ (N • x)) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀)
-    at_top (𝓝 (g x₀)) :=
-begin
-  sorry
-end
+lemma convolution_tendsto [is_neg_invariant μ] {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
+  {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
+  (hg : continuous g) (x₀ : G) :
+  tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
+convolution_tendsto' hφ hg.locally_integrable hg.continuous_at
+
+-- lemma convolution_tendsto' {x₀ : G} :
+--   tendsto (λ N : ℝ, ((λ x, N ^ finrank ℝ G • φ.normed μ (N • x)) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀)
+--     at_top (𝓝 (g x₀)) :=
+-- begin
+--   sorry
+-- end
 
 end inner_product_space
 end cont_diff_bump_of_inner

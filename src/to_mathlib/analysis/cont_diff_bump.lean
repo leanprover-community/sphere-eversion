@@ -151,6 +151,8 @@ by simp_rw [φ.normed_def, φ.sub]
 lemma normed_neg (φ : cont_diff_bump_of_inner (0 : G)) (x : G) : φ.normed μ (- x) = φ.normed μ x :=
 by simp_rw [φ.normed_def, φ.neg]
 
+protected lemma integrable_normed (φ : cont_diff_bump_of_inner a) : integrable (φ.normed μ) μ :=
+φ.continuous_normed.integrable_of_has_compact_support φ.has_compact_support_normed
 
 variable (μ)
 lemma integral_normed_smul (φ : cont_diff_bump_of_inner a) (c : E) :

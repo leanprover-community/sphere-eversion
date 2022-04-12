@@ -512,7 +512,7 @@ begin
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ t)],
     refine tendsto_self_div_add_at_top_nhds_1_nat.smul _,
-    refine cont_diff_bump_of_inner.convolution_tendsto _ t,
+    refine cont_diff_bump_of_inner.convolution_tendsto _ hγ t,
     simp_rw [bump], norm_cast,
     exact (tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1) },
   { rw [← zero_smul ℝ (_ : F)],

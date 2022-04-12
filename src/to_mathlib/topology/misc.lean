@@ -30,6 +30,41 @@ end
 end to_specific_limits
 
 section
+open continuous_linear_map
+
+variables {𝕜 𝕜' E : Type*} [nondiscrete_normed_field 𝕜] [normed_field 𝕜'] [normed_algebra 𝕜 𝕜']
+  [normed_group E] [normed_space 𝕜 E] [normed_space 𝕜' E] [is_scalar_tower 𝕜 𝕜' E]
+
+lemma op_norm_lsmul [nontrivial E] : ∥(lsmul 𝕜 𝕜' : 𝕜' →L[𝕜] E →L[𝕜] E)∥ = 1 :=
+begin
+  refine continuous_linear_map.op_norm_eq_of_bounds zero_le_one (λ x, _) (λ N hN h, _),
+  { simp_rw [one_mul],
+    refine continuous_linear_map.op_norm_le_bound _ (norm_nonneg x) (λ y, _),
+    simp_rw [lsmul_apply, norm_smul] },
+  obtain ⟨y, hy⟩ := exists_ne (0 : E),
+  have := le_of_op_norm_le _ (h 1) y,
+  simp_rw [lsmul_apply, one_smul, norm_one, mul_one] at this,
+  refine le_of_mul_le_mul_right _ (norm_pos_iff.mpr hy),
+  simp_rw [one_mul, this]
+end
+
+-- lemma continuous_linear_map.eq_zero_of_subsingleton_cod {𝕜 𝕜₂ E F : Type*}
+--   [semi_normed_group E] [semi_normed_group F] [nondiscrete_normed_field 𝕜]
+--   [nondiscrete_normed_field 𝕜₂] [normed_space 𝕜 E] [normed_space 𝕜₂ F] {σ₁₂ : 𝕜 →+* 𝕜₂}
+--   [ring_hom_isometric σ₁₂] (f : E →SL[σ₁₂] F) [subsingleton F] : f = 0 :=
+-- by { ext, exact subsingleton.elim _ _ }
+
+lemma op_norm_lsmul_le : ∥(lsmul 𝕜 𝕜' : 𝕜' →L[𝕜] E →L[𝕜] E)∥ ≤ 1 :=
+begin
+  cases subsingleton_or_nontrivial E; resetI,
+  { convert norm_zero.trans_le zero_le_one },
+  rw [op_norm_lsmul]
+end
+
+
+end
+
+section
  -- to connected
 
 variables {α : Type*} [topological_space α] [connected_space α]
