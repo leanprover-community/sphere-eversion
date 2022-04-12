@@ -31,13 +31,19 @@ lemma mem_affine_bases_iff [nontrivial R] (b : affine_basis ι R P) (v : ι → 
   v ∈ affine_bases ι R P ↔ is_unit (b.to_matrix v) :=
 (b.is_unit_to_matrix_iff v).symm
 
-def eval_barycentric_coords [∀ v, decidable (v ∈ affine_bases ι R P)] (p : P) (v : ι → P) : ι → R :=
+def eval_barycentric_coords [decidable_pred (∈ affine_bases ι R P)] (p : P) (v : ι → P) : ι → R :=
 if h : v ∈ affine_bases ι R P then ((affine_basis.mk v h.1 h.2).coords p : ι → R) else 0
 
-@[simp] lemma eval_barycentric_coords_apply_of_mem_bases [∀ v, decidable (v ∈ affine_bases ι R P)]
+@[simp] lemma eval_barycentric_coords_apply_of_mem_bases [decidable_pred (∈ affine_bases ι R P)]
   (p : P) {v : ι → P} (h : v ∈ affine_bases ι R P) :
   eval_barycentric_coords ι R P p v = (affine_basis.mk v h.1 h.2).coords p :=
-by simp only [eval_barycentric_coords, h, dif_pos]
+dif_pos h
+
+@[simp] lemma eval_barycentric_coords_apply_of_not_mem_bases [decidable_pred (∈ affine_bases ι R P)]
+  (p : P) {v : ι → P} (h : v ∉ affine_bases ι R P) :
+  eval_barycentric_coords ι R P p v = 0 :=
+dif_neg h
+
 
 variables {ι R P}
 
@@ -113,7 +119,7 @@ variables [normed_group F] [normed_space 𝕜 F]
 -- An alternative approach would be to prove the affine version of `cont_diff_at_map_inverse`
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
-lemma smooth_barycentric [∀ v, decidable (v ∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
+lemma smooth_barycentric [decidable_pred (∈ affine_bases ι 𝕜 F)] [finite_dimensional 𝕜 F]
   (h : fintype.card ι = finite_dimensional.finrank 𝕜 F + 1) :
   cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (@univ F ×ˢ (affine_bases ι 𝕜 F)) :=
 begin

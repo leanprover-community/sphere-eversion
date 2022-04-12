@@ -10,6 +10,7 @@ import to_mathlib.order.hom.basic
 import to_mathlib.geometry.manifold.partition_of_unity
 import to_mathlib.algebra.periodic
 import to_mathlib.analysis.cont_diff
+import to_mathlib.analysis.normed_group
 
 /-!
 # The reparametrization lemma
@@ -17,7 +18,7 @@ import to_mathlib.analysis.cont_diff
 
 noncomputable theory
 
-open set function measure_theory interval_integral
+open set function measure_theory interval_integral filter
 open_locale topological_space unit_interval manifold big_operators
 
 variables {E F : Type*}
@@ -26,6 +27,73 @@ variables [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
 
 local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
+
+/-- An auxiliary lemma for bootstrapping to `tendsto_mollify_apply`. -/
+lemma loop.tendsto_mollify_apply_aux (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ)
+  (hx : γ x = 0) :
+  tendsto (λ (z : E × ℝ), (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 0) :=
+begin
+  suffices : tendsto (λ (z : E × ℝ), ∥(γ z.1).mollify z.2 t∥) (𝓝 (x, 0)) (𝓝 0),
+  { exact this.of_norm_le (λ z, le_refl _), },
+  suffices : tendsto (λ (z : E × ℝ), ⨆ (s : I), ∥γ z.1 s∥) (𝓝 (x, 0)) (𝓝 0),
+  { refine this.of_norm_le _,
+    rintros ⟨y, η⟩,
+    simp only [norm_norm],
+    rcases eq_or_ne η 0 with hη | hη,
+    { simp only [hη, loop.mollify_eq_of_eq_zero,
+        (γ y).norm_at_le_supr_norm_Icc (loop.continuous_of_family h y)], },
+    { simp only [loop.mollify_eq_of_ne_zero _ η t hη],
+      refine norm_integral_le_integral_norm_Ioc.trans _,
+      simp only [interval_integral.integral_of_le zero_le_one, interval_oc_of_le (@zero_le_one ℝ _),
+        norm_smul, real.norm_of_nonneg (delta_mollifier_pos hη t _).le],
+      rw ← interval_integral.integral_of_le (@zero_le_one ℝ _),
+      let f₁ : ℝ → ℝ := λ s, delta_mollifier η t s * ∥γ y s∥,
+      let f₂ : ℝ → ℝ := λ s, delta_mollifier η t s * ⨆ (u : I), ∥γ y u∥,
+      have hle : f₁ ≤ f₂ := λ s, mul_le_mul_of_nonneg_left ((γ y).norm_at_le_supr_norm_Icc
+        (loop.continuous_of_family h y) s) (delta_mollifier_pos hη t s).le,
+      have hf₁ : interval_integrable f₁ volume 0 1,
+      { apply continuous.interval_integrable,
+        refine continuous.mul (delta_mollifier_smooth' hη t).continuous (continuous_norm.comp _),
+        exact loop.continuous_of_family h y, },
+      have hf₂ : interval_integrable f₂ volume 0 1,
+      { apply continuous.interval_integrable,
+        exact (delta_mollifier_smooth' hη t).continuous.mul continuous_const, },
+      refine (interval_integral.integral_mono (@zero_le_one ℝ _) hf₁ hf₂ hle).trans _,
+      rw [integral_mul_const, delta_mollifier_integral_eq_one hη t, one_mul], }, },
+  suffices : tendsto (λ y, ⨆ (s : I), ∥γ y s∥) (𝓝 x) (𝓝 0),
+  { convert this.comp (continuous_fst.tendsto (x, (0 : ℝ))), },
+  let γ' := loop.as_continuous_family h,
+  have hx' : γ' x = 0, { ext s, simp [hx], },
+  have hγx : tendsto γ' (𝓝 x) (𝓝 (γ' _)) := γ'.continuous.continuous_at,
+  rw metric.tendsto_nhds_nhds at hγx ⊢,
+  simp only [hx', dist_zero_right, continuous_map.norm_eq_supr_norm, γ',
+    continuous_map.curry_apply, continuous_map.coe_mk, gt_iff_lt, exists_prop] at hγx,
+  intros ε hε,
+  obtain ⟨δ, hδ, hδ'⟩ := hγx ε hε,
+  refine ⟨δ, hδ, λ y hy, _⟩,
+  specialize hδ' hy,
+  simp only [dist_zero_right],
+  rw real.norm_of_nonneg,
+  { exact hδ', },
+  { refine real.Sup_nonneg _ (λ n hn, _),
+    obtain ⟨s, rfl⟩ := hn,
+    simp, },
+end
+
+lemma loop.tendsto_mollify_apply (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ) :
+  tendsto (λ (z : E × ℝ), (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 (γ x t)) :=
+begin
+  suffices : tendsto (λ (z : E × ℝ), (γ x).mollify z.2 t - (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 0),
+  { have hx : tendsto (λ (z : E × ℝ), (γ x).mollify z.2 t) (𝓝 (x, 0)) (𝓝 (γ x t)) :=
+    ((γ x).tendsto_mollify (loop.continuous_of_family h x) t).comp (continuous_snd.tendsto (x, 0)),
+    simpa using hx.sub this, },
+  simp_rw loop.mollify_sub (γ x) _ (loop.continuous_of_family h x) (loop.continuous_of_family h _),
+  refine loop.tendsto_mollify_apply_aux (λ y, γ x - γ y) _ x t (sub_self _),
+  suffices : continuous (λ (yt : E × ℝ), γ x yt.2 - γ yt.1 yt.2),
+  { refine this.congr (λ z, _),
+    simp [has_uncurry.uncurry], },
+  exact ((loop.continuous_of_family h x).comp continuous_snd).sub h,
+end
 
 structure smooth_surrounding_family (g : E → F) :=
 (smooth_surrounded : 𝒞 ∞ g)
@@ -77,9 +145,20 @@ end
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
-lemma eventually_exists_surrounding_pts_approx_surrounding_points_at : ∀ᶠ (yη : E × ℝ) in 𝓝 (x, 0),
-  ∃ w, surrounding_pts (g yη.1) (γ.approx_surrounding_points_at x yη.1 yη.2) w :=
-sorry
+lemma eventually_exists_surrounding_pts_approx_surrounding_points_at : ∀ᶠ (z : E × ℝ) in 𝓝 (x, 0),
+  ∃ w, surrounding_pts (g z.1) (γ.approx_surrounding_points_at x z.1 z.2) w :=
+begin
+  let a : ι → E × ℝ → F := λ i z, γ.approx_surrounding_points_at x z.1 z.2 i,
+  suffices : ∀ i, tendsto (a i) (𝓝 (x, 0)) (𝓝 (γ.surrounding_points_at x i)),
+  { have hg : tendsto (λ (z : E × ℝ), g z.fst) (𝓝 (x, 0)) (𝓝 (g x)) :=
+      γ.smooth_surrounded.continuous.continuous_at.comp (continuous_fst.tendsto (x, (0 : ℝ))),
+    exact eventually_surrounding_pts_of_tendsto_of_tendsto'
+      ⟨_, γ.surround_pts_points_weights_at x⟩ this hg, },
+  intros i,
+  let t := γ.surrounding_parameters_at x i,
+  change tendsto (λ (z : E × ℝ), (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 (γ x t)),
+  exact loop.tendsto_mollify_apply γ γ.smooth.continuous x t,
+end
 
 /- This is an auxiliary definition to help construct `centering_density` below.
 
@@ -154,7 +233,6 @@ lemma approx_surrounding_points_at_of_local_centering_density_nhd
   (hy : y ∈ γ.local_centering_density_nhd x) : ∃ w,
   surrounding_pts (g y) (γ.approx_surrounding_points_at x y (γ.local_centering_density_mp x)) w :=
 begin
-  -- Another ludicrous proof 🙄
   let h := filter.eventually_iff_exists_mem.mp
     (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
   let nη := classical.some h,
