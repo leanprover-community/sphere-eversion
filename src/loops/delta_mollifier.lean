@@ -144,7 +144,25 @@ TODO: use that in to_mathlib.topology.periodic?
 -/
 instance : has_vadd ℤ ℝ := ⟨λ n x, (n : ℝ) + x⟩
 
-instance : properly_discontinuous_vadd ℤ ℝ := sorry
+instance : properly_discontinuous_vadd ℤ ℝ :=
+⟨begin
+  intros K L hK hL,
+  rcases eq_empty_or_nonempty K with rfl | hK' ; rcases eq_empty_or_nonempty L with rfl | hL' ;
+  try { simp },
+  have hSK:= (hK.is_lub_Sup hK').1,
+  have hIK:= (hK.is_glb_Inf hK').1,
+  have hSL:= (hL.is_lub_Sup hL').1,
+  have hIL:= (hL.is_glb_Inf hL').1,
+  apply (finite_Icc ⌈Inf L - Sup K⌉ ⌊Sup L - Inf K⌋).subset,
+  rintros n (hn : has_vadd.vadd n '' K ∩ L ≠ ∅),
+  rcases ne_empty_iff_nonempty.mp hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩,
+  split,
+  { rw int.ceil_le,
+    linarith [hIL hnk, hSK hk] },
+  { rw int.le_floor,
+    linarith [hSL hnk, hIK hk] }
+end⟩
+
 end
 
 section
