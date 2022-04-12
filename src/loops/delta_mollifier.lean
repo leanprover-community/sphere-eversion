@@ -302,12 +302,9 @@ begin
   have : support (λ t, f t • γ t) ⊆ Ioc a (a+1),
   { erw support_smul,
     exact ((inter_subset_left _ _).trans hf).trans (Ioc_subset_Ioc_right h) },
-  conv_rhs { rw ← indicator_eq_self.mpr this },
-  rw integral_indicator (measurable_set_Ioc : measurable_set $ Ioc a $ a+1),
+  rw ← interval_integral.integral_eq_integral_of_support_subset this,
   simp_rw [periodize_smul_periodic _ γ.periodic,
-   ← interval_integral.integral_of_le (le_add_of_nonneg_right zero_le_one),
-
-   function.periodic.interval_integral_add_eq (periodic_periodize (λ (x : ℝ), f x • γ x)) c a],
+    function.periodic.interval_integral_add_eq (periodic_periodize (λ (x : ℝ), f x • γ x)) c a],
   exact integral_periodize _ this
 end
 
@@ -488,10 +485,30 @@ periodize_nonneg (bump n).nonneg_normed t
 lemma approx_dirac_smooth (n : ℕ) : 𝒞 ∞ (approx_dirac n) :=
 (bump n).cont_diff_normed.periodize (bump n).has_compact_support_normed
 
+lemma real.ball_zero_eq (r : ℝ) : metric.ball (0 : ℝ) r = Ioo (-r) r :=
+begin
+  ext x,
+  simp [real.norm_eq_abs, abs_lt]
+end
+
 lemma approx_dirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
   ∫ s in a..b, approx_dirac n s = 1 :=
 begin
-  sorry
+  have supp : support ((bump n).normed volume) ⊆ Ioc (-(1 / 2)) (-(1 / 2) + 1),
+  { rw [show -(1/2 : ℝ) + 1 = 1/2, by norm_num,
+        show support ((bump n).normed volume) = _, from (bump n).support_normed_eq,
+        real.ball_zero_eq, show (bump n).R = 1/(n+2 : ℝ), from rfl],
+    have key : 1 / (n + 2 : ℝ) ≤ 1 / 2,
+    { apply one_div_le_one_div_of_le,
+      norm_num,
+      norm_cast,
+      norm_num },
+    exact (Ioo_subset_Ioo (neg_le_neg key) key).trans (Ioo_subset_Ioc_self) },
+  rw [approx_dirac, h,
+      function.periodic.interval_integral_add_eq (periodic_periodize _) a (-(1/2 : ℝ)),
+      integral_periodize _ supp,
+      interval_integral.integral_eq_integral_of_support_subset supp],
+  exact (bump n).integral_normed
 end
 
 
