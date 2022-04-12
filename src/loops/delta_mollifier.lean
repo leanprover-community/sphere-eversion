@@ -1,8 +1,10 @@
 import measure_theory.integral.interval_integral
 import measure_theory.group.integration
 import analysis.calculus.specific_functions
-import to_mathlib.convolution
 
+import to_mathlib.convolution
+import to_mathlib.analysis.cont_diff_bump
+import to_mathlib.data.real_basic
 
 import notations
 import loops.basic
@@ -316,12 +318,23 @@ section
 open filter
 open_locale filter
 
-lemma tendsto_sup_dist {X Y : Type*} [topological_space X] [locally_compact_space X]
-  [metric_space Y] {f : X → Y} (h : continuous f)
-  {t : X} {s : ℕ → set X} (hs : tendsto s at_top (𝓝 t).small_sets) :
+lemma pred_of_mem_set_of {α : Type*} {p : α → Prop} {x} (h : x ∈ {y | p y}) : p x :=
+h
+
+lemma tendsto_sup_dist {X Y : Type*} [topological_space X] [metric_space Y]
+  {f : X → Y} {t : X} (h : continuous_at f t)
+  {s : ℕ → set X} (hs : tendsto s at_top (𝓝 t).small_sets) :
   tendsto (λ (n : ℕ), ⨆ x ∈ s n, dist (f x) (f t)) at_top (𝓝 0) :=
 begin
-  sorry
+  rw metric.tendsto_nhds,
+  have nonneg : ∀ n, 0 ≤ ⨆ x ∈ s n, dist (f x) (f t),
+    from λ n, real.bcsupr_nonneg (λ _ _, dist_nonneg),
+  simp only [dist_zero_right, real.norm_eq_abs, abs_of_nonneg, nonneg],
+  intros ε ε_pos,
+  apply ((𝓝 t).has_basis_small_sets.tendsto_right_iff.mp hs _ $
+         metric.tendsto_nhds.mp h (ε/2) (half_pos ε_pos)).mono (λ n hn, _),
+  apply lt_of_le_of_lt _ (half_lt_self ε_pos),
+  exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (pred_of_mem_set_of (hn hx)).le),
 end
 
 end
@@ -367,7 +380,7 @@ begin
     suffices : tendsto (λ n, ⨆ x ∈ support (δ n), ∥F x - F 0∥) at_top (𝓝 0),
     { simp_rw [F, sub_zero t] at this, exact this },
     simp_rw ← dist_eq_norm,
-    exact tendsto_sup_dist (h.comp $ continuous_sub_left t) supp_δ },
+    exact tendsto_sup_dist (h.comp $ continuous_sub_left t).continuous_at supp_δ },
   rw tendsto_iff_norm_tendsto_zero,
   apply squeeze_zero_norm' _ this,
   have : ∀ᶠ n in at_top, support (δ n) ⊆ Icc (-1) 1,
