@@ -214,6 +214,7 @@ begin
     exact (h.cont_diff_at).comp _ (cont_diff_at_id.add cont_diff_at_const) },
 end
 
+-- if convenient we could set `a = c = -(1/2)` and `b = d = 1/2`
 lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop F)
   {a b c d : ℝ} (h : b ≤ a + 1) (h2 : d = c + 1)
   (hf : support f ⊆ Ioo a b) :
