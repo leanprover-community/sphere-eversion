@@ -583,24 +583,28 @@ lemma delta_mollifier_smooth' : 𝒞 ∞ (delta_mollifier η t) :=
 
 omit hη
 
--- TODO Relocate to `src/loops/basic.lean` if this turns out to be useful.
-instance loop.has_norm : has_norm (loop F) := ⟨λ γ, ⨆ t, ∥γ t∥⟩
-
--- TODO Come up with a better name for this.
 def loop.mollify (γ : loop F) (η t : ℝ) : F :=
 if η = 0 then γ t else ∫ s in 0..1, delta_mollifier η t s • γ s
+
+@[simp] lemma loop.mollify_eq_of_eq_zero (γ : loop F) (t : ℝ) :
+  γ.mollify 0 t = γ t :=
+if_pos rfl
 
 lemma loop.mollify_eq_of_ne_zero (γ : loop F) (η t : ℝ) (hη : η ≠ 0) :
   γ.mollify η t = ∫ s in 0..1, delta_mollifier η t s • γ s :=
 if_neg hη
 
-lemma loop.mollify_eq_integral (γ : loop F) (η t : ℝ) (hη : η ≠ 0) :
-  γ.mollify η t = ∫ s in 0..1, delta_mollifier η t s • γ s :=
-if_neg hη
+lemma loop.mollify_sub (γ₁ γ₂ : loop F) (hγ₁ : continuous γ₁) (hγ₂ : continuous γ₂) (η t : ℝ) :
+  γ₁.mollify η t - γ₂.mollify η t = (γ₁ - γ₂).mollify η t :=
+begin
+  rcases eq_or_ne η 0 with hη | hη,
+  { simp [hη], },
+  { simp only [loop.mollify_eq_of_ne_zero _ _ _ hη, loop.sub_apply, smul_sub],
+    rw interval_integral.integral_sub,
+    exacts [((delta_mollifier_smooth' hη t).continuous.smul hγ₁).interval_integrable 0 1,
+            ((delta_mollifier_smooth' hη t).continuous.smul hγ₂).interval_integrable 0 1], },
+end
 
-/-- I doubt this is exactly the right property and I think we may be able to get away with something
-a good deal weaker. The plan is to try finishing the reparametrization lemma and see what
-convergence property it requires. -/
-lemma loop.eval_at_sub_mollify_lt {ε : ℝ} (hε : 0 < ε) :
-  ∀ᶠ η in 𝓝 0, ∀ (γ : loop F) (hf : continuous γ), ∥γ t - γ.mollify η t∥ < ε * ∥γ∥ :=
+lemma loop.tendsto_mollify (γ : loop F) (hf : continuous γ) (t : ℝ) :
+  tendsto (λ η, γ.mollify η t) (𝓝 0) (𝓝 (γ t)) :=
 sorry
