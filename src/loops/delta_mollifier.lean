@@ -246,7 +246,7 @@ lemma periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
   periodize (λ x', f (x' - t)) x = periodize f (x - t) :=
 by simp_rw [periodize, sub_add_eq_add_sub]
 
--- if convenient we could set `a = c = -(1/2)` and `b = d = 1/2`
+-- if convenient we could set `[c,d] = [0,1]`
 lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop F)
   {a b c d : ℝ} (h : b ≤ a + 1) (h2 : d = c + 1)
   (hf : support f ⊆ Ioc a b) :
