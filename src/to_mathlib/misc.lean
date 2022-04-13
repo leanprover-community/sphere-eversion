@@ -25,23 +25,27 @@ lemma abs_le_abs_of_nonpos {α : Type*} [add_comm_group α] [linear_order α]
   |a| ≤ |b| :=
 by { rw [abs_of_nonpos ha, abs_of_nonpos (hab.trans ha)], exact neg_le_neg_iff.mpr hab }
 
+namespace set
+variables {α β : Type*}
+
+lemma ord_connected.interval_oc_subset {α : Type*} [linear_order α] {a b : α} {s : set α}
+  (hs : ord_connected s) (ha : a ∈ s) (hb : b ∈ s) : Ι a b ⊆ s :=
+Ioc_subset_Icc_self.trans $ hs.interval_subset ha hb
+
+lemma ord_connected_interval_oc {α : Type*} [linear_order α] {a b : α} :
+  ord_connected (Ι a b) :=
+ord_connected_Ioc
+
+lemma Ioc_subset_interval_oc_self {α : Type*} [linear_order α] {a b : α} :
+  Ioc a b ⊆ interval_oc a b :=
+Ioc_subset_Ioc (min_le_left a b) (le_max_right a b)
+
 lemma interval_oc_subset_of_mem_Ioc {α : Type*} [linear_order α] {a b c d : α}
   (ha : a ∈ Ioc c d) (hb : b ∈ Ioc c d) : Ι a b ⊆ Ι c d :=
 begin
    rw interval_oc_of_le (ha.1.le.trans ha.2),
    exact Ioc_subset_Ioc (le_min ha.1.le hb.1.le) (max_le ha.2 hb.2)
 end
-
-lemma interval_subset_Ioo  {α : Type*} [linear_order α] {a b c d : α}
-  (ha : a ∈ Ioo c d) (hb : b ∈ Ioo c d) : interval a b ⊆ Ioo c d :=
-λ t ⟨ht, ht'⟩, ⟨(lt_min ha.1 hb.1).trans_le ht, ht'.trans_lt (max_lt ha.2 hb.2)⟩
-
-lemma interval_oc_subset_Ioo  {α : Type*} [linear_order α] {a b c d : α}
-  (ha : a ∈ Ioo c d) (hb : b ∈ Ioo c d) : Ι a b ⊆ Ioo c d :=
-λ t ⟨ht, ht'⟩, ⟨(lt_min ha.1 hb.1).trans ht, ht'.trans_lt (max_lt ha.2 hb.2)⟩
-
-namespace set
-variables {α β : Type*}
 
 /- near `set.Iic_union_Ici` -/
 lemma Iic_union_Ici' {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :

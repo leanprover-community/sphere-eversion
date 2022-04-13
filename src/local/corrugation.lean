@@ -87,16 +87,10 @@ lemma corrugation.c0_small_on [first_countable_topology E] [t2_space E]
   ∀ᶠ N in at_top, ∀ (x ∈ K) t, ∥𝒯 N (γ t) x∥ < ε :=
 begin
   have cont' : continuous ↿(λ (q : ℝ × E)  t, ∫ t in 0..t, (γ q.1 q.2) t - (γ q.1 q.2).average),
-  { change continuous ((λ q : ℝ × E × ℝ, ∫ t in 0..q.2.2, (γ q.1 q.2.1) t - (γ q.1 q.2.1).average) ∘ (homeomorph.prod_assoc ℝ  E ℝ)),
-    apply continuous.comp _ (homeomorph.prod_assoc ℝ  E ℝ).continuous,
-    refine continuous_parametric_interval_integral_of_continuous _ (continuous_snd.snd),
-    apply continuous.sub,
-    change continuous (↿γ ∘ (λ (x : (ℝ × E × ℝ) × ℝ), (x.1.1, x.1.2.1, x.2))),
-    apply hγ_cont.comp,
-    exact (continuous_fst.fst).prod_mk
-          ((continuous_fst.snd'.fst').prod_mk continuous_snd),
+  { refine continuous_parametric_interval_integral_of_continuous _ continuous_snd,
+    refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub _,
     apply loop.continuous_average,
-    apply hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.snd'.fst'.fst' continuous_snd },
+    apply hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd },
   rcases cont'.bounded_on_compact_of_one_periodic _ ((is_compact_Icc : is_compact I).prod hK) with ⟨C, hC⟩,
   { apply (const_mul_one_div_lt ε_pos C).mono,
     intros N hN x hx t,

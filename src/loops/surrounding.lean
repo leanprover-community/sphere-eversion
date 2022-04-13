@@ -523,9 +523,7 @@ protected lemma t_ge_one (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t 
 by rw [← h.proj_I, proj_I_eq_one.mpr ht]
 
 protected lemma continuous_b (h : surrounding_family g b γ U) : continuous b :=
-by { refine continuous.congr _ (λ x, h.base x 0),
-     exact h.cont.comp (continuous_id.prod_mk
-      (continuous_const : continuous (λ _, ((0, 0) : ℝ × ℝ)))) }
+(h.cont.comp₂ continuous_id continuous_zero).congr (λ x, h.base x 0)
 
 protected lemma change_set (h : surrounding_family g b γ U) {V : set E}
   (hV : ∀ x ∈ V \ U, (γ x 1).surrounds $ g x) :
@@ -640,24 +638,21 @@ end
 -- end
 
 /-- A surrounding family induces a family of paths from `b x` to `b x`.
-Currently I(Floris) defined the concatenation we need on `path`, so we need to turn a surrounding
+We defined the concatenation we need on `path`, so we need to turn a surrounding
 family into the family of paths. -/
 @[simps]
 protected def path (h : surrounding_family g b γ U) (x : E) (t : ℝ) :
   path (b x) (b x) :=
 { to_fun := λ s, γ x t s,
-  continuous_to_fun := begin
-    refine continuous.comp _ continuous_subtype_coe,
-    refine loop.continuous_of_family _ t,
-    refine loop.continuous_of_family_step h.cont x
-  end,
+  continuous_to_fun :=
+    (h.cont.comp₃ continuous_const continuous_const continuous_id).comp continuous_subtype_coe,
   source' := h.base x t,
   target' := h.one x t }
 
 lemma continuous_path {X : Type*} [topological_space X] (h : surrounding_family g b γ U)
   {t : X → ℝ} {f : X → E} {s : X → I} (hf : continuous f) (ht : continuous t)
   (hs : continuous s) : continuous (λ x, h.path (f x) (t x) (s x)) :=
-h.cont.comp (hf.prod_mk $ ht.prod_mk hs.subtype_coe)
+h.cont.comp₃ hf ht hs.subtype_coe
 
 @[simp]
 lemma path_extend_fract (h : surrounding_family g b γ U) (t s : ℝ) (x : E) :
