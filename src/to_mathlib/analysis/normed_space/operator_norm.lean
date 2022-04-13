@@ -95,7 +95,7 @@ lemma continuous.coprodL {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Typ
   {X : Type*} [topological_space X]
   {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).coprod (g x)) :=
-continuous_linear_map.coprodL.continuous.comp (hf.prod_mk hg)
+continuous_linear_map.coprodL.continuous.comp₂ hf hg
 
 lemma continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [semi_normed_group E]
   [semi_normed_group Fₗ] [semi_normed_group Gₗ] [nondiscrete_normed_field 𝕜]
@@ -106,7 +106,7 @@ lemma continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*}
   {X : Type*} [topological_space X]
   {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).prod (g x)) :=
-(continuous_linear_map.prodₗᵢ 𝕜).continuous.comp (hf.prod_mk hg)
+(continuous_linear_map.prodₗᵢ 𝕜).continuous.comp₂ hf hg
 
 @[continuity]
 lemma continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [semi_normed_group E]
@@ -124,5 +124,5 @@ lemma continuous.compL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} 
   {X : Type*} [topological_space X] {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).comp (g x)) :=
 (continuous_linear_map.apply 𝕜 (E →L[𝕜] Gₗ) : (E →L[𝕜] Fₗ) →L[𝕜]
-  ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous.comp
-  (hg.prod_mk $ (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.comp hf)
+  ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous.comp₂ hg $
+  (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.comp hf
