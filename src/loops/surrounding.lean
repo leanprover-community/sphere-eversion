@@ -279,7 +279,7 @@ begin
   have hV' : V ∈ 𝓝 (W' (q, v)) := (is_open_set_pi finite_univ (λ _ _, is_open_Ioi)).mem_nhds hxp,
   have hA : is_open A,
   { simp only [A, affine_bases_findim ι ℝ F hι],
-    exact is_open_univ.prod (is_open_set_affine_independent ℝ F), },
+    exact is_open_univ.prod (is_open_affine_independent ℝ F), },
   have hW' : continuous_at W' (q, v) := (smooth_barycentric ι ℝ F hι).continuous_on.continuous_at
     (mem_nhds_iff.mpr ⟨A, subset.rfl, hA, hqv⟩),
   have hS : S ∈ 𝓝 (q, v) := hW'.preimage_mem_nhds hV',
