@@ -239,8 +239,9 @@ variables {E F : Type*} [normed_group E] [normed_group F]
 variables [normed_space ℝ E] [normed_space ℝ F]
 
 -- is this really not in the library?
-lemma add_sub_left_comm {α : Type*} [add_comm_group α] {x y z : α} : x + (y - z) = y + (x - z) :=
-by abel
+@[to_additive] lemma mul_div_left_comm {α : Type*} [comm_group α] {x y z : α} :
+  x * (y / z) = y * (x / z) :=
+by simp_rw [div_eq_mul_inv, mul_left_comm]
 
 lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
   dist (r • x + (1 - r) • y) x ≤ dist y x :=
@@ -414,6 +415,7 @@ end
 section
 -- consequences of the extreme value theorem
 
+
 lemma is_compact.exists_Sup_image_eq_and_ge {α β : Type*} [conditionally_complete_linear_order α]
   [topological_space α] [order_topology α] [topological_space β] {s : set β}
   (hs : is_compact s) (h0s : s.nonempty) {f : β → α} (hf : continuous_on f s) :
@@ -581,7 +583,7 @@ needs
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 -/
-lemma is_open_set_affine_independent (𝕜 E : Type*) {ι : Type*} [nondiscrete_normed_field 𝕜]
+lemma is_open_affine_independent (𝕜 E : Type*) {ι : Type*} [nondiscrete_normed_field 𝕜]
   [normed_group E] [normed_space 𝕜 E] [complete_space 𝕜] [fintype ι] :
   is_open {p : ι → E | affine_independent 𝕜 p} :=
 begin
