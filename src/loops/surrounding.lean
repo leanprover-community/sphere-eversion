@@ -255,16 +255,16 @@ end surrounding_points
 
 section surrounding_points_limits
 
-variables {X Y : Type*} [topological_space X] [topological_space Y] [finite_dimensional ℝ F]
+variables {X Y : Type*} [finite_dimensional ℝ F]
 
 local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
 
-lemma eventually_surrounding_pts_of_tendsto_of_tendsto {x : X} {y : Y}
+lemma eventually_surrounding_pts_of_tendsto_of_tendsto {l : filter X} {m : filter Y}
   {v : ι → F} {q : F} {p : ι → X → F} {f : Y → F}
   (hq : ∃ w, surrounding_pts q v w)
-  (hp : ∀ i, tendsto (p i) (𝓝 x) (𝓝 (v i)))
-  (hf : tendsto f (𝓝 y) (𝓝 q)) :
-  ∀ᶠ (z : X × Y) in 𝓝 (x, y), ∃ w, surrounding_pts (f z.2) (λ i, p i z.1) w :=
+  (hp : ∀ i, tendsto (p i) l (𝓝 (v i)))
+  (hf : tendsto f m (𝓝 q)) :
+  ∀ᶠ (z : X × Y) in l.prod m, ∃ w, surrounding_pts (f z.2) (λ i, p i z.1) w :=
 begin
   classical,
   obtain ⟨w, hw⟩ := hq,
@@ -286,8 +286,8 @@ begin
   obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS,
   have hn₁' := tendsto_def.mp hf _ hn₁,
   have hn₂' := tendsto_def.mp (tendsto_pi_nhds.mpr hp) _ hn₂,
-  have come_on : ((swap p)⁻¹' n₂) ×ˢ (f⁻¹' n₁) ∈ 𝓝 (x, y) :=
-    mem_nhds_prod_iff.mpr ⟨_, hn₂', _, hn₁', subset.rfl⟩,
+  have come_on : ((swap p)⁻¹' n₂) ×ˢ (f⁻¹' n₁) ∈ l.prod m :=
+    mem_prod_iff.mpr ⟨_, hn₂', _, hn₁', subset.rfl⟩,
   refine eventually_of_mem come_on _,
   rintros ⟨y₂, y₁⟩ ⟨hy₂ : swap p y₂ ∈ n₂, hy₁ : f y₁ ∈ n₁⟩,
   refine ⟨W' (f y₁, swap p y₂), (surrounding_pts_eval_barycentric_coords_iff
@@ -300,14 +300,14 @@ begin
 end
 
 lemma eventually_surrounding_pts_of_tendsto_of_tendsto'
-  {v : ι → F} {q : F} {p : ι → X → F} {x : X} {f : X → F}
+  {v : ι → F} {q : F} {p : ι → X → F} {l : filter X} {f : X → F}
   (hq : ∃ w, surrounding_pts q v w)
-  (hp : ∀ i, tendsto (p i) (𝓝 x) (𝓝 (v i)))
-  (hf : tendsto f (𝓝 x) (𝓝 q)) :
-  ∀ᶠ y in 𝓝 x, ∃ w, surrounding_pts (f y) (λ i, p i y) w :=
+  (hp : ∀ i, tendsto (p i) l (𝓝 (v i)))
+  (hf : tendsto f l (𝓝 q)) :
+  ∀ᶠ y in l, ∃ w, surrounding_pts (f y) (λ i, p i y) w :=
 begin
   have := eventually_surrounding_pts_of_tendsto_of_tendsto hq hp hf,
-  simp_rw [eventually_iff_exists_mem, mem_nhds_prod_iff] at this,
+  simp_rw [eventually_iff_exists_mem, mem_prod_iff] at this,
   obtain ⟨nnn, ⟨n₁, hn₁, n₂, hn₂, hh⟩, h⟩ := this,
   rw eventually_iff_exists_mem,
   exact ⟨n₁ ∩ n₂, inter_mem hn₁ hn₂, λ y hy, h (y, y) (by { apply hh, simpa using hy, })⟩,

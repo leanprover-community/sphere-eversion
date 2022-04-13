@@ -1,6 +1,5 @@
 import analysis.normed.group.basic
 import analysis.normed.normed_field
-import topology.metric_space.basic
 
 lemma norm_sub_le_add {G : Type*} [normed_group G] (a b c : G) : ∥a - b∥ ≤ ∥a - c∥ + ∥c - b∥ :=
 by simp [← dist_eq_norm, ← dist_eq_norm, ← dist_eq_norm, dist_triangle]
@@ -22,10 +21,9 @@ namespace filter
 
 open_locale topological_space
 
-lemma tendsto.of_norm_le {E F : Type*} [metric_space E] [normed_group F]
-  {f : E → F} {g : E → ℝ} {x : E}
-  (h₀ : tendsto g (𝓝 x) (𝓝 0)) (h₁ : ∀ x, ∥f x∥ ≤ g x) :
-  tendsto f (𝓝 x) (𝓝 0) :=
+lemma tendsto.of_norm_le {E F : Type*} {l : filter E} [normed_group F]
+  {f : E → F} {g : E → ℝ} (h₀ : tendsto g l (𝓝 0)) (h₁ : ∀ x, ∥f x∥ ≤ g x) :
+  tendsto f l (𝓝 0) :=
 begin
   rw normed_group.tendsto_nhds_zero at h₀ ⊢,
   refine λ ε hε, (h₀ ε hε).mono (λ x hx, (h₁ x).trans_lt $ _),

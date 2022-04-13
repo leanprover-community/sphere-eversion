@@ -404,6 +404,7 @@ lemma has_compact_mul_support_of_subset {α β : Type*} [topological_space α] [
   has_compact_mul_support f :=
 compact_of_is_closed_subset hK (is_closed_mul_tsupport f) (closure_minimal hf hK.is_closed)
 
+/-
 lemma tendsto_truc {δ : ℕ → ℝ → ℝ} (δ_nonneg : ∀ n x, 0 ≤ δ n x) (int_δ : ∀ n, ∫ s, δ n s = 1)
   (supp_δ : tendsto (λ n, support (δ n)) at_top (𝓝 0).small_sets) (δ_cont : ∀ n, continuous (δ n))
   (δ_meas_supp : ∀ n, measurable_set $ support (δ n))
@@ -459,6 +460,7 @@ begin
     rw integral_indicator (δ_meas_supp n) },
   all_goals { sorry }
 end
+-/
 
 end mollify_on_real
 
@@ -516,26 +518,26 @@ end delta_approx
 
 
 section version_of_delta_mollifier_using_n
-def delta_mollifier' (n : ℕ) (t : ℝ) : ℝ → ℝ :=
+def delta_mollifier (n : ℕ) (t : ℝ) : ℝ → ℝ :=
 λ x, n / (n+1) * approx_dirac n (x - t) + 1 / (n+1)
 
 variables {n : ℕ} {t : ℝ}
-lemma delta_mollifier'_periodic : periodic (delta_mollifier' n t) 1 :=
-λ x, by simp_rw [delta_mollifier', ← sub_add_eq_add_sub, periodic_approx_dirac n (x - t)]
+lemma delta_mollifier_periodic : periodic (delta_mollifier n t) 1 :=
+λ x, by simp_rw [delta_mollifier, ← sub_add_eq_add_sub, periodic_approx_dirac n (x - t)]
 
-lemma delta_mollifier'_pos (s : ℝ) : 0 < delta_mollifier' n t s :=
+lemma delta_mollifier_pos (s : ℝ) : 0 < delta_mollifier n t s :=
 add_pos_of_nonneg_of_pos
   (mul_nonneg (div_nonneg n.cast_nonneg n.cast_add_one_pos.le) (approx_dirac_nonneg n _))
   (div_pos zero_lt_one n.cast_add_one_pos)
 
-lemma delta_mollifier'_smooth : 𝒞 ∞ (delta_mollifier' n t) :=
+lemma delta_mollifier_smooth : 𝒞 ∞ (delta_mollifier n t) :=
 (cont_diff_const.mul $ (approx_dirac_smooth n).comp $
   (cont_diff_id.sub cont_diff_const : 𝒞 ∞ (λ x : ℝ, x - t))).add cont_diff_const
 
 open interval_integral
-@[simp] lemma delta_mollifier'_integral_eq_one : ∫ s in 0..1, delta_mollifier' n t s = 1 :=
+@[simp] lemma delta_mollifier_integral_eq_one : ∫ s in 0..1, delta_mollifier n t s = 1 :=
 begin
-  simp_rw [delta_mollifier'],
+  simp_rw [delta_mollifier],
   rw [integral_comp_sub_right (λ x, (n : ℝ) / (n+1) * approx_dirac n x + 1 / (n+1)) t, integral_add,
     const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel, one_smul,
     approx_dirac_integral_eq_one, mul_one, div_add_div_same, div_self],
@@ -545,14 +547,14 @@ begin
   { exact interval_integrable_const }
 end
 
-def loop.mollify' (γ : loop F) (n : ℕ) (t : ℝ) : F :=
-∫ s in 0..1, delta_mollifier' n t s • γ s
+def loop.mollify (γ : loop F) (n : ℕ) (t : ℝ) : F :=
+∫ s in 0..1, delta_mollifier n t s • γ s
 
-lemma loop.mollify'_eq_convolution (γ : loop F) (hγ : continuous γ) (t : ℝ) :
-  γ.mollify' n t = ((n : ℝ) / (n+1)) • ((bump n).normed volume ⋆[lsmul ℝ ℝ] γ) t +
+lemma loop.mollify_eq_convolution (γ : loop F) (hγ : continuous γ) (t : ℝ) :
+  γ.mollify n t = ((n : ℝ) / (n+1)) • ((bump n).normed volume ⋆[lsmul ℝ ℝ] γ) t +
     ((1 : ℝ) / (n+1)) • ∫ t in 0..1, γ t :=
 begin
-  simp_rw [loop.mollify', delta_mollifier', add_smul, mul_smul],
+  simp_rw [loop.mollify, delta_mollifier, add_smul, mul_smul],
   rw [integral_add],
   simp_rw [integral_smul, approx_dirac, ← periodize_comp_sub],
   rw [interval_integral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)],
@@ -564,10 +566,10 @@ begin
   { exact (continuous_const.smul hγ).interval_integrable _ _ }
 end
 
-lemma loop.tendsto_mollify' (γ : loop F) (hγ : continuous γ) (t : ℝ) :
-  tendsto (λ n, γ.mollify' n t) at_top (𝓝 (γ t)) :=
+lemma loop.tendsto_mollify (γ : loop F) (hγ : continuous γ) (t : ℝ) :
+  tendsto (λ n, γ.mollify n t) at_top (𝓝 (γ t)) :=
 begin
-  simp_rw [γ.mollify'_eq_convolution hγ],
+  simp_rw [γ.mollify_eq_convolution hγ],
   rw [← add_zero (γ t)],
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ t)],
@@ -579,53 +581,14 @@ begin
     exact tendsto_one_div_add_at_top_nhds_0_nat.smul tendsto_const_nhds }
 end
 
-end version_of_delta_mollifier_using_n
-
-/-- A stictly positive, smooth approximation to the Dirac delta function on the circle, centered at
-`t` (regarded as a point of the circle) and converging to the Dirac delta function as `η → 0`.
-
-TODO: When constructing these, we can just do `t = 0` case and then translate. -/
-def delta_mollifier (η t : ℝ) : ℝ → ℝ := sorry
-
-variables {η : ℝ} (hη : η ≠ 0) (t : ℝ)
-include hη
-
-lemma delta_mollifier_periodic : periodic (delta_mollifier η t) 1 := sorry
-
-lemma delta_mollifier_pos (s : ℝ) : 0 < delta_mollifier η t s := sorry
-
--- TODO Maybe just drop this, we'll probably only ever need `delta_mollifier_smooth'`.
-lemma delta_mollifier_smooth : 𝒞 ∞ ↿(delta_mollifier η) := sorry
-
-lemma delta_mollifier_smooth' : 𝒞 ∞ (delta_mollifier η t) :=
-(delta_mollifier_smooth hη).comp (cont_diff_prod_mk t)
-
-@[simp] lemma delta_mollifier_integral_eq_one : ∫ s in 0..1, delta_mollifier η t s = 1 := sorry
-
-omit hη
-
-def loop.mollify (γ : loop F) (η t : ℝ) : F :=
-if η = 0 then γ t else ∫ s in 0..1, delta_mollifier η t s • γ s
-
-@[simp] lemma loop.mollify_eq_of_eq_zero (γ : loop F) (t : ℝ) :
-  γ.mollify 0 t = γ t :=
-if_pos rfl
-
-lemma loop.mollify_eq_of_ne_zero (γ : loop F) (η t : ℝ) (hη : η ≠ 0) :
-  γ.mollify η t = ∫ s in 0..1, delta_mollifier η t s • γ s :=
-if_neg hη
-
-lemma loop.mollify_sub (γ₁ γ₂ : loop F) (hγ₁ : continuous γ₁) (hγ₂ : continuous γ₂) (η t : ℝ) :
-  γ₁.mollify η t - γ₂.mollify η t = (γ₁ - γ₂).mollify η t :=
+lemma loop.mollify_sub (γ₁ γ₂ : loop F) (hγ₁ : continuous γ₁) (hγ₂ : continuous γ₂)
+  (n : ℕ) (t : ℝ) :
+  γ₁.mollify n t - γ₂.mollify n t = (γ₁ - γ₂).mollify n t :=
 begin
-  rcases eq_or_ne η 0 with hη | hη,
-  { simp [hη], },
-  { simp only [loop.mollify_eq_of_ne_zero _ _ _ hη, loop.sub_apply, smul_sub],
-    rw interval_integral.integral_sub,
-    exacts [((delta_mollifier_smooth' hη t).continuous.smul hγ₁).interval_integrable 0 1,
-            ((delta_mollifier_smooth' hη t).continuous.smul hγ₂).interval_integrable 0 1], },
+  simp only [loop.mollify, loop.sub_apply, smul_sub],
+  rw interval_integral.integral_sub,
+  exacts [(delta_mollifier_smooth.continuous.smul hγ₁).interval_integrable 0 1,
+          (delta_mollifier_smooth.continuous.smul hγ₂).interval_integrable 0 1],
 end
 
-lemma loop.tendsto_mollify (γ : loop F) (hf : continuous γ) (t : ℝ) :
-  tendsto (λ η, γ.mollify η t) (𝓝 0) (𝓝 (γ t)) :=
-sorry
+end version_of_delta_mollifier_using_n
