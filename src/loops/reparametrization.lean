@@ -31,37 +31,32 @@ local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
 /-- An auxiliary lemma for bootstrapping to `tendsto_mollify_apply`. -/
 lemma loop.tendsto_mollify_apply_aux (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ)
   (hx : γ x = 0) :
-  tendsto (λ (z : E × ℝ), (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 0) :=
+  tendsto (λ (z : E × ℕ), (γ z.1).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 0) :=
 begin
-  suffices : tendsto (λ (z : E × ℝ), ∥(γ z.1).mollify z.2 t∥) (𝓝 (x, 0)) (𝓝 0),
+  suffices : tendsto (λ (z : E × ℕ), ∥(γ z.1).mollify z.2 t∥) ((𝓝 x).prod at_top) (𝓝 0),
   { exact this.of_norm_le (λ z, le_refl _), },
-  suffices : tendsto (λ (z : E × ℝ), ⨆ (s : I), ∥γ z.1 s∥) (𝓝 (x, 0)) (𝓝 0),
+  suffices : tendsto (λ (z : E × ℕ), ⨆ (s : I), ∥γ z.1 s∥) ((𝓝 x).prod at_top) (𝓝 0),
   { refine this.of_norm_le _,
-    rintros ⟨y, η⟩,
-    simp only [norm_norm],
-    rcases eq_or_ne η 0 with hη | hη,
-    { simp only [hη, loop.mollify_eq_of_eq_zero,
-        (γ y).norm_at_le_supr_norm_Icc (loop.continuous_of_family h y)], },
-    { simp only [loop.mollify_eq_of_ne_zero _ η t hη],
-      refine norm_integral_le_integral_norm_Ioc.trans _,
-      simp only [interval_integral.integral_of_le zero_le_one, interval_oc_of_le (@zero_le_one ℝ _),
-        norm_smul, real.norm_of_nonneg (delta_mollifier_pos hη t _).le],
-      rw ← interval_integral.integral_of_le (@zero_le_one ℝ _),
-      let f₁ : ℝ → ℝ := λ s, delta_mollifier η t s * ∥γ y s∥,
-      let f₂ : ℝ → ℝ := λ s, delta_mollifier η t s * ⨆ (u : I), ∥γ y u∥,
-      have hle : f₁ ≤ f₂ := λ s, mul_le_mul_of_nonneg_left ((γ y).norm_at_le_supr_norm_Icc
-        (loop.continuous_of_family h y) s) (delta_mollifier_pos hη t s).le,
-      have hf₁ : interval_integrable f₁ volume 0 1,
-      { apply continuous.interval_integrable,
-        refine continuous.mul (delta_mollifier_smooth' hη t).continuous (continuous_norm.comp _),
-        exact loop.continuous_of_family h y, },
-      have hf₂ : interval_integrable f₂ volume 0 1,
-      { apply continuous.interval_integrable,
-        exact (delta_mollifier_smooth' hη t).continuous.mul continuous_const, },
-      refine (interval_integral.integral_mono (@zero_le_one ℝ _) hf₁ hf₂ hle).trans _,
-      rw [integral_mul_const, delta_mollifier_integral_eq_one hη t, one_mul], }, },
-  suffices : tendsto (λ y, ⨆ (s : I), ∥γ y s∥) (𝓝 x) (𝓝 0),
-  { convert this.comp (continuous_fst.tendsto (x, (0 : ℝ))), },
+    rintros ⟨y, n⟩,
+    simp only [norm_norm, loop.mollify],
+    refine norm_integral_le_integral_norm_Ioc.trans _,
+    simp only [interval_integral.integral_of_le zero_le_one, interval_oc_of_le (@zero_le_one ℝ _),
+      norm_smul, real.norm_of_nonneg (delta_mollifier_pos _).le],
+    rw ← interval_integral.integral_of_le (@zero_le_one ℝ _),
+    let f₁ : ℝ → ℝ := λ s, delta_mollifier n t s * ∥γ y s∥,
+    let f₂ : ℝ → ℝ := λ s, delta_mollifier n t s * ⨆ (u : I), ∥γ y u∥,
+    have hle : f₁ ≤ f₂ := λ s, mul_le_mul_of_nonneg_left ((γ y).norm_at_le_supr_norm_Icc
+      (loop.continuous_of_family h y) s) (delta_mollifier_pos s).le,
+    have hf₁ : interval_integrable f₁ volume 0 1,
+    { apply continuous.interval_integrable,
+      refine continuous.mul delta_mollifier_smooth.continuous (continuous_norm.comp _),
+      exact loop.continuous_of_family h y, },
+    have hf₂ : interval_integrable f₂ volume 0 1,
+    { apply continuous.interval_integrable,
+      exact delta_mollifier_smooth.continuous.mul continuous_const, },
+    refine (interval_integral.integral_mono (@zero_le_one ℝ _) hf₁ hf₂ hle).trans _,
+    rw [integral_mul_const, delta_mollifier_integral_eq_one, one_mul], },
+  suffices : tendsto (λ y, ⨆ (s : I), ∥γ y s∥) (𝓝 x) (𝓝 0), { exact this.comp tendsto_fst, },
   let γ' := loop.as_continuous_family h,
   have hx' : γ' x = 0, { ext s, simp [hx], },
   have hγx : tendsto γ' (𝓝 x) (𝓝 (γ' _)) := γ'.continuous.continuous_at,
@@ -81,11 +76,12 @@ begin
 end
 
 lemma loop.tendsto_mollify_apply (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ) :
-  tendsto (λ (z : E × ℝ), (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 (γ x t)) :=
+  tendsto (λ (z : E × ℕ), (γ z.1).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 (γ x t)) :=
 begin
-  suffices : tendsto (λ (z : E × ℝ), (γ x).mollify z.2 t - (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 0),
-  { have hx : tendsto (λ (z : E × ℝ), (γ x).mollify z.2 t) (𝓝 (x, 0)) (𝓝 (γ x t)) :=
-    ((γ x).tendsto_mollify (loop.continuous_of_family h x) t).comp (continuous_snd.tendsto (x, 0)),
+  suffices : tendsto (λ (z : E × ℕ), (γ x).mollify z.2 t - (γ z.1).mollify z.2 t)
+    ((𝓝 x).prod at_top) (𝓝 0),
+  { have hx : tendsto (λ (z : E × ℕ), (γ x).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 (γ x t)) :=
+      ((γ x).tendsto_mollify (loop.continuous_of_family h x) t).comp tendsto_snd,
     simpa using hx.sub this, },
   simp_rw loop.mollify_sub (γ x) _ (loop.continuous_of_family h x) (loop.continuous_of_family h _),
   refine loop.tendsto_mollify_apply_aux (λ y, γ x - γ y) _ x t (sub_self _),
@@ -126,37 +122,34 @@ lemma surround_pts_points_weights_at :
 classical.some_spec _
 
 /-- Note that we are mollifying the loop `γ y` at the surrounding parameters for `γ x`. -/
-def approx_surrounding_points_at (η : ℝ) (i : ι) : F :=
-(γ y).mollify η (γ.surrounding_parameters_at x i)
+def approx_surrounding_points_at (n : ℕ) (i : ι) : F :=
+(γ y).mollify n (γ.surrounding_parameters_at x i)
 
-lemma approx_surrounding_points_at_smooth (η : ℝ) :
-  𝒞 ∞ (λ y, γ.approx_surrounding_points_at x y η) :=
+lemma approx_surrounding_points_at_smooth (n : ℕ) :
+  𝒞 ∞ (λ y, γ.approx_surrounding_points_at x y n) :=
 begin
   refine cont_diff_pi.mpr (λ i, _),
-  by_cases hη : η = 0,
-  { suffices : 𝒞 ∞ (λ y, γ y (γ.surrounding_parameters_at x i)),
-    { simpa [approx_surrounding_points_at, loop.mollify, hη], },
-    exact γ.smooth.comp (cont_diff_prod_left (γ.surrounding_parameters_at x i)), },
-  { suffices : 𝒞 ∞ (λy, ∫ s in 0..1, delta_mollifier η (γ.surrounding_parameters_at x i) s • γ y s),
-    { simpa [approx_surrounding_points_at, loop.mollify, hη], },
-    refine cont_diff_parametric_integral_of_cont_diff (cont_diff.smul _ γ.smooth) 0 1,
-    exact (delta_mollifier_smooth' hη _).snd', },
+  suffices : 𝒞 ∞ (λy, ∫ s in 0..1, delta_mollifier n (γ.surrounding_parameters_at x i) s • γ y s),
+  { simpa [approx_surrounding_points_at, loop.mollify], },
+  refine cont_diff_parametric_integral_of_cont_diff (cont_diff.smul _ γ.smooth) 0 1,
+  exact delta_mollifier_smooth.snd',
 end
 
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
-lemma eventually_exists_surrounding_pts_approx_surrounding_points_at : ∀ᶠ (z : E × ℝ) in 𝓝 (x, 0),
+lemma eventually_exists_surrounding_pts_approx_surrounding_points_at :
+  ∀ᶠ (z : E × ℕ) in (𝓝 x).prod at_top,
   ∃ w, surrounding_pts (g z.1) (γ.approx_surrounding_points_at x z.1 z.2) w :=
 begin
-  let a : ι → E × ℝ → F := λ i z, γ.approx_surrounding_points_at x z.1 z.2 i,
-  suffices : ∀ i, tendsto (a i) (𝓝 (x, 0)) (𝓝 (γ.surrounding_points_at x i)),
-  { have hg : tendsto (λ (z : E × ℝ), g z.fst) (𝓝 (x, 0)) (𝓝 (g x)) :=
-      γ.smooth_surrounded.continuous.continuous_at.comp (continuous_fst.tendsto (x, (0 : ℝ))),
+  let a : ι → E × ℕ → F := λ i z, γ.approx_surrounding_points_at x z.1 z.2 i,
+  suffices : ∀ i, tendsto (a i) ((𝓝 x).prod at_top) (𝓝 (γ.surrounding_points_at x i)),
+  { have hg : tendsto (λ (z : E × ℕ), g z.fst) ((𝓝 x).prod at_top) (𝓝 (g x)) :=
+      tendsto.comp γ.smooth_surrounded.continuous.continuous_at tendsto_fst,
     exact eventually_surrounding_pts_of_tendsto_of_tendsto'
       ⟨_, γ.surround_pts_points_weights_at x⟩ this hg, },
   intros i,
   let t := γ.surrounding_parameters_at x i,
-  change tendsto (λ (z : E × ℝ), (γ z.1).mollify z.2 t) (𝓝 (x, 0)) (𝓝 (γ x t)),
+  change tendsto (λ (z : E × ℕ), (γ z.1).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 (γ x t)),
   exact loop.tendsto_mollify_apply γ γ.smooth.continuous x t,
 end
 
@@ -169,30 +162,19 @@ def local_centering_density [decidable_pred (∈ affine_bases ι ℝ F)] : E →
 begin
   choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
     (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
-  choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
-  choose η hη hηv using metric.mem_nhds_iff'.mp hv,
-  exact ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y η) i) •
-    (delta_mollifier η (γ.surrounding_parameters_at x i)),
+  choose u hu v hv huv using mem_prod_iff.mp hn₁,
+  choose m hmv using mem_at_top_sets.mp hv,
+  exact ∑ i, (eval_barycentric_coords ι ℝ F (g y) (γ.approx_surrounding_points_at x y m) i) •
+    (delta_mollifier m (γ.surrounding_parameters_at x i)),
 end
 
-def local_centering_density_mp : ℝ :=
+def local_centering_density_mp : ℕ :=
 begin
   choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
     (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
-  choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
-  choose η hη hηv using metric.mem_nhds_iff'.mp hv,
-  exact η,
-end
-
-lemma local_centering_density_mp_ne_zero : γ.local_centering_density_mp x ≠ 0 :=
-begin
-  let h := filter.eventually_iff_exists_mem.mp
-    (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
-  let v := classical.some ((classical.some_spec
-    (classical.some_spec (mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)))))),
-  let hv : v ∈ 𝓝 (0 : ℝ) := classical.some (classical.some_spec (classical.some_spec
-    (classical.some_spec (mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)))))),
-  exact ne_of_gt (classical.some (classical.some_spec (metric.mem_nhds_iff'.mp hv))),
+  choose u hu v hv huv using mem_prod_iff.mp hn₁,
+  choose m hmv using mem_at_top_sets.mp hv,
+  exact m,
 end
 
 lemma local_centering_density_spec [decidable_pred (∈ affine_bases ι ℝ F)] :
@@ -206,7 +188,7 @@ def local_centering_density_nhd : set E :=
 begin
   choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
     (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
-  choose u hu v hv huv using mem_nhds_prod_iff.mp hn₁,
+  choose u hu v hv huv using mem_prod_iff.mp hn₁,
   exact (interior u),
 end
 
@@ -221,7 +203,7 @@ lemma local_centering_density_nhd_self_mem :
 begin
   let h := filter.eventually_iff_exists_mem.mp
     (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
-  exact mem_interior_iff_mem_nhds.mpr (classical.some (classical.some_spec (mem_nhds_prod_iff.mp
+  exact mem_interior_iff_mem_nhds.mpr (classical.some (classical.some_spec (mem_prod_iff.mp
     (classical.some (classical.some_spec h))))),
 end
 
@@ -235,24 +217,21 @@ lemma approx_surrounding_points_at_of_local_centering_density_nhd
 begin
   let h := filter.eventually_iff_exists_mem.mp
     (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x),
-  let nη := classical.some h,
-  let hnη := mem_nhds_prod_iff.mp (classical.some (classical.some_spec h)),
-  let n := classical.some hnη,
-  let hn := classical.some_spec hnη,
+  let nn := classical.some h,
+  let hnn := mem_prod_iff.mp (classical.some (classical.some_spec h)),
+  let n := classical.some hnn,
+  let hn := classical.some_spec hnn,
   change y ∈ interior n at hy,
   let v := classical.some (classical.some_spec hn),
-  let hv : v ∈ 𝓝 (0 : ℝ) := classical.some (classical.some_spec (classical.some_spec hn)),
-  let η := classical.some (metric.mem_nhds_iff'.mp hv),
-  let hη₁ : 0 < η := classical.some (classical.some_spec (metric.mem_nhds_iff'.mp hv)),
-  let hη₂ := classical.some_spec (classical.some_spec (metric.mem_nhds_iff'.mp hv)),
-  change ∃ w, surrounding_pts (g y) (γ.approx_surrounding_points_at x y η) w,
-  suffices : (y, η) ∈ nη,
+  let hv : v ∈ at_top := classical.some (classical.some_spec (classical.some_spec hn)),
+  let m := classical.some (mem_at_top_sets.mp hv),
+  let hm := classical.some_spec (mem_at_top_sets.mp hv),
+  change ∃ w, surrounding_pts (g y) (γ.approx_surrounding_points_at x y m) w,
+  suffices : (y, m) ∈ nn,
   { exact classical.some_spec (classical.some_spec h) _ this, },
   apply classical.some_spec (classical.some_spec (classical.some_spec hn)),
-  change y ∈ n ∧ η ∈ v,
-  refine ⟨interior_subset hy, hη₂ _⟩,
-  change η ∈ metric.closed_ball (0 : ℝ) η,
-  rw [mem_closed_ball_zero_iff, real.norm_eq_abs, abs_eq_self.mpr hη₁.le],
+  change y ∈ n ∧ m ∈ v,
+  exact ⟨interior_subset hy, hm _ (le_refl _)⟩,
 end
 
 lemma approx_surrounding_points_at_mem_affine_bases (hy : y ∈ γ.local_centering_density_nhd x) :
@@ -268,7 +247,7 @@ begin
   simp only [γ.local_centering_density_spec x, fintype.sum_apply, pi.smul_apply,
     algebra.id.smul_eq_mul],
   refine finset.sum_pos (λ i hi, _) finset.univ_nonempty,
-  refine mul_pos _ (delta_mollifier_pos (γ.local_centering_density_mp_ne_zero x) _ _),
+  refine mul_pos _ (delta_mollifier_pos _),
   obtain ⟨w, hw⟩ := γ.approx_surrounding_points_at_of_local_centering_density_nhd x y hy,
   convert hw.w_pos i,
   rw ← hw.coord_eq_w,
@@ -277,8 +256,7 @@ end
 
 lemma local_centering_density_periodic (hy : y ∈ γ.local_centering_density_nhd x) :
   periodic (γ.local_centering_density x y) 1 :=
-periodic.sum $
-  λ i, periodic.smul (delta_mollifier_periodic (γ.local_centering_density_mp_ne_zero x) _) _
+periodic.sum $ λ i, periodic.smul delta_mollifier_periodic _
 
 lemma local_centering_density_smooth_on :
   smooth_on ↿(γ.local_centering_density x) $
@@ -305,8 +283,7 @@ begin
       exact γ.approx_surrounding_points_at_smooth x _, },
     { intros y hy,
       simp [z, γ.approx_surrounding_points_at_mem_affine_bases x y hy], }, },
-  { refine cont_diff.comp _ cont_diff_snd,
-    exact delta_mollifier_smooth' (γ.local_centering_density_mp_ne_zero x) _, },
+  { exact delta_mollifier_smooth.comp cont_diff_snd, },
 end
 
 lemma local_centering_density_continuous (hy : y ∈ γ.local_centering_density_nhd x) :
@@ -323,40 +300,36 @@ end
 @[simp] lemma local_centering_density_integral_eq_one (hy : y ∈ γ.local_centering_density_nhd x) :
   ∫ s in 0..1, γ.local_centering_density x y s = 1 :=
 begin
-  let η := γ.local_centering_density_mp x,
-  let hη₁ := γ.local_centering_density_mp_ne_zero x,
+  let n := γ.local_centering_density_mp x,
   simp only [γ.local_centering_density_spec x, prod.forall, exists_prop, gt_iff_lt,
     fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
   rw interval_integral.integral_sum,
-  { have h : γ.approx_surrounding_points_at x y η ∈ affine_bases ι ℝ F :=
+  { have h : γ.approx_surrounding_points_at x y n ∈ affine_bases ι ℝ F :=
       γ.approx_surrounding_points_at_mem_affine_bases x y hy,
-    simp_rw [← smul_eq_mul, interval_integral.integral_smul,
-      delta_mollifier_integral_eq_one (γ.local_centering_density_mp_ne_zero x),
+    simp_rw [← smul_eq_mul, interval_integral.integral_smul, delta_mollifier_integral_eq_one,
       algebra.id.smul_eq_mul, mul_one, eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h,
       affine_basis.coords_apply, affine_basis.sum_coord_apply_eq_one], },
   { simp_rw ← smul_eq_mul,
     refine λ i hi, (continuous.const_smul _ _).interval_integrable 0 1,
-    exact (delta_mollifier_smooth' hη₁ (γ.surrounding_parameters_at x i)).continuous },
+    exact delta_mollifier_smooth.continuous, },
 end
 
 @[simp] lemma local_centering_density_average (hy : y ∈ γ.local_centering_density_nhd x) :
   ∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y :=
 begin
-  let η := γ.local_centering_density_mp x,
-  let hη₁ := γ.local_centering_density_mp_ne_zero x,
+  let n := γ.local_centering_density_mp x,
   simp only [γ.local_centering_density_spec x, prod.forall, exists_prop, gt_iff_lt,
     fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
   rw interval_integral.integral_sum,
-  { simp_rw [mul_smul, interval_integral.integral_smul,
-      ← (γ y).mollify_eq_of_ne_zero η (γ.surrounding_parameters_at x _) hη₁],
-    change ∑ i, _ • (γ.approx_surrounding_points_at x y η i) = _,
-    have h : γ.approx_surrounding_points_at x y η ∈ affine_bases ι ℝ F :=
+  { simp_rw [mul_smul, interval_integral.integral_smul],
+    change ∑ i, _ • (γ.approx_surrounding_points_at x y n i) = _,
+    have h : γ.approx_surrounding_points_at x y n ∈ affine_bases ι ℝ F :=
       γ.approx_surrounding_points_at_mem_affine_bases x y hy,
     erw [eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h],
     simpa using affine_basis.affine_combination_coord_eq_self (affine_basis.mk _ h.1 h.2) (g y), },
   { simp_rw mul_smul,
     refine λ i hi, ((continuous.smul _ (γ.continuous y)).const_smul _).interval_integrable 0 1,
-    exact (delta_mollifier_smooth' hη₁ (γ.surrounding_parameters_at x i)).continuous },
+    exact delta_mollifier_smooth.continuous, },
 end
 
 /-- This the key construction. It represents a smooth probability distribution on the circle with
