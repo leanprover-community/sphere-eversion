@@ -218,11 +218,11 @@ lemma is_closed_support (γ : X → loop X') : is_closed (loop.support γ) :=
 is_closed_closure
 
 lemma continuous_of_family {γ : X → loop X'} (h : continuous ↿γ) (x : X) : continuous (γ x) :=
-h.comp $ continuous_const.prod_mk continuous_id
+h.comp₂ continuous_const continuous_id
 
 lemma continuous_of_family_step {γ : X → Y → loop Z} (h : continuous ↿γ) (x : X) :
   continuous ↿(γ x) :=
-h.comp $ continuous_const.prod_mk continuous_id
+h.comp₂ continuous_const continuous_id
 
 @[simps] def as_continuous_family {γ : X → loop X'} (h : continuous ↿γ) : C(X, C(I, X')) :=
 continuous_map.curry
