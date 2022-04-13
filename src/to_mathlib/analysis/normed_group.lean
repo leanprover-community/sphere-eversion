@@ -1,6 +1,5 @@
 import analysis.normed.group.basic
 import analysis.normed.normed_field
-import topology.metric_space.basic
 
 lemma norm_sub_le_add {G : Type*} [normed_group G] (a b c : G) : ∥a - b∥ ≤ ∥a - c∥ + ∥c - b∥ :=
 by simp [← dist_eq_norm, ← dist_eq_norm, ← dist_eq_norm, dist_triangle]
@@ -22,21 +21,19 @@ namespace filter
 
 open_locale topological_space
 
-lemma tendsto.of_norm_le {E F : Type*} [metric_space E] [normed_group F]
-  {f : E → F} {g : E → ℝ} {x : E}
-  (h₀ : tendsto g (𝓝 x) (𝓝 0)) (h₁ : ∀ x, ∥f x∥ ≤ g x) :
-  tendsto f (𝓝 x) (𝓝 0) :=
+lemma tendsto.of_norm_le {E F : Type*} {l : filter E} [normed_group F]
+  {f : E → F} {g : E → ℝ} (h₀ : tendsto g l (𝓝 0)) (h₁ : ∀ x, ∥f x∥ ≤ g x) :
+  tendsto f l (𝓝 0) :=
 begin
   -- TODO Please golf me!
-  rw metric.tendsto_nhds_nhds at h₀ ⊢,
-  intros ε hε,
-  obtain ⟨δ, hδ₁, hδ₂⟩ := h₀ ε hε,
-  refine ⟨δ, hδ₁, λ y hy, _⟩,
-  simp * at *,
-  specialize h₁ y,
-  have hgy : 0 ≤ g y := (norm_nonneg (f y)).trans h₁,
-  rw ← real.norm_of_nonneg hgy at h₁,
-  exact lt_of_le_of_lt h₁ (hδ₂ hy),
+  rw tendsto_def at h₀ ⊢,
+  intros s hs,
+  obtain ⟨ε, hε, hs⟩ := metric.mem_nhds_iff.mp hs,
+  filter_upwards [h₀ (metric.ball 0 ε) (metric.ball_mem_nhds 0 hε)],
+  intros x hx,
+  rw [set.mem_preimage, mem_ball_zero_iff, real.norm_of_nonneg
+    ((norm_nonneg (f x)).trans (h₁ x))] at hx,
+  exact hs (mem_ball_zero_iff.mpr (lt_of_le_of_lt (h₁ x) hx)),
 end
 
 end filter
