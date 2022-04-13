@@ -1,5 +1,6 @@
 import analysis.calculus.specific_functions
 
+import to_mathlib.unused.linear_algebra.multilinear
 import to_mathlib.analysis.normed_space.operator_norm
 
 /-
@@ -42,23 +43,6 @@ sorry_ax
 lemma iterated_fderiv_smooth_transition_one {n : ℕ} (hn : 1 ≤ n) :
   iterated_fderiv ℝ n smooth_transition 1 = 0 :=
 sorry_ax
-
-namespace function
-variables {ι : Sort*} [decidable_eq ι] {α β : ι → Type*}
-
-/-- Special case of `function.apply_update`. Useful for `rw`/`simp`. -/
-lemma update_fst (g : Π i, α i × β i) (i : ι) (v : α i × β i) (j : ι) :
-  (update g i v j).fst = update (λ k, (g k).fst) i v.fst j :=
-apply_update (λ _, prod.fst) g i v j
-
-/-- Special case of `function.apply_update`. Useful for `rw`/`simp`. -/
-lemma update_snd (g : Π i, α i × β i) (i : ι) (v : α i × β i) (j : ι) :
-  (update g i v j).snd = update (λ k, (g k).snd) i v.snd j :=
-apply_update (λ _, prod.snd) g i v j
-
-
-end function
-
 
 section C1_real
 
