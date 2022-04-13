@@ -25,15 +25,10 @@ lemma tendsto.of_norm_le {E F : Type*} {l : filter E} [normed_group F]
   {f : E → F} {g : E → ℝ} (h₀ : tendsto g l (𝓝 0)) (h₁ : ∀ x, ∥f x∥ ≤ g x) :
   tendsto f l (𝓝 0) :=
 begin
-  -- TODO Please golf me!
-  rw tendsto_def at h₀ ⊢,
-  intros s hs,
-  obtain ⟨ε, hε, hs⟩ := metric.mem_nhds_iff.mp hs,
-  filter_upwards [h₀ (metric.ball 0 ε) (metric.ball_mem_nhds 0 hε)],
-  intros x hx,
-  rw [set.mem_preimage, mem_ball_zero_iff, real.norm_of_nonneg
-    ((norm_nonneg (f x)).trans (h₁ x))] at hx,
-  exact hs (mem_ball_zero_iff.mpr (lt_of_le_of_lt (h₁ x) hx)),
+  rw normed_group.tendsto_nhds_zero at h₀ ⊢,
+  refine λ ε hε, (h₀ ε hε).mono (λ x hx, (h₁ x).trans_lt $ _),
+  rw [real.norm_eq_abs] at hx,
+  refine (le_abs_self _).trans_lt hx,
 end
 
 end filter
