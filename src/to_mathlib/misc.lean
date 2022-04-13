@@ -40,15 +40,8 @@ lemma Ioc_subset_interval_oc_self {α : Type*} [linear_order α] {a b : α} :
   Ioc a b ⊆ interval_oc a b :=
 Ioc_subset_Ioc (min_le_left a b) (le_max_right a b)
 
-lemma interval_oc_subset_of_mem_Ioc {α : Type*} [linear_order α] {a b c d : α}
-  (ha : a ∈ Ioc c d) (hb : b ∈ Ioc c d) : Ι a b ⊆ Ι c d :=
-begin
-   rw interval_oc_of_le (ha.1.le.trans ha.2),
-   exact Ioc_subset_Ioc (le_min ha.1.le hb.1.le) (max_le ha.2 hb.2)
-end
-
 /- near `set.Iic_union_Ici` -/
-lemma Iic_union_Ici' {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :
+lemma Iic_union_Ici_of_ge {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :
   Iic a ∪ Ici b = univ :=
 eq_univ_of_forall $ λ x, (le_total x a).imp id $ le_trans h
 
@@ -57,27 +50,12 @@ lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : finite (f ⁻�
   (hs : s ⊆ range f) : finite s :=
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }
 
-@[simp] lemma mk_diag_preimage_prod (s t : set α) :
-  (λ (a : α), (a, a))⁻¹' (s ×ˢ t) = s ∩ t :=
+@[simp] lemma diag_preimage_prod (s t : set α) :
+  (λ a, (a, a)) ⁻¹' (s ×ˢ t) = s ∩ t :=
 rfl
 
-@[simp] lemma mk_diag_preimage_prod_self (s : set α) :
-  (λ (a : α), (a, a))⁻¹' (s ×ˢ s) = s :=
+@[simp] lemma diag_preimage_prod_self (s : set α) :
+  (λ a, (a, a)) ⁻¹' (s ×ˢ s) = s :=
 s.inter_self
 
 end set
-
-lemma has_mem.mem.mul {a b : ℝ} (ha : a ∈ (set.Icc 0 1 : set ℝ)) (hb : b ∈ (set.Icc 0 1 : set ℝ)) :
-  a*b ∈ (set.Icc 0 1 : set ℝ) :=
-begin
-  rw mem_Icc at *,
-  split ; nlinarith
-end
-
-lemma int.fract.mem_Ico {α : Type*} [linear_ordered_ring α] [floor_ring α] (a : α) :
-  int.fract a ∈ (set.Ico 0 1 : set α) :=
-⟨int.fract_nonneg a, int.fract_lt_one a⟩
-
-lemma int.fract.mem_Icc {α : Type*} [linear_ordered_ring α] [floor_ring α] (a : α) :
-  int.fract a ∈ (set.Icc 0 1 : set α) :=
-Ico_subset_Icc_self (int.fract.mem_Ico a)
