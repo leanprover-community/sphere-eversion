@@ -8,7 +8,7 @@ open_locale topological_space
 
 section
 
-variables {ι k : Type*} [fintype ι]
+variables {ι ι' k : Type*} [fintype ι] [fintype ι']
 variables [nondiscrete_normed_field k] {Z : Type*} [normed_group Z] [normed_space k Z]
 variables {m : with_top ℕ}
 
@@ -16,9 +16,9 @@ lemma cont_diff_apply (i : ι) :
   cont_diff k m (λ (f : ι → Z), f i) :=
 (continuous_linear_map.proj i : (ι → Z) →L[k] Z).cont_diff
 
-lemma cont_diff_apply_apply (i j : ι) :
-  cont_diff k m (λ (f : ι → ι → Z), f j i) :=
-(@cont_diff_apply _ _ _ _ Z _ _ m i).comp (@cont_diff_apply _ _ _ _ (ι → Z) _ _ m j)
+lemma cont_diff_apply_apply (i : ι) (j : ι') :
+  cont_diff k m (λ (f : ι → ι' → Z), f i j) :=
+(@cont_diff_apply _ _ _ _ Z _ _ m j).comp (@cont_diff_apply _ _ _ _ (ι' → Z) _ _ m i)
 
 end
 
@@ -26,14 +26,8 @@ lemma is_compact.bdd_above_norm {X : Type*} [topological_space X] {E : Type*} [n
   {s : set X} (hs : is_compact s) {f : X → E} (hf : continuous f) : ∃ M > 0, ∀ x ∈ s, ∥f x∥ ≤ M :=
 begin
   cases (hs.image (continuous_norm.comp hf)).bdd_above with M hM,
-  rcases s.eq_empty_or_nonempty with rfl | ⟨⟨x₀, x₀_in⟩⟩,
-  { use [1, zero_lt_one],
-    simp },
-  { use M + 1,
-    split,
-    { linarith [(norm_nonneg (f x₀)).trans (hM (set.mem_image_of_mem (norm ∘ f) x₀_in))] },
-    { intros x x_in,
-      linarith [hM (set.mem_image_of_mem (norm ∘ f) x_in)] } }
+  refine ⟨max 1 M, zero_lt_one.trans_le (le_max_left _ _), λ x hx, _⟩,
+  exact le_max_of_le_right (hM (set.mem_image_of_mem (norm ∘ f) hx))
 end
 
 namespace real
@@ -67,16 +61,12 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
           {n : with_top ℕ}
 
 lemma has_fderiv_at_prod_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
-begin
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
-end
+by simp_rw [has_fderiv_at_iff_is_o_nhds_zero, inl_apply, prod.mk_sub_mk, add_sub_cancel', sub_self,
+  ← prod.zero_eq_mk, asymptotics.is_o_zero]
 
 lemma has_fderiv_at_prod_right (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
-begin
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
-end
+by simp_rw [has_fderiv_at_iff_is_o_nhds_zero, inr_apply, prod.mk_sub_mk, add_sub_cancel', sub_self,
+  ← prod.zero_eq_mk, asymptotics.is_o_zero]
 
 lemma cont_diff.fst {f : E → F × G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x, (f x).fst) :=
 cont_diff_fst.comp hf
@@ -93,29 +83,21 @@ hf.comp cont_diff_snd
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ e, φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
-begin
-  rw show (λ e, φ e f₀) = (uncurry φ) ∘ (λ e, (e, f₀)), by { ext e, simp },
-  refine h.comp e₀ _,
-  apply has_fderiv_at_prod_left
-end
+h.comp e₀ $ has_fderiv_at_prod_left e₀ f₀
 
 lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
-begin
-  rw show (λ f, φ e₀ f) = (uncurry φ) ∘ (λ f, (e₀, f)), by { ext f, simp },
-  refine h.comp _ _,
-  exact has_fderiv_at_prod_right e₀ f₀
-end
+h.comp f₀ $ has_fderiv_at_prod_right e₀ f₀
 
 variable (𝕜)
 
 /-- The first partial derivative of a binary function. -/
-def partial_fderiv_fst {F : Type*} (φ : E → F → G) :=
+def partial_fderiv_fst {F : Type*} (φ : E → F → G) : E → F → E →L[𝕜] G :=
 λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ e, φ e f₀) e₀
 
 /-- The second partial derivative of a binary function. -/
-def partial_fderiv_snd {E : Type*} (φ : E → F → G) :=
+def partial_fderiv_snd {E : Type*} (φ : E → F → G) : E → F → F →L[𝕜] G :=
 λ (e₀ : E) (f₀ : F), fderiv 𝕜 (λ f, φ e₀ f) f₀
 
 local notation `∂₁` := partial_fderiv_fst
@@ -133,7 +115,6 @@ lemma fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ 
   ∂₂ 𝕜 φ e₀ f₀ = φ'.comp (inr 𝕜 E F) :=
 h.partial_snd.fderiv
 
-
 lemma differentiable_at.has_fderiv_at_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
   (h : differentiable_at 𝕜 (uncurry φ) (e₀, f₀)) :
 has_fderiv_at (λ e, φ e f₀) (partial_fderiv_fst 𝕜 φ e₀ f₀) e₀ :=
@@ -142,23 +123,8 @@ begin
   exact h.has_fderiv_at.partial_fst
 end
 
-lemma cont_diff_prod_left (f₀ : F) : cont_diff 𝕜 ⊤ (λ e : E, (e, f₀)) :=
-begin
-  rw cont_diff_top_iff_fderiv,
-  split,
-  { intro e₀,
-    exact (has_fderiv_at_prod_left e₀ f₀).differentiable_at },
-  { dsimp only,
-    rw show fderiv 𝕜 (λ (e : E), (e, f₀)) = λ (e : E), inl 𝕜 E F,
-      from  funext (λ e : E, (has_fderiv_at_prod_left e f₀).fderiv),
-    exact cont_diff_const }
-end
-
-lemma has_fderiv_at_prod_mk (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
-begin
-  rw has_fderiv_at_iff_is_o_nhds_zero,
-  simp [asymptotics.is_o_zero]
-end
+lemma cont_diff_prod_left (f₀ : F) {n : with_top ℕ} : cont_diff 𝕜 n (λ e : E, (e, f₀)) :=
+cont_diff_id.prod cont_diff_const
 
 lemma differentiable_at.has_fderiv_at_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
   (h : differentiable_at 𝕜 (uncurry φ) (e₀, f₀)) :
@@ -168,25 +134,16 @@ begin
   exact h.has_fderiv_at.partial_snd
 end
 
-lemma cont_diff_prod_mk (e₀ : E) : cont_diff 𝕜 ⊤ (λ f : F, (e₀, f)) :=
-begin
-  rw cont_diff_top_iff_fderiv,
-  split,
-  { intro f₀,
-    exact (has_fderiv_at_prod_mk e₀ f₀).differentiable_at },
-  { dsimp only,
-    rw show fderiv 𝕜 (λ (f : F), (e₀, f)) = λ (f : F), inr 𝕜 E F,
-      from  funext (λ f : F, (has_fderiv_at_prod_mk e₀ f).fderiv),
-    exact cont_diff_const }
-end
+lemma cont_diff_prod_mk (e₀ : E) {n : with_top ℕ} : cont_diff 𝕜 n (λ f : F, (e₀, f)) :=
+cont_diff_const.prod cont_diff_id
 
 lemma cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
   (h : cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : cont_diff 𝕜 n (λ e, φ e f₀) :=
-h.comp ((cont_diff_prod_left f₀).of_le le_top)
+h.comp $ cont_diff_prod_left f₀
 
 lemma cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
   (h : cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : cont_diff 𝕜 n (λ f, φ e₀ f) :=
-h.comp ((cont_diff_prod_mk e₀).of_le le_top)
+h.comp $ cont_diff_prod_mk e₀
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
@@ -202,7 +159,6 @@ def continuous_linear_map.comp_rightL (φ  : E →L[𝕜] F) : (F →L[𝕜] G) 
     { intros c ψ,
       rw smul_comp },
     { intros ψ,
-      change ∥ψ.comp φ∥ ≤ ∥φ∥ * ∥ψ∥,
       rw mul_comm,
       apply op_norm_comp_le }
   end }
@@ -270,11 +226,13 @@ lemma partial_fderiv_snd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
 by simp only [partial_fderiv_snd_eq_smul_right, smul_right_apply, one_apply, one_smul]
 
 @[to_additive]
-lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (m * n : α) :=
+lemma with_top.le_mul_self {α : Type*} [canonically_ordered_monoid α] (n m : α) :
+  (n : with_top α) ≤ (m * n : α) :=
 with_top.coe_le_coe.mpr le_mul_self
 
 @[to_additive]
-lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] (n m : α) : (n : with_top α) ≤ (n * m : α) :=
+lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] (n m : α) :
+  (n : with_top α) ≤ (n * m : α) :=
 with_top.coe_le_coe.mpr le_self_mul
 
 lemma cont_diff.of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
