@@ -42,7 +42,7 @@ lemma Ioc_subset_interval_oc_self {α : Type*} [linear_order α] {a b : α} :
 Ioc_subset_Ioc (min_le_left a b) (le_max_right a b)
 
 /- near `set.Iic_union_Ici` -/
-lemma Iic_union_Ici_of_ge {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :
+lemma Iic_union_Ici_of_le {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :
   Iic a ∪ Ici b = univ :=
 eq_univ_of_forall $ λ x, (le_total x a).imp id $ le_trans h
 

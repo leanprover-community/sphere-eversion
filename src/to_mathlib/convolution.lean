@@ -4,11 +4,13 @@ import measure_theory.measure.haar_lebesgue
 import measure_theory.group.integration
 import to_mathlib.measure_theory.parametric_interval_integral
 import to_mathlib.analysis.cont_diff_bump
+import to_mathlib.order.filter.small_sets
 import analysis.calculus.fderiv_measurable
 import analysis.calculus.specific_functions
 
 noncomputable theory
 open topological_space measure_theory function set measure_theory.measure
+open finite_dimensional continuous_linear_map metric
 open_locale pointwise topological_space nnreal measure_theory
 open filter (hiding map_map map_id map map_id')
 
@@ -35,29 +37,6 @@ TODO:
   Perhaps we should reverse this.
 
 -/
-
--- section deriv_integral
--- open metric
-
--- variables {α : Type*} [measurable_space α] {μ : measure α} {𝕜 : Type*} [is_R_or_C 𝕜]
---           {E : Type*} [normed_group E] [normed_space ℝ E] [normed_space 𝕜 E]
---           [complete_space E] [second_countable_topology E]
---           [measurable_space E] [borel_space E]
-
--- lemma has_deriv_at_integral_of_dominated_of_deriv_le {F : 𝕜 → α → E} {F' : 𝕜 → α → E}
---   {x₀ : 𝕜} {bound : α → ℝ}
---   {ε : ℝ} (ε_pos : 0 < ε)
---   (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_measurable (F x) μ)
---   (hF_int : integrable (F x₀) μ)
---   (hF'_meas : ae_measurable (F' x₀) μ)
---   (h_bound : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, ∥F' x a∥ ≤ bound a)
---   (bound_integrable : integrable bound μ)
---   (h_diff : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, has_deriv_at (λ x, F x a) (F' x a) x) :
---   has_deriv_at (λ x, ∫ a, F x a ∂μ) (∫ a, F' x₀ a ∂μ) x₀ :=
--- (has_deriv_at_integral_of_dominated_loc_of_deriv_le ε_pos hF_meas hF_int hF'_meas h_bound
---   bound_integrable h_diff).2
-
--- end deriv_integral
 
 namespace measure_theory
 
@@ -95,36 +74,7 @@ by simp_rw [dist_eq_norm, ← map_sub, f.le_op_norm]
 
 end op_norm
 
-open metric
-section
 
-variables {α : Type*} [measurable_space α]
--- [topological_space α]
--- [opens_measurable_space α]
-{μ : measure α}
--- [is_locally_finite_measure μ]
-  {𝕜 : Type*} [is_R_or_C 𝕜]
-          {E : Type*} [normed_group E] [normed_space ℝ E] [normed_space 𝕜 E]
-          [complete_space E]
-          {H : Type*} [normed_group H] --[normed_space ℝ H]
-          [normed_space 𝕜 H]
-
-          -- [proper_space H]
-
--- maybe: make F' explicit
-lemma has_fderiv_at_integral_of_dominated_of_fderiv_le' {F : H → α → E} (F' : H → α → (H →L[𝕜] E))
-  {x₀ : H} {bound : α → ℝ}
-  {ε : ℝ} (ε_pos : 0 < ε)
-  (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) μ)
-  (hF_int : integrable (F x₀) μ)
-  (hF'_meas : ae_strongly_measurable (F' x₀) μ)
-  (h_bound : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, ∥F' x a∥ ≤ bound a)
-  (bound_integrable : integrable (bound : α → ℝ) μ)
-  (h_diff : ∀ᵐ a ∂μ, ∀ x ∈ ball x₀ ε, has_fderiv_at (λ x, F x a) (F' x a) x) :
-  has_fderiv_at (λ x, ∫ a, F x a ∂μ) (∫ a, F' x₀ a ∂μ) x₀ :=
-has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas hF_int hF'_meas h_bound bound_integrable h_diff
-
-end
 
 variables {𝕜 G G₀ X Y M R E E' E'' F : Type*}
 
@@ -165,10 +115,6 @@ lemma map_zero_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} : L x 0 = 0 :=
 
 lemma continuous₂ (L : E →L[𝕜] E' →L[𝕜] F) : continuous (uncurry (λ x y, L x y)) :=
 L.is_bounded_bilinear_map.continuous
-
-lemma continuous_comp₂ [topological_space X] (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {g : X → E'}
-  (hf : continuous f) (hg : continuous g) : continuous (λ x, L (f x) (g x)) :=
-L.continuous₂.comp₂ hf hg
 
 lemma has_fderiv_at_const_left [normed_group X] [normed_space 𝕜 X]
   (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E'} {f' : X →L[𝕜] E'}
@@ -219,7 +165,7 @@ variables
 namespace measure_theory
 
 section integrable
-open measure topological_space
+
 -- variables {f : G → E} {g : G} [measurable_space G] [normed_group E] [second_countable_topology E] [normed_space ℝ E] [complete_space E] [measurable_space E] [borel_space E] [normed_group F] [measurable_space F] [opens_measurable_space F] [group G] [has_measurable_mul G] [has_measurable_inv G]
 variables [group G] [has_measurable_mul G] [has_measurable_inv G]
 
@@ -367,11 +313,9 @@ end mul
 
 end measure_theory
 
-
-
 end general_measure
 
-open measure_theory measure_theory.measure
+open measure_theory
 
 section preparation
 
@@ -385,11 +329,11 @@ section
 variables [add_group G] [topological_space G] [has_continuous_sub G]
 lemma continuous.convolution_integrand_snd (hf : continuous f) (hg : continuous g) (x : G) :
   continuous (λ t, L (f t) (g (x - t))) :=
-L.continuous_comp₂ hf (hg.comp $ continuous_const.sub continuous_id)
+L.continuous₂.comp₂ hf (hg.comp $ continuous_const.sub continuous_id)
 
 lemma continuous.convolution_integrand_swap_snd (hf : continuous f) (hg : continuous g) (x : G) :
   continuous (λ t, L (f (x - t)) (g t)) :=
-L.continuous_comp₂ (hf.comp $ continuous_const.sub continuous_id) hg
+L.continuous₂.comp₂ (hf.comp $ continuous_const.sub continuous_id) hg
 end
 
 section
@@ -656,21 +600,20 @@ end sigma_finite
 
 lemma continuous.convolution_integrand_fst (hg : continuous g) (t : G) :
   continuous (λ x, L (f t) (g (x - t))) :=
-L.continuous_comp₂ continuous_const $ hg.comp $ continuous_id.sub continuous_const
+L.continuous₂.comp₂ continuous_const $ hg.comp $ continuous_id.sub continuous_const
 
 lemma bdd_above.convolution_exists_at [sigma_compact_space G] {x₀ : G}
-  (hf : integrable_on f (tsupport (λ t, L (f t) (g (x₀ - t)))) μ)
+  {s : set G} (hs : measurable_set s) (h2s : support (λ t, L (f t) (g (x₀ - t))) ⊆ s)
+  (hf : integrable_on f s μ)
   (hmf : ae_strongly_measurable f μ)
-  (hbg : bdd_above ((λ i, ∥g i∥) '' ((λ t, x₀ - t) ⁻¹' tsupport (λ t, L (f t) (g (x₀ - t))))))
+  (hbg : bdd_above ((λ i, ∥g i∥) '' ((λ t, x₀ - t) ⁻¹' s)))
   (hmg : ae_strongly_measurable g μ) :
     convolution_exists_at f g x₀ L μ :=
 begin
   simp at hbg,
-  let K := tsupport (λ t, L (f t) (g (x₀ - t))),
-  have hK : measurable_set K := is_closed_closure.measurable_set,
-  let K' := (λ t, x₀ - t) ⁻¹' K,
+  let s' := (λ t, x₀ - t) ⁻¹' s,
   have : ∀ᵐ (t : G) ∂μ,
-    ∥L (f t) (g (x₀ - t))∥ ≤ K.indicator (λ t, ∥L∥ * ∥f t∥ * ⨆ i : K', ∥g i∥) t,
+    ∥L (f t) (g (x₀ - t))∥ ≤ s.indicator (λ t, ∥L∥ * ∥f t∥ * ⨆ i : s', ∥g i∥) t,
   { refine eventually_of_forall _,
     refine le_indicator (λ t ht, _) (λ t ht, _),
     { refine (L.le_op_norm₂ _ _).trans _,
@@ -678,10 +621,10 @@ begin
         (le_csupr_set hbg $ mem_preimage.mpr _)
         (mul_nonneg (norm_nonneg _) (norm_nonneg _)),
       rwa sub_sub_cancel },
-    { have : t ∉ support (λ t, L (f t) (g (x₀ - t))) := mt (λ h, subset_closure h) ht,
+    { have : t ∉ support (λ t, L (f t) (g (x₀ - t))) := mt (λ h, h2s h) ht,
       rw [nmem_support.mp this, norm_zero] } },
   refine integrable.mono' _ _ this,
-  { rw [integrable_indicator_iff hK], exact (hf.norm.const_mul _).mul_const _ },
+  { rw [integrable_indicator_iff hs], exact (hf.norm.const_mul _).mul_const _ },
   { exact (hmf.convolution_integrand_snd L hmg x₀) }
 end
 
@@ -689,7 +632,8 @@ lemma has_compact_support.convolution_exists_at [sigma_compact_space G] {x₀ : 
   (h : has_compact_support (λ t, L (f t) (g (x₀ - t)))) (hf : locally_integrable f μ)
   (hg : continuous g) : convolution_exists_at f g x₀ L μ :=
 (((homeomorph.sub_left x₀).compact_preimage.mpr h).bdd_above_image hg.norm.continuous_on)
-  .convolution_exists_at L (hf h) hf.ae_strongly_measurable (hg.ae_strongly_measurable)
+  .convolution_exists_at L is_closed_closure.measurable_set subset_closure (hf h)
+  hf.ae_strongly_measurable (hg.ae_strongly_measurable)
 
 lemma has_compact_support.convolution_exists_right [sigma_compact_space G]
   (hf : locally_integrable f μ) (hcg : has_compact_support g) (hg : continuous g) :
@@ -699,7 +643,7 @@ begin
   refine has_compact_support.convolution_exists_at L _ hf hg,
   refine (hcg.comp_homeomorph (homeomorph.sub_left x₀)).mono _,
   refine λ t, mt (λ ht : g (x₀ - t) = 0, _),
-  simp [ht]
+  simp_rw [ht, L.map_zero_right]
 end
 
 lemma has_compact_support.convolution_exists_left_of_continuous_right [sigma_compact_space G]
@@ -710,7 +654,7 @@ begin
   refine has_compact_support.convolution_exists_at L _ hf hg,
   refine hcf.mono _,
   refine λ t, mt (λ ht : f t = 0, _),
-  simp [ht]
+  simp_rw [ht, L.map_zero_left]
 end
 
 lemma has_compact_support.convolution_exists_left [is_neg_invariant μ] [sigma_compact_space G]
@@ -759,7 +703,7 @@ begin
   { exact eventually_of_forall
       (hf.ae_strongly_measurable.convolution_integrand_snd L hg.ae_strongly_measurable) },
   { rw [integrable_indicator_iff hK'.measurable_set], exact ((hf hK').norm.const_mul _).mul_const _ },
-  { exact eventually_of_forall (λ t, (L.continuous_comp₂ continuous_const $
+  { exact eventually_of_forall (λ t, (L.continuous₂.comp₂ continuous_const $
       hg.comp $ continuous_id.sub $ by apply continuous_const).continuous_at) }
 end
 
@@ -804,28 +748,37 @@ section normed_space
 variables [is_R_or_C 𝕜] --[complete_space 𝕜]
 variables [normed_group E] [normed_space 𝕜 E]
 variables [normed_group E'] [normed_space 𝕜 E']
-variables [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] [smul_comm_class 𝕜 ℝ F]
-variables [normed_group G] [normed_space ℝ G] [normed_space 𝕜 G] [smul_comm_class 𝕜 ℝ G]
+variables [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] --[smul_comm_class 𝕜 ℝ F]
+variables [normed_group G] -- [normed_space ℝ G] [normed_space 𝕜 G] --[smul_comm_class 𝕜 ℝ G]
 variables {f f' : G → E} {g g' : G → E'} {x x' : 𝕜}
 variables {n : with_top ℕ}
 variables (L : E →L[𝕜] E' →L[𝕜] F)
 variables [complete_space E]
 variables [complete_space E']
 variables [complete_space F]
-variables [measurable_space G] [borel_space G] {μ : measure G} [second_countable_topology G]
+variables [measurable_space G] {μ : measure G}
+variables [borel_space G] [second_countable_topology G]
 variables [is_add_left_invariant μ] [sigma_finite μ]
-variables [sigma_compact_space G] [proper_space G] [is_locally_finite_measure μ]
+variables [sigma_compact_space G] --[proper_space G] [is_locally_finite_measure μ]
 
-lemma dist_convolution_le' [normed_space ℝ E] {x₀ : G} {R ε : ℝ}
+lemma dist_convolution_le' {x₀ : G} {R ε : ℝ}
   (hif : integrable f μ)
-  (h : convolution_exists_at f g x₀ L μ)
   (hR : 0 < R) -- todo: remove this assumption(?)
   (hf : support f ⊆ ball (0 : G) R)
+  (hmg : ae_strongly_measurable g μ)
   (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
   dist ((f ⋆[L, μ] g) x₀) (∫ (t : G), (L (f t)) (g x₀) ∂μ) ≤ ∥L∥ * ∫ x, ∥f x∥ ∂μ * ε :=
 begin
-  have hε : 0 ≤ ε,
-  { convert hg x₀ (mem_ball_self hR), rw dist_self },
+  have hε : 0 ≤ ε, { convert hg x₀ (mem_ball_self hR), rw dist_self },
+  have hfg : convolution_exists_at f g x₀ L μ,
+  { refine bdd_above.convolution_exists_at L measurable_set_ball (subset_trans _ hf)
+      hif.integrable_on hif.ae_strongly_measurable _ hmg,
+    { refine λ t, mt (λ ht : f t = 0, _), simp_rw [ht, L.map_zero_left] },
+    rw [bdd_above_def],
+    refine ⟨∥g x₀∥ + ε, _⟩,
+    rintro _ ⟨x, hx, rfl⟩,
+    refine norm_le_norm_add_const_of_dist_le (hg x _),
+    rwa [mem_ball_iff_norm, norm_sub_rev, ← mem_ball_zero_iff] },
   have h2 : ∀ t, dist (L (f t) (g (x₀ - t))) (L (f t) (g x₀)) ≤ ∥L (f t)∥ * ε,
   { intro t, by_cases ht : t ∈ support f,
     { have h2t := hf ht,
@@ -838,7 +791,7 @@ begin
       simp_rw [ht, L.map_zero_left, L.map_zero, norm_zero, zero_mul, dist_self] } },
   simp_rw [convolution_def],
   simp_rw [dist_eq_norm] at h2 ⊢,
-  rw [← integral_sub h.integrable], swap, { exact (L.flip (g x₀)).integrable_comp hif },
+  rw [← integral_sub hfg.integrable], swap, { exact (L.flip (g x₀)).integrable_comp hif },
   refine (norm_integral_le_of_norm_le ((L.integrable_comp hif).norm.mul_const ε)
     (eventually_of_forall h2)).trans _,
   rw [integral_mul_right],
@@ -848,9 +801,26 @@ begin
   rw [integral_mul_left]
 end
 
+lemma dist_convolution_le [normed_space ℝ E'] {f : G → ℝ} {x₀ : G} {R ε : ℝ}
+  (hR : 0 < R) -- todo: remove this assumption(?)
+  (hf : support f ⊆ ball (0 : G) R)
+  (hnf : ∀ x, 0 ≤ f x)
+  (hintf : ∫ x, f x ∂μ = 1)
+  (hmg : ae_strongly_measurable g μ)
+  (hg : ∀ x ∈ ball x₀ R, dist (g x) (g x₀) ≤ ε) :
+  dist ((f ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) (g x₀) ≤ ε :=
+begin
+  have hε : 0 ≤ ε, { convert hg x₀ (mem_ball_self hR), rw dist_self },
+  have hif : integrable f μ,
+  { by_contra hif, exact zero_ne_one ((integral_undef hif).symm.trans hintf) },
+  convert (dist_convolution_le' _ hif hR hf hmg hg).trans _,
+  { simp_rw [lsmul_apply, integral_smul_const, hintf, one_smul] },
+  { simp_rw [real.norm_of_nonneg (hnf _), hintf, mul_one],
+    convert (mul_le_mul_of_nonneg_right op_norm_lsmul_le hε).trans_eq (one_mul ε) }
+end
 
 /-- We can simplify the RHS further if we assume `f` is integrable, but also if `L = (•)`. -/
-lemma convolution_eq_right' [normed_space ℝ E] {x₀ : G} {R : ℝ}
+lemma convolution_eq_right' {x₀ : G} {R : ℝ}
   (hf : support f ⊆ ball (0 : G) R)
   (hg : ∀ x ∈ ball x₀ R, g x = g x₀) : (f ⋆[L, μ] g) x₀ = ∫ (t : G), (L (f t)) (g x₀) ∂μ :=
 begin
@@ -866,11 +836,28 @@ begin
   simp_rw [convolution_def, h2],
 end
 
+lemma convolution_tendsto [normed_space ℝ E] {ι} {l : filter ι} {φ : ι → G → ℝ}
+  (hnφ : ∀ i x, 0 ≤ φ i x)
+  (hiφ : ∀ i, ∫ s, φ i s ∂μ = 1)
+  (hφ : tendsto (λ n, support (φ n)) l (𝓝 0).small_sets)
+  {g : G → E} (hmg : ae_strongly_measurable g μ) {x₀ : G} (hcg : continuous_at g x₀) :
+  tendsto (λ i, (φ i ⋆[lsmul ℝ ℝ, μ] g : G → E) x₀) l (𝓝 (g x₀)) :=
+begin
+  simp_rw [tendsto_small_sets_iff] at hφ,
+  rw [metric.continuous_at_iff] at hcg,
+  rw [metric.tendsto_nhds],
+  intros ε hε,
+  rcases hcg (ε / 2) (half_pos hε) with ⟨δ, hδ, hgδ⟩,
+  refine (hφ (ball (0 : G) δ) $ ball_mem_nhds _ hδ).mono (λ i hi, _),
+  exact (dist_convolution_le hδ hi (hnφ i) (hiφ i) hmg (λ x hx, (hgδ hx.out).le)).trans_lt
+    (half_lt_self hε)
+end
+
 end normed_space
 
 namespace cont_diff_bump_of_inner
 section inner_product_space
-open finite_dimensional continuous_linear_map
+
 variables {f' f : G → E} {g' g : G → E'} {x' x : 𝕜} {n : with_top ℕ} [is_R_or_C 𝕜] [normed_group E] [normed_space 𝕜 E] [normed_group E'] [normed_space ℝ E'] [normed_space 𝕜 E'] [normed_group F] [normed_space ℝ F] [normed_space 𝕜 F] [smul_comm_class 𝕜 ℝ F] [inner_product_space ℝ G] [normed_space 𝕜 G] [smul_comm_class 𝕜 ℝ G] [complete_space E] [second_countable_topology E] [measurable_space E] [borel_space E] [complete_space E'] [second_countable_topology E'] [measurable_space E'] [borel_space E'] [complete_space F] [second_countable_topology F] [measurable_space F] [borel_space F] [measurable_space G] [borel_space G] [second_countable_topology G] [normed_group E''] [normed_space ℝ E''] [normed_space 𝕜 E''] [smul_comm_class 𝕜 ℝ E''] [complete_space E''] [second_countable_topology E''] [measurable_space E''] [borel_space E''] {μ : measure G} (L : E →L[𝕜] E' →L[𝕜] F)
 [is_add_haar_measure μ] [sigma_compact_space G] [proper_space G]
 variables [finite_dimensional ℝ G]
@@ -886,47 +873,33 @@ lemma normed_convolution_eq_right {x₀ : G}
 by { simp_rw [convolution_eq_right' _ φ.support_normed_eq.subset hg, lsmul_apply],
   exact integral_normed_smul μ φ (g x₀) }
 
-lemma dist_normed_convolution_le' {x₀ : G} {ε : ℝ}
-  (h : convolution_exists_at (φ.normed μ) g x₀ (lsmul ℝ ℝ : ℝ →L[ℝ] E' →L[ℝ] E') μ)
+lemma dist_normed_convolution_le {x₀ : G} {ε : ℝ}
+  (hmg : ae_strongly_measurable g μ)
   (hg : ∀ x ∈ ball x₀ φ.R, dist (g x) (g x₀) ≤ ε) :
   dist ((φ.normed μ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) (g x₀) ≤ ε :=
-begin
-  have hε : 0 ≤ ε,
-  { convert hg x₀ (mem_ball_self φ.R_pos), rw dist_self },
-  rw [← φ.integral_normed_smul μ (g x₀)],
-  refine (dist_convolution_le' _ φ.integrable_normed h φ.R_pos
-    φ.support_normed_eq.subset hg).trans _,
-  { simp_rw [real.norm_eq_abs, abs_eq_self.mpr (φ.nonneg_normed _), integral_normed, mul_one],
-    convert (mul_le_mul_of_nonneg_right op_norm_lsmul_le hε).trans_eq (one_mul ε) }
-end
-
-lemma dist_normed_convolution_le [is_neg_invariant μ] {x₀ : G} {ε : ℝ}
-  (hlg : locally_integrable g μ)
-  (hg : ∀ x ∈ ball x₀ φ.R, dist (g x) (g x₀) ≤ ε) :
-  dist ((φ.normed μ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) (g x₀) ≤ ε :=
-dist_normed_convolution_le'
-  (φ.has_compact_support_normed.convolution_exists_left _ φ.continuous_normed hlg x₀) hg
+dist_convolution_le φ.R_pos φ.support_normed_eq.subset φ.nonneg_normed φ.integral_normed hmg hg
 
 lemma convolution_tendsto' [is_neg_invariant μ] {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
   {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
-  (hlg : locally_integrable g μ) {x₀ : G} (hcg : continuous_at g x₀) :
+  (hmg : ae_strongly_measurable g μ) {x₀ : G} (hcg : continuous_at g x₀) :
   tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
 begin
-  simp_rw [normed_group.tendsto_nhds_zero, real.norm_eq_abs, abs_eq_self.mpr (φ _).R_pos.le] at hφ,
-  rw [metric.continuous_at_iff] at hcg,
-  rw [metric.tendsto_nhds],
-  intros ε hε,
-  rcases hcg (ε / 2) (half_pos hε) with ⟨δ, hδ, hgδ⟩,
-  refine (hφ δ hδ).mono (λ i hi, _),
-  refine (dist_normed_convolution_le hlg (λ x hx, _)).trans_lt (half_lt_self hε),
-  exact (hgδ $ hx.out.trans hi).le,
+  refine convolution_tendsto (λ i, (φ i).nonneg_normed) (λ i, (φ i).integral_normed) _ hmg hcg,
+  rw [normed_group.tendsto_nhds_zero] at hφ,
+  rw [tendsto_small_sets_iff],
+  intros t ht,
+  rcases metric.mem_nhds_iff.mp ht with ⟨ε, hε, ht⟩,
+  refine (hφ ε hε).mono (λ i hi, subset_trans _ ht),
+  simp_rw [(φ i).support_normed_eq],
+  rw [real.norm_eq_abs, abs_eq_self.mpr (φ i).R_pos.le] at hi,
+  exact ball_subset_ball hi.le
 end
 
 lemma convolution_tendsto [is_neg_invariant μ] {ι} {φ : ι → cont_diff_bump_of_inner (0 : G)}
   {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
   (hg : continuous g) (x₀ : G) :
   tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀) l (𝓝 (g x₀)) :=
-convolution_tendsto' hφ hg.locally_integrable hg.continuous_at
+convolution_tendsto' hφ hg.ae_strongly_measurable hg.continuous_at
 
 end inner_product_space
 end cont_diff_bump_of_inner

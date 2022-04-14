@@ -5,12 +5,14 @@ import analysis.normed.group.basic
 open_locale filter topological_space
 open filter set metric
 
-variables {α ι : Type*}
+variables {α β ι : Type*}
 
-def filter.small_sets (f : filter α) : filter (set α) :=
+namespace filter
+
+def small_sets (f : filter α) : filter (set α) :=
 ⨅ t ∈ f, 𝓟 {s | s ⊆ t}
 
-lemma filter.has_basis_small_sets (f : filter α) :
+lemma has_basis_small_sets (f : filter α) :
   has_basis f.small_sets (λ t : set α, t ∈ f) (λ t, {s | s ⊆ t}) :=
 begin
   apply has_basis_binfi_principal _ _,
@@ -25,7 +27,7 @@ begin
     exact univ_mem },
 end
 
-lemma filter.has_basis.small_sets {f : filter α} {p : ι → Prop} {s : ι → set α}
+lemma has_basis.small_sets {f : filter α} {p : ι → Prop} {s : ι → set α}
   (h : has_basis f p s) : has_basis f.small_sets p (λ i, {u | u ⊆ s i}) :=
 ⟨begin
   intros t,
@@ -41,16 +43,14 @@ lemma filter.has_basis.small_sets {f : filter α} {p : ι → Prop} {s : ι → 
     exact ⟨s i, h.mem_of_mem hi, hui⟩ }
 end⟩
 
--- sanity check
-example {κ : Type*} {a : filter κ} {f : filter α} {g : κ → set α} :
-  tendsto g a f.small_sets ↔ ∀ t : set α, t ∈ f → ∀ᶠ k in a, g k ⊆ t :=
-f.has_basis_small_sets.tendsto_right_iff
+lemma tendsto_small_sets_iff {la : filter α} {lb : filter β} {f : α → set β} :
+  tendsto f la lb.small_sets ↔ ∀ t ∈ lb, ∀ᶠ x in la, f x ⊆ t :=
+(has_basis_small_sets lb).tendsto_right_iff
 
-
-lemma tendsto_sup_dist {X Y : Type*} [topological_space X] [metric_space Y]
+lemma tendsto_sup_dist {X Y ι : Type*} {l : filter ι} [topological_space X] [metric_space Y]
   {f : X → Y} {t : X} (h : continuous_at f t)
-  {s : ℕ → set X} (hs : tendsto s at_top (𝓝 t).small_sets) :
-  tendsto (λ (n : ℕ), ⨆ x ∈ s n, dist (f x) (f t)) at_top (𝓝 0) :=
+  {s : ι → set X} (hs : tendsto s l (𝓝 t).small_sets) :
+  tendsto (λ i, ⨆ x ∈ s i, dist (f x) (f t)) l (𝓝 0) :=
 begin
   rw metric.tendsto_nhds,
   have nonneg : ∀ n, 0 ≤ ⨆ x ∈ s n, dist (f x) (f t),
@@ -62,3 +62,5 @@ begin
   apply lt_of_le_of_lt _ (half_lt_self ε_pos),
   exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (hn hx).out.le),
 end
+
+end filter
