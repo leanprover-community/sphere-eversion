@@ -1,7 +1,8 @@
 import data.real.nnreal
+import algebra.big_operators.finprod
 
-open real set
-open_locale nnreal interval
+open real set function
+open_locale nnreal interval big_operators
 
 lemma has_mem.mem.out {α : Type*} {p : α → Prop} {x} (h : x ∈ {y | p y}) : p x :=
 h
@@ -59,3 +60,31 @@ rfl
 s.inter_self
 
 end set
+
+
+section finprod
+/-! ## Missing finprod/finsum lemmas -/
+
+variables {M : Type*} [comm_monoid M] {ι ι' : Type*}
+
+@[to_additive]
+lemma finset.prod_equiv [decidable_eq ι] {e : ι ≃ ι'} {f : ι' → M} {s' : finset ι'} {s : finset ι}
+  (h : s = s'.image e.symm) :
+  ∏ i' in s', f i' = ∏ i in s, f (e i) :=
+begin
+  rw [h],
+  refine finset.prod_bij' (λ i' hi', e.symm i') (λ a ha, finset.mem_image_of_mem _ ha)
+    (λ a ha, by simp_rw [e.apply_symm_apply]) (λ i hi, e i) (λ a ha, _)
+    (λ a ha, e.apply_symm_apply a) (λ a ha, e.symm_apply_apply a),
+  rcases finset.mem_image.mp ha with ⟨i', hi', rfl⟩,
+  rwa [e.apply_symm_apply]
+end
+
+lemma equiv.preimage_eq_image {α β : Type*} (e : α ≃ β) (s : set β) : ⇑e ⁻¹' s = e.symm '' s :=
+s.preimage_equiv_eq_image_symm e
+
+@[to_additive]
+lemma finprod_comp_equiv {e : ι ≃ ι'} {f : ι' → M} : ∏ᶠ i', f i' = ∏ᶠ i, f (e i) :=
+(finprod_eq_of_bijective e e.bijective $ λ x, rfl).symm
+
+end finprod
