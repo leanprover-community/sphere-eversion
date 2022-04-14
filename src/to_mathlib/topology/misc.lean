@@ -108,6 +108,8 @@ begin
   rw [op_norm_lsmul]
 end
 
+lemma op_norm_lmul : ∥(lmul 𝕜 𝕜' : 𝕜' →L[𝕜] 𝕜' →L[𝕜] 𝕜')∥ = 1 := op_norm_lsmul
+
 
 end
 
