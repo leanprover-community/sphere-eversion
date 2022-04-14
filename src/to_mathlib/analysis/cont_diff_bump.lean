@@ -23,7 +23,7 @@ namespace cont_diff_bump_of_inner
 variables {𝕜 X G E : Type*} [inner_product_space ℝ G]
 variables [normed_group E] [normed_space ℝ E]
 variables [normed_group X] [normed_space ℝ X]
-variables [measurable_space E] [borel_space E] [complete_space E] [second_countable_topology E]
+variables [complete_space E]
 variables {a : G} {n : with_top ℕ}
 -- variables [nondiscrete_normed_field 𝕜] [normed_group X] [normed_space 𝕜 E]
 
@@ -88,11 +88,6 @@ rfl
 lemma nonneg_normed (φ : cont_diff_bump_of_inner a) (x : G) : 0 ≤ φ.normed μ x :=
 div_nonneg φ.nonneg $ integral_nonneg φ.nonneg'
 
-variables [borel_space G] [finite_dimensional ℝ G] [is_locally_finite_measure μ]
-
-protected lemma integrable (φ : cont_diff_bump_of_inner a) : integrable φ μ :=
-φ.continuous.integrable_of_has_compact_support φ.has_compact_support
-
 lemma cont_diff_normed (φ : cont_diff_bump_of_inner a) {n : with_top ℕ} :
   cont_diff ℝ n (φ.normed μ) :=
 φ.cont_diff.div_const
@@ -100,6 +95,17 @@ lemma cont_diff_normed (φ : cont_diff_bump_of_inner a) {n : with_top ℕ} :
 lemma continuous_normed (φ : cont_diff_bump_of_inner a) :
   continuous (φ.normed μ) :=
 φ.continuous.div_const
+
+lemma normed_sub (φ : cont_diff_bump_of_inner a) (x : G) : φ.normed μ (a - x) = φ.normed μ (a + x) :=
+by simp_rw [φ.normed_def, φ.sub]
+
+lemma normed_neg (φ : cont_diff_bump_of_inner (0 : G)) (x : G) : φ.normed μ (- x) = φ.normed μ x :=
+by simp_rw [φ.normed_def, φ.neg]
+
+variables [borel_space G] [finite_dimensional ℝ G] [is_locally_finite_measure μ]
+
+protected lemma integrable (φ : cont_diff_bump_of_inner a) : integrable φ μ :=
+φ.continuous.integrable_of_has_compact_support φ.has_compact_support
 
 variables [μ .is_open_pos_measure]
 
@@ -131,18 +137,11 @@ lemma has_compact_support_normed (φ : cont_diff_bump_of_inner a) :
   has_compact_support (φ.normed μ) :=
 by simp_rw [has_compact_support, φ.tsupport_normed_eq, is_compact_closed_ball]
 
-lemma normed_sub (φ : cont_diff_bump_of_inner a) (x : G) : φ.normed μ (a - x) = φ.normed μ (a + x) :=
-by simp_rw [φ.normed_def, φ.sub]
-
-lemma normed_neg (φ : cont_diff_bump_of_inner (0 : G)) (x : G) : φ.normed μ (- x) = φ.normed μ x :=
-by simp_rw [φ.normed_def, φ.neg]
-
 protected lemma integrable_normed (φ : cont_diff_bump_of_inner a) : integrable (φ.normed μ) μ :=
 φ.continuous_normed.integrable_of_has_compact_support φ.has_compact_support_normed
 
 variable (μ)
-lemma integral_normed_smul (φ : cont_diff_bump_of_inner a) (c : E) :
-  ∫ x, φ.normed μ x • c ∂μ = c :=
+lemma integral_normed_smul (φ : cont_diff_bump_of_inner a) (c : E) : ∫ x, φ.normed μ x • c ∂μ = c :=
 by simp_rw [integral_smul_const, φ.integral_normed, one_smul]
 variable {μ}
 
