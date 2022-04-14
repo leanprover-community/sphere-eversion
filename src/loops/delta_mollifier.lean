@@ -28,23 +28,6 @@ In this section we construct `bump (n : ℕ)`, a bump function with support in
 `Ioo (-1/(n+2)) (1/(n+2))`.
 -/
 
-lemma aux (n : ℕ) : Ioo (-(1/(n+2 : ℝ))) (1/(n+2)) ∈ 𝓝 (0 : ℝ) :=
-begin
-  have key : (0 : ℝ) < 1/(n+2),
-  { rw show (n : ℝ) + 2 = ((n+1 :ℕ) : ℝ) + 1, from by norm_cast,
-    apply nat.one_div_pos_of_nat },
-  apply Ioo_mem_nhds _ key,
-  rwa neg_lt_zero
-end
-
-lemma neg_one_div_succ_lt (n : ℕ) : -(1/(n+2 : ℝ)) < 1/(n+2) :=
-begin
-  rw neg_lt_iff_pos_add,
-  field_simp,
-  apply div_pos (zero_lt_two : (0 : ℝ) < 2),
-  exact_mod_cast (n + 1).succ_pos
-end
-
 /-- `bump n` is a bump function on `ℝ` which has support `Ioo (-(1/(n+2))) (1/(n+2))`
 and equals one on `Icc (-(1/(n+3))) (1/(n+3))`.
 -/
@@ -64,9 +47,6 @@ def bump (n : ℕ) : cont_diff_bump_of_inner (0 : ℝ) :=
 lemma support_bump (n : ℕ) : support (bump n) = Ioo (-(1/(n+2))) (1/(n+2)) :=
 by rw [(bump n).support_eq, real.ball_eq_Ioo, zero_sub, zero_add, bump]
 
-lemma tsupport_bump (n : ℕ) : tsupport (bump n) = Icc (-(1/(n+2))) (1/(n+2)) :=
-by rw [(bump n).tsupport_eq, real.closed_ball_eq_Icc, zero_sub, zero_add, bump]
-
 lemma support_bump_subset (n : ℕ) : support (bump n) ⊆ Ioc (-(1/2)) (1/2) :=
 begin
   have ineg : 1 / (n + 2 : ℝ) ≤ 1 / 2,
@@ -83,98 +63,6 @@ begin
   refine (preimage_mono (support_bump_subset n)).trans _,
   simp_rw [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]
 end
-
-lemma tsupport_bump_subset (n : ℕ) : tsupport (bump n) ⊆ Icc (-(1/2)) (1/2) :=
-by { rw [tsupport, ← closure_Ioc], exact closure_mono (support_bump_subset n), norm_num }
-
-lemma bump_nonneg (n : ℕ) (x : ℝ) : 0 ≤ bump n x :=
-(bump n).nonneg
-
-lemma continuous_bump (n : ℕ) : continuous (bump n) :=
-(bump n).continuous
-
--- def integral_bump (n : ℕ) : ℝ := ∫ t in -(1/2)..1/2, bump n t
-
--- lemma integral_bump_pos (n : ℕ) : 0 < integral_bump n :=
--- begin
---   have ineq : -(1/2 : ℝ) < 1/2, by norm_num,
---   dsimp [integral_bump],
---   rw [interval_integral.integral_eq_integral_of_support_subset (support_bump_subset n)],
---   exact (bump n).integral_pos
--- end
-
-end
-
-section finprod
-/-! ## Missing finprod/finsum lemmas -/
-
-variables {M : Type*} [comm_monoid M] {ι ι' : Type*}
-
-@[to_additive]
-lemma finset.prod_equiv [decidable_eq ι] {e : ι ≃ ι'} {f : ι' → M} {s' : finset ι'} {s : finset ι}
-  (h : s = finset.image e.symm s') :
-  ∏ i' in s', f i' = ∏ i in s, f (e i) :=
-begin
-  rw [h, finset.prod_bij' (λ i' hi', e.symm i') _ _ (λ i hi, e i)],
-  { simp },
-  { simp },
-  { rintro a ha,
-    rcases finset.mem_image.mp ha with ⟨i', hi', rfl⟩,
-    simp [hi'] },
-  { exact λ i' hi',  finset.mem_image_of_mem _ hi' },
-  { simp },
-end
-
-lemma equiv.preimage_eq_image {α β : Type*} (e : α ≃ β) (s : set β) : ⇑e ⁻¹' s = e.symm '' s :=
-by simp [e.symm.image_eq_preimage]
-
-@[to_additive]
-lemma finprod_comp_equiv {e : ι ≃ ι'} {f : ι' → M} : ∏ᶠ i', f i' = ∏ᶠ i, f (e i) :=
-begin
-  classical,
-  have supp : mul_support (λ i, f (e i)) = e ⁻¹' (mul_support f),
-  { apply mul_support_comp_eq_preimage },
-  cases (finite_or_infinite : (mul_support f).finite ∨ _) with H H,
-  { have H' : (mul_support (λ i, f (e i))).finite,
-    { rw [supp, e.preimage_eq_image],
-      exact H.image (equiv.symm e) },
-    rw [finprod_eq_prod f H, finprod_eq_prod _ H', finset.prod_equiv],
-    apply finset.coe_injective,
-    simp [e.preimage_eq_image, supp] },
-  { rw finprod_of_infinite_mul_support H,
-    rw [finprod_of_infinite_mul_support],
-    rw supp,
-    apply infinite_of_infinite_image,
-    rwa e.image_preimage }
-end
-
-end finprod
-
-section
-/-! ## The standard ℤ action on ℝ is properly discontinuous
-
-TODO: use that in to_mathlib.topology.periodic?
--/
-instance : has_vadd ℤ ℝ := ⟨λ n x, (n : ℝ) + x⟩
-
-instance : properly_discontinuous_vadd ℤ ℝ :=
-⟨begin
-  intros K L hK hL,
-  rcases eq_empty_or_nonempty K with rfl | hK' ; rcases eq_empty_or_nonempty L with rfl | hL' ;
-  try { simp },
-  have hSK:= (hK.is_lub_Sup hK').1,
-  have hIK:= (hK.is_glb_Inf hK').1,
-  have hSL:= (hL.is_lub_Sup hL').1,
-  have hIL:= (hL.is_glb_Inf hL').1,
-  apply (finite_Icc ⌈Inf L - Sup K⌉ ⌊Sup L - Inf K⌋).subset,
-  rintros n (hn : has_vadd.vadd n '' K ∩ L ≠ ∅),
-  rcases ne_empty_iff_nonempty.mp hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩,
-  split,
-  { rw int.ceil_le,
-    linarith [hIL hnk, hSK hk] },
-  { rw int.le_floor,
-    linarith [hSL hnk, hIK hk] }
-end⟩
 
 end
 
@@ -310,169 +198,12 @@ end
 
 end
 
-section small_sets
-open_locale filter
-open filter
-variables {α ι : Type*}
-
-def filter.small_sets (f : filter α) : filter (set α) :=
-⨅ t ∈ f, 𝓟 {s | s ⊆ t}
-
-lemma filter.has_basis_small_sets (f : filter α) :
-  has_basis f.small_sets (λ t : set α, t ∈ f) (λ t, {s | s ⊆ t}) :=
-begin
-  apply has_basis_binfi_principal _ _,
-  { rintros u (u_in : u ∈ f) v (v_in : v ∈ f),
-    use [u ∩ v, inter_mem u_in v_in],
-    split,
-    rintros w (w_sub : w ⊆ u ∩ v),
-    exact w_sub.trans (inter_subset_left u v),
-    rintros w (w_sub : w ⊆ u ∩ v),
-    exact w_sub.trans (inter_subset_right u v) },
-  { use univ,
-    exact univ_mem },
-end
-
-lemma filter.has_basis.small_sets {f : filter α} {p : ι → Prop} {s : ι → set α}
-  (h : has_basis f p s) : has_basis f.small_sets p (λ i, {u | u ⊆ s i}) :=
-⟨begin
-  intros t,
-  rw f.has_basis_small_sets.mem_iff,
-  split,
-  { rintro ⟨u, u_in, hu : {v : set α | v ⊆ u} ⊆ t⟩,
-    rcases h.mem_iff.mp u_in with ⟨i, hpi, hiu⟩,
-    use [i, hpi],
-    apply subset.trans _ hu,
-    intros v hv x hx,
-    exact hiu (hv hx) },
-  { rintro ⟨i, hi, hui⟩,
-    exact ⟨s i, h.mem_of_mem hi, hui⟩ }
-end⟩
-
--- sanity check
-example {κ : Type*} {a : filter κ} {f : filter α} {g : κ → set α} :
-  tendsto g a f.small_sets ↔ ∀ t : set α, t ∈ f → ∀ᶠ k in a, g k ⊆ t :=
-f.has_basis_small_sets.tendsto_right_iff
-
-end small_sets
-
-
-section
-open filter
-open_locale filter
-
-lemma tendsto_sup_dist {X Y : Type*} [topological_space X] [metric_space Y]
-  {f : X → Y} {t : X} (h : continuous_at f t)
-  {s : ℕ → set X} (hs : tendsto s at_top (𝓝 t).small_sets) :
-  tendsto (λ (n : ℕ), ⨆ x ∈ s n, dist (f x) (f t)) at_top (𝓝 0) :=
-begin
-  rw metric.tendsto_nhds,
-  have nonneg : ∀ n, 0 ≤ ⨆ x ∈ s n, dist (f x) (f t),
-    from λ n, real.bcsupr_nonneg (λ _ _, dist_nonneg),
-  simp only [dist_zero_right, real.norm_eq_abs, abs_of_nonneg, nonneg],
-  intros ε ε_pos,
-  apply ((𝓝 t).has_basis_small_sets.tendsto_right_iff.mp hs _ $
-         metric.tendsto_nhds.mp h (ε/2) (half_pos ε_pos)).mono (λ n hn, _),
-  apply lt_of_le_of_lt _ (half_lt_self ε_pos),
-  exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (hn hx).out.le),
-end
-
-end
-
-section
-variables {α E : Type*} [normed_group E]
-
-lemma support_norm (f : α → E) : support (λ a, ∥f a∥) = support f :=
-function.support_comp_eq norm (λ x, norm_eq_zero) f
-
-end
-
-section mollify_on_real
-
-/-! ## Mollifiers on ℝ -/
-open_locale filter
-open filter measure_theory
-
-variables {δ : ℕ → ℝ → ℝ} (δ_nonneg : ∀ n x, 0 ≤ δ n x) (int_δ : ∀ n, ∫ s, δ n s = 1)
-  (supp_δ : tendsto (λ n, support (δ n)) at_top (𝓝 0).small_sets)
-
-variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
-
-@[to_additive]
-lemma has_compact_mul_support_of_subset {α β : Type*} [topological_space α] [t2_space α]
-  [has_one β] {f : α → β} {K : set α} (hK : is_compact K) (hf : mul_support f ⊆ K) :
-  has_compact_mul_support f :=
-compact_of_is_closed_subset hK (is_closed_mul_tsupport f) (closure_minimal hf hK.is_closed)
-
-/-
-lemma tendsto_truc {δ : ℕ → ℝ → ℝ} (δ_nonneg : ∀ n x, 0 ≤ δ n x) (int_δ : ∀ n, ∫ s, δ n s = 1)
-  (supp_δ : tendsto (λ n, support (δ n)) at_top (𝓝 0).small_sets) (δ_cont : ∀ n, continuous (δ n))
-  (δ_meas_supp : ∀ n, measurable_set $ support (δ n))
-  {f : ℝ → E} {t : ℝ} (h : continuous f) :
-  tendsto (λ n, ∫ s, δ n (t - s) • f s) at_top (𝓝 $ f t) :=
-begin
-  have : ∀ n, ∫ s, δ n (t - s) • f s = ∫ s, δ n s  • f (t - s),
-  sorry { intros n,
-    rw ← measure_theory.integral_sub_left_eq_self _ volume t,
-    simp_rw [sub_sub_self] },
-  rw funext this,
-  have : tendsto (λ n, ⨆ x ∈ support (δ n), ∥f (t - x) - f t∥) at_top (𝓝 0),
-  sorry { set F := λ x, f (t - x),
-    suffices : tendsto (λ n, ⨆ x ∈ support (δ n), ∥F x - F 0∥) at_top (𝓝 0),
-    { simp_rw [F, sub_zero t] at this, exact this },
-    simp_rw ← dist_eq_norm,
-    exact tendsto_sup_dist (h.comp $ continuous_sub_left t).continuous_at supp_δ },
-  rw tendsto_iff_norm_tendsto_zero,
-  apply squeeze_zero_norm' _ this,
-  have : ∀ᶠ n in at_top, support (δ n) ⊆ Icc (-1) 1,
-  sorry { have : Icc (-(1 : ℝ)) 1 ∈ 𝓝 (0 : ℝ),
-    apply Icc_mem_nhds ; norm_num,
-    exact (𝓝 (0 : ℝ)).has_basis_small_sets.tendsto_right_iff.mp supp_δ _ this },
-  apply this.mono,
-  intros n hn,
-  have cpct₁ : has_compact_support (δ n),
-  sorry { apply has_compact_support_of_subset is_compact_Icc hn },
-  rw norm_norm,
-  have : (∫ (s : ℝ), δ n s • f (t - s)) - f t = ∫ (s : ℝ), δ n s • (f (t - s) - f t),
-  sorry { conv_lhs { rw [show f t = (1 : ℝ) • f t, by simp only [one_smul], ← int_δ n] },
-    have δ_integrable : integrable (δ n),
-    { exact (δ_cont n).integrable_of_has_compact_support cpct₁, },
-    rw [← integral_smul_const, ← measure_theory.integral_sub],
-    simp [smul_sub],
-    { apply continuous.integrable_of_has_compact_support,
-      exact (δ_cont n).smul (h.comp (continuous_const.sub continuous_id')),
-      exact has_compact_support.smul_right cpct₁, },
-    { apply continuous.integrable_of_has_compact_support,
-      exact (δ_cont n).smul continuous_const,
-      exact has_compact_support.smul_right cpct₁ } },
-  rw this,
-  calc ∥∫ (s : ℝ), δ n s • (f (t - s) - f t)∥ ≤ ∫ s, ∥δ n s • (f (t - s) - f t)∥ : _
-  ... = ∫ s, ∥δ n s∥ * ∥(f (t - s) - f t)∥ : by simp_rw norm_smul
-  ... = ∫ s in support (δ n), ∥δ n s∥ * ∥(f (t - s) - f t)∥ : _
-  ... ≤ ∫ s in support (δ n), ∥δ n s∥ * ⨆ s ∈ support (δ n), ∥(f (t - s) - f t)∥ : _
-  ... = (∫ s in support (δ n), ∥δ n s∥) * ⨆ s ∈ support (δ n), ∥(f (t - s) - f t)∥ : _
-  ... = ⨆ (x : ℝ) (H : x ∈ support (δ n)), ∥f (t - x) - f t∥ : _,
-  exact norm_integral_le_integral_norm _,
-  { have : support (λ s, ∥δ n s∥ * ∥f (t - s) - f t∥) ⊆ support (δ n),
-    { rw ← support_norm (δ n),
-      apply support_mul_subset_left },
-    conv_lhs { rw ← indicator_eq_self.mpr this },
-    rw integral_indicator (δ_meas_supp n) },
-  all_goals { sorry }
-end
--/
-
-end mollify_on_real
-
 section delta_approx
 
 /-- ## An approximate Dirac "on the circle". -/
 
 def approx_dirac (n : ℕ) : ℝ → ℝ :=
 periodize $ (bump n).normed volume
-
-lemma periodic_const {α β : Type*} [has_add α] {a : α} {b : β} : periodic (λ x, b) a :=
-λ x, rfl
 
 lemma periodic_approx_dirac (n : ℕ) : periodic (approx_dirac n) 1 :=
 begin
@@ -486,12 +217,6 @@ periodize_nonneg (bump n).nonneg_normed t
 
 lemma approx_dirac_smooth (n : ℕ) : 𝒞 ∞ (approx_dirac n) :=
 (bump n).cont_diff_normed.periodize (bump n).has_compact_support_normed
-
-lemma real.ball_zero_eq (r : ℝ) : metric.ball (0 : ℝ) r = Ioo (-r) r :=
-begin
-  ext x,
-  simp [real.norm_eq_abs, abs_lt]
-end
 
 lemma approx_dirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
   ∫ s in a..b, approx_dirac n s = 1 :=
@@ -513,9 +238,7 @@ begin
   exact (bump n).integral_normed
 end
 
-
 end delta_approx
-
 
 section version_of_delta_mollifier_using_n
 def delta_mollifier (n : ℕ) (t : ℝ) : ℝ → ℝ :=

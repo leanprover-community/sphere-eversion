@@ -30,6 +30,53 @@ end
 end to_specific_limits
 
 section
+
+lemma support_norm {α E : Type*} [normed_group E] (f : α → E) : support (λ a, ∥f a∥) = support f :=
+function.support_comp_eq norm (λ x, norm_eq_zero) f
+
+@[to_additive]
+lemma has_compact_mul_support_of_subset {α β : Type*} [topological_space α] [t2_space α]
+  [has_one β] {f : α → β} {K : set α} (hK : is_compact K) (hf : mul_support f ⊆ K) :
+  has_compact_mul_support f :=
+compact_of_is_closed_subset hK (is_closed_mul_tsupport f) (closure_minimal hf hK.is_closed)
+
+lemma periodic_const {α β : Type*} [has_add α] {a : α} {b : β} : periodic (λ x, b) a :=
+λ x, rfl
+
+lemma real.ball_zero_eq (r : ℝ) : metric.ball (0 : ℝ) r = Ioo (-r) r :=
+by { ext x, simp [real.norm_eq_abs, abs_lt] }
+
+end
+
+section
+/-! ## The standard ℤ action on ℝ is properly discontinuous
+
+TODO: use that in to_mathlib.topology.periodic?
+-/
+instance : has_vadd ℤ ℝ := ⟨λ n x, (n : ℝ) + x⟩
+
+instance : properly_discontinuous_vadd ℤ ℝ :=
+⟨begin
+  intros K L hK hL,
+  rcases eq_empty_or_nonempty K with rfl | hK' ; rcases eq_empty_or_nonempty L with rfl | hL' ;
+  try { simp },
+  have hSK:= (hK.is_lub_Sup hK').1,
+  have hIK:= (hK.is_glb_Inf hK').1,
+  have hSL:= (hL.is_lub_Sup hL').1,
+  have hIL:= (hL.is_glb_Inf hL').1,
+  apply (finite_Icc ⌈Inf L - Sup K⌉ ⌊Sup L - Inf K⌋).subset,
+  rintros n (hn : has_vadd.vadd n '' K ∩ L ≠ ∅),
+  rcases ne_empty_iff_nonempty.mp hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩,
+  split,
+  { rw int.ceil_le,
+    linarith [hIL hnk, hSK hk] },
+  { rw int.le_floor,
+    linarith [hSL hnk, hIK hk] }
+end⟩
+
+end
+
+section
 open continuous_linear_map
 
 variables {𝕜 𝕜' E : Type*} [nondiscrete_normed_field 𝕜] [normed_field 𝕜'] [normed_algebra 𝕜 𝕜']
