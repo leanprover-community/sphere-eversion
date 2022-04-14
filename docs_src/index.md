@@ -27,7 +27,7 @@ The main motivations are:
 
 The best way to get started is to read the blueprint introduction,
 either in [pdf](blueprint.pdf) or [online](blueprint/sect0001.html).
-Then have a look at the [dependency graph](blueprint/dep_graph.html),
+Then have a look at the [dependency graph](blueprint/dep_graph_document.html),
 paying special attention to blue items. 
 Blue items are items that are ready to be formalized because their
 dependencies are formalized.
