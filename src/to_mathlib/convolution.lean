@@ -344,7 +344,7 @@ begin
   refine ⟨measurable_const.div measurable_id, _⟩,
   simp_rw [div_eq_mul_inv],
   rw [← map_map (measurable_const_mul g) measurable_inv],
-  refine ((map_inv_absolutely_continuous μ).map _).trans _,
+  refine ((map_inv_absolutely_continuous μ).map $ measurable_const_mul g).trans _,
   rw [map_mul_left_eq_self],
 end
 
@@ -358,7 +358,7 @@ begin
   simp_rw [div_eq_mul_inv],
   rw [← map_map (measurable_const_mul g) measurable_inv],
   conv_lhs { rw [← map_mul_left_eq_self μ g] },
-  apply (absolutely_continuous_map_inv μ).map,
+  exact (absolutely_continuous_map_inv μ).map (measurable_const_mul g)
 end
 
 end
@@ -731,7 +731,7 @@ begin
         (le_csupr (hg.norm.bdd_above_range_of_has_compact_support hcg.norm) $ x - t)
         (mul_nonneg (norm_nonneg _) (norm_nonneg _)) },
   { have : x - t ∉ support g,
-    { refine mt (λ hxt, _) ht, refine ⟨_, _, hx, neg_mem_neg.mpr (subset_closure hxt), _⟩,
+    { refine mt (λ hxt, _) ht, refine ⟨_, _, hx, set.neg_mem_neg.mpr (subset_closure hxt), _⟩,
       rw [neg_sub, add_sub_cancel'_right] },
     rw [nmem_support.mp this, L.map_zero_right, norm_zero] }
 end

@@ -64,22 +64,6 @@ end
 
 end
 
-section
- -- to connected
-
-variables {α : Type*} [topological_space α] [connected_space α]
-lemma is_connected_univ : is_connected (univ : set α) :=
-⟨univ_nonempty, is_preconnected_univ⟩
-
-end
-
-section
--- to metric space
-variables {E F : Type*} [metric_space E] [metric_space F]
-@[simp] lemma dist_prod_same_left {x : E} {y₁ y₂ : F} : dist (x, y₁) (x, y₂) = dist y₁ y₂ :=
-by simp [prod.dist_eq, dist_nonneg]
-
-end
 
 section
 -- to normed.group.basic
@@ -87,12 +71,6 @@ section
 
 section
 variables {E : Type*} [semi_normed_group E]
-@[simp] theorem dist_self_add_right (g h : E) : dist g (g + h) = ∥h∥ :=
-by rw [← dist_zero_left, ← dist_add_left g 0 h, add_zero]
-
-@[simp] theorem dist_self_add_left (g h : E) : dist (g + h) g = ∥h∥ :=
-by rw [dist_comm, dist_self_add_right]
-
 @[simp] theorem dist_self_sub_right (g h : E) : dist g (g - h) = ∥h∥ :=
 by rw [sub_eq_add_neg, dist_self_add_right, norm_neg]
 
@@ -237,11 +215,6 @@ section
 -- to normed_space
 variables {E F : Type*} [normed_group E] [normed_group F]
 variables [normed_space ℝ E] [normed_space ℝ F]
-
--- is this really not in the library?
-@[to_additive] lemma mul_div_left_comm {α : Type*} [comm_group α] {x y z : α} :
-  x * (y / z) = y * (x / z) :=
-by simp_rw [div_eq_mul_inv, mul_left_comm]
 
 lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
   dist (r • x + (1 - r) • y) x ≤ dist y x :=
