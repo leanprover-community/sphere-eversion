@@ -1,6 +1,7 @@
 import algebra.module.ulift
 import measure_theory.constructions.borel_space
 import to_mathlib.analysis.calculus
+import to_mathlib.order.filter.small_sets
 
 /-!
 Lemmas that are unused in the sphere-eversion project, but were formulated for one reason or another
@@ -30,6 +31,22 @@ begin
   filter_upwards [hpb], intros b hb, exact h ha hb
 end
 
+-- property of `small_sets`
+lemma tendsto_sup_dist {X Y ι : Type*} {l : filter ι} [topological_space X] [metric_space Y]
+  {f : X → Y} {t : X} (h : continuous_at f t)
+  {s : ι → set X} (hs : tendsto s l (𝓝 t).small_sets) :
+  tendsto (λ i, ⨆ x ∈ s i, dist (f x) (f t)) l (𝓝 0) :=
+begin
+  rw metric.tendsto_nhds,
+  have nonneg : ∀ n, 0 ≤ ⨆ x ∈ s n, dist (f x) (f t),
+    from λ n, real.bcsupr_nonneg (λ _ _, dist_nonneg),
+  simp only [dist_zero_right, real.norm_eq_abs, abs_of_nonneg, nonneg],
+  intros ε ε_pos,
+  apply ((𝓝 t).has_basis_small_sets.tendsto_right_iff.mp hs _ $
+         metric.tendsto_nhds.mp h (ε/2) (half_pos ε_pos)).mono (λ n hn, _),
+  apply lt_of_le_of_lt _ (half_lt_self ε_pos),
+  exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (hn hx).out.le),
+end
 
 end filter
 

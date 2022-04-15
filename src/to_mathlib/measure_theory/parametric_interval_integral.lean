@@ -474,7 +474,6 @@ end
 end
 
 section
--- universe variables u? v
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
           [complete_space E]
           {H : Type*} [normed_group H] [normed_space ℝ H]
