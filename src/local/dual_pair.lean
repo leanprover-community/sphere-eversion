@@ -99,7 +99,7 @@ begin
 end
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
-to use `cont_diff_clm_apply` and ` continuous_clm_apply`. -/
+to use `cont_diff_clm_apply` and `continuous_clm_apply`. -/
 
 lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair' E) {G : Type*} [normed_group G] [normed_space ℝ G]
   {φ : G → (E →L[ℝ] F)} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :

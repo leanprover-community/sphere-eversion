@@ -14,7 +14,7 @@ variables {m : with_top ℕ}
 
 lemma cont_diff_apply (i : ι) :
   cont_diff k m (λ (f : ι → Z), f i) :=
-(continuous_linear_map.proj i : (ι → Z) →L[k] Z).cont_diff
+cont_diff_pi.mp cont_diff_id _
 
 lemma cont_diff_apply_apply (i : ι) (j : ι') :
   cont_diff k m (λ (f : ι → ι' → Z), f i j) :=
@@ -336,25 +336,30 @@ variables (ι : Type*) [fintype ι] [decidable_eq ι] [complete_space 𝕜]
   .. linear_map.to_continuous_linear_map.symm.trans (linear_equiv.pi_ring 𝕜 G ι 𝕜) }
 
 -- maybe we can do this without finite dimensionality of `F`?
-lemma cont_diff_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G} [finite_dimensional 𝕜 F] :
-  cont_diff 𝕜 n f ↔ ∀ y, cont_diff 𝕜 n (λ x, f x y) :=
+lemma cont_diff_on_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G}
+  {s : set E} [finite_dimensional 𝕜 F] :
+  cont_diff_on 𝕜 n f s ↔ ∀ y, cont_diff_on 𝕜 n (λ x, f x y) s :=
 begin
-  refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).cont_diff.comp h, λ h, _⟩,
+  refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).cont_diff.comp_cont_diff_on h, λ h, _⟩,
   let d := finite_dimensional.finrank 𝕜 F,
   have hd : finite_dimensional.finrank 𝕜 (fin d → 𝕜) = d := finite_dimensional.finrank_fin_fun 𝕜,
   obtain ⟨e₁⟩ := finite_dimensional.nonempty_continuous_linear_equiv_iff_finrank_eq.mpr hd,
   let e₂ := (e₁.arrow_congr_equiv' (1 : G ≃L[𝕜] G)).symm.trans
     (continuous_linear_equiv.pi_ring (fin d)),
   have he₂ : ∀ i x, e₂ (f x) i = f x (e₁ (pi.single i (1 : 𝕜))), { simp, },
-  suffices :  cont_diff 𝕜 n (e₂ ∘ f),
+  suffices : cont_diff_on 𝕜 n (e₂ ∘ f) s,
   { rw [← comp.left_id f, ← e₂.symm_comp_self, function.comp.assoc],
-    exact e₂.symm.cont_diff.comp this, },
-  refine cont_diff_pi.mpr (λ i, _),
+    exact e₂.symm.cont_diff.comp_cont_diff_on this },
+  refine cont_diff_on_pi.mpr (λ i, _),
   simp only [he₂, comp_app, h _],
 end
 
+lemma cont_diff_clm_apply {n : with_top ℕ} {f : E → F →L[𝕜] G} [finite_dimensional 𝕜 F] :
+  cont_diff 𝕜 n f ↔ ∀ y, cont_diff 𝕜 n (λ x, f x y) :=
+by simp_rw [← cont_diff_on_univ, cont_diff_on_clm_apply]
+
 lemma continuous_clm_apply {X : Type*} [topological_space X] {f : X → F →L[𝕜] G}
-  [finite_dimensional 𝕜 F] :  continuous f ↔ ∀ y, continuous (λ x, f x y) :=
+  [finite_dimensional 𝕜 F] : continuous f ↔ ∀ y, continuous (λ x, f x y) :=
 begin
   refine ⟨λ h y, (continuous_linear_map.apply 𝕜 G y).continuous.comp h, λ h, _⟩,
   let d := finite_dimensional.finrank 𝕜 F,
@@ -375,6 +380,12 @@ lemma cont_diff_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f :
   differentiable 𝕜 f ∧ ∀ y, cont_diff 𝕜 n (λ x, fderiv 𝕜 f x y) :=
 by rw [cont_diff_succ_iff_fderiv, cont_diff_clm_apply]
 
+-- `unique_diff_on` should not be necessary from the right-to-left implication, which is the one
+-- we really care about.
+lemma cont_diff_on_succ_iff_fderiv_apply [finite_dimensional 𝕜 E] {n : ℕ} {f : E → F}
+  {s : set E} (hs : unique_diff_on 𝕜 s) : cont_diff_on 𝕜 ((n + 1) : ℕ) f s ↔
+  differentiable_on 𝕜 f s ∧ ∀ y, cont_diff_on 𝕜 n (λ x, fderiv_within 𝕜 f s x y) s :=
+by rw [cont_diff_on_succ_iff_fderiv_within hs, cont_diff_on_clm_apply]
 
 end calculus
 
@@ -403,20 +414,13 @@ mem_of_mem_nhds h
 
 
 
-/- Move this next to cont_diff_smul, and think about how to mkae such things much
-less painful. -/
+/- Move this next to cont_diff_smul -/
 lemma cont_diff.const_smul {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
   {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {f : E → F} {n : with_top ℕ} (h : cont_diff 𝕜 n f) (a : 𝕜) :
+  {f : E → F} {n : with_top ℕ} (hf : cont_diff 𝕜 n f) (a : 𝕜) :
   cont_diff 𝕜 n (λ x, a • f x) :=
-begin
-  change cont_diff 𝕜 n ((λ p : 𝕜 × F, p.1 • p.2) ∘ (λ y : F, (a, y)) ∘ f),
-  apply cont_diff.comp,
-  exact cont_diff_smul,
-  apply cont_diff.comp _ h,
-  exact (cont_diff_prod_mk a).of_le le_top
-end
+cont_diff_const.smul hf
 
 section
 

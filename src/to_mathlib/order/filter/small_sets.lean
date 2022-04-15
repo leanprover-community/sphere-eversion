@@ -9,11 +9,15 @@ variables {α β ι : Type*}
 
 namespace filter
 
+/-- The filter `f.small_sets` is the largest filter containing all powersets of members of `f`. -/
 def small_sets (f : filter α) : filter (set α) :=
-⨅ t ∈ f, 𝓟 {s | s ⊆ t}
+⨅ t ∈ f, 𝓟 (𝒫 t)
+
+lemma small_sets_eq_generate {f : filter α} : f.small_sets = generate (powerset '' f.sets) :=
+by simp_rw [generate_eq_binfi, small_sets, infi_image, filter.mem_sets]
 
 lemma has_basis_small_sets (f : filter α) :
-  has_basis f.small_sets (λ t : set α, t ∈ f) (λ t, {s | s ⊆ t}) :=
+  has_basis f.small_sets (λ t : set α, t ∈ f) powerset :=
 begin
   apply has_basis_binfi_principal _ _,
   { rintros u (u_in : u ∈ f) v (v_in : v ∈ f),
@@ -28,7 +32,7 @@ begin
 end
 
 lemma has_basis.small_sets {f : filter α} {p : ι → Prop} {s : ι → set α}
-  (h : has_basis f p s) : has_basis f.small_sets p (λ i, {u | u ⊆ s i}) :=
+  (h : has_basis f p s) : has_basis f.small_sets p (λ i, 𝒫 (s i)) :=
 ⟨begin
   intros t,
   rw f.has_basis_small_sets.mem_iff,
@@ -46,21 +50,5 @@ end⟩
 lemma tendsto_small_sets_iff {la : filter α} {lb : filter β} {f : α → set β} :
   tendsto f la lb.small_sets ↔ ∀ t ∈ lb, ∀ᶠ x in la, f x ⊆ t :=
 (has_basis_small_sets lb).tendsto_right_iff
-
-lemma tendsto_sup_dist {X Y ι : Type*} {l : filter ι} [topological_space X] [metric_space Y]
-  {f : X → Y} {t : X} (h : continuous_at f t)
-  {s : ι → set X} (hs : tendsto s l (𝓝 t).small_sets) :
-  tendsto (λ i, ⨆ x ∈ s i, dist (f x) (f t)) l (𝓝 0) :=
-begin
-  rw metric.tendsto_nhds,
-  have nonneg : ∀ n, 0 ≤ ⨆ x ∈ s n, dist (f x) (f t),
-    from λ n, real.bcsupr_nonneg (λ _ _, dist_nonneg),
-  simp only [dist_zero_right, real.norm_eq_abs, abs_of_nonneg, nonneg],
-  intros ε ε_pos,
-  apply ((𝓝 t).has_basis_small_sets.tendsto_right_iff.mp hs _ $
-         metric.tendsto_nhds.mp h (ε/2) (half_pos ε_pos)).mono (λ n hn, _),
-  apply lt_of_le_of_lt _ (half_lt_self ε_pos),
-  exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (hn hx).out.le),
-end
 
 end filter

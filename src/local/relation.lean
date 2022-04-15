@@ -311,16 +311,10 @@ def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 λ t, by ext x ; refl
 
 /-- A smooth step function on `ℝ`. -/
-def smooth_step : ℝ → ℝ := λ t, smooth_transition (2*t-1/2)
+def smooth_step : ℝ → ℝ := λ t, smooth_transition (2 * t - 1/2)
 
 lemma smooth_step.smooth : 𝒞 ∞ smooth_step :=
-begin
-  apply smooth_transition.cont_diff.comp,
-  apply cont_diff.sub,
-  refine cont_diff.const_smul _ 2,
-  apply cont_diff_id,
-  apply cont_diff_const,
-end
+smooth_transition.cont_diff.comp $ (cont_diff_id.const_smul 2).sub cont_diff_const
 
 @[simp]
 lemma smooth_step.zero : smooth_step 0 = 0 :=

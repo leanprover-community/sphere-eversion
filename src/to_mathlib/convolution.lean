@@ -7,12 +7,12 @@ import measure_theory.integral.interval_integral
 import measure_theory.group.action
 import measure_theory.measure.haar_lebesgue
 import measure_theory.group.integration
-import to_mathlib.measure_theory.parametric_interval_integral
+import analysis.calculus.parametric_integral
 import to_mathlib.analysis.cont_diff_bump
+import to_mathlib.analysis.calculus
 import to_mathlib.order.filter.small_sets
 import analysis.calculus.fderiv_measurable
 import analysis.calculus.specific_functions
-
 
 /-!
 # Convolution of functions
@@ -1049,7 +1049,7 @@ variables [finite_dimensional ℝ G]
 lemma normed_convolution_eq_right {x₀ : G}
   (hg : ∀ x ∈ ball x₀ φ.R, g x = g x₀) : (φ.normed μ ⋆[lsmul ℝ ℝ, μ] g : G → E') x₀ = g x₀ :=
 by { simp_rw [convolution_eq_right' _ φ.support_normed_eq.subset hg, lsmul_apply],
-  exact integral_normed_smul μ φ (g x₀) }
+  exact integral_normed_smul φ μ (g x₀) }
 
 variables [is_add_left_invariant μ]
 
