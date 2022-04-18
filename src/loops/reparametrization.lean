@@ -368,9 +368,11 @@ lemma centering_density_eq_exists_pou_nhd_finset_sum :
 begin
   obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
   refine ⟨p, hp, λ x, _⟩,
-  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := p.exists_finset_nhd hp x (γ.local_centering_density_nhd_is_open),
+  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := partition_of_unity.exists_finset_nhd_support_subset
+    (smooth_partition_of_unity.is_subordinate_to_partition_of_unity.mpr hp)
+    (γ.local_centering_density_nhd_is_open) x,
   refine ⟨ys, n, hn₁, hn₂, λ z hz t, ⟨_, _⟩⟩,
-  { rw [← finsum_eq_sum_of_support_to_finset_subset' _ (hn₃ z hz), p.sum_eq_one (mem_univ z)], },
+  { erw [← finsum_eq_sum_of_support_to_finset_subset' _ (hn₃ z hz), p.sum_eq_one (mem_univ z)], },
   { rw hp',
     suffices : support (λ y, p y z * γ.local_centering_density y z t) ⊆ ys,
     { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
