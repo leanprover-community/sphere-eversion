@@ -450,7 +450,7 @@ begin
     intro t,
     apply (cont_diff.has_strict_fderiv_at _ le_rfl).has_fderiv_at,
     rw show (λ x, F x t) = (uncurry F) ∘ (λ x, (x, t)), by { ext, simp },
-    exact hF.comp ((cont_diff_prod_left t).of_le le_top) },
+    exact hF.comp ((cont_diff_prod_mk_left t).of_le le_top) },
   { exact (cont_diff.has_strict_fderiv_at hs le_rfl).has_fderiv_at },
   { refl },
   { apply continuous.ae_strongly_measurable,

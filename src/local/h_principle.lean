@@ -289,7 +289,7 @@ lemma improve_step_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
 begin
   set γ := L.loop h,
   have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
-  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
+  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk_right 1)).of_le le_top,
   apply ((corrugation.c0_small_on L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and $
         remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono,
   rintros N ⟨H, H'⟩ x t,
@@ -304,7 +304,7 @@ end
 lemma improve_step_part_hol {N : ℝ} (hN : N ≠ 0) :
   ∀ᶠ x near L.K₀, (L.improve_step h N 1).is_part_holonomic_at (L.E' ⊔ L.p.span_v) x :=
 begin
-  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
+  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk_right 1)).of_le le_top,
   let 𝓕' : jet_sec E F :=
   { f := λ x, 𝓕.f x + corrugation L.π N (L.loop h 1) x,
     f_diff := 𝓕.f_diff.add
@@ -350,7 +350,7 @@ lemma improve_step_formal_sol :
 begin
   set γ := L.loop h,
   have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
-    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk 1)).of_le le_top,
+    have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (cont_diff_prod_mk_right 1)).of_le le_top,
   set K := (λ p : E × ℝ × ℝ, (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) '' (L.K₁ ×ˢ (I ×ˢ I)),
   have K_cpt : is_compact K,
   { refine (L.hK₁.prod (is_compact_Icc.prod is_compact_Icc)).image _,
@@ -373,7 +373,7 @@ begin
     refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) $ L.loop h (smooth_step t*L.ρ x) x $ N * L.π x), _, _⟩,
     { simp only [hxK₁, formal_sol.to_jet_sec_eq_coe, exists_prop, mem_set_of_eq, eq_self_iff_true, true_and, K],
       exact ⟨⟨x, smooth_step t * L.ρ x, int.fract (N * L.π x)⟩,
-            ⟨hxK₁, unit_interval.mul_mem' (smooth_step.mem t) (L.ρ_mem x),
+            ⟨hxK₁, unit_interval.mul_mem (smooth_step.mem t) (L.ρ_mem x),
               unit_interval.fract_mem _⟩, by simp only [loop.fract_eq]⟩ },
     { simp only [h, improve_step_apply_f, formal_sol.to_jet_sec_eq_coe, improve_step_apply_φ],
       rw [prod.dist_eq, max_lt_iff, prod.dist_eq, max_lt_iff],
