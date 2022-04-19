@@ -1141,8 +1141,9 @@ begin
   { refine eventually_of_forall (λ t x hx, _),
     exact (hcg.fderiv 𝕜).convolution_integrand_bound_right L'
       (hg.continuous_fderiv le_rfl) (ball_subset_closed_ball hx) },
-  { rw [integrable_indicator_iff hK'.measurable_set], exact ((hf hK').norm.const_mul _).mul_const _ },
-  { refine eventually_of_forall (λ t x hx, L.has_fderiv_at_const_left x (h3 x t)) },
+  { rw [integrable_indicator_iff hK'.measurable_set],
+    exact ((hf hK').norm.const_mul _).mul_const _ },
+  { exact eventually_of_forall (λ t x hx, (L _).has_fderiv_at.comp x (h3 x t)) },
 end
 
 lemma has_compact_support.has_fderiv_at_convolution_left [is_neg_invariant μ]
