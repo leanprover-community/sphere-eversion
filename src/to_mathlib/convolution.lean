@@ -213,7 +213,7 @@ variables (E'')
 /--  Apply the bilinear map pointwise on the second argument -/
 @[simps apply]
 def precompR (L : E →L[𝕜] E' →L[𝕜] F) : E →L[𝕜] (E'' →L[𝕜] E') →L[𝕜] (E'' →L[𝕜] F) :=
-(continuous_linear_map.compL 𝕜 E'' E' F).comp L
+(compL 𝕜 E'' E' F).comp L
 
 /--  Apply the bilinear map pointwise on the second argument -/
 def precompL (L : E →L[𝕜] E' →L[𝕜] F) : (E'' →L[𝕜] E) →L[𝕜] E' →L[𝕜] (E'' →L[𝕜] F) :=
@@ -251,19 +251,19 @@ end integrable
 
 variables [normed_space ℝ F] [complete_space E]
 
-section smul
-variables [group G] [mul_action G X] [has_measurable_smul G X]
+-- section smul
+-- variables [group G] [mul_action G X] [has_measurable_smul G X]
 
-@[to_additive]
-lemma integral_smul_eq_self {μ : measure X} [smul_invariant_measure G X μ] (f : X → E) {m : G} :
-  ∫ x, f (m • x) ∂μ = ∫ x, f x ∂μ :=
-begin
-  have h : measurable_embedding (λ x : X, m • x) :=
-  (measurable_equiv.smul m).measurable_embedding,
-  rw [← h.integral_map, map_smul]
-end
+-- @[to_additive]
+-- lemma integral_smul_eq_self {μ : measure X} [smul_invariant_measure G X μ] (f : X → E) {m : G} :
+--   ∫ x, f (m • x) ∂μ = ∫ x, f x ∂μ :=
+-- begin
+--   have h : measurable_embedding (λ x : X, m • x) :=
+--   (measurable_equiv.smul m).measurable_embedding,
+--   rw [← h.integral_map, map_smul]
+-- end
 
-end smul
+-- end smul
 
 
 section mul
@@ -290,25 +290,25 @@ variables (μ) [sigma_finite μ]
 lemma quasi_measure_preserving.prod_of_right {α β γ} [measurable_space α] [measurable_space β]
   [measurable_space γ] {f : α × β → γ} {μ : measure α} {ν : measure β} {τ : measure γ}
   (hf : measurable f) [sigma_finite ν]
-  (h2f : ∀ x, quasi_measure_preserving (λ y, f (x, y)) ν τ) :
+  (h2f : ∀ᵐ x ∂μ, quasi_measure_preserving (λ y, f (x, y)) ν τ) :
   quasi_measure_preserving f (μ.prod ν) τ :=
 begin
   refine ⟨hf, _⟩,
   refine absolutely_continuous.mk (λ s hs h2s, _),
-  simp_rw [map_apply hf hs, prod_apply (hf hs), preimage_preimage, (h2f _).preimage_null h2s,
-    lintegral_zero],
+  simp_rw [map_apply hf hs, prod_apply (hf hs), preimage_preimage,
+    lintegral_congr_ae (h2f.mono (λ x hx, hx.preimage_null h2s)), lintegral_zero],
 end
 
 lemma quasi_measure_preserving.prod_of_left {α β γ} [measurable_space α] [measurable_space β]
   [measurable_space γ] {f : α × β → γ} {μ : measure α} {ν : measure β} {τ : measure γ}
   (hf : measurable f) [sigma_finite μ] [sigma_finite ν]
-  (h2f : ∀ y, quasi_measure_preserving (λ x, f (x, y)) μ τ) :
+  (h2f : ∀ᵐ y ∂ν, quasi_measure_preserving (λ x, f (x, y)) μ τ) :
   quasi_measure_preserving f (μ.prod ν) τ :=
 begin
   refine ⟨hf, _⟩,
   refine absolutely_continuous.mk (λ s hs h2s, _),
-  simp_rw [map_apply hf hs, prod_apply_symm (hf hs), preimage_preimage, (h2f _).preimage_null h2s,
-    lintegral_zero],
+  simp_rw [map_apply hf hs, prod_apply_symm (hf hs), preimage_preimage,
+    lintegral_congr_ae (h2f.mono (λ x hx, hx.preimage_null h2s)), lintegral_zero],
 end
 
 @[to_additive]
@@ -317,7 +317,8 @@ lemma quasi_measure_preserving_div [is_mul_right_invariant μ] :
 begin
   refine quasi_measure_preserving.prod_of_left measurable_div _,
   simp_rw [div_eq_mul_inv],
-  refine λ y, ⟨measurable_mul_const y⁻¹, (map_mul_right_eq_self μ y⁻¹).absolutely_continuous⟩
+  refine eventually_of_forall
+    (λ y, ⟨measurable_mul_const y⁻¹, (map_mul_right_eq_self μ y⁻¹).absolutely_continuous⟩)
 end
 
 variables [is_mul_left_invariant μ]
@@ -393,7 +394,7 @@ by simp_rw [div_eq_mul_inv, measurable_mul_const]
 
 /-- `equiv.div_right` as a `measurable_equiv` -/
 @[to_additive /-" `equiv.sub_right` as a `measurable_equiv` "-/]
-def measurable_equiv.div_right [has_measurable_mul G] (g : G) : G ≃ᵐ G :=
+def measurable_equiv.div_right [has_measurable_mul G] [has_measurable_inv G] (g : G) : G ≃ᵐ G :=
 { to_equiv := equiv.div_right g,
   measurable_to_fun := measurable_div_const g,
   measurable_inv_fun := measurable_mul_const g }
@@ -415,17 +416,6 @@ lemma map_div_left_ae [has_measurable_mul G] [has_measurable_inv G] [is_mul_left
   [is_inv_invariant μ] :
   filter.map (λ t, x / t) μ.ae = μ.ae :=
 (measurable_equiv.div_left x).map_ae.trans $ congr_arg ae $ map_div_left_eq_self μ x
-
-@[to_additive]
-lemma tendsto_mul_left_ae_ae [has_measurable_mul G] [is_mul_left_invariant μ] :
-  tendsto (λ t, x * t) μ.ae μ.ae :=
-map_mul_left_ae.le
-
-@[to_additive]
-lemma tendsto_div_left_ae_ae [has_measurable_mul G] [has_measurable_inv G] [is_mul_left_invariant μ]
-  [is_inv_invariant μ] :
-  tendsto (λ t, x / t) μ.ae μ.ae :=
-map_div_left_ae.le
 
 end general_measure
 
@@ -1194,60 +1184,36 @@ variables (L₂ : F →L[𝕜] E'' →L[𝕜] F')
 variables (L₃ : E →L[𝕜] F'' →L[𝕜] F')
 variables (L₄ : E' →L[𝕜] E'' →L[𝕜] F'')
 
--- lemma integrable_assoc_integrand  {x₀ : G} (hf : integrable f μ) (hg : integrable g μ)
+-- lemma integrable_assoc_integrand'  {x₀ : G} (hf : integrable f μ) (hg : integrable g μ)
 --   (hk : integrable k μ) :
---   integrable (uncurry (λ x y, (L₃ (f x)) ((L₄ (g y)) (k (x₀ - x - y))))) (μ.prod μ) :=
+--   integrable (uncurry (λ x y, (L₃ (f y)) ((L₄ (g (x - y))) (k (x₀ - x))))) (μ.prod μ) :=
 -- begin
---   sorry
+--   rw [measure_theory.integrable_prod_iff],
+--   { split,
+--     { refine eventually_of_forall (λ x, _), dsimp,
+--       have h2 : integrable (λ y, (L₄ (g y)) (k (x₀ - x))) μ := sorry,
+--       -- have := L₃.integrable_comp,
+--       sorry
+--       -- have h3 : map (λ y, (x, y)) μ ≤ μ.prod μ,
+--       -- { intros s hs, rw [map_apply _ hs, ← prod_univ], },
+--       -- exact ((measure_theory.integrable.convolution_integrand L₃ hf h2).mono_measure
+--       --   h3).comp_measurable (measurable_const.prod_mk measurable_id)
+--         },
+--     { sorry } },
+--   { refine L₃.ae_strongly_measurable_comp₂ hf.ae_strongly_measurable.snd _,
+--     refine L₄.ae_strongly_measurable_comp₂
+--       ((hg.ae_strongly_measurable.mono' _).comp_measurable $ measurable_fst.sub measurable_snd)
+--       ((hk.ae_strongly_measurable.mono' _).comp_measurable $ measurable_const.sub measurable_fst),
+--     exact (quasi_measure_preserving_sub μ).absolutely_continuous,
+--     rw [← measure.map_map],
+--     refine (prod_fst_absolutely_continuous.map $ measurable_id.const_sub x₀).trans
+--       (map_sub_left_absolutely_continuous μ x₀),
+--     exact measurable_id.const_sub x₀,
+--     exact measurable_fst }
 -- end
-
--- -- todo: prove that `hi` follows from simpler conditions.
--- lemma convolution_assoc (hL : ∀ (x : E) (y : E') (z : E''), L₂ (L x y) z = L₃ x (L₄ y z))
---   {x₀ : G}
---   (h₄ : convolution_exists g k L₄ μ)
---   (h₁ : convolution_exists f g L μ)
---   (hi : integrable (uncurry (λ x y, (L₃ (f y)) ((L₄ (g (x - y))) (k (x₀ - x))))) (μ.prod μ)) :
---   ((f ⋆[L, μ] g) ⋆[L₂, μ] k) x₀ = (f ⋆[L₃, μ] (g ⋆[L₄, μ] k)) x₀ :=
--- begin
---   have h1 := λ t, (L₂.flip (k (x₀ - t))).integral_comp_comm (h₁ t),
---   dsimp only [flip_apply] at h1,
---   simp_rw [convolution_def, ← (L₃ (f _)).integral_comp_comm (h₄ (x₀ - _)), ← h1, hL],
---   conv_rhs { congr, skip, funext, rw [← integral_sub_right_eq_self _ μ t] },
---   rw [eq_comm, integral_integral_swap],
---   simp_rw [sub_sub_sub_cancel_right],
--- end
-
-
-lemma integrable_assoc_integrand'  {x₀ : G} (hf : integrable f μ) (hg : integrable g μ)
-  (hk : integrable k μ) :
-  integrable (uncurry (λ x y, (L₃ (f y)) ((L₄ (g (x - y))) (k (x₀ - x))))) (μ.prod μ) :=
-begin
-  rw [measure_theory.integrable_prod_iff],
-  { split,
-    { refine eventually_of_forall (λ x, _), dsimp,
-      have h2 : integrable (λ y, (L₄ (g y)) (k (x₀ - x))) μ := sorry,
-      -- have := L₃.integrable_comp,
-      sorry
-      -- have h3 : map (λ y, (x, y)) μ ≤ μ.prod μ,
-      -- { intros s hs, rw [map_apply _ hs, ← prod_univ], },
-      -- exact ((measure_theory.integrable.convolution_integrand L₃ hf h2).mono_measure
-      --   h3).comp_measurable (measurable_const.prod_mk measurable_id)
-        },
-    { sorry } },
-  { refine L₃.ae_strongly_measurable_comp₂ hf.ae_strongly_measurable.snd _,
-    refine L₄.ae_strongly_measurable_comp₂
-      ((hg.ae_strongly_measurable.mono' _).comp_measurable $ measurable_fst.sub measurable_snd)
-      ((hk.ae_strongly_measurable.mono' _).comp_measurable $ measurable_const.sub measurable_fst),
-    exact (quasi_measure_preserving_sub μ).absolutely_continuous,
-    rw [← measure.map_map],
-    refine (prod_fst_absolutely_continuous.map $ measurable_id.const_sub x₀).trans
-      (map_sub_left_absolutely_continuous μ x₀),
-    exact measurable_id.const_sub x₀,
-    exact measurable_fst }
-end
 
 -- todo: prove that `hi` follows from simpler conditions.
-lemma convolution_assoc' (hL : ∀ (x : E) (y : E') (z : E''), L₂ (L x y) z = L₃ x (L₄ y z))
+lemma convolution_assoc (hL : ∀ (x : E) (y : E') (z : E''), L₂ (L x y) z = L₃ x (L₄ y z))
   {x₀ : G}
   (h₄ : convolution_exists g k L₄ μ)
   (h₁ : convolution_exists f g L μ)
