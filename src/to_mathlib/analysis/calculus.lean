@@ -144,38 +144,13 @@ h.comp $ cont_diff_prod_mk_right e₀
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
-def continuous_linear_map.comp_rightL (φ  : E →L[𝕜] F) : (F →L[𝕜] G) →L[𝕜] (E →L[𝕜] G) :=
-{ to_fun := λ ψ, ψ.comp φ,
-  map_add' := λ x y, add_comp _ _ _,
-  map_smul' := λ r x, by rw [smul_comp, ring_hom.id_apply],
-  cont := begin
-    dsimp only,
-    apply @continuous_of_linear_of_bound 𝕜,
-    { intros x y,
-      apply add_comp },
-    { intros c ψ,
-      rw smul_comp },
-    { intros ψ,
-      rw mul_comm,
-      apply op_norm_comp_le }
-  end }
+def continuous_linear_map.comp_rightL (φ : E →L[𝕜] F) : (F →L[𝕜] G) →L[𝕜] (E →L[𝕜] G) :=
+(compL 𝕜 E F G).flip φ
 
 /-- Postcomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
-def continuous_linear_map.comp_leftL (φ  : F →L[𝕜] G) : (E →L[𝕜] F) →L[𝕜] (E →L[𝕜] G) :=
-{ to_fun := φ.comp,
-  map_add' := λ x y, comp_add _ _ _,
-  map_smul' := λ r x, by rw [comp_smul, ring_hom.id_apply],
-  cont := begin
-    dsimp only,
-    apply @continuous_of_linear_of_bound 𝕜,
-    { intros x y,
-      apply comp_add },
-    { intros c ψ,
-      rw comp_smul },
-    { intros ψ,
-      apply op_norm_comp_le }
-  end }
+def continuous_linear_map.comp_leftL (φ : F →L[𝕜] G) : (E →L[𝕜] F) →L[𝕜] (E →L[𝕜] G) :=
+compL 𝕜 E F G φ
 
 lemma differentiable.fderiv_partial_fst {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) :
   ↿(∂₁ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
@@ -234,17 +209,17 @@ with_top.coe_le_coe.mpr le_self_mul
 
 lemma cont_diff.of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
   cont_diff 𝕜 n φ :=
-h.of_le (with_top.le_self_add n 1)
+h.of_le $ with_top.coe_le_coe.mpr le_self_add
 
 lemma cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
   cont_diff 𝕜 1 φ :=
-h.of_le (with_top.le_add_self 1 n)
+h.of_le $ with_top.coe_le_coe.mpr le_add_self
 
 lemma cont_diff.cont_diff_partial_fst {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
 begin
   cases cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
-  rw (hF.differentiable $ with_top.le_add_self 1 n).fderiv_partial_fst,
+  rw (hF.one_of_succ.differentiable le_rfl).fderiv_partial_fst,
   apply cont_diff.comp _ hF₂,
   exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).cont_diff
 end
@@ -265,7 +240,7 @@ lemma cont_diff.cont_diff_partial_snd {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₂ 𝕜 φ) :=
 begin
   cases cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
-  rw (hF.differentiable $ with_top.le_add_self 1 n).fderiv_partial_snd,
+  rw (hF.one_of_succ.differentiable le_rfl).fderiv_partial_snd,
   apply cont_diff.comp _ hF₂,
   exact ((inr 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] F →L[𝕜] G).cont_diff
 end
