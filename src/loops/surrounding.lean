@@ -573,7 +573,7 @@ begin
     { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
     have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
     λ y, hc.comp₂ continuous_const continuous_id,
-    simp_rw [is_compact_Icc.Sup_lt_of_continuous
+    simp_rw [is_compact_Icc.Sup_lt_iff_of_continuous
       (nonempty_Icc.mpr zero_le_one) (hc _).continuous_on] at this,
     convert this,
     ext y,
@@ -618,7 +618,7 @@ begin
     { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
     have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
     λ y, hc.comp₂ continuous_const continuous_id,
-    simp_rw [is_compact_Icc.Sup_lt_of_continuous
+    simp_rw [is_compact_Icc.Sup_lt_iff_of_continuous
       (nonempty_Icc.mpr zero_le_one) (hc _).continuous_on] at this,
     convert this,
     ext y,
@@ -924,8 +924,8 @@ begin
   rw [sf_homotopy, loop.range_of_path, proj_I_eq_self.mpr ht] at h2y,
   replace h2y := range_strans_subset h2y,
   rcases h2y with ⟨s', rfl⟩|⟨s', rfl⟩,
-  { exact h_in₀ _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ hτ1 },
-  { exact h_in₁ _ hx _ (unit_interval.mul_mem' ρ_mem_I ht) _ hτ0 }
+  { exact h_in₀ _ hx _ (unit_interval.mul_mem ρ_mem_I ht) _ hτ1 },
+  { exact h_in₁ _ hx _ (unit_interval.mul_mem ρ_mem_I ht) _ hτ0 }
 end
 
 lemma sf_homotopy_in (h₀ : surrounding_family_in g b γ₀ U Ω) (h₁ : surrounding_family_in g b γ₁ U Ω)

@@ -320,34 +320,7 @@ hf.comp continuous_at_snd
 
 end
 
-section -- to unit_interval
-
-namespace unit_interval
-
-open int
-lemma fract_mem (x : ℝ) : fract x ∈ I := ⟨fract_nonneg _, (fract_lt_one _).le⟩
-lemma zero_mem : (0 : ℝ) ∈ I := ⟨le_rfl, zero_le_one⟩
-lemma one_mem : (1 : ℝ) ∈ I := ⟨zero_le_one, le_rfl⟩
-lemma div_mem {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hxy : x ≤ y) : x / y ∈ I :=
-⟨div_nonneg hx hy, div_le_one_of_le hxy hy⟩
-
-lemma mul_mem' {x y : ℝ} (hx : x ∈ I) (hy : y ∈ I) : x * y ∈ I :=
-⟨mul_nonneg hx.1 hy.1, (mul_le_mul hx.2 hy.2 hy.1 zero_le_one).trans_eq $ one_mul 1⟩
-
-
-end unit_interval
-
-
-section
-variables {α β : Type*} [linear_order α] {a b x c : α} (h : a ≤ b)
-
--- @[simp] lemma proj_Icc_eq_min : proj_Icc x = min 1 x ↔ 0 ≤ x :=
--- by simp_rw [proj_I_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and]
-
--- lemma min_proj_I (h2 : a ≤ c) : min c (proj_Icc x) = proj_I (min c x) :=
--- by { cases le_total c x with h3 h3; simp [h2, h3, proj_I_le_iff, proj_I_eq_min.mpr],
---      simp [proj_I_eq_min.mpr, h2.trans h3, min_left_comm c, h3] }
-end
+section proj_I
 
 variables {α β : Type*} [linear_ordered_semiring α] {x c : α}
 
@@ -432,83 +405,7 @@ begin
   rw [min_proj_I (s.prop.1.trans $ le_max_left _ _), proj_Icc_proj_I],
 end
 
-end
-
-section
--- consequences of the extreme value theorem
-
-
-lemma is_compact.exists_Sup_image_eq_and_ge {α β : Type*} [conditionally_complete_linear_order α]
-  [topological_space α] [order_topology α] [topological_space β] {s : set β}
-  (hs : is_compact s) (h0s : s.nonempty) {f : β → α} (hf : continuous_on f s) :
-  ∃ x ∈ s, Sup (f '' s) = f x ∧ ∀ y ∈ s, f y ≤ f x :=
-begin
-  obtain ⟨x, hxs, hx⟩ := hs.exists_forall_ge h0s hf,
-  refine ⟨x, hxs, _, hx⟩,
-  refine le_antisymm (cSup_le (h0s.image f) _)
-    (le_cSup (hs.bdd_above_image hf) $ mem_image_of_mem f hxs),
-  rintro _ ⟨x', hx', rfl⟩,
-  exact hx x' hx'
-end
-
-lemma is_compact.Sup_lt_of_continuous {α β : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space β] {f : β → α}
-  {K : set β} (hK : is_compact K) (h0K : K.nonempty) (hf : continuous_on f K) (y : α) :
-    Sup (f '' K) < y ↔ ∀ x ∈ K, f x < y :=
-begin
-  refine ⟨λ h x hx, (le_cSup (hK.bdd_above_image hf) $ mem_image_of_mem f hx).trans_lt h, λ h, _⟩,
-  obtain ⟨x, hx, h2x⟩ := hK.exists_forall_ge h0K hf,
-  refine (cSup_le (h0K.image f) _).trans_lt (h x hx),
-  rintro _ ⟨x', hx', rfl⟩, exact h2x x' hx'
-end
-
-lemma is_compact.lt_Inf_of_continuous {α β : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space β] {f : β → α}
-  {K : set β} (hK : is_compact K) (h0K : K.nonempty) (hf : continuous_on f K) (y : α) :
-    y < Inf (f '' K) ↔ ∀ x ∈ K, y < f x :=
-@is_compact.Sup_lt_of_continuous (order_dual α) β _ _ _ _ _ _ hK h0K hf y
-
-lemma is_compact.continuous_Sup {α β γ : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
-    continuous (λ x, Sup (f x '' K)) :=
-begin
-  rcases eq_empty_or_nonempty K with rfl|h0K,
-  { simp_rw [image_empty], exact continuous_const },
-  rw [continuous_iff_continuous_at],
-  intro x,
-  obtain ⟨y, hyK, h2y, hy⟩ :=
-    hK.exists_Sup_image_eq_and_ge h0K
-      (show continuous (λ y, f x y), from hf.comp $ continuous.prod.mk x).continuous_on,
-  rw [continuous_at, h2y, tendsto_order],
-  have := tendsto_order.mp
-    ((show continuous (λ x, f x y), from hf.comp₂ continuous_id continuous_const).tendsto x),
-  refine ⟨λ z hz, _, λ z hz, _⟩,
-  { refine (this.1 z hz).mono (λ x' hx', hx'.trans_le $ le_cSup _ $ mem_image_of_mem (f x') hyK),
-    refine hK.bdd_above_image (hf.comp $ continuous.prod.mk x').continuous_on },
-  { have h : ({x} : set γ) ×ˢ K ⊆ ↿f ⁻¹' (Iio z),
-    { rintro ⟨x', y'⟩ ⟨hx', hy'⟩, cases hx', exact (hy y' hy').trans_lt hz },
-    obtain ⟨u, v, hu, hv, hxu, hKv, huv⟩ :=
-      generalized_tube_lemma is_compact_singleton hK (is_open_Iio.preimage hf) h,
-    refine eventually_of_mem (hu.mem_nhds (singleton_subset_iff.mp hxu)) (λ x' hx', _),
-    rw [hK.Sup_lt_of_continuous h0K
-      (show continuous (f x'), from (hf.comp $ continuous.prod.mk x')).continuous_on],
-    intros y' hy',
-    refine huv (mk_mem_prod hx' (hKv hy')) }
-end
-
-lemma is_compact.continuous_Inf {α β γ : Type*}
-  [conditionally_complete_linear_order α] [topological_space α]
-  [order_topology α] [topological_space γ] [topological_space β] {f : γ → β → α}
-  {K : set β} (hK : is_compact K) (hf : continuous ↿f) :
-    continuous (λ x, Inf (f x '' K)) :=
-@is_compact.continuous_Sup (order_dual α) β γ _ _ _ _ _ _ _ hK hf
-
-
-end
+end proj_I
 
 section
 

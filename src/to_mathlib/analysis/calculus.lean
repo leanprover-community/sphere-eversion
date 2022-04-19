@@ -60,11 +60,11 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
           {G : Type*} [normed_group G] [normed_space 𝕜 G]
           {n : with_top ℕ}
 
-lemma has_fderiv_at_prod_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
+lemma has_fderiv_at_prod_mk_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
 by simp_rw [has_fderiv_at_iff_is_o_nhds_zero, inl_apply, prod.mk_sub_mk, add_sub_cancel', sub_self,
   ← prod.zero_eq_mk, asymptotics.is_o_zero]
 
-lemma has_fderiv_at_prod_right (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
+lemma has_fderiv_at_prod_mk_right (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
 by simp_rw [has_fderiv_at_iff_is_o_nhds_zero, inr_apply, prod.mk_sub_mk, add_sub_cancel', sub_self,
   ← prod.zero_eq_mk, asymptotics.is_o_zero]
 
@@ -83,12 +83,12 @@ hf.comp cont_diff_snd
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ e, φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
-h.comp e₀ $ has_fderiv_at_prod_left e₀ f₀
+h.comp e₀ $ has_fderiv_at_prod_mk_left e₀ f₀
 
 lemma has_fderiv_at.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ f, φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
-h.comp f₀ $ has_fderiv_at_prod_right e₀ f₀
+h.comp f₀ $ has_fderiv_at_prod_mk_right e₀ f₀
 
 variable (𝕜)
 
@@ -117,13 +117,10 @@ h.partial_snd.fderiv
 
 lemma differentiable_at.has_fderiv_at_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
   (h : differentiable_at 𝕜 (uncurry φ) (e₀, f₀)) :
-has_fderiv_at (λ e, φ e f₀) (partial_fderiv_fst 𝕜 φ e₀ f₀) e₀ :=
-begin
-  rw fderiv_partial_fst h.has_fderiv_at,
-  exact h.has_fderiv_at.partial_fst
-end
+  has_fderiv_at (λ e, φ e f₀) (partial_fderiv_fst 𝕜 φ e₀ f₀) e₀ :=
+(h.comp e₀ $ differentiable_at_id.prod $ differentiable_at_const f₀).has_fderiv_at
 
-lemma cont_diff_prod_left (f₀ : F) {n : with_top ℕ} : cont_diff 𝕜 n (λ e : E, (e, f₀)) :=
+lemma cont_diff_prod_mk_left (f₀ : F) {n : with_top ℕ} : cont_diff 𝕜 n (λ e : E, (e, f₀)) :=
 cont_diff_id.prod cont_diff_const
 
 lemma differentiable_at.has_fderiv_at_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
@@ -134,16 +131,16 @@ begin
   exact h.has_fderiv_at.partial_snd
 end
 
-lemma cont_diff_prod_mk (e₀ : E) {n : with_top ℕ} : cont_diff 𝕜 n (λ f : F, (e₀, f)) :=
+lemma cont_diff_prod_mk_right (e₀ : E) {n : with_top ℕ} : cont_diff 𝕜 n (λ f : F, (e₀, f)) :=
 cont_diff_const.prod cont_diff_id
 
 lemma cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
   (h : cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : cont_diff 𝕜 n (λ e, φ e f₀) :=
-h.comp $ cont_diff_prod_left f₀
+h.comp $ cont_diff_prod_mk_left f₀
 
 lemma cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
   (h : cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : cont_diff 𝕜 n (λ f, φ e₀ f) :=
-h.comp $ cont_diff_prod_mk e₀
+h.comp $ cont_diff_prod_mk_right e₀
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/

@@ -454,7 +454,7 @@ cont_diff.continuous_partial_fst (h : _)
 
 lemma cont_diff.partial_loop {γ : E → loop F} {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
   ∀ t, 𝒞 n (λ e, γ e t) :=
-λ t, hγ_diff.comp ((cont_diff_prod_left t).of_le le_top)
+λ t, hγ_diff.comp ((cont_diff_prod_mk_left t).of_le le_top)
 
 variables [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
 

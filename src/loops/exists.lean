@@ -158,7 +158,7 @@ begin
   have hcε₂ : continuous ε₂ :=
     (continuous_const.min hcε₁).min (hI.continuous_Inf h1f),
   have hε₂ : ∀ {x}, 0 < ε₂ x := λ x, lt_min (lt_min hε₀ (hε₁ x))
-    ((hI.lt_Inf_of_continuous
+    ((hI.lt_Inf_iff_of_continuous
       ((nonempty_Icc.mpr zero_le_one).prod (nonempty_Icc.mpr zero_le_one))
       (h2f x).continuous_on _).mpr $ λ x hx, h3f),
   let γ₄ := ↿γ₃,
