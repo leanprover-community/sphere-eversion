@@ -1166,7 +1166,7 @@ begin
     split,
     { exact λ x₀, ⟨_, h x₀⟩ },
     { simp_rw [fderiv_eq h, convolution_precompR_apply L hf (hcg.fderiv 𝕜)
-        (hg.continuous_fderiv (with_top.le_add_self 1 n))],
+        (hg.one_of_succ.continuous_fderiv le_rfl)],
       intro x,
       refine ih _ _,
       { refine @has_compact_support.comp_left _ _ _ _ _ _ (λ (G : _ →L[𝕜] _), G x) _
