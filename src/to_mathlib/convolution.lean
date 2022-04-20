@@ -156,29 +156,19 @@ variables {f f' : G → E} {g g' : G → E'}
 
 namespace continuous_linear_map
 
-lemma map_add_left (L : E →L[𝕜] E' →L[𝕜] F) {x x' : E} {y : E'} : L (x + x') y = L x y + L x' y :=
-by rw [L.map_add, continuous_linear_map.add_apply]
+variables [normed_group G] [normed_space 𝕜 G]
 
-lemma map_add_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} {y y' : E'} : L x (y + y') = L x y + L x y' :=
-(L x).map_add y y'
+lemma map_add₂' (f : E →L[𝕜] F →L[𝕜] G) (x x' : E) (y : F) : f (x + x') y = f x y + f x' y :=
+by rw [f.map_add, add_apply]
 
-lemma map_sub_left (L : E →L[𝕜] E' →L[𝕜] F) {x x' : E} {y : E'} : L (x - x') y = L x y - L x' y :=
-by rw [L.map_sub, continuous_linear_map.sub_apply]
+lemma map_sub₂ (f : E →L[𝕜] F →L[𝕜] G) (x x' : E) (y : F) : f (x - x') y = f x y - f x' y :=
+by rw [f.map_sub, sub_apply]
 
-lemma map_sub_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} {y y' : E'} : L x (y - y') = L x y - L x y' :=
-(L x).map_sub y y'
+lemma map_smul₂ (f : E →L[𝕜] F →L[𝕜] G) (c : 𝕜) (x : E) (y : F) : f (c • x) y = c • f x y :=
+by rw [f.map_smul, smul_apply]
 
-lemma map_smul_left (L : E →L[𝕜] E' →L[𝕜] F) {c : 𝕜} {x : E} {y : E'} : L (c • x) y = c • L x y :=
-by rw [L.map_smul, smul_apply]
-
-lemma map_smul_right (L : E →L[𝕜] E' →L[𝕜] F) {c : 𝕜} {x : E} {y : E'} : L x (c • y) = c • L x y :=
-(L x).map_smul c y
-
-lemma map_zero_left (L : E →L[𝕜] E' →L[𝕜] F) {y : E'} : L 0 y = 0 :=
-by rw [L.map_zero, zero_apply]
-
-lemma map_zero_right (L : E →L[𝕜] E' →L[𝕜] F) {x : E} : L x 0 = 0 :=
-(L x).map_zero
+lemma map_zero₂ (f : E →L[𝕜] F →L[𝕜] G) (y : F) : f 0 y = 0 :=
+by rw [f.map_zero, zero_apply]
 
 lemma continuous₂ (L : E →L[𝕜] E' →L[𝕜] F) : continuous (uncurry (λ x y, L x y)) :=
 L.is_bounded_bilinear_map.continuous
@@ -483,7 +473,7 @@ begin
   { have : x - t ∉ support g,
     { refine mt (λ hxt, _) ht, refine ⟨_, _, set.neg_mem_neg.mpr (subset_closure hxt), hx, _⟩,
       rw [neg_sub, sub_add_cancel] },
-    rw [nmem_support.mp this, L.map_zero_right, norm_zero] }
+    rw [nmem_support.mp this, (L _).map_zero, norm_zero] }
 end
 
 lemma continuous.convolution_integrand_fst [has_continuous_sub G] (hg : continuous g) (t : G) :
@@ -634,7 +624,7 @@ begin
   refine has_compact_support.convolution_exists_at L _ hf hg,
   refine (hcg.comp_homeomorph (homeomorph.sub_left x₀)).mono _,
   refine λ t, mt (λ ht : g (x₀ - t) = 0, _),
-  simp_rw [ht, L.map_zero_right]
+  simp_rw [ht, (L _).map_zero]
 end
 
 lemma has_compact_support.convolution_exists_left_of_continuous_right
@@ -645,7 +635,7 @@ begin
   refine has_compact_support.convolution_exists_at L _ hf hg,
   refine hcf.mono _,
   refine λ t, mt (λ ht : f t = 0, _),
-  simp_rw [ht, L.map_zero_left]
+  simp_rw [ht, L.map_zero₂]
 end
 
 end group
@@ -737,22 +727,22 @@ variables {L} [add_group G]
 
 lemma smul_convolution [smul_comm_class ℝ 𝕜 F]
   {y : 𝕜} : (y • f) ⋆[L, μ] g = y • (f ⋆[L, μ] g) :=
-by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_left] }
+by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul₂] }
 
 lemma convolution_smul [smul_comm_class ℝ 𝕜 F]
   {y : 𝕜} : f ⋆[L, μ] (y • g) = y • (f ⋆[L, μ] g) :=
-by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, L.map_smul_right] }
+by { ext, simp only [pi.smul_apply, convolution_def, ← integral_smul, (L _).map_smul] }
 
 lemma zero_convolution : 0 ⋆[L, μ] g = 0 :=
-by { ext, simp_rw [convolution_def, pi.zero_apply, L.map_zero_left, integral_zero] }
+by { ext, simp_rw [convolution_def, pi.zero_apply, L.map_zero₂, integral_zero] }
 
 lemma convolution_zero : f ⋆[L, μ] 0 = 0 :=
-by { ext, simp_rw [convolution_def, pi.zero_apply, L.map_zero_right, integral_zero] }
+by { ext, simp_rw [convolution_def, pi.zero_apply, (L _).map_zero, integral_zero] }
 
 lemma convolution_exists_at.distrib_add {x : G} (hfg : convolution_exists_at f g x L μ)
   (hfg' : convolution_exists_at f g' x L μ) :
   (f ⋆[L, μ] (g + g')) x = (f ⋆[L, μ] g) x + (f ⋆[L, μ] g') x :=
-by simp only [convolution_def, L.map_add_right, pi.add_apply, integral_add hfg hfg']
+by simp only [convolution_def, (L _).map_add, pi.add_apply, integral_add hfg hfg']
 
 lemma convolution_exists.distrib_add (hfg : convolution_exists f g L μ)
   (hfg' : convolution_exists f g' L μ) : f ⋆[L, μ] (g + g') = f ⋆[L, μ] g + f ⋆[L, μ] g' :=
@@ -761,7 +751,7 @@ by { ext, exact (hfg x).distrib_add (hfg' x) }
 lemma convolution_exists_at.add_distrib {x : G} (hfg : convolution_exists_at f g x L μ)
   (hfg' : convolution_exists_at f' g x L μ) :
   ((f + f') ⋆[L, μ] g) x = (f ⋆[L, μ] g) x + (f' ⋆[L, μ] g) x :=
-by simp only [convolution_def, L.map_add_left, pi.add_apply, integral_add hfg hfg']
+by simp only [convolution_def, L.map_add₂', pi.add_apply, integral_add hfg hfg']
 
 lemma convolution_exists.add_distrib (hfg : convolution_exists f g L μ)
   (hfg' : convolution_exists f' g L μ) : (f + f') ⋆[L, μ] g = f ⋆[L, μ] g + f' ⋆[L, μ] g :=
@@ -788,8 +778,8 @@ begin
   convert integral_zero G F,
   ext t,
   rcases hx (x - t) t with h|h|h,
-  { rw [h, L.map_zero_right] },
-  { rw [h, L.map_zero_left] },
+  { rw [h, (L _).map_zero] },
+  { rw [h, L.map_zero₂] },
   { exact (h $ sub_add_cancel x t).elim }
 end
 
@@ -931,7 +921,7 @@ begin
       rw [sub_eq_add_neg, add_mem_ball_iff_norm, norm_neg, ← sub_eq_add_neg] at hg,
       rw [hg h2t] },
     { rw [nmem_support] at ht,
-      simp_rw [ht, L.map_zero_left] } },
+      simp_rw [ht, L.map_zero₂] } },
   simp_rw [convolution_def, h2],
 end
 
@@ -952,7 +942,7 @@ begin
   have hfg : convolution_exists_at f g x₀ L μ,
   { refine bdd_above.convolution_exists_at L metric.is_open_ball.measurable_set (subset_trans _ hf)
       hif.integrable_on hif.ae_strongly_measurable _ hmg,
-    { refine λ t, mt (λ ht : f t = 0, _), simp_rw [ht, L.map_zero_left] },
+    { refine λ t, mt (λ ht : f t = 0, _), simp_rw [ht, L.map_zero₂] },
     rw [bdd_above_def],
     refine ⟨∥g x₀∥ + ε, _⟩,
     rintro _ ⟨x, hx, rfl⟩,
@@ -967,7 +957,7 @@ begin
       refine ((L (f t)).dist_le_op_norm _ _).trans _,
       exact mul_le_mul_of_nonneg_left (hg h2t) (norm_nonneg _) },
     { rw [nmem_support] at ht,
-      simp_rw [ht, L.map_zero_left, L.map_zero, norm_zero, zero_mul, dist_self] } },
+      simp_rw [ht, L.map_zero₂, L.map_zero, norm_zero, zero_mul, dist_self] } },
   simp_rw [convolution_def],
   simp_rw [dist_eq_norm] at h2 ⊢,
   rw [← integral_sub hfg.integrable], swap, { exact (L.flip (g x₀)).integrable_comp hif },
