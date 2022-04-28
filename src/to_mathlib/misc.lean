@@ -4,9 +4,6 @@ import algebra.big_operators.finprod
 open real set function
 open_locale nnreal interval big_operators
 
-lemma has_mem.mem.out {α : Type*} {p : α → Prop} {x} (h : x ∈ {y | p y}) : p x :=
-h
-
 /-- to algebra.ring.basic or something -/
 @[simp] lemma smul_add_one_sub_smul {R M : Type*} [ring R] [add_comm_monoid M] [module R M]
   {r : R} {m : M} : r • m + (1 - r) • m = m :=

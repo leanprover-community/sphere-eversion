@@ -1,5 +1,6 @@
 import to_mathlib.analysis.normed_space.add_torsor_bases
 import to_mathlib.analysis.calculus
+import analysis.matrix
 
 noncomputable theory
 open set function
@@ -91,7 +92,7 @@ begin
     { ext, simp, },
     rw h,
     apply (this (fintype.card ι)).comp,
-    exact cont_diff_pi.mpr (λ i, cont_diff_pi.mpr (λ j, cont_diff_apply_apply _ _)), },
+    exact cont_diff_pi.mpr (λ i, cont_diff_pi.mpr (λ j, cont_diff_apply_apply _ _ _ _)), },
   intros n,
   induction n with n ih,
   { rw coe_det_is_empty,
@@ -130,7 +131,7 @@ begin
   have h_snd : cont_diff 𝕜 ⊤ (λ (x : F × (ι → F)), b.to_matrix x.snd),
   { refine cont_diff.comp _ cont_diff_snd,
     refine cont_diff_pi.mpr (λ j, cont_diff_pi.mpr (λ j', _)),
-    exact (smooth_barycentric_coord b j').comp (cont_diff_apply j), },
+    exact (smooth_barycentric_coord b j').comp (cont_diff_apply 𝕜 F j), },
   apply cont_diff_on.mul,
   { apply ((matrix.smooth_det ι 𝕜 ⊤).comp h_snd).cont_diff_on.inv,
     rintros ⟨p, v⟩ hpv,

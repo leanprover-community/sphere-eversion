@@ -132,7 +132,7 @@ begin
   rintros - ⟨p, rfl⟩ - ⟨q, rfl⟩ h (H : dist p q < 1),
   rw [int.dist_eq] at H,
   norm_cast at *,
-  exact h (eq_of_sub_eq_zero $ int.eq_zero_iff_abs_lt_one.mp H)
+  exact h (eq_of_sub_eq_zero $ int.abs_lt_one_iff.mp H)
 end
 
 instance : t2_space 𝕊₁ :=

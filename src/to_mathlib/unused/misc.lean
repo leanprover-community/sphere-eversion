@@ -1,7 +1,7 @@
 import algebra.module.ulift
 import measure_theory.constructions.borel_space
 import to_mathlib.analysis.calculus
-import to_mathlib.order.filter.small_sets
+import order.filter.small_sets
 
 /-!
 Lemmas that are unused in the sphere-eversion project, but were formulated for one reason or another
@@ -37,6 +37,7 @@ lemma tendsto_sup_dist {X Y ι : Type*} {l : filter ι} [topological_space X] [m
   {s : ι → set X} (hs : tendsto s l (𝓝 t).small_sets) :
   tendsto (λ i, ⨆ x ∈ s i, dist (f x) (f t)) l (𝓝 0) :=
 begin
+  /- Problem finding `real.bcsupr_nonneg` and `real.bcsupr_le` after Mathlib bump
   rw metric.tendsto_nhds,
   have nonneg : ∀ n, 0 ≤ ⨆ x ∈ s n, dist (f x) (f t),
     from λ n, real.bcsupr_nonneg (λ _ _, dist_nonneg),
@@ -46,6 +47,8 @@ begin
          metric.tendsto_nhds.mp h (ε/2) (half_pos ε_pos)).mono (λ n hn, _),
   apply lt_of_le_of_lt _ (half_lt_self ε_pos),
   exact real.bcsupr_le (half_pos ε_pos).le (λ x hx, (hn hx).out.le),
+  -/
+  sorry,
 end
 
 end filter

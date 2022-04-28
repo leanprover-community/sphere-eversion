@@ -2,7 +2,6 @@ import loops.basic
 import tactic.fin_cases
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
-import to_mathlib.topology.constructions
 import to_mathlib.partition
 
 import to_mathlib.order.filter.eventually_constant
