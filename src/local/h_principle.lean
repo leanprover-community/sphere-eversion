@@ -377,7 +377,7 @@ begin
               unit_interval.fract_mem _⟩, by simp only [loop.fract_eq]⟩ },
     { simp only [h, improve_step_apply_f, formal_sol.to_jet_sec_eq_coe, improve_step_apply_φ],
       rw [prod.dist_eq, max_lt_iff, prod.dist_eq, max_lt_iff],
-      refine ⟨by simpa using ε_pos, _, _⟩ ; dsimp only ; rw dist_add',
+      refine ⟨by simpa using ε_pos, _, _⟩ ; dsimp only ; rw dist_self_add_left,
       { exact (bu_lt _ _ $ H _ hxK₁ _) },
       { exact (bu_lt _ _ $ H' _ hxK₁) } } },
   { rw [show ((L.improve_step h N) t).f x = 𝓕.f x,
