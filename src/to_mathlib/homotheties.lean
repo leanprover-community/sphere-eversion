@@ -1,6 +1,8 @@
 import linear_algebra.affine_space.affine_map
 import analysis.normed_space.basic
 
+-- TODO Delete this file if/when https://github.com/leanprover-community/mathlib/pull/13766 merged
+
 open affine_map
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
