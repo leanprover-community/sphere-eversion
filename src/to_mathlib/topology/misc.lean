@@ -8,7 +8,6 @@ import topology.shrinking_lemma
 import topology.metric_space.emetric_paracompact
 import analysis.convex.topology
 import to_mathlib.misc
-import to_mathlib.topology.constructions
 
 noncomputable theory
 
@@ -105,27 +104,11 @@ lemma op_norm_lsmul_le : ∥(lsmul 𝕜 𝕜' : 𝕜' →L[𝕜] E →L[𝕜] E)
 begin
   cases subsingleton_or_nontrivial E; resetI,
   { convert norm_zero.trans_le zero_le_one },
-  rw [op_norm_lsmul]
+  rw [continuous_linear_map.op_norm_lsmul]
 end
 
-lemma op_norm_lmul : ∥(lmul 𝕜 𝕜' : 𝕜' →L[𝕜] 𝕜' →L[𝕜] 𝕜')∥ = 1 := op_norm_lsmul
+lemma op_norm_lmul : ∥(lmul 𝕜 𝕜' : 𝕜' →L[𝕜] 𝕜' →L[𝕜] 𝕜')∥ = 1 := continuous_linear_map.op_norm_lsmul
 
-
-end
-
-
-section
--- to normed.group.basic
-
-
-section
-variables {E : Type*} [semi_normed_group E]
-@[simp] theorem dist_self_sub_right (g h : E) : dist g (g - h) = ∥h∥ :=
-by rw [sub_eq_add_neg, dist_self_add_right, norm_neg]
-
-@[simp] theorem dist_self_sub_left (g h : E) : dist (g - h) g = ∥h∥ :=
-by rw [dist_comm, dist_self_sub_right]
-end
 
 end
 
@@ -289,34 +272,6 @@ begin
   simp_rw [preimage_inter, preimage_preimage, preimage_const, mem_of_mem_nhds hU, if_pos,
     inter_univ]
 end
-
-end
-
-section -- to constructions
-
-variables {X Y Z : Type*} [topological_space X] [topological_space Y] [topological_space Z]
-
-lemma continuous.fst' {f : X → Z} (hf : continuous f) : continuous (λ x : X × Y, f x.fst) :=
-hf.comp continuous_fst
-
-lemma continuous.snd' {f : Y → Z} (hf : continuous f) : continuous (λ x : X × Y, f x.snd) :=
-hf.comp continuous_snd
-
-lemma continuous_at.fst' {f : X → Z} {x : X} {y : Y} (hf : continuous_at f x) :
-  continuous_at (λ x : X × Y, f x.fst) (x, y) :=
-continuous_at.comp hf continuous_at_fst
-
-lemma continuous_at.fst'' {f : X → Z} {x : X × Y} (hf : continuous_at f x.fst) :
-  continuous_at (λ x : X × Y, f x.fst) x :=
-hf.comp continuous_at_fst
-
-lemma continuous_at.snd' {f : Y → Z} {x : X} {y : Y} (hf : continuous_at f y) :
-  continuous_at (λ x : X × Y, f x.snd) (x, y) :=
-continuous_at.comp hf continuous_at_snd
-
-lemma continuous_at.snd'' {f : Y → Z} {x : X × Y} (hf : continuous_at f x.snd) :
-  continuous_at (λ x : X × Y, f x.snd) x :=
-hf.comp continuous_at_snd
 
 end
 

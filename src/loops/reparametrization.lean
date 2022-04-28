@@ -6,9 +6,7 @@ import notations
 import loops.surrounding
 import loops.delta_mollifier
 
-import to_mathlib.order.hom.basic
 import to_mathlib.geometry.manifold.partition_of_unity
-import to_mathlib.algebra.periodic
 import to_mathlib.analysis.cont_diff
 import to_mathlib.analysis.normed_group
 
@@ -256,7 +254,7 @@ end
 
 lemma local_centering_density_periodic (hy : y ∈ γ.local_centering_density_nhd x) :
   periodic (γ.local_centering_density x y) 1 :=
-periodic.sum $ λ i, periodic.smul delta_mollifier_periodic _
+finset.univ.periodic_sum $ λ i hi, periodic.smul delta_mollifier_periodic _
 
 lemma local_centering_density_smooth_on :
   smooth_on ↿(γ.local_centering_density x) $
@@ -275,7 +273,7 @@ begin
     rw prod_univ,
     refine cont_diff_on.comp _ cont_diff_fst.cont_diff_on subset.rfl,
     have h₁ := smooth_barycentric ι ℝ F (fintype.card_fin _),
-    have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := cont_diff_apply i,
+    have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := cont_diff_apply _ _ i,
     refine (h₂.comp_cont_diff_on h₁).comp _ _,
     { have h₃ := (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm.subset,
       refine cont_diff_on.comp _ (cont_diff_id.prod cont_diff_id).cont_diff_on h₃,

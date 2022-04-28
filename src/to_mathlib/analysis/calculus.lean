@@ -6,22 +6,6 @@ noncomputable theory
 open set function filter
 open_locale topological_space
 
-section
-
-variables {ι ι' k : Type*} [fintype ι] [fintype ι']
-variables [nondiscrete_normed_field k] {Z : Type*} [normed_group Z] [normed_space k Z]
-variables {m : with_top ℕ}
-
-lemma cont_diff_apply (i : ι) :
-  cont_diff k m (λ (f : ι → Z), f i) :=
-cont_diff_pi.mp cont_diff_id _
-
-lemma cont_diff_apply_apply (i : ι) (j : ι') :
-  cont_diff k m (λ (f : ι → ι' → Z), f i j) :=
-(@cont_diff_apply _ _ _ _ Z _ _ m j).comp (@cont_diff_apply _ _ _ _ (ι' → Z) _ _ m i)
-
-end
-
 lemma is_compact.bdd_above_norm {X : Type*} [topological_space X] {E : Type*} [normed_group E]
   {s : set X} (hs : is_compact s) {f : X → E} (hf : continuous f) : ∃ M > 0, ∀ x ∈ s, ∥f x∥ ≤ M :=
 begin
@@ -44,9 +28,6 @@ begin
       smooth_transition.zero_of_nonpos le_rfl], }
 end
 
-lemma smooth_transition.continuous : continuous smooth_transition :=
-(@smooth_transition.cont_diff 0).continuous
-
 lemma smooth_transition.continuous_at {x : ℝ} : continuous_at smooth_transition x :=
 smooth_transition.continuous.continuous_at
 
@@ -59,26 +40,6 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
           {F : Type*} [normed_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_group G] [normed_space 𝕜 G]
           {n : with_top ℕ}
-
-lemma has_fderiv_at_prod_mk_left (e₀ : E) (f₀ : F) : has_fderiv_at (λ e : E, (e, f₀)) (inl 𝕜 E F) e₀ :=
-by simp_rw [has_fderiv_at_iff_is_o_nhds_zero, inl_apply, prod.mk_sub_mk, add_sub_cancel', sub_self,
-  ← prod.zero_eq_mk, asymptotics.is_o_zero]
-
-lemma has_fderiv_at_prod_mk_right (e₀ : E) (f₀ : F) : has_fderiv_at (λ f : F, (e₀, f)) (inr 𝕜 E F) f₀ :=
-by simp_rw [has_fderiv_at_iff_is_o_nhds_zero, inr_apply, prod.mk_sub_mk, add_sub_cancel', sub_self,
-  ← prod.zero_eq_mk, asymptotics.is_o_zero]
-
-lemma cont_diff.fst {f : E → F × G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x, (f x).fst) :=
-cont_diff_fst.comp hf
-
-lemma cont_diff.snd {f : E → F × G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x, (f x).snd) :=
-cont_diff_snd.comp hf
-
-lemma cont_diff.fst' {f : E → G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x : E × F, f x.fst) :=
-hf.comp cont_diff_fst
-
-lemma cont_diff.snd' {f : F → G} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ x : E × F, f x.snd) :=
-hf.comp cont_diff_snd
 
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
@@ -120,9 +81,6 @@ lemma differentiable_at.has_fderiv_at_partial_fst {φ : E → F → G} {e₀ : E
   has_fderiv_at (λ e, φ e f₀) (partial_fderiv_fst 𝕜 φ e₀ f₀) e₀ :=
 (h.comp e₀ $ differentiable_at_id.prod $ differentiable_at_const f₀).has_fderiv_at
 
-lemma cont_diff_prod_mk_left (f₀ : F) {n : with_top ℕ} : cont_diff 𝕜 n (λ e : E, (e, f₀)) :=
-cont_diff_id.prod cont_diff_const
-
 lemma differentiable_at.has_fderiv_at_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
   (h : differentiable_at 𝕜 (uncurry φ) (e₀, f₀)) :
 has_fderiv_at (λ f, φ e₀ f) (partial_fderiv_snd 𝕜 φ e₀ f₀) f₀ :=
@@ -130,9 +88,6 @@ begin
   rw fderiv_partial_snd h.has_fderiv_at,
   exact h.has_fderiv_at.partial_snd
 end
-
-lemma cont_diff_prod_mk_right (e₀ : E) {n : with_top ℕ} : cont_diff 𝕜 n (λ f : F, (e₀, f)) :=
-cont_diff_const.prod cont_diff_id
 
 lemma cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
   (h : cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : cont_diff 𝕜 n (λ e, φ e f₀) :=
@@ -206,14 +161,6 @@ with_top.coe_le_coe.mpr le_mul_self
 lemma with_top.le_self_mul {α : Type*} [canonically_ordered_monoid α] (n m : α) :
   (n : with_top α) ≤ (n * m : α) :=
 with_top.coe_le_coe.mpr le_self_mul
-
-lemma cont_diff.of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
-  cont_diff 𝕜 n φ :=
-h.of_le $ with_top.coe_le_coe.mpr le_self_add
-
-lemma cont_diff.one_of_succ {φ : E → F} {n : ℕ} (h : cont_diff 𝕜 (n + 1) φ) :
-  cont_diff 𝕜 1 φ :=
-h.of_le $ with_top.coe_le_coe.mpr le_add_self
 
 lemma cont_diff.cont_diff_partial_fst {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
@@ -554,29 +501,3 @@ begin
   { exact h.trans_lt ε_pos },
   { rwa real.norm_of_nonneg h.le at hN },
 end
-
-
-
-section smooth
-variables {𝕜 E E' F F' G H K : Type*}
-variables [nondiscrete_normed_field 𝕜]
-variables [normed_group E] [normed_space 𝕜 E]
-variables [normed_group E'] [normed_space 𝕜 E']
-variables [normed_group F] [normed_space 𝕜 F]
-variables [normed_group G] [normed_space 𝕜 G]
-variables [normed_group H] [normed_space 𝕜 H]
-variables [normed_group K] [normed_space 𝕜 K]
-variables [normed_linear_ordered_field F'] [normed_space 𝕜 F']
-variables {n : with_top ℕ}
-
-
-lemma cont_diff.comp₂ {g : E × F → G} (hg : cont_diff 𝕜 n g) {e : H → E} (he : cont_diff 𝕜 n e)
-  {f : H → F} (hf : cont_diff 𝕜 n f) : cont_diff 𝕜 n (λ h, g (e h, f h)) :=
-hg.comp $ he.prod hf
-
-lemma cont_diff.comp₃ {g : E × F × K → G} (hg : cont_diff 𝕜 n g)
-  {e : H → E} (he : cont_diff 𝕜 n e) {f : H → F} (hf : cont_diff 𝕜 n f)
-  {k : H → K} (hk : cont_diff 𝕜 n k) : cont_diff 𝕜 n (λ h, g (e h, f h, k h)) :=
-hg.comp $ he.prod $ hf.prod hk
-
-end smooth

@@ -13,10 +13,6 @@ variables {α β : Type*} [pseudo_metric_space α] [pseudo_metric_space β]
 lemma ball_subset_thickening {x : α} {E : set α} (hx : x ∈ E) (δ : ℝ) : ball x δ ⊆ thickening δ E :=
 by simp_rw [thickening_eq_bUnion_ball, subset_bUnion_of_mem hx]
 
-lemma thickening_union (ε : ℝ) (s t : set α) :
-  thickening ε (s ∪ t) = thickening ε s ∪ thickening ε t :=
-by { ext x, simp [mem_thickening_iff, or_and_distrib_right, exists_or_distrib] }
-
 lemma thickening_ball (x : α) (ε δ : ℝ) : thickening ε (ball x δ) ⊆ ball x (ε + δ) :=
 begin
   intro y,

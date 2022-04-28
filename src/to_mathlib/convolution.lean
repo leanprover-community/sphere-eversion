@@ -8,9 +8,8 @@ import measure_theory.group.action
 import measure_theory.measure.haar_lebesgue
 import measure_theory.group.integration
 import analysis.calculus.parametric_integral
-import to_mathlib.analysis.cont_diff_bump
 import to_mathlib.analysis.calculus
-import to_mathlib.order.filter.small_sets
+import order.filter.small_sets
 import analysis.calculus.fderiv_measurable
 import analysis.calculus.specific_functions
 
@@ -998,7 +997,8 @@ begin
   convert (dist_convolution_le' _ hif hR hf hmg hg).trans _,
   { simp_rw [lsmul_apply, integral_smul_const, hintf, one_smul] },
   { simp_rw [real.norm_of_nonneg (hnf _), hintf, mul_one],
-    convert (mul_le_mul_of_nonneg_right op_norm_lsmul_le hε).trans_eq (one_mul ε) }
+    convert
+      (mul_le_mul_of_nonneg_right continuous_linear_map.op_norm_lsmul_le hε).trans_eq (one_mul ε) }
 end
 
 lemma convolution_tendsto_right {ι} {l : filter ι} {φ : ι → G → ℝ}

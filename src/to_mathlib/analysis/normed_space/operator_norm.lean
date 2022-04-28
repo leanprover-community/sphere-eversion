@@ -1,5 +1,4 @@
 import analysis.normed_space.bounded_linear_maps
-import to_mathlib.topology.constructions
 
 noncomputable theory
 

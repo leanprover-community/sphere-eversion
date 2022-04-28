@@ -3,7 +3,6 @@ import measure_theory.group.integration
 import analysis.calculus.specific_functions
 
 import to_mathlib.convolution
-import to_mathlib.analysis.cont_diff_bump
 import to_mathlib.data.real_basic
 import to_mathlib.topology.periodic
 
