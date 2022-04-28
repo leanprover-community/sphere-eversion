@@ -32,9 +32,9 @@ lemma loop.tendsto_mollify_apply_aux (γ : E → loop F) (h : continuous ↿γ) 
   tendsto (λ (z : E × ℕ), (γ z.1).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 0) :=
 begin
   suffices : tendsto (λ (z : E × ℕ), ∥(γ z.1).mollify z.2 t∥) ((𝓝 x).prod at_top) (𝓝 0),
-  { exact this.of_norm_le (λ z, le_refl _), },
+  { exact squeeze_zero_norm (λ z, le_refl _) this, },
   suffices : tendsto (λ (z : E × ℕ), ⨆ (s : I), ∥γ z.1 s∥) ((𝓝 x).prod at_top) (𝓝 0),
-  { refine this.of_norm_le _,
+  { refine squeeze_zero_norm _ this,
     rintros ⟨y, n⟩,
     simp only [norm_norm, loop.mollify],
     refine norm_integral_le_integral_norm_Ioc.trans _,
