@@ -172,11 +172,12 @@ begin
     exists_subset_affine_independent_span_eq_top_of_open hs hts htne hai,
   have hb₀ : b.finite, { exact finite_of_fin_dim_affine_independent ℝ hb₃, },
   obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_aff_span_eq_top.mpr hb₄,
-  obtain ⟨ε, hε, hcs⟩ := homothety_image_subset_of_open c hs hb₂ hb₀,
-  have hbε := convex.subset_interior_image_homothety_of_one_lt
-    (convex_convex_hull ℝ _) hc (1 + ε) (lt_add_of_pos_right 1 hε),
+  rw ← hs.interior_eq at hb₂,
+  obtain ⟨ε, hε, hcs⟩ := (@eventually_homothety_image_subset_of_finite_subset_interior
+    _ _ _ _ _ ℝ _ _ c _ _ hb₀ hb₂).exists_gt,
+  have hbε := convex.subset_interior_image_homothety_of_one_lt (convex_convex_hull ℝ _) hc ε hε,
   rw affine_map.image_convex_hull at hbε,
-  let t : units ℝ := units.mk0 (1 + ε) (by linarith),
+  let t : units ℝ := units.mk0 ε (by linarith),
   refine ⟨affine_map.homothety c (t : ℝ) '' b, hcs, _, _, hbε (convex_hull_mono hb₁ hf)⟩,
   { rwa (affine_equiv.homothety_units_mul_hom c t).affine_independent_set_of_eq_iff, },
   { exact (affine_equiv.homothety_units_mul_hom c t).span_eq_top_iff.mp hb₄, },

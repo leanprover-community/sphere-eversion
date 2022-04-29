@@ -7,7 +7,6 @@ import topology.algebra.floor_ring
 import topology.path_connected
 import linear_algebra.affine_space.independent
 
-import to_mathlib.homotheties
 import to_mathlib.smooth_barycentric
 import to_mathlib.topology.path
 import to_mathlib.linear_algebra.affine_space.basis
