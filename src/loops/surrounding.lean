@@ -173,8 +173,8 @@ begin
   have hb₀ : b.finite, { exact finite_of_fin_dim_affine_independent ℝ hb₃, },
   obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_aff_span_eq_top.mpr hb₄,
   rw ← hs.interior_eq at hb₂,
-  obtain ⟨ε, hε, hcs⟩ := (@eventually_homothety_image_subset_of_finite_subset_interior
-    _ _ _ _ _ ℝ _ _ c _ _ hb₀ hb₂).exists_gt,
+  obtain ⟨ε, hε, hcs⟩ :=
+    (eventually_homothety_image_subset_of_finite_subset_interior ℝ c hb₀ hb₂).exists_gt,
   have hbε := convex.subset_interior_image_homothety_of_one_lt (convex_convex_hull ℝ _) hc ε hε,
   rw affine_map.image_convex_hull at hbε,
   let t : units ℝ := units.mk0 ε (by linarith),

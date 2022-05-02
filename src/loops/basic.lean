@@ -3,13 +3,12 @@ import analysis.convex.caratheodory
 import analysis.calculus.cont_diff
 import measure_theory.integral.interval_integral
 import measure_theory.measure.lebesgue
-import topology.algebra.floor_ring
+import topology.algebra.order.floor
 import topology.path_connected
 import linear_algebra.affine_space.independent
 
 import to_mathlib.smooth_barycentric
 import to_mathlib.topology.path
-import to_mathlib.linear_algebra.affine_space.basis
 import to_mathlib.measure_theory.parametric_interval_integral
 import to_mathlib.equivariant
 

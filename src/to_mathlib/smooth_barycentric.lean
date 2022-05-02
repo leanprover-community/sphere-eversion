@@ -1,6 +1,7 @@
-import to_mathlib.analysis.normed_space.add_torsor_bases
-import to_mathlib.analysis.calculus
 import analysis.matrix
+import analysis.normed_space.add_torsor_bases
+
+import to_mathlib.analysis.calculus
 
 noncomputable theory
 open set function

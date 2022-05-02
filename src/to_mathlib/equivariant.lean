@@ -1,5 +1,5 @@
 import notations
-import topology.algebra.floor_ring
+import topology.algebra.order.floor
 import to_mathlib.topology.misc
 
 noncomputable theory
