@@ -324,7 +324,7 @@ begin
     have h : γ.approx_surrounding_points_at x y n ∈ affine_bases ι ℝ F :=
       γ.approx_surrounding_points_at_mem_affine_bases x y hy,
     erw [eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h],
-    simpa using affine_basis.affine_combination_coord_eq_self (affine_basis.mk _ h.1 h.2) (g y), },
+    simp, },
   { simp_rw mul_smul,
     refine λ i hi, ((continuous.smul _ (γ.continuous y)).const_smul _).interval_integrable 0 1,
     exact delta_mollifier_smooth.continuous, },
@@ -370,10 +370,10 @@ begin
     (smooth_partition_of_unity.is_subordinate_to_partition_of_unity.mpr hp)
     (γ.local_centering_density_nhd_is_open) x,
   refine ⟨ys, n, hn₁, hn₂, λ z hz t, ⟨_, _⟩⟩,
-  { erw [← finsum_eq_sum_of_support_to_finset_subset' _ (hn₃ z hz), p.sum_eq_one (mem_univ z)], },
+  { erw [← finsum_eq_finset_sum_of_support_subset _ (hn₃ z hz), p.sum_eq_one (mem_univ z)], },
   { rw hp',
     suffices : support (λ y, p y z * γ.local_centering_density y z t) ⊆ ys,
-    { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
+    { exact finsum_eq_finset_sum_of_support_subset _ this, },
     refine subset.trans (λ y hy, _) (hn₃ z hz),
     rintros (contra : p y z = 0),
     simpa [contra] using hy, },

@@ -3,7 +3,6 @@ import measure_theory.integral.periodic
 
 import to_mathlib.measure_theory.basic
 import to_mathlib.misc
-import to_mathlib.algebra.big_operators.finprod
 
 noncomputable theory
 
@@ -279,12 +278,12 @@ begin
   have h₁ : ∀ x, ∑ᶠ i, f i x = ∑ i in s, f i x,
   { intros x,
     suffices : support (λ i, f i x) ⊆ s,
-    { exact finsum_eq_sum_of_support_to_finset_subset' _ this, },
+    { exact finsum_eq_finset_sum_of_support_subset _ this, },
     intros i hi,
     simp only [set.coe_to_finset, mem_support] at hi ⊢,
     exact λ contra, by simpa [congr_fun contra x] using hi, },
   suffices : support (λ i, ∫ x in a..b, f i x ∂μ) ⊆ s,
-  { simp_rw [h₁, integral_sum s (λ i _, hf i), finsum_eq_sum_of_support_to_finset_subset' _ this] },
+  { simp_rw [h₁, integral_sum s (λ i _, hf i), finsum_eq_finset_sum_of_support_subset _ this] },
   intros i hi,
   simp only [set.coe_to_finset, mem_support] at hi ⊢,
   intros contra,

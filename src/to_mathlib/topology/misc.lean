@@ -3,7 +3,7 @@ import topology.urysohns_lemma
 import topology.uniform_space.compact_separated
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
-import topology.algebra.floor_ring
+import topology.algebra.order.floor
 import topology.shrinking_lemma
 import topology.metric_space.emetric_paracompact
 import analysis.convex.topology
