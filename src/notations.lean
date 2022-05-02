@@ -6,7 +6,6 @@ notation `𝒞` := cont_diff ℝ
 notation `∞` := (⊤ : with_top ℕ)
 notation `hull` := convex_hull ℝ
 notation `D` := fderiv ℝ
-notation `hull` := convex_hull ℝ
 notation `smooth_on` := cont_diff_on ℝ ⊤
 
 -- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.

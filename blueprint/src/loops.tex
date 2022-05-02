@@ -33,7 +33,7 @@ All of this chapter is devoted to proving the following proposition.
   \label{prop:loops}
   \lean{exists_loops}
   \leanok
-  Let $K$ a compact setin $E$. Let $Ω$ be an open set in $E × F$ such that, for each $x$,
+  Let $K$ a compact set in $E$. Let $Ω$ be an open set in $E × F$ such that, for each $x$,
   $Ω_x := Ω ∩ (\{x\} × F)$ is connected in $\{x\} × F$.
 
   Let $β$ and $g$ be smooth maps from $E$ to $F$.
@@ -44,7 +44,7 @@ All of this chapter is devoted to proving the following proposition.
   \[
     γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)
   \]
-  such that, for all $x ∈ $, all $t ∈ ℝ$ and all  $s ∈ 𝕊^1$,
+  such that, for all $x ∈ E$, all $t ∈ ℝ$ and all  $s ∈ 𝕊^1$,
   \begin{itemize}
     \item
       $γ^t_x(s) ∈ Ω_x$
@@ -67,10 +67,9 @@ claim is that $g$ is the average value of $γ = γ_0 ∘ h$ for some
 self-diffeomorphism $h$ of $𝕊^1$. The idea is to choose $h$ such that
 $γ$ rushes to $p_1$, stays there during a time roughly $λ_1$, rushes to
 $p_2$, etc. But, in order to achieve average exactly $g$, it seems like $h$
-needs to be a discontinuous piecewise constant map. The assumption that $g$ is
-in the \emph{interior} of the convex hull gives enough slack to get away with
-a smooth $h$.  Actually the
-conclusion would be false without this interior assumption.
+needs to be a discontinuous piecewise constant map. The assumption that $Ω$ is
+open means that the convex hull is open, which gives enough slack to get away with
+a smooth $h$.
 
 In the previous proof sketch, there is a lot of freedom in constructing $γ$,
 which is problematic when trying to do it consistently when $x$ varies.
