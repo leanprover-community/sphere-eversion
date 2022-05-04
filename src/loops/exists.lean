@@ -112,7 +112,7 @@ end
   (e) Let `δ' x` be a family of loop that is at most `ε₁` away from `γ` using
     `exists_smooth_and_eq_on`. Since `γ` is smooth near `s ∈ ℤ` and `t ≤ 0` we can also
     ensure that `δ' = γ` for those values (*).
-    Now let `δ x t s = δ x (smooth_transition t) (fract s)`
+    Now let `δ x t s = δ' x (smooth_transition t) (fract s)`
     We immediately get (0) and (3). We get (2) by (*).
     This is still smooth, since `δ'` is doesn't depend on `s` near `s ∈ ℤ`.
   (f) (a1) gives (1), (a4) gives (4) and (a5) gives (5).

@@ -2,7 +2,6 @@ import analysis.calculus.cont_diff
 
 open_locale topological_space
 
-notation `I` := set.Icc (0 : ℝ) 1
 notation `𝒞` := cont_diff ℝ
 notation `∞` := (⊤ : with_top ℕ)
 notation `hull` := convex_hull ℝ
