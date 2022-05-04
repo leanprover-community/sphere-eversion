@@ -253,3 +253,34 @@ begin
 end
 
 end
+
+section continuous_linear
+
+-- two lemmas about continuous bilinear maps, not that useful
+variables {X 𝕜 E E' F : Type*}
+variables [nondiscrete_normed_field 𝕜]
+  [normed_group E] [normed_group E'] [normed_group F]
+  [normed_space 𝕜 E] [normed_space 𝕜 E'] [normed_space 𝕜 F]
+
+namespace continuous_linear_map
+
+lemma has_fderiv_at_const_left [normed_group X] [normed_space 𝕜 X]
+  (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E'} {f' : X →L[𝕜] E'}
+  (x : X) {c : E} (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L c (f x)) ((L c).comp f') x :=
+(L c).has_fderiv_at.comp x hf
+
+lemma has_fderiv_at_const_right [normed_group X] [normed_space 𝕜 X]
+  (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {f' : X →L[𝕜] E}
+  (x : X) {c : E'}
+  (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L (f x) c) ((flip L c).comp f') x :=
+(flip L).has_fderiv_at_const_left x hf
+
+end continuous_linear_map
+
+-- (unused)
+@[simp] lemma continuous_linear_equiv.coe_one : (⇑(1 : E ≃L[𝕜] E) : E → E) = id := rfl
+
+-- (unused)
+@[simp] lemma continuous_linear_equiv.one_symm : (1 : E ≃L[𝕜] E).symm = 1 := rfl
+
+end continuous_linear
