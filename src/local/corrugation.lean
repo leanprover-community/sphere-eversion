@@ -19,7 +19,7 @@ noncomputable theory
 
 open set function finite_dimensional asymptotics filter topological_space int measure_theory
      continuous_linear_map
-open_locale topological_space
+open_locale topological_space unit_interval
 
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
