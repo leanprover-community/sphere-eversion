@@ -130,19 +130,6 @@ hf.comp_measurable' measurable_snd prod_snd_absolutely_continuous
 
 end measure_theory
 
-section op_norm
-
-theorem continuous_linear_map.dist_le_op_norm {𝕜 𝕜₂ E F : Type*}
-  [semi_normed_group E] [semi_normed_group F]
-  [nondiscrete_normed_field 𝕜] [nondiscrete_normed_field 𝕜₂] [normed_space 𝕜 E] [normed_space 𝕜₂ F]
-  {σ₁₂ : 𝕜 →+* 𝕜₂} [ring_hom_isometric σ₁₂]
-  (f : E →SL[σ₁₂] F) (x y : E) : dist (f x) (f y) ≤ ∥f∥ * dist x y :=
-by simp_rw [dist_eq_norm, ← map_sub, f.le_op_norm]
-
-end op_norm
-
-
-
 variables {𝕜 G G₀ X Y M R E E' E'' F : Type*}
 
 section continuous_bilinear_map
@@ -151,39 +138,7 @@ variables [nondiscrete_normed_field 𝕜]
   [normed_group E] [normed_group E'] [normed_group E''] [normed_group F]
   [normed_space 𝕜 E] [normed_space 𝕜 E'] [normed_space 𝕜 E''] [normed_space 𝕜 F]
 
-variables {f f' : G → E} {g g' : G → E'}
-    {x x' : G} {y y' : E}
-
 namespace continuous_linear_map
-
-variables [normed_group G] [normed_space 𝕜 G]
-
-lemma map_add₂' (f : E →L[𝕜] F →L[𝕜] G) (x x' : E) (y : F) : f (x + x') y = f x y + f x' y :=
-by rw [f.map_add, add_apply]
-
-lemma map_sub₂ (f : E →L[𝕜] F →L[𝕜] G) (x x' : E) (y : F) : f (x - x') y = f x y - f x' y :=
-by rw [f.map_sub, sub_apply]
-
-lemma map_smul₂ (f : E →L[𝕜] F →L[𝕜] G) (c : 𝕜) (x : E) (y : F) : f (c • x) y = c • f x y :=
-by rw [f.map_smul, smul_apply]
-
-lemma map_zero₂ (f : E →L[𝕜] F →L[𝕜] G) (y : F) : f 0 y = 0 :=
-by rw [f.map_zero, zero_apply]
-
-lemma continuous₂ (L : E →L[𝕜] E' →L[𝕜] F) : continuous (uncurry (λ x y, L x y)) :=
-L.is_bounded_bilinear_map.continuous
-
-lemma has_fderiv_at_const_left [normed_group X] [normed_space 𝕜 X]
-  (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E'} {f' : X →L[𝕜] E'}
-  (x : X) {c : E} (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L c (f x)) ((L c).comp f') x :=
-(L c).has_fderiv_at.comp x hf
-
-lemma has_fderiv_at_const_right [normed_group X] [normed_space 𝕜 X]
-  (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {f' : X →L[𝕜] E}
-  (x : X) {c : E'}
-  (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L (f x) c) ((flip L c).comp f') x :=
-(flip L).has_fderiv_at_const_left x hf
-
 
 section
 
@@ -195,18 +150,6 @@ lemma ae_strongly_measurable_comp₂ (L : E →L[𝕜] E' →L[𝕜] F) {f : X �
 L.continuous₂.comp_ae_strongly_measurable $ hf.prod_mk hg
 
 end
-
-
-variables (E'')
-
-/--  Apply the bilinear map pointwise on the second argument -/
-@[simps apply]
-def precompR (L : E →L[𝕜] E' →L[𝕜] F) : E →L[𝕜] (E'' →L[𝕜] E') →L[𝕜] (E'' →L[𝕜] F) :=
-(compL 𝕜 E'' E' F).comp L
-
-/--  Apply the bilinear map pointwise on the second argument -/
-def precompL (L : E →L[𝕜] E' →L[𝕜] F) : (E'' →L[𝕜] E) →L[𝕜] E' →L[𝕜] (E'' →L[𝕜] F) :=
-(precompR E'' (flip L)).flip
 
 end continuous_linear_map
 
@@ -239,21 +182,6 @@ end
 end integrable
 
 variables [normed_space ℝ F] [complete_space E]
-
--- section smul
--- variables [group G] [mul_action G X] [has_measurable_smul G X]
-
--- @[to_additive]
--- lemma integral_smul_eq_self {μ : measure X} [smul_invariant_measure G X μ] (f : X → E) {m : G} :
---   ∫ x, f (m • x) ∂μ = ∫ x, f x ∂μ :=
--- begin
---   have h : measurable_embedding (λ x : X, m • x) :=
---   (measurable_equiv.smul m).measurable_embedding,
---   rw [← h.integral_map, map_smul]
--- end
-
--- end smul
-
 
 section mul
 
@@ -751,7 +679,7 @@ by { ext, exact (hfg x).distrib_add (hfg' x) }
 lemma convolution_exists_at.add_distrib {x : G} (hfg : convolution_exists_at f g x L μ)
   (hfg' : convolution_exists_at f' g x L μ) :
   ((f + f') ⋆[L, μ] g) x = (f ⋆[L, μ] g) x + (f' ⋆[L, μ] g) x :=
-by simp only [convolution_def, L.map_add₂', pi.add_apply, integral_add hfg hfg']
+by simp only [convolution_def, L.map_add₂, pi.add_apply, integral_add hfg hfg']
 
 lemma convolution_exists.add_distrib (hfg : convolution_exists f g L μ)
   (hfg' : convolution_exists f' g L μ) : (f + f') ⋆[L, μ] g = f ⋆[L, μ] g + f' ⋆[L, μ] g :=
