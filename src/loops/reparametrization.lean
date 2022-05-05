@@ -1,14 +1,11 @@
 import analysis.calculus.specific_functions
 import measure_theory.integral.periodic
-import geometry.manifold.partition_of_unity
-
 import notations
 import loops.surrounding
 import loops.delta_mollifier
 
-import to_mathlib.geometry.manifold.partition_of_unity
+import to_mathlib.partition2
 import to_mathlib.analysis.cont_diff
-import to_mathlib.analysis.normed_group
 
 /-!
 # The reparametrization lemma
@@ -190,7 +187,7 @@ begin
   exact (interior u),
 end
 
-omit x
+omit γ x
 
 lemma local_centering_density_nhd_is_open :
   is_open $ γ.local_centering_density_nhd x :=
@@ -239,7 +236,7 @@ lemma approx_surrounding_points_at_mem_affine_bases (hy : y ∈ γ.local_centeri
 
 variables [decidable_pred (∈ affine_bases ι ℝ F)]
 
-@[simp] lemma local_centering_density_pos (t : ℝ) (hy : y ∈ γ.local_centering_density_nhd x) :
+@[simp] lemma local_centering_density_pos (hy : y ∈ γ.local_centering_density_nhd x) (t : ℝ) :
   0 < γ.local_centering_density x y t :=
 begin
   simp only [γ.local_centering_density_spec x, fintype.sum_apply, pi.smul_apply,
@@ -330,165 +327,92 @@ begin
     exact delta_mollifier_smooth.continuous, },
 end
 
+structure is_centering_density (x : E) (f : ℝ → ℝ) : Prop :=
+(pos : ∀ t, 0 < f t)
+(periodic : periodic f 1)
+(integral_one : ∫ s in 0..1, f s = 1)
+(average : ∫ s in 0..1, f s • γ x s = g x)
+(continuous : continuous f) -- Can drop if/when have `interval_integrable.smul_continuous_on`
+
+lemma is_centering_density_convex (x : E) : convex ℝ { f | γ.is_centering_density x f} :=
+begin
+  classical,
+  rintros f k ⟨hf₁, hf₂, hf₃, hf₄, hf₅⟩ ⟨hk₁, hk₂, hk₃, hk₄, hk₅⟩ a b ha hb hab,
+  have hf₆ : interval_integrable f volume 0 1,
+  { apply interval_integrable_of_integral_ne_zero, rw hf₃, exact one_ne_zero, },
+  have hf₇ : interval_integrable (f • γ x) volume 0 1 :=
+    (hf₅.smul (γ.continuous x)).interval_integrable 0 1,
+  have hk₆ : interval_integrable k volume 0 1,
+  { apply interval_integrable_of_integral_ne_zero, rw hk₃, exact one_ne_zero, },
+  have hk₇ : interval_integrable (k • γ x) volume 0 1 :=
+    (hk₅.smul (γ.continuous x)).interval_integrable 0 1,
+  exact
+  { pos := λ t, convex_Ioi (0 : ℝ) (hf₁ t) (hk₁ t) ha hb hab,
+    periodic := (hf₂.smul a).add (hk₂.smul b),
+    integral_one :=
+    begin
+      simp_rw pi.add_apply,
+      rw interval_integral.integral_add (hf₆.smul a) (hk₆.smul b),
+      simp [interval_integral.integral_smul, hf₃, hk₃, hab],
+    end,
+    average :=
+    begin
+      simp_rw [pi.add_apply, pi.smul_apply, add_smul, smul_assoc],
+      erw interval_integral.integral_add (hf₇.smul a) (hk₇.smul b),
+      simp [interval_integral.integral_smul, ← add_smul, hf₄, hk₄, hab],
+    end,
+    continuous := continuous.add (hf₅.const_smul a) (hk₅.const_smul b) },
+end
+
+lemma exists_smooth_is_centering_density (x : E) : ∃ (U ∈ 𝓝 x) (f : E → ℝ → ℝ),
+    smooth_on (uncurry f) (U ×ˢ (univ : set ℝ)) ∧ ∀ y ∈ U, γ.is_centering_density y (f y) :=
+⟨γ.local_centering_density_nhd x,
+  mem_nhds_iff.mpr
+    ⟨_,
+     subset.rfl,
+     γ.local_centering_density_nhd_is_open x,
+     γ.local_centering_density_nhd_self_mem x⟩,
+  γ.local_centering_density x,
+  γ.local_centering_density_smooth_on x,
+  λ y hy, ⟨γ.local_centering_density_pos x y hy,
+           γ.local_centering_density_periodic x y hy,
+           γ.local_centering_density_integral_eq_one x y hy,
+           γ.local_centering_density_average x y hy,
+           γ.local_centering_density_continuous x y hy⟩⟩
+
 /-- This the key construction. It represents a smooth probability distribution on the circle with
 the property that:
 `∫ s in 0..1, γ.centering_density x s • γ x s = g x`
-for all `x : E` (see `centering_density_average` below).
-
-It is constructed from `local_centering_density` using a partition of unity
-(see `centering_density_eq_exists_pou` below). -/
+for all `x : E` (see `centering_density_average` below). -/
 def centering_density : E → ℝ → ℝ :=
-begin
-  choose p hp using
-    @smooth_partition_of_unity.exists_is_subordinate _ _ _ _ _ _ _ 𝓘(ℝ, E) _ _ _ _ _ _ _
-    is_closed_univ (γ.local_centering_density_nhd) (γ.local_centering_density_nhd_is_open)
-    γ.local_centering_density_nhd_covers,
-  exact λ x t, ∑ᶠ (y : E), (p y x) * γ.local_centering_density y x t,
-end
-omit γ
+classical.some
+  (exists_cont_diff_of_convex₂ γ.is_centering_density_convex γ.exists_smooth_is_centering_density)
 
-lemma centering_density_def :
-  ∃ (p : smooth_partition_of_unity E 𝓘(ℝ, E) E)
-    (hp : p.is_subordinate γ.local_centering_density_nhd),
-    ∀ x t, γ.centering_density x t = ∑ᶠ y, (p y x) * γ.local_centering_density y x t :=
-let h := @smooth_partition_of_unity.exists_is_subordinate _ _ _ _ _ _ _ 𝓘(ℝ, E) _ _ _ _ _ _ _
-  is_closed_univ (γ.local_centering_density_nhd) (γ.local_centering_density_nhd_is_open)
-  γ.local_centering_density_nhd_covers in
-⟨classical.some h, classical.some_spec h, λ x y, rfl⟩
+lemma centering_density_smooth :
+  𝒞 ∞ $ uncurry (λ x t, γ.centering_density x t) :=
+(classical.some_spec $
+  exists_cont_diff_of_convex₂ γ.is_centering_density_convex γ.exists_smooth_is_centering_density).1
 
-lemma centering_density_eq_exists_pou_nhd_finset_sum :
-  ∃ (p : smooth_partition_of_unity E 𝓘(ℝ, E) E)
-    (hp : p.is_subordinate γ.local_centering_density_nhd),
-    ∀ (x : E), ∃ (ys : finset E) {n : set E} (hn₁ : n ∈ 𝓝 x)
-      (hn₂ : n ⊆ ⋂ y ∈ ys, γ.local_centering_density_nhd y),
-      ∀ (z ∈ n) t, ∑ y in ys, p y z = 1 ∧
-      γ.centering_density z t = ∑ y in ys, p y z * γ.local_centering_density y z t :=
-begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
-  refine ⟨p, hp, λ x, _⟩,
-  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := partition_of_unity.exists_finset_nhd_support_subset
-    (smooth_partition_of_unity.is_subordinate_to_partition_of_unity.mpr hp)
-    (γ.local_centering_density_nhd_is_open) x,
-  refine ⟨ys, n, hn₁, hn₂, λ z hz t, ⟨_, _⟩⟩,
-  { erw [← finsum_eq_finset_sum_of_support_subset _ (hn₃ z hz), p.sum_eq_one (mem_univ z)], },
-  { rw hp',
-    suffices : support (λ y, p y z * γ.local_centering_density y z t) ⊆ ys,
-    { exact finsum_eq_finset_sum_of_support_subset _ this, },
-    refine subset.trans (λ y hy, _) (hn₃ z hz),
-    rintros (contra : p y z = 0),
-    simpa [contra] using hy, },
-end
+lemma is_centering_density_centering_density (x : E) :
+  γ.is_centering_density x (γ.centering_density x) :=
+(classical.some_spec $
+  exists_cont_diff_of_convex₂ γ.is_centering_density_convex γ.exists_smooth_is_centering_density).2 x
 
 @[simp] lemma centering_density_pos (t : ℝ) :
   0 < γ.centering_density x t :=
-begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
-  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := hp' x,
-  obtain ⟨hx₁, hx₂⟩ := hn₃ x (mem_of_mem_nhds hn₁) t,
-  rw hx₂,
-  have hx₀ : ∀ y ∈ ys, 0 ≤ p y x  := λ y hy, p.nonneg y x,
-  refine (convex_Ioi (0 : ℝ)).sum_mem hx₀ hx₁ (λ y hy, _),
-  simp only [subset_Inter₂_iff] at hn₂,
-  exact γ.local_centering_density_pos y x t (hn₂ y hy (mem_of_mem_nhds hn₁)),
-end
+(γ.is_centering_density_centering_density x).pos t
 
 lemma centering_density_periodic :
   periodic (γ.centering_density x) 1 :=
-begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
-  have : ∀ y t,
-    p y x * γ.local_centering_density y x (t + 1) = p y x * γ.local_centering_density y x t,
-  { intros,
-    by_cases h : x ∈ γ.local_centering_density_nhd y,
-    { rw γ.local_centering_density_periodic y x h, },
-    { suffices : x ∉ support (p y), { simp [nmem_support.mp this], },
-      exact set.not_mem_subset (subset_tsupport _) (set.not_mem_subset (hp y) h), }, },
-  intros t,
-  simp_rw [hp', this],
-end
-
-lemma centering_density_smooth :
-  -- 𝒞 ∞ ↿γ.centering_density :=
-  𝒞 ∞ $ uncurry (λ x t, γ.centering_density x t) :=
-begin
-  rw cont_diff_iff_cont_diff_at,
-  rintros ⟨x, t⟩,
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_eq_exists_pou_nhd_finset_sum,
-  obtain ⟨ys, n, hn₁, hn₂, hn₃⟩ := hp' x,
-  have hn₄ : n ×ˢ (univ : set ℝ) ∈ 𝓝 (x, t) :=
-    mem_nhds_prod_iff.mpr ⟨n, hn₁, univ, filter.univ_mem, rfl.subset⟩,
-  refine cont_diff_within_at.cont_diff_at
-    (cont_diff_on.cont_diff_within_at _ (mem_of_mem_nhds hn₄)) hn₄,
-  let f : E × ℝ → ℝ := λ zt, ∑ y in ys, p y zt.1 * γ.local_centering_density y zt.1 zt.2,
-  have hf : ∀ zs ∈ n ×ˢ (univ : set ℝ), (uncurry γ.centering_density) zs = f zs,
-  { rintros ⟨z, s⟩ hz,
-    simp only [prod_mk_mem_set_prod_eq, mem_univ, and_true] at hz,
-    simp [hn₃ z hz s], },
-  apply cont_diff_on.congr _ hf,
-  refine cont_diff_on.sum (λ y hy, cont_diff_on.mul (cont_diff.cont_diff_on _) _),
-  { refine cont_diff.comp _ cont_diff_fst,
-    rw ← cont_mdiff_iff_cont_diff,
-    exact (p y).cont_mdiff },
-  { suffices : n ×ˢ (univ : set ℝ) ⊆ (γ.local_centering_density_nhd y) ×ˢ (univ : set ℝ),
-    { exact (γ.local_centering_density_smooth_on y).mono this, },
-    simp only [subset_Inter₂_iff] at hn₂,
-    exact prod_mono (hn₂ y hy) rfl.subset, },
-end
+(γ.is_centering_density_centering_density x).periodic
 
 @[simp] lemma centering_density_integral_eq_one :
   ∫ s in 0..1, γ.centering_density x s = 1 :=
-begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
-  have h_int : ∀ y, interval_integrable
-    (λ t, p y x • γ.local_centering_density y x t) volume 0 1,
-  { intros y,
-    by_cases hy : x ∈ γ.local_centering_density_nhd y,
-    { refine continuous.interval_integrable (continuous.const_smul _ (p y x)) _ _,
-      exact γ.local_centering_density_continuous _ _ hy, },
-    { suffices : x ∉ support (p y), { simp [nmem_support.mp this], },
-      exact λ contra, hy (hp _ (subset_tsupport _ contra)), }, },
-  have h_supp : (support (λ y t, p y x • γ.local_centering_density y x t)).finite,
-  { refine set.finite.subset (p.locally_finite.point_finite x) (λ y hy, _),
-    simp only [ne.def, mem_set_of_eq, mem_support],
-    intros contra,
-    simpa only [mem_support, contra, zero_smul, ne.def, pi.zero_def] using hy, },
-  simp_rw [hp', ← smul_eq_mul, integral_finsum h_int h_supp, interval_integral.integral_smul],
-  suffices : ∀ y z, z ∈ univ ∩ γ.local_centering_density_nhd y →
-    ∫ t in 0..1, γ.local_centering_density y z t = 1,
-  { let f := λ y z, ∫ t in 0..1, γ.local_centering_density y z t,
-    exact p.finsum_smul_eq hp f 1 this (mem_univ x), },
-  intros y z hyz,
-  simp only [univ_inter] at hyz,
-  exact γ.local_centering_density_integral_eq_one y z hyz,
-end
+(γ.is_centering_density_centering_density x).integral_one
 
 @[simp] lemma centering_density_average :
   ∫ s in 0..1, γ.centering_density x s • γ x s = g x :=
-begin
-  obtain ⟨p, hp, hp'⟩ := γ.centering_density_def,
-  have h_int : ∀ y, interval_integrable
-    (λ t, p y x • γ.local_centering_density y x t • γ x t) volume 0 1,
-  { intros y,
-    by_cases hy : x ∈ γ.local_centering_density_nhd y,
-    { refine continuous.interval_integrable (continuous.const_smul _ (p y x)) _ _,
-      refine continuous.smul _ (γ.smooth.continuous.comp (continuous.prod.mk x)),
-      exact γ.local_centering_density_continuous _ _ hy, },
-    { suffices : x ∉ support (p y), { simp [nmem_support.mp this], },
-      exact λ contra, hy (hp _ (subset_tsupport _ contra)), }, },
-  have h_supp : (support (λ y t, p y x • γ.local_centering_density y x t • γ x t)).finite,
-  { refine set.finite.subset (p.locally_finite.point_finite x) (λ y hy, _),
-    simp only [ne.def, mem_set_of_eq, mem_support],
-    intros contra,
-    simpa only [mem_support, contra, zero_smul, ne.def, pi.zero_def] using hy, },
-  simp_rw [hp', finsum_smul, mul_smul, integral_finsum h_int h_supp,
-    interval_integral.integral_smul],
-  suffices : ∀ (y x : E), x ∈ univ ∩ γ.local_centering_density_nhd y →
-    ∫ s in 0..1, γ.local_centering_density y x s • γ x s = g x,
-  { exact p.finsum_smul_eq hp _ _ this (mem_univ x), },
-  intros y x' hx',
-  simp only [univ_inter] at hx',
-  exact γ.local_centering_density_average _ _ hx',
-end
+(γ.is_centering_density_centering_density x).average
 
 lemma centering_density_continuous :
   continuous (γ.centering_density x) :=
