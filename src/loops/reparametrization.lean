@@ -16,38 +16,6 @@ noncomputable theory
 open set function measure_theory interval_integral filter
 open_locale topological_space unit_interval manifold big_operators
 
-section move_to_correct_file
-
-lemma measure_theory.ae_strongly_measurable.smul_continuous_on
-  {E : Type*} [normed_group E] [normed_space ℝ E]
-  {a b : ℝ} {μ : measure ℝ} {f : ℝ → ℝ} {g : ℝ → E}
-  (hf : ae_strongly_measurable f $ μ.restrict $ interval_oc a b) (hg : continuous_on g (interval a b)) :
-  ae_strongly_measurable (λ x, f x • g x) $ μ.restrict $ interval_oc a b :=
-sorry -- Urgh.
-
-lemma interval_integrable.smul_continuous_on {E : Type*} [normed_group E] [normed_space ℝ E]
-  {a b : ℝ} {μ : measure ℝ} {f : ℝ → ℝ} {g : ℝ → E}
-  (hf : interval_integrable f μ a b) (hg : continuous_on g (interval a b)) :
-  interval_integrable (λ x, f x • g x) μ a b :=
-begin
-  have hf' : ae_strongly_measurable (λ (t : ℝ), f t) (μ.restrict (interval_oc a b)),
-  { -- Missing lemma for `Ioc a b` case.
-    rcases le_or_gt a b with h | h,
-    { convert hf.ae_strongly_measurable,
-      exact interval_oc_of_le h, },
-    { convert hf.ae_strongly_measurable',
-      rw interval_oc_swap, -- Missing lemma `interval_oc_of_ge`
-      exact interval_oc_of_le (le_of_lt h), }, },
-  rw ← interval_integrable_norm_iff,
-  { simp_rw norm_smul,
-    refine interval_integrable.mul_continuous_on _ (continuous_norm.comp_continuous_on hg),
-    rw interval_integrable_norm_iff;
-    assumption, },
-  exact hf'.smul_continuous_on hg,
-end
-
-end move_to_correct_file
-
 variables {E F : Type*}
 variables [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
 variables [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
@@ -364,34 +332,36 @@ structure is_centering_density (x : E) (f : ℝ → ℝ) : Prop :=
 (periodic : periodic f 1)
 (integral_one : ∫ s in 0..1, f s = 1)
 (average : ∫ s in 0..1, f s • γ x s = g x)
+(continuous : continuous f) -- Can drop if/when have `interval_integrable.smul_continuous_on`
 
 lemma is_centering_density_convex (x : E) : convex ℝ { f | γ.is_centering_density x f} :=
 begin
   classical,
-  rintros f k ⟨hf₁, hf₂, hf₃, hf₄⟩ ⟨hk₁, hk₂, hk₃, hk₄⟩ a b ha hb hab,
-  have hf₅ : interval_integrable f volume 0 1,
+  rintros f k ⟨hf₁, hf₂, hf₃, hf₄, hf₅⟩ ⟨hk₁, hk₂, hk₃, hk₄, hk₅⟩ a b ha hb hab,
+  have hf₆ : interval_integrable f volume 0 1,
   { apply interval_integrable_of_integral_ne_zero, rw hf₃, exact one_ne_zero, },
-  have hf₆ : interval_integrable (f • γ x) volume 0 1 :=
-    hf₅.smul_continuous_on (γ.continuous x).continuous_on,
-  have hk₅ : interval_integrable k volume 0 1,
+  have hf₇ : interval_integrable (f • γ x) volume 0 1 :=
+    (hf₅.smul (γ.continuous x)).interval_integrable 0 1,
+  have hk₆ : interval_integrable k volume 0 1,
   { apply interval_integrable_of_integral_ne_zero, rw hk₃, exact one_ne_zero, },
-  have hk₆ : interval_integrable (k • γ x) volume 0 1 :=
-    hk₅.smul_continuous_on (γ.continuous x).continuous_on,
+  have hk₇ : interval_integrable (k • γ x) volume 0 1 :=
+    (hk₅.smul (γ.continuous x)).interval_integrable 0 1,
   exact
   { pos := λ t, convex_Ioi (0 : ℝ) (hf₁ t) (hk₁ t) ha hb hab,
     periodic := (hf₂.smul a).add (hk₂.smul b),
     integral_one :=
     begin
       simp_rw pi.add_apply,
-      rw interval_integral.integral_add (hf₅.smul a) (hk₅.smul b),
+      rw interval_integral.integral_add (hf₆.smul a) (hk₆.smul b),
       simp [interval_integral.integral_smul, hf₃, hk₃, hab],
     end,
     average :=
     begin
       simp_rw [pi.add_apply, pi.smul_apply, add_smul, smul_assoc],
-      erw interval_integral.integral_add (hf₆.smul a) (hk₆.smul b),
+      erw interval_integral.integral_add (hf₇.smul a) (hk₇.smul b),
       simp [interval_integral.integral_smul, ← add_smul, hf₄, hk₄, hab],
-    end },
+    end,
+    continuous := continuous.add (hf₅.const_smul a) (hk₅.const_smul b) },
 end
 
 lemma exists_smooth_is_centering_density (x : E) : ∃ (U ∈ 𝓝 x) (f : E → ℝ → ℝ),
@@ -407,7 +377,8 @@ lemma exists_smooth_is_centering_density (x : E) : ∃ (U ∈ 𝓝 x) (f : E →
   λ y hy, ⟨γ.local_centering_density_pos x y hy,
            γ.local_centering_density_periodic x y hy,
            γ.local_centering_density_integral_eq_one x y hy,
-           γ.local_centering_density_average x y hy⟩⟩
+           γ.local_centering_density_average x y hy,
+           γ.local_centering_density_continuous x y hy⟩⟩
 
 /-- This the key construction. It represents a smooth probability distribution on the circle with
 the property that:
