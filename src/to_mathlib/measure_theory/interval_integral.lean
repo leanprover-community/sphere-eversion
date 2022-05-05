@@ -31,6 +31,15 @@ section
 
 variables {E : Type*} [normed_group E]
 
+lemma interval_integrable_of_integral_ne_zero
+  [complete_space E] [normed_space ℝ E] {a b : ℝ}
+  {f : ℝ → E} {μ : measure ℝ} (h : ∫ x in a..b, f x ∂μ ≠ 0) :
+  interval_integrable f μ a b :=
+begin
+  contrapose! h,
+  exact interval_integral.integral_undef h,
+end
+
 lemma interval_integrable_norm_iff {f : ℝ → E} {μ : measure ℝ} {a b : ℝ}
   (hf : ae_strongly_measurable f (μ.restrict (Ι a b))) :
   interval_integrable (λ t, ∥f t∥) μ a b ↔ interval_integrable f μ a b :=
