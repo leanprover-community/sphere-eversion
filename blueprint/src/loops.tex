@@ -575,6 +575,89 @@ as explained in the next lemma.
 The second ingredient needed to prove \Cref{prop:loops} is a
 parametric reparametrization lemma.
 
+\begin{definition}
+  \label{def:delta_mollifier}
+  \lean{delta_mollifier}
+  \leanok
+  A function:
+  \begin{align*}
+    \delta : 𝕊^1 \times ℕ \times 𝕊^1 &\to ℝ\\
+    (t, n, s) &\mapsto \delta_t^n (s)
+  \end{align*}
+  is called a smooth positive delta mollifier for the circle if:
+  \begin{itemize}
+    \item $\delta_t^n$ is strictly positive for all $t$, $n$,
+    \item $\int \delta_t^n = 1$ for all $t$, $n$,
+    \item $\int \delta_t^n f \to f(t)$ as $n \to \infty$ for any continuous map $f : 𝕊^1 \to ℝ$ and for all $t$,
+    \item $\delta_t^n : 𝕊^1 \to ℝ$ is smooth for all $t$, $n$.
+  \end{itemize}
+\end{definition}
+
+\begin{lemma}
+  \label{lem:delta_mollifier_exists}
+  \lean{loop.tendsto_mollify}
+  \leanok
+  There exists a smooth positive delta mollifier for the circle.
+\end{lemma}
+
+\begin{proof}
+  \uses{def:delta_mollifier}
+  \leanok
+  By translation we may assume $t = 0$. By adding a small
+  constant and rescaling, it is sufficient to construct a function $\hat\delta^n$
+  satisfying the required properties except with strict positivity relaxed to non-negativity.
+
+  Regarding $\hat\delta^n$ as a function with period 1 on $ℝ$, we may take
+  $\hat\delta^n = b^n / \int_0^1 b^n$ where $b^n : ℝ \to [0, 1]$ is any smooth periodic bump function
+  whose behaviour near 0 is such that its local support is contained in $(-1/(n+2), 1/(n+2))$ and which
+  is equal to 1 on $(-1/(n+3), 1/(n+3))$.
+
+  One may show that $\int \hat\delta^n f \to f(0)$ either by elementary means or by using
+  a more general theory of convolutions.
+\end{proof}
+
+\begin{definition}
+  \label{def:loop_mollification}
+  \uses{lem:delta_mollifier_exists}
+  \lean{loop.mollify}
+  \leanok
+  Given an integrable loop $\gamma : 𝕊^1 \to F$ we will use the notation:
+  \begin{align*}
+    \gamma^{t,n} = \int \delta_t^n \gamma \in F.
+  \end{align*}
+  Note that the definition uses a choice of delta mollifier for the circle, but
+  we will never care about this choice and so it is left implicit in the notation.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:eventually_surrounded}
+  \uses{def:surrounds}
+  \lean{eventually_exists_surrounding_pts_approx_surrounding_points_at}
+  Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding a map $g$. Let $x \in E$ and
+  $t_0, t_1, \ldots, t_d$ in $𝕊^1$ be such that $\gamma_x(t_i)$ surround $g(x)$.
+
+  There exists a neighborhood $U$ of $x$ and
+  a natural number $N$ such that $g(y)$ is surrounded by $\gamma_y^{t_i,n}$
+  for all $y \in U$ and $n \ge N$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:smooth_barycentric_coord}
+  \leanok
+  This is a standard continuity argument, in particular using the facts that the set of
+  affine bases $B \subset F^{d+1}$ is open and the barycentric coordinate map:
+  \begin{align*}
+    F \times B \to ℝ^{d+1}
+  \end{align*}
+  is continuous (which follows from \Cref{lem:smooth_barycentric_coord}) together with
+  the fact that:
+  \begin{align*}
+    \gamma_y^{t_i,n} \to \gamma_x(t_i),
+  \end{align*}
+  as $y \to x$ and $n \to \infty$ jointly (which follows from the characteristic properties
+  of a delta mollifier).
+\end{proof}
+
 \begin{lemma}
 \label{lem:reparametrization}
 \uses{def:surrounds, def:average}
@@ -587,40 +670,58 @@ that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:smooth_barycentric_coord}
+  \uses{lem:smooth_barycentric_coord, lem:eventually_surrounded}
   \leanok
-  For any fixed $x$, since $γ_x$ strictly surrounds $g(x)$, there are points
-  $s_1, …, s_{n+1}$ in $𝕊^1$ such that $g(x)$ is surrounded
-  by the corresponding points $γ_x(s_j)$.
 
-  Let $μ_1, …, μ_{n+1}$ be smooth positive probability measures very
-  close to the Dirac measures on $s_j$ (ie. $μ_j = f_j\, ds$ for some
-  smooth positive function $f_j$ and, for any function $h$,
-  $\int h\,dμ_j$ is almost $h(s_j)$).  We set $p_j = \int γ_x\, d\mu_j$, which
-  is almost $γ_x(s_j)$ so that $g(x) = \sum w_j p_j$ for some weights
-  $w_j$ in the open interval $(0, 1)$ according to
-  \Cref{lem:smooth_barycentric_coord}.
-
-  If $x'$ is in a sufficiently small neighborhood of $x$,
-  \Cref{lem:smooth_barycentric_coord} gives smooth weight functions $w_j$
-  such that $g(x') = \sum w_j(x')p_j(x')$.
-  Let $U^i$, $i ≥ 1$ be a locally finite cover of $E$ by such
-  neighborhoods, with corresponding measures $μ_j^i$, moving points
-  $p_j^i$ and weight functions $w_j^i$.
-  Let $(ρ_i)$ be a partition of unity associated to this covering. For
-  every $x$, we set
-  \[
-    μ_x = \sum_{i=1}^∞ \sum_{j=1}^{n+1} ρ_i(x)w_j^i(x)\, μ_j^i
-  \]
-  so that:
+  To construct $\phi$ we first construct a family of probability distributions on the circle.
+  Specifically we first construct:
   \begin{align*}
-    \int γ_x\, dμ_x &=
-    \sum_i ρ_i(x)\sum_{j=1}^{n+1} w_j^i(x) \int γ_x\, dμ_j^i\\
-    &= \sum_i ρ_i(x)\sum_{j=1}^{n+1} w_j^i(x) p_j^i(x)\\
-    &= \sum_i ρ_i(x) g(x) = g(x).
+    \pi : E \times 𝕊^1 &\to ℝ\\
+    (x, s) &\mapsto \pi_x(s)
   \end{align*}
-  We now set $φ_x^{-1}(t) = \int_0^tdμ_x$ so that
-  $g(x) = \overline{γ_x ∘ φ_x}$ for all $x$.
+  such that:
+  \begin{itemize}
+    \item $\pi$ is strictly positive,
+    \item $\int \pi_x = 1$ for all $x$,
+    \item $\int \pi_x \gamma_x = g(x)$ for all $x$,
+    \item $\pi$ is smooth (jointly on $E \times 𝕊^1$).
+  \end{itemize}
+  By a standard partition of unity argument, it is sufficient to construct $\pi$ locally.
+  We thus fix some $x$ in $E$ and show how to find a neighborhood $U_x$ of
+  $x$ together with a local map:
+  \begin{align*}
+    \pi^x : U_x \times 𝕊^1 &\to ℝ\\
+    (y, s) &\mapsto \pi_y^x(s)
+  \end{align*}
+  satisfying the required properties.
+
+  Since $\gamma_x$ surrounds $g(x)$,
+  we can find $t_0, t_1, \ldots, t_d$ in $𝕊^1$ such that $\gamma_x(t_i)$ surround $g(x)$.
+  By \Cref{lem:eventually_surrounded} there exist a neighborhood $U_x$ of $x$ and a
+  natural number $N$ such that $\gamma_y^{t_i, n}$ surround $g(y)$
+  for $y$ in $U_x$ and $n \ge N$. We thus define:
+  \begin{align*}
+    \pi^x_y = \sum_i w_i(y) \delta^N_{t_i},
+  \end{align*}
+  where $w_i(y)$ are the barycentric coordinates of $g(y)$ with respect to the affine basis
+  $\gamma_y^{t_i, N}$.
+  It is straightforward to verify that $\pi^x$ has the required properties (making use of
+  \Cref{lem:smooth_barycentric_coord} for smoothness). In particular:
+  \begin{align*}
+    \int \pi^x_y \gamma_y &= \int \sum_i w_i(y) \delta^N_{t_i} \gamma_y\\
+                          &= \sum_i w_i(y) \int \delta^N_{t_i} \gamma_y\\
+                          &= \sum_i w_i(y) \gamma_y^{t_i,N}\\
+                          &= g(y),
+  \end{align*}
+  by definition of $w_i$.
+
+  Finally, we construct $\phi$ from $\pi$ by defining:
+  \begin{align*}
+    \phi_x^{-1}(t) = \int_0^t \pi(s)ds.
+  \end{align*}
+  It is straightforward to verify that $\phi$ is a family of equivalences such that
+  $g(x) = \overline{γ_x ∘ φ_x}$ for all $x$. The fact that $\phi$ is smooth follows
+  from the inverse function theorem.
 \end{proof}
 
 \subsection{Proof of the loop construction proposition}
