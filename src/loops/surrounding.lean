@@ -960,11 +960,11 @@ variables [finite_dimensional ℝ E]
   specified compact subset `K`. -/
 @[nolint has_inhabited_instance]
 structure loop_data (g b : E → F) (Ω : set (E × F)) :=
-(K U : set E)
+(C U : set E)
 (γ :  E → ℝ → loop F)
-(hK : is_compact K)
+(hC : is_closed C)
 (hU : is_open U)
-(hKU : K ⊆ U)
+(hCU : C ⊆ U)
 (hγ : surrounding_family_in g b γ U Ω)
 
 /-
@@ -973,25 +973,25 @@ This makes it easier to find the limit of a sequence of these constructions.
 Todo: we might need that `γ = γ₀` on a neighborhood of `(U₀ ∪ U₁)ᶜ` to ensure that
 `(U₀ ∪ U₁)ᶜ ⊆ extended_invariant ...`
 -/
-lemma extend_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
-  (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)
+lemma extend_loops {U₀ U₁ C₀ C₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
+  (hC₀ : is_closed C₀) (hC₁ : is_closed C₁) (hCU₀ : C₀ ⊆ U₀) (hCU₁ : C₁ ⊆ U₁)
   {γ₀ γ₁ : E → ℝ → loop F}
   (h₀ : surrounding_family_in g b γ₀ U₀ Ω) (h₁ : surrounding_family_in g b γ₁ U₁ Ω) :
-  ∃ (U ∈ 𝓝ˢ (K₀ ∪ K₁)) (γ : E → ℝ → loop F),
+  ∃ (U ∈ 𝓝ˢ (C₀ ∪ C₁)) (γ : E → ℝ → loop F),
     surrounding_family_in g b γ U Ω ∧
-    (∀ᶠ x in 𝓝ˢ K₀, γ x = γ₀ x) ∧
+    (∀ᶠ x in 𝓝ˢ C₀, γ x = γ₀ x) ∧
     (∀ᶠ x in 𝓝ˢ U₁ᶜ, γ x = γ₀ x) :=
 begin
-  obtain ⟨V₀, hV₀, hKV₀, hVU₀, hcV₀⟩ := exists_open_between_and_is_compact_closure hK₀ hU₀ hKU₀,
-  let L₁ := K₁ \ U₀,
-  have hL₁ : is_compact L₁ := hK₁.diff hU₀,
+  obtain ⟨V₀, hV₀, hCV₀, hVU₀⟩ := normal_exists_closure_subset hC₀ hU₀ hCU₀,
+  let L₁ := C₁ \ U₀,
+  have hL₁ : is_closed L₁ := hC₁.inter hU₀.is_closed_compl,
   have hV₀L₁ : disjoint (closure V₀) L₁ := disjoint_diff.mono hVU₀ subset.rfl,
-  obtain ⟨V₂, hV₂, hLV₂, h2V₂, hcV₂⟩ :=
-  exists_open_between_and_is_compact_closure hL₁
-    (hcV₀.is_closed.is_open_compl.inter hU₁)
-    (subset_inter (disjoint_iff_subset_compl_left.mp hV₀L₁) $ (diff_subset _ _).trans hKU₁),
-  obtain ⟨V₁, hV₁, hLV₁, hV₁₂, hcV₁⟩ :=
-    exists_open_between_and_is_compact_closure hL₁ hV₂ hLV₂,
+  obtain ⟨V₂, hV₂, hLV₂, h2V₂⟩ :=
+  normal_exists_closure_subset hL₁
+    (is_closed_closure.is_open_compl.inter hU₁)
+    (subset_inter (disjoint_iff_subset_compl_left.mp hV₀L₁) $ (diff_subset _ _).trans hCU₁),
+  obtain ⟨V₁, hV₁, hLV₁, hV₁₂⟩ :=
+    normal_exists_closure_subset hL₁ hV₂ hLV₂,
   rw [subset_inter_iff, ← disjoint_iff_subset_compl_left] at h2V₂,
   rcases h2V₂ with ⟨hV₀₂, hV₂U₁⟩,
   have hVU₁ : V₁ ⊆ U₁ := subset_closure.trans (hV₁₂.trans $ subset_closure.trans hV₂U₁),
@@ -999,9 +999,9 @@ begin
   { refine disjoint.union_left (hV₀₂.mono_right (hV₁₂.trans subset_closure)) _,
     rw [disjoint_iff_subset_compl_left, compl_compl], exact hV₁₂ },
   refine ⟨V₀ ∪ (U₁ ∩ U₀) ∪ V₁, ((hV₀.union $ hU₁.inter hU₀).union hV₁).mem_nhds_set.mpr _, _⟩,
-  { refine union_subset (hKV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
-    rw [← inter_union_diff K₁], exact
-      union_subset_union ((inter_subset_inter_left _ hKU₁).trans $ subset_union_right _ _) hLV₁ },
+  { refine union_subset (hCV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
+    rw [← inter_union_diff C₁], exact
+      union_subset_union ((inter_subset_inter_left _ hCU₁).trans $ subset_union_right _ _) hLV₁ },
   obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ := exists_continuous_zero_one_of_closed
     (is_closed_closure.union hV₂.is_closed_compl) is_closed_closure hdisj,
   let h₀' : surrounding_family_in g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _),
@@ -1032,7 +1032,7 @@ begin
         { exact (hρx $ h0ρ $ subset_closure.trans (subset_union_left _ _) hx).elim },
         { exact hx },
         { exact hVU₁ hx } } } },
-  { exact eventually_of_mem (hV₀.mem_nhds_set.mpr hKV₀) heq2 },
+  { exact eventually_of_mem (hV₀.mem_nhds_set.mpr hCV₀) heq2 },
   { refine eventually_of_mem
       (is_closed_closure.is_open_compl.mem_nhds_set.mpr $ compl_subset_compl.mpr hV₂U₁)
       (λ x hx, heq1 x $ mem_union_right _ $ compl_subset_compl.mpr subset_closure hx) },
@@ -1043,12 +1043,12 @@ end
 
 /-- The domain of an arbitrary witness of `extend_loops`. -/
 def extended_domain (l₀ l₁ : loop_data g b Ω) : set E :=
-interior $ classical.some $ extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
+interior $ classical.some $ extend_loops l₀.hU l₁.hU l₀.hC l₁.hC l₀.hCU l₁.hCU l₀.hγ l₁.hγ
 
 /-- An arbitrary witness of `extend_loops` with domain specified by `extended_domain`. -/
 def extended_loops (l₀ l₁ : loop_data g b Ω) : E → ℝ → loop F :=
 classical.some $ classical.some_spec $ classical.some_spec $
-  extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
+  extend_loops l₀.hU l₁.hU l₀.hC l₁.hC l₀.hCU l₁.hCU l₀.hγ l₁.hγ
 
 /-- The (interior of the) set where `extended_loops` didn't change -/
 def extended_invariant (l₀ l₁ : loop_data g b Ω) : set E :=
@@ -1059,34 +1059,34 @@ variables {l₀ l₁ : loop_data g b Ω}
 lemma is_open_extended_domain  : is_open (extended_domain l₀ l₁) :=
 is_open_interior
 
-lemma subset_extended_domain : l₀.K ∪ l₁.K ⊆ extended_domain l₀ l₁ :=
+lemma subset_extended_domain : l₀.C ∪ l₁.C ⊆ extended_domain l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr $ classical.some $ classical.some_spec $
-  extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
+  extend_loops l₀.hU l₁.hU l₀.hC l₁.hC l₀.hCU l₁.hCU l₀.hγ l₁.hγ
 
 lemma extended_domain_mem_nhds_set :
-  extended_domain l₀ l₁ ∈ 𝓝ˢ (l₀.K ∪ l₁.K) :=
+  extended_domain l₀ l₁ ∈ 𝓝ˢ (l₀.C ∪ l₁.C) :=
 is_open_extended_domain.mem_nhds_set.mpr subset_extended_domain
 
 lemma surrounding_family_extended_loops :
    surrounding_family_in g b (extended_loops l₀ l₁) (extended_domain l₀ l₁) Ω :=
 (classical.some_spec $ classical.some_spec $ classical.some_spec $
-  extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).1.mono interior_subset
+  extend_loops l₀.hU l₁.hU l₀.hC l₁.hC l₀.hCU l₁.hCU l₀.hγ l₁.hγ).1.mono interior_subset
 
 lemma is_open_extended_invariant : is_open (extended_invariant l₀ l₁) :=
 is_open_interior
 
-lemma subset_extended_invariant : l₀.K ⊆ extended_invariant l₀ l₁ :=
+lemma subset_extended_invariant : l₀.C ⊆ extended_invariant l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr
   (classical.some_spec $ classical.some_spec $ classical.some_spec $
-    extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.1
+    extend_loops l₀.hU l₁.hU l₀.hC l₁.hC l₀.hCU l₁.hCU l₀.hγ l₁.hγ).2.1
 
 lemma compl_subset_extended_invariant : l₁.Uᶜ ⊆ extended_invariant l₀ l₁ :=
 subset_interior_iff_mem_nhds_set.mpr
   (classical.some_spec $ classical.some_spec $ classical.some_spec $
-    extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.2
+    extend_loops l₀.hU l₁.hU l₀.hC l₁.hC l₀.hCU l₁.hCU l₀.hγ l₁.hγ).2.2
 
 lemma extended_invariant_mem_nhds_set :
-  extended_invariant l₀ l₁ ∈ 𝓝ˢ l₀.K :=
+  extended_invariant l₀ l₁ ∈ 𝓝ˢ l₀.C :=
 is_open_extended_invariant.mem_nhds_set.mpr subset_extended_invariant
 
 lemma extended_loops_eq_left {x : E} (hx : x ∈ extended_invariant l₀ l₁) :
@@ -1094,9 +1094,9 @@ lemma extended_loops_eq_left {x : E} (hx : x ∈ extended_invariant l₀ l₁) :
 (interior_subset hx : _)
 
 /-- `l₀.extend l₁` extends the `loop_data` `l₀` using `l₁`, making sure that the extended version
-  is the same as `l₀` on a neighborhood of `l₀.K`. -/
+  is the same as `l₀` on a neighborhood of `l₀.C`. -/
 def loop_data.extend (l₀ l₁ : loop_data g b Ω) : loop_data g b Ω :=
-⟨l₀.K ∪ l₁.K, extended_domain l₀ l₁, extended_loops l₀ l₁, l₀.hK.union (l₁.hK),
+⟨l₀.C ∪ l₁.C, extended_domain l₀ l₁, extended_loops l₀ l₁, l₀.hC.union (l₁.hC),
   is_open_extended_domain, subset_extended_domain, surrounding_family_extended_loops⟩
 
 end extend_loops
@@ -1116,22 +1116,22 @@ lemma loop_data_seq_succ_γ :
   (loop_data_seq l₀ l (n + 1)).γ = extended_loops (loop_data_seq l₀ l n) (l n) :=
 by rw [loop_data_seq, loop_data.extend]
 
-lemma loop_data_seq_K_mono : monotone (λ n, (loop_data_seq l₀ l n).K) :=
+lemma loop_data_seq_K_mono : monotone (λ n, (loop_data_seq l₀ l n).C) :=
 by { refine monotone_nat_of_le_succ _, intro n, rw [loop_data_seq], apply subset_union_left, }
 
-lemma subset_loop_data_seq_K0 (n : ℕ) : l₀.K ⊆ (loop_data_seq l₀ l n).K :=
+lemma subset_loop_data_seq_K0 (n : ℕ) : l₀.C ⊆ (loop_data_seq l₀ l n).C :=
 loop_data_seq_K_mono (zero_le n)
 
-lemma subset_loop_data_seq_K : (l n).K ⊆ (loop_data_seq l₀ l (n+1)).K :=
+lemma subset_loop_data_seq_K : (l n).C ⊆ (loop_data_seq l₀ l (n+1)).C :=
 subset_union_right _ _
 
-lemma union_subset_loop_data_seq_K : l₀.K ∪ (⋃ n, (l n).K) ⊆ ⋃ n, (loop_data_seq l₀ l n).K :=
-let K := λ n, (loop_data_seq l₀ l n).K in
+lemma union_subset_loop_data_seq_K : l₀.C ∪ (⋃ n, (l n).C) ⊆ ⋃ n, (loop_data_seq l₀ l n).C :=
+let K := λ n, (loop_data_seq l₀ l n).C in
 union_subset (subset_Union K 0) $ Union_subset $
   λ n, subset_loop_data_seq_K.trans $ subset_Union K (n+1)
 
-lemma eventually_mem_loop_data_seq_K (hx : x ∈ l₀.K ∪ (⋃ n, (l n).K)) :
-  ∀ᶠ n in at_top, x ∈ (loop_data_seq l₀ l n).K :=
+lemma eventually_mem_loop_data_seq_K (hx : x ∈ l₀.C ∪ (⋃ n, (l n).C)) :
+  ∀ᶠ n in at_top, x ∈ (loop_data_seq l₀ l n).C :=
 begin
   rcases union_subset_loop_data_seq_K hx with ⟨_, ⟨n, rfl⟩, hx⟩,
   exact eventually_at_top.mpr ⟨n, λ m hm, loop_data_seq_K_mono hm hx⟩
@@ -1158,12 +1158,12 @@ begin
 end
 
 lemma loop_data_seq_eq0 (l₀ : loop_data g b Ω) (l : ℕ → loop_data g b Ω) (n : ℕ) :
-  ∀ᶠ x in 𝓝ˢ l₀.K, (loop_data_seq l₀ l n).γ x = l₀.γ x :=
+  ∀ᶠ x in 𝓝ˢ l₀.C, (loop_data_seq l₀ l n).γ x = l₀.γ x :=
 begin
-  have : ∀ᶠ x in 𝓝ˢ l₀.K, ∀ m ∈ Iio n,
+  have : ∀ᶠ x in 𝓝ˢ l₀.C, ∀ m ∈ Iio n,
     (loop_data_seq l₀ l (m + 1)).γ x = (loop_data_seq l₀ l m).γ x,
   { rw [eventually_all_finite (finite_Iio n)], rintro m (hm : m < n),
-    have : extended_invariant (loop_data_seq l₀ l m) (l m) ∈ 𝓝ˢ l₀.K,
+    have : extended_invariant (loop_data_seq l₀ l m) (l m) ∈ 𝓝ˢ l₀.C,
     { refine is_open_extended_invariant.mem_nhds_set.mpr _,
       refine (loop_data_seq_K_mono (zero_le m)).trans subset_extended_invariant },
     refine eventually_of_mem this _,
@@ -1187,7 +1187,7 @@ lemma exists_lim_loop_eq (l₀ : loop_data g b Ω) (l : ℕ → loop_data g b Ω
   .exists_eventual_value_eq
 
 lemma lim_loop_eq0 (hl : locally_finite (λ n, (l n).U))
-  {K : set E} (hK : is_compact K) (h3K : K ⊆ l₀.K) :
+  {K : set E} (hK : is_compact K) (h3K : K ⊆ l₀.C) :
   ∀ᶠ x in 𝓝ˢ K, lim_loop l₀ l x = l₀.γ x :=
 begin
   obtain ⟨O, hO, h⟩ := (loop_data_seq_locally_eventually_constant l₀ hl)
@@ -1200,7 +1200,7 @@ begin
 end
 
 lemma lim_surrounding_family_in (l₀ : loop_data g b Ω) (hl : locally_finite (λ n, (l n).U))
-  (hU : U ⊆ l₀.K ∪ ⋃ n, (l n).K) :
+  (hU : U ⊆ l₀.C ∪ ⋃ n, (l n).C) :
   surrounding_family_in g b (lim_loop l₀ l) U Ω :=
 begin
   have := loop_data_seq_locally_eventually_constant l₀ hl,
@@ -1213,10 +1213,10 @@ begin
     simp_rw [hn], exact (loop_data_seq l₀ l n).hγ.proj_I x t s },
   { intros x hx,
     obtain ⟨n, h1n : (loop_data_seq l₀ l n).γ x = lim_loop l₀ l x,
-      h2n : x ∈ (loop_data_seq l₀ l n).K⟩ :=
+      h2n : x ∈ (loop_data_seq l₀ l n).C⟩ :=
       ((eventually_eq_eventual_value
         (this.eventually_constant $ mem_univ x)).and $ eventually_mem_loop_data_seq_K (hU hx)).exists,
-    rw [← h1n], refine (loop_data_seq l₀ l n).hγ.surrounds x ((loop_data_seq l₀ l n).hKU h2n) },
+    rw [← h1n], refine (loop_data_seq l₀ l n).hγ.surrounds x ((loop_data_seq l₀ l n).hCU h2n) },
   { simp_rw [continuous_iff_continuous_at],
     rintro ⟨x, t, s⟩,
     obtain ⟨O, hO, hgO⟩ := this x (mem_univ x),
@@ -1229,10 +1229,10 @@ begin
     exact (loop_data_seq l₀ l n).hγ.cont.continuous_at },
   { intros x hx,
     obtain ⟨n, h1n : (loop_data_seq l₀ l n).γ x = lim_loop l₀ l x,
-      h2n : x ∈ (loop_data_seq l₀ l n).K⟩ :=
+      h2n : x ∈ (loop_data_seq l₀ l n).C⟩ :=
       ((eventually_eq_eventual_value
         (this.eventually_constant $ mem_univ x)).and $ eventually_mem_loop_data_seq_K (hU hx)).exists,
-    rw [← h1n], refine (loop_data_seq l₀ l n).hγ.val_in' x ((loop_data_seq l₀ l n).hKU h2n) },
+    rw [← h1n], refine (loop_data_seq l₀ l n).hγ.val_in' x ((loop_data_seq l₀ l n).hCU h2n) },
 end
 
 lemma exists_surrounding_loops [finite_dimensional ℝ F]
@@ -1256,7 +1256,7 @@ begin
   (-)   | U' -- an open neighborhood of C
   -/
   rcases hγ₀_surr with ⟨V, hV, hγ₀⟩,
-  rw [mem_nhds_set_iff_exists] at hV, rcases hV with ⟨U₀, hU₀, hKU₀, hU₀V⟩,
+  rw [mem_nhds_set_iff_exists] at hV, rcases hV with ⟨U₀, hU₀, hCU₀, hU₀V⟩,
   let P := λ N : set E, ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ N Ω,
   have hP : antitone P, { rintro s t hst ⟨γ, hγ⟩, exact ⟨γ, hγ.mono hst⟩ },
   have h0P : P ∅ := ⟨γ₀, hγ₀.mono (empty_subset _)⟩,
@@ -1269,8 +1269,8 @@ begin
     exists_locally_finite_subcover_of_locally hC hP h0P h2P,
   choose γ hγ using hPW,
   let l₀ : loop_data g b Ω :=
-  ⟨K, U₀, γ₀, hK, hU₀, hKU₀, hγ₀.mono hU₀V⟩,
-  let l : ℕ → loop_data g b Ω := λ n, ⟨L n, W n, γ n, hL n, hW n, hLW n, hγ n⟩,
+  ⟨K, U₀, γ₀, hK.is_closed, hU₀, hCU₀, hγ₀.mono hU₀V⟩,
+  let l : ℕ → loop_data g b Ω := λ n, ⟨L n, W n, γ n, (hL n).is_closed, hW n, hLW n, hγ n⟩,
   refine ⟨lim_loop l₀ l, lim_surrounding_family_in l₀ hlW (hCL.trans $ subset_union_right _ _),
     lim_loop_eq0 (hlW : _) hK subset.rfl⟩,
 end
