@@ -298,7 +298,7 @@ begin
   let n := γ.local_centering_density_mp x,
   simp only [γ.local_centering_density_spec x, prod.forall, exists_prop, gt_iff_lt,
     fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
-  rw interval_integral.integral_sum,
+  rw interval_integral.integral_finset_sum,
   { have h : γ.approx_surrounding_points_at x y n ∈ affine_bases ι ℝ F :=
       γ.approx_surrounding_points_at_mem_affine_bases x y hy,
     simp_rw [← smul_eq_mul, interval_integral.integral_smul, delta_mollifier_integral_eq_one,
@@ -315,7 +315,7 @@ begin
   let n := γ.local_centering_density_mp x,
   simp only [γ.local_centering_density_spec x, prod.forall, exists_prop, gt_iff_lt,
     fintype.sum_apply, pi.smul_apply, algebra.id.smul_eq_mul, finset.sum_smul],
-  rw interval_integral.integral_sum,
+  rw interval_integral.integral_finset_sum,
   { simp_rw [mul_smul, interval_integral.integral_smul],
     change ∑ i, _ • (γ.approx_surrounding_points_at x y n i) = _,
     have h : γ.approx_surrounding_points_at x y n ∈ affine_bases ι ℝ F :=
