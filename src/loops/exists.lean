@@ -62,7 +62,7 @@ begin
   let ε := ε₁ / (1 + Sup range_γ₀),
   have hε : 0 < ε := div_pos hε₁ h0,
   have h2ε : ∀ t s : ℝ, ∥ε • γ₀ t s∥ < ε₁,
-  { intros t s, simp [norm_smul, mul_comm_div', real.norm_eq_abs, abs_eq_self.mpr, hε.le],
+  { intros t s, simp [norm_smul, mul_comm_div, real.norm_eq_abs, abs_eq_self.mpr, hε.le],
     refine lt_of_lt_of_le _ (mul_one _).le,
     rw [mul_lt_mul_left hε₁, div_lt_one h0],
     refine (zero_add _).symm.le.trans_lt _,
