@@ -248,15 +248,15 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
           {E : Type*}  {F : Type*} [normed_group F]
 
 lemma filter.eventually_le.is_O {f g h : E → F} {l : filter E}
-  (hfg : (λ x, ∥f x∥) ≤ᶠ[l] (λ x, ∥g x∥)) (hh : is_O g h l) : is_O f h l :=
+  (hfg : (λ x, ∥f x∥) ≤ᶠ[l] λ x, ∥g x∥) (hh : g =O[l] h) : f =O[l] h :=
 (is_O_iff.mpr ⟨1, by  simpa using hfg⟩).trans hh
 
 lemma filter.eventually.is_O {f g h : E → F} {l : filter E}
-  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : is_O g h l) : is_O f h l :=
+  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : g =O[l] h) : f =O[l] h :=
 filter.eventually_le.is_O hfg hh
 
 lemma filter.eventually.is_O' {f : E → F} {g : E → ℝ} {l : filter E}
-  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ g x) : is_O f g l :=
+  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ g x) : f =O[l] g :=
 begin
   rw is_O_iff,
   use 1,
@@ -269,7 +269,7 @@ variables [normed_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
           {G : Type*} [normed_group G] [normed_space 𝕜 G]
 
 lemma asymptotics.is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ}
-  (h : is_O f (λ x, ∥x - x₀∥^n) (𝓝 x₀)) (hn : 0 < n) : f x₀ = 0 :=
+  (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 0 < n) : f x₀ = 0 :=
 begin
   cases h.is_O_with with c hc,
   have:= mem_of_mem_nhds (is_O_with_iff.mp hc),
@@ -277,7 +277,7 @@ begin
 end
 
 lemma is_o_pow_sub_pow_sub (x₀ : E) {n m : ℕ} (h : n < m) :
-    is_o (λ (x : E), ∥x - x₀∥^m) (λ (x : E), ∥x - x₀∥^n) (𝓝 x₀) :=
+    (λ (x : E), ∥x - x₀∥^m) =o[𝓝 x₀] λ (x : E), ∥x - x₀∥^n :=
 begin
   have : tendsto (λ x, ∥x - x₀∥) (𝓝 x₀) (𝓝 0),
   { apply tendsto_norm_zero.comp,
@@ -287,53 +287,53 @@ begin
 end
 
 lemma is_o_pow_sub_sub (x₀ : E) {m : ℕ} (h : 1 < m) :
-    is_o (λ (x : E), ∥x - x₀∥^m) (λ (x : E), x - x₀) (𝓝 x₀) :=
+    (λ (x : E), ∥x - x₀∥^m) =o[𝓝 x₀] λ (x : E), x - x₀ :=
 by simpa only [is_o_norm_right, pow_one] using is_o_pow_sub_pow_sub x₀ h
 
 lemma asymptotics.is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
-  is_O (λ p : E × F, p.1 - e₀) (λ p : E × F, p - (e₀, f₀)) l :=
+  (λ p : E × F, p.1 - e₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
 is_O_of_le l (λ p, le_max_left _ _)
 
 lemma asymptotics.is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
-  is_O (λ p : E × F, p.2 - f₀) (λ p : E × F, p - (e₀, f₀)) l :=
+  (λ p : E × F, p.2 - f₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
 is_O_of_le l (λ p, le_max_right _ _)
 
 lemma asymptotics.is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
-  is_O (λ p : E × F, ∥p.1 - e₀∥^n) (λ p : E × F, ∥p - (e₀, f₀)∥^n) l :=
+  (λ p : E × F, ∥p.1 - e₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
 (is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_left e₀ f₀ l).pow n
 
 lemma asymptotics.is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
-  is_O (λ p : E × F, ∥p.2 - f₀∥^n) (λ p : E × F, ∥p - (e₀, f₀)∥^n) l :=
+  (λ p : E × F, ∥p.2 - f₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
 (is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_right e₀ f₀ l).pow n
 
 lemma asymptotics.is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
-  (h : is_O f (λ e, ∥e - e₀∥^n) l) (g₀ : G) (l' : filter G) :
-  is_O (λ p : E × G, f p.1) (λ p, ∥p - (e₀, g₀)∥^n) (l ×ᶠ l') :=
+  (h : f =O[l] λ e, ∥e - e₀∥^n) (g₀ : G) (l' : filter G) :
+  (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
 (h.comp_tendsto tendsto_fst).trans (asymptotics.is_O_pow_sub_prod_left _ _ _ _)
 
 lemma asymptotics.is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
-  (h : is_O f (λ e, ∥e - e₀∥) l) (g₀ : G) (l' : filter G) :
-  is_O (λ p : E × G, f p.1) (λ p, ∥p - (e₀, g₀)∥) (l ×ᶠ l') :=
+  (h : f =O[l] λ e, ∥e - e₀∥) (g₀ : G) (l' : filter G) :
+  (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
 begin
   rw show (λ e, ∥e - e₀∥) = (λ e, ∥e - e₀∥^1), by { ext e, simp } at h,
   simpa using h.comp_fst g₀ l'
 end
 
 lemma asymptotics.is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
-  (h : is_O f (λ g, ∥g - g₀∥^n) l') (e₀ : E) (l : filter E) :
-  is_O (λ p : E × G, f p.2) (λ p, ∥p - (e₀, g₀)∥^n) (l ×ᶠ l') :=
+  (h : f =O[l'] λ g, ∥g - g₀∥^n) (e₀ : E) (l : filter E) :
+  (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
 (h.comp_tendsto tendsto_snd).trans (asymptotics.is_O_pow_sub_prod_right _ _ _ _)
 
 lemma asymptotics.is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
-  (h : is_O f (λ g, ∥g - g₀∥) l') (e₀ : E) (l : filter E) :
-  is_O (λ p : E × G, f p.2) (λ p, ∥p - (e₀, g₀)∥) (l ×ᶠ l') :=
+  (h : f =O[l'] λ g, ∥g - g₀∥) (e₀ : E) (l : filter E) :
+  (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
 begin
   rw show (λ g, ∥g - g₀∥) = (λ g, ∥g - g₀∥^1), by { ext g, simp } at h,
   simpa using h.comp_snd e₀ l
 end
 
 lemma asymptotics.is_O.has_fderiv_at {f : E → F} {x₀ : E} {n : ℕ}
-  (h : is_O f (λ x, ∥x - x₀∥^n) (𝓝 x₀)) (hn : 1 < n) :
+  (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 1 < n) :
   has_fderiv_at f (0 : E →L[𝕜] F) x₀ :=
 begin
   change is_o _ _ _,
@@ -342,7 +342,7 @@ begin
 end
 
 lemma has_deriv_at.is_O {f : E → F} {x₀ : E} {f' : E →L[𝕜] F} (h : has_fderiv_at f f' x₀) :
-  is_O (λ x, f x - f x₀) (λ x, x - x₀) (𝓝 x₀) :=
+  (λ x, f x - f x₀) =O[𝓝 x₀] λ x, x - x₀ :=
 by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
 
 end
