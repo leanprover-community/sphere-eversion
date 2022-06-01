@@ -114,7 +114,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/basic.lean#L362">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/basic.lean#L360">loop.average</a></li>
         </ul>
 
       </div>
@@ -146,7 +146,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/basic.lean#L205">loop.support</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/basic.lean#L203">loop.support</a></li>
         </ul>
 
       </div>
@@ -180,7 +180,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/exists.lean#L249">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/exists.lean#L249">exists_loops</a></li>
         </ul>
 
       </div>
@@ -189,17 +189,17 @@
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>  Let \(K\) a compact setin \(E\). Let \(Ω\) be an open set in \(E × F\) such that, for each \(x\), \(Ω_x := Ω ∩ (\{ x\}  × F)\) is connected in \(\{ x\}  × F\). </p>
+  <p>  Let \(K\) a compact set in \(E\). Let \(Ω\) be an open set in \(E × F\) such that, for each \(x\), \(Ω_x := Ω ∩ (\{ x\}  × F)\) is connected in \(\{ x\}  × F\). </p>
 <p>Let \(β\) and \(g\) be smooth maps from \(E\) to \(F\). Assume that \(β(x) ∈ Ω_x\) for all \(x\), and \(g(x) = β(x)\) near \(K\). </p>
 <p>If, for every \(x\), \(g(x)\) is in the convex hull of \(Ω_x\), then there exists a smooth family of loops </p>
 <div class="displaymath" id="a0000000015">
   \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
 </div>
-<p> such that, for all \(x ∈ \), all \(t ∈ ℝ\) and all \(s ∈ 𝕊^1\), </p>
+<p> such that, for all \(x ∈ E\), all \(t ∈ ℝ\) and all \(s ∈ 𝕊^1\), </p>
 <ul class="itemize">
   <li><p>\(γ^t_x(s) ∈ Ω_x\) </p>
 </li>
-  <li><p>\(γ^0_x(s) = β(x)\) </p>
+  <li><p>\(γ^0_x(s) = γ^t_x(1) = β(x)\) </p>
 </li>
   <li><p>\(\barγ^1_x = g(x)\) </p>
 </li>
@@ -209,7 +209,7 @@
 
   </div>
 </div> </p>
-<p>Let us briefly sketch the geometric idea behind the above proposition if we pretend there is only one point \(x\), and drop it from the notation, and also focus only on \(γ^1\). By assumption, there is a finite collection of points \(p_i\) in \(Ω\) and \(λ_i ∈ [0, 1]\) such that \(g\) is the barycenter \(\sum λ_i p_i\). Since \(Ω\) is open and connected, there is a smooth loop \(γ_0\) which goes through each \(p_i\). The claim is that \(g\) is the average value of \(γ = γ_0 ∘ h\) for some self-diffeomorphism \(h\) of \(𝕊^1\). The idea is to choose \(h\) such that \(γ\) rushes to \(p_1\), stays there during a time roughly \(λ_1\), rushes to \(p_2\), etc. But, in order to achieve average exactly \(g\), it seems like \(h\) needs to be a discontinuous piecewise constant map. The assumption that \(g\) is in the <em>interior</em> of the convex hull gives enough slack to get away with a smooth \(h\). Actually the conclusion would be false without this interior assumption. </p>
+<p>Let us briefly sketch the geometric idea behind the above proposition if we pretend there is only one point \(x\), and drop it from the notation, and also focus only on \(γ^1\). By assumption, there is a finite collection of points \(p_i\) in \(Ω\) and \(λ_i ∈ [0, 1]\) such that \(g\) is the barycenter \(\sum λ_i p_i\). Since \(Ω\) is open and connected, there is a smooth loop \(γ_0\) which goes through each \(p_i\). The claim is that \(g\) is the average value of \(γ = γ_0 ∘ h\) for some self-diffeomorphism \(h\) of \(𝕊^1\). The idea is to choose \(h\) such that \(γ\) rushes to \(p_1\), stays there during a time roughly \(λ_1\), rushes to \(p_2\), etc. But, in order to achieve average exactly \(g\), it seems like \(h\) needs to be a discontinuous piecewise constant map. The assumption that \(Ω\) is open means that the convex hull is open, which gives enough slack to get away with a smooth \(h\). </p>
 <p>In the previous proof sketch, there is a lot of freedom in constructing \(γ\), which is problematic when trying to do it consistently when \(x\) varies. </p>
 <h1 id="sec:preliminaries">1.2 Preliminaries</h1>
 
@@ -235,7 +235,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/e4f93e6f0e77dd2dac6aec4811e010f8c0eecf74/src/analysis/convex/caratheodory.lean#L143">convex_hull_eq_union</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/9f6f605bb0cd47a8e50210872f906f397a8ae348/src/analysis/convex/caratheodory.lean#L143">convex_hull_eq_union</a></li>
         </ul>
 
       </div>
@@ -284,7 +284,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L88">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L87">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -318,7 +318,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/e4f93e6f0e77dd2dac6aec4811e010f8c0eecf74/src/analysis/normed_space/add_torsor_bases.lean#L53">interior_convex_hull_aff_basis</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/9f6f605bb0cd47a8e50210872f906f397a8ae348/src/analysis/normed_space/add_torsor_bases.lean#L57">interior_convex_hull_aff_basis</a></li>
         </ul>
 
       </div>
@@ -371,7 +371,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/e4f93e6f0e77dd2dac6aec4811e010f8c0eecf74/src/analysis/convex/topology.lean#L171">convex.subset_interior_image_homothety_of_one_lt</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/9f6f605bb0cd47a8e50210872f906f397a8ae348/src/analysis/convex/topology.lean#L263">convex.subset_interior_image_homothety_of_one_lt</a></li>
         </ul>
 
       </div>
@@ -441,7 +441,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L162">surrounded_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L161">surrounded_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -524,7 +524,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L187">smooth_surrounding</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L187">smooth_surrounding</a></li>
         </ul>
 
       </div>
@@ -615,7 +615,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L323">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L323">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -665,7 +665,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L470">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L470">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -733,7 +733,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L494">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L494">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -793,7 +793,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L730">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L730">local_loops</a></li>
         </ul>
 
       </div>
@@ -854,7 +854,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L943">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L943">satisfied_or_refund</a></li>
         </ul>
 
       </div>
@@ -920,7 +920,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L976">extend_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L976">extend_loops</a></li>
         </ul>
 
       </div>
@@ -942,7 +942,7 @@
   </div>
   <div class="proof_content">
   <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\overline U_0'\) is compact in \(U_0\). Since \(\overline U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
-<p><a href="chap-loops.html#lem:satisfied_or_refund">Lemma 1.14</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
+<p><a href="chap-loops.html#lem:satisfied_or_refund">Lemma 1.14</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). Moreover, note that \(γ_τ\) is defined on all of \(E\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
 <div class="displaymath" id="a0000000044">
   \[  γ_x = γ_{ρ(x), x}  \]
 </div>
@@ -985,7 +985,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/surrounding.lean#L1238">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L1238">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -1051,7 +1051,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/bd64072305931904e799624ee826ea1fc7c698a4/src/loops/reparametrization.lean#L575">smooth_surrounding_family.reparametrize_average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/reparametrization.lean#L499">smooth_surrounding_family.reparametrize_average</a></li>
         </ul>
 
       </div>

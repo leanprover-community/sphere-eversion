@@ -124,7 +124,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious project map. </p>
+  <p> Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious projection map. </p>
 
   </div>
 </div> </p>
@@ -195,7 +195,7 @@
 
   </div>
 </div> </p>
-<p>The composition of a section \(\mathcal{F}\! :M → J^1(M, N)\) with the projection onto \(N\) will sometimes be denoted by \(\operatorname{bs}\mathcal{F}\! :M → N\) and called the base map of \(\mathcal{F}\). </p>
+<p>The composition of a section \(\mathcal{F}\! :M → J^1(M, N)\) with the projection onto \(N\) will sometimes be denoted by \(\operatorname{bs}\mathcal{F}\! :M → N\) and called the base map of \(\mathcal{F}\). For any \(m\), \(\mathcal{F}(m)_φ\) will denote the component of \(\mathcal{F}(m)\) living in \(\operatorname{Hom}(T_mM, T_{\operatorname{bs}\mathcal{F}(m)}N)\). </p>
 <p><div class="lemma_thmwrapper" id="lem:one_jet_extension_prop">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -376,12 +376,96 @@
 
   </div>
 </div> </p>
-<p><div class="definition_thmwrapper" id="def:h-princ">
+<p>The next definition will be used in cases where \(X\) and \(Y\) are vector spaces, in order to relate the global theory to the local one. </p>
+<p><div class="definition_thmwrapper" id="def:transfer_map">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:transfer_map">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
+<div class="displaymath" id="a0000000068">
+  \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
+</div>
+<p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
+<div class="displaymath" id="a0000000069">
+  \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
+</div>
+<p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
+
+  </div>
+</div> </p>
+<p>The following is a localization lemma needed to take advantage of all the work from the previous chapter. </p>
+<p><div class="lemma_thmwrapper" id="lem:transfer">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.11</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:transfer">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:transfer_map">Definition 3.10</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> In the situation of the previous definition, given a section \(\mathcal{F}: M → J^1(M, N)\): </p>
+<ul class="itemize">
+  <li><p>\(Ψ_{g, h}(\mathcal{F})\) is a smooth section of \(J^1(X, Y)\). </p>
+</li>
+  <li><p>\(\mathcal{F}\) is holonomic on \(s ⊂ h(X) ∩ \operatorname{bs}\mathcal{F}⁻¹(g(Y))\) if and only if \(Ψ_{g, h}(\mathcal{F})\) is holonomic on \(h⁻¹(s)\). </p>
+</li>
+  <li><p>\(\mathcal{F}\) is a formal solution of \(\mathcal{R}\) on \(h(X) ∩ \operatorname{bs}\mathcal{F}⁻¹(g(Y)\) if and only if \(Ψ_{g, h}(\mathcal{F})\) is a formal solution of the induced relation \(Ψ_{g, h}⁻¹\mathcal{R}\). </p>
+</li>
+</ul>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000070">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>The first point is clear by composition. In order to prove the second point while keeping notations under control, we set \(f(x) = g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h\). Using this notation \(Ψ_{g, h}\mathcal{F}(x) = (x, f(x), (T_{f(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh)\). We have </p>
+<div class="displaymath" id="a0000000071">
+  \begin{align*}  T_x f & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h \end{align*}
+</div>
+<p> hence \(Ψ_{g, h}\mathcal{F}\) is holonomic at \(x\) if and only if \(\left(T_{f(x)}g\right)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\) and this is equivalent to \(\mathcal{F}(h(x))_φ = T_{h(x)}\operatorname{bs}\mathcal{F}\) which is the holonomy condition for \(\mathcal{F}\) at \(h(x)\). </p>
+<p>The third point is a direct consequence of the easy formula \(ψ_{g, h} ∘ Ψ_{g, h}(\mathcal{F}) = F ∘ h\). </p>
+
+  </div>
+</div>
+<p><div class="definition_thmwrapper" id="def:h-princ">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.12</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:h-princ">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -404,7 +488,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A first order differential relation \(\mathcal{R}⊂ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions is homotopic to a family of holonomic ones. </p>
+  <p>  A first order differential relation \(\mathcal{R}⊂ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). </p>
 
   </div>
 </div> </p>
@@ -413,7 +497,7 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.11</span>
+    <span class="lemma_thmlabel">3.13</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:sol_chart">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -426,7 +510,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:h-princ">Definition 3.10</a></li>
+          <li><a href="chap-global.html#def:h-princ">Definition 3.12</a></li>
         </ul>
 
       </div>
@@ -439,7 +523,7 @@
 
   </div>
 </div> </p>
-<h2 id="a0000000068">Parametricity for free</h2>
+<h2 id="a0000000072">Parametricity for free</h2>
 <p>In many cases, relative parametric \(h\)-principles can be deduced from relative non-parametric ones with a larger source manifold. Let \(X\), \(P\) and \(Y\) be manifolds, with \(P\) seen a parameter space. Denote by \(Ψ\) the map from \(J^1(X × P, Y)\) to \(J^1(X, Y)\) sending \((x, p, y, ψ)\) to \((x, y, ψ ∘ ι_{x, p})\) where \(ι_{x, p} : T_xX → T_xX × T_pP\) sends \(v\) to \((v, 0)\). </p>
 <p>To any family of sections \(F_p : x ↦ (f_p(x), φ_{p, x})\) of \(J^1(X, Y)\), we associate the section \(\bar F\) of \(J^1(X × P, Y)\) sending \((x, p)\) to \(\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))\). </p>
 <p><div class="lemma_thmwrapper" id="lem:param_trick">
@@ -447,10 +531,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.12</span>
+    <span class="lemma_thmlabel">3.14</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -482,7 +566,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000069">
+<div class="proof_wrapper" id="a0000000073">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -499,10 +583,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.13</span>
+    <span class="lemma_thmlabel">3.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -514,7 +598,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:h-princ">Definition 3.10</a></li>
+          <li><a href="chap-global.html#def:h-princ">Definition 3.12</a></li>
         </ul>
 
       </div>
@@ -527,7 +611,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000070">
+<div class="proof_wrapper" id="a0000000074">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -535,14 +619,14 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.12</a>. </p>
+  <p> This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.14</a>. </p>
 
   </div>
 </div>
 <h1 id="sec:general_theory">3.3 The \(h\)-principle for open and ample differential relations</h1>
 
-<p>In this chapter, \(X\) and \(Y\) are smooth manifolds and \(\mathcal{R}\) is a first order differential relation on maps from \(X\) to \(Y\): \(\mathcal{R}⊂ J^1(X, Y)\). For any \(σ = (x, y, φ)\) in \(\mathcal{R}\) and any dual pair \((λ, v) ∈ T^*_xV × T_xV\), we set: </p>
-<div class="displaymath" id="a0000000071">
+<p>In this chapter, \(X\) and \(Y\) are smooth manifolds and \(\mathcal{R}\) is a first order differential relation on maps from \(X\) to \(Y\): \(\mathcal{R}⊂ J^1(X, Y)\). For any \(σ = (x, y, φ)\) in \(\mathcal{R}\) and any dual pair \((λ, v) ∈ T^*_xX × T_xX\), we set: </p>
+<div class="displaymath" id="a0000000075">
   \[  \mathcal{R}_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  φ + (w - φ(v))⊗λ\big ) ∈ \mathcal{R}\right\}   \]
 </div>
 <p> where \(\operatorname{Conn}_a A\) is the connected component of \(A\) containing \(a\). In order to decipher this definition, it suffices to notice that \(φ + (w - φ(v))⊗λ\) is the unique linear map from \(T_xX\) to \(T_yY\) which coincides with \(φ\) on \(\ker λ\) and sends \(v\) to \(w\). In particular, \(w = φ(v)\) gives back \(φ\). </p>
@@ -553,7 +637,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.14</span>
+    <span class="definition_thmlabel">3.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:ample_relation">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -584,10 +668,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.15</span>
+    <span class="lemma_thmlabel">3.17</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -599,8 +683,9 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:ample_relation">Definition 3.14</a></li>
+          <li><a href="chap-global.html#def:ample_relation">Definition 3.16</a></li>
           <li><a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a></li>
+          <li><a href="chap-global.html#def:transfer_map">Definition 3.10</a></li>
         </ul>
 
       </div>
@@ -609,11 +694,11 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  If a relation is ample then it is ample if the sense of <a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a> when seen in local charts. </p>
+  <p>  Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.10</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000072">
+<div class="proof_wrapper" id="a0000000076">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -621,7 +706,11 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>This follows from the fundamental properties of the tangent bundle. </p>
+  <p>By definition, the relation induced by \(\mathcal{R}\) is \(ψ_{g, h}⁻¹\mathcal{R}\) where \(ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)\). Fix \(σ =(w, z, φ) ∈ ψ_{g, h}⁻¹\mathcal{R}\) and a dual pair \((λ, v)\) on \(T_wW\). We set \(G = T_z g\) and \(H = T_w h\). Both those maps are linear isomorphisms. We compute the slice corresponding to \((σ, λ, v)\): </p>
+<div class="displaymath" id="a0000000077">
+  \begin{align*}  ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v) & = \left\{ u ∈ T_wW \; \left|\;  (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\mathcal{R}\right.\right\} \\ & = \left\{ u ∈ T_wW \; \left|\;  (h(w), g(z), G ∘(φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \mathcal{R}\right.\right\} \\ & = G⁻¹\mathcal{R}((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu). \end{align*}
+</div>
+<p> Hence the slice \(ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v)\) is the image of a slice of \(\mathcal{R}\) under a linear isomorphism, hence ample. </p>
 
   </div>
 </div>
@@ -630,10 +719,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.16</span>
+    <span class="lemma_thmlabel">3.18</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000078"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -643,7 +732,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000073">
+<div class="proof_wrapper" id="a0000000078">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -651,7 +740,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>  This obviously follows from <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a>. </p>
+  <p>  This obviously follows from <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a>. Better, we should remove <a href="chap-local.html#lem:open_ample_immersion_loc">lemma 2.15</a> and copy-paste its proof here. </p>
 
   </div>
 </div>
@@ -660,11 +749,11 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">3.17</span>
+    <span class="theorem_thmlabel">3.19</span>
     <span class="theorem_thmtitle">Gromov</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000079"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -676,7 +765,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:h-princ">Definition 3.10</a></li>
+          <li><a href="chap-global.html#def:h-princ">Definition 3.12</a></li>
         </ul>
 
       </div>
@@ -695,10 +784,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.18</span>
+    <span class="lemma_thmlabel">3.20</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000080"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -710,7 +799,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:ample_relation">Definition 3.14</a></li>
+          <li><a href="chap-global.html#def:ample_relation">Definition 3.16</a></li>
         </ul>
 
       </div>
@@ -723,7 +812,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000075">
+<div class="proof_wrapper" id="a0000000080">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -732,7 +821,7 @@
   </div>
   <div class="proof_content">
   <p>We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000076">
+<div class="displaymath" id="a0000000081">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when \(λ_X = 0\). Then the condition on \(w\) becomes \(ψ ∘ ι_{x, p} ∈ \mathcal{R}\), which is true by definition of \(\mathcal{R}^P\), so \(\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
@@ -740,18 +829,18 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000074">
+<div class="proof_wrapper" id="a0000000079">
   <div class="proof_heading">
     <span class="proof_caption">
-    Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.17</a>
+    Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.19</a>
     </span>
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.13</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.18</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
+  <p>   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.15</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.20</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
 <p>We first assume \(X\) is closed, and will then explain the proof adjustments needed in the non-compact case. By compactness, there are finite many compact subsets \((K_i)_{1 ≤ i ≤ N}\) contained in coordinate charts \(U_i\) and such that \(\bigcup K_i = X\). </p>
 <p>We prove by induction on \(i\) from \(0\) to \(N\) that there are formal solutions \(F_i\), starting with \(F_0 = F\), that are homotopic to \(F\) relative to \(A\), holonomic on \(K_{≤ i} := \bigcup _{j ≤ i} K_j\) and whose base maps are \((1-2^{-i})ε\)-close to that of \(F\) (this contrived bound will be convenient for the non-compact case). </p>
-<p>Assume \(F_i\) has been constructed for some \(i {\lt} N\). We now want to construct it on \(U_{i+1}\). <a href="chap-global.html#lem:ample_iff_loc">Lemma 3.15</a> ensures the pull-back of \(\mathcal{R}\) in the chart corresponding to \(U_{i+1}\) is ample in the sense of the preceding chapter. Hence <a href="chap-local.html#lem:h_principle_open_ample_loc">Lemma 2.16</a> can be applied to construct \(F_{i+1}\), using the image of \(K_{i+1}\) as \(K_0\) and the image of \(A ∩ K_{i+1} ∩ K_{≤ i}\) as \(C\). It is holonomic on \(K_{≤ i+1}\) because it agrees with \(F_i\) near \(K_{≤ i}\) and is holonomic near \(K_{i+1}\). </p>
+<p>Assume \(F_i\) has been constructed for some \(i {\lt} N\). We now want to construct it on \(U_{i+1}\). <a href="chap-global.html#lem:ample_iff_loc">Lemma 3.17</a> ensures the pull-back of \(\mathcal{R}\) in the chart corresponding to \(U_{i+1}\) is ample in the sense of the preceding chapter. Hence <a href="chap-local.html#lem:h_principle_open_ample_loc">Lemma 2.16</a> can be applied to construct \(F_{i+1}\), using the image of \(K_{i+1}\) as \(K_0\) and the image of \(A ∩ K_{i+1} ∩ K_{≤ i}\) as \(C\). It is holonomic on \(K_{≤ i+1}\) because it agrees with \(F_i\) near \(K_{≤ i}\) and is holonomic near \(K_{i+1}\). </p>
 <p>Once all \(F_i\) are constructed, we define \(F^t\) to be the concatenation of all homotopies relating \(F_i\) to \(F_{i+1}\). </p>
 <p>If \(X\) is not compact, then one can use a countable family of subsets \((U_i, K_i)\) which is locally finite (ie. every point \(x\) has a neighborhood intersecting only finitely many \(U_i\)). The way we have chosen \(C^0\)-bounds ensures that each \(\operatorname{bs}F_i\) is still at distance at most \(ε\) from \(\operatorname{bs}F\). We now have countably many homotopies to concatenate, so we need to reparametrize the \(i\)-th homotopy by an interval of length \(2^{-i}\). This give a family of sections of \(J^1(X, Y)\) parametrized by \(t ∈ [0, 1)\). But our local finiteness assumption implies that, for each each \(x\), there is some \(t_0 {\lt} 1\) and some neighborhood \(U\) of \(x\) such that our family is \(t\)–independent on \(U\) for \(t ≥ t_0\). So we can extend to \(t = 1\). The resulting family is smooth since smoothness is a local condition in both \(x\) and \(t\). </p>
 
@@ -762,11 +851,11 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">3.19</span>
+    <span class="theorem_thmlabel">3.21</span>
     <span class="theorem_thmtitle">Smale 1958</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000077"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000082"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -776,7 +865,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000077">
+<div class="proof_wrapper" id="a0000000082">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
