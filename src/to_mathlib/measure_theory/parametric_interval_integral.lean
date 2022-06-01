@@ -334,23 +334,23 @@ begin
         ⟨Ioo a₀ b₀, Ioo_nhds, (hF_meas x₀ x₀_in)⟩ hF_cont },
     have D₃ : has_fderiv_at (λ x, ∫ t in s x₀..s x, F x t - F x₀ t) 0 x₀,
     { apply is_O.has_fderiv_at _ one_lt_two,
-      have O₁ : is_O (λ x, ∫ s in s x₀..s x, bound s) (λ x, ∥x - x₀∥) (𝓝 x₀),
-      { have : is_O (λ x, s x - s x₀) (λ x, ∥x - x₀∥) (𝓝 x₀) := s_diff.is_O_sub.norm_right,
+      have O₁ : (λ x, ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] λ x, ∥x - x₀∥,
+      { have : (λ x, s x - s x₀) =O[𝓝 x₀] λ x, ∥x - x₀∥ := s_diff.is_O_sub.norm_right,
         refine is_O.trans _ this,
-        show is_O ((λ t, ∫ s in s x₀..t, bound s) ∘ s) ((λ t, t - s x₀) ∘ s) (𝓝 x₀),
+        show ((λ t, ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((λ t, t - s x₀) ∘ s),
         refine is_O.comp_tendsto _ s_diff.continuous_at,
         have M : strongly_measurable_at_filter bound (𝓝 (s x₀)) volume,
         { use [Ioo a₀ b₀, Ioo_nhds, bound_integrable.1] },
-        apply is_O.congr' _ eventually_eq.rfl
-          (interval_integral.integral_has_deriv_at_right (bound_int ha hsx₀) M bound_cont).is_O,
+        refine is_O.congr'
+          (interval_integral.integral_has_deriv_at_right (bound_int ha hsx₀) M bound_cont).is_O
+          _ eventually_eq.rfl,
         apply eventually.mono Ioo_nhds,
         rintros t ht,
         dsimp only {eta := false},
         rw interval_integral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀) },
-      have O₂ : is_O (λ x, ∥x - x₀∥) (λ x, ∥x - x₀∥) (𝓝 x₀), from is_O_refl _ _,
-      have O₃ : is_O (λ x, ∫ (t : ℝ) in s x₀..s x, F x t - F x₀ t)
-             (λ x, (∫ t' in s x₀..s x, bound t') * ∥x - x₀∥)
-             (𝓝 x₀),
+      have O₂ : (λ x, ∥x - x₀∥) =O[𝓝 x₀] λ x, ∥x - x₀∥, from is_O_refl _ _,
+      have O₃ : (λ x, ∫ (t : ℝ) in s x₀..s x, F x t - F x₀ t) =O[𝓝 x₀]
+             λ x, (∫ t' in s x₀..s x, bound t') * ∥x - x₀∥,
       { have bdd : ∀ᶠ x in 𝓝 x₀,
           ∥∫ s in s x₀..s x, F x s - F x₀ s∥ ≤ |∫ s in s x₀..s x, bound s |* ∥x - x₀∥,
         { apply eventually.mono mem_nhds,

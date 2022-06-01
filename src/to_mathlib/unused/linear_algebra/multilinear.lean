@@ -54,12 +54,6 @@ variables [topological_space M₃]
 variables [add_comm_monoid M₄] [module R M₄] [topological_space M₄]
 variables [Π i, add_comm_monoid (N i)] [Π i, module R (N i)] [Π i, topological_space (N i)]
 
-
-def simps.apply (L₁ : continuous_multilinear_map R M₁ M₃) (v : Π i, M₁ i) : M₃ := L₁ v
-
-initialize_simps_projections continuous_multilinear_map
-  (-to_multilinear_map, to_multilinear_map_to_fun → apply)
-
 variables [has_continuous_add M₃]
 @[simps]
 def coprod (L₁ : continuous_multilinear_map R M₁ M₃) (L₂ : continuous_multilinear_map R M₂ M₃) :

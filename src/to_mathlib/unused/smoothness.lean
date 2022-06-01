@@ -61,8 +61,8 @@ that would still be useful enough to combine is_o.comp_tendsto and is_o.trans_is
 -/
 
 lemma asymptotics.is_o.comp_fst' {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
-  {f : E → F} (h : is_o f id (𝓝 0)) :
-  is_o (λ p : E × E', f p.1) id (𝓝 0) :=
+  {f : E → F} (h : is_o (𝓝 0) f id) :
+  is_o (𝓝 0) (λ p : E × E', f p.1) id :=
 begin
   have : tendsto prod.fst (𝓝 (0 : E × E')) (𝓝 0), from continuous_fst.continuous_at,
   apply (h.comp_tendsto this).trans_is_O,
@@ -71,8 +71,8 @@ begin
 end
 
 lemma asymptotics.is_o.comp_fst {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
-  {f : E → F} {e : E} (h : is_o f (λ x, x - e) (𝓝 e)) (e' : E') :
-  is_o (λ p : E × E', f p.1) (λ p, p - (e, e')) (𝓝 (e, e')) :=
+  {f : E → F} {e : E} (h : is_o (𝓝 e) f (λ x, x - e)) (e' : E') :
+  is_o (𝓝 (e, e')) (λ p : E × E', f p.1) (λ p, p - (e, e')) :=
 begin
   have : tendsto prod.fst (𝓝 (e, e')) (𝓝 e), from continuous_fst.continuous_at,
   apply (h.comp_tendsto this).trans_is_O,
@@ -81,8 +81,8 @@ begin
 end
 
 lemma asymptotics.is_o.comp_snd' {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
-  {f : E' → F} (h : is_o f id (𝓝 0)) :
-  is_o (λ p : E × E', f p.2) id (𝓝 0) :=
+  {f : E' → F} (h : is_o (𝓝 0) f id) :
+  is_o (𝓝 0) (λ p : E × E', f p.2) id :=
 begin
   have : tendsto prod.snd (𝓝 (0 : E × E')) (𝓝 0), from continuous_snd.continuous_at,
   apply (h.comp_tendsto this).trans_is_O,
@@ -91,8 +91,8 @@ begin
 end
 
 lemma asymptotics.is_o.comp_snd {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
-  {f : E' → F} {e' : E'} (h : is_o f (λ x, x - e') (𝓝 e')) (e : E) :
-  is_o (λ p : E × E', f p.2) (λ p, p - (e, e')) (𝓝 (e, e')) :=
+  {f : E' → F} {e' : E'} (h : is_o (𝓝 e') f (λ x, x - e')) (e : E) :
+  is_o (𝓝 (e, e')) (λ p : E × E', f p.2) (λ p, p - (e, e')) :=
 begin
   have : tendsto prod.snd (𝓝 (e, e')) (𝓝 e'), from continuous_snd.continuous_at,
   apply (h.comp_tendsto this).trans_is_O,

@@ -122,13 +122,6 @@ open ulift
 @[to_additive, simps] def monoid_hom.down [mul_one_class E] : ulift E →* E :=
 ⟨down, rfl, λ x y, rfl⟩
 
-instance [normed_group E] : normed_group (ulift.{v} E) :=
-normed_group.induced add_monoid_hom.down equiv.ulift.injective
-
-instance {F} [normed_field F] [normed_group E] [normed_space F E] : normed_space F (ulift.{v} E) :=
-{ norm_smul_le := by { rintro x ⟨y⟩, exact normed_space.norm_smul_le x y },
-  ..ulift.module' }
-
 instance {X} [topological_space X] [second_countable_topology X] :
   second_countable_topology (ulift.{v} X) :=
 homeomorph.ulift.second_countable_topology
