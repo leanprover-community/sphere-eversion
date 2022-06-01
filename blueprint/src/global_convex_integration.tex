@@ -20,7 +20,7 @@ The case of vector bundles.
 \label{def:hom_bundle}
 Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
 $B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
-$E_b$ to $F_b$ for some $b$ in $B$, with the obvious project map.
+$E_b$ to $F_b$ for some $b$ in $B$, with the obvious projection map.
 \end{definition}
 
 Set-theoretically, one can define $\Hom(E, F)$ as the set of subsets
@@ -58,7 +58,8 @@ $m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
 
 The composition of a section $\F \co M → J^1(M, N)$ with the projection
 onto $N$ will sometimes be denoted by $\bs \F \co M → N$ and called the
-base map of $\F$.
+base map of $\F$. For any $m$, $\F(m)_φ$ will denote the component of $\F(m)$
+living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
 
 \begin{lemma}
 \label{lem:one_jet_extension_prop}
@@ -119,6 +120,59 @@ necessarily $\bs \F$.
   when $t$ is in $[0, 1]$.
 \end{definition}
 
+The next definition will be used in cases where $X$ and $Y$ are vector spaces,
+in order to relate the global theory to the local one.
+
+\begin{definition}
+  \label{def:transfer_map}
+  Given manifolds $M$, $X$, $N$ and $Y$ and smooth embeddings $g : Y → N$
+  and $h : X → M$ we get a transfer map $ψ_{g, h} : J^1(X, Y) → J^1(M, N)$
+  defined by
+  \[
+    ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)
+  \]
+  and an operator on sections which sends $\F : M → J^1(M, N)$ to
+  $Ψ_{g, h}\F : X → J^1(X, Y)$ defined when $\bs\F(h(X)) ⊂ g(Y)$ by
+  \[
+    Ψ_{g, h}\F(x) = (x, g⁻¹ ∘ \bs\F ∘ h(x), (T_{g⁻¹ ∘ \bs\F ∘ h(x)}g)⁻¹ ∘ \F(h(x))_φ ∘ T_xh).
+  \]
+  Given a relation $\Rel ⊂ J^1(M, N)$, the induced relation in $J^1(X, Y)$
+  is $ψ_{g, h}⁻¹\Rel$.
+\end{definition}
+
+The following is a localization lemma needed to take advantage of all the work
+from the previous chapter.
+
+\begin{lemma}
+  \label{lem:transfer}\uses{def:transfer_map}
+  In the situation of the previous definition, given a section $\F : M → J^1(M, N)$:
+  \begin{itemize}
+    \item $Ψ_{g, h}(\F)$ is a smooth section of $J^1(X, Y)$.
+    \item $\F$ is holonomic on $s ⊂ h(X) ∩ \bs\F⁻¹(g(Y))$ if and only if $Ψ_{g, h}(\F)$
+      is holonomic on $h⁻¹(s)$.
+    \item $\F$ is a formal solution of $\Rel$ on $h(X) ∩ \bs\F⁻¹(g(Y)$ if and only if $Ψ_{g, h}(\F)$
+      is a formal solution of the induced relation $Ψ_{g, h}⁻¹\Rel$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  The first point is clear by composition. In order to prove the second point
+  while keeping notations under control, we set
+  $f(x) = g⁻¹ ∘ \bs\F ∘ h$. Using this notation
+  $Ψ_{g, h}\F(x) = (x, f(x), (T_{f(x)}g)⁻¹ ∘ \F(h(x))_φ ∘ T_xh)$. We have
+  \begin{align*}
+    T_x f &= T_{\bs\F ∘ h(x)}(g⁻¹) ∘ T_{h(x)}\bs\F ∘ T_x h\\
+                         &= T_{\bs\F ∘ h(x)}(g⁻¹) ∘ T_{h(x)}\bs\F ∘ T_x h\\
+                         &= \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\bs\F ∘ T_x h
+  \end{align*}
+  hence $Ψ_{g, h}\F$ is holonomic at $x$ if and only if
+  $\left(T_{f(x)}g\right)⁻¹ ∘ \F(h(x))_φ ∘ T_xh = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\bs\F ∘ T_x h$
+  and this is equivalent to $\F(h(x))_φ = T_{h(x)}\bs\F$ which is the holonomy condition for
+  $\F$ at $h(x)$.
+
+  The third point is a direct consequence of the easy formula $ψ_{g, h} ∘ Ψ_{g, h}(\F) = F ∘ h$.
+\end{proof}
+
 \begin{definition}
   \label{def:h-princ}
   \uses{def:formal_sol, def:htpy_formal_sol}
@@ -129,9 +183,6 @@ necessarily $\bs \F$.
   boundary $P$, every family $\F : P × M → J^1(M, N)$ of formal
   solutions which are holonomic for $p$ in $𝓝(∂P)$
   is homotopic to a family of holonomic ones relative to $𝓝(∂P)$.
-  It satisfies the parametric $h$-principle if, for every manifold with
-  boundary $P$, every family $\F : P × M → J^1(M, N)$ of formal
-  solutions is homotopic to a family of holonomic ones.
 \end{definition}
 
 \begin{lemma}
@@ -196,7 +247,7 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
 In this chapter, $X$ and $Y$ are smooth manifolds and $\Rel$ is a first order
 differential relation on maps from $X$ to $Y$: $\Rel ⊂ J^1(X, Y)$.
 For any $σ = (x, y, φ)$ in $\Rel$ and any dual pair
-$(λ, v) ∈ T^*_xV × T_xV$,
+$(λ, v) ∈ T^*_xX × T_xX$,
 we set:
 \[
     \Rel_{σ, λ, v} =
@@ -225,13 +276,30 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 
 \begin{lemma}
   \label{lem:ample_iff_loc}
-  \uses{def:ample_relation, def:ample_relation_loc}
-  If a relation is ample then it is ample if the sense of
-  \Cref{def:ample_relation_loc} when seen in local charts.
+  \uses{def:ample_relation, def:ample_relation_loc, def:transfer_map}
+  Given manifolds $W$, $X$, $Y$ and $Z$ and smooth embeddings $g : Z → Y$
+  and $h : W → X$, the relation induced (in the sense of \Cref{def:transfer_map})
+  in $J^1(W, Z)$ by a ample relation in $J^1(X, Y)$ is ample.
 \end{lemma}
 
 \begin{proof}
-  This follows from the fundamental properties of the tangent bundle.
+  By definition, the relation induced by $\Rel$ is
+  $ψ_{g, h}⁻¹\Rel$ where
+  $ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)$.
+  Fix $σ =(w, z, φ) ∈ ψ_{g, h}⁻¹\Rel$
+  and a dual pair $(λ, v)$ on $T_wW$. We set $G = T_z g$ and $H = T_w h$. Both
+  those maps are linear isomorphisms. We compute the slice corresponding to $(σ, λ, v)$:
+  \begin{align*}
+    ψ_{g, h}⁻¹\Rel(σ, λ, v)
+    &= \left\{u ∈ T_wW \;\left|\; (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\Rel \right.\right\}\\
+    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘(φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \Rel \right.\right\}\\
+%    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
+%    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
+%    &= \left\{u ∈ T_wW \;\left|\; Gu ∈ \Rel((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu) \right.\right\}\\
+    &= G⁻¹\Rel((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu).
+  \end{align*}
+  Hence the slice $ψ_{g, h}⁻¹\Rel(σ, λ, v)$ is the image of a slice of $\Rel$
+  under a linear isomorphism, hence ample.
 \end{proof}
 
 \begin{lemma}
@@ -243,7 +311,8 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 \begin{proof}
   \proves{lem:open_ample_immersion}
   \uses{lem:open_ample_immersion_loc}
-  This obviously follows from \cref{lem:open_ample_immersion_loc}.
+  This obviously follows from \cref{lem:open_ample_immersion_loc}. Better, we should remove
+  \cref{lem:open_ample_immersion_loc} and copy-paste its proof here.
 \end{proof}
 
 \begin{theorem}[Gromov]
