@@ -50,6 +50,9 @@ variables {M M'}
 @[nolint unused_arguments]
 def one_jet_space (p : M × M') : Type* := E →L[𝕜] E'
 
+instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
+  (λ σ, tangent_space I p.1 → tangent_space I' p.2) := ⟨λ φ, φ.to_fun⟩
+
 omit I I'
 
 variables (M M')
