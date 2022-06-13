@@ -1,4 +1,5 @@
 import global.one_jet_sec
+import global.smooth_embedding
 
 noncomputable theory
 
@@ -54,14 +55,86 @@ instance (R : rel_mfld I M I' M') :
 
 lemma formal_sol.is_sol {R : rel_mfld I M I' M'} (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
+
+
 end defs
 
+section smooth_open_embedding
+/-! ## Localisation of one jet sections
+
+In order to use the local story of convex integration, we need a way to turn a
+one jet section into local ones, then apply the local story to build a homotopy of one jets section
+and transfer back to the original manifolds. There is a dissymetry here. First we use
+maps from whole vector spaces to open sets in manifold. And also one jet sections are carried
+from manifold to vector spaces one at a time, but then the return journey is about a homotopy
+of one jet sections.
+
+The global manifolds are called `M` and `N'`. We don't assume the local ones are vector spaces,
+there are manifolds `X` and `Y` that will be vector spaces in the next section.
+
+Note: Patrick doesn't know whether we really need to allow different `E`, `H` and `I` for
+manifolds `X` and `M` (and for `Y` and `N`). We use maximal generality just in case.
+
+In this section the base field is `ℝ` because we care about homotopies.
+-/
+variables
+  {EX : Type*} [normed_group EX] [normed_space ℝ EX]
+  {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
+  {X : Type*} [topological_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
+
+  {EM : Type*} [normed_group EM] [normed_space ℝ EM]
+  {HM : Type*} [topological_space HM] {IM : model_with_corners ℝ EM HM}
+  {M : Type*} [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
+
+  {EY : Type*} [normed_group EY] [normed_space ℝ EY]
+  {HY : Type*} [topological_space HY] {IY : model_with_corners ℝ EY HY}
+  {Y : Type*} [topological_space Y] [charted_space HY Y] [smooth_manifold_with_corners IY Y]
+
+  {EN : Type*} [normed_group EN] [normed_space ℝ EN]
+  {HN : Type*} [topological_space HN] {IN : model_with_corners ℝ EN HN}
+  {N : Type*} [topological_space N] [charted_space HN N] [smooth_manifold_with_corners IN N]
+
+  (g : open_smooth_embedding IY Y IN N) (h : open_smooth_embedding IX X IM M)
+
+local notation `TM` := tangent_space IM
+local notation `TN` := tangent_space IN
+local notation `TX` := tangent_space IX
+local notation `TY` := tangent_space IY
+
+/-- Transfer map between one jet bundles induced by open smooth embedding into the source and
+targets. -/
+def one_jet_bundle.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M IN N :=
+λ σ, ⟨⟨h σ.1.1, g σ.1.2⟩,
+      ((g.fderiv σ.1.2 : TY σ.1.2 →L[ℝ] TN (g σ.1.2)).comp σ.2).comp
+        ((h.fderiv σ.1.1).symm : TM (h σ.1.1) →L[ℝ] TX σ.1.1)⟩
+
+lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer g h) :=
+sorry
+
+def one_jet_sec.localize (F : one_jet_sec IM M IN N) : one_jet_sec IX X IY Y :=
+sorry
+
+def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X  IY Y) : htpy_one_jet_sec IM M IN N :=
+sorry
+
+lemma one_jet_sec.unlocalize_localize (F : one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X  IY Y)
+  (hFG : G 0 = F.localize) : G.unlocalize 0 = F :=
+sorry
+
+lemma localize_mem_iff (F : one_jet_sec IM M IN N) (x : X) (R : rel_mfld IM M IN N) :
+  F (h x) ∈ R ↔ F.localize x ∈ (one_jet_bundle.transfer g h) ⁻¹' R :=
+sorry
+
+end smooth_open_embedding
+
 section loc
-/-! ## Link with the local story -/
+/-! ## Link with the local story
+
+Now we really bridge the gap all the way to vector spaces.
+-/
 
 variables {E : Type*} [normed_group E] [normed_space ℝ E]
 variables {E' : Type*} [normed_group E'] [normed_space ℝ E']
-
 
 /-- For maps between vector spaces, `one_jet_ext` is the obvious thing. -/
 @[simp] theorem one_jet_ext_eq_fderiv {f : E → E'} {x : E} :
