@@ -9,14 +9,13 @@ open_locale manifold
 
 section general
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
--- declare a smooth manifold `M` over the pair `(E, H)`.
-{E : Type*} [normed_group E] [normed_space 𝕜 E]
-{H : Type*} [topological_space H] (I : model_with_corners 𝕜 E H)
+variables
+{E : Type*} [normed_group E] [normed_space ℝ E]
+{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
 {M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
--- declare a smooth manifold `M'` over the pair `(E', H')`.
-{E' : Type*} [normed_group E'] [normed_space 𝕜 E']
-{H' : Type*} [topological_space H'] (I' : model_with_corners 𝕜 E' H')
+
+{E' : Type*} [normed_group E'] [normed_space ℝ E']
+{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
 local notation `TM` := tangent_space I
