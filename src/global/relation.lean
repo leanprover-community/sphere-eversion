@@ -1,3 +1,4 @@
+import local.relation
 import global.one_jet_sec
 import global.smooth_embedding
 
@@ -23,15 +24,16 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 section defs
 /-! ## Fundamental definitions -/
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
--- declare a smooth manifold `M` over the pair `(E, H)`.
-{E : Type*} [normed_group E] [normed_space 𝕜 E]
-{H : Type*} [topological_space H] (I : model_with_corners 𝕜 E H)
+variables
+{E : Type*} [normed_group E] [normed_space ℝ E]
+{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
 (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
--- declare a smooth manifold `M'` over the pair `(E', H')`.
-{E' : Type*} [normed_group E'] [normed_space 𝕜 E']
-{H' : Type*} [topological_space H'] (I' : model_with_corners 𝕜 E' H')
+{E' : Type*} [normed_group E'] [normed_space ℝ E']
+{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+
+local notation `TM` := tangent_space I
+local notation `TM'` := tangent_space I'
 
 def rel_mfld := set (one_jet_bundle I M I' M')
 
@@ -56,6 +58,12 @@ instance (R : rel_mfld I M I' M') :
 lemma formal_sol.is_sol {R : rel_mfld I M I' M'} (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
 
+def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
+  (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
+{w | (⟨⟨σ.1.1, σ.1.2⟩, p.update σ.2 w⟩ : one_jet_bundle I M I' M') ∈ R}
+
+def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
+∀ (σ : one_jet_bundle I M I' M') (p  : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
 
 end defs
 
@@ -74,8 +82,6 @@ there are manifolds `X` and `Y` that will be vector spaces in the next section.
 
 Note: Patrick doesn't know whether we really need to allow different `E`, `H` and `I` for
 manifolds `X` and `M` (and for `Y` and `N`). We use maximal generality just in case.
-
-In this section the base field is `ℝ` because we care about homotopies.
 -/
 variables
   {EX : Type*} [normed_group EX] [normed_space ℝ EX]
@@ -135,6 +141,10 @@ lemma localize_mem_iff (F : one_jet_sec IM M IN N) (x : X) (R : rel_mfld IM M IN
   F (h x) ∈ R ↔ F.localize g h x ∈ (one_jet_bundle.transfer g h) ⁻¹' R :=
 sorry
 
+lemma localize_ample (R : rel_mfld IM M IN N) (hR : R.ample) :
+ rel_mfld.ample ((one_jet_bundle.transfer g h) ⁻¹' R) :=
+sorry
+
 end smooth_open_embedding
 
 section loc
@@ -166,5 +176,19 @@ begin
   rw mfderiv_eq_fderiv,
   exact iff.rfl
 end
+
+/-- Turns a relation between `E` and `E'` seen as manifolds into a relation between them
+seen as vector spaces. One annoying bit is `equiv.prod_assoc E E' $ E →L[ℝ] E'` that is needed
+to reassociate a product of types. -/
+def rel_mfld.rel_loc (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc E E' :=
+(equiv.prod_assoc _ _ _) '' ((one_jet_bundle_model_space_homeomorph E 𝓘(ℝ, E) E' 𝓘(ℝ, E')) '' R)
+
+lemma ample_of_ample (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : R.ample) :
+  R.rel_loc.is_ample :=
+sorry
+
+lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is_open R) :
+  is_open R.rel_loc :=
+sorry
 
 end loc

@@ -12,7 +12,8 @@ noncomputable theory
 
 open function
 
-variables (E : Type*) [normed_group E] [normed_space ℝ E] (F : Type*)
+section no_norm
+variables (E : Type*) [add_comm_group E] [module ℝ E] [topological_space E] (F : Type*)
                         [normed_group F] [normed_space ℝ F]
 
 -- TODO: move mathlib's dual_pair out of the root namespace!
@@ -97,6 +98,14 @@ begin
   rcases this with ⟨u, hu, -, ⟨t, rfl⟩, rfl⟩,
   use [u, hu, t, rfl]
 end
+
+end dual_pair'
+end no_norm
+
+namespace dual_pair'
+variables {E : Type*} [normed_group E] [normed_space ℝ E]
+          {F : Type*} [normed_group F] [normed_space ℝ F]
+
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
 to use `cont_diff_clm_apply` and `continuous_clm_apply`. -/
