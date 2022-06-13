@@ -99,5 +99,30 @@ end
 of its base map at every point. -/
 def one_jet_sec.is_holonomic (F : one_jet_sec I M I' M') : Prop :=
 ∀ x, F.is_holonomic_at x
-
 end general
+
+section real
+variables
+{E : Type*} [normed_group E] [normed_space ℝ E]
+{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
+(M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+{E' : Type*} [normed_group E'] [normed_space ℝ E']
+{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
+(M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+
+
+structure htpy_one_jet_sec :=
+(to_fun : ℝ → M → one_jet_bundle I M I' M')
+(is_sec' : ∀ (t : ℝ) (x : M), (to_fun t x).1.1 = x)
+(smooth' : cont_mdiff (𝓘(ℝ, ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ (uncurry to_fun))
+
+instance : has_coe_to_fun (htpy_one_jet_sec I M I' M') (λ S, ℝ → one_jet_sec I M I' M') :=
+⟨λ S t,
+ { to_fun := S.to_fun t,
+   is_sec' := S.is_sec' t,
+   smooth' := begin
+     intros x,
+     apply cont_mdiff_at.comp x (S.smooth' (t, x)),
+     sorry
+   end }⟩
+end real
