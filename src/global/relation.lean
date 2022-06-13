@@ -111,18 +111,28 @@ def one_jet_bundle.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M I
 lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer g h) :=
 sorry
 
+/-- Localize a one-jet section in two open embeddings. -/
 def one_jet_sec.localize (F : one_jet_sec IM M IN N) : one_jet_sec IX X IY Y :=
-sorry
+{ to_fun := λ x, ⟨⟨x, g.inv_fun (F $ h x).1.2⟩,
+    ((g.fderiv $ g.inv_fun (F $ h x).1.2).symm : TN (g (g.inv_fun (F (h x)).1.2)) →L[ℝ]
+      TY (g.inv_fun (F (h x)).1.2)) ∘L ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x)))⟩,
+  is_sec' := sorry,
+  smooth' := sorry }
 
+/-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
 def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X  IY Y) : htpy_one_jet_sec IM M IN N :=
-sorry
+{ to_fun := λ t m, ⟨⟨m, g (F t (h.inv_fun m)).1.2⟩,
+    (g.fderiv (F t (h.inv_fun m)).1.2).to_continuous_linear_map ∘L
+      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map)⟩,
+  is_sec' := sorry,
+  smooth' := sorry }
 
 lemma one_jet_sec.unlocalize_localize (F : one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X  IY Y)
-  (hFG : G 0 = F.localize) : G.unlocalize 0 = F :=
+  (hFG : G 0 = F.localize g h) : G.unlocalize g h 0 = F :=
 sorry
 
 lemma localize_mem_iff (F : one_jet_sec IM M IN N) (x : X) (R : rel_mfld IM M IN N) :
-  F (h x) ∈ R ↔ F.localize x ∈ (one_jet_bundle.transfer g h) ⁻¹' R :=
+  F (h x) ∈ R ↔ F.localize g h x ∈ (one_jet_bundle.transfer g h) ⁻¹' R :=
 sorry
 
 end smooth_open_embedding
