@@ -185,13 +185,6 @@ from the previous chapter.
   is homotopic to a family of holonomic ones relative to $𝓝(∂P)$.
 \end{definition}
 
-\begin{lemma}
-  \label{lem:sol_chart}
-  \uses{def:h-princ}
-  The above definitions translate to the definitions of the previous
-  chapter in local charts. (We'll need more precise statements...)
-\end{lemma}
-
 
 \subsection*{Parametricity for free}
 
@@ -352,7 +345,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 
 \begin{proof}[Proof of Theorem~\ref{thm:open_ample}]
   \proves{thm:open_ample}
-  \uses{lem:param_for_free, lem:ample_parameter, lem:sol_chart,
+  \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
   lem:ample_iff_loc, lem:h_principle_open_ample_loc}
   Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
   assume there are no parameters. So we start with a single formal solution $F$
@@ -399,6 +392,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 
 \begin{theorem}[Smale 1958]
   \label{thm:sphere_eversion}
+  \lean{sphere_eversion}\leanok
 	There is a homotopy of immersions of $𝕊^2$ into $ℝ^3$ from the inclusion map to
 	the antipodal map $a : q ↦ -q$.
 \end{theorem}
