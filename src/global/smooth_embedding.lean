@@ -1,4 +1,5 @@
 import geometry.manifold.cont_mdiff
+import global.indexing
 
 noncomputable theory
 
@@ -54,11 +55,8 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
   (M : Type*) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
 
-lemma nice_atlas : ∃ φ : ℕ → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M,
-  (⋃ n, (φ n) '' (ball 0 1)) = univ :=
-begin
-
-  sorry
-end
+lemma nice_atlas : ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M,
+  (⋃ i, (φ i) '' (ball 0 1)) = univ ∧ locally_finite (λ i, range $ φ i):=
+sorry
 
 end without_boundary

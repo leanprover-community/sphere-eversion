@@ -55,3 +55,13 @@ begin
   by_contra,
   exact lt_irrefl i (gt_of_gt_of_ge hi $ hind x (set.ne_empty_iff_nonempty.mp h))
 end
+
+/-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `fin n` otherwise-/
+def index_type (n : ℕ) : Type :=
+nat.cases_on n ℕ (λ k, fin $ k + 1)
+
+instance (n : ℕ) : linear_order (index_type n) :=
+nat.cases_on n nat.linear_order (λ _, fin.linear_order)
+
+instance (n : ℕ) : indexing (index_type n) :=
+nat.cases_on n nat.indexing (λ _, fin.indexing _)
