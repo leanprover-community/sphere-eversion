@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-  MathJax = { 
-    tex: {
-		    inlineMath: [['$','$'], ['\\(','\\)']]
-	} }
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -82,7 +79,13 @@
 
   </ul>
  </li>
-<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+  <li>	
+  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
+  </li>
 </ul>
 </nav>
 
@@ -114,7 +117,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/basic.lean#L360">loop.average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/basic.lean#L360">loop.average</a></li>
         </ul>
 
       </div>
@@ -146,7 +149,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/basic.lean#L203">loop.support</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/basic.lean#L203">loop.support</a></li>
         </ul>
 
       </div>
@@ -180,7 +183,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/exists.lean#L249">exists_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/exists.lean#L249">exists_loops</a></li>
         </ul>
 
       </div>
@@ -235,7 +238,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/9f6f605bb0cd47a8e50210872f906f397a8ae348/src/analysis/convex/caratheodory.lean#L143">convex_hull_eq_union</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/dc9eab668f772012648a4c5a60a20824c5a74662/src/analysis/convex/caratheodory.lean#L143">convex_hull_eq_union</a></li>
         </ul>
 
       </div>
@@ -259,9 +262,7 @@
   <p>By assumption, there is a finite set of points \(t_i\) in \(P\) and weights \(f_i\) such that \(x = \sum f_i t_i\), each \(f_i\) is non-negative and \(\sum f_i = 1\). Choose such a set of points of minimum cardinality. We argue by contradiction that such a set must be affinely independent. </p>
 <p>Thus suppose that there is some vanishing combination \(\sum g_i t_i\) with \(\sum g_i = 0\) and not all \(g_i\) vanish. Let \(S = \{ i | g_i {\gt} 0\} \). Let \(i_0\) in \(S\) be an index minimizing \(f_i/g_i\). We shall obtain our contradiction by showing that \(x\) belongs to the convex hull of the set \(\{ t_i| i \ne i_0\} \), which has cardinality strictly smaller than \(\{ t_i\} \). </p>
 <p>We thus define new weights \(k_i = f_i - g_i f_{i_0}/g_{i_0}\). These weights sum to \(\sum f_i - (\sum g_i)f_{i_0}/g_{i_0} = 1\) and \(k_{i_0} = 0\). Each \(k_i\) is non-negative, thanks to the choice of \(i_0\) if \(i\) is in \(S\) or using that \(f_i\), \(-g_i\) and \(f_{i_0}/g_{i_0}\) are all non-negative when \(i\) is not in \(S\). It remain to compute </p>
-<div class="displaymath" id="a0000000017">
-  \begin{align*}  \sum _{i ≠ i_0} k_i t_i & = \sum _i k_i t_i \\ & = \sum _i (f_i - g_i f_{i_0}/g_{i_0}) t_i \\ & = \sum _i f_i t_i - \left(\sum _i g_i t_i\right)f_{i_0}/g_{i_0}) \\ & = x \end{align*}
-</div>
+<span>\begin{align*}  \sum _{i ≠ i_0} k_i t_i & = \sum _i k_i t_i \\ & = \sum _i (f_i - g_i f_{i_0}/g_{i_0}) t_i \\ & = \sum _i f_i t_i - \left(\sum _i g_i t_i\right)f_{i_0}/g_{i_0}) \\ & = x \end{align*}</span>
 <p> where we use \(k_{i_0} = 0\) in the first equality. </p>
 
   </div>
@@ -284,7 +285,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L87">surrounding_pts</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L87">surrounding_pts</a></li>
         </ul>
 
       </div>
@@ -307,7 +308,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:interior_chab">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000018"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000017"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -318,7 +319,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/9f6f605bb0cd47a8e50210872f906f397a8ae348/src/analysis/normed_space/add_torsor_bases.lean#L57">interior_convex_hull_aff_basis</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/dc9eab668f772012648a4c5a60a20824c5a74662/src/analysis/normed_space/add_torsor_bases.lean#L57">interior_convex_hull_aff_basis</a></li>
         </ul>
 
       </div>
@@ -331,7 +332,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000018">
+<div class="proof_wrapper" id="a0000000017">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -340,13 +341,11 @@
   </div>
   <div class="proof_content">
   <p>For each \(i\), let: </p>
-<div class="displaymath" id="a0000000019">
+<div class="displaymath" id="a0000000018">
   \[  w_i \! :E \to ℝ  \]
 </div>
 <p> be the \(i^{\rm th}\) barycentric coordinate with respect to the basis \(b\). Since \(E\) is finite-dimensional, each \(w_i\) is a continuous open map. For such a map, the operation of taking interior commutes with preimage, and so we have: </p>
-<div class="displaymath" id="a0000000020">
-  \begin{align*}  \operatorname{IntConv}(b) & = \operatorname{Int}\left(\bigcap _i w_i^{-1}([0, \infty ))\right)\\ & = \bigcap _i \operatorname{Int}(w_i^{-1}([0, \infty ))\\ & = \bigcap _i w_i^{-1}(\operatorname{Int}([0, \infty ))\\ & = \bigcap _i w_i^{-1}((0, \infty )) \end{align*}
-</div>
+<span>\begin{align*}  \operatorname{IntConv}(b) & = \operatorname{Int}\left(\bigcap _i w_i^{-1}([0, \infty ))\right)\\ & = \bigcap _i \operatorname{Int}(w_i^{-1}([0, \infty ))\\ & = \bigcap _i w_i^{-1}(\operatorname{Int}([0, \infty ))\\ & = \bigcap _i w_i^{-1}((0, \infty )) \end{align*}</span>
 <p> as required. </p>
 
   </div>
@@ -360,7 +359,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:int_homothety_cvx">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000021"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000019"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -371,7 +370,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/mathlib/blob/9f6f605bb0cd47a8e50210872f906f397a8ae348/src/analysis/convex/topology.lean#L263">convex.subset_interior_image_homothety_of_one_lt</a></li>
+          <li><a href="https://github.com/leanprover-community/mathlib/blob/dc9eab668f772012648a4c5a60a20824c5a74662/src/analysis/convex/topology.lean#L263">convex.subset_interior_image_homothety_of_one_lt</a></li>
         </ul>
 
       </div>
@@ -381,18 +380,18 @@
   </div>
   <div class="lemma_thmcontent">
   <p> Given a point \(c\) of \(E\) and a real number \(t\), let: </p>
-<div class="displaymath" id="a0000000022">
+<div class="displaymath" id="a0000000020">
   \[  h^c_t \! :E \to E  \]
 </div>
 <p> be the homothety which dilates about \(c\) by a scale of \(t\). </p>
 <p>Suppose \(c\) belongs to the interior of a convex subset \(C\) of \(E\) and \(t {\gt} 1\), then </p>
-<div class="displaymath" id="a0000000023">
+<div class="displaymath" id="a0000000021">
   \[  C \subseteq \operatorname{Int}(h^c_t(C))  \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000021">
+<div class="proof_wrapper" id="a0000000019">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -401,20 +400,20 @@
   </div>
   <div class="proof_content">
   <p>Since \(h^c_t\) is a homeomorphism with inverse \(h^c_{t^{-1}}\), taking \(s = t^{-1}\), the required result is equivalent to showing: </p>
-<div class="displaymath" id="a0000000024">
+<div class="displaymath" id="a0000000022">
   \[  h^c_s(C) \subseteq \operatorname{Int}(C)  \]
 </div>
 <p> where \(s \in (0, 1)\). </p>
 <p>Let \(x\) be a point of \(C\), we must show there exists an open neighborhood \(U\) of \(h^c_s(x)\), contained in \(C\). In fact we claim: </p>
-<div class="displaymath" id="a0000000025">
+<div class="displaymath" id="a0000000023">
   \[  U = h^x_{1-s}(\operatorname{Int}(C))  \]
 </div>
 <p> is such a set. Indeed \(U\) is open since \(h^x_{1-s}\) is a homeomorphism and \(U\) contains \(h^c_s(x)\) since: </p>
-<div class="displaymath" id="a0000000026">
+<div class="displaymath" id="a0000000024">
   \[  h^c_s(x) = h^x_{1-s}(c) \in h^x_{1-s}(\operatorname{Int}(C))  \]
 </div>
 <p> since \(c\) belongs to \(\operatorname{Int}(C)\). Finally: </p>
-<div class="displaymath" id="a0000000027">
+<div class="displaymath" id="a0000000025">
   \[  h^x_{1-s}(\operatorname{Int}(C)) \subseteq h^x_{1-s}(C) \subseteq C  \]
 </div>
 <p> where the second inclusion follows since \(C\) is convex and contains \(x\). </p>
@@ -430,7 +429,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:int_cvx">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000028"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000026"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -441,7 +440,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L161">surrounded_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L161">surrounded_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -454,7 +453,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000028">
+<div class="proof_wrapper" id="a0000000026">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -464,27 +463,25 @@
   <div class="proof_content">
   <p> It follows from <a href="chap-loops.html#lem:interior_chab">Lemma 1.6</a> that we need only show that \(E\) has an affine basis \(b\) of points belonging to \(P\) such that \(x\) lies in the interior of the convex hull of \(b\). </p>
 <p>Carathéodory’s lemma&#160;<a href="chap-loops.html#lem:caratheodory">1.4</a> provides affinely independent points \(p_0, \dots , p_k\) in \(P\) such that \(x\) belongs to their convex hull. Since \(P\) is open, we may extend \(p_i\) to an affine basis </p>
-<div class="displaymath" id="a0000000029">
+<div class="displaymath" id="a0000000027">
   \[  \hat b = \{ p_0, \ldots , p_d\} ,  \]
 </div>
 <p> where all points still belong to \(P\). Note that \(x\) belongs to the convex hull of \(\hat b\). </p>
 <p>Now let \(c\) be a point in the interior of the convex hull of \(\hat b\) (e.g., the centroid) and for each \(\epsilon {\gt} 0\), consider the homothety </p>
-<div class="displaymath" id="a0000000030">
+<div class="displaymath" id="a0000000028">
   \[  h_{1+\epsilon } \! :E \to E,  \]
 </div>
 <p> which dilates about \(c\) by a scale of \(1 + \epsilon \). </p>
 <p>Since \(\hat b\) is finite and contained in \(P\), and \(P\) is open, there exists \(\epsilon {\gt} 0\) such that </p>
-<div class="displaymath" id="a0000000031">
+<div class="displaymath" id="a0000000029">
   \[  h_{1+\epsilon } (\hat b) \subseteq P.  \]
 </div>
 <p> We claim the required basis is: </p>
-<div class="displaymath" id="a0000000032">
+<div class="displaymath" id="a0000000030">
   \[  b = h_{1+\epsilon } (\hat b)  \]
 </div>
 <p> for any such \(\epsilon \). Indeed, applying <a href="chap-loops.html#lem:int_homothety_cvx">Lemma 1.7</a> to \(\operatorname{Conv}(\hat b)\) we see: </p>
-<div class="displaymath" id="a0000000033">
-  \begin{align*}  x \in \operatorname{Conv}(\hat b) & \subseteq \operatorname{Int}(h_{1+\epsilon } (\operatorname{Conv}(\hat b)))\\ & = \operatorname{Int}(\operatorname{Conv}(h_{1+\epsilon } (\hat b))) \end{align*}
-</div>
+<span>\begin{align*}  x \in \operatorname{Conv}(\hat b) & \subseteq \operatorname{Int}(h_{1+\epsilon } (\operatorname{Conv}(\hat b)))\\ & = \operatorname{Int}(\operatorname{Conv}(h_{1+\epsilon } (\hat b))) \end{align*}</span>
 <p> as required. </p>
 
   </div>
@@ -498,7 +495,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:smooth_barycentric_coord">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000034"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000031"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -524,7 +521,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L187">smooth_surrounding</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L187">smooth_surrounding</a></li>
         </ul>
 
       </div>
@@ -547,7 +544,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000034">
+<div class="proof_wrapper" id="a0000000031">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -556,23 +553,15 @@
   </div>
   <div class="proof_content">
   <p>Let: </p>
-<div class="displaymath" id="a0000000035">
-  \begin{align*}  A = E \times \{  q \in E^{d+1} ~ |~  \mbox{$q$ is an affine basis for $E$} \} , \end{align*}
-</div>
+<span>\begin{align*}  A = E \times \{  q \in E^{d+1} ~ |~  \mbox{$q$ is an affine basis for $E$} \} , \end{align*}</span>
 <p> and define: </p>
-<div class="displaymath" id="a0000000036">
-  \begin{align*}  w \! :A & \to ℝ^{d+1}\\ (y, q) & \mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}. \end{align*}
-</div>
+<span>\begin{align*}  w \! :A & \to ℝ^{d+1}\\ (y, q) & \mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}. \end{align*}</span>
 <p>If we fix an affine basis \(b\) of \(E\), we may express \(w\) as a ratio of determinants in terms of coordinates relative to \(b\). More precisely, by Cramer’s rule, if \(0 \le i \le d\) and \(w_i\) is the \(i^{\rm th}\) component of \(w\), then: </p>
-<div class="displaymath" id="a0000000037">
-  \begin{align*}  w_i (y, q) = \det M_i (y, q) / \det N (q) \end{align*}
-</div>
+<span>\begin{align*}  w_i (y, q) = \det M_i (y, q) / \det N (q) \end{align*}</span>
 <p> where \(N(q)\) is the \((d+1)\times (d+1)\) matrix whose columns are the barycentric coordinates of the components of \(q\) relative to \(b\), and \(M_i (y, q)\) is \(N(q)\) except with column \(i\) replaced by the barycentric coordinates of \(y\) relative to \(b\). </p>
 <p>Since determinants are smooth functions and \((y, q) \mapsto \det N(q)\) is non-vanishing on \(A\), \(w\) is smooth on \(A\). </p>
 <p>Finally define: </p>
-<div class="displaymath" id="a0000000038">
-  \begin{align*}  U = w^{-1}((0, \infty )^{d+1}), \end{align*}
-</div>
+<span>\begin{align*}  U = w^{-1}((0, \infty )^{d+1}), \end{align*}</span>
 <p> and note that \(U\) is open in \(A\), since it is the preimage of an open set under the continuous map \(w\). In fact since \(A\) is open, \(U\) is open as a subset of \(E \times E^{d+1}\). Note that \((x, p) \in U\) since \(p\) surrounds \(x\). </p>
 <p>We may extend \(w\) to \(E \times E^{d+1}\) by giving it any values at all outside \(A\). </p>
 
@@ -615,7 +604,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L323">loop.surrounds</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L323">loop.surrounds</a></li>
         </ul>
 
       </div>
@@ -639,7 +628,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:loop_of_hull">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000039"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000032"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -665,7 +654,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L470">surrounding_loop_of_convex_hull</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L470">surrounding_loop_of_convex_hull</a></li>
         </ul>
 
       </div>
@@ -688,7 +677,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000039">
+<div class="proof_wrapper" id="a0000000032">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -733,7 +722,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L494">surrounding_family</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L494">surrounding_family</a></li>
         </ul>
 
       </div>
@@ -767,7 +756,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:local_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000040"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000033"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -793,7 +782,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L730">local_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L730">local_loops</a></li>
         </ul>
 
       </div>
@@ -806,7 +795,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000040">
+<div class="proof_wrapper" id="a0000000033">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -828,7 +817,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:satisfied_or_refund">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000041"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000034"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -854,7 +843,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L943">satisfied_or_refund</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L943">satisfied_or_refund</a></li>
         </ul>
 
       </div>
@@ -867,7 +856,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000041">
+<div class="proof_wrapper" id="a0000000034">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -876,7 +865,7 @@
   </div>
   <div class="proof_content">
   <p>Let \(ρ\) be the piecewise affine map from \(ℝ\) to \(ℝ\) such that \(ρ(τ) = 1\) if \(τ ≤ 1/2\), \(ρ\) is affine on \([1/2, 1]\), \(ρ(τ) = 0\) if \(τ ≥ 1\). We set </p>
-<div class="displaymath" id="a0000000042">
+<div class="displaymath" id="a0000000035">
   \[  δ_{τ, x}^t(s) = \begin{cases}  γ_{0,x}^{ρ(τ)t}\left(\frac1{1 - τ} s\right) &  \text{if $s ≤ 1 - τ$ and $τ {\lt} 1$}\\ γ_{1,x}^{ρ(1-τ)t}\left(\frac1τ \big (s - (1- τ)\big )\right) &  \text{if $s ≥ 1 - τ$ and $τ {\gt} 0$}\\ \end{cases}  \]
 </div>
 <p> It is clear that if \(s = 1 - τ\) then both branches agree and are equal to \(β(x)\). Therefore it is easy to see that \(δ\) is continuous at \((τ, x, t, s)\) except when \((τ,s)=(1,0)\) or \((τ,s)=(0,1)\). </p>
@@ -894,7 +883,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#cor:extend_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000043"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000036"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -920,7 +909,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L976">extend_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L976">extend_loops</a></li>
         </ul>
 
       </div>
@@ -933,7 +922,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000043">
+<div class="proof_wrapper" id="a0000000036">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -943,7 +932,7 @@
   <div class="proof_content">
   <p> Let \(U_0'\) be an open neighborhood of \(K_0\) whose closure \(\overline U_0'\) is compact in \(U_0\). Since \(\overline U_0'\) and \(K_1' := K_1 ∖ (K_1 ∩ U_0)\) are disjoint compact subsets of \(E\), there is some continuous cut-off \(ρ \! :E → [0, 1]\) which vanishes on \(U_0'\) and equals one on some neighborhood \(U_1'\) of \(K_1'\). </p>
 <p><a href="chap-loops.html#lem:satisfied_or_refund">Lemma 1.14</a> gives a homotopy of loops \(γ_τ\) from \(γ_0\) to \(γ_1\) on \(U_0 ∩ U_1\). Moreover, note that \(γ_τ\) is defined on all of \(E\). On \(U_0' ∪ (U_0 ∩ U_1) ∪ U_1'\), which is a neighborhood of \(K_0 ∪ K_1\), we set </p>
-<div class="displaymath" id="a0000000044">
+<div class="displaymath" id="a0000000037">
   \[  γ_x = γ_{ρ(x), x}  \]
 </div>
 <p> which has the required properties. </p>
@@ -959,7 +948,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:∃_surrounding_loops">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000045"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000038"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -985,7 +974,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/surrounding.lean#L1238">exists_surrounding_loops</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/surrounding.lean#L1238">exists_surrounding_loops</a></li>
         </ul>
 
       </div>
@@ -998,7 +987,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000045">
+<div class="proof_wrapper" id="a0000000038">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1024,7 +1013,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-loops.html#lem:reparametrization">#</a>
-    <a class="icon proof" href="chap-loops.html#a0000000046"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-loops.html#a0000000039"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1051,7 +1040,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/512019bf625ea245b1179630b07b964b1d8668f3/src/loops/reparametrization.lean#L499">smooth_surrounding_family.reparametrize_average</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/loops/reparametrization.lean#L499">smooth_surrounding_family.reparametrize_average</a></li>
         </ul>
 
       </div>
@@ -1064,7 +1053,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000046">
+<div class="proof_wrapper" id="a0000000039">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1075,13 +1064,11 @@
   <p> For any fixed \(x\), since \(γ_x\) strictly surrounds \(g(x)\), there are points \(s_1, …, s_{n+1}\) in \(𝕊^1\) such that \(g(x)\) is surrounded by the corresponding points \(γ_x(s_j)\). </p>
 <p>Let \(μ_1, …, μ_{n+1}\) be smooth positive probability measures very close to the Dirac measures on \(s_j\) (ie. \(μ_j = f_j\,  ds\) for some smooth positive function \(f_j\) and, for any function \(h\), \(\int h\, dμ_j\) is almost \(h(s_j)\)). We set \(p_j = \int γ_x\,  d\mu _j\), which is almost \(γ_x(s_j)\) so that \(g(x) = \sum w_j p_j\) for some weights \(w_j\) in the open interval \((0, 1)\) according to <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.9</a>. </p>
 <p>If \(x'\) is in a sufficiently small neighborhood of \(x\), <a href="chap-loops.html#lem:smooth_barycentric_coord">Lemma 1.9</a> gives smooth weight functions \(w_j\) such that \(g(x') = \sum w_j(x')p_j(x')\). Let \(U^i\), \(i ≥ 1\) be a locally finite cover of \(E\) by such neighborhoods, with corresponding measures \(μ_j^i\), moving points \(p_j^i\) and weight functions \(w_j^i\). Let \((ρ_i)\) be a partition of unity associated to this covering. For every \(x\), we set </p>
-<div class="displaymath" id="a0000000047">
+<div class="displaymath" id="a0000000040">
   \[  μ_x = \sum _{i=1}^∞ \sum _{j=1}^{n+1} ρ_i(x)w_j^i(x)\,  μ_j^i  \]
 </div>
 <p> so that: </p>
-<div class="displaymath" id="a0000000048">
-  \begin{align*}  \int γ_x\,  dμ_x & = \sum _i ρ_i(x)\sum _{j=1}^{n+1} w_j^i(x) \int γ_x\,  dμ_j^i\\ & = \sum _i ρ_i(x)\sum _{j=1}^{n+1} w_j^i(x) p_j^i(x)\\ & = \sum _i ρ_i(x) g(x) = g(x). \end{align*}
-</div>
+<span>\begin{align*}  \int γ_x\,  dμ_x & = \sum _i ρ_i(x)\sum _{j=1}^{n+1} w_j^i(x) \int γ_x\,  dμ_j^i\\ & = \sum _i ρ_i(x)\sum _{j=1}^{n+1} w_j^i(x) p_j^i(x)\\ & = \sum _i ρ_i(x) g(x) = g(x). \end{align*}</span>
 <p> We now set \(φ_x^{-1}(t) = \int _0^tdμ_x\) so that \(g(x) = \overline{γ_x ∘ φ_x}\) for all \(x\). </p>
 
   </div>

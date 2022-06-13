@@ -63,11 +63,11 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 3.10 (def:transfer_map)</div>
       <div class="thm_thm_content"><p> Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000068">
+<div class="displaymath" id="a0000000059">
   \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
 </div>
 <p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000069">
+<div class="displaymath" id="a0000000060">
   \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
 </div>
 <p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
@@ -101,15 +101,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.13 (lem:sol_chart)</div>
-      <div class="thm_thm_content"><p>  The above definitions translate to the definitions of the previous chapter in local charts. (We’ll need more precise statements...) </p>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.14 (lem:param_trick)</div>
+      <div class="thm_thmheading">Lemma 3.13 (lem:param_trick)</div>
       <div class="thm_thm_content"><p>  In the above setup, we have: </p>
 <ul class="itemize">
   <li><p>\(\bar F\) is holonomic at \((x, p)\) if and only if \(F_p\) is holonomic at \(x\). </p>
@@ -123,7 +115,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.15 (lem:param_for_free)</div>
+      <div class="thm_thmheading">Lemma 3.14 (lem:param_for_free)</div>
       <div class="thm_thm_content"><p>  Let \(\mathcal{R}\) be a first order differential relation for maps from \(M\) to \(N\). If, for every manifold with boundary \(P\), \(\mathcal{R}^P\) satisfies the \(h\)-principle then \(\mathcal{R}\) satisfies the parametric \(h\)-principle. Likewise, the \(C^0\)-dense and relative \(h\)-principle for all \(\mathcal{R}^P\) imply the parametric \(C^0\)-dense and relative \(h\)-principle for \(\mathcal{R}\). </p>
 </div>
     </li>
@@ -131,7 +123,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Definition 3.16 (def:ample_relation)</div>
+      <div class="thm_thmheading">Definition 3.15 (def:ample_relation)</div>
       <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
 </div>
     </li>
@@ -139,7 +131,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.17 (lem:ample_iff_loc)</div>
+      <div class="thm_thmheading">Lemma 3.16 (lem:ample_iff_loc)</div>
       <div class="thm_thm_content"><p>  Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.10</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
 </div>
     </li>
@@ -147,7 +139,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.18 (lem:open_ample_immersion)</div>
+      <div class="thm_thmheading">Lemma 3.17 (lem:open_ample_immersion)</div>
       <div class="thm_thm_content"><p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
 </div>
     </li>
@@ -155,8 +147,16 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Theorem 3.19 (thm:open_ample)</div>
+      <div class="thm_thmheading">Theorem 3.18 (thm:open_ample)</div>
       <div class="thm_thm_content"><p>   If \(\mathcal{R}\) is open and ample then it satisfies the relative and parametric \(C^0\)-dense \(h\)-principle. </p>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.19 (lem:ample_parameter)</div>
+      <div class="thm_thm_content"><p>  If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
 </div>
     </li>
     
@@ -171,15 +171,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.20 (lem:ample_parameter)</div>
-      <div class="thm_thm_content"><p>  If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Theorem 3.21 (thm:sphere_eversion)</div>
+      <div class="thm_thmheading">Theorem 3.20 (thm:sphere_eversion)</div>
       <div class="thm_thm_content"><p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
 </div>
     </li>
@@ -284,11 +276,11 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 3.10 (def:transfer_map)</div>
       <div class="thm_thm_content"><p> Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000068">
+<div class="displaymath" id="a0000000059">
   \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
 </div>
 <p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000069">
+<div class="displaymath" id="a0000000060">
   \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
 </div>
 <p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
@@ -296,7 +288,7 @@ Click chapter titles to see missing items.
     </li>
     
     <li>
-      <div class="thm_thmheading">Definition 3.16 (def:ample_relation)</div>
+      <div class="thm_thmheading">Definition 3.15 (def:ample_relation)</div>
       <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
 </div>
     </li>
@@ -333,14 +325,8 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Lemma 3.18 (lem:open_ample_immersion)</div>
+      <div class="thm_thmheading">Lemma 3.17 (lem:open_ample_immersion)</div>
       <div class="thm_thm_content"><p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Theorem 3.21 (thm:sphere_eversion)</div>
-      <div class="thm_thm_content"><p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
 </div>
     </li>
     
