@@ -68,7 +68,7 @@ lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nondiscrete_normed_field 𝕜
     refine ⟨2, zero_lt_two, _⟩,
     rintros ⟨φ, ψ⟩,
     apply continuous_linear_map.op_norm_le_bound,
-    apply mul_nonneg zero_le_two, apply norm_nonneg,
+    exact mul_nonneg zero_le_two (norm_nonneg _),
     rintros ⟨e, f⟩,
     calc ∥φ e + ψ f∥ ≤ ∥φ e∥ + ∥ψ f∥ : norm_add_le _ _
     ... ≤  ∥φ∥ * ∥e∥ + ∥ψ∥ * ∥f∥ : add_le_add (φ.le_op_norm e) (ψ.le_op_norm f)

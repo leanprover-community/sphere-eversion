@@ -44,8 +44,8 @@ lemma Iic_union_Ici_of_le {α : Type*} [linear_order α] {a b : α} (h : b ≤ a
 eq_univ_of_forall $ λ x, (le_total x a).imp id $ le_trans h
 
 /- to data.set.finite -/
-lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : finite (f ⁻¹' s))
-  (hs : s ⊆ range f) : finite s :=
+lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : (f ⁻¹' s).finite)
+  (hs : s ⊆ range f) : s.finite :=
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }
 
 @[simp] lemma diag_preimage_prod (s t : set α) :
