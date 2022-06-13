@@ -661,7 +661,7 @@ end
 
 lemma point_finite_of_locally_finite_coe_preimage {ι X : Type*} [topological_space X] {s : set X}
   {f : ι → set X} (hf : locally_finite (λ i, (coe : s → X) ⁻¹' f i)) (hfs : ∀ i, f i ⊆ s) {x : X} :
-  finite {i | x ∈ f i} :=
+  {i | x ∈ f i}.finite :=
 begin
   by_cases hx : x ∈ s,
   { exact hf.point_finite ⟨x, hx⟩ },
@@ -684,7 +684,7 @@ variables {u : ι → set X} {s : set X} [normal_space s]
 lemma exists_subset_Union_interior_of_is_open (hs : is_open s) (uo : ∀ i, is_open (u i))
   (uc : ∀ i, is_compact (closure (u i)))
   (us : ∀ i, closure (u i) ⊆ s)
-  (uf : ∀ x ∈ s, finite {i | x ∈ u i}) (uU : s ⊆ ⋃ i, u i) :
+  (uf : ∀ x ∈ s, {i | x ∈ u i}.finite) (uU : s ⊆ ⋃ i, u i) :
   ∃ v : ι → set X, s ⊆ (⋃ i, interior (v i)) ∧ (∀ i, is_compact (v i)) ∧ ∀ i, v i ⊆ u i :=
 begin
   obtain ⟨v, vU, vo, hv⟩ := exists_Union_eq_closure_subset
