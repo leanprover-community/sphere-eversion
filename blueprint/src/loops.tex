@@ -33,14 +33,15 @@ All of this chapter is devoted to proving the following proposition.
   \label{prop:loops}
   \lean{exists_loops}
   \leanok
-  Let $K$ a compact set in $E$. Let $Ω$ be an open set in $E × F$ such that, for each $x$,
-  $Ω_x := Ω ∩ (\{x\} × F)$ is connected in $\{x\} × F$.
+  Let $K$ a compact set in $E$. Let $Ω$ be an open set in $E × F$.
 
   Let $β$ and $g$ be smooth maps from $E$ to $F$.
-  Assume that $β(x) ∈ Ω_x$ for all $x$, and $g(x) = β(x)$ near $K$.
+  Write $Ω_x := \{ y ∈ F \mid (x, y) ∈ Ω\}$, assume that $β(x) ∈ Ω_x$ for all $x$,
+  and that $g(x) = β(x)$ near $K$.
 
-  If, for every $x$, $g(x)$ is in the convex hull of $Ω_x$, then there
-  exists a smooth family of loops
+  If, for every $x$, $g(x)$ is in
+  the convex hull of the connected component of $Ω_x$ containing $β(x)$,
+  then there exists a smooth family of loops
   \[
     γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)
   \]
@@ -128,8 +129,8 @@ We'll need the Carathéodory lemma:
   \leanok
   A point $x$ in $E$
   is surrounded by points $p_0$, \dots, $p_d$ if those points are
-  affinely independent and there exist weights $w_i ∈ (0, 1)$ such
-  that $x = \sum_i w_i p_i$.
+  affinely independent and there exist weights $w_i ∈ (0, 1)$ with sum $1$
+  such that $x = \sum_i w_i p_i$.
 \end{definition}
 
 Note that, in the above definition, the number of points $p_i$ is fixed
@@ -412,9 +413,9 @@ Families of surrounding loops are easy to construct locally.
   \uses{def:family_surrounds}
   \lean{local_loops}
   \leanok
-  Assume $Ω$ is open and connected over some neighborhood of $x_0$.
-  If $g(x)$ is in the convex hull of $Ω_x$ for $x$ near $x_0$ then there is
-  a continuous family of loops defined near $x_0$, based at $β$,
+  Assume $Ω$ is open over some neighborhood of $x_0$.
+  If $g(x_0)$ is in the convex hull of the connected component of $Ω_{x_0}$ containing $β(x_0)$,
+  then there is a continuous family of loops defined near $x_0$, based at $β$,
   taking value in $Ω$ and surrounding $g$.
 \end{lemma}
 
@@ -445,7 +446,7 @@ as explained in the next lemma.
   \uses{def:family_surrounds}
   \lean{satisfied_or_refund}
   \leanok
-  For every set $U ⊂ E$,  $\Loop(g, β, U, Ω)$ is path connected:
+  For every set $U ⊂ E$,  $\Loop(g, β, U, Ω)$ is contractible:
   for every $γ_0$ and $γ_1$ in $\Loop(g, β, U, Ω)$,
   there is a continuous map
   $δ \co [0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)$
@@ -508,12 +509,9 @@ as explained in the next lemma.
 \begin{proof}
   \leanok
   \uses{lem:satisfied_or_refund}
-  Let $U_0'$ be an open neighborhood of $K_0$ whose closure
-  $\overline U_0'$ is compact in $U_0$.
-  Since $\overline U_0'$ and $K_1' := K_1 ∖ (K_1 ∩ U_0)$
-  are disjoint compact subsets of $E$, there is some continuous cut-off
-  $ρ \co E → [0, 1]$ which vanishes on $U_0'$ and equals one on some
-  neighborhood $U_1'$ of $K_1'$.
+  Let $C_0 = K_0\cup U_1^c$ and $C_1 := K_1 ∖ U_0$. Since $C_0$ and $C_1$ are disjoint closed sets,
+  there is some continuous cut-off $ρ \co E → [0, 1]$
+  which vanishes on a neighborhood of $C_0$ and equals one on a neighborhood of $C_1$.
 
   \Cref{lem:satisfied_or_refund} gives a homotopy of loops
   $γ_τ$ from $γ_0$ to $γ_1$ on $U_0 ∩ U_1$. Moreover, note that $γ_τ$ is defined on all of $E$.
@@ -560,7 +558,7 @@ as explained in the next lemma.
   $δ^{i+1}$ is obtained by extending $δ^i$ using $γ^i$ via
   \Cref{cor:extend_loops}.
   Since $δ^{i+1}$ equals $δ^i$ on $U_i^c$, this sequence is locally eventually constant.
-  Therefore it has a well-defined limit $δ$ which is defined on continuous on all $E$.
+  Therefore it has a well-defined limit $δ$ which is defined and continuous on all $E$.
   Since $δ^{i+1}$ equals $δ^i$ on a neighborhood of $K\cup\bigcup_{j<i} K_i,$
   we know in particular that $δ^i$ equals $γ$ on a neighborhood of $K$.
   Since $K$ is compact, it has some neighborhood $O$
