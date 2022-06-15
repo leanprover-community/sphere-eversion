@@ -60,6 +60,13 @@ end
 def index_type (n : ℕ) : Type :=
 nat.cases_on n ℕ (λ k, fin $ k + 1)
 
+@[simp] lemma index_type_zero : index_type 0 = ℕ := rfl
+
+@[simp] lemma index_type_succ (n : ℕ) : index_type (n + 1) = fin (n + 1) := rfl
+
+@[simp] lemma index_type_of_zero_lt {n : ℕ} (h : 0 < n) : index_type n = fin n :=
+by rw [← nat.succ_pred_eq_of_pos h, index_type_succ]
+
 instance (n : ℕ) : linear_order (index_type n) :=
 nat.cases_on n nat.linear_order (λ _, fin.linear_order)
 
