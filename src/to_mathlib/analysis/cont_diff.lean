@@ -119,13 +119,6 @@ lemma homeomorph.cont_diff_at_symm (f : homeomorph E F) {f₀' : E ≃L[𝕜] F}
   cont_diff_at 𝕜 n (f.symm) a :=
 f.to_local_homeomorph.cont_diff_at_symm trivial hf' hf
 
-/-- If a homeomorphism `f` is continuously differentiable and its (first) derivative is everywhere
-invertible then `f.symm` is also continuously differentiable. -/
-lemma homeomorph.cont_diff_symm (f : homeomorph E F) {f' : E → E ≃L[𝕜] F}
-  (hf' : ∀ x, has_fderiv_at f (f' x : E →L[𝕜] F) x) (hf : cont_diff 𝕜 n f) :
-  cont_diff 𝕜 n (f.symm) :=
-cont_diff_iff_cont_diff_at.mpr $ λ x, f.cont_diff_at_symm (hf' $ f.symm x) hf.cont_diff_at
-
 lemma equiv.continuous_symm_of_cont_diff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
   (hφ : ∀ x, has_strict_fderiv_at φ (Dφ x : E →L[𝕜] F) x) :
   continuous φ.symm :=
