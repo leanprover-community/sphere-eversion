@@ -3,7 +3,8 @@ Copyright (c) 2022 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
-import geometry.manifold.tangent_bundle
+import to_mathlib.geometry.manifold.vector_bundle.hom
+import to_mathlib.geometry.manifold.vector_bundle.pullback
 
 noncomputable theory
 
@@ -81,19 +82,12 @@ rfl
 
 section one_jet_bundle_instances
 
-/- In general, the definition of one_jet_bundle and one_jet_space are not reducible, so that type
-class inference does not pick wrong instances. In this section, we record the right instances for
-them, noting in particular that the one_jet bundle is a smooth manifold. -/
-
 section
-local attribute [reducible] one_jet_space
 
 variables {M} (p : M × M')
 
-instance : topological_space (one_jet_space I I' p) := by apply_instance
-instance : add_comm_group (one_jet_space I I' p) := by apply_instance
-instance : topological_add_group (one_jet_space I I' p) := by apply_instance
-instance : module 𝕜 (one_jet_space I I' p) := by apply_instance
+instance : normed_group (one_jet_space I I' p) := by delta_instance one_jet_space
+instance : normed_space 𝕜 (one_jet_space I I' p) := by delta_instance one_jet_space
 instance : inhabited (one_jet_space I I' p) := ⟨0⟩
 
 end
@@ -101,7 +95,8 @@ end
 variable (M)
 
 instance : topological_space J¹MM' :=
-(one_jet_bundle_core I M I' M').to_topological_vector_bundle_core.to_topological_space (atlas (model_prod H H') (M × M'))
+(one_jet_bundle_core I M I' M').to_topological_vector_bundle_core.to_topological_space
+  (atlas (model_prod H H') (M × M'))
 
 instance : charted_space (model_prod (model_prod H H') (E →L[𝕜] E')) J¹MM' :=
 (one_jet_bundle_core I M I' M').to_charted_space
