@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Floris van Doorn
 -/
 import topology.vector_bundle.basic
-import geometry.manifold.fiber_bundle
+import to_mathlib.geometry.manifold.fiber_bundle
 
 /-!
 # Smooth vector bundles
@@ -260,40 +260,40 @@ instance {B : Type*} {F : Type*} [normed_group F] [normed_space 𝕜 F] (b : B) 
 instance : charted_space (model_prod H F) (total_space (trivial B F)) :=
 sorry
 
-variables (I I' B F)
-namespace trivial_smooth_vector_bundle
+-- variables (I I' B F)
+-- namespace trivial_smooth_vector_bundle
 
-/-- Local trivialization for trivial bundle. -/
-def trivialization : trivialization I (I.prod 𝓘(𝕜, F)) F (bundle.trivial B F) :=
-{ smooth_on_to_fun := sorry,
-  smooth_on_inv_fun := sorry,
-  ..topological_vector_bundle.trivial_topological_vector_bundle.trivialization 𝕜 B F }
+-- /-- Local trivialization for trivial bundle. -/
+-- def trivialization : trivialization I (I.prod 𝓘(𝕜, F)) F (bundle.trivial B F) :=
+-- { smooth_on_to_fun := sorry,
+--   smooth_on_inv_fun := sorry,
+--   ..topological_vector_bundle.trivial_topological_vector_bundle.trivialization 𝕜 B F }
 
 
-lemma trivialization.coord_change (b : B) :
-  (trivialization B I F).coord_change (trivialization B I F) b = continuous_linear_equiv.refl 𝕜 F :=
-topological_vector_bundle.trivial_topological_vector_bundle.trivialization.coord_change 𝕜 B F b
+-- lemma trivialization.coord_change (b : B) :
+--   (trivialization B I F).coord_change (trivialization B I F) b = continuous_linear_equiv.refl 𝕜 F :=
+-- topological_vector_bundle.trivial_topological_vector_bundle.trivialization.coord_change 𝕜 B F b
 
-instance trivial_bundle.smooth_vector_bundle :
-  smooth_vector_bundle I (I.prod 𝓘(𝕜, F)) F (bundle.trivial B F) :=
-{ trivialization_atlas := {trivial_smooth_vector_bundle.trivialization B I F},
-  trivialization_at := λ x, trivial_smooth_vector_bundle.trivialization B I F,
-  mem_base_set_trivialization_at := mem_univ,
-  trivialization_mem_atlas := λ x, mem_singleton _,
-  total_space_mk_inducing := λ b, ⟨begin
-    have : (λ (x : trivial B F b), x) = @id F, by { ext x, refl },
-    simp only [total_space.topological_space, induced_inf, induced_compose, function.comp,
-      total_space.proj, induced_const, top_inf_eq, trivial.proj_snd, id.def,
-      trivial.topological_space, this, induced_id],
-  end⟩,
-  smooth_on_coord_change := begin
-    intros e he e' he',
-    rw [mem_singleton_iff.mp he, mem_singleton_iff.mp he'],
-    simp_rw [trivialization.coord_change],
-    exact smooth_on_const
-  end }
+-- instance trivial_bundle.smooth_vector_bundle :
+--   smooth_vector_bundle I (I.prod 𝓘(𝕜, F)) F (bundle.trivial B F) :=
+-- { trivialization_atlas := {trivial_smooth_vector_bundle.trivialization B I F},
+--   trivialization_at := λ x, trivial_smooth_vector_bundle.trivialization B I F,
+--   mem_base_set_trivialization_at := mem_univ,
+--   trivialization_mem_atlas := λ x, mem_singleton _,
+--   total_space_mk_inducing := λ b, ⟨begin
+--     have : (λ (x : trivial B F b), x) = @id F, by { ext x, refl },
+--     simp only [total_space.topological_space, induced_inf, induced_compose, function.comp,
+--       total_space.proj, induced_const, top_inf_eq, trivial.proj_snd, id.def,
+--       trivial.topological_space, this, induced_id],
+--   end⟩,
+--   smooth_on_coord_change := begin
+--     intros e he e' he',
+--     rw [mem_singleton_iff.mp he, mem_singleton_iff.mp he'],
+--     simp_rw [trivialization.coord_change],
+--     exact smooth_on_const
+--   end }
 
-end trivial_smooth_vector_bundle
+-- end trivial_smooth_vector_bundle
 
 end trivial
 
@@ -328,28 +328,18 @@ instance normed_space_fiber (x : B) :
   normed_space 𝕜 (Z.to_topological_vector_bundle_core.fiber x) :=
 by delta_instance topological_vector_bundle_core.fiber
 
+/-- The `smooth_fiber_bundle_core` constructed from a `basic_smooth_vector_bundle_core`. -/
+def to_smooth_fiber_bundle_core : smooth_fiber_bundle_core I 𝓘(𝕜, F) B F :=
+{ coord_change := λ i j x, Z.coord_change i j (i.1 x),
+  smooth_on_coord_change := sorry,
+  ..Z.to_topological_vector_bundle_core }
+
 /-- Extended version of the local trivialization of a smooth vector bundle constructed from core,
 registering additionally in its type that it is a smooth local bundle trivialization. -/
 def local_triv (i : atlas H B) :
   trivialization I (I.prod 𝓘(𝕜, F)) F Z.to_topological_vector_bundle_core.fiber :=
-{ smooth_on_to_fun := begin
-    dsimp,
-    sorry
-    -- convert_to smooth_on _ _ (λ p, ⟨p.1, Z.coord_change ⟨chart_at H p.1, chart_mem_atlas H p.1⟩ i
-    --   (chart_at H p.1 p.1) p.2⟩ : B × F → total_space Z.to_topological_vector_bundle_core.fiber) _,
-
-  end,
-  smooth_on_inv_fun := begin
-    dsimp,
-    sorry
-    -- show smooth_on _ _ (λ p, ⟨p.1, Z.coord_change ⟨chart_at H p.1, chart_mem_atlas H p.1⟩ i
-    --   (chart_at H p.1 p.1) p.2⟩ : B × F → total_space Z.to_topological_vector_bundle_core.fiber) _,
-
-  end,
-  .. Z.to_topological_vector_bundle_core.local_triv i}
-
--- to_fun      := λp, ⟨p.1, Z.coord_change (Z.index_at p.1) i p.1 p.2⟩,
--- inv_fun     := λp, ⟨p.1, Z.coord_change i (Z.index_at p.1) p.1 p.2⟩,
+{ .. Z.to_topological_vector_bundle_core.local_triv i,
+  .. Z.to_smooth_fiber_bundle_core.local_triv i }
 
 
 /-- Preferred local trivialization of a smooth vector bundle constructed from core,
@@ -394,6 +384,7 @@ instance to_smooth_vector_bundle :
     rintro _ ⟨x, hx, rfl⟩,
     ext y, dsimp,
     rw [local_triv_coord_change_eq],
+    all_goals {sorry}
     -- refine (Z.coord_change_continuous i i').congr (λ b hb, _),
     -- ext v,
     -- simp_rw [continuous_linear_equiv.coe_coe, Z.local_triv_coord_change_eq i i' hb],

@@ -5,7 +5,7 @@ Authors: Floris van Doorn
 -/
 
 import topology.vector_bundle.pullback
-import geometry.manifold.vector_bundle.basic
+import to_mathlib.geometry.manifold.vector_bundle.basic
 
 /-!
 # Pullbacks of smooth vector bundles
@@ -16,8 +16,7 @@ noncomputable theory
 open bundle set topological_space topological_vector_bundle
 open_locale classical
 
-variables {𝕜 : Type*} {B B' VB VB' VE HB HB' HE : Type*}
-
+variables {𝕜 B B' VB VB' VE HB HB' HE : Type*}
 variables [nondiscrete_normed_field 𝕜]
 variables [normed_group VB] [normed_space 𝕜 VB] [normed_group VB'] [normed_space 𝕜 VB']
 variables [normed_group VE] [normed_space 𝕜 VE]
@@ -29,7 +28,6 @@ variables [∀ x, normed_group (E x)] [∀ x, normed_space 𝕜 (E x)]
 variables [normed_group F] [normed_space 𝕜 F]
 variables [topological_space B] [charted_space HB B]
 variables [topological_space B'] [charted_space HB' B']
-
 variables [topological_space (total_space E)] [charted_space HE (total_space E)]
 -- variables [smooth_manifold_with_corners I' (total_space E)]
 
