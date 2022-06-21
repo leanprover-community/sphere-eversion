@@ -71,11 +71,43 @@ end general
 
 section without_boundary
 
-open metric
+open metric function
+
+/-- We should be able to use this to deduce `nice_atlas`, using `B`, `p`, `c` to represent images of
+Euclidean balls under coordinate charts which also lie in the supplied open cover `s`.
+
+NB: We could generalise and replace `ι × ℝ` with a dependent family of types somewhat similar to
+but it doesn't seem worth it. -/
+lemma nice_atlas_aux {ι X : Type*} [topological_space X] [sigma_compact_space X]
+  {B : ι → ℝ → set X} {p : ι → ℝ → Prop} {c : ι → X}
+  (hB₀ : ∀ i r, is_open (B i r))
+  (hB₁ : ∀ i, (𝓝 (c i)).has_basis (p i) (B i))
+  (hB₂ : ∀ i, monotone (B i))
+  (hp : ∀ i r₁ r₂, r₁ ≤ r₂ → p i r₂ → p i r₁)
+  (hc : surjective c) :
+  ∃ (s : set (ι × ℝ)),
+    countable s ∧
+    ∀ z ∈ s, ↿p z ∧
+    (⋃ z ∈ s, ↿B z) = univ ∧
+    locally_finite (λ (z : s), B (z : ι × ℝ).fst (2 • (z : ι × ℝ).snd)) :=
+begin
+  /-
+  1. Take a compact exhaustion `Kᵢ`.
+  2. Define countable family of compact sets `Cᵢ := Kᵢ₊₂ \ (Kᵢ₊₁)ᵒ` with open neighbourhoods
+     `Uᵢ := (Kᵢ₊₃)ᵒ \ Kᵢ`.
+  3. For each `i`, cover `Cᵢ` by elements of `B`, satisfying `p`, such that corresponding doubled
+     radius elements still contained in `Uᵢ`.
+  4. Let `s` be union over `i` of finite subcovers of sets in step 3.
+  5. Required properties obvious. Note locally finite follows since the enclosing `Uᵢ`, `Uⱼ` are
+     disjoint if `|i - j|  4`.
+  -/
+  sorry,
+end
 
 variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
   (M : Type*) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
+  [sigma_compact_space M]
 
 lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
   ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M,
