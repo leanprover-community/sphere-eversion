@@ -76,8 +76,8 @@ open metric function
 /-- We should be able to use this to deduce `nice_atlas`, using `B`, `p`, `c` to represent images of
 Euclidean balls under coordinate charts which also lie in the supplied open cover `s`.
 
-NB: We could generalise and replace `ι × ℝ` with a dependent family of types somewhat similar to
-but it doesn't seem worth it. -/
+NB: We could generalise and replace `ι × ℝ` with a dependent family of types somewhat but it doesn't
+seem worth it. -/
 lemma nice_atlas_aux {ι X : Type*} [topological_space X] [sigma_compact_space X]
   {B : ι → ℝ → set X} {p : ι → ℝ → Prop} {c : ι → X}
   (hB₀ : ∀ i r, is_open (B i r))
@@ -99,7 +99,7 @@ begin
      radius elements still contained in `Uᵢ`.
   4. Let `s` be union over `i` of finite subcovers of sets in step 3.
   5. Required properties obvious. Note locally finite follows since the enclosing `Uᵢ`, `Uⱼ` are
-     disjoint if `|i - j|  4`.
+     disjoint if `|i - j| > 4`.
   -/
   sorry,
 end
