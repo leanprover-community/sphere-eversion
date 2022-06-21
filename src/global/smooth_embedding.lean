@@ -1,6 +1,9 @@
 import geometry.manifold.cont_mdiff
 import global.indexing
+
 import to_mathlib.topology.maps
+import to_mathlib.topology.paracompact
+import to_mathlib.geometry.manifold.charted_space
 
 noncomputable theory
 
@@ -71,48 +74,127 @@ end general
 
 section without_boundary
 
-open metric function
+open metric (hiding mem_nhds_iff) function
 
-/-- We should be able to use this to deduce `nice_atlas`, using `B`, `p`, `c` to represent images of
-Euclidean balls under coordinate charts which also lie in the supplied open cover `s`.
-
-NB: We could generalise and replace `ι × ℝ` with a dependent family of types somewhat but it doesn't
-seem worth it. -/
-lemma nice_atlas_aux {ι X : Type*} [topological_space X] [sigma_compact_space X]
-  {B : ι → ℝ → set X} {p : ι → ℝ → Prop} {c : ι → X}
-  (hB₀ : ∀ i r, is_open (B i r))
-  (hB₁ : ∀ i, (𝓝 (c i)).has_basis (p i) (B i))
-  (hB₂ : ∀ i, monotone (B i))
-  (hp : ∀ i r₁ r₂, r₁ ≤ r₂ → p i r₂ → p i r₁)
-  (hc : surjective c) :
-  ∃ (s : set (ι × ℝ)),
-    countable s ∧
-    ∀ z ∈ s, ↿p z ∧
-    (⋃ z ∈ s, ↿B z) = univ ∧
-    locally_finite (λ (z : s), B (z : ι × ℝ).fst (2 • (z : ι × ℝ).snd)) :=
-begin
-  /-
-  1. Take a compact exhaustion `Kᵢ`.
-  2. Define countable family of compact sets `Cᵢ := Kᵢ₊₂ \ (Kᵢ₊₁)ᵒ` with open neighbourhoods
-     `Uᵢ := (Kᵢ₊₃)ᵒ \ Kᵢ`.
-  3. For each `i`, cover `Cᵢ` by elements of `B`, satisfying `p`, such that corresponding doubled
-     radius elements still contained in `Uᵢ`.
-  4. Let `s` be union over `i` of finite subcovers of sets in step 3.
-  5. Required properties obvious. Note locally finite follows since the enclosing `Uᵢ`, `Uⱼ` are
-     disjoint if `|i - j| > 4`.
-  -/
-  sorry,
-end
+universe u
 
 variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  (M : Type*) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
-  [sigma_compact_space M]
+  (M : Type u) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
+  [t2_space M] [locally_compact_space M] [sigma_compact_space M]
+
+/- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms. -/
+def open_smooth_embedding_of_subset_chart_target {x : M}
+  {f : open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E} (hf : range f ⊆ (chart_at E x).target) :
+  open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M :=
+{ to_fun := (chart_at E x).symm ∘ f,
+  inv_fun := f.inv_fun ∘ (chart_at E x),
+  left_inv' := λ y, by simp [hf (mem_range_self y)],
+  right_inv' := by { rintros - ⟨y, rfl⟩, simp [hf (mem_range_self y)], },
+  open_map := λ u hu,
+  begin
+    rw image_comp,
+    apply local_homeomorph.image_open_of_open _ (f.open_map _ hu),
+    rw ← image_univ at hf,
+    exact (monotone_image (subset_univ u)).trans hf,
+  end,
+  diff_to := cont_mdiff_on_chart_symm.comp_cont_mdiff f.diff_to (range_subset_iff.mp hf),
+  diff_inv :=
+  begin
+    have hf' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x) ⁻¹' range f,
+    { rw range_comp, exact local_equiv.symm_image_subset_preimage_of_subset_target _ hf, },
+    refine f.diff_inv.comp _ hf',
+    have hf'' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x).source,
+    { rw [range_comp, ← local_equiv.symm_image_target_eq_source],
+      exact (monotone_image hf).trans subset.rfl, },
+    exact cont_mdiff_on_chart.mono hf'',
+  end }
+
+@[simp] lemma coe_open_smooth_embedding_of_subset_chart_target {x : M}
+  {f : open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E} (hf : range f ⊆ (chart_at E x).target) :
+  (open_smooth_embedding_of_subset_chart_target M hf : E → M) = (chart_at E x).symm ∘ f :=
+rfl
+
+variables (𝕜)
+
+/-- A diffeomorphism from `E` onto the open ball of radius `r` in `E` centred at a point `c`,
+sending the open ball of radius 1 centered at 0 to the open ball of radius `r/2` centred at `c`. -/
+def ball_open_smooth_embedding (c : E) {r : ℝ} (h : 0 < r) :
+  open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E :=
+sorry
+
+@[simp] lemma range_ball_open_smooth_embedding (c : E) {r : ℝ} (h : 0 < r) :
+  range (ball_open_smooth_embedding 𝕜 c h) = (ball c r : set E) :=
+sorry
+
+@[simp] lemma ball_open_smooth_embedding_image_unit_ball (c : E) {r : ℝ} (h : 0 < r) :
+  ball_open_smooth_embedding 𝕜 c h '' ball 0 1 = (ball c (r/2) : set E) :=
+sorry
+
+variables (E) {M}
+
+lemma nice_atlas'
+  {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
+  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M),
+  countable t ∧
+  (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
+  locally_finite (λ i, range (φ i)) ∧
+  (⋃ i, φ i '' ball 0 1) = univ :=
+begin
+  let B : M → ℝ → set M := charted_space.ball E,
+  let p : M → ℝ → Prop :=
+    λ x r, 0 < r ∧ ball (chart_at E x x) r ⊆ (chart_at E x).target ∧ ∃ j, B x r ⊆ s j,
+  have hB₀ : ∀ x r, p x r → is_open (B x r),
+  { rintros x r ⟨hr, hx, -⟩,
+    change ball (chart_at E x x) r ⊆ (chart_at E x).symm.source at hx,
+    replace hr : is_open (ball (chart_at E x x) r) := is_open_ball,
+    exact (chart_at E x).symm.image_open_of_open hr hx, },
+  have hB₁ : ∀ x r, p x r → x ∈ B x r,
+  { rintros x r ⟨hr, hx, -⟩,
+    exact ⟨chart_at E x x, by simp [hr], by simp⟩, },
+  have hB₂ : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
+    λ x, charted_space.nhds_has_basis_balls_of_open_cov E x s_op cov,
+  have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,
+  have hp' : ∀ i r r', 0 < r → r < r' → p i r' → p i r,
+  { rintros x r r' hr hr' ⟨h₁, h₂, j, hj⟩,
+    exact ⟨hr, (ball_subset_ball hr'.le).trans h₂, j,
+      (monotone_image (ball_subset_ball hr'.le)).trans hj⟩, },
+  obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
+    exists_countable_locally_finite_cover surjective_id hp hp' hB₀ hB₁ hB₂,
+  refine ⟨M × ℝ, t, λ z, _, ht₁, λ z, _, _, _⟩,
+  { have h : range (ball_open_smooth_embedding 𝕜 (chart_at E z.1.1 z.1.1) $ hp _ _ $ ht₂ _ z.2) ⊆
+      (chart_at E z.1.1).target,
+    { simpa only [range_ball_open_smooth_embedding] using (ht₂ _ z.2).2.1, },
+    exact open_smooth_embedding_of_subset_chart_target M h, },
+  { simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
+    simp only [range_comp, range_ball_open_smooth_embedding],
+    exact (ht₂ z.1 z.2).2.2, },
+  { convert ht₃,
+    ext1,
+    simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target, comp_app],
+    simpa only [range_comp, range_ball_open_smooth_embedding], },
+  { simpa only [subtype.val_eq_coe, subtype.coe_mk, coe_open_smooth_embedding_of_subset_chart_target,
+      Union_coe_set, image_comp (chart_at E _).symm (ball_open_smooth_embedding 𝕜 _ _),
+      ball_open_smooth_embedding_image_unit_ball] using ht₄, },
+end
+
+variables [nonempty M]
 
 lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
   ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M,
-  (⋃ i, (φ i) '' (ball 0 1)) = univ ∧ locally_finite (λ i, range $ φ i) ∧
-  ∀ i, ∃ j, range (φ i) ⊆ s j :=
-sorry
+  (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
+  locally_finite (λ i, range (φ i)) ∧
+  (⋃ i, φ i '' ball 0 1) = univ :=
+begin
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' 𝕜 E s_op cov,
+  have htne : t.nonempty,
+  { by_contra contra,
+    simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
+      @eq_comm _ _ univ, univ_eq_empty_iff] at h₄,
+    exact not_is_empty_of_nonempty M h₄, },
+  obtain ⟨n, ⟨fn⟩⟩ := (set.countable_iff_exists_nonempty_index_type_equiv htne).mp h₁,
+  refine ⟨n, φ ∘ fn, λ i, h₂ (fn i), h₃.comp_injective fn.injective, _⟩,
+  rwa fn.surjective.Union_comp (λ i, φ i '' ball 0 1),
+end
 
 end without_boundary
