@@ -67,10 +67,33 @@ Note that in this whole text, every manifold is paracompact by definition.
 \end{proof}
 
 The general idea will be to apply the results of the previous chapters to
-all the $ψ_{j(i)}⁻¹ ∘ f ∘ φ_i : E → F$ for some maps $f$. However we must be careful
-that doing this for some $i$ does not ruin the setup for the next $i$.
-This is easier to control using a distance function on the target manifold as in
-the following stability lemma.
+all the $ψ_{j(i)}⁻¹ ∘ f ∘ φ_i : E → F$ for some maps $f$. However we must be
+careful that doing this for some $i$ does not ruin the setup for the next $i$.
+This is easier to control using a distance function on the target manifold as
+in \Cref{lem:localisation_stability} below. First we need a general lemma about
+a single metric space.
+
+\begin{lemma}
+  \label{lem:stability_cover}
+  In a paracompact metric space $X$, let $V : ι → \set{X}$ be a locally finite
+  collection of open subsets of $X$ and let $K : ι → \set{X}$ be a family of
+  compact subsets such that $K_i ⊂ V_i$ for all $i$. There existe a continuous
+  function $δ : X → ℝ_{> 0}$ such that:
+  \[
+    ∀ x\, x',\; ∀ i, \left[x ∈ K_i \text{ and } d(x, x') < δ(x)\right] ⇒ x' ∈ V_i.
+  \]
+\end{lemma}
+
+\begin{proof}
+  We first note that, for any given $i$, compactness of $K$ and openness of
+  $V_i$ give a positive number $δ_i$ such that the $δ_i$-neighborhood of $K_i$
+  is contained in $V_i$. We now prove that solutions exist locally. Let $x$ be
+  any point in $X$. From the local finiteness assumption, we get a neighborhood
+  $U$ of $x$ such that $\{i | U ∩ V_i ≠ ∅\}$ is finite. The constant function
+  with value the minimum of the corresponding $δ_i$ is a solution on $U$. Since
+  the condition we put on $δ$ is convex, we can glue those local solutions using
+  a partition of unity.
+\end{proof}
 
 \begin{lemma}
   \label{lem:localisation_stability}
@@ -90,7 +113,13 @@ definition of localisation data.
 The condition $∀ m,\; d(f(m), g(m)) < ε(m)$ will be abbreviated $d(f, g) < ε$.
 
 \begin{proof}
-  TODO.
+  \uses{lem:stability_cover}
+  The preceding lemma applies to the family of open sets $ψ_j(F)$ and the
+  family of compact sets $ψ_j(\overline{B_F})$ give a positive continuous
+  function $δ : N → ℝ$ such that $ε = δ ∘ f$ is suitable. Indeed, assume
+  $g : M → N$ satisfies $d(f, g) < ε$ and fix some $i$ and some $m ∈ φ_i(E)$.
+  We know $f(m) ∈ ψ_{j(i)}(\overline{B_F})$ and our assumption on $g$ gives
+  $d(f(m), g(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
 \end{proof}
 
 \subsection{Vector bundles operations}
@@ -508,4 +537,4 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 	immersion.
 \end{proof}
 
-% vim: set expandtab sw=2 tabstop=2:
+% vim: set expandtab sw=2 tabstop=2 tw=80:
