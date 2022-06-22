@@ -15,7 +15,55 @@ $φ : X → Y$ which is open and for which there is some smooth $ψ : φ(X) → 
 $ψ ∘ φ = \Id$ and $φ ∘ ψ = \Id$.
 Remember that a family of sets $V_i$ in a topological space $X$ is locally finite if
 every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
-Note that in this whole text, every manifold is paracompact by definition.
+Note that in this whole text, every manifold is paracompact by definition. In
+particular their topology are metrizable and we will arbitrarily fix a
+compatible distance function on every manifold.
+
+\begin{definition}
+  \label{update}
+  Given smooth open embeddings $φ : X → M$ and $ψ : Y → N$, for any map
+  $f : M → N$ such that $f(φ(X)) ⊂ ψ(Y)$, and every map $g : X → Y$, the update of $f$
+  using $g$ is the map from $M$ to $N$ sending $m$ to $ψ ∘ g ∘ φ⁻¹(m)$ if
+  $m ∈ φ(E)$ and $f(m)$ otherwise.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:updating}
+  \uses{def:update}
+  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings. Let $K$ and $L$ be
+  compact sets in $E$ and $F$ respectively. Let $f : M → N$ be a smooth map such
+  that $f(φ(X)) ⊂ ψ(L)$. Let $g : X → Y$ be a smooth map which agrees with
+  $ψ⁻¹∘f∘φ$ outside of $K$. Denote by $f'$ the update of $f$ using $g$.
+  \begin{itemize}
+    \item
+      $f'$ is a smooth map from $M$ to $N$.
+    \item
+      For every continuous function $ε : M → ℝ_{> 0}$, there is some positive
+      number $η$ such that, if $∀ e, ‖g(e) - ψ⁻¹∘f∘φ(e)‖ < η$ then
+      $∀ m ∈ M, d(f(m), f'(m)) < ε(m)$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  In order to prove smoothness of $f'$, note that $M = φ(E) ∪ φ(L)^c$. Both
+  those sets are open and $f'$ coincide with $ψ ∘ g ∘ φ⁻¹$ on the first one and
+  $f$ on the second one.
+
+  Let $ε$ be a positive continuous function on $M$. Since $K$ is compact, we get
+  a positive number $ε₀$ such that $ε(m) ≥ ε₀$ for each $m$ in $K$. We denote by
+  $L₁$ the closed $1$-thickening of $ψ⁻¹∘f∘φ(K)$ in $F$. This is a compact set
+  so $ψ$ is uniformly continuous on $L₁$ and we get a positive $τ$ such that
+  for all $x$ and $y$ in $L₁$, $‖x - y‖ < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
+
+  We now prove that $η = \min(τ, 1)$ is suitable. Assume that
+  $∀ e, ‖g(e) - ψ⁻¹∘f∘φ(e)‖ < η$. Let $m$ be a point in $M$. If $m$ isn't in
+  $φ(K)$ then $f'(m) = f(m)$ and in particular $d(f(m), f'(m)) < ε(m)$. Now
+  assume that $m = φ(e)$ for some $e$ in $K$. By assumption $‖g(e) - ψ⁻¹∘f∘φ(e)‖ < η$.
+  In particular $‖g(e) - ψ⁻¹∘f∘φ(e)‖ < 1$ hence $g(e)$ is in $L₁$. Since
+  $ψ⁻¹∘f∘φ(e)$ is also in $L₁$ and $‖g(e) - ψ⁻¹∘f∘φ(e)‖ < τ$, we get
+  $d(ψ∘ g(e), ψ ∘ ψ⁻¹∘f∘φ(e)) < ε₀$. This precisely means that
+  $d(f'(m), f(m)) < ε₀$. Since $m$ is in $K$, this is less than $ε(m)$.
+\end{proof}
 
 \begin{lemma}
   \label{lem:nice_atlas}
@@ -99,9 +147,8 @@ a single metric space.
   \label{lem:localisation_stability}
   \uses{def:localisation_data}
   Let $f : M → N$ be a continuous map between manifolds, and let
-  $(φ, ψ)$ be some localisation data for $f$. Let $d$ be a distance function
-  defining the topology of $N$. There exists some continuous positive
-  function $ε : M → ℝ_{>0}$ such that:
+  $(φ, ψ)$ be some localisation data for $f$. There exists some continuous
+  positive function $ε : M → ℝ_{>0}$ such that:
   \[
     ∀ g : M → N, \big[∀ m,\; d(f(m), g(m)) < ε(m)\big] ⇒ ∀ i,\; g(φ_i(E)) ⊂ ψ_{j(i)}(F).
   \]
