@@ -73,7 +73,7 @@ compatible distance function on every manifold.
   \begin{itemize}
     \item For each $i$ there is some $j$ such that $φ_i(E) ⊂ V_j$
     \item $i ↦ φ_i(E)$ is a locally finite collection of sets in $M$.
-    \item $⋃_i φ_i(B) = M$ where $B$ is the open unit ball in $E$.
+    \item $⋃_i φ_i(B_E) = M$ where $B_E$ is the open unit ball in $E$.
   \end{itemize}
 \end{lemma}
 
@@ -97,7 +97,7 @@ compatible distance function on every manifold.
     \item
       $⋃_i φ_i(B_E) = M$ where $B_E$ is the open unit ball in $E$.
   \end{itemize}
-  Such a tuple will be denote by $(φ, ψ)$ for brevity.
+  Such a tuple will be denoted by $(φ, ψ, j)$ for brevity.
 \end{definition}
 
 \begin{lemma}
@@ -110,7 +110,7 @@ compatible distance function on every manifold.
   \uses{lem:nice_atlas}
   The preceding lemma (applied to the trivial cover of $N$ by itself) gives a
   family of $ψ : ι' × F → N$ of open smooth embeddings that the images of
-  $B_F$ cover $N$. We then apply this lemma again to the cover given by all
+  $B_F$ cover $N$. We then apply this lemma again to the cover of $M$ given by all
   $f⁻¹(ψ_j(B_F))$.
 \end{proof}
 
@@ -147,7 +147,7 @@ a single metric space.
   \label{lem:localisation_stability}
   \uses{def:localisation_data}
   Let $f : M → N$ be a continuous map between manifolds, and let
-  $(φ, ψ)$ be some localisation data for $f$. There exists some continuous
+  $(φ, ψ, i)$ be some localisation data for $f$. There exists some continuous
   positive function $ε : M → ℝ_{>0}$ such that:
   \[
     ∀ g : M → N, \big[∀ m,\; d(f(m), g(m)) < ε(m)\big] ⇒ ∀ i,\; g(φ_i(E)) ⊂ ψ_{j(i)}(F).
@@ -161,7 +161,7 @@ The condition $∀ m,\; d(f(m), g(m)) < ε(m)$ will be abbreviated $d(f, g) < ε
 
 \begin{proof}
   \uses{lem:stability_cover}
-  The preceding lemma applies to the family of open sets $ψ_j(F)$ and the
+  The preceding lemma applied to the family of open sets $ψ_j(F)$ and the
   family of compact sets $ψ_j(\overline{B_F})$ give a positive continuous
   function $δ : N → ℝ$ such that $ε = δ ∘ f$ is suitable. Indeed, assume
   $g : M → N$ satisfies $d(f, g) < ε$ and fix some $i$ and some $m ∈ φ_i(E)$.
@@ -218,7 +218,7 @@ the inclusion as $σ$.
   \end{itemize}
   There exists $U : M → \set{M}$ and $n₀ : M → ℕ$ such that:
   \[
-    ∀ x,\; U_x ∈ 𝓝 x \text{ and }
+    ∀ x,\; U_x ∈ 𝓝_x \text{ and }
            ∀ n ≥ n₀(x),\; \rst{f_n}{U_x} = \rst{f_{n₀(x)}}{U_x}.
   \]
 \end{lemma}
@@ -590,48 +590,85 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 \begin{proof}[Proof of Theorem~\ref{thm:open_ample}]
   \proves{thm:open_ample}
   \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
+  lem:ex_localisation, lem:localisation_stability,
   lem:ample_iff_loc, lem:h_principle_open_ample_loc}
   Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
   assume there are no parameters. So we start with a single formal solution $F$
   of $\Rel$, which is holonomic near some closed subset $A ⊂ X$.
 
-  We first assume $X$ is closed, and will then explain the proof
-  adjustments needed in the non-compact case.
-  By compactness, there are finite many compact subsets
-  $(K_i)_{1 ≤ i ≤ N}$ contained in coordinate charts $U_i$ and such that
-  $\bigcup K_i = X$.
+  We apply \cref{lem:ex_localisation}  to get some
+  localisation data $(φ \co ι → \set{X}, ψ \co ι' → \set{Y}, j)$ for
+  $\bs F : X → Y$. \Cref{lem:localisation_stability} then provides a continuous
+  function $ε : X → ℝ_{> 0}$ such that every function $g$ with $d(\bs F, g) < ε$
+  sends each $φ_i(E)$ into $ψ_{j(i)}(F)$.
+  Since $ι$ is finite or countable we can assume it is a
+  convenient indexing set (see \Cref{def:convenient_indexing}). We denote by
+  $π \co ℕ → ι$ and $σ \co ι → ℕ$ the corresponding structure maps.
 
-  We prove by induction on $i$ from $0$ to $N$ that there are formal solutions
-  $F_i$, starting with $F_0 = F$, that are homotopic to $F$ relative to $A$,
-  holonomic on $K_{≤ i} := \bigcup_{j ≤ i} K_j$ and whose base maps are
-  $(1-2^{-i})ε$-close to that of $F$ (this contrived bound will be convenient
-  for the non-compact case).
+  We will construct by induction on $n$ a sequence of homotopies of sections
+  $F_n \co [0, 1] × X → J¹(X, Y)$ such that, for all $n$,
+  \begin{itemize}
+    \item
+      $F_{n, t}(x)$ coincides with $F(x)$ for all $t$ if $n = 0$ or $x$ is
+      close to $A$~;
+    \item
+      for all $t$, $d(\bs F, \bs F_{n, t}) < ε$~;
+    \item
+      if $π(n+1) = π(n)$ then $F_{n+1, t}$ coincides with $F_{n, t}$ for all $t$~;
+    \item
+      $F_{n+1, 1}$ is holonomic on $K_{≤ n} := \bigcup_{i ≤ π(n)} φ_i(\bar B_E)$~;
+    \item
+      each $F_{n+1, t}$ coincides with $F_{n, t}$ outside $φ_{π(n)}(E)$.
+  \end{itemize}
 
-  Assume $F_i$ has been constructed for some $i < N$.
-  We now want to construct it on $U_{i+1}$.
-  \Cref{lem:ample_iff_loc} ensures the pull-back of $\Rel$ in the chart
-  corresponding to $U_{i+1}$ is ample in the sense of the preceding
-  chapter.
-  Hence \Cref{lem:h_principle_open_ample_loc} can be applied to
-  construct $F_{i+1}$, using the image of $K_{i+1}$ as $K_0$ and
-  the image of $A ∩ K_{i+1} ∩ K_{≤ i}$ as $C$.
-  It is holonomic on $K_{≤ i+1}$ because it agrees with $F_i$ near
-  $K_{≤ i}$ and is holonomic near $K_{i+1}$.
+  The induction construction starts with setting $F_{0, t} = F$ for all $t$,
+  which has the required properties (the first two conditions are clear and the
+  other ones don't say anything about $F_0$). Now assume $F_n$ has been constructed.
+  If $π(n+1) = π(n)$ then we set $F_{n+1} = F_n$.
+  Otherwise we have $π(n+1) > π(n)$. For brevity, we set $i = π(n+1)$
+  and $C = A ∩ φ_{π(n)}(\bar B_E) ∩ K_{≤ n}$.
 
-  Once all $F_i$ are constructed, we define $F^t$ to be the concatenation of all
-  homotopies relating $F_i$ to $F_{i+1}$.
+  For any $t$, since $d(\bs F, \bs F_{n, t}) < ε$ by induction hypothesis,
+  $\bs F_{n, t}$ sends $φ_i(E)$ into $ψ_{j(i)}(F)$.
 
-  If $X$ is not compact, then one can use a countable family of subsets
-  $(U_i, K_i)$ which is locally finite (ie. every point $x$ has a neighborhood
-  intersecting only finitely many $U_i$). The way we have chosen $C^0$-bounds
-  ensures that each $\bs F_i$ is still at distance at most $ε$ from $\bs F$. We
-  now have countably many homotopies to concatenate, so we need to reparametrize
-  the $i$-th homotopy by an interval of length $2^{-i}$. This give a family of
-  sections of $J^1(X, Y)$ parametrized by $t ∈ [0, 1)$. But our local finiteness
-  assumption implies that, for each each $x$, there is some $t_0 < 1$ and some
-  neighborhood $U$ of $x$ such that our family is $t$--independent on $U$ for
-  $t ≥ t_0$. So we can extend to $t = 1$.  The resulting family is smooth since
-  smoothness is a local condition in both $x$ and $t$.
+  \Cref{def:transfer_map} then
+  turns $F_n$ into a homotopy of section $G$ of $J¹(E, F)$.
+  The new homotopy $F_{n+1}$ will be constructed by updating $F_n$ using some
+  homotopy $\bar H$ of sections of $J¹(E, F)$. In order to ensure
+  $d(\bs F, \bs F_{n+1}) < ε$, it suffices to ensure
+  $d(\bs F_n, \bs F_{n+1}) < ε - d(\bs F, \bs F_n)$.
+  This will hold as soon as, for all $e$ and $t$, $‖\bs G_t(e) - \bs \bar
+  H_t(e)‖ < η$ for some positive $η$ given by
+  \Cref{lem:updating}.
+  According to \Cref{lem:transfer}, each $G_t$ is a formal solution of
+  the relation $\Rel_i$ induced by $\Rel$ in $J¹(E, F)$ via $φ_i$ and
+  $ψ_{j(i)}$, and $G_1$ is holonomic near $φ_i⁻¹(C)$.
+
+  Hence \Cref{lem:h_principle_open_ample_loc} can be applied to $G₁$ with
+  $K₀ = \overline{B_E}$, $K₁ = 2\overline{B_E}$ (the ball with radius $2$ around
+  the origin in $E$) and $C = φ_i⁻¹(A ∪ K_{≤ n-1})$, with precision $η$. This
+  way we get a homotopy $t ↦ H_t$ starting at $H₀ = G₁$, relatve to $C$ and the
+  complement of $K₁$ and such that $H₁$ is holonomic on $\overline B_E$.
+  Let $ρ \co E → [0, 1]$ be a smooth cut-off function which equals one on a
+  neighborhood of $\overline B_E$ and vanishes outside $2B_E$.
+
+  We define a new homotopy $\bar H$ of sections of $J¹(E, F)$ as:
+  \[
+    \bar H_t(x) = \begin{cases}
+      G_{2t/(2 - ρ(x))}(x) & \text{if $t ≤ 1 - ρ(x)/2$}\\
+      H_{2t/(2 - ρ(x)) - 1}(x) & \text{if $t ≥ 1 - ρ(x)/2$}
+    \end{cases}
+  \]
+  Near $K₀$, where $ρ$ equals one, this $\bar H$ is simply the concatenation of $G$ and
+  $H$. Outside $K₁$ where $ρ$ vanishes, it is simply $G$.
+  We now transfer back this homotopy $\bar H$ to get $F_{n+1}$. \Cref{lem:transfer}
+  ensures that we get a homotopy of formal solutions that is holonomic on
+  $K_{≤ n}$.
+
+  Now that the inductive construction is completed, we apply
+  \Cref{lem:loc_ultim_const} to make sure our sequence $F_n$ is locally
+  ultimately constant, hence it converges pointwise to a smooth homotopy
+  relative to $A$ and ending at a holonomic section of $\Rel$.
 \end{proof}
 
 \begin{theorem}[Smale 1958]
