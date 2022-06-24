@@ -36,7 +36,7 @@ namespace topological_vector_bundle
 variables {R : Type*} {B : Type*} {F : Type*} {E : B → Type*}
 variables [nondiscrete_normed_field R] [∀ x, add_comm_monoid (E x)] [∀ x, module R (E x)]
   [normed_group F] [normed_space R F] [topological_space B]
-  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  [topological_space (total_space E)]
 
 namespace trivialization
 
@@ -55,7 +55,7 @@ def chart_at (e : trivialization R F E) (f : local_homeomorph B HB) :
   local_homeomorph (total_space E) (model_prod HB F) :=
 e.to_local_homeomorph.trans $ f.prod $ local_homeomorph.refl F
 
-variables (R F E)
+variables (R F E) [∀ x, topological_space (E x)]
 
 /-- The total space of a topological vector bundle forms a charted space.
 Currently not an instance, because it creates the metavariable `R`, but it might be fine to change
@@ -131,6 +131,12 @@ instance : continuous_map_class C^∞⟮I, M; J, N⟯ M N :=
 { coe := coe_fn,
   coe_injective' := coe_inj,
   map_continuous := λ f, f.cont_mdiff_to_fun.continuous }
+
+/-- The first projection of a product, as a smooth map. -/
+def fst : C^∞⟮I.prod I', M × M'; I, M⟯ := ⟨prod.fst, cont_mdiff_fst⟩
+
+/-- The second projection of a product, as a smooth map. -/
+def snd : C^∞⟮I.prod I', M × M'; I', M'⟯ := ⟨prod.snd, cont_mdiff_snd⟩
 
 end cont_mdiff_map
 

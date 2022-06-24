@@ -437,3 +437,231 @@ instance smooth_tangent_bundle :
 (tangent_bundle_core I B).to_smooth_vector_bundle
 
 end basic_smooth_vector_bundle_core
+
+/-! ### Smooth vector prebundle -/
+
+section
+
+open smooth_vector_bundle topological_vector_bundle (pretrivialization)
+/-- Smooth version of `topological_vector_prebundle` -/
+@[nolint has_inhabited_instance]
+structure smooth_vector_prebundle :=
+(pretrivialization_atlas : set (pretrivialization 𝕜 F E))
+(pretrivialization_at : B → pretrivialization 𝕜 F E)
+(mem_base_pretrivialization_at : ∀ x : B, x ∈ (pretrivialization_at x).base_set)
+(pretrivialization_mem_atlas : ∀ x : B, pretrivialization_at x ∈ pretrivialization_atlas)
+(exists_coord_change : ∀ (e e' ∈ pretrivialization_atlas), ∃ f : B → F →L[𝕜] F,
+  smooth_on I 𝓘(𝕜, F →L[𝕜] F) f (e.base_set ∩ e'.base_set) ∧
+  ∀ (b : B) (hb : b ∈ e.base_set ∩ e'.base_set) (v : F),
+    f b v = (e' (total_space_mk b (e.symm b v))).2)
+
+namespace smooth_vector_prebundle
+
+variables {I E F}
+
+/-- A randomly chosen coordinate change on a `smooth_vector_prebundle`, given by
+  the field `exists_coord_change`. -/
+def coord_change (a : smooth_vector_prebundle I F E)
+  {e e' : pretrivialization 𝕜 F E} (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) (b : B) : F →L[𝕜] F :=
+classical.some (a.exists_coord_change e he e' he') b
+
+lemma smooth_on_coord_change (a : smooth_vector_prebundle I F E)
+  {e e' : pretrivialization 𝕜 F E} (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) :
+  smooth_on I 𝓘(𝕜, F →L[𝕜] F) (a.coord_change he he') (e.base_set ∩ e'.base_set) :=
+(classical.some_spec (a.exists_coord_change e he e' he')).1
+
+lemma coord_change_apply (a : smooth_vector_prebundle I F E)
+  {e e' : pretrivialization 𝕜 F E} (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
+  a.coord_change he he' b v = (e' (total_space_mk b (e.symm b v))).2 :=
+(classical.some_spec (a.exists_coord_change e he e' he')).2 b hb v
+
+lemma mk_coord_change (a : smooth_vector_prebundle I F E)
+  {e e' : pretrivialization 𝕜 F E} (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
+  (b, a.coord_change he he' b v) = e' (total_space_mk b (e.symm b v)) :=
+begin
+  ext,
+  { rw [e.mk_symm hb.1 v, e'.coe_fst', e.proj_symm_apply' hb.1],
+    rw [e.proj_symm_apply' hb.1], exact hb.2 },
+  { exact a.coord_change_apply he he' hb v }
+end
+
+/-- Natural identification of `smooth_vector_prebundle` as a `smooth_fiber_prebundle`. -/
+def to_smooth_fiber_prebundle (a : smooth_vector_prebundle I F E) :
+  smooth_fiber_prebundle F (@total_space.proj B E) :=
+{ pretrivialization_atlas :=
+    pretrivialization.to_fiber_bundle_pretrivialization '' a.pretrivialization_atlas,
+  pretrivialization_at := λ x, (a.pretrivialization_at x).to_fiber_bundle_pretrivialization,
+  pretrivialization_mem_atlas := λ x, ⟨_, a.pretrivialization_mem_atlas x, rfl⟩,
+  continuous_triv_change := begin
+    rintros _ ⟨e, he, rfl⟩ _ ⟨e', he', rfl⟩,
+    have := is_bounded_bilinear_map_apply.continuous.comp_continuous_on
+      ((a.continuous_on_coord_change he' he).prod_map continuous_on_id),
+    have H : e'.to_fiber_bundle_pretrivialization.to_local_equiv.target ∩
+      e'.to_fiber_bundle_pretrivialization.to_local_equiv.symm ⁻¹'
+      e.to_fiber_bundle_pretrivialization.to_local_equiv.source =
+      (e'.base_set ∩ e.base_set) ×ˢ (univ : set F),
+    { rw [e'.target_eq, e.source_eq],
+      ext ⟨b, f⟩,
+      simp only [-total_space.proj, and.congr_right_iff, e'.proj_symm_apply', iff_self,
+        implies_true_iff] with mfld_simps {contextual := tt} },
+    rw [H],
+    refine (continuous_on_fst.prod this).congr _,
+    rintros ⟨b, f⟩ ⟨hb, -⟩,
+    dsimp only [function.comp, prod.map],
+    rw [a.mk_coord_change _ _ hb, e'.mk_symm hb.1],
+    refl,
+  end,
+  .. a }
+
+/-- Topology on the total space that will make the prebundle into a bundle. -/
+def total_space_topology (a : smooth_vector_prebundle I F E) :
+  topological_space (total_space E) :=
+a.to_topological_fiber_prebundle.total_space_topology
+
+/-- Promotion from a `topologial_vector_prebundle.trivialization` to a
+  `topological_vector_bundle.trivialization`. -/
+def trivialization_of_mem_pretrivialization_atlas (a : smooth_vector_prebundle I F E)
+  {e : topological_vector_bundle.pretrivialization 𝕜 F E} (he : e ∈ a.pretrivialization_atlas) :
+  @topological_vector_bundle.trivialization R _ F E _ _ _ _ _ _ _ a.total_space_topology :=
+begin
+  letI := a.total_space_topology,
+  exact { linear' := λ b, e.linear,
+  ..a.to_topological_fiber_prebundle.trivialization_of_mem_pretrivialization_atlas ⟨e, he, rfl⟩ }
+end
+
+variable (a : smooth_vector_prebundle I F E)
+
+lemma mem_trivialization_at_source (b : B) (x : E b) :
+  total_space_mk b x ∈ (a.pretrivialization_at b).source :=
+begin
+  simp only [(a.pretrivialization_at b).source_eq, mem_preimage, total_space.proj],
+  exact a.mem_base_pretrivialization_at b,
+end
+
+@[simp] lemma total_space_mk_preimage_source (b : B) :
+  (total_space_mk b) ⁻¹' (a.pretrivialization_at b).source = univ :=
+begin
+  apply eq_univ_of_univ_subset,
+  rw [(a.pretrivialization_at b).source_eq, ←preimage_comp, function.comp],
+  simp only [total_space.proj],
+  rw preimage_const_of_mem _,
+  exact a.mem_base_pretrivialization_at b,
+end
+
+/-- Topology on the fibers `E b` induced by the map `E b → E.total_space`. -/
+def fiber_topology (b : B) : topological_space (E b) :=
+topological_space.induced (total_space_mk b) a.total_space_topology
+
+@[continuity] lemma inducing_total_space_mk (b : B) :
+  @inducing _ _ (a.fiber_topology b) a.total_space_topology (total_space_mk b) :=
+by { letI := a.total_space_topology, letI := a.fiber_topology b, exact ⟨rfl⟩ }
+
+@[continuity] lemma continuous_total_space_mk (b : B) :
+  @continuous _ _ (a.fiber_topology b) a.total_space_topology (total_space_mk b) :=
+begin
+  letI := a.total_space_topology, letI := a.fiber_topology b,
+  exact (a.inducing_total_space_mk b).continuous
+end
+
+/-- Make a `topological_vector_bundle` from a `smooth_vector_prebundle`.  Concretely this means
+that, given a `smooth_vector_prebundle` structure for a sigma-type `E` -- which consists of a
+number of "pretrivializations" identifying parts of `E` with product spaces `U × F` -- one
+establishes that for the topology constructed on the sigma-type using
+`smooth_vector_prebundle.total_space_topology`, these "pretrivializations" are actually
+"trivializations" (i.e., homeomorphisms with respect to the constructed topology). -/
+def to_topological_vector_bundle :
+  @topological_vector_bundle R _ F E _ _ _ _ _ _ a.total_space_topology a.fiber_topology :=
+{ total_space_mk_inducing := a.inducing_total_space_mk,
+  trivialization_atlas := {e | ∃ e₀ (he₀ : e₀ ∈ a.pretrivialization_atlas),
+    e = a.trivialization_of_mem_pretrivialization_atlas he₀},
+  trivialization_at := λ x, a.trivialization_of_mem_pretrivialization_atlas
+    (a.pretrivialization_mem_atlas x),
+  mem_base_set_trivialization_at := a.mem_base_pretrivialization_at,
+  trivialization_mem_atlas := λ x, ⟨_, a.pretrivialization_mem_atlas x, rfl⟩,
+  continuous_on_coord_change := begin
+    rintros _ ⟨e, he, rfl⟩ _ ⟨e', he', rfl⟩,
+    refine (a.continuous_on_coord_change he he').congr _,
+    intros b hb,
+    ext v,
+    rw [a.coord_change_apply he he' hb v, continuous_linear_equiv.coe_coe,
+      trivialization.coord_change_apply],
+    exacts [rfl, hb]
+  end }
+
+/-- The total space of a basic smooth bundle is endowed with a charted space structure, where the
+charts are in bijection with the charts of the basis. -/
+instance to_charted_space :
+  charted_space (model_prod H F) (total_space E) :=
+{ atlas := ⋃(e ∈ atlas H B), {Z.chart he},
+  chart_at := λ p, Z.chart (chart_mem_atlas H p.1),
+  mem_chart_source := λ p, by simp [mem_chart_source],
+  chart_mem_atlas := λ p, begin
+    simp only [mem_Union, mem_singleton_iff, chart_mem_atlas],
+    exact ⟨chart_at H p.1, chart_mem_atlas H p.1, rfl⟩
+  end }
+
+/-- Smooth manifold structure on the total space of a basic smooth bundle -/
+instance to_smooth_manifold [smooth_manifold_with_corners I B] :
+  smooth_manifold_with_corners (I.prod (𝓘(𝕜, F))) (total_space E) :=
+begin
+  sorry
+  /- We have to check that the charts belong to the smooth groupoid, i.e., they are smooth on their
+  source, and their inverses are smooth on the target. Since both objects are of the same kind, it
+  suffices to prove the first statement in A below, and then glue back the pieces at the end. -/
+  -- let J := model_with_corners.to_local_equiv (I.prod (𝓘(𝕜, F))),
+  -- have A : ∀ (e e' : local_homeomorph M H) (he : e ∈ atlas H M) (he' : e' ∈ atlas H M),
+  --   cont_diff_on 𝕜 ∞
+  --   (J ∘ ((Z.chart he).symm.trans (Z.chart he')) ∘ J.symm)
+  --   (J.symm ⁻¹' ((Z.chart he).symm.trans (Z.chart he')).source ∩ range J),
+  -- { assume e e' he he',
+  --   have : J.symm ⁻¹' ((chart Z he).symm.trans (chart Z he')).source ∩ range J =
+  --     (I.symm ⁻¹' (e.symm.trans e').source ∩ range I) ×ˢ (univ : set F),
+  --     by { simp only [J, chart, model_with_corners.prod], mfld_set_tac },
+  --   rw this,
+  --   -- check separately that the two components of the coordinate change are smooth
+  --   apply cont_diff_on.prod,
+  --   show cont_diff_on 𝕜 ∞ (λ (p : E × F), (I ∘ e' ∘ e.symm ∘ I.symm) p.1)
+  --        ((I.symm ⁻¹' (e.symm.trans e').source ∩ range I) ×ˢ (univ : set F)),
+  --   { -- the coordinate change on the base is just a coordinate change for `M`, smooth since
+  --     -- `M` is smooth
+  --     have A : cont_diff_on 𝕜 ∞ (I ∘ (e.symm.trans e') ∘ I.symm)
+  --       (I.symm ⁻¹' (e.symm.trans e').source ∩ range I) :=
+  --     (has_groupoid.compatible (cont_diff_groupoid ∞ I) he he').1,
+  --     have B : cont_diff_on 𝕜 ∞ (λ p : E × F, p.1)
+  --       ((I.symm ⁻¹' (e.symm.trans e').source ∩ range I) ×ˢ (univ : set F)) :=
+  --     cont_diff_fst.cont_diff_on,
+  --     exact cont_diff_on.comp A B (prod_subset_preimage_fst _ _) },
+  --   show cont_diff_on 𝕜 ∞ (λ (p : E × F),
+  --     Z.coord_change ⟨chart_at H (e.symm (I.symm p.1)), _⟩ ⟨e', he'⟩
+  --        ((chart_at H (e.symm (I.symm p.1)) : M → H) (e.symm (I.symm p.1)))
+  --     (Z.coord_change ⟨e, he⟩ ⟨chart_at H (e.symm (I.symm p.1)), _⟩
+  --       (e (e.symm (I.symm p.1))) p.2))
+  --     ((I.symm ⁻¹' (e.symm.trans e').source ∩ range I) ×ˢ (univ : set F)),
+  --   { /- The coordinate change in the fiber is more complicated as its definition involves the
+  --     reference chart chosen at each point. However, it appears with its inverse, so using the
+  --     cocycle property one can get rid of it, and then conclude using the smoothness of the
+  --     cocycle as given in the definition of basic smooth bundles. -/
+  --     have := Z.coord_change_smooth ⟨e, he⟩ ⟨e', he'⟩,
+  --     rw I.image_eq at this,
+  --     apply cont_diff_on.congr this,
+  --     rintros ⟨x, v⟩ hx,
+  --     simp only with mfld_simps at hx,
+  --     let f := chart_at H (e.symm (I.symm x)),
+  --     have A : I.symm x ∈ ((e.symm.trans f).trans (f.symm.trans e')).source,
+  --       by simp only [hx.1.1, hx.1.2] with mfld_simps,
+  --     rw e.right_inv hx.1.1,
+  --     have := Z.coord_change_comp ⟨e, he⟩ ⟨f, chart_mem_atlas _ _⟩ ⟨e', he'⟩ (I.symm x) A v,
+  --     simpa only [] using this } },
+  -- refine @smooth_manifold_with_corners.mk _ _ _ _ _ _ _ _ _ _ _ ⟨_⟩,
+  -- assume e₀ e₀' he₀ he₀',
+  -- rcases (Z.mem_atlas_iff _).1 he₀ with ⟨e, he, rfl⟩,
+  -- rcases (Z.mem_atlas_iff _).1 he₀' with ⟨e', he', rfl⟩,
+  -- rw [cont_diff_groupoid, mem_groupoid_of_pregroupoid],
+  -- exact ⟨A e e' he he', A e' e he' he⟩
+end
+
+end smooth_vector_prebundle

@@ -8,7 +8,7 @@ import to_mathlib.geometry.manifold.vector_bundle.pullback
 
 noncomputable theory
 
-open set equiv
+open set equiv bundle
 open_locale manifold
 
 variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
@@ -21,47 +21,21 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   (I' : model_with_corners 𝕜 E' H')
   (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-/-
-The definition below is an unreadable term but we keep the tactic version commented out
-for people who want to understand.
-
-A element `i : ↥(atlas (model_prod H H') (M × M'))` is secretely a pair consisting of
-an element `atlas H M` and an element of `atlas H' M'`. They are accessed as
-`i.2.some` and `i.2.some_spec.some` because `prod_charted_space` is defined using `image2`.
--/
-
-def one_jet_bundle_core : basic_smooth_vector_bundle_core (I.prod I') (M × M') (E →L[𝕜] E') :=
-{ coord_change := λ i j x, (continuous_linear_map.compL 𝕜 E E' E' (fderiv_within 𝕜 (I' ∘ (j.2.some_spec.some) ∘ (i.2.some_spec.some).symm ∘ I'.symm) (range I') (I' x.2))) ∘L (continuous_linear_map.compL 𝕜 E E E').flip (fderiv_within 𝕜 (I ∘ (j.2.some) ∘ (i.2.some).symm ∘ I.symm) (range I) (I x.1)),
-/- begin
-  cases i with ii hi,
-  choose i i' hi hi' H using hi,
-  --subst H,
-  cases j with jj hj,
-  choose j j' hj hj' H' using hj,
-  --subst H',
-  exact (continuous_linear_map.compL 𝕜 E E' E' (fderiv_within 𝕜 (I' ∘ j' ∘ i'.symm ∘ I'.symm) (range I') (I' x.2))) ∘L (continuous_linear_map.compL 𝕜 E E E').flip (fderiv_within 𝕜 (I ∘ j ∘ i.symm ∘ I.symm) (range I) (I x.1)),
-end, -/
-  coord_change_self := sorry,
-  coord_change_comp := sorry,
-  coord_change_smooth_clm := sorry }
-
 include I I'
 variables {M M'}
 
-@[nolint unused_arguments]
-def one_jet_space (p : M × M') : Type* := E →L[𝕜] E'
-
-instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
-  (λ σ, tangent_space I p.1 → tangent_space I' p.2) := ⟨λ φ, φ.to_fun⟩
-
-omit I I'
+/-- The fibers of the 1-jet space of `M` and `N`. -/
+@[nolint unused_arguments, derive [normed_group, normed_space 𝕜, inhabited]]
+def one_jet_space : M × M' → Type* :=
+bundle.continuous_linear_map (ring_hom.id 𝕜) E (cont_mdiff_map.fst I M I' M' *ᵖ tangent_space I)
+  E' (cont_mdiff_map.snd I M I' M' *ᵖ tangent_space I')
 
 variables (M M')
 
 /-- The space of one jets of maps between two smooth manifolds, as a Sigma type.
 Defined in terms of `bundle.total_space` to be able to put a suitable topology on it. -/
 @[nolint has_inhabited_instance, reducible] -- is empty if the base manifold is empty
-def one_jet_bundle := bundle.total_space (one_jet_space I I' : M × M' → Type*)
+def one_jet_bundle := total_space (one_jet_space I I' : M × M' → Type*)
 
 local notation `J¹MM'` := one_jet_bundle I M I' M'
 
@@ -70,6 +44,26 @@ one_jet bundle is represented internally as a sigma type, the notation `p.1` als
 projection of the point `p`. -/
 def one_jet_bundle.proj : J¹MM' → M × M' :=
 λ p, p.1
+
+instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
+  (λ σ, tangent_space I p.1 → tangent_space I' p.2) := ⟨λ φ, φ.to_fun⟩
+
+instance topological_space_total_space_one_jet_space : topological_space J¹MM' :=
+by delta_instance one_jet_bundle one_jet_space
+
+instance charted_space_total_space_one_jet_space :
+  charted_space (model_prod (model_prod H H') (E →L[𝕜] E')) J¹MM' :=
+by delta_instance one_jet_bundle one_jet_space
+
+omit I I'
+
+instance :
+  smooth_vector_bundle (I.prod I') ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (E →L[𝕜] E')
+  (one_jet_space I I' : M × M' → Type*) :=
+by delta_instance one_jet_space
+
+instance : smooth_manifold_with_corners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) J¹MM' :=
+sorry
 
 /-
 TODO: Also define the projection to source?
@@ -82,27 +76,7 @@ rfl
 
 section one_jet_bundle_instances
 
-section
-
-variables {M} (p : M × M')
-
-instance : normed_group (one_jet_space I I' p) := by delta_instance one_jet_space
-instance : normed_space 𝕜 (one_jet_space I I' p) := by delta_instance one_jet_space
-instance : inhabited (one_jet_space I I' p) := ⟨0⟩
-
-end
-
 variable (M)
-
-instance : topological_space J¹MM' :=
-(one_jet_bundle_core I M I' M').to_topological_vector_bundle_core.to_topological_space
-  (atlas (model_prod H H') (M × M'))
-
-instance : charted_space (model_prod (model_prod H H') (E →L[𝕜] E')) J¹MM' :=
-(one_jet_bundle_core I M I' M').to_charted_space
-
-instance : smooth_manifold_with_corners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) J¹MM' :=
-(one_jet_bundle_core I M I' M').to_smooth_manifold
 
 instance : topological_vector_bundle 𝕜 (E →L[𝕜] E') (one_jet_space I I' : M × M' → Type*) :=
 topological_vector_bundle_core.fiber.topological_vector_bundle

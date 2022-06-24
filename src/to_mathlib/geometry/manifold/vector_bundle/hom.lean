@@ -38,7 +38,7 @@ are only defined when they are Banach spaces over the same field. -/
 
 namespace smooth_vector_bundle
 
-variables {F₁ E₁ F₂ E₂} (e₁ e₁' : trivialization IB IE₁ F₁ E₁)
+variables (e₁ e₁' : trivialization IB IE₁ F₁ E₁)
   (e₂ e₂' : trivialization IB IE₂ F₂ E₂)
 variables [ring_hom_isometric σ]
 
