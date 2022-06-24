@@ -449,4 +449,51 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   to $[i/n, (i + 1)/n]$ before joining them.
 \end{proof}
 
+\begin{lemma}
+  \label{lem:improve_htpy_loc}
+  \uses{def:ample_relation_loc, def:holonomic_loc}
+  Let $\F$ be a homotopy of formal solutions of $\Rel$.
+  Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
+  the interior of $K_1$.
+  Assume each $\F_t$ is holonomic and equal to $\F₀$ near a closed subset $A$ of $E$,
+  and $\F₁$ is holonomic near a closed subset $C$ of $E$.
+  Let $ε$ be a positive real number.
+
+  If $\Rel$ is open and ample then there is a homotopy $\F'_t$ such that:
+  \begin{enumerate}
+    \item
+      $\F'₀ = \F₀$
+    \item
+      $\F'_t$ is a formal solution of $\Rel$ for all $t$~;
+    \item
+      $\F'_t(x) = \F₀(x)$ for all $t$ when $x$ is near $A$.
+    \item
+      $\F'_t(x) = \F_t(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$.
+    \item
+      for all $t$ and $x$, either $\F'_t(x) = \bs \F_{t'}(x)$ for some $t'$ or
+      $d(\bs \F'_t(x), \bs \F₁(x)) ≤ ε$~;
+    \item
+      $\F'_1$ is holonomic near $K_0$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:h_principle_open_ample_loc}
+  We apply \Cref{lem:h_principle_open_ample_loc} to $\F₁$ with closed subset $C ∪ A$.
+  This way we get a homotopy $t ↦ \G_t$ starting at $\G₀ = \F₁$, relative to $C ∪ A$ and the
+  complement of $K₁$ and such that $\G₁$ is holonomic on $K₀$.
+  Let $ρ \co E → [0, 1]$ be a smooth cut-off function which equals one on a
+  neighborhood of $K₀$ and vanishes outside $K₁$.
+
+  We set
+  \[
+    \F'_t(x) = \begin{cases}
+      \F_{2t/(2 - ρ(x))}(x) & \text{if $t ≤ 1 - ρ(x)/2$}\\
+      \G_{2t/(2 - ρ(x)) - 1}(x) & \text{if $t ≥ 1 - ρ(x)/2$}
+    \end{cases}
+  \]
+  Near $K₀$, where $ρ$ equals one, this $\F'$ is simply the concatenation of $\F$ and
+  $\G$. Outside $K₁$ where $ρ$ vanishes, it is simply $\F$.
+\end{proof}
+
 % vim: set expandtab sw=2 tabstop=2:
