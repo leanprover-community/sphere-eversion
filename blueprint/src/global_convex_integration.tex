@@ -616,7 +616,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
     \item
       if $π(n+1) = π(n)$ then $F_{n+1, t}$ coincides with $F_{n, t}$ for all $t$~;
     \item
-      $F_{n+1, 1}$ is holonomic on $K_{≤ n} := \bigcup_{i ≤ π(n)} φ_i(\bar B_E)$~;
+      $F_{n+1, 1}$ is holonomic on $\bigcup_{i < π(n)} φ_i(\bar B_E)$~;
     \item
       each $F_{n+1, t}$ coincides with $F_{n, t}$ outside $φ_{π(n)}(E)$.
   \end{itemize}
@@ -625,45 +625,27 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   which has the required properties (the first two conditions are clear and the
   other ones don't say anything about $F_0$). Now assume $F_n$ has been constructed.
   If $π(n+1) = π(n)$ then we set $F_{n+1} = F_n$.
-  Otherwise we have $π(n+1) > π(n)$. For brevity, we set $i = π(n+1)$
-  and $C = A ∩ φ_{π(n)}(\bar B_E) ∩ K_{≤ n}$.
+  Otherwise we have $π(n+1) > π(n)$.
 
   For any $t$, since $d(\bs F, \bs F_{n, t}) < ε$ by induction hypothesis,
   $\bs F_{n, t}$ sends $φ_i(E)$ into $ψ_{j(i)}(F)$.
 
   \Cref{def:transfer_map} then
-  turns $F_n$ into a homotopy of section $G$ of $J¹(E, F)$.
+  turns $F_n$ into a homotopy of sections $\F$ of $J¹(E, F)$.
+  According to \Cref{lem:transfer}, each $\F_t$ is a formal solution of
+  the relation $\Rel_i$ induced by $\Rel$ in $J¹(E, F)$ via $φ_{π(n)}$ and
+  $ψ_{j(π(n))}$, $\F$ is relative to $φ_{π(n)}⁻¹(A)$
+  and $\F_1$ is holonomic near $φ_{π(n)}⁻¹(A ∪ \bigcup_{i < π(n)} φ_i(\bar B_E))$.
+
   The new homotopy $F_{n+1}$ will be constructed by updating $F_n$ using some
-  homotopy $\bar H$ of sections of $J¹(E, F)$. In order to ensure
-  $d(\bs F, \bs F_{n+1}) < ε$, it suffices to ensure
-  $d(\bs F_n, \bs F_{n+1}) < ε - d(\bs F, \bs F_n)$.
-  This will hold as soon as, for all $e$ and $t$, $‖\bs G_t(e) - \bs \bar
-  H_t(e)‖ < η$ for some positive $η$ given by
-  \Cref{lem:updating}.
-  According to \Cref{lem:transfer}, each $G_t$ is a formal solution of
-  the relation $\Rel_i$ induced by $\Rel$ in $J¹(E, F)$ via $φ_i$ and
-  $ψ_{j(i)}$, and $G_1$ is holonomic near $φ_i⁻¹(C)$.
-
-  Hence \Cref{lem:h_principle_open_ample_loc} can be applied to $G₁$ with
-  $K₀ = \overline{B_E}$, $K₁ = 2\overline{B_E}$ (the ball with radius $2$ around
-  the origin in $E$) and $C = φ_i⁻¹(A ∪ K_{≤ n-1})$, with precision $η$. This
-  way we get a homotopy $t ↦ H_t$ starting at $H₀ = G₁$, relatve to $C$ and the
-  complement of $K₁$ and such that $H₁$ is holonomic on $\overline B_E$.
-  Let $ρ \co E → [0, 1]$ be a smooth cut-off function which equals one on a
-  neighborhood of $\overline B_E$ and vanishes outside $2B_E$.
-
-  We define a new homotopy $\bar H$ of sections of $J¹(E, F)$ as:
-  \[
-    \bar H_t(x) = \begin{cases}
-      G_{2t/(2 - ρ(x))}(x) & \text{if $t ≤ 1 - ρ(x)/2$}\\
-      H_{2t/(2 - ρ(x)) - 1}(x) & \text{if $t ≥ 1 - ρ(x)/2$}
-    \end{cases}
-  \]
-  Near $K₀$, where $ρ$ equals one, this $\bar H$ is simply the concatenation of $G$ and
-  $H$. Outside $K₁$ where $ρ$ vanishes, it is simply $G$.
-  We now transfer back this homotopy $\bar H$ to get $F_{n+1}$. \Cref{lem:transfer}
-  ensures that we get a homotopy of formal solutions that is holonomic on
-  $K_{≤ n}$.
+  homotopy $\F'$ of sections of $J¹(E, F)$. In order to ensure
+  $d(\bs F, \bs F_{n+1}) < ε$, it suffices to ensure that, for each $x$ and $t$,
+  either $\F_{n+1, t}(x) = \F_{n, t'}(x)$ for some $t'$ or
+  $d(\bs F_{n, 1}(x), \bs F_{n+1, t}(x)) < ε(x) - d(\bs F(x), \bs F_{n, 1}(x))$.
+  The latter will hold as soon as, for all $e$ and $t$,
+  $‖\bs \F_1(e) - \bs \F'_t(e)‖ < η$ for some positive $η$ given by
+  \Cref{lem:updating} (applied to $M × [0, 1]$ and $N$).
+  So \Cref{lem:improve_htpy_loc} gives a suitable $\F'$.
 
   Now that the inductive construction is completed, we apply
   \Cref{lem:loc_ultim_const} to make sure our sequence $F_n$ is locally
