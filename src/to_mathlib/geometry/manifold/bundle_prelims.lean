@@ -6,13 +6,6 @@ attribute [ext] topological_fiber_bundle.trivialization
 attribute [ext] topological_vector_bundle.pretrivialization
 attribute [ext] topological_vector_bundle.trivialization
 
-/- TODO: bug report: `refl` "accepts" the following -/
--- example {α : Type*} (a b : set α) : a ⊆ b :=
--- by refl' -- closes the goal
-/- TODO: bug report 2: the one mentioned on Discord -/
-
-
-
 open bundle set
 open_locale manifold
 
