@@ -108,3 +108,7 @@ begin
 end
 
 end basic_smooth_vector_bundle_core
+
+/-!
+# Homs of basic smooth vector bundle core
+-/
