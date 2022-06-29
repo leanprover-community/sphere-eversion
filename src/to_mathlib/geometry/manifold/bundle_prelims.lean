@@ -1,4 +1,3 @@
-import to_mathlib.topology.vector_bundle.hom
 import geometry.manifold.diffeomorph
 
 attribute [ext] topological_fiber_bundle.pretrivialization
