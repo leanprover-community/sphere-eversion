@@ -3,8 +3,7 @@ Copyright (c) 2022 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
-import to_mathlib.geometry.manifold.vector_bundle.hom
-import to_mathlib.geometry.manifold.vector_bundle.pullback
+import to_mathlib.geometry.manifold.vector_bundle.basic_core_constructions
 
 noncomputable theory
 
@@ -21,29 +20,9 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   (I' : model_with_corners 𝕜 E' H')
   (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-/-
-The definition below is an unreadable term but we keep the tactic version commented out
-for people who want to understand.
-
-A element `i : ↥(atlas (model_prod H H') (M × M'))` is secretely a pair consisting of
-an element `atlas H M` and an element of `atlas H' M'`. They are accessed as
-`i.2.some` and `i.2.some_spec.some` because `prod_charted_space` is defined using `image2`.
--/
 
 def one_jet_bundle_core : basic_smooth_vector_bundle_core (I.prod I') (M × M') (E →L[𝕜] E') :=
-{ coord_change := λ i j x, (continuous_linear_map.compL 𝕜 E E' E' (fderiv_within 𝕜 (I' ∘ (j.2.some_spec.some) ∘ (i.2.some_spec.some).symm ∘ I'.symm) (range I') (I' x.2))) ∘L (continuous_linear_map.compL 𝕜 E E E').flip (fderiv_within 𝕜 (I ∘ (j.2.some) ∘ (i.2.some).symm ∘ I.symm) (range I) (I x.1)),
-/- begin
-  cases i with ii hi,
-  choose i i' hi hi' H using hi,
-  --subst H,
-  cases j with jj hj,
-  choose j j' hj hj' H' using hj,
-  --subst H',
-  exact (continuous_linear_map.compL 𝕜 E E' E' (fderiv_within 𝕜 (I' ∘ j' ∘ i'.symm ∘ I'.symm) (range I') (I' x.2))) ∘L (continuous_linear_map.compL 𝕜 E E E').flip (fderiv_within 𝕜 (I ∘ j ∘ i.symm ∘ I.symm) (range I) (I x.1)),
-end, -/
-  coord_change_self := sorry,
-  coord_change_comp := sorry,
-  coord_change_smooth_clm := sorry }
+(tangent_bundle_core I M).pullback_fst.hom (tangent_bundle_core I' M').pullback_snd
 
 include I I'
 variables {M M'}

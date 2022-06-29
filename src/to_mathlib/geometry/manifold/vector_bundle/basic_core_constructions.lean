@@ -20,7 +20,7 @@ variables {𝕜 B B' VB VB' HB HB' : Type*}
 variables [nondiscrete_normed_field 𝕜]
 variables [normed_group VB] [normed_space 𝕜 VB] [normed_group VB'] [normed_space 𝕜 VB']
 variables [topological_space HB] [topological_space HB']
-variables {IB : model_with_corners 𝕜 VB HB} (IB' : model_with_corners 𝕜 VB' HB')
+variables {IB : model_with_corners 𝕜 VB HB} {IB' : model_with_corners 𝕜 VB' HB'}
 variables {F F' : Type*}
 variables [normed_group F] [normed_space 𝕜 F] [normed_group F'] [normed_space 𝕜 F']
 variables [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
@@ -71,7 +71,7 @@ def pullback (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
 /-- The pullback of `basic_smooth_vector_bundle_core` along the map `B × B' → B` -/
 def pullback_fst : basic_smooth_vector_bundle_core (IB.prod IB') (B × B') F :=
 begin
-  refine Z.pullback (IB.prod IB') cont_mdiff_map.fst prod.fst cont_diff_fst prod.fst
+  refine Z.pullback cont_mdiff_map.fst prod.fst cont_diff_fst prod.fst
     (λ x, rfl) _ (λ e, (image2.some local_homeomorph.prod _ _ e).1) _ _ _ _,
   { simp_rw [model_with_corners_prod_coe, range_prod_map, prod_subset_preimage_fst] },
   { rintro ⟨_, ⟨e₁, e₂, he₁, he₂, rfl⟩⟩ b,
@@ -96,7 +96,7 @@ omit Z
 def pullback_snd (Z : basic_smooth_vector_bundle_core IB' B' F) :
   basic_smooth_vector_bundle_core (IB.prod IB') (B × B') F :=
 begin
-  refine Z.pullback (IB.prod IB') cont_mdiff_map.snd prod.snd cont_diff_snd prod.snd
+  refine Z.pullback cont_mdiff_map.snd prod.snd cont_diff_snd prod.snd
     (λ x, rfl) _ (λ e, (image2.some local_homeomorph.prod _ _ e).2) _ _ _ _,
   { simp_rw [model_with_corners_prod_coe, range_prod_map, prod_subset_preimage_snd] },
   { rintro ⟨_, ⟨e₁, e₂, he₁, he₂, rfl⟩⟩ b,
@@ -121,7 +121,7 @@ end
 
 open continuous_linear_map
 
-def hom2 : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
+def hom : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
 { coord_change := λ e e' b,
     compL 𝕜 F F' F' (Z'.coord_change e e' b) ∘L
     (compL 𝕜 F F F').flip (Z.coord_change e' e (e'.1 (e.1.symm b))),
