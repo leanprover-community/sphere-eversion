@@ -989,15 +989,15 @@ begin
   obtain ⟨V₂, hV₂, hLV₂, h2V₂, hcV₂⟩ :=
   exists_open_between_and_is_compact_closure hL₁
     (hcV₀.is_closed.is_open_compl.inter hU₁)
-    (subset_inter (disjoint_iff_subset_compl_left.mp hV₀L₁) $ (diff_subset _ _).trans hKU₁),
+    (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) $ (diff_subset _ _).trans hKU₁),
   obtain ⟨V₁, hV₁, hLV₁, hV₁₂, hcV₁⟩ :=
     exists_open_between_and_is_compact_closure hL₁ hV₂ hLV₂,
-  rw [subset_inter_iff, ← disjoint_iff_subset_compl_left] at h2V₂,
+  rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂,
   rcases h2V₂ with ⟨hV₀₂, hV₂U₁⟩,
   have hVU₁ : V₁ ⊆ U₁ := subset_closure.trans (hV₁₂.trans $ subset_closure.trans hV₂U₁),
   have hdisj : disjoint (closure V₀ ∪ V₂ᶜ) (closure V₁),
   { refine disjoint.union_left (hV₀₂.mono_right (hV₁₂.trans subset_closure)) _,
-    rw [disjoint_iff_subset_compl_left, compl_compl], exact hV₁₂ },
+    rw [← subset_compl_iff_disjoint_left, compl_compl], exact hV₁₂ },
   refine ⟨V₀ ∪ (U₁ ∩ U₀) ∪ V₁, ((hV₀.union $ hU₁.inter hU₀).union hV₁).mem_nhds_set.mpr _, _⟩,
   { refine union_subset (hKV₀.trans $ (subset_union_left _ _).trans $ subset_union_left _ _) _,
     rw [← inter_union_diff K₁], exact

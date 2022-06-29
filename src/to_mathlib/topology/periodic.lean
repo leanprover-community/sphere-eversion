@@ -43,8 +43,7 @@ begin
   intros k x,
   induction k with k hk,
   { simp },
-  change f (x + (k + 1)) = _,
-  rw [← hk, ← add_assoc, h]
+  rw [nat.cast_succ, ← add_assoc, h, hk]
 end
 
 lemma one_periodic.add_int {f : ℝ → α} (h : one_periodic f) : ∀ k : ℤ, ∀ x, f (x + k) = f x :=

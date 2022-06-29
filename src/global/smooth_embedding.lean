@@ -136,7 +136,7 @@ variables (E) {M}
 lemma nice_atlas'
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
   ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M),
-  countable t ∧
+  t.countable ∧
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
