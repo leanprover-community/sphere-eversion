@@ -252,6 +252,8 @@ converges pointwise and the limit inherits all local properties of the $f_n$
 
 \begin{definition}
 \label{def:pull_back_bundle}
+\leanok
+\lean{basic_smooth_vector_bundle_core.pullback}
 For every bundle $p : E → B$ and every map $f \co B' → B$,
 the pull-back bundle $f^*E → B'$ is defined by
 $f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
@@ -262,6 +264,8 @@ The case of vector bundles.
 
 \begin{definition}
 \label{def:hom_bundle}
+\leanok
+\lean{basic_smooth_vector_bundle_core.hom}
 Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
 $B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
 $E_b$ to $F_b$ for some $b$ in $B$, with the obvious projection map.
@@ -278,6 +282,8 @@ will use other tricks here. The facts that really matter are listed in
 
 \begin{definition}
 \label{def:one_jet_space}
+\leanok
+\lean{one_jet_bundle_core}
 \uses{def:pull_back_bundle, def:hom_bundle}
 Let $M$ and $N$ be smooth manifolds. Denote by
 $p_1$ and $p_2$ the projections of $M × N$ to
@@ -296,6 +302,8 @@ since $φ$ lives in $\Hom(T_mM, T_nN)$ which depends on $m$ and $n$.
 \begin{definition}
 \label{def:one_jet_extension}
 \uses{def:one_jet_space}
+\leanok
+\lean{one_jet_ext}
 The $1$-jet of a smooth map $f \co M → N$ is the map from
 $m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
 \end{definition}
@@ -307,6 +315,7 @@ living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
 
 \begin{lemma}
 \label{lem:one_jet_extension_prop}
+\lean{smooth_one_jet_ext, one_jet_ext_proj}
 \uses{def:one_jet_extension}
 For every smooth map $f \co M → N$,
 \begin{enumerate}
@@ -328,6 +337,8 @@ For every smooth map $f \co M → N$,
 
 \begin{definition}
 \label{def:holonomic_section}
+\leanok
+\lean{one_jet_sec.is_holonomic_at, one_jet_sec.is_holonomic_at_iff}
 \uses{def:one_jet_space, lem:one_jet_extension_prop}
 A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
 $1$--jet of its base map.
@@ -340,6 +351,8 @@ necessarily $\bs \F$.
 
 \begin{definition}
   \label{def:rel}
+  \leanok
+  \lean{rel_mfld}
   \uses{def:one_jet_space}
   A first order differential relation for maps from $M$ to $N$ is a
   subset $\Rel$ of $J^1(M, N)$.
@@ -347,6 +360,8 @@ necessarily $\bs \F$.
 
 \begin{definition}
   \label{def:formal_sol}
+  \leanok
+  \lean{formal_sol, sol}
   \uses{def:rel, def:one_jet_extension}
   A formal solution of a differential relation $\Rel ⊂ J^1(M, N)$ is a
   section of $J^1(M, N) → M$ taking values in $\Rel$.
