@@ -70,9 +70,28 @@ end set
 namespace local_homeomorph
 
 variables {α β γ δ : Type*} [topological_space α] [topological_space β]
-variables [topological_space γ] [topological_space δ]
+variables [topological_space γ] [topological_space δ] {e : local_homeomorph α β}
 
-variables (α β)
+lemma trans_apply {e₁ : local_homeomorph α β} {e₂ : local_homeomorph β γ} {x : α} :
+  (e₁ ≫ₕ e₂) x = e₂ (e₁ x) :=
+rfl
+
+lemma image_source_eq_target (e : local_homeomorph α β) : e '' e.source = e.target :=
+e.to_local_equiv.image_source_eq_target
+
+lemma source_subset_preimage_target : e.source ⊆ e ⁻¹' e.target :=
+e.maps_to
+
+lemma symm_image_target_eq_source (e : local_homeomorph α β) : e.symm '' e.target = e.source :=
+e.symm.image_source_eq_target
+
+lemma target_subset_preimage_source : e.target ⊆ e.symm ⁻¹' e.source :=
+e.symm_maps_to
+
+-- lemma foo {e₁ : local_homeomorph β α} {e₂ : local_homeomorph β γ} {x : α} :
+--   (e₁.symm ≫ₕ e₂).source ⊆ (e₁.symm ≫ₕ e₂) ⁻¹' (e₂.symm ≫ₕ e₁).source :=
+-- source_subset_preimage_target
+
 
 -- lemma prod_eq {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ} :
 --   e₁.prod e₂ = e₁'.prod e₂' →
@@ -93,7 +112,7 @@ variables {ι : Type*} {B : Type*} {F : Type*} {Z : Type*} {proj : Z → B}
 variables [topological_space B] [topological_space F] [topological_space Z]
 
 lemma to_pretrivialization_injective :
-  function.injective (λ e : trivialization F proj, e.to_pretrivialization) :=
+  injective (λ e : trivialization F proj, e.to_pretrivialization) :=
 by { intros e e', rw [pretrivialization.ext_iff, trivialization.ext_iff,
   ← local_homeomorph.to_local_equiv_injective.eq_iff], exact id }
 
@@ -110,7 +129,7 @@ variables [nondiscrete_normed_field R] [∀ x, add_comm_monoid (E x)] [∀ x, mo
 namespace trivialization
 
 lemma to_pretrivialization_injective :
-  function.injective (λ e : trivialization R F E, e.to_pretrivialization) :=
+  injective (λ e : trivialization R F E, e.to_pretrivialization) :=
 by { intros e e', rw [pretrivialization.ext_iff, trivialization.ext_iff,
   ← topological_fiber_bundle.trivialization.to_pretrivialization_injective.eq_iff], exact id }
 
@@ -150,6 +169,20 @@ lemma structure_groupoid.subset_maximal_atlas [has_groupoid M G] : atlas H M ⊆
 
 end charted_space
 
+namespace model_with_corners
+
+variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+  {H : Type*} [topological_space H] (I : model_with_corners 𝕜 E H)
+
+lemma injective : injective I :=
+left_inverse.injective I.left_inv
+
+lemma preimage_image (s : set H) : I ⁻¹' (I '' s) = s :=
+I.injective.preimage_image s
+
+end model_with_corners
+
 
 namespace smooth_manifold_with_corners
 
@@ -160,6 +193,18 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
 
 lemma subset_maximal_atlas [smooth_manifold_with_corners I M] : atlas H M ⊆ maximal_atlas I M :=
 structure_groupoid.subset_maximal_atlas _
+
+variables (I)
+
+lemma _root_.cont_diff_on_coord_change [smooth_manifold_with_corners I M]
+  {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
+  cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
+(has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
+
+lemma _root_.cont_diff_on_coord_change_symm [smooth_manifold_with_corners I M]
+  {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
+  cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
+(has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
 
 end smooth_manifold_with_corners
 
