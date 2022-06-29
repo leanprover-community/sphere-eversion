@@ -20,13 +20,14 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   (I' : model_with_corners 𝕜 E' H')
   (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-
+/-- The one jet-bundle, as a a `basic_smooth_vector_bundle_core` -/
 def one_jet_bundle_core : basic_smooth_vector_bundle_core (I.prod I') (M × M') (E →L[𝕜] E') :=
 (tangent_bundle_core I M).pullback_fst.hom (tangent_bundle_core I' M').pullback_snd
 
 include I I'
 variables {M M'}
 
+/-- The fibers of the one jet-bundle. -/
 @[nolint unused_arguments]
 def one_jet_space (p : M × M') : Type* := E →L[𝕜] E'
 

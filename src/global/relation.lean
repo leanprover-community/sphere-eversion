@@ -35,6 +35,7 @@ variables
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
 
+/-- A first-order differential relation for maps from `M` to `N` is a subset of the 1-jet bundle. -/
 def rel_mfld := set (one_jet_bundle I M I' M')
 
 instance : has_mem (one_jet_bundle I M I' M') (rel_mfld I M I' M') := set.has_mem

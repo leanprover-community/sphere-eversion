@@ -44,11 +44,17 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
 def one_jet_ext (f : M → M') : M → one_jet_bundle I M I' M' :=
 λ x, ⟨(x, f x), (mfderiv I I' f x : tangent_space I x →L[𝕜] tangent_space I' (f x))⟩
 
+variables {I I'}
+
 @[simp, mfld_simps] lemma one_jet_ext_one_jet_bundle_proj {f : M → M'} {x :  M} :
   one_jet_bundle.proj I M I' M' (one_jet_ext I I' f x) = (x, f x) := rfl
 
 @[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x :  M} :
   (one_jet_ext I I' f x).1 = (x, f x) := rfl
+
+lemma smooth_one_jet_ext {f : M → M'} (h : smooth I I' f) :
+  smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
+sorry
 
 variables (I I' M M')
 
@@ -99,6 +105,11 @@ end
 of its base map at every point. -/
 def one_jet_sec.is_holonomic (F : one_jet_sec I M I' M') : Prop :=
 ∀ x, F.is_holonomic_at x
+
+/-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/
+def one_jet_ext_sec (f : C^∞⟮I, M; I', M'⟯) : one_jet_sec I M I' M' :=
+⟨one_jet_ext I I' f, λ x, rfl, smooth_one_jet_ext f.smooth⟩
+
 end general
 
 section real
