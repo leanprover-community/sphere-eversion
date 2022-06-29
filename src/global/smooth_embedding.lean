@@ -119,16 +119,16 @@ variables (𝕜)
 
 /-- A diffeomorphism from `E` onto the open ball of radius `r` in `E` centred at a point `c`,
 sending the open ball of radius 1 centered at 0 to the open ball of radius `r/2` centred at `c`. -/
-def ball_open_smooth_embedding (c : E) {r : ℝ} (h : 0 < r) :
+def open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
   open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E :=
 sorry
 
-@[simp] lemma range_ball_open_smooth_embedding (c : E) {r : ℝ} (h : 0 < r) :
-  range (ball_open_smooth_embedding 𝕜 c h) = (ball c r : set E) :=
+@[simp] lemma range_open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
+  range (open_smooth_embedding_to_ball 𝕜 c h) = (ball c r : set E) :=
 sorry
 
-@[simp] lemma ball_open_smooth_embedding_image_unit_ball (c : E) {r : ℝ} (h : 0 < r) :
-  ball_open_smooth_embedding 𝕜 c h '' ball 0 1 = (ball c (r/2) : set E) :=
+@[simp] lemma open_smooth_embedding_to_ball_image_unit_ball (c : E) {r : ℝ} (h : 0 < r) :
+  open_smooth_embedding_to_ball 𝕜 c h '' ball 0 1 = (ball c (r/2) : set E) :=
 sorry
 
 variables (E) {M}
@@ -162,20 +162,20 @@ begin
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
     exists_countable_locally_finite_cover surjective_id hp hp' hB₀ hB₁ hB₂,
   refine ⟨M × ℝ, t, λ z, _, ht₁, λ z, _, _, _⟩,
-  { have h : range (ball_open_smooth_embedding 𝕜 (chart_at E z.1.1 z.1.1) $ hp _ _ $ ht₂ _ z.2) ⊆
+  { have h : range (open_smooth_embedding_to_ball 𝕜 (chart_at E z.1.1 z.1.1) $ hp _ _ $ ht₂ _ z.2) ⊆
       (chart_at E z.1.1).target,
-    { simpa only [range_ball_open_smooth_embedding] using (ht₂ _ z.2).2.1, },
+    { simpa only [range_open_smooth_embedding_to_ball] using (ht₂ _ z.2).2.1, },
     exact open_smooth_embedding_of_subset_chart_target M h, },
   { simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
-    simp only [range_comp, range_ball_open_smooth_embedding],
+    simp only [range_comp, range_open_smooth_embedding_to_ball],
     exact (ht₂ z.1 z.2).2.2, },
   { convert ht₃,
     ext1,
     simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target, comp_app],
-    simpa only [range_comp, range_ball_open_smooth_embedding], },
+    simpa only [range_comp, range_open_smooth_embedding_to_ball], },
   { simpa only [subtype.val_eq_coe, subtype.coe_mk, coe_open_smooth_embedding_of_subset_chart_target,
-      Union_coe_set, image_comp (chart_at E _).symm (ball_open_smooth_embedding 𝕜 _ _),
-      ball_open_smooth_embedding_image_unit_ball] using ht₄, },
+      Union_coe_set, image_comp (chart_at E _).symm (open_smooth_embedding_to_ball 𝕜 _ _),
+      open_smooth_embedding_to_ball_image_unit_ball] using ht₄, },
 end
 
 variables [nonempty M]
