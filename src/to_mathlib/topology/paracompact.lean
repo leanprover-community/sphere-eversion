@@ -20,7 +20,7 @@ lemma exists_countable_locally_finite_cover
   (hB₁ : ∀ i r, p i r → c i ∈ B i r)
   (hB₂ : ∀ i, (𝓝 (c i)).has_basis (p i) (B i)) :
   ∃ (s : set (ι × ℝ)),
-    countable s ∧
+    s.countable ∧
     (∀ z ∈ s, ↿p z) ∧
     locally_finite (↿B ∘ (coe : s → ι × ℝ)) ∧
     (⋃ z ∈ s, B (z : ι × ℝ).fst ((z : ι × ℝ).snd / 2)) = univ :=

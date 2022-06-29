@@ -85,11 +85,11 @@ loop.per' γ
 protected lemma one (γ : loop X) : γ 1 = γ 0 :=
 by { convert γ.per 0, rw [zero_add] }
 
-lemma add_nat_eq (γ : loop X) (t : ℝ) : ∀ (n : ℕ), γ (t+n) = γ t
-| 0 := (add_zero t).symm ▸ rfl
+lemma add_nat_eq (γ : loop X) (t : ℝ) : ∀ (n : ℕ), γ (t + n) = γ t
+| 0 := by rw [nat.cast_zero, add_zero]
 | (nat.succ n) := by rw [← add_nat_eq n, nat.cast_succ, ← add_assoc, γ.per]
 
-lemma add_int_eq (γ : loop X) (t : ℝ) (n : ℤ) : γ (t+n) = γ t :=
+lemma add_int_eq (γ : loop X) (t : ℝ) (n : ℤ) : γ (t + n) = γ t :=
 begin
   induction n using int.induction_on with n hn n hn,
   { norm_cast, rw add_zero },
@@ -257,7 +257,8 @@ begin
   { change (t : ℝ) ≠ 1 at ht1,
     have : fract ↑t = t.val,
     { rw fract_eq_iff,
-      exact ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, sub_self _⟩⟩ },
+      refine ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, _⟩⟩,
+      rw [int.cast_zero, subtype.val_eq_coe, sub_self] },
     simp only [this, γ.extend_extends t.2],
     congr',
     rw subtype.ext_iff_val }

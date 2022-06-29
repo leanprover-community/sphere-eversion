@@ -20,11 +20,14 @@ lemma exists_cont_diff_zero_one_nhds {E : Type*} [normed_group E]
   ∃ f : E → ℝ, cont_diff ℝ ⊤ f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 0) ∧ (∀ᶠ x in 𝓝ˢ t, f x = 1) ∧
     ∀ x, f x ∈ Icc (0 : ℝ) 1 :=
 begin
-  rcases normal_exists_closure_subset hs ht.is_open_compl (disjoint_iff_subset_compl_left.mp hd.symm) with ⟨u, u_op, hsu, hut⟩,
+  rcases normal_exists_closure_subset hs ht.is_open_compl
+    (subset_compl_iff_disjoint_left.mpr hd.symm) with ⟨u, u_op, hsu, hut⟩,
   have hcu : is_closed (closure u) := is_closed_closure,
-  rcases normal_exists_closure_subset ht hcu.is_open_compl (subset_compl_comm.mp hut) with ⟨v, v_op, htv, hvu⟩,
+  rcases normal_exists_closure_subset ht hcu.is_open_compl (subset_compl_comm.mp hut) with
+    ⟨v, v_op, htv, hvu⟩,
   have hcv : is_closed (closure v) := is_closed_closure,
-  rcases exists_cont_diff_zero_one hcu hcv (disjoint_iff_subset_compl_left.mpr hvu) with ⟨f, hfsmooth, hfu, hfv, hf⟩,
+  rcases exists_cont_diff_zero_one hcu hcv (subset_compl_iff_disjoint_left.mp hvu) with
+    ⟨f, hfsmooth, hfu, hfv, hf⟩,
   refine ⟨f, hfsmooth, _, _, hf⟩,
   apply eventually_of_mem (mem_of_superset (u_op.mem_nhds_set.mpr hsu) subset_closure) hfu,
   apply eventually_of_mem (mem_of_superset (v_op.mem_nhds_set.mpr htv) subset_closure) hfv
@@ -43,5 +46,5 @@ begin
   { refine ⟨f, hfsmooth, h1, _, hf⟩,
     intros x hx,
     exact h0.on_set _ (λ hx', hx $ interior_subset hx') },
-  rwa [disjoint_iff_subset_compl_left, compl_compl]
+  rwa [← subset_compl_iff_disjoint_left, compl_compl]
 end
