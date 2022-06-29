@@ -1,5 +1,8 @@
 import tactic.linarith
+import algebra.order.with_zero
 import topology.basic
+
+import to_mathlib.set_theory.cardinal.basic
 
 /-!
 # Indexing types
@@ -72,3 +75,31 @@ nat.cases_on n nat.linear_order (λ _, fin.linear_order)
 
 instance (n : ℕ) : indexing (index_type n) :=
 nat.cases_on n nat.indexing (λ _, fin.indexing _)
+
+lemma set.countable_iff_exists_nonempty_index_type_equiv
+  {α : Type*} {s : set α} (hne : s.nonempty) :
+  s.countable ↔ ∃ n, nonempty (index_type n ≃ s) :=
+begin
+  -- Huge golfing opportunity.
+  cases @set.finite_or_infinite _ s,
+  { refine ⟨λ hh, ⟨h.to_finset.card, _⟩, λ _, h.countable⟩,
+    have : 0 < h.to_finset.card,
+    { rw finset.card_pos, exact (set.finite.nonempty_to_finset h).mpr hne},
+    simp only [this, index_type_of_zero_lt],
+    have e₁ := fintype.equiv_fin h.to_finset,
+    rw [fintype.card_coe, h.coe_sort_to_finset] at e₁,
+    exact ⟨e₁.symm⟩, },
+  { refine ⟨λ hh, ⟨0, _⟩, _⟩,
+    { simp only [index_type_zero],
+      obtain ⟨_i⟩ := set.countable_infinite_iff_nonempty_denumerable.mp ⟨hh, h⟩,
+      haveI := _i,
+      exact ⟨(denumerable.eqv s).symm⟩, },
+    { rintros ⟨n, ⟨fn⟩⟩,
+      have hn : n = 0,
+      { by_contra hn,
+        replace hn : 0 < n := zero_lt_iff.mpr hn,
+        simp only [hn, index_type_of_zero_lt] at fn,
+        exact set.not_infinite.mpr ⟨fintype.of_equiv (fin n) fn⟩ h, },
+      simp only [hn, index_type_zero] at fn,
+      exact set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩, }, },
+end
