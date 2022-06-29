@@ -6,7 +6,7 @@ attribute [ext] topological_fiber_bundle.trivialization
 attribute [ext] topological_vector_bundle.pretrivialization
 attribute [ext] topological_vector_bundle.trivialization
 
-open bundle set
+open bundle set function
 open_locale manifold
 
 lemma Exists.const_snd {α : Sort*} {p : Prop} : (∃ x : α, p) → p
