@@ -20,7 +20,7 @@ particular their topology are metrizable and we will arbitrarily fix a
 compatible distance function on every manifold.
 
 \begin{definition}
-  \label{update}
+  \label{def:update}
   Given smooth open embeddings $φ : X → M$ and $ψ : Y → N$, for any map
   $f : M → N$ such that $f(φ(X)) ⊂ ψ(Y)$, and every map $g : X → Y$, the update of $f$
   using $g$ is the map from $M$ to $N$ sending $m$ to $ψ ∘ g ∘ φ⁻¹(m)$ if
@@ -660,6 +660,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   \proves{thm:open_ample}
   \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
   lem:ex_localisation, lem:localisation_stability,
+  lem:updating, lem:loc_ultim_const,
   lem:ample_iff_loc, lem:h_principle_open_ample_loc}
   Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
   assume there are no parameters. So we start with a single formal solution $F$
