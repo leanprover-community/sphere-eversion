@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -78,13 +81,7 @@
 
   </ul>
  </li>
-  <li></li>	
-  <li>	
-  <a href="dep_graph.html">Dependency graph</a>
-  </li>
-  <li>	
-  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
-  </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
 </ul>
 </nav>
 
@@ -96,21 +93,461 @@
 <h1 id="chap:global">3 Global theory of open and ample relations</h1>
 
 <h1 id="a0000000012">3.1 Preliminaries</h1>
-<h2 id="sec:vector_bundles_operations">3.1.1 Vector bundles operations</h2>
+<h2 id="sub:localisation_data">3.1.1 Localisation data</h2>
 
-<p><div class="definition_thmwrapper" id="def:pull_back_bundle">
+<p>In order to conveniently globalize the theory of the previous chapter, we’ll need a number of constructions and lemmas. By definition, manifolds are covered by open sets that are diffeomorphic to open sets of vector spaces. But for us it is slightly more convenient to work with smooth open embeddings of whole vector spaces. Here a smooth open embedding from a manifold \(X\) to a manifold \(Y\) is a smooth map \(φ : X → Y\) which is open and for which there is some smooth \(ψ : φ(X) → X\) such that \(ψ ∘ φ = \operatorname{Id}\) and \(φ ∘ ψ = \operatorname{Id}\). Remember that a family of sets \(V_i\) in a topological space \(X\) is locally finite if every point of \(X\) has a neighborhood that intersects only finitely many \(V_i\). Note that in this whole text, every manifold is paracompact by definition. In particular their topology are metrizable and we will arbitrarily fix a compatible distance function on every manifold. </p>
+<p><div class="definition_thmwrapper" id="def:update">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">3.1</span>
     <div class="thm_icons">
-    <a class="icon proof" href="chap-global.html#def:pull_back_bundle">#</a>
+    <a class="icon proof" href="chap-global.html#def:update">#</a>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> For every bundle \(p : E → B\) and every map \(f \! :B' → B\), the pull-back bundle \(f^*E → B'\) is defined by \(f^*E = \{ (b', e) ∈ B' × E \; |\;  p(e) = f(b')\} \) with the obvious projection to \(B'\). </p>
+  <p> Given smooth open embeddings \(φ : X → M\) and \(ψ : Y → N\), for any map \(f : M → N\) such that \(f(φ(X)) ⊂ ψ(Y)\), and every map \(g : X → Y\), the update of \(f\) using \(g\) is the map from \(M\) to \(N\) sending \(m\) to \(ψ ∘ g ∘ φ⁻¹(m)\) if \(m ∈ φ(E)\) and \(f(m)\) otherwise. </p>
+
+  </div>
+</div> </p>
+<p><div class="lemma_thmwrapper" id="lem:updating">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:updating">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000068"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:update">Definition 3.1</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(φ : X → M\) and \(ψ : Y → N\) be smooth open embeddings. Let \(K\) and \(L\) be compact sets in \(E\) and \(F\) respectively. Let \(f : M → N\) be a smooth map such that \(f(φ(X)) ⊂ ψ(L)\). Let \(g : X → Y\) be a smooth map which agrees with \(ψ⁻¹∘f∘φ\) outside of \(K\). Denote by \(f'\) the update of \(f\) using \(g\). </p>
+<ul class="itemize">
+  <li><p>\(f'\) is a smooth map from \(M\) to \(N\). </p>
+</li>
+  <li><p>For every continuous function \(ε : M → ℝ_{{\gt} 0}\), there is some positive number \(η\) such that, if \(∀ e, ‖g(e) - ψ⁻¹∘f∘φ(e)‖ {\lt} η\) then \(∀ m ∈ M, d(f(m), f'(m)) {\lt} ε(m)\). </p>
+</li>
+</ul>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000068">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>In order to prove smoothness of \(f'\), note that \(M = φ(E) ∪ φ(L)^c\). Both those sets are open and \(f'\) coincide with \(ψ ∘ g ∘ φ⁻¹\) on the first one and \(f\) on the second one. </p>
+<p>Let \(ε\) be a positive continuous function on \(M\). Since \(K\) is compact, we get a positive number \(ε₀\) such that \(ε(m) ≥ ε₀\) for each \(m\) in \(K\). We denote by \(L₁\) the closed \(1\)-thickening of \(ψ⁻¹∘f∘φ(K)\) in \(F\). This is a compact set so \(ψ\) is uniformly continuous on \(L₁\) and we get a positive \(τ\) such that for all \(x\) and \(y\) in \(L₁\), \(‖x - y‖ {\lt} τ ⇒ d(ψ(x), ψ(y)) {\lt} ε₀\). </p>
+<p>We now prove that \(η = \min (τ, 1)\) is suitable. Assume that \(∀ e, ‖g(e) - ψ⁻¹∘f∘φ(e)‖ {\lt} η\). Let \(m\) be a point in \(M\). If \(m\) isn’t in \(φ(K)\) then \(f'(m) = f(m)\) and in particular \(d(f(m), f'(m)) {\lt} ε(m)\). Now assume that \(m = φ(e)\) for some \(e\) in \(K\). By assumption \(‖g(e) - ψ⁻¹∘f∘φ(e)‖ {\lt} η\). In particular \(‖g(e) - ψ⁻¹∘f∘φ(e)‖ {\lt} 1\) hence \(g(e)\) is in \(L₁\). Since \(ψ⁻¹∘f∘φ(e)\) is also in \(L₁\) and \(‖g(e) - ψ⁻¹∘f∘φ(e)‖ {\lt} τ\), we get \(d(ψ∘ g(e), ψ ∘ ψ⁻¹∘f∘φ(e)) {\lt} ε₀\). This precisely means that \(d(f'(m), f(m)) {\lt} ε₀\). Since \(m\) is in \(K\), this is less than \(ε(m)\). </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:nice_atlas">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.3</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:nice_atlas">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(M\) be a manifold modelled on the normed space \(E\) and \((V_j)_{j ∈ J}\) a cover of \(M\) by open sets. There exists a countable set \(ι\) and a family of smooth open embeddings \(φ : ι × E → M\) such that </p>
+<ul class="itemize">
+  <li><p>for each \(i\) there is some \(j\) such that \(φ_i(E) \subseteq V_j\), </p>
+</li>
+  <li><p>\(i ↦ φ_i(E)\) is a locally-finite collection of sets in \(M\), </p>
+</li>
+  <li><p>\(⋃_i φ_i(B_E(0, 1)) = M\) where \(B_E(0, 1)\) is the open unit ball in \(E\). </p>
+</li>
+</ul>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000069">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>The proof is a standard compact-exhaustion argument. Let \(K_0, K_1, K_2, \ldots \) be a compact exhaustion of \(M\) and define: </p>
+<div class="displaymath" id="a0000000070">
+  \begin{align*}  C_n & = K_{n+2} \smallsetminus K_{n+1}^o,\\ U_n & = K_{n+3}^o \smallsetminus K_n. \end{align*}
+</div>
+<p> Thus: </p>
+<ul class="itemize">
+  <li><p>\(C_n\) is compact, </p>
+</li>
+  <li><p>\(U_n\) is open, </p>
+</li>
+  <li><p>\(C_n \subseteq U_n\), </p>
+</li>
+  <li><p>\(\bigcup _n C_n = M\), </p>
+</li>
+  <li><p>\(U_n \cap U_m = \emptyset \) if \(|n - m| {\gt} 2\). </p>
+</li>
+</ul>
+<p> For each \(n\) and \(x \in C_n\), let \(\psi _x\) be a smooth chart mapping an open neighbourhood of \(x\) to an open set of the model space \(E\). Writing \(y = \psi _x (x) \in E\), let: </p>
+<div class="displaymath" id="a0000000071">
+  \begin{align*}  W_{n, x} & = \psi _x^{-1} (B_E(y, r)),\\ \hat W_{n, x} & = \psi _x^{-1} (B_E(y, r/2)),\\ \end{align*}
+</div>
+<p> for some \(r {\gt} 0\) (which may depend on \(n\), \(x\)) sufficiently small that: </p>
+<ul class="itemize">
+  <li><p>the ball \(B_E(y, r)\) lies in the target of the chart \(\psi _x\), </p>
+</li>
+  <li><p>\(W_{n,x}\) is contained in \(U_n\), </p>
+</li>
+  <li><p>\(W_{n,x}\) is contained in \(V_j\) for some \(j\). </p>
+</li>
+</ul>
+<p> For each \(n\), choose a finite subcovering of \(C_n\) by \(\hat W_{n, x_1}, \ldots , \hat W_{n, x_{l_n}}\) and define \(\iota \subseteq ℕ \times M\) by: </p>
+<div class="displaymath" id="a0000000072">
+  \begin{align*}  \iota = \bigcup _n \{  (n, x_1), \ldots , (n, x_{l_n}) \}  . \end{align*}
+</div>
+<p> Note that \(\iota \) is countable and furthermore: </p>
+<ul class="itemize">
+  <li><p>for each \(i \in \iota \), there is some \(j\) such that \(W_i \subseteq V_j\), </p>
+</li>
+  <li><p>\((W_i)_{i \in \iota }\) is locally-finite (indeed more is true: \(W_i\) meets only finitely-many \(W_{i'}\) for \(i, i' \in \iota \) since \(W_{m, x} \cap W_{n, x'} = \emptyset \) if \(|n - m| {\gt} 2\)), </p>
+</li>
+  <li><p>\((\hat W_i)_{i \in \iota }\) covers \(M\). </p>
+</li>
+</ul>
+<p> Finally define the required maps \(\phi _i : E \to M\) by precomposing the smooth diffeomorphisms: \(B_E(y_i, r) \simeq W_i\) with smooth diffeomorphisms: </p>
+<div class="displaymath" id="a0000000073">
+  \begin{align*}  E \simeq B_E(y_i, r) \end{align*}
+</div>
+<p> sending \(B_E(0, 1)\) to \(B_E(y_i, r/2)\) according to the following diagram: </p>
+<div class="displaymath" id="a0000000074">
+  \begin{align*} \begin{array}{ccccccc} E &  \simeq &  B_E(y_i, r) &  \simeq &  W_i &  \subseteq &  M\\ \mbox{\rotatebox {90}{$\subseteq $}} & &  \mbox{\rotatebox {90}{$\subseteq $}} & &  \mbox{\rotatebox {90}{$\subseteq $}} & & \\ B_E(0, 1) &  \simeq &  B_E(y_i, r/2) &  \simeq &  \hat W_i &  \subseteq &  M\\ \end{array}\end{align*}
+</div>
+
+  </div>
+</div>
+<p><div class="definition_thmwrapper" id="def:localisation_data">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:localisation_data">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Let \(f : M → N\) be a continuous map between manifolds. A localisation data for \(f\) is a tuple \((E, F, ι, ι', φ, ψ, j)\) where \(E\) and \(F\) are normed vector spaces, \(ι\) is a finite or countable set, \(ι'\) is a set (that is morally also finite or countable but that will play no role), \(φ : ι × E → M\) and \(ψ : ι' × F → N\) are families of smooth open embeddings, and \(j : ι → ι'\) such that: </p>
+<ul class="itemize">
+  <li><p>\(⋃_i φ_i(B₁) = M\) </p>
+</li>
+  <li><p>\(∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)\) where \(B_F\) is the open unit ball in \(F\) </p>
+</li>
+  <li><p>\(⋃_i φ_i(B_E) = M\) where \(B_E\) is the open unit ball in \(E\). </p>
+</li>
+</ul>
+<p> Such a tuple will be denoted by \((φ, ψ, j)\) for brevity. </p>
+
+  </div>
+</div> </p>
+<p><div class="lemma_thmwrapper" id="lem:ex_localisation">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.5</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:ex_localisation">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:localisation_data">Definition 3.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Any continuous map between manifolds has some localisation data. </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000075">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> The preceding lemma (applied to the trivial cover of \(N\) by itself) gives a family of \(ψ : ι' × F → N\) of open smooth embeddings that the images of \(B_F\) cover \(N\). We then apply this lemma again to the cover of \(M\) given by all \(f⁻¹(ψ_j(B_F))\). </p>
+
+  </div>
+</div>
+<p>The general idea will be to apply the results of the previous chapters to all the \(ψ_{j(i)}⁻¹ ∘ f ∘ φ_i : E → F\) for some maps \(f\). However we must be careful that doing this for some \(i\) does not ruin the setup for the next \(i\). This is easier to control using a distance function on the target manifold as in <a href="chap-global.html#lem:localisation_stability">Lemma 3.7</a> below. First we need a general lemma about a single metric space. </p>
+<p><div class="lemma_thmwrapper" id="lem:stability_cover">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.6</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:stability_cover">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> In a paracompact metric space \(X\), let \(V : ι → \operatorname{\mathcal{P}}{X}\) be a locally finite collection of open subsets of \(X\) and let \(K : ι → \operatorname{\mathcal{P}}{X}\) be a family of compact subsets such that \(K_i ⊂ V_i\) for all \(i\). There existe a continuous function \(δ : X → ℝ_{{\gt} 0}\) such that: </p>
+<div class="displaymath" id="a0000000077">
+  \[  ∀ x\,  x',\;  ∀ i, \left[x ∈ K_i \text{ and } d(x, x') {\lt} δ(x)\right] ⇒ x' ∈ V_i.  \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000076">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>We first note that, for any given \(i\), compactness of \(K\) and openness of \(V_i\) give a positive number \(δ_i\) such that the \(δ_i\)-neighborhood of \(K_i\) is contained in \(V_i\). We now prove that solutions exist locally. Let \(x\) be any point in \(X\). From the local finiteness assumption, we get a neighborhood \(U\) of \(x\) such that \(\{ i | U ∩ V_i ≠ ∅\} \) is finite. The constant function with value the minimum of the corresponding \(δ_i\) is a solution on \(U\). Since the condition we put on \(δ\) is convex, we can glue those local solutions using a partition of unity. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:localisation_stability">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.7</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:localisation_stability">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000078"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:localisation_data">Definition 3.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(f : M → N\) be a continuous map between manifolds, and let \((φ, ψ, i)\) be some localisation data for \(f\). There exists some continuous positive function \(ε : M → ℝ_{{\gt}0}\) such that: </p>
+<div class="displaymath" id="a0000000079">
+  \[  ∀ g : M → N, \big [∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\big ] ⇒ ∀ i,\;  g(φ_i(E)) ⊂ ψ_{j(i)}(F).  \]
+</div>
+
+  </div>
+</div> Note that, in the preceding lemma, the conclusion \(g(φ_i(E)) ⊂ ψ_{j(i)}(F)\) is weaker than the condition \(f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)\) that appears in the definition of localisation data. </p>
+<p>The condition \(∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\) will be abbreviated \(d(f, g) {\lt} ε\). </p>
+<div class="proof_wrapper" id="a0000000078">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> The preceding lemma applied to the family of open sets \(ψ_j(F)\) and the family of compact sets \(ψ_j(\overline{B_F})\) give a positive continuous function \(δ : N → ℝ\) such that \(ε = δ ∘ f\) is suitable. Indeed, assume \(g : M → N\) satisfies \(d(f, g) {\lt} ε\) and fix some \(i\) and some \(m ∈ φ_i(E)\). We know \(f(m) ∈ ψ_{j(i)}(\overline{B_F})\) and our assumption on \(g\) gives \(d(f(m), g(m)) {\lt} δ(f(m))\). So the property of \(δ\) ensures \(g(m) ∈ ψ_{j(i)}(F)\). </p>
+
+  </div>
+</div>
+<p>For induction purposes, we will also use a couple of ad hoc technical definitions and lemmas about ordered covers. The first one is an immediate consequence of the definition of locally finite families of sets. Maybe it should simply be included inside the proof of <a href="chap-global.html#lem:loc_ultim_const">Lemma 3.10</a> below. </p>
+<p><div class="lemma_thmwrapper" id="lem:indexing_ordered_cover">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.8</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:indexing_ordered_cover">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000080"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(ι\) be a totally ordered set. Let \(V : ι → \operatorname{\mathcal{P}}{M}\) be a locally finite family of subsets of some topological space \(M\). There exist functions \(U : M → \operatorname{\mathcal{P}}{M}\) and \(i₀ : M → ι\) such that </p>
+<div class="displaymath" id="a0000000081">
+  \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ j {\gt} i₀(x),\;  U_x ∩ V_j = ∅.  \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000080">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>The local finiteness assumption gives \(U : M → \operatorname{\mathcal{P}}{M}\) such that, for all \(x\), \(U_x ∈ 𝓝_x\) and \(\{ i | U_x ∩ V_i\}  ≠ ∅\) is finite. We can define \(i₀(x)\) to be the maximum of this finite set. </p>
+
+  </div>
+</div>
+<p>We now introduce a seemingly abstract definition, but its only goal is to treat uniformly the case of \(ℕ\) and finite sets \(\{ 0, \dots , n\} \). </p>
+<p><div class="definition_thmwrapper" id="def:convenient_indexing">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.9</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:convenient_indexing">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> A convenient indexing set is a totally ordered set \(ι\) equipped with maps \(π : ℕ → ι\) and \(σ : ι → ℕ\) such that \(π\) is order preserving and \(π ∘ σ = \operatorname{Id}\) (in particular \(π\) is surjective). </p>
+
+  </div>
+</div> </p>
+<p>In the case \(ι = ℕ\) we will use \(π = σ = \operatorname{Id}\) while in the case \(ι = \{ 0, \dots , n-1\} \) we use the unique order-preserving retraction as \(π\) and the inclusion as \(σ\). </p>
+<p><div class="lemma_thmwrapper" id="lem:loc_ultim_const">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:loc_ultim_const">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000082"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:convenient_indexing">Definition 3.9</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(ι\) be a convenient indexing set, \(M\) a topological space and \(Z\) a set. Let \(V : ι → \operatorname{\mathcal{P}}{M}\) be a locally finite open cover of \(M\). Let \(f : ℕ × M → Z\) be a sequence of functions such that, for all \(n\): </p>
+<ul class="itemize">
+  <li><p>\(f_{n+1}\) coincides with \(f_n\) outside of \(V_{π(n+1)}\). </p>
+</li>
+  <li><p>if \(π(n+1) = π(n)\) then \(f_{n+1} = f_n\) </p>
+</li>
+</ul>
+<p> There exists \(U : M → \operatorname{\mathcal{P}}{M}\) and \(n₀ : M → ℕ\) such that: </p>
+<div class="displaymath" id="a0000000083">
+  \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ n ≥ n₀(x),\;  f_n|_{U_x} = f_{n₀(x)}|_{U_x}.  \]
+</div>
+
+  </div>
+</div> </p>
+<p>Note that the conclusion of above lemma ensures that the sequence \(f_n\) converges pointwise and the limit inherits all local properties of the \(f_n\) (such as continuity or differentiability when applicable). </p>
+<div class="proof_wrapper" id="a0000000082">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> <a href="chap-global.html#lem:indexing_ordered_cover">Lemma 3.8</a> gives functions \(U : M → \operatorname{\mathcal{P}}{M}\) and \(i₀ : M → ι\) such that </p>
+<div class="displaymath" id="a0000000084">
+  \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ j {\gt} i₀(x),\;  U_x ∩ V_j = ∅.  \]
+</div>
+<p> We will show that \(U\) and \(n₀ = σ ∘ i₀\) are suitable. We fix \(x\) in \(M\) and prove by induction that \(∀ n ≥ n₀(x),\;  f_n|_{U_x} = f_{n₀(x)}|_{U_x}\). The base case \(n = n₀(x)\) is clear. We now assume this holds for some \(n ≥ n₀(x)\) and prove it for \(n+1\). Since \(π\) is order preserving, there are two cases. If \(π(n+1) = π(n)\) then \(f_{n+1} = f_n\) and the induction hypothesis immediately concludes. Assume now that \(π(n + 1) {\gt} π(n)\). Since \(n ≥ n₀(x) = σ(i₀(x))\) and \(π\) is order preserving, we get \(π(n) ≥ π(σ(i₀(x))) = i₀(x)\), hence \(π(n+1) {\gt} i₀(x)\). So we get that \(U_x ∩ V_{π(n+1)} = ∅\). Since \(f_{π(n+1)}\) coincides with \(f_{π(n)}\) outside of \(V_{π(n+1)}\), we conclude by the induction hypothesis. </p>
+
+  </div>
+</div>
+<h2 id="sec:vector_bundles_operations">3.1.2 Vector bundles operations</h2>
+
+<p><div class="definition_thmwrapper" id="def:pull_back_bundle">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.11</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#def:pull_back_bundle">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L41">basic_smooth_vector_bundle_core.pullback</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  For every bundle \(p : E → B\) and every map \(f \! :B' → B\), the pull-back bundle \(f^*E → B'\) is defined by \(f^*E = \{ (b', e) ∈ B' × E \; |\;  p(e) = f(b')\} \) with the obvious projection to \(B'\). </p>
 
   </div>
 </div> </p>
@@ -120,25 +557,41 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.2</span>
+    <span class="definition_thmlabel">3.12</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:hom_bundle">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L124">basic_smooth_vector_bundle_core.hom</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious projection map. </p>
+  <p>  Let \(E → B\) and \(F → B\) be two vector bundles over some smooth manifold \(B\). The bundle \(\operatorname{Hom}(E, F) → B\) is the set of linear maps from \(E_b\) to \(F_b\) for some \(b\) in \(B\), with the obvious projection map. </p>
 
   </div>
 </div> </p>
-<p>Set-theoretically, one can define \(\operatorname{Hom}(E, F)\) as the set of subsets \(S\) of \(E × F\) such that there exists \(b\) such that \(S ⊂ E_b × F_b\) and \(S\) is the graph of a linear map. But the type theory formalization will use other tricks here. The facts that really matter are listed in <a href="chap-global.html#lem:one_jet_extension_prop">lemma 3.5</a>. </p>
-<h2 id="a0000000057">3.1.2 Jets spaces</h2>
+<p>Set-theoretically, one can define \(\operatorname{Hom}(E, F)\) as the set of subsets \(S\) of \(E × F\) such that there exists \(b\) such that \(S ⊂ E_b × F_b\) and \(S\) is the graph of a linear map. But the type theory formalization will use other tricks here. The facts that really matter are listed in <a href="chap-global.html#lem:one_jet_extension_prop">lemma 3.15</a>. </p>
+<h2 id="a0000000085">3.1.3 Jets spaces</h2>
 <p><div class="definition_thmwrapper" id="def:one_jet_space">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.3</span>
+    <span class="definition_thmlabel">3.13</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:one_jet_space">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -151,8 +604,22 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:pull_back_bundle">Definition 3.1</a></li>
-          <li><a href="chap-global.html#def:hom_bundle">Definition 3.2</a></li>
+          <li><a href="chap-global.html#def:pull_back_bundle">Definition 3.11</a></li>
+          <li><a href="chap-global.html#def:hom_bundle">Definition 3.12</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_bundle.lean#L24">one_jet_bundle_core</a></li>
         </ul>
 
       </div>
@@ -161,7 +628,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Let \(M\) and \(N\) be smooth manifolds. Denote by \(p_1\) and \(p_2\) the projections of \(M × N\) to \(M\) and \(N\) respectively. </p>
+  <p>   Let \(M\) and \(N\) be smooth manifolds. Denote by \(p_1\) and \(p_2\) the projections of \(M × N\) to \(M\) and \(N\) respectively. </p>
 <p>The space \(J^1(M, N)\) of \(1\)-jets of maps from \(M\) to \(N\) is \(Hom(p_1^*TM, p_2^*TN)\) </p>
 
   </div>
@@ -172,7 +639,8 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.4</span>
+    <span class="definition_thmlabel">3.14</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:one_jet_extension">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -185,7 +653,21 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:one_jet_space">Definition 3.3</a></li>
+          <li><a href="chap-global.html#def:one_jet_space">Definition 3.13</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L44">one_jet_ext</a></li>
         </ul>
 
       </div>
@@ -194,7 +676,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  The \(1\)-jet of a smooth map \(f \! :M → N\) is the map from \(m\) to \(J^1(M, N)\) defined by \(j^1f(m) = (m, f(m), T_mf)\). </p>
+  <p>   The \(1\)-jet of a smooth map \(f \! :M → N\) is the map from \(m\) to \(J^1(M, N)\) defined by \(j^1f(m) = (m, f(m), T_mf)\). </p>
 
   </div>
 </div> </p>
@@ -204,10 +686,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.5</span>
+    <span class="lemma_thmlabel">3.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:one_jet_extension_prop">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000086"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -219,7 +701,22 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:one_jet_extension">Definition 3.4</a></li>
+          <li><a href="chap-global.html#def:one_jet_extension">Definition 3.14</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L55">smooth_one_jet_ext</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L52">one_jet_ext_proj</a></li>
         </ul>
 
       </div>
@@ -228,7 +725,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  For every smooth map \(f \! :M → N\), </p>
+  <p>   For every smooth map \(f \! :M → N\), </p>
 <ol class="enumerate">
   <li><p> \(j^1f\) is smooth </p>
 </li>
@@ -240,7 +737,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000058">
+<div class="proof_wrapper" id="a0000000086">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -257,7 +754,8 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.6</span>
+    <span class="definition_thmlabel">3.16</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:holonomic_section">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -270,8 +768,23 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:one_jet_space">Definition 3.3</a></li>
-          <li><a href="chap-global.html#lem:one_jet_extension_prop">Lemma 3.5</a></li>
+          <li><a href="chap-global.html#def:one_jet_space">Definition 3.13</a></li>
+          <li><a href="chap-global.html#lem:one_jet_extension_prop">Lemma 3.15</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L85">one_jet_sec.is_holonomic_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L90">one_jet_sec.is_holonomic_at_iff</a></li>
         </ul>
 
       </div>
@@ -280,7 +793,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A section \(\mathcal{F}\) of \(J^1(M, N) → M\) is called holonomic if it is the \(1\)–jet of its base map. Equivalently, \(\mathcal{F}\) is holonomic if there exists \(f \! :M → N\) such that \(\mathcal{F}= j^1f\), since such a map is necessarily \(\operatorname{bs}\mathcal{F}\). </p>
+  <p>   A section \(\mathcal{F}\) of \(J^1(M, N) → M\) is called holonomic if it is the \(1\)–jet of its base map. Equivalently, \(\mathcal{F}\) is holonomic if there exists \(f \! :M → N\) such that \(\mathcal{F}= j^1f\), since such a map is necessarily \(\operatorname{bs}\mathcal{F}\). </p>
 
   </div>
 </div> </p>
@@ -290,7 +803,8 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.7</span>
+    <span class="definition_thmlabel">3.17</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:rel">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -303,7 +817,21 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:one_jet_space">Definition 3.3</a></li>
+          <li><a href="chap-global.html#def:one_jet_space">Definition 3.13</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/relation.lean#L39">rel_mfld</a></li>
         </ul>
 
       </div>
@@ -312,7 +840,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A first order differential relation for maps from \(M\) to \(N\) is a subset \(\mathcal{R}\) of \(J^1(M, N)\). </p>
+  <p>   A first order differential relation for maps from \(M\) to \(N\) is a subset \(\mathcal{R}\) of \(J^1(M, N)\). </p>
 
   </div>
 </div> </p>
@@ -321,7 +849,8 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.8</span>
+    <span class="definition_thmlabel">3.18</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:formal_sol">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -334,8 +863,23 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:rel">Definition 3.7</a></li>
-          <li><a href="chap-global.html#def:one_jet_extension">Definition 3.4</a></li>
+          <li><a href="chap-global.html#def:rel">Definition 3.17</a></li>
+          <li><a href="chap-global.html#def:one_jet_extension">Definition 3.14</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/relation.lean#L52">formal_sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/relation.lean#L46">sol</a></li>
         </ul>
 
       </div>
@@ -344,7 +888,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A formal solution of a differential relation \(\mathcal{R}⊂ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
+  <p>   A formal solution of a differential relation \(\mathcal{R}⊂ J^1(M, N)\) is a section of \(J^1(M, N) → M\) taking values in \(\mathcal{R}\). A solution of \(\mathcal{R}\) is a map from \(M\) to \(N\) whose \(1\)–jet extension is a formal solution. </p>
 
   </div>
 </div> </p>
@@ -353,7 +897,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.9</span>
+    <span class="definition_thmlabel">3.19</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:htpy_formal_sol">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -366,7 +910,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:formal_sol">Definition 3.8</a></li>
+          <li><a href="chap-global.html#def:formal_sol">Definition 3.18</a></li>
         </ul>
 
       </div>
@@ -385,7 +929,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.10</span>
+    <span class="definition_thmlabel">3.20</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:transfer_map">#</a>
 
@@ -393,11 +937,11 @@
   </div>
   <div class="definition_thmcontent">
   <p> Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000059">
+<div class="displaymath" id="a0000000087">
   \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
 </div>
 <p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000060">
+<div class="displaymath" id="a0000000088">
   \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
 </div>
 <p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
@@ -410,10 +954,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.11</span>
+    <span class="lemma_thmlabel">3.21</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:transfer">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000061"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000089"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -425,7 +969,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:transfer_map">Definition 3.10</a></li>
+          <li><a href="chap-global.html#def:transfer_map">Definition 3.20</a></li>
         </ul>
 
       </div>
@@ -446,7 +990,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000061">
+<div class="proof_wrapper" id="a0000000089">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -455,7 +999,9 @@
   </div>
   <div class="proof_content">
   <p>The first point is clear by composition. In order to prove the second point while keeping notations under control, we set \(f(x) = g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h\). Using this notation \(Ψ_{g, h}\mathcal{F}(x) = (x, f(x), (T_{f(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh)\). We have </p>
-<span>\begin{align*}  T_x f & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h \end{align*}</span>
+<div class="displaymath" id="a0000000090">
+  \begin{align*}  T_x f & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h \end{align*}
+</div>
 <p> hence \(Ψ_{g, h}\mathcal{F}\) is holonomic at \(x\) if and only if \(\left(T_{f(x)}g\right)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\) and this is equivalent to \(\mathcal{F}(h(x))_φ = T_{h(x)}\operatorname{bs}\mathcal{F}\) which is the holonomy condition for \(\mathcal{F}\) at \(h(x)\). </p>
 <p>The third point is a direct consequence of the easy formula \(ψ_{g, h} ∘ Ψ_{g, h}(\mathcal{F}) = F ∘ h\). </p>
 
@@ -466,7 +1012,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.12</span>
+    <span class="definition_thmlabel">3.22</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:h-princ">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -479,8 +1025,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:formal_sol">Definition 3.8</a></li>
-          <li><a href="chap-global.html#def:htpy_formal_sol">Definition 3.9</a></li>
+          <li><a href="chap-global.html#def:formal_sol">Definition 3.18</a></li>
+          <li><a href="chap-global.html#def:htpy_formal_sol">Definition 3.19</a></li>
         </ul>
 
       </div>
@@ -493,7 +1039,7 @@
 
   </div>
 </div> </p>
-<h2 id="a0000000062">Parametricity for free</h2>
+<h2 id="a0000000091">Parametricity for free</h2>
 <p>In many cases, relative parametric \(h\)-principles can be deduced from relative non-parametric ones with a larger source manifold. Let \(X\), \(P\) and \(Y\) be manifolds, with \(P\) seen a parameter space. Denote by \(Ψ\) the map from \(J^1(X × P, Y)\) to \(J^1(X, Y)\) sending \((x, p, y, ψ)\) to \((x, y, ψ ∘ ι_{x, p})\) where \(ι_{x, p} : T_xX → T_xX × T_pP\) sends \(v\) to \((v, 0)\). </p>
 <p>To any family of sections \(F_p : x ↦ (f_p(x), φ_{p, x})\) of \(J^1(X, Y)\), we associate the section \(\bar F\) of \(J^1(X × P, Y)\) sending \((x, p)\) to \(\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))\). </p>
 <p><div class="lemma_thmwrapper" id="lem:param_trick">
@@ -501,10 +1047,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.13</span>
+    <span class="lemma_thmlabel">3.23</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000063"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000092"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -516,8 +1062,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:holonomic_section">Definition 3.6</a></li>
-          <li><a href="chap-global.html#def:formal_sol">Definition 3.8</a></li>
+          <li><a href="chap-global.html#def:holonomic_section">Definition 3.16</a></li>
+          <li><a href="chap-global.html#def:formal_sol">Definition 3.18</a></li>
         </ul>
 
       </div>
@@ -536,7 +1082,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000063">
+<div class="proof_wrapper" id="a0000000092">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -553,10 +1099,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.14</span>
+    <span class="lemma_thmlabel">3.24</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000064"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000093"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -568,7 +1114,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:h-princ">Definition 3.12</a></li>
+          <li><a href="chap-global.html#def:h-princ">Definition 3.22</a></li>
         </ul>
 
       </div>
@@ -581,7 +1127,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000064">
+<div class="proof_wrapper" id="a0000000093">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -589,14 +1135,14 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.13</a>. </p>
+  <p> This obviously follows from <a href="chap-global.html#lem:param_trick">lemma 3.23</a>. </p>
 
   </div>
 </div>
 <h1 id="sec:general_theory">3.3 The \(h\)-principle for open and ample differential relations</h1>
 
 <p>In this chapter, \(X\) and \(Y\) are smooth manifolds and \(\mathcal{R}\) is a first order differential relation on maps from \(X\) to \(Y\): \(\mathcal{R}⊂ J^1(X, Y)\). For any \(σ = (x, y, φ)\) in \(\mathcal{R}\) and any dual pair \((λ, v) ∈ T^*_xX × T_xX\), we set: </p>
-<div class="displaymath" id="a0000000065">
+<div class="displaymath" id="a0000000094">
   \[  \mathcal{R}_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  φ + (w - φ(v))⊗λ\big ) ∈ \mathcal{R}\right\}   \]
 </div>
 <p> where \(\operatorname{Conn}_a A\) is the connected component of \(A\) containing \(a\). In order to decipher this definition, it suffices to notice that \(φ + (w - φ(v))⊗λ\) is the unique linear map from \(T_xX\) to \(T_yY\) which coincides with \(φ\) on \(\ker λ\) and sends \(v\) to \(w\). In particular, \(w = φ(v)\) gives back \(φ\). </p>
@@ -607,7 +1153,7 @@
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">3.15</span>
+    <span class="definition_thmlabel">3.25</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:ample_relation">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -638,10 +1184,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.16</span>
+    <span class="lemma_thmlabel">3.26</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000066"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000095"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -653,9 +1199,9 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:ample_relation">Definition 3.15</a></li>
+          <li><a href="chap-global.html#def:ample_relation">Definition 3.25</a></li>
           <li><a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a></li>
-          <li><a href="chap-global.html#def:transfer_map">Definition 3.10</a></li>
+          <li><a href="chap-global.html#def:transfer_map">Definition 3.20</a></li>
         </ul>
 
       </div>
@@ -664,11 +1210,11 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.10</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
+  <p>  Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.20</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000066">
+<div class="proof_wrapper" id="a0000000095">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -677,7 +1223,9 @@
   </div>
   <div class="proof_content">
   <p>By definition, the relation induced by \(\mathcal{R}\) is \(ψ_{g, h}⁻¹\mathcal{R}\) where \(ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)\). Fix \(σ =(w, z, φ) ∈ ψ_{g, h}⁻¹\mathcal{R}\) and a dual pair \((λ, v)\) on \(T_wW\). We set \(G = T_z g\) and \(H = T_w h\). Both those maps are linear isomorphisms. We compute the slice corresponding to \((σ, λ, v)\): </p>
-<span>\begin{align*}  ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v) & = \left\{ u ∈ T_wW \; \left|\;  (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\mathcal{R}\right.\right\} \\ & = \left\{ u ∈ T_wW \; \left|\;  (h(w), g(z), G ∘(φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \mathcal{R}\right.\right\} \\ & = G⁻¹\mathcal{R}((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu). \end{align*}</span>
+<div class="displaymath" id="a0000000096">
+  \begin{align*}  ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v) & = \left\{ u ∈ T_wW \; \left|\;  (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\mathcal{R}\right.\right\} \\ & = \left\{ u ∈ T_wW \; \left|\;  (h(w), g(z), G ∘(φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \mathcal{R}\right.\right\} \\ & = G⁻¹\mathcal{R}((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu). \end{align*}
+</div>
 <p> Hence the slice \(ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v)\) is the image of a slice of \(\mathcal{R}\) under a linear isomorphism, hence ample. </p>
 
   </div>
@@ -687,10 +1235,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.17</span>
+    <span class="lemma_thmlabel">3.27</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000067"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000097"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
@@ -700,7 +1248,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000067">
+<div class="proof_wrapper" id="a0000000097">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -717,11 +1265,11 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">3.18</span>
+    <span class="theorem_thmlabel">3.28</span>
     <span class="theorem_thmtitle">Gromov</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000068"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000098"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -733,7 +1281,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:h-princ">Definition 3.12</a></li>
+          <li><a href="chap-global.html#def:h-princ">Definition 3.22</a></li>
         </ul>
 
       </div>
@@ -752,10 +1300,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">3.19</span>
+    <span class="lemma_thmlabel">3.29</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000099"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -767,7 +1315,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-global.html#def:ample_relation">Definition 3.15</a></li>
+          <li><a href="chap-global.html#def:ample_relation">Definition 3.25</a></li>
         </ul>
 
       </div>
@@ -780,7 +1328,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000069">
+<div class="proof_wrapper" id="a0000000099">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -789,7 +1337,7 @@
   </div>
   <div class="proof_content">
   <p>We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000070">
+<div class="displaymath" id="a0000000100">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when \(λ_X = 0\). Then the condition on \(w\) becomes \(ψ ∘ ι_{x, p} ∈ \mathcal{R}\), which is true by definition of \(\mathcal{R}^P\), so \(\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
@@ -797,20 +1345,34 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000068">
+<div class="proof_wrapper" id="a0000000098">
   <div class="proof_heading">
     <span class="proof_caption">
-    Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.18</a>
+    Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.28</a>
     </span>
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.14</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.19</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
-<p>We first assume \(X\) is closed, and will then explain the proof adjustments needed in the non-compact case. By compactness, there are finite many compact subsets \((K_i)_{1 ≤ i ≤ N}\) contained in coordinate charts \(U_i\) and such that \(\bigcup K_i = X\). </p>
-<p>We prove by induction on \(i\) from \(0\) to \(N\) that there are formal solutions \(F_i\), starting with \(F_0 = F\), that are homotopic to \(F\) relative to \(A\), holonomic on \(K_{≤ i} := \bigcup _{j ≤ i} K_j\) and whose base maps are \((1-2^{-i})ε\)-close to that of \(F\) (this contrived bound will be convenient for the non-compact case). </p>
-<p>Assume \(F_i\) has been constructed for some \(i {\lt} N\). We now want to construct it on \(U_{i+1}\). <a href="chap-global.html#lem:ample_iff_loc">Lemma 3.16</a> ensures the pull-back of \(\mathcal{R}\) in the chart corresponding to \(U_{i+1}\) is ample in the sense of the preceding chapter. Hence <a href="chap-local.html#lem:h_principle_open_ample_loc">Lemma 2.16</a> can be applied to construct \(F_{i+1}\), using the image of \(K_{i+1}\) as \(K_0\) and the image of \(A ∩ K_{i+1} ∩ K_{≤ i}\) as \(C\). It is holonomic on \(K_{≤ i+1}\) because it agrees with \(F_i\) near \(K_{≤ i}\) and is holonomic near \(K_{i+1}\). </p>
-<p>Once all \(F_i\) are constructed, we define \(F^t\) to be the concatenation of all homotopies relating \(F_i\) to \(F_{i+1}\). </p>
-<p>If \(X\) is not compact, then one can use a countable family of subsets \((U_i, K_i)\) which is locally finite (ie. every point \(x\) has a neighborhood intersecting only finitely many \(U_i\)). The way we have chosen \(C^0\)-bounds ensures that each \(\operatorname{bs}F_i\) is still at distance at most \(ε\) from \(\operatorname{bs}F\). We now have countably many homotopies to concatenate, so we need to reparametrize the \(i\)-th homotopy by an interval of length \(2^{-i}\). This give a family of sections of \(J^1(X, Y)\) parametrized by \(t ∈ [0, 1)\). But our local finiteness assumption implies that, for each each \(x\), there is some \(t_0 {\lt} 1\) and some neighborhood \(U\) of \(x\) such that our family is \(t\)–independent on \(U\) for \(t ≥ t_0\). So we can extend to \(t = 1\). The resulting family is smooth since smoothness is a local condition in both \(x\) and \(t\). </p>
+  <p>   Lemmas&#160;<a href="chap-global.html#lem:param_for_free">3.24</a> and&#160;<a href="chap-global.html#lem:ample_parameter">3.29</a> prove we can assume there are no parameters. So we start with a single formal solution \(F\) of \(\mathcal{R}\), which is holonomic near some closed subset \(A ⊂ X\). </p>
+<p>We apply <a href="chap-global.html#lem:ex_localisation">lemma 3.5</a> to get some localisation data \((φ \! :ι → \operatorname{\mathcal{P}}{X}, ψ \! :ι' → \operatorname{\mathcal{P}}{Y}, j)\) for \(\operatorname{bs}F : X → Y\). <a href="chap-global.html#lem:localisation_stability">Lemma 3.7</a> then provides a continuous function \(ε : X → ℝ_{{\gt} 0}\) such that every function \(g\) with \(d(\operatorname{bs}F, g) {\lt} ε\) sends each \(φ_i(E)\) into \(ψ_{j(i)}(F)\). Since \(ι\) is finite or countable we can assume it is a convenient indexing set (see <a href="chap-global.html#def:convenient_indexing">Definition 3.9</a>). We denote by \(π \! :ℕ → ι\) and \(σ \! :ι → ℕ\) the corresponding structure maps. </p>
+<p>We will construct by induction on \(n\) a sequence of homotopies of sections \(F_n \! :[0, 1] × X → J¹(X, Y)\) such that, for all \(n\), </p>
+<ul class="itemize">
+  <li><p>\(F_{n, t}(x)\) coincides with \(F(x)\) for all \(t\) if \(n = 0\) or \(x\) is close to \(A\)&#160;; </p>
+</li>
+  <li><p>for all \(t\), \(d(\operatorname{bs}F, \operatorname{bs}F_{n, t}) {\lt} ε\)&#160;; </p>
+</li>
+  <li><p>if \(π(n+1) = π(n)\) then \(F_{n+1, t}\) coincides with \(F_{n, t}\) for all \(t\)&#160;; </p>
+</li>
+  <li><p>\(F_{n+1, 1}\) is holonomic on \(\bigcup _{i {\lt} π(n)} φ_i(\bar B_E)\)&#160;; </p>
+</li>
+  <li><p>each \(F_{n+1, t}\) coincides with \(F_{n, t}\) outside \(φ_{π(n)}(E)\). </p>
+</li>
+</ul>
+<p>The induction construction starts with setting \(F_{0, t} = F\) for all \(t\), which has the required properties (the first two conditions are clear and the other ones don’t say anything about \(F_0\)). Now assume \(F_n\) has been constructed. If \(π(n+1) = π(n)\) then we set \(F_{n+1} = F_n\). Otherwise we have \(π(n+1) {\gt} π(n)\). </p>
+<p>For any \(t\), since \(d(\operatorname{bs}F, \operatorname{bs}F_{n, t}) {\lt} ε\) by induction hypothesis, \(\operatorname{bs}F_{n, t}\) sends \(φ_i(E)\) into \(ψ_{j(i)}(F)\). </p>
+<p><a href="chap-global.html#def:transfer_map">Definition 3.20</a> then turns \(F_n\) into a homotopy of sections \(\mathcal{F}\) of \(J¹(E, F)\). According to <a href="chap-global.html#lem:transfer">Lemma 3.21</a>, each \(\mathcal{F}_t\) is a formal solution of the relation \(\mathcal{R}_i\) induced by \(\mathcal{R}\) in \(J¹(E, F)\) via \(φ_{π(n)}\) and \(ψ_{j(π(n))}\), \(\mathcal{F}\) is relative to \(φ_{π(n)}⁻¹(A)\) and \(\mathcal{F}_1\) is holonomic near \(φ_{π(n)}⁻¹(A ∪ \bigcup _{i {\lt} π(n)} φ_i(\bar B_E))\). </p>
+<p>The new homotopy \(F_{n+1}\) will be constructed by updating \(F_n\) using some homotopy \(\mathcal{F}'\) of sections of \(J¹(E, F)\). In order to ensure \(d(\operatorname{bs}F, \operatorname{bs}F_{n+1}) {\lt} ε\), it suffices to ensure that, for each \(x\) and \(t\), either \(\mathcal{F}_{n+1, t}(x) = \mathcal{F}_{n, t'}(x)\) for some \(t'\) or \(d(\operatorname{bs}F_{n, 1}(x), \operatorname{bs}F_{n+1, t}(x)) {\lt} ε(x) - d(\operatorname{bs}F(x), \operatorname{bs}F_{n, 1}(x))\). The latter will hold as soon as, for all \(e\) and \(t\), \(‖\operatorname{bs}\mathcal{F}_1(e) - \operatorname{bs}\mathcal{F}'_t(e)‖ {\lt} η\) for some positive \(η\) given by <a href="chap-global.html#lem:updating">Lemma 3.2</a> (applied to \(M × [0, 1]\) and \(N\)). So <a href="chap-local.html#lem:improve_htpy_loc">Lemma 2.17</a> gives a suitable \(\mathcal{F}'\). </p>
+<p>Now that the inductive construction is completed, we apply <a href="chap-global.html#lem:loc_ultim_const">Lemma 3.10</a> to make sure our sequence \(F_n\) is locally ultimately constant, hence it converges pointwise to a smooth homotopy relative to \(A\) and ending at a holonomic section of \(\mathcal{R}\). </p>
 
   </div>
 </div>
@@ -819,11 +1381,11 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">3.20</span>
+    <span class="theorem_thmlabel">3.30</span>
     <span class="theorem_thmtitle">Smale 1958</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000071"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -834,7 +1396,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/d61fdc6efb85ee6c461f28e71d5780b383db586e/src/global/immersion.lean#L64">sphere_eversion</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/immersion.lean#L63">sphere_eversion</a></li>
         </ul>
 
       </div>
@@ -847,7 +1409,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000071">
+<div class="proof_wrapper" id="a0000000101">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
