@@ -183,24 +183,51 @@ I.injective.preimage_image s
 end model_with_corners
 
 
-namespace smooth_manifold_with_corners
+section smooth_manifold_with_corners
+open smooth_manifold_with_corners
 
 variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {E : Type*} [normed_group E] [normed_space 𝕜 E]
+  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
   {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
+  {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
   {M : Type*} [topological_space M] [charted_space H M]
+  {M' : Type*} [topological_space M'] [charted_space H' M']
+variables {f : M → M'} {n : with_top ℕ} {s : set M}
 
-lemma subset_maximal_atlas [smooth_manifold_with_corners I M] : atlas H M ⊆ maximal_atlas I M :=
+
+lemma smooth_manifold_with_corners.subset_maximal_atlas [smooth_manifold_with_corners I M] :
+  atlas H M ⊆ maximal_atlas I M :=
 structure_groupoid.subset_maximal_atlas _
+
+lemma cont_mdiff_within_at_iff'_right
+  [smooth_manifold_with_corners I' M']
+  {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
+  cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
+    cont_mdiff_within_at I 𝓘(𝕜, E') n ((ext_chart_at I' y) ∘ f) s x :=
+begin
+  sorry
+end
+
+lemma cont_mdiff_at_iff'_right
+  [smooth_manifold_with_corners I' M']
+  {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
+  cont_mdiff_at I I' n f x ↔ continuous_at f x ∧
+    cont_mdiff_at I 𝓘(𝕜, E') n ((ext_chart_at I' y) ∘ f) x :=
+begin
+  rw [cont_mdiff_at, cont_mdiff_within_at_iff'_right hy, continuous_within_at_univ,
+    cont_mdiff_at],
+  apply_instance
+end
 
 variables (I)
 
-lemma _root_.cont_diff_on_coord_change [smooth_manifold_with_corners I M]
+lemma cont_diff_on_coord_change [smooth_manifold_with_corners I M]
   {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
 (has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
 
-lemma _root_.cont_diff_on_coord_change_symm [smooth_manifold_with_corners I M]
+lemma cont_diff_on_coord_change_symm [smooth_manifold_with_corners I M]
   {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
 (has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
@@ -217,6 +244,27 @@ def eq_on_common_source (e e' : local_equiv α β) : Prop :=
 ∀ x ∈ e.source ∩ e'.source, e x = e' x
 
 end local_equiv
+
+
+namespace basic_smooth_vector_bundle_core
+
+variables {𝕜 B B' M VB VB' VM HB HB' HM : Type*}
+variables [nondiscrete_normed_field 𝕜]
+variables [normed_group VB] [normed_space 𝕜 VB] [normed_group VB'] [normed_space 𝕜 VB']
+variables [normed_group VM] [normed_space 𝕜 VM]
+variables [topological_space HB] [topological_space HB'] [topological_space HM]
+variables {IB : model_with_corners 𝕜 VB HB} {IB' : model_with_corners 𝕜 VB' HB'}
+variables {IM : model_with_corners 𝕜 VM HM}
+variables {F F' : Type*}
+variables [normed_group F] [normed_space 𝕜 F] [normed_group F'] [normed_space 𝕜 F']
+variables [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
+variables [topological_space B'] [charted_space HB' B'] [smooth_manifold_with_corners IB' B']
+variables [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
+variables (f : C^∞⟮IB', B'; IB, B⟯) -- todo: define cont_mdiff_map_class
+variables (Z : basic_smooth_vector_bundle_core IB B F)
+variables (Z' : basic_smooth_vector_bundle_core IB B F')
+
+end basic_smooth_vector_bundle_core
 
 section maps
 
