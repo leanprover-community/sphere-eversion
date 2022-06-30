@@ -16,15 +16,18 @@ noncomputable theory
 open bundle set topological_space topological_vector_bundle local_homeomorph
 open_locale classical manifold
 
-variables {𝕜 B B' VB VB' HB HB' : Type*}
+variables {𝕜 B B' M VB VB' VM HB HB' HM : Type*}
 variables [nondiscrete_normed_field 𝕜]
 variables [normed_group VB] [normed_space 𝕜 VB] [normed_group VB'] [normed_space 𝕜 VB']
-variables [topological_space HB] [topological_space HB']
+variables [normed_group VM] [normed_space 𝕜 VM]
+variables [topological_space HB] [topological_space HB'] [topological_space HM]
 variables {IB : model_with_corners 𝕜 VB HB} {IB' : model_with_corners 𝕜 VB' HB'}
+variables {IM : model_with_corners 𝕜 VM HM}
 variables {F F' : Type*}
 variables [normed_group F] [normed_space 𝕜 F] [normed_group F'] [normed_space 𝕜 F']
 variables [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
 variables [topological_space B'] [charted_space HB' B'] [smooth_manifold_with_corners IB' B']
+variables [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
 variables (f : C^∞⟮IB', B'; IB, B⟯) -- todo: define cont_mdiff_map_class
 variables (Z : basic_smooth_vector_bundle_core IB B F)
 variables (Z' : basic_smooth_vector_bundle_core IB B F')
@@ -156,6 +159,5 @@ def hom : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
     { intros x hx, simp_rw [function.comp_apply, trans_apply, IB.left_inv] },
     { rw [← IB.image_eq] }
   end }
-
 
 end basic_smooth_vector_bundle_core

@@ -54,7 +54,34 @@ variables {I I'}
 
 lemma smooth_one_jet_ext {f : M → M'} (h : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
-sorry
+begin
+  intro x,
+  split,
+  {  },
+  { },
+  -- rw [cont_mdiff_at, cont_mdiff_within_at_iff],
+  --   assume x,
+  -- rw [cont_mdiff_at, cont_mdiff_within_at_iff],
+  -- split,
+  -- { apply continuous.continuous_within_at,
+  --   apply topological_fiber_bundle_core.continuous_const_section,
+  --   assume i j y hy,
+  --   exact h _ _ _ hy },
+  -- { have : cont_diff 𝕜 ⊤ (λ (y : E), (y, v)) := cont_diff_id.prod cont_diff_const,
+  --   apply this.cont_diff_within_at.congr,
+  --   { assume y hy,
+  --     simp only with mfld_simps at hy,
+  --     simp only [chart, hy, chart_at, prod.mk.inj_iff, to_topological_vector_bundle_core]
+  --       with mfld_simps,
+  --     apply h,
+  --     simp only [hy, subtype.val_eq_coe] with mfld_simps,
+  --     exact mem_chart_source H (((chart_at H x).symm) ((model_with_corners.symm I) y)) },
+  --   { simp only [chart, chart_at, prod.mk.inj_iff, to_topological_vector_bundle_core]
+  --       with mfld_simps,
+  --     apply h,
+  --     simp only [subtype.val_eq_coe] with mfld_simps,
+  --     exact mem_chart_source H x, } }
+end
 
 variables (I I' M M')
 
