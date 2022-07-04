@@ -41,6 +41,7 @@ include Z
   either `M` or `N`. Some hypotheses in this def might be redundant.
   The hypotheses h1v, h1g and h2g can probably be weakened to assume that the point lies in the
   appropriate source/target, but this stronger hypothesis is also true for the projections. -/
+@[simps]
 def pullback (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
   (h1v : ∀ x : VB', IB.symm (v x) = h (IB'.symm x))
   (h2v : range IB' ⊆ v ⁻¹' range IB)
@@ -71,23 +72,28 @@ def pullback (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
       refine inter_subset_inter (inter_subset_inter (preimage_mono $ hh i) (λ x hx, hf j hx)) h2v }
   end }
 
-lemma pullback.chart_at (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
-  (h1v : ∀ x : VB', IB.symm (v x) = h (IB'.symm x))
-  (h2v : range IB' ⊆ v ⁻¹' range IB)
-  (g : atlas HB' B' → atlas HB B)
-  (h1g : ∀ (e : atlas HB' B') (b : B'), (g e).1 (f b) = h (e.1 b))
-  (h2g : ∀ (e : atlas HB' B') (x : HB'), (g e).1.symm (h x) = f (e.1.symm x))
-  (hf : ∀ (e : atlas HB' B'), maps_to f e.1.source (g e).1.source)
-  (hh : ∀ (e : atlas HB' B'), maps_to h e.1.target (g e).1.target)
-  {e : local_homeomorph B' HB'} (he : e ∈ atlas HB' B') (x) :
+attribute [simps coord_change index_at] to_topological_vector_bundle_core
+
+lemma pullback.chart_eq {v : VB' → VB} {hv : cont_diff 𝕜 ∞ v} {h : HB' → HB}
+  {h1v : ∀ x : VB', IB.symm (v x) = h (IB'.symm x)}
+  {h2v : range IB' ⊆ v ⁻¹' range IB}
+  {g : atlas HB' B' → atlas HB B}
+  {h1g : ∀ (e : atlas HB' B') (b : B'), (g e).1 (f b) = h (e.1 b)}
+  {h2g : ∀ (e : atlas HB' B') (x : HB'), (g e).1.symm (h x) = f (e.1.symm x)}
+  {hf : ∀ (e : atlas HB' B'), maps_to f e.1.source (g e).1.source}
+  {hh : ∀ (e : atlas HB' B'), maps_to h e.1.target (g e).1.target}
+  (g_at : ∀ b : B', g (achart HB' b) = achart HB (f b))
+  (h_at : ∀ b x : B', h (chart_at HB' b x) = chart_at HB (f b) (f x))
+  (x : (pullback f Z v hv h h1v h2v g h1g h2g hf hh).to_topological_vector_bundle_core.total_space)
+  {e : local_homeomorph B' HB'} (he : e ∈ atlas HB' B') :
   (Z.pullback f v hv h h1v h2v g h1g h2g hf hh).chart he x =
   (e x.1, (Z.chart (g ⟨e, he⟩).2 ⟨f x.1, x.2⟩).2) :=
-begin
-  simp_rw [chart, trans_apply, prod_apply],
-  -- dsimp only [topological_vector_bundle_core.local_triv_apply],
-  simp_rw [trivialization.coe_coe, topological_vector_bundle_core.local_triv_apply,
-    local_homeomorph.refl_apply, function.id_apply],
-end
+by simp_rw [chart, trans_apply, prod_apply, trivialization.coe_coe, local_homeomorph.refl_apply,
+  function.id_def, topological_vector_bundle_core.local_triv_apply,
+  to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
+  pullback_coord_change, ← achart_def, g_at, h_at, subtype.eta]
+
+variables (IB' B')
 
 /-- The pullback of `basic_smooth_vector_bundle_core` along the map `B × B' → B` -/
 def pullback_fst : basic_smooth_vector_bundle_core (IB.prod IB') (B × B') F :=
@@ -111,7 +117,37 @@ begin
     exact (heq.mpr hx).1 }
 end
 
+variables {IB' B'}
+
+lemma pullback_fst.chart_eq
+  (x : (Z.pullback_fst B' IB').to_topological_vector_bundle_core.total_space)
+  {e : local_homeomorph B HB} {e' : local_homeomorph B' HB'} (he : e ∈ atlas HB B)
+  (he' : e' ∈ atlas HB' B') (h : (e.prod e').source.nonempty) :
+  (Z.pullback_fst B' IB').chart (mem_image2_of_mem he he') x =
+  ((e x.1.1, e' x.1.2), (Z.chart he ⟨x.1.1, x.2⟩).2) :=
+begin
+  refine (pullback.chart_eq _ Z _ _ x _).trans _,
+  { intros b,
+    obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_fst local_homeomorph.prod
+      (chart_mem_atlas HB b.1) (chart_mem_atlas HB' b.2),
+    have h2e₂ : e₂.source.nonempty,
+    { have := congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), b ∈ e.source) heq,
+      exact ⟨b.2, ((iff_of_eq this).mpr ⟨mem_chart_source HB b.1, mem_chart_source HB' b.2⟩).2⟩ },
+    ext1, ext1 x,
+    exact congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), (e (x, b.2)).1) heq,
+    exact λ y, congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), (e.symm (y, e' b.2)).1) heq,
+    have := congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), prod.fst '' e.source) heq,
+    simp_rw [local_homeomorph.prod_source, fst_image_prod _ h2e₂,
+      fst_image_prod _ ⟨b.2, mem_chart_source HB' b.2⟩] at this,
+    exact this },
+  { intros b x, refl },
+  obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_fst local_homeomorph.prod he he',
+  obtain ⟨h₁, h₂⟩ := (prod_eq_prod_of_nonempty' h).mp heq,
+  congr'
+end
+
 omit Z
+variables (IB B)
 
 /-- The pullback of `basic_smooth_vector_bundle_core` along the map `B × B' → B` -/
 def pullback_snd (Z : basic_smooth_vector_bundle_core IB' B' F) :
@@ -136,13 +172,44 @@ begin
     exact (heq.mpr hx).2 }
 end
 
+variables {IB B}
+
+
+lemma pullback_snd.chart_eq
+  (Z : basic_smooth_vector_bundle_core IB' B' F)
+  (x : (Z.pullback_snd B IB).to_topological_vector_bundle_core.total_space)
+  {e : local_homeomorph B HB} {e' : local_homeomorph B' HB'} (he : e ∈ atlas HB B)
+  (he' : e' ∈ atlas HB' B') (h : (e.prod e').source.nonempty) :
+  (Z.pullback_snd B IB).chart (mem_image2_of_mem he he') x =
+  ((e x.1.1, e' x.1.2), (Z.chart he' ⟨x.1.2, x.2⟩).2) :=
+begin
+  refine (pullback.chart_eq _ Z _ _ x _).trans _,
+  { intros b,
+    obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_snd local_homeomorph.prod
+      (chart_mem_atlas HB b.1) (chart_mem_atlas HB' b.2),
+    have h2e₂ : e₂.source.nonempty,
+    { have := congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), b ∈ e.source) heq,
+      exact ⟨b.1, ((iff_of_eq this).mpr ⟨mem_chart_source HB b.1, mem_chart_source HB' b.2⟩).1⟩ },
+    ext1, ext1 x,
+    exact congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), (e (b.1, x)).2) heq,
+    exact λ y, congr_arg (λ e₀ : local_homeomorph (B × B') (HB × HB'), (e₀.symm (e b.1, y)).2) heq,
+    have := congr_arg (λ e : local_homeomorph (B × B') (HB × HB'), prod.snd '' e.source) heq,
+    simp_rw [local_homeomorph.prod_source, snd_image_prod h2e₂,
+      snd_image_prod ⟨b.1, mem_chart_source HB b.1⟩] at this,
+    exact this },
+  { intros b x, refl },
+  obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_snd local_homeomorph.prod he he',
+  obtain ⟨h₁, h₂⟩ := (prod_eq_prod_of_nonempty' h).mp heq,
+  congr'
+end
+
 /-!
 ### Homs of basic smooth vector bundle core
 -/
 
 open continuous_linear_map
 
-def hom : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
+@[simps] def hom : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
 { coord_change := λ e e' b,
     compL 𝕜 F F' F' (Z'.coord_change e e' b) ∘L
     (compL 𝕜 F F F').flip (Z.coord_change e' e (e'.1 (e.1.symm b))),
@@ -177,5 +244,16 @@ def hom : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
     { intros x hx, simp_rw [function.comp_apply, trans_apply, IB.left_inv] },
     { rw [← IB.image_eq] }
   end }
+
+lemma hom.chart_eq
+  (x : (Z.hom Z').to_topological_vector_bundle_core.total_space)
+  {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
+  (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
+    x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
+by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
+  local_homeomorph.refl_apply, function.id_def, topological_vector_bundle_core.local_triv_apply,
+  to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
+  hom_coord_change, comp_apply, flip_apply, compL_apply, ← achart_def,
+  (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
 
 end basic_smooth_vector_bundle_core

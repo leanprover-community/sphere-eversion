@@ -75,6 +75,10 @@ lemma trans_apply {e₁ : local_homeomorph α β} {e₂ : local_homeomorph β γ
   (e₁ ≫ₕ e₂) x = e₂ (e₁ x) :=
 rfl
 
+protected lemma ext_iff {e e' : local_homeomorph α β} : e = e' ↔ (∀ x, e x = e' x) ∧
+  (∀ x, e.symm x = e'.symm x) ∧ e.source = e'.source :=
+⟨by { rintro rfl, exact ⟨λ x, rfl, λ x, rfl, rfl⟩ }, λ h, e.ext e' h.1 h.2.1 h.2.2⟩
+
 lemma image_source_eq_target (e : local_homeomorph α β) : e '' e.source = e.target :=
 e.to_local_equiv.image_source_eq_target
 
@@ -87,20 +91,34 @@ e.symm.image_source_eq_target
 lemma target_subset_preimage_source : e.target ⊆ e.symm ⁻¹' e.source :=
 e.symm_maps_to
 
--- lemma foo {e₁ : local_homeomorph β α} {e₂ : local_homeomorph β γ} {x : α} :
---   (e₁.symm ≫ₕ e₂).source ⊆ (e₁.symm ≫ₕ e₂) ⁻¹' (e₂.symm ≫ₕ e₁).source :=
--- source_subset_preimage_target
+example {α : Type*} (p : Prop) [nonempty α] : (α → p) ↔ p :=
+by simp only [forall_const]
 
+example {α β : Type*} (p : β → Prop) [h : nonempty α] : (∀ x : β, id x = x) ↔ ∀ x : β, x = x :=
+by simp only [id]
 
--- lemma prod_eq {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ} :
---   e₁.prod e₂ = e₁'.prod e₂' →
---   (e₁ = e₁' ∨ (e₁.source = ∅ ∧ e₂.source = ∅)) ∧ (e₂ = e₂' ∨ (e₁.source = ∅ ∧ e₂.source = ∅)) :=
--- begin
---   intro h,
---   have := congr_arg (λ e : local_homeomorph _ _, e.source) h,
---   simp_rw [prod_source, set.prod_eq] at this,
--- end
+@[simp] lemma forall_forall_const {α β : Type*} (p : β → Prop) [h : nonempty α] :
+  (∀ x, α → p x) ↔ ∀ x, p x :=
+forall_congr $ λ x, forall_const α -- for some reason simp doesn't like this
 
+lemma prod_eq_prod_of_nonempty {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ}
+  (h : (e₁.prod e₂).source.nonempty) :
+  e₁.prod e₂ = e₁'.prod e₂' ↔ e₁ = e₁' ∧ e₂ = e₂' :=
+begin
+  obtain ⟨⟨x, y⟩, -⟩ := id h,
+  have : nonempty α := ⟨x⟩,
+  have : nonempty β  := ⟨e₁ x⟩,
+  have : nonempty γ := ⟨y⟩,
+  haveI : nonempty δ := ⟨e₂ y⟩,
+  simp_rw [local_homeomorph.ext_iff, prod_apply, prod_symm_apply, prod_source, prod.ext_iff,
+    set.prod_eq_prod_iff_of_nonempty h,
+    forall_and_distrib, prod.forall, forall_const, forall_forall_const, and_assoc, and.left_comm]
+end
+
+lemma prod_eq_prod_of_nonempty' {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ}
+  (h : (e₁'.prod e₂').source.nonempty) :
+  e₁.prod e₂ = e₁'.prod e₂' ↔ e₁ = e₁' ∧ e₂ = e₂' :=
+by rw [eq_comm, prod_eq_prod_of_nonempty h, eq_comm, @eq_comm _ e₂']
 
 end local_homeomorph
 
@@ -166,6 +184,15 @@ variables {M H : Type*} [topological_space M] [topological_space H] [charted_spa
 
 lemma structure_groupoid.subset_maximal_atlas [has_groupoid M G] : atlas H M ⊆ G.maximal_atlas M :=
 λ e he e' he', ⟨G.compatible he he', G.compatible he' he⟩
+
+variable (H)
+/-- `achart H x` is the chart at `x`, considered as an element of the atlas. -/
+def achart (x : M) : atlas H M := ⟨chart_at H x, chart_mem_atlas H x⟩
+
+lemma achart_def (x : M) : achart H x = ⟨chart_at H x, chart_mem_atlas H x⟩ := rfl
+@[simp] lemma coe_achart (x : M) : (achart H x : local_homeomorph M H) = chart_at H x := rfl
+
+variable {H}
 
 end charted_space
 
