@@ -61,10 +61,9 @@ def 𝕊₁ := quotient trans_one
 
 lemma trans_one_rel_iff {a b : ℝ} : trans_one.rel a b ↔ ∃ k : ℤ, b = a + k :=
 begin
-  apply exists_congr,
-  intro k,
-  change (k : ℝ) = _ ↔ _,
-  split ; intro h ; linarith [h]
+  refine quotient_add_group.left_rel_apply.trans _,
+  refine exists_congr (λ k, _),
+  rw [coe_cast_add_hom, eq_neg_add_iff_add_eq, eq_comm]
 end
 
 section

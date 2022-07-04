@@ -153,7 +153,7 @@ instance [has_add X] : has_vadd X (loop X) :=
 rfl
 
 /-- Multiplying a loop by a scalar value. -/
-instance [has_scalar K X] : has_scalar K (loop X) :=
+instance [has_smul K X] : has_smul K (loop X) :=
 ⟨λ k γ, γ.transform (λ y, k • y)⟩
 
 instance [semiring K] [add_comm_group X] [module K X] : module K (loop X) :=
@@ -164,7 +164,7 @@ instance [semiring K] [add_comm_group X] [module K X] : module K (loop X) :=
   add_smul := λ k₁ k₂ γ, by { ext t, apply add_smul },
   zero_smul := λ γ, by { ext t, apply zero_smul } }
 
-@[simp] lemma smul_apply [has_scalar K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
+@[simp] lemma smul_apply [has_smul K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
 rfl
 
 lemma norm_at_le_supr_norm_Icc (γ : loop F) (hγ : continuous γ) (t : ℝ) :
