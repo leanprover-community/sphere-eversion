@@ -1,7 +1,5 @@
 import geometry.manifold.partition_of_unity
 
---import to_mathlib.geometry.manifold.cont_mdiff
-
 noncomputable theory
 
 open_locale topological_space filter manifold big_operators
