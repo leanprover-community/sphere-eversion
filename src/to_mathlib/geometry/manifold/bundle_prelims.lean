@@ -211,24 +211,35 @@ lemma smooth_manifold_with_corners.subset_maximal_atlas [smooth_manifold_with_co
   atlas H M ⊆ maximal_atlas I M :=
 structure_groupoid.subset_maximal_atlas _
 
-lemma cont_mdiff_within_at_iff_target_of_mem_source
+lemma cont_mdiff_at_iff_target
+  [smooth_manifold_with_corners I' M']
+  {x : M} :
+  cont_mdiff_at I I' n f x ↔
+    continuous_at f x ∧ cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' (f x) ∘ f) x :=
+begin
+  rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ,
+    univ_inter],
+  sorry -- refl after #15116 ?
+end
+
+lemma cont_mdiff_within_at_iff_target_of_mem_source_chart_at
   [smooth_manifold_with_corners I' M']
   {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
   cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
-    cont_mdiff_within_at I 𝓘(𝕜, E') n ((ext_chart_at I' y) ∘ f) s x :=
+    cont_mdiff_within_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) s x :=
 begin
   sorry -- easier after #15116
   -- combination of `cont_mdiff_within_at_iff_target` and `cont_mdiff_within_at_iff_of_mem_source`
 end
 
-lemma cont_mdiff_at_iff_target_of_mem_source
+lemma cont_mdiff_at_iff_target_of_mem_source_chart_at
   [smooth_manifold_with_corners I' M']
   {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
   cont_mdiff_at I I' n f x ↔ continuous_at f x ∧
-    cont_mdiff_at I 𝓘(𝕜, E') n ((ext_chart_at I' y) ∘ f) x :=
+    cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) x :=
 begin
-  rw [cont_mdiff_at, cont_mdiff_within_at_iff_target_of_mem_source hy, continuous_within_at_univ,
-    cont_mdiff_at],
+  rw [cont_mdiff_at, cont_mdiff_within_at_iff_target_of_mem_source_chart_at hy,
+    continuous_within_at_univ, cont_mdiff_at],
   apply_instance
 end
 
@@ -305,7 +316,7 @@ lemma cont_mdiff_on_iff_of_subset_source_chart_at {x : M} {y : M'}
   (hs : s ⊆ (chart_at H x).source)
   (h2s : f '' s ⊆ (chart_at H' y).source) :
   cont_mdiff_on I I' n f s ↔ continuous_on f s ∧
-    cont_diff_on 𝕜 n ((ext_chart_at I' y) ∘ f ∘ (ext_chart_at I x).symm)
+    cont_diff_on 𝕜 n (ext_chart_at I' y ∘ f ∘ (ext_chart_at I x).symm)
     ((ext_chart_at I x).target ∩
       (ext_chart_at I x).symm ⁻¹' (s ∩ f ⁻¹' (ext_chart_at I' y).source)) :=
 cont_mdiff_on_iff_of_subset_source (structure_groupoid.chart_mem_maximal_atlas _ x)
