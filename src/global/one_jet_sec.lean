@@ -56,10 +56,12 @@ lemma smooth_one_jet_ext {f : M → M'} (h : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
 begin
   intro x,
-  rw [cont_mdiff_within_at_iff_target_of_mem_source],
+  rw [cont_mdiff_at_iff_target],
   split,
-  {  },
-  { },
+  { sorry },
+  { dsimp [ext_chart_at, function.comp],
+    -- refine cont_mdiff.prod_mk _ _,
+     },
   -- rw [cont_mdiff_at, cont_mdiff_within_at_iff],
   --   assume x,
   -- rw [cont_mdiff_at, cont_mdiff_within_at_iff],

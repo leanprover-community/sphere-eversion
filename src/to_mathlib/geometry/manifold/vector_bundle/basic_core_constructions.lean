@@ -71,6 +71,24 @@ def pullback (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
       refine inter_subset_inter (inter_subset_inter (preimage_mono $ hh i) (λ x hx, hf j hx)) h2v }
   end }
 
+lemma pullback.chart_at (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
+  (h1v : ∀ x : VB', IB.symm (v x) = h (IB'.symm x))
+  (h2v : range IB' ⊆ v ⁻¹' range IB)
+  (g : atlas HB' B' → atlas HB B)
+  (h1g : ∀ (e : atlas HB' B') (b : B'), (g e).1 (f b) = h (e.1 b))
+  (h2g : ∀ (e : atlas HB' B') (x : HB'), (g e).1.symm (h x) = f (e.1.symm x))
+  (hf : ∀ (e : atlas HB' B'), maps_to f e.1.source (g e).1.source)
+  (hh : ∀ (e : atlas HB' B'), maps_to h e.1.target (g e).1.target)
+  {e : local_homeomorph B' HB'} (he : e ∈ atlas HB' B') (x) :
+  (Z.pullback f v hv h h1v h2v g h1g h2g hf hh).chart he x =
+  (e x.1, (Z.chart (g ⟨e, he⟩).2 ⟨f x.1, x.2⟩).2) :=
+begin
+  simp_rw [chart, trans_apply, prod_apply],
+  -- dsimp only [topological_vector_bundle_core.local_triv_apply],
+  simp_rw [trivialization.coe_coe, topological_vector_bundle_core.local_triv_apply,
+    local_homeomorph.refl_apply, function.id_apply],
+end
+
 /-- The pullback of `basic_smooth_vector_bundle_core` along the map `B × B' → B` -/
 def pullback_fst : basic_smooth_vector_bundle_core (IB.prod IB') (B × B') F :=
 begin
