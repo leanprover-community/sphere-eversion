@@ -8,11 +8,16 @@ attribute [ext] topological_vector_bundle.trivialization
 open bundle set function
 open_locale manifold
 
-lemma Exists.const_snd {α : Sort*} {p : Prop} : (∃ x : α, p) → p
-| ⟨x, h⟩ := h
+-- lemma Exists.const_snd {α : Sort*} {p : Prop} : (∃ x : α, p) → p
+-- | ⟨x, h⟩ := h
 
 -- lemma Exists.snd_fst {α : Sort*} {p : Prop} {q : α → Prop} (h : ∃ x, p ∧ q x) : p :=
 -- (exists_imp_exists (λ x, and.left) h).const_snd
+
+/- These lemmas have the wrong name -/
+lemma id_comp {α β : Sort*} (f : α → β) : id ∘ f = f := rfl -- function.comp.left_id
+lemma comp_id {α β : Sort*} (f : α → β) : f ∘ id = f := rfl -- function.comp.right_id
+lemma id_apply {α : Sort*} (x : α) : id x = x := rfl -- id.def
 
 namespace set
 
@@ -191,6 +196,7 @@ def achart (x : M) : atlas H M := ⟨chart_at H x, chart_mem_atlas H x⟩
 
 lemma achart_def (x : M) : achart H x = ⟨chart_at H x, chart_mem_atlas H x⟩ := rfl
 @[simp] lemma coe_achart (x : M) : (achart H x : local_homeomorph M H) = chart_at H x := rfl
+@[simp] lemma achart_val (x : M) : (achart H x).1 = chart_at H x := rfl
 
 variable {H}
 
@@ -220,6 +226,39 @@ by rw [local_homeomorph.extend, local_equiv.trans_source, I.source_eq, preimage_
 
 end model_with_corners
 
+namespace structure_groupoid.local_invariant_properties
+
+variables {H : Type*} {M : Type*} [topological_space H] [topological_space M] [charted_space H M]
+{H' : Type*} {M' : Type*} [topological_space H'] [topological_space M'] [charted_space H' M']
+
+variables {G : structure_groupoid H} {G' : structure_groupoid H'}
+{e e' : local_homeomorph M H} {f f' : local_homeomorph M' H'}
+{P : (H → H') → set H → H → Prop} {g g' : M → M'} {s t : set M} {x : M}
+{Q : (H → H) → set H → H → Prop}
+variable (hG : G.local_invariant_prop G' P)
+include hG
+
+-- lemma lift_prop_within_at_indep_chart_target [has_groupoid M' G']
+--   (hf : f ∈ G'.maximal_atlas M') (xf : g x ∈ f.source) :
+--   lift_prop_within_at P g s x ↔
+--     /-continuous_within_at g s x ∧-/
+--     lift_prop_within_at P (f ∘ g) s x :=
+-- begin
+--   split,
+--   { intro hg,
+--     refine ⟨(f.continuous_at _).comp_continuous_within_at hg.1, _⟩,  },
+--   { }
+-- end
+
+-- lemma lift_prop_within_at_indep_chart_source [has_groupoid M G] [has_groupoid M' G']
+--   (he : e ∈ G.maximal_atlas M) (xe : x ∈ e.source)
+--   (hf : f ∈ G'.maximal_atlas M') (xf : g x ∈ f.source) :
+--   lift_prop_within_at P g s x ↔
+--     continuous_within_at g s x ∧ P (f ∘ g ∘ e.symm)
+--       (e.target ∩ e.symm ⁻¹' (s ∩ g⁻¹' f.source)) (e x) :=
+-- sorry
+
+end structure_groupoid.local_invariant_properties
 
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
@@ -358,6 +397,73 @@ lemma smooth_on_iff_of_subset_source
     ((c.extend I).target ∩
       (c.extend I).symm ⁻¹' (s ∩ f ⁻¹' (d.extend I').source)) :=
 cont_mdiff_on_iff_of_subset_source hc hd hs h2s
+
+variables {F G F' : Type*}
+variables [normed_group F] [normed_group G] [normed_group F']
+variables [normed_space 𝕜 F] [normed_space 𝕜 G] [normed_space 𝕜 F']
+
+lemma cont_diff_within_at.comp_cont_mdiff_within_at {g : F → G} {f : M → F} {s : set M} {t : set F}
+  {x : M}
+  (hg : cont_diff_within_at 𝕜 n g t (f x))
+  (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
+  cont_mdiff_within_at I 𝓘(𝕜, G) n (g ∘ f) s x :=
+begin
+  rw cont_mdiff_within_at_iff'' at *,
+  refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
+  -- simp_rw [written_in_ext_chart_at, ext_chart_model_space_eq_id, local_equiv.refl_coe,
+  --   id_comp] at hf ⊢,
+  rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
+  apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
+  -- rw [@preimage_comp _ _ _ _ f],
+  exact (inter_subset_left _ _).trans (preimage_mono h)
+end
+
+lemma cont_diff_at.comp_cont_mdiff_at {g : F → G} {f : M → F} {x : M}
+  (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, G) n (g ∘ f) x :=
+hg.comp_cont_mdiff_within_at hf subset.rfl
+
+lemma cont_diff.comp_cont_mdiff {g : F → G} {f : M → F}
+  (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
+  cont_mdiff I 𝓘(𝕜, G) n (g ∘ f) :=
+λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
+
+-- lemma cont_mdiff_within_at.clm_comp {g : M → F →L[𝕜] G} {f : M → E →L[𝕜] F} {s : set M} {x : M}
+--   (hg : cont_mdiff_within_at I 𝓘(𝕜, F →L[𝕜] G) n g s x)
+--   (hf : cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] F) n f s x) :
+--   cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] G) n (λ x, (g x).comp (f x)) s x :=
+-- sorry
+
+-- the following proof takes very long in pure term mode
+lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜] F} {x : M}
+  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] G) n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] G) n (λ x, (g x).comp (f x)) x :=
+@cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ H _ I M _ _ n _ ((F →L[𝕜] G) × (F' →L[𝕜] F))
+  _ _ _ _ _
+  (λ x, continuous_linear_map.comp x.1 x.2) (λ x, (g x, f x)) x
+  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff, exact is_bounded_bilinear_map_comp,  }) (hg.prod_mk_space hf)
+
+lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜] F}
+  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] G) n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
+  cont_mdiff I 𝓘(𝕜, F' →L[𝕜] G) n (λ x, (g x).comp (f x)) :=
+λ x, (hg x).clm_comp (hf x)
+
+-- wrong
+-- lemma cont_mdiff_at.ext_chart_at {f : M' → M} {g : M' → M} {x : M'}
+--   (hf : cont_mdiff_at I' I n f x) (hg : cont_mdiff_at I' I n g x) :
+--   cont_mdiff_at I' 𝓘(𝕜, E) n (λ x, ext_chart_at I (f x) (g x)) x :=
+-- sorry
+-- ⊢ cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') ⊤ (λ (x : M), (one_jet_ext I I' f x).snd) x
+
+lemma cont_mdiff.mfderiv {f : M → M'}
+  (hf : cont_mdiff I I' n f) (hmn : m + 1 ≤ n) :
+  cont_mdiff I 𝓘(𝕜, E →L[𝕜] E') m (show M → E →L[𝕜] E', from mfderiv I I' f) :=
+sorry
+
+lemma smooth.mfderiv {f : M → M'}
+  (hf : smooth I I' f) :
+  smooth I 𝓘(𝕜, E →L[𝕜] E') (show M → E →L[𝕜] E', from mfderiv I I' f) :=
+hf.mfderiv le_rfl
 
 end smooth_manifold_with_corners
 

@@ -32,7 +32,42 @@ variables (f : C^∞⟮IB', B'; IB, B⟯) -- todo: define cont_mdiff_map_class
 variables (Z : basic_smooth_vector_bundle_core IB B F)
 variables (Z' : basic_smooth_vector_bundle_core IB B F')
 
+-- wrong?
+-- lemma cont_mdiff_at.coord_change {n : with_top ℕ} {x : B'} {f g : B' → B} {h : B' → HB}
+--   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
+--   (hh : cont_mdiff_at IB' IB n h x) :
+--   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
+--     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (h x)) x :=
+-- sorry
+
+-- wrong?
+-- lemma cont_mdiff_at.coord_change' {n : with_top ℕ} {x : B'} {f g : B' → B} {h : B' → HB}
+--   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
+--   (hh : cont_mdiff_at IB' 𝓘(𝕜, VB) n (IB ∘ h) x) :
+--   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
+--     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (h x)) x :=
+-- sorry
+
+-- is this true?
+lemma cont_mdiff_at.coord_change'' {n : with_top ℕ} {x : B'} {f g h : B' → B}
+  (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
+  (hh : cont_mdiff_at IB' IB n h x) (h2 : h x = f x) :
+  cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
+    (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (charted_space.chart_at HB (f x) (h x))) x :=
+sorry
+
 namespace basic_smooth_vector_bundle_core
+
+lemma pullback_prod_aux {e₁ : local_homeomorph B HB} {e₂ : local_homeomorph B' HB'}
+  (h : (e₁.prod e₂).source.nonempty)
+  (he₁ : e₁ ∈ atlas HB B) (he₂ : e₂ ∈ atlas HB' B') :
+  image2.some local_homeomorph.prod (atlas HB B) (atlas HB' B') ⟨_, mem_image2_of_mem he₁ he₂⟩ =
+  (⟨e₁, he₁⟩, ⟨e₂, he₂⟩) :=
+begin
+  obtain ⟨h₁, h₂⟩ :=
+    (prod_eq_prod_of_nonempty' h).mp (image2.some_spec local_homeomorph.prod he₁ he₂),
+  simp_rw [prod.ext_iff, subtype.ext_iff, h₁, h₂, subtype.coe_mk, eq_self_iff_true, and_self]
+end
 
 include Z
 
@@ -73,8 +108,9 @@ def pullback (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
   end }
 
 attribute [simps coord_change index_at] to_topological_vector_bundle_core
+attribute [simps chart_at] basic_smooth_vector_bundle_core.to_charted_space
 
-lemma pullback.chart_eq {v : VB' → VB} {hv : cont_diff 𝕜 ∞ v} {h : HB' → HB}
+lemma pullback_chart {v : VB' → VB} {hv : cont_diff 𝕜 ∞ v} {h : HB' → HB}
   {h1v : ∀ x : VB', IB.symm (v x) = h (IB'.symm x)}
   {h2v : range IB' ⊆ v ⁻¹' range IB}
   {g : atlas HB' B' → atlas HB B}
@@ -119,14 +155,31 @@ end
 
 variables {IB' B'}
 
-lemma pullback_fst.chart_eq
+def pullback_fst_coord_change
+  {e₁ e₁' : local_homeomorph B HB} {e₂ e₂' : local_homeomorph B' HB'} (he₁ : e₁ ∈ atlas HB B)
+  (he₁' : e₁' ∈ atlas HB B) (he₂ : e₂ ∈ atlas HB' B') (he₂' : e₂' ∈ atlas HB' B')
+  (h : (e₁.prod e₂).source.nonempty) (h' : (e₁'.prod e₂').source.nonempty)
+  (b : model_prod HB HB') : (Z.pullback_fst B' IB').coord_change
+  ⟨_, mem_image2_of_mem he₁ he₂⟩ ⟨_, mem_image2_of_mem he₁' he₂'⟩ b =
+  Z.coord_change ⟨e₁, he₁⟩ ⟨e₁', he₁'⟩ b.1 :=
+by simp_rw [pullback_fst, pullback, pullback_prod_aux h, pullback_prod_aux h']
+
+def pullback_fst_coord_change_at {b b' : B × B'}
+  (x : model_prod HB HB') : (Z.pullback_fst B' IB').coord_change
+  (achart (model_prod HB HB') b) (achart (model_prod HB HB') b') x =
+  Z.coord_change (achart HB b.1) (achart HB b'.1) x.1 :=
+Z.pullback_fst_coord_change _ _ (chart_mem_atlas HB' b.2) (chart_mem_atlas HB' b'.2)
+  ⟨b, mk_mem_prod (mem_chart_source HB b.1) (mem_chart_source HB' b.2)⟩
+  ⟨b', mk_mem_prod (mem_chart_source HB b'.1) (mem_chart_source HB' b'.2)⟩ x
+
+lemma pullback_fst_chart
   (x : (Z.pullback_fst B' IB').to_topological_vector_bundle_core.total_space)
   {e : local_homeomorph B HB} {e' : local_homeomorph B' HB'} (he : e ∈ atlas HB B)
   (he' : e' ∈ atlas HB' B') (h : (e.prod e').source.nonempty) :
   (Z.pullback_fst B' IB').chart (mem_image2_of_mem he he') x =
   ((e x.1.1, e' x.1.2), (Z.chart he ⟨x.1.1, x.2⟩).2) :=
 begin
-  refine (pullback.chart_eq _ Z _ _ x _).trans _,
+  refine (pullback_chart _ Z _ _ x _).trans _,
   { intros b,
     obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_fst local_homeomorph.prod
       (chart_mem_atlas HB b.1) (chart_mem_atlas HB' b.2),
@@ -141,10 +194,16 @@ begin
       fst_image_prod _ ⟨b.2, mem_chart_source HB' b.2⟩] at this,
     exact this },
   { intros b x, refl },
-  obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_fst local_homeomorph.prod he he',
-  obtain ⟨h₁, h₂⟩ := (prod_eq_prod_of_nonempty' h).mp heq,
-  congr'
+  { congr', rw [pullback_prod_aux h] }
 end
+
+lemma pullback_fst_chart_at
+  (x : (Z.pullback_fst B' IB').to_topological_vector_bundle_core.total_space)
+  (b : B) (b' : B') : (Z.pullback_fst B' IB').chart
+  (mem_image2_of_mem (chart_mem_atlas HB b) (chart_mem_atlas HB' b')) x =
+  ((chart_at HB b x.1.1, chart_at HB' b' x.1.2), (Z.chart (chart_mem_atlas HB b) ⟨x.1.1, x.2⟩).2) :=
+Z.pullback_fst_chart x _ _
+  ⟨(b, b'), mk_mem_prod (mem_chart_source HB b) (mem_chart_source HB' b')⟩
 
 omit Z
 variables (IB B)
@@ -174,16 +233,31 @@ end
 
 variables {IB B}
 
+def pullback_snd_coord_change (Z : basic_smooth_vector_bundle_core IB' B' F)
+  {e₁ e₁' : local_homeomorph B HB} {e₂ e₂' : local_homeomorph B' HB'} (he₁ : e₁ ∈ atlas HB B)
+  (he₁' : e₁' ∈ atlas HB B) (he₂ : e₂ ∈ atlas HB' B') (he₂' : e₂' ∈ atlas HB' B')
+  (h : (e₁.prod e₂).source.nonempty) (h' : (e₁'.prod e₂').source.nonempty)
+  (x : model_prod HB HB') : (Z.pullback_snd B IB).coord_change
+  ⟨_, mem_image2_of_mem he₁ he₂⟩ ⟨_, mem_image2_of_mem he₁' he₂'⟩ x =
+  Z.coord_change ⟨e₂, he₂⟩ ⟨e₂', he₂'⟩ x.2 :=
+by simp_rw [pullback_snd, pullback, pullback_prod_aux h, pullback_prod_aux h']
 
-lemma pullback_snd.chart_eq
-  (Z : basic_smooth_vector_bundle_core IB' B' F)
+def pullback_snd_coord_change_at (Z : basic_smooth_vector_bundle_core IB' B' F) {b b' : B × B'}
+  (x : model_prod HB HB') : (Z.pullback_snd B IB).coord_change
+  (achart (model_prod HB HB') b) (achart (model_prod HB HB') b') x =
+  Z.coord_change (achart HB' b.2) (achart HB' b'.2) x.2 :=
+Z.pullback_snd_coord_change (chart_mem_atlas HB b.1) (chart_mem_atlas HB b'.1) _ _
+  ⟨b, mk_mem_prod (mem_chart_source HB b.1) (mem_chart_source HB' b.2)⟩
+  ⟨b', mk_mem_prod (mem_chart_source HB b'.1) (mem_chart_source HB' b'.2)⟩ x
+
+lemma pullback_snd_chart (Z : basic_smooth_vector_bundle_core IB' B' F)
   (x : (Z.pullback_snd B IB).to_topological_vector_bundle_core.total_space)
   {e : local_homeomorph B HB} {e' : local_homeomorph B' HB'} (he : e ∈ atlas HB B)
   (he' : e' ∈ atlas HB' B') (h : (e.prod e').source.nonempty) :
   (Z.pullback_snd B IB).chart (mem_image2_of_mem he he') x =
   ((e x.1.1, e' x.1.2), (Z.chart he' ⟨x.1.2, x.2⟩).2) :=
 begin
-  refine (pullback.chart_eq _ Z _ _ x _).trans _,
+  refine (pullback_chart _ Z _ _ x _).trans _,
   { intros b,
     obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_snd local_homeomorph.prod
       (chart_mem_atlas HB b.1) (chart_mem_atlas HB' b.2),
@@ -198,10 +272,17 @@ begin
       snd_image_prod ⟨b.1, mem_chart_source HB b.1⟩] at this,
     exact this },
   { intros b x, refl },
-  obtain ⟨e₂, he₂, heq⟩ := image2.some_spec_snd local_homeomorph.prod he he',
-  obtain ⟨h₁, h₂⟩ := (prod_eq_prod_of_nonempty' h).mp heq,
-  congr'
+  { congr', rw [pullback_prod_aux h] }
 end
+
+lemma pullback_snd_chart_at (Z : basic_smooth_vector_bundle_core IB' B' F)
+  (x : (Z.pullback_snd B IB).to_topological_vector_bundle_core.total_space)
+  (b : B) (b' : B') : (Z.pullback_snd B IB).chart
+  (mem_image2_of_mem (chart_mem_atlas HB b) (chart_mem_atlas HB' b')) x =
+  ((chart_at HB b x.1.1, chart_at HB' b' x.1.2), (Z.chart (chart_mem_atlas HB' b') ⟨x.1.2, x.2⟩).2) :=
+Z.pullback_snd_chart x _ _
+  ⟨(b, b'), mk_mem_prod (mem_chart_source HB b) (mem_chart_source HB' b')⟩
+
 
 /-!
 ### Homs of basic smooth vector bundle core
@@ -245,7 +326,7 @@ open continuous_linear_map
     { rw [← IB.image_eq] }
   end }
 
-lemma hom.chart_eq
+lemma hom_chart
   (x : (Z.hom Z').to_topological_vector_bundle_core.total_space)
   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L

@@ -3,8 +3,6 @@ Copyright (c) 2022 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
-import geometry.manifold.cont_mdiff
-
 import local.relation
 import global.one_jet_bundle
 
@@ -52,38 +50,40 @@ variables {I I'}
 @[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x :  M} :
   (one_jet_ext I I' f x).1 = (x, f x) := rfl
 
-lemma smooth_one_jet_ext {f : M → M'} (h : smooth I I' f) :
+open basic_smooth_vector_bundle_core
+def model_with_corners.simps.apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
+  (E : Type*) [normed_group E] [normed_space 𝕜 E] (H : Type*) [topological_space H]
+  (I : model_with_corners 𝕜 E H) : H → E := I
+
+def model_with_corners.simps.symm_apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
+  (E : Type*) [normed_group E] [normed_space 𝕜 E] (H : Type*) [topological_space H]
+  (I : model_with_corners 𝕜 E H) : E → H := I.symm
+
+initialize_simps_projections model_with_corners
+  (to_local_equiv_to_fun → apply, to_local_equiv_inv_fun → symm_apply,
+   to_local_equiv_source → source, to_local_equiv_target → target, -to_local_equiv)
+
+attribute [simps] model_with_corners.prod
+
+lemma smooth_one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
 begin
   intro x,
   rw [cont_mdiff_at_iff_target],
   split,
   { sorry },
-  { dsimp [ext_chart_at, function.comp],
-    -- refine cont_mdiff.prod_mk _ _,
-     },
-  -- rw [cont_mdiff_at, cont_mdiff_within_at_iff],
-  --   assume x,
-  -- rw [cont_mdiff_at, cont_mdiff_within_at_iff],
-  -- split,
-  -- { apply continuous.continuous_within_at,
-  --   apply topological_fiber_bundle_core.continuous_const_section,
-  --   assume i j y hy,
-  --   exact h _ _ _ hy },
-  -- { have : cont_diff 𝕜 ⊤ (λ (y : E), (y, v)) := cont_diff_id.prod cont_diff_const,
-  --   apply this.cont_diff_within_at.congr,
-  --   { assume y hy,
-  --     simp only with mfld_simps at hy,
-  --     simp only [chart, hy, chart_at, prod.mk.inj_iff, to_topological_vector_bundle_core]
-  --       with mfld_simps,
-  --     apply h,
-  --     simp only [hy, subtype.val_eq_coe] with mfld_simps,
-  --     exact mem_chart_source H (((chart_at H x).symm) ((model_with_corners.symm I) y)) },
-  --   { simp only [chart, chart_at, prod.mk.inj_iff, to_topological_vector_bundle_core]
-  --       with mfld_simps,
-  --     apply h,
-  --     simp only [subtype.val_eq_coe] with mfld_simps,
-  --     exact mem_chart_source H x, } }
+  { simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
+    dsimp only [one_jet_bundle_core],
+    simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
+      pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
+      model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
+      local_homeomorph.prod_apply],
+    refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ (hf x))
+      .prod_mk_space _,
+    refine cont_mdiff_at.clm_comp _ ((hf.mfderiv x).clm_comp _),
+    { exact (hf x).coord_change'' (tangent_bundle_core I' M') cont_mdiff_at_const (hf x) rfl },
+    { exact cont_mdiff_at_const.coord_change'' (tangent_bundle_core I M) cont_mdiff_at_id
+        cont_mdiff_at_id rfl } },
 end
 
 variables (I I' M M')
