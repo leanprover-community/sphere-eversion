@@ -167,7 +167,7 @@ lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport
 
 
 lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ) :
-  cont_mdiff_at I 𝓘(ℝ, F) n f  x :=
+  cont_mdiff_at I 𝓘(ℝ, F) n f x :=
 cont_mdiff_within_at_of_not_mem hx n univ
 
 @[simp]
@@ -193,13 +193,8 @@ lemma cont_mdiff_within_at.smul {f : M → F} {r : M → ℝ}
   (hf : cont_mdiff_within_at I 𝓘(ℝ, F) n f s x₀)
   (hs : cont_mdiff_within_at I 𝓘(ℝ, ℝ) n r s x₀) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n (r • f) s x₀ :=
-begin
-  have : cont_mdiff_within_at I 𝓘(ℝ, ℝ × F) n (λ x, (r x, f x)) s x₀,
-  { rw [model_with_corners_self_prod, ← charted_space_self_prod],
-    exact cont_mdiff_within_at.prod_mk hs hf },
-  exact (cont_mdiff_iff_cont_diff.mpr cont_diff_smul).cont_mdiff_at.cont_mdiff_within_at.comp
-    _ this (maps_to_univ _ _)
-end
+(cont_mdiff_iff_cont_diff.mpr cont_diff_smul).cont_mdiff_at.cont_mdiff_within_at.comp
+  _ (hs.prod_mk_space hf) (maps_to_univ _ _)
 
 lemma cont_mdiff_at.smul {f : M → F} {r : M → ℝ}
   {n : with_top ℕ} {x₀ : M}
@@ -213,13 +208,8 @@ lemma cont_mdiff_within_at.add {f g : M → F}
   (hf : cont_mdiff_within_at I 𝓘(ℝ, F) n f s x₀)
   (hg : cont_mdiff_within_at I 𝓘(ℝ, F) n g s x₀) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n (f + g) s x₀ :=
-begin
-  have : cont_mdiff_within_at I 𝓘(ℝ, F × F) n (λ x, (f x, g x)) s x₀,
-  { rw [model_with_corners_self_prod, ← charted_space_self_prod],
-    exact cont_mdiff_within_at.prod_mk hf hg },
-  exact (cont_mdiff_iff_cont_diff.mpr cont_diff_add).cont_mdiff_at.cont_mdiff_within_at.comp
-    _ this (maps_to_univ _ _)
-end
+(cont_mdiff_iff_cont_diff.mpr cont_diff_add).cont_mdiff_at.cont_mdiff_within_at.comp
+  _ (hf.prod_mk_space hg) (maps_to_univ _ _)
 
 lemma cont_mdiff_within_at.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
   {n : with_top ℕ} {s : set M} {x₀ : M}

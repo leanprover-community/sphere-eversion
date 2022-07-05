@@ -22,7 +22,7 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
 
 /-- The one jet-bundle, as a a `basic_smooth_vector_bundle_core` -/
 def one_jet_bundle_core : basic_smooth_vector_bundle_core (I.prod I') (M × M') (E →L[𝕜] E') :=
-(tangent_bundle_core I M).pullback_fst.hom (tangent_bundle_core I' M').pullback_snd
+((tangent_bundle_core I M).pullback_fst M' I').hom $ (tangent_bundle_core I' M').pullback_snd M I
 
 include I I'
 variables {M M'}
