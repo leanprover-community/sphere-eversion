@@ -26,7 +26,7 @@ variables {IM : model_with_corners 𝕜 VM HM}
 variables {F F' : Type*}
 variables [normed_group F] [normed_space 𝕜 F] [normed_group F'] [normed_space 𝕜 F']
 variables [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
-variables [topological_space B'] [charted_space HB' B'] [smooth_manifold_with_corners IB' B']
+variables [topological_space B'] [charted_space HB' B']
 variables [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
 variables (f : C^∞⟮IB', B'; IB, B⟯) -- todo: define cont_mdiff_map_class
 variables (Z : basic_smooth_vector_bundle_core IB B F)
@@ -48,8 +48,15 @@ variables (Z' : basic_smooth_vector_bundle_core IB B F')
 --     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (h x)) x :=
 -- sorry
 
+-- lemma cont_mdiff_within_at_iff_target :
+--   cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
+--     cont_mdiff_within_at I 𝓘(𝕜, E') n ((ext_chart_at I' (f x)) ∘ f)
+--     (s ∩ f ⁻¹' (ext_chart_at I' (f x)).source) x :=
+
+
 -- is this true?
-lemma cont_mdiff_at.coord_change'' {n : with_top ℕ} {x : B'} {f g h : B' → B}
+lemma cont_mdiff_at.coord_change'' [smooth_manifold_with_corners IB' B']
+  {n : with_top ℕ} {x : B'} {f g h : B' → B}
   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
   (hh : cont_mdiff_at IB' IB n h x) (h2 : h x = f x) :
   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
@@ -57,6 +64,22 @@ lemma cont_mdiff_at.coord_change'' {n : with_top ℕ} {x : B'} {f g h : B' → B
 sorry
 
 namespace basic_smooth_vector_bundle_core
+
+/-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
+  a `basic_smooth_vector_bundle_core`. The RHS is easier to prove. -/
+lemma cont_mdiff_at_iff_target {f : B' → Z.to_topological_vector_bundle_core.total_space}
+  {x : B'} {n : with_top ℕ} :
+  cont_mdiff_at IB' (IB.prod 𝓘(𝕜, F)) n f x ↔ continuous_at (bundle.total_space.proj ∘ f) x ∧
+  cont_mdiff_at IB' 𝓘(𝕜, VB × F) n ((ext_chart_at (IB.prod 𝓘(𝕜, F)) (f x)) ∘ f) x :=
+begin
+  let Z' := Z.to_topological_vector_bundle_core,
+  rw [cont_mdiff_at_iff_target, and.congr_left_iff],
+  refine λ hf, ⟨λ h, Z'.continuous_proj.continuous_at.comp h, λ h, _⟩,
+  exact (Z'.local_triv (achart _ (f x).1)).to_fiber_bundle_trivialization
+    .continuous_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
+end
+
+variables [smooth_manifold_with_corners IB' B']
 
 lemma pullback_prod_aux {e₁ : local_homeomorph B HB} {e₂ : local_homeomorph B' HB'}
   (h : (e₁.prod e₂).source.nonempty)
