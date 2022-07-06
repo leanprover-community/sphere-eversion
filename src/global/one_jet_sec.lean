@@ -69,21 +69,20 @@ lemma smooth_one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
 begin
   intro x,
-  rw [cont_mdiff_at_iff_target],
-  split,
-  { sorry },
-  { simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
-    dsimp only [one_jet_bundle_core],
-    simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
-      pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
-      model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
-      local_homeomorph.prod_apply],
-    refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ (hf x))
-      .prod_mk_space _,
-    refine cont_mdiff_at.clm_comp _ ((hf.mfderiv x).clm_comp _),
-    { exact (hf x).coord_change'' (tangent_bundle_core I' M') cont_mdiff_at_const (hf x) rfl },
-    { exact cont_mdiff_at_const.coord_change'' (tangent_bundle_core I M) cont_mdiff_at_id
-        cont_mdiff_at_id rfl } },
+  rw [(one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
+  refine ⟨continuous_at_id.prod (hf x).continuous_at, _⟩,
+  simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
+  dsimp only [one_jet_bundle_core],
+  simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
+    pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
+    model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
+    local_homeomorph.prod_apply],
+  refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ (hf x))
+    .prod_mk_space _,
+  refine cont_mdiff_at.clm_comp _ ((hf.mfderiv x).clm_comp _),
+  { exact (hf x).coord_change'' (tangent_bundle_core I' M') cont_mdiff_at_const (hf x) rfl },
+  { exact cont_mdiff_at_const.coord_change'' (tangent_bundle_core I M) cont_mdiff_at_id
+      cont_mdiff_at_id rfl }
 end
 
 variables (I I' M M')
