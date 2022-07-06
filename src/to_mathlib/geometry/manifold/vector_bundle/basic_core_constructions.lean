@@ -54,14 +54,16 @@ variables (Z' : basic_smooth_vector_bundle_core IB B F')
 --     (s ∩ f ⁻¹' (ext_chart_at I' (f x)).source) x :=
 
 
--- is this true?
-lemma cont_mdiff_at.coord_change'' [smooth_manifold_with_corners IB' B']
-  {n : with_top ℕ} {x : B'} {f g h : B' → B}
-  (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
-  (hh : cont_mdiff_at IB' IB n h x) (h2 : h x = f x) :
-  cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
-    (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (charted_space.chart_at HB (f x) (h x))) x :=
-sorry
+-- this is also false, right?
+-- lemma cont_mdiff_at.coord_change'' [smooth_manifold_with_corners IB' B']
+--   {n : with_top ℕ} {x : B'} {f g h : B' → B}
+--   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
+--   (hh : cont_mdiff_at IB' IB n h x) (h2 : h x = f x) :
+--   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
+--     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (chart_at HB (f x) (h x))) x :=
+-- begin
+--   sorry
+-- end
 
 namespace basic_smooth_vector_bundle_core
 
