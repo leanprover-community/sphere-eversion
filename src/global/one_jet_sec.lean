@@ -63,7 +63,7 @@ initialize_simps_projections model_with_corners
   (to_local_equiv_to_fun → apply, to_local_equiv_inv_fun → symm_apply,
    to_local_equiv_source → source, to_local_equiv_target → target, -to_local_equiv)
 
-attribute [simps] model_with_corners.prod
+attribute [simps] model_with_corners.prod tangent_bundle_core
 
 lemma smooth_one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
@@ -79,10 +79,12 @@ begin
     local_homeomorph.prod_apply],
   refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ (hf x))
     .prod_mk_space _,
-  refine cont_mdiff_at.clm_comp _ ((hf.mfderiv x).clm_comp _),
-  { exact (hf x).coord_change'' (tangent_bundle_core I' M') cont_mdiff_at_const (hf x) rfl },
-  { exact cont_mdiff_at_const.coord_change'' (tangent_bundle_core I M) cont_mdiff_at_id
-      cont_mdiff_at_id rfl }
+  dsimp only [one_jet_ext],
+  exact hf.mfderiv' le_rfl, 
+  -- refine cont_mdiff_at.clm_comp _ ((hf.mfderiv x).clm_comp _),
+  -- { exact (hf x).coord_change'' (tangent_bundle_core I' M') cont_mdiff_at_const (hf x) rfl },
+  -- { exact cont_mdiff_at_const.coord_change'' (tangent_bundle_core I M) cont_mdiff_at_id
+  --     cont_mdiff_at_id rfl }
 end
 
 variables (I I' M M')

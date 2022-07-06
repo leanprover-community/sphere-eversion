@@ -455,15 +455,27 @@ lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜] F}
 -- sorry
 -- ⊢ cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') ⊤ (λ (x : M), (one_jet_ext I I' f x).snd) x
 
-lemma cont_mdiff.mfderiv {f : M → M'}
+-- wrong
+-- lemma cont_mdiff.mfderiv {f : M → M'}
+--   (hf : cont_mdiff I I' n f) (hmn : m + 1 ≤ n) :
+--   cont_mdiff I 𝓘(𝕜, E →L[𝕜] E') m (show M → E →L[𝕜] E', from mfderiv I I' f) :=
+-- sorry -- this is stronger than `cont_mdiff.cont_mdiff_tangent_map`, which seems problematic
+
+lemma cont_mdiff.mfderiv' {f : M → M'}
   (hf : cont_mdiff I I' n f) (hmn : m + 1 ≤ n) :
-  cont_mdiff I 𝓘(𝕜, E →L[𝕜] E') m (show M → E →L[𝕜] E', from mfderiv I I' f) :=
+  cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
+  (λ x', ((tangent_bundle_core I' M').coord_change (achart H' (f x')) (achart H' (f x)) $
+    chart_at H' (f x') (f x')).comp $
+    (mfderiv I I' f x').comp $
+    (tangent_bundle_core I M).coord_change (achart H x) (achart H x') $ chart_at H x x') x :=
 sorry
 
-lemma smooth.mfderiv {f : M → M'}
-  (hf : smooth I I' f) :
-  smooth I 𝓘(𝕜, E →L[𝕜] E') (show M → E →L[𝕜] E', from mfderiv I I' f) :=
-hf.mfderiv le_rfl
+
+-- wrong
+-- lemma smooth.mfderiv {f : M → M'}
+--   (hf : smooth I I' f) :
+--   smooth I 𝓘(𝕜, E →L[𝕜] E') (show M → E →L[𝕜] E', from mfderiv I I' f) :=
+-- hf.mfderiv le_rfl
 
 end smooth_manifold_with_corners
 
