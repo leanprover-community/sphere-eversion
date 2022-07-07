@@ -99,9 +99,6 @@ def pullback (v : VB' → VB) (hv : cont_diff 𝕜 ∞ v) (h : HB' → HB)
       refine inter_subset_inter (inter_subset_inter (preimage_mono $ hh i) (λ x hx, hf j hx)) h2v }
   end }
 
-attribute [simps coord_change index_at] to_topological_vector_bundle_core
-attribute [simps chart_at] basic_smooth_vector_bundle_core.to_charted_space
-
 lemma pullback_chart {v : VB' → VB} {hv : cont_diff 𝕜 ∞ v} {h : HB' → HB}
   {h1v : ∀ x : VB', IB.symm (v x) = h (IB'.symm x)}
   {h2v : range IB' ⊆ v ⁻¹' range IB}
