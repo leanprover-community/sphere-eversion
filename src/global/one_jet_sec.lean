@@ -51,19 +51,6 @@ variables {I I'}
   (one_jet_ext I I' f x).1 = (x, f x) := rfl
 
 open basic_smooth_vector_bundle_core
-def model_with_corners.simps.apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-  (E : Type*) [normed_group E] [normed_space 𝕜 E] (H : Type*) [topological_space H]
-  (I : model_with_corners 𝕜 E H) : H → E := I
-
-def model_with_corners.simps.symm_apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-  (E : Type*) [normed_group E] [normed_space 𝕜 E] (H : Type*) [topological_space H]
-  (I : model_with_corners 𝕜 E H) : E → H := I.symm
-
-initialize_simps_projections model_with_corners
-  (to_local_equiv_to_fun → apply, to_local_equiv_inv_fun → symm_apply,
-   to_local_equiv_source → source, to_local_equiv_target → target, -to_local_equiv)
-
-attribute [simps] model_with_corners.prod tangent_bundle_core
 
 lemma smooth_one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
