@@ -1224,7 +1224,7 @@ begin
     dsimp at hn,
     simp only [function.funext_iff, eventual_value_apply hgO, restrict_apply, loop.ext_iff,
       set_coe.forall, subtype.coe_mk] at hn,
-    refine (continuous_at_congr (eventually_of_mem (prod_is_open.mem_nhds hO univ_mem) _)).mp _,
+    refine (continuous_at_congr (eventually_of_mem (prod_mem_nhds hO univ_mem) _)).mp _,
     swap, { exact λ (x : E × ℝ × ℝ) hx, hn x.1 (mem_prod.2 hx).1 x.2.1 x.2.2 },
     exact (loop_data_seq l₀ l n).hγ.cont.continuous_at },
   { intros x hx,

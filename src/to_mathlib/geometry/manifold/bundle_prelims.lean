@@ -282,11 +282,7 @@ lemma cont_mdiff_at_iff_target
   {x : M} :
   cont_mdiff_at I I' n f x ↔
     continuous_at f x ∧ cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' (f x) ∘ f) x :=
-begin
-  rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ,
-    univ_inter],
-  sorry -- refl after #15116 ?
-end
+by rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ]
 
 lemma cont_mdiff_within_at_iff_target_of_mem_source_chart_at
   [smooth_manifold_with_corners I' M']
@@ -294,7 +290,7 @@ lemma cont_mdiff_within_at_iff_target_of_mem_source_chart_at
   cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
     cont_mdiff_within_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) s x :=
 begin
-  sorry -- easier after #15116
+  sorry
   -- combination of `cont_mdiff_within_at_iff_target` and `cont_mdiff_within_at_iff_of_mem_source`
 end
 
@@ -325,7 +321,20 @@ variables {I} [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I
 
 /-- One can reformulate smoothness within a set at a point as continuity within this set at this
 point, and smoothness in any chart containing that point. -/
-lemma cont_mdiff_within_at_iff_of_mem_source
+lemma cont_mdiff_within_at_iff_of_mem_maximal_atlas
+  {c : local_homeomorph M H} (hc : c ∈ maximal_atlas I M)
+  {d : local_homeomorph M' H'} (hd : d ∈ maximal_atlas I' M')
+  (hx : x ∈ c.source) (hy : f x ∈ d.source) :
+  cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
+    cont_diff_within_at 𝕜 n (d.extend I' ∘ f ∘ (c.extend I).symm)
+    ((c.extend I).symm ⁻¹' s ∩ range I)
+    (c.extend I x) :=
+(cont_diff_within_at_local_invariant_prop I I' n).lift_prop_within_at_indep_chart hc hx hd hy
+
+
+/-- One can reformulate smoothness within a set at a point as continuity within this set at this
+point, and smoothness in any chart containing that point. -/
+lemma cont_mdiff_within_at_iff_of_mem_maximal_atlas'
   {c : local_homeomorph M H} (hc : c ∈ maximal_atlas I M)
   {d : local_homeomorph M' H'} (hd : d ∈ maximal_atlas I' M')
   (hx : x ∈ c.source) (hy : f x ∈ d.source) :
@@ -333,13 +342,8 @@ lemma cont_mdiff_within_at_iff_of_mem_source
     cont_diff_within_at 𝕜 n (d.extend I' ∘ f ∘ (c.extend I).symm)
     ((c.extend I).target ∩ (c.extend I).symm ⁻¹' (s ∩ f ⁻¹' (d.extend I').source))
     (c.extend I x) :=
-begin
-  refine ((cont_diff_within_at_local_invariant_prop I I' n).lift_prop_within_at_indep_chart
-    hc hx hd hy).trans _,
-  rw [cont_diff_within_at_prop, iff_eq_eq],
-  congr' 2,
-  mfld_set_tac
-end
+sorry
+
 
 /-- One can reformulate smoothness on a set as continuity on this set, and smoothness in two given
 charts that contain the set. -/
@@ -356,15 +360,15 @@ begin -- todo: cleanup
   { refine λ H, ⟨H.continuous_on, _⟩,
     rintro x' ⟨h1x', h2x', h3x'⟩,
     rw [mem_preimage] at h3x',
-    convert ((cont_mdiff_within_at_iff_of_mem_source hc hd _ _).mp (H _ h2x')).2,
+    convert ((cont_mdiff_within_at_iff_of_mem_maximal_atlas' hc hd _ _).mp (H _ h2x')).2,
     rw [local_equiv.right_inv _ h1x'],
     rw [← local_homeomorph.extend_source I, ← local_equiv.symm_target],
     rw [← local_equiv.symm_source] at h1x',
     apply local_equiv.maps_to _ h1x',
     rwa [local_homeomorph.extend_source] at h3x' },
   { rintro ⟨h1, h2⟩ x' hx',
-    refine (cont_mdiff_within_at_iff_of_mem_source hc hd (hs hx') (h2s $ mem_image_of_mem f hx')).mpr
-      ⟨h1.continuous_within_at hx', _⟩,
+    refine (cont_mdiff_within_at_iff_of_mem_maximal_atlas' hc hd (hs hx')
+      (h2s $ mem_image_of_mem f hx')).mpr ⟨h1.continuous_within_at hx', _⟩,
     apply h2,
     simp only [hx', hs hx', h2s (mem_image_of_mem f hx'), local_homeomorph.extend,
       local_equiv.coe_trans, model_with_corners.to_local_equiv_coe, local_homeomorph.coe_coe,
@@ -408,7 +412,7 @@ lemma cont_diff_within_at.comp_cont_mdiff_within_at {g : F → G} {f : M → F} 
   (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
   cont_mdiff_within_at I 𝓘(𝕜, G) n (g ∘ f) s x :=
 begin
-  rw cont_mdiff_within_at_iff'' at *,
+  rw cont_mdiff_within_at_iff at *,
   refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
   -- simp_rw [written_in_ext_chart_at, ext_chart_model_space_eq_id, local_equiv.refl_coe,
   --   id_comp] at hf ⊢,
