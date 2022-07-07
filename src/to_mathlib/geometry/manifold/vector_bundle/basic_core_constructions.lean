@@ -32,39 +32,6 @@ variables (f : C^∞⟮IB', B'; IB, B⟯) -- todo: define cont_mdiff_map_class
 variables (Z : basic_smooth_vector_bundle_core IB B F)
 variables (Z' : basic_smooth_vector_bundle_core IB B F')
 
--- wrong?
--- lemma cont_mdiff_at.coord_change {n : with_top ℕ} {x : B'} {f g : B' → B} {h : B' → HB}
---   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
---   (hh : cont_mdiff_at IB' IB n h x) :
---   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
---     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (h x)) x :=
--- sorry
-
--- wrong?
--- lemma cont_mdiff_at.coord_change' {n : with_top ℕ} {x : B'} {f g : B' → B} {h : B' → HB}
---   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
---   (hh : cont_mdiff_at IB' 𝓘(𝕜, VB) n (IB ∘ h) x) :
---   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
---     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (h x)) x :=
--- sorry
-
--- lemma cont_mdiff_within_at_iff_target :
---   cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
---     cont_mdiff_within_at I 𝓘(𝕜, E') n ((ext_chart_at I' (f x)) ∘ f)
---     (s ∩ f ⁻¹' (ext_chart_at I' (f x)).source) x :=
-
-
--- this is also false, right?
--- lemma cont_mdiff_at.coord_change'' [smooth_manifold_with_corners IB' B']
---   {n : with_top ℕ} {x : B'} {f g h : B' → B}
---   (hf : cont_mdiff_at IB' IB n f x) (hg : cont_mdiff_at IB' IB n g x)
---   (hh : cont_mdiff_at IB' IB n h x) (h2 : h x = f x) :
---   cont_mdiff_at IB' 𝓘(𝕜, F →L[𝕜] F) n
---     (λ x, Z.coord_change (achart HB (f x)) (achart HB (g x)) (chart_at HB (f x) (h x))) x :=
--- begin
---   sorry
--- end
-
 namespace basic_smooth_vector_bundle_core
 
 /-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
