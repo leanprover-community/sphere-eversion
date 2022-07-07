@@ -79,12 +79,7 @@ begin
     local_homeomorph.prod_apply],
   refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ (hf x))
     .prod_mk_space _,
-  dsimp only [one_jet_ext],
-  exact hf.mfderiv' le_rfl, 
-  -- refine cont_mdiff_at.clm_comp _ ((hf.mfderiv x).clm_comp _),
-  -- { exact (hf x).coord_change'' (tangent_bundle_core I' M') cont_mdiff_at_const (hf x) rfl },
-  -- { exact cont_mdiff_at_const.coord_change'' (tangent_bundle_core I M) cont_mdiff_at_id
-  --     cont_mdiff_at_id rfl }
+  exact hf.mfderiv' le_rfl
 end
 
 variables (I I' M M')
