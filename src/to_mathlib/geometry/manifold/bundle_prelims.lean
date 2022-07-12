@@ -24,16 +24,10 @@ attribute [simps coord_change index_at]
   basic_smooth_vector_bundle_core.to_topological_vector_bundle_core
 attribute [simps chart_at] basic_smooth_vector_bundle_core.to_charted_space
 
--- lemma Exists.const_snd {α : Sort*} {p : Prop} : (∃ x : α, p) → p
--- | ⟨x, h⟩ := h
-
--- lemma Exists.snd_fst {α : Sort*} {p : Prop} {q : α → Prop} (h : ∃ x, p ∧ q x) : p :=
--- (exists_imp_exists (λ x, and.left) h).const_snd
-
-/- These lemmas have the wrong name -/
-lemma id_comp {α β : Sort*} (f : α → β) : id ∘ f = f := rfl -- function.comp.left_id
-lemma comp_id {α β : Sort*} (f : α → β) : f ∘ id = f := rfl -- function.comp.right_id
-lemma id_apply {α : Sort*} (x : α) : id x = x := rfl -- id.def
+/-- For some reason simp doesn't use `forall_const` to simplify in cases like this. -/
+@[simp] lemma forall_forall_const {α β : Type*} (p : β → Prop) [nonempty α] :
+  (∀ x, α → p x) ↔ ∀ x, p x :=
+forall_congr $ λ x, forall_const α
 
 namespace set
 
@@ -64,12 +58,10 @@ begin
   simp_rw [h, false_and, or_false],
 end
 
--- def mk_image2 (f : α → β → γ) (x : s) (y : t) : image2 f s t :=
--- ⟨f x y, mem_image2_of_mem x.2 y.2⟩
-
 lemma image2.some_prop (z : image2 f s t) : ∃ (y : s × t), f y.1 y.2 = z :=
 let ⟨_, ⟨x, y, hx, hy, rfl⟩⟩ := z in ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, rfl⟩
 
+/-- Choose arbitrary elements in the domain mapped to `z`. Probably not mathlib-worthy. -/
 noncomputable def image2.some (f : α → β → γ) (s : set α) (t : set β) (z : image2 f s t) : s × t :=
 classical.some (image2.some_prop z)
 
@@ -97,21 +89,22 @@ begin
   simp_rw [filter.le_def, mem_nhds_within_iff_eventually],
   split,
   { exact λ h, (h t $ eventually_of_forall (λ x, id)).mono (λ x, id) },
-  { refine λ h u hu, (h.and hu).mono (λ x hx h, hx.2 $ hx.1 h) }
+  { exact λ h u hu, (h.and hu).mono (λ x hx h, hx.2 $ hx.1 h) }
 end
 
 end topology
 
 namespace local_equiv
 
-variables {α β γ : Type*} {e e' : local_equiv α β}
+variables {α β γ : Type*}
 
-/-- This might be useful to formulate many "composition of `f` and `g` is given by `h`" notions,
-like `coord_change_comp` in various structures. -/
-def eq_on_common_source (e e' : local_equiv α β) : Prop :=
-∀ x ∈ e.source ∩ e'.source, e x = e' x
+-- /-- This might be useful to formulate many "composition of `f` and `g` is given by `h`" notions,
+-- like `coord_change_comp` in various structures. -/
+-- def eq_on_common_source (e e' : local_equiv α β) : Prop :=
+-- ∀ x ∈ e.source ∩ e'.source, e x = e' x
 
-lemma mem_symm_trans_source {x : α} (he : x ∈ e.source) (he' : x ∈ e'.source) :
+/-- A lemma commonly useful when `e` and `e'` are charts. -/
+lemma mem_symm_trans_source {e : local_equiv α β} {e' : local_equiv α γ} {x : α} (he : x ∈ e.source) (he' : x ∈ e'.source) :
   e x ∈ (e.symm ≫ e').source :=
 ⟨e.maps_to he, by rwa [mem_preimage, local_equiv.symm_symm, e.left_inv he]⟩
 
@@ -133,33 +126,17 @@ protected lemma ext_iff {e e' : local_homeomorph α β} : e = e' ↔ (∀ x, e x
 lemma image_source_eq_target (e : local_homeomorph α β) : e '' e.source = e.target :=
 e.to_local_equiv.image_source_eq_target
 
-lemma source_subset_preimage_target : e.source ⊆ e ⁻¹' e.target :=
-e.maps_to
-
 lemma symm_image_target_eq_source (e : local_homeomorph α β) : e.symm '' e.target = e.source :=
 e.symm.image_source_eq_target
-
-lemma target_subset_preimage_source : e.target ⊆ e.symm ⁻¹' e.source :=
-e.symm_maps_to
-
-example {α : Type*} (p : Prop) [nonempty α] : (α → p) ↔ p :=
-by simp only [forall_const]
-
-example {α β : Type*} (p : β → Prop) [h : nonempty α] : (∀ x : β, id x = x) ↔ ∀ x : β, x = x :=
-by simp only [id]
-
-@[simp] lemma forall_forall_const {α β : Type*} (p : β → Prop) [h : nonempty α] :
-  (∀ x, α → p x) ↔ ∀ x, p x :=
-forall_congr $ λ x, forall_const α -- for some reason simp doesn't like this
 
 lemma prod_eq_prod_of_nonempty {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ}
   (h : (e₁.prod e₂).source.nonempty) :
   e₁.prod e₂ = e₁'.prod e₂' ↔ e₁ = e₁' ∧ e₂ = e₂' :=
 begin
   obtain ⟨⟨x, y⟩, -⟩ := id h,
-  have : nonempty α := ⟨x⟩,
-  have : nonempty β  := ⟨e₁ x⟩,
-  have : nonempty γ := ⟨y⟩,
+  haveI : nonempty α := ⟨x⟩,
+  haveI : nonempty β  := ⟨e₁ x⟩,
+  haveI : nonempty γ := ⟨y⟩,
   haveI : nonempty δ := ⟨e₂ y⟩,
   simp_rw [local_homeomorph.ext_iff, prod_apply, prod_symm_apply, prod_source, prod.ext_iff,
     set.prod_eq_prod_iff_of_nonempty h,
@@ -211,7 +188,8 @@ lemma cont_diff_within_at.congr_of_eventually_eq_insert
 h.congr_of_eventually_eq (nhds_within_mono x (subset_insert x s) h₁)
   (mem_of_mem_nhds_within (mem_insert x s) h₁ : _)
 
-
+/-- One direction of `cont_diff_within_at_succ_iff_has_fderiv_within_at`, but where all derivatives
+  are taken within the same set. -/
 lemma cont_diff_within_at.has_fderiv_within_at_nhds {n : ℕ}
   (hf : cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x) :
   ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : E → E →L[𝕜] F,
@@ -229,7 +207,8 @@ begin
   { exact hf'.mono_of_mem (nhds_within_mono _ (subset_insert _ _) hu) }
 end
 
-/- do we need assumption `x ∈ s`? -/
+/-- A version of `cont_diff_within_at_succ_iff_has_fderiv_within_at` where all derivatives
+  are taken within the same set. This lemma assumes `x ∈ s`. -/
 lemma cont_diff_within_at_succ_iff_has_fderiv_within_at_of_mem {n : ℕ} (hx : x ∈ s) :
   cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x
   ↔ ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : E → E →L[𝕜] F,
@@ -553,11 +532,8 @@ lemma cont_diff_within_at.comp_cont_mdiff_within_at {g : F → G} {f : M → F} 
 begin
   rw cont_mdiff_within_at_iff at *,
   refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
-  -- simp_rw [written_in_ext_chart_at, ext_chart_model_space_eq_id, local_equiv.refl_coe,
-  --   id_comp] at hf ⊢,
   rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
   apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
-  -- rw [@preimage_comp _ _ _ _ f],
   exact (inter_subset_left _ _).trans (preimage_mono h)
 end
 
@@ -673,11 +649,9 @@ begin
     refine ⟨(this.continuous_within_at.comp (ext_chart_at_continuous_at I x).continuous_within_at
       (λ _ _, mem_range_self _)).continuous_at univ_mem, _⟩,
     simp_rw [function.comp, ext_chart_at_self_self_apply],
-    refine this.congr_of_eventually_eq_insert _,
-    rw [insert_eq_of_mem],
+    refine this.congr_of_eventually_eq' _ (mem_range_self _),
     { refine eventually_of_mem (ext_chart_at_target_mem_nhds_within I x) (λ x' hx', _),
-      simp_rw [(ext_chart_at I x).right_inv hx'] },
-    exact mem_range_self _ },
+      simp_rw [(ext_chart_at I x).right_inv hx'] } },
   have : cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
     (λ x', fderiv_within 𝕜 (ext_chart_at I' (f x) ∘ (ext_chart_at I' (f x')).symm ∘
       written_in_ext_chart_at I I' x' f ∘ ext_chart_at I x' ∘ (ext_chart_at I x).symm)

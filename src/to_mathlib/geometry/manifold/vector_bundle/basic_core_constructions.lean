@@ -296,7 +296,7 @@ open continuous_linear_map
     simp_rw [trans_source, symm_source, mem_inter_iff, mem_preimage, trans_apply, mem_inter_iff,
       mem_preimage] at hx,
     rw [← Z.coord_change_comp k j i (k.1 (i.1.symm x)) _ v],
-    swap, { rw [← j.1.left_inv hx.1.2], apply source_subset_preimage_target h2x },
+    swap, { rw [← j.1.left_inv hx.1.2], apply local_homeomorph.maps_to _ h2x },
     simp_rw [trans_apply],
     have := hx.2.2, -- for some reason I cannot rewrite in `hx` directly?
     rw [j.1.left_inv hx.1.2] at this ⊢,
@@ -310,7 +310,7 @@ open continuous_linear_map
     refine (((Z.coord_change_smooth_clm j i).comp (cont_diff_on_coord_change' IB i.2 j.2) _).congr
       _).mono _,
     { rw [@preimage_comp _ _ _ _ IB, IB.preimage_image, @preimage_comp _ _ _ IB.symm],
-      exact (inter_subset_left _ _).trans (preimage_mono source_subset_preimage_target) },
+      exact (inter_subset_left _ _).trans (preimage_mono $ local_homeomorph.maps_to _) },
     { intros x hx, simp_rw [function.comp_apply, trans_apply, IB.left_inv] },
     { rw [← IB.image_eq] }
   end }
