@@ -1,6 +1,6 @@
 import geometry.manifold.diffeomorph
 
-open bundle set function
+open bundle set function filter
 open_locale manifold topological_space
 
 def model_with_corners.simps.apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
@@ -96,7 +96,7 @@ lemma nhds_within_le_iff {s t : set α} {x : α} : 𝓝[s] x ≤ 𝓝[t] x ↔ t
 begin
   simp_rw [filter.le_def, mem_nhds_within_iff_eventually],
   split,
-  { exact λ h, (h t $ filter.eventually_of_forall (λ x, id)).mono (λ x, id) },
+  { exact λ h, (h t $ eventually_of_forall (λ x, id)).mono (λ x, id) },
   { refine λ h u hu, (h.and hu).mono (λ x hx h, hx.2 $ hx.1 h) }
 end
 
@@ -211,31 +211,60 @@ lemma cont_diff_within_at.congr_of_eventually_eq_insert
 h.congr_of_eventually_eq (nhds_within_mono x (subset_insert x s) h₁)
   (mem_of_mem_nhds_within (mem_insert x s) h₁ : _)
 
-lemma cont_diff_at.fderiv_within {m : ℕ}
-  (hf : cont_diff_within_at 𝕜 n f s x) (hs : unique_diff_on 𝕜 s) (hmn : (m + 1 : with_top ℕ) ≤ n) :
+
+lemma cont_diff_within_at.has_fderiv_within_at_nhds {n : ℕ}
+  (hf : cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x) :
+  ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : E → E →L[𝕜] F,
+    (∀ x ∈ u, has_fderiv_within_at f (f' x) s x) ∧ cont_diff_within_at 𝕜 n f' s x :=
+begin
+  obtain ⟨u, hu, f', huf', hf'⟩ := cont_diff_within_at_succ_iff_has_fderiv_within_at.mp hf,
+  obtain ⟨w, hw, hxw, hwu⟩ := mem_nhds_within.mp hu,
+  rw [inter_comm] at hwu,
+  refine ⟨insert x s ∩ w, inter_mem_nhds_within _ (hw.mem_nhds hxw), inter_subset_left _ _,
+    f', λ y hy, _, _⟩,
+  { refine has_fderiv_at_filter.mono ((huf' y $ hwu hy).mono hwu) _,
+    rw [nhds_within_le_iff],
+    refine mem_of_superset _ (inter_subset_inter_left _ (subset_insert _ _)),
+    refine inter_mem_nhds_within _ (hw.mem_nhds hy.2) },
+  { exact hf'.mono_of_mem (nhds_within_mono _ (subset_insert _ _) hu) }
+end
+
+/- do we need assumption `x ∈ s`? -/
+lemma cont_diff_within_at_succ_iff_has_fderiv_within_at_of_mem {n : ℕ} (hx : x ∈ s) :
+  cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x
+  ↔ ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : E → E →L[𝕜] F,
+    (∀ x ∈ u, has_fderiv_within_at f (f' x) s x) ∧ cont_diff_within_at 𝕜 n f' s x :=
+begin
+  refine ⟨λ hf, hf.has_fderiv_within_at_nhds, _⟩,
+  rw [cont_diff_within_at_succ_iff_has_fderiv_within_at, insert_eq_of_mem hx],
+  rintro ⟨u, hu, hus, f', huf', hf'⟩,
+  exact ⟨u, hu, f', λ y hy, (huf' y hy).mono hus, hf'.mono hus⟩,
+end
+
+lemma cont_diff_within_at.fderiv_within'
+  (hf : cont_diff_within_at 𝕜 n f s x) (hs : ∀ᶠ y in 𝓝[insert x s] x, unique_diff_within_at 𝕜 s y)
+  (hmn : m + 1 ≤ n) :
   cont_diff_within_at 𝕜 m (fderiv_within 𝕜 f s) s x :=
 begin
-  obtain ⟨u, hu, hus, hfu⟩ := hf.cont_diff_on hmn,
-  obtain ⟨v, hv, f', hvf', hf'⟩ :=
-  -- doesn't give enough information
-    cont_diff_within_at_succ_iff_has_fderiv_within_at.mp (hf.of_le hmn),
-  obtain ⟨w, hw, hxw, hwv⟩ := mem_nhds_within.mp hv,
-  rw [with_top.coe_add] at hfu,
-  -- have : ∀ y ∈ s, fderiv_within 𝕜 f s y = f' y,
-  -- { intros y hy, refine hs.eq hy _ _, },
-  apply (hf'.mono_of_mem (nhds_within_mono _ (subset_insert _ _) hv)).congr_of_eventually_eq_insert,
-  rw [inter_comm] at hwv,
-  have : insert x s ∩ w ∈ 𝓝[insert x s] x := inter_mem_nhds_within _ (hw.mem_nhds hxw),
-  refine filter.eventually_of_mem this (λ y hy, _),
-  -- have hvs : v ⊆ s,
-  -- { sorry },
-  have : has_fderiv_within_at f (f' y) s y,
-  { refine has_fderiv_at_filter.mono (hvf' y $ hwv hy) _, rw [nhds_within_le_iff],
-    sorry
-     },
-  sorry
-  -- refine hs.eq _ _ ((hvf' y hy).mono _),
+  have : ∀ k : ℕ, (k + 1 : with_top ℕ) ≤ n → cont_diff_within_at 𝕜 k (fderiv_within 𝕜 f s) s x,
+  { intros k hkn,
+    obtain ⟨v, hv, -, f', hvf', hf'⟩ := (hf.of_le hkn).has_fderiv_within_at_nhds,
+    apply hf'.congr_of_eventually_eq_insert,
+    filter_upwards [hv, hs],
+    exact λ y hy h2y, (hvf' y hy).fderiv_within h2y },
+  induction m using with_top.rec_top_coe,
+  { obtain rfl := eq_top_iff.mpr hmn,
+    rw [cont_diff_within_at_top],
+    exact λ m, this m le_top },
+  exact this m hmn
 end
+
+lemma cont_diff_within_at.fderiv_within
+  (hf : cont_diff_within_at 𝕜 n f s x) (hs : unique_diff_on 𝕜 s)
+  (hmn : (m + 1 : with_top ℕ) ≤ n) (hxs : x ∈ s) :
+  cont_diff_within_at 𝕜 m (fderiv_within 𝕜 f s) s x :=
+hf.fderiv_within' (by { rw [insert_eq_of_mem hxs], exact eventually_of_mem self_mem_nhds_within hs})
+  hmn
 
 end fderiv
 
@@ -399,32 +428,32 @@ lemma cont_mdiff_at_iff_target
     continuous_at f x ∧ cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' (f x) ∘ f) x :=
 by rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ]
 
-lemma cont_mdiff_within_at_iff_target_of_mem_source_chart_at
-  [smooth_manifold_with_corners I' M']
-  {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
-  cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
-    cont_mdiff_within_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) s x :=
-begin
-  -- rw [cont_mdiff_within_at_iff_target, and.congr_right_iff],
-  -- intro hf,
-  -- have := (cont_diff_within_at_local_invariant_prop I I' n).lift_prop_within_at_indep_chart_aux
-  --   (chart_mem_maximal_atlas I),
-  sorry -- useful, but currently unused
-  -- combination of `cont_mdiff_within_at_iff_target` and `cont_mdiff_within_at_iff_of_mem_source`
-  -- probably needs generalization of `lift_prop_within_at_indep_chart_aux` that does only one side,
-  -- and only assumes that that side is a manifold with corners
-end
+-- lemma cont_mdiff_within_at_iff_target_of_mem_source_chart_at
+--   [smooth_manifold_with_corners I' M']
+--   {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
+--   cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
+--     cont_mdiff_within_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) s x :=
+-- begin
+--   -- rw [cont_mdiff_within_at_iff_target, and.congr_right_iff],
+--   -- intro hf,
+--   -- have := (cont_diff_within_at_local_invariant_prop I I' n).lift_prop_within_at_indep_chart_aux
+--   --   (chart_mem_maximal_atlas I),
+--   sorry -- useful, but currently unused
+--   -- combination of `cont_mdiff_within_at_iff_target` and `cont_mdiff_within_at_iff_of_mem_source`
+--   -- probably needs generalization of `lift_prop_within_at_indep_chart_aux` that does only one side,
+--   -- and only assumes that that side is a manifold with corners
+-- end
 
-lemma cont_mdiff_at_iff_target_of_mem_source_chart_at
-  [smooth_manifold_with_corners I' M']
-  {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
-  cont_mdiff_at I I' n f x ↔ continuous_at f x ∧
-    cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) x :=
-begin
-  rw [cont_mdiff_at, cont_mdiff_within_at_iff_target_of_mem_source_chart_at hy,
-    continuous_within_at_univ, cont_mdiff_at],
-  apply_instance
-end
+-- lemma cont_mdiff_at_iff_target_of_mem_source_chart_at
+--   [smooth_manifold_with_corners I' M']
+--   {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
+--   cont_mdiff_at I I' n f x ↔ continuous_at f x ∧
+--     cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) x :=
+-- begin
+--   rw [cont_mdiff_at, cont_mdiff_within_at_iff_target_of_mem_source_chart_at hy,
+--     continuous_within_at_univ, cont_mdiff_at],
+--   apply_instance
+-- end
 
 variables (I)
 
@@ -449,8 +478,10 @@ lemma cont_mdiff_within_at_iff_of_mem_maximal_atlas
 
 /-
 todo: `((ext_chart_at I x).symm ⁻¹' s ∩ range I)` in `cont_mdiff.lean` is not very nice,
-since it doesn't have to be a subset of `(ext_chart_at I x).target`, which is annoying.
+since it doesn't have to be a subset of `(ext_chart_at I x).target` when `s` is a subset of the
+source, which is annoying.
 Of course, near `(ext_chart_at I x x)` it's the same.
+`(ext_chart_at I x) '' s` is better.
 Also do this in file `mfderiv`
 -/
 
@@ -543,7 +574,6 @@ lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜]
   (λ x, continuous_linear_map.comp x.1 x.2) (λ x, (g x, f x)) x
   (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff, exact is_bounded_bilinear_map_comp,  }) (hg.prod_mk_space hf)
 
-open filter
 lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜] F}
   (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] G) n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
   cont_mdiff I 𝓘(𝕜, F' →L[𝕜] G) n (λ x, (g x).comp (f x)) :=
@@ -595,7 +625,7 @@ by { rw [ext_coord_change_source, I.image_eq], exact (has_groupoid.compatible
 lemma cont_diff_within_at_coord_change [smooth_manifold_with_corners I M] (x x' : M) {x₂ : E}
   (hx₂ : x₂ ∈ ((ext_chart_at I x').symm ≫ ext_chart_at I x).source) :
   cont_diff_within_at 𝕜 ⊤ (ext_chart_at I x ∘ (ext_chart_at I x').symm) (range I) x₂ :=
-by { sorry }
+(cont_diff_on_coord_change I x x' x₂ hx₂).mono_of_mem sorry
 
 lemma cont_diff_on_fderiv_coord_change (x x' : M) :
   cont_diff_on 𝕜 ⊤
@@ -625,6 +655,9 @@ by simp only with mfld_simps
 lemma ext_chart_at_self_apply {x y : H} : ext_chart_at I x y = I y :=
 by simp only with mfld_simps
 
+lemma ext_chart_at_self_self_apply {x y : E} : ext_chart_at 𝓘(𝕜, E) x y = y :=
+by simp only with mfld_simps
+
 variables {I}
 
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
@@ -636,30 +669,26 @@ lemma cont_mdiff_at.mfderiv' {f : M → M'}
 begin
   have hn : 1 ≤ n := (self_le_add_left 1 m).trans hmn,
   obtain ⟨u, hu, hfu⟩ := cont_mdiff_at_iff_cont_mdiff_at_nhds.mp (hf.of_le hn),
-  -- have : ∀ᶠ x' in 𝓝 x, differentiable_within_at 𝕜 (written_in_ext_chart_at I I' x' f) (range I)
-  --   (ext_chart_at I x' $ (ext_chart_at I x').symm $ ext_chart_at I x' x'),
-  -- { sorry },
   have : cont_diff_within_at 𝕜 m (fderiv_within 𝕜 (written_in_ext_chart_at I I' x f) (range I))
     (range I) (ext_chart_at I x x),
-  { },
+  { rw [cont_mdiff_at_iff] at hf,
+    exact hf.2.fderiv_within I.unique_diff hmn (mem_range_self _) },
   have : cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
     (λ x', fderiv_within 𝕜 (written_in_ext_chart_at I I' x f) (range I) (ext_chart_at I x x')) x,
   { rw [cont_mdiff_at_iff],
-    split, sorry,
-    simp_rw [function.comp, ext_chart_at_self_apply, model_with_corners_self_coe],
-
-
-    -- refine cont_mdiff_at.congr_of_eventually_eq _ (eventually_of_mem hu _),
-    -- swap 3,
-    -- intros x' hx',
-    -- have := ((hfu x' hx').mdifferentiable_at le_rfl).2,
-   },
-  sorry, sorry,
+    refine ⟨(this.continuous_within_at.comp (ext_chart_at_continuous_at I x).continuous_within_at
+      (λ _ _, mem_range_self _)).continuous_at univ_mem, _⟩,
+    simp_rw [function.comp, ext_chart_at_self_self_apply],
+    refine this.congr_of_eventually_eq_insert _,
+    rw [insert_eq_of_mem],
+    { refine eventually_of_mem (ext_chart_at_target_mem_nhds_within I x) (λ x' hx', _),
+      simp_rw [(ext_chart_at I x).right_inv hx'] },
+    exact mem_range_self _ },
   have : cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
     (λ x', fderiv_within 𝕜 (ext_chart_at I' (f x) ∘ (ext_chart_at I' (f x')).symm ∘
       written_in_ext_chart_at I I' x' f ∘ ext_chart_at I x' ∘ (ext_chart_at I x).symm)
       (range I) (ext_chart_at I x x')) x,
-  sorry { refine this.congr_of_eventually_eq _,
+  { refine this.congr_of_eventually_eq _,
     filter_upwards [ext_chart_at_source_mem_nhds I x, hu],
     intros x₂ hx₂ h2x₂,
     have : ∀ x' ∈ (ext_chart_at I x).symm ⁻¹' (ext_chart_at I x₂).source ∩
@@ -670,7 +699,7 @@ begin
     { rintro x' ⟨hx', h2x'⟩,
       simp_rw [written_in_ext_chart_at, function.comp_apply],
       rw [(ext_chart_at I x₂).left_inv hx', (ext_chart_at I' (f x₂)).left_inv h2x'] },
-    refine eventually_eq.fderiv_within_eq_nhds (I.unique_diff _ $ mem_range_self _) _,
+    refine filter.eventually_eq.fderiv_within_eq_nhds (I.unique_diff _ $ mem_range_self _) _,
     refine eventually_of_mem (inter_mem _ _) this,
     { exact ext_chart_preimage_mem_nhds' hx₂ (ext_chart_at_source_mem_nhds I x₂) },
     refine ext_chart_preimage_mem_nhds' hx₂ _,
@@ -697,29 +726,6 @@ begin
   { simp_rw [written_in_ext_chart_at, function.comp_apply,
       (ext_chart_at I x₂).left_inv (mem_ext_chart_source I x₂)] },
   { simp_rw [function.comp_apply, (ext_chart_at I x).left_inv hx₂] }
-end
-
--- todo fix
-lemma cont_mdiff_at_iff_cont_mdiff_on_nhds' {n : with_top ℕ} :
-  cont_mdiff_at I I' n f x ↔ ∃ u ∈ 𝓝 x, cont_mdiff_on I I' n f u :=
-by sorry
-
-lemma cont_mdiff.mfderiv' {f : M → M'}
-  (hf : cont_mdiff I I' n f) (hmn : m + 1 ≤ n) :
-  cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-  (λ x', ((tangent_bundle_core I' M').coord_change (achart H' (f x')) (achart H' (f x)) $
-    chart_at H' (f x') (f x')).comp $
-    (mfderiv I I' f x').comp $
-    (tangent_bundle_core I M).coord_change (achart H x) (achart H x') $ chart_at H x x') x :=
-begin
-  have hn : 1 ≤ n := (self_le_add_left 1 m).trans hmn,
-  have := (hf.cont_mdiff_at.mdifferentiable_at hn).mfderiv,
-  have hI := (tangent_bundle_core I M).coord_change_smooth_clm,
-  have hI' := (tangent_bundle_core I' M').coord_change_smooth_clm,
-  simp_rw [function.comp, tangent_bundle_core_coord_change] at hI hI' ⊢,
-  simp_rw [(hf.cont_mdiff_at.mdifferentiable_at hn).mfderiv],
-  have := (hf.cont_mdiff_at.mdifferentiable_at hn).2,
-  have := @fderiv_within.comp,
 end
 
 end smooth_manifold_with_corners
