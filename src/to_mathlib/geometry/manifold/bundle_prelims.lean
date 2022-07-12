@@ -356,6 +356,18 @@ left_inverse.injective I.left_inv
 lemma preimage_image (s : set H) : I ⁻¹' (I '' s) = s :=
 I.injective.preimage_image s
 
+lemma nhds_within_eq_bot {x : H} {s : set H} : 𝓝[s] x = ⊥ ↔ x ∉ closure s :=
+by simp_rw [← empty_mem_iff_bot, mem_nhds_within, mem_closure_iff, not_forall, exists_prop,
+  not_nonempty_iff_eq_empty, subset_empty_iff]
+
+lemma image_mem_nhds_within_of_mem {x : E} {s : set H} (hs : s ∈ 𝓝 (I.symm x)) :
+  I '' s ∈ 𝓝[range I] x :=
+begin
+  by_cases hx : x ∈ range I,
+  { obtain ⟨x, rfl⟩ := hx, rw [I.left_inv] at hs, exact I.image_mem_nhds_within hs },
+  { rw [← I.closed_range.closure_eq, ← nhds_within_eq_bot] at hx, rw [hx], exact mem_bot }
+end
+
 /-- Given a chart `f` on a manifold with corners, `f.extend` is the extended chart to the model
 vector space. -/
 @[simp, mfld_simps] def _root_.local_homeomorph.extend : local_equiv M E :=
@@ -622,31 +634,14 @@ lemma cont_diff_on_coord_change [smooth_manifold_with_corners I M] (x x' : M) :
 by { rw [ext_coord_change_source, I.image_eq], exact (has_groupoid.compatible
   (cont_diff_groupoid ⊤ I) (chart_mem_atlas H x') (chart_mem_atlas H x)).1 }
 
-lemma cont_diff_within_at_coord_change [smooth_manifold_with_corners I M] (x x' : M) {x₂ : E}
-  (hx₂ : x₂ ∈ ((ext_chart_at I x').symm ≫ ext_chart_at I x).source) :
-  cont_diff_within_at 𝕜 ⊤ (ext_chart_at I x ∘ (ext_chart_at I x').symm) (range I) x₂ :=
-(cont_diff_on_coord_change I x x' x₂ hx₂).mono_of_mem sorry
-
-lemma cont_diff_on_fderiv_coord_change (x x' : M) :
-  cont_diff_on 𝕜 ⊤
-    (fderiv_within 𝕜 (ext_chart_at I x ∘ (ext_chart_at I x').symm) (range I))
-    (((ext_chart_at I x').symm ≫ ext_chart_at I x).source) :=
+lemma cont_diff_within_at_coord_change [smooth_manifold_with_corners I M] (x x' : M) {y : E}
+  (hy : y ∈ ((ext_chart_at I x').symm ≫ ext_chart_at I x).source) :
+  cont_diff_within_at 𝕜 ⊤ (ext_chart_at I x ∘ (ext_chart_at I x').symm) (range I) y :=
 begin
-  have := (tangent_bundle_core I M).coord_change_smooth_clm (achart H x') (achart H x),
-  simp_rw [function.comp, tangent_bundle_core_coord_change] at this,
-  rw [ext_coord_change_source],
-  refine this.congr (λ x₂ hx₂, _),
-  rw [I.right_inv (mem_range_of_mem_image _ _ hx₂)],
-  refl,
-end
-
-lemma cont_diff_within_at_fderiv_coord_change (x x' : M) {x₂ : E}
-  (hx₂ : x₂ ∈ ((ext_chart_at I x').symm ≫ ext_chart_at I x).source) :
-  cont_diff_within_at 𝕜 ⊤
-    (fderiv_within 𝕜 (ext_chart_at I x ∘ (ext_chart_at I x').symm) (range I))
-    (range I) x₂ :=
-begin
-  sorry
+  apply (cont_diff_on_coord_change I x x' y hy).mono_of_mem,
+  rw [ext_coord_change_source] at hy ⊢,
+  obtain ⟨z, hz, rfl⟩ := hy,
+  exact I.image_mem_nhds_within ((local_homeomorph.open_source _).mem_nhds hz)
 end
 
 lemma ext_chart_at_self_eq {x y : H} : ⇑(ext_chart_at I x) = I :=
@@ -671,8 +666,7 @@ begin
   obtain ⟨u, hu, hfu⟩ := cont_mdiff_at_iff_cont_mdiff_at_nhds.mp (hf.of_le hn),
   have : cont_diff_within_at 𝕜 m (fderiv_within 𝕜 (written_in_ext_chart_at I I' x f) (range I))
     (range I) (ext_chart_at I x x),
-  { rw [cont_mdiff_at_iff] at hf,
-    exact hf.2.fderiv_within I.unique_diff hmn (mem_range_self _) },
+  { rw [cont_mdiff_at_iff] at hf, exact hf.2.fderiv_within I.unique_diff hmn (mem_range_self _) },
   have : cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
     (λ x', fderiv_within 𝕜 (written_in_ext_chart_at I I' x f) (range I) (ext_chart_at I x x')) x,
   { rw [cont_mdiff_at_iff],

@@ -66,7 +66,7 @@ begin
     local_homeomorph.prod_apply],
   refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ (hf x))
     .prod_mk_space _,
-  exact hf.mfderiv' le_rfl
+  exact (hf x).mfderiv' le_rfl
 end
 
 variables (I I' M M')
