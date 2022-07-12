@@ -307,7 +307,7 @@ open continuous_linear_map
     refine ((compL 𝕜 F F' F').cont_diff.comp_cont_diff_on
       (Z'.coord_change_smooth_clm i j)).clm_comp _,
     refine (compL 𝕜 F F F').flip.cont_diff.comp_cont_diff_on _,
-    refine (((Z.coord_change_smooth_clm j i).comp (cont_diff_on_coord_change IB i.2 j.2) _).congr
+    refine (((Z.coord_change_smooth_clm j i).comp (cont_diff_on_coord_change' IB i.2 j.2) _).congr
       _).mono _,
     { rw [@preimage_comp _ _ _ _ IB, IB.preimage_image, @preimage_comp _ _ _ IB.symm],
       exact (inter_subset_left _ _).trans (preimage_mono source_subset_preimage_target) },
