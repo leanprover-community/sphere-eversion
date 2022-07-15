@@ -19,44 +19,15 @@ attribute [ext] topological_fiber_bundle.pretrivialization
 attribute [ext] topological_fiber_bundle.trivialization
 attribute [ext] topological_vector_bundle.pretrivialization
 attribute [ext] topological_vector_bundle.trivialization
-attribute [simps] model_with_corners.prod tangent_bundle_core
+attribute [simps (lemmas_only)] model_with_corners.prod
+attribute [simps] tangent_bundle_core
 attribute [simps coord_change index_at]
   basic_smooth_vector_bundle_core.to_topological_vector_bundle_core
--- attribute [simps chart_at] basic_smooth_vector_bundle_core.to_charted_space
-
-/-- For some reason simp doesn't use `forall_const` to simplify in cases like this. -/
-@[simp] lemma forall_forall_const {α β : Type*} (p : β → Prop) [nonempty α] :
-  (∀ x, α → p x) ↔ ∀ x, p x :=
-forall_congr $ λ x, forall_const α
+attribute [simps chart_at (lemmas_only)] basic_smooth_vector_bundle_core.to_charted_space
 
 namespace set
 
 variables {α β γ δ : Type*} {f : α → β → γ} {s s₁ : set α} {t t₁ : set β} {x : α} {y : β}
-
-lemma prod_eq_prod_iff_of_nonempty (h : (s ×ˢ t : set _).nonempty) :
-  s ×ˢ t = s₁ ×ˢ t₁ ↔ s = s₁ ∧ t = t₁ :=
-begin
-  split,
-  { intro heq,
-    have h₁ : (s₁ ×ˢ t₁ : set _).nonempty, { rwa [← heq] },
-    rw [prod_nonempty_iff] at h h₁,
-    rw [← fst_image_prod s h.2, ← fst_image_prod s₁ h₁.2, heq, eq_self_iff_true, true_and,
-        ← snd_image_prod h.1 t, ← snd_image_prod h₁.1 t₁, heq] },
-  { rintro ⟨rfl, rfl⟩, refl }
-end
-
-lemma prod_eq_prod_iff : s ×ˢ t = s₁ ×ˢ t₁ ↔ s = s₁ ∧ t = t₁ ∨ (s = ∅ ∨ t = ∅) ∧
-  (s₁ = ∅ ∨ t₁ = ∅) :=
-begin
-  symmetry,
-  cases eq_empty_or_nonempty (s ×ˢ t) with h h,
-  { simp_rw [h, @eq_comm _ ∅, prod_eq_empty_iff, prod_eq_empty_iff.mp h, true_and,
-      or_iff_right_iff_imp],
-    rintro ⟨rfl, rfl⟩, exact prod_eq_empty_iff.mp h },
-  rw [prod_eq_prod_iff_of_nonempty h],
-  rw [← ne_empty_iff_nonempty, ne.def, prod_eq_empty_iff] at h,
-  simp_rw [h, false_and, or_false],
-end
 
 lemma image2.some_prop (z : image2 f s t) : ∃ (y : s × t), f y.1 y.2 = z :=
 let ⟨_, ⟨x, y, hx, hy, rfl⟩⟩ := z in ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, rfl⟩
@@ -79,21 +50,6 @@ lemma image2.some_spec_snd (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) 
 
 end set
 
-
-section topology
-
-variables {α : Type*} [topological_space α]
-
-lemma nhds_within_le_iff {s t : set α} {x : α} : 𝓝[s] x ≤ 𝓝[t] x ↔ t ∈ 𝓝[s] x :=
-begin
-  simp_rw [filter.le_def, mem_nhds_within_iff_eventually],
-  split,
-  { exact λ h, (h t $ eventually_of_forall (λ x, id)).mono (λ x, id) },
-  { exact λ h u hu, (h.and hu).mono (λ x hx h, hx.2 $ hx.1 h) }
-end
-
-end topology
-
 namespace local_equiv
 
 variables {α β γ : Type*}
@@ -103,150 +59,7 @@ variables {α β γ : Type*}
 -- def eq_on_common_source (e e' : local_equiv α β) : Prop :=
 -- ∀ x ∈ e.source ∩ e'.source, e x = e' x
 
-/-- A lemma commonly useful when `e` and `e'` are charts. -/
-lemma mem_symm_trans_source {e : local_equiv α β} {e' : local_equiv α γ} {x : α} (he : x ∈ e.source) (he' : x ∈ e'.source) :
-  e x ∈ (e.symm ≫ e').source :=
-⟨e.maps_to he, by rwa [mem_preimage, local_equiv.symm_symm, e.left_inv he]⟩
-
 end local_equiv
-
-namespace local_homeomorph
-
-variables {α β γ δ : Type*} [topological_space α] [topological_space β]
-variables [topological_space γ] [topological_space δ] {e : local_homeomorph α β}
-
-lemma trans_apply {e₁ : local_homeomorph α β} {e₂ : local_homeomorph β γ} {x : α} :
-  (e₁ ≫ₕ e₂) x = e₂ (e₁ x) :=
-rfl
-
-protected lemma ext_iff {e e' : local_homeomorph α β} : e = e' ↔ (∀ x, e x = e' x) ∧
-  (∀ x, e.symm x = e'.symm x) ∧ e.source = e'.source :=
-⟨by { rintro rfl, exact ⟨λ x, rfl, λ x, rfl, rfl⟩ }, λ h, e.ext e' h.1 h.2.1 h.2.2⟩
-
-lemma image_source_eq_target (e : local_homeomorph α β) : e '' e.source = e.target :=
-e.to_local_equiv.image_source_eq_target
-
-lemma symm_image_target_eq_source (e : local_homeomorph α β) : e.symm '' e.target = e.source :=
-e.symm.image_source_eq_target
-
-lemma prod_eq_prod_of_nonempty {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ}
-  (h : (e₁.prod e₂).source.nonempty) :
-  e₁.prod e₂ = e₁'.prod e₂' ↔ e₁ = e₁' ∧ e₂ = e₂' :=
-begin
-  obtain ⟨⟨x, y⟩, -⟩ := id h,
-  haveI : nonempty α := ⟨x⟩,
-  haveI : nonempty β  := ⟨e₁ x⟩,
-  haveI : nonempty γ := ⟨y⟩,
-  haveI : nonempty δ := ⟨e₂ y⟩,
-  simp_rw [local_homeomorph.ext_iff, prod_apply, prod_symm_apply, prod_source, prod.ext_iff,
-    set.prod_eq_prod_iff_of_nonempty h,
-    forall_and_distrib, prod.forall, forall_const, forall_forall_const, and_assoc, and.left_comm]
-end
-
-lemma prod_eq_prod_of_nonempty' {e₁ e₁' : local_homeomorph α β} {e₂ e₂' : local_homeomorph γ δ}
-  (h : (e₁'.prod e₂').source.nonempty) :
-  e₁.prod e₂ = e₁'.prod e₂' ↔ e₁ = e₁' ∧ e₂ = e₂' :=
-by rw [eq_comm, prod_eq_prod_of_nonempty h, eq_comm, @eq_comm _ e₂']
-
-end local_homeomorph
-
-section fderiv
-
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-variables {E : Type*} [normed_group E] [normed_space 𝕜 E]
-variables {F : Type*} [normed_group F] [normed_space 𝕜 F]
-variables {G : Type*} [normed_group G] [normed_space 𝕜 G]
-variables {G' : Type*} [normed_group G'] [normed_space 𝕜 G']
-variables {f f₀ f₁ g : E → F}
-variables {x : E} {s t : set E} {n m : with_top ℕ}
-
-lemma filter.eventually_eq.fderiv_within_eq_nhds (hs : unique_diff_within_at 𝕜 s x)
-  (hL : f₁ =ᶠ[𝓝 x] f) :
-  fderiv_within 𝕜 f₁ s x = fderiv_within 𝕜 f s x :=
-(show f₁ =ᶠ[𝓝[s] x] f, from nhds_within_le_nhds hL).fderiv_within_eq hs (mem_of_mem_nhds hL : _)
-
-/-- Ternary version of `fderiv_within.comp` -/
-lemma fderiv_within.comp₃ {g' : G → G'} {g : F → G} {t : set F} {u : set G} {y : F} {y' : G}
-  (hg' : differentiable_within_at 𝕜 g' u y') (hg : differentiable_within_at 𝕜 g t y)
-  (hf : differentiable_within_at 𝕜 f s x)
-  (h2g : maps_to g t u) (h2f : maps_to f s t)
-  (h3g : g y = y') (h3f : f x = y) (hxs : unique_diff_within_at 𝕜 s x) :
-  fderiv_within 𝕜 (g' ∘ g ∘ f) s x = (fderiv_within 𝕜 g' u y').comp
-    ((fderiv_within 𝕜 g t y).comp (fderiv_within 𝕜 f s x)) :=
-begin
-  substs h3g h3f,
-  exact (hg'.has_fderiv_within_at.comp x
-    (hg.has_fderiv_within_at.comp x (hf.has_fderiv_within_at) h2f) $ h2g.comp h2f).fderiv_within hxs
-end
-
-
--- to cont_diff
-
-lemma cont_diff_within_at.congr_of_eventually_eq_insert
-  (h : cont_diff_within_at 𝕜 n f s x) (h₁ : f₁ =ᶠ[𝓝[insert x s] x] f) :
-  cont_diff_within_at 𝕜 n f₁ s x :=
-h.congr_of_eventually_eq (nhds_within_mono x (subset_insert x s) h₁)
-  (mem_of_mem_nhds_within (mem_insert x s) h₁ : _)
-
-/-- One direction of `cont_diff_within_at_succ_iff_has_fderiv_within_at`, but where all derivatives
-  are taken within the same set. -/
-lemma cont_diff_within_at.has_fderiv_within_at_nhds {n : ℕ}
-  (hf : cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x) :
-  ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : E → E →L[𝕜] F,
-    (∀ x ∈ u, has_fderiv_within_at f (f' x) s x) ∧ cont_diff_within_at 𝕜 n f' s x :=
-begin
-  obtain ⟨u, hu, f', huf', hf'⟩ := cont_diff_within_at_succ_iff_has_fderiv_within_at.mp hf,
-  obtain ⟨w, hw, hxw, hwu⟩ := mem_nhds_within.mp hu,
-  rw [inter_comm] at hwu,
-  refine ⟨insert x s ∩ w, inter_mem_nhds_within _ (hw.mem_nhds hxw), inter_subset_left _ _,
-    f', λ y hy, _, _⟩,
-  { refine has_fderiv_at_filter.mono ((huf' y $ hwu hy).mono hwu) _,
-    rw [nhds_within_le_iff],
-    refine mem_of_superset _ (inter_subset_inter_left _ (subset_insert _ _)),
-    refine inter_mem_nhds_within _ (hw.mem_nhds hy.2) },
-  { exact hf'.mono_of_mem (nhds_within_mono _ (subset_insert _ _) hu) }
-end
-
-/-- A version of `cont_diff_within_at_succ_iff_has_fderiv_within_at` where all derivatives
-  are taken within the same set. This lemma assumes `x ∈ s`. -/
-lemma cont_diff_within_at_succ_iff_has_fderiv_within_at_of_mem {n : ℕ} (hx : x ∈ s) :
-  cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x
-  ↔ ∃ u ∈ 𝓝[s] x, u ⊆ s ∧ ∃ f' : E → E →L[𝕜] F,
-    (∀ x ∈ u, has_fderiv_within_at f (f' x) s x) ∧ cont_diff_within_at 𝕜 n f' s x :=
-begin
-  split,
-  { intro hf, simpa only [insert_eq_of_mem hx] using hf.has_fderiv_within_at_nhds },
-  rw [cont_diff_within_at_succ_iff_has_fderiv_within_at, insert_eq_of_mem hx],
-  rintro ⟨u, hu, hus, f', huf', hf'⟩,
-  exact ⟨u, hu, f', λ y hy, (huf' y hy).mono hus, hf'.mono hus⟩
-end
-
-lemma cont_diff_within_at.fderiv_within'
-  (hf : cont_diff_within_at 𝕜 n f s x) (hs : ∀ᶠ y in 𝓝[insert x s] x, unique_diff_within_at 𝕜 s y)
-  (hmn : m + 1 ≤ n) :
-  cont_diff_within_at 𝕜 m (fderiv_within 𝕜 f s) s x :=
-begin
-  have : ∀ k : ℕ, (k + 1 : with_top ℕ) ≤ n → cont_diff_within_at 𝕜 k (fderiv_within 𝕜 f s) s x,
-  { intros k hkn,
-    obtain ⟨v, hv, -, f', hvf', hf'⟩ := (hf.of_le hkn).has_fderiv_within_at_nhds,
-    apply hf'.congr_of_eventually_eq_insert,
-    filter_upwards [hv, hs],
-    exact λ y hy h2y, (hvf' y hy).fderiv_within h2y },
-  induction m using with_top.rec_top_coe,
-  { obtain rfl := eq_top_iff.mpr hmn,
-    rw [cont_diff_within_at_top],
-    exact λ m, this m le_top },
-  exact this m hmn
-end
-
-lemma cont_diff_within_at.fderiv_within
-  (hf : cont_diff_within_at 𝕜 n f s x) (hs : unique_diff_on 𝕜 s)
-  (hmn : (m + 1 : with_top ℕ) ≤ n) (hxs : x ∈ s) :
-  cont_diff_within_at 𝕜 m (fderiv_within 𝕜 f s) s x :=
-hf.fderiv_within' (by { rw [insert_eq_of_mem hxs], exact eventually_of_mem self_mem_nhds_within hs})
-  hmn
-
-end fderiv
 
 namespace topological_fiber_bundle
 namespace trivialization
@@ -475,6 +288,8 @@ source, which is annoying.
 Of course, near `(ext_chart_at I x x)` it's the same.
 `(ext_chart_at I x) '' s` is better.
 Also do this in file `mfderiv`
+
+Tradeoff:
 -/
 
 /-- One can reformulate smoothness on a set as continuity on this set, and smoothness in two given
@@ -684,12 +499,13 @@ begin
   intros x₂ hx₂ h2x₂ h3x₂,
   symmetry,
   rw [((hfu x₂ h2x₂).mdifferentiable_at le_rfl).mfderiv],
-  have hI := (cont_diff_within_at_coord_change I x₂ x $ local_equiv.mem_symm_trans_source hx₂ $
+  have hI := (cont_diff_within_at_coord_change I x₂ x $ local_equiv.mem_symm_trans_source _ hx₂ $
     mem_ext_chart_source I x₂).differentiable_within_at le_top,
-  have hI' := (cont_diff_within_at_coord_change I' (f x) (f x₂) $ local_equiv.mem_symm_trans_source
+  have hI' := (cont_diff_within_at_coord_change I' (f x) (f x₂) $
+    local_equiv.mem_symm_trans_source _
     (mem_ext_chart_source I' (f x₂)) h3x₂).differentiable_within_at le_top,
   have h3f := ((hfu x₂ h2x₂).mdifferentiable_at le_rfl).2,
-  refine fderiv_within.comp₃ hI' h3f hI _ _ _ _ (I.unique_diff _ $ mem_range_self _),
+  refine fderiv_within.comp₃ _ hI' h3f hI _ _ _ _ (I.unique_diff _ $ mem_range_self _),
   { exact λ x _, mem_range_self _ },
   { exact λ x _, mem_range_self _ },
   { simp_rw [written_in_ext_chart_at, function.comp_apply,

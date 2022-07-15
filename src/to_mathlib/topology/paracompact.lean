@@ -78,7 +78,7 @@ begin
     let P : ι × ℝ → Prop := λ z, (↿B (z : ι × ℝ) ∩ U n).nonempty,
     rw (set.subsubset_equiv_inter s P).set_finite_iff,
     simp only [s, P, set.Union_inter],
-    refine set.finite_Union' (λ m, set.finite_of_fintype _) (hU' n) (λ m hm, _),
+    refine set.finite_Union' (λ m, set.to_finite _) (hU' n) (λ m hm, _),
     rw set.eq_empty_iff_forall_not_mem,
     intros z,
     simp only [pi.prod, finset.coe_image, mem_inter_eq, mem_image, finset.mem_coe, set_coe.exists,

@@ -3,7 +3,7 @@ import data.finite.set
 
 lemma equiv.set_finite_iff {α β : Type*} {s : set α} {t : set β} (hst : s ≃ t) :
   s.finite ↔ t.finite :=
-by rw [set.finite_iff_finite, set.finite_iff_finite, hst.finite_iff]
+by simp_rw [← set.finite_coe_iff, hst.finite_iff]
 
 lemma set.finite_Union' {α ι : Type*} {s : ι → set α} (hs : ∀ i, (s i).finite) {t : set ι}
   (ht₁ : t.finite) (ht₂ : ∀ i ∉ t, s i = ∅) :

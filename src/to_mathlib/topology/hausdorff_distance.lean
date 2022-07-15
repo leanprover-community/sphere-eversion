@@ -50,7 +50,7 @@ end
 /--
   is this true without the additional assumptions on `α`?
 -/
-lemma _root_.is_open.exists_thickening_image [locally_compact_space α] [regular_space α]
+lemma _root_.is_open.exists_thickening_image [locally_compact_space α] [t3_space α]
   {f : α → β} {K : set α} {U : set β} (hU : is_open U) (hK : is_compact K)
   (hf : continuous f) (hKU : f '' K ⊆ U) :
   ∃ (ε > 0) (V ∈ 𝓝ˢ K), metric.thickening ε (f '' V) ⊆ U :=
