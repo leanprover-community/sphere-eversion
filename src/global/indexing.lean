@@ -76,6 +76,10 @@ nat.cases_on n nat.linear_order (λ _, fin.linear_order)
 instance (n : ℕ) : indexing (index_type n) :=
 nat.cases_on n nat.indexing (λ _, fin.indexing _)
 
+def index_type_encodable : Π n : ℕ, encodable (index_type n)
+| 0 := nat.encodable
+| (n + 1) := fin.encodable (n + 1)
+
 lemma set.countable_iff_exists_nonempty_index_type_equiv
   {α : Type*} {s : set α} (hne : s.nonempty) :
   s.countable ↔ ∃ n, nonempty (index_type n ≃ s) :=
