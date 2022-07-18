@@ -129,40 +129,6 @@ by rw [local_homeomorph.extend, local_equiv.trans_target, I.target_eq, I.image_e
 
 end model_with_corners
 
-namespace structure_groupoid.local_invariant_properties
-
-variables {H : Type*} {M : Type*} [topological_space H] [topological_space M] [charted_space H M]
-{H' : Type*} {M' : Type*} [topological_space H'] [topological_space M'] [charted_space H' M']
-
-variables {G : structure_groupoid H} {G' : structure_groupoid H'}
-{e e' : local_homeomorph M H} {f f' : local_homeomorph M' H'}
-{P : (H → H') → set H → H → Prop} {g g' : M → M'} {s t : set M} {x : M}
-{Q : (H → H) → set H → H → Prop}
-variable (hG : G.local_invariant_prop G' P)
-include hG
-
--- lemma lift_prop_within_at_indep_chart_target [has_groupoid M' G']
---   (hf : f ∈ G'.maximal_atlas M') (xf : g x ∈ f.source) :
---   lift_prop_within_at P g s x ↔
---     /-continuous_within_at g s x ∧-/
---     lift_prop_within_at P (f ∘ g) s x :=
--- begin
---   split,
---   { intro hg,
---     refine ⟨(f.continuous_at _).comp_continuous_within_at hg.1, _⟩,  },
---   { }
--- end
-
--- lemma lift_prop_within_at_indep_chart_source [has_groupoid M G] [has_groupoid M' G']
---   (he : e ∈ G.maximal_atlas M) (xe : x ∈ e.source)
---   (hf : f ∈ G'.maximal_atlas M') (xf : g x ∈ f.source) :
---   lift_prop_within_at P g s x ↔
---     continuous_within_at g s x ∧ P (f ∘ g ∘ e.symm)
---       (e.target ∩ e.symm ⁻¹' (s ∩ g⁻¹' f.source)) (e x) :=
--- sorry
-
-end structure_groupoid.local_invariant_properties
-
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
@@ -175,7 +141,6 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {M' : Type*} [topological_space M'] [charted_space H' M']
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
 
-
 lemma smooth_manifold_with_corners.subset_maximal_atlas [smooth_manifold_with_corners I M] :
   atlas H M ⊆ maximal_atlas I M :=
 structure_groupoid.subset_maximal_atlas _
@@ -186,33 +151,6 @@ lemma cont_mdiff_at_iff_target
   cont_mdiff_at I I' n f x ↔
     continuous_at f x ∧ cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' (f x) ∘ f) x :=
 by rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ]
-
--- lemma cont_mdiff_within_at_iff_target_of_mem_source_chart_at
---   [smooth_manifold_with_corners I' M']
---   {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
---   cont_mdiff_within_at I I' n f s x ↔ continuous_within_at f s x ∧
---     cont_mdiff_within_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) s x :=
--- begin
---   -- rw [cont_mdiff_within_at_iff_target, and.congr_right_iff],
---   -- intro hf,
---   -- have := (cont_diff_within_at_local_invariant_prop I I' n).lift_prop_within_at_indep_chart_aux
---   --   (chart_mem_maximal_atlas I),
---   sorry -- useful, but currently unused
---   -- combination of `cont_mdiff_within_at_iff_target` and `cont_mdiff_within_at_iff_of_mem_source`
---   -- probably needs generalization of `lift_prop_within_at_indep_chart_aux` that does only one side,
---   -- and only assumes that that side is a manifold with corners
--- end
-
--- lemma cont_mdiff_at_iff_target_of_mem_source_chart_at
---   [smooth_manifold_with_corners I' M']
---   {x : M} {y : M'} (hy : f x ∈ (chart_at H' y).source) :
---   cont_mdiff_at I I' n f x ↔ continuous_at f x ∧
---     cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' y ∘ f) x :=
--- begin
---   rw [cont_mdiff_at, cont_mdiff_within_at_iff_target_of_mem_source_chart_at hy,
---     continuous_within_at_univ, cont_mdiff_at],
---   apply_instance
--- end
 
 variables (I)
 
@@ -243,52 +181,10 @@ Of course, near `(ext_chart_at I x x)` it's the same.
 `(ext_chart_at I x) '' s` is better.
 Also do this in file `mfderiv`
 
-Tradeoff:
+This is a trade-off: the preimage can be nicer since `I.symm` is assumed to be continuous
+everywhere, which gives some nice properties.
 -/
 
-/-- One can reformulate smoothness on a set as continuity on this set, and smoothness in two given
-charts that contain the set. -/
-lemma cont_mdiff_on_iff_of_subset_source
-  {c : local_homeomorph M H} (hc : c ∈ maximal_atlas I M)
-  {d : local_homeomorph M' H'} (hd : d ∈ maximal_atlas I' M')
-  (hs : s ⊆ c.source) (h2s : f '' s ⊆ d.source) :
-  cont_mdiff_on I I' n f s ↔ continuous_on f s ∧
-    cont_diff_on 𝕜 n (d.extend I' ∘ f ∘ (c.extend I).symm) (c.extend I '' s) :=
-begin
-  split,
-  { refine λ H, ⟨H.continuous_on, _⟩,
-    rintro _ ⟨x', hx', rfl⟩,
-    refine ((cont_mdiff_within_at_iff_of_mem_maximal_atlas hc hd (hs hx')
-      (h2s $ mem_image_of_mem f hx')).mp (H _ hx')).2.mono _,
-    rw [(c.extend I).image_eq_target_inter_inv_preimage _, inter_comm, c.extend_target],
-    refine inter_subset_inter subset.rfl (image_subset_range _ _),
-    rwa [c.extend_source] },
-  { rintro ⟨h1, h2⟩ x' hx',
-    refine (cont_mdiff_within_at_iff_of_mem_maximal_atlas hc hd (hs hx')
-      (h2s $ mem_image_of_mem f hx')).mpr ⟨h1.continuous_within_at hx', _⟩,
-    refine (h2 _ $ mem_image_of_mem _ hx').mono_of_mem _,
-    sorry -- easy, but even easier after above todo
-     }
-end
-
--- rename or remove depending on whether this is useful
-lemma cont_mdiff_on_iff_of_subset_source_chart_at {x : M} {y : M'}
-  (hs : s ⊆ (chart_at H x).source)
-  (h2s : f '' s ⊆ (chart_at H' y).source) :
-  cont_mdiff_on I I' n f s ↔ continuous_on f s ∧
-    cont_diff_on 𝕜 n (ext_chart_at I' y ∘ f ∘ (ext_chart_at I x).symm)
-    (ext_chart_at I x '' s) :=
-cont_mdiff_on_iff_of_subset_source (structure_groupoid.chart_mem_maximal_atlas _ x)
-  (structure_groupoid.chart_mem_maximal_atlas _ y) hs h2s
-
-lemma smooth_on_iff_of_subset_source
-  {c : local_homeomorph M H} (hc : c ∈ maximal_atlas I M)
-  {d : local_homeomorph M' H'} (hd : d ∈ maximal_atlas I' M')
-  (hs : s ⊆ c.source) (h2s : f '' s ⊆ d.source) :
-  smooth_on I I' f s ↔ continuous_on f s ∧
-    cont_diff_on 𝕜 ⊤ (d.extend I' ∘ f ∘ (c.extend I).symm)
-    (c.extend I '' s) :=
-cont_mdiff_on_iff_of_subset_source hc hd hs h2s
 
 variables {F G F' : Type*}
 variables [normed_group F] [normed_group G] [normed_group F']
