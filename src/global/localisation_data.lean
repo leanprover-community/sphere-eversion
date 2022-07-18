@@ -88,5 +88,3 @@ def std_localisation_data (f : continuous_map M M') : localisation_data 𝓘(�
   end,
   h₃ := target_charts_cover 𝕜 E' M' }
 end
-
-#lint
