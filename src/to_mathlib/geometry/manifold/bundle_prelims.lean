@@ -3,28 +3,6 @@ import geometry.manifold.diffeomorph
 open bundle set function filter
 open_locale manifold topological_space
 
-def model_with_corners.simps.apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-  (E : Type*) [normed_group E] [normed_space 𝕜 E] (H : Type*) [topological_space H]
-  (I : model_with_corners 𝕜 E H) : H → E := I
-
-def model_with_corners.simps.symm_apply (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-  (E : Type*) [normed_group E] [normed_space 𝕜 E] (H : Type*) [topological_space H]
-  (I : model_with_corners 𝕜 E H) : E → H := I.symm
-
-initialize_simps_projections model_with_corners
-  (to_local_equiv_to_fun → apply, to_local_equiv_inv_fun → symm_apply,
-   to_local_equiv_source → source, to_local_equiv_target → target, -to_local_equiv)
-
-attribute [ext] topological_fiber_bundle.pretrivialization
-attribute [ext] topological_fiber_bundle.trivialization
-attribute [ext] topological_vector_bundle.pretrivialization
-attribute [ext] topological_vector_bundle.trivialization
-attribute [simps (lemmas_only)] model_with_corners.prod
-attribute [simps] tangent_bundle_core
-attribute [simps coord_change index_at]
-  basic_smooth_vector_bundle_core.to_topological_vector_bundle_core
-attribute [simps chart_at (lemmas_only)] basic_smooth_vector_bundle_core.to_charted_space
-
 namespace set
 
 variables {α β γ δ : Type*} {f : α → β → γ} {s s₁ : set α} {t t₁ : set β} {x : α} {y : β}
@@ -61,36 +39,12 @@ variables {α β γ : Type*}
 
 end local_equiv
 
-namespace topological_fiber_bundle
-namespace trivialization
-
-
-variables {ι : Type*} {B : Type*} {F : Type*} {Z : Type*} {proj : Z → B}
-variables [topological_space B] [topological_space F] [topological_space Z]
-
-lemma to_pretrivialization_injective :
-  injective (λ e : trivialization F proj, e.to_pretrivialization) :=
-by { intros e e', rw [pretrivialization.ext_iff, trivialization.ext_iff,
-  ← local_homeomorph.to_local_equiv_injective.eq_iff], exact id }
-
-end trivialization
-end topological_fiber_bundle
-
 namespace topological_vector_bundle
 
 variables {R : Type*} {B : Type*} {F : Type*} {E : B → Type*}
 variables [nondiscrete_normed_field R] [∀ x, add_comm_monoid (E x)] [∀ x, module R (E x)]
   [normed_group F] [normed_space R F] [topological_space B]
   [topological_space (total_space E)]
-
-namespace trivialization
-
-lemma to_pretrivialization_injective :
-  injective (λ e : trivialization R F E, e.to_pretrivialization) :=
-by { intros e e', rw [pretrivialization.ext_iff, trivialization.ext_iff,
-  ← topological_fiber_bundle.trivialization.to_pretrivialization_injective.eq_iff], exact id }
-
-end trivialization
 
 variables {HB : Type*} [topological_space HB]
 

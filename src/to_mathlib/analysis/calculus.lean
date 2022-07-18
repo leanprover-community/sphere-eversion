@@ -388,7 +388,7 @@ lemma const_mul_one_div_lt {ε : ℝ} (ε_pos : 0 < ε) (C : ℝ) : ∀ᶠ (N : 
 begin
   have : tendsto (λ N : ℝ, 1/N) at_top (𝓝 0),
   { rw show (λ N : ℝ, 1/N) = λ N, N^(-(1 : ℤ)), by simp,
-    exact tendsto_pow_neg_at_top le_rfl },
+    exact tendsto_pow_neg_at_top one_ne_zero },
   rw tendsto_iff_norm_tendsto_zero at this,
   simp only [sub_zero] at this,
   have key := this.const_mul C,
