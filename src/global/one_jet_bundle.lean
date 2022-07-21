@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2022 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Patrick Massot
+Authors: Patrick Massot, Floris van Doorn
 -/
 import to_mathlib.geometry.manifold.vector_bundle.basic_core_constructions
 

@@ -63,12 +63,6 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {H : Type*} [topological_space H]
   {M : Type*} [topological_space M] (f : local_homeomorph M H) (I : model_with_corners 𝕜 E H)
 
-lemma injective : injective I :=
-I.left_inverse.injective
-
-lemma preimage_image (s : set H) : I ⁻¹' (I '' s) = s :=
-I.injective.preimage_image s
-
 lemma nhds_within_eq_bot {x : H} {s : set H} : 𝓝[s] x = ⊥ ↔ x ∉ closure s :=
 by rw [mem_closure_iff_nhds_within_ne_bot, not_ne_bot]
 
@@ -94,6 +88,39 @@ by rw [local_homeomorph.extend, local_equiv.trans_target, I.target_eq, I.image_e
 
 end model_with_corners
 
+namespace basic_smooth_vector_bundle_core
+
+variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
+  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+  {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
+  {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
+  {G : Type*} [topological_space G] {J : model_with_corners 𝕜 F G}
+  {M : Type*} [topological_space M] [charted_space H M]
+  {M' : Type*} [topological_space M'] [charted_space H' M']
+  {N : Type*} [topological_space N] [charted_space G N]
+variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
+variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_core I M E')
+
+/-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
+  a `basic_smooth_vector_bundle_core`. The continuity condition in the RHS is weaker. -/
+lemma cont_mdiff_within_at_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space}
+  {x : N} {s : set N} {n : with_top ℕ} :
+  cont_mdiff_within_at J (I.prod 𝓘(𝕜, E')) n f s x ↔
+    continuous_within_at (bundle.total_space.proj ∘ f) s x ∧
+    cont_mdiff_within_at J 𝓘(𝕜, E × E') n (ext_chart_at (I.prod 𝓘(𝕜, E')) (f x) ∘ f) s x :=
+begin
+  let Z' := Z.to_topological_vector_bundle_core,
+  rw [cont_mdiff_within_at_iff_target, and.congr_left_iff],
+  refine λ hf, ⟨λ h, Z'.continuous_proj.continuous_within_at.comp h (maps_to_univ _ _), λ h, _⟩,
+  sorry -- need trivialization.continuous_within_at_of_comp_left
+  -- exact (Z'.local_triv ⟨chart_at _ (f x).1, chart_mem_atlas _ _⟩).to_fiber_bundle_trivialization
+  --   .continuous_within_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
+end
+
+end basic_smooth_vector_bundle_core
+
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
@@ -111,11 +138,6 @@ lemma smooth_manifold_with_corners.subset_maximal_atlas [smooth_manifold_with_co
 structure_groupoid.subset_maximal_atlas _
 
 variables (I)
-
-lemma cont_diff_on_coord_change' [smooth_manifold_with_corners I M]
-  {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
-  cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
-(has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
 
 variables {I} [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
 
