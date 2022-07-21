@@ -33,7 +33,10 @@ variables
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 {F : Type*} [normed_group F] [normed_space ℝ F]
 {G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
-(N : Type*) [topological_space N] [charted_space H N] [smooth_manifold_with_corners I N]
+(N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
+{F' : Type*} [normed_group F'] [normed_space ℝ F']
+{G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
+(N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
@@ -43,7 +46,7 @@ def rel_mfld := set (one_jet_bundle I M I' M')
 
 instance : has_mem (one_jet_bundle I M I' M') (rel_mfld I M I' M') := set.has_mem
 
-variables {I M I' M'}
+variables {I M I' M'} {R : rel_mfld I M I' M'}
 
 /-- A solution to a relation `R`. -/
 @[ext] structure sol (R : rel_mfld I M I' M') :=
@@ -56,10 +59,10 @@ variables {I M I' M'}
 (is_sol' : ∀ x : M, to_fun x ∈ R)
 
 instance (R : rel_mfld I M I' M') :
-  has_coe_to_fun (formal_sol R) (λ S, M → one_jet_bundle I M I' M'):=
-⟨λ F, F.to_one_jet_sec.to_fun⟩
+  has_coe_to_fun (formal_sol R) (λ S, M → one_jet_bundle I M I' M') :=
+⟨λ F, F.to_one_jet_sec⟩
 
-lemma formal_sol.is_sol {R : rel_mfld I M I' M'} (F : formal_sol R) : ∀ x, F x ∈ R :=
+lemma formal_sol.is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
 
 def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
@@ -69,22 +72,43 @@ def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
 ∀ (σ : one_jet_bundle I M I' M') (p  : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
 
-structure htpy_formal_sol (R : rel_mfld I M I' M') extends htpy_one_jet_sec I M I' M' :=
-(is_sol' : ∀ (t : ℝ) (x : M), to_fun t x ∈ R)
+/-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
+  solutions in such a way that the function is smooth as a function of all arguments. -/
+structure family_formal_sol (R : rel_mfld I M I' M') extends family_one_jet_sec I M I' M' J N :=
+(is_sol' : ∀ (t : N) (x : M), to_fun t x ∈ R)
 
-instance {R : rel_mfld I M I' M'} : has_coe_to_fun (htpy_formal_sol R) (λ S, ℝ → formal_sol R) :=
-⟨λ S t, ⟨S.to_htpy_one_jet_sec t, S.is_sol' t⟩⟩
+instance : has_coe_to_fun (family_formal_sol J N R) (λ S, N → formal_sol R) :=
+⟨λ S t, ⟨S.to_family_one_jet_sec t, S.is_sol' t⟩⟩
+
+namespace family_formal_sol
+
+variables {J N J' N'}
+
+/-- Reindex a family along a smooth function `f`. -/
+def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
+  family_formal_sol J N R :=
+⟨S.to_family_one_jet_sec.reindex f, λ t, S.is_sol' (f t)⟩
+
+end family_formal_sol
+
+/-- A homotopy of formal solutions is a family indexed by `ℝ` -/
+abbreviation htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
 
 /-- A relation `R` satisfies the (non-parametric) h-principle if all its formal solutions are
 homotopic to a holonomic one. -/
 def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') : Prop :=
 ∀ 𝓕₀ : formal_sol R, ∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧ (𝓕 1).to_one_jet_sec.is_holonomic
 
--- variables (J N)
--- to satisfy the parametric h-principle, we want to generalize `ℝ` in `htpy_formal_sol`
--- /-- A relation `R` satisfies the parametric h-principle w.r.t. manifold `N` if ... -/
--- def satisfies_h_principle_with (R : rel_mfld I M I' M') : Prop :=
--- ∀ 𝓕₀ : N → formal_sol R, ∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧ (𝓕 1).to_one_jet_sec.is_holonomic
+/-- A relation `R` satisfies the parametric h-principle w.r.t. manifold `N` if for every family of
+formal solutions indexed by a manifold with boundary `N` that is holonomic near the boundary `N` is
+homotopic to a holonomic one, in such a way that the homotopy is constant near the boundary of `N`.
+-/
+def satisfies_h_principle_with (R : rel_mfld I M I' M') : Prop :=
+∀ 𝓕₀ : family_formal_sol J N R, (∀ᶠ x in 𝓝ˢ (boundary J N), (𝓕₀ x).to_one_jet_sec.is_holonomic) →
+∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod J) (ℝ × N) R,
+  𝓕.reindex ((cont_mdiff_map.const 0).prod_mk cont_mdiff_map.id) = 𝓕₀ ∧
+  (∀ᶠ x in 𝓝ˢ (boundary J N), ∀ t : ℝ, 𝓕 (t, x) = 𝓕₀ x) ∧
+  ∀ x, (𝓕 (1, x)).to_one_jet_sec.is_holonomic
 
 
 end defs
