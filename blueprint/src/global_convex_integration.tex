@@ -137,6 +137,8 @@ compatible distance function on every manifold.
 
 \begin{definition}
   \label{def:localisation_data}
+  \lean{localisation_data}
+  \leanok
   Let $f : M → N$ be a continuous map between manifolds. A localisation data
   for $f$ is a tuple $(E, F, ι, ι', φ, ψ, j)$ where $E$ and $F$ are normed
   vector spaces, $ι$ is a finite or countable set, $ι'$ is a set (that is
@@ -145,11 +147,11 @@ compatible distance function on every manifold.
   $j : ι → ι'$ such that:
   \begin{itemize}
     \item
-      $⋃_i φ_i(B₁) = M$
+      $⋃_i φ_i(B_E) = M$where $B_E$ is the open unit ball in $E$.
     \item
       $∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)$ where $B_F$ is the open unit ball in $F$
     \item
-      $⋃_i φ_i(B_E) = M$ where $B_E$ is the open unit ball in $E$.
+      $⋃_i ψ_i(B_F) = M$ where $B_F$ is the open unit ball in $F$.
   \end{itemize}
   Such a tuple will be denoted by $(φ, ψ, j)$ for brevity.
 \end{definition}
@@ -157,11 +159,14 @@ compatible distance function on every manifold.
 \begin{lemma}
   \label{lem:ex_localisation}
   \uses{def:localisation_data}
+  \lean{std_localisation_data}
+  \leanok
   Any continuous map between manifolds has some localisation data.
 \end{lemma}
 
 \begin{proof}
   \uses{lem:nice_atlas}
+  \leanok
   The preceding lemma (applied to the trivial cover of $N$ by itself) gives a
   family of $ψ : ι' × F → N$ of open smooth embeddings that the images of
   $B_F$ cover $N$. We then apply this lemma again to the cover of $M$ given by all
