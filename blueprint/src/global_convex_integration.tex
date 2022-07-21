@@ -433,6 +433,8 @@ necessarily $\bs \F$.
 
 \begin{definition}
   \label{def:htpy_formal_sol}
+  \leanok
+  \lean{htpy_formal_sol}
   \uses{def:formal_sol}
   A homotopy of formal solutions of $\Rel$ is a family of sections
   $\F : ℝ × M → J^1(M, N)$ which is smooth over $[0, 1] × M$
@@ -445,8 +447,10 @@ in order to relate the global theory to the local one.
 
 \begin{definition}
   \label{def:transfer_map}
+  \leanok % note: we have not proven continuity/smoothness of ψ yet
+  \lean{one_jet_bundle.transfer, one_jet_sec.localize_fun, rel_mfld.localize}
   \uses{def:one_jet_space}
-  Given manifolds $M$, $X$, $N$ and $Y$ and smooth embeddings $g : Y → N$
+  Given manifolds $M$, $X$, $N$ and $Y$ and smooth open embeddings $g : Y → N$
   and $h : X → M$ we get a transfer map $ψ_{g, h} : J^1(X, Y) → J^1(M, N)$
   defined by
   \[
@@ -465,7 +469,10 @@ The following is a localization lemma needed to take advantage of all the work
 from the previous chapter.
 
 \begin{lemma}
-  \label{lem:transfer}\uses{def:transfer_map}
+  \label{lem:transfer}
+  \leanok
+  \lean{one_jet_sec.localize, is_holonomic_at_localize_iff, one_jet_sec.localize_mem_iff}
+  \uses{def:transfer_map}
   In the situation of the previous definition, given a section $\F : M → J^1(M, N)$:
   \begin{itemize}
     \item $Ψ_{g, h}(\F)$ is a smooth section of $J^1(X, Y)$.
@@ -496,6 +503,7 @@ from the previous chapter.
 
 \begin{definition}
   \label{def:h-princ}
+  \lean{rel_mfld.satisfies_h_principle}
   \uses{def:formal_sol, def:htpy_formal_sol}
   A first order differential relation $\Rel ⊂ J^1(M, N)$ satisfies the
   $h$-principle if every formal solution of $\Rel$ is homotopic to a
@@ -591,7 +599,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 \begin{lemma}
   \label{lem:ample_iff_loc}
   \uses{def:ample_relation, def:ample_relation_loc, def:transfer_map}
-  Given manifolds $W$, $X$, $Y$ and $Z$ and smooth embeddings $g : Z → Y$
+  Given manifolds $W$, $X$, $Y$ and $Z$ and smooth open embeddings $g : Z → Y$
   and $h : W → X$, the relation induced (in the sense of \Cref{def:transfer_map})
   in $J^1(W, Z)$ by a ample relation in $J^1(X, Y)$ is ample.
 \end{lemma}

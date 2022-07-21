@@ -132,7 +132,9 @@ variables
 {E' : Type*} [normed_group E'] [normed_space ℝ E']
 {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-
+{F : Type*} [normed_group F] [normed_space ℝ F]
+{G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
+(N : Type*) [topological_space N] [charted_space H N] [smooth_manifold_with_corners I N]
 
 structure htpy_one_jet_sec :=
 (to_fun : ℝ → M → one_jet_bundle I M I' M')

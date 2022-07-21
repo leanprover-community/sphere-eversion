@@ -31,6 +31,9 @@ variables
 {E' : Type*} [normed_group E'] [normed_space ℝ E']
 {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+{F : Type*} [normed_group F] [normed_space ℝ F]
+{G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
+(N : Type*) [topological_space N] [charted_space H N] [smooth_manifold_with_corners I N]
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
@@ -50,7 +53,7 @@ variables {I M I' M'}
 
 /-- A formal solution to a local relation `R` over a set `U`. -/
 @[ext] structure formal_sol (R : rel_mfld I M I' M') extends one_jet_sec I M I' M' :=
-(is_sol' : ∀ x, to_fun x ∈ R)
+(is_sol' : ∀ x : M, to_fun x ∈ R)
 
 instance (R : rel_mfld I M I' M') :
   has_coe_to_fun (formal_sol R) (λ S, M → one_jet_bundle I M I' M'):=
@@ -65,6 +68,24 @@ def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
 
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
 ∀ (σ : one_jet_bundle I M I' M') (p  : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
+
+structure htpy_formal_sol (R : rel_mfld I M I' M') extends htpy_one_jet_sec I M I' M' :=
+(is_sol' : ∀ (t : ℝ) (x : M), to_fun t x ∈ R)
+
+instance {R : rel_mfld I M I' M'} : has_coe_to_fun (htpy_formal_sol R) (λ S, ℝ → formal_sol R) :=
+⟨λ S t, ⟨S.to_htpy_one_jet_sec t, S.is_sol' t⟩⟩
+
+/-- A relation `R` satisfies the (non-parametric) h-principle if all its formal solutions are
+homotopic to a holonomic one. -/
+def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') : Prop :=
+∀ 𝓕₀ : formal_sol R, ∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧ (𝓕 1).to_one_jet_sec.is_holonomic
+
+-- variables (J N)
+-- to satisfy the parametric h-principle, we want to generalize `ℝ` in `htpy_formal_sol`
+-- /-- A relation `R` satisfies the parametric h-principle w.r.t. manifold `N` if ... -/
+-- def satisfies_h_principle_with (R : rel_mfld I M I' M') : Prop :=
+-- ∀ 𝓕₀ : N → formal_sol R, ∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧ (𝓕 1).to_one_jet_sec.is_holonomic
+
 
 end defs
 
@@ -101,7 +122,9 @@ variables
   {HN : Type*} [topological_space HN] {IN : model_with_corners ℝ EN HN}
   {N : Type*} [topological_space N] [charted_space HN N] [smooth_manifold_with_corners IN N]
 
+  (F : one_jet_sec IM M IN N)
   (g : open_smooth_embedding IY Y IN N) (h : open_smooth_embedding IX X IM M)
+  {R : rel_mfld IM M IN N}
 
 local notation `TM` := tangent_space IM
 local notation `TN` := tangent_space IN
@@ -118,33 +141,72 @@ def one_jet_bundle.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M I
 lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer g h) :=
 sorry
 
+-- do we need this?
+lemma one_jet_bundle.smooth_transfer : smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY))
+  ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) (one_jet_bundle.transfer g h) :=
+sorry
+
+/-- localize a relation -/
+def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
+one_jet_bundle.transfer g h ⁻¹' R
+
+/-- Underlying map of `one_jet_sec.localize`. -/
+def one_jet_sec.localize_fun (x : X) : one_jet_bundle IX X IY Y :=
+let y := g.inv_fun (F.bs $ h x) in
+⟨(x, y), ((g.fderiv y).symm : TN (g y) →L[ℝ] TY y) ∘L
+  ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x)))⟩
+
 /-- Localize a one-jet section in two open embeddings. -/
-def one_jet_sec.localize (F : one_jet_sec IM M IN N) : one_jet_sec IX X IY Y :=
-{ to_fun := λ x, ⟨⟨x, g.inv_fun (F $ h x).1.2⟩,
-    ((g.fderiv $ g.inv_fun (F $ h x).1.2).symm : TN (g (g.inv_fun (F (h x)).1.2)) →L[ℝ]
-      TY (g.inv_fun (F (h x)).1.2)) ∘L ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x)))⟩,
+@[simps] def one_jet_sec.localize (hF : range (F.bs ∘ h) ⊆ range g) :
+  one_jet_sec IX X IY Y :=
+{ to_fun := F.localize_fun g h,
   is_sec' := sorry,
   smooth' := sorry }
+
+lemma transfer_localize (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
+  (F.localize g h hF x).transfer g h = F (h x) :=
+begin
+  simp_rw [one_jet_sec.localize_to_fun, one_jet_sec.localize_fun, one_jet_bundle.transfer],
+  ext,
+  { simp_rw [F.is_sec] },
+  { simp_rw [g.right_inv (hF $ mem_range_self x), one_jet_sec.bs] },
+  { apply heq_of_eq, simp only, ext v, simp_rw [continuous_linear_map.comp_apply], sorry },
+end
+
+/-- Underlying map of `htpy_one_jet_sec.unlocalize`. -/
+def htpy_one_jet_sec.unlocalize_fun (F : htpy_one_jet_sec IX X IY Y) (t : ℝ) (m : M) :
+  one_jet_bundle IM M IN N :=
+⟨⟨m, g $ (F t).bs (h.inv_fun m)⟩,
+    (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
+      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map)⟩
 
 /-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
-def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X  IY Y) : htpy_one_jet_sec IM M IN N :=
-{ to_fun := λ t m, ⟨⟨m, g (F t (h.inv_fun m)).1.2⟩,
-    (g.fderiv (F t (h.inv_fun m)).1.2).to_continuous_linear_map ∘L
-      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map)⟩,
+-- Note(F): this is only well-defined on `univ × range h`, right?
+def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
+{ to_fun := F.unlocalize_fun g h,
   is_sec' := sorry,
   smooth' := sorry }
 
-lemma one_jet_sec.unlocalize_localize (F : one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X  IY Y)
-  (hFG : G 0 = F.localize g h) : G.unlocalize g h 0 = F :=
+lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
+  (hF : range (F.bs ∘ h) ⊆ range g)
+  (hFG : G 0 = F.localize g h hF) : G.unlocalize g h 0 = F :=
 sorry
 
-lemma localize_mem_iff (F : one_jet_sec IM M IN N) (x : X) (R : rel_mfld IM M IN N) :
-  F (h x) ∈ R ↔ F.localize g h x ∈ (one_jet_bundle.transfer g h) ⁻¹' R :=
+lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X} :
+  F.localize g h hF x ∈ R.localize g h ↔ F (h x) ∈ R :=
+by rw [rel_mfld.localize, mem_preimage, transfer_localize F g h hF]
+
+lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize g h).ample  :=
 sorry
 
-lemma localize_ample (R : rel_mfld IM M IN N) (hR : R.ample) :
- rel_mfld.ample ((one_jet_bundle.transfer g h) ⁻¹' R) :=
+lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
+  (F.localize g h hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
 sorry
+
+/-- Localize a formal solution. -/
+def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) :
+  formal_sol (R.localize g h) :=
+⟨F.localize g h hF, λ x, (F.localize_mem_iff g h hF).mpr $ h2F x⟩
 
 end smooth_open_embedding
 
