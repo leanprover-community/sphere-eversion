@@ -134,14 +134,19 @@ variables
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 {F : Type*} [normed_group F] [normed_space ℝ F]
 {G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
-(N : Type*) [topological_space N] [charted_space H N] [smooth_manifold_with_corners I N]
+(N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
+{F' : Type*} [normed_group F'] [normed_space ℝ F']
+{G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
+(N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
 
-structure htpy_one_jet_sec :=
-(to_fun : ℝ → M → one_jet_bundle I M I' M')
-(is_sec' : ∀ (t : ℝ) (x : M), (to_fun t x).1.1 = x)
-(smooth' : cont_mdiff (𝓘(ℝ, ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ (uncurry to_fun))
+/-- A family of jet sections indexed by manifold `N` is a function from `N` into jet sections
+  in such a way that the function is smooth as a function of all arguments. -/
+structure family_one_jet_sec :=
+(to_fun : N → M → one_jet_bundle I M I' M')
+(is_sec' : ∀ (t : N) (x : M), (to_fun t x).1.1 = x)
+(smooth' : smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry to_fun))
 
-instance : has_coe_to_fun (htpy_one_jet_sec I M I' M') (λ S, ℝ → one_jet_sec I M I' M') :=
+instance : has_coe_to_fun (family_one_jet_sec I M I' M' J N) (λ S, N → one_jet_sec I M I' M') :=
 ⟨λ S t,
  { to_fun := S.to_fun t,
    is_sec' := S.is_sec' t,
@@ -150,4 +155,24 @@ instance : has_coe_to_fun (htpy_one_jet_sec I M I' M') (λ S, ℝ → one_jet_se
      apply cont_mdiff_at.comp x (S.smooth' (t, x)),
      sorry
    end }⟩
+
+namespace family_one_jet_sec
+
+variables {I M I' M' J N J' N'}
+
+/-- Reindex a family along a smooth function `f`. -/
+def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) :
+  family_one_jet_sec I M I' M' J N :=
+{ to_fun := λ t, S (f t),
+  is_sec' := λ t, S.is_sec' (f t),
+  smooth' := sorry }
+
+end family_one_jet_sec
+
+/-- A homotopy of formal solutions is a family indexed by `ℝ` -/
+abbreviation htpy_one_jet_sec := family_one_jet_sec I M I' M' 𝓘(ℝ, ℝ) ℝ
+
+example : has_coe_to_fun (htpy_one_jet_sec I M I' M') (λ S, ℝ → one_jet_sec I M I' M') :=
+by apply_instance
+
 end real

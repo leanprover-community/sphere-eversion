@@ -89,6 +89,24 @@ lemma cont_mdiff_at_iff_target {x : M} :
     continuous_at f x ∧ cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' (f x) ∘ f) x :=
 by rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ]
 
+section boundary
+
+variables (I M)
+
+/-- An element is on the boundary of a manifold `M` if its chart maps it to the frontier of the
+model space. Note: this also includes all corners of `M`. -/
+def boundary : set M := {x : M | ext_chart_at I x x ∈ frontier (range I) }
+
+variables {I M}
+
+lemma mem_boundary {x : M} : x ∈ boundary I M ↔ ext_chart_at I x x ∈ frontier (range I) := iff.rfl
+
+lemma mem_boundary_iff_of_mem {x x' : M} (hx : x ∈ (ext_chart_at I x').source) :
+  x ∈ boundary I M ↔ ext_chart_at I x' x ∈ frontier (range I) :=
+sorry
+
+end boundary
+
 namespace basic_smooth_vector_bundle_core
 variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_core I M E')
 
@@ -274,6 +292,10 @@ def fst : C^n⟮I.prod I', M × M'; I, M⟯ := ⟨prod.fst, cont_mdiff_fst⟩
 
 /-- The second projection of a product, as a smooth map. -/
 def snd : C^n⟮I.prod I', M × M'; I', M'⟯ := ⟨prod.snd, cont_mdiff_snd⟩
+
+/-- Given two smooth maps `f` and `g`, this is the smooth map `(x, y) ↦ (f x, g y)`. -/
+def prod_mk (f : C^n⟮J, N; I, M⟯) (g : C^n⟮J, N; I', M'⟯) : C^n⟮J, N; I.prod I', M × M'⟯ :=
+⟨λ x, (f x, g x), f.2.prod_mk g.2⟩
 
 end cont_mdiff_map
 
