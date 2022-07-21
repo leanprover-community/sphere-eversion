@@ -34,20 +34,6 @@ variables (Z' : basic_smooth_vector_bundle_core IB B F')
 
 namespace basic_smooth_vector_bundle_core
 
-/-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
-  a `basic_smooth_vector_bundle_core`. The RHS is easier to prove. -/
-lemma cont_mdiff_at_iff_target {f : B' → Z.to_topological_vector_bundle_core.total_space}
-  {x : B'} {n : with_top ℕ} :
-  cont_mdiff_at IB' (IB.prod 𝓘(𝕜, F)) n f x ↔ continuous_at (bundle.total_space.proj ∘ f) x ∧
-  cont_mdiff_at IB' 𝓘(𝕜, VB × F) n ((ext_chart_at (IB.prod 𝓘(𝕜, F)) (f x)) ∘ f) x :=
-begin
-  let Z' := Z.to_topological_vector_bundle_core,
-  rw [cont_mdiff_at_iff_target, and.congr_left_iff],
-  refine λ hf, ⟨λ h, Z'.continuous_proj.continuous_at.comp h, λ h, _⟩,
-  exact (Z'.local_triv (achart _ (f x).1)).to_fiber_bundle_trivialization
-    .continuous_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
-end
-
 variables [smooth_manifold_with_corners IB' B']
 
 lemma pullback_prod_aux {e₁ : local_homeomorph B HB} {e₂ : local_homeomorph B' HB'}
