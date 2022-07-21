@@ -45,6 +45,22 @@ variable {H}
 
 end charted_space
 
+
+namespace model_with_corners
+
+variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
+  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+  {H : Type*} [topological_space H]
+  {M : Type*} [topological_space M] (f : local_homeomorph M H) (I : model_with_corners 𝕜 E H)
+
+lemma injective : injective I :=
+I.left_inverse.injective
+
+lemma preimage_image (s : set H) : I ⁻¹' (I '' s) = s :=
+I.injective.preimage_image s
+
+end model_with_corners
+
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
@@ -83,22 +99,6 @@ rfl
 
 /-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
   a `basic_smooth_vector_bundle_core`. The continuity condition in the RHS is weaker. -/
-lemma cont_mdiff_within_at_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space}
-  {x : N} {s : set N} {n : with_top ℕ} :
-  cont_mdiff_within_at J (I.prod 𝓘(𝕜, E')) n f s x ↔
-    continuous_within_at (bundle.total_space.proj ∘ f) s x ∧
-    cont_mdiff_within_at J 𝓘(𝕜, E × E') n (ext_chart_at (I.prod 𝓘(𝕜, E')) (f x) ∘ f) s x :=
-begin
-  let Z' := Z.to_topological_vector_bundle_core,
-  rw [cont_mdiff_within_at_iff_target, and.congr_left_iff],
-  refine λ hf, ⟨λ h, Z'.continuous_proj.continuous_within_at.comp h (maps_to_univ _ _), λ h, _⟩,
-  sorry -- need trivialization.continuous_within_at_of_comp_left
-  -- exact (Z'.local_triv ⟨chart_at _ (f x).1, chart_mem_atlas _ _⟩).to_fiber_bundle_trivialization
-  --   .continuous_within_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
-end
-
-/-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
-  a `basic_smooth_vector_bundle_core`. The continuity condition in the RHS is weaker. -/
 lemma cont_mdiff_at_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space}
   {x : N} {n : with_top ℕ} :
   cont_mdiff_at J (I.prod 𝓘(𝕜, E')) n f x ↔ continuous_at (bundle.total_space.proj ∘ f) x ∧
@@ -120,6 +120,12 @@ lemma tangent_bundle_core_coord_change_achart [smooth_manifold_with_corners I M]
 rfl
 
 variables (I)
+
+lemma cont_diff_on_coord_change' [smooth_manifold_with_corners I M]
+  {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
+  cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
+(has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
+
 lemma ext_chart_at_target (x : M) : (ext_chart_at I x).target =
   I.symm ⁻¹' (chart_at H x).target ∩ range I :=
 by simp_rw [ext_chart_at, local_equiv.trans_target, I.target_eq, I.to_local_equiv_coe_symm,

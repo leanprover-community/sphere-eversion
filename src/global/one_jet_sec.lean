@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2022 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Patrick Massot
+Authors: Patrick Massot, Floris van Doorn
 -/
 import local.relation
 import global.one_jet_bundle
@@ -10,14 +10,13 @@ import global.one_jet_bundle
 # Sections of 1-jet bundles
 
 In this file we study sections of 1-jet bundles. This is the direct continuation
-of `one_jet_bundle.lean` but it imports more things more mathlib, hence the cut.
-
+of `one_jet_bundle.lean` but it imports more files, hence the cut.
 
 ## Main definitions
 
 In this file we consider two manifolds `M` and `M'` with models `I` and `I'`
 
-* `one_jet_ext I M I' M' f`: the 1-jet extension of a map `f : M → M'`
+* `one_jet_ext I I' f`: the 1-jet extension of a map `f : M → M'`
 * `one_jet_sec I M I' M'`: smooth sections of `one_jet_bundle I M I' M' → M`
 -/
 
