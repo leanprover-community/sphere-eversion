@@ -234,68 +234,6 @@ begin
   { simp_rw [function.comp_apply, (ext_chart_at I x).left_inv hx₂] }
 end
 
-lemma cont_mdiff_within_at.mfderiv_within' {f : M → M'}
-  (hf : cont_mdiff_within_at I I' n f s x) (hmn : m + 1 ≤ n) (hs : unique_mdiff_on I s) :
-  cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] E') m
-  (λ x', (tangent_bundle_core I' M').coord_change (achart H' (f x')) (achart H' (f x))
-    (chart_at H' (f x') (f x')) ∘L mfderiv_within I I' f s x' ∘L
-    (tangent_bundle_core I M).coord_change (achart H x) (achart H x') (chart_at H x x')) s x :=
-sorry
-
-lemma cont_mdiff_on.mfderiv_within' {f : M → M'}
-  (hf : cont_mdiff_on I I' n f s) (hmn : m + 1 ≤ n) (hs : unique_mdiff_on I s) :
-  cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] E') m
-  (λ x', (tangent_bundle_core I' M').coord_change (achart H' (f x')) (achart H' (f x))
-    (chart_at H' (f x') (f x')) ∘L mfderiv_within I I' f s x' ∘L
-    (tangent_bundle_core I M).coord_change (achart H x) (achart H x') (chart_at H x x')) s x :=
-sorry
-
-open basic_smooth_vector_bundle_core
-theorem cont_mdiff_on.cont_mdiff_on_tangent_map_within'
-  (hf : cont_mdiff_on I I' n f s) (hmn : m + 1 ≤ n) (hs : unique_mdiff_on I s) :
-  cont_mdiff_on I.tangent I'.tangent m (tangent_map_within I I' f s)
-    (tangent_bundle.proj I M ⁻¹' s) :=
-begin
-  have h2mn : m ≤ n := (self_le_add_right m 1).trans hmn,
-  intros x hx,
-  refine ((tangent_bundle_core I' M').cont_mdiff_within_at_iff_target).mpr _,
-  refine ⟨(hf x.1 hx).continuous_within_at.comp
-    (tangent_bundle_proj_continuous I M).continuous_within_at subset.rfl, _⟩,
-  simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
-  simp_rw [local_homeomorph.coe_coe, model_with_corners.to_local_equiv_coe,
-    model_with_corners.prod_apply, model_with_corners_self_coe, id],
-  refine (cont_mdiff_at_ext_chart_at.comp_cont_mdiff_within_at _ _).prod_mk_space _,
-  refine ((hf x.1 hx).of_le h2mn).comp _ tangent_bundle.cont_mdiff_within_at_proj subset.rfl,
-  have h3 : cont_mdiff_at I.tangent 𝓘(𝕜, E) m (
-    λ x' : tangent_bundle I M, (tangent_bundle_core I M).coord_change (achart H x'.1) (achart H x.1) (chart_at H x'.1 x'.1) x'.2) x,
-  {
-    simp_rw [tangent_bundle_core_coord_change_achart],
-    sorry
-  },
-  have h1 := ((hf x.1 hx).mfderiv_within' hmn hs).comp _
-    tangent_bundle.cont_mdiff_within_at_proj subset.rfl,
-  let e : E →L[𝕜] _ := continuous_linear_map.apply 𝕜 E',
-  have h2 := e.is_bounded_bilinear_map.cont_diff.cont_diff_at.cont_mdiff_at,
-  refine ((@eq.subst _ (cont_mdiff_at _ _ _ _) _ _ (by exact rfl) h2).comp_cont_mdiff_within_at _
-    (cont_mdiff_within_at.prod_mk_space h3.cont_mdiff_within_at h1)).congr_of_eventually_eq _ _,
-  apply eventually_of_forall, intro x',
-  clear h1 h2 h3,
-  simp_rw [function.comp, e, continuous_linear_map.apply_apply,
-    continuous_linear_map.comp_apply, (tangent_bundle_core I' M').chart_apply],
-  congr' 1,
-  dsimp only [tangent_map_within],
-  congr' 1,
-  symmetry,
-  convert ((tangent_bundle_core I M).coord_change_comp _ _ _ (chart_at H x'.1 x'.1) _ x'.2).trans _ using 3,
-  swap 3,
-  rw [(tangent_bundle_core I M).coord_change_self],
-  exact (chart_at H x'.1).maps_to (mem_chart_source H x'.1),
-
-  -- have := cont_mdiff_within_at.comp _ _ h2 subset.rfl,
-  -- refine cont_mdiff_within_at.comp _ _ h2 subset.rfl,
-
-end
-
 end smooth_manifold_with_corners
 
 section maps

@@ -1,4 +1,4 @@
-import geometry.manifold.diffeomorph
+import to_mathlib.geometry.manifold.bundle_prelims
 
 open bundle set function filter
 open_locale manifold topological_space
