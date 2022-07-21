@@ -375,6 +375,7 @@ living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
 \begin{lemma}
 \label{lem:one_jet_extension_prop}
 \lean{smooth_one_jet_ext, one_jet_ext_proj}
+\leanok
 \uses{def:one_jet_extension}
 For every smooth map $f \co M → N$,
 \begin{enumerate}
@@ -399,7 +400,7 @@ For every smooth map $f \co M → N$,
 \label{def:holonomic_section}
 \leanok
 \lean{one_jet_sec.is_holonomic_at, one_jet_sec.is_holonomic_at_iff}
-\uses{def:one_jet_space, lem:one_jet_extension_prop}
+\uses{def:one_jet_space}
 A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
 $1$--jet of its base map.
 Equivalently, $\F$ is holonomic if there exists
@@ -444,6 +445,7 @@ in order to relate the global theory to the local one.
 
 \begin{definition}
   \label{def:transfer_map}
+  \uses{def:one_jet_space}
   Given manifolds $M$, $X$, $N$ and $Y$ and smooth embeddings $g : Y → N$
   and $h : X → M$ we get a transfer map $ψ_{g, h} : J^1(X, Y) → J^1(M, N)$
   defined by
