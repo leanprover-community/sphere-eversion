@@ -259,19 +259,34 @@
     Definition
     </span>
     <span class="definition_thmlabel">3.4</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#def:localisation_data">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/localisation_data.lean#L23">localisation_data</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p> Let \(f : M → N\) be a continuous map between manifolds. A localisation data for \(f\) is a tuple \((E, F, ι, ι', φ, ψ, j)\) where \(E\) and \(F\) are normed vector spaces, \(ι\) is a finite or countable set, \(ι'\) is a set (that is morally also finite or countable but that will play no role), \(φ : ι × E → M\) and \(ψ : ι' × F → N\) are families of smooth open embeddings, and \(j : ι → ι'\) such that: </p>
+  <p>  Let \(f : M → N\) be a continuous map between manifolds. A localisation data for \(f\) is a tuple \((E, F, ι, ι', φ, ψ, j)\) where \(E\) and \(F\) are normed vector spaces, \(ι\) is a finite or countable set, \(ι'\) is a set (that is morally also finite or countable but that will play no role), \(φ : ι × E → M\) and \(ψ : ι' × F → N\) are families of smooth open embeddings, and \(j : ι → ι'\) such that: </p>
 <ul class="itemize">
-  <li><p>\(⋃_i φ_i(B₁) = M\) </p>
+  <li><p>\(⋃_i φ_i(B_E) = M\)where \(B_E\) is the open unit ball in \(E\). </p>
 </li>
   <li><p>\(∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)\) where \(B_F\) is the open unit ball in \(F\) </p>
 </li>
-  <li><p>\(⋃_i φ_i(B_E) = M\) where \(B_E\) is the open unit ball in \(E\). </p>
+  <li><p>\(⋃_i ψ_i(B_F) = M\) where \(B_F\) is the open unit ball in \(F\). </p>
 </li>
 </ul>
 <p> Such a tuple will be denoted by \((φ, ψ, j)\) for brevity. </p>
@@ -284,6 +299,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">3.5</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ex_localisation">#</a>
     <a class="icon proof" href="chap-global.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -303,11 +319,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/localisation_data.lean#L76">std_localisation_data</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Any continuous map between manifolds has some localisation data. </p>
+  <p>   Any continuous map between manifolds has some localisation data. </p>
 
   </div>
 </div> </p>
@@ -538,7 +568,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L41">basic_smooth_vector_bundle_core.pullback</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L72">basic_smooth_vector_bundle_core.pullback</a></li>
         </ul>
 
       </div>
@@ -570,7 +600,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L124">basic_smooth_vector_bundle_core.hom</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L282">basic_smooth_vector_bundle_core.hom</a></li>
         </ul>
 
       </div>
@@ -619,7 +649,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_bundle.lean#L24">one_jet_bundle_core</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/one_jet_bundle.lean#L24">one_jet_bundle_core</a></li>
         </ul>
 
       </div>
@@ -667,7 +697,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L44">one_jet_ext</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/one_jet_sec.lean#L42">one_jet_ext</a></li>
         </ul>
 
       </div>
@@ -715,8 +745,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L55">smooth_one_jet_ext</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L52">one_jet_ext_proj</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/one_jet_sec.lean#L55">smooth_one_jet_ext</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/one_jet_sec.lean#L50">one_jet_ext_proj</a></li>
         </ul>
 
       </div>
@@ -745,7 +775,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>This is obvious by construction…</p>
+  <p>This is obvious by construction. </p>
 
   </div>
 </div>
@@ -783,8 +813,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L85">one_jet_sec.is_holonomic_at</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/one_jet_sec.lean#L90">one_jet_sec.is_holonomic_at_iff</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/one_jet_sec.lean#L98">one_jet_sec.is_holonomic_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/one_jet_sec.lean#L103">one_jet_sec.is_holonomic_at_iff</a></li>
         </ul>
 
       </div>
@@ -831,7 +861,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/relation.lean#L39">rel_mfld</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/relation.lean#L39">rel_mfld</a></li>
         </ul>
 
       </div>
@@ -878,8 +908,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/relation.lean#L52">formal_sol</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/relation.lean#L46">sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/relation.lean#L52">formal_sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/relation.lean#L46">sol</a></li>
         </ul>
 
       </div>
@@ -1396,7 +1426,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/f6dd38dc38ac5fc1e48a09d6c79c5ea5622e7a5d/src/global/immersion.lean#L63">sphere_eversion</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/12b5051e4d04e6d2f4a7bf285d0b3eb0fca4f3a8/src/global/immersion.lean#L63">sphere_eversion</a></li>
         </ul>
 
       </div>
