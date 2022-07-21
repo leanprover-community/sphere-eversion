@@ -27,8 +27,8 @@ structure open_smooth_embedding  :=
 (left_inv'   : ∀{x}, inv_fun (to_fun x) = x)
 (right_inv'  : ∀{x}, x ∈ range to_fun → to_fun (inv_fun x) = x)
 (open_map : is_open_map to_fun)
-(diff_to : cont_mdiff I I' ⊤ to_fun)
-(diff_inv : cont_mdiff_on I' I ⊤ inv_fun (range to_fun))
+(smooth_to : smooth I I' to_fun)
+(smooth_inv : smooth_on I' I inv_fun (range to_fun))
 
 instance : has_coe_to_fun (open_smooth_embedding I M I' M') (λ _, M → M') :=
 ⟨open_smooth_embedding.to_fun⟩
@@ -37,9 +37,11 @@ namespace open_smooth_embedding
 
 variables {I I' M M'} (f : open_smooth_embedding I M I' M')
 
-@[simp] lemma left_inv (x : M) : f.inv_fun (f x) = x := by erw f.left_inv'
+@[simp] lemma left_inv (x : M) : f.inv_fun (f x) = x := by apply f.left_inv'
 
-@[simp] lemma inv_fun_comp_coe : f.inv_fun ∘ f = id := by { ext, simp, }
+@[simp] lemma inv_fun_comp_coe : f.inv_fun ∘ f = id := funext f.left_inv
+
+@[simp] lemma right_inv {y : M'} (hy : y ∈ range f) : f (f.inv_fun y) = y := f.right_inv' hy
 
 lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
 filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv' hy
@@ -47,9 +49,9 @@ filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv' h
 /- Note that we are slightly abusing the fact that `tangent_space I x` and
 `tangent_space I (f.inv_fun (f x))` are both definitionally `E` below. -/
 def fderiv (x : M) : tangent_space I x ≃L[𝕜] tangent_space I' (f x) :=
-have h₁ : mdifferentiable_at I' I f.inv_fun (f x) := ((f.diff_inv (f x) (mem_range_self x)
+have h₁ : mdifferentiable_at I' I f.inv_fun (f x) := ((f.smooth_inv (f x) (mem_range_self x)
   ).mdifferentiable_within_at le_top).mdifferentiable_at (f.open_map.range_mem_nhds x),
-have h₂ : mdifferentiable_at I I' f x := f.diff_to.mdifferentiable le_top _,
+have h₂ : mdifferentiable_at I I' f x := f.smooth_to.cont_mdiff.mdifferentiable le_top _,
 continuous_linear_equiv.equiv_of_inverse
   (mfderiv I I' f x)
   (mfderiv I' I f.inv_fun (f x))
@@ -67,6 +69,21 @@ begin
     I' (f x)).congr_of_eventually_eq (f.coe_comp_inv_fun_eventually_eq x)).mfderiv,
     continuous_linear_map.coe_id', id.def],
 end
+
+@[simp] lemma fderiv_coe (x : M) :
+  (f.fderiv x : tangent_space I x →L[𝕜] tangent_space I' (f x)) = mfderiv I I' f x :=
+by { ext, refl }
+
+@[simp] lemma fderiv_symm_coe (x : M) :
+  ((f.fderiv x).symm : tangent_space I' (f x) →L[𝕜] tangent_space I x) =
+  mfderiv I' I f.inv_fun (f x) :=
+by { ext, refl }
+
+lemma fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
+  ((f.fderiv (f.inv_fun x)).symm : tangent_space I' (f (f.inv_fun x)) →L[𝕜]
+    tangent_space I (f.inv_fun x)) =
+  (mfderiv I' I f.inv_fun x : tangent_space I' x →L[𝕜] tangent_space I (f.inv_fun x)) :=
+by rw [fderiv_symm_coe, f.right_inv hx]
 
 end open_smooth_embedding
 
@@ -98,12 +115,12 @@ def open_smooth_embedding_of_subset_chart_target {x : M}
     rw ← image_univ at hf,
     exact (monotone_image (subset_univ u)).trans hf,
   end,
-  diff_to := cont_mdiff_on_chart_symm.comp_cont_mdiff f.diff_to (range_subset_iff.mp hf),
-  diff_inv :=
+  smooth_to := cont_mdiff_on_chart_symm.comp_cont_mdiff f.smooth_to (range_subset_iff.mp hf),
+  smooth_inv :=
   begin
     have hf' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x) ⁻¹' range f,
     { rw range_comp, exact local_equiv.symm_image_subset_preimage_of_subset_target _ hf, },
-    refine f.diff_inv.comp _ hf',
+    refine f.smooth_inv.comp _ hf',
     have hf'' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x).source,
     { rw [range_comp, ← local_equiv.symm_image_target_eq_source],
       exact (monotone_image hf).trans subset.rfl, },
