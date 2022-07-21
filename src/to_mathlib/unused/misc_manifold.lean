@@ -1,4 +1,4 @@
-import to_mathlib.geometry.manifold.bundle_prelims
+import to_mathlib.geometry.manifold.misc_manifold
 
 open bundle set function filter
 open_locale manifold topological_space
@@ -190,15 +190,6 @@ lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜] F}
   (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] G) n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
   cont_mdiff I 𝓘(𝕜, F' →L[𝕜] G) n (λ x, (g x).comp (f x)) :=
 λ x, (hg x).clm_comp (hf x)
-
--- also in the other `bundle_prelims` file
-lemma ext_chart_preimage_mem_nhds' {x' : M} {t : set M}
-  (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :
-  (ext_chart_at I x).symm ⁻¹' t ∈ 𝓝 (ext_chart_at I x x') :=
-begin
-  apply (ext_chart_continuous_at_symm' I x h).preimage_mem_nhds,
-  rwa (ext_chart_at I x).left_inv h
-end
 
 lemma ext_chart_preimage_mem_nhds_within_range {x' : M} {t : set M}
   (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :

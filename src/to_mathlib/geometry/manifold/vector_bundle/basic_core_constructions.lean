@@ -5,7 +5,7 @@ Authors: Floris van Doorn
 -/
 
 import geometry.manifold.cont_mdiff_map
-import to_mathlib.geometry.manifold.bundle_prelims
+import to_mathlib.geometry.manifold.misc_manifold
 
 /-!
 # Pullbacks of basic smooth vector bundle core
