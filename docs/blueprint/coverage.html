@@ -106,7 +106,7 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>3 Global theory of open and ample relations <span class="partial">23%</span></h3>
+  <h3>3 Global theory of open and ample relations <span class="partial">33%</span></h3>
   
   <ul class="coverage">
     
@@ -144,20 +144,6 @@ Click chapter titles to see missing items.
     
     
     
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.15 (lem:one_jet_extension_prop)</div>
-      <div class="thm_thm_content"><p>   For every smooth map \(f \! :M → N\), </p>
-<ol class="enumerate">
-  <li><p> \(j^1f\) is smooth </p>
-</li>
-  <li><p> \(j^1f\) is a section of \(J^1(M, N) → M\) </p>
-</li>
-  <li><p> \(j^1f\) composed with \(J^1(M, N) → N\) is \(f\). </p>
-</li>
-</ol>
-</div>
-    </li>
     
     
     
@@ -315,28 +301,7 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Definition 3.4 (def:localisation_data)</div>
-      <div class="thm_thm_content"><p> Let \(f : M → N\) be a continuous map between manifolds. A localisation data for \(f\) is a tuple \((E, F, ι, ι', φ, ψ, j)\) where \(E\) and \(F\) are normed vector spaces, \(ι\) is a finite or countable set, \(ι'\) is a set (that is morally also finite or countable but that will play no role), \(φ : ι × E → M\) and \(ψ : ι' × F → N\) are families of smooth open embeddings, and \(j : ι → ι'\) such that: </p>
-<ul class="itemize">
-  <li><p>\(⋃_i φ_i(B₁) = M\) </p>
-</li>
-  <li><p>\(∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)\) where \(B_F\) is the open unit ball in \(F\) </p>
-</li>
-  <li><p>\(⋃_i φ_i(B_E) = M\) where \(B_E\) is the open unit ball in \(E\). </p>
-</li>
-</ul>
-<p> Such a tuple will be denoted by \((φ, ψ, j)\) for brevity. </p>
-</div>
-    </li>
     
-    
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.5 (lem:ex_localisation)</div>
-      <div class="thm_thm_content"><p>  Any continuous map between manifolds has some localisation data. </p>
-</div>
-    </li>
     
     
     
@@ -434,21 +399,6 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 3.25 (def:ample_relation)</div>
       <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.4 (def:localisation_data)</div>
-      <div class="thm_thm_content"><p> Let \(f : M → N\) be a continuous map between manifolds. A localisation data for \(f\) is a tuple \((E, F, ι, ι', φ, ψ, j)\) where \(E\) and \(F\) are normed vector spaces, \(ι\) is a finite or countable set, \(ι'\) is a set (that is morally also finite or countable but that will play no role), \(φ : ι × E → M\) and \(ψ : ι' × F → N\) are families of smooth open embeddings, and \(j : ι → ι'\) such that: </p>
-<ul class="itemize">
-  <li><p>\(⋃_i φ_i(B₁) = M\) </p>
-</li>
-  <li><p>\(∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)\) where \(B_F\) is the open unit ball in \(F\) </p>
-</li>
-  <li><p>\(⋃_i φ_i(B_E) = M\) where \(B_E\) is the open unit ball in \(E\). </p>
-</li>
-</ul>
-<p> Such a tuple will be denoted by \((φ, ψ, j)\) for brevity. </p>
 </div>
     </li>
     
@@ -560,6 +510,15 @@ Click chapter titles to see missing items.
       <div class="thm_thm_content"><p> In a paracompact metric space \(X\), let \(V : ι → \operatorname{\mathcal{P}}{X}\) be a locally finite collection of open subsets of \(X\) and let \(K : ι → \operatorname{\mathcal{P}}{X}\) be a family of compact subsets such that \(K_i ⊂ V_i\) for all \(i\). There existe a continuous function \(δ : X → ℝ_{{\gt} 0}\) such that: </p>
 <div class="displaymath" id="a0000000077">
   \[  ∀ x\,  x',\;  ∀ i, \left[x ∈ K_i \text{ and } d(x, x') {\lt} δ(x)\right] ⇒ x' ∈ V_i.  \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.7 (lem:localisation_stability)</div>
+      <div class="thm_thm_content"><p>  Let \(f : M → N\) be a continuous map between manifolds, and let \((φ, ψ, i)\) be some localisation data for \(f\). There exists some continuous positive function \(ε : M → ℝ_{{\gt}0}\) such that: </p>
+<div class="displaymath" id="a0000000079">
+  \[  ∀ g : M → N, \big [∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\big ] ⇒ ∀ i,\;  g(φ_i(E)) ⊂ ψ_{j(i)}(F).  \]
 </div>
 </div>
     </li>
