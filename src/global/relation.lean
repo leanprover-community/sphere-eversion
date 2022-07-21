@@ -103,7 +103,7 @@ def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') : Prop :=
 formal solutions indexed by a manifold with boundary `N` that is holonomic near the boundary `N` is
 homotopic to a holonomic one, in such a way that the homotopy is constant near the boundary of `N`.
 -/
-def satisfies_h_principle_with (R : rel_mfld I M I' M') : Prop :=
+def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') : Prop :=
 ∀ 𝓕₀ : family_formal_sol J N R, (∀ᶠ x in 𝓝ˢ (boundary J N), (𝓕₀ x).to_one_jet_sec.is_holonomic) →
 ∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod J) (ℝ × N) R,
   𝓕.reindex ((cont_mdiff_map.const 0).prod_mk cont_mdiff_map.id) = 𝓕₀ ∧
@@ -184,7 +184,7 @@ let y := g.inv_fun (F.bs $ h x) in
 @[simps] def one_jet_sec.localize (hF : range (F.bs ∘ h) ⊆ range g) :
   one_jet_sec IX X IY Y :=
 { to_fun := F.localize_fun g h,
-  is_sec' := sorry,
+  is_sec' := λ x, rfl,
   smooth' := sorry }
 
 lemma transfer_localize (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
@@ -208,7 +208,7 @@ def htpy_one_jet_sec.unlocalize_fun (F : htpy_one_jet_sec IX X IY Y) (t : ℝ) (
 -- Note(F): this is only well-defined on `univ × range h`, right?
 def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
 { to_fun := F.unlocalize_fun g h,
-  is_sec' := sorry,
+  is_sec' := λ x m, rfl,
   smooth' := sorry }
 
 lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
@@ -225,7 +225,7 @@ sorry
 
 lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
   (F.localize g h hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
-sorry
+by { simp_rw [one_jet_sec.is_holonomic_at], sorry }
 
 /-- Localize a formal solution. -/
 def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) :

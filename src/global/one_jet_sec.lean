@@ -150,11 +150,7 @@ instance : has_coe_to_fun (family_one_jet_sec I M I' M' J N) (λ S, N → one_je
 ⟨λ S t,
  { to_fun := S.to_fun t,
    is_sec' := S.is_sec' t,
-   smooth' := begin
-     intros x,
-     apply cont_mdiff_at.comp x (S.smooth' (t, x)),
-     sorry
-   end }⟩
+   smooth' := λ x, (S.smooth' (t, x)).comp x $ smooth_at_const.prod_mk smooth_at_id }⟩
 
 namespace family_one_jet_sec
 
@@ -165,7 +161,8 @@ def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'�
   family_one_jet_sec I M I' M' J N :=
 { to_fun := λ t, S (f t),
   is_sec' := λ t, S.is_sec' (f t),
-  smooth' := sorry }
+  smooth' := λ x, (S.smooth' (f x.1, x.2)).comp x $
+    (f.cont_mdiff.cont_mdiff_at).prod_map' smooth_at_id }
 
 end family_one_jet_sec
 
