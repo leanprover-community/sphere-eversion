@@ -38,13 +38,13 @@ begin
     { suffices : m ⊆ s j,
       { refine subset.trans _ this,
         convert monotone_image hr₁,
-        exact (local_equiv.symm_image_image_eq_of_subset_source _
+        exact (local_equiv.symm_image_image_of_subset_source _
           (set.inter_subset_right _ _)).symm, },
       exact (set.inter_subset_left _ _).trans (set.inter_subset_left _ _), },
     { suffices : m ⊆ n,
       { refine subset.trans _ this,
         convert monotone_image hr₁,
-        exact (local_equiv.symm_image_image_eq_of_subset_source _
+        exact (local_equiv.symm_image_image_of_subset_source _
           (set.inter_subset_right _ _)).symm, },
       exact (set.inter_subset_left _ _).trans (set.inter_subset_right _ _), }, },
   { rintros ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩,
