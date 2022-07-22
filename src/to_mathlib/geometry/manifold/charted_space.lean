@@ -1,8 +1,6 @@
 import geometry.manifold.charted_space
 import analysis.normed.group.basic
 
-import to_mathlib.logic.equiv.local_equiv
-
 namespace charted_space
 
 open_locale topological_space
