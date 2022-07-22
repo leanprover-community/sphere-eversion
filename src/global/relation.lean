@@ -18,6 +18,9 @@ Given manifolds `M` and `M'` modelled on `I` and `I'`, a first order partial dif
 for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 `one_jet_bundle I M I' M'`.
 
+We also define
+* `one_jet_ext I I' f`: the 1-jet extension of a map `f : M → M'`
+
 
 -/
 
@@ -174,27 +177,68 @@ sorry
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
 one_jet_bundle.transfer g h ⁻¹' R
 
-/-- Underlying map of `one_jet_sec.localize`. -/
-def one_jet_sec.localize_fun (x : X) : one_jet_bundle IX X IY Y :=
-let y := g.inv_fun (F.bs $ h x) in
+/-- Underlying map of `one_jet_sec.localize`. It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(h x) ∘ D_x(h))`
+  where `y : M := g⁻¹(F_{bs}(h x))`. -/
+@[simps fst_fst fst_snd]
+def one_jet_sec.localize_fun : X → one_jet_bundle IX X IY Y :=
+λ x, let y := g.inv_fun (F.bs $ h x) in
 ⟨(x, y), ((g.fderiv y).symm : TN (g y) →L[ℝ] TY y) ∘L
   ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x)))⟩
 
+open basic_smooth_vector_bundle_core
 /-- Localize a one-jet section in two open embeddings. -/
 @[simps] def one_jet_sec.localize (hF : range (F.bs ∘ h) ⊆ range g) :
   one_jet_sec IX X IY Y :=
 { to_fun := F.localize_fun g h,
   is_sec' := λ x, rfl,
-  smooth' := sorry }
+  smooth' := begin
+  simp_rw [one_jet_sec.localize_fun, h.fderiv_coe, g.fderiv_symm_coe],
+  convert smooth.one_jet_comp IX IN IY IX (λ x', F.bs (h x')) _ _,
+  { have := λ x, g.right_inv (hF $ mem_range_self x),
+    simp_rw [function.comp] at this,
+    conv { congr, skip, skip, funext, rw [this x] }, -- simp_rw doesn't do this
+    intro x,
+    have : smooth IN IY g.inv_fun, sorry, -- false. to do: deal with the partial smoothness of g⁻¹
+
+    have := this.one_jet_ext.comp (F.smooth_bs.comp h.smooth_to),
+    -- simp_rw [function.comp] at this,
+    convert this,
+    simp_rw [one_jet_bundle.mk, function.comp, one_jet_ext],
+    sorry -- why is this not refl?
+
+    -- refine g.smooth_inv.one_jet_ext.comp_smooth _ _,
+    -- refine ((g.smooth_inv _ _).smooth_within_at.smooth_at _).one_jet_ext.comp _ _,
+    },
+  refine smooth.one_jet_comp IX IM IN IX h _ _,
+  { exact F.smooth_eta.comp h.smooth_to },
+  { exact h.smooth_to.one_jet_ext },
+  -- have h1 : smooth_at IX IY (λ x', g.inv_fun (F.bs $ h x')) x,
+  -- sorry,
+  -- rw [(one_jet_bundle_core IX X IY Y).cont_mdiff_at_iff_target],
+  -- refine ⟨continuous_at_id.prod h1.continuous_at, _⟩,
+  -- simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
+  -- dsimp only [one_jet_bundle_core],
+  -- simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
+  --   pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
+  --   model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
+  --   local_homeomorph.prod_apply],
+  -- refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ h1)
+  --   .prod_mk_space _,
+  -- simp_rw [F.localize_fun_fst_fst, F.localize_fun_fst_snd],
+  -- sorry
+  -- exact h1.mfderiv' le_rfl
+  end }
 
 lemma transfer_localize (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
   (F.localize g h hF x).transfer g h = F (h x) :=
 begin
-  simp_rw [one_jet_sec.localize_to_fun, one_jet_sec.localize_fun, one_jet_bundle.transfer],
+  rw [one_jet_sec.localize_to_fun, one_jet_sec.localize_fun, one_jet_bundle.transfer],
   ext,
   { simp_rw [F.is_sec] },
   { simp_rw [g.right_inv (hF $ mem_range_self x), one_jet_sec.bs] },
-  { apply heq_of_eq, simp only, ext v, simp_rw [continuous_linear_map.comp_apply], sorry },
+  { apply heq_of_eq, dsimp only, ext v,
+    simp_rw [continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe,
+      continuous_linear_equiv.apply_symm_apply] },
 end
 
 /-- Underlying map of `htpy_one_jet_sec.unlocalize`. -/
