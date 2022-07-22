@@ -117,7 +117,8 @@ def open_smooth_embedding_of_subset_chart_target {x : M}
   smooth_inv :=
   begin
     have hf' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x) ⁻¹' range f,
-    { rw range_comp, exact local_equiv.symm_image_subset_preimage_of_subset_target _ hf, },
+    { rw [range_comp, ← image_subset_iff],
+      exact (local_equiv.image_symm_image_of_subset_target _ hf).subset },
     refine f.smooth_inv.comp _ hf',
     have hf'' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x).source,
     { rw [range_comp, ← local_equiv.symm_image_target_eq_source],
