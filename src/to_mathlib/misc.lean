@@ -26,35 +26,12 @@ by { rw [abs_of_nonpos ha, abs_of_nonpos (hab.trans ha)], exact neg_le_neg_iff.m
 namespace set
 variables {α β : Type*}
 
-lemma ord_connected.interval_oc_subset {α : Type*} [linear_order α] {a b : α} {s : set α}
-  (hs : ord_connected s) (ha : a ∈ s) (hb : b ∈ s) : Ι a b ⊆ s :=
-Ioc_subset_Icc_self.trans $ hs.interval_subset ha hb
-
-lemma ord_connected_interval_oc {α : Type*} [linear_order α] {a b : α} :
-  ord_connected (Ι a b) :=
-ord_connected_Ioc
-
-lemma Ioc_subset_interval_oc_self {α : Type*} [linear_order α] {a b : α} :
-  Ioc a b ⊆ interval_oc a b :=
-Ioc_subset_Ioc (min_le_left a b) (le_max_right a b)
-
-/- near `set.Iic_union_Ici` -/
-lemma Iic_union_Ici_of_le {α : Type*} [linear_order α] {a b : α} (h : b ≤ a) :
-  Iic a ∪ Ici b = univ :=
-eq_univ_of_forall $ λ x, (le_total x a).imp id $ le_trans h
-
 /- to data.set.finite -/
 lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : (f ⁻¹' s).finite)
   (hs : s ⊆ range f) : s.finite :=
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }
 
-@[simp] lemma diag_preimage_prod (s t : set α) :
-  (λ a, (a, a)) ⁻¹' (s ×ˢ t) = s ∩ t :=
-rfl
-
-@[simp] lemma diag_preimage_prod_self (s : set α) :
-  (λ a, (a, a)) ⁻¹' (s ×ˢ s) = s :=
-s.inter_self
+alias ord_interval.interval_oc_subset ← ord_connected.interval_oc_subset -- waiting for https://github.com/leanprover-community/mathlib/pull/15627
 
 end set
 

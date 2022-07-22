@@ -162,7 +162,7 @@ lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport
   cont_mdiff_within_at I 𝓘(ℝ, F) n f s x :=
 (cont_mdiff_within_at_const : cont_mdiff_within_at I 𝓘(ℝ, F) n (λ x, (0 : F)) s x)
   .congr_of_eventually_eq
-  (eventually_nhds_within_of_eventually_nhds $ not_mem_closure_support_iff_eventually_eq.mp hx)
+  (eventually_nhds_within_of_eventually_nhds $ not_mem_tsupport_iff_eventually_eq.mp hx)
   (image_eq_zero_of_nmem_tsupport hx)
 
 
@@ -186,30 +186,6 @@ by { ext1, simp }
 
 lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
 by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
-
-
-lemma cont_mdiff_within_at.smul {f : M → F} {r : M → ℝ}
-  {n : with_top ℕ} {s : set M} {x₀ : M}
-  (hf : cont_mdiff_within_at I 𝓘(ℝ, F) n f s x₀)
-  (hs : cont_mdiff_within_at I 𝓘(ℝ, ℝ) n r s x₀) :
-  cont_mdiff_within_at I 𝓘(ℝ, F) n (r • f) s x₀ :=
-(cont_mdiff_iff_cont_diff.mpr cont_diff_smul).cont_mdiff_at.cont_mdiff_within_at.comp
-  _ (hs.prod_mk_space hf) (maps_to_univ _ _)
-
-lemma cont_mdiff_at.smul {f : M → F} {r : M → ℝ}
-  {n : with_top ℕ} {x₀ : M}
-  (hf : cont_mdiff_at I 𝓘(ℝ, F) n f x₀)
-  (hs : cont_mdiff_at I 𝓘(ℝ, ℝ) n r x₀) :
-  cont_mdiff_at I 𝓘(ℝ, F) n (r • f) x₀ :=
-hf.cont_mdiff_within_at.smul hs.cont_mdiff_within_at
-
-lemma cont_mdiff_within_at.add {f g : M → F}
-  {n : with_top ℕ} {s : set M} {x₀ : M}
-  (hf : cont_mdiff_within_at I 𝓘(ℝ, F) n f s x₀)
-  (hg : cont_mdiff_within_at I 𝓘(ℝ, F) n g s x₀) :
-  cont_mdiff_within_at I 𝓘(ℝ, F) n (f + g) s x₀ :=
-(cont_mdiff_iff_cont_diff.mpr cont_diff_add).cont_mdiff_at.cont_mdiff_within_at.comp
-  _ (hf.prod_mk_space hg) (maps_to_univ _ _)
 
 lemma cont_mdiff_within_at.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
   {n : with_top ℕ} {s : set M} {x₀ : M}
@@ -246,7 +222,7 @@ lemma smooth_partition_of_unity.cont_diff_at_sum (ρ : smooth_partition_of_unity
 begin
   refine cont_mdiff_at_finsum (ρ.locally_finite.smul_left _) (λ i, _),
   by_cases hx : x₀ ∈ tsupport (ρ i),
-  { exact (hφ i hx).smul ((ρ i).smooth.of_le le_top).cont_mdiff_at },
+  { exact cont_mdiff_at.smul ((ρ i).smooth.of_le le_top).cont_mdiff_at (hφ i hx) },
   { exact cont_mdiff_at_of_not_mem (compl_subset_compl.mpr (tsupport_smul_left (ρ i) (φ i)) hx) n }
 end
 
@@ -272,14 +248,14 @@ lemma has_fderiv_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscre
   [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
   {f : E → F} {x} (hx : x ∉ tsupport f) : has_fderiv_at f (0 : E →L[𝕜] F) x :=
 (has_fderiv_at_const (0 : F)  x).congr_of_eventually_eq
-  (not_mem_closure_support_iff_eventually_eq.mp hx)
+  (not_mem_tsupport_iff_eventually_eq.mp hx)
 
 -- Not used here, but should be in mathlib
 lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscrete_normed_field 𝕜]
   [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
   {f : E → F} {x} (hx : x ∉ tsupport f) (n : with_top ℕ) : cont_diff_at 𝕜 n f x :=
 (cont_diff_at_const : cont_diff_at 𝕜 n (λ x, (0 : F)) x).congr_of_eventually_eq
-   (not_mem_closure_support_iff_eventually_eq.mp hx)
+   (not_mem_tsupport_iff_eventually_eq.mp hx)
 
 universes uH uM
 
