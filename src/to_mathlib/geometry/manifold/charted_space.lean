@@ -33,8 +33,7 @@ begin
     obtain ⟨r, hr₀, hr₁⟩ :=
       (filter.has_basis_iff.mp (@nhds_basis_ball E _ (chart_at E x x)) _).mp hm,
     refine ⟨r, ⟨hr₀, hr₁.trans _, ⟨j, _⟩⟩, _⟩,
-    { exact local_equiv.image_subset_target_of_subset_source _
-      ((s j ∩ n).inter_subset_right (chart_at E x).source), },
+    { exact ((chart_at E x).maps_to.mono (inter_subset_right _ _) subset.rfl).image_subset },
     { suffices : m ⊆ s j,
       { refine subset.trans _ this,
         convert monotone_image hr₁,
