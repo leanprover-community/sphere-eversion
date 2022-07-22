@@ -272,7 +272,7 @@ begin
     have h₁ := smooth_barycentric ι ℝ F (fintype.card_fin _),
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := cont_diff_apply _ _ i,
     refine (h₂.comp_cont_diff_on h₁).comp _ _,
-    { have h₃ := (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm.subset,
+    { have h₃ := (diag_preimage_prod_sellf (γ.local_centering_density_nhd x)).symm.subset,
       refine cont_diff_on.comp _ (cont_diff_id.prod cont_diff_id).cont_diff_on h₃,
       refine (γ.smooth_surrounded).cont_diff_on.prod_map (cont_diff.cont_diff_on _),
       exact γ.approx_surrounding_points_at_smooth x _, },

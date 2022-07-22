@@ -27,19 +27,6 @@ namespace set
 -- move
 variables {α β γ : Type*} {s t : set α} {f : s → β} {g : t → β} {x : α}
 
-@[simp]
-lemma restrict_eq_iff {f : α → β} {g : s → β} :
-  s.restrict f = g ↔ ∀ x (hx : x ∈ s), f x = g ⟨x, hx⟩ :=
-by simp_rw [function.funext_iff, set_coe.forall, restrict_apply, subtype.coe_mk]
-
-@[simp]
-lemma eq_restrict_iff {g : α → β} : f = s.restrict g ↔ ∀ x (hx : x ∈ s), f ⟨x, hx⟩ = g x :=
-by simp_rw [@eq_comm _ f, restrict_eq_iff, eq_comm]
-
-@[simp]
-lemma restrict_eq_restrict_iff {f g : α → β} : s.restrict f = s.restrict g ↔ ∀ x ∈ s, f x = g x :=
-by simp_rw [restrict_eq_iff, restrict_apply, subtype.coe_mk]
-
 /-- The union `f ∪ g` of two functions `f : s → β` and `g : t → β`.
   On the intersection `s ∩ t`, the function `f ∪ g` corresponds to `f`. -/
 def union_elim [decidable_pred (∈ s)] (f : s → β) (g : t → β) (x : s ∪ t) : β :=
@@ -219,12 +206,13 @@ lemma eventually_constant_on.nonempty (hg : eventually_constant_on g f O) (hx : 
 
 lemma eventually_constant_on_at_top [semilattice_sup α] [nonempty α] :
   (∃ x, ∀ x', x ≤ x' → ∀ y ∈ O, g x' y = g x y) ↔ eventually_constant_on g at_top O :=
-by simp_rw [eventually_constant_on, ← eventually_constant_at_top, restrict_eq_restrict_iff]
+by simp_rw [eventually_constant_on, ← eventually_constant_at_top, restrict_eq_restrict_iff, eq_on]
 
 lemma eventually_constant_on.exists_eventual_value_eq [f.ne_bot]
   (hg : eventually_constant_on g f O) :
   ∃ i, ∀ x (hx : x ∈ O), @eventual_value _ _ (hg.nonempty hx) (λ n, g n x) f = g i x :=
-by simpa only [eq_restrict_iff, eventual_value_apply hg] using hg.exists_eventual_value_eq
+by simpa only [@eq_restrict_iff β (λ _, γ), eventual_value_apply hg]
+  using hg.exists_eventual_value_eq
 
 -- lemma eventually_constant_on.exists_eventual_value_eq [f.ne_bot] (h : eventually_constant g f) :
 --   ∃ x, @eventual_value _ _ h.nonempty g f = g x :=

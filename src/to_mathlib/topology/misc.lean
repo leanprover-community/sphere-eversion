@@ -602,7 +602,7 @@ begin
     rw [not_nonempty_iff_eq_empty] at h,
     rw [h, bUnion_empty, subset_empty_iff] at hsf,
     exact hs.ne_empty hsf },
-  obtain ⟨x, rfl⟩ := ht.exists_surjective hnt,
+  obtain ⟨x, rfl⟩ := ht.exists_eq_range hnt,
   rw [bUnion_range] at hsf,
   exact ⟨x, hts, hsf⟩
 end

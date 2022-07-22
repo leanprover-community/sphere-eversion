@@ -124,7 +124,7 @@ lemma continuous_at_parametric_primitive_of_dominated
 begin
   have hsub : ∀ {a₀ b₀}, a₀ ∈ Ioo a b → b₀ ∈ Ioo a b → Ι a₀ b₀ ⊆ Ι a b, from
     λ a₀ b₀ ha₀ hb₀, (ord_connected_Ioo.interval_oc_subset ha₀ hb₀).trans
-      (Ioo_subset_Ioc_self.trans Ioc_subset_interval_oc_self),
+      (Ioo_subset_Ioc_self.trans Ioc_subset_interval_oc),
   have Ioo_nhds : Ioo a b ∈ 𝓝 b₀, from Ioo_mem_nhds hb₀.1 hb₀.2,
   have Icc_nhds : Icc a b ∈ 𝓝 b₀, from Icc_mem_nhds hb₀.1 hb₀.2,
   have hx₀ : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ∥F x₀ t∥ ≤ bound t := h_bound.self_of_nhds,

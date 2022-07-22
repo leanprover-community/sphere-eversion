@@ -1,7 +1,5 @@
 import geometry.manifold.cont_mdiff
 import global.indexing
-
-import to_mathlib.topology.maps
 import to_mathlib.topology.paracompact
 import to_mathlib.geometry.manifold.charted_space
 

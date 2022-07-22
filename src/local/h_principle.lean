@@ -1,5 +1,4 @@
 import to_mathlib.analysis.normed_group
-import to_mathlib.analysis.normed_space.finite_dimension
 import to_mathlib.linear_algebra.basis
 import to_mathlib.topology.nhds_set
 import to_mathlib.analysis.cut_off
@@ -402,6 +401,7 @@ open finite_dimensional submodule step_landscape
 
 variables {E}
 .
+
 /--
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
@@ -440,8 +440,7 @@ begin
     let S : step_landscape E :=
     { E' := E' k,
       p := e.dual_pair' k,
-      hEp := by simp only [E', basis.dual_pair', linear_map.ker_to_continuous_linear_map,
-                            e.flag_le_ker_dual],
+      hEp := by simpa only [E', basis.dual_pair'] using e.flag_le_ker_dual k,
       ..L},
     set H₁ : formal_sol R := (hH_sol 1).formal_sol,
     have h_span : S.E' ⊔ S.p.span_v = E' k.succ := e.flag_span_succ k,

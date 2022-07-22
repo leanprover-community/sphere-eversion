@@ -347,25 +347,6 @@ by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
 
 end
 
-namespace continuous_linear_equiv
-
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F] {G : Type*} [normed_group G] [normed_space 𝕜 G]
-  {f : E → F} {n : with_top ℕ}
-
---todo: protect `continuous_linear_map.cont_diff`/`continuous_linear_equiv.cont_diff`
-
-lemma cont_diff_comp_iff (e : G ≃L[𝕜] E) :
-  _root_.cont_diff 𝕜 n (f ∘ e) ↔ _root_.cont_diff 𝕜 n f :=
-by simp_rw [← cont_diff_on_univ, ← e.cont_diff_on_comp_iff, preimage_univ]
-
-lemma comp_cont_diff_iff (e : F ≃L[𝕜] G) :
-  _root_.cont_diff 𝕜 n (e ∘ f) ↔ _root_.cont_diff 𝕜 n f :=
-by simp_rw [← cont_diff_on_univ, ← e.comp_cont_diff_on_iff]
-
-end continuous_linear_equiv
-
-
 section
 open continuous_linear_map
 
