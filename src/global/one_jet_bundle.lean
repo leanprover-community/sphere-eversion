@@ -163,8 +163,33 @@ lemma smooth.one_jet_comp
   (hg : smooth J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_bundle.mk _ _ (g x))) :
   smooth J' ((I.prod J).prod 𝓘(𝕜, E →L[𝕜] F))
     (λ x, one_jet_bundle.mk (f1 x) (f3 x) (h x ∘L g x) : N' → one_jet_bundle I M J N) :=
-sorry
-
+begin
+  rw [basic_smooth_vector_bundle_core.smooth_iff_target] at hh hg ⊢,
+  refine ⟨hg.1.fst.prod_mk hh.1.snd, _⟩,
+  intro x,
+  refine ((cont_diff_at_fst.fst.cont_mdiff_at.comp _ (hg.2 x)).prod_mk_space $
+    cont_diff_at_fst.snd.cont_mdiff_at.comp _ (hh.2 x)).prod_mk_space _,
+  have h1 := (cont_diff_at_snd.cont_mdiff_at.comp _ (hg.2 x)),
+  have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ (hh.2 x)),
+  -- have h3 := h2.clm_comp h1,
+  convert h2.clm_comp h1,
+  clear h1 h2,
+  ext1 x',
+  simp_rw [function.comp_apply, model_with_corners_self_coe],
+  sorry -- this should just be two coordinate change functions canceling with each other
+  -- simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
+  -- dsimp only [one_jet_bundle_core],
+  -- simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
+  --   pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
+  --   model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
+  --   local_homeomorph.prod_apply],
+  -- refine (cont_mdiff_at_fst.comp hg.2.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ h1)
+  --   .prod_mk_space _,
+  -- -- simp_rw [F.localize_fun_fst_fst, F.localize_fun_fst_snd],
+  -- -- sorry
+  -- exact h1.mfderiv' le_rfl
+end
+#exit
 end maps
 
 local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')

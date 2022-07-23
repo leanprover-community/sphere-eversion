@@ -45,6 +45,12 @@ variables {I I' M M'} (f : open_smooth_embedding I M I' M')
 lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
 filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv' hy
 
+lemma is_open_range : is_open (range f) :=
+f.open_map.is_open_range
+
+lemma smooth_at_inv {y : M'} (hy : y ∈ range f) : smooth_at I' I f.inv_fun y :=
+(f.smooth_inv y hy).cont_mdiff_at $ f.is_open_range.mem_nhds hy
+
 /- Note that we are slightly abusing the fact that `tangent_space I x` and
 `tangent_space I (f.inv_fun (f x))` are both definitionally `E` below. -/
 def fderiv (x : M) : tangent_space I x ≃L[𝕜] tangent_space I' (f x) :=

@@ -193,25 +193,13 @@ open basic_smooth_vector_bundle_core
   is_sec' := λ x, rfl,
   smooth' := begin
   simp_rw [one_jet_sec.localize_fun, h.fderiv_coe, g.fderiv_symm_coe],
-  convert smooth.one_jet_comp IX IN IY IX (λ x', F.bs (h x')) _ _,
-  { have := λ x, g.right_inv (hF $ mem_range_self x),
-    simp_rw [function.comp] at this,
-    conv { congr, skip, skip, funext, rw [this x] }, -- simp_rw doesn't do this
-    intro x,
-    have : smooth IN IY g.inv_fun, sorry, -- false. to do: deal with the partial smoothness of g⁻¹
-
-    have := this.one_jet_ext.comp (F.smooth_bs.comp h.smooth_to),
-    -- simp_rw [function.comp] at this,
-    convert this,
-    simp_rw [one_jet_bundle.mk, function.comp, one_jet_ext],
-    sorry -- why is this not refl?
-
-    -- refine g.smooth_inv.one_jet_ext.comp_smooth _ _,
-    -- refine ((g.smooth_inv _ _).smooth_within_at.smooth_at _).one_jet_ext.comp _ _,
-    },
-  refine smooth.one_jet_comp IX IM IN IX h _ _,
-  { exact F.smooth_eta.comp h.smooth_to },
-  { exact h.smooth_to.one_jet_ext },
+  refine smooth.one_jet_comp IX IN IY IX (λ x', F.bs (h x')) _ _,
+  { -- why doesn't `simp_rw` do the following?
+    conv { congr, skip, skip, funext, rw [g.right_inv (hF $ mem_range_self _)] },
+    exact λ x, (g.smooth_at_inv $ hF $ mem_range_self x).one_jet_ext.comp _
+      (F.smooth_bs.comp h.smooth_to).cont_mdiff_at },
+  exact smooth.one_jet_comp IX IM IN IX h (F.smooth_eta.comp h.smooth_to) h.smooth_to.one_jet_ext
+  -- -- delete below if above is sorry-free
   -- have h1 : smooth_at IX IY (λ x', g.inv_fun (F.bs $ h x')) x,
   -- sorry,
   -- rw [(one_jet_bundle_core IX X IY Y).cont_mdiff_at_iff_target],
