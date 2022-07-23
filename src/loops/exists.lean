@@ -40,7 +40,6 @@ lemma exists_loops_aux1 [finite_dimensional ℝ E]
 begin
   have b_in : ∀ x, (x, b x) ∈ Ω :=
     λ x, (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x, hconv x⟩) : _),
-  have bK_im : (λ x, (x, b x)) '' K ⊆ Ω := image_subset_iff.mpr (λ x _, b_in x),
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
 
   -- we could probably get away with something simpler to get γ₀.
@@ -50,7 +49,7 @@ begin
   have := λ x, local_loops_open ⟨univ, univ_mem, h2Ω⟩ hg.continuous.continuous_at
     hb.continuous (hconv x),
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
-    hΩ_op.exists_thickening_image hK (continuous_id.prod_mk hb.continuous) bK_im,
+    hK.exists_thickening_image hΩ_op (continuous_id.prod_mk hb.continuous) (λ x _, b_in x),
   let range_γ₀ := (λ i : ℝ × ℝ, ∥γ₀ i.1 i.2∥) '' (I ×ˢ I),
   have h4γ₀ : bdd_above range_γ₀ :=
   (is_compact_Icc.prod is_compact_Icc).bdd_above_image (hγ₀_cont.norm.continuous_on),

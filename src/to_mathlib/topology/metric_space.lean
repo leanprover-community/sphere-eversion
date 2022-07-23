@@ -9,7 +9,8 @@ variables {α β : Type*} [pseudo_metric_space α] [pseudo_metric_space β]
 
 lemma mem_ball_prod {x x₀ : α × β} {r : ℝ} :
   x ∈ ball x₀ r ↔ x.1 ∈ ball x₀.1 r ∧ x.2 ∈ ball x₀.2 r :=
-by { cases x₀, simp [← ball_prod_same] }
+by simp only [mem_ball, prod.dist_eq, max_lt_iff]
+
 end
 
 section lipschitz

@@ -4,12 +4,13 @@ import topology.metric_space.hausdorff_distance
 TODO: think about versions assuming less than a metric space.
 -/
 
-open set
+open set metric
 open_locale topological_space
+
+variables {α β : Type*} [pseudo_metric_space α] [pseudo_metric_space β]
 
 namespace metric
 
-variables {α β : Type*} [pseudo_metric_space α] [pseudo_metric_space β]
 lemma ball_subset_thickening {x : α} {E : set α} (hx : x ∈ E) (δ : ℝ) : ball x δ ⊆ thickening δ E :=
 by simp_rw [thickening_eq_bUnion_ball, subset_bUnion_of_mem hx]
 
@@ -22,43 +23,25 @@ begin
   ... < ε + δ :  add_lt_add hz' hz
 end
 
-lemma _root_.is_open.exists_thickening {U K : set α} (hU : is_open U)
-  (hK : is_compact K) (hK' : K ⊆ U) :
-  ∃ ε > 0, metric.thickening ε K ⊆ U :=
-begin
-  apply hK.induction_on,
-  { use [1, zero_lt_one],
-    simp },
-  { rintros s t hst ⟨ε, ε_pos, h⟩,
-    use [ε, ε_pos],
-    exact (thickening_subset_of_subset ε hst).trans h },
-  { rintros s t ⟨ε, ε_pos, hε⟩ ⟨δ, δ_pos, hδ⟩,
-    refine ⟨min ε δ, lt_min ε_pos δ_pos, _⟩,
-    rw thickening_union,
-    apply union_subset,
-    exact (thickening_mono (min_le_left ε δ) s).trans hε,
-    exact (thickening_mono (min_le_right ε δ) t).trans hδ },
-  { intros x hx,
-    rcases metric.mem_nhds_iff.mp (hU.mem_nhds (hK' hx)) with ⟨ε, ε_pos, hε⟩,
-    refine ⟨ball x (ε/2), mem_nhds_within_of_mem_nhds $ ball_mem_nhds x (half_pos ε_pos),
-            ⟨ε/2, half_pos ε_pos, _⟩⟩,
-    have := thickening_ball x (ε/2) (ε/2),
-    rw add_halves at this,
-    exact this.trans hε }
-end
-
-/--
-  is this true without the additional assumptions on `α`?
--/
-lemma _root_.is_open.exists_thickening_image [locally_compact_space α] [t3_space α]
-  {f : α → β} {K : set α} {U : set β} (hU : is_open U) (hK : is_compact K)
-  (hf : continuous f) (hKU : f '' K ⊆ U) :
-  ∃ (ε > 0) (V ∈ 𝓝ˢ K), metric.thickening ε (f '' V) ⊆ U :=
-begin
-  obtain ⟨K₂, hK₂, hKK₂, hK₂U⟩ :=
-  exists_compact_between hK (hU.preimage hf) (image_subset_iff.mp hKU),
-  obtain ⟨ε, hε, h2KU⟩ := hU.exists_thickening (hK₂.image hf) (image_subset_iff.mpr hK₂U),
-  refine ⟨ε, hε, K₂, subset_interior_iff_mem_nhds_set.mp hKK₂, h2KU⟩,
-end
+lemma inf_dist_pos_iff_not_mem_closure {x : α} {s : set α} (hs : s.nonempty) :
+  0 < inf_dist x s ↔ x ∉ closure s :=
+by rw [is_closed_closure.not_mem_iff_inf_dist_pos hs.closure, inf_dist_eq_closure]
 
 end metric
+open metric
+
+lemma is_compact.exists_thickening_image {f : α → β} {K : set α} {U : set β}
+  (hK : is_compact K) (ho : is_open U) (hf : continuous f) (hKU : maps_to f K U) :
+  ∃ (ε > 0) (V ∈ 𝓝ˢ K), thickening ε (f '' V) ⊆ U :=
+begin
+  rcases (hK.image hf).exists_thickening_subset_open ho hKU.image_subset with ⟨r, hr₀, hr⟩,
+  refine ⟨r / 2, half_pos hr₀, f ⁻¹' (thickening (r / 2) (f '' K)),
+    (is_open_thickening.preimage hf).mem_nhds_set.2 $ image_subset_iff.mp $
+      self_subset_thickening (half_pos hr₀) _, _⟩,
+  calc thickening (r / 2) (f '' (f ⁻¹' thickening (r / 2) (f '' K)))
+     ⊆ thickening (r / 2) (thickening (r / 2) (f '' K)) :
+    thickening_subset_of_subset _ (image_preimage_subset _ _)
+  ... ⊆ thickening (r / 2 + r / 2) (f '' K) : thickening_thickening_subset _ _ _
+  ... = thickening r (f '' K) : by rw [add_halves]
+  ... ⊆ U : hr
+end
