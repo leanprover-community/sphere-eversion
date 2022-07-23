@@ -61,6 +61,8 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {M : Type*} [topological_space M] [charted_space H M]
   {M' : Type*} [topological_space M'] [charted_space H' M']
   {N : Type*} [topological_space N] [charted_space G N]
+  {F' : Type*} [normed_group F'] [normed_space 𝕜 F']
+  {F'' : Type*} [normed_group F''] [normed_space 𝕜 F'']
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
 
 lemma cont_mdiff_at_iff_target {x : M} :
@@ -107,6 +109,12 @@ begin
   exact (Z'.local_triv ⟨chart_at _ (f x).1, chart_mem_atlas _ _⟩).to_fiber_bundle_trivialization
     .continuous_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
 end
+
+lemma smooth_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space} :
+  smooth J (I.prod 𝓘(𝕜, E')) f ↔ continuous (bundle.total_space.proj ∘ f) ∧
+  ∀ x, smooth_at J 𝓘(𝕜, E × E') (ext_chart_at (I.prod 𝓘(𝕜, E')) (f x) ∘ f) x :=
+by simp_rw [smooth, smooth_at, cont_mdiff, Z.cont_mdiff_at_iff_target, forall_and_distrib,
+  continuous_iff_continuous_at]
 
 end basic_smooth_vector_bundle_core
 
@@ -192,6 +200,43 @@ begin
       (ext_chart_at I x₂).left_inv (mem_ext_chart_source I x₂)] },
   { simp_rw [function.comp_apply, (ext_chart_at I x).left_inv hx₂] }
 end
+
+lemma cont_diff_within_at.comp_cont_mdiff_within_at
+  {g : F → F''} {f : M → F} {s : set M} {t : set F} {x : M}
+  (hg : cont_diff_within_at 𝕜 n g t (f x))
+  (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
+  cont_mdiff_within_at I 𝓘(𝕜, F'') n (g ∘ f) s x :=
+begin
+  rw cont_mdiff_within_at_iff at *,
+  refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
+  rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
+  apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
+  exact (inter_subset_left _ _).trans (preimage_mono h)
+end
+
+lemma cont_diff_at.comp_cont_mdiff_at {g : F → F''} {f : M → F} {x : M}
+  (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, F'') n (g ∘ f) x :=
+hg.comp_cont_mdiff_within_at hf subset.rfl
+
+lemma cont_diff.comp_cont_mdiff {g : F → F''} {f : M → F}
+  (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
+  cont_mdiff I 𝓘(𝕜, F'') n (g ∘ f) :=
+λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
+
+-- the following proof takes very long in pure term mode
+lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F} {x : M}
+  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F'') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) x :=
+@cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ ((F →L[𝕜] F'') × (F' →L[𝕜] F)) _ _ _ _ _ _ _ _
+  _ _ _ _ _
+  (λ x, x.1.comp x.2) (λ x, (g x, f x)) x
+  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff, exact is_bounded_bilinear_map_comp }) (hg.prod_mk_space hf)
+
+lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F}
+  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F'') n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
+  cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
+λ x, (hg x).clm_comp (hf x)
 
 end smooth_manifold_with_corners
 
