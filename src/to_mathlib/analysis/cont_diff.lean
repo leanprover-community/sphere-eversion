@@ -1,5 +1,7 @@
 import analysis.calculus.inverse
 import analysis.calculus.cont_diff
+import analysis.inner_product_space.calculus
+import analysis.inner_product_space.dual
 
 import to_mathlib.analysis.calculus
 import to_mathlib.analysis.normed_space.operator_norm
@@ -221,6 +223,62 @@ begin
     simpa only [rel_iso.coe_fn_to_equiv, continuous_linear_equiv.coe_coe,
       continuous_linear_equiv.units_equiv_aut_apply, units.coe_mk0, one_mul] },
   apply partial_fderiv_snd_one
+end
+
+end
+
+section
+variables (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
+
+lemma cont_diff_to_span_singleton (E : Type*) [normed_group E] [normed_space 𝕜 E] :
+  cont_diff 𝕜 ⊤ (continuous_linear_map.to_span_singleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
+(continuous_linear_map.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.cont_diff
+
+end
+
+section
+variables {𝕜 : Type*} [is_R_or_C 𝕜]
+variables {E : Type*} [inner_product_space 𝕜 E] [complete_space E]
+
+-- variant of `orthogonal_projection_singleton`
+lemma orthogonal_projection_singleton' {v : E} (hv : v ≠ 0) :
+  (𝕜 ∙ v).subtypeL.comp (orthogonal_projection (𝕜 ∙ v))
+  = (1 / ∥v∥ ^ 2 : 𝕜) • (continuous_linear_map.to_span_singleton 𝕜 v)
+    ∘L inner_product_space.to_dual 𝕜 E v :=
+begin
+  ext w,
+  simp [continuous_linear_map.to_span_singleton_apply, orthogonal_projection_singleton, ← mul_smul],
+  congr' 1,
+  have : ∥v∥ ≠ 0 := norm_ne_zero_iff.mpr hv,
+  field_simp,
+end
+
+end
+
+section
+variables {E : Type*} [inner_product_space ℝ E] [complete_space E]
+
+/-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
+from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
+lemma cont_diff_at_orthogonal_projection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
+  cont_diff_at ℝ ⊤ (λ v : E, (ℝ ∙ v).subtypeL.comp (orthogonal_projection (ℝ ∙ v))) v₀ :=
+begin
+  suffices :  cont_diff_at ℝ ⊤
+    (λ v : E, (1 / ∥v∥ ^ 2) • (continuous_linear_map.to_span_singleton ℝ v)
+    ∘L inner_product_space.to_dual ℝ E v) v₀,
+  { apply this.congr_of_eventually_eq,
+    have : is_open {v : E | v ≠ 0} := is_closed_singleton.is_open_compl,
+    apply filter.eventually_eq_of_mem (this.mem_nhds hv₀),
+    intros v hv,
+    dsimp,
+    rw orthogonal_projection_singleton' hv,
+    refl },
+  refine cont_diff_at.smul _ _,
+  { refine cont_diff_at_const.div cont_diff_norm_sq.cont_diff_at _,
+    apply pow_ne_zero,
+    exact norm_ne_zero_iff.mpr hv₀ },
+  exact (cont_diff.clm_comp (cont_diff_to_span_singleton ℝ E)
+    (inner_product_space.to_dual ℝ E).cont_diff).cont_diff_at,
 end
 
 end
