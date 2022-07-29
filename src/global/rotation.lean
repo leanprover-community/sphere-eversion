@@ -6,7 +6,7 @@ Authors: Heather Macbeth
 import to_mathlib.analysis.cont_diff
 import analysis.special_functions.trigonometric.deriv
 
-/-! # Rotation about an axis, considered as a function in that atlas -/
+/-! # Rotation about an axis, considered as a function in that axis -/
 
 noncomputable theory
 
