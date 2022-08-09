@@ -1,6 +1,7 @@
 import geometry.manifold.cont_mdiff
 import global.indexing
 import to_mathlib.topology.paracompact
+import to_mathlib.topology.local_homeomorph
 import to_mathlib.geometry.manifold.charted_space
 
 noncomputable theory
@@ -133,18 +134,20 @@ rfl
 
 variables (𝕜)
 
-/-- A diffeomorphism from `E` onto the open ball of radius `r` in `E` centred at a point `c`,
-sending the open ball of radius 1 centered at 0 to the open ball of radius `r/2` centred at `c`. -/
-def open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
+/-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
+centred at a point `c` and sending `0` to `c`.
+
+The values for `r ≤ 0` are junk. -/
+def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
   open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E :=
 sorry
 
-@[simp] lemma range_open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
-  range (open_smooth_embedding_to_ball 𝕜 c h) = (ball c r : set E) :=
+@[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
+  open_smooth_embedding_to_ball 𝕜 c r 0 = c :=
 sorry
 
-@[simp] lemma open_smooth_embedding_to_ball_image_unit_ball (c : E) {r : ℝ} (h : 0 < r) :
-  open_smooth_embedding_to_ball 𝕜 c h '' ball 0 1 = (ball c (r/2) : set E) :=
+@[simp] lemma range_open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
+  range (open_smooth_embedding_to_ball 𝕜 c r) = ball c r :=
 sorry
 
 variables (E) {M}
@@ -157,41 +160,41 @@ lemma nice_atlas'
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
+  let W : M → ℝ → set M := λ x r,
+    (chart_at E x).symm ∘ open_smooth_embedding_to_ball 𝕜 (chart_at E x x) r '' (ball 0 1),
   let B : M → ℝ → set M := charted_space.ball E,
   let p : M → ℝ → Prop :=
     λ x r, 0 < r ∧ ball (chart_at E x x) r ⊆ (chart_at E x).target ∧ ∃ j, B x r ⊆ s j,
-  have hB₀ : ∀ x r, p x r → is_open (B x r),
-  { rintros x r ⟨hr, hx, -⟩,
-    change ball (chart_at E x x) r ⊆ (chart_at E x).symm.source at hx,
-    replace hr : is_open (ball (chart_at E x x) r) := is_open_ball,
-    exact (chart_at E x).symm.image_open_of_open hr hx, },
-  have hB₁ : ∀ x r, p x r → x ∈ B x r,
-  { rintros x r ⟨hr, hx, -⟩,
-    exact ⟨chart_at E x x, by simp [hr], by simp⟩, },
-  have hB₂ : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
+  have hW₀ : ∀ x r, p x r → x ∈ W x r := λ x r h, ⟨0, by simp, by simp [h.1]⟩,
+  have hW₁ : ∀ x r, p x r → is_open (W x r),
+  { rintros x r ⟨h₁, h₂, -, -⟩,
+    simp only [W],
+    have aux :
+      open_smooth_embedding_to_ball 𝕜 (chart_at E x x) r '' ball 0 1 ⊆ (chart_at E x).target :=
+      subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
+    rw [image_comp, local_homeomorph.is_open_symm_image_iff_of_subset_target _ aux],
+    exact open_smooth_embedding.open_map _ _ is_open_ball, },
+  have hB : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
     λ x, charted_space.nhds_has_basis_balls_of_open_cov E x s_op cov,
   have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,
-  have hp' : ∀ i r r', 0 < r → r < r' → p i r' → p i r,
-  { rintros x r r' hr hr' ⟨h₁, h₂, j, hj⟩,
-    exact ⟨hr, (ball_subset_ball hr'.le).trans h₂, j,
-      (monotone_image (ball_subset_ball hr'.le)).trans hj⟩, },
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
-    exists_countable_locally_finite_cover surjective_id hp hp' hB₀ hB₁ hB₂,
+    exists_countable_locally_finite_cover surjective_id hp hW₀ hW₁ hB,
   refine ⟨M × ℝ, t, λ z, _, ht₁, λ z, _, _, _⟩,
-  { have h : range (open_smooth_embedding_to_ball 𝕜 (chart_at E z.1.1 z.1.1) $ hp _ _ $ ht₂ _ z.2) ⊆
+  { have h : range (open_smooth_embedding_to_ball 𝕜 (chart_at E z.1.1 z.1.1) z.1.2) ⊆
       (chart_at E z.1.1).target,
-    { simpa only [range_open_smooth_embedding_to_ball] using (ht₂ _ z.2).2.1, },
+    { have aux : 0 < z.val.snd := hp _ _ (ht₂ _ z.2),
+      simpa only [range_open_smooth_embedding_to_ball, aux] using (ht₂ _ z.2).2.1, },
     exact open_smooth_embedding_of_subset_chart_target M h, },
-  { simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
-    simp only [range_comp, range_open_smooth_embedding_to_ball],
+  { have aux : 0 < (z : M × ℝ).snd := hp _ _ (ht₂ _ z.2),
+    simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
+    simp only [range_comp, range_open_smooth_embedding_to_ball, aux],
     exact (ht₂ z.1 z.2).2.2, },
-  { convert ht₃,
-    ext1,
-    simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target, comp_app],
-    simpa only [range_comp, range_open_smooth_embedding_to_ball], },
-  { simpa only [subtype.val_eq_coe, subtype.coe_mk, coe_open_smooth_embedding_of_subset_chart_target,
-      Union_coe_set, image_comp (chart_at E _).symm (open_smooth_embedding_to_ball 𝕜 _ _),
-      open_smooth_embedding_to_ball_image_unit_ball] using ht₄, },
+  { convert ht₄,
+    ext1 z,
+    have aux : 0 < (z : M × ℝ).snd := hp _ _ (ht₂ _ z.2),
+    simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
+    simpa only [range_comp, range_open_smooth_embedding_to_ball, aux], },
+  { simpa only [Union_coe_set] using ht₃, },
 end
 
 variables [nonempty M]
