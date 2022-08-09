@@ -129,9 +129,9 @@ end
 
 section
 variables
-  {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+  {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
 
 lemma cont_diff_within_at_finsum {ι : Type*} {f : ι → E → F} (lf : locally_finite (λ i, support $ f i))
   {n : with_top ℕ} {s : set E} {x₀ : E}
@@ -151,10 +151,10 @@ end
 
 section
 variables
-  {ι : Type*} {E : Type*} [normed_group E] [normed_space ℝ E]
+  {ι : Type*} {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
   {H : Type*} [topological_space H] {I : model_with_corners ℝ E H} {M : Type*}
   [topological_space M] [charted_space H M]
-  {s : set M} {F : Type*} [normed_group F] [normed_space ℝ F]
+  {s : set M} {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 
 lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ)
@@ -240,19 +240,19 @@ end
 end
 
 variables
-  {E : Type*} [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-  {F : Type*} [normed_group F] [normed_space ℝ F]
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 -- Not used here, but should be in mathlib
-lemma has_fderiv_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscrete_normed_field 𝕜]
-  [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
+lemma has_fderiv_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_space 𝕜 E] [normed_add_comm_group F] [normed_space 𝕜 F]
   {f : E → F} {x} (hx : x ∉ tsupport f) : has_fderiv_at f (0 : E →L[𝕜] F) x :=
 (has_fderiv_at_const (0 : F)  x).congr_of_eventually_eq
   (not_mem_tsupport_iff_eventually_eq.mp hx)
 
 -- Not used here, but should be in mathlib
-lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nondiscrete_normed_field 𝕜]
-  [normed_group E] [normed_space 𝕜 E] [normed_group F] [normed_space 𝕜 F]
+lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_space 𝕜 E] [normed_add_comm_group F] [normed_space 𝕜 F]
   {f : E → F} {x} (hx : x ∉ tsupport f) (n : with_top ℕ) : cont_diff_at 𝕜 n f x :=
 (cont_diff_at_const : cont_diff_at 𝕜 n (λ x, (0 : F)) x).congr_of_eventually_eq
    (not_mem_tsupport_iff_eventually_eq.mp hx)

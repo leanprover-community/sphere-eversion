@@ -6,7 +6,7 @@ import to_mathlib.topology.nhds_set
 open set filter
 open_locale manifold topological_space
 
-lemma exists_cont_diff_zero_one {E : Type*} [normed_group E]
+lemma exists_cont_diff_zero_one {E : Type*} [normed_add_comm_group E]
   [normed_space ℝ E] [finite_dimensional ℝ E] {s t : set E} (hs : is_closed s)
   (ht : is_closed t) (hd : disjoint s t) :
   ∃ f : E → ℝ, cont_diff ℝ ⊤ f ∧ eq_on f 0 s ∧ eq_on f 1 t ∧
@@ -14,7 +14,7 @@ lemma exists_cont_diff_zero_one {E : Type*} [normed_group E]
 let ⟨f, hfs, hft, hf01⟩ := exists_smooth_zero_one_of_closed 𝓘(ℝ, E) hs ht hd
 in ⟨f, f.smooth.cont_diff, hfs, hft, hf01⟩
 
-lemma exists_cont_diff_zero_one_nhds {E : Type*} [normed_group E]
+lemma exists_cont_diff_zero_one_nhds {E : Type*} [normed_add_comm_group E]
   [normed_space ℝ E] [finite_dimensional ℝ E] {s t : set E} (hs : is_closed s)
   (ht : is_closed t) (hd : disjoint s t) :
   ∃ f : E → ℝ, cont_diff ℝ ⊤ f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 0) ∧ (∀ᶠ x in 𝓝ˢ t, f x = 1) ∧
@@ -33,7 +33,7 @@ begin
   apply eventually_of_mem (mem_of_superset (v_op.mem_nhds_set.mpr htv) subset_closure) hfv
 end
 
-lemma exists_cont_diff_one_nhds_of_interior {E : Type*} [normed_group E]
+lemma exists_cont_diff_one_nhds_of_interior {E : Type*} [normed_add_comm_group E]
   [normed_space ℝ E] [finite_dimensional ℝ E] {s t : set E} (hs : is_closed s)
   (hd : s ⊆ interior t) :
   ∃ f : E → ℝ, cont_diff ℝ ⊤ f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧ (∀ x ∉ t, f x = 0) ∧

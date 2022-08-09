@@ -5,8 +5,8 @@ open_locale topological_space filter manifold
 open topological_space filter
 
 variables
-  {E : Type*} [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-  {F : Type*} [normed_group F] [normed_space ℝ F]
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 
 universes uH uM

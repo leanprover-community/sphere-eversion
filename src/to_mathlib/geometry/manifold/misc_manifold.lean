@@ -33,28 +33,15 @@ section charted_space
 variables {M H : Type*} [topological_space M] [topological_space H] [charted_space H M]
   (G : structure_groupoid H)
 
-variable (H)
-/-- `achart H x` is the chart at `x`, considered as an element of the atlas. -/
-def achart (x : M) : atlas H M := ⟨chart_at H x, chart_mem_atlas H x⟩
-
-lemma achart_def (x : M) : achart H x = ⟨chart_at H x, chart_mem_atlas H x⟩ := rfl
-@[simp] lemma coe_achart (x : M) : (achart H x : local_homeomorph M H) = chart_at H x := rfl
-@[simp] lemma achart_val (x : M) : (achart H x).1 = chart_at H x := rfl
-
-variable {H}
-
 end charted_space
 
 
 namespace model_with_corners
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {H : Type*} [topological_space H]
   {M : Type*} [topological_space M] (f : local_homeomorph M H) (I : model_with_corners 𝕜 E H)
-
-lemma injective : injective I :=
-I.left_inverse.injective
 
 lemma preimage_image (s : set H) : I ⁻¹' (I '' s) = s :=
 I.injective.preimage_image s
@@ -64,10 +51,10 @@ end model_with_corners
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
   {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
   {G : Type*} [topological_space G] {J : model_with_corners 𝕜 F G}
@@ -75,14 +62,6 @@ variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
   {M' : Type*} [topological_space M'] [charted_space H' M']
   {N : Type*} [topological_space N] [charted_space G N]
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
-
-lemma ext_chart_preimage_mem_nhds' {x' : M} {t : set M}
-  (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :
-  (ext_chart_at I x).symm ⁻¹' t ∈ 𝓝 (ext_chart_at I x x') :=
-begin
-  apply (ext_chart_continuous_at_symm' I x h).preimage_mem_nhds,
-  rwa (ext_chart_at I x).left_inv h
-end
 
 lemma cont_mdiff_at_iff_target {x : M} :
   cont_mdiff_at I I' n f x ↔
@@ -144,52 +123,8 @@ lemma cont_diff_on_coord_change' [smooth_manifold_with_corners I M]
   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
 (has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
 
-lemma ext_chart_at_target (x : M) : (ext_chart_at I x).target =
-  I.symm ⁻¹' (chart_at H x).target ∩ range I :=
-by simp_rw [ext_chart_at, local_equiv.trans_target, I.target_eq, I.to_local_equiv_coe_symm,
-  inter_comm]
-
-lemma ext_coord_change_source (x x' : M) :
-  ((ext_chart_at I x').symm ≫ ext_chart_at I x).source =
-  I '' ((chart_at H x').symm ≫ₕ (chart_at H x)).source :=
-by { simp_rw [local_equiv.trans_source, I.image_eq, ext_chart_at_source, local_equiv.symm_source,
-      ext_chart_at_target, inter_right_comm _ (range I)], refl }
-
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
-
-lemma cont_diff_on_ext_coord_change (x x' : M) :
-  cont_diff_on 𝕜 ⊤ (ext_chart_at I x ∘ (ext_chart_at I x').symm)
-  ((ext_chart_at I x').symm ≫ ext_chart_at I x).source :=
-by { rw [ext_coord_change_source, I.image_eq], exact (has_groupoid.compatible
-  (cont_diff_groupoid ⊤ I) (chart_mem_atlas H x') (chart_mem_atlas H x)).1 }
-
-lemma cont_diff_within_at_ext_coord_change (x x' : M) {y : E}
-  (hy : y ∈ ((ext_chart_at I x').symm ≫ ext_chart_at I x).source) :
-  cont_diff_within_at 𝕜 ⊤ (ext_chart_at I x ∘ (ext_chart_at I x').symm) (range I) y :=
-begin
-  apply (cont_diff_on_ext_coord_change I x x' y hy).mono_of_mem,
-  rw [ext_coord_change_source] at hy ⊢,
-  obtain ⟨z, hz, rfl⟩ := hy,
-  exact I.image_mem_nhds_within ((local_homeomorph.open_source _).mem_nhds hz)
-end
-
-variables (𝕜)
-lemma ext_chart_self_eq {x : H} : ⇑(ext_chart_at I x) = I := rfl
-lemma ext_chart_self_apply {x y : H} : ext_chart_at I x y = I y := rfl
-lemma ext_chart_model_space_apply {x y : E} : ext_chart_at 𝓘(𝕜, E) x y = y := rfl
 variables {𝕜 I}
-
-/-- Note: does not hold for `n = ∞`. -/
-lemma cont_mdiff_at_iff_cont_mdiff_at_nhds {n : ℕ} :
-  cont_mdiff_at I I' n f x ↔ ∀ᶠ x' in 𝓝 x, cont_mdiff_at I I' n f x' :=
-begin
-  refine ⟨_, λ h, h.self_of_nhds⟩,
-  rw [cont_mdiff_at_iff_cont_mdiff_on_nhds],
-  rintro ⟨u, hu, h⟩,
-  obtain ⟨v, hvu, hv, hxv⟩ := mem_nhds_iff.mp hu,
-  refine eventually_of_mem (hv.mem_nhds hxv) (λ x' hx', _),
-  exact (h x' (hvu hx')).cont_mdiff_at (mem_of_superset (hv.mem_nhds hx') hvu)
-end
 
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
   (hf : cont_mdiff_at I I' n f x) (hmn : m + 1 ≤ n) :
@@ -228,8 +163,8 @@ begin
       rw [(ext_chart_at I x₂).left_inv hx', (ext_chart_at I' (f x₂)).left_inv h2x'] },
     refine filter.eventually_eq.fderiv_within_eq_nhds (I.unique_diff _ $ mem_range_self _) _,
     refine eventually_of_mem (inter_mem _ _) this,
-    { exact ext_chart_preimage_mem_nhds' hx₂ (ext_chart_at_source_mem_nhds I x₂) },
-    refine ext_chart_preimage_mem_nhds' hx₂ _,
+    { exact ext_chart_preimage_mem_nhds' _ _ hx₂ (ext_chart_at_source_mem_nhds I x₂) },
+    refine ext_chart_preimage_mem_nhds' _ _ hx₂ _,
     exact (h2x₂.continuous_at).preimage_mem_nhds (ext_chart_at_source_mem_nhds _ _) },
   /- The conclusion is the same as the following, when unfolding coord_change of
     `tangent_bundle_core` -/
@@ -262,10 +197,10 @@ end smooth_manifold_with_corners
 
 section maps
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-{E : Type*} [normed_group E] [normed_space 𝕜 E]
-{E' : Type*} [normed_group E'] [normed_space 𝕜 E']
-{F : Type*} [normed_group F] [normed_space 𝕜 F]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+{E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+{E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
+{F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
 {H : Type*} [topological_space H]
 {H' : Type*} [topological_space H']
 {G : Type*} [topological_space G]

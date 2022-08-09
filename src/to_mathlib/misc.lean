@@ -31,8 +31,6 @@ lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : (f ⁻¹' s).f
   (hs : s ⊆ range f) : s.finite :=
 by { rw [← image_preimage_eq_of_subset hs], exact finite.image f h }
 
-alias ord_interval.interval_oc_subset ← ord_connected.interval_oc_subset -- waiting for https://github.com/leanprover-community/mathlib/pull/15627
-
 end set
 
 

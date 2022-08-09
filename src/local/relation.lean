@@ -35,8 +35,8 @@ noncomputable theory
 open set function module (dual) real filter
 open_locale unit_interval topological_space
 
-variables (E : Type*) [normed_group E] [normed_space ℝ E] (F : Type*)
-                        [normed_group F] [normed_space ℝ F]
+variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E] (F : Type*)
+                        [normed_add_comm_group F] [normed_space ℝ F]
 
 
 @[derive metric_space]
@@ -82,7 +82,7 @@ end
 
 variables (E)
 
-@[ext] structure jet_sec (F : Type*) [normed_group F] [normed_space ℝ F] :=
+@[ext] structure jet_sec (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] :=
 (f : E → F)
 (f_diff : 𝒞 ∞ f)
 (φ : E → E →L[ℝ] F)

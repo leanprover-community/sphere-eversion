@@ -9,12 +9,12 @@ open set equiv
 open_locale manifold topological_space
 
 section general
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {H : Type*} [topological_space H]
   (I : model_with_corners 𝕜 E H)
   (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
   {H' : Type*} [topological_space H']
   (I' : model_with_corners 𝕜 E' H')
   (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
@@ -93,8 +93,8 @@ open metric (hiding mem_nhds_iff) function
 
 universe u
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   (M : Type u) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
   [t2_space M] [locally_compact_space M] [sigma_compact_space M]
 

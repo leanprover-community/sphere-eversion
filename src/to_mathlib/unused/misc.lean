@@ -59,7 +59,7 @@ section -- logic.function
   (c : γ) : ↿f (x, c) = ↿(f x) c :=
 rfl
 
--- @[simp] lemma uncurry_loop_apply {F : Type*} [normed_group F] [normed_space ℝ F]
+-- @[simp] lemma uncurry_loop_apply {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 --   [finite_dimensional ℝ F] {α : Type*} (f : α → loop F) (x : α) (t : ℝ) :
 --   ↿f (x, t) = f x t :=
 -- rfl
@@ -174,16 +174,16 @@ def continuous_linear_equiv.ulift (R M : Type*) [semiring R] [topological_space 
   [add_comm_monoid M] [module R M] : ulift.{v} M ≃L[R] M :=
 { ..linear_equiv.ulift R M, ..homeomorph.ulift }
 
-lemma cont_diff_up {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+lemma cont_diff_up {F X : Type*} [nontrivially_normed_field F] [normed_add_comm_group X]
   [normed_space F X] {n : with_top ℕ} : cont_diff F n (@up X) :=
 (continuous_linear_equiv.ulift F X).symm.cont_diff
 
-lemma cont_diff_down {F X : Type*} [nondiscrete_normed_field F] [normed_group X]
+lemma cont_diff_down {F X : Type*} [nontrivially_normed_field F] [normed_add_comm_group X]
   [normed_space F X] {n : with_top ℕ} : cont_diff F n (@down X) :=
 (continuous_linear_equiv.ulift F X).cont_diff
 
-lemma cont_diff_up_iff {F X Y : Type*} [nondiscrete_normed_field F] [normed_group X]
-  [normed_space F X] [normed_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
+lemma cont_diff_up_iff {F X Y : Type*} [nontrivially_normed_field F] [normed_add_comm_group X]
+  [normed_space F X] [normed_add_comm_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
   cont_diff F n (λ x, up (f x)) ↔ cont_diff F n f :=
 (continuous_linear_equiv.ulift F Y).symm.comp_cont_diff_iff
 
@@ -249,18 +249,18 @@ section continuous_linear
 
 -- two lemmas about continuous bilinear maps, not that useful
 variables {X 𝕜 E E' F : Type*}
-variables [nondiscrete_normed_field 𝕜]
-  [normed_group E] [normed_group E'] [normed_group F]
+variables [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_add_comm_group E'] [normed_add_comm_group F]
   [normed_space 𝕜 E] [normed_space 𝕜 E'] [normed_space 𝕜 F]
 
 namespace continuous_linear_map
 
-lemma has_fderiv_at_const_left [normed_group X] [normed_space 𝕜 X]
+lemma has_fderiv_at_const_left [normed_add_comm_group X] [normed_space 𝕜 X]
   (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E'} {f' : X →L[𝕜] E'}
   (x : X) {c : E} (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L c (f x)) ((L c).comp f') x :=
 (L c).has_fderiv_at.comp x hf
 
-lemma has_fderiv_at_const_right [normed_group X] [normed_space 𝕜 X]
+lemma has_fderiv_at_const_right [normed_add_comm_group X] [normed_space 𝕜 X]
   (L : E →L[𝕜] E' →L[𝕜] F) {f : X → E} {f' : X →L[𝕜] E}
   (x : X) {c : E'}
   (hf : has_fderiv_at f f' x) : has_fderiv_at (λ x, L (f x) c) ((flip L c).comp f') x :=

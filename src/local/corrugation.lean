@@ -4,7 +4,6 @@ import measure_theory.integral.interval_integral
 import analysis.calculus.parametric_integral
 
 import to_mathlib.topology.periodic
-import to_mathlib.topology.bases
 import to_mathlib.analysis.calculus
 import to_mathlib.measure_theory.parametric_interval_integral
 
@@ -22,11 +21,11 @@ open set function finite_dimensional asymptotics filter topological_space int me
 open_locale topological_space unit_interval
 
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
-          {G : Type*} [normed_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
-          {H : Type*} [normed_group H] [normed_space ℝ H] [finite_dimensional ℝ H]
+          {G : Type*} [normed_add_comm_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
+          {H : Type*} [normed_add_comm_group H] [normed_space ℝ H] [finite_dimensional ℝ H]
           {π : E →L[ℝ] ℝ} (N : ℝ) (γ : E → loop F)
 
 

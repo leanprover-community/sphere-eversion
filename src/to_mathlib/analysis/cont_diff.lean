@@ -16,11 +16,11 @@ universes u₁ u₂ u₃ u₄ u₅
 
 open continuous_linear_map
 
-variables {𝕜 : Type u₁} [nondiscrete_normed_field 𝕜]
-  {M₁ : Type u₂} [normed_group M₁] [normed_space 𝕜 M₁]
-  {M₂ : Type u₃} [normed_group M₂] [normed_space 𝕜 M₂]
-  {M₃ : Type u₄} [normed_group M₃] [normed_space 𝕜 M₃]
-  {M₄ : Type u₅} [normed_group M₄] [normed_space 𝕜 M₄]
+variables {𝕜 : Type u₁} [nontrivially_normed_field 𝕜]
+  {M₁ : Type u₂} [normed_add_comm_group M₁] [normed_space 𝕜 M₁]
+  {M₂ : Type u₃} [normed_add_comm_group M₂] [normed_space 𝕜 M₂]
+  {M₃ : Type u₄} [normed_add_comm_group M₃] [normed_space 𝕜 M₃]
+  {M₄ : Type u₅} [normed_add_comm_group M₄] [normed_space 𝕜 M₄]
 
 -- The next definition won't be used here, it's practice before the next one.
 
@@ -60,10 +60,10 @@ lemma continuous_linear_equiv.continuous_lower_triangular {X : Type*} [topologic
 end
 
 section
-variables (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_group G] [normed_space 𝕜 G]
+variables (𝕜 : Type*) [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
   {n : with_top ℕ}
 
 -- The next two definitions aren't used in the end, but they may still go to mathlib
@@ -148,9 +148,9 @@ end
 
 section
 variables {𝕜 : Type*} [is_R_or_C 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_group G] [normed_space 𝕜 G]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
   {n : with_top ℕ}
 
 
@@ -205,7 +205,7 @@ end
 end
 
 section
-variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
 
 lemma cont_diff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : cont_diff ℝ ⊤ ↿f)
   (hderiv : ∀ x t, partial_deriv_snd f x t > 0) (hsurj : ∀ x, surjective $ f x) :
@@ -228,9 +228,9 @@ end
 end
 
 section
-variables (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
+variables (𝕜 : Type*) [nontrivially_normed_field 𝕜]
 
-lemma cont_diff_to_span_singleton (E : Type*) [normed_group E] [normed_space 𝕜 E] :
+lemma cont_diff_to_span_singleton (E : Type*) [normed_add_comm_group E] [normed_space 𝕜 E] :
   cont_diff 𝕜 ⊤ (continuous_linear_map.to_span_singleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
 (continuous_linear_map.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.cont_diff
 

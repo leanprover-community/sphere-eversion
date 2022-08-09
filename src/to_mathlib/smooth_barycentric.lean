@@ -80,9 +80,9 @@ end barycentric_det
 
 namespace matrix
 
-variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nondiscrete_normed_field k]
+variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nontrivially_normed_field k]
 
-attribute [instance] matrix.normed_group matrix.normed_space
+attribute [instance] matrix.normed_add_comm_group matrix.normed_space
 
 -- This should really be deduced from general results about continuous multilinear maps.
 lemma smooth_det (m : with_top ℕ) :
@@ -115,8 +115,8 @@ end matrix
 section smooth_barycentric
 
 variables (ι 𝕜 F : Type*)
-variables [fintype ι] [decidable_eq ι] [nondiscrete_normed_field 𝕜] [complete_space 𝕜]
-variables [normed_group F] [normed_space 𝕜 F]
+variables [fintype ι] [decidable_eq ι] [nontrivially_normed_field 𝕜] [complete_space 𝕜]
+variables [normed_add_comm_group F] [normed_space 𝕜 F]
 
 -- An alternative approach would be to prove the affine version of `cont_diff_at_map_inverse`
 -- and prove that barycentric coordinates give a continuous affine equivalence to

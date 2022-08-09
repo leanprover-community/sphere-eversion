@@ -30,7 +30,7 @@ end to_specific_limits
 
 section
 
-lemma support_norm {α E : Type*} [normed_group E] (f : α → E) : support (λ a, ∥f a∥) = support f :=
+lemma support_norm {α E : Type*} [normed_add_comm_group E] (f : α → E) : support (λ a, ∥f a∥) = support f :=
 function.support_comp_eq norm (λ x, norm_eq_zero) f
 
 @[to_additive]
@@ -208,7 +208,7 @@ end fract
 
 section
 -- to normed_space
-variables {E F : Type*} [normed_group E] [normed_group F]
+variables {E F : Type*} [normed_add_comm_group E] [normed_add_comm_group F]
 variables [normed_space ℝ E] [normed_space ℝ F]
 
 lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
@@ -420,8 +420,8 @@ needs
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 -/
-lemma is_open_affine_independent (𝕜 E : Type*) {ι : Type*} [nondiscrete_normed_field 𝕜]
-  [normed_group E] [normed_space 𝕜 E] [complete_space 𝕜] [fintype ι] :
+lemma is_open_affine_independent (𝕜 E : Type*) {ι : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_space 𝕜 E] [complete_space 𝕜] [fintype ι] :
   is_open {p : ι → E | affine_independent 𝕜 p} :=
 begin
   classical,
@@ -489,7 +489,7 @@ end
 section normed_space
 open metric
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 
 lemma is_preconnected_ball (x : E) (r : ℝ) : is_preconnected (ball x r) :=
 (convex_ball x r).is_preconnected'
