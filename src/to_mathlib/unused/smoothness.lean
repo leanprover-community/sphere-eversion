@@ -47,9 +47,9 @@ sorry_ax
 section C1_real
 
 variables {E E' F : Type*}
-variables [normed_group E] [normed_space ℝ E]
-variables [normed_group E'] [normed_space ℝ E']
-variables [normed_group F] [normed_space ℝ F]
+variables [normed_add_comm_group E] [normed_space ℝ E]
+variables [normed_add_comm_group E'] [normed_space ℝ E']
+variables [normed_add_comm_group F] [normed_space ℝ F]
 
 open filter asymptotics metric
 open_locale topological_space filter
@@ -60,7 +60,7 @@ to prove them in the middle of some serious proof. Maybe there is a more general
 that would still be useful enough to combine is_o.comp_tendsto and is_o.trans_is_O.
 -/
 
-lemma asymptotics.is_o.comp_fst' {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
+lemma asymptotics.is_o.comp_fst' {E E' F : Type*} [normed_add_comm_group E] [normed_add_comm_group E'] [normed_add_comm_group F]
   {f : E → F} (h : is_o (𝓝 0) f id) :
   is_o (𝓝 0) (λ p : E × E', f p.1) id :=
 begin
@@ -70,7 +70,7 @@ begin
   exact is_O_fst_prod'
 end
 
-lemma asymptotics.is_o.comp_fst {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
+lemma asymptotics.is_o.comp_fst {E E' F : Type*} [normed_add_comm_group E] [normed_add_comm_group E'] [normed_add_comm_group F]
   {f : E → F} {e : E} (h : is_o (𝓝 e) f (λ x, x - e)) (e' : E') :
   is_o (𝓝 (e, e')) (λ p : E × E', f p.1) (λ p, p - (e, e')) :=
 begin
@@ -80,7 +80,7 @@ begin
   exact is_O_fst_prod
 end
 
-lemma asymptotics.is_o.comp_snd' {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
+lemma asymptotics.is_o.comp_snd' {E E' F : Type*} [normed_add_comm_group E] [normed_add_comm_group E'] [normed_add_comm_group F]
   {f : E' → F} (h : is_o (𝓝 0) f id) :
   is_o (𝓝 0) (λ p : E × E', f p.2) id :=
 begin
@@ -90,7 +90,7 @@ begin
   exact is_O_snd_prod'
 end
 
-lemma asymptotics.is_o.comp_snd {E E' F : Type*} [normed_group E] [normed_group E'] [normed_group F]
+lemma asymptotics.is_o.comp_snd {E E' F : Type*} [normed_add_comm_group E] [normed_add_comm_group E'] [normed_add_comm_group F]
   {f : E' → F} {e' : E'} (h : is_o (𝓝 e') f (λ x, x - e')) (e : E) :
   is_o (𝓝 (e, e')) (λ p : E × E', f p.2) (λ p, p - (e, e')) :=
 begin
@@ -123,16 +123,16 @@ end
 
 
 
-lemma has_fderiv_at.comp' {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_group G] [normed_space 𝕜 G] {f : E → F} {f' : E →L[𝕜] F} {x : E}
+lemma has_fderiv_at.comp' {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
+  [normed_space 𝕜 E] {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G] {f : E → F} {f' : E →L[𝕜] F} {x : E}
   {g : F → G} {g' : F →L[𝕜] G} (hg : has_fderiv_at g g' (f x)) (hf : has_fderiv_at f f' x)
   {gf' : E →L[𝕜] G} (h : gf' = g'.comp f') :
   has_fderiv_at (g ∘ f) gf' x :=
 h.symm ▸ hg.comp x hf
 
-lemma has_fderiv_at.sub' {𝕜 : Type*} [ nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_group F] [normed_space 𝕜 F]
+lemma has_fderiv_at.sub' {𝕜 : Type*} [ nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
+  [normed_space 𝕜 E] {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {f g : E → F} {f' g' fg' : E →L[𝕜] F} {x : E} (hf : has_fderiv_at f f' x)
   (hg : has_fderiv_at g g' x)  (h : fg' = f' - g') :
   has_fderiv_at (λ (x : E), f x - g x) fg' x :=
@@ -218,13 +218,13 @@ end  C1_real
 /- The lemmas below are maybe-true lemmas about iterated derivatives, that are useful to have (though we probably don't need them in this project) -/
 section smooth
 variables {𝕜 E E' F F' G H K : Type*}
-variables [nondiscrete_normed_field 𝕜]
-variables [normed_group E] [normed_space 𝕜 E]
-variables [normed_group E'] [normed_space 𝕜 E']
-variables [normed_group F] [normed_space 𝕜 F]
-variables [normed_group G] [normed_space 𝕜 G]
-variables [normed_group H] [normed_space 𝕜 H]
-variables [normed_group K] [normed_space 𝕜 K]
+variables [nontrivially_normed_field 𝕜]
+variables [normed_add_comm_group E] [normed_space 𝕜 E]
+variables [normed_add_comm_group E'] [normed_space 𝕜 E']
+variables [normed_add_comm_group F] [normed_space 𝕜 F]
+variables [normed_add_comm_group G] [normed_space 𝕜 G]
+variables [normed_add_comm_group H] [normed_space 𝕜 H]
+variables [normed_add_comm_group K] [normed_space 𝕜 K]
 variables [normed_linear_ordered_field F'] [normed_space 𝕜 F']
 variables {n : with_top ℕ}
 

@@ -28,16 +28,16 @@ section defs
 /-! ## Fundamental definitions -/
 
 variables
-{E : Type*} [normed_group E] [normed_space ℝ E]
+{E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 {H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
 (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-{E' : Type*} [normed_group E'] [normed_space ℝ E']
+{E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
 {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-{F : Type*} [normed_group F] [normed_space ℝ F]
+{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 {G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
 (N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
-{F' : Type*} [normed_group F'] [normed_space ℝ F']
+{F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
 {G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
 (N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
 
@@ -133,19 +133,19 @@ Note: Patrick doesn't know whether we really need to allow different `E`, `H` an
 manifolds `X` and `M` (and for `Y` and `N`). We use maximal generality just in case.
 -/
 variables
-  {EX : Type*} [normed_group EX] [normed_space ℝ EX]
+  {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]
   {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
   {X : Type*} [topological_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
 
-  {EM : Type*} [normed_group EM] [normed_space ℝ EM]
+  {EM : Type*} [normed_add_comm_group EM] [normed_space ℝ EM]
   {HM : Type*} [topological_space HM] {IM : model_with_corners ℝ EM HM}
   {M : Type*} [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
 
-  {EY : Type*} [normed_group EY] [normed_space ℝ EY]
+  {EY : Type*} [normed_add_comm_group EY] [normed_space ℝ EY]
   {HY : Type*} [topological_space HY] {IY : model_with_corners ℝ EY HY}
   {Y : Type*} [topological_space Y] [charted_space HY Y] [smooth_manifold_with_corners IY Y]
 
-  {EN : Type*} [normed_group EN] [normed_space ℝ EN]
+  {EN : Type*} [normed_add_comm_group EN] [normed_space ℝ EN]
   {HN : Type*} [topological_space HN] {IN : model_with_corners ℝ EN HN}
   {N : Type*} [topological_space N] [charted_space HN N] [smooth_manifold_with_corners IN N]
 
@@ -284,8 +284,8 @@ section loc
 Now we really bridge the gap all the way to vector spaces.
 -/
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-variables {E' : Type*} [normed_group E'] [normed_space ℝ E']
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+variables {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
 
 /-- For maps between vector spaces, `one_jet_ext` is the obvious thing. -/
 @[simp] theorem one_jet_ext_eq_fderiv {f : E → E'} {x : E} :

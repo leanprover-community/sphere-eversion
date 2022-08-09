@@ -19,10 +19,10 @@ noncomputable theory
 open_locale unit_interval classical filter topological_space
 open filter set rel_loc
 
-variables (E : Type*) [normed_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
+variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
-          {G : Type*} [normed_group G] [normed_space ℝ G]
+          {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
 
 open_locale unit_interval
 /--

@@ -6,7 +6,7 @@ local notation u ` ⬝ `:70 φ:65 :=
   continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 
 @[simp]
-lemma continuous_linear_map.to_span_singleton_zero (𝕜 : Type*) {E : Type*} [semi_normed_group E] [nondiscrete_normed_field 𝕜]
+lemma continuous_linear_map.to_span_singleton_zero (𝕜 : Type*) {E : Type*} [seminormed_add_comm_group E] [nontrivially_normed_field 𝕜]
   [normed_space 𝕜 E] : continuous_linear_map.to_span_singleton 𝕜 (0 : E) = 0 :=
 begin
   ext u,
@@ -15,8 +15,8 @@ begin
 end
 
 @[simp]
-lemma continuous_linear_map.comp_to_span_singleton_apply {E : Type*} [normed_group E] [normed_space ℝ E]
-  {F : Type*} [normed_group F] [normed_space ℝ F]
+lemma continuous_linear_map.comp_to_span_singleton_apply {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
   (φ : E →L[ℝ] ℝ) (v : E) (u : F) : (u ⬝ φ) v = (φ v) • u:=
 rfl
 
@@ -45,9 +45,9 @@ lemma add_le_twice_max (a b : ℝ) : a + b ≤ 2*max a b :=
 calc a + b ≤ max a b + max a b : add_le_add (le_max_left a b) (le_max_right a b)
 ... = _ : by ring
 
-lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nondiscrete_normed_field 𝕜] (E : Type*) [normed_group E]
-  [normed_space 𝕜 E] (F : Type*) [normed_group F] [normed_space 𝕜 F]
-  (G : Type*) [normed_group G] [normed_space 𝕜 G] : is_bounded_linear_map 𝕜
+lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nontrivially_normed_field 𝕜] (E : Type*) [normed_add_comm_group E]
+  [normed_space 𝕜 E] (F : Type*) [normed_add_comm_group F] [normed_space 𝕜 F]
+  (G : Type*) [normed_add_comm_group G] [normed_space 𝕜 G] : is_bounded_linear_map 𝕜
   (λ p : (E →L[𝕜] G) × (F →L[𝕜] G), p.1.coprod p.2) :=
 { map_add := begin
     intros,
@@ -82,23 +82,23 @@ lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nondiscrete_normed_field 𝕜
   end }
 
 
-def continuous_linear_map.coprodL {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_group G] [normed_space 𝕜 G] :
+def continuous_linear_map.coprodL {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
+  [normed_space 𝕜 E] {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G] :
   ((E →L[𝕜] G) × (F →L[𝕜] G)) →L[𝕜] (E × F →L[𝕜] G) :=
 (is_bounded_linear_map_coprod 𝕜 E F G).to_continuous_linear_map
 
 @[continuity]
-lemma continuous.coprodL {𝕜 : Type*} [nondiscrete_normed_field 𝕜] {E : Type*} [normed_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_group G] [normed_space 𝕜 G]
+lemma continuous.coprodL {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
+  [normed_space 𝕜 E] {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
   {X : Type*} [topological_space X]
   {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).coprod (g x)) :=
 continuous_linear_map.coprodL.continuous.comp₂ hf hg
 
-lemma continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [semi_normed_group E]
-  [semi_normed_group Fₗ] [semi_normed_group Gₗ] [nondiscrete_normed_field 𝕜]
+lemma continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [seminormed_add_comm_group E]
+  [seminormed_add_comm_group Fₗ] [seminormed_add_comm_group Gₗ] [nontrivially_normed_field 𝕜]
   [normed_space 𝕜 E] [normed_space 𝕜 Fₗ] [normed_space 𝕜 Gₗ] (R : Type*)
   [semiring R] [module R Fₗ] [module R Gₗ]
   [has_continuous_const_smul R Fₗ] [has_continuous_const_smul R Gₗ]
@@ -109,8 +109,8 @@ lemma continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*}
 (continuous_linear_map.prodₗᵢ 𝕜).continuous.comp₂ hf hg
 
 @[continuity]
-lemma continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [semi_normed_group E]
-  [semi_normed_group Fₗ] [semi_normed_group Gₗ] [nondiscrete_normed_field 𝕜]
+lemma continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [seminormed_add_comm_group E]
+  [seminormed_add_comm_group Fₗ] [seminormed_add_comm_group Gₗ] [nontrivially_normed_field 𝕜]
   [normed_space 𝕜 E] [normed_space 𝕜 Fₗ] [normed_space 𝕜 Gₗ]
   {X : Type*} [topological_space X]
   {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ}
@@ -118,8 +118,8 @@ lemma continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} 
 hf.prodL' 𝕜 hg
 
 @[continuity]
-lemma continuous.compL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [normed_group E]
-  [normed_group Fₗ] [normed_group Gₗ] [nondiscrete_normed_field 𝕜]
+lemma continuous.compL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [normed_add_comm_group E]
+  [normed_add_comm_group Fₗ] [normed_add_comm_group Gₗ] [nontrivially_normed_field 𝕜]
   [normed_space 𝕜 E] [normed_space 𝕜 Fₗ] [normed_space 𝕜 Gₗ]
   {X : Type*} [topological_space X] {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).comp (g x)) :=

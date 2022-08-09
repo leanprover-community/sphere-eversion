@@ -14,7 +14,7 @@ open function
 
 section no_norm
 variables (E : Type*) [add_comm_group E] [module ℝ E] [topological_space E] (F : Type*)
-                        [normed_group F] [normed_space ℝ F]
+                        [normed_add_comm_group F] [normed_space ℝ F]
 
 -- TODO: move mathlib's dual_pair out of the root namespace!
 
@@ -103,14 +103,14 @@ end dual_pair'
 end no_norm
 
 namespace dual_pair'
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
 to use `cont_diff_clm_apply` and `continuous_clm_apply`. -/
 
-lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair' E) {G : Type*} [normed_group G] [normed_space ℝ G]
+lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair' E) {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
   {φ : G → (E →L[ℝ] F)} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
   𝒞 ∞ (λ g, p.update (φ g) (w g)) :=
 begin

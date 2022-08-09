@@ -150,7 +150,7 @@ begin
   exact is_closed.preimage (continuous_snd.sub continuous_fst) is_closed_int
 end
 
-variables {X E : Type*} [topological_space X] [normed_group E] [t2_space X]
+variables {X E : Type*} [topological_space X] [normed_add_comm_group E] [t2_space X]
 
 lemma continuous.bounded_on_compact_of_one_periodic {f : X → ℝ → E} (cont : continuous ↿f)
   (hper : ∀ x, one_periodic (f x)) {K : set X} (hK : is_compact K) :

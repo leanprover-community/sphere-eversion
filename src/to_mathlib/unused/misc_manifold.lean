@@ -17,8 +17,8 @@ end local_equiv
 namespace topological_vector_bundle
 
 variables {R : Type*} {B : Type*} {F : Type*} {E : B → Type*}
-variables [nondiscrete_normed_field R] [∀ x, add_comm_monoid (E x)] [∀ x, module R (E x)]
-  [normed_group F] [normed_space R F] [topological_space B]
+variables [nontrivially_normed_field R] [∀ x, add_comm_monoid (E x)] [∀ x, module R (E x)]
+  [normed_add_comm_group F] [normed_space R F] [topological_space B]
   [topological_space (total_space E)]
 
 variables {HB : Type*} [topological_space HB]
@@ -45,21 +45,10 @@ def total_space.to_charted_space [topological_vector_bundle R F E] [charted_spac
 
 end topological_vector_bundle
 
-section charted_space
-
-variables {M H : Type*} [topological_space M] [topological_space H] [charted_space H M]
-  (G : structure_groupoid H)
-
-lemma structure_groupoid.subset_maximal_atlas [has_groupoid M G] :
-  atlas H M ⊆ G.maximal_atlas M :=
-λ e he e' he', ⟨G.compatible he he', G.compatible he' he⟩
-
-end charted_space
-
 namespace model_with_corners
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {H : Type*} [topological_space H]
   {M : Type*} [topological_space M] (f : local_homeomorph M H) (I : model_with_corners 𝕜 E H)
 
@@ -90,10 +79,10 @@ end model_with_corners
 
 namespace basic_smooth_vector_bundle_core
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
   {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
   {G : Type*} [topological_space G] {J : model_with_corners 𝕜 F G}
@@ -124,22 +113,16 @@ end basic_smooth_vector_bundle_core
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
   {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
   {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
   {M : Type*} [topological_space M] [charted_space H M]
   {M' : Type*} [topological_space M'] [charted_space H' M']
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
 
-lemma smooth_manifold_with_corners.subset_maximal_atlas [smooth_manifold_with_corners I M] :
-  atlas H M ⊆ maximal_atlas I M :=
-structure_groupoid.subset_maximal_atlas _
-
-variables (I)
-
-variables {I} [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
+variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
 
 /-- One can reformulate smoothness within a set at a point as continuity within this set at this
 point, and smoothness in any chart containing that point. -/
@@ -167,7 +150,7 @@ everywhere, which gives some nice properties.
 
 
 variables {F G F' : Type*}
-variables [normed_group F] [normed_group G] [normed_group F']
+variables [normed_add_comm_group F] [normed_add_comm_group G] [normed_add_comm_group F']
 variables [normed_space 𝕜 F] [normed_space 𝕜 G] [normed_space 𝕜 F']
 
 lemma cont_diff_within_at.comp_cont_mdiff_within_at {g : F → G} {f : M → F} {s : set M} {t : set F}
@@ -216,6 +199,6 @@ lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] G} {f : M → F' →L[𝕜] F}
 lemma ext_chart_preimage_mem_nhds_within_range {x' : M} {t : set M}
   (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :
   (ext_chart_at I x).symm ⁻¹' t ∈ 𝓝[range I] ((ext_chart_at I x) x') :=
-nhds_within_le_nhds $ ext_chart_preimage_mem_nhds' h ht
+nhds_within_le_nhds $ ext_chart_preimage_mem_nhds' _ _ h ht
 
 end smooth_manifold_with_corners

@@ -19,8 +19,8 @@ lemma ae_strongly_measurable_interval_oc_iff {α β : Type*} [measurable_space �
 by rw [interval_oc_eq_union, ae_strongly_measurable_union_iff]
 
 section
-variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
-  {H : Type*} [normed_group H] [normed_space ℝ H]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
+  {H : Type*} [normed_add_comm_group H] [normed_space ℝ H]
   (ν : measure ℝ)
 
 /-- Interval version of `has_fderiv_at_of_dominated_of_fderiv_le` -/
@@ -76,7 +76,7 @@ section
 open function
 
 theorem continuous_parametric_integral_of_continuous
-  {E : Type*} [normed_group E] [normed_space ℝ E]
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
   [complete_space E]
   {α : Type*} [topological_space α] [measurable_space α] [opens_measurable_space α]
   [second_countable_topology_either α E]
@@ -111,7 +111,7 @@ open measure_theory
 
 variables {μ : measure ℝ}
           {X : Type*} [topological_space X] [first_countable_topology X]
-          {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
+          {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
 
 lemma continuous_at_parametric_primitive_of_dominated
   {F : X → ℝ → E} (bound : ℝ → ℝ) (a b : ℝ) {a₀ b₀ : ℝ} {x₀ : X}
@@ -191,7 +191,7 @@ section
 variables {μ : measure ℝ}
           [is_locally_finite_measure μ] [has_no_atoms μ]
           {X : Type*} [topological_space X] [first_countable_topology X]
-          {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
+          {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
 
 lemma continuous_parametric_primitive_of_continuous
   [locally_compact_space X]
@@ -245,9 +245,9 @@ end
 
 
 section
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           [complete_space E]
-          {H : Type*} [normed_group H] [normed_space ℝ H]
+          {H : Type*} [normed_add_comm_group H] [normed_space ℝ H]
 
 /-!
 We could weaken `finite_dimensional ℝ H` with `second_countable (H →L[ℝ] E)` if needed,
@@ -435,6 +435,7 @@ begin
     intros t t_in,
     rw [show (λ (x : H), F x t) = (uncurry F) ∘ (λ x : H, (x, t)), by { ext, simp }, ← mul_one K],
     apply hK.comp ((lipschitz_with_prod_mk_right t).lipschitz_on_with $ ball x₀ 1),
+    rw maps_to',
     rintros ⟨x, s⟩ ⟨x', hx, h⟩, cases h,
     refine ⟨ball_subset_closed_ball hx, mem_Icc_of_Ioo t_in⟩ },
   have cont_x : ∀ x, continuous (F x),
@@ -474,9 +475,9 @@ end
 end
 
 section
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           [complete_space E]
-          {H : Type*} [normed_group H] [normed_space ℝ H]
+          {H : Type*} [normed_add_comm_group H] [normed_space ℝ H]
           [finite_dimensional ℝ H]
 
 open real continuous_linear_map asymptotics
@@ -528,9 +529,9 @@ section
 universe variables v u
 
 variables {E : Type u}
-variables [normed_group E] [normed_space ℝ E]
+variables [normed_add_comm_group E] [normed_space ℝ E]
           [complete_space E]
-          {H : Type v} [normed_group H] [normed_space ℝ H]
+          {H : Type v} [normed_add_comm_group H] [normed_space ℝ H]
           [finite_dimensional ℝ H]
 
 /- Should we directly prove the version below?-/

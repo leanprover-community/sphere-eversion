@@ -1,6 +1,6 @@
 import tactic.linarith
 import algebra.order.with_zero
-import topology.basic
+import topology.locally_finite
 
 import to_mathlib.set_theory.cardinal.basic
 

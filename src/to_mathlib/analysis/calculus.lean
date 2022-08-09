@@ -6,7 +6,7 @@ noncomputable theory
 open set function filter
 open_locale topological_space
 
-lemma is_compact.bdd_above_norm {X : Type*} [topological_space X] {E : Type*} [normed_group E]
+lemma is_compact.bdd_above_norm {X : Type*} [topological_space X] {E : Type*} [normed_add_comm_group E]
   {s : set X} (hs : is_compact s) {f : X → E} (hf : continuous f) : ∃ M > 0, ∀ x ∈ s, ∥f x∥ ≤ M :=
 begin
   cases (hs.image (continuous_norm.comp hf)).bdd_above with M hM,
@@ -35,10 +35,10 @@ end real
 
 section calculus
 open continuous_linear_map
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-          {E : Type*} [normed_group E] [normed_space 𝕜 E]
-          {F : Type*} [normed_group F] [normed_space 𝕜 F]
-          {G : Type*} [normed_group G] [normed_space 𝕜 G]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+          {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+          {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+          {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
           {n : with_top ℕ}
 
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
@@ -208,8 +208,8 @@ end calculus
 
 section real_calculus
 open continuous_linear_map
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 lemma cont_diff.lipschitz_on_with {s : set E} {f : E → F} (hf : cont_diff ℝ 1 f)
   (hs : convex ℝ s) (hs' : is_compact s) : ∃ K, lipschitz_on_with K f s :=
@@ -232,9 +232,9 @@ mem_of_mem_nhds h
 
 
 /- Move this next to cont_diff_smul -/
-lemma cont_diff.const_smul {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+lemma cont_diff.const_smul {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {f : E → F} {n : with_top ℕ} (hf : cont_diff 𝕜 n f) (a : 𝕜) :
   cont_diff 𝕜 n (λ x, a • f x) :=
 cont_diff_const.smul hf
@@ -244,8 +244,8 @@ section
 open asymptotics continuous_linear_map filter
 open_locale filter
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-          {E : Type*}  {F : Type*} [normed_group F]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+          {E : Type*}  {F : Type*} [normed_add_comm_group F]
 
 lemma filter.eventually_le.is_O {f g h : E → F} {l : filter E}
   (hfg : (λ x, ∥f x∥) ≤ᶠ[l] λ x, ∥g x∥) (hh : g =O[l] h) : f =O[l] h :=
@@ -265,8 +265,8 @@ begin
   rwa [real.norm_eq_abs, abs_of_nonneg ((norm_nonneg $ f x).trans h), one_mul]
 end
 
-variables [normed_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
-          {G : Type*} [normed_group G] [normed_space 𝕜 G]
+variables [normed_add_comm_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
+          {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
 
 lemma asymptotics.is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ}
   (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 0 < n) : f x₀ = 0 :=
@@ -374,7 +374,7 @@ begin
   simp only [sub_zero] at this,
   have key := this.const_mul C,
   rw mul_zero at key,
-  apply (normed_group.tendsto_nhds_zero.mp key ε ε_pos).mono,
+  apply (normed_add_comm_group.tendsto_nhds_zero.mp key ε ε_pos).mono,
   intros N hN,
   cases le_or_lt (C * ∥1 / N∥) 0 with h h,
   { exact h.trans_lt ε_pos },

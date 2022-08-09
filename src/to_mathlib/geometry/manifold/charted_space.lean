@@ -6,7 +6,7 @@ namespace charted_space
 open_locale topological_space
 open metric (hiding mem_nhds_iff ball) set
 
-variables (E : Type*) {M : Type*} [normed_group E] [topological_space M] [charted_space E M]
+variables (E : Type*) {M : Type*} [normed_add_comm_group E] [topological_space M] [charted_space E M]
 
 def ball (x : M) (r : ℝ) := (chart_at E x).symm '' metric.ball (chart_at E x x) r
 

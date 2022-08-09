@@ -33,8 +33,8 @@ open_locale topological_space filter manifold
 open filter topological_space function set
 
 variables
-  {E : Type*} [normed_group E] [normed_space ℝ E]
-  {F : Type*} [normed_group F] [normed_space ℝ F]
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 lemma cont_mdiff_iff_cont_diff_on {s : opens E}  {f : E → F} {n : with_top ℕ} :
   cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) ↔ cont_diff_on ℝ n f s :=

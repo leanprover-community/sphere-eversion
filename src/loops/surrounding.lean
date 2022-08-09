@@ -59,8 +59,8 @@ end is_path_connected
 
 noncomputable theory
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 local notation `d` := finrank ℝ F
 local notation `smooth_on` := cont_diff_on ℝ ⊤

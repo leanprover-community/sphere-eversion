@@ -21,13 +21,13 @@ begin
 end
 
 -- See: https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/Typeclass.20resolution.20under.20binders/near/281296989
-instance real.normed_space.to_module (F : Type*) [normed_group F] [normed_space ℝ F] : module ℝ F :=
+instance real.normed_space.to_module (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] : module ℝ F :=
 by apply_instance
 
 variables {E₁ E₂ F : Type*}
-variables [normed_group E₁] [normed_space ℝ E₁] [finite_dimensional ℝ E₁]
-variables [normed_group E₂] [normed_space ℝ E₂] [finite_dimensional ℝ E₂]
-variables [normed_group F] [normed_space ℝ F]
+variables [normed_add_comm_group E₁] [normed_space ℝ E₁] [finite_dimensional ℝ E₁]
+variables [normed_add_comm_group E₂] [normed_space ℝ E₂] [finite_dimensional ℝ E₂]
+variables [normed_add_comm_group F] [normed_space ℝ F]
 
 variables {H₁ M₁ H₂ M₂ : Type*}
 variables [topological_space H₁] (I₁ : model_with_corners ℝ E₁ H₁)

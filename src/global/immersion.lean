@@ -10,11 +10,11 @@ open_locale manifold
 section general
 
 variables
-{E : Type*} [normed_group E] [normed_space ℝ E]
+{E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 {H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
 {M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
 
-{E' : Type*} [normed_group E'] [normed_space ℝ E']
+{E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
 {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 

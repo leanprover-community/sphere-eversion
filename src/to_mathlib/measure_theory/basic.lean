@@ -7,7 +7,7 @@ open measure_theory set classical filter
 
 open_locale classical topological_space filter interval
 
-variables {α β E F : Type*} [measurable_space α] {μ : measure α} [normed_group E]
+variables {α β E F : Type*} [measurable_space α] {μ : measure α} [normed_add_comm_group E]
           [complete_space E] [normed_space ℝ E]
 
 namespace measure_theory
@@ -40,7 +40,7 @@ begin
 end
 
 lemma is_compact.integrable_const {α : Type*} [measurable_space α] [topological_space α]
-  {E : Type*} [normed_group E] [measurable_space E]
+  {E : Type*} [normed_add_comm_group E] [measurable_space E]
   {s : set α} (hs : is_compact s) (c : E) (μ : measure α) [is_locally_finite_measure μ] :
   integrable (λ (x : α), c) (μ.restrict s) :=
 by simp_rw [integrable_const_iff, measure.restrict_apply_univ, hs.measure_lt_top, or_true]

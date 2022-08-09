@@ -14,11 +14,11 @@ namespace continuous_linear_map
 open interval_integral
 variables {𝕜 E H F : Type*}
 variables [is_R_or_C 𝕜] {μ : measure ℝ}
-variables [normed_group E] [normed_space 𝕜 E] [complete_space E]
+variables [normed_add_comm_group E] [normed_space 𝕜 E] [complete_space E]
 variables [normed_space ℝ E] [is_scalar_tower ℝ 𝕜 E]
-variables [normed_group F] [normed_space 𝕜 F] [complete_space F]
+variables [normed_add_comm_group F] [normed_space 𝕜 F] [complete_space F]
 variables [normed_space ℝ F] [is_scalar_tower ℝ 𝕜 F]
-variables [normed_group H] [normed_space 𝕜 H]
+variables [normed_add_comm_group H] [normed_space 𝕜 H]
 
 lemma interval_integral_apply {a b : ℝ} {φ : ℝ → H →L[𝕜] E} (φ_int : interval_integrable φ μ a b)
   (v : H) : (∫ x in a..b, φ x ∂μ) v = ∫ x in a..b, φ x v ∂μ :=
@@ -29,7 +29,7 @@ end continuous_linear_map
 
 section
 
-variables {E : Type*} [normed_group E]
+variables {E : Type*} [normed_add_comm_group E]
 
 lemma interval_integrable_of_integral_ne_zero
   [complete_space E] [normed_space ℝ E] {a b : ℝ}
@@ -143,7 +143,7 @@ end interval_integral
 
 /- This should replace interval_integrable.mono_set in mathlib -/
 lemma interval_integrable.mono_set' {E : Type*}
-  [normed_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
+  [normed_add_comm_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
   (hf : interval_integrable f μ a b) (hsub : Ι c d ⊆ Ι a b) : interval_integrable f μ c d :=
 interval_integrable_iff.mpr (hf.def.mono hsub le_rfl)
 
@@ -197,7 +197,7 @@ begin
       simp } }
 end
 
-lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_group β]
+lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_add_comm_group β]
   {f₀ f₁ : ℝ → β} {g : ℝ → ℝ}
   {a b : ℝ}
   (hf₁_m : ae_strongly_measurable f₁ (μ.restrict $ Ι a b))
@@ -218,7 +218,7 @@ end
 
 section
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E] [complete_space E]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
 
 open interval_integral
 

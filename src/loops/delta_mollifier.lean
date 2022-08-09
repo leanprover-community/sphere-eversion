@@ -17,7 +17,7 @@ open_locale topological_space big_operators filter convolution
 
 
 
-variables {F : Type*} [normed_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
 
 section
@@ -100,7 +100,7 @@ begin
   { rwa finsum_of_infinite_support },
 end
 
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 
 lemma cont_diff.periodize {f : ℝ → E} {n : with_top ℕ} (h : cont_diff ℝ n f)
   (h' : has_compact_support f) : cont_diff ℝ n (periodize f) :=

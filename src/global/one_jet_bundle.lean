@@ -10,19 +10,19 @@ noncomputable theory
 open set equiv
 open_locale manifold
 
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {H : Type*} [topological_space H]
   (I : model_with_corners 𝕜 E H)
   (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
   {H' : Type*} [topological_space H']
   (I' : model_with_corners 𝕜 E' H')
   (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-  {F : Type*} [normed_group F] [normed_space 𝕜 F]
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {G : Type*} [topological_space G] (J : model_with_corners 𝕜 F G)
   {N : Type*} [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
-  {F' : Type*} [normed_group F'] [normed_space 𝕜 F']
+  {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
   {G' : Type*} [topological_space G'] (J' : model_with_corners 𝕜 F' G')
   {N' : Type*} [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
 
@@ -73,7 +73,7 @@ section
 
 variables {M} (p : M × M')
 
-instance : normed_group (one_jet_space I I' p) := by delta_instance one_jet_space
+instance : normed_add_comm_group (one_jet_space I I' p) := by delta_instance one_jet_space
 instance : normed_space 𝕜 (one_jet_space I I' p) := by delta_instance one_jet_space
 instance : inhabited (one_jet_space I I' p) := ⟨0⟩
 

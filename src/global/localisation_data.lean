@@ -8,12 +8,12 @@ open_locale manifold
 open metric
 
 section
-variables {𝕜 : Type*} [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {H : Type*} [topological_space H]
   (I : model_with_corners 𝕜 E H)
   {M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  {E' : Type*} [normed_group E'] [normed_space 𝕜 E']
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
   {H' : Type*} [topological_space H']
   (I' : model_with_corners 𝕜 E' H')
   {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
@@ -33,11 +33,11 @@ structure localisation_data (f : continuous_map M M') :=
 end
 
 section
-variables (𝕜 : Type*) [nondiscrete_normed_field 𝕜]
-  {E : Type*} [normed_group E] [normed_space 𝕜 E]
+variables (𝕜 : Type*) [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {M : Type*} [topological_space M] [sigma_compact_space M] [locally_compact_space M] [t2_space M]
   [nonempty M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
-  (E' : Type*) [normed_group E'] [normed_space 𝕜 E']
+  (E' : Type*) [normed_add_comm_group E'] [normed_space 𝕜 E']
   {M' : Type*} [topological_space M'] [sigma_compact_space M'] [locally_compact_space M']
   [t2_space M'] [nonempty M'] [charted_space E' M']
   [smooth_manifold_with_corners 𝓘(𝕜, E') M']

@@ -22,9 +22,9 @@ noncomputable theory
 
 variables {K X X' Y Z : Type*}
 -- variables [topological_space X'] [topological_space Y] [topological_space Z]
-variables {E : Type*} [normed_group E] [normed_space ℝ E]
-          {F : Type*} [normed_group F] [normed_space ℝ F]
-          {F' : Type*} [normed_group F'] [normed_space ℝ F']
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+          {F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
 
 set_option old_structure_cmd true
 

@@ -17,14 +17,14 @@ open bundle set topological_space topological_vector_bundle local_homeomorph
 open_locale classical manifold
 
 variables {𝕜 B B' M VB VB' VM HB HB' HM : Type*}
-variables [nondiscrete_normed_field 𝕜]
-variables [normed_group VB] [normed_space 𝕜 VB] [normed_group VB'] [normed_space 𝕜 VB']
-variables [normed_group VM] [normed_space 𝕜 VM]
+variables [nontrivially_normed_field 𝕜]
+variables [normed_add_comm_group VB] [normed_space 𝕜 VB] [normed_add_comm_group VB'] [normed_space 𝕜 VB']
+variables [normed_add_comm_group VM] [normed_space 𝕜 VM]
 variables [topological_space HB] [topological_space HB'] [topological_space HM]
 variables {IB : model_with_corners 𝕜 VB HB} {IB' : model_with_corners 𝕜 VB' HB'}
 variables {IM : model_with_corners 𝕜 VM HM}
 variables {F F' : Type*}
-variables [normed_group F] [normed_space 𝕜 F] [normed_group F'] [normed_space 𝕜 F']
+variables [normed_add_comm_group F] [normed_space 𝕜 F] [normed_add_comm_group F'] [normed_space 𝕜 F']
 variables [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
 variables [topological_space B'] [charted_space HB' B']
 variables [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
@@ -102,7 +102,7 @@ lemma pullback_chart {v : VB' → VB} {hv : cont_diff 𝕜 ∞ v} {h : HB' → H
 by simp_rw [chart, trans_apply, prod_apply, trivialization.coe_coe, local_homeomorph.refl_apply,
   function.id_def, topological_vector_bundle_core.local_triv_apply,
   to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
-  pullback_coord_change, ← achart_def, g_at, h_at, subtype.eta]
+  pullback_coord_change, g_at, achart_def, h_at, subtype.eta]
 
 variables (IB' B')
 
@@ -309,7 +309,7 @@ lemma hom_chart
 by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
   local_homeomorph.refl_apply, function.id_def, topological_vector_bundle_core.local_triv_apply,
   to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
-  hom_coord_change, comp_apply, flip_apply, compL_apply, ← achart_def,
+  hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
 
 end basic_smooth_vector_bundle_core
