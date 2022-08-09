@@ -17,12 +17,6 @@ section lipschitz
 
 variables {α β γ : Type*} [pseudo_emetric_space α] [pseudo_emetric_space β] [pseudo_emetric_space γ]
 
--- TODO Drop
-protected lemma lipschitz_on_with.comp' {Kf Kg : ℝ≥0} {f : β → γ} {g : α → β} {s : set α} {t : set β}
-  (hf : lipschitz_on_with Kf f t) (hg : lipschitz_on_with Kg g s) (hst : g '' s ⊆ t) :
-  lipschitz_on_with (Kf * Kg) (f ∘ g) s :=
-hf.comp hg $ maps_to'.mpr hst
-
 lemma lipschitz_with_prod_mk_left (a : α) : lipschitz_with 1 (prod.mk a : β → α × β) :=
 λ x y, show max _ _ ≤ _, by simp
 
