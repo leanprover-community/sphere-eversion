@@ -219,27 +219,6 @@ The condition $∀ m,\; d(f(m), g(m)) < ε(m)$ will be abbreviated $d(f, g) < ε
   $d(f(m), g(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
 \end{proof}
 
-For induction purposes, we will also use a couple of ad hoc technical
-definitions and lemmas about ordered covers. The first one is an immediate
-consequence of the definition of locally finite families of sets. Maybe it
-should simply be included inside the proof of \Cref{lem:loc_ultim_const} below.
-
-\begin{lemma}
-  \label{lem:indexing_ordered_cover}
-  Let $ι$ be a totally ordered set. Let $V : ι → \set{M}$ be a locally finite
-  family of subsets of some topological space $M$. There exist functions
-  $U : M → \set{M}$ and $i₀ : M → ι$ such that
-  \[
-    ∀ x,\; U_x ∈ 𝓝_x \text{ and } ∀ j > i₀(x),\; U_x ∩ V_j = ∅.
-  \]
-\end{lemma}
-
-\begin{proof}
-  The local finiteness assumption gives $U : M → \set{M}$ such that,
-  for all $x$, $U_x ∈ 𝓝_x$ and $\{i | U_x ∩ V_i\} ≠ ∅$ is finite. We can define
-  $i₀(x)$ to be the maximum of this finite set.
-\end{proof}
-
 We now introduce a seemingly abstract definition, but its only goal is to treat
 uniformly the case of $ℕ$ and finite sets $\{0, \dots, n\}$.
 
@@ -258,17 +237,13 @@ the inclusion as $σ$.
 
 \begin{lemma}
   \label{lem:loc_ultim_const}
-  \uses{def:convenient_indexing}
-  Let $ι$ be a convenient indexing set, $M$ a topological space and $Z$ a set.
-  Let $V : ι → \set{M}$ be a locally finite open cover of $M$.
-  Let $f : ℕ × M → Z$ be a sequence of functions such that, for all $n$:
-  \begin{itemize}
-    \item
-      $f_{n+1}$ coincides with $f_n$ outside of $V_{π(n+1)}$.
-    \item
-      if $π(n+1) = π(n)$ then $f_{n+1} = f_n$
-  \end{itemize}
-  There exists $U : M → \set{M}$ and $n₀ : M → ℕ$ such that:
+  \lean{locally_finite.exists_forall_eventually_at_top_eventually_eq}
+  \leanok
+  Let $M$ a topological space and $Z$ a set.
+  Let $f : ℕ × M → Z$ be a sequence of functions. If
+  the family of sets $n ↦ \{x \;\|\; f_{n+1}(x) = f_n(x)\}$
+  is locally finite then there exists $U : M → \set{M}$ and
+  $n₀ : M → ℕ$ such that:
   \[
     ∀ x,\; U_x ∈ 𝓝_x \text{ and }
            ∀ n ≥ n₀(x),\; \rst{f_n}{U_x} = \rst{f_{n₀(x)}}{U_x}.
@@ -280,23 +255,16 @@ converges pointwise and the limit inherits all local properties of the $f_n$
 (such as continuity or differentiability when applicable).
 
 \begin{proof}
-  \uses{lem:indexing_ordered_cover}
-  \Cref{lem:indexing_ordered_cover} gives functions $U : M → \set{M}$ and
-  $i₀ : M → ι$ such that
+  \leanok
+  The local finiteness assumption provides a function $U : M → \set{M}$
+  such that
   \[
-    ∀ x,\; U_x ∈ 𝓝_x \text{ and } ∀ j > i₀(x),\; U_x ∩ V_j = ∅.
+    ∀ x,\; U_x ∈ 𝓝_x \text{ and }
+    \{n \;|\; \{y \;|\;f_n(y) ≠ f_{n+1}(y)\} ∩ U_x ≠ ∅\} \text{ is
+    finite}.
   \]
-  We will show that $U$ and $n₀ = σ ∘ i₀$ are suitable. We fix $x$ in $M$
-  and prove by induction that
-  $∀ n ≥ n₀(x),\; \rst{f_n}{U_x} = \rst{f_{n₀(x)}}{U_x}$.
-  The base case $n = n₀(x)$ is clear. We now assume this holds for some $n ≥ n₀(x)$
-  and prove it for $n+1$. Since $π$ is order preserving, there are two cases. If
-  $π(n+1) = π(n)$ then $f_{n+1} = f_n$ and the induction hypothesis immediately
-  concludes. Assume now that $π(n + 1) > π(n)$. Since $n ≥ n₀(x) = σ(i₀(x))$ and
-  $π$ is order preserving, we get $π(n) ≥ π(σ(i₀(x))) = i₀(x)$, hence
-  $π(n+1) > i₀(x)$. So we get that $U_x ∩ V_{π(n+1)} = ∅$. Since $f_{π(n+1)}$
-  coincides with $f_{π(n)}$ outside of $V_{π(n+1)}$, we conclude by the
-  induction hypothesis.
+  For any $x$, we denote by $N_x$ the largest $n$ of the finite set mentioned
+  above. By construction, $n₀ \co x ↦ N_x + 1$ is suitable.
 \end{proof}
 
 \subsection{Vector bundles operations}
