@@ -71,7 +71,7 @@ structure accepts (L : step_landscape E) (𝓕 : jet_sec E F) : Prop :=
 /-- The union of all slices of `R` corresponding to `𝓕`. -/
 def Ω (L : step_landscape E) (𝓕 : jet_sec E F) : set (E × F) :=
 {p | p.2 ∈ 𝓕.slice_at R L.p p.1}
---⋃ x, ({x} : set E) ×ˢ (connected_comp_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
+--⋃ x, ({x} : set E) ×ˢ (connected_component_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
 
 def π (L : step_landscape E) : E →L[ℝ] ℝ := L.p.π
 

@@ -33,13 +33,13 @@ lemma exists_loops_aux1 [finite_dimensional ℝ E]
   (hΩ_op : is_open Ω)
   (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
   (hgK : ∀ᶠ x near K, g x = b x)
-  (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
+  (hconv : ∀ x, g x ∈ hull (connected_component_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ (γ : E → ℝ → loop F) (V ∈ 𝓝ˢ K) (ε > 0), surrounding_family_in g b γ V Ω ∧
   (∀ (x ∈ V), ball (x, b x) (ε + ε) ⊆ Ω) ∧
   ∀ (x ∈ V) t s, dist (γ x t s) (b x) < ε :=
 begin
   have b_in : ∀ x, (x, b x) ∈ Ω :=
-    λ x, (connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x, hconv x⟩) : _),
+    λ x, (connected_component_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x, hconv x⟩) : _),
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
 
   -- we could probably get away with something simpler to get γ₀.
@@ -129,7 +129,7 @@ lemma exists_loops_aux2 [finite_dimensional ℝ E]
   (hΩ_op : is_open Ω)
   (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
   (hgK : ∀ᶠ x near K, g x = b x)
-  (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
+  (hconv : ∀ x, g x ∈ hull (connected_component_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ (γ : E → ℝ → loop F), surrounding_family_in g b γ univ Ω ∧ 𝒞 ∞ ↿γ ∧
   ∀ᶠ x near K, ∀ t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
@@ -250,7 +250,7 @@ theorem exists_loops [finite_dimensional ℝ E]
   (hΩ_op : is_open Ω)
   (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
   (hgK : ∀ᶠ x near K, g x = b x)
-  (hconv : ∀ x, g x ∈ hull (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x)) :
+  (hconv : ∀ x, g x ∈ hull (connected_component_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ :=
 begin
   obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁⟩ := exists_loops_aux2 hK hΩ_op hg hb hgK hconv,

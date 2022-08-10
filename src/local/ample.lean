@@ -29,7 +29,7 @@ variables {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F]
 /-- A subset of a topological real vector space is ample if the convex hull of each of its
 connected components is the full space. -/
 def ample_set (s : set F) :=
-∀ x ∈ s, convex_hull ℝ (connected_comp_in s x) = univ
+∀ x ∈ s, convex_hull ℝ (connected_component_in s x) = univ
 
 section lemma_2_13
 
@@ -149,8 +149,8 @@ lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F
 begin
   haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
   intros x hx,
-  have : connected_comp_in (↑E)ᶜ x = (↑E)ᶜ,
-    from is_preconnected.connected_comp_in (is_connected_compl_of_two_le_codim hcodim).2 hx,
+  have : connected_component_in (↑E)ᶜ x = (↑E)ᶜ,
+    from is_preconnected.connected_component_in (is_connected_compl_of_two_le_codim hcodim).2 hx,
   rw [this, eq_univ_iff_forall],
   intro y,
   by_cases h : y ∈ E,

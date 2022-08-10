@@ -5,13 +5,9 @@ variables {α : Type*} [topological_space α] {s t s₁ s₂ t₁ t₂ : set α}
 open filter
 open_locale filter topological_space
 
-lemma principal_le_nhds_set (s : set α) : 𝓟 s ≤ 𝓝ˢ s :=
-λ u u_in x x_in, mem_of_mem_nhds (mem_nhds_set_iff_forall.mp u_in x x_in)
-
-
 lemma is_open.nhds_set_eq_principal {s : set α} (h : is_open s) : 𝓝ˢ s = 𝓟 s :=
 begin
-  apply le_antisymm _ (principal_le_nhds_set s),
+  apply le_antisymm _ principal_le_nhds_set,
   rw [filter.le_principal_iff, h.mem_nhds_set]
 end
 
@@ -48,4 +44,4 @@ lemma filter.eventually.eventually_nhds_set {p : α → Prop} (h : ∀ᶠ y in �
 eventually_nhds_set_iff.mpr (λ x x_in, (eventually_nhds_set_iff.mp h x x_in).eventually_nhds)
 
 lemma filter.eventually.on_set {p : α → Prop} (h : ∀ᶠ y in 𝓝ˢ s, p y) : ∀ x ∈ s, p x :=
-eventually_principal.mp $ eventually.filter_mono (principal_le_nhds_set s) h
+eventually_principal.mp $ eventually.filter_mono principal_le_nhds_set h

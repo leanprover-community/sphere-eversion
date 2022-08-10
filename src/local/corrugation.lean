@@ -128,7 +128,7 @@ begin
     { exact hγ_diff.comp₃ hg.fst' hx.fst' cont_diff_snd },
     { apply cont_diff_average,
       exact hγ_diff.comp₃ hg.fst'.fst' hx.fst'.fst' cont_diff_snd } },
-  { apply (π.cont_diff.comp hx).const_smul },
+  { apply cont_diff_const.mul (π.cont_diff.comp hx) },
 end
 
 /--
@@ -205,7 +205,7 @@ begin
     apply hγ_diff.comp₃ hg.fst'.snd' cont_diff_fst cont_diff_snd.snd,
     apply cont_diff_average,
     exact hγ_diff.comp₃ hg.fst'.snd'.fst' cont_diff_fst.fst' cont_diff_snd },
-  { apply (π.cont_diff.comp hx).const_smul },
+  { exact cont_diff_const.mul (π.cont_diff.comp hx) },
 end
 
 lemma remainder_c0_small_on {K : set E} (hK : is_compact K)
