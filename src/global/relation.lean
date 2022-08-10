@@ -71,7 +71,7 @@ F.is_sol'
 
 def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
   (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
-{w | (⟨⟨σ.1.1, σ.1.2⟩, p.update σ.2 w⟩ : one_jet_bundle I M I' M') ∈ R}
+connected_comp_in {w | (⟨⟨σ.1.1, σ.1.2⟩, p.update σ.2 w⟩ : one_jet_bundle I M I' M') ∈ R} (σ.2 p.v)
 
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
 ∀ (σ : one_jet_bundle I M I' M') (p : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
@@ -222,7 +222,10 @@ lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X}
 by rw [rel_mfld.localize, mem_preimage, transfer_localize F g h hF]
 
 lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize g h).ample  :=
-sorry
+begin
+  rintro x p, --⟨π, v, hπv⟩,
+  sorry
+end
 
 lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
   (F.localize g h hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
