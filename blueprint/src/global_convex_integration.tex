@@ -169,11 +169,15 @@ all the $ψ_{j(i)}⁻¹ ∘ f ∘ φ_i : E → F$ for some maps $f$. However we 
 careful that doing this for some $i$ does not ruin the setup for the next $i$.
 This is easier to control using a distance function on the target manifold as
 in \Cref{lem:localisation_stability} below. First we need a general lemma about
-a single metric space.
+a single metric space (actually the formalized statement is stronger, it assumes
+only closed sets instead of compact ones, but here we explain the easier proof
+which is sufficient for our purposes).
 
 \begin{lemma}
   \label{lem:stability_cover}
-  In a paracompact metric space $X$, let $V : ι → \set{X}$ be a locally finite
+  \lean{metric.exists_continuous_real_forall_closed_ball_subset}
+  \leanok
+  In a metric space $X$, let $V : ι → \set{X}$ be a locally finite
   collection of open subsets of $X$ and let $K : ι → \set{X}$ be a family of
   compact subsets such that $K_i ⊂ V_i$ for all $i$. There existe a continuous
   function $δ : X → ℝ_{> 0}$ such that:
@@ -183,6 +187,7 @@ a single metric space.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   We first note that, for any given $i$, compactness of $K$ and openness of
   $V_i$ give a positive number $δ_i$ such that the $δ_i$-neighborhood of $K_i$
   is contained in $V_i$. We now prove that solutions exist locally. Let $x$ be
