@@ -74,7 +74,7 @@ def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
 {w | (⟨⟨σ.1.1, σ.1.2⟩, p.update σ.2 w⟩ : one_jet_bundle I M I' M') ∈ R}
 
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
-∀ (σ : one_jet_bundle I M I' M') (p  : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
+∀ (σ : one_jet_bundle I M I' M') (p : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
 
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/

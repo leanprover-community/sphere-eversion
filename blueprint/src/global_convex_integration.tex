@@ -245,6 +245,8 @@ uniformly the case of $ℕ$ and finite sets $\{0, \dots, n\}$.
 
 \begin{definition}
   \label{def:convenient_indexing}
+  \leanok
+  \lean{indexing}
   A convenient indexing set is a totally ordered set $ι$ equipped with
   maps $π : ℕ → ι$ and $σ : ι → ℕ$ such that $π$ is order preserving and
   $π ∘ σ = \Id$ (in particular $π$ is surjective).
@@ -574,7 +576,7 @@ decipher this definition, it suffices to notice that $φ + (w - φ(v))⊗λ$ is 
 unique linear map from $T_xX$ to $T_yY$ which coincides with $φ$ on $\ker λ$
 and sends $v$ to $w$. In particular, $w = φ(v)$ gives back $φ$.
 
-Of course we will want to deal with more that one point, so we will consider a
+Of course we will want to deal with more than one point, so we will consider a
 vector field $V$ and a $1$--form $λ$ such that $λ(V) = 1$ on some subset $U$ of
 $X$, a formal solution $F$ (defined at least on $U$), and get the corresponding
 $\Rel_{F, λ, v}$ over $U$.
@@ -584,7 +586,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 
 \begin{definition}
   \label{def:ample_relation}
-  \uses{def:ample_subset}
+  \uses{def:one_jet_space, def:ample_subset}
   \leanok
   \lean{rel_mfld.ample}
   A relation $\Rel$ is ample if, for every $σ = (x, y, φ)$ in $\Rel$ and every
@@ -593,7 +595,9 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 
 \begin{lemma}
   \label{lem:ample_iff_loc}
-  \uses{def:ample_relation, def:ample_relation_loc, def:transfer_map}
+  \uses{def:ample_relation, def:transfer_map}
+  \leanok
+  \lean{rel_mfld.ample.localize}
   Given manifolds $W$, $X$, $Y$ and $Z$ and smooth open embeddings $g : Z → Y$
   and $h : W → X$, the relation induced (in the sense of \Cref{def:transfer_map})
   in $J^1(W, Z)$ by a ample relation in $J^1(X, Y)$ is ample.
