@@ -24,12 +24,31 @@ open set affine_map
 
 open_locale convex matrix
 
-variables {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F]
+variables {E F : Type*} [add_comm_group F] [module ℝ F] [topological_space F]
+variables [add_comm_group E] [module ℝ E] [topological_space E]
 
 /-- A subset of a topological real vector space is ample if the convex hull of each of its
 connected components is the full space. -/
-def ample_set (s : set F) :=
+def ample_set (s : set F) : Prop :=
 ∀ x ∈ s, convex_hull ℝ (connected_component_in s x) = univ
+
+/-- images of ample sets under continuous linear equivalences are ample. -/
+lemma ample_set.image {s : set E} (h : ample_set s) (L : E ≃L[ℝ] F) : ample_set (L '' s) :=
+begin
+  intros x hx,
+  rw [L.image_eq_preimage] at hx,
+  have : L '' connected_component_in s (L.symm x) = connected_component_in (L '' s) x,
+  { conv_rhs { rw [← L.apply_symm_apply x] },
+    exact L.to_homeomorph.image_connected_component_in hx },
+  rw [← this],
+  refine (L.to_linear_equiv.to_linear_map.convex_hull_image _).trans _,
+  rw [h (L.symm x) hx, image_univ],
+  exact L.to_linear_equiv.to_equiv.range_eq_univ,
+end
+
+/-- preimages of ample sets under continuous linear equivalences are ample. -/
+lemma ample_set.preimage {s : set F} (h : ample_set s) (L : E ≃L[ℝ] F) : ample_set (L ⁻¹' s) :=
+by { rw [← L.image_symm_eq_preimage], exact h.image L.symm }
 
 section lemma_2_13
 

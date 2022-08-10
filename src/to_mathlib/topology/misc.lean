@@ -477,6 +477,29 @@ end
 
 end normed_space
 
+section connected_component_in
+
+variables {α β : Type*} [topological_space α] [topological_space β]
+
+lemma continuous.image_connected_component_in_subset {f : α → β} {s : set α} {x : α}
+  (hf : continuous f) (hx : x ∈ s) :
+  f '' connected_component_in s x ⊆ connected_component_in (f '' s) (f x) :=
+(is_preconnected_connected_component_in.image _ hf.continuous_on).subset_connected_component_in
+  (mem_image_of_mem _ $ mem_connected_component_in hx)
+  (image_subset _ $ connected_component_in_subset _ _)
+
+lemma homeomorph.image_connected_component_in (f : α ≃ₜ β) {s : set α} {x : α} (hx : x ∈ s) :
+  f '' connected_component_in s x = connected_component_in (f '' s) (f x) :=
+begin
+  refine (f.continuous.image_connected_component_in_subset hx).antisymm _,
+  have := f.symm.continuous.image_connected_component_in_subset (mem_image_of_mem _ hx),
+  rwa [image_subset_iff, f.preimage_symm, f.image_symm, f.preimage_image, f.symm_apply_apply]
+    at this,
+end
+
+
+end connected_component_in
+
 namespace topological_space -- to topology.bases
 lemma cover_nat_nhds_within {α} [topological_space α] [second_countable_topology α] {f : α → set α}
   {s : set α} (hf : ∀ x ∈ s, f x ∈ 𝓝[s] x) (hs : s.nonempty) :

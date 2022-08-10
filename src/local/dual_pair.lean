@@ -99,6 +99,11 @@ begin
   use [u, hu, t, rfl]
 end
 
+/-- Map a dual pair under a linear equivalence. -/
+@[simps] def map (p : dual_pair' E) (L : E ≃L[ℝ] F) : dual_pair' F :=
+⟨p.π.comp L.symm.to_continuous_linear_map, L p.v,
+  (congr_arg p.π $ L.symm_apply_apply p.v).trans p.pairing⟩
+
 end dual_pair'
 end no_norm
 
