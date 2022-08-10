@@ -33,6 +33,11 @@ section charted_space
 variables {M H : Type*} [topological_space M] [topological_space H] [charted_space H M]
   (G : structure_groupoid H)
 
+variables (H)
+lemma mem_achart_source (x : M) : x ∈ (achart H x).1.source :=
+mem_chart_source H x
+variables {H}
+
 end charted_space
 
 
@@ -61,8 +66,8 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {M : Type*} [topological_space M] [charted_space H M]
   {M' : Type*} [topological_space M'] [charted_space H' M']
   {N : Type*} [topological_space N] [charted_space G N]
-  {F' : Type*} [normed_group F'] [normed_space 𝕜 F']
-  {F'' : Type*} [normed_group F''] [normed_space 𝕜 F'']
+  {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
+  {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
 
 lemma cont_mdiff_at_iff_target {x : M} :
@@ -90,6 +95,33 @@ end boundary
 
 namespace basic_smooth_vector_bundle_core
 variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_core I M E')
+
+lemma coord_change_comp' {i j k : atlas H M} {x : M}
+  (hi : x ∈ i.1.source) (hj : x ∈ j.1.source) (hk : x ∈ k.1.source) (v : E') :
+  Z.coord_change j k (j x) (Z.coord_change i j (i x) v) = Z.coord_change i k (i x) v :=
+begin
+  rw [show j x = _, by rw [← i.1.left_inv hi]],
+  apply Z.coord_change_comp,
+  simp only [hi, hj, hk] with mfld_simps
+end
+
+lemma coord_change_self' {i : atlas H M} {x : M} (hi : x ∈ i.1.source) (v : E') :
+  Z.coord_change i i (i x) v = v :=
+Z.coord_change_self i (i x) (i.1.maps_to hi) v
+
+lemma coord_change_comp_eq_self (i j : atlas H M) {x : H}
+  (hx : x ∈ (i.1.symm.trans j.1).source) (v : E') :
+  Z.coord_change j i (i.1.symm.trans j.1 x) (Z.coord_change i j x v) = v :=
+begin
+  rw [Z.coord_change_comp i j i x _ v, Z.coord_change_self _ _ hx.1],
+  simp only with mfld_simps at hx,
+  simp only [hx.1, hx.2] with mfld_simps
+end
+
+lemma coord_change_comp_eq_self' {i j : atlas H M} {x : M}
+  (hi : x ∈ i.1.source) (hj : x ∈ j.1.source) (v : E') :
+  Z.coord_change j i (j x) (Z.coord_change i j (i x) v) = v :=
+by rw [Z.coord_change_comp' hi hj hi v, Z.coord_change_self' hi]
 
 lemma chart_apply (z : Z.to_topological_vector_bundle_core.total_space) :
   Z.chart (chart_mem_atlas H x) z = (chart_at H x z.proj,

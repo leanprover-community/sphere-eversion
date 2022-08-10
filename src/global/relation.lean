@@ -95,7 +95,7 @@ def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
 end family_formal_sol
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
-abbreviation htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
+@[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
 
 /-- A relation `R` satisfies the (non-parametric) h-principle if all its formal solutions are
 homotopic to a holonomic one. -/
@@ -199,22 +199,6 @@ open basic_smooth_vector_bundle_core
     exact λ x, (g.smooth_at_inv $ hF $ mem_range_self x).one_jet_ext.comp _
       (F.smooth_bs.comp h.smooth_to).cont_mdiff_at },
   exact smooth.one_jet_comp IX IM IN IX h (F.smooth_eta.comp h.smooth_to) h.smooth_to.one_jet_ext
-  -- -- delete below if above is sorry-free
-  -- have h1 : smooth_at IX IY (λ x', g.inv_fun (F.bs $ h x')) x,
-  -- sorry,
-  -- rw [(one_jet_bundle_core IX X IY Y).cont_mdiff_at_iff_target],
-  -- refine ⟨continuous_at_id.prod h1.continuous_at, _⟩,
-  -- simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
-  -- dsimp only [one_jet_bundle_core],
-  -- simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
-  --   pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
-  --   model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
-  --   local_homeomorph.prod_apply],
-  -- refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ h1)
-  --   .prod_mk_space _,
-  -- simp_rw [F.localize_fun_fst_fst, F.localize_fun_fst_snd],
-  -- sorry
-  -- exact h1.mfderiv' le_rfl
   end }
 
 lemma transfer_localize (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :

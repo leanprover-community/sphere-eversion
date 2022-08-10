@@ -7,7 +7,7 @@ import to_mathlib.geometry.manifold.vector_bundle.basic_core_constructions
 
 noncomputable theory
 
-open set equiv
+open filter set equiv basic_smooth_vector_bundle_core
 open_locale manifold
 
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
@@ -107,6 +107,36 @@ lemma one_jet_bundle_proj_continuous : continuous (one_jet_bundle.proj I M I' M'
 lemma one_jet_bundle_proj_open : is_open_map (one_jet_bundle.proj I M I' M') :=
 ((one_jet_bundle_core I M I' M').to_topological_vector_bundle_core).is_open_map_proj
 
+/-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
+  The last component equals the continuous linear map `v'.2`, composed on both sides by an
+  appropriate coordinate change function. -/
+lemma one_jet_bundle_chart_at {v v' : one_jet_bundle I M I' M'} :
+  chart_at (model_prod (model_prod H H') (E →L[𝕜] E')) v v' =
+  ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
+  ((tangent_bundle_core I' M').coord_change (achart H' v'.1.2) (achart H' v.1.2)
+    (chart_at H' v'.1.2 v'.1.2)).comp $ v'.2.comp $
+    (tangent_bundle_core I M).coord_change (achart H v.1.1) (achart H v'.1.1)
+    (chart_at H v.1.1 v'.1.1)) :=
+begin
+  simp_rw [to_charted_space_chart_at],
+  dsimp only [one_jet_bundle_core],
+  simp_rw [hom_chart, ← achart_def, pullback_fst_coord_change_at,
+    pullback_snd_coord_change_at, prod_charted_space_chart_at, local_homeomorph.prod_apply],
+end
+
+/-- Computing the value of an extended chart around `v` at point `v'` in `J¹(M, M')`.
+  The last component equals the continuous linear map `v'.2`, composed on both sides by an
+  appropriate coordinate change function. -/
+lemma one_jet_bundle_ext_chart_at {v v' : one_jet_bundle I M I' M'} :
+  ext_chart_at ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) v v' =
+  ((I (chart_at H v.1.1 v'.1.1), I' (chart_at H' v.1.2 v'.1.2)),
+  ((tangent_bundle_core I' M').coord_change (achart H' v'.1.2) (achart H' v.1.2)
+    (chart_at H' v'.1.2 v'.1.2)).comp $ v'.2.comp $
+    (tangent_bundle_core I M).coord_change (achart H v.1.1) (achart H v'.1.1)
+    (chart_at H v.1.1 v'.1.1)) :=
+by simp_rw [ext_chart_at_coe, function.comp_apply, one_jet_bundle_chart_at,
+    model_with_corners.prod_apply, model_with_corners_self_coe, id]
+
 section maps
 
 variables {M M'}
@@ -122,6 +152,11 @@ variables {I I'}
   one_jet_bundle I M I' M' :=
 ⟨(x, y), f⟩
 
+@[simp, mfld_simps] lemma one_jet_bundle_mk_fst {x : M} {y : M'} {f : one_jet_space I I' (x, y)} :
+  (one_jet_bundle.mk x y f).1 = (x, y) := rfl
+
+@[simp, mfld_simps] lemma one_jet_bundle_mk_snd {x : M} {y : M'} {f : one_jet_space I I' (x, y)} :
+  (one_jet_bundle.mk x y f).2 = f := rfl
 
 @[simp, mfld_simps] lemma one_jet_ext_one_jet_bundle_proj {f : M → M'} {x :  M} :
   one_jet_bundle.proj I M I' M' (one_jet_ext I I' f x) = (x, f x) := rfl
@@ -129,19 +164,12 @@ variables {I I'}
 @[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x :  M} :
   (one_jet_ext I I' f x).1 = (x, f x) := rfl
 
-open basic_smooth_vector_bundle_core
-
 lemma smooth_at.one_jet_ext {f : M → M'} {x : M} (hf : smooth_at I I' f x) :
   smooth_at I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) x :=
 begin
   rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
   refine ⟨continuous_at_id.prod hf.continuous_at, _⟩,
-  simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
-  dsimp only [one_jet_bundle_core],
-  simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
-    pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
-    model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
-    local_homeomorph.prod_apply],
+  simp_rw [function.comp, one_jet_bundle_ext_chart_at],
   refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ hf)
     .prod_mk_space _,
   exact hf.mfderiv' le_rfl
@@ -167,29 +195,23 @@ begin
   rw [basic_smooth_vector_bundle_core.smooth_iff_target] at hh hg ⊢,
   refine ⟨hg.1.fst.prod_mk hh.1.snd, _⟩,
   intro x,
+  have hf2 : continuous_at f2 x := hg.1.snd.continuous_at,
+  simp_rw [function.comp, one_jet_bundle_ext_chart_at],
   refine ((cont_diff_at_fst.fst.cont_mdiff_at.comp _ (hg.2 x)).prod_mk_space $
     cont_diff_at_fst.snd.cont_mdiff_at.comp _ (hh.2 x)).prod_mk_space _,
   have h1 := (cont_diff_at_snd.cont_mdiff_at.comp _ (hg.2 x)),
   have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ (hh.2 x)),
-  -- have h3 := h2.clm_comp h1,
-  convert h2.clm_comp h1,
-  clear h1 h2,
-  ext1 x',
-  simp_rw [function.comp_apply, model_with_corners_self_coe],
-  sorry -- this should just be two coordinate change functions canceling with each other
-  -- simp_rw [ext_chart_at, local_equiv.coe_trans, function.comp, to_charted_space_chart_at],
-  -- dsimp only [one_jet_bundle_core],
-  -- simp_rw [local_homeomorph.coe_coe, hom_chart, ← achart_def, pullback_fst_coord_change_at,
-  --   pullback_snd_coord_change_at, model_with_corners.to_local_equiv_coe,
-  --   model_with_corners.prod_apply, model_with_corners_self_coe, id, prod_charted_space_chart_at,
-  --   local_homeomorph.prod_apply],
-  -- refine (cont_mdiff_at_fst.comp hg.2.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ h1)
-  --   .prod_mk_space _,
-  -- -- simp_rw [F.localize_fun_fst_fst, F.localize_fun_fst_snd],
-  -- -- sorry
-  -- exact h1.mfderiv' le_rfl
+  refine (h2.clm_comp h1).congr_of_eventually_eq _,
+  refine eventually_of_mem (hf2.preimage_mem_nhds $ (achart H' (f2 x)).1.open_source.mem_nhds $
+    mem_achart_source H' (f2 x)) (λ x' hx', _),
+  ext v,
+  simp_rw [function.comp_apply, one_jet_bundle_ext_chart_at,
+    one_jet_bundle_mk_fst, one_jet_bundle_mk_snd, continuous_linear_map.comp_apply],
+  congr' 2,
+  symmetry,
+  exact (tangent_bundle_core I' M').coord_change_comp_eq_self' (mem_achart_source H' (f2 x')) hx' _
 end
-#exit
+
 end maps
 
 local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')
