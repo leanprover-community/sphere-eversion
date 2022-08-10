@@ -35,7 +35,7 @@ variables {M M'}
 
 /-- The fibers of the one jet-bundle. -/
 @[nolint unused_arguments]
-def one_jet_space (p : M × M') : Type* := E →L[𝕜] E'
+def one_jet_space (p : M × M') : Type* := tangent_space I p.1 →L[𝕜] tangent_space I' p.2
 
 instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
   (λ σ, tangent_space I p.1 → tangent_space I' p.2) := ⟨λ φ, φ.to_fun⟩
