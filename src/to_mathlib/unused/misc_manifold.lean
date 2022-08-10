@@ -153,29 +153,6 @@ variables {F G F' : Type*}
 variables [normed_add_comm_group F] [normed_add_comm_group G] [normed_add_comm_group F']
 variables [normed_space 𝕜 F] [normed_space 𝕜 G] [normed_space 𝕜 F']
 
-lemma cont_diff_within_at.comp_cont_mdiff_within_at {g : F → G} {f : M → F} {s : set M} {t : set F}
-  {x : M}
-  (hg : cont_diff_within_at 𝕜 n g t (f x))
-  (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
-  cont_mdiff_within_at I 𝓘(𝕜, G) n (g ∘ f) s x :=
-begin
-  rw cont_mdiff_within_at_iff at *,
-  refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
-  rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
-  apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
-  exact (inter_subset_left _ _).trans (preimage_mono h)
-end
-
-lemma cont_diff_at.comp_cont_mdiff_at {g : F → G} {f : M → F} {x : M}
-  (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, G) n (g ∘ f) x :=
-hg.comp_cont_mdiff_within_at hf subset.rfl
-
-lemma cont_diff.comp_cont_mdiff {g : F → G} {f : M → F}
-  (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
-  cont_mdiff I 𝓘(𝕜, G) n (g ∘ f) :=
-λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
-
 -- lemma cont_mdiff_within_at.clm_comp {g : M → F →L[𝕜] G} {f : M → E →L[𝕜] F} {s : set M} {x : M}
 --   (hg : cont_mdiff_within_at I 𝓘(𝕜, F →L[𝕜] G) n g s x)
 --   (hf : cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] F) n f s x) :
