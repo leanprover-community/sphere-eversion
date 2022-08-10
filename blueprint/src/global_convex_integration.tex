@@ -92,46 +92,37 @@ compatible distance function on every manifold.
     \item $\bigcup_n C_n = M$,
     \item $U_n \cap U_m = \emptyset$ if $|n - m| > 2$.
   \end{itemize}
+  For any $y \in E$ and $r > 0$, fix a smooth diffeomorphism $f_{y,r} : E \simeq B_E(y, r)$ such
+  that $f_{y,r}(0) = y$.
   For each $n$ and $x \in C_n$, let $\psi_x$  be a smooth chart mapping an open
   neighbourhood of $x$ to an open set of the model space $E$.
   Writing $y = \psi_x (x) \in E$, let:
   \begin{align*}
-    W_{n, x} &= \psi_x^{-1} (B_E(y, r)),\\
-    \hat W_{n, x} &= \psi_x^{-1} (B_E(y, r/2)),\\
+    B_{n, x} &= \psi_x^{-1} (B_E(y, r)),\\
+    W_{n, x} &= \psi_x^{-1} (f_{y,r} (B_E (0, 1))),\\
   \end{align*}
   for some $r > 0$ (which may depend on $n$, $x$) sufficiently small that:
   \begin{itemize}
-    \item the ball $B_E(y, r)$ lies in the target of the chart $\psi_x$,
-    \item $W_{n,x}$ is contained in $U_n$,
-    \item $W_{n,x}$ is contained in $V_j$ for some $j$.
+    \item $B_E(y, r)$ lies in the target of the chart $\psi_x$,
+    \item $B_{n,x}$ is contained in $U_n$,
+    \item $B_{n,x}$ is contained in $V_j$ for some $j$.
   \end{itemize}
-  For each $n$, choose a finite subcovering of $C_n$ by
-  $\hat W_{n, x_1}, \ldots, \hat W_{n, x_{l_n}}$ and define $\iota \subseteq ℕ \times M$ by:
+  Note that $x \in W_{n,x}$. For each $n$, choose a finite subcovering of $C_n$ by
+  $W_{n, x_1}, \ldots, W_{n, x_{l_n}}$ and define $\iota \subseteq ℕ \times M$ by:
   \begin{align*}
     \iota = \bigcup_n \{ (n, x_1), \ldots, (n, x_{l_n}) \} .
   \end{align*}
   Note that $\iota$ is countable and furthermore:
   \begin{itemize}
-    \item for each $i \in \iota$, there is some $j$ such that $W_i \subseteq V_j$,
-    \item $(W_i)_{i \in \iota}$ is locally-finite
-    (indeed more is true: $W_i$ meets only finitely-many $W_{i'}$ for $i, i' \in \iota$
-    since $W_{m, x} \cap W_{n, x'} = \emptyset$ if $|n - m| > 2$),
-    \item $(\hat W_i)_{i \in \iota}$ covers $M$.
+    \item for each $i \in \iota$, there is some $j$ such that $B_i \subseteq V_j$,
+    \item $(B_i)_{i \in \iota}$ is locally-finite
+    (indeed more is true: $B_i$ meets only finitely-many $B_{i'}$ for $i, i' \in \iota$
+    since $B_{m, x} \cap B_{n, x'} = \emptyset$ if $|n - m| > 2$),
+    \item $(W_i)_{i \in \iota}$ covers $M$.
   \end{itemize}
-  Finally define the required maps $\phi_i : E \to M$ by precomposing the smooth diffeomorphisms:
-  $B_E(y_i, r) \simeq W_i$ with smooth diffeomorphisms:
+  Given $i = (n, x_j) \in \iota$, the required map $\phi_i : E \to M$ is just:
   \begin{align*}
-    E \simeq B_E(y_i, r)
-  \end{align*}
-  sending $B_E(0, 1)$ to $B_E(y_i, r/2)$ according to the following diagram:
-  \begin{align*}
-    \begin{array}{ccccccc}
-      E & \simeq & B_E(y_i, r) & \simeq & W_i & \subseteq & M\\
-      \\
-      \mbox{\rotatebox{90}{$\subseteq$}} & & \mbox{\rotatebox{90}{$\subseteq$}} & & \mbox{\rotatebox{90}{$\subseteq$}} & &\\
-      \\
-      B_E(0, 1) & \simeq & B_E(y_i, r/2) & \simeq & \hat W_i & \subseteq & M\\
-    \end{array}
+    E \simeq B_E(y_j, r) \simeq B_{n,j} \subseteq M.
   \end{align*}
 \end{proof}
 
