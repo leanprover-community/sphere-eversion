@@ -213,20 +213,6 @@ begin
       continuous_linear_equiv.apply_symm_apply] },
 end
 
-/-- Underlying map of `htpy_one_jet_sec.unlocalize`. -/
-def htpy_one_jet_sec.unlocalize_fun (F : htpy_one_jet_sec IX X IY Y) (t : ℝ) (m : M) :
-  one_jet_bundle IM M IN N :=
-⟨⟨m, g $ (F t).bs (h.inv_fun m)⟩,
-    (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
-      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map)⟩
-
-/-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
--- Note(F): this is only well-defined on `univ × range h`, right?
-def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
-{ to_fun := F.unlocalize_fun g h,
-  is_sec' := λ x m, rfl,
-  smooth' := sorry }
-
 lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
   (hF : range (F.bs ∘ h) ⊆ range g)
   (hFG : G 0 = F.localize g h hF) : G.unlocalize g h 0 = F :=
@@ -242,6 +228,20 @@ sorry
 lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
   (F.localize g h hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
 by { simp_rw [one_jet_sec.is_holonomic_at], sorry }
+
+/-- Underlying map of `htpy_one_jet_sec.unlocalize`. -/
+def htpy_one_jet_sec.unlocalize_fun (F : htpy_one_jet_sec IX X IY Y) (t : ℝ) (m : M) :
+  one_jet_bundle IM M IN N :=
+⟨⟨m, g $ (F t).bs (h.inv_fun m)⟩,
+    (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
+      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map)⟩
+
+/-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
+-- Note(F): this is only well-defined on `univ × range h`, right?
+def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
+{ to_fun := F.unlocalize_fun g h,
+  is_sec' := λ x m, rfl,
+  smooth' := sorry }
 
 /-- Localize a formal solution. -/
 def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) :
