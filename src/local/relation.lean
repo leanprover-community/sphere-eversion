@@ -63,7 +63,7 @@ ample_set (R.slice p θ)
 
 /- FIXME: the proof below is awful. -/
 lemma is_ample.mem_hull {R : rel_loc E F} (h : is_ample R) {θ : E × F × (E →L[ℝ] F)}
-  (hθ : θ ∈ R) (v : F) (p) : v ∈ hull (connected_comp_in (R.slice p θ) (θ.2.2 p.v)) :=
+  (hθ : θ ∈ R) (v : F) (p) : v ∈ hull (connected_component_in (R.slice p θ) (θ.2.2 p.v)) :=
 begin
   rw h p θ (θ.2.2 p.v) _,
   exact mem_univ _,
@@ -254,10 +254,10 @@ by simpa [rel_loc.formal_sol.slice_at, rel_loc.slice] using  𝓕.is_sol x
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
 corresponding slice. -/
 def is_short_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : Prop :=
-D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v)
+D 𝓕.f x p.v ∈ hull (connected_component_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v)
 
 def _root_.rel_loc.formal_sol.is_short_at (𝓕 : formal_sol R)(p : dual_pair' E) (x : E) : Prop :=
-D 𝓕.f x p.v ∈ hull (connected_comp_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
+D 𝓕.f x p.v ∈ hull (connected_component_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
 
 lemma _root_.rel_loc.is_ample.is_short_at {R : rel_loc E F} (hR : is_ample R) (𝓕 : formal_sol R) (p : dual_pair' E)
   (x : E) : 𝓕.is_short_at p x :=
@@ -314,7 +314,7 @@ def rel_loc.jet_sec.const_htpy (𝓕 : jet_sec E F) : htpy_jet_sec E F :=
 def smooth_step : ℝ → ℝ := λ t, smooth_transition (2 * t - 1/2)
 
 lemma smooth_step.smooth : 𝒞 ∞ smooth_step :=
-smooth_transition.cont_diff.comp $ (cont_diff_id.const_smul 2).sub cont_diff_const
+smooth_transition.cont_diff.comp $ (cont_diff_id.const_smul (2 : ℝ)).sub cont_diff_const
 
 @[simp]
 lemma smooth_step.zero : smooth_step 0 = 0 :=
@@ -357,7 +357,7 @@ begin
   { change 𝒞 ∞ ((prod.map smooth_step id) ∘ (λ p : ℝ × E, (2*p.1, p.2))),
     apply (smooth_step.smooth.prod_map cont_diff_id).comp,
     apply cont_diff.prod,
-    apply cont_diff_fst.const_smul,
+    apply cont_diff_const.mul cont_diff_fst,
     apply cont_diff_snd },
   replace hf := hf.comp s₁,
   have s₂ : 𝒞 ∞ (λ p : ℝ × E, (smooth_step $ 2*p.1 - 1, p.2)),
@@ -365,7 +365,7 @@ begin
     apply (smooth_step.smooth.prod_map cont_diff_id).comp,
     apply cont_diff.prod,
     apply cont_diff.sub,
-    apply cont_diff_fst.const_smul,
+    apply cont_diff_const.mul cont_diff_fst,
     apply cont_diff_const,
     apply cont_diff_snd },
   replace hg := hg.comp s₂,

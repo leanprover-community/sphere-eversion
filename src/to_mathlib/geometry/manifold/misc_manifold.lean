@@ -70,11 +70,6 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
 
-lemma cont_mdiff_at_iff_target {x : M} :
-  cont_mdiff_at I I' n f x ↔
-    continuous_at f x ∧ cont_mdiff_at I 𝓘(𝕜, E') n (ext_chart_at I' (f x) ∘ f) x :=
-by rw [cont_mdiff_at, cont_mdiff_at, cont_mdiff_within_at_iff_target, continuous_within_at_univ]
-
 section boundary
 
 variables (I M)
@@ -127,20 +122,6 @@ lemma chart_apply (z : Z.to_topological_vector_bundle_core.total_space) :
   Z.chart (chart_mem_atlas H x) z = (chart_at H x z.proj,
     Z.coord_change (achart H z.proj) (achart H x) (achart H z.proj z.proj) z.2) :=
 rfl
-
-/-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
-  a `basic_smooth_vector_bundle_core`. The continuity condition in the RHS is weaker. -/
-lemma cont_mdiff_at_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space}
-  {x : N} {n : with_top ℕ} :
-  cont_mdiff_at J (I.prod 𝓘(𝕜, E')) n f x ↔ continuous_at (bundle.total_space.proj ∘ f) x ∧
-  cont_mdiff_at J 𝓘(𝕜, E × E') n (ext_chart_at (I.prod 𝓘(𝕜, E')) (f x) ∘ f) x :=
-begin
-  let Z' := Z.to_topological_vector_bundle_core,
-  rw [cont_mdiff_at_iff_target, and.congr_left_iff],
-  refine λ hf, ⟨λ h, Z'.continuous_proj.continuous_at.comp h, λ h, _⟩,
-  exact (Z'.local_triv ⟨chart_at _ (f x).1, chart_mem_atlas _ _⟩).to_fiber_bundle_trivialization
-    .continuous_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
-end
 
 lemma smooth_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space} :
   smooth J (I.prod 𝓘(𝕜, E')) f ↔ continuous (bundle.total_space.proj ∘ f) ∧

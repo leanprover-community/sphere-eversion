@@ -229,16 +229,6 @@ lemma of_eventually_nhds {X : Type*} [topological_space X] {P : X → Prop} {x�
   (h : ∀ᶠ x in 𝓝 x₀, P x) : P x₀ :=
 mem_of_mem_nhds h
 
-
-
-/- Move this next to cont_diff_smul -/
-lemma cont_diff.const_smul {𝕜 : Type*} [nontrivially_normed_field 𝕜]
-  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-  {f : E → F} {n : with_top ℕ} (hf : cont_diff 𝕜 n f) (a : 𝕜) :
-  cont_diff 𝕜 n (λ x, a • f x) :=
-cont_diff_const.smul hf
-
 section
 
 open asymptotics continuous_linear_map filter

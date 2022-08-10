@@ -1,5 +1,6 @@
 import loops.basic
 import tactic.fin_cases
+import analysis.locally_convex.with_seminorms -- to obtain that normed spaces are locally connected
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
 import to_mathlib.partition
@@ -731,21 +732,21 @@ lemma local_loops [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
   (hg : continuous_at g x₀) (hb : continuous b)
-  (hconv : g x₀ ∈ convex_hull ℝ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀)) :
+  (hconv : g x₀ ∈ convex_hull ℝ (connected_component_in (prod.mk x₀ ⁻¹' Ω) $ b x₀)) :
   ∃ (γ : E → ℝ → loop F) (U ∈ 𝓝 x₀), surrounding_family_in g b γ U Ω :=
 begin
   have hbx₀ : continuous_at b x₀ := hb.continuous_at,
-  have hΩ_op_x₀ : is_open (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
-    (is_open_slice_of_is_open_over hΩ_op).connected_comp_in,
+  have hΩ_op_x₀ : is_open (connected_component_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
+    (is_open_slice_of_is_open_over hΩ_op).connected_component_in,
   have b_in : b x₀ ∈ prod.mk x₀ ⁻¹' Ω :=
-    connected_comp_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x₀, hconv⟩),
-  have hΩ_conn : is_connected (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
-  is_connected_connected_comp_in.mpr b_in,
-  have hb_in : b x₀ ∈ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
-    mem_connected_comp_in_self b_in,
+    connected_component_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x₀, hconv⟩),
+  have hΩ_conn : is_connected (connected_component_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
+  is_connected_connected_component_in_iff.mpr b_in,
+  have hb_in : b x₀ ∈ (connected_component_in (prod.mk x₀ ⁻¹' Ω) $ b x₀) :=
+    mem_connected_component_in b_in,
   rcases surrounding_loop_of_convex_hull hΩ_op_x₀ hΩ_conn hconv hb_in with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ, h6γ⟩,
-  have h5γ : ∀ (t s : ℝ), γ t s ∈ mk x₀ ⁻¹' Ω := λ t s, connected_comp_in_subset _ _ (h5γ t s),
+  have h5γ : ∀ (t s : ℝ), γ t s ∈ mk x₀ ⁻¹' Ω := λ t s, connected_component_in_subset _ _ (h5γ t s),
   let δ : E → ℝ → loop F := λ x t, b x - b x₀ +ᵥ γ t,
   have hδ : continuous ↿δ,
   { dsimp only [δ, has_uncurry.uncurry, loop.vadd_apply],
@@ -790,7 +791,7 @@ lemma local_loops_open [finite_dimensional ℝ F]
   {x₀ : E}
   (hΩ_op : ∃ U ∈ 𝓝 x₀, is_open (Ω ∩ fst ⁻¹' U))
   (hg : continuous_at g x₀) (hb : continuous b)
-  (hconv : g x₀ ∈ convex_hull ℝ (connected_comp_in (prod.mk x₀ ⁻¹' Ω) $ b x₀)) :
+  (hconv : g x₀ ∈ convex_hull ℝ (connected_component_in (prod.mk x₀ ⁻¹' Ω) $ b x₀)) :
   ∃ (γ : E → ℝ → loop F) (U : set E), is_open U ∧ x₀ ∈ U ∧ surrounding_family_in g b γ U Ω :=
 begin
   obtain ⟨γ, U, hU, hγ⟩ := local_loops hΩ_op hg hb hconv,
@@ -1239,7 +1240,7 @@ lemma exists_surrounding_loops [finite_dimensional ℝ F]
   (hK : is_compact K) (hC : is_closed C) (hU : is_open U) (hCU : C ⊆ U)
   (hΩ_op : is_open (Ω ∩ fst ⁻¹' U))
   (hg : ∀ x ∈ C, continuous_at g x) (hb : continuous b)
-  (hconv : ∀ x ∈ C, g x ∈ convex_hull ℝ (connected_comp_in (prod.mk x ⁻¹' Ω) $ b x))
+  (hconv : ∀ x ∈ C, g x ∈ convex_hull ℝ (connected_component_in (prod.mk x ⁻¹' Ω) $ b x))
   {γ₀ :  E → ℝ → loop F}
   (hγ₀_surr : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₀ V Ω) :
   ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ C Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x :=
