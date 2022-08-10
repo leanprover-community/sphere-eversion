@@ -106,7 +106,7 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>3 Global theory of open and ample relations <span class="partial">33%</span></h3>
+  <h3>3 Global theory of open and ample relations <span class="partial">58%</span></h3>
   
   <ul class="coverage">
     
@@ -119,21 +119,6 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Lemma 3.10 (lem:loc_ultim_const)</div>
-      <div class="thm_thm_content"><p>  Let \(ι\) be a convenient indexing set, \(M\) a topological space and \(Z\) a set. Let \(V : ι → \operatorname{\mathcal{P}}{M}\) be a locally finite open cover of \(M\). Let \(f : ℕ × M → Z\) be a sequence of functions such that, for all \(n\): </p>
-<ul class="itemize">
-  <li><p>\(f_{n+1}\) coincides with \(f_n\) outside of \(V_{π(n+1)}\). </p>
-</li>
-  <li><p>if \(π(n+1) = π(n)\) then \(f_{n+1} = f_n\) </p>
-</li>
-</ul>
-<p> There exists \(U : M → \operatorname{\mathcal{P}}{M}\) and \(n₀ : M → ℕ\) such that: </p>
-<div class="displaymath" id="a0000000083">
-  \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ n ≥ n₀(x),\;  f_n|_{U_x} = f_{n₀(x)}|_{U_x}.  \]
-</div>
-</div>
-    </li>
     
     
     
@@ -151,13 +136,6 @@ Click chapter titles to see missing items.
     
     
     
-    
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.19 (def:htpy_formal_sol)</div>
-      <div class="thm_thm_content"><p>  A homotopy of formal solutions of \(\mathcal{R}\) is a family of sections \(\mathcal{F}: ℝ × M → J^1(M, N)\) which is smooth over \([0, 1] × M\) and such that each \(m ↦ \mathcal{F}(t, m)\) is a formal solution when \(t\) is in \([0, 1]\). </p>
-</div>
-    </li>
     
     
     
@@ -175,48 +153,12 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Definition 3.20 (def:transfer_map)</div>
-      <div class="thm_thm_content"><p> Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000087">
-  \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
-</div>
-<p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000088">
-  \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
-</div>
-<p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
-</div>
-    </li>
+    
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.21 (lem:transfer)</div>
-      <div class="thm_thm_content"><p> In the situation of the previous definition, given a section \(\mathcal{F}: M → J^1(M, N)\): </p>
-<ul class="itemize">
-  <li><p>\(Ψ_{g, h}(\mathcal{F})\) is a smooth section of \(J^1(X, Y)\). </p>
-</li>
-  <li><p>\(\mathcal{F}\) is holonomic on \(s ⊂ h(X) ∩ \operatorname{bs}\mathcal{F}⁻¹(g(Y))\) if and only if \(Ψ_{g, h}(\mathcal{F})\) is holonomic on \(h⁻¹(s)\). </p>
-</li>
-  <li><p>\(\mathcal{F}\) is a formal solution of \(\mathcal{R}\) on \(h(X) ∩ \operatorname{bs}\mathcal{F}⁻¹(g(Y)\) if and only if \(Ψ_{g, h}(\mathcal{F})\) is a formal solution of the induced relation \(Ψ_{g, h}⁻¹\mathcal{R}\). </p>
-</li>
-</ul>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.22 (def:h-princ)</div>
-      <div class="thm_thm_content"><p>  A first order differential relation \(\mathcal{R}⊂ J^1(M, N)\) satisfies the \(h\)-principle if every formal solution of \(\mathcal{R}\) is homotopic to a holonomic one. It satisfies the parametric \(h\)-principle if, for every manifold with boundary \(P\), every family \(\mathcal{F}: P × M → J^1(M, N)\) of formal solutions which are holonomic for \(p\) in \(𝓝(∂P)\) is homotopic to a family of holonomic ones relative to \(𝓝(∂P)\). </p>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.23 (lem:param_trick)</div>
+      <div class="thm_thmheading">Lemma 3.22 (lem:param_trick)</div>
       <div class="thm_thm_content"><p>  In the above setup, we have: </p>
 <ul class="itemize">
   <li><p>\(\bar F\) is holonomic at \((x, p)\) if and only if \(F_p\) is holonomic at \(x\). </p>
@@ -230,31 +172,25 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.24 (lem:param_for_free)</div>
+      <div class="thm_thmheading">Lemma 3.23 (lem:param_for_free)</div>
       <div class="thm_thm_content"><p>  Let \(\mathcal{R}\) be a first order differential relation for maps from \(M\) to \(N\). If, for every manifold with boundary \(P\), \(\mathcal{R}^P\) satisfies the \(h\)-principle then \(\mathcal{R}\) satisfies the parametric \(h\)-principle. Likewise, the \(C^0\)-dense and relative \(h\)-principle for all \(\mathcal{R}^P\) imply the parametric \(C^0\)-dense and relative \(h\)-principle for \(\mathcal{R}\). </p>
 </div>
     </li>
     
     
     
+    
+    
     <li>
-      <div class="thm_thmheading">Definition 3.25 (def:ample_relation)</div>
-      <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
+      <div class="thm_thmheading">Lemma 3.25 (lem:ample_iff_loc)</div>
+      <div class="thm_thm_content"><p>   Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth open embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.19</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
 </div>
     </li>
     
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.26 (lem:ample_iff_loc)</div>
-      <div class="thm_thm_content"><p>  Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.20</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.27 (lem:open_ample_immersion)</div>
+      <div class="thm_thmheading">Lemma 3.26 (lem:open_ample_immersion)</div>
       <div class="thm_thm_content"><p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
 </div>
     </li>
@@ -262,7 +198,7 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Theorem 3.28 (thm:open_ample)</div>
+      <div class="thm_thmheading">Theorem 3.27 (thm:open_ample)</div>
       <div class="thm_thm_content"><p>   If \(\mathcal{R}\) is open and ample then it satisfies the relative and parametric \(C^0\)-dense \(h\)-principle. </p>
 </div>
     </li>
@@ -270,8 +206,16 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 3.29 (lem:ample_parameter)</div>
+      <div class="thm_thmheading">Lemma 3.28 (lem:ample_parameter)</div>
       <div class="thm_thm_content"><p>  If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 3.29 (thm:sphere_eversion)</div>
+      <div class="thm_thm_content"><p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
 </div>
     </li>
     
@@ -293,14 +237,6 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Theorem 3.30 (thm:sphere_eversion)</div>
-      <div class="thm_thm_content"><p>  There is a homotopy of immersions of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a : q ↦ -q\). </p>
-</div>
-    </li>
-    
-    
-    
     
     
     
@@ -308,7 +244,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 3.6 (lem:stability_cover)</div>
       <div class="thm_thm_content"><p> In a paracompact metric space \(X\), let \(V : ι → \operatorname{\mathcal{P}}{X}\) be a locally finite collection of open subsets of \(X\) and let \(K : ι → \operatorname{\mathcal{P}}{X}\) be a family of compact subsets such that \(K_i ⊂ V_i\) for all \(i\). There existe a continuous function \(δ : X → ℝ_{{\gt} 0}\) such that: </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000076">
   \[  ∀ x\,  x',\;  ∀ i, \left[x ∈ K_i \text{ and } d(x, x') {\lt} δ(x)\right] ⇒ x' ∈ V_i.  \]
 </div>
 </div>
@@ -319,7 +255,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 3.7 (lem:localisation_stability)</div>
       <div class="thm_thm_content"><p>  Let \(f : M → N\) be a continuous map between manifolds, and let \((φ, ψ, i)\) be some localisation data for \(f\). There exists some continuous positive function \(ε : M → ℝ_{{\gt}0}\) such that: </p>
-<div class="displaymath" id="a0000000079">
+<div class="displaymath" id="a0000000078">
   \[  ∀ g : M → N, \big [∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\big ] ⇒ ∀ i,\;  g(φ_i(E)) ⊂ ψ_{j(i)}(F).  \]
 </div>
 </div>
@@ -327,22 +263,7 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Lemma 3.8 (lem:indexing_ordered_cover)</div>
-      <div class="thm_thm_content"><p> Let \(ι\) be a totally ordered set. Let \(V : ι → \operatorname{\mathcal{P}}{M}\) be a locally finite family of subsets of some topological space \(M\). There exist functions \(U : M → \operatorname{\mathcal{P}}{M}\) and \(i₀ : M → ι\) such that </p>
-<div class="displaymath" id="a0000000081">
-  \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ j {\gt} i₀(x),\;  U_x ∩ V_j = ∅.  \]
-</div>
-</div>
-    </li>
     
-    
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.9 (def:convenient_indexing)</div>
-      <div class="thm_thm_content"><p> A convenient indexing set is a totally ordered set \(ι\) equipped with maps \(π : ℕ → ι\) and \(σ : ι → ℕ\) such that \(π\) is order preserving and \(π ∘ σ = \operatorname{Id}\) (in particular \(π\) is surjective). </p>
-</div>
-    </li>
     
     
   </ul>
@@ -373,38 +294,6 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Definition 3.1 (def:update)</div>
       <div class="thm_thm_content"><p> Given smooth open embeddings \(φ : X → M\) and \(ψ : Y → N\), for any map \(f : M → N\) such that \(f(φ(X)) ⊂ ψ(Y)\), and every map \(g : X → Y\), the update of \(f\) using \(g\) is the map from \(M\) to \(N\) sending \(m\) to \(ψ ∘ g ∘ φ⁻¹(m)\) if \(m ∈ φ(E)\) and \(f(m)\) otherwise. </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.19 (def:htpy_formal_sol)</div>
-      <div class="thm_thm_content"><p>  A homotopy of formal solutions of \(\mathcal{R}\) is a family of sections \(\mathcal{F}: ℝ × M → J^1(M, N)\) which is smooth over \([0, 1] × M\) and such that each \(m ↦ \mathcal{F}(t, m)\) is a formal solution when \(t\) is in \([0, 1]\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.20 (def:transfer_map)</div>
-      <div class="thm_thm_content"><p> Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000087">
-  \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
-</div>
-<p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000088">
-  \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
-</div>
-<p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.25 (def:ample_relation)</div>
-      <div class="thm_thm_content"><p>  A relation \(\mathcal{R}\) is ample if, for every \(σ = (x, y, φ)\) in \(\mathcal{R}\) and every \((λ, v)\), the slice \(\mathcal{R}_{σ, λ, v}\) is ample in \(T_yY\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 3.9 (def:convenient_indexing)</div>
-      <div class="thm_thm_content"><p> A convenient indexing set is a totally ordered set \(ι\) equipped with maps \(π : ℕ → ι\) and \(σ : ι → ℕ\) such that \(π\) is order preserving and \(π ∘ σ = \operatorname{Id}\) (in particular \(π\) is surjective). </p>
 </div>
     </li>
     
@@ -460,21 +349,7 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Lemma 3.15 (lem:one_jet_extension_prop)</div>
-      <div class="thm_thm_content"><p>   For every smooth map \(f \! :M → N\), </p>
-<ol class="enumerate">
-  <li><p> \(j^1f\) is smooth </p>
-</li>
-  <li><p> \(j^1f\) is a section of \(J^1(M, N) → M\) </p>
-</li>
-  <li><p> \(j^1f\) composed with \(J^1(M, N) → N\) is \(f\). </p>
-</li>
-</ol>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.23 (lem:param_trick)</div>
+      <div class="thm_thmheading">Lemma 3.22 (lem:param_trick)</div>
       <div class="thm_thm_content"><p>  In the above setup, we have: </p>
 <ul class="itemize">
   <li><p>\(\bar F\) is holonomic at \((x, p)\) if and only if \(F_p\) is holonomic at \(x\). </p>
@@ -486,8 +361,26 @@ Click chapter titles to see missing items.
     </li>
     
     <li>
-      <div class="thm_thmheading">Lemma 3.27 (lem:open_ample_immersion)</div>
+      <div class="thm_thmheading">Lemma 3.23 (lem:param_for_free)</div>
+      <div class="thm_thm_content"><p>  Let \(\mathcal{R}\) be a first order differential relation for maps from \(M\) to \(N\). If, for every manifold with boundary \(P\), \(\mathcal{R}^P\) satisfies the \(h\)-principle then \(\mathcal{R}\) satisfies the parametric \(h\)-principle. Likewise, the \(C^0\)-dense and relative \(h\)-principle for all \(\mathcal{R}^P\) imply the parametric \(C^0\)-dense and relative \(h\)-principle for \(\mathcal{R}\). </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.26 (lem:open_ample_immersion)</div>
       <div class="thm_thm_content"><p> The relation of immersions of \(M\) into \(N\) in positive codimension is open and ample. </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Theorem 3.27 (thm:open_ample)</div>
+      <div class="thm_thm_content"><p>   If \(\mathcal{R}\) is open and ample then it satisfies the relative and parametric \(C^0\)-dense \(h\)-principle. </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.28 (lem:ample_parameter)</div>
+      <div class="thm_thm_content"><p>  If \(\mathcal{R}\) is ample then, for any parameter space \(P\), \(\mathcal{R}^P\) is also ample. </p>
 </div>
     </li>
     
@@ -508,7 +401,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 3.6 (lem:stability_cover)</div>
       <div class="thm_thm_content"><p> In a paracompact metric space \(X\), let \(V : ι → \operatorname{\mathcal{P}}{X}\) be a locally finite collection of open subsets of \(X\) and let \(K : ι → \operatorname{\mathcal{P}}{X}\) be a family of compact subsets such that \(K_i ⊂ V_i\) for all \(i\). There existe a continuous function \(δ : X → ℝ_{{\gt} 0}\) such that: </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000076">
   \[  ∀ x\,  x',\;  ∀ i, \left[x ∈ K_i \text{ and } d(x, x') {\lt} δ(x)\right] ⇒ x' ∈ V_i.  \]
 </div>
 </div>
@@ -517,17 +410,8 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 3.7 (lem:localisation_stability)</div>
       <div class="thm_thm_content"><p>  Let \(f : M → N\) be a continuous map between manifolds, and let \((φ, ψ, i)\) be some localisation data for \(f\). There exists some continuous positive function \(ε : M → ℝ_{{\gt}0}\) such that: </p>
-<div class="displaymath" id="a0000000079">
+<div class="displaymath" id="a0000000078">
   \[  ∀ g : M → N, \big [∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\big ] ⇒ ∀ i,\;  g(φ_i(E)) ⊂ ψ_{j(i)}(F).  \]
-</div>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.8 (lem:indexing_ordered_cover)</div>
-      <div class="thm_thm_content"><p> Let \(ι\) be a totally ordered set. Let \(V : ι → \operatorname{\mathcal{P}}{M}\) be a locally finite family of subsets of some topological space \(M\). There exist functions \(U : M → \operatorname{\mathcal{P}}{M}\) and \(i₀ : M → ι\) such that </p>
-<div class="displaymath" id="a0000000081">
-  \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ j {\gt} i₀(x),\;  U_x ∩ V_j = ∅.  \]
 </div>
 </div>
     </li>
@@ -553,6 +437,17 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
+  
+  <h3>3 Global theory of open and ample relations</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.25 (lem:ample_iff_loc)</div>
+      <div class="thm_thm_content"><p>   Given manifolds \(W\), \(X\), \(Y\) and \(Z\) and smooth open embeddings \(g : Z → Y\) and \(h : W → X\), the relation induced (in the sense of <a href="chap-global.html#def:transfer_map">Definition 3.19</a>) in \(J^1(W, Z)\) by a ample relation in \(J^1(X, Y)\) is ample. </p>
+</div>
+    </li>
+    
+  </ul>
   
 </section>
 
