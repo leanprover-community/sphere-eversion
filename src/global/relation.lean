@@ -1,6 +1,7 @@
 import local.relation
 import global.one_jet_sec
 import global.smooth_embedding
+import to_mathlib.topology.algebra.module
 
 noncomputable theory
 
@@ -192,11 +193,10 @@ open basic_smooth_vector_bundle_core
 { to_fun := F.localize_fun g h,
   is_sec' := λ x, rfl,
   smooth' := begin
-  simp_rw [one_jet_sec.localize_fun, h.fderiv_coe, g.fderiv_symm_coe],
+  simp_rw [one_jet_sec.localize_fun, h.fderiv_coe, g.fderiv_symm_coe,
+    mfderiv_congr_point (g.right_inv (hF $ mem_range_self _))],
   refine smooth.one_jet_comp IX IN IY IX (λ x', F.bs (h x')) _ _,
-  { -- why doesn't `simp_rw` do the following?
-    conv { congr, skip, skip, funext, rw [g.right_inv (hF $ mem_range_self _)] },
-    exact λ x, (g.smooth_at_inv $ hF $ mem_range_self x).one_jet_ext.comp _
+  { exact λ x, (g.smooth_at_inv $ hF $ mem_range_self x).one_jet_ext.comp _
       (F.smooth_bs.comp h.smooth_to).cont_mdiff_at },
   exact smooth.one_jet_comp IX IM IN IX h (F.smooth_eta.comp h.smooth_to) h.smooth_to.one_jet_ext
   end }
@@ -213,10 +213,9 @@ begin
       continuous_linear_equiv.apply_symm_apply] },
 end
 
-lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
-  (hF : range (F.bs ∘ h) ⊆ range g)
-  (hFG : G 0 = F.localize g h hF) : G.unlocalize g h 0 = F :=
-sorry
+lemma one_jet_sec.localize_bs (hF : range (F.bs ∘ h) ⊆ range g) :
+  (F.localize g h hF).bs = g.inv_fun ∘ F.bs ∘ h :=
+rfl
 
 lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X} :
   F.localize g h hF x ∈ R.localize g h ↔ F (h x) ∈ R :=
@@ -227,7 +226,24 @@ sorry
 
 lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
   (F.localize g h hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
-by { simp_rw [one_jet_sec.is_holonomic_at], sorry }
+begin
+  have : mfderiv IX IY (g.inv_fun ∘ F.bs ∘ h) x =
+    (g.fderiv (g.inv_fun (F.bs (h x)))).symm.to_continuous_linear_map.comp
+    ((mfderiv IM IN F.bs (h x)).comp (h.fderiv x).to_continuous_linear_map),
+  { have h1 : mdifferentiable_at IN IY g.inv_fun (F.bs (h x)) :=
+      (g.smooth_at_inv $ hF $ mem_range_self _).mdifferentiable_at le_top,
+    have h2 : mdifferentiable_at IM IN F.bs (h x) :=
+      F.smooth_bs.smooth_at.mdifferentiable_at le_top,
+    have h3 : mdifferentiable_at IX IM h x :=
+      h.smooth_to.smooth_at.mdifferentiable_at le_top,
+    rw [mfderiv_comp x h1 (h2.comp x h3), mfderiv_comp x h2 h3,
+      ← g.fderiv_symm_coe' (hF $ mem_range_self _)],
+    refl, },
+  simp_rw [one_jet_sec.is_holonomic_at],
+  rw [mfderiv_congr (F.localize_bs g h hF), F.localize_to_fun, this, one_jet_sec.localize_fun],
+  simp_rw [← continuous_linear_equiv.coe_def_rev,
+    continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
+end
 
 /-- Underlying map of `htpy_one_jet_sec.unlocalize`. -/
 def htpy_one_jet_sec.unlocalize_fun (F : htpy_one_jet_sec IX X IY Y) (t : ℝ) (m : M) :
@@ -242,6 +258,11 @@ def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_
 { to_fun := F.unlocalize_fun g h,
   is_sec' := λ x m, rfl,
   smooth' := sorry }
+
+lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
+  (hF : range (F.bs ∘ h) ⊆ range g)
+  (hFG : G 0 = F.localize g h hF) : G.unlocalize g h 0 = F :=
+sorry
 
 /-- Localize a formal solution. -/
 def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) :

@@ -150,6 +150,7 @@ by simp_rw [smooth, smooth_at, cont_mdiff, Z.cont_mdiff_at_iff_target, forall_an
 
 end basic_smooth_vector_bundle_core
 
+
 lemma tangent_bundle_core_coord_change_achart [smooth_manifold_with_corners I M]
   (x x' : M) (z : H) :
   (tangent_bundle_core I M).coord_change (achart H x) (achart H x') z =
@@ -165,6 +166,19 @@ lemma cont_diff_on_coord_change' [smooth_manifold_with_corners I M]
 
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
 variables {𝕜 I}
+
+/-- A congruence lemma for `mfderiv`, (ab)using the fact that `tangent_space I' (f x)` is
+definitionally equal to `E'`. -/
+lemma mfderiv_congr_point {x' : M} (h : x = x') :
+  @eq (E →L[𝕜] E') (mfderiv I I' f x) (mfderiv I I' f x') :=
+by subst h
+
+/-- A congruence lemma for `mfderiv`, (ab)using the fact that `tangent_space I' (f x)` is
+definitionally equal to `E'`. -/
+lemma mfderiv_congr {f' : M → M'} (h : f = f') :
+  @eq (E →L[𝕜] E') (mfderiv I I' f x) (mfderiv I I' f' x) :=
+by subst h
+
 
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
   (hf : cont_mdiff_at I I' n f x) (hmn : m + 1 ≤ n) :
