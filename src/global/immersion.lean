@@ -1,6 +1,6 @@
 import geometry.manifold.instances.sphere
 
-import global.relation
+import global.gromov
 
 noncomputable theory
 
@@ -17,6 +17,10 @@ variables
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
 {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+
+{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+{G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
+(N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
@@ -38,9 +42,20 @@ lemma immersion_iff_one_jet (f : M → M') :
   immersion I I' f ↔ ∀ m, one_jet_ext I I' f m ∈ immersion_rel I M I' M' :=
 by simp [immersion, one_jet_ext, immersion_rel]
 
-/-
-TODO: state the h-principle for immersions in positive codimension.
--/
+variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
+
+lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
+  (immersion_rel I M I' M').ample :=
+sorry
+
+/-- parametric h-principle for immersions. -/
+theorem immersion_rel_satisfies_h_principle_with (h : finrank ℝ E < finrank ℝ E') :
+  (immersion_rel I M I' M').satisfies_h_principle_with J N :=
+begin
+  apply (immersion_rel_ample I I' h).satisfies_h_principle_with J N,
+  have : is_open {L : E →L[ℝ] E' | injective L} := continuous_linear_map.is_open_injective,
+  sorry
+end
 
 end general
 

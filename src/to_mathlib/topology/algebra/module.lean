@@ -15,7 +15,6 @@ variables {R₁ : Type*} {R₂ : Type*} {R₃ : Type*} [semiring R₁] [semiring
 {M₄ : Type*} [topological_space M₄] [add_comm_monoid M₄]
 [module R₁ M₁] [module R₁ M'₁] [module R₂ M₂] [module R₃ M₃]
 
-
 namespace continuous_linear_equiv
 
 include σ₂₁ σ₁₃

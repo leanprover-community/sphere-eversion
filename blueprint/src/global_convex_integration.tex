@@ -599,6 +599,9 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 
 \begin{lemma}
   \label{lem:open_ample_immersion}
+  \uses{def:ample_relation}
+  \leanok
+  \lean{immersion_rel_ample}
   The relation of immersions of $M$ into $N$ in positive codimension is open
   and ample.
 \end{lemma}
@@ -613,6 +616,8 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 \begin{theorem}[Gromov]
   \label{thm:open_ample}
   \uses{def:h-princ}
+  \leanok
+  \lean{rel_mfld.ample.satisfies_h_principle_with}
   If $\Rel$ is open and ample then it satisfies the relative and parametric
   $C^0$-dense $h$-principle.
 \end{theorem}
