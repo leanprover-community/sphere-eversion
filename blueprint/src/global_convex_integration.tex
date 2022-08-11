@@ -577,6 +577,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   By definition, the relation induced by $\Rel$ is
   $ψ_{g, h}⁻¹\Rel$ where
   $ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)$.
@@ -585,12 +586,12 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   those maps are linear isomorphisms. We compute the slice corresponding to $(σ, λ, v)$:
   \begin{align*}
     ψ_{g, h}⁻¹\Rel(σ, λ, v)
-    &= \left\{u ∈ T_wW \;\left|\; (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\Rel \right.\right\}\\
-    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘(φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \Rel \right.\right\}\\
+    &= \Conn_{φv}\left\{u ∈ T_wW \;\left|\; (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\Rel \right.\right\}\\
+    &= \Conn_{φv}\left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ (φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \Rel \right.\right\}\\
 %    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
 %    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
 %    &= \left\{u ∈ T_wW \;\left|\; Gu ∈ \Rel((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu) \right.\right\}\\
-    &= G⁻¹\Rel((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Hv).
+    &= G⁻¹\Rel(ψ_{g, h}σ, λ ∘ H⁻¹, Hv).
   \end{align*}
   Hence the slice $ψ_{g, h}⁻¹\Rel(σ, λ, v)$ is the image of a slice of $\Rel$
   under a linear isomorphism, hence ample.

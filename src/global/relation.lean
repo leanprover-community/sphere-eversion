@@ -21,8 +21,6 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 
 We also define
 * `one_jet_ext I I' f`: the 1-jet extension of a map `f : M → M'`
-
-
 -/
 
 section defs
@@ -44,7 +42,6 @@ variables
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
-local attribute [irreducible] tangent_space
 
 /-- A first-order differential relation for maps from `M` to `N` is a subset of the 1-jet bundle. -/
 @[reducible] def rel_mfld := set (one_jet_bundle I M I' M')
@@ -68,16 +65,25 @@ instance (R : rel_mfld I M I' M') :
 lemma formal_sol.is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
 
-example : @one_jet_space = sorry :=
-by { delta one_jet_space,  }
+/-- part of the construction of the slice `R(σ,p)`. -/
+def rel_mfld.preslice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
+  (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
+{w : TM' σ.1.2 | one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
+/-- For some reason `rw [mem_set_of_eq]` fails after unfolding `preslice`,
+but rewriting with this lemma works. -/
+lemma mem_preslice {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
+  {p : dual_pair' $ TM σ.1.1} {w : TM' σ.1.2} :
+  w ∈ R.preslice σ p ↔ one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
+iff.rfl
+
+/-- the slice `R(σ,p)`. -/
 def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
   (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
-connected_component_in {w : TM' σ.1.2 | one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
-  (σ.2 p.v)
+connected_component_in (R.preslice σ p) (σ.2 p.v)
 
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
-∀ {σ : one_jet_bundle I M I' M'} (p : dual_pair' $ TM σ.1.1), R σ → ample_set (R.slice σ p)
+∀ {σ : one_jet_bundle I M I' M'} (p : dual_pair' $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p)
 
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
@@ -182,8 +188,8 @@ sorry
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
 one_jet_bundle.transfer g h ⁻¹' R
 
-/-- Underlying map of `one_jet_sec.localize`. It maps `x` to
-  `(x, y, (D_y(g))⁻¹ ∘ F_φ(h x) ∘ D_x(h))` where `y : M := g⁻¹(F_{bs}(h x))`. -/
+/-- Underlying map of `one_jet_sec.localize`. It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(h x) ∘ D_x(h))`
+  where `y : M := g⁻¹(F_{bs}(h x))`. -/
 @[simps fst_fst fst_snd]
 def one_jet_sec.localize_fun : X → one_jet_bundle IX X IY Y :=
 λ x, let y := g.inv_fun (F.bs $ h x) in
@@ -225,28 +231,27 @@ lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X}
   F.localize g h hF x ∈ R.localize g h ↔ F (h x) ∈ R :=
 by rw [rel_mfld.localize, mem_preimage, transfer_localize F g h hF]
 
--- the `Gu` in the notes need to be `Hv`
 lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize g h).ample :=
 begin
   intros x p hx,
   have : (rel_mfld.localize g h R).slice x p =
     (g.fderiv x.1.2).symm '' R.slice (x.transfer g h) (p.map (h.fderiv x.1.1)),
-  { simp_rw [rel_mfld.slice, rel_mfld.localize, mem_preimage],
-    dsimp only,
+  { simp_rw [rel_mfld.slice, rel_mfld.localize],
     symmetry,
     refine ((g.fderiv x.1.2).symm.to_homeomorph.image_connected_component_in _).trans _,
-    { show one_jet_bundle.mk (h x.1.1) (g x.1.2) ((p.map $ h.fderiv x.1.1).update
-        (one_jet_bundle.transfer g h x).2 $ (one_jet_bundle.transfer g h x).2 $
-        (p.map (h.fderiv x.fst.fst)).v) ∈ R,
-      rw [dual_pair'.update_self],
-      exact hx },
+    { rw [mem_preslice, dual_pair'.update_self], exact hx },
     simp_rw [continuous_linear_equiv.coe_to_homeomorph,
       continuous_linear_equiv.image_symm_eq_preimage],
     congr' 1,
-    { rw [preimage_set_of_eq],  },
-    { } },
+    { ext v, simp_rw [mem_preimage, mem_preslice, mem_preimage],
+      dsimp only [one_jet_bundle.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
+      simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
+        one_jet_bundle.mk] },
+    { dsimp only [one_jet_bundle.transfer],
+      simp_rw [continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe, p.map_v,
+        continuous_linear_equiv.symm_apply_apply] } },
   rw [this],
-  refine (hR _ hx).image (g.fderiv x.1.2).symm
+  exact (hR _ hx).image (g.fderiv x.1.2).symm
 end
 
 lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
