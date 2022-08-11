@@ -5,6 +5,13 @@ noncomputable theory
 local notation u ` ⬝ `:70 φ:65 :=
   continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
 
+
+variables {𝕜 E F G Fₗ Gₗ X : Type*} [nontrivially_normed_field 𝕜] [normed_add_comm_group E]
+  [normed_add_comm_group Fₗ] [normed_add_comm_group Gₗ] [normed_add_comm_group F]
+  [normed_add_comm_group G]
+  [normed_space 𝕜 E] [normed_space 𝕜 Fₗ] [normed_space 𝕜 Gₗ] [normed_space 𝕜 F] [normed_space 𝕜 G]
+  [topological_space X]
+
 @[simp]
 lemma continuous_linear_map.to_span_singleton_zero (𝕜 : Type*) {E : Type*} [seminormed_add_comm_group E] [nontrivially_normed_field 𝕜]
   [normed_space 𝕜 E] : continuous_linear_map.to_span_singleton 𝕜 (0 : E) = 0 :=
@@ -82,17 +89,12 @@ lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nontrivially_normed_field �
   end }
 
 
-def continuous_linear_map.coprodL {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G] :
+def continuous_linear_map.coprodL :
   ((E →L[𝕜] G) × (F →L[𝕜] G)) →L[𝕜] (E × F →L[𝕜] G) :=
 (is_bounded_linear_map_coprod 𝕜 E F G).to_continuous_linear_map
 
 @[continuity]
-lemma continuous.coprodL {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
-  [normed_space 𝕜 E] {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-  {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
-  {X : Type*} [topological_space X]
+lemma continuous.coprodL
   {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).coprod (g x)) :=
 continuous_linear_map.coprodL.continuous.comp₂ hf hg
@@ -118,11 +120,12 @@ lemma continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} 
 hf.prodL' 𝕜 hg
 
 @[continuity]
-lemma continuous.compL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*} [normed_add_comm_group E]
-  [normed_add_comm_group Fₗ] [normed_add_comm_group Gₗ] [nontrivially_normed_field 𝕜]
-  [normed_space 𝕜 E] [normed_space 𝕜 Fₗ] [normed_space 𝕜 Gₗ]
-  {X : Type*} [topological_space X] {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ}
+lemma continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ}
   (hf : continuous f) (hg : continuous g) : continuous (λ x, (f x).comp (g x)) :=
 (continuous_linear_map.apply 𝕜 (E →L[𝕜] Gₗ) : (E →L[𝕜] Fₗ) →L[𝕜]
   ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous.comp₂ hg $
   (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.comp hf
+
+-- this might not be sufficient to prove that `immersion_rel` is open.
+lemma continuous_linear_map.is_open_injective : is_open {L : E →L[𝕜] F | function.injective L} :=
+sorry

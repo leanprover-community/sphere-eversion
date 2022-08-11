@@ -5,6 +5,20 @@ Authors: Patrick Massot, Floris van Doorn
 -/
 import to_mathlib.geometry.manifold.vector_bundle.basic_core_constructions
 
+/-!
+# 1-jet bundles
+
+This file contains the definition of the 1-jet bundle `J¹(M, M')`, also known as
+`one_jet_bundle I M I' M'`.
+
+We also define
+* `one_jet_ext I I' f : M → J¹(M, M')`: the 1-jet extension `j¹f` of a map `f : M → M'`
+
+We prove
+* If `f` is smooth, `j¹f` is smooth.
+* If `x ↦ (f₁ x, f₂ x, ϕ₁ x) : N → J¹(M₁, M₂)` and `x ↦ (f₂ x, f₃ x, ϕ₂ x) : N → J¹(M₂, M₃)` are smooth, then so is `x ↦ (f₁ x, f₃ x, ϕ₂ x ∘ ϕ₁ x) : N → J¹(M₁, M₃)`.
+-/
+
 noncomputable theory
 
 open filter set equiv basic_smooth_vector_bundle_core
@@ -178,10 +192,6 @@ end
 lemma smooth.one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
 λ x, (hf x).smooth_at.one_jet_ext
-
-def one_jet_comp {x : M} {y : M'} {z : N} (h : one_jet_space I' J (y, z))
-  (g : one_jet_space I I' (x, y)) : one_jet_bundle I M J N :=
-one_jet_bundle.mk x z $ h.comp g
 
 variables (I I' J J')
 lemma smooth.one_jet_comp

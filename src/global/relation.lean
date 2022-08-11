@@ -3,11 +3,6 @@ import global.one_jet_sec
 import global.smooth_embedding
 import to_mathlib.topology.algebra.module
 
-noncomputable theory
-
-open set function filter charted_space smooth_manifold_with_corners
-open_locale topological_space manifold
-
 /-!
 # First order partial differential relations for maps between manifolds
 
@@ -18,10 +13,12 @@ relations for maps between vector spaces.
 Given manifolds `M` and `M'` modelled on `I` and `I'`, a first order partial differential relation
 for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 `one_jet_bundle I M I' M'`.
-
-We also define
-* `one_jet_ext I I' f`: the 1-jet extension of a map `f : M → M'`
 -/
+
+noncomputable theory
+
+open set function filter charted_space smooth_manifold_with_corners
+open_locale topological_space manifold
 
 section defs
 /-! ## Fundamental definitions -/
@@ -83,7 +80,7 @@ def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
 connected_component_in (R.preslice σ p) (σ.2 p.v)
 
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
-∀ {σ : one_jet_bundle I M I' M'} (p : dual_pair' $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p)
+∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair' $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p)
 
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
