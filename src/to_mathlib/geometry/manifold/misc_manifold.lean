@@ -131,23 +131,69 @@ by simp_rw [smooth, smooth_at, cont_mdiff, Z.cont_mdiff_at_iff_target, forall_an
 
 end basic_smooth_vector_bundle_core
 
+lemma cont_diff_within_at.comp_cont_mdiff_within_at
+  {g : F → F''} {f : M → F} {s : set M} {t : set F} {x : M}
+  (hg : cont_diff_within_at 𝕜 n g t (f x))
+  (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
+  cont_mdiff_within_at I 𝓘(𝕜, F'') n (g ∘ f) s x :=
+begin
+  rw cont_mdiff_within_at_iff at *,
+  refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
+  rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
+  apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
+  exact (inter_subset_left _ _).trans (preimage_mono h)
+end
 
-lemma tangent_bundle_core_coord_change_achart [smooth_manifold_with_corners I M]
-  (x x' : M) (z : H) :
+lemma cont_diff_at.comp_cont_mdiff_at {g : F → F''} {f : M → F} {x : M}
+  (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, F'') n (g ∘ f) x :=
+hg.comp_cont_mdiff_within_at hf subset.rfl
+
+lemma cont_diff.comp_cont_mdiff {g : F → F''} {f : M → F}
+  (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
+  cont_mdiff I 𝓘(𝕜, F'') n (g ∘ f) :=
+λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
+
+variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
+
+-- this can be useful to see where we (ab)use definitional equalities
+-- local attribute [irreducible] tangent_space
+
+/-!
+I don't know if these instances were intentionally not declared for `tangent_space`
+(maybe to not endow it with a particular norm), but if we don't want them we need to redesign some
+other things.
+Note that `dual_pair.update` wants `F` to be a `normed_add_comm_group` (which seems to be pretty
+necessary for the definition -- although maybe we can get away with `has_continuous_smul` by
+redesigning some things?).
+In `rel_mfld.slice` we use `dual_pair.update` applied to `tangent_space`. If we don't add these
+instances, it is a miracle that Lean still accepts the definition, but what is going on is that Lean
+is unfolding the definition of `tangent_space`, realizing that `tangent_space I x = E` and
+`tangent_space I' y = E'` and using the `normed_add_comm_group` instances of these types.
+Note that this still uses these instances in a very sneaky way for the tangent space, but with
+additional detriment that up to reducible transparancy, the term is not type-correct
+(in other words: you have to unfold `tangent_space` to realize that the term is type-correct).
+This means that many tactics, like `simp`, `rw` and `dsimp` fail to rewrite within this term,
+because the result is not type correct up to reducible transparancy.
+This is a nightmare, so we declare these instances.
+(at least, this is what I think was going on, but unfortunately some issues still persisted after
+this.) -/
+instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
+instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
+
+lemma tangent_bundle_core_coord_change_achart (x x' : M) (z : H) :
   (tangent_bundle_core I M).coord_change (achart H x) (achart H x') z =
   fderiv_within 𝕜 (ext_chart_at I x' ∘ (ext_chart_at I x).symm) (range I) (I z) :=
 rfl
 
 variables (I)
 
-lemma cont_diff_on_coord_change' [smooth_manifold_with_corners I M]
-  {e e' : local_homeomorph M H} (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
+lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
+  (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
 (has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
 
-variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
-variables {𝕜 I}
-
+variables {I}
 /-- A congruence lemma for `mfderiv`, (ab)using the fact that `tangent_space I' (f x)` is
 definitionally equal to `E'`. -/
 lemma mfderiv_congr_point {x' : M} (h : x = x') :
@@ -227,30 +273,6 @@ begin
       (ext_chart_at I x₂).left_inv (mem_ext_chart_source I x₂)] },
   { simp_rw [function.comp_apply, (ext_chart_at I x).left_inv hx₂] }
 end
-
-lemma cont_diff_within_at.comp_cont_mdiff_within_at
-  {g : F → F''} {f : M → F} {s : set M} {t : set F} {x : M}
-  (hg : cont_diff_within_at 𝕜 n g t (f x))
-  (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
-  cont_mdiff_within_at I 𝓘(𝕜, F'') n (g ∘ f) s x :=
-begin
-  rw cont_mdiff_within_at_iff at *,
-  refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
-  rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
-  apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
-  exact (inter_subset_left _ _).trans (preimage_mono h)
-end
-
-lemma cont_diff_at.comp_cont_mdiff_at {g : F → F''} {f : M → F} {x : M}
-  (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, F'') n (g ∘ f) x :=
-hg.comp_cont_mdiff_within_at hf subset.rfl
-
-lemma cont_diff.comp_cont_mdiff {g : F → F''} {f : M → F}
-  (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
-  cont_mdiff I 𝓘(𝕜, F'') n (g ∘ f) :=
-λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
-
 -- the following proof takes very long in pure term mode
 lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F} {x : M}
   (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F'') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F) n f x) :
@@ -258,7 +280,9 @@ lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[�
 @cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ ((F →L[𝕜] F'') × (F' →L[𝕜] F)) _ _ _ _ _ _ _ _
   _ _ _ _ _
   (λ x, x.1.comp x.2) (λ x, (g x, f x)) x
-  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff, exact is_bounded_bilinear_map_comp }) (hg.prod_mk_space hf)
+  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff,
+    exact is_bounded_bilinear_map_comp })
+  (hg.prod_mk_space hf)
 
 lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F}
   (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F'') n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :

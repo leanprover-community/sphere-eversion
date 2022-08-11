@@ -10,11 +10,13 @@ import to_mathlib.linear_algebra.basic
 
 noncomputable theory
 
-open function
+open function continuous_linear_map
 
 section no_norm
-variables (E : Type*) [add_comm_group E] [module ℝ E] [topological_space E] (F : Type*)
-                        [normed_add_comm_group F] [normed_space ℝ F]
+variables (E : Type*) {E' F G : Type*}
+variables [add_comm_group E] [module ℝ E] [topological_space E]
+variables [add_comm_group E'] [module ℝ E'] [topological_space E']
+variables [normed_add_comm_group F] [normed_space ℝ F] [normed_add_comm_group G] [normed_space ℝ G]
 
 -- TODO: move mathlib's dual_pair out of the root namespace!
 
@@ -33,7 +35,7 @@ local attribute [simp] continuous_linear_map.to_span_singleton_apply
 lemma ker_pi_ne_top (p : dual_pair' E) : p.π.ker ≠ ⊤ :=
 begin
   intro H,
-  have : (p.π : E →ₗ[ℝ]  ℝ) p.v = 1 := p.pairing,
+  have : (p.π : E →ₗ[ℝ] ℝ) p.v = 1 := p.pairing,
   simpa [linear_map.ker_eq_top.mp H]
 end
 
@@ -100,9 +102,33 @@ begin
 end
 
 /-- Map a dual pair under a linear equivalence. -/
-@[simps] def map (p : dual_pair' E) (L : E ≃L[ℝ] F) : dual_pair' F :=
-⟨p.π.comp L.symm.to_continuous_linear_map, L p.v,
-  (congr_arg p.π $ L.symm_apply_apply p.v).trans p.pairing⟩
+@[simps] def map (p : dual_pair' E) (L : E ≃L[ℝ] E') : dual_pair' E' :=
+⟨p.π ∘L ↑L.symm, L p.v, (congr_arg p.π $ L.symm_apply_apply p.v).trans p.pairing⟩
+
+lemma update_comp_left (p : dual_pair' E) (ψ : F →L[ℝ] G) (φ : E →L[ℝ] F) (w : F) :
+  p.update (ψ ∘L φ) (ψ w) = ψ ∘L p.update φ w :=
+begin
+  ext1 u,
+  simp only [update, add_apply, continuous_linear_map.comp_apply, to_span_singleton_apply,
+    ψ.map_add, ψ.map_smul, ψ.map_sub],
+end
+
+lemma update_comp_right (p : dual_pair' E) (ψ : E' →L[ℝ] F) (φ : E ≃L[ℝ] E') (w : F) :
+  p.update (ψ ∘L ↑φ) w = (p.map φ).update ψ w ∘L ↑φ :=
+begin
+  ext1 u,
+  simp only [update, add_apply, continuous_linear_map.comp_apply, to_span_singleton_apply, map,
+    continuous_linear_equiv.coe_coe, φ.symm_apply_apply],
+end
+
+lemma map_update_comp_right (p : dual_pair' E) (ψ : E →L[ℝ] F) (φ : E ≃L[ℝ] E') (w : F) :
+  (p.map φ).update (ψ ∘L ↑φ.symm) w = p.update ψ w ∘L ↑φ.symm :=
+begin
+  -- todo: use `update_comp_right`
+  ext1 u,
+  simp only [update, add_apply, continuous_linear_map.comp_apply, to_span_singleton_apply, map,
+    continuous_linear_equiv.coe_coe, φ.symm_apply_apply],
+end
 
 end dual_pair'
 end no_norm
@@ -115,7 +141,8 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
 to use `cont_diff_clm_apply` and `continuous_clm_apply`. -/
 
-lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair' E) {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
+lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair' E)
+  {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
   {φ : G → (E →L[ℝ] F)} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
   𝒞 ∞ (λ g, p.update (φ g) (w g)) :=
 begin
@@ -125,7 +152,8 @@ begin
   exact (hw.sub (cont_diff_clm_apply.mp hφ p.v)).const_smul _,
 end
 
-lemma continuous_update [finite_dimensional ℝ E] (p : dual_pair' E) {X : Type*} [topological_space X]
+lemma continuous_update [finite_dimensional ℝ E] (p : dual_pair' E)
+  {X : Type*} [topological_space X]
   {φ : X → (E →L[ℝ] F)} (hφ : continuous φ) {w : X → F} (hw : continuous w) :
   continuous (λ g, p.update (φ g) (w g)) :=
 begin
