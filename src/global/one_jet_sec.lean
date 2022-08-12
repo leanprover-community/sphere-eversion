@@ -40,26 +40,22 @@ variables (I I' M M')
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 structure one_jet_sec :=
-(to_fun : M → one_jet_bundle I M I' M')
-(is_sec' : ∀ x : M, (to_fun x).1.1 = x)
-(smooth' : smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) to_fun)
+(bs : M → M')
+(ϕ : ∀ x : M, tangent_space I x →L[𝕜] tangent_space I' (bs x))
+(smooth' : smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_bundle.mk x (bs x) (ϕ x)))
 
-instance : has_coe_to_fun (one_jet_sec I M I' M') (λ S, M → one_jet_bundle I M I' M'):=
-⟨one_jet_sec.to_fun⟩
+instance : has_coe_to_fun (one_jet_sec I M I' M') (λ S, M → one_jet_bundle I M I' M') :=
+⟨λ S x, one_jet_bundle.mk x (S.bs x) (S.ϕ x)⟩
 
 variables {I I' M M'}
 
 namespace one_jet_sec
 
-lemma is_sec (F : one_jet_sec I M I' M') (x : M) : (F x).1.1 = x :=
-F.is_sec' x
-
-/-- The base map corresponding to a section of J¹(M, M') → M. -/
-def bs (F : one_jet_sec I M I' M') : M → M' :=
-λ x, (F x).1.2
-
-lemma fst_eq (F : one_jet_sec I M I' M') (x : M) : (F x).1 = (x, F.bs x) :=
-prod.ext (F.is_sec x) rfl
+lemma coe_apply (F : one_jet_sec I M I' M') (x : M) : F x = ⟨(x, F.bs x), (F.ϕ x)⟩ := rfl
+lemma fst_eq (F : one_jet_sec I M I' M') (x : M) : (F x).1 = (x, F.bs x) := rfl
+lemma snd_eq (F : one_jet_sec I M I' M') (x : M) : (F x).2 = F.ϕ x := rfl
+lemma is_sec (F : one_jet_sec I M I' M') (x : M) : (F x).1.1 = x := rfl
+lemma bs_eq (F : one_jet_sec I M I' M') (x : M) : F.bs x = (F x).1.2 := rfl
 
 protected lemma smooth (F : one_jet_sec I M I' M') :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) F :=
@@ -67,7 +63,7 @@ F.smooth'
 
 lemma smooth_eta (F : one_jet_sec I M I' M') : smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
   (λ x, one_jet_bundle.mk x (F.bs x) (F x).2 : M → one_jet_bundle I M I' M') :=
-by { convert F.smooth, ext1, rw [one_jet_bundle.mk, ← F.fst_eq x, sigma.eta] }
+F.smooth
 
 lemma smooth_bs (F : one_jet_sec I M I' M') : smooth I I' F.bs :=
 (smooth_snd.comp $ basic_smooth_vector_bundle_core.smooth_proj _).comp F.smooth
@@ -93,7 +89,7 @@ end one_jet_sec
 
 /-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/
 def one_jet_ext_sec (f : C^∞⟮I, M; I', M'⟯) : one_jet_sec I M I' M' :=
-⟨one_jet_ext I I' f, λ x, rfl, f.smooth.one_jet_ext⟩
+⟨f, mfderiv I I' f, f.smooth.one_jet_ext⟩
 
 end general
 
@@ -115,14 +111,15 @@ variables
 /-- A family of jet sections indexed by manifold `N` is a function from `N` into jet sections
   in such a way that the function is smooth as a function of all arguments. -/
 structure family_one_jet_sec :=
-(to_fun : N → M → one_jet_bundle I M I' M')
-(is_sec' : ∀ (t : N) (x : M), (to_fun t x).1.1 = x)
-(smooth' : smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry to_fun))
+(bs : N → M → M')
+(ϕ : ∀ (n : N) (m : M), tangent_space I m →L[ℝ] tangent_space I' (bs n m))
+(smooth' : smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E'))
+  (λ p : N × M, one_jet_bundle.mk p.2 (bs p.1 p.2) (ϕ p.1 p.2)))
 
 instance : has_coe_to_fun (family_one_jet_sec I M I' M' J N) (λ S, N → one_jet_sec I M I' M') :=
 ⟨λ S t,
- { to_fun := S.to_fun t,
-   is_sec' := S.is_sec' t,
+ { bs := S.bs t,
+   ϕ := S.ϕ t,
    smooth' := λ x, (S.smooth' (t, x)).comp x $ smooth_at_const.prod_mk smooth_at_id }⟩
 
 namespace family_one_jet_sec
@@ -132,17 +129,13 @@ variables {I M I' M' J N J' N'}
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) :
   family_one_jet_sec I M I' M' J N :=
-{ to_fun := λ t, S (f t),
-  is_sec' := λ t, S.is_sec' (f t),
+{ bs := λ t, S.bs (f t),
+  ϕ := λ t, S.ϕ (f t),
   smooth' := λ x, (S.smooth' (f x.1, x.2)).comp x $ (f.smooth.smooth_at).prod_map' smooth_at_id }
 
-def prod_fun (S : family_one_jet_sec I M I' M' J N) (m : M) (n : N) :
-  one_jet_bundle (I.prod J) (M × N) I' M' :=
-one_jet_bundle.mk (m, n) ((S n).bs m) ((S n m).2 ∘L sorry ∘L mfderiv (I.prod J) I prod.fst (m, n))
-
 def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
-{ to_fun := λ p, S.prod_fun p.1 p.2,
-  is_sec' := λ p, prod.mk.eta,
+{ bs := λ p, S.bs p.2 p.1,
+  ϕ := λ p, S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
   smooth' := sorry }
 
 end family_one_jet_sec
