@@ -1,4 +1,5 @@
 import to_mathlib.partition
+import to_mathlib.geometry.manifold.misc_manifold
 
 noncomputable theory
 
