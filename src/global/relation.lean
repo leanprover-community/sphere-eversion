@@ -194,6 +194,7 @@ def one_jet_sec.localize_fun : X → one_jet_bundle IX X IY Y :=
   ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x)))⟩
 
 open basic_smooth_vector_bundle_core
+
 /-- Localize a one-jet section in two open embeddings. -/
 @[simps] def one_jet_sec.localize (hF : range (F.bs ∘ h) ⊆ range g) :
   one_jet_sec IX X IY Y :=

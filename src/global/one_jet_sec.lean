@@ -136,6 +136,15 @@ def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'�
   is_sec' := λ t, S.is_sec' (f t),
   smooth' := λ x, (S.smooth' (f x.1, x.2)).comp x $ (f.smooth.smooth_at).prod_map' smooth_at_id }
 
+def prod_fun (S : family_one_jet_sec I M I' M' J N) (m : M) (n : N) :
+  one_jet_bundle (I.prod J) (M × N) I' M' :=
+one_jet_bundle.mk (m, n) ((S n).bs m) ((S n m).2 ∘L sorry ∘L mfderiv (I.prod J) I prod.fst (m, n))
+
+def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
+{ to_fun := λ p, S.prod_fun p.1 p.2,
+  is_sec' := λ p, prod.mk.eta,
+  smooth' := sorry }
+
 end family_one_jet_sec
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/

@@ -222,6 +222,11 @@ begin
   exact (tangent_bundle_core I' M').coord_change_comp_eq_self' (mem_achart_source H' (f2 x')) hx' _
 end
 
+/-- Used for `Ψ` in the notes. -/
+def map_left (f : M → N) (Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] tangent_space I x) :
+  one_jet_bundle I M I' M' → one_jet_bundle J N I' M' :=
+λ p, one_jet_bundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
+
 end maps
 
 local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')
