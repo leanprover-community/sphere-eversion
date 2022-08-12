@@ -52,8 +52,9 @@ variables {I M I' M'} {R : rel_mfld I M I' M'}
 (is_sol : ∀ x, one_jet_ext I I' f x ∈ R)
 
 /-- A formal solution to a local relation `R` over a set `U`. -/
-@[ext] structure formal_sol (R : rel_mfld I M I' M') extends one_jet_sec I M I' M' :=
-(is_sol' : ∀ x : M, to_fun x ∈ R)
+@[ext] structure formal_sol (R : rel_mfld I M I' M') extends
+  to_one_jet_sec : one_jet_sec I M I' M' :=
+(is_sol' : ∀ x : M, to_one_jet_sec x ∈ R)
 
 instance (R : rel_mfld I M I' M') :
   has_coe_to_fun (formal_sol R) (λ S, M → one_jet_bundle I M I' M') :=
@@ -84,8 +85,9 @@ def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
 
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
-structure family_formal_sol (R : rel_mfld I M I' M') extends family_one_jet_sec I M I' M' J N :=
-(is_sol' : ∀ (t : N) (x : M), to_fun t x ∈ R)
+structure family_formal_sol (R : rel_mfld I M I' M') extends
+  to_family_one_jet_sec : family_one_jet_sec I M I' M' J N :=
+(is_sol' : ∀ (t : N) (x : M), to_family_one_jet_sec t x ∈ R)
 
 instance : has_coe_to_fun (family_formal_sol J N R) (λ S, N → formal_sol R) :=
 ⟨λ S t, ⟨S.to_family_one_jet_sec t, S.is_sol' t⟩⟩
@@ -185,8 +187,7 @@ sorry
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
 one_jet_bundle.transfer g h ⁻¹' R
 
-/-- Underlying map of `one_jet_sec.localize`. It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(h x) ∘ D_x(h))`
-  where `y : M := g⁻¹(F_{bs}(h x))`. -/
+/-- Underlying map of `one_jet_sec.localize`.  -/
 @[simps fst_fst fst_snd]
 def one_jet_sec.localize_fun : X → one_jet_bundle IX X IY Y :=
 λ x, let y := g.inv_fun (F.bs $ h x) in
@@ -195,11 +196,13 @@ def one_jet_sec.localize_fun : X → one_jet_bundle IX X IY Y :=
 
 open basic_smooth_vector_bundle_core
 
-/-- Localize a one-jet section in two open embeddings. -/
+/-- Localize a one-jet section in two open embeddings.
+  It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(h x) ∘ D_x(h))` where `y : M := g⁻¹(F_{bs}(h x))`. -/
 @[simps] def one_jet_sec.localize (hF : range (F.bs ∘ h) ⊆ range g) :
   one_jet_sec IX X IY Y :=
-{ to_fun := F.localize_fun g h,
-  is_sec' := λ x, rfl,
+{ bs := λ x, g.inv_fun (F.bs $ h x),
+  ϕ := λ x, let y := g.inv_fun (F.bs $ h x) in
+  (↑(g.fderiv y).symm : TN (g y) →L[ℝ] TY y) ∘L ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x))),
   smooth' := begin
   simp_rw [one_jet_sec.localize_fun, h.fderiv_coe, g.fderiv_symm_coe,
     mfderiv_congr_point (g.right_inv (hF $ mem_range_self _))],
@@ -212,16 +215,18 @@ open basic_smooth_vector_bundle_core
 lemma transfer_localize (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
   (F.localize g h hF x).transfer g h = F (h x) :=
 begin
-  rw [one_jet_sec.localize_to_fun, one_jet_sec.localize_fun, one_jet_bundle.transfer],
+  rw [one_jet_sec.coe_apply, one_jet_sec.localize_bs, one_jet_sec.localize_ϕ,
+    one_jet_bundle.transfer],
+  dsimp only,
   ext,
-  { simp_rw [F.is_sec] },
-  { simp_rw [g.right_inv (hF $ mem_range_self x), one_jet_sec.bs] },
+  { refl },
+  { simp_rw [g.right_inv (hF $ mem_range_self x), function.comp_apply, F.bs_eq] },
   { apply heq_of_eq, dsimp only, ext v,
     simp_rw [continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe,
       continuous_linear_equiv.apply_symm_apply] },
 end
 
-lemma one_jet_sec.localize_bs (hF : range (F.bs ∘ h) ⊆ range g) :
+lemma one_jet_sec.localize_bs_fun (hF : range (F.bs ∘ h) ⊆ range g) :
   (F.localize g h hF).bs = g.inv_fun ∘ F.bs ∘ h :=
 rfl
 
@@ -268,23 +273,17 @@ begin
       ← g.fderiv_symm_coe' (hF $ mem_range_self _)],
     refl, },
   simp_rw [one_jet_sec.is_holonomic_at],
-  rw [mfderiv_congr (F.localize_bs g h hF), F.localize_to_fun, this, one_jet_sec.localize_fun],
+  rw [mfderiv_congr (F.localize_bs_fun g h hF), one_jet_sec.snd_eq, F.localize_ϕ, this],
   simp_rw [← continuous_linear_equiv.coe_def_rev,
     continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
 end
 
-/-- Underlying map of `htpy_one_jet_sec.unlocalize`. -/
-def htpy_one_jet_sec.unlocalize_fun (F : htpy_one_jet_sec IX X IY Y) (t : ℝ) (m : M) :
-  one_jet_bundle IM M IN N :=
-⟨⟨m, g $ (F t).bs (h.inv_fun m)⟩,
-    (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
-      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map)⟩
-
 /-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
 -- Note(F): this is only well-defined on `univ × range h`, right?
 def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
-{ to_fun := F.unlocalize_fun g h,
-  is_sec' := λ x m, rfl,
+{ bs := λ t m , g $ (F t).bs (h.inv_fun m),
+  ϕ := λ t m, (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
+      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map),
   smooth' := sorry }
 
 lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
