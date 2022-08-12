@@ -126,6 +126,13 @@ namespace family_one_jet_sec
 
 variables {I M I' M' J N J' N'}
 
+protected lemma smooth (S : family_one_jet_sec I M I' M' J N) :
+  smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (λ p : N × M, S p.1 p.2) := S.smooth'
+
+lemma smooth_bs (S : family_one_jet_sec I M I' M' J N) :
+  smooth (J.prod I) I' (λ p : N × M, S.bs p.1 p.2) :=
+(smooth_snd.comp $ basic_smooth_vector_bundle_core.smooth_proj _).comp S.smooth
+
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) :
   family_one_jet_sec I M I' M' J N :=
@@ -135,9 +142,33 @@ def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'�
 
 def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
 { bs := λ p, S.bs p.2 p.1,
-  ϕ := λ p, S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
-  smooth' := sorry }
+  ϕ := λ p, mfderiv J I' (λ z, S.bs z p.1) p.2 ∘L mfderiv (I.prod J) J prod.snd p +
+    S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
+  smooth' := begin
+    refine smooth.one_jet_add _ _,
+    { refine smooth.one_jet_comp J (λ p, p.2) _ smooth_snd.one_jet_ext,
+      -- have := S.smooth_bs.comp (smooth_id.prod_mk smooth_const), dsimp [function.comp] at this,
+      -- have := smooth.one_jet_ext this,
+      sorry
+       },
+    { refine smooth.one_jet_comp I (λ p, p.1) _ smooth_fst.one_jet_ext,
+      exact S.smooth.comp (smooth_snd.prod_mk smooth_fst) }
+  end  }
 
+/- -- attempted version with one one `mfderiv` left of addition
+def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
+{ bs := λ p, S.bs p.2 p.1,
+  ϕ := λ p, (mfderiv (I.prod J) I' (λ z : M × N, S.bs z.2 p.1) p : _) +
+    S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
+  smooth' := begin
+    refine smooth.one_jet_add _ _,
+    { refine smooth.one_jet_ext _, -- nope
+     },
+    { refine smooth.one_jet_comp I (λ p, p.1) _ smooth_fst.one_jet_ext,
+      exact S.smooth.comp (smooth_snd.prod_mk smooth_fst) }
+  end  }
+
+-/
 end family_one_jet_sec
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/

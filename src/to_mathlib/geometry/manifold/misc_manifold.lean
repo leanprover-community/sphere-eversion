@@ -290,6 +290,15 @@ lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] 
   cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
 λ x, (hg x).clm_comp (hf x)
 
+lemma cont_mdiff_at.add {f g : M → F} {x : M}
+  (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) (hg : cont_mdiff_at I 𝓘(𝕜, F) n g x) :
+  cont_mdiff_at I 𝓘(𝕜, F) n (λ x, f x + g x) x :=
+cont_diff_at.comp_cont_mdiff_at cont_diff_add.cont_diff_at (hf.prod_mk_space hg)
+
+lemma cont_mdiff.add {f g : M → F} (hf : cont_mdiff I 𝓘(𝕜, F) n f) (hg : cont_mdiff I 𝓘(𝕜, F) n g) :
+  cont_mdiff I 𝓘(𝕜, F) n (λ x, f x + g x) :=
+λ x, (hf x).add (hg x)
+
 end smooth_manifold_with_corners
 
 section maps

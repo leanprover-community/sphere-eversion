@@ -187,13 +187,6 @@ sorry
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
 one_jet_bundle.transfer g h ⁻¹' R
 
-/-- Underlying map of `one_jet_sec.localize`.  -/
-@[simps fst_fst fst_snd]
-def one_jet_sec.localize_fun : X → one_jet_bundle IX X IY Y :=
-λ x, let y := g.inv_fun (F.bs $ h x) in
-⟨(x, y), ((g.fderiv y).symm : TN (g y) →L[ℝ] TY y) ∘L
-  ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x)))⟩
-
 open basic_smooth_vector_bundle_core
 
 /-- Localize a one-jet section in two open embeddings.
@@ -204,12 +197,12 @@ open basic_smooth_vector_bundle_core
   ϕ := λ x, let y := g.inv_fun (F.bs $ h x) in
   (↑(g.fderiv y).symm : TN (g y) →L[ℝ] TY y) ∘L ((F $ h x).2 ∘L (h.fderiv x : TX x →L[ℝ] TM (h x))),
   smooth' := begin
-  simp_rw [one_jet_sec.localize_fun, h.fderiv_coe, g.fderiv_symm_coe,
-    mfderiv_congr_point (g.right_inv (hF $ mem_range_self _))],
-  refine smooth.one_jet_comp IX IN IY IX (λ x', F.bs (h x')) _ _,
-  { exact λ x, (g.smooth_at_inv $ hF $ mem_range_self x).one_jet_ext.comp _
-      (F.smooth_bs.comp h.smooth_to).cont_mdiff_at },
-  apply smooth.one_jet_comp IX IM IN IX h (F.smooth_eta.comp h.smooth_to) h.smooth_to.one_jet_ext
+    simp_rw [h.fderiv_coe, g.fderiv_symm_coe,
+      mfderiv_congr_point (g.right_inv (hF $ mem_range_self _))],
+    refine smooth.one_jet_comp IN (λ x', F.bs (h x')) _ _,
+    { exact λ x, (g.smooth_at_inv $ hF $ mem_range_self x).one_jet_ext.comp _
+        (F.smooth_bs.comp h.smooth_to).cont_mdiff_at },
+    apply smooth.one_jet_comp IM h (F.smooth_eta.comp h.smooth_to) h.smooth_to.one_jet_ext
   end }
 
 lemma transfer_localize (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
