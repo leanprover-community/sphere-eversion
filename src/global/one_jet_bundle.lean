@@ -253,7 +253,7 @@ begin
   have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ (hϕ'.2 x)),
   refine (h1.add h2).congr_of_eventually_eq (eventually_of_forall $ λ x', _),
   ext v,
-  simp_rw [function.comp_apply, one_jet_bundle_ext_chart_at,
+  simp_rw [pi.add_apply, function.comp_apply, one_jet_bundle_ext_chart_at,
     one_jet_bundle_mk_fst, one_jet_bundle_mk_snd, continuous_linear_map.add_apply,
     continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
     continuous_linear_map.map_add]

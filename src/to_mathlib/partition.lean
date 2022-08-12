@@ -156,7 +156,6 @@ variables
   [topological_space M] [charted_space H M]
   {s : set M} {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
-
 lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ)
   (s : set M) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n f s x :=
@@ -165,27 +164,9 @@ lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport
   (eventually_nhds_within_of_eventually_nhds $ not_mem_tsupport_iff_eventually_eq.mp hx)
   (image_eq_zero_of_nmem_tsupport hx)
 
-
 lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ) :
   cont_mdiff_at I 𝓘(ℝ, F) n f x :=
 cont_mdiff_within_at_of_not_mem hx n univ
-
-@[simp]
-lemma local_equiv.refl_prod_refl {α β : Type*} :
-  (local_equiv.refl α).prod (local_equiv.refl β) = local_equiv.refl (α × β) :=
-by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
-
-@[simp]
-lemma local_homeomorph.refl_prod_refl {α β : Type*} [topological_space α] [topological_space β] :
-  (local_homeomorph.refl α).prod (local_homeomorph.refl β) = local_homeomorph.refl (α × β) :=
-by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
-
-attribute [ext] model_with_corners charted_space
-lemma model_with_corners_self_prod : 𝓘(ℝ, E × F) = 𝓘(ℝ, E).prod 𝓘(ℝ, F) :=
-by { ext1, simp }
-
-lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
-by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
 
 lemma cont_mdiff_within_at.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
   {n : with_top ℕ} {s : set M} {x₀ : M}

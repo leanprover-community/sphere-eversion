@@ -1,4 +1,5 @@
 import geometry.manifold.diffeomorph
+import geometry.manifold.algebra.monoid
 
 open bundle set function filter
 open_locale manifold topological_space
@@ -40,6 +41,15 @@ variables {H}
 
 end charted_space
 
+@[simp]
+lemma local_equiv.refl_prod_refl {α β : Type*} :
+  (local_equiv.refl α).prod (local_equiv.refl β) = local_equiv.refl (α × β) :=
+by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
+
+@[simp]
+lemma local_homeomorph.refl_prod_refl {α β : Type*} [topological_space α] [topological_space β] :
+  (local_homeomorph.refl α).prod (local_homeomorph.refl β) = local_homeomorph.refl (α × β) :=
+by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
 
 namespace model_with_corners
 
@@ -69,6 +79,13 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
   {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
 variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
+
+attribute [ext] model_with_corners charted_space
+lemma model_with_corners_self_prod : 𝓘(𝕜, E × F) = 𝓘(𝕜, E).prod 𝓘(𝕜, F) :=
+by { ext1, simp }
+
+lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
+by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
 
 section boundary
 
@@ -290,14 +307,9 @@ lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] 
   cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
 λ x, (hg x).clm_comp (hf x)
 
-lemma cont_mdiff_at.add {f g : M → F} {x : M}
-  (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) (hg : cont_mdiff_at I 𝓘(𝕜, F) n g x) :
-  cont_mdiff_at I 𝓘(𝕜, F) n (λ x, f x + g x) x :=
-cont_diff_at.comp_cont_mdiff_at cont_diff_add.cont_diff_at (hf.prod_mk_space hg)
-
-lemma cont_mdiff.add {f g : M → F} (hf : cont_mdiff I 𝓘(𝕜, F) n f) (hg : cont_mdiff I 𝓘(𝕜, F) n g) :
-  cont_mdiff I 𝓘(𝕜, F) n (λ x, f x + g x) :=
-λ x, (hf x).add (hg x)
+instance has_smooth_add_self : has_smooth_add 𝓘(𝕜, F) F :=
+⟨by { convert cont_diff_add.cont_mdiff, exact model_with_corners_self_prod.symm,
+  exact charted_space_self_prod }⟩
 
 end smooth_manifold_with_corners
 
