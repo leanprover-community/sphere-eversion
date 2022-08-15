@@ -34,10 +34,10 @@ end
 
 section
 variables
-  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+  {E : Type*} [inner_product_space ℝ E]
   {M : Type*} [topological_space M] [sigma_compact_space M] [locally_compact_space M] [t2_space M]
   [nonempty M] [charted_space E M] [smooth_manifold_with_corners 𝓘(ℝ, E) M]
-  (E' : Type*) [normed_add_comm_group E'] [normed_space ℝ E']
+  (E' : Type*) [inner_product_space ℝ E']
   {M' : Type*} [topological_space M'] [sigma_compact_space M'] [locally_compact_space M']
   [t2_space M'] [nonempty M'] [charted_space E' M']
   [smooth_manifold_with_corners 𝓘(ℝ, E') M']
