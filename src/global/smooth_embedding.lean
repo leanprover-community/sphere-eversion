@@ -171,12 +171,24 @@ begin
   { simp [← smul_assoc, hr.ne.symm.is_unit.mul_inv_cancel], abel, },
 end
 
+-- TODO Generalise + move
+lemma cont_diff_homothety {n : with_top ℕ} (c : E) (r : ℝ) : cont_diff ℝ n (homothety c r) :=
+begin
+  have : ⇑(homothety c r) = λ x, r • (x - c) + c := by { ext, simp [homothety_apply], },
+  rw this,
+  exact (cont_diff_const.smul (cont_diff_id.sub cont_diff_const)).add cont_diff_const,
+end
+
 open_locale classical
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
 centred at a point `c` and sending `0` to `c`.
 
-The values for `r ≤ 0` are junk. -/
+The values for `r ≤ 0` are junk.
+
+TODO: split this up. We should really prove that an affine equiv is a diffeomorphism, that
+`homeomorph_unit_ball` is a smooth open embedding, and that composition of a smooth open embedding
+with a diffeomorphism is a smooth open embedding. -/
 def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
   open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E :=
 if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
@@ -191,8 +203,13 @@ if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
   left_inv' := sorry,
   right_inv' := sorry,
   open_map := sorry,
-  smooth_to := sorry, -- cont_diff_homeomorph_unit_ball
-  smooth_inv := sorry, } -- cont_diff_on_homeomorph_unit_ball_symm
+  smooth_to := (cont_diff_const.add $ (cont_diff_homothety 0 r).comp
+    cont_diff_homeomorph_unit_ball).cont_mdiff,
+  smooth_inv := cont_diff_on.cont_mdiff_on
+  begin
+    -- type_check cont_diff_on_homeomorph_unit_ball_symm,
+    sorry,
+  end }
 
 @[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
   open_smooth_embedding_to_ball c r 0 = c :=
