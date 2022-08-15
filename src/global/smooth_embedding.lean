@@ -95,6 +95,18 @@ lemma fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
   (mfderiv I' I f.inv_fun x : tangent_space I' x →L[𝕜] tangent_space I (f.inv_fun x)) :=
 by rw [fderiv_symm_coe, f.right_inv hx]
 
+variables (I M)
+
+/-- The identity map is a smooth open embedding. -/
+@[simps] def id : open_smooth_embedding I M I M :=
+{ to_fun := id,
+  inv_fun := id,
+  left_inv' := λ x, rfl,
+  right_inv' := λ x hx, rfl,
+  open_map := is_open_map.id,
+  smooth_to := smooth_id,
+  smooth_inv := smooth_on_id }
+
 end open_smooth_embedding
 
 end general
@@ -167,8 +179,15 @@ centred at a point `c` and sending `0` to `c`.
 The values for `r ≤ 0` are junk. -/
 def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
   open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E :=
+if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
 { to_fun := λ x, c +ᵥ homothety (0 : E) r (homeomorph_unit_ball x),
-  inv_fun := sorry,
+  inv_fun := λ y, if hy : y ∈ ball c r then homeomorph_unit_ball.symm
+    ⟨(homothety c r⁻¹ y) -ᵥ c,
+    begin
+      rw not_le at hr,
+      rw [mem_ball, dist_eq_norm, ← mul_one r, ← inv_mul_lt_iff hr] at hy,
+      simpa [norm_smul, homothety_apply, abs_eq_self.mpr hr.le],
+    end⟩ else 0,
   left_inv' := sorry,
   right_inv' := sorry,
   open_map := sorry,
@@ -177,11 +196,12 @@ def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
 
 @[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
   open_smooth_embedding_to_ball c r 0 = c :=
-by simp [open_smooth_embedding_to_ball]
+by simp [open_smooth_embedding_to_ball, h]
 
 @[simp] lemma range_open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
   range (open_smooth_embedding_to_ball c r) = ball c r :=
 begin
+  simp only [open_smooth_embedding_to_ball, h, not_le, dif_neg, open_smooth_embedding.coe_mk],
   change range ((λ (x : ball (0 : E) 1), c +ᵥ affine_map.homothety (0 : E) r (x : E)) ∘ _) = _,
   have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
   rw [range_comp, this, image_univ, range_affine_equiv_ball h, add_zero, mul_one],
