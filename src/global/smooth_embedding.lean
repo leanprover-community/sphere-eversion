@@ -202,7 +202,13 @@ if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
     end⟩ else 0,
   left_inv' := sorry,
   right_inv' := sorry,
-  open_map := sorry,
+  open_map :=
+  begin
+    change is_open_map ((λ x, c + homothety (0 : E) r x) ∘ (coe : ball (0 : E) 1 → E) ∘ _),
+    refine is_open_map.comp _ (is_open_ball.is_open_map_subtype_coe.comp
+      homeomorph_unit_ball.is_open_map),
+    exact (is_open_map_add_left c).comp (homothety_is_open_map 0 r $ ne_of_not_le hr),
+  end,
   smooth_to := (cont_diff_const.add $ (cont_diff_homothety 0 r).comp
     cont_diff_homeomorph_unit_ball).cont_mdiff,
   smooth_inv := cont_diff_on.cont_mdiff_on
@@ -219,7 +225,7 @@ by simp [open_smooth_embedding_to_ball, h]
   range (open_smooth_embedding_to_ball c r) = ball c r :=
 begin
   simp only [open_smooth_embedding_to_ball, h, not_le, dif_neg, open_smooth_embedding.coe_mk],
-  change range ((λ (x : ball (0 : E) 1), c +ᵥ affine_map.homothety (0 : E) r (x : E)) ∘ _) = _,
+  change range ((λ (x : ball (0 : E) 1), c +ᵥ homothety (0 : E) r (x : E)) ∘ _) = _,
   have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
   rw [range_comp, this, image_univ, range_affine_equiv_ball h, add_zero, mul_one],
 end
