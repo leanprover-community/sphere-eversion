@@ -193,13 +193,8 @@ def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
   open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E :=
 if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
 { to_fun := λ x, c +ᵥ homothety (0 : E) r (homeomorph_unit_ball x),
-  inv_fun := λ y, if hy : y ∈ ball c r then homeomorph_unit_ball.symm
-    ⟨(homothety c r⁻¹ y) -ᵥ c,
-    begin
-      rw not_le at hr,
-      rw [mem_ball, dist_eq_norm, ← mul_one r, ← inv_mul_lt_iff hr] at hy,
-      simpa [norm_smul, homothety_apply, abs_eq_self.mpr hr.le],
-    end⟩ else 0,
+  inv_fun := (λ y, if hy : y ∈ ball (0 : E) 1 then homeomorph_unit_ball.symm ⟨y, hy⟩ else 0) ∘
+    (λ y, (homothety c r⁻¹ y) -ᵥ c),
   left_inv' := sorry,
   right_inv' := sorry,
   open_map :=
@@ -213,8 +208,17 @@ if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
     cont_diff_homeomorph_unit_ball).cont_mdiff,
   smooth_inv := cont_diff_on.cont_mdiff_on
   begin
-    -- type_check cont_diff_on_homeomorph_unit_ball_symm,
-    sorry,
+    rw not_le at hr,
+    change cont_diff_on ℝ ⊤ _ (range ((λ (x : ball (0 : E) 1), c +ᵥ homothety (0 : E) r (x : E)) ∘ _)),
+    have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
+    rw [range_comp, this, image_univ, range_affine_equiv_ball hr, add_zero],
+    simp_rw [mul_one],
+    refine cont_diff_on.comp (cont_diff_on_homeomorph_unit_ball_symm (λ y hy, dif_pos hy))
+      (cont_diff.cont_diff_on _) (λ y hy, _),
+    { simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel],
+      exact cont_diff_const.smul (cont_diff_id.sub cont_diff_const), },
+    { rw [mem_ball, dist_eq_norm, ← mul_one r] at hy,
+      simpa [homothety_apply, norm_smul, abs_eq_self.mpr hr.le] using (inv_mul_lt_iff hr).mpr hy, },
   end }
 
 @[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
