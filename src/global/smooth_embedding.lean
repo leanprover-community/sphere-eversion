@@ -37,6 +37,10 @@ namespace open_smooth_embedding
 
 variables {I I' M M'} (f : open_smooth_embedding I M I' M')
 
+@[simp] lemma coe_mk (f g h₁ h₂ h₃ h₄ h₅) :
+  ⇑(⟨f, g, h₁, h₂, h₃, h₄, h₅⟩ : open_smooth_embedding I M I' M') = f :=
+rfl
+
 @[simp] lemma left_inv (x : M) : f.inv_fun (f x) = x := by apply f.left_inv'
 
 @[simp] lemma inv_fun_comp_coe : f.inv_fun ∘ f = id := funext f.left_inv
@@ -101,15 +105,15 @@ open metric (hiding mem_nhds_iff) function
 
 universe u
 
-variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
-  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-  (M : Type u) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(𝕜, E) M]
+variables
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+  (M : Type u) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(ℝ, E) M]
   [t2_space M] [locally_compact_space M] [sigma_compact_space M]
 
 /- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms. -/
 def open_smooth_embedding_of_subset_chart_target {x : M}
-  {f : open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E} (hf : range f ⊆ (chart_at E x).target) :
-  open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M :=
+  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ (chart_at E x).target) :
+  open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M :=
 { to_fun := (chart_at E x).symm ∘ f,
   inv_fun := f.inv_fun ∘ (chart_at E x),
   left_inv' := λ y, by simp [hf (mem_range_self y)],
@@ -135,43 +139,66 @@ def open_smooth_embedding_of_subset_chart_target {x : M}
   end }
 
 @[simp] lemma coe_open_smooth_embedding_of_subset_chart_target {x : M}
-  {f : open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E} (hf : range f ⊆ (chart_at E x).target) :
+  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ (chart_at E x).target) :
   (open_smooth_embedding_of_subset_chart_target M hf : E → M) = (chart_at E x).symm ∘ f :=
 rfl
 
-variables (𝕜)
+open affine_map
 
-#check cont_diff_homeomorph_unit_ball
-#check cont_diff_on_homeomorph_unit_ball_symm
+-- TODO Generalise + move
+@[simp] lemma range_affine_equiv_ball {p c : E} {s r : ℝ} (hr : 0 < r) :
+  range (λ (x : ball p s), c +ᵥ homothety p r (x : E)) = ball (c + p) (r * s) :=
+begin
+  ext,
+  simp only [homothety_apply, dist_eq_norm, vsub_eq_sub, vadd_eq_add, mem_range,
+    set_coe.exists, mem_ball, subtype.coe_mk, exists_prop],
+  refine ⟨_, λ h, ⟨p + r⁻¹ • (x - (c + p)), _, _⟩⟩,
+  { rintros ⟨y, h, rfl⟩,
+    simpa [norm_smul, abs_eq_self.mpr hr.le] using (mul_lt_mul_left hr).mpr h, },
+  { simpa [norm_smul, abs_eq_self.mpr hr.le] using (inv_mul_lt_iff hr).mpr h, },
+  { simp [← smul_assoc, hr.ne.symm.is_unit.mul_inv_cancel], abel, },
+end
+
+open_locale classical
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
 centred at a point `c` and sending `0` to `c`.
 
 The values for `r ≤ 0` are junk. -/
 def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
-  open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) E :=
-sorry
+  open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E :=
+{ to_fun := λ x, c +ᵥ homothety (0 : E) r (homeomorph_unit_ball x),
+  inv_fun := sorry,
+  left_inv' := sorry,
+  right_inv' := sorry,
+  open_map := sorry,
+  smooth_to := sorry, -- cont_diff_homeomorph_unit_ball
+  smooth_inv := sorry, } -- cont_diff_on_homeomorph_unit_ball_symm
 
 @[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
-  open_smooth_embedding_to_ball 𝕜 c r 0 = c :=
-sorry
+  open_smooth_embedding_to_ball c r 0 = c :=
+by simp [open_smooth_embedding_to_ball]
 
 @[simp] lemma range_open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
-  range (open_smooth_embedding_to_ball 𝕜 c r) = ball c r :=
-sorry
+  range (open_smooth_embedding_to_ball c r) = ball c r :=
+begin
+  change range ((λ (x : ball (0 : E) 1), c +ᵥ affine_map.homothety (0 : E) r (x : E)) ∘ _) = _,
+  have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
+  rw [range_comp, this, image_univ, range_affine_equiv_ball h, add_zero, mul_one],
+end
 
 variables (E) {M}
 
 lemma nice_atlas'
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
-  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M),
+  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M),
   t.countable ∧
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
   let W : M → ℝ → set M := λ x r,
-    (chart_at E x).symm ∘ open_smooth_embedding_to_ball 𝕜 (chart_at E x x) r '' (ball 0 1),
+    (chart_at E x).symm ∘ open_smooth_embedding_to_ball (chart_at E x x) r '' (ball 0 1),
   let B : M → ℝ → set M := charted_space.ball E,
   let p : M → ℝ → Prop :=
     λ x r, 0 < r ∧ ball (chart_at E x x) r ⊆ (chart_at E x).target ∧ ∃ j, B x r ⊆ s j,
@@ -180,7 +207,7 @@ begin
   { rintros x r ⟨h₁, h₂, -, -⟩,
     simp only [W],
     have aux :
-      open_smooth_embedding_to_ball 𝕜 (chart_at E x x) r '' ball 0 1 ⊆ (chart_at E x).target :=
+      open_smooth_embedding_to_ball (chart_at E x x) r '' ball 0 1 ⊆ (chart_at E x).target :=
       subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
     rw [image_comp, local_homeomorph.is_open_symm_image_iff_of_subset_target _ aux],
     exact open_smooth_embedding.open_map _ _ is_open_ball, },
@@ -190,7 +217,7 @@ begin
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
     exists_countable_locally_finite_cover surjective_id hp hW₀ hW₁ hB,
   refine ⟨M × ℝ, t, λ z, _, ht₁, λ z, _, _, _⟩,
-  { have h : range (open_smooth_embedding_to_ball 𝕜 (chart_at E z.1.1 z.1.1) z.1.2) ⊆
+  { have h : range (open_smooth_embedding_to_ball (chart_at E z.1.1 z.1.1) z.1.2) ⊆
       (chart_at E z.1.1).target,
     { have aux : 0 < z.val.snd := hp _ _ (ht₂ _ z.2),
       simpa only [range_open_smooth_embedding_to_ball, aux] using (ht₂ _ z.2).2.1, },
@@ -210,12 +237,12 @@ end
 variables [nonempty M]
 
 lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
-  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E) M,
+  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M,
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' 𝕜 E s_op cov,
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' E s_op cov,
   have htne : t.nonempty,
   { by_contra contra,
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
