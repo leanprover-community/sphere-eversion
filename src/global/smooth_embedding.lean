@@ -1,4 +1,5 @@
 import geometry.manifold.cont_mdiff
+import analysis.inner_product_space.calculus
 import global.indexing
 import to_mathlib.topology.paracompact
 import to_mathlib.topology.local_homeomorph
@@ -139,6 +140,9 @@ def open_smooth_embedding_of_subset_chart_target {x : M}
 rfl
 
 variables (𝕜)
+
+#check cont_diff_homeomorph_unit_ball
+#check cont_diff_on_homeomorph_unit_ball_symm
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
 centred at a point `c` and sending `0` to `c`.
