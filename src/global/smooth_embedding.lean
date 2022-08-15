@@ -223,3 +223,39 @@ begin
 end
 
 end without_boundary
+
+namespace open_smooth_embedding
+
+section updating
+
+variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group EX] [normed_space 𝕜 EX]
+  [normed_add_comm_group EM] [normed_space 𝕜 EM]
+  [normed_add_comm_group EY] [normed_space 𝕜 EY]
+  [normed_add_comm_group EN] [normed_space 𝕜 EN]
+  [topological_space X] [charted_space EX X] [smooth_manifold_with_corners 𝓘(𝕜, EX) X]
+  [topological_space M] [charted_space EM M] [smooth_manifold_with_corners 𝓘(𝕜, EM) M]
+  [metric_space Y]      [charted_space EY Y] [smooth_manifold_with_corners 𝓘(𝕜, EY) Y]
+  [metric_space N]      [charted_space EN N] [smooth_manifold_with_corners 𝓘(𝕜, EN) N]
+  (φ : open_smooth_embedding 𝓘(𝕜, EX) X 𝓘(𝕜, EM) M)
+  (ψ : open_smooth_embedding 𝓘(𝕜, EY) Y 𝓘(𝕜, EN) N)
+  (f : M → N) (g : X → Y)
+
+/-- This is definition `def:update` in the blueprint. -/
+def update [decidable_pred (∈ range φ)] (m : M) : N :=
+if m ∈ range φ then ψ (g (φ.inv_fun m)) else f m
+
+/-- This is lemma `lem:updating` in the blueprint. -/
+lemma nice_update_of_eq_outside_compact [decidable_pred (∈ range φ)]
+  {K : set X} {L : set Y} (hK : is_compact K) (hL : is_compact L)
+  (hf : smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) f) (hf' : f '' range φ ⊆ ψ '' L)
+  (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → ψ.inv_fun (f (φ x)) = g x) :
+  smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) (update φ ψ f g) ∧
+  (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
+    ∃ (η > (0 : ℝ)) (hη : ∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η),
+    ∀ m, dist (f m) (update φ ψ f g m)  < ε m) :=
+sorry
+
+end updating
+
+end open_smooth_embedding

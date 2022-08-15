@@ -21,17 +21,21 @@ compatible distance function on every manifold.
 
 \begin{definition}
   \label{def:update}
+  \lean{open_smooth_embedding.update}
+  \leanok
   Given smooth open embeddings $φ : X → M$ and $ψ : Y → N$, for any map
   $f : M → N$ such that $f(φ(X)) ⊂ ψ(Y)$, and every map $g : X → Y$, the update of $f$
   using $g$ is the map from $M$ to $N$ sending $m$ to $ψ ∘ g ∘ φ⁻¹(m)$ if
-  $m ∈ φ(E)$ and $f(m)$ otherwise.
+  $m ∈ φ(X)$ and $f(m)$ otherwise.
 \end{definition}
 
 \begin{lemma}
   \label{lem:updating}
   \uses{def:update}
+  \lean{open_smooth_embedding.nice_update_of_eq_outside_compact}
+  \leanok
   Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings. Let $K$ and $L$ be
-  compact sets in $E$ and $F$ respectively. Let $f : M → N$ be a smooth map such
+  compact sets in $X$ and $Y$ respectively. Let $f : M → N$ be a smooth map such
   that $f(φ(X)) ⊂ ψ(L)$. Let $g : X → Y$ be a smooth map which agrees with
   $ψ⁻¹∘f∘φ$ outside of $K$. Denote by $f'$ the update of $f$ using $g$.
   \begin{itemize}
@@ -39,13 +43,13 @@ compatible distance function on every manifold.
       $f'$ is a smooth map from $M$ to $N$.
     \item
       For every continuous function $ε : M → ℝ_{> 0}$, there is some positive
-      number $η$ such that, if $∀ e, ‖g(e) - ψ⁻¹∘f∘φ(e)‖ < η$ then
+      number $η$ such that, if $∀ x, ‖g(x) - ψ⁻¹∘f∘φ(x)‖ < η$ then
       $∀ m ∈ M, d(f(m), f'(m)) < ε(m)$.
   \end{itemize}
 \end{lemma}
 
 \begin{proof}
-  In order to prove smoothness of $f'$, note that $M = φ(E) ∪ φ(L)^c$. Both
+  In order to prove smoothness of $f'$, note that $M = φ(X) ∪ φ(L)^c$. Both
   those sets are open and $f'$ coincide with $ψ ∘ g ∘ φ⁻¹$ on the first one and
   $f$ on the second one.
 
