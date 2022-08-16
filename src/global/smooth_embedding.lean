@@ -179,6 +179,10 @@ begin
   exact (cont_diff_const.smul (cont_diff_id.sub cont_diff_const)).add cont_diff_const,
 end
 
+-- TODO Generalise + move
+@[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : E) r) : ∥(x : E)∥ < r :=
+by { cases x with x hx, simpa using hx, }
+
 open_locale classical
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
@@ -195,8 +199,19 @@ if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
 { to_fun := λ x, c +ᵥ homothety (0 : E) r (homeomorph_unit_ball x),
   inv_fun := (λ y, if hy : y ∈ ball (0 : E) 1 then homeomorph_unit_ball.symm ⟨y, hy⟩ else 0) ∘
     (λ y, (homothety c r⁻¹ y) -ᵥ c),
-  left_inv' := sorry,
-  right_inv' := sorry,
+  left_inv' := λ x,
+  begin
+    rw not_le at hr,
+    simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
+      hr.ne.symm.is_unit.inv_mul_cancel],
+  end,
+  right_inv' :=
+  begin
+    rw not_le at hr,
+    rintros y ⟨x, rfl⟩,
+    simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
+      hr.ne.symm.is_unit.inv_mul_cancel],
+  end,
   open_map :=
   begin
     change is_open_map ((λ x, c + homothety (0 : E) r x) ∘ (coe : ball (0 : E) 1 → E) ∘ _),
