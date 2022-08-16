@@ -340,7 +340,7 @@ variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
   [normed_add_comm_group EN] [normed_space 𝕜 EN]
   [topological_space X] [charted_space EX X] [smooth_manifold_with_corners 𝓘(𝕜, EX) X]
   [topological_space M] [charted_space EM M] [smooth_manifold_with_corners 𝓘(𝕜, EM) M] [t2_space M]
-  [metric_space Y]      [charted_space EY Y] [smooth_manifold_with_corners 𝓘(𝕜, EY) Y]
+  [metric_space Y]      [charted_space EY Y] [smooth_manifold_with_corners 𝓘(𝕜, EY) Y] [proper_space Y]
   [metric_space N]      [charted_space EN N] [smooth_manifold_with_corners 𝓘(𝕜, EN) N]
   (φ : open_smooth_embedding 𝓘(𝕜, EX) X 𝓘(𝕜, EM) M)
   (ψ : open_smooth_embedding 𝓘(𝕜, EY) Y 𝓘(𝕜, EN) N)
@@ -390,7 +390,12 @@ begin
     { refine ⟨V, h₂, _, (cont_mdiff_on_congr hK').mpr hf.cont_mdiff_on⟩,
       simpa [hm] using set.ext_iff.mp h₃ m, }, },
   { let K₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
-    have hK₁ : is_compact K₁, { sorry, },
+    have hK₁ : is_compact K₁,
+    { refine metric.is_compact_of_is_closed_bounded metric.is_closed_cthickening
+        (metric.bounded.cthickening $ is_compact.bounded $ hK.image _),
+      replace hf' : ∀ x, f (φ x) ∈ range ψ := λ x, hf' ⟨φ x, mem_range_self x, rfl⟩,
+      exact ψ.smooth_inv.continuous_on.comp_continuous
+        (hf.continuous.comp φ.smooth_to.continuous) hf', },
     have h₁ : uniform_continuous_on ψ K₁ :=
       hK₁.uniform_continuous_on_of_continuous ψ.smooth_to.continuous.continuous_on,
     have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,

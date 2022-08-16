@@ -23,9 +23,9 @@ compatible distance function on every manifold.
   \label{def:update}
   \lean{open_smooth_embedding.update}
   \leanok
-  Given smooth open embeddings $φ : X → M$ and $ψ : Y → N$, for any map
-  $f : M → N$ such that $f(φ(X)) ⊂ ψ(Y)$, and every map $g : X → Y$, the update of $f$
-  using $g$ is the map from $M$ to $N$ sending $m$ to $ψ ∘ g ∘ φ⁻¹(m)$ if
+  Given smooth open embeddings $φ : X → M$ and $ψ : Y → N$, the update of a map
+  $f : M → N$, using a map $g : X → Y$
+  is the map from $M$ to $N$ sending $m$ to $ψ ∘ g ∘ φ⁻¹(m)$ if
   $m ∈ φ(X)$ and $f(m)$ otherwise.
 \end{definition}
 
@@ -34,9 +34,9 @@ compatible distance function on every manifold.
   \uses{def:update}
   \lean{open_smooth_embedding.nice_update_of_eq_outside_compact}
   \leanok
-  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings. Let $K$ and $L$ be
-  compact sets in $X$ and $Y$ respectively. Let $f : M → N$ be a smooth map such
-  that $f(φ(X)) ⊂ ψ(L)$. Let $g : X → Y$ be a smooth map which agrees with
+  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings. Let $K$ be a
+  compact set in $X$. Let $f : M → N$ be a smooth map such
+  that $f(φ(X)) ⊂ ψ(Y)$. Let $g : X → Y$ be a smooth map which agrees with
   $ψ⁻¹∘f∘φ$ outside of $K$. Denote by $f'$ the update of $f$ using $g$.
   \begin{itemize}
     \item
@@ -49,22 +49,23 @@ compatible distance function on every manifold.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   In order to prove smoothness of $f'$, note that $M = φ(X) ∪ φ(K)^c$. Both
   those sets are open and $f'$ coincide with $ψ ∘ g ∘ φ⁻¹$ on the first one and
   $f$ on the second one.
 
   Let $ε$ be a positive continuous function on $M$. Since $K$ is compact, we get
   a positive number $ε₀$ such that $ε(m) ≥ ε₀$ for each $m$ in $K$. We denote by
-  $L₁$ the closed $1$-thickening of $ψ⁻¹∘f∘φ(K)$ in $F$. This is a compact set
-  so $ψ$ is uniformly continuous on $L₁$ and we get a positive $τ$ such that
-  for all $x$ and $y$ in $L₁$, $‖x - y‖ < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
+  $K₁$ the closed $1$-thickening of $ψ⁻¹∘f∘φ(K)$ in $F$. This is a compact set
+  so $ψ$ is uniformly continuous on $K₁$ and we get a positive $τ$ such that
+  for all $x$ and $y$ in $K₁$, $d(x, y) < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
 
   We now prove that $η = \min(τ, 1)$ is suitable. Assume that
-  $∀ e, ‖g(e) - ψ⁻¹∘f∘φ(e)‖ < η$. Let $m$ be a point in $M$. If $m$ isn't in
+  $∀ x, d(g(e), ψ⁻¹∘f∘φ(e)) < η$. Let $m$ be a point in $M$. If $m$ isn't in
   $φ(K)$ then $f'(m) = f(m)$ and in particular $d(f(m), f'(m)) < ε(m)$. Now
-  assume that $m = φ(e)$ for some $e$ in $K$. By assumption $‖g(e) - ψ⁻¹∘f∘φ(e)‖ < η$.
-  In particular $‖g(e) - ψ⁻¹∘f∘φ(e)‖ < 1$ hence $g(e)$ is in $L₁$. Since
-  $ψ⁻¹∘f∘φ(e)$ is also in $L₁$ and $‖g(e) - ψ⁻¹∘f∘φ(e)‖ < τ$, we get
+  assume that $m = φ(e)$ for some $e$ in $K$. By assumption $d(g(e), ψ⁻¹∘f∘φ(e)) < η$.
+  In particular $d(g(e), ψ⁻¹∘f∘φ(e)) < 1$ hence $g(e)$ is in $K₁$. Since
+  $ψ⁻¹∘f∘φ(e)$ is also in $K₁$ and $d(g(e), ψ⁻¹∘f∘φ(e)) < τ$, we get
   $d(ψ∘ g(e), ψ ∘ ψ⁻¹∘f∘φ(e)) < ε₀$. This precisely means that
   $d(f'(m), f(m)) < ε₀$. Since $m$ is in $K$, this is less than $ε(m)$.
 \end{proof}
