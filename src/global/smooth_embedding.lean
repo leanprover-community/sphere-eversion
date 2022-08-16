@@ -1,5 +1,6 @@
 import geometry.manifold.cont_mdiff
 import analysis.inner_product_space.calculus
+import analysis.calculus.affine_map
 import global.indexing
 import to_mathlib.topology.paracompact
 import to_mathlib.topology.local_homeomorph
@@ -173,11 +174,7 @@ end
 
 -- TODO Generalise + move
 lemma cont_diff_homothety {n : with_top ℕ} (c : E) (r : ℝ) : cont_diff ℝ n (homothety c r) :=
-begin
-  have : ⇑(homothety c r) = λ x, r • (x - c) + c := by { ext, simp [homothety_apply], },
-  rw this,
-  exact (cont_diff_const.smul (cont_diff_id.sub cont_diff_const)).add cont_diff_const,
-end
+(⟨homothety c r, homothety_continuous c r⟩ : E →A[ℝ] E).cont_diff
 
 -- TODO Generalise + move
 @[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : E) r) : ∥(x : E)∥ < r :=
