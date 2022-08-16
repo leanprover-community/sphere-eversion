@@ -1,3 +1,5 @@
+import topology.metric_space.hausdorff_distance
+import topology.uniform_space.compact_separated
 import geometry.manifold.cont_mdiff
 import analysis.inner_product_space.calculus
 import analysis.calculus.affine_map
@@ -10,6 +12,21 @@ noncomputable theory
 
 open set equiv
 open_locale manifold topological_space
+
+/-- A variant of `is_compact.exists_forall_le` for real-valued functions that does not require the
+assumption `s.nonempty`.
+
+TODO Move -/
+lemma is_compact.exists_forall_le' {β : Type*} [topological_space β]
+  {s : set β} (hs : is_compact s)
+  {f : β → ℝ} (hf : continuous_on f s) {a : ℝ} (hf' : ∀ b ∈ s, a < f b) :
+  ∃ a', a < a' ∧ ∀ b ∈ s, a' ≤ f b :=
+begin
+  rcases s.eq_empty_or_nonempty with rfl | hs',
+  { exact ⟨a + 1, by simp only [lt_add_iff_pos_right, zero_lt_one], λ b hb, by simpa using hb⟩, },
+  { obtain ⟨x, hx, hx'⟩ := hs.exists_forall_le hs' hf,
+    exact ⟨f x, hf' x hx, hx'⟩, },
+end
 
 section general
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
@@ -351,9 +368,8 @@ lemma nice_update_of_eq_outside_compact
   (hf : smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) f) (hf' : f '' range φ ⊆ ψ '' L)
   (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
   smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) (update φ ψ f g) ∧
-  (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
-    ∃ (η > (0 : ℝ)) (hη : ∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η),
-    ∀ m, dist (f m) (update φ ψ f g m) < ε m) :=
+  (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε), ∃ (η > (0 : ℝ)),
+    (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) → ∀ m, dist (f m) (update φ ψ f g m) < ε m) :=
 begin
   refine ⟨cont_mdiff_of_locally_cont_mdiff_on (λ m, _), λ ε hε hε', _⟩,
   { let U := range φ,
@@ -375,7 +391,17 @@ begin
         ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
     { refine ⟨V, h₂, _, (cont_mdiff_on_congr h₅).mpr hf.cont_mdiff_on⟩,
       simpa [hm] using set.ext_iff.mp h₃ m, }, },
-  { sorry, },
+  { let L₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
+    have hL₁ : is_compact L₁, { sorry, },
+    have h₁ : uniform_continuous_on ψ L₁ :=
+      hL₁.uniform_continuous_on_of_continuous ψ.smooth_to.continuous.continuous_on,
+    have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
+    obtain ⟨ε₀, hε₀, hε₀'⟩ :=
+      hK.exists_forall_le' (hε'.comp φ.smooth_to.continuous).continuous_on hεφ,
+    obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
+    refine ⟨min τ 1, by simp [hτ], λ hη m, _⟩,
+
+    sorry, },
 end
 
 end updating
