@@ -322,27 +322,61 @@ variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
   [normed_add_comm_group EY] [normed_space 𝕜 EY]
   [normed_add_comm_group EN] [normed_space 𝕜 EN]
   [topological_space X] [charted_space EX X] [smooth_manifold_with_corners 𝓘(𝕜, EX) X]
-  [topological_space M] [charted_space EM M] [smooth_manifold_with_corners 𝓘(𝕜, EM) M]
+  [topological_space M] [charted_space EM M] [smooth_manifold_with_corners 𝓘(𝕜, EM) M] [t2_space M]
   [metric_space Y]      [charted_space EY Y] [smooth_manifold_with_corners 𝓘(𝕜, EY) Y]
   [metric_space N]      [charted_space EN N] [smooth_manifold_with_corners 𝓘(𝕜, EN) N]
   (φ : open_smooth_embedding 𝓘(𝕜, EX) X 𝓘(𝕜, EM) M)
   (ψ : open_smooth_embedding 𝓘(𝕜, EY) Y 𝓘(𝕜, EN) N)
   (f : M → N) (g : X → Y)
+  [decidable_pred (∈ range φ)]
 
 /-- This is definition `def:update` in the blueprint. -/
-def update [decidable_pred (∈ range φ)] (m : M) : N :=
-if m ∈ range φ then ψ (g (φ.inv_fun m)) else f m
+def update (m : M) : N := if m ∈ range φ then ψ (g (φ.inv_fun m)) else f m
+
+@[simp] lemma update_of_nmem_range {m : M} (hm : m ∉ range φ) :
+  update φ ψ f g m = f m :=
+by simp [update, hm]
+
+@[simp] lemma update_of_mem_range {m : M} (hm : m ∈ range φ) :
+  update φ ψ f g m = ψ (g (φ.inv_fun m)) :=
+by simp [update, hm]
+
+@[simp] lemma update_apply_embedding (x : X) :
+  update φ ψ f g (φ x) = ψ (g x) :=
+by simp [update]
 
 /-- This is lemma `lem:updating` in the blueprint. -/
-lemma nice_update_of_eq_outside_compact [decidable_pred (∈ range φ)]
+lemma nice_update_of_eq_outside_compact
   {K : set X} {L : set Y} (hK : is_compact K) (hL : is_compact L)
   (hf : smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) f) (hf' : f '' range φ ⊆ ψ '' L)
-  (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → ψ.inv_fun (f (φ x)) = g x) :
+  (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
   smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) (update φ ψ f g) ∧
   (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
     ∃ (η > (0 : ℝ)) (hη : ∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η),
-    ∀ m, dist (f m) (update φ ψ f g m)  < ε m) :=
-sorry
+    ∀ m, dist (f m) (update φ ψ f g m) < ε m) :=
+begin
+  refine ⟨cont_mdiff_of_locally_cont_mdiff_on (λ m, _), λ ε hε hε', _⟩,
+  { let U := range φ,
+    let V := (φ '' K)ᶜ,
+    have h₂ : is_open V := is_open_compl_iff.mpr (hK.image φ.smooth_to.continuous).is_closed,
+    have h₃ : V ∪ U = univ,
+    { rw [← compl_subset_iff_union, compl_compl], exact image_subset_range φ K, },
+    have h₄ : ∀ m ∈ U, update φ ψ f g m = (ψ ∘ g ∘ φ.inv_fun) m := λ m hm, by simp [hm],
+    have h₅ : ∀ m ∈ V, update φ ψ f g m = f m,
+    { intros m hm,
+      by_cases hm' : m ∈ range φ,
+      { obtain ⟨x, rfl⟩ := hm',
+        replace hm : x ∉ K,
+        { rw mem_compl_eq at hm, contrapose! hm, exact mem_image_of_mem φ hm, } ,
+        simp [hg' x hm], },
+      { simp [hm', update], }, },
+    by_cases hm : m ∈ U,
+    { exact ⟨U, φ.is_open_range, hm, (cont_mdiff_on_congr h₄).mpr $
+        ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
+    { refine ⟨V, h₂, _, (cont_mdiff_on_congr h₅).mpr hf.cont_mdiff_on⟩,
+      simpa [hm] using set.ext_iff.mp h₃ m, }, },
+  { sorry, },
+end
 
 end updating
 
