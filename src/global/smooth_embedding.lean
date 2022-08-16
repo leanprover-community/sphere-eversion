@@ -369,8 +369,14 @@ lemma nice_update_of_eq_outside_compact
   (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
   smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) (update φ ψ f g) ∧
   (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε), ∃ (η > (0 : ℝ)),
-    (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) → ∀ m, dist (f m) (update φ ψ f g m) < ε m) :=
+    (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) → ∀ m, dist (update φ ψ f g m) (f m) < ε m) :=
 begin
+  have hK' : ∀ m ∉ φ '' K, update φ ψ f g m = f m := λ m hm, by
+  { by_cases hm' : m ∈ range φ,
+    { obtain ⟨x, rfl⟩ := hm',
+      replace hm : x ∉ K, { contrapose! hm, exact mem_image_of_mem φ hm, },
+      simp [hg' x hm], },
+    { simp [hm'], }, },
   refine ⟨cont_mdiff_of_locally_cont_mdiff_on (λ m, _), λ ε hε hε', _⟩,
   { let U := range φ,
     let V := (φ '' K)ᶜ,
@@ -378,18 +384,10 @@ begin
     have h₃ : V ∪ U = univ,
     { rw [← compl_subset_iff_union, compl_compl], exact image_subset_range φ K, },
     have h₄ : ∀ m ∈ U, update φ ψ f g m = (ψ ∘ g ∘ φ.inv_fun) m := λ m hm, by simp [hm],
-    have h₅ : ∀ m ∈ V, update φ ψ f g m = f m,
-    { intros m hm,
-      by_cases hm' : m ∈ range φ,
-      { obtain ⟨x, rfl⟩ := hm',
-        replace hm : x ∉ K,
-        { rw mem_compl_eq at hm, contrapose! hm, exact mem_image_of_mem φ hm, } ,
-        simp [hg' x hm], },
-      { simp [hm', update], }, },
     by_cases hm : m ∈ U,
     { exact ⟨U, φ.is_open_range, hm, (cont_mdiff_on_congr h₄).mpr $
         ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
-    { refine ⟨V, h₂, _, (cont_mdiff_on_congr h₅).mpr hf.cont_mdiff_on⟩,
+    { refine ⟨V, h₂, _, (cont_mdiff_on_congr hK').mpr hf.cont_mdiff_on⟩,
       simpa [hm] using set.ext_iff.mp h₃ m, }, },
   { let L₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
     have hL₁ : is_compact L₁, { sorry, },
@@ -400,8 +398,15 @@ begin
       hK.exists_forall_le' (hε'.comp φ.smooth_to.continuous).continuous_on hεφ,
     obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
     refine ⟨min τ 1, by simp [hτ], λ hη m, _⟩,
-
-    sorry, },
+    by_cases hm : m ∈ φ '' K, swap, { simp [hK', hm, hε m], },
+    obtain ⟨x, hx, rfl⟩ := hm,
+    refine lt_of_lt_of_le _ (hε₀' x hx),
+    simp only [update_apply_embedding],
+    have h₁ : g x ∈ L₁ :=
+      metric.mem_cthickening_of_dist_le _ _ _ _ ⟨x, hx, rfl⟩ (lt_min_iff.mp (hη x)).2.le,
+    have h₂ : f (φ x) ∈ range ψ := hf'.trans (image_subset_range ψ L) ⟨φ x, mem_range_self x, rfl⟩,
+    rw ← ψ.right_inv h₂,
+    exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1, },
 end
 
 end updating
