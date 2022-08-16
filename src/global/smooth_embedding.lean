@@ -364,8 +364,8 @@ by simp [update]
 
 /-- This is lemma `lem:updating` in the blueprint. -/
 lemma nice_update_of_eq_outside_compact
-  {K : set X} {L : set Y} (hK : is_compact K) (hL : is_compact L)
-  (hf : smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) f) (hf' : f '' range φ ⊆ ψ '' L)
+  {K : set X} (hK : is_compact K)
+  (hf : smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) f) (hf' : f '' range φ ⊆ range ψ)
   (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
   smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) (update φ ψ f g) ∧
   (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε), ∃ (η > (0 : ℝ)),
@@ -389,10 +389,10 @@ begin
         ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
     { refine ⟨V, h₂, _, (cont_mdiff_on_congr hK').mpr hf.cont_mdiff_on⟩,
       simpa [hm] using set.ext_iff.mp h₃ m, }, },
-  { let L₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
-    have hL₁ : is_compact L₁, { sorry, },
-    have h₁ : uniform_continuous_on ψ L₁ :=
-      hL₁.uniform_continuous_on_of_continuous ψ.smooth_to.continuous.continuous_on,
+  { let K₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
+    have hK₁ : is_compact K₁, { sorry, },
+    have h₁ : uniform_continuous_on ψ K₁ :=
+      hK₁.uniform_continuous_on_of_continuous ψ.smooth_to.continuous.continuous_on,
     have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
     obtain ⟨ε₀, hε₀, hε₀'⟩ :=
       hK.exists_forall_le' (hε'.comp φ.smooth_to.continuous).continuous_on hεφ,
@@ -402,9 +402,9 @@ begin
     obtain ⟨x, hx, rfl⟩ := hm,
     refine lt_of_lt_of_le _ (hε₀' x hx),
     simp only [update_apply_embedding],
-    have h₁ : g x ∈ L₁ :=
+    have h₁ : g x ∈ K₁ :=
       metric.mem_cthickening_of_dist_le _ _ _ _ ⟨x, hx, rfl⟩ (lt_min_iff.mp (hη x)).2.le,
-    have h₂ : f (φ x) ∈ range ψ := hf'.trans (image_subset_range ψ L) ⟨φ x, mem_range_self x, rfl⟩,
+    have h₂ : f (φ x) ∈ range ψ := hf' ⟨φ x, mem_range_self x, rfl⟩,
     rw ← ψ.right_inv h₂,
     exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1, },
 end
