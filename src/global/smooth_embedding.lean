@@ -195,19 +195,17 @@ TODO: split this up. We should really prove that an affine equiv is a diffeomorp
 with a diffeomorphism is a smooth open embedding. -/
 def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
   open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E :=
-if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
+if hr : 0 < r then
 { to_fun := λ x, c +ᵥ homothety (0 : E) r (homeomorph_unit_ball x),
   inv_fun := (λ y, if hy : y ∈ ball (0 : E) 1 then homeomorph_unit_ball.symm ⟨y, hy⟩ else 0) ∘
     (λ y, (homothety c r⁻¹ y) -ᵥ c),
   left_inv' := λ x,
   begin
-    rw not_le at hr,
     simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
       hr.ne.symm.is_unit.inv_mul_cancel],
   end,
   right_inv' :=
   begin
-    rw not_le at hr,
     rintros y ⟨x, rfl⟩,
     simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
       hr.ne.symm.is_unit.inv_mul_cancel],
@@ -217,13 +215,12 @@ if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
     change is_open_map ((λ x, c + homothety (0 : E) r x) ∘ (coe : ball (0 : E) 1 → E) ∘ _),
     refine is_open_map.comp _ (is_open_ball.is_open_map_subtype_coe.comp
       homeomorph_unit_ball.is_open_map),
-    exact (is_open_map_add_left c).comp (homothety_is_open_map 0 r $ ne_of_not_le hr),
+    exact (is_open_map_add_left c).comp (homothety_is_open_map 0 r hr.ne.symm),
   end,
   smooth_to := (cont_diff_const.add $ (cont_diff_homothety 0 r).comp
     cont_diff_homeomorph_unit_ball).cont_mdiff,
   smooth_inv := cont_diff_on.cont_mdiff_on
   begin
-    rw not_le at hr,
     change cont_diff_on ℝ ⊤ _ (range ((λ (x : ball (0 : E) 1), c +ᵥ homothety (0 : E) r (x : E)) ∘ _)),
     have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
     rw [range_comp, this, image_univ, range_affine_equiv_ball hr, add_zero],
@@ -235,6 +232,7 @@ if hr : r ≤ 0 then open_smooth_embedding.id 𝓘(ℝ, E) E else
     { rw [mem_ball, dist_eq_norm, ← mul_one r] at hy,
       simpa [homothety_apply, norm_smul, abs_eq_self.mpr hr.le] using (inv_mul_lt_iff hr).mpr hy, },
   end }
+else  open_smooth_embedding.id 𝓘(ℝ, E) E
 
 @[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
   open_smooth_embedding_to_ball c r 0 = c :=
