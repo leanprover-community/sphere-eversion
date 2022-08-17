@@ -107,7 +107,7 @@ begin
   let K : ld.ι' → set M' := λ i, ld.ψ i '' closed_ball 0 1,
   let U : ld.ι' → set M' := λ i, range $ ld.ψ i,
   have hK : ∀ i, is_closed (K i) := λ i, is_compact.is_closed
-    (is_compact.image (is_compact_closed_ball 0 1) (ld.ψ i).smooth_to.continuous),
+    (is_compact.image (is_compact_closed_ball 0 1) (ld.ψ i).continuous),
   have hK' : locally_finite K := ld.h₄.subset (λ i, image_subset_range (ld.ψ i) (closed_ball 0 1)),
   have hU : ∀ i, is_open (U i) := λ i, (ld.ψ i).is_open_range,
   have hKU : ∀ i, K i ⊆ U i := λ i, image_subset_range _ _,

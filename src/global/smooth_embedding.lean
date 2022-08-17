@@ -68,6 +68,8 @@ rfl
 lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
 filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv' hy
 
+protected lemma continuous : continuous f := f.smooth_to.continuous
+
 lemma is_open_range : is_open (range f) :=
 f.open_map.is_open_range
 
@@ -380,7 +382,7 @@ begin
   refine ⟨cont_mdiff_of_locally_cont_mdiff_on (λ m, _), λ ε hε hε', _⟩,
   { let U := range φ,
     let V := (φ '' K)ᶜ,
-    have h₂ : is_open V := is_open_compl_iff.mpr (hK.image φ.smooth_to.continuous).is_closed,
+    have h₂ : is_open V := is_open_compl_iff.mpr (hK.image φ.continuous).is_closed,
     have h₃ : V ∪ U = univ,
     { rw [← compl_subset_iff_union, compl_compl], exact image_subset_range φ K, },
     have h₄ : ∀ m ∈ U, update φ ψ f g m = (ψ ∘ g ∘ φ.inv_fun) m := λ m hm, by simp [hm],
@@ -395,12 +397,12 @@ begin
         (metric.bounded.cthickening $ is_compact.bounded $ hK.image _),
       replace hf' : ∀ x, f (φ x) ∈ range ψ := λ x, hf' ⟨φ x, mem_range_self x, rfl⟩,
       exact ψ.smooth_inv.continuous_on.comp_continuous
-        (hf.continuous.comp φ.smooth_to.continuous) hf', },
+        (hf.continuous.comp φ.continuous) hf', },
     have h₁ : uniform_continuous_on ψ K₁ :=
-      hK₁.uniform_continuous_on_of_continuous ψ.smooth_to.continuous.continuous_on,
+      hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on,
     have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
     obtain ⟨ε₀, hε₀, hε₀'⟩ :=
-      hK.exists_forall_le' (hε'.comp φ.smooth_to.continuous).continuous_on hεφ,
+      hK.exists_forall_le' (hε'.comp φ.continuous).continuous_on hεφ,
     obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
     refine ⟨min τ 1, by simp [hτ], λ hη m, _⟩,
     by_cases hm : m ∈ φ '' K, swap, { simp [hK', hm, hε m], },
