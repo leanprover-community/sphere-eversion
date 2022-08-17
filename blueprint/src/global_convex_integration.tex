@@ -61,12 +61,12 @@ compatible distance function on every manifold.
   for all $x$ and $y$ in $K₁$, $d(x, y) < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
 
   We now prove that $η = \min(τ, 1)$ is suitable. Assume that
-  $∀ x, d(g(e), ψ⁻¹∘f∘φ(e)) < η$. Let $m$ be a point in $M$. If $m$ isn't in
+  $∀ x, d(g(x), ψ⁻¹∘f∘φ(x)) < η$. Let $m$ be a point in $M$. If $m$ isn't in
   $φ(K)$ then $f'(m) = f(m)$ and in particular $d(f(m), f'(m)) < ε(m)$. Now
-  assume that $m = φ(e)$ for some $e$ in $K$. By assumption $d(g(e), ψ⁻¹∘f∘φ(e)) < η$.
-  In particular $d(g(e), ψ⁻¹∘f∘φ(e)) < 1$ hence $g(e)$ is in $K₁$. Since
-  $ψ⁻¹∘f∘φ(e)$ is also in $K₁$ and $d(g(e), ψ⁻¹∘f∘φ(e)) < τ$, we get
-  $d(ψ∘ g(e), ψ ∘ ψ⁻¹∘f∘φ(e)) < ε₀$. This precisely means that
+  assume that $m = φ(x)$ for some $x$ in $K$. By assumption $d(g(x), ψ⁻¹∘f∘φ(x)) < η$.
+  In particular $d(g(x), ψ⁻¹∘f∘φ(x)) < 1$ hence $g(x)$ is in $K₁$. Since
+  $ψ⁻¹∘f∘φ(x)$ is also in $K₁$ and $d(g(x), ψ⁻¹∘f∘φ(x)) < τ$, we get
+  $d(ψ∘ g(x), ψ ∘ ψ⁻¹∘f∘φ(x)) < ε₀$. This precisely means that
   $d(f'(m), f(m)) < ε₀$. Since $m$ is in $K$, this is less than $ε(m)$.
 \end{proof}
 
@@ -187,12 +187,12 @@ which is sufficient for our purposes).
   \label{lem:stability_cover}
   \lean{metric.exists_continuous_real_forall_closed_ball_subset}
   \leanok
-  In a metric space $X$, let $V : ι → \set{X}$ be a locally finite
-  collection of open subsets of $X$ and let $K : ι → \set{X}$ be a family of
-  compact subsets such that $K_i ⊂ V_i$ for all $i$. There exists a continuous
+  In a metric space $X$, let $U : ι → \set{X}$ be a
+  family of open subsets of $X$ and let $K : ι → \set{X}$ be a locally-finite
+  family of closed subsets such that $K_i ⊂ U_i$ for all $i$. There exists a continuous
   function $δ : X → ℝ_{> 0}$ such that:
   \[
-    ∀ x\, x',\; ∀ i, \left[x ∈ K_i \text{ and } d(x, x') < δ(x)\right] ⇒ x' ∈ V_i.
+    ∀ x\, x',\; ∀ i, \left[x ∈ K_i \text{ and } d(x, x') < δ(x)\right] ⇒ x' ∈ U_i.
   \]
 \end{lemma}
 
@@ -224,16 +224,16 @@ Note that, in the preceding lemma, the conclusion $g(φ_i(E)) ⊂ ψ_{j(i)}(F)$ 
 weaker than the condition $f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)$ that appears in the
 definition of localisation data.
 
-The condition $∀ m,\; d(f(m), g(m)) < ε(m)$ will be abbreviated $d(f, g) < ε$.
+The condition $∀ m,\; d(g(m), f(m)) < ε(m)$ will be abbreviated $d(g, f) < ε$.
 
 \begin{proof}
   \uses{lem:stability_cover}
   The preceding lemma applied to the family of open sets $ψ_j(F)$ and the
   family of compact sets $ψ_j(\overline{B_F})$ give a positive continuous
   function $δ : N → ℝ$ such that $ε = δ ∘ f$ is suitable. Indeed, assume
-  $g : M → N$ satisfies $d(f, g) < ε$ and fix some $i$ and some $m ∈ φ_i(E)$.
+  $g : M → N$ satisfies $d(g, f) < ε$ and fix some $i$ and some $m ∈ φ_i(E)$.
   We know $f(m) ∈ ψ_{j(i)}(\overline{B_F})$ and our assumption on $g$ gives
-  $d(f(m), g(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
+  $d(g(m), f(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
 \end{proof}
 
 We now introduce a seemingly abstract definition, but its only goal is to treat
