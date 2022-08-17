@@ -140,17 +140,19 @@ compatible distance function on every manifold.
   \leanok
   Let $f : M → N$ be a continuous map between manifolds. A localisation data
   for $f$ is a tuple $(E, F, ι, ι', φ, ψ, j)$ where $E$ and $F$ are normed
-  vector spaces, $ι$ is a finite or countable set, $ι'$ is a set (that is
-  morally also finite or countable but that will play no role), $φ : ι × E → M$
+  vector spaces, $ι$ is a countable set, $ι'$ is a set (that is
+  morally also countable but that will play no role), $φ : ι × E → M$
   and $ψ : ι' × F → N$  are families of smooth open embeddings, and
   $j : ι → ι'$ such that:
   \begin{itemize}
     \item
-      $⋃_i φ_i(B_E) = M$where $B_E$ is the open unit ball in $E$.
+      $⋃_i φ_i(B_E) = M$ where $B_E$ is the open unit ball in $E$,
+      \item
+      $⋃_i ψ_i(B_F) = N$ where $B_F$ is the open unit ball in $F$,
     \item
-      $∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)$ where $B_F$ is the open unit ball in $F$
+      $∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)$ where $B_F$ is the open unit ball in $F$,
     \item
-      $⋃_i ψ_i(B_F) = M$ where $B_F$ is the open unit ball in $F$.
+      $i \mapsto ψ_i(F)$ is locally finite.
   \end{itemize}
   Such a tuple will be denoted by $(φ, ψ, j)$ for brevity.
 \end{definition}
@@ -187,7 +189,7 @@ which is sufficient for our purposes).
   \leanok
   In a metric space $X$, let $V : ι → \set{X}$ be a locally finite
   collection of open subsets of $X$ and let $K : ι → \set{X}$ be a family of
-  compact subsets such that $K_i ⊂ V_i$ for all $i$. There existe a continuous
+  compact subsets such that $K_i ⊂ V_i$ for all $i$. There exists a continuous
   function $δ : X → ℝ_{> 0}$ such that:
   \[
     ∀ x\, x',\; ∀ i, \left[x ∈ K_i \text{ and } d(x, x') < δ(x)\right] ⇒ x' ∈ V_i.
@@ -208,9 +210,11 @@ which is sufficient for our purposes).
 
 \begin{lemma}
   \label{lem:localisation_stability}
+  \lean{localisation_stability}
+  \leanok
   \uses{def:localisation_data}
   Let $f : M → N$ be a continuous map between manifolds, and let
-  $(φ, ψ, i)$ be some localisation data for $f$. There exists some continuous
+  $(φ, ψ, i)$ be some localisation data for $f$. There exists a continuous
   positive function $ε : M → ℝ_{>0}$ such that:
   \[
     ∀ g : M → N, \big[∀ m,\; d(f(m), g(m)) < ε(m)\big] ⇒ ∀ i,\; g(φ_i(E)) ⊂ ψ_{j(i)}(F).

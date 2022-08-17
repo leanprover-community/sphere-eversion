@@ -1,11 +1,12 @@
 import geometry.manifold.algebra.smooth_functions
 import geometry.manifold.instances.real
+import topology.metric_space.partition_of_unity
 import global.smooth_embedding
 
 noncomputable theory
 
 open_locale manifold
-open metric
+open set metric
 
 section
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
@@ -18,17 +19,25 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   (I' : model_with_corners 𝕜 E' H')
   {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-
-/-- Definition 3.4 `localisation_data` (nb typos in (1) and (3) on blueprint) -/
-structure localisation_data (f : continuous_map M M') :=
+/-- Definition `def:localisation_data`. -/
+structure localisation_data (f : M → M') :=
 (ι ι' : Type*)
 (hι : encodable ι)
 (φ : ι → open_smooth_embedding (model_with_corners_self 𝕜 E) E I M)
 (ψ : ι' → open_smooth_embedding (model_with_corners_self 𝕜 E') E' I' M')
 (j : ι → ι')
-(h₁ : (⋃ i, (φ i) '' (ball (0:E) 1)) = set.univ)
-(h₂ : ∀ i, f '' ((φ i) '' (ball (0:E) 1)) ⊆ (ψ (j i)) '' (ball (0:E') 1))
-(h₃ : (⋃ i', (ψ i') '' (ball (0:E') 1)) = set.univ)
+(h₁ : (⋃ i, (φ i) '' (ball (0:E) 1)) = univ)
+(h₂ : (⋃ i', (ψ i') '' (ball (0:E') 1)) = univ)
+(h₃ : ∀ i, range (f ∘ (φ i)) ⊆ (ψ (j i)) '' (ball (0:E') 1))
+(h₄ : locally_finite $ λ i', range (ψ i'))
+
+namespace localisation_data
+
+variables {f : M → M'} {I I'} (ld : localisation_data I I' f)
+
+abbreviation ψj := ld.ψ ∘ ld.j
+
+end localisation_data
 
 end
 
@@ -38,17 +47,17 @@ variables
   {M : Type*} [topological_space M] [sigma_compact_space M] [locally_compact_space M] [t2_space M]
   [nonempty M] [charted_space E M] [smooth_manifold_with_corners 𝓘(ℝ, E) M]
   (E' : Type*) [inner_product_space ℝ E']
-  {M' : Type*} [topological_space M'] [sigma_compact_space M'] [locally_compact_space M']
-  [t2_space M'] [nonempty M'] [charted_space E' M']
+  {M' : Type*} [metric_space M'] [sigma_compact_space M'] [locally_compact_space M']
+  [nonempty M'] [charted_space E' M']
   [smooth_manifold_with_corners 𝓘(ℝ, E') M']
 
 variables (M')
 
 lemma nice_atlas_target :
   ∃ n, ∃ ψ : index_type n → open_smooth_embedding 𝓘(ℝ, E') E' 𝓘(ℝ, E') M',
-  locally_finite (λ i', set.range (ψ i')) ∧
-  (⋃ i', ψ i' '' ball 0 1) = set.univ :=
-let H := (nice_atlas E' (λ j : punit, @is_open_univ M' _) (by simp [set.eq_univ_iff_forall])) in
+  locally_finite (λ i', range (ψ i')) ∧
+  (⋃ i', ψ i' '' ball 0 1) = univ :=
+let H := (nice_atlas E' (λ j : punit, @is_open_univ M' _) (by simp [eq_univ_iff_forall])) in
 ⟨H.some, H.some_spec.some, H.some_spec.some_spec.2⟩
 
 /-- A collection of charts on a manifold `M'` which are smooth open embeddings with domain the whole
@@ -57,34 +66,36 @@ def target_charts (i' : index_type (nice_atlas_target E' M').some) :
   open_smooth_embedding 𝓘(ℝ, E') E' 𝓘(ℝ, E') M' :=
 (nice_atlas_target E' M').some_spec.some i'
 
-lemma target_charts_cover : (⋃ i', (target_charts E' M' i') '' (ball (0:E') 1)) = set.univ :=
+lemma target_charts_cover : (⋃ i', (target_charts E' M' i') '' (ball (0:E') 1)) = univ :=
 (nice_atlas_target E' M').some_spec.some_spec.2
 
-variables {M'} (f : continuous_map M M')
+variables {M'} {f : M → M'} (hf : continuous f)
 
 lemma nice_atlas_domain :
   ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M,
-  (∀ i, ∃ i', (set.range (φ i)) ⊆ f ⁻¹' (⇑(target_charts E' M' i') '' (ball (0:E') 1))) ∧
-  locally_finite (λ i, set.range (φ i)) ∧
-  (⋃ i, φ i '' ball 0 1) = set.univ :=
+  (∀ i, ∃ i', (range (φ i)) ⊆ f ⁻¹' (⇑(target_charts E' M' i') '' (ball (0:E') 1))) ∧
+  locally_finite (λ i, range (φ i)) ∧
+  (⋃ i, φ i '' ball 0 1) = univ :=
 nice_atlas E
-  (λ i', ((target_charts E' M' i').open_map (ball 0 1) is_open_ball).preimage f.continuous)
-  (by rw [← set.preimage_Union, target_charts_cover, set.preimage_univ])
+  (λ i', ((target_charts E' M' i').open_map (ball 0 1) is_open_ball).preimage hf)
+  (by rw [← preimage_Union, target_charts_cover, preimage_univ])
 
-/-- Lemma 3.5 `ex_localisation`
+/-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
-def std_localisation_data (f : continuous_map M M') : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f :=
-{ ι := index_type (nice_atlas_domain E' f).some,
+def std_localisation_data : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f :=
+{ ι := index_type (nice_atlas_domain E' hf).some,
   ι' := index_type (nice_atlas_target E' M').some,
   hι := index_type_encodable _,
-  φ := (nice_atlas_domain E' f).some_spec.some,
+  φ := (nice_atlas_domain E' hf).some_spec.some,
   ψ := target_charts E' M',
-  j := λ i, ((nice_atlas_domain E' f).some_spec.some_spec.1 i).some,
-  h₁ := (nice_atlas_domain E' f).some_spec.some_spec.2.2,
-  h₂ := λ i, begin
+  j := λ i, ((nice_atlas_domain E' hf).some_spec.some_spec.1 i).some,
+  h₁ := (nice_atlas_domain E' hf).some_spec.some_spec.2.2,
+  h₂ := target_charts_cover E' M',
+  h₃ := λ i, begin
+    rw range_comp,
     rintros - ⟨y, hy, rfl⟩,
-    exact ((nice_atlas_domain E' f).some_spec.some_spec.1 i).some_spec
-      (set.image_subset_range _ _ hy),
+    exact ((nice_atlas_domain E' hf).some_spec.some_spec.1 i).some_spec hy,
   end,
-  h₃ := target_charts_cover E' M' }
+  h₄ := (nice_atlas_target E' M').some_spec.some_spec.1 }
+
 end
