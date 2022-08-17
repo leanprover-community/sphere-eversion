@@ -98,4 +98,25 @@ def std_localisation_data : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f :=
   end,
   h₄ := (nice_atlas_target E' M').some_spec.some_spec.1 }
 
+/-- Lemma `lem:localisation_stability`. -/
+lemma localisation_stability [finite_dimensional ℝ E'] {f : M → M'} (hf : continuous f)
+  (ld : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f) :
+  ∃ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
+    ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ε m) i, range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
+begin
+  let K : ld.ι' → set M' := λ i, ld.ψ i '' closed_ball 0 1,
+  let U : ld.ι' → set M' := λ i, range $ ld.ψ i,
+  have hK : ∀ i, is_closed (K i) := λ i, is_compact.is_closed
+    (is_compact.image (is_compact_closed_ball 0 1) (ld.ψ i).smooth_to.continuous),
+  have hK' : locally_finite K := ld.h₄.subset (λ i, image_subset_range (ld.ψ i) (closed_ball 0 1)),
+  have hU : ∀ i, is_open (U i) := λ i, (ld.ψ i).is_open_range,
+  have hKU : ∀ i, K i ⊆ U i := λ i, image_subset_range _ _,
+  obtain ⟨δ, hδ₀, hδ₁⟩ := exists_continuous_real_forall_closed_ball_subset hK hU hKU hK',
+  refine ⟨δ ∘ f, λ m, hδ₀ (f m), by continuity, λ g hg i, _⟩,
+  rintros - ⟨e, rfl⟩,
+  have hi : f (ld.φ i e) ∈ K (ld.j i) :=
+    image_subset _ ball_subset_closed_ball (ld.h₃ i (mem_range_self e)),
+  exact hδ₁ (ld.j i) (f $ ld.φ i e) hi (le_of_lt (hg _)),
+end
+
 end
