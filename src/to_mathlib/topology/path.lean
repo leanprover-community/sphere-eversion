@@ -29,17 +29,17 @@ def strans (γ γ' : path x x) (t₀ : I) : path x x :=
   continuous_to_fun :=
   begin
     refine continuous.if_le _ _ continuous_id continuous_const (by simp only [extend_div_self,
-      unit_interval.mk_zero, zero_le_one, id.def, zero_div, forall_eq, extend_extends, path.source,
+      Icc.mk_zero, zero_le_one, id.def, zero_div, forall_eq, extend_extends, path.source,
       left_mem_Icc, sub_self]),
     -- TODO: the following are provable by `continuity` but it is too slow
     exacts [γ.continuous_extend.comp continuous_subtype_coe.div_const,
       γ'.continuous_extend.comp (continuous_subtype_coe.sub continuous_const).div_const]
   end,
-  source' := by simp only [unit_interval.nonneg', unit_interval.coe_zero,
-    unit_interval.mk_zero, zero_le_one,
+  source' := by simp only [unit_interval.nonneg', Icc.coe_zero,
+    Icc.mk_zero, zero_le_one,
     if_true, zero_div, comp_app, extend_extends, path.source, left_mem_Icc],
   target' := by simp only [unit_interval.le_one'.le_iff_eq.trans eq_comm, extend_div_self,
-    unit_interval.coe_one, implies_true_iff, eq_self_iff_true, comp_app, ite_eq_right_iff]
+    Icc.coe_one, implies_true_iff, eq_self_iff_true, comp_app, ite_eq_right_iff]
     {contextual := tt}}
 
 /-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
@@ -59,7 +59,7 @@ end
 lemma unit_interval.zero_le (x : I) : 0 ≤ x := x.prop.1
 
 @[simp] lemma strans_zero (γ γ' : path x x) : γ.strans γ' 0 = γ' :=
-by { ext t, simp only [strans_of_ge (unit_interval.zero_le t), unit_interval.coe_zero,
+by { ext t, simp only [strans_of_ge (unit_interval.zero_le t), Icc.coe_zero,
   div_one, extend_extends',
   unit_interval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero, ite_eq_right_iff,
   show (t : ℝ) = 0 ↔ t = 0, from (@subtype.ext_iff _ _ t 0).symm, path.source, eq_self_iff_true,
@@ -67,7 +67,7 @@ by { ext t, simp only [strans_of_ge (unit_interval.zero_le t), unit_interval.coe
 
 @[simp] lemma strans_one {x : X} (γ γ' : path x x) : γ.strans γ' 1 = γ :=
 by { ext t, simp only [strans, unit_interval.le_one', path.coe_mk, if_pos, div_one,
-  extend_extends', unit_interval.coe_one] }
+  extend_extends', Icc.coe_one] }
 
 @[simp] lemma strans_self {x : X} (γ γ' : path x x) (t₀ : I) : γ.strans γ' t₀ t₀ = x :=
 by { simp only [strans, path.coe_mk, extend_div_self, if_pos, le_rfl], }
