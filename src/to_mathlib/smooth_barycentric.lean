@@ -106,7 +106,7 @@ begin
     apply cont_diff_apply_apply, },
   { apply ih.comp,
     refine cont_diff_pi.mpr (λ i, cont_diff_pi.mpr (λ j, _)),
-    simp only [minor_apply],
+    simp only [submatrix_apply],
     apply cont_diff_apply_apply, },
 end
 

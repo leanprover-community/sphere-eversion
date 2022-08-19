@@ -846,13 +846,13 @@ variables {h₀ h₁}
 begin
   ext x t s,
   simp only [sf_homotopy, one_mul, ρ_eq_one_of_nonpos, surrounding_family.path_extend_fract,
-    sub_zero, loop.of_path_apply, unit_interval.mk_one, proj_Icc_right, path.strans_one, h₀.proj_I]
+    sub_zero, loop.of_path_apply, Icc.mk_one, proj_Icc_right, path.strans_one, h₀.proj_I]
 end
 
 @[simp] lemma sf_homotopy_one : sf_homotopy h₀ h₁ 1 = γ₁ :=
 begin
   ext x t s,
-  simp only [sf_homotopy, path.strans_zero, unit_interval.mk_zero, one_mul, ρ_eq_one_of_nonpos,
+  simp only [sf_homotopy, path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos,
     surrounding_family.path_extend_fract, proj_Icc_left, loop.of_path_apply, sub_self,
     h₁.proj_I]
 end
@@ -886,7 +886,7 @@ lemma surrounding_family_sf_homotopy [finite_dimensional ℝ E] (τ : ℝ) :
   surrounding_family g b (sf_homotopy h₀ h₁ τ) U :=
 begin
   constructor,
-  { intros x t, simp only [sf_homotopy, unit_interval.mk_zero, zero_le_one, extend_extends,
+  { intros x t, simp only [sf_homotopy, Icc.mk_zero, zero_le_one, extend_extends,
       path.source, loop.of_path_apply, left_mem_Icc, fract_zero] },
   { intros x s,
     -- have h2t : ρ τ * t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (ρ_nonneg τ) ht,

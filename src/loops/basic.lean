@@ -279,9 +279,9 @@ begin
   change continuous (λ i, (λ s, (γ s).extend) i (fract (t i))),
   refine continuous_on.comp_fract _ ht _,
   { exact (hγ.comp (continuous_id.prod_map continuous_proj_Icc)).continuous_on },
-  { simp only [unit_interval.mk_zero, zero_le_one, path.target, path.extend_extends,
+  { simp only [Icc.mk_zero, zero_le_one, path.target, path.extend_extends,
       implies_true_iff, eq_self_iff_true, path.source, right_mem_Icc, left_mem_Icc,
-      unit_interval.mk_one] }
+      Icc.mk_one] }
 end
 
 /-- `loop.of_path` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
