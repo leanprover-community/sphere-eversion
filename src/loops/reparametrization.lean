@@ -337,7 +337,7 @@ structure is_centering_density (x : E) (f : ℝ → ℝ) : Prop :=
 lemma is_centering_density_convex (x : E) : convex ℝ { f | γ.is_centering_density x f} :=
 begin
   classical,
-  rintros f k ⟨hf₁, hf₂, hf₃, hf₄, hf₅⟩ ⟨hk₁, hk₂, hk₃, hk₄, hk₅⟩ a b ha hb hab,
+  rintros f ⟨hf₁, hf₂, hf₃, hf₄, hf₅⟩ k ⟨hk₁, hk₂, hk₃, hk₄, hk₅⟩ a b ha hb hab,
   have hf₆ : interval_integrable f volume 0 1,
   { apply interval_integrable_of_integral_ne_zero, rw hf₃, exact one_ne_zero, },
   have hf₇ : interval_integrable (f • γ x) volume 0 1 :=
