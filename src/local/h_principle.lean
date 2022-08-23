@@ -399,15 +399,17 @@ This section proves lem:h_principle_open_ample_loc.
 
 open finite_dimensional submodule step_landscape
 
-variables {E}
-.
+variables {E} {R : rel_loc E F} (h_op : is_open R) (h_ample : R.is_ample)
+variables {L : landscape E}
+variables {ε : ℝ} (ε_pos : 0 < ε)
+
+include h_op h_ample ε_pos
 
 /--
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
 -/
-lemma rel_loc.formal_sol.improve {R : rel_loc E F} {L : landscape E} {𝓕 : formal_sol R} {ε : ℝ}
-  (ε_pos : 0 < ε) (h_op : is_open R) (h_ample : R.is_ample)
+lemma rel_loc.formal_sol.improve {𝓕 : formal_sol R}
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∃ H : htpy_jet_sec E F,
     (H 0 = 𝓕) ∧
@@ -508,5 +510,21 @@ begin
       apply improve_step_part_hol acc hNneq } }
 end
 
+/-- Lemma `lem:improve_htpy_loc` from the blueprint. -/
+lemma rel_loc.htpy_formal_sol.improve {𝓕 : htpy_jet_sec E F} {A : set E} (hA : is_closed A)
+  (h_sol : ∀ t, (𝓕 t).is_formal_sol R)
+  (h_A : ∀ᶠ x near A, (𝓕 0).is_holonomic_at x ∧ ∀ t, 𝓕 t x = 𝓕 0 x)
+  (h_C : ∀ᶠ x near L.C, (𝓕 1).is_holonomic_at x) :
+  ∃ 𝓕' : htpy_jet_sec E F,
+  (𝓕' 0 = 𝓕 0) ∧
+  (∀ t, (𝓕' t).is_formal_sol R) ∧
+  (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
+  (∀ᶠ x near L.C, ∀ t, 𝓕' t x = 𝓕 t x) ∧
+  (∀ x, x ∉ L.K₁ → ∀ t, 𝓕' t x = 𝓕 t x) ∧
+  (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ ≤ ε) ∧
+  (∀ᶠ x near L.K₀, (𝓕' 1).is_holonomic_at x) :=
+begin
+  sorry,
+end
 
 end improve
