@@ -451,6 +451,8 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{lemma}
   \label{lem:improve_htpy_loc}
+  \leanok
+  \lean{rel_loc.htpy_formal_sol.improve}
   \uses{def:ample_relation_loc, def:holonomic_loc}
   Let $\F$ be a homotopy of formal solutions of $\Rel$.
   Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
@@ -470,7 +472,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
     \item
       $\F'_t(x) = \F_t(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$.
     \item
-      for all $t$ and $x$, either $\F'_t(x) = \bs \F_{t'}(x)$ for some $t'$ or
+      for all $t$ and $x$, either $\F'_t(x) = \F_{t'}(x)$ for some $t'$ or
       $d(\bs \F'_t(x), \bs \F₁(x)) ≤ ε$~;
     \item
       $\F'_1$ is holonomic near $K_0$.
