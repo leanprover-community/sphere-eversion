@@ -131,10 +131,10 @@ def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') (C : set M) (ε : M 
 /-- A relation `R` satisfies the parametric relative C⁰-dense h-principle w.r.t. manifold `P`,
 `C₁ ⊆ P`, `C₂ ⊆ M` and `ε : M → ℝ` if for every family of
 formal solutions `𝓕₀` indexed by a manifold with boundary `P` that is holonomic near `C₁` and `C₂`,
-there is a homotopy between `𝓕₀` and a holonomic solution,
-in such a way that the homotopy is constant near `C₁` and `C₂` and `ε`-close to `𝓕₀`.
+there is a homotopy `𝓕` between `𝓕₀` and a holonomic solution,
+in such a way that `𝓕` is constant near `C₁` and `C₂` and `ε`-close to `𝓕₀`.
 Note: `ε`-closeness is measured using an arbitrary distance function obtained from the metrizability
-of `J¹(M, M')`. Potentially we prefer to have this w.r.t. an arbitrary compatible metric
+of `J¹(M, M')`. Potentially we prefer to have this w.r.t. an arbitrary compatible metric.
 -/
 def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') (C₁ : set P) (C₂ : set M)
   (ε : M → ℝ) : Prop :=
@@ -143,10 +143,10 @@ def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') (C₁ : set P) 
 (∀ᶠ x in 𝓝ˢ C₂, ∀ s, (𝓕₀ s).to_one_jet_sec.is_holonomic_at x) → -- and near set `C₂` of the domain
 ∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod IP) (ℝ × P) R, -- then there is a homotopy of such families
   (∀ s, 𝓕 (0, s) = 𝓕₀ s) ∧ -- that agrees on `t = 0`
-  (∀ᶠ s in 𝓝ˢ C₁, ∀ t : ℝ, 𝓕 (t, s) = 𝓕₀ s) ∧ -- and agrees on `s` near `C₁`
-  (∀ᶠ x in 𝓝ˢ C₂, ∀ (t : ℝ) (s : P), 𝓕 (t, s) x = 𝓕₀ s x) ∧ -- and agrees on `x` near `C₂`
-  (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`.
-  (∀ (t : ℝ) (s : P) (x : M), @dist _ some_dist (𝓕 (t, s) x) (𝓕₀ s x) ≤ ε x) -- and close to `𝓕₀`
+  (∀ᶠ s in 𝓝ˢ C₁, ∀ t : ℝ, 𝓕 (t, s) = 𝓕₀ s) ∧ -- and agrees near `C₁`
+  (∀ᶠ x in 𝓝ˢ C₂, ∀ (t : ℝ) (s : P), 𝓕 (t, s) x = 𝓕₀ s x) ∧ -- and agrees near `C₂`
+  (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
+  (∀ (t : ℝ) (s : P) (x : M), @dist _ some_dist (𝓕 (t, s) x) (𝓕₀ s x) ≤ ε x) -- and close to `𝓕₀`.
 
 
 end defs
