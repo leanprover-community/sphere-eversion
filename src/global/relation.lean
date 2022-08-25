@@ -36,6 +36,9 @@ variables
 {F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
 {G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
 (N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
+{EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
+{HP : Type*} [topological_space HP] (IP : model_with_corners ℝ EP HP)
+{P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
@@ -94,7 +97,7 @@ instance : has_coe_to_fun (family_formal_sol J N R) (λ S, N → formal_sol R) :
 
 namespace family_formal_sol
 
-variables {J N J' N'}
+variables {J N J' N' IP P}
 
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
@@ -106,21 +109,44 @@ end family_formal_sol
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 @[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
 
-/-- A relation `R` satisfies the (non-parametric) h-principle if all its formal solutions are
-homotopic to a holonomic one. -/
-def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') : Prop :=
-∀ 𝓕₀ : formal_sol R, ∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧ (𝓕 1).to_one_jet_sec.is_holonomic
+variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
+[sigma_compact_space M] [sigma_compact_space M'] [t2_space M] [t2_space M']
 
-/-- A relation `R` satisfies the parametric h-principle w.r.t. manifold `N` if for every family of
-formal solutions indexed by a manifold with boundary `N` that is holonomic near the boundary `N` is
-homotopic to a holonomic one, in such a way that the homotopy is constant near the boundary of `N`.
+/-- An arbitrary distance on `J¹(M, M')`. -/
+@[reducible] def some_dist : has_dist (one_jet_bundle I M I' M') :=
+(@topological_space.metrizable_space_metric _ _ (manifold_with_corners.metrizable_space
+  ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) _)).to_pseudo_metric_space.to_has_dist
+
+/-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
+`C` of the domain if for every formal solution `𝓕₀` that is holonomic near `C`
+there is a homotopy between `𝓕₀` and a holonomic solution that is constant near `C` and
+`ε`-close to `𝓕₀`. -/
+def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') (C : set M) (ε : M → ℝ) : Prop :=
+∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
+∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧
+  (𝓕 1).to_one_jet_sec.is_holonomic ∧
+  (∀ᶠ x in 𝓝ˢ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
+  (∀ (t : ℝ) (x : M), @dist _ some_dist (𝓕 t x) (𝓕₀ x) ≤ ε x)
+
+/-- A relation `R` satisfies the parametric relative C⁰-dense h-principle w.r.t. manifold `P`,
+`C₁ ⊆ P`, `C₂ ⊆ M` and `ε : M → ℝ` if for every family of
+formal solutions `𝓕₀` indexed by a manifold with boundary `P` that is holonomic near `C₁` and `C₂`,
+there is a homotopy between `𝓕₀` and a holonomic solution,
+in such a way that the homotopy is constant near `C₁` and `C₂` and `ε`-close to `𝓕₀`.
+Note: `ε`-closeness is measured using an arbitrary distance function obtained from the metrizability
+of `J¹(M, M')`. Potentially we prefer to have this w.r.t. an arbitrary compatible metric
 -/
-def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') : Prop :=
-∀ 𝓕₀ : family_formal_sol J N R, (∀ᶠ x in 𝓝ˢ (boundary J N), (𝓕₀ x).to_one_jet_sec.is_holonomic) →
-∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod J) (ℝ × N) R,
-  𝓕.reindex ((cont_mdiff_map.const 0).prod_mk cont_mdiff_map.id) = 𝓕₀ ∧
-  (∀ᶠ x in 𝓝ˢ (boundary J N), ∀ t : ℝ, 𝓕 (t, x) = 𝓕₀ x) ∧
-  ∀ x, (𝓕 (1, x)).to_one_jet_sec.is_holonomic
+def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') (C₁ : set P) (C₂ : set M)
+  (ε : M → ℝ) : Prop :=
+∀ 𝓕₀ : family_formal_sol IP P R, -- given a family of formal solutions with parameters in `P`
+(∀ᶠ s in 𝓝ˢ C₁, (𝓕₀ s).to_one_jet_sec.is_holonomic) → -- holonomic near `C₁` of parameter space
+(∀ᶠ x in 𝓝ˢ C₂, ∀ s, (𝓕₀ s).to_one_jet_sec.is_holonomic_at x) → -- and near set `C₂` of the domain
+∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod IP) (ℝ × P) R, -- then there is a homotopy of such families
+  (∀ s, 𝓕 (0, s) = 𝓕₀ s) ∧ -- that agrees on `t = 0`
+  (∀ᶠ s in 𝓝ˢ C₁, ∀ t : ℝ, 𝓕 (t, s) = 𝓕₀ s) ∧ -- and agrees on `s` near `C₁`
+  (∀ᶠ x in 𝓝ˢ C₂, ∀ (t : ℝ) (s : P), 𝓕 (t, s) x = 𝓕₀ s x) ∧ -- and agrees on `x` near `C₂`
+  (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`.
+  (∀ (t : ℝ) (s : P) (x : M), @dist _ some_dist (𝓕 (t, s) x) (𝓕₀ s x) ≤ ε x) -- and close to `𝓕₀`
 
 
 end defs

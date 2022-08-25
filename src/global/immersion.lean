@@ -48,14 +48,15 @@ lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
   (immersion_rel I M I' M').ample :=
 sorry
 
-/-- parametric h-principle for immersions. -/
-theorem immersion_rel_satisfies_h_principle_with (h : finrank ℝ E < finrank ℝ E') :
-  (immersion_rel I M I' M').satisfies_h_principle_with J N :=
-begin
-  apply (immersion_rel_ample I I' h).satisfies_h_principle_with J N,
-  have : is_open {L : E →L[ℝ] E' | injective L} := continuous_linear_map.is_open_injective,
-  sorry
-end
+-- the following needs updating after relativizing
+-- /-- parametric h-principle for immersions. -/
+-- theorem immersion_rel_satisfies_h_principle_with (h : finrank ℝ E < finrank ℝ E') :
+--   (immersion_rel I M I' M').satisfies_h_principle_with J N :=
+-- begin
+--   apply (immersion_rel_ample I I' h).satisfies_h_principle_with J N,
+--   have : is_open {L : E →L[ℝ] E' | injective L} := continuous_linear_map.is_open_injective,
+--   sorry
+-- end
 
 end general
 
