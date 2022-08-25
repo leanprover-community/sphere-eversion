@@ -638,9 +638,15 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 
 \begin{proof}
   \proves{lem:open_ample_immersion}
-  \uses{lem:open_ample_immersion_loc}
-  This obviously follows from \cref{lem:open_ample_immersion_loc}. Better, we should remove
-  \cref{lem:open_ample_immersion_loc} and copy-paste its proof here.
+  \uses{lem:ample_codim_two}
+  \leanok
+  \lean{immersion_rel_ample}
+  For every $σ = (x, y, φ)$ in the immersion relation $\Rel$,
+  and for every dual pair $(π, v)$, the slice
+  $\Rel(σ, π, v)$ is the set of $w$ which do not belong to
+  the image of $\ker π$ under $φ$.
+  Since $\dim M > \dim N$, this image has codimension at least $2$ in
+  $T_yN$, and \cref{lem:ample_codim_two} concludes.
 \end{proof}
 
 \begin{theorem}[Gromov]

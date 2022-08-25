@@ -55,7 +55,7 @@ begin
   rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
           (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
   haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
-  haveI : finite_dimensional ℝ (tangent_space I' m') := (by apply_instance : finite_dimensional ℝ E'),
+  -- haveI : finite_dimensional ℝ (tangent_space I' m') := (by apply_instance : finite_dimensional ℝ E'),
   have hcodim := p.two_le_rank_of_rank_lt_rank h φ,
   have aux : ((immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p) =
              (immersion_rel I M I' M').preslice ⟨(m, m'), φ⟩ p,
