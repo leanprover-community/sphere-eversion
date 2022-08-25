@@ -54,24 +54,17 @@ lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
 begin
   rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
           (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
+  haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
+  haveI : finite_dimensional ℝ (tangent_space I' m') := (by apply_instance : finite_dimensional ℝ E'),
+  have hcodim := p.two_le_rank_of_rank_lt_rank h φ,
   have aux : ((immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p) =
              (immersion_rel I M I' M').preslice ⟨(m, m'), φ⟩ p,
-  { sorry, }, -- Easy (see proof of `ample_of_two_le_codim`) but annoying that necessary
-  rw [aux,  immersion_rel_preslice_eq I M I' M' hφ],
-  apply ample_of_two_le_codim,
-  haveI : finite_dimensional ℝ (tangent_space I m), { sorry, }, -- trivial
-  haveI : finite_dimensional ℝ (tangent_space I' m'), { sorry, }, -- trivial
-  replace h : finrank ℝ (tangent_space I m) < finrank ℝ (tangent_space I' m'), { sorry, }, -- trivial
-  suffices : 2 ≤ finrank ℝ (tangent_space I' m' ⧸ p.π.ker.map φ.to_linear_map),
-  { rw ← finrank_eq_dim,
-    exact_mod_cast this },
-  have aux := submodule.finrank_quotient_add_finrank (p.π.ker.map φ.to_linear_map),
-  apply le_of_add_le_add_right,
-  rw aux,
-  have := calc finrank ℝ (p.π.ker.map φ.to_linear_map)
-         ≤ finrank ℝ p.π.ker : finrank_map_le ℝ φ.to_linear_map p.π.ker
-    ...  < finrank ℝ (tangent_space I m) : submodule.finrank_lt (le_top.lt_of_ne p.ker_pi_ne_top),
-  linarith,
+  { change connected_component_in _ _ = _,
+    have := jet_apply_v_mem_preslice_of_mem_relation (immersion_rel I M I' M') ⟨(m, m'), φ⟩ hφ p,
+    simp only [immersion_rel_preslice_eq I M I' M' hφ] at ⊢ this,
+    exact (p.π.ker.map φ).connected_component_in_eq_self_of_two_le_codim hcodim this, },
+  rw [aux, immersion_rel_preslice_eq I M I' M' hφ],
+  exact ample_of_two_le_codim hcodim,
 end
 
 -- the following needs updating after relativizing

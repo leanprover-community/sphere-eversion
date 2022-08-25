@@ -105,7 +105,9 @@ begin
   ring
 end
 
-lemma joined_in_compl_zero_of_not_mem_span [topological_add_group F] [has_continuous_smul ℝ F]
+variables [topological_add_group F] [has_continuous_smul ℝ F]
+
+lemma joined_in_compl_zero_of_not_mem_span
   {x y : F} (hx : x ≠ 0) (hy : y ∉ submodule.span ℝ ({x} : set F)) :
   joined_in ({0}ᶜ : set F) x y :=
 begin
@@ -115,7 +117,7 @@ begin
   exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 end
 
-lemma is_path_connected_compl_zero_of_two_le_dim [topological_add_group F] [has_continuous_smul ℝ F]
+lemma is_path_connected_compl_zero_of_two_le_dim
   (hdim : 2 ≤ module.rank ℝ F) : is_path_connected ({0}ᶜ : set F) :=
 begin
   rw is_path_connected_iff,
@@ -142,7 +144,7 @@ begin
     { exact joined_in_compl_zero_of_not_mem_span hx h } }
 end
 
-lemma is_path_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F]
+lemma is_path_connected_compl_of_two_le_codim
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   is_path_connected (Eᶜ : set F) :=
 begin
@@ -152,15 +154,20 @@ begin
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
 
-lemma is_connected_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F]
+lemma is_connected_compl_of_two_le_codim
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   is_connected (Eᶜ : set F) :=
 (is_path_connected_compl_of_two_le_codim hcodim).is_connected
 
-lemma connected_space_compl_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F]
+lemma connected_space_compl_of_two_le_codim
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   connected_space (Eᶜ : set F) :=
 is_connected_iff_connected_space.mp (is_connected_compl_of_two_le_codim hcodim)
+
+lemma submodule.connected_component_in_eq_self_of_two_le_codim (E : submodule ℝ F)
+  (hcodim : 2 ≤ module.rank ℝ (F⧸E)) {x : F} (hx : x ∉ E) :
+  connected_component_in (E : set F)ᶜ x = Eᶜ :=
+is_preconnected.connected_component_in (is_connected_compl_of_two_le_codim hcodim).2 hx
 
 lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F]
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
@@ -168,9 +175,7 @@ lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F
 begin
   haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
   intros x hx,
-  have : connected_component_in (↑E)ᶜ x = (↑E)ᶜ,
-    from is_preconnected.connected_component_in (is_connected_compl_of_two_le_codim hcodim).2 hx,
-  rw [this, eq_univ_iff_forall],
+  rw [E.connected_component_in_eq_self_of_two_le_codim hcodim hx, eq_univ_iff_forall],
   intro y,
   by_cases h : y ∈ E,
   { rcases E.exists_is_compl with ⟨E', hE'⟩,
