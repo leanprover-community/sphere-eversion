@@ -38,7 +38,7 @@ variables
 (N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
 {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
 {HP : Type*} [topological_space HP] (IP : model_with_corners ℝ EP HP)
-{P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
+(P : Type*) [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
 {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
 -- note: X is a metric space
@@ -115,8 +115,11 @@ def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
 
 end family_formal_sol
 
-/-- A homotopy of formal solutions is a family indexed by `ℝ` -/
-@[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
+/-- The relation `𝓡 ^ P` -/
+def rel_mfld.relativize (R : rel_mfld I M I' M') : rel_mfld (IP.prod I) (P × M) I' M' :=
+bundle_snd ⁻¹' R
+
+variables {P}
 
 /-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
 `C` of the domain if for every formal solution `𝓕₀` that is holonomic near `C`
@@ -149,6 +152,14 @@ def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C₁ : set P) (
   (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
   (∀ (t : ℝ) (s : P) (x : M), dist ((𝓕 (t, s)).bs x) ((𝓕₀ s).bs x) ≤ ε x) -- and close to `𝓕₀`.
 
+variables [finite_dimensional ℝ EP] [sigma_compact_space P] [t2_space P]
+
+/-- This might need some additional assumptions or other modifications. -/
+lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M I' M') (C₁ : set P) (C₂ : set M)
+  (ε : M → ℝ) :
+  (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2) ↔
+  R.satisfies_h_principle_with IP C₁ C₂ ε :=
+sorry
 
 end defs
 
@@ -318,7 +329,7 @@ def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) 
 
 end smooth_open_embedding
 
-namespace family_one_jet_sec
+section parameter_space
 
 variables
 {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
@@ -327,23 +338,32 @@ variables
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
 {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
 (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-{G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
-(N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
-{F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
-{G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
-(N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
-variables {I M I' M' J N} {R : rel_mfld I M I' M'}
+{EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
+{HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP}
+{P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
+variables {I M I' M'} {R : rel_mfld I M I' M'}
 
-lemma uncurry_mem_iff (S : family_one_jet_sec I M I' M' J N) {t : N} {x : M} :
-  S.uncurry (t, x) ∈ (bundle_snd ⁻¹' R : rel_mfld (J.prod I) (N × M) I' M') ↔ S t x ∈ R :=
+lemma rel_mfld.ample.relativize (hR : R.ample) : (R.relativize IP P).ample :=
+sorry
+
+lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M' IP P) {s : P}
+  {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R :=
 begin
-  simp_rw [mem_preimage],
-  sorry
+  simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd, one_jet_sec.coe_apply,
+    map_left],
+  dsimp only,
+  -- simp_rw [S.uncurry_bs],
+  congr',
+  ext v,
+  simp_rw [S.uncurry_ϕ, continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
+    continuous_linear_map.comp_apply],
+  dsimp only,
+  sorry -- need that `Tpᵢ = pᵢ` where `pᵢ` is either the first or second projection.
+  -- convert zero_add _,
 end
 
 
-end family_one_jet_sec
+end parameter_space
 
 section loc
 /-! ## Link with the local story

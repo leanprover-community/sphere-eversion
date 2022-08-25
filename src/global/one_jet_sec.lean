@@ -107,6 +107,9 @@ variables
 {F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
 {G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
 (N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
+{EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
+{HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP}
+{P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
 
 /-- A family of jet sections indexed by manifold `N` is a function from `N` into jet sections
   in such a way that the function is smooth as a function of all arguments. -/
@@ -142,13 +145,14 @@ def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'�
 
 /-- Turn a family of sections of `J¹(M, M')` parametrized by `N` into a section of `J¹(N × M, M')`.
 -/
-def uncurry (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (J.prod I) (N × M) I' M' :=
+@[simps]
+def uncurry (S : family_one_jet_sec I M I' M' IP P) : one_jet_sec (IP.prod I) (P × M) I' M' :=
 { bs := λ p, S.bs p.1 p.2,
-  ϕ := λ p, mfderiv J I' (λ z, S.bs z p.2) p.1 ∘L mfderiv (J.prod I) J prod.fst p +
-    S.ϕ p.1 p.2 ∘L mfderiv (J.prod I) I prod.snd p,
+  ϕ := λ p, mfderiv IP I' (λ z, S.bs z p.2) p.1 ∘L mfderiv (IP.prod I) IP prod.fst p +
+    S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I prod.snd p,
   smooth' := begin
     refine smooth.one_jet_add _ _,
-    { refine smooth.one_jet_comp J (λ p, p.1) _ smooth_fst.one_jet_ext,
+    { refine smooth.one_jet_comp IP (λ p, p.1) _ smooth_fst.one_jet_ext,
       -- have := S.smooth_bs.comp (smooth_id.prod_mk smooth_const), dsimp [function.comp] at this,
       -- have := smooth.one_jet_ext this,
       sorry

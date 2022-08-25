@@ -527,7 +527,7 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
   \label{lem:param_trick}
   \uses{def:holonomic_section, def:formal_sol}
   \leanok
-  \lean{family_one_jet_sec.is_holonomic_uncurry, family_one_jet_sec.uncurry_mem_iff}
+  \lean{family_one_jet_sec.is_holonomic_uncurry, family_one_jet_sec.uncurry_mem_relativize}
   In the above setup, we have:
   \begin{itemize}
     \item
@@ -546,6 +546,8 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
 \begin{lemma}
   \label{lem:param_for_free}
   \uses{def:h-princ}
+  \leanok
+  \lean{rel_mfld.relativize_satisfies_h_principle}
   Let $\Rel$ be a first order differential relation for maps from $M$ to
   $N$.
   If, for every manifold with boundary $P$, $\Rel^P$ satisfies the
@@ -663,6 +665,8 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 \begin{lemma}
     \label{lem:ample_parameter}
     \uses{def:ample_relation}
+    \leanok
+    \lean{rel_mfld.ample.relativize}
     If $\Rel$ is ample then, for any parameter space $P$, $\Rel^P$ is also ample.
 \end{lemma}
 
