@@ -1,5 +1,6 @@
 import geometry.manifold.diffeomorph
 import geometry.manifold.algebra.monoid
+import geometry.manifold.metrizable
 
 open bundle set function filter
 open_locale manifold topological_space
