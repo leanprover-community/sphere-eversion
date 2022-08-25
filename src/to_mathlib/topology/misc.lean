@@ -30,6 +30,20 @@ end to_specific_limits
 
 section
 
+variables {α β : Type*} [topological_space α] [topological_space β]
+
+instance [sigma_compact_space α] [sigma_compact_space β] : sigma_compact_space (α × β) :=
+begin
+  refine ⟨⟨λ n, compact_covering α n.unpair.1 ×ˢ compact_covering β n.unpair.2, λ n,
+    (is_compact_compact_covering _ _).prod (is_compact_compact_covering _ _), _⟩⟩,
+  simp_rw [set.Union_unpair (λ n m, compact_covering α n ×ˢ compact_covering β m), ← prod_Union,
+    ← Union_prod_const, Union_compact_covering, univ_prod_univ]
+end
+
+end
+
+section
+
 lemma support_norm {α E : Type*} [normed_add_comm_group E] (f : α → E) : support (λ a, ∥f a∥) = support f :=
 function.support_comp_eq norm (λ x, norm_eq_zero) f
 
