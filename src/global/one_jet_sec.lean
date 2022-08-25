@@ -140,23 +140,26 @@ def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'�
   ϕ := λ t, S.ϕ (f t),
   smooth' := λ x, (S.smooth' (f x.1, x.2)).comp x $ (f.smooth.smooth_at).prod_map' smooth_at_id }
 
-def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
-{ bs := λ p, S.bs p.2 p.1,
-  ϕ := λ p, mfderiv J I' (λ z, S.bs z p.1) p.2 ∘L mfderiv (I.prod J) J prod.snd p +
-    S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
+/-- Turn a family of sections of `J¹(M, M')` parametrized by `N` into a section of `J¹(N × M, M')`.
+-/
+def uncurry (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (J.prod I) (N × M) I' M' :=
+{ bs := λ p, S.bs p.1 p.2,
+  ϕ := λ p, mfderiv J I' (λ z, S.bs z p.2) p.1 ∘L mfderiv (J.prod I) J prod.fst p +
+    S.ϕ p.1 p.2 ∘L mfderiv (J.prod I) I prod.snd p,
   smooth' := begin
     refine smooth.one_jet_add _ _,
-    { refine smooth.one_jet_comp J (λ p, p.2) _ smooth_snd.one_jet_ext,
+    { refine smooth.one_jet_comp J (λ p, p.1) _ smooth_fst.one_jet_ext,
       -- have := S.smooth_bs.comp (smooth_id.prod_mk smooth_const), dsimp [function.comp] at this,
       -- have := smooth.one_jet_ext this,
       sorry
        },
-    { refine smooth.one_jet_comp I (λ p, p.1) _ smooth_fst.one_jet_ext,
-      exact S.smooth.comp (smooth_snd.prod_mk smooth_fst) }
+    { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext,
+      -- exact S.smooth.comp (smooth_snd.prod_mk smooth_fst)
+      }
   end  }
 
 /- -- attempted version with one one `mfderiv` left of addition
-def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
+def uncurry (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
 { bs := λ p, S.bs p.2 p.1,
   ϕ := λ p, (mfderiv (I.prod J) I' (λ z : M × N, S.bs z.2 p.1) p : _) +
     S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
@@ -169,6 +172,11 @@ def prod (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N
   end  }
 
 -/
+
+lemma is_holonomic_uncurry (S : family_one_jet_sec I M I' M' J N) {p : N × M} :
+  S.uncurry.is_holonomic_at p ↔ (S p.1).is_holonomic_at p.2 :=
+sorry
+
 end family_one_jet_sec
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
