@@ -78,6 +78,11 @@ lemma mem_preslice {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
   w ∈ R.preslice σ p ↔ one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
 iff.rfl
 
+@[simp] lemma jet_apply_v_mem_preslice_of_mem_relation
+  (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M') (hσ : σ ∈ R) (p : dual_pair' $ TM σ.1.1) :
+  σ.2 p.v ∈ R.preslice σ p :=
+by { rcases σ with ⟨⟨m, m'⟩, φ⟩, simpa [mem_preslice] using hσ, }
+
 /-- the slice `R(σ,p)`. -/
 def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
   (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=

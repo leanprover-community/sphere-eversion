@@ -171,6 +171,23 @@ begin
     exact hφ hw }
 end
 
+open finite_dimensional
+
+lemma two_le_rank_of_rank_lt_rank [finite_dimensional ℝ E] [finite_dimensional ℝ E']
+  (p : dual_pair' E) (h : finrank ℝ E < finrank ℝ E') (φ : E →L[ℝ] E') :
+  2 ≤ module.rank ℝ (E' ⧸ submodule.map φ p.π.ker) :=
+begin
+  suffices : 2 ≤ finrank ℝ (E' ⧸ p.π.ker.map φ.to_linear_map),
+  { rw ← finrank_eq_dim,
+    exact_mod_cast this },
+  apply le_of_add_le_add_right,
+  rw submodule.finrank_quotient_add_finrank (p.π.ker.map φ.to_linear_map),
+  have := calc finrank ℝ (p.π.ker.map φ.to_linear_map)
+        ≤ finrank ℝ p.π.ker : finrank_map_le ℝ φ.to_linear_map p.π.ker
+    ...  < finrank ℝ E : submodule.finrank_lt (le_top.lt_of_ne p.ker_pi_ne_top),
+  linarith,
+end
+
 end dual_pair'
 end no_norm
 
