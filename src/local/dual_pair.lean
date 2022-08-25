@@ -130,6 +130,47 @@ begin
     continuous_linear_equiv.coe_coe, φ.symm_apply_apply],
 end
 
+@[simp] lemma injective_update_iff
+  (p : dual_pair' E) {φ : E →L[ℝ] F} (hφ : injective φ) {w : F} :
+  injective (p.update φ w) ↔ w ∉ p.π.ker.map φ :=
+begin
+  change injective (p.update φ w) ↔ w ∉ φ '' p.π.ker,
+  split,
+  { rintros h ⟨u, hu, rfl⟩,
+    have : p.update φ (φ u) p.v = φ u,
+    exact p.update_v φ (φ u),
+    conv_rhs at this { rw ←  p.update_ker_pi φ (φ u) hu },
+    rw ← h this at hu,
+    simp only [set_like.mem_coe, continuous_linear_map.mem_ker] at hu,
+    rw p.pairing at hu,
+    linarith },
+  { intros h u u' huu',
+    rcases p.decomp u with ⟨a, ha, t, rfl⟩,
+    rcases p.decomp u' with ⟨a', ha', t', rfl⟩,
+    suffices : (t - t') • p.v = a' - a,
+    { rw [sub_smul] at this,
+      rw eq_add_of_sub_eq' this,
+      abel },
+    have : φ a + t • w = φ a' + t' • w,
+      by simpa only [(p.update φ w).map_add, ha, ha', update_ker_pi, update_v,
+        continuous_linear_map.map_smul] using huu',
+    have hw : (t -t') • w = φ (a' - a),
+    { rw [sub_smul, φ.map_sub],
+      rw eq_sub_of_add_eq this,
+      abel },
+    have haa' : a' - a ∈ p.π.ker := p.π.ker.sub_mem ha' ha,
+    have ht : t - t' = 0,
+    { by_contra' ht,
+      apply h,
+      refine ⟨(t - t')⁻¹ • (a' - a), p.π.ker.smul_mem _ haa', _⟩,
+      have := congr_arg (λ u : F, (t - t')⁻¹ • u) hw,
+      simp only [ht, inv_smul_smul₀, ne.def, not_false_iff, map_sub] at this,
+      rwa [← φ.map_sub, ← φ.map_smul, eq_comm] at this },
+    rw [eq_comm, ht, zero_smul] at hw ⊢,
+    rw ← φ.map_zero at hw,
+    exact hφ hw }
+end
+
 end dual_pair'
 end no_norm
 
