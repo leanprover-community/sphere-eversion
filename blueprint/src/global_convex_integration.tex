@@ -372,7 +372,22 @@ For every smooth map $f \co M → N$,
 
 \begin{proof}
   \leanok
-  This is obvious by construction.
+  Points 2 and 3 are obvious by construction.
+
+  To show that $j^1f$ is smooth, suppose that $M$ is modelled over $E$ with charts
+  $C_x : M \to E$ and coordinate change functions
+  $C_{x,x'}=C_{x'}C_x^{-1} : E \to E$ and similarly let $C'_y$ be charts for $N$.
+  By construction of the 1-jet bundle, we need to check that for each $x_0$ the map
+  $$x\mapsto TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ
+    T_{C_{x_0}(x)}(C_{x_0,x}): M \to L(E,E)$$
+  is smooth at $x_0$ (we occasionally omit the point where the tangent maps are taken).
+  For $x$ close to $x_0$ the coordinate changes are smooth, so we can write
+  \begin{align*}
+  TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ T(C_{x_0,x})
+  &= T_{C_{x_0}(x)}(C'_{f(x),f(x_0)}C'_{f(x)}fC_x^{-1}C_{x_0,x})\\
+  &= T_{C_{x_0}(x)}(C'_{f(x_0)}fC_{x_0})
+  \end{align*}
+  This is smooth since $x\mapsto C'_{f(x)}fC_{x}$ is smooth.
 \end{proof}
 
 \begin{definition}
