@@ -99,6 +99,7 @@ variables {I M}
 
 lemma mem_boundary {x : M} : x ∈ boundary I M ↔ ext_chart_at I x x ∈ frontier (range I) := iff.rfl
 
+/-- All charts agree on whether you are at the boundary. -/
 lemma mem_boundary_iff_of_mem {x x' : M} (hx : x ∈ (ext_chart_at I x').source) :
   x ∈ boundary I M ↔ ext_chart_at I x' x ∈ frontier (range I) :=
 sorry
