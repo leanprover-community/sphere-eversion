@@ -259,10 +259,18 @@ begin
     continuous_linear_map.map_add]
 end
 
-/-- Used for `Ψ` in the notes. -/
+/-- A useful definition to define maps between two one_jet_bundles. -/
 def map_left (f : M → N) (Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] tangent_space I x) :
   one_jet_bundle I M I' M' → one_jet_bundle J N I' M' :=
 λ p, one_jet_bundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
+
+def bundle_fst :
+  one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle J N I' M' :=
+map_left prod.fst $ λ x, (continuous_linear_map.id 𝕜 F).prod 0
+
+def bundle_snd :
+  one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle I M I' M' :=
+map_left prod.snd $ λ x, continuous_linear_map.prod 0 (continuous_linear_map.id 𝕜 E)
 
 end maps
 

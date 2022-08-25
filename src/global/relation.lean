@@ -291,6 +291,33 @@ def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) 
 
 end smooth_open_embedding
 
+namespace family_one_jet_sec
+
+variables
+{E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
+(M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+{E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
+{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
+(M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+{G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
+(N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
+{F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
+{G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
+(N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
+variables {I M I' M' J N} {R : rel_mfld I M I' M'}
+
+lemma uncurry_mem_iff (S : family_one_jet_sec I M I' M' J N) {t : N} {x : M} :
+  S.uncurry (t, x) ∈ (bundle_snd ⁻¹' R : rel_mfld (J.prod I) (N × M) I' M') ↔ S t x ∈ R :=
+begin
+  simp_rw [mem_preimage],
+  sorry
+end
+
+
+end family_one_jet_sec
+
 section loc
 /-! ## Link with the local story
 
