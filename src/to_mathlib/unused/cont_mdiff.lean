@@ -36,7 +36,7 @@ variables
   {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
   {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
-lemma cont_mdiff_iff_cont_diff_on {s : opens E}  {f : E → F} {n : with_top ℕ} :
+lemma cont_mdiff_iff_cont_diff_on {s : opens E}  {f : E → F} {n : ℕ∞} :
   cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) ↔ cont_diff_on ℝ n f s :=
 begin
   rw ← cont_mdiff_on_iff_cont_diff_on,
@@ -45,7 +45,7 @@ begin
 end
 
 lemma cont_mdiff_iff_cont_diff_on' {s : opens E} [decidable_pred (λ x, x ∈ s)]
-  {f : s → F} {n : with_top ℕ} :
+  {f : s → F} {n : ℕ∞} :
   cont_mdiff 𝓘(ℝ, E) 𝓘(ℝ, F) n f ↔ cont_diff_on ℝ n (λ x : E, if hx : x ∈ s then f ⟨x, hx⟩ else 0) s :=
 begin
   rw ← cont_mdiff_on_iff_cont_diff_on,
@@ -54,7 +54,7 @@ begin
   exact ⟨λ h x x_in, key.mp h x x_in, λ h x, key.mpr h x⟩
 end
 
-lemma cont_mdiff_on_iff_cont_diff_on' {s : opens E} {t : set E} {f : E → F} {n : with_top ℕ} :
+lemma cont_mdiff_on_iff_cont_diff_on' {s : opens E} {t : set E} {f : E → F} {n : ℕ∞} :
   cont_mdiff_on 𝓘(ℝ, E) 𝓘(ℝ, F) n (f ∘ (coe : s → E)) (coe ⁻¹' t) ↔ cont_diff_on ℝ n f (s ∩ t) :=
 begin
   rw ← cont_mdiff_on_iff_cont_diff_on,

@@ -289,10 +289,10 @@ instance : has_coe_to_fun (htpy_jet_sec E F) (λ S, ℝ → jet_sec E F) :=
 
 namespace htpy_jet_sec
 
-lemma cont_diff_f (𝓕 : htpy_jet_sec E F) {n : with_top ℕ} : 𝒞 n ↿𝓕.f :=
+lemma cont_diff_f (𝓕 : htpy_jet_sec E F) {n : ℕ∞} : 𝒞 n ↿𝓕.f :=
 𝓕.f_diff.of_le le_top
 
-lemma cont_diff_φ (𝓕 : htpy_jet_sec E F) {n : with_top ℕ} : 𝒞 n ↿𝓕.φ :=
+lemma cont_diff_φ (𝓕 : htpy_jet_sec E F) {n : ℕ∞} : 𝒞 n ↿𝓕.φ :=
 𝓕.φ_diff.of_le le_top
 
 end htpy_jet_sec

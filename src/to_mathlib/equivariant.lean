@@ -192,7 +192,7 @@ end
 begin
   rw [← linear_reparam.fract_fract], rcases h with h|h,
   { rw [linear_reparam_eq_zero' (fract_nonneg _) h, fract_zero] },
-  { rw [linear_reparam_eq_one' h (fract_lt_one _).le, _root_.fract_one] },
+  { rw [linear_reparam_eq_one' h (fract_lt_one _).le, fract_one] },
 end
 
 lemma continuous_linear_reparam : continuous linear_reparam :=

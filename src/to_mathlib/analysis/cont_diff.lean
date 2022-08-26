@@ -64,7 +64,7 @@ variables (𝕜 : Type*) [nontrivially_normed_field 𝕜]
   {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
-  {n : with_top ℕ}
+  {n : ℕ∞}
 
 -- The next two definitions aren't used in the end, but they may still go to mathlib
 def strict_differentiable_at (f : E → F) (x) :=
@@ -151,7 +151,7 @@ variables {𝕜 : Type*} [is_R_or_C 𝕜]
   {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
-  {n : with_top ℕ}
+  {n : ℕ∞}
 
 
 local notation `∂₁` := partial_fderiv_fst 𝕜

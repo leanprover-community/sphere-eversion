@@ -88,7 +88,7 @@ begin
   { intro h,
     exact ⟨⌊x⌋, h.symm⟩ },
   { rintros ⟨n, rfl⟩,
-    rw floor_coe }
+    rw floor_int_cast }
 end
 
 lemma fract_eq_zero_iff {x : ℝ} : fract x = 0 ↔ ∃ n : ℤ, x = n :=
@@ -200,9 +200,6 @@ begin
       (hu.union hv).preimage_fract (λ _, subset_union_right _ _ h1v), subset_union_left _ _ hxu⟩ },
   { exact (continuous_at_fract hx).preimage_mem_nhds h1 }
 end
-
-lemma fract_one : fract (1 : ℝ) = 0 :=
-by simp_rw [← fract_coe 1, int.cast_one]
 
 end fract
 

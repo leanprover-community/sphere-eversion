@@ -17,7 +17,7 @@ variables {H : Type uH} [topological_space H] (I : model_with_corners ℝ E H)
 
 lemma exists_cont_diff_of_convex_of_is_open {s : set E} (hs : is_open s)
   {P : E → F → Prop} (hP : ∀ x ∈ s, convex ℝ {y | P x y})
-  {n : with_top ℕ}
+  {n : ℕ∞}
   (hP' : ∀ x ∈ s, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
   ∃ f : E → F, cont_diff_on ℝ n f s ∧ ∀ x ∈ s, P x (f x) :=
 begin

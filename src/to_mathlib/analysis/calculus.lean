@@ -39,7 +39,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
           {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
-          {n : with_top ℕ}
+          {n : ℕ∞}
 
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
@@ -89,11 +89,11 @@ begin
   exact h.has_fderiv_at.partial_snd
 end
 
-lemma cont_diff.partial_fst {φ : E → F → G} {n : with_top ℕ}
+lemma cont_diff.partial_fst {φ : E → F → G} {n : ℕ∞}
   (h : cont_diff 𝕜 n $ uncurry φ) (f₀ : F) : cont_diff 𝕜 n (λ e, φ e f₀) :=
 h.comp $ cont_diff_prod_mk_left f₀
 
-lemma cont_diff.partial_snd {φ : E → F → G} {n : with_top ℕ}
+lemma cont_diff.partial_snd {φ : E → F → G} {n : ℕ∞}
   (h : cont_diff 𝕜 n $ uncurry φ) (e₀ : E) : cont_diff 𝕜 n (λ f, φ e₀ f) :=
 h.comp $ cont_diff_prod_mk_right e₀
 
@@ -176,7 +176,7 @@ lemma cont_diff.cont_diff_partial_fst_apply {φ : E → F → G} {n : ℕ}
 (continuous_linear_map.apply 𝕜 G x).cont_diff.comp hF.cont_diff_partial_fst
 
 lemma cont_diff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
-  (h : cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₁ 𝕜 φ) :=
+  (h : cont_diff 𝕜 ((n + 1 : ℕ) : ℕ∞) $ uncurry φ) : continuous ↿(∂₁ 𝕜 φ) :=
 h.cont_diff_partial_fst.continuous
 
 lemma cont_diff.cont_diff_top_partial_fst {φ : E → F → G} (hF : cont_diff 𝕜 ⊤ (uncurry φ)) :
@@ -197,7 +197,7 @@ lemma cont_diff.cont_diff_partial_snd_apply {φ : E → F → G} {n : ℕ}
 (continuous_linear_map.apply 𝕜 G y).cont_diff.comp hF.cont_diff_partial_snd
 
 lemma cont_diff.continuous_partial_snd {φ : E → F → G} {n : ℕ}
-  (h : cont_diff 𝕜 ((n + 1 : ℕ) : with_top ℕ) $ uncurry φ) : continuous ↿(∂₂ 𝕜 φ) :=
+  (h : cont_diff 𝕜 ((n + 1 : ℕ) : ℕ∞) $ uncurry φ) : continuous ↿(∂₂ 𝕜 φ) :=
 h.cont_diff_partial_snd.continuous
 
 lemma cont_diff.cont_diff_top_partial_snd {φ : E → F → G} (hF : cont_diff 𝕜 ⊤ (uncurry φ)) :

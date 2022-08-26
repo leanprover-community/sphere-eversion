@@ -3,7 +3,7 @@ import analysis.calculus.cont_diff
 open_locale topological_space
 
 notation `𝒞` := cont_diff ℝ
-notation `∞` := (⊤ : with_top ℕ)
+notation `∞` := (⊤ : ℕ∞)
 notation `hull` := convex_hull ℝ
 notation `D` := fderiv ℝ
 notation `smooth_on` := cont_diff_on ℝ ⊤

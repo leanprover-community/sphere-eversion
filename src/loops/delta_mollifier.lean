@@ -102,7 +102,7 @@ end
 
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 
-lemma cont_diff.periodize {f : ℝ → E} {n : with_top ℕ} (h : cont_diff ℝ n f)
+lemma cont_diff.periodize {f : ℝ → E} {n : ℕ∞} (h : cont_diff ℝ n f)
   (h' : has_compact_support f) : cont_diff ℝ n (periodize f) :=
 begin
   apply cont_diff_iff_cont_diff_at.mpr (λ x, cont_diff_at_finsum _ _),

@@ -85,7 +85,7 @@ variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nontrivially_normed_fie
 attribute [instance] matrix.normed_add_comm_group matrix.normed_space
 
 -- This should really be deduced from general results about continuous multilinear maps.
-lemma smooth_det (m : with_top ℕ) :
+lemma smooth_det (m : ℕ∞) :
   cont_diff k m (det : matrix ι ι k → k) :=
 begin
   suffices : ∀ (n : ℕ), cont_diff k m (det : matrix (fin n) (fin n) k → k),

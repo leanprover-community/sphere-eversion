@@ -226,7 +226,7 @@ variables [normed_add_comm_group G] [normed_space 𝕜 G]
 variables [normed_add_comm_group H] [normed_space 𝕜 H]
 variables [normed_add_comm_group K] [normed_space 𝕜 K]
 variables [normed_linear_ordered_field F'] [normed_space 𝕜 F']
-variables {n : with_top ℕ}
+variables {n : ℕ∞}
 
 lemma iterated_fderiv_comp_eq_zero_right {g : F → G} {f : E → F} {n : ℕ} (hg : cont_diff 𝕜 n g)
   (hf : cont_diff 𝕜 n f) (x : E) (hn : 1 ≤ n) (h : ∀ m ≤ n, 1 ≤ m → iterated_fderiv 𝕜 m f x = 0) :
@@ -245,7 +245,7 @@ lemma cont_diff.if_le_of_fderiv {f g : E → F} {a b : E → F'}
   cont_diff 𝕜 n (λ x, if a x ≤ b x then f x else g x) :=
 sorry_ax
 
-lemma cont_diff.if_le_of_deriv {n : with_top ℕ} {f g : 𝕜 → F} {a b : 𝕜 → F'}
+lemma cont_diff.if_le_of_deriv {n : ℕ∞} {f g : 𝕜 → F} {a b : 𝕜 → F'}
   (hf : cont_diff 𝕜 n f) (hg : cont_diff 𝕜 n g) (ha : cont_diff 𝕜 n a) (hb : cont_diff 𝕜 n b)
   (h : ∀ x n, a x = b x → iterated_deriv n f x = iterated_deriv n g x) :
   cont_diff 𝕜 n (λ x, if a x ≤ b x then f x else g x) :=
