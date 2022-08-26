@@ -72,6 +72,13 @@ lemma update_self (p : dual_pair' E) (φ : E →L[ℝ] F)  :
 by simp only [update, add_zero, continuous_linear_map.to_span_singleton_zero,
               continuous_linear_map.zero_comp, sub_self]
 
+@[simp]
+lemma update_update (p : dual_pair' E) (φ : E →L[ℝ] F) (w w' : F) :
+  p.update (p.update φ w') w = p.update φ w :=
+by simp_rw [update, add_apply, coe_comp', comp_app, to_span_singleton_apply, p.pairing,
+  one_smul, add_sub_cancel'_right, add_assoc, ← continuous_linear_map.add_comp,
+  ← to_span_singleton_add, sub_add_eq_add_sub, add_sub_cancel'_right]
+
 lemma inf_eq_bot (p : dual_pair' E) : p.π.ker ⊓ p.span_v = ⊥ :=
 begin
   rw eq_bot_iff,

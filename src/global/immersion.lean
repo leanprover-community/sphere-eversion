@@ -38,7 +38,7 @@ def immersion_rel : rel_mfld I M I' M' := {σ | injective σ.2}
 
 @[simp] lemma immersion_rel_preslice_eq {m : M} {m' : M'} {p : dual_pair' $ tangent_space I m}
   {φ : tangent_space I m →L[ℝ] tangent_space I' m'} (hφ : injective φ) :
-  (immersion_rel I M I' M').preslice ⟨(m, m'), φ⟩ p = (p.π.ker.map φ)ᶜ :=
+  (immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p = (p.π.ker.map φ)ᶜ :=
 set.ext_iff.mpr $ λ w, p.injective_update_iff hφ
 
 variables {M M'}
@@ -56,18 +56,12 @@ sorry
 lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
   (immersion_rel I M I' M').ample :=
 begin
+  rw [rel_mfld.ample_iff],
   rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
           (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
   haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
-  -- haveI : finite_dimensional ℝ (tangent_space I' m') := (by apply_instance : finite_dimensional ℝ E'),
   have hcodim := p.two_le_rank_of_rank_lt_rank h φ,
-  have aux : ((immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p) =
-             (immersion_rel I M I' M').preslice ⟨(m, m'), φ⟩ p,
-  { change connected_component_in _ _ = _,
-    have := jet_apply_v_mem_preslice_of_mem_relation (immersion_rel I M I' M') ⟨(m, m'), φ⟩ hφ p,
-    simp only [immersion_rel_preslice_eq I M I' M' hφ] at ⊢ this,
-    exact (p.π.ker.map φ).connected_component_in_eq_self_of_two_le_codim hcodim this, },
-  rw [aux, immersion_rel_preslice_eq I M I' M' hφ],
+  rw [immersion_rel_preslice_eq I M I' M' hφ],
   exact ample_of_two_le_codim hcodim,
 end
 

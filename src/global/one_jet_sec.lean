@@ -129,6 +129,9 @@ namespace family_one_jet_sec
 
 variables {I M I' M' J N J' N'}
 
+@[simp] lemma coe_bs (S : family_one_jet_sec I M I' M' J N) (s : N) : (S s).bs = S.bs s := rfl
+@[simp] lemma coe_ϕ (S : family_one_jet_sec I M I' M' J N) (s : N) : (S s).ϕ = S.ϕ s := rfl
+
 protected lemma smooth (S : family_one_jet_sec I M I' M' J N) :
   smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (λ p : N × M, S p.1 p.2) := S.smooth'
 
@@ -148,34 +151,28 @@ def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'�
 @[simps]
 def uncurry (S : family_one_jet_sec I M I' M' IP P) : one_jet_sec (IP.prod I) (P × M) I' M' :=
 { bs := λ p, S.bs p.1 p.2,
-  ϕ := λ p, mfderiv IP I' (λ z, S.bs z p.2) p.1 ∘L mfderiv (IP.prod I) IP prod.fst p +
+  ϕ := λ p, (show EP × E →L[ℝ] E', from mfderiv (IP.prod I) I' (λ z : P × M, S.bs z.1 p.2) p) +
     S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I prod.snd p,
   smooth' := begin
     refine smooth.one_jet_add _ _,
-    { refine smooth.one_jet_comp IP (λ p, p.1) _ smooth_fst.one_jet_ext,
-      -- have := S.smooth_bs.comp (smooth_id.prod_mk smooth_const), dsimp [function.comp] at this,
-      -- have := smooth.one_jet_ext this,
-      sorry
+    { sorry -- this is not just an application of `smooth.one_jet_ext`,
+      -- and we (I think) also need more than `smooth.one_jet_ext'`.
+
        },
-    { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext,
-      -- exact S.smooth.comp (smooth_snd.prod_mk smooth_fst)
-      }
-  end  }
+    { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext }
+  end }
 
-/- -- attempted version with one one `mfderiv` left of addition
-def uncurry (S : family_one_jet_sec I M I' M' J N) : one_jet_sec (I.prod J) (M × N) I' M' :=
-{ bs := λ p, S.bs p.2 p.1,
-  ϕ := λ p, (mfderiv (I.prod J) I' (λ z : M × N, S.bs z.2 p.1) p : _) +
-    S.ϕ p.2 p.1 ∘L mfderiv (I.prod J) I prod.fst p,
-  smooth' := begin
-    refine smooth.one_jet_add _ _,
-    { refine smooth.one_jet_ext _, -- nope
-     },
-    { refine smooth.one_jet_comp I (λ p, p.1) _ smooth_fst.one_jet_ext,
-      exact S.smooth.comp (smooth_snd.prod_mk smooth_fst) }
-  end  }
-
--/
+lemma uncurry_ϕ' (S : family_one_jet_sec I M I' M' IP P) (p : P × M) :
+  (S.uncurry).ϕ p = mfderiv IP I' (λ z, S.bs z p.2) p.1 ∘L continuous_linear_map.fst ℝ EP E +
+  S.ϕ p.1 p.2 ∘L continuous_linear_map.snd ℝ EP E :=
+begin
+  simp_rw [S.uncurry_ϕ, mfderiv_snd],
+  congr' 1,
+  convert mfderiv_comp p
+    ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable le_top p.1)
+    (smooth_fst.mdifferentiable p),
+  simp_rw [mfderiv_fst],
+end
 
 lemma is_holonomic_uncurry (S : family_one_jet_sec I M I' M' J N) {p : N × M} :
   S.uncurry.is_holonomic_at p ↔ (S p.1).is_holonomic_at p.2 :=

@@ -103,7 +103,7 @@ lemma mem_boundary {x : M} : x ∈ boundary I M ↔ ext_chart_at I x x ∈ front
 /-- All charts agree on whether you are at the boundary. -/
 lemma mem_boundary_iff_of_mem {x x' : M} (hx : x ∈ (ext_chart_at I x').source) :
   x ∈ boundary I M ↔ ext_chart_at I x' x ∈ frontier (range I) :=
-sorry
+by admit -- likely not going to be used
 
 end boundary
 
@@ -224,6 +224,16 @@ definitionally equal to `E'`. -/
 lemma mfderiv_congr {f' : M → M'} (h : f = f') :
   @eq (E →L[𝕜] E') (mfderiv I I' f x) (mfderiv I I' f' x) :=
 by subst h
+
+/-- The derivative of the projection `M × M' → M` is the projection `TM × TM' → TM` -/
+lemma mfderiv_fst (x : M × M') :
+  mfderiv (I.prod I') I prod.fst x = continuous_linear_map.fst 𝕜 E E' :=
+sorry
+
+/-- The derivative of the projection `M × M' → M'` is the projection `TM × TM' → TM'` -/
+lemma mfderiv_snd (x : M × M') :
+  mfderiv (I.prod I') I' prod.snd x = continuous_linear_map.snd 𝕜 E E' :=
+sorry
 
 
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
