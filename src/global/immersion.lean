@@ -101,6 +101,17 @@ sorry
 lemma immersion_antipodal_sphere : immersion (𝓡 2) 𝓘(ℝ, E) (λ x : sphere (0 : E) 1, -(x : E)) :=
 sorry
 
+/- The relation of immersion of a two-sphere into its ambiant Euclidean space. -/
+local notation `𝓡_imm` := immersion_rel (𝓡 2) (sphere (0 : E) 1) 𝓘(ℝ, E) E
+
+/-- A formal eversion of a two-sphere into its ambiant Euclidean space.
+Right now this is waiting for Heather's work on rotations. -/
+def formal_eversion : family_formal_sol 𝓘(ℝ, ℝ) ℝ 𝓡_imm :=
+{ bs := λ t x, (1-t) • x + t • (-x),
+  ϕ := λ t x, sorry,
+  smooth' := sorry,
+  is_sol' := sorry }
+
 /- TODO: Next step is to define the homotopy of formal immersions from the inclusion
 to the antipodal map. -/
 
