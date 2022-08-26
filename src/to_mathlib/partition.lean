@@ -134,7 +134,7 @@ variables
   {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
 
 lemma cont_diff_within_at_finsum {ι : Type*} {f : ι → E → F} (lf : locally_finite (λ i, support $ f i))
-  {n : with_top ℕ} {s : set E} {x₀ : E}
+  {n : ℕ∞} {s : set E} {x₀ : E}
   (h : ∀ i, cont_diff_within_at 𝕜 n (f i) s x₀) :
   cont_diff_within_at 𝕜 n (λ x, ∑ᶠ i, f i x) s x₀ :=
 let ⟨I, hI⟩ := finsum_eventually_eq_sum lf x₀ in
@@ -142,7 +142,7 @@ let ⟨I, hI⟩ := finsum_eventually_eq_sum lf x₀ in
     (eventually_nhds_within_of_eventually_nhds hI) hI.self_of_nhds
 
 lemma cont_diff_at_finsum {ι : Type*} {f : ι → E → F} (lf : locally_finite (λ i, support $ f i))
-  {n : with_top ℕ} {x₀ : E}
+  {n : ℕ∞} {x₀ : E}
   (h : ∀ i, cont_diff_at 𝕜 n (f i)  x₀) :
   cont_diff_at 𝕜 n (λ x, ∑ᶠ i, f i x) x₀ :=
 cont_diff_within_at_finsum lf h
@@ -156,7 +156,7 @@ variables
   [topological_space M] [charted_space H M]
   {s : set M} {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
-lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ)
+lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : ℕ∞)
   (s : set M) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n f s x :=
 (cont_mdiff_within_at_const : cont_mdiff_within_at I 𝓘(ℝ, F) n (λ x, (0 : F)) s x)
@@ -164,12 +164,12 @@ lemma cont_mdiff_within_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport
   (eventually_nhds_within_of_eventually_nhds $ not_mem_tsupport_iff_eventually_eq.mp hx)
   (image_eq_zero_of_nmem_tsupport hx)
 
-lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : with_top ℕ) :
+lemma cont_mdiff_at_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : ℕ∞) :
   cont_mdiff_at I 𝓘(ℝ, F) n f x :=
 cont_mdiff_within_at_of_not_mem hx n univ
 
 lemma cont_mdiff_within_at.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
-  {n : with_top ℕ} {s : set M} {x₀ : M}
+  {n : ℕ∞} {s : set M} {x₀ : M}
   (h : ∀ i ∈ J, cont_mdiff_within_at I 𝓘(ℝ, F) n (f i) s x₀) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n (λ x, ∑ i in J, f i x) s x₀ :=
 begin
@@ -182,7 +182,7 @@ begin
 end
 
 lemma cont_mdiff_within_at_finsum {ι : Type*} {f : ι → M → F} (lf : locally_finite (λ i, support $ f i))
-  {n : with_top ℕ} {s : set M} {x₀ : M}
+  {n : ℕ∞} {s : set M} {x₀ : M}
   (h : ∀ i, cont_mdiff_within_at I 𝓘(ℝ, F) n (f i) s x₀) :
   cont_mdiff_within_at I 𝓘(ℝ, F) n (λ x, ∑ᶠ i, f i x) s x₀ :=
 let ⟨I, hI⟩ := finsum_eventually_eq_sum lf x₀ in
@@ -190,7 +190,7 @@ cont_mdiff_within_at.congr_of_eventually_eq (cont_mdiff_within_at.sum $ λ i hi,
     (eventually_nhds_within_of_eventually_nhds hI) hI.self_of_nhds
 
 lemma cont_mdiff_at_finsum {ι : Type*} {f : ι → M → F} (lf : locally_finite (λ i, support $ f i))
-  {n : with_top ℕ} {x₀ : M}
+  {n : ℕ∞} {x₀ : M}
   (h : ∀ i, cont_mdiff_at I 𝓘(ℝ, F) n (f i) x₀) :
   cont_mdiff_at I 𝓘(ℝ, F) n (λ x, ∑ᶠ i, f i x) x₀ :=
 cont_mdiff_within_at_finsum lf h
@@ -198,7 +198,7 @@ cont_mdiff_within_at_finsum lf h
 variables [finite_dimensional ℝ E] [smooth_manifold_with_corners I M]
 
 lemma smooth_partition_of_unity.cont_diff_at_sum (ρ : smooth_partition_of_unity ι I M s)
-  {n : with_top ℕ} {x₀ : M} {φ : ι → M → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → cont_mdiff_at I 𝓘(ℝ, F) n (φ i) x₀) :
+  {n : ℕ∞} {x₀ : M} {φ : ι → M → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → cont_mdiff_at I 𝓘(ℝ, F) n (φ i) x₀) :
   cont_mdiff_at I 𝓘(ℝ, F) n (λ x, ∑ᶠ i, ρ i x • φ i x) x₀ :=
 begin
   refine cont_mdiff_at_finsum (ρ.locally_finite.smul_left _) (λ i, _),
@@ -208,7 +208,7 @@ begin
 end
 
 lemma smooth_partition_of_unity.cont_diff_at_sum' {s : set E} (ρ : smooth_partition_of_unity ι 𝓘(ℝ, E) E s)
-  {n : with_top ℕ} {x₀ : E} {φ : ι → E → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → cont_diff_at ℝ n (φ i) x₀) :
+  {n : ℕ∞} {x₀ : E} {φ : ι → E → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → cont_diff_at ℝ n (φ i) x₀) :
   cont_diff_at ℝ n (λ x, ∑ᶠ i, ρ i x • φ i x) x₀ :=
 begin
   rw ← cont_mdiff_at_iff_cont_diff_at,
@@ -234,7 +234,7 @@ lemma has_fderiv_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nontrivia
 -- Not used here, but should be in mathlib
 lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nontrivially_normed_field 𝕜]
   [normed_add_comm_group E] [normed_space 𝕜 E] [normed_add_comm_group F] [normed_space 𝕜 F]
-  {f : E → F} {x} (hx : x ∉ tsupport f) (n : with_top ℕ) : cont_diff_at 𝕜 n f x :=
+  {f : E → F} {x} (hx : x ∉ tsupport f) (n : ℕ∞) : cont_diff_at 𝕜 n f x :=
 (cont_diff_at_const : cont_diff_at 𝕜 n (λ x, (0 : F)) x).congr_of_eventually_eq
    (not_mem_tsupport_iff_eventually_eq.mp hx)
 
@@ -249,7 +249,7 @@ local notation `𝓒_on` := cont_mdiff_on I 𝓘(ℝ, F)
 
 lemma exists_cont_mdiff_of_convex
   {P : M → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
-  {n : with_top ℕ}
+  {n : ℕ∞}
   (hP' : ∀ x : M, ∃ U ∈ 𝓝 x, ∃ f : M → F, 𝓒_on n f U ∧ ∀ x ∈ U, P x (f x)) :
   ∃ f : M → F, 𝓒 n f ∧ ∀ x, P x (f x) :=
 begin
@@ -282,7 +282,7 @@ end
 
 lemma exists_cont_diff_of_convex
   {P : E → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
-  {n : with_top ℕ}
+  {n : ℕ∞}
   (hP' : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ f : E → F, cont_diff_on ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
   ∃ f : E → F, cont_diff ℝ n f ∧ ∀ x, P x (f x) :=
 begin
@@ -315,7 +315,7 @@ by by_cases hP : P; simp [hP, convex_singleton, convex_univ]
 --   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
 -- end
 
--- lemma exists_smooth_and_eq_on_aux2 {n : with_top ℕ} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+-- lemma exists_smooth_and_eq_on_aux2 {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : continuous f)
 --   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
 --   {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U)
 --   (x₀ : E) :
@@ -325,7 +325,7 @@ by by_cases hP : P; simp [hP, convex_singleton, convex_univ]
 --   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
 -- end
 
-lemma exists_smooth_and_eq_on {n : with_top ℕ} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+lemma exists_smooth_and_eq_on {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : continuous f)
   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
   {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U) :
   ∃ f' : E → F, cont_diff ℝ n f' ∧ (∀ x, dist (f' x) (f x) < ε x) ∧ eq_on f' f s :=

@@ -537,7 +537,7 @@ variables [normed_add_comm_group E] [normed_space ℝ E]
 /- Should we directly prove the version below?-/
 
 lemma cont_diff_parametric_primitive_of_cont_diff
-  {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F)
+  {F : H → ℝ → E} {n : ℕ∞} (hF : cont_diff ℝ n ↿F)
   {s : H → ℝ} (hs : cont_diff ℝ n s)
   (a : ℝ) :
   cont_diff ℝ n (λ x : H, ∫ t in a..s x, F x t) :=
@@ -549,7 +549,7 @@ begin
 end
 
 lemma cont_diff_parametric_primitive_of_cont_diff''
-  {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F) (a : ℝ) :
+  {F : H → ℝ → E} {n : ℕ∞} (hF : cont_diff ℝ n ↿F) (a : ℝ) :
   cont_diff ℝ n (λ x : H × ℝ, ∫ t in a..x.2, F x.1 t) :=
 cont_diff_parametric_primitive_of_cont_diff (hF.comp (cont_diff_fst.prod_map cont_diff_id))
 cont_diff_snd a
@@ -557,7 +557,7 @@ cont_diff_snd a
 local notation `∂₁` := partial_fderiv_fst ℝ
 
 lemma cont_diff_parametric_integral_of_cont_diff
-  {F : H → ℝ → E} {n : with_top ℕ} (hF : cont_diff ℝ n ↿F)
+  {F : H → ℝ → E} {n : ℕ∞} (hF : cont_diff ℝ n ↿F)
   (a b : ℝ) :
   cont_diff ℝ n (λ x : H, ∫ t in a..b, F x t) :=
 cont_diff_parametric_primitive_of_cont_diff hF cont_diff_const a

@@ -89,13 +89,13 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {M : Type*} [topological_space M] [charted_space H M]
   {M' : Type*} [topological_space M'] [charted_space H' M']
   {N : Type*} [topological_space N] [charted_space G N]
-variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
+variables {f : M → M'} {m n : ℕ∞} {s : set M} {x : M}
 variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_core I M E')
 
 /-- A version of `cont_mdiff_at_iff_target` when the codomain is the total space of
   a `basic_smooth_vector_bundle_core`. The continuity condition in the RHS is weaker. -/
 lemma cont_mdiff_within_at_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space}
-  {x : N} {s : set N} {n : with_top ℕ} :
+  {x : N} {s : set N} {n : ℕ∞} :
   cont_mdiff_within_at J (I.prod 𝓘(𝕜, E')) n f s x ↔
     continuous_within_at (bundle.total_space.proj ∘ f) s x ∧
     cont_mdiff_within_at J 𝓘(𝕜, E × E') n (ext_chart_at (I.prod 𝓘(𝕜, E')) (f x) ∘ f) s x :=
@@ -120,7 +120,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
   {M : Type*} [topological_space M] [charted_space H M]
   {M' : Type*} [topological_space M'] [charted_space H' M']
-variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
+variables {f : M → M'} {m n : ℕ∞} {s : set M} {x : M}
 
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
 

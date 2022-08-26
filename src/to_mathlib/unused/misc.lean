@@ -175,15 +175,15 @@ def continuous_linear_equiv.ulift (R M : Type*) [semiring R] [topological_space 
 { ..linear_equiv.ulift R M, ..homeomorph.ulift }
 
 lemma cont_diff_up {F X : Type*} [nontrivially_normed_field F] [normed_add_comm_group X]
-  [normed_space F X] {n : with_top ℕ} : cont_diff F n (@up X) :=
+  [normed_space F X] {n : ℕ∞} : cont_diff F n (@up X) :=
 (continuous_linear_equiv.ulift F X).symm.cont_diff
 
 lemma cont_diff_down {F X : Type*} [nontrivially_normed_field F] [normed_add_comm_group X]
-  [normed_space F X] {n : with_top ℕ} : cont_diff F n (@down X) :=
+  [normed_space F X] {n : ℕ∞} : cont_diff F n (@down X) :=
 (continuous_linear_equiv.ulift F X).cont_diff
 
 lemma cont_diff_up_iff {F X Y : Type*} [nontrivially_normed_field F] [normed_add_comm_group X]
-  [normed_space F X] [normed_add_comm_group Y] [normed_space F Y] {n : with_top ℕ} (f : X → Y) :
+  [normed_space F X] [normed_add_comm_group Y] [normed_space F Y] {n : ℕ∞} (f : X → Y) :
   cont_diff F n (λ x, up (f x)) ↔ cont_diff F n f :=
 (continuous_linear_equiv.ulift F Y).symm.comp_cont_diff_iff
 

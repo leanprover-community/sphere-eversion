@@ -192,7 +192,7 @@ begin
 end
 
 -- TODO Generalise + move
-lemma cont_diff_homothety {n : with_top ℕ} (c : E) (r : ℝ) : cont_diff ℝ n (homothety c r) :=
+lemma cont_diff_homothety {n : ℕ∞} (c : E) (r : ℝ) : cont_diff ℝ n (homothety c r) :=
 (⟨homothety c r, homothety_continuous c r⟩ : E →A[ℝ] E).cont_diff
 
 -- TODO Generalise + move

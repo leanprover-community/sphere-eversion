@@ -79,7 +79,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {N : Type*} [topological_space N] [charted_space G N]
   {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
   {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
-variables {f : M → M'} {m n : with_top ℕ} {s : set M} {x : M}
+variables {f : M → M'} {m n : ℕ∞} {s : set M} {x : M}
 
 attribute [ext] model_with_corners charted_space
 lemma model_with_corners_self_prod : 𝓘(𝕜, E × F) = 𝓘(𝕜, E).prod 𝓘(𝕜, F) :=
@@ -332,7 +332,7 @@ variables {M : Type*} [topological_space M] [charted_space H M]
 {M' : Type*} [topological_space M'] [charted_space H' M']
 {N : Type*} [topological_space N] [charted_space G N]
 {N' : Type*} [topological_space N'] [charted_space G' N']
-{n : with_top ℕ}
+{n : ℕ∞}
 (f : C^∞⟮I, M; J, N⟯)
 
 namespace cont_mdiff_map

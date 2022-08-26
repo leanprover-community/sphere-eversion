@@ -113,12 +113,12 @@ variables [finite_dimensional ℝ E]
 
 variables {γ}
 
-lemma corrugation.cont_diff {n : with_top ℕ} (hγ_diff : 𝒞 n ↿γ) :
+lemma corrugation.cont_diff {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
   𝒞 n (𝒯 N γ) :=
 (cont_diff_parametric_primitive_of_cont_diff
   (cont_diff_sub_average hγ_diff) (π.cont_diff.const_smul N) 0).const_smul _
 
-lemma corrugation.cont_diff' {n : with_top ℕ} {γ : G → E → loop F} (hγ_diff : 𝒞 n ↿γ)
+lemma corrugation.cont_diff' {n : ℕ∞} {γ : G → E → loop F} (hγ_diff : 𝒞 n ↿γ)
   {x : H → E} (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) :
   𝒞 n (λ h, 𝒯 N (γ $ g h) $ x h) :=
 begin
