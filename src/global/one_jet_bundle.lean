@@ -184,7 +184,7 @@ variables {I I' J J'}
 @[simp, mfld_simps] lemma one_jet_ext_one_jet_bundle_proj {f : M → M'} {x :  M} :
   one_jet_bundle.proj I M I' M' (one_jet_ext I I' f x) = (x, f x) := rfl
 
-@[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x :  M} :
+@[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x : M} :
   (one_jet_ext I I' f x).1 = (x, f x) := rfl
 
 /-- A family of one-jet extensions indexed by a parameter is smooth. -/
@@ -273,13 +273,11 @@ def map_left (f : M → N) (Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] 
   one_jet_bundle I M I' M' → one_jet_bundle J N I' M' :=
 λ p, one_jet_bundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
 
-def bundle_fst :
-  one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle J N I' M' :=
-map_left prod.fst $ λ x, (continuous_linear_map.id 𝕜 F).prod 0
+def bundle_fst : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle J N I' M' :=
+map_left prod.fst $ λ x, continuous_linear_map.inl 𝕜 F E
 
-def bundle_snd :
-  one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle I M I' M' :=
-map_left prod.snd $ λ x, continuous_linear_map.prod 0 (continuous_linear_map.id 𝕜 E)
+def bundle_snd : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle I M I' M' :=
+map_left prod.snd $ λ x, continuous_linear_map.inr 𝕜 F E
 
 end maps
 
