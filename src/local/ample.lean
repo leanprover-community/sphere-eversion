@@ -50,6 +50,24 @@ end
 lemma ample_set.preimage {s : set F} (h : ample_set s) (L : E ≃L[ℝ] F) : ample_set (L ⁻¹' s) :=
 by { rw [← L.image_symm_eq_preimage], exact h.image L.symm }
 
+open_locale pointwise
+/-- Translating a ample set is ample.
+We basically mimic `ample_set.image`. We could prove the common generalization using
+continuous affine equivalences -/
+lemma ample_set.vadd [has_continuous_add E] {s : set E} (h : ample_set s) {y : E} :
+  ample_set (y +ᵥ s) :=
+begin
+  intros x hx,
+  simp_rw [mem_vadd_set] at hx,
+  obtain ⟨x, hx, rfl⟩ := hx,
+  have : y +ᵥ connected_component_in s x = connected_component_in (y +ᵥ s) (y +ᵥ x),
+  { exact (homeomorph.add_left y).image_connected_component_in hx },
+  rw [← this],
+  refine ((affine_equiv.const_vadd ℝ E y).to_affine_map.image_convex_hull _).symm.trans _,
+  rw [h x hx, image_univ],
+  exact (affine_equiv.to_equiv _).range_eq_univ,
+end
+
 section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _

@@ -137,6 +137,12 @@ end family_formal_sol
 def rel_mfld.relativize (R : rel_mfld I M I' M') : rel_mfld (IP.prod I) (P × M) I' M' :=
 bundle_snd ⁻¹' R
 
+lemma mem_relativize (R : rel_mfld I M I' M') (w : one_jet_bundle (IP.prod I) (P × M) I' M') :
+ w ∈ R.relativize IP P ↔
+  (one_jet_bundle.mk w.1.1.2 w.1.2 (w.2.comp (continuous_linear_map.inr ℝ EP E)) :
+    one_jet_bundle I M I' M') ∈ R :=
+iff.rfl
+
 variables {P}
 
 /-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
@@ -391,8 +397,44 @@ variables
 {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
 variables {I M I' M'} {R : rel_mfld I M I' M'}
 
+open_locale pointwise
+
+lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
+  {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
+  (q : dual_pair' $ tangent_space I σ.1.1.2)
+  (hpq : p.π.comp (continuous_linear_map.inr ℝ EP E) = q.π) :
+  (rel_mfld.relativize IP P R).slice σ p =
+  σ.2 (p.v - (0, q.v)) +ᵥ R.slice (bundle_snd σ) q :=
+begin
+  sorry
+end
+
+lemma relativize_slice_eq_univ {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
+  {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
+  (hp : p.π.comp (continuous_linear_map.inr ℝ EP E) = 0) :
+  (rel_mfld.relativize IP P R).slice σ p = univ :=
+begin
+  simp_rw [eq_univ_iff_forall, mem_slice, mem_relativize],
+  dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
+  intro w,
+  sorry
+end
+
 lemma rel_mfld.ample.relativize (hR : R.ample) : (R.relativize IP P).ample :=
-sorry
+begin
+  intros σ p,
+  let p2 := p.π.comp (continuous_linear_map.inr ℝ EP E),
+  rcases eq_or_ne p2 0 with h|h,
+  { intros w hw,
+    rw [relativize_slice_eq_univ h, connected_component_in_univ,
+      preconnected_space.connected_component_eq_univ, convex_hull_univ] },
+  obtain ⟨u', hu'⟩ := continuous_linear_map.exists_ne_zero h,
+  let u := (p2 u')⁻¹ • u',
+  let q : dual_pair' (tangent_space I σ.1.1.2) :=
+  ⟨p2, u, by rw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩,
+  rw [relativize_slice q rfl],
+  refine (hR q).vadd,
+end
 
 lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M' IP P) {s : P}
   {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R :=
@@ -402,9 +444,8 @@ begin
   congr',
   ext v,
   simp_rw [S.uncurry_ϕ', continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
-    continuous_linear_map.comp_apply, continuous_linear_map.prod_apply,
+    continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
     continuous_linear_map.coe_fst', continuous_linear_map.coe_snd',
-    continuous_linear_map.zero_apply, continuous_linear_map.id_apply,
     continuous_linear_map.map_zero, zero_add, S.coe_ϕ]
 end
 
