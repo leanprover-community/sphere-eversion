@@ -20,23 +20,6 @@ noncomputable theory
 open set function filter charted_space smooth_manifold_with_corners
 open_locale topological_space manifold
 
-section
-variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
-  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-  {H : Type*} [topological_space H]
-  (I : model_with_corners 𝕜 E H)
-  (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
-  {H' : Type*} [topological_space H']
-  (I' : model_with_corners 𝕜 E' H')
-  (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-
-lemma one_jet_bundle.smooth_proj : cont_mdiff ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') ⊤
-        (one_jet_bundle.proj I M I' M') :=
-sorry
-end
-
-
 section defs
 /-! ## Fundamental definitions -/
 
@@ -218,7 +201,7 @@ begin
     rw show uncurry (λ s, (𝓕 (1, s)).bs) = prod.snd ∘ (one_jet_bundle.proj _ _ _ _) ∘
                                             (λ (p : P × M), 𝓕.reindex j p.1 p.2),
     by { ext, refl },
-    exact smooth_snd.comp ((one_jet_bundle.smooth_proj I M IX X).comp
+    exact smooth_snd.comp ((basic_smooth_vector_bundle_core.smooth_proj _).comp
                            ((𝓕.reindex j).to_family_one_jet_sec.smooth)) },
   { apply h₂.mono,
     intros x hx,
