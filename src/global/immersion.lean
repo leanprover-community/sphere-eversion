@@ -43,6 +43,16 @@ set.ext_iff.mpr $ λ w, p.injective_update_iff hφ
 
 variables {M M'}
 
+local notation `HJ` := model_prod (model_prod H H') (E →L[ℝ] E')
+local notation `ψ` := chart_at HJ
+
+lemma chart_at_image_immersion_rel_eq {σ : one_jet_bundle I M I' M'} :
+  (ψ σ) '' ((ψ σ).source ∩ immersion_rel I M I' M') = (ψ σ).target ∩ { q : HJ | injective q.2 } :=
+begin
+  -- type_check one_jet_bundle_chart_at I M I' M',
+  sorry,
+end
+
 lemma immersion_iff_one_jet (f : M → M') :
   immersion I I' f ↔ ∀ m, one_jet_ext I I' f m ∈ immersion_rel I M I' M' :=
 by simp [immersion, one_jet_ext, immersion_rel]
@@ -51,7 +61,11 @@ variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
 lemma immersion_rel_open :
   is_open (immersion_rel I M I' M') :=
-sorry
+begin
+  -- type_check chart_at_image_immersion_rel_eq,
+  -- type_check continuous_linear_map.is_open_injective,
+  sorry,
+end
 
 lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
   (immersion_rel I M I' M').ample :=
