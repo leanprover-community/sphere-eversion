@@ -20,6 +20,23 @@ noncomputable theory
 open set function filter charted_space smooth_manifold_with_corners
 open_locale topological_space manifold
 
+section
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {H : Type*} [topological_space H]
+  (I : model_with_corners 𝕜 E H)
+  (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
+  {H' : Type*} [topological_space H']
+  (I' : model_with_corners 𝕜 E' H')
+  (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+
+lemma one_jet_bundle.smooth_proj : cont_mdiff ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') ⊤
+        (one_jet_bundle.proj I M I' M') :=
+sorry
+end
+
+
 section defs
 /-! ## Fundamental definitions -/
 
@@ -196,26 +213,34 @@ begin
   rcases h 𝓕₀ h₁ h₂ with ⟨𝓕, h₁, h₂, h₃, h₄, h₅⟩,
   refine ⟨λ s, (𝓕 (1, s)).bs, _, _, _, _, _⟩,
   { have := 𝓕.to_family_one_jet_sec.smooth,
-    let j : C^∞⟮IP, P ; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ := ⟨λ p, (1, p), sorry⟩,
-    have := (𝓕.reindex j).to_family_one_jet_sec.smooth,
-    sorry },
-  sorry { apply h₂.mono,
+    let j : C^∞⟮IP, P ; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ := ⟨λ p, (1, p),
+                                                    smooth.prod_mk smooth_const smooth_id⟩,
+    rw show uncurry (λ s, (𝓕 (1, s)).bs) = prod.snd ∘ (one_jet_bundle.proj _ _ _ _) ∘
+                                            (λ (p : P × M), 𝓕.reindex j p.1 p.2),
+    by { ext, refl },
+    exact smooth_snd.comp ((one_jet_bundle.smooth_proj I M IX X).comp
+                           ((𝓕.reindex j).to_family_one_jet_sec.smooth)) },
+  { apply h₂.mono,
     intros x hx,
     rw hx 1,
     refl },
-  sorry { apply h₃.mono,
+  { apply h₃.mono,
     intros m hm p,
     -- TODO: the next line smells like missing lemmas
     exact congr_arg (prod.snd ∘ (one_jet_bundle.proj I M IX X)) (hm 1 p) },
-  sorry { intros p m,
+  { intros p m,
     apply h₅ },
-  {
-    sorry },
+  { intros p m,
+    suffices : one_jet_ext I IX (𝓕 (1, p)).bs m = ((𝓕.to_family_one_jet_sec) (1, p)) m,
+    { rw this,
+      exact 𝓕.is_sol' (1, p) m },
+    exact one_jet_sec.is_holonomic_at_iff.mp (h₄ p m) },
 end
 
 variables (P) [finite_dimensional ℝ EP] [sigma_compact_space P] [t2_space P]
 
-/-- This might need some additional assumptions or other modifications. -/
+/-- This might need some additional assumptions or other modifications.
+Patrick doesn't know whether this lemma is needed. -/
 lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
   (ε : M → ℝ) :
   (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2) ↔
