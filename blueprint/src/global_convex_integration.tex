@@ -631,7 +631,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   \label{lem:open_ample_immersion}
   \uses{def:ample_relation}
   \leanok
-  \lean{immersion_rel_ample}
+  \lean{immersion_rel_open_ample}
   The relation of immersions of $M$ into $N$ in positive codimension is open
   and ample.
 \end{lemma}
@@ -639,8 +639,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 \begin{proof}
   \proves{lem:open_ample_immersion}
   \uses{lem:ample_codim_two}
-  \leanok
-  \lean{immersion_rel_ample}
+  \lean{immersion_rel_open_ample}
   For every $σ = (x, y, φ)$ in the immersion relation $\Rel$,
   and for every dual pair $(π, v)$, the slice
   $\Rel(σ, π, v)$ is the set of $w$ which do not belong to

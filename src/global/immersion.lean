@@ -49,6 +49,10 @@ by simp [immersion, one_jet_ext, immersion_rel]
 
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
+lemma immersion_rel_open :
+  is_open (immersion_rel I M I' M') :=
+sorry
+
 lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
   (immersion_rel I M I' M').ample :=
 begin
@@ -66,6 +70,11 @@ begin
   rw [aux, immersion_rel_preslice_eq I M I' M' hφ],
   exact ample_of_two_le_codim hcodim,
 end
+
+/-- This is lemma `lem:open_ample_immersion` from the blueprint. -/
+lemma immersion_rel_open_ample (h : finrank ℝ E < finrank ℝ E') :
+  is_open (immersion_rel I M I' M') ∧ (immersion_rel I M I' M').ample :=
+⟨immersion_rel_open I I', immersion_rel_ample I I' h⟩
 
 -- the following needs updating after relativizing
 -- /-- parametric h-principle for immersions. -/
