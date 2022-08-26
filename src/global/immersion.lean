@@ -70,21 +70,39 @@ lemma immersion_rel_open_ample (h : finrank ℝ E < finrank ℝ E') :
   is_open (immersion_rel I M I' M') ∧ (immersion_rel I M I' M').ample :=
 ⟨immersion_rel_open I I', immersion_rel_ample I I' h⟩
 
--- the following needs updating after relativizing
--- /-- parametric h-principle for immersions. -/
--- theorem immersion_rel_satisfies_h_principle_with (h : finrank ℝ E < finrank ℝ E') :
---   (immersion_rel I M I' M').satisfies_h_principle_with J N :=
--- begin
---   apply (immersion_rel_ample I I' h).satisfies_h_principle_with J N,
---   have : is_open {L : E →L[ℝ] E' | injective L} := continuous_linear_map.is_open_injective,
---   sorry
--- end
+variables
+  {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
+  {HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP}
+  {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
+  {C₁ : set P} {C₂ : set M} {ε : M → ℝ}
+
+include I I' M' IP
+
+variables (I M I' M' IP P)
+
+/-- parametric h-principle for immersions. -/
+theorem immersion_rel_satisfies_h_principle_with [metric_space M']
+  (h : finrank ℝ E < finrank ℝ E') (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
+  (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
+  (immersion_rel I M I' M').satisfies_h_principle_with IP C₁ C₂ ε :=
+by apply (immersion_rel_ample I I' h).satisfies_h_principle_with (immersion_rel_open I I')
+     hC₁ hC₂ hε_pos hε_cont
+
+/-- parametric h-principle for immersions. -/
+theorem immersion_rel_satisfies_h_principle_with' [sigma_compact_space M'] [t2_space M']
+  (h : finrank ℝ E < finrank ℝ E') (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
+  (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
+  by letI := (@topological_space.metrizable_space_metric _ _
+    (manifold_with_corners.metrizable_space I' M')); exact
+  (immersion_rel I M I' M').satisfies_h_principle_with IP C₁ C₂ ε :=
+by apply (immersion_rel_ample I I' h).satisfies_h_principle_with (immersion_rel_open I I')
+     hC₁ hC₂ hε_pos hε_cont
 
 end general
 
 section sphere_eversion
 
-variables {E : Type*} [inner_product_space ℝ E] {n : ℕ} [fact (finrank ℝ E = 3)]
+variables (E : Type*) [inner_product_space ℝ E] {n : ℕ} [fact (finrank ℝ E = 3)]
 
 /- Maybe the next two lemmas won't be used directly, but they should be done first as
 sanity checks. -/
@@ -95,25 +113,54 @@ sorry
 lemma immersion_antipodal_sphere : immersion (𝓡 2) 𝓘(ℝ, E) (λ x : sphere (0 : E) 1, -(x : E)) :=
 sorry
 
+local notation `𝕊²` := sphere (0 : E) 1
+
 /- The relation of immersion of a two-sphere into its ambiant Euclidean space. -/
-local notation `𝓡_imm` := immersion_rel (𝓡 2) (sphere (0 : E) 1) 𝓘(ℝ, E) E
+local notation `𝓡_imm` := immersion_rel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
+
+
 
 /-- A formal eversion of a two-sphere into its ambiant Euclidean space.
 Right now this is waiting for Heather's work on rotations. -/
 def formal_eversion : family_formal_sol 𝓘(ℝ, ℝ) ℝ 𝓡_imm :=
 { bs := λ t x, (1-t) • x + t • (-x),
-  ϕ := λ t x, sorry,
+  ϕ := λ t x, sorry, -- Here we need to make sure we stay holonomic for t close to 0 and 1
   smooth' := sorry,
   is_sol' := sorry }
 
-/- TODO: Next step is to define the homotopy of formal immersions from the inclusion
-to the antipodal map. -/
+lemma formal_immersion_hol_near :
+  ∀ᶠ (s : ℝ) near {0, 1}, (formal_eversion E s).to_one_jet_sec.is_holonomic :=
+sorry
 
-theorem sphere_eversion : ∃ f : ℝ → sphere (0 : E) 1 → E,
+lemma formal_immersion_hol_near_empty :
+  ∀ᶠ (x : 𝕊²) near ∅, ∀ s, (formal_eversion E s).to_one_jet_sec.is_holonomic_at x :=
+sorry
+
+
+#check immersion_rel_satisfies_h_principle_with
+#check @rel_mfld.satisfies_h_principle_with
+
+theorem sphere_eversion : ∃ f : ℝ → 𝕊² → E,
   (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f)) ∧
   (f 0 = λ x, x) ∧
   (f 1 = λ x, -x) ∧
   ∀ t, immersion (𝓡 2) 𝓘(ℝ, E) (f t) :=
-sorry
+begin
+  haveI : finite_dimensional ℝ E := sorry,
+  have ineq_rank : finrank ℝ (euclidean_space ℝ (fin 2)) < finrank ℝ E := sorry,
+  let ε : 𝕊² → ℝ := λ x, 1,
+  have hε_pos : ∀ x, 0 < ε x,
+  {
+    sorry },
+  have hε_cont : continuous ε := continuous_const,
+  have := immersion_rel_satisfies_h_principle_with (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ,
+  dsimp at this,
+  have key := (immersion_rel_satisfies_h_principle_with (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ ineq_rank
+    (finite.is_closed (by simp : ({0, 1} : set ℝ).finite)) (is_closed_empty : is_closed  (∅ : set 𝕊²)) hε_pos hε_cont),
+  --rcases key (formal_eversion E)(formal_immersion_hol_near E) (formal_immersion_hol_near_empty E),
+  --(formal_eversion E) (formal_immersion_hol_near E) (formal_immersion_hol_near_empty E),
+  --with ⟨𝓕, h𝓕₁, h𝓕₂, -, h𝓕₃, -⟩, -/
+
+end
 
 end sphere_eversion

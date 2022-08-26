@@ -170,7 +170,44 @@ def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C₁ : set P) (
   (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
   (∀ (t : ℝ) (s : P) (x : M), dist ((𝓕 (t, s)).bs x) ((𝓕₀ s).bs x) ≤ ε x) -- and close to `𝓕₀`.
 
-variables [finite_dimensional ℝ EP] [sigma_compact_space P] [t2_space P]
+
+variables {IP}
+
+/-- If a relation satisfies the parametric relative C⁰-dense h-principle wrt some data
+then we can forget the homotopy and get a family of solutions from every
+family of formal solutions. -/
+lemma rel_mfld.satisfies_h_principle_with.bs {R : rel_mfld I M IX X} {C₁ : set P} {C₂ : set M}
+  {ε : M → ℝ} (h : R.satisfies_h_principle_with IP C₁ C₂ ε) (𝓕₀ : family_formal_sol IP P R)
+  (h₁ : ∀ᶠ p in 𝓝ˢ C₁, (𝓕₀ p).to_one_jet_sec.is_holonomic)
+  (h₂ : ∀ᶠ m in 𝓝ˢ C₂, ∀ s, (𝓕₀ s).to_one_jet_sec.is_holonomic_at m) :
+  ∃ f : P → M → X,
+    (smooth (IP.prod I) IX $ uncurry f) ∧
+    (∀ᶠ p in 𝓝ˢ C₁, f p = 𝓕₀.bs p) ∧
+    (∀ᶠ m in 𝓝ˢ C₂, ∀ p, f p m = 𝓕₀.bs p m) ∧
+    (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧
+    (∀ p m, one_jet_ext I IX (f p) m ∈ R) :=
+begin
+  rcases h 𝓕₀ h₁ h₂ with ⟨𝓕, h₁, h₂, h₃, h₄, h₅⟩,
+  refine ⟨λ s, (𝓕 (1, s)).bs, _, _, _, _, _⟩,
+  { have := 𝓕.to_family_one_jet_sec.smooth,
+    let j : C^∞⟮IP, P ; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ := ⟨λ p, (1, p), sorry⟩,
+    have := (𝓕.reindex j).to_family_one_jet_sec.smooth,
+    sorry },
+  sorry { apply h₂.mono,
+    intros x hx,
+    rw hx 1,
+    refl },
+  sorry { apply h₃.mono,
+    intros m hm p,
+    -- TODO: the next line smells like missing lemmas
+    exact congr_arg (prod.snd ∘ (one_jet_bundle.proj I M IX X)) (hm 1 p) },
+  sorry { intros p m,
+    apply h₅ },
+  {
+    sorry },
+end
+
+variables (P) [finite_dimensional ℝ EP] [sigma_compact_space P] [t2_space P]
 
 /-- This might need some additional assumptions or other modifications. -/
 lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
@@ -178,6 +215,7 @@ lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M IX X) (C₁ : 
   (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2) ↔
   R.satisfies_h_principle_with IP C₁ C₂ ε :=
 sorry
+
 
 end defs
 
