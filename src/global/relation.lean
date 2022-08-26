@@ -71,29 +71,44 @@ lemma formal_sol.is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
 
 /-- part of the construction of the slice `R(σ,p)`. -/
-def rel_mfld.preslice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
+def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
   (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
 {w : TM' σ.1.2 | one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
-/-- For some reason `rw [mem_set_of_eq]` fails after unfolding `preslice`,
+/-- For some reason `rw [mem_set_of_eq]` fails after unfolding `slice`,
 but rewriting with this lemma works. -/
-lemma mem_preslice {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
+lemma mem_slice {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
   {p : dual_pair' $ TM σ.1.1} {w : TM' σ.1.2} :
-  w ∈ R.preslice σ p ↔ one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
+  w ∈ R.slice σ p ↔ one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
 iff.rfl
 
-@[simp] lemma jet_apply_v_mem_preslice_of_mem_relation
-  (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M') (hσ : σ ∈ R) (p : dual_pair' $ TM σ.1.1) :
-  σ.2 p.v ∈ R.preslice σ p :=
-by { rcases σ with ⟨⟨m, m'⟩, φ⟩, simpa [mem_preslice] using hσ, }
+@[simp] lemma jet_apply_v_mem_slice
+  {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'} (p : dual_pair' $ TM σ.1.1) :
+  σ.2 p.v ∈ R.slice σ p ↔ σ ∈ R :=
+by { rcases σ with ⟨⟨m, m'⟩, φ⟩, simp [mem_slice], }
 
-/-- the slice `R(σ,p)`. -/
-def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
-  (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
-connected_component_in (R.preslice σ p) (σ.2 p.v)
+lemma slice_mk_update {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
+  {p : dual_pair' $ TM σ.1.1} (x : E') :
+  R.slice (one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p = (R.slice σ p : set E') :=
+begin
+  ext1 w,
+  dsimp only [mem_slice],
+  congr' 3,
+  simp_rw [one_jet_bundle_mk_snd, p.update_update],
+end
 
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
-∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair' $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p)
+∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
+
+lemma rel_mfld.ample_iff (R : rel_mfld I M I' M') : R.ample ↔
+  ∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair' $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p) :=
+begin
+  simp_rw [rel_mfld.ample],
+  refine ⟨λ h σ p _, h p, λ h σ p x hx, _⟩,
+  have := @h (one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p hx,
+  rw [slice_mk_update] at this,
+  exact this x hx
+end
 
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
@@ -114,6 +129,9 @@ def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
 ⟨S.to_family_one_jet_sec.reindex f, λ t, S.is_sol' (f t)⟩
 
 end family_formal_sol
+
+/-- A homotopy of formal solutions is a family indexed by `ℝ` -/
+@[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
 
 /-- The relation `𝓡 ^ P` -/
 def rel_mfld.relativize (R : rel_mfld I M I' M') : rel_mfld (IP.prod I) (P × M) I' M' :=
@@ -155,7 +173,7 @@ def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C₁ : set P) (
 variables [finite_dimensional ℝ EP] [sigma_compact_space P] [t2_space P]
 
 /-- This might need some additional assumptions or other modifications. -/
-lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M I' M') (C₁ : set P) (C₂ : set M)
+lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
   (ε : M → ℝ) :
   (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2) ↔
   R.satisfies_h_principle_with IP C₁ C₂ ε :=
@@ -267,25 +285,17 @@ by rw [rel_mfld.localize, mem_preimage, transfer_localize F g h hF]
 
 lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize g h).ample :=
 begin
-  intros x p hx,
+  intros x p,
   have : (rel_mfld.localize g h R).slice x p =
     (g.fderiv x.1.2).symm '' R.slice (x.transfer g h) (p.map (h.fderiv x.1.1)),
-  { simp_rw [rel_mfld.slice, rel_mfld.localize],
-    symmetry,
-    refine ((g.fderiv x.1.2).symm.to_homeomorph.image_connected_component_in _).trans _,
-    { rw [mem_preslice, dual_pair'.update_self], exact hx },
-    simp_rw [continuous_linear_equiv.coe_to_homeomorph,
-      continuous_linear_equiv.image_symm_eq_preimage],
-    congr' 1,
-    { ext v, simp_rw [mem_preimage, mem_preslice, mem_preimage],
-      dsimp only [one_jet_bundle.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
-      simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
-        one_jet_bundle.mk] },
-    { dsimp only [one_jet_bundle.transfer],
-      simp_rw [continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe, p.map_v,
-        continuous_linear_equiv.symm_apply_apply] } },
+  { ext v,
+    simp_rw [rel_mfld.localize, continuous_linear_equiv.image_symm_eq_preimage, mem_preimage,
+      mem_slice, mem_preimage],
+    dsimp only [one_jet_bundle.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
+    simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
+      one_jet_bundle.mk] },
   rw [this],
-  exact (hR _ hx).image (g.fderiv x.1.2).symm
+  exact (hR _).image (g.fderiv x.1.2).symm
 end
 
 lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
@@ -351,15 +361,13 @@ lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M
 begin
   simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd, one_jet_sec.coe_apply,
     map_left],
-  dsimp only,
-  -- simp_rw [S.uncurry_bs],
   congr',
   ext v,
-  simp_rw [S.uncurry_ϕ, continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
-    continuous_linear_map.comp_apply],
-  dsimp only,
-  sorry -- need that `Tpᵢ = pᵢ` where `pᵢ` is either the first or second projection.
-  -- convert zero_add _,
+  simp_rw [S.uncurry_ϕ', continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
+    continuous_linear_map.comp_apply, continuous_linear_map.prod_apply,
+    continuous_linear_map.coe_fst', continuous_linear_map.coe_snd',
+    continuous_linear_map.zero_apply, continuous_linear_map.id_apply,
+    continuous_linear_map.map_zero, zero_add, S.coe_ϕ]
 end
 
 
