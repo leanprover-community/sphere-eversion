@@ -39,6 +39,10 @@ variables
 {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
 {HP : Type*} [topological_space HP] (IP : model_with_corners ℝ EP HP)
 {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
+{EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]
+{HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
+-- note: X is a metric space
+{X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
@@ -102,7 +106,7 @@ instance : has_coe_to_fun (family_formal_sol J N R) (λ S, N → formal_sol R) :
 
 namespace family_formal_sol
 
-variables {J N J' N' IP P}
+variables {J N J' N'}
 
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
@@ -114,24 +118,16 @@ end family_formal_sol
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 @[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
 
-variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
-[sigma_compact_space M] [sigma_compact_space M'] [t2_space M] [t2_space M']
-
-/-- An arbitrary distance on `J¹(M, M')`. -/
-@[reducible] def some_dist : has_dist (one_jet_bundle I M I' M') :=
-(@topological_space.metrizable_space_metric _ _ (manifold_with_corners.metrizable_space
-  ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) _)).to_pseudo_metric_space.to_has_dist
-
 /-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
 `C` of the domain if for every formal solution `𝓕₀` that is holonomic near `C`
 there is a homotopy between `𝓕₀` and a holonomic solution that is constant near `C` and
 `ε`-close to `𝓕₀`. -/
-def rel_mfld.satisfies_h_principle (R : rel_mfld I M I' M') (C : set M) (ε : M → ℝ) : Prop :=
+def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M → ℝ) : Prop :=
 ∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
 ∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧
   (𝓕 1).to_one_jet_sec.is_holonomic ∧
   (∀ᶠ x in 𝓝ˢ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
-  (∀ (t : ℝ) (x : M), @dist _ some_dist (𝓕 t x) (𝓕₀ x) ≤ ε x)
+  (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
 
 /-- A relation `R` satisfies the parametric relative C⁰-dense h-principle w.r.t. manifold `P`,
 `C₁ ⊆ P`, `C₂ ⊆ M` and `ε : M → ℝ` if for every family of
@@ -141,7 +137,7 @@ in such a way that `𝓕` is constant near `C₁` and `C₂` and `ε`-close to `
 Note: `ε`-closeness is measured using an arbitrary distance function obtained from the metrizability
 of `J¹(M, M')`. Potentially we prefer to have this w.r.t. an arbitrary compatible metric.
 -/
-def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') (C₁ : set P) (C₂ : set M)
+def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
   (ε : M → ℝ) : Prop :=
 ∀ 𝓕₀ : family_formal_sol IP P R, -- given a family of formal solutions with parameters in `P`
 (∀ᶠ s in 𝓝ˢ C₁, (𝓕₀ s).to_one_jet_sec.is_holonomic) → -- holonomic near `C₁` of parameter space
@@ -151,7 +147,7 @@ def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M I' M') (C₁ : set P) 
   (∀ᶠ s in 𝓝ˢ C₁, ∀ t : ℝ, 𝓕 (t, s) = 𝓕₀ s) ∧ -- and agrees near `C₁`
   (∀ᶠ x in 𝓝ˢ C₂, ∀ (t : ℝ) (s : P), 𝓕 (t, s) x = 𝓕₀ s x) ∧ -- and agrees near `C₂`
   (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
-  (∀ (t : ℝ) (s : P) (x : M), @dist _ some_dist (𝓕 (t, s) x) (𝓕₀ s x) ≤ ε x) -- and close to `𝓕₀`.
+  (∀ (t : ℝ) (s : P) (x : M), dist ((𝓕 (t, s)).bs x) ((𝓕₀ s).bs x) ≤ ε x) -- and close to `𝓕₀`.
 
 
 end defs
