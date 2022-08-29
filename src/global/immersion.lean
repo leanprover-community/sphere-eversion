@@ -119,7 +119,7 @@ variables (I M I' M' IP P)
 theorem immersion_rel_satisfies_h_principle_with
   (h : finrank ℝ E < finrank ℝ E') (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
-  (immersion_rel I M I' M').satisfies_h_principle_with IP  C₁ C₂ ε :=
+  (immersion_rel I M I' M').satisfies_h_principle_with IP C₁ C₂ ε :=
 by apply (immersion_rel_ample I I' h).satisfies_h_principle_with (immersion_rel_open I I')
      hC₁ hC₂ hε_pos hε_cont
 
@@ -163,7 +163,7 @@ sorry
 
 lemma formal_eversion_hol_near_empty :
   ∀ᶠ (x : 𝕊²) near ∅, ∀ s, (formal_eversion E s).to_one_jet_sec.is_holonomic_at x :=
-sorry
+by { rw [nhds_set_empty], exact filter.eventually_bot }
 
 theorem sphere_eversion : ∃ f : ℝ → 𝕊² → E,
   (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f)) ∧

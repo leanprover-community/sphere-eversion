@@ -155,7 +155,11 @@ def uncurry (S : family_one_jet_sec I M I' M' IP P) : one_jet_sec (IP.prod I) (P
     S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I prod.snd p,
   smooth' := begin
     refine smooth.one_jet_add _ _,
-    { sorry -- this is not just an application of `smooth.one_jet_ext`,
+    { intro y,
+      refine smooth_at_id.one_jet_bundle_mk (S.smooth_bs y) _,
+
+
+      sorry -- this is not just an application of `smooth.one_jet_ext`,
       -- and we (I think) also need more than `smooth.one_jet_ext'`.
 
        },

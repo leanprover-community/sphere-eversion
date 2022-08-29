@@ -113,11 +113,11 @@ topological_vector_bundle_core.fiber.topological_vector_bundle
 -- /-- `J¹(M, M')` is σ-compact. This is needed if we need metrizability of `J¹(M, M')`. -/
 -- instance [sigma_compact_space M] [sigma_compact_space M'] :
 --   sigma_compact_space (one_jet_bundle I M I' M') :=
--- sorry
+-- by admit
 
 -- /-- `J¹(M, M')` is Hausdorff. This is needed if we need metrizability of `J¹(M, M')`. -/
 -- instance [t2_space M] [t2_space M'] : t2_space (one_jet_bundle I M I' M') :=
--- sorry
+-- by admit
 
 end one_jet_bundle_instances
 
@@ -217,6 +217,23 @@ variables {I I' J J'}
 
 @[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x : M} :
   (one_jet_ext I I' f x).1 = (x, f x) := rfl
+
+lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N}
+  (hf : smooth_at J I f n) (hg : smooth_at J I' g n)
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E')
+    (λ x, ((tangent_bundle_core I' M').coord_change (achart H' (g x)) (achart H' (g n))
+      (chart_at H' (g x) (g x))).comp $ (ϕ x).comp $
+    (tangent_bundle_core I M).coord_change (achart H (f n)) (achart H (f x))
+    (chart_at H (f n) (f x))) n) :
+  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
+    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n :=
+begin
+  rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
+  refine ⟨hf.continuous_at.prod hg.continuous_at, _⟩,
+  simp_rw [function.comp, one_jet_bundle_ext_chart_at],
+  refine ((cont_mdiff_at_ext_chart_at.comp _ hf).prod_mk_space $
+    cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space hϕ
+end
 
 /-- A family of one-jet extensions indexed by a parameter is smooth. -/
 lemma smooth_at.one_jet_ext' {f : N → M → M'} {g : N → M} {n : N}
