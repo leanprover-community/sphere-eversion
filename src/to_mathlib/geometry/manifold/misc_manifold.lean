@@ -225,16 +225,47 @@ lemma mfderiv_congr {f' : M → M'} (h : f = f') :
   @eq (E →L[𝕜] E') (mfderiv I I' f x) (mfderiv I I' f' x) :=
 by subst h
 
+lemma ext_chart_at_prod (x : M × M') :
+  ext_chart_at (I.prod I') x = (ext_chart_at I x.1).prod (ext_chart_at I' x.2) :=
+by simp only with mfld_simps
+
 /-- The derivative of the projection `M × M' → M` is the projection `TM × TM' → TM` -/
 lemma mfderiv_fst (x : M × M') :
   mfderiv (I.prod I') I prod.fst x = continuous_linear_map.fst 𝕜 E E' :=
-sorry
+begin
+  simp_rw [mfderiv, dif_pos (smooth_at_fst.mdifferentiable_at le_top), written_in_ext_chart_at,
+    ext_chart_at_prod, function.comp, local_equiv.prod_coe, local_equiv.prod_coe_symm],
+  have : unique_diff_within_at 𝕜 (range (I.prod I')) (ext_chart_at (I.prod I') x x) :=
+  (I.prod I').unique_diff _ (mem_range_self _),
+  refine (filter.eventually_eq.fderiv_within_eq this _ _).trans _,
+  swap 3,
+  { exact (ext_chart_at I x.1).right_inv ((ext_chart_at I x.1).maps_to $
+      mem_ext_chart_source I x.1) },
+  { refine eventually_of_mem (ext_chart_at_target_mem_nhds_within (I.prod I') x)
+      (λ y hy, local_equiv.right_inv _ _),
+    rw [ext_chart_at_prod] at hy,
+    exact hy.1 },
+  exact fderiv_within_fst this,
+end
 
 /-- The derivative of the projection `M × M' → M'` is the projection `TM × TM' → TM'` -/
 lemma mfderiv_snd (x : M × M') :
   mfderiv (I.prod I') I' prod.snd x = continuous_linear_map.snd 𝕜 E E' :=
-sorry
-
+begin
+  simp_rw [mfderiv, dif_pos (smooth_at_snd.mdifferentiable_at le_top), written_in_ext_chart_at,
+    ext_chart_at_prod, function.comp, local_equiv.prod_coe, local_equiv.prod_coe_symm],
+  have : unique_diff_within_at 𝕜 (range (I.prod I')) (ext_chart_at (I.prod I') x x) :=
+  (I.prod I').unique_diff _ (mem_range_self _),
+  refine (filter.eventually_eq.fderiv_within_eq this _ _).trans _,
+  swap 3,
+  { exact (ext_chart_at I' x.2).right_inv ((ext_chart_at I' x.2).maps_to $
+      mem_ext_chart_source I' x.2) },
+  { refine eventually_of_mem (ext_chart_at_target_mem_nhds_within (I.prod I') x)
+      (λ y hy, local_equiv.right_inv _ _),
+    rw [ext_chart_at_prod] at hy,
+    exact hy.2 },
+  exact fderiv_within_snd this,
+end
 
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
   (hf : cont_mdiff_at I I' n f x) (hmn : m + 1 ≤ n) :
