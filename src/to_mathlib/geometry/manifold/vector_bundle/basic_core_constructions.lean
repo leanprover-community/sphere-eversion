@@ -312,4 +312,65 @@ by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_
   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
 
+section cech_cocycles
+
+/- Clearly `coord_change_equiv` is actually a result about topological vector bundles. I think it
+should be possible to define this as follows:
+```
+noncomputable def coord_change_equiv : F ≃L[𝕜] F :=
+trivialization.coord_change
+  (trivialization_at 𝕜 F Z.to_topological_vector_bundle_core.fiber x)
+  (trivialization_at 𝕜 F Z.to_topological_vector_bundle_core.fiber (j.val.symm (i x))) x
+```
+However the API for this part of the library seems to need of a lot of work so I gave up attempting
+to use it.
+-/
+
+variables {i j : atlas HB B} {x : B}
+
+protected lemma coord_change_equiv_aux
+  (hx₁ : x ∈ (i : local_homeomorph B HB).source)
+  (hx₂ : x ∈ (j : local_homeomorph B HB).source) (v : F) :
+  Z.coord_change j i (j x) (Z.coord_change i j (i x) v) = v :=
+begin
+  have : i x ∈ ((i.val.symm.trans j.val).trans (j.val.symm.trans i.val)).to_local_equiv.source,
+  { simp only [subtype.val_eq_coe, local_homeomorph.trans_to_local_equiv,
+      local_homeomorph.symm_to_local_equiv, local_equiv.trans_source, local_equiv.symm_source,
+      local_homeomorph.coe_coe_symm, local_equiv.coe_trans, local_homeomorph.coe_coe,
+      set.mem_inter_eq, set.mem_preimage, function.comp_app],
+    refine ⟨⟨_, _⟩, _, _⟩,
+    { exact i.val.map_source hx₁, },
+    { erw i.val.left_inv hx₁, exact hx₂, },
+    { erw i.val.left_inv hx₁, exact j.val.map_source hx₂, },
+    { erw [i.val.left_inv hx₁, j.val.left_inv hx₂], exact hx₁, }, },
+  have hx' : i.val.symm.trans j.val (i x) = j x,
+  { simp only [subtype.val_eq_coe, local_homeomorph.coe_trans, function.comp_app],
+    erw i.val.left_inv hx₁, refl, },
+  rw [← hx', Z.coord_change_comp i j i (i x) this v,
+    Z.coord_change_self i (i x) (i.val.map_source hx₁)],
+end
+
+variables (i j x)
+
+/-- Čech cocycle representatives for this bundle relative to the chosen atlas (taking the junk
+value `1` outside the intersection of the sources of the two charts). -/
+noncomputable def coord_change_equiv : F ≃L[𝕜] F :=
+if hx : x ∈ (i : local_homeomorph B HB).source ∩ (j : local_homeomorph B HB).source then
+{ to_fun    := Z.coord_change i j (i x),
+  inv_fun   := Z.coord_change j i (j x),
+  left_inv  := Z.coord_change_equiv_aux hx.1 hx.2,
+  right_inv := Z.coord_change_equiv_aux hx.2 hx.1,
+  continuous_inv_fun := (Z.coord_change j i _).continuous,
+  .. Z.coord_change i j (i x) }
+else 1
+
+variables {i j x}
+
+lemma coe_coord_change_equiv
+  (hx : x ∈ (i : local_homeomorph B HB).source ∩ (j : local_homeomorph B HB).source) :
+  (Z.coord_change_equiv i j x : F → F) = (Z.coord_change i j (i x) : F → F) :=
+by simpa only [coord_change_equiv, dif_pos hx]
+
+end cech_cocycles
+
 end basic_smooth_vector_bundle_core

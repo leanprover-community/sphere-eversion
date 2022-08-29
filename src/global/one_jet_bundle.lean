@@ -64,6 +64,7 @@ Defined in terms of `bundle.total_space` to be able to put a suitable topology o
 def one_jet_bundle := bundle.total_space (one_jet_space I I' : M × M' → Type*)
 
 local notation `J¹MM'` := one_jet_bundle I M I' M'
+local notation `HJ` := model_prod (model_prod H H') (E →L[𝕜] E')
 
 /-- The projection from the one jet bundle of smooth manifolds to the product manifold. As the
 one_jet bundle is represented internally as a sigma type, the notation `p.1` also works for the
@@ -99,7 +100,7 @@ instance : topological_space J¹MM' :=
 (one_jet_bundle_core I M I' M').to_topological_vector_bundle_core.to_topological_space
   (atlas (model_prod H H') (M × M'))
 
-instance : charted_space (model_prod (model_prod H H') (E →L[𝕜] E')) J¹MM' :=
+instance : charted_space HJ J¹MM' :=
 (one_jet_bundle_core I M I' M').to_charted_space
 
 instance : smooth_manifold_with_corners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) J¹MM' :=
@@ -132,9 +133,11 @@ lemma one_jet_bundle_proj_open : is_open_map (one_jet_bundle.proj I M I' M') :=
 
 /-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an
-  appropriate coordinate change function. -/
+  appropriate coordinate change function.
+
+See also `one_jet_bundle_chart_at'`. -/
 lemma one_jet_bundle_chart_at {v v' : one_jet_bundle I M I' M'} :
-  chart_at (model_prod (model_prod H H') (E →L[𝕜] E')) v v' =
+  chart_at HJ v v' =
   ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
   ((tangent_bundle_core I' M').coord_change (achart H' v'.1.2) (achart H' v.1.2)
     (chart_at H' v'.1.2 v'.1.2)).comp $ v'.2.comp $
@@ -145,6 +148,34 @@ begin
   dsimp only [one_jet_bundle_core],
   simp_rw [hom_chart, ← achart_def, pullback_fst_coord_change_at,
     pullback_snd_coord_change_at, prod_charted_space_chart_at, local_homeomorph.prod_apply],
+end
+
+/-- A variant of `one_jet_bundle_chart_at` in which the fact that the coordinate change actions
+are equivalences is expressed at the type-theoretic level (i.e., `coord_change_equiv` instead of
+`coord_change`). -/
+lemma one_jet_bundle_chart_at' {v v' : J¹MM'} (hv' : v' ∈ (chart_at HJ v).source) :
+  chart_at HJ v v' =
+  ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
+   ((tangent_bundle_core I' M').coord_change_equiv
+       (achart H' v'.1.2) (achart H' v.1.2) v'.1.2 : E' →L[𝕜] E').comp $
+   v'.2.comp $
+   ((tangent_bundle_core I M).coord_change_equiv
+       (achart H v.1.1) (achart H v'.1.1) v'.1.1 : E →L[𝕜] E)) :=
+begin
+  have hx : v'.1.2 ∈ (achart H' v'.1.2 : local_homeomorph M' H').source ∩
+                     (achart H' v.1.2  : local_homeomorph M' H').source,
+  { simp only [to_charted_space_chart_at, chart_source] at hv',
+    simpa only [coe_achart, mem_inter_eq, mem_chart_source, true_and] using hv'.2, },
+  have hy : v'.1.1 ∈ (achart H  v.1.1  : local_homeomorph M H).source ∩
+                     (achart H  v'.1.1 : local_homeomorph M H).source,
+  { simp only [to_charted_space_chart_at, chart_source] at hv',
+    simpa only [coe_achart, mem_inter_eq, mem_chart_source, and_true] using hv'.1, },
+  simp only [one_jet_bundle_chart_at I M I' M', prod.mk.inj_iff, eq_self_iff_true, true_and],
+  ext e,
+  simp only [tangent_bundle_core_coord_change, achart_val, continuous_linear_map.coe_comp',
+    function.comp_app, continuous_linear_equiv.coe_coe],
+  erw [← (tangent_bundle_core I' M').coe_coord_change_equiv hx,
+       ← (tangent_bundle_core I M).coe_coord_change_equiv hy],
 end
 
 /-- Computing the value of an extended chart around `v` at point `v'` in `J¹(M, M')`.
