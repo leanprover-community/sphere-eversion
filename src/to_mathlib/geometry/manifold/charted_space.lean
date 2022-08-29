@@ -12,11 +12,7 @@ open set
 variables (H : Type*) (M : Type*) [topological_space H] [topological_space M] [charted_space H M]
 
 @[simp] lemma Union_source_eq_univ : (⋃ (x : M), (chart_at H x).source) = (univ : set M) :=
-begin
-  refine eq_univ_iff_forall.mpr (λ x, _),
-  simp only [mem_Union],
-  exact ⟨x, mem_chart_source H x⟩,
-end
+eq_univ_iff_forall.mpr (λ x, mem_Union.mpr ⟨x, mem_chart_source H x⟩)
 
 variables {M}
 
