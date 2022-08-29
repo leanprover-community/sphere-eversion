@@ -425,6 +425,8 @@ begin
   sorry
 end
 
+variables (IP P)
+
 lemma rel_mfld.ample.relativize (hR : R.ample) : (R.relativize IP P).ample :=
 begin
   intros σ p,
@@ -440,6 +442,8 @@ begin
   rw [relativize_slice q rfl],
   refine (hR q).vadd,
 end
+
+variables {IP P}
 
 lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M' IP P) {s : P}
   {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R :=
