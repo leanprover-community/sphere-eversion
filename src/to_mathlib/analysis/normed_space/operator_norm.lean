@@ -137,9 +137,25 @@ lemma continuous_linear_map.is_open_injective [complete_space 𝕜] :
   is_open {L : E →L[𝕜] F | injective L} :=
 begin
   suffices : ∀ (L : E →L[𝕜] F), injective L ↔ (finrank 𝕜 E : cardinal) ≤ rank (L : E →ₗ[𝕜] F),
-  { simp_rw this, exact is_open_set_of_nat_le_rank (finite_dimensional.finrank 𝕜 E), },
+  { simp_rw this, exact is_open_set_of_nat_le_rank (finrank 𝕜 E), },
   intros L,
-  sorry,
+  -- TODO: replace the below proof with something sane.
+  refine ⟨λ h, _, λ h, _⟩,
+  { rw [← linear_map.finrank_range_of_inj h, finrank_eq_dim], refl, },
+  { replace h : finrank 𝕜 E = finrank 𝕜 (linear_map.range (L : E →ₗ[𝕜] F)),
+    { rw [rank, ← finrank_eq_dim] at h,
+      norm_cast at h,
+      refine le_antisymm h _,
+      rw ← (L : E →ₗ[𝕜] F).finrank_range_add_finrank_ker,
+      linarith, },
+    let L' := (L : E →ₗ[𝕜] F).range_restrict,
+    have hL' : injective L ↔ injective L',
+    { refine forall₂_congr (λ x y, _),
+      simp_rw subtype.ext_iff_val,
+      refl, },
+    rw [hL', linear_map.injective_iff_surjective_of_finrank_eq_finrank h],
+    rintros ⟨-, ⟨x, rfl⟩⟩,
+    exact ⟨x, rfl⟩, },
 end
 
 end finite_dimensional
