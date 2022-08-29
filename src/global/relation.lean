@@ -143,6 +143,10 @@ lemma mem_relativize (R : rel_mfld I M I' M') (w : one_jet_bundle (IP.prod I) (P
     one_jet_bundle I M I' M') ∈ R :=
 iff.rfl
 
+lemma rel_mfld.is_open_relativize (R : rel_mfld I M I' M') (h2 : is_open R) :
+  is_open (rel_mfld.relativize IP P R) :=
+sorry
+
 variables {P}
 
 /-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
