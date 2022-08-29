@@ -444,6 +444,7 @@ begin
   refine (hR q).vadd,
 end
 
+
 lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M' IP P) {s : P}
   {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R :=
 begin
@@ -505,3 +506,7 @@ lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is
 sorry
 
 end loc
+
+-- #print axioms family_one_jet_sec.uncurry_mem_relativize
+-- #print axioms family_one_jet_sec.is_holonomic_uncurry
+-- #print axioms rel_mfld.ample.relativize
