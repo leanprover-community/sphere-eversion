@@ -126,6 +126,5 @@ lemma continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] 
   ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous.comp₂ hg $
   (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.comp hf
 
--- this might not be sufficient to prove that `immersion_rel` is open.
 lemma continuous_linear_map.is_open_injective : is_open {L : E →L[𝕜] F | function.injective L} :=
 sorry
