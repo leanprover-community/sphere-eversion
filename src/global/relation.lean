@@ -220,13 +220,10 @@ begin
     exact one_jet_sec.is_holonomic_at_iff.mp (h₄ p m) },
 end
 
-variables (P) [finite_dimensional ℝ EP] [sigma_compact_space P] [t2_space P]
-
-/-- This might need some additional assumptions or other modifications.
-Patrick doesn't know whether this lemma is needed. -/
-lemma rel_mfld.relativize_satisfies_h_principle (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
-  (ε : M → ℝ) :
-  (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2) ↔
+/-- This might need some additional assumptions or other modifications. -/
+lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
+  (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
+  (ε : M → ℝ) (h : (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2)) :
   R.satisfies_h_principle_with IP C₁ C₂ ε :=
 sorry
 
@@ -444,7 +441,6 @@ begin
   refine (hR q).vadd,
 end
 
-
 lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M' IP P) {s : P}
   {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R :=
 begin
@@ -457,7 +453,6 @@ begin
     continuous_linear_map.coe_fst', continuous_linear_map.coe_snd',
     continuous_linear_map.map_zero, zero_add, S.coe_ϕ]
 end
-
 
 end parameter_space
 
