@@ -1,5 +1,4 @@
 import geometry.manifold.instances.sphere
-
 import global.gromov
 
 noncomputable theory
@@ -24,6 +23,8 @@ variables
 
 local notation `TM` := tangent_space I
 local notation `TM'` := tangent_space I'
+local notation `HJ` := model_prod (model_prod H H') (E →L[ℝ] E')
+local notation `ψJ` := chart_at HJ
 
 /-- A map between manifolds is an immersion if it is differentiable and its differential at
 any point is injective. Note the formalized definition doesn't require differentiability.
@@ -36,20 +37,21 @@ variables (M M')
 /-- The relation of immersions for maps between two manifolds. -/
 def immersion_rel : rel_mfld I M I' M' := {σ | injective σ.2}
 
-@[simp] lemma immersion_rel_preslice_eq {m : M} {m' : M'} {p : dual_pair' $ tangent_space I m}
-  {φ : tangent_space I m →L[ℝ] tangent_space I' m'} (hφ : injective φ) :
-  (immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p = (p.π.ker.map φ)ᶜ :=
-set.ext_iff.mpr $ λ w, p.injective_update_iff hφ
-
 variables {M M'}
 
-local notation `HJ` := model_prod (model_prod H H') (E →L[ℝ] E')
-local notation `ψ` := chart_at HJ
+@[simp] lemma mem_immersion_rel_iff {σ : one_jet_bundle I M I' M'} :
+  σ ∈ immersion_rel I M I' M' ↔ injective (σ.2 : tangent_space I _ →L[ℝ] tangent_space I' _) :=
+iff.rfl
+
+/-- A characterisation of the immersion relation in terms of a local chart. -/
+lemma mem_immersion_rel_iff' {σ σ' : one_jet_bundle I M I' M'} (hσ' : σ' ∈ (ψJ σ).source) :
+  σ' ∈ immersion_rel I M I' M' ↔ injective (ψJ σ σ').2 :=
+by simp [mem_immersion_rel_iff, one_jet_bundle_chart_at' I M I' M' hσ']
 
 lemma chart_at_image_immersion_rel_eq {σ : one_jet_bundle I M I' M'} :
-  (ψ σ) '' ((ψ σ).source ∩ immersion_rel I M I' M') = (ψ σ).target ∩ { q : HJ | injective q.2 } :=
+  (ψJ σ) '' ((ψJ σ).source ∩ immersion_rel I M I' M') = (ψJ σ).target ∩ {q : HJ | injective q.2} :=
 begin
-  -- type_check one_jet_bundle_chart_at I M I' M',
+  -- type_check mem_immersion_rel_iff' I I',
   sorry,
 end
 
@@ -67,6 +69,11 @@ begin
   sorry,
 end
 
+@[simp] lemma immersion_rel_slice_eq {m : M} {m' : M'} {p : dual_pair' $ tangent_space I m}
+  {φ : tangent_space I m →L[ℝ] tangent_space I' m'} (hφ : injective φ) :
+  (immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p = (p.π.ker.map φ)ᶜ :=
+set.ext_iff.mpr $ λ w, p.injective_update_iff hφ
+
 lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
   (immersion_rel I M I' M').ample :=
 begin
@@ -75,7 +82,7 @@ begin
           (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
   haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
   have hcodim := p.two_le_rank_of_rank_lt_rank h φ,
-  rw [immersion_rel_preslice_eq I M I' M' hφ],
+  rw [immersion_rel_slice_eq I I' hφ],
   exact ample_of_two_le_codim hcodim,
 end
 
