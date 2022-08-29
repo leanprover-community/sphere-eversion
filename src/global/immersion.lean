@@ -64,8 +64,9 @@ begin
   simp_rw [charted_space.is_open_iff HJ (immersion_rel I M I' M'), chart_at_image_immersion_rel_eq],
   refine λ σ, (ψJ σ).open_target.inter _,
   convert is_open_univ.prod continuous_linear_map.is_open_injective,
-  ext,
-  simp,
+  { ext, simp, },
+  { apply_instance, },
+  { apply_instance, },
 end
 
 @[simp] lemma immersion_rel_slice_eq {m : M} {m' : M'} {p : dual_pair' $ tangent_space I m}

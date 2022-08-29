@@ -1,4 +1,5 @@
 import analysis.normed_space.bounded_linear_maps
+import analysis.normed_space.finite_dimension
 
 noncomputable theory
 
@@ -126,5 +127,19 @@ lemma continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] 
   ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous.comp₂ hg $
   (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.comp hf
 
-lemma continuous_linear_map.is_open_injective : is_open {L : E →L[𝕜] F | function.injective L} :=
-sorry
+section finite_dimensional
+
+open function finite_dimensional
+
+variables [finite_dimensional 𝕜 E]
+
+lemma continuous_linear_map.is_open_injective [complete_space 𝕜] :
+  is_open {L : E →L[𝕜] F | injective L} :=
+begin
+  suffices : ∀ (L : E →L[𝕜] F), injective L ↔ (finrank 𝕜 E : cardinal) ≤ rank (L : E →ₗ[𝕜] F),
+  { simp_rw this, exact is_open_set_of_nat_le_rank (finite_dimensional.finrank 𝕜 E), },
+  intros L,
+  sorry,
+end
+
+end finite_dimensional
