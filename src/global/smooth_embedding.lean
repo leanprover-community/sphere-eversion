@@ -266,27 +266,28 @@ end
 variables (E) {M}
 
 lemma nice_atlas'
-  {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
+  {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
+  (U : set E) (hU₁ : (0 : E) ∈ U) (hU₂ : is_open U) :
   ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M),
   t.countable ∧
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
-  (⋃ i, φ i '' ball 0 1) = univ :=
+  (⋃ i, φ i '' U) = univ :=
 begin
   let W : M → ℝ → set M := λ x r,
-    (chart_at E x).symm ∘ open_smooth_embedding_to_ball (chart_at E x x) r '' (ball 0 1),
+    (chart_at E x).symm ∘ open_smooth_embedding_to_ball (chart_at E x x) r '' U,
   let B : M → ℝ → set M := charted_space.ball E,
   let p : M → ℝ → Prop :=
     λ x r, 0 < r ∧ ball (chart_at E x x) r ⊆ (chart_at E x).target ∧ ∃ j, B x r ⊆ s j,
-  have hW₀ : ∀ x r, p x r → x ∈ W x r := λ x r h, ⟨0, by simp, by simp [h.1]⟩,
+  have hW₀ : ∀ x r, p x r → x ∈ W x r := λ x r h, ⟨0, hU₁, by simp [h.1]⟩,
   have hW₁ : ∀ x r, p x r → is_open (W x r),
   { rintros x r ⟨h₁, h₂, -, -⟩,
     simp only [W],
     have aux :
-      open_smooth_embedding_to_ball (chart_at E x x) r '' ball 0 1 ⊆ (chart_at E x).target :=
+      open_smooth_embedding_to_ball (chart_at E x x) r '' U ⊆ (chart_at E x).target :=
       subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
     rw [image_comp, local_homeomorph.is_open_symm_image_iff_of_subset_target _ aux],
-    exact open_smooth_embedding.open_map _ _ is_open_ball, },
+    exact open_smooth_embedding.open_map _ _ hU₂, },
   have hB : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
     λ x, charted_space.nhds_has_basis_balls_of_open_cov E x s_op cov,
   have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,
@@ -318,7 +319,7 @@ lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' E s_op cov,
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' E s_op cov (ball 0 1) (by simp) is_open_ball,
   have htne : t.nonempty,
   { by_contra contra,
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
