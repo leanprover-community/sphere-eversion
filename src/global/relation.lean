@@ -17,7 +17,7 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 
 noncomputable theory
 
-open set function filter charted_space smooth_manifold_with_corners
+open set function filter (hiding map_smul) charted_space smooth_manifold_with_corners
 open_locale topological_space manifold
 
 section defs
@@ -406,6 +406,15 @@ variables {I M I' M'} {R : rel_mfld I M I' M'}
 
 open_locale pointwise
 
+lemma prod.zero_mk_add_zero_mk {M N : Type*} [add_monoid M] [has_add N] (b₁ b₂ : N) :
+  ((0 : M), b₁) + (0, b₂) = (0, b₁ + b₂) :=
+by rw [prod.mk_add_mk, add_zero]
+
+lemma prod.smul_zero_mk {M α β : Type*} [monoid M] [add_monoid α] [distrib_mul_action M α]
+  [has_smul M β] (a : M) (c : β) :
+  a • ((0 : α), c) = (0, a • c) :=
+by rw [prod.smul_mk, smul_zero]
+
 lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
   (q : dual_pair' $ tangent_space I σ.1.1.2)
@@ -413,18 +422,46 @@ lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   (rel_mfld.relativize IP P R).slice σ p =
   σ.2 (p.v - (0, q.v)) +ᵥ R.slice (bundle_snd σ) q :=
 begin
-  sorry
+  have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hpq,
+  ext1 w,
+  have h1 : (p.update σ.2 w).comp (continuous_linear_map.inr ℝ EP E) =
+    q.update (bundle_snd σ).2 (-σ.2 (p.v - (0, q.v)) +ᵥ w),
+  { ext1 x,
+    simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
+      ← continuous_linear_map.map_neg, neg_sub],
+    obtain ⟨u, hu, t, rfl⟩ := q.decomp x,
+    have hv : (0, q.v) - p.v ∈ p.π.ker,
+    { rw [continuous_linear_map.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self] },
+    have hup : ((0 : EP), u) ∈ p.π.ker := (h2pq u).trans hu,
+    rw [q.update_apply _ hu, ← prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup,
+      ← prod.smul_zero_mk, map_smul, vadd_eq_add],
+    nth_rewrite 0 [← sub_add_cancel (0, q.v) p.v],
+    rw [map_add, p.update_ker_pi _ _ hv, p.update_v],
+    refl },
+  have := preimage_vadd_neg (show E', from σ.2 (p.v - (0, q.v)))
+    (show set E', from (R.slice (bundle_snd σ) q)),
+  dsimp only at this,
+  simp_rw [← this, mem_preimage, mem_slice, mem_relativize],
+  dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
+  congr'
 end
 
 lemma relativize_slice_eq_univ {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
   (hp : p.π.comp (continuous_linear_map.inr ℝ EP E) = 0) :
+  ((rel_mfld.relativize IP P R).slice σ p).nonempty ↔
   (rel_mfld.relativize IP P R).slice σ p = univ :=
 begin
-  simp_rw [eq_univ_iff_forall, mem_slice, mem_relativize],
+  have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hp,
+  have : ∀ y : E', (p.update σ.snd y).comp (continuous_linear_map.inr ℝ EP E) =
+    σ.snd.comp (continuous_linear_map.inr ℝ EP E),
+  { intro y,
+    ext1 x,
+    simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
+      p.update_ker_pi _ _ (h2p x)] },
+  simp_rw [set.nonempty, eq_univ_iff_forall, mem_slice, mem_relativize],
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
-  intro w,
-  sorry
+  simp_rw [this, exists_const, forall_const]
 end
 
 variables (IP P)
@@ -435,7 +472,7 @@ begin
   let p2 := p.π.comp (continuous_linear_map.inr ℝ EP E),
   rcases eq_or_ne p2 0 with h|h,
   { intros w hw,
-    rw [relativize_slice_eq_univ h, connected_component_in_univ,
+    rw [(relativize_slice_eq_univ h).mp ⟨w, hw⟩, connected_component_in_univ,
       preconnected_space.connected_component_eq_univ, convex_hull_univ] },
   obtain ⟨u', hu'⟩ := continuous_linear_map.exists_ne_zero h,
   let u := (p2 u')⁻¹ • u',
@@ -507,5 +544,3 @@ lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is
 sorry
 
 end loc
-
--- #print axioms rel_mfld.ample.relativize
