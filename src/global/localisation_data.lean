@@ -30,6 +30,7 @@ structure localisation_data (f : M → M') :=
 (h₂ : (⋃ i', (ψ i') '' (ball (0:E') 1)) = univ)
 (h₃ : ∀ i, range (f ∘ (φ i)) ⊆ (ψ (j i)) '' (ball (0:E') 1))
 (h₄ : locally_finite $ λ i', range (ψ i'))
+(lf_φ : locally_finite $ λ i, range (φ i))
 
 namespace localisation_data
 
@@ -98,7 +99,8 @@ def std_localisation_data : localisation_data I I' f :=
     rintros - ⟨y, hy, rfl⟩,
     exact ((nice_atlas_domain E I E' I' hf).some_spec.some_spec.1 i).some_spec hy,
   end,
-  h₄ := (nice_atlas_target E' I' M').some_spec.some_spec.1 }
+  h₄ := (nice_atlas_target E' I' M').some_spec.some_spec.1,
+  lf_φ := sorry }
 
 /-- Lemma `lem:localisation_stability`. -/
 lemma localisation_stability {f : M → M'} (hf : continuous f)

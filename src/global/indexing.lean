@@ -25,6 +25,9 @@ class indexing (α : Type*) [linear_order α] :=
 instance indexing.has_coe (α : Type*) [linear_order α] [indexing α] : has_coe ℕ α :=
 ⟨indexing.from_nat⟩
 
+instance indexing.nonempty (α : Type*) [linear_order α] [indexing α] : nonempty α :=
+⟨indexing.from_nat 0⟩
+
 instance : indexing ℕ :=
 { from_nat := id,
   to_nat := id,
@@ -108,35 +111,35 @@ begin
       exact set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩, }, },
 end
 
+open filter
 
-example {α X : Type*} [topological_space X] {f : ℕ → X → α}
-    (h : locally_finite (λ (n : ℕ), {x : X | f (n + 1) x ≠ f n x})) :
-    ∃ (F : X → α), ∀ (x : X), ∀ᶠ (n : ℕ) in filter.at_top, f n =ᶠ[𝓝 x] F :=
-h.exists_forall_eventually_at_top_eventually_eq
+/-
+Old statement assumed h : ∀ n, {x : X | f (n + 1) x ≠ f n x} ⊆ V (n + 1 : ℕ)
+which gives the new style assumption by:
+  replace h : ∀ n : ℕ, ∀ x ∉ V (n + 1 : ℕ), f (n+1) x = f n x,
+  { intros n x hx,
+    contrapose hx,
+    simp [h n hx] },
+-/
 
 lemma locally_finite.exists_forall_eventually_of_indexing
-  {α X ι : Type*} [topological_space X] [linear_order ι] [indexing ι] [nonempty ι] {f : ℕ → X → α}
+  {α X ι : Type*} [topological_space X] [linear_order ι] [indexing ι] {f : ℕ → X → α}
   {V : ι → set X} (hV : locally_finite V)
-  (h : ∀ n, {x : X | f (n + 1) x ≠ f n x} ⊆ V (n + 1 : ℕ))
-  (h' : ∀ n : ℕ, ((n+1 : ℕ) : ι) = n → f (n + 1) = f n) :
+  (h : ∀ n : ℕ, ∀ x ∉ V n, f (n+1) x = f n x)
+  (h' : ∀ n : ℕ, ((n+1 : ℕ) : ι) = n → f (n + 2) = f (n + 1)) :
   ∃ (F : X → α), ∀ (x : X), ∀ᶠ (n : ℕ) in filter.at_top, f n =ᶠ[𝓝 x] F :=
 begin
   let π :  ℕ → ι := indexing.from_nat,
-  -- Maybe this is the proper way to state h:
-  replace h : ∀ n : ℕ, ∀ x ∈ (V (n + 1 : ℕ))ᶜ, f (n+1) x = f n x,
-  sorry { intros n x hx,
-    contrapose hx,
-    simp [h n hx] },
   choose U hUx hU using hV,
   choose i₀ hi₀ using λ x, (hU x).bdd_above,
   let n₀ : X → ℕ := indexing.to_nat ∘ i₀,
-  have key : ∀ x, ∀ (n ≥ n₀ x) (y ∈ U x), f n y = f (n₀ x) y,
-  sorry { intros x n hn,
-    rcases le_iff_exists_add.mp hn with ⟨k, rfl⟩, clear hn,
+  have key : ∀ x, ∀ (n > n₀ x) (y ∈ U x), f n y = f (n₀ x + 1) y,
+  { intros x n hn,
+    rcases le_iff_exists_add.mp (nat.lt_iff_add_one_le.mp hn) with ⟨k, rfl⟩, clear hn,
     intros y hy,
     induction k with k hk,
     { simp },
-    { rw ← hk,
+    { rw ← hk, clear hk,
       have : ∀ n, π n < π (n+1) ∨ π n = π (n+1),
       exact λ n, lt_or_eq_of_le (indexing.mono_from n.le_succ),
       rcases this (n₀ x + k) with H | H ; clear this,
@@ -145,9 +148,22 @@ begin
           rw ← indexing.from_to (i₀ x),
           exact indexing.mono_from le_self_add },
         apply h,
-        intro hy',
-        exact lt_irrefl _ (lt_of_le_of_lt (hi₀ x ⟨y, ⟨hy', hy⟩⟩) ineq) },
-      { erw [← (h' _ H.symm)],
-        refl } } },
-  sorry
+        rintro (hy' : y ∈ V (π (n₀ x + 1 + k))),
+        have := hi₀ x ⟨y, ⟨hy', hy⟩⟩, clear hy hy',
+        rw (n₀ x).succ_add k at this,
+        exact lt_irrefl _ (lt_of_le_of_lt this ineq) },
+      { rw (n₀ x).succ_add k,
+        erw [← (h' _ H.symm)],
+        congr' 1,
+        ring } } },
+  refine ⟨λ x, f (n₀ x + 1) x, λ x, _⟩,
+  change ∀ᶠ (n : ℕ) in at_top, f n =ᶠ[𝓝 x] λ (y : X), f (n₀ y + 1) y,
+  apply (eventually_gt_at_top (n₀ x)).mono (λ n hn, _),
+  apply mem_of_superset (hUx x) (λ y hy, _),
+  change f n y = f (n₀ y + 1) y,
+  calc f n y = f (n₀ x + 1) y : key _ _ hn _ hy
+  ... = f (max (n₀ x + 1) (n₀ y + 1)) y : (key _ _ _ _ hy).symm
+  ... = f (n₀ y + 1) y : key _ _ _ _ (mem_of_mem_nhds $ hUx y),
+  linarith [le_max_left (n₀ x + 1) (n₀ y + 1)],
+  linarith [le_max_right (n₀ x + 1) (n₀ y + 1)],
 end
