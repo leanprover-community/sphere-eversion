@@ -1,7 +1,47 @@
 import topology.algebra.module.basic
 
-open filter continuous_linear_map
+open filter continuous_linear_map function
 open_locale topological_space big_operators filter
+
+
+namespace continuous_linear_map
+
+variables {R₁ M₁ M₂ M₃ : Type*} [semiring R₁]
+variables [topological_space M₁] [add_comm_monoid M₁]
+variables [topological_space M₂] [add_comm_monoid M₂]
+variables [topological_space M₃] [add_comm_monoid M₃]
+variables [module R₁ M₁] [module R₁ M₂] [module R₁ M₃]
+
+-- unused
+lemma comp_fst_add_comp_snd [has_continuous_add M₃] (f : M₁ →L[R₁] M₃) (g : M₂ →L[R₁] M₃) :
+  f.comp (continuous_linear_map.fst R₁ M₁ M₂) +
+  g.comp (continuous_linear_map.snd R₁ M₁ M₂) =
+  f.coprod g :=
+rfl
+
+lemma fst_prod_zero_add_zero_prod_snd [has_continuous_add M₁] [has_continuous_add M₂] :
+  (continuous_linear_map.fst R₁ M₁ M₂).prod 0 +
+  continuous_linear_map.prod 0 (continuous_linear_map.snd R₁ M₁ M₂) =
+  continuous_linear_map.id R₁ (M₁ × M₂) :=
+begin
+  rw [continuous_linear_map.ext_iff],
+  intro x,
+  simp_rw [continuous_linear_map.add_apply, continuous_linear_map.id_apply,
+    continuous_linear_map.prod_apply, continuous_linear_map.coe_fst',
+    continuous_linear_map.coe_snd', continuous_linear_map.zero_apply, prod.mk_add_mk, add_zero,
+    zero_add, prod.mk.eta]
+end
+
+lemma _root_.function.surjective.clm_comp_injective {g : M₂ →L[R₁] M₁} (hg : surjective g) :
+  injective (λ f : M₁ →L[R₁] M₃, f.comp g) :=
+begin
+  intros f f' hff',
+  ext x,
+  obtain ⟨y, rfl⟩ := hg x,
+  exact congr_arg (λ (h : M₂ →L[R₁] M₃) , h y) hff',
+end
+
+end continuous_linear_map
 
 variables {R₁ : Type*} {R₂ : Type*} {R₃ : Type*} [semiring R₁] [semiring R₂] [semiring R₃]
 {σ₁₂ : R₁ →+* R₂} {σ₂₁ : R₂ →+* R₁} [ring_hom_inv_pair σ₁₂ σ₂₁] [ring_hom_inv_pair σ₂₁ σ₁₂]

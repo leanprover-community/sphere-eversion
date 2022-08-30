@@ -139,6 +139,9 @@ lemma smooth_bs (S : family_one_jet_sec I M I' M' J N) :
   smooth (J.prod I) I' (λ p : N × M, S.bs p.1 p.2) :=
 (smooth_snd.comp $ basic_smooth_vector_bundle_core.smooth_proj _).comp S.smooth
 
+lemma smooth_coe_bs (S : family_one_jet_sec I M I' M' J N) {p : N} : smooth I I' (S.bs p) :=
+(S p).smooth_bs
+
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : family_one_jet_sec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) :
   family_one_jet_sec I M I' M' J N :=
@@ -172,19 +175,9 @@ begin
   simp_rw [S.uncurry_ϕ, mfderiv_snd],
   congr' 1,
   convert mfderiv_comp p
-    ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable p.1)
+    ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable le_top p.1)
     (smooth_fst.mdifferentiable p),
   simp_rw [mfderiv_fst],
-end
-
-lemma mfderiv_prod_eq_add {f : P × M → M'} {p : P × M}
-  (hf : mdifferentiable_at (IP.prod I) I' f p) :
-  mfderiv (IP.prod I) I' f p =
-  (show EP × E →L[ℝ] E', from mfderiv (IP.prod I) I' (λ (z : P × M), f (z.1, p.2)) p +
-  mfderiv (IP.prod I) I' (λ (z : P × M), f (p.1, z.2)) p) :=
-begin
-  dsimp only,
-  -- have := mfderiv_comp p hf smooth_at_fst
 end
 
 lemma is_holonomic_uncurry (S : family_one_jet_sec I M I' M' IP P) {p : P × M} :
@@ -192,9 +185,12 @@ lemma is_holonomic_uncurry (S : family_one_jet_sec I M I' M' IP P) {p : P × M} 
 begin
   simp_rw [one_jet_sec.is_holonomic_at, one_jet_sec.snd_eq, S.uncurry_ϕ],
   rw [show S.uncurry.bs = λ x, S.uncurry.bs x, from rfl, funext S.uncurry_bs],
-  have := S.uncurry_bs,
-  -- dsimp only [S.uncurry_bs] {eta := ff},
-  have := funext S.uncurry_bs,
+  simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj],
+  dsimp only,
+  rw [mfderiv_comp p S.smooth_coe_bs.mdifferentiable_at smooth_snd.mdifferentiable_at, mfderiv_snd,
+    (show surjective (continuous_linear_map.snd ℝ EP E), from prod.snd_surjective)
+      .clm_comp_injective.eq_iff],
+  refl
 end
 
 end family_one_jet_sec
