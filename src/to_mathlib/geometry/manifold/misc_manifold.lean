@@ -1,6 +1,7 @@
 import geometry.manifold.diffeomorph
 import geometry.manifold.algebra.monoid
 import geometry.manifold.metrizable
+import to_mathlib.topology.algebra.module
 
 open bundle set function filter
 open_locale manifold topological_space
@@ -478,6 +479,45 @@ begin
     exact hy.2 },
   exact fderiv_within_snd this,
 end
+
+lemma mdifferentiable_at.prod_mk {f : N → M} {g : N → M'} {x : N}
+  (hf : mdifferentiable_at J I f x)
+  (hg : mdifferentiable_at J I' g x) :
+  mdifferentiable_at J (I.prod I') (λ x, (f x, g x)) x :=
+⟨hf.1.prod hg.1, hf.2.prod hg.2⟩
+
+
+-- todo: rename differentiable_at.fderiv_within_prod -> differentiable_within_at.fderiv_within_prod
+lemma mdifferentiable_at.mfderiv_prod {f : N → M} {g : N → M'} {x : N}
+  (hf : mdifferentiable_at J I f x)
+  (hg : mdifferentiable_at J I' g x) :
+  mfderiv J (I.prod I') (λ x, (f x, g x)) x = (mfderiv J I f x).prod (mfderiv J I' g x) :=
+begin
+  classical,
+  simp_rw [mfderiv, dif_pos (hf.prod_mk hg), dif_pos hf, dif_pos hg],
+  exact differentiable_at.fderiv_within_prod hf.2 hg.2 (J.unique_diff _ (mem_range_self _))
+end
+
+lemma mfderiv_prod_eq_add {f : N × M → M'} {p : N × M}
+  (hf : mdifferentiable_at (J.prod I) I' f p) :
+  mfderiv (J.prod I) I' f p =
+  (show F × E →L[𝕜] E', from mfderiv (J.prod I) I' (λ (z : N × M), f (z.1, p.2)) p +
+  mfderiv (J.prod I) I' (λ (z : N × M), f (p.1, z.2)) p) :=
+begin
+  dsimp only,
+  rw [← @prod.mk.eta _ _ p] at hf,
+  rw [mfderiv_comp p (by apply hf) (smooth_fst.prod_mk smooth_const).mdifferentiable_at,
+    mfderiv_comp p (by apply hf) (smooth_const.prod_mk smooth_snd).mdifferentiable_at,
+    ← continuous_linear_map.comp_add,
+    smooth_fst.mdifferentiable_at.mfderiv_prod smooth_const.mdifferentiable_at,
+    smooth_const.mdifferentiable_at.mfderiv_prod smooth_snd.mdifferentiable_at,
+    mfderiv_fst, mfderiv_snd, mfderiv_const, mfderiv_const],
+  symmetry,
+  convert continuous_linear_map.comp_id _,
+  { exact continuous_linear_map.fst_prod_zero_add_zero_prod_snd },
+  simp_rw [prod.mk.eta],
+end
+
 
 /-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. `admit`ted, since it
 requires generalizing some earlier lemmas, and we haven't finished that.
