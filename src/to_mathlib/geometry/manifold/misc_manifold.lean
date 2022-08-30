@@ -358,6 +358,36 @@ lemma cont_diff.comp_cont_mdiff {g : F → F''} {f : M → F}
   cont_mdiff I 𝓘(𝕜, F'') n (g ∘ f) :=
 λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
 
+lemma smooth_within_at.mdifferentiable_within_at
+  (hf : smooth_within_at I I' f s x) : mdifferentiable_within_at I I' f s x :=
+hf.mdifferentiable_within_at le_top
+
+lemma smooth_at.mdifferentiable_at (hf : smooth_at I I' f x) : mdifferentiable_at I I' f x :=
+hf.mdifferentiable_at le_top
+
+lemma smooth_on.mdifferentiable_on (hf : smooth_on I I' f s) : mdifferentiable_on I I' f s :=
+hf.mdifferentiable_on le_top
+
+lemma ext_chart_at_prod (x : M × M') :
+  ext_chart_at (I.prod I') x = (ext_chart_at I x.1).prod (ext_chart_at I' x.2) :=
+by simp only with mfld_simps
+
+-- the following proof takes very long in pure term mode
+lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F} {x : M}
+  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F'') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) x :=
+@cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ ((F →L[𝕜] F'') × (F' →L[𝕜] F)) _ _ _ _ _ _ _ _
+  _ _ _ _
+  (λ x, x.1.comp x.2) (λ x, (g x, f x)) x
+  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff,
+    exact is_bounded_bilinear_map_comp })
+  (hg.prod_mk_space hf)
+
+lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F}
+  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F'') n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
+  cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
+λ x, (hg x).clm_comp (hf x)
+
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
 
@@ -411,15 +441,11 @@ lemma mfderiv_congr {f' : M → M'} (h : f = f') :
   @eq (E →L[𝕜] E') (mfderiv I I' f x) (mfderiv I I' f' x) :=
 by subst h
 
-lemma ext_chart_at_prod (x : M × M') :
-  ext_chart_at (I.prod I') x = (ext_chart_at I x.1).prod (ext_chart_at I' x.2) :=
-by simp only with mfld_simps
-
 /-- The derivative of the projection `M × M' → M` is the projection `TM × TM' → TM` -/
 lemma mfderiv_fst (x : M × M') :
   mfderiv (I.prod I') I prod.fst x = continuous_linear_map.fst 𝕜 E E' :=
 begin
-  simp_rw [mfderiv, dif_pos (smooth_at_fst.mdifferentiable_at le_top), written_in_ext_chart_at,
+  simp_rw [mfderiv, dif_pos smooth_at_fst.mdifferentiable_at, written_in_ext_chart_at,
     ext_chart_at_prod, function.comp, local_equiv.prod_coe, local_equiv.prod_coe_symm],
   have : unique_diff_within_at 𝕜 (range (I.prod I')) (ext_chart_at (I.prod I') x x) :=
   (I.prod I').unique_diff _ (mem_range_self _),
@@ -438,7 +464,7 @@ end
 lemma mfderiv_snd (x : M × M') :
   mfderiv (I.prod I') I' prod.snd x = continuous_linear_map.snd 𝕜 E E' :=
 begin
-  simp_rw [mfderiv, dif_pos (smooth_at_snd.mdifferentiable_at le_top), written_in_ext_chart_at,
+  simp_rw [mfderiv, dif_pos smooth_at_snd.mdifferentiable_at, written_in_ext_chart_at,
     ext_chart_at_prod, function.comp, local_equiv.prod_coe, local_equiv.prod_coe_symm],
   have : unique_diff_within_at 𝕜 (range (I.prod I')) (ext_chart_at (I.prod I') x x) :=
   (I.prod I').unique_diff _ (mem_range_self _),
@@ -453,7 +479,7 @@ begin
   exact fderiv_within_snd this,
 end
 
-/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. Sorried, since it
+/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. `admit`ted, since it
 requires generalizing some earlier lemmas, and we haven't finished that.
 Currently unused. -/
 lemma cont_mdiff_at.mfderiv''' {x : N} (f : N → M → M') (g : N → M)
@@ -478,8 +504,8 @@ begin
     (range J) (ext_chart_at J x x),
   { rw [cont_mdiff_at_iff] at hf hg,
     simp_rw [function.comp, uncurry, ext_chart_at_prod, local_equiv.prod_coe_symm] at hf ⊢,
-    refine cont_diff_within_at_fderiv_within _ hg.2 I.unique_diff hmn (mem_range_self _) _,
     admit,
+    -- refine cont_diff_within_at_fderiv_within _ hg.2 I.unique_diff hmn (mem_range_self _) _,
     -- simp_rw [← model_with_corners.target_eq, image_id'] at hf ⊢,
     -- exact hf.2
      },
@@ -620,7 +646,6 @@ begin
   { simp_rw [function.comp_apply, (ext_chart_at I x).left_inv hx₂] }
 end
 
-
 /-- The map `mfderiv f` is `C^n` as a continuous linear map, assuming that `f` is `C^(n+1)`.
 We have to insert appropriate coordinate changes to make sense of this statement. -/
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
@@ -635,22 +660,6 @@ begin
   apply cont_mdiff_at.mfderiv'' (λ x, f) this hmn
   -- apply cont_mdiff_at.mfderiv''' (λ x, f) id this cont_mdiff_at_id hmn
 end
-
--- the following proof takes very long in pure term mode
-lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F} {x : M}
-  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F'') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) x :=
-@cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ ((F →L[𝕜] F'') × (F' →L[𝕜] F)) _ _ _ _ _ _ _ _
-  _ _ _ _
-  (λ x, x.1.comp x.2) (λ x, (g x, f x)) x
-  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff,
-    exact is_bounded_bilinear_map_comp })
-  (hg.prod_mk_space hf)
-
-lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F}
-  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F'') n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
-  cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
-λ x, (hg x).clm_comp (hf x)
 
 instance has_smooth_add_self : has_smooth_add 𝓘(𝕜, F) F :=
 ⟨by { convert cont_diff_add.cont_mdiff, exact model_with_corners_self_prod.symm,

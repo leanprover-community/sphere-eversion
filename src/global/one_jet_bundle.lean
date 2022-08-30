@@ -236,7 +236,8 @@ begin
 end
 
 
-/-- A family of one-jet extensions indexed by a parameter is smooth. Currently unused and sorry'd -/
+/-- A family of one-jet extensions indexed by a parameter is smooth. Currently unused and
+`admit`ted -/
 lemma smooth_at.one_jet_ext' {f : N → M → M'} {g : N → M} {n : N}
   (hf : smooth_at (J.prod I) I' (function.uncurry f) (n, g n)) (hg : smooth_at J I g n) :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) n :=
