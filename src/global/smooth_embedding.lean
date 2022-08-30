@@ -127,7 +127,48 @@ variables (I M)
   smooth_to := smooth_id,
   smooth_inv := smooth_on_id }
 
+variables {I M I' M'}
+
+@[simps] def comp
+  {E'' : Type*} [normed_add_comm_group E''] [normed_space 𝕜 E'']
+  {H'' : Type*} [topological_space H'']
+  {I'' : model_with_corners 𝕜 E'' H''}
+  {M'' : Type*} [topological_space M''] [charted_space H'' M''] [smooth_manifold_with_corners I'' M'']
+  (g : open_smooth_embedding I' M' I'' M'') (f : open_smooth_embedding I M I' M') :
+  open_smooth_embedding I M I'' M'' :=
+{ to_fun := g ∘ f,
+  inv_fun := f.inv_fun ∘ g.inv_fun,
+  left_inv' := λ x, by simp only [function.comp_app, left_inv],
+  right_inv' := λ x hx, by { obtain ⟨y, rfl⟩ := hx, simp only [function.comp_app, left_inv], },
+  open_map := g.open_map.comp f.open_map,
+  smooth_to := g.smooth_to.comp f.smooth_to,
+  smooth_inv := (f.smooth_inv.comp' g.smooth_inv).mono
+  begin
+    change range (g ∘ f) ⊆ range g ∩ g.inv_fun ⁻¹' range f,
+    refine subset_inter_iff.mpr ⟨range_comp_subset_range f g, _⟩,
+    rintros x' ⟨x, rfl⟩,
+    exact ⟨x, by simp only [left_inv]⟩,
+  end, }
+
 end open_smooth_embedding
+
+namespace continuous_linear_equiv
+
+variables (e : E ≃L[𝕜] E') [complete_space E] [complete_space E']
+
+@[simp] lemma is_open_map : is_open_map e := (e : E →L[𝕜] E').is_open_map e.surjective
+
+@[simps] def to_open_smooth_embedding :
+  open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E') E' :=
+{ to_fun := e,
+  inv_fun := e.symm,
+  left_inv' := e.symm_apply_apply,
+  right_inv' := λ x hx, e.apply_symm_apply x,
+  open_map := e.is_open_map,
+  smooth_to := (e : E →L[𝕜] E').cont_mdiff,
+  smooth_inv := (e.symm : E' →L[𝕜] E).cont_mdiff.cont_mdiff_on }
+
+end continuous_linear_equiv
 
 end general
 
@@ -314,6 +355,24 @@ end
 variables (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
   [charted_space F M] [smooth_manifold_with_corners 𝓘(ℝ, F) M]
 
+/-- A type alias which we will endow with an `inner_product_space` structure. -/
+def l2 := F
+
+instance : inner_product_space ℝ (l2 F) := sorry
+
+def self_equiv_l2 : F ≃L[ℝ] l2 F :=
+linear_equiv.to_continuous_linear_equiv
+{ to_fun    := id,
+  inv_fun   := id,
+  map_add'  := sorry,
+  map_smul' := sorry,
+  left_inv  := λ x, rfl,
+  right_inv := λ x, rfl, }
+
+instance charted_space_l2 : charted_space (l2 F) M := sorry
+
+instance smooth_manifold_with_corners_l2 : smooth_manifold_with_corners 𝓘(ℝ, l2 F) M := sorry
+
 lemma nice_atlas''
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
   (U : set F) (hU₁ : (0 : F) ∈ U) (hU₂ : is_open U) :
@@ -323,9 +382,11 @@ lemma nice_atlas''
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' U) = univ :=
 begin
-  -- Use `nice_atlas'` for a type alias of `F` endowed with an `inner_product_space` structure
-  -- then precompose all the `φ i` with the identity map between the two norms, which is a diffeo
-  -- because we're in finite dimensions and so it is continuous.
+  let U' := self_equiv_l2 F '' U,
+  have hU'₁ : (0 : l2 F) ∈ U', { sorry, },
+  have hU'₂ : is_open U', { sorry, },
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' (l2 F) s_op cov U' hU'₁ hU'₂,
+  -- type_check λ i, (φ i).comp (self_equiv_l2 F).to_open_smooth_embedding,
   sorry,
 end
 
