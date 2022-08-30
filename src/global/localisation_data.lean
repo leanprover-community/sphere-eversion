@@ -80,6 +80,8 @@ nice_atlas E
   (λ i', ((target_charts E' M' i').open_map (ball 0 1) is_open_ball).preimage hf)
   (by rw [← preimage_Union, target_charts_cover, preimage_univ])
 
+variables (E)
+
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
 def std_localisation_data : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f :=
