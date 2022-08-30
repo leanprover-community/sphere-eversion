@@ -45,64 +45,64 @@ section
 variables
   {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
   {M : Type*} [topological_space M] [sigma_compact_space M] [locally_compact_space M] [t2_space M]
-  [nonempty M] [charted_space E M] [smooth_manifold_with_corners 𝓘(ℝ, E) M]
+  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) [model_with_corners.boundaryless I]
+  [nonempty M] [charted_space H M] [smooth_manifold_with_corners I M]
   (E' : Type*) [normed_add_comm_group E'] [normed_space ℝ E'] [finite_dimensional ℝ E']
+  {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H') [model_with_corners.boundaryless I']
   {M' : Type*} [metric_space M'] [sigma_compact_space M'] [locally_compact_space M']
-  [nonempty M'] [charted_space E' M']
-  [smooth_manifold_with_corners 𝓘(ℝ, E') M']
+  [nonempty M'] [charted_space H' M']
+  [smooth_manifold_with_corners I' M']
 
 variables (M')
 
 lemma nice_atlas_target :
-  ∃ n, ∃ ψ : index_type n → open_smooth_embedding 𝓘(ℝ, E') E' 𝓘(ℝ, E') M',
+  ∃ n, ∃ ψ : index_type n → open_smooth_embedding 𝓘(ℝ, E') E' I' M',
   locally_finite (λ i', range (ψ i')) ∧
   (⋃ i', ψ i' '' ball 0 1) = univ :=
-let H := (nice_atlas E' (λ j : punit, @is_open_univ M' _) (by simp [eq_univ_iff_forall])) in
-⟨H.some, H.some_spec.some, H.some_spec.some_spec.2⟩
+let h := (nice_atlas E' I' (λ j : punit, @is_open_univ M' _) (by simp [eq_univ_iff_forall])) in
+⟨h.some, h.some_spec.some, h.some_spec.some_spec.2⟩
 
 /-- A collection of charts on a manifold `M'` which are smooth open embeddings with domain the whole
 model space, and which cover the manifold when restricted in each case to the unit ball. -/
-def target_charts (i' : index_type (nice_atlas_target E' M').some) :
-  open_smooth_embedding 𝓘(ℝ, E') E' 𝓘(ℝ, E') M' :=
-(nice_atlas_target E' M').some_spec.some i'
+def target_charts (i' : index_type (nice_atlas_target E' I' M').some) :
+  open_smooth_embedding 𝓘(ℝ, E') E' I'  M' :=
+(nice_atlas_target E' I' M').some_spec.some i'
 
-lemma target_charts_cover : (⋃ i', (target_charts E' M' i') '' (ball (0:E') 1)) = univ :=
-(nice_atlas_target E' M').some_spec.some_spec.2
+lemma target_charts_cover : (⋃ i', (target_charts E' I' M' i') '' (ball (0:E') 1)) = univ :=
+(nice_atlas_target E' I' M').some_spec.some_spec.2
 
-variables {M'} {f : M → M'} (hf : continuous f)
+variables (E) {M'} {f : M → M'} (hf : continuous f)
 
 lemma nice_atlas_domain :
-  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M,
-  (∀ i, ∃ i', (range (φ i)) ⊆ f ⁻¹' (⇑(target_charts E' M' i') '' (ball (0:E') 1))) ∧
+  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, E) E I M,
+  (∀ i, ∃ i', (range (φ i)) ⊆ f ⁻¹' (⇑(target_charts E' I' M' i') '' (ball (0:E') 1))) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
-nice_atlas E
-  (λ i', ((target_charts E' M' i').open_map (ball 0 1) is_open_ball).preimage hf)
+nice_atlas E I
+  (λ i', ((target_charts E' I' M' i').open_map (ball 0 1) is_open_ball).preimage hf)
   (by rw [← preimage_Union, target_charts_cover, preimage_univ])
-
-variables (E)
 
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
-def std_localisation_data : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f :=
-{ ι := index_type (nice_atlas_domain E' hf).some,
-  ι' := index_type (nice_atlas_target E' M').some,
+def std_localisation_data : localisation_data I I' f :=
+{ ι := index_type (nice_atlas_domain E I E' I' hf).some,
+  ι' := index_type (nice_atlas_target E' I' M').some,
   hι := index_type_encodable _,
-  φ := (nice_atlas_domain E' hf).some_spec.some,
-  ψ := target_charts E' M',
-  j := λ i, ((nice_atlas_domain E' hf).some_spec.some_spec.1 i).some,
-  h₁ := (nice_atlas_domain E' hf).some_spec.some_spec.2.2,
-  h₂ := target_charts_cover E' M',
+  φ := (nice_atlas_domain E I E' I' hf).some_spec.some,
+  ψ := target_charts E' I' M',
+  j := λ i, ((nice_atlas_domain E I E' I' hf).some_spec.some_spec.1 i).some,
+  h₁ := (nice_atlas_domain E I E' I' hf).some_spec.some_spec.2.2,
+  h₂ := target_charts_cover E' I' M',
   h₃ := λ i, begin
     rw range_comp,
     rintros - ⟨y, hy, rfl⟩,
-    exact ((nice_atlas_domain E' hf).some_spec.some_spec.1 i).some_spec hy,
+    exact ((nice_atlas_domain E I E' I' hf).some_spec.some_spec.1 i).some_spec hy,
   end,
-  h₄ := (nice_atlas_target E' M').some_spec.some_spec.1 }
+  h₄ := (nice_atlas_target E' I' M').some_spec.some_spec.1 }
 
 /-- Lemma `lem:localisation_stability`. -/
 lemma localisation_stability {f : M → M'} (hf : continuous f)
-  (ld : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f) :
+  (ld : localisation_data I I' f) :
   ∃ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
     ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ε m) i, range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
 begin
