@@ -108,6 +108,12 @@ begin
   use [u, hu, t, rfl]
 end
 
+-- useful with `dual_pair.decomp`
+lemma update_apply (p : dual_pair' E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ p.π.ker) :
+  p.update φ w (u + t • p.v) = φ u + t • w :=
+by rw [map_add, map_smul, p.update_v, p.update_ker_pi _ _ hu]
+
+
 /-- Map a dual pair under a linear equivalence. -/
 @[simps] def map (p : dual_pair' E) (L : E ≃L[ℝ] E') : dual_pair' E' :=
 ⟨p.π ∘L ↑L.symm, L p.v, (congr_arg p.π $ L.symm_apply_apply p.v).trans p.pairing⟩
