@@ -107,3 +107,47 @@ begin
       simp only [hn, index_type_zero] at fn,
       exact set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩, }, },
 end
+
+
+example {α X : Type*} [topological_space X] {f : ℕ → X → α}
+    (h : locally_finite (λ (n : ℕ), {x : X | f (n + 1) x ≠ f n x})) :
+    ∃ (F : X → α), ∀ (x : X), ∀ᶠ (n : ℕ) in filter.at_top, f n =ᶠ[𝓝 x] F :=
+h.exists_forall_eventually_at_top_eventually_eq
+
+lemma locally_finite.exists_forall_eventually_of_indexing
+  {α X ι : Type*} [topological_space X] [linear_order ι] [indexing ι] [nonempty ι] {f : ℕ → X → α}
+  {V : ι → set X} (hV : locally_finite V)
+  (h : ∀ n, {x : X | f (n + 1) x ≠ f n x} ⊆ V (n + 1 : ℕ))
+  (h' : ∀ n : ℕ, ((n+1 : ℕ) : ι) = n → f (n + 1) = f n) :
+  ∃ (F : X → α), ∀ (x : X), ∀ᶠ (n : ℕ) in filter.at_top, f n =ᶠ[𝓝 x] F :=
+begin
+  let π :  ℕ → ι := indexing.from_nat,
+  -- Maybe this is the proper way to state h:
+  replace h : ∀ n : ℕ, ∀ x ∈ (V (n + 1 : ℕ))ᶜ, f (n+1) x = f n x,
+  sorry { intros n x hx,
+    contrapose hx,
+    simp [h n hx] },
+  choose U hUx hU using hV,
+  choose i₀ hi₀ using λ x, (hU x).bdd_above,
+  let n₀ : X → ℕ := indexing.to_nat ∘ i₀,
+  have key : ∀ x, ∀ (n ≥ n₀ x) (y ∈ U x), f n y = f (n₀ x) y,
+  sorry { intros x n hn,
+    rcases le_iff_exists_add.mp hn with ⟨k, rfl⟩, clear hn,
+    intros y hy,
+    induction k with k hk,
+    { simp },
+    { rw ← hk,
+      have : ∀ n, π n < π (n+1) ∨ π n = π (n+1),
+      exact λ n, lt_or_eq_of_le (indexing.mono_from n.le_succ),
+      rcases this (n₀ x + k) with H | H ; clear this,
+      { have ineq : π (n₀ x + k + 1) > i₀ x,
+        { suffices : i₀ x ≤ π (n₀ x + k), from lt_of_le_of_lt this H,
+          rw ← indexing.from_to (i₀ x),
+          exact indexing.mono_from le_self_add },
+        apply h,
+        intro hy',
+        exact lt_irrefl _ (lt_of_le_of_lt (hi₀ x ⟨y, ⟨hy', hy⟩⟩) ineq) },
+      { erw [← (h' _ H.symm)],
+        refl } } },
+  sorry
+end
