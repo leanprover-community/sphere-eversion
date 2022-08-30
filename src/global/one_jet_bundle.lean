@@ -235,7 +235,8 @@ begin
     cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space hϕ
 end
 
-/-- A family of one-jet extensions indexed by a parameter is smooth. -/
+
+/-- A family of one-jet extensions indexed by a parameter is smooth. Currently unused and sorry'd -/
 lemma smooth_at.one_jet_ext' {f : N → M → M'} {g : N → M} {n : N}
   (hf : smooth_at (J.prod I) I' (function.uncurry f) (n, g n)) (hg : smooth_at J I g n) :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) n :=
@@ -243,20 +244,30 @@ begin
   -- it is so horrible to work with `cont_mdiff_at.comp`
   have : smooth_at J I' (λ x, f x (g x)) n,
   { exact cont_mdiff_at.comp n hf (smooth_at_id.prod_mk hg) },
-  rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
-  refine ⟨hg.continuous_at.prod this.continuous_at, _⟩,
-  simp_rw [function.comp, one_jet_bundle_ext_chart_at],
-  dsimp only [one_jet_ext_proj],
-  refine ((cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space $
-    cont_mdiff_at_ext_chart_at.comp _ this).prod_mk_space _,
-  sorry
+  refine hg.one_jet_bundle_mk this _,
+  -- refine cont_mdiff_at.mfderiv'' _ _ _,
+  -- rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
+  -- refine ⟨hg.continuous_at.prod this.continuous_at, _⟩,
+  -- simp_rw [function.comp, one_jet_bundle_ext_chart_at],
+  -- dsimp only [one_jet_ext_proj],
+  -- refine ((cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space $
+  --   cont_mdiff_at_ext_chart_at.comp _ this).prod_mk_space _,
+  admit
   -- exact hf.mfderiv' le_rfl
 end
 
 lemma smooth_at.one_jet_ext {f : M → M'} {x : M} (hf : smooth_at I I' f x) :
   smooth_at I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) x :=
-smooth_at.one_jet_ext' (cont_mdiff_at.comp (x, x) (by exact hf) smooth_at_snd) smooth_at_id
+begin
+  rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
+  refine ⟨continuous_at_id.prod hf.continuous_at, _⟩,
+  simp_rw [function.comp, one_jet_bundle_ext_chart_at],
+  refine (cont_mdiff_at_ext_chart_at.prod_mk_space $ cont_mdiff_at_ext_chart_at.comp _ hf)
+    .prod_mk_space _,
+  exact hf.mfderiv' le_rfl
+end
 
+-- sorry'd
 lemma smooth.one_jet_ext' {f : N → M → M'} {g : N → M}
   (hf : smooth (J.prod I) I' (function.uncurry f)) (hg : smooth J I g) :
   smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) :=

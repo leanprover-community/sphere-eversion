@@ -510,6 +510,8 @@ sorry
 
 end loc
 
--- #print axioms family_one_jet_sec.uncurry_mem_relativize
 -- #print axioms family_one_jet_sec.is_holonomic_uncurry
 -- #print axioms rel_mfld.ample.relativize
+
+-- #print axioms family_one_jet_sec.uncurry -- done
+-- #print axioms family_one_jet_sec.uncurry_mem_relativize -- done
