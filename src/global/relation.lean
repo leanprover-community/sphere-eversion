@@ -358,11 +358,9 @@ begin
     (g.fderiv (g.inv_fun (F.bs (h x)))).symm.to_continuous_linear_map.comp
     ((mfderiv IM IN F.bs (h x)).comp (h.fderiv x).to_continuous_linear_map),
   { have h1 : mdifferentiable_at IN IY g.inv_fun (F.bs (h x)) :=
-      (g.smooth_at_inv $ hF $ mem_range_self _).mdifferentiable_at le_top,
-    have h2 : mdifferentiable_at IM IN F.bs (h x) :=
-      F.smooth_bs.smooth_at.mdifferentiable_at le_top,
-    have h3 : mdifferentiable_at IX IM h x :=
-      h.smooth_to.smooth_at.mdifferentiable_at le_top,
+      (g.smooth_at_inv $ hF $ mem_range_self _).mdifferentiable_at,
+    have h2 : mdifferentiable_at IM IN F.bs (h x) := F.smooth_bs.mdifferentiable_at,
+    have h3 : mdifferentiable_at IX IM h x := h.smooth_to.mdifferentiable_at,
     rw [mfderiv_comp x h1 (h2.comp x h3), mfderiv_comp x h2 h3,
       ← g.fderiv_symm_coe' (hF $ mem_range_self _)],
     refl, },
