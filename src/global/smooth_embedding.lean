@@ -180,15 +180,22 @@ universe u
 
 variables
   {E : Type*} [inner_product_space ℝ E]
-  (M : Type u) [topological_space M] [charted_space E M] [smooth_manifold_with_corners 𝓘(ℝ, E) M]
+  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
+  (M : Type u) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
   [t2_space M] [locally_compact_space M] [sigma_compact_space M]
 
 /- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms. -/
 def open_smooth_embedding_of_subset_chart_target {x : M}
-  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ (chart_at E x).target) :
-  open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M :=
-{ to_fun := (chart_at E x).symm ∘ f,
-  inv_fun := f.inv_fun ∘ (chart_at E x),
+  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ I '' (chart_at H x).target) :
+  open_smooth_embedding 𝓘(ℝ, E) E I M :=
+{ to_fun := (chart_at H x).symm ∘ I.symm ∘ f,
+  inv_fun := f.inv_fun ∘ I ∘ (chart_at H x),
+  left_inv' := sorry,
+  right_inv' := sorry,
+  open_map := sorry,
+  smooth_to := sorry,
+  smooth_inv := sorry,
+/- Old approach when stated using `smooth_manifold_with_corners 𝓘(ℝ, E) M` instead of `I`:
   left_inv' := λ y, by simp [hf (mem_range_self y)],
   right_inv' := by { rintros - ⟨y, rfl⟩, simp [hf (mem_range_self y)], },
   open_map := λ u hu,
@@ -209,11 +216,11 @@ def open_smooth_embedding_of_subset_chart_target {x : M}
     { rw [range_comp, ← local_equiv.symm_image_target_eq_source],
       exact (monotone_image hf).trans subset.rfl, },
     exact cont_mdiff_on_chart.mono hf'',
-  end }
+  end -/ }
 
 @[simp] lemma coe_open_smooth_embedding_of_subset_chart_target {x : M}
-  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ (chart_at E x).target) :
-  (open_smooth_embedding_of_subset_chart_target M hf : E → M) = (chart_at E x).symm ∘ f :=
+  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ I '' (chart_at H x).target) :
+  (open_smooth_embedding_of_subset_chart_target I M hf : E → M) = (chart_at H x).symm ∘ I.symm ∘ f :=
 rfl
 
 open affine_map
@@ -304,28 +311,30 @@ begin
   rw [range_comp, this, image_univ, range_affine_equiv_ball h, add_zero, mul_one],
 end
 
-variables (E) {M}
+variables (E) {M} [model_with_corners.boundaryless I]
 
 lemma nice_atlas'
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
   (U : set E) (hU₁ : (0 : E) ∈ U) (hU₂ : is_open U) :
-  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M),
+  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, E) E I M),
   t.countable ∧
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' U) = univ :=
 begin
+  sorry,
+/- Old approach when stated using `smooth_manifold_with_corners 𝓘(ℝ, E) M` instead of `I`:
   let W : M → ℝ → set M := λ x r,
-    (chart_at E x).symm ∘ open_smooth_embedding_to_ball (chart_at E x x) r '' U,
+    (chart_at H x).symm ∘ open_smooth_embedding_to_ball (chart_at H x x) r '' U,
   let B : M → ℝ → set M := charted_space.ball E,
   let p : M → ℝ → Prop :=
-    λ x r, 0 < r ∧ ball (chart_at E x x) r ⊆ (chart_at E x).target ∧ ∃ j, B x r ⊆ s j,
+    λ x r, 0 < r ∧ ball (chart_at H x x) r ⊆ (chart_at H x).target ∧ ∃ j, B x r ⊆ s j,
   have hW₀ : ∀ x r, p x r → x ∈ W x r := λ x r h, ⟨0, hU₁, by simp [h.1]⟩,
   have hW₁ : ∀ x r, p x r → is_open (W x r),
   { rintros x r ⟨h₁, h₂, -, -⟩,
     simp only [W],
     have aux :
-      open_smooth_embedding_to_ball (chart_at E x x) r '' U ⊆ (chart_at E x).target :=
+      open_smooth_embedding_to_ball (chart_at H x x) r '' U ⊆ (chart_at H x).target :=
       subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
     rw [image_comp, local_homeomorph.is_open_symm_image_iff_of_subset_target _ aux],
     exact open_smooth_embedding.open_map _ _ hU₂, },
@@ -335,8 +344,8 @@ begin
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
     exists_countable_locally_finite_cover surjective_id hp hW₀ hW₁ hB,
   refine ⟨M × ℝ, t, λ z, _, ht₁, λ z, _, _, _⟩,
-  { have h : range (open_smooth_embedding_to_ball (chart_at E z.1.1 z.1.1) z.1.2) ⊆
-      (chart_at E z.1.1).target,
+  { have h : range (open_smooth_embedding_to_ball (chart_at H z.1.1 z.1.1) z.1.2) ⊆
+      (chart_at H z.1.1).target,
     { have aux : 0 < z.val.snd := hp _ _ (ht₂ _ z.2),
       simpa only [range_open_smooth_embedding_to_ball, aux] using (ht₂ _ z.2).2.1, },
     exact open_smooth_embedding_of_subset_chart_target M h, },
@@ -350,10 +359,12 @@ begin
     simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
     simpa only [range_comp, range_open_smooth_embedding_to_ball, aux], },
   { simpa only [Union_coe_set] using ht₃, },
+-/
 end
 
 variables (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
-  [charted_space F M] [smooth_manifold_with_corners 𝓘(ℝ, F) M]
+  (IF : model_with_corners ℝ F H)
+  [charted_space H M] [smooth_manifold_with_corners IF M]
 
 /-- A type alias which we will endow with an `inner_product_space` structure. -/
 def l2 := F
@@ -369,14 +380,20 @@ linear_equiv.to_continuous_linear_equiv
   left_inv  := λ x, rfl,
   right_inv := λ x, rfl, }
 
-instance charted_space_l2 : charted_space (l2 F) M := sorry
+variables (H)
 
-instance smooth_manifold_with_corners_l2 : smooth_manifold_with_corners 𝓘(ℝ, l2 F) M := sorry
+def Il2 : model_with_corners ℝ (l2 F) H := sorry
+
+instance l2_boundaryless : (Il2 H F).boundaryless := sorry
+
+variables {H}
+
+instance smooth_manifold_with_corners_l2 : smooth_manifold_with_corners (Il2 H F) M := sorry
 
 lemma nice_atlas''
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
   (U : set F) (hU₁ : (0 : F) ∈ U) (hU₂ : is_open U) :
-  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, F) F 𝓘(ℝ, F) M),
+  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, F) F IF M),
   t.countable ∧
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
@@ -385,7 +402,7 @@ begin
   let U' := self_equiv_l2 F '' U,
   have hU'₁ : (0 : l2 F) ∈ U', { sorry, },
   have hU'₂ : is_open U', { sorry, },
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' (l2 F) s_op cov U' hU'₁ hU'₂,
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' (l2 F) (Il2 H F) s_op cov U' hU'₁ hU'₂,
   -- type_check λ i, (φ i).comp (self_equiv_l2 F).to_open_smooth_embedding,
   sorry,
 end
@@ -393,12 +410,12 @@ end
 variables [nonempty M]
 
 lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
-  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, F) F 𝓘(ℝ, F) M,
+  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, F) F IF M,
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas'' F s_op cov (ball 0 1) (by simp) is_open_ball,
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas'' F IF s_op cov (ball 0 1) (by simp) is_open_ball,
   have htne : t.nonempty,
   { by_contra contra,
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
