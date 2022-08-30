@@ -99,7 +99,7 @@ def std_localisation_data : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f :=
   h₄ := (nice_atlas_target E' M').some_spec.some_spec.1 }
 
 /-- Lemma `lem:localisation_stability`. -/
-lemma localisation_stability [finite_dimensional ℝ E'] {f : M → M'} (hf : continuous f)
+lemma localisation_stability {f : M → M'} (hf : continuous f)
   (ld : localisation_data 𝓘(ℝ, E) 𝓘(ℝ, E') f) :
   ∃ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
     ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ε m) i, range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
