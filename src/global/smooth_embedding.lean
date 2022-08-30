@@ -311,15 +311,33 @@ begin
   { simpa only [Union_coe_set] using ht₃, },
 end
 
+variables (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+  [charted_space F M] [smooth_manifold_with_corners 𝓘(ℝ, F) M]
+
+lemma nice_atlas''
+  {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
+  (U : set F) (hU₁ : (0 : F) ∈ U) (hU₂ : is_open U) :
+  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, F) F 𝓘(ℝ, F) M),
+  t.countable ∧
+  (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
+  locally_finite (λ i, range (φ i)) ∧
+  (⋃ i, φ i '' U) = univ :=
+begin
+  -- Use `nice_atlas'` for a type alias of `F` endowed with an `inner_product_space` structure
+  -- then precompose all the `φ i` with the identity map between the two norms, which is a diffeo
+  -- because we're in finite dimensions and so it is continuous.
+  sorry,
+end
+
 variables [nonempty M]
 
 lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
-  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) M,
+  ∃ n, ∃ φ : index_type n → open_smooth_embedding 𝓘(ℝ, F) F 𝓘(ℝ, F) M,
   (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' E s_op cov (ball 0 1) (by simp) is_open_ball,
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas'' F s_op cov (ball 0 1) (by simp) is_open_ball,
   have htne : t.nonempty,
   { by_contra contra,
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
