@@ -96,19 +96,19 @@ end general
 section generalbis
 
 variables
-{E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
-{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
+{E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+{H : Type*} [topological_space H] (I : model_with_corners ℝ E H) [model_with_corners.boundaryless I]
 {M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
 
-{E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
-{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
+{E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E'] [finite_dimensional ℝ E']
+{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H') [model_with_corners.boundaryless I']
 {M' : Type*} [metric_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
 variables
-  {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
-  {HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP}
+  {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP] [finite_dimensional ℝ EP]
+  {HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP} [model_with_corners.boundaryless IP]
   {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
   {C₁ : set P} {C₂ : set M} {ε : M → ℝ}
 
@@ -118,10 +118,13 @@ variables (I M I' M' IP P)
 
 /-- parametric h-principle for immersions. -/
 theorem immersion_rel_satisfies_h_principle_with
+  [nonempty P] [t2_space P] [sigma_compact_space P] [locally_compact_space P]
+  [nonempty M] [t2_space M] [sigma_compact_space M] [locally_compact_space M]
+  [nonempty M'] [t2_space M'] [locally_compact_space M'] [sigma_compact_space M']
   (h : finrank ℝ E < finrank ℝ E') (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   (immersion_rel I M I' M').satisfies_h_principle_with IP C₁ C₂ ε :=
-by apply (immersion_rel_ample I I' h).satisfies_h_principle_with (immersion_rel_open I I')
+by exact (immersion_rel_ample I I' h).satisfies_h_principle_with (immersion_rel_open I I')
      hC₁ hC₂ hε_pos hε_cont
 
 end generalbis
@@ -180,6 +183,7 @@ begin
   have hε_pos : ∀ x, 0 < ε x,
     from λ x, zero_lt_one,
   have hε_cont : continuous ε := continuous_const,
+  haveI : nonempty ↥(sphere 0 1 : set E) := sorry,
   rcases (immersion_rel_satisfies_h_principle_with (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ ineq_rank
     (finite.is_closed (by simp : ({0, 1} : set ℝ).finite)) (is_closed_empty : is_closed  (∅ : set 𝕊²)) hε_pos hε_cont).bs
     (formal_eversion E)(formal_eversion_hol_near_zero_one E) (formal_eversion_hol_near_empty E)
