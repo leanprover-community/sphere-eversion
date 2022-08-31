@@ -2,6 +2,8 @@ import local.relation
 import global.one_jet_sec
 import global.smooth_embedding
 import to_mathlib.topology.algebra.module
+-- import interactive_expr
+-- set_option trace.filter_inst_type true
 
 /-!
 # First order partial differential relations for maps between manifolds
@@ -144,8 +146,8 @@ lemma mem_relativize (R : rel_mfld I M I' M') (w : one_jet_bundle (IP.prod I) (P
 iff.rfl
 
 lemma rel_mfld.is_open_relativize (R : rel_mfld I M I' M') (h2 : is_open R) :
-  is_open (rel_mfld.relativize IP P R) :=
-sorry
+  is_open (R.relativize IP P) :=
+h2.preimage smooth_bundle_snd.continuous
 
 variables {P}
 

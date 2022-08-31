@@ -77,8 +77,8 @@ mfderiv I I' (F.bs) x = (F x).2
 its base map at x. -/
 lemma is_holonomic_at_iff {F : one_jet_sec I M I' M'} {x : M} :
   F.is_holonomic_at x ↔ one_jet_ext I I' F.bs x = F x :=
-by simp_rw [is_holonomic_at, one_jet_ext, sigma.ext_iff, heq_iff_eq, F.fst_eq, eq_self_iff_true,
-    true_and]
+by simp_rw [is_holonomic_at, one_jet_ext, sigma.ext_iff, heq_iff_eq, F.fst_eq,
+  one_jet_bundle_mk_fst, eq_self_iff_true, true_and, one_jet_bundle_mk_snd]
 
 /-- A map from M to J¹(M, M') is holonomic if its linear map part is the derivative
 of its base map at every point. -/

@@ -1,5 +1,7 @@
 import geometry.manifold.instances.sphere
 import global.gromov
+-- import interactive_expr
+-- set_option trace.filter_inst_type true
 
 noncomputable theory
 
@@ -149,7 +151,7 @@ local notation `𝓡_imm` := immersion_rel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
 
 /-- A formal eversion of a two-sphere into its ambiant Euclidean space.
 Right now this is waiting for Heather's work on rotations. -/
-def formal_eversion : family_formal_sol 𝓘(ℝ, ℝ) ℝ 𝓡_imm :=
+def formal_eversion : htpy_formal_sol 𝓡_imm :=
 { bs := λ t x, (1-t) • x + t • (-x),
   ϕ := λ t x, sorry, -- Here we need to make sure we stay holonomic for t close to 0 and 1
   smooth' := sorry,
