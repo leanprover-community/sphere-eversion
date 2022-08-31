@@ -2,8 +2,8 @@ import local.relation
 import global.one_jet_sec
 import global.smooth_embedding
 import to_mathlib.topology.algebra.module
--- import interactive_expr
--- set_option trace.filter_inst_type true
+import interactive_expr
+set_option trace.filter_inst_type true
 
 /-!
 # First order partial differential relations for maps between manifolds
@@ -69,8 +69,20 @@ instance (R : rel_mfld I M I' M') :
   has_coe_to_fun (formal_sol R) (λ S, M → one_jet_bundle I M I' M') :=
 ⟨λ F, F.to_one_jet_sec⟩
 
-lemma formal_sol.is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
+namespace formal_sol
+
+@[simp]
+lemma coe_mk {S : one_jet_sec I M I' M'} {h : ∀ x, S x ∈ R} {x : M} : formal_sol.mk S h x = S x :=
+rfl
+
+@[simp]
+lemma to_one_jet_sec_coe (S : formal_sol R) {x : M} : S.to_one_jet_sec x = S x :=
+rfl
+
+lemma is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
+
+end formal_sol
 
 /-- part of the construction of the slice `R(σ,p)`. -/
 def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
@@ -124,6 +136,20 @@ instance : has_coe_to_fun (family_formal_sol J N R) (λ S, N → formal_sol R) :
 namespace family_formal_sol
 
 variables {J N J' N'}
+
+@[simp]
+lemma coe_mk {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x, S t x ∈ R} {t : N} {x : M} :
+  family_formal_sol.mk S h t x = S t x :=
+rfl
+
+@[simp]
+lemma to_family_one_jet_sec_coe (S : family_formal_sol J N R) {t : N} {x : M} :
+  S.to_family_one_jet_sec t x = S t x :=
+rfl
+
+
+lemma is_sol (S : family_formal_sol J N R) {t : N} {x : M} : S t x ∈ R :=
+S.is_sol' t x
 
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : family_formal_sol J' N' R) (f : C^∞⟮J, N; J', N'⟯) :
@@ -207,8 +233,8 @@ begin
                            ((𝓕.reindex j).to_family_one_jet_sec.smooth)) },
   { apply h₂.mono,
     intros x hx,
-    -- TODO: the next line smells like missing lemmas
-    exact congr_arg (prod.snd ∘ (one_jet_bundle.proj I M IX X)) (hx 1) },
+    simp_rw [family_one_jet_sec.bs_eq, one_jet_sec.bs_eq, formal_sol.to_one_jet_sec_coe, hx,
+      𝓕₀.to_family_one_jet_sec_coe] },
   { intros p m,
     apply h₄ },
   { intros p m,
@@ -533,7 +559,11 @@ begin
   swap,
   { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp) },
   refine ⟨𝓕.curry, _, _, _, _⟩,
-  all_goals { sorry }
+  { intro s,
+    simp_rw [family_formal_sol.curry], },
+  { },
+  { },
+  { },
 end
 
 end parameter_space
