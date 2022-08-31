@@ -186,7 +186,7 @@ there is a homotopy between `𝓕₀` and a holonomic solution that is constant 
 `ε`-close to `𝓕₀`. -/
 def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M → ℝ) : Prop :=
 ∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
-∃ 𝓕 : htpy_formal_sol R, 𝓕 0 = 𝓕₀ ∧
+∃ 𝓕 : htpy_formal_sol R, (∀ x : M, 𝓕 0 x = 𝓕₀ x) ∧
   (𝓕 1).to_one_jet_sec.is_holonomic ∧
   (∀ᶠ x in 𝓝ˢ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
   (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
@@ -204,9 +204,9 @@ def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C : set (P × M
 ∀ 𝓕₀ : family_formal_sol IP P R, -- given a family of formal solutions with parameters in `P`
 (∀ᶠ (p : P × M) in 𝓝ˢ C, (𝓕₀ p.1).to_one_jet_sec.is_holonomic_at p.2) → -- holonomic near `C`
 ∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod IP) (ℝ × P) R, -- then there is a homotopy of such families
-  (∀ s, 𝓕 (0, s) = 𝓕₀ s) ∧ -- that agrees on `t = 0`
+  (∀ (s : P) (x : M), 𝓕 (0, s) x = 𝓕₀ s x) ∧ -- that agrees on `t = 0`
+  (∀ (s : P), (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
   (∀ᶠ (p : P × M) in 𝓝ˢ C, ∀ t : ℝ, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧ -- and agrees near `C`
-  (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
   (∀ (t : ℝ) (s : P) (x : M), dist ((𝓕 (t, s)).bs x) ((𝓕₀ s).bs x) ≤ ε x) -- and close to `𝓕₀`.
 
 
@@ -234,9 +234,9 @@ begin
     by { ext, refl },
     exact smooth_snd.comp ((basic_smooth_vector_bundle_core.smooth_proj _).comp
                            ((𝓕.reindex j).to_family_one_jet_sec.smooth)) },
-  { apply h₂.mono,
+  { apply h₃.mono,
     intros x hx,
-    simp_rw [family_one_jet_sec.bs_eq, one_jet_sec.bs_eq, formal_sol.to_one_jet_sec_coe, hx,
+    simp_rw [one_jet_sec.bs_eq, formal_sol.to_one_jet_sec_coe, hx, family_one_jet_sec.bs_eq,
       𝓕₀.to_family_one_jet_sec_coe] },
   { intros p m,
     apply h₄ },
@@ -244,7 +244,7 @@ begin
     suffices : one_jet_ext I IX (𝓕 (1, p)).bs m = ((𝓕.to_family_one_jet_sec) (1, p)) m,
     { rw this,
       exact 𝓕.is_sol' (1, p) m },
-    exact one_jet_sec.is_holonomic_at_iff.mp (h₃ p m) },
+    exact one_jet_sec.is_holonomic_at_iff.mp (h₂ p m) },
 end
 
 end defs
@@ -582,13 +582,12 @@ begin
   { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp) },
   refine ⟨𝓕.curry, _, _, _, _⟩,
   { intro s,
-    ext,
     simp_rw [family_formal_sol.curry],
     sorry },
+  { intros s x, exact 𝓕.to_family_one_jet_sec.is_holonomic_curry (h2𝓕 (s, x)) },
   { refine h3𝓕.mono (λ p hp t, _),
     sorry
     },
-  { intros s x, exact 𝓕.to_family_one_jet_sec.is_holonomic_curry (h2𝓕 (s, x)) },
   { intros t s x, exact (h4𝓕 t (s, x)) },
 end
 

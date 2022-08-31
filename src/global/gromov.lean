@@ -21,7 +21,7 @@ variables
 [nonempty M] -- investigate how to remove this
 [sigma_compact_space M]
 
-{EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]  [finite_dimensional ℝ EX]
+{EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX] [finite_dimensional ℝ EX]
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX} [model_with_corners.boundaryless IX]
 -- note: X is a metric space
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
