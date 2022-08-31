@@ -143,19 +143,19 @@ variables
 [sigma_compact_space P]
 [t2_space P]
 [nonempty P] -- investigate how to remove this
-{C₁ : set P} {C₂ : set M}
+{C : set (P × M)}
 
 /-- **Gromov's Theorem** -/
 theorem rel_mfld.ample.satisfies_h_principle_with (h1 : R.ample) (h2 : is_open R)
-  (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
+  (hC : is_closed C)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
-  R.satisfies_h_principle_with IP C₁ C₂ ε :=
+  R.satisfies_h_principle_with IP C ε :=
 begin
   have hε_pos' : ∀ (x : P × M), 0 < ε x.2 := λ (x : P × M), hε_pos x.snd,
   have hε_cont' : continuous (λ (x : P × M), ε x.2) := hε_cont.comp continuous_snd,
   have is_op : is_open (rel_mfld.relativize IP P R) := R.is_open_relativize IP P h2,
   apply rel_mfld.satisfies_h_principle.satisfies_h_principle_with,
-  exact (h1.relativize IP P).satisfies_h_principle is_op (hC₁.prod hC₂) hε_pos' hε_cont',
+  exact (h1.relativize IP P).satisfies_h_principle is_op hC hε_pos' hε_cont',
 end
 
 variables
@@ -171,11 +171,11 @@ include IP
 
 /-- Gromov's Theorem without metric space assumption -/
 theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld I M I' M'}
-  (h1 : R.ample) (h2 : is_open R) (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
+  (h1 : R.ample) (h2 : is_open R) (hC : is_closed C)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   by letI := (@topological_space.metrizable_space_metric _ _
     (manifold_with_corners.metrizable_space I' M')); exact
-  R.satisfies_h_principle_with IP C₁ C₂ ε :=
+  R.satisfies_h_principle_with IP C ε :=
 begin
   haveI := (@topological_space.metrizable_space_metric _ _
     (manifold_with_corners.metrizable_space I' M')),

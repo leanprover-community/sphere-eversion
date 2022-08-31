@@ -112,7 +112,7 @@ variables
   {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP] [finite_dimensional ℝ EP]
   {HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP} [model_with_corners.boundaryless IP]
   {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
-  {C₁ : set P} {C₂ : set M} {ε : M → ℝ}
+  {C : set (P × M)} {ε : M → ℝ}
 
 include I I' M' IP
 
@@ -123,11 +123,11 @@ theorem immersion_rel_satisfies_h_principle_with
   [nonempty P] [t2_space P] [sigma_compact_space P] [locally_compact_space P]
   [nonempty M] [t2_space M] [sigma_compact_space M] [locally_compact_space M]
   [nonempty M'] [t2_space M'] [locally_compact_space M'] [sigma_compact_space M']
-  (h : finrank ℝ E < finrank ℝ E') (hC₁ : is_closed C₁) (hC₂ : is_closed C₂)
+  (h : finrank ℝ E < finrank ℝ E') (hC : is_closed C)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
-  (immersion_rel I M I' M').satisfies_h_principle_with IP C₁ C₂ ε :=
+  (immersion_rel I M I' M').satisfies_h_principle_with IP C ε :=
 by exact (immersion_rel_ample I I' h).satisfies_h_principle_with (immersion_rel_open I I')
-     hC₁ hC₂ hε_pos hε_cont
+     hC hε_pos hε_cont
 
 end generalbis
 
@@ -163,13 +163,13 @@ show (1-0 : ℝ) • (x : E) + (0 : ℝ) • (-x : E) = x, by simp
 lemma formal_eversion_one (x : 𝕊²) : (formal_eversion E 1).bs x = -x :=
 show (1-1 : ℝ) • (x : E) + (1 : ℝ) • (-x : E) = -x, by simp
 
-lemma formal_eversion_hol_near_zero_one :
+lemma formal_eversion_hol_near_zero_one' :
   ∀ᶠ (s : ℝ) near {0, 1}, (formal_eversion E s).to_one_jet_sec.is_holonomic :=
 sorry
 
-lemma formal_eversion_hol_near_empty :
-  ∀ᶠ (x : 𝕊²) near ∅, ∀ s, (formal_eversion E s).to_one_jet_sec.is_holonomic_at x :=
-by { rw [nhds_set_empty], exact filter.eventually_bot }
+lemma formal_eversion_hol_near_zero_one : ∀ᶠ (s : ℝ × 𝕊²) near {0, 1} ×ˢ univ,
+  (formal_eversion E s.1).to_one_jet_sec.is_holonomic_at s.2 :=
+sorry
 
 theorem sphere_eversion : ∃ f : ℝ → 𝕊² → E,
   (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f)) ∧
@@ -187,16 +187,15 @@ begin
   have hε_cont : continuous ε := continuous_const,
   haveI : nonempty ↥(sphere 0 1 : set E) := sorry,
   rcases (immersion_rel_satisfies_h_principle_with (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ ineq_rank
-    (finite.is_closed (by simp : ({0, 1} : set ℝ).finite)) (is_closed_empty : is_closed  (∅ : set 𝕊²)) hε_pos hε_cont).bs
-    (formal_eversion E)(formal_eversion_hol_near_zero_one E) (formal_eversion_hol_near_empty E)
-    with ⟨f, h₁, h₂, -, -, h₅⟩,
+    ((finite.is_closed (by simp : ({0, 1} : set ℝ).finite)).prod is_closed_univ) hε_pos hε_cont).bs
+    (formal_eversion E) (formal_eversion_hol_near_zero_one E) with ⟨f, h₁, h₂, -, h₅⟩,
   have := h₂.nhds_set_forall_mem,
   refine ⟨f, h₁, _, _, h₅⟩,
   { ext x,
-    rw [this 0 (by simp)],
+    rw [this (0, x) (by simp)],
     exact formal_eversion_zero E x },
   { ext x,
-    rw [this 1 (by simp)],
+    rw [this (1, x) (by simp)],
     exact formal_eversion_one E x },
 end
 
