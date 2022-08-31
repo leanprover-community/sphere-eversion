@@ -75,14 +75,6 @@ begin
   tauto
 end
 
-lemma filter.eventually_eq.slice {α β γ : Type*} [topological_space α] [topological_space β]
-  {f g : α × β → γ} {a : α} {b : β} (h : f =ᶠ[𝓝 (a, b)] g) : (λ y, f (a, y)) =ᶠ[𝓝 b] (λ y, g(a, y)) :=
-begin
-
-  sorry
-end
-
-
 set_option trace.filter_inst_type true
 
 /-- The non-parametric version of Gromov's theorem -/
