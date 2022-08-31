@@ -58,23 +58,6 @@ We need to sort out whether we can drop `encodable` from localisation_data.lean
 instance bar (ι : Type*) [encodable ι] : linear_order ι := sorry
 instance baz (ι : Type*) [encodable ι] : indexing ι := sorry
 
-
-
-/- lemma set.subset_bUnion_of_subset {α : Type*} {ι : Sort*} {I : set ι} {s : set α} {t : ι → set α}
-  (i : ι) (hi : i ∈ I) (hs : s ⊆ t i) : s ⊆ ⋃ i ∈ I, t i :=
-begin
-
-  admit
-end -/
-
-lemma set.bUnion_subset_bUnion {α : Type*} {ι : Sort*} {I : set ι} {t u : ι → set α}
-  (h : ∀ i ∈ I, t i ⊆ u i) :  (⋃ i ∈ I, t i) ⊆ ⋃ i ∈ I, u i:=
-begin
-  intros x,
-  simp,
-  tauto
-end
-
 set_option trace.filter_inst_type true
 
 /-- The non-parametric version of Gromov's theorem -/
@@ -168,7 +151,7 @@ begin
       intro x,
       have : x ∈ ⋃ i ≤ π (n (1, x)), (L.φ i) '' metric.closed_ball 0 1,
       { have : x ∈ _ := hn' (1, x) _ le_rfl,
-        apply set.bUnion_subset_bUnion _ this,
+        apply set.bUnion_mono subset_rfl _ this,
         rintros i -,
         exact image_subset _ metric.ball_subset_closed_ball, },
       apply (hFhol (n (1, x)) x this).congr, clear this,
