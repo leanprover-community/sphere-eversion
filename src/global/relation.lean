@@ -2,8 +2,8 @@ import local.relation
 import global.one_jet_sec
 import global.smooth_embedding
 import to_mathlib.topology.algebra.module
-import interactive_expr
-set_option trace.filter_inst_type true
+-- import interactive_expr
+-- set_option trace.filter_inst_type true
 
 /-!
 # First order partial differential relations for maps between manifolds
@@ -163,22 +163,20 @@ def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M �
   (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
 
 /-- A relation `R` satisfies the parametric relative C⁰-dense h-principle w.r.t. manifold `P`,
-`C₁ ⊆ P`, `C₂ ⊆ M` and `ε : M → ℝ` if for every family of
-formal solutions `𝓕₀` indexed by a manifold with boundary `P` that is holonomic near `C₁` and `C₂`,
+`C ⊆ P × M` and `ε : M → ℝ` if for every family of
+formal solutions `𝓕₀` indexed by a manifold with boundary `P` that is holonomic near `C`,
 there is a homotopy `𝓕` between `𝓕₀` and a holonomic solution,
-in such a way that `𝓕` is constant near `C₁` and `C₂` and `ε`-close to `𝓕₀`.
+in such a way that `𝓕` is constant near `C` and `ε`-close to `𝓕₀`.
 Note: `ε`-closeness is measured using an arbitrary distance function obtained from the metrizability
 of `J¹(M, M')`. Potentially we prefer to have this w.r.t. an arbitrary compatible metric.
 -/
-def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
-  (ε : M → ℝ) : Prop :=
+def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C : set (P × M)) (ε : M → ℝ) :
+  Prop :=
 ∀ 𝓕₀ : family_formal_sol IP P R, -- given a family of formal solutions with parameters in `P`
-(∀ᶠ s in 𝓝ˢ C₁, (𝓕₀ s).to_one_jet_sec.is_holonomic) → -- holonomic near `C₁` of parameter space
-(∀ᶠ x in 𝓝ˢ C₂, ∀ s, (𝓕₀ s).to_one_jet_sec.is_holonomic_at x) → -- and near set `C₂` of the domain
+(∀ᶠ (p : P × M) in 𝓝ˢ C, (𝓕₀ p.1).to_one_jet_sec.is_holonomic_at p.2) → -- holonomic near `C`
 ∃ 𝓕 : family_formal_sol (𝓘(ℝ, ℝ).prod IP) (ℝ × P) R, -- then there is a homotopy of such families
   (∀ s, 𝓕 (0, s) = 𝓕₀ s) ∧ -- that agrees on `t = 0`
-  (∀ᶠ s in 𝓝ˢ C₁, ∀ t : ℝ, 𝓕 (t, s) = 𝓕₀ s) ∧ -- and agrees near `C₁`
-  (∀ᶠ x in 𝓝ˢ C₂, ∀ (t : ℝ) (s : P), 𝓕 (t, s) x = 𝓕₀ s x) ∧ -- and agrees near `C₂`
+  (∀ᶠ (p : P × M) in 𝓝ˢ C, ∀ t : ℝ, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧ -- and agrees near `C`
   (∀ s, (𝓕 (1, s)).to_one_jet_sec.is_holonomic) ∧ -- is holonomic everywhere for `t = 1`
   (∀ (t : ℝ) (s : P) (x : M), dist ((𝓕 (t, s)).bs x) ((𝓕₀ s).bs x) ≤ ε x) -- and close to `𝓕₀`.
 
@@ -188,19 +186,17 @@ variables {IP}
 /-- If a relation satisfies the parametric relative C⁰-dense h-principle wrt some data
 then we can forget the homotopy and get a family of solutions from every
 family of formal solutions. -/
-lemma rel_mfld.satisfies_h_principle_with.bs {R : rel_mfld I M IX X} {C₁ : set P} {C₂ : set M}
-  {ε : M → ℝ} (h : R.satisfies_h_principle_with IP C₁ C₂ ε) (𝓕₀ : family_formal_sol IP P R)
-  (h₁ : ∀ᶠ p in 𝓝ˢ C₁, (𝓕₀ p).to_one_jet_sec.is_holonomic)
-  (h₂ : ∀ᶠ m in 𝓝ˢ C₂, ∀ s, (𝓕₀ s).to_one_jet_sec.is_holonomic_at m) :
+lemma rel_mfld.satisfies_h_principle_with.bs {R : rel_mfld I M IX X} {C : set (P × M)}
+  {ε : M → ℝ} (h : R.satisfies_h_principle_with IP C ε) (𝓕₀ : family_formal_sol IP P R)
+  (h2 : ∀ᶠ (p : P × M) in 𝓝ˢ C, (𝓕₀ p.1).to_one_jet_sec.is_holonomic_at p.2) :
   ∃ f : P → M → X,
     (smooth (IP.prod I) IX $ uncurry f) ∧
-    (∀ᶠ p in 𝓝ˢ C₁, f p = 𝓕₀.bs p) ∧
-    (∀ᶠ m in 𝓝ˢ C₂, ∀ p, f p m = 𝓕₀.bs p m) ∧
+    (∀ᶠ (p : P × M) in 𝓝ˢ C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
     (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧
     (∀ p m, one_jet_ext I IX (f p) m ∈ R) :=
 begin
-  rcases h 𝓕₀ h₁ h₂ with ⟨𝓕, h₁, h₂, h₃, h₄, h₅⟩,
-  refine ⟨λ s, (𝓕 (1, s)).bs, _, _, _, _, _⟩,
+  rcases h 𝓕₀ h2  with ⟨𝓕, h₁, h₂, h₃, h₄⟩,
+  refine ⟨λ s, (𝓕 (1, s)).bs, _, _, _, _⟩,
   { have := 𝓕.to_family_one_jet_sec.smooth,
     let j : C^∞⟮IP, P ; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ := ⟨λ p, (1, p),
                                                     smooth.prod_mk smooth_const smooth_id⟩,
@@ -211,19 +207,15 @@ begin
                            ((𝓕.reindex j).to_family_one_jet_sec.smooth)) },
   { apply h₂.mono,
     intros x hx,
-    rw hx 1,
-    refl },
-  { apply h₃.mono,
-    intros m hm p,
     -- TODO: the next line smells like missing lemmas
-    exact congr_arg (prod.snd ∘ (one_jet_bundle.proj I M IX X)) (hm 1 p) },
+    exact congr_arg (prod.snd ∘ (one_jet_bundle.proj I M IX X)) (hx 1) },
   { intros p m,
-    apply h₅ },
+    apply h₄ },
   { intros p m,
     suffices : one_jet_ext I IX (𝓕 (1, p)).bs m = ((𝓕.to_family_one_jet_sec) (1, p)) m,
     { rw this,
       exact 𝓕.is_sol' (1, p) m },
-    exact one_jet_sec.is_holonomic_at_iff.mp (h₄ p m) },
+    exact one_jet_sec.is_holonomic_at_iff.mp (h₃ p m) },
 end
 
 end defs
@@ -532,20 +524,14 @@ def family_formal_sol.curry (S : family_formal_sol J N (R.relativize IP P)) :
 
 /-- This might need some additional assumptions or other modifications. -/
 lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
-  (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
-  (ε : M → ℝ) (h : (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2)) :
-  R.satisfies_h_principle_with IP C₁ C₂ ε :=
+  (R : rel_mfld I M IX X) {C : set (P × M)}
+  (ε : M → ℝ) (h : (R.relativize IP P).satisfies_h_principle C (λ x, ε x.2)) :
+  R.satisfies_h_principle_with IP C ε :=
 begin
-  intros 𝓕₀ h1𝓕₀ h2𝓕₀,
+  intros 𝓕₀ h𝓕₀,
   obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ := h 𝓕₀.uncurry _,
   swap,
-  { refine ((h1𝓕₀.prod_mk h2𝓕₀).filter_mono nhds_set_prod_le).mono _,
-    rintro p ⟨h1p, h2p⟩,
-    refine 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr _,
-    -- exact h1p p.2,
-    exact h2p p.1,
-    -- this indicates that the definition of `satisfies_h_principle_with` is wrong: we get holonomic things twice
-    },
+  { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp) },
   refine ⟨𝓕.curry, _, _, _, _⟩,
   all_goals { sorry }
 end
