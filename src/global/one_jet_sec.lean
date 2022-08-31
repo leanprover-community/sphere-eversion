@@ -39,7 +39,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 variables (I I' M M')
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-structure one_jet_sec :=
+@[ext] structure one_jet_sec :=
 (bs : M → M')
 (ϕ : ∀ x : M, tangent_space I x →L[𝕜] tangent_space I' (bs x))
 (smooth' : smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_bundle.mk x (bs x) (ϕ x)))
@@ -79,6 +79,15 @@ lemma is_holonomic_at_iff {F : one_jet_sec I M I' M'} {x : M} :
   F.is_holonomic_at x ↔ one_jet_ext I I' F.bs x = F x :=
 by simp_rw [is_holonomic_at, one_jet_ext, sigma.ext_iff, heq_iff_eq, F.fst_eq,
   one_jet_bundle_mk_fst, eq_self_iff_true, true_and, one_jet_bundle_mk_snd]
+
+lemma is_holonomic_at.congr {F F' : one_jet_sec I M I' M'} {x : M}
+  (hF : F.is_holonomic_at x) (h : ∀ᶠ y in 𝓝 x, F y = F' y) :  F'.is_holonomic_at x :=
+sorry
+
+/- lemma is_holonomic_at_congr {F F' : one_jet_sec I M I' M'} {s : set M}
+  (h : ∀ᶠ x near s, F x = F' x) : ∀ᶠ x near s, F.is_holonomic_at x ↔ F'.is_holonomic_at x :=
+admit
+ -/
 
 /-- A map from M to J¹(M, M') is holonomic if its linear map part is the derivative
 of its base map at every point. -/
