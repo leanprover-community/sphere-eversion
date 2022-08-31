@@ -129,7 +129,9 @@ namespace family_one_jet_sec
 
 variables {I M I' M' J N J' N'}
 
-@[simp] lemma coe_bs (S : family_one_jet_sec I M I' M' J N) (s : N) : (S s).bs = S.bs s := rfl
+@[simp] lemma bs_eq_coe_bs (S : family_one_jet_sec I M I' M' J N) (s : N) : S.bs s = (S s).bs :=
+rfl
+lemma bs_eq (S : family_one_jet_sec I M I' M' J N) (s : N) (x : M) : S.bs s x = (S s x).1.2 := rfl
 @[simp] lemma coe_ϕ (S : family_one_jet_sec I M I' M' J N) (s : N) : (S s).ϕ = S.ϕ s := rfl
 
 protected lemma smooth (S : family_one_jet_sec I M I' M' J N) :
