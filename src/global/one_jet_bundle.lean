@@ -195,9 +195,6 @@ section maps
 
 variables {M M'}
 
-/-- The one-jet extension of a function -/
-def one_jet_ext (f : M → M') : M → one_jet_bundle I M I' M' :=
-λ x, ⟨(x, f x), (mfderiv I I' f x : tangent_space I x →L[𝕜] tangent_space I' (f x))⟩
 
 variables {I I' J J'}
 
@@ -211,12 +208,6 @@ variables {I I' J J'}
 
 @[simp, mfld_simps] lemma one_jet_bundle_mk_snd {x : M} {y : M'} {f : one_jet_space I I' (x, y)} :
   (one_jet_bundle.mk x y f).2 = f := rfl
-
-@[simp, mfld_simps] lemma one_jet_ext_one_jet_bundle_proj {f : M → M'} {x :  M} :
-  one_jet_bundle.proj I M I' M' (one_jet_ext I I' f x) = (x, f x) := rfl
-
-@[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x : M} :
-  (one_jet_ext I I' f x).1 = (x, f x) := rfl
 
 lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N}
   (hf : smooth_at J I f n) (hg : smooth_at J I' g n)
@@ -235,27 +226,39 @@ begin
     cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space hϕ
 end
 
+variables (I I')
+/-- The one-jet extension of a function -/
+def one_jet_ext (f : M → M') : M → one_jet_bundle I M I' M' :=
+λ x, one_jet_bundle.mk x (f x) (mfderiv I I' f x)
 
-/-- A family of one-jet extensions indexed by a parameter is smooth. Currently unused and
-`admit`ted -/
-lemma smooth_at.one_jet_ext' {f : N → M → M'} {g : N → M} {n : N}
-  (hf : smooth_at (J.prod I) I' (function.uncurry f) (n, g n)) (hg : smooth_at J I g n) :
-  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) n :=
-begin
-  -- it is so horrible to work with `cont_mdiff_at.comp`
-  have : smooth_at J I' (λ x, f x (g x)) n,
-  { exact cont_mdiff_at.comp n hf (smooth_at_id.prod_mk hg) },
-  refine hg.one_jet_bundle_mk this _,
-  -- refine cont_mdiff_at.mfderiv'' _ _ _,
-  -- rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
-  -- refine ⟨hg.continuous_at.prod this.continuous_at, _⟩,
-  -- simp_rw [function.comp, one_jet_bundle_ext_chart_at],
-  -- dsimp only [one_jet_ext_proj],
-  -- refine ((cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space $
-  --   cont_mdiff_at_ext_chart_at.comp _ this).prod_mk_space _,
-  admit
-  -- exact hf.mfderiv' le_rfl
-end
+variables {I I'}
+
+@[simp, mfld_simps] lemma one_jet_ext_one_jet_bundle_proj {f : M → M'} {x :  M} :
+  one_jet_bundle.proj I M I' M' (one_jet_ext I I' f x) = (x, f x) := rfl
+
+@[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x : M} :
+  (one_jet_ext I I' f x).1 = (x, f x) := rfl
+
+-- /-- A family of one-jet extensions indexed by a parameter is smooth. Currently unused and
+-- `admit`ted -/
+-- lemma smooth_at.one_jet_ext' {f : N → M → M'} {g : N → M} {n : N}
+--   (hf : smooth_at (J.prod I) I' (function.uncurry f) (n, g n)) (hg : smooth_at J I g n) :
+--   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) n :=
+-- begin
+--   -- it is so horrible to work with `cont_mdiff_at.comp`
+--   have : smooth_at J I' (λ x, f x (g x)) n,
+--   { exact cont_mdiff_at.comp n hf (smooth_at_id.prod_mk hg) },
+--   refine hg.one_jet_bundle_mk this _,
+--   -- refine cont_mdiff_at.mfderiv'' _ _ _,
+--   -- rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
+--   -- refine ⟨hg.continuous_at.prod this.continuous_at, _⟩,
+--   -- simp_rw [function.comp, one_jet_bundle_ext_chart_at],
+--   -- dsimp only [one_jet_ext_proj],
+--   -- refine ((cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space $
+--   --   cont_mdiff_at_ext_chart_at.comp _ this).prod_mk_space _,
+--   admit
+--   -- exact hf.mfderiv' le_rfl
+-- end
 
 lemma smooth_at.one_jet_ext {f : M → M'} {x : M} (hf : smooth_at I I' f x) :
   smooth_at I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) x :=
@@ -268,11 +271,10 @@ begin
   exact hf.mfderiv' le_rfl
 end
 
--- sorry'd
-lemma smooth.one_jet_ext' {f : N → M → M'} {g : N → M}
-  (hf : smooth (J.prod I) I' (function.uncurry f)) (hg : smooth J I g) :
-  smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) :=
-λ x, hf.smooth_at.one_jet_ext' hg.smooth_at
+-- lemma smooth.one_jet_ext' {f : N → M → M'} {g : N → M}
+--   (hf : smooth (J.prod I) I' (function.uncurry f)) (hg : smooth J I g) :
+--   smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (λ x, one_jet_ext I I' (f x) (g x)) :=
+-- λ x, hf.smooth_at.one_jet_ext' hg.smooth_at
 
 lemma smooth.one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
@@ -338,6 +340,11 @@ map_left prod.fst $ λ x, continuous_linear_map.inl 𝕜 F E
 
 def bundle_snd : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle I M I' M' :=
 map_left prod.snd $ λ x, continuous_linear_map.inr 𝕜 F E
+
+lemma smooth_bundle_snd :
+  smooth (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
+    (bundle_snd : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle I M I' M') :=
+sorry
 
 end maps
 
