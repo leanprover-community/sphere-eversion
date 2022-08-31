@@ -126,7 +126,7 @@ end
 
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
-structure family_formal_sol (R : rel_mfld I M I' M') extends
+@[ext] structure family_formal_sol (R : rel_mfld I M I' M') extends
   to_family_one_jet_sec : family_one_jet_sec I M I' M' J N :=
 (is_sol' : ∀ (t : N) (x : M), to_family_one_jet_sec t x ∈ R)
 
@@ -142,11 +142,14 @@ lemma coe_mk {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x, S t x ∈ R} {
   family_formal_sol.mk S h t x = S t x :=
 rfl
 
+lemma coe_coe_mk {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x, S t x ∈ R} {t : N} :
+  (family_formal_sol.mk S h t : M → one_jet_bundle I M I' M') = S t :=
+rfl
+
 @[simp]
 lemma to_family_one_jet_sec_coe (S : family_formal_sol J N R) {t : N} {x : M} :
   S.to_family_one_jet_sec t x = S t x :=
 rfl
-
 
 lemma is_sol (S : family_formal_sol J N R) {t : N} {x : M} : S t x ∈ R :=
 S.is_sol' t x
@@ -536,6 +539,7 @@ begin
   exact interior_mono huv
 end
 
+@[simps]
 def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) :
   family_one_jet_sec I M I' M' (J.prod IP) (N × P) :=
 { bs := λ p x, S.bs p.1 (p.2, x),
@@ -543,6 +547,24 @@ def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' 
   smooth' := begin
     sorry
   end }
+
+lemma family_one_jet_sec.is_holonomic_curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)
+  {t : N} {s : P} {x : M} (hS : (S t).is_holonomic_at (s, x)) :
+  (S.curry (t, s)).is_holonomic_at x :=
+begin
+  revert hS,
+  simp_rw [one_jet_sec.is_holonomic_at, one_jet_sec.snd_eq, S.curry.coe_ϕ],
+  -- have := S.curry.bs_eq_coe_bs,
+  -- dsimp only [← S.curry.bs_eq_coe_bs],
+  -- rw [show S.curry.bs = λ x, S.curry.bs x, from rfl, funext S.curry_bs],
+  -- simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj],
+  -- dsimp only,
+  -- rw [mfderiv_comp p S.smooth_coe_bs.mdifferentiable_at smooth_snd.mdifferentiable_at, mfderiv_snd,
+  --   (show surjective (continuous_linear_map.snd ℝ EP E), from prod.snd_surjective)
+  --     .clm_comp_injective.eq_iff],
+  -- refl,
+  sorry
+end
 
 def family_formal_sol.curry (S : family_formal_sol J N (R.relativize IP P)) :
   family_formal_sol (J.prod IP) (N × P) R :=
@@ -560,10 +582,14 @@ begin
   { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp) },
   refine ⟨𝓕.curry, _, _, _, _⟩,
   { intro s,
-    simp_rw [family_formal_sol.curry], },
-  { },
-  { },
-  { },
+    ext,
+    simp_rw [family_formal_sol.curry],
+    sorry },
+  { refine h3𝓕.mono (λ p hp t, _),
+    sorry
+    },
+  { intros s x, exact 𝓕.to_family_one_jet_sec.is_holonomic_curry (h2𝓕 (s, x)) },
+  { intros t s x, exact (h4𝓕 t (s, x)) },
 end
 
 end parameter_space
