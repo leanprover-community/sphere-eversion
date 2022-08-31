@@ -82,6 +82,12 @@ rfl
 lemma is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
 
+lemma coe_apply (F : formal_sol R) (x : M) : F x = ⟨(x, F.bs x), (F.ϕ x)⟩ := rfl
+lemma fst_eq (F : formal_sol R) (x : M) : (F x).1 = (x, F.bs x) := rfl
+lemma snd_eq (F : formal_sol R) (x : M) : (F x).2 = F.ϕ x := rfl
+lemma is_sec (F : formal_sol R) (x : M) : (F x).1.1 = x := rfl
+lemma bs_eq (F : formal_sol R) (x : M) : F.bs x = (F x).1.2 := rfl
+
 end formal_sol
 
 /-- part of the construction of the slice `R(σ,p)`. -/
@@ -142,13 +148,18 @@ lemma coe_mk {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x, S t x ∈ R} {
   family_formal_sol.mk S h t x = S t x :=
 rfl
 
-lemma coe_coe_mk {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x, S t x ∈ R} {t : N} :
-  (family_formal_sol.mk S h t : M → one_jet_bundle I M I' M') = S t :=
+lemma coe_mk_to_one_jet_sec {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x, S t x ∈ R} {t : N} :
+  (family_formal_sol.mk S h t).to_one_jet_sec = S t :=
 rfl
 
 @[simp]
 lemma to_family_one_jet_sec_coe (S : family_formal_sol J N R) {t : N} {x : M} :
   S.to_family_one_jet_sec t x = S t x :=
+rfl
+
+@[simp]
+lemma to_family_one_jet_sec_eq (S : family_formal_sol J N R) {t : N} :
+  S.to_family_one_jet_sec t = (S t).to_one_jet_sec :=
 rfl
 
 lemma is_sol (S : family_formal_sol J N R) {t : N} {x : M} : S t x ∈ R :=
@@ -527,48 +538,83 @@ begin
   exact S.to_family_one_jet_sec.uncurry_mem_relativize.mpr (S.is_sol' s x)
 end
 
--- move
-lemma nhds_set_prod_le {α β} [topological_space α] [topological_space β]
-  {s : set α} {t : set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).prod (𝓝ˢ t) :=
-begin
-  intros w hw,
-  obtain ⟨u, hu, v, hv, huv⟩ := mem_prod_iff.mp hw,
-  rw [← subset_interior_iff_mem_nhds_set] at hu hv ⊢,
-  refine (prod_mono hu hv).trans _,
-  rw [← interior_prod_eq],
-  exact interior_mono huv
-end
+lemma family_formal_sol.uncurry_ϕ' (S : family_formal_sol IP P R) (p : P × M) :
+  S.uncurry.ϕ p = mfderiv IP I' (λ z, S.bs z p.2) p.1 ∘L continuous_linear_map.fst ℝ EP E +
+  S.ϕ p.1 p.2 ∘L continuous_linear_map.snd ℝ EP E :=
+S.to_family_one_jet_sec.uncurry_ϕ' p
 
-@[simps]
 def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) :
   family_one_jet_sec I M I' M' (J.prod IP) (N × P) :=
-{ bs := λ p x, S.bs p.1 (p.2, x),
-  ϕ := λ p x, S.ϕ p.1 (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x,
+{ bs := λ p x, (S p.1).bs (p.2, x),
+  ϕ := λ p x, (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x,
   smooth' := begin
     sorry
   end }
 
-lemma family_one_jet_sec.is_holonomic_curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)
+lemma family_one_jet_sec.curry_bs (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) (p : N × P)
+  (x : M) : (S.curry p).bs x = (S p.1).bs (p.2, x) :=
+rfl
+
+lemma family_one_jet_sec.curry_ϕ (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) (p : N × P)
+  (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x :=
+rfl
+
+lemma family_one_jet_sec.curry_ϕ' (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) (p : N × P)
+  (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L continuous_linear_map.inr ℝ EP E :=
+begin
+  rw [S.curry_ϕ],
+  congr' 1,
+  refine ((mdifferentiable_at_const I IP).mfderiv_prod smooth_id.mdifferentiable_at).trans _,
+  rw [mfderiv_id, mfderiv_const],
+  refl,
+end
+
+lemma formal_sol.eq_iff {F₁ F₂ : formal_sol R} {x : M} :
+  F₁ x = F₂ x ↔ F₁.bs x = F₂.bs x ∧ F₁.ϕ x = by apply F₂.ϕ x :=
+by { simp_rw [sigma.ext_iff, formal_sol.fst_eq, heq_iff_eq, prod.ext_iff, eq_self_iff_true,
+  true_and], refl }
+
+lemma family_one_jet_sec.is_holonomic_at_curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)
   {t : N} {s : P} {x : M} (hS : (S t).is_holonomic_at (s, x)) :
   (S.curry (t, s)).is_holonomic_at x :=
 begin
-  revert hS,
-  simp_rw [one_jet_sec.is_holonomic_at, one_jet_sec.snd_eq, S.curry.coe_ϕ],
-  -- have := S.curry.bs_eq_coe_bs,
-  -- dsimp only [← S.curry.bs_eq_coe_bs],
-  -- rw [show S.curry.bs = λ x, S.curry.bs x, from rfl, funext S.curry_bs],
-  -- simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj],
-  -- dsimp only,
-  -- rw [mfderiv_comp p S.smooth_coe_bs.mdifferentiable_at smooth_snd.mdifferentiable_at, mfderiv_snd,
-  --   (show surjective (continuous_linear_map.snd ℝ EP E), from prod.snd_surjective)
-  --     .clm_comp_injective.eq_iff],
-  -- refl,
-  sorry
+  simp_rw [one_jet_sec.is_holonomic_at, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢,
+  dsimp only,
+  rw [show (S.curry (t, s)).bs = λ x, (S.curry (t, s)).bs x, from rfl, funext (S.curry_bs _)],
+  dsimp only,
+  refine (mfderiv_comp x (S t).smooth_bs.mdifferentiable_at
+    ((mdifferentiable_at_const I IP).prod_mk smooth_id.mdifferentiable_at)).trans _,
+  rw [id, hS],
+  refl,
 end
 
 def family_formal_sol.curry (S : family_formal_sol J N (R.relativize IP P)) :
   family_formal_sol (J.prod IP) (N × P) R :=
 ⟨S.to_family_one_jet_sec.curry, sorry⟩
+
+lemma family_formal_sol.curry_ϕ (S : family_formal_sol J N (R.relativize IP P)) (p : N × P)
+  (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x :=
+rfl
+
+lemma family_formal_sol.curry_ϕ' (S : family_formal_sol J N (R.relativize IP P)) (p : N × P)
+  (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L continuous_linear_map.inr ℝ EP E :=
+S.to_family_one_jet_sec.curry_ϕ' p x
+
+lemma curry_eq_iff_eq_uncurry {𝓕 : family_formal_sol J N (R.relativize IP P)}
+  {𝓕₀ : family_formal_sol IP P R} {t : N} {x : M} {s : P}
+  (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
+  (𝓕.curry (t, s)) x = 𝓕₀ s x :=
+begin
+  simp_rw [formal_sol.eq_iff] at h ⊢,
+  refine ⟨h.1, _⟩,
+  simp_rw [𝓕.curry_ϕ', h.2, 𝓕₀.uncurry_ϕ'],
+  ext v,
+  simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
+    continuous_linear_map.comp_apply,
+    continuous_linear_map.inr_apply, continuous_linear_map.coe_fst',
+    continuous_linear_map.coe_snd', continuous_linear_map.map_zero, zero_add],
+  refl
+end
 
 /-- This might need some additional assumptions or other modifications. -/
 lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
@@ -581,13 +627,9 @@ begin
   swap,
   { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp) },
   refine ⟨𝓕.curry, _, _, _, _⟩,
-  { intro s,
-    simp_rw [family_formal_sol.curry],
-    sorry },
-  { intros s x, exact 𝓕.to_family_one_jet_sec.is_holonomic_curry (h2𝓕 (s, x)) },
-  { refine h3𝓕.mono (λ p hp t, _),
-    sorry
-    },
+  { intros s x, exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x)) },
+  { intros s x, exact 𝓕.to_family_one_jet_sec.is_holonomic_at_curry (h2𝓕 (s, x)) },
+  { refine h3𝓕.mono _, rintro ⟨s, x⟩ hp t, exact curry_eq_iff_eq_uncurry (hp t) },
   { intros t s x, exact (h4𝓕 t (s, x)) },
 end
 

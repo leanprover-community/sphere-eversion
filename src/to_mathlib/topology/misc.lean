@@ -32,6 +32,17 @@ section
 
 variables {α β : Type*} [topological_space α] [topological_space β]
 
+-- (unused)
+lemma nhds_set_prod_le {s : set α} {t : set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).prod (𝓝ˢ t) :=
+begin
+  intros w hw,
+  obtain ⟨u, hu, v, hv, huv⟩ := mem_prod_iff.mp hw,
+  rw [← subset_interior_iff_mem_nhds_set] at hu hv ⊢,
+  refine (prod_mono hu hv).trans _,
+  rw [← interior_prod_eq],
+  exact interior_mono huv
+end
+
 instance [sigma_compact_space α] [sigma_compact_space β] : sigma_compact_space (α × β) :=
 begin
   refine ⟨⟨λ n, compact_covering α n.unpair.1 ×ˢ compact_covering β n.unpair.2, λ n,
