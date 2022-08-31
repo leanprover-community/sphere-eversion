@@ -2,8 +2,8 @@ import local.relation
 import global.one_jet_sec
 import global.smooth_embedding
 import to_mathlib.topology.algebra.module
--- import interactive_expr
--- set_option trace.filter_inst_type true
+import interactive_expr
+set_option trace.filter_inst_type true
 
 /-!
 # First order partial differential relations for maps between manifolds
@@ -226,14 +226,6 @@ begin
     exact one_jet_sec.is_holonomic_at_iff.mp (h₄ p m) },
 end
 
-/-- This might need some additional assumptions or other modifications. -/
-lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
-  (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
-  (ε : M → ℝ) (h : (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2)) :
-  R.satisfies_h_principle_with IP C₁ C₂ ε :=
-sorry
-
-
 end defs
 
 section smooth_open_embedding
@@ -404,6 +396,13 @@ variables
 {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
 {HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP}
 {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
+{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+{G : Type*} [topological_space G] {J : model_with_corners ℝ F G}
+{N : Type*} [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
+{EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]
+{HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
+-- note: X is a metric space
+{X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
 variables {I M I' M'} {R : rel_mfld I M I' M'}
 
 open_locale pointwise
@@ -497,6 +496,58 @@ begin
     continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
     continuous_linear_map.coe_fst', continuous_linear_map.coe_snd',
     continuous_linear_map.map_zero, zero_add, S.coe_ϕ]
+end
+
+def family_formal_sol.uncurry
+  (S : family_formal_sol IP P R) : formal_sol (R.relativize IP P) :=
+begin
+  refine ⟨S.to_family_one_jet_sec.uncurry, _⟩,
+  rintro ⟨s, x⟩,
+  exact S.to_family_one_jet_sec.uncurry_mem_relativize.mpr (S.is_sol' s x)
+end
+
+-- move
+lemma nhds_set_prod_le {α β} [topological_space α] [topological_space β]
+  {s : set α} {t : set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).prod (𝓝ˢ t) :=
+begin
+  intros w hw,
+  obtain ⟨u, hu, v, hv, huv⟩ := mem_prod_iff.mp hw,
+  rw [← subset_interior_iff_mem_nhds_set] at hu hv ⊢,
+  refine (prod_mono hu hv).trans _,
+  rw [← interior_prod_eq],
+  exact interior_mono huv
+end
+
+def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) :
+  family_one_jet_sec I M I' M' (J.prod IP) (N × P) :=
+{ bs := λ p x, S.bs p.1 (p.2, x),
+  ϕ := λ p x, S.ϕ p.1 (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x,
+  smooth' := begin
+    sorry
+  end }
+
+def family_formal_sol.curry (S : family_formal_sol J N (R.relativize IP P)) :
+  family_formal_sol (J.prod IP) (N × P) R :=
+⟨S.to_family_one_jet_sec.curry, sorry⟩
+
+/-- This might need some additional assumptions or other modifications. -/
+lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
+  (R : rel_mfld I M IX X) (C₁ : set P) (C₂ : set M)
+  (ε : M → ℝ) (h : (R.relativize IP P).satisfies_h_principle (C₁ ×ˢ C₂) (λ x, ε x.2)) :
+  R.satisfies_h_principle_with IP C₁ C₂ ε :=
+begin
+  intros 𝓕₀ h1𝓕₀ h2𝓕₀,
+  obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ := h 𝓕₀.uncurry _,
+  swap,
+  { refine ((h1𝓕₀.prod_mk h2𝓕₀).filter_mono nhds_set_prod_le).mono _,
+    rintro p ⟨h1p, h2p⟩,
+    refine 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr _,
+    -- exact h1p p.2,
+    exact h2p p.1,
+    -- this indicates that the definition of `satisfies_h_principle_with` is wrong: we get holonomic things twice
+    },
+  refine ⟨𝓕.curry, _, _, _, _⟩,
+  all_goals { sorry }
 end
 
 end parameter_space
