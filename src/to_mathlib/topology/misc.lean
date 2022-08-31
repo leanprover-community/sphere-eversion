@@ -629,3 +629,16 @@ begin
 end
 
 end shrinking_lemma
+
+open_locale filter
+
+lemma filter.eventually_eq.slice {α β γ : Type*} [topological_space α] [topological_space β]
+  {f g : α × β → γ} {a : α} {b : β} (h : f =ᶠ[𝓝 (a, b)] g) : (λ y, f (a, y)) =ᶠ[𝓝 b] (λ y, g(a, y)) :=
+begin
+  rw nhds_prod_eq at h,
+  have : (pure a : filter α) ×ᶠ 𝓝 b ≤ (𝓝 a) ×ᶠ (𝓝 b),
+  exact prod_mono (by apply pure_le_nhds) le_rfl,
+  have := h.filter_mono this,
+  rw [pure_prod] at this,
+  exact eventually_map.mp this
+end
