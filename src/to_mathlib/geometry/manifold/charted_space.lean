@@ -1,5 +1,4 @@
-import geometry.manifold.charted_space
-import analysis.normed.group.basic
+import geometry.manifold.smooth_manifold_with_corners
 
 import to_mathlib.topology.local_homeomorph
 
@@ -34,17 +33,22 @@ section normed_add_comm_group
 open_locale topological_space
 open metric (hiding mem_nhds_iff ball) set
 
-variables (E : Type*) {M : Type*} [normed_add_comm_group E] [topological_space M] [charted_space E M]
+variables {E M H : Type*} [topological_space H] [topological_space M] [charted_space H M]
+variables [normed_add_comm_group E] [normed_space ℝ E]
+variables (I : model_with_corners ℝ E H)
 
-def ball (x : M) (r : ℝ) := (chart_at E x).symm '' metric.ball (chart_at E x x) r
+def ball (x : M) (r : ℝ) := (ext_chart_at I x).symm '' metric.ball (ext_chart_at I x x) r
 
 lemma nhds_has_basis_balls_of_open_cov (x : M)
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ) :
   (𝓝 x).has_basis (λ r, 0 < r ∧
-                         metric.ball (chart_at E x x) r ⊆ (chart_at E x).target ∧
-                         ∃ j, charted_space.ball E x r ⊆ s j)
-                   (charted_space.ball E x) :=
+                         metric.ball (ext_chart_at I x x) r ⊆ (ext_chart_at I x).target ∧
+                         ∃ j, charted_space.ball I x r ⊆ s j)
+                   (charted_space.ball I x) :=
 begin
+  sorry,
+/- Old proof: could assume `M` was charted over `E` and so use `chart_at` instead of `ext_chart_at`
+
   -- MASSIVE golfing opportunity!
   obtain ⟨j, hj⟩ : ∃ j, x ∈ s j, by { simpa only [mem_Union, ← cov] using mem_univ x, },
   replace hj : s j ∈ 𝓝 x := mem_nhds_iff.mpr ⟨s j, subset.rfl, s_op j, hj⟩,
@@ -78,6 +82,7 @@ begin
     replace hr₀ := filter.inter_mem hx hr₀,
     rw ← (chart_at E x).symm_image_eq_source_inter_preimage hr₁ at hr₀,
     filter_upwards [hr₀] using hr₂, },
+-/
 end
 
 end normed_add_comm_group

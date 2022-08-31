@@ -178,56 +178,134 @@ open metric (hiding mem_nhds_iff) function
 
 universe u
 
-variables
-  {E : Type*} [inner_product_space ℝ E]
-  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
-  (M : Type u) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  [t2_space M] [locally_compact_space M] [sigma_compact_space M]
+section general_nonsense
 
-/- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms. -/
-def open_smooth_embedding_of_subset_chart_target {x : M}
-  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ I '' (chart_at H x).target) :
-  open_smooth_embedding 𝓘(ℝ, E) E I M :=
-{ to_fun := (chart_at H x).symm ∘ I.symm ∘ f,
-  inv_fun := f.inv_fun ∘ I ∘ (chart_at H x),
-  left_inv' := sorry,
-  right_inv' := sorry,
-  open_map := sorry,
-  smooth_to := sorry,
-  smooth_inv := sorry,
-/- Old approach when stated using `smooth_manifold_with_corners 𝓘(ℝ, E) M` instead of `I`:
-  left_inv' := λ y, by simp [hf (mem_range_self y)],
-  right_inv' := by { rintros - ⟨y, rfl⟩, simp [hf (mem_range_self y)], },
+variables {𝕜 E H M : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_space 𝕜 E]
+  [topological_space H] {I : model_with_corners 𝕜 E H}
+  [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+  {x : M} {n : ℕ∞}
+
+lemma ext_chart_at_target_eq_image_chart_target :
+  (ext_chart_at I x).target = I '' (chart_at H x).target :=
+begin
+  erw [(chart_at H x).to_local_equiv.trans_target'' I.to_local_equiv, I.source_eq, univ_inter],
+  refl,
+end
+
+@[simp] lemma model_with_corners_self.ext_chart_at {e : E} :
+  ext_chart_at 𝓘(𝕜, E) e = local_equiv.refl E :=
+by simp
+
+lemma cont_mdiff_on_ext_chart_symm :
+  cont_mdiff_on 𝓘(𝕜, E) I n (ext_chart_at I x).symm (ext_chart_at I x).target :=
+begin
+  -- TODO: find a sane proof
+  have hs : (ext_chart_at I x).target ⊆ (chart_at E (ext_chart_at I x x)).source, { simp, },
+  have h2s : maps_to (ext_chart_at I x).symm (ext_chart_at I x).target (chart_at H x).source,
+  { rw ← ext_chart_at_source I, exact (ext_chart_at I x).symm_maps_to, },
+  refine (cont_mdiff_on_iff_of_subset_source hs h2s).mpr ⟨_, _⟩,
+  { rw ext_chart_at_target_eq_image_chart_target,
+    apply (chart_at H x).symm.continuous_to_fun.comp I.continuous_inv_fun.continuous_on,
+    simpa using maps_to_id _, },
+  { simp only [model_with_corners_self.ext_chart_at, local_equiv.refl_symm, local_equiv.refl_coe,
+      comp.right_id, id.def, image_id'],
+    exact (cont_diff_on_congr (λ y hy, (ext_chart_at I x).right_inv hy)).mpr cont_diff_on_id, },
+end
+
+end general_nonsense
+
+variables
+  {F H : Type*} (M : Type u)
+  [normed_add_comm_group F] [normed_space ℝ F]
+  [topological_space H] [topological_space M] [charted_space H M]
+  [t2_space M] [locally_compact_space M] [sigma_compact_space M]
+  (IF : model_with_corners ℝ F H) [smooth_manifold_with_corners IF M]
+
+/- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms.
+
+Note that the input `f` is morally an `open_smooth_embedding` but stated in terms of `cont_diff`
+instead of `cont_mdiff`. This is more convenient for our purposes. -/
+def open_smooth_emb_of_diffeo_subset_chart_target (x : M) {f : local_homeomorph F F}
+  (hf₁ : f.source = univ)
+  (hf₂ : cont_diff ℝ ∞ f)
+  (hf₃ : cont_diff_on ℝ ∞ f.symm f.target)
+  (hf₄ : range f ⊆ IF '' (chart_at H x).target) :
+  open_smooth_embedding 𝓘(ℝ, F) F IF M :=
+{ to_fun := (ext_chart_at IF x).symm ∘ f,
+  inv_fun := f.inv_fun ∘ (ext_chart_at IF x),
+  left_inv' := λ y,
+  begin
+    obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y),
+    have aux : f.symm (IF z) = y, { rw hz', exact f.left_inv (hf₁.symm ▸ mem_univ _), },
+    simp only [← hz', (chart_at H x).right_inv hz, aux, ext_chart_at, local_equiv.coe_trans,
+      local_homeomorph.inv_fun_eq_coe, model_with_corners.to_local_equiv_coe,
+      local_homeomorph.coe_coe, local_equiv.coe_trans_symm, local_homeomorph.coe_coe_symm,
+      model_with_corners.left_inv, model_with_corners.to_local_equiv_coe_symm, comp_app, aux],
+  end,
+  right_inv' :=
+  begin
+    rintros - ⟨y, rfl⟩,
+    obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y),
+    have aux : f.symm (IF z) = y, { rw hz', exact f.left_inv (hf₁.symm ▸ mem_univ _), },
+    simp only [← hz', (chart_at H x).right_inv hz, aux, ext_chart_at, local_equiv.coe_trans,
+      local_homeomorph.inv_fun_eq_coe, model_with_corners.to_local_equiv_coe,
+      local_homeomorph.coe_coe, local_equiv.coe_trans_symm, local_homeomorph.coe_coe_symm,
+      model_with_corners.left_inv, model_with_corners.to_local_equiv_coe_symm, comp_app, aux],
+  end,
   open_map := λ u hu,
   begin
+    have aux : is_open (f '' u) := f.image_open_of_open hu (hf₁.symm ▸ subset_univ u),
+    convert ext_chart_preimage_open_of_open' IF x aux,
     rw image_comp,
-    apply local_homeomorph.image_open_of_open _ (f.open_map _ hu),
-    rw ← image_univ at hf,
-    exact (monotone_image (subset_univ u)).trans hf,
+    refine (ext_chart_at IF x).symm_image_eq_source_inter_preimage
+      ((image_subset_range f u).trans _),
+    rw ext_chart_at_target_eq_image_chart_target,
+    exact hf₄,
   end,
-  smooth_to := cont_mdiff_on_chart_symm.comp_cont_mdiff f.smooth_to (range_subset_iff.mp hf),
+  smooth_to :=
+  begin
+    refine cont_mdiff_on_ext_chart_symm.comp_cont_mdiff hf₂.cont_mdiff (λ y, _),
+    rw ext_chart_at_target_eq_image_chart_target,
+    exact hf₄ (mem_range_self y),
+  end,
   smooth_inv :=
   begin
-    have hf' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x) ⁻¹' range f,
-    { rw [range_comp, ← image_subset_iff],
-      exact (local_equiv.image_symm_image_of_subset_target _ hf).subset },
-    refine f.smooth_inv.comp _ hf',
-    have hf'' : range ((chart_at E x).symm ∘ f) ⊆ (chart_at E x).source,
-    { rw [range_comp, ← local_equiv.symm_image_target_eq_source],
-      exact (monotone_image hf).trans subset.rfl, },
-    exact cont_mdiff_on_chart.mono hf'',
-  end -/ }
+    rw ← ext_chart_at_target_eq_image_chart_target at hf₄,
+    have hf' : range ((ext_chart_at IF x).symm ∘ f) ⊆ (ext_chart_at IF x) ⁻¹' f.target,
+    { rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ],
+      exact (local_equiv.image_symm_image_of_subset_target _ hf₄).subset, },
+    have hf'' : range ((ext_chart_at IF x).symm ∘ f) ⊆ (chart_at H x).source,
+    { rw [← ext_chart_at_source IF, range_comp, ← local_equiv.symm_image_target_eq_source],
+      exact (monotone_image hf₄).trans subset.rfl, },
+    exact hf₃.cont_mdiff_on.comp (cont_mdiff_on_ext_chart_at.mono hf'') hf',
+  end}
 
-@[simp] lemma coe_open_smooth_embedding_of_subset_chart_target {x : M}
-  {f : open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E} (hf : range f ⊆ I '' (chart_at H x).target) :
-  (open_smooth_embedding_of_subset_chart_target I M hf : E → M) = (chart_at H x).symm ∘ I.symm ∘ f :=
-rfl
+@[simp] lemma coe_open_smooth_emb_of_diffeo_subset_chart_target
+  (x : M) {f : local_homeomorph F F}
+  (hf₁ : f.source = univ)
+  (hf₂ : cont_diff ℝ ∞ f)
+  (hf₃ : cont_diff_on ℝ ∞ f.symm f.target)
+  (hf₄ : range f ⊆ IF '' (chart_at H x).target) :
+  (open_smooth_emb_of_diffeo_subset_chart_target M IF x hf₁ hf₂ hf₃ hf₄ : F → M) =
+  (ext_chart_at IF x).symm ∘ f :=
+by simp [open_smooth_emb_of_diffeo_subset_chart_target]
+
+lemma range_open_smooth_emb_of_diffeo_subset_chart_target
+  (x : M) {f : local_homeomorph F F}
+  (hf₁ : f.source = univ)
+  (hf₂ : cont_diff ℝ ∞ f)
+  (hf₃ : cont_diff_on ℝ ∞ f.symm f.target)
+  (hf₄ : range f ⊆ IF '' (chart_at H x).target) :
+  range (open_smooth_emb_of_diffeo_subset_chart_target M IF x hf₁ hf₂ hf₃ hf₄) =
+  (ext_chart_at IF x).symm '' (range f) :=
+by rw [coe_open_smooth_emb_of_diffeo_subset_chart_target, range_comp]
 
 open affine_map
 
 -- TODO Generalise + move
-@[simp] lemma range_affine_equiv_ball {p c : E} {s r : ℝ} (hr : 0 < r) :
-  range (λ (x : ball p s), c +ᵥ homothety p r (x : E)) = ball (c + p) (r * s) :=
+@[simp] lemma range_affine_equiv_ball {p c : F} {s r : ℝ} (hr : 0 < r) :
+  range (λ (x : ball p s), c +ᵥ homothety p r (x : F)) = ball (c + p) (r * s) :=
 begin
   ext,
   simp only [homothety_apply, dist_eq_norm, vsub_eq_sub, vadd_eq_add, mem_range,
@@ -240,14 +318,16 @@ begin
 end
 
 -- TODO Generalise + move
-lemma cont_diff_homothety {n : ℕ∞} (c : E) (r : ℝ) : cont_diff ℝ n (homothety c r) :=
-(⟨homothety c r, homothety_continuous c r⟩ : E →A[ℝ] E).cont_diff
+lemma cont_diff_homothety {n : ℕ∞} (c : F) (r : ℝ) : cont_diff ℝ n (homothety c r) :=
+(⟨homothety c r, homothety_continuous c r⟩ : F →A[ℝ] F).cont_diff
 
 -- TODO Generalise + move
-@[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : E) r) : ∥(x : E)∥ < r :=
+@[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : F) r) : ∥(x : F)∥ < r :=
 by { cases x with x hx, simpa using hx, }
 
 open_locale classical
+
+/- TODO Drop the below. It is superceded by `diffeomorph_to_nhd`.
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
 centred at a point `c` and sending `0` to `c`.
@@ -310,87 +390,40 @@ begin
   have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
   rw [range_comp, this, image_univ, range_affine_equiv_ball h, add_zero, mul_one],
 end
+-/
 
-variables (E) {M} [model_with_corners.boundaryless I]
+/-- This will be a homothety applied to `homeomorph_unit_ball` *except* that since we do not
+assume an `inner_product_space` structure on `F` but merely a `normed_space` structure, we will
+need to equip (a type alias for) `F` with an `inner_product_space`, and then use the equivalence
+of norms in finite dimensions to obtain what we need. Note that
+`range_diffeomorph_to_nhd_subset_ball` only asks for a subset condition. -/
+def diffeomorph_to_nhd (c : F) (r : ℝ) :
+  local_homeomorph F F :=
+sorry
+
+@[simp] lemma diffeomorph_to_nhd_source (c : F) (r : ℝ) :
+  (diffeomorph_to_nhd c r).source = univ :=
+sorry
+
+@[simp] lemma diffeomorph_to_nhd_apply_zero (c : F) {r : ℝ} (h : 0 < r) :
+  diffeomorph_to_nhd c r 0 = c :=
+sorry
+
+@[simp] lemma range_diffeomorph_to_nhd_subset_ball (c : F) {r : ℝ} (h : 0 < r) :
+  range (diffeomorph_to_nhd c r) ⊆ ball c r :=
+sorry
+
+@[simp] lemma cont_diff_diffeomorph_to_nhd (c : F) (r : ℝ) {n : ℕ∞} :
+  cont_diff ℝ n $ diffeomorph_to_nhd c r :=
+sorry
+
+@[simp] lemma cont_diff_diffeomorph_to_nhd_inv (c : F) (r : ℝ) {n : ℕ∞} :
+  cont_diff_on ℝ n (diffeomorph_to_nhd c r).symm (diffeomorph_to_nhd c r).target :=
+sorry
+
+variables {M} (F)
 
 lemma nice_atlas'
-  {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
-  (U : set E) (hU₁ : (0 : E) ∈ U) (hU₂ : is_open U) :
-  ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, E) E I M),
-  t.countable ∧
-  (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
-  locally_finite (λ i, range (φ i)) ∧
-  (⋃ i, φ i '' U) = univ :=
-begin
-  sorry,
-/- Old approach when stated using `smooth_manifold_with_corners 𝓘(ℝ, E) M` instead of `I`:
-  let W : M → ℝ → set M := λ x r,
-    (chart_at H x).symm ∘ open_smooth_embedding_to_ball (chart_at H x x) r '' U,
-  let B : M → ℝ → set M := charted_space.ball E,
-  let p : M → ℝ → Prop :=
-    λ x r, 0 < r ∧ ball (chart_at H x x) r ⊆ (chart_at H x).target ∧ ∃ j, B x r ⊆ s j,
-  have hW₀ : ∀ x r, p x r → x ∈ W x r := λ x r h, ⟨0, hU₁, by simp [h.1]⟩,
-  have hW₁ : ∀ x r, p x r → is_open (W x r),
-  { rintros x r ⟨h₁, h₂, -, -⟩,
-    simp only [W],
-    have aux :
-      open_smooth_embedding_to_ball (chart_at H x x) r '' U ⊆ (chart_at H x).target :=
-      subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
-    rw [image_comp, local_homeomorph.is_open_symm_image_iff_of_subset_target _ aux],
-    exact open_smooth_embedding.open_map _ _ hU₂, },
-  have hB : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
-    λ x, charted_space.nhds_has_basis_balls_of_open_cov E x s_op cov,
-  have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,
-  obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
-    exists_countable_locally_finite_cover surjective_id hp hW₀ hW₁ hB,
-  refine ⟨M × ℝ, t, λ z, _, ht₁, λ z, _, _, _⟩,
-  { have h : range (open_smooth_embedding_to_ball (chart_at H z.1.1 z.1.1) z.1.2) ⊆
-      (chart_at H z.1.1).target,
-    { have aux : 0 < z.val.snd := hp _ _ (ht₂ _ z.2),
-      simpa only [range_open_smooth_embedding_to_ball, aux] using (ht₂ _ z.2).2.1, },
-    exact open_smooth_embedding_of_subset_chart_target M h, },
-  { have aux : 0 < (z : M × ℝ).snd := hp _ _ (ht₂ _ z.2),
-    simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
-    simp only [range_comp, range_open_smooth_embedding_to_ball, aux],
-    exact (ht₂ z.1 z.2).2.2, },
-  { convert ht₄,
-    ext1 z,
-    have aux : 0 < (z : M × ℝ).snd := hp _ _ (ht₂ _ z.2),
-    simp only [subtype.val_eq_coe, coe_open_smooth_embedding_of_subset_chart_target],
-    simpa only [range_comp, range_open_smooth_embedding_to_ball, aux], },
-  { simpa only [Union_coe_set] using ht₃, },
--/
-end
-
-variables (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
-  (IF : model_with_corners ℝ F H)
-  [charted_space H M] [smooth_manifold_with_corners IF M]
-
-/-- A type alias which we will endow with an `inner_product_space` structure. -/
-def l2 := F
-
-instance : inner_product_space ℝ (l2 F) := sorry
-
-def self_equiv_l2 : F ≃L[ℝ] l2 F :=
-linear_equiv.to_continuous_linear_equiv
-{ to_fun    := id,
-  inv_fun   := id,
-  map_add'  := sorry,
-  map_smul' := sorry,
-  left_inv  := λ x, rfl,
-  right_inv := λ x, rfl, }
-
-variables (H)
-
-def Il2 : model_with_corners ℝ (l2 F) H := sorry
-
-instance l2_boundaryless : (Il2 H F).boundaryless := sorry
-
-variables {H}
-
-instance smooth_manifold_with_corners_l2 : smooth_manifold_with_corners (Il2 H F) M := sorry
-
-lemma nice_atlas''
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
   (U : set F) (hU₁ : (0 : F) ∈ U) (hU₂ : is_open U) :
   ∃ (ι' : Type u) (t : set ι') (φ : t → open_smooth_embedding 𝓘(ℝ, F) F IF M),
@@ -399,12 +432,50 @@ lemma nice_atlas''
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' U) = univ :=
 begin
-  let U' := self_equiv_l2 F '' U,
-  have hU'₁ : (0 : l2 F) ∈ U', { sorry, },
-  have hU'₂ : is_open U', { sorry, },
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' (l2 F) (Il2 H F) s_op cov U' hU'₁ hU'₂,
-  -- type_check λ i, (φ i).comp (self_equiv_l2 F).to_open_smooth_embedding,
-  sorry,
+  let W : M → ℝ → set M := λ x r,
+    (ext_chart_at IF x).symm ∘ diffeomorph_to_nhd (ext_chart_at IF x x) r '' U,
+  let B : M → ℝ → set M := charted_space.ball IF,
+  let p : M → ℝ → Prop :=
+    λ x r, 0 < r ∧ ball (ext_chart_at IF x x) r ⊆ (ext_chart_at IF x).target ∧ ∃ j, B x r ⊆ s j,
+  have hW₀ : ∀ x r, p x r → x ∈ W x r := λ x r h, ⟨0, hU₁, by simp [h.1]⟩,
+  have hW₁ : ∀ x r, p x r → is_open (W x r),
+  { rintros x r ⟨h₁, h₂, -, -⟩,
+    simp only [W],
+    rw image_comp,
+    let V := diffeomorph_to_nhd (ext_chart_at IF x x) r '' U,
+    change is_open ((ext_chart_at IF x).symm '' V),
+    have hV₁ : is_open V := ((diffeomorph_to_nhd
+      (ext_chart_at IF x x) r).is_open_image_iff_of_subset_source (by simp)).mp hU₂,
+    have hV₂ : V ⊆ (ext_chart_at IF x).target :=
+      subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
+    rw (ext_chart_at IF x).symm_image_eq_source_inter_preimage hV₂,
+    exact ext_chart_preimage_open_of_open' IF x hV₁, },
+  have hB : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
+    λ x, charted_space.nhds_has_basis_balls_of_open_cov IF x s_op cov,
+  have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,
+  obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
+    exists_countable_locally_finite_cover surjective_id hp hW₀ hW₁ hB,
+  let g : M × ℝ → local_homeomorph F F := λ z, diffeomorph_to_nhd (ext_chart_at IF z.1 z.1) z.2,
+  have hg₁ : ∀ z, (g z).source = univ, { simp, },
+  have hg₂ : ∀ z, cont_diff ℝ ∞ (g z), { simp, },
+  have hg₃ : ∀ z, cont_diff_on ℝ ∞ (g z).symm (g z).target, { simp, },
+  refine ⟨M × ℝ, t,
+    λ z, open_smooth_emb_of_diffeo_subset_chart_target M IF z.1.1 (hg₁ z.1) (hg₂ z.1) (hg₃ z.1) _,
+    ht₁, λ z, _, _, _⟩,
+  { obtain ⟨⟨x, r⟩, hxr⟩ := z,
+    obtain ⟨hr : 0 < r, hr' : ball (ext_chart_at IF x x) r ⊆ _, -⟩ := ht₂ _ hxr,
+    rw ← ext_chart_at_target_eq_image_chart_target,
+    exact (range_diffeomorph_to_nhd_subset_ball (ext_chart_at IF x x) hr).trans hr', },
+  { obtain ⟨⟨x, r⟩, hxr⟩ := z,
+    obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr,
+    simp_rw range_open_smooth_emb_of_diffeo_subset_chart_target,
+    exact ⟨j, subset_trans (monotone_image (range_diffeomorph_to_nhd_subset_ball _ hr)) hj⟩, },
+  { simp_rw range_open_smooth_emb_of_diffeo_subset_chart_target,
+    refine ht₄.subset _,
+    rintros ⟨⟨x, r⟩, hxr⟩,
+    obtain ⟨hr : 0 < r, -, -⟩ := ht₂ _ hxr,
+    exact monotone_image (range_diffeomorph_to_nhd_subset_ball _ hr), },
+  { simpa only [Union_coe_set] using ht₃, },
 end
 
 variables [nonempty M]
@@ -415,7 +486,7 @@ lemma nice_atlas {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (
   locally_finite (λ i, range (φ i)) ∧
   (⋃ i, φ i '' ball 0 1) = univ :=
 begin
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas'' F IF s_op cov (ball 0 1) (by simp) is_open_ball,
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) is_open_ball,
   have htne : t.nonempty,
   { by_contra contra,
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
