@@ -1,4 +1,5 @@
 import analysis.inner_product_space.calculus
+import analysis.inner_product_space.l2_space
 import analysis.calculus.affine_map
 
 variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
@@ -160,20 +161,17 @@ end inner_product_space
 
 variables (F) [finite_dimensional ℝ F]
 
-/-- A type alias which we will endow with an `inner_product_space` structure whose underlying
-`module ℝ` structure coincides with the one that `F` already carries. -/
-def l2 := F
+/-- The Euclidean space obtained by choosing a basis of `F` and declaring it to be orthnormal.  -/
+def l2 := euclidean_space ℝ $ basis.of_vector_space_index ℝ F
 
-instance : inner_product_space ℝ (l2 F) := sorry
+instance : inner_product_space ℝ (l2 F) := pi_Lp.inner_product_space _
 
+/-- The continuous linear equivalence from `F` with its given norm to itself with the Euclidean
+norm obtained from a choice of basis. -/
 def self_equiv_l2 : F ≃L[ℝ] l2 F :=
 linear_equiv.to_continuous_linear_equiv
-{ to_fun    := id,
-  inv_fun   := id,
-  map_add'  := sorry,
-  map_smul' := sorry,
-  left_inv  := λ x, rfl,
-  right_inv := λ x, rfl, }
+  ((basis.of_vector_space ℝ F).equiv_fun.trans
+    (euclidean_space.equiv (basis.of_vector_space_index ℝ F) ℝ).symm.to_linear_equiv)
 
 -- We shouldn't really need this lemma.
 @[simp] lemma self_equiv_l2_image_univ :

@@ -300,7 +300,7 @@ lemma range_open_smooth_emb_of_diffeo_subset_chart_target
   (ext_chart_at IF x).symm '' (range f) :=
 by rw [coe_open_smooth_emb_of_diffeo_subset_chart_target, range_comp]
 
-variables {M} (F) [model_with_corners.boundaryless IF]
+variables {M} (F) [model_with_corners.boundaryless IF] [finite_dimensional ℝ F]
 
 lemma nice_atlas'
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
