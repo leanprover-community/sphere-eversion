@@ -100,7 +100,7 @@ def std_localisation_data : localisation_data I I' f :=
     exact ((nice_atlas_domain E I E' I' hf).some_spec.some_spec.1 i).some_spec hy,
   end,
   h₄ := (nice_atlas_target E' I' M').some_spec.some_spec.1,
-  lf_φ := sorry }
+  lf_φ := (nice_atlas_domain E I E' I' hf).some_spec.some_spec.2.1 }
 
 /-- Lemma `lem:localisation_stability`. -/
 lemma localisation_stability {f : M → M'} (hf : continuous f)
