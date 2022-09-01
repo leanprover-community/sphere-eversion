@@ -76,6 +76,9 @@ by { rintros _ ⟨x, hx, rfl⟩, exact mk_mem_prod (mem_image_of_mem f hx) (mem_
 -- lemma insert_prod_subset {s : set α} {t : set β} {x : α} {y : β} :
 --   insert (x, y) (s ×ˢ t) = (insert x
 
+lemma maps_to.subset_preimage {f : α → β} {s : set α} {t : set β} (hf : maps_to f s t) :
+  s ⊆ f ⁻¹' t := hf
+
 end set
 open set
 
@@ -109,7 +112,55 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
 variables {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
 variables {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
 variables {G' : Type*} [normed_add_comm_group G'] [normed_space 𝕜 G']
-variables {f : G → E → F} {g : G → E} {s : set G} {t : set E} {x : G} {n m : ℕ∞}
+
+
+section -- basic topology
+
+variables {α β : Type*} [topological_space α] [topological_space β] {x y : α} {s s' t : set α}
+
+lemma insert_mem_nhds_within_of_subset_insert [t1_space α] (hu : t ⊆ insert y s) :
+  insert x s ∈ 𝓝[t] x :=
+begin
+  rcases eq_or_ne x y with rfl|h,
+  { exact mem_of_superset self_mem_nhds_within hu },
+  rw [← union_singleton, union_comm, ← diff_subset_iff, diff_eq] at hu,
+  exact mem_of_superset (inter_mem_nhds_within _ (compl_singleton_mem_nhds h))
+    (hu.trans (subset_insert _ _)),
+end
+
+lemma prod_mem_nhds_within {t t' : set β} {x : α × β}
+  (hs : s ∈ 𝓝[s'] x.1) (ht : t ∈ 𝓝[t'] x.2) : s ×ˢ t ∈ 𝓝[s' ×ˢ t'] x :=
+begin
+  rw [mem_nhds_within] at hs ht ⊢,
+  obtain ⟨u, hu, hxu, hus⟩ := hs,
+  obtain ⟨v, hv, hxv, hvt⟩ := ht,
+  exact ⟨u ×ˢ v, hu.prod hv, ⟨hxu, hxv⟩, prod_inter_prod.subset.trans $ prod_mono hus hvt⟩,
+end
+
+
+end
+
+section
+
+variables {f : E → F} {s : set E} {x : E} {f' : E →L[𝕜] F} {n : ℕ∞}
+
+theorem has_fderiv_within_at.comp_of_mem {g : F → G} {g' : F →L[𝕜] G} {t : set F}
+  (hg : has_fderiv_within_at g g' t (f x)) (hf : has_fderiv_within_at f f' s x)
+  (hst : tendsto f (𝓝[s] x) (𝓝[t] f x)) :
+  has_fderiv_within_at (g ∘ f) (g'.comp f') s x :=
+has_fderiv_at_filter.comp x hg hf hst
+
+lemma cont_diff_within_at.comp_of_mem
+  {s : set E} {t : set F} {g : F → G} {f : E → F} (x : E)
+  (hg : cont_diff_within_at 𝕜 n g t (f x))
+  (hf : cont_diff_within_at 𝕜 n f s x) (hs : t ∈ 𝓝[f '' s] f x) :
+  cont_diff_within_at 𝕜 n (g ∘ f) s x :=
+(hg.mono_of_mem hs).comp x hf (subset_preimage_image f s)
+
+end
+
+
+variables {f : G → E → F} {g : G → E} {s : set G} {t : set E} {x : G} {n m : ℕ∞} {u : set (G × E)}
 
 
 lemma has_fderiv_within_at_insert {g' : G →L[𝕜] E} :
@@ -131,17 +182,6 @@ alias cont_diff_within_at_insert ↔ cont_diff_within_at.of_insert cont_diff_wit
 lemma has_fderiv_within_at_diff_singleton {g' : G →L[𝕜] E} :
   has_fderiv_within_at g g' (s \ {x}) x ↔ has_fderiv_within_at g g' s x :=
 by rw [← has_fderiv_within_at_insert, insert_diff_singleton, has_fderiv_within_at_insert]
-
--- basic topology
-lemma insert_mem_nhds_within_of_subset_insert {α} [topological_space α] [t1_space α] {x y : α}
-  {s t : set α} (hu : t ⊆ insert y s) : insert x s ∈ 𝓝[t] x :=
-begin
-  rcases eq_or_ne x y with rfl|h,
-  { exact mem_of_superset self_mem_nhds_within hu },
-  rw [← union_singleton, union_comm, ← diff_subset_iff, diff_eq] at hu,
-  exact mem_of_superset (inter_mem_nhds_within _ (compl_singleton_mem_nhds h))
-    (hu.trans (subset_insert _ _)),
-end
 
 -- replaces 2 mathlib lemmas
 lemma cont_diff_within_at_succ_iff_has_fderiv_within_at_of_mem' {f : E → F} {s : set E} {x : E}
@@ -182,43 +222,40 @@ end
   are taken within the same set. Version for partial derivatives. -/
 -- probably an iff, do we need x ∈ s?
 lemma cont_diff_within_at.has_fderiv_within_at_nhds₂ {n : ℕ}
-  (hf : cont_diff_within_at 𝕜 (n+1) (function.uncurry f) (s ×ˢ (g '' s)) (x, g x))
-  (hg : cont_diff_within_at 𝕜 n g s x) (hx : x ∈ s) (ht : t ⊆ g '' s) :
-  ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : G → E → E →L[𝕜] F,
-    (∀ x ∈ u, has_fderiv_within_at (f x) (f' x (g x)) t (g x)) ∧
-    cont_diff_within_at 𝕜 n (λ x, f' x (g x)) s x :=
+  (hf : cont_diff_within_at 𝕜 (n+1) (function.uncurry f) u (x, g x))
+  (hg : cont_diff_within_at 𝕜 n g s x)
+  (hst : insert x s ×ˢ t ⊆ u) -- maybe weaken
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) :
+  ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : G → E →L[𝕜] F,
+    (∀ x ∈ u, has_fderiv_within_at (f x) (f' x) t (g x)) ∧
+    cont_diff_within_at 𝕜 n (λ x, f' x) s x :=
 begin
   obtain ⟨v, hv, hvs, f', hvf', hf'⟩ := hf.has_fderiv_within_at_nhds,
   refine ⟨(λ z, (z, g z)) ⁻¹' v ∩ insert x s, _, inter_subset_right _ _,
-    λ z x, (f' (z, x)).comp (continuous_linear_map.inr 𝕜 G E), _, _⟩,
+    λ z, (f' (z, g z)).comp (continuous_linear_map.inr 𝕜 G E), _, _⟩,
   { refine inter_mem _ self_mem_nhds_within,
     have := mem_of_mem_nhds_within (mem_insert _ _) hv,
     refine mem_nhds_within_insert.mpr ⟨this, _⟩,
     refine (continuous_within_at_id.prod hg.continuous_within_at).preimage_mem_nhds_within' _,
-    refine nhds_within_mono _ (image_prod_mk_subset_prod.trans _) hv,
-    rw [image_id],
-    exact subset_insert _ _ },
-  { intros z hz, have := hvf' (z, g z) hz.1,
+    rw [← nhds_within_le_iff] at hu hv ⊢,
+    refine (hu.trans $ nhds_within_mono _ $ subset_insert _ _).trans hv },
+  { intros z hz,
+    have := hvf' (z, g z) hz.1,
     refine this.comp (g z) (has_fderiv_at_prod_mk_right _ _).has_fderiv_within_at _,
-    refine maps_to'.mpr ((image_prod_mk_subset_prod_right hz.2).trans _),
-    rw [insert_eq_of_mem hx],
-    exact set.prod_mono subset.rfl ht },
-  { have := (hf'.continuous_linear_map_comp $ (continuous_linear_map.compL 𝕜 E (G × E) F).flip
-      (continuous_linear_map.inr 𝕜 G E)).comp x
-      (cont_diff_within_at_id.prod hg),
-    simp_rw [mk_preimage_prod, preimage_id', subset_inter_iff, subset_preimage_image,
-      subset.rfl, and_true, true_implies_iff, function.comp, continuous_linear_map.flip_apply,
-      continuous_linear_map.compL_apply] at this,
-    exact this },
+    exact maps_to'.mpr ((image_prod_mk_subset_prod_right hz.2).trans hst) },
+  { exact (hf'.continuous_linear_map_comp $ (continuous_linear_map.compL 𝕜 E (G × E) F).flip
+      (continuous_linear_map.inr 𝕜 G E)).comp_of_mem x
+      (cont_diff_within_at_id.prod hg) hu },
 end
 
 -- simplify/replace mathlib lemmas using this
 lemma cont_diff_within_at.fderiv_within₂'
-  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) (s ×ˢ (g '' s)) (x, g x))
+  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
   (hg : cont_diff_within_at 𝕜 m g s x)
   (ht : ∀ᶠ y in 𝓝[insert x s] x, unique_diff_within_at 𝕜 t (g y))
   (hmn : m + 1 ≤ n)
-  (hx : x ∈ s) (hts : t ⊆ g '' s) :
+  (hst : insert x s ×ˢ t ⊆ u)
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) :
   cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
 begin
   have : ∀ k : ℕ, (k : with_top ℕ) ≤ m →
@@ -226,7 +263,7 @@ begin
   { intros k hkm,
     obtain ⟨v, hv, -, f', hvf', hf'⟩ :=
       (hf.of_le $ (add_le_add_right hkm 1).trans hmn).has_fderiv_within_at_nhds₂ (hg.of_le hkm)
-      hx hts,
+      hst hu,
     refine hf'.congr_of_eventually_eq_insert _,
     filter_upwards [hv, ht],
     exact λ y hy h2y, (hvf' y hy).fderiv_within h2y },
@@ -237,16 +274,30 @@ begin
   exact this m le_rfl
 end
 
--- can we weaken hts?
-lemma cont_diff_within_at_fderiv_within
-  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) (s ×ˢ (g '' s)) (x, g x))
+lemma cont_diff_within_at_fderiv_within'
+  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
   (hg : cont_diff_within_at 𝕜 m g s x)
   (ht : unique_diff_on 𝕜 t)
-  (hmn : (m + 1 : with_top ℕ) ≤ n) (hx : x ∈ s) (hts : t = g '' s) :
+  (hmn : (m + 1 : with_top ℕ) ≤ n)
+  (hst : insert x s ×ˢ t ⊆ u) -- maybe weaken
+  (hgx : ∀ᶠ x' in 𝓝[insert x s] x, g x' ∈ t)
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) -- remove
+  :
   cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
-hf.fderiv_within₂' hg
-  (by { rw [insert_eq_of_mem hx], refine eventually_of_mem self_mem_nhds_within (λ y hy, ht _ _),
-    subst hts, exact mem_image_of_mem g hy }) hmn hx hts.subset
+hf.fderiv_within₂' hg (hgx.mono (λ y hy, ht _ hy)) hmn hst hu
+
+lemma cont_diff_within_at_fderiv_within
+  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
+  (hg : cont_diff_within_at 𝕜 m g s x)
+  (ht : unique_diff_on 𝕜 t)
+  (hmn : (m + 1 : with_top ℕ) ≤ n) (hx : x ∈ s)
+  (hst : s ×ˢ t ⊆ u) -- maybe weaken
+  (hgx : ∀ᶠ x' in 𝓝[s] x, g x' ∈ t)
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) -- remove
+  :
+  cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
+by { rw [← insert_eq_self.mpr hx] at hst hgx,
+  exact cont_diff_within_at_fderiv_within' hf hg ht hmn hst hgx hu }
 
 end fderiv
 
@@ -271,8 +322,17 @@ attribute [ext] model_with_corners charted_space
 lemma model_with_corners_self_prod : 𝓘(𝕜, E × F) = 𝓘(𝕜, E).prod 𝓘(𝕜, F) :=
 by { ext1, simp }
 
+lemma model_with_corners.range_prod : range (I.prod J) = range I ×ˢ range J :=
+by { simp_rw [← model_with_corners.target_eq], refl }
+
 lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
 by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
+
+
+lemma ext_chart_preimage_mem_nhds_within_range {x' : M} {t : set M}
+  (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :
+  (ext_chart_at I x).symm ⁻¹' t ∈ 𝓝[range I] ((ext_chart_at I x) x') :=
+nhds_within_le_nhds $ ext_chart_preimage_mem_nhds' _ _ h ht
 
 section boundary
 
@@ -580,11 +640,31 @@ begin
     (range J) (ext_chart_at J x x),
   { rw [cont_mdiff_at_iff] at hf hg,
     simp_rw [function.comp, uncurry, ext_chart_at_prod, local_equiv.prod_coe_symm] at hf ⊢,
-    sorry,
-    -- refine cont_diff_within_at_fderiv_within _ hg.2 I.unique_diff hmn (mem_range_self _) _,
-    -- simp_rw [← model_with_corners.target_eq, image_id'] at hf ⊢,
-    -- exact hf.2
-     },
+    refine (cont_diff_within_at_fderiv_within _ (hg.2.mono_of_mem _) I.unique_diff hmn _ _ _ _).mono_of_mem _,
+    swap 3,
+    { simp_rw [function.comp, ext_chart_at_to_inv],
+      refine hf.2 },
+    { refine (ext_chart_at J x).target ∩
+      (λ x', (ext_chart_at J x).symm x') ⁻¹' (g ⁻¹' (ext_chart_at I (g x)).source) },
+    { exact mem_of_superset self_mem_nhds_within
+        ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x) },
+    { simp_rw [mem_inter_iff, mem_preimage, ext_chart_at_to_inv],
+      exact ⟨local_equiv.maps_to _ (mem_ext_chart_source J x), mem_ext_chart_source I (g x)⟩ },
+    { simp_rw [model_with_corners.range_prod],
+      exact set.prod_mono ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x)
+        subset_rfl },
+    { refine eventually_of_forall (λ x', mem_range_self _) },
+    swap 2, { refine inter_mem (ext_chart_at_target_mem_nhds_within J x) _,
+      refine ext_chart_preimage_mem_nhds_within_range (mem_ext_chart_source J x) _,
+      exact hg.1.preimage_mem_nhds (ext_chart_at_source_mem_nhds I (g x)) },
+    simp_rw [function.comp, model_with_corners.range_prod, ext_chart_at_to_inv],
+    refine mem_of_superset self_mem_nhds_within _,
+    refine image_prod_mk_subset_prod.trans (prod_mono _ _),
+    { rw [image_id'],
+      exact ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x) },
+    rintro _ ⟨x', hx', rfl⟩,
+    refine ext_chart_at_target_subset_range I (g x) _,
+    exact (ext_chart_at I (g x)).maps_to hx'.2 },
   have : cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
     (λ x', fderiv_within 𝕜 (ext_chart_at I' (f x (g x)) ∘ f x' ∘ (ext_chart_at I (g x)).symm)
     (range I) (ext_chart_at I (g x) (g x'))) x,
@@ -640,7 +720,6 @@ begin
   { simp_rw [function.comp_apply, (ext_chart_at I (g x)).left_inv hx₂] }
 end
 
-
 /-- The map `D_xf(x,y)` is `C^n` as a continuous linear map, assuming that `f` is a `C^(n+1)` map
 between manifolds.
 We have to insert appropriate coordinate changes to make sense of this statement.
@@ -649,76 +728,7 @@ lemma cont_mdiff_at.mfderiv'' (f : M → M → M')
   (hf : cont_mdiff_at (I.prod I) I' n (function.uncurry f) (x, x)) (hmn : m + 1 ≤ n) :
   cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
     (in_coordinates I I' id (λ x, f x x) (λ x', mfderiv I I' (f x') x') x) x :=
-begin
-  have h4f := hf.comp x (cont_mdiff_at_id.prod_mk cont_mdiff_at_id),
-  have h3f := cont_mdiff_at_iff_cont_mdiff_at_nhds.mp (hf.of_le $ (self_le_add_left 1 m).trans hmn),
-  have h2f : ∀ᶠ x₂ in 𝓝 x, cont_mdiff_at I I' 1 (f x₂) x₂,
-  { rw [nhds_prod_eq] at h3f,
-    refine h3f.diag_of_prod.mono (λ x hx, _),
-    exact hx.comp x (cont_mdiff_at_const.prod_mk cont_mdiff_at_id) },
-  have : cont_diff_within_at 𝕜 m (λ x', fderiv_within 𝕜
-    (ext_chart_at I' (f x x) ∘ f ((ext_chart_at I x).symm x') ∘ (ext_chart_at I x).symm)
-    (range I) x') (range I) (ext_chart_at I x x),
-  { rw [cont_mdiff_at_iff] at hf,
-    simp_rw [function.comp, uncurry, ext_chart_at_prod, local_equiv.prod_coe_symm] at hf ⊢,
-    refine cont_diff_within_at_fderiv_within _ cont_diff_within_at_id I.unique_diff hmn
-      (mem_range_self _) (image_id' _).symm,
-    simp_rw [← model_with_corners.target_eq, image_id'] at hf ⊢,
-    exact hf.2 },
-  have : cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-    (λ x', fderiv_within 𝕜 (ext_chart_at I' (f x x) ∘ f x' ∘ (ext_chart_at I x).symm)
-    (range I) (ext_chart_at I x x')) x,
-  { simp_rw [cont_mdiff_at_iff_source_of_mem_source (mem_chart_source H x),
-      cont_mdiff_within_at_iff_cont_diff_within_at, function.comp],
-    refine this.congr_of_eventually_eq' _ (mem_range_self _),
-    refine eventually_of_mem (ext_chart_at_target_mem_nhds_within I x) (λ x' hx', _),
-    simp_rw [(ext_chart_at I x).right_inv hx'] },
-  have : cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-    (λ x', fderiv_within 𝕜 (ext_chart_at I' (f x x) ∘ (ext_chart_at I' (f x' x')).symm ∘
-      written_in_ext_chart_at I I' x' (f x') ∘ ext_chart_at I x' ∘ (ext_chart_at I x).symm)
-      (range I) (ext_chart_at I x x')) x,
-  { refine this.congr_of_eventually_eq _,
-    filter_upwards [ext_chart_at_source_mem_nhds I x, h2f],
-    intros x₂ hx₂ h2x₂,
-    have : ∀ x' ∈ (ext_chart_at I x).symm ⁻¹' (ext_chart_at I x₂).source ∩
-        (ext_chart_at I x).symm ⁻¹' (f x₂ ⁻¹' (ext_chart_at I' (f x₂ x₂)).source),
-      (ext_chart_at I' (f x x) ∘ (ext_chart_at I' (f x₂ x₂)).symm ∘
-      written_in_ext_chart_at I I' x₂ (f x₂) ∘ ext_chart_at I x₂ ∘ (ext_chart_at I x).symm) x' =
-      ext_chart_at I' (f x x) (f x₂ ((ext_chart_at I x).symm x')),
-    { rintro x' ⟨hx', h2x'⟩,
-      simp_rw [written_in_ext_chart_at, function.comp_apply],
-      rw [(ext_chart_at I x₂).left_inv hx', (ext_chart_at I' (f x₂ x₂)).left_inv h2x'] },
-    refine filter.eventually_eq.fderiv_within_eq_nhds (I.unique_diff _ $ mem_range_self _) _,
-    refine eventually_of_mem (inter_mem _ _) this,
-    { exact ext_chart_preimage_mem_nhds' _ _ hx₂ (ext_chart_at_source_mem_nhds I x₂) },
-    refine ext_chart_preimage_mem_nhds' _ _ hx₂ _,
-    exact (h2x₂.continuous_at).preimage_mem_nhds (ext_chart_at_source_mem_nhds _ _) },
-  /- The conclusion is the same as the following, when unfolding coord_change of
-    `tangent_bundle_core` -/
-  change cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-    (λ x', (fderiv_within 𝕜 (ext_chart_at I' (f x x) ∘ (ext_chart_at I' (f x' x')).symm)
-        (range I') (ext_chart_at I' (f x' x') (f x' x'))).comp ((mfderiv I I' (f x') x').comp
-          (fderiv_within 𝕜 (ext_chart_at I x' ∘ (ext_chart_at I x).symm)
-             (range I) (ext_chart_at I x x')))) x,
-  refine this.congr_of_eventually_eq _,
-  filter_upwards [ext_chart_at_source_mem_nhds I x, h2f,
-    h4f.continuous_at.preimage_mem_nhds (ext_chart_at_source_mem_nhds I' (f x x))],
-  intros x₂ hx₂ h2x₂ h3x₂,
-  symmetry,
-  rw [(h2x₂.mdifferentiable_at le_rfl).mfderiv],
-  have hI := (cont_diff_within_at_ext_coord_change I x₂ x $ local_equiv.mem_symm_trans_source _
-    hx₂ $ mem_ext_chart_source I x₂).differentiable_within_at le_top,
-  have hI' := (cont_diff_within_at_ext_coord_change I' (f x x) (f x₂ x₂) $
-    local_equiv.mem_symm_trans_source _
-    (mem_ext_chart_source I' (f x₂ x₂)) h3x₂).differentiable_within_at le_top,
-  have h3f := (h2x₂.mdifferentiable_at le_rfl).2,
-  refine fderiv_within.comp₃ _ hI' h3f hI _ _ _ _ (I.unique_diff _ $ mem_range_self _),
-  { exact λ x _, mem_range_self _ },
-  { exact λ x _, mem_range_self _ },
-  { simp_rw [written_in_ext_chart_at, function.comp_apply,
-      (ext_chart_at I x₂).left_inv (mem_ext_chart_source I x₂)] },
-  { simp_rw [function.comp_apply, (ext_chart_at I x).left_inv hx₂] }
-end
+hf.mfderiv''' f id cont_mdiff_at_id hmn
 
 /-- The map `mfderiv f` is `C^n` as a continuous linear map, assuming that `f` is `C^(n+1)`.
 We have to insert appropriate coordinate changes to make sense of this statement. -/
