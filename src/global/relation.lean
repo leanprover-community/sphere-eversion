@@ -175,6 +175,12 @@ end family_formal_sol
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 @[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
 
+def formal_sol.const_htpy {R : rel_mfld I M I' M'} (F : formal_sol R) : htpy_formal_sol R :=
+{ bs := λ t, F.bs,
+  ϕ := λ t, F.ϕ,
+  smooth' := sorry,
+  is_sol' := λ t, F.is_sol' }
+
 /-- The relation `𝓡 ^ P` -/
 def rel_mfld.relativize (R : rel_mfld I M I' M') : rel_mfld (IP.prod I) (P × M) I' M' :=
 bundle_snd ⁻¹' R
@@ -194,6 +200,17 @@ variables {P}
 /-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
 `C` of the domain if for every formal solution `𝓕₀` that is holonomic near `C`
 there is a homotopy between `𝓕₀` and a holonomic solution that is constant near `C` and
+`ε`-close to `𝓕₀`. This is a temporary version with a slightly weaker conclusion. -/
+def rel_mfld.satisfies_h_principle_weak (R : rel_mfld I M IX X) (C : set M) (ε : M → ℝ) : Prop :=
+∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
+∃ 𝓕 : htpy_formal_sol R, (∀ x : M, 𝓕 0 x = 𝓕₀ x) ∧
+  (𝓕 1).to_one_jet_sec.is_holonomic ∧
+  (∀ x ∈ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
+  (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
+
+/-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
+`C` of the domain if for every formal solution `𝓕₀` that is holonomic near `C`
+there is a homotopy between `𝓕₀` and a holonomic solution that is constant near `C` and
 `ε`-close to `𝓕₀`. -/
 def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M → ℝ) : Prop :=
 ∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
@@ -201,6 +218,11 @@ def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M �
   (𝓕 1).to_one_jet_sec.is_holonomic ∧
   (∀ᶠ x in 𝓝ˢ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
   (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
+
+lemma rel_mfld.satisfies_h_principle_of_weak {R : rel_mfld I M IX X} {ε : M → ℝ}
+  {C : set M} (hC : is_closed C)
+  (h : ∀ A : set M, is_closed A → R.satisfies_h_principle_weak A ε)  : R.satisfies_h_principle C ε :=
+sorry
 
 /-- A relation `R` satisfies the parametric relative C⁰-dense h-principle w.r.t. manifold `P`,
 `C ⊆ P × M` and `ε : M → ℝ` if for every family of

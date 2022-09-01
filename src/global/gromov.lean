@@ -52,6 +52,33 @@ begin
     exact ⟨⟨default, b⟩, ⟨trivial, h⟩⟩ }
 end
 
+
+
+-- The next lemma won't be used, it's a warming up exercise for the one below.
+-- It could go to mathlib.
+lemma exists_by_induction {α : Type*} {P : ℕ → α → Prop}
+  (h₀ : ∃ a, P 0 a)
+  (ih : ∀ n a, P n a → ∃ a', P (n+1) a') :
+  ∃ f : ℕ → α, ∀ n, P n (f n) :=
+begin
+  choose f₀ hf₀ using h₀,
+  choose! F hF using ih,
+  exact ⟨λ n, nat.rec_on n f₀ F, λ n, nat.rec hf₀ (λ n ih, hF n _ ih) n⟩
+end
+
+-- We make `P` and `Q` explicit to help the elaborator when applying the lemma
+-- (elab_as_eliminator isn't enough).
+lemma exists_by_induction' {α : Type*} (P : ℕ → α → Prop) (Q : ℕ → α → α → Prop)
+  (h₀ : ∃ a, P 0 a)
+  (ih : ∀ n a, P n a → ∃ a', P (n+1) a' ∧ Q n a a') :
+  ∃ f : ℕ → α, ∀ n, P n (f n) ∧ Q n (f n) (f $ n+1) :=
+begin
+  choose f₀ hf₀ using h₀,
+  choose! F hF hF' using ih,
+  have key : ∀ n, P n (nat.rec_on n f₀ F), from λ n, nat.rec hf₀ (λ n ih, hF n _ ih) n,
+  exact ⟨λ n, nat.rec_on n f₀ F, λ n, ⟨key n, hF' n _ (key n)⟩⟩
+end
+
 set_option trace.filter_inst_type true
 
 lemma rel_mfld.ample.satisfies_h_principle_core
@@ -62,18 +89,33 @@ lemma rel_mfld.ample.satisfies_h_principle_core
   (𝓕₀ : formal_sol R)
   (h𝓕₀ : ∀ᶠ x near A, 𝓕₀.to_one_jet_sec.is_holonomic_at x)
   (L : localisation_data I IX 𝓕₀.to_one_jet_sec.bs) :
-  ∃ F : ℕ → htpy_formal_sol R,
-    (∀ (n : ℕ), (F n) 0 = 𝓕₀) ∧
-    (∀ᶠ x near A, ∀ n t, F n t x = 𝓕₀ x) ∧
-    (∀ n t x, dist ((F n t).bs x) (𝓕₀.bs x) <ε x) ∧
-    (∀ n, L.index (n + 1)  = L.index n → F (n + 2) = F (n + 1)) ∧
-    (∀ n (x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1),
-      ((F (n + 1)) 1).to_one_jet_sec.is_holonomic_at x) ∧
-    ∀ n t (x ∉ range (L.φ $ L.index n)), F (n + 1) t x = F n t x :=
+  ∃ F : ℕ → htpy_formal_sol R, ∀ n : ℕ,
+    ((F n 0 = 𝓕₀) ∧
+    (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
+    (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) <ε x) ∧
+
+    (∀ x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
+      ((F n) 1).to_one_jet_sec.is_holonomic_at x)) ∧
+    ((L.index (n + 1)  = L.index n → F (n + 1) = F n) ∧
+     ∀ t (x ∉ range (L.φ $ L.index $ n+1)), F (n + 1) t x = F n t x) :=
 begin
   have cont_bs : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
   rcases localisation_stability E I EX IX cont_bs L with ⟨η, η_pos, η_cont, hη⟩,
-  sorry
+  let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
+    (Fn 0 = 𝓕₀) ∧
+    (∀ t, ∀ᶠ x near A, Fn t x = 𝓕₀ x) ∧
+    (∀ t x, dist ((Fn t).bs x) (𝓕₀.bs x) <ε x) ∧
+
+    (∀ x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
+      (Fn 1).to_one_jet_sec.is_holonomic_at x),
+  let Q : ℕ → htpy_formal_sol R → htpy_formal_sol R → Prop := λ n Fn Fnp1,
+    (L.index (n + 1)  = L.index n → Fnp1 = Fn) ∧
+     ∀ t, ∀ x ∉ range (L.φ $ L.index $ n+1), Fnp1 t x = Fn t x,
+  apply exists_by_induction' P Q,
+  {
+    sorry },
+  {
+    sorry },
 end
 
 /-- The non-parametric version of Gromov's theorem -/
@@ -82,26 +124,30 @@ lemma rel_mfld.ample.satisfies_h_principle (h1 : R.ample) (h2 : is_open R)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   R.satisfies_h_principle A ε :=
 begin
-  intros 𝓕₀ h𝓕₀,
+  apply rel_mfld.satisfies_h_principle_of_weak hA,
+  unfreezingI { clear_dependent A },
+  intros A hA 𝓕₀ h𝓕₀,
   have cont : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
   let L : localisation_data I IX 𝓕₀.bs := std_localisation_data E I EX IX cont,
   let π := L.index,
 
-  suffices : ∃ F : ℕ → htpy_formal_sol R,
-    (∀ n, F n 0 = 𝓕₀) ∧
-    (∀ᶠ x near A, ∀ n t, F n t x = 𝓕₀ x) ∧
-    (∀ n t x, dist ((F n t).bs x) (𝓕₀.bs x) < ε x) ∧
-    (∀ n, π (n+1) = π n → F (n+2) = F (n + 1)) ∧
-    (∀ n, ∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : E) 1,
-             (F (n+1) 1).to_one_jet_sec.is_holonomic_at x) ∧
-    (∀ n t, ∀ x ∉ range (L.φ $ π n), F (n+1) t x = F n t x),
+  suffices : ∃ F : ℕ → htpy_formal_sol R, ∀ n,
+    ((F n 0 = 𝓕₀) ∧
+    (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
+    (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) < ε x) ∧
+
+    (∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : E) 1,
+             (F n 1).to_one_jet_sec.is_holonomic_at x)) ∧
+    ((π (n+1) = π n → F (n+1) = F n) ∧
+     (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
   { clear_dependent h1 h2,
-    rcases this with ⟨F, hF₀, hfA, hFε, hFπ, hFhol, hFultim⟩,
+    simp_rw [and_assoc, forall_and_distrib] at this,
+    rcases this with ⟨F, hF₀, hfA, hFε, hFhol, hFπ, hFultim⟩,
     let FF := λ n : ℕ, λ p : ℝ × M, F n p.1 p.2,
-    have h : ∀ n : ℕ, ∀ x ∉ (univ : set ℝ) ×ˢ range (L.φ $ π n), FF (n+1) x = FF n x,
+    have h : ∀ n : ℕ, ∀ x ∉ (univ : set ℝ) ×ˢ range (L.φ $ π $ n+1), FF (n+1) x = FF n x,
     { rintros n ⟨t, x⟩ H,
       exact hFultim _ _ _ (λ hx, H ⟨trivial, hx⟩) },
-    have h' : ∀ (n : ℕ), π (n + 1) = π n → FF (n + 2) = FF (n + 1),
+    have h' : ∀ (n : ℕ), π (n + 1) = π n → FF (n + 1) = FF n,
     { intros n hn,
       ext1 ⟨t, x⟩,
       dsimp [FF],
@@ -168,20 +214,19 @@ begin
         rintros i -,
         exact image_subset _ metric.ball_subset_closed_ball, },
       apply (hFhol (n (1, x)) x this).congr, clear this,
-      have : F (n (1, x) + 1) 1 =ᶠ[𝓝 x] (λ x, G (1, x)),
-      { exact (hn (1, x) (n(1, x) + 1) (n (1, x)).le_succ).slice },
+      have : F (n (1, x)) 1 =ᶠ[𝓝 x] (λ x, G (1, x)),
+      { exact (hn (1, x) (n(1, x)) le_rfl).slice },
       apply this.mono, clear this,
-      rintros y (hy : F (n (1, x) + 1) 1 y = G (1, y)),
-      change F (n (1, x) + 1) 1 y = 𝓕 1 y,
+      rintros y (hy : F (n (1, x)) 1 y = G (1, y)),
+      change F (n (1, x)) 1 y = 𝓕 1 y,
       rw hy,
       change G (1, y) = 𝓕 1 y,
       ext ; try { refl },
       rw hG11,
       refl },
     { clear_dependent ε hF₀ hFhol hFπ hFultim,
-      apply hfA.mono, clear hfA,
-      intros x hx t,
-      rw [← hx (n (t, x)) t, ← G_eq], clear hx,
+      intros x x_in t,
+      rw [← (hfA (n (t, x)) t).nhds_set_forall_mem x x_in, ← G_eq],
       ext ; try { refl },
       rw hG11, refl, },
     { clear_dependent hF₀ hFhol hFπ hFultim hfA,
@@ -190,7 +235,7 @@ begin
       change dist (G (t, x)).1.2 (𝓕₀.bs x) < ε x,
       rw ← (hn (t, x) _ le_rfl).eq_of_nhds,
       exact hFε (n (t, x)) t x } },
-  exact h1.satisfies_h_principle_core h2 hA hε_pos hε_cont 𝓕₀ h𝓕₀ L
+  exact h1.satisfies_h_principle_core h2 hA hε_pos hε_cont 𝓕₀ h𝓕₀ L,
 end
 
 variables
