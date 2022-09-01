@@ -1,4 +1,4 @@
-import global.relation
+import global.parametricity_for_free
 import global.localisation_data
 
 import interactive_expr
@@ -11,13 +11,13 @@ We prove the h-principle for open and ample first order differential relations.
 
 noncomputable theory
 
-open set filter
+open set filter model_with_corners
 open_locale topological_space manifold
 
 variables
-{E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-{H : Type*} [topological_space H] {I : model_with_corners ℝ E H} [model_with_corners.boundaryless I]
-{M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+{EM : Type*} [normed_add_comm_group EM] [normed_space ℝ EM] [finite_dimensional ℝ EM]
+{HM : Type*} [topological_space HM] {IM : model_with_corners ℝ EM HM} [boundaryless IM]
+{M : Type*} [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
 [t2_space M]
 [locally_compact_space M] -- investigate how to deduce this from finite-dimensional
 [nonempty M] -- investigate how to remove this
@@ -31,7 +31,7 @@ variables
 [sigma_compact_space X]
 [nonempty X] -- investigate how to remove this
 
-{R : rel_mfld I M IX X}
+{R : rel_mfld IM M IX X}
 {A : set M} {ε : M → ℝ}
 
 lemma univ_prod_inter_univ_prod {α β : Type*} {s t : set β} :
@@ -88,7 +88,7 @@ lemma rel_mfld.ample.satisfies_h_principle_core
   (hε_cont : continuous ε)
   (𝓕₀ : formal_sol R)
   (h𝓕₀ : ∀ᶠ x near A, 𝓕₀.to_one_jet_sec.is_holonomic_at x)
-  (L : localisation_data I IX 𝓕₀.to_one_jet_sec.bs) :
+  (L : localisation_data IM IX 𝓕₀.to_one_jet_sec.bs) :
   ∃ F : ℕ → htpy_formal_sol R, ∀ n : ℕ,
     ((F n 0 = 𝓕₀) ∧
     (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
@@ -100,7 +100,7 @@ lemma rel_mfld.ample.satisfies_h_principle_core
      ∀ t (x ∉ range (L.φ $ L.index $ n+1)), F (n + 1) t x = F n t x) :=
 begin
   have cont_bs : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
-  rcases localisation_stability E I EX IX cont_bs L with ⟨η, η_pos, η_cont, hη⟩,
+  rcases localisation_stability EM IM EX IX cont_bs L with ⟨η, η_pos, η_cont, hη⟩,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
     (Fn 0 = 𝓕₀) ∧
     (∀ t, ∀ᶠ x near A, Fn t x = 𝓕₀ x) ∧
@@ -128,7 +128,7 @@ begin
   unfreezingI { clear_dependent A },
   intros A hA 𝓕₀ h𝓕₀,
   have cont : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
-  let L : localisation_data I IX 𝓕₀.bs := std_localisation_data E I EX IX cont,
+  let L : localisation_data IM IX 𝓕₀.bs := std_localisation_data EM IM EX IX cont,
   let π := L.index,
 
   suffices : ∃ F : ℕ → htpy_formal_sol R, ∀ n,
@@ -136,7 +136,7 @@ begin
     (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
     (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) < ε x) ∧
 
-    (∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : E) 1,
+    (∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : EM) 1,
              (F n 1).to_one_jet_sec.is_holonomic_at x)) ∧
     ((π (n+1) = π n → F (n+1) = F n) ∧
      (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
@@ -273,7 +273,7 @@ variables
 include IP
 
 /-- Gromov's Theorem without metric space assumption -/
-theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld I M I' M'}
+theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
   (h1 : R.ample) (h2 : is_open R) (hC : is_closed C)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   by letI := (@topological_space.metrizable_space_metric _ _
