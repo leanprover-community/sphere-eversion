@@ -159,9 +159,4 @@ variables [normed_space 𝕜 F] [normed_space 𝕜 G] [normed_space 𝕜 F']
 --   cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] G) n (λ x, (g x).comp (f x)) s x :=
 -- sorry
 
-lemma ext_chart_preimage_mem_nhds_within_range {x' : M} {t : set M}
-  (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :
-  (ext_chart_at I x).symm ⁻¹' t ∈ 𝓝[range I] ((ext_chart_at I x) x') :=
-nhds_within_le_nhds $ ext_chart_preimage_mem_nhds' _ _ h ht
-
 end smooth_manifold_with_corners
