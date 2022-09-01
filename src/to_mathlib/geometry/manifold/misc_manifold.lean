@@ -369,6 +369,34 @@ hf.mdifferentiable_at le_top
 lemma smooth_on.mdifferentiable_on (hf : smooth_on I I' f s) : mdifferentiable_on I I' f s :=
 hf.mdifferentiable_on le_top
 
+lemma smooth_at.comp {g : M → M'} {f : N → M} (x : N)
+  (hg : smooth_at I I' g (f x)) (hf : smooth_at J I f x) : smooth_at J I' (g ∘ f) x :=
+hg.comp x hf
+
+lemma smooth.comp {g : M → M'} {f : N → M}
+  (hg : smooth I I' g) (hf : smooth J I f) : smooth J I' (g ∘ f) :=
+hg.comp hf
+
+lemma smooth_at.fst {f : N → M × M'} {x : N} (hf : smooth_at J (I.prod I') f x) :
+  smooth_at J I (λ x, (f x).1) x :=
+smooth_at_fst.comp x hf
+
+lemma smooth_at.snd {f : N → M × M'} {x : N} (hf : smooth_at J (I.prod I') f x) :
+  smooth_at J I' (λ x, (f x).2) x :=
+smooth_at_snd.comp x hf
+
+lemma smooth.fst {f : N → M × M'} (hf : smooth J (I.prod I') f) :
+  smooth J I (λ x, (f x).1) :=
+smooth_fst.comp hf
+
+lemma smooth.snd {f : N → M × M'} (hf : smooth J (I.prod I') f) :
+  smooth J I' (λ x, (f x).2) :=
+smooth_snd.comp hf
+
+lemma smooth_prod_assoc :
+  smooth ((I.prod I').prod J) (I.prod (I'.prod J)) (λ x : (M × M') × N, (x.1.1, x.1.2, x.2)) :=
+smooth_fst.fst.prod_mk $ smooth_fst.snd.prod_mk smooth_snd
+
 lemma ext_chart_at_prod (x : M × M') :
   ext_chart_at (I.prod I') x = (ext_chart_at I x.1).prod (ext_chart_at I' x.2) :=
 by simp only with mfld_simps
@@ -518,18 +546,26 @@ begin
   simp_rw [prod.mk.eta],
 end
 
+variables (I I')
+/-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
+  in charts around `g x`, `in_coordinates I I' f g ϕ x₀ x` is a coordinate change of this continuous
+  linear map that makes sense from charts around `f x₀` to charts around `g x₀`
+  by composing it with appropriate coordinate changes. -/
+noncomputable def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') :
+  N → N → E →L[𝕜] E' :=
+λ x₀ x, ((tangent_bundle_core I' M').coord_change (achart H' (g x)) (achart H' (g x₀))
+      (chart_at H' (g x) (g x))).comp $ (ϕ x).comp $
+    (tangent_bundle_core I M).coord_change (achart H (f x₀)) (achart H (f x))
+    (chart_at H (f x₀) (f x))
 
-/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. `admit`ted, since it
-requires generalizing some earlier lemmas, and we haven't finished that.
-Currently unused. -/
+variables {I I'}
+
+/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. Used in `curry`. -/
 lemma cont_mdiff_at.mfderiv''' {x : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (x, g x))
   (hg : cont_mdiff_at J I m g x) (hmn : m + 1 ≤ n) :
   cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
-  (λ x', (tangent_bundle_core I' M').coord_change (achart H' (f x' (g x'))) (achart H' (f x (g x)))
-    (chart_at H' (f x' (g x')) (f x' (g x'))) ∘L mfderiv I I' (f x') (g x') ∘L
-    (tangent_bundle_core I M).coord_change (achart H (g x)) (achart H (g x'))
-    (chart_at H (g x) (g x'))) x :=
+    (in_coordinates I I' g (λ x, f x (g x)) (λ x', mfderiv I I' (f x') (g x')) x) x :=
 begin
   have h4f : continuous_at (λ x, f x (g x)) x,
   { apply continuous_at.comp (by apply hf.continuous_at) (continuous_at_id.prod hg.continuous_at) },
@@ -544,7 +580,7 @@ begin
     (range J) (ext_chart_at J x x),
   { rw [cont_mdiff_at_iff] at hf hg,
     simp_rw [function.comp, uncurry, ext_chart_at_prod, local_equiv.prod_coe_symm] at hf ⊢,
-    admit,
+    sorry,
     -- refine cont_diff_within_at_fderiv_within _ hg.2 I.unique_diff hmn (mem_range_self _) _,
     -- simp_rw [← model_with_corners.target_eq, image_id'] at hf ⊢,
     -- exact hf.2
@@ -612,9 +648,7 @@ This statement is general enough to work for partial derivatives / functions wit
 lemma cont_mdiff_at.mfderiv'' (f : M → M → M')
   (hf : cont_mdiff_at (I.prod I) I' n (function.uncurry f) (x, x)) (hmn : m + 1 ≤ n) :
   cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-  (λ x', (tangent_bundle_core I' M').coord_change (achart H' (f x' x')) (achart H' (f x x))
-    (chart_at H' (f x' x') (f x' x')) ∘L mfderiv I I' (f x') x' ∘L
-    (tangent_bundle_core I M).coord_change (achart H x) (achart H x') (chart_at H x x')) x :=
+    (in_coordinates I I' id (λ x, f x x) (λ x', mfderiv I I' (f x') x') x) x :=
 begin
   have h4f := hf.comp x (cont_mdiff_at_id.prod_mk cont_mdiff_at_id),
   have h3f := cont_mdiff_at_iff_cont_mdiff_at_nhds.mp (hf.of_le $ (self_le_add_left 1 m).trans hmn),
@@ -690,10 +724,7 @@ end
 We have to insert appropriate coordinate changes to make sense of this statement. -/
 lemma cont_mdiff_at.mfderiv' {f : M → M'}
   (hf : cont_mdiff_at I I' n f x) (hmn : m + 1 ≤ n) :
-  cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-  (λ x', (tangent_bundle_core I' M').coord_change (achart H' (f x')) (achart H' (f x))
-    (chart_at H' (f x') (f x')) ∘L mfderiv I I' f x' ∘L
-    (tangent_bundle_core I M).coord_change (achart H x) (achart H x') (chart_at H x x')) x :=
+  cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m (in_coordinates I I' id f (mfderiv I I' f) x) x :=
 begin
   have : cont_mdiff_at (I.prod I) I' n (λ x : M × M, f x.2) (x, x) :=
   cont_mdiff_at.comp (x, x) hf cont_mdiff_at_snd,
