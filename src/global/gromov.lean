@@ -52,27 +52,40 @@ begin
     exact ⟨⟨default, b⟩, ⟨trivial, h⟩⟩ }
 end
 
-/- The next two instances are evil but temporary
-We need to sort out whether we can drop `encodable` from localisation_data.lean
--/
-instance bar (ι : Type*) [encodable ι] : linear_order ι := sorry
-instance baz (ι : Type*) [encodable ι] : indexing ι := sorry
-
 set_option trace.filter_inst_type true
+
+lemma rel_mfld.ample.satisfies_h_principle_core
+  (h1 : R.ample) (h2 : is_open R)
+  (hA : is_closed A)
+  (hε_pos : ∀ (x : M), 0 < ε x)
+  (hε_cont : continuous ε)
+  (𝓕₀ : formal_sol R)
+  (h𝓕₀ : ∀ᶠ x near A, 𝓕₀.to_one_jet_sec.is_holonomic_at x)
+  (L : localisation_data I IX 𝓕₀.to_one_jet_sec.bs) :
+  ∃ F : ℕ → htpy_formal_sol R,
+    (∀ (n : ℕ), (F n) 0 = 𝓕₀) ∧
+    (∀ᶠ x near A, ∀ n t, F n t x = 𝓕₀ x) ∧
+    (∀ n t x, dist ((F n t).bs x) (𝓕₀.bs x) <ε x) ∧
+    (∀ n, L.index (n + 1)  = L.index n → F (n + 2) = F (n + 1)) ∧
+    (∀ n (x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1),
+      ((F (n + 1)) 1).to_one_jet_sec.is_holonomic_at x) ∧
+    ∀ n t (x ∉ range (L.φ $ L.index n)), F (n + 1) t x = F n t x :=
+begin
+  have cont_bs : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
+  rcases localisation_stability E I EX IX cont_bs L with ⟨η, η_pos, η_cont, hη⟩,
+  sorry
+end
 
 /-- The non-parametric version of Gromov's theorem -/
 lemma rel_mfld.ample.satisfies_h_principle (h1 : R.ample) (h2 : is_open R)
-  (hC₂ : is_closed A)
+  (hA : is_closed A)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   R.satisfies_h_principle A ε :=
 begin
   intros 𝓕₀ h𝓕₀,
-  have cont : continuous 𝓕₀.bs,
-  {
-    sorry },
+  have cont : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
   let L : localisation_data I IX 𝓕₀.bs := std_localisation_data E I EX IX cont,
-  letI := L.hι,
-  let π : ℕ → L.ι := indexing.from_nat,
+  let π := L.index,
 
   suffices : ∃ F : ℕ → htpy_formal_sol R,
     (∀ n, F n 0 = 𝓕₀) ∧
@@ -93,7 +106,7 @@ begin
       ext1 ⟨t, x⟩,
       dsimp [FF],
       rw hFπ n hn },
-    have loc_fin : locally_finite (λ i : L.ι, (univ ×ˢ range (L.φ i) : set $ ℝ × M)),
+    have loc_fin : locally_finite (λ i, (univ ×ˢ range (L.φ i) : set $ ℝ × M)),
     { rintros ⟨t, x⟩,
       rcases L.lf_φ x with ⟨s, s_in, hs⟩,
       refine ⟨univ ×ˢ s, _, _⟩,
@@ -177,8 +190,7 @@ begin
       change dist (G (t, x)).1.2 (𝓕₀.bs x) < ε x,
       rw ← (hn (t, x) _ le_rfl).eq_of_nhds,
       exact hFε (n (t, x)) t x } },
-  { rcases localisation_stability E I EX IX cont L with ⟨η, η_pos, η_cont, hη⟩,
-    sorry },
+  exact h1.satisfies_h_principle_core h2 hA hε_pos hε_cont 𝓕₀ h𝓕₀ L
 end
 
 variables
