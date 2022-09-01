@@ -64,7 +64,6 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 local notation `d` := finrank ℝ F
-local notation `smooth_on` := cont_diff_on ℝ ⊤
 
 /-
 FIXME: the definition below gets a prime because it clashes with a manifold definition

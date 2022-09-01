@@ -72,8 +72,7 @@ begin
   have : j = k ∨ j < k ↔ ↑j < k.succ,
   { cases j,
     cases k,
-    simp only [subtype.mk_eq_mk, subtype.mk_lt_mk, fin.coe_eq_cast_succ, fin.cast_succ_mk,
-             fin.succ_mk, ← le_iff_eq_or_lt, nat.lt_succ_iff.symm] },
+    simp [← le_iff_eq_or_lt, nat.lt_succ_iff.symm] },
   simp [this]
 end
 end
