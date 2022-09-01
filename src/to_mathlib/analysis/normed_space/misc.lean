@@ -175,6 +175,7 @@ linear_equiv.to_continuous_linear_equiv
   left_inv  := λ x, rfl,
   right_inv := λ x, rfl, }
 
+-- We shouldn't really need this lemma.
 @[simp] lemma self_equiv_l2_image_univ :
   self_equiv_l2 F '' univ = univ :=
 begin
@@ -261,10 +262,11 @@ end
 @[simp] lemma cont_diff_diffeomorph_to_nhd_inv (c : F) (r : ℝ) {n : ℕ∞} :
   cont_diff_on ℝ n (diffeomorph_to_nhd c r).symm (diffeomorph_to_nhd c r).target :=
 begin
-by_cases hr : 0 < r,
+  by_cases hr : 0 < r,
   { rw [diffeomorph_to_nhd, dif_pos hr],
-
-    sorry, },
+    refine cont_diff_on.comp_continuous_linear_map _ (self_equiv_l2 F : F →L[ℝ] l2 F),
+    refine (self_equiv_l2 F).symm.cont_diff.comp_cont_diff_on _,
+    exact inner_product_space.cont_diff_diffeomorph_to_nhd_inv _ _, },
   { rw [diffeomorph_to_nhd, dif_neg hr],
     exact cont_diff_on_id, },
 end
