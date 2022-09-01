@@ -421,7 +421,7 @@ sorry
   cont_diff_on ℝ n (diffeomorph_to_nhd c r).symm (diffeomorph_to_nhd c r).target :=
 sorry
 
-variables {M} (F)
+variables {M} (F) [model_with_corners.boundaryless IF]
 
 lemma nice_atlas'
   {ι : Type*} {s : ι → set M} (s_op : ∀ j, is_open $ s j) (cov : (⋃ j, s j) = univ)
