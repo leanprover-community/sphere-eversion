@@ -158,34 +158,113 @@ end
 
 end inner_product_space
 
-/-- This will be `inner_product_space.diffeomorph_to_nhd` *except* that since we do not
-assume an `inner_product_space` structure on `F` but merely a `normed_space` structure, we will
-need to equip (a type alias for) `F` with an `inner_product_space`, and then use the equivalence
-of norms in finite dimensions to obtain what we need.
+variables (F) [finite_dimensional ℝ F]
 
-Note that `range_diffeomorph_to_nhd_subset_ball` only asks for a subset condition rather than
-the `inner_product_space.range_diffeomorph_to_nhd_eq_ball`. One could demand this stronger
-property here too but it would be more work and we don't need it. -/
+/-- A type alias which we will endow with an `inner_product_space` structure whose underlying
+`module ℝ` structure coincides with the one that `F` already carries. -/
+def l2 := F
+
+instance : inner_product_space ℝ (l2 F) := sorry
+
+def self_equiv_l2 : F ≃L[ℝ] l2 F :=
+linear_equiv.to_continuous_linear_equiv
+{ to_fun    := id,
+  inv_fun   := id,
+  map_add'  := sorry,
+  map_smul' := sorry,
+  left_inv  := λ x, rfl,
+  right_inv := λ x, rfl, }
+
+@[simp] lemma self_equiv_l2_image_univ :
+  self_equiv_l2 F '' univ = univ :=
+begin
+  rw image_univ,
+  exact (self_equiv_l2 F : F ≃ l2 F).range_eq_univ,
+end
+
+variables {F}
+
+/-- A variant of `inner_product_space.diffeomorph_to_nhd` which provides a function satisfying the
+weaker condition `range_diffeomorph_to_nhd_subset_ball` but which applies to any `normed_space`.
+
+In fact one could demand this stronger property but it would be more work and we don't need it. -/
 def diffeomorph_to_nhd (c : F) (r : ℝ) :
   local_homeomorph F F :=
-sorry
+if hr : 0 < r then
+begin
+  let B := (self_equiv_l2 F) '' (ball c r),
+  let f := (self_equiv_l2 F).to_homeomorph,
+  have hB : is_open B := f.is_open_map _ is_open_ball,
+  have hc : self_equiv_l2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr),
+  let ε := classical.some (metric.is_open_iff.mp hB _ hc),
+  exact (f.trans_local_homeomorph (inner_product_space.diffeomorph_to_nhd
+    (self_equiv_l2 F c) ε)).trans_homeomorph f.symm,
+end
+else local_homeomorph.refl F
 
 @[simp] lemma diffeomorph_to_nhd_source (c : F) (r : ℝ) :
   (diffeomorph_to_nhd c r).source = univ :=
-sorry
+begin
+  by_cases hr : 0 < r,
+  { simp [diffeomorph_to_nhd, dif_pos hr], },
+  { rw [diffeomorph_to_nhd, dif_neg hr, local_homeomorph.refl_local_equiv,
+      local_equiv.refl_source], },
+end
 
-@[simp] lemma diffeomorph_to_nhd_apply_zero (c : F) {r : ℝ} (h : 0 < r) :
+@[simp] lemma diffeomorph_to_nhd_apply_zero (c : F) {r : ℝ} (hr : 0 < r) :
   diffeomorph_to_nhd c r 0 = c :=
-sorry
+begin
+  rw [diffeomorph_to_nhd, dif_pos hr],
+  let B := (self_equiv_l2 F) '' (ball c r),
+  let f := (self_equiv_l2 F).to_homeomorph,
+  have hB : is_open B := f.is_open_map _ is_open_ball,
+  have hc : self_equiv_l2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr),
+  let ε := classical.some (metric.is_open_iff.mp hB _ hc),
+  have hε : 0 < ε := classical.some (classical.some_spec (metric.is_open_iff.mp hB _ hc)),
+  change (f.trans_local_homeomorph (inner_product_space.diffeomorph_to_nhd
+    (self_equiv_l2 F c) ε)).trans_homeomorph f.symm 0 = c,
+  simp [hε],
+end
 
-@[simp] lemma range_diffeomorph_to_nhd_subset_ball (c : F) {r : ℝ} (h : 0 < r) :
+@[simp] lemma range_diffeomorph_to_nhd_subset_ball (c : F) {r : ℝ} (hr : 0 < r) :
   range (diffeomorph_to_nhd c r) ⊆ ball c r :=
-sorry
+begin
+  rw [diffeomorph_to_nhd, dif_pos hr, ← image_univ],
+  let B := (self_equiv_l2 F) '' (ball c r),
+  let f := (self_equiv_l2 F).to_homeomorph,
+  have hB : is_open B := f.is_open_map _ is_open_ball,
+  have hc : self_equiv_l2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr),
+  let ε := classical.some (metric.is_open_iff.mp hB _ hc),
+  have hε : 0 < ε := classical.some (classical.some_spec (metric.is_open_iff.mp hB _ hc)),
+  have hε' : ball (self_equiv_l2 F c) ε ⊆ B :=
+    classical.some_spec (classical.some_spec (metric.is_open_iff.mp hB _ hc)),
+  change f.symm ∘ (inner_product_space.diffeomorph_to_nhd (self_equiv_l2 F c) ε ∘ f) '' univ ⊆ _,
+  rw [image_comp f.symm _, image_comp _ f],
+  erw [self_equiv_l2_image_univ, image_univ,
+    inner_product_space.range_diffeomorph_to_nhd_eq_ball _ hε],
+  suffices : ball c r = f.symm '' (f '' ball c r), { rw this, exact monotone_image hε', },
+  rw ← image_comp,
+  simp,
+end
 
 @[simp] lemma cont_diff_diffeomorph_to_nhd (c : F) (r : ℝ) {n : ℕ∞} :
   cont_diff ℝ n $ diffeomorph_to_nhd c r :=
-sorry
+begin
+  by_cases hr : 0 < r,
+  { rw [diffeomorph_to_nhd, dif_pos hr],
+    exact (self_equiv_l2 F).symm.cont_diff.comp
+      ((inner_product_space.cont_diff_diffeomorph_to_nhd _ _).comp (self_equiv_l2 F).cont_diff), },
+  { rw [diffeomorph_to_nhd, dif_neg hr],
+    exact cont_diff_id, },
+end
 
 @[simp] lemma cont_diff_diffeomorph_to_nhd_inv (c : F) (r : ℝ) {n : ℕ∞} :
   cont_diff_on ℝ n (diffeomorph_to_nhd c r).symm (diffeomorph_to_nhd c r).target :=
-sorry
+begin
+by_cases hr : 0 < r,
+  { rw [diffeomorph_to_nhd, dif_pos hr],
+
+    sorry, },
+  { rw [diffeomorph_to_nhd, dif_neg hr],
+    exact cont_diff_on_id, },
+end
