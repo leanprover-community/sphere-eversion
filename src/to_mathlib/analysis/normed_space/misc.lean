@@ -4,6 +4,8 @@ import analysis.calculus.affine_map
 variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
 open set function metric affine_map
+open_locale classical
+noncomputable theory
 
 -- TODO Generalise + move
 @[simp] lemma range_affine_equiv_ball {p c : F} {s r : ℝ} (hr : 0 < r) :
@@ -27,78 +29,143 @@ lemma cont_diff_homothety {n : ℕ∞} (c : F) (r : ℝ) : cont_diff ℝ n (homo
 @[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : F) r) : ∥(x : F)∥ < r :=
 by { cases x with x hx, simpa using hx, }
 
-open_locale classical
+lemma maps_to_homothety_ball (c : F) {r : ℝ} (hr : 0 < r) :
+  maps_to (λ y, homothety c r⁻¹ y -ᵥ c) (ball c r) (ball 0 1) :=
+begin
+  intros y hy,
+  replace hy : r⁻¹ * ∥y - c∥ < 1,
+  { rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel hr.ne.symm, mul_one, one_mul],
+    simpa [dist_eq_norm] using hy, },
+  simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel, mem_ball_zero_iff,
+    norm_smul, real.norm_eq_abs, abs_eq_self.2 (inv_pos.mpr hr).le, hy],
+end
 
-/- TODO Drop the below. It is superceded by `diffeomorph_to_nhd`.
+lemma local_equiv.range_eq_target_of_source_eq_univ {α β : Type*}
+  (e : local_equiv α β) (h : e.source = univ) :
+  range e = e.target :=
+by { rw [← image_univ, ← h], exact e.image_source_eq_target, }
+
+namespace inner_product_space
+
+variables {E : Type*} [inner_product_space ℝ E]
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
 centred at a point `c` and sending `0` to `c`.
 
 The values for `r ≤ 0` are junk.
 
-TODO: split this up. We should really prove that an affine equiv is a diffeomorphism, that
-`homeomorph_unit_ball` is a smooth open embedding, and that composition of a smooth open embedding
-with a diffeomorphism is a smooth open embedding. -/
-def open_smooth_embedding_to_ball (c : E) (r : ℝ) :
-  open_smooth_embedding 𝓘(ℝ, E) E 𝓘(ℝ, E) E :=
+TODO Refactor this: clearly it should really be built along the following lines:
+```
+variables (c : F) {r : ℝ} (hr : 0 < r)
+include hr
+
+def ball_homeomorph_ball : ball (0 : F) 1 ≃ₜ ball c r :=
+{ to_fun := λ x, ⟨c +ᵥ homothety (0 : F) r (x : F), by admit⟩,
+  inv_fun := λ y, ⟨(homothety c r⁻¹ y) -ᵥ c, by admit⟩,
+  left_inv := by admit,
+  right_inv := by admit,
+  continuous_to_fun := by admit,
+  continuous_inv_fun := by admit, }
+
+-- Not quite the right type but nearly there:
+#check (homeomorph_unit_ball.trans (ball_homeomorph_ball c hr)).to_local_homeomorph
+```
+ -/
+def diffeomorph_to_nhd (c : E) (r : ℝ) :
+  local_homeomorph E E :=
 if hr : 0 < r then
 { to_fun := λ x, c +ᵥ homothety (0 : E) r (homeomorph_unit_ball x),
   inv_fun := (λ y, if hy : y ∈ ball (0 : E) 1 then homeomorph_unit_ball.symm ⟨y, hy⟩ else 0) ∘
     (λ y, (homothety c r⁻¹ y) -ᵥ c),
-  left_inv' := λ x,
+  source := univ,
+  target := ball c r,
+  open_source := is_open_univ,
+  open_target := is_open_ball,
+  map_source' := λ x _,
   begin
-    simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
-      hr.ne.symm.is_unit.inv_mul_cancel],
+    have hx : ∥(homeomorph_unit_ball x : E)∥ < 1,
+    { rw ← dist_zero_right, exact (homeomorph_unit_ball x).property, },
+    rw [← mul_lt_mul_left hr, mul_one] at hx,
+    simp only [homothety_apply, vsub_eq_sub, sub_zero, vadd_eq_add, add_zero, mem_ball,
+      dist_self_add_left, norm_smul, real.norm_eq_abs, abs_eq_self.2 hr.le, hx],
   end,
-  right_inv' :=
+  map_target' := λ x h, mem_univ _,
+  left_inv' := λ x, by simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc,
+    ← smul_assoc, hr.ne.symm.is_unit.inv_mul_cancel],
+  right_inv' := λ y hy,
   begin
-    rintros y ⟨x, rfl⟩,
-    simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
-      hr.ne.symm.is_unit.inv_mul_cancel],
+    replace hy : r⁻¹ * ∥y - c∥ < 1,
+    { rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel hr.ne.symm, mul_one, one_mul],
+      simpa [dist_eq_norm] using hy, },
+    simp [homothety_apply, norm_smul, abs_eq_self.2 hr.le, ← smul_assoc, mul_inv_cancel hr.ne.symm,
+      hy],
   end,
-  open_map :=
+  continuous_to_fun := continuous_iff_continuous_on_univ.mp $ continuous_const.add $
+    (homothety_continuous 0 r).comp $ continuous_induced_dom.comp homeomorph_unit_ball.continuous,
+  continuous_inv_fun :=
   begin
-    change is_open_map ((λ x, c + homothety (0 : E) r x) ∘ (coe : ball (0 : E) 1 → E) ∘ _),
-    refine is_open_map.comp _ (is_open_ball.is_open_map_subtype_coe.comp
-      homeomorph_unit_ball.is_open_map),
-    exact (is_open_map_add_left c).comp (homothety_is_open_map 0 r hr.ne.symm),
-  end,
-  smooth_to := (cont_diff_const.add $ (cont_diff_homothety 0 r).comp
-    cont_diff_homeomorph_unit_ball).cont_mdiff,
-  smooth_inv := cont_diff_on.cont_mdiff_on
-  begin
-    change cont_diff_on ℝ ⊤ _ (range ((λ (x : ball (0 : E) 1), c +ᵥ homothety (0 : E) r (x : E)) ∘ _)),
-    have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
-    rw [range_comp, this, image_univ, range_affine_equiv_ball hr, add_zero],
-    simp_rw [mul_one],
-    refine cont_diff_on.comp (cont_diff_on_homeomorph_unit_ball_symm (λ y hy, dif_pos hy))
-      (cont_diff.cont_diff_on _) (λ y hy, _),
+    refine continuous_on.comp _ (continuous.continuous_on _) (maps_to_homothety_ball c hr),
+    { rw continuous_on_iff_continuous_restrict,
+      convert homeomorph_unit_ball.symm.continuous, ext, simp, },
     { simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel],
-      exact cont_diff_const.smul (cont_diff_id.sub cont_diff_const), },
-    { rw [mem_ball, dist_eq_norm, ← mul_one r] at hy,
-      simpa [homothety_apply, norm_smul, abs_eq_self.mpr hr.le] using (inv_mul_lt_iff hr).mpr hy, },
+      exact continuous_const.smul (continuous_id.sub continuous_const), },
   end }
-else  open_smooth_embedding.id 𝓘(ℝ, E) E
+else local_homeomorph.refl E
 
-@[simp] lemma open_smooth_embedding_to_ball_apply_zero (c : E) {r : ℝ} (h : 0 < r) :
-  open_smooth_embedding_to_ball c r 0 = c :=
-by simp [open_smooth_embedding_to_ball, h]
-
-@[simp] lemma range_open_smooth_embedding_to_ball (c : E) {r : ℝ} (h : 0 < r) :
-  range (open_smooth_embedding_to_ball c r) = ball c r :=
+@[simp] lemma diffeomorph_to_nhd_source (c : E) (r : ℝ) :
+  (diffeomorph_to_nhd c r).source = univ :=
 begin
-  simp only [open_smooth_embedding_to_ball, h, not_le, dif_neg, open_smooth_embedding.coe_mk],
-  change range ((λ (x : ball (0 : E) 1), c +ᵥ homothety (0 : E) r (x : E)) ∘ _) = _,
-  have : range (homeomorph_unit_ball : E → ball (0 : E) 1) = univ := range_eq_univ _,
-  rw [range_comp, this, image_univ, range_affine_equiv_ball h, add_zero, mul_one],
+  by_cases hr : 0 < r,
+  { rw [diffeomorph_to_nhd, dif_pos hr], },
+  { rw [diffeomorph_to_nhd, dif_neg hr, local_homeomorph.refl_local_equiv,
+      local_equiv.refl_source], },
 end
--/
 
-/-- This will be a homothety applied to `homeomorph_unit_ball` *except* that since we do not
+@[simp] lemma diffeomorph_to_nhd_apply_zero (c : E) {r : ℝ} (hr : 0 < r) :
+  diffeomorph_to_nhd c r 0 = c :=
+by simp only [diffeomorph_to_nhd, dif_pos hr, vadd_eq_add, local_homeomorph.mk_coe,
+    local_equiv.coe_mk, coe_homeomorph_unit_ball_apply_zero, homothety_apply_same, add_zero]
+
+@[simp] lemma range_diffeomorph_to_nhd_eq_ball (c : E) {r : ℝ} (hr : 0 < r) :
+  range (diffeomorph_to_nhd c r) = ball c r :=
+by erw [local_equiv.range_eq_target_of_source_eq_univ _ (diffeomorph_to_nhd_source c r),
+    diffeomorph_to_nhd, dif_pos hr]
+
+@[simp] lemma cont_diff_diffeomorph_to_nhd (c : E) (r : ℝ) {n : ℕ∞} :
+  cont_diff ℝ n $ diffeomorph_to_nhd c r :=
+begin
+  by_cases hr : 0 < r,
+  { rw [diffeomorph_to_nhd, dif_pos hr],
+    exact cont_diff_const.add ((cont_diff_homothety 0 r).comp cont_diff_homeomorph_unit_ball), },
+  { rw [diffeomorph_to_nhd, dif_neg hr],
+    exact cont_diff_id, },
+end
+
+@[simp] lemma cont_diff_diffeomorph_to_nhd_inv (c : E) (r : ℝ) {n : ℕ∞} :
+  cont_diff_on ℝ n (diffeomorph_to_nhd c r).symm (diffeomorph_to_nhd c r).target :=
+begin
+  by_cases hr : 0 < r,
+  { rw [diffeomorph_to_nhd, dif_pos hr],
+    have aux : ball c r ⊆ (λ (x : E), (λ (y : E), homothety c r⁻¹ y -ᵥ c) x) ⁻¹' (ball 0 1) :=
+      maps_to_homothety_ball c hr,
+    refine cont_diff_on.comp _ (cont_diff.cont_diff_on _) aux,
+    { exact cont_diff_on_homeomorph_unit_ball_symm (λ y hy, dif_pos hy), },
+    { simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel],
+      exact cont_diff_const.smul (cont_diff_id.sub cont_diff_const), }, },
+  { rw [diffeomorph_to_nhd, dif_neg hr],
+    exact cont_diff_on_id, },
+end
+
+end inner_product_space
+
+/-- This will be `inner_product_space.diffeomorph_to_nhd` *except* that since we do not
 assume an `inner_product_space` structure on `F` but merely a `normed_space` structure, we will
 need to equip (a type alias for) `F` with an `inner_product_space`, and then use the equivalence
-of norms in finite dimensions to obtain what we need. Note that
-`range_diffeomorph_to_nhd_subset_ball` only asks for a subset condition. -/
+of norms in finite dimensions to obtain what we need.
+
+Note that `range_diffeomorph_to_nhd_subset_ball` only asks for a subset condition rather than
+the `inner_product_space.range_diffeomorph_to_nhd_eq_ball`. One could demand this stronger
+property here too but it would be more work and we don't need it. -/
 def diffeomorph_to_nhd (c : F) (r : ℝ) :
   local_homeomorph F F :=
 sorry
