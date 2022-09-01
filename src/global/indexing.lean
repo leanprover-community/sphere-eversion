@@ -127,17 +127,17 @@ which gives the new style assumption by:
 lemma locally_finite.exists_forall_eventually_of_indexing
   {α X ι : Type*} [topological_space X] [linear_order ι] [indexing ι] {f : ℕ → X → α}
   {V : ι → set X} (hV : locally_finite V)
-  (h : ∀ n : ℕ, ∀ x ∉ V n, f (n+1) x = f n x)
-  (h' : ∀ n : ℕ, ((n+1 : ℕ) : ι) = n → f (n + 2) = f (n + 1)) :
+  (h : ∀ n : ℕ, ∀ x ∉ V ((n + 1) : ℕ), f (n + 1) x = f n x)
+  (h' : ∀ n : ℕ, ((n+1 : ℕ) : ι) = n → f (n + 1) = f n) :
   ∃ (F : X → α), ∀ (x : X), ∀ᶠ (n : ℕ) in filter.at_top, f n =ᶠ[𝓝 x] F :=
 begin
   let π :  ℕ → ι := indexing.from_nat,
   choose U hUx hU using hV,
   choose i₀ hi₀ using λ x, (hU x).bdd_above,
   let n₀ : X → ℕ := indexing.to_nat ∘ i₀,
-  have key : ∀ x, ∀ (n > n₀ x) (y ∈ U x), f n y = f (n₀ x + 1) y,
+  have key : ∀ {x} {n}, n ≥ n₀ x → ∀ {y}, y ∈ U x → f n y = f (n₀ x) y,
   { intros x n hn,
-    rcases le_iff_exists_add.mp (nat.lt_iff_add_one_le.mp hn) with ⟨k, rfl⟩, clear hn,
+    rcases le_iff_exists_add.mp hn with ⟨k, rfl⟩, clear hn,
     intros y hy,
     induction k with k hk,
     { simp },
@@ -150,22 +150,17 @@ begin
           rw ← indexing.from_to (i₀ x),
           exact indexing.mono_from le_self_add },
         apply h,
-        rintro (hy' : y ∈ V (π (n₀ x + 1 + k))),
+        rintro (hy' : y ∈ V (π (n₀ x + k + 1))),
         have := hi₀ x ⟨y, ⟨hy', hy⟩⟩, clear hy hy',
-        rw (n₀ x).succ_add k at this,
         exact lt_irrefl _ (lt_of_le_of_lt this ineq) },
-      { rw (n₀ x).succ_add k,
-        erw [← (h' _ H.symm)],
-        congr' 1,
-        ring } } },
-  refine ⟨λ x, f (n₀ x + 1) x, λ x, _⟩,
-  change ∀ᶠ (n : ℕ) in at_top, f n =ᶠ[𝓝 x] λ (y : X), f (n₀ y + 1) y,
+      { erw [← (h' _ H.symm)],
+        refl } } },
+  refine ⟨λ x, f (n₀ x) x, λ x, _⟩,
+  change ∀ᶠ (n : ℕ) in at_top, f n =ᶠ[𝓝 x] λ (y : X), f (n₀ y) y,
   apply (eventually_gt_at_top (n₀ x)).mono (λ n hn, _),
   apply mem_of_superset (hUx x) (λ y hy, _),
-  change f n y = f (n₀ y + 1) y,
-  calc f n y = f (n₀ x + 1) y : key _ _ hn _ hy
-  ... = f (max (n₀ x + 1) (n₀ y + 1)) y : (key _ _ _ _ hy).symm
-  ... = f (n₀ y + 1) y : key _ _ _ _ (mem_of_mem_nhds $ hUx y),
-  linarith [le_max_left (n₀ x + 1) (n₀ y + 1)],
-  linarith [le_max_right (n₀ x + 1) (n₀ y + 1)],
+  change f n y = f (n₀ y) y,
+  calc f n y = f (n₀ x) y : key hn.le hy
+  ... = f (max (n₀ x) (n₀ y)) y : (key (le_max_left _ _) hy).symm
+  ... = f (n₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
 end
