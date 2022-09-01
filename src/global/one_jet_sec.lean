@@ -66,7 +66,7 @@ lemma smooth_eta (F : one_jet_sec I M I' M') : smooth I ((I.prod I').prod 𝓘(�
 F.smooth
 
 lemma smooth_bs (F : one_jet_sec I M I' M') : smooth I I' F.bs :=
-(smooth_snd.comp $ basic_smooth_vector_bundle_core.smooth_proj _).comp F.smooth
+(basic_smooth_vector_bundle_core.smooth_proj _).snd.comp F.smooth
 
 /-- A section of J¹(M, M') is holonomic at (x : M) if its linear map part is the derivative
 of its base map at x. -/
@@ -148,7 +148,12 @@ protected lemma smooth (S : family_one_jet_sec I M I' M' J N) :
 
 lemma smooth_bs (S : family_one_jet_sec I M I' M' J N) :
   smooth (J.prod I) I' (λ p : N × M, S.bs p.1 p.2) :=
-(smooth_snd.comp $ basic_smooth_vector_bundle_core.smooth_proj _).comp S.smooth
+(basic_smooth_vector_bundle_core.smooth_proj _).snd.comp S.smooth
+
+lemma _root_.smooth_at.family_one_jet_sec_bs {S : family_one_jet_sec I M I' M' J N}
+  {f : N' → N} {g : N' → M} {z : N'} (hf : smooth_at J' J f z) (hg : smooth_at J' I g z) :
+  smooth_at J' I' (λ z, S.bs (f z) (g z)) z :=
+(S.smooth_bs _).comp z (hf.prod_mk hg)
 
 lemma smooth_coe_bs (S : family_one_jet_sec I M I' M' J N) {p : N} : smooth I I' (S.bs p) :=
 (S p).smooth_bs
@@ -173,8 +178,7 @@ def uncurry (S : family_one_jet_sec I M I' M' IP P) : one_jet_sec (IP.prod I) (P
       refine smooth_at_id.one_jet_bundle_mk (S.smooth_bs y) _,
       have : smooth_at ((IP.prod I).prod (IP.prod I)) I'
         (function.uncurry (λ x z : P × M, S.bs z.1 x.2)) (y, y),
-      { exact S.smooth_bs.comp ((smooth_fst.comp smooth_snd).prod_mk $ smooth_snd.comp smooth_fst)
-          (y, y) },
+      { exact S.smooth_bs.comp (smooth_snd.fst.prod_mk smooth_fst.snd) (y, y) },
       apply cont_mdiff_at.mfderiv'' (λ x z : P × M, S.bs z.1 x.2) this le_top },
     { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext }
   end }
@@ -186,7 +190,7 @@ begin
   simp_rw [S.uncurry_ϕ, mfderiv_snd],
   congr' 1,
   convert mfderiv_comp p
-    ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable le_top p.1)
+    ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable p.1)
     (smooth_fst.mdifferentiable p),
   simp_rw [mfderiv_fst],
 end

@@ -24,7 +24,7 @@ We prove
 noncomputable theory
 
 open filter set equiv basic_smooth_vector_bundle_core
-open_locale manifold
+open_locale manifold topological_space
 
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
@@ -197,7 +197,6 @@ section maps
 
 variables {M M'}
 
-
 variables {I I' J J'}
 
 /-- The constructor of one_jet_bundle, in case `sigma.mk` will not give the right type. -/
@@ -213,11 +212,7 @@ variables {I I' J J'}
 
 lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N}
   (hf : smooth_at J I f n) (hg : smooth_at J I' g n)
-  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E')
-    (λ x, ((tangent_bundle_core I' M').coord_change (achart H' (g x)) (achart H' (g n))
-      (chart_at H' (g x) (g x))).comp $ (ϕ x).comp $
-    (tangent_bundle_core I M).coord_change (achart H (f n)) (achart H (f x))
-    (chart_at H (f n) (f x))) n) :
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n) :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
     (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n :=
 begin
@@ -228,24 +223,28 @@ begin
     cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space hϕ
 end
 
+lemma smooth_at_one_jet_bundle {f : N → one_jet_bundle I M I' M'} {n : N} :
+  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f n ↔
+  smooth_at J I (λ x, (f x).1.1) n ∧ smooth_at J I' (λ x, (f x).1.2) n ∧
+  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
+    (λ x, (f x).2) n) n :=
+begin
+  refine ⟨λ h, ⟨_, _, _⟩, λ h, _⟩,
+  { exact ((basic_smooth_vector_bundle_core.smooth_proj _).fst _).comp n h },
+  { exact ((basic_smooth_vector_bundle_core.smooth_proj _).snd _).comp n h },
+  { rw [smooth_at, basic_smooth_vector_bundle_core.cont_mdiff_at_iff_target, ← smooth_at] at h,
+    have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
+    simp_rw [function.comp, one_jet_bundle_ext_chart_at] at h2,
+    exact h2 },
+  { convert h.1.one_jet_bundle_mk h.2.1 h.2.2, ext x; refl }
+end
+
 lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N} :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
     (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n ↔
   smooth_at J I f n ∧ smooth_at J I' g n ∧
-  smooth_at J 𝓘(𝕜, E →L[𝕜] E')
-    (λ x, ((tangent_bundle_core I' M').coord_change (achart H' (g x)) (achart H' (g n))
-      (chart_at H' (g x) (g x))).comp $ (ϕ x).comp $
-    (tangent_bundle_core I M).coord_change (achart H (f n)) (achart H (f x))
-    (chart_at H (f n) (f x))) n :=
-begin
-  refine ⟨λ h, ⟨_, _, _⟩, λ h, h.1.one_jet_bundle_mk h.2.1 h.2.2⟩,
-  { exact (smooth_fst.comp (basic_smooth_vector_bundle_core.smooth_proj _) _).comp n h },
-  { exact (smooth_snd.comp (basic_smooth_vector_bundle_core.smooth_proj _) _).comp n h },
-  rw [smooth_at, basic_smooth_vector_bundle_core.cont_mdiff_at_iff_target] at h,
-  have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
-  simp_rw [function.comp, one_jet_bundle_ext_chart_at] at h2,
-  exact h2,
-end
+  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n :=
+smooth_at_one_jet_bundle
 
 variables (I I')
 /-- The one-jet extension of a function -/
@@ -280,6 +279,29 @@ lemma smooth.one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
 λ x, (hf x).smooth_at.one_jet_ext
 
+lemma continuous_at.in_coordinates_comp {f : N → M} {g : N → M'} {h : N → N'}
+  {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
+  (hg : continuous_at g x₀) :
+  in_coordinates I J' f h (λ x, ϕ' x ∘L ϕ x) x₀ =ᶠ[𝓝 x₀]
+  λ x, in_coordinates I' J' g h ϕ' x₀ x ∘L in_coordinates I I' f g ϕ x₀ x :=
+begin
+  refine eventually_of_mem (hg.preimage_mem_nhds $
+    (achart H' (g x₀)).1.open_source.mem_nhds $ mem_achart_source H' (g x₀)) (λ x hx, _),
+  ext v,
+  simp_rw [function.comp_apply, in_coordinates, continuous_linear_map.comp_apply],
+  congr' 2,
+  symmetry,
+  exact (tangent_bundle_core I' M').coord_change_comp_eq_self' (mem_achart_source H' (g x)) hx _
+end
+
+lemma smooth_at.clm_comp_in_coordinates {f : N → M} {g : N → M'} {h : N → N'}
+  {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {n : N}
+  (hg : continuous_at g n)
+  (hϕ' : smooth_at J 𝓘(𝕜, E' →L[𝕜] F') (in_coordinates I' J' g h ϕ' n) n)
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n) :
+  smooth_at J (𝓘(𝕜, E →L[𝕜] F')) (in_coordinates I J' f h (λ n, ϕ' n ∘L ϕ n) n) n :=
+(hϕ'.clm_comp hϕ).congr_of_eventually_eq (hg.in_coordinates_comp)
+
 variables (I')
 lemma smooth.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
   {h : ∀ x : N', one_jet_space I' J (f2 x, f3 x)} {g : ∀ x : N', one_jet_space I I' (f1 x, f2 x)}
@@ -292,14 +314,7 @@ begin
   specialize hh x,
   specialize hg x,
   rw [← smooth_at, smooth_at_one_jet_bundle_mk] at hh hg ⊢,
-  refine ⟨hg.1, hh.2.1, (hh.2.2.clm_comp hg.2.2).congr_of_eventually_eq _⟩,
-  refine eventually_of_mem (hg.2.1.cont_mdiff_at.continuous_at.preimage_mem_nhds $
-    (achart H' (f2 x)).1.open_source.mem_nhds $ mem_achart_source H' (f2 x)) (λ x' hx', _),
-  ext v,
-  simp_rw [function.comp_apply, continuous_linear_map.comp_apply],
-  congr' 2,
-  symmetry,
-  exact (tangent_bundle_core I' M').coord_change_comp_eq_self' (mem_achart_source H' (f2 x')) hx' _
+  exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_in_coordinates hg.2.1.continuous_at hg.2.2⟩
 end
 
 variables {I'}
@@ -314,7 +329,7 @@ begin
   specialize hϕ x,
   specialize hϕ' x,
   rw [← smooth_at, smooth_at_one_jet_bundle_mk] at hϕ hϕ' ⊢,
-  simp_rw [continuous_linear_map.add_comp, continuous_linear_map.comp_add],
+  simp_rw [in_coordinates, continuous_linear_map.add_comp, continuous_linear_map.comp_add],
   exact ⟨hϕ.1, hϕ.2.1, hϕ.2.2.add hϕ'.2.2⟩
 end
 
@@ -335,8 +350,8 @@ lemma smooth_bundle_snd :
 begin
   intro x,
   refine smooth_at.one_jet_bundle_mk _ _ _,
-  { exact smooth_snd.comp (smooth_fst.comp (basic_smooth_vector_bundle_core.smooth_proj _)) x },
-  { exact smooth_snd.comp (basic_smooth_vector_bundle_core.smooth_proj _) x },
+  { exact (basic_smooth_vector_bundle_core.smooth_proj _).fst.snd x },
+  { exact (basic_smooth_vector_bundle_core.smooth_proj _).snd x },
   sorry
 end
 

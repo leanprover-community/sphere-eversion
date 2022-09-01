@@ -265,8 +265,7 @@ begin
     rw show uncurry (λ s, (𝓕 (1, s)).bs) = prod.snd ∘ (one_jet_bundle.proj _ _ _ _) ∘
                                             (λ (p : P × M), 𝓕.reindex j p.1 p.2),
     by { ext, refl },
-    exact smooth_snd.comp ((basic_smooth_vector_bundle_core.smooth_proj _).comp
-                           ((𝓕.reindex j).to_family_one_jet_sec.smooth)) },
+    exact (𝓕.reindex j).to_family_one_jet_sec.smooth_bs },
   { apply h₃.mono,
     intros x hx,
     simp_rw [one_jet_sec.bs_eq, formal_sol.to_one_jet_sec_coe, hx, family_one_jet_sec.bs_eq,
@@ -570,7 +569,23 @@ def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' 
 { bs := λ p x, (S p.1).bs (p.2, x),
   ϕ := λ p x, (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x,
   smooth' := begin
-    sorry
+    rintro ⟨⟨t, s⟩, x⟩,
+    refine smooth_at_snd.one_jet_bundle_mk (S.smooth_bs.comp smooth_prod_assoc _) _,
+    have h1 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E')
+      (in_coordinates (IP.prod I) I' (λ (p : (N × P) × M), (p.1.2, p.2))
+        (λ (p : (N × P) × M), (S p.1.1).bs (p.1.2, p.2))
+        (λ (p : (N × P) × M), ((S p.1.1).ϕ (p.1.2, p.2))) ((t, s), x)) ((t, s), x),
+    { apply (smooth_at_one_jet_bundle.mp $
+        smooth_at.comp _ (by exact S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2 },
+    have h2 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
+      (in_coordinates I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
+        (λ (p : (N × P) × M),
+          (mfderiv I (IP.prod I) (λ (x : M), (p.1.2, x)) p.snd)) ((t, s), x)) ((t, s), x),
+    { apply cont_mdiff_at.mfderiv''' (λ (p : (N × P) × M) (x : M), (p.1.2, x)) prod.snd
+        (smooth_at_fst.fst.snd.prod_mk smooth_at_snd :
+          smooth_at (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
+        (smooth_at_snd : smooth_at ((J.prod IP).prod I) _ _ _) le_top },
+    exact h1.clm_comp_in_coordinates (continuous_at_fst.snd.prod continuous_at_snd) h2
   end }
 
 lemma family_one_jet_sec.curry_bs (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) (p : N × P)
@@ -596,7 +611,8 @@ lemma formal_sol.eq_iff {F₁ F₂ : formal_sol R} {x : M} :
 by { simp_rw [sigma.ext_iff, formal_sol.fst_eq, heq_iff_eq, prod.ext_iff, eq_self_iff_true,
   true_and], refl }
 
-lemma family_one_jet_sec.is_holonomic_at_curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)
+lemma family_one_jet_sec.is_holonomic_at_curry
+  (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)
   {t : N} {s : P} {x : M} (hS : (S t).is_holonomic_at (s, x)) :
   (S.curry (t, s)).is_holonomic_at x :=
 begin
