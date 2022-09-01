@@ -112,7 +112,9 @@ begin
     (L.index (n + 1)  = L.index n → Fnp1 = Fn) ∧
      ∀ t, ∀ x ∉ range (L.φ $ L.index $ n+1), Fnp1 t x = Fn t x,
   apply exists_by_induction' P Q,
-  {
+  { dsimp only [P],
+    let 𝓕 := (𝓕₀.to_one_jet_sec.localize (L.ψ $ L.j 0)
+              (L.φ 0) ((L.h₃ 0).trans $ image_subset_range _ _)).loc,
     sorry },
   {
     sorry },
