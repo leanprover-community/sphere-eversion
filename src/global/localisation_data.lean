@@ -21,11 +21,11 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 
 /-- Definition `def:localisation_data`. -/
 structure localisation_data (f : M → M') :=
-(ι ι' : Type*)
-(hι : encodable ι)
-(φ : ι → open_smooth_embedding (model_with_corners_self 𝕜 E) E I M)
+(ι' : Type*)
+(N : ℕ)
+(φ : index_type N → open_smooth_embedding (model_with_corners_self 𝕜 E) E I M)
 (ψ : ι' → open_smooth_embedding (model_with_corners_self 𝕜 E') E' I' M')
-(j : ι → ι')
+(j : index_type N → ι')
 (h₁ : (⋃ i, (φ i) '' (ball (0:E) 1)) = univ)
 (h₂ : (⋃ i', (ψ i') '' (ball (0:E') 1)) = univ)
 (h₃ : ∀ i, range (f ∘ (φ i)) ⊆ (ψ (j i)) '' (ball (0:E') 1))
@@ -35,6 +35,8 @@ structure localisation_data (f : M → M') :=
 namespace localisation_data
 
 variables {f : M → M'} {I I'} (ld : localisation_data I I' f)
+
+def index (n : ℕ) := index_from_nat ld.N n
 
 abbreviation ψj := ld.ψ ∘ ld.j
 
@@ -86,9 +88,8 @@ nice_atlas E I
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
 def std_localisation_data : localisation_data I I' f :=
-{ ι := index_type (nice_atlas_domain E I E' I' hf).some,
+{ N := (nice_atlas_domain E I E' I' hf).some,
   ι' := index_type (nice_atlas_target E' I' M').some,
-  hι := index_type_encodable _,
   φ := (nice_atlas_domain E I E' I' hf).some_spec.some,
   ψ := target_charts E' I' M',
   j := λ i, ((nice_atlas_domain E I E' I' hf).some_spec.some_spec.1 i).some,

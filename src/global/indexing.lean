@@ -79,6 +79,8 @@ nat.cases_on n nat.linear_order (λ _, fin.linear_order)
 instance (n : ℕ) : indexing (index_type n) :=
 nat.cases_on n nat.indexing (λ _, fin.indexing _)
 
+def index_from_nat (N n : ℕ) : index_type N := indexing.from_nat n
+
 def index_type_encodable : Π n : ℕ, encodable (index_type n)
 | 0 := nat.encodable
 | (n + 1) := fin.encodable (n + 1)
