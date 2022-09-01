@@ -387,12 +387,16 @@ variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
   [normed_add_comm_group EM] [normed_space 𝕜 EM]
   [normed_add_comm_group EY] [normed_space 𝕜 EY]
   [normed_add_comm_group EN] [normed_space 𝕜 EN]
-  [topological_space X] [charted_space EX X] [smooth_manifold_with_corners 𝓘(𝕜, EX) X]
-  [topological_space M] [charted_space EM M] [smooth_manifold_with_corners 𝓘(𝕜, EM) M] [t2_space M]
-  [metric_space Y]      [charted_space EY Y] [smooth_manifold_with_corners 𝓘(𝕜, EY) Y] [proper_space Y]
-  [metric_space N]      [charted_space EN N] [smooth_manifold_with_corners 𝓘(𝕜, EN) N]
-  (φ : open_smooth_embedding 𝓘(𝕜, EX) X 𝓘(𝕜, EM) M)
-  (ψ : open_smooth_embedding 𝓘(𝕜, EY) Y 𝓘(𝕜, EN) N)
+  {HX : Type*} [topological_space HX] {IX : model_with_corners 𝕜 EX HX}
+  {HY : Type*} [topological_space HY] {IY : model_with_corners 𝕜 EY HY}
+  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
+  {HN : Type*} [topological_space HN] {IN : model_with_corners 𝕜 EN HN}
+  [topological_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
+  [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M] [t2_space M]
+  [metric_space Y]      [charted_space HY Y] [smooth_manifold_with_corners IY Y] [proper_space Y]
+  [metric_space N]      [charted_space HN N] [smooth_manifold_with_corners IN N]
+  (φ : open_smooth_embedding IX X IM M)
+  (ψ : open_smooth_embedding IY Y IN N)
   (f : M → N) (g : X → Y)
   [decidable_pred (∈ range φ)]
 
@@ -414,9 +418,9 @@ by simp [update]
 /-- This is lemma `lem:updating` in the blueprint. -/
 lemma nice_update_of_eq_outside_compact
   {K : set X} (hK : is_compact K)
-  (hf : smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) f) (hf' : f '' range φ ⊆ range ψ)
-  (hg : smooth 𝓘(𝕜, EX) 𝓘(𝕜, EY) g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
-  smooth 𝓘(𝕜, EM) 𝓘(𝕜, EN) (update φ ψ f g) ∧
+  (hf : smooth IM IN f) (hf' : f '' range φ ⊆ range ψ)
+  (hg : smooth IX IY g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
+  smooth IM IN (update φ ψ f g) ∧
   (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε), ∃ (η > (0 : ℝ)),
     (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) → ∀ m, dist (update φ ψ f g m) (f m) < ε m) :=
 begin
