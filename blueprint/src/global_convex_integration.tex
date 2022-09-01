@@ -562,8 +562,11 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   \uses{lem:param_trick}
-  This obviously follows from \cref{lem:param_trick}.
+  By \cref{lem:param_trick} we can turn a formal solution of $\Rel$ into a formal solution of
+  $\Rel^P$, so we get a homotopy to a holonomic formal solution. We can turn this homotopy back to
+  a homotopy of the original formal solution.
 \end{proof}
 
 

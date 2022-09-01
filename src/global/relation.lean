@@ -626,9 +626,21 @@ begin
   refl,
 end
 
+lemma family_one_jet_sec.curry_mem (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)
+  {p : N × P} {x : M} (hR : S p.1 (p.2, x) ∈ R.relativize IP P) :
+  S.curry p x ∈ R :=
+begin
+  simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd, one_jet_sec.coe_apply,
+    map_left] at hR ⊢,
+  convert hR,
+  ext v,
+  simp_rw [S.curry_ϕ']
+end
+
+
 def family_formal_sol.curry (S : family_formal_sol J N (R.relativize IP P)) :
   family_formal_sol (J.prod IP) (N × P) R :=
-⟨S.to_family_one_jet_sec.curry, sorry⟩
+⟨S.to_family_one_jet_sec.curry, λ p x, S.to_family_one_jet_sec.curry_mem S.is_sol⟩
 
 lemma family_formal_sol.curry_ϕ (S : family_formal_sol J N (R.relativize IP P)) (p : N × P)
   (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x :=
