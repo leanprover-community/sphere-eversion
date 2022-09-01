@@ -432,9 +432,8 @@ section c1
 
 /-! ## Differentiation of loop families -/
 
-local notation `D` := fderiv ℝ
+
 local notation `∂₁` := partial_fderiv_fst ℝ
-local notation `𝒞` := cont_diff ℝ
 
 variables (π : E → ℝ) (N : ℝ) (γ : E → loop F)
           (hγ : is_compact (loop.support γ))
