@@ -1,3 +1,5 @@
+import to_mathlib.data.set.prod
+import to_mathlib.data.nat.basic
 import local.h_principle
 import global.parametricity_for_free
 import global.localisation
@@ -25,8 +27,6 @@ variables
 [sigma_compact_space M]
 
 {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX] [finite_dimensional ℝ EX]
-  [measurable_space EX] [borel_space EX] -- FIXME: Assuming this is a bit silly, we should use letI
-                                         -- at the beginning of the proof needing it
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX} [model_with_corners.boundaryless IX]
 -- note: X is a metric space
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
@@ -36,51 +36,6 @@ variables
 
 {R : rel_mfld IM M IX X}
 {A : set M} {ε : M → ℝ}
-
-lemma univ_prod_inter_univ_prod {α β : Type*} {s t : set β} :
-  (univ : set α) ×ˢ s ∩ (univ : set α) ×ˢ t = (univ : set α) ×ˢ (s ∩ t) :=
-begin
-  ext ⟨a, b⟩,
-  simp
-end
-
-@[simp] lemma univ_prod_nonempty_iff {α β : Type*} [nonempty α] {s : set β} :
-  ((univ : set α) ×ˢ s).nonempty ↔ s.nonempty :=
-begin
-  inhabit α,
-  split,
-  { rintro ⟨⟨-, b⟩, ⟨-, h : b ∈ s⟩⟩,
-    exact ⟨b, h⟩ },
-  { rintro ⟨b, h⟩,
-    exact ⟨⟨default, b⟩, ⟨trivial, h⟩⟩ }
-end
-
-
-
--- The next lemma won't be used, it's a warming up exercise for the one below.
--- It could go to mathlib.
-lemma exists_by_induction {α : Type*} {P : ℕ → α → Prop}
-  (h₀ : ∃ a, P 0 a)
-  (ih : ∀ n a, P n a → ∃ a', P (n+1) a') :
-  ∃ f : ℕ → α, ∀ n, P n (f n) :=
-begin
-  choose f₀ hf₀ using h₀,
-  choose! F hF using ih,
-  exact ⟨λ n, nat.rec_on n f₀ F, λ n, nat.rec hf₀ (λ n ih, hF n _ ih) n⟩
-end
-
--- We make `P` and `Q` explicit to help the elaborator when applying the lemma
--- (elab_as_eliminator isn't enough).
-lemma exists_by_induction' {α : Type*} (P : ℕ → α → Prop) (Q : ℕ → α → α → Prop)
-  (h₀ : ∃ a, P 0 a)
-  (ih : ∀ n a, P n a → ∃ a', P (n+1) a' ∧ Q n a a') :
-  ∃ f : ℕ → α, ∀ n, P n (f n) ∧ Q n (f n) (f $ n+1) :=
-begin
-  choose f₀ hf₀ using h₀,
-  choose! F hF hF' using ih,
-  have key : ∀ n, P n (nat.rec_on n f₀ F), from λ n, nat.rec hf₀ (λ n ih, hF n _ ih) n,
-  exact ⟨λ n, nat.rec_on n f₀ F, λ n, ⟨key n, hF' n _ (key n)⟩⟩
-end
 
 set_option trace.filter_inst_type true
 
@@ -102,6 +57,8 @@ lemma rel_mfld.ample.satisfies_h_principle_core
     ((L.index (n + 1)  = L.index n → F (n + 1) = F n) ∧
      ∀ t (x ∉ range (L.φ $ L.index $ n+1)), F (n + 1) t x = F n t x) :=
 begin
+  letI : measurable_space EX := sorry,
+  haveI : borel_space EX := sorry,
   have cont_bs : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
   rcases localisation_stability EM IM EX IX cont_bs L with ⟨η, η_pos, η_cont, hη⟩,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
