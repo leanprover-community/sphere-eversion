@@ -23,8 +23,8 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 structure localisation_data (f : M → M') :=
 (ι' : Type*)
 (N : ℕ)
-(φ : index_type N → open_smooth_embedding (model_with_corners_self 𝕜 E) E I M)
-(ψ : ι' → open_smooth_embedding (model_with_corners_self 𝕜 E') E' I' M')
+(φ : index_type N → open_smooth_embedding 𝓘(𝕜, E) E I M)
+(ψ : ι' → open_smooth_embedding 𝓘(𝕜, E') E' I' M')
 (j : index_type N → ι')
 (h₁ : (⋃ i, (φ i) '' (ball (0:E) 1)) = univ)
 (h₂ : (⋃ i', (ψ i') '' (ball (0:E') 1)) = univ)
@@ -40,18 +40,27 @@ def index (n : ℕ) := index_from_nat ld.N n
 
 abbreviation ψj := ld.ψ ∘ ld.j
 
+/-- The type indexing the source charts of the given localisation data. -/
+@[derive has_zero] def ι (L : localisation_data I I' f) := index_type L.N
+
+lemma rg_subset_rg (i : ld.ι) : range (f ∘ (ld.φ i)) ⊆ range (ld.ψj i) :=
+((ld.h₃ i).trans $ image_subset_range _ _)
+
 end localisation_data
 
 end
 
 section
+
+open model_with_corners
+
 variables
   {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
   {M : Type*} [topological_space M] [sigma_compact_space M] [locally_compact_space M] [t2_space M]
-  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) [model_with_corners.boundaryless I]
+  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) [boundaryless I]
   [nonempty M] [charted_space H M] [smooth_manifold_with_corners I M]
   (E' : Type*) [normed_add_comm_group E'] [normed_space ℝ E'] [finite_dimensional ℝ E']
-  {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H') [model_with_corners.boundaryless I']
+  {H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H') [boundaryless I']
   {M' : Type*} [metric_space M'] [sigma_compact_space M'] [locally_compact_space M']
   [nonempty M'] [charted_space H' M']
   [smooth_manifold_with_corners I' M']

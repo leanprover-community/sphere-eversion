@@ -1,5 +1,6 @@
+import local.h_principle
 import global.parametricity_for_free
-import global.localisation_data
+import global.localisation
 
 import interactive_expr
 
@@ -19,17 +20,19 @@ variables
 {HM : Type*} [topological_space HM] {IM : model_with_corners ℝ EM HM} [boundaryless IM]
 {M : Type*} [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
 [t2_space M]
-[locally_compact_space M] -- investigate how to deduce this from finite-dimensional
-[nonempty M] -- investigate how to remove this
+[locally_compact_space M] -- FIXME: investigate how to deduce this from finite-dimensional
+[nonempty M] -- FIXME: investigate how to remove this
 [sigma_compact_space M]
 
 {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX] [finite_dimensional ℝ EX]
+  [measurable_space EX] [borel_space EX] -- FIXME: Assuming this is a bit silly, we should use letI
+                                         -- at the beginning of the proof needing it
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX} [model_with_corners.boundaryless IX]
 -- note: X is a metric space
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
-[locally_compact_space X] -- investigate how to deduce this from finite-dimensional
+[locally_compact_space X] -- FIXME: investigate how to deduce this from finite-dimensional
 [sigma_compact_space X]
-[nonempty X] -- investigate how to remove this
+[nonempty X] -- FIXME: investigate how to remove this
 
 {R : rel_mfld IM M IX X}
 {A : set M} {ε : M → ℝ}
@@ -82,7 +85,7 @@ end
 set_option trace.filter_inst_type true
 
 lemma rel_mfld.ample.satisfies_h_principle_core
-  (h1 : R.ample) (h2 : is_open R)
+  (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
   (hε_pos : ∀ (x : M), 0 < ε x)
   (hε_cont : continuous ε)
@@ -107,21 +110,28 @@ begin
     (∀ t x, dist ((Fn t).bs x) (𝓕₀.bs x) <ε x) ∧
 
     (∀ x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
-      (Fn 1).to_one_jet_sec.is_holonomic_at x),
+      (Fn 1).is_holonomic_at x),
   let Q : ℕ → htpy_formal_sol R → htpy_formal_sol R → Prop := λ n Fn Fnp1,
     (L.index (n + 1)  = L.index n → Fnp1 = Fn) ∧
      ∀ t, ∀ x ∉ range (L.φ $ L.index $ n+1), Fnp1 t x = Fn t x,
   apply exists_by_induction' P Q,
   { dsimp only [P],
-    let 𝓕 := (𝓕₀.to_one_jet_sec.localize (L.ψ $ L.j 0)
-              (L.φ 0) ((L.h₃ 0).trans $ image_subset_range _ _)).loc,
+    let 𝓕 := L.loc_formal_sol (L.rg_subset_rg 0),
+    have : ∀ᶠ (x : EM) near (L.landscape hA 0).C, 𝓕.is_holonomic_at x,
+    {
+      sorry },
+    let δ : ℝ := sorry,
+    have δ_pos : δ > 0, sorry,
+    rcases rel_loc.formal_sol.improve (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) δ_pos this
+      with ⟨H, hH0, hHC, hHK₁, hHδ, hHsol, hHK₀⟩,
+    use L.unloc_htpy_formal_sol 0 hHsol,
     sorry },
   {
     sorry },
 end
 
 /-- The non-parametric version of Gromov's theorem -/
-lemma rel_mfld.ample.satisfies_h_principle (h1 : R.ample) (h2 : is_open R)
+lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   R.satisfies_h_principle A ε :=
@@ -129,7 +139,7 @@ begin
   apply rel_mfld.satisfies_h_principle_of_weak hA,
   unfreezingI { clear_dependent A },
   intros A hA 𝓕₀ h𝓕₀,
-  have cont : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
+  have cont : continuous 𝓕₀.bs, from 𝓕₀.smooth_bs.continuous,
   let L : localisation_data IM IX 𝓕₀.bs := std_localisation_data EM IM EX IX cont,
   let π := L.index,
 
@@ -139,10 +149,10 @@ begin
     (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) < ε x) ∧
 
     (∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : EM) 1,
-             (F n 1).to_one_jet_sec.is_holonomic_at x)) ∧
+             (F n 1).is_holonomic_at x)) ∧
     ((π (n+1) = π n → F (n+1) = F n) ∧
      (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
-  { clear_dependent h1 h2,
+  { clear_dependent hRample hRopen,
     simp_rw [and_assoc, forall_and_distrib] at this,
     rcases this with ⟨F, hF₀, hfA, hFε, hFhol, hFπ, hFultim⟩,
     let FF := λ n : ℕ, λ p : ℝ × M, F n p.1 p.2,
@@ -237,7 +247,7 @@ begin
       change dist (G (t, x)).1.2 (𝓕₀.bs x) < ε x,
       rw ← (hn (t, x) _ le_rfl).eq_of_nhds,
       exact hFε (n (t, x)) t x } },
-  exact h1.satisfies_h_principle_core h2 hA hε_pos hε_cont 𝓕₀ h𝓕₀ L,
+  exact hRample.satisfies_h_principle_core hRopen hA hε_pos hε_cont 𝓕₀ h𝓕₀ L,
 end
 
 variables
@@ -251,20 +261,21 @@ variables
 {C : set (P × M)}
 
 /-- **Gromov's Theorem** -/
-theorem rel_mfld.ample.satisfies_h_principle_with (h1 : R.ample) (h2 : is_open R)
+theorem rel_mfld.ample.satisfies_h_principle_with (hRample : R.ample) (hRopen : is_open R)
   (hC : is_closed C)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   R.satisfies_h_principle_with IP C ε :=
 begin
   have hε_pos' : ∀ (x : P × M), 0 < ε x.2 := λ (x : P × M), hε_pos x.snd,
   have hε_cont' : continuous (λ (x : P × M), ε x.2) := hε_cont.comp continuous_snd,
-  have is_op : is_open (rel_mfld.relativize IP P R) := R.is_open_relativize IP P h2,
+  have is_op : is_open (rel_mfld.relativize IP P R) := R.is_open_relativize IP P hRopen,
   apply rel_mfld.satisfies_h_principle.satisfies_h_principle_with,
-  exact (h1.relativize IP P).satisfies_h_principle is_op hC hε_pos' hε_cont',
+  exact (hRample.relativize IP P).satisfies_h_principle is_op hC hε_pos' hε_cont',
 end
 
 variables
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E'] [finite_dimensional ℝ E']
+  [measurable_space E'] [borel_space E']
 {H' : Type*} [topological_space H'] {I' : model_with_corners ℝ E' H'} [model_with_corners.boundaryless I']
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 [locally_compact_space M'] -- investigate how to deduce this from finite-dimensional
@@ -276,7 +287,7 @@ include IP
 
 /-- Gromov's Theorem without metric space assumption -/
 theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
-  (h1 : R.ample) (h2 : is_open R) (hC : is_closed C)
+  (hRample : R.ample) (hRopen : is_open R) (hC : is_closed C)
   (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
   by letI := (@topological_space.metrizable_space_metric _ _
     (manifold_with_corners.metrizable_space I' M')); exact
