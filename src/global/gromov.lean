@@ -79,9 +79,10 @@ begin
       sorry },
     let δ : ℝ := sorry,
     have δ_pos : δ > 0, sorry,
-    rcases rel_loc.formal_sol.improve (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) δ_pos this
-      with ⟨H, hH0, hHC, hHK₁, hHδ, hHsol, hHK₀⟩,
-    use L.unloc_htpy_formal_sol 0 hHsol,
+
+    rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) δ_pos this
+      with ⟨H, hH0, hHC, hHK₁, hHδ, hHK₀⟩,
+    use L.unloc_htpy_formal_sol 0 H,
     sorry },
   {
     sorry },

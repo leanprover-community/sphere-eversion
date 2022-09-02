@@ -130,12 +130,7 @@ def localisation_data.loc_formal_sol (L : localisation_data I I' f) {F : formal_
 /-- Turn a global homotopy of formal solutions into a local one using some localisation data. -/
 def localisation_data.loc_htpy_formal_sol (L : localisation_data I I' f) {F : htpy_formal_sol R}
   {i : L.ι} (hFL : ∀ t, range ((F t).bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
-  htpy_jet_sec E E' :=
-sorry
-
-lemma localisation_data.loc_htpy_formal_sol.sol (L : localisation_data I I' f) {F : htpy_formal_sol R}
-  {i : L.ι} (hFL : ∀ t, range ((F t).bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
-  ∀ t, (L.loc_htpy_formal_sol hFL t).is_formal_sol (L.loc_rel i R) :=
+  (L.loc_rel i R).htpy_formal_sol :=
 sorry
 
 /-
@@ -149,7 +144,7 @@ FIXME: the next definition probably misses side conditions.
 
 /-- Turn a local homotopy of formal solutions into a global one using some localisation data. -/
 def localisation_data.unloc_htpy_formal_sol (L : localisation_data I I' f) (i : L.ι)
-  {F : htpy_jet_sec E E'} (hF : ∀ t, (F t).is_formal_sol (L.loc_rel i R)) :
+  (F : (L.loc_rel i R).htpy_formal_sol) :
   htpy_formal_sol R :=
 sorry
 

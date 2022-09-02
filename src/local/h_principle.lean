@@ -510,12 +510,29 @@ begin
       apply improve_step_part_hol acc hNneq } }
 end
 
+/- FIXME: the following lemma is a repackaging. A proper fix would be to edit the
+previous one... -/
+
+lemma rel_loc.formal_sol.improve_htpy {𝓕 : formal_sol R}
+  (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
+  ∃ H : htpy_formal_sol R,
+    (H 0 = 𝓕) ∧
+    (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
+    (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+    (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε)  ∧
+    (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
+begin
+  rcases rel_loc.formal_sol.improve h_op h_ample ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
+  exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
+end
+
+
 /-- Lemma `lem:improve_htpy_loc` from the blueprint. -/
 lemma rel_loc.htpy_formal_sol.improve {𝓕 : htpy_jet_sec E F} {A : set E} (hA : is_closed A)
   (h_sol : ∀ t, (𝓕 t).is_formal_sol R)
   (h_A : ∀ᶠ x near A, (𝓕 0).is_holonomic_at x ∧ ∀ t, 𝓕 t x = 𝓕 0 x)
   (h_C : ∀ᶠ x near L.C, (𝓕 1).is_holonomic_at x) :
-  ∃ 𝓕' : htpy_jet_sec E F,
+  ∃ 𝓕' : htpy_formal_sol R,
   (𝓕' 0 = 𝓕 0) ∧
   (∀ t, (𝓕' t).is_formal_sol R) ∧
   (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
