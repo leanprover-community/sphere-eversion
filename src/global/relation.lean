@@ -181,13 +181,14 @@ end family_formal_sol
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 @[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
-
+/-
 /-- A constant homotopy of formal solutions. -/
 def formal_sol.const_htpy {R : rel_mfld I M I' M'} (F : formal_sol R) : htpy_formal_sol R :=
 { bs := λ t, F.bs,
   ϕ := λ t, F.ϕ,
-  smooth' := sorry,
+  smooth' := by admit,
   is_sol' := λ t, F.is_sol' }
+-/
 
 /-! ## The h-principle -/
 
@@ -282,16 +283,11 @@ section smooth_open_embedding
 
 In order to use the local story of convex integration, we need a way to turn a
 one jet section into local ones, then apply the local story to build a homotopy of one jets section
-and transfer back to the original manifolds. There is a dissymetry here. First we use
-maps from whole vector spaces to open sets in manifold. And also one jet sections are carried
-from manifold to vector spaces one at a time, but then the return journey is about a homotopy
-of one jet sections.
+and transfer back to the original manifolds. There is a dissymetry here: we use
+maps from whole vector spaces to open sets in manifold.
 
 The global manifolds are called `M` and `N'`. We don't assume the local ones are vector spaces,
 there are manifolds `X` and `Y` that will be vector spaces in the next section.
-
-Note: Patrick doesn't know whether we really need to allow different `E`, `H` and `I` for
-manifolds `X` and `M` (and for `Y` and `N`). We use maximal generality just in case.
 -/
 variables
   {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]
@@ -432,50 +428,3 @@ def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) 
 ⟨F.localize g h hF, λ x, (F.localize_mem_iff g h hF).mpr $ h2F x⟩
 
 end smooth_open_embedding
-
-
-section loc
-/-! ## Link with the local story
-
-Now we really bridge the gap all the way to vector spaces.
--/
-
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
-variables {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
-
-/-- For maps between vector spaces, `one_jet_ext` is the obvious thing. -/
-@[simp] theorem one_jet_ext_eq_fderiv {f : E → E'} {x : E} :
-  one_jet_ext 𝓘(ℝ, E) 𝓘(ℝ, E') f x = ⟨(x, f x), fderiv ℝ f x⟩ :=
-by { rw ← mfderiv_eq_fderiv, refl }
-
-/-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
-between those vector spaces. -/
-def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc.jet_sec E E' :=
-{ f := F.bs,
-  f_diff := sorry,
-  φ := λ x, (F x).2,
-  φ_diff := sorry }
-
-lemma one_jet_sec.loc_hol_at_iff (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
-F.loc.is_holonomic_at x ↔ F.is_holonomic_at x :=
-begin
-  dsimp only [one_jet_sec.is_holonomic_at],
-  rw mfderiv_eq_fderiv,
-  exact iff.rfl
-end
-
-/-- Turns a relation between `E` and `E'` seen as manifolds into a relation between them
-seen as vector spaces. One annoying bit is `equiv.prod_assoc E E' $ E →L[ℝ] E'` that is needed
-to reassociate a product of types. -/
-def rel_mfld.rel_loc (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc E E' :=
-(equiv.prod_assoc _ _ _) '' ((one_jet_bundle_model_space_homeomorph E 𝓘(ℝ, E) E' 𝓘(ℝ, E')) '' R)
-
-lemma ample_of_ample (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : R.ample) :
-  R.rel_loc.is_ample :=
-sorry
-
-lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is_open R) :
-  is_open R.rel_loc :=
-sorry
-
-end loc
