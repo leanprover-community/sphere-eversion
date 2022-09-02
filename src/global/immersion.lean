@@ -1,5 +1,8 @@
 import geometry.manifold.instances.sphere
 import global.gromov
+import geometry.manifold.instances.sphere
+import global.twist_one_jet_sec
+import global.rotation
 -- import interactive_expr
 -- set_option trace.filter_inst_type true
 
@@ -134,6 +137,7 @@ end generalbis
 section sphere_eversion
 
 variables (E : Type*) [inner_product_space ℝ E] {n : ℕ} [fact (finrank ℝ E = 3)]
+  [finite_dimensional ℝ E] -- no way of inferring this from the `fact`
 
 /- Maybe the next two lemmas won't be used directly, but they should be done first as
 sanity checks. -/
@@ -149,27 +153,50 @@ local notation `𝕊²` := sphere (0 : E) 1
 /- The relation of immersion of a two-sphere into its ambiant Euclidean space. -/
 local notation `𝓡_imm` := immersion_rel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
 
-/-- A formal eversion of a two-sphere into its ambiant Euclidean space.
+variables (Ω : alternating_map ℝ E ℝ (fin 3))
+
+lemma smooth_bs :
+  smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E)
+    (λ p : ℝ × sphere (0:E) 1, ((1-p.1) • p.2 + p.1 • (-p.2) : E)) :=
+sorry -- easy
+
+def formal_eversion_aux : family_one_jet_sec (𝓡 2) (sphere (0:E) 1) 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
+family_join
+  (smooth_bs E) $
+  family_twist
+    (drop (one_jet_ext_sec ⟨(coe : sphere (0:E) 1 → E), cont_mdiff_coe_sphere⟩))
+    (λ p : ℝ × sphere (0:E) 1, rot_aux Ω (p.1, p.2))
+    begin
+      intros p,
+      have : smooth_at (𝓘(ℝ, ℝ × E)) 𝓘(ℝ, E →L[ℝ] E) (rot_aux Ω) (p.1, p.2),
+      { rw ← rot_eq_aux,
+        refine (cont_diff_rot Ω _).cont_mdiff_at,
+        exact ne_zero_of_mem_unit_sphere p.2 },
+      refine this.comp p (smooth.smooth_at _),
+      exact smooth_fst.prod_mk (cont_mdiff_coe_sphere.comp smooth_snd),
+    end
+
+/-- A formal eversion of a two-sphere into its ambient Euclidean space.
 Right now this is waiting for Heather's work on rotations. -/
 def formal_eversion : htpy_formal_sol 𝓡_imm :=
-{ bs := λ t x, (1-t) • x + t • (-x),
-  ϕ := λ t x, sorry, -- Here we need to make sure we stay holonomic for t close to 0 and 1
-  smooth' := sorry,
-  is_sol' := sorry }
+{ is_sol' := sorry, -- expect to need nondegeneracy of `Ω` for this
+  .. formal_eversion_aux E Ω }
 
-lemma formal_eversion_zero (x : 𝕊²) : (formal_eversion E 0).bs x = x :=
+lemma formal_eversion_zero (x : 𝕊²) : (formal_eversion E Ω 0).bs x = x :=
 show (1-0 : ℝ) • (x : E) + (0 : ℝ) • (-x : E) = x, by simp
 
-lemma formal_eversion_one (x : 𝕊²) : (formal_eversion E 1).bs x = -x :=
+lemma formal_eversion_one (x : 𝕊²) : (formal_eversion E Ω 1).bs x = -x :=
 show (1-1 : ℝ) • (x : E) + (1 : ℝ) • (-x : E) = -x, by simp
 
 lemma formal_eversion_hol_near_zero_one' :
-  ∀ᶠ (s : ℝ) near {0, 1}, (formal_eversion E s).to_one_jet_sec.is_holonomic :=
+  ∀ᶠ (s : ℝ) near {0, 1}, (formal_eversion E Ω s).to_one_jet_sec.is_holonomic :=
 sorry
 
 lemma formal_eversion_hol_near_zero_one : ∀ᶠ (s : ℝ × 𝕊²) near {0, 1} ×ˢ univ,
-  (formal_eversion E s.1).to_one_jet_sec.is_holonomic_at s.2 :=
+  (formal_eversion E Ω s.1).to_one_jet_sec.is_holonomic_at s.2 :=
 sorry
+
+include Ω
 
 theorem sphere_eversion : ∃ f : ℝ → 𝕊² → E,
   (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f)) ∧
@@ -188,15 +215,15 @@ begin
   haveI : nonempty ↥(sphere 0 1 : set E) := sorry,
   rcases (immersion_rel_satisfies_h_principle_with (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ ineq_rank
     ((finite.is_closed (by simp : ({0, 1} : set ℝ).finite)).prod is_closed_univ) hε_pos hε_cont).bs
-    (formal_eversion E) (formal_eversion_hol_near_zero_one E) with ⟨f, h₁, h₂, -, h₅⟩,
+    (formal_eversion E Ω) (formal_eversion_hol_near_zero_one E Ω) with ⟨f, h₁, h₂, -, h₅⟩,
   have := h₂.nhds_set_forall_mem,
   refine ⟨f, h₁, _, _, h₅⟩,
   { ext x,
     rw [this (0, x) (by simp)],
-    exact formal_eversion_zero E x },
+    exact formal_eversion_zero E Ω x },
   { ext x,
     rw [this (1, x) (by simp)],
-    exact formal_eversion_one E x },
+    exact formal_eversion_one E Ω x },
 end
 
 end sphere_eversion
