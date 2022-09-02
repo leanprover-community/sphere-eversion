@@ -497,3 +497,16 @@ begin
 end
 
 end htpy_jet_sec
+
+/-- A homotopy of formal solutions is a 1-parameter family of formal solutions. -/
+@[ext] structure rel_loc.htpy_formal_sol (R : rel_loc E F) extends htpy_jet_sec E F :=
+(is_sol : ∀ t x, (x, f t x, φ t x) ∈ R)
+
+open rel_loc
+
+instance (R : rel_loc E F) : has_coe_to_fun (htpy_formal_sol R) (λ S, ℝ → jet_sec E F) :=
+⟨λ S t,
+ { f := S.f t,
+   f_diff := S.f_diff.comp (cont_diff_const.prod cont_diff_id),
+   φ := S.φ t,
+   φ_diff := S.φ_diff.comp (cont_diff_const.prod cont_diff_id) }⟩
