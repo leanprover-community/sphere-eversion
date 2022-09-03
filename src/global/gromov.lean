@@ -60,7 +60,6 @@ begin
   letI : measurable_space EX := sorry,
   haveI : borel_space EX := sorry,
   have cont_bs : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
-  rcases localisation_stability EM IM EX IX cont_bs L with ⟨η, η_pos, η_cont, hη⟩,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
     (Fn 0 = 𝓕₀) ∧
     (∀ t, ∀ᶠ x near A, Fn t x = 𝓕₀ x) ∧
