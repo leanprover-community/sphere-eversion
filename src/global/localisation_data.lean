@@ -21,6 +21,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 
 /-- Definition `def:localisation_data`. -/
 structure localisation_data (f : M → M') :=
+(cont : continuous f)
 (ι' : Type*)
 (N : ℕ)
 (φ : index_type N → open_smooth_embedding 𝓘(𝕜, E) E I M)
@@ -97,7 +98,8 @@ nice_atlas E I
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
 def std_localisation_data : localisation_data I I' f :=
-{ N := (nice_atlas_domain E I E' I' hf).some,
+{ cont := hf,
+  N := (nice_atlas_domain E I E' I' hf).some,
   ι' := index_type (nice_atlas_target E' I' M').some,
   φ := (nice_atlas_domain E I E' I' hf).some_spec.some,
   ψ := target_charts E' I' M',
@@ -112,9 +114,10 @@ def std_localisation_data : localisation_data I I' f :=
   h₄ := (nice_atlas_target E' I' M').some_spec.some_spec.1,
   lf_φ := (nice_atlas_domain E I E' I' hf).some_spec.some_spec.2.1 }
 
+variables {E E' I I'}
+
 /-- Lemma `lem:localisation_stability`. -/
-lemma localisation_stability {f : M → M'} (hf : continuous f)
-  (ld : localisation_data I I' f) :
+lemma localisation_stability {f : M → M'} (ld : localisation_data I I' f) :
   ∃ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε),
     ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ε m) i, range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
 begin
@@ -126,11 +129,28 @@ begin
   have hU : ∀ i, is_open (U i) := λ i, (ld.ψ i).is_open_range,
   have hKU : ∀ i, K i ⊆ U i := λ i, image_subset_range _ _,
   obtain ⟨δ, hδ₀, hδ₁⟩ := exists_continuous_real_forall_closed_ball_subset hK hU hKU hK',
+  have := ld.cont,
   refine ⟨δ ∘ f, λ m, hδ₀ (f m), by continuity, λ g hg i, _⟩,
   rintros - ⟨e, rfl⟩,
   have hi : f (ld.φ i e) ∈ K (ld.j i) :=
     image_subset _ ball_subset_closed_ball (ld.h₃ i (mem_range_self e)),
   exact hδ₁ (ld.j i) (f $ ld.φ i e) hi (le_of_lt (hg _)),
 end
+
+namespace localisation_data
+protected def ε (ld : localisation_data I I' f) : M → ℝ :=
+(localisation_stability ld).some
+
+lemma localisation_data.ε_pos (ld : localisation_data I I' f) : ∀ m, 0 < ld.ε m :=
+(localisation_stability ld).some_spec.some
+
+lemma localisation_data.ε_cont (ld : localisation_data I I' f) : continuous ld.ε :=
+(localisation_stability ld).some_spec.some_spec.some
+
+lemma localisation_data.ε_spec (ld : localisation_data I I' f) :
+  ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ld.ε m) i, range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
+(localisation_stability ld).some_spec.some_spec.some_spec
+
+end localisation_data
 
 end
