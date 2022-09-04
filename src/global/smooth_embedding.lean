@@ -149,6 +149,30 @@ variables {I M I' M'}
     exact ⟨x, by simp only [left_inv]⟩,
   end, }
 
+/-
+Note: the only indended use of the following definition is the case where `f = (id : ℝ → ℝ)`,
+but the proof shouldn't be hard anyway.
+-/
+@[simps] def prod
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+  {G : Type*} [topological_space G]
+  {J : model_with_corners 𝕜 F G}
+  {N : Type*} [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
+  {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
+  {G' : Type*} [topological_space G']
+  {J' : model_with_corners 𝕜 F' G'}
+  {N' : Type*} [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
+  (f : open_smooth_embedding I M J N)
+  (f' : open_smooth_embedding I' M' J' N') :
+  open_smooth_embedding (I.prod I') (M × M') (J.prod J') (N × N') :=
+{ to_fun := prod.map f f',
+  inv_fun := prod.map f.inv_fun f'.inv_fun,
+  left_inv' := sorry,
+  right_inv' := sorry,
+  open_map := sorry,
+  smooth_to := sorry,
+  smooth_inv := sorry }
+
 end open_smooth_embedding
 
 namespace continuous_linear_equiv
@@ -415,56 +439,75 @@ by simp [update, hm]
   update φ ψ f g (φ x) = ψ (g x) :=
 by simp [update]
 
-/-- This is lemma `lem:updating` in the blueprint. -/
+/- This small auxiliry result is used in the next two lemmas. -/
+lemma nice_update_of_eq_outside_compact_aux {K : set X} (g : X → Y)
+  (hg : ∀ (x : X), x ∉ K → f (φ x) = ψ (g x)) {m : M} (hm : m ∉ ⇑φ '' K) :
+  φ.update ψ f g m = f m :=
+begin
+  by_cases hm' : m ∈ range φ,
+  { obtain ⟨x, rfl⟩ := hm',
+    replace hm : x ∉ K, { contrapose! hm, exact mem_image_of_mem φ hm, },
+    simp [hg x hm] },
+  { simp [hm'] }
+end
+
+/- FIXME: the blueprint statement corresponding to the next two lemmas has very confusing
+quantifiers status. -/
+
+/-- This is half of lemma `lem:updating` in the blueprint. -/
 lemma nice_update_of_eq_outside_compact
-  {K : set X} (hK : is_compact K)
-  (hf : smooth IM IN f) (hf' : f '' range φ ⊆ range ψ)
-  (hg : smooth IX IY g) (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) :
-  smooth IM IN (update φ ψ f g) ∧
-  (∀ (ε : M → ℝ) (hε : ∀ m, 0 < ε m) (hε' : continuous ε), ∃ (η > (0 : ℝ)),
-    (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) → ∀ m, dist (update φ ψ f g m) (f m) < ε m) :=
+  {K : set X} (hK : is_compact K) (hf : smooth IM IN f) (hg : smooth IX IY g)
+  (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) : smooth IM IN (update φ ψ f g) :=
 begin
   have hK' : ∀ m ∉ φ '' K, update φ ψ f g m = f m := λ m hm, by
-  { by_cases hm' : m ∈ range φ,
-    { obtain ⟨x, rfl⟩ := hm',
-      replace hm : x ∉ K, { contrapose! hm, exact mem_image_of_mem φ hm, },
-      simp [hg' x hm], },
-    { simp [hm'], }, },
-  refine ⟨cont_mdiff_of_locally_cont_mdiff_on (λ m, _), λ ε hε hε', _⟩,
-  { let U := range φ,
-    let V := (φ '' K)ᶜ,
-    have h₂ : is_open V := is_open_compl_iff.mpr (hK.image φ.continuous).is_closed,
-    have h₃ : V ∪ U = univ,
-    { rw [← compl_subset_iff_union, compl_compl], exact image_subset_range φ K, },
-    have h₄ : ∀ m ∈ U, update φ ψ f g m = (ψ ∘ g ∘ φ.inv_fun) m := λ m hm, by simp [hm],
-    by_cases hm : m ∈ U,
-    { exact ⟨U, φ.is_open_range, hm, (cont_mdiff_on_congr h₄).mpr $
-        ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
-    { refine ⟨V, h₂, _, (cont_mdiff_on_congr hK').mpr hf.cont_mdiff_on⟩,
-      simpa [hm] using set.ext_iff.mp h₃ m, }, },
-  { let K₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
-    have hK₁ : is_compact K₁,
-    { refine metric.is_compact_of_is_closed_bounded metric.is_closed_cthickening
-        (metric.bounded.cthickening $ is_compact.bounded $ hK.image _),
-      replace hf' : ∀ x, f (φ x) ∈ range ψ := λ x, hf' ⟨φ x, mem_range_self x, rfl⟩,
-      exact ψ.smooth_inv.continuous_on.comp_continuous
-        (hf.continuous.comp φ.continuous) hf', },
-    have h₁ : uniform_continuous_on ψ K₁ :=
-      hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on,
-    have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
-    obtain ⟨ε₀, hε₀, hε₀'⟩ :=
-      hK.exists_forall_le' (hε'.comp φ.continuous).continuous_on hεφ,
-    obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
-    refine ⟨min τ 1, by simp [hτ], λ hη m, _⟩,
-    by_cases hm : m ∈ φ '' K, swap, { simp [hK', hm, hε m], },
-    obtain ⟨x, hx, rfl⟩ := hm,
-    refine lt_of_lt_of_le _ (hε₀' x hx),
-    simp only [update_apply_embedding],
-    have h₁ : g x ∈ K₁ :=
-      metric.mem_cthickening_of_dist_le _ _ _ _ ⟨x, hx, rfl⟩ (lt_min_iff.mp (hη x)).2.le,
-    have h₂ : f (φ x) ∈ range ψ := hf' ⟨φ x, mem_range_self x, rfl⟩,
-    rw ← ψ.right_inv h₂,
-    exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1, },
+    from nice_update_of_eq_outside_compact_aux φ ψ f g hg' hm,
+  refine cont_mdiff_of_locally_cont_mdiff_on (λ m, _),
+  let U := range φ,
+  let V := (φ '' K)ᶜ,
+  have h₂ : is_open V := is_open_compl_iff.mpr (hK.image φ.continuous).is_closed,
+  have h₃ : V ∪ U = univ,
+  { rw [← compl_subset_iff_union, compl_compl], exact image_subset_range φ K, },
+  have h₄ : ∀ m ∈ U, update φ ψ f g m = (ψ ∘ g ∘ φ.inv_fun) m := λ m hm, by simp [hm],
+  by_cases hm : m ∈ U,
+  { exact ⟨U, φ.is_open_range, hm, (cont_mdiff_on_congr h₄).mpr $
+      ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
+  { refine ⟨V, h₂, _, (cont_mdiff_on_congr hK').mpr hf.cont_mdiff_on⟩,
+    simpa [hm] using set.ext_iff.mp h₃ m }
+end
+
+/-- This is half of lemma `lem:updating` in the blueprint. -/
+lemma nice_update_of_eq_outside_compact' {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
+  (hf' : f '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
+  ∃ (η > (0 : ℝ)), ∀ g : X → Y,
+    smooth IX IY g → (∀ x, x ∉ K → f (φ x) = ψ (g x)) →
+    (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) →
+      ∀ m, dist (update φ ψ f g m) (f m) < ε m :=
+begin
+  let K₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
+  have hK₁ : is_compact K₁,
+  { refine metric.is_compact_of_is_closed_bounded metric.is_closed_cthickening
+      (metric.bounded.cthickening $ is_compact.bounded $ hK.image _),
+    replace hf' : ∀ x, f (φ x) ∈ range ψ := λ x, hf' ⟨φ x, mem_range_self x, rfl⟩,
+    exact ψ.smooth_inv.continuous_on.comp_continuous
+      (hf.continuous.comp φ.continuous) hf', },
+  have h₁ : uniform_continuous_on ψ K₁ :=
+    hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on,
+  have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
+  obtain ⟨ε₀, hε₀, hε₀'⟩ :=
+    hK.exists_forall_le' (hε'.comp φ.continuous).continuous_on hεφ,
+  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
+  refine ⟨min τ 1, by simp [hτ], λ g hg hg' hη m,  _⟩,
+  have hK' : ∀ m ∉ φ '' K, update φ ψ f g m = f m := λ m hm, by
+    from nice_update_of_eq_outside_compact_aux φ ψ f g hg' hm,
+  by_cases hm : m ∈ φ '' K, swap, { simp [hK', hm, hε m], },
+  obtain ⟨x, hx, rfl⟩ := hm,
+  refine lt_of_lt_of_le _ (hε₀' x hx),
+  simp only [update_apply_embedding],
+  have h₁ : g x ∈ K₁ :=
+    metric.mem_cthickening_of_dist_le _ _ _ _ ⟨x, hx, rfl⟩ (lt_min_iff.mp (hη x)).2.le,
+  have h₂ : f (φ x) ∈ range ψ := hf' ⟨φ x, mem_range_self x, rfl⟩,
+  rw ← ψ.right_inv h₂,
+  exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1,
 end
 
 end updating
