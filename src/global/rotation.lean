@@ -54,14 +54,14 @@ and `t : ℝ` this endomorphism should be the rotation by the angle `t` about th
 although this definition does not itself impose enough conditions to ensure that meaning. -/
 def rot (p : ℝ × E) : E →L[ℝ] E :=
 (ℝ ∙ p.2).subtypeL ∘L (orthogonal_projection (ℝ ∙ p.2) : E →L[ℝ] (ℝ ∙ p.2))
-  + real.cos p.1 • (ℝ ∙ p.2)ᗮ.subtypeL ∘L (orthogonal_projection (ℝ ∙ p.2)ᗮ : E →L[ℝ] (ℝ ∙ p.2)ᗮ)
-  + real.sin p.1 • (A Ω p.2).to_continuous_linear_map
+  + real.cos (p.1 * real.pi) • (ℝ ∙ p.2)ᗮ.subtypeL ∘L (orthogonal_projection (ℝ ∙ p.2)ᗮ : E →L[ℝ] (ℝ ∙ p.2)ᗮ)
+  + real.sin (p.1 * real.pi) • (A Ω p.2).to_continuous_linear_map
 
 /-- Alternative form of the construction `rot`, convenient for the smoothness calculation. -/
 def rot_aux (p : ℝ × E) : E →L[ℝ] E :=
-real.cos p.1 • continuous_linear_map.id ℝ E +
-  ((1 - real.cos p.1) • (ℝ ∙ p.2).subtypeL ∘L (orthogonal_projection (ℝ ∙ p.2) : E →L[ℝ] (ℝ ∙ p.2))
-    + real.sin p.1 • (A' Ω p.2))
+real.cos (p.1 * real.pi) • continuous_linear_map.id ℝ E +
+  ((1 - real.cos (p.1 * real.pi)) • (ℝ ∙ p.2).subtypeL ∘L (orthogonal_projection (ℝ ∙ p.2) : E →L[ℝ] (ℝ ∙ p.2))
+    + real.sin (p.1 * real.pi) • (A' Ω p.2))
 
 lemma rot_eq_aux : rot Ω = rot_aux Ω :=
 begin
@@ -76,9 +76,9 @@ end
 lemma cont_diff_rot {p : ℝ × E} (hp : p.2 ≠ 0) : cont_diff_at ℝ ⊤ (rot Ω) p :=
 begin
   simp only [rot_eq_aux],
-  refine (cont_diff_at_fst.cos.smul cont_diff_at_const).add _,
-  refine ((cont_diff_at_const.sub cont_diff_at_fst.cos).smul _).add
-    (cont_diff_at_fst.sin.smul _),
+  refine (cont_diff_at_fst.mul_const.cos.smul cont_diff_at_const).add _,
+  refine ((cont_diff_at_const.sub cont_diff_at_fst.mul_const.cos).smul _).add
+    (cont_diff_at_fst.mul_const.sin.smul _),
   { exact (cont_diff_at_orthogonal_projection_singleton hp).comp _ cont_diff_at_snd },
   { exact (A' Ω).cont_diff.cont_diff_at.comp _ cont_diff_at_snd },
 end
@@ -90,8 +90,8 @@ begin
   simpa [rot] using (eq_sum_orthogonal_projection_self_orthogonal_complement (ℝ ∙ v) w).symm,
 end
 
-/-- The map `rot` sends `(π, v)` to a transformation which on `(ℝ ∙ v)ᗮ` acts as the negation. -/
-lemma rot_pi (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : rot Ω (real.pi, v) w = - w :=
+/-- The map `rot` sends `(1, v)` to a transformation which on `(ℝ ∙ v)ᗮ` acts as the negation. -/
+lemma rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : rot Ω (1, v) w = - w :=
 by simp [rot, orthogonal_projection_eq_self_iff.mpr hw,
   orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hw]
 
@@ -102,3 +102,6 @@ begin
     orthogonal_projection_eq_self_iff.mpr (submodule.mem_span_singleton_self p.2),
   simp [rot, A_apply_self, orthogonal_projection_orthogonal_complement_singleton_eq_zero, H],
 end
+
+lemma inj_on_rot (p : ℝ × E) : set.inj_on (rot Ω p) (ℝ ∙ p.2)ᗮ :=
+sorry  -- expect to need nondegeneracy of `Ω` for this
