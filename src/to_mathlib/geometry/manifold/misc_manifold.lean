@@ -530,6 +530,29 @@ lemma mfderiv_congr {f' : M → M'} (h : f = f') :
   @eq (E →L[𝕜] E') (mfderiv I I' f x) (mfderiv I I' f' x) :=
 by subst h
 
+/-- For a function `f` from a manifold `M` to a normed space `E'`, the `mfderiv` of `-f` is the
+negation of the `mfderiv` of `f` (abusing the identification of the tangent spaces to `E'` at `f x`
+and `- f x` with `E'`). -/
+lemma mfderiv_neg (f : M → E') (x : M) :
+  (mfderiv I 𝓘(𝕜, E') (-f) x : tangent_space I x →L[𝕜] E')
+  = (- mfderiv I 𝓘(𝕜, E') f x : tangent_space I x →L[𝕜] E') :=
+begin
+  classical,
+  simp [mfderiv],
+  by_cases hf : mdifferentiable_at I 𝓘(𝕜, E') f x,
+  { have hf_neg : mdifferentiable_at I 𝓘(𝕜, E') (-f) x :=
+      ((cont_diff_neg.cont_mdiff _).mdifferentiable_at (le_refl _)).comp _ hf,
+    rw [if_pos hf, if_pos hf_neg],
+    apply fderiv_within_neg (I.unique_diff _ (set.mem_range_self _)) },
+  { have hf_neg : ¬ mdifferentiable_at I 𝓘(𝕜, E') (-f) x,
+    { intros h,
+      apply hf,
+      convert ((cont_diff_neg.cont_mdiff _).mdifferentiable_at (le_refl _)).comp _ h,
+      ext,
+      simp only [comp_app, pi.neg_apply, neg_neg] },
+    rw [if_neg hf, if_neg hf_neg, neg_zero] },
+end
+
 /-- The derivative of the projection `M × M' → M` is the projection `TM × TM' → TM` -/
 lemma mfderiv_fst (x : M × M') :
   mfderiv (I.prod I') I prod.fst x = continuous_linear_map.fst 𝕜 E E' :=

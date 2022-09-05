@@ -282,3 +282,28 @@ begin
 end
 
 end
+
+section arithmetic
+
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {𝔸 : Type*} [normed_ring 𝔸] [normed_algebra 𝕜 𝔸]
+  {n : ℕ∞} {f : E → 𝔸} {s : set E} {x : E}
+
+lemma cont_diff_within_at.mul_const (hf : cont_diff_within_at 𝕜 n f s x) {c : 𝔸} :
+  cont_diff_within_at 𝕜 n (λ (x : E), f x * c) s x :=
+hf.mul cont_diff_within_at_const
+
+theorem cont_diff_at.mul_const (hf : cont_diff_at 𝕜 n f x) {c : 𝔸} :
+  cont_diff_at 𝕜 n (λ (x : E), f x * c) x :=
+hf.mul cont_diff_at_const
+
+theorem cont_diff_on.mul_const (hf : cont_diff_on 𝕜 n f s) {c : 𝔸} :
+  cont_diff_on 𝕜 n (λ (x : E), f x * c) s :=
+hf.mul cont_diff_on_const
+
+theorem cont_diff.mul_const (hf : cont_diff 𝕜 n f) {c : 𝔸} :
+  cont_diff 𝕜 n (λ (x : E), f x * c) :=
+hf.mul cont_diff_const
+
+end arithmetic
