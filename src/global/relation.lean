@@ -323,13 +323,30 @@ def one_jet_bundle.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M I
       ((g.fderiv σ.1.2 : TY σ.1.2 →L[ℝ] TN (g σ.1.2)).comp σ.2).comp
         ((h.fderiv σ.1.1).symm : TM (h σ.1.1) →L[ℝ] TX σ.1.1)⟩
 
--- do we need this?
-lemma one_jet_bundle.smooth_transfer : smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY))
+lemma one_jet_bundle.smooth_transfer :
+  smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY))
   ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) (one_jet_bundle.transfer g h) :=
-sorry
+begin
+  simp_rw [one_jet_bundle.transfer, g.fderiv_coe, h.fderiv_symm_coe],
+  refine smooth.one_jet_comp IX (λ (x : one_jet_bundle IX X IY Y), x.1.1) _ _,
+  refine smooth.one_jet_comp IY (λ (x : one_jet_bundle IX X IY Y), x.1.2) _ _,
+  { exact λ σ₀, (smooth_at.one_jet_ext (g.smooth_to _)).comp σ₀
+      (smooth_one_jet_bundle_proj.snd σ₀) },
+  { convert smooth_id, ext1 ⟨⟨x, y⟩, ϕ⟩, refl, },
+  { intro σ₀,
+    suffices : smooth_at IX ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX))
+      (λ x, one_jet_bundle.mk (h x) x (mfderiv IM IX h.inv_fun (h x))) σ₀.1.1,
+    { exact this.comp σ₀ (smooth_one_jet_bundle_proj.fst σ₀) },
+    refine h.smooth_to.smooth_at.one_jet_bundle_mk smooth_at_id _,
+    have := cont_mdiff_at.mfderiv''' (λ x x₀, h.inv_fun x₀) h
+      ((h.smooth_at_inv _).comp _ smooth_at_snd) (h.smooth_to _) le_top,
+    simp_rw [h.left_inv] at this,
+    exact this,
+    exact mem_range_self _ },
+end
 
 lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer g h) :=
-one_jet_bundle.smooth_transfer.continuous
+(one_jet_bundle.smooth_transfer _ _).continuous
 
 /-- localize a relation -/
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=

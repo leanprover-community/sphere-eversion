@@ -66,7 +66,7 @@ lemma smooth_eta (F : one_jet_sec I M I' M') : smooth I ((I.prod I').prod 𝓘(�
 F.smooth
 
 lemma smooth_bs (F : one_jet_sec I M I' M') : smooth I I' F.bs :=
-(basic_smooth_vector_bundle_core.smooth_proj _).snd.comp F.smooth
+smooth_one_jet_bundle_proj.snd.comp F.smooth
 
 /-- A section of J¹(M, M') is holonomic at (x : M) if its linear map part is the derivative
 of its base map at x. -/
@@ -148,7 +148,7 @@ protected lemma smooth (S : family_one_jet_sec I M I' M' J N) :
 
 lemma smooth_bs (S : family_one_jet_sec I M I' M' J N) :
   smooth (J.prod I) I' (λ p : N × M, S.bs p.1 p.2) :=
-(basic_smooth_vector_bundle_core.smooth_proj _).snd.comp S.smooth
+smooth_one_jet_bundle_proj.snd.comp S.smooth
 
 lemma _root_.smooth_at.family_one_jet_sec_bs {S : family_one_jet_sec I M I' M' J N}
   {f : N' → N} {g : N' → M} {z : N'} (hf : smooth_at J' J f z) (hg : smooth_at J' I g z) :
