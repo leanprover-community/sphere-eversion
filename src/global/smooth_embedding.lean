@@ -466,11 +466,11 @@ quantifiers status.
 
 /-
 In the next lemma, it is better to assume directly that `φ '' K` is closed. This
-will hold whe `φ = Id.prod ψ` and `K = ℝ × H` with `H` compact.
+will hold both when `K` is compact and when `φ = Id.prod ψ` and `K = ℝ × H` with `H` compact.
 -/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
-lemma nice_update_of_eq_outside_compact [t2_space M]
+lemma smooth_update [t2_space M]
   {K : set X} (hK : is_compact K) (hf : smooth IM IN f) (hg : smooth IX IY g)
   (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) : smooth IM IN (update φ ψ f g) :=
 begin
@@ -512,7 +512,7 @@ and the whole boundary is ok.
 -/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
-lemma nice_update_of_eq_outside_compact' [proper_space Y] {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
+lemma dist_update [proper_space Y] {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
   (hf' : f '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
   ∃ (η > (0 : ℝ)), ∀ g : X → Y,
     (∀ x, x ∉ K → f (φ x) = ψ (g x)) →

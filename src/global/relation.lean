@@ -320,6 +320,8 @@ local notation `J¹MN` := one_jet_bundle IM M IN N
 local notation `IXY` := (IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)
 local notation `IMN` := (IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)
 
+/-! ## Transfer from J¹(X, Y) to J¹(M, N) and localized relations -/
+
 /-- Transfer map between one jet bundles induced by open smooth embedding into the source and
 targets. -/
 @[simps fst_fst fst_snd]
@@ -357,7 +359,24 @@ lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer h
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
 one_jet_bundle.transfer h g ⁻¹' R
 
-open basic_smooth_vector_bundle_core
+/-- Ampleness survives localization -/
+lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize h g).ample :=
+begin
+  intros x p,
+  have : (rel_mfld.localize h g R).slice x p =
+    (g.fderiv x.1.2).symm '' R.slice (x.transfer h g) (p.map (h.fderiv x.1.1)),
+  { ext v,
+    simp_rw [rel_mfld.localize, continuous_linear_equiv.image_symm_eq_preimage, mem_preimage,
+      mem_slice, mem_preimage],
+    dsimp only [one_jet_bundle.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
+    simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
+      one_jet_bundle.mk] },
+  rw [this],
+  exact (hR _).image (g.fderiv x.1.2).symm
+end
+
+
+/-! ## Localized 1-jet sections -/
 
 /-- Localize a one-jet section in two open embeddings.
   It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(h x) ∘ D_x(h))` where `y : M := g⁻¹(F_{bs}(h x))`. -/
@@ -393,6 +412,31 @@ lemma one_jet_sec.localize_bs_fun (hF : range (F.bs ∘ h) ⊆ range g) :
   (F.localize h g hF).bs = g.inv_fun ∘ F.bs ∘ h :=
 rfl
 
+lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X} :
+  F.localize h g hF x ∈ R.localize h g ↔ F (h x) ∈ R :=
+by rw [rel_mfld.localize, mem_preimage, transfer_localize F h g hF]
+
+lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
+  (F.localize h g hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
+begin
+  have : mfderiv IX IY (g.inv_fun ∘ F.bs ∘ h) x =
+    (g.fderiv (g.inv_fun (F.bs (h x)))).symm.to_continuous_linear_map.comp
+    ((mfderiv IM IN F.bs (h x)).comp (h.fderiv x).to_continuous_linear_map),
+  { have h1 : mdifferentiable_at IN IY g.inv_fun (F.bs (h x)) :=
+      (g.smooth_at_inv $ hF $ mem_range_self _).mdifferentiable_at,
+    have h2 : mdifferentiable_at IM IN F.bs (h x) := F.smooth_bs.mdifferentiable_at,
+    have h3 : mdifferentiable_at IX IM h x := h.smooth_to.mdifferentiable_at,
+    rw [mfderiv_comp x h1 (h2.comp x h3), mfderiv_comp x h2 h3,
+      ← g.fderiv_symm_coe' (hF $ mem_range_self _)],
+    refl, },
+  simp_rw [one_jet_sec.is_holonomic_at],
+  rw [mfderiv_congr (F.localize_bs_fun h g hF), one_jet_sec.snd_eq, F.localize_ϕ, this],
+  simp_rw [← continuous_linear_equiv.coe_def_rev,
+    continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
+end
+
+/-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
+
 def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
 { to_fun := one_jet_bundle.transfer h g,
   inv_fun := λ σ, ⟨⟨h.inv_fun σ.1.1, g.inv_fun σ.1.2⟩,
@@ -424,9 +468,19 @@ lemma one_jet_bundle.range_embedding :
   one_jet_bundle.proj IM M IN N ⁻¹' (range (h : X → M) ×ˢ range (g : Y → N)) :=
 sorry
 
-local notation `ψ` := h.update g
+/-! ## Updating 1-jet sections and formal solutions -/
+
 local notation `Jψ` := h.update (one_jet_bundle.embedding h g)
 
+-- Below is the lemma that will ensure smoothness of `Jupdate`
+#check h.smooth_update (one_jet_bundle.embedding h g)
+
+/--  Update a global 1-jet section `F` using a local one `G`.
+FIXME: this misses some support condition to ensure lemma `smooth_update` applies
+(also see the comment above `smooth_update` in the smooth_embedding file).
+We probably need a version of the next lemma stated in terms of
+`λ m, (Jψ F G m).1.2` before being able to write the `smooth'` proof.
+-/
 def open_smooth_embedding.Jupdate (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y) :
   one_jet_sec IM M IN N :=
 { bs := λ m, (Jψ F G m).1.2,
@@ -442,6 +496,17 @@ begin
   split_ifs ; refl,
 end
 
+/-- Update a global formal solution `F` using a local one `G`.
+FIXME: this misses some support condition to ensure lemma `smooth_update` applies.
+-/
+def open_smooth_embedding.update_formal_sol (F : formal_sol R) (G : formal_sol (R.localize h g)) :
+  formal_sol R :=
+{ is_sol' := sorry,
+  ..h.Jupdate g F.to_one_jet_sec G.to_one_jet_sec }
+
+/-- Update a global homotopy of 1-jet-sections `F` using a local one `G`.
+FIXME: this misses some support condition to ensure lemma `smooth_update` applies.
+-/
 def open_smooth_embedding.htpy_Jupdate (F : htpy_one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X IY Y) :
   htpy_one_jet_sec IM M IN N :=
 { bs := λ t m, (Jψ (F t) (G t) m).1.2,
@@ -458,59 +523,14 @@ begin
     if x ∈ range h then _ else _,
   split_ifs ; refl,
 end
-
-lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X} :
-  F.localize h g hF x ∈ R.localize h g ↔ F (h x) ∈ R :=
-by rw [rel_mfld.localize, mem_preimage, transfer_localize F h g hF]
-
-lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize h g).ample :=
-begin
-  intros x p,
-  have : (rel_mfld.localize h g R).slice x p =
-    (g.fderiv x.1.2).symm '' R.slice (x.transfer h g) (p.map (h.fderiv x.1.1)),
-  { ext v,
-    simp_rw [rel_mfld.localize, continuous_linear_equiv.image_symm_eq_preimage, mem_preimage,
-      mem_slice, mem_preimage],
-    dsimp only [one_jet_bundle.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
-    simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
-      one_jet_bundle.mk] },
-  rw [this],
-  exact (hR _).image (g.fderiv x.1.2).symm
-end
-
-lemma is_holonomic_at_localize_iff (hF : range (F.bs ∘ h) ⊆ range g) (x : X) :
-  (F.localize h g hF).is_holonomic_at x ↔ F.is_holonomic_at (h x)  :=
-begin
-  have : mfderiv IX IY (g.inv_fun ∘ F.bs ∘ h) x =
-    (g.fderiv (g.inv_fun (F.bs (h x)))).symm.to_continuous_linear_map.comp
-    ((mfderiv IM IN F.bs (h x)).comp (h.fderiv x).to_continuous_linear_map),
-  { have h1 : mdifferentiable_at IN IY g.inv_fun (F.bs (h x)) :=
-      (g.smooth_at_inv $ hF $ mem_range_self _).mdifferentiable_at,
-    have h2 : mdifferentiable_at IM IN F.bs (h x) := F.smooth_bs.mdifferentiable_at,
-    have h3 : mdifferentiable_at IX IM h x := h.smooth_to.mdifferentiable_at,
-    rw [mfderiv_comp x h1 (h2.comp x h3), mfderiv_comp x h2 h3,
-      ← g.fderiv_symm_coe' (hF $ mem_range_self _)],
-    refl, },
-  simp_rw [one_jet_sec.is_holonomic_at],
-  rw [mfderiv_congr (F.localize_bs_fun h g hF), one_jet_sec.snd_eq, F.localize_ϕ, this],
-  simp_rw [← continuous_linear_equiv.coe_def_rev,
-    continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
-end
-
-/- /-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
--- Note(F): this is only well-defined on `univ × range h`, right?
-def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
-{ bs := λ t m , g $ (F t).bs (h.inv_fun m),
-  ϕ := λ t m, (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
-      ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map),
-  smooth' := admit }
-
-lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
-  (hF : range (F.bs ∘ h) ⊆ range g)
-  (hFG : G 0 = F.localize h g hF) : G.unlocalize h g 0 = F :=
-admit
-
- -/
+/-- Update a global homotopy of formal solutions `F` using a local one `G`.
+FIXME: this misses some support condition to ensure lemma `smooth_update` applies.
+-/
+def open_smooth_embedding.update_htpy_formal_sol (F : htpy_formal_sol R)
+  (G : htpy_formal_sol (R.localize h g)) :
+  htpy_formal_sol R :=
+{ is_sol' := sorry,
+  ..h.htpy_Jupdate g F.to_family_one_jet_sec G.to_family_one_jet_sec }
 
  /-- Localize a formal solution. -/
 def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) :
