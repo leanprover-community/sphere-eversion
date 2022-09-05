@@ -141,14 +141,12 @@ See also `one_jet_bundle_chart_at'`. -/
 lemma one_jet_bundle_chart_at {v v' : one_jet_bundle I M I' M'} :
   chart_at HJ v v' =
   ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
-  ((tangent_bundle_core I' M').coord_change (achart H' v'.1.2) (achart H' v.1.2)
-    (chart_at H' v'.1.2 v'.1.2)).comp $ v'.2.comp $
-    (tangent_bundle_core I M).coord_change (achart H v.1.1) (achart H v'.1.1)
-    (chart_at H v.1.1 v'.1.1)) :=
+  in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
+    v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
 begin
   simp_rw [to_charted_space_chart_at],
   dsimp only [one_jet_bundle_core],
-  simp_rw [hom_chart, ← achart_def, pullback_fst_coord_change_at,
+  simp_rw [hom_chart, in_coordinates', pullback_fst_coord_change_at,
     pullback_snd_coord_change_at, prod_charted_space_chart_at, local_homeomorph.prod_apply],
 end
 
@@ -175,7 +173,7 @@ begin
   simp only [one_jet_bundle_chart_at I M I' M', prod.mk.inj_iff, eq_self_iff_true, true_and],
   ext e,
   simp only [tangent_bundle_core_coord_change, achart_val, continuous_linear_map.coe_comp',
-    function.comp_app, continuous_linear_equiv.coe_coe],
+    function.comp_app, continuous_linear_equiv.coe_coe, in_coordinates'],
   erw [← (tangent_bundle_core I' M').coe_coord_change_equiv hx,
        ← (tangent_bundle_core I M).coe_coord_change_equiv hy],
 end
@@ -183,13 +181,12 @@ end
 /-- Computing the value of an extended chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an
   appropriate coordinate change function. -/
+-- unused
 lemma one_jet_bundle_ext_chart_at {v v' : one_jet_bundle I M I' M'} :
   ext_chart_at ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) v v' =
-  ((I (chart_at H v.1.1 v'.1.1), I' (chart_at H' v.1.2 v'.1.2)),
-  ((tangent_bundle_core I' M').coord_change (achart H' v'.1.2) (achart H' v.1.2)
-    (chart_at H' v'.1.2 v'.1.2)).comp $ v'.2.comp $
-    (tangent_bundle_core I M).coord_change (achart H v.1.1) (achart H v'.1.1)
-    (chart_at H v.1.1 v'.1.1)) :=
+  ((ext_chart_at I v.1.1 v'.1.1, ext_chart_at I' v.1.2 v'.1.2),
+  in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
+  v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
 by simp_rw [ext_chart_at_coe, function.comp_apply, one_jet_bundle_chart_at,
     model_with_corners.prod_apply, model_with_corners_self_coe, id]
 
@@ -210,33 +207,17 @@ variables {I I' J J'}
 @[simp, mfld_simps] lemma one_jet_bundle_mk_snd {x : M} {y : M'} {f : one_jet_space I I' (x, y)} :
   (one_jet_bundle.mk x y f).2 = f := rfl
 
-lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N}
-  (hf : smooth_at J I f n) (hg : smooth_at J I' g n)
-  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n) :
-  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
-    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n :=
-begin
-  rw [smooth_at, (one_jet_bundle_core I M I' M').cont_mdiff_at_iff_target],
-  refine ⟨hf.continuous_at.prod hg.continuous_at, _⟩,
-  simp_rw [function.comp, one_jet_bundle_ext_chart_at],
-  refine ((cont_mdiff_at_ext_chart_at.comp _ hf).prod_mk_space $
-    cont_mdiff_at_ext_chart_at.comp _ hg).prod_mk_space hϕ
-end
-
 lemma smooth_at_one_jet_bundle {f : N → one_jet_bundle I M I' M'} {n : N} :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f n ↔
   smooth_at J I (λ x, (f x).1.1) n ∧ smooth_at J I' (λ x, (f x).1.2) n ∧
   smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
     (λ x, (f x).2) n) n :=
 begin
-  refine ⟨λ h, ⟨_, _, _⟩, λ h, _⟩,
-  { exact ((basic_smooth_vector_bundle_core.smooth_proj _).fst _).comp n h },
-  { exact ((basic_smooth_vector_bundle_core.smooth_proj _).snd _).comp n h },
-  { rw [smooth_at, basic_smooth_vector_bundle_core.cont_mdiff_at_iff_target, ← smooth_at] at h,
-    have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
-    simp_rw [function.comp, one_jet_bundle_ext_chart_at] at h2,
-    exact h2 },
-  { convert h.1.one_jet_bundle_mk h.2.1 h.2.2, ext x; refl }
+  simp_rw [smooth_at_hom_bundle, in_coordinates', pullback_fst_coord_change_at,
+    pullback_snd_coord_change_at],
+  refine ⟨λ h, ⟨h.1.fst, h.1.snd, h.2⟩, λ h, ⟨_, h.2.2⟩⟩,
+  convert h.1.prod_mk h.2.1,
+  ext x; refl
 end
 
 lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N} :
@@ -245,6 +226,13 @@ lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →
   smooth_at J I f n ∧ smooth_at J I' g n ∧
   smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n :=
 smooth_at_one_jet_bundle
+
+lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N}
+  (hf : smooth_at J I f n) (hg : smooth_at J I' g n)
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n) :
+  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
+    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n :=
+smooth_at_one_jet_bundle.mpr ⟨hf, hg, hϕ⟩
 
 variables (I I')
 /-- The one-jet extension of a function -/
@@ -288,7 +276,7 @@ begin
   refine eventually_of_mem (hg.preimage_mem_nhds $
     (achart H' (g x₀)).1.open_source.mem_nhds $ mem_achart_source H' (g x₀)) (λ x hx, _),
   ext v,
-  simp_rw [function.comp_apply, in_coordinates, continuous_linear_map.comp_apply],
+  simp_rw [function.comp_apply, in_coordinates, in_coordinates', continuous_linear_map.comp_apply],
   congr' 2,
   symmetry,
   exact (tangent_bundle_core I' M').coord_change_comp_eq_self' (mem_achart_source H' (g x)) hx _
@@ -329,7 +317,8 @@ begin
   specialize hϕ x,
   specialize hϕ' x,
   rw [← smooth_at, smooth_at_one_jet_bundle_mk] at hϕ hϕ' ⊢,
-  simp_rw [in_coordinates, continuous_linear_map.add_comp, continuous_linear_map.comp_add],
+  simp_rw [in_coordinates, in_coordinates', continuous_linear_map.add_comp,
+    continuous_linear_map.comp_add],
   exact ⟨hϕ.1, hϕ.2.1, hϕ.2.2.add hϕ'.2.2⟩
 end
 
