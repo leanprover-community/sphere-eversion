@@ -75,36 +75,22 @@ variables
   {I' : model_with_corners ℝ E' H'}
   {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-/-
-structure localisation_data (f : M → M') :=
-(ι' : Type*)
-(N : ℕ)
-(φ : index_type N → open_smooth_embedding 𝓘(𝕜, E) E I M)
-(ψ : ι' → open_smooth_embedding 𝓘(𝕜, E') E' I' M')
-(j : index_type N → ι')
-(h₁ : (⋃ i, (φ i) '' (ball (0:E) 1)) = univ)
-(h₂ : (⋃ i', (ψ i') '' (ball (0:E') 1)) = univ)
-(h₃ : ∀ i, range (f ∘ (φ i)) ⊆ (ψ (j i)) '' (ball (0:E') 1))
-(h₄ : locally_finite $ λ i', range (ψ i'))
-(lf_φ : locally_finite $ λ i, range (φ i))
--/
-
-
 variables {f : M → M'} {R : rel_mfld I M I' M'}
 
 variables (L : localisation_data I I' f) (F : formal_sol R) (i : L.ι)
   (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
 
-def localisation_data.loc_rel (R : rel_mfld I M I' M') : _ :=
+namespace localisation_data
+def loc_rel (R : rel_mfld I M I' M') : _ :=
 (R.localize (L.ψj i) (L.φ i)).rel_loc
 
-lemma localisation_data.is_open_loc_rel (h : is_open R) : is_open (L.loc_rel i R) :=
+lemma is_open_loc_rel (h : is_open R) : is_open (L.loc_rel i R) :=
 sorry
 
-lemma localisation_data.is_ample (h : R.ample) : (L.loc_rel i R).is_ample :=
+lemma is_ample (h : R.ample) : (L.loc_rel i R).is_ample :=
 sorry
 
-def localisation_data.landscape [finite_dimensional ℝ E] {A : set M} (hA : is_closed A)
+def landscape [finite_dimensional ℝ E] {A : set M} (hA : is_closed A)
   (n : ℕ) : landscape E :=
 { C := (L.φ n) ⁻¹' (A ∪ ⋃ i < L.index n, (L.φ i) '' metric.closed_ball 0 1), -- CHECK this is correct
   K₀ := metric.closed_ball 0 1,
@@ -121,31 +107,63 @@ FIXME: the next definition in progress should probably use
 -/
 
 /-- Turn a global formal solution into a local one using some localisation data. -/
-def localisation_data.loc_formal_sol (L : localisation_data I I' f) {F : formal_sol R}
+def loc_formal_sol {F : formal_sol R}
   {i : L.ι} (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
   rel_loc.formal_sol (R.localize (L.ψj i) (L.φ i)).rel_loc :=
 { is_sol := sorry,
   ..(F.to_one_jet_sec.localize (L.ψj i) (L.φ i) hFL).loc }
 
 /-- Turn a global homotopy of formal solutions into a local one using some localisation data. -/
-def localisation_data.loc_htpy_formal_sol (L : localisation_data I I' f) {F : htpy_formal_sol R}
-  {i : L.ι} (hFL : ∀ t, range ((F t).bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
+def loc_htpy_formal_sol {𝓕 : htpy_formal_sol R}
+  {i : L.ι} (h𝓕L : ∀ t, range ((𝓕 t).bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
   (L.loc_rel i R).htpy_formal_sol :=
 sorry
-
-/-
-FIXME: There is a mismatch because the global story has a bundled `htpy_formal_sol` and
-the local one hasn't. The local story only has `htpy_jet_sec` and `is_formal_sol`.
--/
 
 /-
 FIXME: the next definition probably misses side conditions.
 -/
 
 /-- Turn a local homotopy of formal solutions into a global one using some localisation data. -/
-def localisation_data.unloc_htpy_formal_sol (L : localisation_data I I' f) (i : L.ι)
-  (F : (L.loc_rel i R).htpy_formal_sol) :
+def unloc_htpy_formal_sol (i : L.ι)
+  (𝓕 : (L.loc_rel i R).htpy_formal_sol) :
   htpy_formal_sol R :=
 sorry
+
+lemma unloc_loc {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
+  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) (h : 𝓕 0 = L.loc_formal_sol hF₀) :
+  L.unloc_htpy_formal_sol i 𝓕 0 = F₀ :=
+sorry
+
+lemma foobar {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
+  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
+  (hAC : (L.φ i) ⁻¹' A ⊆ C)
+  (h : ∀ᶠ x near C, ∀ (t : ℝ), 𝓕 t x = L.loc_formal_sol hF₀ x) :
+  ∀ (t : ℝ), ∀ᶠ (x : M) near A, L.unloc_htpy_formal_sol i 𝓕 t x = F₀ x :=
+sorry
+
+/-
+Hyp :
+∀ᶠ x near (L.landscape hA 0).K₀, (𝓗 1).is_holonomic_at x
+
+But :
+∀ x ∈ ⋃ i ≤ L.index 0, (L.φ i) '' metric.closed_ball 0 1) → (H 1).is_holonomic_at x
+
+-/
+
+lemma barbaz {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
+  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
+  (hAC : (L.φ i) ⁻¹' A ⊆ C)
+  (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
+  ∀ᶠ (x : M) near A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
+sorry
+
+lemma barbaz' {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
+  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
+  (hAC : (L.φ i) ⁻¹' A ⊆ C)
+  (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
+  ∀ x ∈ A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
+(barbaz L hF₀ hAC h).nhds_set_forall_mem
+
+end localisation_data
 
 end localisation_data

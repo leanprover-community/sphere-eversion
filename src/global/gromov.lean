@@ -80,6 +80,9 @@ begin
     tauto },
   apply exists_by_induction' P Q,
   { dsimp only [P],
+    have Union_eq : ∀ s : L.ι → set M, (⋃ i ≤ L.index 0, s i) = s 0,
+    {
+      sorry },
     let 𝓕₀ := L.loc_formal_sol (L.rg_subset_rg 0),
     have : ∀ᶠ (x : EM) near (L.landscape hA 0).C, 𝓕₀.is_holonomic_at x,
     {
@@ -98,16 +101,20 @@ begin
     rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) η_pos this
       with ⟨𝓗, h𝓗₀, h𝓗C, h𝓗K₁, h𝓗δ, h𝓗K₀⟩,
     let H := L.unloc_htpy_formal_sol 0 𝓗,
-    refine ⟨H, _, _, _, _⟩,
+    refine ⟨H, _, _, _, _, _⟩,
+    sorry { apply L.unloc_loc,
+      rw h𝓗₀ },
+    sorry { apply L.foobar _ _ h𝓗C,
+      apply subset_union_left ((L.φ 0) ⁻¹' A) },
     {
       sorry },
     {
       sorry },
-    {
-      sorry },
-    {
-      sorry } },
-  { rintros n F ⟨hF₀, hfA, hFδ, hFhol⟩,
+    sorry { apply L.barbaz' (L.rg_subset_rg 0) _ h𝓗K₀,
+      dsimp [localisation_data.landscape],
+      rw [Union_eq, preimage_image_eq],
+      exact (L.φ 0).injective } },
+  sorry { rintros n F ⟨hF₀, hfA, hFδ, hFhol⟩,
     sorry },
 end
 
