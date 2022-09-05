@@ -81,10 +81,10 @@ nat.cases_on n nat.indexing (λ _, fin.indexing _)
 
 def index_from_nat (N n : ℕ) : index_type N := indexing.from_nat n
 
-instance (N : ℕ) : has_zero (index_type N) := sorry
+instance (N : ℕ) : has_zero (index_type N) := ⟨indexing.from_nat 0⟩
 
 lemma index_from_nat_zero (N : ℕ) : index_from_nat N 0 = 0 :=
-sorry
+rfl
 
 def index_type_encodable : Π n : ℕ, encodable (index_type n)
 | 0 := nat.encodable

@@ -67,6 +67,9 @@ rfl
 lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
 filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv' hy
 
+lemma injective : function.injective f :=
+function.left_inverse.injective (left_inv f)
+
 protected lemma continuous : continuous f := f.smooth_to.continuous
 
 lemma is_open_range : is_open (range f) :=
