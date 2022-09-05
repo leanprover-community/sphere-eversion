@@ -390,7 +390,9 @@ local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')
 between a product type and a sigma type, a.k.a. `sigma_equiv_prod`. -/
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_chart_at (p : one_jet_bundle I H I' H') :
   (chart_at 𝓜 p).to_local_equiv = (sigma_equiv_prod (H × H') (E →L[𝕜] E')).to_local_equiv :=
-sorry
+begin
+  rw [one_jet_bundle_chart_at],
+end
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_coe_chart_at (p : one_jet_bundle I H I' H') :
   ⇑(chart_at 𝓜 p) = sigma_equiv_prod (H × H') (E →L[𝕜] E') :=
@@ -407,8 +409,24 @@ variables (H H')
 /-- The canonical identification between the one_jet bundle to the model space and the product,
 as a homeomorphism -/
 def one_jet_bundle_model_space_homeomorph : one_jet_bundle I H I' H' ≃ₜ 𝓜 :=
-{ continuous_to_fun := sorry,
-  continuous_inv_fun := sorry,
+{ continuous_to_fun :=
+    begin
+    let p : one_jet_bundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), (0 : E →L[𝕜] E')⟩,
+    have : continuous (chart_at 𝓜 p),
+    { rw continuous_iff_continuous_on_univ,
+      convert local_homeomorph.continuous_on _,
+      simp only with mfld_simps },
+    simpa only with mfld_simps using this,
+  end,
+  continuous_inv_fun :=
+  begin
+    let p : one_jet_bundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), (0 : E →L[𝕜] E')⟩,
+    have : continuous (chart_at 𝓜 p).symm,
+    { rw continuous_iff_continuous_on_univ,
+      convert local_homeomorph.continuous_on _,
+      simp only with mfld_simps },
+    simpa only with mfld_simps using this,
+  end,
   .. sigma_equiv_prod (H × H') (E →L[𝕜] E') }
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_homeomorph_coe :
