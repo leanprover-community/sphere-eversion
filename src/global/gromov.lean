@@ -88,14 +88,14 @@ begin
     {
       sorry },
     let Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ,
-    have foo := (Id.prod (L.φ 0)).nice_update_of_eq_outside_compact (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2),
+    have foo := (Id.prod (L.φ 0)).smooth_update (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2),
     let τ : ℝ × M → ℝ := λ p, min (δ p.2) (L.ε p.2),
     have τ_pos : ∀ p, 0 < τ p, sorry,
     have τ_cont : continuous τ, sorry,
     have cpct : is_compact ((Icc 0 1 : set ℝ) ×ˢ (metric.closed_ball 0 2 : set EM)), sorry,
     have smth : smooth (𝓘(ℝ, ℝ).prod IM) IX (λ (p : ℝ × M), F₀.to_one_jet_sec.bs p.snd), sorry,
     have sub : (λ (p : ℝ × M), F₀.bs p.2) '' range (Id.prod (L.φ 0)) ⊆ range (L.ψj 0), sorry,
-    rcases (Id.prod (L.φ 0)).nice_update_of_eq_outside_compact' (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2)
+    rcases (Id.prod (L.φ 0)).dist_update (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2)
       cpct smth sub τ_pos τ_cont with ⟨η, η_pos, hη⟩,
 
     rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) η_pos this
