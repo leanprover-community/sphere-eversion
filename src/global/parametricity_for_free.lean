@@ -39,7 +39,7 @@ lemma mem_relativize (R : rel_mfld I M I' M') (w : one_jet_bundle (IP.prod I) (P
  w ∈ R.relativize IP P ↔
   (one_jet_bundle.mk w.1.1.2 w.1.2 (w.2.comp (continuous_linear_map.inr ℝ EP E)) :
     one_jet_bundle I M I' M') ∈ R :=
-iff.rfl
+by { simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd_eq], refl }
 
 lemma rel_mfld.is_open_relativize (R : rel_mfld I M I' M') (h2 : is_open R) :
   is_open (R.relativize IP P) :=
@@ -100,7 +100,7 @@ begin
     rw [q.update_apply _ hu, ← prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup,
       ← prod.smul_zero_mk, map_smul, vadd_eq_add],
     nth_rewrite 0 [← sub_add_cancel (0, q.v) p.v],
-    rw [map_add, p.update_ker_pi _ _ hv, p.update_v],
+    rw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundle_snd_eq],
     refl },
   have := preimage_vadd_neg (show E', from σ.2 (p.v - (0, q.v)))
     (show set E', from (R.slice (bundle_snd σ) q)),
@@ -151,7 +151,7 @@ variables {IP P}
 lemma family_one_jet_sec.uncurry_mem_relativize (S : family_one_jet_sec I M I' M' IP P) {s : P}
   {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R :=
 begin
-  simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd, one_jet_sec.coe_apply,
+  simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd_eq, one_jet_sec.coe_apply,
     map_left],
   congr',
   ext v,
@@ -240,7 +240,7 @@ lemma family_one_jet_sec.curry_mem (S : family_one_jet_sec (IP.prod I) (P × M) 
   {p : N × P} {x : M} (hR : S p.1 (p.2, x) ∈ R.relativize IP P) :
   S.curry p x ∈ R :=
 begin
-  simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd, one_jet_sec.coe_apply,
+  simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd_eq, one_jet_sec.coe_apply,
     map_left] at hR ⊢,
   convert hR,
   ext v,
