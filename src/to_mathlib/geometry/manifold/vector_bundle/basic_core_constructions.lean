@@ -47,6 +47,21 @@ begin
   simp_rw [prod.ext_iff, subtype.ext_iff, h₁, h₂, subtype.coe_mk, eq_self_iff_true, and_self]
 end
 
+lemma trivial_coord_change_at {b b' : B} (x : HB) :
+  (trivial_basic_smooth_vector_bundle_core IB B F).coord_change (achart HB b) (achart HB b') x =
+  1 :=
+rfl
+
+lemma tangent_space_self_coord_change_at {b b' x : F} :
+  (tangent_bundle_core 𝓘(𝕜, F) F).coord_change (achart F b) (achart F b') x = 1 :=
+begin
+  simp_rw [tangent_bundle_core_coord_change, model_with_corners_self_coe,
+    model_with_corners_self_coe_symm, achart_def, range_id, chart_at_self_eq, function.comp,
+    local_homeomorph.refl_symm, local_homeomorph.refl_apply, function.id_def],
+  exact fderiv_within_id unique_diff_within_at_univ
+end
+
+
 include Z
 
 /-- The pullback of `basic_smooth_vector_bundle_core`, assuming `f` preserves the specific chart
