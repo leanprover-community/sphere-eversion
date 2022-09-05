@@ -129,10 +129,6 @@ def loc_htpy_formal_sol {𝓕 : htpy_formal_sol R}
   (L.loc_rel i R).htpy_formal_sol :=
 sorry
 
-/-
-FIXME: the next definition probably misses side conditions.
--/
-
 def Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ
 
 def update_htpy_jet_sec (F : htpy_one_jet_sec I M I' M') (𝓕 : htpy_jet_sec E E') :
@@ -141,11 +137,15 @@ def update_htpy_jet_sec (F : htpy_one_jet_sec I M I' M') (𝓕 : htpy_jet_sec E 
   ϕ := λ t m, sorry,
   smooth' := sorry }
 
-#where
+section
+variable (hF :  range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
 
-#check F
-
+#check L.loc_formal_sol hF
+#check (L.φ i).update_formal_sol (L.ψj i) F
 #check (L.φ i).update (L.ψj i) F.bs
+#check (L.φ i).Jupdate (L.ψj i) F.to_one_jet_sec
+
+end
 
 def unloc_htpy_jet_sec (i : L.ι) (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec I M I' M' :=
 /- htpy_one_jet_sec.unlocalize (L.ψj i) (L.φ i)
