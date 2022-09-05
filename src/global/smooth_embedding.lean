@@ -420,15 +420,20 @@ variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
   {HN : Type*} [topological_space HN] {IN : model_with_corners 𝕜 EN HN}
   [topological_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
   [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
-  [metric_space Y]      [charted_space HY Y] [smooth_manifold_with_corners IY Y]
-  [metric_space N]      [charted_space HN N] [smooth_manifold_with_corners IN N]
+
+section non_metric
+variables
+  [topological_space Y]      [charted_space HY Y] [smooth_manifold_with_corners IY Y]
+  [topological_space N]      [charted_space HN N] [smooth_manifold_with_corners IN N]
   (φ : open_smooth_embedding IX X IM M)
   (ψ : open_smooth_embedding IY Y IN N)
   (f : M → N) (g : X → Y)
-  [decidable_pred (∈ range φ)]
 
+section
+local attribute [instance] classical.dec
 /-- This is definition `def:update` in the blueprint. -/
 def update (m : M) : N := if m ∈ range φ then ψ (g (φ.inv_fun m)) else f m
+end
 
 @[simp] lemma update_of_nmem_range {m : M} (hm : m ∉ range φ) :
   update φ ψ f g m = f m :=
@@ -485,6 +490,18 @@ begin
     simpa [hm] using set.ext_iff.mp h₃ m }
 end
 
+end non_metric
+
+section metric
+variables
+  [metric_space Y]      [charted_space HY Y] [smooth_manifold_with_corners IY Y]
+  [metric_space N]      [charted_space HN N] [smooth_manifold_with_corners IN N]
+  (φ : open_smooth_embedding IX X IM M)
+  (ψ : open_smooth_embedding IY Y IN N)
+  (f : M → N) (g : X → Y)
+  [decidable_pred (∈ range φ)]
+
+
 /-
 The next lemma probably isn't quite enough. We want to apply it to
 `K = [0, 1] × Ball 0 2` but the condition `f (φ x) = ψ (g x)` doesn't hold on
@@ -528,6 +545,7 @@ begin
   rw ← ψ.right_inv h₂,
   exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1,
 end
+end metric
 
 end updating
 
