@@ -586,6 +586,22 @@ begin
   exact differentiable_at.fderiv_within_prod hf.2 hg.2 (J.unique_diff _ (mem_range_self _))
 end
 
+lemma mfderiv_prod_left {x₀ : M} {y₀ : M'} :
+  mfderiv I (I.prod I') (λ x, (x, y₀)) x₀ = continuous_linear_map.inl 𝕜 E E' :=
+begin
+  refine ((mdifferentiable_at_id I).mfderiv_prod (mdifferentiable_at_const I I')).trans _,
+  rw [mfderiv_id, mfderiv_const],
+  refl
+end
+
+lemma mfderiv_prod_right {x₀ : M} {y₀ : M'} :
+  mfderiv I' (I.prod I') (λ y, (x₀, y)) y₀ = continuous_linear_map.inr 𝕜 E E' :=
+begin
+  refine ((mdifferentiable_at_const I' I).mfderiv_prod (mdifferentiable_at_id I')).trans _,
+  rw [mfderiv_id, mfderiv_const],
+  refl
+end
+
 lemma mfderiv_prod_eq_add {f : N × M → M'} {p : N × M}
   (hf : mdifferentiable_at (J.prod I) I' f p) :
   mfderiv (J.prod I) I' f p =
