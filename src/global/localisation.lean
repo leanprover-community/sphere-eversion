@@ -92,7 +92,7 @@ variables (L : localisation_data I I' f) (F : formal_sol R) (i : L.ι)
   (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
 
 def loc_rel (R : rel_mfld I M I' M') : rel_loc E E' :=
-(R.localize (L.ψj i) (L.φ i)).rel_loc
+(R.localize (L.φ i) (L.ψj i)).rel_loc
 
 lemma is_open_loc_rel (h : is_open R) : is_open (L.loc_rel i R) :=
 is_open_of_is_open _ $ h.preimage $ one_jet_bundle.continuous_transfer _ _
@@ -119,9 +119,9 @@ FIXME: the next definition in progress should probably use
 /-- Turn a global formal solution into a local one using some localisation data. -/
 def loc_formal_sol {F : formal_sol R}
   {i : L.ι} (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
-  rel_loc.formal_sol (R.localize (L.ψj i) (L.φ i)).rel_loc :=
+  rel_loc.formal_sol (R.localize (L.φ i) (L.ψj i)).rel_loc :=
 { is_sol := sorry,
-  ..(F.localize (L.ψj i) (L.φ i) hFL).loc }
+  ..(F.localize (L.φ i) (L.ψj i) hFL).loc }
 
 /-- Turn a global homotopy of formal solutions into a local one using some localisation data. -/
 def loc_htpy_formal_sol {𝓕 : htpy_formal_sol R}
