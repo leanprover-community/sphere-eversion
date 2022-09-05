@@ -36,9 +36,18 @@ by { rw ← mfderiv_eq_fderiv, refl }
 between those vector spaces. -/
 def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc.jet_sec E E' :=
 { f := F.bs,
-  f_diff := sorry,
+  f_diff := F.smooth_bs.cont_diff,
   φ := λ x, (F x).2,
-  φ_diff := sorry }
+  φ_diff := begin
+    rw [cont_diff_iff_cont_diff_at],
+    intro x₀,
+    have : smooth_at _ _ _ _ := F.smooth x₀,
+    simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
+      basic_smooth_vector_bundle_core.tangent_space_self_coord_change_at,
+      continuous_linear_map.one_def, continuous_linear_map.comp_id, continuous_linear_map.id_comp]
+      at this,
+      exact this.2.2.cont_diff_at,
+  end }
 
 lemma one_jet_sec.loc_hol_at_iff (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
 F.loc.is_holonomic_at x ↔ F.is_holonomic_at x :=
@@ -52,19 +61,21 @@ end
 seen as vector spaces. One annoying bit is `equiv.prod_assoc E E' $ E →L[ℝ] E'` that is needed
 to reassociate a product of types. -/
 def rel_mfld.rel_loc (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc E E' :=
-(equiv.prod_assoc _ _ _) '' ((one_jet_bundle_model_space_homeomorph E 𝓘(ℝ, E) E' 𝓘(ℝ, E')) '' R)
+(homeomorph.prod_assoc _ _ _).symm ⁻¹'
+  ((one_jet_bundle_model_space_homeomorph E 𝓘(ℝ, E) E' 𝓘(ℝ, E')).symm ⁻¹' R)
 
 lemma ample_of_ample (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : R.ample) :
   R.rel_loc.is_ample :=
-sorry
+by { rintro p ⟨x, y, ϕ⟩, exact @hR ⟨(x, y), ϕ⟩ p }
 
 lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is_open R) :
   is_open R.rel_loc :=
-sorry
+(homeomorph.is_open_preimage _).mpr $ (homeomorph.is_open_preimage _).mpr hR
 
 end loc
 
-section localisation_data
+namespace localisation_data
+
 variables
   {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
   {H : Type*} [topological_space H]
@@ -80,15 +91,14 @@ variables {f : M → M'} {R : rel_mfld I M I' M'}
 variables (L : localisation_data I I' f) (F : formal_sol R) (i : L.ι)
   (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
 
-namespace localisation_data
-def loc_rel (R : rel_mfld I M I' M') : _ :=
+def loc_rel (R : rel_mfld I M I' M') : rel_loc E E' :=
 (R.localize (L.ψj i) (L.φ i)).rel_loc
 
 lemma is_open_loc_rel (h : is_open R) : is_open (L.loc_rel i R) :=
-sorry
+is_open_of_is_open _ $ h.preimage $ one_jet_bundle.continuous_transfer _ _
 
 lemma is_ample (h : R.ample) : (L.loc_rel i R).is_ample :=
-sorry
+ample_of_ample _ (h.localize _ _)
 
 def landscape [finite_dimensional ℝ E] {A : set M} (hA : is_closed A)
   (n : ℕ) : landscape E :=
@@ -163,7 +173,5 @@ lemma barbaz' {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal
   (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
   ∀ x ∈ A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
 (barbaz L hF₀ hAC h).nhds_set_forall_mem
-
-end localisation_data
 
 end localisation_data

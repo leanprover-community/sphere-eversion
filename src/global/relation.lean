@@ -323,13 +323,13 @@ def one_jet_bundle.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M I
       ((g.fderiv σ.1.2 : TY σ.1.2 →L[ℝ] TN (g σ.1.2)).comp σ.2).comp
         ((h.fderiv σ.1.1).symm : TM (h σ.1.1) →L[ℝ] TX σ.1.1)⟩
 
-lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer g h) :=
-sorry
-
 -- do we need this?
 lemma one_jet_bundle.smooth_transfer : smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY))
   ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) (one_jet_bundle.transfer g h) :=
 sorry
+
+lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer g h) :=
+one_jet_bundle.smooth_transfer.continuous
 
 /-- localize a relation -/
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
