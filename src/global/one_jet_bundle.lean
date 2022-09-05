@@ -196,6 +196,20 @@ variables {M M'}
 
 variables {I I' J J'}
 
+lemma smooth_one_jet_bundle_proj :
+  smooth ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') (one_jet_bundle.proj I M I' M') :=
+basic_smooth_vector_bundle_core.smooth_proj _
+
+lemma smooth.one_jet_bundle_proj {f : N → one_jet_bundle I M I' M'}
+  (hf : smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f) :
+  smooth J (I.prod I') (λ x, (f x).1) :=
+smooth_one_jet_bundle_proj.comp hf
+
+lemma smooth_at.one_jet_bundle_proj {f : N → one_jet_bundle I M I' M'} {x₀ : N}
+  (hf : smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀) :
+  smooth_at J (I.prod I') (λ x, (f x).1) x₀ :=
+(smooth_one_jet_bundle_proj _).comp x₀ hf
+
 /-- The constructor of one_jet_bundle, in case `sigma.mk` will not give the right type. -/
 @[simp] def one_jet_bundle.mk (x : M) (y : M') (f : one_jet_space I I' (x, y)) :
   one_jet_bundle I M I' M' :=
@@ -345,8 +359,8 @@ lemma smooth_bundle_snd :
 begin
   intro x,
   refine smooth_at.one_jet_bundle_mk _ _ _,
-  { exact (basic_smooth_vector_bundle_core.smooth_proj _).fst.snd x },
-  { exact (basic_smooth_vector_bundle_core.smooth_proj _).snd x },
+  { exact smooth_one_jet_bundle_proj.fst.snd x },
+  { exact smooth_one_jet_bundle_proj.snd x },
   sorry
 end
 
