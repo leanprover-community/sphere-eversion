@@ -207,11 +207,11 @@ variables {I I' J J'}
 @[simp, mfld_simps] lemma one_jet_bundle_mk_snd {x : M} {y : M'} {f : one_jet_space I I' (x, y)} :
   (one_jet_bundle.mk x y f).2 = f := rfl
 
-lemma smooth_at_one_jet_bundle {f : N → one_jet_bundle I M I' M'} {n : N} :
-  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f n ↔
-  smooth_at J I (λ x, (f x).1.1) n ∧ smooth_at J I' (λ x, (f x).1.2) n ∧
+lemma smooth_at_one_jet_bundle {f : N → one_jet_bundle I M I' M'} {x₀ : N} :
+  smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀ ↔
+  smooth_at J I (λ x, (f x).1.1) x₀ ∧ smooth_at J I' (λ x, (f x).1.2) x₀ ∧
   smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
-    (λ x, (f x).2) n) n :=
+    (λ x, (f x).2) x₀) x₀ :=
 begin
   simp_rw [smooth_at_hom_bundle, in_coordinates', pullback_fst_coord_change_at,
     pullback_snd_coord_change_at],
@@ -220,18 +220,24 @@ begin
   ext x; refl
 end
 
-lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N} :
+lemma smooth_at.in_coordinates_snd {f : N → one_jet_bundle I M I' M'} {x₀ : N}
+  (hf : smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀) :
+  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
+    (λ x, (f x).2) x₀) x₀ :=
+(smooth_at_one_jet_bundle.mp hf).2.2
+
+lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
-    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n ↔
-  smooth_at J I f n ∧ smooth_at J I' g n ∧
-  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n :=
+    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') x₀ ↔
+  smooth_at J I f x₀ ∧ smooth_at J I' g x₀ ∧
+  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ x₀) x₀ :=
 smooth_at_one_jet_bundle
 
-lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {n : N}
-  (hf : smooth_at J I f n) (hg : smooth_at J I' g n)
-  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n) :
+lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
+  (hf : smooth_at J I f x₀) (hg : smooth_at J I' g x₀)
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ x₀) x₀) :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
-    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') n :=
+    (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') x₀ :=
 smooth_at_one_jet_bundle.mpr ⟨hf, hg, hϕ⟩
 
 variables (I I')
