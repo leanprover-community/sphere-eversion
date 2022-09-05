@@ -451,8 +451,15 @@ begin
   { simp [hm'] }
 end
 
+
 /- FIXME: the blueprint statement corresponding to the next two lemmas has very confusing
-quantifiers status. -/
+quantifiers status.
+-/
+
+/-
+In the next lemma, it is better to assume directly that `φ '' K` is closed. This
+will hold whe `φ = Id.prod ψ` and `K = ℝ × H` with `H` compact.
+-/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
 lemma nice_update_of_eq_outside_compact
@@ -475,11 +482,20 @@ begin
     simpa [hm] using set.ext_iff.mp h₃ m }
 end
 
+/-
+The next lemma probably isn't quite enough. We want to apply it to
+`K = [0, 1] × Ball 0 2` but the condition `f (φ x) = ψ (g x)` doesn't hold on
+`{1} × Ball 0 2`. However we also don't care about what happens when `t` isn't in `[0, 1]`
+so we should probably weaken the conclusion.
+We could even use a reflection trick to reduce to a case where `K = [0, 2] × Ball 0 2`
+and the whole boundary is ok.
+-/
+
 /-- This is half of lemma `lem:updating` in the blueprint. -/
 lemma nice_update_of_eq_outside_compact' {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
   (hf' : f '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
   ∃ (η > (0 : ℝ)), ∀ g : X → Y,
-    smooth IX IY g → (∀ x, x ∉ K → f (φ x) = ψ (g x)) →
+    (∀ x, x ∉ K → f (φ x) = ψ (g x)) →
     (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) →
       ∀ m, dist (update φ ψ f g m) (f m) < ε m :=
 begin
@@ -496,9 +512,9 @@ begin
   obtain ⟨ε₀, hε₀, hε₀'⟩ :=
     hK.exists_forall_le' (hε'.comp φ.continuous).continuous_on hεφ,
   obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
-  refine ⟨min τ 1, by simp [hτ], λ g hg hg' hη m,  _⟩,
+  refine ⟨min τ 1, by simp [hτ], λ g hg hη m,  _⟩,
   have hK' : ∀ m ∉ φ '' K, update φ ψ f g m = f m := λ m hm, by
-    from nice_update_of_eq_outside_compact_aux φ ψ f g hg' hm,
+    from nice_update_of_eq_outside_compact_aux φ ψ f g hg hm,
   by_cases hm : m ∈ φ '' K, swap, { simp [hK', hm, hε m], },
   obtain ⟨x, hx, rfl⟩ := hm,
   refine lt_of_lt_of_le _ (hε₀' x hx),

@@ -141,14 +141,15 @@ namespace localisation_data
 protected def ε (ld : localisation_data I I' f) : M → ℝ :=
 (localisation_stability ld).some
 
-lemma localisation_data.ε_pos (ld : localisation_data I I' f) : ∀ m, 0 < ld.ε m :=
+lemma ε_pos (ld : localisation_data I I' f) : ∀ m, 0 < ld.ε m :=
 (localisation_stability ld).some_spec.some
 
-lemma localisation_data.ε_cont (ld : localisation_data I I' f) : continuous ld.ε :=
+lemma ε_cont (ld : localisation_data I I' f) : continuous ld.ε :=
 (localisation_stability ld).some_spec.some_spec.some
 
-lemma localisation_data.ε_spec (ld : localisation_data I I' f) :
-  ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ld.ε m) i, range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
+lemma ε_spec (ld : localisation_data I I' f) :
+  ∀ (g : M → M') (hg : ∀ m, dist (g m) (f m) < ld.ε m) (i : ld.ι),
+  range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
 (localisation_stability ld).some_spec.some_spec.some_spec
 
 end localisation_data

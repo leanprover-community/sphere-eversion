@@ -35,63 +35,87 @@ variables
 [nonempty X] -- FIXME: investigate how to remove this
 
 {R : rel_mfld IM M IX X}
-{A : set M} {ε : M → ℝ}
+{A : set M} {δ : M → ℝ}
 
 set_option trace.filter_inst_type true
 
 lemma rel_mfld.ample.satisfies_h_principle_core
   (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
-  (hε_pos : ∀ (x : M), 0 < ε x)
-  (hε_cont : continuous ε)
-  (𝓕₀ : formal_sol R)
-  (h𝓕₀ : ∀ᶠ x near A, 𝓕₀.to_one_jet_sec.is_holonomic_at x)
-  (L : localisation_data IM IX 𝓕₀.to_one_jet_sec.bs) :
+  (hδ_pos : ∀ (x : M), 0 < δ x)
+  (hδ_cont : continuous δ)
+  (F₀ : formal_sol R)
+  (hF₀A : ∀ᶠ x near A, F₀.is_holonomic_at x)
+  (L : localisation_data IM IX F₀.bs) :
   ∃ F : ℕ → htpy_formal_sol R, ∀ n : ℕ,
-    ((F n 0 = 𝓕₀) ∧
-    (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
-    (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) <ε x) ∧
+    ((F n 0 = F₀) ∧
+    (∀ t, ∀ᶠ x near A, F n t x = F₀ x) ∧
+    (∀ t x, dist ((F n t).bs x) (F₀.bs x) < δ x) ∧
 
     (∀ x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
       ((F n) 1).to_one_jet_sec.is_holonomic_at x)) ∧
     ((L.index (n + 1)  = L.index n → F (n + 1) = F n) ∧
      ∀ t (x ∉ range (L.φ $ L.index $ n+1)), F (n + 1) t x = F n t x) :=
 begin
+  classical,
   letI : measurable_space EX := sorry,
   haveI : borel_space EX := sorry,
-  have cont_bs : continuous 𝓕₀.bs, from 𝓕₀.to_one_jet_sec.smooth_bs.continuous,
+  have cont_bs : continuous F₀.bs, from F₀.smooth_bs.continuous,
+  have := L.ε_spec,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
-    (Fn 0 = 𝓕₀) ∧
-    (∀ t, ∀ᶠ x near A, Fn t x = 𝓕₀ x) ∧
-    (∀ t x, dist ((Fn t).bs x) (𝓕₀.bs x) <ε x) ∧
-
+    (Fn 0 = F₀) ∧
+    (∀ t, ∀ᶠ x near A, Fn t x = F₀ x) ∧
+    (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < δ x) ∧
+    (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < L.ε x) ∧
     (∀ x ∈ ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
       (Fn 1).is_holonomic_at x),
   let Q : ℕ → htpy_formal_sol R → htpy_formal_sol R → Prop := λ n Fn Fnp1,
     (L.index (n + 1)  = L.index n → Fnp1 = Fn) ∧
      ∀ t, ∀ x ∉ range (L.φ $ L.index $ n+1), Fnp1 t x = Fn t x,
+  suffices : ∃ F : ℕ → htpy_formal_sol R, ∀ n, P n (F n) ∧ Q n (F n) (F $ n+1),
+  sorry { rcases this with ⟨F, hF⟩,
+    use F,
+    intro n,
+    cases hF n,
+    tauto },
   apply exists_by_induction' P Q,
   { dsimp only [P],
-    let 𝓕 := L.loc_formal_sol (L.rg_subset_rg 0),
-    have : ∀ᶠ (x : EM) near (L.landscape hA 0).C, 𝓕.is_holonomic_at x,
+    let 𝓕₀ := L.loc_formal_sol (L.rg_subset_rg 0),
+    have : ∀ᶠ (x : EM) near (L.landscape hA 0).C, 𝓕₀.is_holonomic_at x,
     {
       sorry },
-    let δ : ℝ := sorry,
-    have δ_pos : δ > 0, sorry,
+    let Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ,
+    have foo := (Id.prod (L.φ 0)).nice_update_of_eq_outside_compact (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2),
+    let τ : ℝ × M → ℝ := λ p, min (δ p.2) (L.ε p.2),
+    have τ_pos : ∀ p, 0 < τ p, sorry,
+    have τ_cont : continuous τ, sorry,
+    have cpct : is_compact ((Icc 0 1 : set ℝ) ×ˢ (metric.closed_ball 0 2 : set EM)), sorry,
+    have smth : smooth (𝓘(ℝ, ℝ).prod IM) IX (λ (p : ℝ × M), F₀.to_one_jet_sec.bs p.snd), sorry,
+    have sub : (λ (p : ℝ × M), F₀.bs p.2) '' range (Id.prod (L.φ 0)) ⊆ range (L.ψj 0), sorry,
+    rcases (Id.prod (L.φ 0)).nice_update_of_eq_outside_compact' (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2)
+      cpct smth sub τ_pos τ_cont with ⟨η, η_pos, hη⟩,
 
-    rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) δ_pos this
-      with ⟨H, hH0, hHC, hHK₁, hHδ, hHK₀⟩,
-    use L.unloc_htpy_formal_sol 0 H,
-    sorry },
-  {
+    rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) η_pos this
+      with ⟨𝓗, h𝓗₀, h𝓗C, h𝓗K₁, h𝓗δ, h𝓗K₀⟩,
+    let H := L.unloc_htpy_formal_sol 0 𝓗,
+    refine ⟨H, _, _, _, _⟩,
+    {
+      sorry },
+    {
+      sorry },
+    {
+      sorry },
+    {
+      sorry } },
+  { rintros n F ⟨hF₀, hfA, hFδ, hFhol⟩,
     sorry },
 end
 
 /-- The non-parametric version of Gromov's theorem -/
 lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
-  (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
-  R.satisfies_h_principle A ε :=
+  (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
+  R.satisfies_h_principle A δ :=
 begin
   apply rel_mfld.satisfies_h_principle_of_weak hA,
   unfreezingI { clear_dependent A },
@@ -103,7 +127,7 @@ begin
   suffices : ∃ F : ℕ → htpy_formal_sol R, ∀ n,
     ((F n 0 = 𝓕₀) ∧
     (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
-    (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) < ε x) ∧
+    (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) < δ x) ∧
 
     (∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : EM) 1,
              (F n 1).is_holonomic_at x)) ∧
@@ -111,7 +135,7 @@ begin
      (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
   { clear_dependent hRample hRopen,
     simp_rw [and_assoc, forall_and_distrib] at this,
-    rcases this with ⟨F, hF₀, hfA, hFε, hFhol, hFπ, hFultim⟩,
+    rcases this with ⟨F, hF₀, hfA, hFδ, hFhol, hFπ, hFultim⟩,
     let FF := λ n : ℕ, λ p : ℝ × M, F n p.1 p.2,
     have h : ∀ n : ℕ, ∀ x ∉ (univ : set ℝ) ×ˢ range (L.φ $ π $ n+1), FF (n+1) x = FF n x,
     { rintros n ⟨t, x⟩ H,
@@ -166,7 +190,7 @@ begin
         exact (F (n (t, x))).is_sol' t x,
       end },
     refine ⟨𝓕, _, _, _, _⟩,
-    { clear_dependent ε hfA hFhol hFπ hFultim,
+    { clear_dependent δ hfA hFhol hFπ hFultim,
       intro x,
       ext,
       { refl },
@@ -175,7 +199,7 @@ begin
       { apply heq_of_eq,
         change (G (0, x)).2 = _,
         rw [G_eq, hF₀] } },
-    { clear_dependent ε hF₀ hfA hFπ hFultim,
+    { clear_dependent δ hF₀ hfA hFπ hFultim,
       intro x,
       have : x ∈ ⋃ i ≤ π (n (1, x)), (L.φ i) '' metric.closed_ball 0 1,
       { have : x ∈ _ := hn' (1, x) _ le_rfl,
@@ -193,7 +217,7 @@ begin
       ext ; try { refl },
       rw hG11,
       refl },
-    { clear_dependent ε hF₀ hFhol hFπ hFultim,
+    { clear_dependent δ hF₀ hFhol hFπ hFultim,
       intros x x_in t,
       rw [← (hfA (n (t, x)) t).nhds_set_forall_mem x x_in, ← G_eq],
       ext ; try { refl },
@@ -201,10 +225,10 @@ begin
     { clear_dependent hF₀ hFhol hFπ hFultim hfA,
       intros t x,
       apply le_of_lt,
-      change dist (G (t, x)).1.2 (𝓕₀.bs x) < ε x,
+      change dist (G (t, x)).1.2 (𝓕₀.bs x) < δ x,
       rw ← (hn (t, x) _ le_rfl).eq_of_nhds,
-      exact hFε (n (t, x)) t x } },
-  exact hRample.satisfies_h_principle_core hRopen hA hε_pos hε_cont 𝓕₀ h𝓕₀ L,
+      exact hFδ (n (t, x)) t x } },
+  exact hRample.satisfies_h_principle_core hRopen hA hδ_pos hδ_cont 𝓕₀ h𝓕₀ L,
 end
 
 variables
@@ -220,14 +244,14 @@ variables
 /-- **Gromov's Theorem** -/
 theorem rel_mfld.ample.satisfies_h_principle_with (hRample : R.ample) (hRopen : is_open R)
   (hC : is_closed C)
-  (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
-  R.satisfies_h_principle_with IP C ε :=
+  (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
+  R.satisfies_h_principle_with IP C δ :=
 begin
-  have hε_pos' : ∀ (x : P × M), 0 < ε x.2 := λ (x : P × M), hε_pos x.snd,
-  have hε_cont' : continuous (λ (x : P × M), ε x.2) := hε_cont.comp continuous_snd,
+  have hδ_pos' : ∀ (x : P × M), 0 < δ x.2 := λ (x : P × M), hδ_pos x.snd,
+  have hδ_cont' : continuous (λ (x : P × M), δ x.2) := hδ_cont.comp continuous_snd,
   have is_op : is_open (rel_mfld.relativize IP P R) := R.is_open_relativize IP P hRopen,
   apply rel_mfld.satisfies_h_principle.satisfies_h_principle_with,
-  exact (hRample.relativize IP P).satisfies_h_principle is_op hC hε_pos' hε_cont',
+  exact (hRample.relativize IP P).satisfies_h_principle is_op hC hδ_pos' hδ_cont',
 end
 
 variables
@@ -245,10 +269,10 @@ include IP
 /-- Gromov's Theorem without metric space assumption -/
 theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
   (hRample : R.ample) (hRopen : is_open R) (hC : is_closed C)
-  (hε_pos : ∀ x, 0 < ε x) (hε_cont : continuous ε) :
+  (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
   by letI := (@topological_space.metrizable_space_metric _ _
     (manifold_with_corners.metrizable_space I' M')); exact
-  R.satisfies_h_principle_with IP C ε :=
+  R.satisfies_h_principle_with IP C δ :=
 begin
   haveI := (@topological_space.metrizable_space_metric _ _
     (manifold_with_corners.metrizable_space I' M')),
