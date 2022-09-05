@@ -606,6 +606,17 @@ begin
   simp_rw [prod.mk.eta],
 end
 
+/-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
+  in charts around `y`, `in_coordinates' Z Z' x₀ x y₀ y ϕ` is a coordinate change of this continuous
+  linear map that makes sense from charts around `x₀` to charts around `y₀`
+  by composing it with appropriate coordinate changes given by smooth vector bundles `Z` and `Z'`.
+  -/
+def in_coordinates' (Z : basic_smooth_vector_bundle_core I M F)
+  (Z' : basic_smooth_vector_bundle_core I' M' F')
+  (x₀ x : M) (y₀ y : M') (ϕ : F →L[𝕜] F') : F →L[𝕜] F' :=
+Z'.coord_change (achart H' y) (achart H' y₀) (chart_at H' y y) ∘L ϕ ∘L
+  Z.coord_change (achart H x₀) (achart H x) (chart_at H x₀ x)
+
 variables (I I')
 /-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
   in charts around `g x`, `in_coordinates I I' f g ϕ x₀ x` is a coordinate change of this continuous
@@ -613,10 +624,8 @@ variables (I I')
   by composing it with appropriate coordinate changes. -/
 noncomputable def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') :
   N → N → E →L[𝕜] E' :=
-λ x₀ x, ((tangent_bundle_core I' M').coord_change (achart H' (g x)) (achart H' (g x₀))
-      (chart_at H' (g x) (g x))).comp $ (ϕ x).comp $
-    (tangent_bundle_core I M).coord_change (achart H (f x₀)) (achart H (f x))
-    (chart_at H (f x₀) (f x))
+λ x₀ x, in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
+  (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
 variables {I I'}
 

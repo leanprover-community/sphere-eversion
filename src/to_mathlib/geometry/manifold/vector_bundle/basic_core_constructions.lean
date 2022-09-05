@@ -301,8 +301,9 @@ open continuous_linear_map
     { rw [← IB.image_eq] }
   end }
 
-lemma hom_chart
-  (x : (Z.hom Z').to_topological_vector_bundle_core.total_space)
+local notation `LZZ'` := (Z.hom Z').to_topological_vector_bundle_core.total_space
+
+lemma hom_chart' (x : LZZ')
   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
     x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
@@ -311,6 +312,44 @@ by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_
   to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
+
+lemma hom_chart (x : LZZ') (x₀ : B) :
+  (Z.hom Z').chart (chart_mem_atlas HB x₀) x =
+  (chart_at HB x₀ x.1, in_coordinates' Z Z' x₀ x.1 x₀ x.1 x.2) :=
+by simp_rw [hom_chart', in_coordinates', achart_def]
+
+lemma hom_ext_chart_at {v v' : LZZ'} :
+  ext_chart_at (IB.prod 𝓘(𝕜, F →L[𝕜] F')) v v' =
+  (ext_chart_at IB v.1 v'.1, in_coordinates' Z Z' v.1 v'.1 v.1 v'.1 v'.2) :=
+by simp_rw [ext_chart_at_coe, function.comp_apply, to_charted_space_chart_at, hom_chart,
+    model_with_corners.prod_apply, model_with_corners_self_coe, function.id_def]
+
+lemma smooth_at.hom_bundle_mk {f : M → B} {ϕ : M → F →L[𝕜] F'} {x₀ : M}
+  (hf : smooth_at IM IB f x₀)
+  (hϕ : smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
+    (λ x, in_coordinates' Z Z' (f x₀) (f x) (f x₀) (f x) (ϕ x)) x₀) :
+  smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) (λ x, total_space_mk (f x) (ϕ x) : M → LZZ') x₀ :=
+begin
+  rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target],
+  refine ⟨hf.continuous_at, _⟩,
+  simp_rw [function.comp, hom_ext_chart_at],
+  exact (cont_mdiff_at_ext_chart_at.comp _ hf).prod_mk_space hϕ
+end
+
+lemma smooth_at_hom_bundle {f : M → LZZ'} {x₀ : M} :
+  smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) f x₀ ↔
+  smooth_at IM IB (λ x, (f x).1) x₀ ∧
+  smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
+    (λ x, in_coordinates' Z Z' (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+begin
+  refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
+  { apply ((Z.hom Z').smooth_proj _).comp x₀ h },
+  { rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target, ← smooth_at] at h,
+    have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
+    simp_rw [function.comp, hom_ext_chart_at] at h2,
+    exact h2 },
+  { convert smooth_at.hom_bundle_mk Z Z' h.1 h.2, ext; refl }
+end
 
 section cech_cocycles
 
