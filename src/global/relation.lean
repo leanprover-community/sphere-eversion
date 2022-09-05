@@ -315,6 +315,11 @@ local notation `TN` := tangent_space IN
 local notation `TX` := tangent_space IX
 local notation `TY` := tangent_space IY
 
+local notation `J¹XY` := one_jet_bundle IX X IY Y
+local notation `J¹MN` := one_jet_bundle IM M IN N
+local notation `IXY` := (IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)
+local notation `IMN` := (IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)
+
 /-- Transfer map between one jet bundles induced by open smooth embedding into the source and
 targets. -/
 @[simps fst_fst fst_snd]
@@ -387,6 +392,72 @@ end
 lemma one_jet_sec.localize_bs_fun (hF : range (F.bs ∘ h) ⊆ range g) :
   (F.localize g h hF).bs = g.inv_fun ∘ F.bs ∘ h :=
 rfl
+
+def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
+{ to_fun := one_jet_bundle.transfer g h,
+  inv_fun := λ σ, ⟨⟨h.inv_fun σ.1.1, g.inv_fun σ.1.2⟩,
+      (((g.fderiv $ g.inv_fun σ.1.2).symm : TN (g $ g.inv_fun σ.1.2) →L[ℝ] TY (g.inv_fun σ.1.2)).comp σ.2).comp
+        ((h.fderiv $ h.inv_fun σ.1.1) : TX (h.inv_fun σ.1.1) →L[ℝ] TM (h $ h.inv_fun σ.1.1))⟩,
+  left_inv' := begin
+    rintros ⟨x, y, φ⟩,
+    refine sigma.ext (prod.ext _ _) _,
+    sorry { dsimp [one_jet_bundle.transfer],
+      apply h.left_inv' },
+    sorry { dsimp [one_jet_bundle.transfer],
+      apply g.left_inv' },
+    sorry { dsimp [one_jet_bundle.transfer],
+      apply heq_of_eq,
+      ext1,
+      simp only [open_smooth_embedding.fderiv_symm_coe, open_smooth_embedding.fderiv_coe,
+                 continuous_linear_map.coe_comp', continuous_linear_map.coe_mk', comp_app],
+      sorry },
+
+  end,
+  right_inv' := sorry,
+  open_map := sorry,
+  smooth_to := sorry,
+  smooth_inv := sorry }
+
+-- Not sure this will be needed, but it makes sense to check at least that the statement types check
+lemma one_jet_bundle.range_embedding :
+  range (one_jet_bundle.embedding g h) =
+  one_jet_bundle.proj IM M IN N ⁻¹' (range (h : X → M) ×ˢ range (g : Y → N)) :=
+sorry
+
+local notation `ψ` := h.update g
+local notation `Jψ` := h.update (one_jet_bundle.embedding g h)
+
+def open_smooth_embedding.Jupdate (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y) :
+  one_jet_sec IM M IN N :=
+{ bs := λ m, (Jψ F G m).1.2,
+  ϕ := λ m, (Jψ F G m).2,
+  smooth' := sorry }
+
+lemma open_smooth_embedding.Jupdate_bs (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y) :
+(open_smooth_embedding.Jupdate g h F G).bs = open_smooth_embedding.update h g F.bs G.bs :=
+begin
+  classical,
+  ext x,
+  change (if x ∈ range h then one_jet_bundle.transfer g h _ else _).1.2 = if _ then _ else _,
+  split_ifs ; refl,
+end
+
+def open_smooth_embedding.htpy_Jupdate (F : htpy_one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X IY Y) :
+  htpy_one_jet_sec IM M IN N :=
+{ bs := λ t m, (Jψ (F t) (G t) m).1.2,
+  ϕ := λ t m, (Jψ (F t) (G t) m).2,
+  smooth' := sorry }
+
+lemma open_smooth_embedding.htpy_Jupdate_bs (F : htpy_one_jet_sec IM M IN N)
+  (G : htpy_one_jet_sec IX X IY Y) (t : ℝ) :
+(open_smooth_embedding.htpy_Jupdate g h F G t).bs = open_smooth_embedding.update h g (F t).bs (G t).bs :=
+begin
+  classical,
+  ext x,
+  change (if x ∈ range h then one_jet_bundle.transfer g h (G t (h.inv_fun x)) else F t x).1.2 =
+    if x ∈ range h then _ else _,
+  split_ifs ; refl,
+end
 
 lemma one_jet_sec.localize_mem_iff (hF : range (F.bs ∘ h) ⊆ range g) {x : X} :
   F.localize g h hF x ∈ R.localize g h ↔ F (h x) ∈ R :=

@@ -135,13 +135,11 @@ FIXME: the next definition probably misses side conditions.
 
 def Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ
 
-open_locale classical
-
 def update_htpy_jet_sec (F : htpy_one_jet_sec I M I' M') (𝓕 : htpy_jet_sec E E') :
   htpy_one_jet_sec I M I' M' :=
 { bs := curry $ (Id.prod (L.φ i)).update (L.ψj i) (uncurry F.bs) (uncurry 𝓕.f),
-  ϕ := λ t m, _,
-  smooth' := _ }
+  ϕ := λ t m, sorry,
+  smooth' := sorry }
 
 #where
 
