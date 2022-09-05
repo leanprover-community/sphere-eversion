@@ -426,20 +426,22 @@ begin
     continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
 end
 
-/-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
+/- /-- Un-localize a homotopy of one-jet sections from two open embeddings. -/
 -- Note(F): this is only well-defined on `univ × range h`, right?
 def htpy_one_jet_sec.unlocalize (F : htpy_one_jet_sec IX X IY Y) : htpy_one_jet_sec IM M IN N :=
 { bs := λ t m , g $ (F t).bs (h.inv_fun m),
   ϕ := λ t m, (g.fderiv $ (F t).bs (h.inv_fun m)).to_continuous_linear_map ∘L
       ((F t $ h.inv_fun m).2 ∘L (h.fderiv $ h.inv_fun m).symm.to_continuous_linear_map),
-  smooth' := sorry }
+  smooth' := admit }
 
 lemma one_jet_sec.unlocalize_localize (G : htpy_one_jet_sec IX X IY Y)
   (hF : range (F.bs ∘ h) ⊆ range g)
   (hFG : G 0 = F.localize g h hF) : G.unlocalize g h 0 = F :=
-sorry
+admit
 
-/-- Localize a formal solution. -/
+ -/
+
+ /-- Localize a formal solution. -/
 def transfer (hF : range (F.bs ∘ h) ⊆ range g) (h2F : ∀ x, F (h x) ∈ R) :
   formal_sol (R.localize g h) :=
 ⟨F.localize g h hF, λ x, (F.localize_mem_iff g h hF).mpr $ h2F x⟩

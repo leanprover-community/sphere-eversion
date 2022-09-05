@@ -106,8 +106,12 @@ begin
       rw h𝓗₀ },
     sorry { apply L.foobar _ _ h𝓗C,
       apply subset_union_left ((L.φ 0) ⁻¹' A) },
-    {
-      sorry },
+    { suffices : ∀ p : ℝ × M, dist ((H p.1).bs p.2) (F₀.bs p.2) < min (δ p.2) (L.ε p.2),
+      sorry { exact λ t x, (this (t, x)).trans_le (min_le_left _ _) },
+      rintros ⟨t, x⟩,
+      convert hη _ _ _ (t, x),
+      dsimp,
+      all_goals { sorry } },
     {
       sorry },
     sorry { apply L.barbaz' (L.rg_subset_rg 0) _ h𝓗K₀,

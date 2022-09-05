@@ -419,8 +419,8 @@ variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
   {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
   {HN : Type*} [topological_space HN] {IN : model_with_corners 𝕜 EN HN}
   [topological_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
-  [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M] [t2_space M]
-  [metric_space Y]      [charted_space HY Y] [smooth_manifold_with_corners IY Y] [proper_space Y]
+  [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
+  [metric_space Y]      [charted_space HY Y] [smooth_manifold_with_corners IY Y]
   [metric_space N]      [charted_space HN N] [smooth_manifold_with_corners IN N]
   (φ : open_smooth_embedding IX X IM M)
   (ψ : open_smooth_embedding IY Y IN N)
@@ -465,7 +465,7 @@ will hold whe `φ = Id.prod ψ` and `K = ℝ × H` with `H` compact.
 -/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
-lemma nice_update_of_eq_outside_compact
+lemma nice_update_of_eq_outside_compact [t2_space M]
   {K : set X} (hK : is_compact K) (hf : smooth IM IN f) (hg : smooth IX IY g)
   (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) : smooth IM IN (update φ ψ f g) :=
 begin
@@ -495,7 +495,7 @@ and the whole boundary is ok.
 -/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
-lemma nice_update_of_eq_outside_compact' {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
+lemma nice_update_of_eq_outside_compact' [proper_space Y] {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
   (hf' : f '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
   ∃ (η > (0 : ℝ)), ∀ g : X → Y,
     (∀ x, x ∉ K → f (φ x) = ψ (g x)) →

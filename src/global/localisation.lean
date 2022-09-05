@@ -84,7 +84,7 @@ variables
   {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
   {H' : Type*} [topological_space H']
   {I' : model_with_corners ℝ E' H'}
-  {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+  {M' : Type*} [metric_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
 variables {f : M → M'} {R : rel_mfld I M I' M'}
 
@@ -121,7 +121,7 @@ def loc_formal_sol {F : formal_sol R}
   {i : L.ι} (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
   rel_loc.formal_sol (R.localize (L.ψj i) (L.φ i)).rel_loc :=
 { is_sol := sorry,
-  ..(F.to_one_jet_sec.localize (L.ψj i) (L.φ i) hFL).loc }
+  ..(F.localize (L.ψj i) (L.φ i) hFL).loc }
 
 /-- Turn a global homotopy of formal solutions into a local one using some localisation data. -/
 def loc_htpy_formal_sol {𝓕 : htpy_formal_sol R}
@@ -133,11 +133,32 @@ sorry
 FIXME: the next definition probably misses side conditions.
 -/
 
+def Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ
+
+open_locale classical
+
+def update_htpy_jet_sec (F : htpy_one_jet_sec I M I' M') (𝓕 : htpy_jet_sec E E') :
+  htpy_one_jet_sec I M I' M' :=
+{ bs := curry $ (Id.prod (L.φ i)).update (L.ψj i) (uncurry F.bs) (uncurry 𝓕.f),
+  ϕ := λ t m, _,
+  smooth' := _ }
+
+#where
+
+#check F
+
+#check (L.φ i).update (L.ψj i) F.bs
+
+def unloc_htpy_jet_sec (i : L.ι) (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec I M I' M' :=
+/- htpy_one_jet_sec.unlocalize (L.ψj i) (L.φ i)
+{ bs := λ t e, 𝓕.f t e,
+  ϕ := λ t e, 𝓕.φ t e,
+  smooth' := sorry } -/sorry
+
 /-- Turn a local homotopy of formal solutions into a global one using some localisation data. -/
-def unloc_htpy_formal_sol (i : L.ι)
-  (𝓕 : (L.loc_rel i R).htpy_formal_sol) :
-  htpy_formal_sol R :=
-sorry
+def unloc_htpy_formal_sol (i : L.ι) (𝓕 : (L.loc_rel i R).htpy_formal_sol) : htpy_formal_sol R :=
+{ is_sol' := sorry,
+  ..L.unloc_htpy_jet_sec i 𝓕.to_htpy_jet_sec }
 
 lemma unloc_loc {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
   (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) (h : 𝓕 0 = L.loc_formal_sol hF₀) :
@@ -150,15 +171,6 @@ lemma foobar {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_
   (h : ∀ᶠ x near C, ∀ (t : ℝ), 𝓕 t x = L.loc_formal_sol hF₀ x) :
   ∀ (t : ℝ), ∀ᶠ (x : M) near A, L.unloc_htpy_formal_sol i 𝓕 t x = F₀ x :=
 sorry
-
-/-
-Hyp :
-∀ᶠ x near (L.landscape hA 0).K₀, (𝓗 1).is_holonomic_at x
-
-But :
-∀ x ∈ ⋃ i ≤ L.index 0, (L.φ i) '' metric.closed_ball 0 1) → (H 1).is_holonomic_at x
-
--/
 
 lemma barbaz {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
   (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
