@@ -16,8 +16,6 @@ noncomputable theory
 open metric finite_dimensional set function rel_loc
 open_locale topological_space
 
-section general
-
 section parametric_h_principle
 
 
@@ -50,33 +48,51 @@ end
 
 end parametric_h_principle
 
+
+section sphere_eversion
+
 variables
 {E : Type*} [inner_product_space ℝ E]
 {E' : Type*} [inner_product_space ℝ E']
 {F : Type*} [inner_product_space ℝ F]
 
 
+local notation `𝕊²` := sphere (0 : E) 1
+local notation `{.` x `}ᗮ` := (submodule.span ℝ ({x} : set E))ᗮ
+
 /-- A map between vector spaces is a immersion when viewed as a map on the sphere, when its
 derivative at `x` near the sphere is injective of the orthogonal complement of `x`
 (the tangent space to the sphere).
 -/
 def sphere_immersion (f : E → E') : Prop :=
-∀ᶠ x in 𝓝ˢ (sphere (0 : E) 1), inj_on (D f x) (submodule.span ℝ ({x} : set E))ᗮ
+∀ᶠ x in 𝓝ˢ 𝕊², inj_on (D f x) {.x}ᗮ
 
 variables (E E')
 /-- The relation of immersions for maps between two manifolds. -/
+-- how do we deal exactly with 0?
 def loc_immersion_rel : rel_loc E E' :=
-{w | w.1 ≠ 0 → inj_on w.2.2 (submodule.span ℝ ({w.1} : set E))ᗮ } -- how do we deal exactly with 0?
+{w : one_jet E E' | w.1 ≠ 0 ∧ inj_on w.2.2 {.w.1}ᗮ }
+-- {w : one_jet E E' | w.1 ∈ ball (0 : E) 2⁻¹ ∨ inj_on w.2.2 {.w.1}ᗮ }
 
 variables {E E'}
 
+lemma mem_loc_immersion_rel {w : one_jet E E'} :
+  w ∈ loc_immersion_rel E E' ↔ w.1 ≠ 0 ∧ inj_on w.2.2 {.w.1}ᗮ :=
+iff.rfl
+
 lemma sphere_immersion_iff (f : E → E') :
-  sphere_immersion f ↔ ∀ᶠ x in 𝓝ˢ (sphere (0 : E) 1), (x, f x, fderiv ℝ f x) ∈ loc_immersion_rel E E' :=
-sorry --by simp_rw [sphere_immersion, loc_immersion_rel, mem_set_of]
+  sphere_immersion f ↔ ∀ᶠ x in 𝓝ˢ 𝕊², (x, f x, fderiv ℝ f x) ∈ loc_immersion_rel E E' :=
+begin
+  have : ∀ᶠ (x : E) in 𝓝ˢ 𝕊², x ≠ 0,
+  { sorry },
+  simp_rw [sphere_immersion, mem_loc_immersion_rel],
+  refine filter.eventually_congr (this.mono _),
+  intros x hx, simp_rw [iff_true_intro hx, true_and]
+end
 
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
-lemma immersion_rel_open :
+lemma loc_immersion_rel_open :
   is_open (loc_immersion_rel E E') :=
 begin
   sorry
@@ -88,31 +104,46 @@ begin
   -- { apply_instance, },
 end
 
-lemma immersion_rel_ample (h : finrank ℝ E ≤ finrank ℝ E') :
+-- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
+-- @[simp] lemma loc_immersion_rel_slice_eq {w : one_jet E E'} {p : dual_pair' E}
+--   (hw : w ∈ loc_immersion_rel E E') :
+--   (loc_immersion_rel E E').slice p w = ((p.π.ker ⊓ {.w.1}ᗮ).map w.2.2)ᶜ :=
+-- begin
+--   ext y',
+--   simp_rw [slice, mem_set_of_eq, mem_loc_immersion_rel, iff_true_intro hw.1, true_and],
+--   sorry
+--   -- refine iff.trans _ (p.injective_update_iff hφ),
+-- end
+
+-- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
+lemma loc_immersion_rel_ample (h : finrank ℝ E ≤ finrank ℝ E') :
   (loc_immersion_rel E E').is_ample :=
 begin
+  rintro p w,
+  -- todo: we may WLOG assume that w.2.2 is in rel_loc
+  have hw : w ∈ loc_immersion_rel E E',
+  sorry,
+  -- rw [loc_immersion_rel_slice_eq hw],
+  -- apply ample_of_two_le_codim,
+  -- have hcodim := p.two_le_rank_of_rank_lt_rank,
+  -- sorry
   sorry
   -- rw [rel_mfld.ample_iff],
   -- rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
   --         (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
   -- haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
-  -- have hcodim := p.two_le_rank_of_rank_lt_rank h φ,
+
   -- rw [immersion_rel_slice_eq I I' hφ],
   -- exact ample_of_two_le_codim hcodim,
 end
 
-end general
 
-section sphere_eversion
-
-variables (E : Type*) [inner_product_space ℝ E] {n : ℕ} [fact (finrank ℝ E = 3)]
-
-local notation `𝕊²` := sphere (0 : E) 1
+variables (E) [fact (finrank ℝ E = 3)]
 
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
 local notation `𝓡_imm` := loc_immersion_rel E E
 
-section preparation
+section assume_finite_dimensional
 
 variables [finite_dimensional ℝ E] -- no way of inferring this from the `fact`
 
@@ -216,7 +247,7 @@ lemma formal_eversion_hol_near_zero_one :
   ∀ᶠ (s : ℝ) near {0, 1}, ∀ x : E, (formal_eversion ω s).is_holonomic_at x :=
 sorry
 
-end preparation
+end assume_finite_dimensional
 
 theorem sphere_eversion_of_loc (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] :
   ∃ f : ℝ → E → E,
@@ -239,13 +270,13 @@ begin
   haveI : nonempty ↥(sphere 0 1 : set E) :=
     (normed_space.sphere_nonempty.mpr zero_le_one).to_subtype,
   obtain ⟨f, h₁, h₂, -, h₄, h₅⟩ :=
-    (formal_eversion ω).exists_sol immersion_rel_open (immersion_rel_ample le_rfl)
+    (formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample le_rfl)
     (sphere_landscape E) zero_lt_one _ is_closed_pair (formal_eversion_hol_near_zero_one ω),
   have := h₂.nhds_set_forall_mem,
   refine ⟨f, h₁, _, _, _⟩,
   { ext x, rw [this 0 (by simp), formal_eversion_zero] },
   { ext x, rw [this 1 (by simp), formal_eversion_one] },
-  { sorry }
+  { intro t, rw [sphere_immersion_iff], exact h₅.mono (λ x hx, hx t) }
 end
 
 end sphere_eversion
