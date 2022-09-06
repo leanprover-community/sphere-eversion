@@ -135,8 +135,9 @@ end generalbis
 
 section sphere_eversion
 
-variables (E : Type*) [inner_product_space ℝ E] {n : ℕ} [fact (finrank ℝ E = 3)]
-  [finite_dimensional ℝ E] -- no way of inferring this from the `fact`
+variables (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)]
+
+local attribute [instance] fact_finite_dimensional_of_finrank_eq_succ
 
 local notation `𝕊²` := sphere (0 : E) 1
 
@@ -144,14 +145,14 @@ local notation `𝕊²` := sphere (0 : E) 1
 sanity checks. -/
 
 lemma immersion_inclusion_sphere : immersion (𝓡 2) 𝓘(ℝ, E) (λ x : 𝕊², (x : E)) :=
-mfderiv_coe_sphere_injective E
+mfderiv_coe_sphere_injective
 
 lemma immersion_antipodal_sphere : immersion (𝓡 2) 𝓘(ℝ, E) (λ x : 𝕊², -(x : E)) :=
 begin
   intros x,
   change injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-(λ x : 𝕊², (x:E))) x),
   rw mfderiv_neg,
-  exact neg_injective.comp (mfderiv_coe_sphere_injective E x),
+  exact neg_injective.comp (mfderiv_coe_sphere_injective x),
 end
 
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
@@ -193,10 +194,10 @@ def formal_eversion : htpy_formal_sol 𝓡_imm :=
     change injective (rot_aux ω.volume_form (t, x) ∘ s),
     have : set.univ.inj_on s,
     { rw ← set.injective_iff_inj_on_univ,
-      exact mfderiv_coe_sphere_injective E x },
+      exact mfderiv_coe_sphere_injective x },
     rw set.injective_iff_inj_on_univ,
     refine set.inj_on.comp _ this (set.maps_to_range _ _),
-    rw [← continuous_linear_map.range_coe, range_mfderiv_coe_sphere E, ← rot_eq_aux],
+    rw [← continuous_linear_map.range_coe, range_mfderiv_coe_sphere, ← rot_eq_aux],
     exact ω.inj_on_rot t x,
   end,
   .. formal_eversion_aux E ω }
@@ -234,7 +235,7 @@ begin
     continuous_linear_map.neg_apply],
   rw rot_one,
   convert continuous_linear_map.mem_range_self _ _,
-  rw range_mfderiv_coe_sphere E,
+  rw range_mfderiv_coe_sphere,
 end
 
 lemma formal_eversion_hol_near_zero_one' :

@@ -16,7 +16,10 @@ noncomputable theory
 open_locale real_inner_product_space
 open finite_dimensional
 
-variables (E : Type*) [inner_product_space ℝ E] [finite_dimensional ℝ E]
+variables (E : Type*) [inner_product_space ℝ E]
+
+section
+variables [finite_dimensional ℝ E]
 
 /-- The identification of a finite-dimensional inner product space with its algebraic dual. -/
 def to_dual : E ≃ₗ[ℝ] (E →ₗ[ℝ] ℝ) :=
@@ -135,11 +138,12 @@ begin
   simp [rot, A_apply_self, orthogonal_projection_orthogonal_complement_singleton_eq_zero, H],
 end
 
-omit Ω
+end
 
 namespace orientation
+variables {E} [fact (finrank ℝ E = 3)] (ω : orientation ℝ E (fin 3))
 
-variables [fact (finrank ℝ E = 3)] (ω : orientation ℝ E (fin 3))
+local attribute [instance] fact_finite_dimensional_of_finrank_eq_succ
 
 lemma norm_A (x : E) (v : (ℝ ∙ x)ᗮ) : ∥A ω.volume_form x v∥ = ∥x∥ * ∥v∥ :=
 begin
