@@ -23,8 +23,8 @@ lemma abs_volume_form_apply_of_pairwise_orthogonal
 sorry
 
 lemma abs_volume_form_apply_of_orthonormal {v : fin n.succ → E} (hv : orthonormal ℝ v) :
-  |ω.volume_form n v| = 1 :=
-by simp [ω.abs_volume_form_apply_of_pairwise_orthogonal hn h (λ i j, hv.2), hv.1]
+  |ω.volume_form v| = 1 :=
+by simp [ω.abs_volume_form_apply_of_pairwise_orthogonal (λ i j, hv.2), hv.1]
 
 end orientation
 
