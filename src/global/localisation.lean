@@ -44,7 +44,7 @@ def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc.
     have : smooth_at _ _ _ _ := F.smooth x₀,
     simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
       basic_smooth_vector_bundle_core.tangent_space_self_coord_change_at,
-      continuous_linear_map.one_def, continuous_linear_map.comp_id, continuous_linear_map.id_comp]
+      continuous_linear_map.comp_id, continuous_linear_map.id_comp]
       at this,
       exact this.2.2.cont_diff_at,
   end }

@@ -52,14 +52,28 @@ lemma trivial_coord_change_at {b b' : B} (x : HB) :
   1 :=
 rfl
 
-lemma tangent_space_self_coord_change_at {b b' x : F} :
-  (tangent_bundle_core 𝓘(𝕜, F) F).coord_change (achart F b) (achart F b') x = 1 :=
+variables (IB)
+
+-- use in tangent_bundle_model_space_chart_at
+lemma model_with_corners.fderiv_within_symm_self (x : HB) :
+  fderiv_within 𝕜 (IB ∘ IB.symm) (range IB) (IB x) = continuous_linear_map.id 𝕜 VB :=
+by rw [fderiv_within_congr IB.unique_diff_at_image (λ y, IB.right_inv)
+  (congr_arg IB (IB.left_inv x)), fderiv_within_id' IB.unique_diff_at_image]
+
+lemma tangent_space_model_space_coord_change_at {b b' x : HB} :
+  (tangent_bundle_core IB HB).coord_change (achart HB b) (achart HB b') x =
+  continuous_linear_map.id 𝕜 VB :=
 begin
-  simp_rw [tangent_bundle_core_coord_change, model_with_corners_self_coe,
-    model_with_corners_self_coe_symm, achart_def, range_id, chart_at_self_eq, function.comp,
-    local_homeomorph.refl_symm, local_homeomorph.refl_apply, function.id_def],
-  exact fderiv_within_id unique_diff_within_at_univ
+  simp_rw [tangent_bundle_core_coord_change, achart_def, chart_at_self_eq, function.comp,
+    local_homeomorph.refl_symm, local_homeomorph.refl_apply, function.id_def,
+    IB.fderiv_within_symm_self]
 end
+
+variables {IB}
+lemma tangent_space_self_coord_change_at {b b' x : F} :
+  (tangent_bundle_core 𝓘(𝕜, F) F).coord_change (achart F b) (achart F b') x =
+    continuous_linear_map.id 𝕜 F :=
+tangent_space_model_space_coord_change_at _
 
 
 include Z
@@ -317,6 +331,14 @@ open continuous_linear_map
   end }
 
 local notation `LZZ'` := (Z.hom Z').to_topological_vector_bundle_core.total_space
+
+-- lemma hom_chart'' {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
+--   (Z.hom Z').chart he = sorry :=
+-- by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
+--   local_homeomorph.refl_apply, function.id_def, topological_vector_bundle_core.local_triv_apply,
+--   to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
+--   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
+--   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
 
 lemma hom_chart' (x : LZZ')
   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :

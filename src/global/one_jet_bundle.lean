@@ -133,6 +133,17 @@ lemma one_jet_bundle_proj_continuous : continuous (one_jet_bundle.proj I M I' M'
 lemma one_jet_bundle_proj_open : is_open_map (one_jet_bundle.proj I M I' M') :=
 ((one_jet_bundle_core I M I' M').to_topological_vector_bundle_core).is_open_map_proj
 
+-- lemma one_jet_bundle_chart_at' {v : one_jet_bundle I M I' M'} :
+--   chart_at HJ v =
+--   sorry :=
+-- begin
+--   simp_rw [to_charted_space_chart_at],
+--   dsimp only [one_jet_bundle_core],
+--   simp_rw [hom_chart, in_coordinates', pullback_fst_coord_change_at,
+--     pullback_snd_coord_change_at, prod_charted_space_chart_at, local_homeomorph.prod_apply],
+-- end
+
+
 /-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an
   appropriate coordinate change function.
@@ -391,7 +402,11 @@ between a product type and a sigma type, a.k.a. `sigma_equiv_prod`. -/
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_chart_at (p : one_jet_bundle I H I' H') :
   (chart_at 𝓜 p).to_local_equiv = (sigma_equiv_prod (H × H') (E →L[𝕜] E')).to_local_equiv :=
 begin
-  rw [one_jet_bundle_chart_at],
+  ext1 x,
+  { simp_rw [local_homeomorph.coe_coe, one_jet_bundle_chart_at, in_coordinates', chart_at_self_eq,
+      local_homeomorph.refl_apply, function.id_def], sorry },
+  { sorry },
+  { sorry }
 end
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_coe_chart_at (p : one_jet_bundle I H I' H') :
