@@ -16,17 +16,6 @@ noncomputable theory
 open_locale real_inner_product_space
 open finite_dimensional
 
--- move this
-lemma continuous_linear_map.le_op_norm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E : Type*} {F : Type*}
-  [normed_add_comm_group E] [seminormed_add_comm_group F] [nontrivially_normed_field 𝕜]
-  [nontrivially_normed_field 𝕜₂] [normed_space 𝕜 E] [normed_space 𝕜₂ F] {σ₁₂ : 𝕜 →+* 𝕜₂}
-  [ring_hom_isometric σ₁₂] (f : E →SL[σ₁₂] F) {x : E} (hx : x ≠ 0) {C : ℝ} (h : C * ∥x∥ ≤ ∥f x∥) :
-  C ≤ ∥f∥ :=
-begin
-  apply le_of_mul_le_mul_right (h.trans (f.le_op_norm x)),
-  rwa norm_pos_iff',
-end
-
 variables (E : Type*) [inner_product_space ℝ E] [finite_dimensional ℝ E]
 
 /-- The identification of a finite-dimensional inner product space with its algebraic dual. -/
@@ -151,8 +140,6 @@ omit Ω
 namespace orientation
 
 variables [fact (finrank ℝ E = 3)] (ω : orientation ℝ E (fin 3))
-
-
 
 lemma norm_A (x : E) (v : (ℝ ∙ x)ᗮ) : ∥A ω.volume_form x v∥ = ∥x∥ * ∥v∥ :=
 begin
