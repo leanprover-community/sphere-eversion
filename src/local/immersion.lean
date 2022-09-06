@@ -105,15 +105,16 @@ begin
 end
 
 -- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
--- @[simp] lemma loc_immersion_rel_slice_eq {w : one_jet E E'} {p : dual_pair' E}
---   (hw : w ∈ loc_immersion_rel E E') :
---   (loc_immersion_rel E E').slice p w = ((p.π.ker ⊓ {.w.1}ᗮ).map w.2.2)ᶜ :=
--- begin
---   ext y',
---   simp_rw [slice, mem_set_of_eq, mem_loc_immersion_rel, iff_true_intro hw.1, true_and],
---   sorry
---   -- refine iff.trans _ (p.injective_update_iff hφ),
--- end
+-- this is probably nonsense
+@[simp] lemma loc_immersion_rel_slice_eq {w : one_jet E E'} {p : dual_pair' E}
+  (hw : w ∈ loc_immersion_rel E E') :
+  (loc_immersion_rel E E').slice p w = ((p.π.ker ⊓ {.w.1}ᗮ).map w.2.2)ᶜ :=
+begin
+  ext y',
+  simp_rw [slice, mem_set_of_eq, mem_loc_immersion_rel, iff_true_intro hw.1, true_and],
+  sorry
+  -- refine iff.trans _ (p.injective_update_iff hφ),
+end
 
 -- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
 lemma loc_immersion_rel_ample (h : finrank ℝ E ≤ finrank ℝ E') :
