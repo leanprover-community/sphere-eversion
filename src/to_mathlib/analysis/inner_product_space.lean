@@ -17,6 +17,10 @@ lemma abs_volume_form_apply_le (v : fin n.succ → E) :
   |ω.volume_form v| ≤ ∏ i : fin n.succ, ∥v i∥ :=
 sorry
 
+lemma volume_form_apply_le (v : fin n.succ → E) :
+  ω.volume_form v ≤ ∏ i : fin n.succ, ∥v i∥ :=
+(le_abs_self _).trans (ω.abs_volume_form_apply_le v)
+
 lemma abs_volume_form_apply_of_pairwise_orthogonal
   {v : fin n.succ → E} (hv : pairwise (λ i j, ⟪v i, v j⟫ = 0)) :
   |ω.volume_form v| = ∏ i : fin n.succ, ∥v i∥ :=
