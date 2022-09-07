@@ -66,38 +66,46 @@ local notation `{.` x `}ᗮ` := (submodule.span ℝ ({x} : set E))ᗮ
 
 /-- A map between vector spaces is a immersion when viewed as a map on the sphere, when its
 derivative at `x` near the sphere is injective of the orthogonal complement of `x`
-(the tangent space to the sphere).
+(the tangent space to the sphere). Note that this implies `f` is differentiable at every point
+`x` of `𝕊²` since otherwise `D f x = 0`.
 -/
 def sphere_immersion (f : E → E') : Prop :=
-∀ᶠ x in 𝓝ˢ 𝕊², inj_on (D f x) {.x}ᗮ
+∀ x ∈ 𝕊², inj_on (D f x) {.x}ᗮ
 
 variables (E E')
-/-- The relation of immersions for maps between two manifolds. -/
--- how do we deal exactly with 0?
-def loc_immersion_rel : rel_loc E E' :=
-{w : one_jet E E' | w.1 ≠ 0 ∧ inj_on w.2.2 {.w.1}ᗮ }
--- {w : one_jet E E' | w.1 ∈ ball (0 : E) 2⁻¹ ∨ inj_on w.2.2 {.w.1}ᗮ }
+
+local notation `B` := ball (0 : E) 2⁻¹
+
+/-- The relation of immersions for unit spheres into a vector space. -/
+def immersion_sphere_rel : rel_loc E E' :=
+{w : one_jet E E' | w.1 ∉ B → inj_on w.2.2 {.w.1}ᗮ }
+
+local notation `R` := immersion_sphere_rel E E'
 
 variables {E E'}
 
 lemma mem_loc_immersion_rel {w : one_jet E E'} :
-  w ∈ loc_immersion_rel E E' ↔ w.1 ≠ 0 ∧ inj_on w.2.2 {.w.1}ᗮ :=
+  w ∈ immersion_sphere_rel E E' ↔ w.1 ∉ B → inj_on w.2.2 {.w.1}ᗮ :=
 iff.rfl
 
-lemma sphere_immersion_iff (f : E → E') :
-  sphere_immersion f ↔ ∀ᶠ x in 𝓝ˢ 𝕊², (x, f x, fderiv ℝ f x) ∈ loc_immersion_rel E E' :=
+@[simp] lemma mem_loc_immersion_rel' {x y φ} :
+  (⟨x, y, φ⟩ : one_jet E E') ∈ immersion_sphere_rel E E' ↔ x ∉ B → inj_on φ  {.x}ᗮ :=
+iff.rfl
+
+lemma sphere_immersion_of_sol (f : E → E') :
+  (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersion_sphere_rel E E') →  sphere_immersion f :=
 begin
-  have : ∀ᶠ (x : E) in 𝓝ˢ 𝕊², x ≠ 0,
-  { sorry },
-  simp_rw [sphere_immersion, mem_loc_immersion_rel],
-  refine filter.eventually_congr (this.mono _),
-  intros x hx, simp_rw [iff_true_intro hx, true_and]
+  intros h x x_in,
+  have : x ∉ B,
+  { rw mem_sphere_zero_iff_norm at x_in,
+    norm_num [x_in] },
+  exact h x x_in this
 end
 
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
 lemma loc_immersion_rel_open :
-  is_open (loc_immersion_rel E E') :=
+  is_open (immersion_sphere_rel E E') :=
 begin
   sorry
   -- simp_rw [charted_space.is_open_iff HJ (immersion_rel I M I' M'), chart_at_image_immersion_rel_eq],
@@ -108,37 +116,67 @@ begin
   -- { apply_instance, },
 end
 
--- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
--- this is probably nonsense
-@[simp] lemma loc_immersion_rel_slice_eq {w : one_jet E E'} {p : dual_pair' E}
-  (hw : w ∈ loc_immersion_rel E E') :
-  (loc_immersion_rel E E').slice p w = ((p.π.ker ⊓ {.w.1}ᗮ).map w.2.2)ᶜ :=
+
+lemma ample_set_univ {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F] :
+  ample_set (univ : set F) :=
 begin
-  ext y',
-  simp_rw [slice, mem_set_of_eq, mem_loc_immersion_rel, iff_true_intro hw.1, true_and],
+  intros x _,
+  convert convex_hull_univ,
   sorry
-  -- refine iff.trans _ (p.injective_update_iff hφ),
 end
+
+lemma ample_set_empty {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F] :
+  ample_set (∅ : set F) :=
+λ _ h, false.elim h
+
+
+local notation `S` := (immersion_sphere_rel E E').slice
+
+
+lemma rel_loc.ample_slice_of_forall {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] {F : Type*}
+  [normed_add_comm_group F] [normed_space ℝ F] (Rel : rel_loc E F) {x y φ} (p : dual_pair' E)
+  (h : ∀ w, (x, y, p.update φ w) ∈ Rel) : ample_set (Rel.slice p (x, y, φ)) :=
+begin
+  rw show Rel.slice p (x, y, φ) = univ, from eq_univ_of_forall h,
+  exact ample_set_univ
+end
+
+lemma rel_loc.ample_slice_of_forall_not {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] {F : Type*}
+  [normed_add_comm_group F] [normed_space ℝ F] (Rel : rel_loc E F) {x y φ} (p : dual_pair' E)
+  (h : ∀ w, (x, y, p.update φ w) ∉ Rel) : ample_set (Rel.slice p (x, y, φ)) :=
+begin
+  rw show Rel.slice p (x, y, φ) = ∅, from eq_empty_iff_forall_not_mem.mpr h,
+  exact ample_set_empty
+end
+
 
 -- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
 lemma loc_immersion_rel_ample (h : finrank ℝ E ≤ finrank ℝ E') :
-  (loc_immersion_rel E E').is_ample :=
+  (immersion_sphere_rel E E').is_ample :=
 begin
-  rintro p w,
-  -- todo: we may WLOG assume that w.2.2 is in rel_loc
-  have hw : w ∈ loc_immersion_rel E E',
-  sorry,
-  -- rw [loc_immersion_rel_slice_eq hw],
-  -- apply ample_of_two_le_codim,
-  -- have hcodim := p.two_le_rank_of_rank_lt_rank,
-  -- sorry
-  sorry
-  -- rw [rel_mfld.ample_iff],
-  -- rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
-  --         (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
-  -- haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
-
-  -- rw [immersion_rel_slice_eq I I' hφ],
+  rintro p ⟨x, y, φ⟩,
+  by_cases hx : x ∈ B,
+  sorry { apply rel_loc.ample_slice_of_forall,
+    intros w,
+    simp [hx]  },
+  { by_cases H : p.π.ker = {.x}ᗮ,
+    sorry { have key : ∀ w, eq_on (p.update φ w) φ {.x}ᗮ,
+      { intros w x,
+        rw ← H,
+        exact p.update_ker_pi φ w },
+      by_cases hφ : inj_on φ {.x}ᗮ,
+      { apply rel_loc.ample_slice_of_forall,
+        intros w hx,
+        apply hφ.congr,
+        exact (key w).symm  },
+      { apply rel_loc.ample_slice_of_forall_not,
+        intros w hx',
+        apply hφ, clear hφ,
+        replace hx := mem_loc_immersion_rel'.mp hx' hx, clear hx',
+        apply hx.congr,
+        exact key w }, },
+    {
+      sorry }, },
   -- exact ample_of_two_le_codim hcodim,
 end
 
@@ -146,7 +184,7 @@ end
 variables (E) [fact (finrank ℝ E = 3)]
 
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
-local notation `𝓡_imm` := loc_immersion_rel E E
+local notation `𝓡_imm` := immersion_sphere_rel E E
 
 section assume_finite_dimensional
 
