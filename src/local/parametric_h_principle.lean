@@ -28,23 +28,12 @@ def one_jet_snd : one_jet (P × E) F → one_jet E F :=
 
 lemma continuous_one_jet_snd :
   continuous (one_jet_snd : one_jet (P × E) F → one_jet E F) :=
-begin
-  sorry
-  -- intro x₀,
-  -- refine smooth_at.map_left _ _ smooth_at_id,
-  -- { exact smooth_at_snd.snd },
-  -- have := cont_mdiff_at.mfderiv'''
-  --   (λ (x : one_jet_bundle (J.prod I) (P × E) I' E') (y : E), (x.1.1.1, y))
-  --   (λ (x : one_jet_bundle (J.prod I) (P × E) I' E'), x.1.1.2)
-  --   (smooth_one_jet_bundle_proj.fst.fst.prod_map smooth_id).smooth_at
-  --   smooth_one_jet_bundle_proj.fst.snd.smooth_at le_top,
-  -- simp_rw [prod.mk.eta],
-  -- exact this
-end
+continuous_fst.snd.prod_mk $ continuous_snd.fst.prod_mk $ continuous_snd.snd.clm_comp $
+  continuous.fderiv (cont_diff_fst.fst.prod_map cont_diff_id) continuous_fst.snd le_top
 
 lemma one_jet_snd_eq (p : one_jet (P × E) F) :
   one_jet_snd p = (p.1.2, p.2.1, p.2.2 ∘L continuous_linear_map.inr ℝ P E) :=
-by simp_rw [one_jet_snd]; sorry -- mfderiv_prod_right
+by simp_rw [one_jet_snd, fderiv_prod_right]
 
 variables (P)
 /-- The relation `𝓡 ^ P` -/
@@ -311,24 +300,6 @@ begin
   --   continuous_linear_map.coe_snd', continuous_linear_map.map_zero, zero_add],
   -- refl
 end
-
--- lemma rel_loc.family_formal_sol.parametric_h_principle
---   (R : rel_loc E F) {C : set (P × E)}
---   (ε : E → ℝ) (h : (R.relativize P).satisfies_h_principle C (λ x, ε x.2)) :
---   R.satisfies_h_principle_with IP C ε :=
--- begin
---   intros 𝓕₀ h𝓕₀,
---   obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ := h 𝓕₀.uncurry _,
---   swap,
---   { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_jet_sec.is_holonomic_uncurry.mpr hp) },
---   refine ⟨𝓕.curry, _, _, _, _⟩,
---   { intros s x, exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x)) },
---   { intros s x, exact 𝓕.to_family_jet_sec.is_holonomic_at_curry (h2𝓕 (s, x)) },
---   { refine h3𝓕.mono _, rintro ⟨s, x⟩ hp t, exact curry_eq_iff_eq_uncurry (hp t) },
---   { intros t s x, exact (h4𝓕 t (s, x)) },
--- end
-
-
 
 end parameter_space
 

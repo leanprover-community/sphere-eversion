@@ -41,6 +41,34 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
           {n : ℕ∞}
 
+-- TODO FOR LOCAL
+lemma cont_diff.fderiv {f : E → F → G} {g : E → F} {n m : ℕ∞}
+  (hf : cont_diff 𝕜 m $ uncurry f) (hg : cont_diff 𝕜 n g) (nm : n < m) :
+    cont_diff 𝕜 n (λ x, fderiv 𝕜 (f x) (g x)) :=
+sorry
+
+lemma continuous.fderiv {f : E → F → G} {g : E → F} {n : ℕ∞}
+  (hf : cont_diff 𝕜 n $ uncurry f) (hg : continuous g) (hn : 1 ≤ n):
+    continuous (λ x, fderiv 𝕜 (f x) (g x)) :=
+(hf.fderiv (cont_diff_zero.mpr hg) $ enat.one_le_iff_pos.mp hn).continuous
+
+lemma fderiv_prod_left {x₀ : E} {y₀ : F} :
+  fderiv 𝕜 (λ x, (x, y₀)) x₀ = continuous_linear_map.inl 𝕜 E F :=
+begin
+  refine (differentiable_at_id.fderiv_prod (differentiable_at_const y₀)).trans _,
+  rw [fderiv_id, fderiv_const],
+  refl
+end
+
+lemma fderiv_prod_right {x₀ : E} {y₀ : F} :
+  fderiv 𝕜 (λ y, (x₀, y)) y₀ = continuous_linear_map.inr 𝕜 E F :=
+begin
+  refine ((differentiable_at_const x₀).fderiv_prod differentiable_at_id).trans _,
+  rw [fderiv_id, fderiv_const],
+  refl
+end
+
+
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :
   has_fderiv_at (λ e, φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
