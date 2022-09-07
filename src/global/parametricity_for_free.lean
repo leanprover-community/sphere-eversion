@@ -3,59 +3,18 @@ import global.relation
 noncomputable theory
 
 open set function filter (hiding map_smul) charted_space smooth_manifold_with_corners
-open_locale topological_space manifold
+open_locale topological_space manifold pointwise
 
-section defs
+section parameter_space
 /-! ## Fundamental definitions -/
 
 variables
 {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
-{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
-(M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+{H : Type*} [topological_space H] {I : model_with_corners ℝ E H}
+{M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
-{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
-(M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-{G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
-(N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
-{F' : Type*} [normed_add_comm_group F'] [normed_space ℝ F']
-{G' : Type*} [topological_space G'] (J' : model_with_corners ℝ F' G')
-(N' : Type*) [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
-{EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
-{HP : Type*} [topological_space HP] (IP : model_with_corners ℝ EP HP)
-(P : Type*) [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
-{EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX]
-{HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
--- note: X is a metric space
-{X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
-
-variables {I M I' M'} {R : rel_mfld I M I' M'}
-
-/-- The relation `𝓡 ^ P` -/
-def rel_mfld.relativize (R : rel_mfld I M I' M') : rel_mfld (IP.prod I) (P × M) I' M' :=
-bundle_snd ⁻¹' R
-
-lemma mem_relativize (R : rel_mfld I M I' M') (w : one_jet_bundle (IP.prod I) (P × M) I' M') :
- w ∈ R.relativize IP P ↔
-  (one_jet_bundle.mk w.1.1.2 w.1.2 (w.2.comp (continuous_linear_map.inr ℝ EP E)) :
-    one_jet_bundle I M I' M') ∈ R :=
-by { simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd_eq], refl }
-
-lemma rel_mfld.is_open_relativize (R : rel_mfld I M I' M') (h2 : is_open R) :
-  is_open (R.relativize IP P) :=
-h2.preimage smooth_bundle_snd.continuous
-
-end defs
-
-section parameter_space
-
-variables
-{E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
-{H : Type*} [topological_space H] (I : model_with_corners ℝ E H)
-(M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-{E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
-{H' : Type*} [topological_space H'] (I' : model_with_corners ℝ E' H')
-(M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+{H' : Type*} [topological_space H'] {I' : model_with_corners ℝ E' H'}
+{M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]
 {HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP}
 {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
@@ -66,24 +25,31 @@ variables
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX}
 -- note: X is a metric space
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
-variables {I M I' M'} {R : rel_mfld I M I' M'}
+variables {R : rel_mfld I M I' M'}
 
-open_locale pointwise
+variables (IP P)
 
-lemma prod.zero_mk_add_zero_mk {M N : Type*} [add_monoid M] [has_add N] (b₁ b₂ : N) :
-  ((0 : M), b₁) + (0, b₂) = (0, b₁ + b₂) :=
-by rw [prod.mk_add_mk, add_zero]
+/-- The relation `𝓡 ^ P` -/
+def rel_mfld.relativize (R : rel_mfld I M I' M') : rel_mfld (IP.prod I) (P × M) I' M' :=
+bundle_snd ⁻¹' R
 
-lemma prod.smul_zero_mk {M α β : Type*} [monoid M] [add_monoid α] [distrib_mul_action M α]
-  [has_smul M β] (a : M) (c : β) :
-  a • ((0 : α), c) = (0, a • c) :=
-by rw [prod.smul_mk, smul_zero]
+variables {IP P}
+
+lemma rel_mfld.mem_relativize (R : rel_mfld I M I' M') (w : one_jet_bundle (IP.prod I) (P × M) I' M') :
+ w ∈ R.relativize IP P ↔
+  (one_jet_bundle.mk w.1.1.2 w.1.2 (w.2.comp (continuous_linear_map.inr ℝ EP E)) :
+    one_jet_bundle I M I' M') ∈ R :=
+by { simp_rw [rel_mfld.relativize, mem_preimage, bundle_snd_eq], refl }
+
+lemma rel_mfld.is_open_relativize (R : rel_mfld I M I' M') (h2 : is_open R) :
+  is_open (R.relativize IP P) :=
+h2.preimage smooth_bundle_snd.continuous
 
 lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
   (q : dual_pair' $ tangent_space I σ.1.1.2)
   (hpq : p.π.comp (continuous_linear_map.inr ℝ EP E) = q.π) :
-  (rel_mfld.relativize IP P R).slice σ p =
+  (R.relativize IP P).slice σ p =
   σ.2 (p.v - (0, q.v)) +ᵥ R.slice (bundle_snd σ) q :=
 begin
   have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hpq,
@@ -105,7 +71,7 @@ begin
   have := preimage_vadd_neg (show E', from σ.2 (p.v - (0, q.v)))
     (show set E', from (R.slice (bundle_snd σ) q)),
   dsimp only at this,
-  simp_rw [← this, mem_preimage, mem_slice, mem_relativize],
+  simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize],
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
   congr'
 end
@@ -113,8 +79,8 @@ end
 lemma relativize_slice_eq_univ {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
   (hp : p.π.comp (continuous_linear_map.inr ℝ EP E) = 0) :
-  ((rel_mfld.relativize IP P R).slice σ p).nonempty ↔
-  (rel_mfld.relativize IP P R).slice σ p = univ :=
+  ((R.relativize IP P).slice σ p).nonempty ↔
+  (R.relativize IP P).slice σ p = univ :=
 begin
   have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hp,
   have : ∀ y : E', (p.update σ.snd y).comp (continuous_linear_map.inr ℝ EP E) =
@@ -123,7 +89,7 @@ begin
     ext1 x,
     simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
       p.update_ker_pi _ _ (h2p x)] },
-  simp_rw [set.nonempty, eq_univ_iff_forall, mem_slice, mem_relativize],
+  simp_rw [set.nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize],
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
   simp_rw [this, exists_const, forall_const]
 end
@@ -190,7 +156,7 @@ def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' 
     have h2 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
       (in_coordinates I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
         (λ (p : (N × P) × M),
-          (mfderiv I (IP.prod I) (λ (x : M), (p.1.2, x)) p.snd)) ((t, s), x)) ((t, s), x),
+          (mfderiv I (IP.prod I) (λ (x : M), (p.1.2, x)) p.2)) ((t, s), x)) ((t, s), x),
     { apply cont_mdiff_at.mfderiv''' (λ (p : (N × P) × M) (x : M), (p.1.2, x)) prod.snd
         (smooth_at_fst.fst.snd.prod_mk smooth_at_snd :
           smooth_at (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
@@ -276,7 +242,6 @@ begin
   refl
 end
 
-/-- This might need some additional assumptions or other modifications. -/
 lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
   (R : rel_mfld I M IX X) {C : set (P × M)}
   (ε : M → ℝ) (h : (R.relativize IP P).satisfies_h_principle C (λ x, ε x.2)) :
