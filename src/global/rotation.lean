@@ -148,21 +148,16 @@ local attribute [instance] fact_finite_dimensional_of_finrank_eq_succ
 lemma norm_A (x : E) (v : (ℝ ∙ x)ᗮ) : ∥A ω.volume_form x v∥ = ∥x∥ * ∥v∥ :=
 begin
   classical,
-  simp only [A, to_dual, linear_equiv.trans_symm, linear_equiv.symm_symm,
-    linear_isometry_equiv.to_linear_equiv_symm, alternating_map.curry_left_linear_map_apply,
-    linear_map.coe_comp, function.comp_app, linear_map.llcomp_apply,
-    linear_equiv.coe_coe, linear_equiv.trans_apply, linear_isometry_equiv.coe_to_linear_equiv,
-    linear_isometry_equiv.norm_map, submodule.coe_norm],
   refine le_antisymm _ _,
-  { apply continuous_linear_map.op_norm_le_bound' _ (by positivity : 0 ≤ ∥x∥ * ∥v∥),
-    intros w hw,
-    simpa only [linear_map.coe_to_continuous_linear_map', linear_map.llcomp_apply,
-      linear_equiv.coe_coe, alternating_map.const_linear_equiv_of_is_empty_symm_apply,
-      matrix.zero_empty, alternating_map.curry_left_apply_apply, real.norm_eq_abs,
-      submodule.coe_norm, fin.prod_univ_succ, ←mul_assoc, matrix.cons_val_zero, matrix.cons_val_succ,
-      fintype.univ_of_subsingleton, matrix.cons_val_fin_one, finset.prod_const, finset.card_singleton,
-      pow_one]
-      using ω.abs_volume_form_apply_le ![x, v, w] },
+  { cases eq_or_lt_of_le (norm_nonneg (A ω.volume_form x v)) with h h,
+    { rw ← h,
+      positivity },
+    refine le_of_mul_le_mul_right' _ h,
+    rw ← real_inner_self_eq_norm_mul_norm,
+    simpa only [inner_A_apply, fin.mk_zero, fin.prod_univ_succ, finset.card_singleton,
+      finset.prod_const, fintype.univ_of_subsingleton, matrix.cons_val_fin_one, matrix.cons_val_succ,
+      matrix.cons_val_zero, mul_assoc, nat.nat_zero_eq_zero, pow_one, submodule.coe_norm]
+      using ω.volume_form_apply_le ![x, ↑v, A ω.volume_form x v] },
   let K : submodule ℝ E := submodule.span ℝ ({x, v} : set E),
   haveI : nontrivial Kᗮ,
   { apply @finite_dimensional.nontrivial_of_finrank_pos ℝ,
@@ -179,14 +174,13 @@ begin
     have h2 : ⟪(v:E), w⟫ = 0 := w.2 _ (submodule.subset_span (by simp)),
     have h3 : ⟪x, w⟫ = 0 := w.2 _ (submodule.subset_span (by simp)),
     fin_cases i; fin_cases j; norm_num at hij; simp [h1, h2, h3]; rw real_inner_comm; assumption },
-  refine continuous_linear_map.le_op_norm_of_le' _ hw' _,
-  simp only [linear_map.coe_to_continuous_linear_map', linear_map.llcomp_apply,
-    linear_equiv.coe_coe, alternating_map.const_linear_equiv_of_is_empty_symm_apply,
-    matrix.zero_empty, alternating_map.curry_left_apply_apply, real.norm_eq_abs,
-    ω.abs_volume_form_apply_of_pairwise_orthogonal H,
-    fin.prod_univ_succ, matrix.cons_val_zero, matrix.cons_val_succ,
-    fintype.univ_of_subsingleton, matrix.cons_val_fin_one, finset.prod_const, finset.card_singleton,
-    pow_one, ← mul_assoc],
+  refine le_of_mul_le_mul_right' _ (by rwa norm_pos_iff : 0 < ∥w∥),
+  -- Cauchy-Schwarz inequality for `A ω.volume_form x v` and `w`
+  simpa only [inner_A_apply, ω.abs_volume_form_apply_of_pairwise_orthogonal H, inner_A_apply,
+    fin.mk_zero, fin.prod_univ_succ, finset.card_singleton, finset.prod_const,
+    fintype.univ_of_subsingleton, matrix.cons_val_fin_one, matrix.cons_val_succ, matrix.cons_val_zero,
+    nat.nat_zero_eq_zero, pow_one, mul_assoc]
+    using abs_real_inner_le_norm (A ω.volume_form x v) w,
 end
 
 lemma isometry_on_A (x : metric.sphere (0:E) 1) (v : (ℝ ∙ (x:E))ᗮ) : ∥A ω.volume_form x v∥ = ∥v∥ :=
