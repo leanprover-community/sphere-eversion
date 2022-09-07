@@ -170,16 +170,16 @@ begin
   { exact (cont_diff_neg.cont_mdiff.comp cont_mdiff_coe_sphere).comp cont_mdiff_snd },
 end
 
-def formal_eversion_aux : family_one_jet_sec (𝓡 2) (𝕊²) 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
+def formal_eversion_aux : family_one_jet_sec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
 family_join
   (smooth_bs E) $
   family_twist
     (drop (one_jet_ext_sec ⟨(coe : 𝕊² → E), cont_mdiff_coe_sphere⟩))
-    (λ p : ℝ × 𝕊², rot ω.volume_form (p.1, p.2))
+    (λ p : ℝ × 𝕊², ω.rot (p.1, p.2))
     begin
       intros p,
-      have : smooth_at (𝓘(ℝ, ℝ × E)) 𝓘(ℝ, E →L[ℝ] E) (rot ω.volume_form) (p.1, p.2),
-      { refine (cont_diff_rot ω.volume_form _).cont_mdiff_at,
+      have : smooth_at (𝓘(ℝ, ℝ × E)) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2),
+      { refine (ω.cont_diff_rot _).cont_mdiff_at,
         exact ne_zero_of_mem_unit_sphere p.2 },
       refine this.comp p (smooth.smooth_at _),
       exact smooth_fst.prod_mk (cont_mdiff_coe_sphere.comp smooth_snd),
@@ -201,8 +201,8 @@ lemma formal_eversion_hol_at_zero :
 begin
   intros x,
   change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - 0) • (y:E) + (0:ℝ) • -y) x
-    = (rot ω.volume_form (0, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
-  simp only [rot_zero, continuous_linear_map.id_comp],
+    = (ω.rot (0, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
+  simp only [ω.rot_zero, continuous_linear_map.id_comp],
   congr,
   ext y,
   simp,
@@ -213,7 +213,7 @@ lemma formal_eversion_hol_at_one :
 begin
   intros x,
   change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - 1) • (y:E) + (1:ℝ) • -y) x
-    = (rot ω.volume_form (1, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
+    = (ω.rot (1, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
   transitivity mfderiv (𝓡 2) 𝓘(ℝ, E) (-(λ y : 𝕊², (y:E))) x,
   { congr' 2,
     ext y,
@@ -221,7 +221,7 @@ begin
   ext v,
   simp only [mfderiv_neg, continuous_linear_map.coe_comp', comp_app,
     continuous_linear_map.neg_apply],
-  rw rot_one,
+  rw ω.rot_one,
   convert continuous_linear_map.mem_range_self _ _,
   rw range_mfderiv_coe_sphere,
 end
