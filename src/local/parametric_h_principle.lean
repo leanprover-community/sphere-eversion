@@ -10,7 +10,7 @@ This is a stop-gap file to prove the parametric local h-principle.
 noncomputable theory
 
 open metric finite_dimensional set function rel_loc
-open_locale topological_space
+open_locale topological_space pointwise
 
 section parameter_space
 
@@ -59,8 +59,6 @@ by simp_rw [rel_loc.relativize, mem_preimage, one_jet_snd_eq]
 lemma rel_loc.is_open_relativize (R : rel_loc E F) (h2 : is_open R) :
   is_open (R.relativize P) :=
 h2.preimage continuous_one_jet_snd
-
-open_locale pointwise
 
 lemma relativize_slice {σ : one_jet (P × E) F}
   {p : dual_pair' (P × E)}
@@ -115,7 +113,7 @@ end
 
 variables (P)
 
-lemma rel_loc.ample.relativize (hR : R.is_ample) : (R.relativize P).is_ample :=
+lemma rel_loc.is_ample.relativize (hR : R.is_ample) : (R.relativize P).is_ample :=
 begin
   intros p σ,
   let p2 := p.π.comp (continuous_linear_map.inr ℝ P E),
@@ -180,7 +178,7 @@ begin
   --   continuous_linear_map.map_zero, zero_add, S.coe_φ]
 end
 
-lemma is_holonomic_uncurry (S : family_jet_sec E F P) {p : P × E} :
+lemma family_jet_sec.is_holonomic_at_uncurry (S : family_jet_sec E F P) {p : P × E} :
   S.uncurry.is_holonomic_at p ↔ (S p.1).is_holonomic_at p.2 :=
 begin
   sorry
@@ -194,14 +192,14 @@ begin
   -- refl
 end
 
-def family_formal_sol.uncurry (S : R.family_formal_sol P) : formal_sol (R.relativize P) :=
+def rel_loc.family_formal_sol.uncurry (S : R.family_formal_sol P) : formal_sol (R.relativize P) :=
 begin
   refine ⟨S.to_family_jet_sec.uncurry, _⟩,
   rintro ⟨s, x⟩,
   exact S.to_family_jet_sec.uncurry_mem_relativize.mpr (S.is_sol s x)
 end
 
-lemma family_formal_sol.uncurry_φ' (S : R.family_formal_sol P) (p : P × E) :
+lemma rel_loc.family_formal_sol.uncurry_φ' (S : R.family_formal_sol P) (p : P × E) :
   S.uncurry.φ p = fderiv ℝ (λ z, S.f z p.2) p.1 ∘L continuous_linear_map.fst ℝ P E +
   S.φ p.1 p.2 ∘L continuous_linear_map.snd ℝ P E :=
 S.to_family_jet_sec.uncurry_φ' p
@@ -285,15 +283,15 @@ begin
 end
 
 
-def family_formal_sol.curry (S : family_formal_sol G (R.relativize P)) :
+def rel_loc.family_formal_sol.curry (S : family_formal_sol G (R.relativize P)) :
   family_formal_sol (G × P) R :=
 ⟨S.to_family_jet_sec.curry, λ p x, S.to_family_jet_sec.curry_mem (S.is_sol _ _)⟩
 
-lemma family_formal_sol.curry_φ (S : family_formal_sol G (R.relativize P)) (p : G × P)
+lemma rel_loc.family_formal_sol.curry_φ (S : family_formal_sol G (R.relativize P)) (p : G × P)
   (x : E) : (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L fderiv ℝ (λ x, (p.2, x)) x :=
 rfl
 
-lemma family_formal_sol.curry_φ' (S : family_formal_sol G (R.relativize P)) (p : G × P)
+lemma rel_loc.family_formal_sol.curry_φ' (S : family_formal_sol G (R.relativize P)) (p : G × P)
   (x : E) : (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L continuous_linear_map.inr ℝ P E :=
 S.to_family_jet_sec.curry_φ' p x
 
@@ -342,58 +340,72 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dim
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
           {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
-          {P : Type*} [normed_add_comm_group P] [normed_space ℝ P]
-
-variables [finite_dimensional ℝ E] [finite_dimensional ℝ F]
+          {P : Type*} [normed_add_comm_group P] [normed_space ℝ P] [finite_dimensional ℝ P]
 
 variables {R : rel_loc E F} (h_op: is_open R) (h_ample: R.is_ample) (L : landscape E)
 variables {ε : ℝ} (ε_pos : 0 < ε)
+variables (C : set (P × E)) (hC : is_closed C) (K : set (P × E)) (hK : is_compact K)
+include h_op h_ample ε_pos hC hK
 
-include h_op h_ample ε_pos
-
-
--- def sphere_landscape : landscape E :=
--- { C := ∅,
---   K₀ := 𝕊²,
---   K₁ := closed_ball 0 2,
---   hC := is_closed_empty,
---   hK₀ := is_compact_sphere 0 1,
---   hK₁ := is_compact_closed_ball 0 2,
---   h₀₁ := sphere_subset_closed_ball.trans $
---     (closed_ball_subset_ball $ show (1 : ℝ) < 2, by norm_num).trans
---     (interior_closed_ball _ (show (2 : ℝ) ≠ 0, by norm_num)).symm.subset }
-
-lemma rel_loc.family_formal_sol.improve_htpy {𝓕 : family_formal_sol P R}
-  (C : set P) (hC : is_closed C)
-  (h_hol : ∀ᶠ s near C, ∀ x, (𝓕 s).is_holonomic_at x) :
-  ∃ H : family_formal_sol (ℝ × P) R,
-    (∀ x, H (0, x) = 𝓕 x)
-    -- ∧
-    -- (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x) ∧
-    -- (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
-    -- (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε)  ∧
-    -- (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x)
+/- The local parametric h-principle. -/
+lemma rel_loc.family_formal_sol.improve_htpy (𝓕₀ : family_formal_sol P R)
+  (h_hol : ∀ᶠ (p : P × E) near C, (𝓕₀ p.1).is_holonomic_at p.2) :
+  ∃ 𝓕 : family_formal_sol (ℝ × P) R,
+    (∀ s x, 𝓕 (0, s) x = 𝓕₀ s x) ∧
+    (∀ᶠ (p : P × E) near C, ∀ t, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
+    (∀ s x t, ∥(𝓕 (t, s)).f x - 𝓕₀.f s x∥ ≤ ε)  ∧
+    (∀ᶠ (p : P × E) near K, (𝓕 (1, p.1)).is_holonomic_at p.2)
     :=
 begin
-  sorry
-  -- rcases rel_loc.formal_sol.improve h_op h_ample ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
-  -- exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
+  let parametric_landscape : landscape (P × E) :=
+  { C := C,
+    K₀ := K,
+    K₁ := (exists_compact_superset hK).some,
+    hC := hC,
+    hK₀ := hK,
+    hK₁ := (exists_compact_superset hK).some_spec.1,
+    h₀₁ := (exists_compact_superset hK).some_spec.2 },
+  obtain ⟨𝓕, h₁, h₂, -, h₄, h₅⟩ :=
+    𝓕₀.uncurry.improve_htpy (R.is_open_relativize h_op) (h_ample.relativize P)
+    parametric_landscape ε_pos (h_hol.mono (λ p hp, 𝓕₀.is_holonomic_at_uncurry.mpr hp)),
+  have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p,
+  { intro p, rw h₁, refl },
+  refine ⟨𝓕.curry, _, _, _, _⟩,
+  { intros s x, exact curry_eq_iff_eq_uncurry (h₁ (s, x)) },
+  { refine h₂.mono _, rintro ⟨s, x⟩ hp t, exact curry_eq_iff_eq_uncurry (hp t) },
+  { intros s x t, exact (h₄ (s, x) t) },
+  { refine h₅.mono _, rintros ⟨s, x⟩ hp, exact 𝓕.to_family_jet_sec.is_holonomic_at_curry hp }
 end
 
-/- not the full local h-principle sphere eversion,
-but just a homotopy of solutions from a homotopy of formal solutions
-We don't use the `L.C` in the statement, since we want a set in `ℝ`, not in `E`. -/
-lemma rel_loc.htpy_formal_sol.exists_sol (𝓕 : R.htpy_formal_sol) (C : set ℝ) (hC : is_closed C)
-  (K : set E) (hK : is_compact K)
-  (h_hol : ∀ᶠ t near C, ∀ x, (𝓕 t).is_holonomic_at x) :
+omit hC hK
+open filter
+open_locale unit_interval
+
+/- The minimal consequences we get from the h-principle sufficient to prove sphere eversion. -/
+lemma rel_loc.htpy_formal_sol.exists_sol (𝓕₀ : R.htpy_formal_sol)
+  (C : set ℝ) (hC : is_closed C) (K : set E) (hK : is_compact K)
+  (h_hol : ∀ᶠ t near C, ∀ x, (𝓕₀ t).is_holonomic_at x) :
   ∃ f : ℝ → E → F,
     (𝒞 ∞ $ uncurry f) ∧
-    (∀ᶠ t near C, ∀ x, f t x = 𝓕.f t x) ∧
-    (∀ᶠ x near K, ∀ t, (x, f t x, D (f t) x) ∈ R) :=
+    (∀ t ∈ C, ∀ x, f t x = 𝓕₀.f t x) ∧
+    (∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R) :=
 begin
-  -- have := formal_sol.improve_htpy h_op h_ample ε_pos,
-  -- (family_formal_sol.uncurry 𝓕)
-  sorry
+  obtain ⟨𝓕, h₁, h₂, -, h₄⟩ :=
+    𝓕₀.improve_htpy h_op h_ample ε_pos (C ×ˢ univ)
+      (hC.prod is_closed_univ) (I ×ˢ K) (is_compact_Icc.prod hK) _,
+  swap,
+  { refine eventually.filter_mono (nhds_set_prod_le) _,
+    rw [nhds_set_univ, filter.eventually, filter.mem_prod_top],
+    exact h_hol },
+  refine ⟨λ s, (𝓕 (1, s)).f, _, _, _⟩,
+  { exact 𝓕.f_diff.comp ((cont_diff_const.prod cont_diff_id).prod_map cont_diff_id) },
+  { intros t ht x,
+    exact (prod.ext_iff.mp
+      (h₂.nhds_set_forall_mem (t, x) (mk_mem_prod ht (mem_univ x)) 1)).1 },
+  { intros x hx t ht,
+    rw [show D (𝓕 (1, t)).f x = (𝓕 (1, t)).φ x, from
+      h₄.nhds_set_forall_mem (t, x) (mk_mem_prod ht hx)],
+    exact 𝓕.is_sol (1, t) x },
 end
 
 end parametric_h_principle

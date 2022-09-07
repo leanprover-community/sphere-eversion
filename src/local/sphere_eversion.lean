@@ -16,7 +16,6 @@ noncomputable theory
 
 open metric finite_dimensional set function rel_loc
 open_locale topological_space
-
 section sphere_eversion
 
 variables
@@ -246,12 +245,14 @@ sorry
 
 end assume_finite_dimensional
 
+open_locale unit_interval
+
 theorem sphere_eversion_of_loc (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] :
   ∃ f : ℝ → E → E,
   (𝒞 ∞ (uncurry f)) ∧
   (f 0 = λ x, x) ∧
   (f 1 = λ x, -x) ∧
-  ∀ t, sphere_immersion (f t) :=
+  ∀ t ∈ I, sphere_immersion (f t) :=
 begin
   classical,
   borelize E,
@@ -273,7 +274,10 @@ begin
   refine ⟨f, h₁, _, _, _⟩,
   { ext x, rw [this 0 (by simp), formal_eversion_zero] },
   { ext x, rw [this 1 (by simp), formal_eversion_one] },
-  { intro t, apply sphere_immersion_of_sol, intros x hx, exact h₃.nhds_set_forall_mem x hx t }
+  { intros t ht,
+    apply sphere_immersion_of_sol,
+    intros x hx,
+    exact h₃.nhds_set_forall_mem x hx t ht }
 end
 
 end sphere_eversion

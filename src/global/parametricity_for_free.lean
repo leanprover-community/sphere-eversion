@@ -248,9 +248,8 @@ lemma rel_mfld.satisfies_h_principle.satisfies_h_principle_with
   R.satisfies_h_principle_with IP C ε :=
 begin
   intros 𝓕₀ h𝓕₀,
-  obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ := h 𝓕₀.uncurry _,
-  swap,
-  { refine h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp) },
+  obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ :=
+    h 𝓕₀.uncurry (h𝓕₀.mono (λ p hp, 𝓕₀.to_family_one_jet_sec.is_holonomic_uncurry.mpr hp)),
   refine ⟨𝓕.curry, _, _, _, _⟩,
   { intros s x, exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x)) },
   { intros s x, exact 𝓕.to_family_one_jet_sec.is_holonomic_at_curry (h2𝓕 (s, x)) },
