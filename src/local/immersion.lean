@@ -10,6 +10,9 @@ set_option trace.filter_inst_type true
 This is a stop-gap file to prove sphere eversion from the local verson of the h-principle.
 Contents:
 parametricity
+relation of immersions
+formal solution of sphere eversion
+sphere eversion
 -/
 noncomputable theory
 
@@ -58,6 +61,7 @@ variables
 
 
 local notation `𝕊²` := sphere (0 : E) 1
+local notation (name := module_span_printing_only) `{.` x `}ᗮ` := (submodule.span ℝ {x})ᗮ
 local notation `{.` x `}ᗮ` := (submodule.span ℝ ({x} : set E))ᗮ
 
 /-- A map between vector spaces is a immersion when viewed as a map on the sphere, when its
