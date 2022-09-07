@@ -33,6 +33,255 @@ smooth_transition.continuous.continuous_at
 
 end real
 
+section cont_diff_fderiv
+/-! In this section we prove that the derivative of a parametric function is smooth, assuming the
+  input function is smooth enough. We also do this for `cont_diff_within_at` and `fderiv_within`
+  (needed for manifolds)
+  We also need some random other lemmas that we didn't bother to put in the right place yet. -/
+
+
+namespace set
+
+variables {α β γ δ : Type*}
+lemma image_prod_mk_subset_prod {f : α → β} {g : α → γ} {s : set α} :
+  (λ x, (f x, g x)) '' s ⊆ (f '' s) ×ˢ (g '' s) :=
+by { rintros _ ⟨x, hx, rfl⟩, exact mk_mem_prod (mem_image_of_mem f hx) (mem_image_of_mem g hx) }
+
+lemma maps_to.subset_preimage {f : α → β} {s : set α} {t : set β} (hf : maps_to f s t) :
+  s ⊆ f ⁻¹' t := hf
+
+end set
+open set
+
+
+namespace asymptotics
+variables {α E F E' F' : Type*} [topological_space α] [has_norm E] [has_norm E']
+variables [seminormed_add_comm_group F] [seminormed_add_comm_group F']
+variables {x : α} {s : set α}
+
+lemma is_O_with_insert {C : ℝ} {g : α → E} {g' : α → E'} (h : ∥g x∥ ≤ C * ∥g' x∥) :
+  is_O_with C (𝓝[insert x s] x) g g' ↔ is_O_with C (𝓝[s] x) g g' :=
+by simp_rw [is_O_with, nhds_within_insert, eventually_sup, eventually_pure, h, true_and]
+
+lemma is_o_insert {g : α → F} {g' : α → F'} (h : g x = 0) :
+  g =o[𝓝[insert x s] x] g' ↔ g =o[𝓝[s] x] g' :=
+begin
+  simp_rw [is_o],
+  refine forall_congr (λ c, forall_congr (λ hc, _)),
+  rw [is_O_with_insert],
+  rw [h, norm_zero],
+  exact mul_nonneg hc.le (norm_nonneg _)
+end
+
+end asymptotics
+
+
+section fderiv
+
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+variables {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+variables {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+variables {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
+variables {G' : Type*} [normed_add_comm_group G'] [normed_space 𝕜 G']
+
+
+section -- basic topology
+
+variables {α β : Type*} [topological_space α] [topological_space β] {x y : α} {s s' t : set α}
+
+lemma insert_mem_nhds_within_of_subset_insert [t1_space α] (hu : t ⊆ insert y s) :
+  insert x s ∈ 𝓝[t] x :=
+begin
+  rcases eq_or_ne x y with rfl|h,
+  { exact mem_of_superset self_mem_nhds_within hu },
+  rw [← union_singleton, union_comm, ← diff_subset_iff, diff_eq] at hu,
+  exact mem_of_superset (inter_mem_nhds_within _ (compl_singleton_mem_nhds h))
+    (hu.trans (subset_insert _ _)),
+end
+
+lemma prod_mem_nhds_within {t t' : set β} {x : α × β}
+  (hs : s ∈ 𝓝[s'] x.1) (ht : t ∈ 𝓝[t'] x.2) : s ×ˢ t ∈ 𝓝[s' ×ˢ t'] x :=
+begin
+  rw [mem_nhds_within] at hs ht ⊢,
+  obtain ⟨u, hu, hxu, hus⟩ := hs,
+  obtain ⟨v, hv, hxv, hvt⟩ := ht,
+  exact ⟨u ×ˢ v, hu.prod hv, ⟨hxu, hxv⟩, prod_inter_prod.subset.trans $ prod_mono hus hvt⟩,
+end
+
+
+end
+
+section
+
+variables {f : E → F} {s : set E} {x : E} {f' : E →L[𝕜] F} {n : ℕ∞}
+
+theorem has_fderiv_within_at.comp_of_mem {g : F → G} {g' : F →L[𝕜] G} {t : set F}
+  (hg : has_fderiv_within_at g g' t (f x)) (hf : has_fderiv_within_at f f' s x)
+  (hst : tendsto f (𝓝[s] x) (𝓝[t] f x)) :
+  has_fderiv_within_at (g ∘ f) (g'.comp f') s x :=
+has_fderiv_at_filter.comp x hg hf hst
+
+lemma cont_diff_within_at.comp_of_mem
+  {s : set E} {t : set F} {g : F → G} {f : E → F} (x : E)
+  (hg : cont_diff_within_at 𝕜 n g t (f x))
+  (hf : cont_diff_within_at 𝕜 n f s x) (hs : t ∈ 𝓝[f '' s] f x) :
+  cont_diff_within_at 𝕜 n (g ∘ f) s x :=
+(hg.mono_of_mem hs).comp x hf (subset_preimage_image f s)
+
+end
+
+
+variables {f : G → E → F} {g : G → E} {s : set G} {t : set E} {x : G} {n m : ℕ∞} {u : set (G × E)}
+
+
+lemma has_fderiv_within_at_insert {g' : G →L[𝕜] E} :
+  has_fderiv_within_at g g' (insert x s) x ↔ has_fderiv_within_at g g' s x :=
+begin
+  simp_rw [has_fderiv_within_at, has_fderiv_at_filter],
+  rw [asymptotics.is_o_insert],
+  simp only [sub_self, g'.map_zero]
+end
+
+alias has_fderiv_within_at_insert ↔ has_fderiv_within_at.of_insert has_fderiv_within_at.insert
+
+lemma cont_diff_within_at_insert :
+  cont_diff_within_at 𝕜 n g (insert x s) x ↔ cont_diff_within_at 𝕜 n g s x :=
+by simp_rw [cont_diff_within_at, insert_eq_of_mem (mem_insert _ _)]
+
+alias cont_diff_within_at_insert ↔ cont_diff_within_at.of_insert cont_diff_within_at.insert
+
+lemma has_fderiv_within_at_diff_singleton {g' : G →L[𝕜] E} :
+  has_fderiv_within_at g g' (s \ {x}) x ↔ has_fderiv_within_at g g' s x :=
+by rw [← has_fderiv_within_at_insert, insert_diff_singleton, has_fderiv_within_at_insert]
+
+-- replaces 2 mathlib lemmas
+lemma cont_diff_within_at_succ_iff_has_fderiv_within_at_of_mem' {f : E → F} {s : set E} {x : E}
+  {n : ℕ} :
+  cont_diff_within_at 𝕜 (n + 1 : ℕ) f s x
+  ↔ ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : E → E →L[𝕜] F,
+    (∀ x ∈ u, has_fderiv_within_at f (f' x) s x) ∧ cont_diff_within_at 𝕜 n f' s x :=
+begin
+  refine ⟨λ hf, hf.has_fderiv_within_at_nhds, _⟩,
+  rw [← cont_diff_within_at_insert, cont_diff_within_at_succ_iff_has_fderiv_within_at,
+    insert_eq_of_mem (mem_insert _ _)],
+  rintro ⟨u, hu, hus, f', huf', hf'⟩,
+  refine ⟨u, hu, f', λ y hy, (huf' y hy).insert.mono_of_mem _, hf'.insert.mono hus⟩,
+  exact insert_mem_nhds_within_of_subset_insert hus,
+end
+
+/-- One direction of `cont_diff_within_at_succ_iff_has_fderiv_within_at`, but where all derivatives
+  are taken within the same set. Version for partial derivatives. -/
+lemma cont_diff_within_at.has_fderiv_within_at_nhds₂ {n : ℕ}
+  (hf : cont_diff_within_at 𝕜 (n+1) (function.uncurry f) u (x, g x))
+  (hg : cont_diff_within_at 𝕜 n g s x)
+  (hst : insert x s ×ˢ t ⊆ u) -- can be weakened to only consider points near `(x, g x)`
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) :
+  ∃ u ∈ 𝓝[insert x s] x, u ⊆ insert x s ∧ ∃ f' : G → E →L[𝕜] F,
+    (∀ x ∈ u, has_fderiv_within_at (f x) (f' x) t (g x)) ∧
+    cont_diff_within_at 𝕜 n (λ x, f' x) s x :=
+begin
+  obtain ⟨v, hv, hvs, f', hvf', hf'⟩ := hf.has_fderiv_within_at_nhds,
+  refine ⟨(λ z, (z, g z)) ⁻¹' v ∩ insert x s, _, inter_subset_right _ _,
+    λ z, (f' (z, g z)).comp (continuous_linear_map.inr 𝕜 G E), _, _⟩,
+  { refine inter_mem _ self_mem_nhds_within,
+    have := mem_of_mem_nhds_within (mem_insert _ _) hv,
+    refine mem_nhds_within_insert.mpr ⟨this, _⟩,
+    refine (continuous_within_at_id.prod hg.continuous_within_at).preimage_mem_nhds_within' _,
+    rw [← nhds_within_le_iff] at hu hv ⊢,
+    refine (hu.trans $ nhds_within_mono _ $ subset_insert _ _).trans hv },
+  { intros z hz,
+    have := hvf' (z, g z) hz.1,
+    refine this.comp _ (has_fderiv_at_prod_mk_right _ _).has_fderiv_within_at _,
+    exact maps_to'.mpr ((image_prod_mk_subset_prod_right hz.2).trans hst) },
+  { exact (hf'.continuous_linear_map_comp $ (continuous_linear_map.compL 𝕜 E (G × E) F).flip
+      (continuous_linear_map.inr 𝕜 G E)).comp_of_mem x
+      (cont_diff_within_at_id.prod hg) hu },
+end
+
+-- simplify/replace mathlib lemmas using this
+lemma cont_diff_within_at.fderiv_within₂'
+  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
+  (hg : cont_diff_within_at 𝕜 m g s x)
+  (ht : ∀ᶠ y in 𝓝[insert x s] x, unique_diff_within_at 𝕜 t (g y))
+  (hmn : m + 1 ≤ n)
+  (hst : insert x s ×ˢ t ⊆ u)
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) :
+  cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
+begin
+  have : ∀ k : ℕ, (k : with_top ℕ) ≤ m →
+    cont_diff_within_at 𝕜 k (λ x, fderiv_within 𝕜 (f x) t (g x)) s x,
+  { intros k hkm,
+    obtain ⟨v, hv, -, f', hvf', hf'⟩ :=
+      (hf.of_le $ (add_le_add_right hkm 1).trans hmn).has_fderiv_within_at_nhds₂ (hg.of_le hkm)
+      hst hu,
+    refine hf'.congr_of_eventually_eq_insert _,
+    filter_upwards [hv, ht],
+    exact λ y hy h2y, (hvf' y hy).fderiv_within h2y },
+  induction m using with_top.rec_top_coe,
+  { obtain rfl := eq_top_iff.mpr hmn,
+    rw [cont_diff_within_at_top],
+    exact λ m, this m le_top },
+  exact this m le_rfl
+end
+
+lemma cont_diff_within_at_fderiv_within'
+  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
+  (hg : cont_diff_within_at 𝕜 m g s x)
+  (ht : unique_diff_on 𝕜 t)
+  (hmn : m + 1 ≤ n)
+  (hst : insert x s ×ˢ t ⊆ u) -- maybe weaken
+  (hgx : ∀ᶠ x' in 𝓝[insert x s] x, g x' ∈ t)
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) -- remove
+  :
+  cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
+hf.fderiv_within₂' hg (hgx.mono (λ y hy, ht _ hy)) hmn hst hu
+-- $
+--   begin
+--     have := nhds_within_le_comap (continuous_within_at_id.prod hg.continuous_within_at),
+--     have := hgx.filter_mono (nhds_within_mono _ $ subset_insert _ _),
+--     refine mem_of_superset (inter_mem self_mem_nhds_within _) _,
+
+--   end
+
+lemma cont_diff_within_at_fderiv_within
+  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
+  (hg : cont_diff_within_at 𝕜 m g s x)
+  (ht : unique_diff_on 𝕜 t)
+  (hmn : m + 1 ≤ n) (hx : x ∈ s)
+  (hst : s ×ˢ t ⊆ u) -- maybe weaken
+  (hgx : ∀ᶠ x' in 𝓝[s] x, g x' ∈ t)
+  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) -- remove
+  :
+  cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
+by { rw [← insert_eq_self.mpr hx] at hst hgx,
+  exact cont_diff_within_at_fderiv_within' hf hg ht hmn hst hgx hu }
+
+lemma cont_diff_at.cont_diff_at_fderiv
+  (hf : cont_diff_at 𝕜 n (function.uncurry f) (x, g x))
+  (hg : cont_diff_at 𝕜 m g x)
+  (hmn : m + 1 ≤ n) :
+  cont_diff_at 𝕜 m (λ x, fderiv 𝕜 (f x) (g x)) x :=
+begin
+  simp_rw [← fderiv_within_univ],
+  exact (cont_diff_within_at_fderiv_within hf.cont_diff_within_at hg.cont_diff_within_at
+    unique_diff_on_univ hmn (mem_univ x) (subset_univ _) (eventually_of_forall (λ x, mem_univ _))
+    univ_mem).cont_diff_at univ_mem,
+end
+
+lemma cont_diff.fderiv {f : E → F → G} {g : E → F} {n m : ℕ∞}
+  (hf : cont_diff 𝕜 m $ uncurry f) (hg : cont_diff 𝕜 n g) (hnm : n + 1 ≤ m) :
+    cont_diff 𝕜 n (λ x, fderiv 𝕜 (f x) (g x)) :=
+cont_diff_iff_cont_diff_at.mpr $ λ x, hf.cont_diff_at.cont_diff_at_fderiv hg.cont_diff_at hnm
+
+lemma continuous.fderiv {f : E → F → G} {g : E → F} {n : ℕ∞}
+  (hf : cont_diff 𝕜 n $ uncurry f) (hg : continuous g) (hn : 1 ≤ n):
+    continuous (λ x, fderiv 𝕜 (f x) (g x)) :=
+(hf.fderiv (cont_diff_zero.mpr hg) hn).continuous
+
+end fderiv
+
+end cont_diff_fderiv
+
 section calculus
 open continuous_linear_map
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
@@ -40,17 +289,6 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
           {n : ℕ∞}
-
--- TODO FOR LOCAL
-lemma cont_diff.fderiv {f : E → F → G} {g : E → F} {n m : ℕ∞}
-  (hf : cont_diff 𝕜 m $ uncurry f) (hg : cont_diff 𝕜 n g) (nm : n < m) :
-    cont_diff 𝕜 n (λ x, fderiv 𝕜 (f x) (g x)) :=
-sorry
-
-lemma continuous.fderiv {f : E → F → G} {g : E → F} {n : ℕ∞}
-  (hf : cont_diff 𝕜 n $ uncurry f) (hg : continuous g) (hn : 1 ≤ n):
-    continuous (λ x, fderiv 𝕜 (f x) (g x)) :=
-(hf.fderiv (cont_diff_zero.mpr hg) $ enat.one_le_iff_pos.mp hn).continuous
 
 lemma fderiv_prod_left {x₀ : E} {y₀ : F} :
   fderiv 𝕜 (λ x, (x, y₀)) x₀ = continuous_linear_map.inl 𝕜 E F :=
