@@ -130,12 +130,25 @@ lemma rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : rot Ω (1, v) w = - 
 by simp [rot, orthogonal_projection_eq_self_iff.mpr hw,
   orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hw]
 
-/-- The map `rot` sends `(v, t)` to a transformation preserving `v`. -/
+/-- The map `rot` sends `(v, t)` to a transformation fixing `v`. -/
 lemma rot_self (p : ℝ × E) : rot Ω p p.2 = p.2 :=
 begin
   have H : ↑(orthogonal_projection (ℝ ∙ p.2) p.2) = p.2 :=
     orthogonal_projection_eq_self_iff.mpr (submodule.mem_span_singleton_self p.2),
   simp [rot, A_apply_self, orthogonal_projection_orthogonal_complement_singleton_eq_zero, H],
+end
+
+/-- The map `rot` sends `(v, t)` to a transformation preserving the subspace `(ℝ ∙ v)ᗮ`. -/
+lemma inner_rot_apply_self (p : ℝ × E) (w : E) (hw : w ∈ (ℝ ∙ p.2)ᗮ) : ⟪rot Ω p w, p.2⟫ = 0 :=
+begin
+  have H₁ : orthogonal_projection (ℝ ∙ p.2) w = 0 :=
+    orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hw,
+  have H₂ : (orthogonal_projection (ℝ ∙ p.2)ᗮ w : E) = w :=
+    congr_arg (coe : (ℝ ∙ p.2)ᗮ → E) (orthogonal_projection_mem_subspace_eq_self ⟨w, hw⟩),
+  have H₃ : ⟪w, p.2⟫ = 0 :=
+    by simpa only [real_inner_comm] using hw p.2 (submodule.mem_span_singleton_self _),
+  have H₄ : ⟪A Ω p.2 w, p.2⟫ = 0 := inner_A_apply_self Ω p.2 ⟨w, hw⟩,
+  simp [rot, H₁, H₂, H₃, H₄, inner_smul_left, inner_add_left],
 end
 
 end
@@ -202,11 +215,22 @@ begin
   simp [rot, orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero v.prop, this],
 end
 
-lemma inj_on_rot (t : ℝ) (x : metric.sphere (0:E) 1) :
-  set.inj_on (rot ω.volume_form (t, x)) (ℝ ∙ (x:E))ᗮ :=
+lemma isometry_rot (t : ℝ) (x : metric.sphere (0:E) 1) :
+  isometry (rot ω.volume_form (t, x)) :=
 begin
-  intros v hv w hw h,
-  simpa [sub_eq_zero, h] using (ω.isometry_on_rot t x (⟨v, hv⟩ - ⟨w, hw⟩)).symm
+  rw add_monoid_hom_class.isometry_iff_norm,
+  intros v,
+  obtain ⟨a, ha, w, hw, rfl⟩ := (ℝ ∙ (x:E)).exists_sum_mem_mem_orthogonal v,
+  rw submodule.mem_span_singleton at ha,
+  obtain ⟨s, rfl⟩ := ha,
+  rw [← sq_eq_sq (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
+    norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero,
+    norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero],
+  { have hxw : ∥rot ω.volume_form (t, x) w∥ = ∥w∥ := by simpa only using ω.isometry_on_rot t x ⟨w, hw⟩,
+    simp [hxw, rot_self] },
+  { simp [inner_smul_left, hw x (submodule.mem_span_singleton_self _)] },
+  rw real_inner_comm,
+  simp [rot_self, inner_smul_right, inner_rot_apply_self ω.volume_form (t, x) w hw],
 end
 
 end orientation
