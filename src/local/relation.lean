@@ -58,6 +58,10 @@ the set of `w` in `F` such that updating `θ` using `p` and `w` leads to a jet i
 def slice (R : rel_loc E F) (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)) : set F :=
 {w | (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R}
 
+lemma mem_slice (R : rel_loc E F) {p : dual_pair' E} {θ : E × F × (E →L[ℝ] F)} {w : F} :
+  w ∈ R.slice p θ ↔ (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R :=
+iff.rfl
+
 /-- A relation is ample if all its slices are ample. -/
 def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
 ample_set (R.slice p θ)
@@ -127,6 +131,8 @@ open rel_loc
 
 instance : has_coe_to_fun (jet_sec E F) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
+
+lemma coe_apply (𝓕 : jet_sec E F) (x : E) : 𝓕 x = (𝓕.f x, 𝓕.φ x) := rfl
 
 instance (R : rel_loc E F) (U : set E) : has_coe_to_fun (formal_sol R) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩

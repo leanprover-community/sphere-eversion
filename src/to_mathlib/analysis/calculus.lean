@@ -290,6 +290,11 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
           {n : ℕ∞}
 
+lemma fderiv_comp {g : F → G} {f : E → F} (x : E)
+  (hg : differentiable_at 𝕜 g (f x)) (hf : differentiable_at 𝕜 f x) :
+  fderiv 𝕜 (g ∘ f) x = (fderiv 𝕜 g (f x)).comp (fderiv 𝕜 f x) :=
+(hg.has_fderiv_at.comp x hf.has_fderiv_at).fderiv
+
 lemma fderiv_prod_left {x₀ : E} {y₀ : F} :
   fderiv 𝕜 (λ x, (x, y₀)) x₀ = continuous_linear_map.inl 𝕜 E F :=
 begin

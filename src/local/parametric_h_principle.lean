@@ -28,7 +28,7 @@ def one_jet_snd : one_jet (P × E) F → one_jet E F :=
 
 lemma continuous_one_jet_snd :
   continuous (one_jet_snd : one_jet (P × E) F → one_jet E F) :=
-continuous_fst.snd.prod_mk $ continuous_snd.fst.prod_mk $ continuous_snd.snd.clm_comp $
+continuous_fst.snd.prod $ continuous_snd.fst.prod $ continuous_snd.snd.clm_comp $
   continuous.fderiv (cont_diff_fst.fst.prod_map cont_diff_id) continuous_fst.snd le_top
 
 lemma one_jet_snd_eq (p : one_jet (P × E) F) :
@@ -56,29 +56,26 @@ lemma relativize_slice {σ : one_jet (P × E) F}
   (R.relativize P).slice p σ =
   σ.2.2 (p.v - (0, q.v)) +ᵥ R.slice q (one_jet_snd σ) :=
 begin
-  sorry,
-  -- have h2pq : ∀ x : E, p.π ((0 : P), x) = q.π x := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hpq,
-  -- ext1 w,
-  -- have h1 : (p.update σ.2 w).comp (continuous_linear_map.inr ℝ P E) =
-  --   q.update (one_jet_snd σ).2 (-σ.2 (p.v - (0, q.v)) +ᵥ w),
-  -- { ext1 x,
-  --   simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
-  --     ← continuous_linear_map.map_neg, neg_sub],
-  --   obtain ⟨u, hu, t, rfl⟩ := q.decomp x,
-  --   have hv : (0, q.v) - p.v ∈ p.π.ker,
-  --   { rw [continuous_linear_map.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self] },
-  --   have hup : ((0 : P), u) ∈ p.π.ker := (h2pq u).trans hu,
-  --   rw [q.update_apply _ hu, ← prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup,
-  --     ← prod.smul_zero_mk, map_smul, vadd_eq_add],
-  --   nth_rewrite 0 [← sub_add_cancel (0, q.v) p.v],
-  --   rw [map_add, p.update_ker_pi _ _ hv, p.update_v],
-  --   refl },
-  -- have := preimage_vadd_neg (show F, from σ.2 (p.v - (0, q.v)))
-  --   (show set F, from (R.slice (one_jet_snd σ) q)),
-  -- dsimp only at this,
-  -- simp_rw [← this, mem_preimage, mem_slice, mem_relativize],
-  -- dsimp only [one_jet_mk_fst, one_jet_mk_snd],
-  -- congr'
+  have h2pq : ∀ x : E, p.π ((0 : P), x) = q.π x := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hpq,
+  ext1 w,
+  have h1 : (p.update σ.2.2 w).comp (continuous_linear_map.inr ℝ P E) =
+    q.update (one_jet_snd σ).2.2 (-σ.2.2 (p.v - (0, q.v)) +ᵥ w),
+  { ext1 x,
+    simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
+      ← continuous_linear_map.map_neg, neg_sub],
+    obtain ⟨u, hu, t, rfl⟩ := q.decomp x,
+    have hv : (0, q.v) - p.v ∈ p.π.ker,
+    { rw [continuous_linear_map.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self] },
+    have hup : ((0 : P), u) ∈ p.π.ker := (h2pq u).trans hu,
+    rw [q.update_apply _ hu, ← prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup,
+      ← prod.smul_zero_mk, map_smul, vadd_eq_add],
+    nth_rewrite 0 [← sub_add_cancel (0, q.v) p.v],
+    rw [map_add, p.update_ker_pi _ _ hv, p.update_v, one_jet_snd_eq],
+    refl },
+  have := preimage_vadd_neg (show F, from σ.2.2 (p.v - (0, q.v))) (R.slice q (one_jet_snd σ)),
+  dsimp only at this,
+  simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize, h1],
+  refl,
 end
 
 lemma relativize_slice_eq_univ {σ : one_jet (P × E) F}
@@ -87,17 +84,15 @@ lemma relativize_slice_eq_univ {σ : one_jet (P × E) F}
   ((R.relativize P).slice p σ).nonempty ↔
   (R.relativize P).slice p σ = univ :=
 begin
-  sorry
-  -- have h2p : ∀ x : E, p.π ((0 : P), x) = 0 := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hp,
-  -- have : ∀ y : F, (p.update σ.2.2 y).comp (continuous_linear_map.inr ℝ P E) =
-  --   σ.2.2.comp (continuous_linear_map.inr ℝ P E),
-  -- { intro y,
-  --   ext1 x,
-  --   simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
-  --     p.update_ker_pi _ _ (h2p x)] },
-  -- simp_rw [set.nonempty, eq_univ_iff_forall, mem_slice, mem_relativize],
-  -- dsimp only [one_jet_mk_fst, one_jet_mk_snd],
-  -- simp_rw [this, exists_const, forall_const]
+  have h2p : ∀ x : E, p.π ((0 : P), x) = 0 := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hp,
+  have : ∀ y : F, (p.update σ.2.2 y).comp (continuous_linear_map.inr ℝ P E) =
+    σ.2.2.comp (continuous_linear_map.inr ℝ P E),
+  { intro y,
+    ext1 x,
+    simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
+      p.update_ker_pi _ _ (h2p x)] },
+  simp_rw [set.nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize, this, exists_const,
+    forall_const]
 end
 
 variables (P)
@@ -128,57 +123,70 @@ def family_jet_sec.uncurry (S : family_jet_sec E F P) : jet_sec (P × E) F :=
 { f := λ p, S.f p.1 p.2,
   φ := λ p, fderiv ℝ (λ z : P × E, S.f z.1 p.2) p +
     S.φ p.1 p.2 ∘L fderiv ℝ prod.snd p,
-  f_diff := sorry,
+  f_diff := S.f_diff,
   φ_diff := begin
-    sorry
-    -- refine smooth.one_jet_add _ _,
-    -- { intro y,
-    --   refine smooth_at_id.one_jet_bundle_mk (S.smooth_bs y) _,
-    --   have : smooth_at ((IP.prod I).prod (IP.prod I)) I'
-    --     (function.uncurry (λ x z : P × E, S.f z.1 x.2)) (y, y),
-    --   { exact S.smooth_bs.comp (smooth_snd.fst.prod_mk smooth_fst.snd) (y, y) },
-    --   apply cont_mdiff_at.mfderiv'' (λ x z : P × E, S.f z.1 x.2) this le_top },
-    -- { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext }
-  end }
+    refine (cont_diff.fderiv _ cont_diff_id le_top).add (S.φ_diff.clm_comp _),
+    { exact S.f_diff.comp (cont_diff_snd.fst.prod cont_diff_fst.snd) },
+    { exact cont_diff.fderiv cont_diff_snd.snd cont_diff_id le_top }
+    end }
 
 lemma family_jet_sec.uncurry_φ' (S : family_jet_sec E F P) (p : P × E) :
   (S.uncurry).φ p = fderiv ℝ (λ z, S.f z p.2) p.1 ∘L continuous_linear_map.fst ℝ P E +
   S.φ p.1 p.2 ∘L continuous_linear_map.snd ℝ P E :=
 begin
-  simp_rw [S.uncurry_φ, fderiv_snd],
-  congr' 1,
-  sorry
-  -- convert mfderiv_comp p
-  --   ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable p.1)
-  --   (smooth_fst.mdifferentiable p),
-  -- simp_rw [mfderiv_fst],
+  simp_rw [S.uncurry_φ, fderiv_snd, add_left_inj],
+  refine (fderiv_comp p
+    ((S.f_diff.comp (cont_diff_id.prod cont_diff_const)).differentiable le_top p.1)
+    differentiable_at_fst).trans _,
+  rw [fderiv_fst],
+  refl,
 end
 
 lemma family_jet_sec.uncurry_mem_relativize (S : family_jet_sec E F P) {s : P}
   {x : E} : ((s, x), S.uncurry (s, x)) ∈ R.relativize P ↔ (x, S s x) ∈ R :=
 begin
-  sorry
-  -- simp_rw [rel_loc.relativize, mem_preimage, one_jet_sec.coe_apply, map_left],
-  -- congr',
-  -- ext v,
-  -- simp_rw [S.uncurry_φ', continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
-  --   continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
-  --   continuous_linear_map.coe_fst', continuous_linear_map.coe_snd',
-  --   continuous_linear_map.map_zero, zero_add, S.coe_φ]
+  simp_rw [rel_loc.relativize, mem_preimage, one_jet_snd_eq, jet_sec.coe_apply, S.uncurry_f,
+    S.uncurry_φ'],
+  congr' 2,
+  refine prod.ext rfl (prod.ext rfl _),
+  ext v,
+  simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
+    continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
+    continuous_linear_map.coe_fst', continuous_linear_map.coe_snd',
+    continuous_linear_map.map_zero, zero_add],
+  refl,
+end
+
+lemma fderiv_prod_eq_add {f : E × F → G} {p : E × F}
+  (hf : differentiable_at ℝ f p) :
+  fderiv ℝ f p = fderiv ℝ (λ (z : E × F), f (z.1, p.2)) p + fderiv ℝ (λ (z : E × F), f (p.1, z.2)) p :=
+begin
+  rw [← @prod.mk.eta _ _ p] at hf,
+  rw [fderiv_comp p (by apply hf) (differentiable_at_fst.prod $ differentiable_at_const _),
+    fderiv_comp p (by apply hf) ((differentiable_at_const _).prod differentiable_at_snd),
+    ← continuous_linear_map.comp_add,
+    differentiable_at_fst.fderiv_prod (differentiable_at_const _),
+    (differentiable_at_const _).fderiv_prod differentiable_at_snd,
+    fderiv_fst, fderiv_snd, fderiv_const, fderiv_const],
+  dsimp only [pi.zero_apply],
+  rw [prod.mk.eta, continuous_linear_map.fst_prod_zero_add_zero_prod_snd,
+    continuous_linear_map.comp_id]
 end
 
 lemma family_jet_sec.is_holonomic_at_uncurry (S : family_jet_sec E F P) {p : P × E} :
   S.uncurry.is_holonomic_at p ↔ (S p.1).is_holonomic_at p.2 :=
 begin
-  sorry
-  -- simp_rw [one_jet_sec.is_holonomic_at, one_jet_sec.snd_eq, S.uncurry_φ],
-  -- rw [show S.uncurry.f = λ x, S.uncurry.f x, from rfl, funext S.uncurry_bs],
-  -- simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj],
-  -- dsimp only,
-  -- rw [mfderiv_comp p S.smooth_coe_bs.mdifferentiable_at smooth_snd.mdifferentiable_at, mfderiv_snd,
-  --   (show surjective (continuous_linear_map.snd ℝ P E), from prod.snd_surjective)
-  --     .clm_comp_injective.eq_iff],
-  -- refl
+  simp_rw [jet_sec.is_holonomic_at, S.uncurry_φ],
+  rw [show S.uncurry.f = λ x, S.uncurry.f x, from rfl, funext S.uncurry_f,
+    show (λ x : P × E, S.f x.1 x.2) = ↿S.f, from rfl],
+  simp_rw [fderiv_prod_eq_add (S.f_diff.differentiable le_top _), fderiv_snd],
+  refine (add_right_inj _).trans _,
+  have := fderiv_comp p ((S p.1).f_diff.cont_diff_at.differentiable_at le_top)
+    differentiable_at_snd,
+  rw [show D (λ (z : P × E), ↿(S.f) (p.fst, z.snd)) p = _, from this, fderiv_snd,
+    (show surjective (continuous_linear_map.snd ℝ P E), from prod.snd_surjective)
+      .clm_comp_injective.eq_iff],
+  refl
 end
 
 def rel_loc.family_formal_sol.uncurry (S : R.family_formal_sol P) : formal_sol (R.relativize P) :=
@@ -189,7 +197,7 @@ begin
 end
 
 lemma rel_loc.family_formal_sol.uncurry_φ' (S : R.family_formal_sol P) (p : P × E) :
-  S.uncurry.φ p = fderiv ℝ (λ z, S.f z p.2) p.1 ∘L continuous_linear_map.fst ℝ P E +
+  (S.uncurry p).2 = fderiv ℝ (λ z, S.f z p.2) p.1 ∘L continuous_linear_map.fst ℝ P E +
   S.φ p.1 p.2 ∘L continuous_linear_map.snd ℝ P E :=
 S.to_family_jet_sec.uncurry_φ' p
 
@@ -197,29 +205,15 @@ def family_jet_sec.curry (S : family_jet_sec (P × E) F G) :
   family_jet_sec E F (G × P) :=
 { f := λ p x, (S p.1).f (p.2, x),
   φ := λ p x, (S p.1).φ (p.2, x) ∘L fderiv ℝ (λ x, (p.2, x)) x,
-  f_diff := sorry,
+  f_diff := S.f_diff.comp (cont_diff_prod_assoc : cont_diff ℝ ⊤ (equiv.prod_assoc G P E)),
   φ_diff := begin
-    sorry
-    -- rintro ⟨⟨t, s⟩, x⟩,
-    -- refine smooth_at_snd.one_jet_mk (S.smooth_bs.comp smooth_prod_assoc _) _,
-    -- have h1 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, P × E →L[ℝ] F)
-    --   (in_coordinates (IP.prod I) I' (λ (p : (G × P) × E), (p.1.2, p.2))
-    --     (λ (p : (G × P) × E), (S p.1.1).f (p.1.2, p.2))
-    --     (λ (p : (G × P) × E), ((S p.1.1).φ (p.1.2, p.2))) ((t, s), x)) ((t, s), x),
-    -- { apply (smooth_at_one_jet.mp $
-    --     smooth_at.comp _ (by exact S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2 },
-    -- have h2 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] P × E)
-    --   (in_coordinates I (IP.prod I) prod.snd (λ (p : (G × P) × E), (p.1.2, p.2))
-    --     (λ (p : (G × P) × E),
-    --       (mfderiv I (IP.prod I) (λ (x : E), (p.1.2, x)) p.snd)) ((t, s), x)) ((t, s), x),
-    -- { apply cont_mdiff_at.mfderiv''' (λ (p : (G × P) × E) (x : E), (p.1.2, x)) prod.snd
-    --     (smooth_at_fst.fst.snd.prod_mk smooth_at_snd :
-    --       smooth_at (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
-    --     (smooth_at_snd : smooth_at ((J.prod IP).prod I) _ _ _) le_top },
-    -- exact h1.clm_comp_in_coordinates (continuous_at_fst.snd.prod continuous_at_snd) h2
+    refine (S.φ_diff.comp (cont_diff_prod_assoc : cont_diff ℝ ⊤ (equiv.prod_assoc G P E))).clm_comp
+      _,
+    refine cont_diff.fderiv _ cont_diff_snd le_top,
+    exact cont_diff_fst.fst.snd.prod cont_diff_snd
   end }
 
-lemma family_jet_sec.curry_bs (S : family_jet_sec (P × E) F G) (p : G × P)
+lemma family_jet_sec.curry_f (S : family_jet_sec (P × E) F G) (p : G × P)
   (x : E) : (S.curry p).f x = (S p.1).f (p.2, x) :=
 rfl
 
@@ -230,12 +224,11 @@ rfl
 lemma family_jet_sec.curry_φ' (S : family_jet_sec (P × E) F G) (p : G × P)
   (x : E) : (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L continuous_linear_map.inr ℝ P E :=
 begin
-  sorry
-  -- rw [S.curry_φ],
-  -- congr' 1,
-  -- refine ((mdifferentiable_at_const I IP).mfderiv_prod smooth_id.mdifferentiable_at).trans _,
-  -- rw [mfderiv_id, mfderiv_const],
-  -- refl,
+  rw [S.curry_φ],
+  congr' 1,
+  refine ((differentiable_at_const _).fderiv_prod differentiable_at_id).trans _,
+  rw [fderiv_id, fderiv_const],
+  refl,
 end
 
 -- lemma formal_sol.eq_iff {F₁ F₂ : formal_sol R} {x : E} :
@@ -248,29 +241,22 @@ lemma family_jet_sec.is_holonomic_at_curry
   {t : G} {s : P} {x : E} (hS : (S t).is_holonomic_at (s, x)) :
   (S.curry (t, s)).is_holonomic_at x :=
 begin
-  sorry
-  -- simp_rw [one_jet_sec.is_holonomic_at, (S.curry _).snd_eq, S.curry_φ] at hS ⊢,
-  -- dsimp only,
-  -- rw [show (S.curry (t, s)).f = λ x, (S.curry (t, s)).f x, from rfl, funext (S.curry_bs _)],
-  -- dsimp only,
-  -- refine (mfderiv_comp x (S t).smooth_bs.mdifferentiable_at
-  --   ((mdifferentiable_at_const I IP).prod_mk smooth_id.mdifferentiable_at)).trans _,
-  -- rw [id, hS],
-  -- refl,
+  simp_rw [jet_sec.is_holonomic_at, S.curry_φ] at hS ⊢,
+  rw [show (S.curry (t, s)).f = λ x, (S.curry (t, s)).f x, from rfl, funext (S.curry_f _)],
+  dsimp only,
+  refine (fderiv_comp x ((S t).f_diff.cont_diff_at.differentiable_at le_top)
+    ((differentiable_at_const _).prod differentiable_at_id)).trans _,
+  rw [id, hS],
+  refl,
 end
 
 lemma family_jet_sec.curry_mem (S : family_jet_sec (P × E) F G)
   {p : G × P} {x : E} (hR : ((p.2, x), S p.1 (p.2, x)) ∈ R.relativize P) :
   (x, S.curry p x) ∈ R :=
 begin
-  sorry
-  -- simp_rw [rel_loc.relativize, mem_preimage, one_jet_sec.coe_apply,
-  --   map_left] at hR ⊢,
-  -- convert hR,
-  -- ext v,
-  -- simp_rw [S.curry_φ']
+  simp_rw [rel_loc.relativize, mem_preimage, jet_sec.coe_apply, one_jet_snd_eq, S.curry_φ'] at hR ⊢,
+  exact hR
 end
-
 
 def rel_loc.family_formal_sol.curry (S : family_formal_sol G (R.relativize P)) :
   family_formal_sol (G × P) R :=
@@ -281,24 +267,25 @@ lemma rel_loc.family_formal_sol.curry_φ (S : family_formal_sol G (R.relativize 
 rfl
 
 lemma rel_loc.family_formal_sol.curry_φ' (S : family_formal_sol G (R.relativize P)) (p : G × P)
-  (x : E) : (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L continuous_linear_map.inr ℝ P E :=
+  (x : E) : (S.curry p x).2 = (S p.1 (p.2, x)).2 ∘L continuous_linear_map.inr ℝ P E :=
 S.to_family_jet_sec.curry_φ' p x
 
+
+-- #check jet_sec.formal_sol.eq_iff
 lemma curry_eq_iff_eq_uncurry {𝓕 : family_formal_sol G (R.relativize P)}
   {𝓕₀ : R.family_formal_sol P} {t : G} {x : E} {s : P}
   (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
   (𝓕.curry (t, s)) x = 𝓕₀ s x :=
 begin
-  sorry,
-  -- simp_rw [formal_sol.eq_iff] at h ⊢,
-  -- refine ⟨h.1, _⟩,
-  -- simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ'],
-  -- ext v,
-  -- simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
-  --   continuous_linear_map.comp_apply,
-  --   continuous_linear_map.inr_apply, continuous_linear_map.coe_fst',
-  --   continuous_linear_map.coe_snd', continuous_linear_map.map_zero, zero_add],
-  -- refl
+  simp_rw [prod.ext_iff] at h ⊢,
+  refine ⟨h.1, _⟩,
+  simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ'],
+  ext v,
+  simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.add_apply,
+    continuous_linear_map.comp_apply,
+    continuous_linear_map.inr_apply, continuous_linear_map.coe_fst',
+    continuous_linear_map.coe_snd', continuous_linear_map.map_zero, zero_add],
+  refl
 end
 
 end parameter_space
