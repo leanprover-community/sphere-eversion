@@ -113,35 +113,71 @@ begin
   exact ample_set_empty
 end
 
+open submodule rel_loc
 
--- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
-lemma loc_immersion_rel_ample (h : finrank ℝ E ≤ finrank ℝ E') :
+lemma mem_slice_iff_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
+  (hx : x ∉ B) (y : E') : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) {.x}ᗮ :=
+begin
+  change (x ∉ ball (0 : E) 2⁻¹ → inj_on (p.update φ w) {.x}ᗮ) ↔ inj_on (p.update φ w) {.x}ᗮ,
+  simp [hx]
+end
+
+lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
+  (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) {.x}ᗮ} :=
+by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
+
+local notation `dim` := finrank ℝ
+
+-- In the next lemma the assumption `dim E = n + 1` is for convenience
+-- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...
+lemma loc_immersion_rel_ample {n : ℕ} [fact (dim E = n+1)] (h : finrank ℝ E ≤ finrank ℝ E') :
   (immersion_sphere_rel E E').is_ample :=
 begin
-  rintro p ⟨x, y, φ⟩,
+  rw is_ample_iff,
+  rintro ⟨x, y, φ⟩ p h_mem,
   by_cases hx : x ∈ B,
-  sorry { apply rel_loc.ample_slice_of_forall,
+  sorry { apply ample_slice_of_forall,
     intros w,
     simp [hx]  },
-  { by_cases H : p.π.ker = {.x}ᗮ,
+  { have hφ : inj_on φ {.x}ᗮ := h_mem hx, clear h_mem,
+    by_cases H : p.π.ker = {.x}ᗮ,
     sorry { have key : ∀ w, eq_on (p.update φ w) φ {.x}ᗮ,
       { intros w x,
         rw ← H,
         exact p.update_ker_pi φ w },
-      by_cases hφ : inj_on φ {.x}ᗮ,
-      { apply rel_loc.ample_slice_of_forall,
-        intros w hx,
-        apply hφ.congr,
-        exact (key w).symm  },
-      { apply rel_loc.ample_slice_of_forall_not,
-        intros w hx',
-        apply hφ, clear hφ,
-        replace hx := mem_loc_immersion_rel'.mp hx' hx, clear hx',
-        apply hx.congr,
-        exact key w }, },
-    {
-      sorry }, },
-  -- exact ample_of_two_le_codim hcodim,
+      exact ample_slice_of_forall _ p  (λ w _, hφ.congr (key w).symm) },
+    { obtain ⟨v', hv', hπv'⟩ : ∃ v : E, {.x}ᗮ = (p.π.ker ⊓ {.x}ᗮ) ⊔ span ℝ {v} ∧ p.π v = 1,
+      {
+        sorry },
+      let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
+      apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
+      have : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ {.x}ᗮ))ᶜ,
+      sorry { ext w,
+        rw mem_slice_iff_of_not_mem hx y,
+        -- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
+        --rw inj_on_iff_injective,
+        --have := p'.injective_update_iff,
+        sorry },
+      rw [this],
+      apply ample_of_two_le_codim,
+      let Φ := φ.to_linear_map,
+      suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ {.x}ᗮ)),
+      sorry { rw ← finrank_eq_dim,
+        exact_mod_cast this },
+      apply le_of_add_le_add_right,
+      rw submodule.finrank_quotient_add_finrank (map Φ $ p.π.ker ⊓ {.x}ᗮ),
+      have := finrank_map_le ℝ Φ (p.π.ker ⊓ {.x}ᗮ),
+      have : dim (p.π.ker ⊓ {.x}ᗮ : submodule ℝ E) + 1 = n,
+      sorry { have hx₀ : x ≠ 0, sorry,
+        have eq₁ : dim {.x}ᗮ = n, sorry, -- from finrank_orthogonal_span_singleton hx₀,
+        have eq₂ := submodule.dim_sup_add_dim_inf_eq (p.π.ker ⊓ {.x}ᗮ) (span ℝ {v'}),
+        have : v' ≠ 0, sorry,
+        have eq₃ : dim (span ℝ {v'}) = 1, sorry,
+        have : p.π.ker ⊓ {.x}ᗮ ⊓ span ℝ {v'} = (⊥ : submodule ℝ E), sorry,
+        rw [← hv', eq₁, eq₃, this] at eq₂,
+        simpa using eq₂.symm },
+      have : dim E = n+1, from fact.out _,
+      linarith } }
 end
 
 

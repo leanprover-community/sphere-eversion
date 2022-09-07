@@ -79,6 +79,55 @@ begin
   exact hθ
 end
 
+lemma slice_update {R : rel_loc E F} {θ : E × F × (E →L[ℝ] F)}
+  {p : dual_pair' E} (x : F) :
+  R.slice p (θ.1, θ.2.1, (p.update θ.2.2 x)) = R.slice p θ :=
+begin
+  ext1 w,
+  dsimp [slice],
+  rw [p.update_update]
+end
+
+/-- In order to check ampleness, it suffices to consider slices through elements of the relation. -/
+lemma is_ample_iff {R : rel_loc E F} : R.is_ample ↔
+  ∀ ⦃θ : one_jet E F⦄ (p : dual_pair' E), θ ∈ R → ample_set (R.slice p θ) :=
+begin
+  simp_rw [is_ample],
+  refine ⟨λ h θ p hθ, h p θ, λ h p θ w hw, _⟩,
+  dsimp [slice] at hw,
+  have := h p hw,
+  rw [slice_update] at this,
+  exact this w hw
+end
+
+
+open_locale pointwise
+
+lemma slice_of_ker_eq_ker {R : rel_loc E F} {θ : one_jet E F}
+  {p p' : dual_pair' E} (hpp' : p.π = p'.π) :
+  R.slice p θ = θ.2.2 (p.v - p'.v) +ᵥ R.slice p' θ :=
+begin
+  rcases θ with ⟨x, y, φ⟩,
+  have key : ∀ w, p'.update φ w = p.update φ (w + φ (p.v - p'.v)),
+  { intros w,
+    simp only [dual_pair'.update, hpp', map_sub, add_right_inj],
+    congr' 2,
+    abel },
+  ext w,
+  simp only [slice, mem_set_of_eq, map_sub, vadd_eq_add, mem_vadd_set_iff_neg_vadd_mem, key],
+  have : -(φ p.v - φ p'.v) + w + (φ p.v - φ p'.v) = w,
+  abel,
+  rw this,
+end
+
+lemma ample_slice_of_ample_slice {R : rel_loc E F} {θ : one_jet E F}
+  {p p' : dual_pair' E} (hpp' : p.π = p'.π) (h : ample_set (R.slice p θ)) :
+  ample_set (R.slice p' θ) :=
+begin
+  rw slice_of_ker_eq_ker hpp'.symm,
+  exact ample_set.vadd h
+end
+
 /-- A solution to a local relation `R`. -/
 @[ext] structure sol (R : rel_loc E F) :=
 (f : E → F)
