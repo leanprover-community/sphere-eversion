@@ -352,6 +352,17 @@ variables {ε : ℝ} (ε_pos : 0 < ε)
 include h_op h_ample ε_pos
 
 
+-- def sphere_landscape : landscape E :=
+-- { C := ∅,
+--   K₀ := 𝕊²,
+--   K₁ := closed_ball 0 2,
+--   hC := is_closed_empty,
+--   hK₀ := is_compact_sphere 0 1,
+--   hK₁ := is_compact_closed_ball 0 2,
+--   h₀₁ := sphere_subset_closed_ball.trans $
+--     (closed_ball_subset_ball $ show (1 : ℝ) < 2, by norm_num).trans
+--     (interior_closed_ball _ (show (2 : ℝ) ≠ 0, by norm_num)).symm.subset }
+
 lemma rel_loc.family_formal_sol.improve_htpy {𝓕 : family_formal_sol P R}
   (C : set P) (hC : is_closed C)
   (h_hol : ∀ᶠ s near C, ∀ x, (𝓕 s).is_holonomic_at x) :
@@ -373,16 +384,15 @@ end
 but just a homotopy of solutions from a homotopy of formal solutions
 We don't use the `L.C` in the statement, since we want a set in `ℝ`, not in `E`. -/
 lemma rel_loc.htpy_formal_sol.exists_sol (𝓕 : R.htpy_formal_sol) (C : set ℝ) (hC : is_closed C)
+  (K : set E) (hK : is_compact K)
   (h_hol : ∀ᶠ t near C, ∀ x, (𝓕 t).is_holonomic_at x) :
   ∃ f : ℝ → E → F,
     (𝒞 ∞ $ uncurry f) ∧
     (∀ᶠ t near C, ∀ x, f t x = 𝓕.f t x) ∧
-    (∀ x, x ∉ L.K₁ → ∀ t, f t x = 𝓕.f t x) ∧
-    (∀ᶠ x near L.K₀, ∀ t, ∥f t x - 𝓕.f t x∥ ≤ ε) ∧
-    (∀ᶠ x near L.K₀, ∀ t, (x, f t x, D (f t) x) ∈ R) :=
+    (∀ᶠ x near K, ∀ t, (x, f t x, D (f t) x) ∈ R) :=
 begin
-  let := 𝓕.uncurry,
-  have := family_formal_sol.uncurry 𝓕,
+  -- have := formal_sol.improve_htpy h_op h_ample ε_pos,
+  -- (family_formal_sol.uncurry 𝓕)
   sorry
 end
 

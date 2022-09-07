@@ -1,6 +1,6 @@
 import to_mathlib.geometry.manifold.sphere
 -- import global.twist_one_jet_sec
-import local.parameters
+import local.parametric_h_principle
 import global.rotation
 import interactive_expr
 set_option trace.filter_inst_type true
@@ -155,17 +155,6 @@ section assume_finite_dimensional
 
 variables [finite_dimensional ℝ E] -- no way of inferring this from the `fact`
 
-def sphere_landscape : landscape E :=
-{ C := ∅,
-  K₀ := 𝕊²,
-  K₁ := closed_ball 0 2,
-  hC := is_closed_empty,
-  hK₀ := is_compact_sphere 0 1,
-  hK₁ := is_compact_closed_ball 0 2,
-  h₀₁ := sphere_subset_closed_ball.trans $
-    (closed_ball_subset_ball $ show (1 : ℝ) < 2, by norm_num).trans
-    (interior_closed_ball _ (show (2 : ℝ) ≠ 0, by norm_num)).symm.subset }
-
 lemma is_closed_pair : is_closed ({0, 1} : set ℝ) :=
 (by simp : ({0, 1} : set ℝ).finite).is_closed
 
@@ -277,14 +266,14 @@ begin
   haveI : nontrivial E := nontrivial_of_finrank_eq_succ (fact.out _ : finrank ℝ E = 3),
   haveI : nonempty ↥(sphere 0 1 : set E) :=
     (normed_space.sphere_nonempty.mpr zero_le_one).to_subtype,
-  obtain ⟨f, h₁, h₂, -, h₄, h₅⟩ :=
+  obtain ⟨f, h₁, h₂, h₃⟩ :=
     (formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample le_rfl)
-    (sphere_landscape E) zero_lt_one _ is_closed_pair (formal_eversion_hol_near_zero_one ω),
+    zero_lt_one _ is_closed_pair 𝕊² (is_compact_sphere 0 1) (formal_eversion_hol_near_zero_one ω),
   have := h₂.nhds_set_forall_mem,
   refine ⟨f, h₁, _, _, _⟩,
   { ext x, rw [this 0 (by simp), formal_eversion_zero] },
   { ext x, rw [this 1 (by simp), formal_eversion_one] },
-  { intro t, rw [sphere_immersion_iff], exact h₅.mono (λ x hx, hx t) }
+  { intro t, apply sphere_immersion_of_sol, intros x hx, exact h₃.nhds_set_forall_mem x hx t }
 end
 
 end sphere_eversion
