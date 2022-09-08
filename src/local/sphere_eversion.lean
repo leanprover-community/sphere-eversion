@@ -232,8 +232,9 @@ variables {E} (ω : orientation ℝ E (fin 3))
 
 include ω
 def loc_formal_eversion_aux : htpy_jet_sec E E :=
-{ f := λ (s : ℝ) (x : E), (1 - 2 * s) • x, -- (1 - 2 * s) • x
-  φ := λ s x, rot_aux ω.volume_form (s, x), -- I think we don't have to compose
+{ f := λ (t : ℝ) (x : E), (1 - 2 * t) • x, -- (1 - 2 * s) • x
+  φ := λ t x, rot_aux ω.volume_form (t, x) -
+    (2 * t) • ⟪x, x⟫_ℝ⁻¹ • (continuous_linear_map.to_span_singleton ℝ x ∘L innerSL x),
   f_diff := begin
   sorry
   -- refine (cont_mdiff.smul _ _).add (cont_mdiff_fst.smul _),
@@ -275,6 +276,15 @@ def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
   end,
   .. loc_formal_eversion_aux ω }
 
+lemma loc_formal_eversion_f (t : ℝ) :
+  (loc_formal_eversion ω t).f = λ x : E, ((1 : ℝ) - 2 * t) • x :=
+rfl
+
+lemma loc_formal_eversion_φ (t : ℝ) (x : E) (v : E) :
+  (loc_formal_eversion ω t).φ x v = rot_aux ω.volume_form (t, x) v -
+    (2 * t) • ⟪x, x⟫_ℝ⁻¹ • ⟪x, v⟫_ℝ • x :=
+rfl
+
 lemma loc_formal_eversion_zero (x : E) : (loc_formal_eversion ω).f 0 x = x :=
 show ((1 : ℝ) - 2 * 0) • (x : E) = x, by simp
 
@@ -283,30 +293,36 @@ show ((1 : ℝ) - 2 * 1) • (x : E) = -x, by simp [show (1 : ℝ) - 2 = -1, by 
 
 lemma loc_formal_eversion_hol_at_zero {x : E} :
   (loc_formal_eversion ω 0).is_holonomic_at x :=
-begin
-  change D (λ y : E, ((1 : ℝ) - 2 * 0) • y) x = (rot_aux ω.volume_form (0, x)),
-  simp_rw [← rot_eq_aux, rot_zero, mul_zero, sub_zero,
-    show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id]
-end
+by simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
+    loc_formal_eversion_φ, ← rot_eq_aux, rot_zero, mul_zero, zero_smul, sub_zero,
+    show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id,
+    eq_self_iff_true, implies_true_iff]
 
 lemma loc_formal_eversion_hol_at_one {x : E} :
   (loc_formal_eversion ω 1).is_holonomic_at x :=
 begin
-  change D (λ y : E, ((1 : ℝ) - 2 * 1) • y) x = (rot_aux ω.volume_form (1, x)),
+  simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
+    loc_formal_eversion_φ],
+  intro v,
   simp_rw [← rot_eq_aux],
-  ext1 v,
   simp_rw [mul_one, show (1 : ℝ) - 2 = -1, by norm_num,
     show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
     fderiv_neg, fderiv_id', continuous_linear_map.neg_apply, continuous_linear_map.id_apply],
   -- write `v` as `a • x + v'` with `v' ⊥ x`
-  obtain ⟨a, v, hv, rfl⟩ : ∃ (a : ℝ) (v' : E), ⟪v', x⟫_ℝ = 0 ∧ v = a • x + v',
+  obtain ⟨a, v, hv, rfl⟩ : ∃ (a : ℝ) (v' : E), ⟪x, v'⟫_ℝ = 0 ∧ v = a • x + v',
   { sorry },
-  have hv : v ∈ {.x}ᗮ,
-  { sorry },
-  simp_rw [continuous_linear_map.map_add, continuous_linear_map.map_smul, rot_one _ x hv,
-    rot_self, neg_add],
-  -- oops
-  sorry
+  have h2v : v ∈ {.x}ᗮ,
+  { sorry, },
+  simp_rw [continuous_linear_map.map_add, continuous_linear_map.map_smul, rot_one _ x h2v,
+    rot_self],
+  rcases eq_or_ne x 0 with rfl|hx,
+  { simp },
+  have hx : ⟪x, x⟫_ℝ ≠ 0,
+  { rwa [ne.def, inner_self_eq_zero] },
+  simp_rw [neg_add, inner_add_right, hv, add_zero, inner_smul_right, mul_smul,
+    smul_comm_class.smul_comm a, inv_smul_smul₀ hx, add_sub_right_comm, ← mul_smul, ← sub_smul,
+    ← neg_smul],
+  ring_nf
 end
 
 lemma loc_formal_eversion_hol_near_zero_one :
