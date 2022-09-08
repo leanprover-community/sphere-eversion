@@ -473,7 +473,7 @@ sorry
 local notation `Jψ` := h.update (one_jet_bundle.embedding h g)
 
 -- Below is the lemma that will ensure smoothness of `Jupdate`
-#check h.smooth_update (one_jet_bundle.embedding h g)
+-- #check h.smooth_update (one_jet_bundle.embedding h g)
 
 /--  Update a global 1-jet section `F` using a local one `G`.
 FIXME: this misses some support condition to ensure lemma `smooth_update` applies
