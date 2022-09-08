@@ -1,5 +1,4 @@
 import local.h_principle
--- import global.parametricity_for_free -- remove!?
 import interactive_expr
 
 set_option trace.filter_inst_type true
@@ -28,7 +27,7 @@ def one_jet_snd : one_jet (P × E) F → one_jet E F :=
 
 lemma continuous_one_jet_snd :
   continuous (one_jet_snd : one_jet (P × E) F → one_jet E F) :=
-continuous_fst.snd.prod $ continuous_snd.fst.prod $ continuous_snd.snd.clm_comp $
+continuous_fst.snd.prod_mk $ continuous_snd.fst.prod_mk $ continuous_snd.snd.clm_comp $
   continuous.fderiv (cont_diff_fst.fst.prod_map cont_diff_id) continuous_fst.snd le_top
 
 lemma one_jet_snd_eq (p : one_jet (P × E) F) :

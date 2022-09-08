@@ -130,7 +130,7 @@ local notation `dim` := finrank ℝ
 
 -- In the next lemma the assumption `dim E = n + 1` is for convenience
 -- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...
-lemma loc_immersion_rel_ample {n : ℕ} [fact (dim E = n+1)] (h : finrank ℝ E ≤ finrank ℝ E') :
+lemma loc_immersion_rel_ample (n : ℕ) [fact (dim E = n+1)] (h : finrank ℝ E ≤ finrank ℝ E') :
   (immersion_sphere_rel E E').is_ample :=
 begin
   rw is_ample_iff,
@@ -181,7 +181,7 @@ begin
 end
 
 
-variables (E) [fact (finrank ℝ E = 3)]
+variables (E) [fact (dim E = 3)]
 
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
 local notation `𝓡_imm` := immersion_sphere_rel E E
@@ -283,7 +283,8 @@ end assume_finite_dimensional
 
 open_locale unit_interval
 
-theorem sphere_eversion_of_loc (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] :
+set_option trace.filter_inst_type false
+theorem sphere_eversion_of_loc (E : Type*) [inner_product_space ℝ E] [fact (dim E = 3)] :
   ∃ f : ℝ → E → E,
   (𝒞 ∞ (uncurry f)) ∧
   (f 0 = λ x, x) ∧
@@ -292,28 +293,17 @@ theorem sphere_eversion_of_loc (E : Type*) [inner_product_space ℝ E] [fact (fi
 begin
   classical,
   borelize E,
-  have rankE := fact.out (finrank ℝ E = 3),
+  have rankE := fact.out (dim E = 3),
   haveI : finite_dimensional ℝ E := finite_dimensional_of_finrank_eq_succ rankE,
   let ω : orientation ℝ E (fin 3) :=
-    (fin_std_orthonormal_basis (fact.out _ : finrank ℝ E = 3)).to_basis.orientation,
-  have ineq_rank : finrank ℝ (euclidean_space ℝ (fin 2)) < finrank ℝ E := by simp [rankE],
-  let ε : 𝕊² → ℝ := λ x, 1,
-  have hε_pos : ∀ x, 0 < ε x := λ x, zero_lt_one,
-  have hε_cont : continuous ε := continuous_const,
-  haveI : nontrivial E := nontrivial_of_finrank_eq_succ (fact.out _ : finrank ℝ E = 3),
-  haveI : nonempty ↥(sphere 0 1 : set E) :=
-    (normed_space.sphere_nonempty.mpr zero_le_one).to_subtype,
+    (fin_std_orthonormal_basis (fact.out _ : dim E = 3)).to_basis.orientation,
   obtain ⟨f, h₁, h₂, h₃⟩ :=
-    (formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample le_rfl)
+    (formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
     zero_lt_one _ is_closed_pair 𝕊² (is_compact_sphere 0 1) (formal_eversion_hol_near_zero_one ω),
-  have := h₂.nhds_set_forall_mem,
   refine ⟨f, h₁, _, _, _⟩,
-  { ext x, rw [this 0 (by simp), formal_eversion_zero] },
-  { ext x, rw [this 1 (by simp), formal_eversion_one] },
-  { intros t ht,
-    apply sphere_immersion_of_sol,
-    intros x hx,
-    exact h₃.nhds_set_forall_mem x hx t ht }
+  { ext x, rw [h₂ 0 (by simp), formal_eversion_zero] },
+  { ext x, rw [h₂ 1 (by simp), formal_eversion_one] },
+  { exact λ t ht, sphere_immersion_of_sol _ (λ x hx, h₃ x hx t ht) },
 end
 
 end sphere_eversion
