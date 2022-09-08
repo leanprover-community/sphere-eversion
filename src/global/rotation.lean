@@ -127,7 +127,7 @@ lemma rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : rot Ω (1, v) w = - 
 by simp [rot, orthogonal_projection_eq_self_iff.mpr hw,
   orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hw]
 
-/-- The map `rot` sends `(v, t)` to a transformation preserving `v`. -/
+/-- The map `rot` sends `(t, v)` to a transformation preserving `v`. -/
 lemma rot_self (p : ℝ × E) : rot Ω p p.2 = p.2 :=
 begin
   have H : ↑(orthogonal_projection (ℝ ∙ p.2) p.2) = p.2 :=

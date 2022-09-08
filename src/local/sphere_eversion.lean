@@ -16,6 +16,41 @@ noncomputable theory
 
 open metric finite_dimensional set function rel_loc
 open_locale topological_space
+
+-- section twist
+
+-- variables
+-- {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+-- {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+-- {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
+-- {P : Type*} [normed_add_comm_group P] [normed_space ℝ P]
+-- {V : Type*} [normed_add_comm_group V] [normed_space ℝ V]
+-- {V' : Type*} [normed_add_comm_group V'] [normed_space ℝ V']
+
+
+-- def family_twist
+--   (f : jet_sec E F)
+--   (g : P × E → (F →L[ℝ] G))
+--   (hg : cont_diff ℝ ∞ g) :
+--   family_jet_sec E G P :=
+-- { f := sorry,
+--   φ := λ s x, g (s, x) ∘L (f x).2,
+--   f_diff := sorry,
+--   φ_diff := sorry }
+-- -- { to_fun := λ p, ⟨p.2, (i p).comp (s p.2).2⟩,
+-- --   is_sec' := λ p, rfl,
+-- --   smooth' := begin
+-- --     intro x₀,
+-- --     refine smooth_at_snd.one_jet_eucl_bundle_mk _,
+-- --     simp_rw [continuous_linear_map.comp_assoc],
+-- --     have : smooth_at (J.prod I) _ (λ x : N × M, _) x₀ := s.smooth.comp smooth_snd x₀,
+-- --     simp_rw [smooth_at_one_jet_eucl_bundle, s.is_sec] at this,
+-- --     exact (i_smooth x₀).clm_comp this.2
+-- --   end }
+
+
+-- end twist
+
 section sphere_eversion
 
 variables
@@ -193,20 +228,21 @@ variables [finite_dimensional ℝ E] -- no way of inferring this from the `fact`
 lemma is_closed_pair : is_closed ({0, 1} : set ℝ) :=
 (by simp : ({0, 1} : set ℝ).finite).is_closed
 
-lemma smooth_bs : 𝒞 ∞ (λ p : ℝ × E, ((1-p.1) • p.2 + p.1 • (-p.2) : E)) :=
-begin
+variables {E} (ω : orientation ℝ E (fin 3))
+
+include ω
+def loc_formal_eversion_aux : htpy_jet_sec E E :=
+{ f := λ (s : ℝ) (x : E), (1 - 2 * s) • x, -- (1 - 2 * s) • x
+  φ := λ s x, rot_aux ω.volume_form (s, x), -- I think we don't have to compose
+  f_diff := begin
   sorry
   -- refine (cont_mdiff.smul _ _).add (cont_mdiff_fst.smul _),
   -- { exact (cont_diff_const.sub cont_diff_id).cont_mdiff.comp cont_mdiff_fst },
   -- { exact cont_mdiff_coe_sphere.comp cont_mdiff_snd },
   -- { exact (cont_diff_neg.cont_mdiff.comp cont_mdiff_coe_sphere).comp cont_mdiff_snd },
-end
-
-variables {E} (ω : orientation ℝ E (fin 3))
-
-include ω
-def formal_eversion_aux : htpy_jet_sec E E :=
-sorry
+  end,
+  φ_diff := sorry }
+-- sorry
 -- family_join
 --   (smooth_bs E) $
 --   family_twist
@@ -223,7 +259,7 @@ sorry
 --     end
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
-def formal_eversion : htpy_formal_sol 𝓡_imm :=
+def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
 { is_sol := begin
     sorry
     -- intros t x,
@@ -237,46 +273,44 @@ def formal_eversion : htpy_formal_sol 𝓡_imm :=
     -- rw [← continuous_linear_map.range_coe, range_mfderiv_coe_sphere E, ← rot_eq_aux],
     -- exact ω.inj_on_rot t x,
   end,
-  .. formal_eversion_aux ω }
+  .. loc_formal_eversion_aux ω }
 
-lemma formal_eversion_zero (x : E) : (formal_eversion ω).f 0 x = x :=
-sorry -- show (1-0 : ℝ) • (x : E) + (0 : ℝ) • (-x : E) = x, by simp
+lemma loc_formal_eversion_zero (x : E) : (loc_formal_eversion ω).f 0 x = x :=
+show ((1 : ℝ) - 2 * 0) • (x : E) = x, by simp
 
-lemma formal_eversion_one (x : E) : (formal_eversion ω).f 1 x = -x :=
-sorry -- show (1-1 : ℝ) • (x : E) + (1 : ℝ) • (-x : E) = -x, by simp
+lemma loc_formal_eversion_one (x : E) : (loc_formal_eversion ω).f 1 x = -x :=
+show ((1 : ℝ) - 2 * 1) • (x : E) = -x, by simp [show (1 : ℝ) - 2 = -1, by norm_num]
 
-lemma formal_eversion_hol_at_zero {x : E} :
-  (formal_eversion ω 0).is_holonomic_at x :=
+lemma loc_formal_eversion_hol_at_zero {x : E} :
+  (loc_formal_eversion ω 0).is_holonomic_at x :=
 begin
-  sorry
-  -- change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - 0) • (y:E) + (0:ℝ) • -y) x
-  --   = (rot_aux ω.volume_form (0, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
-  -- simp only [←rot_eq_aux, rot_zero, continuous_linear_map.id_comp],
-  -- congr,
-  -- ext y,
-  -- simp,
+  change D (λ y : E, ((1 : ℝ) - 2 * 0) • y) x = (rot_aux ω.volume_form (0, x)),
+  simp_rw [← rot_eq_aux, rot_zero, mul_zero, sub_zero,
+    show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id]
 end
 
-lemma formal_eversion_hol_at_one {x : E} :
-  (formal_eversion ω 1).is_holonomic_at x :=
+lemma loc_formal_eversion_hol_at_one {x : E} :
+  (loc_formal_eversion ω 1).is_holonomic_at x :=
 begin
+  change D (λ y : E, ((1 : ℝ) - 2 * 1) • y) x = (rot_aux ω.volume_form (1, x)),
+  simp_rw [← rot_eq_aux],
+  ext1 v,
+  simp_rw [mul_one, show (1 : ℝ) - 2 = -1, by norm_num,
+    show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
+    fderiv_neg, fderiv_id', continuous_linear_map.neg_apply, continuous_linear_map.id_apply],
+  -- write `v` as `a • x + v'` with `v' ⊥ x`
+  obtain ⟨a, v, hv, rfl⟩ : ∃ (a : ℝ) (v' : E), ⟪v', x⟫_ℝ = 0 ∧ v = a • x + v',
+  { sorry },
+  have hv : v ∈ {.x}ᗮ,
+  { sorry },
+  simp_rw [continuous_linear_map.map_add, continuous_linear_map.map_smul, rot_one _ x hv,
+    rot_self, neg_add],
+  -- oops
   sorry
-  -- change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - 1) • (y:E) + (1:ℝ) • -y) x
-  --   = (rot_aux ω.volume_form (1, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
-  -- transitivity mfderiv (𝓡 2) 𝓘(ℝ, E) (-(λ y : 𝕊², (y:E))) x,
-  -- { congr' 2,
-  --   ext y,
-  --   simp, },
-  -- ext v,
-  -- simp only [mfderiv_neg, ←rot_eq_aux, continuous_linear_map.coe_comp', comp_app,
-  --   continuous_linear_map.neg_apply],
-  -- rw rot_one,
-  -- convert continuous_linear_map.mem_range_self _ _,
-  -- rw range_mfderiv_coe_sphere E,
 end
 
-lemma formal_eversion_hol_near_zero_one :
-  ∀ᶠ (s : ℝ) near {0, 1}, ∀ x : E, (formal_eversion ω s).is_holonomic_at x :=
+lemma loc_formal_eversion_hol_near_zero_one :
+  ∀ᶠ (s : ℝ) near {0, 1}, ∀ x : E, (loc_formal_eversion ω s).is_holonomic_at x :=
 sorry
 
 end assume_finite_dimensional
@@ -298,11 +332,11 @@ begin
   let ω : orientation ℝ E (fin 3) :=
     (fin_std_orthonormal_basis (fact.out _ : dim E = 3)).to_basis.orientation,
   obtain ⟨f, h₁, h₂, h₃⟩ :=
-    (formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
-    zero_lt_one _ is_closed_pair 𝕊² (is_compact_sphere 0 1) (formal_eversion_hol_near_zero_one ω),
+    (loc_formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
+    zero_lt_one _ is_closed_pair 𝕊² (is_compact_sphere 0 1) (loc_formal_eversion_hol_near_zero_one ω),
   refine ⟨f, h₁, _, _, _⟩,
-  { ext x, rw [h₂ 0 (by simp), formal_eversion_zero] },
-  { ext x, rw [h₂ 1 (by simp), formal_eversion_one] },
+  { ext x, rw [h₂ 0 (by simp), loc_formal_eversion_zero] },
+  { ext x, rw [h₂ 1 (by simp), loc_formal_eversion_one] },
   { exact λ t ht, sphere_immersion_of_sol _ (λ x hx, h₃ x hx t ht) },
 end
 
