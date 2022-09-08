@@ -3,7 +3,7 @@ Copyright (c) 2022 Heather Macbeth. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Heather Macbeth
 -/
-import to_mathlib.analysis.inner_product_space
+import to_mathlib.analysis.inner_product_space.orientation
 import to_mathlib.linear_algebra.finrank
 import analysis.inner_product_space.dual
 import analysis.inner_product_space.orientation

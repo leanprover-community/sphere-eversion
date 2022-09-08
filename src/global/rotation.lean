@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Heather Macbeth
 -/
 import to_mathlib.analysis.cont_diff
-import to_mathlib.analysis.cross_product
+import to_mathlib.analysis.inner_product_space.cross_product
 import analysis.special_functions.trigonometric.deriv
 
 /-! # Rotation about an axis, considered as a function in that axis -/
