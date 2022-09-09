@@ -14,7 +14,7 @@ sphere eversion
 -/
 noncomputable theory
 
-open metric finite_dimensional set function rel_loc filter
+open metric finite_dimensional set function rel_loc filter (hiding mem_map)
 open_locale topological_space
 
 section sphere_eversion
@@ -328,7 +328,7 @@ def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
     rw [h2x, one_smul],
     have h3x : x ≠ 0,
     { rintro rfl, apply hx, exact mem_ball_self (by norm_num) },
-    refine (eq_on.inj_on_iff _).mpr (ω.inj_on_rot_of_ne (smooth_step t) x h3x),
+    refine (eq_on.inj_on_iff _).mpr (ω.inj_on_rot_of_ne (smooth_step t) h3x),
     intros v hv,
     simp_rw [loc_formal_eversion_aux_φ, continuous_linear_map.sub_apply,
       continuous_linear_map.smul_apply, continuous_linear_map.comp_apply,

@@ -208,8 +208,29 @@ begin
   simp [rot, orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero v.prop, this],
 end
 
-lemma inj_on_rot_of_ne (t : ℝ) (x : E) (hx : x ≠ 0) :
-  set.inj_on (rot ω.volume_form (t, x)) (ℝ ∙ (x:E))ᗮ :=
+def foo (S : submodule ℝ E) : E →L[ℝ] E :=
+S.subtypeL ∘L orthogonal_projection S
+
+lemma rot_eq_foo (p : ℝ × E) :
+  rot Ω p = foo (ℝ ∙ p.2) + real.cos (p.1 * real.pi) • foo (ℝ ∙ p.2)ᗮ
+    + real.sin (p.1 * real.pi) • (A Ω p.2).to_continuous_linear_map :=
+rfl
+
+-- lemma inj_on_rot_of_ne (t : ℝ) {x y : E} (hy : y ≠ 0) (hy : y ∈ ℝ ∙ x):
+--   set.eq_on (rot ω.volume_form (t, x)) (rot ω.volume_form (t, y)) (ℝ ∙ x)ᗮ :=
+-- begin
+--   have hx : x ≠ 0, sorry,
+--   obtain ⟨r, rfl⟩ := submodule.mem_span_singleton.mp hy,
+--   have hr : is_unit r,
+--   sorry,
+--   simp_rw [rot_eq_foo, submodule.span_singleton_smul_eq hr x, map_smul],
+--   intros v hv,
+--   have := inner_A_apply_self ω.volume_form x ⟨v, hv⟩,
+-- end
+
+
+lemma inj_on_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) :
+  set.inj_on (rot ω.volume_form (t, x)) (ℝ ∙ x)ᗮ :=
 begin
   sorry
 end
