@@ -136,6 +136,10 @@ local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
 open inner_product_space
 open_locale real_inner_product_space
 
+@[simp] lemma subtypeL_apply' {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
+  [add_comm_monoid M₁] [module R₁ M₁] (p : submodule R₁ M₁) (x : p) :
+  (subtypeL p : p →ₗ[R₁] M₁) x = x :=
+rfl
 
 -- In the next lemma the assumption `dim E = n + 1` is for convenience
 -- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...
@@ -145,26 +149,27 @@ begin
   rw is_ample_iff,
   rintro ⟨x, y, φ⟩ p h_mem,
   by_cases hx : x ∈ B,
-  sorry { apply ample_slice_of_forall,
+  { apply ample_slice_of_forall,
     intros w,
     simp [hx]  },
   { have x_ne : x ≠ 0,
-    sorry { rintro rfl,
+    { rintro rfl,
       apply hx,
       apply mem_ball_self,
       norm_num },
     have hφ : inj_on φ {.x}ᗮ := h_mem hx, clear h_mem,
     let u := (inner_product_space.to_dual ℝ E).symm p.π,
     have u_ne : u ≠ 0,
-    sorry { exact (inner_product_space.to_dual ℝ E).symm.apply_ne_zero p.pi_ne_zero },
+    { exact (inner_product_space.to_dual ℝ E).symm.apply_ne_zero p.pi_ne_zero },
     by_cases H : p.π.ker = {.x}ᗮ,
-    sorry { have key : ∀ w, eq_on (p.update φ w) φ {.x}ᗮ,
+    { have key : ∀ w, eq_on (p.update φ w) φ {.x}ᗮ,
       { intros w x,
         rw ← H,
         exact p.update_ker_pi φ w },
       exact ample_slice_of_forall _ p  (λ w _, hφ.congr (key w).symm) },
-    { obtain ⟨v', hv', hπv'⟩ : ∃ v' : E, {.x}ᗮ = (p.π.ker ⊓ {.x}ᗮ) ⊔ Δ v' ∧ p.π v' = 1,
-      sorry { have ne_z : p.π (pr[x]ᗮ u) ≠ 0,
+    { obtain ⟨v', v'_in, hv', hπv'⟩ :
+        ∃ v' : E,  v' ∈ {.x}ᗮ ∧ {.x}ᗮ = (p.π.ker ⊓ {.x}ᗮ) ⊔ Δ v' ∧ p.π v' = 1,
+      { have ne_z : p.π (pr[x]ᗮ u) ≠ 0,
         { rw ← to_dual_symm_apply,
           change ¬ ⟪u, pr[x]ᗮ u⟫ = 0,
           rw not_iff_not.mpr inner_projection_self_eq_zero_iff,
@@ -174,7 +179,7 @@ begin
           apply_instance },
         have ne_z' : (p.π $ pr[x]ᗮ u)⁻¹ ≠ 0,
         { exact inv_ne_zero ne_z },
-        refine ⟨(p.π $ pr[x]ᗮ u)⁻¹ • pr[x]ᗮ u, _, _⟩,
+        refine ⟨(p.π $ pr[x]ᗮ u)⁻¹ • pr[x]ᗮ u, {.x}ᗮ.smul_mem _ (pr[x]ᗮ u).2, _, _⟩,
         { have := orthogonal_line_inf_sup_line u x,
           rw [← orthogonal_span_to_dual_symm p.π,
             span_singleton_smul_eq ne_z'.is_unit],
@@ -183,7 +188,7 @@ begin
       let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
       apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
       suffices : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ {.x}ᗮ))ᶜ,
-      sorry { rw [this],
+      { rw [this],
         apply ample_of_two_le_codim,
         let Φ := φ.to_linear_map,
         suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ {.x}ᗮ)),
@@ -203,11 +208,29 @@ begin
         linarith [finrank_map_le ℝ Φ (p.π.ker ⊓ {.x}ᗮ)] },
       ext w,
       rw mem_slice_iff_of_not_mem hx y,
-        -- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
-        --rw inj_on_iff_injective,
-        --have := p'.injective_update_iff,
-      sorry
-       } }
+      rw inj_on_iff_injective,
+      let j := {.x}ᗮ.subtypeL,
+      let p'' : dual_pair' {.x}ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩,
+      have eq : ({.x}ᗮ : set E).restrict (p'.update φ w) = (p''.update (φ.comp j) w),
+      { ext z,
+        simp [dual_pair'.update] },
+      have eq' : map (φ.comp j) p''.π.ker = map φ (p.π.ker ⊓ {.x}ᗮ),
+      { have : map ↑j p''.π.ker = p.π.ker ⊓ {.x}ᗮ,
+        { ext z,
+          simp only [mem_map, continuous_linear_map.mem_ker, continuous_linear_map.coe_comp',
+                     coe_subtypeL', submodule.coe_subtype, comp_app, mem_inf],
+          split,
+          { rintros ⟨t, ht, rfl⟩,
+            rw subtypeL_apply',
+            exact ⟨ht, t.2⟩ },
+          { rintros ⟨hz, z_in⟩,
+            exact ⟨⟨z, z_in⟩, hz, rfl⟩ }, },
+        erw [← this, map_comp],
+        refl },
+      rw [eq, p''.injective_update_iff, mem_compl_iff, eq'],
+      exact iff.rfl,
+      rw ← show ({.x}ᗮ : set E).restrict φ = φ.comp j, by { ext, refl },
+      exact hφ.injective } }
 end
 
 
