@@ -76,40 +76,67 @@ end
 section assume_finite_dimensional
 
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
+open_locale real_inner_product_space
+open submodule
+
+lemma function.injective.inj_on_range {α β γ : Type*} {j : α → β} {φ : β → γ}
+  (h : injective $ φ ∘ j) : inj_on φ (range j) :=
+begin
+  rintros - ⟨x, rfl⟩ - ⟨y, rfl⟩ H,
+  exact congr_arg j (h  H)
+end
+
+lemma set.range_comp_of_surj {α β γ : Type*} {f : α → β} (hf : surjective f) (g : β → γ) :
+  range (g ∘ f) = range g :=
+begin
+  ext c,
+  rw [mem_range, mem_range],
+  split,
+  { rintros ⟨a, rfl⟩,
+    exact ⟨f a, rfl⟩ },
+  { rintros ⟨b, rfl⟩,
+    rcases hf b with ⟨a, rfl⟩,
+    exact ⟨a, rfl⟩ }
+end
 
 lemma loc_immersion_rel_open :
   is_open (immersion_sphere_rel E E') :=
 begin
   dsimp only [immersion_sphere_rel],
-  simp_rw [imp_iff_not_or, not_not],
-  apply is_open.union,
-  sorry { change is_open (prod.fst ⁻¹' (ball (0 : E) 2⁻¹)),
-    exact continuous_fst.is_open_preimage _ metric.is_open_ball },
+  rw is_open_iff_mem_nhds,
+  rintros ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → inj_on φ₀ {.x₀}ᗮ),
+  change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), _,
+  by_cases hx₀ : x₀ ∈ B,
+  sorry { have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
+    { rw nhds_prod_eq,
+      apply (is_open_ball.eventually_mem hx₀).prod_inl },
+    apply this.mono,
+    rintros ⟨x, y, φ⟩ (hx : x ∈ B) (Hx : x ∉ B),
+    exact (Hx hx).elim },
+  { replace H := H hx₀,
+    set j₀ := subtypeL {.x₀}ᗮ,
+    have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀),
+      ⟪x₀, p.1⟫ ≠ 0 ∧ (injective $ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
+    { -- This is true at (x₀, y₀, φ₀) and is an open condition because
+      -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
 
-  { change is_open {θ : one_jet E E' | inj_on θ.2.2 {. θ.1}ᗮ},
-    have cont : continuous (λ θ : one_jet E E', (θ.1, θ.2.2)),
-    sorry, --exact (continuous_fst.prod_mk (continuous_snd.comp continuous_snd)),
-    rw show {θ : one_jet E E' | inj_on θ.2.2 {. θ.1}ᗮ} = (λ θ : one_jet E E', (θ.1, θ.2.2)) ⁻¹' {p : E × (E →L[ℝ] E') | inj_on p.2 {. p.1}ᗮ},
-    { ext, refl },
-    apply cont.is_open_preimage, clear cont,
-    rw is_open_iff_mem_nhds,
-    rintros ⟨x, φ⟩ (h : inj_on φ {.x}ᗮ),
-    rcases eq_or_ne x 0 with rfl|hx,
-    sorry { simp only [←injective_iff_inj_on_univ, submodule.span_zero_singleton,
-                 submodule.bot_orthogonal_eq_top, submodule.top_coe] at h,
-      have : is_open {L : E →L[ℝ] E' | injective L} := continuous_linear_map.is_open_injective,
-      rcases metric.is_open_iff.mp this φ h with ⟨ε, ε_pos, hε⟩,
-      refine ⟨ε, ε_pos, _⟩,
-      rw ← ball_prod_same,
+      -- continuous_linear_map.is_open_injective
+
       sorry },
-    { simp_rw nhds_prod_eq,
-      sorry }, },
-  -- simp_rw [charted_space.is_open_iff HJ (immersion_rel I M I' M'), chart_at_image_immersion_rel_eq],
-  -- refine λ σ, (ψJ σ).open_target.inter _,
-  -- convert is_open_univ.prod continuous_linear_map.is_open_injective,
-  -- { ext, simp, },
-  -- { apply_instance, },
-  -- { apply_instance, },
+    /- apply this.mono, clear this,
+    rintros ⟨x, y, φ⟩
+      ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, (Hφ : injective ((φ ∘ ((subtypeL {.x}ᗮ).comp pr[x]ᗮ).comp j₀)))⟩
+      (hx : x ∉ B),
+    change inj_on φ {.x}ᗮ,
+    have : range ((subtypeL {.x}ᗮ) ∘ pr[x]ᗮ ∘ j₀) = {.x}ᗮ,
+    { rw set.range_comp_of_surj,
+      exact subtype.range_coe,
+      -- The next three lines fight a weird elaboration issue
+      have := (orthogonal_projection_orthogonal_line_iso hxx₀).surjective,
+      delta orthogonal_projection_orthogonal_line_iso at this,
+      exact this },
+    rw ← this, clear this,
+    exact function.injective.inj_on_range Hφ -/sorry }
 end
 
 
@@ -158,7 +185,6 @@ lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair'
 by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
 
 open inner_product_space
-open_locale real_inner_product_space
 
 @[simp] lemma subtypeL_apply' {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
   [add_comm_monoid M₁] [module R₁ M₁] (p : submodule R₁ M₁) (x : p) :
