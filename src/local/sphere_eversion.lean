@@ -111,7 +111,7 @@ begin
   -- { apply_instance, },
   -- { apply_instance, },
 end
-#exit
+
 
 lemma ample_set_univ {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] :
   ample_set (univ : set F) :=
@@ -208,7 +208,7 @@ begin
           rw [← orthogonal_span_to_dual_symm p.π,
             span_singleton_smul_eq ne_z'.is_unit],
           exact (orthogonal_line_inf_sup_line u x).symm },
-        simp [ne_z] },
+        rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z] },
       let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
       apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
       suffices : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ {.x}ᗮ))ᶜ,
