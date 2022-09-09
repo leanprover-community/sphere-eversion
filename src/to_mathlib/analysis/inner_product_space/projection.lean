@@ -1,5 +1,7 @@
 import analysis.inner_product_space.projection
 
+noncomputable theory
+
 open_locale real_inner_product_space
 open submodule
 
@@ -14,9 +16,9 @@ begin
   simpa
 end
 
-/- lemma foo {𝕜 : Type*} [field 𝕜]{M : Type*} [add_comm_group M] [module 𝕜 M]
-{u : M} (hu : u ≠ 0) {a : 𝕜} (hu' : u ∈ span 𝕜 ({v} : set M)) :
- -/
+@[simp] lemma forall_mem_span_singleton {R : Type*} [comm_ring R] {M : Type*} [add_comm_group M] [module R M]
+  (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : set M), P x) ↔ ∀ t : R, P (t•u) :=
+by simp [mem_span_singleton]
 
 open_locale pointwise
 
@@ -113,3 +115,64 @@ begin
     exact Fᗮ.zero_mem },
   { exact eq_zero_of_mem_disjoint (inf_orthogonal_eq_bot F) hy },
 end
+
+variables {x₀ x : E}
+
+@[simp] lemma mem_orthogonal_span_singleton_iff {x₀ x : E} :
+  x ∈ {.x₀}ᗮ ↔ ⟪x₀, x⟫ = 0 :=
+begin
+  simp only [mem_orthogonal, forall_mem_span_singleton, inner_smul_left,
+             is_R_or_C.conj_to_real, mul_eq_zero],
+  split,
+  { intros h,
+    simpa using h 1 },
+  { intros h t,
+    exact or.inr h }
+end
+
+@[simp] lemma orthogonal_projection_orthogonal_singleton {x y : E} :
+  pr[x]ᗮ y = ⟨y - (⟪x, y⟫/⟪x, x⟫) • x, begin
+    rcases eq_or_ne x 0 with rfl|hx,
+    { simp },
+    simp [mem_orthogonal_span_singleton_iff],
+    rw [inner_sub_right, inner_smul_right],
+    have : ⟪x, x⟫ ≠ 0, -- TODO: extract as lemma or find it in mathlib
+    { intro H,
+      apply hx,
+      rwa ← inner_self_eq_zero },
+    field_simp [this]
+  end⟩ :=
+begin
+  apply subtype.ext,
+  have := eq_sum_orthogonal_projection_self_orthogonal_complement (span ℝ ({x} : set E)) y,
+  simp [eq_sub_of_add_eq' this.symm, orthogonal_projection_singleton, real_inner_self_eq_norm_sq]
+end
+
+@[simp] lemma coe_orthogonal_projection_orthogonal_singleton {x y : E} :
+  (pr[x]ᗮ y : E) = y - (⟪x, y⟫/⟪x, x⟫) • x :=
+begin
+  rw orthogonal_projection_orthogonal_singleton,
+  refl
+end
+
+lemma orthogonal_projection_orthogonal_line_iso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) :
+{.x₀}ᗮ ≃L[ℝ] {.x}ᗮ :=
+{ inv_fun := λ y, ⟨y - (⟪x₀, y⟫/⟪x₀, x⟫) • x, begin
+    rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right],
+    field_simp [h]
+  end⟩,
+  left_inv := begin
+    rintros ⟨y, hy⟩,
+    ext,
+    dsimp,
+    sorry
+  end,
+  right_inv := begin
+    rintros ⟨y, hy⟩,
+    ext,
+    dsimp,
+    sorry
+  end,
+  continuous_to_fun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous,
+  continuous_inv_fun := sorry,
+  ..pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ) }

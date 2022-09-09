@@ -72,7 +72,30 @@ variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 lemma loc_immersion_rel_open :
   is_open (immersion_sphere_rel E E') :=
 begin
-  sorry
+  dsimp only [immersion_sphere_rel],
+  simp_rw [imp_iff_not_or, not_not],
+  apply is_open.union,
+  sorry { change is_open (prod.fst ⁻¹' (ball (0 : E) 2⁻¹)),
+    exact continuous_fst.is_open_preimage _ metric.is_open_ball },
+
+  { change is_open {θ : one_jet E E' | inj_on θ.2.2 {. θ.1}ᗮ},
+    have cont : continuous (λ θ : one_jet E E', (θ.1, θ.2.2)),
+    sorry, --exact (continuous_fst.prod_mk (continuous_snd.comp continuous_snd)),
+    rw show {θ : one_jet E E' | inj_on θ.2.2 {. θ.1}ᗮ} = (λ θ : one_jet E E', (θ.1, θ.2.2)) ⁻¹' {p : E × (E →L[ℝ] E') | inj_on p.2 {. p.1}ᗮ},
+    { ext, refl },
+    apply cont.is_open_preimage, clear cont,
+    rw is_open_iff_mem_nhds,
+    rintros ⟨x, φ⟩ (h : inj_on φ {.x}ᗮ),
+    rcases eq_or_ne x 0 with rfl|hx,
+    sorry { simp only [←injective_iff_inj_on_univ, submodule.span_zero_singleton,
+                 submodule.bot_orthogonal_eq_top, submodule.top_coe] at h,
+      have : is_open {L : E →L[ℝ] E' | injective L} := continuous_linear_map.is_open_injective,
+      rcases metric.is_open_iff.mp this φ h with ⟨ε, ε_pos, hε⟩,
+      refine ⟨ε, ε_pos, _⟩,
+      rw ← ball_prod_same,
+      sorry },
+    { simp_rw nhds_prod_eq,
+      sorry }, },
   -- simp_rw [charted_space.is_open_iff HJ (immersion_rel I M I' M'), chart_at_image_immersion_rel_eq],
   -- refine λ σ, (ψJ σ).open_target.inter _,
   -- convert is_open_univ.prod continuous_linear_map.is_open_injective,
@@ -80,7 +103,7 @@ begin
   -- { apply_instance, },
   -- { apply_instance, },
 end
-
+#exit
 
 lemma ample_set_univ {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] :
   ample_set (univ : set F) :=
