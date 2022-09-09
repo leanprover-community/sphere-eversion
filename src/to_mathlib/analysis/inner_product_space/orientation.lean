@@ -70,9 +70,7 @@ lemma orthonormal_basis.det_to_matrix_orthonormal_basis_of_same_orientation
   (h : a.to_basis.orientation = b.to_basis.orientation) :
   a.to_basis.det b = 1 :=
 begin
-  have : a.to_basis.det b = -1 ∨ a.to_basis.det b = 1,
-  { simpa using a.det_to_matrix_orthonormal_basis_real b },
-  apply this.resolve_left,
+  apply (a.det_to_matrix_orthonormal_basis_real b).resolve_right,
   have : 0 < a.to_basis.det b,
   { rw a.to_basis.orientation_eq_iff_det_pos at h,
     simpa using h },
