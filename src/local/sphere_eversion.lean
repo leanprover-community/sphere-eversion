@@ -362,8 +362,8 @@ begin
   sorry
 end
 
-lemma loc_formal_eversion_hol_near_zero_one :
-  ∀ᶠ (s : ℝ) near {0, 1}, ∀ x : E, (loc_formal_eversion ω s).is_holonomic_at x :=
+lemma loc_formal_eversion_hol :
+  ∀ᶠ (p : ℝ × E) near {0, 1} ×ˢ 𝕊², (loc_formal_eversion ω p.1).is_holonomic_at p.2 :=
 sorry
 
 end assume_finite_dimensional
@@ -385,10 +385,10 @@ begin
     (fin_std_orthonormal_basis (fact.out _ : dim E = 3)).to_basis.orientation,
   obtain ⟨f, h₁, h₂, h₃⟩ :=
     (loc_formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
-    zero_lt_one _ is_closed_pair 𝕊² (is_compact_sphere 0 1) (loc_formal_eversion_hol_near_zero_one ω),
+    zero_lt_one ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod is_closed_sphere) 𝕊² (is_compact_sphere 0 1) (loc_formal_eversion_hol ω),
   refine ⟨f, h₁, _, _, _⟩,
-  { intros x hx, rw [h₂ 0 (by simp), loc_formal_eversion_zero] },
-  { intros x hx, rw [h₂ 1 (by simp), loc_formal_eversion_one] },
+  { intros x hx, rw [h₂ (0, x) (mk_mem_prod (by simp) hx), loc_formal_eversion_zero] },
+  { intros x hx, rw [h₂ (1, x) (mk_mem_prod (by simp) hx), loc_formal_eversion_one] },
   { exact λ t ht, sphere_immersion_of_sol _ (λ x hx, h₃ x hx t ht) },
 end
 
