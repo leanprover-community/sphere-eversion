@@ -312,7 +312,7 @@ begin
   obtain ⟨a, v, hv, rfl⟩ : ∃ (a : ℝ) (v' : E), ⟪x, v'⟫_ℝ = 0 ∧ v = a • x + v',
   { sorry },
   have h2v : v ∈ {.x}ᗮ,
-  { sorry, },
+  { exact mem_orthogonal_singleton_of_inner_right _ hv },
   simp_rw [continuous_linear_map.map_add, continuous_linear_map.map_smul, rot_one _ x h2v,
     rot_self],
   rcases eq_or_ne x 0 with rfl|hx,
