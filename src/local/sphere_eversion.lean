@@ -3,7 +3,7 @@ import to_mathlib.analysis.inner_product_space.dual
 import local.parametric_h_principle
 import global.rotation
 import interactive_expr
-set_option trace.filter_inst_type true
+-- set_option trace.filter_inst_type true
 
 /-!
 This is a stop-gap file to prove sphere eversion from the local verson of the h-principle.
@@ -26,8 +26,14 @@ variables
 
 
 local notation `𝕊²` := sphere (0 : E) 1
+-- ignore the next line which is fixing a pretty-printer bug
 local notation (name := module_span_printing_only) `{.` x `}ᗮ` := (submodule.span ℝ {x})ᗮ
 local notation `{.` x `}ᗮ` := (ℝ ∙ x)ᗮ
+local notation `dim` := finrank ℝ
+-- ignore the next line which is fixing a pretty-printer bug
+local notation (name := line_printing_only) `Δ` v:55 := submodule.span ℝ {v}
+local notation `Δ ` v:55 := submodule.span ℝ ({v} : set E)
+local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
 
 /-- A map between vector spaces is a immersion viewed as a map on the sphere, when its
 derivative at `x ∈ 𝕊²` is injective on the orthogonal complement of `x`
@@ -66,6 +72,8 @@ begin
     norm_num [x_in] },
   exact h x x_in this
 end
+
+section assume_finite_dimensional
 
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
@@ -149,12 +157,6 @@ lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair'
   (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) {.x}ᗮ} :=
 by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
 
-
-local notation `dim` := finrank ℝ
--- ignore the next line which is fixing a pretty-printer bug
-local notation (name := line_printing_only) `Δ` v:55 := submodule.span ℝ {v}
-local notation `Δ ` v:55 := submodule.span ℝ ({v} : set E)
-local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
 open inner_product_space
 open_locale real_inner_product_space
 
@@ -261,10 +263,6 @@ variables (E) [fact (dim E = 3)]
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
 local notation `𝓡_imm` := immersion_sphere_rel E E
 
-section assume_finite_dimensional
-
-variables [finite_dimensional ℝ E] -- no way of inferring this from the `fact`
-
 lemma is_closed_pair : is_closed ({0, 1} : set ℝ) :=
 (by simp : ({0, 1} : set ℝ).finite).is_closed
 
@@ -341,7 +339,7 @@ show ((1 : ℝ) - 2 * 1) • (x : E) = -x, by simp [show (1 : ℝ) - 2 = -1, by 
 
 lemma loc_formal_eversion_hol_at_zero {x : E} :
   (loc_formal_eversion ω 0).is_holonomic_at x :=
-by simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
+by sorry; simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
     loc_formal_eversion_φ, rot_zero, mul_zero, zero_smul, sub_zero,
     show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id,
     eq_self_iff_true, implies_true_iff]
@@ -372,12 +370,11 @@ end assume_finite_dimensional
 
 open_locale unit_interval
 
-set_option trace.filter_inst_type false
-theorem sphere_eversion_of_loc (E : Type*) [inner_product_space ℝ E] [fact (dim E = 3)] :
+theorem sphere_eversion_of_loc [fact (dim E = 3)] :
   ∃ f : ℝ → E → E,
   (𝒞 ∞ (uncurry f)) ∧
-  (f 0 = λ x, x) ∧
-  (f 1 = λ x, -x) ∧
+  (∀ x ∈ 𝕊², f 0 x = x) ∧
+  (∀ x ∈ 𝕊², f 1 x = -x) ∧
   ∀ t ∈ I, sphere_immersion (f t) :=
 begin
   classical,
@@ -390,9 +387,18 @@ begin
     (loc_formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
     zero_lt_one _ is_closed_pair 𝕊² (is_compact_sphere 0 1) (loc_formal_eversion_hol_near_zero_one ω),
   refine ⟨f, h₁, _, _, _⟩,
-  { ext x, rw [h₂ 0 (by simp), loc_formal_eversion_zero] },
-  { ext x, rw [h₂ 1 (by simp), loc_formal_eversion_one] },
+  { intros x hx, rw [h₂ 0 (by simp), loc_formal_eversion_zero] },
+  { intros x hx, rw [h₂ 1 (by simp), loc_formal_eversion_one] },
   { exact λ t ht, sphere_immersion_of_sol _ (λ x hx, h₃ x hx t ht) },
 end
+
+/- Stating the full statement with all type-class arguments and no uncommon notation. -/
+example (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] :
+  ∃ f : ℝ → E → E,
+  (cont_diff ℝ ⊤ (uncurry f)) ∧
+  (∀ x ∈ sphere (0 : E) 1, f 0 x = x) ∧
+  (∀ x ∈ sphere (0 : E) 1, f 1 x = -x) ∧
+  ∀ t ∈ unit_interval, sphere_immersion (f t) :=
+sphere_eversion_of_loc
 
 end sphere_eversion
