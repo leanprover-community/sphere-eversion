@@ -54,14 +54,10 @@ lemma orthonormal_basis.to_matrix_orthonormal_basis_mem_orthogonal :
 a.to_matrix_orthonormal_basis_mem_unitary b
 
 lemma orthonormal_basis.det_to_matrix_orthonormal_basis_real :
-  a.to_basis.det b ∈ ({-1, 1} : set ℝ) :=
+  a.to_basis.det b = 1 ∨ a.to_basis.det b = -1 :=
 begin
-  have := a.det_to_matrix_orthonormal_basis b,
-  rw ← set_like.mem_coe at this,
-  convert this,
-  ext t,
-  simp [unitary],
-  sorry
+  rw ← sq_eq_one_iff,
+  simpa [unitary, sq] using a.det_to_matrix_orthonormal_basis b
 end
 
 end
