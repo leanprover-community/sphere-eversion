@@ -135,6 +135,10 @@ begin
   simp [rot, A_apply_self, orthogonal_projection_orthogonal_complement_singleton_eq_zero, H],
 end
 
+/-- The map `rot` sends `(t, v)` to a transformation preserving `span v`. -/
+lemma rot_eq_of_mem_span (p : ℝ × E) {x : E} (hx : x ∈ ℝ ∙ p.2): rot Ω p x = x :=
+by { obtain ⟨a, rfl⟩ := submodule.mem_span_singleton.mp hx, simp_rw [map_smul, rot_self] }
+
 omit Ω
 
 namespace orientation

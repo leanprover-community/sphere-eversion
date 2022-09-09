@@ -286,9 +286,24 @@ section calculus
 open continuous_linear_map
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+          {E₁ : Type*} [normed_add_comm_group E₁] [normed_space 𝕜 E₁]
+          {E₂ : Type*} [normed_add_comm_group E₂] [normed_space 𝕜 E₂]
+          {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
           {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
           {n : ℕ∞}
+
+
+
+lemma cont_diff_at.comp₂ {g : E₁ × E₂ → G} {f₁ : F → E₁} {f₂ : F → E₂} {x : F}
+  (hg : cont_diff_at 𝕜 n g (f₁ x, f₂ x)) (hf₁ : cont_diff_at 𝕜 n f₁ x)
+  (hf₂ : cont_diff_at 𝕜 n f₂ x) : cont_diff_at 𝕜 n (λ x, g (f₁ x, f₂ x)) x :=
+hg.comp x $ hf₁.prod hf₂
+
+lemma cont_diff_at.clm_comp {g : E' → F →L[𝕜] G} {f : E' → E →L[𝕜] F} {n : ℕ∞} {x : E'}
+  (hg : cont_diff_at 𝕜 n g x) (hf : cont_diff_at 𝕜 n f x) :
+  cont_diff_at 𝕜 n (λ x, g x ∘L f x) x :=
+is_bounded_bilinear_map_comp.cont_diff.cont_diff_at.comp₂ hg hf
 
 lemma fderiv_comp {g : F → G} {f : E → F} (x : E)
   (hg : differentiable_at 𝕜 g (f x)) (hf : differentiable_at 𝕜 f x) :

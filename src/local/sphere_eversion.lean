@@ -270,21 +270,42 @@ lemma is_closed_pair : is_closed ({0, 1} : set ℝ) :=
 
 variables {E} (ω : orientation ℝ E (fin 3))
 
+def loc_formal_eversion_aux_φ (t : ℝ) (x : E) : E →L[ℝ] E :=
+rot ω.volume_form (t, x) - (2 * t) • (submodule.subtypeL (Δ x) ∘L orthogonal_projection (Δ x))
+
 include ω
 def loc_formal_eversion_aux : htpy_jet_sec E E :=
 { f := λ (t : ℝ) (x : E), (1 - 2 * t) • x,
-  φ := λ t x, rot ω.volume_form (t, x) -
-    (2 * t) • ⟪x, x⟫_ℝ⁻¹ • (continuous_linear_map.to_span_singleton ℝ x ∘L innerSL x),
+  φ := λ t x, smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω t x,
   f_diff := cont_diff.smul (cont_diff_const.sub $ cont_diff_const.mul cont_diff_fst) cont_diff_snd,
   φ_diff := begin
     refine cont_diff_iff_cont_diff_at.mpr (λ x, _),
-    have hx : x.2 ≠ 0, sorry, -- todo
+    cases eq_or_ne x.2 0 with hx hx,
+    { refine cont_diff_at_const.congr_of_eventually_eq _, exact 0,
+      sorry
+       },
+    refine cont_diff_at.smul _ _,
+    refine (smooth_step.smooth.comp $ cont_diff_norm_sq.comp cont_diff_snd).cont_diff_at,
     refine (cont_diff_rot ω.volume_form hx).sub _,
     refine cont_diff_at.smul (cont_diff_at_const.mul cont_diff_at_fst) _,
-    refine cont_diff_at.smul ((cont_diff_at_snd.inner cont_diff_at_snd).inv _) _,
-    { rwa [ne.def, inner_self_eq_zero] },
-    sorry -- have := innerSL.cont_diff,
+    sorry
      end }
+
+-- def loc_formal_eversion_aux_old : htpy_jet_sec E E :=
+-- { f := λ (t : ℝ) (x : E), (1 - 2 * t) • x,
+--   φ := λ t x, rot ω.volume_form (t, x) -
+--     (2 * t) • ⟪x, x⟫_ℝ⁻¹ • (continuous_linear_map.to_span_singleton ℝ x ∘L innerSL x),
+--   f_diff := cont_diff.smul (cont_diff_const.sub $ cont_diff_const.mul cont_diff_fst) cont_diff_snd,
+--   φ_diff := begin
+--     refine cont_diff_iff_cont_diff_at.mpr (λ x, _),
+--     have hx : x.2 ≠ 0, sorry, -- todo
+--     refine (cont_diff_rot ω.volume_form hx).sub _,
+--     refine cont_diff_at.smul (cont_diff_at_const.mul cont_diff_at_fst) _,
+--     refine cont_diff_at.smul ((cont_diff_at_snd.inner cont_diff_at_snd).inv _) _,
+--     { rwa [ne.def, inner_self_eq_zero] },
+--     refine cont_diff_at.clm_comp _ _,
+--     end }
+
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
@@ -308,8 +329,8 @@ lemma loc_formal_eversion_f (t : ℝ) :
 rfl
 
 lemma loc_formal_eversion_φ (t : ℝ) (x : E) (v : E) :
-  (loc_formal_eversion ω t).φ x v = rot ω.volume_form (t, x) v -
-    (2 * t) • ⟪x, x⟫_ℝ⁻¹ • ⟪x, v⟫_ℝ • x :=
+  (loc_formal_eversion ω t).φ x v = smooth_step (∥x∥ ^ 2) • (rot ω.volume_form (t, x) v -
+    (2 * t) • orthogonal_projection (Δ x) v) :=
 rfl
 
 lemma loc_formal_eversion_zero (x : E) : (loc_formal_eversion ω).f 0 x = x :=
@@ -334,22 +355,13 @@ begin
   simp_rw [mul_one, show (1 : ℝ) - 2 = -1, by norm_num,
     show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
     fderiv_neg, fderiv_id', continuous_linear_map.neg_apply, continuous_linear_map.id_apply],
-  -- write `v` as `a • x + v'` with `v' ⊥ x`
-  obtain ⟨a, v, h2v, rfl⟩ : ∃ (a : ℝ) (v' : E), v' ∈ {.x}ᗮ ∧ v = a • x + v',
-  { have := submodule.exists_sum_mem_mem_orthogonal (Δ x) v,
-    simp_rw [submodule.mem_span_singleton, exists_prop, exists_exists_eq_and] at this,
-    exact this },
-  have hv : ⟪x, v⟫_ℝ = 0 := inner_right_of_mem_orthogonal_singleton _ h2v,
-  simp_rw [continuous_linear_map.map_add, continuous_linear_map.map_smul, rot_one _ x h2v,
-    rot_self],
-  rcases eq_or_ne x 0 with rfl|hx,
-  { simp },
-  have hx : ⟪x, x⟫_ℝ ≠ 0,
-  { rwa [ne.def, inner_self_eq_zero] },
-  simp_rw [neg_add, inner_add_right, hv, add_zero, inner_smul_right, mul_smul,
-    smul_comm_class.smul_comm a, inv_smul_smul₀ hx, add_sub_right_comm, ← mul_smul, ← sub_smul,
-    ← neg_smul],
-  ring_nf
+  obtain ⟨v', hv', v, hv, rfl⟩ := submodule.exists_sum_mem_mem_orthogonal (Δ x) v,
+  simp_rw [continuous_linear_map.map_add, rot_one _ x hv, rot_eq_of_mem_span _ ((1 : ℝ), x) hv'],
+  simp_rw [neg_add, submodule.coe_add, orthogonal_projection_eq_self_iff.mpr hv',
+    orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hv, submodule.coe_zero,
+    add_zero, two_smul],
+  abel,
+  sorry
 end
 
 lemma loc_formal_eversion_hol_near_zero_one :
