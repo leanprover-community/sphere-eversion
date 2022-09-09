@@ -1,5 +1,5 @@
 import to_mathlib.geometry.manifold.sphere
--- import global.twist_one_jet_sec
+import to_mathlib.analysis.inner_product_space.dual
 import local.parametric_h_principle
 import global.rotation
 import interactive_expr
@@ -16,40 +16,6 @@ noncomputable theory
 
 open metric finite_dimensional set function rel_loc
 open_locale topological_space
-
--- section twist
-
--- variables
--- {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
--- {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
--- {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
--- {P : Type*} [normed_add_comm_group P] [normed_space ℝ P]
--- {V : Type*} [normed_add_comm_group V] [normed_space ℝ V]
--- {V' : Type*} [normed_add_comm_group V'] [normed_space ℝ V']
-
-
--- def family_twist
---   (f : jet_sec E F)
---   (g : P × E → (F →L[ℝ] G))
---   (hg : cont_diff ℝ ∞ g) :
---   family_jet_sec E G P :=
--- { f := sorry,
---   φ := λ s x, g (s, x) ∘L (f x).2,
---   f_diff := sorry,
---   φ_diff := sorry }
--- -- { to_fun := λ p, ⟨p.2, (i p).comp (s p.2).2⟩,
--- --   is_sec' := λ p, rfl,
--- --   smooth' := begin
--- --     intro x₀,
--- --     refine smooth_at_snd.one_jet_eucl_bundle_mk _,
--- --     simp_rw [continuous_linear_map.comp_assoc],
--- --     have : smooth_at (J.prod I) _ (λ x : N × M, _) x₀ := s.smooth.comp smooth_snd x₀,
--- --     simp_rw [smooth_at_one_jet_eucl_bundle, s.is_sec] at this,
--- --     exact (i_smooth x₀).clm_comp this.2
--- --   end }
-
-
--- end twist
 
 section sphere_eversion
 
@@ -161,7 +127,15 @@ lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair'
   (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) {.x}ᗮ} :=
 by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
 
+
 local notation `dim` := finrank ℝ
+-- ignore the next line which is fixing a pretty-printer bug
+local notation (name := line_printing_only) `Δ` v:55 := submodule.span ℝ {v}
+local notation `Δ` v:55 := submodule.span ℝ ({v} : set E)
+local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
+open inner_product_space
+open_locale real_inner_product_space
+
 
 -- In the next lemma the assumption `dim E = n + 1` is for convenience
 -- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...
@@ -174,45 +148,66 @@ begin
   sorry { apply ample_slice_of_forall,
     intros w,
     simp [hx]  },
-  { have hφ : inj_on φ {.x}ᗮ := h_mem hx, clear h_mem,
+  { have x_ne : x ≠ 0,
+    sorry { rintro rfl,
+      apply hx,
+      apply mem_ball_self,
+      norm_num },
+    have hφ : inj_on φ {.x}ᗮ := h_mem hx, clear h_mem,
+    let u := (inner_product_space.to_dual ℝ E).symm p.π,
+    have u_ne : u ≠ 0,
+    sorry { exact (inner_product_space.to_dual ℝ E).symm.apply_ne_zero p.pi_ne_zero },
     by_cases H : p.π.ker = {.x}ᗮ,
     sorry { have key : ∀ w, eq_on (p.update φ w) φ {.x}ᗮ,
       { intros w x,
         rw ← H,
         exact p.update_ker_pi φ w },
       exact ample_slice_of_forall _ p  (λ w _, hφ.congr (key w).symm) },
-    { obtain ⟨v', hv', hπv'⟩ : ∃ v : E, {.x}ᗮ = (p.π.ker ⊓ {.x}ᗮ) ⊔ span ℝ {v} ∧ p.π v = 1,
-      {
-        sorry },
+    { obtain ⟨v', hv', hπv'⟩ : ∃ v' : E, {.x}ᗮ = (p.π.ker ⊓ {.x}ᗮ) ⊔ Δ v' ∧ p.π v' = 1,
+      sorry { have ne_z : p.π (pr[x]ᗮ u) ≠ 0,
+        { rw ← to_dual_symm_apply,
+          change ¬ ⟪u, pr[x]ᗮ u⟫ = 0,
+          rw not_iff_not.mpr inner_projection_self_eq_zero_iff,
+          contrapose! H,
+          rw orthogonal_orthogonal at H,
+          rw [← orthogonal_span_to_dual_symm, span_singleton_eq_span_singleton_of_ne u_ne H],
+          apply_instance },
+        have ne_z' : (p.π $ pr[x]ᗮ u)⁻¹ ≠ 0,
+        { exact inv_ne_zero ne_z },
+        refine ⟨(p.π $ pr[x]ᗮ u)⁻¹ • pr[x]ᗮ u, _, _⟩,
+        { have := orthogonal_line_inf_sup_line u x,
+          rw [← orthogonal_span_to_dual_symm p.π,
+            span_singleton_smul_eq ne_z'.is_unit],
+          exact (orthogonal_line_inf_sup_line u x).symm },
+        simp [ne_z] },
       let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
       apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
-      have : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ {.x}ᗮ))ᶜ,
-      sorry { ext w,
-        rw mem_slice_iff_of_not_mem hx y,
+      suffices : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ {.x}ᗮ))ᶜ,
+      sorry { rw [this],
+        apply ample_of_two_le_codim,
+        let Φ := φ.to_linear_map,
+        suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ {.x}ᗮ)),
+        { rw ← finrank_eq_dim,
+          exact_mod_cast this },
+        apply le_of_add_le_add_right,
+        rw submodule.finrank_quotient_add_finrank (map Φ $ p.π.ker ⊓ {.x}ᗮ),
+        have : dim (p.π.ker ⊓ {.x}ᗮ : submodule ℝ E) + 1 = n,
+        { have eq := submodule.dim_sup_add_dim_inf_eq (p.π.ker ⊓ {.x}ᗮ) (span ℝ {v'}),
+          have eq₁ : dim {.x}ᗮ = n,  from finrank_orthogonal_span_singleton x_ne,
+          have eq₂ : p.π.ker ⊓ {.x}ᗮ ⊓ span ℝ {v'} = (⊥ : submodule ℝ E),
+          { erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq] },
+          have eq₃ : dim (span ℝ {v'}) = 1, apply finrank_span_singleton p'.v_ne_zero,
+          rw [← hv', eq₁, eq₃, eq₂] at eq,
+          simpa using eq.symm },
+        have : dim E = n+1, from fact.out _,
+        linarith [finrank_map_le ℝ Φ (p.π.ker ⊓ {.x}ᗮ)] },
+      ext w,
+      rw mem_slice_iff_of_not_mem hx y,
         -- we need inj_on_update_iff (see `injective_update_iff` in dual_pair)
         --rw inj_on_iff_injective,
         --have := p'.injective_update_iff,
-        sorry },
-      rw [this],
-      apply ample_of_two_le_codim,
-      let Φ := φ.to_linear_map,
-      suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ {.x}ᗮ)),
-      sorry { rw ← finrank_eq_dim,
-        exact_mod_cast this },
-      apply le_of_add_le_add_right,
-      rw submodule.finrank_quotient_add_finrank (map Φ $ p.π.ker ⊓ {.x}ᗮ),
-      have := finrank_map_le ℝ Φ (p.π.ker ⊓ {.x}ᗮ),
-      have : dim (p.π.ker ⊓ {.x}ᗮ : submodule ℝ E) + 1 = n,
-      sorry { have hx₀ : x ≠ 0, sorry,
-        have eq₁ : dim {.x}ᗮ = n, sorry, -- from finrank_orthogonal_span_singleton hx₀,
-        have eq₂ := submodule.dim_sup_add_dim_inf_eq (p.π.ker ⊓ {.x}ᗮ) (span ℝ {v'}),
-        have : v' ≠ 0, sorry,
-        have eq₃ : dim (span ℝ {v'}) = 1, sorry,
-        have : p.π.ker ⊓ {.x}ᗮ ⊓ span ℝ {v'} = (⊥ : submodule ℝ E), sorry,
-        rw [← hv', eq₁, eq₃, this] at eq₂,
-        simpa using eq₂.symm },
-      have : dim E = n+1, from fact.out _,
-      linarith } }
+      sorry
+       } }
 end
 
 
