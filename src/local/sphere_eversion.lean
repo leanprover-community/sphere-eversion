@@ -27,7 +27,7 @@ variables
 
 local notation `𝕊²` := sphere (0 : E) 1
 local notation (name := module_span_printing_only) `{.` x `}ᗮ` := (submodule.span ℝ {x})ᗮ
-local notation `{.` x `}ᗮ` := (submodule.span ℝ ({x} : set E))ᗮ
+local notation `{.` x `}ᗮ` := (ℝ ∙ x)ᗮ
 
 /-- A map between vector spaces is a immersion viewed as a map on the sphere, when its
 derivative at `x ∈ 𝕊²` is injective on the orthogonal complement of `x`
@@ -131,7 +131,7 @@ by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
 local notation `dim` := finrank ℝ
 -- ignore the next line which is fixing a pretty-printer bug
 local notation (name := line_printing_only) `Δ` v:55 := submodule.span ℝ {v}
-local notation `Δ` v:55 := submodule.span ℝ ({v} : set E)
+local notation `Δ ` v:55 := submodule.span ℝ ({v} : set E)
 local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
 open inner_product_space
 open_locale real_inner_product_space
@@ -227,32 +227,19 @@ variables {E} (ω : orientation ℝ E (fin 3))
 
 include ω
 def loc_formal_eversion_aux : htpy_jet_sec E E :=
-{ f := λ (t : ℝ) (x : E), (1 - 2 * t) • x, -- (1 - 2 * s) • x
-  φ := λ t x, rot_aux ω.volume_form (t, x) -
+{ f := λ (t : ℝ) (x : E), (1 - 2 * t) • x,
+  φ := λ t x, rot ω.volume_form (t, x) -
     (2 * t) • ⟪x, x⟫_ℝ⁻¹ • (continuous_linear_map.to_span_singleton ℝ x ∘L innerSL x),
-  f_diff := begin
-  sorry
-  -- refine (cont_mdiff.smul _ _).add (cont_mdiff_fst.smul _),
-  -- { exact (cont_diff_const.sub cont_diff_id).cont_mdiff.comp cont_mdiff_fst },
-  -- { exact cont_mdiff_coe_sphere.comp cont_mdiff_snd },
-  -- { exact (cont_diff_neg.cont_mdiff.comp cont_mdiff_coe_sphere).comp cont_mdiff_snd },
-  end,
-  φ_diff := sorry }
--- sorry
--- family_join
---   (smooth_bs E) $
---   family_twist
---     (drop (one_jet_ext_sec ⟨(coe : 𝕊² → E), cont_mdiff_coe_sphere⟩))
---     (λ p : ℝ × 𝕊², rot_aux ω.volume_form (p.1, p.2))
---     begin
---       intros p,
---       have : smooth_at (𝓘(ℝ, ℝ × E)) 𝓘(ℝ, E →L[ℝ] E) (rot_aux ω.volume_form) (p.1, p.2),
---       { rw ← rot_eq_aux,
---         refine (cont_diff_rot ω.volume_form _).cont_mdiff_at,
---         exact ne_zero_of_mem_unit_sphere p.2 },
---       refine this.comp p (smooth.smooth_at _),
---       exact smooth_fst.prod_mk (cont_mdiff_coe_sphere.comp smooth_snd),
---     end
+  f_diff := cont_diff.smul (cont_diff_const.sub $ cont_diff_const.mul cont_diff_fst) cont_diff_snd,
+  φ_diff := begin
+    refine cont_diff_iff_cont_diff_at.mpr (λ x, _),
+    have hx : x.2 ≠ 0, sorry, -- todo
+    refine (cont_diff_rot ω.volume_form hx).sub _,
+    refine cont_diff_at.smul (cont_diff_at_const.mul cont_diff_at_fst) _,
+    refine cont_diff_at.smul ((cont_diff_at_snd.inner cont_diff_at_snd).inv _) _,
+    { rwa [ne.def, inner_self_eq_zero] },
+    sorry -- have := innerSL.cont_diff,
+     end }
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
@@ -304,10 +291,11 @@ begin
     show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
     fderiv_neg, fderiv_id', continuous_linear_map.neg_apply, continuous_linear_map.id_apply],
   -- write `v` as `a • x + v'` with `v' ⊥ x`
-  obtain ⟨a, v, hv, rfl⟩ : ∃ (a : ℝ) (v' : E), ⟪x, v'⟫_ℝ = 0 ∧ v = a • x + v',
-  { sorry },
-  have h2v : v ∈ {.x}ᗮ,
-  { exact mem_orthogonal_singleton_of_inner_right _ hv },
+  obtain ⟨a, v, h2v, rfl⟩ : ∃ (a : ℝ) (v' : E), v' ∈ {.x}ᗮ ∧ v = a • x + v',
+  { have := submodule.exists_sum_mem_mem_orthogonal (Δ x) v,
+    simp_rw [submodule.mem_span_singleton, exists_prop, exists_exists_eq_and] at this,
+    exact this },
+  have hv : ⟪x, v⟫_ℝ = 0 := inner_right_of_mem_orthogonal_singleton _ h2v,
   simp_rw [continuous_linear_map.map_add, continuous_linear_map.map_smul, rot_one _ x h2v,
     rot_self],
   rcases eq_or_ne x 0 with rfl|hx,
