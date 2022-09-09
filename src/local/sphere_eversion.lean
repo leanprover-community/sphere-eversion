@@ -276,7 +276,7 @@ def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
     --   exact mfderiv_coe_sphere_injective E x },
     -- rw set.injective_iff_inj_on_univ,
     -- refine set.inj_on.comp _ this (set.maps_to_range _ _),
-    -- rw [← continuous_linear_map.range_coe, range_mfderiv_coe_sphere E, ← rot_eq_aux],
+    -- rw [← continuous_linear_map.range_coe, range_mfderiv_coe_sphere E],
     -- exact ω.inj_on_rot t x,
   end,
   .. loc_formal_eversion_aux ω }
@@ -286,7 +286,7 @@ lemma loc_formal_eversion_f (t : ℝ) :
 rfl
 
 lemma loc_formal_eversion_φ (t : ℝ) (x : E) (v : E) :
-  (loc_formal_eversion ω t).φ x v = rot_aux ω.volume_form (t, x) v -
+  (loc_formal_eversion ω t).φ x v = rot ω.volume_form (t, x) v -
     (2 * t) • ⟪x, x⟫_ℝ⁻¹ • ⟪x, v⟫_ℝ • x :=
 rfl
 
@@ -299,7 +299,7 @@ show ((1 : ℝ) - 2 * 1) • (x : E) = -x, by simp [show (1 : ℝ) - 2 = -1, by 
 lemma loc_formal_eversion_hol_at_zero {x : E} :
   (loc_formal_eversion ω 0).is_holonomic_at x :=
 by simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
-    loc_formal_eversion_φ, ← rot_eq_aux, rot_zero, mul_zero, zero_smul, sub_zero,
+    loc_formal_eversion_φ, rot_zero, mul_zero, zero_smul, sub_zero,
     show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id,
     eq_self_iff_true, implies_true_iff]
 
@@ -309,7 +309,6 @@ begin
   simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
     loc_formal_eversion_φ],
   intro v,
-  simp_rw [← rot_eq_aux],
   simp_rw [mul_one, show (1 : ℝ) - 2 = -1, by norm_num,
     show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
     fderiv_neg, fderiv_id', continuous_linear_map.neg_apply, continuous_linear_map.id_apply],
