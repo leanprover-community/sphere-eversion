@@ -14,7 +14,7 @@ sphere eversion
 -/
 noncomputable theory
 
-open metric finite_dimensional set function rel_loc
+open metric finite_dimensional set function rel_loc filter
 open_locale topological_space
 
 section sphere_eversion
@@ -45,7 +45,7 @@ def sphere_immersion (f : E → E') : Prop :=
 
 variables (E E')
 
-local notation `B` := ball (0 : E) 2⁻¹
+local notation `B` := ball (0 : E) 0.9
 
 /-- The relation of immersions for unit spheres into a vector space. -/
 def immersion_sphere_rel : rel_loc E E' :=
@@ -144,12 +144,12 @@ begin
   exact ample_set_empty
 end
 
-open submodule rel_loc
+open submodule (hiding map_zero) rel_loc
 
 lemma mem_slice_iff_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
   (hx : x ∉ B) (y : E') : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) {.x}ᗮ :=
 begin
-  change (x ∉ ball (0 : E) 2⁻¹ → inj_on (p.update φ w) {.x}ᗮ) ↔ inj_on (p.update φ w) {.x}ᗮ,
+  change (x ∉ ball (0 : E) 0.9 → inj_on (p.update φ w) {.x}ᗮ) ↔ inj_on (p.update φ w) {.x}ᗮ,
   simp [hx]
 end
 
@@ -257,7 +257,6 @@ begin
       exact hφ.injective } }
 end
 
-
 variables (E) [fact (dim E = 3)]
 
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
@@ -271,84 +270,102 @@ variables {E} (ω : orientation ℝ E (fin 3))
 def loc_formal_eversion_aux_φ (t : ℝ) (x : E) : E →L[ℝ] E :=
 rot ω.volume_form (t, x) - (2 * t) • (submodule.subtypeL (Δ x) ∘L orthogonal_projection (Δ x))
 
+lemma smooth_at_loc_formal_eversion_aux_φ {p : ℝ × E} (hx : p.2 ≠ 0) :
+  cont_diff_at ℝ ∞ (uncurry (loc_formal_eversion_aux_φ ω)) p :=
+begin
+  refine (cont_diff_rot ω.volume_form hx).sub _,
+  refine cont_diff_at.smul (cont_diff_at_const.mul cont_diff_at_fst) _,
+  exact (cont_diff_at_orthogonal_projection_singleton hx).comp p cont_diff_at_snd
+end
+
 include ω
 def loc_formal_eversion_aux : htpy_jet_sec E E :=
-{ f := λ (t : ℝ) (x : E), (1 - 2 * t) • x,
-  φ := λ t x, smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω t x,
-  f_diff := cont_diff.smul (cont_diff_const.sub $ cont_diff_const.mul cont_diff_fst) cont_diff_snd,
+{ f := λ (t : ℝ) (x : E), (1 - 2 * smooth_step t) • x,
+  φ := λ t x, smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x,
+  f_diff := cont_diff.smul (cont_diff_const.sub $ cont_diff_const.mul $
+    smooth_step.smooth.comp cont_diff_fst) cont_diff_snd,
   φ_diff := begin
     refine cont_diff_iff_cont_diff_at.mpr (λ x, _),
     cases eq_or_ne x.2 0 with hx hx,
     { refine cont_diff_at_const.congr_of_eventually_eq _, exact 0,
-      sorry
-       },
+      have : ((λ x, ∥x∥ ^ 2) ⁻¹' Iio (1/4)) ∈ 𝓝 (0 : E),
+      { refine is_open.mem_nhds _ _,
+        exact (is_open_Iio.preimage (cont_diff_norm_sq : 𝒞 ∞ _).continuous),
+        simp_rw [mem_preimage, norm_zero, zero_pow two_pos, mem_Iio],
+        norm_num },
+      have : ((λ x, smooth_step (∥x∥ ^ 2)) ⁻¹' {0}) ∈ 𝓝 (0 : E),
+      { refine mem_of_superset this _,
+        rw @preimage_comp _ _ _ _ smooth_step,
+        refine preimage_mono _,
+        intros x hx,
+        rw [mem_preimage, mem_singleton_iff, smooth_step.of_lt hx] },
+      have : ((λ p : ℝ × E, smooth_step (∥p.2∥ ^ 2)) ⁻¹' {0}) ∈ 𝓝 x,
+      { rw [← hx] at this, exact continuous_at_snd.preimage_mem_nhds this },
+      refine eventually_of_mem this _,
+      rintro ⟨t, x⟩ hx,
+      simp_rw [mem_preimage, mem_singleton_iff] at hx,
+      show smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x = 0,
+      simp_rw [hx, zero_smul] },
     refine cont_diff_at.smul _ _,
     refine (smooth_step.smooth.comp $ cont_diff_norm_sq.comp cont_diff_snd).cont_diff_at,
-    refine (cont_diff_rot ω.volume_form hx).sub _,
-    refine cont_diff_at.smul (cont_diff_at_const.mul cont_diff_at_fst) _,
-    sorry
+    exact (smooth_at_loc_formal_eversion_aux_φ ω
+      (show (prod.map smooth_step id x).2 ≠ 0, from hx)).comp x
+      (smooth_step.smooth.prod_map cont_diff_id).cont_diff_at,
      end }
-
--- def loc_formal_eversion_aux_old : htpy_jet_sec E E :=
--- { f := λ (t : ℝ) (x : E), (1 - 2 * t) • x,
---   φ := λ t x, rot ω.volume_form (t, x) -
---     (2 * t) • ⟪x, x⟫_ℝ⁻¹ • (continuous_linear_map.to_span_singleton ℝ x ∘L innerSL x),
---   f_diff := cont_diff.smul (cont_diff_const.sub $ cont_diff_const.mul cont_diff_fst) cont_diff_snd,
---   φ_diff := begin
---     refine cont_diff_iff_cont_diff_at.mpr (λ x, _),
---     have hx : x.2 ≠ 0, sorry, -- todo
---     refine (cont_diff_rot ω.volume_form hx).sub _,
---     refine cont_diff_at.smul (cont_diff_at_const.mul cont_diff_at_fst) _,
---     refine cont_diff_at.smul ((cont_diff_at_snd.inner cont_diff_at_snd).inv _) _,
---     { rwa [ne.def, inner_self_eq_zero] },
---     refine cont_diff_at.clm_comp _ _,
---     end }
-
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
 { is_sol := begin
-    sorry
-    -- intros t x,
-    -- let s : tangent_space (𝓡 2) x →L[ℝ] E := mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x,
-    -- change injective (rot_aux ω.volume_form (t, x) ∘ s),
-    -- have : set.univ.inj_on s,
-    -- { rw ← set.injective_iff_inj_on_univ,
-    --   exact mfderiv_coe_sphere_injective E x },
-    -- rw set.injective_iff_inj_on_univ,
-    -- refine set.inj_on.comp _ this (set.maps_to_range _ _),
-    -- rw [← continuous_linear_map.range_coe, range_mfderiv_coe_sphere E],
-    -- exact ω.inj_on_rot t x,
+    intros t x,
+    change x ∉ B →
+      inj_on (smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x) {.x}ᗮ,
+    intros hx,
+    have h2x : smooth_step (∥x∥ ^ 2) = 1,
+    { refine smooth_step.of_gt _,
+      rw [mem_ball, not_lt, dist_zero_right] at hx,
+      refine (show (3 : ℝ)/4 < 0.9 ^ 2, by norm_num).trans_le _,
+      rwa [sq_le_sq, show |(0.9 : ℝ)| = 0.9, by norm_num, abs_norm_eq_norm] },
+    rw [h2x, one_smul],
+    have h3x : x ≠ 0,
+    { rintro rfl, apply hx, exact mem_ball_self (by norm_num) },
+    refine (eq_on.inj_on_iff _).mpr (ω.inj_on_rot_of_ne (smooth_step t) x h3x),
+    intros v hv,
+    simp_rw [loc_formal_eversion_aux_φ, continuous_linear_map.sub_apply,
+      continuous_linear_map.smul_apply, continuous_linear_map.comp_apply,
+      orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hv,
+      map_zero, smul_zero, sub_zero],
   end,
   .. loc_formal_eversion_aux ω }
 
+@[simp]
 lemma loc_formal_eversion_f (t : ℝ) :
-  (loc_formal_eversion ω t).f = λ x : E, ((1 : ℝ) - 2 * t) • x :=
+  (loc_formal_eversion ω t).f = λ x : E, ((1 : ℝ) - 2 * smooth_step t) • x :=
 rfl
 
 lemma loc_formal_eversion_φ (t : ℝ) (x : E) (v : E) :
-  (loc_formal_eversion ω t).φ x v = smooth_step (∥x∥ ^ 2) • (rot ω.volume_form (t, x) v -
-    (2 * t) • orthogonal_projection (Δ x) v) :=
+  (loc_formal_eversion ω t).φ x v = smooth_step (∥x∥ ^ 2) •
+    (rot ω.volume_form (smooth_step t, x) v -
+    (2 * smooth_step t) • orthogonal_projection (Δ x) v) :=
 rfl
 
-lemma loc_formal_eversion_zero (x : E) : (loc_formal_eversion ω).f 0 x = x :=
-show ((1 : ℝ) - 2 * 0) • (x : E) = x, by simp
+lemma loc_formal_eversion_zero (x : E) : (loc_formal_eversion ω 0).f x = x :=
+by simp
 
-lemma loc_formal_eversion_one (x : E) : (loc_formal_eversion ω).f 1 x = -x :=
-show ((1 : ℝ) - 2 * 1) • (x : E) = -x, by simp [show (1 : ℝ) - 2 = -1, by norm_num]
+lemma loc_formal_eversion_one (x : E) : (loc_formal_eversion ω 1).f x = -x :=
+by simp [show (1 : ℝ) - 2 = -1, by norm_num]
 
-lemma loc_formal_eversion_hol_at_zero {x : E} :
-  (loc_formal_eversion ω 0).is_holonomic_at x :=
-by sorry; simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
-    loc_formal_eversion_φ, rot_zero, mul_zero, zero_smul, sub_zero,
-    show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id,
+lemma loc_formal_eversion_hol_at_zero {t : ℝ} (ht : t < 1/4) {x : E}
+  (hx : smooth_step (∥x∥ ^ 2) = 1) : (loc_formal_eversion ω t).is_holonomic_at x :=
+by simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
+    loc_formal_eversion_φ, smooth_step.of_lt ht, hx, rot_zero, mul_zero, zero_smul, sub_zero,
+    show (has_smul.smul (1 : ℝ) : E → E) = id, from funext (one_smul ℝ), fderiv_id, function.id_def,
     eq_self_iff_true, implies_true_iff]
 
-lemma loc_formal_eversion_hol_at_one {x : E} :
-  (loc_formal_eversion ω 1).is_holonomic_at x :=
+lemma loc_formal_eversion_hol_at_one {t : ℝ} (ht : 3/4 < t) {x : E}
+  (hx : smooth_step (∥x∥ ^ 2) = 1) : (loc_formal_eversion ω t).is_holonomic_at x :=
 begin
   simp_rw [jet_sec.is_holonomic_at, loc_formal_eversion_f, continuous_linear_map.ext_iff,
-    loc_formal_eversion_φ],
+    loc_formal_eversion_φ, smooth_step.of_gt ht, hx],
   intro v,
   simp_rw [mul_one, show (1 : ℝ) - 2 = -1, by norm_num,
     show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
@@ -357,14 +374,39 @@ begin
   simp_rw [continuous_linear_map.map_add, rot_one _ x hv, rot_eq_of_mem_span _ ((1 : ℝ), x) hv'],
   simp_rw [neg_add, submodule.coe_add, orthogonal_projection_eq_self_iff.mpr hv',
     orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hv, submodule.coe_zero,
-    add_zero, two_smul],
-  abel,
-  sorry
+    add_zero, two_smul, one_smul],
+  abel
 end
 
 lemma loc_formal_eversion_hol :
   ∀ᶠ (p : ℝ × E) near {0, 1} ×ˢ 𝕊², (loc_formal_eversion ω p.1).is_holonomic_at p.2 :=
-sorry
+begin
+  have : (Iio (1/4 : ℝ) ∪ Ioi (3/4)) ×ˢ ((λ x, ∥x∥ ^ 2) ⁻¹' Ioi (3/4)) ∈
+    𝓝ˢ (({0, 1} : set ℝ) ×ˢ 𝕊²),
+  { refine (is_open.mem_nhds_set _).mpr _,
+    exact (is_open_Iio.union is_open_Ioi).prod
+      (is_open_Ioi.preimage (cont_diff_norm_sq : 𝒞 ∞ _).continuous),
+    rintro ⟨s, x⟩ ⟨hs, hx⟩,
+    refine ⟨_, _⟩,
+    simp_rw [mem_insert_iff, mem_singleton_iff] at hs,
+    rcases hs with rfl|rfl,
+    exact or.inl (show (0 : ℝ) < 1 / 4, by norm_num),
+    exact or.inr (show (3 / 4 : ℝ) < 1, by norm_num),
+    simp_rw [mem_sphere_zero_iff_norm] at hx,
+    simp_rw [mem_preimage, hx, one_pow, mem_Ioi],
+    norm_num },
+  have : (Iio (1/4 : ℝ) ∪ Ioi (3/4)) ×ˢ ((λ x, smooth_step (∥x∥ ^ 2)) ⁻¹' {1}) ∈
+    𝓝ˢ (({0, 1} : set ℝ) ×ˢ 𝕊²),
+  { refine mem_of_superset this (prod_mono subset.rfl _),
+    rw @preimage_comp _ _ _ _ smooth_step,
+    refine preimage_mono _,
+    intros x hx,
+    rw [mem_preimage, mem_singleton_iff, smooth_step.of_gt hx] },
+  refine eventually_of_mem this _,
+  rintro ⟨t, x⟩ ⟨ht|ht, hx⟩,
+  { exact loc_formal_eversion_hol_at_zero ω ht hx },
+  { exact loc_formal_eversion_hol_at_one ω ht hx }
+end
 
 end assume_finite_dimensional
 

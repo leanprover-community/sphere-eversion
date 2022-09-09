@@ -202,10 +202,16 @@ begin
   have : ∥real.cos (t * real.pi) • (v:E) + real.sin (t * real.pi) • A ω.volume_form x v∥ = ∥(v:E)∥,
   { simp only [norm_eq_sqrt_inner],
     congr' 2,
-    simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
+    simp_rw [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
       is_R_or_C.conj_to_real, submodule.coe_inner],
     linear_combination ⟪(v:E), v⟫ * real.cos_sq_add_sin_sq (t * real.pi) },
   simp [rot, orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero v.prop, this],
+end
+
+lemma inj_on_rot_of_ne (t : ℝ) (x : E) (hx : x ≠ 0) :
+  set.inj_on (rot ω.volume_form (t, x)) (ℝ ∙ (x:E))ᗮ :=
+begin
+  sorry
 end
 
 lemma inj_on_rot (t : ℝ) (x : metric.sphere (0:E) 1) :

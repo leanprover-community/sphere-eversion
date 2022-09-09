@@ -402,6 +402,11 @@ begin
   linarith
 end
 
+lemma smooth_step.pos_of_gt {t : ℝ} (h : 1/4 < t) : 0 < smooth_step t :=
+begin
+  apply smooth_transition.pos_of_pos,
+  linarith
+end
 
 lemma smooth_step.of_gt {t : ℝ} (h : 3/4 < t) : smooth_step t = 1 :=
 begin

@@ -344,15 +344,14 @@ lemma rel_loc.htpy_formal_sol.exists_sol (𝓕₀ : R.htpy_formal_sol)
   (h_hol : ∀ᶠ (p : ℝ × E) near C, (𝓕₀ p.1).is_holonomic_at p.2) :
   ∃ f : ℝ → E → F,
     (𝒞 ∞ $ uncurry f) ∧
-    (∀ p ∈ C, f (p : ℝ × E).1 p.2 = 𝓕₀.f p.1 p.2) ∧
+    (∀ p ∈ C, f (p : ℝ × E).1 p.2 = (𝓕₀ p.1).f p.2) ∧
     (∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R) :=
 begin
   obtain ⟨𝓕, h₁, h₂, -, h₄⟩ :=
     𝓕₀.improve_htpy h_op h_ample ε_pos C hC (I ×ˢ K) (is_compact_Icc.prod hK) h_hol,
   refine ⟨λ s, (𝓕 (1, s)).f, _, _, _⟩,
   { exact 𝓕.f_diff.comp ((cont_diff_const.prod cont_diff_id).prod_map cont_diff_id) },
-  { intros p hp,
-    exact (prod.ext_iff.mp (h₂.nhds_set_forall_mem p hp 1)).1 },
+  { intros p hp, exact (prod.ext_iff.mp (h₂.nhds_set_forall_mem p hp 1)).1 },
   { intros x hx t ht,
     rw [show D (𝓕 (1, t)).f x = (𝓕 (1, t)).φ x, from
       h₄.nhds_set_forall_mem (t, x) (mk_mem_prod ht hx)],
