@@ -182,7 +182,7 @@ begin
     have : range ((subtypeL {.x}ᗮ) ∘ pr[x]ᗮ ∘ j₀) = {.x}ᗮ,
     { rw set.range_comp_of_surj,
       exact subtype.range_coe,
-      exact surjective_orthogonal_projection_comp_subtypeL hxx₀ },
+      exact (orthogonal_projection_orthogonal_line_iso hxx₀).surjective },
     rw ← this, clear this,
     exact function.injective.inj_on_range Hφ },
 end

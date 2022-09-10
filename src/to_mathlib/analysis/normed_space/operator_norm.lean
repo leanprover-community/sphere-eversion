@@ -140,8 +140,12 @@ lemma continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] 
 @[continuity]
 lemma continuous_at.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} {x₀ : X}
   (hf : continuous_at f x₀) (hg : continuous_at g x₀) : continuous_at (λ x, (f x).comp (g x)) x₀ :=
-sorry
-
+begin
+  have cont₁ := (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.continuous_at.comp hf,
+  have cont₂ := (continuous_linear_map.apply 𝕜 (E →L[𝕜] Gₗ) : (E →L[𝕜] Fₗ) →L[𝕜]
+    ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous,
+  exact cont₂.continuous_at.comp (hg.prod cont₁)
+end
 
 section finite_dimensional
 

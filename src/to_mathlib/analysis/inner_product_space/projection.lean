@@ -155,7 +155,30 @@ begin
   refl
 end
 
-lemma orthogonal_projection_orthogonal_line_iso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) :
+lemma foo {x₀ x : E}
+  (h : ⟪x₀, x⟫ ≠ 0)
+  (y : E)
+  (hy : y ∈ {.x₀}ᗮ) :
+  (pr[x]ᗮ y : E) - (⟪x₀, pr[x]ᗮ y⟫ / ⟪x₀, x⟫) • x =  y :=
+begin
+
+  conv_rhs{rw eq_sum_orthogonal_projection_self_orthogonal_complement (Δ x) y},
+  rw orthogonal_projection_singleton,
+  rw [sub_eq_add_neg, add_comm, ← neg_smul],
+  congr' 2,
+  have := eq_sum_orthogonal_projection_self_orthogonal_complement (Δ x) y,
+  rw orthogonal_projection_singleton at this,
+  apply_fun (λ z, ⟪x₀, z⟫) at this,
+  rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right, eq_comm] at this,
+  symmetry,
+  apply eq_of_sub_eq_zero,
+  rw sub_neg_eq_add,
+  apply mul_left_injective₀ h,
+  dsimp only,
+  rwa [add_mul, zero_mul, div_mul_cancel _ h],
+end
+
+def orthogonal_projection_orthogonal_line_iso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) :
 {.x₀}ᗮ ≃L[ℝ] {.x}ᗮ :=
 { inv_fun := λ y, ⟨y - (⟪x₀, y⟫/⟪x₀, x⟫) • x, begin
     rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right],
@@ -164,29 +187,18 @@ lemma orthogonal_projection_orthogonal_line_iso {x₀ x : E} (h : ⟪x₀, x⟫ 
   left_inv := begin
     rintros ⟨y, hy⟩,
     ext,
-    dsimp,
-    sorry
+    exact foo h y hy
   end,
   right_inv := begin
     rintros ⟨y, hy⟩,
     ext,
     dsimp,
-    sorry
+    rw [map_sub, pr[x]ᗮ.map_smul, orthogonal_projection_orthogonal_complement_singleton_eq_zero,
+        smul_zero, sub_zero, orthogonal_projection_eq_self_iff.mpr hy]
   end,
   continuous_to_fun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous,
-  continuous_inv_fun := sorry,
+  continuous_inv_fun := by continuity,
   ..pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ) }
-
-lemma surjective_orthogonal_projection_comp_subtypeL {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) :
-  surjective (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)) :=
-begin
-  -- The following proof is super weird, Lean has a lot of trouble unfolding definitions.
-  convert (orthogonal_projection_orthogonal_line_iso h).surjective,
-  ext e,
-  delta orthogonal_projection_orthogonal_line_iso,
-  refl,
-end
-
 
 lemma orthogonal_projection_comp_coe (K : submodule ℝ E) [complete_space K] :
   orthogonal_projection K ∘ (coe : K → E) = id :=
@@ -247,33 +259,44 @@ lemma continuous_at_orthogonal_projection_orthogonal {x₀ : E} (hx₀ : x₀ �
 begin
   rw normed_space.continuous_at_iff',
   intros ε ε_pos,
+  have hNx₀ : 0 < ∥x₀∥,
+  { exact norm_pos_iff.mpr hx₀ },
+  have hNx₀2 : 0 < ∥x₀∥^2,
+  { apply pow_pos hNx₀ },
   suffices : ∃ δ > 0, ∀ y, ∥y - x₀∥ ≤ δ → ∀ x, ∥(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y∥ ≤ ε * ∥x∥,
-  sorry,/-
-  simpa only [continuous_linear_map.op_norm_le_iff (le_of_lt ε_pos), orthogonal_projection_orthogonal_singleton,
-  continuous_linear_map.coe_sub', continuous_linear_map.coe_comp', coe_subtypeL', submodule.coe_subtype, pi.sub_apply,
-  comp_app, coe_mk, sub_sub_sub_cancel_left], -/
-
+  by simpa only [continuous_linear_map.op_norm_le_iff (le_of_lt ε_pos),
+    orthogonal_projection_orthogonal_singleton, continuous_linear_map.coe_sub',
+    continuous_linear_map.coe_comp', coe_subtypeL', submodule.coe_subtype, pi.sub_apply,
+    comp_app, coe_mk, sub_sub_sub_cancel_left],
   let N : E → E := λ x, ⟪x, x⟫⁻¹ • x,
   have hNx₀ : 0 < ∥N x₀∥,
-  {
-    sorry },
+  { dsimp [N], -- and now let's suffer
+    rw [norm_smul, real_inner_self_eq_norm_sq, norm_inv],
+    apply mul_pos,
+    apply inv_pos_of_pos,
+    apply norm_pos_iff.mpr hNx₀2.ne',
+    exact hNx₀ },
   have cont : continuous_at N x₀,
-  {
-    sorry },
+  { dsimp [N],
+    simp_rw real_inner_self_eq_norm_sq,
+    exact ((continuous_norm.pow 2).continuous_at.inv₀ hNx₀2.ne').smul continuous_at_id },
   have lim : tendsto (λ y, ∥N x₀ - N y∥ * ∥y∥) (𝓝 x₀) (𝓝 0),
-  {
-    sorry },
+  { rw [← zero_mul ∥x₀∥],
+    apply tendsto.mul,
+    rw ← show ∥N x₀ - N x₀∥ = 0, by simp,
+    exact (tendsto_const_nhds.sub cont).norm,
+    exact continuous_norm.continuous_at },
   have key : ∀ x y, (⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y =
     ⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y,
-  sorry { intros x y,
+  { intros x y,
     dsimp only [N],
     simp only [inner_smul_left, inner_sub_left, is_R_or_C.conj_to_real, smul_sub, sub_smul],
     field_simp },
   simp only [key],
   simp_rw [metric.tendsto_nhds_nhds, real.dist_0_eq_abs, dist_eq_norm] at lim,
   rcases lim (ε/2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩,
-  refine ⟨min (ε/(2*∥N x₀∥)) (η/2), _, _⟩,
-  sorry, --{ apply lt_min, positivity, exact half_pos η_pos },
+  refine ⟨min ((ε/2)/ ∥N x₀∥) (η/2), _, _⟩,
+  { apply lt_min, positivity, exact half_pos η_pos },
   intros y hy x,
   have hy₁ := hy.trans (min_le_left _ _), have hy₂ := hy.trans (min_le_right _ _), clear hy,
   specialize hη (by linarith : ∥y - x₀∥ < η),
@@ -283,14 +306,13 @@ begin
   ... ≤ ∥N x₀∥*∥x∥ * ∥x₀ - y∥ + ∥N x₀ - N y∥ * ∥x∥ * ∥y∥ : add_le_add _ _
   ... ≤ (ε/2) * ∥x∥ + (ε/2) * ∥x∥ : add_le_add _ _
   ... = ε * ∥x∥ : by linarith,
-  {
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
-  {
-    sorry },
+  { rw norm_smul,
+    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _) },
+  { rw norm_smul,
+    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _) },
+  { rw [mul_comm, ← mul_assoc, norm_sub_rev],
+    exact mul_le_mul_of_nonneg_right ((_root_.le_div_iff hNx₀).mp hy₁) (norm_nonneg x) },
+  { rw [mul_comm, ← mul_assoc, mul_comm ∥y∥],
+    exact  mul_le_mul_of_nonneg_right hη.le (norm_nonneg x) },
+  { positivity },
 end
