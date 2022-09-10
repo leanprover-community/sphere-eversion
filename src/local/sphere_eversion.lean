@@ -122,21 +122,32 @@ begin
       λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
   let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
       λ q, q.1 ≠ 0 ∧ injective q.2,
-  change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
-  apply continuous.eventually,
-  { clear_dependent H φ₀ P,
+  have x₀_ne : x₀ ≠ 0,
+  { refine λ hx₀', hx₀ _,
+    rw hx₀',
+    apply mem_ball_self,
+    norm_num },
+  -- The following suffices looks stupid but is much faster than using the change tactic.
+  suffices : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+  { exact this },
+  apply continuous_at.eventually,
+  {
     dsimp [f, one_jet],
-    -- continuity says:
-    refine (continuous_const.inner continuous_fst).prod_mk (((continuous_snd.comp continuous_snd).compL _).compL continuous_const),
-    exact (continuous_orthogonal_projection_orthogonal E).comp continuous_fst },
+    apply continuous_at.prod,
+    exact (continuous_const.inner continuous_fst).continuous_at,
+    apply continuous_at.compL,
+    { apply continuous_at.compL,
+      exact continuous_at_snd.comp continuous_at_snd,
+      change continuous_at ((λ x, {.x}ᗮ.subtypeL.comp pr[x]ᗮ) ∘ prod.fst) (x₀, y₀, φ₀),
+      apply continuous_at.comp _ continuous_at_fst,
+      exact continuous_at_orthogonal_projection_orthogonal x₀_ne },
+    exact continuous_at_const },
+
   { exact (continuous_fst.is_open_preimage _ is_open_compl_singleton).inter
           (continuous_snd.is_open_preimage _ continuous_linear_map.is_open_injective) },
   { split,
     { change ⟪x₀, x₀⟫ ≠ 0,
-      apply (inner_self_eq_zero.not).mpr (λ hx₀', hx₀ _),
-      rw hx₀',
-      apply mem_ball_self,
-      norm_num },
+      apply (inner_self_eq_zero.not).mpr x₀_ne },
     { change injective (φ₀ ∘ (coe ∘ (pr[x₀]ᗮ ∘ coe))),
       rw [orthogonal_projection_comp_coe, comp.right_id],
       exact inj_on_iff_injective.mp H } }
