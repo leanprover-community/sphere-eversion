@@ -87,7 +87,7 @@ begin
   simp [gram_schmidt_normed, inner_smul_left, inner_smul_right, gram_schmidt_orthogonal 𝕜 f hij],
 end
 
-variables [fintype ι] (h : finrank 𝕜 E = fintype.card ι) (f : ι → E)
+variables [fintype ι] [finite_dimensional 𝕜 E] (h : finrank 𝕜 E = fintype.card ι) (f : ι → E)
 include h
 
 /-- Given an indexed family `f : ι → E` of vectors in an inner product space `E`, for which the
