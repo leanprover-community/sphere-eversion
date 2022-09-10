@@ -99,15 +99,58 @@ begin
     exact ⟨a, rfl⟩ }
 end
 
-lemma loc_immersion_rel_open :
-  is_open (immersion_sphere_rel E E') :=
+lemma continuous_at.eventually {α β : Type*} [topological_space α] [topological_space β] {f : α → β}
+  {a₀ : α} (hf : continuous_at f a₀) (P : β → Prop) (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
+  ∀ᶠ a in 𝓝 a₀, P (f a) :=
+hf (is_open_iff_mem_nhds.mp hP _ ha₀)
+
+lemma continuous.eventually {α β : Type*} [topological_space α] [topological_space β] {f : α → β}
+  {a₀ : α} (hf : continuous f) (P : β → Prop) (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
+  ∀ᶠ a in 𝓝 a₀, P (f a) :=
+hf.continuous_at.eventually P hP ha₀
+
+-- The following is extracted from `loc_immersion_rel_open` because it takes forever to typecheck
+lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : E'} {φ₀ : E →L[ℝ] E'} (hx₀ : x₀ ∉ B)
+  (H : inj_on φ₀ {.x₀}ᗮ) :
+  ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀),
+    ⟪x₀, p.1⟫ ≠ 0 ∧ injective ((p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp {.x₀}ᗮ.subtypeL) :=
+begin
+  -- This is true at (x₀, y₀, φ₀) and is an open condition because
+  -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
+  set j₀ := subtypeL {.x₀}ᗮ,
+  let f : one_jet E E' → ℝ × ({.x₀}ᗮ →L[ℝ] E') :=
+      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
+  let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
+      λ q, q.1 ≠ 0 ∧ injective q.2,
+  change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+  apply continuous.eventually,
+  { clear_dependent H φ₀ P,
+    dsimp [f, one_jet],
+    -- continuity says:
+    refine (continuous_const.inner continuous_fst).prod_mk (((continuous_snd.comp continuous_snd).compL _).compL continuous_const),
+    exact (continuous_orthogonal_projection_orthogonal E).comp continuous_fst },
+  { exact (continuous_fst.is_open_preimage _ is_open_compl_singleton).inter
+          (continuous_snd.is_open_preimage _ continuous_linear_map.is_open_injective) },
+  { split,
+    { change ⟪x₀, x₀⟫ ≠ 0,
+      apply (inner_self_eq_zero.not).mpr (λ hx₀', hx₀ _),
+      rw hx₀',
+      apply mem_ball_self,
+      norm_num },
+    { change injective (φ₀ ∘ (coe ∘ (pr[x₀]ᗮ ∘ coe))),
+      rw [orthogonal_projection_comp_coe, comp.right_id],
+      exact inj_on_iff_injective.mp H } }
+end
+
+
+lemma loc_immersion_rel_open : is_open (immersion_sphere_rel E E') :=
 begin
   dsimp only [immersion_sphere_rel],
   rw is_open_iff_mem_nhds,
   rintros ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → inj_on φ₀ {.x₀}ᗮ),
   change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), _,
   by_cases hx₀ : x₀ ∈ B,
-  sorry { have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
+  { have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
     { rw nhds_prod_eq,
       apply (is_open_ball.eventually_mem hx₀).prod_inl },
     apply this.mono,
@@ -115,30 +158,23 @@ begin
     exact (Hx hx).elim },
   { replace H := H hx₀,
     set j₀ := subtypeL {.x₀}ᗮ,
-    have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀),
-      ⟪x₀, p.1⟫ ≠ 0 ∧ (injective $ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
-    { -- This is true at (x₀, y₀, φ₀) and is an open condition because
-      -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
-
-      -- continuous_linear_map.is_open_injective
-
-      sorry },
-    /- apply this.mono, clear this,
-    rintros ⟨x, y, φ⟩
-      ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, (Hφ : injective ((φ ∘ ((subtypeL {.x}ᗮ).comp pr[x]ᗮ).comp j₀)))⟩
-      (hx : x ∉ B),
+    let f : one_jet E E' → ℝ × ({.x₀}ᗮ →L[ℝ] E') :=
+      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
+    let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
+      λ q, q.1 ≠ 0 ∧ injective q.2,
+    have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+    { exact loc_immersion_rel_open_aux hx₀ H },
+    apply this.mono, clear this,
+    rintros ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ (hx : x ∉ B),
+    dsimp only [P, f] at Hφ,
     change inj_on φ {.x}ᗮ,
     have : range ((subtypeL {.x}ᗮ) ∘ pr[x]ᗮ ∘ j₀) = {.x}ᗮ,
     { rw set.range_comp_of_surj,
       exact subtype.range_coe,
-      -- The next three lines fight a weird elaboration issue
-      have := (orthogonal_projection_orthogonal_line_iso hxx₀).surjective,
-      delta orthogonal_projection_orthogonal_line_iso at this,
-      exact this },
+      exact surjective_orthogonal_projection_comp_subtypeL hxx₀ },
     rw ← this, clear this,
-    exact function.injective.inj_on_range Hφ -/sorry }
+    exact function.injective.inj_on_range Hφ },
 end
-
 
 lemma ample_set_univ {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] :
   ample_set (univ : set F) :=
@@ -222,7 +258,7 @@ begin
       { have ne_z : p.π (pr[x]ᗮ u) ≠ 0,
         { rw ← to_dual_symm_apply,
           change ¬ ⟪u, pr[x]ᗮ u⟫ = 0,
-          rw not_iff_not.mpr inner_projection_self_eq_zero_iff,
+          rw inner_projection_self_eq_zero_iff.not,
           contrapose! H,
           rw orthogonal_orthogonal at H,
           rw [← orthogonal_span_to_dual_symm, span_singleton_eq_span_singleton_of_ne u_ne H],
@@ -359,7 +395,7 @@ def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
     simp_rw [loc_formal_eversion_aux_φ, continuous_linear_map.sub_apply,
       continuous_linear_map.smul_apply, continuous_linear_map.comp_apply,
       orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hv,
-      map_zero, smul_zero, sub_zero],
+      _root_.map_zero, smul_zero, sub_zero],
   end,
   .. loc_formal_eversion_aux ω }
 

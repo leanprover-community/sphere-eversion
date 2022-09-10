@@ -3,7 +3,7 @@ import analysis.inner_product_space.projection
 noncomputable theory
 
 open_locale real_inner_product_space
-open submodule
+open submodule function set
 
 section general_stuff
 -- Things in this section go to other files
@@ -176,3 +176,31 @@ lemma orthogonal_projection_orthogonal_line_iso {x₀ x : E} (h : ⟪x₀, x⟫ 
   continuous_to_fun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous,
   continuous_inv_fun := sorry,
   ..pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ) }
+
+lemma surjective_orthogonal_projection_comp_subtypeL {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) :
+  surjective (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)) :=
+begin
+  -- The following proof is super weird, Lean has a lot of trouble unfolding definitions.
+  convert (orthogonal_projection_orthogonal_line_iso h).surjective,
+  ext e,
+  delta orthogonal_projection_orthogonal_line_iso,
+  refl,
+end
+
+
+lemma orthogonal_projection_comp_coe (K : submodule ℝ E) [complete_space K] :
+  orthogonal_projection K ∘ (coe : K → E) = id :=
+begin
+  ext1 x,
+  exact orthogonal_projection_mem_subspace_eq_self x
+end
+
+variable (E)
+
+@[continuity]
+lemma continuous_orthogonal_projection_orthogonal :
+  continuous (λ x : E, {.x}ᗮ.subtypeL.comp pr[x]ᗮ) :=
+begin
+
+  sorry
+end
