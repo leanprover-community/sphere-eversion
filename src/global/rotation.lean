@@ -79,6 +79,10 @@ begin
   simp [rot, cross_product_apply_self, orthogonal_projection_orthogonal_complement_singleton_eq_zero, H],
 end
 
+/-- The map `rot` sends `(t, v)` to a transformation preserving `span v`. -/
+lemma rot_eq_of_mem_span (p : ℝ × E) {x : E} (hx : x ∈ ℝ ∙ p.2): ω.rot p x = x :=
+by { obtain ⟨a, rfl⟩ := submodule.mem_span_singleton.mp hx, simp_rw [map_smul, rot_self] }
+
 /-- The map `rot` sends `(v, t)` to a transformation preserving the subspace `(ℝ ∙ v)ᗮ`. -/
 lemma inner_rot_apply_self (p : ℝ × E) (w : E) (hw : w ∈ (ℝ ∙ p.2)ᗮ) : ⟪ω.rot p w, p.2⟫ = 0 :=
 begin
