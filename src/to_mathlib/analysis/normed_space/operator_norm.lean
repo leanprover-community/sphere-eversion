@@ -13,6 +13,16 @@ variables {𝕜 E F G Fₗ Gₗ X : Type*} [nontrivially_normed_field 𝕜] [nor
   [normed_space 𝕜 E] [normed_space 𝕜 Fₗ] [normed_space 𝕜 Gₗ] [normed_space 𝕜 F] [normed_space 𝕜 G]
   [topological_space X]
 
+lemma continuous_linear_map.le_op_norm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E : Type*} {F : Type*}
+  [normed_add_comm_group E] [seminormed_add_comm_group F] [nontrivially_normed_field 𝕜]
+  [nontrivially_normed_field 𝕜₂] [normed_space 𝕜 E] [normed_space 𝕜₂ F] {σ₁₂ : 𝕜 →+* 𝕜₂}
+  [ring_hom_isometric σ₁₂] (f : E →SL[σ₁₂] F) {x : E} (hx : x ≠ 0) {C : ℝ} (h : C * ∥x∥ ≤ ∥f x∥) :
+  C ≤ ∥f∥ :=
+begin
+  apply le_of_mul_le_mul_right (h.trans (f.le_op_norm x)),
+  rwa norm_pos_iff',
+end
+
 @[simp]
 lemma continuous_linear_map.to_span_singleton_zero (𝕜 : Type*) {E : Type*} [seminormed_add_comm_group E] [nontrivially_normed_field 𝕜]
   [normed_space 𝕜 E] : continuous_linear_map.to_span_singleton 𝕜 (0 : E) = 0 :=
@@ -126,6 +136,16 @@ lemma continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] 
 (continuous_linear_map.apply 𝕜 (E →L[𝕜] Gₗ) : (E →L[𝕜] Fₗ) →L[𝕜]
   ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous.comp₂ hg $
   (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.comp hf
+
+@[continuity]
+lemma continuous_at.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} {x₀ : X}
+  (hf : continuous_at f x₀) (hg : continuous_at g x₀) : continuous_at (λ x, (f x).comp (g x)) x₀ :=
+begin
+  have cont₁ := (continuous_linear_map.compL 𝕜 E Fₗ Gₗ).continuous.continuous_at.comp hf,
+  have cont₂ := (continuous_linear_map.apply 𝕜 (E →L[𝕜] Gₗ) : (E →L[𝕜] Fₗ) →L[𝕜]
+    ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).is_bounded_bilinear_map.continuous,
+  exact cont₂.continuous_at.comp (hg.prod cont₁)
+end
 
 section finite_dimensional
 
