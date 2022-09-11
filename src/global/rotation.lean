@@ -13,6 +13,21 @@ import analysis.special_functions.trigonometric.deriv
 
 noncomputable theory
 
+lemma linear_map.ker_inf_eq_bot {R : Type*} {R₂ : Type*} {M : Type*} {M₂ : Type*} [ring R] [ring R₂]
+  [add_comm_group M] [add_comm_group M₂] [module R M] [module R₂ M₂]
+  {τ₁₂ : R →+* R₂} {f : M →ₛₗ[τ₁₂] M₂} {S : submodule R M} :
+  linear_map.ker f ⊓ S = ⊥ ↔ set.inj_on f S :=
+begin
+  rw [set.inj_on_iff_injective, inf_comm, ← disjoint_iff, linear_map.disjoint_ker'],
+  split,
+  { intros h x y hxy,
+    exact subtype.coe_injective (h x x.prop y y.prop hxy) },
+  { intros h x hx y hy hxy,
+    have : (S : set M).restrict f ⟨x, hx⟩ = (S : set M).restrict f ⟨y, hy⟩, from hxy,
+    cases h this,
+    refl }
+end
+
 open_locale real_inner_product_space
 open finite_dimensional
 
@@ -216,23 +231,54 @@ lemma rot_eq_foo (p : ℝ × E) :
     + real.sin (p.1 * real.pi) • (A Ω p.2).to_continuous_linear_map :=
 rfl
 
--- lemma inj_on_rot_of_ne (t : ℝ) {x y : E} (hy : y ≠ 0) (hy : y ∈ ℝ ∙ x):
---   set.eq_on (rot ω.volume_form (t, x)) (rot ω.volume_form (t, y)) (ℝ ∙ x)ᗮ :=
--- begin
---   have hx : x ≠ 0, sorry,
---   obtain ⟨r, rfl⟩ := submodule.mem_span_singleton.mp hy,
---   have hr : is_unit r,
---   sorry,
---   simp_rw [rot_eq_foo, submodule.span_singleton_smul_eq hr x, map_smul],
---   intros v hv,
---   have := inner_A_apply_self ω.volume_form x ⟨v, hv⟩,
--- end
+open real submodule
+open_locale real
 
+lemma aux {x : E} (hx : x ≠ 0) (t : ℝ) : 0 < cos (t * π) ^ 2 + sin (t * π) ^ 2 * ∥x∥ ^ 2 :=
+begin
+  have : 0 < ∥x∥^2,
+  exact pow_pos (norm_pos_iff.mpr hx) 2,
+  rw cos_sq',
+  rw show 1 - sin (t * π) ^ 2 + sin (t * π) ^ 2 * ∥x∥ ^ 2 = 1 + sin (t * π) ^ 2*(∥x∥^2 - 1), by ring,
+  have I₁ : ∥x∥ ^ 2 - 1 > -1, by linarith,
+  have I₂ : sin (t * π) ^ 2 ≤ 1, from sin_sq_le_one (t * π),
+  have I₃ : 0 ≤ sin (t * π) ^ 2, from sq_nonneg _,
+  rcases I₃.eq_or_lt with H | H,
+  { rw ← H,
+    norm_num },
+  { nlinarith }
+end
 
 lemma inj_on_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) :
   set.inj_on (rot ω.volume_form (t, x)) (ℝ ∙ x)ᗮ :=
 begin
-  sorry
+  change set.inj_on (rot ω.volume_form (t, x)).to_linear_map (ℝ ∙ x)ᗮ,
+  simp_rw [← linear_map.ker_inf_eq_bot, submodule.eq_bot_iff, submodule.mem_inf],
+  rintros y ⟨hy, hy'⟩,
+  rw linear_map.mem_ker at hy,
+  change ↑((orthogonal_projection (span ℝ {x})) y) +
+      cos (t * real.pi) • ↑((orthogonal_projection (span ℝ {x})ᗮ) y) +
+      real.sin (t * real.pi) • (A ω.volume_form x) y = 0 at hy,
+  rw [orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hy',
+      orthogonal_projection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy,
+  apply_fun (λ x, ∥x∥^2) at hy,
+  rw [pow_two, norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero] at hy,
+  simp_rw [← pow_two, norm_smul, mul_pow] at hy,
+  change _ + _ * ∥((A ω.volume_form) x) (⟨y, hy'⟩ : (span ℝ {x})ᗮ)∥ ^ 2 = ∥(0 : E)∥ ^ 2 at hy,
+  rw [norm_A] at hy,
+  simp only [norm_eq_abs, pow_bit0_abs, coe_mk, norm_zero, zero_pow', ne.def, bit0_eq_zero,
+             nat.one_ne_zero, not_false_iff] at hy,
+  change _ + _ * (_ * ∥y∥) ^ 2 = 0 at hy,
+  rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy,
+  have : 0 < cos (t * π) ^ 2 + sin (t * π) ^ 2 * ∥x∥ ^ 2,
+  { apply aux hx },
+  replace hy := hy this.ne',
+  exact norm_eq_zero.mp (pow_eq_zero hy),
+  rw [inner_smul_left, inner_smul_right],
+  have := inner_A_apply_apply_self ω.volume_form x ⟨y, hy'⟩,
+  change ⟪A ω.volume_form x y, y⟫ = 0 at this,
+  rw [real_inner_comm, this],
+  simp,
 end
 
 lemma inj_on_rot (t : ℝ) (x : metric.sphere (0:E) 1) :
