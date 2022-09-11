@@ -5,7 +5,6 @@ Authors: Heather Macbeth
 -/
 import to_mathlib.analysis.cont_diff
 import to_mathlib.analysis.inner_product_space
-import to_mathlib.linear_algebra.finrank
 import analysis.inner_product_space.orientation
 import analysis.special_functions.trigonometric.deriv
 
@@ -181,8 +180,10 @@ begin
   let K : submodule ℝ E := submodule.span ℝ ({x, v} : set E),
   haveI : nontrivial Kᗮ,
   { apply @finite_dimensional.nontrivial_of_finrank_pos ℝ,
-    have : finrank ℝ K ≤ _ := finrank_span_insert_le {(v:E)} x,
-    have : finrank ℝ _ ≤ 1 := finrank_span_singleton_le (v:E),
+    have : finrank ℝ K ≤ finset.card {x, (v:E)},
+    { simpa [set.to_finset_singleton] using finrank_span_le_card ({x, v} : set E) },
+    have : finset.card {x, (v:E)} ≤ finset.card {(v:E)} + 1 := finset.card_insert_le x {v},
+    have : finset.card {(v:E)} = 1 := finset.card_singleton (v:E),
     have : finrank ℝ K + finrank ℝ Kᗮ = finrank ℝ E := K.finrank_add_finrank_orthogonal,
     have : finrank ℝ E = 3 := fact.out _,
     linarith },
