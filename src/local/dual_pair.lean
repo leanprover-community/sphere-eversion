@@ -39,6 +39,18 @@ begin
   simpa [linear_map.ker_eq_top.mp H]
 end
 
+lemma pi_ne_zero (p : dual_pair' E) : p.π ≠ 0 :=
+begin
+  intro H,
+  simpa [H] using p.pairing
+end
+
+lemma v_ne_zero (p : dual_pair' E) : p.v ≠ 0 :=
+begin
+  intro H,
+  simpa [H] using p.pairing
+end
+
 /-- Given a dual pair `p`, `p.span_v` is the line spanned by `p.v`. -/
 def span_v (p : dual_pair' E) : submodule ℝ E := submodule.span ℝ {p.v}
 
