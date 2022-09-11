@@ -9,6 +9,21 @@ open_locale nnreal interval big_operators
   {r : R} {m : M} : r • m + (1 - r) • m = m :=
 by rw [← add_smul, add_sub_cancel'_right, one_smul]
 
+section product_monoid
+
+@[to_additive]
+lemma prod.one_mk_mul_one_mk {M N : Type*} [monoid M] [has_mul N] (b₁ b₂ : N) :
+  ((1 : M), b₁) * (1, b₂) = (1, b₁ * b₂) :=
+by rw [prod.mk_mul_mk, mul_one]
+
+lemma prod.smul_zero_mk {M α β : Type*} [monoid M] [add_monoid α] [distrib_mul_action M α]
+  [has_smul M β] (a : M) (c : β) :
+  a • ((0 : α), c) = (0, a • c) :=
+by rw [prod.smul_mk, smul_zero]
+
+end product_monoid
+
+
 lemma nnabs_coe (K : ℝ≥0) : nnabs K = K := by simp
 
 lemma abs_le_abs_of_nonneg {α : Type*} [add_comm_group α] [linear_order α]
