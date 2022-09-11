@@ -110,8 +110,81 @@ lemma continuous.eventually {α β : Type*} [topological_space α] [topological_
 hf.continuous_at.eventually P hP ha₀
 
 -- The following is extracted from `loc_immersion_rel_open` because it takes forever to typecheck
+lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : E'} {φ₀ : E →L[ℝ] E'} (hx₀ : x₀ ∉ B)
+  (H : inj_on φ₀ {.x₀}ᗮ) :
+  ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀),
+    ⟪x₀, p.1⟫ ≠ 0 ∧ injective ((p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp {.x₀}ᗮ.subtypeL) :=
+begin
+  -- This is true at (x₀, y₀, φ₀) and is an open condition because
+  -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
+  set j₀ := subtypeL {.x₀}ᗮ,
+  let f : one_jet E E' → ℝ × ({.x₀}ᗮ →L[ℝ] E') :=
+      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
+  let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
+      λ q, q.1 ≠ 0 ∧ injective q.2,
+  have x₀_ne : x₀ ≠ 0,
+  { refine λ hx₀', hx₀ _,
+    rw hx₀',
+    apply mem_ball_self,
+    norm_num },
+  -- The following suffices looks stupid but is much faster than using the change tactic.
+  suffices : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+  { exact this },
+  apply continuous_at.eventually,
+  {
+    dsimp [f, one_jet],
+    apply continuous_at.prod,
+    exact (continuous_const.inner continuous_fst).continuous_at,
+    apply continuous_at.compL,
+    { apply continuous_at.compL,
+      exact continuous_at_snd.comp continuous_at_snd,
+      change continuous_at ((λ x, {.x}ᗮ.subtypeL.comp pr[x]ᗮ) ∘ prod.fst) (x₀, y₀, φ₀),
+      apply continuous_at.comp _ continuous_at_fst,
+      exact continuous_at_orthogonal_projection_orthogonal x₀_ne },
+    exact continuous_at_const },
+
+  { exact (continuous_fst.is_open_preimage _ is_open_compl_singleton).inter
+          (continuous_snd.is_open_preimage _ continuous_linear_map.is_open_injective) },
+  { split,
+    { change ⟪x₀, x₀⟫ ≠ 0,
+      apply (inner_self_eq_zero.not).mpr x₀_ne },
+    { change injective (φ₀ ∘ (coe ∘ (pr[x₀]ᗮ ∘ coe))),
+      rw [orthogonal_projection_comp_coe, comp.right_id],
+      exact inj_on_iff_injective.mp H } }
+end
+
 lemma loc_immersion_rel_open : is_open (immersion_sphere_rel E E') :=
-sorry
+begin
+  dsimp only [immersion_sphere_rel],
+  rw is_open_iff_mem_nhds,
+  rintros ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → inj_on φ₀ {.x₀}ᗮ),
+  change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), _,
+  by_cases hx₀ : x₀ ∈ B,
+  { have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
+    { rw nhds_prod_eq,
+      apply (is_open_ball.eventually_mem hx₀).prod_inl },
+    apply this.mono,
+    rintros ⟨x, y, φ⟩ (hx : x ∈ B) (Hx : x ∉ B),
+    exact (Hx hx).elim },
+  { replace H := H hx₀,
+    set j₀ := subtypeL {.x₀}ᗮ,
+    let f : one_jet E E' → ℝ × ({.x₀}ᗮ →L[ℝ] E') :=
+      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
+    let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
+      λ q, q.1 ≠ 0 ∧ injective q.2,
+    have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+    { exact loc_immersion_rel_open_aux hx₀ H },
+    apply this.mono, clear this,
+    rintros ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ (hx : x ∉ B),
+    dsimp only [P, f] at Hφ,
+    change inj_on φ {.x}ᗮ,
+    have : range ((subtypeL {.x}ᗮ) ∘ pr[x]ᗮ ∘ j₀) = {.x}ᗮ,
+    { rw set.range_comp_of_surj,
+      exact subtype.range_coe,
+      exact (orthogonal_projection_orthogonal_line_iso hxx₀).surjective },
+    rw ← this, clear this,
+    exact function.injective.inj_on_range Hφ },
+end
 
 lemma ample_set_univ {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] :
   ample_set (univ : set F) :=
