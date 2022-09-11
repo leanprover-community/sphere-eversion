@@ -68,3 +68,19 @@ begin
 end
 
 end
+
+
+lemma linear_map.ker_inf_eq_bot {R : Type*} {R₂ : Type*} {M : Type*} {M₂ : Type*} [ring R] [ring R₂]
+  [add_comm_group M] [add_comm_group M₂] [module R M] [module R₂ M₂]
+  {τ₁₂ : R →+* R₂} {f : M →ₛₗ[τ₁₂] M₂} {S : submodule R M} :
+  linear_map.ker f ⊓ S = ⊥ ↔ set.inj_on f S :=
+begin
+  rw [set.inj_on_iff_injective, inf_comm, ← disjoint_iff, linear_map.disjoint_ker'],
+  split,
+  { intros h x y hxy,
+    exact subtype.coe_injective (h x x.prop y y.prop hxy) },
+  { intros h x hx y hy hxy,
+    have : (S : set M).restrict f ⟨x, hx⟩ = (S : set M).restrict f ⟨y, hy⟩, from hxy,
+    cases h this,
+    refl }
+end
