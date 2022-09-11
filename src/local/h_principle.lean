@@ -400,7 +400,7 @@ This section proves lem:h_principle_open_ample_loc.
 open finite_dimensional submodule step_landscape
 
 variables {E} {R : rel_loc E F} (h_op : is_open R) (h_ample : R.is_ample)
-variables {L : landscape E}
+variables (L : landscape E)
 variables {ε : ℝ} (ε_pos : 0 < ε)
 
 include h_op h_ample ε_pos
@@ -513,7 +513,7 @@ end
 /- FIXME: the following lemma is a repackaging. A proper fix would be to edit the
 previous one... -/
 
-lemma rel_loc.formal_sol.improve_htpy {𝓕 : formal_sol R}
+lemma rel_loc.formal_sol.improve_htpy (𝓕 : formal_sol R)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∃ H : htpy_formal_sol R,
     (H 0 = 𝓕) ∧
@@ -522,7 +522,7 @@ lemma rel_loc.formal_sol.improve_htpy {𝓕 : formal_sol R}
     (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε)  ∧
     (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
 begin
-  rcases rel_loc.formal_sol.improve h_op h_ample ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
+  rcases rel_loc.formal_sol.improve h_op h_ample L ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
   exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
 end
 

@@ -181,6 +181,8 @@ open rel_loc
 instance : has_coe_to_fun (jet_sec E F) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
 
+lemma coe_apply (𝓕 : jet_sec E F) (x : E) : 𝓕 x = (𝓕.f x, 𝓕.φ x) := rfl
+
 instance (R : rel_loc E F) (U : set E) : has_coe_to_fun (formal_sol R) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
 
@@ -323,33 +325,37 @@ section htpy_jet_sec
 
 open rel_loc
 
-variables (E F)
+variables (E F P)
 
-/-- A homotopy of sections of J¹(E, F). -/
-structure htpy_jet_sec :=
-(f : ℝ → E → F)
+/-- A parametrized family of sections of J¹(E, F). -/
+structure family_jet_sec :=
+(f : P → E → F)
 (f_diff : 𝒞 ∞ ↿f)
-(φ : ℝ → E → E →L[ℝ] F)
+(φ : P → E → E →L[ℝ] F)
 (φ_diff : 𝒞 ∞ ↿φ)
 
-variables  {E F} {R : rel_loc E F}
 
-instance : has_coe_to_fun (htpy_jet_sec E F) (λ S, ℝ → jet_sec E F) :=
+/-- A homotopy of sections of J¹(E, F). -/
+@[reducible] def htpy_jet_sec := family_jet_sec E F ℝ
+
+variables  {E F P} {R : rel_loc E F}
+
+instance : has_coe_to_fun (family_jet_sec E F P) (λ S, P → jet_sec E F) :=
 ⟨λ S t,
  { f := S.f t,
    f_diff := S.f_diff.comp (cont_diff_const.prod cont_diff_id),
    φ := S.φ t,
    φ_diff := S.φ_diff.comp (cont_diff_const.prod cont_diff_id) }⟩
 
-namespace htpy_jet_sec
+namespace family_jet_sec
 
-lemma cont_diff_f (𝓕 : htpy_jet_sec E F) {n : ℕ∞} : 𝒞 n ↿𝓕.f :=
+lemma cont_diff_f (𝓕 : family_jet_sec E F P) {n : ℕ∞} : 𝒞 n ↿𝓕.f :=
 𝓕.f_diff.of_le le_top
 
-lemma cont_diff_φ (𝓕 : htpy_jet_sec E F) {n : ℕ∞} : 𝒞 n ↿𝓕.φ :=
+lemma cont_diff_φ (𝓕 : family_jet_sec E F P) {n : ℕ∞} : 𝒞 n ↿𝓕.φ :=
 𝓕.φ_diff.of_le le_top
 
-end htpy_jet_sec
+end family_jet_sec
 
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
@@ -396,6 +402,11 @@ begin
   linarith
 end
 
+lemma smooth_step.pos_of_gt {t : ℝ} (h : 1/4 < t) : 0 < smooth_step t :=
+begin
+  apply smooth_transition.pos_of_pos,
+  linarith
+end
 
 lemma smooth_step.of_gt {t : ℝ} (h : 3/4 < t) : smooth_step t = 1 :=
 begin
@@ -552,13 +563,17 @@ end
 
 end htpy_jet_sec
 
-/-- A homotopy of formal solutions is a 1-parameter family of formal solutions. -/
-@[ext] structure rel_loc.htpy_formal_sol (R : rel_loc E F) extends htpy_jet_sec E F :=
+variable (P)
+/-- A family of formal solutions is a 1-parameter family of formal solutions. -/
+@[ext] structure rel_loc.family_formal_sol (R : rel_loc E F) extends family_jet_sec E F P :=
 (is_sol : ∀ t x, (x, f t x, φ t x) ∈ R)
+
+/-- A homotopy of formal solutions is a 1-parameter family of formal solutions. -/
+@[reducible] def rel_loc.htpy_formal_sol (R : rel_loc E F) := R.family_formal_sol ℝ
 
 open rel_loc
 
-instance (R : rel_loc E F) : has_coe_to_fun (htpy_formal_sol R) (λ S, ℝ → jet_sec E F) :=
+instance (R : rel_loc E F) : has_coe_to_fun (family_formal_sol P R) (λ S, P → jet_sec E F) :=
 ⟨λ S t,
  { f := S.f t,
    f_diff := S.f_diff.comp (cont_diff_const.prod cont_diff_id),
