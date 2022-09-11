@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Heather Macbeth
 -/
 import to_mathlib.analysis.inner_product_space.orientation
-import to_mathlib.linear_algebra.finrank
 import analysis.inner_product_space.dual
 import analysis.inner_product_space.orientation
 
@@ -102,8 +101,10 @@ begin
   let K : submodule ℝ E := submodule.span ℝ ({u, v} : set E),
   haveI : nontrivial Kᗮ,
   { apply @finite_dimensional.nontrivial_of_finrank_pos ℝ,
-    have : finrank ℝ K ≤ _ := finrank_span_insert_le {(v:E)} u,
-    have : finrank ℝ _ ≤ 1 := finrank_span_singleton_le (v:E),
+    have : finrank ℝ K ≤ finset.card {u, (v:E)},
+    { simpa [set.to_finset_singleton] using finrank_span_le_card ({u, v} : set E) },
+    have : finset.card {u, (v:E)} ≤ finset.card {(v:E)} + 1 := finset.card_insert_le u {v},
+    have : finset.card {(v:E)} = 1 := finset.card_singleton (v:E),
     have : finrank ℝ K + finrank ℝ Kᗮ = finrank ℝ E := K.finrank_add_finrank_orthogonal,
     have : finrank ℝ E = 3 := fact.out _,
     linarith },
