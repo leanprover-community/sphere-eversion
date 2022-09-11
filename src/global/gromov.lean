@@ -98,8 +98,8 @@ begin
     rcases (Id.prod (L.φ 0)).dist_update (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2)
       cpct smth sub τ_pos τ_cont with ⟨η, η_pos, hη⟩,
 
-    rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample) η_pos this
-      with ⟨𝓗, h𝓗₀, h𝓗C, h𝓗K₁, h𝓗δ, h𝓗K₀⟩,
+    rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample)
+      (L.landscape hA 0) η_pos 𝓕₀ this with ⟨𝓗, h𝓗₀, h𝓗C, h𝓗K₁, h𝓗δ, h𝓗K₀⟩,
     let H := L.unloc_htpy_formal_sol 0 𝓗,
     refine ⟨H, _, _, _, _, _⟩,
     sorry { apply L.unloc_loc,
@@ -260,7 +260,7 @@ theorem rel_mfld.ample.satisfies_h_principle_with (hRample : R.ample) (hRopen : 
 begin
   have hδ_pos' : ∀ (x : P × M), 0 < δ x.2 := λ (x : P × M), hδ_pos x.snd,
   have hδ_cont' : continuous (λ (x : P × M), δ x.2) := hδ_cont.comp continuous_snd,
-  have is_op : is_open (rel_mfld.relativize IP P R) := R.is_open_relativize IP P hRopen,
+  have is_op : is_open (rel_mfld.relativize IP P R) := R.is_open_relativize hRopen,
   apply rel_mfld.satisfies_h_principle.satisfies_h_principle_with,
   exact (hRample.relativize IP P).satisfies_h_principle is_op hC hδ_pos' hδ_cont',
 end
