@@ -140,10 +140,10 @@ def update_htpy_jet_sec (F : htpy_one_jet_sec I M I' M') (𝓕 : htpy_jet_sec E 
 section
 variable (hF :  range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
 
-#check L.loc_formal_sol hF
-#check (L.φ i).update_formal_sol (L.ψj i) F
-#check (L.φ i).update (L.ψj i) F.bs
-#check (L.φ i).Jupdate (L.ψj i) F.to_one_jet_sec
+-- #check L.loc_formal_sol hF
+-- #check (L.φ i).update_formal_sol (L.ψj i) F
+-- #check (L.φ i).update (L.ψj i) F.bs
+-- #check (L.φ i).Jupdate (L.ψj i) F.to_one_jet_sec
 
 end
 
@@ -156,7 +156,7 @@ def unloc_htpy_jet_sec (i : L.ι) (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec 
 /-- Turn a local homotopy of formal solutions into a global one using some localisation data. -/
 def unloc_htpy_formal_sol (i : L.ι) (𝓕 : (L.loc_rel i R).htpy_formal_sol) : htpy_formal_sol R :=
 { is_sol' := sorry,
-  ..L.unloc_htpy_jet_sec i 𝓕.to_htpy_jet_sec }
+  ..L.unloc_htpy_jet_sec i 𝓕.to_family_jet_sec }
 
 lemma unloc_loc {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
   (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) (h : 𝓕 0 = L.loc_formal_sol hF₀) :
