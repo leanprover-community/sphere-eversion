@@ -9,6 +9,37 @@ import to_mathlib.analysis.cont_diff
 
 /-!
 # The reparametrization lemma
+
+This file contains a proof of Gromov's parametric reparametrization lemma. It concerns the behaviour
+of the average value of a loop `γ : S¹ → F` when the loop is reparametrized by precomposing with a
+diffeomorphism `S¹ → S¹`.
+
+Given a loop `γ : S¹ → F` for some real vector space `F`, one may integrate to obtain its average
+`∫ x in 0..1, (γ x)` in `F`. Although this average depends on the loop's parametrization, it
+satisfies a contraint that depends only on the image of the loop: the average is contained in the
+convex hull of the image of `γ`. The non-parametric version of the reparametrization lemma says that
+conversely, given any point `g` in the interior of the convex hull of the image of `γ`, one may find
+a reparametrization of `γ` whose average is `g`.
+
+The reparametrization lemma thus allows one to reduce the problem of constructing a loop whose
+average is a given point, to the problem of constructing a loop subject to a condition that depends
+only on its image.
+
+In fact the reparametrization lemma holds parametrically. Given a smooth family of loops:
+`γ : E × S¹ → F`, `(x, t) ↦ γₓ t`, together with a smooth function `g : E → F`, such that `g x` is
+contained in the interior of the convex hull of the image of `γₓ` for all `x`, there exists a smooth
+family of diffeomorphism `φ : E × S¹ → S¹`, `(x, t) ↦ φₓ t` such that the average of `γₓ ∘ φₓ` is
+`g x` for all `x`.
+
+The idea of the proof is simple: since `g x` is contained in the interior of the convex hull of
+the image of `γₓ` one may find `t₀, t₁, ..., tₙ` and barycentric coordinates `w₀, w₁, ..., wₙ` such
+that `g x = ∑ᵢ wᵢ • γₓ(tᵢ)`. If there were no smoothness requirement on `φₓ` one could define
+it to be a step function which spends time `wᵢ` at each `tᵢ`. However because there is a smoothness
+condition, one rounds off the corners of the would-be step function by using a "delta mollifier"
+(an approximation to a Dirac delta function).
+
+The above construction works locally in the neighbourhood of any `x` in `E` and one uses a partition
+of unity to globalise all the local solutions into the required family: `φ : E × S¹ → S¹`.
 -/
 
 noncomputable theory
