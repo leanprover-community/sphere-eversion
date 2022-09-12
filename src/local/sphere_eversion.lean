@@ -186,18 +186,6 @@ begin
     exact function.injective.inj_on_range Hφ },
 end
 
-lemma ample_set_univ {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] :
-  ample_set (univ : set F) :=
-begin
-  intros x _,
-  rw [connected_component_in_univ, preconnected_space.connected_component_eq_univ, convex_hull_univ]
-end
-
-lemma ample_set_empty {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F] :
-  ample_set (∅ : set F) :=
-λ _ h, false.elim h
-
-
 local notation `S` := (immersion_sphere_rel E E').slice
 
 

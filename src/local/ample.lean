@@ -13,6 +13,17 @@ import to_mathlib.topology.misc
 /-!
 # Ample subsets of real vector spaces
 
+In this file we study ample set in real vector spaces. A set is ample if all its connected
+component have full convex hull. We then prove this property is invariant under a number of affine
+geometric operations.
+
+As trivial examples, the empty set and the univ set are ample. After proving those fact,
+the second part of the file proves that a linear subspace with codimension at least 2 has a
+ample complement. This is the crucial geometric ingredient which allows to apply convex integration
+to the theory of immersions in positive codimension.
+
+All vector spaces in the file (and more generally in this folder) are real vector spaces.
+
 ## Implementation notes
 
 The definition of ample subset asks for a vector space structure and a topology on the ambiant type
@@ -20,6 +31,8 @@ without any link between those structures, but we will only be using these for f
 vector spaces with their natural topology.
 -/
 
+
+/-! ## Definition and invariance -/
 open set affine_map
 
 open_locale convex matrix
@@ -68,11 +81,30 @@ begin
   exact (affine_equiv.to_equiv _).range_eq_univ,
 end
 
+/-! ## Trivial examples -/
+
+/-- A whole vector space is ample. -/
+lemma ample_set_univ {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] :
+  ample_set (univ : set F) :=
+begin
+  intros x _,
+  rw [connected_component_in_univ, preconnected_space.connected_component_eq_univ, convex_hull_univ]
+end
+
+/-- The empty set in a vector space is ample. -/
+lemma ample_set_empty {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F] :
+  ample_set (∅ : set F) :=
+λ _ h, false.elim h
+
+/-! ## Codimension at least 2 subspaces have ample complement. -/
+
 section lemma_2_13
 
 local notation `π` := submodule.linear_proj_of_is_compl _ _
 local attribute [instance, priority 100] topological_add_group.path_connected
 
+/-- Given two complementary subspaces `p` and `q` in `F`, if the complement of `{0}`
+is path connected in `p` then the complement of `q` is path connected in `F`. -/
 lemma is_path_connected_compl_of_is_path_connected_compl_zero [topological_add_group F]
   [has_continuous_smul ℝ F] {p q : submodule ℝ F} (hpq : is_compl p q)
   (hpc : is_path_connected ({0}ᶜ : set p)) : is_path_connected (qᶜ : set F) :=
@@ -103,6 +135,8 @@ begin
     exact mt (submodule.eq_zero_of_coe_mem_of_disjoint hpq.disjoint) (hγ₁ t) }
 end
 
+/-- For `x` and `y` in a real vector space, if `x ≠ 0` and `0` is in the segment from
+`x` to `y` then `y` is on the line spanned by `x`.  -/
 lemma mem_span_of_zero_mem_segment {x y : F} (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) :
   y ∈ submodule.span ℝ ({x} : set F) :=
 begin
@@ -125,6 +159,8 @@ end
 
 variables [topological_add_group F] [has_continuous_smul ℝ F]
 
+/-- For `x` and `y` in a real vector space, if `x ≠ 0` and `y` is not on the line
+spanned by `x` then `x` and `y` can be joined by a path in the complement of `{0}`.  -/
 lemma joined_in_compl_zero_of_not_mem_span
   {x y : F} (hx : x ≠ 0) (hy : y ∉ submodule.span ℝ ({x} : set F)) :
   joined_in ({0}ᶜ : set F) x y :=
@@ -135,6 +171,8 @@ begin
   exact λ t ht (h' : t = 0), (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 end
 
+/-- In a vector space whose dimension is at least 2, the complement of
+`{0}` is ample. -/
 lemma is_path_connected_compl_zero_of_two_le_dim
   (hdim : 2 ≤ module.rank ℝ F) : is_path_connected ({0}ᶜ : set F) :=
 begin
@@ -162,6 +200,8 @@ begin
     { exact joined_in_compl_zero_of_not_mem_span hx h } }
 end
 
+/-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
+least two then its complement is path-connected. -/
 lemma is_path_connected_compl_of_two_le_codim
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   is_path_connected (Eᶜ : set F) :=
@@ -172,11 +212,15 @@ begin
   rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
 end
 
+/-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
+least two then its complement is connected. -/
 lemma is_connected_compl_of_two_le_codim
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   is_connected (Eᶜ : set F) :=
 (is_path_connected_compl_of_two_le_codim hcodim).is_connected
 
+/-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
+least two then its complement is a path-connected space. -/
 lemma connected_space_compl_of_two_le_codim
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   connected_space (Eᶜ : set F) :=
@@ -187,6 +231,8 @@ lemma submodule.connected_component_in_eq_self_of_two_le_codim (E : submodule �
   connected_component_in (E : set F)ᶜ x = Eᶜ :=
 is_preconnected.connected_component_in (is_connected_compl_of_two_le_codim hcodim).2 hx
 
+/-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
+least two then its complement is ample. -/
 lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F]
   {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   ample_set (Eᶜ : set F) :=
