@@ -5,24 +5,30 @@ import local.parametric_h_principle
 
 /-!
 This is file proves the existence of a sphere eversion from the local verson of the h-principle.
-Contents:
-* relation of immersions `immersion_sphere_rel` that is open and ample.
-* formal solution of sphere eversion
-  - we define a formal solution of sphere eversion. We have to be careful since we're not actually
-    working on the sphere, but in the ambient space `E ≃ ℝ³`.
-    See `loc_formal_eversion` for the considerations into the solution.
-* We obtain sphere eversion from the parametric h-principle in `local.parametric_h_principle`.
+
+We define the relation of immersions `R = immersion_sphere_rel ⊆ J¹(E, F)` which consist of all
+`(x, y, ϕ)` such that if `x` is outside a ball around the origin with chosen radius `R < 1` then
+`ϕ` must be injective on `(ℝ ∙ x)ᗮ` (the orthogonal complement of the span of `x`).
+We show that `R` is open and ample.
+
+Furthermore, we define a formal solution of sphere eversion that is holonomic near `0` and `1`.
+We have to be careful since we're not actually working on the sphere,
+but in the ambient space `E ≃ ℝ³`.
+See `loc_formal_eversion` for the choice and constaints of the solution.
+
+Finally, we obtain the existence of sphere eversion from the parametric local h-principle,
+proven in `local.parametric_h_principle`.
 -/
 noncomputable theory
 
-open metric finite_dimensional set function rel_loc filter (hiding mem_map)
-open_locale topological_space
+open metric finite_dimensional set function rel_loc filter (hiding mem_map) inner_product_space
+  submodule
+open_locale topological_space real_inner_product_space
 
 section sphere_eversion
 
 variables
 {E : Type*} [inner_product_space ℝ E]
-{E' : Type*} [inner_product_space ℝ E']
 {F : Type*} [inner_product_space ℝ F]
 
 local notation `𝕊²` := sphere (0 : E) 1
@@ -31,37 +37,36 @@ local notation `pr[`x`]ᗮ` := orthogonal_projection (ℝ ∙ x)ᗮ
 local notation (name := dot_print_only) R ` ∙ `:1000 x := submodule.span R {x}
 local notation (name := dot_local) R ` ∙ `:1000 x :=
   submodule.span R (@singleton _ _ set.has_singleton x)
+local notation `B` := ball (0 : E) 0.9
 
 /-- A map between vector spaces is a immersion viewed as a map on the sphere, when its
 derivative at `x ∈ 𝕊²` is injective on the orthogonal complement of `x`
 (the tangent space to the sphere). Note that this implies `f` is differentiable at every point
 `x ∈ 𝕊²` since otherwise `D f x = 0`.
 -/
-def sphere_immersion (f : E → E') : Prop :=
+def sphere_immersion (f : E → F) : Prop :=
 ∀ x ∈ 𝕊², inj_on (D f x) (ℝ ∙ x)ᗮ
 
-variables (E E')
+variables (E F)
 
-local notation `B` := ball (0 : E) 0.9
+/-- The relation of immersionsof a two-sphere into its ambient Euclidean space. -/
+def immersion_sphere_rel : rel_loc E F :=
+{w : one_jet E F | w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ }
 
-/-- The relation of immersions for unit spheres into a vector space. -/
-def immersion_sphere_rel : rel_loc E E' :=
-{w : one_jet E E' | w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ }
+local notation `R` := immersion_sphere_rel E F
 
-local notation `R` := immersion_sphere_rel E E'
+variables {E F}
 
-variables {E E'}
-
-lemma mem_loc_immersion_rel {w : one_jet E E'} :
-  w ∈ immersion_sphere_rel E E' ↔ w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ :=
+lemma mem_loc_immersion_rel {w : one_jet E F} :
+  w ∈ immersion_sphere_rel E F ↔ w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ :=
 iff.rfl
 
 @[simp] lemma mem_loc_immersion_rel' {x y φ} :
-  (⟨x, y, φ⟩ : one_jet E E') ∈ immersion_sphere_rel E E' ↔ x ∉ B → inj_on φ (ℝ ∙ x)ᗮ :=
+  (⟨x, y, φ⟩ : one_jet E F) ∈ immersion_sphere_rel E F ↔ x ∉ B → inj_on φ (ℝ ∙ x)ᗮ :=
 iff.rfl
 
-lemma sphere_immersion_of_sol (f : E → E') :
-  (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersion_sphere_rel E E') → sphere_immersion f :=
+lemma sphere_immersion_of_sol (f : E → F) :
+  (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersion_sphere_rel E F) → sphere_immersion f :=
 begin
   intros h x x_in,
   have : x ∉ B,
@@ -70,24 +75,29 @@ begin
   exact h x x_in this
 end
 
+lemma mem_slice_iff_of_not_mem {x : E} {w : F} {φ : E →L[ℝ] F} {p : dual_pair' E}
+  (hx : x ∉ B) (y : F) : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ :=
+begin
+  change (x ∉ B → inj_on (p.update φ w) (ℝ ∙ x)ᗮ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ,
+  simp_rw [eq_true_intro hx, true_implies_iff]
+end
+
 section assume_finite_dimensional
 
-variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
-open_locale real_inner_product_space
-open submodule
+variables [finite_dimensional ℝ E]
 
 -- The following is extracted from `loc_immersion_rel_open` because it takes forever to typecheck
-lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : E'} {φ₀ : E →L[ℝ] E'} (hx₀ : x₀ ∉ B)
+lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F} (hx₀ : x₀ ∉ B)
   (H : inj_on φ₀ (ℝ ∙ x₀)ᗮ) :
-  ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), ⟪x₀, p.1⟫ ≠ 0 ∧
+  ∀ᶠ (p : one_jet E F) in 𝓝 (x₀, y₀, φ₀), ⟪x₀, p.1⟫ ≠ 0 ∧
   injective ((p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) :=
 begin
-  -- This is true at (x₀, y₀, φ₀) and is an open condition because
-  -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
+  -- This is true at (x₀, y₀, φ₀) and is an open condition because `p ↦ ⟪x₀, p.1⟫` and
+  -- `p ↦ (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀` are continuous
   set j₀ := subtypeL (ℝ ∙ x₀)ᗮ,
-  let f : one_jet E E' → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') :=
+  let f : one_jet E F → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) :=
       λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀),
-  let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') → Prop :=
+  let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop :=
       λ q, q.1 ≠ 0 ∧ injective q.2,
   have x₀_ne : x₀ ≠ 0,
   { refine λ hx₀', hx₀ _,
@@ -95,7 +105,7 @@ begin
     apply mem_ball_self,
     norm_num },
   -- The following suffices looks stupid but is much faster than using the change tactic.
-  suffices : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+  suffices : ∀ᶠ (p : one_jet E F) in 𝓝 (x₀, y₀, φ₀), P (f p),
   { exact this },
   apply continuous_at.eventually,
   { dsimp [f, one_jet],
@@ -118,14 +128,14 @@ begin
       exact inj_on_iff_injective.mp H } }
 end
 
-lemma loc_immersion_rel_open : is_open (immersion_sphere_rel E E') :=
+lemma loc_immersion_rel_open : is_open (immersion_sphere_rel E F) :=
 begin
   dsimp only [immersion_sphere_rel],
   rw is_open_iff_mem_nhds,
   rintros ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → inj_on φ₀ (ℝ ∙ x₀)ᗮ),
-  change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), _,
+  change ∀ᶠ (p : one_jet E F) in 𝓝 (x₀, y₀, φ₀), _,
   by_cases hx₀ : x₀ ∈ B,
-  { have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
+  { have : ∀ᶠ (p : one_jet E F) in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
     { rw nhds_prod_eq,
       apply (is_open_ball.eventually_mem hx₀).prod_inl },
     apply this.mono,
@@ -133,11 +143,11 @@ begin
     exact (Hx hx).elim },
   { replace H := H hx₀,
     set j₀ := subtypeL (ℝ ∙ x₀)ᗮ,
-    let f : one_jet E E' → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') :=
+    let f : one_jet E F → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) :=
       λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀),
-    let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') → Prop :=
+    let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop :=
       λ q, q.1 ≠ 0 ∧ injective q.2,
-    have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
+    have : ∀ᶠ (p : one_jet E F) in 𝓝 (x₀, y₀, φ₀), P (f p),
     { exact loc_immersion_rel_open_aux hx₀ H },
     apply this.mono, clear this,
     rintros ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ (hx : x ∉ B),
@@ -151,23 +161,12 @@ begin
     exact function.injective.inj_on_range Hφ },
 end
 
-open submodule (hiding map_zero) inner_product_space
-
-lemma mem_slice_iff_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
-  (hx : x ∉ B) (y : E') : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ :=
-begin
-  change (x ∉ B → inj_on (p.update φ w) (ℝ ∙ x)ᗮ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ,
-  simp_rw [eq_true_intro hx, true_implies_iff]
-end
-
-lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
-  (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) (ℝ ∙ x)ᗮ} :=
-by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
+variables [finite_dimensional ℝ F]
 
 -- In the next lemma the assumption `dim E = n + 1` is for convenience
 -- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...
-lemma loc_immersion_rel_ample (n : ℕ) [fact (dim E = n+1)] (h : finrank ℝ E ≤ finrank ℝ E') :
-  (immersion_sphere_rel E E').is_ample :=
+lemma loc_immersion_rel_ample (n : ℕ) [fact (dim E = n+1)] (h : finrank ℝ E ≤ finrank ℝ F) :
+  (immersion_sphere_rel E F).is_ample :=
 begin
   classical, -- gives a minor speedup
   rw is_ample_iff,
@@ -215,7 +214,7 @@ begin
   { rw [this],
     apply ample_of_two_le_codim,
     let Φ := φ.to_linear_map,
-    suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)),
+    suffices : 2 ≤ dim (F ⧸ map Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)),
     { rw ← finrank_eq_dim,
       exact_mod_cast this },
     apply le_of_add_le_add_right,
@@ -258,16 +257,16 @@ begin
   exact hφ.injective
 end
 
-variables (E) [fact (dim E = 3)]
-
-/- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
-local notation `𝓡_imm` := immersion_sphere_rel E E
-
-variables {E} (ω : orientation ℝ E (fin 3))
+end assume_finite_dimensional
 
 /-- The main ingredient of the linear map in the formal eversion of the sphere. -/
-def loc_formal_eversion_aux_φ (t : ℝ) (x : E) : E →L[ℝ] E :=
+def loc_formal_eversion_aux_φ [fact (dim E = 3)] (ω : orientation ℝ E (fin 3))
+  (t : ℝ) (x : E) : E →L[ℝ] E :=
 ω.rot (t, x) - (2 * t) • (submodule.subtypeL (ℝ ∙ x) ∘L orthogonal_projection (ℝ ∙ x))
+
+section assume_finite_dimensional
+
+variables [fact (dim E = 3)] [finite_dimensional ℝ E] (ω : orientation ℝ E (fin 3))
 
 lemma smooth_at_loc_formal_eversion_aux_φ {p : ℝ × E} (hx : p.2 ≠ 0) :
   cont_diff_at ℝ ∞ (uncurry (loc_formal_eversion_aux_φ ω)) p :=
@@ -277,7 +276,6 @@ begin
   exact (cont_diff_at_orthogonal_projection_singleton hx).comp p cont_diff_at_snd
 end
 
-include ω
 /-- A formal eversion of `𝕊²`, viewed as a homotopy. -/
 def loc_formal_eversion_aux : htpy_jet_sec E E :=
 { f := λ (t : ℝ) (x : E), (1 - 2 * smooth_step t) • x,
@@ -327,7 +325,7 @@ keep track of a few complications:
 * We have to make sure the family of continuous linear map is smooth at `x = 0`. Therefore, we
   multiply the family with a factor of `smooth_step (∥x∥ ^ 2)`.
 -/
-def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
+def loc_formal_eversion : htpy_formal_sol (immersion_sphere_rel E E) :=
 { is_sol := begin
     intros t x,
     change x ∉ B →
@@ -442,7 +440,7 @@ begin
   (by simp : ({0, 1} : set ℝ).finite).is_closed,
   obtain ⟨f, h₁, h₂, h₃⟩ :=
     (loc_formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
-    zero_lt_one ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod is_closed_sphere) 𝕊² (is_compact_sphere 0 1)
+    ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod is_closed_sphere) 𝕊² (is_compact_sphere 0 1)
     (loc_formal_eversion_hol ω),
   refine ⟨f, h₁, _, _, _⟩,
   { intros x hx, rw [h₂ (0, x) (mk_mem_prod (by simp) hx), loc_formal_eversion_zero] },

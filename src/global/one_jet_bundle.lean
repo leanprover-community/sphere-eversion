@@ -356,9 +356,11 @@ begin
     exact this.one_jet_bundle_mk hg.one_jet_bundle_proj.fst hDfinv },
 end
 
+/-- The projection `J¹(E × P, F) → J¹(E, F)`. Not actually used. -/
 def bundle_fst : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle J N I' M' :=
 map_left prod.fst $ λ x, continuous_linear_map.inl 𝕜 F E
 
+/-- The projection `J¹(P × E, F) → J¹(E, F)`. -/
 def bundle_snd : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle I M I' M' :=
 map_left prod.snd $ λ x, mfderiv I (J.prod I) (λ y, (x.1, y)) x.2
 

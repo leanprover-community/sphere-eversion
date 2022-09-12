@@ -23,12 +23,15 @@ section parameter_space
 variables
 {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-{G : Type*} [normed_add_comm_group G] [normed_space ℝ G] -- `G` will be ℝ in the application
+-- `G` will be `ℝ` in the proof of the parametric h-principle.
+-- It indicates the homotopy variable `t`.
+{G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
 {P : Type*} [normed_add_comm_group P] [normed_space ℝ P]
 
 
 variables {R : rel_loc E F}
 
+/-- The projection `J¹(P × E, F) → J¹(E, F)`. -/
 def one_jet_snd : one_jet (P × E) F → one_jet E F :=
 λ p, (p.1.2, p.2.1, p.2.2 ∘L fderiv ℝ (λ y, (p.1.1, y)) p.1.2)
 
@@ -42,7 +45,8 @@ lemma one_jet_snd_eq (p : one_jet (P × E) F) :
 by simp_rw [one_jet_snd, fderiv_prod_right]
 
 variables (P)
-/-- The relation `𝓡 ^ P` -/
+/-- The relation `R.relativize P` (`𝓡 ^ P` in the blueprint) is the relation on `J¹(P × E, F)`
+induced by `R`. -/
 def rel_loc.relativize (R : rel_loc E F) : rel_loc (P × E) F :=
 one_jet_snd ⁻¹' R
 variables {P}
@@ -121,7 +125,6 @@ end
 
 variables {P}
 
-
 /-- Turn a family of sections of `J¹(E, E')` parametrized by `P` into a section of `J¹(P × E, E')`.
 -/
 @[simps]
@@ -179,6 +182,8 @@ begin
   refl
 end
 
+/-- Turn a family of formal solutions of `R ⊆ J¹(E, E')` parametrized by `P` into a formal solution
+of `R.relativize P`. -/
 def rel_loc.family_formal_sol.uncurry (S : R.family_formal_sol P) : formal_sol (R.relativize P) :=
 begin
   refine ⟨S.to_family_jet_sec.uncurry, _⟩,
@@ -191,6 +196,8 @@ lemma rel_loc.family_formal_sol.uncurry_φ' (S : R.family_formal_sol P) (p : P �
   S.φ p.1 p.2 ∘L continuous_linear_map.snd ℝ P E :=
 S.to_family_jet_sec.uncurry_φ' p
 
+/-- Turn a family of sections of `J¹(P × E, F)` parametrized by `G` into a family of sections of
+`J¹(E, F)` parametrized by `G × P`. -/
 def family_jet_sec.curry (S : family_jet_sec (P × E) F G) :
   family_jet_sec E F (G × P) :=
 { f := λ p x, (S p.1).f (p.2, x),
@@ -243,6 +250,8 @@ begin
   exact hR
 end
 
+/-- Turn a family of formal solutions of `R.relativize P` parametrized by `G` into a family of
+formal solutions of `R` parametrized by `G × P`. -/
 def rel_loc.family_formal_sol.curry (S : family_formal_sol G (R.relativize P)) :
   family_formal_sol (G × P) R :=
 ⟨S.to_family_jet_sec.curry, λ p x, S.to_family_jet_sec.curry_mem (S.is_sol _ _)⟩
@@ -282,12 +291,13 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dim
           {P : Type*} [normed_add_comm_group P] [normed_space ℝ P] [finite_dimensional ℝ P]
 
 variables {R : rel_loc E F} (h_op: is_open R) (h_ample: R.is_ample) (L : landscape E)
-variables {ε : ℝ} (ε_pos : 0 < ε)
-variables (C : set (P × E)) (hC : is_closed C) (K : set (P × E)) (hK : is_compact K)
-include h_op h_ample ε_pos hC hK
+include h_op h_ample
 
 /- The local parametric h-principle. -/
-lemma rel_loc.family_formal_sol.improve_htpy (𝓕₀ : family_formal_sol P R)
+lemma rel_loc.family_formal_sol.improve_htpy
+  {ε : ℝ} (ε_pos : 0 < ε)
+  (C : set (P × E)) (hC : is_closed C) (K : set (P × E)) (hK : is_compact K)
+  (𝓕₀ : family_formal_sol P R)
   (h_hol : ∀ᶠ (p : P × E) near C, (𝓕₀ p.1).is_holonomic_at p.2) :
   ∃ 𝓕 : family_formal_sol (ℝ × P) R,
     (∀ s x, 𝓕 (0, s) x = 𝓕₀ s x) ∧
@@ -315,11 +325,14 @@ begin
   { refine h₅.mono _, rintros ⟨s, x⟩ hp, exact 𝓕.to_family_jet_sec.is_holonomic_at_curry hp }
 end
 
-omit hC hK
 open filter
 open_locale unit_interval
 
-/- The minimal consequences we get from the h-principle sufficient to prove sphere eversion. -/
+/--
+A corollary of the local parametric h-principle, forgetting the homotopy and `ε`-closeness,
+and just stating the existence of a solution that is holonomic near `K`.
+Furthermore, we assume that `P = ℝ` and `K` is of the form `compact set × I`.
+This is sufficient to prove sphere eversion. -/
 lemma rel_loc.htpy_formal_sol.exists_sol (𝓕₀ : R.htpy_formal_sol)
   (C : set (ℝ × E)) (hC : is_closed C) (K : set E) (hK : is_compact K)
   (h_hol : ∀ᶠ (p : ℝ × E) near C, (𝓕₀ p.1).is_holonomic_at p.2) :
@@ -329,7 +342,7 @@ lemma rel_loc.htpy_formal_sol.exists_sol (𝓕₀ : R.htpy_formal_sol)
     (∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R) :=
 begin
   obtain ⟨𝓕, h₁, h₂, -, h₄⟩ :=
-    𝓕₀.improve_htpy h_op h_ample ε_pos C hC (I ×ˢ K) (is_compact_Icc.prod hK) h_hol,
+    𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (is_compact_Icc.prod hK) h_hol,
   refine ⟨λ s, (𝓕 (1, s)).f, _, _, _⟩,
   { exact 𝓕.f_diff.comp ((cont_diff_const.prod cont_diff_id).prod_map cont_diff_id) },
   { intros p hp, exact (prod.ext_iff.mp (h₂.nhds_set_forall_mem p hp 1)).1 },
