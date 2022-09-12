@@ -12,7 +12,28 @@ import notations
 import loops.basic
 import local.dual_pair
 
-notation `∂₁` := partial_fderiv_fst ℝ
+/-! # Theillière's corrugation operation
+
+This files introduces the fundamental calculus tool of convex integration. The version of convex
+integration that we formalize is Theillière's corrugation-based convex integration.
+It improves a map `f : E → F` by adding to it some corrugation map
+`λ x, (1/N) • ∫ t in 0..(N*π x), (γ x t - (γ x).average)` where `γ` is a family of loops in
+`F` parametrized by `E` and `N` is some (very large) real number.
+
+Under the assumption that `∀ x, (γ x).average = D f x p.v` for some dual pair `p`, this improved
+map will have a derivative which is almost a value of `γ x` in direction `p.v` and almost the
+derivative of `f` in direction `ker p.π`. More precisely, its derivative will be almost
+`p.update (D f x) (γ x (N*p.π x))`. In addition the improved map will be very close to `f`
+in C⁰ topology. All those "almost" and "very close" refer to the asymptotic behavior when `N`
+is very large.
+
+The main definition is `corrugation`. The main results are:
+* `fderiv_corrugated_map` computing the difference between `D (f + corrugation p.π N γ) x` and
+    `p.update (D f x) (γ x (N*p.π x)) + corrugation.remainder p.π N γ x`
+* `remainder_c0_small_on` saying this difference is very small
+* `corrugation.c0_small_on` saying that corrugations are C⁰-small
+
+-/
 
 noncomputable theory
 
@@ -21,12 +42,13 @@ open set function finite_dimensional asymptotics filter topological_space int me
 open_locale topological_space unit_interval
 
 
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
-          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
-          [finite_dimensional ℝ F]
-          {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
-          {H : Type*} [normed_add_comm_group H] [normed_space ℝ H] [finite_dimensional ℝ H]
-          {π : E →L[ℝ] ℝ} (N : ℝ) (γ : E → loop F)
+variables
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
+    [finite_dimensional ℝ F]
+  {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
+  {H : Type*} [normed_add_comm_group H] [normed_space ℝ H] [finite_dimensional ℝ H]
+  {π : E →L[ℝ] ℝ} (N : ℝ) (γ : E → loop F)
 
 
 /-- Theillière's corrugations. -/
@@ -35,6 +57,7 @@ def corrugation (π : E →L[ℝ] ℝ) (N : ℝ) (γ : E → loop F) : E → F :
 
 local notation `𝒯` := corrugation π
 
+/-- The integral appearing in corrugations is periodic. -/
 lemma per_corrugation (γ : loop F) (hγ : ∀ s t, interval_integrable γ volume s t) :
   one_periodic (λ s, ∫ t in 0..s, γ t - γ.average) :=
 begin
@@ -111,11 +134,6 @@ end
 
 variables {γ}
 
-lemma corrugation.cont_diff [finite_dimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-  𝒞 n (𝒯 N γ) :=
-(cont_diff_parametric_primitive_of_cont_diff
-  (cont_diff_sub_average hγ_diff) (π.cont_diff.const_smul N) 0).const_smul _
-
 lemma corrugation.cont_diff' {n : ℕ∞} {γ : G → E → loop F} (hγ_diff : 𝒞 n ↿γ)
   {x : H → E} (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) :
   𝒞 n (λ h, 𝒯 N (γ $ g h) $ x h) :=
@@ -129,6 +147,13 @@ begin
   { apply cont_diff_const.mul (π.cont_diff.comp hx) },
 end
 
+lemma corrugation.cont_diff [finite_dimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
+  𝒞 n (𝒯 N γ) :=
+(cont_diff_parametric_primitive_of_cont_diff
+  (cont_diff_sub_average hγ_diff) (π.cont_diff.const_smul N) 0).const_smul _
+
+notation `∂₁` := partial_fderiv_fst ℝ
+
 /--
 The remainder appearing when differentiating a corrugation.
 -/
@@ -137,7 +162,7 @@ def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E →
 
 local notation `R` := corrugation.remainder π
 
-variables [finite_dimensional ℝ E]
+variable [finite_dimensional ℝ E]
 
 lemma remainder_eq (N : ℝ) {γ : E → loop F} (h : 𝒞 1 ↿γ) :
 R N γ = λ x, (1/N) • ∫ t in 0..(N*π x), (loop.diff γ x).normalize t :=
