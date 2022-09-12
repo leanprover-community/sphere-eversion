@@ -24,7 +24,8 @@ At the end of the file we consider 1-jet sections and slices corresponding to po
 
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-
+variables {X : Type*} [inner_product_space ℝ X]
+variables {R : rel_loc E F}
 open set
 
 /-! ## Slices and ampleness -/
@@ -43,7 +44,7 @@ iff.rfl
 def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
 ample_set (R.slice p θ)
 
-lemma is_ample.mem_hull {R : rel_loc E F} (h : is_ample R) {θ : E × F × (E →L[ℝ] F)}
+lemma is_ample.mem_hull (h : is_ample R) {θ : E × F × (E →L[ℝ] F)}
   (hθ : θ ∈ R) (v : F) (p) : v ∈ hull (connected_component_in (R.slice p θ) (θ.2.2 p.v)) :=
 begin
   rw h p θ (θ.2.2 p.v),
@@ -52,7 +53,7 @@ begin
   exact hθ
 end
 
-lemma slice_update {R : rel_loc E F} {θ : E × F × (E →L[ℝ] F)}
+lemma slice_update {θ : E × F × (E →L[ℝ] F)}
   {p : dual_pair' E} (x : F) :
   R.slice p (θ.1, θ.2.1, (p.update θ.2.2 x)) = R.slice p θ :=
 begin
@@ -62,7 +63,7 @@ begin
 end
 
 /-- In order to check ampleness, it suffices to consider slices through elements of the relation. -/
-lemma is_ample_iff {R : rel_loc E F} : R.is_ample ↔
+lemma is_ample_iff : R.is_ample ↔
   ∀ ⦃θ : one_jet E F⦄ (p : dual_pair' E), θ ∈ R → ample_set (R.slice p θ) :=
 begin
   simp_rw [is_ample],
@@ -73,10 +74,9 @@ begin
   exact this w hw
 end
 
-
 open_locale pointwise
 
-lemma slice_of_ker_eq_ker {R : rel_loc E F} {θ : one_jet E F}
+lemma slice_of_ker_eq_ker {θ : one_jet E F}
   {p p' : dual_pair' E} (hpp' : p.π = p'.π) :
   R.slice p θ = θ.2.2 (p.v - p'.v) +ᵥ R.slice p' θ :=
 begin
@@ -93,12 +93,27 @@ begin
   rw this,
 end
 
-lemma ample_slice_of_ample_slice {R : rel_loc E F} {θ : one_jet E F}
+lemma ample_slice_of_ample_slice {θ : one_jet E F}
   {p p' : dual_pair' E} (hpp' : p.π = p'.π) (h : ample_set (R.slice p θ)) :
   ample_set (R.slice p' θ) :=
 begin
   rw slice_of_ker_eq_ker hpp'.symm,
   exact ample_set.vadd h
+end
+
+lemma ample_slice_of_forall (R : rel_loc E F) {x y φ} (p : dual_pair' E)
+  (h : ∀ w, (x, y, p.update φ w) ∈ R) : ample_set (R.slice p (x, y, φ)) :=
+begin
+  rw show R.slice p (x, y, φ) = univ, from eq_univ_of_forall h,
+  exact ample_set_univ
+end
+
+-- unused
+lemma ample_slice_of_forall_not (R : rel_loc E F) {x y φ} (p : dual_pair' E)
+  (h : ∀ w, (x, y, p.update φ w) ∉ R) : ample_set (R.slice p (x, y, φ)) :=
+begin
+  rw show R.slice p (x, y, φ) = ∅, from eq_empty_iff_forall_not_mem.mpr h,
+  exact ample_set_empty
 end
 
 end rel_loc

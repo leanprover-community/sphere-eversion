@@ -78,36 +78,6 @@ variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 open_locale real_inner_product_space
 open submodule
 
-lemma function.injective.inj_on_range {α β γ : Type*} {j : α → β} {φ : β → γ}
-  (h : injective $ φ ∘ j) : inj_on φ (range j) :=
-begin
-  rintros - ⟨x, rfl⟩ - ⟨y, rfl⟩ H,
-  exact congr_arg j (h H)
-end
-
-lemma set.range_comp_of_surj {α β γ : Type*} {f : α → β} (hf : surjective f) (g : β → γ) :
-  range (g ∘ f) = range g :=
-begin
-  ext c,
-  rw [mem_range, mem_range],
-  split,
-  { rintros ⟨a, rfl⟩,
-    exact ⟨f a, rfl⟩ },
-  { rintros ⟨b, rfl⟩,
-    rcases hf b with ⟨a, rfl⟩,
-    exact ⟨a, rfl⟩ }
-end
-
-lemma continuous_at.eventually {α β : Type*} [topological_space α] [topological_space β] {f : α → β}
-  {a₀ : α} (hf : continuous_at f a₀) (P : β → Prop) (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
-  ∀ᶠ a in 𝓝 a₀, P (f a) :=
-hf (is_open_iff_mem_nhds.mp hP _ ha₀)
-
-lemma continuous.eventually {α β : Type*} [topological_space α] [topological_space β] {f : α → β}
-  {a₀ : α} (hf : continuous f) (P : β → Prop) (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
-  ∀ᶠ a in 𝓝 a₀, P (f a) :=
-hf.continuous_at.eventually P hP ha₀
-
 -- The following is extracted from `loc_immersion_rel_open` because it takes forever to typecheck
 lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : E'} {φ₀ : E →L[ℝ] E'} (hx₀ : x₀ ∉ B)
   (H : inj_on φ₀ (ℝ ∙ x₀)ᗮ) :
@@ -130,8 +100,7 @@ begin
   suffices : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
   { exact this },
   apply continuous_at.eventually,
-  {
-    dsimp [f, one_jet],
+  { dsimp [f, one_jet],
     apply continuous_at.prod,
     exact (continuous_const.inner continuous_fst).continuous_at,
     apply continuous_at.compL,
@@ -141,7 +110,6 @@ begin
       apply continuous_at.comp _ continuous_at_fst,
       exact continuous_at_orthogonal_projection_orthogonal x₀_ne },
     exact continuous_at_const },
-
   { exact (continuous_fst.is_open_preimage _ is_open_compl_singleton).inter
           (continuous_snd.is_open_preimage _ continuous_linear_map.is_open_injective) },
   { split,
@@ -178,51 +146,25 @@ begin
     dsimp only [P, f] at Hφ,
     change inj_on φ (ℝ ∙ x)ᗮ,
     have : range ((subtypeL (ℝ ∙ x)ᗮ) ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ,
-    { rw set.range_comp_of_surj,
+    { rw function.surjective.range_comp,
       exact subtype.range_coe,
       exact (orthogonal_projection_orthogonal_line_iso hxx₀).surjective },
     rw ← this, clear this,
     exact function.injective.inj_on_range Hφ },
 end
 
-local notation `S` := (immersion_sphere_rel E E').slice
-
-
-lemma rel_loc.ample_slice_of_forall {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] {F : Type*}
-  [normed_add_comm_group F] [normed_space ℝ F] (Rel : rel_loc E F) {x y φ} (p : dual_pair' E)
-  (h : ∀ w, (x, y, p.update φ w) ∈ Rel) : ample_set (Rel.slice p (x, y, φ)) :=
-begin
-  rw show Rel.slice p (x, y, φ) = univ, from eq_univ_of_forall h,
-  exact ample_set_univ
-end
-
-lemma rel_loc.ample_slice_of_forall_not {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] {F : Type*}
-  [normed_add_comm_group F] [normed_space ℝ F] (Rel : rel_loc E F) {x y φ} (p : dual_pair' E)
-  (h : ∀ w, (x, y, p.update φ w) ∉ Rel) : ample_set (Rel.slice p (x, y, φ)) :=
-begin
-  rw show Rel.slice p (x, y, φ) = ∅, from eq_empty_iff_forall_not_mem.mpr h,
-  exact ample_set_empty
-end
-
-open submodule (hiding map_zero) rel_loc
+open submodule (hiding map_zero) inner_product_space
 
 lemma mem_slice_iff_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
   (hx : x ∉ B) (y : E') : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ :=
 begin
-  change (x ∉ ball (0 : E) 0.9 → inj_on (p.update φ w) (ℝ ∙ x)ᗮ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ,
-  simp [hx]
+  change (x ∉ B → inj_on (p.update φ w) (ℝ ∙ x)ᗮ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ,
+  simp_rw [eq_true_intro hx, true_implies_iff]
 end
 
 lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
   (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) (ℝ ∙ x)ᗮ} :=
 by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
-
-open inner_product_space
-
-@[simp] lemma subtypeL_apply' {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
-  [add_comm_monoid M₁] [module R₁ M₁] (p : submodule R₁ M₁) (x : p) :
-  (subtypeL p : p →ₗ[R₁] M₁) x = x :=
-rfl
 
 -- In the next lemma the assumption `dim E = n + 1` is for convenience
 -- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...

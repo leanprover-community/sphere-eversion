@@ -39,7 +39,16 @@ lemma abs_le_abs_of_nonpos {α : Type*} [add_comm_group α] [linear_order α]
 by { rw [abs_of_nonpos ha, abs_of_nonpos (hab.trans ha)], exact neg_le_neg_iff.mpr hab }
 
 namespace set
-variables {α β : Type*}
+variables {α β γ : Type*}
+
+
+lemma function.injective.inj_on_range {j : α → β} {φ : β → γ}
+  (h : injective $ φ ∘ j) : inj_on φ (range j) :=
+begin
+  rintros - ⟨x, rfl⟩ - ⟨y, rfl⟩ H,
+  exact congr_arg j (h H)
+end
+
 
 /- to data.set.finite -/
 lemma finite_of_finite_preimage {s : set β} {f : α → β} (h : (f ⁻¹' s).finite)

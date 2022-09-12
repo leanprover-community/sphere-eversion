@@ -32,6 +32,17 @@ section
 
 variables {α β : Type*} [topological_space α] [topological_space β]
 
+
+lemma continuous_at.eventually {f : α → β} {a₀ : α} (hf : continuous_at f a₀)
+  (P : β → Prop) (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
+  ∀ᶠ a in 𝓝 a₀, P (f a) :=
+hf (is_open_iff_mem_nhds.mp hP _ ha₀)
+
+lemma continuous.eventually {f : α → β} {a₀ : α} (hf : continuous f) (P : β → Prop)
+  (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
+  ∀ᶠ a in 𝓝 a₀, P (f a) :=
+hf.continuous_at.eventually P hP ha₀
+
 -- (unused)
 lemma nhds_set_prod_le {s : set α} {t : set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).prod (𝓝ˢ t) :=
 begin
@@ -428,7 +439,7 @@ variables {α β γ : Type*} [topological_space α] [topological_space β] [topo
 lemma is_compact.eventually_forall_mem {x₀ : α} {K : set β} (hK : is_compact K)
   {f : α → β → γ} (hf : continuous ↿f) {U : set γ} (hU : ∀ y ∈ K, U ∈ 𝓝 (f x₀ y)) :
   ∀ᶠ x in 𝓝 x₀, ∀ y ∈ K, f x y ∈ U :=
-hK.eventually_forall_of_forall_eventually $ λ y hy, hf.continuous_at.eventually $
+hK.eventually_forall_of_forall_eventually $ λ y hy, (hf.tendsto _).eventually $
   show U ∈ 𝓝 (↿f (x₀, y)), from hU y hy
 
 end
