@@ -8,9 +8,12 @@ import interactive_expr
 /-!
 This is file proves the existence of a sphere eversion from the local verson of the h-principle.
 Contents:
-relation of immersions
-formal solution of sphere eversion
-sphere eversion
+* relation of immersions `immersion_sphere_rel` that is open and ample.
+* formal solution of sphere eversion
+  - we define a formal solution of sphere eversion. We have to be careful since we're not actually
+    working on the sphere, but in the ambient space `E ≃ ℝ³`.
+    See `loc_formal_eversion` for the considerations into the solution.
+* We obtain sphere eversion from the parametric h-principle in `local.parametric_h_principle`.
 -/
 noncomputable theory
 
@@ -327,6 +330,7 @@ lemma is_closed_pair : is_closed ({0, 1} : set ℝ) :=
 
 variables {E} (ω : orientation ℝ E (fin 3))
 
+/-- The main ingredient of the linear map in the formal eversion of the sphere. -/
 def loc_formal_eversion_aux_φ (t : ℝ) (x : E) : E →L[ℝ] E :=
 ω.rot (t, x) - (2 * t) • (submodule.subtypeL (Δ x) ∘L orthogonal_projection (Δ x))
 
@@ -339,6 +343,7 @@ begin
 end
 
 include ω
+/-- A formal eversion of `𝕊²`, viewed as a homotopy. -/
 def loc_formal_eversion_aux : htpy_jet_sec E E :=
 { f := λ (t : ℝ) (x : E), (1 - 2 * smooth_step t) • x,
   φ := λ t x, smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x,
@@ -373,7 +378,20 @@ def loc_formal_eversion_aux : htpy_jet_sec E E :=
       (smooth_step.smooth.prod_map cont_diff_id).cont_diff_at,
      end }
 
-/-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
+/-- A formal eversion of `𝕊²` into its ambient Euclidean space.
+The corresponding map `E → E` is roughly a linear homotopy from `id` at `t = 0` to `- id` at
+`t = 1`. The continuous linear maps are roughly rotations with angle `t * π`. However, we have to
+keep track of a few complications:
+* We need the formal solution to be holonomic near `0` and `1`.
+  Therefore, we compose the above maps with a smooth step function that is constant `0` near `t = 0`
+  and constant `1` near `t = 1`.
+* We need to modify the derivative of `ω.rot` to also have the right behavior on `(ℝ ∙ x)`
+  at `t = 1` (it is the identity, but it should be `-id`). Therefore, we subtract
+  `(2 * t) • (submodule.subtypeL (Δ x) ∘L orthogonal_projection (Δ x))`,
+  which is `2t` times the identity on `(ℝ ∙ x)`.
+* We have to make sure the family of continuous linear map is smooth at `x = 0`. Therefore, we
+  multiply the family with a factor of `smooth_step (∥x∥ ^ 2)`.
+-/
 def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
 { is_sol := begin
     intros t x,
