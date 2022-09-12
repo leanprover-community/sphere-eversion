@@ -285,8 +285,7 @@ end parameter_space
 section parametric_h_principle
 
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
-          [finite_dimensional ℝ F]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
           {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
           {P : Type*} [normed_add_comm_group P] [normed_space ℝ P] [finite_dimensional ℝ P]
 
