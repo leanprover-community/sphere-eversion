@@ -1,8 +1,8 @@
 import measure_theory.integral.interval_integral
 import measure_theory.group.integration
 import analysis.calculus.specific_functions
+import analysis.convolution
 
-import to_mathlib.convolution
 import to_mathlib.data.real_basic
 import to_mathlib.topology.periodic
 
