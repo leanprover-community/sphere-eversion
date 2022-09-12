@@ -1,6 +1,7 @@
 import analysis.inner_product_space.calculus
 import analysis.inner_product_space.l2_space
 import analysis.calculus.affine_map
+import to_mathlib.logic.equiv.local_equiv
 
 variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
@@ -40,11 +41,6 @@ begin
   simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel, mem_ball_zero_iff,
     norm_smul, real.norm_eq_abs, abs_eq_self.2 (inv_pos.mpr hr).le, hy],
 end
-
-lemma local_equiv.range_eq_target_of_source_eq_univ {α β : Type*}
-  (e : local_equiv α β) (h : e.source = univ) :
-  range e = e.target :=
-by { rw [← image_univ, ← h], exact e.image_source_eq_target, }
 
 namespace inner_product_space
 
