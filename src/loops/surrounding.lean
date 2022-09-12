@@ -9,6 +9,27 @@ import to_mathlib.order.filter.eventually_constant
 
 /-!
 # Surrounding families of loops
+
+In order to carry out the corrugation technique of convex integration, one needs to a family of
+loops with various prescribed properties.
+
+This file begins the work of constructing such a family.
+
+The key definitions are:
+ * `surrounded`
+ * `surrounding_pts`
+ * `surrounding_family`
+
+The key results are:
+ * `surrounded_iff_mem_interior_convex_hull_aff_basis`
+ * `surrounded_of_convex_hull`
+ * `smooth_surrounding`
+ * `eventually_surrounding_pts_of_tendsto_of_tendsto`
+ * `surrounding_loop_of_convex_hull`
+ * `local_loops`
+ * `satisfied_or_refund`
+ * `extend_loops`
+ * `exists_surrounding_loops`
 -/
 
 open set function finite_dimensional int prod function path filter topological_space
