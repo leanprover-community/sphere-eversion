@@ -137,7 +137,8 @@ end
 
 /-- For `x` and `y` in a real vector space, if `x ≠ 0` and `0` is in the segment from
 `x` to `y` then `y` is on the line spanned by `x`.  -/
-lemma mem_span_of_zero_mem_segment {x y : F} (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) :
+lemma mem_span_of_zero_mem_segment {F : Type*} [add_comm_group F] [module ℝ F]
+  {x y : F} (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) :
   y ∈ submodule.span ℝ ({x} : set F) :=
 begin
   rw segment_eq_image at h,
@@ -233,8 +234,7 @@ is_preconnected.connected_component_in (is_connected_compl_of_two_le_codim hcodi
 
 /-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
 least two then its complement is ample. -/
-lemma ample_of_two_le_codim [topological_add_group F] [has_continuous_smul ℝ F]
-  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
+lemma ample_of_two_le_codim {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   ample_set (Eᶜ : set F) :=
 begin
   haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
