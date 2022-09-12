@@ -6,6 +6,7 @@ import to_mathlib.topology.paracompact
 import to_mathlib.topology.local_homeomorph
 import to_mathlib.topology.algebra.order.compact
 import to_mathlib.geometry.manifold.charted_space
+import to_mathlib.geometry.manifold.smooth_manifold_with_corners
 import to_mathlib.analysis.normed_space.misc
 
 noncomputable theory
