@@ -6,7 +6,7 @@ import to_mathlib.analysis.cut_off
 import loops.exists
 
 import local.corrugation
-import local.relation
+import local.ample_relation
 
 /-!
 # Local h-principle for open and ample relations

@@ -6,8 +6,6 @@ import to_mathlib.topology.nhds_set
 import to_mathlib.topology.hausdorff_distance
 import to_mathlib.linear_algebra.basic
 
-import local.dual_pair
-import local.ample
 import notations
 
 /-!
@@ -26,8 +24,6 @@ construct will be constant for `t ≤ 0` and `t ≥ 1`. It looks like this impos
 constraints at `t = 0` and `t = 1` (requiring flat functions), but this is needed for smooth
 concatenations anyway.
 
-This file also defines the ampleness conditions for these relations. Together with openness,
-this will guarantee the h-principle (in some other file).
 -/
 
 noncomputable theory
@@ -53,80 +49,6 @@ variables {E F}
 
 namespace rel_loc
 
-/-- The slice of a local relation `R : rel_loc E F` for a dual pair `p` at a jet `θ` is
-the set of `w` in `F` such that updating `θ` using `p` and `w` leads to a jet in `R`. -/
-def slice (R : rel_loc E F) (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)) : set F :=
-{w | (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R}
-
-lemma mem_slice (R : rel_loc E F) {p : dual_pair' E} {θ : E × F × (E →L[ℝ] F)} {w : F} :
-  w ∈ R.slice p θ ↔ (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R :=
-iff.rfl
-
-/-- A relation is ample if all its slices are ample. -/
-def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
-ample_set (R.slice p θ)
-
-/- FIXME: the proof below is awful. -/
-lemma is_ample.mem_hull {R : rel_loc E F} (h : is_ample R) {θ : E × F × (E →L[ℝ] F)}
-  (hθ : θ ∈ R) (v : F) (p) : v ∈ hull (connected_component_in (R.slice p θ) (θ.2.2 p.v)) :=
-begin
-  rw h p θ (θ.2.2 p.v) _,
-  exact mem_univ _,
-  dsimp [rel_loc.slice],
-  rw p.update_self,
-  cases θ,
-  cases θ_snd,
-  exact hθ
-end
-
-lemma slice_update {R : rel_loc E F} {θ : E × F × (E →L[ℝ] F)}
-  {p : dual_pair' E} (x : F) :
-  R.slice p (θ.1, θ.2.1, (p.update θ.2.2 x)) = R.slice p θ :=
-begin
-  ext1 w,
-  dsimp [slice],
-  rw [p.update_update]
-end
-
-/-- In order to check ampleness, it suffices to consider slices through elements of the relation. -/
-lemma is_ample_iff {R : rel_loc E F} : R.is_ample ↔
-  ∀ ⦃θ : one_jet E F⦄ (p : dual_pair' E), θ ∈ R → ample_set (R.slice p θ) :=
-begin
-  simp_rw [is_ample],
-  refine ⟨λ h θ p hθ, h p θ, λ h p θ w hw, _⟩,
-  dsimp [slice] at hw,
-  have := h p hw,
-  rw [slice_update] at this,
-  exact this w hw
-end
-
-
-open_locale pointwise
-
-lemma slice_of_ker_eq_ker {R : rel_loc E F} {θ : one_jet E F}
-  {p p' : dual_pair' E} (hpp' : p.π = p'.π) :
-  R.slice p θ = θ.2.2 (p.v - p'.v) +ᵥ R.slice p' θ :=
-begin
-  rcases θ with ⟨x, y, φ⟩,
-  have key : ∀ w, p'.update φ w = p.update φ (w + φ (p.v - p'.v)),
-  { intros w,
-    simp only [dual_pair'.update, hpp', map_sub, add_right_inj],
-    congr' 2,
-    abel },
-  ext w,
-  simp only [slice, mem_set_of_eq, map_sub, vadd_eq_add, mem_vadd_set_iff_neg_vadd_mem, key],
-  have : -(φ p.v - φ p'.v) + w + (φ p.v - φ p'.v) = w,
-  abel,
-  rw this,
-end
-
-lemma ample_slice_of_ample_slice {R : rel_loc E F} {θ : one_jet E F}
-  {p p' : dual_pair' E} (hpp' : p.π = p'.π) (h : ample_set (R.slice p θ)) :
-  ample_set (R.slice p' θ) :=
-begin
-  rw slice_of_ker_eq_ker hpp'.symm,
-  exact ample_set.vadd h
-end
 
 /-- A solution to a local relation `R`. -/
 @[ext] structure sol (R : rel_loc E F) :=
@@ -205,14 +127,6 @@ variables  {R : rel_loc E F}
 lemma formal_sol.eq_iff {𝓕 𝓕' : formal_sol R} {x : E} :
   𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
 jet_sec.eq_iff
-
-/-- The slice associated to a jet section and a dual pair at some point. -/
-def slice_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : set F :=
-R.slice p (x, 𝓕.f x, 𝓕.φ x)
-
-/-- The slice associated to a formal solution and a dual pair at some point. -/
-def _root_.rel_loc.formal_sol.slice_at (𝓕 : formal_sol R) (p : dual_pair' E) (x : E) : set F :=
-R.slice p (x, 𝓕.f x, 𝓕.φ x)
 
 /-- A jet section `𝓕` is holonomic if its linear map part at `x`
 is the derivative of its function part at `x`. -/
@@ -302,22 +216,6 @@ begin
 end
 
 
-lemma mem_slice (𝓕 : formal_sol R) (p : dual_pair' E) {x : E} :
-  𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
-by simpa [rel_loc.formal_sol.slice_at, rel_loc.slice] using  𝓕.is_sol x
-
-/-- A formal solution `𝓕` is short for a dual pair `p` at a point `x` if the derivative of
-the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
-corresponding slice. -/
-def is_short_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : Prop :=
-D 𝓕.f x p.v ∈ hull (connected_component_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v)
-
-def _root_.rel_loc.formal_sol.is_short_at (𝓕 : formal_sol R)(p : dual_pair' E) (x : E) : Prop :=
-D 𝓕.f x p.v ∈ hull (connected_component_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
-
-lemma _root_.rel_loc.is_ample.is_short_at {R : rel_loc E F} (hR : is_ample R) (𝓕 : formal_sol R) (p : dual_pair' E)
-  (x : E) : 𝓕.is_short_at p x :=
-hR.mem_hull (𝓕.is_sol x) _ p
 
 end rel_loc.jet_sec
 
@@ -469,42 +367,6 @@ begin
     rw if_neg hp,
     refl }
 end
-/- begin
-  have c3 : ∀ {n}, 𝒞 n (λ t : ℝ, 2 * t) :=
-  λ n, cont_diff_const.mul cont_diff_id,
-  have c4 : ∀ {n}, 𝒞 n ↿(λ t : ℝ, 2 * t - 1) :=
-  λ n, (cont_diff_const.mul cont_diff_id).sub cont_diff_const,
-  have c5 : ∀ {n}, 𝒞 n (λ t, smooth_step $ 2 * t) :=
-  λ n, smooth_transition.cont_diff.comp c3,
-  have c6 : ∀ {n}, 𝒞 n ↿(λ t, smooth_step $ 2*t - 1) :=
-  λ n, smooth_transition.cont_diff.comp c4,
-  have h1 : ∀ {n}, 𝒞 n ↿(λ t, f (smooth_step $ 2*t)) :=
-  λ n, hf.comp₂ c5.fst' cont_diff_snd,
-  have h2 : ∀ {n}, 𝒞 n ↿(λ t, g (smooth_step $ 2*t - 1)) :=
-  λ n, hg.comp₂ c6.fst' cont_diff_snd,
-  refine h1.if_le_of_fderiv h2 cont_diff_fst cont_diff_const _,
-  rintro ⟨t, x⟩ n ht,
-  dsimp only at ht,
-  subst ht,
-  simp [has_uncurry.uncurry],
-  cases n,
-  { simp [iterated_fderiv_zero_eq_comp, hfg], },
-  rw [iterated_fderiv_of_partial, iterated_fderiv_of_partial],
-  { simp [has_uncurry.uncurry, hfg],
-    congr' 1,
-    refine (iterated_fderiv_comp (hf.comp₂ cont_diff_id cont_diff_const) c5 _).trans _,
-    convert continuous_multilinear_map.comp_zero _,
-    { ext1 i, refine (iterated_fderiv_comp smooth_transition.cont_diff c3 _).trans _,
-      convert continuous_multilinear_map.zero_comp _, simp },
-    refine (iterated_fderiv_comp (hg.comp₂ cont_diff_id cont_diff_const) c6 _).trans _,
-    convert continuous_multilinear_map.comp_zero _,
-    { ext1 i, refine (iterated_fderiv_comp smooth_transition.cont_diff c4 _).trans _,
-      convert continuous_multilinear_map.zero_comp _, simp [has_uncurry.uncurry] } },
-  { exact λ x, h2.comp₂ cont_diff_const cont_diff_id },
-  { exact λ y, h2.comp₂ cont_diff_id cont_diff_const },
-  { exact λ x, h1.comp₂ cont_diff_const cont_diff_id },
-  { exact λ y, h1.comp₂ cont_diff_id cont_diff_const },
-end -/
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
