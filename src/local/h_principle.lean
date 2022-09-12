@@ -2,6 +2,7 @@ import to_mathlib.analysis.normed_group
 import to_mathlib.linear_algebra.basis
 import to_mathlib.topology.nhds_set
 import to_mathlib.analysis.cut_off
+import to_mathlib.measure_theory.borel_space
 
 import loops.exists
 
@@ -20,8 +21,7 @@ open_locale unit_interval classical filter topological_space
 open filter set rel_loc
 
 variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
-          [finite_dimensional ℝ F]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
           {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
 
 open_locale unit_interval
@@ -115,6 +115,8 @@ begin
   dsimp [step_landscape.g, step_landscape.b],
   rw hx
 end
+
+open_locale borelize
 
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
@@ -216,7 +218,6 @@ lemma improve_step_apply_φ (t : ℝ) (x : E) :
                  (smooth_step t*L.ρ x) • (corrugation.remainder L.p.π N (L.loop h 1) x) :=
 rfl
 
-@[simp]
 lemma improve_step_of_support (t : ℝ) {x : E}
   (H : ∀ t, x ∉ loop.support (L.loop h t)) :
   L.improve_step h N t x = 𝓕 x :=
@@ -545,3 +546,4 @@ begin
 end
 
 end improve
+#lint

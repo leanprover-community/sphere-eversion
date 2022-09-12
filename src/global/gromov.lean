@@ -58,8 +58,7 @@ lemma rel_mfld.ample.satisfies_h_principle_core
      ∀ t (x ∉ range (L.φ $ L.index $ n+1)), F (n + 1) t x = F n t x) :=
 begin
   classical,
-  letI : measurable_space EX := sorry,
-  haveI : borel_space EX := sorry,
+  borelize EX,
   have cont_bs : continuous F₀.bs, from F₀.smooth_bs.continuous,
   have := L.ε_spec,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
@@ -267,7 +266,6 @@ end
 
 variables
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E'] [finite_dimensional ℝ E']
-  [measurable_space E'] [borel_space E']
 {H' : Type*} [topological_space H'] {I' : model_with_corners ℝ E' H'} [model_with_corners.boundaryless I']
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 [locally_compact_space M'] -- investigate how to deduce this from finite-dimensional
