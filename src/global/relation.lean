@@ -226,8 +226,6 @@ sorry
 formal solutions `𝓕₀` indexed by a manifold with boundary `P` that is holonomic near `C`,
 there is a homotopy `𝓕` between `𝓕₀` and a holonomic solution,
 in such a way that `𝓕` is constant near `C` and `ε`-close to `𝓕₀`.
-Note: `ε`-closeness is measured using an arbitrary distance function obtained from the metrizability
-of `J¹(M, M')`. Potentially we prefer to have this w.r.t. an arbitrary compatible metric.
 -/
 def rel_mfld.satisfies_h_principle_with (R : rel_mfld I M IX X) (C : set (P × M)) (ε : M → ℝ) :
   Prop :=
@@ -473,7 +471,7 @@ sorry
 local notation `Jψ` := h.update (one_jet_bundle.embedding h g)
 
 -- Below is the lemma that will ensure smoothness of `Jupdate`
---#check h.smooth_update (one_jet_bundle.embedding h g)
+-- #check h.smooth_update (one_jet_bundle.embedding h g)
 
 /--  Update a global 1-jet section `F` using a local one `G`.
 FIXME: this misses some support condition to ensure lemma `smooth_update` applies

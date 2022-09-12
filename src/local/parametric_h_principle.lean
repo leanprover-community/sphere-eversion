@@ -1,11 +1,18 @@
 import local.h_principle
-import interactive_expr
-
-set_option trace.filter_inst_type true
 
 /-!
-This is a stop-gap file to prove the parametric local h-principle.
+In this file we prove the parametric version of the local h-principle.
+
+We will not use this to prove the global version of the h-principle, but we do use this to conclude
+the existence of sphere eversion from the local h-principle, which is proven in `local.h_principle`.
+
+The parametric h-principle states the following: Suppose that `R` is a local relation,
+`𝓕₀ : P → J¹(E, F)` is a family of formal solutions of `R` that is holonomic near some set
+`C ⊆ P × E`, `K ⊆ P × E` is compact and `ε : ℝ`,
+then there exists a homotopy `𝓕 : ℝ × P → J¹(E, F)` between `𝓕` and a solution that is holonomic
+near `K`, that agrees with `𝓕₀` near `C` and is everywhere `ε`-close to `𝓕₀`
 -/
+
 noncomputable theory
 
 open metric finite_dimensional set function rel_loc
@@ -16,7 +23,7 @@ section parameter_space
 variables
 {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-{G : Type*} [normed_add_comm_group G] [normed_space ℝ G] -- this will be ℝ in the application
+{G : Type*} [normed_add_comm_group G] [normed_space ℝ G] -- `G` will be ℝ in the application
 {P : Type*} [normed_add_comm_group P] [normed_space ℝ P]
 
 
@@ -156,22 +163,6 @@ begin
   refl,
 end
 
-lemma fderiv_prod_eq_add {f : E × F → G} {p : E × F}
-  (hf : differentiable_at ℝ f p) :
-  fderiv ℝ f p = fderiv ℝ (λ (z : E × F), f (z.1, p.2)) p + fderiv ℝ (λ (z : E × F), f (p.1, z.2)) p :=
-begin
-  rw [← @prod.mk.eta _ _ p] at hf,
-  rw [fderiv_comp p (by apply hf) (differentiable_at_fst.prod $ differentiable_at_const _),
-    fderiv_comp p (by apply hf) ((differentiable_at_const _).prod differentiable_at_snd),
-    ← continuous_linear_map.comp_add,
-    differentiable_at_fst.fderiv_prod (differentiable_at_const _),
-    (differentiable_at_const _).fderiv_prod differentiable_at_snd,
-    fderiv_fst, fderiv_snd, fderiv_const, fderiv_const],
-  dsimp only [pi.zero_apply],
-  rw [prod.mk.eta, continuous_linear_map.fst_prod_zero_add_zero_prod_snd,
-    continuous_linear_map.comp_id]
-end
-
 lemma family_jet_sec.is_holonomic_at_uncurry (S : family_jet_sec E F P) {p : P × E} :
   S.uncurry.is_holonomic_at p ↔ (S p.1).is_holonomic_at p.2 :=
 begin
@@ -230,11 +221,6 @@ begin
   refl,
 end
 
--- lemma formal_sol.eq_iff {F₁ F₂ : formal_sol R} {x : E} :
---   F₁ x = F₂ x ↔ F₁.f x = F₂.f x ∧ F₁.φ x = by apply F₂.φ x :=
--- by { simp_rw [prod.ext_iff, formal_sol.fst_eq, heq_iff_eq, prod.ext_iff, eq_self_iff_true,
---   true_and], refl }
-
 lemma family_jet_sec.is_holonomic_at_curry
   (S : family_jet_sec (P × E) F G)
   {t : G} {s : P} {x : E} (hS : (S t).is_holonomic_at (s, x)) :
@@ -269,8 +255,6 @@ lemma rel_loc.family_formal_sol.curry_φ' (S : family_formal_sol G (R.relativize
   (x : E) : (S.curry p x).2 = (S p.1 (p.2, x)).2 ∘L continuous_linear_map.inr ℝ P E :=
 S.to_family_jet_sec.curry_φ' p x
 
-
--- #check jet_sec.formal_sol.eq_iff
 lemma curry_eq_iff_eq_uncurry {𝓕 : family_formal_sol G (R.relativize P)}
   {𝓕₀ : R.family_formal_sol P} {t : G} {x : E} {s : P}
   (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
@@ -289,9 +273,7 @@ end
 
 end parameter_space
 
-
 section parametric_h_principle
-
 
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
@@ -311,8 +293,7 @@ lemma rel_loc.family_formal_sol.improve_htpy (𝓕₀ : family_formal_sol P R)
     (∀ s x, 𝓕 (0, s) x = 𝓕₀ s x) ∧
     (∀ᶠ (p : P × E) near C, ∀ t, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
     (∀ s x t, ∥(𝓕 (t, s)).f x - 𝓕₀.f s x∥ ≤ ε)  ∧
-    (∀ᶠ (p : P × E) near K, (𝓕 (1, p.1)).is_holonomic_at p.2)
-    :=
+    (∀ᶠ (p : P × E) near K, (𝓕 (1, p.1)).is_holonomic_at p.2) :=
 begin
   let parametric_landscape : landscape (P × E) :=
   { C := C,

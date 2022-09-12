@@ -1,5 +1,6 @@
 import analysis.calculus.specific_functions
 import to_mathlib.topology.misc
+import to_mathlib.topology.algebra.module
 
 noncomputable theory
 
@@ -326,6 +327,21 @@ begin
   refl
 end
 
+lemma fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : differentiable_at 𝕜 f p) :
+  fderiv 𝕜 f p =
+  fderiv 𝕜 (λ (z : E × F), f (z.1, p.2)) p + fderiv 𝕜 (λ (z : E × F), f (p.1, z.2)) p :=
+begin
+  rw [← @prod.mk.eta _ _ p] at hf,
+  rw [fderiv_comp p (by apply hf) (differentiable_at_fst.prod $ differentiable_at_const _),
+    fderiv_comp p (by apply hf) ((differentiable_at_const _).prod differentiable_at_snd),
+    ← continuous_linear_map.comp_add,
+    differentiable_at_fst.fderiv_prod (differentiable_at_const _),
+    (differentiable_at_const _).fderiv_prod differentiable_at_snd,
+    fderiv_fst, fderiv_snd, fderiv_const, fderiv_const],
+  dsimp only [pi.zero_apply],
+  rw [prod.mk.eta, continuous_linear_map.fst_prod_zero_add_zero_prod_snd,
+    continuous_linear_map.comp_id]
+end
 
 lemma has_fderiv_at.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
   (h : has_fderiv_at (uncurry φ) φ' (e₀, f₀)) :

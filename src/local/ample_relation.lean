@@ -120,8 +120,6 @@ end rel_loc
 
 open rel_loc
 
-variables  {R : rel_loc E F}
-
 /-! ## Slices for 1-jet sections and formal solutions. -/
 
 namespace jet_sec
