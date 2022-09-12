@@ -24,7 +24,7 @@ open_locale topological_space unit_interval
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [measurable_space F] [borel_space F]
           [finite_dimensional ℝ F]
-          {G : Type*} [normed_add_comm_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
+          {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
           {H : Type*} [normed_add_comm_group H] [normed_space ℝ H] [finite_dimensional ℝ H]
           {π : E →L[ℝ] ℝ} (N : ℝ) (γ : E → loop F)
 
@@ -109,11 +109,9 @@ begin
     exact (hγ_cont.comp₃ continuous_const continuous_const continuous_id).interval_integrable _ _ }
 end
 
-variables [finite_dimensional ℝ E]
-
 variables {γ}
 
-lemma corrugation.cont_diff {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
+lemma corrugation.cont_diff [finite_dimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
   𝒞 n (𝒯 N γ) :=
 (cont_diff_parametric_primitive_of_cont_diff
   (cont_diff_sub_average hγ_diff) (π.cont_diff.const_smul N) 0).const_smul _
@@ -138,6 +136,8 @@ def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → loop F) : E →
 λ x, (1/N) • ∫ t in 0..(N*π x), ∂₁ (λ x t, (γ x).normalize t) x t
 
 local notation `R` := corrugation.remainder π
+
+variables [finite_dimensional ℝ E]
 
 lemma remainder_eq (N : ℝ) {γ : E → loop F} (h : 𝒞 1 ↿γ) :
 R N γ = λ x, (1/N) • ∫ t in 0..(N*π x), (loop.diff γ x).normalize t :=
