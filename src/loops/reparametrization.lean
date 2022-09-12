@@ -40,6 +40,9 @@ condition, one rounds off the corners of the would-be step function by using a "
 
 The above construction works locally in the neighbourhood of any `x` in `E` and one uses a partition
 of unity to globalise all the local solutions into the required family: `φ : E × S¹ → S¹`.
+
+The key ingredients are theories of calculus, convex hulls, barycentric coordinates,
+existence of delta mollifiers, partitions of unity, and the inverse function theorem.
 -/
 
 noncomputable theory
