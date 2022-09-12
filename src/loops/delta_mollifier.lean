@@ -11,6 +11,25 @@ import loops.basic
 
 import to_mathlib.partition -- get our finsum stuff
 
+/-!
+# Delta mollifiers
+
+A key ingredient in the proof of the reparametrization lemma is the existence of a smooth
+approximation to the Dirac delta function. Such an approximation is a sequence of functions
+`δ : ℕ × S¹ → S¹`, `(i, t) ↦ δᵢ t` such that:
+ * `δᵢ` is smooth for all `i`,
+ * `δᵢ` is non-negative for all `i`,
+ * `∫ x in 0..1, (δᵢ x) = 1` for all `i`,
+ * `∫ x in 0..1, (δᵢ x) • f x → f 0`, as `i → ∞` for any continuous function `f` on `S¹`.
+
+This file contains a construction `approx_dirac` of such a family `δ` together with code which
+packages this into the precise form required for the proof of the reparametrization lemma:
+`delta_mollifier`, `loop.mollify`.
+
+The key ingredients are the existence of smooth "bump functions" and a powerful theory of
+convolutions.
+-/
+
 noncomputable theory
 open set function measure_theory.measure_space continuous_linear_map filter
 open_locale topological_space big_operators filter convolution
