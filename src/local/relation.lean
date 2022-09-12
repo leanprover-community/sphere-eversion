@@ -35,7 +35,7 @@ variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]
 variables (F : Type*) [normed_add_comm_group F] [normed_space ℝ F]
 variables (P : Type*) [normed_add_comm_group P] [normed_space ℝ P]
 
-
+/-- The space of 1-jets of maps from `E` to `F`. -/
 @[derive metric_space]
 def one_jet := E × F × (E →L[ℝ] F)
 
@@ -58,6 +58,7 @@ namespace rel_loc
 
 variables (E)
 
+/-- A smooth section of J¹(E, F) → E. -/
 @[ext] structure jet_sec (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] :=
 (f : E → F)
 (f_diff : 𝒞 ∞ f)
@@ -66,10 +67,12 @@ variables (E)
 
 variables {E}
 
+/-- A predicate stating that a 1-jet section is a formal solution to a first order relation for
+maps between vector spaces. -/
 def jet_sec.is_formal_sol (𝓕 : jet_sec E F) (R : rel_loc E F) : Prop :=
 ∀ x, (x, 𝓕.f x, 𝓕.φ x) ∈ R
 
-/-- A formal solution to a local relation `R` over a set `U`. -/
+/-- A formal solution to a local relation `R`. -/
 @[ext] structure formal_sol (R : rel_loc E F) extends jet_sec E F :=
 (is_sol : ∀ x, (x, f x, φ x) ∈ R)
 
@@ -82,6 +85,7 @@ instance (R : rel_loc E F) : has_coe (formal_sol R) (jet_sec E F):=
 @[simp] lemma formal_sol.coe_is_formal_sol  {R : rel_loc E F} (𝓕 : formal_sol R) :
   (𝓕 : jet_sec E F).is_formal_sol R := 𝓕.is_sol
 
+/-- Bundling a formal solution from a 1-jet section that is a formal solution. -/
 def jet_sec.is_formal_sol.formal_sol  {𝓕 : jet_sec E F} {R : rel_loc E F}
   (h : 𝓕.is_formal_sol R) : formal_sol R :=
 {is_sol := h, ..𝓕}
@@ -105,13 +109,13 @@ instance : has_coe_to_fun (jet_sec E F) (λ S, E → F × (E →L[ℝ] F)) :=
 
 lemma coe_apply (𝓕 : jet_sec E F) (x : E) : 𝓕 x = (𝓕.f x, 𝓕.φ x) := rfl
 
-instance (R : rel_loc E F) (U : set E) : has_coe_to_fun (formal_sol R) (λ S, E → F × (E →L[ℝ] F)) :=
+instance (R : rel_loc E F) : has_coe_to_fun (formal_sol R) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
 
 @[simp] lemma formal_sol.coe_apply  {R : rel_loc E F} (𝓕 : formal_sol R) (x : E) :
 (𝓕 : jet_sec E F) x = 𝓕 x := rfl
 
-lemma jet_sec.eq_iff {𝓕 𝓕' : jet_sec E F} {x : E} :
+lemma eq_iff {𝓕 𝓕' : jet_sec E F} {x : E} :
   𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
 begin
   split,
@@ -124,14 +128,15 @@ end
 
 variables  {R : rel_loc E F}
 
-lemma formal_sol.eq_iff {𝓕 𝓕' : formal_sol R} {x : E} :
+lemma _root_.rel_loc.formal_sol.eq_iff {𝓕 𝓕' : formal_sol R} {x : E} :
   𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
-jet_sec.eq_iff
+eq_iff
 
 /-- A jet section `𝓕` is holonomic if its linear map part at `x`
 is the derivative of its function part at `x`. -/
 def is_holonomic_at (𝓕 : jet_sec E F) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
 
+/-- A formal solution (f, φ) is holonomic at `x` if the differential of `f` at `x` is `φ x`. -/
 def _root_.rel_loc.formal_sol.is_holonomic_at (𝓕 : formal_sol R) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
 
 lemma _root_.rel_loc.formal_sol.is_holonomic_at_congr (𝓕 𝓕' : formal_sol R) {s : set E}
@@ -141,18 +146,17 @@ begin
   intros x hx,
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f,
   { apply hx.mono,
-    simp_rw formal_sol.eq_iff,
+    simp_rw rel_loc.formal_sol.eq_iff,
     tauto },
   unfold rel_loc.formal_sol.is_holonomic_at,
-  rw [hf.fderiv_eq, (formal_sol.eq_iff.mp hx.self_of_nhds).2]
+  rw [hf.fderiv_eq, (rel_loc.formal_sol.eq_iff.mp hx.self_of_nhds).2]
 end
 
 lemma _root_.rel_loc.sol.is_holonomic {R : rel_loc E F} (𝓕 : sol R) (x : E) :
   𝓕.to_formal_sol.is_holonomic_at x :=
 by simp [rel_loc.sol.to_formal_sol, rel_loc.formal_sol.is_holonomic_at]
 
-/-- A formal solution of `R` over `U` that is holonomic at every point of `U`
-comes from a genuine solution. -/
+/-- A formal solution of `R` that is holonomic comes from a genuine solution. -/
 def _root_.rel_loc.formal_sol.to_sol (𝓕 : formal_sol R) (h : ∀ x, 𝓕.to_jet_sec.is_holonomic_at x) : sol R :=
 { f := 𝓕.f,
   f_diff := 𝓕.f_diff,
@@ -177,10 +181,10 @@ begin
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f,
   { apply hx.mono,
     dsimp only,
-    simp_rw jet_sec.eq_iff,
+    simp_rw eq_iff,
     tauto },
   unfold rel_loc.jet_sec.is_part_holonomic_at,
-  rw [hf.fderiv_eq, (jet_sec.eq_iff.mp hx.self_of_nhds).2]
+  rw [hf.fderiv_eq, (eq_iff.mp hx.self_of_nhds).2]
 end
 
 lemma is_part_holonomic_at.sup (𝓕 : jet_sec E F) {E' E'' : submodule ℝ E} {x : E}
@@ -193,6 +197,8 @@ lemma _root_.rel_loc.jet_sec.is_part_holonomic_at.mono {𝓕 : jet_sec E F}
   𝓕.is_part_holonomic_at E'' x :=
 λ v v_in, h v $ set_like.coe_subset_coe.mpr h' v_in
 
+/-- A formal solution (f, φ) is partially holonomic along a subspace `E'` at `x` if the
+differential of `f` at `x` coincides with `φ x` on `E'`. -/
 def _root_.rel_loc.formal_sol.is_part_holonomic_at (𝓕 : formal_sol R) (E' : submodule ℝ E) (x : E) :=
 ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
@@ -214,8 +220,6 @@ begin
   ext x,
   simp only [is_part_holonomic_at, submodule.mem_bot, forall_eq, map_zero, eq_self_iff_true]
 end
-
-
 
 end rel_loc.jet_sec
 
