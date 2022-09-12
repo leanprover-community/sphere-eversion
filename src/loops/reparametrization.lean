@@ -51,11 +51,14 @@ open set function measure_theory interval_integral filter
 open_locale topological_space unit_interval manifold big_operators
 
 variables {E F : Type*}
-variables [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
 variables [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
 
 local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
+
+section metric_space
+
+variables [metric_space E]
 
 /-- An auxiliary lemma for bootstrapping to `tendsto_mollify_apply`. -/
 lemma loop.tendsto_mollify_apply_aux (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ)
@@ -120,6 +123,13 @@ begin
   exact ((loop.continuous_of_family h x).comp continuous_snd).sub h,
 end
 
+end metric_space
+
+variables [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+
+/-- Given a smooth function `g : E → F` between normed vector spaces, a smooth surrounding family
+is a smooth family of loops `E → loop F`, `x ↦ γₓ` such that `γₓ` surrounds `g x` for all `x`. -/
+@[nolint has_nonempty_instance]
 structure smooth_surrounding_family (g : E → F) :=
 (smooth_surrounded : 𝒞 ∞ g)
 (to_fun : E → loop F)
@@ -140,10 +150,18 @@ end
 
 include γ x
 
+/-- Given `γ : smooth_surrounding_family g` and `x : E`, `γ.surrounding_parameters_at x` are the
+`tᵢ : ℝ`, for `i = 0, 1, ..., dim F` such that `γ x tᵢ` surround `g x`. -/
 def surrounding_parameters_at : ι → ℝ := classical.some (γ.surrounds x)
 
+/-- Given `γ : smooth_surrounding_family g` and `x : E`, `γ.surrounding_points_at x` are the
+points `γ x tᵢ` surrounding `g x` for parameters `tᵢ : ℝ`, `i = 0, 1, ..., dim F` (defined
+by `γ.surrounding_parameters_at x`). -/
 def surrounding_points_at : ι → F := γ x ∘ γ.surrounding_parameters_at x
 
+/-- Given `γ : smooth_surrounding_family g` and `x : E`, `γ.surrounding_weights_at x` are the
+barycentric coordinates of `g x` wrt to the points `γ x tᵢ`, for parameters `tᵢ : ℝ`,
+`i = 0, 1, ..., dim F` (defined by `γ.surrounding_parameters_at x`). -/
 def surrounding_weights_at : ι → ℝ := classical.some (classical.some_spec (γ.surrounds x))
 
 lemma surround_pts_points_weights_at :
@@ -182,7 +200,7 @@ begin
   exact loop.tendsto_mollify_apply γ γ.smooth.continuous x t,
 end
 
-/- This is an auxiliary definition to help construct `centering_density` below.
+/-- This is an auxiliary definition to help construct `centering_density` below.
 
 Given `x : E`, it represents a smooth probability distribution on the circle with the property that:
 `∫ s in 0..1, γ.local_centering_density x y s • γ y s = g y`
@@ -197,6 +215,7 @@ begin
     (delta_mollifier m (γ.surrounding_parameters_at x i)),
 end
 
+/-- This is an auxiliary definition to help construct `centering_density` below. -/
 def local_centering_density_mp : ℕ :=
 begin
   choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
@@ -213,6 +232,7 @@ lemma local_centering_density_spec [decidable_pred (∈ affine_bases ι ℝ F)] 
     (delta_mollifier (γ.local_centering_density_mp x) (γ.surrounding_parameters_at x i)) :=
 rfl
 
+/-- This is an auxiliary definition to help construct `centering_density` below. -/
 def local_centering_density_nhd : set E :=
 begin
   choose n hn₁ hn₂ using filter.eventually_iff_exists_mem.mp
@@ -283,7 +303,7 @@ begin
   simp [eval_barycentric_coords, γ.approx_surrounding_points_at_mem_affine_bases x y hy],
 end
 
-lemma local_centering_density_periodic (hy : y ∈ γ.local_centering_density_nhd x) :
+lemma local_centering_density_periodic :
   periodic (γ.local_centering_density x y) 1 :=
 finset.univ.periodic_sum $ λ i hi, periodic.smul delta_mollifier_periodic _
 
@@ -361,6 +381,12 @@ begin
     exact delta_mollifier_smooth.continuous, },
 end
 
+/-- Given `γ : smooth_surrounding_family g`, together with a point `x : E` and a map `f : ℝ → ℝ`,
+`γ.is_centering_density x f` is the proposition that `f` is periodic, strictly positive, and
+has integral one and that the average of `γₓ` with respect to the measure that `f` defines on
+the circle is `g x`.
+
+The continuity assumption is just a legacy convenience and should be dropped. -/
 structure is_centering_density (x : E) (f : ℝ → ℝ) : Prop :=
 (pos : ∀ t, 0 < f t)
 (periodic : periodic f 1)
@@ -409,7 +435,7 @@ lemma exists_smooth_is_centering_density (x : E) : ∃ (U ∈ 𝓝 x) (f : E →
   γ.local_centering_density x,
   γ.local_centering_density_smooth_on x,
   λ y hy, ⟨γ.local_centering_density_pos x y hy,
-           γ.local_centering_density_periodic x y hy,
+           γ.local_centering_density_periodic x y,
            γ.local_centering_density_integral_eq_one x y hy,
            γ.local_centering_density_average x y hy,
            γ.local_centering_density_continuous x y hy⟩⟩
@@ -490,6 +516,11 @@ begin
     ⟨λ t, ∫ s in 0..t, γ.centering_density x s, γ.integral_add_one_centering_density x⟩ this
 end
 
+/-- Given `γ : smooth_surrounding_family g`, `x ↦ γ.reparametrize x` is a smooth family of
+diffeomorphisms of the circle such that reparametrizing `γₓ` by `γ.reparametrize x` gives a loop
+with average `g x`.
+
+This is the key construction and the main "output" of the reparametrization lemma. -/
 def reparametrize : E → equivariant_equiv := λ x,
 ({ to_fun := λ t, ∫ s in 0..t, γ.centering_density x s,
   inv_fun := (strict_mono.order_iso_of_surjective _
