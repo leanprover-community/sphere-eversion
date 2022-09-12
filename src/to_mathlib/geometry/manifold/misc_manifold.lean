@@ -444,7 +444,7 @@ begin
   { apply continuous_at.comp (by apply hf.continuous_at) (continuous_at_id.prod hg.continuous_at) },
   have h3f := cont_mdiff_at_iff_cont_mdiff_at_nhds.mp (hf.of_le $ (self_le_add_left 1 m).trans hmn),
   have h2f : ∀ᶠ x₂ in 𝓝 x, cont_mdiff_at I I' 1 (f x₂) (g x₂),
-  { refine ((continuous_at_id.prod hg.continuous_at).eventually h3f).mono (λ x hx, _),
+  { refine ((continuous_at_id.prod hg.continuous_at).tendsto.eventually h3f).mono (λ x hx, _),
     exact hx.comp (g x) (cont_mdiff_at_const.prod_mk cont_mdiff_at_id) },
   have h2g := hg.continuous_at.preimage_mem_nhds (ext_chart_at_source_mem_nhds I (g x)),
   have : cont_diff_within_at 𝕜 m (λ x', fderiv_within 𝕜

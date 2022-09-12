@@ -801,7 +801,7 @@ begin
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p),
     { simp only [c, hδx₀, function.comp, prod.mk.inj_iff, eq_self_iff_true, and_self] },
     rw [← hcx₀] at hW,
-    filter_upwards [hc.eventually hW], rintro x ⟨hW, hx⟩,
+    filter_upwards [hc.tendsto.eventually hW], rintro x ⟨hW, hx⟩,
     exact ⟨_, _, hx⟩ },
   exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, hδt1, λ x, and.right, hδ⟩, λ x, and.left⟩⟩
 end
