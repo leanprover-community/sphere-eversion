@@ -27,16 +27,12 @@ variables
 {E' : Type*} [inner_product_space ℝ E']
 {F : Type*} [inner_product_space ℝ F]
 
-
 local notation `𝕊²` := sphere (0 : E) 1
--- ignore the next line which is fixing a pretty-printer bug
-local notation (name := module_span_printing_only) `{.` x `}ᗮ` := (submodule.span ℝ {x})ᗮ
-local notation `{.` x `}ᗮ` := (ℝ ∙ x)ᗮ
 local notation `dim` := finrank ℝ
--- ignore the next line which is fixing a pretty-printer bug
-local notation (name := line_printing_only) `Δ` v:55 := submodule.span ℝ {v}
-local notation `Δ ` v:55 := submodule.span ℝ ({v} : set E)
-local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
+local notation `pr[`x`]ᗮ` := orthogonal_projection (ℝ ∙ x)ᗮ
+local notation (name := dot_print_only) R ` ∙ `:1000 x := submodule.span R {x}
+local notation (name := dot_local) R ` ∙ `:1000 x :=
+  submodule.span R (@singleton _ _ set.has_singleton x)
 
 /-- A map between vector spaces is a immersion viewed as a map on the sphere, when its
 derivative at `x ∈ 𝕊²` is injective on the orthogonal complement of `x`
@@ -44,7 +40,7 @@ derivative at `x ∈ 𝕊²` is injective on the orthogonal complement of `x`
 `x ∈ 𝕊²` since otherwise `D f x = 0`.
 -/
 def sphere_immersion (f : E → E') : Prop :=
-∀ x ∈ 𝕊², inj_on (D f x) {.x}ᗮ
+∀ x ∈ 𝕊², inj_on (D f x) (ℝ ∙ x)ᗮ
 
 variables (E E')
 
@@ -52,22 +48,22 @@ local notation `B` := ball (0 : E) 0.9
 
 /-- The relation of immersions for unit spheres into a vector space. -/
 def immersion_sphere_rel : rel_loc E E' :=
-{w : one_jet E E' | w.1 ∉ B → inj_on w.2.2 {.w.1}ᗮ }
+{w : one_jet E E' | w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ }
 
 local notation `R` := immersion_sphere_rel E E'
 
 variables {E E'}
 
 lemma mem_loc_immersion_rel {w : one_jet E E'} :
-  w ∈ immersion_sphere_rel E E' ↔ w.1 ∉ B → inj_on w.2.2 {.w.1}ᗮ :=
+  w ∈ immersion_sphere_rel E E' ↔ w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ :=
 iff.rfl
 
 @[simp] lemma mem_loc_immersion_rel' {x y φ} :
-  (⟨x, y, φ⟩ : one_jet E E') ∈ immersion_sphere_rel E E' ↔ x ∉ B → inj_on φ  {.x}ᗮ :=
+  (⟨x, y, φ⟩ : one_jet E E') ∈ immersion_sphere_rel E E' ↔ x ∉ B → inj_on φ (ℝ ∙ x)ᗮ :=
 iff.rfl
 
 lemma sphere_immersion_of_sol (f : E → E') :
-  (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersion_sphere_rel E E') →  sphere_immersion f :=
+  (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersion_sphere_rel E E') → sphere_immersion f :=
 begin
   intros h x x_in,
   have : x ∉ B,
@@ -86,7 +82,7 @@ lemma function.injective.inj_on_range {α β γ : Type*} {j : α → β} {φ : �
   (h : injective $ φ ∘ j) : inj_on φ (range j) :=
 begin
   rintros - ⟨x, rfl⟩ - ⟨y, rfl⟩ H,
-  exact congr_arg j (h  H)
+  exact congr_arg j (h H)
 end
 
 lemma set.range_comp_of_surj {α β γ : Type*} {f : α → β} (hf : surjective f) (g : β → γ) :
@@ -114,16 +110,16 @@ hf.continuous_at.eventually P hP ha₀
 
 -- The following is extracted from `loc_immersion_rel_open` because it takes forever to typecheck
 lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : E'} {φ₀ : E →L[ℝ] E'} (hx₀ : x₀ ∉ B)
-  (H : inj_on φ₀ {.x₀}ᗮ) :
-  ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀),
-    ⟪x₀, p.1⟫ ≠ 0 ∧ injective ((p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp {.x₀}ᗮ.subtypeL) :=
+  (H : inj_on φ₀ (ℝ ∙ x₀)ᗮ) :
+  ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), ⟪x₀, p.1⟫ ≠ 0 ∧
+  injective ((p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) :=
 begin
   -- This is true at (x₀, y₀, φ₀) and is an open condition because
-  -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
-  set j₀ := subtypeL {.x₀}ᗮ,
-  let f : one_jet E E' → ℝ × ({.x₀}ᗮ →L[ℝ] E') :=
-      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
-  let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
+  -- p ↦ ⟪x₀, p.1⟫ and p ↦ (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀ are continuous
+  set j₀ := subtypeL (ℝ ∙ x₀)ᗮ,
+  let f : one_jet E E' → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') :=
+      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀),
+  let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') → Prop :=
       λ q, q.1 ≠ 0 ∧ injective q.2,
   have x₀_ne : x₀ ≠ 0,
   { refine λ hx₀', hx₀ _,
@@ -141,7 +137,7 @@ begin
     apply continuous_at.compL,
     { apply continuous_at.compL,
       exact continuous_at_snd.comp continuous_at_snd,
-      change continuous_at ((λ x, {.x}ᗮ.subtypeL.comp pr[x]ᗮ) ∘ prod.fst) (x₀, y₀, φ₀),
+      change continuous_at ((λ x, (ℝ ∙ x)ᗮ.subtypeL.comp pr[x]ᗮ) ∘ prod.fst) (x₀, y₀, φ₀),
       apply continuous_at.comp _ continuous_at_fst,
       exact continuous_at_orthogonal_projection_orthogonal x₀_ne },
     exact continuous_at_const },
@@ -160,7 +156,7 @@ lemma loc_immersion_rel_open : is_open (immersion_sphere_rel E E') :=
 begin
   dsimp only [immersion_sphere_rel],
   rw is_open_iff_mem_nhds,
-  rintros ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → inj_on φ₀ {.x₀}ᗮ),
+  rintros ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → inj_on φ₀ (ℝ ∙ x₀)ᗮ),
   change ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), _,
   by_cases hx₀ : x₀ ∈ B,
   { have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B,
@@ -170,18 +166,18 @@ begin
     rintros ⟨x, y, φ⟩ (hx : x ∈ B) (Hx : x ∉ B),
     exact (Hx hx).elim },
   { replace H := H hx₀,
-    set j₀ := subtypeL {.x₀}ᗮ,
-    let f : one_jet E E' → ℝ × ({.x₀}ᗮ →L[ℝ] E') :=
-      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL {.p.1}ᗮ).comp pr[p.1]ᗮ).comp j₀),
-    let P : ℝ × ({.x₀}ᗮ →L[ℝ] E') → Prop :=
+    set j₀ := subtypeL (ℝ ∙ x₀)ᗮ,
+    let f : one_jet E E' → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') :=
+      λ p, (⟪x₀, p.1⟫, (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀),
+    let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] E') → Prop :=
       λ q, q.1 ≠ 0 ∧ injective q.2,
     have : ∀ᶠ (p : one_jet E E') in 𝓝 (x₀, y₀, φ₀), P (f p),
     { exact loc_immersion_rel_open_aux hx₀ H },
     apply this.mono, clear this,
     rintros ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ (hx : x ∉ B),
     dsimp only [P, f] at Hφ,
-    change inj_on φ {.x}ᗮ,
-    have : range ((subtypeL {.x}ᗮ) ∘ pr[x]ᗮ ∘ j₀) = {.x}ᗮ,
+    change inj_on φ (ℝ ∙ x)ᗮ,
+    have : range ((subtypeL (ℝ ∙ x)ᗮ) ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ,
     { rw set.range_comp_of_surj,
       exact subtype.range_coe,
       exact (orthogonal_projection_orthogonal_line_iso hxx₀).surjective },
@@ -211,14 +207,14 @@ end
 open submodule (hiding map_zero) rel_loc
 
 lemma mem_slice_iff_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
-  (hx : x ∉ B) (y : E') : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) {.x}ᗮ :=
+  (hx : x ∉ B) (y : E') : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ :=
 begin
-  change (x ∉ ball (0 : E) 0.9 → inj_on (p.update φ w) {.x}ᗮ) ↔ inj_on (p.update φ w) {.x}ᗮ,
+  change (x ∉ ball (0 : E) 0.9 → inj_on (p.update φ w) (ℝ ∙ x)ᗮ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ,
   simp [hx]
 end
 
 lemma slice_eq_of_not_mem {x : E} {w : E'} {φ : E →L[ℝ] E'} {p : dual_pair' E}
-  (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) {.x}ᗮ} :=
+  (hx : x ∉ B) (y : E') : slice R p (x, y, φ) = {w | inj_on (p.update φ w) (ℝ ∙ x)ᗮ} :=
 by { ext w, rw mem_slice_iff_of_not_mem hx y, exact iff.rfl }
 
 open inner_product_space
@@ -233,91 +229,93 @@ rfl
 lemma loc_immersion_rel_ample (n : ℕ) [fact (dim E = n+1)] (h : finrank ℝ E ≤ finrank ℝ E') :
   (immersion_sphere_rel E E').is_ample :=
 begin
+  classical, -- gives a minor speedup
   rw is_ample_iff,
   rintro ⟨x, y, φ⟩ p h_mem,
   by_cases hx : x ∈ B,
   { apply ample_slice_of_forall,
     intros w,
-    simp [hx]  },
-  { have x_ne : x ≠ 0,
-    { rintro rfl,
-      apply hx,
-      apply mem_ball_self,
-      norm_num },
-    have hφ : inj_on φ {.x}ᗮ := h_mem hx, clear h_mem,
-    let u := (inner_product_space.to_dual ℝ E).symm p.π,
-    have u_ne : u ≠ 0,
-    { exact (inner_product_space.to_dual ℝ E).symm.apply_ne_zero p.pi_ne_zero },
-    by_cases H : p.π.ker = {.x}ᗮ,
-    { have key : ∀ w, eq_on (p.update φ w) φ {.x}ᗮ,
-      { intros w x,
-        rw ← H,
-        exact p.update_ker_pi φ w },
-      exact ample_slice_of_forall _ p  (λ w _, hφ.congr (key w).symm) },
-    { obtain ⟨v', v'_in, hv', hπv'⟩ :
-        ∃ v' : E,  v' ∈ {.x}ᗮ ∧ {.x}ᗮ = (p.π.ker ⊓ {.x}ᗮ) ⊔ Δ v' ∧ p.π v' = 1,
-      { have ne_z : p.π (pr[x]ᗮ u) ≠ 0,
-        { rw ← to_dual_symm_apply,
-          change ¬ ⟪u, pr[x]ᗮ u⟫ = 0,
-          rw inner_projection_self_eq_zero_iff.not,
-          contrapose! H,
-          rw orthogonal_orthogonal at H,
-          rw [← orthogonal_span_to_dual_symm, span_singleton_eq_span_singleton_of_ne u_ne H],
-          apply_instance },
-        have ne_z' : (p.π $ pr[x]ᗮ u)⁻¹ ≠ 0,
-        { exact inv_ne_zero ne_z },
-        refine ⟨(p.π $ pr[x]ᗮ u)⁻¹ • pr[x]ᗮ u, {.x}ᗮ.smul_mem _ (pr[x]ᗮ u).2, _, _⟩,
-        { have := orthogonal_line_inf_sup_line u x,
-          rw [← orthogonal_span_to_dual_symm p.π,
-            span_singleton_smul_eq ne_z'.is_unit],
-          exact (orthogonal_line_inf_sup_line u x).symm },
-        rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z] },
-      let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
-      apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
-      suffices : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ {.x}ᗮ))ᶜ,
-      { rw [this],
-        apply ample_of_two_le_codim,
-        let Φ := φ.to_linear_map,
-        suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ {.x}ᗮ)),
-        { rw ← finrank_eq_dim,
-          exact_mod_cast this },
-        apply le_of_add_le_add_right,
-        rw submodule.finrank_quotient_add_finrank (map Φ $ p.π.ker ⊓ {.x}ᗮ),
-        have : dim (p.π.ker ⊓ {.x}ᗮ : submodule ℝ E) + 1 = n,
-        { have eq := submodule.dim_sup_add_dim_inf_eq (p.π.ker ⊓ {.x}ᗮ) (span ℝ {v'}),
-          have eq₁ : dim {.x}ᗮ = n,  from finrank_orthogonal_span_singleton x_ne,
-          have eq₂ : p.π.ker ⊓ {.x}ᗮ ⊓ span ℝ {v'} = (⊥ : submodule ℝ E),
-          { erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq] },
-          have eq₃ : dim (span ℝ {v'}) = 1, apply finrank_span_singleton p'.v_ne_zero,
-          rw [← hv', eq₁, eq₃, eq₂] at eq,
-          simpa using eq.symm },
-        have : dim E = n+1, from fact.out _,
-        linarith [finrank_map_le ℝ Φ (p.π.ker ⊓ {.x}ᗮ)] },
-      ext w,
-      rw mem_slice_iff_of_not_mem hx y,
-      rw inj_on_iff_injective,
-      let j := {.x}ᗮ.subtypeL,
-      let p'' : dual_pair' {.x}ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩,
-      have eq : ({.x}ᗮ : set E).restrict (p'.update φ w) = (p''.update (φ.comp j) w),
-      { ext z,
-        simp [dual_pair'.update] },
-      have eq' : map (φ.comp j) p''.π.ker = map φ (p.π.ker ⊓ {.x}ᗮ),
-      { have : map ↑j p''.π.ker = p.π.ker ⊓ {.x}ᗮ,
-        { ext z,
-          simp only [mem_map, continuous_linear_map.mem_ker, continuous_linear_map.coe_comp',
-                     coe_subtypeL', submodule.coe_subtype, comp_app, mem_inf],
-          split,
-          { rintros ⟨t, ht, rfl⟩,
-            rw subtypeL_apply',
-            exact ⟨ht, t.2⟩ },
-          { rintros ⟨hz, z_in⟩,
-            exact ⟨⟨z, z_in⟩, hz, rfl⟩ }, },
-        erw [← this, map_comp],
-        refl },
-      rw [eq, p''.injective_update_iff, mem_compl_iff, eq'],
-      exact iff.rfl,
-      rw ← show ({.x}ᗮ : set E).restrict φ = φ.comp j, by { ext, refl },
-      exact hφ.injective } }
+    simp only [hx, mem_loc_immersion_rel', not_true, is_empty.forall_iff] },
+  have x_ne : x ≠ 0,
+  { rintro rfl,
+    apply hx,
+    apply mem_ball_self,
+    norm_num1 },
+  have hφ : inj_on φ (ℝ ∙ x)ᗮ := h_mem hx, clear h_mem,
+  let u : E := (inner_product_space.to_dual ℝ E).symm p.π,
+  have u_ne : u ≠ 0,
+  { exact (inner_product_space.to_dual ℝ E).symm.apply_ne_zero p.pi_ne_zero },
+  by_cases H : p.π.ker = (ℝ ∙ x)ᗮ,
+  { have key : ∀ w, eq_on (p.update φ w) φ (ℝ ∙ x)ᗮ,
+    { intros w x,
+      rw ← H,
+      exact p.update_ker_pi φ w },
+    exact ample_slice_of_forall _ p (λ w _, hφ.congr (key w).symm) },
+  obtain ⟨v', v'_in, hv', hπv'⟩ :
+    ∃ v' : E, v' ∈ (ℝ ∙ x)ᗮ ∧ (ℝ ∙ x)ᗮ = (p.π.ker ⊓ (ℝ ∙ x)ᗮ) ⊔ (ℝ ∙ v') ∧ p.π v' = 1,
+  { have ne_z : p.π (pr[x]ᗮ u) ≠ 0,
+    { rw ← to_dual_symm_apply,
+      change ¬ ⟪u, pr[x]ᗮ u⟫ = 0,
+      rw inner_projection_self_eq_zero_iff.not,
+      contrapose! H,
+      rw orthogonal_orthogonal at H,
+      rw [← orthogonal_span_to_dual_symm, span_singleton_eq_span_singleton_of_ne u_ne H],
+      apply_instance },
+    have ne_z' : (p.π $ pr[x]ᗮ u)⁻¹ ≠ 0,
+    { exact inv_ne_zero ne_z },
+    refine ⟨(p.π $ pr[x]ᗮ u)⁻¹ • pr[x]ᗮ u, (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, _, _⟩,
+    { have := orthogonal_line_inf_sup_line u x,
+      rw [← orthogonal_span_to_dual_symm p.π,
+        span_singleton_smul_eq ne_z'.is_unit],
+      exact (orthogonal_line_inf_sup_line u x).symm },
+    rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z] },
+  let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
+  apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
+  suffices : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ))ᶜ,
+  { rw [this],
+    apply ample_of_two_le_codim,
+    let Φ := φ.to_linear_map,
+    suffices : 2 ≤ dim (E' ⧸ map Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)),
+    { rw ← finrank_eq_dim,
+      exact_mod_cast this },
+    apply le_of_add_le_add_right,
+    rw submodule.finrank_quotient_add_finrank (map Φ $ p.π.ker ⊓ (ℝ ∙ x)ᗮ),
+    have : dim (p.π.ker ⊓ (ℝ ∙ x)ᗮ : submodule ℝ E) + 1 = n,
+    { have eq := submodule.dim_sup_add_dim_inf_eq (p.π.ker ⊓ (ℝ ∙ x)ᗮ) (span ℝ {v'}),
+      have eq₁ : dim (ℝ ∙ x)ᗮ = n, from finrank_orthogonal_span_singleton x_ne,
+      have eq₂ : p.π.ker ⊓ (ℝ ∙ x)ᗮ ⊓ span ℝ {v'} = (⊥ : submodule ℝ E),
+      { erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq] },
+      have eq₃ : dim (span ℝ {v'}) = 1, apply finrank_span_singleton p'.v_ne_zero,
+      rw [← hv', eq₁, eq₃, eq₂] at eq,
+      simpa only [finrank_bot] using eq.symm },
+    have : dim E = n+1, from fact.out _,
+    linarith [finrank_map_le ℝ Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)] },
+  ext w,
+  rw mem_slice_iff_of_not_mem hx y,
+  rw inj_on_iff_injective,
+  let j := (ℝ ∙ x)ᗮ.subtypeL,
+  let p'' : dual_pair' (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩,
+  have eq : ((ℝ ∙ x)ᗮ : set E).restrict (p'.update φ w) = (p''.update (φ.comp j) w),
+  { ext z,
+    simp only [dual_pair'.update, restrict_apply, continuous_linear_map.add_apply,
+      continuous_linear_map.coe_comp', coe_subtypeL', submodule.coe_subtype, comp_app, coe_mk] },
+  have eq' : map (φ.comp j) p''.π.ker = map φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ),
+  { have : map ↑j p''.π.ker = p.π.ker ⊓ (ℝ ∙ x)ᗮ,
+    { ext z,
+      simp only [mem_map, continuous_linear_map.mem_ker, continuous_linear_map.coe_comp',
+                coe_subtypeL', submodule.coe_subtype, comp_app, mem_inf],
+      split,
+      { rintros ⟨t, ht, rfl⟩,
+        rw [continuous_linear_map.coe_coe, subtypeL_apply],
+        exact ⟨ht, t.2⟩ },
+      { rintros ⟨hz, z_in⟩,
+        exact ⟨⟨z, z_in⟩, hz, rfl⟩ }, },
+    erw [← this, map_comp],
+    refl },
+  rw [eq, p''.injective_update_iff, mem_compl_iff, eq'],
+  exact iff.rfl,
+  rw ← show ((ℝ ∙ x)ᗮ : set E).restrict φ = φ.comp j, by { ext, refl },
+  exact hφ.injective
 end
 
 variables (E) [fact (dim E = 3)]
@@ -325,14 +323,11 @@ variables (E) [fact (dim E = 3)]
 /- The relation of immersion of a two-sphere into its ambient Euclidean space. -/
 local notation `𝓡_imm` := immersion_sphere_rel E E
 
-lemma is_closed_pair : is_closed ({0, 1} : set ℝ) :=
-(by simp : ({0, 1} : set ℝ).finite).is_closed
-
 variables {E} (ω : orientation ℝ E (fin 3))
 
 /-- The main ingredient of the linear map in the formal eversion of the sphere. -/
 def loc_formal_eversion_aux_φ (t : ℝ) (x : E) : E →L[ℝ] E :=
-ω.rot (t, x) - (2 * t) • (submodule.subtypeL (Δ x) ∘L orthogonal_projection (Δ x))
+ω.rot (t, x) - (2 * t) • (submodule.subtypeL (ℝ ∙ x) ∘L orthogonal_projection (ℝ ∙ x))
 
 lemma smooth_at_loc_formal_eversion_aux_φ {p : ℝ × E} (hx : p.2 ≠ 0) :
   cont_diff_at ℝ ∞ (uncurry (loc_formal_eversion_aux_φ ω)) p :=
@@ -387,7 +382,7 @@ keep track of a few complications:
   and constant `1` near `t = 1`.
 * We need to modify the derivative of `ω.rot` to also have the right behavior on `(ℝ ∙ x)`
   at `t = 1` (it is the identity, but it should be `-id`). Therefore, we subtract
-  `(2 * t) • (submodule.subtypeL (Δ x) ∘L orthogonal_projection (Δ x))`,
+  `(2 * t) • (submodule.subtypeL (ℝ ∙ x) ∘L orthogonal_projection (ℝ ∙ x))`,
   which is `2t` times the identity on `(ℝ ∙ x)`.
 * We have to make sure the family of continuous linear map is smooth at `x = 0`. Therefore, we
   multiply the family with a factor of `smooth_step (∥x∥ ^ 2)`.
@@ -396,7 +391,7 @@ def loc_formal_eversion : htpy_formal_sol 𝓡_imm :=
 { is_sol := begin
     intros t x,
     change x ∉ B →
-      inj_on (smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x) {.x}ᗮ,
+      inj_on (smooth_step (∥x∥ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x) (ℝ ∙ x)ᗮ,
     intros hx,
     have h2x : smooth_step (∥x∥ ^ 2) = 1,
     { refine smooth_step.of_gt _,
@@ -423,7 +418,7 @@ rfl
 lemma loc_formal_eversion_φ (t : ℝ) (x : E) (v : E) :
   (loc_formal_eversion ω t).φ x v = smooth_step (∥x∥ ^ 2) •
     (ω.rot (smooth_step t, x) v -
-    (2 * smooth_step t) • orthogonal_projection (Δ x) v) :=
+    (2 * smooth_step t) • orthogonal_projection (ℝ ∙ x) v) :=
 rfl
 
 lemma loc_formal_eversion_zero (x : E) : (loc_formal_eversion ω 0).f x = x :=
@@ -448,7 +443,7 @@ begin
   simp_rw [mul_one, show (1 : ℝ) - 2 = -1, by norm_num,
     show (has_smul.smul (-1 : ℝ) : E → E) = λ x, - x, from funext (λ v, by rw [neg_smul, one_smul]),
     fderiv_neg, fderiv_id', continuous_linear_map.neg_apply, continuous_linear_map.id_apply],
-  obtain ⟨v', hv', v, hv, rfl⟩ := submodule.exists_sum_mem_mem_orthogonal (Δ x) v,
+  obtain ⟨v', hv', v, hv, rfl⟩ := submodule.exists_sum_mem_mem_orthogonal (ℝ ∙ x) v,
   simp_rw [continuous_linear_map.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv'],
   simp_rw [neg_add, submodule.coe_add, orthogonal_projection_eq_self_iff.mpr hv',
     orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hv, submodule.coe_zero,
@@ -503,9 +498,12 @@ begin
   haveI : finite_dimensional ℝ E := finite_dimensional_of_finrank_eq_succ rankE,
   let ω : orientation ℝ E (fin 3) :=
     (fin_std_orthonormal_basis (fact.out _ : dim E = 3)).to_basis.orientation,
+  have is_closed_pair : is_closed ({0, 1} : set ℝ) :=
+  (by simp : ({0, 1} : set ℝ).finite).is_closed,
   obtain ⟨f, h₁, h₂, h₃⟩ :=
     (loc_formal_eversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
-    zero_lt_one ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod is_closed_sphere) 𝕊² (is_compact_sphere 0 1) (loc_formal_eversion_hol ω),
+    zero_lt_one ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod is_closed_sphere) 𝕊² (is_compact_sphere 0 1)
+    (loc_formal_eversion_hol ω),
   refine ⟨f, h₁, _, _, _⟩,
   { intros x hx, rw [h₂ (0, x) (mk_mem_prod (by simp) hx), loc_formal_eversion_zero] },
   { intros x hx, rw [h₂ (1, x) (mk_mem_prod (by simp) hx), loc_formal_eversion_one] },
