@@ -74,6 +74,8 @@ In this section we turn any function `f : ℝ → E` into a 1-periodic function
 
 variables {M : Type*} [add_comm_monoid M]
 
+/-- Turn a function into a 1-periodic function. If its support lies in a (non-closed) interval
+of length 1, then this will be that function made periodic with period 1. -/
 def periodize (f : ℝ → M) (t : ℝ) : M :=
 ∑ᶠ n : ℤ, f (t + n)
 
@@ -148,7 +150,9 @@ end
 
 open measure_theory
 
-lemma integral_periodize [complete_space E] (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a + 1)) :
+variables [complete_space E]
+
+lemma integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a + 1)) :
   ∫ t in a..a+1, periodize f t = ∫ t in a..a+1, f t :=
 begin
   apply interval_integral.integral_congr_ae,
@@ -180,7 +184,7 @@ begin
 end
 
 -- if convenient we could set `[c,d] = [0,1]`
-lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop F)
+lemma interval_integral_periodize_smul (f : ℝ → ℝ) (γ : loop E)
   {a b c d : ℝ} (h : b ≤ a + 1) (h2 : d = c + 1)
   (hf : support f ⊆ Ioc a b) :
   ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t :=
@@ -199,8 +203,10 @@ end
 
 section delta_approx
 
-/-- ## An approximate Dirac "on the circle". -/
+/-! ## An approximate Dirac "on the circle". -/
 
+/-- A periodized bump function, which we can view as a function from `𝕊¹ → ℝ`. As `n → ∞` this
+tends to the Dirac delta function located at `0`. -/
 def approx_dirac (n : ℕ) : ℝ → ℝ :=
 periodize $ (bump n).normed volume
 
@@ -240,6 +246,8 @@ end
 end delta_approx
 
 section version_of_delta_mollifier_using_n
+/-- A sequence of functions that converges to the Dirac delta function located at `t`, with the
+properties that this sequence is everywhere positive and -/
 def delta_mollifier (n : ℕ) (t : ℝ) : ℝ → ℝ :=
 λ x, n / (n+1) * approx_dirac n (x - t) + 1 / (n+1)
 
@@ -269,6 +277,10 @@ begin
   { exact interval_integrable_const }
 end
 
+/-- `γ.mollify n t` is a weighted average of `γ` using weights `delta_mollifier n t`.
+This means that as `n → ∞` this value tends to `γ t`, but because `delta_mollifier n t` is positive,
+we know that we can reparametrize `γ` to obtain a loop that has `γ.mollify n t` as its actual
+average. -/
 def loop.mollify (γ : loop F) (n : ℕ) (t : ℝ) : F :=
 ∫ s in 0..1, delta_mollifier n t s • γ s
 
