@@ -34,7 +34,7 @@ by { rw ← mfderiv_eq_fderiv, refl }
 
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
-def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc.jet_sec E E' :=
+def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : jet_sec E E' :=
 { f := F.bs,
   f_diff := F.smooth_bs.cont_diff,
   φ := λ x, (F x).2,

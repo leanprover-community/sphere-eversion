@@ -1,4 +1,4 @@
-import local.relation
+import local.ample_relation
 import global.one_jet_sec
 import global.smooth_embedding
 import to_mathlib.topology.algebra.module

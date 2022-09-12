@@ -90,7 +90,7 @@ end rel_loc
 
 open rel_loc
 
-namespace rel_loc.jet_sec
+namespace jet_sec
 
 variables  {R : rel_loc E F}
 
@@ -120,4 +120,4 @@ lemma _root_.rel_loc.is_ample.is_short_at {R : rel_loc E F} (hR : is_ample R) (ğ
 hR.mem_hull (ğ“•.is_sol x) _ p
 
 
-end rel_loc.jet_sec
+end jet_sec

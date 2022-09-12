@@ -329,7 +329,7 @@ begin
   rw eventually_congr (H.is_part_holonomic_at_congr (L.E' ⊔ L.p.span_v)),
   apply h.hK₀.mono,
   intros x hx,
-  apply rel_loc.jet_sec.is_part_holonomic_at.sup,
+  apply jet_sec.is_part_holonomic_at.sup,
   { intros u hu,
     have hu_ker := L.hEp hu,
     dsimp [𝓕'],
@@ -429,7 +429,7 @@ begin
     (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ δ) ∧
     (∀ t, (H t).is_formal_sol R) ∧
     (∀ᶠ x near L.K₀, (H 1).is_part_holonomic_at (E' k) x),
-  { simpa only [show E' (fin.last n) = ⊤, from e.flag_last, is_part_holonomic_top] using
+  { simpa only [show E' (fin.last n) = ⊤, from e.flag_last, jet_sec.is_part_holonomic_top] using
       this (fin.last n) ε ε_pos },
   clear ε_pos ε,
   intro k,
