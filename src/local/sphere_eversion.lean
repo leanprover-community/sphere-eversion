@@ -1,7 +1,7 @@
 import to_mathlib.geometry.manifold.sphere
+import to_mathlib.analysis.inner_product_space.rotation
 import to_mathlib.analysis.inner_product_space.dual
 import local.parametric_h_principle
-import global.rotation
 import interactive_expr
 -- set_option trace.filter_inst_type true
 

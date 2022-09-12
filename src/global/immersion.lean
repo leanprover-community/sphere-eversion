@@ -1,7 +1,7 @@
 import to_mathlib.geometry.manifold.sphere
+import to_mathlib.analysis.inner_product_space.rotation
 import global.gromov
 import global.twist_one_jet_sec
-import global.rotation
 -- import interactive_expr
 -- set_option trace.filter_inst_type true
 
