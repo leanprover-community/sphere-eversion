@@ -1,4 +1,5 @@
 import to_mathlib.geometry.manifold.sphere
+import to_mathlib.linear_algebra.finite_dimensional
 import to_mathlib.analysis.inner_product_space.rotation
 import global.gromov
 import global.twist_one_jet_sec
@@ -85,7 +86,7 @@ begin
   rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
           (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
   haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
-  have hcodim := p.two_le_rank_of_rank_lt_rank h φ,
+  have hcodim := two_le_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.to_linear_map,
   rw [immersion_rel_slice_eq I I' hφ],
   exact ample_of_two_le_codim hcodim,
 end

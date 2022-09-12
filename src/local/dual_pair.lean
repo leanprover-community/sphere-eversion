@@ -6,11 +6,34 @@ import to_mathlib.analysis.normed_space.operator_norm
 import to_mathlib.analysis.calculus
 import to_mathlib.linear_algebra.basic
 
+/-! # Dual pairs
+
+Convex integration improves maps by successively modify their derivative in a direction of a
+vector field (almost) without changing their derivative along some complementary hyperplace.
+
+In this file we introduce the linear algebra part of the story of such modifications.
+The main gadget here are dual pairs on a real topological vector space `E`.
+Each `p : dual_pair' E` is made of a (continuous) linear form `p.π : E →L[ℝ] ℝ` and a vector
+`p.v : E` such that `p.π p.v = 1`.
+
+Those pairs are used to build the updating operation turning `φ : E →L[ℝ] F` into
+`p.update φ w` which equals `φ` on `ker p.π` and sends `v` to the given `w : F`.
+
+After formalizing the above definitions, we first record a number of trivial algebraic lemmas.
+Then we prove a lemma which is geometrically obvious but not so easy to formalize:
+`injective_update_iff` states, starting with an injective `φ`, that the updated
+map `p.update φ w` is injective if and only if `w` isn't in the image of `ker p.π` under `φ`.
+This is crucial in order to apply convex integration to immersions.
+
+Then we prove continuity and smoothness lemmas for this operation.
+-/
 
 
 noncomputable theory
 
 open function continuous_linear_map
+
+/-! ## General theory -/
 
 section no_norm
 variables (E : Type*) {E' F G : Type*}
@@ -155,6 +178,8 @@ begin
     continuous_linear_equiv.coe_coe, φ.symm_apply_apply],
 end
 
+/-! ## Injectivity criterion -/
+
 @[simp] lemma injective_update_iff
   (p : dual_pair' E) {φ : E →L[ℝ] F} (hφ : injective φ) {w : F} :
   injective (p.update φ w) ↔ w ∉ p.π.ker.map φ :=
@@ -196,25 +221,10 @@ begin
     exact hφ hw }
 end
 
-open finite_dimensional
-
-lemma two_le_rank_of_rank_lt_rank [finite_dimensional ℝ E] [finite_dimensional ℝ E']
-  (p : dual_pair' E) (h : finrank ℝ E < finrank ℝ E') (φ : E →L[ℝ] E') :
-  2 ≤ module.rank ℝ (E' ⧸ submodule.map φ p.π.ker) :=
-begin
-  suffices : 2 ≤ finrank ℝ (E' ⧸ p.π.ker.map φ.to_linear_map),
-  { rw ← finrank_eq_dim,
-    exact_mod_cast this },
-  apply le_of_add_le_add_right,
-  rw submodule.finrank_quotient_add_finrank (p.π.ker.map φ.to_linear_map),
-  have := calc finrank ℝ (p.π.ker.map φ.to_linear_map)
-        ≤ finrank ℝ p.π.ker : finrank_map_le ℝ φ.to_linear_map p.π.ker
-    ...  < finrank ℝ E : submodule.finrank_lt (le_top.lt_of_ne p.ker_pi_ne_top),
-  linarith,
-end
-
 end dual_pair'
 end no_norm
+
+/-! ## Smoothness and continuity -/
 
 namespace dual_pair'
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
@@ -246,13 +256,16 @@ begin
   exact (hw.sub (continuous_clm_apply.mp hφ p.v)).const_smul _
 end
 
+end dual_pair'
+
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair' i`
 is given by the `i`th basis element and its dual. -/
-def _root_.basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι] [decidable_eq ι]
+def basis.dual_pair' [finite_dimensional ℝ E] {ι : Type*} [fintype ι] [decidable_eq ι]
   (e : basis ι ℝ E) (i : ι) : dual_pair' E :=
 { π := (e.dual_basis i).to_continuous_linear_map,
   v := e i,
   pairing := by simp only [basis.coord_apply, finsupp.single_eq_same, basis.repr_self,
                            linear_map.coe_to_continuous_linear_map', basis.coe_dual_basis] }
-
-end dual_pair'
