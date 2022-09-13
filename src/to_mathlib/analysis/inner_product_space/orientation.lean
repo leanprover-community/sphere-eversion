@@ -5,7 +5,6 @@ Authors: Heather Macbeth
 -/
 import analysis.inner_product_space.orientation
 import to_mathlib.analysis.inner_product_space.gram_schmidt
-import to_mathlib.analysis.inner_product_space.unitary_group
 import to_mathlib.linear_algebra.orientation
 
 noncomputable theory
