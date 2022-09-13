@@ -14,7 +14,7 @@ import local.ample_relation
 
 This file proves lem:h_principle_open_ample_loc from the blueprint. This is the local
 version of the h-principle for open and ample relations. The proof brings together the
-main result `exists_loops` from the loop folder (Chapter 1 in the blueprint) and
+main result `exist_loops` from the loop folder (Chapter 1 in the blueprint) and
 the corrugation technique.
 
 One formalization issue is that the whole construction carries around a lot of data.
@@ -171,11 +171,11 @@ open_locale borelize
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ℝ → E → loop F :=
-classical.some (exists_loops L.is_compact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕) h.rel h.h_short)
+classical.some (exist_loops L.is_compact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕) h.rel h.h_short)
 
 lemma nice (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
   nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L 𝓕) L.K (L.loop h) :=
-classical.some_spec $ exists_loops L.is_compact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕) h.rel h.h_short
+classical.some_spec $ exist_loops L.is_compact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕) h.rel h.h_short
 
 lemma update_zero (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (x : E) (s : ℝ) :
 L.p.update (𝓕.φ x) ((L.loop h 0 x) s) = 𝓕.φ x :=

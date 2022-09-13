@@ -269,7 +269,7 @@ Try to change the left-hand side to the simplified term!
 #check @loop.mollify /- argument 6: [_inst_5 : borel_space F] -/
 
 -- loops\exists.lean
-#check @exists_loops_aux1 /- argument 12: [_inst_6 : borel_space F], argument 14: [_inst_8 : finite_dimensional ℝ E], argument 17: (hg : 𝒞 ⊤ g) -/
+#check @exist_loops_aux1 /- argument 12: [_inst_6 : borel_space F], argument 14: [_inst_8 : finite_dimensional ℝ E], argument 17: (hg : 𝒞 ⊤ g) -/
 
 -- loops\reparametrization.lean
 #check @loop.tendsto_mollify_apply_aux /- argument 5: [_inst_3 : finite_dimensional ℝ E] -/

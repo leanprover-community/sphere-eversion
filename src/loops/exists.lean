@@ -12,26 +12,12 @@ open_locale topological_space unit_interval
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F]
           {g b : E → F} {Ω : set (E × F)} {U K C : set E}
-variables [normed_space ℝ F] [measurable_space F] [borel_space F] [finite_dimensional ℝ F]
+variables [normed_space ℝ F] [finite_dimensional ℝ F]
 
-variables (g b Ω U K)
-
-structure nice_loop (γ : ℝ → E → loop F) : Prop :=
-(t_le_zero : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
-(t_ge_one : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
-(t_zero : ∀ x s, γ 0 x s = b x)
-(s_zero : ∀ x t, γ t x 0 = b x)
-(avg : ∀ x, (γ 1 x).average = g x)
-(mem_Ω : ∀ x t s, (x, γ t x s) ∈ Ω)
-(smooth : 𝒞 ∞ ↿γ)
-(rel_K : ∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)
-
-variables {g b Ω U K}
-
-lemma exists_loops_aux1 [finite_dimensional ℝ E]
+lemma exist_loops_aux1
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
-  (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
+  (hb : 𝒞 ∞ b)
   (hgK : ∀ᶠ x near K, g x = b x)
   (hconv : ∀ x, g x ∈ hull (connected_component_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ (γ : E → ℝ → loop F) (V ∈ 𝓝ˢ K) (ε > 0), surrounding_family_in g b γ V Ω ∧
@@ -46,8 +32,6 @@ begin
   obtain ⟨γ₀, hγ₀_cont, hγ₀, h2γ₀, h3γ₀, -, hγ₀_surr⟩ := -- γ₀ is γ* in notes
     surrounding_loop_of_convex_hull is_open_univ is_connected_univ
     (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
-  have := λ x, local_loops_open ⟨univ, univ_mem, h2Ω⟩ hg.continuous.continuous_at
-    hb.continuous (hconv x),
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
     hK.exists_thickening_image hΩ_op (continuous_id.prod_mk hb.continuous) (λ x _, b_in x),
   let range_γ₀ := (λ i : ℝ × ℝ, ∥γ₀ i.1 i.2∥) '' (I ×ˢ I),
@@ -89,7 +73,7 @@ begin
   { rintro x ⟨-, hx⟩ t s, simp [h2ε] }
 end
 
-/- Some remarks about `exists_loops_aux2`:
+/- Some remarks about `exist_loops_aux2`:
   `δ`: loop after smoothing
   `γ`: loop before smoothing (defined on all of `E`)
   Requirements:
@@ -106,7 +90,7 @@ end
     continuous `ε₁`.
   (a4) Furthermore, `ε₁` should be small enough so that any function with that
     distance from `γ` still surrounds `g`, using `surrounding_family.surrounds_of_close`.
-  (a5): `ε₁ x < ε₀` (obtained from `exists_loops_aux1`)
+  (a5): `ε₁ x < ε₀` (obtained from `exist_loops_aux1`)
   (b) Replace `γ x t s` by `γ x (linear_reparam t) (linear_reparam s)`.
   (e) Let `δ' x` be a family of loop that is at most `ε₁` away from `γ` using
     `exists_smooth_and_eq_on`. Since `γ` is smooth near `s ∈ ℤ` and `t ≤ 0` we can also
@@ -124,7 +108,7 @@ end
 
   -/
 
-lemma exists_loops_aux2 [finite_dimensional ℝ E]
+lemma exist_loops_aux2 [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
   (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
@@ -134,7 +118,7 @@ lemma exists_loops_aux2 [finite_dimensional ℝ E]
   ∀ᶠ x near K, ∀ t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
   have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
-  obtain ⟨γ₁, V, hV, ε₀, hε₀, hγ₁, hΩ, h2γ₁⟩ := exists_loops_aux1 hK hΩ_op hg hb hgK hconv,
+  obtain ⟨γ₁, V, hV, ε₀, hε₀, hγ₁, hΩ, h2γ₁⟩ := exist_loops_aux1 hK hΩ_op hb hgK hconv,
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
     (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) ⟨V, hV, hγ₁⟩,
@@ -245,7 +229,28 @@ begin
     exact h2γ₁ x hx.1 _ _ }
 end
 
-theorem exists_loops [finite_dimensional ℝ E]
+variables (g b Ω U K)
+variables [measurable_space F] [borel_space F]
+
+/-- A "nice" family of loops consists of all the properties we want from the `exist_loops` lemma:
+it is a smooth homotopy in `Ω` with fixed endpoints from the constant loop at `b x` to a loop with
+average `g x` that is also constantly `b x` near `K`.
+The first two conditions are implementation specific: the homotopy is constant outside the unit
+interval. -/
+structure nice_loop (γ : ℝ → E → loop F) : Prop :=
+(t_le_zero : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
+(t_ge_one : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
+(t_zero : ∀ x s, γ 0 x s = b x)
+(s_zero : ∀ x t, γ t x 0 = b x)
+(avg : ∀ x, (γ 1 x).average = g x)
+(mem_Ω : ∀ x t s, (x, γ t x s) ∈ Ω)
+(smooth : 𝒞 ∞ ↿γ)
+(rel_K : ∀ᶠ x in 𝓝ˢ K, ∀ t s, γ t x s = b x)
+
+variables {g b Ω U K}
+
+
+theorem exist_loops [finite_dimensional ℝ E]
   (hK : is_compact K)
   (hΩ_op : is_open Ω)
   (hg : 𝒞 ∞ g) (hb : 𝒞 ∞ b)
@@ -253,7 +258,7 @@ theorem exists_loops [finite_dimensional ℝ E]
   (hconv : ∀ x, g x ∈ hull (connected_component_in (prod.mk x ⁻¹' Ω) $ b x)) :
   ∃ γ : ℝ → E → loop F, nice_loop g b Ω K γ :=
 begin
-  obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁⟩ := exists_loops_aux2 hK hΩ_op hg hb hgK hconv,
+  obtain ⟨γ₁, hγ₁, hsγ₁, h2γ₁⟩ := exist_loops_aux2 hK hΩ_op hg hb hgK hconv,
   let γ₂ : smooth_surrounding_family g :=
     ⟨hg, λ x, γ₁ x 1, hsγ₁.comp₃ cont_diff_fst cont_diff_const cont_diff_snd,
       λ x, hγ₁.surrounds x (mem_univ _)⟩,
