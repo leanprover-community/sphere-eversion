@@ -739,9 +739,9 @@ variables {x₀ : E} (hΩ_conn : is_path_connected (prod.mk x₀ ⁻¹' Ω))
   {p : fin (d + 1) → F}
   (hp : ∀ i, p i ∈ prod.mk x₀ ⁻¹' Ω)
 
-/-- The witness of `local_loops`. -/
-def local_loops_def (x : E) (t : ℝ) : loop F :=
-b x - b x₀ +ᵥ surrounding_loop hΩ_conn hp hb_in t
+-- /-- The witness of `local_loops`. -/
+-- def local_loops_def (x : E) (t : ℝ) : loop F :=
+-- b x - b x₀ +ᵥ surrounding_loop hΩ_conn hp hb_in t
 
 /--
 Note: The conditions in this lemma are currently a bit weaker than the ones mentioned in the

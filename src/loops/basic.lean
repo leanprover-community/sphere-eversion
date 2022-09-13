@@ -222,6 +222,8 @@ lemma continuous_of_family_step {γ : X → Y → loop Z} (h : continuous ↿γ)
   continuous ↿(γ x) :=
 h.comp₂ continuous_const continuous_id
 
+/-- Given a continuous family of loops, we can turn it into a bundled continuous map with as
+codomain the space of bundled continuous maps. -/
 @[simps] def as_continuous_family {γ : X → loop X'} (h : continuous ↿γ) : C(X, C(I, X')) :=
 continuous_map.curry
 { to_fun := λ z, γ z.1 z.2,
