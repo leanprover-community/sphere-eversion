@@ -75,7 +75,7 @@ begin
   exact h x x_in this
 end
 
-lemma mem_slice_iff_of_not_mem {x : E} {w : F} {φ : E →L[ℝ] F} {p : dual_pair' E}
+lemma mem_slice_iff_of_not_mem {x : E} {w : F} {φ : E →L[ℝ] F} {p : dual_pair E}
   (hx : x ∉ B) (y : F) : w ∈ slice R p (x, y, φ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ :=
 begin
   change (x ∉ B → inj_on (p.update φ w) (ℝ ∙ x)ᗮ) ↔ inj_on (p.update φ w) (ℝ ∙ x)ᗮ,
@@ -208,7 +208,7 @@ begin
         span_singleton_smul_eq ne_z'.is_unit],
       exact (orthogonal_line_inf_sup_line u x).symm },
     rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z] },
-  let p' : dual_pair' E := { π := p.π, v := v', pairing := hπv' },
+  let p' : dual_pair E := { π := p.π, v := v', pairing := hπv' },
   apply ample_slice_of_ample_slice (show p'.π = p.π, from rfl),
   suffices : slice R p' (x, y, φ) = (map φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ))ᶜ,
   { rw [this],
@@ -233,10 +233,10 @@ begin
   rw mem_slice_iff_of_not_mem hx y,
   rw inj_on_iff_injective,
   let j := (ℝ ∙ x)ᗮ.subtypeL,
-  let p'' : dual_pair' (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩,
+  let p'' : dual_pair (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩,
   have eq : ((ℝ ∙ x)ᗮ : set E).restrict (p'.update φ w) = (p''.update (φ.comp j) w),
   { ext z,
-    simp only [dual_pair'.update, restrict_apply, continuous_linear_map.add_apply,
+    simp only [dual_pair.update, restrict_apply, continuous_linear_map.add_apply,
       continuous_linear_map.coe_comp', coe_subtypeL', submodule.coe_subtype, comp_app, coe_mk] },
   have eq' : map (φ.comp j) p''.π.ker = map φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ),
   { have : map ↑j p''.π.ker = p.π.ker ⊓ (ℝ ∙ x)ᗮ,

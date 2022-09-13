@@ -64,7 +64,7 @@ open set
 The following types should have an associated instance of the class
 `nonempty`, or if computably possible `inhabited` or `unique`: -/
 -- local\dual_pair.lean
-#check @dual_pair' /- nonempty/inhabited/unique instance missing -/
+#check @dual_pair /- nonempty/inhabited/unique instance missing -/
 
 -- local\h_principle.lean
 #check @landscape /- nonempty/inhabited/unique instance missing -/

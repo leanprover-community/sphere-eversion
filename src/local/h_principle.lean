@@ -50,7 +50,7 @@ together with a dual pair `p` and a subspace `E'` of the corresponding hyperplan
 -/
 structure step_landscape extends landscape E :=
 (E' : submodule ℝ E)
-(p : dual_pair' E)
+(p : dual_pair E)
 (hEp : E' ≤ p.π.ker)
 
 variables {E}
@@ -174,7 +174,7 @@ lemma hρ_compl_K₁ (L : step_landscape E) {x : E} : x ∉ L.K₁ → L.ρ x = 
 (exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some_spec.2.2.1 x
 
 /--
-Homotopy of formal solutions obtained by corrugation in the direction of `p : dual_pair' E`
+Homotopy of formal solutions obtained by corrugation in the direction of `p : dual_pair E`
 in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomic to
 `L.E' ⊔ span {p.v}`-holonomic near `L.K₀`.
 -/
@@ -442,8 +442,8 @@ begin
     rcases HH (δ/2) (half_pos δ_pos) with ⟨H, hH₀, hHC, hHK₁, hHc0, hH_sol, hH_hol⟩, clear HH,
     let S : step_landscape E :=
     { E' := E' k,
-      p := e.dual_pair' k,
-      hEp := by simpa only [E', basis.dual_pair'] using e.flag_le_ker_dual k,
+      p := e.dual_pair k,
+      hEp := by simpa only [E', basis.dual_pair] using e.flag_le_ker_dual k,
       ..L},
     set H₁ : formal_sol R := (hH_sol 1).formal_sol,
     have h_span : S.E' ⊔ S.p.span_v = E' k.succ := e.flag_span_succ k,

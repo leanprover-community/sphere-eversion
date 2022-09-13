@@ -46,8 +46,8 @@ lemma rel_mfld.is_open_relativize (R : rel_mfld I M I' M') (h2 : is_open R) :
 h2.preimage smooth_bundle_snd.continuous
 
 lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
-  {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
-  (q : dual_pair' $ tangent_space I σ.1.1.2)
+  {p : dual_pair $ tangent_space (IP.prod I) σ.1.1}
+  (q : dual_pair $ tangent_space I σ.1.1.2)
   (hpq : p.π.comp (continuous_linear_map.inr ℝ EP E) = q.π) :
   (R.relativize IP P).slice σ p =
   σ.2 (p.v - (0, q.v)) +ᵥ R.slice (bundle_snd σ) q :=
@@ -77,7 +77,7 @@ begin
 end
 
 lemma relativize_slice_eq_univ {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
-  {p : dual_pair' $ tangent_space (IP.prod I) σ.1.1}
+  {p : dual_pair $ tangent_space (IP.prod I) σ.1.1}
   (hp : p.π.comp (continuous_linear_map.inr ℝ EP E) = 0) :
   ((R.relativize IP P).slice σ p).nonempty ↔
   (R.relativize IP P).slice σ p = univ :=
@@ -106,7 +106,7 @@ begin
       preconnected_space.connected_component_eq_univ, convex_hull_univ] },
   obtain ⟨u', hu'⟩ := continuous_linear_map.exists_ne_zero h,
   let u := (p2 u')⁻¹ • u',
-  let q : dual_pair' (tangent_space I σ.1.1.2) :=
+  let q : dual_pair (tangent_space I σ.1.1.2) :=
   ⟨p2, u, by rw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩,
   rw [relativize_slice q rfl],
   refine (hR q).vadd,

@@ -94,23 +94,23 @@ end formal_sol
 
 /-- The slice `R(σ,p)`. -/
 def rel_mfld.slice (R : rel_mfld I M I' M') (σ : one_jet_bundle I M I' M')
-  (p : dual_pair' $ TM σ.1.1) : set (TM' σ.1.2) :=
+  (p : dual_pair $ TM σ.1.1) : set (TM' σ.1.2) :=
 {w : TM' σ.1.2 | one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
 /-- For some reason `rw [mem_set_of_eq]` fails after unfolding `slice`,
 but rewriting with this lemma works. -/
 lemma mem_slice {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
-  {p : dual_pair' $ TM σ.1.1} {w : TM' σ.1.2} :
+  {p : dual_pair $ TM σ.1.1} {w : TM' σ.1.2} :
   w ∈ R.slice σ p ↔ one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
 iff.rfl
 
 @[simp] lemma jet_apply_v_mem_slice
-  {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'} (p : dual_pair' $ TM σ.1.1) :
+  {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'} (p : dual_pair $ TM σ.1.1) :
   σ.2 p.v ∈ R.slice σ p ↔ σ ∈ R :=
 by { rcases σ with ⟨⟨m, m'⟩, φ⟩, simp [mem_slice], }
 
 lemma slice_mk_update {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
-  {p : dual_pair' $ TM σ.1.1} (x : E') :
+  {p : dual_pair $ TM σ.1.1} (x : E') :
   R.slice (one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p = (R.slice σ p : set E') :=
 begin
   ext1 w,
@@ -121,10 +121,10 @@ end
 
 /-- A differential relation is ample if all its slices are ample sets. -/
 def rel_mfld.ample (R : rel_mfld I M I' M') : Prop :=
-∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair' $ TM σ.1.1), ample_set (R.slice σ p)
+∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair $ TM σ.1.1), ample_set (R.slice σ p)
 
 lemma rel_mfld.ample_iff (R : rel_mfld I M I' M') : R.ample ↔
-  ∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair' $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p) :=
+  ∀ ⦃σ : one_jet_bundle I M I' M'⦄ (p : dual_pair $ TM σ.1.1), σ ∈ R → ample_set (R.slice σ p) :=
 begin
   simp_rw [rel_mfld.ample],
   refine ⟨λ h σ p _, h p, λ h σ p x hx, _⟩,

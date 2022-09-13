@@ -60,8 +60,8 @@ lemma rel_loc.is_open_relativize (R : rel_loc E F) (h2 : is_open R) :
 h2.preimage continuous_one_jet_snd
 
 lemma relativize_slice {σ : one_jet (P × E) F}
-  {p : dual_pair' (P × E)}
-  (q : dual_pair' E)
+  {p : dual_pair (P × E)}
+  (q : dual_pair E)
   (hpq : p.π.comp (continuous_linear_map.inr ℝ P E) = q.π) :
   (R.relativize P).slice p σ =
   σ.2.2 (p.v - (0, q.v)) +ᵥ R.slice q (one_jet_snd σ) :=
@@ -89,7 +89,7 @@ begin
 end
 
 lemma relativize_slice_eq_univ {σ : one_jet (P × E) F}
-  {p : dual_pair' (P × E)}
+  {p : dual_pair (P × E)}
   (hp : p.π.comp (continuous_linear_map.inr ℝ P E) = 0) :
   ((R.relativize P).slice p σ).nonempty ↔
   (R.relativize P).slice p σ = univ :=
@@ -117,7 +117,7 @@ begin
       preconnected_space.connected_component_eq_univ, convex_hull_univ] },
   obtain ⟨u', hu'⟩ := continuous_linear_map.exists_ne_zero h,
   let u := (p2 u')⁻¹ • u',
-  let q : dual_pair' E :=
+  let q : dual_pair E :=
   ⟨p2, u, by rw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩,
   rw [relativize_slice q rfl],
   exact (hR q _).vadd

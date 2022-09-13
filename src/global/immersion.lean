@@ -74,7 +74,7 @@ begin
   { apply_instance, },
 end
 
-@[simp] lemma immersion_rel_slice_eq {m : M} {m' : M'} {p : dual_pair' $ tangent_space I m}
+@[simp] lemma immersion_rel_slice_eq {m : M} {m' : M'} {p : dual_pair $ tangent_space I m}
   {φ : tangent_space I m →L[ℝ] tangent_space I' m'} (hφ : injective φ) :
   (immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p = (p.π.ker.map φ)ᶜ :=
 set.ext_iff.mpr $ λ w, p.injective_update_iff hφ
@@ -84,7 +84,7 @@ lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
 begin
   rw [rel_mfld.ample_iff],
   rintros ⟨⟨m, m'⟩, φ : tangent_space I m →L[ℝ] tangent_space I' m'⟩
-          (p : dual_pair' (tangent_space I m)) (hφ : injective φ),
+          (p : dual_pair (tangent_space I m)) (hφ : injective φ),
   haveI : finite_dimensional ℝ (tangent_space I m) := (by apply_instance : finite_dimensional ℝ E),
   have hcodim := two_le_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.to_linear_map,
   rw [immersion_rel_slice_eq I I' hφ],

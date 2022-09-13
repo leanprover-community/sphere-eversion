@@ -33,15 +33,15 @@ namespace rel_loc
 
 /-- The slice of a local relation `R : rel_loc E F` for a dual pair `p` at a jet `θ` is
 the set of `w` in `F` such that updating `θ` using `p` and `w` leads to a jet in `R`. -/
-def slice (R : rel_loc E F) (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)) : set F :=
+def slice (R : rel_loc E F) (p : dual_pair E) (θ : E × F × (E →L[ℝ] F)) : set F :=
 {w | (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R}
 
-lemma mem_slice (R : rel_loc E F) {p : dual_pair' E} {θ : E × F × (E →L[ℝ] F)} {w : F} :
+lemma mem_slice (R : rel_loc E F) {p : dual_pair E} {θ : E × F × (E →L[ℝ] F)} {w : F} :
   w ∈ R.slice p θ ↔ (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R :=
 iff.rfl
 
 /-- A relation is ample if all its slices are ample. -/
-def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair' E) (θ : E × F × (E →L[ℝ] F)),
+def is_ample (R : rel_loc E F) : Prop := ∀ (p : dual_pair E) (θ : E × F × (E →L[ℝ] F)),
 ample_set (R.slice p θ)
 
 lemma is_ample.mem_hull (h : is_ample R) {θ : E × F × (E →L[ℝ] F)}
@@ -54,7 +54,7 @@ begin
 end
 
 lemma slice_update {θ : E × F × (E →L[ℝ] F)}
-  {p : dual_pair' E} (x : F) :
+  {p : dual_pair E} (x : F) :
   R.slice p (θ.1, θ.2.1, (p.update θ.2.2 x)) = R.slice p θ :=
 begin
   ext1 w,
@@ -64,7 +64,7 @@ end
 
 /-- In order to check ampleness, it suffices to consider slices through elements of the relation. -/
 lemma is_ample_iff : R.is_ample ↔
-  ∀ ⦃θ : one_jet E F⦄ (p : dual_pair' E), θ ∈ R → ample_set (R.slice p θ) :=
+  ∀ ⦃θ : one_jet E F⦄ (p : dual_pair E), θ ∈ R → ample_set (R.slice p θ) :=
 begin
   simp_rw [is_ample],
   refine ⟨λ h θ p hθ, h p θ, λ h p θ w hw, _⟩,
@@ -77,13 +77,13 @@ end
 open_locale pointwise
 
 lemma slice_of_ker_eq_ker {θ : one_jet E F}
-  {p p' : dual_pair' E} (hpp' : p.π = p'.π) :
+  {p p' : dual_pair E} (hpp' : p.π = p'.π) :
   R.slice p θ = θ.2.2 (p.v - p'.v) +ᵥ R.slice p' θ :=
 begin
   rcases θ with ⟨x, y, φ⟩,
   have key : ∀ w, p'.update φ w = p.update φ (w + φ (p.v - p'.v)),
   { intros w,
-    simp only [dual_pair'.update, hpp', map_sub, add_right_inj],
+    simp only [dual_pair.update, hpp', map_sub, add_right_inj],
     congr' 2,
     abel },
   ext w,
@@ -94,14 +94,14 @@ begin
 end
 
 lemma ample_slice_of_ample_slice {θ : one_jet E F}
-  {p p' : dual_pair' E} (hpp' : p.π = p'.π) (h : ample_set (R.slice p θ)) :
+  {p p' : dual_pair E} (hpp' : p.π = p'.π) (h : ample_set (R.slice p θ)) :
   ample_set (R.slice p' θ) :=
 begin
   rw slice_of_ker_eq_ker hpp'.symm,
   exact ample_set.vadd h
 end
 
-lemma ample_slice_of_forall (R : rel_loc E F) {x y φ} (p : dual_pair' E)
+lemma ample_slice_of_forall (R : rel_loc E F) {x y φ} (p : dual_pair E)
   (h : ∀ w, (x, y, p.update φ w) ∈ R) : ample_set (R.slice p (x, y, φ)) :=
 begin
   rw show R.slice p (x, y, φ) = univ, from eq_univ_of_forall h,
@@ -109,7 +109,7 @@ begin
 end
 
 -- unused
-lemma ample_slice_of_forall_not (R : rel_loc E F) {x y φ} (p : dual_pair' E)
+lemma ample_slice_of_forall_not (R : rel_loc E F) {x y φ} (p : dual_pair E)
   (h : ∀ w, (x, y, p.update φ w) ∉ R) : ample_set (R.slice p (x, y, φ)) :=
 begin
   rw show R.slice p (x, y, φ) = ∅, from eq_empty_iff_forall_not_mem.mpr h,
@@ -125,13 +125,13 @@ open rel_loc
 namespace jet_sec
 
 /-- The slice associated to a jet section and a dual pair at some point. -/
-def slice_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : set F :=
+def slice_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair E) (x : E) : set F :=
 R.slice p (x, 𝓕.f x, 𝓕.φ x)
 
 /-- A 1-jet section `𝓕` is short for a dual pair `p` at a point `x` if the derivative of
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
 corresponding slice. -/
-def is_short_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair' E) (x : E) : Prop :=
+def is_short_at (𝓕 : jet_sec E F) (R : rel_loc E F) (p : dual_pair E) (x : E) : Prop :=
 D 𝓕.f x p.v ∈ hull (connected_component_in (𝓕.slice_at R p x) $ 𝓕.φ x p.v)
 
 end jet_sec
@@ -139,21 +139,21 @@ end jet_sec
 namespace rel_loc.formal_sol
 
 /-- The slice associated to a formal solution and a dual pair at some point. -/
-def slice_at (𝓕 : formal_sol R) (p : dual_pair' E) (x : E) : set F :=
+def slice_at (𝓕 : formal_sol R) (p : dual_pair E) (x : E) : set F :=
 R.slice p (x, 𝓕.f x, 𝓕.φ x)
 
-lemma mem_slice (𝓕 : formal_sol R) (p : dual_pair' E) {x : E} :
+lemma mem_slice (𝓕 : formal_sol R) (p : dual_pair E) {x : E} :
   𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
 by simpa [rel_loc.formal_sol.slice_at, rel_loc.slice] using  𝓕.is_sol x
 
 /-- A formal solution `𝓕` is short for a dual pair `p` at a point `x` if the derivative of
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
 corresponding slice. -/
-def is_short_at (𝓕 : formal_sol R) (p : dual_pair' E) (x : E) : Prop :=
+def is_short_at (𝓕 : formal_sol R) (p : dual_pair E) (x : E) : Prop :=
 D 𝓕.f x p.v ∈ hull (connected_component_in (𝓕.slice_at p x) $ 𝓕.φ x p.v)
 
 end rel_loc.formal_sol
 
-lemma rel_loc.is_ample.is_short_at (hR : is_ample R) (𝓕 : formal_sol R) (p : dual_pair' E)
+lemma rel_loc.is_ample.is_short_at (hR : is_ample R) (𝓕 : formal_sol R) (p : dual_pair E)
   (x : E) : 𝓕.is_short_at p x :=
 hR.mem_hull (𝓕.is_sol x) _ p
