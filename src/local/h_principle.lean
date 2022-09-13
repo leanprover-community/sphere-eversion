@@ -12,7 +12,47 @@ import local.ample_relation
 /-!
 # Local h-principle for open and ample relations
 
-This file proves lem:h_principle_open_ample_loc
+This file proves lem:h_principle_open_ample_loc from the blueprint. This is the local
+version of the h-principle for open and ample relations. The proof brings together the
+main result `exists_loops` from the loop folder (Chapter 1 in the blueprint) and
+the corrugation technique.
+
+One formalization issue is that the whole construction carries around a lot of data.
+On paper it is easy to state one lemma listing once all this data and proving many properties.
+Here it is more convenient to give each property its own lemma so carrying around data,
+assumptions and constructions requires some planning. Our way to mitigate this issue
+is to use two ad-hoc structures `landscape` and `step_landscape` which partly bundle
+all this.
+
+The `landscape` structure record three sets in a vector space, a closed
+set `C` and two nested compact sets `K₀` and `K₁`. This is the ambiant data for
+the local h-principle result. We call this partly bundled because it doesn't include
+the data of the formal solution we want to improve. Instead we have a Prop-valued
+structure `landscape.accepts` that takes a landscape and a formal solution and assert
+some compatibility conditions. There are four conditions, which is already enough
+motivation to introduce a structure instead of one definition using the logical
+conjunction operator that would lead to awkward and error prone access to the
+individual conditions.
+
+The proof of this proposition involves an induction on a flag of subspaces (nested
+subspaces of increasing dimensions). For the purpose of this induction we use
+a second structure `step_landscape` that extends `landscape` with two more pieces
+of data, a subspace and a dual pair, and a compatibility condition, namely the subspace
+has to be in the hyperplane defined by the dual pair.
+
+In this setup, given `(L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕)`,
+the loop family constructed by Chapter 2 is `L.loop h`. Together with corrugation,
+it is used to build `L.improve_step h` which is the homotopy of 1-jet sections improving
+the formal solution `𝓕` in that step of the main inductive proof. A rather long series of
+lemmas prove all the required properties of that homotopy, corresponding to
+lemma lem:integration_step from the blueprint.
+
+The inductive proof itself is the proof of `rel_loc.formal_sol.improve`.
+Here all conclusions are stated at once this the induction requires to know about each
+of them to proceed to the next step. We could have introduced one more ad-hoc structure
+to record those conclusion but this isn't needed (at least in that Chapter) since we
+need to access its components only once.
+
 -/
 
 noncomputable theory
@@ -20,8 +60,8 @@ noncomputable theory
 open_locale unit_interval classical filter topological_space
 open filter set rel_loc
 
-variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
+variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]
+          {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
           {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
 
 open_locale unit_interval
@@ -73,14 +113,22 @@ def Ω (L : step_landscape E) (𝓕 : jet_sec E F) : set (E × F) :=
 {p | p.2 ∈ 𝓕.slice_at R L.p p.1}
 --⋃ x, ({x} : set E) ×ˢ (connected_component_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
 
+/-- The linear form in a `step_landscape`, coming from the underlying dual pair. -/
 def π (L : step_landscape E) : E →L[ℝ] ℝ := L.p.π
 
+/-- The vector in a `step_landscape`, coming from the underlying dual pair. -/
 def v (L : step_landscape E) : E := L.p.v
 
+/-- One more compact set in the landscape: K₁ ∩ C, needed as an input to the
+loop construction. -/
 def K (L : step_landscape E) : set E := L.K₁ ∩ L.C
 
+/-- The base function for the loop family associated in any jet section in a
+step landscape. -/
 def b (L : step_landscape E) (𝓕 : jet_sec E F) : E → F := λ x, 𝓕.φ x L.v
 
+/-- The desired average for the loop family associated in any jet section in a
+step landscape. -/
 def g (L : step_landscape E) (𝓕 : jet_sec E F) : E → F := λ x, D 𝓕.f x L.v
 
 lemma is_compact_K (L : step_landscape E) : is_compact L.K :=
@@ -88,7 +136,7 @@ L.hK₁.inter_right L.hC
 
 variables {R}
 
-lemma accepts.open {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+lemma accepts.open [finite_dimensional ℝ E]  {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
   is_open (L.Ω R 𝓕) :=
 begin
   set ψ : E × F → one_jet E F := λ p, (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2),
@@ -98,11 +146,11 @@ begin
   exact L.p.continuous_update 𝓕.φ_diff.continuous.fst' continuous_snd
 end
 
-lemma accepts.smooth_b {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+lemma smooth_b (L : step_landscape E) (𝓕 : jet_sec E F) :
   𝒞 ∞ (L.b 𝓕) :=
 (continuous_linear_map.apply ℝ F L.v).cont_diff.comp 𝓕.φ_diff
 
-lemma accepts.smooth_g {L : step_landscape E} {𝓕 : jet_sec E F} (h : L.accepts R 𝓕) :
+lemma smooth_g (L : step_landscape E) (𝓕 : jet_sec E F) :
   𝒞 ∞ (L.g 𝓕) :=
 (continuous_linear_map.apply ℝ F L.v).cont_diff.comp (cont_diff_top_iff_fderiv.mp 𝓕.f_diff).2
 
@@ -116,16 +164,18 @@ begin
   rw hx
 end
 
+variables [finite_dimensional ℝ E]  [finite_dimensional ℝ F]
+
 open_locale borelize
 
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
 ℝ → E → loop F :=
-classical.some (exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.h_short)
+classical.some (exists_loops L.is_compact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕) h.rel h.h_short)
 
 lemma nice (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) :
   nice_loop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L 𝓕) L.K (L.loop h) :=
-classical.some_spec $ exists_loops L.is_compact_K h.open h.smooth_g h.smooth_b h.rel h.h_short
+classical.some_spec $ exists_loops L.is_compact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕) h.rel h.h_short
 
 lemma update_zero (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕) (x : E) (s : ℝ) :
 L.p.update (𝓕.φ x) ((L.loop h 0 x) s) = 𝓕.φ x :=
@@ -149,7 +199,8 @@ lemma loop_C1 (L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕
 
 variables (L : step_landscape E)
 
--- Cut-off function which needs to satisfies the next three lemmas
+/-- The cut-off function associated to a step landscape, equal to one near K₀ and
+zero outside K₁. -/
 def ρ (L : step_landscape E) : E → ℝ :=
 (exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁).some
 
@@ -276,7 +327,11 @@ begin
     exact λ x, improve_step_rel_compl_K₁ h N }
 end
 
-lemma bu_lt (t : ℝ) (x : E) {v : F} {ε : ℝ} (hv : ∥v∥ < ε) :
+-- In the next lemma we reintroduce F to appaise the unused argument linter since
+-- `finite_dimensional ℝ F` isn't needed here.
+
+lemma bu_lt {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+  (t : ℝ) (x : E) {v : F} {ε : ℝ} (hv : ∥v∥ < ε) :
   ∥(smooth_step t * L.ρ x) • v∥ < ε :=
 calc ∥(smooth_step t * L.ρ x) • v∥ = |smooth_step t| * |L.ρ x| * ∥v∥ : by
              rw [norm_smul, real.norm_eq_abs, abs_mul]
@@ -400,7 +455,8 @@ This section proves lem:h_principle_open_ample_loc.
 
 open finite_dimensional submodule step_landscape
 
-variables {E} {R : rel_loc E F} (h_op : is_open R) (h_ample : R.is_ample)
+variables {E} [finite_dimensional ℝ E] [finite_dimensional ℝ F]
+  {R : rel_loc E F} (h_op : is_open R) (h_ample : R.is_ample)
 variables (L : landscape E)
 variables {ε : ℝ} (ε_pos : 0 < ε)
 
@@ -546,4 +602,3 @@ begin
 end
 
 end improve
-#lint
