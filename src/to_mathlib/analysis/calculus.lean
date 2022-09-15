@@ -411,33 +411,17 @@ compL 𝕜 E F G φ
 
 lemma differentiable.fderiv_partial_fst {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) :
   ↿(∂₁ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
-begin
-  have : ∀ p : E × F, has_fderiv_at (uncurry φ) _ p,
-  { intro p,
-    exact (hF p).has_fderiv_at },
-  dsimp [partial_fderiv_fst],
-  rw funext (λ x : E , funext $ λ t : F, (this (x, t)).partial_fst.fderiv),
-  ext ⟨y, t⟩,
-  refl
-end
+by { ext1 ⟨y, t⟩, exact fderiv_partial_fst (hF ⟨y, t⟩).has_fderiv_at }
 
 lemma differentiable.fderiv_partial_snd {φ : E → F → G} (hF : differentiable 𝕜 (uncurry φ)) :
   ↿(∂₂ 𝕜 φ) = (λ ψ : E × F →L[𝕜] G, ψ.comp (inr 𝕜 E F)) ∘ (fderiv 𝕜 $ uncurry φ) :=
-begin
-  have : ∀ p : E × F, has_fderiv_at (uncurry φ) _ p,
-  { intro p,
-    exact (hF p).has_fderiv_at },
-  dsimp [partial_fderiv_snd],
-  rw funext (λ x : E , funext $ λ t : F, (this (x, t)).partial_snd.fderiv),
-  ext ⟨y, t⟩,
-  refl
-end
+by { ext1 ⟨y, t⟩, exact fderiv_partial_snd (hF ⟨y, t⟩).has_fderiv_at }
 
 /-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G`-/
-def partial_deriv_fst (φ : 𝕜 → F → G) := λ k f, ∂₁ 𝕜 φ k f 1
+def partial_deriv_fst (φ : 𝕜 → F → G) : 𝕜 → F → G := λ k f, ∂₁ 𝕜 φ k f 1
 
 /-- The second partial derivative of `φ : E → 𝕜 → G` seen as a function from `E → 𝕜 → G`-/
-def partial_deriv_snd (φ : E → 𝕜 → G) := λ e k, ∂₂ 𝕜 φ e k 1
+def partial_deriv_snd (φ : E → 𝕜 → G) : E → 𝕜 → G := λ e k, ∂₂ 𝕜 φ e k 1
 
 lemma partial_fderiv_fst_eq_smul_right (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
   ∂₁ 𝕜 φ k f = smul_right (1 : 𝕜 →L[𝕜] 𝕜) (partial_deriv_fst φ k f) := deriv_fderiv.symm
@@ -466,12 +450,7 @@ with_top.coe_le_coe.mpr le_self_mul
 
 lemma cont_diff.cont_diff_partial_fst {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₁ 𝕜 φ) :=
-begin
-  cases cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
-  rw (hF.one_of_succ.differentiable le_rfl).fderiv_partial_fst,
-  apply cont_diff.comp _ hF₂,
-  exact ((inl 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] E →L[𝕜] G).cont_diff
-end
+cont_diff.fderiv (hF.comp $ cont_diff_snd.prod cont_diff_fst.snd) cont_diff_fst le_rfl
 
 lemma cont_diff.cont_diff_partial_fst_apply {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) {x : E} : cont_diff 𝕜 n ↿(λ x' y, ∂₁ 𝕜 φ x' y x) :=
@@ -487,12 +466,7 @@ cont_diff_top.mpr (λ n, (cont_diff_top.mp hF (n + 1)).cont_diff_partial_fst)
 
 lemma cont_diff.cont_diff_partial_snd {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) : cont_diff 𝕜 n ↿(∂₂ 𝕜 φ) :=
-begin
-  cases cont_diff_succ_iff_fderiv.mp hF with hF₁ hF₂,
-  rw (hF.one_of_succ.differentiable le_rfl).fderiv_partial_snd,
-  apply cont_diff.comp _ hF₂,
-  exact ((inr 𝕜 E F).comp_rightL : (E × F →L[𝕜] G) →L[𝕜] F →L[𝕜] G).cont_diff
-end
+cont_diff.fderiv (hF.comp $ cont_diff_fst.fst.prod cont_diff_snd) cont_diff_snd le_rfl
 
 lemma cont_diff.cont_diff_partial_snd_apply {φ : E → F → G} {n : ℕ}
   (hF : cont_diff 𝕜 (n + 1) (uncurry φ)) {y : F} : cont_diff 𝕜 n ↿(λ x y', ∂₂ 𝕜 φ x y' y) :=
@@ -522,14 +496,6 @@ begin
 end
 
 end real_calculus
-
-
-open real continuous_linear_map asymptotics
-open_locale topological_space
-
-lemma of_eventually_nhds {X : Type*} [topological_space X] {P : X → Prop} {x₀ : X}
-  (h : ∀ᶠ x in 𝓝 x₀, P x) : P x₀ :=
-mem_of_mem_nhds h
 
 section
 
@@ -636,19 +602,6 @@ end
 lemma has_deriv_at.is_O {f : E → F} {x₀ : E} {f' : E →L[𝕜] F} (h : has_fderiv_at f f' x₀) :
   (λ x, f x - f x₀) =O[𝓝 x₀] λ x, x - x₀ :=
 by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
-
-end
-
-section
-open continuous_linear_map
-
-lemma coprod_eq_add {R₁ : Type*} [semiring R₁] {M₁ : Type*} [topological_space M₁]
-  [add_comm_monoid M₁] {M₂ : Type*} [topological_space M₂] [add_comm_monoid M₂]
-  {M₃ : Type*} [topological_space M₃] [add_comm_monoid M₃] [module R₁ M₁]
-  [module R₁ M₂] [module R₁ M₃] [has_continuous_add M₃]
-  (f : M₁ →L[R₁] M₃) (g : M₂ →L[R₁] M₃) :
-  f.coprod g = (f.comp $ fst R₁ M₁ M₂) + (g.comp $ snd R₁ M₁ M₂) :=
-by { ext ; refl }
 
 end
 

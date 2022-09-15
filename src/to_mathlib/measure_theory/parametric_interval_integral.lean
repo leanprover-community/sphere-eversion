@@ -39,10 +39,10 @@ lemma has_fderiv_at_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
 begin
   erw ae_restrict_interval_oc_iff at h_diff h_bound,
   simp_rw [ae_strongly_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
-  exact (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
-         bound_integrable.1 h_diff.1).sub
-        (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
-         bound_integrable.2 h_diff.2)
+  exact (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos
+          hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1 bound_integrable.1 h_diff.1).sub
+        (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos
+          hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2 bound_integrable.2 h_diff.2)
 end
 
 /-- Interval version of `has_fderiv_at_of_dominated_loc_of_lip` -/
