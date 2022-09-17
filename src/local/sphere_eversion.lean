@@ -425,7 +425,7 @@ open_locale unit_interval
 
 theorem sphere_eversion_of_loc [fact (dim E = 3)] :
   ∃ f : ℝ → E → E,
-  (𝒞 ∞ (uncurry f)) ∧
+  (𝒞 ∞ ↿f) ∧
   (∀ x ∈ 𝕊², f 0 x = x) ∧
   (∀ x ∈ 𝕊², f 1 x = -x) ∧
   ∀ t ∈ I, sphere_immersion (f t) :=
