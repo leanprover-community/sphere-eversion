@@ -153,29 +153,63 @@ open function finite_dimensional
 
 variables [finite_dimensional 𝕜 E]
 
+lemma continuous_linear_map.inj_iff_antilip [complete_space 𝕜] (φ : E →L[𝕜] F) :
+  injective φ ↔ ∃ K > 0, antilipschitz_with K φ :=
+begin
+  change injective φ.to_linear_map ↔ _,
+  split,
+  { rw ← linear_map.ker_eq_bot,
+    exact φ.exists_antilipschitz_with },
+  { rintro ⟨K, K_pos, H⟩,
+    exact H.injective }
+end
+open_locale topological_space
+
+lemma is_open_iff_eventually {α : Type*} [topological_space α] {s : set α} :
+is_open s ↔ ∀ x, x ∈ s → ∀ᶠ y in 𝓝 x, y ∈ s :=
+is_open_iff_mem_nhds
+
+lemma is_closed_iff_frequently {α : Type*} [topological_space α] {s : set α} :
+is_closed s ↔ ∀ x, (∃ᶠ y in 𝓝 x, y ∈ s) → x ∈ s :=
+begin
+  rw ← closure_subset_iff_is_closed,
+  apply forall_congr (λ x, _),
+  rw mem_closure_iff_frequently
+end
+
+open_locale nnreal
+
+lemma eventually_nnorm_sub_lt (x₀ : E) {ε : ℝ≥0} {ε_pos : 0 < ε} :
+∀ᶠ x in 𝓝 x₀, ∥x - x₀∥₊ < ε :=
+begin
+  rw metric.nhds_basis_ball.eventually_iff,
+  use [ε, ε_pos],
+  simp [dist_eq_norm],
+  exact λ x, id
+end
+
+lemma eventually_norm_sub_lt (x₀ : E) {ε : ℝ} {ε_pos : 0 < ε} :
+∀ᶠ x in 𝓝 x₀, ∥x - x₀∥ < ε :=
+begin
+  rw metric.nhds_basis_ball.eventually_iff,
+  use [ε, ε_pos],
+  simp [dist_eq_norm]
+end
+
 lemma continuous_linear_map.is_open_injective [complete_space 𝕜] :
   is_open {L : E →L[𝕜] F | injective L} :=
 begin
-  suffices : ∀ (L : E →L[𝕜] F), injective L ↔ (finrank 𝕜 E : cardinal) ≤ rank (L : E →ₗ[𝕜] F),
-  { simp_rw this, exact is_open_set_of_nat_le_rank (finrank 𝕜 E), },
-  intros L,
-  -- TODO: replace the below proof with something sane.
-  refine ⟨λ h, _, λ h, _⟩,
-  { rw [← linear_map.finrank_range_of_inj h, finrank_eq_dim], refl, },
-  { replace h : finrank 𝕜 E = finrank 𝕜 (linear_map.range (L : E →ₗ[𝕜] F)),
-    { rw [rank, ← finrank_eq_dim] at h,
-      norm_cast at h,
-      refine le_antisymm h _,
-      rw ← (L : E →ₗ[𝕜] F).finrank_range_add_finrank_ker,
-      linarith, },
-    let L' := (L : E →ₗ[𝕜] F).range_restrict,
-    have hL' : injective L ↔ injective L',
-    { refine forall₂_congr (λ x y, _),
-      simp_rw subtype.ext_iff_val,
-      refl, },
-    rw [hL', linear_map.injective_iff_surjective_of_finrank_eq_finrank h],
-    rintros ⟨-, ⟨x, rfl⟩⟩,
-    exact ⟨x, rfl⟩, },
+  rw is_open_iff_eventually,
+  rintros φ₀ (hφ₀ : injective φ₀),
+  rcases φ₀.inj_iff_antilip.mp hφ₀ with ⟨K, K_pos, H⟩,
+  have : ∀ᶠ φ in 𝓝 φ₀, ∥φ - φ₀∥₊ < K⁻¹,
+  { apply eventually_nnorm_sub_lt,
+    apply inv_pos_of_pos K_pos },
+  apply this.mono, dsimp only [set.mem_set_of_eq],
+  intros φ hφ,
+  apply φ.inj_iff_antilip.mpr,
+  refine ⟨(K⁻¹ - ∥φ - φ₀∥₊)⁻¹, inv_pos_of_pos (tsub_pos_of_lt hφ), _⟩,
+  exact antilipschitz_with.add_sub_lipschitz_with H (φ - φ₀).lipschitz hφ
 end
 
 end finite_dimensional
