@@ -184,7 +184,6 @@ end
   (p : dual_pair E) {φ : E →L[ℝ] F} (hφ : injective φ) {w : F} :
   injective (p.update φ w) ↔ w ∉ p.π.ker.map φ :=
 begin
-  change injective (p.update φ w) ↔ w ∉ φ '' p.π.ker,
   split,
   { rintros h ⟨u, hu, rfl⟩,
     have : p.update φ (φ u) p.v = φ u,
@@ -194,31 +193,20 @@ begin
     simp only [set_like.mem_coe, continuous_linear_map.mem_ker] at hu,
     rw p.pairing at hu,
     linarith },
-  { intros h u u' huu',
-    rcases p.decomp u with ⟨a, ha, t, rfl⟩,
-    rcases p.decomp u' with ⟨a', ha', t', rfl⟩,
-    suffices : (t - t') • p.v = a' - a,
-    { rw [sub_smul] at this,
-      rw eq_add_of_sub_eq' this,
-      abel },
-    have : φ a + t • w = φ a' + t' • w,
-      by simpa only [(p.update φ w).map_add, ha, ha', update_ker_pi, update_v,
-        continuous_linear_map.map_smul] using huu',
-    have hw : (t -t') • w = φ (a' - a),
-    { rw [sub_smul, φ.map_sub],
-      rw eq_sub_of_add_eq this,
-      abel },
-    have haa' : a' - a ∈ p.π.ker := p.π.ker.sub_mem ha' ha,
-    have ht : t - t' = 0,
-    { by_contra' ht,
-      apply h,
-      refine ⟨(t - t')⁻¹ • (a' - a), p.π.ker.smul_mem _ haa', _⟩,
-      have := congr_arg (λ u : F, (t - t')⁻¹ • u) hw,
-      simp only [ht, inv_smul_smul₀, ne.def, not_false_iff, map_sub] at this,
-      rwa [← φ.map_sub, ← φ.map_smul, eq_comm] at this },
-    rw [eq_comm, ht, zero_smul] at hw ⊢,
-    rw ← φ.map_zero at hw,
-    exact hφ hw }
+  { intros hw,
+    apply (injective_iff_map_eq_zero (p.update φ w)).mpr (λ x hx, _),
+    rcases p.decomp x with ⟨u, hu, t, rfl⟩,
+    rw [map_add, map_smul, update_v, p.update_ker_pi _ _ hu] at hx,
+    have ht : t = 0,
+    { by_contra ht,
+      apply hw,
+      refine ⟨-t⁻¹ • u, p.π.ker.smul_mem _ hu, _⟩,
+      rw map_smul,
+      have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • 0 + w := congr_arg (λ u : F, -t⁻¹ • u + w) hx,
+      rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,
+           neg_add_cancel_right, ← neg_smul] at this },
+    rw [ht, zero_smul, add_zero] at hx ⊢,
+    exact (injective_iff_map_eq_zero φ).mp hφ u hx }
 end
 
 end dual_pair
