@@ -58,7 +58,7 @@ variables {R₁ : Type*} {R₂ : Type*} {R₃ : Type*} [semiring R₁] [semiring
 namespace continuous_linear_equiv
 
 include σ₂₁ σ₁₃
-@[simp] theorem cancel_right {f f' : M₂ →SL[σ₂₃] M₃} {e : M₁ ≃SL[σ₁₂] M₂} :
+theorem cancel_right {f f' : M₂ →SL[σ₂₃] M₃} {e : M₁ ≃SL[σ₁₂] M₂} :
   f.comp e.to_continuous_linear_map = f'.comp e.to_continuous_linear_map ↔ f = f' :=
 begin
   split,
@@ -70,7 +70,7 @@ end
 omit σ₂₁
 include σ₃₂
 
-@[simp] theorem cancel_left {e : M₂ ≃SL[σ₂₃] M₃} {f f' : M₁ →SL[σ₁₂] M₂} :
+theorem cancel_left {e : M₂ ≃SL[σ₂₃] M₃} {f f' : M₁ →SL[σ₁₂] M₂} :
   e.to_continuous_linear_map.comp f = e.to_continuous_linear_map.comp f' ↔ f = f' :=
 begin
   split,

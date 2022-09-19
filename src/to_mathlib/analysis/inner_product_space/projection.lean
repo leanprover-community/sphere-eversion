@@ -148,7 +148,7 @@ begin
   simp [eq_sub_of_add_eq' this.symm, orthogonal_projection_singleton, real_inner_self_eq_norm_sq]
 end
 
-@[simp] lemma coe_orthogonal_projection_orthogonal_singleton {x y : E} :
+lemma coe_orthogonal_projection_orthogonal_singleton {x y : E} :
   (pr[x]ᗮ y : E) = y - (⟪x, y⟫/⟪x, x⟫) • x :=
 begin
   rw orthogonal_projection_orthogonal_singleton,
