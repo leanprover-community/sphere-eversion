@@ -3,11 +3,11 @@ import linear_algebra.determinant
 open_locale big_operators
 
 variables {R : Type*} [comm_ring R] {M : Type*} [add_comm_group M] [module R M] {ι : Type*}
-  [decidable_eq ι] [fintype ι]
 
 lemma basis.coord_units_smul (e : basis ι R M) (w : ι → Rˣ) (i : ι) :
   (e.units_smul w).coord i = (w i)⁻¹ • e.coord i :=
 begin
+  classical,
   apply e.ext,
   intros j,
   transitivity ((e.units_smul w).coord i) ((w j)⁻¹ • (e.units_smul w) j),
@@ -25,7 +25,7 @@ lemma basis.repr_units_smul (e : basis ι R M) (w : ι → Rˣ) (v : M) (i : ι)
 congr_arg (λ f : M →ₗ[R] R, f v) (e.coord_units_smul w i)
 
 -- rename existing `basis.det_units_smul` to make room for this
-lemma basis.det_units_smul' (e : basis ι R M) (w : ι → Rˣ) :
+lemma basis.det_units_smul' (e : basis ι R M) (w : ι → Rˣ) [decidable_eq ι] [fintype ι] :
   (e.units_smul w).det = (↑(∏ i, w i)⁻¹ : R) • e.det :=
 begin
   ext f,
