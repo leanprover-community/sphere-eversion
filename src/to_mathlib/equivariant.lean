@@ -204,9 +204,15 @@ end
 
 set_option old_structure_cmd true
 
+/-- A bijection from `ℝ` to itself that fixes `0` and is equivariant with respect to the `ℤ`
+action by translations.
+
+Morally, these are bijections of the circle `ℝ / ℤ` to itself. -/
 structure equivariant_equiv extends ℝ ≃ ℝ :=
 (map_zero' : to_fun 0 = 0)
 (eqv' : ∀ t, to_fun (t + 1) = to_fun t + 1)
+
+attribute [nolint doc_blame] equivariant_equiv.to_equiv
 
 namespace equivariant_equiv
 
@@ -216,6 +222,8 @@ instance : has_coe_to_fun equivariant_equiv (λ _, ℝ → ℝ) := ⟨λ f, f.to
 
 instance has_coe_to_equiv : has_coe equivariant_equiv (ℝ ≃ ℝ) := ⟨to_equiv⟩
 
+/-- Forgetting its bijective properties, an `equivariant_equiv` can be regarded as an
+`equivariant_map`. -/
 @[simps]
 protected def equivariant_map : equivariant_map := { to_fun := φ, ..φ }
 
@@ -234,6 +242,7 @@ rfl
 
 @[simp] lemma coe_to_equiv (e : equivariant_equiv) : (⇑(e : ℝ ≃ ℝ) : ℝ → ℝ) = e := rfl
 
+/-- The inverse of an `equivariant_equiv` is an `equivariant_equiv`. -/
 def symm (e : equivariant_equiv) : equivariant_equiv :=
 { map_zero' := by rw [← (e : ℝ ≃ ℝ).apply_eq_iff_eq, equiv.to_fun_as_coe, equiv.apply_symm_apply,
     coe_to_equiv, map_zero],

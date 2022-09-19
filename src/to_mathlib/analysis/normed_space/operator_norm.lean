@@ -40,6 +40,11 @@ rfl
 
 universes u₁ u₂ u₃ u₄
 
+/-- The natural linear map `(M →ₗ[R] M₃) × (M₂ →ₗ[R] M₃) →ₗ[R] M × M₂ →ₗ[R] M₃` for `R`-modules `M`,
+`M₂`, `M₃` over a commutative ring `R`.
+
+If `f : M →ₗ[R] M₃` and `g : M₂ →ₗ[R] M₃` then `linear_map.coprodₗ (f, g)` is the map
+`(m, n) ↦ f m + g n`. -/
 def linear_map.coprodₗ (R : Type u₁) (M : Type u₂) (M₂ : Type u₃) (M₃ : Type u₄) [comm_ring R]
   [add_comm_monoid M] [add_comm_monoid M₂] [add_comm_monoid M₃] [module R M]
   [module R M₂] [module R M₃] : ((M →ₗ[R] M₃) × (M₂ →ₗ[R] M₃)) →ₗ[R] (M × M₂ →ₗ[R] M₃) :=
@@ -99,7 +104,11 @@ lemma is_bounded_linear_map_coprod (𝕜 : Type*) [nontrivially_normed_field �
     apply mul_le_mul_of_nonneg_left (add_le_twice_max _ _) (le_max_of_le_left $ norm_nonneg _)
   end }
 
+/-- The natural continuous linear map `((E →L[𝕜] G) × (F →L[𝕜] G)) →L[𝕜] (E × F →L[𝕜] G)` for
+normed spaces `E`, `F`, `G` over a normed field `𝕜`.
 
+If `g₁ : E →L[𝕜] G` and `g₂ : F →L[𝕜] G` then `continuous_linear_map.coprodL (g₁, g₂)` is the map
+`(e, f) ↦ g₁ e + g₂ f`. -/
 def continuous_linear_map.coprodL :
   ((E →L[𝕜] G) × (F →L[𝕜] G)) →L[𝕜] (E × F →L[𝕜] G) :=
 (is_bounded_linear_map_coprod 𝕜 E F G).to_continuous_linear_map

@@ -67,9 +67,14 @@ variables (𝕜 : Type*) [nontrivially_normed_field 𝕜]
   {n : ℕ∞}
 
 -- The next two definitions aren't used in the end, but they may still go to mathlib
+
+/-- The proposition that a function between two normed spaces has a strict derivative at a given
+point. -/
 def strict_differentiable_at (f : E → F) (x) :=
 ∃ φ : E →L[𝕜] F, has_strict_fderiv_at f φ x
 
+/-- The proposition that a function between two normed spaces has a strict derivative at every
+point. -/
 def strict_differentiable (f : E → F) :=
 ∀ x, strict_differentiable_at 𝕜 f x
 
@@ -138,6 +143,7 @@ begin
   apply (hφ y).local_inverse_continuous_at
 end
 
+/-- A bijection that is strictly differentiable at every point is a homeomorphism. -/
 def equiv.to_homeomorph_of_cont_diff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
   (hφ : ∀ x, has_strict_fderiv_at φ (Dφ x : E →L[𝕜] F) x) : E ≃ₜ F :=
 { continuous_to_fun := differentiable.continuous (λ x, (hφ x).differentiable_at),

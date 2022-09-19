@@ -30,6 +30,8 @@ begin
   simpa using e.to_basis.adjust_to_orientation_apply_eq_or_eq_neg x
 end
 
+/-- Given an orientation for a real vector space, this function consumes an orthnormal basis and
+emits another orthnormal basis which is compatible with the orientation. -/
 def orthonormal_basis.adjust_to_orientation : orthonormal_basis ι ℝ E :=
 (e.to_basis.adjust_to_orientation x).to_orthonormal_basis (e.orthonormal_adjust_to_orientation x)
 
@@ -90,6 +92,8 @@ namespace orientation
 
 variables {n : ℕ} [fact (finrank ℝ E = n + 1)] (ω : orientation ℝ E (fin n.succ))
 
+/-- If `ω` is an orientation for a real vector space then `ω.volume_form` is the top-degree
+real-valued alternating map corresponding to `ω`. -/
 def volume_form : alternating_map ℝ E ℝ (fin n.succ) :=
 (ω.fin_orthonormal_basis n.succ_pos (fact.out (finrank ℝ E = n + 1))).det
 

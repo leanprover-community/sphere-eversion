@@ -178,6 +178,9 @@ begin
   rwa [add_mul, zero_mul, div_mul_cancel _ h],
 end
 
+/-- Given two non-orthogonal vectors in an inner product space,
+`orthogonal_projection_orthogonal_line_iso` is the continuous linear equivalence between their
+orthogonal complements obtained from orthogonal projection. -/
 def orthogonal_projection_orthogonal_line_iso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) :
 {.x₀}ᗮ ≃L[ℝ] {.x}ᗮ :=
 { inv_fun := λ y, ⟨y - (⟪x₀, y⟫/⟪x₀, x⟫) • x, begin
