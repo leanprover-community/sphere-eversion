@@ -14,8 +14,7 @@ open_locale big_operators
 
 variables (𝕜 : Type*) [is_R_or_C 𝕜]
 variables {E : Type*} [inner_product_space 𝕜 E]
-variables {ι : Type*} [nonempty ι] [fintype ι] [linear_order ι] [locally_finite_order_bot ι]
-  [is_well_order ι (<)]
+variables {ι : Type*} [linear_order ι] [locally_finite_order_bot ι] [is_well_order ι (<)]
 
 local notation `⟪`x`, `y`⟫` := @inner 𝕜 _ _ x y
 
