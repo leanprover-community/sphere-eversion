@@ -313,4 +313,3 @@ theorem cont_diff.mul_const (hf : cont_diff 𝕜 n f) {c : 𝔸} :
 hf.mul cont_diff_const
 
 end arithmetic
-#lint
