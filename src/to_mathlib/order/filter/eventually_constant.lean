@@ -61,6 +61,7 @@ namespace filter
 
 variables {α β γ : Type*} {g : α → β} {f : filter α} {x : α} {y : β}
 
+/-- The proposition that a function is eventually constant along a fitler on the domain. -/
 def eventually_constant (g : α → β) (f : filter α) : Prop :=
 ∃ y : β, ∀ᶠ x in f, g x = y
 
@@ -103,6 +104,10 @@ lemma eventually_constant.apply {ι : Type*} {p : ι → Type*} {g : α → ∀ 
   (h : eventually_constant g f) (i : ι) : eventually_constant (λ x, g x i) f :=
 h.compose $ λ p, p i
 
+/-- The eventual value of an eventually-constant function.
+
+For convenience, `eventual_value` may be applied to any function; if the input is not
+eventually-constant the result should be regarded as a "junk" value. -/
 noncomputable def eventual_value [nonempty β] (g : α → β) (f : filter α) : β :=
 classical.epsilon $ λ x : β, ∀ᶠ i in f, g i = x
 

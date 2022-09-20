@@ -12,15 +12,11 @@ section barycentric_det
 variables (ι R k P : Type*) {M : Type*} [ring R] [add_comm_group M] [module R M] [affine_space M P]
 include M
 
--- On reflection, it might be better to drop this definition and just write
--- `affine_independent R v ∧ affine_span R (range v) = ⊤` everywhere instead of
--- `v ∈ affine_bases ι R P`.
+/-- The set of affine bases for an affine space. -/
 def affine_bases : set (ι → P) :=
 { v | affine_independent R v ∧ affine_span R (range v) = ⊤ }
 
-variables [fintype ι] [decidable_eq ι]
-
-lemma affine_bases_findim [field k] [module k M] [finite_dimensional k M]
+lemma affine_bases_findim [fintype ι] [field k] [module k M] [finite_dimensional k M]
   (h : fintype.card ι = finite_dimensional.finrank k M + 1) :
   affine_bases ι k P = { v | affine_independent k v } :=
 begin
@@ -29,10 +25,16 @@ begin
   exact λ h_ind, h_ind.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr h,
 end
 
-lemma mem_affine_bases_iff [nontrivial R] (b : affine_basis ι R P) (v : ι → P) :
+lemma mem_affine_bases_iff [fintype ι] [decidable_eq ι] [nontrivial R] (b : affine_basis ι R P) (v : ι → P) :
   v ∈ affine_bases ι R P ↔ is_unit (b.to_matrix v) :=
 (b.is_unit_to_matrix_iff v).symm
 
+/-- If `P` is an affine space over the ring `R`, `v : ι → P` is an affine basis (for some indexing
+set `ι`) and `p : P` is a point, then `eval_barycentric_coords ι R P p v` are the barycentric
+coordinates of `p` with respect to the affine basis `v`.
+
+Actually for convenience `eval_barycentric_coords` is defined even when `v` is not an affine basis.
+In this case its value should be regarded as "junk". -/
 def eval_barycentric_coords [decidable_pred (∈ affine_bases ι R P)] (p : P) (v : ι → P) : ι → R :=
 if h : v ∈ affine_bases ι R P then ((affine_basis.mk v h.1 h.2).coords p : ι → R) else 0
 
@@ -54,7 +56,7 @@ variables {ι R P}
 -- are that the top exterior power is one-dimensional (and thus its non-zero elements are a
 -- multiplicative torsor for the scalar units) and that linear independence corresponds to
 -- exterior product being non-zero.
-lemma eval_barycentric_coords_eq_det
+lemma eval_barycentric_coords_eq_det [fintype ι] [decidable_eq ι]
   (S : Type*) [field S] [module S M] [∀ v, decidable (v ∈ affine_bases ι S P)]
   (b : affine_basis ι S P) (p : P) (v : ι → P) :
   eval_barycentric_coords ι S P p v = (b.to_matrix v).det⁻¹ • (b.to_matrix v)ᵀ.cramer (b.coords p) :=
@@ -115,7 +117,7 @@ end matrix
 section smooth_barycentric
 
 variables (ι 𝕜 F : Type*)
-variables [fintype ι] [decidable_eq ι] [nontrivially_normed_field 𝕜] [complete_space 𝕜]
+variables [fintype ι] [nontrivially_normed_field 𝕜] [complete_space 𝕜]
 variables [normed_add_comm_group F] [normed_space 𝕜 F]
 
 -- An alternative approach would be to prove the affine version of `cont_diff_at_map_inverse`
@@ -125,6 +127,7 @@ lemma smooth_barycentric [decidable_pred (∈ affine_bases ι 𝕜 F)] [finite_d
   (h : fintype.card ι = finite_dimensional.finrank 𝕜 F + 1) :
   cont_diff_on 𝕜 ⊤ (uncurry (eval_barycentric_coords ι 𝕜 F)) (@univ F ×ˢ (affine_bases ι 𝕜 F)) :=
 begin
+  classical,
   obtain ⟨b : affine_basis ι 𝕜 F⟩ := affine_basis.exists_affine_basis_of_finite_dimensional h,
   simp_rw [uncurry_def, cont_diff_on_pi, eval_barycentric_coords_eq_det 𝕜 b],
   intros i,

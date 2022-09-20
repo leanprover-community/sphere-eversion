@@ -12,6 +12,7 @@ section
 variables {R : Type*} [semiring R]
           {M : Type*} [add_comm_monoid M] [module R M]
 
+/-- The span of the first `n` elements of an ordered basis. -/
 def basis.flag {n : ℕ} (b : basis (fin n) R M) : fin (n + 1) → submodule R M :=
 λ k, span R (b '' {j | (j : fin $ n + 1) < k })
 
@@ -63,7 +64,7 @@ begin
   simp
 end
 
-@[simp] lemma basis.flag_span_succ {n : ℕ} (b : basis (fin n) R M) (k : fin n) :
+lemma basis.flag_span_succ {n : ℕ} (b : basis (fin n) R M) (k : fin n) :
   b.flag k ⊔ span R {b k} = b.flag k.succ :=
 begin
   rw [basis.flag, ← span_union, ← image_singleton, ← image_union],

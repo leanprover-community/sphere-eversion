@@ -32,10 +32,13 @@ section one_periodic
 
 variables {α : Type*}
 
+/-- The integers as an additive subgroup of the reals. -/
 def ℤ_sub_ℝ : add_subgroup ℝ := add_monoid_hom.range (int.cast_add_hom ℝ)
 
+/-- The equivalence relation on `ℝ` corresponding to its partition as cosets of `ℤ`. -/
 def trans_one : setoid ℝ := quotient_add_group.left_rel ℤ_sub_ℝ
 
+/-- The proposition that a function on `ℝ` is periodic with period `1`. -/
 def one_periodic (f : ℝ → α) : Prop := periodic f 1
 
 lemma one_periodic.add_nat {f : ℝ → α} (h : one_periodic f) : ∀ k : ℕ, ∀ x, f (x + k) = f x :=
@@ -69,6 +72,7 @@ end
 section
 local attribute [instance] trans_one
 
+/-- The quotient map from the reals to the circle `ℝ ⧸ ℤ`. -/
 def proj_𝕊₁ : ℝ → 𝕊₁ := quotient.mk
 
 @[simp]
@@ -79,6 +83,8 @@ begin
   exact (trans_one_rel_iff.mpr ⟨k, rfl⟩)
 end
 
+/-- The unique representative in the half-open interval `[0, 1)` for each coset of `ℤ` in `ℝ`,
+regarded as a map from the circle `𝕊₁ → ℝ`. -/
 def 𝕊₁.repr (x : 𝕊₁) : ℝ := let t := quotient.out x in fract t
 
 lemma 𝕊₁.repr_mem (x : 𝕊₁) : x.repr ∈ (Ico 0 1 : set ℝ) :=
@@ -113,7 +119,7 @@ lemma quotient_map_id_proj_𝕊₁ {X : Type*} [topological_space X] :
 (is_open_map.id.prod is_open_map_proj_𝕊₁).to_quotient_map (continuous_id.prod_map continuous_proj_𝕊₁)
   (surjective_id.prod_map quotient.exists_rep)
 
-
+/-- A one-periodic function on `ℝ` descends to a function on the circle `ℝ ⧸ ℤ`. -/
 def one_periodic.lift {f : ℝ → α} (h : one_periodic f) : 𝕊₁ → α :=
 quotient.lift f (by { intros a b hab, rcases trans_one_rel_iff.mp hab with ⟨k, rfl⟩, rw h.add_int })
 
@@ -150,7 +156,7 @@ begin
   exact is_closed.preimage (continuous_snd.sub continuous_fst) is_closed_int
 end
 
-variables {X E : Type*} [topological_space X] [normed_add_comm_group E] [t2_space X]
+variables {X E : Type*} [topological_space X] [normed_add_comm_group E]
 
 lemma continuous.bounded_on_compact_of_one_periodic {f : X → ℝ → E} (cont : continuous ↿f)
   (hper : ∀ x, one_periodic (f x)) {K : set X} (hK : is_compact K) :

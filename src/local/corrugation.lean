@@ -102,7 +102,7 @@ end
 lemma corrugation_eq_zero (x ∉ loop.support γ) : corrugation π N γ x = 0 :=
 nmem_support.mp (λ hx, H (corrugation.support N γ hx))
 
-lemma corrugation.c0_small_on [first_countable_topology E] [t2_space E]
+lemma corrugation.c0_small_on [first_countable_topology E]
   [locally_compact_space E] {γ : ℝ → E → loop F} {K : set E} (hK : is_compact K)
   (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x) (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
   (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :

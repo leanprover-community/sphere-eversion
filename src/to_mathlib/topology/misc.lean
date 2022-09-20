@@ -275,6 +275,8 @@ section proj_I
 
 variables {α β : Type*} [linear_ordered_semiring α] {x c : α}
 
+/-- If `α` is a `linear_ordered_semiring`, then `proj_I : α → α` projection of `α` onto the unit
+interval `[0, 1]`. -/
 def proj_I : α → α := λ x, proj_Icc (0 : α) 1 zero_le_one x
 
 lemma proj_I_def : proj_I x = max 0 (min 1 x) := rfl
@@ -367,7 +369,7 @@ variables {α β γ : Type*} [topological_space α] [topological_space β]
 /-- Given a locally finite sequence of sets indexed by an encodable type, we can naturally reindex
   this sequence to get a sequence indexed by `ℕ` (by adding some `∅` values).
   This new sequence is still locally finite. -/
-lemma decode₂_locally_finite {ι} [encodable ι] [topological_space α] {s : ι → set α}
+lemma decode₂_locally_finite {ι} [encodable ι] {s : ι → set α}
   (hs : locally_finite s) : locally_finite (λ i, (s <$> decode₂ ι i).get_or_else ∅) :=
 begin
   intro x,
@@ -454,7 +456,7 @@ import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 -/
 lemma is_open_affine_independent (𝕜 E : Type*) {ι : Type*} [nontrivially_normed_field 𝕜]
-  [normed_add_comm_group E] [normed_space 𝕜 E] [complete_space 𝕜] [fintype ι] :
+  [normed_add_comm_group E] [normed_space 𝕜 E] [complete_space 𝕜] [finite ι] :
   is_open {p : ι → E | affine_independent 𝕜 p} :=
 begin
   classical,
@@ -462,6 +464,7 @@ begin
   obtain ⟨i₀⟩ := h,
   simp_rw [affine_independent_iff_linear_independent_vsub 𝕜 _ i₀],
   let ι' := {x // x ≠ i₀},
+  casesI nonempty_fintype ι,
   haveI : fintype ι' := subtype.fintype _,
   convert_to
     is_open ((λ (p : ι → E) (i : ι'), p i -ᵥ p i₀) ⁻¹' {p : ι' → E | linear_independent 𝕜 p}),

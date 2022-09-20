@@ -44,6 +44,9 @@ namespace smooth_partition_of_unity
 
 variables {ι : Type*} (ρ : smooth_partition_of_unity ι I₁ M₁) {I₁} (I₂ M₂)
 
+/-- If `ρ` is a smooth partition of unity for smooth manifold `M₁` and `M₂` is another smooth
+manifold (with model `I₂`) then `ρ.prod M₂ I₂` is the smooth partition of unity for `M₁ × M₂`
+obtained by precomposing each component of `ρ` with the projection map `M₁ × M₂ → M₁`. -/
 def prod : smooth_partition_of_unity ι (I₁.prod I₂) (M₁ × M₂) :=
 { to_fun := λ i, (ρ i).comp ⟨prod.fst, cont_mdiff_fst⟩,
   locally_finite' :=

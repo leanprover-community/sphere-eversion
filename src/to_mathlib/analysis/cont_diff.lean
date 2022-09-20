@@ -214,7 +214,7 @@ section
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
 
 lemma cont_diff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : cont_diff ℝ ⊤ ↿f)
-  (hderiv : ∀ x t, partial_deriv_snd f x t > 0) (hsurj : ∀ x, surjective $ f x) :
+  (hderiv : ∀ x t, 0 < partial_deriv_snd f x t) (hsurj : ∀ x, surjective $ f x) :
   cont_diff ℝ ⊤  (λ p : E × ℝ, (strict_mono.order_iso_of_surjective (f p.1)
                                 (strict_mono_of_deriv_pos $ hderiv p.1) (hsurj p.1)).symm p.2) :=
 begin
@@ -313,3 +313,4 @@ theorem cont_diff.mul_const (hf : cont_diff 𝕜 n f) {c : 𝔸} :
 hf.mul cont_diff_const
 
 end arithmetic
+#lint
