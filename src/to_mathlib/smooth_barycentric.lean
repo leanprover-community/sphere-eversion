@@ -51,11 +51,6 @@ dif_neg h
 
 variables {ι R P}
 
--- This could be stated and proved without having to assume a choice of affine basis if we
--- had a sufficiently-developed theory of exterior algebras. Two key results which are missing
--- are that the top exterior power is one-dimensional (and thus its non-zero elements are a
--- multiplicative torsor for the scalar units) and that linear independence corresponds to
--- exterior product being non-zero.
 lemma eval_barycentric_coords_eq_det [fintype ι] [decidable_eq ι]
   (S : Type*) [field S] [module S M] [∀ v, decidable (v ∈ affine_bases ι S P)]
   (b : affine_basis ι S P) (p : P) (v : ι → P) :
@@ -70,8 +65,7 @@ begin
     rw matrix.is_unit_iff_is_unit_det at hu,
     rw ← ring.inverse_eq_inv,
     exact ring.inverse_mul_cancel _ hu, },
-  { -- Both sides are "junk values". It's only slightly evil to take advantage of this.
-    simp only [eval_barycentric_coords, h, algebra.id.smul_eq_mul, pi.zero_apply, inv_eq_zero,
+  { simp only [eval_barycentric_coords, h, algebra.id.smul_eq_mul, pi.zero_apply, inv_eq_zero,
       dif_neg, not_false_iff, zero_eq_mul, pi.smul_apply],
     left,
     rwa [mem_affine_bases_iff ι S P b v, matrix.is_unit_iff_is_unit_det,
@@ -86,7 +80,6 @@ variables (ι k : Type*) [fintype ι] [decidable_eq ι] [nontrivially_normed_fie
 
 attribute [instance] matrix.normed_add_comm_group matrix.normed_space
 
--- This should really be deduced from general results about continuous multilinear maps.
 lemma smooth_det (m : ℕ∞) :
   cont_diff k m (det : matrix ι ι k → k) :=
 begin

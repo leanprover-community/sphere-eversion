@@ -248,25 +248,24 @@ variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M'
 -- this can be useful to see where we (ab)use definitional equalities
 -- local attribute [irreducible] tangent_space
 
-/-!
-I don't know if these instances were intentionally not declared for `tangent_space`
-(maybe to not endow it with a particular norm), but if we don't want them we need to redesign some
-other things.
-Note that `dual_pair.update` wants `F` to be a `normed_add_comm_group` (which seems to be pretty
-necessary for the definition -- although maybe we can get away with `has_continuous_smul` by
-redesigning some things?).
+/-! The two instances below deserve some further thought. For example one might not want the tangent
+space at every point to carry a canonical norm.
+
+Note that `dual_pair.update` requires `F` to be a `normed_add_comm_group` (though perhaps we could
+get away with `has_continuous_smul` with sufficient extra work).
+
 In `rel_mfld.slice` we use `dual_pair.update` applied to `tangent_space`. If we don't add these
-instances, it is a miracle that Lean still accepts the definition, but what is going on is that Lean
+instances, then in fact Lean still accepts the definition. What is going on is that Lean
 is unfolding the definition of `tangent_space`, realizing that `tangent_space I x = E` and
 `tangent_space I' y = E'` and using the `normed_add_comm_group` instances of these types.
-Note that this still uses these instances in a very sneaky way for the tangent space, but with
-additional detriment that up to reducible transparancy, the term is not type-correct
-(in other words: you have to unfold `tangent_space` to realize that the term is type-correct).
-This means that many tactics, like `simp`, `rw` and `dsimp` fail to rewrite within this term,
+Note that this still uses these instances but at the cost that up to reducible transparency, the
+term is not type-correct (in other words: you have to unfold `tangent_space` to realize that the
+term is type-correct).
+
+This means that many tactics, like `simp`, `rw`, and `dsimp` fail to rewrite within this term,
 because the result is not type correct up to reducible transparancy.
-This is a nightmare, so we declare these instances.
-(at least, this is what I think was going on, but unfortunately some issues still persisted after
-this.) -/
+
+Declaring these instances avoids such problems. -/
 instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
 instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
 

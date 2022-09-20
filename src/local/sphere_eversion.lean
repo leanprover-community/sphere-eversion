@@ -86,7 +86,7 @@ section assume_finite_dimensional
 
 variables [finite_dimensional ℝ E]
 
--- The following is extracted from `loc_immersion_rel_open` because it takes forever to typecheck
+-- The following is extracted from `loc_immersion_rel_open` because it is slow to typecheck
 lemma loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F} (hx₀ : x₀ ∉ B)
   (H : inj_on φ₀ (ℝ ∙ x₀)ᗮ) :
   ∀ᶠ (p : one_jet E F) in 𝓝 (x₀, y₀, φ₀), ⟪x₀, p.1⟫ ≠ 0 ∧

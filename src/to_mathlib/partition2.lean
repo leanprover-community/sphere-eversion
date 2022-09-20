@@ -72,8 +72,6 @@ end
 
 end smooth_partition_of_unity
 
--- The fact that it does not seem to be possible to prove this via `exists_cont_mdiff_of_convex`
--- suggests (to @ocfnash) that we may not have quite the right abstraction.
 lemma exists_cont_mdiff_of_convex₂
   {P : M₁ → (M₂ → F) → Prop} (hP : ∀ x, convex ℝ {f | P x f}) {n : ℕ∞}
   (hP' : ∀ x : M₁, ∃ (U ∈ 𝓝 x) (f : M₁ → M₂ → F),
