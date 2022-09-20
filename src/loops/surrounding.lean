@@ -991,8 +991,6 @@ structure loop_data (g b : E → F) (Ω : set (E × F)) :=
 /-
 Note: we also want add the condition that `γ = γ₀` outside a neighborhood of `U₁ᶜ`.
 This makes it easier to find the limit of a sequence of these constructions.
-Todo: we might need that `γ = γ₀` on a neighborhood of `(U₀ ∪ U₁)ᶜ` to ensure that
-`(U₀ ∪ U₁)ᶜ ⊆ extended_invariant ...`
 -/
 lemma extend_loops {U₀ U₁ K₀ K₁ : set E} (hU₀ : is_open U₀) (hU₁ : is_open U₁)
   (hK₀ : is_compact K₀) (hK₁ : is_compact K₁) (hKU₀ : K₀ ⊆ U₀) (hKU₁ : K₁ ⊆ U₁)

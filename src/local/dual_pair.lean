@@ -41,8 +41,6 @@ variables [add_comm_group E] [module ℝ E] [topological_space E]
 variables [add_comm_group E'] [module ℝ E'] [topological_space E']
 variables [normed_add_comm_group F] [normed_space ℝ F] [normed_add_comm_group G] [normed_space ℝ G]
 
--- TODO: move mathlib's dual_pair out of the root namespace!
-
 /-- A continuous linear form `π` and a vector `v` that pair to one. In particular `ker π` is a
 hyperplane and `v` spans a complement of this hyperplane. -/
 structure dual_pair :=

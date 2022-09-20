@@ -1,9 +1,5 @@
 import topology.metric_space.hausdorff_distance
 
-/-
-TODO: think about versions assuming less than a metric space.
--/
-
 open set metric
 open_locale topological_space
 
