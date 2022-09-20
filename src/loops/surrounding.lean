@@ -87,7 +87,7 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 local notation `d` := finrank ℝ F
 
 /-
-FIXME: the definition below gets a prime because it clashes with a manifold definition
+The definition below gets a prime because it clashes with a manifold definition
 in mathlib which is in the root namespace.
 -/
 

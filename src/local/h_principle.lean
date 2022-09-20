@@ -567,9 +567,7 @@ begin
       apply improve_step_part_hol acc hNneq } }
 end
 
-/- FIXME: the following lemma is a repackaging. A proper fix would be to edit the
-previous one... -/
-
+/-- A repackaging of `rel_loc.formal_sol.improve` for convenience. -/
 lemma rel_loc.formal_sol.improve_htpy (𝓕 : formal_sol R)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∃ H : htpy_formal_sol R,
