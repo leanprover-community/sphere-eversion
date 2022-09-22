@@ -7,8 +7,10 @@ This is the supplementary material for the CPP 2023 paper
 
 The Lean source files are in the `src` directory, together with the compiled binaries.
 The source files for the blueprint are in the `blueprint/src` directory.
-A compiled pdf version is in `blueprint.pdf`.
-We recommend navigating the blueprint using the html version which can be found [online](https://leanprover-community.github.io/sphere-eversion/blueprint/index.html) or locally built using the instructions below.
+A compiled pdf version is in `blueprint.pdf`. A compiled version is in the
+`blueprint/html` folder. We recommend using a local webserver to browse it
+since otherwise some icons will be banned by browser security restrictions
+(for instance using `python3 -m http.server` in the html folder).
 
 # Navigating the Lean files
 
