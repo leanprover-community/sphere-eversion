@@ -10,11 +10,9 @@ The source files for the blueprint are in the `blueprint/src` directory.
 A compiled pdf version is in `blueprint.pdf`.
 We recommend navigating the blueprint using the html version which can be found [online](https://leanprover-community.github.io/sphere-eversion/blueprint/index.html) or locally built using the instructions below.
 
-The other folders contain miscellaneous build files or compiled Lean files.
-
 # Navigating the Lean files
 
-However, one does need a working version of Lean.
+To navigate the code and get feedback from Lean, one does need a working version of Lean.
 See [the installation instructions of Lean](https://leanprover-community.github.io/get_started.html) (under Regular install).
 
 To obtain the compiled binaries of mathlib, run `leanproject get-mathlib-cache`.
