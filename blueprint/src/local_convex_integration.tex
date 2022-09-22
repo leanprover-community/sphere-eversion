@@ -431,53 +431,111 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   to $[i/n, (i + 1)/n]$ before joining them.
 \end{proof}
 
-\begin{lemma}
-  \label{lem:improve_htpy_loc}
-  \leanok
-  \lean{rel_loc.htpy_formal_sol.improve}
-  \uses{def:ample_relation_loc, def:holonomic_loc}
-  Let $\F$ be a homotopy of formal solutions of $\Rel$.
-  Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
-  the interior of $K_1$.
-  Assume each $\F_t$ is holonomic and equal to $\F₀$ near a closed subset $A$ of $E$,
-  and $\F₁$ is holonomic near a closed subset $C$ of $E$.
-  Let $ε$ be a positive real number.
+\section{Parametricity for free}%
+\label{sec:parametricity_for_free}
 
-  If $\Rel$ is open and ample then there is a homotopy $\F'_t$ such that:
-  \begin{enumerate}
+In many cases, relative parametric $h$-principles can be deduced from relative
+non-parametric ones with a larger source.
+Let $E$, $P$ and $F$ be real normed vector spaces, with $P$ seen a parameter space.
+Denote by $Ψ$ the map from $J^1(E × P, F)$ to $J^1(E, F)$ sending $(x, p, y, ψ)$ to
+$(x, y, ψ ∘ ι_{x, p})$ where $ι_{x, p} : E → E × P$ sends $v$ to $(v, 0)$.
+
+To any family of sections $F_p : x ↦ (f_p(x), φ_{p, x})$ of $J^1(E, F)$, we
+associate the section $\bar F$ of $J^1(E × P, F)$ sending $(x, p)$ to
+$\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
+
+\begin{lemma}
+  \label{lem:param_trick}
+  \uses{def:holonomic_section, def:formal_sol}
+  \leanok
+  \lean{family_jet_sec.is_holonomic_at_uncurry, family_jet_sec.uncurry_mem_relativize, rel_loc.is_ample.relativize}
+  In the above setup, we have:
+  \begin{itemize}
     \item
-      $\F'₀ = \F₀$
+      $\bar F$ is holonomic at $(x, p)$ if and only if $F_p$ is holonomic
+      at $x$.
     \item
-      $\F'_t$ is a formal solution of $\Rel$ for all $t$~;
-    \item
-      $\F'_t(x) = \F₀(x)$ for all $t$ when $x$ is near $A$.
-    \item
-      $\F'_t(x) = \F_t(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$.
-    \item
-      for all $t$ and $x$, either $\F'_t(x) = \F_{t'}(x)$ for some $t'$ or
-      $d(\bs \F'_t(x), \bs \F₁(x)) ≤ ε$~;
-    \item
-      $\F'_1$ is holonomic near $K_0$.
-  \end{enumerate}
+      $F$ is a family of formal solutions of some $\Rel ⊂ J^1(E, F)$ if and
+      only if $\bar F$ is a formal solution of $\Rel^P := Ψ^{-1}(\Rel)$.
+
+    \item If $\Rel$ is ample then, for any parameter space $P$, $\Rel^P$ is also ample.
+  \end{itemize}
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:h_principle_open_ample_loc}
-  We apply \Cref{lem:h_principle_open_ample_loc} to $\F₁$ with closed subset $C ∪ A$.
-  This way we get a homotopy $t ↦ \G_t$ starting at $\G₀ = \F₁$, relative to $C ∪ A$ and the
-  complement of $K₁$ and such that $\G₁$ is holonomic on $K₀$.
-  Let $ρ \co E → [0, 1]$ be a smooth cut-off function which equals one on a
-  neighborhood of $K₀$ and vanishes outside $K₁$.
+  \leanok
+  For the first part, the derivative of $\bar F$ is $∂f/∂x(x, p) ⊕ ∂f/∂p(x, p)$, which is equal to
+  $\bar F_φ$ iff $∂f/∂x(x, p) = f_φ$.
 
-  We set
+  The second part follows from $Ψ ∘ \bar F(x,p)=F_p(x)$.
+
+  Now assume $\Rel$ is ample. We fix $σ = (x, y, ψ)$ in $\Rel^P$.
+  For any $λ = (λ_E, λ_P) ∈ E^* × P^*$ and $v = (v_E, v_P) ∈ E × P$
+  such that $λ(v) = 1$, we need to prove that $\Conv\Rel^P_{σ, λ, v} = F$.
+  Unfolding the definitions gives:
   \[
-    \F'_t(x) = \begin{cases}
-      \F_{2t/(2 - ρ(x))}(x) & \text{if $t ≤ 1 - ρ(x)/2$}\\
-      \G_{2t/(2 - ρ(x)) - 1}(x) & \text{if $t ≥ 1 - ρ(x)/2$}
-    \end{cases}
+  \Rel^P_{σ, λ, v} = \Conn_{φ(v)}\left\{w ∈ F \;;\;
+      \big(x,\; y,\; ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_E\big) ∈ \Rel\right\}.
   \]
-  Near $K₀$, where $ρ$ equals one, this $\F'$ is simply the concatenation of $\F$ and
-  $\G$. Outside $K₁$ where $ρ$ vanishes, it is simply $\F$.
+  A degenerate but easy case is when $λ_E = 0$. Then the condition on $w$
+  becomes $ψ ∘ ι_{x, p} ∈ \Rel$, which is true by definition of $\Rel^P$, so
+  $\Rel^P_{σ, λ, v} = F$.
+
+  We now assume $λ_E$ is not zero and choose $u ∈ E$ such that $λ_E(u) = 1$.
+  We then have $\Rel^P_{σ, λ, v} = \Rel_{Ψσ, λ_E, u} + ψ(v) - ψ∘ι_{x, p}(u)$.
+  Because $\Rel$ is ample and taking convex hull commutes with translation, we
+  get that $\Conv\Rel^P_{σ, λ, v} = F$.
+\end{proof}
+
+\section{Application to Smale's theorem}%
+\label{sec:application_to_smale_s_theorem}
+
+The local theory of this chapter is already enough to deduce Smale's sphere
+eversion theorem. In this section $E$ denote a finite dimensional real vector space
+equipped with an inner product. Later we will assume it is 3-dimensional.
+We denote by $𝕊$ the unit sphere in $E$.
+
+Although we want to study immersions of $𝕊$ into $E$, we want to work only with
+functions defined on the whole $E$. So we introduce a slightly artificial relation.
+We denote by $B$ the open ball with radius $9/10$ around the origin in $E$.
+
+\[
+  \Rel := \{(x, y, φ) ∈ J^1(E, E) \;|\; x ∉ B ⇒ \rst{φ}{x^⊥} \text{ is injective}.
+\]
+
+Of course solutions of this relation restrict to immersions of $𝕊$.
+
+\begin{lemma}
+  \label{lem:loc_immersion_rel_open}
+  \lean{loc_immersion_rel_open}
+  \leanok
+  The relation $\Rel$ above is open.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+\end{proof}
+
+\begin{lemma}
+  \label{lem:loc_immersion_rel_ample}
+  \lean{loc_immersion_rel_ample}
+  \leanok
+  The relation $\Rel$ above is ample.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+\end{proof}
+
+\begin{theorem}[Smale 1958]
+  \lean{sphere_eversion_of_loc}
+  \leanok
+  There is a homotopy of immersion of $𝕊^2$ into $ℝ^3$ from the inclusion map to
+	the antipodal map $a \co q ↦ -q$.
+\end{theorem}
+
+\begin{proof}
+  \uses{lem: loc_immersion_rel_open, lem:loc_immersion_rel_ample, lem:h_principle_open_ample_loc, lem:param_trick}
 \end{proof}
 
 % vim: set expandtab sw=2 tabstop=2:
