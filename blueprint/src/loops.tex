@@ -629,11 +629,11 @@ We finally assemble the ingredients from the previous two sections.
   \proves{prop:loops}
   \uses{lem:∃_surrounding_loops, lem:reparametrization}
   \leanok
-  Let $γ^*$ be a family of loops surrounding the origin in $F$,
-  constructed using \Cref{lem:local_loops}.
+  Let $γ^*$ be a family of loops surrounding the origin in $B_F(0,1)$
+  the open unit ball in $F$, constructed using \Cref{lem:local_loops}.
   For $x$ in some neighborhood $U^*$ of $K$ where $g = β$, we set
-  $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure
-  the image of $γ_x$ and its convex hull are contained in $Ω_x$ (recall $Ω$ is
+  $γ_x = g(x) + εγ^*$ where $ε > 0$ is sufficiently small to ensure that
+  $B_{E\times F}((x,β(x)),2ε)\subseteq \Omega$ (recall $Ω$ is
   open and $K$ is compact).
   \Cref{lem:∃_surrounding_loops} extends this family to a continuous
   family of surrounding loops $γ_x$ for all $x$ (this is not yet our
@@ -641,20 +641,21 @@ We finally assemble the ingredients from the previous two sections.
 
   We then need to approximate this continuous family by a smooth one.
   Some care is needed to ensure that it stays based at $β$.
-  For instance, we can first compose each loop by some fixed surjective
-  continuous map from $𝕊^1$ to itself that sends a neighborhood of $0$
-  to $0$.
-  This way each loop becomes constant near $0$, and a convolution
-  smoothing will then keep the value at $0$.
-  If the smoothing is sufficiently $C^0$ small then the new $γ$ is
-  still surrounding and takes values in $Ω$.
+  We can first reparametrize $γ$ on $[0,1] \times 𝕊^1$
+  to ensure that $γ$ is constant in a neighborhood around
+  $C = \{(t, s) \in [0,1] \times 𝕊^1 \mid t = 0 \vee s = 0\}$.
+  By a partition of unity argument, we can find a smooth function
+  that has distance at most $ε$ from $γ$ and coincides with $γ$ on $C$
+  (using the fact that $γ$ is already smooth near $C$).
+  Since all loops that are sufficiently close to $γ$ still surround $g$,
+  we can also ensure that the new smoothened $γ$ is still surrounding.
 
   Then \Cref{lem:reparametrization} gives a family of circle
   diffeomorphisms $h_x$ such that $γ^1_x ∘ h_x$ has average $g(x)$.
 
   Finally we choose a cut-off function function $χ$ which vanishes near
-  $K$ and equals one near $E ∖ U^*$.  In $U^*$, we replace
-  $γ_x ∘ h_x = g(x) + γ^* ∘ h_x$ by $g(x) + χ(x)γ^* ∘ h_x$. This
+  $K$ and equals one near $E ∖ U^*$. As our final family of loop,
+  we choose $(1-χ(x))g(x) + χ(x)(γ_x ∘ h_x)$. This
   operation does not change the average values of these loops, because
   it rescales them around their average value, but makes them constant
   on $\Op{K}$. Also, those loops stay in $Ω$, thanks to our choice of $ε$.
