@@ -51,34 +51,21 @@ open set function measure_theory interval_integral filter
 open_locale topological_space unit_interval manifold big_operators
 
 
-section -- remove after mathlib bump
+section -- proven in mathlib
 open topological_space continuous_linear_map
 open_locale convolution filter
-lemma convolution_tendsto_right' {G E' ι : Type*} [normed_add_comm_group E'] {g : G → E'}
+lemma convolution_tendsto_right' {G E' ι : Type*} [normed_add_comm_group E']
   [measurable_space G] {μ : measure G} [normed_space ℝ E']
   [inner_product_space ℝ G] [complete_space E'] [borel_space G]
   [is_locally_finite_measure μ] [μ.is_open_pos_measure] [finite_dimensional ℝ G]
-  [μ.is_add_left_invariant]
-  (φ : ι → cont_diff_bump_of_inner (0 : G))
-  {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
-  (hig : locally_integrable g μ) {x₀ : G} (hcg : continuous_at g x₀) :
-  tendsto (λ p : ι × G, (φ p.1 ⋆[lsmul ℝ ℝ, μ] g : G → E') p.2) (l ×ᶠ 𝓝 x₀) (𝓝 (g x₀)) :=
-sorry -- on mathlib branch
-
-lemma convolution_tendsto_right_swap {G E' ι : Type*} [normed_add_comm_group E'] {g : G → E'}
-  [measurable_space G] {μ : measure G} [normed_space ℝ E']
-  [inner_product_space ℝ G] [complete_space E'] [borel_space G]
-  [is_locally_finite_measure μ] [μ.is_open_pos_measure] [finite_dimensional ℝ G]
-  [μ.is_add_left_invariant]
-  (φ : ι → cont_diff_bump_of_inner (0 : G))
-  {l : filter ι} (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
-  (hig : locally_integrable g μ) {x₀ : G} (hcg : continuous_at g x₀) :
-  tendsto (λ p : G × ι, (φ p.2 ⋆[lsmul ℝ ℝ, μ] g : G → E') p.1) (𝓝 x₀ ×ᶠ l) (𝓝 (g x₀)) :=
-begin
-  have := convolution_tendsto_right' φ hφ hig hcg,
-  have := this.comp tendsto_prod_swap,
-  exact this,
-end
+  [μ.is_add_left_invariant] {φ : ι → cont_diff_bump_of_inner (0 : G)}
+  {g : ι → G → E'} {k : ι → G} {x₀ : G} {z₀ : E'} {l : filter ι}
+  (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
+  (hig : ∀ j, locally_integrable (g j) μ)
+  (hcg : tendsto (uncurry g) (l ×ᶠ 𝓝 x₀) (𝓝 z₀))
+  (hk : tendsto k l (𝓝 x₀)) :
+  tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g i : G → E') (k i)) l (𝓝 z₀) :=
+sorry
 end
 
 
@@ -90,71 +77,32 @@ local notation `ι` := fin (finite_dimensional.finrank ℝ F + 1)
 
 section metric_space
 
-variables [metric_space E]
+variables [metric_space E] [locally_compact_space E]
 
-/-- An auxiliary lemma for bootstrapping to `tendsto_mollify_apply`. -/
-lemma loop.tendsto_mollify_apply_aux (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ)
-  (hx : γ x = 0) :
-  tendsto (λ (z : E × ℕ), (γ z.1).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 0) :=
-begin
-  suffices : tendsto (λ (z : E × ℕ), ∥(γ z.1).mollify z.2 t∥) ((𝓝 x).prod at_top) (𝓝 0),
-  { exact squeeze_zero_norm (λ z, le_refl _) this, },
-  suffices : tendsto (λ (z : E × ℕ), ⨆ (s : I), ∥γ z.1 s∥) ((𝓝 x).prod at_top) (𝓝 0),
-  { refine squeeze_zero_norm _ this,
-    rintros ⟨y, n⟩,
-    simp only [norm_norm, loop.mollify],
-    refine norm_integral_le_integral_norm_Ioc.trans _,
-    simp only [interval_integral.integral_of_le zero_le_one, interval_oc_of_le zero_le_one,
-      norm_smul, real.norm_of_nonneg (delta_mollifier_pos _).le],
-    rw ← interval_integral.integral_of_le zero_le_one,
-    let f₁ : ℝ → ℝ := λ s, delta_mollifier n t s * ∥γ y s∥,
-    let f₂ : ℝ → ℝ := λ s, delta_mollifier n t s * ⨆ (u : I), ∥γ y u∥,
-    have hle : f₁ ≤ f₂ := λ s, mul_le_mul_of_nonneg_left ((γ y).norm_at_le_supr_norm_Icc
-      (loop.continuous_of_family h y) s) (delta_mollifier_pos s).le,
-    have hf₁ : interval_integrable f₁ volume 0 1,
-    { apply continuous.interval_integrable,
-      refine continuous.mul delta_mollifier_smooth.continuous (continuous_norm.comp _),
-      exact loop.continuous_of_family h y, },
-    have hf₂ : interval_integrable f₂ volume 0 1,
-    { apply continuous.interval_integrable,
-      exact delta_mollifier_smooth.continuous.mul continuous_const, },
-    refine (interval_integral.integral_mono zero_le_one hf₁ hf₂ hle).trans _,
-    rw [integral_mul_const, delta_mollifier_integral_eq_one, one_mul], },
-  suffices : tendsto (λ y, ⨆ (s : I), ∥γ y s∥) (𝓝 x) (𝓝 0), { exact this.comp tendsto_fst, },
-  let γ' := loop.as_continuous_family h,
-  have hx' : γ' x = 0, { ext s, simp [hx], },
-  have hγx : tendsto γ' (𝓝 x) (𝓝 (γ' _)) := γ'.continuous.continuous_at,
-  rw metric.tendsto_nhds_nhds at hγx ⊢,
-  simp only [hx', dist_zero_right, continuous_map.norm_eq_supr_norm, γ',
-    continuous_map.curry_apply, continuous_map.coe_mk, gt_iff_lt, exists_prop] at hγx,
-  intros ε hε,
-  obtain ⟨δ, hδ, hδ'⟩ := hγx ε hε,
-  refine ⟨δ, hδ, λ y hy, _⟩,
-  specialize hδ' hy,
-  simp only [dist_zero_right],
-  rw real.norm_of_nonneg,
-  { exact hδ', },
-  { refine real.Sup_nonneg _ (λ n hn, _),
-    obtain ⟨s, rfl⟩ := hn,
-    simp, },
-end
-
-lemma loop.tendsto_mollify_apply (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ) :
+lemma loop.tendsto_mollify_apply
+  (γ : E → loop F) (h : continuous ↿γ) (x : E) (t : ℝ) :
   tendsto (λ (z : E × ℕ), (γ z.1).mollify z.2 t) ((𝓝 x).prod at_top) (𝓝 (γ x t)) :=
 begin
   have hγ : ∀ x, continuous (γ x) := λ x, h.comp $ continuous.prod.mk _,
+  have h2γ : ∀ x, continuous (λ z, γ z x) := λ x, h.comp $ continuous.prod.mk_left _,
   simp_rw [loop.mollify_eq_convolution _ (hγ _)],
   rw [← add_zero (γ x t)],
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ x t)],
     refine (tendsto_self_div_add_at_top_nhds_1_nat.comp tendsto_snd).smul _,
-
-    -- refine convolution_tendsto_right_swap bump _ _ _,
-    -- simp_rw [bump], norm_cast,
-    -- exact (tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1)
-    },
+    refine convolution_tendsto_right' _ _ _ tendsto_const_nhds,
+    { simp_rw [bump], norm_cast,
+      exact ((tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1)).comp
+        tendsto_snd },
+    { exact λ x, (hγ _).locally_integrable },
+    { have := h.tendsto (x, t),
+      rw [nhds_prod_eq] at this,
+      exact this.comp ((tendsto_fst.comp tendsto_fst).prod_mk tendsto_snd) } },
   { rw [← zero_smul ℝ (_ : F)],
-    exact tendsto_one_div_add_at_top_nhds_0_nat.smul tendsto_const_nhds }
+    have : continuous (λ z, interval_integral (γ z) 0 1 volume) :=
+      continuous_parametric_interval_integral_of_continuous (by apply h) continuous_const,
+    exact (tendsto_one_div_add_at_top_nhds_0_nat.comp tendsto_snd).smul
+      ((this.tendsto x).comp tendsto_fst) }
 end
 
 end metric_space
