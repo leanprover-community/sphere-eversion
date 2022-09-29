@@ -319,29 +319,4 @@ begin
   { exact (continuous_const.smul hγ).interval_integrable _ _ }
 end
 
-lemma loop.tendsto_mollify (γ : loop F) (hγ : continuous γ) (t : ℝ) :
-  tendsto (λ n, γ.mollify n t) at_top (𝓝 (γ t)) :=
-begin
-  simp_rw [γ.mollify_eq_convolution hγ],
-  rw [← add_zero (γ t)],
-  refine tendsto.add _ _,
-  { rw [← one_smul ℝ (γ t)],
-    refine tendsto_self_div_add_at_top_nhds_1_nat.smul _,
-    refine cont_diff_bump_of_inner.convolution_tendsto_right _ hγ t,
-    simp_rw [bump], norm_cast,
-    exact (tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1) },
-  { rw [← zero_smul ℝ (_ : F)],
-    exact tendsto_one_div_add_at_top_nhds_0_nat.smul tendsto_const_nhds }
-end
-
-lemma loop.mollify_sub (γ₁ γ₂ : loop F) (hγ₁ : continuous γ₁) (hγ₂ : continuous γ₂)
-  (n : ℕ) (t : ℝ) :
-  γ₁.mollify n t - γ₂.mollify n t = (γ₁ - γ₂).mollify n t :=
-begin
-  simp only [loop.mollify, loop.sub_apply, smul_sub],
-  rw interval_integral.integral_sub,
-  exacts [(delta_mollifier_smooth.continuous.smul hγ₁).interval_integrable 0 1,
-          (delta_mollifier_smooth.continuous.smul hγ₂).interval_integrable 0 1],
-end
-
 end version_of_delta_mollifier_using_n
