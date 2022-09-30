@@ -8,7 +8,7 @@ import global.twist_one_jet_sec
 
 noncomputable theory
 
-open metric finite_dimensional set function
+open metric finite_dimensional set function linear_map
 open_locale manifold
 
 section general
@@ -76,7 +76,7 @@ end
 
 @[simp] lemma immersion_rel_slice_eq {m : M} {m' : M'} {p : dual_pair $ tangent_space I m}
   {φ : tangent_space I m →L[ℝ] tangent_space I' m'} (hφ : injective φ) :
-  (immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p = (p.π.ker.map φ)ᶜ :=
+  (immersion_rel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ)ᶜ :=
 set.ext_iff.mpr $ λ w, p.injective_update_iff hφ
 
 lemma immersion_rel_ample (h : finrank ℝ E < finrank ℝ E') :
@@ -222,9 +222,9 @@ begin
   ext v,
   simp only [mfderiv_neg, continuous_linear_map.coe_comp', comp_app,
     continuous_linear_map.neg_apply],
-  rw ω.rot_one,
-  convert continuous_linear_map.mem_range_self _ _,
-  rw range_mfderiv_coe_sphere,
+  rw [ω.rot_one],
+  rw [← range_mfderiv_coe_sphere x],
+  exact linear_map.mem_range_self _ _,
 end
 
 lemma formal_eversion_hol_near_zero_one' :

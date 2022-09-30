@@ -1,6 +1,6 @@
 import topology.path_connected
 import topology.urysohns_lemma
-import topology.uniform_space.compact_separated
+import topology.uniform_space.separation
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 import topology.algebra.order.floor

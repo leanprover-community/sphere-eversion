@@ -391,7 +391,7 @@ begin
   { simp only [subtype.val_eq_coe, local_homeomorph.trans_to_local_equiv,
       local_homeomorph.symm_to_local_equiv, local_equiv.trans_source, local_equiv.symm_source,
       local_homeomorph.coe_coe_symm, local_equiv.coe_trans, local_homeomorph.coe_coe,
-      set.mem_inter_eq, set.mem_preimage, function.comp_app],
+      set.mem_inter_iff, set.mem_preimage, function.comp_app],
     refine ⟨⟨_, _⟩, _, _⟩,
     { exact i.val.map_source hx₁, },
     { erw i.val.left_inv hx₁, exact hx₂, },

@@ -84,7 +84,7 @@ begin
     refine set.finite_Union' (λ m, set.to_finite _) (hU' n) (λ m hm, _),
     rw set.eq_empty_iff_forall_not_mem,
     intros z,
-    simp only [pi.prod, finset.coe_image, mem_inter_eq, mem_image, finset.mem_coe, set_coe.exists,
+    simp only [pi.prod, finset.coe_image, mem_inter_iff, mem_image, finset.mem_coe, set_coe.exists,
       mem_set_of_eq, not_and, bex_imp_distrib, and_imp],
     rintros x hx₁ hx₂ rfl,
     rw set.not_nonempty_iff_eq_empty,

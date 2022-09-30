@@ -31,7 +31,7 @@ Then we prove continuity and smoothness lemmas for this operation.
 
 noncomputable theory
 
-open function continuous_linear_map
+open function continuous_linear_map linear_map (ker)
 
 /-! ## General theory -/
 
@@ -53,10 +53,10 @@ variables {E F}
 
 local attribute [simp] continuous_linear_map.to_span_singleton_apply
 
-lemma ker_pi_ne_top (p : dual_pair E) : p.π.ker ≠ ⊤ :=
+lemma ker_pi_ne_top (p : dual_pair E) : ker p.π ≠ ⊤ :=
 begin
   intro H,
-  have : (p.π : E →ₗ[ℝ] ℝ) p.v = 1 := p.pairing,
+  have : p.π.to_linear_map p.v = 1 := p.pairing,
   simpa [linear_map.ker_eq_top.mp H]
 end
 
@@ -84,10 +84,10 @@ def update (p : dual_pair E) (φ : E →L[ℝ] F) (w : F) : E →L[ℝ] F :=
 φ + (w - φ p.v) ⬝ p.π
 
 @[simp]
-lemma update_ker_pi (p : dual_pair E) (φ : E →L[ℝ] F) (w : F) {u} (hu : u ∈ p.π.ker) :
+lemma update_ker_pi (p : dual_pair E) (φ : E →L[ℝ] F) (w : F) {u} (hu : u ∈ ker p.π) :
   p.update φ w u = φ u :=
 begin
-  rw continuous_linear_map.mem_ker at hu,
+  rw linear_map.mem_ker at hu,
   simp only [update, hu, continuous_linear_map.to_span_singleton_apply, add_zero,
              continuous_linear_map.coe_comp', comp_app, zero_smul, continuous_linear_map.add_apply]
 end
@@ -112,7 +112,7 @@ by simp_rw [update, add_apply, coe_comp', comp_app, to_span_singleton_apply, p.p
   one_smul, add_sub_cancel'_right, add_assoc, ← continuous_linear_map.add_comp,
   ← to_span_singleton_add, sub_add_eq_add_sub, add_sub_cancel'_right]
 
-lemma inf_eq_bot (p : dual_pair E) : p.π.ker ⊓ p.span_v = ⊥ :=
+lemma inf_eq_bot (p : dual_pair E) : ker p.π ⊓ p.span_v = ⊥ :=
 begin
   rw eq_bot_iff,
   intros x hx,
@@ -123,7 +123,7 @@ begin
   simp [H]
 end
 
-lemma sup_eq_top (p : dual_pair E) : p.π.ker ⊔ p.span_v = ⊤ :=
+lemma sup_eq_top (p : dual_pair E) : ker p.π ⊔ p.span_v = ⊤ :=
 begin
   rw submodule.sup_eq_top_iff,
   intro x,
@@ -131,9 +131,9 @@ begin
   simp [dual_pair.span_v, submodule.mem_span_singleton, p.pairing]
 end
 
-lemma decomp (p : dual_pair E) (e : E) : ∃ u ∈ p.π.ker, ∃ t : ℝ, e = u + t•p.v :=
+lemma decomp (p : dual_pair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u + t•p.v :=
 begin
-  have : e ∈ p.π.ker ⊔ p.span_v,
+  have : e ∈ ker p.π ⊔ p.span_v,
   { rw p.sup_eq_top,
     exact submodule.mem_top },
   simp_rw [submodule.mem_sup, dual_pair.mem_span_v] at this,
@@ -142,7 +142,7 @@ begin
 end
 
 -- useful with `dual_pair.decomp`
-lemma update_apply (p : dual_pair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ p.π.ker) :
+lemma update_apply (p : dual_pair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ ker p.π) :
   p.update φ w (u + t • p.v) = φ u + t • w :=
 by rw [map_add, map_smul, p.update_v, p.update_ker_pi _ _ hu]
 
@@ -180,7 +180,7 @@ end
 
 @[simp] lemma injective_update_iff
   (p : dual_pair E) {φ : E →L[ℝ] F} (hφ : injective φ) {w : F} :
-  injective (p.update φ w) ↔ w ∉ p.π.ker.map φ :=
+  injective (p.update φ w) ↔ w ∉ (ker p.π).map φ :=
 begin
   split,
   { rintros h ⟨u, hu, rfl⟩,
@@ -188,7 +188,7 @@ begin
     exact p.update_v φ (φ u),
     conv_rhs at this { rw ←  p.update_ker_pi φ (φ u) hu },
     rw ← h this at hu,
-    simp only [set_like.mem_coe, continuous_linear_map.mem_ker] at hu,
+    simp only [set_like.mem_coe, linear_map.mem_ker] at hu,
     rw p.pairing at hu,
     linarith },
   { intros hw,
@@ -198,7 +198,7 @@ begin
     have ht : t = 0,
     { by_contra ht,
       apply hw,
-      refine ⟨-t⁻¹ • u, p.π.ker.smul_mem _ hu, _⟩,
+      refine ⟨-t⁻¹ • u, (ker p.π).smul_mem _ hu, _⟩,
       rw map_smul,
       have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • 0 + w := congr_arg (λ u : F, -t⁻¹ • u + w) hx,
       rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,

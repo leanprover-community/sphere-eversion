@@ -165,11 +165,11 @@ begin
   have hx : v'.1.2 ∈ (achart H' v'.1.2 : local_homeomorph M' H').source ∩
                      (achart H' v.1.2  : local_homeomorph M' H').source,
   { simp only [to_charted_space_chart_at, chart_source] at hv',
-    simpa only [coe_achart, mem_inter_eq, mem_chart_source, true_and] using hv'.2, },
+    simpa only [coe_achart, mem_inter_iff, mem_chart_source, true_and] using hv'.2, },
   have hy : v'.1.1 ∈ (achart H  v.1.1  : local_homeomorph M H).source ∩
                      (achart H  v'.1.1 : local_homeomorph M H).source,
   { simp only [to_charted_space_chart_at, chart_source] at hv',
-    simpa only [coe_achart, mem_inter_eq, mem_chart_source, and_true] using hv'.1, },
+    simpa only [coe_achart, mem_inter_iff, mem_chart_source, and_true] using hv'.1, },
   simp only [one_jet_bundle_chart_at I M I' M', prod.mk.inj_iff, eq_self_iff_true, true_and],
   ext e,
   simp only [tangent_bundle_core_coord_change, achart_val, continuous_linear_map.coe_comp',

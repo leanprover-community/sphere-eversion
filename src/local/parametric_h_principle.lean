@@ -15,7 +15,7 @@ near `K`, that agrees with `𝓕₀` near `C` and is everywhere `ε`-close to `�
 
 noncomputable theory
 
-open metric finite_dimensional set function rel_loc
+open metric finite_dimensional set function rel_loc linear_map (ker)
 open_locale topological_space pointwise
 
 section parameter_space
@@ -74,9 +74,9 @@ begin
     simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
       ← continuous_linear_map.map_neg, neg_sub],
     obtain ⟨u, hu, t, rfl⟩ := q.decomp x,
-    have hv : (0, q.v) - p.v ∈ p.π.ker,
-    { rw [continuous_linear_map.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self] },
-    have hup : ((0 : P), u) ∈ p.π.ker := (h2pq u).trans hu,
+    have hv : (0, q.v) - p.v ∈ ker p.π,
+    { rw [linear_map.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self] },
+    have hup : ((0 : P), u) ∈ ker p.π := (h2pq u).trans hu,
     rw [q.update_apply _ hu, ← prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup,
       ← prod.smul_zero_mk, map_smul, vadd_eq_add],
     nth_rewrite 0 [← sub_add_cancel (0, q.v) p.v],

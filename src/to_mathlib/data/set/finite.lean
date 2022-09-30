@@ -16,6 +16,6 @@ begin
   by_cases h : i ∈ t,
   { simp only [set.mem_Union],
     exact ⟨i, h, hx⟩, },
-  { rw [ht₂ i h, set.mem_empty_eq] at hx,
+  { rw [ht₂ i h, set.mem_empty_iff_false] at hx,
     contradiction, },
 end

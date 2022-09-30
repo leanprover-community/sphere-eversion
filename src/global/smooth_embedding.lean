@@ -1,5 +1,5 @@
 import topology.metric_space.hausdorff_distance
-import topology.uniform_space.compact_separated
+import topology.uniform_space.separation
 import geometry.manifold.cont_mdiff
 import global.indexing
 import to_mathlib.topology.paracompact

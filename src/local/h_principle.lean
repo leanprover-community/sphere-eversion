@@ -58,7 +58,7 @@ need to access its components only once.
 noncomputable theory
 
 open_locale unit_interval classical filter topological_space
-open filter set rel_loc
+open filter set rel_loc linear_map (ker)
 
 variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
@@ -91,7 +91,7 @@ together with a dual pair `p` and a subspace `E'` of the corresponding hyperplan
 structure step_landscape extends landscape E :=
 (E' : submodule ℝ E)
 (p : dual_pair E)
-(hEp : E' ≤ p.π.ker)
+(hEp : E' ≤ ker p.π)
 
 variables {E}
 

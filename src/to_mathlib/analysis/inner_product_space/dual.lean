@@ -3,7 +3,7 @@ import analysis.inner_product_space.dual
 import to_mathlib.analysis.inner_product_space.projection
 
 open_locale real_inner_product_space
-open submodule inner_product_space
+open submodule inner_product_space linear_map (ker)
 
 variables {E : Type*} [inner_product_space ℝ E] [complete_space E]
 
@@ -17,11 +17,11 @@ local notation `pr[`x`]ᗮ` := orthogonal_projection (submodule.span ℝ {x})ᗮ
 
 
 lemma orthogonal_span_to_dual_symm (π : E →L[ℝ] ℝ) :
-  {.(inner_product_space.to_dual ℝ E).symm π}ᗮ = π.ker :=
+  {.(inner_product_space.to_dual ℝ E).symm π}ᗮ = ker π :=
 begin
   ext x,
   suffices : (∀ (a : ℝ), ⟪a • ((to_dual ℝ E).symm) π, x⟫ = 0) ↔ π x = 0,
-  { simp only [orthogonal, mem_mk, set.mem_set_of_eq, continuous_linear_map.mem_ker, ← to_dual_symm_apply],
+  { simp only [orthogonal, mem_mk, set.mem_set_of_eq, linear_map.mem_ker, ← to_dual_symm_apply],
     simpa only [mem_span_singleton, forall_exists_index, forall_apply_eq_imp_iff', to_dual_symm_apply]},
 
   split,

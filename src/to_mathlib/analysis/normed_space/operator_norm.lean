@@ -172,21 +172,7 @@ begin
   { rintro ⟨K, K_pos, H⟩,
     exact H.injective }
 end
-open_locale topological_space
-
-lemma is_open_iff_eventually {α : Type*} [topological_space α] {s : set α} :
-is_open s ↔ ∀ x, x ∈ s → ∀ᶠ y in 𝓝 x, y ∈ s :=
-is_open_iff_mem_nhds
-
-lemma is_closed_iff_frequently {α : Type*} [topological_space α] {s : set α} :
-is_closed s ↔ ∀ x, (∃ᶠ y in 𝓝 x, y ∈ s) → x ∈ s :=
-begin
-  rw ← closure_subset_iff_is_closed,
-  apply forall_congr (λ x, _),
-  rw mem_closure_iff_frequently
-end
-
-open_locale nnreal
+open_locale topological_space nnreal
 
 lemma eventually_nnorm_sub_lt (x₀ : E) {ε : ℝ≥0} {ε_pos : 0 < ε} :
 ∀ᶠ x in 𝓝 x₀, ∥x - x₀∥₊ < ε :=
