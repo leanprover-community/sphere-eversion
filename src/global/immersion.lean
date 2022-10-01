@@ -1,4 +1,4 @@
-import to_mathlib.geometry.manifold.sphere
+import geometry.manifold.instances.sphere
 import to_mathlib.linear_algebra.finite_dimensional
 import to_mathlib.analysis.inner_product_space.rotation
 import global.gromov
