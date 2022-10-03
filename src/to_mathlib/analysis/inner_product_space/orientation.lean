@@ -5,7 +5,7 @@ Authors: Heather Macbeth
 -/
 import analysis.inner_product_space.orientation
 import to_mathlib.analysis.inner_product_space.gram_schmidt
-import to_mathlib.linear_algebra.orientation
+-- import linear_algebra.orientation
 
 noncomputable theory
 
@@ -21,38 +21,6 @@ variables {ι : Type*} [fintype ι] [decidable_eq ι] [nonempty ι] (e : orthono
 /-! These lemmas should replace some of the current `basis.adjust_to_orientation`
 construction for orthonormal sets. -/
 
-/-- `basis.adjust_to_orientation`, applied to an orthonormal basis, produces an orthonormal
-basis. -/
-lemma orthonormal_basis.orthonormal_adjust_to_orientation :
-  orthonormal ℝ (e.to_basis.adjust_to_orientation x) :=
-begin
-  apply e.orthonormal.orthonormal_of_forall_eq_or_eq_neg,
-  simpa using e.to_basis.adjust_to_orientation_apply_eq_or_eq_neg x
-end
-
-/-- Given an orientation for a real vector space, this function consumes an orthnormal basis and
-emits another orthnormal basis which is compatible with the orientation. -/
-def orthonormal_basis.adjust_to_orientation : orthonormal_basis ι ℝ E :=
-(e.to_basis.adjust_to_orientation x).to_orthonormal_basis (e.orthonormal_adjust_to_orientation x)
-
-lemma orthonormal_basis.to_basis_adjust_to_orientation :
-  (e.adjust_to_orientation x).to_basis = e.to_basis.adjust_to_orientation x :=
-(e.to_basis.adjust_to_orientation x).to_basis_to_orthonormal_basis _
-
-/-- `adjust_to_orientation` gives an orthonormal basis with the required orientation. -/
-@[simp] lemma orthonormal_basis.orientation_adjust_to_orientation :
-  (e.adjust_to_orientation x).to_basis.orientation = x :=
-begin
-  rw e.to_basis_adjust_to_orientation,
-  exact e.to_basis.orientation_adjust_to_orientation x,
-end
-
-/-- Every basis vector from `adjust_to_orientation` is either that from the original basis or its
-negation. -/
-lemma orthonormal_basis.adjust_to_orientation_apply_eq_or_eq_neg (i : ι) :
-  e.adjust_to_orientation x i = e i ∨ e.adjust_to_orientation x i = -(e i) :=
-by simpa [← e.to_basis_adjust_to_orientation] using e.to_basis.adjust_to_orientation_apply_eq_or_eq_neg x i
-
 lemma orthonormal_basis.det_adjust_to_orientation :
   (e.adjust_to_orientation x).to_basis.det = e.to_basis.det
   ∨ (e.adjust_to_orientation x).to_basis.det = -e.to_basis.det :=
@@ -60,7 +28,7 @@ by simpa using e.to_basis.det_adjust_to_orientation x
 
 lemma orthonormal_basis.abs_det_adjust_to_orientation (v : ι → E) :
   |(e.adjust_to_orientation x).to_basis.det v| = |e.to_basis.det v| :=
-by simpa using e.to_basis.abs_det_adjust_to_orientation x v
+by simpa [-basis.abs_det_adjust_to_orientation] using e.to_basis.abs_det_adjust_to_orientation x v
 
 end adjust_to_orientation
 
@@ -95,17 +63,14 @@ variables {n : ℕ} [fact (finrank ℝ E = n + 1)] (ω : orientation ℝ E (fin 
 /-- If `ω` is an orientation for a real vector space then `ω.volume_form` is the top-degree
 real-valued alternating map corresponding to `ω`. -/
 def volume_form : alternating_map ℝ E ℝ (fin n.succ) :=
-(ω.fin_orthonormal_basis n.succ_pos (fact.out (finrank ℝ E = n + 1))).det
+(ω.fin_orthonormal_basis n.succ_pos (fact.out (finrank ℝ E = n + 1))).to_basis.det
 
-lemma volume_form_robust (b : orthonormal_basis (fin n.succ) ℝ E) (hb : b.to_basis.orientation = ω) :
-  ω.volume_form = b.to_basis.det :=
+lemma volume_form_robust (b : orthonormal_basis (fin n.succ) ℝ E)
+  (hb : b.to_basis.orientation = ω) : ω.volume_form = b.to_basis.det :=
 begin
-  let e : orthonormal_basis (fin n.succ) ℝ E :=
-    (ω.fin_orthonormal_basis n.succ_pos (fact.out _)).to_orthonormal_basis
-    (ω.fin_orthonormal_basis_orthonormal _ _),
+  let e : orthonormal_basis (fin n.succ) ℝ E := ω.fin_orthonormal_basis n.succ_pos (fact.out _),
   apply e.det_eq_det_of_same_orientation b,
-  rw [hb, ← ω.fin_orthonormal_basis_orientation n.succ_pos (fact.out _)],
-  refl,
+  rw [hb, ← ω.fin_orthonormal_basis_orientation n.succ_pos (fact.out _)]
 end
 
 attribute [irreducible] orientation.volume_form

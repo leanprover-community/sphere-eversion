@@ -243,7 +243,7 @@ theorem sphere_eversion : ∃ f : ℝ → 𝕊² → E,
 begin
   classical,
   let ω : orientation ℝ E (fin 3) :=
-    (fin_std_orthonormal_basis (fact.out _ : finrank ℝ E = 3)).to_basis.orientation,
+    ((std_orthonormal_basis _ _).reindex $ fin_congr (fact.out _ : finrank ℝ E = 3)).to_basis.orientation,
   have rankE := fact.out (finrank ℝ E = 3),
   haveI : finite_dimensional ℝ E :=
     finite_dimensional_of_finrank_eq_succ rankE,

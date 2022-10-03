@@ -434,7 +434,7 @@ begin
   have rankE := fact.out (dim E = 3),
   haveI : finite_dimensional ℝ E := finite_dimensional_of_finrank_eq_succ rankE,
   let ω : orientation ℝ E (fin 3) :=
-    (fin_std_orthonormal_basis (fact.out _ : dim E = 3)).to_basis.orientation,
+    ((std_orthonormal_basis _ _).reindex $ fin_congr (fact.out _ : dim E = 3)).to_basis.orientation,
   have is_closed_pair : is_closed ({0, 1} : set ℝ) :=
   (by simp : ({0, 1} : set ℝ).finite).is_closed,
   obtain ⟨f, h₁, h₂, h₃⟩ :=
