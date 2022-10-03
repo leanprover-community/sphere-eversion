@@ -50,25 +50,6 @@ noncomputable theory
 open set function measure_theory interval_integral filter
 open_locale topological_space unit_interval manifold big_operators
 
-
-section -- proven in mathlib
-open topological_space continuous_linear_map
-open_locale convolution filter
-lemma convolution_tendsto_right' {G E' ι : Type*} [normed_add_comm_group E']
-  [measurable_space G] {μ : measure G} [normed_space ℝ E']
-  [inner_product_space ℝ G] [complete_space E'] [borel_space G]
-  [is_locally_finite_measure μ] [μ.is_open_pos_measure] [finite_dimensional ℝ G]
-  [μ.is_add_left_invariant] {φ : ι → cont_diff_bump_of_inner (0 : G)}
-  {g : ι → G → E'} {k : ι → G} {x₀ : G} {z₀ : E'} {l : filter ι}
-  (hφ : tendsto (λ i, (φ i).R) l (𝓝 0))
-  (hig : ∀ j, locally_integrable (g j) μ)
-  (hcg : tendsto (uncurry g) (l ×ᶠ 𝓝 x₀) (𝓝 z₀))
-  (hk : tendsto k l (𝓝 x₀)) :
-  tendsto (λ i, ((λ x, (φ i).normed μ x) ⋆[lsmul ℝ ℝ, μ] g i : G → E') (k i)) l (𝓝 z₀) :=
-sorry
-end
-
-
 variables {E F : Type*}
 variables [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
 variables [measurable_space F] [borel_space F]
@@ -90,11 +71,11 @@ begin
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ x t)],
     refine (tendsto_self_div_add_at_top_nhds_1_nat.comp tendsto_snd).smul _,
-    refine convolution_tendsto_right' _ _ _ tendsto_const_nhds,
+    refine cont_diff_bump_of_inner.convolution_tendsto_right _ _ _ tendsto_const_nhds,
     { simp_rw [bump], norm_cast,
       exact ((tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1)).comp
         tendsto_snd },
-    { exact λ x, (hγ _).locally_integrable },
+    { exact eventually_of_forall (λ x, (hγ _).ae_strongly_measurable) },
     { have := h.tendsto (x, t),
       rw [nhds_prod_eq] at this,
       exact this.comp ((tendsto_fst.comp tendsto_fst).prod_mk tendsto_snd) } },
