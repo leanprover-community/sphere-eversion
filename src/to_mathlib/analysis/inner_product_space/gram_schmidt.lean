@@ -5,7 +5,6 @@ Authors: Heather Macbeth
 -/
 import analysis.inner_product_space.gram_schmidt_ortho
 import linear_algebra.matrix.block
-import to_mathlib.analysis.inner_product_space.orthonormal_basis
 
 /-! # Additions to the mathlib theory of Gram-Schmidt orthogonalization -/
 
@@ -18,74 +17,7 @@ variables {ι : Type*} [linear_order ι] [locally_finite_order_bot ι] [is_well_
 
 local notation `⟪`x`, `y`⟫` := @inner 𝕜 _ _ x y
 
-lemma gram_schmidt_def'' (f : ι → E) (n : ι):
-  f n = gram_schmidt 𝕜 f n
-  + ∑ i in Iio n, (⟪gram_schmidt 𝕜 f i, f n⟫ / ∥gram_schmidt 𝕜 f i∥ ^ 2) • gram_schmidt 𝕜 f i :=
-begin
-  convert gram_schmidt_def' 𝕜 f n,
-  ext i,
-  rw orthogonal_projection_singleton,
-end
-
-lemma gram_schmidt_of_orthogonal {f : ι → E} (hf : pairwise (λ i j, ⟪f i, f j⟫ = 0)) :
-  gram_schmidt 𝕜 f = f :=
-begin
-  ext i,
-  rw gram_schmidt_def,
-  transitivity f i - 0,
-  { congr,
-    apply finset.sum_eq_zero,
-    intros j hj,
-    rw coe_eq_zero,
-    suffices : span 𝕜 (f '' set.Iic j) ≤ (𝕜 ∙ f i)ᗮ,
-    { apply orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero,
-      apply mem_orthogonal_singleton_of_inner_left,
-      apply inner_right_of_mem_orthogonal_singleton,
-      exact this (gram_schmidt_mem_span 𝕜 f (le_refl j)) },
-    rw span_le,
-    rintros - ⟨k, hk, rfl⟩,
-    apply mem_orthogonal_singleton_of_inner_left,
-    apply hf,
-    refine (lt_of_le_of_lt hk _).ne,
-    simpa using hj },
-  { simp },
-end
-
-lemma gram_schmidt_inv_triangular (v : ι → E) {i j : ι} (hij : i < j) :
-  ⟪gram_schmidt 𝕜 v j, v i⟫ = 0 :=
-begin
-  rw gram_schmidt_def'' 𝕜 v,
-  simp only [inner_add_right, inner_sum, inner_smul_right],
-  set b : ι → E := gram_schmidt 𝕜 v,
-  convert zero_add (0:𝕜),
-  { exact gram_schmidt_orthogonal 𝕜 v hij.ne' },
-  apply finset.sum_eq_zero,
-  rintros k hki',
-  have hki : k < i := by simpa using hki',
-  have : ⟪b j, b k⟫ = 0 := gram_schmidt_orthogonal 𝕜 v (hki.trans hij).ne',
-  simp [this],
-end
-
 variables {𝕜}
-
-lemma gram_schmidt_normed_unit_length'
-    {f : ι → E} {n : ι} (hn : gram_schmidt_normed 𝕜 f n ≠ 0) :
-  ∥gram_schmidt_normed 𝕜 f n∥ = 1 :=
-begin
-  rw gram_schmidt_normed at *,
-  rw [norm_smul_inv_norm],
-  simpa using hn,
-end
-
-lemma gram_schmidt_orthonormal' (f : ι → E) :
-  orthonormal 𝕜 (λ i : {i | gram_schmidt_normed 𝕜 f i ≠ 0}, gram_schmidt_normed 𝕜 f i) :=
-begin
-  refine ⟨λ i, gram_schmidt_normed_unit_length' i.prop, _⟩,
-  rintros i j (hij : ¬ _),
-  rw subtype.ext_iff at hij,
-  simp [gram_schmidt_normed, inner_smul_left, inner_smul_right, gram_schmidt_orthogonal 𝕜 f hij],
-end
-
 variables [fintype ι] [finite_dimensional 𝕜 E] (h : finrank 𝕜 E = fintype.card ι) (f : ι → E)
 include h
 
