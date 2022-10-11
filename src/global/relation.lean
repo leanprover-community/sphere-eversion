@@ -216,10 +216,18 @@ def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M �
   (∀ᶠ x in 𝓝ˢ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
   (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
 
-lemma rel_mfld.satisfies_h_principle_of_weak {R : rel_mfld I M IX X} {ε : M → ℝ}
-  {C : set M} (hC : is_closed C)
-  (h : ∀ A : set M, is_closed A → R.satisfies_h_principle_weak A ε)  : R.satisfies_h_principle C ε :=
-sorry
+lemma rel_mfld.satisfies_h_principle_of_weak
+  [finite_dimensional ℝ E] [t2_space M] [sigma_compact_space M]
+  {R : rel_mfld I M IX X} {ε : M → ℝ} {C : set M} (hC : is_closed C)
+  (h : ∀ A : set M, is_closed A → R.satisfies_h_principle_weak A ε) : R.satisfies_h_principle C ε :=
+begin
+  haveI := manifold_with_corners.metrizable_space I M,
+  letI : metric_space M := topological_space.metrizable_space_metric M,
+  intros 𝓕₀ h𝓕₀,
+  obtain ⟨C', hCC', hC', h𝓕₀C'⟩ := h𝓕₀.closed_neighborhood hC,
+  obtain ⟨𝓕, h1, h2, h3, h4⟩ := h C' hC' 𝓕₀ h𝓕₀C',
+  exact ⟨𝓕, h1, h2, eventually_of_mem hCC' h3, h4⟩
+end
 
 /-- A relation `R` satisfies the parametric relative C⁰-dense h-principle w.r.t. manifold `P`,
 `C ⊆ P × M` and `ε : M → ℝ` if for every family of

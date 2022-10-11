@@ -127,7 +127,7 @@ lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open
   (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
   R.satisfies_h_principle A δ :=
 begin
-  apply rel_mfld.satisfies_h_principle_of_weak hA,
+  refine rel_mfld.satisfies_h_principle_of_weak hA _,
   unfreezingI { clear_dependent A },
   intros A hA 𝓕₀ h𝓕₀,
   have cont : continuous 𝓕₀.bs, from 𝓕₀.smooth_bs.continuous,

@@ -28,6 +28,20 @@ end
 
 end to_specific_limits
 
+section -- to separation
+
+lemma filter.eventually.closed_neighborhood {α} [topological_space α] [normal_space α] {C : set α}
+  {P : α → Prop} (hP : ∀ᶠ x in 𝓝ˢ C, P x) (hC : is_closed C) :
+    ∃ C' ∈ 𝓝ˢ C, is_closed C' ∧ ∀ᶠ x in 𝓝ˢ C', P x :=
+begin
+  obtain ⟨O, hO, hCO, hPO⟩ := mem_nhds_set_iff_exists.mp hP,
+  obtain ⟨U, hU, hCU, hUO⟩ := normal_exists_closure_subset hC hO hCO,
+  exact ⟨closure U, mem_of_superset (hU.mem_nhds_set.mpr hCU) subset_closure, is_closed_closure,
+    eventually_of_mem (hO.mem_nhds_set.mpr hUO) hPO⟩
+end
+
+end
+
 section
 
 variables {α β : Type*} [topological_space α] [topological_space β]
