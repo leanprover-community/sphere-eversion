@@ -81,8 +81,12 @@ by simp_rw [is_holonomic_at, one_jet_ext, sigma.ext_iff, heq_iff_eq, F.fst_eq,
   one_jet_bundle_mk_fst, eq_self_iff_true, true_and, one_jet_bundle_mk_snd]
 
 lemma is_holonomic_at.congr {F F' : one_jet_sec I M I' M'} {x : M}
-  (hF : F.is_holonomic_at x) (h : ∀ᶠ y in 𝓝 x, F y = F' y) :  F'.is_holonomic_at x :=
-sorry
+  (hF : F.is_holonomic_at x) (h : F =ᶠ[𝓝 x] F') : F'.is_holonomic_at x :=
+begin
+  rw [is_holonomic_at] at hF ⊢,
+  rw [← h.self_of_nhds, ← hF],
+  exact (h.symm.fun_comp (λ x, x.1.2)).mfderiv_eq
+end
 
 /- lemma is_holonomic_at_congr {F F' : one_jet_sec I M I' M'} {s : set M}
   (h : ∀ᶠ x near s, F x = F' x) : ∀ᶠ x near s, F.is_holonomic_at x ↔ F'.is_holonomic_at x :=
