@@ -8,8 +8,8 @@ import global.twist_one_jet_sec
 
 noncomputable theory
 
-open metric finite_dimensional set function linear_map
-open_locale manifold
+open metric finite_dimensional set function linear_map filter
+open_locale manifold topological_space
 
 section general
 
@@ -187,53 +187,70 @@ family_join
     end
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
-def formal_eversion : htpy_formal_sol 𝓡_imm :=
+def formal_eversion_aux2 : htpy_formal_sol 𝓡_imm :=
 { is_sol' := λ t x, (ω.isometry_rot t x).injective.comp (mfderiv_coe_sphere_injective x),
   .. formal_eversion_aux E ω }
 
+def formal_eversion : htpy_formal_sol 𝓡_imm :=
+(formal_eversion_aux2 E ω).reindex ⟨smooth_step, cont_mdiff_iff_cont_diff.mpr smooth_step.smooth⟩
+
+@[simp]
+lemma formal_eversion_bs (t : ℝ) : (formal_eversion E ω t).bs =
+  λ x : 𝕊², (1 - smooth_step t : ℝ) • (x : E) + (smooth_step t : ℝ) • (-x : E) :=
+rfl
+
 lemma formal_eversion_zero (x : 𝕊²) : (formal_eversion E ω 0).bs x = x :=
-show (1-0 : ℝ) • (x : E) + (0 : ℝ) • (-x : E) = x, by simp
+by simp
 
 lemma formal_eversion_one (x : 𝕊²) : (formal_eversion E ω 1).bs x = -x :=
-show (1-1 : ℝ) • (x : E) + (1 : ℝ) • (-x : E) = -x, by simp
+by simp
 
-lemma formal_eversion_hol_at_zero :
-  (formal_eversion E ω 0).to_one_jet_sec.is_holonomic :=
+lemma formal_eversion_hol_at_zero {t : ℝ} (ht : t < 1/4) :
+  (formal_eversion E ω t).to_one_jet_sec.is_holonomic :=
 begin
   intros x,
-  change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - 0) • (y:E) + (0:ℝ) • -y) x
-    = (ω.rot (0, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
-  simp only [ω.rot_zero, continuous_linear_map.id_comp],
+  change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1 : ℝ) - smooth_step t) • (y:E) + smooth_step t • -y) x
+    = (ω.rot (smooth_step t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
+  simp_rw [smooth_step.of_lt ht, ω.rot_zero, continuous_linear_map.id_comp],
   congr,
   ext y,
-  simp,
+  simp [smooth_step.of_lt ht],
 end
 
-lemma formal_eversion_hol_at_one :
-  (formal_eversion E ω 1).to_one_jet_sec.is_holonomic :=
+lemma formal_eversion_hol_at_one {t : ℝ} (ht : 3/4 < t) :
+  (formal_eversion E ω t).to_one_jet_sec.is_holonomic :=
 begin
   intros x,
-  change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - 1) • (y:E) + (1:ℝ) • -y) x
-    = (ω.rot (1, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
+  change mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², ((1:ℝ) - smooth_step t) • (y:E) + smooth_step t • -y) x
+    = (ω.rot (smooth_step t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (λ y : 𝕊², (y:E)) x),
   transitivity mfderiv (𝓡 2) 𝓘(ℝ, E) (-(λ y : 𝕊², (y:E))) x,
   { congr' 2,
     ext y,
-    simp, },
+    simp [smooth_step.of_gt ht], },
   ext v,
-  simp only [mfderiv_neg, continuous_linear_map.coe_comp', comp_app,
-    continuous_linear_map.neg_apply],
+  simp_rw [mfderiv_neg, continuous_linear_map.coe_comp', comp_app, continuous_linear_map.neg_apply,
+    smooth_step.of_gt ht],
   rw [ω.rot_one],
   rw [← range_mfderiv_coe_sphere x],
   exact linear_map.mem_range_self _ _,
 end
 
-lemma formal_eversion_hol_near_zero_one' :
-  ∀ᶠ (s : ℝ) near {0, 1}, (formal_eversion E ω s).to_one_jet_sec.is_holonomic :=
-sorry
-
 lemma formal_eversion_hol_near_zero_one : ∀ᶠ (s : ℝ × 𝕊²) near {0, 1} ×ˢ univ,
   (formal_eversion E ω s.1).to_one_jet_sec.is_holonomic_at s.2 :=
-sorry
+begin
+  have : (Iio (1/4 : ℝ) ∪ Ioi (3/4)) ×ˢ (univ : set 𝕊²) ∈ 𝓝ˢ (({0, 1} : set ℝ) ×ˢ univ),
+  { refine ((is_open_Iio.union is_open_Ioi).prod is_open_univ).mem_nhds_set.mpr _,
+    rintro ⟨s, x⟩ ⟨hs, hx⟩,
+    refine ⟨_, mem_univ _⟩,
+    simp_rw [mem_insert_iff, mem_singleton_iff] at hs,
+    rcases hs with rfl|rfl,
+    { exact or.inl (show (0 : ℝ) < 1 / 4, by norm_num) },
+    { exact or.inr (show (3 / 4 : ℝ) < 1, by norm_num) } },
+  refine eventually_of_mem this _,
+  rintro ⟨t, x⟩ ⟨ht|ht, hx⟩,
+  { exact formal_eversion_hol_at_zero E ω ht x },
+  { exact formal_eversion_hol_at_one E ω ht x }
+end
 
 theorem sphere_eversion : ∃ f : ℝ → 𝕊² → E,
   (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f)) ∧
@@ -262,10 +279,10 @@ begin
   refine ⟨f, h₁, _, _, h₅⟩,
   { ext x,
     rw [this (0, x) (by simp)],
-    exact formal_eversion_zero E ω x },
+    convert formal_eversion_zero E ω x },
   { ext x,
     rw [this (1, x) (by simp)],
-    exact formal_eversion_one E ω x },
+    convert formal_eversion_one E ω x },
 end
 
 end sphere_eversion

@@ -75,9 +75,7 @@ namespace formal_sol
 lemma coe_mk {S : one_jet_sec I M I' M'} {h : ∀ x, S x ∈ R} {x : M} : formal_sol.mk S h x = S x :=
 rfl
 
-@[simp]
-lemma to_one_jet_sec_coe (S : formal_sol R) {x : M} : S.to_one_jet_sec x = S x :=
-rfl
+@[simp] lemma to_one_jet_sec_coe (S : formal_sol R) {x : M} : S.to_one_jet_sec x = S x := rfl
 
 lemma is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=
 F.is_sol'
