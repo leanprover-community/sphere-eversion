@@ -41,6 +41,9 @@ by { rintros _ ⟨x, hx, rfl⟩, exact mk_mem_prod (mem_image_of_mem f hx) (mem_
 lemma maps_to.subset_preimage {f : α → β} {s : set α} {t : set β} (hf : maps_to f s t) :
   s ⊆ f ⁻¹' t := hf
 
+lemma not_mem_diff_of_mem {x : α} {s t : set α} (hx : x ∈ t) : x ∉ s \ t :=
+λ h, h.2 hx
+
 end set
 open set
 
@@ -80,25 +83,26 @@ section -- basic topology
 
 variables {α β : Type*} [topological_space α] [topological_space β] {x y : α} {s s' t : set α}
 
+lemma nhds_within_insert_of_ne [t1_space α] (hxy : x ≠ y) : 𝓝[insert y s] x = 𝓝[s] x :=
+begin
+  refine le_antisymm (λ t ht, _) (nhds_within_mono x $ subset_insert y s),
+  obtain ⟨o, ho, hxo, host⟩ := mem_nhds_within.mp ht,
+  refine mem_nhds_within.mpr ⟨o \ {y}, ho.sdiff is_closed_singleton, ⟨hxo, hxy⟩, _⟩,
+  rw [inter_insert_of_not_mem $ not_mem_diff_of_mem (mem_singleton y)],
+  exact (inter_subset_inter (diff_subset _ _) subset.rfl).trans host
+end
+
+/-- If `t` is a subset of `s`, except for one point,
+then `insert x s` is a neighborhood of `x` within `t`. -/
 lemma insert_mem_nhds_within_of_subset_insert [t1_space α] (hu : t ⊆ insert y s) :
   insert x s ∈ 𝓝[t] x :=
 begin
   rcases eq_or_ne x y with rfl|h,
   { exact mem_of_superset self_mem_nhds_within hu },
-  rw [← union_singleton, union_comm, ← diff_subset_iff, diff_eq] at hu,
-  exact mem_of_superset (inter_mem_nhds_within _ (compl_singleton_mem_nhds h))
-    (hu.trans (subset_insert _ _)),
+  refine nhds_within_mono x hu _,
+  rw [nhds_within_insert_of_ne h],
+  exact mem_of_superset self_mem_nhds_within (subset_insert x s)
 end
-
-lemma prod_mem_nhds_within {t t' : set β} {x : α × β}
-  (hs : s ∈ 𝓝[s'] x.1) (ht : t ∈ 𝓝[t'] x.2) : s ×ˢ t ∈ 𝓝[s' ×ˢ t'] x :=
-begin
-  rw [mem_nhds_within] at hs ht ⊢,
-  obtain ⟨u, hu, hxu, hus⟩ := hs,
-  obtain ⟨v, hv, hxv, hvt⟩ := ht,
-  exact ⟨u ×ˢ v, hu.prod hv, ⟨hxu, hxv⟩, prod_inter_prod.subset.trans $ prod_mono hus hvt⟩,
-end
-
 
 end
 
@@ -122,24 +126,39 @@ lemma cont_diff_within_at.comp_of_mem
 end
 
 
-variables {f : G → E → F} {g : G → E} {s : set G} {t : set E} {x : G} {n m : ℕ∞} {u : set (G × E)}
-
+variables {f : G → E → F} {g : G → E} {s : set G} {t : set E} {x y : G} {n m : ℕ∞} {u : set (G × E)}
 
 lemma has_fderiv_within_at_insert {g' : G →L[𝕜] E} :
-  has_fderiv_within_at g g' (insert x s) x ↔ has_fderiv_within_at g g' s x :=
+  has_fderiv_within_at g g' (insert y s) x ↔ has_fderiv_within_at g g' s x :=
 begin
-  simp_rw [has_fderiv_within_at, has_fderiv_at_filter],
-  rw [asymptotics.is_o_insert],
-  simp only [sub_self, g'.map_zero]
+  rcases eq_or_ne x y with rfl|h,
+  { simp_rw [has_fderiv_within_at, has_fderiv_at_filter],
+    apply asymptotics.is_o_insert,
+    simp only [sub_self, g'.map_zero] },
+  refine ⟨λ h, h.mono $ subset_insert y s, λ hg, hg.mono_of_mem _⟩,
+  simp_rw [nhds_within_insert_of_ne h, self_mem_nhds_within]
 end
 
-alias has_fderiv_within_at_insert ↔ has_fderiv_within_at.of_insert has_fderiv_within_at.insert
+alias has_fderiv_within_at_insert ↔ has_fderiv_within_at.of_insert has_fderiv_within_at.insert'
+
+lemma has_fderiv_within_at.insert {g' : G →L[𝕜] E} (h : has_fderiv_within_at g g' s x) :
+  has_fderiv_within_at g g' (insert x s) x :=
+h.insert'
 
 lemma cont_diff_within_at_insert :
-  cont_diff_within_at 𝕜 n g (insert x s) x ↔ cont_diff_within_at 𝕜 n g s x :=
-by simp_rw [cont_diff_within_at, insert_eq_of_mem (mem_insert _ _)]
+  cont_diff_within_at 𝕜 n g (insert y s) x ↔ cont_diff_within_at 𝕜 n g s x :=
+begin
+  simp_rw [cont_diff_within_at],
+  rcases eq_or_ne x y with rfl|h,
+  { simp_rw [insert_eq_of_mem (mem_insert _ _)] },
+  simp_rw [insert_comm x y, nhds_within_insert_of_ne h]
+end
 
-alias cont_diff_within_at_insert ↔ cont_diff_within_at.of_insert cont_diff_within_at.insert
+alias cont_diff_within_at_insert ↔ cont_diff_within_at.of_insert cont_diff_within_at.insert'
+
+lemma cont_diff_within_at.insert (h : cont_diff_within_at 𝕜 n g s x) :
+  cont_diff_within_at 𝕜 n g (insert x s) x :=
+h.insert'
 
 lemma has_fderiv_within_at_diff_singleton {g' : G →L[𝕜] E} :
   has_fderiv_within_at g g' (s \ {x}) x ↔ has_fderiv_within_at g g' s x :=
@@ -156,8 +175,7 @@ begin
   rw [← cont_diff_within_at_insert, cont_diff_within_at_succ_iff_has_fderiv_within_at,
     insert_eq_of_mem (mem_insert _ _)],
   rintro ⟨u, hu, hus, f', huf', hf'⟩,
-  refine ⟨u, hu, f', λ y hy, (huf' y hy).insert.mono_of_mem _, hf'.insert.mono hus⟩,
-  exact insert_mem_nhds_within_of_subset_insert hus,
+  refine ⟨u, hu, f', λ y hy, (huf' y hy).insert'.mono hus, hf'.insert.mono hus⟩
 end
 
 /-- One direction of `cont_diff_within_at_succ_iff_has_fderiv_within_at`, but where all derivatives
@@ -490,15 +508,11 @@ open_locale filter
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {E : Type*}  {F : Type*} [normed_add_comm_group F]
 
-lemma filter.eventually_le.is_O {f g h : E → F} {l : filter E}
-  (hfg : (λ x, ∥f x∥) ≤ᶠ[l] λ x, ∥g x∥) (hh : g =O[l] h) : f =O[l] h :=
+lemma filter.eventually.trans_is_O {f g h : E → F} {l : filter E}
+  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : g =O[l] h) : f =O[l] h :=
 (is_O_iff.mpr ⟨1, by  simpa using hfg⟩).trans hh
 
-lemma filter.eventually.is_O {f g h : E → F} {l : filter E}
-  (hfg : ∀ᶠ x in l, ∥f x∥ ≤ ∥g x∥) (hh : g =O[l] h) : f =O[l] h :=
-filter.eventually_le.is_O hfg hh
-
-lemma filter.eventually.is_O' {f : E → F} {g : E → ℝ} {l : filter E}
+lemma filter.eventually.is_O {f : E → F} {g : E → ℝ} {l : filter E}
   (hfg : ∀ᶠ x in l, ∥f x∥ ≤ g x) : f =O[l] g :=
 begin
   rw is_O_iff,
@@ -513,13 +527,9 @@ variables [normed_add_comm_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
 
 namespace asymptotics
 
-lemma is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ}
+lemma is_O.eq_zero_of_norm_pow {f : E → F} {x₀ : E} {n : ℕ}
   (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 0 < n) : f x₀ = 0 :=
-begin
-  cases h.is_O_with with c hc,
-  have:= mem_of_mem_nhds (is_O_with_iff.mp hc),
-  simpa [zero_pow hn]
-end
+mem_of_mem_nhds h.eq_zero_imp $ by simp_rw [sub_self, norm_zero, zero_pow hn]
 
 lemma is_o_pow_sub_pow_sub (x₀ : E) {n m : ℕ} (h : n < m) :
     (λ (x : E), ∥x - x₀∥^m) =o[𝓝 x₀] λ (x : E), ∥x - x₀∥^n :=
@@ -535,53 +545,11 @@ lemma is_o_pow_sub_sub (x₀ : E) {m : ℕ} (h : 1 < m) :
     (λ (x : E), ∥x - x₀∥^m) =o[𝓝 x₀] λ (x : E), x - x₀ :=
 by simpa only [is_o_norm_right, pow_one] using is_o_pow_sub_pow_sub x₀ h
 
-lemma is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
-  (λ p : E × F, p.1 - e₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
-is_O_of_le l (λ p, le_max_left _ _)
-
-lemma is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
-  (λ p : E × F, p.2 - f₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
-is_O_of_le l (λ p, le_max_right _ _)
-
-lemma is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
-  (λ p : E × F, ∥p.1 - e₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
-(is_O_norm_norm.mpr $ is_O_sub_prod_left e₀ f₀ l).pow n
-
-lemma is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
-  (λ p : E × F, ∥p.2 - f₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
-(is_O_norm_norm.mpr $ is_O_sub_prod_right e₀ f₀ l).pow n
-
-lemma is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
-  (h : f =O[l] λ e, ∥e - e₀∥^n) (g₀ : G) (l' : filter G) :
-  (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
-(h.comp_tendsto tendsto_fst).trans (is_O_pow_sub_prod_left _ _ _ _)
-
-lemma is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
-  (h : f =O[l] λ e, ∥e - e₀∥) (g₀ : G) (l' : filter G) :
-  (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
-begin
-  simp only [← pow_one (∥_∥)] at h {single_pass := tt},
-  simpa using h.comp_fst g₀ l'
-end
-
-lemma is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
-  (h : f =O[l'] λ g, ∥g - g₀∥^n) (e₀ : E) (l : filter E) :
-  (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
-(h.comp_tendsto tendsto_snd).trans (is_O_pow_sub_prod_right _ _ _ _)
-
-lemma is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
-  (h : f =O[l'] λ g, ∥g - g₀∥) (e₀ : E) (l : filter E) :
-  (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
-begin
-  simp only [← pow_one (∥_∥)] at h {single_pass := tt},
-  simpa using h.comp_snd e₀ l
-end
-
 lemma is_O.has_fderiv_at {f : E → F} {x₀ : E} {n : ℕ}
   (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 1 < n) :
   has_fderiv_at f (0 : E →L[𝕜] F) x₀ :=
-by simp_rw [has_fderiv_at, has_fderiv_at_filter, h.eq_zero $ zero_lt_one.trans hn, zero_apply,
-  sub_zero, h.trans_is_o $ is_o_pow_sub_sub x₀ hn]
+by simp_rw [has_fderiv_at, has_fderiv_at_filter, h.eq_zero_of_norm_pow $ zero_lt_one.trans hn,
+  zero_apply, sub_zero, h.trans_is_o $ is_o_pow_sub_sub x₀ hn]
 
 end asymptotics
 

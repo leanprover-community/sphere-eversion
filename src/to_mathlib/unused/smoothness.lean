@@ -44,12 +44,67 @@ lemma iterated_fderiv_smooth_transition_one {n : ℕ} (hn : 1 ≤ n) :
   iterated_fderiv ℝ n smooth_transition 1 = 0 :=
 sorry_ax
 
+namespace asymptotics
+
+open asymptotics continuous_linear_map filter
+open_locale filter
+
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+          {E : Type*}  {F : Type*} [normed_add_comm_group F]
+variables [normed_add_comm_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
+          {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
+
+lemma is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
+  (λ p : E × F, p.1 - e₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
+is_O_of_le l (λ p, le_max_left _ _)
+
+lemma is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
+  (λ p : E × F, p.2 - f₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
+is_O_of_le l (λ p, le_max_right _ _)
+
+lemma is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
+  (λ p : E × F, ∥p.1 - e₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
+(is_O_norm_norm.mpr $ is_O_sub_prod_left e₀ f₀ l).pow n
+
+lemma is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
+  (λ p : E × F, ∥p.2 - f₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
+(is_O_norm_norm.mpr $ is_O_sub_prod_right e₀ f₀ l).pow n
+
+lemma is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
+  (h : f =O[l] λ e, ∥e - e₀∥^n) (g₀ : G) (l' : filter G) :
+  (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
+(h.comp_tendsto tendsto_fst).trans (is_O_pow_sub_prod_left _ _ _ _)
+
+lemma is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
+  (h : f =O[l] λ e, ∥e - e₀∥) (g₀ : G) (l' : filter G) :
+  (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
+begin
+  simp only [← pow_one (∥_∥)] at h {single_pass := tt},
+  simpa using h.comp_fst g₀ l'
+end
+
+lemma is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
+  (h : f =O[l'] λ g, ∥g - g₀∥^n) (e₀ : E) (l : filter E) :
+  (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
+(h.comp_tendsto tendsto_snd).trans (is_O_pow_sub_prod_right _ _ _ _)
+
+lemma is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
+  (h : f =O[l'] λ g, ∥g - g₀∥) (e₀ : E) (l : filter E) :
+  (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
+begin
+  simp only [← pow_one (∥_∥)] at h {single_pass := tt},
+  simpa using h.comp_snd e₀ l
+end
+
+end asymptotics
+
 section C1_real
 
 variables {E E' F : Type*}
 variables [normed_add_comm_group E] [normed_space ℝ E]
 variables [normed_add_comm_group E'] [normed_space ℝ E']
 variables [normed_add_comm_group F] [normed_space ℝ F]
+
 
 open filter asymptotics metric
 open_locale topological_space filter

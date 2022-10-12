@@ -367,7 +367,7 @@ begin
           exact ht hx (mem_ball_self ε_pos) },
         rw ← is_O_norm_right,
         simp only [norm_eq_abs, abs_mul, abs_norm_eq_norm],
-        exact bdd.is_O' },
+        exact bdd.is_O },
       simp_rw pow_two,
       exact O₃.trans (O₁.mul O₂) },
     have : ∀ᶠ x in 𝓝 x₀, ∫ t in a..s x, F x t =
