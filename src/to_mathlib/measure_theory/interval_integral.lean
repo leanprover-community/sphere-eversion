@@ -1,7 +1,6 @@
 import measure_theory.integral.interval_integral
 import measure_theory.integral.periodic
 
-import to_mathlib.measure_theory.basic
 import to_mathlib.misc
 
 noncomputable theory
@@ -71,11 +70,7 @@ lemma interval_integrable_of_norm_le {f : ℝ → E} {bound : ℝ → ℝ} {μ :
   (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) (hbound : interval_integrable bound μ a b) :
   interval_integrable f μ a b :=
-begin
-  rw ← interval_integrable_norm_iff hf,
-  apply interval_integrable_of_nonneg_of_le hf.norm (h.mono _) hbound,
-  simp,
-end
+hbound.mono_fun' hf h
 
 variables
   [complete_space E] [normed_space ℝ E]  {a b : ℝ} {f : ℝ → E} {bound : ℝ → ℝ}
@@ -145,11 +140,11 @@ end interval_integral
 lemma interval_integrable.mono_set' {E : Type*}
   [normed_add_comm_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
   (hf : interval_integrable f μ a b) (hsub : Ι c d ⊆ Ι a b) : interval_integrable f μ c d :=
-interval_integrable_iff.mpr (hf.def.mono hsub le_rfl)
+hf.mono_set_ae $ eventually_of_forall hsub
 
 lemma interval_integrable.const_mul
   {f : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ}
-  (hf : interval_integrable f μ a b) (c : ℝ) : interval_integrable (λ x, c*f x) μ a b :=
+  (hf : interval_integrable f μ a b) (c : ℝ) : interval_integrable (λ x, c * f x) μ a b :=
 begin
   rw interval_integrable_iff at *,
   exact hf.const_mul c

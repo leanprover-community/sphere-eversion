@@ -5,7 +5,6 @@ import algebra.module.ulift
 import to_mathlib.analysis.calculus
 import to_mathlib.measure_theory.interval_integral
 import to_mathlib.topology.metric_space
-import to_mathlib.misc
 
 open topological_space measure_theory filter first_countable_topology metric set function
 open_locale topological_space filter nnreal big_operators interval
@@ -61,7 +60,7 @@ lemma has_fderiv_at_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
   has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' t ∂ν) x₀ :=
 begin
   simp_rw [ae_strongly_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
-  rw ae_interval_oc at h_lip h_diff,
+  rw ae_restrict_interval_oc_iff at h_lip h_diff,
   have H₁ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1
     h_lip.1 bound_integrable.1 h_diff.1,
   have H₂ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.2 hF_int.2 hF'_meas.2
@@ -83,20 +82,20 @@ theorem continuous_parametric_integral_of_continuous
   {μ : measure_theory.measure α} [is_locally_finite_measure μ]
   {X : Type*} [topological_space X] [first_countable_topology X] [locally_compact_space X]
   {F : X → α → E} (hF : continuous (λ p : X × α, F p.1 p.2))
-  {s : set α} (hs : is_compact s) (hs' : measurable_set s):
+  {s : set α} (hs : is_compact s) :
   continuous (λ x, ∫ a in s, F x a ∂μ) :=
 begin
   rw continuous_iff_continuous_at,
   intros x₀,
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩,
-  rcases (U_cpct.prod hs).bdd_above_norm hF with ⟨M, M_pos, hM⟩,
+  rcases (U_cpct.prod hs).bdd_above_image hF.norm.continuous_on with ⟨M, hM⟩,
   apply continuous_at_of_dominated,
   { exact eventually_of_forall (λ x, (hF.comp (continuous.prod.mk x)).ae_strongly_measurable) },
   { apply eventually.mono U_nhds (λ x x_in, _),
-    apply ae_restrict_of_forall_mem hs',
-    intros t t_in,
-    exact hM (x, t) (set.mk_mem_prod x_in t_in) },
-  { exact hs.integrable_const _ _, },
+    rw [ae_restrict_iff],
+    exact eventually_of_forall (λ t t_in, hM (mem_image_of_mem _ $ mk_mem_prod x_in t_in)),
+    exact (is_closed_le (hF.comp $ continuous.prod.mk x).norm continuous_const).measurable_set },
+  { exact integrable_on_const.mpr (or.inr hs.measure_lt_top), },
   { apply ae_of_all,
     intros a,
     apply (hF.comp₂ continuous_id continuous_const).continuous_at }
@@ -137,9 +136,10 @@ begin
     dsimp {eta := ff},
     have hiF : ∀ {x a₀ b₀}, (∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t) →
       a₀ ∈ Ioo a b → b₀ ∈ Ioo a b → interval_integrable (F x) μ a₀ b₀ :=
-    λ x a₀ b₀ hx ha₀ hb₀, interval_integrable_of_norm_le ((hF_meas x).mono_set $ hsub ha₀ hb₀)
-        (ae_restrict_of_ae_restrict_of_subset (hsub ha₀ hb₀) hx)
-        (bound_integrable.mono_set' $ hsub ha₀ hb₀),
+    λ x a₀ b₀ hx ha₀ hb₀,
+      (bound_integrable.mono_set_ae $ eventually_of_forall $ hsub ha₀ hb₀).mono_fun'
+        ((hF_meas x).mono_set $ hsub ha₀ hb₀)
+        (ae_restrict_of_ae_restrict_of_subset (hsub ha₀ hb₀) hx),
     rw [interval_integral.integral_sub, add_assoc, add_sub_cancel'_right,
         interval_integral.integral_add_adjacent_intervals],
     { exact hiF hx ha₀ hb₀ },
@@ -150,9 +150,10 @@ begin
   refine (continuous_at.add _ _).add _,
   { exact (interval_integral.continuous_at_of_dominated_interval
             (eventually_of_forall $ λ x, (hF_meas x).mono_set $ hsub ha₀ hb₀)
-            (h_bound.mono $ λ  x, ae_mem_imp_of_ae_restrict_of_subset $ hsub ha₀ hb₀)
-            (bound_integrable.mono_set' $ hsub ha₀ hb₀)
-            (ae_mem_imp_of_ae_restrict_of_subset (hsub ha₀ hb₀) h_cont)).fst' },
+            (h_bound.mono $ λ x hx,
+              ae_imp_of_ae_restrict $ ae_restrict_of_ae_restrict_of_subset (hsub ha₀ hb₀) hx)
+            (bound_integrable.mono_set_ae $ eventually_of_forall $ hsub ha₀ hb₀) $
+            ae_imp_of_ae_restrict $ ae_restrict_of_ae_restrict_of_subset (hsub ha₀ hb₀) h_cont).fst' },
   { refine (_ : continuous_at (λ t, ∫ s in b₀..t, F x₀ s ∂μ) b₀).snd',
     apply continuous_within_at.continuous_at _ (Icc_mem_nhds hb₀.1 hb₀.2),
     apply interval_integral.continuous_within_at_primitive hμb₀,
@@ -208,16 +209,15 @@ begin
   rw max_lt_iff at lt_b,
   have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩,
   have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩,
-  obtain ⟨M : ℝ, M_pos : M > 0,
-          hM : ∀ (x : X × ℝ), x ∈ U ×ˢ Icc a b → ∥(λ (p : X × ℝ), F p.fst p.snd) x∥ ≤ M⟩ :=
-    (U_cpct.prod (is_compact_Icc : is_compact $ Icc a b)).bdd_above_norm hF,
+  obtain ⟨M, hM⟩ :=
+    (U_cpct.prod (is_compact_Icc : is_compact $ Icc a b)).bdd_above_image hF.norm.continuous_on,
   refine continuous_at_parametric_primitive_of_dominated (λ t, M) a b _ _ _ _ a₀_in b₀_in
     (measure_singleton b₀),
   { exact λ x, (hF.comp (continuous.prod.mk x)).ae_strongly_measurable },
   { apply eventually.mono U_nhds (λ x (x_in : x ∈ U), _),
-    refine ae_restrict_of_forall_mem measurable_set_Ioc _,
-    intros t t_in,
-    refine hM (x, t) ⟨x_in, _⟩,
+    simp_rw [ae_restrict_iff' measurable_set_interval_oc],
+    refine eventually_of_forall (λ t t_in, _),
+    refine hM (mem_image_of_mem _ $ mk_mem_prod x_in _),
     rw interval_oc_of_le (a_lt.1.trans lt_b.1).le at t_in,
     exact mem_Icc_of_Ioc t_in },
   { apply interval_integrable_const },
@@ -341,9 +341,8 @@ begin
         refine is_O.comp_tendsto _ s_diff.continuous_at,
         have M : strongly_measurable_at_filter bound (𝓝 (s x₀)) volume,
         { use [Ioo a₀ b₀, Ioo_nhds, bound_integrable.1] },
-        refine is_O.congr'
-          (interval_integral.integral_has_deriv_at_right (bound_int ha hsx₀) M bound_cont).is_O
-          _ eventually_eq.rfl,
+        refine (interval_integral.integral_has_deriv_at_right (bound_int ha hsx₀) M bound_cont)
+          .has_fderiv_at.is_O.congr' _ eventually_eq.rfl,
         apply eventually.mono Ioo_nhds,
         rintros t ht,
         dsimp only {eta := false},
@@ -389,11 +388,7 @@ begin
     simpa using ((D₁.add D₂).add D₃).sub (has_fderiv_at_const (φ x₀ (s x₀)) x₀) }
 end
 
-
-
-local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
-local notation `∂₁` := partial_fderiv_fst ℝ
 
 variable [finite_dimensional ℝ H]
 
@@ -404,9 +399,9 @@ A version of the above lemma using Floris' style statement. This does not reuse 
 lemma has_fderiv_at_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF : cont_diff ℝ 1 ↿F)
   {s : H → ℝ} (hs : cont_diff ℝ 1 s)
   (x₀ : H) (a : ℝ) :
-  (interval_integrable (λ t, (fderiv ℝ $ λ x, F x t) x₀) volume a $ s x₀) ∧
+  (interval_integrable (λ t, fderiv ℝ (λ x, F x t) x₀) volume a $ s x₀) ∧
   has_fderiv_at (λ x : H, ∫ t in a..s x, F x t)
-    ((∫ t in a..s x₀, ∂₁F x₀ t) + (F x₀ (s x₀)) ⬝ (D s x₀))
+    ((∫ t in a..s x₀, fderiv ℝ (λ x, F x t) x₀) + F x₀ (s x₀) ⬝ fderiv ℝ s x₀)
     x₀ :=
 begin
   set a₀ :=  min a (s x₀) - 1,
@@ -423,14 +418,15 @@ begin
     linarith [le_max_right a (s x₀)] },
   have cpct : is_compact (closed_ball x₀ 1 ×ˢ Icc a₀ b₀),
       from (proper_space.is_compact_closed_ball x₀ 1).prod is_compact_Icc,
-  obtain ⟨M, M_nonneg, F_bound⟩ : ∃ M : ℝ, 0 ≤ M ∧ ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
-  { rcases cpct.bdd_above_norm hF.continuous with ⟨M, M_pos : 0 < M, hM⟩,
-    use [M, M_pos.le],
-    exact λ x x_in t t_in, hM (x, t) ⟨ball_subset_closed_ball x_in, mem_Icc_of_Ioo t_in⟩ },
+  obtain ⟨M, F_bound⟩ : ∃ M : ℝ, ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
+  { rcases cpct.bdd_above_image hF.continuous.norm.continuous_on with ⟨M, hM⟩,
+    refine ⟨M, _⟩,
+    exact λ x x_in t t_in, hM (mem_image_of_mem _ $ mk_mem_prod (ball_subset_closed_ball x_in) $
+      mem_Icc_of_Ioo t_in) },
   obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, lipschitz_on_with K (λ x, F x t) (ball x₀ 1),
   { have conv : convex ℝ (closed_ball x₀ 1 ×ˢ Icc a₀ b₀),
       from (convex_closed_ball x₀ 1).prod (convex_Icc a₀ b₀),
-    rcases hF.lipschitz_on_with conv cpct with ⟨K, hK⟩,
+    rcases hF.lipschitz_on_with le_rfl conv cpct with ⟨K, hK⟩,
     use K,
     intros t t_in,
     rw [show (λ (x : H), F x t) = (uncurry F) ∘ (λ x : H, (x, t)), by { ext, simp }, ← mul_one K],
@@ -464,9 +460,8 @@ begin
     rw this, clear this,
     exact (inl ℝ H ℝ).comp_rightL.continuous.comp ((hF.continuous_fderiv le_rfl).comp $
       continuous.prod.mk x₀) },
-  { refine ae_restrict_of_forall_mem measurable_set_Ioo _,
-    swap,
-    intros t t_in,
+  { simp_rw [ae_restrict_iff' measurable_set_Ioo],
+    refine eventually_of_forall (λ t t_in, _),
     rw nnabs_coe K,
     exact F_lip t t_in },
   { exact integrable_on_const.mpr (or.inr measure_Ioo_lt_top) }
@@ -482,9 +477,7 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 
 open real continuous_linear_map asymptotics
 
-local notation `D` := fderiv ℝ
 local notation u ` ⬝ `:70 φ :=  continuous_linear_map.comp (continuous_linear_map.to_span_singleton ℝ u) φ
-local notation `∂₁` := partial_fderiv_fst ℝ
 
 lemma cont_diff_parametric_primitive_of_cont_diff' {F : H → ℝ → E} {n : ℕ}
   (hF : cont_diff ℝ n ↿F)
@@ -498,7 +491,7 @@ begin
   { have hF₁ : cont_diff ℝ 1 (↿F), from hF.one_of_succ,
     have hs₁ : cont_diff ℝ 1 s, from hs.one_of_succ,
     have h : ∀ x, has_fderiv_at (λ x, ∫ t in a..s x, F x t)
-      ((∫ t in a..s x, ∂₁F x t) + F x (s x) ⬝ D s x) x :=
+      ((∫ t in a..s x, fderiv ℝ (λ x', F x' t) x) + F x (s x) ⬝ fderiv ℝ s x) x :=
     λ x, (has_fderiv_at_parametric_primitive_of_cont_diff' hF₁ hs₁ x a).2,
     rw cont_diff_succ_iff_fderiv_apply,
     split,
@@ -507,10 +500,9 @@ begin
       rw fderiv_eq h,
       apply cont_diff.add,
       { simp only [continuous_linear_map.coe_coe],
-      --cont_diff ℝ ↑n ↿(λ (x' : H) (a : ℝ), ⇑(D (λ (e : H), F e a) x') x)
-        have hD : cont_diff ℝ n ↿(λ x' a, (D (λ e, F e a) x') x),
+        have hD : cont_diff ℝ n ↿(λ x' a, (fderiv ℝ (λ e, F e a) x') x),
         { apply cont_diff.cont_diff_partial_fst_apply, exact hF },
-        have hD' : cont_diff ℝ n ↿(∂₁ F),
+        have hD' : cont_diff ℝ n ↿(λ x₀ t, fderiv ℝ (λ x, F x t) x₀),
         { apply cont_diff.cont_diff_partial_fst, exact hF },
         convert ih hs.of_succ hD, ext x', refine continuous_linear_map.interval_integral_apply _ x,
         exact (continuous_curry x' hD'.continuous).interval_integrable _ _, },
@@ -554,8 +546,6 @@ lemma cont_diff_parametric_primitive_of_cont_diff''
 cont_diff_parametric_primitive_of_cont_diff (hF.comp (cont_diff_fst.prod_map cont_diff_id))
 cont_diff_snd a
 
-local notation `∂₁` := partial_fderiv_fst ℝ
-
 lemma cont_diff_parametric_integral_of_cont_diff
   {F : H → ℝ → E} {n : ℕ∞} (hF : cont_diff ℝ n ↿F)
   (a b : ℝ) :
@@ -565,7 +555,7 @@ cont_diff_parametric_primitive_of_cont_diff hF cont_diff_const a
 lemma cont_diff.fderiv_parametric_integral
   {F : H → ℝ → E} (hF : cont_diff ℝ 1 ↿F)
   (a b : ℝ) :
-  fderiv ℝ (λ x : H, ∫ t in a..b, F x t) = λ x : H, (∫ t in a..b, ∂₁F x t) :=
+  fderiv ℝ (λ x : H, ∫ t in a..b, F x t) = λ x : H, (∫ t in a..b, fderiv ℝ (λ x', F x' t) x) :=
 begin
   ext x₀,
   cases has_fderiv_at_parametric_primitive_of_cont_diff' hF cont_diff_const x₀ a with int h,

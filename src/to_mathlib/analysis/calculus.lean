@@ -7,14 +7,6 @@ noncomputable theory
 open set function filter
 open_locale topological_space
 
-lemma is_compact.bdd_above_norm {X : Type*} [topological_space X] {E : Type*} [normed_add_comm_group E]
-  {s : set X} (hs : is_compact s) {f : X → E} (hf : continuous f) : ∃ M > 0, ∀ x ∈ s, ∥f x∥ ≤ M :=
-begin
-  cases (hs.image (continuous_norm.comp hf)).bdd_above with M hM,
-  refine ⟨max 1 M, zero_lt_one.trans_le (le_max_left _ _), λ x hx, _⟩,
-  exact le_max_of_le_right (hM (set.mem_image_of_mem (norm ∘ f) hx))
-end
-
 namespace real
 
 lemma smooth_transition_proj_I {x : ℝ} :
@@ -22,11 +14,9 @@ lemma smooth_transition_proj_I {x : ℝ} :
 begin
   cases le_total (0 : ℝ) x with hx hx,
   cases le_total (1 : ℝ) x with h2x h2x,
-  { rw [proj_I_eq_one.mpr h2x, smooth_transition.one_of_one_le h2x,
-      smooth_transition.one_of_one_le le_rfl], },
+  { rw [proj_I_eq_one.mpr h2x, smooth_transition.one_of_one_le h2x, smooth_transition.one], },
   { rw [proj_I_eq_self.mpr ⟨hx, h2x⟩] },
-  { rw [proj_I_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx,
-      smooth_transition.zero_of_nonpos le_rfl], }
+  { rw [proj_I_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx, smooth_transition.zero], }
 end
 
 lemma smooth_transition.continuous_at {x : ℝ} : continuous_at smooth_transition x :=
@@ -236,13 +226,6 @@ lemma cont_diff_within_at_fderiv_within'
   :
   cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
 hf.fderiv_within₂' hg (hgx.mono (λ y hy, ht _ hy)) hmn hst hu
--- $
---   begin
---     have := nhds_within_le_comap (continuous_within_at_id.prod hg.continuous_within_at),
---     have := hgx.filter_mono (nhds_within_mono _ $ subset_insert _ _),
---     refine mem_of_superset (inter_mem self_mem_nhds_within _) _,
-
---   end
 
 lemma cont_diff_within_at_fderiv_within
   (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
@@ -487,12 +470,14 @@ open continuous_linear_map
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
 
-lemma cont_diff.lipschitz_on_with {s : set E} {f : E → F} (hf : cont_diff ℝ 1 f)
+lemma cont_diff.lipschitz_on_with {s : set E} {f : E → F} {n} (hf : cont_diff ℝ n f) (hn : 1 ≤ n)
   (hs : convex ℝ s) (hs' : is_compact s) : ∃ K, lipschitz_on_with K f s :=
 begin
-  rcases hs'.bdd_above_norm (hf.continuous_fderiv le_rfl) with ⟨M, M_pos : 0 < M, hM⟩,
-  use ⟨M, M_pos.le⟩,
-  exact convex.lipschitz_on_with_of_nnnorm_fderiv_le (λ x x_in, hf.differentiable le_rfl x) hM hs
+  rcases (bdd_above_iff_exists_ge 0).mp (hs'.image (hf.continuous_fderiv hn).norm).bdd_above with
+    ⟨M, M_nonneg, hM⟩,
+  simp_rw [ball_image_iff] at hM,
+  use ⟨M, M_nonneg⟩,
+  exact convex.lipschitz_on_with_of_nnnorm_fderiv_le (λ x x_in, hf.differentiable hn x) hM hs
 end
 
 end real_calculus
@@ -526,7 +511,9 @@ end
 variables [normed_add_comm_group E] [normed_space 𝕜 E] [normed_space 𝕜 F]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
 
-lemma asymptotics.is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ}
+namespace asymptotics
+
+lemma is_O.eq_zero {f : E → F} {x₀ : E} {n : ℕ}
   (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 0 < n) : f x₀ = 0 :=
 begin
   cases h.is_O_with with c hc,
@@ -548,58 +535,57 @@ lemma is_o_pow_sub_sub (x₀ : E) {m : ℕ} (h : 1 < m) :
     (λ (x : E), ∥x - x₀∥^m) =o[𝓝 x₀] λ (x : E), x - x₀ :=
 by simpa only [is_o_norm_right, pow_one] using is_o_pow_sub_pow_sub x₀ h
 
-lemma asymptotics.is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
+lemma is_O_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) :
   (λ p : E × F, p.1 - e₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
 is_O_of_le l (λ p, le_max_left _ _)
 
-lemma asymptotics.is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
+lemma is_O_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) :
   (λ p : E × F, p.2 - f₀) =O[l] λ p : E × F, p - (e₀, f₀) :=
 is_O_of_le l (λ p, le_max_right _ _)
 
-lemma asymptotics.is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
+lemma is_O_pow_sub_prod_left (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
   (λ p : E × F, ∥p.1 - e₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
-(is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_left e₀ f₀ l).pow n
+(is_O_norm_norm.mpr $ is_O_sub_prod_left e₀ f₀ l).pow n
 
-lemma asymptotics.is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
+lemma is_O_pow_sub_prod_right (e₀ : E) (f₀ : F) (l : filter $ E × F) (n : ℕ) :
   (λ p : E × F, ∥p.2 - f₀∥^n) =O[l] λ p : E × F, ∥p - (e₀, f₀)∥^n :=
-(is_O_norm_norm.mpr $ asymptotics.is_O_sub_prod_right e₀ f₀ l).pow n
+(is_O_norm_norm.mpr $ is_O_sub_prod_right e₀ f₀ l).pow n
 
-lemma asymptotics.is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
+lemma is_O.comp_fst {f : E → F} {n : ℕ} {e₀ : E} {l : filter E}
   (h : f =O[l] λ e, ∥e - e₀∥^n) (g₀ : G) (l' : filter G) :
   (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
-(h.comp_tendsto tendsto_fst).trans (asymptotics.is_O_pow_sub_prod_left _ _ _ _)
+(h.comp_tendsto tendsto_fst).trans (is_O_pow_sub_prod_left _ _ _ _)
 
-lemma asymptotics.is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
+lemma is_O.comp_fst_one {f : E → F} {e₀ : E}  {l : filter E}
   (h : f =O[l] λ e, ∥e - e₀∥) (g₀ : G) (l' : filter G) :
   (λ p : E × G, f p.1) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
 begin
-  rw show (λ e, ∥e - e₀∥) = (λ e, ∥e - e₀∥^1), by { ext e, simp } at h,
+  simp only [← pow_one (∥_∥)] at h {single_pass := tt},
   simpa using h.comp_fst g₀ l'
 end
 
-lemma asymptotics.is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
+lemma is_O.comp_snd {f : G → F} {n : ℕ}  {g₀ : G} {l' : filter G}
   (h : f =O[l'] λ g, ∥g - g₀∥^n) (e₀ : E) (l : filter E) :
   (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥^n :=
-(h.comp_tendsto tendsto_snd).trans (asymptotics.is_O_pow_sub_prod_right _ _ _ _)
+(h.comp_tendsto tendsto_snd).trans (is_O_pow_sub_prod_right _ _ _ _)
 
-lemma asymptotics.is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
+lemma is_O.comp_snd_one {f : G → F}  {g₀ : G} {l' : filter G}
   (h : f =O[l'] λ g, ∥g - g₀∥) (e₀ : E) (l : filter E) :
   (λ p : E × G, f p.2) =O[l ×ᶠ l'] λ p, ∥p - (e₀, g₀)∥ :=
 begin
-  rw show (λ g, ∥g - g₀∥) = (λ g, ∥g - g₀∥^1), by { ext g, simp } at h,
+  simp only [← pow_one (∥_∥)] at h {single_pass := tt},
   simpa using h.comp_snd e₀ l
 end
 
-lemma asymptotics.is_O.has_fderiv_at {f : E → F} {x₀ : E} {n : ℕ}
+lemma is_O.has_fderiv_at {f : E → F} {x₀ : E} {n : ℕ}
   (h : f =O[𝓝 x₀] λ x, ∥x - x₀∥^n) (hn : 1 < n) :
   has_fderiv_at f (0 : E →L[𝕜] F) x₀ :=
-begin
-  change is_o _ _ _,
-  simp only [h.eq_zero (zero_lt_one.trans hn), sub_zero, zero_apply],
-  exact h.trans_is_o (is_o_pow_sub_sub x₀ hn)
-end
+by simp_rw [has_fderiv_at, has_fderiv_at_filter, h.eq_zero $ zero_lt_one.trans hn, zero_apply,
+  sub_zero, h.trans_is_o $ is_o_pow_sub_sub x₀ hn]
 
-lemma has_deriv_at.is_O {f : E → F} {x₀ : E} {f' : E →L[𝕜] F} (h : has_fderiv_at f f' x₀) :
+end asymptotics
+
+lemma has_fderiv_at.is_O {f : E → F} {x₀ : E} {f' : E →L[𝕜] F} (h : has_fderiv_at f f' x₀) :
   (λ x, f x - f x₀) =O[𝓝 x₀] λ x, x - x₀ :=
 by simpa using h.is_O.add (is_O_sub f' (𝓝 x₀) x₀)
 
