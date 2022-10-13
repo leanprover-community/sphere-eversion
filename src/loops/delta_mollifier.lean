@@ -108,7 +108,7 @@ begin
   let e := equiv.add_right (1 : ℤ),
   let F : ℤ → M := λ n, f (t + n),
   change ∑ᶠ (n : ℤ), F (e n) = ∑ᶠ (n : ℤ), f (t + ↑n),
-  exact finsum_comp_equiv.symm,
+  apply finsum_comp_equiv,
 end
 
 lemma periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 ≤ periodize f t :=

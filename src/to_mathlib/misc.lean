@@ -63,8 +63,12 @@ section finprod
 
 variables {M : Type*} [comm_monoid M] {ι ι' : Type*}
 
-@[to_additive]
-lemma finset.prod_equiv [decidable_eq ι] {e : ι ≃ ι'} {f : ι' → M} {s' : finset ι'} {s : finset ι}
+/-- Reindexing a product over a finset along an equivalence.
+See `equiv.prod_comp` for the version where `s` and `s'` are `univ`. -/
+@[to_additive /-" Reindexing a sum over a finset along an equivalence.
+See `equiv.sum_comp` for the version where `s` and `s'` are `univ`. "-/]
+lemma equiv.prod_comp_finset [decidable_eq ι] (e : ι ≃ ι') {f : ι' → M} {s' : finset ι'}
+  {s : finset ι}
   (h : s = s'.image e.symm) :
   ∏ i' in s', f i' = ∏ i in s, f (e i) :=
 begin
@@ -77,7 +81,7 @@ begin
 end
 
 @[to_additive]
-lemma finprod_comp_equiv {e : ι ≃ ι'} {f : ι' → M} : ∏ᶠ i', f i' = ∏ᶠ i, f (e i) :=
-(finprod_eq_of_bijective e e.bijective $ λ x, rfl).symm
+lemma finprod_comp_equiv (e : ι ≃ ι') (f : ι' → M) : ∏ᶠ i, f (e i) = ∏ᶠ i', f i' :=
+finprod_eq_of_bijective e e.bijective $ λ x, rfl
 
 end finprod
