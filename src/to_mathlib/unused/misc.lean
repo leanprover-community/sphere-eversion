@@ -196,7 +196,7 @@ lemma mem_closure_inter_of_mem_nhds_of_mem_closure {X : Type*} [topological_spac
   {u v : set X} (hu : u ∈ 𝓝 x) (hv : x ∈ closure v) : x ∈ closure (u ∩ v) :=
 begin
   rcases mem_nhds_iff.mp hu with ⟨w, w_sub, w_op, hw⟩,
-  exact closure_mono (v.inter_subset_inter_left w_sub) (w_op.closure_inter ⟨hw, hv⟩)
+  exact closure_mono (v.inter_subset_inter_left w_sub) (w_op.inter_closure ⟨hw, hv⟩)
 end
 
 lemma continuous.symm {X Y : Type*} [topological_space X]

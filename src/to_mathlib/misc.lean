@@ -76,4 +76,8 @@ begin
   rwa [e.apply_symm_apply]
 end
 
+@[to_additive]
+lemma finprod_comp_equiv {e : ι ≃ ι'} {f : ι' → M} : ∏ᶠ i', f i' = ∏ᶠ i, f (e i) :=
+(finprod_eq_of_bijective e e.bijective $ λ x, rfl).symm
+
 end finprod
