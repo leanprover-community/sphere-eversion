@@ -272,13 +272,29 @@ end
 
 lemma cont_diff.fderiv {f : E → F → G} {g : E → F} {n m : ℕ∞}
   (hf : cont_diff 𝕜 m $ uncurry f) (hg : cont_diff 𝕜 n g) (hnm : n + 1 ≤ m) :
-    cont_diff 𝕜 n (λ x, fderiv 𝕜 (f x) (g x)) :=
+  cont_diff 𝕜 n (λ x, fderiv 𝕜 (f x) (g x)) :=
 cont_diff_iff_cont_diff_at.mpr $ λ x, hf.cont_diff_at.cont_diff_at_fderiv hg.cont_diff_at hnm
 
 lemma continuous.fderiv {f : E → F → G} {g : E → F} {n : ℕ∞}
   (hf : cont_diff 𝕜 n $ uncurry f) (hg : continuous g) (hn : 1 ≤ n):
-    continuous (λ x, fderiv 𝕜 (f x) (g x)) :=
+  continuous (λ x, fderiv 𝕜 (f x) (g x)) :=
 (hf.fderiv (cont_diff_zero.mpr hg) hn).continuous
+
+lemma cont_diff.clm_apply {f : E → F →L[𝕜] G} {g : E → F} {n : ℕ∞}
+  (hf : cont_diff 𝕜 n f) (hg : cont_diff 𝕜 n g) :
+  cont_diff 𝕜 n (λ x, (f x) (g x)) :=
+is_bounded_bilinear_map_apply.cont_diff.comp₂ hf hg
+
+lemma cont_diff.smul_right {f : E → F →L[𝕜] 𝕜} {g : E → G} {n : ℕ∞}
+  (hf : cont_diff 𝕜 n f) (hg : cont_diff 𝕜 n g) :
+  cont_diff 𝕜 n (λ x, (f x).smul_right (g x)) :=
+  -- giving the following implicit type arguments speeds up elaboration significantly
+(@is_bounded_bilinear_map_smul_right 𝕜 _ F _ _ G _ _).cont_diff.comp₂ hf hg
+
+lemma cont_diff.fderiv_apply {f : E → F → G} {g s : E → F} {n m : ℕ∞}
+  (hf : cont_diff 𝕜 m $ uncurry f) (hg : cont_diff 𝕜 n g) (hs : cont_diff 𝕜 n s) (hnm : n + 1 ≤ m) :
+  cont_diff 𝕜 n (λ x, fderiv 𝕜 (f x) (g x) (s x)) :=
+(hf.fderiv hg hnm).clm_apply hs
 
 end fderiv
 
@@ -294,8 +310,6 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
           {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
           {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
           {n : ℕ∞}
-
-
 
 lemma cont_diff_at.comp₂ {g : E₁ × E₂ → G} {f₁ : F → E₁} {f₂ : F → E₂} {x : F}
   (hg : cont_diff_at 𝕜 n g (f₁ x, f₂ x)) (hf₁ : cont_diff_at 𝕜 n f₁ x)

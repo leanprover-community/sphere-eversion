@@ -121,11 +121,11 @@ lemma continuous_at_parametric_primitive_of_dominated
   (ha₀ : a₀ ∈ Ioo a b) (hb₀ : b₀ ∈ Ioo a b) (hμb₀ : μ {b₀} = 0) :
   continuous_at (λ p : X × ℝ, ∫ (t : ℝ) in a₀..p.2, F p.1 t ∂μ) (x₀, b₀) :=
 begin
-  have hsub : ∀ {a₀ b₀}, a₀ ∈ Ioo a b → b₀ ∈ Ioo a b → Ι a₀ b₀ ⊆ Ι a b, from
+  have hsub : ∀ {a₀ b₀}, a₀ ∈ Ioo a b → b₀ ∈ Ioo a b → Ι a₀ b₀ ⊆ Ι a b :=
     λ a₀ b₀ ha₀ hb₀, (ord_connected_Ioo.interval_oc_subset ha₀ hb₀).trans
       (Ioo_subset_Ioc_self.trans Ioc_subset_interval_oc),
-  have Ioo_nhds : Ioo a b ∈ 𝓝 b₀, from Ioo_mem_nhds hb₀.1 hb₀.2,
-  have Icc_nhds : Icc a b ∈ 𝓝 b₀, from Icc_mem_nhds hb₀.1 hb₀.2,
+  have Ioo_nhds : Ioo a b ∈ 𝓝 b₀ := Ioo_mem_nhds hb₀.1 hb₀.2,
+  have Icc_nhds : Icc a b ∈ 𝓝 b₀ := Icc_mem_nhds hb₀.1 hb₀.2,
   have hx₀ : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ∥F x₀ t∥ ≤ bound t := h_bound.self_of_nhds,
   have : ∀ᶠ (p : X × ℝ) in 𝓝 (x₀, b₀),
     ∫ s in a₀..p.2, F p.1 s ∂μ = ∫ s in a₀..b₀, F p.1 s ∂μ + ∫ s in b₀..p.2, F x₀ s ∂μ +
@@ -323,7 +323,7 @@ begin
   { have D₁ : has_fderiv_at (λ x, φ x (s x₀)) (∫ t in a..s x₀, F' t) x₀,
     { replace hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) (volume.restrict (Ι a (s x₀))),
         from eventually.mono (ball_mem_nhds x₀ ε_pos) (λ x hx, hF_meas_ball hx ha hsx₀),
-      replace hF_int : interval_integrable (F x₀) volume a (s x₀), from hF_int_ball x₀ x₀_in ha hsx₀,
+      replace hF_int : interval_integrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀,
       exact (has_fderiv_at_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
         (ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.interval_oc_subset ha hsx₀) h_lipsch)
         (bound_int ha hsx₀) h_diff).2 },
@@ -347,7 +347,7 @@ begin
         rintros t ht,
         dsimp only {eta := false},
         rw interval_integral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀) },
-      have O₂ : (λ x, ∥x - x₀∥) =O[𝓝 x₀] λ x, ∥x - x₀∥, from is_O_refl _ _,
+      have O₂ : (λ x, ∥x - x₀∥) =O[𝓝 x₀] λ x, ∥x - x₀∥ := is_O_refl _ _,
       have O₃ : (λ x, ∫ (t : ℝ) in s x₀..s x, F x t - F x₀ t) =O[𝓝 x₀]
              λ x, (∫ t' in s x₀..s x, bound t') * ∥x - x₀∥,
       { have bdd : ∀ᶠ x in 𝓝 x₀,
@@ -454,8 +454,8 @@ begin
     have : (λ t, fderiv ℝ (λ (x : H), F x t) x₀) =
       ((λ φ : H × ℝ →L[ℝ] E, φ.comp (inl ℝ H ℝ)) ∘ (fderiv ℝ $ uncurry F) ∘ (λ t, (x₀, t))),
     { ext t,
-      have : has_fderiv_at (λ e, F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀,
-        from has_fderiv_at.partial_fst (hF.has_strict_fderiv_at le_rfl).has_fderiv_at,
+      have : has_fderiv_at (λ e, F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀ :=
+        (hF.has_strict_fderiv_at le_rfl).has_fderiv_at.comp _ (has_fderiv_at_prod_mk_left _ _),
       rw [this.fderiv] },
     rw this, clear this,
     exact (inl ℝ H ℝ).comp_rightL.continuous.comp ((hF.continuous_fderiv le_rfl).comp $
@@ -488,8 +488,8 @@ begin
   induction n with n ih generalizing F,
   { rw [with_top.coe_zero, cont_diff_zero] at *,
     exact continuous_parametric_interval_integral_of_continuous hF hs },
-  { have hF₁ : cont_diff ℝ 1 (↿F), from hF.one_of_succ,
-    have hs₁ : cont_diff ℝ 1 s, from hs.one_of_succ,
+  { have hF₁ : cont_diff ℝ 1 (↿F) := hF.one_of_succ,
+    have hs₁ : cont_diff ℝ 1 s := hs.one_of_succ,
     have h : ∀ x, has_fderiv_at (λ x, ∫ t in a..s x, F x t)
       ((∫ t in a..s x, fderiv ℝ (λ x', F x' t) x) + F x (s x) ⬝ fderiv ℝ s x) x :=
     λ x, (has_fderiv_at_parametric_primitive_of_cont_diff' hF₁ hs₁ x a).2,
@@ -500,18 +500,16 @@ begin
       rw fderiv_eq h,
       apply cont_diff.add,
       { simp only [continuous_linear_map.coe_coe],
-        have hD : cont_diff ℝ n ↿(λ x' a, (fderiv ℝ (λ e, F e a) x') x),
-        { apply cont_diff.cont_diff_partial_fst_apply, exact hF },
-        have hD' : cont_diff ℝ n ↿(λ x₀ t, fderiv ℝ (λ x, F x t) x₀),
-        { apply cont_diff.cont_diff_partial_fst, exact hF },
-        convert ih hs.of_succ hD, ext x', refine continuous_linear_map.interval_integral_apply _ x,
+        have hD' : cont_diff ℝ n ↿(λ x₀ t, fderiv ℝ (λ x, F x t) x₀) :=
+          cont_diff.fderiv (hF.comp₂ cont_diff_snd cont_diff_fst.snd) cont_diff_fst le_rfl,
+        have hD : cont_diff ℝ n ↿(λ x' a, (fderiv ℝ (λ e, F e a) x') x) :=
+          hD'.clm_apply cont_diff_const,
+        convert ih hs.of_succ hD,
+        ext x',
+        refine continuous_linear_map.interval_integral_apply _ x,
         exact (continuous_curry x' hD'.continuous).interval_integrable _ _, },
-      { -- giving the following implicit type arguments speeds up elaboration significantly
-        have := (@is_bounded_bilinear_map_smul_right ℝ _ H _ _ E _ _).cont_diff.comp
-          ((cont_diff_succ_iff_fderiv.mp hs).2.prod $ hF.of_succ.comp $
-            cont_diff_id.prod hs.of_succ),
-        rw [cont_diff_clm_apply] at this,
-        exact this x } } }
+      { exact ((cont_diff_succ_iff_fderiv.mp hs).2.smul_right
+          (hF.of_succ.comp $ cont_diff_id.prod hs.of_succ)).clm_apply cont_diff_const } } }
 end
 
 end
