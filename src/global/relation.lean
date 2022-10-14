@@ -435,7 +435,7 @@ begin
     refl, },
   simp_rw [one_jet_sec.is_holonomic_at],
   rw [mfderiv_congr (F.localize_bs_fun h g hF), one_jet_sec.snd_eq, F.localize_ϕ, this],
-  simp_rw [← continuous_linear_equiv.coe_def_rev,
+  simp_rw [continuous_linear_equiv.coe_def_rev,
     continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
 end
 

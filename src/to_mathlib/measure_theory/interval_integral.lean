@@ -47,12 +47,7 @@ begin
   exact integrable_norm_iff hf
 end
 
-lemma interval_oc_comm {α : Type*} [linear_order α] (a b : α) : Ι a b = Ι b a :=
-begin
-  dsimp [interval_oc],
-  rw [min_comm, max_comm]
-end
-
+-- not ported
 lemma interval_integrable_of_nonneg_of_le {f g : ℝ → ℝ} {μ : measure ℝ} {a b : ℝ}
   (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), 0 ≤ f t ∧ f t ≤ g t)
@@ -66,16 +61,11 @@ begin
   rwa abs_of_nonneg H
 end
 
-lemma interval_integrable_of_norm_le {f : ℝ → E} {bound : ℝ → ℝ} {μ : measure ℝ} {a b : ℝ}
-  (hf : ae_strongly_measurable f $ μ.restrict (Ι a b))
-  (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t) (hbound : interval_integrable bound μ a b) :
-  interval_integrable f μ a b :=
-hbound.mono_fun' hf h
-
 variables
   [complete_space E] [normed_space ℝ E]  {a b : ℝ} {f : ℝ → E} {bound : ℝ → ℝ}
   {μ : measure ℝ}
 
+-- next 4 lemmas not ported (also unused)
 namespace interval_integral
 
 lemma integral_mono_of_le
@@ -118,7 +108,7 @@ begin
     rw integral_symm b a,
     apply neg_le_neg,
     apply integral_mono_of_le hab.le hf.symm hg.symm,
-    rwa [interval_oc_comm, interval_oc_of_lt hab] }
+    rwa [interval_oc_swap, interval_oc_of_lt hab] }
 end
 
 lemma integral_antimono_of_le_of_nonneg
@@ -136,7 +126,7 @@ begin
 end
 end interval_integral
 
-/- This should replace interval_integrable.mono_set in mathlib -/
+/- interval_integrable.mono_set' should replace interval_integrable.mono_set in mathlib -/
 lemma interval_integrable.mono_set' {E : Type*}
   [normed_add_comm_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
   (hf : interval_integrable f μ a b) (hsub : Ι c d ⊆ Ι a b) : interval_integrable f μ c d :=
@@ -158,40 +148,33 @@ begin
   exact hf.mul_const c
 end
 
-lemma interval_integral.const_mul
-  {f : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ} (c : ℝ) : ∫ x in a..b, c*f x ∂μ = c*∫ x in a..b, f x ∂μ :=
+section
+open interval_integral
+lemma norm_interval_integral_eq (f : ℝ → E) (a b : ℝ) (μ : measure ℝ) :
+  ∥∫ x in a..b, f x ∂μ∥ = ∥∫ x in Ι a b, f x ∂μ∥ :=
 begin
-  erw mul_sub,
-  simpa only [← integral_mul_left]
+  simp_rw [interval_integral_eq_integral_interval_oc, norm_smul],
+  split_ifs; simp only [norm_neg, norm_one, one_mul],
+end
 end
 
-lemma interval_integral.mul_const
-  {f : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ} (c : ℝ) :
-  ∫ x in a..b, f x * c ∂μ = (∫ x in a..b, f x ∂μ) * c :=
-by simp_rw [mul_comm, ← interval_integral.const_mul]
+lemma abs_interval_integral_eq (f : ℝ → ℝ) (a b : ℝ) (μ : measure ℝ) :
+  |∫ x in a..b, f x ∂μ| = |∫ x in Ι a b, f x ∂μ| :=
+norm_interval_integral_eq f a b μ
 
 
 lemma interval_integral.norm_integral_le_of_norm_le
   (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t)
-  (hf : ae_strongly_measurable f (μ.restrict (Ι a b)) )
   (hbound : interval_integrable bound μ a b) :
   ∥∫ t in a..b, f t ∂μ∥ ≤ |∫ t in a..b, bound t ∂μ| :=
 begin
-  apply interval_integral.norm_integral_le_abs_integral_norm.trans,
-  cases le_total a b with hab hab,
-  { apply abs_le_abs_of_nonneg,
-    { apply interval_integral.integral_nonneg_of_forall hab,
-      exact λ t, norm_nonneg _ },
-    apply interval_integral.integral_mono_of_le_of_nonneg hab hf.norm _ hbound h,
-    simp },
-  { apply abs_le_abs_of_nonpos,
-    { rw [← neg_nonneg, ← interval_integral.integral_symm],
-      apply interval_integral.integral_nonneg_of_forall hab,
-      exact λ t, norm_nonneg _ },
-    { apply interval_integral.integral_antimono_of_le_of_nonneg hab hf.norm _ hbound h,
-      simp } }
+  simp [norm_interval_integral_eq, abs_interval_integral_eq],
+  rw [abs_eq_self.mpr],
+  { exact norm_integral_le_of_norm_le hbound.def h },
+  refine integral_nonneg_of_ae (h.mono $ λ t ht, (norm_nonneg _).trans ht),
 end
 
+-- not ported
 lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_add_comm_group β]
   {f₀ f₁ : ℝ → β} {g : ℝ → ℝ}
   {a b : ℝ}
@@ -206,23 +189,23 @@ begin
     intros a ha,
     calc ∥f₁ a∥ ≤ ∥f₀ a∥ + ∥f₀ a - f₁ a∥ : norm_le_insert _ _
     ... ≤ ∥f₀ a∥ + g a : add_le_add_left ha _ },
-  exact interval_integrable_of_norm_le hf₁_m this (hf₀_i.norm.add hg_i)
+  exact (hf₀_i.norm.add hg_i).mono_fun' hf₁_m this
 end
 
 end
 
-section
+-- section
 
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
+-- variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
 
-open interval_integral
+-- open interval_integral
 
-lemma integral_comp_add_right' {f : ℝ → E} (a b : ℝ) :
-  ∫ t in a..(b + a), f t = ∫ t in 0..b, f (t + a) :=
-by simp [← integral_comp_add_right]
+-- lemma integral_comp_add_right' {f : ℝ → E} (a b : ℝ) :
+--   ∫ t in a..(b + a), f t = ∫ t in 0..b, f (t + a) :=
+-- by simp [← integral_comp_add_right]
 
-lemma integral_comp_add_left' {f : ℝ → E} (a b : ℝ) :
-  ∫ t in a..(a + b), f t = ∫ t in 0..b, f (t + a) :=
-by simp [← integral_comp_add_left, add_comm]
+-- lemma integral_comp_add_left' {f : ℝ → E} (a b : ℝ) :
+--   ∫ t in a..(a + b), f t = ∫ t in 0..b, f (t + a) :=
+-- by simp [← integral_comp_add_left, add_comm]
 
-end
+-- end

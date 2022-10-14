@@ -7,31 +7,6 @@ import to_mathlib.analysis.calculus
 open bundle set function filter
 open_locale manifold topological_space
 
-namespace set
-
-variables {α β γ δ : Type*} {f : α → β → γ} {s s₁ : set α} {t t₁ : set β} {x : α} {y : β}
-
-lemma image2.some_prop (z : image2 f s t) : ∃ (y : s × t), f y.1 y.2 = z :=
-let ⟨_, ⟨x, y, hx, hy, rfl⟩⟩ := z in ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, rfl⟩
-
-/-- Choose arbitrary elements in the domain mapped to `z`. Probably not mathlib-worthy. -/
-noncomputable def image2.some (f : α → β → γ) (s : set α) (t : set β) (z : image2 f s t) : s × t :=
-classical.some (image2.some_prop z)
-
-lemma image2.some_spec (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) :
-  (λ x : s × t, f x.1 x.2) (image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩) = f x y :=
-classical.some_spec (image2.some_prop ⟨f x y, mem_image2_of_mem hx hy⟩)
-
-lemma image2.some_spec_fst (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) : ∃ y' ∈ t,
-  f (image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).1 y' = f x y :=
-⟨(image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).2, subtype.mem _, image2.some_spec f hx hy⟩
-
-lemma image2.some_spec_snd (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) : ∃ x' ∈ s,
-  f x' (image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).2 = f x y :=
-⟨(image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).1, subtype.mem _, image2.some_spec f hx hy⟩
-
-end set
-
 section charted_space
 
 variables {M H : Type*} [topological_space M] [topological_space H] [charted_space H M]
@@ -93,31 +68,6 @@ by { simp_rw [← model_with_corners.target_eq], refl }
 lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
 by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
 
-
-lemma ext_chart_preimage_mem_nhds_within_range {x' : M} {t : set M}
-  (h : x' ∈ (ext_chart_at I x).source) (ht : t ∈ 𝓝 x') :
-  (ext_chart_at I x).symm ⁻¹' t ∈ 𝓝[range I] ((ext_chart_at I x) x') :=
-nhds_within_le_nhds $ ext_chart_preimage_mem_nhds' _ _ h ht
-
-section boundary
-
-variables (I M)
-
-/-- An element is on the boundary of a manifold `M` if its chart maps it to the frontier of the
-model space. Note: this also includes all corners of `M`. -/
-def boundary : set M := {x : M | ext_chart_at I x x ∈ frontier (range I) }
-
-variables {I M}
-
-lemma mem_boundary {x : M} : x ∈ boundary I M ↔ ext_chart_at I x x ∈ frontier (range I) := iff.rfl
-
--- /-- All charts agree on whether you are at the boundary. -/
--- lemma mem_boundary_iff_of_mem {x x' : M} (hx : x ∈ (ext_chart_at I x').source) :
---   x ∈ boundary I M ↔ ext_chart_at I x' x ∈ frontier (range I) :=
--- by admit -- likely not going to be used
-
-end boundary
-
 namespace basic_smooth_vector_bundle_core
 variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_core I M E')
 
@@ -162,10 +112,10 @@ by simp_rw [smooth, smooth_at, cont_mdiff, Z.cont_mdiff_at_iff_target, forall_an
 end basic_smooth_vector_bundle_core
 
 lemma cont_diff_within_at.comp_cont_mdiff_within_at
-  {g : F → F''} {f : M → F} {s : set M} {t : set F} {x : M}
+  {g : F → F'} {f : M → F} {s : set M} {t : set F} {x : M}
   (hg : cont_diff_within_at 𝕜 n g t (f x))
   (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
-  cont_mdiff_within_at I 𝓘(𝕜, F'') n (g ∘ f) s x :=
+  cont_mdiff_within_at I 𝓘(𝕜, F') n (g ∘ f) s x :=
 begin
   rw cont_mdiff_within_at_iff at *,
   refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
@@ -174,14 +124,14 @@ begin
   exact (inter_subset_left _ _).trans (preimage_mono h)
 end
 
-lemma cont_diff_at.comp_cont_mdiff_at {g : F → F''} {f : M → F} {x : M}
+lemma cont_diff_at.comp_cont_mdiff_at {g : F → F'} {f : M → F} {x : M}
   (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, F'') n (g ∘ f) x :=
+  cont_mdiff_at I 𝓘(𝕜, F') n (g ∘ f) x :=
 hg.comp_cont_mdiff_within_at hf subset.rfl
 
-lemma cont_diff.comp_cont_mdiff {g : F → F''} {f : M → F}
+lemma cont_diff.comp_cont_mdiff {g : F → F'} {f : M → F}
   (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
-  cont_mdiff I 𝓘(𝕜, F'') n (g ∘ f) :=
+  cont_mdiff I 𝓘(𝕜, F') n (g ∘ f) :=
 λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
 
 lemma smooth_within_at.mdifferentiable_within_at
@@ -201,6 +151,22 @@ hg.comp x hf
 lemma smooth.comp {g : M → M'} {f : N → M}
   (hg : smooth I I' g) (hf : smooth J I f) : smooth J I' (g ∘ f) :=
 hg.comp hf
+
+lemma cont_mdiff_at.fst {f : N → M × M'} {x : N} (hf : cont_mdiff_at J (I.prod I') n f x) :
+  cont_mdiff_at J I n (λ x, (f x).1) x :=
+cont_mdiff_at_fst.comp x hf
+
+lemma cont_mdiff_at.snd {f : N → M × M'} {x : N} (hf : cont_mdiff_at J (I.prod I') n f x) :
+  cont_mdiff_at J I' n (λ x, (f x).2) x :=
+cont_mdiff_at_snd.comp x hf
+
+lemma cont_mdiff.fst {f : N → M × M'} (hf : cont_mdiff J (I.prod I') n f) :
+  cont_mdiff J I n (λ x, (f x).1) :=
+cont_mdiff_fst.comp hf
+
+lemma cont_mdiff.snd {f : N → M × M'} (hf : cont_mdiff J (I.prod I') n f) :
+  cont_mdiff J I' n (λ x, (f x).2) :=
+cont_mdiff_snd.comp hf
 
 lemma smooth_at.fst {f : N → M × M'} {x : N} (hf : smooth_at J (I.prod I') f x) :
   smooth_at J I (λ x, (f x).1) x :=
@@ -233,14 +199,27 @@ lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[�
 @cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ ((F →L[𝕜] F'') × (F' →L[𝕜] F)) _ _ _ _ _ _ _ _
   _ _ _ _
   (λ x, x.1.comp x.2) (λ x, (g x, f x)) x
-  (by { apply cont_diff.cont_diff_at, apply is_bounded_bilinear_map.cont_diff,
-    exact is_bounded_bilinear_map_comp })
+  (cont_diff_fst.clm_comp cont_diff_snd).cont_diff_at
   (hg.prod_mk_space hf)
 
 lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F}
   (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F'') n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
   cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
 λ x, (hg x).clm_comp (hf x)
+
+lemma cont_mdiff_at.clm_apply {g : M → F →L[𝕜] F'} {f : M → F}
+  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
+  cont_mdiff_at I 𝓘(𝕜, F') n (λ x, g x (f x)) x :=
+@cont_diff_at.comp_cont_mdiff_at _ _ _ _ _ _ _ _ _ _ _ _ _ _
+  _ _ _ _
+  (λ x : (F →L[𝕜] F') × F, x.1 x.2) (λ x, (g x, f x)) x
+  (cont_diff_fst.clm_apply cont_diff_snd).cont_diff_at
+  (hg.prod_mk_space hf)
+
+lemma cont_mdiff.clm_apply {g : M → F →L[𝕜] F'} {f : M → F}
+  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F') n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
+  cont_mdiff I 𝓘(𝕜, F') n (λ x, g x (f x)) :=
+λ x, (hg x).clm_apply (hf x)
 
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
@@ -266,6 +245,7 @@ This means that many tactics, like `simp`, `rw`, and `dsimp` fail to rewrite wit
 because the result is not type correct up to reducible transparancy.
 
 Declaring these instances avoids such problems. -/
+-- not yet ported
 instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
 instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
 
@@ -276,6 +256,7 @@ rfl
 
 variables (I)
 
+-- not yet ported
 lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
   (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
@@ -302,7 +283,7 @@ lemma mfderiv_neg (f : M → E') (x : M) :
   = (- mfderiv I 𝓘(𝕜, E') f x : tangent_space I x →L[𝕜] E') :=
 begin
   classical,
-  simp [mfderiv],
+  simp only [mfderiv, dite_eq_ite] with mfld_simps,
   by_cases hf : mdifferentiable_at I 𝓘(𝕜, E') f x,
   { have hf_neg : mdifferentiable_at I 𝓘(𝕜, E') (-f) x :=
       ((cont_diff_neg.cont_mdiff _).mdifferentiable_at (le_refl _)).comp _ hf,
@@ -432,7 +413,7 @@ noncomputable def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L
 
 variables {I I'}
 
-/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. Used in `curry`. -/
+/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. -/
 lemma cont_mdiff_at.mfderiv''' {x : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (x, g x))
   (hg : cont_mdiff_at J I m g x) (hmn : m + 1 ≤ n) :
@@ -468,7 +449,7 @@ begin
     { refine eventually_of_forall (λ x', mem_range_self _) },
     swap 2,
     { refine inter_mem (ext_chart_at_target_mem_nhds_within J x) _,
-      refine ext_chart_preimage_mem_nhds_within_range (mem_ext_chart_source J x) _,
+      refine nhds_within_le_nhds (ext_chart_preimage_mem_nhds' _ _ (mem_ext_chart_source J x) _),
       exact hg.1.preimage_mem_nhds (ext_chart_at_source_mem_nhds I (g x)) },
     simp_rw [function.comp, model_with_corners.range_prod, ext_chart_at_to_inv],
     refine mem_of_superset self_mem_nhds_within _,

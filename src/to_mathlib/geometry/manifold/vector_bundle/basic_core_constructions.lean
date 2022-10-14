@@ -16,6 +16,33 @@ noncomputable theory
 open bundle set topological_space topological_vector_bundle local_homeomorph
 open_locale classical manifold
 
+
+namespace set
+
+variables {α β γ δ : Type*} {f : α → β → γ} {s s₁ : set α} {t t₁ : set β} {x : α} {y : β}
+
+lemma image2.some_prop (z : image2 f s t) : ∃ (y : s × t), f y.1 y.2 = z :=
+let ⟨_, ⟨x, y, hx, hy, rfl⟩⟩ := z in ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, rfl⟩
+
+/-- Choose arbitrary elements in the domain mapped to `z`. Probably not mathlib-worthy. -/
+noncomputable def image2.some (f : α → β → γ) (s : set α) (t : set β) (z : image2 f s t) : s × t :=
+classical.some (image2.some_prop z)
+
+lemma image2.some_spec (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) :
+  (λ x : s × t, f x.1 x.2) (image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩) = f x y :=
+classical.some_spec (image2.some_prop ⟨f x y, mem_image2_of_mem hx hy⟩)
+
+lemma image2.some_spec_fst (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) : ∃ y' ∈ t,
+  f (image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).1 y' = f x y :=
+⟨(image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).2, subtype.mem _, image2.some_spec f hx hy⟩
+
+lemma image2.some_spec_snd (f : α → β → γ) (hx : x ∈ s) (hy : y ∈ t) : ∃ x' ∈ s,
+  f x' (image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).2 = f x y :=
+⟨(image2.some f s t ⟨f x y, mem_image2_of_mem hx hy⟩).1, subtype.mem _, image2.some_spec f hx hy⟩
+
+end set
+open set
+
 variables {𝕜 B B' M VB VB' VM HB HB' HM : Type*}
 variables [nontrivially_normed_field 𝕜]
 variables [normed_add_comm_group VB] [normed_space 𝕜 VB] [normed_add_comm_group VB'] [normed_space 𝕜 VB']

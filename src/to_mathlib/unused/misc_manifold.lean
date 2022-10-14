@@ -108,6 +108,42 @@ begin
   --   .continuous_within_at_of_comp_left h (mem_chart_source _ _) (h.prod hf.continuous_at.snd)
 end
 
+lemma cont_mdiff_within_at_iff {x₀ : N} {s : set N} {n : ℕ∞}
+  {f : N → Z.to_topological_vector_bundle_core.total_space} :
+  cont_mdiff_within_at J (I.prod 𝓘(𝕜, E')) n f s x₀ ↔
+  cont_mdiff_within_at J I n (λ x, (f x).1) s x₀ ∧
+  cont_mdiff_within_at J 𝓘(𝕜, E') n (λ x, Z.coord_change
+    (achart H (f x).1) (achart H (f x₀).1) (chart_at H (f x).1 (f x).1) (f x).2) s x₀ :=
+begin
+  refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
+  { apply (Z.cont_mdiff_proj _).comp_cont_mdiff_within_at x₀ h },
+  { rw [Z.cont_mdiff_within_at_iff_target] at h,
+    exact (cont_diff_at_snd.cont_mdiff_at.comp_cont_mdiff_within_at _ h.2) },
+  { rw [Z.cont_mdiff_within_at_iff_target],
+    exact ⟨h.1.continuous_within_at,
+      (cont_mdiff_at_ext_chart_at.comp_cont_mdiff_within_at _ h.1).prod_mk_space h.2⟩ }
+end
+
+lemma cont_mdiff_at_iff {x₀ : N} {n : ℕ∞}
+  {f : N → Z.to_topological_vector_bundle_core.total_space} :
+  cont_mdiff_at J (I.prod 𝓘(𝕜, E')) n f x₀ ↔
+  cont_mdiff_at J I n (λ x, (f x).1) x₀ ∧
+  cont_mdiff_at J 𝓘(𝕜, E') n (λ x, Z.coord_change
+    (achart H (f x).1) (achart H (f x₀).1) (chart_at H (f x).1 (f x).1) (f x).2) x₀ :=
+begin
+  refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
+  { apply (Z.cont_mdiff_proj _).comp x₀ h },
+  { rw [Z.cont_mdiff_at_iff_target] at h, exact (cont_diff_at_snd.cont_mdiff_at.comp _ h.2) },
+  { rw [Z.cont_mdiff_at_iff_target],
+    exact ⟨h.1.continuous_at, (cont_mdiff_at_ext_chart_at.comp _ h.1).prod_mk_space h.2⟩ }
+end
+
+lemma _root_.cont_mdiff_at.proj' {x₀ : M} {v₀ : E'} {n : ℕ∞}
+  {f : M → N} (hf : cont_mdiff_at I J n f x₀) :
+  cont_mdiff_at (I.prod 𝓘(𝕜, E')) J n
+    (λ x : Z.to_topological_vector_bundle_core.total_space, f x.1) ⟨x₀, v₀⟩ :=
+cont_mdiff_at.comp _ hf (Z.cont_mdiff_proj _)
+
 end basic_smooth_vector_bundle_core
 
 section smooth_manifold_with_corners
@@ -120,7 +156,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
   {M : Type*} [topological_space M] [charted_space H M]
   {M' : Type*} [topological_space M'] [charted_space H' M']
-variables {f : M → M'} {m n : ℕ∞} {s : set M} {x : M}
+variables {f : M → M'} {m n : ℕ∞} {s : set M} {x x₀ : M}
 
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
 
@@ -135,6 +171,26 @@ lemma cont_mdiff_within_at_iff_of_mem_maximal_atlas
     ((c.extend I).symm ⁻¹' s ∩ range I)
     (c.extend I x) :=
 (cont_diff_within_at_local_invariant_prop I I' n).lift_prop_within_at_indep_chart hc hx hd hy
+
+
+section boundary
+
+variables (I M)
+
+/-- An element is on the boundary of a manifold `M` if its chart maps it to the frontier of the
+model space. Note: this also includes all corners of `M`. -/
+def boundary : set M := {x : M | ext_chart_at I x x ∈ frontier (range I) }
+
+variables {I M}
+
+lemma mem_boundary {x : M} : x ∈ boundary I M ↔ ext_chart_at I x x ∈ frontier (range I) := iff.rfl
+
+-- /-- All charts agree on whether you are at the boundary. -/
+-- lemma mem_boundary_iff_of_mem {x x' : M} (hx : x ∈ (ext_chart_at I x').source) :
+--   x ∈ boundary I M ↔ ext_chart_at I x' x ∈ frontier (range I) :=
+-- by admit -- likely not going to be used
+
+end boundary
 
 /-
 todo: `((ext_chart_at I x).symm ⁻¹' s ∩ range I)` in `cont_mdiff.lean` is not very nice,
@@ -158,5 +214,38 @@ variables [normed_space 𝕜 F] [normed_space 𝕜 G] [normed_space 𝕜 F']
 --   (hf : cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] F) n f s x) :
 --   cont_mdiff_within_at I 𝓘(𝕜, E →L[𝕜] G) n (λ x, (g x).comp (f x)) s x :=
 -- sorry
+
+lemma cont_mdiff_at_tangent_bundle {n : ℕ∞} {f : M → tangent_bundle I' M'} :
+  cont_mdiff_at I I'.tangent n f x₀ ↔
+  cont_mdiff_at I I' n (λ x, (f x).1) x₀ ∧
+  cont_mdiff_at I 𝓘(𝕜, E') n (λ x, (tangent_bundle_core I' M').coord_change
+    (achart H' (f x).1) (achart H' (f x₀).1) (chart_at H' (f x).1 (f x).1) (f x).2) x₀ :=
+(tangent_bundle_core I' M').cont_mdiff_at_iff
+
+theorem cont_mdiff_at.tangent_map_within {v₀ : tangent_space I x₀}
+  (hf : cont_mdiff_at I I' n f x₀) (hmn : m + 1 ≤ n) (hs : unique_mdiff_on I s) :
+  cont_mdiff_at I.tangent I'.tangent m (tangent_map_within I I' f s) ⟨x₀, v₀⟩ :=
+begin
+  let z₀ : tangent_bundle I M := ⟨x₀, v₀⟩,
+  rw [(tangent_bundle_core I' M').cont_mdiff_at_iff],
+  split,
+  { rw [← enat.succ_def] at hmn, exact (hf.of_le $ (order.le_succ m).trans hmn).proj' _ },
+  have h1 : cont_mdiff_at I.tangent 𝓘(𝕜, E) m (λ x, (ext_chart_at (I.prod 𝓘(𝕜, E)) z₀ x).2) z₀ :=
+    cont_diff_at_snd.cont_mdiff_at.comp _ cont_mdiff_at_ext_chart_at,
+  convert ((hf.mfderiv' hmn).proj' (tangent_bundle_core I M)).clm_apply h1,
+  ext ⟨x, v⟩,
+  dsimp only,
+  sorry
+end
+
+theorem cont_mdiff_on.tangent_map_within
+  (hf : cont_mdiff_on I I' n f s) (hmn : m + 1 ≤ n) (hs : unique_mdiff_on I s) :
+  cont_mdiff_on I.tangent I'.tangent m (tangent_map_within I I' f s)
+  ((tangent_bundle.proj I M) ⁻¹' s) :=
+begin
+  intros x hx,
+  rw [(tangent_bundle_core I' M').cont_mdiff_within_at_iff],
+  sorry -- refine ⟨_, _⟩,
+end
 
 end smooth_manifold_with_corners

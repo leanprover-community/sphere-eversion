@@ -158,7 +158,7 @@ begin
     apply continuous_within_at.continuous_at _ (Icc_mem_nhds hb₀.1 hb₀.2),
     apply interval_integral.continuous_within_at_primitive hμb₀,
     rw [min_eq_right hb₀.1.le, max_eq_right hb₀.2.le],
-    exact interval_integrable_of_norm_le (hF_meas x₀) hx₀ bound_integrable },
+    exact bound_integrable.mono_fun' (hF_meas x₀) hx₀ },
   { suffices : tendsto (λ (x : X × ℝ), ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0),
       by simpa [continuous_at],
     have : ∀ᶠ p : X × ℝ in 𝓝 (x₀, b₀),
@@ -172,7 +172,6 @@ begin
         calc ∥F x s - F x₀ s∥ ≤ ∥F x s∥ + ∥F x₀ s∥ : norm_sub_le _ _
           ... ≤ 2 * bound s : by linarith only [hs₁, hs₂] },
       exact interval_integral.norm_integral_le_of_norm_le H
-        (((hF_meas x).mono_set $ hsub hb₀ ht).sub ((hF_meas x₀).mono_set $ hsub hb₀ ht))
         ((bound_integrable.mono_set' $ hsub hb₀ ht).const_mul 2) },
     apply squeeze_zero_norm' this,
     have : tendsto (λ t, ∫ s in b₀..t, 2 * bound s ∂μ) (𝓝 b₀) (𝓝 0),
@@ -311,7 +310,7 @@ begin
       simpa [bound_nonneg t] using ht hx x₀_in },
     exact (this.mono_set $ ord_connected_Ioo.interval_subset hs hu).interval_integrable },
   split,
-  { apply interval_integrable_of_norm_le hF'_meas _ (bound_int ha hsx₀),
+  { apply (bound_int ha hsx₀).mono_fun' hF'_meas _,
     replace h_lipsch : ∀ᵐ t ∂volume.restrict (Ι a (s x₀)),
       lipschitz_on_with (nnabs (bound t)) (λ (x : H), F x t) (ball x₀ ε),
       from ae_restrict_of_ae_restrict_of_subset
@@ -354,10 +353,9 @@ begin
           ∥∫ s in s x₀..s x, F x s - F x₀ s∥ ≤ |∫ s in s x₀..s x, bound s |* ∥x - x₀∥,
         { apply eventually.mono mem_nhds,
           rintros x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩,
-          rw [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul, ← interval_integral.mul_const],
-          apply interval_integral.norm_integral_le_of_norm_le _ ((hF_meas_ball hx hsx₀ hsx).sub
-            (hF_meas_ball x₀_in hsx₀ hsx))
-            ((bound_int hsx₀ hsx).mul_const _),
+          rw [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul,
+            ← interval_integral.integral_mul_const],
+          apply interval_integral.norm_integral_le_of_norm_le _ ((bound_int hsx₀ hsx).mul_const _),
           apply ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.interval_oc_subset hsx₀ hsx),
           apply h_lipsch.mono,
           intros t ht,

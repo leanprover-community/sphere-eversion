@@ -288,7 +288,7 @@ open interval_integral
 begin
   simp_rw [delta_mollifier],
   rw [integral_comp_sub_right (λ x, (n : ℝ) / (n+1) * approx_dirac n x + 1 / (n+1)) t, integral_add,
-    const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel, one_smul,
+    integral_const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel, one_smul,
     approx_dirac_integral_eq_one, mul_one, div_add_div_same, div_self],
   { exact n.cast_add_one_pos.ne' },
   { rw [sub_eq_add_neg, add_comm] },

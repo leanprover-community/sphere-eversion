@@ -32,14 +32,6 @@ begin
     zero_add, prod.mk.eta]
 end
 
-lemma _root_.function.surjective.clm_comp_injective {g : M₂ →L[R₁] M₁} (hg : surjective g) :
-  injective (λ f : M₁ →L[R₁] M₃, f.comp g) :=
-begin
-  intros f f' hff',
-  ext x,
-  obtain ⟨y, rfl⟩ := hg x,
-  exact congr_arg (λ (h : M₂ →L[R₁] M₃) , h y) hff',
-end
 
 end continuous_linear_map
 
@@ -55,14 +47,27 @@ variables {R₁ : Type*} {R₂ : Type*} {R₃ : Type*} [semiring R₁] [semiring
 {M₄ : Type*} [topological_space M₄] [add_comm_monoid M₄]
 [module R₁ M₁] [module R₁ M'₁] [module R₂ M₂] [module R₃ M₃]
 
+section
+include σ₁₃
+lemma function.surjective.clm_comp_injective {g : M₁ →SL[σ₁₂] M₂}
+  (hg : function.surjective g) : function.injective (λ f : M₂ →SL[σ₂₃] M₃, f.comp g) :=
+begin
+  intros f f' hff',
+  rw [continuous_linear_map.ext_iff] at hff' ⊢,
+  intros x,
+  obtain ⟨y, rfl⟩ := hg x,
+  exact hff' y,
+end
+end
+
 namespace continuous_linear_equiv
 
 include σ₂₁ σ₁₃
 theorem cancel_right {f f' : M₂ →SL[σ₂₃] M₃} {e : M₁ ≃SL[σ₁₂] M₂} :
-  f.comp e.to_continuous_linear_map = f'.comp e.to_continuous_linear_map ↔ f = f' :=
+  f.comp (e : M₁ →SL[σ₁₂] M₂) = f'.comp (e : M₁ →SL[σ₁₂] M₂) ↔ f = f' :=
 begin
   split,
-  { simp_rw [continuous_linear_map.ext_iff, continuous_linear_map.comp_apply, coe_def_rev, coe_coe],
+  { simp_rw [continuous_linear_map.ext_iff, continuous_linear_map.comp_apply, coe_coe],
     intros h v, rw [← e.apply_symm_apply v, h] },
   { rintro rfl, refl }
 end
@@ -71,10 +76,10 @@ omit σ₂₁
 include σ₃₂
 
 theorem cancel_left {e : M₂ ≃SL[σ₂₃] M₃} {f f' : M₁ →SL[σ₁₂] M₂} :
-  e.to_continuous_linear_map.comp f = e.to_continuous_linear_map.comp f' ↔ f = f' :=
+  (e : M₂ →SL[σ₂₃] M₃).comp f = (e : M₂ →SL[σ₂₃] M₃).comp f' ↔ f = f' :=
 begin
   split,
-  { simp_rw [continuous_linear_map.ext_iff, continuous_linear_map.comp_apply, coe_def_rev, coe_coe],
+  { simp_rw [continuous_linear_map.ext_iff, continuous_linear_map.comp_apply, coe_coe],
     intros h v, rw [← e.symm_apply_apply (f v), h, e.symm_apply_apply] },
   { rintro rfl, refl }
 end
