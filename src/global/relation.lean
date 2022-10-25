@@ -480,13 +480,12 @@ local notation `Jψ` := h.update (one_jet_bundle.embedding h g)
 -- #check h.smooth_update (one_jet_bundle.embedding h g)
 
 /--  Update a global 1-jet section `F` using a local one `G`.
-FIXME: this misses some support condition to ensure lemma `smooth_update` applies
-(also see the comment above `smooth_update` in the smooth_embedding file).
 We probably need a version of the next lemma stated in terms of
 `λ m, (Jψ F G m).1.2` before being able to write the `smooth'` proof.
 -/
-def open_smooth_embedding.Jupdate (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y) :
-  one_jet_sec IM M IN N :=
+def open_smooth_embedding.Jupdate (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y)
+  (hF : range (F.bs ∘ h) ⊆ range g) {K : set X} (hK : is_compact K)
+  (hFG : ∀ x ∉ K, F (h x) = one_jet_bundle.embedding h g (G x)) : one_jet_sec IM M IN N :=
 { bs := λ m, (Jψ F G m).1.2,
   ϕ := λ m, (Jψ F G m).2,
   smooth' := sorry }

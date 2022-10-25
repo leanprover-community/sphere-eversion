@@ -60,7 +60,7 @@ begin
   classical,
   borelize EX,
   have cont_bs : continuous F₀.bs, from F₀.smooth_bs.continuous,
-  have := L.ε_spec,
+  -- have ε_spec := L.ε_spec,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
     (Fn 0 = F₀) ∧
     (∀ t, ∀ᶠ x near A, Fn t x = F₀ x) ∧
@@ -78,7 +78,7 @@ begin
     cases hF n,
     tauto },
   apply exists_by_induction' P Q,
-  { dsimp only [P],
+  { dsimp only [P], clear P Q,
     have Union_eq : ∀ s : L.ι → set M, (⋃ i ≤ L.index 0, s i) = s 0,
     {
       sorry },
@@ -87,29 +87,34 @@ begin
     {
       sorry },
     let Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ,
-    have foo := (Id.prod (L.φ 0)).smooth_update (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2),
+
     let τ : ℝ × M → ℝ := λ p, min (δ p.2) (L.ε p.2),
     have τ_pos : ∀ p, 0 < τ p, sorry,
     have τ_cont : continuous τ, sorry,
     have cpct : is_compact ((Icc 0 1 : set ℝ) ×ˢ (metric.closed_ball 0 2 : set EM)), sorry,
-    have smth : smooth (𝓘(ℝ, ℝ).prod IM) IX (λ (p : ℝ × M), F₀.to_one_jet_sec.bs p.snd), sorry,
+    -- have foo := (Id.prod (L.φ 0)).smooth_update (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2),
+    have smth : smooth (𝓘(ℝ, ℝ).prod IM) IX (λ (p : ℝ × M), F₀.bs p.snd), sorry,
     have sub : (λ (p : ℝ × M), F₀.bs p.2) '' range (Id.prod (L.φ 0)) ⊆ range (L.ψj 0), sorry,
     rcases (Id.prod (L.φ 0)).dist_update (L.ψj 0) (λ p : ℝ × M, F₀.bs p.2)
       cpct smth sub τ_pos τ_cont with ⟨η, η_pos, hη⟩,
+    clear cpct smth sub τ_pos τ_cont,
+    dsimp only at hη,
 
     rcases rel_loc.formal_sol.improve_htpy (L.is_open_loc_rel 0 hRopen) (L.is_ample 0 hRample)
       (L.landscape hA 0) η_pos 𝓕₀ this with ⟨𝓗, h𝓗₀, h𝓗C, h𝓗K₁, h𝓗δ, h𝓗K₀⟩,
+    clear hRopen hRample,
     let H := L.unloc_htpy_formal_sol 0 𝓗,
     refine ⟨H, _, _, _, _, _⟩,
-    sorry { apply L.unloc_loc,
+    { apply L.unloc_loc,
       rw h𝓗₀ },
     sorry { apply L.foobar _ _ h𝓗C,
       apply subset_union_left ((L.φ 0) ⁻¹' A) },
-    { suffices : ∀ p : ℝ × M, dist ((H p.1).bs p.2) (F₀.bs p.2) < min (δ p.2) (L.ε p.2),
+    { suffices : ∀ p : ℝ × M, dist ((H p.1).bs p.2) (F₀.bs p.2) < τ p,
       sorry { exact λ t x, (this (t, x)).trans_le (min_le_left _ _) },
       rintros ⟨t, x⟩,
-      convert hη _ _ _ (t, x),
       dsimp,
+      convert hη _ _ _ (t, x),
+
       all_goals { sorry } },
     {
       sorry },

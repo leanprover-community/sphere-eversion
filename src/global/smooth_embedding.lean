@@ -436,7 +436,7 @@ by simp [update]
 
 /- This small auxiliry result is used in the next two lemmas. -/
 lemma nice_update_of_eq_outside_compact_aux {K : set X} (g : X → Y)
-  (hg : ∀ (x : X), x ∉ K → f (φ x) = ψ (g x)) {m : M} (hm : m ∉ ⇑φ '' K) :
+  (hg : ∀ (x : X), x ∉ K → f (φ x) = ψ (g x)) {m : M} (hm : m ∉ φ '' K) :
   φ.update ψ f g m = f m :=
 begin
   by_cases hm' : m ∈ range φ,
