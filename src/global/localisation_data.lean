@@ -47,6 +47,21 @@ abbreviation ψj := ld.ψ ∘ ld.j
 lemma rg_subset_rg (i : ld.ι) : range (f ∘ (ld.φ i)) ⊆ range (ld.ψj i) :=
 ((ld.h₃ i).trans $ image_subset_range _ _)
 
+lemma is_closed_Union {K : set E} (hK : is_compact K) (n : ℕ) :
+  is_closed (⋃ i ≤ ld.index n, (ld.φ i) '' K) :=
+sorry
+
+lemma Union_le_zero {β : Type*} (s : ld.ι → set β) : (⋃ i ≤ ld.index 0, s i) = s 0 :=
+sorry
+
+
+lemma Union_succ {β : Type*} (s : ld.ι → set β) (n : ℕ) :
+  (⋃ i ≤ ld.index (n + 1), s i) = (⋃ i ≤ ld.index n, s i) ∪ s (ld.index $ n+1) :=
+begin
+
+  sorry
+end
+
 end localisation_data
 
 end

@@ -46,6 +46,13 @@ eventually_nhds_set_iff.mpr (λ x x_in, (eventually_nhds_set_iff.mp h x x_in).ev
 lemma filter.eventually.on_set {p : α → Prop} (h : ∀ᶠ y in 𝓝ˢ s, p y) : ∀ x ∈ s, p x :=
 eventually_principal.mp $ eventually.filter_mono principal_le_nhds_set h
 
+lemma filter.eventually.union {p : α → Prop} (hs : ∀ᶠ x in 𝓝ˢ s, p x) (ht : ∀ᶠ x in 𝓝ˢ t, p x) :
+  ∀ᶠ x in 𝓝ˢ (s ∪ t), p x :=
+begin
+  rw nhds_set_union,
+  exact ⟨hs, ht⟩
+end
+
 -- This lemma goes to filter.basic, after filter.eventually_principal
 lemma filter.eventually.forall_mem {α : Type*} {f : filter α} {s : set α} {P : α → Prop}
   (hP : ∀ᶠ x in f, P x) (hf : 𝓟 s ≤ f) : ∀ x ∈ s, P x :=

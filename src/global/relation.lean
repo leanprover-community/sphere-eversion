@@ -179,14 +179,16 @@ end family_formal_sol
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 @[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
-/-
-/-- A constant homotopy of formal solutions. -/
-def formal_sol.const_htpy {R : rel_mfld I M I' M'} (F : formal_sol R) : htpy_formal_sol R :=
+
+/-- The constant homotopy of formal solution associated to a formal solution. -/
+def formal_sol.const_htpy (F : formal_sol R) : htpy_formal_sol R :=
 { bs := λ t, F.bs,
   ϕ := λ t, F.ϕ,
-  smooth' := by admit,
-  is_sol' := λ t, F.is_sol' }
--/
+  smooth' := sorry,
+  is_sol' := λ t, F.is_sol }
+
+lemma formal_sol.const_htpy_eq (F : formal_sol R) (t : ℝ) : F.const_htpy t = F :=
+by ext : 3 ; refl
 
 /-! ## The h-principle -/
 
@@ -480,12 +482,13 @@ local notation `Jψ` := h.update (one_jet_bundle.embedding h g)
 -- #check h.smooth_update (one_jet_bundle.embedding h g)
 
 /--  Update a global 1-jet section `F` using a local one `G`.
+FIXME: this misses some support condition to ensure lemma `smooth_update` applies
+(also see the comment above `smooth_update` in the smooth_embedding file).
 We probably need a version of the next lemma stated in terms of
 `λ m, (Jψ F G m).1.2` before being able to write the `smooth'` proof.
 -/
-def open_smooth_embedding.Jupdate (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y)
-  (hF : range (F.bs ∘ h) ⊆ range g) {K : set X} (hK : is_compact K)
-  (hFG : ∀ x ∉ K, F (h x) = one_jet_bundle.embedding h g (G x)) : one_jet_sec IM M IN N :=
+def open_smooth_embedding.Jupdate (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y) :
+  one_jet_sec IM M IN N :=
 { bs := λ m, (Jψ F G m).1.2,
   ϕ := λ m, (Jψ F G m).2,
   smooth' := sorry }
