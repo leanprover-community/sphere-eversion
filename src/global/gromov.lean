@@ -164,7 +164,7 @@ begin
              (F n 1).is_holonomic_at x)) ∧
     ((π (n+1) = π n → F (n+1) = F n) ∧
      (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
-  sorry { clear_dependent hRample hRopen,
+  { clear_dependent hRample hRopen,
     simp_rw [and_assoc, forall_and_distrib] at this,
     rcases this with ⟨F, hF₀, hfA, hFδ, hFhol, hFπ, hFultim⟩,
     let FF := λ n : ℕ, λ p : ℝ × M, F n p.1 p.2,
