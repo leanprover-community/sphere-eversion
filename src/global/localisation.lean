@@ -100,17 +100,7 @@ is_open_of_is_open _ $ h.preimage $ one_jet_bundle.continuous_transfer _ _
 lemma is_ample (h : R.ample) : (L.loc_rel i R).is_ample :=
 ample_of_ample _ (h.localize _ _)
 
-def landscape [finite_dimensional ℝ E] {A : set M} (hA : is_closed A)
-  (n : ℕ) : landscape E :=
-{ C := (L.φ n) ⁻¹' (A ∪ ⋃ i < L.index n, (L.φ i) '' metric.closed_ball 0 1), -- CHECK this is correct
-  K₀ := metric.closed_ball 0 1,
-  K₁ := metric.closed_ball 0 2,
-  hC := sorry,
-  hK₀ := is_compact_closed_ball 0 1,
-  hK₁ := is_compact_closed_ball 0 2,
-  h₀₁ := sorry }
-
-/-
+/- /-
 FIXME: the next definition in progress should probably use
 `transfer F.to_one_jet_sec (L.ψj i) (L.φ i) hFL` instead of going back to
 `one_jet_sec.localize`
@@ -183,5 +173,5 @@ lemma barbaz' {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal
   (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
   ∀ x ∈ A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
 (barbaz L hF₀ hAC h).nhds_set_forall_mem
-
+ -/
 end localisation_data
