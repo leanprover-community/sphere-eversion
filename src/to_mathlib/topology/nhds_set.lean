@@ -11,6 +11,13 @@ begin
   rw [filter.le_principal_iff, h.mem_nhds_set]
 end
 
+lemma is_open.forall_near_mem_of_subset {s t : set α} (h : is_open s) (ht : t ⊆ s) : ∀ᶠ x in 𝓝ˢ t, x ∈ s :=
+begin
+  apply eventually.filter_mono (nhds_set_mono ht),
+  rw [h.nhds_set_eq_principal, eventually_principal],
+  exact λ x, id
+end
+
 /-
 In the next lemma, the inequality cannot be improved to an equality. For instance,
 if α has two elements and the coarse topology and s and t are distinct singletons then

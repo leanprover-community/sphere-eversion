@@ -114,7 +114,7 @@ variables
   (I' : model_with_corners ℝ E' H')
   (M' : Type*) [metric_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-variables {f : M → M'} {R : rel_mfld I M I' M'}
+variables {R : rel_mfld I M I' M'}
 
 /-- A pair of charts together with a compact subset of the first vector space. -/
 structure chart_pair :=
@@ -137,6 +137,11 @@ def chart_pair.accepts (F : htpy_formal_sol R) := ∀ t, range ((F t).bs ∘ p.�
   φ_diff := sorry,
   is_sol := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).is_sol }
 
+lemma htpy_formal_sol.localize_eq_of_eq (F : htpy_formal_sol R) (hF : p.accepts F)
+  {t e} (h : F t (p.φ e) = F 0 (p.φ e)) :
+  F.localize p hF t e = F.localize p hF 0 e :=
+sorry
+
 variables (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
 
@@ -156,7 +161,7 @@ def chart_pair.update (F : htpy_formal_sol R)
 if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) (λ t x (hx : x ∉ p.K₁), begin
   erw ← transfer_localize (F t).to_one_jet_sec p.φ p.ψ (h.hF t) x,
   have := h.hFF t x hx,
-  apply  congr_arg,
+  apply congr_arg,
   sorry
 end) else F
 
@@ -177,6 +182,10 @@ lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
   p.update F 𝓕 t = F t :=
 sorry
 
+lemma chart_pair.update_is_holonomic_at_iff {F : htpy_formal_sol R}
+  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
+  (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at (p.φ e) ↔ (𝓕 t).is_holonomic_at e :=
+sorry
 
 /-
 namespace localisation_data
