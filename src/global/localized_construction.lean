@@ -54,6 +54,62 @@ lemma open_smooth_embedding.improve_htpy_formal_sol
     (∀ t x, dist ((F' t).bs x) ((F 0).bs x) < δ x) ∧
     ∀ᶠ x near A ∪ φ '' K₀, (F' 1).is_holonomic_at x :=
 begin
+  let Rloc : rel_loc EM EX := (R.localize φ ψ).rel_loc,
+  have hRloc_op : is_open Rloc,
+  sorry { exact  is_open_of_is_open _ (hRopen.preimage $ one_jet_bundle.continuous_transfer _ _) },
+  have hRloc_ample : Rloc.is_ample,
+  sorry { exact ample_of_ample _ (hRample.localize _ _) },
+  -- TODO: try to be consistent about how to state the hFφψ condition
+  replace hFφψ : ∀ (t : ℝ), range ((F t).bs ∘ φ) ⊆ range ψ,
+  sorry { intro t,
+    rw range_comp,
+    exact hFφψ t },
+  let p : chart_pair IM M IX X :=
+  { φ := φ,
+    ψ := ψ,
+    K₁ := K₁,
+    hK₁ := hK₁ },
 
-  admit,
+  let 𝓕 : Rloc.htpy_formal_sol := F.localize p hFφψ,
+  let 𝓕' : Rloc.htpy_formal_sol := sorry, -- coming from Chapter 2
+  have h𝓕'rel : ∀ t, ∀ x ∉ closed_ball (0 : EM) 2, 𝓕' t x = F.localize p hFφψ t x,
+  {
+    sorry },
+  have h𝓕'relA : ∀ t, ∀ᶠ x near φ ⁻¹' A, 𝓕' t x = F.localize p hFφψ 0 x,
+  {
+    sorry },
+  have h𝓕'relA' : ∀ t, ∀ᶠ x near A, ∀ e, x = φ e → 𝓕' t e = F.localize p hFφψ 0 e,
+  {
+    sorry },
+
+  have h𝓕'₀ : 𝓕' 0 = 𝓕 0,
+  {
+    sorry },
+  have hK₁ : is_compact (closed_ball (0 : EM) 2),
+  sorry { exact is_compact_closed_ball 0 2 },
+  let F' : htpy_formal_sol R := p.update F 𝓕',
+  refine ⟨p.update F 𝓕', _, _, _, _, _, _⟩,
+  sorry { rw p.update_eq_of_forall F 𝓕' (λ _, _),
+    rw h𝓕'₀,
+    refl, },
+  { intros t,
+    apply (h𝓕'relA' t).mono,
+    rintros x H,
+    by_cases hx : x ∈ range φ,
+    { rcases hx with ⟨e, rfl⟩,
+      rw p.update_eq_of_eq,
+      specialize H e rfl,
+      {
+        sorry },
+      sorry },
+
+    sorry },
+  {
+    sorry },
+  {
+    sorry },
+  {
+    sorry },
+  {
+    sorry },
 end

@@ -138,6 +138,9 @@ variable (P)
 /-- A homotopy of formal solutions is a 1-parameter family of formal solutions. -/
 @[reducible] def htpy_formal_sol (R : rel_loc E F) := R.family_formal_sol ℝ
 
+def htpy_formal_sol.to_htpy_jet_sec {R : rel_loc E F} (𝓕 : R.htpy_formal_sol) : htpy_jet_sec E F :=
+𝓕.to_family_jet_sec
+
 open rel_loc
 
 instance (R : rel_loc E F) : has_coe_to_fun (family_formal_sol P R) (λ S, P → jet_sec E F) :=

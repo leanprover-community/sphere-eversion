@@ -1,7 +1,7 @@
 import local.h_principle
 
 import global.relation
-import global.localisation_data
+--import global.localisation_data
 
 import interactive_expr
 set_option trace.filter_inst_type true
@@ -74,19 +74,113 @@ lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is
 
 end loc
 
-namespace localisation_data
+section unloc
+/-! ## Unlocalizing relations and 1-jet sections
+
+-/
+
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+variables {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
+
+/-- Convert a 1-jet section between vector spaces to a 1-jet section
+between those vector spaces seen as manifolds. -/
+def jet_sec.unloc (𝓕 : jet_sec E E') : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' :=
+{ bs := 𝓕.f,
+  ϕ := λ x, (𝓕 x).2,
+  smooth' := sorry }
+
+lemma jet_sec.unloc_hol_at_iff (𝓕 : jet_sec E E') (x : E) :
+𝓕.unloc.is_holonomic_at x ↔ 𝓕.is_holonomic_at x :=
+begin
+  dsimp only [one_jet_sec.is_holonomic_at],
+  rw mfderiv_eq_fderiv,
+  exact iff.rfl
+end
+
+def htpy_jet_sec.unloc (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' :=
+{ bs := λ t, (𝓕 t).f,
+  ϕ := λ t x, (𝓕 t x).2,
+  smooth' := sorry }
+
+end unloc
 
 variables
   {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
   {H : Type*} [topological_space H]
-  {I : model_with_corners ℝ E H}
-  {M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+  (I : model_with_corners ℝ E H)
+  (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
   {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
   {H' : Type*} [topological_space H']
-  {I' : model_with_corners ℝ E' H'}
-  {M' : Type*} [metric_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+  (I' : model_with_corners ℝ E' H')
+  (M' : Type*) [metric_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
 variables {f : M → M'} {R : rel_mfld I M I' M'}
+
+/-- A pair of charts together with a compact subset of the first vector space. -/
+structure chart_pair :=
+(φ : open_smooth_embedding 𝓘(ℝ, E) E I M)
+(ψ : open_smooth_embedding 𝓘(ℝ, E') E' I' M')
+(K₁ : set E)
+(hK₁ : is_compact K₁)
+
+variables  (p : chart_pair I M I' M') {I M I' M'}
+
+/-- A pair of chart accepts `F : htpy_formal_sol R` if the base map of
+`F` sends the first chart into the second one. -/
+def chart_pair.accepts (F : htpy_formal_sol R) := ∀ t, range ((F t).bs ∘ p.φ) ⊆ range p.ψ
+
+@[simps] def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
+  (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol  :=
+{ f := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).bs,
+  f_diff := sorry,
+  φ := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).ϕ,
+  φ_diff := sorry,
+  is_sol := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).is_sol }
+
+variables (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
+
+structure chart_pair.compat : Prop :=
+(hF : p.accepts F)
+(hFF : ∀ t, ∀ x ∉ p.K₁, 𝓕 t x = F.localize p hF t x)
+
+def rel_loc.htpy_formal_sol.unloc : htpy_formal_sol (rel_mfld.localize p.φ p.ψ R) :=
+{ is_sol' := 𝓕.is_sol,
+  ..𝓕.to_htpy_jet_sec.unloc}
+
+open_locale classical
+
+def chart_pair.update (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
+   : htpy_formal_sol R :=
+if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) (λ t x (hx : x ∉ p.K₁), begin
+  erw ← transfer_localize (F t).to_one_jet_sec p.φ p.ψ (h.hF t) x,
+  have := h.hFF t x hx,
+  apply  congr_arg,
+  sorry
+end) else F
+
+lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t} {m} (hm : m ∉ p.φ '' p.K₁) :
+  p.update F 𝓕 t m = F t m :=
+sorry
+
+lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t x}
+   (htx : ∀ hF : p.accepts F, 𝓕 t x = F.localize p hF t x) :
+  p.update F 𝓕 t (p.φ x) = F t (p.φ x) :=
+sorry
+
+lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t}
+  (heq : ∀ hF : p.accepts F, 𝓕 t = F.localize p hF t) :
+  p.update F 𝓕 t = F t :=
+sorry
+
+
+/-
+namespace localisation_data
+
 
 variables (L : localisation_data I I' f) (F : formal_sol R) (i : L.ι)
   (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
@@ -100,7 +194,7 @@ is_open_of_is_open _ $ h.preimage $ one_jet_bundle.continuous_transfer _ _
 lemma is_ample (h : R.ample) : (L.loc_rel i R).is_ample :=
 ample_of_ample _ (h.localize _ _)
 
-/- /-
+/-
 FIXME: the next definition in progress should probably use
 `transfer F.to_one_jet_sec (L.ψj i) (L.φ i) hFL` instead of going back to
 `one_jet_sec.localize`
@@ -173,5 +267,6 @@ lemma barbaz' {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal
   (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
   ∀ x ∈ A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
 (barbaz L hF₀ hAC h).nhds_set_forall_mem
- -/
+
 end localisation_data
+ -/
