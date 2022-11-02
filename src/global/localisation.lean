@@ -87,7 +87,15 @@ between those vector spaces seen as manifolds. -/
 def jet_sec.unloc (𝓕 : jet_sec E E') : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' :=
 { bs := 𝓕.f,
   ϕ := λ x, (𝓕 x).2,
-  smooth' := sorry }
+  smooth' := begin
+    intros a,
+    refine smooth_at_one_jet_bundle.mpr _,
+    refine ⟨smooth_at_id, 𝓕.f_diff.cont_mdiff a, _⟩,
+    dsimp [in_coordinates, in_coordinates', chart_at],
+    simp only [range_id, fderiv_within_univ, fderiv_id, continuous_linear_map.id_comp,
+      continuous_linear_map.comp_id],
+    exact 𝓕.φ_diff.cont_mdiff a,
+  end }
 
 lemma jet_sec.unloc_hol_at_iff (𝓕 : jet_sec E E') (x : E) :
 𝓕.unloc.is_holonomic_at x ↔ 𝓕.is_holonomic_at x :=
@@ -100,7 +108,16 @@ end
 def htpy_jet_sec.unloc (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' :=
 { bs := λ t, (𝓕 t).f,
   ϕ := λ t x, (𝓕 t x).2,
-  smooth' := sorry }
+  smooth' := begin
+    intros a,
+    refine smooth_at_one_jet_bundle.mpr _,
+    refine ⟨smooth_at_snd,
+      (𝓕.f_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smooth_at_snd), _⟩,
+    dsimp [in_coordinates, in_coordinates', chart_at],
+    simp only [range_id, fderiv_within_univ, fderiv_id, continuous_linear_map.id_comp,
+      continuous_linear_map.comp_id],
+    exact (𝓕.φ_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smooth_at_snd),
+  end }
 
 end unloc
 
@@ -132,10 +149,28 @@ def chart_pair.accepts (F : htpy_formal_sol R) := ∀ t, range ((F t).bs ∘ p.�
 @[simps] def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
   (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol  :=
 { f := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).bs,
-  f_diff := sorry,
+  f_diff := begin
+    dsimp [transfer],
+    rw cont_diff_iff_cont_diff_at,
+    intros a,
+    refine ((p.ψ.smooth_at_inv _).comp a _).cont_diff_at,
+    { exact hF a.fst (set.mem_range_self _) },
+    have H : smooth 𝓘(ℝ, ℝ × E) (𝓘(ℝ, ℝ).prod I) (λ (X : ℝ × E), (X.fst, (p.φ) X.snd)),
+    { exact (continuous_linear_map.fst ℝ ℝ E).cont_diff.cont_mdiff.prod_mk
+        (p.φ.smooth_to.comp (continuous_linear_map.snd ℝ ℝ E).cont_diff.cont_mdiff) },
+    exact (F.smooth_bs.comp H).smooth_at,
+  end,
   φ := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).ϕ,
   φ_diff := sorry,
   is_sol := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).is_sol }
+
+lemma lem1 (F : htpy_formal_sol R) (hF : p.accepts F) (t : ℝ) :
+  (F.localize p hF t).f = ((F t).localize p.φ p.ψ (hF t)).bs :=
+rfl
+
+lemma lem2 (F : htpy_formal_sol R) (hF : p.accepts F) (t : ℝ) :
+  (F.localize p hF t).φ = ((F t).localize p.φ p.ψ (hF t)).ϕ :=
+rfl
 
 lemma htpy_formal_sol.localize_eq_of_eq (F : htpy_formal_sol R) (hF : p.accepts F)
   {t e} (h : F t (p.φ e) = F 0 (p.φ e)) :
