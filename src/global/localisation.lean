@@ -187,6 +187,19 @@ lemma chart_pair.update_is_holonomic_at_iff {F : htpy_formal_sol R}
   (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at (p.φ e) ↔ (𝓕 t).is_holonomic_at e :=
 sorry
 
+lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
+  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t x} (hx : x ∉ range p.φ)
+  (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at x ↔ (F t).is_holonomic_at x :=
+sorry
+
+lemma chart_pair.dist_update {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ)
+  {F : htpy_formal_sol R} (hF : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < δ x) : ∃ η > 0,
+  ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
+  (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
+  ∀ t x, dist (((p.update F 𝓕) t).bs x) ((F 0).bs x) < δ x :=
+sorry
+
+
 /-
 namespace localisation_data
 

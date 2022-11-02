@@ -76,6 +76,7 @@ begin
   have hcompat : p.compat F 𝓕',
   {
     sorry },
+  rcases p.dist_update hδ_pos hδ_cont hFF₀δ with ⟨η, η_pos, hη⟩,
   have h𝓕'rel : ∀ t, ∀ x ∉ closed_ball (0 : EM) 2, 𝓕' t x = F.localize p hFφψ t x,
   {
     sorry },
@@ -94,12 +95,15 @@ begin
   have h𝓕'hol : ∀ᶠ x near A ∪ φ '' K₀, ∀ e, x = φ e → (𝓕' 1).is_holonomic_at e,
   {
     sorry },
-  let F' : htpy_formal_sol R := p.update F 𝓕',
+  have h𝓕'relt : ∀ e (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t e = htpy_formal_sol.localize p F hcompat.1 t e,
+  {
+    sorry },
+  sorry /- let F' : htpy_formal_sol R := p.update F 𝓕',
   refine ⟨p.update F 𝓕', _, _, _, _, _, _⟩,
-  sorry { rw p.update_eq_of_forall F 𝓕' (λ _, _),
+  { rw p.update_eq_of_forall F 𝓕' (λ _, _),
     rw h𝓕'₀,
     refl, },
-  sorry { intros t,
+  { intros t,
     apply ((h𝓕'relA' t).and $ hFA t).mono,
     rintros x ⟨H, H'⟩,
     by_cases hx : x ∈ range φ,
@@ -112,7 +116,7 @@ begin
       exact H' },
     { rw [p.update_eq_of_not_mem, H'],
       exact  (λ hx', hx (mem_range_of_mem_image φ _ hx')) } },
-  sorry { intro t,
+  { intro t,
     apply (h𝓕'relC t).mono,
     intros x H,
     by_cases hx : x ∈ range φ,
@@ -122,11 +126,9 @@ begin
       refl },
     { rw [p.update_eq_of_not_mem],
       exact (λ hx', hx (mem_range_of_mem_image φ _ hx')) } },
-  sorry { exact λ _ _, p.update_eq_of_not_mem _ _ },
-  {
-    sorry },
-  sorry { rw [nhds_set_union, eventually_sup] at h𝓕'hol ⊢,
-    clear hFF₀δ h𝓕'rel h𝓕'relA h𝓕'relA' h𝓕'relC hFC hδ_pos hδ_cont δ hRloc_op hRloc_ample hRample hRopen,
+  { exact λ _ _, p.update_eq_of_not_mem _ _ },
+  { exact hη hcompat h𝓕'relt },
+  { rw [nhds_set_union, eventually_sup] at h𝓕'hol ⊢,
     split,
     { apply ((h𝓕'hol.1.eventually_nhds_set.and (hFA 1).eventually_nhds_set).and hF₀A).mono, clear h𝓕'hol,
       intros x H,
@@ -141,5 +143,5 @@ begin
       apply (this.and h𝓕'hol.2).mono,
       rintros x ⟨⟨e, rfl⟩, H⟩,
       rw p.update_is_holonomic_at_iff hcompat,
-      exact H e rfl } },
+      exact H e rfl } }, -/
 end
