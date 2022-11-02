@@ -205,11 +205,29 @@ lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
   p.update F 𝓕 t m = F t m :=
 sorry
 
+-- Patrick hopes the following is true, but proving it will require going back to earlier files
+-- to add more congruence lemmas
+-- See also the more general version in the next lemma
 lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t x}
    (htx : ∀ hF : p.accepts F, 𝓕 t x = F.localize p hF t x) :
   p.update F 𝓕 t (p.φ x) = F t (p.φ x) :=
 sorry
+
+-- Patrick hopes the following is true, but proving it will require going back to earlier files
+-- to add more congruence lemmas
+lemma chart_pair.update_eq_of_eq' (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat F 𝓕) {t t' x}
+  (h : 𝓕 t x = F.localize p h𝓕.1 t' x) :
+  p.update F 𝓕 t (p.φ x) = F t' (p.φ x) :=
+begin
+  dsimp only [chart_pair.update],
+  split_ifs,
+  dsimp only [open_smooth_embedding.update_htpy_formal_sol],
+  simp only [family_formal_sol.coe_mk],
+  sorry
+end
+
 
 lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t}

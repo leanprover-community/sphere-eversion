@@ -25,7 +25,6 @@ variables
 [sigma_compact_space X]
 [nonempty X] -- FIXME: investigate how to remove this
 
-
 lemma open_smooth_embedding.improve_htpy_formal_sol
   (φ : open_smooth_embedding 𝓘(ℝ, EM) EM IM M)
   (ψ : open_smooth_embedding 𝓘(ℝ, EX) EX IX X)
@@ -71,53 +70,60 @@ begin
     ψ := ψ,
     K₁ := K₁,
     hK₁ := hK₁ },
+  rcases p.dist_update hδ_pos hδ_cont hFF₀δ with ⟨η, η_pos, hη⟩,
   let 𝓕 : Rloc.htpy_formal_sol := F.localize p hFφψ,
   let 𝓕' : Rloc.htpy_formal_sol := sorry, -- coming from Chapter 2
   have hcompat : p.compat F 𝓕',
   {
     sorry },
-  rcases p.dist_update hδ_pos hδ_cont hFF₀δ with ⟨η, η_pos, hη⟩,
-  have h𝓕'rel : ∀ t, ∀ x ∉ closed_ball (0 : EM) 2, 𝓕' t x = F.localize p hFφψ t x,
-  {
-    sorry },
-  have h𝓕'relA : ∀ t, ∀ᶠ x near φ ⁻¹' A, 𝓕' t x = F.localize p hFφψ 0 x,
-  {
-    sorry },
-  have h𝓕'relA' : ∀ t, ∀ᶠ x near A, ∀ e, x = φ e → 𝓕' t e = F.localize p hFφψ 0 e,
-  {
-    sorry },
-  have h𝓕'relC : ∀ t, ∀ᶠ x near C, ∀ e, x = φ e → 𝓕' t e = F.localize p hFφψ t e,
-  {
-    sorry },
   have h𝓕'₀ : 𝓕' 0 = 𝓕 0,
   {
     sorry },
-  have h𝓕'hol : ∀ᶠ x near A ∪ φ '' K₀, ∀ e, x = φ e → (𝓕' 1).is_holonomic_at e,
+  have h𝓕'relK₁ : ∀ t, ∀ e ∉ K₁, 𝓕' t e = 𝓕 t e,
   {
     sorry },
-  have h𝓕'relt : ∀ e (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t e = htpy_formal_sol.localize p F hcompat.1 t e,
+  have h𝓕'relA : ∀ t, ∀ᶠ e near φ ⁻¹' A, 𝓕' t e = 𝓕 0 e,
   {
     sorry },
-  sorry /- let F' : htpy_formal_sol R := p.update F 𝓕',
-  refine ⟨p.update F 𝓕', _, _, _, _, _, _⟩,
+  have h𝓕'relA' : ∀ t, ∀ᶠ x near A, ∀ e, x = φ e → 𝓕' t e = F.localize p hFφψ 0 e,
+  { intro t,
+    apply φ.forall_near hK₁ (h𝓕'relA t),
+    sorry,
+    sorry },
+  have h𝓕'relC : ∀ t, ∀ᶠ e near φ ⁻¹' C,  𝓕' t e = 𝓕 t e,
+  {
+    sorry },
+  have h𝓕'hol : ∀ᶠ e near φ ⁻¹' A ∪ K₀, (𝓕' 1).is_holonomic_at e,
+  {
+    sorry },
+  have h𝓕'relt : ∀ e (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t e = 𝓕 t e,
+  {
+    sorry },
+  replace h𝓕'hol : ∀ᶠ x near A ∪ φ '' K₀, ∀ e, x = φ e → (𝓕' 1).is_holonomic_at e,
+  sorry { rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at h𝓕'hol,
+    exact φ.forall_near h𝓕'hol },
+  let F' : htpy_formal_sol R := p.update F 𝓕',
+  have  hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F t x,
+  {
+    sorry },
+  sorry /- refine ⟨p.update F 𝓕', _, _, _, _, _, _⟩,
   { rw p.update_eq_of_forall F 𝓕' (λ _, _),
     rw h𝓕'₀,
     refl, },
   { intros t,
-    apply ((h𝓕'relA' t).and $ hFA t).mono,
-    rintros x ⟨H, H'⟩,
-    by_cases hx : x ∈ range φ,
-    { rcases hx with ⟨e, rfl⟩,
-      have : ∀ (hF : p.accepts F), (𝓕' t) e = ((F.localize p hF) t) e,
-      { intros hF,
-        rw [H e rfl, htpy_formal_sol.localize_eq_of_eq p F hF H'],
-        refl },
-      rw p.update_eq_of_eq F 𝓕' this,
-      exact H' },
-    { rw [p.update_eq_of_not_mem, H'],
-      exact  (λ hx', hx (mem_range_of_mem_image φ _ hx')) } },
-  { intro t,
-    apply (h𝓕'relC t).mono,
+    /-
+    P = (λ (e : EM), ⇑(⇑𝓕' t) e = ⇑(⇑𝓕 0) e)
+    P' = (λ (m' : M), ⇑(⇑(p.update F 𝓕') t) m' = ⇑(⇑F 0) m')
+    -/
+    apply φ.forall_near hK₁ (h𝓕'relA t),
+    { apply (hFA t).mono,
+      intros x hx hx',
+      rwa hF'relK₁ t x hx' },
+    { intros e he,
+      rw p.update_eq_of_eq' _ _ hcompat,
+      exact he } },
+  /- { intro t,
+    apply (φ.forall_near (h𝓕'relC t)).mono,
     intros x H,
     by_cases hx : x ∈ range φ,
     { rcases hx with ⟨e, rfl⟩,
@@ -143,5 +149,5 @@ begin
       apply (this.and h𝓕'hol.2).mono,
       rintros x ⟨⟨e, rfl⟩, H⟩,
       rw p.update_is_holonomic_at_iff hcompat,
-      exact H e rfl } }, -/
+      exact H e rfl } }, -/ -/
 end

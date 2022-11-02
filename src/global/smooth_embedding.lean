@@ -5,6 +5,7 @@ import global.indexing
 import to_mathlib.topology.paracompact
 import to_mathlib.topology.local_homeomorph
 import to_mathlib.topology.algebra.order.compact
+import to_mathlib.topology.nhds_set
 import to_mathlib.geometry.manifold.charted_space
 import to_mathlib.geometry.manifold.smooth_manifold_with_corners
 import to_mathlib.analysis.normed_space.misc
@@ -103,6 +104,61 @@ lemma fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
     tangent_space I (f.inv_fun x)) =
   (mfderiv I' I f.inv_fun x : tangent_space I' x →L[𝕜] tangent_space I (f.inv_fun x)) :=
 by rw [fderiv_symm_coe, f.right_inv hx]
+
+open filter
+
+lemma open_embedding : open_embedding f :=
+open_embedding_of_continuous_injective_open f.continuous f.injective f.open_map
+
+lemma inducing : inducing f := f.open_embedding.to_inducing
+
+-- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
+notation `∀ᶠ` binders ` near ` s `, ` r:(scoped p, filter.eventually p $ 𝓝ˢ s) := r
+
+lemma forall_near' {P : M → Prop} {A : set M'} (h : ∀ᶠ m near f ⁻¹' A, P m) :
+  ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m :=
+begin
+  rw eventually_nhds_set_iff at h ⊢,
+  rintros _ ⟨hfm₀, m₀, rfl⟩,
+  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U,
+  { intros U U_in,
+    exact f.open_map.image_mem_nhds U_in },
+  apply (this _ $ h m₀ hfm₀).mono,
+  rintros _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl,
+  rwa ← f.injective hm₀'
+end
+
+lemma eventually_nhds_set_mono {α : Type*} [topological_space α] {s t : set α} {P : α → Prop}
+  (h : ∀ᶠ x near t, P x) (h' : s ⊆ t) : ∀ᶠ x near s, P x :=
+h.filter_mono (nhds_set_mono h')
+
+-- TODO: optimize this proof which is probably more complicated than it needs to be
+lemma forall_near [t2_space M'] {P : M → Prop} {P' : M' → Prop} {K : set M} (hK : is_compact K)
+  {A : set M'} (hP : ∀ᶠ m near f ⁻¹' A, P m) (hP' : ∀ᶠ m' near A, m' ∉ f '' K → P' m')
+  (hPP' : ∀ m, P m → P' (f m)) :
+  ∀ᶠ m' near A, P' m' :=
+begin
+  rw show A = (A ∩ range f) ∪ (A ∩ (range f)ᶜ), by simp,
+  apply filter.eventually.union,
+  { have : ∀ᶠ m' near A ∩ range f, m' ∈ range f,
+      from f.is_open_range.forall_near_mem_of_subset (inter_subset_right _ _),
+    apply (this.and $ f.forall_near' hP).mono,
+    rintros _ ⟨⟨m, rfl⟩, hm⟩,
+    exact hPP' _ (hm _ rfl) },
+  { have op : is_open (f '' K)ᶜ,
+    { rw is_open_compl_iff,
+      exact (hK.image f.continuous).is_closed },
+    have : A ∩ (range f)ᶜ ⊆ A ∩ (f '' K)ᶜ,
+    { exact inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K)) },
+    apply eventually_nhds_set_mono _ this,
+    rw eventually_nhds_set_iff at hP' ⊢,
+    rintros x ⟨hx, hx'⟩,
+    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ,
+      from is_open_iff_eventually.mp op x hx',
+    apply ((hP' x hx).and hx').mono,
+    rintros y ⟨hy, hy'⟩,
+    exact hy hy' },
+end
 
 variables (I M)
 
