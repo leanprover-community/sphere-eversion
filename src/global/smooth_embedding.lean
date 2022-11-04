@@ -30,7 +30,6 @@ structure open_smooth_embedding  :=
 (to_fun : M → M')
 (inv_fun : M' → M)
 (left_inv'   : ∀{x}, inv_fun (to_fun x) = x)
-(right_inv'  : ∀{x}, x ∈ range to_fun → to_fun (inv_fun x) = x)
 (open_map : is_open_map to_fun)
 (smooth_to : smooth I I' to_fun)
 (smooth_inv : smooth_on I' I inv_fun (range to_fun))
@@ -42,18 +41,19 @@ namespace open_smooth_embedding
 
 variables {I I' M M'} (f : open_smooth_embedding I M I' M')
 
-@[simp] lemma coe_mk (f g h₁ h₂ h₃ h₄ h₅) :
-  ⇑(⟨f, g, h₁, h₂, h₃, h₄, h₅⟩ : open_smooth_embedding I M I' M') = f :=
+@[simp] lemma coe_mk (f g h₁ h₂ h₃ h₄) :
+  ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : open_smooth_embedding I M I' M') = f :=
 rfl
 
 @[simp] lemma left_inv (x : M) : f.inv_fun (f x) = x := by apply f.left_inv'
 
 @[simp] lemma inv_fun_comp_coe : f.inv_fun ∘ f = id := funext f.left_inv
 
-@[simp] lemma right_inv {y : M'} (hy : y ∈ range f) : f (f.inv_fun y) = y := f.right_inv' hy
+@[simp] lemma right_inv {y : M'} (hy : y ∈ range f) : f (f.inv_fun y) = y :=
+by { obtain ⟨x, rfl⟩ := hy, rw [f.left_inv] }
 
 lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
-filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv' hy
+filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv hy
 
 lemma injective : function.injective f :=
 function.left_inverse.injective (left_inv f)
@@ -167,7 +167,6 @@ variables (I M)
 { to_fun := id,
   inv_fun := id,
   left_inv' := λ x, rfl,
-  right_inv' := λ x hx, rfl,
   open_map := is_open_map.id,
   smooth_to := smooth_id,
   smooth_inv := smooth_on_id }
@@ -184,7 +183,6 @@ variables {I M I' M'}
 { to_fun := g ∘ f,
   inv_fun := f.inv_fun ∘ g.inv_fun,
   left_inv' := λ x, by simp only [function.comp_app, left_inv],
-  right_inv' := λ x hx, by { obtain ⟨y, rfl⟩ := hx, simp only [function.comp_app, left_inv], },
   open_map := g.open_map.comp f.open_map,
   smooth_to := g.smooth_to.comp f.smooth_to,
   smooth_inv := (f.smooth_inv.comp' g.smooth_inv).mono
@@ -214,7 +212,6 @@ but the proof shouldn't be hard anyway.
 { to_fun := prod.map f f',
   inv_fun := prod.map f.inv_fun f'.inv_fun,
   left_inv' := sorry,
-  right_inv' := sorry,
   open_map := sorry,
   smooth_to := sorry,
   smooth_inv := sorry }
@@ -232,7 +229,6 @@ variables (e : E ≃L[𝕜] E') [complete_space E] [complete_space E']
 { to_fun := e,
   inv_fun := e.symm,
   left_inv' := e.symm_apply_apply,
-  right_inv' := λ x hx, e.apply_symm_apply x,
   open_map := e.is_open_map,
   smooth_to := (e : E →L[𝕜] E').cont_mdiff,
   smooth_inv := (e.symm : E' →L[𝕜] E).cont_mdiff.cont_mdiff_on }
@@ -305,16 +301,6 @@ def open_smooth_emb_of_diffeo_subset_chart_target (x : M) {f : local_homeomorph 
   inv_fun := f.inv_fun ∘ (ext_chart_at IF x),
   left_inv' := λ y,
   begin
-    obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y),
-    have aux : f.symm (IF z) = y, { rw hz', exact f.left_inv (hf₁.symm ▸ mem_univ _), },
-    simp only [← hz', (chart_at H x).right_inv hz, aux, ext_chart_at, local_equiv.coe_trans,
-      local_homeomorph.inv_fun_eq_coe, model_with_corners.to_local_equiv_coe,
-      local_homeomorph.coe_coe, local_equiv.coe_trans_symm, local_homeomorph.coe_coe_symm,
-      model_with_corners.left_inv, model_with_corners.to_local_equiv_coe_symm, comp_app, aux],
-  end,
-  right_inv' :=
-  begin
-    rintros - ⟨y, rfl⟩,
     obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y),
     have aux : f.symm (IF z) = y, { rw hz', exact f.left_inv (hf₁.symm ▸ mem_univ _), },
     simp only [← hz', (chart_at H x).right_inv hz, aux, ext_chart_at, local_equiv.coe_trans,

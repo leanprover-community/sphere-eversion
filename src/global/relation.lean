@@ -469,7 +469,6 @@ def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
       sorry },
 
   end,
-  right_inv' := sorry,
   open_map := sorry,
   smooth_to := sorry,
   smooth_inv := sorry }
