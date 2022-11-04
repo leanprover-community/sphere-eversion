@@ -184,7 +184,7 @@ end family_formal_sol
 def formal_sol.const_htpy (F : formal_sol R) : htpy_formal_sol R :=
 { bs := λ t, F.bs,
   ϕ := λ t, F.ϕ,
-  smooth' := sorry,
+  smooth' := F.smooth.comp smooth_snd,
   is_sol' := λ t, F.is_sol }
 
 lemma formal_sol.const_htpy_eq (F : formal_sol R) (t : ℝ) : F.const_htpy t = F :=
