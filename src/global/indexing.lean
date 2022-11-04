@@ -2,6 +2,7 @@ import tactic.linarith
 import algebra.order.with_zero
 import topology.locally_finite
 import data.fin.interval
+import data.fin.succ_pred
 
 import to_mathlib.set_theory.cardinal.basic
 
@@ -16,6 +17,8 @@ are `ℕ` and `fin (n+1)`.
 It also includes a lemma about locally finite cover that doesn't require an indexing
 index type but will be used with one.
 -/
+
+open set
 
 class indexing (α : Type*) [linear_order α] :=
 (from_nat : ℕ → α)
@@ -60,7 +63,7 @@ begin
   refine ⟨ind, V, λ  x, ⟨V_in x, _⟩⟩,
   intros i hi,
   by_contra,
-  exact lt_irrefl i (gt_of_gt_of_ge hi $ hind x (set.ne_empty_iff_nonempty.mp h))
+  exact lt_irrefl i (gt_of_gt_of_ge hi $ hind x (ne_empty_iff_nonempty.mp h))
 end
 
 /-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `fin n` otherwise-/
@@ -86,12 +89,39 @@ nat.cases_on n nat.locally_finite_order (λ _, fin.locally_finite_order _)
 instance (n : ℕ) : order_bot (index_type n) :=
 nat.cases_on n nat.order_bot (λ k, show order_bot $ fin (k + 1), by apply_instance)
 
+instance (n : ℕ) : succ_order (index_type n) :=
+nat.cases_on n nat.succ_order (λ k, fin.succ_order)
+
 def index_from_nat (N n : ℕ) : index_type N := indexing.from_nat n
 
 instance (N : ℕ) : has_zero (index_type N) := ⟨indexing.from_nat 0⟩
 
 lemma index_from_nat_zero (N : ℕ) : index_from_nat N 0 = 0 :=
 rfl
+
+protected lemma index_type.Iic_zero (n : ℕ) : Iic (0 : index_type n) = {0} :=
+nat.cases_on n (by { ext n, simp [@le_zero_iff ℕ] }) (λ k, by { ext n, simp })
+
+@[simp] lemma fin.coe_order_succ {n : ℕ} (a : fin (n+1)) :
+  ((order.succ a : fin _) : ℕ) = if (a : ℕ) < n then a + 1 else a := sorry
+
+@[simp] lemma fin.coe_order_succ_mk {n m : ℕ} (h : m < n + 1) :
+  ((order.succ ⟨m, h⟩ : fin _) : ℕ) = if m < n then m + 1 else m := fin.coe_order_succ _
+
+protected lemma index_from_nat_succ (N m : ℕ) : index_from_nat N (m + 1) =
+  order.succ (index_from_nat N m) :=
+begin
+  refine nat.cases_on N rfl (λ n, _),
+  dsimp only [index_from_nat, index_type, index_type.indexing, fin.indexing, index_type.succ_order],
+  ext,
+  split_ifs with h h' h',
+  { rw [fin.coe_order_succ_mk, if_pos (nat.lt_of_succ_lt_succ h)], refl },
+  { linarith },
+  { obtain rfl : m = n :=
+      le_antisymm (nat.le_of_lt_succ h') (nat.le_of_succ_le_succ $ le_of_not_lt h),
+    rw [fin.coe_order_succ_mk, if_neg (lt_irrefl _)], refl },
+  { rw [fin.coe_order_succ, fin.coe_last, if_neg (lt_irrefl _)] }
+end
 
 def index_type_encodable : Π n : ℕ, encodable (index_type n)
 | 0 := nat.encodable

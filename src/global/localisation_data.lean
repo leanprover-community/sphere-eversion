@@ -53,15 +53,13 @@ show is_closed (⋃ i ∈ Iic (ld.index n), (ld.φ i) '' K), from
 is_closed_bUnion (finite_Iic _) (λ i hi, (hK.image $ (ld.φ i).continuous).is_closed)
 
 lemma Union_le_zero {β : Type*} (s : ld.ι → set β) : (⋃ i ≤ ld.index 0, s i) = s 0 :=
-sorry
-
+by simp_rw [← mem_Iic, localisation_data.index, index_from_nat_zero, index_type.Iic_zero,
+    bUnion_singleton]
 
 lemma Union_succ {β : Type*} (s : ld.ι → set β) (n : ℕ) :
   (⋃ i ≤ ld.index (n + 1), s i) = (⋃ i ≤ ld.index n, s i) ∪ s (ld.index $ n+1) :=
-begin
-
-  sorry
-end
+by simp_rw [← mem_Iic, localisation_data.index, index_from_nat_succ, order.Iic_succ, bUnion_insert,
+    union_comm]
 
 end localisation_data
 
