@@ -360,6 +360,33 @@ lemma hom_chart (x : LZZ') (x₀ : B) :
   (chart_at HB x₀ x.1, in_coordinates' Z Z' x₀ x.1 x₀ x.1 x.2) :=
 by simp_rw [hom_chart', in_coordinates', achart_def]
 
+lemma hom_chart_source (x₀ : B) :
+  ((Z.hom Z').chart (chart_mem_atlas HB x₀)).source =
+  sigma.fst ⁻¹' (chart_at HB x₀).source :=
+begin
+  -- simp_rw [chart, trans_source],
+  -- simp only with mfld_simps,
+  set ZZ' := (Z.hom Z').to_topological_vector_bundle_core,
+  change ZZ'.proj ⁻¹' (chart_at HB x₀).source ∩
+    (λ x, ZZ'.local_triv (achart HB x₀) x) ⁻¹' (chart_at HB x₀).source ×ˢ univ = _,
+  simp_rw [topological_vector_bundle_core.local_triv_apply, mk_preimage_prod, preimage_univ,
+    inter_univ],
+  exact inter_self _
+end
+
+lemma hom_chart_target (x₀ : B) :
+  ((Z.hom Z').chart (chart_mem_atlas HB x₀)).target =
+  prod.fst ⁻¹' (chart_at HB x₀).target :=
+begin
+  simp_rw [chart, trans_target],
+  simp only with mfld_simps,
+  simp_rw [prod_univ, preimage_preimage, inter_eq_left_iff_subset],
+  rw [← @preimage_preimage _ _ _ (chart_at HB x₀).symm],
+  refine preimage_mono _,
+  rw [← image_subset_iff],
+  exact (chart_at HB x₀).symm.bij_on.image_eq.subset
+end
+
 lemma hom_ext_chart_at {v v' : LZZ'} :
   ext_chart_at (IB.prod 𝓘(𝕜, F →L[𝕜] F')) v v' =
   (ext_chart_at IB v.1 v'.1, in_coordinates' Z Z' v.1 v'.1 v.1 v'.1 v'.2) :=

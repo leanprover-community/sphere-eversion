@@ -150,6 +150,18 @@ begin
     pullback_snd_coord_change_at, prod_charted_space_chart_at, local_homeomorph.prod_apply],
 end
 
+-- lemma one_jet_bundle_chart_at_source {v : one_jet_bundle I M I' M'} :
+--   (chart_at HJ v v').source =
+--   ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
+--   in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
+--     v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
+-- begin
+--   simp_rw [to_charted_space_chart_at],
+--   dsimp only [one_jet_bundle_core],
+--   simp_rw [hom_chart, in_coordinates', pullback_fst_coord_change_at,
+--     pullback_snd_coord_change_at, prod_charted_space_chart_at, local_homeomorph.prod_apply],
+-- end
+
 /-- A variant of `one_jet_bundle_chart_at` in which the fact that the coordinate change actions
 are equivalences is expressed at the type-theoretic level (i.e., `coord_change_equiv` instead of
 `coord_change`). -/
@@ -386,13 +398,33 @@ end
 
 end maps
 
-local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')
+-- move
+lemma local_equiv_eq_equiv {α β} {f : local_equiv α β} {e : α ≃ β}
+  (h1 : ∀ x, f x = e x) (h2 : f.source = univ) (h3 : f.target = univ) : f = e.to_local_equiv :=
+begin
+  refine local_equiv.ext h1 (λ y, _) h2,
+  conv_rhs { rw [← f.right_inv ((set.ext_iff.mp h3 y).mpr (mem_univ y)), h1] },
+  exact (e.left_inv _).symm
+end
 
+local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')
 /-- In the one_jet bundle to the model space, the charts are just the canonical identification
 between a product type and a sigma type, a.k.a. `sigma_equiv_prod`. -/
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_chart_at (p : one_jet_bundle I H I' H') :
   (chart_at 𝓜 p).to_local_equiv = (sigma_equiv_prod (H × H') (E →L[𝕜] E')).to_local_equiv :=
-sorry
+begin
+  apply local_equiv_eq_equiv,
+  { intros x,
+    rw [local_homeomorph.coe_coe, one_jet_bundle_chart_at I H I' H',
+      in_coordinates'_tangent_bundle_core_model_space],
+    ext; refl },
+  { refine (hom_chart_source _ _ _).trans _,
+    simp_rw [prod_charted_space_chart_at, chart_at_self_eq, local_homeomorph.refl_prod_refl],
+    refl },
+  { refine (hom_chart_target _ _ _).trans _,
+    simp_rw [prod_charted_space_chart_at, chart_at_self_eq, local_homeomorph.refl_prod_refl],
+    refl },
+end
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_coe_chart_at (p : one_jet_bundle I H I' H') :
   ⇑(chart_at 𝓜 p) = sigma_equiv_prod (H × H') (E →L[𝕜] E') :=
@@ -408,9 +440,27 @@ variables (H H')
 
 /-- The canonical identification between the one_jet bundle to the model space and the product,
 as a homeomorphism -/
+-- note: this proof works for all vector bundles where we have proven
+-- `∀ p, chart_at _ p = f.to_local_equiv`
 def one_jet_bundle_model_space_homeomorph : one_jet_bundle I H I' H' ≃ₜ 𝓜 :=
-{ continuous_to_fun := sorry,
-  continuous_inv_fun := sorry,
+{ continuous_to_fun :=
+  begin
+    let p : one_jet_bundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩,
+    have : continuous (chart_at 𝓜 p),
+    { rw continuous_iff_continuous_on_univ,
+      convert local_homeomorph.continuous_on _,
+      simp only with mfld_simps },
+    simpa only with mfld_simps using this,
+  end,
+  continuous_inv_fun :=
+  begin
+    let p : one_jet_bundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩,
+    have : continuous (chart_at 𝓜 p).symm,
+    { rw continuous_iff_continuous_on_univ,
+      convert local_homeomorph.continuous_on _,
+      simp only with mfld_simps },
+    simpa only with mfld_simps using this,
+  end,
   .. sigma_equiv_prod (H × H') (E →L[𝕜] E') }
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_homeomorph_coe :

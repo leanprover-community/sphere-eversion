@@ -255,6 +255,24 @@ lemma tangent_bundle_core_coord_change_achart (x x' : M) (z : H) :
 rfl
 
 variables (I)
+-- used in tangent_bundle_model_space_chart_at
+-- not yet ported
+lemma model_with_corners.fderiv_within_comp_symm (x : H) :
+  fderiv_within 𝕜 (I ∘ I.symm) (range I) (I x) = continuous_linear_map.id 𝕜 E :=
+begin
+  have : fderiv_within 𝕜 (I ∘ I.symm) (range I) (I x) = fderiv_within 𝕜 id (range I) (I x),
+  { refine fderiv_within_congr I.unique_diff_at_image (λ y hy, _) (by simp only with mfld_simps),
+    exact model_with_corners.right_inv _ hy },
+  rwa fderiv_within_id I.unique_diff_at_image at this
+end
+
+-- not yet ported
+lemma tangent_bundle_core_coord_change_model_space (x x' : H) (z : H) :
+  (tangent_bundle_core I H).coord_change (achart H x) (achart H x') z =
+  continuous_linear_map.id 𝕜 E :=
+begin
+  simp only [tangent_bundle_core_coord_change_achart, ext_chart_at, I.fderiv_within_comp_symm] with mfld_simps,
+end
 
 -- not yet ported
 lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
@@ -410,6 +428,13 @@ noncomputable def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L
   N → N → E →L[𝕜] E' :=
 λ x₀ x, in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
   (f x₀) (f x) (g x₀) (g x) (ϕ x)
+
+-- not yet ported
+lemma in_coordinates'_tangent_bundle_core_model_space
+  (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') : in_coordinates' (tangent_bundle_core I H)
+    (tangent_bundle_core I' H') x₀ x y₀ y ϕ = ϕ :=
+by simp_rw [in_coordinates', tangent_bundle_core_coord_change_model_space,
+    continuous_linear_map.id_comp, continuous_linear_map.comp_id]
 
 variables {I I'}
 
