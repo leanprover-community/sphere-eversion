@@ -37,7 +37,7 @@ namespace localisation_data
 
 variables {f : M → M'} {I I'} (ld : localisation_data I I' f)
 
-def index (n : ℕ) := index_from_nat ld.N n
+def index (n : ℕ) : index_type ld.N := index_from_nat ld.N n
 
 abbreviation ψj := ld.ψ ∘ ld.j
 
@@ -47,9 +47,10 @@ abbreviation ψj := ld.ψ ∘ ld.j
 lemma rg_subset_rg (i : ld.ι) : range (f ∘ (ld.φ i)) ⊆ range (ld.ψj i) :=
 ((ld.h₃ i).trans $ image_subset_range _ _)
 
-lemma is_closed_Union {K : set E} (hK : is_compact K) (n : ℕ) :
+lemma is_closed_Union [t2_space M] {K : set E} (hK : is_compact K) (n : ℕ) :
   is_closed (⋃ i ≤ ld.index n, (ld.φ i) '' K) :=
-sorry
+show is_closed (⋃ i ∈ Iic (ld.index n), (ld.φ i) '' K), from
+is_closed_bUnion (finite_Iic _) (λ i hi, (hK.image $ (ld.φ i).continuous).is_closed)
 
 lemma Union_le_zero {β : Type*} (s : ld.ι → set β) : (⋃ i ≤ ld.index 0, s i) = s 0 :=
 sorry

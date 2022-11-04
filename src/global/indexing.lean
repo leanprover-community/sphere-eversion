@@ -1,6 +1,7 @@
 import tactic.linarith
 import algebra.order.with_zero
 import topology.locally_finite
+import data.fin.interval
 
 import to_mathlib.set_theory.cardinal.basic
 
@@ -78,6 +79,12 @@ nat.cases_on n nat.linear_order (λ _, fin.linear_order)
 
 instance (n : ℕ) : indexing (index_type n) :=
 nat.cases_on n nat.indexing (λ _, fin.indexing _)
+
+instance (n : ℕ) : locally_finite_order (index_type n) :=
+nat.cases_on n nat.locally_finite_order (λ _, fin.locally_finite_order _)
+
+instance (n : ℕ) : order_bot (index_type n) :=
+nat.cases_on n nat.order_bot (λ k, show order_bot $ fin (k + 1), by apply_instance)
 
 def index_from_nat (N n : ℕ) : index_type N := indexing.from_nat n
 
