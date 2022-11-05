@@ -255,7 +255,7 @@ lemma chart_pair.update_is_holonomic_at_iff {F : htpy_formal_sol R}
 sorry
 
 lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
-  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t x} (hx : x ∉ range p.φ)
+  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t x} (hx : x ∉ p.φ '' p.K₁)
   (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at x ↔ (F t).is_holonomic_at x :=
 sorry
 
@@ -265,97 +265,3 @@ lemma chart_pair.dist_update {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x) (hδ_c
   (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
   ∀ t x, dist (((p.update F 𝓕) t).bs x) ((F 0).bs x) < δ x :=
 sorry
-
-
-/-
-namespace localisation_data
-
-
-variables (L : localisation_data I I' f) (F : formal_sol R) (i : L.ι)
-  (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
-
-def loc_rel (R : rel_mfld I M I' M') : rel_loc E E' :=
-(R.localize (L.φ i) (L.ψj i)).rel_loc
-
-lemma is_open_loc_rel (h : is_open R) : is_open (L.loc_rel i R) :=
-is_open_of_is_open _ $ h.preimage $ one_jet_bundle.continuous_transfer _ _
-
-lemma is_ample (h : R.ample) : (L.loc_rel i R).is_ample :=
-ample_of_ample _ (h.localize _ _)
-
-/-
-FIXME: the next definition in progress should probably use
-`transfer F.to_one_jet_sec (L.ψj i) (L.φ i) hFL` instead of going back to
-`one_jet_sec.localize`
--/
-
-/-- Turn a global formal solution into a local one using some localisation data. -/
-def loc_formal_sol {F : formal_sol R}
-  {i : L.ι} (hFL : range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
-  rel_loc.formal_sol (R.localize (L.φ i) (L.ψj i)).rel_loc :=
-{ is_sol := sorry,
-  ..(F.localize (L.φ i) (L.ψj i) hFL).loc }
-
-/-- Turn a global homotopy of formal solutions into a local one using some localisation data. -/
-def loc_htpy_formal_sol {𝓕 : htpy_formal_sol R}
-  {i : L.ι} (h𝓕L : ∀ t, range ((𝓕 t).bs ∘ (L.φ i)) ⊆ range (L.ψj i)) :
-  (L.loc_rel i R).htpy_formal_sol :=
-sorry
-
-def Id := open_smooth_embedding.id 𝓘(ℝ, ℝ) ℝ
-
-def update_htpy_jet_sec (F : htpy_one_jet_sec I M I' M') (𝓕 : htpy_jet_sec E E') :
-  htpy_one_jet_sec I M I' M' :=
-{ bs := curry $ (Id.prod (L.φ i)).update (L.ψj i) (uncurry F.bs) (uncurry 𝓕.f),
-  ϕ := λ t m, sorry,
-  smooth' := sorry }
-
-section
-variable (hF :  range (F.bs ∘ (L.φ i)) ⊆ range (L.ψj i))
-
--- #check L.loc_formal_sol hF
--- #check (L.φ i).update_formal_sol (L.ψj i) F
--- #check (L.φ i).update (L.ψj i) F.bs
--- #check (L.φ i).Jupdate (L.ψj i) F.to_one_jet_sec
-
-end
-
-def unloc_htpy_jet_sec (i : L.ι) (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec I M I' M' :=
-/- htpy_one_jet_sec.unlocalize (L.ψj i) (L.φ i)
-{ bs := λ t e, 𝓕.f t e,
-  ϕ := λ t e, 𝓕.φ t e,
-  smooth' := sorry } -/sorry
-
-/-- Turn a local homotopy of formal solutions into a global one using some localisation data. -/
-def unloc_htpy_formal_sol (i : L.ι) (𝓕 : (L.loc_rel i R).htpy_formal_sol) : htpy_formal_sol R :=
-{ is_sol' := sorry,
-  ..L.unloc_htpy_jet_sec i 𝓕.to_family_jet_sec }
-
-lemma unloc_loc {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
-  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) (h : 𝓕 0 = L.loc_formal_sol hF₀) :
-  L.unloc_htpy_formal_sol i 𝓕 0 = F₀ :=
-sorry
-
-lemma foobar {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
-  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
-  (hAC : (L.φ i) ⁻¹' A ⊆ C)
-  (h : ∀ᶠ x near C, ∀ (t : ℝ), 𝓕 t x = L.loc_formal_sol hF₀ x) :
-  ∀ (t : ℝ), ∀ᶠ (x : M) near A, L.unloc_htpy_formal_sol i 𝓕 t x = F₀ x :=
-sorry
-
-lemma barbaz {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
-  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
-  (hAC : (L.φ i) ⁻¹' A ⊆ C)
-  (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
-  ∀ᶠ (x : M) near A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
-sorry
-
-lemma barbaz' {i : L.ι} {𝓕 : (L.loc_rel i R).htpy_formal_sol} {F₀ : formal_sol R}
-  (hF₀ :  range (F₀.bs ∘ (L.φ i)) ⊆ range (L.ψj i)) {A : set M} {C : set E}
-  (hAC : (L.φ i) ⁻¹' A ⊆ C)
-  (h : ∀ᶠ x near C, (𝓕 1).is_holonomic_at x) :
-  ∀ x ∈ A, (L.unloc_htpy_formal_sol i 𝓕 1).is_holonomic_at x :=
-(barbaz L hF₀ hAC h).nhds_set_forall_mem
-
-end localisation_data
- -/
