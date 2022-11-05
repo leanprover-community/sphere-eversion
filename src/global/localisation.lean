@@ -188,16 +188,30 @@ def rel_loc.htpy_formal_sol.unloc : htpy_formal_sol (rel_mfld.localize p.φ p.ψ
 { is_sol' := 𝓕.is_sol,
   ..𝓕.to_htpy_jet_sec.unloc}
 
+lemma rel_loc.htpy_formal_sol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}
+  {t t' x} (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x :=
+begin
+  ext1,
+  refl,
+  change (𝓕 t x).1 = (𝓕' t' x).1,
+  rw h,
+  change (𝓕 t x).2 = (𝓕' t' x).2,
+  rw h
+end
+
+@[simp]
+lemma htpy_formal_sol.transfer_unloc_localize (hF : p.accepts F) (t : ℝ) (x : E) :
+  p.φ.transfer p.ψ ((F.localize p hF).unloc p t x) = F t (p.φ x) :=
+transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
+
 open_locale classical
 
 def chart_pair.update (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
    : htpy_formal_sol R :=
 if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) (λ t x (hx : x ∉ p.K₁), begin
-  erw ← transfer_localize (F t).to_one_jet_sec p.φ p.ψ (h.hF t) x,
-  have := h.hFF t x hx,
-  apply congr_arg,
-  sorry
+  rw [← F.transfer_unloc_localize p h.1, rel_loc.htpy_formal_sol.unloc_congr p (h.hFF t x hx).symm],
+  refl
 end) else F
 
 lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
@@ -205,17 +219,18 @@ lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
   p.update F 𝓕 t m = F t m :=
 sorry
 
--- Patrick hopes the following is true, but proving it will require going back to earlier files
--- to add more congruence lemmas
--- See also the more general version in the next lemma
 lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t x}
    (htx : ∀ hF : p.accepts F, 𝓕 t x = F.localize p hF t x) :
   p.update F 𝓕 t (p.φ x) = F t (p.φ x) :=
-sorry
+begin
+  dsimp only [chart_pair.update],
+  split_ifs,
+  simp only [open_smooth_embedding.update_htpy_formal_sol_apply_image],
+  rw [rel_loc.htpy_formal_sol.unloc_congr p (htx h.1), htpy_formal_sol.transfer_unloc_localize],
+  refl,
+end
 
--- Patrick hopes the following is true, but proving it will require going back to earlier files
--- to add more congruence lemmas
 lemma chart_pair.update_eq_of_eq' (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat F 𝓕) {t t' x}
   (h : 𝓕 t x = F.localize p h𝓕.1 t' x) :
@@ -223,11 +238,10 @@ lemma chart_pair.update_eq_of_eq' (F : htpy_formal_sol R)
 begin
   dsimp only [chart_pair.update],
   split_ifs,
-  dsimp only [open_smooth_embedding.update_htpy_formal_sol],
-  simp only [family_formal_sol.coe_mk],
-  sorry
+  simp only [open_smooth_embedding.update_htpy_formal_sol_apply_image],
+  rw [rel_loc.htpy_formal_sol.unloc_congr p , htpy_formal_sol.transfer_unloc_localize _ _ h𝓕.1],
+  exact h
 end
-
 
 lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t}

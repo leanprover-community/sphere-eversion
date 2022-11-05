@@ -68,6 +68,16 @@ def one_jet_bundle := bundle.total_space (one_jet_space I I' : M × M' → Type*
 local notation `J¹MM'` := one_jet_bundle I M I' M'
 local notation `HJ` := model_prod (model_prod H H') (E →L[𝕜] E')
 
+@[ext] lemma one_jet_bundle.ext {x y : J¹MM'} (h : x.1.1 = y.1.1) (h' : x.1.2 = y.1.2)
+  (h'' : x.2 = y.2) : x = y :=
+begin
+  rcases x with ⟨⟨a, b⟩, c⟩,
+  rcases y with ⟨⟨d, e⟩, f⟩,
+  dsimp only at h h' h'',
+  rw [h, h', h'']
+end
+
+
 /-- The projection from the one jet bundle of smooth manifolds to the product manifold. As the
 one_jet bundle is represented internally as a sigma type, the notation `p.1` also works for the
 projection of the point `p`. -/

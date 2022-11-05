@@ -413,7 +413,7 @@ tc.stateless $ λ ft, do
     h "li" [key u_n] [
       h "span" [cn "goal-vdash b"] ["⊢ "],
       t_comp
-  ]] ++ lchs
+  ]] ++ lchs.reverse
 
 /--
 Actions accepted by the `tactic_view_component`.

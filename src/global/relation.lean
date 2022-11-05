@@ -331,16 +331,16 @@ local notation `IMN` := (IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)
 /-- Transfer map between one jet bundles induced by open smooth embedding into the source and
 targets. -/
 @[simps fst_fst fst_snd]
-def one_jet_bundle.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M IN N :=
+def open_smooth_embedding.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M IN N :=
 λ σ, ⟨⟨φ σ.1.1, ψ σ.1.2⟩,
       ((ψ.fderiv σ.1.2 : TY σ.1.2 →L[ℝ] TN (ψ σ.1.2)).comp σ.2).comp
         ((φ.fderiv σ.1.1).symm : TM (φ σ.1.1) →L[ℝ] TX σ.1.1)⟩
 
-lemma one_jet_bundle.smooth_transfer :
+lemma open_smooth_embedding.smooth_transfer :
   smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY))
-  ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) (one_jet_bundle.transfer φ ψ) :=
+  ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) (φ.transfer ψ) :=
 begin
-  simp_rw [one_jet_bundle.transfer, ψ.fderiv_coe, φ.fderiv_symm_coe],
+  simp_rw [open_smooth_embedding.transfer, ψ.fderiv_coe, φ.fderiv_symm_coe],
   refine smooth.one_jet_comp IX (λ (x : one_jet_bundle IX X IY Y), x.1.1) _ _,
   refine smooth.one_jet_comp IY (λ (x : one_jet_bundle IX X IY Y), x.1.2) _ _,
   { exact λ σ₀, (smooth_at.one_jet_ext (ψ.smooth_to _)).comp σ₀
@@ -358,23 +358,23 @@ begin
     exact mem_range_self _ },
 end
 
-lemma one_jet_bundle.continuous_transfer : continuous (one_jet_bundle.transfer φ ψ) :=
-(one_jet_bundle.smooth_transfer _ _).continuous
+lemma one_jet_bundle.continuous_transfer : continuous (φ.transfer ψ) :=
+(open_smooth_embedding.smooth_transfer _ _).continuous
 
 /-- localize a relation -/
 def rel_mfld.localize (R : rel_mfld IM M IN N) : rel_mfld IX X IY Y :=
-one_jet_bundle.transfer φ ψ ⁻¹' R
+φ.transfer ψ ⁻¹' R
 
 /-- Ampleness survives localization -/
 lemma rel_mfld.ample.localize (hR : R.ample) : (R.localize φ ψ).ample :=
 begin
   intros x p,
   have : (rel_mfld.localize φ ψ R).slice x p =
-    (ψ.fderiv x.1.2).symm '' R.slice (x.transfer φ ψ) (p.map (φ.fderiv x.1.1)),
+    (ψ.fderiv x.1.2).symm '' R.slice (φ.transfer ψ x) (p.map (φ.fderiv x.1.1)),
   { ext v,
     simp_rw [rel_mfld.localize, continuous_linear_equiv.image_symm_eq_preimage, mem_preimage,
       mem_slice, mem_preimage],
-    dsimp only [one_jet_bundle.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
+    dsimp only [open_smooth_embedding.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
     simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
       one_jet_bundle.mk] },
   rw [this],
@@ -401,15 +401,15 @@ end
   end }
 
 lemma transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
-  (F.localize φ ψ hF x).transfer φ ψ = F (φ x) :=
+  φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) :=
 begin
   rw [one_jet_sec.coe_apply, one_jet_sec.localize_bs, one_jet_sec.localize_ϕ,
-    one_jet_bundle.transfer],
+    open_smooth_embedding.transfer],
   dsimp only,
   ext,
   { refl },
   { simp_rw [ψ.right_inv (hF $ mem_range_self x), function.comp_apply, F.bs_eq] },
-  { apply heq_of_eq, dsimp only, ext v,
+  { dsimp only,
     simp_rw [continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe,
       continuous_linear_equiv.apply_symm_apply] },
 end
@@ -450,18 +450,18 @@ def transfer (hF : range (F.bs ∘ φ) ⊆ range ψ) (h2F : ∀ x, F (φ x) ∈ 
 /-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
 def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
-{ to_fun := one_jet_bundle.transfer φ ψ,
+{ to_fun := φ.transfer ψ,
   inv_fun := λ σ, ⟨⟨φ.inv_fun σ.1.1, ψ.inv_fun σ.1.2⟩,
       (((ψ.fderiv $ ψ.inv_fun σ.1.2).symm : TN (ψ $ ψ.inv_fun σ.1.2) →L[ℝ] TY (ψ.inv_fun σ.1.2)).comp σ.2).comp
         ((φ.fderiv $ φ.inv_fun σ.1.1) : TX (φ.inv_fun σ.1.1) →L[ℝ] TM (φ $ φ.inv_fun σ.1.1))⟩,
   left_inv' := begin
     rintros ⟨x, y, φ⟩,
     refine sigma.ext (prod.ext _ _) _,
-    sorry { dsimp [one_jet_bundle.transfer],
+    sorry { dsimp [open_smooth_embedding.transfer],
       apply φ.left_inv' },
-    sorry { dsimp [one_jet_bundle.transfer],
+    sorry { dsimp [open_smooth_embedding.transfer],
       apply ψ.left_inv' },
-    sorry { dsimp [one_jet_bundle.transfer],
+    sorry { dsimp [open_smooth_embedding.transfer],
       apply heq_of_eq,
       ext1,
       simp only [open_smooth_embedding.fderiv_symm_coe, open_smooth_embedding.fderiv_coe,
@@ -503,7 +503,7 @@ lemma open_smooth_embedding.Jupdate_bs (F : one_jet_sec IM M IN N) (G : one_jet_
 begin
   classical,
   ext x,
-  change (if x ∈ range φ then one_jet_bundle.transfer φ ψ _ else _).1.2 = if _ then _ else _,
+  change (if x ∈ range φ then φ.transfer ψ _ else _).1.2 = if _ then _ else _,
   split_ifs ; refl,
 end
 
@@ -524,13 +524,20 @@ def open_smooth_embedding.htpy_Jupdate (F : htpy_one_jet_sec IM M IN N) (G : htp
   ϕ := λ t m, (JΘ (F t) (G t) m).2,
   smooth' := sorry }
 
+@[simp]
+lemma open_smooth_embedding.htpy_Jupdate_apply {F : htpy_one_jet_sec IM M IN N}
+  {G : htpy_one_jet_sec IX X IY Y}
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t m) :
+ φ.htpy_Jupdate ψ F G hFG t m = ⟨⟨m, (JΘ (F t) (G t) m).1.2⟩, (JΘ (F t) (G t) m).2⟩ :=
+rfl
+
 lemma open_smooth_embedding.htpy_Jupdate_bs (F : htpy_one_jet_sec IM M IN N)
   (G : htpy_one_jet_sec IX X IY Y) (t : ℝ) (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) :
 (open_smooth_embedding.htpy_Jupdate φ ψ F G hFG t).bs = open_smooth_embedding.update φ ψ (F t).bs (G t).bs :=
 begin
   classical,
   ext x,
-  change (if x ∈ range φ then one_jet_bundle.transfer φ ψ (G t (φ.inv_fun x)) else F t x).1.2 =
+  change (if x ∈ range φ then φ.transfer ψ (G t (φ.inv_fun x)) else F t x).1.2 =
     if x ∈ range φ then _ else _,
   split_ifs ; refl,
 end
@@ -545,4 +552,46 @@ def open_smooth_embedding.update_htpy_formal_sol (F : htpy_formal_sol R)
   ..φ.htpy_Jupdate ψ F.to_family_one_jet_sec G.to_family_one_jet_sec hFG }
 
 
+lemma open_smooth_embedding.update_htpy_formal_sol_apply {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t x) :
+φ.update_htpy_formal_sol ψ F G hFG t x = ⟨⟨x, (JΘ (F t) (G t) x).1.2⟩, (JΘ (F t) (G t) x).2⟩ :=
+rfl
+
+@[simp]
+lemma open_smooth_embedding.update_htpy_formal_sol_apply_of_not_mem {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t)
+  {m} (hx : m ∉ range φ) :
+φ.update_htpy_formal_sol ψ F G hFG t m = F t m :=
+begin
+  rw [open_smooth_embedding.update_htpy_formal_sol_apply, φ.update_of_nmem_range _ _ _ hx],
+  refl
+end
+
+@[simp]
+lemma open_smooth_embedding.update_htpy_formal_sol_apply_of_mem {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t)
+  {m} (hx : m ∈ range φ) :
+φ.update_htpy_formal_sol ψ F G hFG t m = φ.transfer ψ (G t $ φ.inv_fun m) :=
+begin
+  rw [open_smooth_embedding.update_htpy_formal_sol_apply, φ.update_of_mem_range _ _ _ hx],
+  ext,
+  { change m = φ (φ.inv_fun m),
+    rw φ.right_inv hx },
+  refl,
+  refl
+end
+
+@[simp]
+lemma open_smooth_embedding.update_htpy_formal_sol_apply_image {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t)
+  {x} :
+φ.update_htpy_formal_sol ψ F G hFG t (φ x) = φ.transfer ψ (G t x) :=
+begin
+ rw [open_smooth_embedding.update_htpy_formal_sol_apply_of_mem, φ.left_inv],
+ exact mem_range_self x,
+end
 end smooth_open_embedding
