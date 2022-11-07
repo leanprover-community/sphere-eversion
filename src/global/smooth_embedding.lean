@@ -592,6 +592,19 @@ begin
   rw ← ψ.right_inv h₂,
   exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1,
 end
+
+lemma dist_update' [proper_space Y] {K : set X} (hK : is_compact K)
+  {P : Type*} [metric_space P] {KP : set P} (hKP : is_compact KP)
+  (f : P → M → N) (hf : continuous ↿f)
+  (hf' : ∀ p, (f p) '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
+  ∃ η > (0 : ℝ), ∀ g : P → X → Y,
+    (∀ (p ∈ KP) (p' ∈ KP) (x ∈ K), dist (g p' x) (ψ.inv_fun (f p (φ x))) < η →
+      dist (update φ ψ (f p') (g p') $ φ x) (f p $ φ x) < ε (φ x)) :=
+begin
+  -- Ce n'est pas le bon énoncé pour l'instant
+  sorry
+end
+
 end metric
 
 end updating

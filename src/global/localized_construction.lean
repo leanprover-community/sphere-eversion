@@ -88,7 +88,7 @@ begin
   have δ'_cont : continuous δ',
   { exact hδ_cont.sub (continuous.dist (F.smooth_bs.continuous.comp (continuous.prod.mk 1))
                                        (F.smooth_bs.continuous.comp (continuous.prod.mk 0))) },
-  rcases p.dist_update δ'_pos δ'_cont 1 with ⟨τ, τ_pos, hτ⟩,
+  rcases p.dist_update δ'_pos δ'_cont with ⟨τ, τ_pos, hτ⟩,
   let 𝓕 : Rloc.htpy_formal_sol := F.localize p hFφψ,
   have h𝓕₀A :  ∀ᶠ e near φ ⁻¹' A, (𝓕 0).is_holonomic_at e ∧ ∀ t, 𝓕 t e = 𝓕 0 e,
   { rw eventually_nhds_set_iff at hF₀A hFA ⊢,

@@ -265,12 +265,34 @@ lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
   (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at x ↔ (F t).is_holonomic_at x :=
 sorry
 
-lemma chart_pair.dist_update {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ)
+lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ)
   {F : htpy_formal_sol R}
-  --(hF : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < δ x)
-  (t₀ : ℝ) : ∃ η > (0 : ℝ),
-  ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
-  (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
-  ∀ e t, ∥(𝓕 t).f e - (F.localize p hF𝓕.1 t₀).f e∥ < η →
-   dist (((p.update F 𝓕) t).bs $ p.φ e) ((F t₀).bs $ p.φ e) < δ (p.φ e) :=
-sorry
+  -- (hF : p.accepts F) -- Probably needed
+   :
+  ∃ η > (0 : ℝ),
+    ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
+    (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
+    ∀ e t, ∥(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e∥ < η →
+    dist (((p.update F 𝓕) t).bs $ p.φ e) ((F 1).bs $ p.φ e) < δ (p.φ e) :=
+begin
+  let bsF := (λ t m, (F t).bs m),
+  have : ∀ 𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol, ∀ t e,
+    (p.update F 𝓕 t).bs (p.φ e) = p.φ.update p.ψ (bsF t) (λ e, (𝓕.unloc p t).bs e) (p.φ e),
+  {
+    sorry },
+  simp only [this], clear this,
+  have cpct : is_compact (Icc 0 2 : set ℝ), sorry,
+  have cont : continuous ↿(λ t m, (F t).bs m), sorry,
+  have hrg : ∀ t, (F t).bs '' range p.φ ⊆ range p.ψ, sorry,
+  rcases p.φ.dist_update' p.ψ p.hK₁ cpct (λ t m, (F t).bs m) cont hrg hδ_pos hδ_cont with ⟨η, η_pos, hη⟩,
+  refine ⟨η, η_pos, _⟩,
+  intros 𝓕 H H' e t het,
+  by_cases Het : t ∈ (Icc 0 2 : set ℝ) ∧ e ∈ p.K₁,
+  sorry { rw ← dist_eq_norm at het,
+    exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, one_le_two⟩ t Het.1 e Het.2 het },
+  { cases not_and_distrib.mp Het with ht he',
+    { specialize H' e t ht,
+      sorry },
+    { have := H.2 t e he',
+      sorry } }
+end
