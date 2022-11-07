@@ -27,6 +27,34 @@ end
 
 end to_specific_limits
 
+section maps
+open function set
+variables {α β : Type*} [topological_space α] [topological_space β] {f : α → β} {g : β → α}
+
+lemma function.left_inverse.mem_preimage_iff (hfg : left_inverse g f) {s : set α} {x : α} :
+  f x ∈ g ⁻¹' s ↔ x ∈ s :=
+by rw [set.mem_preimage, hfg x]
+
+-- to set.basic
+lemma function.left_inverse.image_eq (hfg : left_inverse g f) (s : set α) :
+  f '' s = range f ∩ g ⁻¹' s :=
+-- begin
+--   simp_rw [set.ext_iff, mem_image, mem_inter_iff, mem_range, and_comm (_ ∈ _),
+--     @eq_comm _ (f _), ← exists_and_distrib_right, ← exists_prop],
+--   simp only [hfg _, iff_true_intro iff.rfl, implies_true_iff, hfg.mem_preimage_iff] {contextual := tt},
+-- end
+begin
+  ext x, split,
+  { rintro ⟨x, hx, rfl⟩, exact ⟨mem_range_self x, hfg.mem_preimage_iff.mpr hx⟩ },
+  { rintro ⟨⟨x, rfl⟩, b⟩, exact mem_image_of_mem f (hfg.mem_preimage_iff.mp b) }
+end
+
+lemma function.left_inverse.is_open_map {f : α → β} {g : β → α} (hfg : left_inverse g f)
+  (hf : is_open (range f)) (hg : continuous_on g (range f)) : is_open_map f :=
+by { intros U hU, rw [hfg.image_eq], exact hg.preimage_open_of_open hf hU }
+
+end maps
+
 section -- to separation
 
 lemma filter.eventually.closed_neighborhood {α} [topological_space α] [normal_space α] {C : set α}

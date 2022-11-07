@@ -36,7 +36,7 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 {H' : Type*} [topological_space H'] (I' : model_with_corners 𝕜 E' H')
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
 
-variables (I I' M M')
+variables (I M I' M')
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext] structure one_jet_sec :=
@@ -47,9 +47,13 @@ variables (I I' M M')
 instance : has_coe_to_fun (one_jet_sec I M I' M') (λ S, M → one_jet_bundle I M I' M') :=
 ⟨λ S x, one_jet_bundle.mk x (S.bs x) (S.ϕ x)⟩
 
-variables {I I' M M'}
+variables {I M I' M'}
 
 namespace one_jet_sec
+
+protected def mk' (F : M → one_jet_bundle I M I' M') (hF : ∀ m, (F m).1.1 = m)
+  (h2F : smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) F) : one_jet_sec I M I' M' :=
+⟨λ x, (F x).1.2, λ x, (F x).2, by { convert h2F, ext m, exact (hF m).symm, refl, refl }⟩
 
 lemma coe_apply (F : one_jet_sec I M I' M') (x : M) : F x = ⟨(x, F.bs x), (F.ϕ x)⟩ := rfl
 lemma fst_eq (F : one_jet_sec I M I' M') (x : M) : (F x).1 = (x, F.bs x) := rfl
@@ -141,6 +145,12 @@ instance : has_coe_to_fun (family_one_jet_sec I M I' M' J N) (λ S, N → one_je
 namespace family_one_jet_sec
 
 variables {I M I' M' J N J' N'}
+
+protected def mk' (FF : N → M → one_jet_bundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
+  (h2F : smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) :
+  family_one_jet_sec I M I' M' J N :=
+⟨λ s x, (FF s x).1.2, λ s x, (FF s x).2,
+  by { convert h2F, ext ⟨s, m⟩, exact (hF s m).symm, refl, refl }⟩
 
 @[simp] lemma bs_eq_coe_bs (S : family_one_jet_sec I M I' M' J N) (s : N) : S.bs s = (S s).bs :=
 rfl

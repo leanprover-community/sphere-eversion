@@ -6,6 +6,7 @@ import to_mathlib.topology.paracompact
 import to_mathlib.topology.local_homeomorph
 import to_mathlib.topology.algebra.order.compact
 import to_mathlib.topology.nhds_set
+import to_mathlib.topology.misc
 import to_mathlib.geometry.manifold.charted_space
 import to_mathlib.geometry.manifold.smooth_manifold_with_corners
 import to_mathlib.analysis.normed_space.misc
@@ -30,7 +31,7 @@ structure open_smooth_embedding  :=
 (to_fun : M → M')
 (inv_fun : M' → M)
 (left_inv' : ∀{x}, inv_fun (to_fun x) = x)
-(open_map : is_open (range to_fun))
+(is_open_range : is_open (range to_fun))
 (smooth_to : smooth I I' to_fun)
 (smooth_inv : smooth_on I' I inv_fun (range to_fun))
 
@@ -52,45 +53,25 @@ rfl
 @[simp] lemma right_inv {y : M'} (hy : y ∈ range f) : f (f.inv_fun y) = y :=
 by { obtain ⟨x, rfl⟩ := hy, rw [f.left_inv] }
 
-def to_local_homeomorph : local_homeomorph M M' :=
-{ to_fun := f,
-  inv_fun := f.inv_fun,
-  source := univ,
-  target := range f,
-  open_source := is_open_univ,
-  open_target := f.open_map,
-  map_source' := λ x _, mem_range_self x,
-  map_target' := λ _ _, mem_univ _,
-  left_inv' := λ x _, f.left_inv x,
-  right_inv' := λ _, f.right_inv,
-  continuous_to_fun := f.smooth_to.continuous.continuous_on,
-  continuous_inv_fun := f.smooth_inv.continuous_on }
-
-lemma image_eq {s : set M} : f '' s = f.inv_fun ⁻¹' s ∩ range f :=
-begin
-  rw [inter_comm],
-  exact f.to_local_homeomorph.image_eq_target_inter_inv_preimage (subset_univ _)
-end
-
-lemma open_map : is_open_map f :=
-λ U hU, _
-
-lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
-filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv hy
-
-lemma injective : function.injective f :=
-function.left_inverse.injective (left_inv f)
-
-protected lemma continuous : continuous f := f.smooth_to.continuous
-
-lemma is_open_range : is_open (range f) :=
-f.open_map.is_open_range
-
 lemma smooth_at_inv {y : M'} (hy : y ∈ range f) : smooth_at I' I f.inv_fun y :=
 (f.smooth_inv y hy).cont_mdiff_at $ f.is_open_range.mem_nhds hy
 
 lemma smooth_at_inv' {x : M} : smooth_at I' I f.inv_fun (f x) :=
 f.smooth_at_inv $ mem_range_self x
+
+lemma left_inverse : function.left_inverse f.inv_fun f :=
+left_inv f
+
+lemma injective : function.injective f :=
+f.left_inverse.injective
+
+protected lemma continuous : continuous f := f.smooth_to.continuous
+
+lemma open_map : is_open_map f :=
+f.left_inverse.is_open_map f.is_open_range f.smooth_inv.continuous_on
+
+lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
+filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv hy
 
 /- Note that we are slightly abusing the fact that `tangent_space I x` and
 `tangent_space I (f.inv_fun (f x))` are both definitionally `E` below. -/
@@ -193,7 +174,7 @@ variables (I M)
 { to_fun := id,
   inv_fun := id,
   left_inv' := λ x, rfl,
-  open_map := is_open_map.id,
+  is_open_range := is_open_map.id.is_open_range,
   smooth_to := smooth_id,
   smooth_inv := smooth_on_id }
 
@@ -209,7 +190,7 @@ variables {I M I' M'}
 { to_fun := g ∘ f,
   inv_fun := f.inv_fun ∘ g.inv_fun,
   left_inv' := λ x, by simp only [function.comp_app, left_inv],
-  open_map := g.open_map.comp f.open_map,
+  is_open_range := (g.open_map.comp f.open_map).is_open_range,
   smooth_to := g.smooth_to.comp f.smooth_to,
   smooth_inv := (f.smooth_inv.comp' g.smooth_inv).mono
   begin
@@ -238,7 +219,7 @@ but the proof shouldn't be hard anyway.
 { to_fun := prod.map f f',
   inv_fun := prod.map f.inv_fun f'.inv_fun,
   left_inv' := sorry,
-  open_map := sorry,
+  is_open_range := sorry,
   smooth_to := sorry,
   smooth_inv := sorry }
 
@@ -255,7 +236,7 @@ variables (e : E ≃L[𝕜] E') [complete_space E] [complete_space E']
 { to_fun := e,
   inv_fun := e.symm,
   left_inv' := e.symm_apply_apply,
-  open_map := e.is_open_map,
+  is_open_range := e.is_open_map.is_open_range,
   smooth_to := (e : E →L[𝕜] E').cont_mdiff,
   smooth_inv := (e.symm : E' →L[𝕜] E).cont_mdiff.cont_mdiff_on }
 
@@ -334,7 +315,7 @@ def open_smooth_emb_of_diffeo_subset_chart_target (x : M) {f : local_homeomorph 
       local_homeomorph.coe_coe, local_equiv.coe_trans_symm, local_homeomorph.coe_coe_symm,
       model_with_corners.left_inv, model_with_corners.to_local_equiv_coe_symm, comp_app, aux],
   end,
-  open_map := λ u hu,
+  is_open_range := is_open_map.is_open_range $ λ u hu,
   begin
     have aux : is_open (f '' u) := f.image_open_of_open hu (hf₁.symm ▸ subset_univ u),
     convert ext_chart_preimage_open_of_open' IF x aux,
@@ -464,17 +445,20 @@ namespace open_smooth_embedding
 
 section updating
 
-variables {𝕜 EX EM EY EN X M Y N : Type*} [nontrivially_normed_field 𝕜]
+variables {𝕜 EX EM EY EN EM' X M Y N M' : Type*} [nontrivially_normed_field 𝕜]
   [normed_add_comm_group EX] [normed_space 𝕜 EX]
   [normed_add_comm_group EM] [normed_space 𝕜 EM]
+  [normed_add_comm_group EM'] [normed_space 𝕜 EM']
   [normed_add_comm_group EY] [normed_space 𝕜 EY]
   [normed_add_comm_group EN] [normed_space 𝕜 EN]
   {HX : Type*} [topological_space HX] {IX : model_with_corners 𝕜 EX HX}
   {HY : Type*} [topological_space HY] {IY : model_with_corners 𝕜 EY HY}
   {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
+  {HM' : Type*} [topological_space HM'] {IM' : model_with_corners 𝕜 EM' HM'}
   {HN : Type*} [topological_space HN] {IN : model_with_corners 𝕜 EN HN}
   [topological_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
   [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
+  [topological_space M'] [charted_space HM' M']
 
 section non_metric
 variables
@@ -514,7 +498,7 @@ begin
   { simp [hm'] }
 end
 
-
+open function
 /- FIXME: the blueprint statement corresponding to the next two lemmas has very confusing
 quantifiers status.
 -/
@@ -525,24 +509,32 @@ will hold both when `K` is compact and when `φ = Id.prod ψ` and `K = ℝ × H`
 -/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
-lemma smooth_update [t2_space M]
-  {K : set X} (hK : is_compact K) (hf : smooth IM IN f) (hg : smooth IX IY g)
-  (hg' : ∀ x, x ∉ K → f (φ x) = ψ (g x)) : smooth IM IN (update φ ψ f g) :=
+lemma smooth_update
+  (f : M' → M → N) (g : M' → X → Y)
+  {k : M' → M}
+  {K : set X} (hK : is_closed (φ '' K)) (hf : smooth (IM'.prod IM) IN (uncurry f))
+  (hg : smooth (IM'.prod IX) IY (uncurry g))
+  (hk : smooth IM' IM k)
+  (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
+  smooth IM' IN (λ x, update φ ψ (f x) (g x) (k x)) :=
 begin
-  have hK' : ∀ m ∉ φ '' K, update φ ψ f g m = f m := λ m hm, by
-    from nice_update_of_eq_outside_compact_aux φ ψ f g hg' hm,
-  refine cont_mdiff_of_locally_cont_mdiff_on (λ m, _),
+  have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) :=
+    λ x hx, nice_update_of_eq_outside_compact_aux φ ψ (f x) (g x) (hg' x) hx,
+  refine cont_mdiff_of_locally_cont_mdiff_on (λ x, _),
   let U := range φ,
   let V := (φ '' K)ᶜ,
-  have h₂ : is_open V := is_open_compl_iff.mpr (hK.image φ.continuous).is_closed,
+  have h₂ : is_open (k ⁻¹' V) := hK.is_open_compl.preimage hk.continuous,
   have h₃ : V ∪ U = univ,
   { rw [← compl_subset_iff_union, compl_compl], exact image_subset_range φ K, },
-  have h₄ : ∀ m ∈ U, update φ ψ f g m = (ψ ∘ g ∘ φ.inv_fun) m := λ m hm, by simp [hm],
-  by_cases hm : m ∈ U,
-  { exact ⟨U, φ.is_open_range, hm, (cont_mdiff_on_congr h₄).mpr $
-      ψ.smooth_to.comp_cont_mdiff_on $ hg.comp_cont_mdiff_on φ.smooth_inv⟩, },
-  { refine ⟨V, h₂, _, (cont_mdiff_on_congr hK').mpr hf.cont_mdiff_on⟩,
-    simpa [hm] using set.ext_iff.mp h₃ m }
+  have h₄ : ∀ x, k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.inv_fun) (k x) :=
+    λ m hm, by simp [hm],
+  by_cases hx : k x ∈ U,
+  { refine ⟨k ⁻¹' U, φ.is_open_range.preimage hk.continuous, hx,
+    (cont_mdiff_on_congr h₄).mpr $ ψ.smooth_to.comp_cont_mdiff_on $
+      hg.comp_cont_mdiff_on (smooth_on_id.prod_mk $ φ.smooth_inv.comp hk.smooth_on subset_rfl)⟩ },
+  { refine ⟨k ⁻¹' V, h₂, _, (cont_mdiff_on_congr hK').mpr
+      (hf.comp (smooth_id.prod_mk hk)).cont_mdiff_on⟩,
+    simpa [hx] using set.ext_iff.mp h₃ (k x) }
 end
 
 end non_metric

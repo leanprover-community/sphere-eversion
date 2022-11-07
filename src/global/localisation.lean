@@ -209,14 +209,16 @@ lemma htpy_formal_sol.transfer_unloc_localize (hF : p.accepts F) (t : ℝ) (x : 
 transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
 
 open_locale classical
+variables [t2_space M]
 
 def chart_pair.update (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
    : htpy_formal_sol R :=
-if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) (λ t x (hx : x ∉ p.K₁), begin
+if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) p.hK₁
+  (λ t x (hx : x ∉ p.K₁), begin
   rw [← F.transfer_unloc_localize p h.1, rel_loc.htpy_formal_sol.unloc_congr p (h.hFF t x hx).symm],
   refl
-end) else F
+  end) else F
 
 lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t} {m} (hm : m ∉ p.φ '' p.K₁) :
