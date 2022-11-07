@@ -50,7 +50,7 @@ lemma rel_mfld.ample.satisfies_h_principle_core
   (L : localisation_data IM IX F₀.bs) :
   ∃ F : ℕ → htpy_formal_sol R, ∀ n : ℕ,
     ((F n 0 = F₀) ∧
-    (∀ t, ∀ᶠ x near A, F n t x = F₀ x) ∧
+    (∀ᶠ x near A, ∀ t, F n t x = F₀ x) ∧
     (∀ t x, dist ((F n t).bs x) (F₀.bs x) < δ x) ∧
 
     (∀ᶠ x near ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
@@ -62,7 +62,7 @@ begin
   borelize EX,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
     (Fn 0 = F₀) ∧
-    (∀ t, ∀ᶠ x near A, Fn t x = F₀ x) ∧
+    (∀ᶠ x near A, ∀ t, Fn t x = F₀ x) ∧
     (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < δ x) ∧
     (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < L.ε x) ∧
     (∀ᶠ x near ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
@@ -96,7 +96,7 @@ begin
     { simp only [F₀.const_htpy_eq, dist_self, τ_pos, forall_const] },
     have hFφψ : ∀ t, (F t).bs '' (range $ L.φ 0) ⊆ range (L.ψj 0),
     { simp only [F₀.const_htpy_eq, forall_const, ← range_comp, L.rg_subset_rg] },
-    have hFA : ∀ t, ∀ᶠ x near A, F t x = F 0 x,
+    have hFA : ∀ᶠ x near A, ∀ t, F t x = F 0 x,
     { simp only [F₀.const_htpy_eq, eq_self_iff_true, eventually_true, forall_const] },
     have hFC : ∀ᶠ x near ∅, (F 1).is_holonomic_at x,
     { simp only [nhds_set_empty] },
@@ -127,9 +127,9 @@ begin
       { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_right _ _) },
       { rw L.Union_succ,
         have : ∀ᶠ x near ⋃ i ≤ L.index n, (L.φ i) '' K₀, (F' 1).is_holonomic_at x,
-        { apply ((hF'F 1).eventually_nhds_set.and hFhol).mono,
+        { apply (hF'F.eventually_nhds_set.and hFhol).mono,
           rintros x ⟨hx, hx'⟩,
-          exact hx'.congr (eventually_eq.symm hx) },
+          exact hx'.congr (eventually_eq.symm $ hx.forall 1) },
         replace hF'K₀ : ∀ᶠ x near (L.φ (L.index (n + 1))) '' K₀, (F' 1).is_holonomic_at x,
           from hF'K₀.filter_mono (nhds_set_mono $ subset_union_right _ _),
         exact this.union hF'K₀ },
@@ -266,7 +266,8 @@ begin
   rcases h n with ⟨⟨h₀, h₁, h₂, h₃⟩, h₄, h₅⟩,
   refine ⟨⟨_, _, _, _⟩, _, _⟩,
   all_goals { try { assumption} },
-  exact h₃.on_set
+  exact h₁.forall,
+  exact h₃.on_set,
 end
 
 variables

@@ -164,6 +164,10 @@ def chart_pair.accepts (F : htpy_formal_sol R) := ∀ t, range ((F t).bs ∘ p.�
   φ_diff := sorry,
   is_sol := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).is_sol }
 
+lemma htpy_formal_sol.is_holonomic_localize (F : htpy_formal_sol R) (hF : p.accepts F)
+  (e t) (he : (F t).is_holonomic_at (p.φ e)) : (F.localize p hF t).is_holonomic_at e :=
+sorry
+
 lemma lem1 (F : htpy_formal_sol R) (hF : p.accepts F) (t : ℝ) :
   (F.localize p hF t).f = ((F t).localize p.φ p.ψ (hF t)).bs :=
 rfl
@@ -260,8 +264,11 @@ lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
 sorry
 
 lemma chart_pair.dist_update {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ)
-  {F : htpy_formal_sol R} (hF : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < δ x) : ∃ η > 0,
+  {F : htpy_formal_sol R}
+  --(hF : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < δ x)
+  (t₀ : ℝ) : ∃ η > (0 : ℝ),
   ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
   (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
-  ∀ t x, dist (((p.update F 𝓕) t).bs x) ((F 0).bs x) < δ x :=
+  ∀ e t, ∥(𝓕 t).f e - (F.localize p hF𝓕.1 t₀).f e∥ < η →
+   dist (((p.update F 𝓕) t).bs $ p.φ e) ((F t₀).bs $ p.φ e) < δ (p.φ e) :=
 sorry

@@ -581,20 +581,20 @@ begin
   exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
 end
 
-
-/-- Lemma `lem:improve_htpy_loc` from the blueprint. -/
-lemma rel_loc.htpy_formal_sol.improve {𝓕 : htpy_jet_sec E F} {A : set E} (hA : is_closed A)
-  (h_sol : ∀ t, (𝓕 t).is_formal_sol R)
+/-- This is a version of Lemma `lem:improve_htpy_loc` from the blueprint.
+The blueprint should be updated to match this. -/
+lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA : is_closed A)
+  --(hdist: ∀ x t, ∥(𝓕 t).f x - (𝓕 0).f x∥ < ε)
   (h_A : ∀ᶠ x near A, (𝓕 0).is_holonomic_at x ∧ ∀ t, 𝓕 t x = 𝓕 0 x)
   (h_C : ∀ᶠ x near L.C, (𝓕 1).is_holonomic_at x) :
   ∃ 𝓕' : htpy_formal_sol R,
-  (𝓕' 0 = 𝓕 0) ∧
-  (∀ t, (𝓕' t).is_formal_sol R) ∧
-  (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
-  (∀ᶠ x near L.C, ∀ t, 𝓕' t x = 𝓕 t x) ∧
-  (∀ x, x ∉ L.K₁ → ∀ t, 𝓕' t x = 𝓕 t x) ∧
-  (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ ≤ ε) ∧
-  (∀ᶠ x near L.K₀, (𝓕' 1).is_holonomic_at x) :=
+    (𝓕' 0 = 𝓕 0) ∧
+    (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
+    (∀ᶠ x near L.C, ∀ t, 𝓕' t x = 𝓕 t x) ∧
+    (∀ t x, x ∉ L.K₁ → 𝓕' t x = 𝓕 t x) ∧
+    (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ < ε) ∧
+    (∀ᶠ x near A ∪ L.K₀, (𝓕' 1).is_holonomic_at x) ∧
+    (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t x = 𝓕 t x) :=
 begin
   sorry,
 end
