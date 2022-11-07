@@ -29,8 +29,8 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 structure open_smooth_embedding  :=
 (to_fun : M → M')
 (inv_fun : M' → M)
-(left_inv'   : ∀{x}, inv_fun (to_fun x) = x)
-(open_map : is_open_map to_fun)
+(left_inv' : ∀{x}, inv_fun (to_fun x) = x)
+(open_map : is_open (range to_fun))
 (smooth_to : smooth I I' to_fun)
 (smooth_inv : smooth_on I' I inv_fun (range to_fun))
 
@@ -52,6 +52,29 @@ rfl
 @[simp] lemma right_inv {y : M'} (hy : y ∈ range f) : f (f.inv_fun y) = y :=
 by { obtain ⟨x, rfl⟩ := hy, rw [f.left_inv] }
 
+def to_local_homeomorph : local_homeomorph M M' :=
+{ to_fun := f,
+  inv_fun := f.inv_fun,
+  source := univ,
+  target := range f,
+  open_source := is_open_univ,
+  open_target := f.open_map,
+  map_source' := λ x _, mem_range_self x,
+  map_target' := λ _ _, mem_univ _,
+  left_inv' := λ x _, f.left_inv x,
+  right_inv' := λ _, f.right_inv,
+  continuous_to_fun := f.smooth_to.continuous.continuous_on,
+  continuous_inv_fun := f.smooth_inv.continuous_on }
+
+lemma image_eq {s : set M} : f '' s = f.inv_fun ⁻¹' s ∩ range f :=
+begin
+  rw [inter_comm],
+  exact f.to_local_homeomorph.image_eq_target_inter_inv_preimage (subset_univ _)
+end
+
+lemma open_map : is_open_map f :=
+λ U hU, _
+
 lemma coe_comp_inv_fun_eventually_eq (x : M) : f ∘ f.inv_fun =ᶠ[𝓝 (f x)] id :=
 filter.eventually_of_mem (f.open_map.range_mem_nhds x) $ λ y hy, f.right_inv hy
 
@@ -65,6 +88,9 @@ f.open_map.is_open_range
 
 lemma smooth_at_inv {y : M'} (hy : y ∈ range f) : smooth_at I' I f.inv_fun y :=
 (f.smooth_inv y hy).cont_mdiff_at $ f.is_open_range.mem_nhds hy
+
+lemma smooth_at_inv' {x : M} : smooth_at I' I f.inv_fun (f x) :=
+f.smooth_at_inv $ mem_range_self x
 
 /- Note that we are slightly abusing the fact that `tangent_space I x` and
 `tangent_space I (f.inv_fun (f x))` are both definitionally `E` below. -/

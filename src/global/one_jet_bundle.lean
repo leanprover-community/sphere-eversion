@@ -28,19 +28,27 @@ open_locale manifold topological_space
 
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-  {H : Type*} [topological_space H]
-  (I : model_with_corners 𝕜 E H)
+  {H : Type*} [topological_space H] (I : model_with_corners 𝕜 E H)
   (M : Type*) [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
   {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
-  {H' : Type*} [topological_space H']
-  (I' : model_with_corners 𝕜 E' H')
+  {H' : Type*} [topological_space H'] (I' : model_with_corners 𝕜 E' H')
   (M' : Type*) [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
+  {E'' : Type*} [normed_add_comm_group E''] [normed_space 𝕜 E'']
+  {H'' : Type*} [topological_space H''] {I'' : model_with_corners 𝕜 E'' H''}
+  {M'' : Type*} [topological_space M''] [charted_space H'' M'']
+  [smooth_manifold_with_corners I'' M'']
   {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
   {G : Type*} [topological_space G] (J : model_with_corners 𝕜 F G)
   {N : Type*} [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
   {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
   {G' : Type*} [topological_space G'] (J' : model_with_corners 𝕜 F' G')
   {N' : Type*} [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
+  {E₂ : Type*} [normed_add_comm_group E₂] [normed_space 𝕜 E₂]
+  {H₂ : Type*} [topological_space H₂] {I₂ : model_with_corners 𝕜 E₂ H₂}
+  {M₂ : Type*} [topological_space M₂] [charted_space H₂ M₂] [smooth_manifold_with_corners I₂ M₂]
+  {E₃ : Type*} [normed_add_comm_group E₃] [normed_space 𝕜 E₃]
+  {H₃ : Type*} [topological_space H₃] {I₃ : model_with_corners 𝕜 E₃ H₃}
+  {M₃ : Type*} [topological_space M₃] [charted_space H₃ M₃] [smooth_manifold_with_corners I₃ M₃]
 
 /-- The one jet-bundle, as a a `basic_smooth_vector_bundle_core` -/
 def one_jet_bundle_core : basic_smooth_vector_bundle_core (I.prod I') (M × M') (E →L[𝕜] E') :=
@@ -357,10 +365,64 @@ begin
   exact ⟨hϕ.1, hϕ.2.1, hϕ.2.2.add hϕ'.2.2⟩
 end
 
+variables (I' J')
+/-- A useful definition to define maps between two one_jet_bundles. -/
+protected def one_jet_bundle.map (f : M → N) (g : M' → N')
+  (Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] tangent_space I x) :
+  one_jet_bundle I M I' M' → one_jet_bundle J N J' N' :=
+λ p, one_jet_bundle.mk (f p.1.1) (g p.1.2) ((mfderiv I' J' g p.1.2 ∘L p.2) ∘L Dfinv p.1.1)
+variables {I' J'}
+
+lemma one_jet_bundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M₃} {g : M' → N'}
+  {Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] tangent_space I x}
+  {Df₂inv : ∀ x : N, tangent_space I₂ (f₂ x) →L[𝕜] tangent_space J x}
+  {x : one_jet_bundle I M I' M'}
+  (hg₂ : mdifferentiable_at J' I₃ g₂ (g x.1.2)) (hg : mdifferentiable_at I' J' g x.1.2) :
+  one_jet_bundle.map J' I₃ f₂ g₂ Df₂inv (one_jet_bundle.map I' J' f g Dfinv x) =
+  one_jet_bundle.map I' I₃ (f₂ ∘ f) (g₂ ∘ g) (λ x, Dfinv x ∘L Df₂inv (f x)) x :=
+begin
+  ext _, { refl }, { refl },
+  dsimp only [one_jet_bundle.map, one_jet_bundle.mk],
+  simp_rw [← continuous_linear_map.comp_assoc, mfderiv_comp x.1.2 hg₂ hg]
+end
+
+lemma one_jet_bundle.map_id (x : one_jet_bundle I M I' M') :
+  one_jet_bundle.map I' I' id id (λ x, continuous_linear_map.id 𝕜 (tangent_space I x)) x = x :=
+begin
+  ext _, { refl }, { refl },
+  dsimp only [one_jet_bundle.map, one_jet_bundle.mk],
+  simp_rw [mfderiv_id, x.2.id_comp, x.2.comp_id]
+end
+
+lemma smooth_at.one_jet_bundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
+  {Dfinv : ∀ (z : M'') (x : M), tangent_space J (f z x) →L[𝕜] tangent_space I x}
+  {k : M'' → one_jet_bundle I M I' M'}
+  (hf : smooth_at (I''.prod I) J f.uncurry (x₀, (k x₀).1.1))
+  (hg : smooth_at (I''.prod I') J' g.uncurry (x₀, (k x₀).1.2))
+  (hDfinv : smooth_at I'' 𝓘(𝕜, F →L[𝕜] E)
+    (in_coordinates J I (λ x, f x (k x).1.1) (λ x, (k x).1.1) (λ x, Dfinv x (k x).1.1) x₀) x₀)
+  (hk : smooth_at I'' ((I.prod I').prod (𝓘(𝕜, E →L[𝕜] E'))) k x₀) :
+  smooth_at I'' ((J.prod J').prod (𝓘(𝕜, F →L[𝕜] F')))
+    (λ z, one_jet_bundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ :=
+begin
+  rw [smooth_at_one_jet_bundle] at hk,
+  refine smooth_at.one_jet_comp _ _ _ _,
+  refine smooth_at.one_jet_comp _ _ _ _,
+  { refine hk.2.1.one_jet_bundle_mk (hg.comp x₀ (smooth_at_id.prod_mk hk.2.1)) _,
+    exact cont_mdiff_at.mfderiv''' g (λ x, (k x).1.2) hg hk.2.1 le_rfl },
+  { exact hk.1.one_jet_bundle_mk hk.2.1 hk.2.2 },
+  exact (hf.comp x₀ (smooth_at_id.prod_mk hk.1)).one_jet_bundle_mk hk.1 hDfinv,
+end
+
 /-- A useful definition to define maps between two one_jet_bundles. -/
 def map_left (f : M → N) (Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] tangent_space I x) :
   one_jet_bundle I M I' M' → one_jet_bundle J N I' M' :=
 λ p, one_jet_bundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
+
+lemma map_left_eq_map (f : M → N) (Dfinv : ∀ x : M, tangent_space J (f x) →L[𝕜] tangent_space I x) :
+  map_left f Dfinv = one_jet_bundle.map I' I' f (id : M' → M') Dfinv :=
+by { ext x, refl, refl, dsimp only [one_jet_bundle.map, map_left, one_jet_bundle_mk_snd],
+  simp_rw [mfderiv_id, continuous_linear_map.id_comp] }
 
 lemma smooth_at.map_left {f : N' → M → N} {x₀ : N'}
   {Dfinv : ∀ (z : N') (x : M), tangent_space J (f z x) →L[𝕜] tangent_space I x}
@@ -370,13 +432,7 @@ lemma smooth_at.map_left {f : N' → M → N} {x₀ : N'}
     (in_coordinates J I (λ x, f x (g x).1.1) (λ x, (g x).1.1) (λ x, Dfinv x (g x).1.1) x₀) x₀)
   (hg : smooth_at J' ((I.prod I').prod (𝓘(𝕜, E →L[𝕜] E'))) g x₀) :
   smooth_at J' ((J.prod I').prod (𝓘(𝕜, F →L[𝕜] E'))) (λ z, map_left (f z) (Dfinv z) (g z)) x₀ :=
-begin
-  refine smooth_at.one_jet_comp _ _ _ _,
-  { convert hg, ext; refl, },
-  { have : smooth_at J' J (λ x, f x (g x).1.1) x₀,
-    { apply (smooth_at.comp _ (by apply hf) $ smooth_at_id.prod_mk hg.one_jet_bundle_proj.fst) },
-    exact this.one_jet_bundle_mk hg.one_jet_bundle_proj.fst hDfinv },
-end
+by { simp_rw [map_left_eq_map], exact hf.one_jet_bundle_map smooth_at_snd hDfinv hg }
 
 /-- The projection `J¹(E × P, F) → J¹(E, F)`. Not actually used. -/
 def bundle_fst : one_jet_bundle (J.prod I) (N × M) I' M' → one_jet_bundle J N I' M' :=

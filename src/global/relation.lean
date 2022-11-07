@@ -332,30 +332,20 @@ local notation `IMN` := (IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)
 targets. -/
 @[simps fst_fst fst_snd]
 def open_smooth_embedding.transfer : one_jet_bundle IX X IY Y → one_jet_bundle IM M IN N :=
-λ σ, ⟨⟨φ σ.1.1, ψ σ.1.2⟩,
-      ((ψ.fderiv σ.1.2 : TY σ.1.2 →L[ℝ] TN (ψ σ.1.2)).comp σ.2).comp
-        ((φ.fderiv σ.1.1).symm : TM (φ σ.1.1) →L[ℝ] TX σ.1.1)⟩
+one_jet_bundle.map IY IN φ ψ (λ x, (φ.fderiv x).symm)
 
 lemma open_smooth_embedding.smooth_transfer :
   smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY))
   ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) (φ.transfer ψ) :=
 begin
-  simp_rw [open_smooth_embedding.transfer, ψ.fderiv_coe, φ.fderiv_symm_coe],
-  refine smooth.one_jet_comp IX (λ (x : one_jet_bundle IX X IY Y), x.1.1) _ _,
-  refine smooth.one_jet_comp IY (λ (x : one_jet_bundle IX X IY Y), x.1.2) _ _,
-  { exact λ σ₀, (smooth_at.one_jet_ext (ψ.smooth_to _)).comp σ₀
-      (smooth_one_jet_bundle_proj.snd σ₀) },
-  { convert smooth_id, ext1 ⟨⟨x, y⟩, ϕ⟩, refl, },
-  { intro σ₀,
-    suffices : smooth_at IX ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX))
-      (λ x, one_jet_bundle.mk (φ x) x (mfderiv IM IX φ.inv_fun (φ x))) σ₀.1.1,
-    { exact this.comp σ₀ (smooth_one_jet_bundle_proj.fst σ₀) },
-    refine φ.smooth_to.smooth_at.one_jet_bundle_mk smooth_at_id _,
-    have := cont_mdiff_at.mfderiv''' (λ x x₀, φ.inv_fun x₀) φ
-      ((φ.smooth_at_inv _).comp _ smooth_at_snd) (φ.smooth_to _) le_top,
-    simp_rw [φ.left_inv] at this,
-    exact this,
-    exact mem_range_self _ },
+  intro x,
+  refine smooth_at.one_jet_bundle_map (φ.smooth_to.smooth_at.comp _ smooth_at_snd)
+    (ψ.smooth_to.smooth_at.comp _ smooth_at_snd) _ smooth_at_id,
+  have := cont_mdiff_at.mfderiv''' (λ x, φ.inv_fun) (λ x : one_jet_bundle IX X IY Y, φ x.1.1)
+    ((φ.smooth_at_inv $ _).comp (x, φ x.1.1) smooth_at_snd)
+    (φ.smooth_to.smooth_at.comp x (smooth_one_jet_bundle_proj.fst x)) le_top,
+  { simp_rw [φ.left_inv] at this, exact this },
+  exact mem_range_self _,
 end
 
 lemma one_jet_bundle.continuous_transfer : continuous (φ.transfer ψ) :=
@@ -374,9 +364,10 @@ begin
   { ext v,
     simp_rw [rel_mfld.localize, continuous_linear_equiv.image_symm_eq_preimage, mem_preimage,
       mem_slice, mem_preimage],
-    dsimp only [open_smooth_embedding.transfer, one_jet_bundle_mk_fst, one_jet_bundle_mk_snd],
-    simp_rw [p.map_update_comp_right, ← p.update_comp_left, continuous_linear_equiv.coe_coe,
-      one_jet_bundle.mk] },
+    dsimp only [open_smooth_embedding.transfer, one_jet_bundle.map, one_jet_bundle_mk_fst,
+      one_jet_bundle_mk_snd],
+    simp_rw [p.map_update_comp_right, ← p.update_comp_left, one_jet_bundle.mk, ← ψ.fderiv_coe,
+      continuous_linear_equiv.coe_coe] },
   rw [this],
   exact (hR _).image (ψ.fderiv x.1.2).symm
 end
@@ -404,13 +395,12 @@ lemma transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
   φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) :=
 begin
   rw [one_jet_sec.coe_apply, one_jet_sec.localize_bs, one_jet_sec.localize_ϕ,
-    open_smooth_embedding.transfer],
-  dsimp only,
+    open_smooth_embedding.transfer, one_jet_bundle.map],
+  dsimp only [one_jet_bundle.mk],
   ext,
   { refl },
   { simp_rw [ψ.right_inv (hF $ mem_range_self x), function.comp_apply, F.bs_eq] },
-  { dsimp only,
-    simp_rw [continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe,
+  { simp_rw [← ψ.fderiv_coe, continuous_linear_map.comp_apply, continuous_linear_equiv.coe_coe,
       continuous_linear_equiv.apply_symm_apply] },
 end
 
@@ -451,33 +441,39 @@ def transfer (hF : range (F.bs ∘ φ) ⊆ range ψ) (h2F : ∀ x, F (φ x) ∈ 
 
 def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
 { to_fun := φ.transfer ψ,
-  inv_fun := λ σ, ⟨⟨φ.inv_fun σ.1.1, ψ.inv_fun σ.1.2⟩,
-      (((ψ.fderiv $ ψ.inv_fun σ.1.2).symm : TN (ψ $ ψ.inv_fun σ.1.2) →L[ℝ] TY (ψ.inv_fun σ.1.2)).comp σ.2).comp
-        ((φ.fderiv $ φ.inv_fun σ.1.1) : TX (φ.inv_fun σ.1.1) →L[ℝ] TM (φ $ φ.inv_fun σ.1.1))⟩,
-  left_inv' := begin
-    rintros ⟨x, y, φ⟩,
-    refine sigma.ext (prod.ext _ _) _,
-    sorry { dsimp [open_smooth_embedding.transfer],
-      apply φ.left_inv' },
-    sorry { dsimp [open_smooth_embedding.transfer],
-      apply ψ.left_inv' },
-    sorry { dsimp [open_smooth_embedding.transfer],
-      apply heq_of_eq,
-      ext1,
-      simp only [open_smooth_embedding.fderiv_symm_coe, open_smooth_embedding.fderiv_coe,
-                 continuous_linear_map.coe_comp', continuous_linear_map.coe_mk', comp_app],
-      sorry },
-
+  inv_fun := one_jet_bundle.map IN IY φ.inv_fun ψ.inv_fun
+    (λ x, (φ.fderiv $ φ.inv_fun x : TX (φ.inv_fun x) →L[ℝ] TM (φ $ φ.inv_fun x))),
+  left_inv' := λ σ, by sorry begin
+    rw [open_smooth_embedding.transfer, one_jet_bundle.map_map
+      ψ.smooth_at_inv'.mdifferentiable_at ψ.smooth_to.smooth_at.mdifferentiable_at],
+    conv_rhs { rw [← one_jet_bundle.map_id σ] },
+    congr' 1,
+    { rw [open_smooth_embedding.inv_fun_comp_coe] },
+    { rw [open_smooth_embedding.inv_fun_comp_coe] },
+    { ext x v, simp_rw [continuous_linear_map.comp_apply],
+      convert (φ.fderiv x).symm_apply_apply v, simp_rw [φ.left_inv] }
   end,
   open_map := sorry,
-  smooth_to := sorry,
-  smooth_inv := sorry }
+  smooth_to := sorry, --φ.smooth_transfer ψ,
+  smooth_inv := sorry -- repeat proof below with minor adjustments
+-- begin
+--   intro x,
+--   refine smooth_at.one_jet_bundle_map (φ.smooth_to.smooth_at.comp _ smooth_at_snd)
+--     (ψ.smooth_to.smooth_at.comp _ smooth_at_snd) _ smooth_at_id,
+--   have := cont_mdiff_at.mfderiv''' (λ x, φ.inv_fun) (λ x : one_jet_bundle IX X IY Y, φ x.1.1)
+--     ((φ.smooth_at_inv $ _).comp (x, φ x.1.1) smooth_at_snd)
+--     (φ.smooth_to.smooth_at.comp x (smooth_one_jet_bundle_proj.fst x)) le_top,
+--   { simp_rw [φ.left_inv] at this, exact this },
+--   exact mem_range_self _,
+-- end
+
 
 -- Not sure this will be needed, but it makes sense to check at least that the statement types check
 lemma one_jet_bundle.range_embedding :
   range (one_jet_bundle.embedding φ ψ) =
   one_jet_bundle.proj IM M IN N ⁻¹' (range (φ : X → M) ×ˢ range (ψ : Y → N)) :=
 sorry
+
 
 /-! ## Updating 1-jet sections and formal solutions -/
 
