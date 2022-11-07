@@ -1,6 +1,6 @@
 import analysis.asymptotics.asymptotics
 import linear_algebra.dual
-import measure_theory.integral.interval_integral
+import measure_theory.integral.periodic
 import analysis.calculus.parametric_integral
 
 import to_mathlib.topology.periodic

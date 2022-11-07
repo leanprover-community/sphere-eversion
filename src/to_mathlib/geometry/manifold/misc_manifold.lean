@@ -12,22 +12,7 @@ section charted_space
 variables {M H : Type*} [topological_space M] [topological_space H] [charted_space H M]
   (G : structure_groupoid H)
 
-variables (H)
-lemma mem_achart_source (x : M) : x ∈ (achart H x).1.source :=
-mem_chart_source H x
-variables {H}
-
 end charted_space
-
-@[simp]
-lemma local_equiv.refl_prod_refl {α β : Type*} :
-  (local_equiv.refl α).prod (local_equiv.refl β) = local_equiv.refl (α × β) :=
-by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
-
-@[simp]
-lemma local_homeomorph.refl_prod_refl {α β : Type*} [topological_space α] [topological_space β] :
-  (local_homeomorph.refl α).prod (local_homeomorph.refl β) = local_homeomorph.refl (α × β) :=
-by { ext1 ⟨x, y⟩, { refl }, { rintro ⟨x, y⟩, refl }, exact univ_prod_univ }
 
 namespace model_with_corners
 
@@ -35,9 +20,6 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
   {H : Type*} [topological_space H]
   {M : Type*} [topological_space M] (f : local_homeomorph M H) (I : model_with_corners 𝕜 E H)
-
-lemma preimage_image (s : set H) : I ⁻¹' (I '' s) = s :=
-I.injective.preimage_image s
 
 end model_with_corners
 
@@ -58,154 +40,11 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
 variables {f : M → M'} {m n : ℕ∞} {s : set M} {x : M}
 
-attribute [ext] model_with_corners charted_space
-lemma model_with_corners_self_prod : 𝓘(𝕜, E × F) = 𝓘(𝕜, E).prod 𝓘(𝕜, F) :=
-by { ext1, simp }
-
-lemma model_with_corners.range_prod : range (I.prod J) = range I ×ˢ range J :=
-by { simp_rw [← model_with_corners.target_eq], refl }
-
-lemma charted_space_self_prod : prod_charted_space E E F F = charted_space_self (E × F) :=
-by { ext1, simp [prod_charted_space, atlas], ext1, simp, }
 
 namespace basic_smooth_vector_bundle_core
 variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_core I M E')
 
-lemma coord_change_comp' {i j k : atlas H M} {x : M}
-  (hi : x ∈ i.1.source) (hj : x ∈ j.1.source) (hk : x ∈ k.1.source) (v : E') :
-  Z.coord_change j k (j x) (Z.coord_change i j (i x) v) = Z.coord_change i k (i x) v :=
-begin
-  rw [show j x = _, by rw [← i.1.left_inv hi]],
-  apply Z.coord_change_comp,
-  simp only [hi, hj, hk] with mfld_simps
-end
-
-lemma coord_change_self' {i : atlas H M} {x : M} (hi : x ∈ i.1.source) (v : E') :
-  Z.coord_change i i (i x) v = v :=
-Z.coord_change_self i (i x) (i.1.maps_to hi) v
-
-lemma coord_change_comp_eq_self (i j : atlas H M) {x : H}
-  (hx : x ∈ (i.1.symm.trans j.1).source) (v : E') :
-  Z.coord_change j i (i.1.symm.trans j.1 x) (Z.coord_change i j x v) = v :=
-begin
-  rw [Z.coord_change_comp i j i x _ v, Z.coord_change_self _ _ hx.1],
-  simp only with mfld_simps at hx,
-  simp only [hx.1, hx.2] with mfld_simps
-end
-
-lemma coord_change_comp_eq_self' {i j : atlas H M} {x : M}
-  (hi : x ∈ i.1.source) (hj : x ∈ j.1.source) (v : E') :
-  Z.coord_change j i (j x) (Z.coord_change i j (i x) v) = v :=
-by rw [Z.coord_change_comp' hi hj hi v, Z.coord_change_self' hi]
-
-lemma chart_apply (z : Z.to_topological_vector_bundle_core.total_space) :
-  Z.chart (chart_mem_atlas H x) z = (chart_at H x z.proj,
-    Z.coord_change (achart H z.proj) (achart H x) (achart H z.proj z.proj) z.2) :=
-rfl
-
-lemma smooth_iff_target {f : N → Z.to_topological_vector_bundle_core.total_space} :
-  smooth J (I.prod 𝓘(𝕜, E')) f ↔ continuous (bundle.total_space.proj ∘ f) ∧
-  ∀ x, smooth_at J 𝓘(𝕜, E × E') (ext_chart_at (I.prod 𝓘(𝕜, E')) (f x) ∘ f) x :=
-by simp_rw [smooth, smooth_at, cont_mdiff, Z.cont_mdiff_at_iff_target, forall_and_distrib,
-  continuous_iff_continuous_at]
-
 end basic_smooth_vector_bundle_core
-
-lemma cont_diff_within_at.comp_cont_mdiff_within_at
-  {g : F → F'} {f : M → F} {s : set M} {t : set F} {x : M}
-  (hg : cont_diff_within_at 𝕜 n g t (f x))
-  (hf : cont_mdiff_within_at I 𝓘(𝕜, F) n f s x) (h : s ⊆ f ⁻¹' t) :
-  cont_mdiff_within_at I 𝓘(𝕜, F') n (g ∘ f) s x :=
-begin
-  rw cont_mdiff_within_at_iff at *,
-  refine ⟨hg.continuous_within_at.comp hf.1 h, _⟩,
-  rw [← (ext_chart_at I x).left_inv (mem_ext_chart_source I x)] at hg,
-  apply cont_diff_within_at.comp _ (by exact hg) hf.2 _,
-  exact (inter_subset_left _ _).trans (preimage_mono h)
-end
-
-lemma cont_diff_at.comp_cont_mdiff_at {g : F → F'} {f : M → F} {x : M}
-  (hg : cont_diff_at 𝕜 n g (f x)) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, F') n (g ∘ f) x :=
-hg.comp_cont_mdiff_within_at hf subset.rfl
-
-lemma cont_diff.comp_cont_mdiff {g : F → F'} {f : M → F}
-  (hg : cont_diff 𝕜 n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
-  cont_mdiff I 𝓘(𝕜, F') n (g ∘ f) :=
-λ x, hg.cont_diff_at.comp_cont_mdiff_at (hf x)
-
-lemma smooth_within_at.mdifferentiable_within_at
-  (hf : smooth_within_at I I' f s x) : mdifferentiable_within_at I I' f s x :=
-hf.mdifferentiable_within_at le_top
-
-lemma smooth_at.mdifferentiable_at (hf : smooth_at I I' f x) : mdifferentiable_at I I' f x :=
-hf.mdifferentiable_at le_top
-
-lemma smooth_on.mdifferentiable_on (hf : smooth_on I I' f s) : mdifferentiable_on I I' f s :=
-hf.mdifferentiable_on le_top
-
-lemma smooth_at.comp {g : M → M'} {f : N → M} (x : N)
-  (hg : smooth_at I I' g (f x)) (hf : smooth_at J I f x) : smooth_at J I' (g ∘ f) x :=
-hg.comp x hf
-
-lemma smooth.comp {g : M → M'} {f : N → M}
-  (hg : smooth I I' g) (hf : smooth J I f) : smooth J I' (g ∘ f) :=
-hg.comp hf
-
-lemma cont_mdiff_at.fst {f : N → M × M'} {x : N} (hf : cont_mdiff_at J (I.prod I') n f x) :
-  cont_mdiff_at J I n (λ x, (f x).1) x :=
-cont_mdiff_at_fst.comp x hf
-
-lemma cont_mdiff_at.snd {f : N → M × M'} {x : N} (hf : cont_mdiff_at J (I.prod I') n f x) :
-  cont_mdiff_at J I' n (λ x, (f x).2) x :=
-cont_mdiff_at_snd.comp x hf
-
-lemma cont_mdiff.fst {f : N → M × M'} (hf : cont_mdiff J (I.prod I') n f) :
-  cont_mdiff J I n (λ x, (f x).1) :=
-cont_mdiff_fst.comp hf
-
-lemma cont_mdiff.snd {f : N → M × M'} (hf : cont_mdiff J (I.prod I') n f) :
-  cont_mdiff J I' n (λ x, (f x).2) :=
-cont_mdiff_snd.comp hf
-
-lemma smooth_at.fst {f : N → M × M'} {x : N} (hf : smooth_at J (I.prod I') f x) :
-  smooth_at J I (λ x, (f x).1) x :=
-smooth_at_fst.comp x hf
-
-lemma smooth_at.snd {f : N → M × M'} {x : N} (hf : smooth_at J (I.prod I') f x) :
-  smooth_at J I' (λ x, (f x).2) x :=
-smooth_at_snd.comp x hf
-
-lemma smooth.fst {f : N → M × M'} (hf : smooth J (I.prod I') f) :
-  smooth J I (λ x, (f x).1) :=
-smooth_fst.comp hf
-
-lemma smooth.snd {f : N → M × M'} (hf : smooth J (I.prod I') f) :
-  smooth J I' (λ x, (f x).2) :=
-smooth_snd.comp hf
-
-lemma smooth_prod_assoc :
-  smooth ((I.prod I').prod J) (I.prod (I'.prod J)) (λ x : (M × M') × N, (x.1.1, x.1.2, x.2)) :=
-smooth_fst.fst.prod_mk $ smooth_fst.snd.prod_mk smooth_snd
-
-lemma ext_chart_at_prod (x : M × M') :
-  ext_chart_at (I.prod I') x = (ext_chart_at I x.1).prod (ext_chart_at I' x.2) :=
-by simp only with mfld_simps
-
--- the following proof takes very long in pure term mode
-lemma cont_mdiff_at.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F} {x : M}
-  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F'') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) x :=
-@cont_diff_at.comp_cont_mdiff_at 𝕜 _ E _ _ ((F →L[𝕜] F'') × (F' →L[𝕜] F)) _ _ _ _ _ _ _ _
-  _ _ _ _
-  (λ x, x.1.comp x.2) (λ x, (g x, f x)) x
-  (cont_diff_fst.clm_comp cont_diff_snd).cont_diff_at
-  (hg.prod_mk_space hf)
-
-lemma cont_mdiff.clm_comp {g : M → F →L[𝕜] F''} {f : M → F' →L[𝕜] F}
-  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F'') n g) (hf : cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F) n f) :
-  cont_mdiff I 𝓘(𝕜, F' →L[𝕜] F'') n (λ x, (g x).comp (f x)) :=
-λ x, (hg x).clm_comp (hf x)
 
 lemma cont_mdiff_at.clm_apply {g : M → F →L[𝕜] F'} {f : M → F}
   (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
@@ -245,7 +84,7 @@ This means that many tactics, like `simp`, `rw`, and `dsimp` fail to rewrite wit
 because the result is not type correct up to reducible transparancy.
 
 Declaring these instances avoids such problems. -/
--- not yet ported
+
 instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
 instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
 
@@ -256,7 +95,7 @@ rfl
 
 variables (I)
 -- used in tangent_bundle_model_space_chart_at
--- not yet ported
+
 lemma model_with_corners.fderiv_within_comp_symm (x : H) :
   fderiv_within 𝕜 (I ∘ I.symm) (range I) (I x) = continuous_linear_map.id 𝕜 E :=
 begin
@@ -266,7 +105,7 @@ begin
   rwa fderiv_within_id I.unique_diff_at_image at this
 end
 
--- not yet ported
+
 lemma tangent_bundle_core_coord_change_model_space (x x' : H) (z : H) :
   (tangent_bundle_core I H).coord_change (achart H x) (achart H x') z =
   continuous_linear_map.id 𝕜 E :=
@@ -274,7 +113,7 @@ begin
   simp only [tangent_bundle_core_coord_change_achart, ext_chart_at, I.fderiv_within_comp_symm] with mfld_simps,
 end
 
--- not yet ported
+
 lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
   (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
@@ -429,7 +268,7 @@ noncomputable def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L
 λ x₀ x, in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
   (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
--- not yet ported
+
 lemma in_coordinates'_tangent_bundle_core_model_space
   (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') : in_coordinates' (tangent_bundle_core I H)
     (tangent_bundle_core I' H') x₀ x y₀ y ϕ = ϕ :=

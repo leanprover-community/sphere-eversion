@@ -1,6 +1,6 @@
 import topology.metric_space.hausdorff_distance
 import topology.uniform_space.separation
-import geometry.manifold.cont_mdiff
+import geometry.manifold.cont_mdiff_mfderiv
 import global.indexing
 import to_mathlib.topology.paracompact
 import to_mathlib.topology.local_homeomorph

@@ -30,7 +30,7 @@ for smooth concatenations anyway.
 
 noncomputable theory
 
-open set function module (dual) real filter
+open set function real filter
 open_locale unit_interval topological_space
 
 variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]

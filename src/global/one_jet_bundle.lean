@@ -397,13 +397,12 @@ begin
   intro x₀,
   refine smooth_at.map_left _ _ smooth_at_id,
   { exact smooth_at_snd.snd },
-  have := cont_mdiff_at.mfderiv'''
+  apply cont_mdiff_at.mfderiv'''
     (λ (x : one_jet_bundle (J.prod I) (N × M) I' M') (y : M), (x.1.1.1, y))
-    (λ (x : one_jet_bundle (J.prod I) (N × M) I' M'), x.1.1.2)
-    (smooth_one_jet_bundle_proj.fst.fst.prod_map smooth_id).smooth_at
-    smooth_one_jet_bundle_proj.fst.snd.smooth_at le_top,
-  simp_rw [prod.mk.eta],
-  exact this
+    (λ (x : one_jet_bundle (J.prod I) (N × M) I' M'), x.1.1.2) _ _ le_top,
+  { apply_instance },
+  { exact (smooth_one_jet_bundle_proj.fst.fst.prod_map smooth_id).smooth_at }, -- slow
+  { exact smooth_one_jet_bundle_proj.fst.snd.smooth_at }, -- slow
 end
 
 end maps

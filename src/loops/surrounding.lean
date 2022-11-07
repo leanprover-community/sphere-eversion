@@ -923,7 +923,7 @@ begin
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])
         (subset_range_strans_left $ by simp [this]) },
     { have : 0 < τ := lt_of_lt_of_le (by norm_num) h,
-      have h : 1 - τ ≤ 1 / 2, { rw [sub_le], convert h, norm_num },
+      have h : 1 - τ ≤ 1 / 2, { rw [sub_le_comm], convert h, norm_num },
       refine (h₁.surrounds x hx).mono _,
       simp only [mul_one, loop.range_of_path, sf_homotopy, proj_I_one],
       refine subset.trans (by simp only [surrounding_family.range_path, ρ_eq_one_of_le, h])

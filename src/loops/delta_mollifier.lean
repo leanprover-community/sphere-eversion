@@ -1,4 +1,4 @@
-import measure_theory.integral.interval_integral
+import measure_theory.integral.periodic
 import measure_theory.group.integration
 import analysis.calculus.specific_functions
 import analysis.convolution
@@ -20,7 +20,7 @@ approximation to the Dirac delta function. Such an approximation is a sequence o
  * `δᵢ` is smooth for all `i`,
  * `δᵢ` is non-negative for all `i`,
  * `∫ x in 0..1, (δᵢ x) = 1` for all `i`,
- * `∫ x in 0..1, (δᵢ x) • f x → f 0`, as `i → ∞` for any continuous function `f` on `S¹`.
+* `∫ x in 0..1, (δᵢ x) • f x → f 0`, as `i → ∞` for any continuous function `f` on `S¹`.
 
 This file contains a construction `approx_dirac` of such a family `δ` together with code which
 packages this into the precise form required for the proof of the reparametrization lemma:
