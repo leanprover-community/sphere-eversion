@@ -7,7 +7,6 @@ import topology.algebra.order.floor
 import topology.shrinking_lemma
 import topology.metric_space.emetric_paracompact
 import analysis.convex.topology
-import to_mathlib.misc
 
 noncomputable theory
 

@@ -1,51 +1,31 @@
 import measure_theory.integral.interval_integral
 import measure_theory.integral.periodic
 
-import to_mathlib.misc
-
 noncomputable theory
 
 open topological_space measure_theory filter first_countable_topology metric set function
 open_locale topological_space filter nnreal big_operators interval
 
-namespace continuous_linear_map
-
-open interval_integral
-variables {𝕜 E H F : Type*}
-variables [is_R_or_C 𝕜] {μ : measure ℝ}
-variables [normed_add_comm_group E] [normed_space 𝕜 E] [complete_space E]
-variables [normed_space ℝ E] [is_scalar_tower ℝ 𝕜 E]
-variables [normed_add_comm_group F] [normed_space 𝕜 F] [complete_space F]
-variables [normed_space ℝ F] [is_scalar_tower ℝ 𝕜 F]
-variables [normed_add_comm_group H] [normed_space 𝕜 H]
-
-lemma interval_integral_apply {a b : ℝ} {φ : ℝ → H →L[𝕜] E} (φ_int : interval_integrable φ μ a b)
-  (v : H) : (∫ x in a..b, φ x ∂μ) v = ∫ x in a..b, φ x v ∂μ :=
-by simp_rw [interval_integral_eq_integral_interval_oc, ← integral_apply φ_int.def v,
-  continuous_linear_map.coe_smul', pi.smul_apply]
-
-end continuous_linear_map
-
 section
 
 variables {E : Type*} [normed_add_comm_group E]
 
-lemma interval_integrable_of_integral_ne_zero
-  [complete_space E] [normed_space ℝ E] {a b : ℝ}
-  {f : ℝ → E} {μ : measure ℝ} (h : ∫ x in a..b, f x ∂μ ≠ 0) :
-  interval_integrable f μ a b :=
-begin
-  contrapose! h,
-  exact interval_integral.integral_undef h,
-end
+-- lemma interval_integrable_of_integral_ne_zero
+--   [complete_space E] [normed_space ℝ E] {a b : ℝ}
+--   {f : ℝ → E} {μ : measure ℝ} (h : ∫ x in a..b, f x ∂μ ≠ 0) :
+--   interval_integrable f μ a b :=
+-- begin
+--   contrapose! h,
+--   exact interval_integral.integral_undef h,
+-- end
 
-lemma interval_integrable_norm_iff {f : ℝ → E} {μ : measure ℝ} {a b : ℝ}
-  (hf : ae_strongly_measurable f (μ.restrict (Ι a b))) :
-  interval_integrable (λ t, ∥f t∥) μ a b ↔ interval_integrable f μ a b :=
-begin
-  simp_rw [interval_integrable_iff, integrable_on],
-  exact integrable_norm_iff hf
-end
+-- lemma interval_integrable_norm_iff {f : ℝ → E} {μ : measure ℝ} {a b : ℝ}
+--   (hf : ae_strongly_measurable f (μ.restrict (Ι a b))) :
+--   interval_integrable (λ t, ∥f t∥) μ a b ↔ interval_integrable f μ a b :=
+-- begin
+--   simp_rw [interval_integrable_iff, integrable_on],
+--   exact integrable_norm_iff hf
+-- end
 
 -- not ported
 lemma interval_integrable_of_nonneg_of_le {f g : ℝ → ℝ} {μ : measure ℝ} {a b : ℝ}
@@ -126,28 +106,6 @@ begin
 end
 end interval_integral
 
-/- interval_integrable.mono_set' should replace interval_integrable.mono_set in mathlib -/
-lemma interval_integrable.mono_set' {E : Type*}
-  [normed_add_comm_group E] {f : ℝ → E} {a b c d : ℝ} {μ : measure ℝ}
-  (hf : interval_integrable f μ a b) (hsub : Ι c d ⊆ Ι a b) : interval_integrable f μ c d :=
-hf.mono_set_ae $ eventually_of_forall hsub
-
-lemma interval_integrable.const_mul
-  {f : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ}
-  (hf : interval_integrable f μ a b) (c : ℝ) : interval_integrable (λ x, c * f x) μ a b :=
-begin
-  rw interval_integrable_iff at *,
-  exact hf.const_mul c
-end
-
-lemma interval_integrable.mul_const
-  {f : ℝ → ℝ} {a b : ℝ} {μ : measure ℝ}
-  (hf : interval_integrable f μ a b) (c : ℝ) : interval_integrable (λ x, (f x)*c) μ a b :=
-begin
-  rw interval_integrable_iff at *,
-  exact hf.mul_const c
-end
-
 section
 open interval_integral
 lemma norm_interval_integral_eq (f : ℝ → E) (a b : ℝ) (μ : measure ℝ) :
@@ -161,18 +119,6 @@ end
 lemma abs_interval_integral_eq (f : ℝ → ℝ) (a b : ℝ) (μ : measure ℝ) :
   |∫ x in a..b, f x ∂μ| = |∫ x in Ι a b, f x ∂μ| :=
 norm_interval_integral_eq f a b μ
-
-
-lemma interval_integral.norm_integral_le_of_norm_le
-  (h : ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥f t∥ ≤ bound t)
-  (hbound : interval_integrable bound μ a b) :
-  ∥∫ t in a..b, f t ∂μ∥ ≤ |∫ t in a..b, bound t ∂μ| :=
-begin
-  simp [norm_interval_integral_eq, abs_interval_integral_eq],
-  rw [abs_eq_self.mpr],
-  { exact norm_integral_le_of_norm_le hbound.def h },
-  refine integral_nonneg_of_ae (h.mono $ λ t ht, (norm_nonneg _).trans ht),
-end
 
 -- not ported
 lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_add_comm_group β]

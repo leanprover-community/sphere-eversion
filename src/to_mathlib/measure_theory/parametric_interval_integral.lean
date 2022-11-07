@@ -3,8 +3,6 @@ import analysis.calculus.parametric_integral
 import algebra.module.ulift
 
 import to_mathlib.analysis.calculus
-import to_mathlib.measure_theory.interval_integral
-import to_mathlib.topology.metric_space
 
 open topological_space measure_theory filter first_countable_topology metric set function
 open_locale topological_space filter nnreal big_operators interval
@@ -428,7 +426,7 @@ begin
     use K,
     intros t t_in,
     rw [show (λ (x : H), F x t) = (uncurry F) ∘ (λ x : H, (x, t)), by { ext, simp }, ← mul_one K],
-    apply hK.comp ((lipschitz_with_prod_mk_right t).lipschitz_on_with $ ball x₀ 1),
+    apply hK.comp ((lipschitz_with.prod_mk_right t).lipschitz_on_with $ ball x₀ 1),
     rw maps_to',
     rintros ⟨x, s⟩ ⟨x', hx, h⟩, cases h,
     refine ⟨ball_subset_closed_ball hx, mem_Icc_of_Ioo t_in⟩ },
