@@ -146,6 +146,16 @@ variables  (p : chart_pair I M I' M') {I M I' M'}
 `F` sends the first chart into the second one. -/
 def chart_pair.accepts (F : htpy_formal_sol R) := ∀ t, range ((F t).bs ∘ p.φ) ⊆ range p.ψ
 
+variable {p}
+
+lemma chart_pair.accepts.image_subset {F : htpy_formal_sol R} (h : p.accepts F) (t : ℝ) :
+  (F t).bs '' range (p.φ) ⊆ range p.ψ :=
+begin
+  rw ← range_comp, exact (h t)
+end
+
+variable (p)
+
 @[simps] def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
   (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol  :=
 { f := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).bs,
@@ -265,34 +275,31 @@ lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
   (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at x ↔ (F t).is_holonomic_at x :=
 sorry
 
-lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ)
-  {F : htpy_formal_sol R}
-  -- (hF : p.accepts F) -- Probably needed
-   :
+lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
+  (hδ_cont : continuous δ) {F : htpy_formal_sol R} (hF : p.accepts F) :
   ∃ η > (0 : ℝ),
     ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
     (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
-    ∀ e t, ∥(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e∥ < η →
+    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 2 : set ℝ)), ∥(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e∥ < η →
     dist (((p.update F 𝓕) t).bs $ p.φ e) ((F 1).bs $ p.φ e) < δ (p.φ e) :=
 begin
   let bsF := (λ t m, (F t).bs m),
-  have : ∀ 𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol, ∀ t e,
+  have : ∀ 𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol, p.compat F 𝓕 → ∀ t e,
     (p.update F 𝓕 t).bs (p.φ e) = p.φ.update p.ψ (bsF t) (λ e, (𝓕.unloc p t).bs e) (p.φ e),
-  {
-    sorry },
-  simp only [this], clear this,
-  have cpct : is_compact (Icc 0 2 : set ℝ), sorry,
-  have cont : continuous ↿(λ t m, (F t).bs m), sorry,
-  have hrg : ∀ t, (F t).bs '' range p.φ ⊆ range p.ψ, sorry,
-  rcases p.φ.dist_update' p.ψ p.hK₁ cpct (λ t m, (F t).bs m) cont hrg hδ_pos hδ_cont with ⟨η, η_pos, hη⟩,
+  { -- TODO: this proof needs more lemmas
+    intros 𝓕 h𝓕 t e,
+    change (p.update F 𝓕 t (p.φ e)).1.2 = p.φ.update p.ψ (bsF t) (λ e, (𝓕.unloc p t).bs e) (p.φ e),
+    simp only [open_smooth_embedding.update_apply_embedding],
+    dsimp only [chart_pair.update],
+    rw [dif_pos h𝓕, open_smooth_embedding.update_htpy_formal_sol_apply],
+    dsimp only,
+    simp only [open_smooth_embedding.update_apply_embedding, one_jet_bundle.embedding_to_fun, open_smooth_embedding.transfer_fst_snd],
+    refl },
+  rcases p.φ.dist_update' p.ψ p.hK₁ is_compact_Icc (λ t m, (F t).bs m) F.smooth_bs.continuous
+    hF.image_subset hδ_pos hδ_cont with ⟨η, η_pos, hη⟩,
   refine ⟨η, η_pos, _⟩,
-  intros 𝓕 H H' e t het,
-  by_cases Het : t ∈ (Icc 0 2 : set ℝ) ∧ e ∈ p.K₁,
-  sorry { rw ← dist_eq_norm at het,
-    exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, one_le_two⟩ t Het.1 e Het.2 het },
-  { cases not_and_distrib.mp Het with ht he',
-    { specialize H' e t ht,
-      sorry },
-    { have := H.2 t e he',
-      sorry } }
+  intros 𝓕 H H' e he t ht het,
+  simp only [this 𝓕 H], -- clear this,
+  rw ← dist_eq_norm at het,
+  exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, one_le_two⟩ t ht e he het,
 end

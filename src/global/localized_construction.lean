@@ -80,7 +80,6 @@ begin
     ψ := ψ,
     K₁ := K₁,
     hK₁ := hK₁ },
-  --rcases p.dist_update hδ_pos hδ_cont hFF₀δ 0 with ⟨η, η_pos, hη⟩,
   let δ' : M → ℝ := λ x, δ x - dist ((F 1).bs x) ((F 0).bs x),
   have δ'_pos : ∀ x, 0 < δ' x,
   { intros x,
@@ -88,7 +87,7 @@ begin
   have δ'_cont : continuous δ',
   { exact hδ_cont.sub (continuous.dist (F.smooth_bs.continuous.comp (continuous.prod.mk 1))
                                        (F.smooth_bs.continuous.comp (continuous.prod.mk 0))) },
-  rcases p.dist_update δ'_pos δ'_cont with ⟨τ, τ_pos, hτ⟩,
+  rcases p.dist_update δ'_pos δ'_cont hFφψ with ⟨τ, τ_pos, hτ⟩,
   let 𝓕 : Rloc.htpy_formal_sol := F.localize p hFφψ,
   have h𝓕₀A :  ∀ᶠ e near φ ⁻¹' A, (𝓕 0).is_holonomic_at e ∧ ∀ t, 𝓕 t e = 𝓕 0 e,
   { rw eventually_nhds_set_iff at hF₀A hFA ⊢,
@@ -144,10 +143,14 @@ begin
         change ((p.update F 𝓕') t _).1.2 = _,
         rw p.update_eq_of_eq' F 𝓕' hcompat ht',
         refl, },
-      { calc dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) ≤ dist ((F' t).bs (φ e)) ((F 1).bs (φ e)) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : dist_triangle _ _ _
-        ... < δ' (φ e) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : add_lt_add_right (hτ hcompat h𝓕'relt e t h) _
+      { by_cases ht : t ∈ (Icc 0 2 : set ℝ),
+        { calc dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) ≤ dist ((F' t).bs (φ e)) ((F 1).bs (φ e)) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : dist_triangle _ _ _
+        ... < δ' (φ e) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : add_lt_add_right (hτ hcompat h𝓕'relt e he t ht h) _
         ... = (δ (φ e) - dist ((F 1).bs (φ e)) ((F 0).bs (φ e))) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : rfl
-        ... = δ (φ e) : sub_add_cancel _ _,  } },
+        ... = δ (φ e) : sub_add_cancel _ _ },
+       { change dist (p.update F 𝓕' t (φ e)).1.2 ((F 0).bs (φ e)) < δ (φ e),
+         rw p.update_eq_of_eq F 𝓕' (λ _, h𝓕'relt e t ht),
+         apply hFF₀δ } } },
     { convert hFF₀δ t x using 2,
       change ((p.update F 𝓕') t x).1.2 = _,
       rw p.update_eq_of_not_mem F 𝓕' hx,
