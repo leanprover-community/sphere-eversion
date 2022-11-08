@@ -608,10 +608,11 @@ begin
   { C := L.C ∪ A,
     hC := L.hC.union hA,
     ..L},
-  rcases 𝓕₁.improve_htpy h_op h_ample L' (half_pos ε_pos) h_CA with ⟨𝓖, h𝓖₀, h𝓖CA, h𝓖K₁, h𝓖dist, h𝓖K₀⟩,
+  rcases 𝓕₁.improve_htpy h_op h_ample L' (half_pos ε_pos) h_CA with ⟨𝓖, h𝓖₀, h𝓖C, h𝓖K₁, h𝓖dist, h𝓖K₀⟩,
   let P : ℝ → E → Prop := sorry,
   let φ : ℝ → E → ℝ := sorry,
   let ψ : ℝ → E → ℝ := sorry,
+  -- The following 6 constraints are probably not compatible, but I'm too tired to adjust them
   have H₁ : ∀ x, P 0 x ∧ φ 0 x = 0,
   {
     sorry },
@@ -622,6 +623,12 @@ begin
   {
     sorry },
   have H₄ : ∀ t, ∀ x ∉ L.K₁, P t x ∧ φ t x = t,
+  {
+    sorry },
+  have H₅ : ∀ᶠ x near L.K₀, ∀ᶠ t in 𝓝 1, ¬ P t x ∧ ψ t x = 1,
+  {
+    sorry },
+  have H₆ : ∀ (x : E) (t ∉ (Icc 0 2 : set ℝ)), P t x ∧ φ t x = t,
   {
     sorry },
   set 𝓕' : htpy_formal_sol R :=
@@ -647,18 +654,18 @@ begin
   {
     sorry },
   refine ⟨𝓕', _, _, _, _, _, _, _⟩,
-  sorry { apply jet_sec.ext',
+  sorry /- { apply jet_sec.ext',
     intro x,
     rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
-  sorry { apply (h_A.and H₂).mono (λ x hx, _),
+  { apply (h_A.and H₂).mono (λ x hx, _),
     intro t,
     rw [h𝓕'_apply, if_pos (hx.2 t).1],
     apply hx.1.2 },
-  sorry { refine H₃.mono (λ x hx t, _),
+  { refine H₃.mono (λ x hx t, _),
     rw [h𝓕'_apply, if_pos (hx t).1, (hx t).2] },
-  sorry { intros t x hx,
+  { intros t x hx,
     rw [h𝓕'_apply, if_pos (H₄ t x hx).1, (H₄ t x hx).2] },
-  sorry { intros x t,
+  { intros x t,
     by_cases H : P t x,
     { left,
       simp only [h𝓕'_apply, if_pos H],
@@ -666,10 +673,21 @@ begin
     { right,
       simp only [h𝓕'_f_apply, if_neg H],
       exact lt_of_le_of_lt (h𝓖dist _ _) (half_lt_self ε_pos) }, },
-  {
-    sorry },
-  {
-    sorry },
+  { apply filter.eventually.union,
+    { refine (h_A.and H₂).eventually_nhds_set.mono _,
+      rintro x hx,
+      apply hx.self_of_nhds.1.1.congr,
+      apply hx.mono,
+      intros y hy,
+      simp only [h𝓕'_apply, if_pos (hy.2 1).1, hy.1.2] },
+    { apply (H₅.eventually_nhds_set.and h𝓖K₀).mono,
+      rintros x ⟨hx, hx'⟩,
+      apply hx'.congr,
+      apply hx.mono,
+      intros y hy,
+      simp only [h𝓕'_apply, if_neg hy.self_of_nhds.1, hy.self_of_nhds.2] }, },
+  { intros x t ht,
+    simp only [h𝓕'_apply, if_pos (H₆ x t ht).1, (H₆ x t ht).2] }, -/
 end
 
 end improve

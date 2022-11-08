@@ -83,6 +83,18 @@ end
 is the derivative of its function part at `x`. -/
 def is_holonomic_at (𝓕 : jet_sec E F) (x : E) : Prop := D 𝓕.f x = 𝓕.φ x
 
+lemma is_holonomic_at.congr {𝓕 𝓕' : jet_sec E F} {x} (h : is_holonomic_at 𝓕 x)
+  (h' : 𝓕 =ᶠ[𝓝 x] 𝓕') : is_holonomic_at 𝓕' x :=
+begin
+  have h'' : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f,
+  { apply h'.mono,
+    dsimp only,
+    simp_rw eq_iff,
+    tauto },
+  unfold jet_sec.is_holonomic_at,
+  rwa [h''.symm.fderiv_eq, ← (eq_iff.mp h'.self_of_nhds).2]
+end
+
 /-- A formal solution `𝓕` of `R` is partially holonomic in the direction of some subspace `E'`
 if its linear map part at `x` is the derivative of its function part at `x` in restriction to
 `E'`. -/
