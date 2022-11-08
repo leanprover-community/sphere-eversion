@@ -6,6 +6,7 @@ import global.localized_construction
 import global.localisation_data
 
 import interactive_expr
+import print_sorry
 
 /-!
 # Gromov's theorem
@@ -316,3 +317,5 @@ begin
     (manifold_with_corners.metrizable_space I' M')),
   apply rel_mfld.ample.satisfies_h_principle_with; assumption
 end
+
+#print_sorry_in rel_mfld.ample.satisfies_h_principle_with'
