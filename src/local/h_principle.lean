@@ -654,7 +654,7 @@ begin
   {
     sorry },
   refine ⟨𝓕', _, _, _, _, _, _, _⟩,
-  sorry /- { apply jet_sec.ext',
+  all_goals { sorry } /- { apply jet_sec.ext',
     intro x,
     rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
   { apply (h_A.and H₂).mono (λ x hx, _),
