@@ -70,6 +70,13 @@ begin
     exacts [h, h'] }
 end
 
+lemma ext' {𝓕 𝓕' : jet_sec E F} (h : ∀ x, 𝓕 x = 𝓕' x) : 𝓕 = 𝓕' :=
+begin
+  ext : 2,
+  { exact congr_arg prod.fst (h x) },
+  { ext1 x, exact congr_arg prod.snd (h x) },
+end
+
 /-! ## Holonomic sections-/
 
 /-- A jet section `𝓕` is holonomic if its linear map part at `x`

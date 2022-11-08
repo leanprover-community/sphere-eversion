@@ -9,6 +9,9 @@ import loops.exists
 import local.corrugation
 import local.ample_relation
 
+import interactive_expr
+set_option trace.filter_inst_type true
+
 /-!
 # Local h-principle for open and ample relations
 
@@ -466,7 +469,7 @@ include h_op h_ample ε_pos
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
 -/
-lemma rel_loc.formal_sol.improve {𝓕 : formal_sol R}
+lemma rel_loc.formal_sol.improve (𝓕 : formal_sol R)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∃ H : htpy_jet_sec E F,
     (H 0 = 𝓕) ∧
@@ -577,14 +580,13 @@ lemma rel_loc.formal_sol.improve_htpy (𝓕 : formal_sol R)
     (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε)  ∧
     (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
 begin
-  rcases rel_loc.formal_sol.improve h_op h_ample L ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
+  rcases 𝓕.improve h_op h_ample L ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
   exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
 end
 
 /-- This is a version of Lemma `lem:improve_htpy_loc` from the blueprint.
 The blueprint should be updated to match this. -/
 lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA : is_closed A)
-  --(hdist: ∀ x t, ∥(𝓕 t).f x - (𝓕 0).f x∥ < ε)
   (h_A : ∀ᶠ x near A, (𝓕 0).is_holonomic_at x ∧ ∀ t, 𝓕 t x = 𝓕 0 x)
   (h_C : ∀ᶠ x near L.C, (𝓕 1).is_holonomic_at x) :
   ∃ 𝓕' : htpy_formal_sol R,
@@ -596,7 +598,78 @@ lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA
     (∀ᶠ x near A ∪ L.K₀, (𝓕' 1).is_holonomic_at x) ∧
     (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t x = 𝓕 t x) :=
 begin
-  sorry,
+  let 𝓕₁ : formal_sol R :=
+  { is_sol := 𝓕.is_sol 1,
+    ..𝓕 1 },
+  have h_CA : ∀ᶠ x near L.C ∪ A, (𝓕 1).is_holonomic_at x,
+  {
+    sorry },
+  let L' : landscape E :=
+  { C := L.C ∪ A,
+    hC := L.hC.union hA,
+    ..L},
+  rcases 𝓕₁.improve_htpy h_op h_ample L' (half_pos ε_pos) h_CA with ⟨𝓖, h𝓖₀, h𝓖CA, h𝓖K₁, h𝓖dist, h𝓖K₀⟩,
+  let P : ℝ → E → Prop := sorry,
+  let φ : ℝ → E → ℝ := sorry,
+  let ψ : ℝ → E → ℝ := sorry,
+  have H₁ : ∀ x, P 0 x ∧ φ 0 x = 0,
+  {
+    sorry },
+  have H₂ : ∀ᶠ x near A, ∀ t, P t x ∧ φ t x = t,
+  {
+    sorry },
+  have H₃ : ∀ᶠ x near L.C, ∀ t, P t x ∧ φ t x = t,
+  {
+    sorry },
+  have H₄ : ∀ t, ∀ x ∉ L.K₁, P t x ∧ φ t x = t,
+  {
+    sorry },
+  set 𝓕' : htpy_formal_sol R :=
+  { f := λ t x, if P t x then (𝓕 $ φ t x).f x else (𝓖 $ ψ t x).f x,
+    f_diff := sorry,
+    φ := λ t x, if P t x then (𝓕 $ φ t x).φ x else (𝓖 $ ψ t x).φ x,
+    φ_diff := sorry,
+  is_sol := sorry /- begin
+    intros t x,
+    dsimp only,
+    split_ifs,
+    apply 𝓕.is_sol,
+    apply 𝓖.is_sol
+  end -/ },
+  have h𝓕'_apply : ∀ t x, 𝓕' t x = if P t x then 𝓕 (φ t x) x else 𝓖 (ψ t x) x,
+  sorry { intros t x,
+    apply prod.ext,
+    change ite (P t x) ((𝓕 (φ t x)).f x) ((𝓖 (ψ t x)).f x) = _,
+    split_ifs ; refl,
+    change ite (P t x) ((𝓕 (φ t x)).φ x) ((𝓖 (ψ t x)).φ x) = _,
+    split_ifs ; refl },
+  have h𝓕'_f_apply : ∀ t x, (𝓕' t).f x = if P t x then (𝓕 (φ t x)).f x else (𝓖 (ψ t x)).f x,
+  {
+    sorry },
+  refine ⟨𝓕', _, _, _, _, _, _, _⟩,
+  sorry { apply jet_sec.ext',
+    intro x,
+    rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
+  sorry { apply (h_A.and H₂).mono (λ x hx, _),
+    intro t,
+    rw [h𝓕'_apply, if_pos (hx.2 t).1],
+    apply hx.1.2 },
+  sorry { refine H₃.mono (λ x hx t, _),
+    rw [h𝓕'_apply, if_pos (hx t).1, (hx t).2] },
+  sorry { intros t x hx,
+    rw [h𝓕'_apply, if_pos (H₄ t x hx).1, (H₄ t x hx).2] },
+  sorry { intros x t,
+    by_cases H : P t x,
+    { left,
+      simp only [h𝓕'_apply, if_pos H],
+      exact ⟨φ t x, rfl⟩ },
+    { right,
+      simp only [h𝓕'_f_apply, if_neg H],
+      exact lt_of_le_of_lt (h𝓖dist _ _) (half_lt_self ε_pos) }, },
+  {
+    sorry },
+  {
+    sorry },
 end
 
 end improve
