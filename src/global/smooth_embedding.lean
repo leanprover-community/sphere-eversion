@@ -11,6 +11,9 @@ import to_mathlib.geometry.manifold.charted_space
 import to_mathlib.geometry.manifold.smooth_manifold_with_corners
 import to_mathlib.analysis.normed_space.misc
 
+import interactive_expr
+set_option trace.filter_inst_type true
+
 noncomputable theory
 
 open set equiv
@@ -546,7 +549,6 @@ variables
   (φ : open_smooth_embedding IX X IM M)
   (ψ : open_smooth_embedding IY Y IN N)
   (f : M → N) (g : X → Y)
-  [decidable_pred (∈ range φ)]
 
 
 /-
@@ -559,7 +561,7 @@ and the whole boundary is ok.
 -/
 
 /-- This is half of lemma `lem:updating` in the blueprint. -/
-lemma dist_update [proper_space Y] {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
+/- lemma dist_update [proper_space Y] {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
   (hf' : f '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
   ∃ (η > (0 : ℝ)), ∀ g : X → Y,
     (∀ x, x ∉ K → f (φ x) = ψ (g x)) →
@@ -591,7 +593,7 @@ begin
   have h₂ : f (φ x) ∈ range ψ := hf' ⟨φ x, mem_range_self x, rfl⟩,
   rw ← ψ.right_inv h₂,
   exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1,
-end
+end -/
 
 lemma dist_update' [proper_space Y] {K : set X} (hK : is_compact K)
   {P : Type*} [metric_space P] {KP : set P} (hKP : is_compact KP)
@@ -601,8 +603,32 @@ lemma dist_update' [proper_space Y] {K : set X} (hK : is_compact K)
     (∀ (p ∈ KP) (p' ∈ KP) (x ∈ K), dist (g p' x) (ψ.inv_fun (f p (φ x))) < η →
       dist (update φ ψ (f p') (g p') $ φ x) (f p $ φ x) < ε (φ x)) :=
 begin
-  -- Ce n'est pas le bon énoncé pour l'instant
-  sorry
+  let F : P × X → Y := λ q, (ψ.inv_fun ∘ (f q.1) ∘ φ) q.2,
+  let K₁ := metric.cthickening 1 (F '' KP.prod K),
+  have hK₁ : is_compact K₁,
+  { refine metric.is_compact_of_is_closed_bounded metric.is_closed_cthickening
+      (metric.bounded.cthickening $ is_compact.bounded $ _),
+    apply (hKP.prod hK).image,
+    exact ψ.smooth_inv.continuous_on.comp_continuous
+      (hf.comp $ continuous_fst.prod_mk $ φ.continuous.comp continuous_snd)
+      (λ q, hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩) },
+  have h₁ : uniform_continuous_on ψ K₁ :=
+    hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on,
+  have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
+  obtain ⟨ε₀, hε₀, hε₀'⟩ :=
+    hK.exists_forall_le' (hε'.comp φ.continuous).continuous_on hεφ,
+  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
+  refine ⟨min τ 1, by simp [hτ], λ g p hp p' hp' x hx hη,  _⟩,
+  cases lt_min_iff.mp hη with H H',
+  specialize hεφ x hx,
+  apply lt_of_lt_of_le _ (hε₀' x hx), clear hε₀',
+  simp only [update_apply_embedding],
+  have h₁ : g p' x ∈ K₁,
+    from metric.mem_cthickening_of_dist_le (g p' x) (F (p, x)) 1 _ ⟨(p, x), ⟨hp, hx⟩, rfl⟩ H'.le,
+  have h₂ : f p (φ x) ∈ range ψ,
+    from hf' p ⟨φ x, mem_range_self _, rfl⟩,
+  rw ← ψ.right_inv h₂,
+  exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨(p, x), ⟨hp, hx⟩, rfl⟩) H,
 end
 
 end metric
