@@ -32,8 +32,10 @@ compatible distance function on every manifold.
 \begin{lemma}
   \label{lem:updating}
   \uses{def:update}
-  \lean{open_smooth_embedding.nice_update_of_eq_outside_compact}
+  \lean{open_smooth_embedding.smooth_update, open_smooth_embedding.dist_update}
   \leanok
+  % TODO: we need this (and formalized this) for the case where $f$ and $g$ have
+  % parameters/are families of maps
   Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings. Let $K$ be a
   compact set in $X$. Let $f : M → N$ be a smooth map such
   that $f(φ(X)) ⊂ ψ(Y)$. Let $g : X → Y$ be a smooth map which agrees with
