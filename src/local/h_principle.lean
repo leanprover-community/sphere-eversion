@@ -612,14 +612,13 @@ begin
   let P : ℝ → E → Prop := sorry,
   let φ : ℝ → E → ℝ := sorry,
   let ψ : ℝ → E → ℝ := sorry,
-  -- The following 6 constraints are probably not compatible, but I'm too tired to adjust them
   have H₁ : ∀ x, P 0 x ∧ φ 0 x = 0,
   {
     sorry },
-  /- have H₂ : ∀ᶠ x near A, ∀ t, P t x ∧ φ t x = t,
+  have H₂ : is_open {x | ¬ P 1 x},
   {
-    sorry }, -/
-  have H₃ : ∀ᶠ x near L.C, ∀ t, P t x ∧ φ t x = t,
+    sorry },
+  have H₃ : ∀ᶠ x near L.C, P 1 x → ∀ᶠ y in 𝓝 x, P 1 y ∧ φ 1 y = 1,
   {
     sorry },
   have H₄ : ∀ t, ∀ x ∉ L.K₁, P t x ∧ φ t x = t,
@@ -654,7 +653,6 @@ begin
   {
     sorry },
   refine ⟨𝓕', _, _, _, _, _, _⟩,
-  --all_goals { sorry }
   sorry { apply jet_sec.ext',
     intro x,
     rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
@@ -666,8 +664,6 @@ begin
     { apply hx.1.2 },
     { rw hx.2,
       apply hx.1.2 } },
-  /- sorry { refine H₃.mono (λ x hx t, _),
-    rw [h𝓕'_apply, if_pos (hx t).1, (hx t).2] }, -/
   sorry { intros t x hx,
     rw [h𝓕'_apply, if_pos (H₄ t x hx).1, (H₄ t x hx).2] },
   sorry { intros x t,
@@ -678,19 +674,36 @@ begin
     { right,
       simp only [h𝓕'_f_apply, if_neg H],
       exact lt_of_le_of_lt (h𝓖dist _ _) (half_lt_self ε_pos) }, },
-  sorry { apply filter.eventually.union,
-    { rw [nhds_set_union, eventually_sup] at h𝓖CA h_CA,
-      refine ((h𝓖CA.2.and h_CA.2).and h_A).eventually_nhds_set.mono _,
-      rintro x hx,
-      -- C'est le bazar mais ça va fonctionner sans imposer H₂.
-      sorry
-       },
-    { apply (H₅.eventually_nhds_set.and h𝓖K₀).mono,
-      rintros x ⟨hx, hx'⟩,
-      apply hx'.congr,
-      apply hx.mono,
+  { rw [nhds_set_union, eventually_sup] at h𝓖CA h_CA,
+    apply filter.eventually.union,
+    { apply ((h𝓖CA.2.and h_A).eventually_nhds_set.and h_CA.2).mono,
+      rintro x₀ hx₀,
+      apply hx₀.2.congr,
+      apply hx₀.1.mono,
       intros y hy,
-      simp only [h𝓕'_apply, if_neg hy.1, hy.2] }, },
+      by_cases H : P 1 y,
+      { simp only [h𝓕'_apply, if_pos H, hy.2.2] },
+      { simp only [h𝓕'_apply, if_neg H, hy.1],
+        refl } },
+    { apply filter.eventually.union,
+      { refine (h𝓖CA.1.eventually_nhds_set.and $ h_C.and H₃).mono _,
+        intros x₀ hx₀,
+        by_cases H : P 1 x₀,
+        { apply hx₀.2.1.congr,
+          apply (hx₀.2.2 H).mono,
+          rintros x ⟨hx, hx'⟩,
+          rw [h𝓕'_apply, if_pos hx, hx'] },
+        {
+          apply hx₀.2.1.congr,
+          apply (hx₀.1.and $ is_open_iff_eventually.mp H₂ _ H).mono,
+          rintros x ⟨hx, hx'⟩,
+          erw [h𝓕'_apply, if_neg hx', ← hx _] } },
+      { apply (H₅.eventually_nhds_set.and h𝓖K₀).mono,
+        rintros x ⟨hx, hx'⟩,
+        apply hx'.congr,
+        apply hx.mono,
+        intros y hy,
+        simp only [h𝓕'_apply, if_neg hy.1, hy.2] } } },
   sorry { intros x t ht,
     simp only [h𝓕'_apply, if_pos (H₆ x t ht).1, (H₆ x t ht).2] },
 end
