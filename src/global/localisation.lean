@@ -72,6 +72,23 @@ lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is
   is_open R.rel_loc :=
 (homeomorph.is_open_preimage _).mpr $ (homeomorph.is_open_preimage _).mpr hR
 
+def htpy_formal_sol.loc {R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E'} (F : htpy_formal_sol R) :
+  R.rel_loc.htpy_formal_sol :=
+{ f := F.bs,
+  f_diff := begin
+    rw [← cont_mdiff_iff_cont_diff, ← charted_space_self_prod, model_with_corners_self_prod],
+    exact F.smooth_bs,
+  end,
+  φ := F.ϕ,
+  φ_diff := begin
+    rw [cont_diff_iff_cont_diff_at],
+    intro x,
+    have : smooth_at _ _ _ _ := (smooth_at_one_jet_bundle.mp (F.smooth x)).2.2,
+    simp_rw [in_coordinates, in_coordinates'_tangent_bundle_core_model_space] at this,
+    rwa [← cont_mdiff_at_iff_cont_diff_at, ← charted_space_self_prod, model_with_corners_self_prod]
+  end,
+  is_sol := λ t x, F.is_sol }
+
 end loc
 
 section unloc
@@ -156,35 +173,13 @@ end
 
 variable (p)
 
-@[simps] def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
-  (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol  :=
-{ f := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).bs,
-  f_diff := begin
-    dsimp [transfer],
-    rw cont_diff_iff_cont_diff_at,
-    intros a,
-    refine ((p.ψ.smooth_at_inv _).comp a _).cont_diff_at,
-    { exact hF a.fst (set.mem_range_self _) },
-    have H : smooth 𝓘(ℝ, ℝ × E) (𝓘(ℝ, ℝ).prod I) (λ (X : ℝ × E), (X.fst, (p.φ) X.snd)),
-    { exact (continuous_linear_map.fst ℝ ℝ E).cont_diff.cont_mdiff.prod_mk
-        (p.φ.smooth_to.comp (continuous_linear_map.snd ℝ ℝ E).cont_diff.cont_mdiff) },
-    exact (F.smooth_bs.comp H).smooth_at,
-  end,
-  φ := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).ϕ,
-  φ_diff := sorry,
-  is_sol := λ t, (transfer (F t).to_one_jet_sec p.φ p.ψ (hF t) (λ x, F.is_sol)).is_sol }
+def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
+  (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol :=
+(F.localize' p.φ p.ψ hF).loc
 
 lemma htpy_formal_sol.is_holonomic_localize (F : htpy_formal_sol R) (hF : p.accepts F)
   (e t) (he : (F t).is_holonomic_at (p.φ e)) : (F.localize p hF t).is_holonomic_at e :=
 sorry
-
-lemma lem1 (F : htpy_formal_sol R) (hF : p.accepts F) (t : ℝ) :
-  (F.localize p hF t).f = ((F t).localize p.φ p.ψ (hF t)).bs :=
-rfl
-
-lemma lem2 (F : htpy_formal_sol R) (hF : p.accepts F) (t : ℝ) :
-  (F.localize p hF t).φ = ((F t).localize p.φ p.ψ (hF t)).ϕ :=
-rfl
 
 lemma htpy_formal_sol.localize_eq_of_eq (F : htpy_formal_sol R) (hF : p.accepts F)
   {t e} (h : F t (p.φ e) = F 0 (p.φ e)) :
@@ -216,7 +211,7 @@ end
 @[simp]
 lemma htpy_formal_sol.transfer_unloc_localize (hF : p.accepts F) (t : ℝ) (x : E) :
   p.φ.transfer p.ψ ((F.localize p hF).unloc p t x) = F t (p.φ x) :=
-transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
+sorry --transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
 
 open_locale classical
 variables [t2_space M]

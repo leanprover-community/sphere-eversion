@@ -453,11 +453,31 @@ begin
     continuous_linear_equiv.cancel_left, continuous_linear_equiv.cancel_right]
 end
 
- /-- Localize a formal solution. -/
-def transfer (hF : range (F.bs ∘ φ) ⊆ range ψ) (h2F : ∀ x, F (φ x) ∈ R) :
-  formal_sol (R.localize φ ψ) :=
-⟨F.localize φ ψ hF, λ x, (F.localize_mem_iff φ ψ hF).mpr $ h2F x⟩
-
+-- We use `localize` in `localisation` for the version that is a `rel_loc.htpy_formal_sol`.
+def htpy_formal_sol.localize' (F : htpy_formal_sol R) (hF : ∀ t, range ((F t).bs ∘ φ) ⊆ range ψ) :
+  htpy_formal_sol (R.localize φ ψ)  :=
+{ bs := λ t, ((F t).to_one_jet_sec.localize φ ψ (hF t)).bs,
+  ϕ := λ t, ((F t).to_one_jet_sec.localize φ ψ (hF t)).ϕ,
+  smooth' := begin
+    dsimp only [one_jet_sec.localize],
+    simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe,
+      mfderiv_congr_point (ψ.right_inv (hF _ $ mem_range_self _))],
+    have h1 : ∀ {x : ℝ × X}, smooth_at (𝓘(ℝ, ℝ).prod IX) IN (λ x : ℝ × X, F.bs x.1 (φ x.2)) x :=
+      λ x, F.smooth_bs.smooth_at.comp x
+        (smooth_at_fst.prod_mk (φ.smooth_to.smooth_at.comp _ smooth_at_snd)),
+    have h2 : ∀ (x : ℝ × X), smooth_at IN IY ψ.inv_fun (F.bs x.1 (φ x.2)) :=
+      λ x, ψ.smooth_at_inv $ hF x.1 $ mem_range_self x.2,
+    -- argh
+    have h2' : ∀ (x : ℝ × X), smooth_at IN IY ψ.inv_fun (x, F.bs x.1 (φ x.2)).2 :=
+      h2,
+    refine smooth.one_jet_comp IN (λ z, (F z.1).bs (φ z.2)) (λ x, _) _,
+    { refine h1.one_jet_bundle_mk ((h2 x).comp x h1) _,
+      apply cont_mdiff_at.mfderiv''' (λ x, ψ.inv_fun) (λ x : ℝ × X, F.bs x.1 (φ x.2))
+        ((h2' x).comp _ smooth_at_snd) h1 le_top },
+    refine (F.smooth.comp (smooth_id.prod_map φ.smooth_to)).one_jet_comp IM (λ z, φ z.2) _,
+    exact φ.smooth_to.one_jet_ext.comp smooth_snd
+  end,
+  is_sol' := λ t x, ((F t).to_one_jet_sec.localize_mem_iff φ ψ (hF t)).mpr F.is_sol }
 
 /-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
