@@ -178,13 +178,21 @@ def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
 (F.localize' p.φ p.ψ hF).loc
 
 lemma htpy_formal_sol.is_holonomic_localize (F : htpy_formal_sol R) (hF : p.accepts F)
-  (e t) (he : (F t).is_holonomic_at (p.φ e)) : (F.localize p hF t).is_holonomic_at e :=
-sorry
+  (x t) (hx : (F t).is_holonomic_at (p.φ x)) : (F.localize p hF t).is_holonomic_at x :=
+(one_jet_sec.loc_hol_at_iff _ _).mpr $
+  (is_holonomic_at_localize_iff (F t).to_one_jet_sec p.φ p.ψ (hF t) x).mpr hx
 
 lemma htpy_formal_sol.localize_eq_of_eq (F : htpy_formal_sol R) (hF : p.accepts F)
-  {t e} (h : F t (p.φ e) = F 0 (p.φ e)) :
-  F.localize p hF t e = F.localize p hF 0 e :=
-sorry
+  {t x} (h : F t (p.φ x) = F 0 (p.φ x)) :
+  F.localize p hF t x = F.localize p hF 0 x :=
+begin
+  change (p.ψ.inv_fun (F t (p.φ x)).1.2,
+    ((p.ψ.fderiv (p.ψ.inv_fun (F t (p.φ x)).1.2)).symm :
+      tangent_space I' (p.ψ (p.ψ.inv_fun (F t (p.φ x)).1.2)) →L[ℝ]
+    tangent_space 𝓘(ℝ, E') (p.ψ.inv_fun (F t ((p.φ) x)).1.2)) ∘L (F t (p.φ x)).2 ∘L _) = _,
+  rw [h],
+  refl,
+end
 
 variables (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
