@@ -103,7 +103,13 @@ protected lemma index_type.Iic_zero (n : ℕ) : Iic (0 : index_type n) = {0} :=
 nat.cases_on n (by { ext n, simp [@le_zero_iff ℕ] }) (λ k, by { ext n, simp })
 
 @[simp] lemma fin.coe_order_succ {n : ℕ} (a : fin (n+1)) :
-  ((order.succ a : fin _) : ℕ) = if (a : ℕ) < n then a + 1 else a := sorry
+  ((order.succ a : fin _) : ℕ) = if (a : ℕ) < n then a + 1 else a :=
+begin
+  simp_rw [order.succ, fin.succ_eq],
+  split_ifs,
+  { simp_rw [fin.coe_add_one_of_lt h] },
+  { refl }
+end
 
 @[simp] lemma fin.coe_order_succ_mk {n m : ℕ} (h : m < n + 1) :
   ((order.succ ⟨m, h⟩ : fin _) : ℕ) = if m < n then m + 1 else m := fin.coe_order_succ _
