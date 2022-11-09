@@ -584,6 +584,8 @@ begin
   exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
 end
 
+open_locale unit_interval
+
 /-- This is a version of Lemma `lem:improve_htpy_loc` from the blueprint.
 The blueprint should be updated to match this. -/
 lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA : is_closed A)
@@ -593,9 +595,9 @@ lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA
     (𝓕' 0 = 𝓕 0) ∧
     (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
     (∀ t x, x ∉ L.K₁ → 𝓕' t x = 𝓕 t x) ∧
-    (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ < ε) ∧
-    (∀ᶠ x near A ∪ (L.C ∪ L.K₀), (𝓕' 1).is_holonomic_at x) ∧
-    (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t x = 𝓕 t x) :=
+    (∀ x t, (∃ t' ∈ I, 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ < ε) ∧
+    (∀ᶠ x near A ∪ (L.C ∪ L.K₀), (𝓕' 1).is_holonomic_at x)/-  ∧
+    (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t x = 𝓕 t x) -/ :=
 begin
   let 𝓕₁ : formal_sol R :=
   { is_sol := 𝓕.is_sol 1,
@@ -652,7 +654,7 @@ begin
   have h𝓕'_f_apply : ∀ t x, (𝓕' t).f x = if P t x then (𝓕 (φ t x)).f x else (𝓖 (ψ t x)).f x,
   {
     sorry },
-  refine ⟨𝓕', _, _, _, _, _, _⟩,
+  refine ⟨𝓕', _, _, _, _, _⟩,
   sorry { apply jet_sec.ext',
     intro x,
     rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
@@ -703,9 +705,7 @@ begin
         apply hx'.congr,
         apply hx.mono,
         intros y hy,
-        simp only [h𝓕'_apply, if_neg hy.1, hy.2] } } },
-  sorry { intros x t ht,
-    simp only [h𝓕'_apply, if_pos (H₆ x t ht).1, (H₆ x t ht).2] },
+        simp only [h𝓕'_apply, if_neg hy.1, hy.2] } } }
 end
 
 end improve

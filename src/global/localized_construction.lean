@@ -35,6 +35,8 @@ begin
   exact ha b
 end
 
+open_locale unit_interval
+
 lemma open_smooth_embedding.improve_htpy_formal_sol
   (φ : open_smooth_embedding 𝓘(ℝ, EM) EM IM M)
   (ψ : open_smooth_embedding 𝓘(ℝ, EX) EX IX X)
@@ -49,7 +51,7 @@ lemma open_smooth_embedding.improve_htpy_formal_sol
   (hδ_cont : continuous δ)
   {F : htpy_formal_sol R}
   (hF₀A : ∀ᶠ x near A, (F 0).is_holonomic_at x)
-  (hFF₀δ : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < δ x)
+  (hFF₀δ : ∀ (t ∈ I) x, dist ((F t).bs x) ((F 0).bs x) < δ x)
   (hFφψ : ∀ t, (F t).bs '' (range φ) ⊆ range ψ)
   (hFA : ∀ᶠ x near A, ∀ t, F t x = F 0 x)
   (hFC : ∀ᶠ x near C, (F 1).is_holonomic_at x)
@@ -60,9 +62,9 @@ lemma open_smooth_embedding.improve_htpy_formal_sol
   ∃ F' : htpy_formal_sol R,
     F' 0 = F 0 ∧
     (∀ᶠ x near A, ∀ t, (F' t) x = F 0 x) ∧
-    --(∀ᶠ x near C, ∀ t, (F' t) x = F t x) ∧
     (∀ t, ∀ x ∉ φ '' K₁, F' t x = F t x) ∧
-    (∀ t x, dist ((F' t).bs x) ((F 0).bs x) < δ x) ∧
+    (∀ (t ∈ (Icc 0 1 : set ℝ)) x, dist ((F' t).bs x) ((F 0).bs x) < δ x) ∧
+    (∀ t x, (∃ t' ∈ I, F' t x = F t' x) ∨ dist ((F' t).bs x) ((F 0).bs x) < δ x) ∧
     ∀ᶠ x near A ∪ (C ∪ φ '' K₀), (F' 1).is_holonomic_at x :=
 begin
   let Rloc : rel_loc EM EX := (R.localize φ ψ).rel_loc,
@@ -82,15 +84,15 @@ begin
     hK₁ := hK₁ },
   let δ' : M → ℝ := λ x, δ x - dist ((F 1).bs x) ((F 0).bs x),
   have δ'_pos : ∀ x, 0 < δ' x,
-  { intros x,
-    exact sub_pos.mpr (hFF₀δ 1 x) },
+  sorry { intros x,
+    exact sub_pos.mpr (hFF₀δ 1 unit_interval.one_mem x) },
   have δ'_cont : continuous δ',
-  { exact hδ_cont.sub (continuous.dist (F.smooth_bs.continuous.comp (continuous.prod.mk 1))
+  sorry { exact hδ_cont.sub (continuous.dist (F.smooth_bs.continuous.comp (continuous.prod.mk 1))
                                        (F.smooth_bs.continuous.comp (continuous.prod.mk 0))) },
   rcases p.dist_update δ'_pos δ'_cont hFφψ with ⟨τ, τ_pos, hτ⟩,
   let 𝓕 : Rloc.htpy_formal_sol := F.localize p hFφψ,
   have h𝓕₀A :  ∀ᶠ e near φ ⁻¹' A, (𝓕 0).is_holonomic_at e ∧ ∀ t, 𝓕 t e = 𝓕 0 e,
-  { rw eventually_nhds_set_iff at hF₀A hFA ⊢,
+  sorry { rw eventually_nhds_set_iff at hF₀A hFA ⊢,
     intros e he,
     rw [φ.inducing.nhds_eq_comap, eventually_comap],
     apply ((hF₀A _ he).and $ hFA _ he).mono,
@@ -112,16 +114,16 @@ begin
     rintros x hx e rfl,
     exact F.is_holonomic_localize p hFφψ e 1 hx },
   rcases 𝓕.improve hRloc_op hRloc_ample L τ_pos (hA.preimage φ.continuous) h𝓕₀A h𝓕C
-    with ⟨𝓕', h𝓕'₀, h𝓕'relA, h𝓕'relK₁, h𝓕'dist, h𝓕'hol, h𝓕'relt⟩,
+    with ⟨𝓕', h𝓕'₀, h𝓕'relA, h𝓕'relK₁, h𝓕'dist, h𝓕'hol⟩,
   have hcompat : p.compat F 𝓕', from ⟨hFφψ, h𝓕'relK₁⟩,
   let F' : htpy_formal_sol R := p.update F 𝓕',
   have hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F t x,
   { apply p.update_eq_of_not_mem },
-  refine ⟨p.update F 𝓕', _, _, _, _, _⟩,
-  { rw p.update_eq_of_forall F 𝓕' (λ _, _),
+  refine ⟨p.update F 𝓕', _, _, _, _, _, _⟩,
+  sorry { rw p.update_eq_of_forall F 𝓕' (λ _, _),
     rw h𝓕'₀,
     refl, },
-  { intros t,
+  sorry { intros t,
     apply φ.forall_near hK₁ h𝓕'relA,
     { apply hFA.mono,
       intros x hx hx' t,
@@ -130,32 +132,31 @@ begin
     { intros e he t,
       rw p.update_eq_of_eq' _ _ hcompat,
       exact he t } },
-  /- { apply φ.forall_near hK₁ h𝓕'relC,
-    exact eventually_of_forall (λ x hx t, hF'relK₁ t x hx),
-    { intros e he t,
-      rw p.update_eq_of_eq' _ _ hcompat,
-      exact he t } }, -/
-  { exact hF'relK₁ },
-  { intros t x,
+  sorry { exact hF'relK₁ },
+  sorry { intros t ht x,
     rcases classical.em (x ∈ φ '' K₁) with ⟨e, he, rfl⟩|hx,
-    { rcases h𝓕'dist e t with ⟨t', ht'⟩|h,
-      { convert hFF₀δ t' (φ e) using 2,
+    { rcases h𝓕'dist e t with ⟨t', ht'I, ht'⟩|h,
+      { convert hFF₀δ t' ht'I (φ e) using 2,
         change ((p.update F 𝓕') t _).1.2 = _,
         rw p.update_eq_of_eq' F 𝓕' hcompat ht',
         refl, },
-      { by_cases ht : t ∈ (Icc 0 2 : set ℝ),
-        { calc dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) ≤ dist ((F' t).bs (φ e)) ((F 1).bs (φ e)) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : dist_triangle _ _ _
-        ... < δ' (φ e) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : add_lt_add_right (hτ hcompat h𝓕'relt e he t ht h) _
+      { calc dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) ≤ dist ((F' t).bs (φ e)) ((F 1).bs (φ e)) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : dist_triangle _ _ _
+        ... < δ' (φ e) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : add_lt_add_right (hτ hcompat e he t ht h) _
         ... = (δ (φ e) - dist ((F 1).bs (φ e)) ((F 0).bs (φ e))) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : rfl
-        ... = δ (φ e) : sub_add_cancel _ _ },
-       { change dist (p.update F 𝓕' t (φ e)).1.2 ((F 0).bs (φ e)) < δ (φ e),
-         rw p.update_eq_of_eq F 𝓕' (λ _, h𝓕'relt e t ht),
-         apply hFF₀δ } } },
-    { convert hFF₀δ t x using 2,
+        ... = δ (φ e) : sub_add_cancel _ _  } },
+    { convert hFF₀δ t ht x using 2,
       change ((p.update F 𝓕') t x).1.2 = _,
       rw p.update_eq_of_not_mem F 𝓕' hx,
       refl } },
-  { rw [show L.K₀ = K₀, from rfl, ← preimage_image_eq K₀ φ.injective, ← preimage_union,
+  { intros t x,
+    rcases classical.em (x ∈ φ '' K₁) with ⟨e, he, rfl⟩| hx,
+    { rcases h𝓕'dist e t with ⟨t', ht'I, ht'⟩ | h,
+      sorry { left,
+        exact ⟨t', ht'I, p.update_eq_of_eq' _ _ hcompat ht'⟩ },
+      { right,
+        sorry } },
+    sorry },
+  sorry { rw [show L.K₀ = K₀, from rfl, ← preimage_image_eq K₀ φ.injective, ← preimage_union,
         ← preimage_union] at h𝓕'hol,
     apply φ.forall_near hK₁ h𝓕'hol, clear h𝓕'hol,
     rw [nhds_set_union, eventually_sup],
