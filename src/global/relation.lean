@@ -75,6 +75,17 @@ namespace formal_sol
 lemma coe_mk {S : one_jet_sec I M I' M'} {h : ∀ x, S x ∈ R} {x : M} : formal_sol.mk S h x = S x :=
 rfl
 
+lemma coe_inj_iff {S T : formal_sol R} : S = T ↔ ∀ x, S x = T x :=
+begin
+  split,
+  { rintro rfl x, refl },
+  { intros h, ext : 3, show (S x).1.2 = (T x).1.2, rw [h],
+    apply heq_of_eq, ext1, show (S x).2 = (T x).2, rw [h] }
+end
+
+lemma coe_inj {S T : formal_sol R} (h : ∀ x, S x = T x) : S = T :=
+coe_inj_iff.mpr h
+
 @[simp] lemma to_one_jet_sec_coe (S : formal_sol R) {x : M} : S.to_one_jet_sec x = S x := rfl
 
 lemma is_sol (F : formal_sol R) : ∀ x, F x ∈ R :=

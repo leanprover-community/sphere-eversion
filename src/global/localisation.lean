@@ -233,22 +233,44 @@ if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) p.
   refl
   end) else F
 
+lemma chart_pair.update_eq_self (F : htpy_formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t m}
+  (hm : ∀ hF : p.accepts F, ∀ x ∈ p.K₁, m = p.φ x → 𝓕 t x = F.localize p hF t x) :
+  p.update F 𝓕 t m = F t m :=
+begin
+  rw [chart_pair.update],
+  split_ifs,
+  { refine (p.φ.htpy_Jupdate_apply _ _ _ _ _).trans _,
+    rw [open_smooth_embedding.update],
+    split_ifs with h',
+    { obtain ⟨x, rfl⟩ := h',
+      rw [one_jet_bundle.embedding_to_fun, p.φ.left_inv],
+      have : (𝓕 t).unloc x = (F t).localize p.φ p.ψ (h.hF t) x,
+      { have : 𝓕 t x = F.localize p h.hF t x,
+        { by_cases h'' : x ∈ p.K₁,
+          { exact hm h.hF x h'' rfl },
+          { exact h.hFF t x h'' } },
+        rw [prod.ext_iff] at this,
+        ext1, refl, exact this.1, dsimp only, exact this.2 },
+      change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F t (p.φ x),
+      rw [this, transfer_localize],
+      refl },
+    refl },
+  refl,
+end
+
 lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t} {m} (hm : m ∉ p.φ '' p.K₁) :
   p.update F 𝓕 t m = F t m :=
-sorry
+chart_pair.update_eq_self p F 𝓕 $
+  by { rintro hF x hx rfl, exfalso, exact hm (mem_image_of_mem _ hx) }
 
 lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t x}
    (htx : ∀ hF : p.accepts F, 𝓕 t x = F.localize p hF t x) :
   p.update F 𝓕 t (p.φ x) = F t (p.φ x) :=
-begin
-  dsimp only [chart_pair.update],
-  split_ifs,
-  simp only [open_smooth_embedding.update_htpy_formal_sol_apply_image],
-  rw [rel_loc.htpy_formal_sol.unloc_congr p (htx h.1), htpy_formal_sol.transfer_unloc_localize],
-  refl,
-end
+chart_pair.update_eq_self p F 𝓕 $
+  by { intros hF y hy hyx, obtain rfl := p.φ.injective hyx, exact htx hF }
 
 lemma chart_pair.update_eq_of_eq' (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat F 𝓕) {t t' x}
@@ -266,7 +288,9 @@ lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t}
   (heq : ∀ hF : p.accepts F, 𝓕 t = F.localize p hF t) :
   p.update F 𝓕 t = F t :=
-sorry
+formal_sol.coe_inj $ λ m, chart_pair.update_eq_self p F 𝓕 $
+    by { rintro hF y hy rfl, by rw heq hF }
+
 
 lemma chart_pair.update_is_holonomic_at_iff {F : htpy_formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
