@@ -518,37 +518,6 @@ end
 
 variables [t2_space M]
 
-/--  Update a global 1-jet section `F` using a local one `G`. -/
-def Jupdate
-  (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y)
-  (hK : is_compact K)
-  (hFG : ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G x)) : one_jet_sec IM M IN N :=
-one_jet_sec.mk' (JΘ F G) (φ.Jupdate_aux ψ F G) $
-  begin
-    sorry -- easy, if we need it, similar to `htpy_Jupdate`
-    -- φ.smooth_update (one_jet_bundle.embedding φ ψ) F G hK F.smooth G.smooth hFG
-  end
-
-lemma Jupdate_bs (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y)
-  (hK : is_compact K)
-  (hFG : ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G x)) :
-  (φ.Jupdate ψ F G hK hFG).bs = open_smooth_embedding.update φ ψ F.bs G.bs :=
-begin
-  classical,
-  ext x,
-  change (if x ∈ range φ then φ.transfer ψ _ else _).1.2 = if _ then _ else _,
-  split_ifs ; refl,
-end
-
-/-- Update a global formal solution `F` using a local one `G`.
--/
-def update_formal_sol (F : formal_sol R) (G : formal_sol (R.localize φ ψ))
-  (hK : is_compact K)
-  (hFG : ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G x)) :
-  formal_sol R :=
-{ is_sol' := sorry, -- easy, if we need it, similar to `update_htpy_formal_sol`
-  ..φ.Jupdate ψ F.to_one_jet_sec G.to_one_jet_sec hK hFG }
-
 /-- Update a global homotopy of 1-jet-sections `F` using a local one `G`. -/
 def htpy_Jupdate
   (F : htpy_one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X IY Y)
