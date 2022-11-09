@@ -219,7 +219,7 @@ end
 @[simp]
 lemma htpy_formal_sol.transfer_unloc_localize (hF : p.accepts F) (t : ℝ) (x : E) :
   p.φ.transfer p.ψ ((F.localize p hF).unloc p t x) = F t (p.φ x) :=
-sorry --transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
+transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
 
 open_locale classical
 variables [t2_space M]
