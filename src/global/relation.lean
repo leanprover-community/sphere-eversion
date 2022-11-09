@@ -475,7 +475,8 @@ def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
     { rw [open_smooth_embedding.inv_fun_comp_coe] },
     { rw [open_smooth_embedding.inv_fun_comp_coe] },
     { ext x v, simp_rw [continuous_linear_map.comp_apply],
-      convert (φ.fderiv x).symm_apply_apply v, simp_rw [φ.left_inv] }
+      convert (φ.fderiv x).symm_apply_apply v,
+      simp_rw [φ.left_inv] }
   end,
   is_open_range := φ.is_open_range_transfer ψ,
   smooth_to := φ.smooth_transfer ψ,
@@ -487,11 +488,14 @@ def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
     have := cont_mdiff_at.mfderiv''' (λ x, φ) (λ x : one_jet_bundle IM M IN N, φ.inv_fun x.1.1)
       (φ.smooth_to.smooth_at.comp _ smooth_at_snd)
       ((φ.smooth_at_inv _).comp _ (smooth_one_jet_bundle_proj.fst (φ.transfer ψ x))) le_top,
-    { dsimp only [id], simp_rw [φ.left_inv] at this, refine this.congr_of_eventually_eq _,
+    { dsimp only [id],
+      simp_rw [φ.left_inv] at this,
+      refine this.congr_of_eventually_eq _,
       refine filter.eventually_of_mem ((φ.is_open_range_transfer ψ).mem_nhds (mem_range_self _)) _,
       rw [φ.range_transfer ψ],
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩,
-      simp_rw [in_coordinates, φ.transfer_fst_fst, φ.left_inv], refl, },
+      simp_rw [in_coordinates, φ.transfer_fst_fst, φ.left_inv],
+      refl },
     exact mem_range_self _,
   end }
 
@@ -513,17 +517,15 @@ begin
 end
 
 variables [t2_space M]
-/--  Update a global 1-jet section `F` using a local one `G`.
-We probably need a version of the next lemma stated in terms of
-`λ m, (JΘ F G m).1.2` before being able to write the `smooth'` proof.
--/
+
+/--  Update a global 1-jet section `F` using a local one `G`. -/
 def Jupdate
   (F : one_jet_sec IM M IN N) (G : one_jet_sec IX X IY Y)
   (hK : is_compact K)
   (hFG : ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G x)) : one_jet_sec IM M IN N :=
 one_jet_sec.mk' (JΘ F G) (φ.Jupdate_aux ψ F G) $
   begin
-    sorry -- easy, if we need it
+    sorry -- easy, if we need it, similar to `htpy_Jupdate`
     -- φ.smooth_update (one_jet_bundle.embedding φ ψ) F G hK F.smooth G.smooth hFG
   end
 
@@ -544,11 +546,10 @@ def update_formal_sol (F : formal_sol R) (G : formal_sol (R.localize φ ψ))
   (hK : is_compact K)
   (hFG : ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G x)) :
   formal_sol R :=
-{ is_sol' := sorry,
+{ is_sol' := sorry, -- easy, if we need it, similar to `update_htpy_formal_sol`
   ..φ.Jupdate ψ F.to_one_jet_sec G.to_one_jet_sec hK hFG }
 
-/-- Update a global homotopy of 1-jet-sections `F` using a local one `G`.
--/
+/-- Update a global homotopy of 1-jet-sections `F` using a local one `G`. -/
 def htpy_Jupdate
   (F : htpy_one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X IY Y)
   (hK : is_compact K)
@@ -561,13 +562,11 @@ begin
   { exact G.smooth.comp (smooth_fst.prod_map smooth_id) },
 end
 
-@[simp]
-lemma htpy_Jupdate_apply {F : htpy_one_jet_sec IM M IN N}
-  {G : htpy_one_jet_sec IX X IY Y}
+lemma htpy_Jupdate_apply {F : htpy_one_jet_sec IM M IN N} {G : htpy_one_jet_sec IX X IY Y}
   (hK : is_compact K)
-  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t m) :
- φ.htpy_Jupdate ψ F G hK hFG t m = ⟨⟨m, (JΘ (F t) (G t) m).1.2⟩, (JΘ (F t) (G t) m).2⟩ :=
-rfl
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
+  φ.htpy_Jupdate ψ F G hK hFG t m = JΘ (F t) (G t) m :=
+by { ext, exact (φ.Jupdate_aux ψ (F t) (G t) m).symm, refl, refl }
 
 lemma htpy_Jupdate_bs (F : htpy_one_jet_sec IM M IN N)
   (G : htpy_one_jet_sec IX X IY Y) (t : ℝ)
@@ -582,15 +581,19 @@ begin
   split_ifs ; refl,
 end
 
-/-- Update a global homotopy of formal solutions `F` using a local one `G`.
--/
+
+/-- Update a global homotopy of formal solutions `F` using a local one `G`. -/
 def update_htpy_formal_sol (F : htpy_formal_sol R)
   (G : htpy_formal_sol (R.localize φ ψ))
   (hK : is_compact K) (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) :
   htpy_formal_sol R :=
-{ is_sol' := sorry,
-  ..φ.htpy_Jupdate ψ F.to_family_one_jet_sec G.to_family_one_jet_sec hK hFG }
-
+{ to_family_one_jet_sec := φ.htpy_Jupdate ψ F.to_family_one_jet_sec G.to_family_one_jet_sec hK hFG,
+  is_sol' := λ t x, begin
+    simp_rw [htpy_Jupdate_apply, open_smooth_embedding.update, one_jet_bundle.embedding_to_fun],
+    split_ifs,
+    { exact G.is_sol },
+    { exact F.is_sol }
+  end }
 
 lemma update_htpy_formal_sol_apply {F : htpy_formal_sol R}
   {G : htpy_formal_sol (R.localize φ ψ)}
