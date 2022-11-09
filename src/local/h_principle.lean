@@ -592,10 +592,9 @@ lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA
   ∃ 𝓕' : htpy_formal_sol R,
     (𝓕' 0 = 𝓕 0) ∧
     (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
-    (∀ᶠ x near L.C, ∀ t, 𝓕' t x = 𝓕 t x) ∧
     (∀ t x, x ∉ L.K₁ → 𝓕' t x = 𝓕 t x) ∧
     (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ < ε) ∧
-    (∀ᶠ x near A ∪ L.K₀, (𝓕' 1).is_holonomic_at x) ∧
+    (∀ᶠ x near A ∪ (L.C ∪ L.K₀), (𝓕' 1).is_holonomic_at x) ∧
     (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t x = 𝓕 t x) :=
 begin
   let 𝓕₁ : formal_sol R :=
@@ -654,7 +653,7 @@ begin
   have h𝓕'_f_apply : ∀ t x, (𝓕' t).f x = if P t x then (𝓕 (φ t x)).f x else (𝓖 (ψ t x)).f x,
   {
     sorry },
-  refine ⟨𝓕', _, _, _, _, _, _, _⟩,
+  refine ⟨𝓕', _, _, _, _, _, _⟩,
   --all_goals { sorry }
   sorry { apply jet_sec.ext',
     intro x,
@@ -667,8 +666,8 @@ begin
     { apply hx.1.2 },
     { rw hx.2,
       apply hx.1.2 } },
-  sorry { refine H₃.mono (λ x hx t, _),
-    rw [h𝓕'_apply, if_pos (hx t).1, (hx t).2] },
+  /- sorry { refine H₃.mono (λ x hx t, _),
+    rw [h𝓕'_apply, if_pos (hx t).1, (hx t).2] }, -/
   sorry { intros t x hx,
     rw [h𝓕'_apply, if_pos (H₄ t x hx).1, (H₄ t x hx).2] },
   sorry { intros x t,

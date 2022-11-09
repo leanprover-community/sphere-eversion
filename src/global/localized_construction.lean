@@ -60,10 +60,10 @@ lemma open_smooth_embedding.improve_htpy_formal_sol
   ∃ F' : htpy_formal_sol R,
     F' 0 = F 0 ∧
     (∀ᶠ x near A, ∀ t, (F' t) x = F 0 x) ∧
-    (∀ᶠ x near C, ∀ t, (F' t) x = F t x) ∧
+    --(∀ᶠ x near C, ∀ t, (F' t) x = F t x) ∧
     (∀ t, ∀ x ∉ φ '' K₁, F' t x = F t x) ∧
     (∀ t x, dist ((F' t).bs x) ((F 0).bs x) < δ x) ∧
-    ∀ᶠ x near A ∪ φ '' K₀, (F' 1).is_holonomic_at x :=
+    ∀ᶠ x near A ∪ (C ∪ φ '' K₀), (F' 1).is_holonomic_at x :=
 begin
   let Rloc : rel_loc EM EX := (R.localize φ ψ).rel_loc,
   have hRloc_op : is_open Rloc,
@@ -112,12 +112,12 @@ begin
     rintros x hx e rfl,
     exact F.is_holonomic_localize p hFφψ e 1 hx },
   rcases 𝓕.improve hRloc_op hRloc_ample L τ_pos (hA.preimage φ.continuous) h𝓕₀A h𝓕C
-    with ⟨𝓕', h𝓕'₀, h𝓕'relA, h𝓕'relC, h𝓕'relK₁, h𝓕'dist, h𝓕'hol, h𝓕'relt⟩,
+    with ⟨𝓕', h𝓕'₀, h𝓕'relA, h𝓕'relK₁, h𝓕'dist, h𝓕'hol, h𝓕'relt⟩,
   have hcompat : p.compat F 𝓕', from ⟨hFφψ, h𝓕'relK₁⟩,
   let F' : htpy_formal_sol R := p.update F 𝓕',
   have hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F t x,
   { apply p.update_eq_of_not_mem },
-  refine ⟨p.update F 𝓕', _, _, _, _, _, _⟩,
+  refine ⟨p.update F 𝓕', _, _, _, _, _⟩,
   { rw p.update_eq_of_forall F 𝓕' (λ _, _),
     rw h𝓕'₀,
     refl, },
@@ -130,11 +130,11 @@ begin
     { intros e he t,
       rw p.update_eq_of_eq' _ _ hcompat,
       exact he t } },
-  { apply φ.forall_near hK₁ h𝓕'relC,
+  /- { apply φ.forall_near hK₁ h𝓕'relC,
     exact eventually_of_forall (λ x hx t, hF'relK₁ t x hx),
     { intros e he t,
       rw p.update_eq_of_eq' _ _ hcompat,
-      exact he t } },
+      exact he t } }, -/
   { exact hF'relK₁ },
   { intros t x,
     rcases classical.em (x ∈ φ '' K₁) with ⟨e, he, rfl⟩|hx,
@@ -155,8 +155,9 @@ begin
       change ((p.update F 𝓕') t x).1.2 = _,
       rw p.update_eq_of_not_mem F 𝓕' hx,
       refl } },
-  { rw [show L.K₀ = K₀, from rfl, ← preimage_image_eq K₀ φ.injective, ← preimage_union] at h𝓕'hol,
-    apply φ.forall_near hK₁ h𝓕'hol,
+  { rw [show L.K₀ = K₀, from rfl, ← preimage_image_eq K₀ φ.injective, ← preimage_union,
+        ← preimage_union] at h𝓕'hol,
+    apply φ.forall_near hK₁ h𝓕'hol, clear h𝓕'hol,
     rw [nhds_set_union, eventually_sup],
     split,
     { apply ((hFA.eventually_nhds_set).and hF₀A).mono,
@@ -166,11 +167,21 @@ begin
       apply a.mono,
       intros x hx,
       exact (hx 1).symm },
-    { have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁,
+    {
+      apply filter.eventually.union,
+      { apply hFC.mono,
+        intros x hx hx',
+        apply hx.congr,
+        symmetry,
+        have : ∀ᶠ y in 𝓝 x, y ∈ (φ '' K₁)ᶜ,
+        { exact is_open_iff_mem_nhds.mp (hK₁.image φ.continuous).is_closed.is_open_compl x hx' },
+        apply this.mono,
+        exact hF'relK₁ _ },
+      { have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁,
       { suffices : ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁), from this.mono interior_subset,
         apply is_open_interior.forall_near_mem_of_subset,
         exact (image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁) },
-      apply this.mono,
-      exact λ a hx hx', (hx' hx).elim },
+        apply this.mono,
+        exact λ a hx hx', (hx' hx).elim } },
     { exact λ _, (p.update_is_holonomic_at_iff hcompat).mpr } },
 end
