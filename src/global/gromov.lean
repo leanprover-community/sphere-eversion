@@ -50,7 +50,8 @@ lemma rel_mfld.ample.satisfies_h_principle_core
   (hF₀A : ∀ᶠ x near A, F₀.is_holonomic_at x)
   (L : localisation_data IM IX F₀.bs) :
   ∃ F : ℕ → htpy_formal_sol R, ∀ n : ℕ,
-    ((F n 0 = F₀) ∧
+    ((∀ᶠ t near Iic (0 : ℝ), F n t = F₀) ∧
+    (∀ᶠ t near Ici (1 : ℝ), F n t = F n 1) ∧
     (∀ᶠ x near A, ∀ t, F n t x = F₀ x) ∧
     (∀ t x, dist ((F n t).bs x) (F₀.bs x) < δ x) ∧
 
@@ -62,7 +63,8 @@ begin
   classical,
   borelize EX,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
-    (Fn 0 = F₀) ∧
+    (∀ᶠ t near Iic (0 : ℝ), Fn t = F₀) ∧
+    (∀ᶠ t near Ici (1 : ℝ), Fn t = Fn 1) ∧
     (∀ᶠ x near A, ∀ t, Fn t x = F₀ x) ∧
     (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < δ x) ∧
     (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < L.ε x) ∧
@@ -91,6 +93,12 @@ begin
   apply exists_by_induction' P Q,
   { dsimp only [P], clear P Q,
     let F := F₀.const_htpy,
+    have hF₀ : ∀ᶠ (t : ℝ) near Iic 0, F t = F 0,
+    { apply eventually_of_forall _,
+      simp [F₀.const_htpy_eq] },
+    have hF₁ : ∀ᶠ (t : ℝ) near Ici 1, F t = F 1,
+    { apply eventually_of_forall _,
+      simp [F₀.const_htpy_eq] },
     have hF₀A : ∀ᶠ x near A, (F 0).is_holonomic_at x,
     { simp only [F₀.const_htpy_eq, hF₀A] },
     have hFF₀τ : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < τ x,
@@ -102,29 +110,33 @@ begin
     have hFC : ∀ᶠ x near ∅, (F 1).is_holonomic_at x,
     { simp only [nhds_set_empty] },
     rcases (L.φ 0).improve_htpy_formal_sol (L.ψj 0) hRample hRopen hA is_closed_empty
-      τ_pos τ_cont hF₀A hFF₀τ hFφψ hFA hFC hK₀ hK₁ hK₀K₁ with ⟨F', hF'₀, /- hF'A, -/ hF'F₀τ, hF'K₁, hF'τ, hF'K₀⟩,
+      τ_pos τ_cont hF₀ hF₁ hF₀A hFF₀τ hFφψ hFA hFC hK₀ hK₁ hK₀K₁ with ⟨F', hF'₀, hF'₁, hF'F₀τ, hF'K₁, hF'τ, hF'K₀⟩,
     rw [nhds_set_union, eventually_sup] at hF'K₀,
-    refine ⟨F', _, _, _, _, _⟩,
-    { rw [hF'₀, F₀.const_htpy_eq] },
+    refine ⟨F', _, _, _, _, _, _⟩,
+    { apply hF'₀.mono,
+      intros t ht,
+      rw [ht, F₀.const_htpy_eq] },
+    { exact hF'₁ },
     { exact hF'F₀τ },
     { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_left _ _) },
     { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_right _ _) },
     { rw L.Union_le_zero,
       simpa using hF'K₀.2 } },
-  { rintros n F ⟨hF₀, hFA, hFδ, hFε, hFhol⟩,
+  { rintros n F ⟨hF₀, hF₁, hFA, hFδ, hFε, hFhol⟩,
     by_cases hn : L.index (n+1) = L.index n,
-    { refine ⟨F, ⟨hF₀, hFA, hFδ, hFε, _⟩, λ _, rfl, λ _ _ _, rfl⟩ ; clear P Q,
+    { refine ⟨F, ⟨hF₀, hF₁, hFA, hFδ, hFε, _⟩, λ _, rfl, λ _ _ _, rfl⟩ ; clear P Q,
       rw hn,
       exact hFhol },
     { dsimp only [P, Q], clear P Q,
-      simp only [← hF₀] at hF₀A hFδ hFε hFA ⊢,
+      have hF₀₀ := hF₀.on_set 0 right_mem_Iic,
+      simp only [← hF₀.on_set 0 right_mem_Iic] at hF₀ hF₀A hFδ hFε hFA ⊢,
       have hFτ : ∀ t x, dist ((F t).bs x) ((F 0).bs x) <  τ x,
       { exact λ t x, lt_min (hFδ t x) (hFε t x) },
       rcases (L.φ $ L.index $ n+1).improve_htpy_formal_sol (L.ψj $ L.index $ n+1) hRample hRopen
-        hA _ τ_pos τ_cont hF₀A hFτ _ hFA hFhol hK₀ hK₁ hK₀K₁  with
-        ⟨F', hF'₀, hF'A, /- hF'F, -/ hF'K₁, hF'τ, hF'K₀⟩,
+        hA _ τ_pos τ_cont hF₀ hF₁ hF₀A hFτ _ hFA hFhol hK₀ hK₁ hK₀K₁  with
+        ⟨F', hF'₀, hF'₁, hF'A, hF'K₁, hF'τ, hF'K₀⟩,
       rw [nhds_set_union, eventually_sup] at hF'K₀,
-      refine ⟨F', ⟨hF'₀, _, _, _, _⟩, _, _⟩ ; clear hRample hRopen hδ_pos hδ_cont hK₀ hK₁ hK₀K₁,
+      refine ⟨F', ⟨hF'₀, hF'₁, _, _, _, _⟩, _, _⟩ ; clear hRample hRopen hδ_pos hδ_cont hK₀ hK₁ hK₀K₁,
       { exact hF'A },
       { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_left _ _) },
       { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_right _ _) },
@@ -136,7 +148,7 @@ begin
       { intro t,
         rw ← range_comp,
         apply L.ε_spec,
-        simp only [← hF₀],
+        simp only [← hF₀₀],
         apply hFε } } },
 end
 
@@ -260,11 +272,12 @@ begin
   -- is now slightly too strong. This should be aligned at some point.
   rcases hRample.satisfies_h_principle_core hRopen hA hδ_pos hδ_cont 𝓕₀ h𝓕₀ L with ⟨F, h⟩,
   refine ⟨F, λ n, _⟩,
-  rcases h n with ⟨⟨h₀, h₁, h₂, h₃⟩, h₄, h₅⟩,
+  rcases h n with ⟨⟨h₀, h₁, h₂, h₃, h₄⟩, h₅, h₆⟩,
   refine ⟨⟨_, _, _, _⟩, _, _⟩,
   all_goals { try { assumption} },
-  exact h₁.forall,
-  exact h₃.on_set,
+  exact h₀.on_set 0 right_mem_Iic,
+  exact h₂.forall,
+  exact h₄.on_set,
 end
 
 variables

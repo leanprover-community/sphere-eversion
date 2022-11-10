@@ -588,14 +588,16 @@ end
 The blueprint should be updated to match this. -/
 lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA : is_closed A)
   (h_A : ∀ᶠ x near A, (𝓕 0).is_holonomic_at x ∧ ∀ t, 𝓕 t x = 𝓕 0 x)
-  (h_C : ∀ᶠ x near L.C, (𝓕 1).is_holonomic_at x) :
+  (h_C : ∀ᶠ x near L.C, (𝓕 1).is_holonomic_at x)
+  (h_t_0 : ∀ᶠ t near Iic (0 : ℝ), 𝓕 t = 𝓕 0)
+  (h_t_1 : ∀ᶠ t near Ici (1 : ℝ), 𝓕 t = 𝓕 1) :
   ∃ 𝓕' : htpy_formal_sol R,
-    (𝓕' 0 = 𝓕 0) ∧
+    (∀ᶠ t near Iic (0 : ℝ), 𝓕' t = 𝓕 0) ∧
+    (∀ᶠ t near Ici (1 : ℝ), 𝓕' t = 𝓕' 1) ∧
     (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
     (∀ t x, x ∉ L.K₁ → 𝓕' t x = 𝓕 t x) ∧
     (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ < ε) ∧
-    (∀ᶠ x near A ∪ (L.C ∪ L.K₀), (𝓕' 1).is_holonomic_at x) ∧
-    (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕' t x = 𝓕 t x) :=
+    (∀ᶠ x near A ∪ (L.C ∪ L.K₀), (𝓕' 1).is_holonomic_at x) :=
 begin
   let 𝓕₁ : formal_sol R :=
   { is_sol := 𝓕.is_sol 1,
@@ -653,7 +655,7 @@ begin
   {
     sorry },
   refine ⟨𝓕', _, _, _, _, _, _⟩,
-  sorry { apply jet_sec.ext',
+  all_goals { sorry } /- sorry { apply jet_sec.ext',
     intro x,
     rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
   sorry { rw [nhds_set_union, eventually_sup] at h𝓖CA,
@@ -705,7 +707,7 @@ begin
         intros y hy,
         simp only [h𝓕'_apply, if_neg hy.1, hy.2] } } },
   sorry { intros x t ht,
-    simp only [h𝓕'_apply, if_pos (H₆ x t ht).1, (H₆ x t ht).2] },
+    simp only [h𝓕'_apply, if_pos (H₆ x t ht).1, (H₆ x t ht).2] }, -/
 end
 
 end improve

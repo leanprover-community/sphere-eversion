@@ -194,6 +194,22 @@ begin
   refl,
 end
 
+lemma htpy_formal_sol.localize_eq_of_eq' (F : htpy_formal_sol R) (hF : p.accepts F)
+  {t t'} (h : F t = F t') :
+  F.localize p hF t = F.localize p hF t' :=
+begin
+  ext x,
+  change p.ψ.inv_fun (F t (p.φ x)).1.2 = _,
+  rw [h],
+  refl,
+  ext1 x,
+  change ((p.ψ.fderiv (p.ψ.inv_fun (F t (p.φ x)).1.2)).symm :
+      tangent_space I' (p.ψ (p.ψ.inv_fun (F t (p.φ x)).1.2)) →L[ℝ]
+    tangent_space 𝓘(ℝ, E') (p.ψ.inv_fun (F t ((p.φ) x)).1.2)) ∘L (F t (p.φ x)).2 ∘L _ = _,
+  rw [h],
+  refl
+end
+
 variables (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
 
@@ -306,8 +322,7 @@ lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_p
   (hδ_cont : continuous δ) {F : htpy_formal_sol R} (hF : p.accepts F) :
   ∃ η > (0 : ℝ),
     ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
-    (∀ x (t ∉ (Icc 0 2 : set ℝ)), 𝓕 t x = F.localize p hF𝓕.1 t x) →
-    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 2 : set ℝ)), ∥(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e∥ < η →
+    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 1 : set ℝ)), ∥(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e∥ < η →
     dist (((p.update F 𝓕) t).bs $ p.φ e) ((F 1).bs $ p.φ e) < δ (p.φ e) :=
 begin
   let bsF := (λ t m, (F t).bs m),
@@ -325,8 +340,8 @@ begin
   rcases p.φ.dist_update' p.ψ p.hK₁ is_compact_Icc (λ t m, (F t).bs m) F.smooth_bs.continuous
     hF.image_subset hδ_pos hδ_cont with ⟨η, η_pos, hη⟩,
   refine ⟨η, η_pos, _⟩,
-  intros 𝓕 H H' e he t ht het,
+  intros 𝓕 H e he t ht het,
   simp only [this 𝓕 H], -- clear this,
   rw ← dist_eq_norm at het,
-  exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, one_le_two⟩ t ht e he het,
+  exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, le_rfl⟩ t ht e he het,
 end
