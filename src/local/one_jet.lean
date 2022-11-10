@@ -323,12 +323,25 @@ begin
 end
 
 
+lemma htpy_jet_sec.comp_le_0 (𝓕 𝓖 : htpy_jet_sec E F) (h) : ∀ᶠ t near Iic 0, 𝓕.comp 𝓖 h t = 𝓕 0 :=
+begin
+  have : Iio (1/8 : ℝ) ∈ 𝓝ˢ (Iic (0 : ℝ)),
+  { apply mem_nhds_set_iff_forall.mpr (λ (x : ℝ) (hx : x ≤ 0), Iio_mem_nhds _),
+    linarith },
+  apply mem_of_superset this,
+  rintros t (ht : t <1/8),
+  have ht' : t ≤ 1/2,
+  { linarith },
+  change 𝓕.comp 𝓖 h t = 𝓕 0,
+  rw htpy_jet_sec.comp_of_le _ _ h ht',
+  have ht'' : 2*t < 1/4,
+  { linarith },
+  rw smooth_step.of_lt ht''
+end
+
 @[simp]
 lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec E F) (h) : 𝓕.comp 𝓖 h 0 = 𝓕 0 :=
-begin
-  rw htpy_jet_sec.comp_of_le _ _ h (by norm_num : (0 : ℝ) ≤ 1/2),
-  simp
-end
+(𝓕.comp_le_0 𝓖 h).on_set 0 right_mem_Iic
 
 @[simp]
 lemma htpy_jet_sec.comp_of_not_le (𝓕 𝓖 : htpy_jet_sec E F) (h) {t : ℝ} (ht : ¬ t ≤ 1/2) :
@@ -345,11 +358,25 @@ begin
   refl
 end
 
+lemma htpy_jet_sec.comp_ge_1 (𝓕 𝓖 : htpy_jet_sec E F) (h) : ∀ᶠ t near Ici 1, 𝓕.comp 𝓖 h t = 𝓖 1 :=
+begin
+  have : Ioi (7/8 : ℝ) ∈ 𝓝ˢ (Ici (1 : ℝ)),
+  { apply mem_nhds_set_iff_forall.mpr (λ (x : ℝ) (hx : 1 ≤ x), Ioi_mem_nhds _),
+    linarith },
+  apply mem_of_superset this,
+  rintros t (ht : 7/8 < t),
+  have ht' : ¬ t ≤ 1/2,
+  { linarith },
+  change 𝓕.comp 𝓖 h t = 𝓖 1,
+  rw htpy_jet_sec.comp_of_not_le _ _ h ht',
+  have ht'' : 3/4 < 2*t - 1,
+  { linarith },
+  rw smooth_step.of_gt ht''
+end
+
+
 @[simp]
 lemma htpy_jet_sec.comp_1 (𝓕 𝓖 : htpy_jet_sec E F) (h) : 𝓕.comp 𝓖 h 1 = 𝓖 1 :=
-begin
-  rw htpy_jet_sec.comp_of_not_le _ _ h (by norm_num : ¬ (1 : ℝ) ≤ 1/2),
-  norm_num
-end
+(𝓕.comp_ge_1 𝓖 h).on_set 1 left_mem_Ici
 
 end htpy_jet_sec

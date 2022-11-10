@@ -472,7 +472,8 @@ formal solution `𝓕` until it becomes holonomic near `L.K₀`.
 lemma rel_loc.formal_sol.improve (𝓕 : formal_sol R)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∃ H : htpy_jet_sec E F,
-    (H 0 = 𝓕) ∧
+    (∀ᶠ t near Iic 0, H t = 𝓕) ∧
+    (∀ᶠ t near Ici 1, H t = H 1) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
     (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε) ∧
@@ -483,7 +484,8 @@ begin
   let e := fin_basis ℝ E,
   let E' := e.flag,
   suffices : ∀ k : fin (n + 1), ∀ δ > (0 : ℝ), ∃ H : htpy_jet_sec E F,
-    (H 0 = 𝓕) ∧
+    (∀ᶠ t near Iic 0, H t = 𝓕) ∧
+    (∀ᶠ t near Ici 1, H t = H 1) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
     (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ δ) ∧
@@ -498,7 +500,7 @@ begin
     use 𝓕.to_jet_sec.const_htpy,
     simp [show E' 0 = ⊥, from e.flag_zero, le_of_lt δ_pos] },
   { rintros k HH δ δ_pos,
-    rcases HH (δ/2) (half_pos δ_pos) with ⟨H, hH₀, hHC, hHK₁, hHc0, hH_sol, hH_hol⟩, clear HH,
+    rcases HH (δ/2) (half_pos δ_pos) with ⟨H, hH₀, hH₁, hHC, hHK₁, hHc0, hH_sol, hH_hol⟩, clear HH,
     let S : step_landscape E :=
     { E' := E' k,
       p := e.dual_pair k,
@@ -537,9 +539,14 @@ begin
     have glue : H 1 = S.improve_step acc N 0,
     { rw improve_step_rel_t_eq_0,
       refl  },
-    refine ⟨H.comp (S.improve_step acc N) glue, _, _, _, _, _, _⟩,
-    { simp only [hH₀, htpy_jet_sec.comp_of_le, one_div, inv_nonneg, zero_le_bit0, zero_le_one,
-                 mul_zero, smooth_step.zero], }, -- t = 0
+    refine ⟨H.comp (S.improve_step acc N) glue, _, _, _, _, _, _, _⟩,
+    { apply (H.comp_le_0 _ _).mono,
+      intros t ht,
+      rw ht,
+      exact hH₀.on_set 0 right_mem_Iic }, -- t = 0
+    { apply (H.comp_ge_1 _ _).mono,
+      intros t ht,
+      rw [ht, H.comp_1] },
     { -- rel C
       apply (hHC.and $ hH₁_rel_C.and $ improve_step_rel_C acc N).mono,
       rintros x ⟨hx, hx', hx''⟩ t,
@@ -574,14 +581,15 @@ end
 lemma rel_loc.formal_sol.improve_htpy (𝓕 : formal_sol R)
   (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
   ∃ H : htpy_formal_sol R,
-    (H 0 = 𝓕) ∧
+    (∀ᶠ t near Iic 0, H t = 𝓕) ∧
+    (∀ᶠ t near Ici 1, H t = H 1) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
     (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε)  ∧
     (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
 begin
-  rcases 𝓕.improve h_op h_ample L ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆⟩,
-  exact⟨{is_sol := h₅, ..H}, h₁, h₂, h₃, h₄, h₆⟩
+  rcases 𝓕.improve h_op h_ample L ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩,
+  exact ⟨{is_sol := h₆, ..H}, h₁, h₂, h₃, h₄, h₅, h₇⟩
 end
 
 /-- This is a version of Lemma `lem:improve_htpy_loc` from the blueprint.
@@ -610,7 +618,7 @@ begin
     hC := L.hC.union hA,
     ..L},
   rcases 𝓕₁.improve_htpy h_op h_ample L' (half_pos ε_pos) h_CA with
-    ⟨𝓖, h𝓖₀, h𝓖CA : ∀ᶠ x near L.C ∪ A, _, h𝓖K₁, h𝓖dist, h𝓖K₀⟩,
+    ⟨𝓖, h𝓖₀, h𝓖₁, h𝓖CA : ∀ᶠ x near L.C ∪ A, _, h𝓖K₁, h𝓖dist, h𝓖K₀⟩,
   let P : ℝ → E → Prop := sorry,
   let φ : ℝ → E → ℝ := sorry,
   let ψ : ℝ → E → ℝ := sorry,
@@ -627,9 +635,6 @@ begin
   {
     sorry },
   have H₅ : ∀ᶠ x near L.K₀, ¬ P 1 x ∧ ψ 1 x = 1,
-  {
-    sorry },
-  have H₆ : ∀ (x : E) (t ∉ (Icc 0 2 : set ℝ)), P t x ∧ φ t x = t,
   {
     sorry },
   set 𝓕' : htpy_formal_sol R :=
@@ -655,10 +660,14 @@ begin
   {
     sorry },
   refine ⟨𝓕', _, _, _, _, _, _⟩,
-  all_goals { sorry } /- sorry { apply jet_sec.ext',
+  {
+    sorry
+    /- apply jet_sec.ext',
     intro x,
-    rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] },
-  sorry { rw [nhds_set_union, eventually_sup] at h𝓖CA,
+    rw [h𝓕'_apply, if_pos (H₁ x).1, (H₁ x).2] -/ },
+  {
+    sorry },
+  { rw [nhds_set_union, eventually_sup] at h𝓖CA,
     apply (h_A.and h𝓖CA.2).mono (λ x hx, _),
     intro t,
     rw [h𝓕'_apply],
@@ -666,9 +675,9 @@ begin
     { apply hx.1.2 },
     { rw hx.2,
       apply hx.1.2 } },
-  sorry { intros t x hx,
+  { intros t x hx,
     rw [h𝓕'_apply, if_pos (H₄ t x hx).1, (H₄ t x hx).2] },
-  sorry { intros x t,
+  { intros x t,
     by_cases H : P t x,
     { left,
       simp only [h𝓕'_apply, if_pos H],
@@ -706,8 +715,6 @@ begin
         apply hx.mono,
         intros y hy,
         simp only [h𝓕'_apply, if_neg hy.1, hy.2] } } },
-  sorry { intros x t ht,
-    simp only [h𝓕'_apply, if_pos (H₆ x t ht).1, (H₆ x t ht).2] }, -/
 end
 
 end improve
