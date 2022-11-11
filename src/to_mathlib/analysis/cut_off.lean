@@ -48,3 +48,25 @@ begin
     exact h0.on_set _ (λ hx', hx $ interior_subset hx') },
   rwa [← subset_compl_iff_disjoint_left, compl_compl]
 end
+
+lemma exists_interpolation_of_interior {E : Type*} [normed_add_comm_group E]
+  [normed_space ℝ E] [finite_dimensional ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+  {s t : set E} (hs : is_closed s)
+  (hd : s ⊆ interior t) {f g : E → F} {n : ℕ∞} (hf : cont_diff ℝ n f) (hg : cont_diff ℝ n g) :
+  ∃ h : E → F, cont_diff ℝ n h ∧
+               (∀ᶠ x in 𝓝ˢ s, h x = f x) ∧
+               (∀ x ∉ t, h x = g x) ∧
+               (∀ x, h x ∈ segment ℝ (f x) (g x)) :=
+begin
+  rcases exists_cont_diff_one_nhds_of_interior hs hd with ⟨ρ, ρ_diff, ρs, ρt, ρ_mem⟩,
+  replace ρ_diff : cont_diff ℝ n ρ, from ρ_diff.of_le le_top,
+  refine ⟨λ x, ρ x • f x + (1 - ρ x) • g x, _, _, _, _⟩,
+  { exact (ρ_diff.smul hf).add ((cont_diff_const.sub ρ_diff).smul hg) },
+  { apply ρs.mono,
+    intros x hx,
+    simp [hx] },
+  { intros x hx,
+    simp [ρt x hx] },
+  { exact λ x, ⟨ρ x, 1 - ρ x, (ρ_mem x).1, by simp [(ρ_mem x).2], by simp, rfl⟩ },
+end

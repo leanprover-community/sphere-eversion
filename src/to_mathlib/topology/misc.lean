@@ -79,6 +79,14 @@ lemma continuous_at.eventually {f : α → β} {a₀ : α} (hf : continuous_at f
   ∀ᶠ a in 𝓝 a₀, P (f a) :=
 hf (is_open_iff_mem_nhds.mp hP _ ha₀)
 
+lemma continuous_at.eventually' {f : α → β} {a₀ : α} (hf : continuous_at f a₀)
+  (P : β → Prop)(hP : ∀ᶠ y in 𝓝 (f a₀), P y) :
+  ∀ᶠ a in 𝓝 a₀, P (f a) :=
+begin
+  rw [continuous_at, tendsto_iff_comap] at hf,
+  exact eventually.filter_mono hf (hP.comap f)
+end
+
 lemma continuous.eventually {f : α → β} {a₀ : α} (hf : continuous f) (P : β → Prop)
   (hP : is_open {b | P b}) (ha₀ : P (f a₀)) :
   ∀ᶠ a in 𝓝 a₀, P (f a) :=
