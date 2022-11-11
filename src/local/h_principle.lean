@@ -63,6 +63,54 @@ noncomputable theory
 open_locale unit_interval classical filter topological_space
 open filter set rel_loc linear_map (ker)
 
+section MOVEME
+variables {α : Type*}  [linear_order α] [no_max_order α] [no_min_order α]
+  [topological_space α] [order_topology α]
+
+-- TODO: golf the next proof
+
+lemma has_basis_nhds_set_Iic (a : α) : (𝓝ˢ $ Iic a).has_basis (λ b, a < b) (λ b, Iio b) :=
+⟨begin
+  intros u,
+  rw [mem_nhds_set_iff_forall],
+  simp only [mem_Iic, exists_prop],
+  split,
+  { intros h,
+    have : ∀ x ≤ a, ∃ p : α × α, x ∈ Ioo p.1 p.2 ∧ Ioo p.1 p.2 ⊆ u,
+    { intros x hx,
+      rcases (nhds_basis_Ioo x).mem_iff.mp (h x hx) with ⟨⟨c, d⟩, ⟨hc, hd⟩, H⟩,
+      exact ⟨(c, d), ⟨hc, hd⟩, H⟩ },
+    choose! p hp using this,
+    rcases (nhds_basis_Ioo a).mem_iff.mp (h a le_rfl) with ⟨⟨c, d⟩, ⟨hc, hd⟩, H⟩,
+    dsimp only at H hc hd,
+    use [d, hd],
+    rintros x (hx : x < d),
+    cases le_or_lt x c with hx' hx',
+    { cases hp x (hx'.trans hc.le) with H H',
+      exact H' H },
+    { exact H ⟨hx', hx⟩ }, },
+  { rintros ⟨b, hb, hb'⟩ x hx,
+    apply mem_of_superset _ hb',
+    apply Iio_mem_nhds (hx.trans_lt hb) }
+end⟩
+
+lemma has_basis_nhds_set_Iic' [densely_ordered α] (a : α) : (𝓝ˢ $ Iic a).has_basis (λ b, a < b) (λ b, Iic b) :=
+⟨λ u, begin
+  rw (has_basis_nhds_set_Iic a).mem_iff,
+  dsimp only,
+  split; rintro ⟨b, hb, hb'⟩,
+  { rcases exists_between hb with ⟨c, hc, hc'⟩,
+    exact ⟨c, hc, subset_trans (Iic_subset_Iio.mpr hc') hb'⟩ },
+  { exact ⟨b, hb, Iio_subset_Iic_self.trans hb'⟩ }
+end⟩
+
+lemma has_basis_nhds_set_Ici (a : α) : (𝓝ˢ $ Ici a).has_basis (λ b, b < a) (λ b, Ioi b) :=
+@has_basis_nhds_set_Iic (order_dual α) _ _ _ _ _ _
+
+lemma has_basis_nhds_set_Ici' [densely_ordered α] (a : α) : (𝓝ˢ $ Ici a).has_basis (λ b, b < a) (λ b, Ici b) :=
+@has_basis_nhds_set_Iic' (order_dual α) _ _ _ _ _ _ _
+end MOVEME
+
 variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
           {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
@@ -611,7 +659,7 @@ begin
   { is_sol := 𝓕.is_sol 1,
     ..𝓕 1 },
   have h_CA : ∀ᶠ x near L.C ∪ A, (𝓕 1).is_holonomic_at x,
-  sorry { apply h_C.union,
+  { apply h_C.union,
     apply h_A.eventually_nhds_set.mono,
     rintros x hx,
     apply hx.self_of_nhds.1.congr,
@@ -630,7 +678,7 @@ begin
     (∀ᶠ x near L.K₀, ρ x = 2) ∧
     (∀ x ∉ L.K₁, ρ x = 1) ∧
     𝒞 ∞ ρ,
-  sorry { rcases exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁ with
+  { rcases exists_cont_diff_one_nhds_of_interior L.hK₀.is_closed L.h₀₁ with
       ⟨f, f_smooth, fK₀, fK₁, hf⟩,
     refine ⟨λ x, f x + 1, λ x, _, λ x, _, _, λ x hx, _, _⟩,
     { linarith [(hf x).1] },
@@ -649,10 +697,22 @@ begin
     𝒞 ∞ χ,
   { obtain ⟨η, η_pos, hη, hη₀, hη₁⟩ : ∃ η > (0 : ℝ), (η < 1/4) ∧ (∀ t ≤ η, 𝓕 t = 𝓕 0) ∧
                                                                  (∀ t ≥ 1- η, 𝓕 t = 𝓕 1),
-    {
-      sorry },
-
-    sorry /- have : Icc η (1 - η) ⊆ interior (Icc (η/2) (1 - η/2)),
+    { rcases (has_basis_nhds_set_Iic' (0 : ℝ)).eventually_iff.mp h_t_0 with ⟨η₀, η₀_pos, hη₀⟩,
+      rcases (has_basis_nhds_set_Ici' (1 : ℝ)).eventually_iff.mp h_t_1 with ⟨η₁, η₁_pos, hη₁⟩,
+      refine ⟨min (min η₀ (1 - η₁)) (1/8), _, _, _, _⟩,
+      { apply lt_min (lt_min η₀_pos _) _ ; linarith },
+      { apply lt_of_le_of_lt,
+        apply min_le_right,
+        norm_num },
+      { intros t ht,
+        apply hη₀,
+        exact (le_min_iff.mp (le_min_iff.mp ht).1).1 },
+      { intros t ht,
+        apply hη₁,
+        change η₁ ≤ t,
+        have : 1 - t ≤  min (min η₀ (1 - η₁)) (1 / 8), by linarith,
+        linarith [(le_min_iff.mp (le_min_iff.mp this).1).2] } },
+    have : Icc η (1 - η) ⊆ interior (Icc (η/2) (1 - η/2)),
     { rw interior_Icc,
       apply Icc_subset_Ioo ; linarith },
     rcases exists_interpolation_of_interior is_closed_Icc this cont_diff_id smooth_step.smooth with
@@ -725,8 +785,8 @@ begin
         apply lt_of_lt_of_le _ ht,
         linarith },
       apply mem_of_superset this,
-      exact hχ₄ }, -/ },
-  sorry /- have hχ_1' : χ 1 = 1,
+      exact hχ₄ } },
+  have hχ_1' : χ 1 = 1,
   { exact hχ_1.on_set _ left_mem_Ici },
   have Hdiff : 𝒞 ∞ (λ p : ℝ × E, (χ p.1 * ρ p.2, p.2)),
   { exact (cont_diff_mul.comp (hχ_smooth.prod_map hρ_smooth)).prod cont_diff_snd },
@@ -916,7 +976,7 @@ begin
         rw [h𝓕'_apply, if_neg, hy, hχ_1'],
         congr' 2, ring,
         rw [hy, hχ_1'],
-        norm_num } } }, -/
+        norm_num } } },
 end
 
 end improve
