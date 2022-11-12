@@ -6,7 +6,6 @@ import global.localized_construction
 import global.localisation_data
 
 import interactive_expr
-import print_sorry
 
 /-!
 # Gromov's theorem

@@ -203,29 +203,6 @@ variables {I M I' M'}
     exact ⟨x, by simp only [left_inv]⟩,
   end, }
 
-/-
-Note: the only indended use of the following definition is the case where `f = (id : ℝ → ℝ)`,
-but the proof shouldn't be hard anyway.
--/
-@[simps] def prod
-  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-  {G : Type*} [topological_space G]
-  {J : model_with_corners 𝕜 F G}
-  {N : Type*} [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
-  {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
-  {G' : Type*} [topological_space G']
-  {J' : model_with_corners 𝕜 F' G'}
-  {N' : Type*} [topological_space N'] [charted_space G' N'] [smooth_manifold_with_corners J' N']
-  (f : open_smooth_embedding I M J N)
-  (f' : open_smooth_embedding I' M' J' N') :
-  open_smooth_embedding (I.prod I') (M × M') (J.prod J') (N × N') :=
-{ to_fun := prod.map f f',
-  inv_fun := prod.map f.inv_fun f'.inv_fun,
-  left_inv' := sorry,
-  is_open_range := sorry,
-  smooth_to := sorry,
-  smooth_inv := sorry }
-
 end open_smooth_embedding
 
 namespace continuous_linear_equiv
