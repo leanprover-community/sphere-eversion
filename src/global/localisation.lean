@@ -393,7 +393,7 @@ begin
     dsimp only,
     simp only [open_smooth_embedding.update_apply_embedding, one_jet_bundle.embedding_to_fun, open_smooth_embedding.transfer_fst_snd],
     refl },
-  rcases p.φ.dist_update' p.ψ p.hK₁ is_compact_Icc (λ t m, (F t).bs m) F.smooth_bs.continuous
+  rcases p.φ.dist_update p.ψ p.hK₁ is_compact_Icc (λ t m, (F t).bs m) F.smooth_bs.continuous
     hF.image_subset hδ_pos hδ_cont with ⟨η, η_pos, hη⟩,
   refine ⟨η, η_pos, _⟩,
   intros 𝓕 H e he t ht het,

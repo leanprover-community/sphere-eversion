@@ -443,8 +443,8 @@ in order to relate the global theory to the local one.
 
 \begin{definition}
   \label{def:transfer_map}
-  \leanok % note: we have not proven continuity/smoothness of ψ yet
-  \lean{one_jet_bundle.transfer, one_jet_sec.localize, rel_mfld.localize}
+  \leanok
+  \lean{open_smooth_embedding.transfer, one_jet_sec.localize, rel_mfld.localize}
   \uses{def:one_jet_space}
   Given manifolds $M$, $X$, $N$ and $Y$ and smooth open embeddings $g : Y → N$
   and $h : X → M$ we get a transfer map $ψ_{g, h} : J^1(X, Y) → J^1(M, N)$
@@ -701,6 +701,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:open_ample}]
+  \leanok
   \proves{thm:open_ample}
   \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
   lem:ex_localisation, lem:localisation_stability,
@@ -775,6 +776,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 \end{theorem}
 
 \begin{proof}
+  \leanok
   \uses{thm:open_ample, lem:open_ample_immersion}
 	We denote by $ι$ the inclusion of $𝕊^2$ into $ℝ^3$.
 	We set $j_t = (1-t)ι	+ ta$.

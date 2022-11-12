@@ -59,7 +59,7 @@ lemma rel_loc.is_open_relativize (R : rel_loc E F) (h2 : is_open R) :
   is_open (R.relativize P) :=
 h2.preimage continuous_one_jet_snd
 
-lemma relativize_slice {σ : one_jet (P × E) F}
+lemma relativize_slice_loc {σ : one_jet (P × E) F}
   {p : dual_pair (P × E)}
   (q : dual_pair E)
   (hpq : p.π.comp (continuous_linear_map.inr ℝ P E) = q.π) :
@@ -88,7 +88,7 @@ begin
   refl,
 end
 
-lemma relativize_slice_eq_univ {σ : one_jet (P × E) F}
+lemma relativize_slice_eq_univ_loc {σ : one_jet (P × E) F}
   {p : dual_pair (P × E)}
   (hp : p.π.comp (continuous_linear_map.inr ℝ P E) = 0) :
   ((R.relativize P).slice p σ).nonempty ↔
@@ -113,13 +113,13 @@ begin
   let p2 := p.π.comp (continuous_linear_map.inr ℝ P E),
   rcases eq_or_ne p2 0 with h|h,
   { intros w hw,
-    rw [(relativize_slice_eq_univ h).mp ⟨w, hw⟩, connected_component_in_univ,
+    rw [(relativize_slice_eq_univ_loc h).mp ⟨w, hw⟩, connected_component_in_univ,
       preconnected_space.connected_component_eq_univ, convex_hull_univ] },
   obtain ⟨u', hu'⟩ := continuous_linear_map.exists_ne_zero h,
   let u := (p2 u')⁻¹ • u',
   let q : dual_pair E :=
   ⟨p2, u, by rw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩,
-  rw [relativize_slice q rfl],
+  rw [relativize_slice_loc q rfl],
   exact (hR q _).vadd
 end
 
@@ -264,7 +264,7 @@ lemma rel_loc.family_formal_sol.curry_φ' (S : family_formal_sol G (R.relativize
   (x : E) : (S.curry p x).2 = (S p.1 (p.2, x)).2 ∘L continuous_linear_map.inr ℝ P E :=
 S.to_family_jet_sec.curry_φ' p x
 
-lemma curry_eq_iff_eq_uncurry {𝓕 : family_formal_sol G (R.relativize P)}
+lemma curry_eq_iff_eq_uncurry_loc {𝓕 : family_formal_sol G (R.relativize P)}
   {𝓕₀ : R.family_formal_sol P} {t : G} {x : E} {s : P}
   (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
   (𝓕.curry (t, s)) x = 𝓕₀ s x :=
@@ -318,8 +318,8 @@ begin
   have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p,
   { intro p, rw h₁.on_set 0 right_mem_Iic, refl },
   refine ⟨𝓕.curry, _, _, _, _⟩,
-  { intros s x, exact curry_eq_iff_eq_uncurry (h₁ (s, x)) },
-  { refine h₂.mono _, rintro ⟨s, x⟩ hp t, exact curry_eq_iff_eq_uncurry (hp t) },
+  { intros s x, exact curry_eq_iff_eq_uncurry_loc (h₁ (s, x)) },
+  { refine h₂.mono _, rintro ⟨s, x⟩ hp t, exact curry_eq_iff_eq_uncurry_loc (hp t) },
   { intros s x t, exact (h₄ (s, x) t) },
   { refine h₅.mono _, rintros ⟨s, x⟩ hp, exact 𝓕.to_family_jet_sec.is_holonomic_at_curry hp }
 end

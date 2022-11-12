@@ -54,18 +54,6 @@ instance (n : ℕ) : indexing (fin $ n + 1) :=
 
 open_locale topological_space
 
-lemma foo {X : Type*} [topological_space X] {ι : Type*} [linear_order ι] [nonempty ι]
-  {s : ι → set X} (h : locally_finite s) :
-  ∃ ind : X → ι, ∃ U : X → set X, ∀ x, U x ∈ 𝓝 x ∧ ∀ i > ind x, s i ∩ U x = ∅ :=
-begin
-  choose V V_in hV using h,
-  choose ind hind using (λ x, (hV x).bdd_above),
-  refine ⟨ind, V, λ  x, ⟨V_in x, _⟩⟩,
-  intros i hi,
-  by_contra,
-  exact lt_irrefl i (gt_of_gt_of_ge hi $ hind x (ne_empty_iff_nonempty.mp h))
-end
-
 /-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `fin n` otherwise-/
 def index_type (n : ℕ) : Type :=
 nat.cases_on n ℕ (λ k, fin $ k + 1)

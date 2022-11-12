@@ -528,51 +528,9 @@ variables
   (f : M → N) (g : X → Y)
 
 
-/-
-The next lemma probably isn't quite enough. We want to apply it to
-`K = [0, 1] × Ball 0 2` but the condition `f (φ x) = ψ (g x)` doesn't hold on
-`{1} × Ball 0 2`. However we also don't care about what happens when `t` isn't in `[0, 1]`
-so we should probably weaken the conclusion.
-We could even use a reflection trick to reduce to a case where `K = [0, 2] × Ball 0 2`
-and the whole boundary is ok.
--/
 
-/-- This is half of lemma `lem:updating` in the blueprint. -/
-/- lemma dist_update [proper_space Y] {K : set X} (hK : is_compact K) (hf : smooth IM IN f)
-  (hf' : f '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
-  ∃ (η > (0 : ℝ)), ∀ g : X → Y,
-    (∀ x, x ∉ K → f (φ x) = ψ (g x)) →
-    (∀ x, dist (g x) (ψ.inv_fun (f (φ x))) < η) →
-      ∀ m, dist (update φ ψ f g m) (f m) < ε m :=
-begin
-  let K₁ := metric.cthickening 1 ((ψ.inv_fun ∘ f ∘ φ) '' K),
-  have hK₁ : is_compact K₁,
-  { refine metric.is_compact_of_is_closed_bounded metric.is_closed_cthickening
-      (metric.bounded.cthickening $ is_compact.bounded $ hK.image _),
-    replace hf' : ∀ x, f (φ x) ∈ range ψ := λ x, hf' ⟨φ x, mem_range_self x, rfl⟩,
-    exact ψ.smooth_inv.continuous_on.comp_continuous
-      (hf.continuous.comp φ.continuous) hf', },
-  have h₁ : uniform_continuous_on ψ K₁ :=
-    hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on,
-  have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := λ x hx, hε _,
-  obtain ⟨ε₀, hε₀, hε₀'⟩ :=
-    hK.exists_forall_le' (hε'.comp φ.continuous).continuous_on hεφ,
-  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀,
-  refine ⟨min τ 1, by simp [hτ], λ g hg hη m,  _⟩,
-  have hK' : ∀ m ∉ φ '' K, update φ ψ f g m = f m := λ m hm, by
-    from nice_update_of_eq_outside_compact_aux φ ψ f g hg hm,
-  by_cases hm : m ∈ φ '' K, swap, { simp [hK', hm, hε m], },
-  obtain ⟨x, hx, rfl⟩ := hm,
-  refine lt_of_lt_of_le _ (hε₀' x hx),
-  simp only [update_apply_embedding],
-  have h₁ : g x ∈ K₁ :=
-    metric.mem_cthickening_of_dist_le _ _ _ _ ⟨x, hx, rfl⟩ (lt_min_iff.mp (hη x)).2.le,
-  have h₂ : f (φ x) ∈ range ψ := hf' ⟨φ x, mem_range_self x, rfl⟩,
-  rw ← ψ.right_inv h₂,
-  exact hτ' _ h₁ _ (metric.self_subset_cthickening _ ⟨x, hx, rfl⟩) (lt_min_iff.mp (hη x)).1,
-end -/
-
-lemma dist_update' [proper_space Y] {K : set X} (hK : is_compact K)
+/-- This is half of lemma `lem:updating` in the blueprint. TODO: update the blueprint. -/
+lemma dist_update [proper_space Y] {K : set X} (hK : is_compact K)
   {P : Type*} [metric_space P] {KP : set P} (hKP : is_compact KP)
   (f : P → M → N) (hf : continuous ↿f)
   (hf' : ∀ p, (f p) '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : continuous ε) :
