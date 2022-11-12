@@ -130,15 +130,6 @@ instance : topological_vector_bundle 𝕜 (E →L[𝕜] E') (one_jet_space I I' 
 topological_vector_bundle_core.fiber.topological_vector_bundle
   (one_jet_bundle_core I M I' M').to_topological_vector_bundle_core
 
--- /-- `J¹(M, M')` is σ-compact. This is needed if we need metrizability of `J¹(M, M')`. -/
--- instance [sigma_compact_space M] [sigma_compact_space M'] :
---   sigma_compact_space (one_jet_bundle I M I' M') :=
--- by admit
-
--- /-- `J¹(M, M')` is Hausdorff. This is needed if we need metrizability of `J¹(M, M')`. -/
--- instance [t2_space M] [t2_space M'] : t2_space (one_jet_bundle I M I' M') :=
--- by admit
-
 end one_jet_bundle_instances
 
 variable (M)

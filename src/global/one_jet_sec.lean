@@ -92,11 +92,6 @@ begin
   exact (h.symm.fun_comp (λ x, x.1.2)).mfderiv_eq
 end
 
-/- lemma is_holonomic_at_congr {F F' : one_jet_sec I M I' M'} {s : set M}
-  (h : ∀ᶠ x near s, F x = F' x) : ∀ᶠ x near s, F.is_holonomic_at x ↔ F'.is_holonomic_at x :=
-admit
- -/
-
 /-- A map from M to J¹(M, M') is holonomic if its linear map part is the derivative
 of its base map at every point. -/
 def is_holonomic (F : one_jet_sec I M I' M') : Prop :=

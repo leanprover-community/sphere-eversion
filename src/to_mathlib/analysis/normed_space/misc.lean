@@ -24,12 +24,12 @@ variables (c : F) {r : ℝ} (hr : 0 < r)
 include hr
 
 def ball_homeomorph_ball : ball (0 : F) 1 ≃ₜ ball c r :=
-{ to_fun := λ x, ⟨c +ᵥ homothety (0 : F) r (x : F), by admit⟩,
-  inv_fun := λ y, ⟨(homothety c r⁻¹ y) -ᵥ c, by admit⟩,
-  left_inv := by admit,
-  right_inv := by admit,
-  continuous_to_fun := by admit,
-  continuous_inv_fun := by admit, }
+{ to_fun := λ x, ⟨c +ᵥ homothety (0 : F) r (x : F), ...⟩,
+  inv_fun := λ y, ⟨(homothety c r⁻¹ y) -ᵥ c, ...⟩,
+  left_inv := ...,
+  right_inv := ...,
+  continuous_to_fun := ...,
+  continuous_inv_fun := ..., }
 
 -- Not quite the right type but nearly there:
 #check (homeomorph_unit_ball.trans (ball_homeomorph_ball c hr)).to_local_homeomorph
