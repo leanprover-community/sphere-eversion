@@ -602,6 +602,37 @@ lemma update_htpy_formal_sol_apply {F : htpy_formal_sol R}
   φ.update_htpy_formal_sol ψ F G hK hFG t x = ⟨⟨x, (JΘ (F t) (G t) x).1.2⟩, (JΘ (F t) (G t) x).2⟩ :=
 rfl
 
+lemma update_htpy_formal_sol_bs' {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t) :
+(φ.update_htpy_formal_sol ψ F G hK hFG t).bs = λ x, (JΘ (F t) (G t) x).1.2 :=
+rfl
+
+lemma update_htpy_formal_sol_bs {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t) :
+(φ.update_htpy_formal_sol ψ F G hK hFG t).bs = φ.update ψ (F t).bs (G t).bs :=
+begin
+  rw update_htpy_formal_sol_bs',
+  ext x,
+  by_cases hx : x ∈ range φ,
+  { simp only [hx, update_of_mem_range, one_jet_bundle.embedding_to_fun, transfer_fst_snd],
+    refl },
+  { rw [update_of_nmem_range, update_of_nmem_range],
+    refl,
+    exacts [hx, hx] },
+end
+
+lemma update_htpy_formal_sol_ϕ {F : htpy_formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t) :
+(φ.update_htpy_formal_sol ψ F G hK hFG t).ϕ = λ x, (JΘ (F t) (G t) x).2 :=
+rfl
+
+
 @[simp]
 lemma update_htpy_formal_sol_apply_of_not_mem {F : htpy_formal_sol R}
   {G : htpy_formal_sol (R.localize φ ψ)}

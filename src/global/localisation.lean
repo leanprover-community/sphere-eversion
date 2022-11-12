@@ -307,16 +307,72 @@ lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
 formal_sol.coe_inj $ λ m, chart_pair.update_eq_self p F 𝓕 $
     by { rintro hF y hy rfl, by rw heq hF }
 
-
 lemma chart_pair.update_is_holonomic_at_iff {F : htpy_formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
   (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at (p.φ e) ↔ (𝓕 t).is_holonomic_at e :=
-sorry
+begin
+  have rg : range ((p.update F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ,
+  { rintros - ⟨e, rfl⟩,
+    dsimp only [chart_pair.update],
+    simp only [dif_pos h],
+    rw p.φ.update_htpy_formal_sol_bs p.ψ p.hK₁,
+    simp },
+  have : (p.update F 𝓕 t).localize p.φ p.ψ rg =ᶠ[𝓝 e] (𝓕 t).unloc,
+  { apply eventually_of_forall,
+    intros e,
+    apply ((one_jet_bundle_model_space_homeomorph E 𝓘(ℝ, E) E' 𝓘(ℝ, E'))).injective,
+    have foo : p.ψ.inv_fun (((p.update F 𝓕) t).to_one_jet_sec.bs (p.φ e)) = (𝓕 t).f e,
+    { dsimp only [chart_pair.update],
+      simp only [dif_pos h],
+      rw p.φ.update_htpy_formal_sol_bs p.ψ p.hK₁,
+      simp only [open_smooth_embedding.update_apply_embedding, open_smooth_embedding.left_inv],
+      refl },
+    ext,
+    { refl },
+    { exact foo },
+    { simp only [one_jet_bundle_model_space_homeomorph_coe, equiv.sigma_equiv_prod_apply],
+      change (((p.update F 𝓕) t).to_one_jet_sec.localize p.φ p.ψ rg).ϕ e x = (𝓕 t).φ e x,
+      rw ((p.update F 𝓕) t).to_one_jet_sec.localize_ϕ p.φ p.ψ rg e,
+      rw foo,
+      change (((p.ψ.fderiv ((𝓕 t).f e)).symm.to_continuous_linear_map).comp
+       (((p.update F 𝓕 t).ϕ (p.φ e)).comp (p.φ.fderiv e).to_continuous_linear_map)) x = ((𝓕 t).φ e) x,
+      have pr := chart_pair.update._proof_7 p F 𝓕 h,
+      have : (p.update F 𝓕 t).ϕ = (p.φ.update_htpy_formal_sol p.ψ F (rel_loc.htpy_formal_sol.unloc p 𝓕) p.hK₁ pr t).ϕ,
+      { dsimp only [chart_pair.update],
+        rw dif_pos h },
+      rw this,
+      rw p.φ.update_htpy_formal_sol_ϕ p.ψ p.hK₁,
+      simp only [continuous_linear_equiv.coe_def_rev, continuous_linear_map.coe_comp', comp_app],
+      rw p.φ.update_apply_embedding,
+      change (p.ψ.fderiv ((𝓕 t).f e)).symm (((p.φ.transfer p.ψ (𝓕.unloc p t e)).2) (p.φ.fderiv e x)) =
+        ((𝓕 t).φ e) x,
+      dsimp only [open_smooth_embedding.transfer, one_jet_bundle.map],
+      simp [← open_smooth_embedding.fderiv_symm_coe, ← open_smooth_embedding.fderiv_coe],
+      change ((p.ψ.fderiv ((𝓕 t).f e)).symm ∘ (p.ψ.fderiv ((𝓕 t).f e))) (
+       (((((𝓕.unloc p) t) e).snd)
+          ((p.φ.fderiv _).symm ((p.φ.fderiv e) x)))) = ((𝓕 t).φ e) x,
+      rw continuous_linear_equiv.symm_apply_apply,
+      simp,
+      refl } },
+  rw [← is_holonomic_at_localize_iff (p.update F 𝓕 t).to_one_jet_sec p.φ p.ψ rg e,
+      ← jet_sec.unloc_hol_at_iff],
+  split ; intro h ; apply h.congr,
+  { exact this },
+  { exact this.symm }
+end
 
 lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t x} (hx : x ∉ p.φ '' p.K₁)
   (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at x ↔ (F t).is_holonomic_at x :=
-sorry
+begin
+  have key : p.update F 𝓕 t =ᶠ[𝓝 x] F t,
+  { have : ∀ᶠ y in 𝓝 x, y ∉ p.φ '' p.K₁,
+      from (p.hK₁.image p.φ.continuous).is_closed.is_open_compl.eventually_mem hx,
+    exact this.mono (λ y hy, p.update_eq_of_not_mem F 𝓕 hy) },
+  split ; intro h,
+  { exact h.congr key },
+  { exact h.congr key.symm }
+end
 
 lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
   (hδ_cont : continuous δ) {F : htpy_formal_sol R} (hF : p.accepts F) :

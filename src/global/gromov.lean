@@ -327,4 +327,9 @@ begin
   apply rel_mfld.ample.satisfies_h_principle_with; assumption
 end
 
-#print_sorry_in rel_mfld.ample.satisfies_h_principle_with'
+#print axioms rel_mfld.ample.satisfies_h_principle_with'
+/-
+propext
+classical.choice
+quot.sound
+-/
