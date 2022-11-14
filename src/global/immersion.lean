@@ -285,4 +285,10 @@ begin
     convert formal_eversion_one E ω x },
 end
 
+-- The next instance will be used in the main file
+instance (n : ℕ) : fact (finrank ℝ (euclidean_space ℝ $ fin n) = n) :=
+⟨finrank_euclidean_space_fin⟩
+
+-- The next notation will be used in the main file
+notation `ℝ^`n:max := euclidean_space ℝ (fin n)
 end sphere_eversion
