@@ -1,6 +1,9 @@
 # The sphere eversion project
 
-The goal of this project is to formalize the proof of a theorem implying the existence of sphere eversions. Details can be found on the [project website.](https://leanprover-community.github.io/sphere-eversion/)
+This project formalizes the proof of a theorem implying the existence of sphere
+eversions. It was carried out by Patrick Massot, Floris van Doorn and Oliver
+Nash, with crucial help from the wider Lean community. The proof of the main theorem was completed on November 12th 2022.
+Details can be found on the [project website.](https://leanprover-community.github.io/sphere-eversion/)
 
 # Build the Lean files
 
