@@ -18,29 +18,59 @@ noncomputable theory
 open set filter model_with_corners metric
 open_locale topological_space manifold
 
+section
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) (M : Type*)
+  [topological_space M] [charted_space H M]
+
+lemma locally_compact_manifold  :
+  locally_compact_space M :=
+@charted_space.locally_compact H M _ _ _ I.locally_compact
+
+/-- A metric defining the topology on a sigma-compact T2 real manifold. -/
+def manifold_metric [t2_space M] [sigma_compact_space M] : metric_space M :=
+@topological_space.metrizable_space_metric _ _ (manifold_with_corners.metrizable_space I M)
+end
+
 variables
 {EM : Type*} [normed_add_comm_group EM] [normed_space ℝ EM] [finite_dimensional ℝ EM]
 {HM : Type*} [topological_space HM] {IM : model_with_corners ℝ EM HM} [boundaryless IM]
 {M : Type*} [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
-[t2_space M]
-[locally_compact_space M] -- FIXME: investigate how to deduce this from finite-dimensional
-[nonempty M] -- FIXME: investigate how to remove this
-[sigma_compact_space M]
+[t2_space M] [sigma_compact_space M]
 
 {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX] [finite_dimensional ℝ EX]
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX} [model_with_corners.boundaryless IX]
 -- note: X is a metric space
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
-[locally_compact_space X] -- FIXME: investigate how to deduce this from finite-dimensional
 [sigma_compact_space X]
-[nonempty X] -- FIXME: investigate how to remove this
 
-{R : rel_mfld IM M IX X}
+(R : rel_mfld IM M IX X)
 {A : set M} {δ : M → ℝ}
 
-set_option trace.filter_inst_type true
+/-- The empty homotopy of formal solution associated to any relation whose source manifold
+is empty. This is required to avoid a silly nonemptyness assumption in the main theorems. -/
+def empty_htpy_formal_sol [is_empty M] : htpy_formal_sol R :=
+{ bs := λ t x, (is_empty.false x).elim,
+  ϕ :=  λ t x, (is_empty.false x).elim,
+  smooth' := λ ⟨t, x⟩, (is_empty.false x).elim,
+  is_sol' := λ t x, (is_empty.false x).elim }
+
+lemma empty_htpy_formal_sol_eq [is_empty M] (F : formal_sol R) (t) :
+  empty_htpy_formal_sol R t = F :=
+begin
+  ext x : 3,
+  exact (is_empty.false x).elim,
+  apply heq_of_eq,
+  ext1 x,
+  exact (is_empty.false x).elim
+end
+
+variable {R}
+
+--set_option trace.filter_inst_type true
 
 lemma rel_mfld.ample.satisfies_h_principle_core
+  [nonempty M] [nonempty X]
   (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
   (hδ_pos : ∀ (x : M), 0 < δ x)
@@ -61,6 +91,8 @@ lemma rel_mfld.ample.satisfies_h_principle_core
 begin
   classical,
   borelize EX,
+  haveI := locally_compact_manifold IM M,
+  haveI := locally_compact_manifold IX X,
   let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
     (∀ᶠ t near Iic (0 : ℝ), Fn t = F₀) ∧
     (∀ᶠ t near Ici (1 : ℝ), Fn t = Fn 1) ∧
@@ -157,9 +189,21 @@ lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open
   (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
   R.satisfies_h_principle A δ :=
 begin
+  haveI := locally_compact_manifold IM M,
+  haveI := locally_compact_manifold IX X,
   refine rel_mfld.satisfies_h_principle_of_weak hA _,
   unfreezingI { clear_dependent A },
   intros A hA 𝓕₀ h𝓕₀,
+  casesI is_empty_or_nonempty M with hM hM,
+  { refine  ⟨empty_htpy_formal_sol R, _, _, _, _⟩,
+    all_goals { try { apply eventually_of_forall _ } },
+    all_goals { try { intro } },
+    all_goals { try { intro } },
+    all_goals { apply empty_htpy_formal_sol_eq <|> apply (is_empty.false ‹M›).elim } },
+  casesI is_empty_or_nonempty X with hX hX,
+  { exfalso,
+    inhabit M,
+    exact (is_empty.false $ 𝓕₀.bs default).elim },
   have cont : continuous 𝓕₀.bs, from 𝓕₀.smooth_bs.continuous,
   let L : localisation_data IM IX 𝓕₀.bs := std_localisation_data EM IM EX IX cont,
   let π := L.index,
@@ -281,12 +325,10 @@ end
 
 variables
 {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]  [finite_dimensional ℝ EP]
-{HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP} [model_with_corners.boundaryless IP]
+{HP : Type*} [topological_space HP] {IP : model_with_corners ℝ EP HP} [boundaryless IP]
 {P : Type*} [topological_space P] [charted_space HP P] [smooth_manifold_with_corners IP P]
-[locally_compact_space P] -- investigate how to deduce this from finite-dimensional
 [sigma_compact_space P]
 [t2_space P]
-[nonempty P] -- investigate how to remove this
 {C : set (P × M)}
 
 /-- **Gromov's Theorem** -/
@@ -306,10 +348,7 @@ variables
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E'] [finite_dimensional ℝ E']
 {H' : Type*} [topological_space H'] {I' : model_with_corners ℝ E' H'} [model_with_corners.boundaryless I']
 {M' : Type*} [topological_space M'] [charted_space H' M'] [smooth_manifold_with_corners I' M']
-[locally_compact_space M'] -- investigate how to deduce this from finite-dimensional
-[sigma_compact_space M']
-[t2_space M']
-[nonempty M'] -- investigate how to remove this
+[sigma_compact_space M'] [t2_space M']
 
 include IP
 
@@ -317,18 +356,6 @@ include IP
 theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
   (hRample : R.ample) (hRopen : is_open R) (hC : is_closed C)
   (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
-  by letI := (@topological_space.metrizable_space_metric _ _
-    (manifold_with_corners.metrizable_space I' M')); exact
+  by letI := manifold_metric I' M' ; exact
   R.satisfies_h_principle_with IP C δ :=
-begin
-  haveI := (@topological_space.metrizable_space_metric _ _
-    (manifold_with_corners.metrizable_space I' M')),
-  apply rel_mfld.ample.satisfies_h_principle_with; assumption
-end
-
-#print axioms rel_mfld.ample.satisfies_h_principle_with'
-/-
-propext
-classical.choice
-quot.sound
--/
+by apply rel_mfld.ample.satisfies_h_principle_with; assumption
