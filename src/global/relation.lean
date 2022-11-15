@@ -201,6 +201,26 @@ def formal_sol.const_htpy (F : formal_sol R) : htpy_formal_sol R :=
 lemma formal_sol.const_htpy_eq (F : formal_sol R) (t : ℝ) : F.const_htpy t = F :=
 by ext : 3 ; refl
 
+variable (R)
+
+/-- The empty homotopy of formal solution associated to any relation whose source manifold
+is empty. This is required to avoid a silly nonemptyness assumption in the main theorems. -/
+def empty_htpy_formal_sol [is_empty M] : htpy_formal_sol R :=
+{ bs := λ t x, (is_empty.false x).elim,
+  ϕ :=  λ t x, (is_empty.false x).elim,
+  smooth' := λ ⟨t, x⟩, (is_empty.false x).elim,
+  is_sol' := λ t x, (is_empty.false x).elim }
+
+lemma empty_htpy_formal_sol_eq [is_empty M] (F : formal_sol R) (t) :
+  empty_htpy_formal_sol R t = F :=
+begin
+  ext x : 3,
+  exact (is_empty.false x).elim,
+  apply heq_of_eq,
+  ext1 x,
+  exact (is_empty.false x).elim
+end
+
 /-! ## The h-principle -/
 
 variables {P}

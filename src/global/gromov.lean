@@ -44,30 +44,10 @@ variables
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
 [sigma_compact_space X]
 
-(R : rel_mfld IM M IX X)
+{R : rel_mfld IM M IX X}
 {A : set M} {δ : M → ℝ}
 
-/-- The empty homotopy of formal solution associated to any relation whose source manifold
-is empty. This is required to avoid a silly nonemptyness assumption in the main theorems. -/
-def empty_htpy_formal_sol [is_empty M] : htpy_formal_sol R :=
-{ bs := λ t x, (is_empty.false x).elim,
-  ϕ :=  λ t x, (is_empty.false x).elim,
-  smooth' := λ ⟨t, x⟩, (is_empty.false x).elim,
-  is_sol' := λ t x, (is_empty.false x).elim }
-
-lemma empty_htpy_formal_sol_eq [is_empty M] (F : formal_sol R) (t) :
-  empty_htpy_formal_sol R t = F :=
-begin
-  ext x : 3,
-  exact (is_empty.false x).elim,
-  apply heq_of_eq,
-  ext1 x,
-  exact (is_empty.false x).elim
-end
-
-variable {R}
-
---set_option trace.filter_inst_type true
+set_option trace.filter_inst_type true
 
 lemma rel_mfld.ample.satisfies_h_principle_core
   [nonempty M] [nonempty X]

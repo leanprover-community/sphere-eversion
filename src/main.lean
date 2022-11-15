@@ -79,8 +79,7 @@ theorem Gromov
   -- agrees with `𝓕₀` near `C`,
   (∀ᶠ (p : P × M) in 𝓝ˢ C, ∀ t : ℝ, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
   -- and whose underlying maps are `ε`--close to `𝓕₀`.
-  (∀ (t : ℝ) (p : P) (x : M), dist ((𝓕 (t, p)).bs x) ((𝓕₀ p).bs x) ≤ ε x)
- :=
+  (∀ (t : ℝ) (p : P) (x : M), dist ((𝓕 (t, p)).bs x) ((𝓕₀ p).bs x) ≤ ε x) :=
 by apply rel_mfld.ample.satisfies_h_principle_with ; assumption
 
 end Gromov
