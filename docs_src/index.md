@@ -1,7 +1,6 @@
 ---
 title: The sphere eversion project
 ---
-# What is it about?
 
 This project is a formalization the proof of existence of
 [sphere eversions](https://www.youtube.com/watch?v=wO61D9x6lNY)
