@@ -12,7 +12,7 @@ by open sets that are diffeomorphic to open sets of vector spaces. But for us it
 slightly more convenient to work with smooth open embeddings of whole vector spaces.
 Here a smooth open embedding from a manifold $X$ to a manifold $Y$ is a smooth map
 $φ : X → Y$ which is open and for which there is some smooth $ψ : φ(X) → X$ such that
-$ψ ∘ φ = \Id$ and $φ ∘ ψ = \Id$.
+$ψ ∘ φ = \Id$ (hence also and $φ ∘ ψ = \Id$).
 Remember that a family of sets $V_i$ in a topological space $X$ is locally finite if
 every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
 Note that in this whole text, every manifold is paracompact by definition. In
@@ -30,54 +30,84 @@ compatible distance function on every manifold.
 \end{definition}
 
 \begin{lemma}
-  \label{lem:updating}
+  \label{lem:smooth_updating}
   \uses{def:update}
-  \lean{open_smooth_embedding.smooth_update, open_smooth_embedding.dist_update}
+  \lean{open_smooth_embedding.smooth_update}
   \leanok
   % TODO: we need this (and formalized this) for the case where $f$ and $g$ have
   % parameters/are families of maps
-  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings. Let $K$ be a
-  compact set in $X$. Let $f : M → N$ be a smooth map such
-  that $f(φ(X)) ⊂ ψ(Y)$. Let $g : X → Y$ be a smooth map which agrees with
-  $ψ⁻¹∘f∘φ$ outside of $K$. Denote by $f'$ the update of $f$ using $g$.
-  \begin{itemize}
-    \item
-      $f'$ is a smooth map from $M$ to $N$.
-    \item
-      For every continuous function $ε : M → ℝ_{> 0}$, there is some positive
-      number $η$ such that, if $∀ x, d(g(x), ψ⁻¹∘f∘φ(x)) < η$ then
-      $∀ m ∈ M, d(f(m), f'(m)) < ε(m)$.
-  \end{itemize}
+  Let $φ : P × X → M$ and $ψ : P × Y → N$ be families of smooth open embeddings.
+  Let $K$ be a set in $X$ whose image in $M$ is closed. Let $f : P × M → N$
+  and $g : P × X → Y$ be
+  smooth families of maps. If for each $p$ and for every $x$ not in $K$,
+  $f_p(φ(x)) = ψ(g_p(x))$ then the family of maps $f_p$ updated using $g_p$ is
+  smooth from $P × M$ to $N$.
 \end{lemma}
 
 \begin{proof}
   \leanok
-  In order to prove smoothness of $f'$, note that $M = φ(X) ∪ φ(K)^c$. Both
-  those sets are open and $f'$ coincide with $ψ ∘ g ∘ φ⁻¹$ on the first one and
-  $f$ on the second one.
+  Note that $P × M = (P × φ(X)) ∪ (P × φ(K)^c)$. Both
+  those sets are open and the updated maps coincide with
+  $(p, m) ↦ ψ ∘ g_p ∘ φ⁻¹(m)$ on the first one and $f$ on the second one.
+\end{proof}
 
-  Let $ε$ be a positive continuous function on $M$. Since $K$ is compact, we get
-  a positive number $ε₀$ such that $ε(m) ≥ ε₀$ for each $m$ in $K$. We denote by
-  $K₁$ the closed $1$-thickening of $ψ⁻¹∘f∘φ(K)$ in $F$. This is a compact set
+\begin{lemma}
+  \label{lem:dist_updating}
+  \uses{def:update}
+  \lean{open_smooth_embedding.dist_update}
+  \leanok
+  Let $φ : P × X → M$ and $ψ : P × Y → N$ be families of smooth open embeddings.
+  Let $K_X$ and $K_P$ be compact sets in $X$ and $P$.
+  Let $f : P × M → N$ be a continuous family of
+  maps such that, for each $p$, $f_p(φ(X)) ⊂ ψ(Y)$.
+  For every continuous function $ε : M → ℝ_{> 0}$, there is some positive
+  number $η$ such that, for every map $g : P × X → Y$ and every $(p, p', x)$ in
+  $K_P × K_P × K_X$, $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < η$ implies
+  $d(f'_{p'}(φ(x)), f_p(φ(x))) < ε(φ(x))$ where $f'$ is obtained by updating $f$
+  using $g$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Let $ε$ be a positive continuous function on $M$. Since $K_X$ is compact, we get
+  a positive number $ε₀$ such that $ε(m) ≥ ε₀$ for each $m$ in $K_X$. We denote by
+  $K₁$ the closed $1$-thickening of the image of $K_P × K_X$ under
+  $(p, x) ↦ ψ⁻¹∘f_p∘φ(x)$. This is a compact set
   so $ψ$ is uniformly continuous on $K₁$ and we get a positive $τ$ such that
   for all $x$ and $y$ in $K₁$, $d(x, y) < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
 
-  We now prove that $η = \min(τ, 1)$ is suitable. Assume that
-  $∀ x, d(g(x), ψ⁻¹∘f∘φ(x)) < η$. Let $m$ be a point in $M$. If $m$ isn't in
-  $φ(K)$ then $f'(m) = f(m)$ and in particular $d(f(m), f'(m)) < ε(m)$. Now
-  assume that $m = φ(x)$ for some $x$ in $K$. By assumption $d(g(x), ψ⁻¹∘f∘φ(x)) < η$.
-  In particular $d(g(x), ψ⁻¹∘f∘φ(x)) < 1$ hence $g(x)$ is in $K₁$. Since
-  $ψ⁻¹∘f∘φ(x)$ is also in $K₁$ and $d(g(x), ψ⁻¹∘f∘φ(x)) < τ$, we get
-  $d(ψ∘ g(x), ψ ∘ ψ⁻¹∘f∘φ(x)) < ε₀$. This precisely means that
-  $d(f'(m), f(m)) < ε₀$. Since $m$ is in $K$, this is less than $ε(m)$.
+  We now prove that $η = \min(τ, 1)$ is suitable. Fix $(p, p', x)$ in
+  $K_P × K_P × K_X$ such that $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < η$.
+  In particular $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < 1$ hence $g_{p'}(x)$ is in $K₁$. Since
+  $ψ⁻¹∘f_p∘φ(x)$ is also in $K₁$ and $d(g_{p'}(x), ψ⁻¹∘f∘φ(x)) < τ$, we get
+  $d(ψ∘ g_{p'}(x), ψ ∘ ψ⁻¹∘f_p∘φ(x)) < ε₀$. This precisely means that
+  $d(f'_{p'}(φ(x)), f_p(φ(x)) < ε₀$. Since $(p, p', x)$ is in $K_P × K_P × K_X$,
+  this is less than $ε(m)$.
 \end{proof}
+
+We now introduce a seemingly abstract definition, but its only goal is to treat
+uniformly the case of $ℕ$ and finite sets $\{0, \dots, n\}$ so that we can treat
+uniformly atlases of compact and non-compact manifolds.
+
+\begin{definition}
+  \label{def:convenient_indexing}
+  \leanok
+  \lean{indexing}
+  A convenient indexing set is a totally ordered set $ι$ equipped with
+  maps $π : ℕ → ι$ and $σ : ι → ℕ$ such that $π$ is order preserving and
+  $π ∘ σ = \Id$ (in particular $π$ is surjective).
+\end{definition}
+
+In the case $ι = ℕ$ we will use $π = σ = \Id$ while in the case
+$ι = \{0, \dots, n-1\}$ we use the unique order-preserving retraction as $π$ and
+the inclusion as $σ$.
 
 \begin{lemma}
   \label{lem:nice_atlas}
   \lean{nice_atlas}
   \leanok
   Let $M$ be a manifold modelled on the normed space $E$ and $(V_j)_{j ∈ J}$
-  a cover of $M$ by open sets. There exists a countable set $ι$ and
+  a cover of $M$ by open sets. There exists a convenient indexing set $ι$ and
   a family of smooth open embeddings $φ : ι × E → M$ such that
   \begin{itemize}
     \item for each $i$ there is some $j$ such that $φ_i(E) \subseteq V_j$,
@@ -138,12 +168,13 @@ compatible distance function on every manifold.
 
 \begin{definition}
   \label{def:localisation_data}
+  \uses{def:convenient_indexing}
   \lean{localisation_data}
   \leanok
   Let $f : M → N$ be a continuous map between manifolds. A localisation data
   for $f$ is a tuple $(E, F, ι, ι', φ, ψ, j)$ where $E$ and $F$ are normed
-  vector spaces, $ι$ is a countable set, $ι'$ is a set (that is
-  morally also countable but that will play no role), $φ : ι × E → M$
+  vector spaces, $ι$ is a convenient indexing set, $ι'$ is a set (that is
+  morally also convenient but that will play no role), $φ : ι × E → M$
   and $ψ : ι' × F → N$  are families of smooth open embeddings, and
   $j : ι → ι'$ such that:
   \begin{itemize}
@@ -239,22 +270,6 @@ The condition $∀ m,\; d(g(m), f(m)) < ε(m)$ will be abbreviated $d(g, f) < ε
   $d(g(m), f(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
 \end{proof}
 
-We now introduce a seemingly abstract definition, but its only goal is to treat
-uniformly the case of $ℕ$ and finite sets $\{0, \dots, n\}$.
-
-\begin{definition}
-  \label{def:convenient_indexing}
-  \leanok
-  \lean{indexing}
-  A convenient indexing set is a totally ordered set $ι$ equipped with
-  maps $π : ℕ → ι$ and $σ : ι → ℕ$ such that $π$ is order preserving and
-  $π ∘ σ = \Id$ (in particular $π$ is surjective).
-\end{definition}
-
-In the case $ι = ℕ$ we will use $π = σ = \Id$ while in the case
-$ι = \{0, \dots, n-1\}$ we use the unique order-preserving retraction as $π$ and
-the inclusion as $σ$.
-
 \begin{lemma}
   \label{lem:loc_ultim_const}
   \lean{locally_finite.exists_forall_eventually_at_top_eventually_eq}
@@ -287,8 +302,11 @@ converges pointwise and the limit inherits all local properties of the $f_n$
   above. By construction, $n₀ \co x ↦ N_x + 1$ is suitable.
 \end{proof}
 
-\subsection{Vector bundles operations}
-\label{sec:vector_bundles_operations}
+\subsection{Jets spaces}
+
+We now need to introduce the bundles that will replace the jet spaces
+$E × F × \Hom(E, F)$ from the previous chapter. We need a couple of
+fiber bundles constructions.
 
 \begin{definition}
 \label{def:pull_back_bundle}
@@ -299,8 +317,6 @@ the pull-back bundle $f^*E → B'$ is defined by
 $f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
 the obvious projection to $B'$.
 \end{definition}
-
-The case of vector bundles.
 
 \begin{definition}
 \label{def:hom_bundle}
@@ -315,10 +331,7 @@ Set-theoretically, one can define $\Hom(E, F)$ as the set of subsets
 $S$ of $E × F$ such that there exists $b$ such that $S ⊂ E_b × F_b$
 and $S$ is the graph of a linear map. But the type theory formalization
 will use other tricks here. The facts that really matter are listed in
-\cref{lem:one_jet_extension_prop}.
-
-
-\subsection{Jets spaces}
+\cref{lem:one_jet_extension_prop} below.
 
 \begin{definition}
 \label{def:one_jet_space}
@@ -432,10 +445,8 @@ necessarily $\bs \F$.
   \leanok
   \lean{htpy_formal_sol}
   \uses{def:formal_sol}
-  A homotopy of formal solutions of $\Rel$ is a family of sections
-  $\F : ℝ × M → J^1(M, N)$ which is smooth over $[0, 1] × M$
-  and such that each $m ↦ \F(t, m)$ is a formal solution
-  when $t$ is in $[0, 1]$.
+  A homotopy of formal solutions of $\Rel$ is a smooth family of sections
+  $\F : ℝ × M → J^1(M, N)$ such that each $m ↦ \F(t, m)$ is a formal solution.
 \end{definition}
 
 The next definition will be used in cases where $X$ and $Y$ are vector spaces,
@@ -506,10 +517,10 @@ from the previous chapter.
   A first order differential relation $\Rel ⊂ J^1(M, N)$ satisfies the
   $h$-principle if every formal solution of $\Rel$ is homotopic to a
   holonomic one.
-  It satisfies the parametric $h$-principle if, for every manifold with
-  boundary $P$, every family $\F : P × M → J^1(M, N)$ of formal
-  solutions which are holonomic for $p$ in $𝓝(∂P)$
-  is homotopic to a family of holonomic ones relative to $𝓝(∂P)$.
+  It satisfies the parametric $h$-principle if, for every manifold $P$
+  and every closed set $C$ in $P × M$, every family $\F : P × M → J^1(M, N)$ of formal
+  solutions which are holonomic for $(p, m)$ near $C$
+  is homotopic to a family of holonomic ones relative to $C$.
 \end{definition}
 
 
@@ -705,7 +716,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   \proves{thm:open_ample}
   \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
   lem:ex_localisation, lem:localisation_stability,
-  lem:updating, lem:loc_ultim_const,
+  lem:smooth_updating, lem:dist_updating, lem:loc_ultim_const,
   lem:ample_iff_loc, lem:improve_htpy_loc}
   Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
   assume there are no parameters. So we start with a single formal solution $F$
@@ -759,11 +770,11 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   $d(\bs F_{n, 1}(x), \bs F_{n+1, t}(x)) < ε(x) - d(\bs F(x), \bs F_{n, 1}(x))$.
   The latter will hold as soon as, for all $e$ and $t$,
   $‖\bs \F_1(e) - \bs \F'_t(e)‖ < η$ for some positive $η$ given by
-  \Cref{lem:updating} (applied to $M × [0, 1]$ and $N$).
+  \Cref{lem:dist_updating} (applied to $P = ℝ$, $M$ and $N$).
   So \Cref{lem:improve_htpy_loc} gives a suitable $\F'$.
 
   Now that the inductive construction is completed, we apply
-  \Cref{lem:loc_ultim_const} to make sure our sequence $F_n$ is locally
+  \Cref{lem:loc_ultim_const} to learn our sequence $F_n$ is locally
   ultimately constant, hence it converges pointwise to a smooth homotopy
   relative to $A$ and ending at a holonomic section of $\Rel$.
 \end{proof}

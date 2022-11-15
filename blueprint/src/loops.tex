@@ -501,7 +501,7 @@ as explained in the next lemma.
   Let $U_0$ and $U_1$ be open sets in $E$.
   Let $K_0 ⊂ U_0$ and $K_1 ⊂ U_1$ be compact subsets.
   For any $γ_0 ∈ \Loop(U_0, g, β, Ω)$ and $γ_1 ∈ \Loop(U_1, g, β, Ω)$,
-  there exists $U ∈ 𝓝(K_0 ∪ K_1)$ and
+  there exists a neighborhood $U$ of $K_0 ∪ K_1$ and
   there exists $γ ∈ \Loop(U, g, β, Ω)$
   which coincides with $γ_0$ near $K_0\cup U_1^c$.
 \end{corollary}
@@ -579,7 +579,7 @@ parametric reparametrization lemma.
 \leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
 a map $g$.
-There is a smooth family of equivalences $φ \co E × 𝕊^1 → 𝕊^1$ such
+There is a smooth family $φ \co E × 𝕊^1 → 𝕊^1$ such
 that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 \end{lemma}
 
@@ -658,7 +658,7 @@ We finally assemble the ingredients from the previous two sections.
   we choose $(1-χ(x))g(x) + χ(x)(γ_x ∘ h_x)$. This
   operation does not change the average values of these loops, because
   it rescales them around their average value, but makes them constant
-  on $\Op{K}$. Also, those loops stay in $Ω$, thanks to our choice of $ε$.
+  near $K$. Also, those loops stay in $Ω$, thanks to our choice of $ε$.
 \end{proof}
 
 % vim: set expandtab sw=2 tabstop=2:
