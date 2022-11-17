@@ -190,7 +190,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   \lean{step_landscape.improve_step_rel_t_eq_0, step_landscape.improve_step_rel_C,%
     step_landscape.improve_step_rel_compl_K₁, step_landscape.improve_step_c0_close,%
     step_landscape.improve_step_part_hol}
-  \uses{def:formal_sol_loc, def:short_formal_sol, def:hol_partial, def:htpy_jet_sec_loc}
+  \uses{def:short_formal_sol, def:hol_partial, def:htpy_jet_sec_loc}
   Let $\F$ be a formal solution of $\Rel$.
   Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
   the interior of $K_1$. Let $C$ be a closed subset of $E$.
@@ -369,7 +369,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   \label{def:ample_relation_loc}
   \leanok
   \lean{rel_loc.is_ample}
-  \uses{def:ample_subset, def:rel_loc, def:rel_slice}
+  \uses{def:ample_subset, def:rel_slice}
   A first order differential relation $\Rel$ is ample if all its slices
   are ample.
 \end{definition}
@@ -440,7 +440,7 @@ improve a homotopy of formal solutions.
   \label{lem:improve_htpy_loc}
   \leanok
   \lean{rel_loc.htpy_formal_sol.improve}
-  \uses{def:ample_relation_loc, def:holonomic_loc}
+  % \uses{def:ample_relation_loc, def:holonomic_loc}
   Let $\F$ be a homotopy of formal solutions of $\Rel$.
   Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
   the interior of $K_1$.
