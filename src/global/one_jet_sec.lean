@@ -147,6 +147,12 @@ protected def mk' (FF : N → M → one_jet_bundle I M I' M') (hF : ∀ n m, (FF
 ⟨λ s x, (FF s x).1.2, λ s x, (FF s x).2,
   by { convert h2F, ext ⟨s, m⟩, exact (hF s m).symm, refl, refl }⟩
 
+lemma coe_mk' (FF : N → M → one_jet_bundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
+  (h2F : smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) (x : N) :
+  family_one_jet_sec.mk' FF hF h2F x =
+  one_jet_sec.mk' (FF x) (hF x) (h2F.comp (smooth_const.prod_mk smooth_id)) :=
+rfl
+
 @[simp] lemma bs_eq_coe_bs (S : family_one_jet_sec I M I' M' J N) (s : N) : S.bs s = (S s).bs :=
 rfl
 lemma bs_eq (S : family_one_jet_sec I M I' M' J N) (s : N) (x : M) : S.bs s x = (S s x).1.2 := rfl
