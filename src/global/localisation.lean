@@ -1,9 +1,6 @@
 import local.h_principle
-
 import global.relation
---import global.localisation_data
 
-import interactive_expr
 set_option trace.filter_inst_type true
 
 /-! # Link with the local story

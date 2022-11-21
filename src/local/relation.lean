@@ -1,11 +1,6 @@
 import analysis.calculus.specific_functions
 import topology.metric_space.hausdorff_distance
 
-import to_mathlib.topology.misc
-import to_mathlib.topology.nhds_set
-import to_mathlib.topology.hausdorff_distance
-import to_mathlib.linear_algebra.basic
-
 import local.one_jet
 
 /-!

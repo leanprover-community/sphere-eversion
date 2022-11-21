@@ -1,4 +1,3 @@
-import notations
 import loops.reparametrization
 import to_mathlib.analysis.cut_off
 import to_mathlib.topology.hausdorff_distance

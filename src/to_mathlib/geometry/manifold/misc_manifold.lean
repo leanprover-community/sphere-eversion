@@ -1,7 +1,6 @@
 import geometry.manifold.diffeomorph
 import geometry.manifold.algebra.monoid
 import geometry.manifold.metrizable
-import to_mathlib.topology.algebra.module
 import to_mathlib.analysis.calculus
 
 open bundle set function filter

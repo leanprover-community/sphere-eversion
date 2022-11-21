@@ -1,6 +1,5 @@
 import analysis.calculus.specific_functions
 import measure_theory.integral.periodic
-import notations
 import loops.surrounding
 import loops.delta_mollifier
 

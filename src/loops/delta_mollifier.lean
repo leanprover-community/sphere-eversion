@@ -6,7 +6,6 @@ import analysis.convolution
 import to_mathlib.data.real_basic
 import to_mathlib.topology.periodic
 
-import notations
 import loops.basic
 
 import to_mathlib.partition -- get our finsum stuff

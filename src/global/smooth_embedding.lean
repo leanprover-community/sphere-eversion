@@ -3,7 +3,6 @@ import topology.uniform_space.separation
 import geometry.manifold.cont_mdiff_mfderiv
 import global.indexing
 import to_mathlib.topology.paracompact
-import to_mathlib.topology.local_homeomorph
 import to_mathlib.topology.algebra.order.compact
 import to_mathlib.topology.nhds_set
 import to_mathlib.topology.misc

@@ -4,11 +4,7 @@ import measure_theory.integral.periodic
 import analysis.calculus.parametric_integral
 
 import to_mathlib.topology.periodic
-import to_mathlib.analysis.calculus
-import to_mathlib.measure_theory.parametric_interval_integral
 import to_mathlib.measure_theory.borel_space
-
-import notations
 
 import loops.basic
 import local.dual_pair
