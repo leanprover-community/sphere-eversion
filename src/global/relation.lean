@@ -166,7 +166,6 @@ lemma coe_mk_to_one_jet_sec {S : family_one_jet_sec I M I' M' J N} {h : ∀ t x,
   (family_formal_sol.mk S h t).to_one_jet_sec = S t :=
 rfl
 
-@[simp]
 lemma to_family_one_jet_sec_coe (S : family_formal_sol J N R) {t : N} {x : M} :
   S.to_family_one_jet_sec t x = S t x :=
 rfl
@@ -601,6 +600,27 @@ begin
   split_ifs ; refl,
 end
 
+lemma htpy_Jupdate_localize {F : htpy_one_jet_sec IM M IN N} {G : htpy_one_jet_sec IX X IY Y}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t : ℝ)
+  (rg : range ((φ.htpy_Jupdate ψ F G hK hFG t).bs ∘ φ) ⊆ range ψ) (x : X) :
+  (φ.htpy_Jupdate ψ F G hK hFG t).localize φ ψ rg x = G t x :=
+begin
+  have foo : ψ.inv_fun ((φ.htpy_Jupdate ψ F G hK hFG t).bs (φ x)) = (G t).bs x,
+  { simp_rw [htpy_Jupdate_bs, open_smooth_embedding.update_apply_embedding,
+    open_smooth_embedding.left_inv] },
+  ext,
+  refl,
+  { exact foo },
+  { simp_rw [one_jet_sec.snd_eq, one_jet_sec.localize_ϕ],
+    rw [foo],
+    change (ψ.fderiv ((G t).bs x)).symm ((JΘ (F t) (G t) (φ x)).2 (φ.fderiv x x_1)) =
+      ((G t).ϕ x) x_1,
+    rw φ.update_apply_embedding,
+    change (ψ.fderiv ((G t).bs x)).symm (ψ.fderiv ((G t).bs x) $ (G t).ϕ x $
+      (φ.fderiv x).symm $ φ.fderiv x x_1) = ((G t).ϕ x x_1),
+    simp_rw [continuous_linear_equiv.symm_apply_apply] },
+end
 
 /-- Update a global homotopy of formal solutions `F` using a local one `G`. -/
 def update_htpy_formal_sol (F : htpy_formal_sol R)
@@ -689,6 +709,7 @@ begin
  rw [open_smooth_embedding.update_htpy_formal_sol_apply_of_mem, φ.left_inv],
  exact mem_range_self x,
 end
+
 
 end open_smooth_embedding
 end open_smooth_embedding
