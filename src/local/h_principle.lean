@@ -1,9 +1,6 @@
 import to_mathlib.analysis.normed_group
 import to_mathlib.linear_algebra.basis
-import to_mathlib.topology.nhds_set
 import to_mathlib.topology.algebra.order.basic
-import to_mathlib.analysis.cut_off
-import to_mathlib.measure_theory.borel_space
 
 import loops.exists
 
