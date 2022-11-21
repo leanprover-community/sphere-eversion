@@ -157,7 +157,7 @@ begin
       rw hF'relK₁ t x hx',
       exact hx t },
     { intros e he t,
-      rw p.update_eq_of_eq' _ _ hcompat,
+      rw p.update_eq_of_eq _ _ hcompat,
       exact he t } },
   { exact hF'relK₁ },
   { have key : ∀ (e ∈ K₁) (t ∈ I), dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) < δ (φ e),
@@ -165,7 +165,7 @@ begin
       rcases h𝓕'dist e t with ⟨t', ht'⟩|h,
       { convert hFF₀δ t' (φ e) using 2,
         change ((p.update F 𝓕') t _).1.2 = _,
-        rw p.update_eq_of_eq' F 𝓕' hcompat ht',
+        rw p.update_eq_of_eq F 𝓕' hcompat ht',
         refl, },
       calc dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) ≤ dist ((F' t).bs (φ e)) ((F 1).bs (φ e)) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : dist_triangle _ _ _
       ... < δ' (φ e) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : add_lt_add_right (hτ hcompat e he t ht h) _

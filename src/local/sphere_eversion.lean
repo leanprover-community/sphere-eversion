@@ -56,11 +56,7 @@ local notation `R` := immersion_sphere_rel E F
 
 variables {E F}
 
-lemma mem_loc_immersion_rel {w : one_jet E F} :
-  w ∈ immersion_sphere_rel E F ↔ w.1 ∉ B → inj_on w.2.2 (ℝ ∙ w.1)ᗮ :=
-iff.rfl
-
-@[simp] lemma mem_loc_immersion_rel' {x y φ} :
+@[simp] lemma mem_loc_immersion_rel {x y φ} :
   (⟨x, y, φ⟩ : one_jet E F) ∈ immersion_sphere_rel E F ↔ x ∉ B → inj_on φ (ℝ ∙ x)ᗮ :=
 iff.rfl
 
@@ -173,7 +169,7 @@ begin
   by_cases hx : x ∈ B,
   { apply ample_slice_of_forall,
     intros w,
-    simp only [hx, mem_loc_immersion_rel', not_true, is_empty.forall_iff] },
+    simp only [hx, mem_loc_immersion_rel, not_true, is_empty.forall_iff] },
   have x_ne : x ≠ 0,
   { rintro rfl,
     apply hx,

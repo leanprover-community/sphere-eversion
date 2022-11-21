@@ -27,11 +27,6 @@ Now we really bridge the gap all the way to vector spaces.
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 variables {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
 
-/-- For maps between vector spaces, `one_jet_ext` is the obvious thing. -/
-@[simp] theorem one_jet_ext_eq_fderiv {f : E → E'} {x : E} :
-  one_jet_ext 𝓘(ℝ, E) 𝓘(ℝ, E') f x = ⟨(x, f x), fderiv ℝ f x⟩ :=
-by { rw ← mfderiv_eq_fderiv, refl }
-
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
 def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : jet_sec E E' :=
@@ -282,13 +277,6 @@ chart_pair.update_eq_self p F 𝓕 $
   by { rintro hF x hx rfl, exfalso, exact hm (mem_image_of_mem _ hx) }
 
 lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
-  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t x}
-   (htx : ∀ hF : p.accepts F, 𝓕 t x = F.localize p hF t x) :
-  p.update F 𝓕 t (p.φ x) = F t (p.φ x) :=
-chart_pair.update_eq_self p F 𝓕 $
-  by { intros hF y hy hyx, obtain rfl := p.φ.injective hyx, exact htx hF }
-
-lemma chart_pair.update_eq_of_eq' (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat F 𝓕) {t t' x}
   (h : 𝓕 t x = F.localize p h𝓕.1 t' x) :
   p.update F 𝓕 t (p.φ x) = F t' (p.φ x) :=

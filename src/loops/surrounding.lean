@@ -94,9 +94,6 @@ in mathlib which is in the root namespace.
 /-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
 def smooth_at' (f : E → F) (x : E) : Prop := ∃ s ∈ 𝓝 x, smooth_on f s
 
-lemma smooth_at'.continuous_at {f : E → F} {x : E} (h : smooth_at' f x) : continuous_at f x :=
-by { obtain ⟨s, hs, h⟩ := h, exact h.continuous_on.continuous_at hs }
-
 section surrounding_points
 
 local notation `ι` := fin (d + 1)
@@ -543,69 +540,9 @@ protected lemma t_ge_one (h : surrounding_family g b γ U) (x : E) (s : ℝ) {t 
   γ x t s = γ x 1 s :=
 by rw [← h.proj_I, proj_I_eq_one.mpr ht]
 
-protected lemma continuous_b (h : surrounding_family g b γ U) : continuous b :=
-(h.cont.comp₂ continuous_id continuous_zero).congr (λ x, h.base x 0)
-
-protected lemma change_set (h : surrounding_family g b γ U) {V : set E}
-  (hV : ∀ x ∈ V \ U, (γ x 1).surrounds $ g x) :
-  surrounding_family g b γ V :=
-begin
-  refine ⟨h.base, h.t₀, h.proj_I, λ x hx, _, h.cont⟩,
-  by_cases h2x : x ∈ U, exact h.surrounds x h2x, exact hV x ⟨hx, h2x⟩
-end
-
 protected lemma mono (h : surrounding_family g b γ U) {V : set E} (hVU : V ⊆ U) :
   surrounding_family g b γ V :=
 ⟨h.base, h.t₀, h.proj_I, λ x hx, h.surrounds x (hVU hx), h.cont⟩
-
-/-
--- The version below depends on `exists_cont_diff_of_convex_of_is_open` which is not yet proven
--- and we don't need it anyway.
-protected lemma surrounds_of_close [finite_dimensional ℝ E] [finite_dimensional ℝ F]
-  (hg : continuous g)
-  (hU : is_open U)
-  (h : surrounding_family g b γ U) :
-  ∃ ε : E → ℝ, (∀ x ∈ U, 0 < ε x) ∧ continuous_on ε U ∧
-  ∀ (x ∈ U) (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < ε x) → γ'.surrounds (g x) :=
-begin
-  let P : E → ℝ → Prop := λ x t, 0 < t ∧
-    ∀ (γ' : loop F), (∀ z, dist (γ' z) (γ x 1 z) < t) → γ'.surrounds (g x),
-  have hP : ∀ x ∈ U, convex ℝ {t | P x t} :=
-  begin
-    intros x hx,
-    rw [convex_iff_ord_connected],
-    constructor,
-    rintro ε₁ hε₁ ε₂ hε₂ ε₃ ⟨hε₁₃, hε₃₂⟩,
-    refine ⟨hε₁.1.trans_le hε₁₃, λ γ hγ, hε₂.2 γ $ λ z, (hγ z).trans_le hε₃₂⟩
-  end,
-  obtain ⟨ε, hε, hPε⟩ := exists_cont_diff_of_convex_of_is_open hU hP _,
-  { refine ⟨ε, λ x hx, (hPε x hx).1, cont_diff_on_zero.mp hε, λ x hx, (hPε x hx).2⟩ },
-  intros x hx,
-  obtain ⟨ε, hε, h2⟩ := (h.surrounds x hx).eventually_surrounds,
-  have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=
-    (metric.is_open_ball.preimage hg).mem_nhds
-    (by simp_rw [mem_preimage, metric.mem_ball, dist_self, hε.lt]),
-  have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x,
-  { refine is_open.mem_nhds _ (λ z, by simp_rw [dist_self, half_pos hε]),
-    have hc : continuous ↿(λ y s, dist (γ y 1 s) (γ x 1 s)) :=
-    (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
-      (h.cont.comp₃ continuous_const continuous_const continuous_snd),
-    have : is_open {y : E | Sup ((λ z, dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2},
-    { refine is_open_lt (is_compact_Icc.continuous_Sup hc) continuous_const },
-    have hc : ∀ y, continuous (λ s, dist (γ y 1 s) (γ x 1 s)) :=
-    λ y, hc.comp₂ continuous_const continuous_id,
-    simp_rw [is_compact_Icc.Sup_lt_iff_of_continuous
-      (nonempty_Icc.mpr zero_le_one) (hc _).continuous_on] at this,
-    convert this,
-    ext y,
-    refine ⟨λ h z hz, h z, λ h z, _⟩,
-    rw [← (γ y 1).fract_eq, ← (γ x 1).fract_eq],
-    exact h _ (unit_interval.fract_mem _) },
-  refine ⟨_, inter_mem h4 h3, λ _, ε / 2, cont_diff_on_const,
-    λ y hy, ⟨half_pos hε, λ γ' hγ', h2 _ _ (λ z, _) hy.2⟩⟩,
-  refine (dist_triangle _ _ _).trans_lt
-    ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le)
-end -/
 
 protected lemma surrounds_of_close_univ [finite_dimensional ℝ E] [finite_dimensional ℝ F]
   (hg : continuous g)
@@ -689,10 +626,6 @@ by simp only [path.coe_mk, surrounding_family.path, range_comp _ coe, subtype.ra
 @[simp]
 lemma path_t₀ (h : surrounding_family g b γ U) (x : E) : h.path x 0 = refl (b x) :=
 by { ext t, exact h.t₀ x t }
-
-@[simp] lemma path_proj_I (h : surrounding_family g b γ U) (t : ℝ) (x : E) :
-  h.path x (proj_I t) = h.path x t :=
-by { ext s, exact h.proj_I x t s }
 
 end surrounding_family
 
@@ -842,11 +775,7 @@ by { rw [ρ, proj_I_eq_zero], split; intros; linarith }
 @[simp] lemma ρ_eq_zero_of_le {x : ℝ} (h : 1 ≤ x) : ρ x = 0 :=
 ρ_eq_zero.mpr h
 
-lemma ρ_zero : ρ 0 = 1 := by simp
-lemma ρ_half : ρ 2⁻¹ = 1 := by simp
-lemma ρ_one : ρ 1 = 0 := by simp
 lemma ρ_mem_I {x : ℝ} : ρ x ∈ I := proj_I_mem_Icc
-lemma ρ_nonneg (x : ℝ) : 0 ≤ ρ x := ρ_mem_I.1
 
 section satisfied_or_refund
 
@@ -895,12 +824,6 @@ begin
     simp only [hs, h₁.t₀, zero_mul, surrounding_family.path_apply, ρ_eq_zero_of_le] },
   { refine continuous_proj_Icc.comp (continuous_const.sub hτ.fst') }
 end
-
-/-- In this lemmas and the lemmas below we add `finite_dimensional ℝ E` so that we can conclude
- `locally_compact_space E`. -/
-lemma continuous_sf_homotopy [finite_dimensional ℝ E] : continuous ↿(sf_homotopy h₀ h₁) :=
-continuous.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
-  continuous_snd.snd.snd
 
 lemma surrounding_family_sf_homotopy [finite_dimensional ℝ E] (τ : ℝ) :
   surrounding_family g b (sf_homotopy h₀ h₁ τ) U :=
@@ -1082,10 +1005,6 @@ lemma subset_extended_domain : l₀.K ∪ l₁.K ⊆ extended_domain l₀ l₁ :
 subset_interior_iff_mem_nhds_set.mpr $ classical.some $ classical.some_spec $
   extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ
 
-lemma extended_domain_mem_nhds_set :
-  extended_domain l₀ l₁ ∈ 𝓝ˢ (l₀.K ∪ l₁.K) :=
-is_open_extended_domain.mem_nhds_set.mpr subset_extended_domain
-
 lemma surrounding_family_extended_loops :
    surrounding_family_in g b (extended_loops l₀ l₁) (extended_domain l₀ l₁) Ω :=
 (classical.some_spec $ classical.some_spec $ classical.some_spec $
@@ -1103,10 +1022,6 @@ lemma compl_subset_extended_invariant : l₁.Uᶜ ⊆ extended_invariant l₀ l�
 subset_interior_iff_mem_nhds_set.mpr
   (classical.some_spec $ classical.some_spec $ classical.some_spec $
     extend_loops l₀.hU l₁.hU l₀.hK l₁.hK l₀.hKU l₁.hKU l₀.hγ l₁.hγ).2.2
-
-lemma extended_invariant_mem_nhds_set :
-  extended_invariant l₀ l₁ ∈ 𝓝ˢ l₀.K :=
-is_open_extended_invariant.mem_nhds_set.mpr subset_extended_invariant
 
 lemma extended_loops_eq_left {x : E} (hx : x ∈ extended_invariant l₀ l₁) :
   extended_loops l₀ l₁ x = l₀.γ x :=
@@ -1137,9 +1052,6 @@ by rw [loop_data_seq, loop_data.extend]
 
 lemma loop_data_seq_K_mono : monotone (λ n, (loop_data_seq l₀ l n).K) :=
 by { refine monotone_nat_of_le_succ _, intro n, rw [loop_data_seq], apply subset_union_left, }
-
-lemma subset_loop_data_seq_K0 (n : ℕ) : l₀.K ⊆ (loop_data_seq l₀ l n).K :=
-loop_data_seq_K_mono (zero_le n)
 
 lemma subset_loop_data_seq_K : (l n).K ⊆ (loop_data_seq l₀ l (n+1)).K :=
 subset_union_right _ _

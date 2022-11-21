@@ -219,10 +219,6 @@ def family_formal_sol.curry (S : family_formal_sol J N (R.relativize IP P)) :
   family_formal_sol (J.prod IP) (N × P) R :=
 ⟨S.to_family_one_jet_sec.curry, λ p x, S.to_family_one_jet_sec.curry_mem S.is_sol⟩
 
-lemma family_formal_sol.curry_ϕ (S : family_formal_sol J N (R.relativize IP P)) (p : N × P)
-  (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (λ x, (p.2, x)) x :=
-rfl
-
 lemma family_formal_sol.curry_ϕ' (S : family_formal_sol J N (R.relativize IP P)) (p : N × P)
   (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L continuous_linear_map.inr ℝ EP E :=
 S.to_family_one_jet_sec.curry_ϕ' p x

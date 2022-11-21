@@ -121,6 +121,7 @@ lemma is_part_holonomic_at.sup (𝓕 : jet_sec E F) {E' E'' : submodule ℝ E} {
   𝓕.is_part_holonomic_at (E' ⊔ E'') x :=
 λ v : E, linear_map.eq_on_sup h' h''
 
+-- unused
 lemma is_part_holonomic_at.mono {𝓕 : jet_sec E F}
   {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
   𝓕.is_part_holonomic_at E'' x :=
@@ -229,6 +230,7 @@ begin
   linarith
 end
 
+-- unused
 lemma smooth_step.pos_of_gt {t : ℝ} (h : 1/4 < t) : 0 < smooth_step t :=
 begin
   apply smooth_transition.pos_of_pos,
@@ -339,6 +341,7 @@ begin
   rw smooth_step.of_lt ht''
 end
 
+-- unused
 @[simp]
 lemma htpy_jet_sec.comp_0 (𝓕 𝓖 : htpy_jet_sec E F) (h) : 𝓕.comp 𝓖 h 0 = 𝓕 0 :=
 (𝓕.comp_le_0 𝓖 h).on_set 0 right_mem_Iic

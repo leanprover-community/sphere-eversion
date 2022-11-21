@@ -173,6 +173,7 @@ end
 variables (I M)
 
 /-- The identity map is a smooth open embedding. -/
+-- unused
 @[simps] def id : open_smooth_embedding I M I M :=
 { to_fun := id,
   inv_fun := id,
@@ -183,6 +184,7 @@ variables (I M)
 
 variables {I M I' M'}
 
+-- unused
 @[simps] def comp
   {E'' : Type*} [normed_add_comm_group E''] [normed_space 𝕜 E'']
   {H'' : Type*} [topological_space H'']
@@ -211,6 +213,7 @@ variables (e : E ≃L[𝕜] E') [complete_space E] [complete_space E']
 
 @[simp] lemma is_open_map : is_open_map e := (e : E →L[𝕜] E').is_open_map e.surjective
 
+-- unused
 @[simps] def to_open_smooth_embedding :
   open_smooth_embedding 𝓘(𝕜, E) E 𝓘(𝕜, E') E' :=
 { to_fun := e,

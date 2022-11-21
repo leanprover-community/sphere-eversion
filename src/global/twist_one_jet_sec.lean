@@ -185,13 +185,6 @@ def family_join
     simp,
   end }
 
-@[simp] lemma family_join_bs
-  {f : N × M → V}
-  (hf : smooth (J.prod I) 𝓘(ℝ, V) f)
-  (s : family_one_jet_eucl_sec I M V J N) (n : N) (m : M) :
-  (family_join hf s n).bs m = f (n, m) :=
-rfl
-
 def family_twist
   (s : one_jet_eucl_sec I M V)
   (i : N × M → (V →L[ℝ] V'))

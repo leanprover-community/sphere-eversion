@@ -92,16 +92,6 @@ projection of the point `p`. -/
 def one_jet_bundle.proj : J¹MM' → M × M' :=
 λ p, p.1
 
-
-/-
-TODO: Also define the projection to source?
--/
-
-@[simp, mfld_simps] lemma one_jet_bundle.proj_apply (p : M × M') (σ : one_jet_space I I' p) :
-  one_jet_bundle.proj I M I' M' ⟨p, σ⟩ = p :=
-rfl
-
-
 section one_jet_bundle_instances
 
 section
@@ -109,7 +99,6 @@ section
 variables {M} (p : M × M')
 
 instance : normed_add_comm_group (one_jet_space I I' p) := by delta_instance one_jet_space
-instance : normed_space 𝕜 (one_jet_space I I' p) := by delta_instance one_jet_space
 instance : inhabited (one_jet_space I I' p) := ⟨0⟩
 
 end
@@ -126,10 +115,6 @@ instance : charted_space HJ J¹MM' :=
 instance : smooth_manifold_with_corners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) J¹MM' :=
 (one_jet_bundle_core I M I' M').to_smooth_manifold
 
-instance : topological_vector_bundle 𝕜 (E →L[𝕜] E') (one_jet_space I I' : M × M' → Type*) :=
-topological_vector_bundle_core.fiber.topological_vector_bundle
-  (one_jet_bundle_core I M I' M').to_topological_vector_bundle_core
-
 end one_jet_bundle_instances
 
 variable (M)
@@ -137,10 +122,6 @@ variable (M)
 /-- The tangent bundle projection on the basis is a continuous map. -/
 lemma one_jet_bundle_proj_continuous : continuous (one_jet_bundle.proj I M I' M') :=
 ((one_jet_bundle_core I M I' M').to_topological_vector_bundle_core).continuous_proj
-
-/-- The one_jet bundle projection on the basis is an open map. -/
-lemma one_jet_bundle_proj_open : is_open_map (one_jet_bundle.proj I M I' M') :=
-((one_jet_bundle_core I M I' M').to_topological_vector_bundle_core).is_open_map_proj
 
 /-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an
@@ -199,18 +180,6 @@ begin
        ← (tangent_bundle_core I M).coe_coord_change_equiv hy],
 end
 
-/-- Computing the value of an extended chart around `v` at point `v'` in `J¹(M, M')`.
-  The last component equals the continuous linear map `v'.2`, composed on both sides by an
-  appropriate coordinate change function. -/
--- unused
-lemma one_jet_bundle_ext_chart_at {v v' : one_jet_bundle I M I' M'} :
-  ext_chart_at ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) v v' =
-  ((ext_chart_at I v.1.1 v'.1.1, ext_chart_at I' v.1.2 v'.1.2),
-  in_coordinates' (tangent_bundle_core I M) (tangent_bundle_core I' M')
-  v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
-by simp_rw [ext_chart_at_coe, function.comp_apply, one_jet_bundle_chart_at,
-    model_with_corners.prod_apply, model_with_corners_self_coe, id]
-
 section maps
 
 variables {M M'}
@@ -255,12 +224,6 @@ begin
   ext x; refl
 end
 
-lemma smooth_at.in_coordinates_snd {f : N → one_jet_bundle I M I' M'} {x₀ : N}
-  (hf : smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀) :
-  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
-    (λ x, (f x).2) x₀) x₀ :=
-(smooth_at_one_jet_bundle.mp hf).2.2
-
 lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
     (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → one_jet_bundle I M I' M') x₀ ↔
@@ -281,12 +244,6 @@ def one_jet_ext (f : M → M') : M → one_jet_bundle I M I' M' :=
 λ x, one_jet_bundle.mk x (f x) (mfderiv I I' f x)
 
 variables {I I'}
-
-@[simp, mfld_simps] lemma one_jet_ext_one_jet_bundle_proj {f : M → M'} {x :  M} :
-  one_jet_bundle.proj I M I' M' (one_jet_ext I I' f x) = (x, f x) := rfl
-
-@[simp, mfld_simps] lemma one_jet_ext_proj {f : M → M'} {x : M} :
-  (one_jet_ext I I' f x).1 = (x, f x) := rfl
 
 lemma smooth_at.one_jet_ext {f : M → M'} {x : M} (hf : smooth_at I I' f x) :
   smooth_at I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) x :=
@@ -519,11 +476,13 @@ def one_jet_bundle_model_space_homeomorph : one_jet_bundle I H I' H' ≃ₜ 𝓜
   end,
   .. sigma_equiv_prod (H × H') (E →L[𝕜] E') }
 
+-- unused
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_homeomorph_coe :
   (one_jet_bundle_model_space_homeomorph H I H' I' : one_jet_bundle I H I' H' → 𝓜) =
   sigma_equiv_prod (H × H') (E →L[𝕜] E') :=
 rfl
 
+-- unused
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_homeomorph_coe_symm :
   ((one_jet_bundle_model_space_homeomorph H I H' I').symm : 𝓜 → one_jet_bundle I H I' H') =
   (sigma_equiv_prod (H × H') (E →L[𝕜] E')).symm :=

@@ -69,6 +69,7 @@ instance [has_zero X] : has_zero (loop X) :=
 @[simp] lemma zero_fun [has_zero X] : ((0 : loop X) : ℝ → X) = (0 : ℝ → X) :=
 rfl
 
+-- unused
 @[simp] lemma const_zero [has_zero X] : const (0 : X) = (0 : loop X) :=
 rfl
 
@@ -85,6 +86,7 @@ loop.per' γ
 protected lemma one (γ : loop X) : γ 1 = γ 0 :=
 by { convert γ.per 0, rw [zero_add] }
 
+-- unused
 lemma add_nat_eq (γ : loop X) (t : ℝ) : ∀ (n : ℕ), γ (t + n) = γ t
 | 0 := by rw [nat.cast_zero, add_zero]
 | (nat.succ n) := by rw [← add_nat_eq n, nat.cast_succ, ← add_assoc, γ.per]
@@ -104,9 +106,6 @@ begin
   rw [sub_eq_add_neg, ← int.cast_neg],
   exact γ.add_int_eq _ _
 end
-
-lemma comp_fract_eq (γ : loop X) : γ ∘ fract = γ :=
-funext γ.fract_eq
 
 lemma range_eq_image (γ : loop X) : range γ = γ '' I :=
 begin
@@ -142,9 +141,6 @@ instance [add_comm_group X] : add_comm_group (loop X) :=
   ..loop.has_zero,
   ..loop.has_neg }
 
-@[simp] lemma sub_apply (γ₁ γ₂ : loop F) (t : ℝ) : (γ₁ - γ₂) t = γ₁ t - γ₂ t :=
-by simp [sub_eq_add_neg]
-
 /-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
 instance [has_add X] : has_vadd X (loop X) :=
 ⟨λ x γ, γ.transform (λ y, x + y)⟩
@@ -167,6 +163,7 @@ instance [semiring K] [add_comm_group X] [module K X] : module K (loop X) :=
 @[simp] lemma smul_apply [has_smul K X] {k : K} {γ : loop X} {t : ℝ} : (k • γ) t = k • γ t :=
 rfl
 
+-- unused
 lemma norm_at_le_supr_norm_Icc (γ : loop F) (hγ : continuous γ) (t : ℝ) :
   ∥γ t∥ ≤ ⨆ (s : I), ∥γ s∥ :=
 begin
@@ -212,23 +209,6 @@ begin
   exact hz' hz
 end
 
-lemma is_closed_support (γ : X → loop X') : is_closed (loop.support γ) :=
-is_closed_closure
-
-lemma continuous_of_family {γ : X → loop X'} (h : continuous ↿γ) (x : X) : continuous (γ x) :=
-h.comp₂ continuous_const continuous_id
-
-lemma continuous_of_family_step {γ : X → Y → loop Z} (h : continuous ↿γ) (x : X) :
-  continuous ↿(γ x) :=
-h.comp₂ continuous_const continuous_id
-
-/-- Given a continuous family of loops, we can turn it into a bundled continuous map with as
-codomain the space of bundled continuous maps. -/
-@[simps] def as_continuous_family {γ : X → loop X'} (h : continuous ↿γ) : C(X, C(I, X')) :=
-continuous_map.curry
-{ to_fun := λ z, γ z.1 z.2,
-  continuous_to_fun := h.comp (continuous_id.prod_map continuous_induced_dom) }
-
 /-! ## From paths to loops -/
 
 /-- Turn a path into a loop. -/
@@ -266,13 +246,6 @@ begin
     rw subtype.ext_iff_val }
 end
 
-lemma of_path_continuous {x : X} (γ : path x x) : continuous (of_path γ) :=
-begin
-  simp only [has_coe_to_fun.coe, coe_fn, of_path],
-  apply γ.continuous_extend.continuous_on.comp_fract'',
-  rw [γ.extend_zero, γ.extend_one]
-end
-
 /-- `loop.of_path` is continuous, general version. -/
 lemma _root_.continuous.of_path (x : X → Y) (t : X → ℝ)
   (γ : ∀ i, path (x i) (x i)) (hγ : continuous ↿γ) (ht : continuous t) :
@@ -307,9 +280,6 @@ begin
   rw [round_trip, of_path],
   simp [fract_zero]
 end
-
-lemma round_trip_continuous {x y : X} (γ : path x y) : continuous (round_trip γ) :=
-of_path_continuous _
 
 lemma round_trip_eq {x y x' y' : X} {γ : path x y} {γ' : path x' y'} (h : ∀ s, γ s = γ' s) :
   round_trip γ = round_trip γ' :=
@@ -363,6 +333,7 @@ variables [measurable_space F] [borel_space F] [second_countable_topology F] [co
 noncomputable def average (γ : loop F) : F :=
 ∫ x in 0..1, (γ x)
 
+-- unused
 @[simp]
 lemma zero_average : average (0 : loop F) = 0 :=
 interval_integral.integral_zero
@@ -400,10 +371,6 @@ begin
   classical,
   exact decidable.by_contradiction (λ H, hx (subset_closure H)),
 end
-
-lemma eq_const_of_not_mem_support {γ : X → loop F} {x : X}
-  (hx : x ∉ support γ) : γ x = loop.const (γ x).average :=
-loop.is_const_iff_const_avg.mp (is_const_of_not_mem_support hx)
 
 lemma continuous_average {E : Type*} [topological_space E] [first_countable_topology E]
   [locally_compact_space E] {γ : E → loop F}
@@ -479,10 +446,6 @@ begin
   intros t s,
   simp [this]
 end
-
-lemma loop.compact_support_diff {γ : E → loop F}  (h' : is_compact (loop.support γ)):
-  is_compact (loop.support $ loop.diff γ) :=
-compact_of_is_closed_subset h' is_closed_closure loop.support_diff
 
 variables [finite_dimensional ℝ E]
 

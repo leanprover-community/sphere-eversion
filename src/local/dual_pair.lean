@@ -159,18 +159,9 @@ begin
     ψ.map_add, ψ.map_smul, ψ.map_sub],
 end
 
-lemma update_comp_right (p : dual_pair E) (ψ : E' →L[ℝ] F) (φ : E ≃L[ℝ] E') (w : F) :
-  p.update (ψ ∘L ↑φ) w = (p.map φ).update ψ w ∘L ↑φ :=
-begin
-  ext1 u,
-  simp only [update, add_apply, continuous_linear_map.comp_apply, to_span_singleton_apply, map,
-    continuous_linear_equiv.coe_coe, φ.symm_apply_apply],
-end
-
 lemma map_update_comp_right (p : dual_pair E) (ψ : E →L[ℝ] F) (φ : E ≃L[ℝ] E') (w : F) :
   (p.map φ).update (ψ ∘L ↑φ.symm) w = p.update ψ w ∘L ↑φ.symm :=
 begin
-  -- todo: use `update_comp_right`
   ext1 u,
   simp only [update, add_apply, continuous_linear_map.comp_apply, to_span_singleton_apply, map,
     continuous_linear_equiv.coe_coe, φ.symm_apply_apply],

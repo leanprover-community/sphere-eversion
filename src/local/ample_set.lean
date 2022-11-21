@@ -60,6 +60,7 @@ begin
 end
 
 /-- preimages of ample sets under continuous linear equivalences are ample. -/
+-- unused
 lemma ample_set.preimage {s : set F} (h : ample_set s) (L : E ≃L[ℝ] F) : ample_set (L ⁻¹' s) :=
 by { rw [← L.image_symm_eq_preimage], exact h.image L.symm }
 
@@ -92,6 +93,7 @@ begin
 end
 
 /-- The empty set in a vector space is ample. -/
+-- unused
 lemma ample_set_empty {F : Type*} [add_comm_group F] [module ℝ F] [topological_space F] :
   ample_set (∅ : set F) :=
 λ _ h, false.elim h
@@ -220,13 +222,6 @@ lemma is_connected_compl_of_two_le_codim
   is_connected (Eᶜ : set F) :=
 (is_path_connected_compl_of_two_le_codim hcodim).is_connected
 
-/-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
-least two then its complement is a path-connected space. -/
-lemma connected_space_compl_of_two_le_codim
-  {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
-  connected_space (Eᶜ : set F) :=
-is_connected_iff_connected_space.mp (is_connected_compl_of_two_le_codim hcodim)
-
 lemma submodule.connected_component_in_eq_self_of_two_le_codim (E : submodule ℝ F)
   (hcodim : 2 ≤ module.rank ℝ (F⧸E)) {x : F} (hx : x ∉ E) :
   connected_component_in (E : set F)ᶜ x = Eᶜ :=
@@ -237,7 +232,6 @@ least two then its complement is ample. -/
 lemma ample_of_two_le_codim {E : submodule ℝ F} (hcodim : 2 ≤ module.rank ℝ (F⧸E)) :
   ample_set (Eᶜ : set F) :=
 begin
-  haveI : connected_space (Eᶜ : set F) := connected_space_compl_of_two_le_codim hcodim,
   intros x hx,
   rw [E.connected_component_in_eq_self_of_two_le_codim hcodim hx, eq_univ_iff_forall],
   intro y,

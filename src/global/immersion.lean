@@ -57,10 +57,6 @@ lemma chart_at_image_immersion_rel_eq {σ : one_jet_bundle I M I' M'} :
   (ψJ σ) '' ((ψJ σ).source ∩ immersion_rel I M I' M') = (ψJ σ).target ∩ {q : HJ | injective q.2} :=
 local_equiv.is_image.image_eq $ λ σ' hσ', (mem_immersion_rel_iff' I I' hσ').symm
 
-lemma immersion_iff_one_jet (f : M → M') :
-  immersion I I' f ↔ ∀ m, one_jet_ext I I' f m ∈ immersion_rel I M I' M' :=
-by simp [immersion, one_jet_ext, immersion_rel]
-
 variables [finite_dimensional ℝ E] [finite_dimensional ℝ E']
 
 lemma immersion_rel_open :

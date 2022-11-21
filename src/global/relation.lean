@@ -54,12 +54,6 @@ local notation `TM'` := tangent_space I'
 
 variables {I M I' M'} {R : rel_mfld I M I' M'}
 
-/-- A solution to a relation `R`. -/
-@[ext] structure sol (R : rel_mfld I M I' M') :=
-(f : M → M')
-(f_diff : cont_mdiff I I' ⊤ f)
-(is_sol : ∀ x, one_jet_ext I I' f x ∈ R)
-
 /-- A formal solution to a local relation `R` over a set `U`. -/
 @[ext] structure formal_sol (R : rel_mfld I M I' M') extends
   to_one_jet_sec : one_jet_sec I M I' M' :=
@@ -112,11 +106,6 @@ lemma mem_slice {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
   {p : dual_pair $ TM σ.1.1} {w : TM' σ.1.2} :
   w ∈ R.slice σ p ↔ one_jet_bundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
 iff.rfl
-
-@[simp] lemma jet_apply_v_mem_slice
-  {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'} (p : dual_pair $ TM σ.1.1) :
-  σ.2 p.v ∈ R.slice σ p ↔ σ ∈ R :=
-by { rcases σ with ⟨⟨m, m'⟩, φ⟩, simp [mem_slice], }
 
 lemma slice_mk_update {R : rel_mfld I M I' M'} {σ : one_jet_bundle I M I' M'}
   {p : dual_pair $ TM σ.1.1} (x : E') :
@@ -209,16 +198,6 @@ def empty_htpy_formal_sol [is_empty M] : htpy_formal_sol R :=
   ϕ :=  λ t x, (is_empty.false x).elim,
   smooth' := λ ⟨t, x⟩, (is_empty.false x).elim,
   is_sol' := λ t x, (is_empty.false x).elim }
-
-lemma empty_htpy_formal_sol_eq [is_empty M] (F : formal_sol R) (t) :
-  empty_htpy_formal_sol R t = F :=
-begin
-  ext x : 3,
-  exact (is_empty.false x).elim,
-  apply heq_of_eq,
-  ext1 x,
-  exact (is_empty.false x).elim
-end
 
 /-! ## The h-principle -/
 

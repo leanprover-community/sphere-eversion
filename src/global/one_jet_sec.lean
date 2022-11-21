@@ -170,11 +170,6 @@ lemma smooth_bs (S : family_one_jet_sec I M I' M' J N) :
   smooth (J.prod I) I' (λ p : N × M, S.bs p.1 p.2) :=
 smooth_one_jet_bundle_proj.snd.comp S.smooth
 
-lemma _root_.smooth_at.family_one_jet_sec_bs {S : family_one_jet_sec I M I' M' J N}
-  {f : N' → N} {g : N' → M} {z : N'} (hf : smooth_at J' J f z) (hg : smooth_at J' I g z) :
-  smooth_at J' I' (λ z, S.bs (f z) (g z)) z :=
-(S.smooth_bs _).comp z (hf.prod_mk hg)
-
 lemma smooth_coe_bs (S : family_one_jet_sec I M I' M' J N) {p : N} : smooth I I' (S.bs p) :=
 (S p).smooth_bs
 

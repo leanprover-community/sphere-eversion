@@ -219,6 +219,7 @@ begin
     (classical.some (classical.some_spec h))))),
 end
 
+-- unused
 lemma local_centering_density_nhd_covers :
   univ ⊆ ⋃ x, γ.local_centering_density_nhd x :=
 λ x hx, mem_Union.mpr ⟨x, γ.local_centering_density_nhd_self_mem x⟩
@@ -494,14 +495,17 @@ def reparametrize : E → equivariant_equiv := λ x,
   map_zero' := integral_same,
   eqv' := γ.integral_add_one_centering_density x, } : equivariant_equiv).symm
 
+-- unused
 lemma coe_reparametrize_symm :
   ((γ.reparametrize x).symm : ℝ → ℝ) = λ t, ∫ s in 0..t, γ.centering_density x s :=
 rfl
 
+-- unused
 lemma reparametrize_symm_apply (t : ℝ) :
   (γ.reparametrize x).symm t = ∫ s in 0..t, γ.centering_density x s :=
 rfl
 
+-- unused
 @[simp] lemma integral_reparametrize (t : ℝ) :
   ∫ s in 0..(γ.reparametrize x t), γ.centering_density x s = t :=
 by simp [← reparametrize_symm_apply]

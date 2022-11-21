@@ -170,7 +170,7 @@ R N γ = λ x, (1/N) • ∫ t in 0..(N*π x), (loop.diff γ x).normalize t :=
 by { simp_rw loop.diff_normalize h, refl }
 
 -- The next lemma is a restatement of the above to emphasize that remainder is a corrugation
--- but it won't be used directly
+-- unused
 lemma remainder_eq_corrugation (N : ℝ) {γ : E → loop F} (h : 𝒞 1 ↿γ) :
 R N γ = 𝒯 N (λ x, (loop.diff γ x)) :=
 remainder_eq _ _ h

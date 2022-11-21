@@ -108,14 +108,6 @@ begin
   exact ample_set_univ
 end
 
--- unused
-lemma ample_slice_of_forall_not (R : rel_loc E F) {x y φ} (p : dual_pair E)
-  (h : ∀ w, (x, y, p.update φ w) ∉ R) : ample_set (R.slice p (x, y, φ)) :=
-begin
-  rw show R.slice p (x, y, φ) = ∅, from eq_empty_iff_forall_not_mem.mpr h,
-  exact ample_set_empty
-end
-
 end rel_loc
 
 open rel_loc
@@ -141,10 +133,6 @@ namespace rel_loc.formal_sol
 /-- The slice associated to a formal solution and a dual pair at some point. -/
 def slice_at (𝓕 : formal_sol R) (p : dual_pair E) (x : E) : set F :=
 R.slice p (x, 𝓕.f x, 𝓕.φ x)
-
-lemma mem_slice (𝓕 : formal_sol R) (p : dual_pair E) {x : E} :
-  𝓕.φ x p.v ∈ 𝓕.slice_at p x :=
-by simpa [rel_loc.formal_sol.slice_at, rel_loc.slice] using  𝓕.is_sol x
 
 /-- A formal solution `𝓕` is short for a dual pair `p` at a point `x` if the derivative of
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the

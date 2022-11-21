@@ -45,12 +45,6 @@ def jet_sec.is_formal_sol (𝓕 : jet_sec E F) (R : rel_loc E F) : Prop :=
 
 namespace rel_loc
 
-/-- A solution to a local relation `R`. -/
-@[ext] structure sol (R : rel_loc E F) :=
-(f : E → F)
-(f_diff : 𝒞 ∞ f)
-(is_sol : ∀ x, (x, f x, D f x) ∈ R)
-
 /-- A formal solution to a local relation `R`. -/
 @[ext] structure formal_sol (R : rel_loc E F) extends jet_sec E F :=
 (is_sol : ∀ x, (x, f x, φ x) ∈ R)
@@ -68,14 +62,6 @@ instance (R : rel_loc E F) : has_coe (formal_sol R) (jet_sec E F):=
 def _root_.jet_sec.is_formal_sol.formal_sol  {𝓕 : jet_sec E F} {R : rel_loc E F}
   (h : 𝓕.is_formal_sol R) : formal_sol R :=
 {is_sol := h, ..𝓕}
-
-/-- Inclusion of solutions into formal solutions. -/
-def sol.to_formal_sol {R : rel_loc E F}  (𝓕 : sol R) : formal_sol R :=
-{ f := 𝓕.f,
-  f_diff := 𝓕.f_diff,
-  φ := D 𝓕.f,
-  φ_diff := (cont_diff_top_iff_fderiv.mp 𝓕.f_diff).2,
-  is_sol := 𝓕.is_sol }
 
 instance (R : rel_loc E F) : has_coe_to_fun (formal_sol R) (λ S, E → F × (E →L[ℝ] F)) :=
 ⟨λ 𝓕, λ x, (𝓕.f x, 𝓕.φ x)⟩
@@ -105,30 +91,6 @@ begin
   unfold rel_loc.formal_sol.is_holonomic_at,
   rw [hf.fderiv_eq, (rel_loc.formal_sol.eq_iff.mp hx.self_of_nhds).2]
 end
-
-lemma sol.is_holonomic {R : rel_loc E F} (𝓕 : sol R) (x : E) :
-  𝓕.to_formal_sol.is_holonomic_at x :=
-by simp [rel_loc.sol.to_formal_sol, rel_loc.formal_sol.is_holonomic_at]
-
-/-- A formal solution of `R` that is holonomic comes from a genuine solution. -/
-def formal_sol.to_sol (𝓕 : formal_sol R) (h : ∀ x, 𝓕.to_jet_sec.is_holonomic_at x) : sol R :=
-{ f := 𝓕.f,
-  f_diff := 𝓕.f_diff,
-  is_sol := λ x, ((h x).symm ▸ (𝓕.is_sol x)) }
-
-lemma to_sol_to_formal_sol (𝓕 : sol R) :
-  𝓕.to_formal_sol.to_sol (λ x, 𝓕.is_holonomic x) = 𝓕 :=
-by { ext x, refl }
-
-/-- A formal solution (f, φ) is partially holonomic along a subspace `E'` at `x` if the
-differential of `f` at `x` coincides with `φ x` on `E'`. -/
-def formal_sol.is_part_holonomic_at (𝓕 : formal_sol R) (E' : submodule ℝ E) (x : E) :=
-∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
-
-lemma formal_sol.is_part_holonomic_at.mono {𝓕 : formal_sol R}
-  {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
-  𝓕.is_part_holonomic_at E'' x :=
-λ v v_in, h v $ set_like.coe_subset_coe.mpr h' v_in
 
 variable (P)
 /-- A family of formal solutions is a 1-parameter family of formal solutions. -/

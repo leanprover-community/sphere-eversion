@@ -117,6 +117,7 @@ begin
   { rw [fin.coe_order_succ, fin.coe_last, if_neg (lt_irrefl _)] }
 end
 
+-- unused
 def index_type_encodable : Π n : ℕ, encodable (index_type n)
 | 0 := nat.encodable
 | (n + 1) := fin.encodable (n + 1)
