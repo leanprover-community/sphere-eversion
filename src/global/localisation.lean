@@ -330,7 +330,7 @@ lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_p
   (hδ_cont : continuous δ) {F : htpy_formal_sol R} (hF : p.accepts F) :
   ∃ η > (0 : ℝ),
     ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
-    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 1 : set ℝ)), ∥(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e∥ < η →
+    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 1 : set ℝ)), ‖(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e‖ < η →
     dist (((p.update F 𝓕) t).bs $ p.φ e) ((F 1).bs $ p.φ e) < δ (p.φ e) :=
 begin
   let bsF := (λ t m, (F t).bs m),

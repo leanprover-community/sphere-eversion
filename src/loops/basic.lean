@@ -165,13 +165,13 @@ rfl
 
 -- unused
 lemma norm_at_le_supr_norm_Icc (γ : loop F) (hγ : continuous γ) (t : ℝ) :
-  ∥γ t∥ ≤ ⨆ (s : I), ∥γ s∥ :=
+  ‖γ t‖ ≤ ⨆ (s : I), ‖γ s‖ :=
 begin
   obtain ⟨u, hu, ht⟩ := γ.periodic.exists_mem_Ico₀ zero_lt_one t,
   replace hu := mem_Icc_of_Ico hu,
   rw ht,
-  have h₁ : set.nonempty (range (λ (s : I), ∥γ s∥)) := ⟨∥γ 0∥, 0, rfl⟩,
-  have h₂ : bdd_above (range (λ (s : I), ∥γ s∥)),
+  have h₁ : set.nonempty (range (λ (s : I), ‖γ s‖)) := ⟨‖γ 0‖, 0, rfl⟩,
+  have h₂ : bdd_above (range (λ (s : I), ‖γ s‖)),
   { convert is_compact_Icc.bdd_above_image (continuous_norm.comp hγ).continuous_on, ext, simp, },
   exact (real.is_lub_Sup _ h₁ h₂).1 ⟨⟨u, hu⟩, rfl⟩,
 end

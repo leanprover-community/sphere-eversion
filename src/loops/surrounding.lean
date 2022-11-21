@@ -148,13 +148,13 @@ begin
       indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
     refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
     let basis : affine_basis ι ℝ F := ⟨p, indep, h_tot⟩,
-    rw interior_convex_hull_aff_basis basis,
+    rw basis.interior_convex_hull,
     intros i,
     rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
       basis.coord_apply_combination_of_mem (finset.mem_univ i) w_sum],
     exact w_pos i, },
   { rintros ⟨b, h₀, h₁, h₂, h₃⟩,
-    haveI : fintype b := (finite_of_fin_dim_affine_independent ℝ h₁).fintype,
+    haveI : fintype b := (finite_set_of_fin_dim_affine_independent ℝ h₁).fintype,
     have hb : fintype.card b = d + 1,
     { rw [← h₁.affine_span_eq_top_iff_card_eq_finrank_add_one, subtype.range_coe_subtype,
         set_of_mem_eq, h₂], },
@@ -167,7 +167,7 @@ begin
     replace h₁ : affine_independent ℝ p :=
       h₁.comp_embedding (fintype.equiv_fin_of_card_eq hb).symm.to_embedding,
     let basis : affine_basis ι ℝ F := ⟨_, h₁, h₂⟩,
-    rw [interior_convex_hull_aff_basis basis, mem_set_of_eq] at h₃,
+    rw [basis.interior_convex_hull, mem_set_of_eq] at h₃,
     refine ⟨p, λ i, basis.coord i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
     { exact basis.sum_coord_apply_eq_one f, },
     { rw [← finset.univ.affine_combination_eq_linear_combination p _
@@ -187,9 +187,9 @@ begin
       f ∈ convex_hull ℝ (t : set F)),
   have htne : (t : set F).nonempty := (@convex_hull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩,
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ :=
-    exists_subset_affine_independent_span_eq_top_of_open hs hts htne hai,
-  have hb₀ : b.finite, { exact finite_of_fin_dim_affine_independent ℝ hb₃, },
-  obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_aff_span_eq_top.mpr hb₄,
+    hs.exists_between_affine_independent_span_eq_top hts htne hai,
+  have hb₀ : b.finite, { exact finite_set_of_fin_dim_affine_independent ℝ hb₃, },
+  obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_affine_span_eq_top.mpr hb₄,
   rw ← hs.interior_eq at hb₂,
   obtain ⟨ε, hε, hcs⟩ :=
     (eventually_homothety_image_subset_of_finite_subset_interior ℝ c hb₀ hb₂).exists_gt,

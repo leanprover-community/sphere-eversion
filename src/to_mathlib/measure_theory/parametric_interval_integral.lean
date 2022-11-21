@@ -29,7 +29,7 @@ lemma has_fderiv_at_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
   (hF_meas : ∀ᶠ x in 𝓝 x₀, ae_strongly_measurable (F x) $ ν.restrict (Ι a b))
   (hF_int : interval_integrable (F x₀) ν a b)
   (hF'_meas : ae_strongly_measurable (F' x₀) $ ν.restrict (Ι a b))
-  (h_bound : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, ∥F' x t∥ ≤ bound t)
+  (h_bound : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, ‖F' x t‖ ≤ bound t)
   (bound_integrable : interval_integrable bound ν a b)
   (h_diff : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, has_fderiv_at (λ x, F x t) (F' x t) x) :
   has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ :=
@@ -113,7 +113,7 @@ variables {μ : measure ℝ}
 lemma continuous_at_parametric_primitive_of_dominated
   {F : X → ℝ → E} (bound : ℝ → ℝ) (a b : ℝ) {a₀ b₀ : ℝ} {x₀ : X}
   (hF_meas : ∀ x, ae_strongly_measurable (F x) (μ.restrict $ Ι a b))
-  (h_bound : ∀ᶠ x in 𝓝 x₀, ∀ᵐ t ∂(μ.restrict $ Ι a b), ∥F x t∥ ≤ bound t)
+  (h_bound : ∀ᶠ x in 𝓝 x₀, ∀ᵐ t ∂(μ.restrict $ Ι a b), ‖F x t‖ ≤ bound t)
   (bound_integrable : interval_integrable bound μ a b)
   (h_cont : ∀ᵐ t ∂(μ.restrict $ Ι a b), continuous_at (λ x, F x t) x₀)
   (ha₀ : a₀ ∈ Ioo a b) (hb₀ : b₀ ∈ Ioo a b) (hμb₀ : μ {b₀} = 0) :
@@ -124,15 +124,15 @@ begin
       (Ioo_subset_Ioc_self.trans Ioc_subset_interval_oc),
   have Ioo_nhds : Ioo a b ∈ 𝓝 b₀ := Ioo_mem_nhds hb₀.1 hb₀.2,
   have Icc_nhds : Icc a b ∈ 𝓝 b₀ := Icc_mem_nhds hb₀.1 hb₀.2,
-  have hx₀ : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ∥F x₀ t∥ ≤ bound t := h_bound.self_of_nhds,
+  have hx₀ : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ‖F x₀ t‖ ≤ bound t := h_bound.self_of_nhds,
   have : ∀ᶠ (p : X × ℝ) in 𝓝 (x₀, b₀),
     ∫ s in a₀..p.2, F p.1 s ∂μ = ∫ s in a₀..b₀, F p.1 s ∂μ + ∫ s in b₀..p.2, F x₀ s ∂μ +
                                  ∫ s in b₀..p.2, (F p.1 s - F x₀ s) ∂μ,
   { rw nhds_prod_eq,
     refine (h_bound.prod_mk Ioo_nhds).mono _,
-    rintros ⟨x, t⟩ ⟨hx : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t, ht : t ∈ Ioo a b⟩,
+    rintros ⟨x, t⟩ ⟨hx : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ‖F x t‖ ≤ bound t, ht : t ∈ Ioo a b⟩,
     dsimp {eta := ff},
-    have hiF : ∀ {x a₀ b₀}, (∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t) →
+    have hiF : ∀ {x a₀ b₀}, (∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ‖F x t‖ ≤ bound t) →
       a₀ ∈ Ioo a b → b₀ ∈ Ioo a b → interval_integrable (F x) μ a₀ b₀ :=
     λ x a₀ b₀ hx ha₀ hb₀,
       (bound_integrable.mono_set_ae $ eventually_of_forall $ hsub ha₀ hb₀).mono_fun'
@@ -160,14 +160,14 @@ begin
   { suffices : tendsto (λ (x : X × ℝ), ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0),
       by simpa [continuous_at],
     have : ∀ᶠ p : X × ℝ in 𝓝 (x₀, b₀),
-      ∥∫ s in b₀..p.2, F p.1 s - F x₀ s ∂μ∥ ≤ |∫ s in b₀..p.2, 2 * bound s ∂μ|,
+      ‖∫ s in b₀..p.2, F p.1 s - F x₀ s ∂μ‖ ≤ |∫ s in b₀..p.2, 2 * bound s ∂μ|,
     { rw nhds_prod_eq,
       refine (h_bound.prod_mk Ioo_nhds).mono _,
-      rintros ⟨x, t⟩ ⟨hx : ∀ᵐ t ∂μ.restrict (Ι a b), ∥F x t∥ ≤ bound t, ht : t ∈ Ioo a b⟩,
-      have H : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι b₀ t), ∥F x t - F x₀ t∥ ≤ 2 * bound t,
+      rintros ⟨x, t⟩ ⟨hx : ∀ᵐ t ∂μ.restrict (Ι a b), ‖F x t‖ ≤ bound t, ht : t ∈ Ioo a b⟩,
+      have H : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι b₀ t), ‖F x t - F x₀ t‖ ≤ 2 * bound t,
       { apply (ae_restrict_of_ae_restrict_of_subset (hsub hb₀ ht) (hx.and hx₀)).mono,
         rintros s ⟨hs₁, hs₂⟩,
-        calc ∥F x s - F x₀ s∥ ≤ ∥F x s∥ + ∥F x₀ s∥ : norm_sub_le _ _
+        calc ‖F x s - F x₀ s‖ ≤ ‖F x s‖ + ‖F x₀ s‖ : norm_sub_le _ _
           ... ≤ 2 * bound s : by linarith only [hs₁, hs₂] },
       exact interval_integral.norm_integral_le_of_norm_le H
         ((bound_integrable.mono_set' $ hsub hb₀ ht).const_mul 2) },
@@ -300,7 +300,7 @@ begin
     interval_integrable (F x) volume s u,
   { intros x hx s u hs hu,
     have : integrable_on (F x) (Ioo a₀ b₀),
-    { apply integrable_of_norm_sub_le (hF_meas x hx) hF_int (bound_integrable.mul_const (∥x - x₀∥)),
+    { apply integrable_of_norm_sub_le (hF_meas x hx) hF_int (bound_integrable.mul_const (‖x - x₀‖)),
       apply h_lipsch.mono,
       intros t ht,
       rw norm_sub_rev,
@@ -331,8 +331,8 @@ begin
         ⟨Ioo a₀ b₀, Ioo_nhds, (hF_meas x₀ x₀_in)⟩ hF_cont },
     have D₃ : has_fderiv_at (λ x, ∫ t in s x₀..s x, F x t - F x₀ t) 0 x₀,
     { apply is_O.has_fderiv_at _ one_lt_two,
-      have O₁ : (λ x, ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] λ x, ∥x - x₀∥,
-      { have : (λ x, s x - s x₀) =O[𝓝 x₀] λ x, ∥x - x₀∥ := s_diff.is_O_sub.norm_right,
+      have O₁ : (λ x, ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] λ x, ‖x - x₀‖,
+      { have : (λ x, s x - s x₀) =O[𝓝 x₀] λ x, ‖x - x₀‖ := s_diff.is_O_sub.norm_right,
         refine is_O.trans _ this,
         show ((λ t, ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((λ t, t - s x₀) ∘ s),
         refine is_O.comp_tendsto _ s_diff.continuous_at,
@@ -344,11 +344,11 @@ begin
         rintros t ht,
         dsimp only {eta := false},
         rw interval_integral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀) },
-      have O₂ : (λ x, ∥x - x₀∥) =O[𝓝 x₀] λ x, ∥x - x₀∥ := is_O_refl _ _,
+      have O₂ : (λ x, ‖x - x₀‖) =O[𝓝 x₀] λ x, ‖x - x₀‖ := is_O_refl _ _,
       have O₃ : (λ x, ∫ (t : ℝ) in s x₀..s x, F x t - F x₀ t) =O[𝓝 x₀]
-             λ x, (∫ t' in s x₀..s x, bound t') * ∥x - x₀∥,
+             λ x, (∫ t' in s x₀..s x, bound t') * ‖x - x₀‖,
       { have bdd : ∀ᶠ x in 𝓝 x₀,
-          ∥∫ s in s x₀..s x, F x s - F x₀ s∥ ≤ |∫ s in s x₀..s x, bound s |* ∥x - x₀∥,
+          ‖∫ s in s x₀..s x, F x s - F x₀ s‖ ≤ |∫ s in s x₀..s x, bound s |* ‖x - x₀‖,
         { apply eventually.mono mem_nhds,
           rintros x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩,
           rw [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul,
@@ -414,7 +414,7 @@ begin
     linarith [le_max_right a (s x₀)] },
   have cpct : is_compact (closed_ball x₀ 1 ×ˢ Icc a₀ b₀),
       from (proper_space.is_compact_closed_ball x₀ 1).prod is_compact_Icc,
-  obtain ⟨M, F_bound⟩ : ∃ M : ℝ, ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ∥F x t∥ ≤ M,
+  obtain ⟨M, F_bound⟩ : ∃ M : ℝ, ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ‖F x t‖ ≤ M,
   { rcases cpct.bdd_above_image hF.continuous.norm.continuous_on with ⟨M, hM⟩,
     refine ⟨M, _⟩,
     exact λ x x_in t t_in, hM (mem_image_of_mem _ $ mk_mem_prod (ball_subset_closed_ball x_in) $

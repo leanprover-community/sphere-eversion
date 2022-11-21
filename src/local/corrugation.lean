@@ -102,7 +102,7 @@ lemma corrugation.c0_small_on [first_countable_topology E]
   [locally_compact_space E] {γ : ℝ → E → loop F} {K : set E} (hK : is_compact K)
   (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x) (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x)
   (hγ_cont : continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
-  ∀ᶠ N in at_top, ∀ (x ∈ K) t, ∥𝒯 N (γ t) x∥ < ε :=
+  ∀ᶠ N in at_top, ∀ (x ∈ K) t, ‖𝒯 N (γ t) x‖ < ε :=
 begin
   have cont' : continuous ↿(λ (q : ℝ × E)  t, ∫ t in 0..t, (γ q.1 q.2) t - (γ q.1 q.2).average),
   { refine continuous_parametric_interval_integral_of_continuous _ continuous_snd,
@@ -232,7 +232,7 @@ end
 
 lemma remainder_c0_small_on {K : set E} (hK : is_compact K)
   (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
-  ∀ᶠ N in at_top, ∀ x ∈ K, ∥R N γ x∥ < ε :=
+  ∀ᶠ N in at_top, ∀ x ∈ K, ‖R N γ x‖ < ε :=
 begin
   have : ∀ N : ℝ, R N γ = 𝒯 N (loop.diff γ),
   { intro N,

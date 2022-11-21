@@ -46,7 +46,7 @@ lemma linear_map.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (h
 begin
   split,
   { intro h,
-    simp [disjoint, linear_map.ker_eq_bot.mpr h, ← submodule.map_inf h, hpq] },
+    simp [disjoint_iff_inf_le, linear_map.ker_eq_bot.mpr h, ← submodule.map_inf h, hpq] },
   { rintros ⟨hp, hq, h⟩,
     rw linear_map.disjoint_ker at *,
     rw [← linear_map.ker_eq_bot, ← @inf_top_eq _ _ _ f.ker, ← hpq'],
@@ -62,6 +62,7 @@ begin
     rw ← hx at hv',
     have H : f u ∈ map f p ⊓ map f q,
     apply mem_inf.mpr ⟨hu', hv'⟩,
+    rw [disjoint_iff_inf_le] at h,
     rw [hp u hu (h H), zero_add],
     rw [hp u hu (h H), f.map_zero, f.map_neg, eq_comm, neg_eq_zero] at hx,
     exact hq v hv hx }

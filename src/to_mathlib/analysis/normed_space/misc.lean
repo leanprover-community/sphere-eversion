@@ -47,7 +47,7 @@ if hr : 0 < r then
   open_target := is_open_ball,
   map_source' := λ x _,
   begin
-    have hx : ∥(homeomorph_unit_ball x : E)∥ < 1,
+    have hx : ‖(homeomorph_unit_ball x : E)‖ < 1,
     { rw ← dist_zero_right, exact (homeomorph_unit_ball x).property, },
     rw [← mul_lt_mul_left hr, mul_one] at hx,
     simp only [homothety_apply, vsub_eq_sub, sub_zero, vadd_eq_add, add_zero, mem_ball,
@@ -58,7 +58,7 @@ if hr : 0 < r then
     ← smul_assoc, hr.ne.symm.is_unit.inv_mul_cancel],
   right_inv' := λ y hy,
   begin
-    replace hy : r⁻¹ * ∥y - c∥ < 1,
+    replace hy : r⁻¹ * ‖y - c‖ < 1,
     { rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel hr.ne.symm, mul_one, one_mul],
       simpa [dist_eq_norm] using hy, },
     simp [homothety_apply, norm_smul, abs_eq_self.2 hr.le, ← smul_assoc, mul_inv_cancel hr.ne.symm,

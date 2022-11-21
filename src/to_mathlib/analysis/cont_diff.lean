@@ -249,13 +249,13 @@ variables {E : Type*} [inner_product_space 𝕜 E] [complete_space E]
 -- variant of `orthogonal_projection_singleton`
 lemma orthogonal_projection_singleton' {v : E} (hv : v ≠ 0) :
   (𝕜 ∙ v).subtypeL.comp (orthogonal_projection (𝕜 ∙ v))
-  = (1 / ∥v∥ ^ 2 : 𝕜) • (continuous_linear_map.to_span_singleton 𝕜 v)
+  = (1 / ‖v‖ ^ 2 : 𝕜) • (continuous_linear_map.to_span_singleton 𝕜 v)
     ∘L inner_product_space.to_dual 𝕜 E v :=
 begin
   ext w,
   simp [continuous_linear_map.to_span_singleton_apply, orthogonal_projection_singleton, ← mul_smul],
   congr' 1,
-  have : ∥v∥ ≠ 0 := norm_ne_zero_iff.mpr hv,
+  have : ‖v‖ ≠ 0 := norm_ne_zero_iff.mpr hv,
   field_simp,
 end
 
@@ -270,7 +270,7 @@ lemma cont_diff_at_orthogonal_projection_singleton {v₀ : E} (hv₀ : v₀ ≠ 
   cont_diff_at ℝ ⊤ (λ v : E, (ℝ ∙ v).subtypeL.comp (orthogonal_projection (ℝ ∙ v))) v₀ :=
 begin
   suffices :  cont_diff_at ℝ ⊤
-    (λ v : E, (1 / ∥v∥ ^ 2) • (continuous_linear_map.to_span_singleton ℝ v)
+    (λ v : E, (1 / ‖v‖ ^ 2) • (continuous_linear_map.to_span_singleton ℝ v)
     ∘L inner_product_space.to_dual ℝ E v) v₀,
   { apply this.congr_of_eventually_eq,
     have : is_open {v : E | v ≠ 0} := is_closed_singleton.is_open_compl,

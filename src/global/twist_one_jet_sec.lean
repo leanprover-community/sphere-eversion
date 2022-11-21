@@ -25,8 +25,8 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 /- Given a smooth manifold `M` and a normed space `V`, the total space of the bundle Hom(TM, V) of
 homomorphisms from TM to V. This is naturally a smooth manifold. -/
 local notation `J¹MV` :=
-topological_vector_bundle_core.total_space $
-basic_smooth_vector_bundle_core.to_topological_vector_bundle_core $
+vector_bundle_core.total_space $
+basic_smooth_vector_bundle_core.to_vector_bundle_core $
 (tangent_bundle_core I M).hom (trivial_basic_smooth_vector_bundle_core I M V)
 
 section smoothness
@@ -143,8 +143,8 @@ variables
   (N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
 
 local notation `J¹MV` :=
-topological_vector_bundle_core.total_space $
-basic_smooth_vector_bundle_core.to_topological_vector_bundle_core $
+vector_bundle_core.total_space $
+basic_smooth_vector_bundle_core.to_vector_bundle_core $
 (tangent_bundle_core I M).hom (trivial_basic_smooth_vector_bundle_core I M V)
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/

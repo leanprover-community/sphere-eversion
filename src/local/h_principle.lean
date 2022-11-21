@@ -331,16 +331,16 @@ end
 -- `finite_dimensional ℝ F` isn't needed here.
 
 lemma bu_lt {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-  (t : ℝ) (x : E) {v : F} {ε : ℝ} (hv : ∥v∥ < ε) :
-  ∥(smooth_step t * L.ρ x) • v∥ < ε :=
-calc ∥(smooth_step t * L.ρ x) • v∥ = |smooth_step t| * |L.ρ x| * ∥v∥ : by
+  (t : ℝ) (x : E) {v : F} {ε : ℝ} (hv : ‖v‖ < ε) :
+  ‖(smooth_step t * L.ρ x) • v‖ < ε :=
+calc ‖(smooth_step t * L.ρ x) • v‖ = |smooth_step t| * |L.ρ x| * ‖v‖ : by
              rw [norm_smul, real.norm_eq_abs, abs_mul]
-... ≤ ∥v∥ : mul_le_of_le_one_left (norm_nonneg _) (mul_le_one (smooth_step.abs_le t)
+... ≤ ‖v‖ : mul_le_of_le_one_left (norm_nonneg _) (mul_le_one (smooth_step.abs_le t)
                                                           (abs_nonneg _) (L.ρ_le x))
 ... < ε : hv
 
 lemma improve_step_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
-  ∀ᶠ N in at_top, ∀ x t, ∥(L.improve_step h N t).f x - 𝓕.f x∥ ≤ ε :=
+  ∀ᶠ N in at_top, ∀ x t, ‖(L.improve_step h N t).f x - 𝓕.f x‖ ≤ ε :=
 begin
   set γ := L.loop h,
   have γ_cont : continuous ↿(λ t x, γ t x) := (L.nice h).smooth.continuous,
@@ -350,7 +350,7 @@ begin
   rintros N ⟨H, H'⟩ x t,
   by_cases hx : x ∈ L.K₁,
   { rw [improve_step_apply_f h],
-    suffices : ∥(smooth_step t * L.ρ x) • corrugation L.π N (L.loop h t) x∥ ≤ ε, by simpa,
+    suffices : ‖(smooth_step t * L.ρ x) • corrugation L.π N (L.loop h t) x‖ ≤ ε, by simpa,
     exact (bu_lt _ _ $ H _ hx t).le },
   { rw show (L.improve_step h N t).f x = 𝓕.f x, from congr_arg prod.fst (improve_step_rel_compl_K₁ h N hx t),
     simp [ε_pos.le] }
@@ -473,7 +473,7 @@ lemma rel_loc.formal_sol.improve (𝓕 : formal_sol R)
     (∀ᶠ t near Ici 1, H t = H 1) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
-    (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε) ∧
+    (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ ε) ∧
     (∀ t, (H t).is_formal_sol R) ∧
     (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
 begin
@@ -485,7 +485,7 @@ begin
     (∀ᶠ t near Ici 1, H t = H 1) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
-    (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ δ) ∧
+    (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ δ) ∧
     (∀ t, (H t).is_formal_sol R) ∧
     (∀ᶠ x near L.K₀, (H 1).is_part_holonomic_at (E' k) x),
   { simpa only [show E' (fin.last n) = ⊤, from e.flag_last, jet_sec.is_part_holonomic_top] using
@@ -582,7 +582,7 @@ lemma rel_loc.formal_sol.improve_htpy (𝓕 : formal_sol R)
     (∀ᶠ t near Ici 1, H t = H 1) ∧
     (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
     (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
-    (∀ x t, ∥(H t).f x - 𝓕.f x∥ ≤ ε)  ∧
+    (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ ε)  ∧
     (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
 begin
   rcases 𝓕.improve h_op h_ample L ε_pos h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩,
@@ -601,7 +601,7 @@ lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA
     (∀ᶠ t near Ici (1 : ℝ), 𝓕' t = 𝓕' 1) ∧
     (∀ᶠ x near A, ∀ t, 𝓕' t x = 𝓕 0 x) ∧
     (∀ t x, x ∉ L.K₁ → 𝓕' t x = 𝓕 t x) ∧
-    (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ∥(𝓕' t).f x - (𝓕 1).f x∥ < ε) ∧
+    (∀ x t, (∃ t', 𝓕' t x = 𝓕 t' x) ∨ ‖(𝓕' t).f x - (𝓕 1).f x‖ < ε) ∧
     (∀ᶠ x near A ∪ (L.C ∪ L.K₀), (𝓕' 1).is_holonomic_at x) :=
 begin
   let 𝓕₁ : formal_sol R :=

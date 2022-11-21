@@ -301,7 +301,7 @@ lemma rel_loc.family_formal_sol.improve_htpy
   ∃ 𝓕 : family_formal_sol (ℝ × P) R,
     (∀ s x, 𝓕 (0, s) x = 𝓕₀ s x) ∧
     (∀ᶠ (p : P × E) near C, ∀ t, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
-    (∀ s x t, ∥(𝓕 (t, s)).f x - 𝓕₀.f s x∥ ≤ ε)  ∧
+    (∀ s x t, ‖(𝓕 (t, s)).f x - 𝓕₀.f s x‖ ≤ ε)  ∧
     (∀ᶠ (p : P × E) near K, (𝓕 (1, p.1)).is_holonomic_at p.2) :=
 begin
   let parametric_landscape : landscape (P × E) :=

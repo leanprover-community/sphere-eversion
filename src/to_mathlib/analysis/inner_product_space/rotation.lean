@@ -7,6 +7,7 @@ import to_mathlib.linear_algebra.basic
 import to_mathlib.analysis.cont_diff
 import to_mathlib.analysis.inner_product_space.cross_product
 import analysis.special_functions.trigonometric.deriv
+import tactic.linear_combination
 
 /-! # Rotation about an axis, considered as a function in that axis -/
 
@@ -97,13 +98,13 @@ begin
 end
 
 lemma isometry_on_rot (t : ℝ) (v : metric.sphere (0:E) 1) (w : (ℝ ∙ (v:E))ᗮ) :
-  ∥ω.rot (t, v) w∥ = ∥(w:E)∥ :=
+  ‖ω.rot (t, v) w‖ = ‖(w:E)‖ :=
 begin
   have h1 : ⟪v ×₃ w, v ×₃ w⟫ = ⟪w, w⟫,
   { simp only [inner_self_eq_norm_sq_to_K, ω.isometry_on_cross_product v w] },
   have h2 : ⟪v ×₃ w, w⟫ = 0 := ω.inner_cross_product_apply_apply_self v w,
   have h3 : ⟪(w:E), v ×₃ w⟫ = 0 := by rwa real_inner_comm,
-  have : ∥real.cos (t * real.pi) • (w:E) + real.sin (t * real.pi) • v ×₃ w∥ = ∥(w:E)∥,
+  have : ‖real.cos (t * real.pi) • (w:E) + real.sin (t * real.pi) • v ×₃ w‖ = ‖(w:E)‖,
   { simp only [norm_eq_sqrt_inner],
     congr' 2,
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
@@ -123,7 +124,7 @@ begin
   rw [← sq_eq_sq (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
     norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero,
     norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero],
-  { have hvw : ∥ω.rot (t, v) w∥ = ∥w∥ := by simpa only using ω.isometry_on_rot t v ⟨w, hw⟩,
+  { have hvw : ‖ω.rot (t, v) w‖ = ‖w‖ := by simpa only using ω.isometry_on_rot t v ⟨w, hw⟩,
     simp [hvw, rot_self] },
   { simp [inner_smul_left, hw v (submodule.mem_span_singleton_self _)] },
   rw real_inner_comm,
@@ -145,21 +146,21 @@ begin
       real.sin (t * real.pi) • x ×₃ y = 0 at hy,
   rw [orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hy',
       orthogonal_projection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy,
-  apply_fun (λ x, ∥x∥^2) at hy,
+  apply_fun (λ x, ‖x‖^2) at hy,
   rw [pow_two, norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero] at hy,
   simp_rw [← pow_two, norm_smul, mul_pow] at hy,
-  change _ + _ * ∥ x ×₃ (⟨y, hy'⟩ : (span ℝ {x})ᗮ)∥ ^ 2 = ∥(0 : E)∥ ^ 2 at hy,
+  change _ + _ * ‖ x ×₃ (⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy,
   rw [norm_cross_product] at hy,
   simp only [norm_eq_abs, pow_bit0_abs, coe_mk, norm_zero, zero_pow', ne.def, bit0_eq_zero,
              nat.one_ne_zero, not_false_iff] at hy,
-  change _ + _ * (_ * ∥y∥) ^ 2 = 0 at hy,
+  change _ + _ * (_ * ‖y‖) ^ 2 = 0 at hy,
   rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy,
-  have : 0 < cos (t * π) ^ 2 + sin (t * π) ^ 2 * ∥x∥ ^ 2,
-  { have : 0 < ∥x∥^2,
+  have : 0 < cos (t * π) ^ 2 + sin (t * π) ^ 2 * ‖x‖ ^ 2,
+  { have : 0 < ‖x‖^2,
     exact pow_pos (norm_pos_iff.mpr hx) 2,
     rw cos_sq',
-    rw show 1 - sin (t * π) ^ 2 + sin (t * π) ^ 2 * ∥x∥ ^ 2 = 1 + sin (t * π) ^ 2*(∥x∥^2 - 1), by ring,
-    have I₁ : ∥x∥ ^ 2 - 1 > -1, by linarith,
+    rw show 1 - sin (t * π) ^ 2 + sin (t * π) ^ 2 * ‖x‖ ^ 2 = 1 + sin (t * π) ^ 2*(‖x‖^2 - 1), by ring,
+    have I₁ : ‖x‖ ^ 2 - 1 > -1, by linarith,
     have I₂ : sin (t * π) ^ 2 ≤ 1, from sin_sq_le_one (t * π),
     have I₃ : 0 ≤ sin (t * π) ^ 2, from sq_nonneg _,
     rcases I₃.eq_or_lt with H | H,

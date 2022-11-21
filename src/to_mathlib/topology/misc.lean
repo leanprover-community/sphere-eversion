@@ -115,14 +115,14 @@ end
 
 section
 
-lemma support_norm {α E : Type*} [normed_add_comm_group E] (f : α → E) : support (λ a, ∥f a∥) = support f :=
+lemma support_norm {α E : Type*} [normed_add_comm_group E] (f : α → E) : support (λ a, ‖f a‖) = support f :=
 function.support_comp_eq norm (λ x, norm_eq_zero) f
 
 @[to_additive]
 lemma has_compact_mul_support_of_subset {α β : Type*} [topological_space α] [t2_space α]
   [has_one β] {f : α → β} {K : set α} (hK : is_compact K) (hf : mul_support f ⊆ K) :
   has_compact_mul_support f :=
-compact_of_is_closed_subset hK (is_closed_mul_tsupport f) (closure_minimal hf hK.is_closed)
+is_compact_of_is_closed_subset hK (is_closed_mul_tsupport f) (closure_minimal hf hK.is_closed)
 
 lemma periodic_const {α β : Type*} [has_add α] {a : α} {b : β} : periodic (λ x, b) a :=
 λ x, rfl
@@ -296,7 +296,7 @@ variables [normed_space ℝ E] [normed_space ℝ F]
 lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
   dist (r • x + (1 - r) • y) x ≤ dist y x :=
 calc
-  dist (r • x + (1 - r) • y) x = ∥1 - r∥ * ∥x - y∥ : by simp_rw [dist_eq_norm', ← norm_smul,
+  dist (r • x + (1 - r) • y) x = ‖1 - r‖ * ‖x - y‖ : by simp_rw [dist_eq_norm', ← norm_smul,
     sub_smul, one_smul, smul_sub, ← sub_sub, ← sub_add, sub_right_comm]
   ... = (1 - r) * dist y x :
     by rw [real.norm_eq_abs, abs_eq_self.mpr (sub_nonneg.mpr h.2), dist_eq_norm']
@@ -463,7 +463,7 @@ begin
   { intro n, cases h : decode₂ s n with i,
     { simp_rw [K', h, map_none, get_or_else_none, is_compact_empty] },
     { simp_rw [K', h, map_some, get_or_else_some],
-      exact compact_of_is_closed_subset (hcV i) (hK i)
+      exact is_compact_of_is_closed_subset (hcV i) (hK i)
         ((hKW i).trans $ (hWV i).trans interior_subset) }},
   { intro n, cases h : decode₂ s n,
     { simp_rw [W', h, map_none, get_or_else_none, is_open_empty] },
@@ -686,7 +686,7 @@ begin
     (λ x, uf x x.prop)
     (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU]),
   have : ∀ i, is_compact (closure ((coe : _ → X) '' (v i))),
-  { intro i, refine compact_of_is_closed_subset (uc i) is_closed_closure _,
+  { intro i, refine is_compact_of_is_closed_subset (uc i) is_closed_closure _,
     apply closure_mono, rw image_subset_iff, refine subset_closure.trans (hv i) },
   refine ⟨λ i, closure (coe '' (v i)), _, this, _⟩,
   { refine subset.trans _ (Union_mono $

@@ -33,7 +33,7 @@ begin
     (by { rw [convex_hull_univ], exact mem_univ 0 }) (mem_univ (0 : F)),
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
     hK.exists_thickening_image hΩ_op (continuous_id.prod_mk hb.continuous) (λ x _, b_in x),
-  let range_γ₀ := (λ i : ℝ × ℝ, ∥γ₀ i.1 i.2∥) '' (I ×ˢ I),
+  let range_γ₀ := (λ i : ℝ × ℝ, ‖γ₀ i.1 i.2‖) '' (I ×ˢ I),
   have h4γ₀ : bdd_above range_γ₀ :=
   (is_compact_Icc.prod is_compact_Icc).bdd_above_image (hγ₀_cont.norm.continuous_on),
   have h0 : 0 < 1 + Sup range_γ₀ := add_pos_of_pos_of_nonneg zero_lt_one (le_cSup_of_le h4γ₀
@@ -43,7 +43,7 @@ begin
   have hε₁ : 0 < ε₁ := h0ε₁ ▸ div_pos hε₀ two_pos,
   let ε := ε₁ / (1 + Sup range_γ₀),
   have hε : 0 < ε := div_pos hε₁ h0,
-  have h2ε : ∀ t s : ℝ, ∥ε • γ₀ t s∥ < ε₁,
+  have h2ε : ∀ t s : ℝ, ‖ε • γ₀ t s‖ < ε₁,
   { intros t s, simp [norm_smul, mul_comm_div, real.norm_eq_abs, abs_eq_self.mpr, hε.le],
     refine lt_of_lt_of_le _ (mul_one _).le,
     rw [mul_lt_mul_left hε₁, div_lt_one h0],
@@ -64,7 +64,7 @@ begin
     exact (hγ₀_surr.smul0 hε.ne').vadd0 },
   { refine hb.continuous.fst'.add (continuous_const.smul $ hγ₀_cont.snd') },
   { rintro x ⟨-, hx⟩ t ht s hs,
-    have : ∥ε • γ₀ t s∥ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀),
+    have : ‖ε • γ₀ t s‖ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀),
     refine h1 x hx t s (by simp [← h0ε₁, this]) },
   { intros x hx,
     rw [← h0ε₁, add_halves'],

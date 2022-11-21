@@ -5,6 +5,7 @@ Authors: Heather Macbeth
 -/
 import analysis.inner_product_space.dual
 import analysis.inner_product_space.orientation
+import tactic.norm_fin
 
 /-! # The cross-product on an oriented real inner product space of dimension three -/
 
@@ -62,17 +63,15 @@ by simp only [cross_product, to_dual, linear_equiv.trans_symm, linear_equiv.symm
 lemma inner_cross_product_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u ×₃ v, u⟫ = 0 :=
 begin
   rw ω.inner_cross_product_apply u v u,
-  refine ω.volume_form.map_eq_zero_of_eq ![u, v, u] _ (_ : (0 : fin 3) ≠ 2),
-  { simp },
-  { norm_num }
+  refine ω.volume_form.map_eq_zero_of_eq ![u, v, u] _ (by norm_num : (0 : fin 3) ≠ 2),
+  simp
 end
 
 lemma inner_cross_product_apply_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u ×₃ v, v⟫ = 0 :=
 begin
   rw ω.inner_cross_product_apply u v v,
-  refine ω.volume_form.map_eq_zero_of_eq ![u, v, v] _ (_ : (1 : fin 3) ≠ 2),
-  { simp },
-  { norm_num }
+  refine ω.volume_form.map_eq_zero_of_eq ![u, v, v] _ (by norm_num : (1 : fin 3) ≠ 2),
+  simp
 end
 
 attribute [irreducible] cross_product
@@ -84,7 +83,7 @@ def cross_product' : E →L[ℝ] (E →L[ℝ] E) :=
 
 @[simp] lemma cross_product'_apply (v : E) : ω.cross_product' v = (ω.cross_product v).to_continuous_linear_map := rfl
 
-lemma norm_cross_product (u : E) (v : (ℝ ∙ u)ᗮ) : ∥u ×₃ v∥ = ∥u∥ * ∥v∥ :=
+lemma norm_cross_product (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u ×₃ v‖ = ‖u‖ * ‖v‖ :=
 begin
   classical,
   refine le_antisymm _ _,
@@ -115,7 +114,7 @@ begin
     have h2 : ⟪(v:E), w⟫ = 0 := w.2 _ (submodule.subset_span (by simp)),
     have h3 : ⟪u, w⟫ = 0 := w.2 _ (submodule.subset_span (by simp)),
     fin_cases i; fin_cases j; norm_num at hij; simp [h1, h2, h3]; rw real_inner_comm; assumption },
-  refine le_of_mul_le_mul_right _ (by rwa norm_pos_iff : 0 < ∥w∥),
+  refine le_of_mul_le_mul_right _ (by rwa norm_pos_iff : 0 < ‖w‖),
   -- Cauchy-Schwarz inequality for `u ×₃ v` and `w`
   simpa only [inner_cross_product_apply, ω.abs_volume_form_apply_of_pairwise_orthogonal H,
     inner_cross_product_apply, fin.mk_zero, fin.prod_univ_succ, finset.card_singleton,
@@ -124,7 +123,7 @@ begin
     using abs_real_inner_le_norm (u ×₃ v) w,
 end
 
-lemma isometry_on_cross_product (u : metric.sphere (0:E) 1) (v : (ℝ ∙ (u:E))ᗮ) : ∥u ×₃ v∥ = ∥v∥ :=
+lemma isometry_on_cross_product (u : metric.sphere (0:E) 1) (v : (ℝ ∙ (u:E))ᗮ) : ‖u ×₃ v‖ = ‖v‖ :=
 by simp [norm_cross_product]
 
 end orientation

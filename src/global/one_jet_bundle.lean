@@ -106,7 +106,7 @@ end
 variable (M)
 
 instance : topological_space J¹MM' :=
-(one_jet_bundle_core I M I' M').to_topological_vector_bundle_core.to_topological_space
+(one_jet_bundle_core I M I' M').to_vector_bundle_core.to_topological_space
   (atlas (model_prod H H') (M × M'))
 
 instance : charted_space HJ J¹MM' :=
@@ -121,7 +121,7 @@ variable (M)
 
 /-- The tangent bundle projection on the basis is a continuous map. -/
 lemma one_jet_bundle_proj_continuous : continuous (one_jet_bundle.proj I M I' M') :=
-((one_jet_bundle_core I M I' M').to_topological_vector_bundle_core).continuous_proj
+((one_jet_bundle_core I M I' M').to_vector_bundle_core).continuous_proj
 
 /-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an

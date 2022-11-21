@@ -26,14 +26,14 @@ begin
   { simp [← smul_assoc, hr.ne.symm.is_unit.mul_inv_cancel], abel, },
 end
 
-@[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : F) r) : ∥(x : F)∥ < r :=
+@[simp] lemma norm_coe_ball_lt (r : ℝ) (x : ball (0 : F) r) : ‖(x : F)‖ < r :=
 by { cases x with x hx, simpa using hx, }
 
 lemma maps_to_homothety_ball (c : F) {r : ℝ} (hr : 0 < r) :
   maps_to (λ y, homothety c r⁻¹ y -ᵥ c) (ball c r) (ball 0 1) :=
 begin
   intros y hy,
-  replace hy : r⁻¹ * ∥y - c∥ < 1,
+  replace hy : r⁻¹ * ‖y - c‖ < 1,
   { rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel hr.ne.symm, mul_one, one_mul],
     simpa [dist_eq_norm] using hy, },
   simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel, mem_ball_zero_iff,

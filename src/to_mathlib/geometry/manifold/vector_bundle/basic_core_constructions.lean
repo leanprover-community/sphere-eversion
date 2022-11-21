@@ -13,9 +13,8 @@ import to_mathlib.geometry.manifold.misc_manifold
 
 noncomputable theory
 
-open bundle set topological_space topological_vector_bundle local_homeomorph
+open bundle set topological_space local_homeomorph
 open_locale classical manifold
-
 
 namespace set
 
@@ -137,13 +136,13 @@ lemma pullback_chart {v : VB' → VB} {hv : cont_diff 𝕜 ∞ v} {h : HB' → H
   {hh : ∀ (e : atlas HB' B'), maps_to h e.1.target (g e).1.target}
   (g_at : ∀ b : B', g (achart HB' b) = achart HB (f b))
   (h_at : ∀ b x : B', h (chart_at HB' b x) = chart_at HB (f b) (f x))
-  (x : (pullback f Z v hv h h1v h2v g h1g h2g hf hh).to_topological_vector_bundle_core.total_space)
+  (x : (pullback f Z v hv h h1v h2v g h1g h2g hf hh).to_vector_bundle_core.total_space)
   {e : local_homeomorph B' HB'} (he : e ∈ atlas HB' B') :
   (Z.pullback f v hv h h1v h2v g h1g h2g hf hh).chart he x =
   (e x.1, (Z.chart (g ⟨e, he⟩).2 ⟨f x.1, x.2⟩).2) :=
 by simp_rw [chart, trans_apply, prod_apply, trivialization.coe_coe, local_homeomorph.refl_apply,
-  function.id_def, topological_vector_bundle_core.local_triv_apply,
-  to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
+  function.id_def, vector_bundle_core.local_triv_apply,
+  to_vector_bundle_core_coord_change, to_vector_bundle_core_index_at,
   pullback_coord_change, g_at, achart_def, h_at, subtype.eta]
 
 variables (IB' B')
@@ -190,7 +189,7 @@ Z.pullback_fst_coord_change _ _ (chart_mem_atlas HB' b.2) (chart_mem_atlas HB' b
   ⟨b', mk_mem_prod (mem_chart_source HB b'.1) (mem_chart_source HB' b'.2)⟩ x
 
 lemma pullback_fst_chart
-  (x : (Z.pullback_fst B' IB').to_topological_vector_bundle_core.total_space)
+  (x : (Z.pullback_fst B' IB').to_vector_bundle_core.total_space)
   {e : local_homeomorph B HB} {e' : local_homeomorph B' HB'} (he : e ∈ atlas HB B)
   (he' : e' ∈ atlas HB' B') (h : (e.prod e').source.nonempty) :
   (Z.pullback_fst B' IB').chart (mem_image2_of_mem he he') x =
@@ -215,7 +214,7 @@ begin
 end
 
 lemma pullback_fst_chart_at
-  (x : (Z.pullback_fst B' IB').to_topological_vector_bundle_core.total_space)
+  (x : (Z.pullback_fst B' IB').to_vector_bundle_core.total_space)
   (b : B) (b' : B') : (Z.pullback_fst B' IB').chart
   (mem_image2_of_mem (chart_mem_atlas HB b) (chart_mem_atlas HB' b')) x =
   ((chart_at HB b x.1.1, chart_at HB' b' x.1.2), (Z.chart (chart_mem_atlas HB b) ⟨x.1.1, x.2⟩).2) :=
@@ -268,7 +267,7 @@ Z.pullback_snd_coord_change (chart_mem_atlas HB b.1) (chart_mem_atlas HB b'.1) _
   ⟨b', mk_mem_prod (mem_chart_source HB b'.1) (mem_chart_source HB' b'.2)⟩ x
 
 lemma pullback_snd_chart (Z : basic_smooth_vector_bundle_core IB' B' F)
-  (x : (Z.pullback_snd B IB).to_topological_vector_bundle_core.total_space)
+  (x : (Z.pullback_snd B IB).to_vector_bundle_core.total_space)
   {e : local_homeomorph B HB} {e' : local_homeomorph B' HB'} (he : e ∈ atlas HB B)
   (he' : e' ∈ atlas HB' B') (h : (e.prod e').source.nonempty) :
   (Z.pullback_snd B IB).chart (mem_image2_of_mem he he') x =
@@ -293,7 +292,7 @@ begin
 end
 
 lemma pullback_snd_chart_at (Z : basic_smooth_vector_bundle_core IB' B' F)
-  (x : (Z.pullback_snd B IB).to_topological_vector_bundle_core.total_space)
+  (x : (Z.pullback_snd B IB).to_vector_bundle_core.total_space)
   (b : B) (b' : B') : (Z.pullback_snd B IB).chart
   (mem_image2_of_mem (chart_mem_atlas HB b) (chart_mem_atlas HB' b')) x =
   ((chart_at HB b x.1.1, chart_at HB' b' x.1.2), (Z.chart (chart_mem_atlas HB' b') ⟨x.1.2, x.2⟩).2) :=
@@ -343,15 +342,15 @@ open continuous_linear_map
     { rw [← IB.image_eq] }
   end }
 
-local notation `LZZ'` := (Z.hom Z').to_topological_vector_bundle_core.total_space
+local notation `LZZ'` := (Z.hom Z').to_vector_bundle_core.total_space
 
 lemma hom_chart' (x : LZZ')
   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
     x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
 by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
-  local_homeomorph.refl_apply, function.id_def, topological_vector_bundle_core.local_triv_apply,
-  to_topological_vector_bundle_core_coord_change, to_topological_vector_bundle_core_index_at,
+  local_homeomorph.refl_apply, function.id_def, vector_bundle_core.local_triv_apply,
+  to_vector_bundle_core_coord_change, to_vector_bundle_core_index_at,
   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
 
@@ -366,10 +365,10 @@ lemma hom_chart_source (x₀ : B) :
 begin
   -- simp_rw [chart, trans_source],
   -- simp only with mfld_simps,
-  set ZZ' := (Z.hom Z').to_topological_vector_bundle_core,
+  set ZZ' := (Z.hom Z').to_vector_bundle_core,
   change ZZ'.proj ⁻¹' (chart_at HB x₀).source ∩
     (λ x, ZZ'.local_triv (achart HB x₀) x) ⁻¹' (chart_at HB x₀).source ×ˢ univ = _,
-  simp_rw [topological_vector_bundle_core.local_triv_apply, mk_preimage_prod, preimage_univ,
+  simp_rw [vector_bundle_core.local_triv_apply, mk_preimage_prod, preimage_univ,
     inter_univ],
   exact inter_self _
 end
@@ -427,8 +426,8 @@ should be possible to define this as follows:
 ```
 noncomputable def coord_change_equiv : F ≃L[𝕜] F :=
 trivialization.coord_change
-  (trivialization_at 𝕜 F Z.to_topological_vector_bundle_core.fiber x)
-  (trivialization_at 𝕜 F Z.to_topological_vector_bundle_core.fiber (j.val.symm (i x))) x
+  (trivialization_at 𝕜 F Z.to_vector_bundle_core.fiber x)
+  (trivialization_at 𝕜 F Z.to_vector_bundle_core.fiber (j.val.symm (i x))) x
 ```
 However the API for this part of the library seems to need of a lot of work so I gave up attempting
 to use it.

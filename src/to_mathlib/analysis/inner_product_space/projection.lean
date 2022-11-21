@@ -215,12 +215,12 @@ variable (E)
 -- Is this really missing??
 lemma normed_space.continuous_at_iff {E F : Type*}
   [seminormed_add_comm_group E] [seminormed_add_comm_group F] (f : E → F) (x : E) :
-  continuous_at f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ∥y - x∥ < δ → ∥f y - f x∥ < ε :=
+  continuous_at f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ < δ → ‖f y - f x‖ < ε :=
 by simp_rw [metric.continuous_at_iff, dist_eq_norm]
 
 lemma normed_space.continuous_at_iff' {E F : Type*}
   [seminormed_add_comm_group E] [seminormed_add_comm_group F] (f : E → F) (x : E) :
-  continuous_at f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ∥y - x∥ ≤ δ → ∥f y - f x∥ ≤ ε :=
+  continuous_at f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε :=
 begin
   rw normed_space.continuous_at_iff,
   split ; intros h ε ε_pos,
@@ -239,19 +239,19 @@ end
 -- Is this really missing??
 lemma normed_space.continuous_iff {E F : Type*}
   [seminormed_add_comm_group E] [seminormed_add_comm_group F] (f : E → F) :
-  continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ∥y - x∥ < δ → ∥f y - f x∥ < ε :=
+  continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ < δ → ‖f y - f x‖ < ε :=
 by simp_rw [metric.continuous_iff, dist_eq_norm]
 
 lemma normed_space.continuous_iff' {E F : Type*}
   [seminormed_add_comm_group E] [seminormed_add_comm_group F] (f : E → F) :
-  continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ∥y - x∥ ≤ δ → ∥f y - f x∥ ≤ ε :=
+  continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε :=
 by simp_rw [continuous_iff_continuous_at, normed_space.continuous_at_iff']
 
 lemma continuous_linear_map.op_norm_le_iff {𝕜 : Type*} {𝕜₂ : Type*} {E : Type*} {F : Type*}
   [seminormed_add_comm_group E] [seminormed_add_comm_group F] [nontrivially_normed_field 𝕜]
   [nontrivially_normed_field 𝕜₂] [normed_space 𝕜 E] [normed_space 𝕜₂ F]
   {σ₁₂ : 𝕜 →+* 𝕜₂} [ring_hom_isometric σ₁₂] {M : ℝ} (hM : 0 ≤ M) (f : E →SL[σ₁₂] F) :
-  ∥f∥ ≤ M ↔ ∀ x, ∥f x∥ ≤ M * ∥x∥:=
+  ‖f‖ ≤ M ↔ ∀ x, ‖f x‖ ≤ M * ‖x‖:=
 ⟨f.le_of_op_norm_le, f.op_norm_le_bound hM⟩
 
 variable {E}
@@ -262,17 +262,17 @@ lemma continuous_at_orthogonal_projection_orthogonal {x₀ : E} (hx₀ : x₀ �
 begin
   rw normed_space.continuous_at_iff',
   intros ε ε_pos,
-  have hNx₀ : 0 < ∥x₀∥,
+  have hNx₀ : 0 < ‖x₀‖,
   { exact norm_pos_iff.mpr hx₀ },
-  have hNx₀2 : 0 < ∥x₀∥^2,
+  have hNx₀2 : 0 < ‖x₀‖^2,
   { apply pow_pos hNx₀ },
-  suffices : ∃ δ > 0, ∀ y, ∥y - x₀∥ ≤ δ → ∀ x, ∥(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y∥ ≤ ε * ∥x∥,
+  suffices : ∃ δ > 0, ∀ y, ‖y - x₀‖ ≤ δ → ∀ x, ‖(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y‖ ≤ ε * ‖x‖,
   by simpa only [continuous_linear_map.op_norm_le_iff (le_of_lt ε_pos),
     orthogonal_projection_orthogonal_singleton, continuous_linear_map.coe_sub',
     continuous_linear_map.coe_comp', coe_subtypeL', submodule.coe_subtype, pi.sub_apply,
     comp_app, coe_mk, sub_sub_sub_cancel_left],
   let N : E → E := λ x, ⟪x, x⟫⁻¹ • x,
-  have hNx₀ : 0 < ∥N x₀∥,
+  have hNx₀ : 0 < ‖N x₀‖,
   { dsimp [N], -- and now let's suffer
     rw [norm_smul, real_inner_self_eq_norm_sq, norm_inv],
     apply mul_pos,
@@ -283,10 +283,10 @@ begin
   { dsimp [N],
     simp_rw real_inner_self_eq_norm_sq,
     exact ((continuous_norm.pow 2).continuous_at.inv₀ hNx₀2.ne').smul continuous_at_id },
-  have lim : tendsto (λ y, ∥N x₀ - N y∥ * ∥y∥) (𝓝 x₀) (𝓝 0),
-  { rw [← zero_mul ∥x₀∥],
+  have lim : tendsto (λ y, ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0),
+  { rw [← zero_mul ‖x₀‖],
     apply tendsto.mul,
-    rw ← show ∥N x₀ - N x₀∥ = 0, by simp,
+    rw ← show ‖N x₀ - N x₀‖ = 0, by simp,
     exact (tendsto_const_nhds.sub cont).norm,
     exact continuous_norm.continuous_at },
   have key : ∀ x y, (⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y =
@@ -298,24 +298,24 @@ begin
   simp only [key],
   simp_rw [metric.tendsto_nhds_nhds, real.dist_0_eq_abs, dist_eq_norm] at lim,
   rcases lim (ε/2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩,
-  refine ⟨min ((ε/2)/ ∥N x₀∥) (η/2), _, _⟩,
+  refine ⟨min ((ε/2)/ ‖N x₀‖) (η/2), _, _⟩,
   { apply lt_min, positivity, exact half_pos η_pos },
   intros y hy x,
   have hy₁ := hy.trans (min_le_left _ _), have hy₂ := hy.trans (min_le_right _ _), clear hy,
-  specialize hη (by linarith : ∥y - x₀∥ < η),
+  specialize hη (by linarith : ‖y - x₀‖ < η),
   rw abs_of_nonneg at hη,
-  calc ∥⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y∥ ≤
-     ∥⟪N x₀, x⟫ • (x₀ - y)∥ + ∥⟪N x₀ - N y, x⟫ • y∥ : norm_add_le _ _
-  ... ≤ ∥N x₀∥*∥x∥ * ∥x₀ - y∥ + ∥N x₀ - N y∥ * ∥x∥ * ∥y∥ : add_le_add _ _
-  ... ≤ (ε/2) * ∥x∥ + (ε/2) * ∥x∥ : add_le_add _ _
-  ... = ε * ∥x∥ : by linarith,
+  calc ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤
+     ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ : norm_add_le _ _
+  ... ≤ ‖N x₀‖*‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ : add_le_add _ _
+  ... ≤ (ε/2) * ‖x‖ + (ε/2) * ‖x‖ : add_le_add _ _
+  ... = ε * ‖x‖ : by linarith,
   { rw norm_smul,
     exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _) },
   { rw norm_smul,
     exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _) },
   { rw [mul_comm, ← mul_assoc, norm_sub_rev],
     exact mul_le_mul_of_nonneg_right ((_root_.le_div_iff hNx₀).mp hy₁) (norm_nonneg x) },
-  { rw [mul_comm, ← mul_assoc, mul_comm ∥y∥],
+  { rw [mul_comm, ← mul_assoc, mul_comm ‖y‖],
     exact  mul_le_mul_of_nonneg_right hη.le (norm_nonneg x) },
   { positivity },
 end

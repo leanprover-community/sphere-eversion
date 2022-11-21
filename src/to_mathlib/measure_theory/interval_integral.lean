@@ -21,7 +21,7 @@ variables {E : Type*} [normed_add_comm_group E]
 
 -- lemma interval_integrable_norm_iff {f : ℝ → E} {μ : measure ℝ} {a b : ℝ}
 --   (hf : ae_strongly_measurable f (μ.restrict (Ι a b))) :
---   interval_integrable (λ t, ∥f t∥) μ a b ↔ interval_integrable f μ a b :=
+--   interval_integrable (λ t, ‖f t‖) μ a b ↔ interval_integrable f μ a b :=
 -- begin
 --   simp_rw [interval_integrable_iff, integrable_on],
 --   exact integrable_norm_iff hf
@@ -109,7 +109,7 @@ end interval_integral
 section
 open interval_integral
 lemma norm_interval_integral_eq (f : ℝ → E) (a b : ℝ) (μ : measure ℝ) :
-  ∥∫ x in a..b, f x ∂μ∥ = ∥∫ x in Ι a b, f x ∂μ∥ :=
+  ‖∫ x in a..b, f x ∂μ‖ = ‖∫ x in Ι a b, f x ∂μ‖ :=
 begin
   simp_rw [interval_integral_eq_integral_interval_oc, norm_smul],
   split_ifs; simp only [norm_neg, norm_one, one_mul],
@@ -127,14 +127,14 @@ lemma interval_integrable_of_norm_sub_le {β : Type*} [normed_add_comm_group β]
   (hf₁_m : ae_strongly_measurable f₁ (μ.restrict $ Ι a b))
   (hf₀_i : interval_integrable f₀ μ a b)
   (hg_i : interval_integrable g μ a b)
-  (h : ∀ᵐ a ∂(μ.restrict $ Ι a b), ∥f₀ a - f₁ a∥ ≤ g a) :
+  (h : ∀ᵐ a ∂(μ.restrict $ Ι a b), ‖f₀ a - f₁ a‖ ≤ g a) :
   interval_integrable f₁ μ a b :=
 begin
-  have : ∀ᵐ a ∂(μ.restrict $ Ι a b), ∥f₁ a∥ ≤ ∥f₀ a∥ + g a,
+  have : ∀ᵐ a ∂(μ.restrict $ Ι a b), ‖f₁ a‖ ≤ ‖f₀ a‖ + g a,
   { apply h.mono,
     intros a ha,
-    calc ∥f₁ a∥ ≤ ∥f₀ a∥ + ∥f₀ a - f₁ a∥ : norm_le_insert _ _
-    ... ≤ ∥f₀ a∥ + g a : add_le_add_left ha _ },
+    calc ‖f₁ a‖ ≤ ‖f₀ a‖ + ‖f₀ a - f₁ a‖ : norm_le_insert _ _
+    ... ≤ ‖f₀ a‖ + g a : add_le_add_left ha _ },
   exact (hf₀_i.norm.add hg_i).mono_fun' hf₁_m this
 end
 
