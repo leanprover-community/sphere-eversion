@@ -329,7 +329,7 @@ variables
 include IP
 
 /-- Gromov's Theorem without metric space assumption -/
-@[main_declaration] theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
+theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
   (hRample : R.ample) (hRopen : is_open R) (hC : is_closed C)
   (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
   by letI := manifold_metric I' M' ; exact

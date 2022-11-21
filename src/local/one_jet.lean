@@ -121,12 +121,6 @@ lemma is_part_holonomic_at.sup (𝓕 : jet_sec E F) {E' E'' : submodule ℝ E} {
   𝓕.is_part_holonomic_at (E' ⊔ E'') x :=
 λ v : E, linear_map.eq_on_sup h' h''
 
--- unused
-lemma is_part_holonomic_at.mono {𝓕 : jet_sec E F}
-  {E' E'' : submodule ℝ E} {x : E} (h : 𝓕.is_part_holonomic_at E' x) (h' : E'' ≤ E') :
-  𝓕.is_part_holonomic_at E'' x :=
-λ v v_in, h v $ set_like.coe_subset_coe.mpr h' v_in
-
 lemma is_part_holonomic_top {𝓕 : jet_sec E F} {x : E} :
   is_part_holonomic_at 𝓕 ⊤ x ↔ is_holonomic_at 𝓕 x :=
 begin

@@ -825,6 +825,12 @@ begin
   { refine continuous_proj_Icc.comp (continuous_const.sub hτ.fst') }
 end
 
+/-- In this lemmas and the lemmas below we add `finite_dimensional ℝ E` so that we can conclude
+ `locally_compact_space E`. -/
+lemma continuous_sf_homotopy [finite_dimensional ℝ E] : continuous ↿(sf_homotopy h₀ h₁) :=
+continuous.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
+  continuous_snd.snd.snd
+
 lemma surrounding_family_sf_homotopy [finite_dimensional ℝ E] (τ : ℝ) :
   surrounding_family g b (sf_homotopy h₀ h₁ τ) U :=
 begin
