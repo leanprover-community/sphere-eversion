@@ -11,19 +11,16 @@ variables
 {EM : Type*} [normed_add_comm_group EM] [normed_space ℝ EM] [finite_dimensional ℝ EM]
 {HM : Type*} [topological_space HM] {IM : model_with_corners ℝ EM HM} [boundaryless IM]
 {M : Type*} [topological_space M] [charted_space HM M] [smooth_manifold_with_corners IM M]
-[t2_space M]
-[locally_compact_space M] -- FIXME: investigate how to deduce this from finite-dimensional
-[nonempty M] -- FIXME: investigate how to remove this
-[sigma_compact_space M]
+[t2_space M] [locally_compact_space M] [nonempty M] [sigma_compact_space M]
 
 {EX : Type*} [normed_add_comm_group EX] [normed_space ℝ EX] [finite_dimensional ℝ EX]
   [measurable_space EX] [borel_space EX]
 {HX : Type*} [topological_space HX] {IX : model_with_corners ℝ EX HX} [model_with_corners.boundaryless IX]
 -- note: X is a metric space
 {X : Type*} [metric_space X] [charted_space HX X] [smooth_manifold_with_corners IX X]
-[locally_compact_space X] -- FIXME: investigate how to deduce this from finite-dimensional
+[locally_compact_space X]
 [sigma_compact_space X]
-[nonempty X] -- FIXME: investigate how to remove this
+[nonempty X]
 
 lemma filter.eventually.forall {α β : Type*} {P : β → α → Prop} {A : filter α}
   (h : ∀ᶠ a in A, ∀ b, P b a) (b : β) : ∀ᶠ a in A, P b a :=

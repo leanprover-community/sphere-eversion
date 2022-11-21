@@ -254,17 +254,14 @@ by simp
 lemma cont_mdiff_on_ext_chart_symm :
   cont_mdiff_on 𝓘(𝕜, E) I n (ext_chart_at I x).symm (ext_chart_at I x).target :=
 begin
-  -- TODO: find a sane proof
-  have hs : (ext_chart_at I x).target ⊆ (chart_at E (ext_chart_at I x x)).source, { simp, },
+  have hs : (ext_chart_at I x).target ⊆ (chart_at E (ext_chart_at I x x)).source,
+  { simp only [subset_univ] with mfld_simps },
   have h2s : maps_to (ext_chart_at I x).symm (ext_chart_at I x).target (chart_at H x).source,
   { rw ← ext_chart_at_source I, exact (ext_chart_at I x).symm_maps_to, },
-  refine (cont_mdiff_on_iff_of_subset_source hs h2s).mpr ⟨_, _⟩,
-  { rw ext_chart_at_target_eq_image_chart_target,
-    apply (chart_at H x).symm.continuous_to_fun.comp I.continuous_inv_fun.continuous_on,
-    simpa using maps_to_id _, },
-  { simp only [model_with_corners_self.ext_chart_at, local_equiv.refl_symm, local_equiv.refl_coe,
-      comp.right_id, id.def, image_id'],
-    exact (cont_diff_on_congr (λ y hy, (ext_chart_at I x).right_inv hy)).mpr cont_diff_on_id, },
+  refine (cont_mdiff_on_iff_of_subset_source hs h2s).mpr ⟨ext_chart_at_continuous_on_symm I x, _⟩,
+  simp_rw [model_with_corners_self.ext_chart_at, local_equiv.refl_symm, local_equiv.refl_coe,
+    comp.right_id, id.def, image_id'],
+  exact (cont_diff_on_congr (λ y hy, (ext_chart_at I x).right_inv hy)).mpr cont_diff_on_id
 end
 
 end general_nonsense
@@ -481,16 +478,8 @@ begin
 end
 
 open function
-/- FIXME: the blueprint statement corresponding to the next two lemmas has very confusing
-quantifiers status.
--/
 
-/-
-In the next lemma, it is better to assume directly that `φ '' K` is closed. This
-will hold both when `K` is compact and when `φ = Id.prod ψ` and `K = ℝ × H` with `H` compact.
--/
-
-/-- This is half of lemma `lem:updating` in the blueprint. -/
+/-- This is lemma `lem:smooth_updating` in the blueprint. -/
 lemma smooth_update
   (f : M' → M → N) (g : M' → X → Y)
   {k : M' → M}
@@ -531,7 +520,7 @@ variables
 
 
 
-/-- This is half of lemma `lem:updating` in the blueprint. TODO: update the blueprint. -/
+/-- This is `lem:dist_updating` in the blueprint. -/
 lemma dist_update [proper_space Y] {K : set X} (hK : is_compact K)
   {P : Type*} [metric_space P] {KP : set P} (hKP : is_compact KP)
   (f : P → M → N) (hf : continuous ↿f)
