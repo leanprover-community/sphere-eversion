@@ -1,4 +1,5 @@
-import local.ample_relation
+import local.dual_pair
+import local.ample_set
 import global.one_jet_sec
 import global.smooth_embedding
 set_option trace.filter_inst_type true

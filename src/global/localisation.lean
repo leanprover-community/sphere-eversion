@@ -1,4 +1,4 @@
-import local.h_principle
+import local.ample_relation
 import global.relation
 
 set_option trace.filter_inst_type true
