@@ -100,7 +100,7 @@ directions of $\ker π$, and almost without moving $f(x)$.
 \begin{definition}
   \label{def:hol_partial}
   \leanok
-  \lean{rel_loc.formal_sol.is_part_holonomic_at}
+  \lean{jet_sec.is_part_holonomic_at}
   Let $E'$ be a linear subspace of $E$.
   A map $\F = (f, φ) : E → F × \Hom(E, F)$ is $E'$--holonomic if,
   for every $v$ in $E'$ and every $x$, $Df(x)v = φ(x)v$.
@@ -159,7 +159,7 @@ $[0, 1] × E$ and every map from $[0, 1] × E$ could be extended.
 \begin{lemma}
   \label{lem:update_lin_map}
   \leanok
-  \lean{dual_pair.update_ker_pi, dual_pair.update_v, rel_loc.formal_sol.mem_slice}
+  \lean{dual_pair.update_ker_pi, dual_pair.update_v, rel_loc.mem_slice}
   The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$
   and sends $v$ to $w$.
   If $\sigma$ belongs to $\Rel$ then $φ(v)$ belongs to
