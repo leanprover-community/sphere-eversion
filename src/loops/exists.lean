@@ -91,7 +91,7 @@ end
     distance from `γ` still surrounds `g`, using `surrounding_family.surrounds_of_close`.
   (a5): `ε₁ x < ε₀` (obtained from `exist_loops_aux1`)
   (b) Replace `γ x t s` by `γ x (linear_reparam t) (linear_reparam s)`.
-  (e) Let `δ' x` be a family of loop that is at most `ε₁` away from `γ` using
+  (e) Let `δ' x` be a family of loops that is at most `ε₁` away from `γ` using
     `exists_smooth_and_eq_on`. Since `γ` is smooth near `s ∈ ℤ` and `t ≤ 0` we can also
     ensure that `δ' = γ` for those values (*).
     Now let `δ x t s = δ' x (smooth_transition t) (fract s)`
