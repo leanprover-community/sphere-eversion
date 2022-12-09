@@ -142,7 +142,7 @@ begin
     simp_rw [hsupp, hsupp', inter_comm (support f)], clear hsupp hsupp',
     refine (properly_discontinuous_vadd.finite_disjoint_inter_image (is_compact_Icc : is_compact $ Icc (y-1) (y+1)) h').subset _,
     intros i hi,
-    rw [mem_set_of_eq, ne_empty_iff_nonempty],
+    rw [mem_set_of_eq, ← nonempty_iff_ne_empty],
     apply nonempty.mono _ hi,
     mono,
     { rw show (e i : ℝ → ℝ) = (has_vadd.vadd i), by { ext x, exact add_comm x i },

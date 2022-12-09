@@ -150,7 +150,7 @@ instance : properly_discontinuous_vadd ℤ ℝ :=
   have hIL:= (hL.is_glb_Inf hL').1,
   apply (finite_Icc ⌈Inf L - Sup K⌉ ⌊Sup L - Inf K⌋).subset,
   rintros n (hn : has_vadd.vadd n '' K ∩ L ≠ ∅),
-  rcases ne_empty_iff_nonempty.mp hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩,
+  rcases nonempty_iff_ne_empty.mpr hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩,
   split,
   { rw int.ceil_le,
     linarith [hIL hnk, hSK hk] },
@@ -345,10 +345,10 @@ congr_arg coe $ proj_Icc_of_right_le _ hx
 congr_arg coe $ proj_Icc_right _
 
 @[simp] lemma proj_I_eq_zero [nontrivial α] : proj_I x = 0 ↔ x ≤ 0 :=
-by { rw [← proj_Icc_eq_left (@zero_lt_one α _ _), subtype.ext_iff], refl }
+by { rw [← proj_Icc_eq_left (zero_lt_one' α), subtype.ext_iff], refl }
 
 @[simp] lemma proj_I_eq_one : proj_I x = 1 ↔ 1 ≤ x :=
-by { rw [← proj_Icc_eq_right (@zero_lt_one α _ _), subtype.ext_iff], refl }
+by { rw [← proj_Icc_eq_right (zero_lt_one' α), subtype.ext_iff], refl }
 
 lemma proj_I_mem_Icc : proj_I x ∈ Icc (0 : α) 1 :=
 (proj_Icc (0 : α) 1 zero_le_one x).prop

@@ -92,7 +92,7 @@ def linear_reparam : equivariant_map :=
 lemma linear_reparam_eq_zero {t : ℝ} (h1 : -4⁻¹ ≤ t) (h2 : t ≤ 4⁻¹) : linear_reparam t = 0 :=
 begin
   rcases h2.eq_or_lt with rfl|h2,
-  { rw [linear_reparam], norm_num, simp_rw [abs_of_pos (half_pos (@zero_lt_one ℝ _ _)), sub_self] },
+  { rw [linear_reparam], norm_num, simp_rw [abs_of_pos (half_pos (zero_lt_one' ℝ)), sub_self] },
   have : ⌊ t - 4⁻¹ ⌋ = -1,
   { refine floor_eq_iff.mpr ⟨le_sub_iff_add_le.mpr $ le_trans (by norm_num) h1,
       sub_lt_iff_lt_add.mpr $ h2.trans_le (by norm_num)⟩ },

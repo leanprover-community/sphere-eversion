@@ -258,7 +258,7 @@ begin
   { simp only [subset_univ] with mfld_simps },
   have h2s : maps_to (ext_chart_at I x).symm (ext_chart_at I x).target (chart_at H x).source,
   { rw ← ext_chart_at_source I, exact (ext_chart_at I x).symm_maps_to, },
-  refine (cont_mdiff_on_iff_of_subset_source hs h2s).mpr ⟨ext_chart_at_continuous_on_symm I x, _⟩,
+  refine (cont_mdiff_on_iff_of_subset_source hs h2s).mpr ⟨continuous_on_ext_chart_at_symm I x, _⟩,
   simp_rw [model_with_corners_self.ext_chart_at, local_equiv.refl_symm, local_equiv.refl_coe,
     comp.right_id, id.def, image_id'],
   exact (cont_diff_on_congr (λ y hy, (ext_chart_at I x).right_inv hy)).mpr cont_diff_on_id
@@ -289,7 +289,8 @@ def open_smooth_emb_of_diffeo_subset_chart_target (x : M) {f : local_homeomorph 
   begin
     obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y),
     have aux : f.symm (IF z) = y, { rw hz', exact f.left_inv (hf₁.symm ▸ mem_univ _), },
-    simp only [← hz', (chart_at H x).right_inv hz, aux, ext_chart_at, local_equiv.coe_trans,
+    simp only [← hz', (chart_at H x).right_inv hz, aux, ext_chart_at,
+      local_homeomorph.extend, local_equiv.coe_trans,
       local_homeomorph.inv_fun_eq_coe, model_with_corners.to_local_equiv_coe,
       local_homeomorph.coe_coe, local_equiv.coe_trans_symm, local_homeomorph.coe_coe_symm,
       model_with_corners.left_inv, model_with_corners.to_local_equiv_coe_symm, comp_app, aux],
@@ -297,7 +298,7 @@ def open_smooth_emb_of_diffeo_subset_chart_target (x : M) {f : local_homeomorph 
   is_open_range := is_open_map.is_open_range $ λ u hu,
   begin
     have aux : is_open (f '' u) := f.image_open_of_open hu (hf₁.symm ▸ subset_univ u),
-    convert ext_chart_preimage_open_of_open' IF x aux,
+    convert is_open_ext_chart_at_preimage' IF x aux,
     rw image_comp,
     refine (ext_chart_at IF x).symm_image_eq_source_inter_preimage
       ((image_subset_range f u).trans _),
@@ -370,7 +371,7 @@ begin
     have hV₂ : V ⊆ (ext_chart_at IF x).target :=
       subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂,
     rw (ext_chart_at IF x).symm_image_eq_source_inter_preimage hV₂,
-    exact ext_chart_preimage_open_of_open' IF x hV₁, },
+    exact is_open_ext_chart_at_preimage' IF x hV₁, },
   have hB : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
     λ x, charted_space.nhds_has_basis_balls_of_open_cov IF x s_op cov,
   have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,

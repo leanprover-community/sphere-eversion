@@ -107,7 +107,6 @@ variable (M)
 
 instance : topological_space J¹MM' :=
 (one_jet_bundle_core I M I' M').to_vector_bundle_core.to_topological_space
-  (atlas (model_prod H H') (M × M'))
 
 instance : charted_space HJ J¹MM' :=
 (one_jet_bundle_core I M I' M').to_charted_space

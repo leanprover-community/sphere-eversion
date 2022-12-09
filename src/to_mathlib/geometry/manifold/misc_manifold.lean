@@ -312,7 +312,7 @@ begin
     { refine eventually_of_forall (λ x', mem_range_self _) },
     swap 2,
     { refine inter_mem (ext_chart_at_target_mem_nhds_within J x) _,
-      refine nhds_within_le_nhds (ext_chart_preimage_mem_nhds' _ _ (mem_ext_chart_source J x) _),
+      refine nhds_within_le_nhds (ext_chart_at_preimage_mem_nhds' _ _ (mem_ext_chart_source J x) _),
       exact hg.1.preimage_mem_nhds (ext_chart_at_source_mem_nhds I (g x)) },
     simp_rw [function.comp, model_with_corners.range_prod, ext_chart_at_to_inv],
     refine mem_of_superset self_mem_nhds_within _,
@@ -346,8 +346,8 @@ begin
       rw [(ext_chart_at I (g x₂)).left_inv hx', (ext_chart_at I' (f x₂ (g x₂))).left_inv h2x'] },
     refine filter.eventually_eq.fderiv_within_eq_nhds (I.unique_diff _ $ mem_range_self _) _,
     refine eventually_of_mem (inter_mem _ _) this,
-    { exact ext_chart_preimage_mem_nhds' _ _ hx₂ (ext_chart_at_source_mem_nhds I (g x₂)) },
-    refine ext_chart_preimage_mem_nhds' _ _ hx₂ _,
+    { exact ext_chart_at_preimage_mem_nhds' _ _ hx₂ (ext_chart_at_source_mem_nhds I (g x₂)) },
+    refine ext_chart_at_preimage_mem_nhds' _ _ hx₂ _,
     exact (h2x₂.continuous_at).preimage_mem_nhds (ext_chart_at_source_mem_nhds _ _) },
   /- The conclusion is the same as the following, when unfolding coord_change of
     `tangent_bundle_core` -/

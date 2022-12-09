@@ -1,4 +1,4 @@
-import topology.algebra.order.basic
+import topology.order.basic
 
 open_locale topological_space
 open filter set

@@ -8,15 +8,15 @@ variables [topological_space H] [topological_space M] [charted_space H M]
 variables [normed_add_comm_group E] [normed_space 𝕜 E]
 variables (I : model_with_corners 𝕜 E H)
 
-lemma ext_chart_at_map_nhds_of_boundaryless [I.boundaryless] {x : M} :
+lemma map_ext_chart_at_nhds_of_boundaryless [I.boundaryless] {x : M} :
   filter.map (ext_chart_at I x) (𝓝 x) = 𝓝 (ext_chart_at I x x) :=
-by rw [ext_chart_at_map_nhds I x, model_with_corners.boundaryless.range_eq_univ, nhds_within_univ]
+by rw [map_ext_chart_at_nhds I x, model_with_corners.boundaryless.range_eq_univ, nhds_within_univ]
 
 lemma ext_chart_at_image_nhd_mem_nhds_of_boundaryless [I.boundaryless]
   {x : M} {s : set M} (h : s ∈ 𝓝 x) :
   (ext_chart_at I x) '' s ∈ 𝓝 (ext_chart_at I x x) :=
 begin
-  rw [← ext_chart_at_map_nhds_of_boundaryless, filter.mem_map],
+  rw [← map_ext_chart_at_nhds_of_boundaryless, filter.mem_map],
   filter_upwards [h] using subset_preimage_image (ext_chart_at I x) s,
 end
 
@@ -60,7 +60,7 @@ begin
       exact (set.inter_subset_left _ _).trans (set.inter_subset_right _ _), }, },
   { rintros ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩,
     replace hr₀ : metric.ball (ext_chart_at I x x) r ∈ 𝓝 (ext_chart_at I x x) := ball_mem_nhds _ hr₀,
-    rw [← ext_chart_at_map_nhds_of_boundaryless, filter.mem_map] at hr₀,
+    rw [← map_ext_chart_at_nhds_of_boundaryless, filter.mem_map] at hr₀,
     replace hr₀ := filter.inter_mem hx hr₀,
     rw ← (ext_chart_at I x).symm_image_eq_source_inter_preimage hr₁ at hr₀,
     filter_upwards [hr₀] using hr₂, },

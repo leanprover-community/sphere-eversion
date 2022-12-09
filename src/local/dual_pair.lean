@@ -209,7 +209,7 @@ variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
-to use `cont_diff_clm_apply` and `continuous_clm_apply`. -/
+to use `cont_diff_clm_apply_iff` and `continuous_clm_apply`. -/
 
 lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair E)
   {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
@@ -217,9 +217,9 @@ lemma smooth_update [finite_dimensional ℝ E] (p : dual_pair E)
   𝒞 ∞ (λ g, p.update (φ g) (w g)) :=
 begin
   apply hφ.add,
-  rw cont_diff_clm_apply,
+  rw cont_diff_clm_apply_iff,
   intro y,
-  exact (hw.sub (cont_diff_clm_apply.mp hφ p.v)).const_smul _,
+  exact (hw.sub (cont_diff_clm_apply_iff.mp hφ p.v)).const_smul _,
 end
 
 lemma continuous_update [finite_dimensional ℝ E] (p : dual_pair E)
