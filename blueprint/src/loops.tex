@@ -6,23 +6,20 @@
 
 In this chapter, we explain how to construct families of loops to feed into the
 corrugation process explained at the end of the introduction.
-A loop is a map defined on the circle $𝕊^1 = ℝ/ℤ$ with values in a
-finite-dimensional vector space.
-It can also freely be seen as $1$-periodic maps defined on $ℝ$.
-
-\begin{definition}
-  \label{def:average}
-  \lean{loop.average}
-  \leanok
-  The average of a loop $γ$ is $\bar γ := \int_{𝕊^1} γ(s)\, ds$.
-\end{definition}
 
 Throughout this document, $E$ and $F$ will denote finite-dimensional
 real vector spaces.
 
 \begin{definition}
-  \label{def:loop_family_support}
-  \lean{loop.support}\leanok
+  \label{def:loop}
+  \lean{loop, loop.average, loop.support}
+  \leanok
+  A loop is a map defined on the circle $𝕊^1 = ℝ/ℤ$ with values in a
+  finite-dimensional vector space.
+  It can also freely be seen as $1$-periodic maps defined on $ℝ$.
+
+  The average of a loop $γ$ is $\bar γ := \int_{𝕊^1} γ(s)\, ds$.
+
   The \emph{support} of a family $γ$ of loops in $F$ parametrized by $E$ is
   the closure of the set of $x$ in $E$ such that $γ_x$ is not a constant loop.
 \end{definition}
@@ -30,8 +27,9 @@ real vector spaces.
 All of this chapter is devoted to proving the following proposition.
 
 \begin{proposition}
-  \label{prop:loops}
+  \label{prop:∃_loops}
   \lean{exist_loops}
+  \uses{def:loop}
   \leanok
   Let $K$ a compact set in $E$. Let $Ω$ be an open set in $E × F$.
 
@@ -75,11 +73,113 @@ a smooth $h$.
 In the previous proof sketch, there is a lot of freedom in constructing $γ$,
 which is problematic when trying to do it consistently when $x$ varies.
 
-\section{Preliminaries}
+\section{Surrounding points}
 \label{sec:preliminaries}
 
+This section collects elementary results about convex sets in finite
+dimensional real vector spaces that will help to construct families of loops.
 In this section, $E$ is a real vector space with (finite) dimension $d$.
-We'll need the Carathéodory lemma:
+The discussion will center around the following definition which is tailored to
+our ulterior needs.
+
+\begin{definition}
+  \label{def:surrounds_points}
+  \lean{surrounding_pts}
+  \leanok
+  A point $x$ in $E$
+  is surrounded by points $p_0$, \dots, $p_d$ if those points are
+  affinely independent and there exist weights $w_i ∈ (0, 1)$ with sum $1$
+  such that $x = \sum_i w_i p_i$.
+\end{definition}
+
+Note that, in the above definition, the number of points $p_i$ is fixed
+by the dimension $d$ of $E$, and that the weights $w_i$ are the barycentric
+coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
+
+The first important point in this definition is that surrounding is
+smoothly locally stable: if $x$ is surrounded by a collection of points $p$
+then points that are close to $y$ are surrounded by every collection of points
+$q$ that is closed to $p$, and the relevant barycentric coordinates smoothly
+depend on $y$ and $q$. The precise statement follows.
+
+\begin{lemma}
+  \label{lem:smooth_barycentric_coord}
+  \uses{def:surrounds_points}
+  \lean{smooth_surrounding}
+  \leanok
+  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
+  surrounding $x$, there is a function $w \co E × E^{d+1} → ℝ^{d+1}$ such that,
+  for every $(y, q)$ in a neighborhood of $(x, p)$,
+  \begin{itemize}
+    \item
+      $w$ is smooth at $(y, q)$
+    \item
+      $w(y, q) > 0$
+    \item
+      $\sum_{i=0}^d w_i(y, q) = 1$
+    \item
+      $y = \sum_{i=0}^d w_i(y, q)q_i$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Let:
+  \begin{align*}
+    A = E \times \{ q \in E^{d+1} ~|~ \mbox{$q$ is an affine basis for $E$} \},
+  \end{align*}
+  and define:
+  \begin{align*}
+    w \co A &\to ℝ^{d+1}\\
+    (y, q) &\mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}.
+  \end{align*}
+
+  If we fix an affine basis $b$ of $E$, we may express $w$ as a
+  ratio of determinants in terms of coordinates relative to $b$. More precisely,
+  by Cramer's rule, if $0 \le i \le d$ and $w_i$ is the $i^{\rm th}$ component of $w$,
+  then:
+  \begin{align*}
+    w_i (y, q) = \det M_i (y, q) / \det N (q)
+  \end{align*}
+  where $N(q)$ is the $(d+1)\times (d+1)$ matrix whose columns are the barycentric
+  coordinates of the components of $q$ relative to $b$, and $M_i (y, q)$ is $N(q)$
+  except with column $i$ replaced by the barycentric coordinates of $y$ relative
+  to $b$.
+
+  Since determinants are smooth functions and $(y, q) \mapsto \det N(q)$ is
+  non-vanishing on $A$, $w$ is smooth on $A$.
+
+  Finally define:
+  \begin{align*}
+    U = w^{-1}((0, \infty)^{d+1}),
+  \end{align*}
+  and note that $U$ is open in $A$, since it is the preimage of an open set under the
+  continuous map $w$. In fact since $A$ is open, $U$ is open as a subset of $E \times E^{d+1}$.
+  Note that $(x, p) \in U$ since $p$ surrounds $x$.
+
+  We may extend $w$ to $E \times E^{d+1}$ by giving it any values at all outside $A$.
+\end{proof}
+
+Then we need a criterion ensuring a point $x$ is surrounded by a collection of points taken
+in a given subset $P$. The first temptation is to hope that $x$ being in the interior of
+the convex hull of $P$ is enough. But this is not true. For instance the center of a square
+in a plane is in the interior of the convex hull of the set $P$ of vertices of the square,
+but it isn't surrounded by any set of vertices. This counter example also shows that
+the stability lemma above is slightly less trivial than it sounds.
+
+The rest of this section is devoted to the following result that proves no such issue arises
+when $P$ is open.
+
+\begin{proposition}
+  \label{prop:surrounded_by_open}
+  \uses{def:surrounds_points}
+  \lean{surrounded_of_convex_hull}\leanok
+  If a point $x$ of $E$ lies in the convex hull of an open set $P$,
+  then it is surrounded by some collection of points belonging to $P$.
+\end{proposition}
+
+This proposition will be proven at the end of this section.
+We'll first need the Carathéodory lemma:
 
 \begin{lemma}[Carathéodory's lemma]
 \label{lem:caratheodory}
@@ -123,19 +223,6 @@ We'll need the Carathéodory lemma:
 \end{proof}
 
 
-\begin{definition}
-  \label{def:surrounds_points}
-  \lean{surrounding_pts}
-  \leanok
-  A point $x$ in $E$
-  is surrounded by points $p_0$, \dots, $p_d$ if those points are
-  affinely independent and there exist weights $w_i ∈ (0, 1)$ with sum $1$
-  such that $x = \sum_i w_i p_i$.
-\end{definition}
-
-Note that, in the above definition, the number of points $p_i$ is fixed
-by the dimension $d$ of $E$, and that the weights $w_i$ are the barycentric
-coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
 
 \begin{lemma}
   \label{lem:interior_chab}
@@ -205,14 +292,9 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
   where the second inclusion follows since $C$ is convex and contains $x$.
 \end{proof}
 
-\begin{lemma}
-  \label{lem:int_cvx}
-  \lean{surrounded_of_convex_hull}\leanok
-  If a point $x$ of $E$ lies in the convex hull of an open set $P$,
-  then it is surrounded by some collection of points belonging to $P$.
-\end{lemma}
+We are now ready to come back to \Cref{prop:surrounded_by_open}.
 
-\begin{proof}
+\begin{proof}[Proof of \Cref{prop:surrounded_by_open}]\proves{prop:surrounded_by_open}
   \leanok
   \uses{lem:caratheodory,lem:interior_chab,lem:int_homothety_cvx}
   It follows from \Cref{lem:interior_chab} that we need only show that $E$
@@ -254,64 +336,6 @@ coordinates of $x$ with respect to the affine basis $p_0, \ldots, p_d$.
 \end{proof}
 
 
-\begin{lemma}
-  \label{lem:smooth_barycentric_coord}
-  \uses{def:surrounds_points}
-  \lean{smooth_surrounding}
-  \leanok
-  For every $x$ in $E$ and every collection of points $p ∈ E^{d+1}$
-  surrounding $x$, there is a function $w \co E × E^{d+1} → ℝ^{d+1}$ such that,
-  for every $(y, q)$ in a neighborhood of $(x, p)$,
-  \begin{itemize}
-    \item
-      $w$ is smooth at $(y, q)$
-    \item
-      $w(y, q) > 0$
-    \item
-      $\sum_{i=0}^d w_i(y, q) = 1$
-    \item
-      $y = \sum_{i=0}^d w_i(y, q)q_i$
-  \end{itemize}
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  Let:
-  \begin{align*}
-    A = E \times \{ q \in E^{d+1} ~|~ \mbox{$q$ is an affine basis for $E$} \},
-  \end{align*}
-  and define:
-  \begin{align*}
-    w \co A &\to ℝ^{d+1}\\
-    (y, q) &\mapsto \mbox{barycentric coordinates of $y$ with respect to $q$}.
-  \end{align*}
-
-  If we fix an affine basis $b$ of $E$, we may express $w$ as a
-  ratio of determinants in terms of coordinates relative to $b$. More precisely,
-  by Cramer's rule, if $0 \le i \le d$ and $w_i$ is the $i^{\rm th}$ component of $w$,
-  then:
-  \begin{align*}
-    w_i (y, q) = \det M_i (y, q) / \det N (q)
-  \end{align*}
-  where $N(q)$ is the $(d+1)\times (d+1)$ matrix whose columns are the barycentric
-  coordinates of the components of $q$ relative to $b$, and $M_i (y, q)$ is $N(q)$
-  except with column $i$ replaced by the barycentric coordinates of $y$ relative
-  to $b$.
-
-  Since determinants are smooth functions and $(y, q) \mapsto \det N(q)$ is
-  non-vanishing on $A$, $w$ is smooth on $A$.
-
-  Finally define:
-  \begin{align*}
-    U = w^{-1}((0, \infty)^{d+1}),
-  \end{align*}
-  and note that $U$ is open in $A$, since it is the preimage of an open set under the
-  continuous map $w$. In fact since $A$ is open, $U$ is open as a subset of $E \times E^{d+1}$.
-  Note that $(x, p) \in U$ since $p$ surrounds $x$.
-
-  We may extend $w$ to $E \times E^{d+1}$ by giving it any values at all outside $A$.
-\end{proof}
-
 \section{Constructing loops}
 
 \subsection{Surrounding families}
@@ -321,7 +345,7 @@ It will be convenient to introduce some more vocabulary.
 
 \begin{definition}
   \label{def:surrounds}
-  \uses{def:surrounds_points}
+  \uses{def:loop, def:surrounds_points}
   \lean{loop.surrounds}
   \leanok
   We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded
@@ -330,7 +354,7 @@ It will be convenient to introduce some more vocabulary.
   point $b$ if $0$ is sent to $b$.
 \end{definition}
 
-The first main task in proving \Cref{prop:loops} is to construct
+The first main task in proving \Cref{prop:∃_loops} is to construct
 suitable families of loops $γ_x$ surrounding $g(x)$, by assembling local
 families of loops.
 Those will then be reparametrized to get the correct average in the next
@@ -367,9 +391,9 @@ convex hull of $O$.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:int_cvx}
+  \uses{prop:surrounded_by_open}
   \leanok
-  Since $O$ is open, \Cref{lem:int_cvx} gives points $p_i$ in $O$
+  Since $O$ is open, \Cref{prop:surrounded_by_open} gives points $p_i$ in $O$
   surrounding $x$.
   Since $O$ is open and connected, it is path connected.
   Let $λ \co [0, 1] → Ω_x$ be a continuous path starting at $b$ and
@@ -529,7 +553,7 @@ as explained in the next lemma.
   % \uses{def:family_surrounds} % causes transitive arrow in depgraph
   \lean{exists_surrounding_loops}
   \leanok
-  In the setup of \Cref{prop:loops}, assume we have a
+  In the setup of \Cref{prop:∃_loops}, assume we have a
   continuous family $γ$ of loops defined near $K$ which is based at $β$,
   surrounds $g$ and such that each $γ_x^t$ takes values in $Ω_x$.
   Then there such a family which is defined on all of $E$ and agrees
@@ -569,12 +593,12 @@ as explained in the next lemma.
 \subsection{The reparametrization lemma}
 \label{sub:the_reparametrization_lemma}
 
-The second ingredient needed to prove \Cref{prop:loops} is a
+The second ingredient needed to prove \Cref{prop:∃_loops} is a
 parametric reparametrization lemma.
 
 \begin{lemma}
 \label{lem:reparametrization}
-\uses{def:surrounds, def:average}
+\uses{def:surrounds}
 \lean{smooth_surrounding_family.reparametrize_average}
 \leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
@@ -625,8 +649,8 @@ that each $γ_x ∘ φ_x$ has average $g(x)$ and $φ_x(0) = 0$.
 
 We finally assemble the ingredients from the previous two sections.
 
-\begin{proof}[Proof of \Cref{prop:loops}]
-  \proves{prop:loops}
+\begin{proof}[Proof of \Cref{prop:∃_loops}]
+  \proves{prop:∃_loops}
   \uses{lem:∃_surrounding_loops, lem:reparametrization}
   \leanok
   Let $γ^*$ be a family of loops surrounding the origin in $B_F(0,1)$

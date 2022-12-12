@@ -34,6 +34,7 @@ using the following construction.
 
 \begin{definition}[Theillière 2018]
   \label{def:corrugation}
+  \uses{def:loop}
   \leanok
   \lean{corrugation}
   The map obtained by corrugation of $f$ in direction $(π, v)$ using $γ$
@@ -54,7 +55,7 @@ directions of $\ker π$, and almost without moving $f(x)$.
 \begin{proposition}[Theillière 2018]
   \label{prop:theilliere}
   \lean{fderiv_corrugated_map, corrugation.c0_small_on, remainder_c0_small_on, corrugation.support}\leanok
-  \uses{def:corrugation,def:loop_family_support}
+  \uses{def:corrugation}
   Let $f$ be a $\mathcal{C}^1$ function from $E$ to $F$. Let $(π, v)$ be a dual
   pair on $E$. Let $γ \co E × 𝕊^1 → F$ be a $\mathcal{C}^1$ family of loops
   such that $\overline{γ_x} = Df(x)v$ for all $x$.
@@ -219,9 +220,9 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{proof}
   \leanok
   \proves{lem:integration_step}
-  \uses{prop:loops, prop:theilliere, lem:update_lin_map}
+  \uses{prop:∃_loops, prop:theilliere, lem:update_lin_map}
   We denote the components of $\F$ by $f$ and $φ$.
-  Since $\F$ is short, \cref{prop:loops} applied to
+  Since $\F$ is short, \cref{prop:∃_loops} applied to
   $g \co x ↦ Df(x)v$, $β \co x ↦ φ(x)v$,
   $Ω_x = \Rel(\F(x), π, v)$, and $K = C ∩ K_1$ gives us a smooth family of loops
   $γ \co E × [0, 1] × 𝕊^1 → F$ such that, for all $x$:

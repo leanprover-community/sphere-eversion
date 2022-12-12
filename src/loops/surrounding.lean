@@ -175,7 +175,7 @@ begin
         basis.affine_combination_coord_eq_self] } }
 end
 
---- lem:int_cvx
+--- prop:surrounded_by_open
 lemma surrounded_of_convex_hull [finite_dimensional ℝ F]
   {f : F} {s : set F} (hs : is_open s) (hsf : f ∈ convex_hull ℝ s) :
   surrounded f s :=
