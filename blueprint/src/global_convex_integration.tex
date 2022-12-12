@@ -366,7 +366,7 @@ living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
 
 \begin{lemma}
 \label{lem:one_jet_extension_prop}
-\lean{smooth.one_jet_ext, one_jet_ext_proj}
+\lean{smooth.one_jet_ext}
 \leanok
 \uses{def:one_jet_extension}
 For every smooth map $f \co M → N$,
@@ -377,9 +377,6 @@ For every smooth map $f \co M → N$,
   \item
     \label{lem:one_jet_section}\uses{def:one_jet_space, def:one_jet_extension}
     $j^1f$ is a section of $J^1(M, N) → M$
-  \item
-    \label{lem:one_jet_zero_jet}\uses{def:one_jet_space, def:one_jet_extension}
-    $j^1f$ composed with $J^1(M, N) → N$ is $f$.
 \end{enumerate}
 \end{lemma}
 
@@ -429,12 +426,10 @@ necessarily $\bs \F$.
 \begin{definition}
   \label{def:formal_sol}
   \leanok
-  \lean{formal_sol, sol}
+  \lean{formal_sol}
   \uses{def:rel, def:one_jet_extension}
   A formal solution of a differential relation $\Rel ⊂ J^1(M, N)$ is a
   section of $J^1(M, N) → M$ taking values in $\Rel$.
-  A solution of $\Rel$ is a map from $M$ to $N$ whose $1$--jet extension
-  is a formal solution.
 \end{definition}
 
 
