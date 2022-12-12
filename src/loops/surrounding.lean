@@ -497,8 +497,6 @@ lemma surrounding_loop_of_convex_hull [finite_dimensional ℝ F] {f b : F} {O : 
 begin
   rcases surrounded_of_convex_hull O_op hsf with ⟨p, w, h, hp⟩,
   rw ← O_op.is_connected_iff_is_path_connected at O_conn,
-  rcases (O_conn.exists_path_through_family p hp) with ⟨Ω₀, hΩ₀⟩,
-  rcases O_conn.joined_in b hb (p 0) (hp 0) with ⟨Ω₁, hΩ₁⟩,
   exact ⟨surrounding_loop O_conn hp hb, continuous_surrounding_loop, surrounding_loop_zero_right,
     surrounding_loop_zero_left, λ s t, by rw surrounding_loop_proj_I,
     surrounding_loop_mem, surrounding_loop_surrounds h⟩
