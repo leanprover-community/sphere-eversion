@@ -52,18 +52,17 @@ MathJax = {
    <li>Producing a bilingual informal/formal document by keeping the blueprint and the formalization in sync.</li>
    </ul>
    <p>The main statements that we formalized appear in <a href="https://github.com/leanprover-community/sphere-eversion/blob/master/src/main.lean">main.lean</a>. In particular the sphere eversion statement is:</p>
-   <div class="highlight"><pre><span></span><span class="kd">theorem</span> <span class="n">Smale</span> <span class="o">:</span>
-     <span class="c1">-- There exists a family of functions `f t` indexed by `ℝ` going from `𝕊²` to `ℝ³` such that</span>
-     <span class="n">∃</span> <span class="n">f</span> <span class="o">:</span> <span class="n">ℝ</span> <span class="n">→</span> <span class="n">𝕊²</span> <span class="n">→</span> <span class="n">ℝ³</span><span class="o">,</span>
-       <span class="c1">-- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and</span>
-       <span class="o">(</span><span class="n">cont_mdiff</span> <span class="o">(</span><span class="n">𝓘</span><span class="o">(</span><span class="n">ℝ</span><span class="o">,</span> <span class="n">ℝ</span><span class="o">)</span><span class="n">.</span><span class="n">prod</span> <span class="o">(</span><span class="n">𝓡</span> <span class="mi">2</span><span class="o">))</span> <span class="n">𝓘</span><span class="o">(</span><span class="n">ℝ</span><span class="o">,</span> <span class="n">ℝ</span><span class="n">³</span><span class="o">)</span> <span class="n">∞</span> <span class="n">↿</span><span class="n">f</span><span class="o">)</span> <span class="n">∧</span>
-       <span class="c1">-- `f 0` is the inclusion map, sending `x` to `x` and</span>
-       <span class="o">(</span><span class="n">f</span> <span class="mi">0</span> <span class="n">=</span> <span class="n">λ</span> <span class="n">x</span><span class="o">,</span> <span class="n">x</span><span class="o">)</span> <span class="n">∧</span>
-       <span class="c1">-- `f 1` is the antipodal map, sending `x` to `-x` and</span>
-       <span class="o">(</span><span class="n">f</span> <span class="mi">1</span> <span class="n">=</span> <span class="n">λ</span> <span class="n">x</span><span class="o">,</span> <span class="n">-</span><span class="n">x</span><span class="o">)</span> <span class="n">∧</span>
-       <span class="c1">-- every `f t` is an immersion.</span>
-       <span class="n">∀</span> <span class="n">t</span><span class="o">,</span> <span class="n">immersion</span> <span class="o">(</span><span class="n">𝓡</span> <span class="mi">2</span><span class="o">)</span> <span class="n">𝓘</span><span class="o">(</span><span class="n">ℝ</span><span class="o">,</span> <span class="n">ℝ</span><span class="n">³</span><span class="o">)</span> <span class="o">(</span><span class="n">f</span> <span class="n">t</span><span class="o">)</span>
-   </pre></div>
+   <pre class="lean"><code>theorem Smale :
+     -- There exists a family of functions `f t` indexed by `ℝ` going from `𝕊²` to `ℝ³` such that
+     ∃ f : ℝ → 𝕊² → ℝ³,
+       -- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and
+       (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f) ∧
+       -- `f 0` is the inclusion map, sending `x` to `x` and
+       (f 0 = λ x, x) ∧
+       -- `f 1` is the antipodal map, sending `x` to `-x` and
+       (f 1 = λ x, -x) ∧
+       -- every `f t` is an immersion.
+       ∀ t, immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t)</code></pre>
 
       <footer class="site-footer">
           <span class="site-footer-owner"><a href="https://github.com/leanprover-community/sphere-eversion">sphere-eversion</a> is maintained by <a href="https://github.com/leanprover-community">leanprover-community</a>.</span>

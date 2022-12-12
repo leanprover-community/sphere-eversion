@@ -82,6 +82,9 @@
 
   </ul>
  </li>
+<li class="">
+  <a href="chap-local_eversion.html"><span class="toc_ref">A</span> <span class="toc_entry">Local sphere eversion</span></a>
+ </li>
 <li ><a href="dep_graph_document.html">Dependency graph</a></li>
 </ul>
 </nav>
@@ -93,7 +96,7 @@
 <div class="main-text">
 <h1 id="a0000000002">Introduction</h1>
 
-<p>This project had two goals. First we want to check whether a proof assistant can do differential topology. Many people still think that formal mathematics are mostly suitable for algebra, combinatorics, or foundational studies. So we chose one of the most famous examples of geometric topology theorems associated to tricky geometric intuition: the existence of sphere eversions. Note however that we won’t focus on any of the many videos of explicit sphere eversions. We will prove a general theorem which immediately implies the existence of sphere eversions. </p>
+<p>This project had two goals. First we wanted to check whether a proof assistant can do differential topology. Many people still think that formal mathematics are mostly suitable for algebra, combinatorics, or foundational studies. So we chose one of the most famous examples of geometric topology theorems associated to tricky geometric intuition: the existence of sphere eversions. Note however that we won’t focus on any of the many videos of explicit sphere eversions. We will prove a general theorem which immediately implies the existence of sphere eversions. </p>
 <p>The second goal of this project was to experiment using a formalization blueprint that evolves with the project until we get a proof that has very closely related formal and informal presentations. A full proof (by normal pen and paper standards) was written before the formalization effort began. This proof evolved a lot during the formalization. In particular, the chapter on the global theory required a lot of work during the formalization in order to ensure that its technical lemmas are both fully correct and actually sufficient for our purposes. </p>
 <p>In this introduction, we will describe the mathematical context of this project, the main definitions and statements, and outline the proof strategy. </p>
 <p>Gromov observed that it’s often fruitful to distinguish two kinds of geometric construction problems. He says that a geometric construction problem satisfies the \(h\)-principle if the only obstructions to the existence of a solution come from algebraic topology. In this case, the construction is called flexible, otherwise it is called rigid. This definition is purposely vague. We will see a rather general way to give it a precise meaning, but one must keep in mind that such a precise meaning will fail to encompass a number of situations that can be illuminated by the \(h\)-principle dichotomy point of view. </p>
@@ -224,7 +227,7 @@
 
   </div>
 </div> </p>
-<p><a href="chap-loops.html">Chapter 1</a> provides the loops supply. <a href="chap-local.html">Chapter 2</a> then discusses the local theory, including the key construction above, and <a href="chap-global.html">chapter 3</a> finally moves to manifolds, and proves the main theorem and its sphere eversion corollary. </p>
+<p><a href="chap-loops.html">Chapter 1</a> provides the loops supply. <a href="chap-local.html">Chapter 2</a> then discusses the local theory, including the key construction above, and <a href="chap-global.html">chapter 3</a> finally moves to manifolds, and proves the main theorem and its sphere eversion corollary. <a href="chap-local_eversion.html">Chapter A</a> explains how the first two chapters are already enough to derive Smale’s theorem, although in a slightly less natural way than using the manifold case. This served as an intermediate target in the formalization, and can be used for elementary teaching since it does not require any theory of manifolds. </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
