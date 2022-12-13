@@ -59,12 +59,12 @@
       <span class="corollary_thmcaption">
       Corollary
       </span>
-      <span class="corollary_thmlabel">1.15</span></div>
+      <span class="corollary_thmlabel">1.14</span></div>
     <div class="thm_thmcontent"><p>  Let \(U_0\) and \(U_1\) be open sets in \(E\). Let \(K_0 ⊂ U_0\) and \(K_1 ⊂ U_1\) be compact subsets. For any \(γ_0 ∈ \operatorname{\mathcal{L}}(U_0, g, β, Ω)\) and \(γ_1 ∈ \operatorname{\mathcal{L}}(U_1, g, β, Ω)\), there exists a neighborhood \(U\) of \(K_0 ∪ K_1\) and there exists \(γ ∈ \operatorname{\mathcal{L}}(U, g, β, Ω)\) which coincides with \(γ_0\) near \(K_0\cup U_1^c\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#cor:extend_loops">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L924">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L922">Lean</a></div>
     
       </div>
     </div>
@@ -87,7 +87,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:ample_relation">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L120">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L120">Lean</a></div>
     
       </div>
     </div>
@@ -110,7 +110,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:ample_relation_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/ample_relation.lean#L44">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/ample_relation.lean#L44">Lean</a></div>
     
       </div>
     </div>
@@ -133,30 +133,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:ample_subset">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/ample_set.lean#L45">Lean</a></div>
-    
-      </div>
-    </div>
-
-
-    
-    <div class="dep-modal-container" id="def:average_modal">
-      <div class="dep-modal-content">
-          <button class="dep-closebtn">
-<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        
-  <div class="thm" id="def:average" style="display: none">
-    <div class="thm_thmheading">
-      <span class="definition_thmcaption">
-      Definition
-      </span>
-      <span class="definition_thmlabel">1.1</span></div>
-    <div class="thm_thmcontent"><p>  The average of a loop \(γ\) is \(\barγ := \int _{𝕊^1} γ(s)\,  ds\). </p>
-</div>
-
-    <a class="latex_link" href="chap-loops.html#def:average">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/basic.lean#L333">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/ample_set.lean#L45">Lean</a></div>
     
       </div>
     </div>
@@ -179,7 +156,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:convenient_indexing">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/indexing.lean#L23">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/indexing.lean#L23">Lean</a></div>
     
       </div>
     </div>
@@ -198,14 +175,14 @@
       Definition
       </span>
       <span class="definition_thmlabel">2.2</span><span class="definition_thmtitle">Theillière 2018</span></div>
-    <div class="thm_thmcontent"><p>   The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
-<div class="displaymath" id="a0000000051">
+    <div class="thm_thmcontent"><p>    The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
+<div class="displaymath" id="a0000000052">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nπ(x)} \left[γ_x(s) - \overline{γ}_x\right]ds.  \]
 </div>
 </div>
 
     <a class="latex_link" href="chap-local.html#def:corrugation">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/corrugation.lean#L52">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/corrugation.lean#L52">Lean</a></div>
     
       </div>
     </div>
@@ -228,7 +205,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:dual_pair">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/dual_pair.lean#L46">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/dual_pair.lean#L46">Lean</a></div>
     
       </div>
     </div>
@@ -246,7 +223,7 @@
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">1.12</span></div>
+      <span class="definition_thmlabel">1.11</span></div>
     <div class="thm_thmcontent"><p>   A continuous family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)\) surrounds a map \(g \! :E → F\) with base \(β \! :E → F\) on \(U ⊂ E\) in \(Ω ⊂ E × F\) if, for every \(x\) in \(U\), every \(t ∈ [0, 1]\) and every \(s ∈ 𝕊^1\), </p>
 <ul class="itemize">
   <li><p>\(γ^t_x\) is based at \(β(x)\) </p>
@@ -262,7 +239,7 @@
 </div>
 
     <a class="latex_link" href="chap-loops.html#def:family_surrounds">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L512">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L510">Lean</a></div>
     
       </div>
     </div>
@@ -285,7 +262,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:formal_sol">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L57">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L57">Lean</a></div>
     
       </div>
     </div>
@@ -308,7 +285,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:formal_sol_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/relation.lean#L44">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/relation.lean#L44">Lean</a></div>
     
       </div>
     </div>
@@ -335,9 +312,9 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L220">rel_mfld.satisfies_h_principle</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L220">rel_mfld.satisfies_h_principle</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L246">rel_mfld.satisfies_h_principle_with</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L246">rel_mfld.satisfies_h_principle_with</a></li>
         
       </ul>
   </div></div>
@@ -363,7 +340,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:hol_partial">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/one_jet.lean#L101">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/one_jet.lean#L101">Lean</a></div>
     
       </div>
     </div>
@@ -390,9 +367,9 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_sec.lean#L76">one_jet_sec.is_holonomic_at</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_sec.lean#L76">one_jet_sec.is_holonomic_at</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_sec.lean#L81">one_jet_sec.is_holonomic_at_iff</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_sec.lean#L81">one_jet_sec.is_holonomic_at_iff</a></li>
         
       </ul>
   </div></div>
@@ -418,7 +395,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:hom_bundle">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L309">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L309">Lean</a></div>
     
       </div>
     </div>
@@ -441,7 +418,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:htpy_formal_sol">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L179">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L179">Lean</a></div>
     
       </div>
     </div>
@@ -464,7 +441,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:htpy_jet_sec_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/one_jet.lean#L153">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/one_jet.lean#L153">Lean</a></div>
     
       </div>
     </div>
@@ -498,30 +475,43 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:localisation_data">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/localisation_data.lean#L23">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/localisation_data.lean#L23">Lean</a></div>
     
       </div>
     </div>
 
 
     
-    <div class="dep-modal-container" id="def:loop_family_support_modal">
+    <div class="dep-modal-container" id="def:loop_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="def:loop_family_support" style="display: none">
+  <div class="thm" id="def:loop" style="display: none">
     <div class="thm_thmheading">
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">1.2</span></div>
-    <div class="thm_thmcontent"><p> The <em>support</em> of a family \(γ\) of loops in \(F\) parametrized by \(E\) is the closure of the set of \(x\) in \(E\) such that \(γ_x\) is not a constant loop. </p>
+      <span class="definition_thmlabel">1.1</span></div>
+    <div class="thm_thmcontent"><p>  A loop is a map defined on the circle \(𝕊^1 = ℝ/ℤ\) with values in a finite-dimensional vector space. It can also freely be seen as \(1\)-periodic maps defined on \(ℝ\). </p>
+<p>The average of a loop \(γ\) is \(\barγ := \int _{𝕊^1} γ(s)\,  ds\). </p>
+<p>The <em>support</em> of a family \(γ\) of loops in \(F\) parametrized by \(E\) is the closure of the set of \(x\) in \(E\) such that \(γ_x\) is not a constant loop. </p>
 </div>
 
-    <a class="latex_link" href="chap-loops.html#def:loop_family_support">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/basic.lean#L200">Lean</a></div>
+    <a class="latex_link" href="chap-loops.html#def:loop">LaTeX</a>
+  <div class="tooltip">
+      <span class="lean_link">Lean</span>
+      <ul class="tooltip_list">
+        
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/basic.lean#L36">loop</a></li>
+        
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/basic.lean#L333">loop.average</a></li>
+        
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/basic.lean#L200">loop.support</a></li>
+        
+      </ul>
+  </div></div>
     
       </div>
     </div>
@@ -544,7 +534,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:one_jet_extension">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_bundle.lean#L242">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_bundle.lean#L242">Lean</a></div>
     
       </div>
     </div>
@@ -568,7 +558,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:one_jet_space">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_bundle.lean#L54">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_bundle.lean#L54">Lean</a></div>
     
       </div>
     </div>
@@ -591,7 +581,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:pull_back_bundle">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L99">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L99">Lean</a></div>
     
       </div>
     </div>
@@ -614,7 +604,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:rel">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L52">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L52">Lean</a></div>
     
       </div>
     </div>
@@ -637,7 +627,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:rel_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/relation.lean#L29">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/relation.lean#L29">Lean</a></div>
     
       </div>
     </div>
@@ -657,13 +647,13 @@
       </span>
       <span class="definition_thmlabel">2.8</span></div>
     <div class="thm_thmcontent"><p>   For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
-<div class="displaymath" id="a0000000054">
+<div class="displaymath" id="a0000000055">
   \[  \mathcal{R}(σ, π, v) = \{ w ∈ F \; |\;  (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} .  \]
 </div>
 </div>
 
     <a class="latex_link" href="chap-local.html#def:rel_slice">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/ample_relation.lean#L36">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/ample_relation.lean#L36">Lean</a></div>
     
       </div>
     </div>
@@ -686,7 +676,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#def:short_formal_sol">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/ample_relation.lean#L140">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/ample_relation.lean#L140">Lean</a></div>
     
       </div>
     </div>
@@ -704,12 +694,12 @@
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">1.10</span></div>
+      <span class="definition_thmlabel">1.9</span></div>
     <div class="thm_thmcontent"><p>   We say a loop \(γ\) surrounds a vector \(v\) if \(v\) is surrounded by a collection of points belonging to the image of \(γ\). Also, we fix a base point \(0\) in \(𝕊^1\) and say a loop is based at some point \(b\) if \(0\) is sent to \(b\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#def:surrounds">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L341">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L341">Lean</a></div>
     
       </div>
     </div>
@@ -727,12 +717,12 @@
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">1.5</span></div>
+      <span class="definition_thmlabel">1.3</span></div>
     <div class="thm_thmcontent"><p>  A point \(x\) in \(E\) is surrounded by points \(p_0\), …, \(p_d\) if those points are affinely independent and there exist weights \(w_i ∈ (0, 1)\) with sum \(1\) such that \(x = \sum _i w_i p_i\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#def:surrounds_points">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L105">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L105">Lean</a></div>
     
       </div>
     </div>
@@ -752,11 +742,11 @@
       </span>
       <span class="definition_thmlabel">3.20</span></div>
     <div class="thm_thmcontent"><p>   Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth open embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000088">
+<div class="displaymath" id="a0000000089">
   \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
 </div>
 <p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000089">
+<div class="displaymath" id="a0000000090">
   \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
 </div>
 <p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
@@ -767,11 +757,11 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L342">open_smooth_embedding.transfer</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L342">open_smooth_embedding.transfer</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L385">rel_mfld.localize</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L385">rel_mfld.localize</a></li>
         
       </ul>
   </div></div>
@@ -797,7 +787,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#def:update">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L454">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L454">Lean</a></div>
     
       </div>
     </div>
@@ -820,7 +810,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#lem:ample_codim_two">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/ample_set.lean#L232">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/ample_set.lean#L232">Lean</a></div>
     
       </div>
     </div>
@@ -843,7 +833,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:ample_iff_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L389">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L389">Lean</a></div>
     
       </div>
     </div>
@@ -866,7 +856,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:ample_parameter">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/parametricity_for_free.lean#L100">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/parametricity_for_free.lean#L100">Lean</a></div>
     
       </div>
     </div>
@@ -884,7 +874,7 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.4</span><span class="lemma_thmtitle">Carathéodory’s lemma</span></div>
+      <span class="lemma_thmlabel">1.6</span><span class="lemma_thmtitle">Carathéodory’s lemma</span></div>
     <div class="thm_thmcontent"><p>   If a point \(x\) of \(E\) lies in the convex hull of a set \(P\), then \(x\) belongs to the convex hull of a finite set of affinely independent points of \(P\). </p>
 </div>
 
@@ -912,7 +902,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:dist_updating">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L525">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L525">Lean</a></div>
     
       </div>
     </div>
@@ -935,7 +925,53 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:ex_localisation">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/localisation_data.lean#L114">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/localisation_data.lean#L114">Lean</a></div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:exists_cont_diff_of_convex_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:exists_cont_diff_of_convex" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">1.16</span></div>
+    <div class="thm_thmcontent"><p>  Let \(E\) and \(F\) be real normed vector spaces. Assume that \(E\) is finite dimensional. Let \(P\) be a predicate on \(E \times F\) such that for all \(x\) in \(E\), \(\{ y ~ |~  P (x, y) \} \) is convex. Let \(n\) be a natural number or \(+\infty \). Assume that every \(x\) has a neighbourhood \(U\) on which there exists a \(C^n\) function \(f\) such that \(\forall x ∈ U, P(x, f(x))\). Then there is a global \(C^n\) function \(f\) such that \(\forall x, P(x, f(x))\). </p>
+</div>
+
+    <a class="latex_link" href="chap-loops.html#lem:exists_cont_diff_of_convex">LaTeX</a>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/to_mathlib/partition.lean#L283">Lean</a></div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:exists_cont_diff_of_convex₂_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:exists_cont_diff_of_convex₂" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">1.17</span></div>
+    <div class="thm_thmcontent"><p>  Let \(E₁\), \(E₂\) and \(F\) be real vector spaces. Assume \(E₁\) and \(E₂\) are finite dimensional. Let \(n\) be a natural number or \(+\infty \). Let \(P\) be a property of pairs \((x, f)\) with \(x ∈ E₁\) and \(f : E₂ → F\). Assume that, for every \(x\), the space of functions \(f\) such that \(P(x, f)\) holds is convex. Assume that for every \(x₀\) in \(E₁\) there is a neighborhood \(U\) of \(x₀\) and a function \(φ : E₁ × E₂ → F\) which is \(C^n\) on \(U × E₂\) and such that \(P(x, φ(x, \cdot ))\) holds for every \(x\) in \(U\). There there is a global \(C^n\) function \(φ \! :E₁ × E₂ → F\) such that \(P(x, φ(x, \cdot ))\) holds for every \(x\). </p>
+</div>
+
+    <a class="latex_link" href="chap-loops.html#lem:exists_cont_diff_of_convex₂">LaTeX</a>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/to_mathlib/partition2.lean#L121">Lean</a></div>
     
       </div>
     </div>
@@ -973,7 +1009,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#lem:h_principle_open_ample_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L469">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L469">Lean</a></div>
     
       </div>
     </div>
@@ -1011,30 +1047,7 @@
 </div>
 
     <a class="latex_link" href="chap-local.html#lem:improve_htpy_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L594">Lean</a></div>
-    
-      </div>
-    </div>
-
-
-    
-    <div class="dep-modal-container" id="lem:int_cvx_modal">
-      <div class="dep-modal-content">
-          <button class="dep-closebtn">
-<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        
-  <div class="thm" id="lem:int_cvx" style="display: none">
-    <div class="thm_thmheading">
-      <span class="lemma_thmcaption">
-      Lemma
-      </span>
-      <span class="lemma_thmlabel">1.8</span></div>
-    <div class="thm_thmcontent"><p> If a point \(x\) of \(E\) lies in the convex hull of an open set \(P\), then it is surrounded by some collection of points belonging to \(P\). </p>
-</div>
-
-    <a class="latex_link" href="chap-loops.html#lem:int_cvx">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L179">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L594">Lean</a></div>
     
       </div>
     </div>
@@ -1052,14 +1065,14 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.7</span></div>
+      <span class="lemma_thmlabel">1.8</span></div>
     <div class="thm_thmcontent"><p> Given a point \(c\) of \(E\) and a real number \(t\), let: </p>
-<div class="displaymath" id="a0000000024">
+<div class="displaymath" id="a0000000030">
   \[  h^c_t \! :E \to E  \]
 </div>
 <p> be the homothety which dilates about \(c\) by a scale of \(t\). </p>
 <p>Suppose \(c\) belongs to the interior of a convex subset \(C\) of \(E\) and \(t {\gt} 1\), then </p>
-<div class="displaymath" id="a0000000025">
+<div class="displaymath" id="a0000000031">
   \[  C \subseteq \operatorname{Int}(h^c_t(C))  \]
 </div>
 </div>
@@ -1105,15 +1118,15 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L287">step_landscape.improve_step_rel_t_eq_0</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L287">step_landscape.improve_step_rel_t_eq_0</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L320">step_landscape.improve_step_rel_C</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L320">step_landscape.improve_step_rel_C</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L298">step_landscape.improve_step_rel_compl_K₁</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L298">step_landscape.improve_step_rel_compl_K₁</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L342">step_landscape.improve_step_c0_close</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L342">step_landscape.improve_step_c0_close</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/h_principle.lean#L359">step_landscape.improve_step_part_hol</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/h_principle.lean#L359">step_landscape.improve_step_part_hol</a></li>
         
       </ul>
   </div></div>
@@ -1134,7 +1147,7 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.6</span></div>
+      <span class="lemma_thmlabel">1.7</span></div>
     <div class="thm_thmcontent"><p> Given an affine basis \(b\) of \(E\), the interior of the convex hull of \(b\) is the set of points with strictly positive barycentric coordinates. </p>
 </div>
 
@@ -1162,7 +1175,7 @@
 </div>
 
     <a class="latex_link" href="chap-local_eversion.html#lem:loc_immersion_rel_ample">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/sphere_eversion.lean#L163">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/sphere_eversion.lean#L163">Lean</a></div>
     
       </div>
     </div>
@@ -1185,7 +1198,7 @@
 </div>
 
     <a class="latex_link" href="chap-local_eversion.html#lem:loc_immersion_rel_open">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/sphere_eversion.lean#L126">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/sphere_eversion.lean#L126">Lean</a></div>
     
       </div>
     </div>
@@ -1205,7 +1218,7 @@
       </span>
       <span class="lemma_thmlabel">3.10</span></div>
     <div class="thm_thmcontent"><p>  Let \(M\) a topological space and \(Z\) a set. Let \(f : ℕ × M → Z\) be a sequence of functions. If the family of sets \(n ↦ \{ x \; \| \;  f_{n+1}(x) \ne f_n(x)\} \) is locally finite then there exists \(U : M → \operatorname{\mathcal{P}}{M}\) and \(n₀ : M → ℕ\) such that: </p>
-<div class="displaymath" id="a0000000082">
+<div class="displaymath" id="a0000000083">
   \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ n ≥ n₀(x),\;  f_n|_{U_x} = f_{n₀(x)}|_{U_x}.  \]
 </div>
 </div>
@@ -1229,12 +1242,12 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.13</span></div>
+      <span class="lemma_thmlabel">1.12</span></div>
     <div class="thm_thmcontent"><p>   Assume \(Ω\) is open over some neighborhood of \(x_0\). If \(g(x_0)\) is in the convex hull of the connected component of \(Ω_{x_0}\) containing \(β(x_0)\), then there is a continuous family of loops defined near \(x_0\), based at \(β\), taking value in \(Ω\) and surrounding \(g\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#lem:local_loops">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L684">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L682">Lean</a></div>
     
       </div>
     </div>
@@ -1254,13 +1267,13 @@
       </span>
       <span class="lemma_thmlabel">3.9</span></div>
     <div class="thm_thmcontent"><p>   Let \(f : M → N\) be a continuous map between manifolds, and let \((φ, ψ, i)\) be some localisation data for \(f\). There exists a continuous positive function \(ε : M → ℝ_{{\gt}0}\) such that: </p>
-<div class="displaymath" id="a0000000080">
+<div class="displaymath" id="a0000000081">
   \[  ∀ g : M → N, \big [∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\big ] ⇒ ∀ i,\;  g(φ_i(E)) ⊂ ψ_{j(i)}(F).  \]
 </div>
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:localisation_stability">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/localisation_data.lean#L134">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/localisation_data.lean#L134">Lean</a></div>
     
       </div>
     </div>
@@ -1278,7 +1291,7 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.11</span></div>
+      <span class="lemma_thmlabel">1.10</span></div>
     <div class="thm_thmcontent"><p>   If a vector \(v\) is in the convex hull of a connected open subset \(O\) then, for every base point \(b ∈ O\), there is a continuous family of loops \(γ \! :[0, 1] × 𝕊^1 → E, (t, s) ↦ γ^t(s)\) such that, for all \(t\) and \(s\): </p>
 <ul class="itemize">
   <li><p>\(γ^t\) is based at \(b\) </p>
@@ -1293,7 +1306,7 @@
 </div>
 
     <a class="latex_link" href="chap-loops.html#lem:loop_of_hull">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L488">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L488">Lean</a></div>
     
       </div>
     </div>
@@ -1324,7 +1337,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:nice_atlas">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L405">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L405">Lean</a></div>
     
       </div>
     </div>
@@ -1353,7 +1366,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:one_jet_extension_prop">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_bundle.lean#L251">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_bundle.lean#L251">Lean</a></div>
     
       </div>
     </div>
@@ -1376,7 +1389,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:open_ample_immersion">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/immersion.lean#L91">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/immersion.lean#L91">Lean</a></div>
     
       </div>
     </div>
@@ -1399,7 +1412,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:param_for_free">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/parametricity_for_free.lean#L242">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/parametricity_for_free.lean#L242">Lean</a></div>
     
       </div>
     </div>
@@ -1432,9 +1445,9 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_sec.lean#L212">family_one_jet_sec.is_holonomic_uncurry</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_sec.lean#L212">family_one_jet_sec.is_holonomic_uncurry</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/parametricity_for_free.lean#L118">family_one_jet_sec.uncurry_mem_relativize</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/parametricity_for_free.lean#L118">family_one_jet_sec.uncurry_mem_relativize</a></li>
         
       </ul>
   </div></div>
@@ -1455,12 +1468,12 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.17</span></div>
+      <span class="lemma_thmlabel">1.18</span></div>
     <div class="thm_thmcontent"><p>   Let \(γ \! :E × 𝕊^1 → F\) be a smooth family of loops surrounding a map \(g\). There is a smooth family \(φ \! :E × 𝕊^1 → 𝕊^1\) such that each \(γ_x ∘ φ_x\) has average \(g(x)\) and \(φ_x(0) = 0\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#lem:reparametrization">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/reparametrization.lean#L530">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/reparametrization.lean#L530">Lean</a></div>
     
       </div>
     </div>
@@ -1478,12 +1491,12 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.14</span></div>
-    <div class="thm_thmcontent"><p>   For every set \(U ⊂ E\), \(\operatorname{\mathcal{L}}(g, β, U, Ω)\) is contractible: for every \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\), there is a continuous map \(δ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)\) which interpolates between \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\). </p>
+      <span class="lemma_thmlabel">1.13</span></div>
+    <div class="thm_thmcontent"><p>   For every set \(U ⊂ E\), \(\operatorname{\mathcal{L}}(g, β, U, Ω)\) is “path connected”: for every \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\), there is a continuous map \(δ \! :[0, 1] × E × [0, 1] × 𝕊^1 → F, (τ, x, t, s) ↦ δ^t_{τ, x}(s)\) which interpolates between \(γ_0\) and \(γ_1\) in \(\operatorname{\mathcal{L}}(g, β, U, Ω)\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#lem:satisfied_or_refund">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L893">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L891">Lean</a></div>
     
       </div>
     </div>
@@ -1501,7 +1514,7 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.9</span></div>
+      <span class="lemma_thmlabel">1.4</span></div>
     <div class="thm_thmcontent"><p>   For every \(x\) in \(E\) and every collection of points \(p ∈ E^{d+1}\) surrounding \(x\), there is a function \(w \! :E × E^{d+1} → ℝ^{d+1}\) such that, for every \((y, q)\) in a neighborhood of \((x, p)\), </p>
 <ul class="itemize">
   <li><p>\(w\) is smooth at \((y, q)\) </p>
@@ -1510,13 +1523,13 @@
 </li>
   <li><p>\(\sum _{i=0}^d w_i(y, q) = 1\) </p>
 </li>
-  <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\) </p>
+  <li><p>\(y = \sum _{i=0}^d w_i(y, q)q_i\). </p>
 </li>
 </ul>
 </div>
 
     <a class="latex_link" href="chap-loops.html#lem:smooth_barycentric_coord">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L205">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L205">Lean</a></div>
     
       </div>
     </div>
@@ -1539,7 +1552,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#lem:smooth_updating">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L484">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L484">Lean</a></div>
     
       </div>
     </div>
@@ -1559,7 +1572,7 @@
       </span>
       <span class="lemma_thmlabel">3.8</span></div>
     <div class="thm_thmcontent"><p>  In a metric space \(X\), let \(U : ι → \operatorname{\mathcal{P}}{X}\) be a family of open subsets of \(X\) and let \(K : ι → \operatorname{\mathcal{P}}{X}\) be a locally-finite family of closed subsets such that \(K_i ⊂ U_i\) for all \(i\). There exists a continuous function \(δ : X → ℝ_{{\gt} 0}\) such that: </p>
-<div class="displaymath" id="a0000000078">
+<div class="displaymath" id="a0000000079">
   \[  ∀ x\,  x',\;  ∀ i, \left[x ∈ K_i \text{ and } d(x, x') {\lt} δ(x)\right] ⇒ x' ∈ U_i.  \]
 </div>
 </div>
@@ -1600,11 +1613,11 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L445">is_holonomic_at_localize_iff</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L445">is_holonomic_at_localize_iff</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L441">one_jet_sec.localize_mem_iff</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L441">one_jet_sec.localize_mem_iff</a></li>
         
       </ul>
   </div></div>
@@ -1634,11 +1647,11 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/dual_pair.lean#L87">dual_pair.update_ker_pi</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/dual_pair.lean#L87">dual_pair.update_ker_pi</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/dual_pair.lean#L96">dual_pair.update_v</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/dual_pair.lean#L96">dual_pair.update_v</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/ample_relation.lean#L39">rel_loc.mem_slice</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/ample_relation.lean#L39">rel_loc.mem_slice</a></li>
         
       </ul>
   </div></div>
@@ -1659,51 +1672,35 @@
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">1.16</span></div>
-    <div class="thm_thmcontent"><p>  In the setup of <a href="chap-loops.html#prop:loops">Proposition 1.3</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(E\) and agrees with \(γ\) near \(K\). </p>
+      <span class="lemma_thmlabel">1.15</span></div>
+    <div class="thm_thmcontent"><p>  In the setup of <a href="chap-loops.html#prop:∃_loops">Proposition 1.2</a>, assume we have a continuous family \(γ\) of loops defined near \(K\) which is based at \(β\), surrounds \(g\) and such that each \(γ_x^t\) takes values in \(Ω_x\). Then there such a family which is defined on all of \(E\) and agrees with \(γ\) near \(K\). </p>
 </div>
 
     <a class="latex_link" href="chap-loops.html#lem:∃_surrounding_loops">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/surrounding.lean#L1175">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L1173">Lean</a></div>
     
       </div>
     </div>
 
 
     
-    <div class="dep-modal-container" id="prop:loops_modal">
+    <div class="dep-modal-container" id="prop:surrounded_by_open_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="prop:loops" style="display: none">
+  <div class="thm" id="prop:surrounded_by_open" style="display: none">
     <div class="thm_thmheading">
       <span class="proposition_thmcaption">
       Proposition
       </span>
-      <span class="proposition_thmlabel">1.3</span></div>
-    <div class="thm_thmcontent"><p>  Let \(K\) a compact set in \(E\). Let \(Ω\) be an open set in \(E × F\). </p>
-<p>Let \(β\) and \(g\) be smooth maps from \(E\) to \(F\). Write \(Ω_x := \{  y ∈ F \mid (x, y) ∈ Ω\} \), assume that \(β(x) ∈ Ω_x\) for all \(x\), and that \(g(x) = β(x)\) near \(K\). </p>
-<p>If, for every \(x\), \(g(x)\) is in the convex hull of the connected component of \(Ω_x\) containing \(β(x)\), then there exists a smooth family of loops </p>
-<div class="displaymath" id="a0000000017">
-  \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
-</div>
-<p> such that, for all \(x ∈ E\), all \(t ∈ ℝ\) and all \(s ∈ 𝕊^1\), </p>
-<ul class="itemize">
-  <li><p>\(γ^t_x(s) ∈ Ω_x\) </p>
-</li>
-  <li><p>\(γ^0_x(s) = γ^t_x(1) = β(x)\) </p>
-</li>
-  <li><p>\(\barγ^1_x = g(x)\) </p>
-</li>
-  <li><p>\(γ^t_x(s) = β(x)\) if \(x\) is near \(K\). </p>
-</li>
-</ul>
+      <span class="proposition_thmlabel">1.5</span></div>
+    <div class="thm_thmcontent"><p>  If a point \(x\) of \(E\) lies in the convex hull of an open set \(P\), then it is surrounded by some collection of points belonging to \(P\). </p>
 </div>
 
-    <a class="latex_link" href="chap-loops.html#prop:loops">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/loops/exists.lean#L252">Lean</a></div>
+    <a class="latex_link" href="chap-loops.html#prop:surrounded_by_open">LaTeX</a>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/surrounding.lean#L179">Lean</a></div>
     
       </div>
     </div>
@@ -1740,16 +1737,55 @@
       <span class="lean_link">Lean</span>
       <ul class="tooltip_list">
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/corrugation.lean#L204">fderiv_corrugated_map</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/corrugation.lean#L204">fderiv_corrugated_map</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/corrugation.lean#L101">corrugation.c0_small_on</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/corrugation.lean#L101">corrugation.c0_small_on</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/corrugation.lean#L233">remainder_c0_small_on</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/corrugation.lean#L233">remainder_c0_small_on</a></li>
         
-           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/corrugation.lean#L89">corrugation.support</a></li>
+           <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/corrugation.lean#L89">corrugation.support</a></li>
         
       </ul>
   </div></div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="prop:∃_loops_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="prop:∃_loops" style="display: none">
+    <div class="thm_thmheading">
+      <span class="proposition_thmcaption">
+      Proposition
+      </span>
+      <span class="proposition_thmlabel">1.2</span></div>
+    <div class="thm_thmcontent"><p>   Let \(K\) a compact set in \(E\). Let \(Ω\) be an open set in \(E × F\). </p>
+<p>Let \(β\) and \(g\) be smooth maps from \(E\) to \(F\). Write \(Ω_x := \{  y ∈ F \mid (x, y) ∈ Ω\} \), assume that \(β(x) ∈ Ω_x\) for all \(x\), and that \(g(x) = β(x)\) near \(K\). </p>
+<p>If, for every \(x\), \(g(x)\) is in the convex hull of the connected component of \(Ω_x\) containing \(β(x)\), then there exists a smooth family of loops </p>
+<div class="displaymath" id="a0000000017">
+  \[  γ \! :E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)  \]
+</div>
+<p> such that, for all \(x ∈ E\), all \(t ∈ ℝ\) and all \(s ∈ 𝕊^1\), </p>
+<ul class="itemize">
+  <li><p>\(γ^t_x(s) ∈ Ω_x\) </p>
+</li>
+  <li><p>\(γ^0_x(s) = γ^t_x(1) = β(x)\) </p>
+</li>
+  <li><p>\(\barγ^1_x = g(x)\) </p>
+</li>
+  <li><p>\(γ^t_x(s) = β(x)\) if \(x\) is near \(K\). </p>
+</li>
+</ul>
+</div>
+
+    <a class="latex_link" href="chap-loops.html#prop:∃_loops">LaTeX</a>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/loops/exists.lean#L251">Lean</a></div>
     
       </div>
     </div>
@@ -1772,7 +1808,7 @@
 </div>
 
     <a class="latex_link" href="chap-local_eversion.html#sphere_eversion_of_loc">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/local/sphere_eversion.lean#L421">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/local/sphere_eversion.lean#L421">Lean</a></div>
     
       </div>
     </div>
@@ -1795,7 +1831,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#thm:open_ample">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/gromov.lean#L311">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/gromov.lean#L311">Lean</a></div>
     
       </div>
     </div>
@@ -1818,7 +1854,7 @@
 </div>
 
     <a class="latex_link" href="chap-global.html#thm:sphere_eversion">LaTeX</a>
-  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/immersion.lean#L251">Lean</a></div>
+  <a class="lean_link" href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/immersion.lean#L251">Lean</a></div>
     
       </div>
     </div>
@@ -1841,7 +1877,7 @@ graphContainer.graphviz({useWorker: true})
     .width(width)
     .height(height)
     .fit(true)
-    .renderDot('strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"def:loop_family_support"	[color=green,		fillcolor="#b0eca3",		label=loop_family_support,		shape=box,		style=filled];	"prop:theilliere"	[color=green,		fillcolor="#9cec8b",		label=theilliere,		shape=ellipse,		style=filled];	"def:loop_family_support" -> "prop:theilliere"	[style=dashed];	"def:family_surrounds"	[color=green,		fillcolor="#b0eca3",		label=family_surrounds,		shape=box,		style=filled];	"lem:local_loops"	[color=green,		fillcolor="#9cec8b",		label=local_loops,		shape=ellipse,		style=filled];	"def:family_surrounds" -> "lem:local_loops"	[style=dashed];	"lem:satisfied_or_refund"	[color=green,		fillcolor="#9cec8b",		label=satisfied_or_refund,		shape=ellipse,		style=filled];	"def:family_surrounds" -> "lem:satisfied_or_refund"	[style=dashed];	"def:hom_bundle"	[color=green,		fillcolor="#b0eca3",		label=hom_bundle,		shape=box,		style=filled];	"def:one_jet_space"	[color=green,		fillcolor="#b0eca3",		label=one_jet_space,		shape=box,		style=filled];	"def:hom_bundle" -> "def:one_jet_space"	[style=dashed];	"lem:int_cvx"	[color=green,		fillcolor="#9cec8b",		label=int_cvx,		shape=ellipse,		style=filled];	"lem:loop_of_hull"	[color=green,		fillcolor="#9cec8b",		label=loop_of_hull,		shape=ellipse,		style=filled];	"lem:int_cvx" -> "lem:loop_of_hull";	"lem:ample_codim_two"	[color=green,		fillcolor="#9cec8b",		label=ample_codim_two,		shape=ellipse,		style=filled];	"lem:open_ample_immersion"	[color=green,		fillcolor="#9cec8b",		label=open_ample_immersion,		shape=ellipse,		style=filled];	"lem:ample_codim_two" -> "lem:open_ample_immersion";	"lem:improve_htpy_loc"	[color=green,		fillcolor="#9cec8b",		label=improve_htpy_loc,		shape=ellipse,		style=filled];	"thm:open_ample"	[color=green,		fillcolor="#9cec8b",		label=open_ample,		shape=ellipse,		style=filled];	"lem:improve_htpy_loc" -> "thm:open_ample";	"lem:stability_cover"	[color=green,		fillcolor="#9cec8b",		label=stability_cover,		shape=ellipse,		style=filled];	"lem:localisation_stability"	[color=green,		fillcolor="#9cec8b",		label=localisation_stability,		shape=ellipse,		style=filled];	"lem:stability_cover" -> "lem:localisation_stability";	"lem:param_for_free"	[color=green,		fillcolor="#9cec8b",		label=param_for_free,		shape=ellipse,		style=filled];	"lem:param_for_free" -> "thm:open_ample";	"lem:loc_immersion_rel_open"	[color=green,		fillcolor="#9cec8b",		label=loc_immersion_rel_open,		shape=ellipse,		style=filled];	sphere_eversion_of_loc	[color=green,		fillcolor="#9cec8b",		label=sphere_eversion_of_loc,		shape=ellipse,		style=filled];	"lem:loc_immersion_rel_open" -> sphere_eversion_of_loc;	"def:ample_relation_loc"	[color=green,		fillcolor="#b0eca3",		label=ample_relation_loc,		shape=box,		style=filled];	"lem:h_principle_open_ample_loc"	[color=green,		fillcolor="#9cec8b",		label=h_principle_open_ample_loc,		shape=ellipse,		style=filled];	"def:ample_relation_loc" -> "lem:h_principle_open_ample_loc"	[style=dashed];	"def:holonomic_section"	[color=green,		fillcolor="#b0eca3",		label=holonomic_section,		shape=box,		style=filled];	"def:one_jet_space" -> "def:holonomic_section"	[style=dashed];	"def:transfer_map"	[color=green,		fillcolor="#b0eca3",		label=transfer_map,		shape=box,		style=filled];	"def:one_jet_space" -> "def:transfer_map"	[style=dashed];	"def:one_jet_extension"	[color=green,		fillcolor="#b0eca3",		label=one_jet_extension,		shape=box,		style=filled];	"def:one_jet_space" -> "def:one_jet_extension"	[style=dashed];	"def:rel"	[color=green,		fillcolor="#b0eca3",		label=rel,		shape=box,		style=filled];	"def:one_jet_space" -> "def:rel"	[style=dashed];	"def:ample_relation"	[color=green,		fillcolor="#b0eca3",		label=ample_relation,		shape=box,		style=filled];	"def:one_jet_space" -> "def:ample_relation"	[style=dashed];	"lem:update_lin_map"	[color=green,		fillcolor="#9cec8b",		label=update_lin_map,		shape=ellipse,		style=filled];	"lem:integration_step"	[color=green,		fillcolor="#9cec8b",		label=integration_step,		shape=ellipse,		style=filled];	"lem:update_lin_map" -> "lem:integration_step";	"lem:dist_updating"	[color=green,		fillcolor="#9cec8b",		label=dist_updating,		shape=ellipse,		style=filled];	"lem:dist_updating" -> "thm:open_ample";	"lem:localisation_stability" -> "thm:open_ample";	"prop:theilliere" -> "lem:integration_step";	"thm:sphere_eversion"	[color=green,		fillcolor="#9cec8b",		label=sphere_eversion,		shape=ellipse,		style=filled];	"thm:open_ample" -> "thm:sphere_eversion";	"cor:extend_loops"	[color=green,		fillcolor="#9cec8b",		label=extend_loops,		shape=ellipse,		style=filled];	"lem:∃_surrounding_loops"	[color=green,		fillcolor="#9cec8b",		label=∃_surrounding_loops,		shape=ellipse,		style=filled];	"cor:extend_loops" -> "lem:∃_surrounding_loops";	"def:rel_slice"	[color=green,		fillcolor="#b0eca3",		label=rel_slice,		shape=box,		style=filled];	"def:rel_slice" -> "def:ample_relation_loc"	[style=dashed];	"def:ample_subset"	[color=green,		fillcolor="#b0eca3",		label=ample_subset,		shape=box,		style=filled];	"def:ample_subset" -> "lem:ample_codim_two"	[style=dashed];	"def:ample_subset" -> "def:ample_relation_loc"	[style=dashed];	"def:ample_subset" -> "def:ample_relation"	[style=dashed];	"def:localisation_data"	[color=green,		fillcolor="#b0eca3",		label=localisation_data,		shape=box,		style=filled];	"def:localisation_data" -> "lem:localisation_stability"	[style=dashed];	"lem:ex_localisation"	[color=green,		fillcolor="#9cec8b",		label=ex_localisation,		shape=ellipse,		style=filled];	"def:localisation_data" -> "lem:ex_localisation"	[style=dashed];	"lem:param_trick"	[color=green,		fillcolor="#9cec8b",		label=param_trick,		shape=ellipse,		style=filled];	"def:holonomic_section" -> "lem:param_trick"	[style=dashed];	"lem:transfer"	[color=green,		fillcolor="#9cec8b",		label=transfer,		shape=ellipse,		style=filled];	"def:holonomic_section" -> "lem:transfer"	[style=dashed];	"def:formal_sol"	[color=green,		fillcolor="#b0eca3",		label=formal_sol,		shape=box,		style=filled];	"def:formal_sol" -> "lem:param_trick"	[style=dashed];	"def:htpy_formal_sol"	[color=green,		fillcolor="#b0eca3",		label=htpy_formal_sol,		shape=box,		style=filled];	"def:formal_sol" -> "def:htpy_formal_sol"	[style=dashed];	"def:formal_sol" -> "lem:transfer"	[style=dashed];	"lem:ample_iff_loc"	[color=green,		fillcolor="#9cec8b",		label=ample_iff_loc,		shape=ellipse,		style=filled];	"def:transfer_map" -> "lem:ample_iff_loc"	[style=dashed];	"def:transfer_map" -> "lem:transfer"	[style=dashed];	"prop:loops"	[color=green,		fillcolor="#9cec8b",		label=loops,		shape=ellipse,		style=filled];	"lem:∃_surrounding_loops" -> "prop:loops";	"lem:smooth_updating"	[color=green,		fillcolor="#9cec8b",		label=smooth_updating,		shape=ellipse,		style=filled];	"lem:smooth_updating" -> "thm:open_ample";	"lem:nice_atlas"	[color=green,		fillcolor="#9cec8b",		label=nice_atlas,		shape=ellipse,		style=filled];	"lem:nice_atlas" -> "lem:ex_localisation";	"lem:ex_localisation" -> "thm:open_ample";	"def:rel_loc"	[color=green,		fillcolor="#b0eca3",		label=rel_loc,		shape=box,		style=filled];	"def:rel_loc" -> "def:rel_slice"	[style=dashed];	"def:formal_sol_loc"	[color=green,		fillcolor="#b0eca3",		label=formal_sol_loc,		shape=box,		style=filled];	"def:rel_loc" -> "def:formal_sol_loc"	[style=dashed];	"lem:caratheodory"	[color=green,		fillcolor="#9cec8b",		label=caratheodory,		shape=ellipse,		style=filled];	"lem:caratheodory" -> "lem:int_cvx";	"lem:local_loops" -> "lem:∃_surrounding_loops";	"def:surrounds"	[color=green,		fillcolor="#b0eca3",		label=surrounds,		shape=box,		style=filled];	"def:surrounds" -> "def:family_surrounds"	[style=dashed];	"def:surrounds" -> "lem:loop_of_hull"	[style=dashed];	"lem:reparametrization"	[color=green,		fillcolor="#9cec8b",		label=reparametrization,		shape=ellipse,		style=filled];	"def:surrounds" -> "lem:reparametrization"	[style=dashed];	"def:corrugation"	[color=green,		fillcolor="#b0eca3",		label=corrugation,		shape=box,		style=filled];	"def:corrugation" -> "prop:theilliere"	[style=dashed];	"def:pull_back_bundle"	[color=green,		fillcolor="#b0eca3",		label=pull_back_bundle,		shape=box,		style=filled];	"def:pull_back_bundle" -> "def:one_jet_space"	[style=dashed];	"def:one_jet_extension" -> "def:formal_sol"	[style=dashed];	"lem:one_jet_extension_prop"	[color=green,		fillcolor="#9cec8b",		label=one_jet_extension_prop,		shape=ellipse,		style=filled];	"def:one_jet_extension" -> "lem:one_jet_extension_prop"	[style=dashed];	"def:rel" -> "def:formal_sol"	[style=dashed];	"lem:smooth_barycentric_coord"	[color=green,		fillcolor="#9cec8b",		label=smooth_barycentric_coord,		shape=ellipse,		style=filled];	"lem:smooth_barycentric_coord" -> "lem:local_loops";	"lem:smooth_barycentric_coord" -> "lem:reparametrization";	"lem:one_jet_extension_prop" -> "lem:transfer";	"lem:param_trick" -> "lem:param_for_free";	"lem:param_trick" -> sphere_eversion_of_loc;	"lem:ample_iff_loc" -> "thm:open_ample";	"def:dual_pair"	[color=green,		fillcolor="#b0eca3",		label=dual_pair,		shape=box,		style=filled];	"def:short_formal_sol"	[color=green,		fillcolor="#b0eca3",		label=short_formal_sol,		shape=box,		style=filled];	"def:dual_pair" -> "def:short_formal_sol"	[style=dashed];	"def:update"	[color=green,		fillcolor="#b0eca3",		label=update,		shape=box,		style=filled];	"def:update" -> "lem:dist_updating"	[style=dashed];	"def:update" -> "lem:smooth_updating"	[style=dashed];	"def:h-princ"	[color=green,		fillcolor="#b0eca3",		label="h-princ",		shape=box,		style=filled];	"def:htpy_formal_sol" -> "def:h-princ"	[style=dashed];	"def:h-princ" -> "lem:param_for_free"	[style=dashed];	"lem:int_homothety_cvx"	[color=green,		fillcolor="#9cec8b",		label=int_homothety_cvx,		shape=ellipse,		style=filled];	"lem:int_homothety_cvx" -> "lem:int_cvx";	"lem:h_principle_open_ample_loc" -> "lem:improve_htpy_loc";	"lem:h_principle_open_ample_loc" -> sphere_eversion_of_loc;	"lem:open_ample_immersion" -> "thm:sphere_eversion";	"lem:ample_parameter"	[color=green,		fillcolor="#9cec8b",		label=ample_parameter,		shape=ellipse,		style=filled];	"lem:ample_parameter" -> "thm:open_ample";	"prop:loops" -> "lem:integration_step";	"def:formal_sol_loc" -> "def:short_formal_sol"	[style=dashed];	"def:ample_relation" -> "lem:ample_iff_loc"	[style=dashed];	"def:ample_relation" -> "lem:open_ample_immersion"	[style=dashed];	"def:ample_relation" -> "lem:ample_parameter"	[style=dashed];	"lem:interior_chab"	[color=green,		fillcolor="#9cec8b",		label=interior_chab,		shape=ellipse,		style=filled];	"lem:interior_chab" -> "lem:int_cvx";	"lem:loop_of_hull" -> "lem:local_loops";	"lem:reparametrization" -> "prop:loops";	"lem:loc_immersion_rel_ample"	[color=green,		fillcolor="#9cec8b",		label=loc_immersion_rel_ample,		shape=ellipse,		style=filled];	"lem:loc_immersion_rel_ample" -> sphere_eversion_of_loc;	"lem:transfer" -> "thm:open_ample";	"def:average"	[color=green,		fillcolor="#b0eca3",		label=average,		shape=box,		style=filled];	"def:average" -> "lem:reparametrization"	[style=dashed];	"def:surrounds_points"	[color=green,		fillcolor="#b0eca3",		label=surrounds_points,		shape=box,		style=filled];	"def:surrounds_points" -> "def:surrounds"	[style=dashed];	"def:surrounds_points" -> "lem:smooth_barycentric_coord"	[style=dashed];	"def:hol_partial"	[color=green,		fillcolor="#b0eca3",		label=hol_partial,		shape=box,		style=filled];	"def:hol_partial" -> "lem:integration_step"	[style=dashed];	"def:htpy_jet_sec_loc"	[color=green,		fillcolor="#b0eca3",		label=htpy_jet_sec_loc,		shape=box,		style=filled];	"def:htpy_jet_sec_loc" -> "lem:integration_step"	[style=dashed];	"def:short_formal_sol" -> "lem:integration_step"	[style=dashed];	"def:convenient_indexing"	[color=green,		fillcolor="#b0eca3",		label=convenient_indexing,		shape=box,		style=filled];	"def:convenient_indexing" -> "def:localisation_data"	[style=dashed];	"lem:satisfied_or_refund" -> "cor:extend_loops";	"lem:integration_step" -> "lem:h_principle_open_ample_loc";	"lem:loc_ultim_const"	[color=green,		fillcolor="#9cec8b",		label=loc_ultim_const,		shape=ellipse,		style=filled];	"lem:loc_ultim_const" -> "thm:open_ample";}')
+    .renderDot('strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"def:surrounds"	[color=green,		fillcolor="#b0eca3",		label=surrounds,		shape=box,		style=filled];	"lem:loop_of_hull"	[color=green,		fillcolor="#9cec8b",		label=loop_of_hull,		shape=ellipse,		style=filled];	"def:surrounds" -> "lem:loop_of_hull"	[style=dashed];	"lem:reparametrization"	[color=green,		fillcolor="#9cec8b",		label=reparametrization,		shape=ellipse,		style=filled];	"def:surrounds" -> "lem:reparametrization"	[style=dashed];	"def:family_surrounds"	[color=green,		fillcolor="#b0eca3",		label=family_surrounds,		shape=box,		style=filled];	"def:surrounds" -> "def:family_surrounds"	[style=dashed];	"def:rel_loc"	[color=green,		fillcolor="#b0eca3",		label=rel_loc,		shape=box,		style=filled];	"def:formal_sol_loc"	[color=green,		fillcolor="#b0eca3",		label=formal_sol_loc,		shape=box,		style=filled];	"def:rel_loc" -> "def:formal_sol_loc"	[style=dashed];	"def:rel_slice"	[color=green,		fillcolor="#b0eca3",		label=rel_slice,		shape=box,		style=filled];	"def:rel_loc" -> "def:rel_slice"	[style=dashed];	"def:one_jet_space"	[color=green,		fillcolor="#b0eca3",		label=one_jet_space,		shape=box,		style=filled];	"def:one_jet_extension"	[color=green,		fillcolor="#b0eca3",		label=one_jet_extension,		shape=box,		style=filled];	"def:one_jet_space" -> "def:one_jet_extension"	[style=dashed];	"def:holonomic_section"	[color=green,		fillcolor="#b0eca3",		label=holonomic_section,		shape=box,		style=filled];	"def:one_jet_space" -> "def:holonomic_section"	[style=dashed];	"def:rel"	[color=green,		fillcolor="#b0eca3",		label=rel,		shape=box,		style=filled];	"def:one_jet_space" -> "def:rel"	[style=dashed];	"def:transfer_map"	[color=green,		fillcolor="#b0eca3",		label=transfer_map,		shape=box,		style=filled];	"def:one_jet_space" -> "def:transfer_map"	[style=dashed];	"def:ample_relation"	[color=green,		fillcolor="#b0eca3",		label=ample_relation,		shape=box,		style=filled];	"def:one_jet_space" -> "def:ample_relation"	[style=dashed];	"lem:local_loops"	[color=green,		fillcolor="#9cec8b",		label=local_loops,		shape=ellipse,		style=filled];	"lem:∃_surrounding_loops"	[color=green,		fillcolor="#9cec8b",		label=∃_surrounding_loops,		shape=ellipse,		style=filled];	"lem:local_loops" -> "lem:∃_surrounding_loops";	"lem:ample_codim_two"	[color=green,		fillcolor="#9cec8b",		label=ample_codim_two,		shape=ellipse,		style=filled];	"lem:open_ample_immersion"	[color=green,		fillcolor="#9cec8b",		label=open_ample_immersion,		shape=ellipse,		style=filled];	"lem:ample_codim_two" -> "lem:open_ample_immersion";	"lem:improve_htpy_loc"	[color=green,		fillcolor="#9cec8b",		label=improve_htpy_loc,		shape=ellipse,		style=filled];	"thm:open_ample"	[color=green,		fillcolor="#9cec8b",		label=open_ample,		shape=ellipse,		style=filled];	"lem:improve_htpy_loc" -> "thm:open_ample";	"lem:stability_cover"	[color=green,		fillcolor="#9cec8b",		label=stability_cover,		shape=ellipse,		style=filled];	"lem:localisation_stability"	[color=green,		fillcolor="#9cec8b",		label=localisation_stability,		shape=ellipse,		style=filled];	"lem:stability_cover" -> "lem:localisation_stability";	"thm:sphere_eversion"	[color=green,		fillcolor="#9cec8b",		label=sphere_eversion,		shape=ellipse,		style=filled];	"def:loop"	[color=green,		fillcolor="#b0eca3",		label=loop,		shape=box,		style=filled];	"def:loop" -> "def:surrounds"	[style=dashed];	"prop:∃_loops"	[color=green,		fillcolor="#9cec8b",		label=∃_loops,		shape=ellipse,		style=filled];	"def:loop" -> "prop:∃_loops"	[style=dashed];	"def:corrugation"	[color=green,		fillcolor="#b0eca3",		label=corrugation,		shape=box,		style=filled];	"def:loop" -> "def:corrugation"	[style=dashed];	"def:short_formal_sol"	[color=green,		fillcolor="#b0eca3",		label=short_formal_sol,		shape=box,		style=filled];	"lem:integration_step"	[color=green,		fillcolor="#9cec8b",		label=integration_step,		shape=ellipse,		style=filled];	"def:short_formal_sol" -> "lem:integration_step"	[style=dashed];	"lem:ex_localisation"	[color=green,		fillcolor="#9cec8b",		label=ex_localisation,		shape=ellipse,		style=filled];	"lem:ex_localisation" -> "thm:open_ample";	"lem:one_jet_extension_prop"	[color=green,		fillcolor="#9cec8b",		label=one_jet_extension_prop,		shape=ellipse,		style=filled];	"lem:transfer"	[color=green,		fillcolor="#9cec8b",		label=transfer,		shape=ellipse,		style=filled];	"lem:one_jet_extension_prop" -> "lem:transfer";	"lem:ample_iff_loc"	[color=green,		fillcolor="#9cec8b",		label=ample_iff_loc,		shape=ellipse,		style=filled];	"lem:ample_iff_loc" -> "thm:open_ample";	"lem:ample_parameter"	[color=green,		fillcolor="#9cec8b",		label=ample_parameter,		shape=ellipse,		style=filled];	"lem:ample_parameter" -> "thm:open_ample";	"prop:theilliere"	[color=green,		fillcolor="#9cec8b",		label=theilliere,		shape=ellipse,		style=filled];	"prop:theilliere" -> "lem:integration_step";	"def:ample_subset"	[color=green,		fillcolor="#b0eca3",		label=ample_subset,		shape=box,		style=filled];	"def:ample_subset" -> "lem:ample_codim_two"	[style=dashed];	"def:ample_relation_loc"	[color=green,		fillcolor="#b0eca3",		label=ample_relation_loc,		shape=box,		style=filled];	"def:ample_subset" -> "def:ample_relation_loc"	[style=dashed];	"def:ample_subset" -> "def:ample_relation"	[style=dashed];	"lem:h_principle_open_ample_loc"	[color=green,		fillcolor="#9cec8b",		label=h_principle_open_ample_loc,		shape=ellipse,		style=filled];	"def:ample_relation_loc" -> "lem:h_principle_open_ample_loc"	[style=dashed];	"def:one_jet_extension" -> "lem:one_jet_extension_prop"	[style=dashed];	"def:formal_sol"	[color=green,		fillcolor="#b0eca3",		label=formal_sol,		shape=box,		style=filled];	"def:one_jet_extension" -> "def:formal_sol"	[style=dashed];	"lem:param_for_free"	[color=green,		fillcolor="#9cec8b",		label=param_for_free,		shape=ellipse,		style=filled];	"lem:param_for_free" -> "thm:open_ample";	"prop:surrounded_by_open"	[color=green,		fillcolor="#9cec8b",		label=surrounded_by_open,		shape=ellipse,		style=filled];	"prop:surrounded_by_open" -> "lem:loop_of_hull";	"def:dual_pair"	[color=green,		fillcolor="#b0eca3",		label=dual_pair,		shape=box,		style=filled];	"def:dual_pair" -> "def:short_formal_sol"	[style=dashed];	"def:htpy_formal_sol"	[color=green,		fillcolor="#b0eca3",		label=htpy_formal_sol,		shape=box,		style=filled];	"def:formal_sol" -> "def:htpy_formal_sol"	[style=dashed];	"def:formal_sol" -> "lem:transfer"	[style=dashed];	"lem:param_trick"	[color=green,		fillcolor="#9cec8b",		label=param_trick,		shape=ellipse,		style=filled];	"def:formal_sol" -> "lem:param_trick"	[style=dashed];	"def:h-princ"	[color=green,		fillcolor="#b0eca3",		label="h-princ",		shape=box,		style=filled];	"def:htpy_formal_sol" -> "def:h-princ"	[style=dashed];	"lem:update_lin_map"	[color=green,		fillcolor="#9cec8b",		label=update_lin_map,		shape=ellipse,		style=filled];	"lem:update_lin_map" -> "lem:integration_step";	"lem:smooth_updating"	[color=green,		fillcolor="#9cec8b",		label=smooth_updating,		shape=ellipse,		style=filled];	"lem:smooth_updating" -> "thm:open_ample";	"lem:loc_ultim_const"	[color=green,		fillcolor="#9cec8b",		label=loc_ultim_const,		shape=ellipse,		style=filled];	"lem:loc_ultim_const" -> "thm:open_ample";	"prop:∃_loops" -> "lem:integration_step";	"def:corrugation" -> "prop:theilliere"	[style=dashed];	"def:hol_partial"	[color=green,		fillcolor="#b0eca3",		label=hol_partial,		shape=box,		style=filled];	"def:hol_partial" -> "lem:integration_step"	[style=dashed];	"def:convenient_indexing"	[color=green,		fillcolor="#b0eca3",		label=convenient_indexing,		shape=box,		style=filled];	"def:localisation_data"	[color=green,		fillcolor="#b0eca3",		label=localisation_data,		shape=box,		style=filled];	"def:convenient_indexing" -> "def:localisation_data"	[style=dashed];	"def:localisation_data" -> "lem:ex_localisation"	[style=dashed];	"def:localisation_data" -> "lem:localisation_stability"	[style=dashed];	"def:holonomic_section" -> "lem:transfer"	[style=dashed];	"def:holonomic_section" -> "lem:param_trick"	[style=dashed];	"lem:caratheodory"	[color=green,		fillcolor="#9cec8b",		label=caratheodory,		shape=ellipse,		style=filled];	"lem:caratheodory" -> "prop:surrounded_by_open";	"lem:interior_chab"	[color=green,		fillcolor="#9cec8b",		label=interior_chab,		shape=ellipse,		style=filled];	"lem:interior_chab" -> "prop:surrounded_by_open";	"lem:loop_of_hull" -> "lem:local_loops";	"lem:∃_surrounding_loops" -> "prop:∃_loops";	"lem:exists_cont_diff_of_convex₂"	[color=green,		fillcolor="#9cec8b",		label=exists_cont_diff_of_convex₂,		shape=ellipse,		style=filled];	"lem:exists_cont_diff_of_convex₂" -> "lem:reparametrization";	"def:hom_bundle"	[color=green,		fillcolor="#b0eca3",		label=hom_bundle,		shape=box,		style=filled];	"def:hom_bundle" -> "def:one_jet_space"	[style=dashed];	"def:formal_sol_loc" -> "def:short_formal_sol"	[style=dashed];	"def:htpy_jet_sec_loc"	[color=green,		fillcolor="#b0eca3",		label=htpy_jet_sec_loc,		shape=box,		style=filled];	"def:htpy_jet_sec_loc" -> "lem:integration_step"	[style=dashed];	"def:rel_slice" -> "def:ample_relation_loc"	[style=dashed];	"def:update"	[color=green,		fillcolor="#b0eca3",		label=update,		shape=box,		style=filled];	"def:update" -> "lem:smooth_updating"	[style=dashed];	"lem:dist_updating"	[color=green,		fillcolor="#9cec8b",		label=dist_updating,		shape=ellipse,		style=filled];	"def:update" -> "lem:dist_updating"	[style=dashed];	"def:rel" -> "def:formal_sol"	[style=dashed];	"def:h-princ" -> "lem:param_for_free"	[style=dashed];	"lem:smooth_barycentric_coord"	[color=green,		fillcolor="#9cec8b",		label=smooth_barycentric_coord,		shape=ellipse,		style=filled];	"lem:smooth_barycentric_coord" -> "lem:local_loops";	"lem:smooth_barycentric_coord" -> "lem:reparametrization";	"lem:integration_step" -> "lem:h_principle_open_ample_loc";	"lem:h_principle_open_ample_loc" -> "lem:improve_htpy_loc";	sphere_eversion_of_loc	[color=green,		fillcolor="#9cec8b",		label=sphere_eversion_of_loc,		shape=ellipse,		style=filled];	"lem:h_principle_open_ample_loc" -> sphere_eversion_of_loc;	"thm:open_ample" -> "thm:sphere_eversion";	"def:transfer_map" -> "lem:ample_iff_loc"	[style=dashed];	"def:transfer_map" -> "lem:transfer"	[style=dashed];	"lem:satisfied_or_refund"	[color=green,		fillcolor="#9cec8b",		label=satisfied_or_refund,		shape=ellipse,		style=filled];	"cor:extend_loops"	[color=green,		fillcolor="#9cec8b",		label=extend_loops,		shape=ellipse,		style=filled];	"lem:satisfied_or_refund" -> "cor:extend_loops";	"lem:exists_cont_diff_of_convex"	[color=green,		fillcolor="#9cec8b",		label=exists_cont_diff_of_convex,		shape=ellipse,		style=filled];	"lem:exists_cont_diff_of_convex" -> "prop:∃_loops";	"lem:dist_updating" -> "thm:open_ample";	"lem:nice_atlas"	[color=green,		fillcolor="#9cec8b",		label=nice_atlas,		shape=ellipse,		style=filled];	"lem:nice_atlas" -> "lem:ex_localisation";	"lem:loc_immersion_rel_open"	[color=green,		fillcolor="#9cec8b",		label=loc_immersion_rel_open,		shape=ellipse,		style=filled];	"lem:loc_immersion_rel_open" -> sphere_eversion_of_loc;	"lem:loc_immersion_rel_ample"	[color=green,		fillcolor="#9cec8b",		label=loc_immersion_rel_ample,		shape=ellipse,		style=filled];	"lem:loc_immersion_rel_ample" -> sphere_eversion_of_loc;	"lem:reparametrization" -> "prop:∃_loops";	"lem:localisation_stability" -> "thm:open_ample";	"lem:open_ample_immersion" -> "thm:sphere_eversion";	"def:family_surrounds" -> "lem:local_loops"	[style=dashed];	"def:family_surrounds" -> "lem:satisfied_or_refund"	[style=dashed];	"def:surrounds_points"	[color=green,		fillcolor="#b0eca3",		label=surrounds_points,		shape=box,		style=filled];	"def:surrounds_points" -> "def:surrounds"	[style=dashed];	"def:surrounds_points" -> "prop:surrounded_by_open"	[style=dashed];	"def:surrounds_points" -> "lem:smooth_barycentric_coord"	[style=dashed];	"def:pull_back_bundle"	[color=green,		fillcolor="#b0eca3",		label=pull_back_bundle,		shape=box,		style=filled];	"def:pull_back_bundle" -> "def:one_jet_space"	[style=dashed];	"def:ample_relation" -> "lem:ample_iff_loc"	[style=dashed];	"def:ample_relation" -> "lem:ample_parameter"	[style=dashed];	"def:ample_relation" -> "lem:open_ample_immersion"	[style=dashed];	"lem:int_homothety_cvx"	[color=green,		fillcolor="#9cec8b",		label=int_homothety_cvx,		shape=ellipse,		style=filled];	"lem:int_homothety_cvx" -> "prop:surrounded_by_open";	"lem:transfer" -> "thm:open_ample";	"lem:param_trick" -> "lem:param_for_free";	"lem:param_trick" -> sphere_eversion_of_loc;	"cor:extend_loops" -> "lem:∃_surrounding_loops";}')
     .on("end", interactive);
 
 clickNode = function() {

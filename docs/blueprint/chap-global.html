@@ -42,7 +42,7 @@
   <a href="chap-loops.html#sec:loops_introduction"><span class="toc_ref">1.1</span> <span class="toc_entry">Introduction</span></a>
  </li>
 <li class="">
-  <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Preliminaries</span></a>
+  <a href="chap-loops.html#sec:preliminaries"><span class="toc_ref">1.2</span> <span class="toc_entry">Surrounding points</span></a>
  </li>
 <li class="">
   <a href="chap-loops.html#a0000000013"><span class="toc_ref">1.3</span> <span class="toc_entry">Constructing loops</span></a>
@@ -118,7 +118,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L454">open_smooth_embedding.update</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L454">open_smooth_embedding.update</a></li>
         </ul>
 
       </div>
@@ -140,66 +140,6 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:smooth_updating">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
-</a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-global.html#def:update">Definition 3.1</a></li>
-        </ul>
-
-      </div>
-    </div>
-    <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Lean declarations</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L484">open_smooth_embedding.smooth_update</a></li>
-        </ul>
-
-      </div>
-    </div>
-
-  </div>
-  </div>
-  <div class="lemma_thmcontent">
-  <p>   Let \(φ : P × X → M\) and \(ψ : P × Y → N\) be families of smooth open embeddings. Let \(K\) be a set in \(X\) whose image in \(M\) is closed. Let \(f : P × M → N\) and \(g : P × X → Y\) be smooth families of maps. If for each \(p\) and for every \(x\) not in \(K\), \(f_p(φ(x)) = ψ(g_p(x))\) then the family of maps \(f_p\) updated using \(g_p\) is smooth from \(P × M\) to \(N\). </p>
-
-  </div>
-</div> </p>
-<div class="proof_wrapper" id="a0000000069">
-  <div class="proof_heading">
-    <span class="proof_caption">
-    Proof
-    </span>
-    <span class="expand-proof">▼</span>
-  </div>
-  <div class="proof_content">
-  <p>Note that \(P × M = (P × φ(X)) ∪ (P × φ(K)^c)\). Both those sets are open and the updated maps coincide with \((p, m) ↦ ψ ∘ g_p ∘ φ⁻¹(m)\) on the first one and \(f\) on the second one. </p>
-
-  </div>
-</div>
-<p><div class="lemma_thmwrapper" id="lem:dist_updating">
-  <div class="lemma_thmheading">
-    <span class="lemma_thmcaption">
-    Lemma
-    </span>
-    <span class="lemma_thmlabel">3.3</span>
-    ✓
-    <div class="thm_icons">
-    <a class="icon proof" href="chap-global.html#lem:dist_updating">#</a>
     <a class="icon proof" href="chap-global.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -226,7 +166,67 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L525">open_smooth_embedding.dist_update</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L484">open_smooth_embedding.smooth_update</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Let \(φ : P × X → M\) and \(ψ : P × Y → N\) be families of smooth open embeddings. Let \(K\) be a set in \(X\) whose image in \(M\) is closed. Let \(f : P × M → N\) and \(g : P × X → Y\) be smooth families of maps. If for each \(p\) and for every \(x\) not in \(K\), \(f_p(φ(x)) = ψ(g_p(x))\) then the family of maps \(f_p\) updated using \(g_p\) is smooth from \(P × M\) to \(N\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000070">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Note that \(P × M = (P × φ(X)) ∪ (P × φ(K)^c)\). Both those sets are open and the updated maps coincide with \((p, m) ↦ ψ ∘ g_p ∘ φ⁻¹(m)\) on the first one and \(f\) on the second one. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:dist_updating">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.3</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-global.html#lem:dist_updating">#</a>
+    <a class="icon proof" href="chap-global.html#a0000000071"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-global.html#def:update">Definition 3.1</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L525">open_smooth_embedding.dist_update</a></li>
         </ul>
 
       </div>
@@ -239,7 +239,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000070">
+<div class="proof_wrapper" id="a0000000071">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -271,7 +271,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/indexing.lean#L23">indexing</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/indexing.lean#L23">indexing</a></li>
         </ul>
 
       </div>
@@ -294,7 +294,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:nice_atlas">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000071"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -305,7 +305,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/smooth_embedding.lean#L405">nice_atlas</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/smooth_embedding.lean#L405">nice_atlas</a></li>
         </ul>
 
       </div>
@@ -326,7 +326,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000071">
+<div class="proof_wrapper" id="a0000000072">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -335,7 +335,7 @@
   </div>
   <div class="proof_content">
   <p>The proof is a standard compact-exhaustion argument. Let \(K_0, K_1, K_2, \ldots \) be a compact exhaustion of \(M\) and define: </p>
-<div class="displaymath" id="a0000000072">
+<div class="displaymath" id="a0000000073">
   \begin{align*}  C_n & = K_{n+2} \smallsetminus K_{n+1}^o,\\ U_n & = K_{n+3}^o \smallsetminus K_n. \end{align*}
 </div>
 <p> Thus: </p>
@@ -352,7 +352,7 @@
 </li>
 </ul>
 <p> For any \(y \in E\) and \(r {\gt} 0\), fix a smooth diffeomorphism \(f_{y,r} : E \simeq B_E(y, r)\) such that \(f_{y,r}(0) = y\). For each \(n\) and \(x \in C_n\), let \(\psi _x\) be a smooth chart mapping an open neighbourhood of \(x\) to an open set of the model space \(E\). Writing \(y = \psi _x (x) \in E\), let: </p>
-<div class="displaymath" id="a0000000073">
+<div class="displaymath" id="a0000000074">
   \begin{align*}  B_{n, x} & = \psi _x^{-1} (B_E(y, r)),\\ W_{n, x} & = \psi _x^{-1} (f_{y,r} (B_E (0, 1))),\\ \end{align*}
 </div>
 <p> for some \(r {\gt} 0\) (which may depend on \(n\), \(x\)) sufficiently small that: </p>
@@ -365,7 +365,7 @@
 </li>
 </ul>
 <p> Note that \(x \in W_{n,x}\). For each \(n\), choose a finite subcovering of \(C_n\) by \(W_{n, x_1}, \ldots , W_{n, x_{l_n}}\) and define \(\iota \subseteq ℕ \times M\) by: </p>
-<div class="displaymath" id="a0000000074">
+<div class="displaymath" id="a0000000075">
   \begin{align*}  \iota = \bigcup _n \{  (n, x_1), \ldots , (n, x_{l_n}) \}  . \end{align*}
 </div>
 <p> Note that \(\iota \) is countable and furthermore: </p>
@@ -378,7 +378,7 @@
 </li>
 </ul>
 <p> Given \(i = (n, x_j) \in \iota \), the required map \(\phi _i : E \to M\) is just: </p>
-<div class="displaymath" id="a0000000075">
+<div class="displaymath" id="a0000000076">
   \begin{align*}  E \simeq B_E(y_j, r) \simeq B_{n,j} \subseteq M. \end{align*}
 </div>
 
@@ -417,7 +417,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/localisation_data.lean#L23">localisation_data</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/localisation_data.lean#L23">localisation_data</a></li>
         </ul>
 
       </div>
@@ -450,7 +450,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ex_localisation">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000077"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -476,7 +476,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/localisation_data.lean#L114">std_localisation_data</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/localisation_data.lean#L114">std_localisation_data</a></li>
         </ul>
 
       </div>
@@ -489,7 +489,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000076">
+<div class="proof_wrapper" id="a0000000077">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -511,7 +511,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:stability_cover">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000077"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000078"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -532,13 +532,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  In a metric space \(X\), let \(U : ι → \operatorname{\mathcal{P}}{X}\) be a family of open subsets of \(X\) and let \(K : ι → \operatorname{\mathcal{P}}{X}\) be a locally-finite family of closed subsets such that \(K_i ⊂ U_i\) for all \(i\). There exists a continuous function \(δ : X → ℝ_{{\gt} 0}\) such that: </p>
-<div class="displaymath" id="a0000000078">
+<div class="displaymath" id="a0000000079">
   \[  ∀ x\,  x',\;  ∀ i, \left[x ∈ K_i \text{ and } d(x, x') {\lt} δ(x)\right] ⇒ x' ∈ U_i.  \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000077">
+<div class="proof_wrapper" id="a0000000078">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -559,7 +559,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:localisation_stability">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000079"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000080"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -585,7 +585,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/localisation_data.lean#L134">localisation_stability</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/localisation_data.lean#L134">localisation_stability</a></li>
         </ul>
 
       </div>
@@ -595,14 +595,14 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   Let \(f : M → N\) be a continuous map between manifolds, and let \((φ, ψ, i)\) be some localisation data for \(f\). There exists a continuous positive function \(ε : M → ℝ_{{\gt}0}\) such that: </p>
-<div class="displaymath" id="a0000000080">
+<div class="displaymath" id="a0000000081">
   \[  ∀ g : M → N, \big [∀ m,\;  d(f(m), g(m)) {\lt} ε(m)\big ] ⇒ ∀ i,\;  g(φ_i(E)) ⊂ ψ_{j(i)}(F).  \]
 </div>
 
   </div>
 </div> Note that, in the preceding lemma, the conclusion \(g(φ_i(E)) ⊂ ψ_{j(i)}(F)\) is weaker than the condition \(f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)\) that appears in the definition of localisation data. </p>
 <p>The condition \(∀ m,\;  d(g(m), f(m)) {\lt} ε(m)\) will be abbreviated \(d(g, f) {\lt} ε\). </p>
-<div class="proof_wrapper" id="a0000000079">
+<div class="proof_wrapper" id="a0000000080">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -623,7 +623,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:loc_ultim_const">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000082"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -644,14 +644,14 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Let \(M\) a topological space and \(Z\) a set. Let \(f : ℕ × M → Z\) be a sequence of functions. If the family of sets \(n ↦ \{ x \; \| \;  f_{n+1}(x) \ne f_n(x)\} \) is locally finite then there exists \(U : M → \operatorname{\mathcal{P}}{M}\) and \(n₀ : M → ℕ\) such that: </p>
-<div class="displaymath" id="a0000000082">
+<div class="displaymath" id="a0000000083">
   \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } ∀ n ≥ n₀(x),\;  f_n|_{U_x} = f_{n₀(x)}|_{U_x}.  \]
 </div>
 
   </div>
 </div> </p>
 <p>Note that the conclusion of above lemma ensures that the sequence \(f_n\) converges pointwise and the limit inherits all local properties of the \(f_n\) (such as continuity or differentiability when applicable). </p>
-<div class="proof_wrapper" id="a0000000081">
+<div class="proof_wrapper" id="a0000000082">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -660,14 +660,14 @@
   </div>
   <div class="proof_content">
   <p>The local finiteness assumption provides a function \(U : M → \operatorname{\mathcal{P}}{M}\) such that </p>
-<div class="displaymath" id="a0000000083">
+<div class="displaymath" id="a0000000084">
   \[  ∀ x,\;  U_x ∈ 𝓝_x \text{ and } \{ n \; |\;  \{ y \; |\; f_n(y) ≠ f_{n+1}(y)\}  ∩ U_x ≠ ∅\}  \text{ is finite}.  \]
 </div>
 <p> For any \(x\), we denote by \(N_x\) the largest \(n\) of the finite set mentioned above. By construction, \(n₀ \! :x ↦ N_x + 1\) is suitable. </p>
 
   </div>
 </div>
-<h2 id="a0000000084">3.1.2 Jets spaces</h2>
+<h2 id="a0000000085">3.1.2 Jets spaces</h2>
 <p>We now need to introduce the bundles that will replace the jet spaces \(E × F × \operatorname{Hom}(E, F)\) from the previous chapter. We need a couple of fiber bundles constructions. </p>
 <p><div class="definition_thmwrapper" id="def:pull_back_bundle">
   <div class="definition_thmheading">
@@ -687,7 +687,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L99">basic_smooth_vector_bundle_core.pullback</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L99">basic_smooth_vector_bundle_core.pullback</a></li>
         </ul>
 
       </div>
@@ -718,7 +718,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L309">basic_smooth_vector_bundle_core.hom</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/to_mathlib/geometry/manifold/vector_bundle/basic_core_constructions.lean#L309">basic_smooth_vector_bundle_core.hom</a></li>
         </ul>
 
       </div>
@@ -766,7 +766,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_bundle.lean#L54">one_jet_bundle_core</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_bundle.lean#L54">one_jet_bundle_core</a></li>
         </ul>
 
       </div>
@@ -814,7 +814,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_bundle.lean#L242">one_jet_ext</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_bundle.lean#L242">one_jet_ext</a></li>
         </ul>
 
       </div>
@@ -837,7 +837,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:one_jet_extension_prop">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000085"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000086"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -863,7 +863,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_bundle.lean#L251">smooth.one_jet_ext</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_bundle.lean#L251">smooth.one_jet_ext</a></li>
         </ul>
 
       </div>
@@ -882,7 +882,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000085">
+<div class="proof_wrapper" id="a0000000086">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -892,11 +892,11 @@
   <div class="proof_content">
   <p>Points 2 and 3 are obvious by construction. </p>
 <p>To show that \(j^1f\) is smooth, suppose that \(M\) is modelled over \(E\) with charts \(C_x : M \to E\) and coordinate change functions \(C_{x,x'}=C_{x'}C_x^{-1} : E \to E\) and similarly let \(C'_y\) be charts for \(N\). By construction of the 1-jet bundle, we need to check that for each \(x_0\) the map </p>
-<div class="displaymath" id="a0000000086">
+<div class="displaymath" id="a0000000087">
   \[ x\mapsto TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ T_{C_{x_0}(x)}(C_{x_0,x}): M \to L(E,E) \]
 </div>
 <p> is smooth at \(x_0\) (we occasionally omit the point where the tangent maps are taken). For \(x\) close to \(x_0\) the coordinate changes are smooth, so we can write </p>
-<div class="displaymath" id="a0000000087">
+<div class="displaymath" id="a0000000088">
   \begin{align*}  TC’_{f(x),f(x_0)}\circ T(C’_{f(x)}fC_x^{-1})\circ T(C_{x_0,x}) & = T_{C_{x_0}(x)}(C’_{f(x),f(x_0)}C’_{f(x)}fC_x^{-1}C_{x_0,x})\\ & = T_{C_{x_0}(x)}(C’_{f(x_0)}fC_{x_0}) \end{align*}
 </div>
 <p> This is smooth since \(C'_{f(x_0)}fC_{x_0}\) is smooth. </p>
@@ -936,8 +936,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_sec.lean#L76">one_jet_sec.is_holonomic_at</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_sec.lean#L81">one_jet_sec.is_holonomic_at_iff</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_sec.lean#L76">one_jet_sec.is_holonomic_at</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_sec.lean#L81">one_jet_sec.is_holonomic_at_iff</a></li>
         </ul>
 
       </div>
@@ -984,7 +984,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L52">rel_mfld</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L52">rel_mfld</a></li>
         </ul>
 
       </div>
@@ -1031,7 +1031,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L57">formal_sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L57">formal_sol</a></li>
         </ul>
 
       </div>
@@ -1077,7 +1077,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L179">htpy_formal_sol</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L179">htpy_formal_sol</a></li>
         </ul>
 
       </div>
@@ -1124,9 +1124,9 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L342">open_smooth_embedding.transfer</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L385">rel_mfld.localize</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L342">open_smooth_embedding.transfer</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L385">rel_mfld.localize</a></li>
         </ul>
 
       </div>
@@ -1136,11 +1136,11 @@
   </div>
   <div class="definition_thmcontent">
   <p>   Given manifolds \(M\), \(X\), \(N\) and \(Y\) and smooth open embeddings \(g : Y → N\) and \(h : X → M\) we get a transfer map \(ψ_{g, h} : J^1(X, Y) → J^1(M, N)\) defined by </p>
-<div class="displaymath" id="a0000000088">
+<div class="displaymath" id="a0000000089">
   \[  ψ_{g, h}(x, y, φ) = (h(x), g(y), T_yg ∘ φ ∘ (T_xh)⁻¹)  \]
 </div>
 <p> and an operator on sections which sends \(\mathcal{F}: M → J^1(M, N)\) to \(Ψ_{g, h}\mathcal{F}: X → J^1(X, Y)\) defined when \(\operatorname{bs}\mathcal{F}(h(X)) ⊂ g(Y)\) by </p>
-<div class="displaymath" id="a0000000089">
+<div class="displaymath" id="a0000000090">
   \[  Ψ_{g, h}\mathcal{F}(x) = (x, g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x), (T_{g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh).  \]
 </div>
 <p> Given a relation \(\mathcal{R}⊂ J^1(M, N)\), the induced relation in \(J^1(X, Y)\) is \(ψ_{g, h}⁻¹\mathcal{R}\). </p>
@@ -1157,7 +1157,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:transfer">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000090"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000091"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1185,9 +1185,9 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L445">is_holonomic_at_localize_iff</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L441">one_jet_sec.localize_mem_iff</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L410">one_jet_sec.localize</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L445">is_holonomic_at_localize_iff</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L441">one_jet_sec.localize_mem_iff</a></li>
         </ul>
 
       </div>
@@ -1208,7 +1208,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000090">
+<div class="proof_wrapper" id="a0000000091">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1217,7 +1217,7 @@
   </div>
   <div class="proof_content">
   <p> The first point is clear by composition. In order to prove the second point while keeping notations under control, we set \(f(x) = g⁻¹ ∘ \operatorname{bs}\mathcal{F}∘ h\). Using this notation \(Ψ_{g, h}\mathcal{F}(x) = (x, f(x), (T_{f(x)}g)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh)\). We have </p>
-<div class="displaymath" id="a0000000091">
+<div class="displaymath" id="a0000000092">
   \begin{align*}  T_x f & = T_{\operatorname{bs}\mathcal{F}∘ h(x)}(g⁻¹) ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\\ & = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h \end{align*}
 </div>
 <p> hence \(Ψ_{g, h}\mathcal{F}\) is holonomic at \(x\) if and only if \(\left(T_{f(x)}g\right)⁻¹ ∘ \mathcal{F}(h(x))_φ ∘ T_xh = \left(T_{f(x)}g\right)⁻¹ ∘ T_{h(x)}\operatorname{bs}\mathcal{F}∘ T_x h\) and this is equivalent to \(\mathcal{F}(h(x))_φ = T_{h(x)}\operatorname{bs}\mathcal{F}\) which is the holonomy condition for \(\mathcal{F}\) at \(h(x)\). </p>
@@ -1258,8 +1258,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L220">rel_mfld.satisfies_h_principle</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L246">rel_mfld.satisfies_h_principle_with</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L220">rel_mfld.satisfies_h_principle</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L246">rel_mfld.satisfies_h_principle_with</a></li>
         </ul>
 
       </div>
@@ -1272,7 +1272,7 @@
 
   </div>
 </div> </p>
-<h2 id="a0000000092">Parametricity for free</h2>
+<h2 id="a0000000093">Parametricity for free</h2>
 <p>In many cases, relative parametric \(h\)-principles can be deduced from relative non-parametric ones with a larger source manifold. Let \(X\), \(P\) and \(Y\) be manifolds, with \(P\) seen a parameter space. Denote by \(Ψ\) the map from \(J^1(X × P, Y)\) to \(J^1(X, Y)\) sending \((x, p, y, ψ)\) to \((x, y, ψ ∘ ι_{x, p})\) where \(ι_{x, p} : T_xX → T_xX × T_pP\) sends \(v\) to \((v, 0)\). </p>
 <p>To any family of sections \(F_p : x ↦ (f_p(x), φ_{p, x})\) of \(J^1(X, Y)\), we associate the section \(\bar F\) of \(J^1(X × P, Y)\) sending \((x, p)\) to \(\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))\). </p>
 <p><div class="lemma_thmwrapper" id="lem:param_trick">
@@ -1284,7 +1284,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_trick">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000093"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000094"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1311,8 +1311,8 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/one_jet_sec.lean#L212">family_one_jet_sec.is_holonomic_uncurry</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/parametricity_for_free.lean#L118">family_one_jet_sec.uncurry_mem_relativize</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/one_jet_sec.lean#L212">family_one_jet_sec.is_holonomic_uncurry</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/parametricity_for_free.lean#L118">family_one_jet_sec.uncurry_mem_relativize</a></li>
         </ul>
 
       </div>
@@ -1331,7 +1331,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000093">
+<div class="proof_wrapper" id="a0000000094">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1353,7 +1353,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:param_for_free">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000094"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000095"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1379,7 +1379,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/parametricity_for_free.lean#L242">rel_mfld.satisfies_h_principle.satisfies_h_principle_with</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/parametricity_for_free.lean#L242">rel_mfld.satisfies_h_principle.satisfies_h_principle_with</a></li>
         </ul>
 
       </div>
@@ -1392,7 +1392,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000094">
+<div class="proof_wrapper" id="a0000000095">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1407,7 +1407,7 @@
 <h1 id="sec:general_theory">3.3 The \(h\)-principle for open and ample differential relations</h1>
 
 <p>In this chapter, \(X\) and \(Y\) are smooth manifolds and \(\mathcal{R}\) is a first order differential relation on maps from \(X\) to \(Y\): \(\mathcal{R}⊂ J^1(X, Y)\). For any \(σ = (x, y, φ)\) in \(\mathcal{R}\) and any dual pair \((λ, v) ∈ T^*_xX × T_xX\), we set: </p>
-<div class="displaymath" id="a0000000095">
+<div class="displaymath" id="a0000000096">
   \[  \mathcal{R}_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  φ + (w - φ(v))⊗λ\big ) ∈ \mathcal{R}\right\}   \]
 </div>
 <p> where \(\operatorname{Conn}_a A\) is the connected component of \(A\) containing \(a\). In order to decipher this definition, it suffices to notice that \(φ + (w - φ(v))⊗λ\) is the unique linear map from \(T_xX\) to \(T_yY\) which coincides with \(φ\) on \(\ker λ\) and sends \(v\) to \(w\). In particular, \(w = φ(v)\) gives back \(φ\). </p>
@@ -1447,7 +1447,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L120">rel_mfld.ample</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L120">rel_mfld.ample</a></li>
         </ul>
 
       </div>
@@ -1469,7 +1469,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_iff_loc">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000096"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000097"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1496,7 +1496,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/relation.lean#L389">rel_mfld.ample.localize</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/relation.lean#L389">rel_mfld.ample.localize</a></li>
         </ul>
 
       </div>
@@ -1509,7 +1509,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000096">
+<div class="proof_wrapper" id="a0000000097">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1518,7 +1518,7 @@
   </div>
   <div class="proof_content">
   <p>By definition, the relation induced by \(\mathcal{R}\) is \(ψ_{g, h}⁻¹\mathcal{R}\) where \(ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)\). Fix \(σ =(w, z, φ) ∈ ψ_{g, h}⁻¹\mathcal{R}\) and a dual pair \((λ, v)\) on \(T_wW\). We set \(G = T_z g\) and \(H = T_w h\). Both those maps are linear isomorphisms. We compute the slice corresponding to \((σ, λ, v)\): </p>
-<div class="displaymath" id="a0000000097">
+<div class="displaymath" id="a0000000098">
   \begin{align*}  ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v) & = \operatorname{Conn}_{φv}\left\{ u ∈ T_wW \; \left|\;  (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\mathcal{R}\right.\right\} \\ & = \operatorname{Conn}_{φv}\left\{ u ∈ T_wW \; \left|\;  (h(w), g(z), G ∘ (φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \mathcal{R}\right.\right\} \\ & = G⁻¹\mathcal{R}(ψ_{g, h}σ, λ ∘ H⁻¹, Hv). \end{align*}
 </div>
 <p> Hence the slice \(ψ_{g, h}⁻¹\mathcal{R}(σ, λ, v)\) is the image of a slice of \(\mathcal{R}\) under a linear isomorphism, hence ample. </p>
@@ -1534,7 +1534,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:open_ample_immersion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000098"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000099"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1560,7 +1560,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/immersion.lean#L91">immersion_rel_open_ample</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/immersion.lean#L91">immersion_rel_open_ample</a></li>
         </ul>
 
       </div>
@@ -1573,7 +1573,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000098">
+<div class="proof_wrapper" id="a0000000099">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1595,7 +1595,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:open_ample">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000099"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000100"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -1606,7 +1606,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/gromov.lean#L311">rel_mfld.ample.satisfies_h_principle_with</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/gromov.lean#L311">rel_mfld.ample.satisfies_h_principle_with</a></li>
         </ul>
 
       </div>
@@ -1629,7 +1629,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#lem:ample_parameter">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000100"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1655,7 +1655,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/parametricity_for_free.lean#L100">rel_mfld.ample.relativize</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/parametricity_for_free.lean#L100">rel_mfld.ample.relativize</a></li>
         </ul>
 
       </div>
@@ -1668,7 +1668,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000100">
+<div class="proof_wrapper" id="a0000000101">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1677,7 +1677,7 @@
   </div>
   <div class="proof_content">
   <p>We fix \(σ = (x, y, ψ)\) in \(\mathcal{R}^P\). For any \(λ = (λ_X, λ_P) ∈ T^*_xX × T^*_pP\) and \(v = (v_X, v_P) ∈ T_xX × T_pP\) such that \(λ(v) = 1\), we need to prove that \(\operatorname{Conv}\mathcal{R}^P_{σ, λ, v} = T_yY\). Unfolding the definitions gives: </p>
-<div class="displaymath" id="a0000000101">
+<div class="displaymath" id="a0000000102">
   \[  \mathcal{R}^P_{σ, λ, v} = \operatorname{Conn}_{φ(v)}\left\{ w ∈ T_yY \; ;\;  \big (x,\;  y,\;  ψ ∘ ι_{x, p} + (w - ψ(v))⊗λ_X\big ) ∈ \mathcal{R}\right\} .  \]
 </div>
 <p> A degenerate but easy case is when \(λ_X = 0\). Then the condition on \(w\) becomes \(ψ ∘ ι_{x, p} ∈ \mathcal{R}\), which is true by definition of \(\mathcal{R}^P\), so \(\mathcal{R}^P_{σ, λ, v} = T_yY\). </p>
@@ -1685,7 +1685,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000099">
+<div class="proof_wrapper" id="a0000000100">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof of Theorem&#160;<a href="chap-global.html#thm:open_ample">3.28</a>
@@ -1726,7 +1726,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-global.html#thm:sphere_eversion">#</a>
-    <a class="icon proof" href="chap-global.html#a0000000102"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-global.html#a0000000103"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -1737,7 +1737,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/75366ed1d31f29121c53f76f695ce4cc3e3b82dc/src/global/immersion.lean#L251">sphere_eversion</a></li>
+          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/2489070856de9b0b34147230484a7e1c534b4599/src/global/immersion.lean#L251">sphere_eversion</a></li>
         </ul>
 
       </div>
@@ -1750,7 +1750,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000102">
+<div class="proof_wrapper" id="a0000000103">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
