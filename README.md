@@ -7,17 +7,17 @@ This is the supplementary material for the CPP 2023 paper
 
 The Lean source files are in the `src` directory, together with the compiled binaries.
 The source files for the blueprint are in the `blueprint/src` directory.
-A compiled pdf version is in `blueprint.pdf`. A compiled version is in the
-`blueprint/html` folder. We recommend using a local webserver to browse it
+A compiled pdf version is in `blueprint.pdf`. A compiled html version is in the
+`blueprint/web` folder. We recommend using a local webserver to browse it
 since otherwise some icons will be banned by browser security restrictions
-(for instance using `python3 -m http.server` in the html folder).
+(for instance using `python3 -m http.server` in the folder `blueprint/web` and then opening `localhost:8000` in your browser).
 
 # Navigating the Lean files
 
 To navigate the code and get feedback from Lean, one does need a working version of Lean.
 See [the installation instructions of Lean](https://leanprover-community.github.io/get_started.html) (under Regular install).
 
-To obtain the compiled binaries of mathlib, run `leanproject get-mathlib-cache`.
+To obtain the compiled binaries of mathlib, run `leanproject get-mathlib-cache` in the root directory.
 This is necessary to browse the folder in Lean.
 
 One can then build this project using `leanproject build`.
@@ -29,7 +29,7 @@ you should have a working version of VS code with the Lean 3 extension.
 
 To launch VS code, run `code .` in the top-level directory to open the project folder.
 Opening a single file in VS Code will cause the extension to misbehave.
-After opening ane `.lean` file, there should be a `Lean infoview` on the right-hand side of your screen, which will give you information from Lean. This can be used to navigate the proofs.
+After opening a `.lean` file, there should be a `Lean infoview` on the right-hand side of your screen, which will give you information from Lean. This can be used to navigate the proofs.
 
 To confirm that we have proven a theorem without additional axioms, you can run at
 the bottom of `local/sphere_eversion.lean` the command `#print axioms sphere_eversion_of_loc`
@@ -39,7 +39,8 @@ to see which axioms are used. This should return the list `classical.choice`, `q
 
 # Build the blueprint html
 
-To build the web version of the blueprint, you need a working LaTeX installation.
+The blueprint is already included in the supplementary material.
+If you want to build it from scratch, you need a working LaTeX installation.
 Furthermore, you need some packages:
 ```
 sudo apt install graphviz libgraphviz-dev
