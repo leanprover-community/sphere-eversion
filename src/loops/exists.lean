@@ -99,10 +99,9 @@ end
     This is still smooth, since `δ'` is doesn't depend on `s` near `s ∈ ℤ`.
   (f) (a1) gives (1), (a4) gives (4) and (a5) gives (5).
 
-  Note: to ensure (2) the reparamerization strategy  from the blueprint
+  Note: to ensure (2) the reparamerization strategy that was originally in the blueprint
   (ensuring that `γ` is locally constant in the `t` and `s` directions)
-  doesn't work.
-  We also need to take the convolution in the `x`-direction,
+  didn't work. Indeed it needed to take the convolution in the `x`-direction,
   meaning that the value won't stay the same, since `γ` is not constant in the `x`-direction.
 
   -/
