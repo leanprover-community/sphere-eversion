@@ -18,15 +18,8 @@ To navigate the code and get feedback from Lean, one does need a working version
 See [the installation instructions of Lean](https://leanprover-community.github.io/get_started.html) (under Regular install).
 
 One also needs the right version of mathlib. There are two options:
-(1) download `mathlib.zip` that should have been made available parallel to `cpp2023.zip` and extract it in the same location as `cpp2023.zip`. You should have a root directory with contains (among other things) this `README.md` and a `_target` directory. Then run `leanproject get-mathlib-cache` in this root directory.
-(2) download mathlib yourself by following the following steps in the directory containing this `README.md`
-```
-mkdir _target/deps -p
-cd _target/deps/
-leanproject get mathlib
-cd ../..
-leanproject get-mathlib-cache
-```
+* download mathlib yourself by executing the following commands in the directory containing this `README.md`: `leanpkg configure` followed by `leanproject get-mathlib-cache`.
+* download `mathlib.zip` that was made available together with `cpp2023.zip` and extract it in the same location as `cpp2023.zip`. You should have a root directory with contains (among other things) this `README.md` and a `_target` directory. Then run `leanproject get-mathlib-cache` in this root directory.
 
 After obtaining mathlib, one can then build this project using `leanproject build`.
 This should not do much, since the compiled binaries are already included.
