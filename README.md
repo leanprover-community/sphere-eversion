@@ -17,25 +17,34 @@ since otherwise some icons will be banned by browser security restrictions
 To navigate the code and get feedback from Lean, one does need a working version of Lean.
 See [the installation instructions of Lean](https://leanprover-community.github.io/get_started.html) (under Regular install).
 
-To obtain the compiled binaries of mathlib, run `leanproject get-mathlib-cache` in the root directory.
-This is necessary to browse the folder in Lean.
+One also needs the right version of mathlib. There are two options:
+(1) download `mathlib.zip` that should have been made available parallel to `cpp2023.zip` and extract it in the same location as `cpp2023.zip`. You should have a root directory with contains (among other things) this `README.md` and a `_target` directory. Then run `leanproject get-mathlib-cache` in this root directory.
+(2) download mathlib yourself by following the following steps in the directory containing this `README.md`
+```
+mkdir _target/deps -p
+cd _target/deps/
+leanproject get mathlib
+cd ../..
+leanproject get-mathlib-cache
+```
 
-One can then build this project using `leanproject build`.
-However, this should not do anything, since the compiled binaries are already included.
+After obtaining mathlib, one can then build this project using `leanproject build`.
+This should not do much, since the compiled binaries are already included.
+It should only check that all files are compiled, and then exit after 10-20 seconds with only a few lines of output.
 
-We will provide instructions on how to navigate the code using the VS code editor.
+Next we give instructions on how to navigate the code using the VS code editor.
 If you installed Lean using the aforementioned instructions,
 you should have a working version of VS code with the Lean 3 extension.
 
 To launch VS code, run `code .` in the top-level directory to open the project folder.
 Opening a single file in VS Code will cause the extension to misbehave.
-After opening a `.lean` file, there should be a `Lean infoview` on the right-hand side of your screen, which will give you information from Lean. This can be used to navigate the proofs.
+After opening a `.lean` file, there should be a `Lean infoview` on the right-hand side of your screen, which will give you information from Lean.
+This can be used to navigate the proofs. You will be able to see goal states when putting your cursor in the middle of a proof, and you can obtain more information form the goal state by clicking on them.
 
 To confirm that we have proven a theorem without additional axioms, you can run at
 the bottom of `local/sphere_eversion.lean` the command `#print axioms sphere_eversion_of_loc`
 to see which axioms are used. This should return the list `classical.choice`, `quot.sound`,
 `propext`. If any proofs were omitted or additional axioms were used, they would be mentioned here.
-
 
 # Build the blueprint html
 
