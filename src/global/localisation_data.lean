@@ -61,6 +61,19 @@ lemma Union_succ {β : Type*} (s : ld.ι → set β) (n : ℕ) :
 by simp_rw [← mem_Iic, localisation_data.index, index_from_nat_succ, order.Iic_succ, bUnion_insert,
     union_comm]
 
+open filter
+
+lemma eventually_mem_Union (x : M) :
+  ∀ᶠ (n : ℕ) in at_top, x ∈ ⋃ i ≤ (n : index_type ld.N), (ld.φ i) '' ball (0 : E) 1 :=
+begin
+  rw [eventually_at_top],
+  rcases (mem_top.mpr ld.h₁ x) with ⟨-, ⟨i, rfl⟩, hi : x ∈ (ld.φ i) '' metric.ball 0 1⟩,
+  refine ⟨indexing.to_nat i, λ n hn, _⟩,
+  have : i ≤ n,
+  { rw ← indexing.from_to i,
+    exact indexing.mono_from hn },
+  exact mem_bUnion this hi
+end
 end localisation_data
 
 end
