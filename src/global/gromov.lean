@@ -1,6 +1,7 @@
 import to_mathlib.data.set.prod
 import to_mathlib.data.nat.basic
 import to_mathlib.geometry.manifold.metrizable
+import to_mathlib.topology.constructions
 import global.parametricity_for_free
 import global.localized_construction
 import global.localisation_data
@@ -204,14 +205,7 @@ begin
       dsimp [FF],
       rw hFπ n hn },
     have loc_fin : locally_finite (λ i, (univ ×ˢ range (L.φ i) : set $ ℝ × M)),
-    { rintros ⟨t, x⟩,
-      rcases L.lf_φ x with ⟨s, s_in, hs⟩,
-      refine ⟨univ ×ˢ s, _, _⟩,
-      { rw nhds_prod_eq,
-        exact filter.prod_mem_prod filter.univ_mem s_in },
-      { convert hs,
-        ext i,
-        simp [univ_prod_inter_univ_prod] } },
+    { apply L.lf_φ.prod_left },
     have : ∀ x : ℝ × M, ∀ᶠ n in at_top, x.2 ∈ ⋃ i ≤ π n, (L.φ i) '' metric.ball 0 1,
     { rintros ⟨t, x⟩,
       rw [eventually_at_top],
