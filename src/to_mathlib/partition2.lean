@@ -1,25 +1,11 @@
 import to_mathlib.partition
+import to_mathlib.topology.constructions
 import to_mathlib.geometry.manifold.misc_manifold
 
 noncomputable theory
 
 open_locale topological_space manifold big_operators
 open set function
-
-lemma locally_finite_prod {α β γ : Type*} [topological_space α] [topological_space γ]
-  (f : β → set α) (h : locally_finite f) :
-  locally_finite (λ b, (f b) ×ˢ (univ : set γ)) :=
-begin
-  rintros ⟨a, c⟩,
-  obtain ⟨t, ht₁, ht₂⟩ := h a,
-  refine ⟨t ×ˢ univ, mem_nhds_prod_iff.mpr ⟨t, ht₁, univ, filter.univ_mem, subset.rfl⟩, _⟩,
-  simp only [prod_inter_prod, univ_inter],
-  refine ht₂.subset (λ b hb, _),
-  simp only [mem_set_of_eq] at hb,
-  obtain ⟨⟨a', c'⟩, h'⟩ := hb,
-  simp only [prod_mk_mem_set_prod_eq, mem_univ, and_true] at h',
-  exact ⟨a', h'⟩,
-end
 
 -- See: https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/Typeclass.20resolution.20under.20binders/near/281296989
 instance real.normed_space.to_module (F : Type*) [normed_add_comm_group F] [normed_space ℝ F] : module ℝ F :=
@@ -51,7 +37,7 @@ def prod : smooth_partition_of_unity ι (I₁.prod I₂) (M₁ × M₂) :=
 { to_fun := λ i, (ρ i).comp ⟨prod.fst, cont_mdiff_fst⟩,
   locally_finite' :=
   begin
-    convert locally_finite_prod _ ρ.locally_finite,
+    convert ρ.locally_finite.prod_right (λ i, univ),
     ext i ⟨x, y⟩,
     simp only [mem_support, cont_mdiff_map.comp_apply, cont_mdiff_map.coe_fn_mk,
       prod_mk_mem_set_prod_eq, mem_univ, and_true],
