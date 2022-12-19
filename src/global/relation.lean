@@ -205,7 +205,13 @@ variables {P}
 /-- A relation `R` satisfies the (non-parametric) relative C⁰-dense h-principle w.r.t. a subset
 `C` of the domain if for every formal solution `𝓕₀` that is holonomic near `C`
 there is a homotopy between `𝓕₀` and a holonomic solution that is constant near `C` and
-`ε`-close to `𝓕₀`. This is a temporary version with a slightly weaker conclusion. -/
+`ε`-close to `𝓕₀`. This is a temporary version with a slightly weaker conclusion.
+The weak version has `∀ x ∈ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x` while the strong one has
+`∀ᶠ x near C, ∀ t, 𝓕 t x = 𝓕₀ x`. The strong version is easy to derive from the weak one
+if we prove the weak one for *all* closed sets, see `rel_mfld.satisfies_h_principle_of_weak`
+below. The reason why the weak one is more convenient for us is we will prove
+the h-principle using a sequence of homotopy of formal solutions and we don't
+want to keep control of a fixed neighborhood of `C` independant from the sequence index. -/
 def rel_mfld.satisfies_h_principle_weak (R : rel_mfld I M IX X) (C : set M) (ε : M → ℝ) : Prop :=
 ∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
 ∃ 𝓕 : htpy_formal_sol R, (∀ x : M, 𝓕 0 x = 𝓕₀ x) ∧
@@ -221,7 +227,7 @@ def rel_mfld.satisfies_h_principle (R : rel_mfld I M IX X) (C : set M) (ε : M �
 ∀ 𝓕₀ : formal_sol R, (∀ᶠ x in 𝓝ˢ C, 𝓕₀.to_one_jet_sec.is_holonomic_at x) →
 ∃ 𝓕 : htpy_formal_sol R, (∀ x : M, 𝓕 0 x = 𝓕₀ x) ∧
   (𝓕 1).to_one_jet_sec.is_holonomic ∧
-  (∀ᶠ x in 𝓝ˢ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
+  (∀ᶠ x near C, ∀ t, 𝓕 t x = 𝓕₀ x) ∧
   (∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x)
 
 lemma rel_mfld.satisfies_h_principle_of_weak
