@@ -3,6 +3,7 @@ import geometry.manifold.smooth_manifold_with_corners
 open_locale topological_space
 open metric (hiding mem_nhds_iff ball) set
 
+section
 variables {𝕜 E M H : Type*} [nontrivially_normed_field 𝕜]
 variables [topological_space H] [topological_space M] [charted_space H M]
 variables [normed_add_comm_group E] [normed_space 𝕜 E]
@@ -67,3 +68,14 @@ begin
 end
 
 end charted_space
+end
+
+section
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) (M : Type*)
+  [topological_space M] [charted_space H M]
+
+lemma locally_compact_manifold  :
+  locally_compact_space M :=
+@charted_space.locally_compact H M _ _ _ I.locally_compact
+end

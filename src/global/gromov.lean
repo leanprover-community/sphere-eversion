@@ -1,5 +1,6 @@
 import to_mathlib.data.set.prod
 import to_mathlib.data.nat.basic
+import to_mathlib.geometry.manifold.metrizable
 import global.parametricity_for_free
 import global.localized_construction
 import global.localisation_data
@@ -13,20 +14,6 @@ noncomputable theory
 
 open set filter model_with_corners metric
 open_locale topological_space manifold
-
-section
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) (M : Type*)
-  [topological_space M] [charted_space H M]
-
-lemma locally_compact_manifold  :
-  locally_compact_space M :=
-@charted_space.locally_compact H M _ _ _ I.locally_compact
-
-/-- A metric defining the topology on a sigma-compact T2 real manifold. -/
-def manifold_metric [t2_space M] [sigma_compact_space M] : metric_space M :=
-@topological_space.metrizable_space_metric _ _ (manifold_with_corners.metrizable_space I M)
-end
 
 variables
 {EM : Type*} [normed_add_comm_group EM] [normed_space ℝ EM] [finite_dimensional ℝ EM]
@@ -44,7 +31,9 @@ variables
 {A : set M} {δ : M → ℝ}
 
 set_option trace.filter_inst_type true
-
+/--
+Main inductive construction for the non-parametric version of Gromov's theorem.
+-/
 lemma rel_mfld.ample.satisfies_h_principle_core
   [nonempty M] [nonempty X]
   (hRample : R.ample) (hRopen : is_open R)
@@ -59,7 +48,6 @@ lemma rel_mfld.ample.satisfies_h_principle_core
     (∀ᶠ t near Ici (1 : ℝ), F n t = F n 1) ∧
     (∀ᶠ x near A, ∀ t, F n t x = F₀ x) ∧
     (∀ t x, dist ((F n t).bs x) (F₀.bs x) < δ x) ∧
-
     (∀ᶠ x near ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
       ((F n) 1).to_one_jet_sec.is_holonomic_at x)) ∧
     ((L.index (n + 1)  = L.index n → F (n + 1) = F n) ∧
@@ -165,6 +153,8 @@ lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open
   (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
   R.satisfies_h_principle A δ :=
 begin
+  /- We first get rid of edge cases where `M` or `X` is empty.
+  This is necessary because the localization data existence lemma has nonemptyness assumptions. -/
   haveI := locally_compact_manifold IM M,
   haveI := locally_compact_manifold IX X,
   refine rel_mfld.satisfies_h_principle_of_weak hA _,
@@ -180,6 +170,7 @@ begin
   { exfalso,
     inhabit M,
     exact (is_empty.false $ 𝓕₀.bs default).elim },
+  /- We now start the main proof under the assumption that `M` and `X` are nonempty. -/
   have cont : continuous 𝓕₀.bs, from 𝓕₀.smooth_bs.continuous,
   let L : localisation_data IM IX 𝓕₀.bs := std_localisation_data EM IM EX IX cont,
   let π := L.index,
@@ -193,9 +184,16 @@ begin
              (F n 1).is_holonomic_at x)) ∧
     ((π (n+1) = π n → F (n+1) = F n) ∧
      (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
-  { clear_dependent hRample hRopen,
+  { /- Here we must build the homotopy of formal solution from the sequence
+    given by the inductive construction.
+    **TODO**:
+    This uses `locally_finite.exists_forall_eventually_of_indexing` which partially duplicates
+    use `locally_eventually_constant_on` from `to_mathlib.order.filter.eventually_constant`.
+    Maybe this can be unified. -/
+    clear_dependent hRample hRopen,
     simp_rw [and_assoc, forall_and_distrib] at this,
     rcases this with ⟨F, hF₀, hfA, hFδ, hFhol, hFπ, hFultim⟩,
+    /- The sequence F seen as a sequence of plain functions. -/
     let FF := λ n : ℕ, λ p : ℝ × M, F n p.1 p.2,
     have h : ∀ n : ℕ, ∀ x ∉ (univ : set ℝ) ×ˢ range (L.φ $ π $ n+1), FF (n+1) x = FF n x,
     { rintros n ⟨t, x⟩ H,
@@ -223,6 +221,7 @@ begin
       { rw ← indexing.from_to i,
         exact indexing.mono_from hn },
       exact mem_bUnion this hi },
+    /- Now get the limit function. -/
     cases loc_fin.exists_forall_eventually_of_indexing h h' with G hG, clear h h' loc_fin,
     choose n hn' hn using λ x, eventually_at_top.mp ((this x).and (hG x)), clear hG this,
     have G_eq : ∀ t x, G (t, x) = F (n (t, x)) t x,
@@ -231,6 +230,7 @@ begin
     { intros t x,
       rw G_eq,
       refl },
+    /- The limit function is a homotopy of formal solutions. -/
     let 𝓕 : htpy_formal_sol R := {
       bs := λ t x, (G (t, x)).1.2,
       ϕ := λ t x, (G (t, x)).2,
@@ -307,6 +307,13 @@ variables
 [t2_space P]
 {C : set (P × M)}
 
+/-
+We now deduce the parametric case from the unparametric one using
+`rel_mfld.satisfies_h_principle.satisfies_h_principle_with` which reduces the parametric
+`h`-principle to the non-parametric one for a different relation and `rel_mafld.ample.relativize`
+which ensures the ampleness assumption survives this reduction.
+-/
+
 /-- **Gromov's Theorem** -/
 theorem rel_mfld.ample.satisfies_h_principle_with (hRample : R.ample) (hRopen : is_open R)
   (hC : is_closed C)
@@ -327,6 +334,10 @@ variables
 [sigma_compact_space M'] [t2_space M']
 
 include IP
+
+/-
+Since every (sigma-compact) manifold is metrizable, the metric space assumption can be removed.
+-/
 
 /-- Gromov's Theorem without metric space assumption -/
 theorem rel_mfld.ample.satisfies_h_principle_with' {R : rel_mfld IM M I' M'}
