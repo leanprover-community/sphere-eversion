@@ -32,6 +32,7 @@ variables
 {H'' : Type*} [topological_space H''] {I'' : model_with_corners ℝ E'' H''}
 {N' : Type*} [topological_space N'] [charted_space H'' N']
 (F : Type*) [normed_add_comm_group F] [normed_space ℝ F]
+(G : Type*) [add_comm_group G] [module ℝ G]
 
 
 def smooth_germ (x : N) : subring (germ (𝓝 x) ℝ) :=
@@ -42,11 +43,26 @@ def smooth_germ (x : N) : subring (germ (𝓝 x) ℝ) :=
   zero_mem' := sorry,
   neg_mem' := sorry }
 
+instance (x : N) : has_coe C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ (smooth_germ I x) :=
+⟨λ f, ⟨(f : N → ℝ), ⟨f, rfl⟩⟩⟩
+
+instance smooth_germ.module_fun (x : N) : module (smooth_germ I x) (germ (𝓝 x) G) :=
+{ one_smul := sorry,
+  mul_smul := sorry,
+  smul_zero := sorry,
+  smul_add := sorry,
+  add_smul := sorry,
+  zero_smul := sorry,
+  ..(@smooth_germ E _ _ H _ I N _ _ x).has_smul }
+
 def smooth_germ_vec (x : N) : submodule (germ (𝓝 x) ℝ) (germ (𝓝 x) F) :=
 { carrier := {φ : germ (𝓝 x) F | ∃ f : C^∞⟮I, N; 𝓘(ℝ, F), F⟯, φ = (f : N → F)},
   add_mem' := sorry,
   zero_mem' := sorry,
   smul_mem' := sorry }
+
+instance (x : N) : has_coe C^∞⟮I, N; 𝓘(ℝ, F), F⟯ (smooth_germ_vec I F x) :=
+⟨λ f, ⟨(f : N → F), ⟨f, rfl⟩⟩⟩
 
 variables {I F}
 

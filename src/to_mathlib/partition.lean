@@ -1,4 +1,5 @@
 import geometry.manifold.partition_of_unity
+import to_mathlib.geometry.manifold.algebra.smooth_germ
 
 noncomputable theory
 
@@ -123,6 +124,70 @@ begin
   apply (finsum_eq_sum_of_support_subset _ _).symm,
   erw [ρ.coe_finsupport x₀, support_smul],
   exact inter_subset_left _ _
+end
+
+end
+
+section
+variables {ι : Type*}
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {H : Type*} [topological_space H] {I : model_with_corners ℝ E H} {M : Type*}
+  [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+  [sigma_compact_space M] [t2_space M]
+variables {F : Type*} [add_comm_group F] [module ℝ F]
+
+include I
+
+lemma smooth_partition_of_unity.finite_tsupport {s : set M} (ρ : smooth_partition_of_unity ι I M s) (x : M) :
+{i | x ∈ tsupport (ρ i)}.finite :=
+sorry
+
+def smooth_partition_of_unity.index_support {s : set M} (ρ : smooth_partition_of_unity ι I M s)
+  (x : M) : finset ι :=
+set.finite.to_finset (ρ.finite_tsupport x)
+--⟨{i | x ∈ tsupport (ρ i)}, sorry⟩
+
+def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unity ι I M s)
+  (φ : ι → M → F) (x : M) : F := ∑ᶠ i, (ρ i x) • φ i x
+
+lemma smooth_partition_of_unity.germ_combine_mem {s : set M} (ρ : smooth_partition_of_unity ι I M s)
+  (φ : ι → M → F) {x : M} (hx : x ∈ s . tactic.mem_univ) :
+  (ρ.combine φ : germ (𝓝 x) F) ∈ convex_hull (smooth_germ I x) ((λ i, (φ i : germ (𝓝 x) F)) '' (ρ.index_support x)) :=
+begin
+  change ((λ x', ∑ᶠ i, (ρ i x') • φ i x') : germ (𝓝 x) F) ∈ _,
+  have : ∀ᶠ x' in 𝓝 x, ρ.combine φ x' = ∑ i in ρ.index_support x, (ρ i x') • φ i x',
+  {
+    sorry },
+  have : ((λ x', ∑ᶠ i, (ρ i x') • φ i x') : germ (𝓝 x) F) = ((λ x', ∑ i in ρ.index_support x, (ρ i x') • φ i x') : germ (𝓝 x) F),
+  {
+    sorry },
+  rw this, clear this, clear this,
+  have : convex ((smooth_germ I x)) (convex_hull (smooth_germ I x) ((λ i, (φ i : germ (𝓝 x) F)) '' (ρ.index_support x))),
+  apply convex_convex_hull ,
+  --apply this.sum_mem,
+  have := finsum_eq_sum_of_support_to_finset_subset (λ i, (ρ i x) • φ i x),
+  sorry
+end
+
+lemma exists_of_convex {P : (Σ x : M, germ (𝓝 x) F) → Prop}
+  (hP : ∀ x, convex (smooth_germ I x) {φ | P ⟨x, φ⟩})
+  (hP' : ∀ x : M, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, P ⟨x', f⟩) : ∃ f : M → F, ∀ x, P ⟨x, f⟩ :=
+begin
+  replace hP' : ∀ x : M, ∃ f : M → F, ∃ U ∈ 𝓝 x, ∀ x' ∈ U, P ⟨x', f⟩,
+  { intros x,
+    rcases hP' x with ⟨f, hf⟩,
+    exact ⟨f, {x' | P ⟨x', ↑f⟩}, hf, λ _, id⟩ },
+  choose φ U hU hφ using hP',
+  rcases smooth_bump_covering.exists_is_subordinate I is_closed_univ (λ x h, hU x) with ⟨ι, b, hb⟩,
+  let ρ := b.to_smooth_partition_of_unity,
+  refine ⟨λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x), λ x₀, _⟩,
+  let g : ι → germ (𝓝 x₀) F := λ i, φ (b.c i),
+  have : ((λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x)) : germ (𝓝 x₀) F) ∈
+    convex_hull (smooth_germ I x₀) (g '' (ρ.index_support x₀)),
+    from ρ.germ_combine_mem (λ i x, φ (b.c i) x) (mem_univ x₀),
+  apply mem_convex_hull_iff.mp this {φ : germ (𝓝 x₀) F | P ⟨x₀, φ⟩} _ (hP x₀),
+  rintros _ ⟨i, hi, rfl⟩,
+  exact hφ _ _ (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i hi)
 end
 
 end
