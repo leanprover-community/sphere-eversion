@@ -1,5 +1,6 @@
 import geometry.manifold.partition_of_unity
 import to_mathlib.geometry.manifold.algebra.smooth_germ
+import to_mathlib.analysis.convex.basic
 
 noncomputable theory
 
@@ -8,23 +9,23 @@ open set function filter
 
 section convexity
 
-def really_convex_hull (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
+/- def really_convex_hull (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
   [has_smul 𝕜 E] (s : set E) : set E :=
 {e | ∃ w : E → 𝕜,  0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
-
+ -/
 lemma really_convex_hull_mono (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [has_smul 𝕜 E] : monotone (really_convex_hull 𝕜 : set E → set E) :=
+  [module 𝕜 E] : monotone (really_convex_hull 𝕜 : set E → set E) :=
 begin
   rintros s t h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩,
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 end
 
 def really_convex (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [has_smul 𝕜 E] (s : set E) : Prop :=
+  [module 𝕜 E] (s : set E) : Prop :=
   ∀ w : E → 𝕜,  0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
 
 variables {𝕜 : Type*} {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [has_smul 𝕜 E] {s : set E}
+  [module 𝕜 E] {s : set E}
 
 lemma really_convex_iff_hull : really_convex 𝕜 s ↔ really_convex_hull 𝕜 s ⊆ s :=
 begin
@@ -34,11 +35,6 @@ begin
   { rintros h w w_pos supp_w sum_w,
     exact h ⟨w, w_pos, supp_w, sum_w, rfl⟩ }
 end
-
-lemma sum_mem_really_convex_hull {ι : Type*} {t : finset ι} {w : ι → 𝕜}
-  {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
-  ∑ i in t, w i • z i ∈ really_convex_hull 𝕜 s :=
-sorry
 
 lemma really_convex.sum_mem (hs : really_convex 𝕜 s) {ι : Type*} {t : finset ι} {w : ι → 𝕜}
   {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
