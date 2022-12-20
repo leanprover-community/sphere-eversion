@@ -147,6 +147,10 @@ def smooth_partition_of_unity.index_support {s : set M} (ρ : smooth_partition_o
 set.finite.to_finset (ρ.finite_tsupport x)
 --⟨{i | x ∈ tsupport (ρ i)}, sorry⟩
 
+lemma smooth_partition_of_unity.mem_index_support_iff {s : set M}
+  (ρ : smooth_partition_of_unity ι I M s) (x : M) (i : ι) : i ∈ ρ.index_support x ↔ x ∈ tsupport (ρ i) :=
+finite.mem_to_finset _
+
 def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unity ι I M s)
   (φ : ι → M → F) (x : M) : F := ∑ᶠ i, (ρ i x) • φ i x
 
@@ -187,7 +191,9 @@ begin
     from ρ.germ_combine_mem (λ i x, φ (b.c i) x) (mem_univ x₀),
   apply mem_convex_hull_iff.mp this {φ : germ (𝓝 x₀) F | P ⟨x₀, φ⟩} _ (hP x₀),
   rintros _ ⟨i, hi, rfl⟩,
-  exact hφ _ _ (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i hi)
+  exact hφ _ _ (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i $
+    (ρ.mem_index_support_iff _ i).mp hi),
+
 end
 
 end
