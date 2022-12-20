@@ -52,18 +52,31 @@ variables {I F}
 
 @[elab_as_eliminator]
 lemma smooth_germ_vec.induction_on {x : N} {P : germ (𝓝 x) F → Prop}
-  (h : ∀  f : C^∞⟮I, N; 𝓘(ℝ, F), F⟯, P (f : N → F))
-  {φ : germ (𝓝 x) F} (hφ : φ ∈ smooth_germ_vec I F x) : P φ :=
+  (h : ∀  f : C^∞⟮I, N; 𝓘(ℝ, F), F⟯, P (f : N → F)) :
+  ∀ φ ∈ smooth_germ_vec I F x, P φ :=
 begin
-  rcases hφ with ⟨f, rfl⟩,
+  rintros _ ⟨f, rfl⟩,
   apply h
 end
 
-example (x : N) : convex (smooth_germ I x)
+@[elab_as_eliminator]
+lemma smooth_germ.induction_on {x : N} {P : germ (𝓝 x) ℝ → Prop}
+  (h : ∀  f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯, P (f : N → ℝ)) :
+  ∀ φ ∈ smooth_germ I x, P φ :=
+begin
+  rintros _ ⟨f, rfl⟩,
+  apply h
+end
+
+-- We may also need versions of the above two lemmas for using the coe_to_sort
+-- `∀ φ : smooth_germ I x`, maybe even a tactic, but let's wait to see if they are really needed.
+
+lemma convex_smooth_germ_vec (x : N) : convex (smooth_germ I x)
   (smooth_germ_vec I F x : set $ germ (𝓝 x) F) :=
 begin
-  intros φ,
   refine smooth_germ_vec.induction_on _,
-  rintros g _ ⟨h, rfl⟩ ⟨_, ⟨b, rfl⟩⟩ ⟨_, ⟨c, rfl⟩⟩ hb hc hbc,
-  exact ⟨b • g + c • h, rfl⟩,
+  intros f,
+  refine smooth_germ_vec.induction_on _,
+  rintros g ⟨_, ⟨b, rfl⟩⟩ ⟨_, ⟨c, rfl⟩⟩ hb hc hbc,
+  exact ⟨b • f + c • g, rfl⟩,
 end
