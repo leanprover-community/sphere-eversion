@@ -1,53 +1,9 @@
 import geometry.manifold.partition_of_unity
-import to_mathlib.geometry.manifold.algebra.smooth_germ
-import to_mathlib.analysis.convex.basic
 
 noncomputable theory
 
 open_locale topological_space filter manifold big_operators
 open set function filter
-
-section convexity
-
-/- def really_convex_hull (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [has_smul 𝕜 E] (s : set E) : set E :=
-{e | ∃ w : E → 𝕜,  0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
- -/
-lemma really_convex_hull_mono (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [module 𝕜 E] : monotone (really_convex_hull 𝕜 : set E → set E) :=
-begin
-  rintros s t h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩,
-  exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
-end
-
-def really_convex (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [module 𝕜 E] (s : set E) : Prop :=
-  ∀ w : E → 𝕜,  0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
-
-variables {𝕜 : Type*} {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
-  [module 𝕜 E] {s : set E}
-
-lemma really_convex_iff_hull : really_convex 𝕜 s ↔ really_convex_hull 𝕜 s ⊆ s :=
-begin
-  split,
-  { rintros h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩,
-    exact h w w_pos supp_w sum_w },
-  { rintros h w w_pos supp_w sum_w,
-    exact h ⟨w, w_pos, supp_w, sum_w, rfl⟩ }
-end
-
-lemma really_convex.sum_mem (hs : really_convex 𝕜 s) {ι : Type*} {t : finset ι} {w : ι → 𝕜}
-  {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
-  ∑ i in t, w i • z i ∈ s :=
-really_convex_iff_hull.mp hs (sum_mem_really_convex_hull h₀ h₁ hz)
-
-variables (𝕜)
-
-/-  The next lemma would also be nice to have.
-lemma really_convex_really_convex_hull (s : set E) : really_convex 𝕜 (really_convex_hull 𝕜 s) :=
-sorry
- -/
-end convexity
 
 section
 
@@ -171,87 +127,6 @@ end
 
 end
 
-section
-variables {ι : Type*}
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
-  {H : Type*} [topological_space H] {I : model_with_corners ℝ E H} {M : Type*}
-  [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  [sigma_compact_space M] [t2_space M]
-variables {F : Type*} [add_comm_group F] [module ℝ F]
-
-include I
-
-lemma smooth_partition_of_unity.finite_tsupport {s : set M} (ρ : smooth_partition_of_unity ι I M s) (x : M) :
-{i | x ∈ tsupport (ρ i)}.finite :=
-begin
-  rcases ρ.locally_finite x with ⟨t, t_in, ht⟩,
-  apply ht.subset,
-  rintros i hi,
-  simp only [inter_comm],
-  exact mem_closure_iff_nhds.mp hi t t_in
-end
-
-def smooth_partition_of_unity.index_support {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (x : M) : finset ι :=
-(ρ.finite_tsupport x).to_finset
-
-lemma smooth_partition_of_unity.mem_index_support_iff {s : set M}
-  (ρ : smooth_partition_of_unity ι I M s) (x : M) (i : ι) : i ∈ ρ.index_support x ↔ x ∈ tsupport (ρ i) :=
-finite.mem_to_finset _
-
-lemma smooth_partition_of_unity.sum_germ {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (x : M) : ∑ i in ρ.index_support x, (ρ i : smooth_germ I x) = 1 :=
-sorry
-
-def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (φ : ι → M → F) (x : M) : F := ∑ᶠ i, (ρ i x) • φ i x
-
-lemma smooth_partition_of_unity.germ_combine_mem {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (φ : ι → M → F) {x : M} (hx : x ∈ s . tactic.mem_univ) :
-  (ρ.combine φ : germ (𝓝 x) F) ∈ really_convex_hull (smooth_germ I x) ((λ i, (φ i : germ (𝓝 x) F)) '' (ρ.index_support x)) :=
-begin
-  have : ((λ x', ∑ᶠ i, (ρ i x') • φ i x') : germ (𝓝 x) F) =
-    ∑ i in ρ.index_support x, (ρ i : smooth_germ I x) • (φ i : germ (𝓝 x) F),
-  { have : ∀ᶠ x' in 𝓝 x, ρ.combine φ x' = ∑ i in ρ.index_support x, (ρ i x') • φ i x',
-    {
-      sorry },
-    sorry },
-  erw this,
-  apply sum_mem_really_convex_hull,
-  { intros i hi,
-    apply eventually_of_forall,
-    apply ρ.nonneg },
-  { apply ρ.sum_germ },
-  { intros i hi,
-    exact mem_image_of_mem _ hi },
-end
-
-lemma exists_of_convex {P : (Σ x : M, germ (𝓝 x) F) → Prop}
-  (hP : ∀ x, really_convex (smooth_germ I x) {φ | P ⟨x, φ⟩})
-  (hP' : ∀ x : M, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, P ⟨x', f⟩) : ∃ f : M → F, ∀ x, P ⟨x, f⟩ :=
-begin
-  replace hP' : ∀ x : M, ∃ f : M → F, ∃ U ∈ 𝓝 x, ∀ x' ∈ U, P ⟨x', f⟩,
-  { intros x,
-    rcases hP' x with ⟨f, hf⟩,
-    exact ⟨f, {x' | P ⟨x', ↑f⟩}, hf, λ _, id⟩ },
-  choose φ U hU hφ using hP',
-  rcases smooth_bump_covering.exists_is_subordinate I is_closed_univ (λ x h, hU x) with ⟨ι, b, hb⟩,
-  let ρ := b.to_smooth_partition_of_unity,
-  refine ⟨λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x), λ x₀, _⟩,
-  let g : ι → germ (𝓝 x₀) F := λ i, φ (b.c i),
-  have : ((λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x)) : germ (𝓝 x₀) F) ∈
-    really_convex_hull (smooth_germ I x₀) (g '' (ρ.index_support x₀)),
-    from ρ.germ_combine_mem (λ i x, φ (b.c i) x) (mem_univ x₀),
-  simp_rw [really_convex_iff_hull] at hP,
-  apply hP x₀, clear hP,
-  have H : g '' ↑(ρ.index_support x₀) ⊆ {φ : (𝓝 x₀).germ F | P ⟨x₀, φ⟩},
-  { rintros _ ⟨i, hi, rfl⟩,
-    exact hφ _ _ (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i $
-      (ρ.mem_index_support_iff _ i).mp hi) },
-  exact really_convex_hull_mono _ H this,
-end
-
-end
 
 section
 variables
@@ -405,50 +280,6 @@ begin
     exact (hφ $ b.c i).2 _ (subf _ hi) },
 end
 
-/-- The value associated to a germ at a point. This is the common value
-shared by all representatives at the given point. -/
-def filter.germ.value {X α : Type*} [topological_space X] {x : X} (φ : germ (𝓝 x) α) : α :=
-quotient.lift_on' φ (λ f, f x) (λ f g h, by { dsimp only, rw eventually.self_of_nhds h })
-
-include I
-
-/-- The predicate selecting germs of `cont_mdiff_at` functions.
-TODO: generalize target space -/
-def filter.germ.cont_mdiff_at {x : M} (φ : germ (𝓝 x) F) (n : ℕ∞) : Prop :=
-quotient.lift_on' φ (λ f, cont_mdiff_at I 𝓘(ℝ, F) n f x) (λ f g h, propext begin
-  split,
-  all_goals { refine λ H, H.congr_of_eventually_eq _ },
-  exacts [h.symm, h]
-end)
-
-omit I
-
-lemma exists_cont_mdiff_of_convex'
-  {P : M → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
-  {n : ℕ∞}
-  (hP' : ∀ x : M, ∃ U ∈ 𝓝 x, ∃ f : M → F, 𝓒_on n f U ∧ ∀ x ∈ U, P x (f x)) :
-  ∃ f : M → F, 𝓒 n f ∧ ∀ x, P x (f x) :=
-begin
-  let PP : (Σ x : M, germ (𝓝 x) F) → Prop := λ p, p.2.cont_mdiff_at I n ∧ P p.1 p.2.value,
-  have hPP : ∀ x, really_convex (smooth_germ I x) {φ | PP ⟨x, φ⟩},
-  {
-    sorry },
-  have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩,
-  { intro x,
-    rcases hP' x with ⟨U, U_in, f, hf, hf'⟩,
-    use f,
-    apply mem_of_superset U_in,
-    rintros y hy,
-    split,
-    { --have : cont_mdiff_at I 𝓘(ℝ, F) n f x,
-      --exact hf.cont_mdiff_at U_in,
-      -- FIXME: need to use we can find U which is open or similar to ensure f is cont_mdiff at y
-      sorry },
-    {
-      sorry } },
-  sorry/- rcases exists_of_convex hPP hPP' with ⟨f, hf⟩,
-  exact ⟨f, λ x, (hf x).1, λ x, (hf x).2⟩ -/
-end
 
 lemma exists_cont_diff_of_convex
   {P : E → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
