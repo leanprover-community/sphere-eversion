@@ -7,6 +7,8 @@ open function
 variables (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
   [module 𝕜 E] -- note to Patrick: I needed this at some point
 
+
+
 def really_convex_hull (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
   [has_smul 𝕜 E] (s : set E) : set E :=
 {e | ∃ w : E → 𝕜,  0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
@@ -19,6 +21,16 @@ lemma finsum.exists_ne_zero_of_sum_ne_zero {β α : Type*} {s : finset α} {f : 
 begin
   rw finsum_mem_finset_eq_sum,
   exact finset.exists_ne_zero_of_sum_ne_zero,
+end
+
+@[to_additive]
+lemma finite_of_finprod_ne_one {M : Type*} {ι : Sort*} [comm_monoid M] {f : ι → M}
+  (h : ∏ᶠ i, f i ≠ 1) : (mul_support f).finite :=
+begin
+  classical,
+  rw finprod_def at h,
+  contrapose h,
+  rw [not_not, dif_neg h]
 end
 
 lemma foo {α β M : Type*} [add_comm_monoid M] (f : β → α) (s : finset β) [decidable_eq α]
@@ -65,3 +77,45 @@ begin
     rw finset.mem_filter at hy,
     rw hy.2, },
 end
+
+lemma really_convex_hull_mono : monotone (really_convex_hull 𝕜 : set E → set E) :=
+begin
+  rintros s t h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩,
+  exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
+end
+
+def really_convex (𝕜 : Type*) {E : Type*} [ordered_semiring 𝕜] [add_comm_monoid E]
+  [module 𝕜 E] (s : set E) : Prop :=
+  ∀ w : E → 𝕜,  0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
+
+variables {s : set E}
+
+lemma really_convex_iff_hull : really_convex 𝕜 s ↔ really_convex_hull 𝕜 s ⊆ s :=
+begin
+  split,
+  { rintros h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩,
+    exact h w w_pos supp_w sum_w },
+  { rintros h w w_pos supp_w sum_w,
+    exact h ⟨w, w_pos, supp_w, sum_w, rfl⟩ }
+end
+
+lemma really_convex.sum_mem (hs : really_convex 𝕜 s) {ι : Type*} {t : finset ι} {w : ι → 𝕜}
+  {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
+  ∑ i in t, w i • z i ∈ s :=
+really_convex_iff_hull.mp hs (sum_mem_really_convex_hull h₀ h₁ hz)
+
+lemma really_convex.inter {t : set E} (hs : really_convex 𝕜 s) (ht : really_convex 𝕜 t) :
+  really_convex 𝕜 (s ∩ t) :=
+begin
+  intros w w_pos supp_w sum_w,
+  cases set.subset_inter_iff.mp supp_w,
+  split,
+  { apply hs ; assumption },
+  { apply ht ; assumption }
+end
+
+
+/-  The next lemma would also be nice to have.
+lemma really_convex_really_convex_hull (s : set E) : really_convex 𝕜 (really_convex_hull 𝕜 s) :=
+sorry
+ -/
