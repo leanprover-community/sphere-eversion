@@ -112,12 +112,33 @@ quotient.lift_on' φ (λ f, f x) (λ f g h, by { dsimp only, rw eventually.self_
 variable (I)
 
 /-- The predicate selecting germs of `cont_mdiff_at` functions.
-TODO: generalize target space -/
+TODO: merge with the next def that generalizes target space -/
 def filter.germ.cont_mdiff_at {x : M} (φ : germ (𝓝 x) F) (n : ℕ∞) : Prop :=
 quotient.lift_on' φ (λ f, cont_mdiff_at I 𝓘(ℝ, F) n f x) (λ f g h, propext begin
   split,
   all_goals { refine λ H, H.congr_of_eventually_eq _ },
   exacts [h.symm, h]
+end)
+
+variables {G : Type*} [normed_add_comm_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
+  {HG : Type*} [topological_space HG] (IG : model_with_corners ℝ G HG) {N : Type*}
+  [topological_space N] [charted_space HG N] [smooth_manifold_with_corners IG N]
+
+def filter.germ.cont_mdiff_at' {x : M} (φ : germ (𝓝 x) N) (n : ℕ∞) : Prop :=
+quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
+  split,
+  all_goals { refine λ H, H.congr_of_eventually_eq _ },
+  exacts [h.symm, h]
+end)
+
+
+def filter.germ.mfderiv {x : M} (φ : germ (𝓝 x) N) :
+  tangent_space I x →L[ℝ] tangent_space IG φ.value :=
+@quotient.hrec_on _ (germ_setoid (𝓝 x) N)
+  (λ φ : germ (𝓝 x) N, tangent_space I x →L[ℝ] tangent_space IG φ.value) φ (λ f, mfderiv I IG f x)
+(begin
+  intros f g hfg,
+  sorry
 end)
 
 lemma really_convex_cont_mdiff_at (x : M) (n : ℕ∞) :
