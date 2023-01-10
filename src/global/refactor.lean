@@ -1,8 +1,10 @@
+
 import to_mathlib.data.set.prod
 import to_mathlib.data.set.lattice
 import to_mathlib.data.nat.basic
-
 import to_mathlib.topology.constructions
+import to_mathlib.partition3
+
 import global.localized_construction
 import global.localisation_data
 /-!
@@ -15,6 +17,26 @@ noncomputable theory
 
 open set filter model_with_corners metric
 open_locale topological_space manifold
+
+/-- Given a predicate on germs `P : (Σ x : X, germ (𝓝 x) Y) → Prop` and `A : set X`,
+build a new predicate on germs `restrict_germ_predicate P A` such that
+`(∀ x, restrict_germ_predicate P A ⟨x, f⟩) ↔ ∀ᶠ x near A, P ⟨x, f⟩`, see
+`forall_restrict_germ_predicate_iff` for this equivalence. -/
+def restrict_germ_predicate {X Y : Type*} [topological_space X]
+  (P : (Σ x : X, germ (𝓝 x) Y) → Prop) (A : set X) : (Σ x : X, germ (𝓝 x) Y) → Prop :=
+λ ⟨x, φ⟩, quotient.lift_on' φ (λ f, x ∈ A → ∀ᶠ y in 𝓝 x, P ⟨y, f⟩) begin
+  have : ∀ f f' : X → Y, f =ᶠ[𝓝 x] f' → (∀ᶠ y in 𝓝 x, P ⟨y, f⟩) → ∀ᶠ y in 𝓝 x, P ⟨y, f'⟩,
+  { intros f f' hff' hf,
+    apply (hf.and $ eventually.eventually_nhds hff').mono,
+    rintros y ⟨hy, hy'⟩,
+    rwa germ.coe_eq.mpr (eventually_eq.symm hy') },
+  exact λ f f' hff', propext $ forall_congr $ λ _, ⟨this f f' hff', this f' f hff'.symm⟩,
+end
+
+lemma forall_restrict_germ_predicate_iff {X Y : Type*} [topological_space X]
+  {P : (Σ x : X, germ (𝓝 x) Y) → Prop} {A : set X} {f : X → Y} :
+  (∀ x, restrict_germ_predicate P A ⟨x, f⟩) ↔ ∀ᶠ x near A, P ⟨x, f⟩ :=
+by { rw eventually_nhds_set_iff, exact iff.rfl }
 
 -- Replace localisation_data.Union_succ with
 lemma localisation_data.Union_succ' {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
@@ -62,58 +84,100 @@ def mk_htpy_formal_sol (F : ℝ × M → one_jet_bundle IM M IX X) (hsec : ∀ p
     all_goals { refl }
     end}
 
-lemma inductive_construction {X Y : Type*} [topological_space X] (P₀ : (X → Y) → Prop)
-  (P₁ : (Σ x : X, germ (𝓝 x) Y) → Prop) {N : ℕ} {U K : index_type N → set X}
-  (U_op : ∀ i, is_open (U i)) (K_cpct : ∀ i, is_compact (K i)) (K_sub_U : ∀ i, K i ⊆ U i)
-  (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
-  (init : ∃ f : X → Y, P₀ f)
-  (ind : ∀ (i : index_type N) (f : X → Y), P₀ f → (∀ x ∈ ⋃ j < i, K j, P₁ ⟨x, f⟩) →
-    ∃ f', P₀ f' ∧ (∀ x ∈ ⋃ j ≤ i, K j, P₁ ⟨x, f'⟩) ∧ ∀ x ∉ U i, f' x = f x) :
-    ∃ f, P₀ f ∧ ∀ x, P₁ ⟨x, f⟩ :=
+lemma index_type.lt_or_eq_succ (N n : ℕ) :
+  (n : index_type N) < (n+1 : ℕ) ∨ (n : index_type N) = (n+1 : ℕ) :=
 begin
-  let P : ℕ → (X → Y) → Prop := λ n f, P₀ f ∧ ∀ x ∈ (⋃ i < (n : index_type N) , K i), P₁ ⟨x, f⟩,
+  rw or_comm,
+  exact eq_or_lt_of_le (indexing.mono_from n.le_succ)
+end
+
+lemma index_type.le_or_lt_succ {N n : ℕ} (hn : (n : index_type N) < (n+1 : ℕ)) (j : index_type N) :
+  j ≤ n ↔ j < (n + 1 : ℕ) :=
+begin
+  split ; intros hj,
+  { exact hj.trans_lt hn },
+  { cases N,
+    exact nat.lt_succ_iff.mp hj,
+    cases j with j hj',
+    have : n < N + 1,
+    {
+      sorry },
+    change (⟨j, hj'⟩ : fin (N+1)) ≤ if h : n < N + 1 then ⟨n, h⟩ else fin.last N,
+    change (⟨j, hj'⟩ : fin (N+1)) < if h : n+1 < N + 1 then ⟨n+1, h⟩ else fin.last N at hj,
+    rw dif_pos this,
+    change j ≤ n,
+    sorry
+    /- --dsimp [index_type] at j,
+    change j < if h : n+1 < N + 1 then ⟨n+1, h⟩ else fin.last N at hj,
+    change j ≤ if h : n < N + 1 then ⟨n, h⟩ else fin.last N,
+    split_ifs,
+    { cases j with j hj',
+      change j ≤ n,
+      split_ifs at hj,
+      exact nat.lt_succ_iff.mp hj,
+      cases N,
+      apply (nat.lt_succ_iff.mp hj').trans n.zero_le,
+
+      change j < N + 1 at hj,
+      have := nat.lt_succ_iff.mp hj,
+      sorry },
+    exact j.le_last -/ }
+end
+
+lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
+sorry
+
+lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
+sorry
+
+lemma inductive_construction {X Y : Type*} [topological_space X]
+  (P₀ P₁ : (Σ x : X, germ (𝓝 x) Y) → Prop) {N : ℕ} {U K : index_type N → set X}
+  --(U_op : ∀ i, is_open (U i)) (K_cpct : ∀ i, is_compact (K i)) (K_sub_U : ∀ i, K i ⊆ U i)
+  (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
+  (init : ∃ f : X → Y, ∀ x, P₀ ⟨x, f⟩)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ ⟨x, f⟩) → (∀ x ∈ ⋃ j < i, K j, P₁ ⟨x, f⟩) →
+    ∃ f' : X → Y, (∀ x, P₀ ⟨x, f'⟩) ∧ (∀ x ∈ ⋃ j ≤ i, K j, P₁ ⟨x, f'⟩) ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, ∀ x, P₀ ⟨x, f⟩ ∧ P₁ ⟨x, f⟩ :=
+begin
+  let P : ℕ → (X → Y) → Prop :=
+    λ n f, (∀ x, P₀ ⟨x, f⟩) ∧ ∀ x ∈ (⋃ i ≤ (n : index_type N) , K i), P₁ ⟨x, f⟩,
   let Q : ℕ → (X → Y) → (X → Y) → Prop :=
-    λ n f f', (((n + 1 : ℕ) : index_type N) = n → f = f') ∧ ∀ x ∉ U n, f' x = f x,
-  have : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
+    λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧  ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
+  obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
   { apply exists_by_induction',
     { dsimp [P],
       cases init with f₀ hf₀,
-      use [f₀, hf₀],
-      intros x,
-      simp only [mem_Union, exists_prop, forall_exists_index, and_imp],
-      sorry },
+      rcases ind 0 f₀ hf₀ _ with ⟨f', h₀f', h₁f', hf'⟩,
+      use [f', h₀f'],
+      intros x hx,
+      apply h₁f' _ hx,
+      have : (⋃ (j : index_type N) (H : j < 0), K j) = ∅,
+      { simp [index_type.not_lt_zero] },
+      simp only [this, mem_empty_iff_false, is_empty.forall_iff, implies_true_iff] },
     { rintros n f ⟨h₀f, h₁f⟩,
-      rcases ind n f h₀f h₁f with ⟨f', h₀f', h₁f', hf'⟩,
-      refine ⟨if ((n+1 : ℕ) : index_type N) = n then f else f', _, ⟨_, _⟩⟩,
-
-      { split_ifs,
-        { split,
-          { exact h₀f },
-          { simp_rw h,
-            exact h₁f }, },
-        { refine ⟨h₀f', _⟩,
-        intros x hx,
-        /- by_cases hn : ((n + 1 : ℕ) : index_type N) = n,
-        { simp_rw [hn, mem_Union, exists_prop] at hx,
-          rcases hx with ⟨i, hi, hx⟩,
-          apply h₁f',
-          rw mem_Union₂,
-          exact ⟨i, hi.le, hx⟩ }, -/
-        { apply h₁f',
-          rw mem_Union₂ at hx ⊢,
-          rcases hx with ⟨i, hi, hx⟩,
-          refine ⟨i, _, hx⟩,
-          sorry } } },
-      { intros H,
-        rw if_pos H },
-      { intros x hx,
-        split_ifs,
-        refl,
-        exact hf' x hx } } },
-  sorry
+      rcases index_type.lt_or_eq_succ N n with hn | hn,
+      { simp_rw index_type.le_or_lt_succ hn at h₁f,
+        rcases ind (n+1 : ℕ) f h₀f h₁f with ⟨f', h₀f', h₁f', hf'⟩,
+        exact ⟨f', ⟨h₀f', h₁f'⟩, ⟨λ hn', (hn.ne hn'.symm).elim, hf'⟩⟩ },
+      { simp only [hn] at h₁f,
+        exact ⟨f, ⟨h₀f, h₁f⟩, λ hn, rfl, λ x hx, rfl⟩ } } },
+  dsimp only [P, Q] at hf,
+  simp only [forall_and_distrib] at hf,
+  rcases hf with ⟨⟨h₀f, h₁f⟩, hf, hf'⟩,
+  rcases U_fin.exists_forall_eventually_of_indexing hf' hf with ⟨F, hF⟩,
+  refine ⟨F, λ x, _,⟩,
+  have : ∀ᶠ (n : ℕ) in at_top, x ∈ ⋃ i ≤ (n : index_type N), K i,
+  { have : x ∈ ⋃ (i : index_type N), K i := K_cover.symm ▸ (mem_univ x),
+    rcases mem_Union.mp this with ⟨i, hi⟩,
+    apply (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) i).mono,
+    intros n hn,
+    exact mem_Union₂.mpr ⟨i, hn, hi⟩ },
+  rcases eventually_at_top.mp ((hF x).and this) with ⟨n₀, hn₀⟩,
+  rcases hn₀ n₀ le_rfl with ⟨hx, hx'⟩,
+  rw germ.coe_eq.mpr hx.symm,
+  exact ⟨h₀f n₀ x, h₁f n₀ x hx'⟩
 end
 
-#exit
 -- temporary assumptions to avoid stupid case disjunction and instance juggling
 
 variables [nonempty M] [nonempty X] [locally_compact_space M] [locally_compact_space X]
@@ -146,18 +210,32 @@ begin
   let τ := λ x : M, min (δ x) (L.ε x),
   have τ_pos : ∀ x, 0 < τ x, from λ x, lt_min (hδ_pos x) (L.ε_pos x),
   have τ_cont : continuous τ, from hδ_cont.min L.ε_cont,
-  let π := L.index,
-  let P₀ : (ℝ × M → J¹) → Prop := λ F,
+  -- Warning: the property `∀ᶠ (t, x) near (Iic 0 : set ℝ) ×ˢ univ, F t x = 𝓕₀ x`
+  -- is weaker than `∀ᶠ t, near (Iic 0 : set ℝ), ∀ x, F t x = 𝓕₀ x` when `M` isn't compact,
+  -- so we will need a variation of `localization_data.improve_htpy`
+  let P₀ : (Σ p : ℝ × M, germ (𝓝 p) J¹) → Prop := λ F,
+    F.2.value.1.1 = F.1.2 ∧
+    F.2.value ∈ R ∧
+    F.2.cont_mdiff_at' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
+    restrict_germ_predicate (λ F' : Σ p : ℝ × M, germ (𝓝 p) J¹, F'.2.value = 𝓕₀ F'.1.2)
+                            ((Iic 0 : set ℝ) ×ˢ univ) F ∧
+    restrict_germ_predicate (λ F' : Σ p : ℝ × M, germ (𝓝 p) J¹, F'.2.mfderiv (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) (1, 0) = 0)
+                            ((Ici 1 : set ℝ) ×ˢ univ) F ∧
+    restrict_germ_predicate (λ F' : Σ p : ℝ × M, germ (𝓝 p) J¹, F'.2.value = 𝓕₀ F'.1.2)
+                            (univ ×ˢ A) F ∧
+    dist (F.2.value.1.2) (𝓕₀.bs F.1.2) < τ F.1.2,
+
+  /- let P₀ : (ℝ × M → J¹) → Prop := λ F,
     (∀ p, (F p).1.1 = p.2) ∧
     (∀ p, F p ∈ R) ∧
     smooth (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) F ∧
     (∀ᶠ t near (Iic 0 : set ℝ), ∀ x, F (t, x) = 𝓕₀ x) ∧
     (∀ᶠ t near (Ici 1 : set ℝ), ∀ x, F (t, x) = F (1, x)) ∧
     (∀ᶠ x near A, ∀ t, F (t, x) = 𝓕₀ x) ∧
-    ∀ p : ℝ × M, dist ((F p).1.2) (𝓕₀.bs p.2) < τ p.2,
+    ∀ p : ℝ × M, dist ((F p).1.2) (𝓕₀.bs p.2) < τ p.2,-/
   let P₁ : (Σ p : ℝ × M, germ (𝓝 p) J¹) → Prop := λ F, F.1.1 = 1 → is_holonomic_germ F.2,
-  rcases inductive_construction P₀ P₁ U_op K_cpct K_sub_U U_fin K_cover _ _ with
-    ⟨F, ⟨F_sec, F_sol, F_smooth, F_0, F_1, F_A, F_dist⟩, h₁F⟩,
+  rcases inductive_construction P₀ P₁ /- U_op K_cpct K_sub_U -/ U_fin K_cover _ _ with ⟨F, hF⟩,
+    /- ⟨F, ⟨F_sec, F_sol, F_smooth, F_0, F_1, F_A, F_dist⟩, h₁F⟩ -/
   refine ⟨mk_htpy_formal_sol F _ _ _, _, _, _, _⟩,
   sorry { exact F_sec },
   sorry { exact F_sol },
@@ -179,7 +257,8 @@ begin
       change dist (𝓕₀.bs p.2) (𝓕₀.bs p.2) < τ p.2,
       rw dist_self,
       apply τ_pos } },
-  { rintros i F ⟨F_sec, F_sol, F_smooth, F_0, F_1, F_A, F_dist⟩ h₁F,
+  sorry
+  /- { rintros i F ⟨F_sec, F_sol, F_smooth, F_0, F_1, F_A, F_dist⟩ h₁F,
     let 𝓕 := mk_htpy_formal_sol F F_sec F_sol F_smooth,
     have apply_F : ∀ t x, 𝓕 t x = F (t, x),
     {
@@ -241,5 +320,5 @@ begin
       rw ← apply_F,
       apply hF'K₁ t x (λ hx, H _),
       simp only [prod_mk_mem_set_prod_eq, mem_univ, true_and, not_exists, not_and, K],
-      exact image_subset_range (L.φ i) _ hx } }
+      exact image_subset_range (L.φ i) _ hx } } -/
 end
