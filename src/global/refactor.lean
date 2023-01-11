@@ -18,6 +18,56 @@ noncomputable theory
 open set filter model_with_corners metric
 open_locale topological_space manifold
 
+section
+
+meta def prove_finiteness : tactic unit := `[intro x, apply set.to_finite]
+
+structure local_prop (X Y : Type*) [topological_space X] :=
+(s : X → set X)
+(s_fin : ∀ x, (s x).finite . prove_finiteness)
+(prop : Π x, (Π x' ∈ s x, germ (𝓝 x') Y) → Prop)
+
+variables {X Y : Type*} [topological_space X]
+
+/-- Evaluate a local property at a point on a given function. -/
+def local_prop.eval  (P : local_prop X Y) (x : X) (f : X → Y) : Prop :=
+P.prop x (λ x' hx', (f : germ (𝓝 x') Y))
+
+instance : has_coe_to_fun (local_prop X Y) (λ _, X → (X → Y) → Prop) :=
+⟨local_prop.eval⟩
+
+/-- A local property depending on a single point. -/
+def local_prop.single (P : Π x : X, germ (𝓝 x) Y → Prop) : local_prop X Y :=
+{ s := λ x, {x},
+  prop := λ x φ, P x (φ _ (mem_singleton x))  }
+
+@[simp]
+lemma local_prop.eval_single (P : Π x : X, (germ (𝓝 x) Y → Prop)) (f : X → Y) (x : X) :
+  local_prop.single P x f ↔ P x f :=
+iff.rfl
+
+/-- A local property depending on a point and its image under a given function. -/
+def local_prop.pair (π : X → X)
+  (P : Π x : X, germ (𝓝 x) Y → germ (𝓝 $ π x) Y →  Prop) : local_prop X Y :=
+{ s := λ x : X, {x, π x},
+  prop := λ x φ, P x (φ x (mem_insert _ _)) (φ _ $ mem_insert_iff.mpr $ or.inr $ mem_singleton _) }
+
+/-- The local property asserting `f x = f (π x)`. -/
+def local_prop.equality (π : X → X) : local_prop X Y :=
+  local_prop.pair π (λ x φ ψ, φ.value = ψ.value)
+
+@[simp]
+lemma local_prop.eval_pair {π : X → X}
+  {P : Π x : X, germ (𝓝 x) Y → germ (𝓝 $ π x) Y →  Prop} {f : X → Y} {x : X} :
+  local_prop.pair π P x f ↔ P x f f :=
+iff.rfl
+
+lemma local_prop.equality_iff {π : X → X} (f : X → Y) (x : X) :
+  local_prop.equality π x f ↔ f x = f (π x) := iff.rfl
+
+end
+
+
 /-- Given a predicate on germs `P : (Σ x : X, germ (𝓝 x) Y) → Prop` and `A : set X`,
 build a new predicate on germs `restrict_germ_predicate P A` such that
 `(∀ x, restrict_germ_predicate P A ⟨x, f⟩) ↔ ∀ᶠ x near A, P ⟨x, f⟩`, see
@@ -130,6 +180,21 @@ sorry
 lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
 sorry
 
+example {α γ : Type*} (β : α → Type*) : ((Σ a, β a) → γ) ≃ Π a, (β a → γ) :=
+{ to_fun := λ f a b, f ⟨a, b⟩,
+  inv_fun := λ f p, f p.1 p.2,
+  left_inv := begin
+    intros f,
+    ext ⟨a, b⟩,
+    refl
+  end,
+  right_inv := begin
+    intros f,
+    ext a,
+    refl
+  end }
+
+
 lemma inductive_construction {X Y : Type*} [topological_space X]
   (P₀ P₁ : (Σ x : X, germ (𝓝 x) Y) → Prop) {N : ℕ} {U K : index_type N → set X}
   --(U_op : ∀ i, is_open (U i)) (K_cpct : ∀ i, is_compact (K i)) (K_sub_U : ∀ i, K i ⊆ U i)
@@ -202,9 +267,9 @@ begin
   let L : localisation_data IM IX 𝓕₀.bs := std_localisation_data EM IM EX IX cont,
   let K : index_type L.N → set (ℝ × M) := λ i, (Icc 0 1).prod ((L.φ i) '' (closed_ball (0:EM) 1)),
   let U : index_type L.N → set (ℝ × M) := λ i, univ.prod (range (L.φ i)),
-  have U_op : ∀ i, is_open (U i), sorry,
+  /- have U_op : ∀ i, is_open (U i), sorry,
   have K_cpct : ∀ i, is_compact (K i), sorry,
-  have K_sub_U : ∀ i, K i ⊆ U i, sorry,
+  have K_sub_U : ∀ i, K i ⊆ U i, sorry, -/
   have U_fin : locally_finite U, sorry,
   have K_cover : (⋃ i, K i) = univ, sorry,
   let τ := λ x : M, min (δ x) (L.ε x),
