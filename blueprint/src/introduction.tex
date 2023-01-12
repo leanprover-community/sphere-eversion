@@ -165,7 +165,7 @@ a map from $ℝ^3 ∖ \{0\} → ℝ^3 ∖ \{0\}$ by
 which exchanges the interior and exterior of $𝕊^2$. More abstractly, one can say
 the normal bundle of $𝕊^2$ is trivial, hence one can extend $a$ to a tubular
 neighborhood of $𝕊^2$ as an orientation preserving map. Since $a$ is orientation
-reversing, any such extension will be reversing coorientation.
+reversing, any such extension will be reversing co-orientation.
 
 \begin{proof}[Proof of the sphere eversion corollary]
 	We denote by $ι$ the inclusion of $𝕊^2$ into $ℝ^3$.
@@ -218,7 +218,7 @@ $Ω_x ⊂ ℝ^m$. Assume there is a smooth family of loops $γ \co ℝ^n × 𝕊
 that each $γ_x$ takes values in $Ω_x$, and has average value
 $\int_{𝕊^1} γ_x = ∂_j f(x)$. Obviously such loops
 can exist only if $∂_jf(x)$ is in the convex hull of $Ω_x$,
-hence the name convex integration, and we will see this condition is
+and we will see this condition is
 almost sufficient. In the immersion case, this convex hull condition
 will always be met because, from the above description, we see that
 $Ω_x$ will always be the complement of a linear subspace with
@@ -233,6 +233,9 @@ A wonderfully easy exercise shows that, provided $N$ is large enough,
 we have achieved $∂_j f(x) ∈ Ω_x$, almost without modifying
 derivatives $∂_i f(x)$ for $i ≠ j$, and almost without moving
 $f(x)$. See \ref{prop:theilliere} for a precise statement.
+This technique is called convex integration
+since we are taking an integral under the assumption that
+$∂_jf(x)$ is in the convex hull of $Ω_x$.
 
 In addition, if we assume that $γ_x$ is constant (necessarily with value
 $∂_j f(x)$) for $x$ near some subset $K$ where
@@ -253,7 +256,7 @@ last definition and state the actual main theorem that we formalized.
   \[
     \left\{ψ ∈ \Hom(T_xM, T_yN) \;|\; \rst{ψ}{H} = \rst{φ}{H} \text{ and } (x, y, ψ) ∈ \Rel\right\}
   \]
-  in the whole set of $ψ$ such that $\rst{ψ}{H} = \rst{φ}{H}$.
+  is the whole set of $ψ$ such that $\rst{ψ}{H} = \rst{φ}{H}$.
 \end{definition-intro}
 
 We can now state our goal in its full glory.
@@ -272,4 +275,3 @@ enough to derive Smale's theorem, although in a slightly less natural way than
 using the manifold case. This served as an intermediate target in the
 formalization, and can be used for elementary teaching since it does not
 require any theory of manifolds.
-
