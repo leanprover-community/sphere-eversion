@@ -117,6 +117,25 @@ begin
   { rw [fin.coe_order_succ, fin.coe_last, if_neg (lt_irrefl _)] }
 end
 
+lemma index_type.le_iff_lt_succ {N n : ℕ} (hn : (n : index_type N) < (n+1 : ℕ)) (j : index_type N) :
+  j ≤ n ↔ j < (n + 1 : ℕ) :=
+begin
+  cases N, { exact nat.lt_succ_iff.symm, },
+  refine ⟨λ h, lt_of_le_of_lt h hn, λ h, _⟩,
+  clear hn,
+  obtain ⟨j, hj⟩ := j,
+  change _ ≤ indexing.from_nat n,
+  change _ < indexing.from_nat (n + 1) at h,
+  unfold indexing.from_nat at ⊢ h,
+  rcases lt_trichotomy N n with hNn | rfl | hNn,
+  { replace hNn : ¬ (n < N + 1) := by simpa using nat.succ_le_iff.mpr hNn,
+    simp only [hNn, not_false_iff, dif_neg],
+    exact fin.le_last _, },
+  { simpa using nat.lt_succ_iff.mp hj, },
+  { simp only [hNn, add_lt_add_iff_right, dif_pos, fin.mk_lt_mk] at h,
+    simpa only [nat.lt.step hNn, dif_pos, fin.mk_le_mk] using nat.lt_succ_iff.mp h, },
+end
+
 lemma set.countable_iff_exists_nonempty_index_type_equiv
   {α : Type*} {s : set α} (hne : s.nonempty) :
   s.countable ↔ ∃ n, nonempty (index_type n ≃ s) :=
