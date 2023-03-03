@@ -355,6 +355,8 @@ begin
   simp
 end
 
+private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 := sorry
+
 private def Tinv : ℝ → ℕ := sorry
 
 /- TODO: think whether `∀ x ∈ ⋃ j < i, K j, P₁ x f` should be something more general. -/
@@ -405,20 +407,56 @@ begin
       { simp_rw index_type.le_or_lt_succ hn at h₁f,
         rcases ind (n+1 : ℕ) (λ x, f (T (n+1), x)) (λ x, (h₀'f (T (n+1), x)).1) h₁f with
           ⟨f', h₀f', h₁f', hf'₂, hf'not, hf'0, hf'1⟩,
-        refine ⟨λ p, f' (2^(n+2)*(p.1 - T (n+1))) p.2, ⟨λ p, ⟨h₀f' (2^(n+2)*(p.1-T (n+1))) p.2, _⟩, _, _, _⟩, _, _⟩,
-        sorry { simpa [mul_sub] using hP₂ (2^(n+2)) (-2^(n+2)*T (n+1)) p ↿f' (hf'₂ _) },
+        refine ⟨λ p, if p.1 ≥ T (n+1) then f' (2^(n+2)*(p.1 - T (n+1))) p.2 else f p, ⟨λ p, ⟨_, _⟩, _, _, _⟩, _, _⟩,
+        sorry { by_cases ht : (T $ n+1) ≤ p.1,
+          { convert h₀f' (2^(n+2)*(p.1-T (n+1))) p.2 using 1,
+            apply quotient.sound,
+            simp [ht] },
+          { convert (h₀'f p).1 using 1,
+            apply quotient.sound,
+            simp [ht] } },
+        /-FIXME-/sorry { rcases lt_trichotomy (T $ n+1) p.1 with ht|ht|ht,
+          sorry { convert hP₂ (2^(n+2)) (-2^(n+2)*T (n+1)) p ↿f' (hf'₂ _) using 1,
+            apply quotient.sound,
+            have hp : ∀ᶠ (q : ℝ × X) in 𝓝 p, T (n+1) ≤ q.1,
+            { cases p with t x,
+              apply mem_of_superset (prod_mem_nhds (Ioi_mem_nhds ht) univ_mem),
+              rintros ⟨t', x'⟩ ⟨ht', hx'⟩,
+              exact le_of_lt ht' },
+            apply hp.mono (λ q hq, _),
+            simp [if_pos hq, mul_sub, neg_mul],
+            refl },
+          { -- Autour de p, les deux branches du if valent λ ⟨t, x⟩, f (T(n+1), x)
+            sorry },
+          sorry { have hp : ∀ᶠ (q : ℝ × X) in 𝓝 p, ¬ T (n+1) ≤ q.1,
+            { cases p with t x,
+              apply mem_of_superset (prod_mem_nhds (Iio_mem_nhds ht) univ_mem),
+              rintros ⟨t', x'⟩ ⟨ht', hx'⟩,
+              simpa using ht' },
+            convert (h₀'f p).2 using 1,
+            apply quotient.sound,
+            apply hp.mono (λ q hq, _),
+            simp [if_neg hq] } },
         sorry { apply h₁f'.mono,
           intros x hx,
-          change P₁ x (λ x, f' (2^(n+2)*(T (n+2) - T (n+1))) x),
-          simp [T_succ_sub, hx] },
-        {
-          sorry },
-        {
-          sorry },
-        {
-          sorry },
-        {
-          sorry } },
+          change P₁ x (λ x', if T (n+2) ≥ T (n+1) then f' (2^(n+2)*(T (n+2) - T (n+1))) x' else _),
+          convert hx using 2,
+          ext x',
+          simp [if_pos (T_le_succ $ n+1), T_succ_sub] },
+        /-FIXME-/sorry { rintros t ht x,
+          dsimp only,
+          simp only [T_succ_sub, one_div, mul_inv_cancel_of_invertible],
+          replace ht : 1 / 2 ^ (n + 2) ≤ t - T (n+1) := le_sub_iff_add_le'.mpr ht,
+          rw ← hf'1.on_set _ _,
+          exact (div_le_iff' (by positivity)).mp ht },
+        sorry { intros x,
+          simp [not_T_succ_le, hf0] },
+        sorry { exact λ hn', (hn.ne hn'.symm).elim },
+        { intros x hx t,
+          dsimp only,
+          split_ifs with ht,
+          { rw [hf'not _ _ hx, hinvf _ ht] },
+          { refl }, } },
       sorry { simp only [hn] at h₁f,
         refine ⟨f, ⟨h₀'f, _, _, hf0⟩, _, _⟩,
         { apply h₁f.mono,
