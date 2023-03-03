@@ -208,34 +208,20 @@ end
 lemma index_type.le_or_lt_succ {N n : ℕ} (hn : (n : index_type N) < (n+1 : ℕ)) (j : index_type N) :
   j ≤ n ↔ j < (n + 1 : ℕ) :=
 begin
-  split ; intros hj,
-  { exact hj.trans_lt hn },
-  { cases N,
-    exact nat.lt_succ_iff.mp hj,
-    cases j with j hj',
-    have : n < N + 1,
-    {
-      sorry },
-    change (⟨j, hj'⟩ : fin (N+1)) ≤ if h : n < N + 1 then ⟨n, h⟩ else fin.last N,
-    change (⟨j, hj'⟩ : fin (N+1)) < if h : n+1 < N + 1 then ⟨n+1, h⟩ else fin.last N at hj,
-    rw dif_pos this,
-    change j ≤ n,
-    sorry
-    /- --dsimp [index_type] at j,
-    change j < if h : n+1 < N + 1 then ⟨n+1, h⟩ else fin.last N at hj,
-    change j ≤ if h : n < N + 1 then ⟨n, h⟩ else fin.last N,
-    split_ifs,
-    { cases j with j hj',
-      change j ≤ n,
-      split_ifs at hj,
-      exact nat.lt_succ_iff.mp hj,
-      cases N,
-      apply (nat.lt_succ_iff.mp hj').trans n.zero_le,
-
-      change j < N + 1 at hj,
-      have := nat.lt_succ_iff.mp hj,
-      sorry },
-    exact j.le_last -/ }
+  cases N, { exact nat.lt_succ_iff.symm, },
+  refine ⟨λ h, lt_of_le_of_lt h hn, λ h, _⟩,
+  clear hn,
+  obtain ⟨j, hj⟩ := j,
+  change _ ≤ indexing.from_nat n,
+  change _ < indexing.from_nat (n + 1) at h,
+  unfold indexing.from_nat at ⊢ h,
+  rcases lt_trichotomy N n with hNn | rfl | hNn,
+  { replace hNn : ¬ (n < N + 1) := by simpa using nat.succ_le_iff.mpr hNn,
+    simp only [hNn, not_false_iff, dif_neg],
+    exact fin.le_last _ },
+  { simpa using nat.lt_succ_iff.mp hj },
+  { simp only [hNn, add_lt_add_iff_right, dif_pos, fin.mk_lt_mk] at h,
+    simpa only [nat.lt.step hNn, dif_pos, fin.mk_le_mk] using nat.lt_succ_iff.mp h }
 end
 
 lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
@@ -260,18 +246,18 @@ example {α γ : Type*} (β : α → Type*) : ((Σ a, β a) → γ) ≃ Π a, (�
 
 
 lemma inductive_construction {X Y : Type*} [topological_space X]
-  (P₀ P₁ : (Σ x : X, germ (𝓝 x) Y) → Prop) {N : ℕ} {U K : index_type N → set X}
-  --(U_op : ∀ i, is_open (U i)) (K_cpct : ∀ i, is_compact (K i)) (K_sub_U : ∀ i, K i ⊆ U i)
+  {N : ℕ} {U K : index_type N → set X}
+  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
   (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
-  (init : ∃ f : X → Y, ∀ x, P₀ ⟨x, f⟩)
-  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ ⟨x, f⟩) → (∀ x ∈ ⋃ j < i, K j, P₁ ⟨x, f⟩) →
-    ∃ f' : X → Y, (∀ x, P₀ ⟨x, f'⟩) ∧ (∀ x ∈ ⋃ j ≤ i, K j, P₁ ⟨x, f'⟩) ∧ ∀ x ∉ U i, f' x = f x) :
-    ∃ f : X → Y, ∀ x, P₀ ⟨x, f⟩ ∧ P₁ ⟨x, f⟩ :=
+  (init : ∃ f : X → Y, ∀ x, P₀ x f)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ x ∈ ⋃ j < i, K j, P₁ x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ x ∈ ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₁ x f :=
 begin
   let P : ℕ → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ ⟨x, f⟩) ∧ ∀ x ∈ (⋃ i ≤ (n : index_type N) , K i), P₁ ⟨x, f⟩,
+    λ n f, (∀ x, P₀ x f) ∧ ∀ x ∈ (⋃ i ≤ (n : index_type N) , K i), P₁ x f,
   let Q : ℕ → (X → Y) → (X → Y) → Prop :=
-    λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧  ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
+    λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧ ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
   obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
   { apply exists_by_induction',
     { dsimp [P],
@@ -306,21 +292,207 @@ begin
   rw germ.coe_eq.mpr hx.symm,
   exact ⟨h₀f n₀ x, h₁f n₀ x hx'⟩
 end
+
+lemma forall₂_and_distrib {α β : Sort*} {p q : α → β → Prop} :
+  (∀ x y, p x y ∧ q x y) ↔ (∀ x y, p x y) ∧ ∀ x y, q x y :=
+begin
+  split ; intros h,
+  split ; intros,
+  exact (h x y).1,
+  exact (h x y).2,
+  intros x y,
+   exact ⟨h.1 x y, h.2 x y⟩
+end
+
 .
+open_locale filter
+
+lemma filter.eventually_eq.comp_fun {α β γ : Type*} {f g : β → γ} {l : filter α} {l' : filter β}
+  (h : f =ᶠ[l'] g) {φ : α → β} (hφ : tendsto φ l l') : f ∘ φ =ᶠ[l] g ∘ φ :=
+hφ h
+
+def filter.germ.slice_left {X Y Z : Type*} [topological_space X] [topological_space Y] {x : X} {y : Y}
+  (P : germ (𝓝 (x, y)) Z) : germ (𝓝 x) Z :=
+P.lift_on (λ f, ((λ x', f (x', y)) : germ (𝓝 x) Z))
+  (λ f g hfg, @quotient.sound _ ((𝓝 x).germ_setoid Z) _ _
+     (hfg.comp_fun (continuous.prod.mk_left y).continuous_at))
+
+-- The following version is needed because prod.mk.eta isn't refl.
+def filter.germ.slice_left' {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
+  (P : germ (𝓝 p) Z) : germ (𝓝 p.1) Z :=
+P.lift_on (λ f, ((λ x', f (x', p.2)) : germ (𝓝 p.1) Z))
+  (λ f g hfg, @quotient.sound _ ((𝓝 p.1).germ_setoid Z) _ _
+     (hfg.comp_fun begin
+       rw ← (prod.mk.eta : (p.1, p.2) = p),
+       exact (continuous.prod.mk_left p.2).continuous_at,
+     end))
+
+def filter.germ.slice_right {X Y Z : Type*} [topological_space X] [topological_space Y] {x : X} {y : Y}
+  (P : germ (𝓝 (x, y)) Z) : germ (𝓝 y) Z :=
+P.lift_on (λ f, ((λ y', f (x, y')) : germ (𝓝 y) Z))
+  (λ f g hfg, @quotient.sound _ ((𝓝 y).germ_setoid Z) _ _
+     (hfg.comp_fun (continuous.prod.mk x).continuous_at))
+
+-- The following version is needed because prod.mk.eta isn't refl.
+def filter.germ.slice_right' {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
+  (P : germ (𝓝 p) Z) : germ (𝓝 p.2) Z :=
+P.lift_on (λ f, ((λ y, f (p.1, y)) : germ (𝓝 p.2) Z))
+  (λ f g hfg, @quotient.sound _ ((𝓝 p.2).germ_setoid Z) _ _
+     (hfg.comp_fun begin
+       rw ← (prod.mk.eta : (p.1, p.2) = p),
+       exact (continuous.prod.mk p.1).continuous_at,
+     end))
+
+private def T : ℕ → ℝ := λ n, nat.rec 0 (λ k x, x + 1/(2 : ℝ)^(k+1)) n
+
+private lemma T_lt (n : ℕ) : T n < 1 := sorry
+
+private lemma T_le_succ (n : ℕ) : T n ≤ T (n+1) := sorry
+
+private lemma T_succ_sub (n : ℕ) : T (n+1) - T n = 1/2^(n+1) :=
+begin
+  change T n + _ - T n = _,
+  simp
+end
+
+private def Tinv : ℝ → ℕ := sorry
+
 /- TODO: think whether `∀ x ∈ ⋃ j < i, K j, P₁ x f` should be something more general. -/
 lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
-  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop) (P₂ : Π t : ℝ, Π x : X, germ (𝓝 (t, x)) Y → Prop)
-  (hP₂ : ∀ a b t x (f : ℝ × X → Y), P₂ (a*t+b) x f → P₂ t x (λ p : ℝ × X, f (a*p.1+b, p.2)))
+  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop) (P₂ : Π p : ℝ × X, germ (𝓝 p) Y → Prop)
+  (hP₂ : ∀ a b (p : ℝ × X) (f : ℝ × X → Y), P₂ (a*p.1+b, p.2) f → P₂ p (λ p : ℝ × X, f (a*p.1+b, p.2)))
   (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
-  {f₀ : X → Y} (hf : ∀ x, P₀ x f₀)
+  {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
   (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
     ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x $ F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x $ F 1) ∧
-                     (∀ t x, P₂ t x ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
+                     (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
                      (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1)) :
-  ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ (∀ t x, P₂ t x ↿F) :=
-sorry
+  ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ (∀ p, P₂ p ↿F) :=
+begin
+  let P₀' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right' ∧ P₂ p φ,
+  let P₁' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₁ p.2 φ.slice_right',
+  let P : ℕ → (ℝ × X → Y) → Prop :=
+    λ n f, (∀ p, P₀' p f) ∧ (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁' (T (n+1), x) f) ∧
+           (∀ t ≥ T (n+1), ∀ x, f (t, x) = f (T (n+1), x)) ∧ (∀ x, f (0, x) = f₀ x),
+  let Q : ℕ → (ℝ × X → Y) → (ℝ × X → Y) → Prop :=
+    λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧
+              (∀ x ∉ U (n + 1 : ℕ), ∀ t, f' (t, x) = f (t, x)),
+  obtain ⟨f, hf⟩ : ∃ f : ℕ → ℝ × X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
+  { apply exists_by_induction',
+    sorry { dsimp only [P],
+      rcases ind 0 f₀ init _ with ⟨f', h₀f', h₁f', hf'₂, hf'not, hf'0, hf'1⟩,
+      refine ⟨λ p, f' (2*p.1) p.2, λ p, ⟨_, _⟩, _, _, _⟩,
+      { exact h₀f' (2*p.1) p.2 },
+      { simpa using hP₂ 2 0 p ↿f' (hf'₂ _) },
+      { apply h₁f'.mono,
+        intros x hx,
+        change P₁ x (λ x' : X, f' (2*T (0 + 1)) x'),
+        simpa [T] using hx },
+      { simp only [T, zero_add, one_div, nat.rec_add_one, algebra_map.coe_zero, nat.rec_zero,
+                   real.rpow_one, ge_iff_le, mul_inv_cancel_of_invertible],
+        intros t ht x,
+        rw ← hf'1.on_set (2*t) _,
+        change 1 ≤ 2*t,
+        field_simp at ht,
+        linarith only [ht] },
+      { intros x,
+        rw hf'0.on_set,
+        simp },
+      { simp [index_type.not_lt_zero] } },
+    { rintros n f ⟨h₀'f, h₁f, hinvf, hf0⟩,
+      rcases index_type.lt_or_eq_succ N n with hn | hn,
+      { simp_rw index_type.le_or_lt_succ hn at h₁f,
+        rcases ind (n+1 : ℕ) (λ x, f (T (n+1), x)) (λ x, (h₀'f (T (n+1), x)).1) h₁f with
+          ⟨f', h₀f', h₁f', hf'₂, hf'not, hf'0, hf'1⟩,
+        refine ⟨λ p, f' (2^(n+2)*(p.1 - T (n+1))) p.2, ⟨λ p, ⟨h₀f' (2^(n+2)*(p.1-T (n+1))) p.2, _⟩, _, _, _⟩, _, _⟩,
+        sorry { simpa [mul_sub] using hP₂ (2^(n+2)) (-2^(n+2)*T (n+1)) p ↿f' (hf'₂ _) },
+        sorry { apply h₁f'.mono,
+          intros x hx,
+          change P₁ x (λ x, f' (2^(n+2)*(T (n+2) - T (n+1))) x),
+          simp [T_succ_sub, hx] },
+        {
+          sorry },
+        {
+          sorry },
+        {
+          sorry },
+        {
+          sorry } },
+      sorry { simp only [hn] at h₁f,
+        refine ⟨f, ⟨h₀'f, _, _, hf0⟩, _, _⟩,
+        { apply h₁f.mono,
+          intros x hx,
+          change P₁ x (λ x, f (T (n+2), x)),
+          convert hx using 2,
+          ext x',
+          apply  hinvf,
+          apply T_le_succ },
+        { intros t ht x,
+          rw [hinvf (T $ n+1+1) (T_le_succ _), hinvf _ ((T_le_succ $ n+1).trans ht)] },
+        { simp },
+        { simp } } } },
 
+  sorry/- simp only [P, Q, forall_and_distrib, forall₂_and_distrib] at hf,
+  rcases hf with ⟨⟨⟨h₀f, h₂f⟩, h₁f, hinvf, hf0⟩, hf₁, hf₃⟩,
+  choose W W_in hW using U_fin,
+  choose i₀ hi₀ using λ x, (hW x).bdd_above,
+  have : ∀ x, ∃ n : ℕ, x ∈ K n,
+  { intros x,
+    rcases eq_univ_iff_forall.mp K_cover x with ⟨-, ⟨i, rfl⟩, hi⟩,
+    use indexing.to_nat i,
+    simpa using hi },
+  choose nK hnK using this,
+  let n₀ : X → ℕ := λ x, max (nK x) (indexing.to_nat (i₀ x)),
+  have key : ∀ {x : X} {n}, n ≥ n₀ x → ∀ {q : ℝ × X}, q.2 ∈ W x → f n q = f (n₀ x) q,
+  { intros x₀ n hn,
+    rcases le_iff_exists_add.mp hn with ⟨k, rfl⟩, clear hn,
+    rintros ⟨t, x⟩ (hx : x ∈ _),
+    induction k with k hk,
+    { rw add_zero },
+    rw ← hk, clear hk,
+    let π :  ℕ → index_type N := indexing.from_nat,
+    have : ∀ n, π n < π (n+1) ∨ π n = π (n+1),
+    exact λ n, lt_or_eq_of_le (indexing.mono_from n.le_succ),
+    rcases this (n₀ x₀ + k) with H | H ; clear this,
+    { have ineq : i₀ x₀ < π (n₀ x₀ + k + 1),
+      { suffices : i₀ x₀ ≤ π (n₀ x₀ + k), from lt_of_le_of_lt this H,
+        rw ← indexing.from_to (i₀ x₀),
+        exact indexing.mono_from ((le_max_right _ _).trans le_self_add) },
+      apply hf₃,
+      intros hx',
+      exact lt_irrefl _ (ineq.trans_le $ hi₀ x₀ ⟨x, ⟨hx', hx⟩⟩) },
+    { rw [← nat.add_one, ← add_assoc, hf₁ _ H.symm] } },
+  have key' : ∀ p : ℝ × X, ∀ n ≥ n₀ p.2, f n =ᶠ[𝓝 p] λ q, f (n₀ q.2) q,
+  { rintros ⟨t, x⟩ n hn,
+    apply mem_of_superset (prod_mem_nhds univ_mem $ W_in x) (λ p hp, _),
+    dsimp only [mem_set_of],
+    calc f n p = f (n₀ x) p : key hn hp.2
+    ... = f (max (n₀ x) (n₀ p.2)) p : (key (le_max_left (n₀ x) _) hp.2).symm
+    ... = f (n₀ p.2) p : key (le_max_right _ _) (mem_of_mem_nhds $ W_in _) },
+  have key'' : ∀ p : ℝ × X, ∀ᶠ (n : ℕ) in at_top, f n =ᶠ[𝓝 p] λ q, f (n₀ q.2) q,
+  { exact λ p, (eventually_ge_at_top (n₀ p.2)).mono (λ n hn, key' p n hn) },
+  refine ⟨λ t x, f (n₀ x) (t, x), _, _, _, _⟩,
+  { ext x,
+    rw hf0 },
+  { intros t x,
+    convert h₀f (n₀ x) (t, x) using 1,
+    apply quotient.sound,
+    exact ((key' (t, x) _ le_rfl).comp_fun (continuous.prod.mk t).continuous_at).symm },
+  { intro x,
+    convert (h₁f (n₀ x)).on_set x (mem_Union₂_of_mem (indexing.coe_mono $ le_max_left _ _) $ hnK x) using 1,
+    apply quotient.sound,
+    change (λ x', f (n₀ x') (1, x')) =ᶠ[𝓝 x] λ (x' : X), f (n₀ x) (T (n₀ x + 1), x'),
+    simp_rw ← hinvf (n₀ x) 1 (T_lt _).le,
+    exact ((key' (1, x) _ le_rfl).comp_fun (continuous.prod.mk 1).continuous_at).symm },
+  { rintros p,
+    convert h₂f (n₀ p.2) p using 1,
+    apply quotient.sound,
+    rw show ↿(λ t x, f (n₀ x) (t, x)) = λ p : ℝ × X, f (n₀ p.2) p, by ext ⟨s, y⟩ ; refl,
+    exact (key' p _ le_rfl).symm } -/
+end
+
+#exit
 -- temporary assumptions to avoid stupid case disjunction and instance juggling
 
 variables [nonempty M] [nonempty X] [locally_compact_space M] [locally_compact_space X]
@@ -345,17 +517,6 @@ lemma is_holonomic_germ_mk_formal_sol (F : M → one_jet_bundle IM M IX X) (hsec
 (hsmooth : smooth IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ↿F)  (x : M) :
   is_holonomic_germ (F : germ (𝓝 x) J¹) ↔ (mk_formal_sol F hsec hsol hsmooth).is_holonomic_at x :=
 iff.rfl
-
-lemma forall₂_and_distrib {α β : Sort*} {p q : α → β → Prop} :
-  (∀ x y, p x y ∧ q x y) ↔ (∀ x y, p x y) ∧ ∀ x y, q x y :=
-begin
-  split ; intros h,
-  split ; intros,
-  exact (h x y).1,
-  exact (h x y).2,
-  intros x y,
-   exact ⟨h.1 x y, h.2 x y⟩
-end
 
 lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
@@ -388,13 +549,10 @@ begin
   let P₂ : Π t : ℝ, Π x : M, germ (𝓝 (t, x)) J¹ → Prop := λ t x F,
     F.cont_mdiff_at' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞,
   have hP₂ : ∀ (a b t : ℝ) (x : M) (f : ℝ × M → one_jet_bundle IM M IX X),
-    P₂ (a * t + b) x f → P₂ t x (λ (p : ℝ × M), f (a * p.1 + b, p.2)),
+    P₂ (a * t + b) x f → P₂ t x (λ (p : ℝ × M), f (a * p.1 + b, x₀)),
   { intros a b t x f h,
-    dsimp only [P₂] at h ⊢,
-    change cont_mdiff_at (𝓘(ℝ, ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
-      (f ∘ λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
-    change cont_mdiff_at (𝓘(ℝ, ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
-      f ((λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x)) at h,
+    change cont_mdiff_at _ _ _ (f ∘ λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
+    change cont_mdiff_at _ _ _ f ((λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x)) at h,
     have : cont_mdiff_at (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
     { have h₁ : cont_mdiff_at 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (λ t, a * t + b) t,
       from cont_mdiff_at_iff_cont_diff_at.mpr

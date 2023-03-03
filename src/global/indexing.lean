@@ -29,6 +29,15 @@ class indexing (α : Type*) [linear_order α] :=
 instance indexing.has_coe (α : Type*) [linear_order α] [indexing α] : has_coe ℕ α :=
 ⟨indexing.from_nat⟩
 
+@[simp]
+lemma indexing.coe_to {α : Type*} [linear_order α] [indexing α] (i : α) :
+  ((indexing.to_nat i) : α) = i :=
+indexing.from_to i
+
+lemma indexing.coe_mono {α : Type*} [linear_order α] [indexing α] {i j : ℕ} (h : i ≤ j) :
+  (i : α) ≤ j :=
+indexing.mono_from h
+
 instance indexing.nonempty (α : Type*) [linear_order α] [indexing α] : nonempty α :=
 ⟨indexing.from_nat 0⟩
 
