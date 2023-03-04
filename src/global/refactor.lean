@@ -359,6 +359,15 @@ private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 := sorry
 
 private def Tinv : ℝ → ℕ := sorry
 
+lemma filter.eventually_eq.eventually_eq_ite {X Y : Type*} {l : filter X} {f g : X → Y}
+  {P : X → Prop} [decidable_pred P] (h : f =ᶠ[l] g) :
+(λ x, if P x then f x else g x) =ᶠ[l] f :=
+begin
+  apply h.mono (λ x hx, _),
+  dsimp only,
+  split_ifs ; tauto
+end
+
 /- TODO: think whether `∀ x ∈ ⋃ j < i, K j, P₁ x f` should be something more general. -/
 lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
@@ -376,7 +385,8 @@ begin
   let P₁' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₁ p.2 φ.slice_right',
   let P : ℕ → (ℝ × X → Y) → Prop :=
     λ n f, (∀ p, P₀' p f) ∧ (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁' (T (n+1), x) f) ∧
-           (∀ t ≥ T (n+1), ∀ x, f (t, x) = f (T (n+1), x)) ∧ (∀ x, f (0, x) = f₀ x),
+           (∀ t ≥ T (n+1), ∀ x, f (t, x) = f (T (n+1), x)) ∧ (∀ x, f (0, x) = f₀ x) ∧
+           (∀ᶠ t in 𝓝 (T $ n+1), ∀ x, f (t, x) = f (T (n+1), x)),
   let Q : ℕ → (ℝ × X → Y) → (ℝ × X → Y) → Prop :=
     λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧
               (∀ x ∉ U (n + 1 : ℕ), ∀ t, f' (t, x) = f (t, x)),
@@ -402,7 +412,7 @@ begin
         rw hf'0.on_set,
         simp },
       { simp [index_type.not_lt_zero] } },
-    { rintros n f ⟨h₀'f, h₁f, hinvf, hf0⟩,
+    { rintros n f ⟨h₀'f, h₁f, hinvf, hf0, hfTn1⟩,
       rcases index_type.lt_or_eq_succ N n with hn | hn,
       { simp_rw index_type.le_or_lt_succ hn at h₁f,
         rcases ind (n+1 : ℕ) (λ x, f (T (n+1), x)) (λ x, (h₀'f (T (n+1), x)).1) h₁f with
@@ -415,7 +425,7 @@ begin
           { convert (h₀'f p).1 using 1,
             apply quotient.sound,
             simp [ht] } },
-        /-FIXME-/sorry { rcases lt_trichotomy (T $ n+1) p.1 with ht|ht|ht,
+        { rcases lt_trichotomy (T $ n+1) p.1 with ht|ht|ht,
           sorry { convert hP₂ (2^(n+2)) (-2^(n+2)*T (n+1)) p ↿f' (hf'₂ _) using 1,
             apply quotient.sound,
             have hp : ∀ᶠ (q : ℝ × X) in 𝓝 p, T (n+1) ≤ q.1,
@@ -426,8 +436,41 @@ begin
             apply hp.mono (λ q hq, _),
             simp [if_pos hq, mul_sub, neg_mul],
             refl },
-          { -- Autour de p, les deux branches du if valent λ ⟨t, x⟩, f (T(n+1), x)
-            sorry },
+          sorry { let g : ℝ × X → Y := λ p, f' (2 ^ (n + 2) * (p.fst - T (n + 1))) p.snd,
+            have hg : P₂ p g,
+            { convert hP₂ (2^(n+2)) (-2^(n+2)*T (n+1)) p ↿f' (hf'₂ _) using 2,
+              ext q,
+              dsimp only [g],
+              ring_nf },
+            convert hg using 1,
+            apply quotient.sound,
+            apply filter.eventually_eq.eventually_eq_ite,
+            cases p with t x,
+            have hf : f =ᶠ[𝓝 (t, x)] λ q : ℝ × X, f (T (n + 1), q.2),
+            { change T (n+1) = t at ht,
+              rw ← ht,
+              apply mem_of_superset (prod_mem_nhds hfTn1 univ_mem),
+              rintros ⟨t', x'⟩ ⟨ht', hx'⟩,
+              exact ht' x' },
+            replace hf'0 : ↿f' =ᶠ[𝓝 (0, x)] λ q : ℝ × X, f (T (n + 1), q.2),
+            { have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0),
+              { exact nhds_le_nhds_set right_mem_Iic },
+              apply mem_of_superset (prod_mem_nhds (hf'0.filter_mono this) univ_mem),
+              rintros ⟨t', x'⟩ ⟨ht', hx'⟩,
+              exact (congr_fun ht' x' : _) },
+            have : tendsto (λ (x : ℝ × X), (2 ^ (n + 2) * (x.1 - T (n + 1)), x.2)) (𝓝 (t, x)) (𝓝 (0, x)),
+            { rw [nhds_prod_eq, nhds_prod_eq],
+              have limt : tendsto (λ t, 2 ^ (n + 2) * (t - T (n + 1))) (𝓝 t) (𝓝 0),
+              { rw [show (0 : ℝ) = 2^(n+2)*(T (n+1) - T (n+1)), by simp, ht],
+                apply tendsto.const_mul,
+                exact tendsto_id.sub_const _ },
+              exact limt.prod_map tendsto_id },
+            have := hf'0.comp_fun this,
+            rw show (λ (q : ℝ × X), f (T (n + 1), q.2)) ∘
+              (λ (x : ℝ × X), (2 ^ (n + 2) * (x.1 - T (n + 1)), x.2)) =
+              λ q : ℝ × X, f (T (n + 1), q.2),
+            by { ext, refl } at this,
+            exact this.trans hf.symm },
           sorry { have hp : ∀ᶠ (q : ℝ × X) in 𝓝 p, ¬ T (n+1) ≤ q.1,
             { cases p with t x,
               apply mem_of_superset (prod_mem_nhds (Iio_mem_nhds ht) univ_mem),
@@ -443,9 +486,10 @@ begin
           convert hx using 2,
           ext x',
           simp [if_pos (T_le_succ $ n+1), T_succ_sub] },
-        /-FIXME-/sorry { rintros t ht x,
+        sorry { rintros t ht x,
           dsimp only,
-          simp only [T_succ_sub, one_div, mul_inv_cancel_of_invertible],
+          simp only [if_pos ((T_le_succ $ n+1).trans ht), if_pos (T_le_succ $ n+1),
+                     T_succ_sub, one_div, mul_inv_cancel_of_invertible],
           replace ht : 1 / 2 ^ (n + 2) ≤ t - T (n+1) := le_sub_iff_add_le'.mpr ht,
           rw ← hf'1.on_set _ _,
           exact (div_le_iff' (by positivity)).mp ht },
