@@ -219,14 +219,12 @@ lemma open_smooth_embedding.improve_formal_sol
   {R : rel_mfld IM M IX X}
   (hRample : R.ample)
   (hRopen : is_open R)
-  {A C : set M}
-  (hA : is_closed A)
+  {C : set M}
   (hC : is_closed C)
   {δ : M → ℝ}
   (hδ_pos : ∀ x, 0 < δ x)
   (hδ_cont : continuous δ)
   {F : formal_sol R}
-  (hF₀A : ∀ᶠ x near A, F.is_holonomic_at x)
   (hFφψ : F.bs '' (range φ) ⊆ range ψ)
   (hFC : ∀ᶠ x near C, F.is_holonomic_at x)
   {K₀ K₁ : set EM}
@@ -236,50 +234,27 @@ lemma open_smooth_embedding.improve_formal_sol
   ∃ F' : htpy_formal_sol R,
     (∀ᶠ t near Iic (0 : ℝ), F' t = F) ∧
     (∀ᶠ t near Ici (1 : ℝ), F' t = F' 1) ∧
-    (∀ᶠ x near A, ∀ t, F' t x = F x) ∧
+    (∀ᶠ x near C, ∀ t, F' t x = F x) ∧
     (∀ t, ∀ x ∉ φ '' K₁, F' t x = F x) ∧
     (∀ t x, dist ((F' t).bs x) (F.bs x) < δ x) ∧
-    ∀ᶠ x near A ∪ (C ∪ φ '' K₀), (F' 1).is_holonomic_at x :=
+    ∀ᶠ x near C ∪ φ '' K₀, (F' 1).is_holonomic_at x :=
 begin
-  sorry /- let Rloc : rel_loc EM EX := (R.localize φ ψ).rel_loc,
+  let Rloc : rel_loc EM EX := (R.localize φ ψ).rel_loc,
   have hRloc_op : is_open Rloc,
   { exact  is_open_of_is_open _ (hRopen.preimage $ one_jet_bundle.continuous_transfer _ _) },
   have hRloc_ample : Rloc.is_ample,
   { exact ample_of_ample _ (hRample.localize _ _) },
   -- TODO: try to be consistent about how to state the hFφψ condition
-  replace hFφψ : ∀ (t : ℝ), range ((F t).bs ∘ φ) ⊆ range ψ,
-  { intro t,
-    rw range_comp,
-    exact hFφψ t },
+  replace hFφψ : range (F.bs ∘ φ) ⊆ range ψ,
+  { rw range_comp,
+    exact hFφψ },
   let p : chart_pair IM M IX X :=
   { φ := φ,
     ψ := ψ,
     K₁ := K₁,
     hK₁ := hK₁ },
-  let δ' : M → ℝ := λ x, δ x - dist ((F 1).bs x) ((F 0).bs x),
-  have δ'_pos : ∀ x, 0 < δ' x,
-  { intros x,
-    exact sub_pos.mpr (hFF₀δ 1 x) },
-  have δ'_cont : continuous δ',
-  { exact hδ_cont.sub (continuous.dist (F.smooth_bs.continuous.comp (continuous.prod.mk 1))
-                                       (F.smooth_bs.continuous.comp (continuous.prod.mk 0))) },
-  rcases p.dist_update δ'_pos δ'_cont hFφψ with ⟨τ, τ_pos, hτ⟩,
-  let 𝓕 : Rloc.htpy_formal_sol := F.localize p hFφψ,
-  have h𝓕t0 : ∀ᶠ t near Iic (0 : ℝ), 𝓕 t = 𝓕 0,
-  { apply hFt0.mono,
-    intros t ht,
-    exact htpy_formal_sol.localize_eq_of_eq' _ _ _ ht },
-  have h𝓕t1 : ∀ᶠ t near Ici (1 : ℝ), 𝓕 t = 𝓕 1,
-  { apply hFt1.mono,
-    intros t ht,
-    exact htpy_formal_sol.localize_eq_of_eq' _ _ _ ht },
-  have h𝓕₀A :  ∀ᶠ e near φ ⁻¹' A, (𝓕 0).is_holonomic_at e ∧ ∀ t, 𝓕 t e = 𝓕 0 e,
-  { rw eventually_nhds_set_iff at hF₀A hFA ⊢,
-    intros e he,
-    rw [φ.inducing.nhds_eq_comap, eventually_comap],
-    apply ((hF₀A _ he).and $ hFA _ he).mono,
-    rintros x hx e rfl,
-    exact ⟨F.is_holonomic_localize p hFφψ e 0 hx.1, λ t, F.localize_eq_of_eq p hFφψ (hx.2 t)⟩ },
+  rcases p.dist_update' hδ_pos hδ_cont hFφψ with ⟨τ, τ_pos, hτ⟩,
+  let 𝓕 := F.localize p hFφψ,
   let L : landscape EM :=
   { C := φ ⁻¹' C,
     K₀ := K₀,
@@ -288,27 +263,28 @@ begin
     hK₀ := hK₀,
     hK₁ := hK₁,
     h₀₁ := hK₀K₁ },
-  have h𝓕C : ∀ᶠ (x : EM) near L.C, (𝓕 1).is_holonomic_at x,
-  { rw eventually_nhds_set_iff at hFC ⊢,
+  have h𝓕C : ∀ᶠ (x : EM) near L.C, 𝓕.is_holonomic_at x,
+  sorry { rw eventually_nhds_set_iff at hFC ⊢,
     intros e he,
     rw [φ.inducing.nhds_eq_comap, eventually_comap],
     apply (hFC _ he).mono,
     rintros x hx e rfl,
-    exact F.is_holonomic_localize p hFφψ e 1 hx },
-  rcases 𝓕.improve hRloc_op hRloc_ample L τ_pos (hA.preimage φ.continuous) h𝓕₀A h𝓕C h𝓕t0 h𝓕t1
-    with ⟨𝓕', h𝓕't0, h𝓕't1, h𝓕'relA, h𝓕'relK₁, h𝓕'dist, h𝓕'hol⟩,
-  have hcompat : p.compat F 𝓕', from ⟨hFφψ, h𝓕'relK₁⟩,
-  let F' : htpy_formal_sol R := p.update F 𝓕',
-  have hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F t x,
-  { apply p.update_eq_of_not_mem },
-  have hF't0 : ∀ᶠ (t : ℝ) near Iic 0, F' t = F 0,
-  { apply (h𝓕t0.and $ h𝓕't0.and hFt0).mono,
+    exact F.is_holonomic_localize p hFφψ e hx },
+  rcases 𝓕.improve_htpy' hRloc_op hRloc_ample L τ_pos h𝓕C
+    with ⟨𝓕', h𝓕't0, h𝓕't1, h𝓕'relC, h𝓕'relK₁, h𝓕'dist, h𝓕'hol⟩,
+  have hcompat : p.compat' F 𝓕', sorry, --from ⟨hFφψ, h𝓕'relK₁⟩,
+  let F' : htpy_formal_sol R := p.mk_htpy F 𝓕',
+  have hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F x,
+  {
+    sorry },
+  have hF't0 : ∀ᶠ (t : ℝ) near Iic 0, F' t = F,
+  /-FIXME-/sorry { apply (h𝓕t0.and $ h𝓕't0.and hFt0).mono,
     rintros t ⟨ht, ht', ht''⟩,
     rw p.update_eq_of_forall F 𝓕' (λ _, _),
     exact ht'',
     rw [ht', ← ht], refl },
   have hF't1 : ∀ᶠ (t : ℝ) near Ici 1, F' t = F' 1,
-  { -- TODO: this proofs should use more congruence lemmas
+  /-FIXME-/sorry { -- TODO: this proofs should use more congruence lemmas
     apply (hFt1.and h𝓕't1).mono,
     rintros t ⟨ht, ht'⟩,
     dsimp only [F', chart_pair.update],
@@ -321,54 +297,32 @@ begin
       rw ht' },
     { simp only [hx, open_smooth_embedding.update_htpy_formal_sol_apply_of_not_mem, not_false_iff],
       rw ht } },
-  refine ⟨p.update F 𝓕', hF't0, hF't1, _, _, _, _⟩,
-  { intros t,
-    apply φ.forall_near hK₁ h𝓕'relA,
-    { apply hFA.mono,
-      intros x hx hx' t,
-      rw hF'relK₁ t x hx',
-      exact hx t },
+  sorry /- refine ⟨F', hF't0, hF't1, _, _, _, _⟩,
+  { apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall $ λ x hx t, hF'relK₁ t x hx),
     { intros e he t,
-      rw p.update_eq_of_eq _ _ hcompat,
+      rw p.mk_htpy_eq_of_eq _ _ hcompat,
       exact he t } },
   { exact hF'relK₁ },
-  { have key : ∀ (e ∈ K₁) (t ∈ I), dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) < δ (φ e),
-    { intros e he t ht,
-      rcases h𝓕'dist e t with ⟨t', ht'⟩|h,
-      { convert hFF₀δ t' (φ e) using 2,
-        change ((p.update F 𝓕') t _).1.2 = _,
-        rw p.update_eq_of_eq F 𝓕' hcompat ht',
-        refl, },
-      calc dist ((F' t).bs (φ e)) ((F 0).bs (φ e)) ≤ dist ((F' t).bs (φ e)) ((F 1).bs (φ e)) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : dist_triangle _ _ _
-      ... < δ' (φ e) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : add_lt_add_right (hτ hcompat e he t ht h) _
-      ... = (δ (φ e) - dist ((F 1).bs (φ e)) ((F 0).bs (φ e))) + dist ((F 1).bs (φ e)) ((F 0).bs (φ e)) : rfl
-      ... = δ (φ e) : sub_add_cancel _ _ },
-    intros t x,
+  { intros t x,
     rcases classical.em (x ∈ φ '' K₁) with ⟨e, he, rfl⟩|hx,
     { by_cases ht : t ∈ (Icc 0 1 : set ℝ),
-      { exact key e he t ht },
+      { exact hτ e he t ht (h𝓕'dist e t) },
       { rw [mem_Icc, not_and_distrib, not_le, not_le] at ht,
         cases ht with ht ht,
         { erw [hF't0.on_set t ht.le, dist_self],
           apply hδ_pos },
         { rw [hF't1.on_set t ht.le],
-          exact key e he _ unit_interval.one_mem } } },
-    { convert hFF₀δ t x using 2,
-      change ((p.update F 𝓕') t x).1.2 = _,
-      rw p.update_eq_of_not_mem F 𝓕' hx,
-      refl } },
-  { rw [show L.K₀ = K₀, from rfl, ← preimage_image_eq K₀ φ.injective, ← preimage_union,
-        ← preimage_union] at h𝓕'hol,
-    apply φ.forall_near hK₁ h𝓕'hol, clear h𝓕'hol,
-    rw [nhds_set_union, eventually_sup],
-    split,
-    { apply ((hFA.eventually_nhds_set).and hF₀A).mono,
-      rintros x ⟨a, b⟩ c,
-      apply (p.update_is_holonomic_at_iff' c hcompat).mpr,
-      apply b.congr,
-      apply a.mono,
-      intros x hx,
-      exact (hx 1).symm },
+          exact hτ e he 1 (right_mem_Icc.mpr zero_le_one) (h𝓕'dist e 1) } } },
+    { change dist ((F' t x).1.2) (F.bs x) < δ x,
+      erw [p.mk_htpy_eq_of_not_mem _ _ hx, dist_self],
+      apply hδ_pos } },
+  { have h𝓕'holC : ∀ᶠ (x : EM) near L.C, (𝓕' 1).is_holonomic_at x,
+    { apply (h𝓕'relC.eventually_nhds_set.and h𝓕C).mono,
+      rintros x ⟨hx, hx'⟩,
+      exact jet_sec.is_holonomic_at.congr hx' (hx.mono $ λ x' hx', (hx' 1).symm) },
+    have : ∀ᶠ x near φ ⁻¹' C  ∪ K₀, (𝓕' 1).is_holonomic_at x := h𝓕'holC.union h𝓕'hol,
+    rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at this,
+    apply φ.forall_near hK₁ this,
     { apply filter.eventually.union,
       { apply hFC.mono,
         intros x hx hx',
@@ -384,5 +338,5 @@ begin
         exact (image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁) },
         apply this.mono,
         exact λ a hx hx', (hx' hx).elim } },
-    { exact λ _, (p.update_is_holonomic_at_iff hcompat).mpr } }, -/
+    { exact λ _, (p.mk_htpy_is_holonomic_at_iff hcompat).mpr } }, -/
 end

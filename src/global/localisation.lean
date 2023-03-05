@@ -165,6 +165,15 @@ end
 
 variable (p)
 
+def formal_sol.localize (F : formal_sol R) (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :
+  (R.localize p.φ p.ψ).rel_loc.formal_sol :=
+sorry -- (F.localize' p.φ p.ψ hF).loc
+
+lemma formal_sol.is_holonomic_localize (F : formal_sol R) (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ)
+  (x) (hx : F.is_holonomic_at (p.φ x)) : (F.localize p hF).is_holonomic_at x :=
+sorry /- (one_jet_sec.loc_hol_at_iff _ _).mpr $
+  (is_holonomic_at_localize_iff F.to_one_jet_sec p.φ p.ψ hF x).mpr hx -/
+
 def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
   (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol :=
 (F.localize' p.φ p.ψ hF).loc
@@ -209,6 +218,12 @@ structure chart_pair.compat : Prop :=
 (hF : p.accepts F)
 (hFF : ∀ t, ∀ x ∉ p.K₁, 𝓕 t x = F.localize p hF t x)
 
+structure chart_pair.compat' (F : formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) : Prop :=
+(hF : range (F.bs ∘ p.φ) ⊆ range p.ψ)
+(hFF : ∀ t, ∀ x ∉ p.K₁, 𝓕 t x = F.localize p hF x)
+
+
 def rel_loc.htpy_formal_sol.unloc : htpy_formal_sol (rel_mfld.localize p.φ p.ψ R) :=
 { is_sol' := 𝓕.is_sol,
   ..𝓕.to_htpy_jet_sec.unloc}
@@ -232,6 +247,17 @@ transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
 open_locale classical
 variables [t2_space M]
 
+def chart_pair.mk_htpy (F : formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
+   : htpy_formal_sol R :=
+sorry
+
+lemma chart_pair.mk_htpy_is_holonomic_at_iff {F : formal_sol R}
+  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} (h : p.compat' F 𝓕) {t e} :
+  (p.mk_htpy F 𝓕 t).is_holonomic_at (p.φ e) ↔ (𝓕 t).is_holonomic_at e :=
+sorry
+
+
 def chart_pair.update (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
    : htpy_formal_sol R :=
@@ -253,7 +279,7 @@ begin
     split_ifs with h',
     { obtain ⟨x, rfl⟩ := h',
       rw [one_jet_bundle.embedding_to_fun, p.φ.left_inv],
-      have : (𝓕 t).unloc x = (F t).localize p.φ p.ψ (h.hF t) x,
+      have : (𝓕 t).unloc x = (F t).to_one_jet_sec.localize p.φ p.ψ (h.hF t) x,
       { have : 𝓕 t x = F.localize p h.hF t x,
         { by_cases h'' : x ∈ p.K₁,
           { exact hm h.hF x h'' rfl },
@@ -273,6 +299,11 @@ lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
 chart_pair.update_eq_self p F 𝓕 $
   by { rintro hF x hx rfl, exfalso, exact hm (mem_image_of_mem _ hx) }
 
+lemma chart_pair.mk_htpy_eq_of_not_mem (F : formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t} {m} (hm : m ∉ p.φ '' p.K₁) :
+  p.mk_htpy F 𝓕 t m = F m :=
+sorry
+
 lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat F 𝓕) {t t' x}
   (h : 𝓕 t x = F.localize p h𝓕.1 t' x) :
@@ -285,6 +316,12 @@ begin
   exact h
 end
 
+lemma chart_pair.mk_htpy_eq_of_eq (F : formal_sol R)
+  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat' F 𝓕) {t x}
+  (h : 𝓕 t x = F.localize p h𝓕.1 x) :
+  p.mk_htpy F 𝓕 t (p.φ x) = F (p.φ x) :=
+sorry
+
 lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t}
   (heq : ∀ hF : p.accepts F, 𝓕 t = F.localize p hF t) :
@@ -295,7 +332,7 @@ formal_sol.coe_inj $ λ m, chart_pair.update_eq_self p F 𝓕 $
 lemma chart_pair.update_localize {F : htpy_formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
   (h : p.compat F 𝓕) (rg : range ((p.update F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ) :
-  (p.update F 𝓕 t).localize p.φ p.ψ rg e = (𝓕 t).unloc e :=
+  (p.update F 𝓕 t).to_one_jet_sec.localize p.φ p.ψ rg e = (𝓕 t).unloc e :=
 begin
   simp_rw [chart_pair.update, dif_pos h] at rg ⊢,
   exact p.φ.htpy_Jupdate_localize p.ψ _ _ t rg e
@@ -354,3 +391,11 @@ begin
   rw ← dist_eq_norm at het,
   exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, le_rfl⟩ t ht e he het,
 end
+
+lemma chart_pair.dist_update' [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
+  (hδ_cont : continuous δ) {F : formal_sol R} (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :
+  ∃ η > (0 : ℝ),
+    ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol},
+    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 1 : set ℝ)), ‖(𝓕 t).f e - (F.localize p hF).f e‖ < η →
+    dist (((p.mk_htpy F 𝓕) t).bs $ p.φ e) (F.bs $ p.φ e) < δ (p.φ e) :=
+sorry
