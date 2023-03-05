@@ -648,7 +648,6 @@ begin
     exact (key' p _ le_rfl).symm }
 end
 
-#exit
 -- temporary assumptions to avoid stupid case disjunction and instance juggling
 
 variables [nonempty M] [nonempty X] [locally_compact_space M] [locally_compact_space X]
@@ -702,11 +701,11 @@ begin
     dist (F.value.1.2) (𝓕₀.bs x) < τ x,
 
   let P₁ : Π x : M, germ (𝓝 x) J¹ → Prop := λ x F, is_holonomic_germ F,
-  let P₂ : Π t : ℝ, Π x : M, germ (𝓝 (t, x)) J¹ → Prop := λ t x F,
+  let P₂ : Π p : ℝ × M, germ (𝓝 p) J¹ → Prop := λ p F,
     F.cont_mdiff_at' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞,
-  have hP₂ : ∀ (a b t : ℝ) (x : M) (f : ℝ × M → one_jet_bundle IM M IX X),
-    P₂ (a * t + b) x f → P₂ t x (λ (p : ℝ × M), f (a * p.1 + b, x₀)),
-  { intros a b t x f h,
+  have hP₂ : ∀ (a b : ℝ) (p : ℝ × M) (f : ℝ × M → one_jet_bundle IM M IX X),
+    P₂ (a*p.1+b, p.2) f → P₂ p (λ p : ℝ × M, f (a*p.1+b, p.2)),
+  { rintros a b ⟨t, x⟩ f h,
     change cont_mdiff_at _ _ _ (f ∘ λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
     change cont_mdiff_at _ _ _ f ((λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x)) at h,
     have : cont_mdiff_at (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
@@ -723,7 +722,7 @@ begin
       exact τ_pos x } },
   have ind : ∀ (i : index_type L.N) (f : M → J¹), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
     ∃ F : ℝ → M → J¹, (∀ t, ∀ x, P₀ x $ F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x $ F 1) ∧
-                     (∀ t x, P₂ t x ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
+                     (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
                      (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1),
   { intros i f hf₀ hf₁,
     let K₀ : set EM := closed_ball 0 1,
@@ -782,7 +781,7 @@ begin
       replace hF'K₀ := hF'K₀.2,
       simp_rw [← L.Union_succ'] at hF'K₀,
       exact hF'K₀ },
-    { exact λ t x, F'.smooth (t, x) },
+    { exact F'.smooth },
     { intros t x hx,
       rw hF'K₁ t x ((mem_range_of_mem_image _ _).mt hx),
       simp [F] },
@@ -795,7 +794,6 @@ begin
   rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩,
   simp only [P₀, forall₂_and_distrib] at hFP₀,
   rcases hFP₀ with ⟨hF_sec, hF_sol, hF_smooth, hF_A, hF_dist⟩,
-  replace hFP₂ :  smooth (𝓘(ℝ, ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ↿F := λ ⟨t, x⟩, hFP₂ t x,
   refine ⟨mk_htpy_formal_sol F hF_sec hF_sol hFP₂, _, _, _, _⟩,
   { intros x,
     rw [mk_htpy_formal_sol_apply, hF₀] },
