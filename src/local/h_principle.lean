@@ -589,6 +589,22 @@ begin
   exact ⟨{is_sol := h₆, ..H}, h₁, h₂, h₃, h₄, h₅, h₇⟩
 end
 
+/-- A repackaging of `rel_loc.formal_sol.improve` for convenience. -/
+lemma rel_loc.formal_sol.improve_htpy' (𝓕 : formal_sol R)
+  (h_hol : ∀ᶠ x near L.C, 𝓕.is_holonomic_at x) :
+  ∃ H : htpy_formal_sol R,
+    (∀ᶠ t near Iic 0, H t = 𝓕) ∧
+    (∀ᶠ t near Ici 1, H t = H 1) ∧
+    (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x ) ∧
+    (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+    (∀ x t, ‖(H t).f x - 𝓕.f x‖ < ε)  ∧
+    (∀ᶠ x near L.K₀, (H 1).is_holonomic_at x) :=
+begin
+  rcases 𝓕.improve h_op h_ample L (half_pos ε_pos) h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩,
+  exact ⟨{is_sol := h₆, ..H}, h₁, h₂, h₃, h₄, λ x t, (h₅ x t).trans_lt (half_lt_self ε_pos), h₇⟩
+end
+
+
 /-- This is a version of Lemma `lem:improve_htpy_loc` from the blueprint.
 The blueprint should be updated to match this. -/
 lemma rel_loc.htpy_formal_sol.improve (𝓕 : htpy_formal_sol R) {A : set E} (hA : is_closed A)
