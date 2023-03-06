@@ -565,11 +565,31 @@ begin
   { exact G.smooth.comp (smooth_fst.prod_map smooth_id) },
 end
 
+/-- Update a global homotopy of 1-jet-sections `F` using a local one `G`. -/
+def Jupdate
+  (F : one_jet_sec IM M IN N) (G : htpy_one_jet_sec IX X IY Y)
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) :
+  htpy_one_jet_sec IM M IN N :=
+begin
+  refine family_one_jet_sec.mk' (λ t, JΘ F (G t)) (λ t, (φ.Jupdate_aux ψ F (G t))) _,
+  refine φ.smooth_update _ _ _ (hK.image φ.continuous).is_closed _ _ smooth_snd (λ x, hFG x.1),
+  { exact F.smooth.comp smooth_snd },
+  { exact G.smooth.comp (smooth_fst.prod_map smooth_id) },
+end
+
+
 lemma htpy_Jupdate_apply {F : htpy_one_jet_sec IM M IN N} {G : htpy_one_jet_sec IX X IY Y}
   (hK : is_compact K)
   (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
   φ.htpy_Jupdate ψ F G hK hFG t m = JΘ (F t) (G t) m :=
 by { ext, exact (φ.Jupdate_aux ψ (F t) (G t) m).symm, refl, refl }
+
+lemma Jupdate_apply {F : one_jet_sec IM M IN N} {G : htpy_one_jet_sec IX X IY Y}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
+  φ.Jupdate ψ F G hK hFG t m = JΘ F (G t) m :=
+by { ext, exact (φ.Jupdate_aux ψ F (G t) m).symm, refl, refl }
 
 lemma htpy_Jupdate_bs (F : htpy_one_jet_sec IM M IN N)
   (G : htpy_one_jet_sec IX X IY Y) (t : ℝ)
@@ -580,6 +600,19 @@ begin
   classical,
   ext x,
   change (if x ∈ range φ then φ.transfer ψ (G t (φ.inv_fun x)) else F t x).1.2 =
+    if x ∈ range φ then _ else _,
+  split_ifs ; refl,
+end
+
+lemma Jupdate_bs (F : one_jet_sec IM M IN N)
+  (G : htpy_one_jet_sec IX X IY Y) (t : ℝ)
+  (hK : is_compact K) (hFG : ∀ t, ∀ x ∉ K, F (φ x) = one_jet_bundle.embedding φ ψ (G t x)) :
+  (open_smooth_embedding.Jupdate φ ψ F G hK hFG t).bs =
+  open_smooth_embedding.update φ ψ F.bs (G t).bs :=
+begin
+  classical,
+  ext x,
+  change (if x ∈ range φ then φ.transfer ψ (G t (φ.inv_fun x)) else F x).1.2 =
     if x ∈ range φ then _ else _,
   split_ifs ; refl,
 end
@@ -606,6 +639,28 @@ begin
     simp_rw [continuous_linear_equiv.symm_apply_apply] },
 end
 
+lemma Jupdate_localize {F : one_jet_sec IM M IN N} {G : htpy_one_jet_sec IX X IY Y}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t : ℝ)
+  (rg : range ((φ.Jupdate ψ F G hK hFG t).bs ∘ φ) ⊆ range ψ) (x : X) :
+  (φ.Jupdate ψ F G hK hFG t).localize φ ψ rg x = G t x :=
+begin
+  have foo : ψ.inv_fun ((φ.Jupdate ψ F G hK hFG t).bs (φ x)) = (G t).bs x,
+  { simp_rw [Jupdate_bs, open_smooth_embedding.update_apply_embedding,
+    open_smooth_embedding.left_inv] },
+  ext,
+  refl,
+  { exact foo },
+  { simp_rw [one_jet_sec.snd_eq, one_jet_sec.localize_ϕ],
+    rw [foo],
+    change (ψ.fderiv ((G t).bs x)).symm ((JΘ F (G t) (φ x)).2 (φ.fderiv x x_1)) =
+      ((G t).ϕ x) x_1,
+    rw φ.update_apply_embedding,
+    change (ψ.fderiv ((G t).bs x)).symm (ψ.fderiv ((G t).bs x) $ (G t).ϕ x $
+      (φ.fderiv x).symm $ φ.fderiv x x_1) = ((G t).ϕ x x_1),
+    simp_rw [continuous_linear_equiv.symm_apply_apply] },
+end
+
 /-- Update a global homotopy of formal solutions `F` using a local one `G`. -/
 def update_htpy_formal_sol (F : htpy_formal_sol R)
   (G : htpy_formal_sol (R.localize φ ψ))
@@ -619,11 +674,31 @@ def update_htpy_formal_sol (F : htpy_formal_sol R)
     { exact F.is_sol }
   end }
 
+/-- Update a global formal solutions `F` using a homotopy of local ones `G`. -/
+def update_formal_sol (F : formal_sol R)
+  (G : htpy_formal_sol (R.localize φ ψ))
+  (hK : is_compact K) (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) :
+  htpy_formal_sol R :=
+{ to_family_one_jet_sec := φ.Jupdate ψ F.to_one_jet_sec G.to_family_one_jet_sec hK hFG,
+  is_sol' := λ t x, begin
+    simp_rw [Jupdate_apply, open_smooth_embedding.update, one_jet_bundle.embedding_to_fun],
+    split_ifs,
+    { exact G.is_sol },
+    { exact F.is_sol x }
+  end }
+
 lemma update_htpy_formal_sol_apply {F : htpy_formal_sol R}
   {G : htpy_formal_sol (R.localize φ ψ)}
   (hK : is_compact K)
   (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t x) :
   φ.update_htpy_formal_sol ψ F G hK hFG t x = ⟨⟨x, (JΘ (F t) (G t) x).1.2⟩, (JΘ (F t) (G t) x).2⟩ :=
+rfl
+
+lemma update_formal_sol_apply {F : formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t x) :
+  φ.update_formal_sol ψ F G hK hFG t x = ⟨⟨x, (JΘ F (G t) x).1.2⟩, (JΘ F (G t) x).2⟩ :=
 rfl
 
 lemma update_htpy_formal_sol_bs' {F : htpy_formal_sol R}
@@ -633,6 +708,13 @@ lemma update_htpy_formal_sol_bs' {F : htpy_formal_sol R}
 (φ.update_htpy_formal_sol ψ F G hK hFG t).bs = λ x, (JΘ (F t) (G t) x).1.2 :=
 rfl
 
+lemma update_formal_sol_bs' {F : formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t) :
+(φ.update_formal_sol ψ F G hK hFG t).bs = λ x, (JΘ F (G t) x).1.2 :=
+rfl
+
 lemma update_htpy_formal_sol_bs {F : htpy_formal_sol R}
   {G : htpy_formal_sol (R.localize φ ψ)}
   (hK : is_compact K)
@@ -640,6 +722,22 @@ lemma update_htpy_formal_sol_bs {F : htpy_formal_sol R}
 (φ.update_htpy_formal_sol ψ F G hK hFG t).bs = φ.update ψ (F t).bs (G t).bs :=
 begin
   rw update_htpy_formal_sol_bs',
+  ext x,
+  by_cases hx : x ∈ range φ,
+  { simp only [hx, update_of_mem_range, one_jet_bundle.embedding_to_fun, transfer_fst_snd],
+    refl },
+  { rw [update_of_nmem_range, update_of_nmem_range],
+    refl,
+    exacts [hx, hx] },
+end
+
+lemma update_formal_sol_bs {F : formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K)
+  (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t) :
+(φ.update_formal_sol ψ F G hK hFG t).bs = φ.update ψ F.bs (G t).bs :=
+begin
+  rw update_formal_sol_bs',
   ext x,
   by_cases hx : x ∈ range φ,
   { simp only [hx, update_of_mem_range, one_jet_bundle.embedding_to_fun, transfer_fst_snd],
@@ -684,6 +782,21 @@ begin
 end
 
 @[simp]
+lemma update_formal_sol_apply_of_mem {F : formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K) (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t)
+  {m} (hx : m ∈ range φ) :
+  φ.update_formal_sol ψ F G hK hFG t m = φ.transfer ψ (G t $ φ.inv_fun m) :=
+begin
+  rw [update_formal_sol_apply, φ.update_of_mem_range _ _ _ hx],
+  ext,
+  { change m = φ (φ.inv_fun m),
+    rw φ.right_inv hx },
+  refl,
+  refl
+end
+
+@[simp]
 lemma update_htpy_formal_sol_apply_image {F : htpy_formal_sol R}
   {G : htpy_formal_sol (R.localize φ ψ)}
   (hK : is_compact K) (hFG : ∀ t, ∀ x ∉ K, F t (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t)
@@ -694,6 +807,16 @@ begin
  exact mem_range_self x,
 end
 
+@[simp]
+lemma update_formal_sol_apply_image {F : formal_sol R}
+  {G : htpy_formal_sol (R.localize φ ψ)}
+  (hK : is_compact K) (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (one_jet_bundle.embedding φ ψ) (G t x)) (t)
+  {x} :
+φ.update_formal_sol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) :=
+begin
+ rw [open_smooth_embedding.update_formal_sol_apply_of_mem, φ.left_inv],
+ exact mem_range_self x,
+end
 
 end open_smooth_embedding
 end open_smooth_embedding
