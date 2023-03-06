@@ -347,9 +347,10 @@ private def T : ℕ → ℝ := λ n, nat.rec 0 (λ k x, x + 1/(2 : ℝ)^(k+1)) n
 
 private lemma T_lt (n : ℕ) : T n < 1 := sorry
 
-private lemma T_lt_succ (n : ℕ) : T n < T (n+1) := sorry
+private lemma T_lt_succ (n : ℕ) : T n < T (n+1) :=
+lt_add_of_le_of_pos le_rfl (one_div_pos.mpr (pow_pos zero_lt_two _))
 
-private lemma T_le_succ (n : ℕ) : T n ≤ T (n+1) := sorry
+private lemma T_le_succ (n : ℕ) : T n ≤ T (n+1) := (T_lt_succ n).le
 
 private lemma T_succ_sub (n : ℕ) : T (n+1) - T n = 1/2^(n+1) :=
 begin
@@ -368,7 +369,6 @@ by simp [T]
 
 private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 := sorry
 
-private def Tinv : ℝ → ℕ := sorry
 
 lemma filter.eventually_eq.eventually_eq_ite {X Y : Type*} {l : filter X} {f g : X → Y}
   {P : X → Prop} [decidable_pred P] (h : f =ᶠ[l] g) :
