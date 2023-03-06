@@ -221,7 +221,7 @@ structure chart_pair.compat : Prop :=
 structure chart_pair.compat' (F : formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) : Prop :=
 (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ)
-(hFF : ∀ t, ∀ x ∉ p.K₁, 𝓕 t x = F.localize p hF x)
+(hFF : ∀ x ∉ p.K₁, ∀ t, 𝓕 t x = F.localize p hF x)
 
 
 def rel_loc.htpy_formal_sol.unloc : htpy_formal_sol (rel_mfld.localize p.φ p.ψ R) :=
@@ -250,6 +250,11 @@ variables [t2_space M]
 def chart_pair.mk_htpy (F : formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
    : htpy_formal_sol R :=
+sorry
+
+def chart_pair.mk_htpy_congr (F : formal_sol R)
+  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t t' : ℝ} (h : 𝓕 t = 𝓕 t') :
+  p.mk_htpy F 𝓕 t = p.mk_htpy F 𝓕 t' :=
 sorry
 
 lemma chart_pair.mk_htpy_is_holonomic_at_iff {F : formal_sol R}
@@ -328,6 +333,13 @@ lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
   p.update F 𝓕 t = F t :=
 formal_sol.coe_inj $ λ m, chart_pair.update_eq_self p F 𝓕 $
     by { rintro hF y hy rfl, by rw heq hF }
+
+lemma chart_pair.mk_htpy_eq_of_forall {F : formal_sol R}
+  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} (h𝓕 : p.compat' F 𝓕) {t}
+  (h : 𝓕 t = F.localize p h𝓕.1) :
+  p.mk_htpy F 𝓕 t = F :=
+sorry
+
 
 lemma chart_pair.update_localize {F : htpy_formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
