@@ -224,3 +224,36 @@ begin
   ... = f (max (n₀ x) (n₀ y)) y : (key (le_max_left _ _) hy).symm
   ... = f (n₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
 end
+
+lemma index_type.lt_or_eq_succ (N n : ℕ) :
+  (n : index_type N) < (n+1 : ℕ) ∨ (n : index_type N) = (n+1 : ℕ) :=
+begin
+  rw or_comm,
+  exact eq_or_lt_of_le (indexing.mono_from n.le_succ)
+end
+
+lemma index_type.le_or_lt_succ {N n : ℕ} (hn : (n : index_type N) < (n+1 : ℕ)) (j : index_type N) :
+  j ≤ n ↔ j < (n + 1 : ℕ) :=
+begin
+  cases N, { exact nat.lt_succ_iff.symm, },
+  refine ⟨λ h, lt_of_le_of_lt h hn, λ h, _⟩,
+  clear hn,
+  obtain ⟨j, hj⟩ := j,
+  change _ ≤ indexing.from_nat n,
+  change _ < indexing.from_nat (n + 1) at h,
+  unfold indexing.from_nat at ⊢ h,
+  rcases lt_trichotomy N n with hNn | rfl | hNn,
+  { replace hNn : ¬ (n < N + 1) := by simpa using nat.succ_le_iff.mpr hNn,
+    simp only [hNn, not_false_iff, dif_neg],
+    exact fin.le_last _ },
+  { simpa using nat.lt_succ_iff.mp hj },
+  { simp only [hNn, add_lt_add_iff_right, dif_pos, fin.mk_lt_mk] at h,
+    simpa only [nat.lt.step hNn, dif_pos, fin.mk_le_mk] using nat.lt_succ_iff.mp h }
+end
+
+lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
+tendsto_at_top_at_top.mpr
+  (λ i, ⟨indexing.to_nat i, λ n hn,(indexing.from_to i) ▸ indexing.coe_mono hn⟩)
+
+lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
+nat.cases_on N nat.not_lt_zero (λ n, fin.not_lt_zero) j

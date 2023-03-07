@@ -103,6 +103,19 @@ def is_holonomic (F : one_jet_sec I M I' M') : Prop :=
 
 end one_jet_sec
 
+def is_holonomic_germ {x : M} (φ : germ (𝓝 x) (one_jet_bundle I M I' M')) : Prop :=
+quotient.lift_on' φ (λ F, mfderiv I I' (λ x', (F x').1.2) x  = (F x).2)
+begin
+  letI : setoid (M → one_jet_bundle I M I' M') := (𝓝 x).germ_setoid (one_jet_bundle I M I' M'),
+  have key : ∀ f g, f ≈ g → (λ (F : M → one_jet_bundle I M I' M'), mfderiv I I' (λ (x' : M), (F x').fst.snd) x = (F x).snd) f →
+  (λ (F : M → one_jet_bundle I M I' M'), mfderiv I I' (λ (x' : M), (F x').fst.snd) x = (F x).snd) g,
+  { intros f g hfg hf,
+    have hfg' : (λ x', (f x').1.2) =ᶠ[𝓝 x] (λ x', (g x').1.2),
+      from hfg.fun_comp (λ s, s.1.2),
+    rw [← hfg'.mfderiv_eq, hf, hfg.self_of_nhds] },
+  exact λ f g H, propext ⟨key f g H, key g f H.symm⟩,
+end
+
 /-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/
 def one_jet_ext_sec (f : C^∞⟮I, M; I', M'⟯) : one_jet_sec I M I' M' :=
 ⟨f, mfderiv I I' f, f.smooth.one_jet_ext⟩

@@ -62,6 +62,42 @@ instance (R : rel_mfld I M I' M') :
   has_coe_to_fun (formal_sol R) (λ S, M → one_jet_bundle I M I' M') :=
 ⟨λ F, F.to_one_jet_sec⟩
 
+def mk_formal_sol (F : M → one_jet_bundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
+(hsol : ∀ x, F x ∈ R)
+(hsmooth : smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) F) : formal_sol R :=
+{ bs := λ m, (F m).1.2,
+  ϕ := λ m, (F m).2,
+  smooth' := begin
+    convert hsmooth,
+    ext x,
+    rw hsec,
+    all_goals { refl }
+  end,
+  is_sol' := λ m, begin
+    convert hsol m,
+    refine  one_jet_bundle.ext I M I' M' _ _ _,
+    rw hsec,
+    all_goals { refl }
+    end}
+
+@[simp]
+lemma mk_formal_sol_apply (F : M → one_jet_bundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
+(hsol : ∀ x, F x ∈ R)
+(hsmooth : smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F)  :
+  (mk_formal_sol F hsec hsol hsmooth : M → one_jet_bundle I M I' M') = F :=
+begin
+  ext x ; try { refl },
+  rw hsec,
+  refl
+end
+
+@[simp]
+lemma mk_formal_sol_bs_apply (F : M → one_jet_bundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
+(hsol : ∀ x, F x ∈ R)
+(hsmooth : smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F)  (x : M) :
+  (mk_formal_sol F hsec hsol hsmooth).bs x = (F x).1.2 :=
+rfl
+
 namespace formal_sol
 
 @[simp]
@@ -177,6 +213,35 @@ end family_formal_sol
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 @[reducible] def htpy_formal_sol (R : rel_mfld I M I' M') := family_formal_sol 𝓘(ℝ, ℝ) ℝ R
+
+def mk_htpy_formal_sol (F : ℝ → M → one_jet_bundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
+(hsol : ∀ t x, F t x ∈ R)
+(hsmooth : smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) : htpy_formal_sol R :=
+{ bs := λ t m, (F t m).1.2,
+  ϕ := λ t m, (F t m).2,
+  smooth' := begin
+    convert hsmooth,
+    ext ⟨t, x⟩,
+    exact (hsec t x).symm,
+    all_goals { refl }
+  end,
+  is_sol' := λ t m, begin
+    convert hsol t m,
+    refine  one_jet_bundle.ext I M I' M' _ _ _,
+    rw hsec,
+    all_goals { refl }
+    end}
+
+@[simp]
+lemma mk_htpy_formal_sol_apply (F : ℝ → M → one_jet_bundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
+(hsol : ∀ t x, F t x ∈ R)
+(hsmooth : smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (t : ℝ) :
+  (mk_htpy_formal_sol F hsec hsol hsmooth t : M → one_jet_bundle I M I' M') = F t :=
+begin
+  ext x ; try { refl },
+  rw hsec,
+  refl
+end
 
 /-- The constant homotopy of formal solution associated to a formal solution. -/
 def formal_sol.const_htpy (F : formal_sol R) : htpy_formal_sol R :=
