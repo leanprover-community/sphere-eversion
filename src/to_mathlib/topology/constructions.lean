@@ -1,7 +1,7 @@
 import topology.constructions
 
 open set function filter
-open_locale topological_space filter
+open_locale topology filter
 
 universe u
 variables {ι : Type u} {X Y : Type*} [topological_space X] [topological_space Y]

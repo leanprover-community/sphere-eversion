@@ -24,7 +24,7 @@ We prove
 noncomputable theory
 
 open filter set equiv basic_smooth_vector_bundle_core
-open_locale manifold topological_space
+open_locale manifold topology
 
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]

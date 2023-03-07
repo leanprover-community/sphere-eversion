@@ -3,7 +3,7 @@ import topology.constructions
 
 import to_mathlib.topology.nhds_set
 
-open_locale topological_space
+open_locale topology
 open filter
 
 /-- The value associated to a germ at a point. This is the common value

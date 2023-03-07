@@ -21,7 +21,7 @@ In this file we consider two manifolds `M` and `M'` with models `I` and `I'`
 noncomputable theory
 
 open set function filter charted_space smooth_manifold_with_corners
-open_locale topological_space manifold
+open_locale topology manifold
 
 section general
 

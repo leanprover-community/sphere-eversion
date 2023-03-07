@@ -1,4 +1,4 @@
-import analysis.calculus.specific_functions
+import analysis.calculus.bump_function_inner
 import topology.metric_space.hausdorff_distance
 
 import to_mathlib.topology.misc
@@ -31,7 +31,7 @@ for smooth concatenations anyway.
 noncomputable theory
 
 open set function real filter
-open_locale unit_interval topological_space
+open_locale unit_interval topology
 
 variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]
 variables (F : Type*) [normed_add_comm_group F] [normed_space ℝ F]

@@ -22,7 +22,7 @@ noncomputable theory
 
 open metric finite_dimensional set function rel_loc filter (hiding mem_map) inner_product_space
   submodule linear_map (ker)
-open_locale topological_space real_inner_product_space
+open_locale topology real_inner_product_space
 
 section sphere_eversion
 

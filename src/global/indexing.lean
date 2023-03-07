@@ -61,7 +61,7 @@ instance (n : ℕ) : indexing (fin $ n + 1) :=
     refl
   end }
 
-open_locale topological_space
+open_locale topology
 
 /-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `fin n` otherwise-/
 def index_type (n : ℕ) : Type :=
@@ -96,7 +96,7 @@ begin
   cases @set.finite_or_infinite _ s,
   { refine ⟨λ hh, ⟨h.to_finset.card, _⟩, λ _, h.countable⟩,
     have : 0 < h.to_finset.card,
-    { rw finset.card_pos, exact (set.finite.nonempty_to_finset h).mpr hne},
+    { rw finset.card_pos, exact (set.finite.to_finset_nonempty h).mpr hne},
     simp only [this, index_type_of_zero_lt],
     have e₁ := fintype.equiv_fin h.to_finset,
     rw [fintype.card_coe, h.coe_sort_to_finset] at e₁,

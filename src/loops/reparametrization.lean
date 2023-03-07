@@ -1,4 +1,4 @@
-import analysis.calculus.specific_functions
+import analysis.calculus.bump_function_inner
 import measure_theory.integral.periodic
 import loops.surrounding
 import loops.delta_mollifier
@@ -47,7 +47,7 @@ existence of delta mollifiers, partitions of unity, and the inverse function the
 noncomputable theory
 
 open set function measure_theory interval_integral filter
-open_locale topological_space unit_interval manifold big_operators
+open_locale topology unit_interval manifold big_operators
 
 variables {E F : Type*}
 variables [normed_add_comm_group F] [normed_space ℝ F] [finite_dimensional ℝ F]
@@ -70,7 +70,7 @@ begin
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ x t)],
     refine (tendsto_self_div_add_at_top_nhds_1_nat.comp tendsto_snd).smul _,
-    refine cont_diff_bump_of_inner.convolution_tendsto_right _ _ _ tendsto_const_nhds,
+    refine cont_diff_bump.convolution_tendsto_right _ _ _ tendsto_const_nhds,
     { simp_rw [bump], norm_cast,
       exact ((tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1)).comp
         tendsto_snd },
@@ -338,7 +338,8 @@ begin
     have h : γ.approx_surrounding_points_at x y n ∈ affine_bases ι ℝ F :=
       γ.approx_surrounding_points_at_mem_affine_bases x y hy,
     erw [eval_barycentric_coords_apply_of_mem_bases ι ℝ F (g y) h],
-    simp, },
+    simp only [affine_basis.coords_apply],
+    exact affine_basis.linear_combination_coord_eq_self _ _, },
   { simp_rw mul_smul,
     refine λ i hi, ((continuous.smul _ (γ.continuous y)).const_smul _).interval_integrable 0 1,
     exact delta_mollifier_smooth.continuous, },
@@ -532,9 +533,9 @@ end
 begin
   change ∫ (s : ℝ) in 0..1, γ x (γ.reparametrize x s) = g x,
   have h₁ : ∀ s,
-    s ∈ interval 0 (1 : ℝ) → has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
+    s ∈ uIcc 0 (1 : ℝ) → has_deriv_at (γ.reparametrize x).symm (γ.centering_density x s) s :=
     λ s hs, γ.has_deriv_at_reparametrize_symm x s,
-  have h₂ : continuous_on (λ s, γ.centering_density x s) (interval 0 1) :=
+  have h₂ : continuous_on (λ s, γ.centering_density x s) (uIcc 0 1) :=
     (γ.centering_density_continuous x).continuous_on,
   have h₃ : continuous (λ s, γ x (γ.reparametrize x s)) :=
     (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous),

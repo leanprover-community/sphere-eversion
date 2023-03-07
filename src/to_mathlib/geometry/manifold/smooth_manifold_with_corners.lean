@@ -1,6 +1,6 @@
 import geometry.manifold.smooth_manifold_with_corners
 
-open_locale topological_space
+open_locale topology
 open metric (hiding mem_nhds_iff ball) set
 
 section

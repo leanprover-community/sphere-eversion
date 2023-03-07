@@ -15,7 +15,7 @@ We prove the h-principle for open and ample first order differential relations.
 noncomputable theory
 
 open set filter model_with_corners metric
-open_locale topological_space manifold
+open_locale topology manifold
 
 variables
 {EM : Type*} [normed_add_comm_group EM] [normed_space ℝ EM] [finite_dimensional ℝ EM]

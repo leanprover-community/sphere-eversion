@@ -3,7 +3,7 @@ import topology.path_connected
 import to_mathlib.topology.misc
 
 open set function int topological_space
-open_locale big_operators topological_space topological_space unit_interval
+open_locale big_operators topology unit_interval
 noncomputable theory
 
 variables {X X' Y Z : Type*} [topological_space X]
@@ -32,8 +32,8 @@ def strans (γ γ' : path x x) (t₀ : I) : path x x :=
       Icc.mk_zero, zero_le_one, id.def, zero_div, forall_eq, extend_extends, path.source,
       left_mem_Icc, sub_self]),
     -- TODO: the following are provable by `continuity` but it is too slow
-    exacts [γ.continuous_extend.comp continuous_subtype_coe.div_const,
-      γ'.continuous_extend.comp (continuous_subtype_coe.sub continuous_const).div_const]
+    exacts [γ.continuous_extend.comp (continuous_subtype_coe.div_const _),
+      γ'.continuous_extend.comp ((continuous_subtype_coe.sub continuous_const).div_const _)]
   end,
   source' := by simp only [unit_interval.nonneg', Icc.coe_zero,
     Icc.mk_zero, zero_le_one,

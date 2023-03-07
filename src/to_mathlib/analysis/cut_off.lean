@@ -4,7 +4,7 @@ import topology.metric_space.emetric_paracompact
 import to_mathlib.topology.nhds_set
 
 open set filter
-open_locale manifold topological_space
+open_locale manifold topology
 
 lemma exists_cont_diff_zero_one {E : Type*} [normed_add_comm_group E]
   [normed_space ℝ E] [finite_dimensional ℝ E] {s t : set E} (hs : is_closed s)

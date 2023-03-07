@@ -1,4 +1,5 @@
 import analysis.matrix
+import linear_algebra.affine_space.matrix
 import analysis.normed_space.add_torsor_bases
 
 import to_mathlib.analysis.calculus
@@ -59,12 +60,12 @@ begin
   ext i,
   by_cases h : v ∈ affine_bases ι S P,
   { simp only [eval_barycentric_coords, h, dif_pos, algebra.id.smul_eq_mul, pi.smul_apply,
-      affine_basis.coords_apply, ← b.det_smul_coords_eq_cramer_coords ⟨v, h.1, h.2⟩, smul_smul],
-    convert (one_mul _).symm,
+               affine_basis.coords_apply],
+    erw [← b.det_smul_coords_eq_cramer_coords ⟨v, h.1, h.2⟩ p],
+    simp only [pi.smul_apply, affine_basis.coords_apply, algebra.id.smul_eq_mul],
     have hu := b.is_unit_to_matrix ⟨v, h.1, h.2⟩,
     rw matrix.is_unit_iff_is_unit_det at hu,
-    rw ← ring.inverse_eq_inv,
-    exact ring.inverse_mul_cancel _ hu, },
+    erw [← mul_assoc, ← ring.inverse_eq_inv, ring.inverse_mul_cancel _ hu, one_mul] },
   { simp only [eval_barycentric_coords, h, algebra.id.smul_eq_mul, pi.zero_apply, inv_eq_zero,
       dif_neg, not_false_iff, zero_eq_mul, pi.smul_apply],
     left,

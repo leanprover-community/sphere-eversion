@@ -1,7 +1,7 @@
 import topology.algebra.module.basic
 
 open filter continuous_linear_map function
-open_locale topological_space big_operators filter
+open_locale topology big_operators filter
 
 
 namespace continuous_linear_map

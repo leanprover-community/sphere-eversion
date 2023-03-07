@@ -172,7 +172,7 @@ begin
   { rintro ⟨K, K_pos, H⟩,
     exact H.injective }
 end
-open_locale topological_space nnreal
+open_locale topology nnreal
 
 lemma eventually_nnorm_sub_lt (x₀ : E) {ε : ℝ≥0} {ε_pos : 0 < ε} :
 ∀ᶠ x in 𝓝 x₀, ‖x - x₀‖₊ < ε :=

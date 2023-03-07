@@ -16,7 +16,7 @@ import topology.separation
 Related: `monotonic_sequence_limit_index`
 -/
 
-open_locale topological_space
+open_locale topology
 -- move
 lemma continuous_within_at.congr_nhds {α β} [topological_space α] [topological_space β]
   {f f₁ : α → β} {s : set α} {x : α} (h : continuous_within_at f s x)

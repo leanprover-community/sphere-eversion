@@ -5,7 +5,7 @@ import data.nat.interval
 import to_mathlib.data.set.basic
 import to_mathlib.data.set.finite
 
-open_locale topological_space
+open_locale topology
 open set function
 
 /-- We could generalise and replace `ι × ℝ` with a dependent family of types but it doesn't seem

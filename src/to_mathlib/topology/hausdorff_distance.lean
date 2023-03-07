@@ -1,14 +1,11 @@
 import topology.metric_space.hausdorff_distance
 
 open set metric
-open_locale topological_space
+open_locale topology
 
 variables {α β : Type*} [pseudo_metric_space α] [pseudo_metric_space β]
 
 namespace metric
-
-lemma ball_subset_thickening {x : α} {E : set α} (hx : x ∈ E) (δ : ℝ) : ball x δ ⊆ thickening δ E :=
-by simp_rw [thickening_eq_bUnion_ball, subset_bUnion_of_mem hx]
 
 lemma thickening_ball (x : α) (ε δ : ℝ) : thickening ε (ball x δ) ⊆ ball x (ε + δ) :=
 begin

@@ -16,7 +16,7 @@ near `K`, that agrees with `𝓕₀` near `C` and is everywhere `ε`-close to `�
 noncomputable theory
 
 open metric finite_dimensional set function rel_loc linear_map (ker)
-open_locale topological_space pointwise
+open_locale topology pointwise
 
 section parameter_space
 

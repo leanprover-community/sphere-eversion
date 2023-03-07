@@ -19,7 +19,7 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 noncomputable theory
 
 open set function filter (hiding map_smul) charted_space smooth_manifold_with_corners
-open_locale topological_space manifold
+open_locale topology manifold
 
 section defs
 /-! ## Fundamental definitions -/

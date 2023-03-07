@@ -5,15 +5,15 @@ import algebra.module.ulift
 import to_mathlib.analysis.calculus
 
 open topological_space measure_theory filter first_countable_topology metric set function
-open_locale topological_space filter nnreal big_operators interval
+open_locale topology filter nnreal big_operators interval
 
-lemma ae_strongly_measurable_interval_oc_iff {α β : Type*} [measurable_space α] [linear_order α]
+lemma ae_strongly_measurable_uIoc_iff {α β : Type*} [measurable_space α] [linear_order α]
   [topological_space β] [metrizable_space β] {μ : measure α}
   {f : α → β} {a b : α} :
   (ae_strongly_measurable f $ μ.restrict $ Ι a b) ↔
     (ae_strongly_measurable f $ μ.restrict $ Ioc a b)
       ∧ (ae_strongly_measurable f $ μ.restrict $ Ioc b a) :=
-by rw [interval_oc_eq_union, ae_strongly_measurable_union_iff]
+by rw [uIoc_eq_union, ae_strongly_measurable_union_iff]
 
 section
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [complete_space E]
@@ -34,8 +34,8 @@ lemma has_fderiv_at_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
   (h_diff : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, has_fderiv_at (λ x, F x t) (F' x t) x) :
   has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ :=
 begin
-  erw ae_restrict_interval_oc_iff at h_diff h_bound,
-  simp_rw [ae_strongly_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
+  erw ae_restrict_uIoc_iff at h_diff h_bound,
+  simp_rw [ae_strongly_measurable_uIoc_iff, eventually_and] at hF_meas hF'_meas,
   exact (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos
           hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1 bound_integrable.1 h_diff.1).sub
         (has_fderiv_at_integral_of_dominated_of_fderiv_le ε_pos
@@ -57,8 +57,8 @@ lemma has_fderiv_at_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
   interval_integrable F' ν a b ∧
   has_fderiv_at (λ x, ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' t ∂ν) x₀ :=
 begin
-  simp_rw [ae_strongly_measurable_interval_oc_iff, eventually_and] at hF_meas hF'_meas,
-  rw ae_restrict_interval_oc_iff at h_lip h_diff,
+  simp_rw [ae_strongly_measurable_uIoc_iff, eventually_and] at hF_meas hF'_meas,
+  rw ae_restrict_uIoc_iff at h_lip h_diff,
   have H₁ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1
     h_lip.1 bound_integrable.1 h_diff.1,
   have H₂ := has_fderiv_at_integral_of_dominated_loc_of_lip ε_pos hF_meas.2 hF_int.2 hF'_meas.2
@@ -120,8 +120,8 @@ lemma continuous_at_parametric_primitive_of_dominated
   continuous_at (λ p : X × ℝ, ∫ (t : ℝ) in a₀..p.2, F p.1 t ∂μ) (x₀, b₀) :=
 begin
   have hsub : ∀ {a₀ b₀}, a₀ ∈ Ioo a b → b₀ ∈ Ioo a b → Ι a₀ b₀ ⊆ Ι a b :=
-    λ a₀ b₀ ha₀ hb₀, (ord_connected_Ioo.interval_oc_subset ha₀ hb₀).trans
-      (Ioo_subset_Ioc_self.trans Ioc_subset_interval_oc),
+    λ a₀ b₀ ha₀ hb₀, (ord_connected_Ioo.uIoc_subset ha₀ hb₀).trans
+      (Ioo_subset_Ioc_self.trans Ioc_subset_uIoc),
   have Ioo_nhds : Ioo a b ∈ 𝓝 b₀ := Ioo_mem_nhds hb₀.1 hb₀.2,
   have Icc_nhds : Icc a b ∈ 𝓝 b₀ := Icc_mem_nhds hb₀.1 hb₀.2,
   have hx₀ : ∀ᵐ (t : ℝ) ∂μ.restrict (Ι a b), ‖F x₀ t‖ ≤ bound t := h_bound.self_of_nhds,
@@ -212,10 +212,10 @@ begin
     (measure_singleton b₀),
   { exact λ x, (hF.comp (continuous.prod.mk x)).ae_strongly_measurable },
   { apply eventually.mono U_nhds (λ x (x_in : x ∈ U), _),
-    simp_rw [ae_restrict_iff' measurable_set_interval_oc],
+    simp_rw [ae_restrict_iff' measurable_set_uIoc],
     refine eventually_of_forall (λ t t_in, _),
     refine hM (mem_image_of_mem _ $ mk_mem_prod x_in _),
-    rw interval_oc_of_le (a_lt.1.trans lt_b.1).le at t_in,
+    rw uIoc_of_le (a_lt.1.trans lt_b.1).le at t_in,
     exact mem_Icc_of_Ioc t_in },
   { apply interval_integrable_const },
   { apply ae_of_all,
@@ -288,14 +288,14 @@ begin
   have Ioo_nhds : Ioo a₀ b₀ ∈ 𝓝 (s x₀) := Ioo_mem_nhds hsx₀.1 hsx₀.2,
   have bound_int : ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ → interval_integrable bound volume s u,
   { intros s u hs hu,
-    exact (bound_integrable.mono_set $ ord_connected_Ioo.interval_subset hs hu).interval_integrable },
+    exact (bound_integrable.mono_set $ ord_connected_Ioo.uIcc_subset hs hu).interval_integrable },
   have mem_nhds : ball x₀ ε ∩ (s ⁻¹' Ioo a₀ b₀) ∈ 𝓝 x₀ :=
   filter.inter_mem (ball_mem_nhds x₀ ε_pos) (s_diff.continuous_at.preimage_mem_nhds Ioo_nhds),
   have x₀_in : x₀ ∈ ball x₀ ε := mem_ball_self ε_pos,
   have hF_meas_ball : ∀ {x}, x ∈ ball x₀ ε → ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
     ae_strongly_measurable (F x) (volume.restrict $ Ι s u),
   { intros x hx s u hs hu,
-    exact (hF_meas x hx).mono_set (ord_connected_Ioo.interval_oc_subset hs hu) },
+    exact (hF_meas x hx).mono_set (ord_connected_Ioo.uIoc_subset hs hu) },
   have hF_int_ball : ∀ x ∈ ball x₀ ε, ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
     interval_integrable (F x) volume s u,
   { intros x hx s u hs hu,
@@ -306,13 +306,13 @@ begin
       rw norm_sub_rev,
       rw lipschitz_on_with_iff_norm_sub_le at ht,
       simpa [bound_nonneg t] using ht hx x₀_in },
-    exact (this.mono_set $ ord_connected_Ioo.interval_subset hs hu).interval_integrable },
+    exact (this.mono_set $ ord_connected_Ioo.uIcc_subset hs hu).interval_integrable },
   split,
   { apply (bound_int ha hsx₀).mono_fun' hF'_meas _,
     replace h_lipsch : ∀ᵐ t ∂volume.restrict (Ι a (s x₀)),
       lipschitz_on_with (nnabs (bound t)) (λ (x : H), F x t) (ball x₀ ε),
       from ae_restrict_of_ae_restrict_of_subset
-        (ord_connected_Ioo.interval_oc_subset ha hsx₀) h_lipsch,
+        (ord_connected_Ioo.uIoc_subset ha hsx₀) h_lipsch,
     filter_upwards [h_lipsch, h_diff],
     intros t ht_lip ht_diff,
     rw show bound t = nnabs (bound t), by simp [bound_nonneg t],
@@ -322,7 +322,7 @@ begin
         from eventually.mono (ball_mem_nhds x₀ ε_pos) (λ x hx, hF_meas_ball hx ha hsx₀),
       replace hF_int : interval_integrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀,
       exact (has_fderiv_at_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
-        (ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.interval_oc_subset ha hsx₀) h_lipsch)
+        (ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.uIoc_subset ha hsx₀) h_lipsch)
         (bound_int ha hsx₀) h_diff).2 },
     have D₂ : has_fderiv_at (λ x, φ x₀ (s x)) ((to_span_singleton ℝ (F x₀ (s x₀))).comp s') x₀,
     { refine has_fderiv_at.comp _ _ s_diff,
@@ -354,7 +354,7 @@ begin
           rw [← abs_of_nonneg (norm_nonneg $ x - x₀), ← abs_mul,
             ← interval_integral.integral_mul_const],
           apply interval_integral.norm_integral_le_of_norm_le _ ((bound_int hsx₀ hsx).mul_const _),
-          apply ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.interval_oc_subset hsx₀ hsx),
+          apply ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.uIoc_subset hsx₀ hsx),
           apply h_lipsch.mono,
           intros t ht,
           rw lipschitz_on_with_iff_norm_sub_le at ht,
@@ -433,7 +433,7 @@ begin
   have cont_x : ∀ x, continuous (F x),
     from λ x, hF.continuous.comp (continuous.prod.mk x),
   have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀),
-    from λ x, (cont_x x).locally_integrable is_compact_Icc,
+    from λ x, (cont_x x).continuous_on.integrable_on_Icc,
   have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀),
     from λ x, (int_Icc x).mono_set Ioo_subset_Icc_self,
   apply has_fderiv_at_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀

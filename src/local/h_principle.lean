@@ -58,7 +58,7 @@ need to access its components only once.
 
 noncomputable theory
 
-open_locale unit_interval classical filter topological_space
+open_locale unit_interval classical filter topology
 open filter set rel_loc linear_map (ker)
 
 variables (E : Type*) [normed_add_comm_group E] [normed_space ℝ E]

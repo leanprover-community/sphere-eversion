@@ -4,7 +4,7 @@ import local.h_principle
 noncomputable theory
 
 open set filter model_with_corners metric
-open_locale topological_space manifold
+open_locale topology manifold
 
 set_option trace.filter_inst_type true
 

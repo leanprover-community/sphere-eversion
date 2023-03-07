@@ -36,7 +36,7 @@ noncomputable theory
 
 open set function finite_dimensional asymptotics filter topological_space int measure_theory
      continuous_linear_map
-open_locale topological_space unit_interval
+open_locale topology unit_interval
 
 
 variables

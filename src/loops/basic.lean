@@ -17,7 +17,7 @@ import to_mathlib.equivariant
 -/
 
 open set function finite_dimensional int topological_space
-open_locale big_operators topological_space topological_space unit_interval
+open_locale big_operators topology unit_interval
 noncomputable theory
 
 variables {K X X' Y Z : Type*}

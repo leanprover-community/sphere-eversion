@@ -2,7 +2,7 @@ import analysis.inner_product_space.projection
 
 noncomputable theory
 
-open_locale real_inner_product_space topological_space
+open_locale real_inner_product_space topology
 open submodule function set filter
 
 section general_stuff

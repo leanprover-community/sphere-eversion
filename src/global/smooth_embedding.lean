@@ -16,7 +16,7 @@ set_option trace.filter_inst_type true
 noncomputable theory
 
 open set equiv
-open_locale manifold topological_space
+open_locale manifold topology
 
 section general
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]

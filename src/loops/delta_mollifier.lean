@@ -1,6 +1,6 @@
 import measure_theory.integral.periodic
 import measure_theory.group.integration
-import analysis.calculus.specific_functions
+import analysis.calculus.bump_function_inner
 import analysis.convolution
 
 import to_mathlib.data.real_basic
@@ -31,7 +31,7 @@ convolutions.
 
 noncomputable theory
 open set function measure_theory.measure_space continuous_linear_map filter
-open_locale topological_space big_operators filter convolution
+open_locale topology big_operators filter convolution
 
 
 
@@ -48,7 +48,7 @@ In this section we construct `bump (n : ℕ)`, a bump function with support in
 /-- `bump n` is a bump function on `ℝ` which has support `Ioo (-(1/(n+2))) (1/(n+2))`
 and equals one on `Icc (-(1/(n+3))) (1/(n+3))`.
 -/
-def bump (n : ℕ) : cont_diff_bump_of_inner (0 : ℝ) :=
+def bump (n : ℕ) : cont_diff_bump (0 : ℝ) :=
 { r := 1/(n+3),
   R := 1/(n+2),
   r_pos := begin
@@ -113,7 +113,7 @@ end
 lemma periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 ≤ periodize f t :=
 begin
   unfold periodize,
-  cases (finite_or_infinite : (support (λ i : ℤ, f (t+i))).finite ∨ _) with H H,
+  cases (support (λ i : ℤ, f (t+i))).finite_or_infinite with H H,
   { rw [finsum_eq_sum _ H],
     apply finset.sum_nonneg,
     exact λ i hi, h _ },
@@ -174,8 +174,8 @@ lemma integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a 
   ∫ t in a..a+1, periodize f t = ∫ t in a..a+1, f t :=
 begin
   apply interval_integral.integral_congr_ae,
-  have : ∀ᵐ (x : ℝ), x ∈ interval_oc a (a + 1) → x ∈ Ioo a (a+1),
-  { rw interval_oc_of_le (le_add_of_nonneg_right (zero_le_one : (0 :ℝ) ≤ 1)),
+  have : ∀ᵐ (x : ℝ), x ∈ uIoc a (a + 1) → x ∈ Ioo a (a+1),
+  { rw uIoc_of_le (le_add_of_nonneg_right (zero_le_one : (0 :ℝ) ≤ 1)),
     have : ∀ᵐ x : ℝ, x ≠ a + 1,
     { rw ae_iff,
       simp },

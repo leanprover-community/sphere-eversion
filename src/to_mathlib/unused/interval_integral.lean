@@ -4,7 +4,7 @@ import measure_theory.integral.periodic
 noncomputable theory
 
 open topological_space measure_theory filter first_countable_topology metric set function
-open_locale topological_space filter nnreal big_operators interval
+open_locale topology filter nnreal big_operators interval
 
 section
 
@@ -55,7 +55,7 @@ lemma integral_mono_of_le
   (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) :
   ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ :=
 begin
-  rw interval_oc_of_le hab at hfg,
+  rw uIoc_of_le hab at hfg,
   let H := hfg.filter_mono (ae_mono le_rfl),
   simpa only [integral_of_le hab] using set_integral_mono_ae_restrict hf.1 hg.1 H
 end
@@ -83,12 +83,12 @@ lemma integral_antimono_of_le
 begin
   cases hab.eq_or_lt with hab hab,
   { simp [hab] },
-  { rw interval_oc_of_lt hab at hfg,
+  { rw uIoc_of_lt hab at hfg,
     rw integral_symm b a,
     rw integral_symm b a,
     apply neg_le_neg,
     apply integral_mono_of_le hab.le hf.symm hg.symm,
-    rwa [interval_oc_swap, interval_oc_of_lt hab] }
+    rwa [uIoc_swap, uIoc_of_lt hab] }
 end
 
 lemma integral_antimono_of_le_of_nonneg
@@ -111,7 +111,7 @@ open interval_integral
 lemma norm_interval_integral_eq (f : ℝ → E) (a b : ℝ) (μ : measure ℝ) :
   ‖∫ x in a..b, f x ∂μ‖ = ‖∫ x in Ι a b, f x ∂μ‖ :=
 begin
-  simp_rw [interval_integral_eq_integral_interval_oc, norm_smul],
+  simp_rw [interval_integral_eq_integral_uIoc, norm_smul],
   split_ifs; simp only [norm_neg, norm_one, one_mul],
 end
 end

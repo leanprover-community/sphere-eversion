@@ -6,12 +6,12 @@ import analysis.normed_space.finite_dimension
 import topology.algebra.order.floor
 import topology.shrinking_lemma
 import topology.metric_space.emetric_paracompact
-import analysis.convex.topology
+import analysis.convex.normed
 
 noncomputable theory
 
 open set function filter topological_space
-open_locale unit_interval topological_space uniformity filter classical
+open_locale unit_interval topology uniformity filter classical
 
 section to_specific_limits
 

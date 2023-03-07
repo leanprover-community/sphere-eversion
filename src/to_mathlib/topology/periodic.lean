@@ -25,7 +25,7 @@ In the first part, generalize many lemmas to any period and add to algebra/perio
 noncomputable theory
 
 open set function  filter topological_space int
-open_locale topological_space
+open_locale topology
 
 
 section one_periodic

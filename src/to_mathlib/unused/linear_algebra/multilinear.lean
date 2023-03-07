@@ -1,4 +1,4 @@
-import analysis.calculus.specific_functions
+import analysis.calculus.bump_function_inner
 
 /-
 Multilinear map stuff that was meant as preliminaries for smooth functions gluing.

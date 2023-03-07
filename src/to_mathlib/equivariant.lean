@@ -5,7 +5,7 @@ import to_mathlib.topology.misc
 noncomputable theory
 
 open set function finite_dimensional prod int
-open_locale topological_space unit_interval
+open_locale topology unit_interval
 
 /-- Equivariant maps from `ℝ` to itself are functions `f : ℝ → ℝ` with `f (t + 1) = f t + 1`. -/
 structure equivariant_map :=

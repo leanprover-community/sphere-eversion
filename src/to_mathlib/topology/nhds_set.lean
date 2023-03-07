@@ -3,7 +3,7 @@ import topology.nhds_set
 variables {α : Type*} [topological_space α] {s t s₁ s₂ t₁ t₂ : set α} {x : α}
 
 open filter
-open_locale filter topological_space
+open_locale filter topology
 
 lemma is_open.nhds_set_eq_principal {s : set α} (h : is_open s) : 𝓝ˢ s = 𝓟 s :=
 begin

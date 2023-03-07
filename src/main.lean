@@ -1,6 +1,6 @@
 import global.immersion
 open metric finite_dimensional set model_with_corners
-open_locale manifold topological_space
+open_locale manifold topology
 
 
 /-! # The sphere eversion project

@@ -33,7 +33,7 @@ The key results are:
 -/
 
 open set function finite_dimensional int prod function path filter topological_space
-open_locale classical topological_space unit_interval big_operators
+open_locale classical topology unit_interval big_operators
 
 namespace is_path_connected
 -- we redo `exists_path_through_family` to use `def`s
@@ -148,9 +148,9 @@ begin
       indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (fintype.card_fin _),
     refine ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩,
     let basis : affine_basis ι ℝ F := ⟨p, indep, h_tot⟩,
-    rw basis.interior_convex_hull,
+    erw basis.interior_convex_hull,
     intros i,
-    rw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
+    erw [← finset.affine_combination_eq_linear_combination _ _ _ w_sum,
       basis.coord_apply_combination_of_mem (finset.mem_univ i) w_sum],
     exact w_pos i, },
   { rintros ⟨b, h₀, h₁, h₂, h₃⟩,
@@ -167,10 +167,10 @@ begin
     replace h₁ : affine_independent ℝ p :=
       h₁.comp_embedding (fintype.equiv_fin_of_card_eq hb).symm.to_embedding,
     let basis : affine_basis ι ℝ F := ⟨_, h₁, h₂⟩,
-    rw [basis.interior_convex_hull, mem_set_of_eq] at h₃,
+    erw [basis.interior_convex_hull, mem_set_of_eq] at h₃,
     refine ⟨p, λ i, basis.coord i f, ⟨h₁, h₃, _, _⟩, λ i, h₀ (mem_range_self i)⟩,
     { exact basis.sum_coord_apply_eq_one f, },
-    { rw [← finset.univ.affine_combination_eq_linear_combination p _
+    { erw [← finset.univ.affine_combination_eq_linear_combination p _
         (basis.sum_coord_apply_eq_one f),
         basis.affine_combination_coord_eq_self] } }
 end
@@ -235,7 +235,7 @@ begin
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩, (smooth_barycentric ι ℝ F hι).mono hU₁⟩, _, _, _⟩,
   { simpa using hyq', },
   { simp [hq], },
-  { simp [hq, affine_basis.linear_combination_coord_eq_self _ y], },
+  { simp [hq], exact affine_basis.linear_combination_coord_eq_self _ y, },
 end
 
 lemma smooth_surrounding_pts [finite_dimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
@@ -931,7 +931,7 @@ begin
   obtain ⟨V₀, hV₀, hKV₀, hVU₀, hcV₀⟩ := exists_open_between_and_is_compact_closure hK₀ hU₀ hKU₀,
   let L₁ := K₁ \ U₀,
   have hL₁ : is_compact L₁ := hK₁.diff hU₀,
-  have hV₀L₁ : disjoint (closure V₀) L₁ := disjoint_diff.mono hVU₀ subset.rfl,
+  have hV₀L₁ : disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ subset.rfl,
   obtain ⟨V₂, hV₂, hLV₂, h2V₂, hcV₂⟩ :=
   exists_open_between_and_is_compact_closure hL₁
     (hcV₀.is_closed.is_open_compl.inter hU₁)

@@ -8,7 +8,7 @@ import to_mathlib.analysis.normed_space.operator_norm
 
 noncomputable theory
 
-open_locale topological_space filter
+open_locale topology filter
 open function
 
 section

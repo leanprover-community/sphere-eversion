@@ -6,7 +6,7 @@ noncomputable theory
 
 open set function finite_dimensional prod int topological_space metric filter
 open measure_theory measure_theory.measure real
-open_locale topological_space unit_interval
+open_locale topology unit_interval
 
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
           {F : Type*} [normed_add_comm_group F]

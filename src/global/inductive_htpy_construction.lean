@@ -11,7 +11,7 @@ import global.indexing
 noncomputable theory
 
 open set filter
-open_locale topological_space
+open_locale topology
 
 private def T : ℕ → ℝ := λ n, nat.rec 0 (λ k x, x + 1/(2 : ℝ)^(k+1)) n
 

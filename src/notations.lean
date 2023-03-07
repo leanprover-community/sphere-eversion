@@ -1,7 +1,7 @@
 import analysis.calculus.cont_diff
 import lint
 
-open_locale topological_space
+open_locale topology
 
 notation `𝒞` := cont_diff ℝ
 notation `∞` := (⊤ : ℕ∞)

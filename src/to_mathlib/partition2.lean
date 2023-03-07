@@ -4,7 +4,7 @@ import to_mathlib.geometry.manifold.misc_manifold
 
 noncomputable theory
 
-open_locale topological_space manifold big_operators
+open_locale topology manifold big_operators
 open set function
 
 -- See: https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/Typeclass.20resolution.20under.20binders/near/281296989

@@ -39,7 +39,7 @@ set.image_inter_subset _ _ _
 
 lemma submodule.map_inf {f : M →ₛₗ[σ₁₂] M₂} (h : injective f) (p q : submodule R M) :
   map f (p ⊓ q) = map f p ⊓ map f q :=
-set_like.coe_injective (set.image_inter h).symm
+set_like.coe_injective (set.image_inter h)
 
 lemma linear_map.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (hpq : p ⊓ q = ⊥) (hpq' : p ⊔ q = ⊤) :
   injective f ↔ (disjoint p f.ker ∧ disjoint q f.ker ∧ disjoint (map f p) (map f q)) :=

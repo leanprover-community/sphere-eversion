@@ -1,6 +1,6 @@
 import topology.order.basic
 
-open_locale topological_space
+open_locale topology
 open filter set
 
 variables {α : Type*}  [linear_order α] [no_max_order α] [no_min_order α]

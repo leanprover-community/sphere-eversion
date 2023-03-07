@@ -4,7 +4,7 @@ noncomputable theory
 
 open set function filter (hiding map_smul) charted_space smooth_manifold_with_corners
   linear_map (ker)
-open_locale topological_space manifold pointwise
+open_locale topology manifold pointwise
 
 section parameter_space
 /-! ## Fundamental definitions -/
