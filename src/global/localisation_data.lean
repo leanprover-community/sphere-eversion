@@ -36,30 +36,10 @@ structure localisation_data (f : M → M') :=
 namespace localisation_data
 
 variables {f : M → M'} {I I'} (ld : localisation_data I I' f)
-
-def index (n : ℕ) : index_type ld.N := index_from_nat ld.N n
-
 abbreviation ψj := ld.ψ ∘ ld.j
 
 /-- The type indexing the source charts of the given localisation data. -/
-@[derive has_zero] def ι (L : localisation_data I I' f) := index_type L.N
-
-lemma rg_subset_rg (i : ld.ι) : range (f ∘ (ld.φ i)) ⊆ range (ld.ψj i) :=
-((ld.h₃ i).trans $ image_subset_range _ _)
-
-lemma is_closed_Union [t2_space M] {K : set E} (hK : is_compact K) (n : ℕ) :
-  is_closed (⋃ i ≤ ld.index n, (ld.φ i) '' K) :=
-show is_closed (⋃ i ∈ Iic (ld.index n), (ld.φ i) '' K), from
-is_closed_bUnion (finite_Iic _) (λ i hi, (hK.image $ (ld.φ i).continuous).is_closed)
-
-lemma Union_le_zero {β : Type*} (s : ld.ι → set β) : (⋃ i ≤ ld.index 0, s i) = s 0 :=
-by simp_rw [← mem_Iic, localisation_data.index, index_from_nat_zero, index_type.Iic_zero,
-    bUnion_singleton]
-
-lemma Union_succ {β : Type*} (s : ld.ι → set β) (n : ℕ) :
-  (⋃ i ≤ ld.index (n + 1), s i) = (⋃ i ≤ ld.index n, s i) ∪ s (ld.index $ n+1) :=
-by simp_rw [← mem_Iic, localisation_data.index, index_from_nat_succ, order.Iic_succ, bUnion_insert,
-    union_comm]
+def ι (L : localisation_data I I' f) := index_type L.N
 
 lemma Union_succ' {β : Type*} (s : ld.ι → set β) (i : index_type ld.N) :
   (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i :=
@@ -69,18 +49,6 @@ begin
   refl
 end
 open filter
-
-lemma eventually_mem_Union (x : M) :
-  ∀ᶠ (n : ℕ) in at_top, x ∈ ⋃ i ≤ (n : index_type ld.N), (ld.φ i) '' ball (0 : E) 1 :=
-begin
-  rw [eventually_at_top],
-  rcases (mem_top.mpr ld.h₁ x) with ⟨-, ⟨i, rfl⟩, hi : x ∈ (ld.φ i) '' metric.ball 0 1⟩,
-  refine ⟨indexing.to_nat i, λ n hn, _⟩,
-  have : i ≤ n,
-  { rw ← indexing.from_to i,
-    exact indexing.mono_from hn },
-  exact mem_bUnion this hi
-end
 end localisation_data
 
 end

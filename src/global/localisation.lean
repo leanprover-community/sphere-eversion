@@ -64,23 +64,6 @@ lemma is_open_of_is_open (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : is
   is_open R.rel_loc :=
 (homeomorph.is_open_preimage _).mpr $ (homeomorph.is_open_preimage _).mpr hR
 
-def htpy_formal_sol.loc {R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E'} (F : htpy_formal_sol R) :
-  R.rel_loc.htpy_formal_sol :=
-{ f := F.bs,
-  f_diff := begin
-    rw [← cont_mdiff_iff_cont_diff, ← charted_space_self_prod, model_with_corners_self_prod],
-    exact F.smooth_bs,
-  end,
-  φ := F.ϕ,
-  φ_diff := begin
-    rw [cont_diff_iff_cont_diff_at],
-    intro x,
-    have : smooth_at _ _ _ _ := (smooth_at_one_jet_bundle.mp (F.smooth x)).2.2,
-    simp_rw [in_coordinates, in_coordinates'_tangent_bundle_core_model_space] at this,
-    rwa [← cont_mdiff_at_iff_cont_diff_at, ← charted_space_self_prod, model_with_corners_self_prod]
-  end,
-  is_sol := λ t x, F.is_sol }
-
 end loc
 
 section unloc
@@ -151,23 +134,11 @@ structure chart_pair :=
 
 variables  (p : chart_pair I M I' M') {I M I' M'}
 
-/-- A pair of chart accepts `F : htpy_formal_sol R` if the base map of
-`F` sends the first chart into the second one. -/
-def chart_pair.accepts (F : htpy_formal_sol R) := ∀ t, range ((F t).bs ∘ p.φ) ⊆ range p.ψ
-
-variable {p}
-
-lemma chart_pair.accepts.image_subset {F : htpy_formal_sol R} (h : p.accepts F) (t : ℝ) :
-  (F t).bs '' range (p.φ) ⊆ range p.ψ :=
-begin
-  rw ← range_comp, exact (h t)
-end
-
 variable (p)
 
 def formal_sol.localize (F : formal_sol R) (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :
   (R.localize p.φ p.ψ).rel_loc.formal_sol :=
-{ is_sol := λ x, (F.to_one_jet_sec.localize_mem_iff p.φ p.ψ hF).mpr (F.is_sol _),
+{ is_sol := λ x, (F.localize_mem_iff p.φ p.ψ hF).mpr (F.is_sol _),
   ..(F.localize p.φ p.ψ hF).loc }
 
 lemma formal_sol.is_holonomic_localize (F : formal_sol R) (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ)
@@ -175,49 +146,8 @@ lemma formal_sol.is_holonomic_localize (F : formal_sol R) (hF : range (F.bs ∘ 
 (one_jet_sec.loc_hol_at_iff _ _).mpr $
   (is_holonomic_at_localize_iff F.to_one_jet_sec p.φ p.ψ hF x).mpr hx
 
-def htpy_formal_sol.localize (F : htpy_formal_sol R) (hF : p.accepts F) :
-  (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol :=
-(F.localize' p.φ p.ψ hF).loc
-
-lemma htpy_formal_sol.is_holonomic_localize (F : htpy_formal_sol R) (hF : p.accepts F)
-  (x t) (hx : (F t).is_holonomic_at (p.φ x)) : (F.localize p hF t).is_holonomic_at x :=
-(one_jet_sec.loc_hol_at_iff _ _).mpr $
-  (is_holonomic_at_localize_iff (F t).to_one_jet_sec p.φ p.ψ (hF t) x).mpr hx
-
-lemma htpy_formal_sol.localize_eq_of_eq (F : htpy_formal_sol R) (hF : p.accepts F)
-  {t x} (h : F t (p.φ x) = F 0 (p.φ x)) :
-  F.localize p hF t x = F.localize p hF 0 x :=
-begin
-  change (p.ψ.inv_fun (F t (p.φ x)).1.2,
-    ((p.ψ.fderiv (p.ψ.inv_fun (F t (p.φ x)).1.2)).symm :
-      tangent_space I' (p.ψ (p.ψ.inv_fun (F t (p.φ x)).1.2)) →L[ℝ]
-    tangent_space 𝓘(ℝ, E') (p.ψ.inv_fun (F t ((p.φ) x)).1.2)) ∘L (F t (p.φ x)).2 ∘L _) = _,
-  rw [h],
-  refl,
-end
-
-lemma htpy_formal_sol.localize_eq_of_eq' (F : htpy_formal_sol R) (hF : p.accepts F)
-  {t t'} (h : F t = F t') :
-  F.localize p hF t = F.localize p hF t' :=
-begin
-  ext x,
-  change p.ψ.inv_fun (F t (p.φ x)).1.2 = _,
-  rw [h],
-  refl,
-  ext1 x,
-  change ((p.ψ.fderiv (p.ψ.inv_fun (F t (p.φ x)).1.2)).symm :
-      tangent_space I' (p.ψ (p.ψ.inv_fun (F t (p.φ x)).1.2)) →L[ℝ]
-    tangent_space 𝓘(ℝ, E') (p.ψ.inv_fun (F t ((p.φ) x)).1.2)) ∘L (F t (p.φ x)).2 ∘L _ = _,
-  rw [h],
-  refl
-end
-
 variables (F : htpy_formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
-
-structure chart_pair.compat : Prop :=
-(hF : p.accepts F)
-(hFF : ∀ t, ∀ x ∉ p.K₁, 𝓕 t x = F.localize p hF t x)
 
 structure chart_pair.compat' (F : formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) : Prop :=
@@ -252,7 +182,6 @@ begin
   rw h
 end
 
-
 lemma rel_loc.htpy_formal_sol.unloc_congr' {𝓕 𝓕' : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}
   {t t'} (h : 𝓕 t = 𝓕' t') : 𝓕.unloc p t = 𝓕'.unloc p t' :=
 begin
@@ -261,11 +190,6 @@ begin
   apply rel_loc.htpy_formal_sol.unloc_congr,
   rw h,
 end
-
-@[simp]
-lemma htpy_formal_sol.transfer_unloc_localize (hF : p.accepts F) (t : ℝ) (x : E) :
-  p.φ.transfer p.ψ ((F.localize p hF).unloc p t x) = F t (p.φ x) :=
-transfer_localize (F t).to_one_jet_sec p.φ p.ψ (hF t) x
 
 @[simp]
 lemma formal_sol.transfer_unloc_localize (F : formal_sol R)
@@ -299,41 +223,6 @@ begin
   { simp only [dif_neg hF], refl },
 end
 
-def chart_pair.update (F : htpy_formal_sol R)
-  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol)
-   : htpy_formal_sol R :=
-if h : p.compat F 𝓕 then p.φ.update_htpy_formal_sol p.ψ F (𝓕.unloc p) p.hK₁
-  (λ t x (hx : x ∉ p.K₁), begin
-  rw [← F.transfer_unloc_localize p h.1, rel_loc.htpy_formal_sol.unloc_congr p (h.hFF t x hx).symm],
-  refl
-  end) else F
-
-lemma chart_pair.update_eq_self (F : htpy_formal_sol R)
-  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t m}
-  (hm : ∀ hF : p.accepts F, ∀ x ∈ p.K₁, m = p.φ x → 𝓕 t x = F.localize p hF t x) :
-  p.update F 𝓕 t m = F t m :=
-begin
-  rw [chart_pair.update],
-  split_ifs,
-  { refine (p.φ.htpy_Jupdate_apply _ _ _ _ _).trans _,
-    rw [open_smooth_embedding.update],
-    split_ifs with h',
-    { obtain ⟨x, rfl⟩ := h',
-      rw [one_jet_bundle.embedding_to_fun, p.φ.left_inv],
-      have : (𝓕 t).unloc x = (F t).to_one_jet_sec.localize p.φ p.ψ (h.hF t) x,
-      { have : 𝓕 t x = F.localize p h.hF t x,
-        { by_cases h'' : x ∈ p.K₁,
-          { exact hm h.hF x h'' rfl },
-          { exact h.hFF t x h'' } },
-        rw [prod.ext_iff] at this,
-        ext1, refl, exact this.1, dsimp only, exact this.2 },
-      change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F t (p.φ x),
-      rw [this, transfer_localize],
-      refl },
-    refl },
-  refl,
-end
-
 lemma chart_pair.mk_htpy_eq_self (F : formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t m}
   (hm : ∀ hF : range (F.bs ∘ p.φ) ⊆ range p.ψ, ∀ x ∈ p.K₁, m = p.φ x → 𝓕 t x = F.localize p hF x) :
@@ -360,29 +249,11 @@ begin
   refl,
 end
 
-lemma chart_pair.update_eq_of_not_mem (F : htpy_formal_sol R)
-  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t} {m} (hm : m ∉ p.φ '' p.K₁) :
-  p.update F 𝓕 t m = F t m :=
-chart_pair.update_eq_self p F 𝓕 $
-  by { rintro hF x hx rfl, exfalso, exact hm (mem_image_of_mem _ hx) }
-
 lemma chart_pair.mk_htpy_eq_of_not_mem (F : formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t} {m} (hm : m ∉ p.φ '' p.K₁) :
   p.mk_htpy F 𝓕 t m = F m :=
 chart_pair.mk_htpy_eq_self p F 𝓕 $
   by { rintro hF x hx rfl, exfalso, exact hm (mem_image_of_mem _ hx) }
-
-lemma chart_pair.update_eq_of_eq (F : htpy_formal_sol R)
-  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat F 𝓕) {t t' x}
-  (h : 𝓕 t x = F.localize p h𝓕.1 t' x) :
-  p.update F 𝓕 t (p.φ x) = F t' (p.φ x) :=
-begin
-  dsimp only [chart_pair.update],
-  split_ifs,
-  simp only [open_smooth_embedding.update_htpy_formal_sol_apply_image],
-  rw [rel_loc.htpy_formal_sol.unloc_congr p , htpy_formal_sol.transfer_unloc_localize _ _ h𝓕.1],
-  exact h
-end
 
 lemma chart_pair.mk_htpy_eq_of_eq (F : formal_sol R)
   (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) (h𝓕 : p.compat' F 𝓕) {t x}
@@ -396,29 +267,12 @@ begin
   exact h,
 end
 
-lemma chart_pair.update_eq_of_forall (F : htpy_formal_sol R)
-  (𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol) {t}
-  (heq : ∀ hF : p.accepts F, 𝓕 t = F.localize p hF t) :
-  p.update F 𝓕 t = F t :=
-formal_sol.coe_inj $ λ m, chart_pair.update_eq_self p F 𝓕 $
-    by { rintro hF y hy rfl, by rw heq hF }
-
 lemma chart_pair.mk_htpy_eq_of_forall {F : formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} (h𝓕 : p.compat' F 𝓕) {t}
   (h : 𝓕 t = F.localize p h𝓕.1) :
   p.mk_htpy F 𝓕 t = F :=
 formal_sol.coe_inj $ λ m, chart_pair.mk_htpy_eq_self p F 𝓕 $
     by { rintro hF y hy rfl, by { rw h, refl } }
-
-
-lemma chart_pair.update_localize {F : htpy_formal_sol R}
-  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
-  (h : p.compat F 𝓕) (rg : range ((p.update F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ) :
-  (p.update F 𝓕 t).to_one_jet_sec.localize p.φ p.ψ rg e = (𝓕 t).unloc e :=
-begin
-  simp_rw [chart_pair.update, dif_pos h] at rg ⊢,
-  exact p.φ.htpy_Jupdate_localize p.ψ _ _ t rg e
-end
 
 lemma chart_pair.mk_htpy_localize {F : formal_sol R}
   {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
@@ -427,31 +281,6 @@ lemma chart_pair.mk_htpy_localize {F : formal_sol R}
 begin
   simp_rw [chart_pair.mk_htpy, dif_pos h] at rg ⊢,
   exact p.φ.Jupdate_localize p.ψ _ _ t rg e
-end
-
-lemma chart_pair.update_is_holonomic_at_iff {F : htpy_formal_sol R}
-  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t e}
-  (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at (p.φ e) ↔ (𝓕 t).is_holonomic_at e :=
-begin
-  have rg : range ((p.update F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ,
-  { rintros - ⟨e, rfl⟩,
-    dsimp only [chart_pair.update],
-    simp only [dif_pos h],
-    rw p.φ.update_htpy_formal_sol_bs p.ψ p.hK₁,
-    simp only [comp_app, open_smooth_embedding.update_apply_embedding, mem_range_self] },
-  rw [← is_holonomic_at_localize_iff (p.update F 𝓕 t).to_one_jet_sec p.φ p.ψ rg e,
-      ← jet_sec.unloc_hol_at_iff],
-  exact one_jet_sec.is_holonomic_at_congr (eventually_of_forall $ λ e, p.update_localize h rg)
-end
-
-lemma chart_pair.update_is_holonomic_at_iff' {F : htpy_formal_sol R}
-  {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol} {t x} (hx : x ∉ p.φ '' p.K₁)
-  (h : p.compat F 𝓕) : (p.update F 𝓕 t).is_holonomic_at x ↔ (F t).is_holonomic_at x :=
-begin
-  apply one_jet_sec.is_holonomic_at_congr,
-  have : ∀ᶠ y in 𝓝 x, y ∉ p.φ '' p.K₁,
-    from (p.hK₁.image p.φ.continuous).is_closed.is_open_compl.eventually_mem hx,
-  exact this.mono (λ y hy, p.update_eq_of_not_mem F 𝓕 hy)
 end
 
 lemma chart_pair.mk_htpy_is_holonomic_at_iff {F : formal_sol R}
@@ -467,35 +296,6 @@ begin
   rw [← is_holonomic_at_localize_iff _ p.φ p.ψ rg e,
       ← jet_sec.unloc_hol_at_iff],
   exact one_jet_sec.is_holonomic_at_congr (eventually_of_forall $ λ e, p.mk_htpy_localize h rg)
-end
-
-lemma chart_pair.dist_update [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
-  (hδ_cont : continuous δ) {F : htpy_formal_sol R} (hF : p.accepts F) :
-  ∃ η > (0 : ℝ),
-    ∀ {𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol}, ∀ hF𝓕 : p.compat F 𝓕,
-    ∀ (e ∈ p.K₁) (t ∈ (Icc 0 1 : set ℝ)), ‖(𝓕 t).f e - (F.localize p hF𝓕.1 1).f e‖ < η →
-    dist (((p.update F 𝓕) t).bs $ p.φ e) ((F 1).bs $ p.φ e) < δ (p.φ e) :=
-begin
-  let bsF := (λ t m, (F t).bs m),
-  have : ∀ 𝓕 : (R.localize p.φ p.ψ).rel_loc.htpy_formal_sol, p.compat F 𝓕 → ∀ t e,
-    (p.update F 𝓕 t).bs (p.φ e) = p.φ.update p.ψ (bsF t) (λ e, (𝓕.unloc p t).bs e) (p.φ e),
-  { -- TODO: this proof needs more lemmas
-    intros 𝓕 h𝓕 t e,
-    change (p.update F 𝓕 t (p.φ e)).1.2 = p.φ.update p.ψ (bsF t) (λ e, (𝓕.unloc p t).bs e) (p.φ e),
-    simp only [open_smooth_embedding.update_apply_embedding],
-    dsimp only [chart_pair.update],
-    rw [dif_pos h𝓕, open_smooth_embedding.update_htpy_formal_sol_apply],
-    dsimp only,
-    simp_rw [open_smooth_embedding.update_apply_embedding, one_jet_bundle.embedding_to_fun,
-      open_smooth_embedding.transfer_fst_snd],
-    refl },
-  rcases p.φ.dist_update p.ψ p.hK₁ is_compact_Icc (λ t m, (F t).bs m) F.smooth_bs.continuous
-    hF.image_subset hδ_pos hδ_cont with ⟨η, η_pos, hη⟩,
-  refine ⟨η, η_pos, _⟩,
-  intros 𝓕 H e he t ht het,
-  simp only [this 𝓕 H], -- clear this,
-  rw ← dist_eq_norm at het,
-  exact hη (λ t e, (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, le_rfl⟩ t ht e he het,
 end
 
 lemma chart_pair.dist_update' [finite_dimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
