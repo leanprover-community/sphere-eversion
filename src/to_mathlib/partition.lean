@@ -127,6 +127,7 @@ end
 
 end
 
+
 section
 variables
   {𝕜 : Type*} [nontrivially_normed_field 𝕜]
