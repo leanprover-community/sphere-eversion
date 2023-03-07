@@ -40,77 +40,11 @@ quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
 end)
 end
 
-section
-
-meta def prove_finiteness : tactic unit := `[intro x, apply set.to_finite]
-
-structure local_prop (X Y : Type*) [topological_space X] :=
-(s : X → set X)
-(s_fin : ∀ x, (s x).finite . prove_finiteness)
-(prop : Π x, (Π x' ∈ s x, germ (𝓝 x') Y) → Prop)
-
-variables {X Y : Type*} [topological_space X]
-
-/-- Evaluate a local property at a point on a given function. -/
-def local_prop.eval  (P : local_prop X Y) (x : X) (f : X → Y) : Prop :=
-P.prop x (λ x' hx', (f : germ (𝓝 x') Y))
-
-instance : has_coe_to_fun (local_prop X Y) (λ _, X → (X → Y) → Prop) :=
-⟨local_prop.eval⟩
-
-/-- A local property depending on a single point. -/
-def local_prop.single (P : Π x : X, germ (𝓝 x) Y → Prop) : local_prop X Y :=
-{ s := λ x, {x},
-  prop := λ x φ, P x (φ _ (mem_singleton x))  }
-
-@[simp]
-lemma local_prop.eval_single (P : Π x : X, (germ (𝓝 x) Y → Prop)) (f : X → Y) (x : X) :
-  local_prop.single P x f ↔ P x f :=
-iff.rfl
-
-/-- A local property depending on a point and its image under a given function. -/
-def local_prop.pair (π : X → X)
-  (P : Π x : X, germ (𝓝 x) Y → germ (𝓝 $ π x) Y →  Prop) : local_prop X Y :=
-{ s := λ x : X, {x, π x},
-  prop := λ x φ, P x (φ x (mem_insert _ _)) (φ _ $ mem_insert_iff.mpr $ or.inr $ mem_singleton _) }
-
-/-- The local property asserting `f x = f (π x)`. -/
-def local_prop.equality (π : X → X) : local_prop X Y :=
-  local_prop.pair π (λ x φ ψ, φ.value = ψ.value)
-
-@[simp]
-lemma local_prop.eval_pair {π : X → X}
-  {P : Π x : X, germ (𝓝 x) Y → germ (𝓝 $ π x) Y →  Prop} {f : X → Y} {x : X} :
-  local_prop.pair π P x f ↔ P x f f :=
-iff.rfl
-
-lemma local_prop.equality_iff {π : X → X} (f : X → Y) (x : X) :
-  local_prop.equality π x f ↔ f x = f (π x) := iff.rfl
-
-end
-
-
-/-- Given a predicate on germs `P : (Σ x : X, germ (𝓝 x) Y) → Prop` and `A : set X`,
+/-- Given a predicate on germs `P : Π x : X, germ (𝓝 x) Y → Prop` and `A : set X`,
 build a new predicate on germs `restrict_germ_predicate P A` such that
-`(∀ x, restrict_germ_predicate P A ⟨x, f⟩) ↔ ∀ᶠ x near A, P ⟨x, f⟩`, see
+`(∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x near A, P x f`, see
 `forall_restrict_germ_predicate_iff` for this equivalence. -/
 def restrict_germ_predicate {X Y : Type*} [topological_space X]
-  (P : (Σ x : X, germ (𝓝 x) Y) → Prop) (A : set X) : (Σ x : X, germ (𝓝 x) Y) → Prop :=
-λ ⟨x, φ⟩, quotient.lift_on' φ (λ f, x ∈ A → ∀ᶠ y in 𝓝 x, P ⟨y, f⟩) begin
-  have : ∀ f f' : X → Y, f =ᶠ[𝓝 x] f' → (∀ᶠ y in 𝓝 x, P ⟨y, f⟩) → ∀ᶠ y in 𝓝 x, P ⟨y, f'⟩,
-  { intros f f' hff' hf,
-    apply (hf.and $ eventually.eventually_nhds hff').mono,
-    rintros y ⟨hy, hy'⟩,
-    rwa germ.coe_eq.mpr (eventually_eq.symm hy') },
-  exact λ f f' hff', propext $ forall_congr $ λ _, ⟨this f f' hff', this f' f hff'.symm⟩,
-end
-
-lemma forall_restrict_germ_predicate_iff {X Y : Type*} [topological_space X]
-  {P : (Σ x : X, germ (𝓝 x) Y) → Prop} {A : set X} {f : X → Y} :
-  (∀ x, restrict_germ_predicate P A ⟨x, f⟩) ↔ ∀ᶠ x near A, P ⟨x, f⟩ :=
-by { rw eventually_nhds_set_iff, exact iff.rfl }
-
-def restrict_germ_predicate' {X Y : Type*} [topological_space X]
   (P : Π x : X, germ (𝓝 x) Y → Prop) (A : set X) : Π x : X, germ (𝓝 x) Y → Prop :=
 λ x φ, quotient.lift_on' φ (λ f, x ∈ A → ∀ᶠ y in 𝓝 x, P y f) begin
   have : ∀ f f' : X → Y, f =ᶠ[𝓝 x] f' → (∀ᶠ y in 𝓝 x, P y f) → ∀ᶠ y in 𝓝 x, P y f',
@@ -121,15 +55,15 @@ def restrict_germ_predicate' {X Y : Type*} [topological_space X]
   exact λ f f' hff', propext $ forall_congr $ λ _, ⟨this f f' hff', this f' f hff'.symm⟩,
 end
 
-lemma forall_restrict_germ_predicate'_iff {X Y : Type*} [topological_space X]
+lemma forall_restrict_germ_predicate_iff {X Y : Type*} [topological_space X]
   {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f : X → Y} :
-  (∀ x, restrict_germ_predicate' P A x f) ↔ ∀ᶠ x near A, P x f :=
+  (∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x near A, P x f :=
 by { rw eventually_nhds_set_iff, exact iff.rfl }
 
-lemma  forall_restrict_germ_predicate'_of_forall {X Y : Type*} [topological_space X]
+lemma  forall_restrict_germ_predicate_of_forall {X Y : Type*} [topological_space X]
   {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f : X → Y} (h : ∀ x, P x f) :
-  ∀ x, restrict_germ_predicate' P A x f :=
-forall_restrict_germ_predicate'_iff.mpr (eventually_of_forall h)
+  ∀ x, restrict_germ_predicate P A x f :=
+forall_restrict_germ_predicate_iff.mpr (eventually_of_forall h)
 
 -- Replace localisation_data.Union_succ with
 lemma localisation_data.Union_succ' {𝕜 : Type*} [nontrivially_normed_field 𝕜] {E : Type*} [normed_add_comm_group E]
@@ -263,54 +197,6 @@ tendsto_at_top_at_top.mpr
 lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
 nat.cases_on N nat.not_lt_zero (λ n, fin.not_lt_zero) j
 
-lemma inductive_construction {X Y : Type*} [topological_space X]
-  {N : ℕ} {U K : index_type N → set X}
-  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
-  (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
-  (init : ∃ f : X → Y, ∀ x, P₀ x f)
-  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ x ∈ ⋃ j < i, K j, P₁ x f) →
-    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ x ∈ ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
-    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₁ x f :=
-begin
-  let P : ℕ → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ ∀ x ∈ (⋃ i ≤ (n : index_type N) , K i), P₁ x f,
-  let Q : ℕ → (X → Y) → (X → Y) → Prop :=
-    λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧ ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
-  obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
-  { apply exists_by_induction',
-    { dsimp [P],
-      cases init with f₀ hf₀,
-      rcases ind 0 f₀ hf₀ _ with ⟨f', h₀f', h₁f', hf'⟩,
-      use [f', h₀f'],
-      intros x hx,
-      apply h₁f' _ hx,
-      have : (⋃ (j : index_type N) (H : j < 0), K j) = ∅,
-      { simp [index_type.not_lt_zero] },
-      simp only [this, mem_empty_iff_false, is_empty.forall_iff, implies_true_iff] },
-    { rintros n f ⟨h₀f, h₁f⟩,
-      rcases index_type.lt_or_eq_succ N n with hn | hn,
-      { simp_rw index_type.le_or_lt_succ hn at h₁f,
-        rcases ind (n+1 : ℕ) f h₀f h₁f with ⟨f', h₀f', h₁f', hf'⟩,
-        exact ⟨f', ⟨h₀f', h₁f'⟩, ⟨λ hn', (hn.ne hn'.symm).elim, hf'⟩⟩ },
-      { simp only [hn] at h₁f,
-        exact ⟨f, ⟨h₀f, h₁f⟩, λ hn, rfl, λ x hx, rfl⟩ } } },
-  dsimp only [P, Q] at hf,
-  simp only [forall_and_distrib] at hf,
-  rcases hf with ⟨⟨h₀f, h₁f⟩, hf, hf'⟩,
-  rcases U_fin.exists_forall_eventually_of_indexing hf' hf with ⟨F, hF⟩,
-  refine ⟨F, λ x, _⟩,
-  have : ∀ᶠ (n : ℕ) in at_top, x ∈ ⋃ i ≤ (n : index_type N), K i,
-  { have : x ∈ ⋃ (i : index_type N), K i := K_cover.symm ▸ (mem_univ x),
-    rcases mem_Union.mp this with ⟨i, hi⟩,
-    apply (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) i).mono,
-    intros n hn,
-    exact mem_Union₂.mpr ⟨i, hn, hi⟩ },
-  rcases eventually_at_top.mp ((hF x).and this) with ⟨n₀, hn₀⟩,
-  rcases hn₀ n₀ le_rfl with ⟨hx, hx'⟩,
-  rw germ.coe_eq.mpr hx.symm,
-  exact ⟨h₀f n₀ x, h₁f n₀ x hx'⟩
-end
-
 lemma forall₂_and_distrib {α β : Sort*} {p q : α → β → Prop} :
   (∀ x y, p x y ∧ q x y) ↔ (∀ x y, p x y) ∧ ∀ x y, q x y :=
 begin
@@ -322,21 +208,13 @@ begin
    exact ⟨h.1 x y, h.2 x y⟩
 end
 
-.
 open_locale filter
 
 lemma filter.eventually_eq.comp_fun {α β γ : Type*} {f g : β → γ} {l : filter α} {l' : filter β}
   (h : f =ᶠ[l'] g) {φ : α → β} (hφ : tendsto φ l l') : f ∘ φ =ᶠ[l] g ∘ φ :=
 hφ h
 
-def filter.germ.slice_left {X Y Z : Type*} [topological_space X] [topological_space Y] {x : X} {y : Y}
-  (P : germ (𝓝 (x, y)) Z) : germ (𝓝 x) Z :=
-P.lift_on (λ f, ((λ x', f (x', y)) : germ (𝓝 x) Z))
-  (λ f g hfg, @quotient.sound _ ((𝓝 x).germ_setoid Z) _ _
-     (hfg.comp_fun (continuous.prod.mk_left y).continuous_at))
-
--- The following version is needed because prod.mk.eta isn't refl.
-def filter.germ.slice_left' {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
+def filter.germ.slice_left {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
   (P : germ (𝓝 p) Z) : germ (𝓝 p.1) Z :=
 P.lift_on (λ f, ((λ x', f (x', p.2)) : germ (𝓝 p.1) Z))
   (λ f g hfg, @quotient.sound _ ((𝓝 p.1).germ_setoid Z) _ _
@@ -345,14 +223,7 @@ P.lift_on (λ f, ((λ x', f (x', p.2)) : germ (𝓝 p.1) Z))
        exact (continuous.prod.mk_left p.2).continuous_at,
      end))
 
-def filter.germ.slice_right {X Y Z : Type*} [topological_space X] [topological_space Y] {x : X} {y : Y}
-  (P : germ (𝓝 (x, y)) Z) : germ (𝓝 y) Z :=
-P.lift_on (λ f, ((λ y', f (x, y')) : germ (𝓝 y) Z))
-  (λ f g hfg, @quotient.sound _ ((𝓝 y).germ_setoid Z) _ _
-     (hfg.comp_fun (continuous.prod.mk x).continuous_at))
-
--- The following version is needed because prod.mk.eta isn't refl.
-def filter.germ.slice_right' {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
+def filter.germ.slice_right {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
   (P : germ (𝓝 p) Z) : germ (𝓝 p.2) Z :=
 P.lift_on (λ f, ((λ y, f (p.1, y)) : germ (𝓝 p.2) Z))
   (λ f g hfg, @quotient.sound _ ((𝓝 p.2).germ_setoid Z) _ _
@@ -438,16 +309,16 @@ lemma inductive_htpy_construction_aux {X Y : Type*} [topological_space X]
                      (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
                      (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1)) :
   ∃ f : ℕ → ℝ × X → Y, ∀ n,
-    ((∀ p : ℝ × X, P₀ p.2 (filter.germ.slice_right' (f n)) ∧ P₂ p (f n)) ∧
-    (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁ x (filter.germ.slice_right' (f n : (𝓝 (T (n+1), x)).germ Y))) ∧
+    ((∀ p : ℝ × X, P₀ p.2 (filter.germ.slice_right (f n)) ∧ P₂ p (f n)) ∧
+    (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁ x (filter.germ.slice_right (f n : (𝓝 (T (n+1), x)).germ Y))) ∧
     (∀ t ≥ T (n+1), ∀ x, f n (t, x) = f n (T (n+1), x)) ∧ (∀ x, f n (0, x) = f₀ x) ∧
     (∀ᶠ t in 𝓝 (T $ n+1), ∀ x, f n (t, x) = f n (T (n+1), x))) ∧
     (((((n+1:ℕ) : index_type N) = n) → f (n+1) = f n) ∧
       ∀ x ∉ U (n + 1 : ℕ), ∀ t, f (n+1) (t, x) = f n (t, x))
    :=
 begin
-  let P₀' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right' ∧ P₂ p φ,
-  let P₁' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₁ p.2 φ.slice_right',
+  let P₀' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧ P₂ p φ,
+  let P₁' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₁ p.2 φ.slice_right,
   let P : ℕ → (ℝ × X → Y) → Prop :=
     λ n f, (∀ p, P₀' p f) ∧ (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁' (T (n+1), x) f) ∧
            (∀ t ≥ T (n+1), ∀ x, f (t, x) = f (T (n+1), x)) ∧ (∀ x, f (0, x) = f₀ x) ∧
@@ -627,8 +498,8 @@ lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
                      (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1)) :
   ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ (∀ p, P₂ p ↿F) :=
 begin
-  let P₀' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right' ∧ P₂ p φ,
-  let P₁' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₁ p.2 φ.slice_right',
+  let P₀' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧ P₂ p φ,
+  let P₁' : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₁ p.2 φ.slice_right,
   let P : ℕ → (ℝ × X → Y) → Prop :=
     λ n f, (∀ p, P₀' p f) ∧ (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁' (T (n+1), x) f) ∧
            (∀ t ≥ T (n+1), ∀ x, f (t, x) = f (T (n+1), x)) ∧ (∀ x, f (0, x) = f₀ x) ∧
@@ -697,8 +568,6 @@ begin
     exact (key' p _ le_rfl).symm }
 end
 
--- temporary assumptions to avoid stupid case disjunction and instance juggling
-
 variables [nonempty M] [nonempty X] [locally_compact_space M] [locally_compact_space X]
 
 local notation `J¹` := one_jet_bundle IM M IX X
@@ -715,12 +584,6 @@ begin
     rw [← hfg'.mfderiv_eq, hf, hfg.self_of_nhds] },
   exact λ f g H, propext ⟨key f g H, key g f H.symm⟩,
 end
-
-lemma is_holonomic_germ_mk_formal_sol (F : M → one_jet_bundle IM M IX X) (hsec : ∀ x, (F x).1.1 = x)
-(hsol : ∀ x, F x ∈ R)
-(hsmooth : smooth IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ↿F)  (x : M) :
-  is_holonomic_germ (F : germ (𝓝 x) J¹) ↔ (mk_formal_sol F hsec hsol hsmooth).is_holonomic_at x :=
-iff.rfl
 
 lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
@@ -746,7 +609,7 @@ begin
     F.value.1.1 = x ∧
     F.value ∈ R ∧
     F.cont_mdiff_at' IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
-    restrict_germ_predicate' (λ x F', F'.value = 𝓕₀ x) A x F ∧
+    restrict_germ_predicate (λ x F', F'.value = 𝓕₀ x) A x F ∧
     dist (F.value.1.2) (𝓕₀.bs x) < τ x,
 
   let P₁ : Π x : M, germ (𝓝 x) J¹ → Prop := λ x F, is_holonomic_germ F,
@@ -766,7 +629,7 @@ begin
   have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹),
   { refine λ x, ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, _, _⟩,
     { revert x,
-      exact forall_restrict_germ_predicate'_of_forall (λ x, rfl) },
+      exact forall_restrict_germ_predicate_of_forall (λ x, rfl) },
     { erw dist_self,
       exact τ_pos x } },
   have ind : ∀ (i : index_type L.N) (f : M → J¹), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
@@ -788,7 +651,7 @@ begin
       exact is_closed_bUnion (finite_Iio _) (λ j hj, (hK₀.image $ (L.φ j).continuous).is_closed) },
     simp only [P₀, forall_and_distrib] at hf₀,
     rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩,
-    rw forall_restrict_germ_predicate'_iff at hf_A,
+    rw forall_restrict_germ_predicate_iff at hf_A,
     let F : formal_sol R := mk_formal_sol f hf_sec hf_sol hf_smooth,
     have hFAC : ∀ᶠ x near A ∪ C, F.is_holonomic_at x,
     { rw eventually_nhds_set_union,
@@ -819,7 +682,7 @@ begin
     refine ⟨λ t x, F' t x, _, _, _, _, _, _⟩,
     { refine λ t x, ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩,
       { revert x,
-        rw forall_restrict_germ_predicate'_iff,
+        rw forall_restrict_germ_predicate_iff,
         rw [eventually_nhds_set_union] at hF'AC,
         apply (hF'AC.1.and hf_A).mono,
         rintros x ⟨hx, hx'⟩,
@@ -852,7 +715,7 @@ begin
   { exact hFP₁ },
   { intros x hx t,
     rw mk_htpy_formal_sol_apply,
-    exact (forall_restrict_germ_predicate'_iff.mp $ hF_A t).on_set x hx },
+    exact (forall_restrict_germ_predicate_iff.mp $ hF_A t).on_set x hx },
   { intros t x,
     change dist (mk_htpy_formal_sol F hF_sec hF_sol hFP₂ t x).1.2 (𝓕₀.bs x) ≤ δ x,
     rw mk_htpy_formal_sol_apply,
