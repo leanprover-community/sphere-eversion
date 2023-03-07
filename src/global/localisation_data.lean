@@ -61,6 +61,13 @@ lemma Union_succ {β : Type*} (s : ld.ι → set β) (n : ℕ) :
 by simp_rw [← mem_Iic, localisation_data.index, index_from_nat_succ, order.Iic_succ, bUnion_insert,
     union_comm]
 
+lemma Union_succ' {β : Type*} (s : ld.ι → set β) (i : index_type ld.N) :
+  (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i :=
+begin
+  simp only [(λ j, le_iff_lt_or_eq : ∀ j, j ≤ i ↔ j < i ∨ j = i)],
+  erw [bUnion_union, bUnion_singleton],
+  refl
+end
 open filter
 
 lemma eventually_mem_Union (x : M) :
