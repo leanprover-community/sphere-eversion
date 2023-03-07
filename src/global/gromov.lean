@@ -3,6 +3,7 @@ import to_mathlib.data.nat.basic
 import to_mathlib.geometry.manifold.metrizable
 import to_mathlib.topology.constructions
 import global.parametricity_for_free
+import global.inductive_htpy_construction
 import global.localized_construction
 import global.localisation_data
 /-!
@@ -32,135 +33,20 @@ variables
 {A : set M} {δ : M → ℝ}
 
 set_option trace.filter_inst_type true
-/--
-Main inductive construction for the non-parametric version of Gromov's theorem.
--/
-lemma rel_mfld.ample.satisfies_h_principle_core
-  [nonempty M] [nonempty X]
-  (hRample : R.ample) (hRopen : is_open R)
-  (hA : is_closed A)
-  (hδ_pos : ∀ (x : M), 0 < δ x)
-  (hδ_cont : continuous δ)
-  (F₀ : formal_sol R)
-  (hF₀A : ∀ᶠ x near A, F₀.is_holonomic_at x)
-  (L : localisation_data IM IX F₀.bs) :
-  ∃ F : ℕ → htpy_formal_sol R, ∀ n : ℕ,
-    ((∀ᶠ t near Iic (0 : ℝ), F n t = F₀) ∧
-    (∀ᶠ t near Ici (1 : ℝ), F n t = F n 1) ∧
-    (∀ᶠ x near A, ∀ t, F n t x = F₀ x) ∧
-    (∀ t x, dist ((F n t).bs x) (F₀.bs x) < δ x) ∧
-    (∀ᶠ x near ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
-      ((F n) 1).to_one_jet_sec.is_holonomic_at x)) ∧
-    ((L.index (n + 1)  = L.index n → F (n + 1) = F n) ∧
-     ∀ t (x ∉ range (L.φ $ L.index $ n+1)), F (n + 1) t x = F n t x) :=
-begin
-  classical,
-  borelize EX,
-  haveI := locally_compact_manifold IM M,
-  haveI := locally_compact_manifold IX X,
-  let P : ℕ → htpy_formal_sol R → Prop := λ n Fn,
-    (∀ᶠ t near Iic (0 : ℝ), Fn t = F₀) ∧
-    (∀ᶠ t near Ici (1 : ℝ), Fn t = Fn 1) ∧
-    (∀ᶠ x near A, ∀ t, Fn t x = F₀ x) ∧
-    (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < δ x) ∧
-    (∀ t x, dist ((Fn t).bs x) (F₀.bs x) < L.ε x) ∧
-    (∀ᶠ x near ⋃ i ≤ L.index n, (L.φ i) '' metric.closed_ball 0 1,
-      (Fn 1).is_holonomic_at x),
-  let Q : ℕ → htpy_formal_sol R → htpy_formal_sol R → Prop := λ n Fn Fnp1,
-    (L.index (n + 1)  = L.index n → Fnp1 = Fn) ∧
-     ∀ t, ∀ x ∉ range (L.φ $ L.index $ n+1), Fnp1 t x = Fn t x,
-  suffices : ∃ F : ℕ → htpy_formal_sol R, ∀ n, P n (F n) ∧ Q n (F n) (F $ n+1),
-  { rcases this with ⟨F, hF⟩,
-    use F,
-    intro n,
-    cases hF n,
-    tauto },
-  let K₀ : set EM := closed_ball 0 1,
-  have hK₀ : is_compact K₀, from is_compact_closed_ball 0 1,
-  let K₁ : set EM := closed_ball 0 2,
-  have hK₁ : is_compact K₁, from is_compact_closed_ball 0 2,
-  have hK₀K₁ : K₀ ⊆ interior K₁,
-  { dsimp [K₀, K₁],
-    rw interior_closed_ball (0 : EM) (by norm_num : (2 : ℝ) ≠ 0),
-    exact closed_ball_subset_ball (by norm_num) },
-  let τ := λ x : M, min (δ x) (L.ε x),
-  have τ_pos : ∀ x, 0 < τ x, from λ x, lt_min (hδ_pos x) (L.ε_pos x),
-  have τ_cont : continuous τ, from hδ_cont.min L.ε_cont,
-  apply exists_by_induction' P Q,
-  { dsimp only [P], clear P Q,
-    let F := F₀.const_htpy,
-    have hF₀ : ∀ᶠ (t : ℝ) near Iic 0, F t = F 0,
-    { apply eventually_of_forall _,
-      simp [F₀.const_htpy_eq] },
-    have hF₁ : ∀ᶠ (t : ℝ) near Ici 1, F t = F 1,
-    { apply eventually_of_forall _,
-      simp [F₀.const_htpy_eq] },
-    have hF₀A : ∀ᶠ x near A, (F 0).is_holonomic_at x,
-    { simp only [F₀.const_htpy_eq, hF₀A] },
-    have hFF₀τ : ∀ t x, dist ((F t).bs x) ((F 0).bs x) < τ x,
-    { simp only [F₀.const_htpy_eq, dist_self, τ_pos, forall_const] },
-    have hFφψ : ∀ t, (F t).bs '' (range $ L.φ 0) ⊆ range (L.ψj 0),
-    { simp only [F₀.const_htpy_eq, forall_const, ← range_comp, L.rg_subset_rg] },
-    have hFA : ∀ᶠ x near A, ∀ t, F t x = F 0 x,
-    { simp only [F₀.const_htpy_eq, eq_self_iff_true, eventually_true, forall_const] },
-    have hFC : ∀ᶠ x near ∅, (F 1).is_holonomic_at x,
-    { simp only [nhds_set_empty] },
-    rcases (L.φ 0).improve_htpy_formal_sol (L.ψj 0) hRample hRopen hA is_closed_empty
-      τ_pos τ_cont hF₀ hF₁ hF₀A hFF₀τ hFφψ hFA hFC hK₀ hK₁ hK₀K₁ with ⟨F', hF'₀, hF'₁, hF'F₀τ, hF'K₁, hF'τ, hF'K₀⟩,
-    rw [nhds_set_union, eventually_sup] at hF'K₀,
-    refine ⟨F', _, _, _, _, _, _⟩,
-    { apply hF'₀.mono,
-      intros t ht,
-      rw [ht, F₀.const_htpy_eq] },
-    { exact hF'₁ },
-    { exact hF'F₀τ },
-    { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_left _ _) },
-    { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_right _ _) },
-    { rw L.Union_le_zero,
-      simpa using hF'K₀.2 } },
-  { rintros n F ⟨hF₀, hF₁, hFA, hFδ, hFε, hFhol⟩,
-    by_cases hn : L.index (n+1) = L.index n,
-    { refine ⟨F, ⟨hF₀, hF₁, hFA, hFδ, hFε, _⟩, λ _, rfl, λ _ _ _, rfl⟩ ; clear P Q,
-      rw hn,
-      exact hFhol },
-    { dsimp only [P, Q], clear P Q,
-      have hF₀₀ := hF₀.on_set 0 right_mem_Iic,
-      simp only [← hF₀.on_set 0 right_mem_Iic] at hF₀ hF₀A hFδ hFε hFA ⊢,
-      have hFτ : ∀ t x, dist ((F t).bs x) ((F 0).bs x) <  τ x,
-      { exact λ t x, lt_min (hFδ t x) (hFε t x) },
-      rcases (L.φ $ L.index $ n+1).improve_htpy_formal_sol (L.ψj $ L.index $ n+1) hRample hRopen
-        hA _ τ_pos τ_cont hF₀ hF₁ hF₀A hFτ _ hFA hFhol hK₀ hK₁ hK₀K₁  with
-        ⟨F', hF'₀, hF'₁, hF'A, hF'K₁, hF'τ, hF'K₀⟩,
-      rw [nhds_set_union, eventually_sup] at hF'K₀,
-      refine ⟨F', ⟨hF'₀, hF'₁, _, _, _, _⟩, _, _⟩ ; clear hRample hRopen hδ_pos hδ_cont hK₀ hK₁ hK₀K₁,
-      { exact hF'A },
-      { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_left _ _) },
-      { exact λ t x, lt_of_lt_of_le (hF'τ t x) (min_le_right _ _) },
-      { rw L.Union_succ,
-        exact hF'K₀.2, },
-      { exact λ hn', (hn hn').elim },
-      { exact λ t x hx, hF'K₁ t x (λ hx', hx $ mem_range_of_mem_image _ _ hx') },
-      { exact L.is_closed_Union hK₀ n },
-      { intro t,
-        rw ← range_comp,
-        apply L.ε_spec,
-        simp only [← hF₀₀],
-        apply hFε } } },
-end
+local notation `J¹` := one_jet_bundle IM M IX X
 
-/-- The non-parametric version of Gromov's theorem -/
 lemma rel_mfld.ample.satisfies_h_principle (hRample : R.ample) (hRopen : is_open R)
   (hA : is_closed A)
   (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : continuous δ) :
   R.satisfies_h_principle A δ :=
 begin
-  /- We first get rid of edge cases where `M` or `X` is empty.
-  This is necessary because the localization data existence lemma has nonemptyness assumptions. -/
+  borelize EX,
   haveI := locally_compact_manifold IM M,
   haveI := locally_compact_manifold IX X,
   refine rel_mfld.satisfies_h_principle_of_weak hA _,
   unfreezingI { clear_dependent A },
   intros A hA 𝓕₀ h𝓕₀,
+
   casesI is_empty_or_nonempty M with hM hM,
   { refine  ⟨empty_htpy_formal_sol R, _, _, _, _⟩,
     all_goals { try { apply eventually_of_forall _ } },
@@ -174,118 +60,131 @@ begin
   /- We now start the main proof under the assumption that `M` and `X` are nonempty. -/
   have cont : continuous 𝓕₀.bs, from 𝓕₀.smooth_bs.continuous,
   let L : localisation_data IM IX 𝓕₀.bs := std_localisation_data EM IM EX IX cont,
-  let π := L.index,
+  let K : index_type L.N → set M := λ i, (L.φ i) '' (closed_ball (0:EM) 1),
+  let U : index_type L.N → set M := λ i, range (L.φ i),
+  have K_cover : (⋃ i, K i) = univ,
+    from eq_univ_of_subset (Union_mono (λ i, image_subset _ ball_subset_closed_ball)) L.h₁,
+  let τ := λ x : M, min (δ x) (L.ε x),
+  have τ_pos : ∀ x, 0 < τ x, from λ x, lt_min (hδ_pos x) (L.ε_pos x),
+  have τ_cont : continuous τ, from hδ_cont.min L.ε_cont,
+  have := (λ (x : M) (F' : germ (𝓝 x) J¹), F'.value = 𝓕₀ x),
+  let P₀ : Π x : M, germ (𝓝 x) J¹ → Prop := λ x F,
+    F.value.1.1 = x ∧
+    F.value ∈ R ∧
+    F.cont_mdiff_at' IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
+    restrict_germ_predicate (λ x F', F'.value = 𝓕₀ x) A x F ∧
+    dist (F.value.1.2) (𝓕₀.bs x) < τ x,
 
-  suffices : ∃ F : ℕ → htpy_formal_sol R, ∀ n,
-    ((F n 0 = 𝓕₀) ∧
-    (∀ t, ∀ᶠ x near A, F n t x = 𝓕₀ x) ∧
-    (∀ t x, dist ((F n t).bs x) (𝓕₀.bs x) < δ x) ∧
-
-    (∀ x ∈ ⋃ i ≤ π n, L.φ i '' metric.closed_ball (0 : EM) 1,
-             (F n 1).is_holonomic_at x)) ∧
-    ((π (n+1) = π n → F (n+1) = F n) ∧
-     (∀ t, ∀ x ∉ range (L.φ $ π (n+1)), F (n+1) t x = F n t x)),
-  { /- Here we must build the homotopy of formal solution from the sequence
-    given by the inductive construction.
-    **TODO**:
-    This uses `locally_finite.exists_forall_eventually_of_indexing` which partially duplicates
-    use `locally_eventually_constant_on` from `to_mathlib.order.filter.eventually_constant`.
-    Maybe this can be unified. -/
-    clear_dependent hRample hRopen,
-    simp_rw [and_assoc, forall_and_distrib] at this,
-    rcases this with ⟨F, hF₀, hfA, hFδ, hFhol, hFπ, hFultim⟩,
-    /- The sequence F seen as a sequence of plain functions. -/
-    let FF := λ n : ℕ, λ p : ℝ × M, F n p.1 p.2,
-    have h : ∀ n : ℕ, ∀ x ∉ (univ : set ℝ) ×ˢ range (L.φ $ π $ n+1), FF (n+1) x = FF n x,
-    { rintros n ⟨t, x⟩ H,
-      exact hFultim _ _ _ (λ hx, H ⟨trivial, hx⟩) },
-    have h' : ∀ (n : ℕ), π (n + 1) = π n → FF (n + 1) = FF n,
-    { intros n hn,
-      ext1 ⟨t, x⟩,
-      dsimp [FF],
-      rw hFπ n hn },
-    have loc_fin : locally_finite (λ i, (univ ×ˢ range (L.φ i) : set $ ℝ × M)),
-    { apply L.lf_φ.prod_left },
-    have : ∀ x : ℝ × M, ∀ᶠ n in at_top, x.2 ∈ ⋃ i ≤ π n, (L.φ i) '' metric.ball 0 1,
-    { rintros ⟨t, x⟩,
-      exact L.eventually_mem_Union x },
-    /- Now get the limit function. -/
-    cases loc_fin.exists_forall_eventually_of_indexing h h' with G hG, clear h h' loc_fin,
-    choose n hn' hn using λ x, eventually_at_top.mp ((this x).and (hG x)), clear hG this,
-    have G_eq : ∀ t x, G (t, x) = F (n (t, x)) t x,
-    { exact λ t x, ((hn (t, x) _ le_rfl).eq_of_nhds).symm },
-    have hG11 : ∀ t x, (G (t, x)).1.1 = x,
-    { intros t x,
-      rw G_eq,
-      refl },
-    /- The limit function is a homotopy of formal solutions. -/
-    let 𝓕 : htpy_formal_sol R := {
-      bs := λ t x, (G (t, x)).1.2,
-      ϕ := λ t x, (G (t, x)).2,
-      smooth' := begin
-        intro x,
-        apply ((F (n x)).smooth' x).congr_of_eventually_eq,
-        apply (hn x _ le_rfl).mono,
-        intros p hp,
-        dsimp only,
-        rw [show (p.1, p.2) = p, from prod.ext rfl rfl, ← hp],
-        refl
-      end,
-      is_sol' := begin
-        intros t x,
-        change one_jet_bundle.mk x (G (t, x)).1.2 (G (t, x)).2 ∈ R,
-        rw ← (hn (t, x) _ le_rfl).eq_of_nhds,
-        exact (F (n (t, x))).is_sol' t x,
-      end },
-    refine ⟨𝓕, _, _, _, _⟩,
-    { clear_dependent δ hfA hFhol hFπ hFultim,
+  let P₁ : Π x : M, germ (𝓝 x) J¹ → Prop := λ x F, is_holonomic_germ F,
+  let P₂ : Π p : ℝ × M, germ (𝓝 p) J¹ → Prop := λ p F,
+    F.cont_mdiff_at' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞,
+  have hP₂ : ∀ (a b : ℝ) (p : ℝ × M) (f : ℝ × M → one_jet_bundle IM M IX X),
+    P₂ (a*p.1+b, p.2) f → P₂ p (λ p : ℝ × M, f (a*p.1+b, p.2)),
+  { rintros a b ⟨t, x⟩ f h,
+    change cont_mdiff_at _ _ _ (f ∘ λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
+    change cont_mdiff_at _ _ _ f ((λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x)) at h,
+    have : cont_mdiff_at (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (λ (p : ℝ × M), (a * p.1 + b, p.2)) (t, x),
+    { have h₁ : cont_mdiff_at 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (λ t, a * t + b) t,
+      from cont_mdiff_at_iff_cont_diff_at.mpr
+        (((cont_diff_at_id : cont_diff_at ℝ ∞ id t).const_smul a).add cont_diff_at_const),
+      exact h₁.prod_map cont_mdiff_at_id },
+    exact h.comp (t, x) this },
+  have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹),
+  { refine λ x, ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, _, _⟩,
+    { revert x,
+      exact forall_restrict_germ_predicate_of_forall (λ x, rfl) },
+    { erw dist_self,
+      exact τ_pos x } },
+  have ind : ∀ (i : index_type L.N) (f : M → J¹), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
+    ∃ F : ℝ → M → J¹, (∀ t, ∀ x, P₀ x $ F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x $ F 1) ∧
+                     (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
+                     (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1),
+  { intros i f hf₀ hf₁,
+    let K₀ : set EM := closed_ball 0 1,
+    have hK₀ : is_compact K₀, from is_compact_closed_ball 0 1,
+    let K₁ : set EM := closed_ball 0 2,
+    have hK₁ : is_compact K₁, from is_compact_closed_ball 0 2,
+    have hK₀K₁ : K₀ ⊆ interior K₁,
+    { dsimp [K₀, K₁],
+      rw interior_closed_ball (0 : EM) (by norm_num : (2 : ℝ) ≠ 0),
+      exact closed_ball_subset_ball (by norm_num) },
+    let C := ⋃ j < i, (L.φ j) '' closed_ball 0 1,
+    have hC : is_closed C,
+    { -- TODO: rewrite localization_data.is_closed_Union to match this.
+      exact is_closed_bUnion (finite_Iio _) (λ j hj, (hK₀.image $ (L.φ j).continuous).is_closed) },
+    simp only [P₀, forall_and_distrib] at hf₀,
+    rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩,
+    rw forall_restrict_germ_predicate_iff at hf_A,
+    let F : formal_sol R := mk_formal_sol f hf_sec hf_sol hf_smooth,
+    have hFAC : ∀ᶠ x near A ∪ C, F.is_holonomic_at x,
+    { rw eventually_nhds_set_union,
+      refine ⟨_, hf₁⟩,
+      apply (hf_A.and h𝓕₀).eventually_nhds_set.mono (λ x hx, _),
+      rw eventually_and at hx,
+      apply hx.2.self_of_nhds.congr,
+      apply hx.1.mono (λ x' hx', _),
+      simp [F],
+      exact hx'.symm },
+    have hFφψ : F.bs '' (range $ L.φ i) ⊆ range (L.ψj i),
+    { rw ← range_comp,
+      apply L.ε_spec,
       intro x,
-      ext1,
-      { refl },
-      { change (G (0, x)).1.2 = _,
-        rw [G_eq, hF₀] },
-      { change (G (0, x)).2 = _,
-        rw [G_eq, hF₀] } },
-    { clear_dependent δ hF₀ hfA hFπ hFultim,
-      intro x,
-      have : x ∈ ⋃ i ≤ π (n (1, x)), (L.φ i) '' metric.closed_ball 0 1,
-      { have : x ∈ _ := hn' (1, x) _ le_rfl,
-        apply set.bUnion_mono subset_rfl _ this,
-        rintros i -,
-        exact image_subset _ metric.ball_subset_closed_ball, },
-      apply (hFhol (n (1, x)) x this).congr, clear this,
-      have : F (n (1, x)) 1 =ᶠ[𝓝 x] (λ x, G (1, x)),
-      { exact (hn (1, x) (n(1, x)) le_rfl).slice },
-      apply this.mono, clear this,
-      rintros y (hy : F (n (1, x)) 1 y = G (1, y)),
-      change F (n (1, x)) 1 y = 𝓕 1 y,
-      rw hy,
-      change G (1, y) = 𝓕 1 y,
-      ext ; try { refl },
-      rw hG11,
-      refl },
-    { clear_dependent δ hF₀ hFhol hFπ hFultim,
-      intros x x_in t,
-      rw [← (hfA (n (t, x)) t).nhds_set_forall_mem x x_in, ← G_eq],
-      ext ; try { refl },
-      rw hG11, refl, },
-    { clear_dependent hF₀ hFhol hFπ hFultim hfA,
-      intros t x,
-      apply le_of_lt,
-      change dist (G (t, x)).1.2 (𝓕₀.bs x) < δ x,
-      rw ← (hn (t, x) _ le_rfl).eq_of_nhds,
-      exact hFδ (n (t, x)) t x } },
-  -- The next six lines work around the fact that the statement of `satisfies_h_principle_core`
-  -- is now slightly too strong. This should be aligned at some point.
-  rcases hRample.satisfies_h_principle_core hRopen hA hδ_pos hδ_cont 𝓕₀ h𝓕₀ L with ⟨F, h⟩,
-  refine ⟨F, λ n, _⟩,
-  rcases h n with ⟨⟨h₀, h₁, h₂, h₃, h₄⟩, h₅, h₆⟩,
-  refine ⟨⟨_, _, _, _⟩, _, _⟩,
-  all_goals { try { assumption} },
-  exact h₀.on_set 0 right_mem_Iic,
-  exact h₂.forall,
-  exact h₄.on_set,
+      calc dist (F.bs x) (𝓕₀.bs x) = dist (f x).1.2 (𝓕₀.bs x) : by simp only [F, mk_formal_sol_bs_apply]
+      ... < τ x : hf_dist x
+      ... ≤ L.ε x : min_le_right _ _ },
+    let η : M → ℝ := λ x, τ x - dist (f x).1.2 (𝓕₀.bs x),
+    have η_pos : ∀ x, 0 < η x,
+    { exact λ x, sub_pos.mpr (hf_dist x) },
+    have η_cont : continuous η,
+    { have : cont_mdiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f, from λ x, hf_smooth x,
+      apply τ_cont.sub,
+      exact ((one_jet_bundle_proj_continuous IM M IX X).comp this.continuous).snd.dist
+        𝓕₀.smooth_bs.continuous },
+    rcases (L.φ i).improve_formal_sol (L.ψj i) hRample hRopen (hA.union hC) η_pos η_cont hFφψ hFAC
+      hK₀ hK₁ hK₀K₁ with ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩,
+    refine ⟨λ t x, F' t x, _, _, _, _, _, _⟩,
+    { refine λ t x, ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩,
+      { revert x,
+        rw forall_restrict_germ_predicate_iff,
+        rw [eventually_nhds_set_union] at hF'AC,
+        apply (hF'AC.1.and hf_A).mono,
+        rintros x ⟨hx, hx'⟩,
+        change F' t x = _,
+        rw [hx t, ← hx', mk_formal_sol_apply],
+        refl },
+      { calc dist (F' t x).1.2 (𝓕₀.bs x) ≤ dist (F' t x).1.2 (F.bs x) + dist (F.bs x) (𝓕₀.bs x) : dist_triangle _ _ _
+        ... < η x + dist (F.bs x) (𝓕₀.bs x) : add_lt_add_right (hF'η t x) _
+        ... = τ x : by simp [η] } },
+    { rw [union_assoc, eventually_nhds_set_union] at hF'hol,
+      replace hF'hol := hF'hol.2,
+      simp_rw [← L.Union_succ'] at hF'hol,
+      exact hF'hol },
+    { exact F'.smooth },
+    { intros t x hx,
+      rw hF'K₁ t x ((mem_range_of_mem_image _ _).mt hx),
+      simp [F] },
+    { apply hF'₀.mono (λ x hx, _),
+      erw hx,
+      ext1 y,
+      simp [F] },
+    { apply hF'₁.mono (λ x hx, _),
+      rw hx } },
+  rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩,
+  simp only [P₀, forall₂_and_distrib] at hFP₀,
+  rcases hFP₀ with ⟨hF_sec, hF_sol, hF_smooth, hF_A, hF_dist⟩,
+  refine ⟨mk_htpy_formal_sol F hF_sec hF_sol hFP₂, _, _, _, _⟩,
+  { intros x,
+    rw [mk_htpy_formal_sol_apply, hF₀] },
+  { exact hFP₁ },
+  { intros x hx t,
+    rw mk_htpy_formal_sol_apply,
+    exact (forall_restrict_germ_predicate_iff.mp $ hF_A t).on_set x hx },
+  { intros t x,
+    change dist (mk_htpy_formal_sol F hF_sec hF_sol hFP₂ t x).1.2 (𝓕₀.bs x) ≤ δ x,
+    rw mk_htpy_formal_sol_apply,
+    exact (hF_dist t x).le.trans (min_le_left _ _) }
 end
+
 
 variables
 {EP : Type*} [normed_add_comm_group EP] [normed_space ℝ EP]  [finite_dimensional ℝ EP]
