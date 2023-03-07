@@ -508,7 +508,6 @@ begin
       (hf.comp (smooth_id.prod_mk hk)).cont_mdiff_on⟩,
     simpa [hx] using set.ext_iff.mp h₃ (k x) }
 end
-
 end non_metric
 
 section metric

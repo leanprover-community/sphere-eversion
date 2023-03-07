@@ -313,14 +313,14 @@ begin
     hK₁ := (exists_compact_superset hK).some_spec.1,
     h₀₁ := (exists_compact_superset hK).some_spec.2 },
   obtain ⟨𝓕, h₁, -, h₂, -, h₄, h₅⟩ :=
-    𝓕₀.uncurry.improve_htpy (R.is_open_relativize h_op) (h_ample.relativize P)
+    𝓕₀.uncurry.improve_htpy' (R.is_open_relativize h_op) (h_ample.relativize P)
     parametric_landscape ε_pos (h_hol.mono (λ p hp, 𝓕₀.is_holonomic_at_uncurry.mpr hp)),
   have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p,
   { intro p, rw h₁.on_set 0 right_mem_Iic, refl },
   refine ⟨𝓕.curry, _, _, _, _⟩,
   { intros s x, exact curry_eq_iff_eq_uncurry_loc (h₁ (s, x)) },
   { refine h₂.mono _, rintro ⟨s, x⟩ hp t, exact curry_eq_iff_eq_uncurry_loc (hp t) },
-  { intros s x t, exact (h₄ (s, x) t) },
+  { intros s x t, exact (h₄ (s, x) t).le },
   { refine h₅.mono _, rintros ⟨s, x⟩ hp, exact 𝓕.to_family_jet_sec.is_holonomic_at_curry hp }
 end
 

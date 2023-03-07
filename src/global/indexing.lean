@@ -86,45 +86,7 @@ nat.cases_on n nat.locally_finite_order (λ _, fin.locally_finite_order _)
 instance (n : ℕ) : order_bot (index_type n) :=
 nat.cases_on n nat.order_bot (λ k, show order_bot $ fin (k + 1), by apply_instance)
 
-instance (n : ℕ) : succ_order (index_type n) :=
-nat.cases_on n nat.succ_order (λ k, fin.succ_order)
-
-def index_from_nat (N n : ℕ) : index_type N := indexing.from_nat n
-
 instance (N : ℕ) : has_zero (index_type N) := ⟨indexing.from_nat 0⟩
-
-lemma index_from_nat_zero (N : ℕ) : index_from_nat N 0 = 0 :=
-rfl
-
-protected lemma index_type.Iic_zero (n : ℕ) : Iic (0 : index_type n) = {0} :=
-nat.cases_on n (by { ext n, simp [@le_zero_iff ℕ] }) (λ k, by { ext n, simp })
-
-@[simp] lemma fin.coe_order_succ {n : ℕ} (a : fin (n+1)) :
-  ((order.succ a : fin _) : ℕ) = if (a : ℕ) < n then a + 1 else a :=
-begin
-  simp_rw [order.succ, fin.succ_eq],
-  split_ifs,
-  { simp_rw [fin.coe_add_one_of_lt h] },
-  { refl }
-end
-
-@[simp] lemma fin.coe_order_succ_mk {n m : ℕ} (h : m < n + 1) :
-  ((order.succ ⟨m, h⟩ : fin _) : ℕ) = if m < n then m + 1 else m := fin.coe_order_succ _
-
-protected lemma index_from_nat_succ (N m : ℕ) : index_from_nat N (m + 1) =
-  order.succ (index_from_nat N m) :=
-begin
-  refine nat.cases_on N rfl (λ n, _),
-  dsimp only [index_from_nat, index_type, index_type.indexing, fin.indexing, index_type.succ_order],
-  ext,
-  split_ifs with h h' h',
-  { rw [fin.coe_order_succ_mk, if_pos (nat.lt_of_succ_lt_succ h)], refl },
-  { linarith },
-  { obtain rfl : m = n :=
-      le_antisymm (nat.le_of_lt_succ h') (nat.le_of_succ_le_succ $ le_of_not_lt h),
-    rw [fin.coe_order_succ_mk, if_neg (lt_irrefl _)], refl },
-  { rw [fin.coe_order_succ, fin.coe_last, if_neg (lt_irrefl _)] }
-end
 
 lemma set.countable_iff_exists_nonempty_index_type_equiv
   {α : Type*} {s : set α} (hne : s.nonempty) :
@@ -156,56 +118,6 @@ end
 
 open filter
 
-/-
-Old statement assumed h : ∀ n, {x : X | f (n + 1) x ≠ f n x} ⊆ V (n + 1 : ℕ)
-which gives the new style assumption by:
-  replace h : ∀ n : ℕ, ∀ x ∉ V (n + 1 : ℕ), f (n+1) x = f n x,
-  { intros n x hx,
-    contrapose hx,
-    simp [h n hx] },
--/
-
-lemma locally_finite.exists_forall_eventually_of_indexing
-  {α X ι : Type*} [topological_space X] [linear_order ι] [indexing ι] {f : ℕ → X → α}
-  {V : ι → set X} (hV : locally_finite V)
-  (h : ∀ n : ℕ, ∀ x ∉ V ((n + 1) : ℕ), f (n + 1) x = f n x)
-  (h' : ∀ n : ℕ, ((n+1 : ℕ) : ι) = n → f (n + 1) = f n) :
-  ∃ (F : X → α), ∀ (x : X), ∀ᶠ (n : ℕ) in filter.at_top, f n =ᶠ[𝓝 x] F :=
-begin
-  let π :  ℕ → ι := indexing.from_nat,
-  choose U hUx hU using hV,
-  choose i₀ hi₀ using λ x, (hU x).bdd_above,
-  let n₀ : X → ℕ := indexing.to_nat ∘ i₀,
-  have key : ∀ {x} {n}, n ≥ n₀ x → ∀ {y}, y ∈ U x → f n y = f (n₀ x) y,
-  { intros x n hn,
-    rcases le_iff_exists_add.mp hn with ⟨k, rfl⟩, clear hn,
-    intros y hy,
-    induction k with k hk,
-    { simp },
-    { rw ← hk, clear hk,
-      have : ∀ n, π n < π (n+1) ∨ π n = π (n+1),
-      exact λ n, lt_or_eq_of_le (indexing.mono_from n.le_succ),
-      rcases this (n₀ x + k) with H | H ; clear this,
-      { have ineq : π (n₀ x + k + 1) > i₀ x,
-        { suffices : i₀ x ≤ π (n₀ x + k), from lt_of_le_of_lt this H,
-          rw ← indexing.from_to (i₀ x),
-          exact indexing.mono_from le_self_add },
-        apply h,
-        rintro (hy' : y ∈ V (π (n₀ x + k + 1))),
-        have := hi₀ x ⟨y, ⟨hy', hy⟩⟩, clear hy hy',
-        exact lt_irrefl _ (lt_of_le_of_lt this ineq) },
-      { erw [← (h' _ H.symm)],
-        refl } } },
-  refine ⟨λ x, f (n₀ x) x, λ x, _⟩,
-  change ∀ᶠ (n : ℕ) in at_top, f n =ᶠ[𝓝 x] λ (y : X), f (n₀ y) y,
-  apply (eventually_gt_at_top (n₀ x)).mono (λ n hn, _),
-  apply mem_of_superset (hUx x) (λ y hy, _),
-  change f n y = f (n₀ y) y,
-  calc f n y = f (n₀ x) y : key hn.le hy
-  ... = f (max (n₀ x) (n₀ y)) y : (key (le_max_left _ _) hy).symm
-  ... = f (n₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
-end
-
 lemma index_type.lt_or_eq_succ (N n : ℕ) :
   (n : index_type N) < (n+1 : ℕ) ∨ (n : index_type N) = (n+1 : ℕ) :=
 begin
@@ -231,10 +143,6 @@ begin
   { simp only [hNn, add_lt_add_iff_right, dif_pos, fin.mk_lt_mk] at h,
     simpa only [nat.lt.step hNn, dif_pos, fin.mk_le_mk] using nat.lt_succ_iff.mp h }
 end
-
-lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
-tendsto_at_top_at_top.mpr
-  (λ i, ⟨indexing.to_nat i, λ n hn,(indexing.from_to i) ▸ indexing.coe_mono hn⟩)
 
 lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
 nat.cases_on N nat.not_lt_zero (λ n, fin.not_lt_zero) j
