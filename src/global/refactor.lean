@@ -147,7 +147,12 @@ def mk_formal_sol (F : M → one_jet_bundle IM M IX X) (hsec : ∀ x, (F x).1.1 
 (hsmooth : smooth IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) F) : formal_sol R :=
 { bs := λ m, (F m).1.2,
   ϕ := λ m, (F m).2,
-  smooth' := sorry,
+  smooth' := begin
+    convert hsmooth,
+    ext x,
+    rw hsec,
+    all_goals { refl }
+  end,
   is_sol' := λ m, begin
     convert hsol m,
     refine  one_jet_bundle.ext IM M IX X _ _ _,
@@ -179,7 +184,12 @@ def mk_htpy_formal_sol (F : ℝ → M → one_jet_bundle IM M IX X) (hsec : ∀ 
 (hsmooth : smooth (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ↿F) : htpy_formal_sol R :=
 { bs := λ t m, (F t m).1.2,
   ϕ := λ t m, (F t m).2,
-  smooth' := sorry,
+  smooth' := begin
+    convert hsmooth,
+    ext ⟨t, x⟩,
+    exact (hsec t x).symm,
+    all_goals { refl }
+  end,
   is_sol' := λ t m, begin
     convert hsol t m,
     refine  one_jet_bundle.ext IM M IX X _ _ _,
@@ -225,25 +235,11 @@ begin
 end
 
 lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
-sorry
+tendsto_at_top_at_top.mpr
+  (λ i, ⟨indexing.to_nat i, λ n hn,(indexing.from_to i) ▸ indexing.coe_mono hn⟩)
 
 lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
-sorry
-
-example {α γ : Type*} (β : α → Type*) : ((Σ a, β a) → γ) ≃ Π a, (β a → γ) :=
-{ to_fun := λ f a b, f ⟨a, b⟩,
-  inv_fun := λ f p, f p.1 p.2,
-  left_inv := begin
-    intros f,
-    ext ⟨a, b⟩,
-    refl
-  end,
-  right_inv := begin
-    intros f,
-    ext a,
-    refl
-  end }
-
+nat.cases_on N nat.not_lt_zero (λ n, fin.not_lt_zero) j
 
 lemma inductive_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
@@ -345,7 +341,32 @@ P.lift_on (λ f, ((λ y, f (p.1, y)) : germ (𝓝 p.2) Z))
 
 private def T : ℕ → ℝ := λ n, nat.rec 0 (λ k x, x + 1/(2 : ℝ)^(k+1)) n
 
-private lemma T_lt (n : ℕ) : T n < 1 := sorry
+open_locale big_operators
+
+-- Note this is more painful than Patrick hoped for. Maybe this should be the definition of T.
+private lemma T_eq (n : ℕ) : T n = 1- (1/(2: ℝ))^n :=
+begin
+  have : T n = ∑ k in finset.range n, 1/(2: ℝ)^(k+1),
+  { induction n with n hn,
+    { simp only [T, finset.range_zero, finset.sum_empty] },
+    change T n + _ = _,
+    rw [hn, finset.sum_range_succ] },
+  simp_rw [this, ← one_div_pow, pow_succ, ← finset.mul_sum, geom_sum_eq (by norm_num : 1/(2:ℝ) ≠ 1) n],
+  field_simp,
+  norm_num,
+  apply div_eq_of_eq_mul,
+  apply neg_ne_zero.mpr,
+  apply ne_of_gt,
+  positivity,
+  ring
+end
+
+private lemma T_lt (n : ℕ) : T n < 1 :=
+begin
+  rw T_eq,
+  have : (0 : ℝ) < (1 / 2) ^ n, by positivity,
+  linarith
+end
 
 private lemma T_lt_succ (n : ℕ) : T n < T (n+1) :=
 lt_add_of_le_of_pos le_rfl (one_div_pos.mpr (pow_pos zero_lt_two _))
@@ -364,10 +385,16 @@ begin
   field_simp
 end
 
-lemma T_one : T 1 = 1/2 :=
+private lemma T_one : T 1 = 1/2 :=
 by simp [T]
 
-private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 := sorry
+private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 :=
+begin
+  rw [T_eq, not_le],
+  have : (1 / (2 : ℝ)) ^ (n + 1) < 1,
+  apply pow_lt_one ; norm_num,
+  linarith,
+end
 
 
 lemma filter.eventually_eq.eventually_eq_ite {X Y : Type*} {l : filter X} {f g : X → Y}
