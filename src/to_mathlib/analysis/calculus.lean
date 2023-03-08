@@ -41,44 +41,27 @@ variables {X : Type*} [normed_add_comm_group X] [normed_space 𝕜 X]
 variables {G' : Type*} [normed_add_comm_group G'] [normed_space 𝕜 G']
 variables {f : E → F} {g : E → F} {u : set (E × F)} {s : set E} {x : E} {t : set F} {n m : ℕ∞}
 
-
--- the following versions are not exactly ported
-lemma cont_diff_within_at_fderiv_within' {f : E → F → G}
-  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
-  (hg : cont_diff_within_at 𝕜 m g s x)
-  (ht : unique_diff_on 𝕜 t)
-  (hmn : m + 1 ≤ n)
-  (hst : insert x s ×ˢ t ⊆ u) -- maybe weaken
-  (hgx : ∀ᶠ x' in 𝓝[insert x s] x, g x' ∈ t)
-  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) -- remove
-  :
-  cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
-sorry -- hf.fderiv_within'' hg (hgx.mono (λ y hy, ht _ hy)) hmn hst hu
-
+-- the following version is not exactly ported
 lemma cont_diff_within_at_fderiv_within {f : E → F → G}
   (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
   (hg : cont_diff_within_at 𝕜 m g s x)
   (ht : unique_diff_on 𝕜 t)
   (hmn : m + 1 ≤ n) (hx : x ∈ s)
-  (hst : s ×ˢ t ⊆ u) -- maybe weaken
+  (hst : s ×ˢ t ⊆ u)
   (hgx : ∀ᶠ x' in 𝓝[s] x, g x' ∈ t)
-  (hu : u ∈ 𝓝[(λ x, (x, g x)) '' s] (x, g x)) -- remove
+  (hgt : t ∈ 𝓝[g '' s] g x)
   :
   cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
 by { rw [← insert_eq_self.mpr hx] at hst hgx,
-  exact cont_diff_within_at_fderiv_within' hf hg ht hmn hst hgx hu }
+  exact (hf.mono hst).fderiv_within'' hg (hgx.mono (λ y hy, ht _ hy)) hmn hgt }
 
+-- todo: remove alias
 lemma cont_diff_at.fderiv {f : E → F → G}
   (hf : cont_diff_at 𝕜 n (function.uncurry f) (x, g x))
   (hg : cont_diff_at 𝕜 m g x)
   (hmn : m + 1 ≤ n) :
   cont_diff_at 𝕜 m (λ x, fderiv 𝕜 (f x) (g x)) x :=
-begin
-  simp_rw [← fderiv_within_univ],
-  exact (cont_diff_within_at_fderiv_within hf.cont_diff_within_at hg.cont_diff_within_at
-    unique_diff_on_univ hmn (mem_univ x) (subset_univ _) (eventually_of_forall (λ x, mem_univ _))
-    univ_mem).cont_diff_at univ_mem,
-end
+cont_diff_at.cont_diff_at_fderiv hf hg hmn
 
 end fderiv
 

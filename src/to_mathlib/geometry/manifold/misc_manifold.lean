@@ -293,12 +293,8 @@ begin
       exact hg.1.preimage_mem_nhds (ext_chart_at_source_mem_nhds I (g x)) },
     simp_rw [function.comp, model_with_corners.range_prod, ext_chart_at_to_inv],
     refine mem_of_superset self_mem_nhds_within _,
-    refine image_prod_mk_subset_prod.trans (prod_mono _ _),
-    { rw [image_id'],
-      exact ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x) },
-    rintro _ ⟨x', hx', rfl⟩,
-    refine ext_chart_at_target_subset_range I (g x) _,
-    exact (ext_chart_at I (g x)).maps_to hx'.2 },
+    refine (image_subset_range _ _).trans _,
+    exact range_comp_subset_range (λ a, chart_at H (g x) $ g $ (chart_at G x).symm $ J.symm a) I },
   have : cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
     (λ x', fderiv_within 𝕜 (ext_chart_at I' (f x (g x)) ∘ f x' ∘ (ext_chart_at I (g x)).symm)
     (range I) (ext_chart_at I (g x) (g x'))) x,
