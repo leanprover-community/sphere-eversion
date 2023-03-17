@@ -65,7 +65,7 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   {n : ℕ∞}
   [fiber_bundle F₁ E₁] [vector_bundle 𝕜 F₁ E₁] [smooth_vector_bundle F₁ E₁ IB]
   [fiber_bundle F₂ E₂] [vector_bundle 𝕜 F₂ E₂] [smooth_vector_bundle F₂ E₂ IB]
-  [∀ (x : B), has_continuous_add (E₂ x)] [∀ (x : B), has_continuous_smul 𝕜 (E₂ x)]
+  [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
 
 namespace basic_smooth_vector_bundle_core
 
@@ -317,59 +317,37 @@ open continuous_linear_map
 
 local notation `LE₁E₂'` := bundle.continuous_linear_map (ring_hom.id 𝕜) F₁ E₁ F₂ E₂
 
-instance smooth_vector_bundle.pullback :
+def topological_space.continuous_linear_map' (x) :
+  topological_space ((bundle.continuous_linear_map (ring_hom.id 𝕜) F₁ E₁ F₂ E₂) x) :=
+by apply_instance
+attribute [instance] topological_space.continuous_linear_map' -- why is this needed?
+
+instance smooth_vector_bundle.continuous_linear_map :
   smooth_vector_bundle (F₁ →L[𝕜] F₂)
     (bundle.continuous_linear_map (ring_hom.id 𝕜) F₁ E₁ F₂ E₂) IB :=
 { smooth_on_coord_change := begin
     rintro _ _ ⟨e, he, rfl⟩ ⟨e', he', rfl⟩, resetI,
-    refine ((smooth_on_coord_change e e').comp f.smooth.smooth_on
-      (λ b hb, hb)).congr _,
-    rintro b (hb : f b ∈ e.base_set ∩ e'.base_set), ext v,
-    show ((e.pullback f).coord_changeL 𝕜 (e'.pullback f) b) v = (e.coord_changeL 𝕜 e' (f b)) v,
-    rw [e.coord_changeL_apply e' hb, (e.pullback f).coord_changeL_apply' _],
-    exacts [rfl, hb]
+    sorry,
+    -- -- basic_smooth_vector_bundle_core proof
+    -- refine ((compL 𝕜 F₁ F₂ F₂).cont_diff.comp_cont_diff_on
+    --   (smooth_on_coord_change e e')).clm_comp _,
+    -- refine (compL 𝕜 F₁ F₁ F₂).flip.cont_diff.comp_cont_diff_on _,
+    -- refine (((Z.coord_change_smooth_clm j i).comp (cont_diff_on_coord_change' IB i.2 j.2) _).congr
+    --   _).mono _,
+    -- { rw [@preimage_comp _ _ _ _ IB, IB.preimage_image, @preimage_comp _ _ _ IB.symm],
+    --   exact (inter_subset_left _ _).trans (preimage_mono $ local_homeomorph.maps_to _) },
+    -- { intros x hx, simp_rw [function.comp_apply, trans_apply, IB.left_inv] },
+    -- { rw [← IB.image_eq] },
+    -- -- pullback proof
+    -- refine ((smooth_on_coord_change e e').comp f.smooth.smooth_on
+    --   (λ b hb, hb)).congr _,
+    -- rintro b (hb : f b ∈ e.base_set ∩ e'.base_set), ext v,
+    -- show ((e.pullback f).coord_changeL 𝕜 (e'.pullback f) b) v = (e.coord_changeL 𝕜 e' (f b)) v,
+    -- rw [e.coord_changeL_apply e' hb, (e.pullback f).coord_changeL_apply' _],
+    -- exacts [rfl, hb]
   end }
 
 #exit
-
-@[simps] def hom : basic_smooth_vector_bundle_core IB B (F →L[𝕜] F') :=
-{ coord_change := λ e e' b,
-    compL 𝕜 F F' F' (Z'.coord_change e e' b) ∘L
-    (compL 𝕜 F F F').flip (Z.coord_change e' e (e'.1 (e.1.symm b))),
-  coord_change_self := λ e x hx L, begin
-    ext v,
-    simp_rw [comp_apply, flip_apply, compL_apply, comp_apply, e.1.right_inv hx,
-      Z.coord_change_self e x hx, Z'.coord_change_self e x hx],
-  end,
-  coord_change_comp := begin
-    intros i j k x hx L,
-    ext v,
-    simp_rw [comp_apply, flip_apply, compL_apply, comp_apply, Z'.coord_change_comp i j k x hx],
-    have h2x := hx,
-    simp_rw [trans_source, symm_source, mem_inter_iff, mem_preimage, trans_apply, mem_inter_iff,
-      mem_preimage] at hx,
-    rw [← Z.coord_change_comp k j i (k.1 (i.1.symm x)) _ v],
-    swap, { rw [← j.1.left_inv hx.1.2], apply local_homeomorph.maps_to _ h2x },
-    simp_rw [trans_apply],
-    have := hx.2.2, -- for some reason I cannot rewrite in `hx` directly?
-    rw [j.1.left_inv hx.1.2] at this ⊢,
-    rw [k.1.left_inv this]
-  end,
-  coord_change_smooth_clm := begin
-    intros i j,
-    refine ((compL 𝕜 F F' F').cont_diff.comp_cont_diff_on
-      (Z'.coord_change_smooth_clm i j)).clm_comp _,
-    refine (compL 𝕜 F F F').flip.cont_diff.comp_cont_diff_on _,
-    refine (((Z.coord_change_smooth_clm j i).comp (cont_diff_on_coord_change' IB i.2 j.2) _).congr
-      _).mono _,
-    { rw [@preimage_comp _ _ _ _ IB, IB.preimage_image, @preimage_comp _ _ _ IB.symm],
-      exact (inter_subset_left _ _).trans (preimage_mono $ local_homeomorph.maps_to _) },
-    { intros x hx, simp_rw [function.comp_apply, trans_apply, IB.left_inv] },
-    { rw [← IB.image_eq] }
-  end }
-
-
-
 lemma hom_chart' (x : LE₁E₂')
   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
@@ -434,7 +412,7 @@ lemma smooth_at_hom_bundle {f : M → LE₁E₂'} {x₀ : M} :
   smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) f x₀ ↔
   smooth_at IM IB (λ x, (f x).1) x₀ ∧
   smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
-    (λ x, in_coordinates' Z Z' (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+    (λ x, in_coordinates' I I Z' (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
 begin
   refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
   { apply ((Z.hom Z').smooth_proj _).comp x₀ h },
