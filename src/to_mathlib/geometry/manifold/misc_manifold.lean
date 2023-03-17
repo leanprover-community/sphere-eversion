@@ -283,7 +283,7 @@ begin
   exact Z₁.local_triv_coord_change_eq _ _ ⟨hx, Z₁.mem_base_set_at x⟩ v
 end
 
--- lemma in_coordinates_core'_eq
+-- lemma in_coordinates_core_eq
 --   {x₀ x : M} {y₀ y : M'} (ϕ : F₁ →L[𝕜] F₂)
 --   (hx : x ∈ Z₁.base_set (Z₁.index_at x₀))
 --   (hy : y ∈ Z₂.base_set (Z₂.index_at y₀)) :
