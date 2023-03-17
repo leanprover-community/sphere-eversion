@@ -45,20 +45,6 @@ variables [smooth_manifold_with_corners I M] (Z : basic_smooth_vector_bundle_cor
 
 end basic_smooth_vector_bundle_core
 
-lemma cont_mdiff_at.clm_apply {g : M → F →L[𝕜] F'} {f : M → F}
-  (hg : cont_mdiff_at I 𝓘(𝕜, F →L[𝕜] F') n g x) (hf : cont_mdiff_at I 𝓘(𝕜, F) n f x) :
-  cont_mdiff_at I 𝓘(𝕜, F') n (λ x, g x (f x)) x :=
-@cont_diff_at.comp_cont_mdiff_at _ _ _ _ _ _ _ _ _ _ _ _ _ _
-  _ _ _ _
-  (λ x : (F →L[𝕜] F') × F, x.1 x.2) (λ x, (g x, f x)) x
-  (cont_diff_fst.clm_apply cont_diff_snd).cont_diff_at
-  (hg.prod_mk_space hf)
-
-lemma cont_mdiff.clm_apply {g : M → F →L[𝕜] F'} {f : M → F}
-  (hg : cont_mdiff I 𝓘(𝕜, F →L[𝕜] F') n g) (hf : cont_mdiff I 𝓘(𝕜, F) n f) :
-  cont_mdiff I 𝓘(𝕜, F') n (λ x, g x (f x)) :=
-λ x, (hg x).clm_apply (hf x)
-
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
 
@@ -399,11 +385,6 @@ variables {M : Type*} [topological_space M] [charted_space H M]
 (f : C^∞⟮I, M; J, N⟯)
 
 namespace cont_mdiff_map
-
-instance : continuous_map_class C^n⟮I, M; J, N⟯ M N :=
-{ coe := coe_fn,
-  coe_injective' := coe_inj,
-  map_continuous := λ f, f.cont_mdiff_to_fun.continuous }
 
 /-- The first projection of a product, as a smooth map. -/
 def fst : C^n⟮I.prod I', M × M'; I, M⟯ := ⟨prod.fst, cont_mdiff_fst⟩

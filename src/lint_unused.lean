@@ -35,4 +35,4 @@ meta def lint_unused : tactic unit := do
   let d := grouped_by_filename env (ds.map $ λ _, "unused") str.length (print_warnings env ff name.anonymous),
   trace d
 
-#eval lint_unused
+-- #eval lint_unused

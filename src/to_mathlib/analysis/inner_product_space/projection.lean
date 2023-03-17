@@ -108,7 +108,7 @@ begin
   rw [inner_add_left, map_add, coe_add, inner_add_right, inner_add_right],
   suffices : y = 0 ↔ y + z ∈ Fᗮ,
   { simpa [orthogonal_projection_eq_zero_of_mem hz, orthogonal_projection_eq_self_iff.mpr hy,
-           inner_eq_zero_sym.mp (hz y hy)] },
+           inner_eq_zero_symm.mp (hz y hy)] },
   rw add_mem_cancel_right hz,
   split,
   { rintro rfl,
