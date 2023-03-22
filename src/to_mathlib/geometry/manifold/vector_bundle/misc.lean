@@ -15,7 +15,7 @@ import to_mathlib.geometry.manifold.misc_manifold
 noncomputable theory
 
 open bundle set topological_space local_homeomorph
-open_locale classical manifold
+open_locale classical manifold bundle
 
 -- variables {𝕜 𝕜₁ 𝕜₂ B F F₁ F₂ M M₁ M₂ : Type*}
 --   {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
@@ -43,6 +43,127 @@ open_locale classical manifold
 --   [∀ (x : B), has_continuous_add (E₂ x)] [∀ (x : B), has_continuous_smul 𝕜₂ (E₂ x)],
 --     vector_bundle 𝕜₂ (F₁ →SL[σ] F₂) (continuous_linear_map σ F₁ E₁ F₂ E₂)
 
+namespace fiber_bundle
+
+variables {𝕜 B B' F M : Type*} {E : B → Type*}
+variables [topological_space F] [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  {HB : Type*} [topological_space HB]
+  [topological_space B] [charted_space HB B] [fiber_bundle F E]
+
+lemma charted_space_chart_at_fst (x y : total_space E) :
+  (chart_at (model_prod HB F) x y).1 =
+  chart_at HB x.proj (trivialization_at F E x.proj y).1 :=
+by { rw [charted_space_chart_at], refl }
+
+lemma charted_space_chart_at_snd (x y : total_space E) :
+  (chart_at (model_prod HB F) x y).2 = (trivialization_at F E x.proj y).2 :=
+by { rw [charted_space_chart_at], refl }
+
+end fiber_bundle
+
+namespace vector_bundle_core
+
+variables {R 𝕜 B F ι : Type*}
+  [nontrivially_normed_field R]
+  [normed_add_comm_group F] [normed_space R F] [topological_space B]
+  (Z : vector_bundle_core R B F ι)
+
+/-- `Z.coord_change j i` is a partial inverse of `Z.coord_change i j`. -/
+lemma coord_change_comp_eq_self {i j : ι} {x : B} (hx : x ∈ Z.base_set i ∩ Z.base_set j) (v : F) :
+  Z.coord_change j i x (Z.coord_change i j x v) = v :=
+by rw [Z.coord_change_comp i j i x ⟨hx, hx.1⟩, Z.coord_change_self i x hx.1]
+
+end vector_bundle_core
+
+namespace vector_prebundle
+
+attribute [reducible] vector_prebundle.to_fiber_bundle
+
+/-!
+### `vector_prebundle.is_smooth`
+
+Todo: maybe redefine `vector_prebundle` as a mixin `fiber_prebundle.is_vector_prebundle`.
+The reason is that if you define a `fiber_prebundle` operation, and then
+(under certain circumstances)
+upgrade it to a `vector_prebundle`, this will result in `fiber_bundle` instances that are probably
+not easily seen as definitionally equal by type-class inference.
+-/
+
+
+variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
+  {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
+  [nontrivially_normed_field 𝕜]
+  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
+  [normed_add_comm_group F] [normed_space 𝕜 F]
+  [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
+  [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
+  [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
+  [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
+  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
+  {HB : Type*} [topological_space HB] (IB : model_with_corners 𝕜 EB HB)
+  [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
+  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
+  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
+  [topological_space M] [charted_space HM M] [Is : smooth_manifold_with_corners IM M]
+  {n : ℕ∞}
+
+variables (IB)
+
+/-- Mixin for a `vector_prebundle` stating smoothness of coordinate changes. -/
+class is_smooth (a : vector_prebundle 𝕜 F E) : Prop :=
+(exists_smooth_coord_change : ∀ (e e' ∈ a.pretrivialization_atlas), ∃ f : B → F →L[𝕜] F,
+  smooth_on IB 𝓘(𝕜, F →L[𝕜] F) f (e.base_set ∩ e'.base_set) ∧
+  ∀ (b : B) (hb : b ∈ e.base_set ∩ e'.base_set) (v : F),
+    f b v = (e' (total_space_mk b (e.symm b v))).2)
+
+variables (a : vector_prebundle 𝕜 F E) [ha : a.is_smooth IB] {e e' : pretrivialization F (π E)}
+include ha
+
+/-- A randomly chosen coordinate change on a `smooth_vector_prebundle`, given by
+  the field `exists_coord_change`. -/
+def smooth_coord_change (he : e ∈ a.pretrivialization_atlas) (he' : e' ∈ a.pretrivialization_atlas)
+  (b : B) : F →L[𝕜] F :=
+classical.some (ha.exists_smooth_coord_change e he e' he') b
+
+variables {IB}
+lemma smooth_on_smooth_coord_change (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) :
+  smooth_on IB 𝓘(𝕜, F →L[𝕜] F) (a.smooth_coord_change IB he he') (e.base_set ∩ e'.base_set) :=
+(classical.some_spec (ha.exists_smooth_coord_change e he e' he')).1
+
+lemma smooth_coord_change_apply (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
+  a.smooth_coord_change IB he he' b v = (e' (total_space_mk b (e.symm b v))).2 :=
+(classical.some_spec (ha.exists_smooth_coord_change e he e' he')).2 b hb v
+
+lemma mk_smooth_coord_change (he : e ∈ a.pretrivialization_atlas)
+  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
+  (b, (a.smooth_coord_change IB he he' b v)) = e' (total_space_mk b (e.symm b v)) :=
+begin
+  ext,
+  { rw [e.mk_symm hb.1 v, e'.coe_fst', e.proj_symm_apply' hb.1],
+    rw [e.proj_symm_apply' hb.1], exact hb.2 },
+  { exact a.smooth_coord_change_apply he he' hb v }
+end
+
+variables (IB)
+/-- Make a `smooth_vector_bundle` from a `smooth_vector_prebundle`.  -/
+lemma to_smooth_vector_bundle :
+  @smooth_vector_bundle _ _ F E _ _ _ _ _ a.total_space_topology a.fiber_topology _ _ _ _ _ IB
+  _ _ _ a.to_fiber_bundle a.to_vector_bundle :=
+{ smooth_on_coord_change := begin
+    rintros _ _ ⟨e, he, rfl⟩ ⟨e', he', rfl⟩,
+    refine (a.smooth_on_smooth_coord_change he he').congr _,
+    intros b hb,
+    ext v,
+    rw [a.smooth_coord_change_apply he he' hb v, continuous_linear_equiv.coe_coe,
+      trivialization.coord_changeL_apply],
+    exacts [rfl, hb]
+  end }
+
+end vector_prebundle
+
+
 variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
   [nontrivially_normed_field 𝕜]
@@ -66,8 +187,7 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   [fiber_bundle F₁ E₁] [vector_bundle 𝕜 F₁ E₁] [smooth_vector_bundle F₁ E₁ IB]
   [fiber_bundle F₂ E₂] [vector_bundle 𝕜 F₂ E₂] [smooth_vector_bundle F₂ E₂ IB]
   [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
-
-namespace basic_smooth_vector_bundle_core
+  {e₁ e₁' : trivialization F₁ (π E₁)} {e₂ e₂' : trivialization F₂ (π E₂)}
 
 -- variables [smooth_manifold_with_corners IB' B']
 
@@ -313,117 +433,137 @@ namespace basic_smooth_vector_bundle_core
 ### Homs of smooth vector bundles over the same base space
 -/
 
-open continuous_linear_map
+open continuous_linear_map pretrivialization
 
-local notation `LE₁E₂'` := bundle.continuous_linear_map (ring_hom.id 𝕜) F₁ E₁ F₂ E₂
+local notation `σ` := ring_hom.id 𝕜
+-- what is better notation for this?
+local notation `FE₁E₂` := bundle.continuous_linear_map σ F₁ E₁ F₂ E₂
+local notation `LE₁E₂` := total_space FE₁E₂
+local notation `PLE₁E₂` := bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂
 
-def topological_space.continuous_linear_map' (x) :
-  topological_space ((bundle.continuous_linear_map (ring_hom.id 𝕜) F₁ E₁ F₂ E₂) x) :=
+/- This proof is slow, especially the `simp only` and the elaboration of `h₂`. -/
+lemma smooth_on_continuous_linear_map_coord_change
+  [mem_trivialization_atlas e₁] [mem_trivialization_atlas e₁']
+  [mem_trivialization_atlas e₂] [mem_trivialization_atlas e₂'] :
+  smooth_on IB 𝓘(𝕜, ((F₁ →L[𝕜] F₂) →L[𝕜] (F₁ →L[𝕜] F₂)))
+    (continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂')
+    ((e₁.base_set ∩ e₂.base_set) ∩ (e₁'.base_set ∩ e₂'.base_set)) :=
+begin
+  let L₁ := compSL F₁ F₂ F₂ σ σ,
+  have h₁ : smooth _ _ _ := L₁.cont_mdiff,
+  have h₂ : smooth _ _ _ := (continuous_linear_map.flip (compSL F₁ F₁ F₂ σ σ)).cont_mdiff,
+  have h₃ : smooth_on IB _ _ _ := smooth_on_coord_change e₁' e₁,
+  have h₄ : smooth_on IB _ _ _ := smooth_on_coord_change e₂ e₂',
+  refine ((h₁.comp_smooth_on (h₄.mono _)).clm_comp (h₂.comp_smooth_on (h₃.mono _))).congr _,
+  { mfld_set_tac },
+  { mfld_set_tac },
+  { intros b hb, ext L v,
+    simp only [continuous_linear_map_coord_change, continuous_linear_equiv.coe_coe,
+      continuous_linear_equiv.arrow_congrSL_apply, comp_apply, function.comp, compSL_apply,
+      flip_apply, continuous_linear_equiv.symm_symm] },
+end
+
+instance bundle.continuous_linear_map.vector_prebundle.is_smooth : PLE₁E₂ .is_smooth IB :=
+{ exists_smooth_coord_change := by {
+    rintro _ ⟨e₁, e₂, he₁, he₂, rfl⟩ _ ⟨e₁', e₂', he₁', he₂', rfl⟩,
+    resetI,
+    refine ⟨continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂',
+    smooth_on_continuous_linear_map_coord_change IB,
+    continuous_linear_map_coord_change_apply σ e₁ e₁' e₂ e₂'⟩ } }
+
+@[reducible]
+def topological_space.continuous_linear_map' (x) : topological_space (FE₁E₂ x) :=
 by apply_instance
-attribute [instance] topological_space.continuous_linear_map' -- why is this needed?
+local attribute [instance, priority 1] topological_space.continuous_linear_map' -- why is this needed?
 
 instance smooth_vector_bundle.continuous_linear_map :
-  smooth_vector_bundle (F₁ →L[𝕜] F₂)
-    (bundle.continuous_linear_map (ring_hom.id 𝕜) F₁ E₁ F₂ E₂) IB :=
-{ smooth_on_coord_change := begin
-    rintro _ _ ⟨e, he, rfl⟩ ⟨e', he', rfl⟩, resetI,
-    sorry,
-    -- -- basic_smooth_vector_bundle_core proof
-    -- refine ((compL 𝕜 F₁ F₂ F₂).cont_diff.comp_cont_diff_on
-    --   (smooth_on_coord_change e e')).clm_comp _,
-    -- refine (compL 𝕜 F₁ F₁ F₂).flip.cont_diff.comp_cont_diff_on _,
-    -- refine (((Z.coord_change_smooth_clm j i).comp (cont_diff_on_coord_change' IB i.2 j.2) _).congr
-    --   _).mono _,
-    -- { rw [@preimage_comp _ _ _ _ IB, IB.preimage_image, @preimage_comp _ _ _ IB.symm],
-    --   exact (inter_subset_left _ _).trans (preimage_mono $ local_homeomorph.maps_to _) },
-    -- { intros x hx, simp_rw [function.comp_apply, trans_apply, IB.left_inv] },
-    -- { rw [← IB.image_eq] },
-    -- -- pullback proof
-    -- refine ((smooth_on_coord_change e e').comp f.smooth.smooth_on
-    --   (λ b hb, hb)).congr _,
-    -- rintro b (hb : f b ∈ e.base_set ∩ e'.base_set), ext v,
-    -- show ((e.pullback f).coord_changeL 𝕜 (e'.pullback f) b) v = (e.coord_changeL 𝕜 e' (f b)) v,
-    -- rw [e.coord_changeL_apply e' hb, (e.pullback f).coord_changeL_apply' _],
-    -- exacts [rfl, hb]
-  end }
+  smooth_vector_bundle (F₁ →L[𝕜] F₂) FE₁E₂ IB :=
+PLE₁E₂ .to_smooth_vector_bundle IB
 
-#exit
-lemma hom_chart' (x : LE₁E₂')
-  {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
-  (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
-    x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
-by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
-  local_homeomorph.refl_apply, function.id_def, vector_bundle_core.local_triv_apply,
-  to_vector_bundle_core_coord_change, to_vector_bundle_core_index_at,
-  hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
-  (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
+-- lemma hom_chart' (x : LE₁E₂)
+--   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
+--   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
+--     x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
+-- by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
+--   local_homeomorph.refl_apply, function.id_def, vector_bundle_core.local_triv_apply,
+--   to_vector_bundle_core_coord_change, to_vector_bundle_core_index_at,
+--   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
+--   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
 
-lemma hom_chart (x : LE₁E₂') (x₀ : B) :
-  (Z.hom Z').chart (chart_mem_atlas HB x₀) x =
-  (chart_at HB x₀ x.1, in_coordinates' Z Z' x₀ x.1 x₀ x.1 x.2) :=
-by simp_rw [hom_chart', in_coordinates', achart_def]
+lemma trivialization_at_hom_apply (x₀ : B) (x : LE₁E₂) :
+  trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀ x =
+  ⟨x.1, (trivialization_at F₂ E₂ x₀).continuous_linear_map_at 𝕜 x.1 ∘L x.2 ∘L
+    (trivialization_at F₁ E₁ x₀).symmL 𝕜 x.1⟩ :=
+rfl
 
-lemma hom_chart_source (x₀ : B) :
-  ((Z.hom Z').chart (chart_mem_atlas HB x₀)).source =
-  sigma.fst ⁻¹' (chart_at HB x₀).source :=
-begin
-  -- simp_rw [chart, trans_source],
-  -- simp only with mfld_simps,
-  set ZZ' := (Z.hom Z').to_vector_bundle_core,
-  change ZZ'.proj ⁻¹' (chart_at HB x₀).source ∩
-    (λ x, ZZ'.local_triv (achart HB x₀) x) ⁻¹' (chart_at HB x₀).source ×ˢ univ = _,
-  simp_rw [vector_bundle_core.local_triv_apply, mk_preimage_prod, preimage_univ,
-    inter_univ],
-  exact inter_self _
-end
+@[simp, mfld_simps]
+lemma trivialization_at_hom_source (x₀ : B) :
+  (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).source =
+  π FE₁E₂ ⁻¹' ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) :=
+rfl
 
-lemma hom_chart_target (x₀ : B) :
-  ((Z.hom Z').chart (chart_mem_atlas HB x₀)).target =
-  prod.fst ⁻¹' (chart_at HB x₀).target :=
-begin
-  simp_rw [chart, trans_target],
-  simp only with mfld_simps,
-  simp_rw [prod_univ, preimage_preimage, inter_eq_left_iff_subset],
-  rw [← @preimage_preimage _ _ _ (chart_at HB x₀).symm],
-  refine preimage_mono _,
-  rw [← image_subset_iff],
-  exact (chart_at HB x₀).symm.bij_on.image_eq.subset
-end
+@[simp, mfld_simps]
+lemma trivialization_at_hom_target (x₀ : B) :
+  (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).target =
+  ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) ×ˢ set.univ :=
+rfl
 
-lemma hom_ext_chart_at {v v' : LE₁E₂'} :
-  ext_chart_at (IB.prod 𝓘(𝕜, F →L[𝕜] F')) v v' =
-  (ext_chart_at IB v.1 v'.1, in_coordinates' Z Z' v.1 v'.1 v.1 v'.1 v'.2) :=
-by simp_rw [ext_chart_at_coe, function.comp_apply, to_charted_space_chart_at, hom_chart,
-    model_with_corners.prod_apply, model_with_corners_self_coe, function.id_def]
+-- lemma hom_chart' (x₀ x : LE₁E₂) :
+--   chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ =
+--   sorry :=
+-- by { simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
+--   trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, trivialization_at_hom_apply] }
 
-lemma smooth_at.hom_bundle_mk {f : M → B} {ϕ : M → F →L[𝕜] F'} {x₀ : M}
-  (hf : smooth_at IM IB f x₀)
-  (hϕ : smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
-    (λ x, in_coordinates' Z Z' (f x₀) (f x) (f x₀) (f x) (ϕ x)) x₀) :
-  smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) (λ x, total_space_mk (f x) (ϕ x) : M → LE₁E₂') x₀ :=
-begin
-  rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target],
-  refine ⟨hf.continuous_at, _⟩,
-  simp_rw [function.comp, hom_ext_chart_at],
-  exact (cont_mdiff_at_ext_chart_at.comp _ hf).prod_mk_space hϕ
-end
 
-lemma smooth_at_hom_bundle {f : M → LE₁E₂'} {x₀ : M} :
-  smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) f x₀ ↔
-  smooth_at IM IB (λ x, (f x).1) x₀ ∧
-  smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
-    (λ x, in_coordinates' I I Z' (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
-begin
-  refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
-  { apply ((Z.hom Z').smooth_proj _).comp x₀ h },
-  { rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target, ← smooth_at] at h,
-    have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
-    simp_rw [function.comp, hom_ext_chart_at] at h2,
-    exact h2 },
-  { convert smooth_at.hom_bundle_mk Z Z' h.1 h.2, ext; refl }
-end
+lemma hom_chart (x₀ x : LE₁E₂) :
+  chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
+  (chart_at HB x₀.1 x.1, (trivialization.continuous_linear_map_at 𝕜 (trivialization_at F₂ E₂ x₀.proj) x.fst).comp (comp x.snd (trivialization.symmL 𝕜 (trivialization_at F₁ E₁ x₀.proj) x.fst))) :=
+by { simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
+  trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, trivialization_at_hom_apply] }
 
-section cech_cocycles
+-- lemma hom_chart (x₀ x : LE₁E₂) :
+--   chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
+--   (chart_at HB x₀.1 x.1, in_coordinates' F₁ F₂ E₁ E₂ x₀.1 x.1 x₀.1 x.1 sorry) :=
+-- by { simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
+--   trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, trivialization_at_hom_apply,
+--     in_coordinates'],
+--   congr' 1,
+--    }
+
+-- lemma hom_ext_chart_at {v v' : LE₁E₂} :
+--   ext_chart_at (IB.prod 𝓘(𝕜, F →L[𝕜] F')) v v' =
+--   (ext_chart_at IB v.1 v'.1, in_coordinates' Z Z' v.1 v'.1 v.1 v'.1 v'.2) :=
+-- by simp_rw [ext_chart_at_coe, function.comp_apply, to_charted_space_chart_at, hom_chart,
+--     model_with_corners.prod_apply, model_with_corners_self_coe, function.id_def]
+
+-- lemma smooth_at.hom_bundle_mk {f : M → B} {ϕ : M → F →L[𝕜] F'} {x₀ : M}
+--   (hf : smooth_at IM IB f x₀)
+--   (hϕ : smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
+--     (λ x, in_coordinates' Z Z' (f x₀) (f x) (f x₀) (f x) (ϕ x)) x₀) :
+--   smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) (λ x, total_space_mk (f x) (ϕ x) : M → LE₁E₂) x₀ :=
+-- begin
+--   rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target],
+--   refine ⟨hf.continuous_at, _⟩,
+--   simp_rw [function.comp, hom_ext_chart_at],
+--   exact (cont_mdiff_at_ext_chart_at.comp _ hf).prod_mk_space hϕ
+-- end
+
+-- lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
+--   smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) f x₀ ↔
+--   smooth_at IM IB (λ x, (f x).1) x₀ ∧
+--   smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
+--     (λ x, in_coordinates' I I Z' (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+-- begin
+--   refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
+--   { apply ((Z.hom Z').smooth_proj _).comp x₀ h },
+--   { rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target, ← smooth_at] at h,
+--     have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
+--     simp_rw [function.comp, hom_ext_chart_at] at h2,
+--     exact h2 },
+--   { convert smooth_at.hom_bundle_mk Z Z' h.1 h.2, ext; refl }
+-- end
+
+-- section cech_cocycles
 
 /- Clearly `coord_change_equiv` is actually a result about topological vector bundles. I think it
 should be possible to define this as follows:
@@ -437,51 +577,51 @@ However the API for this part of the library seems to need of a lot of work so I
 to use it.
 -/
 
-variables {i j : atlas HB B} {x : B}
+-- variables {i j : atlas HB B} {x : B}
 
-protected lemma coord_change_equiv_aux
-  (hx₁ : x ∈ (i : local_homeomorph B HB).source)
-  (hx₂ : x ∈ (j : local_homeomorph B HB).source) (v : F) :
-  Z.coord_change j i (j x) (Z.coord_change i j (i x) v) = v :=
-begin
-  have : i x ∈ ((i.val.symm.trans j.val).trans (j.val.symm.trans i.val)).to_local_equiv.source,
-  { simp only [subtype.val_eq_coe, local_homeomorph.trans_to_local_equiv,
-      local_homeomorph.symm_to_local_equiv, local_equiv.trans_source, local_equiv.symm_source,
-      local_homeomorph.coe_coe_symm, local_equiv.coe_trans, local_homeomorph.coe_coe,
-      set.mem_inter_iff, set.mem_preimage, function.comp_app],
-    refine ⟨⟨_, _⟩, _, _⟩,
-    { exact i.val.map_source hx₁, },
-    { erw i.val.left_inv hx₁, exact hx₂, },
-    { erw i.val.left_inv hx₁, exact j.val.map_source hx₂, },
-    { erw [i.val.left_inv hx₁, j.val.left_inv hx₂], exact hx₁, }, },
-  have hx' : i.val.symm.trans j.val (i x) = j x,
-  { simp only [subtype.val_eq_coe, local_homeomorph.coe_trans, function.comp_app],
-    erw i.val.left_inv hx₁, refl, },
-  rw [← hx', Z.coord_change_comp i j i (i x) this v,
-    Z.coord_change_self i (i x) (i.val.map_source hx₁)],
-end
+-- protected lemma coord_change_equiv_aux
+--   (hx₁ : x ∈ (i : local_homeomorph B HB).source)
+--   (hx₂ : x ∈ (j : local_homeomorph B HB).source) (v : F) :
+--   Z.coord_change j i (j x) (Z.coord_change i j (i x) v) = v :=
+-- begin
+--   have : i x ∈ ((i.val.symm.trans j.val).trans (j.val.symm.trans i.val)).to_local_equiv.source,
+--   { simp only [subtype.val_eq_coe, local_homeomorph.trans_to_local_equiv,
+--       local_homeomorph.symm_to_local_equiv, local_equiv.trans_source, local_equiv.symm_source,
+--       local_homeomorph.coe_coe_symm, local_equiv.coe_trans, local_homeomorph.coe_coe,
+--       set.mem_inter_iff, set.mem_preimage, function.comp_app],
+--     refine ⟨⟨_, _⟩, _, _⟩,
+--     { exact i.val.map_source hx₁, },
+--     { erw i.val.left_inv hx₁, exact hx₂, },
+--     { erw i.val.left_inv hx₁, exact j.val.map_source hx₂, },
+--     { erw [i.val.left_inv hx₁, j.val.left_inv hx₂], exact hx₁, }, },
+--   have hx' : i.val.symm.trans j.val (i x) = j x,
+--   { simp only [subtype.val_eq_coe, local_homeomorph.coe_trans, function.comp_app],
+--     erw i.val.left_inv hx₁, refl, },
+--   rw [← hx', Z.coord_change_comp i j i (i x) this v,
+--     Z.coord_change_self i (i x) (i.val.map_source hx₁)],
+-- end
 
-variables (i j x)
+-- variables (i j x)
 
-/-- Čech cocycle representatives for this bundle relative to the chosen atlas (taking the junk
-value `1` outside the intersection of the sources of the two charts). -/
-noncomputable def coord_change_equiv : F ≃L[𝕜] F :=
-if hx : x ∈ (i : local_homeomorph B HB).source ∩ (j : local_homeomorph B HB).source then
-{ to_fun    := Z.coord_change i j (i x),
-  inv_fun   := Z.coord_change j i (j x),
-  left_inv  := Z.coord_change_equiv_aux hx.1 hx.2,
-  right_inv := Z.coord_change_equiv_aux hx.2 hx.1,
-  continuous_inv_fun := (Z.coord_change j i _).continuous,
-  .. Z.coord_change i j (i x) }
-else 1
+-- /-- Čech cocycle representatives for this bundle relative to the chosen atlas (taking the junk
+-- value `1` outside the intersection of the sources of the two charts). -/
+-- noncomputable def coord_change_equiv : F ≃L[𝕜] F :=
+-- if hx : x ∈ (i : local_homeomorph B HB).source ∩ (j : local_homeomorph B HB).source then
+-- { to_fun    := Z.coord_change i j (i x),
+--   inv_fun   := Z.coord_change j i (j x),
+--   left_inv  := Z.coord_change_equiv_aux hx.1 hx.2,
+--   right_inv := Z.coord_change_equiv_aux hx.2 hx.1,
+--   continuous_inv_fun := (Z.coord_change j i _).continuous,
+--   .. Z.coord_change i j (i x) }
+-- else 1
 
-variables {i j x}
+-- variables {i j x}
 
-lemma coe_coord_change_equiv
-  (hx : x ∈ (i : local_homeomorph B HB).source ∩ (j : local_homeomorph B HB).source) :
-  (Z.coord_change_equiv i j x : F → F) = (Z.coord_change i j (i x) : F → F) :=
-by simpa only [coord_change_equiv, dif_pos hx]
+-- lemma coe_coord_change_equiv
+--   (hx : x ∈ (i : local_homeomorph B HB).source ∩ (j : local_homeomorph B HB).source) :
+--   (Z.coord_change_equiv i j x : F → F) = (Z.coord_change i j (i x) : F → F) :=
+-- by simpa only [coord_change_equiv, dif_pos hx]
 
-end cech_cocycles
+-- end cech_cocycles
 
-end basic_smooth_vector_bundle_core
+-- end basic_smooth_vector_bundle_core
