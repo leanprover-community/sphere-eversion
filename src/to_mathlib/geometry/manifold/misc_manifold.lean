@@ -230,6 +230,7 @@ variables
 
 variables (I I' Z Z₂ F₁ F₂)
 
+
 /-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
   in charts around `y`, `in_coordinates' Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
   linear map that makes sense from charts around `x₀` to charts around `y₀`
@@ -250,6 +251,8 @@ def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') :
 
 variables {F₁ F₂}
 
+/-- Todo: use `in_coordinates` instead of `in_coordinates_core`. -/
+
 def in_coordinates_core' {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
   (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂) (x₀ x : M) (y₀ y : M') (ϕ : F₁ →L[𝕜] F₂) : F₁ →L[𝕜] F₂ :=
 Z₂.coord_change (Z₂.index_at y) (Z₂.index_at y₀) y ∘L ϕ ∘L
@@ -260,12 +263,13 @@ def in_coordinates_core (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E'
 λ x₀ x, in_coordinates_core' (tangent_bundle_core I M) (tangent_bundle_core I' M')
   (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
--- /-- The map `in_coordinates'` is trivial if `M'` is the -/
--- lemma in_coordinates'_tangent_bundle_core_model_space
---   (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') :
---     in_coordinates' E E' (tangent_space I) (tangent_space I') x₀ x y₀ y ϕ = ϕ :=
--- by simp_rw [in_coordinates', tangent_bundle_core_coord_change_achart,
---   continuous_linear_map.id_comp, continuous_linear_map.comp_id]
+/-- The map `in_coordinates_core'` is trivial if `M'` is the -/
+lemma in_coordinates_core'_tangent_bundle_core_model_space
+  (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') :
+    in_coordinates_core' (tangent_bundle_core I H) (tangent_bundle_core I' H') x₀ x y₀ y ϕ = ϕ :=
+by simp_rw [in_coordinates_core', tangent_bundle_core_index_at,
+  tangent_bundle_core_coord_change_model_space,
+  continuous_linear_map.id_comp, continuous_linear_map.comp_id]
 
 lemma in_coordinates_core'_eq {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
   (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂)
@@ -409,7 +413,8 @@ begin
       (ext_chart_at I (g x₂)).left_inv (mem_ext_chart_source I (g x₂))] },
   { simp_rw [function.comp_apply, (ext_chart_at I (g x)).left_inv hx₂] }
 end
- -- prove from cont_mdiff_within_at.mfderiv
+
+ -- todo: prove from cont_mdiff_within_at.mfderiv
 /-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. -/
 lemma cont_mdiff_at.mfderiv''' {x : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (x, g x))
