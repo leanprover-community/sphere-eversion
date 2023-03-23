@@ -374,9 +374,8 @@ begin
     exact is_open_ext_chart_at_preimage' IF x hV₁, },
   have hB : ∀ x, (𝓝 x).has_basis (p x) (B x) :=
     λ x, charted_space.nhds_has_basis_balls_of_open_cov IF x s_op cov,
-  have hp : ∀ i r, p i r → 0 < r := λ i r h, h.1,
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ :=
-    exists_countable_locally_finite_cover surjective_id hp hW₀ hW₁ hB,
+    exists_countable_locally_finite_cover surjective_id hW₀ hW₁ hB,
   let g : M × ℝ → local_homeomorph F F := λ z, diffeomorph_to_nhd (ext_chart_at IF z.1 z.1) z.2,
   have hg₁ : ∀ z, (g z).source = univ, { simp, },
   have hg₂ : ∀ z, cont_diff ℝ ∞ (g z), { simp, },

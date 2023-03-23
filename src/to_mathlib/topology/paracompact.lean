@@ -14,7 +14,6 @@ lemma exists_countable_locally_finite_cover
   {ι X : Type*} [topological_space X] [t2_space X] [locally_compact_space X] [sigma_compact_space X]
   {c : ι → X} {W : ι → ℝ → set X} {B : ι → ℝ → set X} {p : ι → ℝ → Prop}
   (hc : surjective c)
-  (hp  : ∀ i r, p i r → 0 < r)
   (hW₀ : ∀ i r, p i r → c i ∈ W i r)
   (hW₁ : ∀ i r, p i r → is_open (W i r))
   (hB : ∀ i, (𝓝 (c i)).has_basis (p i) (B i)) :
@@ -56,7 +55,6 @@ begin
     obtain ⟨r, hr₁, hr₂⟩ := (hB i).mem_iff.mp (hU'' n _ hx),
     exact ⟨i, r, hW₀ i r hr₁, hr₂, hr₁⟩, },
   choose i r h₁ h₂ h₃ using λ n, this n,
-  have hr : ∀ n (x : C n), 0 < r n x := λ n x, hp _ _ (h₃ n x),
   let V : Π n, C n → set X := λ n x, W (i n x) (r n x),
   have hV₁ : ∀ n x, is_open (V n x) := λ n x, hW₁ _ _ (h₃ n x),
   have hV₂ : ∀ n, C n ⊆ ⋃ (x : C n), V n x := λ n x hx, mem_Union.mpr ⟨⟨x, hx⟩, h₁ _ _⟩,
