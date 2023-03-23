@@ -390,7 +390,7 @@ begin
   { obtain ⟨⟨x, r⟩, hxr⟩ := z,
     obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr,
     simp_rw range_open_smooth_emb_of_diffeo_subset_chart_target,
-    exact ⟨j, subset_trans (monotone_image (range_diffeomorph_to_nhd_subset_ball _ hr)) hj⟩, },
+    exact ⟨j, (monotone_image (range_diffeomorph_to_nhd_subset_ball _ hr)).trans hj⟩, },
   { simp_rw range_open_smooth_emb_of_diffeo_subset_chart_target,
     refine ht₄.subset _,
     rintros ⟨⟨x, r⟩, hxr⟩,
