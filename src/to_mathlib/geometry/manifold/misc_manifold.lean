@@ -23,6 +23,63 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 
 end model_with_corners
 
+
+-- todo: make `vector_bundle_core.total_space` protected!
+namespace vector_bundle_core
+
+variables {𝕜 B F : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group F] [normed_space 𝕜 F] [topological_space B]
+  {ι : Type*} (Z : vector_bundle_core 𝕜 B F ι) {i j : ι}
+
+@[simp, mfld_simps] lemma local_triv_continuous_linear_map_at {b : B} (hb : b ∈ Z.base_set i) :
+  (Z.local_triv i).continuous_linear_map_at 𝕜 b = Z.coord_change (Z.index_at b) i b :=
+begin
+  ext1 v,
+  rw [(Z.local_triv i).continuous_linear_map_at_apply 𝕜, (Z.local_triv i).coe_linear_map_at_of_mem],
+  exacts [rfl, hb]
+end
+
+@[simp, mfld_simps] lemma trivialization_at_continuous_linear_map_at {b₀ b : B}
+  (hb : b ∈ (trivialization_at F Z.fiber b₀).base_set) :
+  (trivialization_at F Z.fiber b₀).continuous_linear_map_at 𝕜 b =
+  Z.coord_change (Z.index_at b) (Z.index_at b₀) b :=
+Z.local_triv_continuous_linear_map_at hb
+
+@[simp, mfld_simps] lemma local_triv_symmL {b : B} (hb : b ∈ Z.base_set i) :
+  (Z.local_triv i).symmL 𝕜 b = Z.coord_change i (Z.index_at b) b :=
+by { ext1 v, rw [(Z.local_triv i).symmL_apply 𝕜, (Z.local_triv i).symm_apply], exacts [rfl, hb] }
+
+@[simp, mfld_simps] lemma trivialization_at_symmL {b₀ b : B}
+  (hb : b ∈ (trivialization_at F Z.fiber b₀).base_set) :
+  (trivialization_at F Z.fiber b₀).symmL 𝕜 b = Z.coord_change (Z.index_at b₀) (Z.index_at b) b :=
+Z.local_triv_symmL hb
+
+@[simp, mfld_simps] lemma trivialization_at_coord_change_eq {b₀ b₁ b : B}
+  (hb : b ∈ (trivialization_at F Z.fiber b₀).base_set ∩ (trivialization_at F Z.fiber b₁).base_set)
+  (v : F) :
+  (trivialization_at F Z.fiber b₀).coord_changeL 𝕜 (trivialization_at F Z.fiber b₁) b v =
+  Z.coord_change (Z.index_at b₀) (Z.index_at b₁) b v :=
+Z.local_triv_coord_change_eq _ _ hb v
+
+end vector_bundle_core
+
+namespace tangent_bundle
+
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+{E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+{H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
+{M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+{F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+
+lemma ext_chart_at_def (x : M) : ext_chart_at I x = (chart_at H x).extend I := rfl
+
+lemma coord_change_at_self {b b' x : F} :
+  (tangent_bundle_core 𝓘(𝕜, F) F).coord_change (achart F b) (achart F b') x = 1 :=
+by simpa only [tangent_bundle_core_coord_change] with mfld_simps using
+    fderiv_within_id unique_diff_within_at_univ
+
+end tangent_bundle
+
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
@@ -248,10 +305,26 @@ def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') :
   N → N → E →L[𝕜] E' :=
 λ x₀ x, in_coordinates' E E' (tangent_space I) (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
+/-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
+  in charts around `y`, `in_coordinates' Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
+  linear map that makes sense from charts around `x₀` to charts around `y₀`
+  by composing it with appropriate coordinate changes given by smooth vector bundles `Z` and `Z₂`.
+-/
+def in_coordinates2' (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y) : F₁ →L[𝕜] F₂ :=
+(trivialization_at F₂ Z₂ y₀).continuous_linear_map_at 𝕜 y ∘L ϕ ∘L
+(trivialization_at F₁ Z x₀).symmL 𝕜 x
+
+/-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
+  in charts around `g x`, `in_coordinates I I' f g ϕ x₀ x` is a coordinate change of this continuous
+  linear map that makes sense from charts around `f x₀` to charts around `g x₀`
+  by composing it with appropriate coordinate changes. -/
+def in_coordinates2 (f : N → M) (g : N → M')
+  (ϕ : Π x : N, tangent_space I (f x) →L[𝕜] tangent_space I' (g x)) : N → N → E →L[𝕜] E' :=
+λ x₀ x, in_coordinates2' E E' (tangent_space I) (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
 variables {F₁ F₂}
 
-/-- Todo: use `in_coordinates` instead of `in_coordinates_core`. -/
+/-- Todo: use `in_coordinates(2)` instead of `in_coordinates_core`. -/
 
 def in_coordinates_core' {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
   (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂) (x₀ x : M) (y₀ y : M') (ϕ : F₁ →L[𝕜] F₂) : F₁ →L[𝕜] F₂ :=
@@ -271,6 +344,10 @@ by simp_rw [in_coordinates_core', tangent_bundle_core_index_at,
   tangent_bundle_core_coord_change_model_space,
   continuous_linear_map.id_comp, continuous_linear_map.comp_id]
 
+lemma in_coordinates_core_model_space (f : N → H) (g : N → H') (ϕ : N → E →L[𝕜] E') (x₀ : N) :
+    in_coordinates_core I I' f g ϕ x₀ = ϕ :=
+by simp_rw [in_coordinates_core, in_coordinates_core'_tangent_bundle_core_model_space]
+
 lemma in_coordinates_core'_eq {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
   (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂)
   {x₀ x : M} {y₀ y : M'} (ϕ : F₁ →L[𝕜] F₂)
@@ -286,6 +363,17 @@ begin
   { ext v, exact Z₂.local_triv_coord_change_eq _ _ ⟨Z₂.mem_base_set_at y, hy⟩ v },
   exact Z₁.local_triv_coord_change_eq _ _ ⟨hx, Z₁.mem_base_set_at x⟩ v
 end
+
+-- for the tangent bundle this equality should also hold outside the base sets
+lemma in_coordinates_core'_eq2 {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
+  (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂)
+  {x₀ x : M} {y₀ y : M'} (ϕ : F₁ →L[𝕜] F₂)
+  (hx : x ∈ Z₁.base_set (Z₁.index_at x₀))
+  (hy : y ∈ Z₂.base_set (Z₂.index_at y₀)) :
+    in_coordinates2' F₁ F₂ Z₁.fiber Z₂.fiber x₀ x y₀ y ϕ =
+    in_coordinates_core' Z₁ Z₂ x₀ x y₀ y ϕ :=
+by simp_rw [in_coordinates2', in_coordinates_core',
+    Z₂.trivialization_at_continuous_linear_map_at hy, Z₁.trivialization_at_symmL hx]
 
 -- lemma in_coordinates_core_eq
 --   {x₀ x : M} {y₀ y : M'} (ϕ : F₁ →L[𝕜] F₂)

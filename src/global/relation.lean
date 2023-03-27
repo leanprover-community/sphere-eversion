@@ -19,7 +19,7 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 noncomputable theory
 
 open set function filter (hiding map_smul) charted_space smooth_manifold_with_corners
-open_locale topology manifold
+open_locale topology manifold bundle
 
 section defs
 /-! ## Fundamental definitions -/
@@ -75,7 +75,7 @@ def mk_formal_sol (F : M → one_jet_bundle I M I' M') (hsec : ∀ x, (F x).1.1 
   end,
   is_sol' := λ m, begin
     convert hsol m,
-    refine  one_jet_bundle.ext I M I' M' _ _ _,
+    refine one_jet_bundle.ext _ _ _,
     rw hsec,
     all_goals { refl }
     end}
@@ -227,7 +227,7 @@ def mk_htpy_formal_sol (F : ℝ → M → one_jet_bundle I M I' M') (hsec : ∀ 
   end,
   is_sol' := λ t m, begin
     convert hsol t m,
-    refine  one_jet_bundle.ext I M I' M' _ _ _,
+    refine  one_jet_bundle.ext _ _ _,
     rw hsec,
     all_goals { refl }
     end}
@@ -341,7 +341,7 @@ begin
   { have := 𝓕.to_family_one_jet_sec.smooth,
     let j : C^∞⟮IP, P ; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ := ⟨λ p, (1, p),
                                                     smooth.prod_mk smooth_const smooth_id⟩,
-    rw show uncurry (λ s, (𝓕 (1, s)).bs) = prod.snd ∘ (one_jet_bundle.proj _ _ _ _) ∘
+    rw show uncurry (λ s, (𝓕 (1, s)).bs) = prod.snd ∘ π (one_jet_space I IX) ∘
                                             (λ (p : P × M), 𝓕.reindex j p.1 p.2),
     by { ext, refl },
     exact (𝓕.reindex j).to_family_one_jet_sec.smooth_bs },
@@ -428,7 +428,7 @@ lemma one_jet_bundle.continuous_transfer : continuous (φ.transfer ψ) :=
 (open_smooth_embedding.smooth_transfer _ _).continuous
 
 lemma open_smooth_embedding.range_transfer : range (φ.transfer ψ) =
-  one_jet_bundle.proj IM M IN N ⁻¹' (range φ ×ˢ range ψ) :=
+  π (one_jet_space IM IN) ⁻¹' (range φ ×ˢ range ψ) :=
 begin
   ext σ, split,
   { rintro ⟨σ, rfl⟩, exact mk_mem_prod (mem_range_self _) (mem_range_self _) },
@@ -446,7 +446,7 @@ end
 lemma open_smooth_embedding.is_open_range_transfer : is_open (range (φ.transfer ψ)) :=
 begin
   rw [φ.range_transfer ψ],
-  exact (φ.is_open_range.prod ψ.is_open_range).preimage (one_jet_bundle_proj_continuous _ _ _ _),
+  exact (φ.is_open_range.prod ψ.is_open_range).preimage one_jet_bundle_proj_continuous,
 end
 
 /-- localize a relation -/
@@ -564,7 +564,7 @@ def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
       refine filter.eventually_of_mem ((φ.is_open_range_transfer ψ).mem_nhds (mem_range_self _)) _,
       rw [φ.range_transfer ψ],
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩,
-      simp_rw [in_coordinates, φ.transfer_fst_fst, φ.left_inv],
+      simp_rw [in_coordinates_core, φ.transfer_fst_fst, φ.left_inv],
       refl },
     exact mem_range_self _,
   end }

@@ -40,7 +40,6 @@ open_locale classical manifold bundle
 --   {n : ℕ∞}
 --   [fiber_bundle F₁ E₁] [vector_bundle 𝕜₁ F₁ E₁] [smooth_vector_bundle F₁ E₁ IB₁]
 --   [fiber_bundle F₂ E₂] [vector_bundle 𝕜₂ F₂ E₂] [smooth_vector_bundle F₂ E₂ IB₂]
---   [∀ (x : B), has_continuous_add (E₂ x)] [∀ (x : B), has_continuous_smul 𝕜₂ (E₂ x)],
 --     vector_bundle 𝕜₂ (F₁ →SL[σ] F₂) (continuous_linear_map σ F₁ E₁ F₂ E₂)
 
 namespace fiber_bundle
@@ -58,6 +57,17 @@ by { rw [charted_space_chart_at], refl }
 lemma charted_space_chart_at_snd (x y : total_space E) :
   (chart_at (model_prod HB F) x y).2 = (trivialization_at F E x.proj y).2 :=
 by { rw [charted_space_chart_at], refl }
+
+-- lemma charted_space_chart_at_source (x : total_space E) :
+--   (chart_at (model_prod HB F) x).source =
+--   (trivialization_at F E x.proj).to_local_homeomorph ≫ₕ
+--   (chart_at HB x.proj).prod (local_homeomorph.refl F) :=
+-- begin
+--   dsimp only [fiber_bundle.charted_space', charted_space.comp, fiber_bundle.charted_space,
+--     prod_charted_space, charted_space_self],
+--   rw [trivialization.coe_coe,
+--     trivialization.coe_fst' _ (mem_base_set_trivialization_at F E x.proj)]
+-- end
 
 end fiber_bundle
 
@@ -104,7 +114,7 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
   {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
   {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
-  [topological_space M] [charted_space HM M] [Is : smooth_manifold_with_corners IM M]
+  [topological_space M] [charted_space HM M]
   {n : ℕ∞}
 
 variables (IB)
@@ -164,31 +174,6 @@ lemma to_smooth_vector_bundle :
 end vector_prebundle
 
 
-variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
-  {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
-  [nontrivially_normed_field 𝕜]
-  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
-  [normed_add_comm_group F] [normed_space 𝕜 F]
-  [topological_space (total_space E)] [∀ x, topological_space (E x)]
-  [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
-  [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
-  [topological_space (total_space E₁)] [∀ x, topological_space (E₁ x)]
-  [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
-  [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
-  [topological_space (total_space E₂)] [∀ x, topological_space (E₂ x)]
-
-  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
-  {HB : Type*} [topological_space HB] (IB : model_with_corners 𝕜 EB HB)
-  [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
-  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
-  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
-  [topological_space M] [charted_space HM M] [Is : smooth_manifold_with_corners IM M]
-  {n : ℕ∞}
-  [fiber_bundle F₁ E₁] [vector_bundle 𝕜 F₁ E₁] [smooth_vector_bundle F₁ E₁ IB]
-  [fiber_bundle F₂ E₂] [vector_bundle 𝕜 F₂ E₂] [smooth_vector_bundle F₂ E₂ IB]
-  [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
-  {e₁ e₁' : trivialization F₁ (π E₁)} {e₂ e₂' : trivialization F₂ (π E₂)}
-
 -- variables [smooth_manifold_with_corners IB' B']
 
 -- lemma pullback_prod_aux {e₁ : local_homeomorph B HB} {e₂ : local_homeomorph B' HB'}
@@ -206,16 +191,6 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
 --   (trivial_basic_smooth_vector_bundle_core IB B F).coord_change (achart HB b) (achart HB b') x =
 --   1 :=
 -- rfl
-
--- lemma tangent_space_self_coord_change_at {b b' x : F} :
---   (tangent_bundle_core 𝓘(𝕜, F) F).coord_change (achart F b) (achart F b') x = 1 :=
--- begin
---   simp_rw [tangent_bundle_core_coord_change, model_with_corners_self_coe,
---     model_with_corners_self_coe_symm, achart_def, range_id, chart_at_self_eq, function.comp,
---     local_homeomorph.refl_symm, local_homeomorph.refl_apply, function.id_def],
---   exact fderiv_within_id unique_diff_within_at_univ
--- end
-
 
 -- include Z
 
@@ -429,20 +404,52 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
 --   ⟨(b, b'), mk_mem_prod (mem_chart_source HB b) (mem_chart_source HB' b')⟩
 
 
+variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
+  {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
+  [nontrivially_normed_field 𝕜]
+  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
+  [normed_add_comm_group F] [normed_space 𝕜 F]
+  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
+  [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
+  [topological_space (total_space E₁)] [∀ x, topological_space (E₁ x)]
+  [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
+  [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
+  [topological_space (total_space E₂)] [∀ x, topological_space (E₂ x)]
+
+  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
+  {HB : Type*} [topological_space HB] (IB : model_with_corners 𝕜 EB HB)
+  [topological_space B] [charted_space HB B]
+  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
+  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
+  [topological_space M] [charted_space HM M] [Is : smooth_manifold_with_corners IM M]
+  {n : ℕ∞}
+  [fiber_bundle F₁ E₁] [vector_bundle 𝕜 F₁ E₁]
+  [fiber_bundle F₂ E₂] [vector_bundle 𝕜 F₂ E₂]
+  {e₁ e₁' : trivialization F₁ (π E₁)} {e₂ e₂' : trivialization F₂ (π E₂)}
+
+
 /-!
 ### Homs of smooth vector bundles over the same base space
 -/
+-- protect `bundle.continuous_linear_map`
 
+section hom
 open continuous_linear_map pretrivialization
 
 local notation `σ` := ring_hom.id 𝕜
+
+section general
 -- what is better notation for this?
 local notation `FE₁E₂` := bundle.continuous_linear_map σ F₁ E₁ F₂ E₂
 local notation `LE₁E₂` := total_space FE₁E₂
 local notation `PLE₁E₂` := bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂
 
+
 /- This proof is slow, especially the `simp only` and the elaboration of `h₂`. -/
 lemma smooth_on_continuous_linear_map_coord_change
+  [smooth_manifold_with_corners IB B]
+  [smooth_vector_bundle F₁ E₁ IB] [smooth_vector_bundle F₂ E₂ IB]
   [mem_trivialization_atlas e₁] [mem_trivialization_atlas e₁']
   [mem_trivialization_atlas e₂] [mem_trivialization_atlas e₂'] :
   smooth_on IB 𝓘(𝕜, ((F₁ →L[𝕜] F₂) →L[𝕜] (F₁ →L[𝕜] F₂)))
@@ -463,38 +470,19 @@ begin
       flip_apply, continuous_linear_equiv.symm_symm] },
 end
 
-instance bundle.continuous_linear_map.vector_prebundle.is_smooth : PLE₁E₂ .is_smooth IB :=
-{ exists_smooth_coord_change := by {
-    rintro _ ⟨e₁, e₂, he₁, he₂, rfl⟩ _ ⟨e₁', e₂', he₁', he₂', rfl⟩,
-    resetI,
-    refine ⟨continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂',
-    smooth_on_continuous_linear_map_coord_change IB,
-    continuous_linear_map_coord_change_apply σ e₁ e₁' e₂ e₂'⟩ } }
+variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
 
 @[reducible]
 def topological_space.continuous_linear_map' (x) : topological_space (FE₁E₂ x) :=
 by apply_instance
-local attribute [instance, priority 1] topological_space.continuous_linear_map' -- why is this needed?
-
-instance smooth_vector_bundle.continuous_linear_map :
-  smooth_vector_bundle (F₁ →L[𝕜] F₂) FE₁E₂ IB :=
-PLE₁E₂ .to_smooth_vector_bundle IB
-
--- lemma hom_chart' (x : LE₁E₂)
---   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
---   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
---     x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
--- by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
---   local_homeomorph.refl_apply, function.id_def, vector_bundle_core.local_triv_apply,
---   to_vector_bundle_core_coord_change, to_vector_bundle_core_index_at,
---   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
---   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
+local attribute [instance, priority 1] topological_space.continuous_linear_map'
 
 lemma trivialization_at_hom_apply (x₀ : B) (x : LE₁E₂) :
   trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀ x =
   ⟨x.1, (trivialization_at F₂ E₂ x₀).continuous_linear_map_at 𝕜 x.1 ∘L x.2 ∘L
     (trivialization_at F₁ E₁ x₀).symmL 𝕜 x.1⟩ :=
 rfl
+
 
 @[simp, mfld_simps]
 lemma trivialization_at_hom_source (x₀ : B) :
@@ -520,6 +508,7 @@ lemma hom_chart (x₀ x : LE₁E₂) :
   (chart_at HB x₀.1 x.1, (trivialization.continuous_linear_map_at 𝕜 (trivialization_at F₂ E₂ x₀.proj) x.fst).comp (comp x.snd (trivialization.symmL 𝕜 (trivialization_at F₁ E₁ x₀.proj) x.fst))) :=
 by { simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
   trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, trivialization_at_hom_apply] }
+
 
 -- lemma hom_chart (x₀ x : LE₁E₂) :
 --   chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
@@ -547,21 +536,92 @@ by { simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph
 --   simp_rw [function.comp, hom_ext_chart_at],
 --   exact (cont_mdiff_at_ext_chart_at.comp _ hf).prod_mk_space hϕ
 -- end
-
--- lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
---   smooth_at IM (IB.prod 𝓘(𝕜, F →L[𝕜] F')) f x₀ ↔
---   smooth_at IM IB (λ x, (f x).1) x₀ ∧
---   smooth_at IM 𝓘(𝕜, F →L[𝕜] F')
---     (λ x, in_coordinates' I I Z' (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+-- lemma smooth_at_one_jet_bundle {f : N → J¹MM'} {x₀ : N} :
+--   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀ ↔
+--   smooth_at J I (λ x, (f x).1.1) x₀ ∧ smooth_at J I' (λ x, (f x).1.2) x₀ ∧
+--   smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates_core I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
+--     (λ x, (f x).2) x₀) x₀ :=
 -- begin
---   refine ⟨λ h, ⟨_, _⟩, λ h, _⟩,
---   { apply ((Z.hom Z').smooth_proj _).comp x₀ h },
---   { rw [smooth_at, (Z.hom Z').cont_mdiff_at_iff_target, ← smooth_at] at h,
---     have h2 := (cont_diff_at_snd.cont_mdiff_at.comp _ h.2),
---     simp_rw [function.comp, hom_ext_chart_at] at h2,
---     exact h2 },
---   { convert smooth_at.hom_bundle_mk Z Z' h.1 h.2, ext; refl }
+--   simp_rw [smooth_at, cont_mdiff_at_total_space, one_jet_bundle_trivialization_at],
+--   refine ⟨λ h, ⟨h.1.fst, h.1.snd, h.2⟩, λ h, ⟨_, h.2.2⟩⟩,
+--   convert h.1.prod_mk h.2.1,
+--   ext x; refl
 -- end
+
+lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
+  smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
+  smooth_at IM IB (λ x, (f x).1) x₀ ∧
+  smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
+  (λ x, in_coordinates2' F₁ F₂ E₁ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+by { simp_rw [smooth_at, cont_mdiff_at_total_space], refl }
+
+
+variables [smooth_manifold_with_corners IB B]
+  [smooth_vector_bundle F₁ E₁ IB] [smooth_vector_bundle F₂ E₂ IB]
+
+variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
+
+instance bundle.continuous_linear_map.vector_prebundle.is_smooth : PLE₁E₂ .is_smooth IB :=
+{ exists_smooth_coord_change := by {
+    rintro _ ⟨e₁, e₂, he₁, he₂, rfl⟩ _ ⟨e₁', e₂', he₁', he₂', rfl⟩,
+    resetI,
+    refine ⟨continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂',
+    smooth_on_continuous_linear_map_coord_change IB,
+    continuous_linear_map_coord_change_apply σ e₁ e₁' e₂ e₂'⟩ } }
+
+-- ^ probably needed because of the type-class pi bug
+-- https://leanprover.zulipchat.com/#narrow/stream/116395-maths/topic/vector.20bundles.20--.20typeclass.20inference.20issue
+
+instance smooth_vector_bundle.continuous_linear_map :
+  smooth_vector_bundle (F₁ →L[𝕜] F₂) FE₁E₂ IB :=
+PLE₁E₂ .to_smooth_vector_bundle IB
+
+-- lemma hom_chart' (x : LE₁E₂)
+--   {e : local_homeomorph B HB} (he : e ∈ atlas HB B) :
+--   (Z.hom Z').chart he x = (e x.1, Z'.coord_change (achart HB x.1) ⟨e, he⟩ (chart_at HB x.1 x.1) ∘L
+--     x.2 ∘L Z.coord_change ⟨e, he⟩ (achart HB x.1) (e x.1)) :=
+-- by simp_rw [chart, trans_apply, local_homeomorph.prod_apply, trivialization.coe_coe,
+--   local_homeomorph.refl_apply, function.id_def, vector_bundle_core.local_triv_apply,
+--   to_vector_bundle_core_coord_change, to_vector_bundle_core_index_at,
+--   hom_coord_change, comp_apply, flip_apply, compL_apply, achart_def,
+--   (chart_at HB x.1).left_inv (mem_chart_source HB x.1)]
+
+end general
+
+section core
+
+variables {ι₁ ι₂ : Type*} (Z₁ : vector_bundle_core 𝕜 B F₁ ι₁) (Z₂ : vector_bundle_core 𝕜 B F₂ ι₂)
+
+local notation `FZ₁Z₂` := bundle.continuous_linear_map σ F₁ Z₁.fiber F₂ Z₂.fiber
+local notation `LZ₁Z₂` := total_space FZ₁Z₂
+
+def foo1 (b : B) :
+  topological_space (continuous_linear_map σ F₁ Z₁.fiber F₂ Z₂.fiber b) :=
+by apply_instance
+local attribute [instance] foo1 -- probably needed because of the type-class pi bug
+
+lemma hom_trivialization_at' (x₀ x : LZ₁Z₂) :
+  (trivialization_at (F₁ →L[𝕜] F₂) FZ₁Z₂ x₀.proj x).2 =
+  in_coordinates_core' Z₁ Z₂ x₀.proj x.proj x₀.proj x.proj x.2 :=
+begin
+  sorry
+end
+
+lemma hom_trivialization_at {f : M → LZ₁Z₂} {x₀ : M} (x : M) :
+  (trivialization_at (F₁ →L[𝕜] F₂) FZ₁Z₂ (f x₀).proj (f x)).2 =
+  in_coordinates_core' Z₁ Z₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2 :=
+by apply hom_trivialization_at'
+
+lemma smooth_at_hom_bundle_core {f : M → LZ₁Z₂} {x₀ : M} :
+  smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
+  smooth_at IM IB (λ x, (f x).1) x₀ ∧
+  smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
+  (λ x, in_coordinates_core' Z₁ Z₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀  :=
+by simp_rw [smooth_at, cont_mdiff_at_total_space, hom_trivialization_at]
+
+end core
+
+
 
 -- section cech_cocycles
 
@@ -625,3 +685,5 @@ to use it.
 -- end cech_cocycles
 
 -- end basic_smooth_vector_bundle_core
+
+end hom
