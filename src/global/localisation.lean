@@ -34,8 +34,8 @@ def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : jet_sec 
     rw [cont_diff_iff_cont_diff_at],
     intro x₀,
     have : smooth_at _ _ _ _ := F.smooth x₀,
-    simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
-      basic_smooth_vector_bundle_core.tangent_space_self_coord_change_at,
+    simp_rw [smooth_at_one_jet_bundle, in_coordinates_core, in_coordinates_core',
+      tangent_bundle_core_index_at, tangent_bundle.coord_change_at_self,
       continuous_linear_map.one_def, continuous_linear_map.comp_id, continuous_linear_map.id_comp]
       at this,
       exact this.2.2.cont_diff_at,
@@ -83,9 +83,14 @@ def jet_sec.unloc (𝓕 : jet_sec E E') : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E
     intros a,
     refine smooth_at_one_jet_bundle.mpr _,
     refine ⟨smooth_at_id, 𝓕.f_diff.cont_mdiff a, _⟩,
-    dsimp [in_coordinates, in_coordinates', chart_at],
-    simp only [range_id, fderiv_within_univ, fderiv_id, continuous_linear_map.id_comp,
-      continuous_linear_map.comp_id],
+    simp_rw [in_coordinates_core_model_space],
+    convert 𝓕.φ_diff.cont_mdiff a,
+
+    ext1 v,
+    apply in_coordinates_core_model_space,
+    -- dsimp [in_coordinates_core, in_coordinates_core'],
+    -- simp only [range_id, fderiv_within_univ, fderiv_id, continuous_linear_map.id_comp,
+    --   continuous_linear_map.comp_id],
     exact 𝓕.φ_diff.cont_mdiff a,
   end }
 

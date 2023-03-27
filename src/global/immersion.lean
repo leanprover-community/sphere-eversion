@@ -51,7 +51,14 @@ iff.rfl
 /-- A characterisation of the immersion relation in terms of a local chart. -/
 lemma mem_immersion_rel_iff' {σ σ' : one_jet_bundle I M I' M'} (hσ' : σ' ∈ (ψJ σ).source) :
   σ' ∈ immersion_rel I M I' M' ↔ injective (ψJ σ σ').2 :=
-by simp [mem_immersion_rel_iff, one_jet_bundle_chart_at' I M I' M' hσ']
+begin
+  simp only [fiber_bundle.charted_space_chart_at] with mfld_simps at hσ',
+  simp_rw [mem_immersion_rel_iff, one_jet_bundle_chart_at I M I' M'],
+  rw [← in_coordinates_core'_eq, in_coordinates'],
+  { simp },
+  { exact hσ'.1.1 },
+  { exact hσ'.1.2 }
+end
 
 lemma chart_at_image_immersion_rel_eq {σ : one_jet_bundle I M I' M'} :
   (ψJ σ) '' ((ψJ σ).source ∩ immersion_rel I M I' M') = (ψJ σ).target ∩ {q : HJ | injective q.2} :=

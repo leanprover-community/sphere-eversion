@@ -69,8 +69,8 @@ variables {I I'}
 -- what is better notation for this?
 local notation `FJ¹MM'` := (one_jet_space I I' : M × M' → Type*)
 variables (I I')
--- instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
---   (λ σ, tangent_space I p.1 → tangent_space I' p.2) := ⟨λ φ, φ.to_fun⟩
+instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
+  (λ _, tangent_space I p.1 → tangent_space I' p.2) := ⟨λ φ, φ.to_fun⟩
 
 variables (M M')
 
@@ -82,7 +82,6 @@ def one_jet_bundle := total_space (one_jet_space I I' : M × M' → Type*)
 variables {I I' M M'}
 local notation `J¹MM'` := one_jet_bundle I M I' M'
 local notation `HJ` := model_prod (model_prod H H') (E →L[𝕜] E')
-variables (I I' M M')
 
 @[ext] lemma one_jet_bundle.ext {x y : J¹MM'} (h : x.1.1 = y.1.1) (h' : x.1.2 = y.1.2)
   (h'' : x.2 = y.2) : x = y :=
@@ -92,6 +91,8 @@ begin
   dsimp only at h h' h'',
   rw [h, h', h'']
 end
+
+variables (I I' M M')
 
 -- /-- The projection from the one jet bundle of smooth manifolds to the product manifold. As the
 -- one_jet bundle is represented internally as a sigma type, the notation `p.1` also works for the

@@ -7,8 +7,8 @@ import global.one_jet_sec
 
 noncomputable theory
 
-open set equiv basic_smooth_vector_bundle_core
-open_locale manifold
+open set equiv bundle
+open_locale manifold bundle
 
 section arbitrary_field
 
@@ -24,10 +24,10 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 
 /- Given a smooth manifold `M` and a normed space `V`, the total space of the bundle Hom(TM, V) of
 homomorphisms from TM to V. This is naturally a smooth manifold. -/
-local notation `J¹MV` :=
-vector_bundle_core.total_space $
-basic_smooth_vector_bundle_core.to_vector_bundle_core $
-(tangent_bundle_core I M).hom (trivial_basic_smooth_vector_bundle_core I M V)
+local notation `σ` := ring_hom.id 𝕜
+local notation `FJ¹MV` :=
+  bundle.continuous_linear_map σ E (tangent_space I : M → Type*) V (bundle.trivial M V)
+local notation `J¹MV` := total_space FJ¹MV
 
 section smoothness
 
@@ -36,16 +36,15 @@ variables {I M V} {f : N → J¹MV}
 lemma smooth_at_one_jet_eucl_bundle {x₀ : N} :
   smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
   smooth_at J I (λ x, (f x).1) x₀ ∧
-  smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, (f x).2 ∘L (tangent_bundle_core I M).coord_change
-    (achart H (f x₀).1) (achart H (f x).1) (chart_at H (f x₀).1 (f x).1)) x₀ :=
-smooth_at_hom_bundle _ _
+  smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
+    (f x).2 ∘L (trivialization_at E (tangent_space I : M → Type*) (f x₀).1).symmL 𝕜 (f x).1) x₀ :=
+by { convert smooth_at_hom_bundle I, ext x v, dsimp only, sorry }
 
 lemma smooth_at.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
   (hf : smooth_at J I f x₀)
-  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, ϕ x ∘L (tangent_bundle_core I M).coord_change
-    (achart H (f x₀)) (achart H (f x)) (chart_at H (f x₀) (f x))) x₀) :
-  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V))
-    (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
+    ϕ x ∘L (trivialization_at E (tangent_space I : M → Type*) (f x₀)).symmL 𝕜 (f x)) x₀) :
+  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
 smooth_at_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
 
@@ -76,6 +75,13 @@ end sections
 
 section proj
 
+instance pi_bug_instance_restatement (x : M) :
+  topological_space (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
+by apply_instance
+instance pi_bug_instance_restatement2 (x : M × V) :
+  topological_space (one_jet_space I 𝓘(𝕜, V) x) :=
+by apply_instance
+
 /- Given a smooth manifold `M` and a normed space `V`, there is a canonical projection from the
 one-jet bundle of maps from `M` to `V` to the bundle of homomorphisms from `TM` to `V`. This is
 constructed using the fact that each tangent space to `V` is canonically isomorphic to `V`. -/
@@ -86,10 +92,28 @@ lemma smooth_proj :
   smooth ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, E →L[𝕜] V)) (proj I M V) :=
 begin
   intro x₀,
+  -- remove
+  -- have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, V))
+  --   (π (one_jet_space I 𝓘(𝕜, V) : M × V → Type*)) x₀ :=
+  --   smooth_one_jet_bundle_proj _,
+  -- have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) I
+  --   (λ x : one_jet_bundle I M 𝓘(𝕜, V) V, x.1.1) x₀ :=
+  --   (smooth_one_jet_bundle_proj _).fst,
+  -- have := smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, V)) (π FJ¹MV) x₀ :=
+  --   smooth_at_proj FJ¹MV,
+  -- refine smooth_one_jet_bundle_proj.smooth_at.fst.one_jet_eucl_bundle_mk _,
+
   have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smooth_at_id,
-  simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
-    tangent_space_self_coord_change_at] at this,
-  exact this.1.one_jet_eucl_bundle_mk this.2.2
+  simp_rw [smooth_at_one_jet_bundle, in_coordinates_core, in_coordinates_core',
+    tangent_bundle_core_index_at,
+    tangent_bundle.coord_change_at_self,
+    continuous_linear_map.one_def, continuous_linear_map.id_comp] at this,
+  refine this.1.one_jet_eucl_bundle_mk _,
+  sorry -- the functions are locally equal by the following argument:
+  -- convert this.2.2, ext1 x,
+  -- dsimp only, congr', ext1 v,
+  -- apply (tangent_bundle_core I M).local_triv_symmL, --this.2.2
+  -- apply (tangent_bundle_core I M).mem_base_set_at,
 end
 
 variables {I M V}
@@ -120,8 +144,9 @@ begin
   have : smooth_at ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ prod.fst x₀ := smooth_at_fst,
   rw [smooth_at_one_jet_eucl_bundle] at this,
   refine this.1.one_jet_bundle_mk smooth_at_snd _,
-  simp_rw [in_coordinates, in_coordinates', tangent_space_self_coord_change_at],
-  exact this.2
+  simp_rw [in_coordinates_core, in_coordinates_core', tangent_bundle_core_index_at,
+    tangent_bundle.coord_change_at_self],
+  sorry -- exact this.2
 end
 
 @[simp] lemma incl_fst_fst (v : J¹MV × V) : (incl I M V v).1.1 = v.1.1 := rfl
@@ -142,10 +167,10 @@ variables
   {G : Type*} [topological_space G] (J : model_with_corners ℝ F G)
   (N : Type*) [topological_space N] [charted_space G N] [smooth_manifold_with_corners J N]
 
-local notation `J¹MV` :=
-vector_bundle_core.total_space $
-basic_smooth_vector_bundle_core.to_vector_bundle_core $
-(tangent_bundle_core I M).hom (trivial_basic_smooth_vector_bundle_core I M V)
+local notation `σ` := ring_hom.id ℝ
+local notation `FJ¹MV` :=
+  bundle.continuous_linear_map σ E (tangent_space I : M → Type*) V (bundle.trivial M V)
+local notation `J¹MV` := total_space FJ¹MV
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext] structure family_one_jet_eucl_sec :=
@@ -198,7 +223,10 @@ def family_twist
     simp_rw [continuous_linear_map.comp_assoc],
     have : smooth_at (J.prod I) _ (λ x : N × M, _) x₀ := s.smooth.comp smooth_snd x₀,
     simp_rw [smooth_at_one_jet_eucl_bundle, s.is_sec] at this,
-    exact (i_smooth x₀).clm_comp this.2
+    refine (i_smooth x₀).clm_comp _,
+    convert this.2,
+    ext z,
+    rw [s.is_sec],
   end }
 
 end family_twist
