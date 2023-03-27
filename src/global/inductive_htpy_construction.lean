@@ -84,7 +84,7 @@ lemma inductive_htpy_construction_aux {X Y : Type*} [topological_space X]
     (∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁ x (filter.germ.slice_right (f n : (𝓝 (T (n+1), x)).germ Y))) ∧
     (∀ t ≥ T (n+1), ∀ x, f n (t, x) = f n (T (n+1), x)) ∧ (∀ x, f n (0, x) = f₀ x) ∧
     (∀ᶠ t in 𝓝 (T $ n+1), ∀ x, f n (t, x) = f n (T (n+1), x))) ∧
-    (((((n+1:ℕ) : index_type N) = n) → f (n+1) = f n) ∧
+    ((((n+1:ℕ) : index_type N) = n → f (n+1) = f n) ∧
       ∀ x ∉ U (n + 1 : ℕ), ∀ t, f (n+1) (t, x) = f n (t, x))
    :=
 begin

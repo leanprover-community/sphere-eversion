@@ -140,11 +140,11 @@ lemma inductive_construction' {X Y : Type*} [topological_space X]
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
   {K : set X} (hK : is_compact K)
   {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
-  (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x f)
+  (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
   (ind : ∀ {U₁ U₂ K₁ K₂ : set X} {f₁ f₂ : X → Y}, is_open U₁ → is_open U₂ →
      is_compact K₁ → is_compact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) →
      (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
-     ∃ f : X → Y, (∀ x, P₀ x f₁) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
+     ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x :=
 begin
 
@@ -166,7 +166,15 @@ end
 
 def continuous_germ {x : E} (φ : germ (𝓝 x) (ℝ → loop F)) : Prop :=
 quotient.lift_on' φ (λ γ, ∀ (t s : ℝ), continuous_at (λ p : E × ℝ × ℝ, γ p.1 p.2.1 p.2.2) (x, t, s))
-sorry
+begin
+  rintros γ γ' (h : {x | γ x = γ' x} ∈ 𝓝 x),
+  ext,
+  refine forall_congr (λ t, forall_congr (λ s, continuous_at_congr _)),
+  rw [nhds_prod_eq],
+  apply mem_of_superset (filter.prod_mem_prod h univ_mem),
+  rintros ⟨x', p⟩ ⟨hx' : γ x' = γ' x', -⟩,
+  simp only [mem_set_of_eq, hx']
+end
 
 variables (g b Ω)
 
@@ -182,10 +190,27 @@ structure surrounding_family_germ (x : E) (φ : germ (𝓝 x) (ℝ → loop F)) 
 
 variables {g b Ω}
 
+/-
+The following proof is slightly tedious because the definition of `surrounding_family_in`
+splits weirdly into `surrounding_family` which includes one condition on `C`
+and one extra condition on `C` instead of putting everything which does not depend on `C`
+on one side and the two conditions depending on `C` on the other side as we do here.
+-/
 lemma surrounding_family_in_iff_germ {γ : E → ℝ → loop F} :
   surrounding_family_in g b γ C Ω ↔ (∀ x, loop_family_germ b x γ) ∧
                                     (∀ x ∈ C, surrounding_family_germ g Ω x γ) :=
-sorry
+begin
+  split,
+  { rintro ⟨⟨base, t₀, proj_I, family_surrounds, family_cont⟩, H⟩,
+    exact ⟨λ x, ⟨base x, t₀ x, proj_I x, λ t s, family_cont.continuous_at⟩,
+           λ x x_in, ⟨family_surrounds x x_in, H x x_in⟩⟩ },
+  { rintro ⟨h, h'⟩,
+    refine ⟨⟨λ x, (h x).base, λ x, (h x).t₀, λ x, (h x).proj_I,  λ x hx, (h' x hx).surrounds, _⟩,
+            λ x hx, (h' x hx).val_in'⟩,
+    apply continuous_iff_continuous_at.mpr,
+    rintros ⟨x, t, s⟩,
+    apply (h x).cont }
+end
 
 lemma exists_surrounding_loops'
   (hK : is_compact K)
@@ -196,16 +221,19 @@ lemma exists_surrounding_loops'
   (hγ₀_surr : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₀ V Ω) :
   ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ univ Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x :=
 begin
+  rcases hγ₀_surr with ⟨V, V_in, hV⟩,
+  cases surrounding_family_in_iff_germ.mp hV with hV h'V,
   simp only [surrounding_family_in_iff_germ, mem_univ, forall_true_left, ← forall_and_distrib],
-  apply inductive_construction' (loop_family_germ b) (surrounding_family_germ g Ω) hK,
-  {
-    sorry },
-  {
-    sorry },
-  { -- This is meant to use a version of `local_loops`.
-    sorry },
+  apply inductive_construction' (loop_family_germ b) (surrounding_family_germ g Ω) hK hV
+    (mem_of_superset V_in h'V),
+  { intros x,
+    rcases local_loops ⟨univ, univ_mem, by  simp only [preimage_univ, inter_univ,hΩ_op ]⟩
+      (hg x) hb (hconv x) with ⟨γ, U, U_in, H⟩,
+    cases surrounding_family_in_iff_germ.mp H with H H',
+    exact ⟨γ, H, mem_of_superset U_in H'⟩ },
   { intros U₁ U₂ K₁  K₂ γ₁ γ₂ hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ hγ₁ hγ₂ h'γ₁ h'γ₂,
-    -- Note: `extend_loops` isn't good enough because it says nothing outside U₁ and U₂, not
-    -- even `loop_family_germ`
-    sorry },
+    rcases extend_loops hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ (surrounding_family_in_iff_germ.mpr ⟨hγ₁, h'γ₁⟩)
+      (surrounding_family_in_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with ⟨U, U_in, γ, H, H''⟩,
+    cases surrounding_family_in_iff_germ.mp H with H H',
+    refine ⟨γ, H, mem_of_superset U_in H', eventually_nhds_set_union.mpr H''⟩ }
 end
