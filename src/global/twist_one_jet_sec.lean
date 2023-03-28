@@ -8,7 +8,7 @@ import global.one_jet_sec
 noncomputable theory
 
 open set equiv bundle
-open_locale manifold bundle
+open_locale manifold bundle topology
 
 section arbitrary_field
 
@@ -33,20 +33,56 @@ section smoothness
 
 variables {I M V} {f : N → J¹MV}
 
-lemma smooth_at_one_jet_eucl_bundle {x₀ : N} :
+-- todo: remove or use to prove `smooth_at_one_jet_eucl_bundle`
+lemma smooth_at_one_jet_eucl_bundle' {x₀ : N} :
   smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
   smooth_at J I (λ x, (f x).1) x₀ ∧
   smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
     (f x).2 ∘L (trivialization_at E (tangent_space I : M → Type*) (f x₀).1).symmL 𝕜 (f x).1) x₀ :=
-by { convert smooth_at_hom_bundle I, ext x v, dsimp only, sorry }
+begin
+  convert smooth_at_hom_bundle I,
+  ext1 x,
+  dsimp only,
+  simp_rw [in_coordinates', trivial.trivialization_at,
+    trivial.trivialization_continuous_linear_map_at],
+  exact (continuous_linear_map.id_comp _).symm
+end
 
-lemma smooth_at.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
+lemma smooth_at_one_jet_eucl_bundle {x₀ : N} :
+  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
+  smooth_at J I (λ x, (f x).1) x₀ ∧
+  smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from (f x).2 ∘L
+    (tangent_bundle_core I M).coord_change (achart H (f x₀).proj) (achart H (f x).proj) (f x).proj)
+    x₀ :=
+begin
+  rw [smooth_at_hom_bundle I, and.congr_right_iff],
+  intros hf,
+  refine filter.eventually_eq.cont_mdiff_at_iff _,
+  have := hf.continuous_at.preimage_mem_nhds
+    (((tangent_bundle_core I M).is_open_base_set (achart H (f x₀).proj)).mem_nhds
+    ((tangent_bundle_core I M).mem_base_set_at (f x₀).proj)),
+  filter_upwards [this] with x hx,
+  simp_rw [in_coordinates', trivial.trivialization_at,
+    trivial.trivialization_continuous_linear_map_at, ← continuous_linear_map.comp_assoc],
+  congr' 1,
+  { apply continuous_linear_map.id_comp },
+  exact (tangent_bundle_core I M).local_triv_symmL hx
+end
+
+lemma smooth_at.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
   (hf : smooth_at J I f x₀)
   (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
     ϕ x ∘L (trivialization_at E (tangent_space I : M → Type*) (f x₀)).symmL 𝕜 (f x)) x₀) :
   smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
-smooth_at_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
+smooth_at_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
 
+lemma smooth_at.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
+  (hf : smooth_at J I f x₀)
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
+    ϕ x ∘L (tangent_bundle_core I M).coord_change (achart H (f x₀)) (achart H (f x))
+    (f x)) x₀) :
+  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
+smooth_at_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
 end smoothness
 
@@ -92,28 +128,12 @@ lemma smooth_proj :
   smooth ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, E →L[𝕜] V)) (proj I M V) :=
 begin
   intro x₀,
-  -- remove
-  -- have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, V))
-  --   (π (one_jet_space I 𝓘(𝕜, V) : M × V → Type*)) x₀ :=
-  --   smooth_one_jet_bundle_proj _,
-  -- have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) I
-  --   (λ x : one_jet_bundle I M 𝓘(𝕜, V) V, x.1.1) x₀ :=
-  --   (smooth_one_jet_bundle_proj _).fst,
-  -- have := smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, V)) (π FJ¹MV) x₀ :=
-  --   smooth_at_proj FJ¹MV,
-  -- refine smooth_one_jet_bundle_proj.smooth_at.fst.one_jet_eucl_bundle_mk _,
-
   have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smooth_at_id,
   simp_rw [smooth_at_one_jet_bundle, in_coordinates_core, in_coordinates_core',
     tangent_bundle_core_index_at,
     tangent_bundle.coord_change_at_self,
     continuous_linear_map.one_def, continuous_linear_map.id_comp] at this,
-  refine this.1.one_jet_eucl_bundle_mk _,
-  sorry -- the functions are locally equal by the following argument:
-  -- convert this.2.2, ext1 x,
-  -- dsimp only, congr', ext1 v,
-  -- apply (tangent_bundle_core I M).local_triv_symmL, --this.2.2
-  -- apply (tangent_bundle_core I M).mem_base_set_at,
+  exact this.1.one_jet_eucl_bundle_mk this.2.2
 end
 
 variables {I M V}
@@ -145,8 +165,9 @@ begin
   rw [smooth_at_one_jet_eucl_bundle] at this,
   refine this.1.one_jet_bundle_mk smooth_at_snd _,
   simp_rw [in_coordinates_core, in_coordinates_core', tangent_bundle_core_index_at,
-    tangent_bundle.coord_change_at_self],
-  sorry -- exact this.2
+    tangent_bundle.coord_change_at_self, continuous_linear_map.one_def,
+    continuous_linear_map.id_comp],
+  exact this.2
 end
 
 @[simp] lemma incl_fst_fst (v : J¹MV × V) : (incl I M V v).1.1 = v.1.1 := rfl
@@ -219,10 +240,10 @@ def family_twist
   is_sec' := λ p, rfl,
   smooth' := begin
     intro x₀,
-    refine smooth_at_snd.one_jet_eucl_bundle_mk _,
+    refine smooth_at_snd.one_jet_eucl_bundle_mk' _,
     simp_rw [continuous_linear_map.comp_assoc],
     have : smooth_at (J.prod I) _ (λ x : N × M, _) x₀ := s.smooth.comp smooth_snd x₀,
-    simp_rw [smooth_at_one_jet_eucl_bundle, s.is_sec] at this,
+    simp_rw [smooth_at_one_jet_eucl_bundle', s.is_sec] at this,
     refine (i_smooth x₀).clm_comp _,
     convert this.2,
     ext z,
