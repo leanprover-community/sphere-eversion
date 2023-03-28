@@ -53,10 +53,14 @@ lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   (R.relativize IP P).slice σ p =
   σ.2 (p.v - (0, q.v)) +ᵥ R.slice (bundle_snd σ) q :=
 begin
+  -- for some reason this is needed
+  letI : module ℝ (((cont_mdiff_map.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ
+    tangent_space I') σ.1),
+  { apply_instance },
   have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hpq,
   ext1 w,
   have h1 : (p.update σ.2 w).comp (continuous_linear_map.inr ℝ EP E) =
-    q.update (bundle_snd σ).2 (-σ.2 (p.v - (0, q.v)) +ᵥ w),
+    q.update (bundle_snd σ).2 (-σ.2 (p.v - (0, q.v)) + w),
   { ext1 x,
     simp_rw [continuous_linear_map.comp_apply, continuous_linear_map.inr_apply,
       ← continuous_linear_map.map_neg, neg_sub],
@@ -65,7 +69,7 @@ begin
     { rw [linear_map.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self] },
     have hup : ((0 : EP), u) ∈ ker p.π := (h2pq u).trans hu,
     rw [q.update_apply _ hu, ← prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup,
-      ← prod.smul_zero_mk, map_smul, vadd_eq_add],
+      ← prod.smul_zero_mk, map_smul],
     nth_rewrite 0 [← sub_add_cancel (0, q.v) p.v],
     rw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundle_snd_eq],
     refl },
@@ -83,6 +87,10 @@ lemma relativize_slice_eq_univ {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
   ((R.relativize IP P).slice σ p).nonempty ↔
   (R.relativize IP P).slice σ p = univ :=
 begin
+  -- for some reason this is needed
+  letI : module ℝ (((cont_mdiff_map.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ
+    tangent_space I') σ.1),
+  { apply_instance },
   have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hp,
   have : ∀ y : E', (p.update σ.snd y).comp (continuous_linear_map.inr ℝ EP E) =
     σ.snd.comp (continuous_linear_map.inr ℝ EP E),
@@ -149,20 +157,20 @@ def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' 
     rintro ⟨⟨t, s⟩, x⟩,
     refine smooth_at_snd.one_jet_bundle_mk (S.smooth_bs.comp smooth_prod_assoc _) _,
     have h1 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E')
-      (in_coordinates (IP.prod I) I' (λ (p : (N × P) × M), (p.1.2, p.2))
+      (in_coordinates_core (IP.prod I) I' (λ (p : (N × P) × M), (p.1.2, p.2))
         (λ (p : (N × P) × M), (S p.1.1).bs (p.1.2, p.2))
         (λ (p : (N × P) × M), ((S p.1.1).ϕ (p.1.2, p.2))) ((t, s), x)) ((t, s), x),
     { apply (smooth_at_one_jet_bundle.mp $
         smooth_at.comp _ (by exact S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2 },
     have h2 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
-      (in_coordinates I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
+      (in_coordinates_core I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
         (λ (p : (N × P) × M),
           (mfderiv I (IP.prod I) (λ (x : M), (p.1.2, x)) p.2)) ((t, s), x)) ((t, s), x),
     { apply cont_mdiff_at.mfderiv''' (λ (p : (N × P) × M) (x : M), (p.1.2, x)) prod.snd
         (smooth_at_fst.fst.snd.prod_mk smooth_at_snd :
           smooth_at (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
         (smooth_at_snd : smooth_at ((J.prod IP).prod I) _ _ _) le_top },
-    exact h1.clm_comp_in_coordinates (continuous_at_fst.snd.prod continuous_at_snd) h2
+    exact h1.clm_comp_in_coordinates_core (continuous_at_fst.snd.prod continuous_at_snd) h2
   end }
 
 lemma family_one_jet_sec.curry_bs (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) (p : N × P)
