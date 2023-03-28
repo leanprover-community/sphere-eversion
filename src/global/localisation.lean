@@ -54,7 +54,7 @@ seen as vector spaces. One annoying bit is `equiv.prod_assoc E E' $ E →L[ℝ] 
 to reassociate a product of types. -/
 def rel_mfld.rel_loc (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : rel_loc E E' :=
 (homeomorph.prod_assoc _ _ _).symm ⁻¹'
-  ((one_jet_bundle_model_space_homeomorph E 𝓘(ℝ, E) E' 𝓘(ℝ, E')).symm ⁻¹' R)
+  ((one_jet_bundle_model_space_homeomorph 𝓘(ℝ, E) 𝓘(ℝ, E')).symm ⁻¹' R)
 
 lemma ample_of_ample (R : rel_mfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : R.ample) :
   R.rel_loc.is_ample :=
