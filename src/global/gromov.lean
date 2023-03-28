@@ -138,7 +138,7 @@ begin
     have η_cont : continuous η,
     { have : cont_mdiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f, from λ x, hf_smooth x,
       apply τ_cont.sub,
-      exact ((one_jet_bundle_proj_continuous IM M IX X).comp this.continuous).snd.dist
+      exact (one_jet_bundle_proj_continuous.comp this.continuous).snd.dist
         𝓕₀.smooth_bs.continuous },
     rcases (L.φ i).improve_formal_sol (L.ψj i) hRample hRopen (hA.union hC) η_pos η_cont hFφψ hFAC
       hK₀ hK₁ hK₀K₁ with ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩,
