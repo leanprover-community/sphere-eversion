@@ -24,10 +24,15 @@ variables [topological_space F] [topological_space (total_space E)] [∀ x, topo
   {HB : Type*} [topological_space HB]
   [topological_space B] [charted_space HB B] [fiber_bundle F E]
 
-lemma charted_space_chart_at_fst (x y : total_space E) :
+lemma charted_space_chart_at_fst' (x y : total_space E) :
   (chart_at (model_prod HB F) x y).1 =
   chart_at HB x.proj (trivialization_at F E x.proj y).1 :=
 by { rw [charted_space_chart_at], refl }
+
+lemma charted_space_chart_at_fst {x y : total_space E}
+  (hy : y.proj ∈ (trivialization_at F E x.proj).base_set) :
+  (chart_at (model_prod HB F) x y).1 = chart_at HB x.proj y.proj :=
+by rw [charted_space_chart_at_fst', (trivialization_at F E x.proj).coe_fst' hy]
 
 lemma charted_space_chart_at_snd (x y : total_space E) :
   (chart_at (model_prod HB F) x y).2 = (trivialization_at F E x.proj y).2 :=
@@ -93,7 +98,7 @@ variables [Π x : B, topological_space (E₂ x)] [fiber_bundle F₂ E₂] [vecto
 variables [Π x, has_continuous_add (E₂ x)] [Π x, has_continuous_smul 𝕜₂ (E₂ x)]
 
 @[simp, mfld_simps]
-lemma trivialization_at_continuous_linear_map (x : B) :
+lemma continuous_linear_map_trivialization_at (x : B) :
   trivialization_at (F₁ →SL[σ] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x =
   (trivialization_at F₁ E₁ x).continuous_linear_map σ (trivialization_at F₂ E₂ x) :=
 rfl
@@ -324,31 +329,32 @@ variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 
 def topological_space.continuous_linear_map' (x) : topological_space (FE₁E₂ x) :=
 by apply_instance
 local attribute [instance, priority 1] topological_space.continuous_linear_map'
+-- ^ probably needed because of the type-class pi bug
+-- https://leanprover.zulipchat.com/#narrow/stream/116395-maths/topic/vector.20bundles.20--.20typeclass.20inference.20issue
 
-lemma trivialization_at_hom_apply (x₀ : B) (x : LE₁E₂) :
+lemma hom_trivialization_at_apply (x₀ : B) (x : LE₁E₂) :
   trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀ x =
-  ⟨x.1, (trivialization_at F₂ E₂ x₀).continuous_linear_map_at 𝕜 x.1 ∘L x.2 ∘L
-    (trivialization_at F₁ E₁ x₀).symmL 𝕜 x.1⟩ :=
+  ⟨x.1, in_coordinates' F₁ F₂ E₁ E₂ x₀ x.1 x₀ x.1 x.2⟩ :=
 rfl
 
 
 @[simp, mfld_simps]
-lemma trivialization_at_hom_source (x₀ : B) :
+lemma hom_trivialization_at_source (x₀ : B) :
   (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).source =
   π FE₁E₂ ⁻¹' ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) :=
 rfl
 
 @[simp, mfld_simps]
-lemma trivialization_at_hom_target (x₀ : B) :
+lemma hom_trivialization_at_target (x₀ : B) :
   (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).target =
   ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) ×ˢ set.univ :=
 rfl
 
 lemma hom_chart (x₀ x : LE₁E₂) :
   chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
-  (chart_at HB x₀.1 x.1, (trivialization.continuous_linear_map_at 𝕜 (trivialization_at F₂ E₂ x₀.proj) x.fst).comp (comp x.snd (trivialization.symmL 𝕜 (trivialization_at F₁ E₁ x₀.proj) x.fst))) :=
-by { simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
-  trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, trivialization_at_hom_apply] }
+  (chart_at HB x₀.1 x.1, in_coordinates' F₁ F₂ E₁ E₂ x₀.1 x.1 x₀.1 x.1 x.2) :=
+by simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
+  trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, hom_trivialization_at_apply]
 
 lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
   smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
@@ -356,7 +362,6 @@ lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
   smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
   (λ x, in_coordinates' F₁ F₂ E₁ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
 by { simp_rw [smooth_at, cont_mdiff_at_total_space], refl }
-
 
 variables [smooth_manifold_with_corners IB B]
   [smooth_vector_bundle F₁ E₁ IB] [smooth_vector_bundle F₂ E₂ IB]
@@ -370,9 +375,6 @@ instance bundle.continuous_linear_map.vector_prebundle.is_smooth : PLE₁E₂ .i
     refine ⟨continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂',
     smooth_on_continuous_linear_map_coord_change IB,
     continuous_linear_map_coord_change_apply σ e₁ e₁' e₂ e₂'⟩ } }
-
--- ^ probably needed because of the type-class pi bug
--- https://leanprover.zulipchat.com/#narrow/stream/116395-maths/topic/vector.20bundles.20--.20typeclass.20inference.20issue
 
 instance smooth_vector_bundle.continuous_linear_map :
   smooth_vector_bundle (F₁ →L[𝕜] F₂) FE₁E₂ IB :=
@@ -398,7 +400,7 @@ lemma hom_trivialization_at (x₀ x : LZ₁Z₂)
   (trivialization_at (F₁ →L[𝕜] F₂) FZ₁Z₂ x₀.proj x).2 =
   in_coordinates_core' Z₁ Z₂ x₀.proj x.proj x₀.proj x.proj x.2 :=
 begin
-  rw [trivialization_at_continuous_linear_map, trivialization.continuous_linear_map_apply,
+  rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply,
     ← in_coordinates_core'_eq],
   exacts [rfl, h1x, h2x]
 end
