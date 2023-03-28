@@ -53,7 +53,7 @@ lemma mem_immersion_rel_iff' {σ σ' : one_jet_bundle I M I' M'} (hσ' : σ' ∈
   σ' ∈ immersion_rel I M I' M' ↔ injective (ψJ σ σ').2 :=
 begin
   simp only [fiber_bundle.charted_space_chart_at] with mfld_simps at hσ',
-  simp_rw [mem_immersion_rel_iff, one_jet_bundle_chart_at],
+  simp_rw [mem_immersion_rel_iff, one_jet_bundle_chart_at_apply],
   rw [← in_coordinates_core'_eq, in_coordinates'],
   { simp },
   { exact hσ'.1.1 },

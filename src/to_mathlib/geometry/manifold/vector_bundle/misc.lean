@@ -80,6 +80,30 @@ by rw [Z.coord_change_comp i j i x ⟨hx, hx.1⟩, Z.coord_change_self i x hx.1]
 
 end vector_bundle_core
 
+namespace bundle.trivial
+open _root_.trivialization
+
+variables {𝕜 B F : Type*}
+variables [nontrivially_normed_field 𝕜] [normed_add_comm_group F] [normed_space 𝕜 F]
+  [topological_space B]
+
+@[simp, mfld_simps]
+protected lemma trivialization_at (x : B) :
+  trivialization_at F (trivial B F) x = trivial.trivialization B F :=
+rfl
+
+@[simp, mfld_simps]
+lemma trivialization_continuous_linear_map_at (x : B) :
+  (trivial.trivialization B F).continuous_linear_map_at 𝕜 x = continuous_linear_map.id 𝕜 F :=
+begin
+  ext v,
+  simp_rw [continuous_linear_map_at_apply, coe_linear_map_at],
+  rw [if_pos],
+  exacts [rfl, mem_univ _]
+end
+
+end bundle.trivial
+
 section hom
 variables {𝕜₁ : Type*} [nontrivially_normed_field 𝕜₁] {𝕜₂ : Type*} [nontrivially_normed_field 𝕜₂]
   (σ : 𝕜₁ →+* 𝕜₂) [iσ : ring_hom_isometric σ]
@@ -382,12 +406,12 @@ PLE₁E₂ .to_smooth_vector_bundle IB
 
 end general
 
-section core
+namespace vector_bundle_core
 
 variables {ι₁ ι₂ : Type*} (Z₁ : vector_bundle_core 𝕜 B F₁ ι₁) (Z₂ : vector_bundle_core 𝕜 B F₂ ι₂)
 
 local notation `FZ₁Z₂` := bundle.continuous_linear_map σ F₁ Z₁.fiber F₂ Z₂.fiber
-local notation `LZ₁Z₂` := total_space FZ₁Z₂
+local notation `LZ₁Z₂` := bundle.total_space FZ₁Z₂
 
 def foo1 (b : B) :
   topological_space (continuous_linear_map σ F₁ Z₁.fiber F₂ Z₂.fiber b) :=
@@ -424,6 +448,6 @@ begin
   exact hom_trivialization_at Z₁ Z₂ (f x₀) (f x) h1x h2x
 end
 
-end core
+end vector_bundle_core
 
 end hom
