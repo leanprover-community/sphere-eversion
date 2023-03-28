@@ -84,14 +84,7 @@ def jet_sec.unloc (𝓕 : jet_sec E E') : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E
     refine smooth_at_one_jet_bundle.mpr _,
     refine ⟨smooth_at_id, 𝓕.f_diff.cont_mdiff a, _⟩,
     simp_rw [in_coordinates_core_model_space],
-    convert 𝓕.φ_diff.cont_mdiff a,
-
-    ext1 v,
-    apply in_coordinates_core_model_space,
-    -- dsimp [in_coordinates_core, in_coordinates_core'],
-    -- simp only [range_id, fderiv_within_univ, fderiv_id, continuous_linear_map.id_comp,
-    --   continuous_linear_map.comp_id],
-    exact 𝓕.φ_diff.cont_mdiff a,
+    exact 𝓕.φ_diff.cont_mdiff a
   end }
 
 lemma jet_sec.unloc_hol_at_iff (𝓕 : jet_sec E E') (x : E) :
@@ -110,7 +103,7 @@ def htpy_jet_sec.unloc (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec 𝓘(ℝ, E
     refine smooth_at_one_jet_bundle.mpr _,
     refine ⟨smooth_at_snd,
       (𝓕.f_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smooth_at_snd), _⟩,
-    dsimp [in_coordinates, in_coordinates', chart_at],
+    dsimp [in_coordinates_core, in_coordinates_core', chart_at],
     simp only [range_id, fderiv_within_univ, fderiv_id, continuous_linear_map.id_comp,
       continuous_linear_map.comp_id],
     exact (𝓕.φ_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smooth_at_snd),

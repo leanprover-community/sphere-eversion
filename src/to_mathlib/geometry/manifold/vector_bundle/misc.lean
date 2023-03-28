@@ -9,7 +9,7 @@ import topology.vector_bundle.hom
 import to_mathlib.geometry.manifold.misc_manifold
 
 /-!
-# Pullbacks of basic smooth vector bundle core
+# Various operations on and properties of smooth vector bundles
 -/
 
 noncomputable theory
@@ -88,6 +88,15 @@ end vector_bundle_core
 namespace vector_prebundle
 
 attribute [reducible] vector_prebundle.to_fiber_bundle
+
+section pullback
+
+/-- We need some instances like this to work with negation on pullbacks -/
+instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', add_comm_group (E x')] :
+  add_comm_group ((f *ᵖ E) x) :=
+by delta_instance bundle.pullback
+
+end pullback
 
 /-!
 ### `vector_prebundle.is_smooth`
