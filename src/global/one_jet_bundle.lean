@@ -213,34 +213,6 @@ begin
     exact (chart_at H' x₀.proj.2).target_subset_preimage_source }
 end
 
--- /-- A variant of `one_jet_bundle_chart_at` in which the fact that the coordinate change actions
--- are equivalences is expressed at the type-theoretic level (i.e., `coord_change_equiv` instead of
--- `coord_change`). -/
--- lemma one_jet_bundle_chart_at' {v v' : J¹MM'} (hv' : v' ∈ (chart_at HJ v).source) :
---   chart_at HJ v v' =
---   ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
---    ((tangent_bundle_core I' M').coord_change_equiv
---        (achart H' v'.1.2) (achart H' v.1.2) v'.1.2 : E' →L[𝕜] E').comp $
---    v'.2.comp $
---    ((tangent_bundle_core I M).coord_change_equiv
---        (achart H v.1.1) (achart H v'.1.1) v'.1.1 : E →L[𝕜] E)) :=
--- begin
---   have hx : v'.1.2 ∈ (achart H' v'.1.2 : local_homeomorph M' H').source ∩
---                      (achart H' v.1.2  : local_homeomorph M' H').source,
---   { simp only [to_charted_space_chart_at, chart_source] at hv',
---     simpa only [coe_achart, mem_inter_iff, mem_chart_source, true_and] using hv'.2, },
---   have hy : v'.1.1 ∈ (achart H  v.1.1  : local_homeomorph M H).source ∩
---                      (achart H  v'.1.1 : local_homeomorph M H).source,
---   { simp only [to_charted_space_chart_at, chart_source] at hv',
---     simpa only [coe_achart, mem_inter_iff, mem_chart_source, and_true] using hv'.1, },
---   simp only [one_jet_bundle_chart_at I M I' M', prod.mk.inj_iff, eq_self_iff_true, true_and],
---   ext e,
---   simp only [tangent_bundle_core_coord_change, achart_val, continuous_linear_map.coe_comp',
---     function.comp_app, continuous_linear_equiv.coe_coe, in_coordinates'],
---   erw [← (tangent_bundle_core I' M').coe_coord_change_equiv hx,
---        ← (tangent_bundle_core I M).coe_coord_change_equiv hy],
--- end
-
 section maps
 
 variables {M M'}
@@ -272,29 +244,47 @@ lemma smooth_at.one_jet_bundle_proj {f : N → J¹MM'} {x₀ : N}
 @[simp, mfld_simps] lemma one_jet_bundle_mk_snd {x : M} {y : M'} {f : one_jet_space I I' (x, y)} :
   (one_jet_bundle.mk x y f).2 = f := rfl
 
-lemma one_jet_bundle_trivialization_at' (x₀ x : J¹MM') :
+attribute [simps] cont_mdiff_map.fst cont_mdiff_map.snd
+
+lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM')
+  (h1x : x.proj.1 ∈ (chart_at H x₀.proj.1).source)
+  (h2x : x.proj.2 ∈ (chart_at H' x₀.proj.2).source) :
   (trivialization_at (E →L[𝕜] E') (one_jet_space I I') x₀.proj x).2 =
   in_coordinates_core' (tangent_bundle_core I M) (tangent_bundle_core I' M')
     x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2 x.2 :=
 begin
- simp_rw [trivialization_at_one_jet_bundle_apply], sorry
+  delta one_jet_space,
+  rw [trivialization_at_continuous_linear_map, trivialization.continuous_linear_map_apply,
+    ← in_coordinates_core'_eq],
+  { simp_rw [in_coordinates, in_coordinates', pullback_trivialization_at],
+    -- for some reason rewriting with `trivialization.pullback_symmL` doesn't work
+    -- (probably type dependencies)
+    refine congr_arg _ _,
+    refine congr_arg _ _,
+    ext y,
+    simp_rw [trivialization.symmL_apply, trivialization.pullback_symm],
+    refl, },
+  exacts [h1x, h2x]
 end
 
-lemma one_jet_bundle_trivialization_at {f : N → J¹MM'} {x₀ : N} (x : N) :
-  (trivialization_at (E →L[𝕜] E') (one_jet_space I I') (f x₀).proj (f x)).2 =
-  in_coordinates_core I I' (λ x, (f x).proj.1) (λ x, (f x).proj.2) (λ x, (f x).2) x₀ x :=
-by apply one_jet_bundle_trivialization_at'
-
+-- todo: refactor
 lemma smooth_at_one_jet_bundle {f : N → J¹MM'} {x₀ : N} :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀ ↔
   smooth_at J I (λ x, (f x).1.1) x₀ ∧ smooth_at J I' (λ x, (f x).1.2) x₀ ∧
   smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates_core I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
     (λ x, (f x).2) x₀) x₀ :=
 begin
-  simp_rw [smooth_at, cont_mdiff_at_total_space, one_jet_bundle_trivialization_at],
-  refine ⟨λ h, ⟨h.1.fst, h.1.snd, h.2⟩, λ h, ⟨_, h.2.2⟩⟩,
-  convert h.1.prod_mk h.2.1,
-  ext x; refl
+  simp_rw [smooth_at, cont_mdiff_at_total_space, cont_mdiff_at_prod, and_assoc,
+    and.congr_right_iff],
+  intros h1f h2f,
+  refine filter.eventually_eq.cont_mdiff_at_iff _,
+  have h1 := h1f.continuous_at.preimage_mem_nhds ((trivialization.open_base_set _).mem_nhds
+    (mem_base_set_trivialization_at E (tangent_space I) (f x₀).proj.1)),
+  have h2 := h2f.continuous_at.preimage_mem_nhds ((trivialization.open_base_set _).mem_nhds
+    (mem_base_set_trivialization_at E' (tangent_space I') (f x₀).proj.2)),
+  filter_upwards [h1, h2],
+  intros x h1x h2x,
+  exact one_jet_bundle_trivialization_at (f x₀) (f x) h1x h2x,
 end
 
 lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
