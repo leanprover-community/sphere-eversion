@@ -134,6 +134,30 @@ one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
   into a map satisfying `P₁` on `K₁ ∪ K₂` for any compact sets `Kᵢ ⊆ Uᵢ`.
 One can probably deduce this version from the version where `K` is empty for some
 other `P₀`. -/
+lemma inductive_construction'' {X Y : Type*} [emetric_space X] [locally_compact_space X]
+  [second_countable_topology X]
+  (P₀ P₀' P₁ : Π x : X, germ (𝓝 x) Y → Prop)
+  {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀ )
+  (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
+  (ind : ∀ {U₁ U₂ K₁ K₂ : set X} {f₁ f₂ : X → Y}, is_open U₁ → is_open U₂ →
+     is_compact K₁ → is_compact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) →
+     (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f ) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧
+                  (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
+    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f :=
+begin
+  sorry
+end
+
+/-- We are given a suitably nice topological space `X` and two local constraints `P₀` and `P₁`
+on maps from `X` to some type `Y`. All maps entering the discussion are required to statisfy `P₀`
+everywhere. The goal is to turn a map `f₀` satisfying `P₁` near a compact set `K` into
+one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
+* For every `x` in `X` there is a map which satisfies `P₁` near `x`
+* One can patch two maps `f₁ f₂` satisfying `P₁` on open sets `U₁` and `U₂` respectively
+  into a map satisfying `P₁` on `K₁ ∪ K₂` for any compact sets `Kᵢ ⊆ Uᵢ`.
+One can probably deduce this version from the version where `K` is empty for some
+other `P₀`. -/
 lemma inductive_construction' {X Y : Type*} [emetric_space X] [locally_compact_space X]
   [second_countable_topology X]
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
@@ -146,27 +170,25 @@ lemma inductive_construction' {X Y : Type*} [emetric_space X] [locally_compact_s
      ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x :=
 begin
-  --choose F h₀F h₁F using loc,
-
-  let P : set X → Prop := λ U, ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ x ∈ U, P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x,
-  have hP₁ : antitone P,
-  {
-    sorry },
-  have hP₂ : P ∅,
-  sorry { exact ⟨f₀, hP₀f₀, λ x h, h.elim, eventually_of_forall $ λ x, rfl⟩ },
-  have hP₃ : ∀ (x : X), x ∈ univ → (∃ (V : set X) (H : V ∈ 𝓝 x), P V),
-  { rintros x -,
-    by_cases hx : x ∈ K,
-    {
-      sorry },
-    { rcases loc x with ⟨F, hF⟩,
-      refine ⟨{x' | P₁ x' F}, hF.2, ⟨F, hF.1, λ x', id, _⟩⟩,
-      sorry },
-     },
-  rcases exists_locally_finite_subcover_of_locally is_closed_univ hP₁ hP₂ hP₃ with
-  ⟨K, U, K_cpct, U_op, hU, hKU, U_loc, hK⟩,
-
-  sorry
+  let P₀' : Π x : X, germ (𝓝 x) Y → Prop := restrict_germ_predicate (λ x φ, φ.value = f₀ x) K,
+  have hf₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀,
+  { exact λ x, ⟨hP₀f₀ x, λ hx, eventually_of_forall (λ x', rfl)⟩ },
+  have ind' : ∀ (U₁ U₂ K₁ K₂ : set X) {f₁ f₂ : X → Y}, is_open U₁ → is_open U₂ →
+     is_compact K₁ → is_compact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) →
+     (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f ) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧
+                  (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x),
+  { intros U₁ U₂ K₁ K₂ f₁ f₂ U₁_op U₂_op K₁_cpct K₂_cpct hK₁U₁ hK₂U₂ hf₁ hf₂ hf₁U₁ hf₂U₂,
+    obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and_distrib.mp hf₁,
+    rw forall_restrict_germ_predicate_iff at h₀'f₁,
+    rcases (has_basis_nhds_set K).mem_iff.mp (hP₁f₀.germ_congr h₀'f₁) with ⟨U, ⟨U_op, hKU⟩, hU⟩,
+    rcases ind (U_op.union U₁_op) U₂_op (hK.union K₁_cpct) K₂_cpct (union_subset_union hKU hK₁U₁)
+      hK₂U₂ h₀f₁ hf₂ (λ x hx, hx.elim (λ hx, hU hx) (λ hx, hf₁U₁ x hx)) hf₂U₂ with ⟨f, h₀f, hf, h'f⟩,
+    rw [union_assoc, eventually_nhds_set_union] at hf h'f,
+    exact ⟨f, λ x, ⟨h₀f x, restrict_germ_predicate_congr (hf₁ x).2 h'f.1⟩, hf.2, h'f.2⟩ },
+  rcases inductive_construction'' P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩,
+  simp only [forall_and_distrib, forall_restrict_germ_predicate_iff ] at hf ⊢,
+  exact ⟨f, ⟨hf.1, hf.2.2⟩, hf.2.1⟩
 end
 
 end inductive_construction

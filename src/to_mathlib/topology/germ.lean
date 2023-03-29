@@ -26,6 +26,35 @@ def restrict_germ_predicate {X Y : Type*} [topological_space X]
   exact λ f f' hff', propext $ forall_congr $ λ _, ⟨this f f' hff', this f' f hff'.symm⟩,
 end
 
+lemma filter.eventually.germ_congr {X Y : Type*} [topological_space X]
+  {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f g : X → Y}
+  (hf : ∀ᶠ x in 𝓝ˢ A, P x f) (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) : ∀ᶠ x in 𝓝ˢ A, P x g :=
+begin
+  rw eventually_nhds_set_iff at *,
+  intros x hx,
+  apply ((hf x hx).and (h x hx).eventually_nhds).mono,
+  intros y hy,
+  convert hy.1 using 1,
+  apply quotient.sound,
+  exact hy.2
+end
+
+
+lemma restrict_germ_predicate_congr {X Y : Type*} [topological_space X]
+  {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f g : X → Y} {x : X}
+  (hf : restrict_germ_predicate P A x f) (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) :
+  restrict_germ_predicate P A x g :=
+begin
+  intros hx,
+  apply ((hf hx).and $ eventually_nhds_set_iff.mp h x hx).eventually_nhds.mono,
+  intros y hy,
+  rw eventually_and at hy,
+  convert hy.1.self_of_nhds using 1,
+  apply quotient.sound,
+  exact hy.2,
+end
+
+
 lemma forall_restrict_germ_predicate_iff {X Y : Type*} [topological_space X]
   {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f : X → Y} :
   (∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x in 𝓝ˢ A, P x f :=
