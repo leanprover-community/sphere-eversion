@@ -5,10 +5,9 @@ import to_mathlib.topology.constructions
 import to_mathlib.topology.germ
 
 import global.indexing
-import global.localized_construction
 import loops.surrounding
 
-open set filter  metric prod
+open set filter metric prod topological_space
 open_locale topology unit_interval
 
 /-!
@@ -135,8 +134,8 @@ one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
   into a map satisfying `P₁` on `K₁ ∪ K₂` for any compact sets `Kᵢ ⊆ Uᵢ`.
 One can probably deduce this version from the version where `K` is empty for some
 other `P₀`. -/
-lemma inductive_construction' {X Y : Type*} [topological_space X]
-  [t2_space X] [locally_compact_space X] [sigma_compact_space X]
+lemma inductive_construction' {X Y : Type*} [emetric_space X] [locally_compact_space X]
+  [second_countable_topology X]
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
   {K : set X} (hK : is_compact K)
   {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
@@ -147,6 +146,25 @@ lemma inductive_construction' {X Y : Type*} [topological_space X]
      ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x :=
 begin
+  --choose F h₀F h₁F using loc,
+
+  let P : set X → Prop := λ U, ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ x ∈ U, P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x,
+  have hP₁ : antitone P,
+  {
+    sorry },
+  have hP₂ : P ∅,
+  sorry { exact ⟨f₀, hP₀f₀, λ x h, h.elim, eventually_of_forall $ λ x, rfl⟩ },
+  have hP₃ : ∀ (x : X), x ∈ univ → (∃ (V : set X) (H : V ∈ 𝓝 x), P V),
+  { rintros x -,
+    by_cases hx : x ∈ K,
+    {
+      sorry },
+    { rcases loc x with ⟨F, hF⟩,
+      refine ⟨{x' | P₁ x' F}, hF.2, ⟨F, hF.1, λ x', id, _⟩⟩,
+      sorry },
+     },
+  rcases exists_locally_finite_subcover_of_locally is_closed_univ hP₁ hP₂ hP₃ with
+  ⟨K, U, K_cpct, U_op, hU, hKU, U_loc, hK⟩,
 
   sorry
 end
