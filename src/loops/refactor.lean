@@ -146,6 +146,37 @@ lemma inductive_construction'' {X Y : Type*} [emetric_space X] [locally_compact_
                   (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
     ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f :=
 begin
+  let P : set X → Prop := λ U, ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ x ∈ U, P₁ x f),
+  have hP₁ : antitone P,
+  {
+    sorry },
+  have hP₂ : P ∅,
+  sorry { exact ⟨f₀, hP₀f₀, λ x h, h.elim, eventually_of_forall $ λ x, rfl⟩ },
+  have hP₃ : ∀ (x : X), x ∈ univ → (∃ (V : set X) (H : V ∈ 𝓝 x), P V),
+  sorry { rintros x -,
+    rcases loc x with ⟨f, h₀f, h₁f⟩,
+    exact ⟨_, h₁f, f, h₀f, λ x, id⟩ },
+  rcases exists_locally_finite_subcover_of_locally is_closed_univ hP₁ hP₂ hP₃ with
+    ⟨K, (U : index_type 0 →set X) , K_cpct, U_op, hU, hKU, U_loc, hK⟩,
+  simp only [← and_assoc],
+  apply inductive_construction (λ x φ, P₀ x φ ∧ P₀' x φ) P₁ U_loc (eq_univ_of_univ_subset hK)
+    ⟨f₀, hP₀f₀⟩,
+  rintros (n : ℕ) f h₀f (h₁f : ∀ x ∈ ⋃ j < n, K j, P₁ x f),
+  rcases hU n with ⟨f', h₀f', h₁f'⟩,
+  have cpct : is_compact ⋃ j < n, K j,
+  sorry { have : (⋃ j < n, K j) = ⋃ j ∈ finset.range n, K j,
+    {
+      sorry },
+    rw this,
+    apply (finset.range n).is_compact_bUnion (λ j _, K_cpct j) },
+  rcases ind (is_open_bUnion (λ j (_ : j < n), U_op j)) (U_op n) cpct (K_cpct n)
+    (Union₂_mono $ λ j _,hKU j) (hKU n) h₀f h₀f' _ h₁f' with ⟨F, h₀F, h₁F, hF⟩,
+  have : (⋃ j ≤ n, K j) = (⋃ j < n, K j) ∪ K n,
+  sorry { simp only [(λ j, le_iff_lt_or_eq : ∀ j, j ≤ n ↔ j < n ∨ j = n)],
+    erw [bUnion_union, bUnion_singleton],
+    refl },
+  simp_rw ← this at h₁F, clear this,
+  exact ⟨F, h₀F, h₁F.on_set, λ x hx, hF.on_set x (or.inr hx)⟩,
   sorry
 end
 
