@@ -28,8 +28,9 @@ In this section, I took lemmas that used to exist when I worked on the inductive
 refactor. In particular there is the lemma which can't quite be used to prove
 `inductive_htpy_construction`, namely `inductive_construction`.
 
-In that lemma, the covering is fixed. Lemma `inductive_construction'`, to be proven, is meant
-to combine this with an argument using local existence and exhaustions.
+In that lemma, the covering is fixed. Lemma `inductive_construction'` combines this with an argument
+using local existence and exhaustions. A technical intermediate statement is
+`inductive_construction''`.
 -/
 
 lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
@@ -82,12 +83,12 @@ lemma inductive_construction {X Y : Type*} [topological_space X]
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
   (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
   (init : ∃ f : X → Y, ∀ x, P₀ x f)
-  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ x ∈ ⋃ j < i, K j, P₁ x f) →
-    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ x ∈ ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, ∀ x, P₀ x f ∧ P₁ x f :=
 begin
   let P : ℕ → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ ∀ x ∈ (⋃ i ≤ (n : index_type N) , K i), P₁ x f,
+    λ n f, (∀ x, P₀ x f) ∧ ∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁ x f,
   let Q : ℕ → (X → Y) → (X → Y) → Prop :=
     λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧ ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
   obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
@@ -95,12 +96,8 @@ begin
     { dsimp [P],
       cases init with f₀ hf₀,
       rcases ind 0 f₀ hf₀ _ with ⟨f', h₀f', h₁f', hf'⟩,
-      use [f', h₀f'],
-      intros x hx,
-      apply h₁f' _ hx,
-      have : (⋃ (j : index_type N) (H : j < 0), K j) = ∅,
-      { simp [index_type.not_lt_zero] },
-      simp only [this, mem_empty_iff_false, is_empty.forall_iff, implies_true_iff] },
+      use [f', h₀f', h₁f'],
+      simp [index_type.not_lt_zero] },
     { rintros n f ⟨h₀f, h₁f⟩,
       rcases index_type.lt_or_eq_succ N n with hn | hn,
       { simp_rw index_type.le_or_lt_succ hn at h₁f,
@@ -122,18 +119,17 @@ begin
   rcases eventually_at_top.mp ((hF x).and this) with ⟨n₀, hn₀⟩,
   rcases hn₀ n₀ le_rfl with ⟨hx, hx'⟩,
   rw germ.coe_eq.mpr hx.symm,
-  exact ⟨h₀f n₀ x, h₁f n₀ x hx'⟩
+  exact ⟨h₀f n₀ x, (h₁f n₀).on_set x hx'⟩
 end
 
-/-- We are given a suitably nice topological space `X` and two local constraints `P₀` and `P₁`
-on maps from `X` to some type `Y`. All maps entering the discussion are required to statisfy `P₀`
-everywhere. The goal is to turn a map `f₀` satisfying `P₁` near a compact set `K` into
+/-- We are given a suitably nice topological space `X` and three local constraints `P₀`,`P₀'` and
+`P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to statisfy
+`P₀` everywhere. The goal is to turn a map `f₀` satisfying `P₁` near a compact set `K` into
 one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
 * For every `x` in `X` there is a map which satisfies `P₁` near `x`
 * One can patch two maps `f₁ f₂` satisfying `P₁` on open sets `U₁` and `U₂` respectively
-  into a map satisfying `P₁` on `K₁ ∪ K₂` for any compact sets `Kᵢ ⊆ Uᵢ`.
-One can probably deduce this version from the version where `K` is empty for some
-other `P₀`. -/
+  and such that `f₁` satisfies `P₀'` everywhere into a map satisfying `P₁` on `K₁ ∪ K₂` for any
+  compact sets `Kᵢ ⊆ Uᵢ` and `P₀'` everywhere. -/
 lemma inductive_construction'' {X Y : Type*} [emetric_space X] [locally_compact_space X]
   [second_countable_topology X]
   (P₀ P₀' P₁ : Π x : X, germ (𝓝 x) Y → Prop)
@@ -148,36 +144,28 @@ lemma inductive_construction'' {X Y : Type*} [emetric_space X] [locally_compact_
 begin
   let P : set X → Prop := λ U, ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ x ∈ U, P₁ x f),
   have hP₁ : antitone P,
-  {
-    sorry },
-  have hP₂ : P ∅,
-  sorry { exact ⟨f₀, hP₀f₀, λ x h, h.elim, eventually_of_forall $ λ x, rfl⟩ },
+  { rintros U V hUV ⟨f, h, h'⟩,
+    exact ⟨f, h, λ x hx, h' x (hUV hx)⟩ },
+  have hP₂ : P ∅, from ⟨f₀, λ x, (hP₀f₀ x).1, λ x h, h.elim⟩,
   have hP₃ : ∀ (x : X), x ∈ univ → (∃ (V : set X) (H : V ∈ 𝓝 x), P V),
-  sorry { rintros x -,
+  { rintros x -,
     rcases loc x with ⟨f, h₀f, h₁f⟩,
     exact ⟨_, h₁f, f, h₀f, λ x, id⟩ },
   rcases exists_locally_finite_subcover_of_locally is_closed_univ hP₁ hP₂ hP₃ with
     ⟨K, (U : index_type 0 →set X) , K_cpct, U_op, hU, hKU, U_loc, hK⟩,
-  simp only [← and_assoc],
+  simp_rw ← and_assoc,
   apply inductive_construction (λ x φ, P₀ x φ ∧ P₀' x φ) P₁ U_loc (eq_univ_of_univ_subset hK)
     ⟨f₀, hP₀f₀⟩,
-  rintros (n : ℕ) f h₀f (h₁f : ∀ x ∈ ⋃ j < n, K j, P₁ x f),
-  rcases hU n with ⟨f', h₀f', h₁f'⟩,
+  rintros (n : ℕ) f h₀f (h₁f : ∀ᶠ x near ⋃ j < n, K j, P₁ x f),
   have cpct : is_compact ⋃ j < n, K j,
-  sorry { have : (⋃ j < n, K j) = ⋃ j ∈ finset.range n, K j,
-    {
-      sorry },
-    rw this,
+  { rw show (⋃ j < n, K j) = ⋃ j ∈ finset.range n, K j, by simp only [finset.mem_range],
     apply (finset.range n).is_compact_bUnion (λ j _, K_cpct j) },
-  rcases ind (is_open_bUnion (λ j (_ : j < n), U_op j)) (U_op n) cpct (K_cpct n)
-    (Union₂_mono $ λ j _,hKU j) (hKU n) h₀f h₀f' _ h₁f' with ⟨F, h₀F, h₁F, hF⟩,
-  have : (⋃ j ≤ n, K j) = (⋃ j < n, K j) ∪ K n,
-  sorry { simp only [(λ j, le_iff_lt_or_eq : ∀ j, j ≤ n ↔ j < n ∨ j = n)],
-    erw [bUnion_union, bUnion_singleton],
-    refl },
-  simp_rw ← this at h₁F, clear this,
-  exact ⟨F, h₀F, h₁F.on_set, λ x hx, hF.on_set x (or.inr hx)⟩,
-  sorry
+  rcases hU n with ⟨f', h₀f', h₁f'⟩,
+  rcases mem_nhds_set_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩,
+  rcases ind V_op (U_op n) cpct (K_cpct n)
+    hKV (hKU n) h₀f h₀f' h₁V h₁f' with ⟨F, h₀F, h₁F, hF⟩,
+  simp_rw ← bUnion_le at h₁F,
+  exact ⟨F, h₀F, h₁F, λ x hx, hF.on_set x (or.inr hx)⟩
 end
 
 /-- We are given a suitably nice topological space `X` and two local constraints `P₀` and `P₁`
@@ -187,8 +175,8 @@ one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
 * For every `x` in `X` there is a map which satisfies `P₁` near `x`
 * One can patch two maps `f₁ f₂` satisfying `P₁` on open sets `U₁` and `U₂` respectively
   into a map satisfying `P₁` on `K₁ ∪ K₂` for any compact sets `Kᵢ ⊆ Uᵢ`.
-One can probably deduce this version from the version where `K` is empty for some
-other `P₀`. -/
+This is deduced this version from the version where `K` is empty but adding some `P'₀`, see
+`inductive_construction''`. -/
 lemma inductive_construction' {X Y : Type*} [emetric_space X] [locally_compact_space X]
   [second_countable_topology X]
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
