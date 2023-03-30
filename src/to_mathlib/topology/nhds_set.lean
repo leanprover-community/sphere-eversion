@@ -72,3 +72,6 @@ lemma filter.eventually.nhds_set_forall_mem {α : Type*} [topological_space α]
   {s : set α} {P : α → Prop}
   (hP : ∀ᶠ x in nhds_set s, P x) : ∀ x ∈ s, P x :=
 hP.forall_mem principal_le_nhds_set
+
+lemma subset_of_mem_nhds_set {α : Type*} [topological_space α] {s t : set α} (h : t ∈ 𝓝ˢ s) : s ⊆ t :=
+λ x hx, mem_of_mem_nhds $ mem_nhds_set_iff_forall.mp h x hx

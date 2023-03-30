@@ -716,3 +716,9 @@ begin
   rw [pure_prod] at this,
   exact eventually_map.mp this
 end
+
+lemma exists_compact_between' {α : Type*} [topological_space α] [locally_compact_space α]
+  {K U : set α} (hK : is_compact K) (hU : is_open U) (h_KU : K ⊆ U) :
+  ∃ L, is_compact L ∧ L ∈ 𝓝ˢ K ∧ L ⊆ U :=
+let ⟨L, L_cpct, L_in, LU⟩ := exists_compact_between hK hU h_KU in
+  ⟨L, L_cpct, subset_interior_iff_mem_nhds_set.mp L_in, LU⟩
