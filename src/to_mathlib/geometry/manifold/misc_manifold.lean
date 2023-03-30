@@ -318,7 +318,9 @@ def in_coordinates (f : N → M) (g : N → M')
 
 variables {F₁ F₂}
 
-/-- Todo: use `in_coordinates(2)` instead of `in_coordinates_core`. -/
+/-! Todo: use `in_coordinates` instead of `in_coordinates_core`.
+These are the same mathematical object, but not equal, since they are defined differently if the
+`x` and the `y` are not in the right charts. -/
 
 def in_coordinates_core' {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
   (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂) (x₀ x : M) (y₀ y : M') (ϕ : F₁ →L[𝕜] F₂) : F₁ →L[𝕜] F₂ :=
@@ -330,7 +332,21 @@ def in_coordinates_core (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E'
 λ x₀ x, in_coordinates_core' (tangent_bundle_core I M) (tangent_bundle_core I' M')
   (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
-/-- The map `in_coordinates_core'` is trivial if `M'` is the -/
+/-- rewrite `in_coordinates'` using continuous linear equivalences. -/
+lemma in_coordinates'_eq (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y)
+  (hx : x ∈ (trivialization_at F₁ Z x₀).base_set)
+  (hy : y ∈ (trivialization_at F₂ Z₂ y₀).base_set) :
+  in_coordinates' F₁ F₂ Z Z₂ x₀ x y₀ y ϕ =
+  ((trivialization_at F₂ Z₂ y₀).continuous_linear_equiv_at 𝕜 y hy : Z₂ y →L[𝕜] F₂) ∘L ϕ ∘L
+  (((trivialization_at F₁ Z x₀).continuous_linear_equiv_at 𝕜 x hx).symm : F₁ →L[𝕜] Z x) :=
+begin
+  ext,
+  simp_rw [in_coordinates', continuous_linear_map.coe_comp', continuous_linear_equiv.coe_coe,
+    trivialization.coe_continuous_linear_equiv_at_eq,
+    trivialization.symm_continuous_linear_equiv_at_eq]
+end
+
+/-- The map `in_coordinates_core'` is trivial on the model spaces -/
 lemma in_coordinates_core'_tangent_bundle_core_model_space
   (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') :
     in_coordinates_core' (tangent_bundle_core I H) (tangent_bundle_core I' H') x₀ x y₀ y ϕ = ϕ :=

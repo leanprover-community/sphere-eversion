@@ -133,6 +133,18 @@ variables {I M I' M' J J'}
 
 attribute [simps] cont_mdiff_map.fst cont_mdiff_map.snd
 
+lemma one_jet_bundle_trivialization_at' (x₀ x : J¹MM') :
+  (trivialization_at (E →L[𝕜] E') (one_jet_space I I') x₀.proj x).2 =
+  in_coordinates' E E' (tangent_space I) (tangent_space I')
+    x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2 x.2 :=
+begin
+  delta one_jet_space,
+  rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply],
+  simp_rw [in_coordinates, in_coordinates', pullback_trivialization_at],
+  erw [trivialization.pullback_symmL],
+  refl
+end
+
 lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM')
   (h1x : x.proj.1 ∈ (chart_at H x₀.proj.1).source)
   (h2x : x.proj.2 ∈ (chart_at H' x₀.proj.2).source) :
@@ -140,18 +152,8 @@ lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM')
   in_coordinates_core' (tangent_bundle_core I M) (tangent_bundle_core I' M')
     x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2 x.2 :=
 begin
-  delta one_jet_space,
-  rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply,
-    ← in_coordinates_core'_eq],
-  { simp_rw [in_coordinates, in_coordinates', pullback_trivialization_at],
-    -- for some reason rewriting with `trivialization.pullback_symmL` doesn't work
-    -- (probably type dependencies)
-    refine congr_arg _ _,
-    refine congr_arg _ _,
-    ext y,
-    simp_rw [trivialization.symmL_apply, trivialization.pullback_symm],
-    refl, },
-  exacts [h1x, h2x]
+  rw [one_jet_bundle_trivialization_at', ← in_coordinates_core'_eq],
+  exacts [rfl, h1x, h2x]
 end
 
 @[simp, mfld_simps]
@@ -166,6 +168,18 @@ lemma trivialization_at_one_jet_bundle_target (x₀ : M × M') :
   (prod.fst ⁻¹' (trivialization_at E (tangent_space I) x₀.1).base_set ∩
   prod.snd ⁻¹' (trivialization_at E' (tangent_space I') x₀.2).base_set) ×ˢ set.univ :=
 rfl
+
+lemma one_jet_bundle_chart_at_apply' (v v' : one_jet_bundle I M I' M') :
+  chart_at HJ v v' =
+  ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
+  in_coordinates' E E' (tangent_space I) (tangent_space I')
+    v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
+begin
+  ext1,
+  { refl },
+  rw [charted_space_chart_at_snd],
+  exact one_jet_bundle_trivialization_at' v v'
+end
 
 /-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an
