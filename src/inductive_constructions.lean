@@ -3,15 +3,12 @@ import to_mathlib.data.set.lattice
 import to_mathlib.data.nat.basic
 import to_mathlib.topology.constructions
 import to_mathlib.topology.germ
+import to_mathlib.topology.misc
 
-import global.indexing
-import loops.basic
-import tactic.fin_cases
-import topology.metric_space.emetric_paracompact
-import topology.shrinking_lemma
-import to_mathlib.partition
+import indexing
+import notations
 
-open set filter metric prod topological_space
+open set filter prod topological_space
 open_locale topology unit_interval
 
 /-!

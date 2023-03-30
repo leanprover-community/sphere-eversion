@@ -1,8 +1,5 @@
 import loops.basic
-import loops.inductive_constructions
-import tactic.fin_cases
-import topology.metric_space.emetric_paracompact
-import topology.shrinking_lemma
+import inductive_constructions
 import to_mathlib.partition
 import analysis.locally_convex.with_seminorms -- to obtain that normed spaces are locally connected
 import to_mathlib.order.filter.eventually_constant

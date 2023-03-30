@@ -1,7 +1,7 @@
 import topology.metric_space.hausdorff_distance
 import topology.uniform_space.separation
 import geometry.manifold.cont_mdiff_mfderiv
-import global.indexing
+import indexing
 import to_mathlib.topology.paracompact
 import to_mathlib.topology.algebra.order.compact
 import to_mathlib.topology.nhds_set

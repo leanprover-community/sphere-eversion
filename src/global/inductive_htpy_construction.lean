@@ -6,7 +6,7 @@ import to_mathlib.topology.germ
 import to_mathlib.order.filter.basic
 
 import notations
-import global.indexing
+import indexing
 
 noncomputable theory
 
