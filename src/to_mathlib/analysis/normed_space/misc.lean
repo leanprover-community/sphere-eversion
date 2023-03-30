@@ -11,7 +11,7 @@ noncomputable theory
 
 namespace inner_product_space
 
-variables {E : Type*} [inner_product_space ℝ E]
+variables {E : Type*} [normed_add_comm_group E] [inner_product_space ℝ E]
 
 /-- Provided `0 < r`, this is a diffeomorphism from `E` onto the open ball of radius `r` in `E`
 centred at a point `c` and sending `0` to `c`.
@@ -127,6 +127,7 @@ variables (F) [finite_dimensional ℝ F]
 /-- The Euclidean space obtained by choosing a basis of `F` and declaring it to be orthnormal.  -/
 def l2 := euclidean_space ℝ $ basis.of_vector_space_index ℝ F
 
+instance : normed_add_comm_group (l2 F) := pi_Lp.normed_add_comm_group 2 _
 instance : inner_product_space ℝ (l2 F) := pi_Lp.inner_product_space _
 
 /-- The continuous linear equivalence from `F` with its given norm to itself with the Euclidean

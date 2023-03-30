@@ -139,7 +139,7 @@ end generalbis
 
 section sphere_eversion
 
-variables (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)]
+variables (E : Type*) [normed_add_comm_group E] [inner_product_space ℝ E] [fact (finrank ℝ E = 3)]
 
 local attribute [instance] fact_finite_dimensional_of_finrank_eq_succ
 

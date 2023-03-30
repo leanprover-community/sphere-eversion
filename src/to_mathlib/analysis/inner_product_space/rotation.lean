@@ -18,7 +18,8 @@ open finite_dimensional
 
 local attribute [instance] fact_finite_dimensional_of_finrank_eq_succ
 
-variables {E : Type*} [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] (ω : orientation ℝ E (fin 3))
+variables {E : Type*} [normed_add_comm_group E] [inner_product_space ℝ E] [fact (finrank ℝ E = 3)]
+  (ω : orientation ℝ E (fin 3))
 
 include ω
 
@@ -105,7 +106,7 @@ begin
   have h2 : ⟪v ×₃ w, w⟫ = 0 := ω.inner_cross_product_apply_apply_self v w,
   have h3 : ⟪(w:E), v ×₃ w⟫ = 0 := by rwa real_inner_comm,
   have : ‖real.cos (t * real.pi) • (w:E) + real.sin (t * real.pi) • v ×₃ w‖ = ‖(w:E)‖,
-  { simp only [norm_eq_sqrt_inner],
+  { simp only [@norm_eq_sqrt_inner ℝ],
     congr' 2,
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
       is_R_or_C.conj_to_real, submodule.coe_inner],
@@ -122,8 +123,8 @@ begin
   rw submodule.mem_span_singleton at ha,
   obtain ⟨s, rfl⟩ := ha,
   rw [← sq_eq_sq (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
-    norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero,
-    norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero],
+    @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ,
+    @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ],
   { have hvw : ‖ω.rot (t, v) w‖ = ‖w‖ := by simpa only using ω.isometry_on_rot t v ⟨w, hw⟩,
     simp [hvw, rot_self] },
   { simp [inner_smul_left, hw v (submodule.mem_span_singleton_self _)] },
@@ -147,7 +148,7 @@ begin
   rw [orthogonal_projection_mem_subspace_orthogonal_complement_eq_zero hy',
       orthogonal_projection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy,
   apply_fun (λ x, ‖x‖^2) at hy,
-  rw [pow_two, norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero] at hy,
+  rw [pow_two, @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ] at hy,
   simp_rw [← pow_two, norm_smul, mul_pow] at hy,
   change _ + _ * ‖ x ×₃ (⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy,
   rw [norm_cross_product] at hy,

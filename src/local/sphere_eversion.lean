@@ -27,8 +27,8 @@ open_locale topology real_inner_product_space
 section sphere_eversion
 
 variables
-{E : Type*} [inner_product_space ℝ E]
-{F : Type*} [inner_product_space ℝ F]
+{E : Type*} [normed_add_comm_group E] [inner_product_space ℝ E]
+{F : Type*} [normed_add_comm_group F] [inner_product_space ℝ F]
 
 local notation `𝕊²` := sphere (0 : E) 1
 local notation `dim` := finrank ℝ
@@ -282,7 +282,7 @@ def loc_formal_eversion_aux : htpy_jet_sec E E :=
     { refine cont_diff_at_const.congr_of_eventually_eq _, exact 0,
       have : ((λ x, ‖x‖ ^ 2) ⁻¹' Iio (1/4)) ∈ 𝓝 (0 : E),
       { refine is_open.mem_nhds _ _,
-        exact (is_open_Iio.preimage (cont_diff_norm_sq : 𝒞 ∞ _).continuous),
+        exact (is_open_Iio.preimage (cont_diff_norm_sq ℝ : 𝒞 ∞ _).continuous),
         simp_rw [mem_preimage, norm_zero, zero_pow two_pos, mem_Iio],
         norm_num },
       have : ((λ x, smooth_step (‖x‖ ^ 2)) ⁻¹' {0}) ∈ 𝓝 (0 : E),
@@ -299,7 +299,7 @@ def loc_formal_eversion_aux : htpy_jet_sec E E :=
       show smooth_step (‖x‖ ^ 2) • loc_formal_eversion_aux_φ ω (smooth_step t) x = 0,
       simp_rw [hx, zero_smul] },
     refine cont_diff_at.smul _ _,
-    refine (smooth_step.smooth.comp $ cont_diff_norm_sq.comp cont_diff_snd).cont_diff_at,
+    refine (smooth_step.smooth.comp $ (cont_diff_norm_sq ℝ).comp cont_diff_snd).cont_diff_at,
     exact (smooth_at_loc_formal_eversion_aux_φ ω
       (show (prod.map smooth_step id x).2 ≠ 0, from hx)).comp x
       (smooth_step.smooth.prod_map cont_diff_id).cont_diff_at,
@@ -390,7 +390,7 @@ begin
     𝓝ˢ (({0, 1} : set ℝ) ×ˢ 𝕊²),
   { refine (is_open.mem_nhds_set _).mpr _,
     exact (is_open_Iio.union is_open_Ioi).prod
-      (is_open_Ioi.preimage (cont_diff_norm_sq : 𝒞 ∞ _).continuous),
+      (is_open_Ioi.preimage (cont_diff_norm_sq ℝ : 𝒞 ∞ _).continuous),
     rintro ⟨s, x⟩ ⟨hs, hx⟩,
     refine ⟨_, _⟩,
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs,
@@ -443,7 +443,7 @@ begin
 end
 
 /- Stating the full statement with all type-class arguments and no uncommon notation. -/
-example (E : Type*) [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] :
+example (E : Type*) [normed_add_comm_group E] [inner_product_space ℝ E] [fact (finrank ℝ E = 3)] :
   ∃ f : ℝ → E → E,
   (cont_diff ℝ ⊤ (uncurry f)) ∧
   (∀ x ∈ sphere (0 : E) 1, f 0 x = x) ∧

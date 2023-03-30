@@ -55,14 +55,6 @@ lemma cont_diff_within_at_fderiv_within {f : E → F → G}
 by { rw [← insert_eq_self.mpr hx] at hst hgx,
   exact (hf.mono hst).fderiv_within'' hg (hgx.mono (λ y hy, ht _ hy)) hmn hgt }
 
--- todo: remove alias
-lemma cont_diff_at.fderiv {f : E → F → G}
-  (hf : cont_diff_at 𝕜 n (function.uncurry f) (x, g x))
-  (hg : cont_diff_at 𝕜 m g x)
-  (hmn : m + 1 ≤ n) :
-  cont_diff_at 𝕜 m (λ x, fderiv 𝕜 (f x) (g x)) x :=
-cont_diff_at.cont_diff_at_fderiv hf hg hmn
-
 end fderiv
 
 section calculus

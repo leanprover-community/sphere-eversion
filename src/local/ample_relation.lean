@@ -24,7 +24,7 @@ At the end of the file we consider 1-jet sections and slices corresponding to po
 
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
-variables {X : Type*} [inner_product_space ℝ X]
+variables {X : Type*} [normed_add_comm_group X] [inner_product_space ℝ X]
 variables {R : rel_loc E F}
 open set
 

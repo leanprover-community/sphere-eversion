@@ -244,7 +244,7 @@ end
 
 section
 variables {𝕜 : Type*} [is_R_or_C 𝕜]
-variables {E : Type*} [inner_product_space 𝕜 E] [complete_space E]
+variables {E : Type*} [normed_add_comm_group E] [inner_product_space 𝕜 E] [complete_space E]
 
 -- variant of `orthogonal_projection_singleton`
 lemma orthogonal_projection_singleton' {v : E} :
@@ -261,7 +261,7 @@ end
 end
 
 section
-variables {E : Type*} [inner_product_space ℝ E] [complete_space E]
+variables {E : Type*} [normed_add_comm_group E] [inner_product_space ℝ E] [complete_space E]
 
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
 from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
@@ -277,7 +277,7 @@ begin
     rw orthogonal_projection_singleton',
     refl },
   refine cont_diff_at.smul _ _,
-  { refine cont_diff_at_const.div cont_diff_norm_sq.cont_diff_at _,
+  { refine cont_diff_at_const.div (cont_diff_norm_sq ℝ).cont_diff_at _,
     apply pow_ne_zero,
     exact norm_ne_zero_iff.mpr hv₀ },
   exact (cont_diff.clm_comp (cont_diff_to_span_singleton ℝ E)

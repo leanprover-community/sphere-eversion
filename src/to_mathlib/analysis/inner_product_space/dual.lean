@@ -5,7 +5,7 @@ import to_mathlib.analysis.inner_product_space.projection
 open_locale real_inner_product_space
 open submodule inner_product_space linear_map (ker)
 
-variables {E : Type*} [inner_product_space ℝ E] [complete_space E]
+variables {E : Type*} [normed_add_comm_group E] [inner_product_space ℝ E] [complete_space E]
 
 -- ignore the next line which is fixing a pretty-printer bug
 local notation (name := line_printing_only) `Δ` v:55 := submodule.span ℝ {v}

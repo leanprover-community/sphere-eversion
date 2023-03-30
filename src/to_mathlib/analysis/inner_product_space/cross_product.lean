@@ -16,7 +16,7 @@ open finite_dimensional
 
 local attribute [instance] fact_finite_dimensional_of_finrank_eq_succ
 
-variables (E : Type*) [inner_product_space ℝ E]
+variables (E : Type*) [normed_add_comm_group E] [inner_product_space ℝ E]
 
 /-- The identification of a finite-dimensional inner product space with its algebraic dual. -/
 private def to_dual [finite_dimensional ℝ E] : E ≃ₗ[ℝ] (E →ₗ[ℝ] ℝ) :=

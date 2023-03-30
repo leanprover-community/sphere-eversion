@@ -50,7 +50,7 @@ end
 
 end general_stuff
 
-variables {E : Type*} [inner_product_space ℝ E] [complete_space E]
+variables {E : Type*} [normed_add_comm_group E] [inner_product_space ℝ E] [complete_space E]
 
 lemma linear_isometry_equiv.apply_ne_zero
   {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
@@ -136,11 +136,7 @@ end
     { simp },
     simp [mem_orthogonal_span_singleton_iff],
     rw [inner_sub_right, inner_smul_right],
-    have : ⟪x, x⟫ ≠ 0, -- TODO: extract as lemma or find it in mathlib
-    { intro H,
-      apply hx,
-      rwa ← inner_self_eq_zero },
-    field_simp [this]
+    field_simp [inner_self_ne_zero.mpr hx]
   end⟩ :=
 begin
   apply subtype.ext,

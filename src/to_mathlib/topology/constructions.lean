@@ -1,4 +1,5 @@
 import topology.constructions
+import topology.locally_finite
 
 open set function filter
 open_locale topology filter
