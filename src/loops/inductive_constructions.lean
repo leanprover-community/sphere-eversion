@@ -5,7 +5,11 @@ import to_mathlib.topology.constructions
 import to_mathlib.topology.germ
 
 import global.indexing
-import loops.surrounding
+import loops.basic
+import tactic.fin_cases
+import topology.metric_space.emetric_paracompact
+import topology.shrinking_lemma
+import to_mathlib.partition
 
 open set filter metric prod topological_space
 open_locale topology unit_interval
@@ -136,7 +140,7 @@ lemma inductive_construction'' {X Y : Type*} [emetric_space X] [locally_compact_
   {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀ )
   (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
   (ind : ∀ {U₁ U₂ K₁ K₂ : set X} {f₁ f₂ : X → Y}, is_open U₁ → is_open U₂ →
-     is_compact K₁ → is_compact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) →
+     is_closed K₁ → is_closed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) →
      (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
      ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f ) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧
                   (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
@@ -157,12 +161,12 @@ begin
   apply inductive_construction (λ x φ, P₀ x φ ∧ P₀' x φ) P₁ U_loc (eq_univ_of_univ_subset hK)
     ⟨f₀, hP₀f₀⟩,
   rintros (n : ℕ) f h₀f (h₁f : ∀ᶠ x near ⋃ j < n, K j, P₁ x f),
-  have cpct : is_compact ⋃ j < n, K j,
+  have cpct : is_closed ⋃ j < n, K j,
   { rw show (⋃ j < n, K j) = ⋃ j ∈ finset.range n, K j, by simp only [finset.mem_range],
-    apply (finset.range n).is_compact_bUnion (λ j _, K_cpct j) },
+    apply (finset.range n).is_closed_bUnion _ (λ j _, (K_cpct j).is_closed) },
   rcases hU n with ⟨f', h₀f', h₁f'⟩,
   rcases mem_nhds_set_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩,
-  rcases ind V_op (U_op n) cpct (K_cpct n)
+  rcases ind V_op (U_op n) cpct (K_cpct n).is_closed
     hKV (hKU n) h₀f h₀f' h₁V h₁f' with ⟨F, h₀F, h₁F, hF⟩,
   simp_rw ← bUnion_le at h₁F,
   exact ⟨F, h₀F, h₁F, λ x hx, hF.on_set x (or.inr hx)⟩
@@ -180,11 +184,11 @@ This is deduced this version from the version where `K` is empty but adding some
 lemma inductive_construction' {X Y : Type*} [emetric_space X] [locally_compact_space X]
   [second_countable_topology X]
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
-  {K : set X} (hK : is_compact K)
+  {K : set X} (hK : is_closed K)
   {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
   (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
   (ind : ∀ {U₁ U₂ K₁ K₂ : set X} {f₁ f₂ : X → Y}, is_open U₁ → is_open U₂ →
-     is_compact K₁ → is_compact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) →
+     is_closed K₁ → is_closed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) →
      (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
      ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x)) :
     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x :=
@@ -193,7 +197,7 @@ begin
   have hf₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀,
   { exact λ x, ⟨hP₀f₀ x, λ hx, eventually_of_forall (λ x', rfl)⟩ },
   have ind' : ∀ (U₁ U₂ K₁ K₂ : set X) {f₁ f₂ : X → Y}, is_open U₁ → is_open U₂ →
-     is_compact K₁ → is_compact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) →
+     is_closed K₁ → is_closed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ → (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) →
      (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
      ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f ) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧
                   (∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x),
@@ -211,88 +215,3 @@ begin
 end
 
 end inductive_construction
-
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] {F : Type*}
-  [normed_add_comm_group F] [normed_space ℝ F] {g b : E → F} {U K C : set E} {Ω : set (E × F)}
-  [finite_dimensional ℝ E] [finite_dimensional ℝ F]
-
--- Patrick doesn't understand why `apply_instance` doesn't work in the next example.
--- Because of this issue, the next definition can't use `↿γ`.
-example : function.has_uncurry (E → ℝ → loop F) (E × ℝ × ℝ) F :=
-begin
-  apply function.has_uncurry_induction,
-end
-
-def continuous_germ {x : E} (φ : germ (𝓝 x) (ℝ → loop F)) : Prop :=
-quotient.lift_on' φ (λ γ, ∀ (t s : ℝ), continuous_at (λ p : E × ℝ × ℝ, γ p.1 p.2.1 p.2.2) (x, t, s))
-begin
-  rintros γ γ' (h : {x | γ x = γ' x} ∈ 𝓝 x),
-  ext,
-  refine forall_congr (λ t, forall_congr (λ s, continuous_at_congr _)),
-  rw [nhds_prod_eq],
-  apply mem_of_superset (filter.prod_mem_prod h univ_mem),
-  rintros ⟨x', p⟩ ⟨hx' : γ x' = γ' x', -⟩,
-  simp only [mem_set_of_eq, hx']
-end
-
-variables (g b Ω)
-
-structure loop_family_germ (x : E) (φ : germ (𝓝 x) (ℝ → loop F)) : Prop :=
-(base : ∀ t, φ.value t 0 = b x)
-(t₀ : ∀ s, φ.value 0 s = b x)
-(proj_I : ∀ (t : ℝ) (s : ℝ), φ.value (proj_I t) s = φ.value t s)
-(cont : continuous_germ φ)
-
-structure surrounding_family_germ (x : E) (φ : germ (𝓝 x) (ℝ → loop F)) : Prop :=
-(surrounds : (φ.value 1).surrounds $ g x)
-(val_in' : ∀ (t ∈ I) (s ∈ I), (x, φ.value t s) ∈ Ω)
-
-variables {g b Ω}
-
-/-
-The following proof is slightly tedious because the definition of `surrounding_family_in`
-splits weirdly into `surrounding_family` which includes one condition on `C`
-and one extra condition on `C` instead of putting everything which does not depend on `C`
-on one side and the two conditions depending on `C` on the other side as we do here.
--/
-lemma surrounding_family_in_iff_germ {γ : E → ℝ → loop F} :
-  surrounding_family_in g b γ C Ω ↔ (∀ x, loop_family_germ b x γ) ∧
-                                    (∀ x ∈ C, surrounding_family_germ g Ω x γ) :=
-begin
-  split,
-  { rintro ⟨⟨base, t₀, proj_I, family_surrounds, family_cont⟩, H⟩,
-    exact ⟨λ x, ⟨base x, t₀ x, proj_I x, λ t s, family_cont.continuous_at⟩,
-           λ x x_in, ⟨family_surrounds x x_in, H x x_in⟩⟩ },
-  { rintro ⟨h, h'⟩,
-    refine ⟨⟨λ x, (h x).base, λ x, (h x).t₀, λ x, (h x).proj_I,  λ x hx, (h' x hx).surrounds, _⟩,
-            λ x hx, (h' x hx).val_in'⟩,
-    apply continuous_iff_continuous_at.mpr,
-    rintros ⟨x, t, s⟩,
-    apply (h x).cont }
-end
-
-lemma exists_surrounding_loops'
-  (hK : is_compact K)
-  (hΩ_op : is_open Ω)
-  (hg : ∀ x, continuous_at g x) (hb : continuous b)
-  (hconv : ∀ x, g x ∈ convex_hull ℝ (connected_component_in (prod.mk x ⁻¹' Ω) $ b x))
-  {γ₀ :  E → ℝ → loop F}
-  (hγ₀_surr : ∃ V ∈ 𝓝ˢ K, surrounding_family_in g b γ₀ V Ω) :
-  ∃ γ : E → ℝ → loop F, surrounding_family_in g b γ univ Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x :=
-begin
-  rcases hγ₀_surr with ⟨V, V_in, hV⟩,
-  cases surrounding_family_in_iff_germ.mp hV with hV h'V,
-  simp only [surrounding_family_in_iff_germ, mem_univ, forall_true_left, ← forall_and_distrib],
-  apply inductive_construction' (loop_family_germ b) (surrounding_family_germ g Ω) hK hV
-    (mem_of_superset V_in h'V),
-  { intros x,
-    rcases local_loops ⟨univ, univ_mem, by  simp only [preimage_univ, inter_univ,hΩ_op ]⟩
-      (hg x) hb (hconv x) with ⟨γ, U, U_in, H⟩,
-    cases surrounding_family_in_iff_germ.mp H with H H',
-    exact ⟨γ, H, mem_of_superset U_in H'⟩ },
-  { intros U₁ U₂ K₁  K₂ γ₁ γ₂ hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ hγ₁ hγ₂ h'γ₁ h'γ₂,
-    rcases extend_loops hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ (surrounding_family_in_iff_germ.mpr ⟨hγ₁, h'γ₁⟩)
-      (surrounding_family_in_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with ⟨U, U_in, γ, H, H''⟩,
-    cases surrounding_family_in_iff_germ.mp H with H H',
-    refine ⟨γ, H, mem_of_superset U_in H', eventually_nhds_set_union.mpr H''⟩ }
-end

@@ -26,6 +26,7 @@ class indexing (α : Type*) [linear_order α] :=
 (mono_from : monotone from_nat)
 (from_to : ∀ a, from_nat (to_nat a) = a)
 
+@[priority 100]
 instance indexing.has_coe (α : Type*) [linear_order α] [indexing α] : has_coe ℕ α :=
 ⟨indexing.from_nat⟩
 
@@ -47,7 +48,7 @@ instance : indexing ℕ :=
   mono_from := monotone_id,
   from_to := λ n, rfl }
 
-instance (n : ℕ) : indexing (fin $ n + 1) :=
+def fin.indexing (n : ℕ) : indexing (fin $ n + 1) :=
 { from_nat := λ k, if h : k < n + 1 then ⟨k, h⟩ else fin.last n,
   to_nat := coe,
   mono_from := λ k l hkl, begin
@@ -61,6 +62,7 @@ instance (n : ℕ) : indexing (fin $ n + 1) :=
     refl
   end }
 
+local attribute [instance] fin.indexing
 open_locale topology
 
 /-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `fin n` otherwise-/

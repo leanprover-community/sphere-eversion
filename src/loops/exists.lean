@@ -115,11 +115,10 @@ lemma exist_loops_aux2 [finite_dimensional ℝ E]
   ∃ (γ : E → ℝ → loop F), surrounding_family_in g b γ univ Ω ∧ 𝒞 ∞ ↿γ ∧
   ∀ᶠ x near K, ∀ t s, closed_ball (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
 begin
-  have h2Ω : is_open (Ω ∩ fst ⁻¹' univ), { rwa [preimage_univ, inter_univ] },
   obtain ⟨γ₁, V, hV, ε₀, hε₀, hγ₁, hΩ, h2γ₁⟩ := exist_loops_aux1 hK hΩ_op hb hgK hconv,
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
-    exists_surrounding_loops hK is_closed_univ is_open_univ subset.rfl h2Ω
-    (λ x hx, hg.continuous.continuous_at) hb.continuous (λ x _, hconv x) ⟨V, hV, hγ₁⟩,
+    exists_surrounding_loops hK.is_closed hΩ_op
+    (λ x, hg.continuous.continuous_at) hb.continuous (λ x, hconv x) ⟨V, hV, hγ₁⟩,
   let γ₃ : E → ℝ → loop F := λ x t, (γ₂ x (linear_reparam t)).reparam linear_reparam,
   have hγ₃ : surrounding_family_in g b γ₃ univ Ω := hγ₂.reparam,
   obtain ⟨ε₁, hε₁, hcε₁, hγε₁⟩ := hγ₃.to_sf.surrounds_of_close_univ hg.continuous,

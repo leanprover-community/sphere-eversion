@@ -722,3 +722,13 @@ lemma exists_compact_between' {α : Type*} [topological_space α] [locally_compa
   ∃ L, is_compact L ∧ L ∈ 𝓝ˢ K ∧ L ⊆ U :=
 let ⟨L, L_cpct, L_in, LU⟩ := exists_compact_between hK hU h_KU in
   ⟨L, L_cpct, subset_interior_iff_mem_nhds_set.mp L_in, LU⟩
+
+section -- to topology/basic
+
+@[simp] lemma finset.is_closed_bUnion {α} [topological_space α]
+  {ι : Type*} (s : finset ι) (f : ι → set α) (hf : ∀ i ∈ s, is_closed (f i)) :
+  is_closed (⋃ i ∈ s, f i) :=
+is_closed_bUnion s.finite_to_set hf
+
+
+end
