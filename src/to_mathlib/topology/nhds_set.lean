@@ -63,6 +63,20 @@ lemma filter.eventually.union {p : α → Prop} (hs : ∀ᶠ x in 𝓝ˢ s, p x)
   ∀ᶠ x in 𝓝ˢ (s ∪ t), p x :=
 filter.eventually_nhds_set_union.mpr ⟨hs, ht⟩
 
+lemma eventually_nhds_set_Union₂ {α ι : Type*} [topological_space α] {p : ι → Prop} {s : ι → set α}
+  {P : α → Prop} : (∀ᶠ x in 𝓝ˢ (⋃ i (hi : p i), s i), P x) ↔ ∀ i, p i → ∀ᶠ x in 𝓝ˢ (s i), P x :=
+begin
+  simp_rw [eventually_nhds_set_iff, set.mem_Union₂],
+  split,
+  exact λ h i hi x hx, h x ⟨i,hi, hx⟩,
+  rintros h x ⟨i, hi, hx⟩,
+  exact h i hi x hx
+end
+
+lemma eventually_nhds_set_Union {α ι : Type*} [topological_space α] {s : ι → set α}
+  {P : α → Prop} : (∀ᶠ x in 𝓝ˢ (⋃ i, s i), P x) ↔ ∀ i, ∀ᶠ x in 𝓝ˢ (s i), P x :=
+by simpa using @eventually_nhds_set_Union₂ _ _ _ (λ i, true) s P
+
 -- This lemma goes to filter.basic, after filter.eventually_principal
 lemma filter.eventually.forall_mem {α : Type*} {f : filter α} {s : set α} {P : α → Prop}
   (hP : ∀ᶠ x in f, P x) (hf : 𝓟 s ≤ f) : ∀ x ∈ s, P x :=

@@ -79,17 +79,17 @@ begin
   ... = f (n₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
 end
 
-lemma inductive_construction {X Y : Type*} [topological_space X]
+lemma inductive_construction_alt {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
-  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
-  (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
+  (P₀ : Π x : X, germ (𝓝 x) Y → Prop) (P₁ : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop)
+  (U_fin : locally_finite U)
   (init : ∃ f : X → Y, ∀ x, P₀ x f)
-  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
-    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
-    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₁ x f :=
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ j < i, ∀ᶠ x near K j, P₁ j x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ j ≤ i, ∀ᶠ x near K j, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ᶠ x near K j, P₁ j x f :=
 begin
   let P : ℕ → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ ∀ᶠ x near (⋃ i ≤ (n : index_type N) , K i), P₁ x f,
+    λ n f, (∀ x, P₀ x f) ∧ ∀ j : index_type N, j ≤ n → ∀ᶠ x near K j, P₁ j x f,
   let Q : ℕ → (X → Y) → (X → Y) → Prop :=
     λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧ ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
   obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
@@ -110,17 +110,33 @@ begin
   simp only [forall_and_distrib] at hf,
   rcases hf with ⟨⟨h₀f, h₁f⟩, hf, hf'⟩,
   rcases U_fin.exists_forall_eventually_of_indexing hf' hf with ⟨F, hF⟩,
-  refine ⟨F, λ x, _⟩,
-  have : ∀ᶠ (n : ℕ) in at_top, x ∈ ⋃ i ≤ (n : index_type N), K i,
-  { have : x ∈ ⋃ (i : index_type N), K i := K_cover.symm ▸ (mem_univ x),
-    rcases mem_Union.mp this with ⟨i, hi⟩,
-    apply (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) i).mono,
-    intros n hn,
-    exact mem_Union₂.mpr ⟨i, hn, hi⟩ },
-  rcases eventually_at_top.mp ((hF x).and this) with ⟨n₀, hn₀⟩,
-  rcases hn₀ n₀ le_rfl with ⟨hx, hx'⟩,
-  rw germ.coe_eq.mpr hx.symm,
-  exact ⟨h₀f n₀ x, (h₁f n₀).on_set x hx'⟩
+  refine ⟨F, λ x, _, λ j, _⟩,
+  { rcases (hF x).exists with ⟨n₀, hn₀⟩,
+    simp only [germ.coe_eq.mpr hn₀.symm, h₀f n₀ x] },
+  apply eventually_nhds_set_iff.mpr,
+  intros x hx,
+  rcases ((hF x).and $ (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) j)).exists
+    with ⟨n₀, hn₀, hn₀'⟩,
+  apply ((eventually_nhds_set_iff.mp (h₁f _ _ hn₀') x hx).and $
+         eventually_eventually_eq_nhds.mpr hn₀).mono,
+  rintros y ⟨hy, hy'⟩,
+  rwa germ.coe_eq.mpr hy'.symm
+end
+
+lemma inductive_construction {X Y : Type*} [topological_space X]
+  {N : ℕ} {U K : index_type N → set X}
+  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop)
+  (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
+  (init : ∃ f : X → Y, ∀ x, P₀ x f)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₁ x f :=
+begin
+  rcases inductive_construction_alt P₀ (λ j, P₁) U_fin init
+    (by simpa only [eventually_nhds_set_Union₂] using ind) with ⟨f, h₀f, h₁f⟩,
+  refine ⟨f, λ x, ⟨h₀f x, _⟩⟩,
+  obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover]  : x ∈ ⋃ j, K j),
+  exact (h₁f j).on_set _ hj
 end
 
 /-- We are given a suitably nice topological space `X` and three local constraints `P₀`,`P₀'` and
