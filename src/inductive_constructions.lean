@@ -135,7 +135,7 @@ begin
   rcases inductive_construction_alt P₀ (λ j, P₁) U_fin init
     (by simpa only [eventually_nhds_set_Union₂] using ind) with ⟨f, h₀f, h₁f⟩,
   refine ⟨f, λ x, ⟨h₀f x, _⟩⟩,
-  obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover]  : x ∈ ⋃ j, K j),
+  obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j),
   exact (h₁f j).on_set _ hj
 end
 
@@ -228,3 +228,79 @@ begin
 end
 
 end inductive_construction
+
+section htpy
+
+private noncomputable def T : ℕ → ℝ := λ n, nat.rec 0 (λ k x, x + 1/(2 : ℝ)^(k+1)) n
+
+open_locale big_operators
+
+-- Note this is more painful than Patrick hoped for. Maybe this should be the definition of T.
+private lemma T_eq (n : ℕ) : T n = 1- (1/(2: ℝ))^n :=
+begin
+  have : T n = ∑ k in finset.range n, 1/(2: ℝ)^(k+1),
+  { induction n with n hn,
+    { simp only [T, finset.range_zero, finset.sum_empty] },
+    change T n + _ = _,
+    rw [hn, finset.sum_range_succ] },
+  simp_rw [this, ← one_div_pow, pow_succ, ← finset.mul_sum, geom_sum_eq (by norm_num : 1/(2:ℝ) ≠ 1) n],
+  field_simp,
+  norm_num,
+  apply div_eq_of_eq_mul,
+  apply neg_ne_zero.mpr,
+  apply ne_of_gt,
+  positivity,
+  ring
+end
+
+private lemma T_lt (n : ℕ) : T n < 1 :=
+begin
+  rw T_eq,
+  have : (0 : ℝ) < (1 / 2) ^ n, by positivity,
+  linarith
+end
+
+private lemma T_lt_succ (n : ℕ) : T n < T (n+1) :=
+lt_add_of_le_of_pos le_rfl (one_div_pos.mpr (pow_pos zero_lt_two _))
+
+private lemma T_le_succ (n : ℕ) : T n ≤ T (n+1) := (T_lt_succ n).le
+
+private lemma T_succ_sub (n : ℕ) : T (n+1) - T n = 1/2^(n+1) :=
+begin
+  change T n + _ - T n = _,
+  simp
+end
+
+private lemma mul_T_succ_sub (n : ℕ) : 2^(n+1)*(T (n+1) - T n) = 1 :=
+begin
+  rw T_succ_sub,
+  field_simp
+end
+
+private lemma T_one : T 1 = 1/2 :=
+by simp [T]
+
+private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 :=
+begin
+  rw [T_eq, not_le],
+  have : (1 / (2 : ℝ)) ^ (n + 1) < 1,
+  apply pow_lt_one ; norm_num,
+  linarith,
+end
+
+lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
+  {N : ℕ} {U K : index_type N → set X}
+  (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop) (P₂ : Π p : ℝ × X, germ (𝓝 p) Y → Prop)
+  (hP₂ : ∀ a b (p : ℝ × X) (f : ℝ × X → Y), P₂ (a*p.1+b, p.2) f → P₂ p (λ p : ℝ × X, f (a*p.1+b, p.2)))
+  (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
+  {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
+    ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x $ F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x $ F 1) ∧
+                     (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
+                     (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1)) :
+  ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ (∀ p, P₂ p ↿F) :=
+begin
+  let PP₀ : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧ sorry,
+  sorry
+end
+end htpy
