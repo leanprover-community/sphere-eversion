@@ -8,7 +8,7 @@ import to_mathlib.topology.misc
 import indexing
 import notations
 
-open set filter prod topological_space
+open set filter prod topological_space function
 open_locale topology unit_interval
 
 /-!
@@ -294,13 +294,56 @@ lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   (hP₂ : ∀ a b (p : ℝ × X) (f : ℝ × X → Y), P₂ (a*p.1+b, p.2) f → P₂ p (λ p : ℝ × X, f (a*p.1+b, p.2)))
   (U_fin : locally_finite U) (K_cover : (⋃ i, K i) = univ)
   {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
+  (init' : ∀ p, P₂ p (λ p : ℝ × X, f₀ p.2)) -- Not in the original version
   (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
     ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x $ F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x $ F 1) ∧
                      (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ U i, F t x = f x) ∧
                      (∀ᶠ t near Iic 0, F t = f) ∧ (∀ᶠ t near Ici 1, F t = F 1)) :
   ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ (∀ p, P₂ p ↿F) :=
 begin
-  let PP₀ : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧ sorry,
-  sorry
+  let PP₀ : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧
+    (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ,
+  let PP₁ : Π i : index_type N, Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ i p φ,
+    (p.1 = 1 → P₁ p.2 φ.slice_right) ∧ (p.1 ≥ T (indexing.to_nat i) → φ.slice_left.is_constant),
+  set K' : index_type N → set (ℝ × X) := λ i, Ici (T $ indexing.to_nat i) ×ˢ (K i),
+  set U' : index_type N → set (ℝ × X) := λ i, Ici (T $ indexing.to_nat i) ×ˢ (U i),
+  have hPP₀ : ∀ (p : ℝ × X), PP₀ p (λ (p : ℝ × X), f₀ p.2),
+  sorry { rintros ⟨t, x⟩,
+    exact ⟨init x, λ h, rfl, init' _⟩ },
+  have ind' : ∀ (i : index_type N) (F : ℝ × X → Y),
+   (∀ p, PP₀ p F) →
+   (∀ j < i, ∀ᶠ p near K' j, PP₁ j p F) →
+   (∃ F' : ℝ × X → Y,
+      (∀ p, PP₀ p F') ∧
+        (∀ j ≤ i, ∀ᶠ p near K' j, PP₁ j p F') ∧
+          ∀ p, p ∉ U' i → F' p = F p),
+  { intros i F h₀F h₁F,
+    rcases ind i (λ x, F (T (indexing.to_nat i), x)) (λ x, (h₀F (_, x)).1) _ with
+      ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ ; clear ind,
+    { refine ⟨↿F', _, _, _⟩,
+      { rintros ⟨t, x⟩,
+        refine ⟨h₀F' t x, _, _⟩,
+        { rintros (rfl : t = 0),
+          sorry },
+        sorry },
+      {
+        sorry },
+      {
+        sorry } },
+    { apply eventually_nhds_set_Union₂.mpr,
+      intros j hj,
+      have := h₁F j hj,
+      sorry } },
+  sorry /- rcases inductive_construction_alt PP₀ PP₁ (U_fin.prod_left $ λ i, Ici (T $ indexing.to_nat i))
+    ⟨λ p, f₀ p.2, hPP₀⟩ ind' with ⟨F, hF,h'F ⟩, clear ind ind' hPP₀,
+  refine ⟨curry F, _, _, _, _⟩,
+  { exact funext (λ x, (hF (0, x)).2.1 rfl) },
+  { exact λ t x, (hF (t, x)).1 },
+  { intros x,
+    obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j),
+    exact ((h'F j).on_set (1, x) ⟨(T_lt _).le, hj⟩).1 rfl },
+  { intros p,
+    convert (hF p).2.2,
+    exact uncurry_curry F }, -/
 end
 end htpy
