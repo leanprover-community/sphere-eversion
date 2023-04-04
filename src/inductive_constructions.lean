@@ -288,6 +288,8 @@ begin
   linarith,
 end
 
+def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
+
 lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop) (P₂ : Π p : ℝ × X, germ (𝓝 p) Y → Prop)
@@ -304,9 +306,9 @@ begin
   let PP₀ : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧
     (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ,
   let PP₁ : Π i : index_type N, Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ i p φ,
-    (p.1 = 1 → P₁ p.2 φ.slice_right) ∧ (p.1 ≥ T (indexing.to_nat i) → φ.slice_left.is_constant),
-  set K' : index_type N → set (ℝ × X) := λ i, Ici (T $ indexing.to_nat i) ×ˢ (K i),
-  set U' : index_type N → set (ℝ × X) := λ i, Ici (T $ indexing.to_nat i) ×ˢ (U i),
+    (p.1 = 1 → P₁ p.2 φ.slice_right) ∧ (p.1 ≥ T i.to_nat → φ.slice_left.is_constant),
+  set K' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ (K i),
+  set U' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ (U i),
   have hPP₀ : ∀ (p : ℝ × X), PP₀ p (λ (p : ℝ × X), f₀ p.2),
   sorry { rintros ⟨t, x⟩,
     exact ⟨init x, λ h, rfl, init' _⟩ },
@@ -318,15 +320,24 @@ begin
         (∀ j ≤ i, ∀ᶠ p near K' j, PP₁ j p F') ∧
           ∀ p, p ∉ U' i → F' p = F p),
   { intros i F h₀F h₁F,
-    rcases ind i (λ x, F (T (indexing.to_nat i), x)) (λ x, (h₀F (_, x)).1) _ with
+    rcases ind i (λ x, F (T i.to_nat, x)) (λ x, (h₀F (_, x)).1) _ with
       ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ ; clear ind,
-    { refine ⟨↿F', _, _, _⟩,
-      { rintros ⟨t, x⟩,
-        refine ⟨h₀F' t x, _, _⟩,
-        { rintros (rfl : t = 0),
-          sorry },
-        sorry },
+    { let F'' : ℝ × X → Y :=  λ p : ℝ × X,
+        if p.1 ≥ T (i.to_nat+1) then F' (2^(i.to_nat+2)*(p.1 - T (i.to_nat+1))) p.2 else F p,
+      have loc₁ : ∀ p : ℝ × X, p.1 < T (i.to_nat+1) → (F'' : germ (𝓝 p) Y)  = F,
       {
+        sorry },
+      have loc₂ : ∀ p : ℝ × X, p.1 ≥ T (i.to_nat+1) → (F'' : germ (𝓝 p) Y)  = ↿F',
+      {
+        sorry },
+      refine ⟨F'', _, _, _⟩,
+      { rintros ⟨t, x⟩,
+        by_cases ht : t ≥ T (i.to_nat + 1),
+        { rw loc₂ (t, x) ht,
+          exact ⟨h₀F' t x, λ h't, (not_T_succ_le i.to_nat $ h't ▸ ht).elim, h₂F' _⟩ },
+        { rw loc₁ (t, x) (lt_of_not_ge ht),
+          apply h₀F } },
+      { intros j hj,
         sorry },
       {
         sorry } },
