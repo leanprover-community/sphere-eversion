@@ -52,25 +52,21 @@ def index_type.succ : Π {N : ℕ}, index_type N → index_type N
 
 def index_type.is_last {N} (i : index_type N) : Prop := N > 0 ∧ i = (N-1 : ℕ)
 
+-- useless?
 lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ i.is_last :=
 begin
-  cases N,
+  sorry /- cases N,
   sorry { simp [index_type.succ, index_type.is_last] },
   { simp [index_type.succ, index_type.is_last],
     have : (N : index_type (N+1)) = fin.last N,
     sorry { change (λ k, if h : k < N+1 then (⟨k, h⟩ : fin (N+1)) else fin.last N) N = _,
       simp only [fin.last, lt_add_iff_pos_right, nat.lt_one_iff, dif_pos] },
-    refine @fin.last_cases N
-  (λ (_x : index_type N.succ),
-     @fin.last_cases N (λ (_x : fin (N + 1)), index_type (N + 1)) (fin.last N) (@fin.succ N) _x = _x ↔ _x = ↑N)
-  _
-  _
-  i,
+    refine fin.last_cases _ _ i,
     sorry { simp only [this, fin.last_cases_last] },
     { intros i,
+      -- We now secretely need to prove false ↔ false
       simp only [this, fin.last_cases_cast_succ],
-       }
-     },
+      sorry } }, -/
 end
 
 lemma locally_finite.exists_forall_eventually_of_indexing
@@ -114,30 +110,88 @@ begin
   ... = f (n₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
 end
 
+lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ i.is_last ) : i < i.succ :=
+sorry
+
+lemma index_type.le_last {N : ℕ} {i : index_type N} (h : i.is_last) (j) : j ≤ i :=
+sorry
+
+lemma index_type.le_of_lt_succ  {N : ℕ} (i : index_type N) {j : index_type N} (h : i < j.succ) : i ≤ j :=
+begin
+  by_cases h : j.is_last,
+  exact i.le_last h,
+  sorry
+end
+
+@[simp] lemma index_type.not_is_last (n : index_type 0) : ¬ n.is_last :=
+by simp [index_type.is_last]
+
+@[elab_as_eliminator]
+lemma index_type.induction_from {N : ℕ} {P : index_type N → Prop} {i₀ : index_type N} (h₀ : P i₀)
+  (ih : ∀ i ≥ i₀, ¬ i.is_last → P i → P i.succ) : ∀ i ≥ i₀, P i :=
+begin
+
+  sorry
+end
+
+lemma locally_finite.exists_forall_eventually_of_index_type
+  {α X : Type*} [topological_space X] {N : ℕ} {f : index_type N → X → α}
+  {V : index_type N → set X} (hV : locally_finite V)
+  (h : ∀ n : index_type N, ¬ n.is_last → ∀ x ∉ V n.succ, f n.succ x = f n x) :
+  ∃ (F : X → α), ∀ (x : X), ∀ᶠ n in filter.at_top, f n =ᶠ[𝓝 x] F :=
+begin
+  choose U hUx hU using hV,
+  choose i₀ hi₀ using λ x, (hU x).bdd_above,
+  have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y,
+  { intros x,
+    apply @index_type.induction_from N (λ i, ∀ {y}, y ∈ U x → f i y = f (i₀ x) y),
+    exact λ _ _, rfl,
+    intros i hi h'i ih y hy,
+    rw [h i h'i, ih hy],
+    intros h'y,
+    replace hi₀ := mem_upper_bounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩,
+    exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi) },
+  refine ⟨λ x, f (i₀ x) x, λ x, _⟩,
+  change ∀ᶠ n in at_top, f n =ᶠ[𝓝 x] λ (y : X), f (i₀ y) y,
+  apply (eventually_ge_at_top (i₀ x)).mono (λ n hn, _),
+  apply mem_of_superset (hUx x) (λ y hy, _),
+  change f n y = f (i₀ y) y,
+  calc f n y = f (i₀ x) y : key hn hy
+  ... = f (max (i₀ x) (i₀ y)) y : (key (le_max_left _ _) hy).symm
+  ... = f (i₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
+end
+
+/-
+/-- Predecessor function sending 0 to itself and nonzero elements where you think they should go. -/
+def index_type.pred : Π {N : ℕ}, index_type N → index_type N
+| 0 i := nat.pred i
+| (n+1) i := if h : i = 0 then 0 else ⟨i.val.pred, (nat.pred_le _).trans_lt i.prop⟩
+
+@[simp]
+lemma index_type.succ_pred {N : ℕ} (n : index_type N) : n.succ.pred = n :=
+sorry
+-/
+
+
 -- We make `P` and `Q` explicit to help the elaborator when applying the lemma
 -- (elab_as_eliminator isn't enough).
-lemma intex_type.exists_by_induction {N : ℕ} {α : Type*} (P : index_type N → α → Prop)
+lemma index_type.exists_by_induction {N : ℕ} {α : Type*} (P : index_type N → α → Prop)
   (Q : index_type N → α → α → Prop)
   (h₀ : ∃ a, P 0 a)
-  (ih : ∀ n a, P n a → ∃ a', P n.succ a' ∧ Q n a a') :
-  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ Q n (f n) (f n.succ) :=
+  (ih : ∀ n a, P n a → ¬ n.is_last → ∃ a', P n.succ a' ∧ Q n a a') :
+  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ (¬ n.is_last → Q n (f n) (f n.succ)) :=
 begin
   revert P Q h₀ ih,
   cases N,
-  intros P Q h₀ ih,
-  exact exists_by_induction' P Q h₀ ih,
-  dsimp only [index_type, index_type.succ],
-  intros P Q h₀ ih,
-  choose f₀ hf₀ using h₀,
-  choose! F hF hF' using ih,
-  have key : ∀ n : fin (N+1), P n (fin.induction_on n f₀ (λ k, F k.succ)),
-  { intros n,
-    apply n.induction _ _,
-    exact hf₀,
-    intros i hi,
-
-    sorry },
-  exact ⟨λ n, nat.rec_on n f₀ F, λ n, ⟨key n, hF' n _ (key n)⟩⟩
+  { intros P Q h₀ ih,
+    rcases exists_by_induction' P Q h₀ _ with ⟨f, hf⟩,
+    exact ⟨f, λ n, ⟨(hf n).1, λ _, (hf n).2⟩⟩,
+    simpa using ih },
+  { --dsimp only [index_type, index_type.succ],
+    intros P Q h₀ ih,
+    choose f₀ hf₀ using h₀,
+    choose! F hF hF' using ih,
+    sorry }
 end
 
 
@@ -181,6 +235,8 @@ begin
   exact eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
 end
 
+local notation `𝓘` := index_type
+
 lemma inductive_construction_again {X Y : Type*} [topological_space X]
   {N : ℕ} {U : index_type N → set X}
   (P₀ : Π x : X, germ (𝓝 x) Y → Prop) (P₁ : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop)
@@ -191,50 +247,27 @@ lemma inductive_construction_again {X Y : Type*} [topological_space X]
     ∃ f' : X → Y, (∀ x, P₀ x f') ∧ P₂ i.succ f' ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
 begin
-  let P : ℕ → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ (P₂ n f) ∧ ∀ j < n, ∀ x, P₁ j x f,
-  let Q : ℕ → (X → Y) → (X → Y) → Prop :=
-    λ n f f', (N > 0 → n ≥ N → f' = f) ∧ ∀ x ∉ U n, f' x = f x,
-  obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
-  { apply exists_by_induction',
-    sorry { rcases init with ⟨f₀, h₀f₀, h₁f₀⟩,
-      use [f₀, h₀f₀,h₁f₀],
-      simp [index_type.not_lt_zero] },
-    { rintros n f ⟨h₀f, h₂f, h₁f⟩,
-      by_cases hnN : N > 0 ∧ n ≥ N,
-      { have n_eq : ((n+1 : ℕ) : index_type N) = n,
-        {
-          sorry },
-        refine ⟨f, ⟨h₀f, _, _⟩, _⟩,
-        sorry { exact n_eq.symm ▸ h₂f  },
-        sorry { intros j hj,
-          obtain ⟨j', hj'n, hj'⟩ : ∃ j' < n, (j' : index_type N) = j,
-          {
-            sorry },
-          exact hj' ▸ h₁f _ hj'n },
-        sorry { exact ⟨λ _ _, rfl, λ _ _, rfl⟩ } },
-      { rcases ind n f h₀f _ _ with ⟨f', h₀f', h₂f', h₁f', hUf'⟩,
-        refine ⟨f', ⟨h₀f', _, _⟩, _, _⟩,
-        sorry, -- h₁f après avoir modifié ind ?
-        intros hN hn,
-        exact (not_and.mp hnN hN hn).elim,
-        sorry },
-      /- rcases index_type.lt_or_eq_succ N n with hn | hn,
-      { simp_rw index_type.le_or_lt_succ hn at h₁f,
-        rcases ind (n+1 : ℕ) f h₀f h₁f with ⟨f', h₀f', h₁f', hf'⟩,
-        exact ⟨f', ⟨h₀f', h₁f'⟩, ⟨λ hn', (hn.ne hn'.symm).elim, hf'⟩⟩ },
-      { simp only [hn] at h₁f,
-        exact ⟨f, ⟨h₀f, h₁f⟩, λ hn, rfl, λ x hx, rfl⟩ } -/ } },
+  let P : 𝓘 N → (X → Y) → Prop :=
+    λ n f, (∀ x, P₀ x f) ∧ (P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f,
+  let Q : 𝓘 N → (X → Y) → (X → Y) → Prop :=
+    λ n f f', ∀ x ∉ U n.succ, f' x = f x,
+  obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬ n.is_last → Q n (f n) (f n.succ)),
+  { apply index_type.exists_by_induction,
+    { rcases init with ⟨f₀, h₀f₀, h₁f₀⟩,
+      rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [index_type.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
+      exact ⟨f', h₀f', h₂f', h₁f'⟩ },
+    { rintros n f ⟨h₀f, h₂f, h₁f⟩ hn,
+      rcases ind _ f h₀f h₂f (λ j hj, h₁f _ $ j.le_of_lt_succ hj) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
+      exact ⟨f', ⟨h₀f', h₂f', h₁f'⟩, hf'⟩  } },
   dsimp only [P, Q] at hf,
   simp only [forall_and_distrib] at hf,
-  rcases hf with ⟨⟨h₀f, h₁f⟩, hf, hf'⟩,
-  rcases U_fin.exists_forall_eventually_of_indexing hf' hf with ⟨F, hF⟩,
+  rcases hf with ⟨⟨h₀f, h₂f, h₁f⟩, hfU⟩,
+  rcases U_fin.exists_forall_eventually_of_index_type hfU with ⟨F, hF⟩,
   refine ⟨F, λ x, _, λ j, _⟩,
   { rcases (hF x).exists with ⟨n₀, hn₀⟩,
     simp only [germ.coe_eq.mpr hn₀.symm, h₀f n₀ x] },
   intros x,
-  rcases ((hF x).and $ (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) j)).exists
-    with ⟨n₀, hn₀, hn₀'⟩,
+  rcases ((hF x).and $ eventually_ge_at_top j).exists with ⟨n₀, hn₀, hn₀'⟩,
   exact eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
 end
 
