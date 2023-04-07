@@ -1,4 +1,5 @@
 import topology.nhds_set
+import topology.constructions
 
 variables {α : Type*} [topological_space α] {s t s₁ s₂ t₁ t₂ : set α} {x : α}
 
@@ -57,6 +58,36 @@ lemma filter.eventually_nhds_set_union {p : α → Prop} :
   (∀ᶠ x in 𝓝ˢ (s ∪ t), p x) ↔ (∀ᶠ x in 𝓝ˢ s, p x) ∧ ∀ᶠ x in 𝓝ˢ t, p x :=
 begin
   rw [nhds_set_union, eventually_sup]
+end
+
+lemma filter.nhds_set_prod_le_prod {α β : Type*} [topological_space α] [topological_space β]
+  {s : set α} {t : set β} :  𝓝ˢ (s ×ˢ t) ≤ 𝓝ˢ s ×ᶠ 𝓝ˢ t:=
+begin
+  apply Sup_le_iff.mpr _,
+  rintros f ⟨⟨x, y⟩, ⟨hx, hy⟩, rfl⟩,
+  intros U hU,
+  simp only [mem_nhds_set_iff_forall, nhds_prod_eq, mem_prod_iff] at *,
+  rcases hU with ⟨V, V_in, W, W_in, hVW⟩,
+  exact ⟨V, V_in x hx, W, W_in y hy, hVW⟩
+end
+
+lemma filter.eventually_nhds_set_prod_iff {α β : Type*} [topological_space α] [topological_space β]
+  {p : α × β → Prop} {s : set α} {t : set β} :
+  (∀ᶠ q in 𝓝ˢ (s ×ˢ t), p q) ↔
+  ∀ x ∈ s, ∀ y ∈ t, ∃ (pa : α → Prop) (ha : ∀ᶠ x' in 𝓝 x, pa x')
+                      (pb : β → Prop) (hb : ∀ᶠ y' in 𝓝 y, pb y'),
+                      ∀ {x : α}, pa x → ∀ {y : β}, pb y → p (x, y) :=
+by simp_rw [eventually_nhds_set_iff, set.forall_prod_set, nhds_prod_eq, eventually_prod_iff]
+
+lemma filter.eventually_nhds_set_of_prod {α β : Type*} [topological_space α] [topological_space β]
+  {p : α × β → Prop} {pa : α → Prop} {pb : β → Prop}
+  (hp : ∀ {x : α}, pa x → ∀ {y : β}, pb y → p (x, y)) {s : set α} {t : set β}
+  (hs : ∀ᶠ x in 𝓝ˢ s, pa x) (ht : ∀ᶠ y in 𝓝ˢ t, pb y) : ∀ᶠ q in 𝓝ˢ (s ×ˢ t), p q :=
+begin
+  apply filter.nhds_set_prod_le_prod,
+  apply mem_of_superset (prod_mem_prod hs ht),
+  rintros ⟨x, y⟩ ⟨hx, hy⟩,
+  exact hp hx hy
 end
 
 lemma filter.eventually.union {p : α → Prop} (hs : ∀ᶠ x in 𝓝ˢ s, p x) (ht : ∀ᶠ x in 𝓝ˢ t, p x) :

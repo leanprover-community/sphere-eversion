@@ -7,6 +7,9 @@ import to_mathlib.topology.misc
 
 import indexing
 import notations
+import interactive_expr
+
+set_option trace.filter_inst_type true
 
 open set filter prod topological_space function
 open_locale topology unit_interval
@@ -37,6 +40,38 @@ using local existence and exhaustions. A technical intermediate statement is
 lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
 tendsto_at_top_at_top.mpr
   (λ i, ⟨indexing.to_nat i, λ n hn,(indexing.from_to i) ▸ indexing.coe_mono hn⟩)
+
+def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
+
+def index_type.succ : Π {N : ℕ}, index_type N → index_type N
+| 0 i := nat.succ i
+| (n + 1) i := @fin.last_cases n (λ _, index_type $n+1) (fin.last n) (λ k, k.succ) i
+
+
+
+
+def index_type.is_last {N} (i : index_type N) : Prop := N > 0 ∧ i = (N-1 : ℕ)
+
+lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ i.is_last :=
+begin
+  cases N,
+  sorry { simp [index_type.succ, index_type.is_last] },
+  { simp [index_type.succ, index_type.is_last],
+    have : (N : index_type (N+1)) = fin.last N,
+    sorry { change (λ k, if h : k < N+1 then (⟨k, h⟩ : fin (N+1)) else fin.last N) N = _,
+      simp only [fin.last, lt_add_iff_pos_right, nat.lt_one_iff, dif_pos] },
+    refine @fin.last_cases N
+  (λ (_x : index_type N.succ),
+     @fin.last_cases N (λ (_x : fin (N + 1)), index_type (N + 1)) (fin.last N) (@fin.succ N) _x = _x ↔ _x = ↑N)
+  _
+  _
+  i,
+    sorry { simp only [this, fin.last_cases_last] },
+    { intros i,
+      simp only [this, fin.last_cases_cast_succ],
+       }
+     },
+end
 
 lemma locally_finite.exists_forall_eventually_of_indexing
   {α X ι : Type*} [topological_space X] [linear_order ι] [indexing ι] {f : ℕ → X → α}
@@ -79,17 +114,44 @@ begin
   ... = f (n₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
 end
 
+-- We make `P` and `Q` explicit to help the elaborator when applying the lemma
+-- (elab_as_eliminator isn't enough).
+lemma intex_type.exists_by_induction {N : ℕ} {α : Type*} (P : index_type N → α → Prop)
+  (Q : index_type N → α → α → Prop)
+  (h₀ : ∃ a, P 0 a)
+  (ih : ∀ n a, P n a → ∃ a', P n.succ a' ∧ Q n a a') :
+  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ Q n (f n) (f n.succ) :=
+begin
+  revert P Q h₀ ih,
+  cases N,
+  intros P Q h₀ ih,
+  exact exists_by_induction' P Q h₀ ih,
+  dsimp only [index_type, index_type.succ],
+  intros P Q h₀ ih,
+  choose f₀ hf₀ using h₀,
+  choose! F hF hF' using ih,
+  have key : ∀ n : fin (N+1), P n (fin.induction_on n f₀ (λ k, F k.succ)),
+  { intros n,
+    apply n.induction _ _,
+    exact hf₀,
+    intros i hi,
+
+    sorry },
+  exact ⟨λ n, nat.rec_on n f₀ F, λ n, ⟨key n, hF' n _ (key n)⟩⟩
+end
+
+
 lemma inductive_construction_alt {X Y : Type*} [topological_space X]
-  {N : ℕ} {U K : index_type N → set X}
+  {N : ℕ} {U : index_type N → set X}
   (P₀ : Π x : X, germ (𝓝 x) Y → Prop) (P₁ : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop)
   (U_fin : locally_finite U)
   (init : ∃ f : X → Y, ∀ x, P₀ x f)
-  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ j < i, ∀ᶠ x near K j, P₁ j x f) →
-    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ j ≤ i, ∀ᶠ x near K j, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
-    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ᶠ x near K j, P₁ j x f :=
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ j < i, ∀ x, P₁ j x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
 begin
   let P : ℕ → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ ∀ j : index_type N, j ≤ n → ∀ᶠ x near K j, P₁ j x f,
+    λ n f, (∀ x, P₀ x f) ∧ ∀ j : index_type N, j ≤ n → ∀ x, P₁ j x f,
   let Q : ℕ → (X → Y) → (X → Y) → Prop :=
     λ n f f', ((((n+1:ℕ) : index_type N) = n) → f' = f) ∧ ∀ x ∉ U (n + 1 : ℕ), f' x = f x,
   obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
@@ -113,14 +175,87 @@ begin
   refine ⟨F, λ x, _, λ j, _⟩,
   { rcases (hF x).exists with ⟨n₀, hn₀⟩,
     simp only [germ.coe_eq.mpr hn₀.symm, h₀f n₀ x] },
-  apply eventually_nhds_set_iff.mpr,
-  intros x hx,
+  intros x,
   rcases ((hF x).and $ (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) j)).exists
     with ⟨n₀, hn₀, hn₀'⟩,
-  apply ((eventually_nhds_set_iff.mp (h₁f _ _ hn₀') x hx).and $
-         eventually_eventually_eq_nhds.mpr hn₀).mono,
-  rintros y ⟨hy, hy'⟩,
-  rwa germ.coe_eq.mpr hy'.symm
+  exact eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
+end
+
+lemma inductive_construction_again {X Y : Type*} [topological_space X]
+  {N : ℕ} {U : index_type N → set X}
+  (P₀ : Π x : X, germ (𝓝 x) Y → Prop) (P₁ : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop)
+  (P₂ : index_type N → (X → Y) → Prop)
+  (U_fin : locally_finite U)
+  (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (P₂ i f) → (∀ j < i, ∀ x, P₁ j x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ P₂ i.succ f' ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
+begin
+  let P : ℕ → (X → Y) → Prop :=
+    λ n f, (∀ x, P₀ x f) ∧ (P₂ n f) ∧ ∀ j < n, ∀ x, P₁ j x f,
+  let Q : ℕ → (X → Y) → (X → Y) → Prop :=
+    λ n f f', (N > 0 → n ≥ N → f' = f) ∧ ∀ x ∉ U n, f' x = f x,
+  obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f $ n + 1),
+  { apply exists_by_induction',
+    sorry { rcases init with ⟨f₀, h₀f₀, h₁f₀⟩,
+      use [f₀, h₀f₀,h₁f₀],
+      simp [index_type.not_lt_zero] },
+    { rintros n f ⟨h₀f, h₂f, h₁f⟩,
+      by_cases hnN : N > 0 ∧ n ≥ N,
+      { have n_eq : ((n+1 : ℕ) : index_type N) = n,
+        {
+          sorry },
+        refine ⟨f, ⟨h₀f, _, _⟩, _⟩,
+        sorry { exact n_eq.symm ▸ h₂f  },
+        sorry { intros j hj,
+          obtain ⟨j', hj'n, hj'⟩ : ∃ j' < n, (j' : index_type N) = j,
+          {
+            sorry },
+          exact hj' ▸ h₁f _ hj'n },
+        sorry { exact ⟨λ _ _, rfl, λ _ _, rfl⟩ } },
+      { rcases ind n f h₀f _ _ with ⟨f', h₀f', h₂f', h₁f', hUf'⟩,
+        refine ⟨f', ⟨h₀f', _, _⟩, _, _⟩,
+        sorry, -- h₁f après avoir modifié ind ?
+        intros hN hn,
+        exact (not_and.mp hnN hN hn).elim,
+        sorry },
+      /- rcases index_type.lt_or_eq_succ N n with hn | hn,
+      { simp_rw index_type.le_or_lt_succ hn at h₁f,
+        rcases ind (n+1 : ℕ) f h₀f h₁f with ⟨f', h₀f', h₁f', hf'⟩,
+        exact ⟨f', ⟨h₀f', h₁f'⟩, ⟨λ hn', (hn.ne hn'.symm).elim, hf'⟩⟩ },
+      { simp only [hn] at h₁f,
+        exact ⟨f, ⟨h₀f, h₁f⟩, λ hn, rfl, λ x hx, rfl⟩ } -/ } },
+  dsimp only [P, Q] at hf,
+  simp only [forall_and_distrib] at hf,
+  rcases hf with ⟨⟨h₀f, h₁f⟩, hf, hf'⟩,
+  rcases U_fin.exists_forall_eventually_of_indexing hf' hf with ⟨F, hF⟩,
+  refine ⟨F, λ x, _, λ j, _⟩,
+  { rcases (hF x).exists with ⟨n₀, hn₀⟩,
+    simp only [germ.coe_eq.mpr hn₀.symm, h₀f n₀ x] },
+  intros x,
+  rcases ((hF x).and $ (filter.tendsto_at_top.mp (index_type.tendsto_coe_at_top N) j)).exists
+    with ⟨n₀, hn₀, hn₀'⟩,
+  exact eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
+end
+
+
+/- Below is my previous attempt that was not general enough. I keep it for now to
+prove it follows from the above version. -/
+lemma inductive_construction_alt' {X Y : Type*} [topological_space X]
+  {N : ℕ} {U K : index_type N → set X}
+  (P₀ : Π x : X, germ (𝓝 x) Y → Prop) (P₁ : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop)
+  (U_fin : locally_finite U)
+  (init : ∃ f : X → Y, ∀ x, P₀ x f)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (∀ j < i, ∀ᶠ x near K j, P₁ j x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ j ≤ i, ∀ᶠ x near K j, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ᶠ x near K j, P₁ j x f :=
+begin
+  let P₁' : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop :=
+    λ i, restrict_germ_predicate (P₁ i) (K i),
+  rcases inductive_construction_alt P₀ P₁' U_fin init _ with ⟨f, h₀f, h₁f⟩,
+  exact ⟨f, h₀f, λ j, forall_restrict_germ_predicate_iff.mp (h₁f j)⟩,
+  simp_rw forall_restrict_germ_predicate_iff,
+  exact ind,
 end
 
 lemma inductive_construction {X Y : Type*} [topological_space X]
@@ -132,11 +267,12 @@ lemma inductive_construction {X Y : Type*} [topological_space X]
     ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x f') ∧ ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, ∀ x, P₀ x f ∧ P₁ x f :=
 begin
-  rcases inductive_construction_alt P₀ (λ j, P₁) U_fin init
-    (by simpa only [eventually_nhds_set_Union₂] using ind) with ⟨f, h₀f, h₁f⟩,
+  rcases inductive_construction_alt P₀ (λ j, restrict_germ_predicate P₁ (K j)) U_fin init
+    (by simpa only [eventually_nhds_set_Union₂, forall_restrict_germ_predicate_iff] using ind) with
+    ⟨f, h₀f, h₁f⟩,
   refine ⟨f, λ x, ⟨h₀f x, _⟩⟩,
   obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j),
-  exact (h₁f j).on_set _ hj
+  exact (forall_restrict_germ_predicate_iff.mp (h₁f j)).on_set x hj,
 end
 
 /-- We are given a suitably nice topological space `X` and three local constraints `P₀`,`P₀'` and
@@ -217,7 +353,7 @@ begin
   { intros U₁ U₂ K₁ K₂ f₁ f₂ U₁_op U₂_op K₁_cpct K₂_cpct hK₁U₁ hK₂U₂ hf₁ hf₂ hf₁U₁ hf₂U₂,
     obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and_distrib.mp hf₁,
     rw forall_restrict_germ_predicate_iff at h₀'f₁,
-    rcases (has_basis_nhds_set K).mem_iff.mp (hP₁f₀.germ_congr h₀'f₁) with ⟨U, ⟨U_op, hKU⟩, hU⟩,
+    rcases (has_basis_nhds_set K).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U, ⟨U_op, hKU⟩, hU⟩,
     rcases ind (U_op.union U₁_op) U₂_op (hK.union K₁_cpct) K₂_cpct (union_subset_union hKU hK₁U₁)
       hK₂U₂ h₀f₁ hf₂ (λ x hx, hx.elim (λ hx, hU hx) (λ hx, hf₁U₁ x hx)) hf₂U₂ with ⟨f, h₀f, hf, h'f⟩,
     rw [union_assoc, eventually_nhds_set_union] at hf h'f,
@@ -288,8 +424,6 @@ begin
   linarith,
 end
 
-def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
-
 lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop) (P₂ : Π p : ℝ × X, germ (𝓝 p) Y → Prop)
@@ -306,55 +440,120 @@ begin
   let PP₀ : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧
     (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ,
   let PP₁ : Π i : index_type N, Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ i p φ,
-    (p.1 = 1 → P₁ p.2 φ.slice_right) ∧ (p.1 ≥ T i.to_nat → φ.slice_left.is_constant),
-  set K' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ (K i),
-  set U' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ (U i),
+    (p.1 = 1 → restrict_germ_predicate P₁ (K i) p.2 φ.slice_right) ∧ (p.1 > T (i.to_nat + 1) → φ.slice_left.is_constant),
+  set K' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ K i,
+  set U' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ U i,
   have hPP₀ : ∀ (p : ℝ × X), PP₀ p (λ (p : ℝ × X), f₀ p.2),
   sorry { rintros ⟨t, x⟩,
     exact ⟨init x, λ h, rfl, init' _⟩ },
-  have ind' : ∀ (i : index_type N) (F : ℝ × X → Y),
-   (∀ p, PP₀ p F) →
-   (∀ j < i, ∀ᶠ p near K' j, PP₁ j p F) →
-   (∃ F' : ℝ × X → Y,
-      (∀ p, PP₀ p F') ∧
-        (∀ j ≤ i, ∀ᶠ p near K' j, PP₁ j p F') ∧
-          ∀ p, p ∉ U' i → F' p = F p),
+  have ind' : ∀ (i : index_type N) (F : ℝ × X → Y), (∀ p, PP₀ p F) → (∀ j < i, ∀ p, PP₁ j p F) →
+    ∃ F' : ℝ × X → Y, (∀ p, PP₀ p F') ∧ (∀ j ≤ i, ∀ p, PP₁ j p F') ∧
+                      ∀ x ∉ U' i, F' x = F x,
   { intros i F h₀F h₁F,
     rcases ind i (λ x, F (T i.to_nat, x)) (λ x, (h₀F (_, x)).1) _ with
       ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ ; clear ind,
     { let F'' : ℝ × X → Y :=  λ p : ℝ × X,
-        if p.1 ≥ T (i.to_nat+1) then F' (2^(i.to_nat+2)*(p.1 - T (i.to_nat+1))) p.2 else F p,
-      have loc₁ : ∀ p : ℝ × X, p.1 < T (i.to_nat+1) → (F'' : germ (𝓝 p) Y)  = F,
+        if p.1 ≤ T i.to_nat then F p else F' (2^(i.to_nat+1)*(p.1 - T i.to_nat)) p.2,
+      have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.to_nat → (F'' : germ (𝓝 p) Y)  = F,
       {
         sorry },
-      have loc₂ : ∀ p : ℝ × X, p.1 ≥ T (i.to_nat+1) → (F'' : germ (𝓝 p) Y)  = ↿F',
+      have loc₂ : ∀ p : ℝ × X, p.1 > T i.to_nat →
+        (F'' : germ (𝓝 p) Y)  = λ p : ℝ × X, F' (2^(i.to_nat+1)*(p.1 - T i.to_nat)) p.2,
+      {
+        sorry },
+      have loc₂' : ∀ (t : ℝ) (x : X), t > T i.to_nat →
+        (↑λ x' : X,  F'' (t, x') : germ (𝓝 x) Y) = ↑λ x' : X, F' (2^(i.to_nat+1)*(t - T i.to_nat)) x,
       {
         sorry },
       refine ⟨F'', _, _, _⟩,
-      { rintros ⟨t, x⟩,
-        by_cases ht : t ≥ T (i.to_nat + 1),
-        { rw loc₂ (t, x) ht,
-          exact ⟨h₀F' t x, λ h't, (not_T_succ_le i.to_nat $ h't ▸ ht).elim, h₂F' _⟩ },
-        { rw loc₁ (t, x) (lt_of_not_ge ht),
-          apply h₀F } },
-      { intros j hj,
-        sorry },
-      {
-        sorry } },
+      sorry { rintros ⟨t, x⟩,
+        by_cases ht : t ≤ T i.to_nat,
+        { rw loc₁ (t, x) ht,
+          apply h₀F },
+        { rw loc₂ (t, x) (lt_of_not_ge ht),
+          refine ⟨h₀F' (2 ^ (i.to_nat + 1) * (t - T i.to_nat)) x, _, _⟩,
+          { rintros (rfl : t = 0),
+            have : T i.to_nat = 0,
+            {
+              sorry },
+            rw this at *,
+            sorry },
+          sorry { simpa only [mul_sub, neg_mul] using hP₂ (2^(i.to_nat+1)) (-2^(i.to_nat+1)*T i.to_nat)
+              (t, x) ↿F' (h₂F' _) } } },
+      { rintros j hj ⟨t, x⟩,
+        split,
+        { rintros (rfl : t = 1),
+          rintros (hx : x ∈ K j),
+          apply (eventually_nhds_set_iff.mp (eventually_nhds_set_Union₂.mp h₁F' j hj) x hx).mono,
+          intros x' hx',
+          dsimp only, -- ∀ᶠ (y : X) in 𝓝 x, P₁ y ↑(λ (y : X), F'' (1, y)),
+          rw loc₂' 1 x' (T_lt _),
+
+          sorry },
+        { rintros (ht : t > _),
+          /- rw [loc₂, germ.slice_left_coe],
+          change (↑((λ t, F' t x) ∘ λ (t : ℝ), 2 ^ (i.to_nat + 1) * (t - T i.to_nat)) : germ (𝓝 t) Y).is_constant,
+          have : (λ (t : ℝ), F' t x) =ᶠ[𝓝 1] λ t, F' 1 x,
+          {
+            sorry },
+
+          rw filter.tendsto.congr_germ this,
+          simp only [fst_comp_mk, germ.is_constant_coe_const], -/
+
+          sorry },
+
+/-         apply eventually_nhds_set_of_prod _ _ (eventually_nhds_set_Union₂.mp h₁F' j hj) ; clear h₁F',
+        exact λ t, true,
+        dsimp only,
+        rintros t - x hx,
+        split,
+        sorry { rintros rfl,
+          rw loc₂ (1, x),
+          apply eventually.germ_congr hx,
+          apply eventually_of_forall,
+          intros y,
+          dsimp only,
+          rw hfutur_F'.on_set (2 ^ (i.to_nat + 1) * (1 - T i.to_nat)) _,
+          sorry,
+          apply T_lt },
+        { intros ht,
+          rcases eq_or_lt_of_le hj with j_eq | j_lt ; clear hj,
+          { rw eq_comm at j_eq,
+            subst j_eq,
+            sorry },
+          { specialize h₁F j j_lt,
+            sorry },
+
+           },
+        exact eventually_true _  -/},
+      { rintros ⟨t, x⟩ htx,
+        simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_distrib, not_le] at htx,
+        cases htx with ht hx,
+        sorry { change (↑F'' : germ (𝓝 (t, x)) Y).value = (↑F : germ (𝓝 (t, x)) Y).value,
+          rw loc₁ (t, x) ht.le },
+        { dsimp only [F''],
+          split_ifs with ht ht,
+          { refl },
+          { rw hUF' _ x hx,
+            push_neg at ht,
+            dsimp only,
+
+            have := h₁F i,
+            sorry }, } } },
     { apply eventually_nhds_set_Union₂.mpr,
       intros j hj,
       have := h₁F j hj,
       sorry } },
-  sorry /- rcases inductive_construction_alt PP₀ PP₁ (U_fin.prod_left $ λ i, Ici (T $ indexing.to_nat i))
+  sorry/- rcases inductive_construction_alt PP₀ PP₁ (U_fin.prod_left $ λ i, Ici (T $ indexing.to_nat i))
     ⟨λ p, f₀ p.2, hPP₀⟩ ind' with ⟨F, hF,h'F ⟩, clear ind ind' hPP₀,
   refine ⟨curry F, _, _, _, _⟩,
   { exact funext (λ x, (hF (0, x)).2.1 rfl) },
   { exact λ t x, (hF (t, x)).1 },
   { intros x,
     obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j),
-    exact ((h'F j).on_set (1, x) ⟨(T_lt _).le, hj⟩).1 rfl },
+    exact ((h'F j (1, x)).1 rfl hj).self_of_nhds },
   { intros p,
-    convert (hF p).2.2,
+    convert (hF p).2.2 using 2,
     exact uncurry_curry F }, -/
 end
 end htpy

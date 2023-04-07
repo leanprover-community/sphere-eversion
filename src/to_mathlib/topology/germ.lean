@@ -30,16 +30,22 @@ def restrict_germ_predicate {X Y : Type*} [topological_space X]
 end
 
 lemma filter.eventually.germ_congr {X Y : Type*} [topological_space X]
+  {x : X} {P : germ (𝓝 x) Y → Prop} {f g : X → Y}
+  (hf : P f) (h : ∀ᶠ z in 𝓝 x, g z = f z) : P g :=
+begin
+  convert hf using 1,
+  apply quotient.sound,
+  exact h,
+end
+
+lemma filter.eventually.germ_congr_set {X Y : Type*} [topological_space X]
   {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f g : X → Y}
   (hf : ∀ᶠ x in 𝓝ˢ A, P x f) (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) : ∀ᶠ x in 𝓝ˢ A, P x g :=
 begin
   rw eventually_nhds_set_iff at *,
   intros x hx,
   apply ((hf x hx).and (h x hx).eventually_nhds).mono,
-  intros y hy,
-  convert hy.1 using 1,
-  apply quotient.sound,
-  exact hy.2
+  exact λ y hy, hy.2.germ_congr hy.1
 end
 
 
@@ -49,12 +55,9 @@ lemma restrict_germ_predicate_congr {X Y : Type*} [topological_space X]
   restrict_germ_predicate P A x g :=
 begin
   intros hx,
-  apply ((hf hx).and $ eventually_nhds_set_iff.mp h x hx).eventually_nhds.mono,
-  intros y hy,
-  rw eventually_and at hy,
-  convert hy.1.self_of_nhds using 1,
-  apply quotient.sound,
-  exact hy.2,
+  apply ((hf hx).and $ (eventually_nhds_set_iff.mp h x hx).eventually_nhds).mono,
+  rintros y ⟨hy, h'y⟩,
+  rwa germ.coe_eq.mpr h'y
 end
 
 
@@ -72,6 +75,10 @@ lemma filter.eventually_eq.comp_fun {α β γ : Type*} {f g : β → γ} {l : fi
   (h : f =ᶠ[l'] g) {φ : α → β} (hφ : tendsto φ l l') : f ∘ φ =ᶠ[l] g ∘ φ :=
 hφ h
 
+lemma filter.tendsto.congr_germ {α β γ : Type*} {f g : β → γ} {l : filter α} {l' : filter β}
+  (h : f =ᶠ[l'] g) {φ : α → β} (hφ : tendsto φ l l') : (f ∘ φ : germ l γ) = g ∘ φ :=
+@quotient.sound _ (l.germ_setoid γ) _ _ (hφ h)
+
 def filter.germ.slice_left {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
   (P : germ (𝓝 p) Z) : germ (𝓝 p.1) Z :=
 P.lift_on (λ f, ((λ x', f (x', p.2)) : germ (𝓝 p.1) Z))
@@ -80,6 +87,10 @@ P.lift_on (λ f, ((λ x', f (x', p.2)) : germ (𝓝 p.1) Z))
        rw ← (prod.mk.eta : (p.1, p.2) = p),
        exact (continuous.prod.mk_left p.2).continuous_at,
      end))
+
+@[simp] lemma filter.germ.slice_left_coe {X Y Z : Type*} [topological_space X] [topological_space Y]
+  {x : X} {y : Y} (f : X × Y → Z) : (↑f : germ (𝓝 (x, y)) Z).slice_left = λ x',f (x', y) :=
+rfl
 
 def filter.germ.slice_right {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
   (P : germ (𝓝 p) Z) : germ (𝓝 p.2) Z :=
@@ -90,6 +101,10 @@ P.lift_on (λ f, ((λ y, f (p.1, y)) : germ (𝓝 p.2) Z))
        exact (continuous.prod.mk p.1).continuous_at,
      end))
 
+@[simp] lemma filter.germ.slice_right_coe {X Y Z : Type*} [topological_space X] [topological_space Y]
+  {x : X} {y : Y} (f : X × Y → Z) : (↑f : germ (𝓝 (x, y)) Z).slice_right = λ y',f (x, y') :=
+rfl
+
 def filter.germ.is_constant {X Y : Type*} [topological_space X] {x} (P : germ (𝓝 x) Y) : Prop :=
 P.lift_on (λ f, ∀ᶠ x' in 𝓝 x, f x' = f x) begin
   suffices : ∀ (f g : X → Y), f =ᶠ[𝓝 x] g →
@@ -99,6 +114,19 @@ P.lift_on (λ f, ∀ᶠ x' in 𝓝 x, f x' = f x) begin
   apply (hf.and hfg).mono (λ x' hx', _),
   rw [← hx'.2, hx'.1, hfg.eq_of_nhds],
 end
+
+lemma filter.germ.is_constant_coe {X Y : Type*} [topological_space X] {x : X} {y} {f : X → Y}
+  (h : ∀ x', f x' = y) : (↑f : germ (𝓝 x) Y).is_constant :=
+begin
+  apply eventually_of_forall (λx', _),
+  rw [h, h]
+end
+
+@[simp]
+lemma filter.germ.is_constant_coe_const {X Y : Type*} [topological_space X] {x : X} {y : Y} :
+  ((λ x' : X, y) : germ (𝓝 x) Y).is_constant :=
+eventually_of_forall (λx', rfl)
+
 
 lemma eq_of_germ_is_constant {X Y : Type*} [topological_space X] [preconnected_space X]
   {f : X → Y} (h : ∀ x : X, (f : germ (𝓝 x) Y).is_constant) (x x' : X) : f x = f x' :=
