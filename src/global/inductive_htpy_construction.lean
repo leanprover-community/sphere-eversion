@@ -256,7 +256,6 @@ begin
       { simp } } }
 end
 
-/- TODO: think whether `∀ x ∈ ⋃ j < i, K j, P₁ x f` should be something more general. -/
 lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
   (P₀ P₁ : Π x : X, germ (𝓝 x) Y → Prop) (P₂ : Π p : ℝ × X, germ (𝓝 p) Y → Prop)

@@ -244,11 +244,11 @@ lemma inductive_construction_again {X Y : Type*} [topological_space X]
   (U_fin : locally_finite U)
   (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
   (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (P₂ i f) → (∀ j < i, ∀ x, P₁ j x f) →
-    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ P₂ i.succ f' ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (¬ i.is_last → P₂ i.succ f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
 begin
   let P : 𝓘 N → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ (P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f,
+    λ n f, (∀ x, P₀ x f) ∧ (¬ n.is_last → P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f,
   let Q : 𝓘 N → (X → Y) → (X → Y) → Prop :=
     λ n f f', ∀ x ∉ U n.succ, f' x = f x,
   obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬ n.is_last → Q n (f n) (f n.succ)),
@@ -257,7 +257,10 @@ begin
       rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [index_type.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
       exact ⟨f', h₀f', h₂f', h₁f'⟩ },
     { rintros n f ⟨h₀f, h₂f, h₁f⟩ hn,
-      rcases ind _ f h₀f h₂f (λ j hj, h₁f _ $ j.le_of_lt_succ hj) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
+      by_cases hn : n.is_last,
+      { simp only [P, Q, n.succ_eq.mpr hn],
+        exact ⟨f, ⟨h₀f, λ hn', (hn' hn).elim, h₁f⟩, λ _ _, rfl⟩ },
+      rcases ind _ f h₀f (h₂f hn) (λ j hj, h₁f _ $ j.le_of_lt_succ hj) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
       exact ⟨f', ⟨h₀f', h₂f', h₁f'⟩, hf'⟩  } },
   dsimp only [P, Q] at hf,
   simp only [forall_and_distrib] at hf,
