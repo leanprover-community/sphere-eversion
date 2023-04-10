@@ -2,8 +2,11 @@ import to_mathlib.data.set.prod
 import to_mathlib.data.nat.basic
 import to_mathlib.geometry.manifold.metrizable
 import to_mathlib.topology.constructions
+import to_mathlib.logic.basic
+
+import inductive_constructions
+
 import global.parametricity_for_free
-import global.inductive_htpy_construction
 import global.localized_construction
 import global.localisation_data
 /-!
@@ -169,7 +172,8 @@ begin
       simp [F] },
     { apply hF'₁.mono (λ x hx, _),
       rw hx } },
-  rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩,
+  rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init
+    (𝓕₀.smooth.comp cont_mdiff_snd) ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩,
   simp only [P₀, forall₂_and_distrib] at hFP₀,
   rcases hFP₀ with ⟨hF_sec, hF_sol, hF_smooth, hF_A, hF_dist⟩,
   refine ⟨mk_htpy_formal_sol F hF_sec hF_sol hFP₂, _, _, _, _⟩,
