@@ -1034,7 +1034,7 @@ begin
   rcases hγ₀_surr with ⟨V, V_in, hV⟩,
   cases surrounding_family_in_iff_germ.mp hV with hV h'V,
   simp only [surrounding_family_in_iff_germ, mem_univ, forall_true_left, ← forall_and_distrib],
-  apply inductive_construction' (loop_family_germ b) (surrounding_family_germ g Ω) hK hV
+  apply relative_inductive_construction_of_loc (loop_family_germ b) (surrounding_family_germ g Ω) hK hV
     (mem_of_superset V_in h'V),
   { intros x,
     rcases local_loops ⟨univ, univ_mem, by  simp only [preimage_univ, inter_univ,hΩ_op ]⟩
