@@ -449,6 +449,15 @@ end
 private lemma T_one : T 1 = 1/2 :=
 by simp [T]
 
+private lemma T_nonneg (n : ℕ) : 0 ≤ T n :=
+begin
+  rw [T_eq],
+  have : (1 / (2 : ℝ))^n ≤ 1,
+  apply pow_le_one ; norm_num,
+  linarith,
+end
+
+
 private lemma not_T_succ_le (n : ℕ) : ¬ T (n + 1) ≤ 0 :=
 begin
   rw [T_eq, not_le],
@@ -456,6 +465,25 @@ begin
   apply pow_lt_one ; norm_num,
   linarith,
 end
+
+lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) :
+  (i.succ.to_nat = i.to_nat + 1) ∨ (i.is_last ∧ i.succ.to_nat = i.to_nat) :=
+begin
+
+  sorry
+end
+
+/-
+lemma inductive_construction_again {X Y : Type*} [topological_space X]
+  {N : ℕ} {U : index_type N → set X}
+  (P₀ : Π x : X, germ (𝓝 x) Y → Prop) (P₁ : Π i : index_type N, Π x : X, germ (𝓝 x) Y → Prop)
+  (P₂ : index_type N → (X → Y) → Prop)
+  (U_fin : locally_finite U)
+  (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
+  (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (P₂ i f) → (∀ j < i, ∀ x, P₁ j x f) →
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ P₂ i.succ f' ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
+-/
 
 lemma inductive_htpy_construction {X Y : Type*} [topological_space X]
   {N : ℕ} {U K : index_type N → set X}
@@ -473,118 +501,112 @@ begin
   let PP₀ : Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ p φ, P₀ p.2 φ.slice_right ∧
     (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ,
   let PP₁ : Π i : index_type N, Π p : ℝ × X, germ (𝓝 p) Y → Prop := λ i p φ,
-    (p.1 = 1 → restrict_germ_predicate P₁ (K i) p.2 φ.slice_right) ∧ (p.1 > T (i.to_nat + 1) → φ.slice_left.is_constant),
+    p.1 = 1 → restrict_germ_predicate P₁ (K i) p.2 φ.slice_right,
+  let PP₂ : index_type N → (ℝ × X → Y) → Prop :=
+    λ i f, ∀ x, ∀ t ≥ T i.to_nat, f (t, x) = f (T i.to_nat, x),
   set K' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ K i,
   set U' : index_type N → set (ℝ × X) := λ i, Ici (T i.to_nat) ×ˢ U i,
   have hPP₀ : ∀ (p : ℝ × X), PP₀ p (λ (p : ℝ × X), f₀ p.2),
   sorry { rintros ⟨t, x⟩,
     exact ⟨init x, λ h, rfl, init' _⟩ },
-  have ind' : ∀ (i : index_type N) (F : ℝ × X → Y), (∀ p, PP₀ p F) → (∀ j < i, ∀ p, PP₁ j p F) →
-    ∃ F' : ℝ × X → Y, (∀ p, PP₀ p F') ∧ (∀ j ≤ i, ∀ p, PP₁ j p F') ∧
-                      ∀ x ∉ U' i, F' x = F x,
-  { intros i F h₀F h₁F,
-    rcases ind i (λ x, F (T i.to_nat, x)) (λ x, (h₀F (_, x)).1) _ with
-      ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ ; clear ind,
-    { let F'' : ℝ × X → Y :=  λ p : ℝ × X,
-        if p.1 ≤ T i.to_nat then F p else F' (2^(i.to_nat+1)*(p.1 - T i.to_nat)) p.2,
-      have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.to_nat → (F'' : germ (𝓝 p) Y)  = F,
-      {
-        sorry },
-      have loc₂ : ∀ p : ℝ × X, p.1 > T i.to_nat →
-        (F'' : germ (𝓝 p) Y)  = λ p : ℝ × X, F' (2^(i.to_nat+1)*(p.1 - T i.to_nat)) p.2,
-      {
-        sorry },
-      have loc₂' : ∀ (t : ℝ) (x : X), t > T i.to_nat →
-        (↑λ x' : X,  F'' (t, x') : germ (𝓝 x) Y) = ↑λ x' : X, F' (2^(i.to_nat+1)*(t - T i.to_nat)) x,
-      {
-        sorry },
-      refine ⟨F'', _, _, _⟩,
-      sorry { rintros ⟨t, x⟩,
-        by_cases ht : t ≤ T i.to_nat,
-        { rw loc₁ (t, x) ht,
-          apply h₀F },
-        { rw loc₂ (t, x) (lt_of_not_ge ht),
-          refine ⟨h₀F' (2 ^ (i.to_nat + 1) * (t - T i.to_nat)) x, _, _⟩,
-          { rintros (rfl : t = 0),
-            have : T i.to_nat = 0,
-            {
-              sorry },
-            rw this at *,
-            sorry },
-          sorry { simpa only [mul_sub, neg_mul] using hP₂ (2^(i.to_nat+1)) (-2^(i.to_nat+1)*T i.to_nat)
-              (t, x) ↿F' (h₂F' _) } } },
-      { rintros j hj ⟨t, x⟩,
-        split,
-        { rintros (rfl : t = 1),
-          rintros (hx : x ∈ K j),
-          apply (eventually_nhds_set_iff.mp (eventually_nhds_set_Union₂.mp h₁F' j hj) x hx).mono,
-          intros x' hx',
-          dsimp only, -- ∀ᶠ (y : X) in 𝓝 x, P₁ y ↑(λ (y : X), F'' (1, y)),
-          rw loc₂' 1 x' (T_lt _),
-
-          sorry },
-        { rintros (ht : t > _),
-          /- rw [loc₂, germ.slice_left_coe],
-          change (↑((λ t, F' t x) ∘ λ (t : ℝ), 2 ^ (i.to_nat + 1) * (t - T i.to_nat)) : germ (𝓝 t) Y).is_constant,
-          have : (λ (t : ℝ), F' t x) =ᶠ[𝓝 1] λ t, F' 1 x,
-          {
-            sorry },
-
-          rw filter.tendsto.congr_germ this,
-          simp only [fst_comp_mk, germ.is_constant_coe_const], -/
-
-          sorry },
-
-/-         apply eventually_nhds_set_of_prod _ _ (eventually_nhds_set_Union₂.mp h₁F' j hj) ; clear h₁F',
-        exact λ t, true,
-        dsimp only,
-        rintros t - x hx,
-        split,
-        sorry { rintros rfl,
-          rw loc₂ (1, x),
-          apply eventually.germ_congr hx,
-          apply eventually_of_forall,
-          intros y,
-          dsimp only,
-          rw hfutur_F'.on_set (2 ^ (i.to_nat + 1) * (1 - T i.to_nat)) _,
-          sorry,
-          apply T_lt },
-        { intros ht,
-          rcases eq_or_lt_of_le hj with j_eq | j_lt ; clear hj,
-          { rw eq_comm at j_eq,
-            subst j_eq,
-            sorry },
-          { specialize h₁F j j_lt,
-            sorry },
-
-           },
-        exact eventually_true _  -/},
-      { rintros ⟨t, x⟩ htx,
-        simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_distrib, not_le] at htx,
-        cases htx with ht hx,
-        sorry { change (↑F'' : germ (𝓝 (t, x)) Y).value = (↑F : germ (𝓝 (t, x)) Y).value,
-          rw loc₁ (t, x) ht.le },
-        { dsimp only [F''],
-          split_ifs with ht ht,
-          { refl },
-          { rw hUF' _ x hx,
-            push_neg at ht,
-            dsimp only,
-
-            have := h₁F i,
-            sorry }, } } },
-    { apply eventually_nhds_set_Union₂.mpr,
+  have ind' : ∀ i (f : ℝ × X → Y), (∀ p, PP₀ p f) → PP₂ i f → (∀ j < i, ∀ p, PP₁ j p f) →
+    ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ PP₂ i.succ f' ∧ (∀ j ≤ i, ∀ p, PP₁ j p f') ∧
+                      ∀ p ∉ Ici (T i.to_nat) ×ˢ U i, f' p = f p,
+  { rintros i F h₀F h₂F h₁F,
+    replace h₁F : ∀ᶠ (x : X) near ⋃ j < i, K j, P₁ x ↑(λ x, F (T i.to_nat, x)),
+    sorry { rw eventually_nhds_set_Union₂,
       intros j hj,
-      have := h₁F j hj,
-      sorry } },
-  sorry/- rcases inductive_construction_alt PP₀ PP₁ (U_fin.prod_left $ λ i, Ici (T $ indexing.to_nat i))
-    ⟨λ p, f₀ p.2, hPP₀⟩ ind' with ⟨F, hF,h'F ⟩, clear ind ind' hPP₀,
+      have : ∀ x : X, restrict_germ_predicate P₁ (K j) x (λ x', F (1, x')),
+        from λ x, h₁F j hj (1, x) rfl,
+      apply (forall_restrict_germ_predicate_iff.mp this).germ_congr_set,
+      apply eventually_of_forall (λ x, (_ : F (T i.to_nat, x) = F (1, x))),
+      rw h₂F _ _ (T_lt _).le },
+    rcases ind i (λ x, F (T i.to_nat, x)) (λ x, (h₀F (_, x)).1) h₁F with
+      ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ ; clear ind,
+    let F'' : ℝ × X → Y :=  λ p : ℝ × X,
+        if p.1 ≤ T i.to_nat then F p else F' (2^(i.to_nat+1)*(p.1 - T i.to_nat)) p.2,
+    have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.to_nat → (F'' : germ (𝓝 p) Y)  = F,
+    {
+      sorry },
+    have loc₂ : ∀ p : ℝ × X, p.1 > T i.to_nat →
+      (F'' : germ (𝓝 p) Y)  = λ p : ℝ × X, F' (2^(i.to_nat+1)*(p.1 - T i.to_nat)) p.2,
+    {
+      sorry },
+    have loc₂' : ∀ (t : ℝ) (x : X), t > T i.to_nat →
+      (↑λ x' : X,  F'' (t, x') : germ (𝓝 x) Y) = ↑λ x' : X, F' (2^(i.to_nat+1)*(t - T i.to_nat)) x,
+    {
+      sorry },
+    dsimp only [PP₀, PP₁, PP₂],
+    refine ⟨F'', _, _, _,_ ⟩,
+    sorry { rintros p,
+      by_cases ht : p.1 ≤ T i.to_nat,
+      { rw loc₁ _ ht,
+        apply h₀F },
+      { push_neg at ht,
+        cases p with t x,
+        rw loc₂ _ ht,
+        refine ⟨h₀F' (2 ^ (i.to_nat + 1) * (t - T i.to_nat)) x, _, _⟩,
+        { rintro (rfl : t = 0),
+          exact (lt_irrefl _ ((T_nonneg i.to_nat).trans_lt ht)).elim },
+        { simpa only [mul_sub, neg_mul] using hP₂ (2^(i.to_nat+1)) (-2^(i.to_nat+1)*T i.to_nat)
+              (t, x) ↿F' (h₂F' _) } } },
+    { intros x t ht,
+      rw ge_iff_le at ht,
+    /-
+
+      /- rcases eq_or_lt_of_le ht with rfl|ht',
+      refl,
+      clear ht,
+       -/rcases i.to_nat_succ with hi|⟨hi, hi'⟩,
+      sorry { rw hi at *,
+        have h₂t : ¬ t ≤ T i.to_nat,
+        { push_neg,
+          exact (T_lt_succ i.to_nat).trans_le ht },
+          dsimp only [F''],
+          rw [if_neg h₂t, if_neg],
+          { rw [hfutur_F'.on_set, mul_T_succ_sub],
+            conv { rw mem_Ici, congr, rw ← mul_T_succ_sub i.to_nat },
+            exact mul_le_mul_of_nonneg_left (sub_le_sub_right ht _) (pow_nonneg zero_le_two _) },
+          { push_neg,
+            apply T_lt_succ } },
+        { rw hi' at *,
+          dsimp only [F''],
+          rcases eq_or_lt_of_le ht with rfl|ht',
+          rw [if_pos le_rfl, h₂F _ _ ht],
+          rw [if_neg (not_le_of_gt ht'), if_pos le_rfl],
+          rw h₂F, -/
+
+          sorry },
+    sorry { rintros j hj ⟨t, x⟩ (rfl : t = 1),
+      replace h₁F' := eventually_nhds_set_Union₂.mp h₁F' j hj,
+      rw loc₂ (1, x) (T_lt i.to_nat),
+      revert x,
+      change ∀ x : X, restrict_germ_predicate P₁ (K j) x (λ x' : X, F' (2 ^ (i.to_nat + 1) * (1 - T i.to_nat)) x'),
+      rw forall_restrict_germ_predicate_iff,
+      apply h₁F'.germ_congr_set,
+      apply eventually_of_forall _,
+      apply congr_fun (hfutur_F'.on_set _ _),
+      conv { congr, skip, rw ← mul_T_succ_sub i.to_nat },
+      exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _) },
+    sorry { rintros ⟨t, x⟩ htx,
+      simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_distrib, not_le] at htx,
+      cases htx with ht hx,
+      { change (↑F'' : germ (𝓝 (t, x)) Y).value = (↑F : germ (𝓝 (t, x)) Y).value,
+        rw loc₁ (t, x) ht.le },
+      { dsimp only [F''],
+        split_ifs with ht ht,
+        { refl },
+        { rw hUF' _ x hx,
+          push_neg at ht,
+          rw h₂F x _ ht.le } } } },
+  sorry /- rcases inductive_construction_again PP₀ PP₁ PP₂ (U_fin.prod_left $ λ i, Ici (T $ indexing.to_nat i))
+    ⟨λ p, f₀ p.2, hPP₀, λ x t ht, rfl⟩ ind' with ⟨F, hF,h'F ⟩, clear ind ind' hPP₀,
   refine ⟨curry F, _, _, _, _⟩,
   { exact funext (λ x, (hF (0, x)).2.1 rfl) },
   { exact λ t x, (hF (t, x)).1 },
   { intros x,
     obtain ⟨j, hj⟩ : ∃ j, x ∈ K j, by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j),
-    exact ((h'F j (1, x)).1 rfl hj).self_of_nhds },
+    exact (h'F j (1, x) rfl hj).self_of_nhds },
   { intros p,
     convert (hF p).2.2 using 2,
     exact uncurry_curry F }, -/
