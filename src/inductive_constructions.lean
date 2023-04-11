@@ -42,7 +42,7 @@ get rid of the `indexing` abstraction and do everything in terms of `index_type`
 
 
 section inductive_construction
-open order
+open order fin
 
 lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
 tendsto_at_top_at_top.mpr
@@ -52,10 +52,10 @@ def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
 
 def index_type.succ : Π {N : ℕ}, index_type N → index_type N
 | 0 i := nat.succ i
-| (n + 1) i := @fin.last_cases n (λ _, index_type $n+1) (fin.last n) (λ k, k.succ) i
+| (n + 1) i := last_cases (fin.last n) (λ k, k.succ) i
 
-lemma succ_eq_succ {N} (i : fin N) : fin.succ i = @index_type.succ (N+1) i.cast_succ :=
-sorry
+lemma succ_eq_succ {N} (i : fin N) : @index_type.succ (N+1) i.cast_succ = i.succ :=
+last_cases_cast_succ _ _ i
 
 instance {N : ℕ} : succ_order (index_type N) :=
 succ_order.of_core index_type.succ sorry sorry
@@ -74,7 +74,15 @@ le_of_lt_succ h
 
 lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬is_max i) :
   i.succ.to_nat = i.to_nat + 1 :=
-sorry
+begin
+  cases N, { refl },
+  revert hi,
+  refine fin.last_cases _ _ i,
+  { intro hi, apply hi.elim, intros i hi, exact le_last i },
+  intros i hi,
+  rw [succ_eq_succ],
+  exact coe_succ i
+end
 
 @[simp] lemma index_type.not_is_max (n : index_type 0) : ¬ is_max n :=
 not_is_max_of_lt $ nat.lt_succ_self n
@@ -94,11 +102,11 @@ begin
   { intros i hi hi₀i,
     rcases hi₀i.le.eq_or_lt with rfl|hi₀i,
     { exact h₀ },
-    rw [succ_eq_succ],
+    rw [← succ_eq_succ],
     refine ih _ _ _ _,
-    { rwa [ge_iff_le, fin.le_cast_succ_iff] },
-    { exact not_is_max_of_lt (fin.cast_succ_lt_succ i) },
-    { apply hi, rwa [ge_iff_le, fin.le_cast_succ_iff] }
+    { rwa [ge_iff_le, le_cast_succ_iff] },
+    { exact not_is_max_of_lt (cast_succ_lt_succ i) },
+    { apply hi, rwa [ge_iff_le, le_cast_succ_iff] }
     }
 end
 
