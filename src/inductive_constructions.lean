@@ -50,20 +50,19 @@ tendsto_at_top_at_top.mpr
 
 def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
 
-def index_type.succ : Π {N : ℕ}, index_type N → index_type N
-| 0 i := nat.succ i
-| (n + 1) i := last_cases (fin.last n) (λ k, k.succ) i
+instance {N : ℕ} : succ_order (index_type N) :=
+by { cases N, { exact nat.succ_order }, exact fin.succ_order }
+
+def index_type.succ {N : ℕ} : index_type N → index_type N :=
+order.succ
 
 lemma succ_eq_succ {N} (i : fin N) : @index_type.succ (N+1) i.cast_succ = i.succ :=
-last_cases_cast_succ _ _ i
-
-instance {N : ℕ} : succ_order (index_type N) :=
-succ_order.of_core index_type.succ sorry sorry
+sorry
 
 lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ is_max i :=
 order.succ_eq_iff_is_max
 
-lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ is_max i ) : i < i.succ :=
+lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ is_max i) : i < i.succ :=
 order.lt_succ_of_not_is_max h
 
 lemma index_type.le_max {N : ℕ} {i : index_type N} (h : is_max i) (j) : j ≤ i :=
