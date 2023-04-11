@@ -41,6 +41,7 @@ get rid of the `indexing` abstraction and do everything in terms of `index_type`
 
 
 section inductive_construction
+open order
 
 lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
 tendsto_at_top_at_top.mpr
@@ -52,47 +53,31 @@ def index_type.succ : Π {N : ℕ}, index_type N → index_type N
 | 0 i := nat.succ i
 | (n + 1) i := @fin.last_cases n (λ _, index_type $n+1) (fin.last n) (λ k, k.succ) i
 
-def index_type.is_last {N} (i : index_type N) : Prop := N > 0 ∧ i = (N-1 : ℕ)
+instance {N : ℕ} : succ_order (index_type N) :=
+succ_order.of_core index_type.succ sorry sorry
 
-lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ i.is_last :=
-begin
-  sorry /- cases N,
-  sorry { simp [index_type.succ, index_type.is_last] },
-  { simp [index_type.succ, index_type.is_last],
-    have : (N : index_type (N+1)) = fin.last N,
-    sorry { change (λ k, if h : k < N+1 then (⟨k, h⟩ : fin (N+1)) else fin.last N) N = _,
-      simp only [fin.last, lt_add_iff_pos_right, nat.lt_one_iff, dif_pos] },
-    refine fin.last_cases _ _ i,
-    sorry { simp only [this, fin.last_cases_last] },
-    { intros i,
-      -- We now secretely need to prove false ↔ false
-      simp only [this, fin.last_cases_cast_succ],
-      sorry } }, -/
-end
+lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ is_max i :=
+order.succ_eq_iff_is_max
 
-lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ i.is_last ) : i < i.succ :=
-sorry
+lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ is_max i ) : i < i.succ :=
+order.lt_succ_of_not_is_max h
 
-lemma index_type.le_last {N : ℕ} {i : index_type N} (h : i.is_last) (j) : j ≤ i :=
-sorry
+lemma index_type.le_max {N : ℕ} {i : index_type N} (h : is_max i) (j) : j ≤ i :=
+h.is_top j
 
 lemma index_type.le_of_lt_succ  {N : ℕ} (i : index_type N) {j : index_type N} (h : i < j.succ) : i ≤ j :=
-begin
-  by_cases h : j.is_last,
-  exact i.le_last h,
-  sorry
-end
+le_of_lt_succ h
 
-lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬i.is_last) :
+lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬is_max i) :
   i.succ.to_nat = i.to_nat + 1 :=
 sorry
 
-@[simp] lemma index_type.not_is_last (n : index_type 0) : ¬ n.is_last :=
-by simp [index_type.is_last]
+@[simp] lemma index_type.not_is_max (n : index_type 0) : ¬ is_max n :=
+λ h, (nat.lt_succ_self n).not_le $ h.is_top _
 
 @[elab_as_eliminator]
 lemma index_type.induction_from {N : ℕ} {P : index_type N → Prop} {i₀ : index_type N} (h₀ : P i₀)
-  (ih : ∀ i ≥ i₀, ¬ i.is_last → P i → P i.succ) : ∀ i ≥ i₀, P i :=
+  (ih : ∀ i ≥ i₀, ¬ is_max i → P i → P i.succ) : ∀ i ≥ i₀, P i :=
 begin
 
   sorry
@@ -103,8 +88,8 @@ end
 lemma index_type.exists_by_induction {N : ℕ} {α : Type*} (P : index_type N → α → Prop)
   (Q : index_type N → α → α → Prop)
   (h₀ : ∃ a, P 0 a)
-  (ih : ∀ n a, P n a → ¬ n.is_last → ∃ a', P n.succ a' ∧ Q n a a') :
-  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ (¬ n.is_last → Q n (f n) (f n.succ)) :=
+  (ih : ∀ n a, P n a → ¬ is_max n → ∃ a', P n.succ a' ∧ Q n a a') :
+  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ (¬ is_max n → Q n (f n) (f n.succ)) :=
 begin
   revert P Q h₀ ih,
   cases N,
@@ -122,7 +107,7 @@ end
 lemma locally_finite.exists_forall_eventually_of_index_type
   {α X : Type*} [topological_space X] {N : ℕ} {f : index_type N → X → α}
   {V : index_type N → set X} (hV : locally_finite V)
-  (h : ∀ n : index_type N, ¬ n.is_last → ∀ x ∉ V n.succ, f n.succ x = f n x) :
+  (h : ∀ n : index_type N, ¬ is_max n → ∀ x ∉ V n.succ, f n.succ x = f n x) :
   ∃ (F : X → α), ∀ (x : X), ∀ᶠ n in filter.at_top, f n =ᶠ[𝓝 x] F :=
 begin
   choose U hUx hU using hV,
@@ -155,20 +140,20 @@ lemma inductive_construction {X Y : Type*} [topological_space X]
   (U_fin : locally_finite U)
   (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
   (ind : ∀ (i : index_type N) (f : X → Y), (∀ x, P₀ x f) → (P₂ i f) → (∀ j < i, ∀ x, P₁ j x f) →
-    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (¬ i.is_last → P₂ i.succ f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
+    ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (¬ is_max i → P₂ i.succ f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
 begin
   let P : 𝓘 N → (X → Y) → Prop :=
-    λ n f, (∀ x, P₀ x f) ∧ (¬ n.is_last → P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f,
+    λ n f, (∀ x, P₀ x f) ∧ (¬ is_max n → P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f,
   let Q : 𝓘 N → (X → Y) → (X → Y) → Prop :=
     λ n f f', ∀ x ∉ U n.succ, f' x = f x,
-  obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬ n.is_last → Q n (f n) (f n.succ)),
+  obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬ is_max n → Q n (f n) (f n.succ)),
   { apply index_type.exists_by_induction,
     { rcases init with ⟨f₀, h₀f₀, h₁f₀⟩,
       rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [index_type.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
       exact ⟨f', h₀f', h₂f', h₁f'⟩ },
     { rintros n f ⟨h₀f, h₂f, h₁f⟩ hn,
-      by_cases hn : n.is_last,
+      by_cases hn : is_max n,
       { simp only [P, Q, n.succ_eq.mpr hn],
         exact ⟨f, ⟨h₀f, λ hn', (hn' hn).elim, h₁f⟩, λ _ _, rfl⟩ },
       rcases ind _ f h₀f (h₂f hn) (λ j hj, h₁f _ $ j.le_of_lt_succ hj) with ⟨f', h₀f', h₂f', h₁f', hf'⟩,
@@ -233,7 +218,7 @@ begin
     exact ⟨F, h₀F, h₁F, λ x hx, hF.on_set x (or.inr hx)⟩ },
   have := inductive_construction (λ x φ, P₀ x φ ∧ P₀' x φ)
     (λ j : 𝓘 0, restrict_germ_predicate P₁ (K j)) (λ _ _, true) U_loc ⟨f₀, hP₀f₀, trivial⟩,
-  simp only [index_type.not_is_last, not_false_iff, forall_true_left, true_and] at this,
+  simp only [index_type.not_is_max, not_false_iff, forall_true_left, true_and] at this,
   rcases this ind' with ⟨f, h, h'⟩,
   refine ⟨f, λ x, ⟨(h x).1, (h x).2, _⟩⟩,
   rcases mem_Union.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩,
@@ -374,7 +359,7 @@ begin
   { rintros ⟨t, x⟩,
     exact ⟨init x, λ h, rfl, init' _⟩ },
   have ind' : ∀ i (f : ℝ × X → Y), (∀ p, PP₀ p f) → PP₂ i f → (∀ j < i, ∀ p, PP₁ j p f) →
-    ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (¬i.is_last → PP₂ i.succ f') ∧ (∀ j ≤ i, ∀ p, PP₁ j p f') ∧
+    ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (¬ is_max i → PP₂ i.succ f') ∧ (∀ j ≤ i, ∀ p, PP₁ j p f') ∧
                       ∀ p ∉ Ici (T i.to_nat) ×ˢ U i, f' p = f p,
   { rintros i F h₀F h₂F h₁F,
     replace h₁F : ∀ᶠ (x : X) near ⋃ j < i, K j, P₁ x (λ x, F (T i.to_nat, x)),
