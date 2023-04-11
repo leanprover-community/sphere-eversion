@@ -2,7 +2,6 @@ import loops.basic
 import inductive_constructions
 import to_mathlib.partition
 import analysis.locally_convex.with_seminorms -- to obtain that normed spaces are locally connected
-import to_mathlib.order.filter.eventually_constant
 
 /-!
 # Surrounding families of loops
