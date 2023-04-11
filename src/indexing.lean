@@ -4,70 +4,30 @@ import topology.locally_finite
 import data.fin.interval
 import data.fin.succ_pred
 
+import to_mathlib.data.nat.basic
 import to_mathlib.set_theory.cardinal.basic
 
 /-!
 # Indexing types
 
-This is a stupid file introducing a type class for types that will index
-locally finite covers of (paracompact) manifolds without having
-to discuss according to compactness. The only intended instances
-are `ℕ` and `fin (n+1)`.
-
-It also includes a lemma about locally finite cover that doesn't require an indexing
-index type but will be used with one.
+This file introduces `index_type : ℕ → Type` such that `index_type 0 = ℕ` and
+`index_type (N+1) = fin (N+1)`. Each `index_type N` has a total order and and inductive principle
+together with supporting lemmas.
 -/
 
 open set
 
-class indexing (α : Type*) [linear_order α] :=
-(from_nat : ℕ → α)
-(to_nat : α → ℕ)
-(mono_from : monotone from_nat)
-(from_to : ∀ a, from_nat (to_nat a) = a)
-
-@[priority 100]
-instance indexing.has_coe (α : Type*) [linear_order α] [indexing α] : has_coe ℕ α :=
-⟨indexing.from_nat⟩
-
-@[simp]
-lemma indexing.coe_to {α : Type*} [linear_order α] [indexing α] (i : α) :
-  ((indexing.to_nat i) : α) = i :=
-indexing.from_to i
-
-lemma indexing.coe_mono {α : Type*} [linear_order α] [indexing α] {i j : ℕ} (h : i ≤ j) :
-  (i : α) ≤ j :=
-indexing.mono_from h
-
-instance indexing.nonempty (α : Type*) [linear_order α] [indexing α] : nonempty α :=
-⟨indexing.from_nat 0⟩
-
-instance : indexing ℕ :=
-{ from_nat := id,
-  to_nat := id,
-  mono_from := monotone_id,
-  from_to := λ n, rfl }
-
-def fin.indexing (n : ℕ) : indexing (fin $ n + 1) :=
-{ from_nat := λ k, if h : k < n + 1 then ⟨k, h⟩ else fin.last n,
-  to_nat := coe,
-  mono_from := λ k l hkl, begin
-    dsimp [fin.of_nat],
-    split_ifs ; try { simp [fin.le_last] };
-    linarith,
-  end,
-  from_to := begin
-    rintros ⟨k, hk⟩,
-    erw dif_pos hk,
-    refl
-  end }
-
-local attribute [instance] fin.indexing
-open_locale topology
-
 /-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `fin n` otherwise-/
 def index_type (n : ℕ) : Type :=
 nat.cases_on n ℕ (λ k, fin $ k + 1)
+
+def index_type.from_nat : Π {N : ℕ}, ℕ → index_type N
+| 0 := id
+| (N+1) := (coe : ℕ → fin (N+1))
+
+def index_type.to_nat : Π {N}, index_type N → ℕ
+| 0 := id
+| (N+1) := fin.val
 
 @[simp] lemma index_type_zero : index_type 0 = ℕ := rfl
 
@@ -79,16 +39,13 @@ by rw [← nat.succ_pred_eq_of_pos h, index_type_succ]
 instance (n : ℕ) : linear_order (index_type n) :=
 nat.cases_on n nat.linear_order (λ _, fin.linear_order)
 
-instance (n : ℕ) : indexing (index_type n) :=
-nat.cases_on n nat.indexing (λ _, fin.indexing _)
-
 instance (n : ℕ) : locally_finite_order (index_type n) :=
 nat.cases_on n nat.locally_finite_order (λ _, fin.locally_finite_order _)
 
 instance (n : ℕ) : order_bot (index_type n) :=
 nat.cases_on n nat.order_bot (λ k, show order_bot $ fin (k + 1), by apply_instance)
 
-instance (N : ℕ) : has_zero (index_type N) := ⟨indexing.from_nat 0⟩
+instance (N : ℕ) : has_zero (index_type N) := ⟨index_type.from_nat 0⟩
 
 lemma set.countable_iff_exists_nonempty_index_type_equiv
   {α : Type*} {s : set α} (hne : s.nonempty) :
@@ -118,33 +75,117 @@ begin
       exact set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩, }, },
 end
 
-open filter
-
-lemma index_type.lt_or_eq_succ (N n : ℕ) :
-  (n : index_type N) < (n+1 : ℕ) ∨ (n : index_type N) = (n+1 : ℕ) :=
-begin
-  rw or_comm,
-  exact eq_or_lt_of_le (indexing.mono_from n.le_succ)
-end
-
-lemma index_type.le_or_lt_succ {N n : ℕ} (hn : (n : index_type N) < (n+1 : ℕ)) (j : index_type N) :
-  j ≤ n ↔ j < (n + 1 : ℕ) :=
-begin
-  cases N, { exact nat.lt_succ_iff.symm, },
-  refine ⟨λ h, lt_of_le_of_lt h hn, λ h, _⟩,
-  clear hn,
-  obtain ⟨j, hj⟩ := j,
-  change _ ≤ indexing.from_nat n,
-  change _ < indexing.from_nat (n + 1) at h,
-  unfold indexing.from_nat at ⊢ h,
-  rcases lt_trichotomy N n with hNn | rfl | hNn,
-  { replace hNn : ¬ (n < N + 1) := by simpa using nat.succ_le_iff.mpr hNn,
-    simp only [hNn, not_false_iff, dif_neg],
-    exact fin.le_last _ },
-  { simpa using nat.lt_succ_iff.mp hj },
-  { simp only [hNn, add_lt_add_iff_right, dif_pos, fin.mk_lt_mk] at h,
-    simpa only [nat.lt.step hNn, dif_pos, fin.mk_le_mk] using nat.lt_succ_iff.mp h }
-end
-
 lemma index_type.not_lt_zero {N : ℕ} (j : index_type N) : ¬ (j < 0) :=
 nat.cases_on N nat.not_lt_zero (λ n, fin.not_lt_zero) j
+
+open order fin
+
+lemma index_type.zero_le {N} (i : index_type N) : 0 ≤ i :=
+by { cases N; dsimp at *; simp }
+
+instance {N : ℕ} : succ_order (index_type N) :=
+by { cases N, { exact nat.succ_order }, exact fin.succ_order }
+
+def index_type.succ {N : ℕ} : index_type N → index_type N :=
+order.succ
+
+lemma index_type.succ_cast_succ {N} (i : fin N) : @index_type.succ (N+1) i.cast_succ = i.succ :=
+begin
+  refine (succ_apply _).trans _,
+  rw [if_pos (cast_succ_lt_last i), fin.coe_succ_eq_succ, fin.succ_inj],
+end
+
+lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ is_max i :=
+order.succ_eq_iff_is_max
+
+lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ is_max i) : i < i.succ :=
+order.lt_succ_of_not_is_max h
+
+lemma index_type.le_max {N : ℕ} {i : index_type N} (h : is_max i) (j) : j ≤ i :=
+h.is_top j
+
+lemma index_type.le_of_lt_succ  {N : ℕ} (i : index_type N) {j : index_type N} (h : i < j.succ) :
+  i ≤ j :=
+le_of_lt_succ h
+
+lemma index_type.exists_cast_succ_eq {N : ℕ} (i : fin (N+1)) (hi : ¬ is_max i) :
+  ∃ i' : fin N, i'.cast_succ = i :=
+begin
+  revert hi,
+  refine fin.last_cases _ _ i,
+  { intro hi, apply hi.elim, intros i hi, exact le_last i },
+  intros i hi,
+  exact ⟨_, rfl⟩
+end
+
+lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬ is_max i) :
+  i.succ.to_nat = i.to_nat + 1 :=
+begin
+  cases N, { refl },
+  rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩,
+  rw [index_type.succ_cast_succ],
+  exact coe_succ i
+end
+
+@[simp] lemma index_type.not_is_max (n : index_type 0) : ¬ is_max n :=
+not_is_max_of_lt $ nat.lt_succ_self n
+
+@[elab_as_eliminator]
+lemma index_type.induction_from {N : ℕ} {P : index_type N → Prop} {i₀ : index_type N} (h₀ : P i₀)
+  (ih : ∀ i ≥ i₀, ¬ is_max i → P i → P i.succ) : ∀ i ≥ i₀, P i :=
+begin
+  cases N,
+  { intros i h,
+    induction h with i hi₀i hi ih,
+    { exact h₀ },
+    exact ih i hi₀i (index_type.not_is_max i) hi },
+  intros i,
+  refine fin.induction _ _ i,
+  { intro hi, convert h₀, exact (hi.le.antisymm $ fin.zero_le _).symm },
+  { intros i hi hi₀i,
+    rcases hi₀i.le.eq_or_lt with rfl|hi₀i,
+    { exact h₀ },
+    rw [← index_type.succ_cast_succ],
+    refine ih _ _ _ _,
+    { rwa [ge_iff_le, le_cast_succ_iff] },
+    { exact not_is_max_of_lt (cast_succ_lt_succ i) },
+    { apply hi, rwa [ge_iff_le, le_cast_succ_iff] }
+    }
+end
+
+@[elab_as_eliminator]
+lemma index_type.induction {N : ℕ} {P : index_type N → Prop} (h₀ : P 0)
+  (ih : ∀ i, ¬ is_max i → P i → P i.succ) : ∀ i, P i :=
+λ i, index_type.induction_from h₀ (λ i _, ih i) i i.zero_le
+
+-- We make `P` and `Q` explicit to help the elaborator when applying the lemma
+-- (elab_as_eliminator isn't enough).
+lemma index_type.exists_by_induction {N : ℕ} {α : Type*} (P : index_type N → α → Prop)
+  (Q : index_type N → α → α → Prop)
+  (h₀ : ∃ a, P 0 a)
+  (ih : ∀ n a, P n a → ¬ is_max n → ∃ a', P n.succ a' ∧ Q n a a') :
+  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ (¬ is_max n → Q n (f n) (f n.succ)) :=
+begin
+  revert P Q h₀ ih,
+  cases N,
+  { intros P Q h₀ ih,
+    rcases exists_by_induction' P Q h₀ _ with ⟨f, hf⟩,
+    exact ⟨f, λ n, ⟨(hf n).1, λ _, (hf n).2⟩⟩,
+    simpa using ih },
+  { --dsimp only [index_type, index_type.succ],
+    intros P Q h₀ ih,
+    choose f₀ hf₀ using h₀,
+    choose! F hF hF' using ih,
+    let G := λ i : fin N, F i.cast_succ,
+    let f : fin (N + 1) → α := λ i, fin.induction f₀ G i,
+    have key : ∀ i, P i (f i),
+    { refine λ i, fin.induction hf₀ _ i,
+      intros i hi,
+      simp_rw [f, induction_succ, ← index_type.succ_cast_succ],
+      apply hF _ _ hi,
+      exact not_is_max_of_lt (cast_succ_lt_succ i) },
+    refine ⟨f, λ i, ⟨key i, λ hi, _⟩⟩,
+    { convert hF' _ _ (key i) hi,
+      rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩,
+      simp_rw [index_type.succ_cast_succ, f, induction_succ] } }
+end

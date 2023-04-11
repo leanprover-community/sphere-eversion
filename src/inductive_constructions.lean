@@ -1,6 +1,5 @@
 import to_mathlib.data.set.prod
 import to_mathlib.data.set.lattice
-import to_mathlib.data.nat.basic
 import to_mathlib.topology.constructions
 import to_mathlib.topology.germ
 import to_mathlib.topology.misc
@@ -42,123 +41,6 @@ get rid of the `indexing` abstraction and do everything in terms of `index_type`
 
 
 section inductive_construction
-open order fin
-
-lemma index_type.tendsto_coe_at_top (N : ℕ) : tendsto (coe : ℕ → index_type N) at_top at_top :=
-tendsto_at_top_at_top.mpr
-  (λ i, ⟨indexing.to_nat i, λ n hn,(indexing.from_to i) ▸ indexing.coe_mono hn⟩)
-
-def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
-
-lemma index_type.zero_le {N} (i : index_type N) : 0 ≤ i :=
-by { cases N; dsimp at *; simp }
-
-instance {N : ℕ} : succ_order (index_type N) :=
-by { cases N, { exact nat.succ_order }, exact fin.succ_order }
-
-def index_type.succ {N : ℕ} : index_type N → index_type N :=
-order.succ
-
-lemma index_type.succ_cast_succ {N} (i : fin N) : @index_type.succ (N+1) i.cast_succ = i.succ :=
-begin
-  refine (succ_apply _).trans _,
-  rw [if_pos (cast_succ_lt_last i), fin.coe_succ_eq_succ, fin.succ_inj],
-end
-
-lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ is_max i :=
-order.succ_eq_iff_is_max
-
-lemma index_type.lt_succ  {N : ℕ} (i : index_type N) (h : ¬ is_max i) : i < i.succ :=
-order.lt_succ_of_not_is_max h
-
-lemma index_type.le_max {N : ℕ} {i : index_type N} (h : is_max i) (j) : j ≤ i :=
-h.is_top j
-
-lemma index_type.le_of_lt_succ  {N : ℕ} (i : index_type N) {j : index_type N} (h : i < j.succ) :
-  i ≤ j :=
-le_of_lt_succ h
-
-lemma index_type.exists_cast_succ_eq {N : ℕ} (i : fin (N+1)) (hi : ¬ is_max i) :
-  ∃ i' : fin N, i'.cast_succ = i :=
-begin
-  revert hi,
-  refine fin.last_cases _ _ i,
-  { intro hi, apply hi.elim, intros i hi, exact le_last i },
-  intros i hi,
-  exact ⟨_, rfl⟩
-end
-
-lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬ is_max i) :
-  i.succ.to_nat = i.to_nat + 1 :=
-begin
-  cases N, { refl },
-  rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩,
-  rw [index_type.succ_cast_succ],
-  exact coe_succ i
-end
-
-@[simp] lemma index_type.not_is_max (n : index_type 0) : ¬ is_max n :=
-not_is_max_of_lt $ nat.lt_succ_self n
-
-@[elab_as_eliminator]
-lemma index_type.induction_from {N : ℕ} {P : index_type N → Prop} {i₀ : index_type N} (h₀ : P i₀)
-  (ih : ∀ i ≥ i₀, ¬ is_max i → P i → P i.succ) : ∀ i ≥ i₀, P i :=
-begin
-  cases N,
-  { intros i h,
-    induction h with i hi₀i hi ih,
-    { exact h₀ },
-    exact ih i hi₀i (index_type.not_is_max i) hi },
-  intros i,
-  refine fin.induction _ _ i,
-  { intro hi, convert h₀, exact (hi.le.antisymm $ fin.zero_le _).symm },
-  { intros i hi hi₀i,
-    rcases hi₀i.le.eq_or_lt with rfl|hi₀i,
-    { exact h₀ },
-    rw [← index_type.succ_cast_succ],
-    refine ih _ _ _ _,
-    { rwa [ge_iff_le, le_cast_succ_iff] },
-    { exact not_is_max_of_lt (cast_succ_lt_succ i) },
-    { apply hi, rwa [ge_iff_le, le_cast_succ_iff] }
-    }
-end
-
-@[elab_as_eliminator]
-lemma index_type.induction {N : ℕ} {P : index_type N → Prop} (h₀ : P 0)
-  (ih : ∀ i, ¬ is_max i → P i → P i.succ) : ∀ i, P i :=
-λ i, index_type.induction_from h₀ (λ i _, ih i) i i.zero_le
-
--- We make `P` and `Q` explicit to help the elaborator when applying the lemma
--- (elab_as_eliminator isn't enough).
-lemma index_type.exists_by_induction {N : ℕ} {α : Type*} (P : index_type N → α → Prop)
-  (Q : index_type N → α → α → Prop)
-  (h₀ : ∃ a, P 0 a)
-  (ih : ∀ n a, P n a → ¬ is_max n → ∃ a', P n.succ a' ∧ Q n a a') :
-  ∃ f : index_type N → α, ∀ n, P n (f n) ∧ (¬ is_max n → Q n (f n) (f n.succ)) :=
-begin
-  revert P Q h₀ ih,
-  cases N,
-  { intros P Q h₀ ih,
-    rcases exists_by_induction' P Q h₀ _ with ⟨f, hf⟩,
-    exact ⟨f, λ n, ⟨(hf n).1, λ _, (hf n).2⟩⟩,
-    simpa using ih },
-  { --dsimp only [index_type, index_type.succ],
-    intros P Q h₀ ih,
-    choose f₀ hf₀ using h₀,
-    choose! F hF hF' using ih,
-    let G := λ i : fin N, F i.cast_succ,
-    let f : fin (N + 1) → α := λ i, fin.induction f₀ G i,
-    have key : ∀ i, P i (f i),
-    { refine λ i, fin.induction hf₀ _ i,
-      intros i hi,
-      simp_rw [f, induction_succ, ← index_type.succ_cast_succ],
-      apply hF _ _ hi,
-      exact not_is_max_of_lt (cast_succ_lt_succ i) },
-    refine ⟨f, λ i, ⟨key i, λ hi, _⟩⟩,
-    { convert hF' _ _ (key i) hi,
-      rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩,
-      simp_rw [index_type.succ_cast_succ, f, induction_succ] } }
-end
 
 lemma locally_finite.exists_forall_eventually_of_index_type
   {α X : Type*} [topological_space X] {N : ℕ} {f : index_type N → X → α}
@@ -518,7 +400,7 @@ begin
         { rw hUF' _ x hx,
           push_neg at ht,
           rw h₂F x _ ht.le } } } },
-  rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left $ λ i, Ici (T $ indexing.to_nat i))
+  rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left $ λ i, Ici (T i.to_nat))
     ⟨λ p, f₀ p.2, hPP₀, λ x t ht, rfl⟩ ind' with ⟨F, hF,h'F ⟩, clear ind ind' hPP₀,
   refine ⟨curry F, _, _, _, _⟩,
   { exact funext (λ x, (hF (0, x)).2.1 rfl) },
