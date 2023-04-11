@@ -74,17 +74,25 @@ order.lt_succ_of_not_is_max h
 lemma index_type.le_max {N : ℕ} {i : index_type N} (h : is_max i) (j) : j ≤ i :=
 h.is_top j
 
-lemma index_type.le_of_lt_succ  {N : ℕ} (i : index_type N) {j : index_type N} (h : i < j.succ) : i ≤ j :=
+lemma index_type.le_of_lt_succ  {N : ℕ} (i : index_type N) {j : index_type N} (h : i < j.succ) :
+  i ≤ j :=
 le_of_lt_succ h
 
-lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬is_max i) :
-  i.succ.to_nat = i.to_nat + 1 :=
+lemma index_type.exists_cast_succ_eq {N : ℕ} (i : fin (N+1)) (hi : ¬ is_max i) :
+  ∃ i' : fin N, i'.cast_succ = i :=
 begin
-  cases N, { refl },
   revert hi,
   refine fin.last_cases _ _ i,
   { intro hi, apply hi.elim, intros i hi, exact le_last i },
   intros i hi,
+  exact ⟨_, rfl⟩
+end
+
+lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬ is_max i) :
+  i.succ.to_nat = i.to_nat + 1 :=
+begin
+  cases N, { refl },
+  rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩,
   rw [index_type.succ_cast_succ],
   exact coe_succ i
 end
@@ -138,7 +146,18 @@ begin
     intros P Q h₀ ih,
     choose f₀ hf₀ using h₀,
     choose! F hF hF' using ih,
-    sorry }
+    let G := λ i : fin N, F i.cast_succ,
+    let f : fin (N + 1) → α := λ i, fin.induction f₀ G i,
+    have key : ∀ i, P i (f i),
+    { refine λ i, fin.induction hf₀ _ i,
+      intros i hi,
+      simp_rw [f, induction_succ, ← index_type.succ_cast_succ],
+      apply hF _ _ hi,
+      exact not_is_max_of_lt (cast_succ_lt_succ i) },
+    refine ⟨f, λ i, ⟨key i, λ hi, _⟩⟩,
+    { convert hF' _ _ (key i) hi,
+      rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩,
+      simp_rw [index_type.succ_cast_succ, f, induction_succ] } }
 end
 
 lemma locally_finite.exists_forall_eventually_of_index_type
