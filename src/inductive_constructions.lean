@@ -9,6 +9,7 @@ import to_mathlib.order.filter.basic
 import indexing
 import notations
 import interactive_expr
+import tactic.induction
 
 set_option trace.filter_inst_type true
 
@@ -53,6 +54,9 @@ def index_type.succ : Π {N : ℕ}, index_type N → index_type N
 | 0 i := nat.succ i
 | (n + 1) i := @fin.last_cases n (λ _, index_type $n+1) (fin.last n) (λ k, k.succ) i
 
+lemma succ_eq_succ {N} (i : fin N) : fin.succ i = @index_type.succ (N+1) i.cast_succ :=
+sorry
+
 instance {N : ℕ} : succ_order (index_type N) :=
 succ_order.of_core index_type.succ sorry sorry
 
@@ -73,14 +77,29 @@ lemma index_type.to_nat_succ {N : ℕ} (i : index_type N) (hi : ¬is_max i) :
 sorry
 
 @[simp] lemma index_type.not_is_max (n : index_type 0) : ¬ is_max n :=
-λ h, (nat.lt_succ_self n).not_le $ h.is_top _
+not_is_max_of_lt $ nat.lt_succ_self n
 
 @[elab_as_eliminator]
 lemma index_type.induction_from {N : ℕ} {P : index_type N → Prop} {i₀ : index_type N} (h₀ : P i₀)
   (ih : ∀ i ≥ i₀, ¬ is_max i → P i → P i.succ) : ∀ i ≥ i₀, P i :=
 begin
-
-  sorry
+  cases N,
+  { intros i h,
+    induction h with i hi₀i hi ih,
+    { exact h₀ },
+    exact ih i hi₀i (index_type.not_is_max i) hi },
+  intros i,
+  refine fin.induction _ _ i,
+  { intro hi, convert h₀, exact (hi.le.antisymm $ fin.zero_le _).symm },
+  { intros i hi hi₀i,
+    rcases hi₀i.le.eq_or_lt with rfl|hi₀i,
+    { exact h₀ },
+    rw [succ_eq_succ],
+    refine ih _ _ _ _,
+    { rwa [ge_iff_le, fin.le_cast_succ_iff] },
+    { exact not_is_max_of_lt (fin.cast_succ_lt_succ i) },
+    { apply hi, rwa [ge_iff_le, fin.le_cast_succ_iff] }
+    }
 end
 
 -- We make `P` and `Q` explicit to help the elaborator when applying the lemma
