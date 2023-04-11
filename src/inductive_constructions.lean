@@ -50,14 +50,20 @@ tendsto_at_top_at_top.mpr
 
 def index_type.to_nat {N} (i : index_type N) : ℕ := indexing.to_nat i
 
+lemma index_type.zero_le {N} (i : index_type N) : 0 ≤ i :=
+by { cases N; dsimp at *; simp }
+
 instance {N : ℕ} : succ_order (index_type N) :=
 by { cases N, { exact nat.succ_order }, exact fin.succ_order }
 
 def index_type.succ {N : ℕ} : index_type N → index_type N :=
 order.succ
 
-lemma succ_eq_succ {N} (i : fin N) : @index_type.succ (N+1) i.cast_succ = i.succ :=
-sorry
+lemma index_type.succ_cast_succ {N} (i : fin N) : @index_type.succ (N+1) i.cast_succ = i.succ :=
+begin
+  refine (succ_apply _).trans _,
+  rw [if_pos (cast_succ_lt_last i), fin.coe_succ_eq_succ, fin.succ_inj],
+end
 
 lemma index_type.succ_eq {N} (i : index_type N) : i.succ = i ↔ is_max i :=
 order.succ_eq_iff_is_max
@@ -79,7 +85,7 @@ begin
   refine fin.last_cases _ _ i,
   { intro hi, apply hi.elim, intros i hi, exact le_last i },
   intros i hi,
-  rw [succ_eq_succ],
+  rw [index_type.succ_cast_succ],
   exact coe_succ i
 end
 
@@ -101,13 +107,18 @@ begin
   { intros i hi hi₀i,
     rcases hi₀i.le.eq_or_lt with rfl|hi₀i,
     { exact h₀ },
-    rw [← succ_eq_succ],
+    rw [← index_type.succ_cast_succ],
     refine ih _ _ _ _,
     { rwa [ge_iff_le, le_cast_succ_iff] },
     { exact not_is_max_of_lt (cast_succ_lt_succ i) },
     { apply hi, rwa [ge_iff_le, le_cast_succ_iff] }
     }
 end
+
+@[elab_as_eliminator]
+lemma index_type.induction {N : ℕ} {P : index_type N → Prop} (h₀ : P 0)
+  (ih : ∀ i, ¬ is_max i → P i → P i.succ) : ∀ i, P i :=
+λ i, index_type.induction_from h₀ (λ i _, ih i) i i.zero_le
 
 -- We make `P` and `Q` explicit to help the elaborator when applying the lemma
 -- (elab_as_eliminator isn't enough).
