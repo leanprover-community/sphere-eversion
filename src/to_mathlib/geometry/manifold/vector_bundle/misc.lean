@@ -323,7 +323,8 @@ local notation `LE₁E₂` := total_space FE₁E₂
 local notation `PLE₁E₂` := bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂
 
 
-/- This proof is slow, especially the `simp only` and the elaboration of `h₂`. -/
+/- This proof is slow, especially the `simp only` and the elaboration of `h₂`.
+  It needs a timeout >100k to compile -/
 lemma smooth_on_continuous_linear_map_coord_change
   [smooth_manifold_with_corners IB B]
   [smooth_vector_bundle F₁ E₁ IB] [smooth_vector_bundle F₂ E₂ IB]
@@ -405,49 +406,5 @@ instance smooth_vector_bundle.continuous_linear_map :
 PLE₁E₂ .to_smooth_vector_bundle IB
 
 end general
-
-namespace vector_bundle_core
-
-variables {ι₁ ι₂ : Type*} (Z₁ : vector_bundle_core 𝕜 B F₁ ι₁) (Z₂ : vector_bundle_core 𝕜 B F₂ ι₂)
-
-local notation `FZ₁Z₂` := bundle.continuous_linear_map σ F₁ Z₁.fiber F₂ Z₂.fiber
-local notation `LZ₁Z₂` := bundle.total_space FZ₁Z₂
-
-def foo1 (b : B) :
-  topological_space (continuous_linear_map σ F₁ Z₁.fiber F₂ Z₂.fiber b) :=
-by apply_instance
-local attribute [instance] foo1 -- probably needed because of the type-class pi bug
-
-lemma hom_trivialization_at (x₀ x : LZ₁Z₂)
-  (h1x : x.proj ∈ Z₁.base_set (Z₁.index_at x₀.proj))
-  (h2x : x.proj ∈ Z₂.base_set (Z₂.index_at x₀.proj)) :
-  (trivialization_at (F₁ →L[𝕜] F₂) FZ₁Z₂ x₀.proj x).2 =
-  in_coordinates_core' Z₁ Z₂ x₀.proj x.proj x₀.proj x.proj x.2 :=
-begin
-  rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply,
-    ← in_coordinates_core'_eq],
-  exacts [rfl, h1x, h2x]
-end
-
--- todo: refactor
-lemma smooth_at_hom_bundle_core {f : M → LZ₁Z₂} {x₀ : M} :
-  smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
-  smooth_at IM IB (λ x, (f x).1) x₀ ∧
-  smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
-  (λ x, in_coordinates_core' Z₁ Z₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀  :=
-begin
-  simp_rw [smooth_at, cont_mdiff_at_total_space, and.congr_right_iff],
-  intro hf,
-  refine filter.eventually_eq.cont_mdiff_at_iff _,
-  have h1 := hf.continuous_at.preimage_mem_nhds ((trivialization.open_base_set _).mem_nhds
-    (mem_base_set_trivialization_at F₁ Z₁.fiber (f x₀).proj)),
-  have h2 := hf.continuous_at.preimage_mem_nhds ((trivialization.open_base_set _).mem_nhds
-    (mem_base_set_trivialization_at F₂ Z₂.fiber (f x₀).proj)),
-  filter_upwards [h1, h2],
-  intros x h1x h2x,
-  exact hom_trivialization_at Z₁ Z₂ (f x₀) (f x) h1x h2x
-end
-
-end vector_bundle_core
 
 end hom

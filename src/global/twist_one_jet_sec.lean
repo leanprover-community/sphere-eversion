@@ -42,18 +42,17 @@ lemma smooth_at_one_jet_eucl_bundle' {x₀ : N} :
 begin
   convert smooth_at_hom_bundle I,
   ext1 x,
-  dsimp only,
   simp_rw [in_coordinates', trivial.trivialization_at,
     trivial.trivialization_continuous_linear_map_at],
-  exact (continuous_linear_map.id_comp _).symm
+  dsimp only [bundle.trivial],
+  simp_rw [continuous_linear_map.id_comp]
 end
 
 lemma smooth_at_one_jet_eucl_bundle {x₀ : N} :
   smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
   smooth_at J I (λ x, (f x).1) x₀ ∧
   smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from (f x).2 ∘L
-    (tangent_bundle_core I M).coord_change (achart H (f x₀).proj) (achart H (f x).proj) (f x).proj)
-    x₀ :=
+    (trivialization_at E (tangent_space I) (f x₀).proj).symmL 𝕜 (f x).proj) x₀ :=
 begin
   rw [smooth_at_hom_bundle I, and.congr_right_iff],
   intros hf,
@@ -64,9 +63,8 @@ begin
   filter_upwards [this] with x hx,
   simp_rw [in_coordinates', trivial.trivialization_at,
     trivial.trivialization_continuous_linear_map_at, ← continuous_linear_map.comp_assoc],
-  congr' 1,
-  { apply continuous_linear_map.id_comp },
-  exact (tangent_bundle_core I M).local_triv_symmL hx
+  dsimp only [bundle.trivial],
+  simp_rw [continuous_linear_map.id_comp]
 end
 
 lemma smooth_at.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
@@ -79,8 +77,7 @@ smooth_at_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
 lemma smooth_at.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
   (hf : smooth_at J I f x₀)
   (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
-    ϕ x ∘L (tangent_bundle_core I M).coord_change (achart H (f x₀)) (achart H (f x))
-    (f x)) x₀) :
+    ϕ x ∘L (trivialization_at E (tangent_space I) (f x₀)).symmL 𝕜 (f x)) x₀) :
   smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
 smooth_at_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
@@ -106,7 +103,6 @@ s.is_sec' p
   smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) s :=
 s.smooth'
 
-
 end sections
 
 section proj
@@ -129,11 +125,13 @@ lemma smooth_proj :
 begin
   intro x₀,
   have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smooth_at_id,
-  simp_rw [smooth_at_one_jet_bundle, in_coordinates_core, in_coordinates_core',
+  simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
     tangent_bundle_core_index_at,
-    tangent_bundle.coord_change_at_self,
-    continuous_linear_map.one_def, continuous_linear_map.id_comp] at this,
-  exact this.1.one_jet_eucl_bundle_mk this.2.2
+    tangent_bundle.continuous_linear_map_at_model_space,
+    continuous_linear_map.one_def] at this,
+  dsimp only [tangent_space] at this,
+  simp_rw [continuous_linear_map.id_comp] at this,
+  refine this.1.one_jet_eucl_bundle_mk this.2.2
 end
 
 variables {I M V}
@@ -164,8 +162,8 @@ begin
   have : smooth_at ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ prod.fst x₀ := smooth_at_fst,
   rw [smooth_at_one_jet_eucl_bundle] at this,
   refine this.1.one_jet_bundle_mk smooth_at_snd _,
-  simp_rw [in_coordinates_core, in_coordinates_core', tangent_bundle_core_index_at,
-    tangent_bundle.coord_change_at_self, continuous_linear_map.one_def,
+  dsimp only [in_coordinates, in_coordinates', tangent_space],
+  simp_rw [tangent_bundle.continuous_linear_map_at_model_space, continuous_linear_map.one_def,
     continuous_linear_map.id_comp],
   exact this.2
 end

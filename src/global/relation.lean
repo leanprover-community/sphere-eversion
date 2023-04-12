@@ -564,8 +564,10 @@ def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
       refine filter.eventually_of_mem ((φ.is_open_range_transfer ψ).mem_nhds (mem_range_self _)) _,
       rw [φ.range_transfer ψ],
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩,
-      simp_rw [in_coordinates_core, φ.transfer_fst_fst, φ.left_inv],
-      refl },
+      simp_rw [in_coordinates, φ.fderiv_coe],
+      simp_rw [φ.transfer_fst_fst, φ.left_inv],
+      congr' 1,
+      simp_rw [φ.left_inv] },
     exact mem_range_self _,
   end }
 
