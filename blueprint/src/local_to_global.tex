@@ -1,0 +1,126 @@
+\chapter{From local to global}%
+\label{cha:from_local_to_global}
+
+In this chapter, we gather some topological preliminaries allowing to build
+global objects from local ones. This is usually not discussed in informal expositions
+where such arguments are either implicit or mixed with more specific arguments.
+
+We first need to discuss how to build a function having everywhere some local
+properties from a sequence of functions having those properties on bigger and
+bigger parts of the source space. We actually want to also accomodate finite sequences
+so we start with a definition of the source of our sequences.
+
+\begin{definition}
+  \label{def:index_type}\lean{index_type}\leanok
+  For every natural number $N$ we set
+  \[
+    \IT{N} =
+    \begin{cases}
+      ℕ \text{ if $N = 0$}\\
+      \{0, \dots, N - 1\} \text{otherwise}
+    \end{cases}
+  \]
+\end{definition}
+
+On each $\IT{N}$ we use the obvious linear ordering. In particular there is no
+maximal elementwhen $N = 0$ and $N-1$ is maximal if $N$ is positive.
+The successor function $S \co \IT{N} → \IT{N}$ is the function sending $n$ to
+$n+1$ unless $n$ is maximal, in which case $S(n) = n$.
+
+Our first lemma gives a criterion ensuring that a sequence of functions is locally
+ultimately constant hence has a limit that locally ultimately agrees with the
+elements of the sequence.
+Remember that a family of sets $V_i$ in a topological space $X$ is locally finite if
+every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
+
+\begin{lemma}
+  \label{lem:exists_forall_eventually_of_index_type}
+  \lean{locally_finite.exists_forall_eventually_of_index_type}
+  \leanok
+  Let $X$ be a topological space and let $Y$ be any set. Let
+  $f$ be a sequence of functions from $X$ to $Y$ indexed by $\IT{N}$
+  for some $N$. Let $V$ be a family of subsets of $X$ indexed by $\IT{N}$
+  such that for every non-maximal $n$, $f_{S(n)}$ coincides with $f_n$ outside
+  $V_{S(n)}$. If $V$ is locally finite then there exists $F \co X → Y$ such
+  that, for every $x$ and every sufficiently large $n$,
+  $F$ coincides with $f_n$ near $x$.
+\end{lemma}
+
+\begin{proof}\leanok
+  The assumption that $V$ is locally finite gives, for every $x$ in $X$, a
+  subset $U_x$ of $X$ such that $U_x$ is a neighborhood of $x$ and intersects
+  only finite many $V_n$'s. In particular we can find an upper bound $n₀(x)$ of the set
+  of indices $i$ in $\IT{N}$ such that $V_n$ intersects $U_X$.
+  Since, for every non-maximal $n$, $f_{S(n)}$ coincides with $f_n$ outside
+  $V_{S(n)}$, we get by induction that, for all $n ≥ n₀(x)$, $f_n$ coincides
+  with $f_{n₀(x)}$ on $U_x$.
+
+  We now define $F$ as $x ↦ f_{n₀(x)}(x)$. We claim that, for every $x$,
+  $F$ coincides with $f_n$ on $U_x$ as soon as $n$ is at least $n₀(x)$.
+  Indeed let us fix $x$ and $n ≥ n₀(x)$ and $y ∈ U_x$. We have
+  \begin{align*}
+    f_n(y) &= f_{n₀(x)}(y) \text{ since $n ≥ n₀(x)$ and $y ∈ U_x$}\\
+           &= f_{\max(n₀(x), n₀(y))}(y) \text{ since $\max(n₀(x), n₀(y)) ≥ n₀(x)$ and $y ∈ U_x$}\\
+           &= f_{n₀(y)}(y) \text{ since $\max(n₀(x), n₀(y)) ≥ n₀(y)$ and $y ∈ U_y$}
+           &= F(y) \text{ by definition of $F$}.
+  \end{align*}
+\end{proof}
+
+In the preceding lemma, the limit function $F$ inherits all local properties of
+the elements of the sequence. In order to make this precise, we need the
+language of germs of functions. One can defines germs with respects to any filter but
+we will need only the case of neighborhood filters~: two functions $f$ and $g$
+define the same germ at some point $x$ if they coincide near $x$.
+
+\begin{definition}\label{def:germ}\lean{filter.germ}\leanok
+  Let $X$ be a topological space, $x$ a point in $X$ and $Y$ a set. A germ of function
+  from $X$ to $Y$ at $x$ is an element of the quotient $(X → Y)_x$ of the set of functions
+  from $X$ to $Y$ by the relation $f ∼ g$ if $f$ and $g$ coincide near $x$. The image
+  of a function $f$ in this quotient will be denoted by $[f]_x$.
+
+  A local predicate on functions from $X$ to $Y$ is a family of predicates on the
+  germ set $(X → Y)_x$ for every $x$ in $X$.
+\end{definition}
+
+For instance if $Y$ is also equipped with a topology then continuity is
+(equivalent to) a local predicate on functions from $X$ to $Y$ since a function
+is continuous if and only if it is continuous at every point $x$ and this
+condition only depends on the germ of the function at $x$.
+
+\begin{lemma}
+  \uses{def:germ}\lean{inductive_construction}\leanok
+  Let $X$ be a topological space and $Y$ be any set. Let $U$ be a locally
+  finite family of subsets of $X$ indexed by some $\IT{N}$. Let $P₀$ be a local
+  predicate on functions from $X$ to $Y$, let $i ↦ P₁^i$ be a family of such
+  predicates, and let $i ↦ P₂^i$ be a family of predicates on functions from $X$ to
+  $Y$, both families being indexed by $\IT{N}$. Assume there exists $f₀ \co X → Y$
+  such $P₀ [f₀]_x$ holds for every $x$ and $P₂^0 f₀$ holds. Assume that for
+  every $i$ in $\IT{N}$ and every $f \co X → Y$ such that $P₂^i f$ and
+  $P₀ [f]_x$ and $P₁^j [f]_x$ hold for every $x$ and for every $j < i$, there
+  exists a function $f' \xo X → Y$ such that  $P₀ [f]_x$ and $P₁^j [f]_x$ hold
+  for every $x$ and for every $j ≤ i$ and $P₂^{S(i)} f$ holds unless $i$ is maximal and
+  $f'$ coincides with $f$ outside $U_i$.
+  Then there exists $f \co X → Y$ which everywhere satisfies $P₀$ and all $P₁^i$'s.
+\end{lemma}
+
+\begin{proof}
+  \leanok\uses{lem:exists_forall_eventually_of_index_type}
+  The main assumption from the lemma allows to build by induction a sequence
+  $f$ of functions from $X$ to $Y$ indexed by $\IT{N}$ such that, for every $n ∈ \IT{N}$,
+  \begin{itemize}
+    \item $f_n$ satisfies $P₀$ everywhere
+    \item for every $i ≤ n$, $f_n$ satisfies $P₁^i$ everywhere.
+    \item $f_{S(n)}$ satisfies $P₂$ unless $n$ is maximal.
+    \item $f_{S(n)}$ coincides with $f_n$ outside $U_{S(n)}$.
+  \end{itemize}
+  Note that the first term of this sequence isn't $f₀$ but the function obtained by
+  applying the induction assumption to $f₀$.
+
+  The preceding lemma applied to this sequence gives a map $f$ which locally
+  coincides with every element which is far enough in the sequence.
+  Let $x$ be a point in $X$. Let $n$ be large enough to ensure $f$ coincides with
+  $f_n$ near $x$. By definition this means $[f]_x = [f_n]_x$ and we know $P₀ [f_n]_x$
+  hence we get $P₀ [f]_x$. Now fix also $n$ in $\IT{N}$. Let $n'$ be large
+  enough to be larger than $n$ and such that $[f]_x = [f_{n'}]_x$. Since $n' ≥ n$ we have
+  $P₁^n [f_{n'}]_x$ hence $P₁^n [f]_x$.
+\end{proof}
