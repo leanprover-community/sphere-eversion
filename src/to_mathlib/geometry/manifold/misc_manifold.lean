@@ -483,7 +483,9 @@ begin
     filter_upwards [this] with x hx,
     swap, exact cont_mdiff_within_at (J.prod I) I' ↑1 (uncurry f) (prod.fst ⁻¹' s),
     refine hx.comp (g x) (cont_mdiff_within_at_const.prod_mk cont_mdiff_within_at_id) _,
-    rw [maps_to', image_image], refl', sorry,
+    simp_rw [maps_to', ← image_subset_iff, image_image, id],
+    sorry, --false
+    sorry
     },
   have h2g : g ⁻¹' (ext_chart_at I (g x₀)).source ∈ 𝓝[insert x₀ s] x₀ :=
     hg.continuous_within_at.insert_self.preimage_mem_nhds_within
@@ -553,7 +555,9 @@ begin
     refine eventually_of_mem (inter_mem _ _) this,
     { exact ext_chart_at_preimage_mem_nhds' _ _ hx₂ (ext_chart_at_source_mem_nhds I (g x₂)) },
     refine ext_chart_at_preimage_mem_nhds' _ _ hx₂ _,
-    exact h2x₂.continuous_within_at.preimage_mem_nhds_within (ext_chart_at_source_mem_nhds _ _) },
+    sorry
+    -- exact h2x₂.continuous_within_at.preimage_mem_nhds_within (ext_chart_at_source_mem_nhds _ _)
+     },
   refine this.congr_of_eventually_eq_insert _,
   filter_upwards [h2g, h2f, h4f],
   intros x₂ hx₂ h2x₂ h3x₂,
@@ -561,20 +565,21 @@ begin
   rw [in_coordinates_core_eq],
   swap, { rwa [ext_chart_at_source] at hx₂ },
   swap, { rwa [ext_chart_at_source] at h3x₂ },
-  rw [(h2x₂.mdifferentiable_at le_rfl).mfderiv],
-  have hI := (cont_diff_within_at_ext_coord_change I (g x₂) (g x₀) $
-    local_equiv.mem_symm_trans_source _ hx₂ $ mem_ext_chart_source I (g x₂))
-    .differentiable_within_at le_top,
-  have hI' := (cont_diff_within_at_ext_coord_change I' (f x₀ (g x₀)) (f x₂ (g x₂)) $
-    local_equiv.mem_symm_trans_source _
-    (mem_ext_chart_source I' (f x₂ (g x₂))) h3x₂).differentiable_within_at le_top,
-  have h3f := (h2x₂.mdifferentiable_at le_rfl).2,
-  refine fderiv_within.comp₃ _ hI' h3f hI _ _ _ _ (I.unique_diff _ $ mem_range_self _),
-  { exact λ x _, mem_range_self _ },
-  { exact λ x _, mem_range_self _ },
-  { simp_rw [written_in_ext_chart_at, function.comp_apply,
-      (ext_chart_at I (g x₂)).left_inv (mem_ext_chart_source I (g x₂))] },
-  { simp_rw [function.comp_apply, (ext_chart_at I (g x₀)).left_inv hx₂] }
+  sorry,
+  -- rw [(h2x₂.mdifferentiable_at le_rfl).mfderiv],
+  -- have hI := (cont_diff_within_at_ext_coord_change I (g x₂) (g x₀) $
+  --   local_equiv.mem_symm_trans_source _ hx₂ $ mem_ext_chart_source I (g x₂))
+  --   .differentiable_within_at le_top,
+  -- have hI' := (cont_diff_within_at_ext_coord_change I' (f x₀ (g x₀)) (f x₂ (g x₂)) $
+  --   local_equiv.mem_symm_trans_source _
+  --   (mem_ext_chart_source I' (f x₂ (g x₂))) h3x₂).differentiable_within_at le_top,
+  -- have h3f := (h2x₂.mdifferentiable_at le_rfl).2,
+  -- refine fderiv_within.comp₃ _ hI' h3f hI _ _ _ _ (I.unique_diff _ $ mem_range_self _),
+  -- { exact λ x _, mem_range_self _ },
+  -- { exact λ x _, mem_range_self _ },
+  -- { simp_rw [written_in_ext_chart_at, function.comp_apply,
+  --     (ext_chart_at I (g x₂)).left_inv (mem_ext_chart_source I (g x₂))] },
+  -- { simp_rw [function.comp_apply, (ext_chart_at I (g x₀)).left_inv hx₂] }
 end
 
  -- todo: prove from cont_mdiff_within_at.mfderiv
