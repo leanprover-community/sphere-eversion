@@ -12,7 +12,7 @@ by open sets that are diffeomorphic to open sets of vector spaces. But for us it
 slightly more convenient to work with smooth open embeddings of whole vector spaces.
 Here a smooth open embedding from a manifold $X$ to a manifold $Y$ is a smooth map
 $φ : X → Y$ which is open and for which there is some smooth $ψ : φ(X) → X$ such that
-$ψ ∘ φ = \Id$ (hence also and $φ ∘ ψ = \Id$).
+$ψ ∘ φ = \Id_X$ (hence also and $φ ∘ ψ = \Id_{φ(X)}$).
 Remember that a family of sets $V_i$ in a topological space $X$ is locally finite if
 every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
 Note that in this whole text, every manifold is paracompact by definition. In
@@ -54,7 +54,7 @@ compatible distance function on every manifold.
   \uses{def:update}
   \lean{open_smooth_embedding.dist_update}
   \leanok
-  Let $φ : P × X → M$ and $ψ : P × Y → N$ be families of smooth open embeddings.
+  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings.
   Let $K_X$ and $K_P$ be compact sets in $X$ and $P$.
   Let $f : P × M → N$ be a continuous family of
   maps such that, for each $p$, $f_p(φ(X)) ⊂ ψ(Y)$.
@@ -83,30 +83,24 @@ compatible distance function on every manifold.
   this is less than $ε(m)$.
 \end{proof}
 
-We now introduce a seemingly abstract definition, but its only goal is to treat
-uniformly the case of $ℕ$ and finite sets $\{0, \dots, n\}$ so that we can treat
-uniformly atlases of compact and non-compact manifolds.
-
-\begin{definition}
-  \label{def:convenient_indexing}
-  \leanok
-  \lean{indexing}
-  A convenient indexing set is a totally ordered set $ι$ equipped with
-  maps $π : ℕ → ι$ and $σ : ι → ℕ$ such that $π$ is order preserving and
-  $π ∘ σ = \Id$ (in particular $π$ is surjective).
-\end{definition}
-
-In the case $ι = ℕ$ we will use $π = σ = \Id$ while in the case
-$ι = \{0, \dots, n-1\}$ we use the unique order-preserving retraction as $π$ and
-the inclusion as $σ$.
+In order to handle in a uniform way compact and non-compact manifolds, we will
+index sequences by the family of sets $\IT{N}$ defined for each natural number
+$N$ by:
+  \[
+    \IT{N} =
+    \begin{cases}
+      ℕ \text{ if $N = 0$}\\
+      \{0, \dots, N - 1\} \text{otherwise}
+    \end{cases}
+  \]
 
 \begin{lemma}
   \label{lem:nice_atlas}
   \lean{nice_atlas}
   \leanok
   Let $M$ be a manifold modelled on the normed space $E$ and $(V_j)_{j ∈ J}$
-  a cover of $M$ by open sets. There exists a convenient indexing set $ι$ and
-  a family of smooth open embeddings $φ : ι × E → M$ such that
+  a cover of $M$ by open sets. There exists some natural number $N$ and
+  a family of smooth open embeddings $φ : \IT{N} × E → M$ such that
   \begin{itemize}
     \item for each $i$ there is some $j$ such that $φ_i(E) \subseteq V_j$,
     \item $i ↦ φ_i(E)$ is a locally-finite collection of sets in $M$,
@@ -162,6 +156,7 @@ the inclusion as $σ$.
   \begin{align*}
     E \simeq B_E(y_j, r) \simeq B_{n,j} \subseteq M.
   \end{align*}
+  Since $ι$ is countable, it is in bijection with some $\IT{N}$.
 \end{proof}
 
 \begin{definition}
@@ -170,11 +165,10 @@ the inclusion as $σ$.
   \lean{localisation_data}
   \leanok
   Let $f : M → N$ be a continuous map between manifolds. A localisation data
-  for $f$ is a tuple $(E, F, ι, ι', φ, ψ, j)$ where $E$ and $F$ are normed
-  vector spaces, $ι$ is a convenient indexing set, $ι'$ is a set (that is
-  morally also convenient but that will play no role), $φ : ι × E → M$
-  and $ψ : ι' × F → N$  are families of smooth open embeddings, and
-  $j : ι → ι'$ such that:
+  for $f$ is a tuple $(E, F, N, ι, φ, ψ, j)$ where $E$ and $F$ are normed
+  vector spaces, $N$ is a natural number, $ι$ is a set, $φ : \IT{N} × E → M$
+  and $ψ : ι × F → N$  are families of smooth open embeddings, and
+  $j : \IT{N} → ι$ such that:
   \begin{itemize}
     \item
       $⋃_i φ_i(B_E) = M$ where $B_E$ is the open unit ball in $E$,
@@ -236,7 +230,7 @@ which is sufficient for our purposes).
   $U$ of $x$ such that $\{i | U ∩ V_i ≠ ∅\}$ is finite. The constant function
   with value the minimum of the corresponding $δ_i$ is a solution on $U$. Since
   the condition we put on $δ$ is convex, we can glue those local solutions using
-  a partition of unity.
+  \Cref{lem:exists_cont_diff_of_convex}.
 \end{proof}
 
 \begin{lemma}
@@ -268,37 +262,6 @@ The condition $∀ m,\; d(g(m), f(m)) < ε(m)$ will be abbreviated $d(g, f) < ε
   $d(g(m), f(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
 \end{proof}
 
-\begin{lemma}
-  \label{lem:loc_ultim_const}
-  \lean{locally_finite.exists_forall_eventually_at_top_eventually_eq}
-  \leanok
-  Let $M$ a topological space and $Z$ a set.
-  Let $f : ℕ × M → Z$ be a sequence of functions. If
-  the family of sets $n ↦ \{x \;\|\; f_{n+1}(x) \ne f_n(x)\}$
-  is locally finite then there exists $U : M → \set{M}$ and
-  $n₀ : M → ℕ$ such that:
-  \[
-    ∀ x,\; U_x ∈ 𝓝_x \text{ and }
-           ∀ n ≥ n₀(x),\; \rst{f_n}{U_x} = \rst{f_{n₀(x)}}{U_x}.
-  \]
-\end{lemma}
-
-Note that the conclusion of above lemma ensures that the sequence $f_n$
-converges pointwise and the limit inherits all local properties of the $f_n$
-(such as continuity or differentiability when applicable).
-
-\begin{proof}
-  \leanok
-  The local finiteness assumption provides a function $U : M → \set{M}$
-  such that
-  \[
-    ∀ x,\; U_x ∈ 𝓝_x \text{ and }
-    \{n \;|\; \{y \;|\;f_n(y) ≠ f_{n+1}(y)\} ∩ U_x ≠ ∅\} \text{ is
-    finite}.
-  \]
-  For any $x$, we denote by $N_x$ the largest $n$ of the finite set mentioned
-  above. By construction, $n₀ \co x ↦ N_x + 1$ is suitable.
-\end{proof}
 
 \subsection{Jets spaces}
 
@@ -669,7 +632,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   % \uses{def:h-princ} % causes transitive arrow in depgraph
   \leanok
   \lean{rel_mfld.ample.satisfies_h_principle_with}
-  For any manifolds $M$ and $N$, any relation $\Rel ⊂ J^1(M, N)$ that is open
+  For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
   and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
 \end{theorem}
 
@@ -709,67 +672,65 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   \proves{thm:open_ample}
   \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
   lem:ex_localisation, lem:localisation_stability,
-  lem:smooth_updating, lem:dist_updating, lem:loc_ultim_const,
+  lem:smooth_updating, lem:dist_updating, lem:inductive_htpy_construction,
   lem:ample_iff_loc, lem:improve_htpy_loc}
   Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
-  assume there are no parameters. So we start with a single formal solution $F$
-  of $\Rel$, which is holonomic near some closed subset $A ⊂ X$.
+  assume there are no parameters. So we start with a single formal solution $F₀$
+  of $\Rel$, which is holonomic near some closed subset $A ⊂ X$. We also
+  fix a positive continuous function $δ$ on $X$ and we want to build a homotopy
+  of formal solutions starting at $F₀$ relative to $A$ with base map staying at
+  distance at most $δ$ from the base map of $F₀$ and ending at a holonomic
+  solution.
 
   We apply \cref{lem:ex_localisation}  to get some
-  localisation data $(φ \co ι → \set{X}, ψ \co ι' → \set{Y}, j)$ for
-  $\bs F : X → Y$. \Cref{lem:localisation_stability} then provides a continuous
-  function $ε : X → ℝ_{> 0}$ such that every function $g$ with $d(\bs F, g) < ε$
-  sends each $φ_i(E)$ into $ψ_{j(i)}(F)$.
-  Since $ι$ is finite or countable we can assume it is a
-  convenient indexing set (see \Cref{def:convenient_indexing}). We denote by
-  $π \co ℕ → ι$ and $σ \co ι → ℕ$ the corresponding structure maps.
+  localisation data $(φ \co \IT{N} × E → \set{X}, ψ \co ι × E' → \set{Y}, j)$ for
+  $\bs F₀ : X → Y$. \Cref{lem:localisation_stability} then provides a continuous
+  function $ε : X → ℝ_{> 0}$ such that every function $g$ with $d(\bs F₀, g) < ε$
+  sends each $φ_i(E)$ into $ψ_{j(i)}(E')$. We denote by $τ$ the positive
+  continuous function $\min(δ, ε)$.
 
-  We will construct by induction on $n$ a sequence of homotopies of sections
-  $F_n \co [0, 1] × X → J¹(X, Y)$ such that, for all $n$,
-  \begin{itemize}
-    \item
-      $F_{n, t}(x)$ coincides with $F(x)$ for all $t$ if $n = 0$ or $x$ is
-      close to $A$~;
-    \item
-      for all $t$, $d(\bs F, \bs F_{n, t}) < ε$~;
-    \item
-      if $π(n+1) = π(n)$ then $F_{n+1, t}$ coincides with $F_{n, t}$ for all $t$~;
-    \item
-      $F_{n+1, 1}$ is holonomic on $\bigcup_{i < π(n)} φ_i(\bar B_E)$~;
-    \item
-      each $F_{n+1, t}$ coincides with $F_{n, t}$ outside $φ_{π(n)}(E)$.
-  \end{itemize}
+  We then use the inductive construction of homotopies provided by
+  \Cref{lem:inductive_htpy_construction} starting with $F₀$ and
+  using the following local predicates. On maps $F$ from $X$ to $J¹(X, Y)$ we
+  use the background predicate $P₀$ asserting that $F$ is a smooth section of
+  $J¹(X, Y) → X$ that takes values in $R$, coincides with $F₀$ near $A$ and
+  satisfies $d(\bs F, \bs F₀) < τ$. The background
+  predicate for maps from $ℝ × X$ to $J¹(X, Y)$ is simply smoothness and the
+  target local predicate $P₁$ on maps from $X$ to $J¹(X, Y)$ is being holonomic.
+  We use the family of sets $U \co i ↦ φ_i(E)$ and $K \co i ↦ φ_i(\bar{B}_E)$.
 
-  The induction construction starts with setting $F_{0, t} = F$ for all $t$,
-  which has the required properties (the first two conditions are clear and the
-  other ones don't say anything about $F_0$). Now assume $F_n$ has been constructed.
-  If $π(n+1) = π(n)$ then we set $F_{n+1} = F_n$.
-  Otherwise we have $π(n+1) > π(n)$.
+  In order to check the induction assumption from
+  \Cref{lem:inductive_htpy_construction}, we fix some
+  $i$ in $\IT{N}$, and some formal solution $F$ which coincides with $F₀$ near
+  $A$ and such that $d(\bs F₀, \bs F) < τ$. We assume that $F$ is holonomic near
+  $\bigcup_{j < i} K_j$. We need to build a smooth homotopy of formal solutions
+  starting at $F$ which coincide with $F₀$ near $A$, coincide with $F$ outside
+  $U_i$, have base map at distance less than $τ$ from $\bs F₀$ and end at a
+  formal solution which is holonomic near $\bigcup_{j ≤ i} K_j$. In addition this
+  homotopy must be time-independent for time near $(-∞, 0]$ and $[1, +∞)$.
 
-  For any $t$, since $d(\bs F, \bs F_{n, t}) < ε$ by induction hypothesis,
-  $\bs F_{n, t}$ sends $φ_i(E)$ into $ψ_{j(i)}(F)$.
+  Of course this homotopy comes from the local $h$-principle we proved in
+  \Cref{lem:h_principle_open_ample_loc}. The first key observation allowing to
+  apply that lemma is that $d(\bs F, \bs F₀) < τ ≤ ε$ hence $\bs F$ sends
+  sends $φ_i(E)$ into $ψ_{j(i)}(E')$.
 
-  \Cref{def:transfer_map} then
-  turns $F_n$ into a homotopy of sections $\F$ of $J¹(E, F)$.
-  According to \Cref{lem:transfer}, each $\F_t$ is a formal solution of
-  the relation $\Rel_i$ induced by $\Rel$ in $J¹(E, F)$ via $φ_{π(n)}$ and
-  $ψ_{j(π(n))}$, $\F$ is relative to $φ_{π(n)}⁻¹(A)$
-  and $\F_1$ is holonomic near $φ_{π(n)}⁻¹(A ∪ \bigcup_{i < π(n)} φ_i(\bar B_E))$.
+  \Cref{def:transfer_map} then turns $F$ into a section $\F$ of $J¹(E, E')$.
+  According to \Cref{lem:transfer}, $\F$ is a formal solution of
+  the relation $\Rel_i$ induced by $\Rel$ in $J¹(E, E')$ via $φ_i$ and
+  $ψ_{j(i)}$, $\F$ is relative to $φ_i⁻¹(A)$
+  and $\F$ is holonomic near $φ_i⁻¹(A ∪ \bigcup_{j < i} φ_j(\bar B_E))$.
 
-  The new homotopy $F_{n+1}$ will be constructed by updating $F_n$ using some
-  homotopy $\F'$ of sections of $J¹(E, F)$. In order to ensure
-  $d(\bs F, \bs F_{n+1}) < ε$, it suffices to ensure that, for each $x$ and $t$,
-  either $\F_{n+1, t}(x) = \F_{n, t'}(x)$ for some $t'$ or
-  $d(\bs F_{n, 1}(x), \bs F_{n+1, t}(x)) < ε(x) - d(\bs F(x), \bs F_{n, 1}(x))$.
+  The homotopy $H$ will be constructed by updating $F$ using some
+  homotopy $\H$ of sections of $J¹(E, E')$ with support in the closed ball $2B_E$
+  and time independent for $t$ near $(-∞, 0] ∪ [1, +∞)$ (here by support we mean
+  the closure of the set of points where $\H_t$ differs from $\F$).
+  In order to ensure
+  $d(\bs F₀, \bs H_t) < τ$ for all $t$, it suffices to ensure that, for each
+  $x ∈ φ_i(2\bar{B}_E)$ and $t ∈ [0, 1]$,
+  $d(\bs H_t(x), \bs F(x)) < τ(x) - d(\bs F(x), \bs F₀(x))$.
   The latter will hold as soon as, for all $e$ and $t$,
-  $‖\bs \F_1(e) - \bs \F'_t(e)‖ < η$ for some positive $η$ given by
+  $‖\bs \H_t(e) - \bs \F(e)‖ < η$ for some positive $η$ given by
   \Cref{lem:dist_updating} (applied to $P = ℝ$, $M$ and $N$).
-  So \Cref{lem:improve_htpy_loc} gives a suitable $\F'$.
-
-  Now that the inductive construction is completed, we apply
-  \Cref{lem:loc_ultim_const} to learn our sequence $F_n$ is locally
-  ultimately constant, hence it converges pointwise to a smooth homotopy
-  relative to $A$ and ending at a holonomic section of $\Rel$.
 \end{proof}
 
 \begin{theorem}[Smale 1958]

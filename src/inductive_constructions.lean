@@ -60,10 +60,8 @@ begin
     replace hi₀ := mem_upper_bounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩,
     exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi) },
   refine ⟨λ x, f (i₀ x) x, λ x, _⟩,
-  change ∀ᶠ n in at_top, f n =ᶠ[𝓝 x] λ (y : X), f (i₀ y) y,
   apply (eventually_ge_at_top (i₀ x)).mono (λ n hn, _),
   apply mem_of_superset (hUx x) (λ y hy, _),
-  change f n y = f (i₀ y) y,
   calc f n y = f (i₀ x) y : key hn hy
   ... = f (max (i₀ x) (i₀ y)) y : (key (le_max_left _ _) hy).symm
   ... = f (i₀ y) y : key (le_max_right _ _) (mem_of_mem_nhds $ hUx y)
