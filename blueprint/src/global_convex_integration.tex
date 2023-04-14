@@ -272,7 +272,7 @@ fiber bundles constructions.
 \begin{definition}
 \label{def:pull_back_bundle}
 \leanok
-\lean{basic_smooth_vector_bundle_core.pullback}
+\lean{bundle.pullback}
 For every bundle $p : E → B$ and every map $f \co B' → B$,
 the pull-back bundle $f^*E → B'$ is defined by
 $f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
@@ -282,7 +282,7 @@ the obvious projection to $B'$.
 \begin{definition}
 \label{def:hom_bundle}
 \leanok
-\lean{basic_smooth_vector_bundle_core.hom}
+\lean{bundle.continuous_linear_map}
 Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
 $B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
 $E_b$ to $F_b$ for some $b$ in $B$, with the obvious projection map.
@@ -297,7 +297,7 @@ will use other tricks here. The facts that really matter are listed in
 \begin{definition}
 \label{def:one_jet_space}
 \leanok
-\lean{one_jet_bundle_core}
+\lean{one_jet_bundle}
 \uses{def:pull_back_bundle, def:hom_bundle}
 Let $M$ and $N$ be smooth manifolds. Denote by
 $p_1$ and $p_2$ the projections of $M × N$ to
