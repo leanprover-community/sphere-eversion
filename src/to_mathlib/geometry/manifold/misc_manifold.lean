@@ -68,10 +68,12 @@ section
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
 {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
-{M : Type*} [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
+{M : Type*} [topological_space M] [charted_space H M]
 {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
 
 lemma ext_chart_at_def (x : M) : ext_chart_at I x = (chart_at H x).extend I := rfl
+
+variables [smooth_manifold_with_corners I M]
 
 namespace tangent_bundle
 
@@ -111,6 +113,40 @@ end tangent_bundle
 
 end
 
+section
+
+variables {𝕜 B B' F M : Type*} {E : B → Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group F] [normed_space 𝕜 F]
+  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+
+  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
+  {HB : Type*} [topological_space HB] (IB : model_with_corners 𝕜 EB HB)
+  (E' : B → Type*) [Π x, has_zero (E' x)]
+  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
+  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
+  [topological_space M] [charted_space HM M]
+  {n : ℕ∞}
+
+variables [topological_space B] [charted_space HB B] [fiber_bundle F E]
+variables {F E IB} [smooth_manifold_with_corners IB B]
+
+
+-- temporary duplicate
+-- instance {x : M} [smooth_manifold_with_corners IM M] : normed_add_comm_group (tangent_space IM x) :=
+-- by delta_instance tangent_space
+-- instance {x : M} [smooth_manifold_with_corners IM M] : normed_space 𝕜 (tangent_space IM x) :=
+-- by delta_instance tangent_space
+
+
+-- /-- Characterization of C^n functions into a smooth vector bundle. -/
+-- lemma tangent_bundle.cont_mdiff_at_total_space (f : M → tangent_bundle IB B) (x₀ : M) :
+--   cont_mdiff_at IM IB.tangent n f x₀ ↔
+--   cont_mdiff_at IM IB n (λ x, (f x).proj) x₀ ∧
+--   cont_mdiff_at IM 𝓘(𝕜, tangent_space IB (f x₀).proj) n (λ x, (trivialization_at EB (tangent_space IB) (f x₀).proj (f x)).2) x₀ :=
+-- cont_mdiff_at_total_space f x₀
+
+end
+
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
@@ -132,9 +168,6 @@ variables {f : M → M'} {m n : ℕ∞} {s : set M} {x x' : M}
 -- declare some additional normed spaces, used for fibers of vector bundles
 {F₁ : Type*} [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
 {F₂ : Type*} [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
-
-variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
-  [smooth_manifold_with_corners J N]
 
 -- this can be useful to see where we (ab)use definitional equalities
 -- local attribute [irreducible] tangent_space
@@ -158,9 +191,12 @@ because the result is not type correct up to reducible transparancy.
 
 Declaring these instances avoids such problems. -/
 
+section
+
+variables [smooth_manifold_with_corners I M]
 instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
 instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
-
+end
 -- lemma tangent_bundle_core_coord_change_achart (x x' : M) (z : H) :
 --   (tangent_bundle_core I M).coord_change (achart H x) (achart H x') z =
 --   fderiv_within 𝕜 (ext_chart_at I x' ∘ (ext_chart_at I x).symm) (range I) (I z) :=
@@ -195,6 +231,8 @@ begin
   simp only [tangent_bundle_core_coord_change_achart, ext_chart_at, I.fderiv_within_comp_symm] with mfld_simps,
 end
 
+variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
+  [smooth_manifold_with_corners J N]
 
 lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
   (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
@@ -354,6 +392,22 @@ variables
   [∀ b, add_comm_monoid (Z₂ b)] [∀ b, module 𝕜 (Z₂ b)]
   [fiber_bundle F₂ Z₂] [vector_bundle 𝕜 F₂ Z₂] [smooth_vector_bundle F₂ Z₂ I']
 
+open_locale bundle
+
+theorem smooth_at_coord_change (e e' : trivialization F₁ (π Z)) {x : M}
+  (hx : x ∈ e.base_set ∩ e'.base_set)
+  [mem_trivialization_atlas e] [mem_trivialization_atlas e'] :
+  smooth_at I 𝓘(𝕜, F₁ →L[𝕜] F₁) (λ b : M, (e.coord_changeL 𝕜 e' b : F₁ →L[𝕜] F₁)) x :=
+(smooth_on_coord_change e e').smooth_at $ (e.open_base_set.inter e'.open_base_set).mem_nhds hx
+
+open vector_bundle_core
+theorem vector_bundle_core.smooth_at_coord_change {ι} (Z : vector_bundle_core 𝕜 M F₁ ι)
+  [Z.is_smooth I] (i j : ι) {x : M}
+  (hx : x ∈ Z.base_set i ∩ Z.base_set j) :
+  smooth_at I 𝓘(𝕜, F₁ →L[𝕜] F₁) (Z.coord_change i j) x :=
+(Z.smooth_on_coord_change I i j).smooth_at $
+  ((Z.is_open_base_set i).inter (Z.is_open_base_set j)).mem_nhds hx
+
 variables (I I' Z Z₂ F₁ F₂)
 
 /-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
@@ -447,48 +501,33 @@ variables {I I'}
 
 attribute [mfld_simps] mem_insert_iff
 
--- lemma cont_mdiff_within_at.mfderiv' {s : set N} {x₀ : N} (f : N → M → M') (g : N → M)
---   (hf : cont_mdiff_within_at (J.prod I) I' n (function.uncurry f) (prod.fst ⁻¹' s) (x₀, g x₀))
---   (hg : cont_mdiff_within_at J I m g s x₀) (hmn : m + 1 ≤ n) (hx : x₀ ∈ s) :
---   cont_mdiff_within_at J 𝓘(𝕜, E →L[𝕜] E') m
---     (in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) s x₀ :=
--- sorry
-
--- lemma cont_mdiff_within_at.mfderiv2 {s : set N} {x₀ : N} (f : N → M → M') (g : N → M)
---   (hf : cont_mdiff_within_at (J.prod I) I' n (function.uncurry f) (prod.fst ⁻¹' s) (x₀, g x₀))
---   (hg : cont_mdiff_within_at J I m g s x₀) (hmn : m + 1 ≤ n) :
---   cont_mdiff_within_at J 𝓘(𝕜, E →L[𝕜] E') m
---     (in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) s x₀ :=
--- begin
---   refine  (cont_mdiff_within_at.mfderiv' f g _ hg.insert hmn $ mem_insert x₀ s).of_insert,
---   refine hf.insert.mono _,
--- end
-
+/-- Proving this without the assumption `x₀ ∈ s` might be possible, but is highly nontrivial. -/
 lemma cont_mdiff_within_at.mfderiv {s : set N} {x₀ : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_within_at (J.prod I) I' n (function.uncurry f) (prod.fst ⁻¹' s) (x₀, g x₀))
-  (hg : cont_mdiff_within_at J I m g s x₀) (hmn : m + 1 ≤ n) :
+  (hg : cont_mdiff_within_at J I m g s x₀) (hx₀ : x₀ ∈ s) (hmn : m + 1 ≤ n) :
   cont_mdiff_within_at J 𝓘(𝕜, E →L[𝕜] E') m
     (in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) s x₀ :=
 begin
-  have h4f : (λ x, f x (g x)) ⁻¹' (ext_chart_at I' (f x₀ (g x₀))).source ∈ 𝓝[insert x₀ s] x₀,
+  have h4f : (λ x, f x (g x)) ⁻¹' (ext_chart_at I' (f x₀ (g x₀))).source ∈ 𝓝[s] x₀,
   { have : continuous_within_at (λ x, f x (g x)) s x₀,
     { apply continuous_within_at.comp (by apply hf.continuous_within_at)
         (continuous_within_at_id.prod hg.continuous_within_at),
       simp_rw [maps_to', image_subset_iff, preimage_preimage, preimage_id] },
-    exact this.insert_self.preimage_mem_nhds_within (ext_chart_at_source_mem_nhds I' (f x₀ (g x₀))) },
-  have h2f : ∀ᶠ x₂ in 𝓝[insert x₀ s] x₀, cont_mdiff_within_at I I' 1 (f x₂) (g '' s) (g x₂),
+    exact this.preimage_mem_nhds_within (ext_chart_at_source_mem_nhds I' (f x₀ (g x₀))) },
+  have h2f : ∀ᶠ x₂ in 𝓝[s] x₀, cont_mdiff_within_at I I' 1 (f x₂) (g '' s) (g x₂),
   { have := cont_mdiff_within_at_iff_cont_mdiff_within_at_nhds_within.mp
       (hf.of_le $ (self_le_add_left 1 m).trans hmn),
-    have := (continuous_within_at_id.prod hg.continuous_within_at.insert_self).eventually _,
+    have := (continuous_within_at_id.prod hg.continuous_within_at).eventually _,
     filter_upwards [this] with x hx,
     swap, exact cont_mdiff_within_at (J.prod I) I' ↑1 (uncurry f) (prod.fst ⁻¹' s),
     refine hx.comp (g x) (cont_mdiff_within_at_const.prod_mk cont_mdiff_within_at_id) _,
-    simp_rw [maps_to', ← image_subset_iff, image_image, id],
+    classical,
+    simp_rw [maps_to', image_subset_iff, preimage_preimage, id, preimage_const],
     sorry, --false
     sorry
     },
-  have h2g : g ⁻¹' (ext_chart_at I (g x₀)).source ∈ 𝓝[insert x₀ s] x₀ :=
-    hg.continuous_within_at.insert_self.preimage_mem_nhds_within
+  have h2g : g ⁻¹' (ext_chart_at I (g x₀)).source ∈ 𝓝[s] x₀ :=
+    hg.continuous_within_at.preimage_mem_nhds_within
       (ext_chart_at_source_mem_nhds I (g x₀)),
   have : cont_diff_within_at 𝕜 m (λ x', fderiv_within 𝕜
     (ext_chart_at I' (f x₀ (g x₀)) ∘ f ((ext_chart_at J x₀).symm x') ∘ (ext_chart_at I (g x₀)).symm)
@@ -500,14 +539,14 @@ begin
       (hg.2.insert.mono_of_mem _) I.unique_diff hmn _ _ _ _).mono_of_mem _,
     swap 3,
     { simp_rw [function.comp, ext_chart_at_to_inv], exact hf.2.insert },
-    { refine (ext_chart_at J x₀).symm ⁻¹' (insert x₀ s) ∩ (ext_chart_at J x₀).target ∩
+    { refine (ext_chart_at J x₀).symm ⁻¹' (s) ∩ (ext_chart_at J x₀).target ∩
         (ext_chart_at J x₀).symm ⁻¹' (g ⁻¹' (ext_chart_at I (g x₀)).source) },
     { refine mem_of_superset self_mem_nhds_within ((inter_subset_left _ _).trans $ _),
       sorry -- set theory made stupid because of an insert
       -- exact inter_subset_inter_right _ (ext_chart_at_target_subset_range J x₀)
       },
     { simp_rw [mem_inter_iff, mem_preimage, ext_chart_at_to_inv],
-      exact ⟨⟨mem_insert x₀ s, local_equiv.maps_to _ (mem_ext_chart_source J x₀)⟩,
+      exact ⟨⟨hx₀, local_equiv.maps_to _ (mem_ext_chart_source J x₀)⟩,
         mem_ext_chart_source I (g x₀)⟩ },
     { simp_rw [model_with_corners.range_prod],
       rw [inter_assoc, inter_prod],
@@ -540,6 +579,7 @@ begin
       written_in_ext_chart_at I I' (g x') (f x') ∘ ext_chart_at I (g x') ∘
       (ext_chart_at I (g x₀)).symm) (range I) (ext_chart_at I (g x₀) (g x'))) s x₀,
   { refine this.congr_of_eventually_eq_insert _,
+    rw [insert_eq_of_mem hx₀],
     filter_upwards [h2g, h2f],
     intros x₂ hx₂ h2x₂,
     have : ∀ x' ∈ (ext_chart_at I (g x₀)).symm ⁻¹' (ext_chart_at I (g x₂)).source ∩
@@ -559,6 +599,7 @@ begin
     -- exact h2x₂.continuous_within_at.preimage_mem_nhds_within (ext_chart_at_source_mem_nhds _ _)
      },
   refine this.congr_of_eventually_eq_insert _,
+  rw [insert_eq_of_mem hx₀],
   filter_upwards [h2g, h2f, h4f],
   intros x₂ hx₂ h2x₂ h3x₂,
   symmetry,
@@ -708,9 +749,62 @@ begin
   -- apply cont_mdiff_at.mfderiv''' (λ x, f) id this cont_mdiff_at_id hmn
 end
 
+lemma cont_mdiff_at.mfderiv_apply {x₀ : N'} (f : N → M → M') (g : N → M) (g₁ : N' → N)
+  (g₂ : N' → E)
+  (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (g₁ x₀, g (g₁ x₀)))
+  (hg : cont_mdiff_at J I m g (g₁ x₀))
+  (hg₁ : cont_mdiff_at J' J m g₁ x₀)
+  (hg₂ : cont_mdiff_at J' 𝓘(𝕜, E) m g₂ x₀) (hmn : m + 1 ≤ n) :
+  cont_mdiff_at J' 𝓘(𝕜, E') m
+    (λ x, in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) (g₁ x₀) (g₁ x) (g₂ x))
+    x₀ :=
+(cont_mdiff_at.comp x₀ (by apply hf.mfderiv''' f g hg hmn) hg₁).clm_apply hg₂
+
 instance has_smooth_add_self : has_smooth_add 𝓘(𝕜, F) F :=
 ⟨by { convert cont_diff_add.cont_mdiff, exact model_with_corners_self_prod.symm,
   exact charted_space_self_prod }⟩
+
+theorem cont_mdiff_at.cont_mdiff_at_tangent_map_within (x₀ : tangent_bundle I M) :
+  cont_mdiff_at I.tangent 𝓘(𝕜, E) m (λ x : tangent_bundle I M,
+    (trivialization_at E (tangent_space I) x₀.proj).continuous_linear_map_at 𝕜 x.proj x.2) x₀ :=
+begin
+  refine ((tangent_bundle_core I M).smooth_on_coord_change e e').smooth_at ((e.open_base_set.inter e'.open_base_set).mem_nhds hx)
+  refine smooth_at_coord_change.congr_of_eventually_eq _ _,
+  have h1 := (continuous_proj E (tangent_space I)).continuous_at.preimage_mem_nhds
+    (e.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
+  have h2 := (hf.continuous_at.comp (continuous_proj E (tangent_space I)).continuous_at)
+    .preimage_mem_nhds (e'.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
+  filter_upwards [h1, h2] with x hx h2x,
+end
+
+theorem cont_mdiff_at.cont_mdiff_at_tangent_map (x₀ : tangent_bundle I M)
+  (hf : cont_mdiff_at I I' n f x₀.proj) (hmn : m + 1 ≤ n) :
+  cont_mdiff_at I.tangent I'.tangent m (tangent_map I I' f) x₀ :=
+begin
+  rw cont_mdiff_at_total_space,
+  refine ⟨(hf.comp x₀ (cont_mdiff_at_proj (tangent_space I))).of_le $
+    (self_le_add_right m 1).trans hmn, _⟩,
+  dsimp only [tangent_map, total_space.proj_mk],
+  let e := trivialization_at E (tangent_space I) x₀.proj,
+  let e' := trivialization_at E' (tangent_space I') (f x₀.proj),
+  have : cont_mdiff_at I.tangent 𝓘(𝕜, E') m (λ x : tangent_bundle I M,
+    in_coordinates I I' id f (mfderiv I I' f) x₀.proj x.proj $
+    e.continuous_linear_map_at 𝕜 x.proj x.2) x₀,
+  { refine cont_mdiff_at.mfderiv_apply (λ _, f) id total_space.proj
+      (λ x, e.continuous_linear_map_at 𝕜 x.proj x.2) _ cont_mdiff_at_id (cont_mdiff_at_proj _) _
+      hmn,
+    apply cont_mdiff_at.comp (x₀.proj, x₀.proj) (by exact hf) cont_mdiff_at_snd,
+    sorry },
+  refine this.congr_of_eventually_eq _,
+  have h1 := (continuous_proj E (tangent_space I)).continuous_at.preimage_mem_nhds
+    (e.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
+  have h2 := (hf.continuous_at.comp (continuous_proj E (tangent_space I)).continuous_at)
+    .preimage_mem_nhds (e'.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
+  filter_upwards [h1, h2] with x hx h2x,
+  dsimp only [in_coordinates, in_coordinates', id_def],
+  simp_rw [continuous_linear_map.comp_apply, e.symmL_continuous_linear_map_at hx,
+    trivialization.continuous_linear_map_at_apply, e'.coe_linear_map_at_of_mem h2x],
+end
 
 end smooth_manifold_with_corners
 
