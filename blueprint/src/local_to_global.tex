@@ -3,11 +3,11 @@
 
 In this chapter, we gather some topological preliminaries allowing to build
 global objects from local ones. This is usually not discussed in informal expositions
-where such arguments are either implicit or mixed with more specific arguments.
+where such arguments are either implicit or interspersed with more specific arguments.
 
 We first need to discuss how to build a function having everywhere some local
 properties from a sequence of functions having those properties on bigger and
-bigger parts of the source space. We actually want to also accomodate finite sequences
+bigger parts of the source space. We actually want to also accommodate finite sequences
 so we start with a definition of the source of our sequences.
 
 \begin{definition}
@@ -23,15 +23,15 @@ so we start with a definition of the source of our sequences.
 \end{definition}
 
 On each $\IT{N}$ we use the obvious linear ordering. In particular there is no
-maximal elementwhen $N = 0$ and $N-1$ is maximal if $N$ is positive.
+maximal element when $N = 0$ and $N-1$ is maximal if $N$ is positive.
 The successor function $S \co \IT{N} → \IT{N}$ is the function sending $n$ to
 $n+1$ unless $n$ is maximal, in which case $S(n) = n$.
 
 Our first lemma gives a criterion ensuring that a sequence of functions is locally
 ultimately constant hence has a limit that locally ultimately agrees with the
 elements of the sequence.
-Remember that a family of sets $V_i$ in a topological space $X$ is locally finite if
-every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
+Remember that a family of sets $V_n$ in a topological space $X$ is locally finite if
+every point of $X$ has a neighborhood that intersects only finitely many $V_n$.
 
 \begin{lemma}
   \label{lem:exists_forall_eventually_of_index_type}
@@ -40,7 +40,7 @@ every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
   Let $X$ be a topological space and let $Y$ be any set. Let
   $f$ be a sequence of functions from $X$ to $Y$ indexed by $\IT{N}$
   for some $N$. Let $V$ be a family of subsets of $X$ indexed by $\IT{N}$
-  such that for every non-maximal $n$, $f_{S(n)}$ coincides with $f_n$ outside
+  such that, for every non-maximal $n$, $f_{S(n)}$ coincides with $f_n$ outside
   $V_{S(n)}$. If $V$ is locally finite then there exists $F \co X → Y$ such
   that, for every $x$ and every sufficiently large $n$,
   $F$ coincides with $f_n$ near $x$.
@@ -50,7 +50,7 @@ every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
   The assumption that $V$ is locally finite gives, for every $x$ in $X$, a
   subset $U_x$ of $X$ such that $U_x$ is a neighborhood of $x$ and intersects
   only finite many $V_n$'s. In particular we can find an upper bound $n₀(x)$ of the set
-  of indices $i$ in $\IT{N}$ such that $V_n$ intersects $U_X$.
+  of indices $n$ in $\IT{N}$ such that $V_n$ intersects $U_X$.
   Since, for every non-maximal $n$, $f_{S(n)}$ coincides with $f_n$ outside
   $V_{S(n)}$, we get by induction that, for all $n ≥ n₀(x)$, $f_n$ coincides
   with $f_{n₀(x)}$ on $U_x$.
@@ -61,14 +61,14 @@ every point of $X$ has a neighborhood that intersects only finitely many $V_i$.
   \begin{align*}
     f_n(y) &= f_{n₀(x)}(y) \text{ since $n ≥ n₀(x)$ and $y ∈ U_x$}\\
            &= f_{\max(n₀(x), n₀(y))}(y) \text{ since $\max(n₀(x), n₀(y)) ≥ n₀(x)$ and $y ∈ U_x$}\\
-           &= f_{n₀(y)}(y) \text{ since $\max(n₀(x), n₀(y)) ≥ n₀(y)$ and $y ∈ U_y$}
+           &= f_{n₀(y)}(y) \text{ since $\max(n₀(x), n₀(y)) ≥ n₀(y)$ and $y ∈ U_y$}\\
            &= F(y) \text{ by definition of $F$}.
   \end{align*}
 \end{proof}
 
 In the preceding lemma, the limit function $F$ inherits all local properties of
 the elements of the sequence. In order to make this precise, we need the
-language of germs of functions. One can defines germs with respects to any filter but
+language of germs of functions. One can define germs with respect to any filter but
 we will need only the case of neighborhood filters~: two functions $f$ and $g$
 define the same germ at some point $x$ if they coincide near $x$.
 
@@ -89,8 +89,8 @@ For instance if $Y$ is also equipped with a topology then continuity is
 is continuous if and only if it is continuous at every point $x$ and this
 condition only depends on the germ of the function at $x$.
 
-We also need to build local predicate by localizing some local predicate near
-some subset.
+We also need to build local predicates by localizing some local predicates near
+some subsets.
 
 \begin{definition}
   \label{def:restrict_germ_predicate}\lean{restrict_germ_predicate}\leanok
@@ -119,7 +119,7 @@ $P₂^i$'' as ``$f$ can be improved in $Uᵢ$''.
   finite family of subsets of $X$ indexed by some $\IT{N}$. Let $P₀$ be a local
   predicate on functions from $X$ to $Y$, let $i ↦ P₁^i$ be a family of such
   predicates, and let $i ↦ P₂^i$ be a family of predicates on functions from $X$ to
-  $Y$, both families being indexed by $\IT{N}$. Assume that
+  $Y$, all families being indexed by $\IT{N}$. Assume that
   \begin{itemize}
     \item
       there exists $f₀ \co X → Y$ satisfying $P₀$ and $P₂^0$~;
@@ -129,7 +129,7 @@ $P₂^i$'' as ``$f$ can be improved in $Uᵢ$''.
       which coincides with $f$ outside $U_i$ and satisfies $P₀$ and every
       $P₁^j$ for $j ≤ i$ as well as $P₂^{S(i)}$ unless $i$ is maximal.
   \end{itemize}
-  Then there exists $f \co X → Y$ which everywhere satisfies $P₀$ and all $P₁^i$'s.
+  Then there exists $f \co X → Y$ which satisfies $P₀$ and all $P₁^i$'s.
 \end{lemma}
 
 \begin{proof}
@@ -160,18 +160,18 @@ all maps from $X$ to $Y$ entering the discussion. Then $P₀'$ is analogous but 
 maps from $ℝ × X$ to $Y$, and it will come with some affine invariance assumption
 ensuring its compatibility with concatenation of homotopies.
 Instead of having a completely general family of local predicates
-$P₁^i$, we fix a single local predicate $P₁$ but it will be required to hold only on some
-subset $K_i$.
+$P₁^i$, we fix a single local predicate $P₁$ but it will be required to hold only
+near some subset $K_i$ (as in \Cref{def:restrict_germ_predicate}).
 
 Homotopies of maps from $X$ to $Y$ are usually meant to be continuous maps from
 $[0, 1] × X$ to $Y$. In a differential topology context, one requires
 smoothness and in order to be able to easily concatenate homotopies, it is very
 convenient to add the assumptions that those maps are independent of the time
 variable $t ∈ [0, 1]$ when $t$ is close to $0$ or $1$. Especially in a
-formalization context, it is more convenient to assume homotopies are defined on
-$ℝ × X$, and time independant near $(-∞, 0] × X$ and $[1, +∞) × X$. Continuity or
+formalization context, it is even more convenient to assume homotopies are defined on
+$ℝ × X$, and time independent near $(-∞, 0] × X$ and $[1, +∞) × X$. Continuity or
 smoothness don't appear in the following abstract lemma where they are replaced by
-abritrary local predicates.
+arbitrary local predicates.
 
 \begin{lemma}
   \label{lem:inductive_htpy_construction}\lean{inductive_htpy_construction}\leanok
@@ -195,7 +195,7 @@ abritrary local predicates.
     \item $F(t, x) = f(x)$ whenever $x$ is not in $U_i$ or $t$ is near $(-∞, 0]$
     \item $F(t, x) = F(1, x)$ whenever $t$ is near $[1, +∞)$.
   \end{itemize}
-  Then there exists $F \co ℝ → X → Y$ such that
+  Then there exists $F \co ℝ × X → Y$ such that
   \begin{itemize}
     \item for all $t$, $F(t, \cdot)$ satisfies $P₀$
     \item $F$ satisfies $P₀'$
@@ -209,7 +209,7 @@ abritrary local predicates.
   We fix an increasing sequence $T \co \IT{N} → [0, 1)$ starting at $0$,
   say $i ↦ 1 - 1/2^i$.
   We want to build a sequence of homotopies $F_i \co ℝ × X → Y$ where each
-  $F_i$ is time-independant on $[T_i, + ∞) × X$ and, assuming $i$ isn't
+  $F_i$ is time-independent on $[T_i, + ∞) × X$ and, assuming $i$ isn't
   maximal, $F_{S(i)}$ is built from $F_i$ by applying the induction assumption
   to $F_i(T_i, \cdot)$ and rescaling the obtained homotopy by the affine map
   sending $[0, 1]$ to $[T_i, T_{S(i)}]$.
@@ -217,19 +217,19 @@ abritrary local predicates.
   Hence we want to apply \Cref{lem:inductive_construction} with source space
   $\hat{X} = ℝ × X$.
   We use as the background local predicate $\hat{P}₀$ at $(t, x)$ the
-  constraint on a function $F$ that $F(t, \cdots)$ satisfies $P₀$ at $x$ and $P₀'$ at
+  constraint on a function $F$ that $F(t, \cdot)$ satisfies $P₀$ at $x$ and $P₀'$ at
   $(t, x)$ and if $t = 0$ then $F(t, x) = f₀(x)$. As the target family of local predicates
   $\hat{P}₁$ we use for every $i ∈ \IT{N}$ the constraint on $F$ at $(t, x)$
-  that if $t = 1$ and $x$ is near $K_i$ then $F(t, \cdot)$ should satify $P₂$
-  at $x$. As the auxilliary family of predicates $\hat{P₂}$ at index $i$ we use
-  the constraint of being time-independant on $[T_i, + ∞) × X$.
+  that if $t = 1$ and $x$ is near $K_i$ then $F(t, \cdot)$ should satisfy $P₂$
+  at $x$. As the auxiliary family of predicates $\hat{P₂}$ at index $i$ we use
+  the constraint of being time-independent on $[T_i, + ∞) × X$.
 
   In order to explain how the induction assumption of the current lemma implies
   the induction assumption of \Cref{lem:inductive_construction}, we fix $i ∈ \IT{N}$
-  and a map $F \co ℝ × X → Y$ that satisfies $\hat{P}₀$, is time-independant on
+  and a map $F \co ℝ × X → Y$ that satisfies $\hat{P}₀$, is time-independent on
   $[T_i, + ∞) × X$ and satisfies $\hat{P}₁^j$ for all $j < i$. By this last
-  requirement and the time independance property, we get that $F(T_i, \cdot)$
-  satisfies $P₁$ near $\bigcup_{j < i} K_j$. Our inductive assumption applied to
+  requirement and the time independence property, we get that $F(T_i, \cdot)$
+  satisfies $P₁$ near $\bigcup_{j < i} K_j$. Our induction assumption applied to
   $F(T_i, \cdot)$ then gives $F' \co ℝ × X → Y$ such that
   \begin{itemize}
     \item for all $t$, $F'(t, \cdot)$ satisfies $P₀$
@@ -243,15 +243,15 @@ abritrary local predicates.
   \[
     F'' \co (t, x) ↦
     \begin{cases}
-      F(t, x) \text{ if $t ≤ T_i$}
+      F(t, x) \text{ if $t ≤ T_i$}\\
       F'\left((t - T_i)/(T_{S(i)} - T_i), x\right) \text{ if $t > T_i$}
     \end{cases}
   \]
 
   Fully checking that $F''$ is suitable is fairly technical but mostly straightforward.
   Care is required in particular to check that $F''$ coincides with $F$ near
-  $(T_i, x)$ for every $x$. This check uses both the fact that $F$ is time-indenpendant on
-  $[T_i, + ∞) × X$ and that $F'$ is time-independant near $(-∞, 0] × X$ hence in particular
+  $(T_i, x)$ for every $x$. This uses both the fact that $F$ is time-independent on
+  $[T_i, + ∞) × X$ and that $F'$ is time-independent near $(-∞, 0] × X$ hence in particular
   near $(0, x)$.
 \end{proof}
 
@@ -259,11 +259,34 @@ In a different direction, we need a version of \Cref{lem:inductive_construction}
 we do not fix any family of subsets of the source space, but simply want to derive existence
 of a function satisfying some local predicates from the assumptions of
 existence of local solution and the ability to patch solutions. This requires putting a lot
-more constraints on the source topological space.
+more constraints on the source topological space in order to use the following classical
+result.
+
+\begin{lemma}
+  \label{lem:exists_locally_finite_subcover_of_locally}
+  \lean{exists_locally_finite_subcover_of_locally}\leanok
+  Let $X$ be a metrizable locally compact second countable topological space.
+  Let $C$ be a closed subset in $X$. Let $P$ be a non-decreasing predicate on subsets
+  of $X$ (meaning that if $U ⊂ V$ and $V$ satisfies $P$ then so does $U$). Assume
+  the empty set satisfies $P$ and every point in $C$ has a neighborhood in $X$
+  satisfying $P$. Then there exist sequences of subsets $K$ and $W$ indexed by
+  natural numbers such that $K$ covers $C$, $W$ is locally finite and, for every $n$~:
+  \begin{itemize}
+    \item $K_n$ is compact
+    \item $W_n$ is open
+    \item $K_n ⊂ W_n$
+    \item $W_n$ satisfies $P$.
+  \end{itemize}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  This is a classical result.
+\end{proof}
 
 In the next lemma, $P₀$ is again a background local predicate satisfied by all
 maps entering the discussion, and $P₁$ is the main target local predicate. We also use
-and extra predicate $P₀'$ that enters the patching assumption in an asymmetric way
+an extra predicate $P₀'$ that enters the patching assumption in an asymmetric way
 and will allows to deduce a relative version of the lemma.
 
 \begin{lemma}
@@ -286,8 +309,9 @@ and will allows to deduce a relative version of the lemma.
 \end{lemma}
 
 \begin{proof}
-  \leanok\uses{lem:inductive_construction}
-  The assumptions on the topology of $X$ and local existence of solutions give sequences
+  \leanok\uses{lem:inductive_construction,lem:exists_locally_finite_subcover_of_locally}
+  The assumptions on the topology of $X$ and local existence of solutions
+  allow to apply \Cref{lem:exists_locally_finite_subcover_of_locally} to get sequences
   of subsets $K$ and $U$ of $X$ indexed by natural numbers such that $K$ covers
   $X$, $U$ is locally finite and, for every $i$:
   \begin{itemize}
@@ -299,7 +323,7 @@ and will allows to deduce a relative version of the lemma.
 
   We then apply \Cref{lem:inductive_construction} to the family of subsets $U$
   with local predicates $\hat{P}₀$ combining $P₀$ and $P₀'$ and $\hat{P}₁^i$ asking that
-  $P₁$ holds near $K_i$, and a trivial family of auxilliary predicates $\hat{P}'₀$.
+  $P₁$ holds near $K_i$, and the trivial family of auxiliary predicates $\hat{P}'₀$.
 
   For this we need to explain how the patching assumption of the current lemma
   implies the induction assumption of \Cref{lem:inductive_construction}. So we fix
@@ -319,7 +343,7 @@ subset $K$. The is the version that is actually used in our application.
   \label{lem:relative_inductive_construction_of_loc}
   \lean{relative_inductive_construction_of_loc}\leanok
   Let $X$ a second countable locally compact metrizable topological space. Let $P₀$
-  and $P₁$ be local predicates on function from $X$ to a set $Y$.
+  and $P₁$ be local predicates on functions from $X$ to a set $Y$.
   Let $K$ be a closed subset of $X$.
   Let $f₀ \co X → Y$ be a function satisfying $P₀$ and satisfying $P₁$ near $K$.
   Assume that
