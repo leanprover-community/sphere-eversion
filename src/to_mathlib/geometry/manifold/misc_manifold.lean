@@ -501,7 +501,7 @@ variables {I I'}
 
 attribute [mfld_simps] mem_insert_iff
 
-/-- Proving this without the assumption `x₀ ∈ s` might be possible, but is highly nontrivial. -/
+/-- Proving this without the assumption `x₀ ∈ s` might be possible, but is nontrivial. -/
 lemma cont_mdiff_within_at.mfderiv {s : set N} {x₀ : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_within_at (J.prod I) I' n (function.uncurry f) (prod.fst ⁻¹' s) (x₀, g x₀))
   (hg : cont_mdiff_within_at J I m g s x₀) (hx₀ : x₀ ∈ s) (hmn : m + 1 ≤ n) :
@@ -764,17 +764,43 @@ instance has_smooth_add_self : has_smooth_add 𝓘(𝕜, F) F :=
 ⟨by { convert cont_diff_add.cont_mdiff, exact model_with_corners_self_prod.symm,
   exact charted_space_self_prod }⟩
 
-theorem cont_mdiff_at.cont_mdiff_at_tangent_map_within (x₀ : tangent_bundle I M) :
+-- theorem cont_mdiff_at_tangent_bundle_snd (x₀ : tangent_bundle I M) :
+--   cont_mdiff_at I.tangent 𝓘(𝕜, E) m (λ x : tangent_bundle I M, @id E x.2) x₀ :=
+-- begin
+--   refine cont_mdiff_at.of_le _ le_top,
+--   let e := trivialization_at E (tangent_space I) x₀.proj,
+--   have : smooth_at I 𝓘(𝕜, E →L[𝕜] E)
+--     ((tangent_bundle_core I M).coord_change (achart H x₀.proj) (achart H x₀.proj)) x₀.proj :=
+--   ((tangent_bundle_core I M).smooth_at_coord_change (achart H x₀.proj) (achart H x₀.proj)
+--     ⟨mem_chart_source H _, mem_chart_source H _⟩),
+--   refine ((this.comp x₀ $ cont_mdiff_at_proj (tangent_space I)).clm_apply _)
+--     .congr_of_eventually_eq _,
+--   exact sigma.snd,
+--   swap 2,
+--   have h1 := (continuous_proj E (tangent_space I)).continuous_at.preimage_mem_nhds
+--     (e.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
+--   filter_upwards [h1] with x hx,
+--   simp_rw [trivialization.continuous_linear_map_at_apply, e.coe_linear_map_at_of_mem hx, e],
+--   simp_rw [tangent_bundle.trivialization_at_apply, function.comp_apply,
+--     tangent_bundle_core_coord_change],
+--   congr',
+-- end
+
+theorem cont_mdiff_at_tangent_bundle_trivialization_at_continuous_linear_map
+  (x₀ : tangent_bundle I M) :
   cont_mdiff_at I.tangent 𝓘(𝕜, E) m (λ x : tangent_bundle I M,
     (trivialization_at E (tangent_space I) x₀.proj).continuous_linear_map_at 𝕜 x.proj x.2) x₀ :=
 begin
-  refine ((tangent_bundle_core I M).smooth_on_coord_change e e').smooth_at ((e.open_base_set.inter e'.open_base_set).mem_nhds hx)
-  refine smooth_at_coord_change.congr_of_eventually_eq _ _,
+  let e := trivialization_at E (tangent_space I) x₀.proj,
+  refine cont_mdiff_at.congr_of_eventually_eq _ _,
+  swap 3,
   have h1 := (continuous_proj E (tangent_space I)).continuous_at.preimage_mem_nhds
     (e.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
-  have h2 := (hf.continuous_at.comp (continuous_proj E (tangent_space I)).continuous_at)
-    .preimage_mem_nhds (e'.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
-  filter_upwards [h1, h2] with x hx h2x,
+  filter_upwards [h1] with x hx,
+  rw [trivialization.continuous_linear_map_at_apply, e.coe_linear_map_at_of_mem hx],
+  simp_rw [tangent_bundle.trivialization_at_apply, total_space.proj],
+  -- have := (tangent_bundle_core I M).coord_change_self (achart H x₀.proj) _ _ _,
+  sorry,
 end
 
 theorem cont_mdiff_at.cont_mdiff_at_tangent_map (x₀ : tangent_bundle I M)
@@ -794,7 +820,7 @@ begin
       (λ x, e.continuous_linear_map_at 𝕜 x.proj x.2) _ cont_mdiff_at_id (cont_mdiff_at_proj _) _
       hmn,
     apply cont_mdiff_at.comp (x₀.proj, x₀.proj) (by exact hf) cont_mdiff_at_snd,
-    sorry },
+    apply cont_mdiff_at_tangent_bundle_trivialization_at_continuous_linear_map },
   refine this.congr_of_eventually_eq _,
   have h1 := (continuous_proj E (tangent_space I)).continuous_at.preimage_mem_nhds
     (e.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
