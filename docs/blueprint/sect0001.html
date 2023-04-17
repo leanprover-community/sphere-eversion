@@ -85,6 +85,9 @@
 <li class="">
   <a href="chap-local_eversion.html"><span class="toc_ref">A</span> <span class="toc_entry">Local sphere eversion</span></a>
  </li>
+<li class="">
+  <a href="cha-from_local_to_global.html"><span class="toc_ref">B</span> <span class="toc_entry">From local to global</span></a>
+ </li>
 <li ><a href="dep_graph_document.html">Dependency graph</a></li>
 </ul>
 </nav>
@@ -167,7 +170,7 @@
 <div class="displaymath" id="a0000000008">
   \[  \hat{a} \! :q ↦ -\frac{1}{‖q‖^2}q  \]
 </div>
-<p> which exchanges the interior and exterior of \(𝕊^2\). More abstractly, one can say the normal bundle of \(𝕊^2\) is trivial, hence one can extend \(a\) to a tubular neighborhood of \(𝕊^2\) as an orientation preserving map. Since \(a\) is orientation reversing, any such extension will be reversing coorientation. </p>
+<p> which exchanges the interior and exterior of \(𝕊^2\). More abstractly, one can say the normal bundle of \(𝕊^2\) is trivial, hence one can extend \(a\) to a tubular neighborhood of \(𝕊^2\) as an orientation preserving map. Since \(a\) is orientation reversing, any such extension will be reversing co-orientation. </p>
 <div class="proof_wrapper" id="a0000000007">
   <div class="proof_heading">
     <span class="proof_caption">
@@ -183,12 +186,12 @@
 <p>The Smale-Hirsch theorem and its above corollary follows from a more general theorem: the \(h\)-principle for open and ample first order differential relations (see below). We will prove this theorem using a technique which is even more general: convex integration. For instance this technique also underlies the constructions of paradoxical isometric embeddings, which could be a nice follow-up project. </p>
 <p>We’ll end this introduction by describing the key construction of convex integration, since it is very nice and elementary. Convex integration was invented by Gromov around 1970, inspired in particular by the \(C^1\) isometric embedding work of Nash and the original proof of flexibility of immersions. This term is pretty vague however, and there are several different implementations. The newest one, and by far the most efficient one, is Mélanie Theillière’s corrugation process from 2018. And this is what we will use. </p>
 <p>Let \(f\) be a map from \(ℝ^n\) to \(ℝ^m\). Say we want to turn \(f\) into a solution of some partial differential relation. For instance if we are interested in immersions, we want to make sure its differential is everywhere injective. We will ensure this by tackling each partial derivative in turn. In the immersion example, we first make sure \(∂_1f(x) := ∂f(x)/∂x_1\) is non-zero for all \(x\). Then we make sure \(∂_2f(x)\) is not colinear to \(∂_1f(x)\). Then we make sure \(∂_3f(x)\) is not in the plane spanned by the two previous derivatives, etc… until all \(n\) partial derivatives are everywhere linearly independent. </p>
-<p>In general, what happens is that, for each number \(j\) between \(1\) and \(n\), we wish \(∂_jf(x)\) could live in some open subset \(Ω_x ⊂ ℝ^m\). Assume there is a smooth family of loops \(γ \! :ℝ^n × 𝕊^1 → ℝ^m\) such that each \(γ_x\) takes values in \(Ω_x\), and has average value \(\int _{𝕊^1} γ_x = ∂_j f(x)\). Obviously such loops can exist only if \(∂_jf(x)\) is in the convex hull of \(Ω_x\), hence the name convex integration, and we will see this condition is almost sufficient. In the immersion case, this convex hull condition will always be met because, from the above description, we see that \(Ω_x\) will always be the complement of a linear subspace with codimension at least two. </p>
+<p>In general, what happens is that, for each number \(j\) between \(1\) and \(n\), we wish \(∂_jf(x)\) could live in some open subset \(Ω_x ⊂ ℝ^m\). Assume there is a smooth family of loops \(γ \! :ℝ^n × 𝕊^1 → ℝ^m\) such that each \(γ_x\) takes values in \(Ω_x\), and has average value \(\int _{𝕊^1} γ_x = ∂_j f(x)\). Obviously such loops can exist only if \(∂_jf(x)\) is in the convex hull of \(Ω_x\), and we will see this condition is almost sufficient. In the immersion case, this convex hull condition will always be met because, from the above description, we see that \(Ω_x\) will always be the complement of a linear subspace with codimension at least two. </p>
 <p>For some large positive \(N\), we replace \(f\) by the new map </p>
 <div class="displaymath" id="a0000000009">
   \[  x ↦ f(x) + \frac1N ∫_0^{Nx_j} \left[γ_x(s) - ∂_jf(x)\right]ds.  \]
 </div>
-<p>A wonderfully easy exercise shows that, provided \(N\) is large enough, we have achieved \(∂_j f(x) ∈ Ω_x\), almost without modifying derivatives \(∂_i f(x)\) for \(i ≠ j\), and almost without moving \(f(x)\). See <a href="chap-local.html#prop:theilliere">2.3</a> for a precise statement. </p>
+<p>A wonderfully easy exercise shows that, provided \(N\) is large enough, we have achieved \(∂_j f(x) ∈ Ω_x\), almost without modifying derivatives \(∂_i f(x)\) for \(i ≠ j\), and almost without moving \(f(x)\). See <a href="chap-local.html#prop:theilliere">2.3</a> for a precise statement. This technique is called convex integration since we are taking an integral under the assumption that \(∂_jf(x)\) is in the convex hull of \(Ω_x\). </p>
 <p>In addition, if we assume that \(γ_x\) is constant (necessarily with value \(∂_j f(x)\)) for \(x\) near some subset \(K\) where \(∂_j f(x)\) was already good, then nothing changed on \(K\) since the integrand vanishes there. It is also easy to damp out this modification by multiplying the integral by a cut-off function. So this is a very local construction, and it isn’t obvious how the absence of homotopical obstruction, embodied by the existence of a formal solution, should enter the discussion. The answer is that is essentially provides a way to coherently choose base points for the \(γ_x\) loops. </p>
 <p>Now that we’ve seen how convex hulls enter the discussion we can provide one last definition and state the actual main theorem that we formalized. </p>
 <p><div class="definition-intro_thmwrapper" id="a0000000010">
@@ -206,7 +209,7 @@
 <div class="displaymath" id="a0000000011">
   \[  \left\{ ψ ∈ \operatorname{Hom}(T_xM, T_yN) \; |\;  ψ|_{H} = φ|_{H} \text{ and } (x, y, ψ) ∈ \mathcal{R}\right\}   \]
 </div>
-<p> in the whole set of \(ψ\) such that \(ψ|_{H} = φ|_{H}\). </p>
+<p> is the whole set of \(ψ\) such that \(ψ|_{H} = φ|_{H}\). </p>
 
   </div>
 </div> </p>
@@ -227,7 +230,7 @@
 
   </div>
 </div> </p>
-<p><a href="chap-loops.html">Chapter 1</a> provides the loops supply. <a href="chap-local.html">Chapter 2</a> then discusses the local theory, including the key construction above, and <a href="chap-global.html">chapter 3</a> finally moves to manifolds, and proves the main theorem and its sphere eversion corollary. <a href="chap-local_eversion.html">Chapter A</a> explains how the first two chapters are already enough to derive Smale’s theorem, although in a slightly less natural way than using the manifold case. This served as an intermediate target in the formalization, and can be used for elementary teaching since it does not require any theory of manifolds. </p>
+<p><a href="chap-loops.html">Chapter 1</a> provides the loops supply. <a href="chap-local.html">Chapter 2</a> then discusses the local theory, including the key construction above, and <a href="chap-global.html">chapter 3</a> finally moves to manifolds, and proves the main theorem and its sphere eversion corollary. <a href="chap-local_eversion.html">Chapter A</a> explains how the first two chapters are already enough to derive Smale’s theorem, although in a slightly less natural way than using the manifold case. This served as an intermediate target in the formalization, and can be used for elementary teaching since it does not require any theory of manifolds.  </p>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
