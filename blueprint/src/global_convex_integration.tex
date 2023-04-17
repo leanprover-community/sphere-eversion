@@ -642,8 +642,8 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 \begin{lemma}
     \label{lem:ample_parameter}
     \uses{def:ample_relation}
-    \leanok
     \lean{rel_mfld.ample.relativize}
+    \leanok
     If $\Rel$ is ample then, for any parameter space $P$, $\Rel^P$ is also ample.
 \end{lemma}
 
@@ -721,15 +721,15 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   and $\F$ is holonomic near $φ_i⁻¹(A ∪ \bigcup_{j < i} φ_j(\bar B_E))$.
 
   The homotopy $H$ will be constructed by updating $F$ using some
-  homotopy $\H$ of sections of $J¹(E, E')$ with support in the closed ball $2B_E$
+  homotopy $\HH$ of sections of $J¹(E, E')$ with support in the closed ball $2B_E$
   and time independent for $t$ near $(-∞, 0] ∪ [1, +∞)$ (here by support we mean
-  the closure of the set of points where $\H_t$ differs from $\F$).
+  the closure of the set of points where $\HH_t$ differs from $\F$).
   In order to ensure
   $d(\bs F₀, \bs H_t) < τ$ for all $t$, it suffices to ensure that, for each
   $x ∈ φ_i(2\bar{B}_E)$ and $t ∈ [0, 1]$,
   $d(\bs H_t(x), \bs F(x)) < τ(x) - d(\bs F(x), \bs F₀(x))$.
   The latter will hold as soon as, for all $e$ and $t$,
-  $‖\bs \H_t(e) - \bs \F(e)‖ < η$ for some positive $η$ given by
+  $‖\bs \HH_t(e) - \bs \F(e)‖ < η$ for some positive $η$ given by
   \Cref{lem:dist_updating} (applied to $P = ℝ$, $M$ and $N$).
 \end{proof}
 
