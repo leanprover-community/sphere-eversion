@@ -560,33 +560,11 @@ and only this statement will be used.
 \end{lemma}
 
 \begin{proof}
-  \uses{lem:local_loops, cor:extend_loops}
+  \uses{lem:local_loops, cor:extend_loops, lem:relative_inductive_construction_of_loc}
   \leanok
-  Let $U_0$ be an open set containing $K$ such that $γ$ forms a surrounding family
-  of loops on $U_0$.
-  Let $U_i$, $i ≥ 1$ be a locally finite family of open sets with local
-  surrounding families of loops $γ^i$ and compact subsets $K_i ⊂ U_i$ covering $E$.
-
-  % \begin{explanation} % I am imagining that eventually this will be hidden until clicked
-    This is possible, since by \Cref{lem:local_loops} there is a local surrounding family
-    of loops around each point in $E$. Since $E$ is locally compact we may pick
-    a compact neighborhood around each point in $E$ with such a local family of loops.
-    Since $E$ is paracompact second countable, we can pick a countable refinement $U_i$
-    which is locally finite and still covers $E$.
-    By the shrinking lemma we can pick closed (and hence compact) subsets $K_i ⊂ U_i$ that
-    also cover $E$.
-  % \end{explanation}
-
-  Now we define a family $(δ^i)_{i \in ℕ}$ by $δ^0 = \rst{γ}{U_0}$ and
-  $δ^{i+1}$ is obtained by extending $δ^i$ using $γ^i$ via
-  \Cref{cor:extend_loops}.
-  Since $δ^{i+1}$ equals $δ^i$ on $U_i^c$, this sequence is locally eventually constant.
-  Therefore it has a well-defined limit $δ$ which is defined and continuous on all $E$.
-  Since $δ^{i+1}$ equals $δ^i$ on a neighborhood of $K\cup\bigcup_{j<i} K_i,$
-  we know in particular that $δ^i$ equals $γ$ on a neighborhood of $K$.
-  Since $K$ is compact, it has some neighborhood $O$
-  such that $\rst{δ^i}{O}$ is eventually constant with eventual value $\rst{δ}{O}$.
-  Hence $δ=γ$ on a neighborhood of $K$.
+  \Cref{lem:local_loops} proves the existence of local families of surrounding
+  loops and \Cref{cor:extend_loops} allows to patch such families hence
+  \Cref{lem:relative_inductive_construction_of_loc} proves global existence.
 \end{proof}
 
 \subsection{The reparametrization lemma}
@@ -628,7 +606,7 @@ from the above one.
   \label{lem:exists_cont_diff_of_convex₂}
   \lean{exists_cont_diff_of_convex₂}
   \leanok
-  Let $E₁$, $E₂$ and $F$ be real vector spaces. Assume $E₁$ and $E₂$ are finite dimensional. 
+  Let $E₁$, $E₂$ and $F$ be real vector spaces. Assume $E₁$ and $E₂$ are finite dimensional.
   Let $n$ be a natural number or $+\infty$. Let $P$ be a property
   of pairs $(x, f)$ with $x ∈ E₁$ and $f : E₂ → F$. Assume that, for every $x$, the space
   of functions $f$ such that $P(x, f)$ holds is convex. Assume that for every $x₀$
