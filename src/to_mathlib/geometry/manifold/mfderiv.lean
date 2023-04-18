@@ -229,22 +229,27 @@ open_locale bundle
 variables (I I' Z Z₂ F₁ F₂)
 
 /-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
-  in charts around `y`, `in_coordinates Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
-  linear map that makes sense from charts around `x₀` to charts around `y₀`
-  by composing it with appropriate coordinate changes given by smooth vector bundles `Z` and `Z₂`.
+in charts around `y`, `in_coordinates Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
+linear map that makes sense from charts around `x₀` to charts around `y₀`
+by composing it with appropriate coordinate changes given by smooth vector bundles `Z` and `Z₂`.
+
+This is the underlying function of the trivializations of the hom of two vector bundles.
 -/
 def in_coordinates (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y) : F₁ →L[𝕜] F₂ :=
 (trivialization_at F₂ Z₂ y₀).continuous_linear_map_at 𝕜 y ∘L ϕ ∘L
 (trivialization_at F₁ Z x₀).symmL 𝕜 x
 
 /-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
-  in charts around `g x`, `in_tangent_coordinates I I' f g ϕ x₀ x` is a coordinate change of
-  this continuous linear map that makes sense from charts around `f x₀` to charts around `g x₀`
-  by composing it with appropriate coordinate changes.
-  Note that in the type of `ϕ` is more accurately
-  `Π x : N, tangent_space I (f x) →L[𝕜] tangent_space I' (g x)`.
-  We are unfolding `tangent_space` in this type so that Lean recognizes that the type of `ϕ` doesn't
-  actually depend on `f` or `g`. -/
+in charts around `g x`, `in_tangent_coordinates I I' f g ϕ x₀ x` is a coordinate change of
+this continuous linear map that makes sense from charts around `f x₀` to charts around `g x₀`
+by composing it with appropriate coordinate changes.
+Note that in the type of `ϕ` is more accurately
+`Π x : N, tangent_space I (f x) →L[𝕜] tangent_space I' (g x)`.
+We are unfolding `tangent_space` in this type so that Lean recognizes that the type of `ϕ` doesn't
+actually depend on `f` or `g`.
+
+This is the underlying function of the trivializations of the hom of (pullbacks of) tangent spaces.
+-/
 def in_tangent_coordinates {N} (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') : N → N → E →L[𝕜] E' :=
 λ x₀ x, in_coordinates E E' (tangent_space I) (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
 

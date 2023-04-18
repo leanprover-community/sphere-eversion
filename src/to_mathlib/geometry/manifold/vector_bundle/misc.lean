@@ -318,8 +318,7 @@ local notation `σ` := ring_hom.id 𝕜
 
 section general
 -- what is better notation for this?
-local notation `FE₁E₂` := bundle.continuous_linear_map σ F₁ E₁ F₂ E₂
-local notation `LE₁E₂` := total_space FE₁E₂
+local notation `LE₁E₂` := total_space (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂)
 local notation `PLE₁E₂` := bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂
 
 
@@ -351,7 +350,7 @@ end
 variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
 
 @[reducible]
-def topological_space.continuous_linear_map' (x) : topological_space (FE₁E₂ x) :=
+def topological_space.continuous_linear_map' (x) : topological_space (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂ x) :=
 by apply_instance
 local attribute [instance, priority 1] topological_space.continuous_linear_map'
 -- ^ probably needed because of the type-class pi bug
@@ -366,7 +365,7 @@ rfl
 @[simp, mfld_simps]
 lemma hom_trivialization_at_source (x₀ : B) :
   (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).source =
-  π FE₁E₂ ⁻¹' ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) :=
+  π (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) ⁻¹' ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) :=
 rfl
 
 @[simp, mfld_simps]
@@ -402,7 +401,7 @@ instance bundle.continuous_linear_map.vector_prebundle.is_smooth : PLE₁E₂ .i
     continuous_linear_map_coord_change_apply σ e₁ e₁' e₂ e₂'⟩ } }
 
 instance smooth_vector_bundle.continuous_linear_map :
-  smooth_vector_bundle (F₁ →L[𝕜] F₂) FE₁E₂ IB :=
+  smooth_vector_bundle (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) IB :=
 PLE₁E₂ .to_smooth_vector_bundle IB
 
 end general
