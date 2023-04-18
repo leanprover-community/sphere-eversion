@@ -166,7 +166,7 @@ def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' 
       (in_coordinates I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
         (λ (p : (N × P) × M),
           (mfderiv I (IP.prod I) (λ (x : M), (p.1.2, x)) p.2)) ((t, s), x)) ((t, s), x),
-    { apply cont_mdiff_at.mfderiv''' (λ (p : (N × P) × M) (x : M), (p.1.2, x)) prod.snd
+    { apply cont_mdiff_at.mfderiv (λ (p : (N × P) × M) (x : M), (p.1.2, x)) prod.snd
         (smooth_at_fst.fst.snd.prod_mk smooth_at_snd :
           smooth_at (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
         (smooth_at_snd : smooth_at ((J.prod IP).prod I) _ _ _) le_top },

@@ -267,7 +267,7 @@ variables {I I'}
 
 lemma smooth_at.one_jet_ext {f : M → M'} {x : M} (hf : smooth_at I I' f x) :
   smooth_at I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) x :=
-smooth_at_id.one_jet_bundle_mk hf (hf.mfderiv' le_rfl)
+smooth_at_id.one_jet_bundle_mk hf (hf.mfderiv_const le_rfl)
 
 lemma smooth.one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
@@ -378,7 +378,7 @@ begin
   refine smooth_at.one_jet_comp _ _ _ _,
   refine smooth_at.one_jet_comp _ _ _ _,
   { refine hk.2.1.one_jet_bundle_mk (hg.comp x₀ (smooth_at_id.prod_mk hk.2.1)) _,
-    exact cont_mdiff_at.mfderiv''' g (λ x, (k x).1.2) hg hk.2.1 le_rfl },
+    exact cont_mdiff_at.mfderiv g (λ x, (k x).1.2) hg hk.2.1 le_rfl },
   { exact hk.1.one_jet_bundle_mk hk.2.1 hk.2.2 },
   exact (hf.comp x₀ (smooth_at_id.prod_mk hk.1)).one_jet_bundle_mk hk.1 hDfinv,
 end
@@ -424,7 +424,7 @@ begin
   { exact smooth_at_snd.snd },
   have : cont_mdiff_at (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) 𝓘(𝕜, E →L[𝕜] F × E) ∞
     (in_coordinates I (J.prod I) _ _ _ x₀) x₀ :=
-    cont_mdiff_at.mfderiv'''
+    cont_mdiff_at.mfderiv
     (λ (x : one_jet_bundle (J.prod I) (N × M) I' M') (y : M), (x.1.1.1, y))
     (λ (x : one_jet_bundle (J.prod I) (N × M) I' M'), x.1.1.2) _ _ le_top,
   exact this,
