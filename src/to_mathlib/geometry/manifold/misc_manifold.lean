@@ -7,6 +7,43 @@ open bundle set function filter
 open_locale manifold topology
 noncomputable theory
 
+section topology
+
+variables {α β γ : Type*} [topological_space α] [topological_space β]
+
+lemma map_fst_nhds_within_eq {x : α × β} {s : set α} :
+  map prod.fst (𝓝[prod.fst ⁻¹' s] x) = 𝓝[s] x.1 :=
+by { cases x, rw [← prod_univ, nhds_within_prod_eq, nhds_within_univ, map_fst_prod] }
+
+lemma nhds_within_preimage_fst_le {x : α × β} {s : set α} :
+  𝓝[prod.fst ⁻¹' s] x ≤ comap prod.fst (𝓝[s] x.1) :=
+by { rw [← map_fst_nhds_within_eq], exact le_comap_map }
+
+lemma filter.eventually.nhds_within_preimage_fst {z : α × β} {s : set α} {p : α × β → Prop}
+  (h : ∀ᶠ x in 𝓝[s] z.1, ∀ y, p (x, y)) : ∀ᶠ z' in 𝓝[prod.fst ⁻¹' s] z, p z' :=
+begin
+  refine eventually.filter_mono nhds_within_preimage_fst_le _,
+  simp_rw [eventually_comap, prod.forall],
+  simp only [forall_swap] {single_pass := tt},
+  convert h, ext x,
+  refine forall_congr (λ y, _),
+  simp_rw [forall_eq],
+end
+
+lemma filter.eventually_eq.nhds_within_preimage_fst {z : α × β} {s : set α} {f g : α × β → γ}
+  (h : curry f =ᶠ[𝓝[s] z.1] curry g) : f =ᶠ[𝓝[prod.fst ⁻¹' s] z] g :=
+filter.eventually.nhds_within_preimage_fst $ by { simp_rw [← funext_iff], exact h }
+
+lemma eventually_mem_nhds_within' {α} [topological_space α] {s t : set α} {a : α} :
+  (∀ᶠ x in 𝓝[s] a, t ∈ 𝓝[s] x) ↔ t ∈ 𝓝[s] a :=
+eventually_nhds_within_nhds_within
+
+lemma eventually_mem_nhds_within'' {α} [topological_space α] {s t : set α} {a : α} :
+  (∀ᶠ x in 𝓝 a, t ∈ 𝓝[s] x) ↔ t ∈ 𝓝[s] a :=
+eventually_nhds_nhds_within
+
+end topology
+
 section charted_space
 
 variables {M H : Type*} [topological_space M] [topological_space H] [charted_space H M]
@@ -394,25 +431,30 @@ begin
   simp only [fiber_bundle.ext_chart_at, function.comp, prod_univ, -ext_chart_at] with mfld_simps,
   let e' := trivialization_at F E x₀.proj,
   let c := (ext_chart_at IB x₀.proj).symm,
+  have h0 := (ext_chart_at IB x₀.proj).left_inv (mem_ext_chart_source IB x₀.proj),
   have : cont_mdiff_within_at 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤
-    (λ (x : EB × F), e.coord_changeL 𝕜 e' (c x.1) x.2)
+    (λ (x : EB × F), e'.coord_changeL 𝕜 e (c x.1) x.2)
     (prod.fst ⁻¹' range IB) (ext_chart_at IB x₀.proj x₀.proj, (e' x₀).2),
   { refine cont_mdiff_within_at.clm_apply _ cont_diff_within_at_snd.cont_mdiff_within_at,
-    have h1 := smooth_at_coord_change IB e e' ⟨hx₀, mem_base_set_trivialization_at F E x₀.proj⟩,
+    have h1 := smooth_at_coord_change IB e' e ⟨mem_base_set_trivialization_at F E x₀.proj, hx₀⟩,
     refine h1.cont_mdiff_within_at.comp_of_eq _ (maps_to_univ _ _) _,
     { refine ((cont_mdiff_on_ext_chart_at_symm IB x₀.proj _ $ (ext_chart_at IB x₀.proj).maps_to $
         mem_ext_chart_source IB x₀.proj).mono_of_mem _).comp_of_eq _ (maps_to_preimage _ _) rfl,
       { exact ext_chart_at_target_mem_nhds_within IB x₀.proj },
       exact cont_diff_within_at_fst.cont_mdiff_within_at },
-    exact (ext_chart_at IB x₀.proj).left_inv (mem_ext_chart_source IB x₀.proj) },
-  have : cont_mdiff_within_at 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤
-    (λ (x : EB × F), (e (e'.symm ((ext_chart_at IB x₀.proj).symm x.1) x.2)).2)
-    (prod.fst ⁻¹' range IB) (ext_chart_at IB x₀.proj x₀.proj, (e' x₀).2),
-  sorry,
+    exact h0 },
   refine this.congr_of_eventually_eq_insert _,
   rw [insert_eq_of_mem],
-  sorry,
-  sorry
+  swap, exact mem_range_self _,
+  refine filter.eventually.nhds_within_preimage_fst _,
+  dsimp only,
+  have h1 := (continuous_at_ext_chart_at_symm IB x₀.proj).preimage_mem_nhds
+    ((trivialization_at F E _).open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
+  rw [h0] at h1,
+  have h2 := (continuous_at_ext_chart_at_symm IB x₀.proj).preimage_mem_nhds
+    (e.open_base_set.mem_nhds $ by rwa [h0]),
+  filter_upwards [nhds_within_le_nhds h1, nhds_within_le_nhds h2] with b h1b h2b y,
+  rw [e'.coord_changeL_apply e ⟨h1b, h2b⟩, e'.mk_symm h1b]
 end
 
 theorem trivialization.smooth_on (e : trivialization F (π E)) [mem_trivialization_atlas e] :
@@ -561,25 +603,17 @@ begin
   simp_rw [prod.mk.eta],
 end
 
-lemma cont_mdiff_within_at_insert :
-  cont_mdiff_within_at I I' n f (insert x' s) x ↔ cont_mdiff_within_at I I' n f s x :=
-begin
-  sorry
-end
+-- lemma cont_mdiff_within_at_insert :
+--   cont_mdiff_within_at I I' n f (insert x' s) x ↔ cont_mdiff_within_at I I' n f s x :=
+-- begin
+--   sorry
+-- end
 
-alias cont_mdiff_within_at_insert ↔ cont_mdiff_within_at.of_insert cont_mdiff_within_at.insert'
+-- alias cont_mdiff_within_at_insert ↔ cont_mdiff_within_at.of_insert cont_mdiff_within_at.insert'
 
-lemma cont_mdiff_within_at.insert (h : cont_mdiff_within_at I I' n f s x) :
-  cont_mdiff_within_at I I' n f (insert x s) x :=
-h.insert'
-
-lemma eventually_mem_nhds_within' {α} [topological_space α] {s t : set α} {a : α} :
-  (∀ᶠ x in 𝓝[s] a, t ∈ 𝓝[s] x) ↔ t ∈ 𝓝[s] a :=
-eventually_nhds_within_nhds_within
-
-lemma eventually_mem_nhds_within'' {α} [topological_space α] {s t : set α} {a : α} :
-  (∀ᶠ x in 𝓝 a, t ∈ 𝓝[s] x) ↔ t ∈ 𝓝[s] a :=
-eventually_nhds_nhds_within
+-- lemma cont_mdiff_within_at.insert (h : cont_mdiff_within_at I I' n f s x) :
+--   cont_mdiff_within_at I I' n f (insert x s) x :=
+-- h.insert'
 
 /-- A function is `C^n` at a point, for `n : ℕ`, if and only if it is `C^n` on
 a neighborhood of this point. -/
@@ -699,7 +733,8 @@ variables {I I'}
 
 attribute [mfld_simps] mem_insert_iff
 
-/-- Proving this without the assumption `x₀ ∈ s` might be possible, but is nontrivial. -/
+/-- Proving this without the assumption `x₀ ∈ s` might be possible, but is nontrivial.
+  Todo: use `mfderiv_within`, either with the same set or a different set. -/
 lemma cont_mdiff_within_at.mfderiv {s : set N} {x₀ : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_within_at (J.prod I) I' n (function.uncurry f) (prod.fst ⁻¹' s) (x₀, g x₀))
   (hg : cont_mdiff_within_at J I m g s x₀) (hx₀ : x₀ ∈ s) (hmn : m + 1 ≤ n) :
@@ -821,9 +856,16 @@ begin
   -- { simp_rw [function.comp_apply, (ext_chart_at I (g x₀)).left_inv hx₂] }
 end
 
- -- todo: prove from cont_mdiff_within_at.mfderiv
-/-- The appropriate (more general) formulation of `cont_mdiff_at.mfderiv''`. -/
-lemma cont_mdiff_at.mfderiv''' {x₀ : N} (f : N → M → M') (g : N → M)
+/-- The function that sends `x` to the `y`-derivative of `f(x,y)` at `g(x)` is `C^n` at `x₀`,
+where the derivative is taken as a continuous linear map.
+We have to assume that `f` is `C^(n+1)` at `(x₀, g(x₀))` and `g` is `C^n` at `x₀`.
+We have to insert appropriate coordinate changes to make the derivative sensible.
+`cont_mdiff_at.mfderiv_id` and `cont_mdiff_at.mfderiv_const` are special cases of this.
+
+This lemma should be generalized to a `cont_mdiff_within_at` for `mfderiv_within`. If we do that, we
+can deduce `cont_mdiff_on.cont_mdiff_on_tangent_map_within` from this.
+-/
+lemma cont_mdiff_at.mfderiv {x₀ : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (x₀, g x₀))
   (hg : cont_mdiff_at J I m g x₀) (hmn : m + 1 ≤ n) :
   cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
@@ -892,7 +934,7 @@ begin
     { exact ext_chart_at_preimage_mem_nhds' _ _ hx₂ (ext_chart_at_source_mem_nhds I (g x₂)) },
     refine ext_chart_at_preimage_mem_nhds' _ _ hx₂ _,
     exact (h2x₂.continuous_at).preimage_mem_nhds (ext_chart_at_source_mem_nhds _ _) },
-  /- The conclusion is the same as the following, when unfolding coord_change of
+  /- The conclusion is equal to the following, when unfolding coord_change of
     `tangent_bundle_core` -/
   have : cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
     (λ x, (fderiv_within 𝕜 (ext_chart_at I' (f x₀ (g x₀)) ∘ (ext_chart_at I' (f x (g x))).symm)
@@ -925,26 +967,30 @@ begin
   { rwa [ext_chart_at_source] at h2x },
 end
 
-/-- The map `D_xf(x,y)` is `C^n` as a continuous linear map, assuming that `f` is a `C^(n+1)` map
-between manifolds.
-We have to insert appropriate coordinate changes to make sense of this statement.
-This statement is general enough to work for partial derivatives / functions with parameters. -/
-lemma cont_mdiff_at.mfderiv'' {x₀ : M} (f : M → M → M')
+/-- The function `x ↦ D_yf(x,y)` is `C^n` at `x₀`, where the derivative is taken as a continuous
+linear map. We have to assume that `f` is `C^(n+1)` at `(x₀, x₀)`.
+We have to insert appropriate coordinate changes to make the derivative sensible.
+This is a special case of `cont_mdiff_at.mfderiv` (with `g = id`),
+and `cont_mdiff_at.mfderiv_const` is a special case of this.
+-/
+lemma cont_mdiff_at.mfderiv_id {x₀ : M} (f : M → M → M')
   (hf : cont_mdiff_at (I.prod I) I' n (function.uncurry f) (x₀, x₀)) (hmn : m + 1 ≤ n) :
   cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
     (in_coordinates I I' id (λ x, f x x) (λ x, mfderiv I I' (f x) x) x₀) x₀ :=
-hf.mfderiv''' f id cont_mdiff_at_id hmn
+hf.mfderiv f id cont_mdiff_at_id hmn
 
-/-- The map `mfderiv f` is `C^n` as a continuous linear map, assuming that `f` is `C^(n+1)`.
-We have to insert appropriate coordinate changes to make sense of this statement. -/
-lemma cont_mdiff_at.mfderiv' {x₀ : M} {f : M → M'}
+/-- The derivative `D_yf(y)` is `C^n` at `x₀`, where the derivative is taken as a continuous
+linear map. We have to assume that `f` is `C^(n+1)` at `x₀`.
+We have to insert appropriate coordinate changes to make the derivative sensible.
+This is a special case of See `cont_mdiff_at.mfderiv_id` where `f` does not contain any parameters.
+-/
+lemma cont_mdiff_at.mfderiv_const {x₀ : M} {f : M → M'}
   (hf : cont_mdiff_at I I' n f x₀) (hmn : m + 1 ≤ n) :
   cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m (in_coordinates I I' id f (mfderiv I I' f) x₀) x₀ :=
 begin
   have : cont_mdiff_at (I.prod I) I' n (λ x : M × M, f x.2) (x₀, x₀) :=
   cont_mdiff_at.comp (x₀, x₀) hf cont_mdiff_at_snd,
-  apply cont_mdiff_at.mfderiv'' (λ x, f) this hmn
-  -- apply cont_mdiff_at.mfderiv''' (λ x, f) id this cont_mdiff_at_id hmn
+  apply cont_mdiff_at.mfderiv_id (λ x, f) this hmn
 end
 
 lemma cont_mdiff_at.mfderiv_apply {x₀ : N'} (f : N → M → M') (g : N → M) (g₁ : N' → N)
@@ -954,35 +1000,14 @@ lemma cont_mdiff_at.mfderiv_apply {x₀ : N'} (f : N → M → M') (g : N → M)
   (hg₁ : cont_mdiff_at J' J m g₁ x₀)
   (hg₂ : cont_mdiff_at J' 𝓘(𝕜, E) m g₂ x₀) (hmn : m + 1 ≤ n) :
   cont_mdiff_at J' 𝓘(𝕜, E') m
-    (λ x, in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) (g₁ x₀) (g₁ x) (g₂ x))
+    (λ x, in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x))
+      (g₁ x₀) (g₁ x) (g₂ x))
     x₀ :=
-(cont_mdiff_at.comp x₀ (by apply hf.mfderiv''' f g hg hmn) hg₁).clm_apply hg₂
+(cont_mdiff_at.comp x₀ (by apply hf.mfderiv f g hg hmn) hg₁).clm_apply hg₂
 
 instance has_smooth_add_self : has_smooth_add 𝓘(𝕜, F) F :=
 ⟨by { convert cont_diff_add.cont_mdiff, exact model_with_corners_self_prod.symm,
   exact charted_space_self_prod }⟩
-
--- theorem cont_mdiff_at_tangent_bundle_snd (x₀ : tangent_bundle I M) :
---   cont_mdiff_at I.tangent 𝓘(𝕜, E) m (λ x : tangent_bundle I M, @id E x.2) x₀ :=
--- begin
---   refine cont_mdiff_at.of_le _ le_top,
---   let e := trivialization_at E (tangent_space I) x₀.proj,
---   have : smooth_at I 𝓘(𝕜, E →L[𝕜] E)
---     ((tangent_bundle_core I M).coord_change (achart H x₀.proj) (achart H x₀.proj)) x₀.proj :=
---   ((tangent_bundle_core I M).smooth_at_coord_change (achart H x₀.proj) (achart H x₀.proj)
---     ⟨mem_chart_source H _, mem_chart_source H _⟩),
---   refine ((this.comp x₀ $ cont_mdiff_at_proj (tangent_space I)).clm_apply _)
---     .congr_of_eventually_eq _,
---   exact sigma.snd,
---   swap 2,
---   have h1 := (continuous_proj E (tangent_space I)).continuous_at.preimage_mem_nhds
---     (e.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
---   filter_upwards [h1] with x hx,
---   simp_rw [trivialization.continuous_linear_map_at_apply, e.coe_linear_map_at_of_mem hx, e],
---   simp_rw [tangent_bundle.trivialization_at_apply, function.comp_apply,
---     tangent_bundle_core_coord_change],
---   congr',
--- end
 
 theorem cont_mdiff_at_tangent_bundle_trivialization_at_continuous_linear_map
   (x₀ : tangent_bundle I M) :
@@ -999,6 +1024,7 @@ begin
   exact (e.smooth_at I $ mem_base_set_trivialization_at E _ _).snd.of_le le_top,
 end
 
+/-- Not useful by itself. TODO: generalize to `cont_mdiff_within_at` of `tangent_map_within` -/
 theorem cont_mdiff_at.cont_mdiff_at_tangent_map (x₀ : tangent_bundle I M)
   (hf : cont_mdiff_at I I' n f x₀.proj) (hmn : m + 1 ≤ n) :
   cont_mdiff_at I.tangent I'.tangent m (tangent_map I I' f) x₀ :=

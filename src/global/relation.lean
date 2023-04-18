@@ -417,7 +417,7 @@ begin
   intro x,
   refine smooth_at.one_jet_bundle_map (φ.smooth_to.smooth_at.comp _ smooth_at_snd)
     (ψ.smooth_to.smooth_at.comp _ smooth_at_snd) _ smooth_at_id,
-  have := cont_mdiff_at.mfderiv''' (λ x, φ.inv_fun) (λ x : one_jet_bundle IX X IY Y, φ x.1.1)
+  have := cont_mdiff_at.mfderiv (λ x, φ.inv_fun) (λ x : one_jet_bundle IX X IY Y, φ x.1.1)
     ((φ.smooth_at_inv $ _).comp (x, φ x.1.1) smooth_at_snd)
     (φ.smooth_to.smooth_at.comp x (smooth_one_jet_bundle_proj.fst x)) le_top,
   { simp_rw [φ.left_inv] at this, exact this },
@@ -555,7 +555,7 @@ def one_jet_bundle.embedding : open_smooth_embedding IXY J¹XY IMN J¹MN :=
     refine (smooth_at.one_jet_bundle_map _ _ _ smooth_at_id).smooth_within_at,
     { refine ((φ.smooth_at_inv _).comp _ smooth_at_snd), exact mem_range_self _ },
     { refine ((ψ.smooth_at_inv _).comp _ smooth_at_snd), exact mem_range_self _ },
-    have := cont_mdiff_at.mfderiv''' (λ x, φ) (λ x : one_jet_bundle IM M IN N, φ.inv_fun x.1.1)
+    have := cont_mdiff_at.mfderiv (λ x, φ) (λ x : one_jet_bundle IM M IN N, φ.inv_fun x.1.1)
       (φ.smooth_to.smooth_at.comp _ smooth_at_snd)
       ((φ.smooth_at_inv _).comp _ (smooth_one_jet_bundle_proj.fst (φ.transfer ψ x))) le_top,
     { dsimp only [id],
