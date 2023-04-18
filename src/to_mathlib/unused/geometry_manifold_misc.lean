@@ -43,6 +43,51 @@ end topology
 
 section vector_bundle
 
+open smooth_manifold_with_corners vector_bundle_core
+open_locale bundle
+
+variables {𝕜 B F M : Type*} {E : B → Type*}
+  [nontrivially_normed_field 𝕜]
+  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
+  [normed_add_comm_group F] [normed_space 𝕜 F]
+  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
+  {HB : Type*} [topological_space HB] {IB : model_with_corners 𝕜 EB HB}
+  [topological_space B] [charted_space HB B]
+  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
+  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
+  [topological_space M] [charted_space HM M]
+  {n : ℕ∞}
+  [fiber_bundle F E] [vector_bundle 𝕜 F E]
+  {e e' : trivialization F (π E)}
+
+theorem vector_bundle_core.smooth_at_coord_change {ι} (Z : vector_bundle_core 𝕜 B F ι)
+  [Z.is_smooth IB] (i j : ι) {x₀ : B}
+  (hx₀ : x₀ ∈ Z.base_set i ∩ Z.base_set j) :
+  smooth_at IB 𝓘(𝕜, F →L[𝕜] F) (Z.coord_change i j) x₀ :=
+(Z.smooth_on_coord_change IB i j).smooth_at $
+  ((Z.is_open_base_set i).inter (Z.is_open_base_set j)).mem_nhds hx₀
+
+variables (IB) [smooth_manifold_with_corners IB B] [smooth_vector_bundle F E IB]
+lemma smooth_at_coord_change (e e' : trivialization F (π E)) {x₀ : B}
+  (hx₀ : x₀ ∈ e.base_set ∩ e'.base_set)
+  [mem_trivialization_atlas e] [mem_trivialization_atlas e']  :
+  smooth_at IB 𝓘(𝕜, F →L[𝕜] F) (λ b : B, (e.coord_changeL 𝕜 e' b : F →L[𝕜] F)) x₀ :=
+(smooth_on_coord_change e e').smooth_at $ (e.open_base_set.inter e'.open_base_set).mem_nhds hx₀
+
+variables {IB}
+lemma cont_mdiff_at_coord_change_apply (e e' : trivialization F (π E)) {x₀ : M}
+  {f : M → B} {g : M → F} (hf : cont_mdiff_at IM IB n f x₀)
+  (hg : cont_mdiff_at IM 𝓘(𝕜, F) n g x₀)
+  (hx₀ : f x₀ ∈ e.base_set ∩ e'.base_set)
+  [mem_trivialization_atlas e] [mem_trivialization_atlas e']  :
+  cont_mdiff_at IM 𝓘(𝕜, F) n (λ x, e.coord_changeL 𝕜 e' (f x) (g x)) x₀ :=
+(((smooth_at_coord_change IB e e' hx₀).of_le le_top).comp x₀ hf).clm_apply hg
+
+end vector_bundle
+
+section vector_bundle
+
 open smooth_manifold_with_corners
 open_locale bundle
 
@@ -116,6 +161,7 @@ theorem smooth_on_trivialization_at (x₀ : B) :
 (trivialization_at F E x₀).smooth_on IB
 
 end vector_bundle
+
 
 
 section smooth_manifold_with_corners
