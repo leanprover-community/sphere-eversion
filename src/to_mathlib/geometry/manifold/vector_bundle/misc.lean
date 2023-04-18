@@ -359,7 +359,7 @@ local attribute [instance, priority 1] topological_space.continuous_linear_map'
 
 lemma hom_trivialization_at_apply (x₀ : B) (x : LE₁E₂) :
   trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀ x =
-  ⟨x.1, in_coordinates' F₁ F₂ E₁ E₂ x₀ x.1 x₀ x.1 x.2⟩ :=
+  ⟨x.1, in_coordinates F₁ F₂ E₁ E₂ x₀ x.1 x₀ x.1 x.2⟩ :=
 rfl
 
 
@@ -377,7 +377,7 @@ rfl
 
 lemma hom_chart (x₀ x : LE₁E₂) :
   chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
-  (chart_at HB x₀.1 x.1, in_coordinates' F₁ F₂ E₁ E₂ x₀.1 x.1 x₀.1 x.1 x.2) :=
+  (chart_at HB x₀.1 x.1, in_coordinates F₁ F₂ E₁ E₂ x₀.1 x.1 x₀.1 x.1 x.2) :=
 by simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
   trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, hom_trivialization_at_apply]
 
@@ -385,7 +385,7 @@ lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
   smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
   smooth_at IM IB (λ x, (f x).1) x₀ ∧
   smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
-  (λ x, in_coordinates' F₁ F₂ E₁ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+  (λ x, in_coordinates F₁ F₂ E₁ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
 by { simp_rw [smooth_at, cont_mdiff_at_total_space], refl }
 
 variables [smooth_manifold_with_corners IB B]

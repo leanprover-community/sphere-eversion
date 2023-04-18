@@ -192,7 +192,7 @@ attribute [mfld_simps] mem_insert_iff
 --   (hf : cont_mdiff_within_at (J.prod I) I' n (function.uncurry f) (prod.fst ⁻¹' s) (x₀, g x₀))
 --   (hg : cont_mdiff_within_at J I m g s x₀) (hx₀ : x₀ ∈ s) (hmn : m + 1 ≤ n) :
 --   cont_mdiff_within_at J 𝓘(𝕜, E →L[𝕜] E') m
---     (in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) s x₀ :=
+--     (in_tangent_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) s x₀ :=
 -- begin
 --   have h4f : (λ x, f x (g x)) ⁻¹' (ext_chart_at I' (f x₀ (g x₀))).source ∈ 𝓝[s] x₀,
 --   { have : continuous_within_at (λ x, f x (g x)) s x₀,
@@ -289,7 +289,7 @@ attribute [mfld_simps] mem_insert_iff
 --   filter_upwards [h2g, h2f, h4f],
 --   intros x₂ hx₂ h2x₂ h3x₂,
 --   symmetry,
---   rw [in_coordinates_core_eq],
+--   rw [in_tangent_coordinates_core_eq],
 --   swap, { rwa [ext_chart_at_source] at hx₂ },
 --   swap, { rwa [ext_chart_at_source] at h3x₂ },
 --   sorry,
@@ -313,7 +313,7 @@ attribute [mfld_simps] mem_insert_iff
 --   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (x₀, g x₀))
 --   (hg : cont_mdiff_at J I m g x₀) (hmn : m + 1 ≤ n) :
 --   cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
---     (in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) x₀ :=
+--     (in_tangent_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) x₀ :=
 -- begin
 --   sorry
 -- end
@@ -345,7 +345,7 @@ begin
   let e := trivialization_at E (tangent_space I) x₀.proj,
   let e' := trivialization_at E' (tangent_space I') (f x₀.proj),
   have : cont_mdiff_at I.tangent 𝓘(𝕜, E') m (λ x : tangent_bundle I M,
-    in_coordinates I I' id f (mfderiv I I' f) x₀.proj x.proj $
+    in_tangent_coordinates I I' id f (mfderiv I I' f) x₀.proj x.proj $
     e.continuous_linear_map_at 𝕜 x.proj x.2) x₀,
   { refine cont_mdiff_at.mfderiv_apply (λ _, f) id total_space.proj
       (λ x, e.continuous_linear_map_at 𝕜 x.proj x.2) _ cont_mdiff_at_id (cont_mdiff_at_proj _) _
@@ -358,7 +358,7 @@ begin
   have h2 := (hf.continuous_at.comp (continuous_proj E (tangent_space I)).continuous_at)
     .preimage_mem_nhds (e'.open_base_set.mem_nhds $ mem_base_set_trivialization_at _ _ _),
   filter_upwards [h1, h2] with x hx h2x,
-  dsimp only [in_coordinates, in_coordinates', id_def],
+  dsimp only [in_tangent_coordinates, in_coordinates, id_def],
   simp_rw [continuous_linear_map.comp_apply, e.symmL_continuous_linear_map_at hx,
     trivialization.continuous_linear_map_at_apply, e'.coe_linear_map_at_of_mem h2x],
 end

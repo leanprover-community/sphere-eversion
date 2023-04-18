@@ -70,7 +70,7 @@ The following types should have an associated instance of the class
 
 -- to_mathlib/geometry/manifold/misc_manifold.lean
 #check @mdifferentiable_at.prod_mk /- argument 30: [_inst_21 : smooth_manifold_with_corners I M], argument 31: [_inst_22 : smooth_manifold_with_corners I' M'], argument 32: [_inst_23 : smooth_manifold_with_corners J N] -/
-#check @in_coordinates /- argument 22: [_inst_15 : topological_space N] -/
+#check @in_tangent_coordinates /- argument 22: [_inst_15 : topological_space N] -/
 
 -- to_mathlib/measure_theory/basic.lean
 #check @is_compact.integrable_const /- argument 6: [_inst_8 : measurable_space E] -/

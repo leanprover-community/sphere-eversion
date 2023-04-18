@@ -157,20 +157,20 @@ def family_one_jet_sec.curry (S : family_one_jet_sec (IP.prod I) (P × M) I' M' 
     rintro ⟨⟨t, s⟩, x⟩,
     refine smooth_at_snd.one_jet_bundle_mk (S.smooth_bs.comp smooth_prod_assoc _) _,
     have h1 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E')
-      (in_coordinates (IP.prod I) I' (λ (p : (N × P) × M), (p.1.2, p.2))
+      (in_tangent_coordinates (IP.prod I) I' (λ (p : (N × P) × M), (p.1.2, p.2))
         (λ (p : (N × P) × M), (S p.1.1).bs (p.1.2, p.2))
         (λ (p : (N × P) × M), ((S p.1.1).ϕ (p.1.2, p.2))) ((t, s), x)) ((t, s), x),
     { apply (smooth_at_one_jet_bundle.mp $
         smooth_at.comp _ (by exact S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2 },
     have h2 : smooth_at ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
-      (in_coordinates I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
+      (in_tangent_coordinates I (IP.prod I) prod.snd (λ (p : (N × P) × M), (p.1.2, p.2))
         (λ (p : (N × P) × M),
           (mfderiv I (IP.prod I) (λ (x : M), (p.1.2, x)) p.2)) ((t, s), x)) ((t, s), x),
     { apply cont_mdiff_at.mfderiv (λ (p : (N × P) × M) (x : M), (p.1.2, x)) prod.snd
         (smooth_at_fst.fst.snd.prod_mk smooth_at_snd :
           smooth_at (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
         (smooth_at_snd : smooth_at ((J.prod IP).prod I) _ _ _) le_top },
-    exact h1.clm_comp_in_coordinates (continuous_at_fst.snd.prod continuous_at_snd) h2
+    exact h1.clm_comp_in_tangent_coordinates (continuous_at_fst.snd.prod continuous_at_snd) h2
   end }
 
 lemma family_one_jet_sec.curry_bs (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N) (p : N × P)

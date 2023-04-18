@@ -34,7 +34,7 @@ def one_jet_sec.loc (F : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : jet_sec 
     rw [cont_diff_iff_cont_diff_at],
     intro x₀,
     have : smooth_at _ _ _ _ := F.smooth x₀,
-    simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
+    simp_rw [smooth_at_one_jet_bundle, in_tangent_coordinates, in_coordinates,
       tangent_bundle_core_index_at, tangent_bundle.symmL_model_space,
       tangent_bundle.continuous_linear_map_at_model_space,
       continuous_linear_map.one_def, continuous_linear_map.comp_id] at this,
@@ -85,7 +85,7 @@ def jet_sec.unloc (𝓕 : jet_sec E E') : one_jet_sec 𝓘(ℝ, E) E 𝓘(ℝ, E
     intros a,
     refine smooth_at_one_jet_bundle.mpr _,
     refine ⟨smooth_at_id, 𝓕.f_diff.cont_mdiff a, _⟩,
-    simp_rw [in_coordinates_model_space],
+    simp_rw [in_tangent_coordinates_model_space],
     exact 𝓕.φ_diff.cont_mdiff a
   end }
 
@@ -105,7 +105,7 @@ def htpy_jet_sec.unloc (𝓕 : htpy_jet_sec E E') : htpy_one_jet_sec 𝓘(ℝ, E
     refine smooth_at_one_jet_bundle.mpr _,
     refine ⟨smooth_at_snd,
       (𝓕.f_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smooth_at_snd), _⟩,
-    dsimp [in_coordinates, in_coordinates', chart_at],
+    dsimp [in_tangent_coordinates, in_coordinates, chart_at],
     simp only [range_id, fderiv_within_univ, fderiv_id, tangent_bundle.symmL_model_space,
       tangent_bundle.continuous_linear_map_at_model_space, continuous_linear_map.one_def,
       continuous_linear_map.comp_id],

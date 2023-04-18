@@ -135,12 +135,12 @@ attribute [simps] cont_mdiff_map.fst cont_mdiff_map.snd
 
 lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM') :
   (trivialization_at (E →L[𝕜] E') (one_jet_space I I') x₀.proj x).2 =
-  in_coordinates' E E' (tangent_space I) (tangent_space I')
+  in_coordinates E E' (tangent_space I) (tangent_space I')
     x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2 x.2 :=
 begin
   delta one_jet_space,
   rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply],
-  simp_rw [in_coordinates, in_coordinates', pullback_trivialization_at],
+  simp_rw [in_tangent_coordinates, in_coordinates, pullback_trivialization_at],
   erw [trivialization.pullback_symmL],
   refl
 end
@@ -164,7 +164,7 @@ rfl
 lemma one_jet_bundle_chart_at_apply (v v' : one_jet_bundle I M I' M') :
   chart_at HJ v v' =
   ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
-  in_coordinates' E E' (tangent_space I) (tangent_space I')
+  in_coordinates E E' (tangent_space I) (tangent_space I')
     v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
 begin
   ext1,
@@ -236,7 +236,7 @@ lemma smooth_at.one_jet_bundle_proj {f : N → J¹MM'} {x₀ : N}
 lemma smooth_at_one_jet_bundle {f : N → J¹MM'} {x₀ : N} :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀ ↔
   smooth_at J I (λ x, (f x).1.1) x₀ ∧ smooth_at J I' (λ x, (f x).1.2) x₀ ∧
-  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
+  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_tangent_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
     (λ x, (f x).2) x₀) x₀ :=
 begin
   simp_rw [smooth_at, cont_mdiff_at_total_space, cont_mdiff_at_prod, and_assoc,
@@ -248,12 +248,12 @@ lemma smooth_at_one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
     (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ ↔
   smooth_at J I f x₀ ∧ smooth_at J I' g x₀ ∧
-  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ x₀) x₀ :=
+  smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_tangent_coordinates I I' f g ϕ x₀) x₀ :=
 smooth_at_one_jet_bundle
 
 lemma smooth_at.one_jet_bundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
   (hf : smooth_at J I f x₀) (hg : smooth_at J I' g x₀)
-  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ x₀) x₀) :
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_tangent_coordinates I I' f g ϕ x₀) x₀) :
   smooth_at J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
     (λ x, one_jet_bundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ :=
 smooth_at_one_jet_bundle.mpr ⟨hf, hg, hϕ⟩
@@ -273,27 +273,27 @@ lemma smooth.one_jet_ext {f : M → M'} (hf : smooth I I' f) :
   smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (one_jet_ext I I' f) :=
 λ x, (hf x).smooth_at.one_jet_ext
 
-lemma continuous_at.in_coordinates_comp {f : N → M} {g : N → M'} {h : N → N'}
+lemma continuous_at.in_tangent_coordinates_comp {f : N → M} {g : N → M'} {h : N → N'}
   {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
   (hg : continuous_at g x₀) :
-  in_coordinates I J' f h (λ x, ϕ' x ∘L ϕ x) x₀ =ᶠ[𝓝 x₀]
-  λ x, in_coordinates I' J' g h ϕ' x₀ x ∘L in_coordinates I I' f g ϕ x₀ x :=
+  in_tangent_coordinates I J' f h (λ x, ϕ' x ∘L ϕ x) x₀ =ᶠ[𝓝 x₀]
+  λ x, in_tangent_coordinates I' J' g h ϕ' x₀ x ∘L in_tangent_coordinates I I' f g ϕ x₀ x :=
 begin
   refine eventually_of_mem (hg.preimage_mem_nhds $
     (achart H' (g x₀)).1.open_source.mem_nhds $ mem_achart_source H' (g x₀)) (λ x hx, _),
   ext v,
-  simp_rw [function.comp_apply, in_coordinates, in_coordinates', continuous_linear_map.comp_apply],
+  simp_rw [function.comp_apply, in_tangent_coordinates, in_coordinates, continuous_linear_map.comp_apply],
   rw [trivialization.symmL_continuous_linear_map_at],
   exact hx,
 end
 
-lemma smooth_at.clm_comp_in_coordinates {f : N → M} {g : N → M'} {h : N → N'}
+lemma smooth_at.clm_comp_in_tangent_coordinates {f : N → M} {g : N → M'} {h : N → N'}
   {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {n : N}
   (hg : continuous_at g n)
-  (hϕ' : smooth_at J 𝓘(𝕜, E' →L[𝕜] F') (in_coordinates I' J' g h ϕ' n) n)
-  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_coordinates I I' f g ϕ n) n) :
-  smooth_at J (𝓘(𝕜, E →L[𝕜] F')) (in_coordinates I J' f h (λ n, ϕ' n ∘L ϕ n) n) n :=
-(hϕ'.clm_comp hϕ).congr_of_eventually_eq (hg.in_coordinates_comp)
+  (hϕ' : smooth_at J 𝓘(𝕜, E' →L[𝕜] F') (in_tangent_coordinates I' J' g h ϕ' n) n)
+  (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_tangent_coordinates I I' f g ϕ n) n) :
+  smooth_at J (𝓘(𝕜, E →L[𝕜] F')) (in_tangent_coordinates I J' f h (λ n, ϕ' n ∘L ϕ n) n) n :=
+(hϕ'.clm_comp hϕ).congr_of_eventually_eq (hg.in_tangent_coordinates_comp)
 
 variables (I')
 lemma smooth_at.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
@@ -304,7 +304,7 @@ lemma smooth_at.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x
     (λ x, one_jet_bundle.mk (f1 x) (f3 x) (h x ∘L g x) : N' → one_jet_bundle I M J N) x₀ :=
 begin
   rw [smooth_at_one_jet_bundle_mk] at hh hg ⊢,
-  exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_in_coordinates hg.2.1.continuous_at hg.2.2⟩
+  exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_in_tangent_coordinates hg.2.1.continuous_at hg.2.2⟩
 end
 
 lemma smooth.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
@@ -327,7 +327,7 @@ begin
   specialize hϕ x,
   specialize hϕ' x,
   rw [← smooth_at, smooth_at_one_jet_bundle_mk] at hϕ hϕ' ⊢,
-  simp_rw [in_coordinates, in_coordinates', continuous_linear_map.add_comp,
+  simp_rw [in_tangent_coordinates, in_coordinates, continuous_linear_map.add_comp,
     continuous_linear_map.comp_add],
   exact ⟨hϕ.1, hϕ.2.1, hϕ.2.2.add hϕ'.2.2⟩
 end
@@ -369,7 +369,7 @@ lemma smooth_at.one_jet_bundle_map {f : M'' → M → N} {g : M'' → M' → N'}
   (hf : smooth_at (I''.prod I) J f.uncurry (x₀, (k x₀).1.1))
   (hg : smooth_at (I''.prod I') J' g.uncurry (x₀, (k x₀).1.2))
   (hDfinv : smooth_at I'' 𝓘(𝕜, F →L[𝕜] E)
-    (in_coordinates J I (λ x, f x (k x).1.1) (λ x, (k x).1.1) (λ x, Dfinv x (k x).1.1) x₀) x₀)
+    (in_tangent_coordinates J I (λ x, f x (k x).1.1) (λ x, (k x).1.1) (λ x, Dfinv x (k x).1.1) x₀) x₀)
   (hk : smooth_at I'' ((I.prod I').prod (𝓘(𝕜, E →L[𝕜] E'))) k x₀) :
   smooth_at I'' ((J.prod J').prod (𝓘(𝕜, F →L[𝕜] F')))
     (λ z, one_jet_bundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ :=
@@ -398,7 +398,7 @@ lemma smooth_at.map_left {f : N' → M → N} {x₀ : N'}
   {g : N' → J¹MM'}
   (hf : smooth_at (J'.prod I) J f.uncurry (x₀, (g x₀).1.1))
   (hDfinv : smooth_at J' 𝓘(𝕜, F →L[𝕜] E)
-    (in_coordinates J I (λ x, f x (g x).1.1) (λ x, (g x).1.1) (λ x, Dfinv x (g x).1.1) x₀) x₀)
+    (in_tangent_coordinates J I (λ x, f x (g x).1.1) (λ x, (g x).1.1) (λ x, Dfinv x (g x).1.1) x₀) x₀)
   (hg : smooth_at J' ((I.prod I').prod (𝓘(𝕜, E →L[𝕜] E'))) g x₀) :
   smooth_at J' ((J.prod I').prod (𝓘(𝕜, F →L[𝕜] E'))) (λ z, map_left (f z) (Dfinv z) (g z)) x₀ :=
 by { simp_rw [map_left_eq_map], exact hf.one_jet_bundle_map smooth_at_snd hDfinv hg }
@@ -423,7 +423,7 @@ begin
   refine smooth_at.map_left _ _ smooth_at_id,
   { exact smooth_at_snd.snd },
   have : cont_mdiff_at (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) 𝓘(𝕜, E →L[𝕜] F × E) ∞
-    (in_coordinates I (J.prod I) _ _ _ x₀) x₀ :=
+    (in_tangent_coordinates I (J.prod I) _ _ _ x₀) x₀ :=
     cont_mdiff_at.mfderiv
     (λ (x : one_jet_bundle (J.prod I) (N × M) I' M') (y : M), (x.1.1.1, y))
     (λ (x : one_jet_bundle (J.prod I) (N × M) I' M'), x.1.1.2) _ _ le_top,
@@ -452,7 +452,7 @@ begin
   apply local_equiv_eq_equiv,
   { intros x,
     rw [local_homeomorph.coe_coe, one_jet_bundle_chart_at_apply p x,
-      in_coordinates'_tangent_bundle_core_model_space],
+      in_coordinates_tangent_bundle_core_model_space],
     ext; refl },
   { simp_rw [one_jet_bundle_chart_source, prod_charted_space_chart_at, chart_at_self_eq,
       local_homeomorph.refl_prod_refl],

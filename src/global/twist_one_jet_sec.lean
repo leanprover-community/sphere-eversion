@@ -42,7 +42,7 @@ lemma smooth_at_one_jet_eucl_bundle' {x₀ : N} :
 begin
   convert smooth_at_hom_bundle I,
   ext1 x,
-  simp_rw [in_coordinates', trivial.trivialization_at,
+  simp_rw [in_coordinates, trivial.trivialization_at,
     trivial.trivialization_continuous_linear_map_at],
   dsimp only [bundle.trivial],
   simp_rw [continuous_linear_map.id_comp]
@@ -61,7 +61,7 @@ begin
     (((tangent_bundle_core I M).is_open_base_set (achart H (f x₀).proj)).mem_nhds
     ((tangent_bundle_core I M).mem_base_set_at (f x₀).proj)),
   filter_upwards [this] with x hx,
-  simp_rw [in_coordinates', trivial.trivialization_at,
+  simp_rw [in_coordinates, trivial.trivialization_at,
     trivial.trivialization_continuous_linear_map_at, ← continuous_linear_map.comp_assoc],
   dsimp only [bundle.trivial],
   simp_rw [continuous_linear_map.id_comp]
@@ -125,7 +125,7 @@ lemma smooth_proj :
 begin
   intro x₀,
   have : smooth_at ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smooth_at_id,
-  simp_rw [smooth_at_one_jet_bundle, in_coordinates, in_coordinates',
+  simp_rw [smooth_at_one_jet_bundle, in_tangent_coordinates, in_coordinates,
     tangent_bundle_core_index_at,
     tangent_bundle.continuous_linear_map_at_model_space,
     continuous_linear_map.one_def] at this,
@@ -162,7 +162,7 @@ begin
   have : smooth_at ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ prod.fst x₀ := smooth_at_fst,
   rw [smooth_at_one_jet_eucl_bundle] at this,
   refine this.1.one_jet_bundle_mk smooth_at_snd _,
-  dsimp only [in_coordinates, in_coordinates', tangent_space],
+  dsimp only [in_tangent_coordinates, in_coordinates, tangent_space],
   simp_rw [tangent_bundle.continuous_linear_map_at_model_space, continuous_linear_map.one_def,
     continuous_linear_map.id_comp],
   exact this.2

@@ -392,6 +392,12 @@ variables {f : M → M'} {m n : ℕ∞} {s : set M} {x x' : M}
 {F₁ : Type*} [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
 {F₂ : Type*} [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
 
+lemma mdifferentiable_at.prod_mk {f : N → M} {g : N → M'} {x : N}
+  (hf : mdifferentiable_at J I f x)
+  (hg : mdifferentiable_at J I' g x) :
+  mdifferentiable_at J (I.prod I') (λ x, (f x, g x)) x :=
+⟨hf.1.prod hg.1, hf.2.prod hg.2⟩
+
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
 
@@ -444,13 +450,6 @@ begin
     exact hy.2 },
   exact fderiv_within_snd this,
 end
-
-lemma mdifferentiable_at.prod_mk {f : N → M} {g : N → M'} {x : N}
-  (hf : mdifferentiable_at J I f x)
-  (hg : mdifferentiable_at J I' g x) :
-  mdifferentiable_at J (I.prod I') (λ x, (f x, g x)) x :=
-⟨hf.1.prod hg.1, hf.2.prod hg.2⟩
-
 
 -- todo: rename differentiable_at.fderiv_within_prod -> differentiable_within_at.fderiv_within_prod
 lemma mdifferentiable_at.mfderiv_prod {f : N → M} {g : N → M'} {x : N}
@@ -513,98 +512,81 @@ open_locale bundle
 variables (I I' Z Z₂ F₁ F₂)
 
 /-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
-  in charts around `y`, `in_coordinates' Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
+  in charts around `y`, `in_coordinates Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
   linear map that makes sense from charts around `x₀` to charts around `y₀`
   by composing it with appropriate coordinate changes given by smooth vector bundles `Z` and `Z₂`.
 -/
-def in_coordinates' (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y) : F₁ →L[𝕜] F₂ :=
+def in_coordinates (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y) : F₁ →L[𝕜] F₂ :=
 (trivialization_at F₂ Z₂ y₀).continuous_linear_map_at 𝕜 y ∘L ϕ ∘L
 (trivialization_at F₁ Z x₀).symmL 𝕜 x
 
 /-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
-  in charts around `g x`, `in_coordinates I I' f g ϕ x₀ x` is a coordinate change of this continuous
-  linear map that makes sense from charts around `f x₀` to charts around `g x₀`
+  in charts around `g x`, `in_tangent_coordinates I I' f g ϕ x₀ x` is a coordinate change of
+  this continuous linear map that makes sense from charts around `f x₀` to charts around `g x₀`
   by composing it with appropriate coordinate changes.
   Note that in the type of `ϕ` is more accurately
   `Π x : N, tangent_space I (f x) →L[𝕜] tangent_space I' (g x)`.
   We are unfolding `tangent_space` in this type so that Lean recognizes that the type of `ϕ` doesn't
   actually depend on `f` or `g`. -/
-def in_coordinates (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') : N → N → E →L[𝕜] E' :=
-λ x₀ x, in_coordinates' E E' (tangent_space I) (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
+def in_tangent_coordinates {N} (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') : N → N → E →L[𝕜] E' :=
+λ x₀ x, in_coordinates E E' (tangent_space I) (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
 variables {F₁ F₂}
 
-/-! Todo: use `in_coordinates'` instead of `in_coordinates_core'`.
-These are the same mathematical object, but not equal, since they are defined differently if the
-`x` and the `y` are not in the right charts. -/
-def in_coordinates_core' {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
-  (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂) (x₀ x : M) (y₀ y : M') (ϕ : F₁ →L[𝕜] F₂) : F₁ →L[𝕜] F₂ :=
-Z₂.coord_change (Z₂.index_at y) (Z₂.index_at y₀) y ∘L ϕ ∘L
-  Z₁.coord_change (Z₁.index_at x₀) (Z₁.index_at x) x
-
-/-! Todo: use `in_coordinates` instead of `in_coordinates_core`.
-These are the same mathematical object, but not equal, since they are defined differently if the
-`f x` and the `g x` are not in the right charts. -/
-def in_coordinates_core (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') :
-  N → N → E →L[𝕜] E' :=
-λ x₀ x, in_coordinates_core' (tangent_bundle_core I M) (tangent_bundle_core I' M')
-  (f x₀) (f x) (g x₀) (g x) (ϕ x)
-
-/-- rewrite `in_coordinates'` using continuous linear equivalences. -/
-lemma in_coordinates'_eq (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y)
+/-- rewrite `in_coordinates` using continuous linear equivalences. -/
+lemma in_coordinates_eq (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y)
   (hx : x ∈ (trivialization_at F₁ Z x₀).base_set)
   (hy : y ∈ (trivialization_at F₂ Z₂ y₀).base_set) :
-  in_coordinates' F₁ F₂ Z Z₂ x₀ x y₀ y ϕ =
+  in_coordinates F₁ F₂ Z Z₂ x₀ x y₀ y ϕ =
   ((trivialization_at F₂ Z₂ y₀).continuous_linear_equiv_at 𝕜 y hy : Z₂ y →L[𝕜] F₂) ∘L ϕ ∘L
   (((trivialization_at F₁ Z x₀).continuous_linear_equiv_at 𝕜 x hx).symm : F₁ →L[𝕜] Z x) :=
 begin
   ext,
-  simp_rw [in_coordinates', continuous_linear_map.coe_comp', continuous_linear_equiv.coe_coe,
+  simp_rw [in_coordinates, continuous_linear_map.coe_comp', continuous_linear_equiv.coe_coe,
     trivialization.coe_continuous_linear_equiv_at_eq,
     trivialization.symm_continuous_linear_equiv_at_eq]
 end
 
-lemma in_coordinates_core'_eq {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
+protected lemma vector_bundle_core.in_coordinates_eq {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
   (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂)
   {x₀ x : M} {y₀ y : M'} (ϕ : F₁ →L[𝕜] F₂)
   (hx : x ∈ Z₁.base_set (Z₁.index_at x₀))
   (hy : y ∈ Z₂.base_set (Z₂.index_at y₀)) :
-    in_coordinates_core' Z₁ Z₂ x₀ x y₀ y ϕ =
-    in_coordinates' F₁ F₂ Z₁.fiber Z₂.fiber x₀ x y₀ y ϕ :=
-by simp_rw [in_coordinates', in_coordinates_core',
-    Z₂.trivialization_at_continuous_linear_map_at hy, Z₁.trivialization_at_symmL hx]
+    in_coordinates F₁ F₂ Z₁.fiber Z₂.fiber x₀ x y₀ y ϕ =
+    Z₂.coord_change (Z₂.index_at y) (Z₂.index_at y₀) y ∘L ϕ ∘L
+    Z₁.coord_change (Z₁.index_at x₀) (Z₁.index_at x) x :=
+by simp_rw [in_coordinates, Z₂.trivialization_at_continuous_linear_map_at hy,
+  Z₁.trivialization_at_symmL hx]
 
-/-- The map `in_coordinates'` is trivial on the model spaces -/
-lemma in_coordinates'_tangent_bundle_core_model_space
+/-- The map `in_coordinates` is trivial on the model spaces -/
+lemma in_coordinates_tangent_bundle_core_model_space
   (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') :
-    in_coordinates' E E' (tangent_space I) (tangent_space I') x₀ x y₀ y ϕ = ϕ :=
+    in_coordinates E E' (tangent_space I) (tangent_space I') x₀ x y₀ y ϕ = ϕ :=
 begin
-  have : in_coordinates_core' (tangent_bundle_core I H) (tangent_bundle_core I' H') x₀ x y₀ y ϕ = ϕ,
-  { simp_rw [in_coordinates_core', tangent_bundle_core_index_at,
-    tangent_bundle_core_coord_change_model_space,
-    continuous_linear_map.id_comp, continuous_linear_map.comp_id] },
-  conv_rhs { rw [← this] },
-  rw [in_coordinates_core'_eq],
-  exacts [rfl, mem_univ x, mem_univ y],
+  refine (vector_bundle_core.in_coordinates_eq _ _ _ _ _).trans _,
+  { exact mem_univ x },
+  { exact mem_univ y },
+  simp_rw [tangent_bundle_core_index_at, tangent_bundle_core_coord_change_model_space,
+    continuous_linear_map.id_comp, continuous_linear_map.comp_id]
 end
 
-lemma in_coordinates_model_space (f : N → H) (g : N → H') (ϕ : N → E →L[𝕜] E') (x₀ : N) :
-    in_coordinates I I' f g ϕ x₀ = ϕ :=
-by simp_rw [in_coordinates, in_coordinates'_tangent_bundle_core_model_space]
+lemma in_tangent_coordinates_model_space (f : N → H) (g : N → H') (ϕ : N → E →L[𝕜] E') (x₀ : N) :
+    in_tangent_coordinates I I' f g ϕ x₀ = ϕ :=
+by simp_rw [in_tangent_coordinates, in_coordinates_tangent_bundle_core_model_space]
 
-lemma in_coordinates_core_eq (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') {x₀ x : N}
+lemma in_tangent_coordinates_eq (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') {x₀ x : N}
   (hx : f x ∈ (chart_at H (f x₀)).source) (hy : g x ∈ (chart_at H' (g x₀)).source) :
-  in_coordinates I I' f g ϕ x₀ x =
+  in_tangent_coordinates I I' f g ϕ x₀ x =
   (tangent_bundle_core I' M').coord_change (achart H' (g x)) (achart H' (g x₀)) (g x) ∘L ϕ x ∘L
   (tangent_bundle_core I M).coord_change (achart H (f x₀)) (achart H (f x)) (f x) :=
-(in_coordinates_core'_eq (tangent_bundle_core I M) (tangent_bundle_core I' M') (ϕ x) hx hy).symm
+(tangent_bundle_core I M).in_coordinates_eq (tangent_bundle_core I' M') (ϕ x) hx hy
 
 variables {I I'}
 
 /-- The function that sends `x` to the `y`-derivative of `f(x,y)` at `g(x)` is `C^n` at `x₀`,
 where the derivative is taken as a continuous linear map.
 We have to assume that `f` is `C^(n+1)` at `(x₀, g(x₀))` and `g` is `C^n` at `x₀`.
-We have to insert appropriate coordinate changes to make the derivative sensible.
+We have to insert a coordinate change from `x₀` to `x` to make the derivative sensible.
 `cont_mdiff_at.mfderiv_id` and `cont_mdiff_at.mfderiv_const` are special cases of this.
 
 This lemma should be generalized to a `cont_mdiff_within_at` for `mfderiv_within`. If we do that, we
@@ -614,7 +596,7 @@ lemma cont_mdiff_at.mfderiv {x₀ : N} (f : N → M → M') (g : N → M)
   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (x₀, g x₀))
   (hg : cont_mdiff_at J I m g x₀) (hmn : m + 1 ≤ n) :
   cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
-    (in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) x₀ :=
+    (in_tangent_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x)) x₀) x₀ :=
 begin
   have h4f : continuous_at (λ x, f x (g x)) x₀,
   { apply continuous_at.comp (by apply hf.continuous_at) (continuous_at_id.prod hg.continuous_at) },
@@ -706,7 +688,7 @@ begin
     { simp_rw [function.comp_apply, (ext_chart_at I (g x₀)).left_inv hx₂] } },
   refine this.congr_of_eventually_eq _,
   filter_upwards [h2g, h4f] with x hx h2x,
-  rw [in_coordinates_core_eq],
+  rw [in_tangent_coordinates_eq],
   { refl },
   { rwa [ext_chart_at_source] at hx },
   { rwa [ext_chart_at_source] at h2x },
@@ -714,30 +696,38 @@ end
 
 /-- The function `x ↦ D_yf(x,y)` is `C^n` at `x₀`, where the derivative is taken as a continuous
 linear map. We have to assume that `f` is `C^(n+1)` at `(x₀, x₀)`.
-We have to insert appropriate coordinate changes to make the derivative sensible.
+We have to insert a coordinate change from `x₀` to `x` to make the derivative sensible.
 This is a special case of `cont_mdiff_at.mfderiv` (with `g = id`),
 and `cont_mdiff_at.mfderiv_const` is a special case of this.
 -/
 lemma cont_mdiff_at.mfderiv_id {x₀ : M} (f : M → M → M')
   (hf : cont_mdiff_at (I.prod I) I' n (function.uncurry f) (x₀, x₀)) (hmn : m + 1 ≤ n) :
   cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m
-    (in_coordinates I I' id (λ x, f x x) (λ x, mfderiv I I' (f x) x) x₀) x₀ :=
+    (in_tangent_coordinates I I' id (λ x, f x x) (λ x, mfderiv I I' (f x) x) x₀) x₀ :=
 hf.mfderiv f id cont_mdiff_at_id hmn
 
 /-- The derivative `D_yf(y)` is `C^n` at `x₀`, where the derivative is taken as a continuous
 linear map. We have to assume that `f` is `C^(n+1)` at `x₀`.
-We have to insert appropriate coordinate changes to make the derivative sensible.
+We have to insert a coordinate change from `x₀` to `x` to make the derivative sensible.
 This is a special case of See `cont_mdiff_at.mfderiv_id` where `f` does not contain any parameters.
 -/
 lemma cont_mdiff_at.mfderiv_const {x₀ : M} {f : M → M'}
   (hf : cont_mdiff_at I I' n f x₀) (hmn : m + 1 ≤ n) :
-  cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m (in_coordinates I I' id f (mfderiv I I' f) x₀) x₀ :=
+  cont_mdiff_at I 𝓘(𝕜, E →L[𝕜] E') m (in_tangent_coordinates I I' id f (mfderiv I I' f) x₀) x₀ :=
 begin
   have : cont_mdiff_at (I.prod I) I' n (λ x : M × M, f x.2) (x₀, x₀) :=
   cont_mdiff_at.comp (x₀, x₀) hf cont_mdiff_at_snd,
   apply cont_mdiff_at.mfderiv_id (λ x, f) this hmn
 end
 
+/-- The function that sends `x` to the `y`-derivative of `f(x,y)` at `g(x)` applied to `g₂(x)` is
+`C^n` at `x₀`, where the derivative is taken as a continuous linear map.
+We have to assume that `f` is `C^(n+1)` at `(x₀, g(x₀))` and `g` is `C^n` at `x₀`.
+We have to insert a coordinate change from `x₀` to `g₁(x)` to make the derivative sensible.
+
+This is  similar to `cont_mdiff_at.mfderiv`, but where the continuous linear map is applied to a
+(variable) vector.
+-/
 lemma cont_mdiff_at.mfderiv_apply {x₀ : N'} (f : N → M → M') (g : N → M) (g₁ : N' → N)
   (g₂ : N' → E)
   (hf : cont_mdiff_at (J.prod I) I' n (function.uncurry f) (g₁ x₀, g (g₁ x₀)))
@@ -745,7 +735,7 @@ lemma cont_mdiff_at.mfderiv_apply {x₀ : N'} (f : N → M → M') (g : N → M)
   (hg₁ : cont_mdiff_at J' J m g₁ x₀)
   (hg₂ : cont_mdiff_at J' 𝓘(𝕜, E) m g₂ x₀) (hmn : m + 1 ≤ n) :
   cont_mdiff_at J' 𝓘(𝕜, E') m
-    (λ x, in_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x))
+    (λ x, in_tangent_coordinates I I' g (λ x, f x (g x)) (λ x, mfderiv I I' (f x) (g x))
       (g₁ x₀) (g₁ x) (g₂ x))
     x₀ :=
 ((hf.mfderiv f g hg hmn).comp_of_eq hg₁ rfl).clm_apply hg₂

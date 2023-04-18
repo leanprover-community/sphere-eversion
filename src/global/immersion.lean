@@ -54,7 +54,7 @@ lemma mem_immersion_rel_iff' {σ σ' : one_jet_bundle I M I' M'} (hσ' : σ' ∈
 begin
   simp only [fiber_bundle.charted_space_chart_at] with mfld_simps at hσ',
   simp_rw [mem_immersion_rel_iff],
-  rw [one_jet_bundle_chart_at_apply, in_coordinates'_eq],
+  rw [one_jet_bundle_chart_at_apply, in_coordinates_eq],
   simp_rw [continuous_linear_map.coe_comp', continuous_linear_equiv.coe_coe,
     equiv_like.comp_injective, equiv_like.injective_comp],
   exacts [hσ'.1.1, hσ'.1.2],
