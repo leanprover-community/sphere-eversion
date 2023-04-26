@@ -78,12 +78,22 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 
 variables [smooth_manifold_with_corners I M]
 
-/- These instances should not be in mathlib, since these are non-canonical/wrong choices
-  in certain applications. We currently need these in some proofs. -/
-instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
-instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
+instance {x : M} : has_continuous_add (tangent_space I x) := by delta_instance tangent_space
 
 end
+
+section real
+
+variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+{H : Type*} [topological_space H] {I : model_with_corners ℝ E H}
+{M : Type*} [topological_space M] [charted_space H M]
+{F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+
+variables [smooth_manifold_with_corners I M]
+
+instance {x : M} : path_connected_space (tangent_space I x) := by delta_instance tangent_space
+
+end real
 
 section
 
