@@ -239,7 +239,7 @@ lemma smooth_at_one_jet_bundle {f : N → J¹MM'} {x₀ : N} :
   smooth_at J 𝓘(𝕜, E →L[𝕜] E') (in_tangent_coordinates I I' (λ x, (f x).1.1) (λ x, (f x).1.2)
     (λ x, (f x).2) x₀) x₀ :=
 begin
-  simp_rw [smooth_at, cont_mdiff_at_total_space, cont_mdiff_at_prod, and_assoc,
+  simp_rw [smooth_at, cont_mdiff_at_total_space, cont_mdiff_at_prod_iff, and_assoc,
     one_jet_bundle_trivialization_at],
   refl,
 end

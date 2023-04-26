@@ -215,10 +215,10 @@ variables (I)
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
 
-lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
-  (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
-  cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
-(has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
+-- lemma cont_diff_on_coord_change' {e e' : local_homeomorph M H}
+--   (h : e ∈ atlas H M) (h' : e' ∈ atlas H M) :
+--   cont_diff_on 𝕜 ⊤ (I ∘ (e.symm ≫ₕ e') ∘ I.symm) (I.symm ⁻¹' (e.symm ≫ₕ e').source ∩ range I) :=
+-- (has_groupoid.compatible (cont_diff_groupoid ⊤ I) h h').1
 
 end smooth_manifold_with_corners
 
