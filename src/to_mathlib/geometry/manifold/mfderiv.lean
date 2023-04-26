@@ -26,8 +26,6 @@ variables {f : M → M'} {m n : ℕ∞} {s : set M} {x x' : M}
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
 
-open bundle
-
 variables (I I')
 
 /-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
@@ -41,7 +39,8 @@ actually depend on `f` or `g`.
 
 This is the underlying function of the trivializations of the hom of (pullbacks of) tangent spaces.
 -/
-def in_tangent_coordinates {N} (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') : N → N → E →L[𝕜] E' :=
+def in_tangent_coordinates {N} (f : N → M) (g : N → M')
+  (ϕ : N → E →L[𝕜] E') : N → N → E →L[𝕜] E' :=
 λ x₀ x, in_coordinates E (tangent_space I) E' (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
 /-- The map `in_coordinates` for the tangent bundle is trivial on the model spaces -/
