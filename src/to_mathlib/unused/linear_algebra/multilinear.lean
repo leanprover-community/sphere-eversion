@@ -25,7 +25,7 @@ open function
 
 namespace multilinear_map
 variables {R ι ι' M₃ M₄ : Type*} {M₁ M₂ : ι → Type*} {N : ι' → Type*}
-variables [decidable_eq ι] [decidable_eq ι'] [semiring R]
+variables [semiring R]
 variables [Π i, add_comm_monoid (M₁ i)] [Π i, module R (M₁ i)]
 variables [Π i, add_comm_monoid (M₂ i)] [Π i, module R (M₂ i)]
 variables [Π i, add_comm_monoid (N i)] [Π i, module R (N i)]
@@ -37,16 +37,16 @@ variables [add_comm_monoid M₄] [module R M₄]
 def coprod (L₁ : multilinear_map R M₁ M₃) (L₂ : multilinear_map R M₂ M₃) :
   multilinear_map R (λ i, M₁ i × M₂ i) M₃ :=
 { to_fun := λ v, L₁ (λ i, (v i).1) + L₂ (λ i, (v i).2),
-  map_add' := λ v i p q, by {
+  map_add' := λ _ v i p q, by { resetI,
   simp_rw [update_fst, update_snd, add_add_add_comm, ← L₁.map_add, ← L₂.map_add, prod.add_def] },
-  map_smul' := λ v i c p, by {
+  map_smul' := λ _ v i c p, by { resetI,
   simp_rw [update_fst, update_snd, smul_add, ← L₁.map_smul, ← L₂.map_smul, prod.smul_def] } }
 
 end multilinear_map
 
 namespace continuous_multilinear_map
 variables {R ι ι' : Type*} {M₁ M₂ : ι → Type*} {M₃ M₄ : Type*} {N : ι' → Type*}
-variables [decidable_eq ι] [decidable_eq ι'] [semiring R]
+variables [semiring R]
 variables [Π i, add_comm_monoid (M₁ i)] [Π i, add_comm_monoid (M₂ i)] [add_comm_monoid M₃]
 variables [Π i, module R (M₁ i)] [Π i, module R (M₂ i)] [module R M₃]
 variables [Π i, topological_space (M₁ i)] [Π i, topological_space (M₂ i)]

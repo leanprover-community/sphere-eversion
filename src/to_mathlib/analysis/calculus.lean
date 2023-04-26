@@ -25,38 +25,6 @@ smooth_transition.continuous.continuous_at
 
 end real
 
--- section cont_diff_fderiv
-/-! In this section we prove that the derivative of a parametric function is smooth, assuming the
-  input function is smooth enough. We also do this for `cont_diff_within_at` and `fderiv_within`
-  (needed for manifolds)
-  We also need some random other lemmas that we didn't bother to put in the right place yet. -/
-
-section fderiv
-
-variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
-variables {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-variables {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-variables {G : Type*} [normed_add_comm_group G] [normed_space 𝕜 G]
-variables {X : Type*} [normed_add_comm_group X] [normed_space 𝕜 X]
-variables {G' : Type*} [normed_add_comm_group G'] [normed_space 𝕜 G']
-variables {f : E → F} {g : E → F} {u : set (E × F)} {s : set E} {x : E} {t : set F} {n m : ℕ∞}
-
--- the following version is not exactly ported
-lemma cont_diff_within_at_fderiv_within {f : E → F → G}
-  (hf : cont_diff_within_at 𝕜 n (function.uncurry f) u (x, g x))
-  (hg : cont_diff_within_at 𝕜 m g s x)
-  (ht : unique_diff_on 𝕜 t)
-  (hmn : m + 1 ≤ n) (hx : x ∈ s)
-  (hst : s ×ˢ t ⊆ u)
-  (hgx : ∀ᶠ x' in 𝓝[s] x, g x' ∈ t)
-  (hgt : t ∈ 𝓝[g '' s] g x)
-  :
-  cont_diff_within_at 𝕜 m (λ x, fderiv_within 𝕜 (f x) t (g x)) s x :=
-by { rw [← insert_eq_self.mpr hx] at hst hgx,
-  exact (hf.mono hst).fderiv_within'' hg (hgx.mono (λ y hy, ht _ hy)) hmn hgt }
-
-end fderiv
-
 section calculus
 open continuous_linear_map
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]

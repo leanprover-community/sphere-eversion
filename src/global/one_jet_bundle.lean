@@ -24,7 +24,7 @@ We prove
 
 noncomputable theory
 
-open filter set equiv bundle
+open filter set equiv bundle continuous_linear_map
 open_locale manifold topology bundle
 
 variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
@@ -135,7 +135,7 @@ attribute [simps] cont_mdiff_map.fst cont_mdiff_map.snd
 
 lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM') :
   (trivialization_at (E →L[𝕜] E') (one_jet_space I I') x₀.proj x).2 =
-  in_coordinates E E' (tangent_space I) (tangent_space I')
+  in_coordinates E (tangent_space I) E' (tangent_space I')
     x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2 x.2 :=
 begin
   delta one_jet_space,
@@ -164,7 +164,7 @@ rfl
 lemma one_jet_bundle_chart_at_apply (v v' : one_jet_bundle I M I' M') :
   chart_at HJ v v' =
   ((chart_at H v.1.1 v'.1.1, chart_at H' v.1.2 v'.1.2),
-  in_coordinates E E' (tangent_space I) (tangent_space I')
+  in_coordinates E (tangent_space I) E' (tangent_space I')
     v.1.1 v'.1.1 v.1.2 v'.1.2 v'.2) :=
 begin
   ext1,

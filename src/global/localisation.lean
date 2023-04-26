@@ -13,6 +13,7 @@ is about embedding any manifold into another one).
 noncomputable theory
 
 open set function filter (hiding map_smul) charted_space smooth_manifold_with_corners
+  continuous_linear_map
 open_locale topology manifold
 
 section loc

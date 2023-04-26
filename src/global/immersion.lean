@@ -8,7 +8,7 @@ import global.twist_one_jet_sec
 
 noncomputable theory
 
-open metric finite_dimensional set function linear_map filter
+open metric finite_dimensional set function linear_map filter continuous_linear_map
 open_locale manifold topology
 
 section general

@@ -1,6 +1,6 @@
 import to_mathlib.geometry.manifold.misc_manifold
 
-open bundle set function filter
+open bundle set function filter continuous_linear_map
 open_locale manifold topology
 noncomputable theory
 

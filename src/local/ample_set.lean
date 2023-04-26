@@ -182,7 +182,7 @@ begin
   rw is_path_connected_iff,
   split,
   { suffices : 0 < module.rank ℝ F,
-      by rwa dim_pos_iff_exists_ne_zero at this,
+      by rwa rank_pos_iff_exists_ne_zero at this,
     exact lt_of_lt_of_le (by norm_num) hdim },
   { intros x hx y hy,
     by_cases h : y ∈ submodule.span ℝ ({x} : set F),
@@ -195,10 +195,10 @@ begin
       by_contra h',
       push_neg at h',
       rw ← submodule.eq_top_iff' at h',
-      rw [← dim_top ℝ, ← h'] at hdim,
+      rw [← rank_top ℝ, ← h'] at hdim,
       suffices : (2 : cardinal) ≤ 1,
         from not_le_of_lt (by norm_num) this,
-      have := hdim.trans (dim_span_le _),
+      have := hdim.trans (rank_span_le _),
       rwa cardinal.mk_singleton at this },
     { exact joined_in_compl_zero_of_not_mem_span hx h } }
 end
@@ -212,7 +212,7 @@ begin
   rcases E.exists_is_compl with ⟨E', hE'⟩,
   refine is_path_connected_compl_of_is_path_connected_compl_zero hE'.symm _,
   refine is_path_connected_compl_zero_of_two_le_dim _,
-  rwa ← (E.quotient_equiv_of_is_compl E' hE').dim_eq
+  rwa ← (E.quotient_equiv_of_is_compl E' hE').rank_eq
 end
 
 /-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
@@ -237,9 +237,9 @@ begin
   intro y,
   by_cases h : y ∈ E,
   { rcases E.exists_is_compl with ⟨E', hE'⟩,
-    rw (E.quotient_equiv_of_is_compl E' hE').dim_eq at hcodim,
+    rw (E.quotient_equiv_of_is_compl E' hE').rank_eq at hcodim,
     have hcodim' : 0 < module.rank ℝ E' := lt_of_lt_of_le (by norm_num) hcodim,
-    rw dim_pos_iff_exists_ne_zero at hcodim',
+    rw rank_pos_iff_exists_ne_zero at hcodim',
     rcases hcodim' with ⟨z, hz⟩,
     have : y ∈ [y+(-z) -[ℝ] y+z],
     { rw ← sub_eq_add_neg,

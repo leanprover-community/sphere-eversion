@@ -1,4 +1,8 @@
 import to_mathlib.geometry.manifold.mfderiv
+import to_mathlib.analysis.calculus
+import geometry.manifold.diffeomorph
+import geometry.manifold.algebra.monoid
+import geometry.manifold.metrizable
 
 open bundle set function filter
 open_locale manifold topology
@@ -74,9 +78,10 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 
 variables [smooth_manifold_with_corners I M]
 
-namespace tangent_bundle
-
-end tangent_bundle
+/- These instances should not be in mathlib, since these are non-canonical/wrong choices
+  in certain applications. We currently need these in some proofs. -/
+instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
+instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
 
 end
 

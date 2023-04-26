@@ -195,7 +195,7 @@ end pullback_vb
 
 namespace vector_prebundle
 
-attribute [reducible] vector_prebundle.to_fiber_bundle
+-- attribute [reducible] vector_prebundle.to_fiber_bundle
 
 /-!
 ### `vector_prebundle.is_smooth`
@@ -309,7 +309,6 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
 /-!
 ### Homs of smooth vector bundles over the same base space
 -/
--- protect `bundle.continuous_linear_map`
 
 section hom
 open continuous_linear_map pretrivialization
@@ -356,27 +355,9 @@ local attribute [instance, priority 1] topological_space.continuous_linear_map'
 -- ^ probably needed because of the type-class pi bug
 -- https://leanprover.zulipchat.com/#narrow/stream/116395-maths/topic/vector.20bundles.20--.20typeclass.20inference.20issue
 
-lemma hom_trivialization_at_apply (x₀ : B) (x : LE₁E₂) :
-  trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀ x =
-  ⟨x.1, in_coordinates F₁ F₂ E₁ E₂ x₀ x.1 x₀ x.1 x.2⟩ :=
-rfl
-
-
-@[simp, mfld_simps]
-lemma hom_trivialization_at_source (x₀ : B) :
-  (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).source =
-  π (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) ⁻¹' ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) :=
-rfl
-
-@[simp, mfld_simps]
-lemma hom_trivialization_at_target (x₀ : B) :
-  (trivialization_at (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x₀).target =
-  ((trivialization_at F₁ E₁ x₀).base_set ∩ (trivialization_at F₂ E₂ x₀).base_set) ×ˢ set.univ :=
-rfl
-
 lemma hom_chart (x₀ x : LE₁E₂) :
   chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
-  (chart_at HB x₀.1 x.1, in_coordinates F₁ F₂ E₁ E₂ x₀.1 x.1 x₀.1 x.1 x.2) :=
+  (chart_at HB x₀.1 x.1, in_coordinates F₁ E₁ F₂ E₂ x₀.1 x.1 x₀.1 x.1 x.2) :=
 by simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
   trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, hom_trivialization_at_apply]
 
@@ -384,7 +365,7 @@ lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
   smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
   smooth_at IM IB (λ x, (f x).1) x₀ ∧
   smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
-  (λ x, in_coordinates F₁ F₂ E₁ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
+  (λ x, in_coordinates F₁ E₁ F₂ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
 by { simp_rw [smooth_at, cont_mdiff_at_total_space], refl }
 
 variables [smooth_manifold_with_corners IB B]
@@ -392,7 +373,8 @@ variables [smooth_manifold_with_corners IB B]
 
 variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
 
-instance bundle.continuous_linear_map.vector_prebundle.is_smooth : PLE₁E₂ .is_smooth IB :=
+instance bundle.continuous_linear_map.vector_prebundle.is_smooth :
+  (bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂).is_smooth IB :=
 { exists_smooth_coord_change := by {
     rintro _ ⟨e₁, e₂, he₁, he₂, rfl⟩ _ ⟨e₁', e₂', he₁', he₂', rfl⟩,
     resetI,

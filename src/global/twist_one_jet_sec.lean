@@ -7,7 +7,7 @@ import global.one_jet_sec
 
 noncomputable theory
 
-open set equiv bundle
+open set equiv bundle continuous_linear_map
 open_locale manifold bundle topology
 
 section arbitrary_field

@@ -1,195 +1,9 @@
-import geometry.manifold.diffeomorph
-import geometry.manifold.algebra.monoid
-import geometry.manifold.metrizable
-import to_mathlib.analysis.calculus
+import geometry.manifold.cont_mdiff_mfderiv
 
-open bundle set function filter
+open bundle set function filter continuous_linear_map
 open_locale manifold topology
 noncomputable theory
 
-namespace vector_bundle_core
-
-variables {𝕜 B F : Type*} [nontrivially_normed_field 𝕜]
-  [normed_add_comm_group F] [normed_space 𝕜 F] [topological_space B]
-  {ι : Type*} (Z : vector_bundle_core 𝕜 B F ι) {i j : ι}
-
-@[simp, mfld_simps] lemma local_triv_continuous_linear_map_at {b : B} (hb : b ∈ Z.base_set i) :
-  (Z.local_triv i).continuous_linear_map_at 𝕜 b = Z.coord_change (Z.index_at b) i b :=
-begin
-  ext1 v,
-  rw [(Z.local_triv i).continuous_linear_map_at_apply 𝕜, (Z.local_triv i).coe_linear_map_at_of_mem],
-  exacts [rfl, hb]
-end
-
-@[simp, mfld_simps] lemma trivialization_at_continuous_linear_map_at {b₀ b : B}
-  (hb : b ∈ (trivialization_at F Z.fiber b₀).base_set) :
-  (trivialization_at F Z.fiber b₀).continuous_linear_map_at 𝕜 b =
-  Z.coord_change (Z.index_at b) (Z.index_at b₀) b :=
-Z.local_triv_continuous_linear_map_at hb
-
-@[simp, mfld_simps] lemma local_triv_symmL {b : B} (hb : b ∈ Z.base_set i) :
-  (Z.local_triv i).symmL 𝕜 b = Z.coord_change i (Z.index_at b) b :=
-by { ext1 v, rw [(Z.local_triv i).symmL_apply 𝕜, (Z.local_triv i).symm_apply], exacts [rfl, hb] }
-
-@[simp, mfld_simps] lemma trivialization_at_symmL {b₀ b : B}
-  (hb : b ∈ (trivialization_at F Z.fiber b₀).base_set) :
-  (trivialization_at F Z.fiber b₀).symmL 𝕜 b = Z.coord_change (Z.index_at b₀) (Z.index_at b) b :=
-Z.local_triv_symmL hb
-
-@[simp, mfld_simps] lemma trivialization_at_coord_change_eq {b₀ b₁ b : B}
-  (hb : b ∈ (trivialization_at F Z.fiber b₀).base_set ∩ (trivialization_at F Z.fiber b₁).base_set)
-  (v : F) :
-  (trivialization_at F Z.fiber b₀).coord_changeL 𝕜 (trivialization_at F Z.fiber b₁) b v =
-  Z.coord_change (Z.index_at b₀) (Z.index_at b₁) b v :=
-Z.local_triv_coord_change_eq _ _ hb v
-
-end vector_bundle_core
-
-section
-open smooth_manifold_with_corners
-
-variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
--- declare a smooth manifold `M` over the pair `(E, H)`.
-{E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-{H : Type*} [topological_space H] (I : model_with_corners 𝕜 E H)
-{M : Type*} [topological_space M] [charted_space H M] [Is : smooth_manifold_with_corners I M]
--- declare a smooth manifold `M'` over the pair `(E', H')`.
-{E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
-{H' : Type*} [topological_space H'] (I' : model_with_corners 𝕜 E' H')
-{M' : Type*} [topological_space M'] [charted_space H' M'] [I's : smooth_manifold_with_corners I' M']
--- declare a manifold `M''` over the pair `(E'', H'')`.
-{E'' : Type*} [normed_add_comm_group E''] [normed_space 𝕜 E'']
-{H'' : Type*} [topological_space H''] {I'' : model_with_corners 𝕜 E'' H''}
-{M'' : Type*} [topological_space M''] [charted_space H'' M'']
--- declare a smooth manifold `N` over the pair `(F, G)`.
-{F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-{G : Type*} [topological_space G] {J : model_with_corners 𝕜 F G}
-{N : Type*} [topological_space N] [charted_space G N] [Js : smooth_manifold_with_corners J N]
--- declare a smooth manifold `N'` over the pair `(F', G')`.
-{F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
-{G' : Type*} [topological_space G'] {J' : model_with_corners 𝕜 F' G'}
-{N' : Type*} [topological_space N'] [charted_space G' N'] [J's : smooth_manifold_with_corners J' N']
--- F₁, F₂, F₃, F₄ are normed spaces
-{F₁ : Type*} [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
-{F₂ : Type*} [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
-{F₃ : Type*} [normed_add_comm_group F₃] [normed_space 𝕜 F₃]
-{F₄ : Type*} [normed_add_comm_group F₄] [normed_space 𝕜 F₄]
--- declare functions, sets, points and smoothness indices
-{e : local_homeomorph M H} {e' : local_homeomorph M' H'}
-{f f₁ : M → M'} {s s₁ t : set M} {x : M} {m n : ℕ∞}
-
-end
-
-section
-
-variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
-{E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-{H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
-{M : Type*} [topological_space M] [charted_space H M]
-{F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-
-variables [smooth_manifold_with_corners I M]
-
-namespace tangent_bundle
-
-@[simp, mfld_simps] lemma trivialization_at_continuous_linear_map_at {b₀ b : M}
-  (hb : b ∈ (trivialization_at E (tangent_space I) b₀).base_set) :
-  (trivialization_at E (tangent_space I) b₀).continuous_linear_map_at 𝕜 b =
-  (tangent_bundle_core I M).coord_change (achart H b) (achart H b₀) b :=
-(tangent_bundle_core I M).local_triv_continuous_linear_map_at hb
-
-@[simp, mfld_simps] lemma trivialization_at_symmL {b₀ b : M}
-  (hb : b ∈ (trivialization_at E (tangent_space I) b₀).base_set) :
-  (trivialization_at E (tangent_space I) b₀).symmL 𝕜 b =
-    (tangent_bundle_core I M).coord_change (achart H b₀) (achart H b) b :=
-(tangent_bundle_core I M).local_triv_symmL hb
-
-lemma coord_change_model_space (b b' x : F) :
-  (tangent_bundle_core 𝓘(𝕜, F) F).coord_change (achart F b) (achart F b') x = 1 :=
-by simpa only [tangent_bundle_core_coord_change] with mfld_simps using
-    fderiv_within_id unique_diff_within_at_univ
-
-lemma symmL_model_space (b b' : F) :
-  (trivialization_at F (tangent_space 𝓘(𝕜, F)) b).symmL 𝕜 b' = (1 : F →L[𝕜] F) :=
-begin
-  rw [tangent_bundle.trivialization_at_symmL, coord_change_model_space],
-  apply mem_univ
-end
-
-lemma continuous_linear_map_at_model_space (b b' : F) :
-  (trivialization_at F (tangent_space 𝓘(𝕜, F)) b).continuous_linear_map_at 𝕜 b' =
-  (1 : F →L[𝕜] F) :=
-begin
-  rw [tangent_bundle.trivialization_at_continuous_linear_map_at, coord_change_model_space],
-  apply mem_univ
-end
-
-end tangent_bundle
-
-end
-
-
-section smooth_manifold_with_corners
-open smooth_manifold_with_corners
-
-variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
-  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
-  {E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
-  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
-  {F' : Type*} [normed_add_comm_group F'] [normed_space 𝕜 F']
-  {H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
-  {H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
-  {G : Type*} [topological_space G] {J : model_with_corners 𝕜 F G}
-  {G' : Type*} [topological_space G'] {J' : model_with_corners 𝕜 F' G'}
-  {M : Type*} [topological_space M] [charted_space H M]
-  {M' : Type*} [topological_space M'] [charted_space H' M']
-  {N : Type*} [topological_space N] [charted_space G N]
-  {N' : Type*} [topological_space N'] [charted_space G' N']
-  {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
-  {E'' : Type*} [normed_add_comm_group E''] [normed_space 𝕜 E'']
-  {H'' : Type*} [topological_space H''] {I'' : model_with_corners 𝕜 E'' H''}
-  {M'' : Type*} [topological_space M''] [charted_space H'' M'']
-  {e : local_homeomorph M H}
-variables {f : M → M'} {m n : ℕ∞} {s : set M} {x x' : M}
-
--- this can be useful to see where we (ab)use definitional equalities
--- local attribute [irreducible] tangent_space
-
-/-! The two instances below deserve some further thought. For example one might not want the tangent
-space at every point to carry a canonical norm.
-
-Note that `dual_pair.update` requires `F` to be a `normed_add_comm_group` (though perhaps we could
-get away with `has_continuous_smul` with sufficient extra work).
-
-In `rel_mfld.slice` we use `dual_pair.update` applied to `tangent_space`. If we don't add these
-instances, then in fact Lean still accepts the definition. What is going on is that Lean
-is unfolding the definition of `tangent_space`, realizing that `tangent_space I x = E` and
-`tangent_space I' y = E'` and using the `normed_add_comm_group` instances of these types.
-Note that this still uses these instances but at the cost that up to reducible transparency, the
-term is not type-correct (in other words: you have to unfold `tangent_space` to realize that the
-term is type-correct).
-
-This means that many tactics, like `simp`, `rw`, and `dsimp` fail to rewrite within this term,
-because the result is not type correct up to reducible transparancy.
-
-Declaring these instances avoids such problems. -/
-
-section
-
-variables [smooth_manifold_with_corners I M]
-instance {x : M} : normed_add_comm_group (tangent_space I x) := by delta_instance tangent_space
-instance {x : M} : normed_space 𝕜 (tangent_space I x) := by delta_instance tangent_space
-end
-
-variables (I)
-
-lemma tangent_bundle_core_coord_change_model_space (x x' z : H) :
-  (tangent_bundle_core I H).coord_change (achart H x) (achart H x') z =
-  continuous_linear_map.id 𝕜 E :=
-by { ext v, exact (tangent_bundle_core I H).coord_change_self (achart _ z) z (mem_univ _) v }
-
-end smooth_manifold_with_corners
-
 section smooth_manifold_with_corners
 open smooth_manifold_with_corners
 
@@ -208,36 +22,13 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
   {N' : Type*} [topological_space N'] [charted_space G' N']
   {F'' : Type*} [normed_add_comm_group F''] [normed_space 𝕜 F'']
 variables {f : M → M'} {m n : ℕ∞} {s : set M} {x x' : M}
--- declare some additional normed spaces, used for fibers of vector bundles
-{F₁ : Type*} [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
-{F₂ : Type*} [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
 
 variables [smooth_manifold_with_corners I M] [smooth_manifold_with_corners I' M']
   [smooth_manifold_with_corners J N]
 
 open bundle
-variables
-  {Z : M → Type*} [topological_space (total_space Z)] [∀ b, topological_space (Z b)]
-  [∀ b, add_comm_monoid (Z b)] [∀ b, module 𝕜 (Z b)]
-  [fiber_bundle F₁ Z] [vector_bundle 𝕜 F₁ Z] [smooth_vector_bundle F₁ Z I]
-  {Z₂ : M' → Type*} [topological_space (total_space Z₂)] [∀ b, topological_space (Z₂ b)]
-  [∀ b, add_comm_monoid (Z₂ b)] [∀ b, module 𝕜 (Z₂ b)]
-  [fiber_bundle F₂ Z₂] [vector_bundle 𝕜 F₂ Z₂] [smooth_vector_bundle F₂ Z₂ I']
 
-open_locale bundle
-
-variables (I I' Z Z₂ F₁ F₂)
-
-/-- When `ϕ` is a continuous linear map that changes vectors in charts around `x` to vectors
-in charts around `y`, `in_coordinates Z Z₂ x₀ x y₀ y ϕ` is a coordinate change of this continuous
-linear map that makes sense from charts around `x₀` to charts around `y₀`
-by composing it with appropriate coordinate changes given by smooth vector bundles `Z` and `Z₂`.
-
-This is the underlying function of the trivializations of the hom of two vector bundles.
--/
-def in_coordinates (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y) : F₁ →L[𝕜] F₂ :=
-(trivialization_at F₂ Z₂ y₀).continuous_linear_map_at 𝕜 y ∘L ϕ ∘L
-(trivialization_at F₁ Z x₀).symmL 𝕜 x
+variables (I I')
 
 /-- When `ϕ x` is a continuous linear map that changes vectors in charts around `f x` to vectors
 in charts around `g x`, `in_tangent_coordinates I I' f g ϕ x₀ x` is a coordinate change of
@@ -251,39 +42,12 @@ actually depend on `f` or `g`.
 This is the underlying function of the trivializations of the hom of (pullbacks of) tangent spaces.
 -/
 def in_tangent_coordinates {N} (f : N → M) (g : N → M') (ϕ : N → E →L[𝕜] E') : N → N → E →L[𝕜] E' :=
-λ x₀ x, in_coordinates E E' (tangent_space I) (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
+λ x₀ x, in_coordinates E (tangent_space I) E' (tangent_space I') (f x₀) (f x) (g x₀) (g x) (ϕ x)
 
-variables {F₁ F₂}
-
-/-- rewrite `in_coordinates` using continuous linear equivalences. -/
-lemma in_coordinates_eq (x₀ x : M) (y₀ y : M') (ϕ : Z x →L[𝕜] Z₂ y)
-  (hx : x ∈ (trivialization_at F₁ Z x₀).base_set)
-  (hy : y ∈ (trivialization_at F₂ Z₂ y₀).base_set) :
-  in_coordinates F₁ F₂ Z Z₂ x₀ x y₀ y ϕ =
-  ((trivialization_at F₂ Z₂ y₀).continuous_linear_equiv_at 𝕜 y hy : Z₂ y →L[𝕜] F₂) ∘L ϕ ∘L
-  (((trivialization_at F₁ Z x₀).continuous_linear_equiv_at 𝕜 x hx).symm : F₁ →L[𝕜] Z x) :=
-begin
-  ext,
-  simp_rw [in_coordinates, continuous_linear_map.coe_comp', continuous_linear_equiv.coe_coe,
-    trivialization.coe_continuous_linear_equiv_at_eq,
-    trivialization.symm_continuous_linear_equiv_at_eq]
-end
-
-protected lemma vector_bundle_core.in_coordinates_eq {ι₁ ι₂} (Z₁ : vector_bundle_core 𝕜 M F₁ ι₁)
-  (Z₂ : vector_bundle_core 𝕜 M' F₂ ι₂)
-  {x₀ x : M} {y₀ y : M'} (ϕ : F₁ →L[𝕜] F₂)
-  (hx : x ∈ Z₁.base_set (Z₁.index_at x₀))
-  (hy : y ∈ Z₂.base_set (Z₂.index_at y₀)) :
-    in_coordinates F₁ F₂ Z₁.fiber Z₂.fiber x₀ x y₀ y ϕ =
-    Z₂.coord_change (Z₂.index_at y) (Z₂.index_at y₀) y ∘L ϕ ∘L
-    Z₁.coord_change (Z₁.index_at x₀) (Z₁.index_at x) x :=
-by simp_rw [in_coordinates, Z₂.trivialization_at_continuous_linear_map_at hy,
-  Z₁.trivialization_at_symmL hx]
-
-/-- The map `in_coordinates` is trivial on the model spaces -/
+/-- The map `in_coordinates` for the tangent bundle is trivial on the model spaces -/
 lemma in_coordinates_tangent_bundle_core_model_space
   (x₀ x : H) (y₀ y : H') (ϕ : E →L[𝕜] E') :
-    in_coordinates E E' (tangent_space I) (tangent_space I') x₀ x y₀ y ϕ = ϕ :=
+    in_coordinates E (tangent_space I) E' (tangent_space I') x₀ x y₀ y ϕ = ϕ :=
 begin
   refine (vector_bundle_core.in_coordinates_eq _ _ _ _ _).trans _,
   { exact mem_univ x },
@@ -304,7 +68,6 @@ lemma in_tangent_coordinates_eq (f : N → M) (g : N → M') (ϕ : N → E →L[
 (tangent_bundle_core I M).in_coordinates_eq (tangent_bundle_core I' M') (ϕ x) hx hy
 
 variables {I I'}
-
 /-- The function that sends `x` to the `y`-derivative of `f(x,y)` at `g(x)` is `C^n` at `x₀`,
 where the derivative is taken as a continuous linear map.
 We have to assume that `f` is `C^(n+1)` at `(x₀, g(x₀))` and `g` is `C^n` at `x₀`.
@@ -333,29 +96,13 @@ begin
     (range I) (ext_chart_at I (g x₀) (g ((ext_chart_at J x₀).symm x))))
     (range J) (ext_chart_at J x₀ x₀),
   { rw [cont_mdiff_at_iff] at hf hg,
-    simp_rw [function.comp, uncurry, ext_chart_at_prod, local_equiv.prod_coe_symm] at hf ⊢,
-    refine (cont_diff_within_at_fderiv_within _
-      (hg.2.mono_of_mem _) I.unique_diff hmn _ _ _ _).mono_of_mem _,
-    swap 3,
-    { simp_rw [function.comp, ext_chart_at_to_inv], exact hf.2 },
-    { refine (ext_chart_at J x₀).target ∩
-      (λ x, (ext_chart_at J x₀).symm x) ⁻¹' (g ⁻¹' (ext_chart_at I (g x₀)).source) },
-    { exact mem_of_superset self_mem_nhds_within
-        ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x₀) },
-    { simp_rw [mem_inter_iff, mem_preimage, ext_chart_at_to_inv],
-      exact ⟨local_equiv.maps_to _ (mem_ext_chart_source J x₀), mem_ext_chart_source I (g x₀)⟩ },
-    { simp_rw [model_with_corners.range_prod],
-      exact set.prod_mono ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x₀)
-        subset_rfl },
-    { refine eventually_of_forall (λ x, mem_range_self _) },
-    swap 2,
-    { refine inter_mem (ext_chart_at_target_mem_nhds_within J x₀) _,
-      refine nhds_within_le_nhds (ext_chart_at_preimage_mem_nhds' _ _ (mem_ext_chart_source J x₀) _),
-      exact hg.1.preimage_mem_nhds (ext_chart_at_source_mem_nhds I (g x₀)) },
-    simp_rw [function.comp, ext_chart_at_to_inv],
-    refine mem_of_superset self_mem_nhds_within _,
-    refine (image_subset_range _ _).trans _,
-    exact range_comp_subset_range (λ a, chart_at H (g x₀) $ g $ (chart_at G x₀).symm $ J.symm a) I },
+    simp_rw [function.comp, uncurry, ext_chart_at_prod, local_equiv.prod_coe_symm,
+      model_with_corners.range_prod] at hf ⊢,
+    refine cont_diff_within_at.fderiv_within _ hg.2 I.unique_diff hmn (mem_range_self _) _,
+    { simp_rw [ext_chart_at_to_inv], exact hf.2 },
+    { rw [← image_subset_iff],
+      rintros _ ⟨x, hx, rfl⟩,
+      exact mem_range_self _ } },
   have : cont_mdiff_at J 𝓘(𝕜, E →L[𝕜] E') m
     (λ x, fderiv_within 𝕜 (ext_chart_at I' (f x₀ (g x₀)) ∘ f x ∘ (ext_chart_at I (g x₀)).symm)
     (range I) (ext_chart_at I (g x₀) (g x))) x₀,

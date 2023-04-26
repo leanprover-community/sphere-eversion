@@ -1,6 +1,6 @@
 import linear_algebra.finite_dimensional
 
-open finite_dimensional
+open finite_dimensional submodule
 
 variables {𝕜 : Type*} [field 𝕜]
           {E : Type*} [add_comm_group E] [module 𝕜 E]
@@ -11,12 +11,12 @@ lemma two_le_rank_of_rank_lt_rank [finite_dimensional 𝕜 E] [finite_dimensiona
   2 ≤ module.rank 𝕜 (E' ⧸ submodule.map φ π.ker) :=
 begin
   suffices : 2 ≤ finrank 𝕜 (E' ⧸ π.ker.map φ),
-  { rw ← finrank_eq_dim,
+  { rw ← finrank_eq_rank,
     exact_mod_cast this },
   apply le_of_add_le_add_right,
   rw submodule.finrank_quotient_add_finrank (π.ker.map φ),
   have := calc finrank 𝕜 (π.ker.map φ)
-        ≤ finrank 𝕜 π.ker : finrank_map_le 𝕜 φ π.ker
+        ≤ finrank 𝕜 π.ker : finrank_map_le φ π.ker
     ...  < finrank 𝕜 E : submodule.finrank_lt (le_top.lt_of_ne hπ),
   linarith,
 end
