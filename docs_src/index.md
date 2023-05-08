@@ -2,7 +2,7 @@
 title: The sphere eversion project
 ---
 
-This project is a formalization the proof of existence of
+This project is a formalization of the proof of existence of
 [sphere eversions](https://www.youtube.com/watch?v=wO61D9x6lNY)
 using the [Lean theorem prover](https://leanprover.github.io/),
 mainly developed at [Microsoft Research](https://www.microsoft.com/en-us/research/)
