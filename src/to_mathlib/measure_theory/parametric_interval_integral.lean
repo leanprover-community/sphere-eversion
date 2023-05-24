@@ -1,4 +1,4 @@
-import measure_theory.integral.interval_integral
+import measure_theory.integral.fund_thm_calculus
 import analysis.calculus.parametric_integral
 import algebra.module.ulift
 
@@ -362,7 +362,7 @@ begin
           rw ← abs_of_nonneg (bound_nonneg t),
           exact ht hx (mem_ball_self ε_pos) },
         rw ← is_O_norm_right,
-        simp only [norm_eq_abs, abs_mul, abs_norm_eq_norm],
+        simp only [norm_eq_abs, abs_mul, abs_norm],
         exact bdd.is_O },
       simp_rw pow_two,
       exact O₃.trans (O₁.mul O₂) },

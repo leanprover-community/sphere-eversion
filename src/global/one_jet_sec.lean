@@ -206,7 +206,7 @@ def uncurry (S : family_one_jet_sec I M I' M' IP P) : one_jet_sec (IP.prod I) (P
       have : smooth_at ((IP.prod I).prod (IP.prod I)) I'
         (function.uncurry (λ x z : P × M, S.bs z.1 x.2)) (y, y),
       { exact S.smooth_bs.comp (smooth_snd.fst.prod_mk smooth_fst.snd) (y, y) },
-      apply cont_mdiff_at.mfderiv_id (λ x z : P × M, S.bs z.1 x.2) this le_top },
+      exact cont_mdiff_at.mfderiv (λ x z : P × M, S.bs z.1 x.2) id this cont_mdiff_at_id le_top },
     { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext }
   end }
 
