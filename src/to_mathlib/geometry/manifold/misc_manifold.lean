@@ -272,7 +272,7 @@ begin
     ext_chart_at_prod, function.comp, local_equiv.prod_coe, local_equiv.prod_coe_symm],
   have : unique_diff_within_at 𝕜 (range (I.prod I')) (ext_chart_at (I.prod I') x x) :=
   (I.prod I').unique_diff _ (mem_range_self _),
-  refine (filter.eventually_eq.fderiv_within_eq this _ _).trans _,
+  refine (filter.eventually_eq.fderiv_within_eq _ _).trans _,
   swap 3,
   { exact (ext_chart_at I x.1).right_inv ((ext_chart_at I x.1).maps_to $
       mem_ext_chart_source I x.1) },
@@ -291,7 +291,7 @@ begin
     ext_chart_at_prod, function.comp, local_equiv.prod_coe, local_equiv.prod_coe_symm],
   have : unique_diff_within_at 𝕜 (range (I.prod I')) (ext_chart_at (I.prod I') x x) :=
   (I.prod I').unique_diff _ (mem_range_self _),
-  refine (filter.eventually_eq.fderiv_within_eq this _ _).trans _,
+  refine (filter.eventually_eq.fderiv_within_eq _ _).trans _,
   swap 3,
   { exact (ext_chart_at I' x.2).right_inv ((ext_chart_at I' x.2).maps_to $
       mem_ext_chart_source I' x.2) },
