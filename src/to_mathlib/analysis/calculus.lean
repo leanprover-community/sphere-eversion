@@ -20,9 +20,6 @@ begin
   { rw [proj_I_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx, smooth_transition.zero], }
 end
 
-lemma smooth_transition.continuous_at {x : ℝ} : continuous_at smooth_transition x :=
-smooth_transition.continuous.continuous_at
-
 end real
 
 section calculus

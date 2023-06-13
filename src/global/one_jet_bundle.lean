@@ -57,12 +57,37 @@ variables {M M'}
 
 local notation `σ` := ring_hom.id 𝕜
 
+instance deleteme1 : Π (x : M × M'), module 𝕜
+  (((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) x) :=
+by apply_instance
+
+instance deleteme2 : Π (x : M × M'), module 𝕜
+  (((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') x) :=
+by apply_instance
+
+instance deleteme3 : vector_bundle 𝕜 E
+  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) :=
+by apply_instance
+
+instance deleteme4 : vector_bundle 𝕜 E'
+  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') :=
+by apply_instance
+
+instance deleteme5 : smooth_vector_bundle E
+  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) (I.prod I') :=
+by apply_instance
+
+instance deleteme6 : smooth_vector_bundle E'
+  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') (I.prod I') :=
+by apply_instance
+
 /-- The fibers of the one jet-bundle. -/
-@[nolint unused_arguments, derive [add_comm_monoid, topological_space]]
+@[nolint unused_arguments, derive [add_comm_group, topological_space]]
 def one_jet_space (p : M × M') : Type* :=
 bundle.continuous_linear_map σ E
   ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) E'
   ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') p
+
 
 variables {I I'}
 -- what is better notation for this?
@@ -115,11 +140,14 @@ by delta_instance one_jet_space
 instance : vector_bundle 𝕜 (E →L[𝕜] E') FJ¹MM' :=
 by delta_instance one_jet_space
 
+instance : smooth_vector_bundle (E →L[𝕜] E') (one_jet_space I I' : M × M' → Type*) (I.prod I') :=
+by delta_instance one_jet_space
+
 instance : charted_space HJ J¹MM' :=
 by delta_instance one_jet_bundle one_jet_space
 
 instance : smooth_manifold_with_corners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) J¹MM' :=
-by delta_instance one_jet_bundle one_jet_space
+by apply bundle.total_space.smooth_manifold_with_corners
 
 end one_jet_bundle_instances
 
@@ -141,8 +169,9 @@ begin
   delta one_jet_space,
   rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply],
   simp_rw [in_tangent_coordinates, in_coordinates, pullback_trivialization_at],
-  erw [trivialization.pullback_symmL],
-  refl
+  -- this is very slow, but `trivialization.pullback_symmL` doesn't rewrite properly
+  congr' 2,
+  convert trivialization.pullback_symmL _ _ _
 end
 
 @[simp, mfld_simps]
@@ -413,7 +442,7 @@ map_left prod.snd $ λ x, mfderiv I (J.prod I) (λ y, (x.1, y)) x.2
 
 lemma bundle_snd_eq (x : one_jet_bundle (J.prod I) (N × M) I' M') :
   bundle_snd x = map_left prod.snd (λ x, continuous_linear_map.inr 𝕜 F E) x :=
-by simp_rw [bundle_snd, mfderiv_prod_right]
+by { simp_rw [bundle_snd, mfderiv_prod_right], refl }
 
 lemma smooth_bundle_snd :
   smooth (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))

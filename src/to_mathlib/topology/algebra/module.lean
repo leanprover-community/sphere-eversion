@@ -12,13 +12,6 @@ variables [topological_space M₂] [add_comm_monoid M₂]
 variables [topological_space M₃] [add_comm_monoid M₃]
 variables [module R₁ M₁] [module R₁ M₂] [module R₁ M₃]
 
--- unused
-lemma comp_fst_add_comp_snd [has_continuous_add M₃] (f : M₁ →L[R₁] M₃) (g : M₂ →L[R₁] M₃) :
-  f.comp (continuous_linear_map.fst R₁ M₁ M₂) +
-  g.comp (continuous_linear_map.snd R₁ M₁ M₂) =
-  f.coprod g :=
-rfl
-
 lemma fst_prod_zero_add_zero_prod_snd [has_continuous_add M₁] [has_continuous_add M₂] :
   (continuous_linear_map.fst R₁ M₁ M₂).prod 0 +
   continuous_linear_map.prod 0 (continuous_linear_map.snd R₁ M₁ M₂) =

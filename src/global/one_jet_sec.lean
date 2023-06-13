@@ -206,7 +206,7 @@ def uncurry (S : family_one_jet_sec I M I' M' IP P) : one_jet_sec (IP.prod I) (P
       have : smooth_at ((IP.prod I).prod (IP.prod I)) I'
         (function.uncurry (λ x z : P × M, S.bs z.1 x.2)) (y, y),
       { exact S.smooth_bs.comp (smooth_snd.fst.prod_mk smooth_fst.snd) (y, y) },
-      apply cont_mdiff_at.mfderiv_id (λ x z : P × M, S.bs z.1 x.2) this le_top },
+      apply cont_mdiff_at.mfderiv (λ x z : P × M, S.bs z.1 x.2) id this cont_mdiff_at_id le_top },
     { refine smooth.one_jet_comp I (λ p, p.2) S.smooth smooth_snd.one_jet_ext }
   end }
 
@@ -220,6 +220,7 @@ begin
     ((S.smooth_bs.comp (smooth_id.prod_mk smooth_const)).mdifferentiable p.1)
     (smooth_fst.mdifferentiable p),
   simp_rw [mfderiv_fst],
+  refl,
 end
 
 lemma is_holonomic_uncurry (S : family_one_jet_sec I M I' M' IP P) {p : P × M} :
@@ -227,12 +228,11 @@ lemma is_holonomic_uncurry (S : family_one_jet_sec I M I' M' IP P) {p : P × M} 
 begin
   simp_rw [one_jet_sec.is_holonomic_at, one_jet_sec.snd_eq, S.uncurry_ϕ],
   rw [show S.uncurry.bs = λ x, S.uncurry.bs x, from rfl, funext S.uncurry_bs],
-  simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj],
+  simp_rw [mfderiv_prod_eq_add _ _ _ (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj],
   dsimp only,
-  rw [mfderiv_comp p S.smooth_coe_bs.mdifferentiable_at smooth_snd.mdifferentiable_at, mfderiv_snd,
-    (show surjective (continuous_linear_map.snd ℝ EP E), from prod.snd_surjective)
-      .clm_comp_injective.eq_iff],
-  refl
+  rw [mfderiv_comp p S.smooth_coe_bs.mdifferentiable_at smooth_snd.mdifferentiable_at, mfderiv_snd],
+  exact (show surjective (continuous_linear_map.snd ℝ EP E), from prod.snd_surjective)
+    .clm_comp_injective.eq_iff
 end
 
 end family_one_jet_sec

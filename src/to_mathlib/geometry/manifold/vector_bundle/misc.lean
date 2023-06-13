@@ -5,7 +5,7 @@ Authors: Floris van Doorn
 -/
 
 import geometry.manifold.vector_bundle.pullback
-import topology.vector_bundle.hom
+import geometry.manifold.vector_bundle.hom
 import to_mathlib.geometry.manifold.misc_manifold
 
 /-!
@@ -111,21 +111,27 @@ variables {𝕜₁ : Type*} [nontrivially_normed_field 𝕜₁] {𝕜₂ : Type*
 variables {B : Type*} [topological_space B]
 
 variables (F₁ : Type*) [normed_add_comm_group F₁] [normed_space 𝕜₁ F₁]
-  (E₁ : B → Type*) [Π x, add_comm_monoid (E₁ x)] [Π x, module 𝕜₁ (E₁ x)]
+  (E₁ : B → Type*) [Π x, add_comm_group (E₁ x)] [Π x, module 𝕜₁ (E₁ x)]
   [topological_space (total_space E₁)]
 variables (F₂ : Type*) [normed_add_comm_group F₂][normed_space 𝕜₂ F₂]
-  (E₂ : B → Type*) [Π x, add_comm_monoid (E₂ x)] [Π x, module 𝕜₂ (E₂ x)]
+  (E₂ : B → Type*) [Π x, add_comm_group (E₂ x)] [Π x, module 𝕜₂ (E₂ x)]
   [topological_space (total_space E₂)]
 variables (F₁ E₁ F₂ E₂) [ring_hom_isometric σ]
 variables [Π x : B, topological_space (E₁ x)] [fiber_bundle F₁ E₁] [vector_bundle 𝕜₁ F₁ E₁]
 variables [Π x : B, topological_space (E₂ x)] [fiber_bundle F₂ E₂] [vector_bundle 𝕜₂ F₂ E₂]
-variables [Π x, has_continuous_add (E₂ x)] [Π x, has_continuous_smul 𝕜₂ (E₂ x)]
+variables [Π x, topological_add_group (E₂ x)] [Π x, has_continuous_smul 𝕜₂ (E₂ x)]
 
 @[simp, mfld_simps]
 lemma continuous_linear_map_trivialization_at (x : B) :
   trivialization_at (F₁ →SL[σ] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x =
   (trivialization_at F₁ E₁ x).continuous_linear_map σ (trivialization_at F₂ E₂ x) :=
 rfl
+
+-- todo: do in mathlib
+instance bundle.continuous_linear_map.add_comm_group (x : B) :
+  add_comm_group (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂ x) :=
+by delta_instance bundle.continuous_linear_map
+
 
 end hom
 
@@ -192,200 +198,3 @@ by { ext y, simp_rw [symmL_apply, pullback_symm] }
 end trivialization
 
 end pullback_vb
-
-namespace vector_prebundle
-
--- attribute [reducible] vector_prebundle.to_fiber_bundle
-
-/-!
-### `vector_prebundle.is_smooth`
-
-Todo: maybe redefine `vector_prebundle` as a mixin `fiber_prebundle.is_vector_prebundle`.
-The reason is that if you define a `fiber_prebundle` operation, and then
-(under certain circumstances)
-upgrade it to a `vector_prebundle`, this will result in `fiber_bundle` instances that are probably
-not easily seen as definitionally equal by type-class inference.
--/
-
-
-variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
-  {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
-  [nontrivially_normed_field 𝕜]
-  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
-  [normed_add_comm_group F] [normed_space 𝕜 F]
-  [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
-  [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
-  [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
-  [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
-  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
-  {HB : Type*} [topological_space HB] (IB : model_with_corners 𝕜 EB HB)
-  [topological_space B] [charted_space HB B] [smooth_manifold_with_corners IB B]
-  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
-  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
-  [topological_space M] [charted_space HM M]
-  {n : ℕ∞}
-
-variables (IB)
-
-/-- Mixin for a `vector_prebundle` stating smoothness of coordinate changes. -/
-class is_smooth (a : vector_prebundle 𝕜 F E) : Prop :=
-(exists_smooth_coord_change : ∀ (e e' ∈ a.pretrivialization_atlas), ∃ f : B → F →L[𝕜] F,
-  smooth_on IB 𝓘(𝕜, F →L[𝕜] F) f (e.base_set ∩ e'.base_set) ∧
-  ∀ (b : B) (hb : b ∈ e.base_set ∩ e'.base_set) (v : F),
-    f b v = (e' (total_space_mk b (e.symm b v))).2)
-
-variables (a : vector_prebundle 𝕜 F E) [ha : a.is_smooth IB] {e e' : pretrivialization F (π E)}
-include ha
-
-/-- A randomly chosen coordinate change on a `smooth_vector_prebundle`, given by
-  the field `exists_coord_change`. -/
-def smooth_coord_change (he : e ∈ a.pretrivialization_atlas) (he' : e' ∈ a.pretrivialization_atlas)
-  (b : B) : F →L[𝕜] F :=
-classical.some (ha.exists_smooth_coord_change e he e' he') b
-
-variables {IB}
-lemma smooth_on_smooth_coord_change (he : e ∈ a.pretrivialization_atlas)
-  (he' : e' ∈ a.pretrivialization_atlas) :
-  smooth_on IB 𝓘(𝕜, F →L[𝕜] F) (a.smooth_coord_change IB he he') (e.base_set ∩ e'.base_set) :=
-(classical.some_spec (ha.exists_smooth_coord_change e he e' he')).1
-
-lemma smooth_coord_change_apply (he : e ∈ a.pretrivialization_atlas)
-  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
-  a.smooth_coord_change IB he he' b v = (e' (total_space_mk b (e.symm b v))).2 :=
-(classical.some_spec (ha.exists_smooth_coord_change e he e' he')).2 b hb v
-
-lemma mk_smooth_coord_change (he : e ∈ a.pretrivialization_atlas)
-  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
-  (b, (a.smooth_coord_change IB he he' b v)) = e' (total_space_mk b (e.symm b v)) :=
-begin
-  ext,
-  { rw [e.mk_symm hb.1 v, e'.coe_fst', e.proj_symm_apply' hb.1],
-    rw [e.proj_symm_apply' hb.1], exact hb.2 },
-  { exact a.smooth_coord_change_apply he he' hb v }
-end
-
-variables (IB)
-/-- Make a `smooth_vector_bundle` from a `smooth_vector_prebundle`.  -/
-lemma to_smooth_vector_bundle :
-  @smooth_vector_bundle _ _ F E _ _ _ _ _ a.total_space_topology a.fiber_topology _ _ _ _ _ IB
-  _ _ _ a.to_fiber_bundle a.to_vector_bundle :=
-{ smooth_on_coord_change := begin
-    rintros _ _ ⟨e, he, rfl⟩ ⟨e', he', rfl⟩,
-    refine (a.smooth_on_smooth_coord_change he he').congr _,
-    intros b hb,
-    ext v,
-    rw [a.smooth_coord_change_apply he he' hb v, continuous_linear_equiv.coe_coe,
-      trivialization.coord_changeL_apply],
-    exacts [rfl, hb]
-  end }
-
-end vector_prebundle
-
-variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
-  {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
-  [nontrivially_normed_field 𝕜]
-  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
-  [normed_add_comm_group F] [normed_space 𝕜 F]
-  [topological_space (total_space E)] [∀ x, topological_space (E x)]
-  [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
-  [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
-  [topological_space (total_space E₁)] [∀ x, topological_space (E₁ x)]
-  [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
-  [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
-  [topological_space (total_space E₂)] [∀ x, topological_space (E₂ x)]
-
-  {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
-  {HB : Type*} [topological_space HB] (IB : model_with_corners 𝕜 EB HB)
-  [topological_space B] [charted_space HB B]
-  {EM : Type*} [normed_add_comm_group EM] [normed_space 𝕜 EM]
-  {HM : Type*} [topological_space HM] {IM : model_with_corners 𝕜 EM HM}
-  [topological_space M] [charted_space HM M] [Is : smooth_manifold_with_corners IM M]
-  {n : ℕ∞}
-  [fiber_bundle F₁ E₁] [vector_bundle 𝕜 F₁ E₁]
-  [fiber_bundle F₂ E₂] [vector_bundle 𝕜 F₂ E₂]
-  {e₁ e₁' : trivialization F₁ (π E₁)} {e₂ e₂' : trivialization F₂ (π E₂)}
-
-
-/-!
-### Homs of smooth vector bundles over the same base space
--/
-
-section hom
-open continuous_linear_map pretrivialization
-
-local notation `σ` := ring_hom.id 𝕜
-
-section general
--- what is better notation for this?
-local notation `LE₁E₂` := total_space (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂)
-local notation `PLE₁E₂` := bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂
-
-
-/- This proof is slow, especially the `simp only` and the elaboration of `h₂`.
-  It needs a timeout >100k to compile -/
-lemma smooth_on_continuous_linear_map_coord_change
-  [smooth_manifold_with_corners IB B]
-  [smooth_vector_bundle F₁ E₁ IB] [smooth_vector_bundle F₂ E₂ IB]
-  [mem_trivialization_atlas e₁] [mem_trivialization_atlas e₁']
-  [mem_trivialization_atlas e₂] [mem_trivialization_atlas e₂'] :
-  smooth_on IB 𝓘(𝕜, ((F₁ →L[𝕜] F₂) →L[𝕜] (F₁ →L[𝕜] F₂)))
-    (continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂')
-    ((e₁.base_set ∩ e₂.base_set) ∩ (e₁'.base_set ∩ e₂'.base_set)) :=
-begin
-  let L₁ := compSL F₁ F₂ F₂ σ σ,
-  have h₁ : smooth _ _ _ := L₁.cont_mdiff,
-  have h₂ : smooth _ _ _ := (continuous_linear_map.flip (compSL F₁ F₁ F₂ σ σ)).cont_mdiff,
-  have h₃ : smooth_on IB _ _ _ := smooth_on_coord_change e₁' e₁,
-  have h₄ : smooth_on IB _ _ _ := smooth_on_coord_change e₂ e₂',
-  refine ((h₁.comp_smooth_on (h₄.mono _)).clm_comp (h₂.comp_smooth_on (h₃.mono _))).congr _,
-  { mfld_set_tac },
-  { mfld_set_tac },
-  { intros b hb, ext L v,
-    simp only [continuous_linear_map_coord_change, continuous_linear_equiv.coe_coe,
-      continuous_linear_equiv.arrow_congrSL_apply, comp_apply, function.comp, compSL_apply,
-      flip_apply, continuous_linear_equiv.symm_symm] },
-end
-
-variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
-
-@[reducible]
-def topological_space.continuous_linear_map' (x) : topological_space (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂ x) :=
-by apply_instance
-local attribute [instance, priority 1] topological_space.continuous_linear_map'
--- ^ probably needed because of the type-class pi bug
--- https://leanprover.zulipchat.com/#narrow/stream/116395-maths/topic/vector.20bundles.20--.20typeclass.20inference.20issue
-
-lemma hom_chart (x₀ x : LE₁E₂) :
-  chart_at (model_prod HB (F₁ →L[𝕜] F₂)) x₀ x =
-  (chart_at HB x₀.1 x.1, in_coordinates F₁ E₁ F₂ E₂ x₀.1 x.1 x₀.1 x.1 x.2) :=
-by simp_rw [fiber_bundle.charted_space_chart_at, trans_apply, local_homeomorph.prod_apply,
-  trivialization.coe_coe, local_homeomorph.refl_apply, function.id_def, hom_trivialization_at_apply]
-
-lemma smooth_at_hom_bundle {f : M → LE₁E₂} {x₀ : M} :
-  smooth_at IM (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) f x₀ ↔
-  smooth_at IM IB (λ x, (f x).1) x₀ ∧
-  smooth_at IM 𝓘(𝕜, F₁ →L[𝕜] F₂)
-  (λ x, in_coordinates F₁ E₁ F₂ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
-by { simp_rw [smooth_at, cont_mdiff_at_total_space], refl }
-
-variables [smooth_manifold_with_corners IB B]
-  [smooth_vector_bundle F₁ E₁ IB] [smooth_vector_bundle F₂ E₂ IB]
-
-variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
-
-instance bundle.continuous_linear_map.vector_prebundle.is_smooth :
-  (bundle.continuous_linear_map.vector_prebundle σ F₁ E₁ F₂ E₂).is_smooth IB :=
-{ exists_smooth_coord_change := by {
-    rintro _ ⟨e₁, e₂, he₁, he₂, rfl⟩ _ ⟨e₁', e₂', he₁', he₂', rfl⟩,
-    resetI,
-    refine ⟨continuous_linear_map_coord_change σ e₁ e₁' e₂ e₂',
-    smooth_on_continuous_linear_map_coord_change IB,
-    continuous_linear_map_coord_change_apply σ e₁ e₁' e₂ e₂'⟩ } }
-
-instance smooth_vector_bundle.continuous_linear_map :
-  smooth_vector_bundle (F₁ →L[𝕜] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) IB :=
-PLE₁E₂ .to_smooth_vector_bundle IB
-
-end general
-
-end hom

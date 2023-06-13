@@ -329,7 +329,7 @@ def loc_formal_eversion : htpy_formal_sol (immersion_sphere_rel E E) :=
     { refine smooth_step.of_gt _,
       rw [mem_ball, not_lt, dist_zero_right] at hx,
       refine (show (3 : ℝ)/4 < 0.9 ^ 2, by norm_num).trans_le _,
-      rwa [sq_le_sq, show |(0.9 : ℝ)| = 0.9, by norm_num, abs_norm_eq_norm] },
+      rwa [sq_le_sq, show |(0.9 : ℝ)| = 0.9, by norm_num, abs_norm] },
     rw [h2x, one_smul],
     have h3x : x ≠ 0,
     { rintro rfl, apply hx, exact mem_ball_self (by norm_num) },

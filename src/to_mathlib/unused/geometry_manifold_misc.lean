@@ -127,7 +127,7 @@ begin
   { refine cont_mdiff_within_at.clm_apply _ cont_diff_within_at_snd.cont_mdiff_within_at,
     have h1 := smooth_at_coord_change IB e' e ⟨mem_base_set_trivialization_at F E x₀.proj, hx₀⟩,
     refine h1.cont_mdiff_within_at.comp_of_eq _ (maps_to_univ _ _) _,
-    { refine ((cont_mdiff_on_ext_chart_at_symm IB x₀.proj _ $ (ext_chart_at IB x₀.proj).maps_to $
+    { refine ((cont_mdiff_on_ext_chart_at_symm x₀.proj _ $ (ext_chart_at IB x₀.proj).maps_to $
         mem_ext_chart_source IB x₀.proj).mono_of_mem _).comp_of_eq _ (maps_to_preimage _ _) rfl,
       { exact ext_chart_at_target_mem_nhds_within IB x₀.proj },
       exact cont_diff_within_at_fst.cont_mdiff_within_at },

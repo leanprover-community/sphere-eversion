@@ -40,9 +40,7 @@ lemma smooth_at_one_jet_eucl_bundle' {x₀ : N} :
   smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
     (f x).2 ∘L (trivialization_at E (tangent_space I : M → Type*) (f x₀).1).symmL 𝕜 (f x).1) x₀ :=
 begin
-  convert smooth_at_hom_bundle I,
-  ext1 x,
-  simp_rw [in_coordinates, trivial.trivialization_at,
+  simp_rw [smooth_at_hom_bundle, in_coordinates, trivial.trivialization_at,
     trivial.trivialization_continuous_linear_map_at],
   dsimp only [bundle.trivial],
   simp_rw [continuous_linear_map.id_comp]
@@ -54,7 +52,7 @@ lemma smooth_at_one_jet_eucl_bundle {x₀ : N} :
   smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from (f x).2 ∘L
     (trivialization_at E (tangent_space I) (f x₀).proj).symmL 𝕜 (f x).proj) x₀ :=
 begin
-  rw [smooth_at_hom_bundle I, and.congr_right_iff],
+  rw [smooth_at_hom_bundle, and.congr_right_iff],
   intros hf,
   refine filter.eventually_eq.cont_mdiff_at_iff _,
   have := hf.continuous_at.preimage_mem_nhds
