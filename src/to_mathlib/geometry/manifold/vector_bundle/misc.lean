@@ -111,15 +111,15 @@ variables {𝕜₁ : Type*} [nontrivially_normed_field 𝕜₁] {𝕜₂ : Type*
 variables {B : Type*} [topological_space B]
 
 variables (F₁ : Type*) [normed_add_comm_group F₁] [normed_space 𝕜₁ F₁]
-  (E₁ : B → Type*) [Π x, add_comm_monoid (E₁ x)] [Π x, module 𝕜₁ (E₁ x)]
+  (E₁ : B → Type*) [Π x, add_comm_group (E₁ x)] [Π x, module 𝕜₁ (E₁ x)]
   [topological_space (total_space E₁)]
 variables (F₂ : Type*) [normed_add_comm_group F₂][normed_space 𝕜₂ F₂]
-  (E₂ : B → Type*) [Π x, add_comm_monoid (E₂ x)] [Π x, module 𝕜₂ (E₂ x)]
+  (E₂ : B → Type*) [Π x, add_comm_group (E₂ x)] [Π x, module 𝕜₂ (E₂ x)]
   [topological_space (total_space E₂)]
 variables (F₁ E₁ F₂ E₂) [ring_hom_isometric σ]
 variables [Π x : B, topological_space (E₁ x)] [fiber_bundle F₁ E₁] [vector_bundle 𝕜₁ F₁ E₁]
 variables [Π x : B, topological_space (E₂ x)] [fiber_bundle F₂ E₂] [vector_bundle 𝕜₂ F₂ E₂]
-variables [Π x, has_continuous_add (E₂ x)] [Π x, has_continuous_smul 𝕜₂ (E₂ x)]
+variables [Π x, topological_add_group (E₂ x)] [Π x, has_continuous_smul 𝕜₂ (E₂ x)]
 
 @[simp, mfld_simps]
 lemma continuous_linear_map_trivialization_at (x : B) :
@@ -211,7 +211,7 @@ not easily seen as definitionally equal by type-class inference.
 variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
   [nontrivially_normed_field 𝕜]
-  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
+  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)] [∀ x, topological_space (E x)]
   [normed_add_comm_group F] [normed_space 𝕜 F]
   [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
   [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
@@ -225,50 +225,13 @@ variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   [topological_space M] [charted_space HM M]
   {n : ℕ∞}
 
-variables (IB)
-
-/-- Mixin for a `vector_prebundle` stating smoothness of coordinate changes. -/
-class is_smooth (a : vector_prebundle 𝕜 F E) : Prop :=
-(exists_smooth_coord_change : ∀ (e e' ∈ a.pretrivialization_atlas), ∃ f : B → F →L[𝕜] F,
-  smooth_on IB 𝓘(𝕜, F →L[𝕜] F) f (e.base_set ∩ e'.base_set) ∧
-  ∀ (b : B) (hb : b ∈ e.base_set ∩ e'.base_set) (v : F),
-    f b v = (e' (total_space_mk b (e.symm b v))).2)
-
 variables (a : vector_prebundle 𝕜 F E) [ha : a.is_smooth IB] {e e' : pretrivialization F (π E)}
 include ha
 
-/-- A randomly chosen coordinate change on a `smooth_vector_prebundle`, given by
-  the field `exists_coord_change`. -/
-def smooth_coord_change (he : e ∈ a.pretrivialization_atlas) (he' : e' ∈ a.pretrivialization_atlas)
-  (b : B) : F →L[𝕜] F :=
-classical.some (ha.exists_smooth_coord_change e he e' he') b
-
-variables {IB}
-lemma smooth_on_smooth_coord_change (he : e ∈ a.pretrivialization_atlas)
-  (he' : e' ∈ a.pretrivialization_atlas) :
-  smooth_on IB 𝓘(𝕜, F →L[𝕜] F) (a.smooth_coord_change IB he he') (e.base_set ∩ e'.base_set) :=
-(classical.some_spec (ha.exists_smooth_coord_change e he e' he')).1
-
-lemma smooth_coord_change_apply (he : e ∈ a.pretrivialization_atlas)
-  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
-  a.smooth_coord_change IB he he' b v = (e' (total_space_mk b (e.symm b v))).2 :=
-(classical.some_spec (ha.exists_smooth_coord_change e he e' he')).2 b hb v
-
-lemma mk_smooth_coord_change (he : e ∈ a.pretrivialization_atlas)
-  (he' : e' ∈ a.pretrivialization_atlas) {b : B} (hb : b ∈ e.base_set ∩ e'.base_set) (v : F) :
-  (b, (a.smooth_coord_change IB he he' b v)) = e' (total_space_mk b (e.symm b v)) :=
-begin
-  ext,
-  { rw [e.mk_symm hb.1 v, e'.coe_fst', e.proj_symm_apply' hb.1],
-    rw [e.proj_symm_apply' hb.1], exact hb.2 },
-  { exact a.smooth_coord_change_apply he he' hb v }
-end
-
-variables (IB)
 /-- Make a `smooth_vector_bundle` from a `smooth_vector_prebundle`.  -/
 lemma to_smooth_vector_bundle :
-  @smooth_vector_bundle _ _ F E _ _ _ _ _ a.total_space_topology a.fiber_topology _ _ _ _ _ IB
-  _ _ _ a.to_fiber_bundle a.to_vector_bundle :=
+  @_root_.smooth_vector_bundle  _ _ F E _ _ _ _ _ _ IB _ _ _ _ _ _ _ a.total_space_topology _
+  a.to_fiber_bundle a.to_vector_bundle :=
 { smooth_on_coord_change := begin
     rintros _ _ ⟨e, he, rfl⟩ ⟨e', he', rfl⟩,
     refine (a.smooth_on_smooth_coord_change he he').congr _,
@@ -284,13 +247,13 @@ end vector_prebundle
 variables {𝕜 B F F₁ F₂ M M₁ M₂ : Type*}
   {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
   [nontrivially_normed_field 𝕜]
-  [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
+  [∀ x, add_comm_group (E x)] [∀ x, module 𝕜 (E x)]
   [normed_add_comm_group F] [normed_space 𝕜 F]
   [topological_space (total_space E)] [∀ x, topological_space (E x)]
-  [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
+  [∀ x, add_comm_group (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
   [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
   [topological_space (total_space E₁)] [∀ x, topological_space (E₁ x)]
-  [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
+  [∀ x, add_comm_group (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
   [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
   [topological_space (total_space E₂)] [∀ x, topological_space (E₂ x)]
 
@@ -346,7 +309,7 @@ begin
       flip_apply, continuous_linear_equiv.symm_symm] },
 end
 
-variables [∀ x, has_continuous_add (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
+variables [∀ x, topological_add_group (E₂ x)] [∀ x, has_continuous_smul 𝕜 (E₂ x)]
 
 @[reducible]
 def topological_space.continuous_linear_map' (x) : topological_space (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂ x) :=

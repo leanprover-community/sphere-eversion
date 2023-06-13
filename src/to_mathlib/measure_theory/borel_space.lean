@@ -1,4 +1,4 @@
-import measure_theory.constructions.borel_space
+import measure_theory.constructions.borel_space.basic
 
 variables (α : Type*) [topological_space α]
 

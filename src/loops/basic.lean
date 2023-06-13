@@ -2,7 +2,7 @@ import analysis.normed_space.add_torsor_bases
 import analysis.convex.caratheodory
 import analysis.calculus.cont_diff
 import measure_theory.integral.interval_integral
-import measure_theory.measure.lebesgue
+import measure_theory.measure.lebesgue.basic
 import topology.algebra.order.floor
 import topology.path_connected
 import linear_algebra.affine_space.independent
