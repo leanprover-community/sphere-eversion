@@ -6,6 +6,8 @@ import measure_theory.measure.lebesgue.basic
 import topology.algebra.order.floor
 import topology.path_connected
 import linear_algebra.affine_space.independent
+import measure_theory.constructions.borel_space.continuous_linear_map
+
 
 import to_mathlib.smooth_barycentric
 import to_mathlib.topology.path

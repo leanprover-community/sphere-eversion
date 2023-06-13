@@ -1,4 +1,3 @@
-import to_mathlib.geometry.manifold.mfderiv
 import to_mathlib.analysis.calculus
 import geometry.manifold.diffeomorph
 import geometry.manifold.algebra.monoid

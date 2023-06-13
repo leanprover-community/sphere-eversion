@@ -5,7 +5,7 @@ Authors: Floris van Doorn
 -/
 
 import geometry.manifold.vector_bundle.pullback
-import topology.vector_bundle.hom
+import geometry.manifold.vector_bundle.hom
 import to_mathlib.geometry.manifold.misc_manifold
 
 /-!
