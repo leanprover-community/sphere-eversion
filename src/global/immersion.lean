@@ -177,7 +177,7 @@ end
 def formal_eversion_aux : family_one_jet_sec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
 family_join
   (smooth_bs E) $
-  family_twist
+  family_twist 𝕊²
     (drop (one_jet_ext_sec ⟨(coe : 𝕊² → E), cont_mdiff_coe_sphere⟩))
     (λ p : ℝ × 𝕊², ω.rot (p.1, p.2))
     begin

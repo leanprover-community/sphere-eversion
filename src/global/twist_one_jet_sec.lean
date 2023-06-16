@@ -82,18 +82,6 @@ smooth_at_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
 end smoothness
 
-section sections
-
-instance pi_bug_instance_restatement0 (x : M) :
-  add_comm_group (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
-by apply_instance
-
-instance pi_bug_instance_restatement0' (x : M) :
-  module 𝕜 (bundle.continuous_linear_map (ring_hom.id 𝕜) E (tangent_space I) V (trivial M V) x) :=
-by apply_instance
-
-end sections
-
 section proj
 
 /- Given a smooth manifold `M` and a normed space `V`, there is a canonical projection from the
@@ -117,6 +105,10 @@ begin
 end
 
 variables {I M V}
+
+instance pi_bug_instance_restatement0 (x : M) :
+  add_comm_group (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
+by apply_instance
 
 def drop (s : one_jet_sec I M 𝓘(𝕜, V) V) : Cₛ^∞⟮I; E →L[𝕜] V, FJ¹MV⟯ :=
 { to_fun := λ x : M, (s x).2,
@@ -206,21 +198,9 @@ instance more_pi_bug₃ (x : M) :
   add_comm_group (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
 by apply_instance
 
-instance more_pi_bug₄ (x : M) :
-  module ℝ (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
-by apply_instance
-
-section sections
-variables (I M V)
-
-/-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-@[reducible] def one_jet_eucl_sec := Cₛ^∞⟮I; E →L[ℝ] V, FJ¹MV⟯
-
-end sections
-
 -- define pullbacks of smooth sections and fibre-by-fibre compositions of smooth sections
 def family_twist
-  (s : one_jet_eucl_sec I M V)
+  (s : Cₛ^∞⟮I; E →L[ℝ] V, FJ¹MV⟯)
   (i : N × M → (V →L[ℝ] V'))
   (i_smooth : ∀ x₀ : N × M, smooth_at (J.prod I) 𝓘(ℝ, V →L[ℝ] V') i x₀) :
   Cₛ^∞⟮J.prod I; E →L[ℝ] V', foo I M V' J N⟯ :=
