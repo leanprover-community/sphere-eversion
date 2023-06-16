@@ -92,11 +92,6 @@ instance pi_bug_instance_restatement0' (x : M) :
   module 𝕜 (bundle.continuous_linear_map (ring_hom.id 𝕜) E (tangent_space I) V (trivial M V) x) :=
 by apply_instance
 
-/-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-@[reducible] def one_jet_eucl_sec := Cₛ^∞⟮I; E →L[𝕜] V, FJ¹MV⟯
-
-variables {I M V}
-
 end sections
 
 section proj
@@ -206,6 +201,22 @@ def family_join
     -- rw [this],
     -- simp,
   end }
+
+instance more_pi_bug₃ (x : M) :
+  add_comm_group (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
+by apply_instance
+
+instance more_pi_bug₄ (x : M) :
+  module ℝ (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
+by apply_instance
+
+section sections
+variables (I M V)
+
+/-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
+@[reducible] def one_jet_eucl_sec := Cₛ^∞⟮I; E →L[ℝ] V, FJ¹MV⟯
+
+end sections
 
 -- define pullbacks of smooth sections and fibre-by-fibre compositions of smooth sections
 def family_twist
