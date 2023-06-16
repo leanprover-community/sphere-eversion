@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Heather Macbeth
 -/
 import global.one_jet_sec
+import geometry.manifold.vector_bundle.smooth_section
 
 noncomputable theory
 
@@ -83,11 +84,19 @@ end smoothness
 
 section sections
 
+instance pi_bug_instance_restatement0 (x : M) :
+  add_comm_group (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
+sorry
+
+instance pi_bug_instance_restatement0' (x : M) :
+  module 𝕜 (bundle.continuous_linear_map (ring_hom.id 𝕜) E (tangent_space I) V (trivial M V) x) :=
+sorry
+
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-@[ext] structure one_jet_eucl_sec :=
-(to_fun : M → J¹MV)
-(is_sec' : ∀ p, (to_fun p).1 = p)
-(smooth' : smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) to_fun)
+@[reducible] def one_jet_eucl_sec := smooth_section I (E →L[𝕜] V) FJ¹MV
+-- (to_fun : M → J¹MV)
+-- (is_sec' : ∀ p, (to_fun p).1 = p)
+-- (smooth' : smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) to_fun)
 
 variables {I M V}
 
