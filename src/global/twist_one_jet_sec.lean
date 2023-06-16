@@ -86,40 +86,20 @@ section sections
 
 instance pi_bug_instance_restatement0 (x : M) :
   add_comm_group (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
-sorry
+by apply_instance
 
 instance pi_bug_instance_restatement0' (x : M) :
   module 𝕜 (bundle.continuous_linear_map (ring_hom.id 𝕜) E (tangent_space I) V (trivial M V) x) :=
-sorry
+by apply_instance
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-@[reducible] def one_jet_eucl_sec := smooth_section I (E →L[𝕜] V) FJ¹MV
--- (to_fun : M → J¹MV)
--- (is_sec' : ∀ p, (to_fun p).1 = p)
--- (smooth' : smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) to_fun)
+@[reducible] def one_jet_eucl_sec := Cₛ^∞⟮I; E →L[𝕜] V, FJ¹MV⟯
 
 variables {I M V}
-
-instance : has_coe_to_fun (one_jet_eucl_sec I M V) (λ S, M → J¹MV) :=
-⟨λ S x, S.to_fun x⟩
-
-@[simp] lemma one_jet_eucl_sec.is_sec (s : one_jet_eucl_sec I M V) (p : M) : (s p).1 = p :=
-s.is_sec' p
-
-@[simp] lemma one_jet_eucl_sec.smooth (s : one_jet_eucl_sec I M V) :
-  smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) s :=
-s.smooth'
 
 end sections
 
 section proj
-
-instance pi_bug_instance_restatement (x : M) :
-  topological_space (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
-by apply_instance
-instance pi_bug_instance_restatement2 (x : M × V) :
-  topological_space (one_jet_space I 𝓘(𝕜, V) x) :=
-by apply_instance
 
 /- Given a smooth manifold `M` and a normed space `V`, there is a canonical projection from the
 one-jet bundle of maps from `M` to `V` to the bundle of homomorphisms from `TM` to `V`. This is
@@ -143,10 +123,9 @@ end
 
 variables {I M V}
 
-def drop (s : one_jet_sec I M 𝓘(𝕜, V) V) : one_jet_eucl_sec I M V :=
-{ to_fun := (proj I M V).comp s,
-  is_sec' := λ p, rfl,
-  smooth' := (smooth_proj I M V).comp s.smooth }
+def drop (s : one_jet_sec I M 𝓘(𝕜, V) V) : Cₛ^∞⟮I; E →L[𝕜] V, FJ¹MV⟯ :=
+{ to_fun := λ x : M, (s x).2,
+  cont_mdiff_to_fun := (smooth_proj I M V).comp s.smooth }
 
 end proj
 
@@ -198,61 +177,54 @@ local notation `FJ¹MV` :=
   bundle.continuous_linear_map σ E (tangent_space I : M → Type*) V (bundle.trivial M V)
 local notation `J¹MV` := total_space FJ¹MV
 
-/-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-@[ext] structure family_one_jet_eucl_sec :=
-(to_fun : N × M → J¹MV)
-(is_sec' : ∀ p, (to_fun p).1 = p.2)
-(smooth' : smooth (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) to_fun)
+@[reducible] def foo : N × M → Type* := (cont_mdiff_map.snd : C^∞⟮J.prod I, N × M; I, M⟯) *ᵖ FJ¹MV
 
-instance : has_coe_to_fun (family_one_jet_eucl_sec I M V J N) (λ S, N × M → J¹MV) :=
-⟨λ S x, S.to_fun x⟩
+instance (x : N × M) : add_comm_group (foo I M V J N x) :=
+module.add_comm_monoid_to_add_comm_group ℝ
 
-variables {I M V J N}
-
-@[simp] lemma family_one_jet_eucl_sec.is_sec (s : family_one_jet_eucl_sec I M V J N) (p : N × M) :
-  (s p).1 = p.2 :=
-s.is_sec' p
-
-@[simp] lemma family_one_jet_eucl_sec.smooth (s : family_one_jet_eucl_sec I M V J N) :
-  smooth (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) s :=
-s.smooth'
+instance more_pi_bug₀ (x : N × M) : module ℝ (foo I M V J N x) := by apply_instance
+instance more_pi_bug₁ : vector_bundle ℝ (E →L[ℝ] V) (foo I M V J N) := by apply_instance
+instance more_pi_bug₂ : smooth_vector_bundle (E →L[ℝ] V) (foo I M V J N) (J.prod I) := by
+apply_instance
 
 variables {I M V J N V'}
 
 def family_join
   {f : N × M → V}
   (hf : smooth (J.prod I) 𝓘(ℝ, V) f)
-  (s : family_one_jet_eucl_sec I M V J N) :
+  (s : Cₛ^∞⟮J.prod I; E →L[ℝ] V, foo I M V J N⟯) :
   family_one_jet_sec I M 𝓘(ℝ, V) V J N :=
-{ bs := λ n m, (incl I M V (s (n, m), f (n, m))).1.2,
-  ϕ := λ n m, (incl I M V (s (n, m), f (n, m))).2,
+{ bs := λ n m, f (n, m),
+  ϕ := λ n m, s (n, m),
   smooth' := begin
-    convert (smooth_incl I M V).comp (s.smooth.prod_mk hf),
-    ext p,
-    { simp },
-    { simp },
-    have : (p.1, p.2) = p := prod.ext rfl rfl,
-    rw [this],
-    simp,
+    sorry,
+    -- convert (smooth_incl I M V).comp (s.smooth.prod_mk hf),
+    -- ext p,
+    -- { simp },
+    -- { simp },
+    -- have : (p.1, p.2) = p := prod.ext rfl rfl,
+    -- rw [this],
+    -- simp,
   end }
 
+-- define pullbacks of smooth sections and fibre-by-fibre compositions of smooth sections
 def family_twist
   (s : one_jet_eucl_sec I M V)
   (i : N × M → (V →L[ℝ] V'))
   (i_smooth : ∀ x₀ : N × M, smooth_at (J.prod I) 𝓘(ℝ, V →L[ℝ] V') i x₀) :
-  family_one_jet_eucl_sec I M V' J N :=
-{ to_fun := λ p, ⟨p.2, (i p).comp (s p.2).2⟩,
-  is_sec' := λ p, rfl,
-  smooth' := begin
-    intro x₀,
-    refine smooth_at_snd.one_jet_eucl_bundle_mk' _,
-    simp_rw [continuous_linear_map.comp_assoc],
-    have : smooth_at (J.prod I) _ (λ x : N × M, _) x₀ := s.smooth.comp smooth_snd x₀,
-    simp_rw [smooth_at_one_jet_eucl_bundle', s.is_sec] at this,
-    refine (i_smooth x₀).clm_comp _,
-    convert this.2,
-    ext z,
-    rw [s.is_sec],
+  Cₛ^∞⟮J.prod I; E →L[ℝ] V', foo I M V' J N⟯ :=
+{ to_fun := λ p, (i p).comp (s p.2),
+  cont_mdiff_to_fun := begin
+    sorry
+    -- intro x₀,
+    -- refine smooth_at_snd.one_jet_eucl_bundle_mk' _,
+    -- simp_rw [continuous_linear_map.comp_assoc],
+    -- have : smooth_at (J.prod I) _ (λ x : N × M, _) x₀ := s.smooth.comp smooth_snd x₀,
+    -- simp_rw [smooth_at_one_jet_eucl_bundle', s.is_sec] at this,
+    -- refine (i_smooth x₀).clm_comp _,
+    -- convert this.2,
+    -- ext z,
+    -- rw [s.is_sec],
   end }
 
 end family_twist
