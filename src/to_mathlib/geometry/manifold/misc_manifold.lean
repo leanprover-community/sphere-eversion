@@ -1,5 +1,5 @@
 import to_mathlib.analysis.calculus
-import geometry.manifold.diffeomorph
+import geometry.manifold.cont_mdiff_mfderiv
 import geometry.manifold.algebra.monoid
 import geometry.manifold.metrizable
 
