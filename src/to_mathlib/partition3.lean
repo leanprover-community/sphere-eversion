@@ -1,4 +1,5 @@
 import geometry.manifold.partition_of_unity
+import tactic.find_unused
 import to_mathlib.geometry.manifold.algebra.smooth_germ
 import to_mathlib.analysis.convex.basic
 import to_mathlib.partition
@@ -28,17 +29,74 @@ begin
   exact mem_closure_iff_nhds.mp hi t t_in
 end
 
-def smooth_partition_of_unity.index_support {s : set M} (ρ : smooth_partition_of_unity ι I M s)
+def smooth_partition_of_unity.fintsupport {s : set M} (ρ : smooth_partition_of_unity ι I M s)
   (x : M) : finset ι :=
 (ρ.finite_tsupport x).to_finset
 
-lemma smooth_partition_of_unity.mem_index_support_iff {s : set M}
-  (ρ : smooth_partition_of_unity ι I M s) (x : M) (i : ι) : i ∈ ρ.index_support x ↔ x ∈ tsupport (ρ i) :=
+lemma smooth_partition_of_unity.mem_fintsupport_iff {s : set M}
+  (ρ : smooth_partition_of_unity ι I M s) (x : M) (i : ι) : i ∈ ρ.fintsupport x ↔ x ∈ tsupport (ρ i) :=
 finite.mem_to_finset _
 
+lemma locally_finite.eventually_subset {ι X : Type*} [topological_space X] {s : ι → set X}
+(hs : locally_finite s) (hs' : ∀ i, is_closed (s i)) (x : X) :
+∀ᶠ y in 𝓝 x, {i | y ∈ s i} ⊆ {i | x ∈ s i} :=
+begin
+  apply mem_of_superset (hs.Inter_compl_mem_nhds hs' x),
+  intros y hy i hi,
+  simp only [mem_Inter, mem_compl_iff] at hy,
+  exact not_imp_not.mp (hy i) hi
+end
+
+lemma smooth_partition_of_unity.eventually_fintsupport_subset {s : set M}
+  (ρ : smooth_partition_of_unity ι I M s) (x : M) : ∀ᶠ y in 𝓝 x, ρ.fintsupport y ⊆ ρ.fintsupport x :=
+(ρ.locally_finite.closure.eventually_subset (λ _, is_closed_closure) x).mono
+  (λ y, finite.to_finset_subset.mpr)
+
+def smooth_partition_of_unity.finsupport {ι : Type*} {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
+[finite_dimensional ℝ E] {H : Type*} [topological_space H] {I : model_with_corners ℝ E H}
+{M : Type*} [topological_space M] [charted_space H M]
+[smooth_manifold_with_corners I M] {s} (ρ : smooth_partition_of_unity ι I M s) (x : M) : finset ι :=
+ρ.to_partition_of_unity.finsupport x
+
+/-- Weaker version of `smooth_partition_of_unity.eventually_fintsupport_subset`. -/
+lemma smooth_partition_of_unity.finsupport_subset_fintsupport {s : set M}
+  (ρ : smooth_partition_of_unity ι I M s) (x : M) : ρ.finsupport x ⊆ ρ.fintsupport x :=
+begin
+  rintros i hi,
+  rw ρ.mem_fintsupport_iff,
+  apply subset_closure,
+  exact (ρ.to_partition_of_unity.mem_finsupport x).mp hi,
+end
+
+lemma smooth_partition_of_unity.eventually_finsupport_subset {s : set M}
+  (ρ : smooth_partition_of_unity ι I M s) (x : M) : ∀ᶠ y in 𝓝 x, ρ.finsupport y ⊆ ρ.fintsupport x :=
+begin
+  apply (ρ.eventually_fintsupport_subset x).mono,
+  exact λ y hy, (ρ.finsupport_subset_fintsupport y).trans hy
+end
+
+/-- Try to prove something is in the interior of a set by using this set is `univ`. -/
+meta def tactic.mem_interior_univ : tactic unit := `[rw interior_univ; apply set.mem_univ]
+
+
 lemma smooth_partition_of_unity.sum_germ {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (x : M) : ∑ i in ρ.index_support x, (ρ i : smooth_germ I x) = 1 :=
-sorry
+  {x : M} (hx : x ∈ interior s . tactic.mem_interior_univ) :
+∑ i in ρ.fintsupport x, (ρ i : smooth_germ I x) = 1 :=
+begin
+  have : ∀ᶠ y in 𝓝 x, y ∈ interior s,
+  sorry { exact is_open_interior.eventually_mem hx },
+  have : ∀ᶠ y in 𝓝 x, ∑ i in ρ.fintsupport x, ρ i y = 1,
+  sorry { apply ((ρ.eventually_finsupport_subset x).and this).mono,
+    rintros y ⟨hy, hy'⟩,
+    apply ρ.to_partition_of_unity.sum_finsupport' (interior_subset hy') hy },
+  convert smooth_germ.coe_eq_coe _ _ _ this,
+  { ext y,
+    sorry },
+  sorry { apply cont_mdiff.sum,
+    intros _ _,
+    exact (ρ i).cont_mdiff },
+  sorry { apply cont_mdiff_const },
+end
 
 def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unity ι I M s)
   (φ : ι → M → F) (x : M) : F := ∑ᶠ i, (ρ i x) • φ i x
@@ -46,12 +104,13 @@ def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unit
 include I
 
 lemma smooth_partition_of_unity.germ_combine_mem {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (φ : ι → M → F) {x : M} (hx : x ∈ s . tactic.mem_univ) :
-  (ρ.combine φ : germ (𝓝 x) F) ∈ really_convex_hull (smooth_germ I x) ((λ i, (φ i : germ (𝓝 x) F)) '' (ρ.index_support x)) :=
+  (φ : ι → M → F) {x : M} (hx : x ∈ interior s . tactic.mem_interior_univ) :
+  (ρ.combine φ : germ (𝓝 x) F) ∈ really_convex_hull (smooth_germ I x) ((λ i, (φ i : germ (𝓝 x) F)) '' (ρ.fintsupport x)) :=
 begin
+  change x ∈ interior s at hx,
   have : ((λ x', ∑ᶠ i, (ρ i x') • φ i x') : germ (𝓝 x) F) =
-    ∑ i in ρ.index_support x, (ρ i : smooth_germ I x) • (φ i : germ (𝓝 x) F),
-  { have : ∀ᶠ x' in 𝓝 x, ρ.combine φ x' = ∑ i in ρ.index_support x, (ρ i x') • φ i x',
+    ∑ i in ρ.fintsupport x, (ρ i : smooth_germ I x) • (φ i : germ (𝓝 x) F),
+  { have : ∀ᶠ x' in 𝓝 x, ρ.combine φ x' = ∑ i in ρ.finsupport x, (ρ i x') • φ i x',
     {
       sorry },
     sorry },
@@ -60,7 +119,7 @@ begin
   { intros i hi,
     apply eventually_of_forall,
     apply ρ.nonneg },
-  { apply ρ.sum_germ },
+  { apply ρ.sum_germ hx },
   { intros i hi,
     exact mem_image_of_mem _ hi },
 end
@@ -85,14 +144,14 @@ begin
   refine ⟨λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x), λ x₀, _⟩,
   let g : ι → germ (𝓝 x₀) F := λ i, φ (b.c i),
   have : ((λ x : M, (∑ᶠ i, (ρ i x) • φ (b.c i) x)) : germ (𝓝 x₀) F) ∈
-    really_convex_hull (smooth_germ I x₀) (g '' (ρ.index_support x₀)),
-    from ρ.germ_combine_mem (λ i x, φ (b.c i) x) (mem_univ x₀),
+    really_convex_hull (smooth_germ I x₀) (g '' (ρ.fintsupport x₀)),
+    from ρ.germ_combine_mem (λ i x, φ (b.c i) x),
   simp_rw [really_convex_iff_hull] at hP,
   apply hP x₀, clear hP,
-  have H : g '' ↑(ρ.index_support x₀) ⊆ {φ : (𝓝 x₀).germ F | P ⟨x₀, φ⟩},
+  have H : g '' ↑(ρ.fintsupport x₀) ⊆ {φ : (𝓝 x₀).germ F | P ⟨x₀, φ⟩},
   { rintros _ ⟨i, hi, rfl⟩,
     exact hφ _ _ (smooth_bump_covering.is_subordinate.to_smooth_partition_of_unity hb i $
-      (ρ.mem_index_support_iff _ i).mp hi) },
+      (ρ.mem_fintsupport_iff _ i).mp hi) },
   exact really_convex_hull_mono H this,
 end
 
@@ -120,6 +179,37 @@ quotient.lift_on' φ (λ f, cont_mdiff_at I 𝓘(ℝ, F) n f x) (λ f g h, prope
   exacts [h.symm, h]
 end)
 
+lemma filter.germ.cont_mdiff_at_add {x : M} {φ ψ : germ (𝓝 x) F} {n : ℕ∞}
+(hφ : φ.cont_mdiff_at I n) (hψ : ψ.cont_mdiff_at I n) :
+  (φ + ψ).cont_mdiff_at I n :=
+begin
+
+  sorry
+end
+
+lemma filter.germ.cont_mdiff_at.smul {x : M} {φ : germ (𝓝 x) F} {n : ℕ∞}
+(hφ : φ.cont_mdiff_at I n) (a : smooth_germ I x) :
+  (a • φ).cont_mdiff_at I n :=
+begin
+
+  sorry
+end
+
+
+lemma filter.germ.cont_mdiff_at_sum {x : M} {s : finset (germ (𝓝 x) F)} {n : ℕ∞}
+(h : ∀ φ : germ (𝓝 x) F, φ ∈ s → φ.cont_mdiff_at I n) (w : (𝓝 x).germ F → ↥(smooth_germ I x)) :
+  (∑ φ in s, w φ • φ).cont_mdiff_at I n :=
+begin
+  classical,
+  induction s using finset.induction_on with φ s hφs hs,
+  { rw [finset.sum_empty],
+    exact cont_mdiff_at_const },
+  simp only [finset.mem_insert, forall_eq_or_imp] at h,
+  specialize hs h.2, replace h := h.1,
+  rw finset.sum_insert hφs,
+  exact filter.germ.cont_mdiff_at_add _ (h.smul _ _) hs
+end
+
 variables {G : Type*} [normed_add_comm_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
   {HG : Type*} [topological_space HG] (IG : model_with_corners ℝ G HG) {N : Type*}
   [topological_space N] [charted_space HG N] [smooth_manifold_with_corners IG N]
@@ -131,30 +221,30 @@ quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
   exacts [h.symm, h]
 end)
 
-
 def filter.germ.mfderiv {x : M} (φ : germ (𝓝 x) N) :
   tangent_space I x →L[ℝ] tangent_space IG φ.value :=
 @quotient.hrec_on _ (germ_setoid (𝓝 x) N)
   (λ φ : germ (𝓝 x) N, tangent_space I x →L[ℝ] tangent_space IG φ.value) φ (λ f, mfderiv I IG f x)
-(begin
-  intros f g hfg,
-  sorry
-end)
+(λ f g hfg, heq_of_eq (eventually_eq.mfderiv_eq hfg : _))
 
 lemma really_convex_cont_mdiff_at (x : M) (n : ℕ∞) :
   really_convex (smooth_germ I x) {φ : germ (𝓝 x) F | φ.cont_mdiff_at I n} :=
 begin
+  classical,
   rintros w w_pos w_supp w_sum,
   have : (support w).finite,
-  sorry { apply finite_of_finsum_ne_zero,
+  { apply finite_of_finsum_ne_zero,
     rw w_sum,
     exact zero_ne_one.symm },
   let fin_supp := this.to_finset,
   have : support (λ (i : (𝓝 x).germ F), w i • i) ⊆ fin_supp,
-  sorry { rw set.finite.coe_to_finset,
+  { rw set.finite.coe_to_finset,
     exact support_smul_subset_left w id },
   rw finsum_eq_sum_of_support_subset _ this, clear this,
-  sorry
+  apply filter.germ.cont_mdiff_at_sum,
+  intros φ hφ,
+  apply w_supp,
+  simpa [fin_supp] using hφ
 end
 
 
@@ -227,6 +317,7 @@ quotient.lift_on' φ (λ f, ∀ y : M₂, cont_mdiff_at (I₁.prod I₂) 𝓘(�
   exacts [hx'.symm, hx']
 end)
 
+@[main_declaration]
 lemma exists_cont_mdiff_of_convex₂'
   {P : M₁ → (M₂ → F) → Prop} (hP : ∀ x, convex ℝ {f | P x f}) {n : ℕ∞}
   (hP' : ∀ x : M₁, ∃ (U ∈ 𝓝 x) (f : M₁ → M₂ → F),
@@ -246,3 +337,4 @@ begin
   exact ⟨f, λ ⟨x, y⟩, (hf x).1 y, λ x, (hf x).2⟩
 end
 end
+#list_unused_decls []

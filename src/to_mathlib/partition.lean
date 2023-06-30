@@ -115,6 +115,22 @@ begin
   exact subset.rfl
 end
 
+lemma partition_of_unity.sum_finsupport' {s : set X} (ρ : partition_of_unity ι X s) {x₀ : X}
+  (hx₀ : x₀ ∈ s . tactic.mem_univ) {I : finset ι} (hI : ρ.finsupport x₀ ⊆ I):
+  ∑ i in I, ρ i x₀ = 1 :=
+begin
+  classical,
+  rw [← finset.sum_sdiff hI, ρ.sum_finsupport hx₀],
+  suffices : ∑ i in I \ ρ.finsupport x₀, ρ i x₀ = 0, by rw [this, zero_add],
+  suffices : ∑ i in I \ ρ.finsupport x₀, (ρ i) x₀ = ∑ i in I \ ρ.finsupport x₀, 0,
+  rw [this, finset.sum_const_zero],
+  apply finset.sum_congr rfl,
+  rintros x hx,
+  simp only [finset.mem_sdiff, ρ.mem_finsupport, mem_support, not_not] at hx,
+  exact hx.2
+end
+
+
 lemma partition_of_unity.sum_finsupport_smul {s : set X} (ρ : partition_of_unity ι X s) {x₀ : X}
   {M : Type*} [add_comm_group M] [module ℝ M]
   (φ : ι → X → M) :

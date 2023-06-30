@@ -46,6 +46,22 @@ def smooth_germ (x : N) : subring (germ (𝓝 x) ℝ) :=
 instance (x : N) : has_coe C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ (smooth_germ I x) :=
 ⟨λ f, ⟨(f : N → ℝ), ⟨f, rfl⟩⟩⟩
 
+@[simp]
+lemma smooth_germ.coe_coe (f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
+  ((f : smooth_germ I x) : (𝓝 x).germ ℝ) = (f  : (𝓝 x).germ ℝ) := rfl
+
+@[simp]
+lemma smooth_germ.coe_eq_coe {f g : N → ℝ} (hf : cont_mdiff I 𝓘(ℝ) ⊤ f)
+  (hg : cont_mdiff I 𝓘(ℝ) ⊤ g) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
+((⟨f, hf⟩ : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smooth_germ I x) = ((⟨g, hg⟩ : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smooth_germ I x) :=
+begin
+  ext,
+  apply quotient.sound,
+  exact h
+end
+
+
+
 instance smooth_germ.module_fun (x : N) : module (smooth_germ I x) (germ (𝓝 x) G) :=
 { one_smul := sorry,
   mul_smul := sorry,
