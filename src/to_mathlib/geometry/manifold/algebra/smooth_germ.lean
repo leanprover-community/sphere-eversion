@@ -4,7 +4,28 @@ import geometry.manifold.algebra.smooth_functions
 noncomputable theory
 
 open filter set
-open_locale manifold topological_space
+open_locale manifold topological_space big_operators
+
+-- to smooth_functions
+section
+
+variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+{E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+{E' : Type*} [normed_add_comm_group E'] [normed_space 𝕜 E']
+{H : Type*} [topological_space H] {I : model_with_corners 𝕜 E H}
+{H' : Type*} [topological_space H'] {I' : model_with_corners 𝕜 E' H'}
+{N : Type*} [topological_space N] [charted_space H N]
+{E'' : Type*} [normed_add_comm_group E''] [normed_space 𝕜 E'']
+{H'' : Type*} [topological_space H''] {I'' : model_with_corners 𝕜 E'' H''}
+{N' : Type*} [topological_space N'] [charted_space H'' N']
+{G : Type*} [comm_monoid G] [topological_space G] [charted_space H' G] [has_smooth_mul I' G]
+
+@[to_additive]
+lemma smooth_map.coe_prod {ι} (f : ι → C^∞⟮I, N; I', G⟯) (s : finset ι) :
+  ⇑∏ i in s, f i = ∏ i in s, f i :=
+map_prod (smooth_map.coe_fn_monoid_hom : C^∞⟮I, N; I', G⟯ →* N → G) f s
+
+end
 
 -- This should be in `order.filter.germ` (and the end of the module docstring of that file
 -- should be fixed, it currently refers to things that are in the filter_product file).
@@ -34,14 +55,11 @@ variables
 (F : Type*) [normed_add_comm_group F] [normed_space ℝ F]
 (G : Type*) [add_comm_group G] [module ℝ G]
 
+def ring_hom.germ_of_cont_mdiff_map (x : N) : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ →+* germ (𝓝 x) ℝ :=
+ring_hom.comp (germ.coe_ring_hom _) smooth_map.coe_fn_ring_hom
 
 def smooth_germ (x : N) : subring (germ (𝓝 x) ℝ) :=
-{ carrier := set.range (λ f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯, ((f : N → ℝ) : (germ (𝓝 x) ℝ))),
-  mul_mem' := sorry,
-  one_mem' := sorry,
-  add_mem' := sorry,
-  zero_mem' := sorry,
-  neg_mem' := sorry }
+(ring_hom.germ_of_cont_mdiff_map I x).range
 
 instance (x : N) : has_coe C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ (smooth_germ I x) :=
 ⟨λ f, ⟨(f : N → ℝ), ⟨f, rfl⟩⟩⟩
@@ -51,9 +69,13 @@ lemma smooth_germ.coe_coe (f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
   ((f : smooth_germ I x) : (𝓝 x).germ ℝ) = (f  : (𝓝 x).germ ℝ) := rfl
 
 @[simp]
-lemma smooth_germ.coe_eq_coe {f g : N → ℝ} (hf : cont_mdiff I 𝓘(ℝ) ⊤ f)
-  (hg : cont_mdiff I 𝓘(ℝ) ⊤ g) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
-((⟨f, hf⟩ : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smooth_germ I x) = ((⟨g, hg⟩ : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smooth_germ I x) :=
+lemma smooth_germ.coe_sum {ι} (f : ι → C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (s : finset ι) (x : N) :
+  ((∑ i in s, f i : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smooth_germ I x) = ∑ i in s, (f i : smooth_germ I x) :=
+map_sum (ring_hom.range_restrict (ring_hom.germ_of_cont_mdiff_map I x)) f s
+
+@[simp]
+lemma smooth_germ.coe_eq_coe (f g : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
+  (f : smooth_germ I x) = (g : smooth_germ I x) :=
 begin
   ext,
   apply quotient.sound,

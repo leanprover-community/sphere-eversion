@@ -78,28 +78,23 @@ end
 /-- Try to prove something is in the interior of a set by using this set is `univ`. -/
 meta def tactic.mem_interior_univ : tactic unit := `[rw interior_univ; apply set.mem_univ]
 
-
 lemma smooth_partition_of_unity.sum_germ {s : set M} (ρ : smooth_partition_of_unity ι I M s)
   {x : M} (hx : x ∈ interior s . tactic.mem_interior_univ) :
 ∑ i in ρ.fintsupport x, (ρ i : smooth_germ I x) = 1 :=
 begin
   have : ∀ᶠ y in 𝓝 x, y ∈ interior s,
-  sorry { exact is_open_interior.eventually_mem hx },
-  have : ∀ᶠ y in 𝓝 x, ∑ i in ρ.fintsupport x, ρ i y = 1,
-  sorry { apply ((ρ.eventually_finsupport_subset x).and this).mono,
+  { exact is_open_interior.eventually_mem hx },
+  have : ∀ᶠ y in 𝓝 x, (⇑∑ (i : ι) in ρ.fintsupport x, ρ i) y = 1,
+  { apply ((ρ.eventually_finsupport_subset x).and this).mono,
     rintros y ⟨hy, hy'⟩,
+    rw [smooth_map.coe_sum, finset.sum_apply],
     apply ρ.to_partition_of_unity.sum_finsupport' (interior_subset hy') hy },
-  convert smooth_germ.coe_eq_coe _ _ _ this,
-  { ext y,
-    sorry },
-  sorry { apply cont_mdiff.sum,
-    intros _ _,
-    exact (ρ i).cont_mdiff },
-  sorry { apply cont_mdiff_const },
+  rw [← smooth_germ.coe_sum],
+  exact smooth_germ.coe_eq_coe _ _ 1 this,
 end
 
 def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unity ι I M s)
-  (φ : ι → M → F) (x : M) : F := ∑ᶠ i, (ρ i x) • φ i x
+  (φ : ι → M → F) (x : M) : F := ∑ᶠ i, ρ i x • φ i x
 
 include I
 
@@ -158,15 +153,65 @@ end
 end
 
 variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+variables {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
+  {HG : Type*} [topological_space HG] (IG : model_with_corners ℝ G HG) {N : Type*}
+  [topological_space N] [charted_space HG N] [smooth_manifold_with_corners IG N]
 
 local notation `𝓒` := cont_mdiff I 𝓘(ℝ, F)
 local notation `𝓒_on` := cont_mdiff_on I 𝓘(ℝ, F)
 
 
+namespace filter.germ
 /-- The value associated to a germ at a point. This is the common value
 shared by all representatives at the given point. -/
-def filter.germ.value {X α : Type*} [topological_space X] {x : X} (φ : germ (𝓝 x) α) : α :=
+def value {X α : Type*} [topological_space X] {x : X} (φ : germ (𝓝 x) α) : α :=
 quotient.lift_on' φ (λ f, f x) (λ f g h, by { dsimp only, rw eventually.self_of_nhds h })
+
+lemma value_smul {X α β : Type*} [topological_space X] {x : X} [has_smul α β]
+  (φ : germ (𝓝 x) α) (ψ : germ (𝓝 x) β) : (φ • ψ).value = φ.value • ψ.value :=
+germ.induction_on φ (λ f, germ.induction_on ψ (λ g, rfl))
+
+@[to_additive]
+def value_mul_hom {X E : Type*} [monoid E] [topological_space X] {x : X} :
+  germ (𝓝 x) E →* E :=
+{ to_fun := filter.germ.value,
+  map_one' := rfl,
+  map_mul' := λ φ ψ, germ.induction_on φ (λ f, germ.induction_on ψ (λ g, rfl)) }
+
+def valueₗ {X 𝕜 E : Type*} [semiring 𝕜] [add_comm_monoid E] [module 𝕜 E]
+  [topological_space X] {x : X} : germ (𝓝 x) E →ₗ[𝕜] E :=
+{ map_smul' := λ r φ, germ.induction_on φ (λ f, rfl),
+  .. filter.germ.value_add_hom }
+
+def value_ring_hom {X E : Type*} [semiring E] [topological_space X] {x : X} :
+  germ (𝓝 x) E →+* E :=
+{ ..filter.germ.value_mul_hom,
+  ..filter.germ.value_add_hom }
+
+def value_order_ring_hom {X E : Type*} [ordered_semiring E] [topological_space X] {x : X} :
+  germ (𝓝 x) E →+*o E :=
+{ monotone' := λ φ ψ, germ.induction_on φ (λ f, germ.induction_on ψ (λ g h, h.self_of_nhds)),
+  ..filter.germ.value_ring_hom }
+
+def _root_.subring.ordered_subtype {R} [ordered_ring R] (s : subring R) : s →+*o R :=
+{ monotone' := λ x y h, h,
+  ..s.subtype }
+
+def _root_.smooth_germ.value_order_ring_hom (x : N) : smooth_germ IG x →+*o ℝ :=
+filter.germ.value_order_ring_hom.comp $ subring.ordered_subtype _
+
+def _root_.smooth_germ.value_ring_hom (x : N) : smooth_germ IG x →+* ℝ :=
+filter.germ.value_ring_hom.comp $ subring.subtype _
+
+lemma _root_.smooth_germ.value_order_ring_hom_to_ring_hom (x : N) :
+  (smooth_germ.value_order_ring_hom IG x).to_ring_hom  = smooth_germ.value_ring_hom IG x :=
+rfl
+
+def valueₛₗ (x : N) : germ (𝓝 x) F →ₛₗ[smooth_germ.value_ring_hom IG x] F :=
+{ to_fun := filter.germ.value,
+  map_smul' := λ φ ψ, value_smul (φ : germ (𝓝 x) ℝ) ψ,
+  .. filter.germ.value_add_hom }
+end filter.germ
 
 variable (I)
 
@@ -179,20 +224,26 @@ quotient.lift_on' φ (λ f, cont_mdiff_at I 𝓘(ℝ, F) n f x) (λ f g h, prope
   exacts [h.symm, h]
 end)
 
+lemma smooth_germ.germ.cont_mdiff_at {x : M} {φ : smooth_germ I x} {n : ℕ∞} :
+  (φ : germ (𝓝 x) ℝ).cont_mdiff_at I n :=
+sorry -- unused
+
 lemma filter.germ.cont_mdiff_at_add {x : M} {φ ψ : germ (𝓝 x) F} {n : ℕ∞}
 (hφ : φ.cont_mdiff_at I n) (hψ : ψ.cont_mdiff_at I n) :
   (φ + ψ).cont_mdiff_at I n :=
 begin
-
-  sorry
+  refine germ.induction_on φ (λ f hf, germ.induction_on ψ (λ g hg, _)) hφ hψ,
+  exact hf.add hg
 end
 
 lemma filter.germ.cont_mdiff_at.smul {x : M} {φ : germ (𝓝 x) F} {n : ℕ∞}
 (hφ : φ.cont_mdiff_at I n) (a : smooth_germ I x) :
   (a • φ).cont_mdiff_at I n :=
 begin
-
+  rcases a with ⟨ψ, g, rfl⟩,
+  refine germ.induction_on φ (λ f hf, _) hφ,
   sorry
+  -- exact cont_mdiff_at.smul g.2 hf
 end
 
 
@@ -209,10 +260,6 @@ begin
   rw finset.sum_insert hφs,
   exact filter.germ.cont_mdiff_at_add _ (h.smul _ _) hs
 end
-
-variables {G : Type*} [normed_add_comm_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
-  {HG : Type*} [topological_space HG] (IG : model_with_corners ℝ G HG) {N : Type*}
-  [topological_space N] [charted_space HG N] [smooth_manifold_with_corners IG N]
 
 def filter.germ.cont_mdiff_at' {x : M} (φ : germ (𝓝 x) N) (n : ℕ∞) : Prop :=
 quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
@@ -231,6 +278,7 @@ lemma really_convex_cont_mdiff_at (x : M) (n : ℕ∞) :
   really_convex (smooth_germ I x) {φ : germ (𝓝 x) F | φ.cont_mdiff_at I n} :=
 begin
   classical,
+  rw [nontrivial.really_convex_iff],
   rintros w w_pos w_supp w_sum,
   have : (support w).finite,
   { apply finite_of_finsum_ne_zero,
@@ -247,7 +295,6 @@ begin
   simpa [fin_supp] using hφ
 end
 
-
 lemma exists_cont_mdiff_of_convex'
   {P : M → F → Prop} (hP : ∀ x, convex ℝ {y | P x y})
   {n : ℕ∞}
@@ -260,14 +307,14 @@ begin
     apply really_convex.inter,
     apply really_convex_cont_mdiff_at,
     dsimp only,
-    let v : germ (𝓝 x) F → F := filter.germ.value,
+    let v : germ (𝓝 x) F →ₛₗ[smooth_germ.value_ring_hom I x] F := filter.germ.valueₛₗ I x,
     change really_convex (smooth_germ I x) (v ⁻¹' {y | P x y}),
-    -- Here we want to argue that `v` is `ℝ`-linear and use an analogue of
-    -- `convex.is_linear_preimage` for `really_convex` together with the fact
-    -- that `convex` implies `really_convex` over a field.
-    sorry, },
+    dsimp only [← smooth_germ.value_order_ring_hom_to_ring_hom] at v,
+    apply really_convex.preimageₛₗ,
+    rw [really_convex_iff_convex],
+    apply hP },
   have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩,
-  sorry { intro x,
+  { intro x,
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩,
     rcases mem_nhds_iff.mp U_in with ⟨V, hUV, V_op, hxV⟩,
     use f,
@@ -276,8 +323,8 @@ begin
     split,
     { exact hf.cont_mdiff_at (mem_of_superset (V_op.mem_nhds hy) hUV) },
     { exact hf' y (hUV hy) } },
-  sorry/- rcases exists_of_convex hPP hPP' with ⟨f, hf⟩,
-  exact ⟨f, λ x, (hf x).1, λ x, (hf x).2⟩ -/
+  rcases exists_of_convex hPP hPP' with ⟨f, hf⟩,
+  exact ⟨f, λ x, (hf x).1, λ x, (hf x).2⟩
 end
 
 end
