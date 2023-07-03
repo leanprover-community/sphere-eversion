@@ -195,8 +195,21 @@ begin
   { simp [cont_mdiff_within_at_const] },
   { simp only [iK, finset.sum_insert, not_false_iff],
     exact (h _ (finset.mem_insert_self i K)).add (IH $ λ j hj, h _ $ finset.mem_insert_of_mem hj) }
-
 end
+
+lemma cont_mdiff_at.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
+  {n : ℕ∞} {x₀ : M}
+  (h : ∀ i ∈ J, cont_mdiff_at I 𝓘(ℝ, F) n (f i)  x₀) :
+  cont_mdiff_at I 𝓘(ℝ, F) n (λ x, ∑ i in J, f i x) x₀ :=
+begin
+  simp only [← cont_mdiff_within_at_univ] at *,
+  exact cont_mdiff_within_at.sum h,
+end
+
+lemma cont_mdiff.sum {ι : Type*} {f : ι → M → F} {J : finset ι}
+  {n : ℕ∞} (h : ∀ i ∈ J, cont_mdiff I 𝓘(ℝ, F) n (f i)) :
+  cont_mdiff I 𝓘(ℝ, F) n (λ x, ∑ i in J, f i x) :=
+λ x, cont_mdiff_at.sum (λ j hj, h j hj x)
 
 lemma cont_mdiff_within_at_finsum {ι : Type*} {f : ι → M → F} (lf : locally_finite (λ i, support $ f i))
   {n : ℕ∞} {s : set M} {x₀ : M}
