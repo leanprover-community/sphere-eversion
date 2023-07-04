@@ -43,6 +43,12 @@ instance filter.germ.ordered_comm_ring {α : Type*} (l : filter α) (R : Type*) 
   ..filter.germ.partial_order,
   ..(by apply_instance : comm_ring (germ l R))}
 
+@[simp, to_additive]
+lemma germ.coe_prod {α : Type*} (l : filter α) (R : Type*) [comm_monoid R] {ι} (f : ι → α → R)
+  (s : finset ι) : ((∏ i in s, f i : α → R) : germ l R) = ∏ i in s, (f i : germ l R) :=
+map_prod (germ.coe_mul_hom l : (α → R) →* germ l R) f s
+
+
 variables
 {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 {E' : Type*} [normed_add_comm_group E'] [normed_space ℝ E']
@@ -82,18 +88,20 @@ begin
   exact h
 end
 
+example (x : N) : module (smooth_germ I x) (germ (𝓝 x) G) :=
+by apply_instance
+
+example (x : N) : module (germ (𝓝 x) ℝ) (germ (𝓝 x) F) :=
+by apply_instance
 
 
-instance smooth_germ.module_fun (x : N) : module (smooth_germ I x) (germ (𝓝 x) G) :=
-{ one_smul := sorry,
-  mul_smul := sorry,
-  smul_zero := sorry,
-  smul_add := sorry,
-  add_smul := sorry,
-  zero_smul := sorry,
-  ..(@smooth_germ E _ _ H _ I N _ _ x).has_smul }
+-- def linear_map.germ_of_cont_mdiff_map (x : N) :
+--   C^∞⟮I, N; 𝓘(ℝ, F), F⟯ →ₛₗ[(germ.coe_ring_hom (𝓝 x) : (N → ℝ) →+* germ (𝓝 x) ℝ).comp (pi.const_ring_hom N ℝ)] germ (𝓝 x) F :=
+-- sorry -- linear_map.comp (germ.coe_linear_map _) smooth_map.coe_fn_linear_map
 
-def smooth_germ_vec (x : N) : submodule (germ (𝓝 x) ℝ) (germ (𝓝 x) F) :=
+/-
+def smooth_germ_vec (x : N) : submodule (smooth_germ I x) (germ (𝓝 x) F) :=
+-- linear_map.range (linear_map.germ_of_cont_mdiff_map I F x)
 { carrier := {φ : germ (𝓝 x) F | ∃ f : C^∞⟮I, N; 𝓘(ℝ, F), F⟯, φ = (f : N → F)},
   add_mem' := sorry,
   zero_mem' := sorry,
@@ -134,3 +142,4 @@ begin
   rintros g ⟨_, ⟨b, rfl⟩⟩ ⟨_, ⟨c, rfl⟩⟩ hb hc hbc,
   exact ⟨b • f + c • g, rfl⟩,
 end
+-/

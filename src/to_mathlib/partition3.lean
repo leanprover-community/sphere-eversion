@@ -98,18 +98,26 @@ def smooth_partition_of_unity.combine {s : set M} (ρ : smooth_partition_of_unit
 
 include I
 
+attribute [simps] smooth_partition_of_unity.to_partition_of_unity
+
 lemma smooth_partition_of_unity.germ_combine_mem {s : set M} (ρ : smooth_partition_of_unity ι I M s)
   (φ : ι → M → F) {x : M} (hx : x ∈ interior s . tactic.mem_interior_univ) :
   (ρ.combine φ : germ (𝓝 x) F) ∈ really_convex_hull (smooth_germ I x) ((λ i, (φ i : germ (𝓝 x) F)) '' (ρ.fintsupport x)) :=
 begin
   change x ∈ interior s at hx,
-  have : ((λ x', ∑ᶠ i, (ρ i x') • φ i x') : germ (𝓝 x) F) =
+  have : (ρ.combine φ : germ (𝓝 x) F) =
     ∑ i in ρ.fintsupport x, (ρ i : smooth_germ I x) • (φ i : germ (𝓝 x) F),
-  { have : ∀ᶠ x' in 𝓝 x, ρ.combine φ x' = ∑ i in ρ.finsupport x, (ρ i x') • φ i x',
-    {
-      sorry },
-    sorry },
-  erw this,
+  { suffices :
+      (ρ.combine φ : germ (𝓝 x) F) = ↑∑ i in ρ.fintsupport x, ((ρ i : M → ℝ) • φ i : M → F),
+    { rw [this, germ.coe_sum], refl },
+    rw [germ.coe_eq],
+    filter_upwards [ρ.eventually_finsupport_subset x] with x' hx',
+    simp_rw [smooth_partition_of_unity.combine, finset.sum_apply, pi.smul_apply'],
+    rw [finsum_eq_sum_of_support_subset],
+    refine subset_trans _ (finset.coe_subset.mpr hx'),
+    rw [smooth_partition_of_unity.finsupport, partition_of_unity.finsupport, finite.coe_to_finset],
+    apply support_smul_subset_left },
+  rw this,
   apply sum_mem_really_convex_hull,
   { intros i hi,
     apply eventually_of_forall,
@@ -207,7 +215,8 @@ lemma _root_.smooth_germ.value_order_ring_hom_to_ring_hom (x : N) :
   (smooth_germ.value_order_ring_hom IG x).to_ring_hom  = smooth_germ.value_ring_hom IG x :=
 rfl
 
-def valueₛₗ (x : N) : germ (𝓝 x) F →ₛₗ[smooth_germ.value_ring_hom IG x] F :=
+def valueₛₗ {F} [add_comm_monoid F] [module ℝ F] (x : N) :
+  germ (𝓝 x) F →ₛₗ[smooth_germ.value_ring_hom IG x] F :=
 { to_fun := filter.germ.value,
   map_smul' := λ φ ψ, value_smul (φ : germ (𝓝 x) ℝ) ψ,
   .. filter.germ.value_add_hom }
@@ -224,43 +233,7 @@ quotient.lift_on' φ (λ f, cont_mdiff_at I 𝓘(ℝ, F) n f x) (λ f g h, prope
   exacts [h.symm, h]
 end)
 
-lemma smooth_germ.germ.cont_mdiff_at {x : M} {φ : smooth_germ I x} {n : ℕ∞} :
-  (φ : germ (𝓝 x) ℝ).cont_mdiff_at I n :=
-sorry -- unused
-
-lemma filter.germ.cont_mdiff_at_add {x : M} {φ ψ : germ (𝓝 x) F} {n : ℕ∞}
-(hφ : φ.cont_mdiff_at I n) (hψ : ψ.cont_mdiff_at I n) :
-  (φ + ψ).cont_mdiff_at I n :=
-begin
-  refine germ.induction_on φ (λ f hf, germ.induction_on ψ (λ g hg, _)) hφ hψ,
-  exact hf.add hg
-end
-
-lemma filter.germ.cont_mdiff_at.smul {x : M} {φ : germ (𝓝 x) F} {n : ℕ∞}
-(hφ : φ.cont_mdiff_at I n) (a : smooth_germ I x) :
-  (a • φ).cont_mdiff_at I n :=
-begin
-  rcases a with ⟨ψ, g, rfl⟩,
-  refine germ.induction_on φ (λ f hf, _) hφ,
-  sorry
-  -- exact cont_mdiff_at.smul g.2 hf
-end
-
-
-lemma filter.germ.cont_mdiff_at_sum {x : M} {s : finset (germ (𝓝 x) F)} {n : ℕ∞}
-(h : ∀ φ : germ (𝓝 x) F, φ ∈ s → φ.cont_mdiff_at I n) (w : (𝓝 x).germ F → ↥(smooth_germ I x)) :
-  (∑ φ in s, w φ • φ).cont_mdiff_at I n :=
-begin
-  classical,
-  induction s using finset.induction_on with φ s hφs hs,
-  { rw [finset.sum_empty],
-    exact cont_mdiff_at_const },
-  simp only [finset.mem_insert, forall_eq_or_imp] at h,
-  specialize hs h.2, replace h := h.1,
-  rw finset.sum_insert hφs,
-  exact filter.germ.cont_mdiff_at_add _ (h.smul _ _) hs
-end
-
+-- currently unused
 def filter.germ.cont_mdiff_at' {x : M} (φ : germ (𝓝 x) N) (n : ℕ∞) : Prop :=
 quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
   split,
@@ -268,11 +241,39 @@ quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
   exacts [h.symm, h]
 end)
 
+-- currently unused
 def filter.germ.mfderiv {x : M} (φ : germ (𝓝 x) N) :
   tangent_space I x →L[ℝ] tangent_space IG φ.value :=
 @quotient.hrec_on _ (germ_setoid (𝓝 x) N)
   (λ φ : germ (𝓝 x) N, tangent_space I x →L[ℝ] tangent_space IG φ.value) φ (λ f, mfderiv I IG f x)
 (λ f g hfg, heq_of_eq (eventually_eq.mfderiv_eq hfg : _))
+
+variable {I}
+lemma smooth_germ.cont_mdiff_at {x : M} (φ : smooth_germ I x) {n : ℕ∞} :
+  (φ : germ (𝓝 x) ℝ).cont_mdiff_at I n :=
+by { rcases φ with ⟨_, g, rfl⟩, apply g.smooth.of_le le_top }
+
+lemma filter.germ.cont_mdiff_at.add {x : M} {φ ψ : germ (𝓝 x) F} {n : ℕ∞}
+(hφ : φ.cont_mdiff_at I n) (hψ : ψ.cont_mdiff_at I n) :
+  (φ + ψ).cont_mdiff_at I n :=
+germ.induction_on φ (λ f hf, germ.induction_on ψ (λ g hg, hf.add hg)) hφ hψ
+
+lemma filter.germ.cont_mdiff_at.smul {x : M} {φ : germ (𝓝 x) ℝ} {ψ : germ (𝓝 x) F} {n : ℕ∞}
+  (hφ : φ.cont_mdiff_at I n) (hψ : ψ.cont_mdiff_at I n) : (φ • ψ).cont_mdiff_at I n :=
+germ.induction_on φ (λ f hf, germ.induction_on ψ (λ g hg, hf.smul hg)) hφ hψ
+
+lemma filter.germ.cont_mdiff_at.sum {x : M} {ι} {s : finset ι} {n : ℕ∞} {f : ι → germ (𝓝 x) F}
+(h : ∀ i ∈ s, (f i).cont_mdiff_at I n) : (∑ i in s, f i).cont_mdiff_at I n :=
+begin
+  classical,
+  induction s using finset.induction_on with φ s hφs hs,
+  { rw [finset.sum_empty], exact cont_mdiff_at_const },
+  simp only [finset.mem_insert, forall_eq_or_imp] at h,
+  rw finset.sum_insert hφs,
+  exact h.1.add (hs h.2)
+end
+
+variable (I)
 
 lemma really_convex_cont_mdiff_at (x : M) (n : ℕ∞) :
   really_convex (smooth_germ I x) {φ : germ (𝓝 x) F | φ.cont_mdiff_at I n} :=
@@ -280,18 +281,14 @@ begin
   classical,
   rw [nontrivial.really_convex_iff],
   rintros w w_pos w_supp w_sum,
-  have : (support w).finite,
-  { apply finite_of_finsum_ne_zero,
-    rw w_sum,
-    exact zero_ne_one.symm },
+  have : (support w).finite := support_finite_of_finsum_eq_one w_sum,
   let fin_supp := this.to_finset,
   have : support (λ (i : (𝓝 x).germ F), w i • i) ⊆ fin_supp,
-  { rw set.finite.coe_to_finset,
-    exact support_smul_subset_left w id },
+  { rw set.finite.coe_to_finset, exact support_smul_subset_left w id },
   rw finsum_eq_sum_of_support_subset _ this, clear this,
-  apply filter.germ.cont_mdiff_at_sum,
+  apply filter.germ.cont_mdiff_at.sum,
   intros φ hφ,
-  apply w_supp,
+  refine (smooth_germ.cont_mdiff_at _).smul (w_supp _),
   simpa [fin_supp] using hφ
 end
 
@@ -316,13 +313,9 @@ begin
   have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩,
   { intro x,
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩,
-    rcases mem_nhds_iff.mp U_in with ⟨V, hUV, V_op, hxV⟩,
     use f,
-    apply mem_of_superset (V_op.mem_nhds hxV),
-    rintros y hy,
-    split,
-    { exact hf.cont_mdiff_at (mem_of_superset (V_op.mem_nhds hy) hUV) },
-    { exact hf' y (hUV hy) } },
+    filter_upwards [eventually_mem_nhds.mpr U_in] with y hy,
+    exact ⟨hf.cont_mdiff_at hy, hf' y (mem_of_mem_nhds hy)⟩ },
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩,
   exact ⟨f, λ x, (hf x).1, λ x, (hf x).2⟩
 end
@@ -331,25 +324,31 @@ end
 
 section
 
-variables {E₁ E₂ F : Type*}
+variables {E₁ E₂ E₃ E₄ F : Type*}
 variables [normed_add_comm_group E₁] [normed_space ℝ E₁] [finite_dimensional ℝ E₁]
 variables [normed_add_comm_group E₂] [normed_space ℝ E₂] [finite_dimensional ℝ E₂]
+variables [normed_add_comm_group E₃] [normed_space ℝ E₃] [finite_dimensional ℝ E₃]
+variables [normed_add_comm_group E₄] [normed_space ℝ E₄] [finite_dimensional ℝ E₄]
 variables [normed_add_comm_group F] [normed_space ℝ F]
 
-variables {H₁ M₁ H₂ M₂ : Type*}
+variables {H₁ M₁ H₂ M₂ H₃ M₃ H₄ M₄ : Type*}
 variables [topological_space H₁] (I₁ : model_with_corners ℝ E₁ H₁)
 variables [topological_space M₁] [charted_space H₁ M₁] [smooth_manifold_with_corners I₁ M₁]
 variables [sigma_compact_space M₁] [t2_space M₁]
 variables [topological_space H₂] (I₂ : model_with_corners ℝ E₂ H₂)
 variables [topological_space M₂] [charted_space H₂ M₂] [smooth_manifold_with_corners I₂ M₂]
+variables [topological_space H₃] (I₃ : model_with_corners ℝ E₃ H₃)
+variables [topological_space M₃] [charted_space H₃ M₃] [smooth_manifold_with_corners I₃ M₃]
+variables [topological_space H₄] (I₄ : model_with_corners ℝ E₄ H₄)
+variables [topological_space M₄] [charted_space H₄ M₄] [smooth_manifold_with_corners I₄ M₄]
 
 local notation `𝓒` := cont_mdiff (I₁.prod I₂) 𝓘(ℝ, F)
 local notation `𝓒_on` := cont_mdiff_on (I₁.prod I₂) 𝓘(ℝ, F)
 
 /- TODO: generalize the next def? -/
-
 def filter.germ.cont_mdiff_at_prod {x : M₁} (φ : germ (𝓝 x) $ M₂ → F) (n : ℕ∞) : Prop :=
-quotient.lift_on' φ (λ f, ∀ y : M₂, cont_mdiff_at (I₁.prod I₂) 𝓘(ℝ, F) n (uncurry f) (x, y)) (λ f g h, propext begin
+quotient.lift_on' φ (λ f, ∀ y : M₂, cont_mdiff_at (I₁.prod I₂) 𝓘(ℝ, F) n (uncurry f) (x, y))
+  (λ f g h, propext begin
   change {x' | f x' = g x'} ∈ 𝓝 x at h,
   split,
   all_goals
@@ -364,6 +363,74 @@ quotient.lift_on' φ (λ f, ∀ y : M₂, cont_mdiff_at (I₁.prod I₂) 𝓘(�
   exacts [hx'.symm, hx']
 end)
 
+/- potential generalization of the above
+def filter.germ.cont_mdiff_at_comp {x : M₁} (φ : germ (𝓝 x) M₂) (n : ℕ∞)
+  (g : M₂ → M₃) (h : M₄ → M₁) : Prop :=
+quotient.lift_on' φ (λ f, ∀ y ∈ h⁻¹' {x}, cont_mdiff_at I₄ I₃ n (g ∘ f ∘ h) y) (λ f g h, propext begin
+  change {x' | f x' = g x'} ∈ 𝓝 x at h,
+  split,
+  all_goals
+  { refine λ H y, (H y).congr_of_eventually_eq _,
+    clear H,
+    replace h : {x' | f x' = g x'} ×ˢ (univ : set M₂) ∈ (𝓝 x) ×ᶠ (𝓝 y) := prod_mem_prod h univ_mem,
+    rw ← nhds_prod_eq at h,
+    apply mem_of_superset h,
+    rintros ⟨x', y'⟩ ⟨(hx' : f x' = g x'), -⟩,
+    simp only [mem_set_of_eq, uncurry_apply_pair],
+    apply congr_fun, },
+  exacts [hx'.symm, hx']
+end)
+-/
+
+variables {I₁ I₂}
+lemma filter.germ.cont_mdiff_at_prod.add {x : M₁} {φ ψ : germ (𝓝 x) $ M₂ → F} {n : ℕ∞}
+  (hφ : φ.cont_mdiff_at_prod I₁ I₂ n) (hψ : ψ.cont_mdiff_at_prod I₁ I₂ n) :
+  (φ + ψ).cont_mdiff_at_prod I₁ I₂ n :=
+germ.induction_on φ (λ f hf, germ.induction_on ψ (λ g hg y, (hf y).add (hg y))) hφ hψ
+
+lemma filter.germ.cont_mdiff_at_prod.smul {x : M₁} {φ : germ (𝓝 x) $ M₂ → ℝ}
+  {ψ : germ (𝓝 x) $ M₂ → F} {n : ℕ∞}
+  (hφ : φ.cont_mdiff_at_prod I₁ I₂ n) (hψ : ψ.cont_mdiff_at_prod I₁ I₂ n) :
+  (φ • ψ).cont_mdiff_at_prod I₁ I₂ n :=
+germ.induction_on φ (λ f hf, germ.induction_on ψ (λ g hg y, (hf y).smul (hg y))) hφ hψ
+
+lemma filter.germ.cont_mdiff_at.smul_prod {x : M₁} {φ : germ (𝓝 x) ℝ}
+  {ψ : germ (𝓝 x) $ M₂ → F} {n : ℕ∞}
+  (hφ : φ.cont_mdiff_at I₁ n) (hψ : ψ.cont_mdiff_at_prod I₁ I₂ n) :
+  (φ • ψ).cont_mdiff_at_prod I₁ I₂ n :=
+germ.induction_on φ (λ f hf, germ.induction_on ψ
+  (λ g hg y, cont_mdiff_at.smul (cont_mdiff_at.comp _ hf cont_mdiff_at_fst) (hg y))) hφ hψ
+
+lemma filter.germ.cont_mdiff_at_prod.sum {x : M₁} {ι} {s : finset ι} {n : ℕ∞}
+  {f : ι → germ (𝓝 x) (M₂ → F)}
+  (h : ∀ i ∈ s, (f i).cont_mdiff_at_prod I₁ I₂ n) : (∑ i in s, f i).cont_mdiff_at_prod I₁ I₂ n :=
+begin
+  classical,
+  induction s using finset.induction_on with φ s hφs hs,
+  { rw [finset.sum_empty], intro y, exact cont_mdiff_at_const },
+  simp only [finset.mem_insert, forall_eq_or_imp] at h,
+  rw finset.sum_insert hφs,
+  exact h.1.add (hs h.2)
+end
+
+lemma really_convex_cont_mdiff_at_prod {x : M₁} (n : ℕ∞) :
+  really_convex (smooth_germ I₁ x) {φ : germ (𝓝 x) (M₂ → F) | φ.cont_mdiff_at_prod I₁ I₂ n} :=
+begin
+  classical,
+  rw [nontrivial.really_convex_iff],
+  rintros w w_pos w_supp w_sum,
+  have : (support w).finite := support_finite_of_finsum_eq_one w_sum,
+  let fin_supp := this.to_finset,
+  have : support (λ (i : (𝓝 x).germ (M₂ → F)), w i • i) ⊆ fin_supp,
+  { rw set.finite.coe_to_finset,
+    exact support_smul_subset_left w id },
+  rw finsum_eq_sum_of_support_subset _ this, clear this,
+  apply filter.germ.cont_mdiff_at_prod.sum,
+  intros φ hφ,
+  refine (smooth_germ.cont_mdiff_at _).smul_prod (w_supp _),
+  simpa [fin_supp] using hφ
+end
+
 @[main_declaration]
 lemma exists_cont_mdiff_of_convex₂'
   {P : M₁ → (M₂ → F) → Prop} (hP : ∀ x, convex ℝ {f | P x f}) {n : ℕ∞}
@@ -374,12 +441,23 @@ begin
   let PP : (Σ x : M₁, germ (𝓝 x) (M₂ → F)) → Prop :=
     λ p, p.2.cont_mdiff_at_prod I₁ I₂ n ∧ P p.1 p.2.value,
   have hPP : ∀ x, really_convex (smooth_germ I₁ x) {φ | PP ⟨x, φ⟩},
-  {
-    sorry },
+  { intros x,
+    apply really_convex.inter,
+    apply really_convex_cont_mdiff_at_prod,
+    dsimp only,
+    let v : germ (𝓝 x) (M₂ → F) →ₛₗ[smooth_germ.value_ring_hom I₁ x] (M₂ → F) :=
+      filter.germ.valueₛₗ I₁ x,
+    change really_convex (smooth_germ I₁ x) (v ⁻¹' {y | P x y}),
+    dsimp only [← smooth_germ.value_order_ring_hom_to_ring_hom] at v,
+    apply really_convex.preimageₛₗ,
+    rw [really_convex_iff_convex],
+    apply hP },
   have hPP' : ∀ x, ∃ f : M₁ → M₂ → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩,
-  {
-    sorry },
-  letI : module ℝ (M₂ → F) := by apply_instance, -- Why is this line necessary??
+  { intro x,
+    rcases hP' x with ⟨U, U_in, f, hf, hf'⟩,
+    use f,
+    filter_upwards [eventually_mem_nhds.mpr U_in] with y hy,
+    refine ⟨λz, hf.cont_mdiff_at (prod_mem_nhds hy univ_mem), hf' y (mem_of_mem_nhds hy)⟩ },
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩,
   exact ⟨f, λ ⟨x, y⟩, (hf x).1 y, λ x, (hf x).2⟩
 end
