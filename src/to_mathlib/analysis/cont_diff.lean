@@ -12,6 +12,26 @@ open_locale topological_space filter
 open function
 
 section
+variables
+  {E : Type*} [normed_add_comm_group E] [normed_space ℝ E] [finite_dimensional ℝ E]
+  {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+
+-- Not used here, but should be in mathlib
+lemma has_fderiv_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_space 𝕜 E] [normed_add_comm_group F] [normed_space 𝕜 F]
+  {f : E → F} {x} (hx : x ∉ tsupport f) : has_fderiv_at f (0 : E →L[𝕜] F) x :=
+(has_fderiv_at_const (0 : F)  x).congr_of_eventually_eq
+  (not_mem_tsupport_iff_eventually_eq.mp hx)
+
+-- Not used here, but should be in mathlib
+lemma cont_diff_at_of_not_mem (𝕜 : Type*) {E : Type*} {F : Type*} [nontrivially_normed_field 𝕜]
+  [normed_add_comm_group E] [normed_space 𝕜 E] [normed_add_comm_group F] [normed_space 𝕜 F]
+  {f : E → F} {x} (hx : x ∉ tsupport f) (n : ℕ∞) : cont_diff_at 𝕜 n f x :=
+(cont_diff_at_const : cont_diff_at 𝕜 n (λ x, (0 : F)) x).congr_of_eventually_eq
+   (not_mem_tsupport_iff_eventually_eq.mp hx)
+end
+
+section
 universes u₁ u₂ u₃ u₄ u₅
 
 open continuous_linear_map

@@ -68,8 +68,8 @@ begin
   exact support_finite_of_finsum_eq_of_ne_zero h
 end
 
-lemma foo {α β M : Type*} [add_comm_monoid M] (f : β → α) (s : finset β) [decidable_eq α]
-  (g : β → M) :
+lemma finsum_sum_filter {α β M : Type*} [add_comm_monoid M] (f : β → α) (s : finset β)
+  [decidable_eq α] (g : β → M) :
   ∑ᶠ (x : α), ∑ (y : β) in finset.filter (λ (j : β), f j = x) s, g y = ∑ k in s, g k :=
 begin
   rw finsum_eq_finset_sum_of_support_subset _ (show _ ⊆ ↑(s.image f), from _),
@@ -102,9 +102,9 @@ begin
     exact hz a h, },
   { rw ← h₁,
     simp_rw finsum_mem_finset_eq_sum,
-    rw foo z _ _, },
+    rw finsum_sum_filter z _ _, },
   { simp_rw [finsum_mem_finset_eq_sum, finset.sum_smul],
-    rw ← foo z,
+    rw ← finsum_sum_filter z,
     congr',
     ext x,
     rw finset.sum_congr rfl,
