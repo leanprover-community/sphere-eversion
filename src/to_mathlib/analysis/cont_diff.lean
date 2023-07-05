@@ -330,3 +330,28 @@ theorem cont_diff.mul_const (hf : cont_diff 𝕜 n f) {c : 𝔸} :
 hf.mul cont_diff_const
 
 end arithmetic
+
+
+section
+open_locale big_operators
+
+variables
+  {𝕜 : Type*} [nontrivially_normed_field 𝕜]
+  {E : Type*} [normed_add_comm_group E] [normed_space 𝕜 E]
+  {F : Type*} [normed_add_comm_group F] [normed_space 𝕜 F]
+
+lemma cont_diff_within_at_finsum {ι : Type*} {f : ι → E → F} (lf : locally_finite (λ i, support $ f i))
+  {n : ℕ∞} {s : set E} {x₀ : E}
+  (h : ∀ i, cont_diff_within_at 𝕜 n (f i) s x₀) :
+  cont_diff_within_at 𝕜 n (λ x, ∑ᶠ i, f i x) s x₀ :=
+let ⟨I, hI⟩ := finsum_eventually_eq_sum lf x₀ in
+  cont_diff_within_at.congr_of_eventually_eq (cont_diff_within_at.sum $ λ i hi, h i)
+    (eventually_nhds_within_of_eventually_nhds hI) hI.self_of_nhds
+
+lemma cont_diff_at_finsum {ι : Type*} {f : ι → E → F} (lf : locally_finite (λ i, support $ f i))
+  {n : ℕ∞} {x₀ : E}
+  (h : ∀ i, cont_diff_at 𝕜 n (f i)  x₀) :
+  cont_diff_at 𝕜 n (λ x, ∑ᶠ i, f i x) x₀ :=
+cont_diff_within_at_finsum lf h
+
+end

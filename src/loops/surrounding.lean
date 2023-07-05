@@ -3,7 +3,7 @@ import tactic.fin_cases
 import analysis.locally_convex.with_seminorms -- to obtain that normed spaces are locally connected
 import topology.metric_space.emetric_paracompact
 import topology.shrinking_lemma
-import to_mathlib.partition
+import to_mathlib.exists_of_convex
 
 import to_mathlib.order.filter.eventually_constant
 
