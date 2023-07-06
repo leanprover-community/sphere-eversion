@@ -2,7 +2,7 @@ import topology.partition_of_unity
 
 noncomputable theory
 
-open_locale topological_space filter  big_operators
+open_locale topology filter  big_operators
 open set function filter
 
 section

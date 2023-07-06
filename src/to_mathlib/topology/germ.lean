@@ -1,156 +1,48 @@
 import order.filter.germ
-import topology.constructions
+import topology.algebra.ring.basic
+import analysis.calculus.fderiv.basic
+import algebra.order.hom.ring
 
-import topology.connected
-import topology.separation
-
-import to_mathlib.topology.nhds_set
+variables {F : Type*} [normed_add_comm_group F] [normed_space ℝ F]
+variables {G : Type*} [normed_add_comm_group G] [normed_space ℝ G]
 
 open_locale topology
 open filter set
 
+namespace filter.germ
 /-- The value associated to a germ at a point. This is the common value
 shared by all representatives at the given point. -/
-def filter.germ.value {X α : Type*} [topological_space X] {x : X} (φ : germ (𝓝 x) α) : α :=
+def value {X α : Type*} [topological_space X] {x : X} (φ : germ (𝓝 x) α) : α :=
 quotient.lift_on' φ (λ f, f x) (λ f g h, by { dsimp only, rw eventually.self_of_nhds h })
 
-/-- Given a predicate on germs `P : Π x : X, germ (𝓝 x) Y → Prop` and `A : set X`,
-build a new predicate on germs `restrict_germ_predicate P A` such that
-`(∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x near A, P x f`, see
-`forall_restrict_germ_predicate_iff` for this equivalence. -/
-def restrict_germ_predicate {X Y : Type*} [topological_space X]
-  (P : Π x : X, germ (𝓝 x) Y → Prop) (A : set X) : Π x : X, germ (𝓝 x) Y → Prop :=
-λ x φ, quotient.lift_on' φ (λ f, x ∈ A → ∀ᶠ y in 𝓝 x, P y f) begin
-  have : ∀ f f' : X → Y, f =ᶠ[𝓝 x] f' → (∀ᶠ y in 𝓝 x, P y f) → ∀ᶠ y in 𝓝 x, P y f',
-  { intros f f' hff' hf,
-    apply (hf.and $ eventually.eventually_nhds hff').mono,
-    rintros y ⟨hy, hy'⟩,
-    rwa germ.coe_eq.mpr (eventually_eq.symm hy') },
-  exact λ f f' hff', propext $ forall_congr $ λ _, ⟨this f f' hff', this f' f hff'.symm⟩,
-end
+lemma value_smul {X α β : Type*} [topological_space X] {x : X} [has_smul α β]
+  (φ : germ (𝓝 x) α) (ψ : germ (𝓝 x) β) : (φ • ψ).value = φ.value • ψ.value :=
+germ.induction_on φ (λ f, germ.induction_on ψ (λ g, rfl))
 
-lemma filter.eventually.germ_congr {X Y : Type*} [topological_space X]
-  {x : X} {P : germ (𝓝 x) Y → Prop} {f g : X → Y}
-  (hf : P f) (h : ∀ᶠ z in 𝓝 x, g z = f z) : P g :=
-begin
-  convert hf using 1,
-  apply quotient.sound,
-  exact h,
-end
+@[to_additive]
+def value_mul_hom {X E : Type*} [monoid E] [topological_space X] {x : X} :
+  germ (𝓝 x) E →* E :=
+{ to_fun := filter.germ.value,
+  map_one' := rfl,
+  map_mul' := λ φ ψ, germ.induction_on φ (λ f, germ.induction_on ψ (λ g, rfl)) }
 
-lemma filter.eventually.germ_congr_set {X Y : Type*} [topological_space X]
-  {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f g : X → Y}
-  (hf : ∀ᶠ x in 𝓝ˢ A, P x f) (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) : ∀ᶠ x in 𝓝ˢ A, P x g :=
-begin
-  rw eventually_nhds_set_iff at *,
-  intros x hx,
-  apply ((hf x hx).and (h x hx).eventually_nhds).mono,
-  exact λ y hy, hy.2.germ_congr hy.1
-end
+def valueₗ {X 𝕜 E : Type*} [semiring 𝕜] [add_comm_monoid E] [module 𝕜 E]
+  [topological_space X] {x : X} : germ (𝓝 x) E →ₗ[𝕜] E :=
+{ map_smul' := λ r φ, germ.induction_on φ (λ f, rfl),
+  .. filter.germ.value_add_hom }
 
+def value_ring_hom {X E : Type*} [semiring E] [topological_space X] {x : X} :
+  germ (𝓝 x) E →+* E :=
+{ ..filter.germ.value_mul_hom,
+  ..filter.germ.value_add_hom }
 
-lemma restrict_germ_predicate_congr {X Y : Type*} [topological_space X]
-  {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f g : X → Y} {x : X}
-  (hf : restrict_germ_predicate P A x f) (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) :
-  restrict_germ_predicate P A x g :=
-begin
-  intros hx,
-  apply ((hf hx).and $ (eventually_nhds_set_iff.mp h x hx).eventually_nhds).mono,
-  rintros y ⟨hy, h'y⟩,
-  rwa germ.coe_eq.mpr h'y
-end
+def value_order_ring_hom {X E : Type*} [ordered_semiring E] [topological_space X] {x : X} :
+  germ (𝓝 x) E →+*o E :=
+{ monotone' := λ φ ψ, germ.induction_on φ (λ f, germ.induction_on ψ (λ g h, h.self_of_nhds)),
+  ..filter.germ.value_ring_hom }
 
+def _root_.subring.ordered_subtype {R} [ordered_ring R] (s : subring R) : s →+*o R :=
+{ monotone' := λ x y h, h,
+  ..s.subtype }
 
-lemma forall_restrict_germ_predicate_iff {X Y : Type*} [topological_space X]
-  {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f : X → Y} :
-  (∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x in 𝓝ˢ A, P x f :=
-by { rw eventually_nhds_set_iff, exact iff.rfl }
-
-lemma  forall_restrict_germ_predicate_of_forall {X Y : Type*} [topological_space X]
-  {P : Π x : X, germ (𝓝 x) Y → Prop} {A : set X} {f : X → Y} (h : ∀ x, P x f) :
-  ∀ x, restrict_germ_predicate P A x f :=
-forall_restrict_germ_predicate_iff.mpr (eventually_of_forall h)
-
-lemma filter.eventually_eq.comp_fun {α β γ : Type*} {f g : β → γ} {l : filter α} {l' : filter β}
-  (h : f =ᶠ[l'] g) {φ : α → β} (hφ : tendsto φ l l') : f ∘ φ =ᶠ[l] g ∘ φ :=
-hφ h
-
-lemma filter.tendsto.congr_germ {α β γ : Type*} {f g : β → γ} {l : filter α} {l' : filter β}
-  (h : f =ᶠ[l'] g) {φ : α → β} (hφ : tendsto φ l l') : (f ∘ φ : germ l γ) = g ∘ φ :=
-@quotient.sound _ (l.germ_setoid γ) _ _ (hφ h)
-
-def filter.germ.slice_left {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
-  (P : germ (𝓝 p) Z) : germ (𝓝 p.1) Z :=
-P.lift_on (λ f, ((λ x', f (x', p.2)) : germ (𝓝 p.1) Z))
-  (λ f g hfg, @quotient.sound _ ((𝓝 p.1).germ_setoid Z) _ _
-     (hfg.comp_fun begin
-       rw ← (prod.mk.eta : (p.1, p.2) = p),
-       exact (continuous.prod.mk_left p.2).continuous_at,
-     end))
-
-@[simp] lemma filter.germ.slice_left_coe {X Y Z : Type*} [topological_space X] [topological_space Y]
-  {x : X} {y : Y} (f : X × Y → Z) : (↑f : germ (𝓝 (x, y)) Z).slice_left = λ x',f (x', y) :=
-rfl
-
-def filter.germ.slice_right {X Y Z : Type*} [topological_space X] [topological_space Y] {p : X × Y}
-  (P : germ (𝓝 p) Z) : germ (𝓝 p.2) Z :=
-P.lift_on (λ f, ((λ y, f (p.1, y)) : germ (𝓝 p.2) Z))
-  (λ f g hfg, @quotient.sound _ ((𝓝 p.2).germ_setoid Z) _ _
-     (hfg.comp_fun begin
-       rw ← (prod.mk.eta : (p.1, p.2) = p),
-       exact (continuous.prod.mk p.1).continuous_at,
-     end))
-
-@[simp] lemma filter.germ.slice_right_coe {X Y Z : Type*} [topological_space X] [topological_space Y]
-  {x : X} {y : Y} (f : X × Y → Z) : (↑f : germ (𝓝 (x, y)) Z).slice_right = λ y',f (x, y') :=
-rfl
-
-def filter.germ.is_constant {X Y : Type*} [topological_space X] {x} (P : germ (𝓝 x) Y) : Prop :=
-P.lift_on (λ f, ∀ᶠ x' in 𝓝 x, f x' = f x) begin
-  suffices : ∀ (f g : X → Y), f =ᶠ[𝓝 x] g →
-     (∀ᶠ x' in 𝓝 x, f x' = f x) → ∀ᶠ x' in 𝓝 x, g x' = g x,
-  from λ f g hfg, propext ⟨λ h, this f g hfg h, λ h, this g f hfg.symm h⟩,
-  rintros f g hfg hf,
-  apply (hf.and hfg).mono (λ x' hx', _),
-  rw [← hx'.2, hx'.1, hfg.eq_of_nhds],
-end
-
-lemma filter.germ.is_constant_coe {X Y : Type*} [topological_space X] {x : X} {y} {f : X → Y}
-  (h : ∀ x', f x' = y) : (↑f : germ (𝓝 x) Y).is_constant :=
-begin
-  apply eventually_of_forall (λx', _),
-  rw [h, h]
-end
-
-@[simp]
-lemma filter.germ.is_constant_coe_const {X Y : Type*} [topological_space X] {x : X} {y : Y} :
-  ((λ x' : X, y) : germ (𝓝 x) Y).is_constant :=
-eventually_of_forall (λx', rfl)
-
-
-lemma eq_of_germ_is_constant {X Y : Type*} [topological_space X] [preconnected_space X]
-  {f : X → Y} (h : ∀ x : X, (f : germ (𝓝 x) Y).is_constant) (x x' : X) : f x = f x' :=
-begin
-  revert x,
-  erw ← eq_univ_iff_forall,
-  apply is_clopen.eq_univ _ (⟨x', rfl⟩ : {x | f x = f x'}.nonempty),
-  refine ⟨is_open_iff_eventually.mpr (λ x hx, hx ▸ h x), _⟩,
-  rw is_closed_iff_frequently,
-  rintros x hx,
-  rcases (eventually.and_frequently (h x) hx).exists with ⟨x'', H⟩,
-  exact H.1.symm.trans H.2
-end
-
-lemma eq_of_germ_is_constant_on {X Y : Type*} [topological_space X]
-  {f : X → Y} {s : set X} (h : ∀ x ∈ s, (f : germ (𝓝 x) Y).is_constant)
-  (hs : is_preconnected s) {x x' : X} (x_in : x ∈ s) (x'_in : x' ∈ s) : f x = f x' :=
-begin
-  haveI := is_preconnected_iff_preconnected_space.mp hs,
-  let F : s → Y := f ∘ coe,
-  change F ⟨x, x_in⟩ = F ⟨x', x'_in⟩,
-  apply eq_of_germ_is_constant,
-  rintros ⟨x, hx⟩,
-  have : continuous_at (coe : s → X) ⟨x, hx⟩,
-  exact continuous_at_subtype_coe,
-  exact this (h x hx)
-end
+end filter.germ

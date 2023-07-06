@@ -1,12 +1,15 @@
 import order.filter.germ
+import algebra.order.hom.ring
 import geometry.manifold.algebra.smooth_functions
+import geometry.manifold.vector_bundle.tangent
+import geometry.manifold.mfderiv
 
 import to_mathlib.topology.germ
 
 noncomputable theory
 
 open filter set
-open_locale manifold topological_space big_operators
+open_locale manifold topology big_operators
 
 -- to smooth_functions
 section
