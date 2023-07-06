@@ -3,7 +3,7 @@ import measure_theory.integral.periodic
 import loops.surrounding
 import loops.delta_mollifier
 
-import to_mathlib.partition2
+import to_mathlib.exists_of_convex
 import to_mathlib.analysis.cont_diff
 
 /-!

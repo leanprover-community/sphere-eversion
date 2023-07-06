@@ -4,10 +4,10 @@ import analysis.calculus.bump_function_inner
 import analysis.convolution
 
 import to_mathlib.topology.periodic
+import to_mathlib.analysis.cont_diff
 
 import loops.basic
 
-import to_mathlib.partition -- get our finsum stuff
 
 /-!
 # Delta mollifiers
