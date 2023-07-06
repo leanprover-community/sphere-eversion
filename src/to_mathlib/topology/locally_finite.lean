@@ -37,7 +37,7 @@ end
 
 end
 
-open_locale topological_space
+open_locale topology
 open filter
 
 lemma locally_finite.eventually_subset {ι X : Type*} [topological_space X] {s : ι → set X}

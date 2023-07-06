@@ -2,7 +2,7 @@ import to_mathlib.partition
 
 noncomputable theory
 
-open_locale topological_space filter manifold big_operators
+open_locale topology filter manifold big_operators
 open set function filter
 
 

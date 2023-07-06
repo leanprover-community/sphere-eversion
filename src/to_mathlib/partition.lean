@@ -77,8 +77,12 @@ finite.mem_to_finset _
 
 lemma smooth_partition_of_unity.eventually_fintsupport_subset {s : set M}
   (ρ : smooth_partition_of_unity ι I M s) (x : M) : ∀ᶠ y in 𝓝 x, ρ.fintsupport y ⊆ ρ.fintsupport x :=
-(ρ.locally_finite.closure.eventually_subset (λ _, is_closed_closure) x).mono
-  (λ y, finite.to_finset_subset.mpr)
+begin
+  apply (ρ.locally_finite.closure.eventually_subset (λ _, is_closed_closure) x).mono,
+  intros y hy z hz,
+  rw smooth_partition_of_unity.mem_fintsupport_iff at *,
+  exact hy hz
+end
 
 def smooth_partition_of_unity.finsupport {ι : Type*} {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 [finite_dimensional ℝ E] {H : Type*} [topological_space H] {I : model_with_corners ℝ E H}

@@ -57,19 +57,3 @@ hf.congr_of_eventually_eq (h.filter_mono $ nhds_within_mono x $ subset_insert x 
   h.self_of_nhds_within (mem_insert x s)
 
 end smooth_manifold_with_corners
-
-section
-variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
-  {H : Type*} [topological_space H] (I : model_with_corners ℝ E H) {M : Type*}
-  [topological_space M] [charted_space H M] [smooth_manifold_with_corners I M]
-  {G : Type*} [normed_add_comm_group G] [normed_space ℝ G] [finite_dimensional ℝ G]
-  {HG : Type*} [topological_space HG] (IG : model_with_corners ℝ G HG) {N : Type*}
-  [topological_space N] [charted_space HG N] [smooth_manifold_with_corners IG N]
-
-def filter.germ.cont_mdiff_at' {x : M} (φ : germ (𝓝 x) N) (n : ℕ∞) : Prop :=
-quotient.lift_on' φ (λ f, cont_mdiff_at I IG n f x) (λ f g h, propext begin
-  split,
-  all_goals { refine λ H, H.congr_of_eventually_eq _ },
-  exacts [h.symm, h]
-end)
-end
