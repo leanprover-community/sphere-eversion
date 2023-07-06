@@ -50,7 +50,7 @@ variables {𝕜 B F M : Type*} {E : B → Type*}
   [nontrivially_normed_field 𝕜]
   [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
   [normed_add_comm_group F] [normed_space 𝕜 F]
-  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  [topological_space (total_space F E)] [∀ x, topological_space (E x)]
   {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
   {HB : Type*} [topological_space HB] {IB : model_with_corners 𝕜 EB HB}
   [topological_space B] [charted_space HB B]
@@ -59,7 +59,7 @@ variables {𝕜 B F M : Type*} {E : B → Type*}
   [topological_space M] [charted_space HM M]
   {n : ℕ∞}
   [fiber_bundle F E] [vector_bundle 𝕜 F E]
-  {e e' : trivialization F (π E)}
+  {e e' : trivialization F (π F E)}
 
 theorem vector_bundle_core.smooth_at_coord_change {ι} (Z : vector_bundle_core 𝕜 B F ι)
   [Z.is_smooth IB] (i j : ι) {x₀ : B}
@@ -69,14 +69,14 @@ theorem vector_bundle_core.smooth_at_coord_change {ι} (Z : vector_bundle_core �
   ((Z.is_open_base_set i).inter (Z.is_open_base_set j)).mem_nhds hx₀
 
 variables (IB) [smooth_manifold_with_corners IB B] [smooth_vector_bundle F E IB]
-lemma smooth_at_coord_change (e e' : trivialization F (π E)) {x₀ : B}
+lemma smooth_at_coord_change (e e' : trivialization F (π F E)) {x₀ : B}
   (hx₀ : x₀ ∈ e.base_set ∩ e'.base_set)
   [mem_trivialization_atlas e] [mem_trivialization_atlas e']  :
   smooth_at IB 𝓘(𝕜, F →L[𝕜] F) (λ b : B, (e.coord_changeL 𝕜 e' b : F →L[𝕜] F)) x₀ :=
 (smooth_on_coord_change e e').smooth_at $ (e.open_base_set.inter e'.open_base_set).mem_nhds hx₀
 
 variables {IB}
-lemma cont_mdiff_at_coord_change_apply (e e' : trivialization F (π E)) {x₀ : M}
+lemma cont_mdiff_at_coord_change_apply (e e' : trivialization F (π F E)) {x₀ : M}
   {f : M → B} {g : M → F} (hf : cont_mdiff_at IM IB n f x₀)
   (hg : cont_mdiff_at IM 𝓘(𝕜, F) n g x₀)
   (hx₀ : f x₀ ∈ e.base_set ∩ e'.base_set)
@@ -95,7 +95,7 @@ variables {𝕜 B F M : Type*} {E : B → Type*}
   [nontrivially_normed_field 𝕜]
   [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
   [normed_add_comm_group F] [normed_space 𝕜 F]
-  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  [topological_space (total_space F E)] [∀ x, topological_space (E x)]
   {EB : Type*} [normed_add_comm_group EB] [normed_space 𝕜 EB]
   {HB : Type*} [topological_space HB] {IB : model_with_corners 𝕜 EB HB}
   [topological_space B] [charted_space HB B]
@@ -104,12 +104,12 @@ variables {𝕜 B F M : Type*} {E : B → Type*}
   [topological_space M] [charted_space HM M]
   {n : ℕ∞}
   [fiber_bundle F E] [vector_bundle 𝕜 F E]
-  {e e' : trivialization F (π E)}
+  {e e' : trivialization F (π F E)}
 
 variables (IB) [smooth_manifold_with_corners IB B] [smooth_vector_bundle F E IB]
 
-theorem trivialization.smooth_at (e : trivialization F (π E)) [mem_trivialization_atlas e]
-  {x₀ : total_space E} (hx₀ : x₀.proj ∈ e.base_set) :
+theorem trivialization.smooth_at (e : trivialization F (π F E)) [mem_trivialization_atlas e]
+  {x₀ : total_space F E} (hx₀ : x₀.proj ∈ e.base_set) :
   smooth_at (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e x₀ :=
 begin
   rw [smooth_at_prod],
@@ -146,12 +146,12 @@ begin
   rw [e'.coord_changeL_apply e ⟨h1b, h2b⟩, e'.mk_symm h1b]
 end
 
-theorem trivialization.smooth_on (e : trivialization F (π E)) [mem_trivialization_atlas e] :
+theorem trivialization.smooth_on (e : trivialization F (π F E)) [mem_trivialization_atlas e] :
   smooth_on (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e e.source :=
 λ x hx, (e.smooth_at IB $ e.mem_source.mp hx).smooth_within_at
 
 theorem smooth_at_trivialization_at
-  {x₀ : B} {x : total_space E} (hx : x.proj ∈ (trivialization_at F E x₀).base_set) :
+  {x₀ : B} {x : total_space F E} (hx : x.proj ∈ (trivialization_at F E x₀).base_set) :
   smooth_at (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) (trivialization_at F E x₀) x :=
 (trivialization_at F E x₀).smooth_at IB hx
 
@@ -217,10 +217,10 @@ end
 
 open bundle
 variables
-  {Z : M → Type*} [topological_space (total_space Z)] [∀ b, topological_space (Z b)]
+  {Z : M → Type*} [topological_space (total_space F₁ Z)] [∀ b, topological_space (Z b)]
   [∀ b, add_comm_monoid (Z b)] [∀ b, module 𝕜 (Z b)]
   [fiber_bundle F₁ Z] [vector_bundle 𝕜 F₁ Z] [smooth_vector_bundle F₁ Z I]
-  {Z₂ : M' → Type*} [topological_space (total_space Z₂)] [∀ b, topological_space (Z₂ b)]
+  {Z₂ : M' → Type*} [topological_space (total_space F₂ Z₂)] [∀ b, topological_space (Z₂ b)]
   [∀ b, add_comm_monoid (Z₂ b)] [∀ b, module 𝕜 (Z₂ b)]
   [fiber_bundle F₂ Z₂] [vector_bundle 𝕜 F₂ Z₂] [smooth_vector_bundle F₂ Z₂ I']
 
@@ -387,7 +387,7 @@ begin
   rw cont_mdiff_at_total_space,
   refine ⟨(hf.comp x₀ (cont_mdiff_at_proj (tangent_space I))).of_le $
     (self_le_add_right m 1).trans hmn, _⟩,
-  dsimp only [tangent_map, total_space.proj_mk],
+  dsimp only [tangent_map],
   let e := trivialization_at E (tangent_space I) x₀.proj,
   let e' := trivialization_at E' (tangent_space I') (f x₀.proj),
   have : cont_mdiff_at I.tangent 𝓘(𝕜, E') m (λ x : tangent_bundle I M,

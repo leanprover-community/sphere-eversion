@@ -80,7 +80,7 @@ mfderiv I I' (F.bs) x = (F x).2
 its base map at x. -/
 lemma is_holonomic_at_iff {F : one_jet_sec I M I' M'} {x : M} :
   F.is_holonomic_at x ↔ one_jet_ext I I' F.bs x = F x :=
-by simp_rw [is_holonomic_at, one_jet_ext, sigma.ext_iff, heq_iff_eq, F.fst_eq,
+by simp_rw [is_holonomic_at, one_jet_ext, bundle.total_space.ext_iff, heq_iff_eq, F.fst_eq,
   one_jet_bundle_mk_fst, eq_self_iff_true, true_and, one_jet_bundle_mk_snd]
 
 lemma is_holonomic_at_congr {F F' : one_jet_sec I M I' M'} {x : M}
@@ -107,8 +107,8 @@ def is_holonomic_germ {x : M} (φ : germ (𝓝 x) (one_jet_bundle I M I' M')) : 
 quotient.lift_on' φ (λ F, mfderiv I I' (λ x', (F x').1.2) x  = (F x).2)
 begin
   letI : setoid (M → one_jet_bundle I M I' M') := (𝓝 x).germ_setoid (one_jet_bundle I M I' M'),
-  have key : ∀ f g, f ≈ g → (λ (F : M → one_jet_bundle I M I' M'), mfderiv I I' (λ (x' : M), (F x').fst.snd) x = (F x).snd) f →
-  (λ (F : M → one_jet_bundle I M I' M'), mfderiv I I' (λ (x' : M), (F x').fst.snd) x = (F x).snd) g,
+  have key : ∀ f g, f ≈ g → (λ (F : M → one_jet_bundle I M I' M'), mfderiv I I' (λ (x' : M), (F x').proj.snd) x = (F x).snd) f →
+  (λ (F : M → one_jet_bundle I M I' M'), mfderiv I I' (λ (x' : M), (F x').proj.snd) x = (F x).snd) g,
   { intros f g hfg hf,
     have hfg' : (λ x', (f x').1.2) =ᶠ[𝓝 x] (λ x', (g x').1.2),
       from hfg.fun_comp (λ s, s.1.2),

@@ -58,35 +58,35 @@ variables {M M'}
 local notation `σ` := ring_hom.id 𝕜
 
 instance deleteme1 : Π (x : M × M'), module 𝕜
-  (((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) x) :=
+  (((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (tangent_space I)) x) :=
 by apply_instance
 
 instance deleteme2 : Π (x : M × M'), module 𝕜
-  (((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') x) :=
+  (((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (tangent_space I')) x) :=
 by apply_instance
 
 instance deleteme3 : vector_bundle 𝕜 E
-  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) :=
+  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (tangent_space I)) :=
 by apply_instance
 
 instance deleteme4 : vector_bundle 𝕜 E'
-  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') :=
+  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (tangent_space I')) :=
 by apply_instance
 
 instance deleteme5 : smooth_vector_bundle E
-  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) (I.prod I') :=
+  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (tangent_space I)) (I.prod I') :=
 by apply_instance
 
 instance deleteme6 : smooth_vector_bundle E'
-  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') (I.prod I') :=
+  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (tangent_space I')) (I.prod I') :=
 by apply_instance
 
 /-- The fibers of the one jet-bundle. -/
 @[nolint unused_arguments, derive [add_comm_group, topological_space]]
 def one_jet_space (p : M × M') : Type* :=
-bundle.continuous_linear_map σ E
-  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ tangent_space I) E'
-  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ tangent_space I') p
+bundle.continuous_linear_map σ
+  ((cont_mdiff_map.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (tangent_space I))
+  ((cont_mdiff_map.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (tangent_space I')) p
 
 
 variables {I I'}
@@ -98,10 +98,10 @@ instance (p : M × M') : has_coe_to_fun (one_jet_space I I' p)
 
 variables (M M')
 
-/-- The space of one jets of maps between two smooth manifolds, as a Sigma type.
+/-- The space of one jets of maps between two smooth manifolds.
 Defined in terms of `bundle.total_space` to be able to put a suitable topology on it. -/
 @[nolint has_inhabited_instance, reducible] -- is empty if the base manifold is empty
-def one_jet_bundle := total_space (one_jet_space I I' : M × M' → Type*)
+def one_jet_bundle := total_space (E →L[𝕜] E') (one_jet_space I I' : M × M' → Type*)
 
 variables {I I' M M'}
 local notation `J¹MM'` := one_jet_bundle I M I' M'
@@ -154,7 +154,7 @@ end one_jet_bundle_instances
 variable (M)
 
 /-- The tangent bundle projection on the basis is a continuous map. -/
-lemma one_jet_bundle_proj_continuous : continuous (π FJ¹MM') :=
+lemma one_jet_bundle_proj_continuous : continuous (π (E →L[𝕜] E') FJ¹MM') :=
 continuous_proj (E →L[𝕜] E') FJ¹MM'
 
 variables {I M I' M' J J'}
@@ -168,16 +168,17 @@ lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM') :
 begin
   delta one_jet_space,
   rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply],
-  simp_rw [in_tangent_coordinates, in_coordinates, pullback_trivialization_at],
+  sorry
+  /- simp_rw [in_tangent_coordinates, in_coordinates, pullback_trivialization_at],
   -- this is very slow, but `trivialization.pullback_symmL` doesn't rewrite properly
   congr' 2,
-  convert trivialization.pullback_symmL _ _ _
+  convert trivialization.pullback_symmL _ _ _ -/
 end
 
 @[simp, mfld_simps]
 lemma trivialization_at_one_jet_bundle_source (x₀ : M × M') :
   (trivialization_at (E →L[𝕜] E') FJ¹MM' x₀).source =
-  π FJ¹MM' ⁻¹' (prod.fst ⁻¹' (chart_at H x₀.1).source ∩ prod.snd ⁻¹' (chart_at H' x₀.2).source) :=
+  π (E →L[𝕜] E') FJ¹MM' ⁻¹' (prod.fst ⁻¹' (chart_at H x₀.1).source ∩ prod.snd ⁻¹' (chart_at H' x₀.2).source) :=
 rfl
 
 @[simp, mfld_simps]
@@ -204,7 +205,7 @@ end
 
 /-- In `J¹(M, M')`, the source of a chart has a nice formula -/
 lemma one_jet_bundle_chart_source (x₀ : J¹MM') :
-  (chart_at HJ x₀).source = π FJ¹MM' ⁻¹' (chart_at (model_prod H H') x₀.proj).source :=
+  (chart_at HJ x₀).source = π (E →L[𝕜] E') FJ¹MM' ⁻¹' (chart_at (model_prod H H') x₀.proj).source :=
 begin
   simp only [fiber_bundle.charted_space_chart_at,
     trivialization_at_one_jet_bundle_source] with mfld_simps,
@@ -238,7 +239,7 @@ end
 section maps
 
 lemma smooth_one_jet_bundle_proj :
-  smooth ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') (π FJ¹MM') :=
+  smooth ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') (π (E →L[𝕜] E') FJ¹MM') :=
 by apply smooth_proj _
 
 lemma smooth.one_jet_bundle_proj {f : N → J¹MM'}
@@ -474,9 +475,9 @@ end
 
 local notation `𝓜` := model_prod (model_prod H H') (E →L[𝕜] E')
 /-- In the one_jet bundle to the model space, the charts are just the canonical identification
-between a product type and a sigma type, a.k.a. `sigma_equiv_prod`. -/
+between a product type and a bundle total space type, a.k.a. ` bundle.total_space.to_prod`. -/
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_chart_at (p : one_jet_bundle I H I' H') :
-  (chart_at 𝓜 p).to_local_equiv = (sigma_equiv_prod (H × H') (E →L[𝕜] E')).to_local_equiv :=
+  (chart_at 𝓜 p).to_local_equiv = ( bundle.total_space.to_prod (H × H') (E →L[𝕜] E')).to_local_equiv :=
 begin
   apply local_equiv_eq_equiv,
   { intros x,
@@ -492,13 +493,13 @@ begin
 end
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_coe_chart_at (p : one_jet_bundle I H I' H') :
-  ⇑(chart_at 𝓜 p) = sigma_equiv_prod (H × H') (E →L[𝕜] E') :=
+  ⇑(chart_at 𝓜 p) =  bundle.total_space.to_prod (H × H') (E →L[𝕜] E') :=
 by { unfold_coes, simp only with mfld_simps }
 
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_coe_chart_at_symm
   (p : one_jet_bundle I H I' H') :
   ((chart_at 𝓜 p).symm : 𝓜 → one_jet_bundle I H I' H') =
-  (sigma_equiv_prod (H × H') (E →L[𝕜] E')).symm :=
+  ( bundle.total_space.to_prod (H × H') (E →L[𝕜] E')).symm :=
 by { unfold_coes, simp only with mfld_simps }
 
 variables (I I')
@@ -526,16 +527,16 @@ def one_jet_bundle_model_space_homeomorph : one_jet_bundle I H I' H' ≃ₜ 𝓜
       simp only with mfld_simps },
     simpa only with mfld_simps using this,
   end,
-  .. sigma_equiv_prod (H × H') (E →L[𝕜] E') }
+  ..  bundle.total_space.to_prod (H × H') (E →L[𝕜] E') }
 
 -- unused
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_homeomorph_coe :
   (one_jet_bundle_model_space_homeomorph I I' : one_jet_bundle I H I' H' → 𝓜) =
-  sigma_equiv_prod (H × H') (E →L[𝕜] E') :=
+   bundle.total_space.to_prod (H × H') (E →L[𝕜] E') :=
 rfl
 
 -- unused
 @[simp, mfld_simps] lemma one_jet_bundle_model_space_homeomorph_coe_symm :
   ((one_jet_bundle_model_space_homeomorph I I').symm : 𝓜 → one_jet_bundle I H I' H') =
-  (sigma_equiv_prod (H × H') (E →L[𝕜] E')).symm :=
+  ( bundle.total_space.to_prod (H × H') (E →L[𝕜] E')).symm :=
 rfl

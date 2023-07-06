@@ -245,7 +245,7 @@ begin
           { exact hm h.hF x h'' rfl },
           { exact h.hFF x h'' t } },
         rw [prod.ext_iff] at this,
-        ext1, refl, exact this.1, dsimp only, exact this.2 },
+        ext1, refl, exact this.1, exact this.2 },
       change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F (p.φ x),
       rw [this, transfer_localize],
       refl },
@@ -320,7 +320,7 @@ begin
     rw [dif_pos h𝓕, open_smooth_embedding.update_formal_sol_apply],
     dsimp only,
     simp_rw [open_smooth_embedding.update_apply_embedding, one_jet_bundle.embedding_to_fun,
-      open_smooth_embedding.transfer_fst_snd],
+      open_smooth_embedding.transfer_proj_snd],
     refl },
   rcases p.φ.dist_update p.ψ p.hK₁ (is_compact_Icc : is_compact (Icc 0 1 : set ℝ)) (λ t m, F.bs m)
     (F.smooth_bs.continuous.comp continuous_snd) (λ t, (range_comp bsF p.φ) ▸ hF) hδ_pos hδ_cont

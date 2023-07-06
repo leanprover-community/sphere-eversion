@@ -20,21 +20,21 @@ open_locale classical manifold bundle
 namespace fiber_bundle
 
 variables {𝕜 B B' F M : Type*} {E : B → Type*}
-variables [topological_space F] [topological_space (total_space E)] [∀ x, topological_space (E x)]
+variables [topological_space F] [topological_space (total_space F E)] [∀ x, topological_space (E x)]
   {HB : Type*} [topological_space HB]
   [topological_space B] [charted_space HB B] [fiber_bundle F E]
 
-lemma charted_space_chart_at_fst' (x y : total_space E) :
+lemma charted_space_chart_at_fst' (x y : total_space F E) :
   (chart_at (model_prod HB F) x y).1 =
   chart_at HB x.proj (trivialization_at F E x.proj y).1 :=
 by { rw [charted_space_chart_at], refl }
 
-lemma charted_space_chart_at_fst {x y : total_space E}
+lemma charted_space_chart_at_fst {x y : total_space F E}
   (hy : y.proj ∈ (trivialization_at F E x.proj).base_set) :
   (chart_at (model_prod HB F) x y).1 = chart_at HB x.proj y.proj :=
 by rw [charted_space_chart_at_fst', (trivialization_at F E x.proj).coe_fst' hy]
 
-lemma charted_space_chart_at_snd (x y : total_space E) :
+lemma charted_space_chart_at_snd (x y : total_space F E) :
   (chart_at (model_prod HB F) x y).2 = (trivialization_at F E x.proj y).2 :=
 by { rw [charted_space_chart_at], refl }
 
@@ -47,18 +47,18 @@ variables {𝕜 B F F₁ F₂ : Type*}
   [nontrivially_normed_field 𝕜]
   [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)]
   [normed_add_comm_group F] [normed_space 𝕜 F]
-  [topological_space (total_space E)] [∀ x, topological_space (E x)]
+  [topological_space (total_space F E)] [∀ x, topological_space (E x)]
   [∀ x, add_comm_monoid (E₁ x)] [∀ x, module 𝕜 (E₁ x)]
   [normed_add_comm_group F₁] [normed_space 𝕜 F₁]
-  [topological_space (total_space E₁)] [∀ x, topological_space (E₁ x)]
+  [topological_space (total_space F₁ E₁)] [∀ x, topological_space (E₁ x)]
   [∀ x, add_comm_monoid (E₂ x)] [∀ x, module 𝕜 (E₂ x)]
   [normed_add_comm_group F₂] [normed_space 𝕜 F₂]
-  [topological_space (total_space E₂)] [∀ x, topological_space (E₂ x)]
+  [topological_space (total_space F₂ E₂)] [∀ x, topological_space (E₂ x)]
   [topological_space B]
   {n : ℕ∞}
   [fiber_bundle F₁ E₁] [vector_bundle 𝕜 F₁ E₁]
   [fiber_bundle F₂ E₂] [vector_bundle 𝕜 F₂ E₂]
-  {e₁ e₁' : trivialization F₁ (π E₁)} {e₂ e₂' : trivialization F₂ (π E₂)}
+  {e₁ e₁' : trivialization F₁ (π F₁ E₁)} {e₂ e₂' : trivialization F₂ (π F₂ E₂)}
 
 
 
@@ -112,10 +112,10 @@ variables {B : Type*} [topological_space B]
 
 variables (F₁ : Type*) [normed_add_comm_group F₁] [normed_space 𝕜₁ F₁]
   (E₁ : B → Type*) [Π x, add_comm_group (E₁ x)] [Π x, module 𝕜₁ (E₁ x)]
-  [topological_space (total_space E₁)]
+  [topological_space (total_space F₁ E₁)]
 variables (F₂ : Type*) [normed_add_comm_group F₂][normed_space 𝕜₂ F₂]
   (E₂ : B → Type*) [Π x, add_comm_group (E₂ x)] [Π x, module 𝕜₂ (E₂ x)]
-  [topological_space (total_space E₂)]
+  [topological_space (total_space F₂ E₂)]
 variables (F₁ E₁ F₂ E₂) [ring_hom_isometric σ]
 variables [Π x : B, topological_space (E₁ x)] [fiber_bundle F₁ E₁] [vector_bundle 𝕜₁ F₁ E₁]
 variables [Π x : B, topological_space (E₂ x)] [fiber_bundle F₂ E₂] [vector_bundle 𝕜₂ F₂ E₂]
@@ -123,13 +123,13 @@ variables [Π x, topological_add_group (E₂ x)] [Π x, has_continuous_smul 𝕜
 
 @[simp, mfld_simps]
 lemma continuous_linear_map_trivialization_at (x : B) :
-  trivialization_at (F₁ →SL[σ] F₂) (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂) x =
+  trivialization_at (F₁ →SL[σ] F₂) (bundle.continuous_linear_map σ E₁ E₂) x =
   (trivialization_at F₁ E₁ x).continuous_linear_map σ (trivialization_at F₂ E₂ x) :=
 rfl
 
 -- todo: do in mathlib
 instance bundle.continuous_linear_map.add_comm_group (x : B) :
-  add_comm_group (bundle.continuous_linear_map σ F₁ E₁ F₂ E₂ x) :=
+  add_comm_group (bundle.continuous_linear_map σ E₁ E₂ x) :=
 by delta_instance bundle.continuous_linear_map
 
 
@@ -147,7 +147,7 @@ instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', has_zero (E x
 by delta_instance bundle.pullback
 
 variables {B F B' K : Type*} {E : B → Type*} {f : K}
-  [topological_space B'] [topological_space (total_space E)]
+  [topological_space B'] [topological_space (total_space F E)]
   [topological_space F] [topological_space B]
   [∀ b, has_zero (E b)] [continuous_map_class K B' B]
 
@@ -155,7 +155,7 @@ namespace trivialization
 
 -- attribute [simps base_set] trivialization.pullback
 
-lemma pullback_symm (e : trivialization F (π E)) (x : B') : (e.pullback f).symm x = e.symm (f x) :=
+lemma pullback_symm (e : trivialization F (π F E)) (x : B') : (e.pullback f).symm x = e.symm (f x) :=
 begin
   ext y,
   simp_rw [trivialization.symm, pretrivialization.symm],
@@ -184,14 +184,14 @@ section pullback_vb
 variables {R 𝕜 B F B' : Type*} {E : B → Type*}
 
 
-variables [topological_space B'] [topological_space (total_space E)]
+variables [topological_space B'] [topological_space (total_space F E)]
   [nontrivially_normed_field 𝕜] [normed_add_comm_group F] [normed_space 𝕜 F] [topological_space B]
   [∀ x, add_comm_monoid (E x)] [∀ x, module 𝕜 (E x)] [∀ x, topological_space (E x)]
   [fiber_bundle F E]
   {K : Type*} [continuous_map_class K B' B] (f : K)
 
 namespace trivialization
-lemma pullback_symmL (e : trivialization F (π E)) [e.is_linear 𝕜] (x : B') :
+lemma pullback_symmL (e : trivialization F (π F E)) [e.is_linear 𝕜] (x : B') :
   (e.pullback f).symmL 𝕜 x = e.symmL 𝕜 (f x) :=
 by { ext y, simp_rw [symmL_apply, pullback_symm] }
 

@@ -55,7 +55,7 @@ lemma relativize_slice {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
 begin
   -- for some reason this is needed
   letI : module ℝ (((cont_mdiff_map.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ
-    tangent_space I') σ.1),
+    (tangent_space I')) σ.1),
   { apply_instance },
   have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hpq,
   ext1 w,
@@ -89,7 +89,7 @@ lemma relativize_slice_eq_univ {σ : one_jet_bundle (IP.prod I) (P × M) I' M'}
 begin
   -- for some reason this is needed
   letI : module ℝ (((cont_mdiff_map.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ
-    tangent_space I') σ.1),
+    (tangent_space I')) σ.1),
   { apply_instance },
   have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := λ x, congr_arg (λ f : E →L[ℝ] ℝ, f x) hp,
   have : ∀ y : E', (p.update σ.snd y).comp (continuous_linear_map.inr ℝ EP E) =
@@ -193,8 +193,8 @@ end
 
 lemma formal_sol.eq_iff {F₁ F₂ : formal_sol R} {x : M} :
   F₁ x = F₂ x ↔ F₁.bs x = F₂.bs x ∧ F₁.ϕ x = by apply F₂.ϕ x :=
-by { simp_rw [sigma.ext_iff, formal_sol.fst_eq, heq_iff_eq, prod.ext_iff, eq_self_iff_true,
-  true_and], refl }
+by { simp_rw [bundle.total_space.ext_iff, formal_sol.fst_eq, heq_iff_eq, prod.ext_iff,
+              eq_self_iff_true, true_and], refl }
 
 lemma family_one_jet_sec.is_holonomic_at_curry
   (S : family_one_jet_sec (IP.prod I) (P × M) I' M' J N)

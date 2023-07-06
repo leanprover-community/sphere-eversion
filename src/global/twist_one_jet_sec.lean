@@ -26,8 +26,8 @@ variables {𝕜 : Type*} [nontrivially_normed_field 𝕜]
 homomorphisms from TM to V. This is naturally a smooth manifold. -/
 local notation `σ` := ring_hom.id 𝕜
 local notation `FJ¹MV` :=
-  bundle.continuous_linear_map σ E (tangent_space I : M → Type*) V (bundle.trivial M V)
-local notation `J¹MV` := total_space FJ¹MV
+  bundle.continuous_linear_map σ (tangent_space I : M → Type*) (bundle.trivial M V)
+local notation `J¹MV` := total_space (E →L[𝕜] V) FJ¹MV
 
 section smoothness
 
@@ -69,14 +69,14 @@ lemma smooth_at.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] V
   (hf : smooth_at J I f x₀)
   (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
     ϕ x ∘L (trivialization_at E (tangent_space I : M → Type*) (f x₀)).symmL 𝕜 (f x)) x₀) :
-  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
+  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
 smooth_at_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
 
 lemma smooth_at.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
   (hf : smooth_at J I f x₀)
   (hϕ : smooth_at J 𝓘(𝕜, E →L[𝕜] V) (λ x, show E →L[𝕜] V, from
     ϕ x ∘L (trivialization_at E (tangent_space I) (f x₀)).symmL 𝕜 (f x)) x₀) :
-  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space_mk (f x) (ϕ x) : N → J¹MV) x₀ :=
+  smooth_at J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (λ x, bundle.total_space.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
 smooth_at_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
 end smoothness
@@ -106,7 +106,7 @@ end sections
 section proj
 
 instance pi_bug_instance_restatement (x : M) :
-  topological_space (bundle.continuous_linear_map σ E (tangent_space I) V (trivial M V) x) :=
+  topological_space (bundle.continuous_linear_map σ (tangent_space I) (trivial M V) x) :=
 by apply_instance
 instance pi_bug_instance_restatement2 (x : M × V) :
   topological_space (one_jet_space I 𝓘(𝕜, V) x) :=
@@ -186,8 +186,8 @@ variables
 
 local notation `σ` := ring_hom.id ℝ
 local notation `FJ¹MV` :=
-  bundle.continuous_linear_map σ E (tangent_space I : M → Type*) V (bundle.trivial M V)
-local notation `J¹MV` := total_space FJ¹MV
+  bundle.continuous_linear_map σ (tangent_space I : M → Type*) (bundle.trivial M V)
+local notation `J¹MV` := total_space (E →L[ℝ] V) FJ¹MV
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext] structure family_one_jet_eucl_sec :=
