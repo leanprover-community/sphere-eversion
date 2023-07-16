@@ -436,11 +436,11 @@ begin
     rintro ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩,
     refine ⟨⟨(x, y), ((ψ.fderiv y).symm : tangent_space IN (ψ y) →L[ℝ] tangent_space IY y) ∘L τ ∘L
       (φ.fderiv x : tangent_space IX x →L[ℝ] tangent_space IM (φ x))⟩, _⟩,
-    ext _, { refl }, { refl },
-    sorry /- ext1 v,
+    refine congr_arg (bundle.total_space.mk _) _,
+    ext1 v,
     dsimp only [open_smooth_embedding.transfer, one_jet_bundle.map, one_jet_bundle.mk],
     simp_rw [continuous_linear_map.comp_apply, ← ψ.fderiv_coe, continuous_linear_equiv.coe_coe,
-      (φ.fderiv x).apply_symm_apply, (ψ.fderiv y).apply_symm_apply] -/ }
+      (φ.fderiv x).apply_symm_apply, (ψ.fderiv y).apply_symm_apply] }
 end
 
 lemma open_smooth_embedding.is_open_range_transfer : is_open (range (φ.transfer ψ)) :=
