@@ -168,14 +168,12 @@ lemma one_jet_bundle_trivialization_at (x₀ x : J¹MM') :
 begin
   delta one_jet_space,
   rw [continuous_linear_map_trivialization_at, trivialization.continuous_linear_map_apply],
-  sorry
-  /- simp_rw [in_tangent_coordinates, in_coordinates, pullback_trivialization_at],
-  -- this is very slow, but `trivialization.pullback_symmL` doesn't rewrite properly
+  simp_rw [in_tangent_coordinates, in_coordinates],
   congr' 2,
-  convert trivialization.pullback_symmL _ _ _ -/
+  exact trivialization.pullback_symmL cont_mdiff_map.fst
+    (trivialization_at E (tangent_space I) x₀.1.1) x.proj
 end
 
-@[simp, mfld_simps]
 lemma trivialization_at_one_jet_bundle_source (x₀ : M × M') :
   (trivialization_at (E →L[𝕜] E') FJ¹MM' x₀).source =
   π (E →L[𝕜] E') FJ¹MM' ⁻¹' (prod.fst ⁻¹' (chart_at H x₀.1).source ∩ prod.snd ⁻¹' (chart_at H' x₀.2).source) :=
