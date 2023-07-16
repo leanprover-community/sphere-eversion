@@ -12,14 +12,6 @@ begin
 end
 
 @[simp] lemma univ_prod_nonempty_iff {α β : Type*} [nonempty α] {s : set β} :
-  ((univ : set α) ×ˢ s).nonempty ↔ s.nonempty :=
-begin
-  inhabit α,
-  split,
-  { rintro ⟨⟨-, b⟩, ⟨-, h : b ∈ s⟩⟩,
-    exact ⟨b, h⟩ },
-  { rintro ⟨b, h⟩,
-    exact ⟨⟨default, b⟩, ⟨trivial, h⟩⟩ }
-end
+  ((univ : set α) ×ˢ s).nonempty ↔ s.nonempty := by simp [prod_nonempty_iff]
 
 end set
