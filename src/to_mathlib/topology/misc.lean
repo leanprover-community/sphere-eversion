@@ -13,20 +13,6 @@ noncomputable theory
 open set function filter topological_space
 open_locale unit_interval topology uniformity filter classical
 
-section to_specific_limits
-
-lemma tendsto_self_div_add_at_top_nhds_1_nat :
-  tendsto (λ n : ℕ, (n : ℝ) / (n + 1)) at_top (𝓝 1) :=
-begin
-  suffices : tendsto (λ n : ℕ, (1 : ℝ) - 1 / (n + 1)) at_top (𝓝 (1 - 0)),
-  { have hn : ∀ n : ℕ, (n : ℝ) + 1 ≠ 0 := λ n, n.cast_add_one_pos.ne',
-    simp_rw [one_sub_div (hn _), add_sub_cancel, sub_zero] at this, exact this },
-  exact tendsto_const_nhds.sub tendsto_one_div_add_at_top_nhds_0_nat
-end
-
-
-end to_specific_limits
-
 section maps
 open function set
 variables {α β : Type*} [topological_space α] [topological_space β] {f : α → β} {g : β → α}
@@ -120,7 +106,7 @@ lemma periodic_const {α β : Type*} [has_add α] {a : α} {b : β} : periodic (
 λ x, rfl
 
 lemma real.ball_zero_eq (r : ℝ) : metric.ball (0 : ℝ) r = Ioo (-r) r :=
-by { ext x, simp [real.norm_eq_abs, abs_lt] }
+by simp [real.ball_eq_Ioo]
 
 end
 
@@ -285,7 +271,7 @@ section
 variables {E F : Type*} [normed_add_comm_group E] [normed_add_comm_group F]
 variables [normed_space ℝ E] [normed_space ℝ F]
 
-lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ unit_interval) :
+lemma dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ I) :
   dist (r • x + (1 - r) • y) x ≤ dist y x :=
 calc
   dist (r • x + (1 - r) • y) x = ‖1 - r‖ * ‖x - y‖ : by simp_rw [dist_eq_norm', ← norm_smul,
@@ -515,17 +501,6 @@ end
 
 end
 
-section convex
-
-variables {E : Type*} [add_comm_group E] [module ℝ E] [topological_space E]
-  [topological_add_group E] [has_continuous_smul ℝ E] {s : set E}
-
-lemma convex.is_preconnected' (hs : convex ℝ s) : is_preconnected s :=
-by { rcases s.eq_empty_or_nonempty with rfl|h, exact is_preconnected_empty,
-     exact (hs.is_path_connected h).is_connected.is_preconnected }
-
-end convex
-
 section
 
 open metric
@@ -542,13 +517,10 @@ open metric
 variables {E : Type*} [normed_add_comm_group E] [normed_space ℝ E]
 
 lemma is_preconnected_ball (x : E) (r : ℝ) : is_preconnected (ball x r) :=
-(convex_ball x r).is_preconnected'
+(convex_ball x r).is_preconnected
 
 lemma is_connected_ball {x : E} {r : ℝ} : is_connected (ball x r) ↔ 0 < r :=
-begin
-  rw [← @nonempty_ball _ _ x],
-  refine ⟨λ h, h.nonempty, λ h, ((convex_ball x r).is_path_connected $ h).is_connected⟩
-end
+by simp [is_connected, is_preconnected_ball]
 
 -- todo: make metric.mem_nhds_iff protected
 
@@ -700,14 +672,7 @@ open_locale filter
 
 lemma filter.eventually_eq.slice {α β γ : Type*} [topological_space α] [topological_space β]
   {f g : α × β → γ} {a : α} {b : β} (h : f =ᶠ[𝓝 (a, b)] g) : (λ y, f (a, y)) =ᶠ[𝓝 b] (λ y, g(a, y)) :=
-begin
-  rw nhds_prod_eq at h,
-  have : (pure a : filter α) ×ᶠ 𝓝 b ≤ (𝓝 a) ×ᶠ (𝓝 b),
-  exact prod_mono (by apply pure_le_nhds) le_rfl,
-  have := h.filter_mono this,
-  rw [pure_prod] at this,
-  exact eventually_map.mp this
-end
+h.curry_nhds.self_of_nhds
 
 lemma exists_compact_between' {α : Type*} [topological_space α] [locally_compact_space α]
   {K U : set α} (hK : is_compact K) (hU : is_open U) (h_KU : K ⊆ U) :
