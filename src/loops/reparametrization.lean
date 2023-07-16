@@ -69,7 +69,7 @@ begin
   rw [← add_zero (γ x t)],
   refine tendsto.add _ _,
   { rw [← one_smul ℝ (γ x t)],
-    refine (tendsto_self_div_add_at_top_nhds_1_nat.comp tendsto_snd).smul _,
+    refine ((tendsto_coe_nat_div_add_at_top 1).comp tendsto_snd).smul _,
     refine cont_diff_bump.convolution_tendsto_right _ _ _ tendsto_const_nhds,
     { simp_rw [bump], norm_cast,
       exact ((tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_at_top_nhds_0_nat 1)).comp
