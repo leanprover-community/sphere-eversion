@@ -2,7 +2,6 @@ import Mathlib.Topology.Paracompact
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Nat.Interval
 import SphereEversion.ToMathlib.Data.Set.Basic
-import SphereEversion.ToMathlib.Data.Set.Finite
 
 open scoped Topology
 
@@ -14,10 +13,8 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     [LocallyCompactSpace X] [SigmaCompactSpace X] {c : ι → X} {W : ι → ℝ → Set X}
     {B : ι → ℝ → Set X} {p : ι → ℝ → Prop} (hc : Surjective c) (hW₀ : ∀ i r, p i r → c i ∈ W i r)
     (hW₁ : ∀ i r, p i r → IsOpen (W i r)) (hB : ∀ i, (𝓝 (c i)).HasBasis (p i) (B i)) :
-    ∃ s : Set (ι × ℝ),
-      s.Countable ∧
-        (∀ z ∈ s, (↿p) z) ∧ (⋃ z ∈ s, (↿W) z) = univ ∧ LocallyFinite (↿B ∘ (coe : s → ι × ℝ)) :=
-  by
+    ∃ s : Set (ι × ℝ), s.Countable ∧ (∀ z ∈ s, (↿p) z) ∧ (⋃ z ∈ s, (↿W) z) = univ ∧
+      LocallyFinite (↿B ∘ (coe : s → ι × ℝ)) := by
   let K' := CompactExhaustion.choice X
   let K := K'.shiftr.shiftr
   let C : ℕ → Set X := fun n => K (n + 2) \ interior (K (n + 1))
