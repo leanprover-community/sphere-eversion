@@ -109,7 +109,7 @@ def ContinuousLinearMap.coprodL : (E →L[𝕜] G) × (F →L[𝕜] G) →L[𝕜
 @[continuity]
 theorem Continuous.coprodL {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G} (hf : Continuous f)
     (hg : Continuous g) : Continuous fun x => (f x).coprod (g x) :=
-  ContinuousLinearMap.coprodL.Continuous.comp₂ hf hg
+  ContinuousLinearMap.coprodL.continuous.comp₂ hf hg
 
 theorem Continuous.prodL' {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : Type _}
     [SeminormedAddCommGroup E] [SeminormedAddCommGroup Fₗ] [SeminormedAddCommGroup Gₗ]
@@ -118,7 +118,7 @@ theorem Continuous.prodL' {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : T
     [SMulCommClass 𝕜 R Fₗ] [SMulCommClass 𝕜 R Gₗ] {X : Type _} [TopologicalSpace X]
     {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f) (hg : Continuous g) :
     Continuous fun x => (f x).Prod (g x) :=
-  (ContinuousLinearMap.prodₗᵢ 𝕜).Continuous.comp₂ hf hg
+  (ContinuousLinearMap.prodₗᵢ 𝕜).continuous.comp₂ hf hg
 
 @[continuity]
 theorem Continuous.prodL {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : Type _}
@@ -134,20 +134,20 @@ theorem Continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜
   (ContinuousLinearMap.apply 𝕜 (E →L[𝕜] Gₗ) :
               (E →L[𝕜] Fₗ) →L[𝕜]
                 ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜]
-                  E →L[𝕜] Gₗ).IsBoundedBilinearMap.Continuous.comp₂
+                  E →L[𝕜] Gₗ).IsBoundedBilinearMap.continuous.comp₂
       hg <|
-    (ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).Continuous.comp hf
+    (ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous.comp hf
 
 @[continuity]
 theorem ContinuousAt.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} {x₀ : X}
     (hf : ContinuousAt f x₀) (hg : ContinuousAt g x₀) :
     ContinuousAt (fun x => (f x).comp (g x)) x₀ :=
   by
-  have cont₁ := (ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).Continuous.ContinuousAt.comp hf
+  have cont₁ := (ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous.continuousAt.comp hf
   have cont₂ :=
     (ContinuousLinearMap.apply 𝕜 (E →L[𝕜] Gₗ) :
           (E →L[𝕜] Fₗ) →L[𝕜]
-            ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).IsBoundedBilinearMap.Continuous
+            ((E →L[𝕜] Fₗ) →L[𝕜] E →L[𝕜] Gₗ) →L[𝕜] E →L[𝕜] Gₗ).IsBoundedBilinearMap.continuous
   exact cont₂.continuous_at.comp (hg.prod cont₁)
 
 section FiniteDimensional

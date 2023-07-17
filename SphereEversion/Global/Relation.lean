@@ -452,7 +452,7 @@ theorem OpenSmoothEmbedding.smooth_transfer :
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
-  (OpenSmoothEmbedding.smooth_transfer _ _).Continuous
+  (OpenSmoothEmbedding.smooth_transfer _ _).continuous
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 theorem OpenSmoothEmbedding.range_transfer :
@@ -476,7 +476,7 @@ theorem OpenSmoothEmbedding.range_transfer :
 theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer ψ)) :=
   by
   rw [φ.range_transfer ψ]
-  exact (φ.is_open_range.prod ψ.is_open_range).Preimage one_jet_bundle_proj_continuous
+  exact (φ.is_open_range.prod ψ.is_open_range).preimage one_jet_bundle_proj_continuous
 
 /-- localize a relation -/
 def RelMfld.localize (R : RelMfld IM M IN N) : RelMfld IX X IY Y :=

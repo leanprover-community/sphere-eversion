@@ -72,10 +72,10 @@ theorem injective : Function.Injective f :=
   f.LeftInverse.Injective
 
 protected theorem continuous : Continuous f :=
-  f.smooth_to.Continuous
+  f.smooth_to.continuous
 
 theorem open_map : IsOpenMap f :=
-  f.LeftInverse.IsOpenMap f.isOpen_range f.smooth_inv.ContinuousOn
+  f.LeftInverse.IsOpenMap f.isOpen_range f.smooth_inv.continuousOn
 
 theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] id :=
   Filter.eventually_of_mem (f.open_map.range_mem_nhds x) fun y hy => f.right_inv hy
@@ -121,7 +121,7 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
 open Filter
 
 theorem openEmbedding : OpenEmbedding f :=
-  openEmbedding_of_continuous_injective_open f.Continuous f.Injective f.open_map
+  openEmbedding_of_continuous_injective_open f.continuous f.Injective f.open_map
 
 theorem inducing : Inducing f :=
   f.OpenEmbedding.to_inducing
@@ -525,7 +525,7 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type _} 
   have h₁ : UniformContinuousOn ψ K₁ :=
     hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on
   have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x hx => hε _
-  obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).ContinuousOn hεφ
+  obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).continuousOn hεφ
   obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀
   refine' ⟨min τ 1, by simp [hτ], fun g p hp p' hp' x hx hη => _⟩
   cases' lt_min_iff.mp hη with H H'

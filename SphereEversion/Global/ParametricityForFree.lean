@@ -52,7 +52,7 @@ theorem RelMfld.mem_relativize (R : RelMfld I M I' M')
 
 theorem RelMfld.isOpen_relativize (R : RelMfld I M I' M') (h2 : IsOpen R) :
     IsOpen (R.relativize IP P) :=
-  h2.Preimage smooth_bundleSnd.Continuous
+  h2.preimage smooth_bundleSnd.continuous
 
 theorem relativize_slice {σ : OneJetBundle (IP.Prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.Prod I) σ.1.1} (q : DualPair <| TangentSpace I σ.1.1.2)

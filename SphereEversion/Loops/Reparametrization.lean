@@ -309,8 +309,8 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
       ⟨γ.local_centering_density_nhd x, univ, γ.local_centering_density_nhd_is_open x, hy,
         isOpen_univ, mem_univ t, rfl.subset⟩
   exact
-    ((γ.local_centering_density_smooth_on x).ContinuousOn.ContinuousAt hyt).comp
-      (Continuous.Prod.mk y).ContinuousAt
+    ((γ.local_centering_density_smooth_on x).continuousOn.continuousAt hyt).comp
+      (Continuous.Prod.mk y).continuousAt
 
 @[simp]
 theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensityNhd x) :
@@ -455,7 +455,7 @@ theorem deriv_integral_centeringDensity_pos (t : ℝ) :
   by
   rw [intervalIntegral.deriv_integral_right (γ.centering_density_interval_integrable _ _ _)
       ((γ.centering_density_continuous x).StronglyMeasurableAtFilter volume (𝓝 t))
-      (centering_density_continuous γ x).ContinuousAt]
+      (centering_density_continuous γ x).continuousAt]
   exact centering_density_pos γ x t
 
 theorem strictMono_integral_centeringDensity :
@@ -504,7 +504,7 @@ theorem hasDerivAt_reparametrize_symm (s : ℝ) :
     HasDerivAt (γ.reparametrize x).symm (γ.centeringDensity x s) s :=
   integral_hasDerivAt_right (γ.centeringDensity_intervalIntegrable x 0 s)
     ((γ.centeringDensity_continuous x).StronglyMeasurableAtFilter _ _)
-    (γ.centeringDensity_continuous x).ContinuousAt
+    (γ.centeringDensity_continuous x).continuousAt
 
 theorem
   reparametrize_smooth :-- 𝒞 ∞ ↿γ.reparametrize :=
@@ -527,7 +527,7 @@ theorem reparametrize_average :
     ∀ s, s ∈ uIcc 0 (1 : ℝ) → HasDerivAt (γ.reparametrize x).symm (γ.centering_density x s) s :=
     fun s hs => γ.has_deriv_at_reparametrize_symm x s
   have h₂ : ContinuousOn (fun s => γ.centering_density x s) (uIcc 0 1) :=
-    (γ.centering_density_continuous x).ContinuousOn
+    (γ.centering_density_continuous x).continuousOn
   have h₃ : Continuous fun s => γ x (γ.reparametrize x s) :=
     (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous)
   rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one, ←

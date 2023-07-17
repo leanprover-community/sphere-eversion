@@ -94,7 +94,7 @@ theorem nice_atlas_domain :
         (∀ i, ∃ i', range (φ i) ⊆ f ⁻¹' (⇑(targetCharts E' I' M' i') '' ball (0 : E') 1)) ∧
           (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   nice_atlas E I
-    (fun i' => ((targetCharts E' I' M' i').open_map (ball 0 1) isOpen_ball).Preimage hf)
+    (fun i' => ((targetCharts E' I' M' i').open_map (ball 0 1) isOpen_ball).preimage hf)
     (by rw [← preimage_Union, targetCharts_cover, preimage_univ])
 
 /-- Lemma `lem:ex_localisation`
@@ -126,7 +126,7 @@ theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :
   let K : ld.ι' → Set M' := fun i => ld.ψ i '' closed_ball 0 1
   let U : ld.ι' → Set M' := fun i => range <| ld.ψ i
   have hK : ∀ i, IsClosed (K i) := fun i =>
-    IsCompact.isClosed (IsCompact.image (is_compact_closed_ball 0 1) (ld.ψ i).Continuous)
+    IsCompact.isClosed (IsCompact.image (is_compact_closed_ball 0 1) (ld.ψ i).continuous)
   have hK' : LocallyFinite K := ld.h₄.subset fun i => image_subset_range (ld.ψ i) (closed_ball 0 1)
   have hU : ∀ i, IsOpen (U i) := fun i => (ld.ψ i).isOpen_range
   have hKU : ∀ i, K i ⊆ U i := fun i => image_subset_range _ _

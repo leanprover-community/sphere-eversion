@@ -218,7 +218,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hι : Fintype.card ι = d + 1 := Fintype.card_fin _
   have hp : p ∈ affineBases ι ℝ F := h.mem_affine_bases
   have hV : IsOpen V := isOpen_set_pi finite_univ fun _ _ => isOpen_Ioi
-  have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι).ContinuousOn
+  have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι).continuousOn
   have hxp : W' (x, p) ∈ V := by simp [W', hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
@@ -296,7 +296,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     simp only [A, affineBases_findim ι ℝ F hι]
     exact is_open_univ.prod (isOpen_affineIndependent ℝ F)
   have hW' : ContinuousAt W' (q, v) :=
-    (smooth_barycentric ι ℝ F hι).ContinuousOn.ContinuousAt
+    (smooth_barycentric ι ℝ F hι).continuousOn.continuousAt
       (mem_nhds_iff.mpr ⟨A, subset.rfl, hA, hqv⟩)
   have hS : S ∈ 𝓝 (q, v) := hW'.preimage_mem_nhds hV'
   obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS
@@ -555,7 +555,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
     have hc : ∀ y, Continuous fun s => dist (γ y 1 s) (γ x 1 s) := fun y =>
       hc.comp₂ continuous_const continuous_id
     simp_rw [is_compact_Icc.Sup_lt_iff_of_continuous (nonempty_Icc.mpr zero_le_one)
-        (hc _).ContinuousOn] at
+        (hc _).continuousOn] at
       this 
     convert this
     ext y

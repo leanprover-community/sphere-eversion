@@ -68,7 +68,7 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
         continuous_iff_continuousOn_univ.mp <|
           continuous_const.add <|
             (homothety_continuous 0 r).comp <|
-              continuous_induced_dom.comp homeomorphUnitBall.Continuous
+              continuous_induced_dom.comp homeomorphUnitBall.continuous
       continuous_invFun :=
         by
         refine' ContinuousOn.comp _ (Continuous.continuousOn _) (mapsTo_homothety_ball c hr)

@@ -74,7 +74,7 @@ theorem ContinuousAt.eventually' {f : α → β} {a₀ : α} (hf : ContinuousAt 
 
 theorem Continuous.eventually {f : α → β} {a₀ : α} (hf : Continuous f) (P : β → Prop)
     (hP : IsOpen {b | P b}) (ha₀ : P (f a₀)) : ∀ᶠ a in 𝓝 a₀, P (f a) :=
-  hf.ContinuousAt.Eventually P hP ha₀
+  hf.continuousAt.Eventually P hP ha₀
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- (unused)
@@ -233,7 +233,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
   · rw [fract_ne_zero_iff] at hx' 
     have H : Ico (⌊x⌋ : ℝ) (⌊x⌋ + 1) ∈ 𝓝 x :=
       mem_of_superset (Ioo_floor_mem_nhds hx') Ioo_subset_Ico_self
-    exact (continuousOn_fract ⌊x⌋).ContinuousAt H (hs.mem_nhds hx)
+    exact (continuousOn_fract ⌊x⌋).continuousAt H (hs.mem_nhds hx)
 
 theorem IsOpen.preimage_fract {s : Set ℝ} (hs : IsOpen s) (h2s : (0 : ℝ) ∈ s → (1 : ℝ) ∈ s) :
     IsOpen (fract ⁻¹' s) :=
@@ -535,7 +535,7 @@ variable {α β : Type _} [TopologicalSpace α] [TopologicalSpace β]
 theorem Continuous.image_connectedComponentIn_subset {f : α → β} {s : Set α} {x : α}
     (hf : Continuous f) (hx : x ∈ s) :
     f '' connectedComponentIn s x ⊆ connectedComponentIn (f '' s) (f x) :=
-  (isPreconnected_connectedComponentIn.image _ hf.ContinuousOn).subset_connectedComponentIn
+  (isPreconnected_connectedComponentIn.image _ hf.continuousOn).subset_connectedComponentIn
     (mem_image_of_mem _ <| mem_connectedComponentIn hx)
     (image_subset _ <| connectedComponentIn_subset _ _)
 
@@ -616,7 +616,7 @@ theorem precise_refinement_set' {ι X : Type _} [TopologicalSpace X] {s : Set X}
   by
   obtain ⟨v, vo, vs, vl, vu⟩ :=
     precise_refinement (fun i => (coe : s → X) ⁻¹' u i)
-      (fun i => (uo i).Preimage continuous_subtype_val)
+      (fun i => (uo i).preimage continuous_subtype_val)
       (by rwa [← preimage_Union, subtype.preimage_coe_eq_univ])
   refine'
     ⟨fun i => coe '' v i, fun i => hs.is_open_map_subtype_coe _ (vo i), by
@@ -651,7 +651,7 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
   by
   obtain ⟨v, vU, vo, hv⟩ :=
     exists_iUnion_eq_closure_subset
-      (fun i => (uo i).Preimage (continuous_subtype_val : Continuous (coe : s → X)))
+      (fun i => (uo i).preimage (continuous_subtype_val : Continuous (coe : s → X)))
       (fun x => uf x x.Prop) (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU])
   have : ∀ i, IsCompact (closure ((coe : _ → X) '' v i)) :=
     by

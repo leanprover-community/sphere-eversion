@@ -340,7 +340,7 @@ theorem SmoothAt.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {
       (fun x => OneJetBundle.mk (f1 x) (f3 x) (h x ∘L g x) : N' → OneJetBundle I M J N) x₀ :=
   by
   rw [smoothAt_oneJetBundle_mk] at hh hg ⊢
-  exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_inTangentCoordinates hg.2.1.ContinuousAt hg.2.2⟩
+  exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_inTangentCoordinates hg.2.1.continuousAt hg.2.2⟩
 
 theorem Smooth.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}

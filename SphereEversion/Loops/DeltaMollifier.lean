@@ -296,7 +296,7 @@ theorem deltaMollifier_integral_eq_one : ∫ s in 0 ..1, deltaMollifier n t s = 
     one_smul, approxDirac_integral_eq_one, mul_one, div_add_div_same, div_self]
   · exact n.cast_add_one_pos.ne'
   · rw [sub_eq_add_neg, add_comm]
-  · exact ((approxDirac_smooth n).Continuous.IntervalIntegrable _ _).const_mul _
+  · exact ((approxDirac_smooth n).continuous.IntervalIntegrable _ _).const_mul _
   · exact intervalIntegrable_const
 
 /-- `γ.mollify n t` is a weighted average of `γ` using weights `delta_mollifier n t`.
@@ -321,7 +321,7 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
   ·
     exact
       (continuous_const.smul
-            (((approxDirac_smooth n).Continuous.comp (continuous_id.sub continuous_const)).smul
+            (((approxDirac_smooth n).continuous.comp (continuous_id.sub continuous_const)).smul
               hγ)).IntervalIntegrable
         _ _
   · exact (continuous_const.smul hγ).IntervalIntegrable _ _

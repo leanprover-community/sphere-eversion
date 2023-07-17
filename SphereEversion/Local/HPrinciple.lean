@@ -340,7 +340,7 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x t, ‖(L.improveStep h N t).f x - 𝓕.f x‖ ≤ ε :=
   by
   set γ := L.loop h
-  have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.Continuous
+  have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.continuous
   have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   apply
     ((corrugation.c0_small_on L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).And <|
@@ -403,7 +403,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
 theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).IsFormalSol R :=
   by
   set γ := L.loop h
-  have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.Continuous
+  have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.continuous
   have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   set K :=
     (fun p : E × ℝ × ℝ => (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
@@ -414,7 +414,7 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
     refine' continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _)
     apply L.p.continuous_update 𝓕.φ_diff.continuous.fst'
     change Continuous (↿(L.loop h) ∘ fun g : E × ℝ × ℝ => (g.snd.fst, g.fst, g.snd.snd))
-    exact (L.loop_smooth h).Continuous.comp₃ continuous_snd.fst continuous_fst continuous_snd.snd
+    exact (L.loop_smooth h).continuous.comp₃ continuous_snd.fst continuous_fst continuous_snd.snd
   have K_sub : K ⊆ R := by
     rintro _ ⟨⟨x, t, s⟩, ⟨x_in, t_in, s_in⟩, rfl⟩
     exact (L.nice h).mem_Ω x t s

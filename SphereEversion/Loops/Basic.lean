@@ -177,7 +177,7 @@ theorem norm_at_le_iSup_norm_Icc (γ : Loop F) (hγ : Continuous γ) (t : ℝ) :
   rw [ht]
   have h₁ : Set.Nonempty (range fun s : I => ‖γ s‖) := ⟨‖γ 0‖, 0, rfl⟩
   have h₂ : BddAbove (range fun s : I => ‖γ s‖) := by
-    convert is_compact_Icc.bdd_above_image (continuous_norm.comp hγ).ContinuousOn; ext; simp
+    convert is_compact_Icc.bdd_above_image (continuous_norm.comp hγ).continuousOn; ext; simp
   exact (Real.isLUB_sSup _ h₁ h₂).1 ⟨⟨u, hu⟩, rfl⟩
 
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
@@ -257,7 +257,7 @@ theorem Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) 
   by
   change Continuous fun i => (fun s => (γ s).extend) i (fract (t i))
   refine' ContinuousOn.comp_fract _ ht _
-  · exact (hγ.comp (continuous_id.prod_map continuous_projIcc)).ContinuousOn
+  · exact (hγ.comp (continuous_id.prod_map continuous_projIcc)).continuousOn
   ·
     simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]

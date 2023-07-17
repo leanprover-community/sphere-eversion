@@ -186,7 +186,7 @@ theorem ContDiff.contDiff_partial_fst_apply {φ : E → F → G} {n : ℕ}
 
 theorem ContDiff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
     (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₁ 𝕜 φ) :=
-  h.contDiff_partial_fst.Continuous
+  h.contDiff_partial_fst.continuous
 
 theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
     ContDiff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
@@ -202,7 +202,7 @@ theorem ContDiff.contDiff_partial_snd_apply {φ : E → F → G} {n : ℕ}
 
 theorem ContDiff.continuous_partial_snd {φ : E → F → G} {n : ℕ}
     (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₂ 𝕜 φ) :=
-  h.contDiff_partial_snd.Continuous
+  h.contDiff_partial_snd.continuous
 
 theorem ContDiff.contDiff_top_partial_snd {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
     ContDiff 𝕜 ⊤ ↿(∂₂ 𝕜 φ) :=

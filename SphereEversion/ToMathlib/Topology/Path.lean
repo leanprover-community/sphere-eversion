@@ -130,8 +130,8 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
   · rw [continuous_iff_continuousAt]
     intro x
     refine'
-      (continuous_subtype_coe.comp hs).ContinuousAt.comp_div_cases (fun x s => (γ x).extend s)
-        (continuous_subtype_coe.comp ht).ContinuousAt _ _
+      (continuous_subtype_coe.comp hs).continuousAt.comp_div_cases (fun x s => (γ x).extend s)
+        (continuous_subtype_coe.comp ht).continuousAt _ _
     · intro h
       refine' ContinuousAt.path_extend _ _ continuousAt_snd
       exact hγ.continuous_at.comp (continuous_at_fst.fst.prod continuousAt_snd)
@@ -144,9 +144,9 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
     intro x
     refine'
       ((continuous_subtype_coe.comp hs).sub
-              (continuous_subtype_coe.comp ht)).ContinuousAt.comp_div_cases
+              (continuous_subtype_coe.comp ht)).continuousAt.comp_div_cases
         (fun x s => (γ' x).extend s)
-        (continuous_const.sub <| continuous_subtype_coe.comp ht).ContinuousAt _ _
+        (continuous_const.sub <| continuous_subtype_coe.comp ht).continuousAt _ _
     · intro h
       refine' ContinuousAt.path_extend _ _ continuousAt_snd
       exact hγ'.continuous_at.comp (continuous_at_fst.fst.prod continuousAt_snd)

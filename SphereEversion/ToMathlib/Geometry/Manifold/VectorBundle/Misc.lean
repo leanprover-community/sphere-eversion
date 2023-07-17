@@ -117,7 +117,7 @@ variable [∀ x, TopologicalAddGroup (E₂ x)] [∀ x, ContinuousSMul 𝕜₂ (E
 @[simp, mfld_simps]
 theorem continuousLinearMap_trivializationAt (x : B) :
     trivializationAt (F₁ →SL[σ] F₂) (Bundle.ContinuousLinearMap σ E₁ E₂) x =
-      (trivializationAt F₁ E₁ x).ContinuousLinearMap σ (trivializationAt F₂ E₂ x) :=
+      (trivializationAt F₁ E₁ x).continuousLinearMap σ (trivializationAt F₂ E₂ x) :=
   rfl
 
 -- todo: do in mathlib

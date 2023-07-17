@@ -61,7 +61,7 @@ theorem RelLoc.mem_relativize (R : RelLoc E F) (w : OneJet (P × E) F) :
   simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
 
 theorem RelLoc.isOpen_relativize (R : RelLoc E F) (h2 : IsOpen R) : IsOpen (R.relativize P) :=
-  h2.Preimage continuous_oneJetSnd
+  h2.preimage continuous_oneJetSnd
 
 theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q : DualPair E)
     (hpq : p.π.comp (ContinuousLinearMap.inr ℝ P E) = q.π) :

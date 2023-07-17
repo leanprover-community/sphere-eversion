@@ -189,7 +189,7 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
       dsimp
       rw [map_sub, pr[x]ᗮ.map_smul, orthogonalProjection_orthogonalComplement_singleton_eq_zero,
         smul_zero, sub_zero, orthogonal_projection_eq_self_iff.mpr hy]
-    continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).Continuous
+    continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous
     continuous_invFun := by continuity }
 
 theorem orthogonalProjection_comp_coe (K : Submodule ℝ E) [CompleteSpace K] :
@@ -270,7 +270,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have cont : ContinuousAt N x₀ := by
     dsimp [N]
     simp_rw [real_inner_self_eq_norm_sq]
-    exact ((continuous_norm.pow 2).ContinuousAt.inv₀ hNx₀2.ne').smul continuousAt_id
+    exact ((continuous_norm.pow 2).continuousAt.inv₀ hNx₀2.ne').smul continuousAt_id
   have lim : tendsto (fun y => ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) :=
     by
     rw [← MulZeroClass.zero_mul ‖x₀‖]

@@ -88,7 +88,7 @@ theorem continuous_parametric_integral_of_continuous {E : Type _} [NormedAddComm
   · exact integrable_on_const.mpr (Or.inr hs.measure_lt_top)
   · apply ae_of_all
     intro a
-    apply (hF.comp₂ continuous_id continuous_const).ContinuousAt
+    apply (hF.comp₂ continuous_id continuous_const).continuousAt
 
 end
 
@@ -217,7 +217,7 @@ theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F
   · apply intervalIntegrable_const
   · apply ae_of_all
     intro a
-    apply (hF.comp₂ continuous_id continuous_const).ContinuousAt
+    apply (hF.comp₂ continuous_id continuous_const).continuousAt
 
 theorem continuous_parametric_intervalIntegral_of_continuous [LocallyCompactSpace X] {a₀ : ℝ}
     {F : X → ℝ → E} (hF : Continuous fun p : X × ℝ => F p.1 p.2) {s : X → ℝ} (hs : Continuous s) :
@@ -441,12 +441,12 @@ theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF
     refine' ⟨ball_subset_closed_ball hx, mem_Icc_of_Ioo t_in⟩
   have cont_x : ∀ x, Continuous (F x) := fun x => hF.continuous.comp (Continuous.Prod.mk x)
   have int_Icc : ∀ x, integrable_on (F x) (Icc a₀ b₀) := fun x =>
-    (cont_x x).ContinuousOn.integrableOn_Icc
+    (cont_x x).continuousOn.integrableOn_Icc
   have int_Ioo : ∀ x, integrable_on (F x) (Ioo a₀ b₀) := fun x =>
     (int_Icc x).mono_set Ioo_subset_Icc_self
   apply
     hasFDerivAt_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀
-      (fun x hx => (cont_x x).AEStronglyMeasurable) (int_Ioo x₀) (cont_x x₀).ContinuousAt _ _ _
+      (fun x hx => (cont_x x).AEStronglyMeasurable) (int_Ioo x₀) (cont_x x₀).continuousAt _ _ _
       (continuousAt_const : (ContinuousAt fun t : ℝ => (K : ℝ)) <| s x₀) fun t =>
       NNReal.coe_nonneg K
   · apply ae_of_all
@@ -468,7 +468,7 @@ theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF
       rw [this.fderiv]
     rw [this]; clear this
     exact
-      (inl ℝ H ℝ).compRightL.Continuous.comp
+      (inl ℝ H ℝ).compRightL.continuous.comp
         ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]
     refine' eventually_of_forall fun t t_in => _

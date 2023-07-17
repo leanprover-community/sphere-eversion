@@ -143,7 +143,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     lt_min (lt_min hε₀ (hε₁ x))
       ((hI.lt_Inf_iff_of_continuous
             ((nonempty_Icc.mpr zero_le_one).Prod (nonempty_Icc.mpr zero_le_one))
-            (h2f x).ContinuousOn _).mpr
+            (h2f x).continuousOn _).mpr
         fun x hx => h3f)
   let γ₄ := ↿γ₃
   have h0γ₄ : ∀ x t s, γ₄ (x, t, s) = γ₃ x t s := fun x t s => rfl
@@ -161,7 +161,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have hC : IsClosed C :=
     by
     refine' (is_closed_Iic.preimage continuous_snd.fst).union _
-    refine' ((is_closed_Iic.union isClosed_Ici).preimage_fract _).Preimage continuous_snd.snd
+    refine' ((is_closed_Iic.union isClosed_Ici).preimage_fract _).preimage continuous_snd.snd
     exact fun x => Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
   let U₁ : Set ℝ := Iio (4⁻¹ : ℝ) ∪ Ioi (3 / 4)
   let U : Set (E × ℝ × ℝ) := (fun x => x.2.1) ⁻¹' Iio (4⁻¹ : ℝ) ∪ (fun x => fract x.2.2) ⁻¹' U₁
@@ -169,7 +169,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     haveI hU : IsOpen U :=
       by
       refine' (is_open_Iio.preimage continuous_snd.fst).union _
-      refine' ((is_open_Iio.union isOpen_Ioi).preimage_fract _).Preimage continuous_snd.snd
+      refine' ((is_open_Iio.union isOpen_Ioi).preimage_fract _).preimage continuous_snd.snd
       exact fun x => Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
     hU.mem_nhds_set.mpr
       ((union_subset_union fun x hx => lt_of_le_of_lt hx (by norm_num)) <|
@@ -231,7 +231,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     exact (x, γ₃ x (smooth_transition t) (fract s))
     rw [dist_comm, dist_prod_same_left]
     refine' (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le _ _)
-    refine' (is_compact_Icc.prod is_compact_Icc).bddBelow_image (h2f x).ContinuousOn
+    refine' (is_compact_Icc.prod is_compact_Icc).bddBelow_image (h2f x).continuousOn
     rw [← hγ₃.proj_I]
     simp_rw [f, if_pos hΩ]
     apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
@@ -294,7 +294,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       show IntervalIntegrable (fun t => χ x • b x) volume (0 : ℝ) (1 : ℝ)
       exact intervalIntegrable_const
     have h2 : IntervalIntegrable ((1 - χ x) • γ₃ 1 x : Loop F) volume 0 1 :=
-      ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).Continuous.IntervalIntegrable _ _).smul
+      ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).continuous.IntervalIntegrable _ _).smul
         _
     have h3 : (γ₃ 1 x).average = g x := γ₂.reparametrize_average x
     simp [h1, h2, h3]

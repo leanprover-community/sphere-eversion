@@ -356,7 +356,7 @@ theorem contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap (x₀ : T
   refine' ContMDiffAt.congr_of_eventuallyEq _ _
   pick_goal 3
   have h1 :=
-    (continuous_proj E (TangentSpace I)).ContinuousAt.preimage_mem_nhds
+    (continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
       (e.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
   filter_upwards [h1] with x hx
   rw [Trivialization.continuousLinearMapAt_apply, e.coe_linear_map_at_of_mem hx]
@@ -389,10 +389,10 @@ theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     apply contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap
   refine' this.congr_of_eventually_eq _
   have h1 :=
-    (continuous_proj E (TangentSpace I)).ContinuousAt.preimage_mem_nhds
+    (continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
       (e.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
   have h2 :=
-    (hf.continuous_at.comp (continuous_proj E (TangentSpace I)).ContinuousAt).preimage_mem_nhds
+    (hf.continuous_at.comp (continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
       (e'.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
   filter_upwards [h1, h2] with x hx h2x
   dsimp only [inTangentCoordinates, in_coordinates, id_def]

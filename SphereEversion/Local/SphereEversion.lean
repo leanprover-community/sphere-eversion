@@ -302,7 +302,7 @@ def locFormalEversionAux : HtpyJetSec E E
       have : (fun x => ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) :=
         by
         refine' IsOpen.mem_nhds _ _
-        exact is_open_Iio.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).Continuous
+        exact is_open_Iio.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous
         simp_rw [mem_preimage, norm_zero, zero_pow two_pos, mem_Iio]
         norm_num
       have : (fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) :=
@@ -415,7 +415,7 @@ theorem locFormalEversion_hol :
     refine' (IsOpen.mem_nhdsSet _).mpr _
     exact
       (is_open_Iio.union isOpen_Ioi).Prod
-        (is_open_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).Continuous)
+        (is_open_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, _⟩
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs 

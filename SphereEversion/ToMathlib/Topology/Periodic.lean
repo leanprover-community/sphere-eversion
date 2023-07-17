@@ -176,7 +176,7 @@ theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont
     dsimp [φ] at this 
     rwa [this, ← qm.continuous_iff] at cont 
   obtain ⟨C, hC⟩ :=
-    (hK.prod isCompact_univ).bddAbove_image (continuous_norm.comp Fcont).ContinuousOn
+    (hK.prod isCompact_univ).bddAbove_image (continuous_norm.comp Fcont).continuousOn
   exact ⟨C, fun x x_in t => hC ⟨(x, π t), ⟨x_in, mem_univ _⟩, rfl⟩⟩
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » K) -/
