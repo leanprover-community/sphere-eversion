@@ -42,12 +42,10 @@ get rid of the `indexing` abstraction and do everything in terms of `index_type`
 
 section inductive_construction
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » V n.succ) -/
 theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [TopologicalSpace X]
     {N : ℕ} {f : IndexType N → X → α} {V : IndexType N → Set X} (hV : LocallyFinite V)
     (h : ∀ n : IndexType N, ¬IsMax n → ∀ (x) (_ : x ∉ V n.succ), f n.succ x = f n x) :
-    ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F :=
-  by
+    ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F := by
   choose U hUx hU using hV
   choose i₀ hi₀ using fun x => (hU x).bddAbove
   have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y := fun {x} ↦ by
@@ -99,7 +97,6 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
   rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
   exact Eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U i) -/
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
 statisfy `P₀` everywhere. The goal is to turn a map `f₀` satisfying `P₁` near a compact set `K` into
@@ -117,8 +114,7 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
       (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
       ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
         (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
-    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f :=
-  by
+    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f := by
   let P : Set X → Prop := fun U => ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ x ∈ U, P₁ x f
   have hP₁ : Antitone P := by
     rintro U V hUV ⟨f, h, h'⟩
@@ -248,157 +244,121 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     (U_fin : LocallyFinite U) (K_cover : (⋃ i, K i) = univ) {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
     (init' : ∀ p, P₂ p fun p : ℝ × X => f₀ p.2)
     -- Not in the original version
-    (ind :
-      ∀ (i : IndexType N) (f : X → Y),
-        (∀ x, P₀ x f) →
-          (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
-            ∃ F : ℝ → X → Y,
-              (∀ t, ∀ x, P₀ x <| F t) ∧
-                (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x <| F 1) ∧
-                  (∀ p, P₂ p ↿F) ∧
-                    (∀ t, ∀ (x) (_ : x ∉ U i), F t x = f x) ∧
-                      (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
-    ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F :=
-  by
-  let PP₀ : ∀ p : ℝ × X, germ (𝓝 p) Y → Prop := fun p φ =>
+    (ind : ∀ (i : IndexType N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
+      ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x <| F 1) ∧
+        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x, x ∉ U i → F t x = f x) ∧
+          (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
+    ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
+  let PP₀ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun p φ =>
     P₀ p.2 φ.sliceRight ∧ (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ
-  let PP₁ : ∀ i : IndexType N, ∀ p : ℝ × X, germ (𝓝 p) Y → Prop := fun i p φ =>
+  let PP₁ : ∀ i : IndexType N, ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun i p φ =>
     p.1 = 1 → RestrictGermPredicate P₁ (K i) p.2 φ.sliceRight
   let PP₂ : IndexType N → (ℝ × X → Y) → Prop := fun i f =>
     ∀ x, ∀ t ≥ T i.toNat, f (t, x) = f (T i.toNat, x)
-  have hPP₀ : ∀ p : ℝ × X, PP₀ p fun p : ℝ × X => f₀ p.2 :=
-    by
-    rintro ⟨t, x⟩
-    exact ⟨init x, fun h => rfl, init' _⟩
-  have ind' :
-    ∀ (i) (f : ℝ × X → Y),
-      (∀ p, PP₀ p f) →
-        PP₂ i f →
-          (∀ j < i, ∀ p, PP₁ j p f) →
-            ∃ f' : ℝ × X → Y,
-              (∀ p, PP₀ p f') ∧
-                (¬IsMax i → PP₂ i.succ f') ∧
-                  (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ (p) (_ : p ∉ Ici (T i.toNat) ×ˢ U i), f' p = f p :=
-    by
+  have hPP₀ : ∀ p : ℝ × X, PP₀ p fun p : ℝ × X => f₀ p.2 := fun (t, x) ↦
+    ⟨init x, fun h => rfl, init' _⟩
+  have ind' : ∀ (i) (f : ℝ × X → Y), (∀ p, PP₀ p f) → PP₂ i f → (∀ j < i, ∀ p, PP₁ j p f) →
+      ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (¬IsMax i → PP₂ i.succ f') ∧
+        (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ p, p ∉ Ici (T i.toNat) ×ˢ U i → f' p = f p := by
     rintro i F h₀F h₂F h₁F
-    replace h₁F : ∀ᶠ x : X near ⋃ j < i, K j, P₁ x fun x => F (T i.to_nat, x)
-    · rw [eventually_nhdsSet_Union₂]
+    replace h₁F : ∀ᶠ x : X near ⋃ j < i, K j, P₁ x fun x => F (T i.toNat, x)
+    · rw [eventually_nhdsSet_iUnion₂]
       intro j hj
       have : ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' => F (1, x') := fun x =>
         h₁F j hj (1, x) rfl
-      apply (forall_restrict_germ_predicate_iff.mp this).germ_congr_set
-      apply eventually_of_forall fun x => (_ : F (T i.to_nat, x) = F (1, x))
+      apply (forall_restrictGermPredicate_iff.mp this).germ_congr_set
+      refine eventually_of_forall fun x => (?_ : F (T i.toNat, x) = F (1, x))
       rw [h₂F _ _ (T_lt _).le]
-    rcases ind i (fun x => F (T i.to_nat, x)) (fun x => (h₀F (_, x)).1) h₁F with
+    rcases ind i (fun x => F (T i.toNat, x)) (fun x => (h₀F (_, x)).1) h₁F with
         ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ <;>
       clear ind
     let F'' : ℝ × X → Y := fun p : ℝ × X =>
-      if p.1 ≤ T i.to_nat then F p else F' (2 ^ (i.to_nat + 1) * (p.1 - T i.to_nat)) p.2
-    have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.to_nat → (F'' : germ (𝓝 p) Y) = F :=
-      by
-      dsimp only [PP₂] at h₂F 
+      if p.1 ≤ T i.toNat then F p else F' (2 ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2
+    have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.toNat → (F'' : Germ (𝓝 p) Y) = F := by
+      dsimp only at h₂F 
       rintro ⟨t, x⟩ (ht : t ≤ _)
       rcases eq_or_lt_of_le ht with (rfl | ht)
       · apply Quotient.sound
-        replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X => F (T i.to_nat, q.2)
+        replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X => F (T i.toNat, q.2)
         · have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet right_mem_Iic
           apply mem_of_superset (prod_mem_nhds (hpast_F'.filter_mono this) univ_mem)
           rintro ⟨t', x'⟩ ⟨ht', hx'⟩
           exact (congr_fun ht' x' : _)
-        have lim :
-          tendsto (fun x : ℝ × X => (2 ^ (i.to_nat + 1) * (x.1 - T i.to_nat), x.2))
-            (𝓝 (T i.to_nat, x)) (𝓝 (0, x)) :=
-          by
+        have lim : Tendsto (fun x : ℝ × X => (2 ^ (i.toNat + 1) * (x.1 - T i.toNat), x.2))
+            (𝓝 (T i.toNat, x)) (𝓝 (0, x)) := by
           rw [nhds_prod_eq, nhds_prod_eq]
           have limt :
-            tendsto (fun t => 2 ^ (i.to_nat + 1) * (t - T i.to_nat)) (𝓝 <| T i.to_nat) (𝓝 0) :=
-            by
-            rw [show (0 : ℝ) = 2 ^ (i.to_nat + 1) * (T i.to_nat - T i.to_nat) by simp]
-            apply tendsto.const_mul
-            exact tendsto_id.sub_const _
+              Tendsto (fun t => 2 ^ (i.toNat + 1) * (t - T i.toNat)) (𝓝 (T i.toNat)) (𝓝 0) :=
+            Continuous.tendsto' (by continuity) _ _ (by simp)
           exact limt.prod_map tendsto_id
-        apply eventually.mono (hpast_F'.comp_fun limUnder)
-        dsimp [F'']
+        apply Eventually.mono (hpast_F'.comp_fun lim)
+        dsimp
         rintro ⟨t, x⟩ h'
-        split_ifs
+        split_ifs with h
         · rfl
         · push_neg at h 
-          change (↿F') (2 ^ (i.to_nat + 1) * (t - T i.to_nat), x) = _
+          change (↿F') (2 ^ (i.toNat + 1) * (t - T i.toNat), x) = _
           rw [h', h₂F x t h.le]
-      · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i.to_nat :=
-          by
-          convert prod_mem_nhds (Iic_mem_nhds ht) univ_mem using 1
-          simp
+      · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i.toNat :=
+          continuousAt_fst (p := (t, x)) (Iic_mem_nhds ht)
         apply Quotient.sound
         exact hp.mono fun p hp => if_pos hp
-    have loc₂ :
-      ∀ p : ℝ × X,
-        p.1 > T i.to_nat →
-          (F'' : germ (𝓝 p) Y) = fun p : ℝ × X =>
-            F' (2 ^ (i.to_nat + 1) * (p.1 - T i.to_nat)) p.2 :=
-      by
-      rintro ⟨t, x⟩ (ht : t > _)
+    have loc₂ : ∀ p : ℝ × X, p.1 > T i.toNat →
+          (F'' : Germ (𝓝 p) Y) =
+            fun p : ℝ × X ↦ F' (2 ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2 := fun (t, x) ht ↦ by
       apply Quotient.sound
-      have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), ¬p.1 ≤ T i.to_nat :=
-        by
+      have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), ¬p.1 ≤ T i.toNat := by
         apply mem_of_superset (prod_mem_nhds (Ioi_mem_nhds ht) univ_mem)
         rintro ⟨t', x'⟩ ⟨ht', hx'⟩
         simpa using ht'
-      apply hp.mono fun q hq => _
-      exact if_neg hq
+      exact hp.mono fun q hq => if_neg hq
     refine' ⟨F'', _, _, _, _⟩
     · rintro p
-      by_cases ht : p.1 ≤ T i.to_nat
+      by_cases ht : p.1 ≤ T i.toNat
       · rw [loc₁ _ ht]
         apply h₀F
       · push_neg at ht 
         cases' p with t x
         rw [loc₂ _ ht]
-        refine' ⟨h₀F' (2 ^ (i.to_nat + 1) * (t - T i.to_nat)) x, _, _⟩
+        refine' ⟨h₀F' (2 ^ (i.toNat + 1) * (t - T i.toNat)) x, _, _⟩
         · rintro (rfl : t = 0)
-          exact (lt_irrefl _ ((T_nonneg i.to_nat).trans_lt ht)).elim
-        ·
-          simpa only [mul_sub, neg_mul] using
-            hP₂ (2 ^ (i.to_nat + 1)) (-2 ^ (i.to_nat + 1) * T i.to_nat) (t, x) (↿F') (h₂F' _)
+          exact (lt_irrefl _ ((T_nonneg i.toNat).trans_lt ht)).elim
+        · simpa only [mul_sub, neg_mul]
+            using hP₂ (2 ^ (i.toNat + 1)) (-2 ^ (i.toNat + 1) * T i.toNat) (t, x) (↿F') (h₂F' _)
     · intro hi x t ht
-      rw [i.to_nat_succ hi] at ht ⊢
-      have h₂t : ¬t ≤ T i.to_nat := by
+      rw [i.toNat_succ hi] at ht ⊢
+      have h₂t : ¬t ≤ T i.toNat := by
         push_neg
-        exact (T_lt_succ i.to_nat).trans_le ht
-      dsimp only [F'']
+        exact (T_lt_succ i.toNat).trans_le ht
+      dsimp only
       rw [if_neg h₂t, if_neg]
       · rw [hfutur_F'.on_set, mul_T_succ_sub]
         conv =>
           rw [mem_Ici]
           congr
-          rw [← mul_T_succ_sub i.to_nat]
+          rw [← mul_T_succ_sub i.toNat]
         exact mul_le_mul_of_nonneg_left (sub_le_sub_right ht _) (pow_nonneg zero_le_two _)
       · push_neg
         apply T_lt_succ
     · rintro j hj ⟨t, x⟩ (rfl : t = 1)
-      replace h₁F' := eventually_nhdsSet_Union₂.mp h₁F' j hj
-      rw [loc₂ (1, x) (T_lt i.to_nat)]
+      replace h₁F' := eventually_nhdsSet_iUnion₂.mp h₁F' j hj
+      rw [loc₂ (1, x) (T_lt i.toNat)]
       revert x
-      change
-        ∀ x : X,
-          RestrictGermPredicate P₁ (K j) x fun x' : X =>
-            F' (2 ^ (i.to_nat + 1) * (1 - T i.to_nat)) x'
+      change ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' : X =>
+          F' (2 ^ (i.toNat + 1) * (1 - T i.toNat)) x'
       rw [forall_restrictGermPredicate_iff]
       apply h₁F'.germ_congr_set
       apply eventually_of_forall _
       apply congr_fun (hfutur_F'.on_set _ _)
-      conv =>
-        congr
-        skip
-        rw [← mul_T_succ_sub i.to_nat]
+      conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
       exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
     · rintro ⟨t, x⟩ htx
       simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx 
       cases' htx with ht hx
-      · change (↑F'' : germ (𝓝 (t, x)) Y).value = (↑F : germ (𝓝 (t, x)) Y).value
+      · change (↑F'' : Germ (𝓝 (t, x)) Y).value = (↑F : Germ (𝓝 (t, x)) Y).value
         rw [loc₁ (t, x) ht.le]
-      · dsimp only [F'']
-        split_ifs with ht ht
+      · dsimp only
+        split_ifs with ht
         · rfl
         · rw [hUF' _ x hx]
           push_neg at ht 
@@ -413,9 +373,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
   · intro x
     obtain ⟨j, hj⟩ : ∃ j, x ∈ K j := by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j)
     exact (h'F j (1, x) rfl hj).self_of_nhds
-  · intro p
-    convert (hF p).2.2 using 2
-    exact uncurry_curry F
+  · exact fun p ↦ (hF p).2.2
 
 end Htpy
 
