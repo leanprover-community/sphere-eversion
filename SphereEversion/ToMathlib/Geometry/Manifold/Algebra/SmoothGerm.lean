@@ -24,7 +24,7 @@ variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddC
 
 @[to_additive]
 theorem SmoothMap.coe_prod {ι} (f : ι → C^∞⟮I, N; I', G⟯) (s : Finset ι) :
-    ⇑(∏ i in s, f i) = ∏ i in s, f i :=
+    ⇑(∏ i in s, f i) = ∏ i in s, ⇑(f i) :=
   map_prod (SmoothMap.coeFnMonoidHom : C^∞⟮I, N; I', G⟯ →* N → G) f s
 
 end
@@ -50,7 +50,7 @@ instance Filter.Germ.orderedCommRing {α : Type _} (l : Filter α) (R : Type _) 
       exact eventually.mono (ha.and hb) fun x hx => mul_nonneg hx.1 hx.2 }
 -/
 
-@[simp, to_additive]
+@[to_additive (attr := simp)]
 theorem Germ.coe_prod {α : Type _} (l : Filter α) (R : Type _) [CommMonoid R] {ι} (f : ι → α → R)
     (s : Finset ι) : ((∏ i in s, f i : α → R) : Germ l R) = ∏ i in s, (f i : Germ l R) :=
   map_prod (Germ.coeMulHom l : (α → R) →* Germ l R) f s
@@ -84,8 +84,7 @@ theorem smoothGerm.coe_sum {ι} (f : ι → C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (s 
 
 @[simp]
 theorem smoothGerm.coe_eq_coe (f g : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
-    (f : smoothGerm I x) = (g : smoothGerm I x) :=
-  by
+    (f : smoothGerm I x) = (g : smoothGerm I x) := by
   ext
   apply Quotient.sound
   exact h
