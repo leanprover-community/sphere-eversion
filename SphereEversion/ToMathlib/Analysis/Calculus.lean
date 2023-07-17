@@ -84,16 +84,16 @@ theorem HasFDerivAt.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G}
 variable (𝕜)
 
 /-- The first partial derivative of a binary function. -/
-def partialFderivFst {F : Type _} (φ : E → F → G) : E → F → E →L[𝕜] G := fun (e₀ : E) (f₀ : F) =>
+def partialFDerivFst {F : Type _} (φ : E → F → G) : E → F → E →L[𝕜] G := fun (e₀ : E) (f₀ : F) =>
   fderiv 𝕜 (fun e => φ e f₀) e₀
 
 /-- The second partial derivative of a binary function. -/
-def partialFderivSnd {E : Type _} (φ : E → F → G) : E → F → F →L[𝕜] G := fun (e₀ : E) (f₀ : F) =>
+def partialFDerivSnd {E : Type _} (φ : E → F → G) : E → F → F →L[𝕜] G := fun (e₀ : E) (f₀ : F) =>
   fderiv 𝕜 (fun f => φ e₀ f) f₀
 
-local notation "∂₁" => partialFderivFst
+local notation "∂₁" => partialFDerivFst
 
-local notation "∂₂" => partialFderivSnd
+local notation "∂₂" => partialFDerivSnd
 
 variable {𝕜}
 
@@ -107,12 +107,12 @@ theorem fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e�
 
 theorem DifferentiableAt.hasFDerivAt_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
-    HasFDerivAt (fun e => φ e f₀) (partialFderivFst 𝕜 φ e₀ f₀) e₀ :=
+    HasFDerivAt (fun e => φ e f₀) (partialFDerivFst 𝕜 φ e₀ f₀) e₀ :=
   (h.comp e₀ <| differentiableAt_id.Prod <| differentiableAt_const f₀).HasFDerivAt
 
 theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
-    HasFDerivAt (fun f => φ e₀ f) (partialFderivSnd 𝕜 φ e₀ f₀) f₀ :=
+    HasFDerivAt (fun f => φ e₀ f) (partialFDerivSnd 𝕜 φ e₀ f₀) f₀ :=
   by
   rw [fderiv_partial_snd h.has_fderiv_at]
   exact h.has_fderiv_at.partial_snd
@@ -149,22 +149,22 @@ def partialDerivFst (φ : 𝕜 → F → G) : 𝕜 → F → G := fun k f => ∂
 /-- The second partial derivative of `φ : E → 𝕜 → G` seen as a function from `E → 𝕜 → G`-/
 def partialDerivSnd (φ : E → 𝕜 → G) : E → 𝕜 → G := fun e k => ∂₂ 𝕜 φ e k 1
 
-theorem partialFderivFst_eq_smulRight (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
+theorem partialFDerivFst_eq_smulRight (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivFst φ k f) :=
   deriv_fderiv.symm
 
 @[simp]
-theorem partialFderivFst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
+theorem partialFDerivFst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f 1 = partialDerivFst φ k f := by
-  simp only [partialFderivFst_eq_smulRight, smul_right_apply, one_apply, one_smul]
+  simp only [partialFDerivFst_eq_smulRight, smul_right_apply, one_apply, one_smul]
 
-theorem partialFderivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
+theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivSnd φ e k) :=
   deriv_fderiv.symm
 
-theorem partialFderivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
+theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k 1 = partialDerivSnd φ e k := by
-  simp only [partialFderivSnd_eq_smulRight, smul_right_apply, one_apply, one_smul]
+  simp only [partialFDerivSnd_eq_smulRight, smul_right_apply, one_apply, one_smul]
 
 @[to_additive]
 theorem WithTop.le_mul_self {α : Type _} [CanonicallyOrderedMonoid α] (n m : α) :

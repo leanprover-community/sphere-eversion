@@ -123,7 +123,7 @@ theorem ContinuousLinearMap.coprod_comp_inl_inr {R₁ : Type _} [Semiring R₁] 
 
 theorem DifferentiableAt.hasFDerivAt_coprod_partial {f : E → F → G} {x : E} {y : F}
     (hf : DifferentiableAt 𝕜 (uncurry f) (x, y)) :
-    HasFDerivAt (uncurry f) ((partialFderivFst 𝕜 f x y).coprod (partialFderivSnd 𝕜 f x y)) (x, y) :=
+    HasFDerivAt (uncurry f) ((partialFDerivFst 𝕜 f x y).coprod (partialFDerivSnd 𝕜 f x y)) (x, y) :=
   by
   rcases hf with ⟨θ, hθ⟩
   rwa [fderiv_partial_fst hθ, fderiv_partial_snd hθ, θ.coprod_comp_inl_inr]
@@ -174,9 +174,9 @@ variable {𝕜 : Type _} [IsROrC 𝕜] {E : Type _} [NormedAddCommGroup E] [Norm
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type _} [NormedAddCommGroup G] [NormedSpace 𝕜 G]
   {n : ℕ∞}
 
-local notation "∂₁" => partialFderivFst 𝕜
+local notation "∂₁" => partialFDerivFst 𝕜
 
-local notation "∂₂" => partialFderivSnd 𝕜
+local notation "∂₂" => partialFDerivSnd 𝕜
 
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
     {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ⊤ fun p : E × F => f p.1 p.2)
@@ -241,12 +241,12 @@ theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : Cont
   exact fun x t =>
     ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 (deriv (f x) t) <| ne_of_gt (hderiv x t))
   intro x t
-  suffices partialFderivSnd ℝ f x t 1 = partialDerivSnd f x t
+  suffices partialFDerivSnd ℝ f x t 1 = partialDerivSnd f x t
     by
     ext v
     simpa only [RelIso.coe_fn_toEquiv, ContinuousLinearEquiv.coe_coe,
       ContinuousLinearEquiv.unitsEquivAut_apply, Units.val_mk0, one_mul]
-  apply partialFderivSnd_one
+  apply partialFDerivSnd_one
 
 end
 

@@ -398,7 +398,7 @@ section C1
 /-! ## Differentiation of loop families -/
 
 
-local notation "∂₁" => partialFderivFst ℝ
+local notation "∂₁" => partialFDerivFst ℝ
 
 variable (π : E → ℝ) (N : ℝ) (γ : E → Loop F) (hγ : IsCompact (Loop.support γ))
 
@@ -406,7 +406,7 @@ variable (π : E → ℝ) (N : ℝ) (γ : E → Loop F) (hγ : IsCompact (Loop.s
 def Loop.diff (γ : E → Loop F) (e : E) : Loop (E →L[ℝ] F)
     where
   toFun t := ∂₁ (fun e t => γ e t) e t
-  per' t := by simp only [partialFderivFst, Loop.per]
+  per' t := by simp only [partialFDerivFst, Loop.per]
 
 @[simp]
 theorem Loop.diff_apply (γ : E → Loop F) (e : E) (t : ℝ) :
@@ -458,7 +458,7 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
     (Loop.diff γ e).normalize = Loop.diff (fun e => (γ e).normalize) e :=
   by
   ext t x
-  simp only [Loop.diff_apply, Loop.normalize_apply, partialFderivFst]
+  simp only [Loop.diff_apply, Loop.normalize_apply, partialFDerivFst]
   rw [fderiv_sub ((hγ_diff.partial_loop t).Differentiable le_rfl).DifferentiableAt,
     Loop.average_diff hγ_diff]
   exact (hγ_diff.loop_average.differentiable le_rfl).DifferentiableAt

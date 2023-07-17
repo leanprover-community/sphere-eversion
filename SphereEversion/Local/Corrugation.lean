@@ -143,7 +143,7 @@ theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 
         (π.ContDiff.const_smul N) 0).const_smul
     _
 
-notation "∂₁" => partialFderivFst ℝ
+notation "∂₁" => partialFDerivFst ℝ
 
 /-- The remainder appearing when differentiating a corrugation.
 -/

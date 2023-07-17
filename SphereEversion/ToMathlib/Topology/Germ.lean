@@ -1,6 +1,6 @@
 import Mathlib.Order.Filter.Germ
 import Mathlib.Topology.Algebra.Ring.Basic
-import Mathlib.Analysis.Calculus.Fderiv.Basic
+import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Algebra.Order.Hom.Ring
 import SphereEversion.ToMathlib.Topology.NhdsSet
 
