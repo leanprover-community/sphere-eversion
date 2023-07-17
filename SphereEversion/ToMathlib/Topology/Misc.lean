@@ -650,8 +650,8 @@ section
 
 -- to topology/basic
 @[simp]
-theorem Finset.isClosed_bUnion {α} [TopologicalSpace α] {ι : Type _} (s : Finset ι) (f : ι → Set α)
-    (hf : ∀ i ∈ s, IsClosed (f i)) : IsClosed (⋃ i ∈ s, f i) :=
+nonrec theorem Finset.isClosed_biUnion {α} [TopologicalSpace α] {ι : Type _} (s : Finset ι)
+    (f : ι → Set α) (hf : ∀ i ∈ s, IsClosed (f i)) : IsClosed (⋃ i ∈ s, f i) :=
   isClosed_biUnion s.finite_toSet hf
 
 end

@@ -50,19 +50,17 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [Top
   by
   choose U hUx hU using hV
   choose i₀ hi₀ using fun x => (hU x).bddAbove
-  have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y :=
-    by
-    intro x
-    apply @IndexType.induction_from N fun i => ∀ {y}, y ∈ U x → f i y = f (i₀ x) y
-    exact fun _ _ => rfl
+  have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y := fun {x} ↦ by
+    refine @IndexType.induction_from N (fun i => ∀ {y}, y ∈ U x → f i y = f (i₀ x) y) _ ?_ ?_
+    · exact fun _ => rfl
     intro i hi h'i ih y hy
     rw [h i h'i, ih hy]
     intro h'y
-    replace hi₀ := mem_upper_bounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
+    replace hi₀ := mem_upperBounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
     exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi)
   refine' ⟨fun x => f (i₀ x) x, fun x => _⟩
-  apply (eventually_ge_atTop (i₀ x)).mono fun n hn => _
-  apply mem_of_superset (hUx x) fun y hy => _
+  refine (eventually_ge_atTop (i₀ x)).mono fun n hn => ?_
+  refine mem_of_superset (hUx x) fun y hy => ?_
   calc
     f n y = f (i₀ x) y := key hn hy
     _ = f (max (i₀ x) (i₀ y)) y := (key (le_max_left _ _) hy).symm
@@ -70,49 +68,36 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [Top
 
 local notation "𝓘" => IndexType
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U n.succ) -/
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U i) -/
 theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U : IndexType N → Set X}
     (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ i : IndexType N, ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : IndexType N → (X → Y) → Prop) (U_fin : LocallyFinite U)
     (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
-    (ind :
-      ∀ (i : IndexType N) (f : X → Y),
-        (∀ x, P₀ x f) →
-          P₂ i f →
-            (∀ j < i, ∀ x, P₁ j x f) →
-              ∃ f' : X → Y,
-                (∀ x, P₀ x f') ∧
-                  (¬IsMax i → P₂ i.succ f') ∧
-                    (∀ j ≤ i, ∀ x, P₁ j x f') ∧ ∀ (x) (_ : x ∉ U i), f' x = f x) :
-    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f :=
-  by
+    (ind : ∀ (i : IndexType N) (f : X → Y), (∀ x, P₀ x f) → P₂ i f → (∀ j < i, ∀ x, P₁ j x f) →
+      ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (¬IsMax i → P₂ i.succ f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧
+        ∀ x, x ∉ U i → f' x = f x) :
+    ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f := by
   let P : 𝓘 N → (X → Y) → Prop := fun n f =>
     (∀ x, P₀ x f) ∧ (¬IsMax n → P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f
   let Q : 𝓘 N → (X → Y) → (X → Y) → Prop := fun n f f' => ∀ (x) (_ : x ∉ U n.succ), f' x = f x
-  obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) :=
-    by
+  obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) := by
     apply IndexType.exists_by_induction
     · rcases init with ⟨f₀, h₀f₀, h₁f₀⟩
-      rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [IndexType.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', hf'⟩
+      rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [IndexType.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', -⟩
       exact ⟨f', h₀f', h₂f', h₁f'⟩
     · rintro n f ⟨h₀f, h₂f, h₁f⟩ hn
-      by_cases hn : IsMax n
-      · simp only [P, Q, n.succ_eq.mpr hn]
-        exact ⟨f, ⟨h₀f, fun hn' => (hn' hn).elim, h₁f⟩, fun _ _ => rfl⟩
       rcases ind _ f h₀f (h₂f hn) fun j hj => h₁f _ <| j.le_of_lt_succ hj with
         ⟨f', h₀f', h₂f', h₁f', hf'⟩
       exact ⟨f', ⟨h₀f', h₂f', h₁f'⟩, hf'⟩
-  dsimp only [P, Q] at hf 
+  dsimp only at hf 
   simp only [forall_and] at hf 
-  rcases hf with ⟨⟨h₀f, h₂f, h₁f⟩, hfU⟩
-  rcases U_fin.exists_forall_eventually_of_index_type hfU with ⟨F, hF⟩
+  rcases hf with ⟨⟨h₀f, -, h₁f⟩, hfU⟩
+  rcases U_fin.exists_forall_eventually_of_indexType hfU with ⟨F, hF⟩
   refine' ⟨F, fun x => _, fun j => _⟩
   · rcases(hF x).exists with ⟨n₀, hn₀⟩
-    simp only [germ.coe_eq.mpr hn₀.symm, h₀f n₀ x]
+    simp only [Germ.coe_eq.mpr hn₀.symm, h₀f n₀ x]
   intro x
-  rcases((hF x).And <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
-  exact eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
+  rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
+  exact Eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U i) -/
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
@@ -127,21 +112,11 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
     (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
-    (ind :
-      ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
-        IsOpen U₁ →
-          IsOpen U₂ →
-            IsClosed K₁ →
-              IsClosed K₂ →
-                K₁ ⊆ U₁ →
-                  K₂ ⊆ U₂ →
-                    (∀ x, P₀ x f₁ ∧ P₀' x f₁) →
-                      (∀ x, P₀ x f₂) →
-                        (∀ x ∈ U₁, P₁ x f₁) →
-                          (∀ x ∈ U₂, P₁ x f₂) →
-                            ∃ f : X → Y,
-                              (∀ x, P₀ x f ∧ P₀' x f) ∧
-                                (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
+    (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y}, IsOpen U₁ → IsOpen U₂ →
+      IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+      ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
+        (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
     ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f :=
   by
   let P : Set X → Prop := fun U => ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ x ∈ U, P₁ x f
@@ -149,30 +124,21 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
     rintro U V hUV ⟨f, h, h'⟩
     exact ⟨f, h, fun x hx => h' x (hUV hx)⟩
   have hP₂ : P ∅ := ⟨f₀, fun x => (hP₀f₀ x).1, fun x h => h.elim⟩
-  have hP₃ : ∀ x : X, x ∈ univ → ∃ (V : Set X) (H : V ∈ 𝓝 x), P V :=
-    by
-    rintro x -
+  have hP₃ : ∀ x : X, x ∈ univ → ∃ V ∈ 𝓝 x, P V := fun x _ ↦ by
     rcases loc x with ⟨f, h₀f, h₁f⟩
     exact ⟨_, h₁f, f, h₀f, fun x => id⟩
   rcases exists_locallyFinite_subcover_of_locally isClosed_univ hP₁ hP₂ hP₃ with
     ⟨K, U : IndexType 0 → Set X, K_cpct, U_op, hU, hKU, U_loc, hK⟩
-  have ind' :
-    ∀ (i : 𝓘 0) (f : X → Y),
-      (∀ x, P₀ x f ∧ P₀' x f) →
-        (∀ j < i, ∀ x, RestrictGermPredicate P₁ (K j) x ↑f) →
-          ∃ f' : X → Y,
-            (∀ x : X, P₀ x ↑f' ∧ P₀' x ↑f') ∧
-              (∀ j ≤ i, ∀ x, RestrictGermPredicate P₁ (K j) x f') ∧
-                ∀ (x) (_ : x ∉ U i), f' x = f x :=
-    by
-    simp_rw [forall_restrictGermPredicate_iff, ← eventually_nhdsSet_Union₂]
+  have ind' : ∀ (i : 𝓘 0) (f : X → Y), (∀ x, P₀ x f ∧ P₀' x f) →
+      (∀ j < i, ∀ x, RestrictGermPredicate P₁ (K j) x ↑f) →
+      ∃ f' : X → Y, (∀ x : X, P₀ x ↑f' ∧ P₀' x ↑f') ∧
+        (∀ j ≤ i, ∀ x, RestrictGermPredicate P₁ (K j) x f') ∧ ∀ x, x ∉ U i → f' x = f x := by
+    simp_rw [forall_restrictGermPredicate_iff, ← eventually_nhdsSet_iUnion₂]
     rintro (i : ℕ) f h₀f h₁f
     have cpct : IsClosed (⋃ j < i, K j) :=
-      by
-      rw [show (⋃ j < i, K j) = ⋃ j ∈ Finset.range i, K j by simp only [Finset.mem_range]]
-      apply (Finset.range i).isClosed_biUnion _ fun j _ => (K_cpct j).isClosed
+      isClosed_biUnion (finite_lt_nat i) fun j _ => (K_cpct j).isClosed
     rcases hU i with ⟨f', h₀f', h₁f'⟩
-    rcases mem_nhds_set_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
+    rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
     rcases ind V_op (U_op i) cpct (K_cpct i).isClosed hKV (hKU i) h₀f h₀f' h₁V h₁f' with
       ⟨F, h₀F, h₁F, hF⟩
     simp_rw [← bUnion_le] at h₁F 
@@ -183,7 +149,7 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
   simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this 
   rcases this ind' with ⟨f, h, h'⟩
   refine' ⟨f, fun x => ⟨(h x).1, (h x).2, _⟩⟩
-  rcases mem_Union.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
+  rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
   exact (h' j x hj).self_of_nhds
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
@@ -199,50 +165,27 @@ theorem relative_inductive_construction_of_loc {X Y : Type _} [EMetricSpace X]
     [LocallyCompactSpace X] [SecondCountableTopology X] (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
     {K : Set X} (hK : IsClosed K) {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
-    (ind :
-      ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
-        IsOpen U₁ →
-          IsOpen U₂ →
-            IsClosed K₁ →
-              IsClosed K₂ →
-                K₁ ⊆ U₁ →
-                  K₂ ⊆ U₂ →
-                    (∀ x, P₀ x f₁) →
-                      (∀ x, P₀ x f₂) →
-                        (∀ x ∈ U₁, P₁ x f₁) →
-                          (∀ x ∈ U₂, P₁ x f₂) →
-                            ∃ f : X → Y,
-                              (∀ x, P₀ x f) ∧
-                                (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
-    ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x :=
-  by
-  let P₀' : ∀ x : X, germ (𝓝 x) Y → Prop := RestrictGermPredicate (fun x φ => φ.value = f₀ x) K
+    (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
+      IsOpen U₁ → IsOpen U₂ → IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+      ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
+    ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x := by
+  let P₀' : ∀ x : X, Germ (𝓝 x) Y → Prop := RestrictGermPredicate (fun x φ => φ.value = f₀ x) K
   have hf₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀ := fun x =>
-    ⟨hP₀f₀ x, fun hx => eventually_of_forall fun x' => rfl⟩
-  have ind' :
-    ∀ (U₁ U₂ K₁ K₂ : Set X) {f₁ f₂ : X → Y},
-      IsOpen U₁ →
-        IsOpen U₂ →
-          IsClosed K₁ →
-            IsClosed K₂ →
-              K₁ ⊆ U₁ →
-                K₂ ⊆ U₂ →
-                  (∀ x, P₀ x f₁ ∧ P₀' x f₁) →
-                    (∀ x, P₀ x f₂) →
-                      (∀ x ∈ U₁, P₁ x f₁) →
-                        (∀ x ∈ U₂, P₁ x f₂) →
-                          ∃ f : X → Y,
-                            (∀ x, P₀ x f ∧ P₀' x f) ∧
-                              (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x :=
-    by
+    ⟨hP₀f₀ x, fun _ => eventually_of_forall fun x' => rfl⟩
+  have ind' : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
+      IsOpen U₁ → IsOpen U₂ → IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+      ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
+        (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x := by
     intro U₁ U₂ K₁ K₂ f₁ f₂ U₁_op U₂_op K₁_cpct K₂_cpct hK₁U₁ hK₂U₂ hf₁ hf₂ hf₁U₁ hf₂U₂
-    obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and_distrib.mp hf₁
+    obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and.mp hf₁
     rw [forall_restrictGermPredicate_iff] at h₀'f₁ 
     rcases(hasBasis_nhdsSet K).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U, ⟨U_op, hKU⟩, hU⟩
     rcases ind (U_op.union U₁_op) U₂_op (hK.union K₁_cpct) K₂_cpct (union_subset_union hKU hK₁U₁)
         hK₂U₂ h₀f₁ hf₂ (fun x hx => hx.elim (fun hx => hU hx) fun hx => hf₁U₁ x hx) hf₂U₂ with
       ⟨f, h₀f, hf, h'f⟩
-    rw [union_assoc, eventually_nhds_set_union] at hf h'f 
+    rw [union_assoc, eventually_nhdsSet_union] at hf h'f 
     exact ⟨f, fun x => ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 h'f.1⟩, hf.2, h'f.2⟩
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
@@ -257,65 +200,45 @@ private noncomputable def T : ℕ → ℝ := fun n => Nat.rec 0 (fun k x => x + 
 open scoped BigOperators
 
 -- Note this is more painful than Patrick hoped for. Maybe this should be the definition of T.
-private theorem T_eq (n : ℕ) : t n = 1 - (1 / (2 : ℝ)) ^ n :=
-  by
-  have : T n = ∑ k in Finset.range n, 1 / (2 : ℝ) ^ (k + 1) :=
-    by
-    induction' n with n hn
-    · simp only [T, Finset.range_zero, Finset.sum_empty]
-    change T n + _ = _
-    rw [hn, Finset.sum_range_succ]
-  simp_rw [this, ← one_div_pow, pow_succ, ← Finset.mul_sum,
-    geom_sum_eq (by norm_num : 1 / (2 : ℝ) ≠ 1) n]
-  field_simp
-  norm_num
-  apply div_eq_of_eq_mul
-  apply neg_ne_zero.mpr
-  apply ne_of_gt
-  positivity
-  ring
+private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2) ^ n := by
+  unfold T
+  induction n with
+  | zero => simp [Nat.zero_eq]
+  | succ n ihn =>
+    simp_rw [ihn, pow_succ']
+    field_simp
+    ring
 
-private theorem T_lt (n : ℕ) : t n < 1 := by
+private theorem T_lt (n : ℕ) : T n < 1 := by
   rw [T_eq]
   have : (0 : ℝ) < (1 / 2) ^ n := by positivity
   linarith
 
-private theorem T_lt_succ (n : ℕ) : t n < t (n + 1) :=
+private theorem T_lt_succ (n : ℕ) : T n < T (n + 1) :=
   lt_add_of_le_of_pos le_rfl (one_div_pos.mpr (pow_pos zero_lt_two _))
 
-private theorem T_le_succ (n : ℕ) : t n ≤ t (n + 1) :=
-  (t_lt_succ n).le
+private theorem T_le_succ (n : ℕ) : T n ≤ T (n + 1) :=
+  (T_lt_succ n).le
 
-private theorem T_succ_sub (n : ℕ) : t (n + 1) - t n = 1 / 2 ^ (n + 1) :=
-  by
-  change T n + _ - T n = _
-  simp
+private theorem T_succ_sub (n : ℕ) : T (n + 1) - T n = 1 / 2 ^ (n + 1) := add_sub_cancel' ..
 
-private theorem mul_T_succ_sub (n : ℕ) : 2 ^ (n + 1) * (t (n + 1) - t n) = 1 :=
-  by
+private theorem mul_T_succ_sub (n : ℕ) : 2 ^ (n + 1) * (T (n + 1) - T n) = 1 := by
   rw [T_succ_sub]
   field_simp
 
-private theorem T_one : t 1 = 1 / 2 := by simp [T]
+private theorem T_one : T 1 = 1 / 2 := by simp [T]
 
-private theorem T_nonneg (n : ℕ) : 0 ≤ t n :=
-  by
-  rw [T_eq]
-  have : (1 / (2 : ℝ)) ^ n ≤ 1
+private theorem T_pos {n : ℕ} (hn : n ≠ 0) : 0 < T n := by
+  rw [T_eq, sub_pos]
+  apply pow_lt_one <;> first | assumption | norm_num
+
+private theorem T_nonneg (n : ℕ) : 0 ≤ T n := by
+  rw [T_eq, sub_nonneg]
   apply pow_le_one <;> norm_num
-  linarith
 
-private theorem not_T_succ_le (n : ℕ) : ¬t (n + 1) ≤ 0 :=
-  by
-  rw [T_eq, not_le]
-  have : (1 / (2 : ℝ)) ^ (n + 1) < 1
-  apply pow_lt_one <;> norm_num
-  linarith
+private theorem not_T_succ_le (n : ℕ) : ¬T (n + 1) ≤ 0 :=
+  (T_pos n.succ_ne_zero).not_le
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (p «expr ∉ » [lower_set.prod/upper_set.prod/finset.product/multiset.product/set.prod/list.product](Ici (T i.to_nat),
-  U i)) -/
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U i) -/
 theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ}
     {U K : IndexType N → Set X} (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop)
@@ -453,7 +376,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       · push_neg
         apply T_lt_succ
     · rintro j hj ⟨t, x⟩ (rfl : t = 1)
-      replace h₁F' := eventually_nhds_set_Union₂.mp h₁F' j hj
+      replace h₁F' := eventually_nhdsSet_Union₂.mp h₁F' j hj
       rw [loc₂ (1, x) (T_lt i.to_nat)]
       revert x
       change
