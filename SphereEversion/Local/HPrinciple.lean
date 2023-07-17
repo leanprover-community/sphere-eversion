@@ -540,7 +540,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       apply hHK₁ x hx
     obtain ⟨N, ⟨hN_close, hN_sol⟩, hNneq⟩ :=
       (((improve_step_c0_close Acc <| half_pos δ_pos).And (improve_step_formal_sol Acc)).And <|
-          eventually_ne_at_top (0 : ℝ)).exists
+          eventually_ne_atTop (0 : ℝ)).exists
     have glue : H 1 = S.improve_step Acc N 0 :=
       by
       rw [improve_step_rel_t_eq_0]

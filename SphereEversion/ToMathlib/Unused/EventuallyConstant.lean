@@ -16,7 +16,7 @@ Related: `monotonic_sequence_limit_index`
 
 
 -- in mathlib, this should probably import
--- import order.filter.at_top_bot
+-- import order.filter.atTop_bot
 -- and topology.separation should import this
 -- import topology.basic
 open scoped Topology
@@ -85,7 +85,7 @@ theorem eventuallyConstant_of_unique [Unique β] : EventuallyConstant g f :=
 theorem eventuallyConstant_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ i, ∀ j, i ≤ j → g j = g i) ↔ EventuallyConstant g atTop :=
   by
-  simp_rw [eventually_constant, eventually_at_top]
+  simp_rw [eventually_constant, eventually_atTop]
   constructor
   · rintro ⟨i, hi⟩; refine' ⟨g i, i, hi⟩
   · rintro ⟨y, i, hi⟩; use i; simp_rw [hi i le_rfl]; exact hi
@@ -93,7 +93,7 @@ theorem eventuallyConstant_atTop [SemilatticeSup α] [Nonempty α] :
 theorem eventuallyConstant_atTop_nat {g : ℕ → α} :
     (∃ n, ∀ m, n ≤ m → g (m + 1) = g m) ↔ EventuallyConstant g atTop :=
   by
-  rw [← eventually_constant_at_top]
+  rw [← eventually_constant_atTop]
   apply exists_congr; intro n
   constructor
   · intro h m hm; induction' hm with m hm ih; rfl; rw [Nat.succ_eq_add_one, h m hm, ih]
@@ -168,15 +168,15 @@ theorem eventualValue_eq_limUnder [f.ne_bot] [Nonempty β] [TopologicalSpace β]
 --   eventually constant. -/
 -- noncomputable def eventual_index (g : ℕ → α) : ℕ :=
 -- Inf {n : ℕ | ∀ m, n ≤ m → g m = g n}
--- lemma eventually_constant.eq_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) {n : ℕ}
+-- lemma eventually_constant.eq_eventual_index {g : ℕ → α} (hg : eventually_constant g atTop) {n : ℕ}
 --   (hn : eventual_index g ≤ n) : g n = g (eventual_index g) :=
--- nat.Inf_mem (eventually_constant_at_top.mpr hg) n hn
--- lemma eventually_constant.fn_eventual_index {g : ℕ → α} (hg : eventually_constant g at_top) :
---   g (eventual_index g) = @eventual_value _ _ ⟨g 0⟩ g at_top :=
+-- nat.Inf_mem (eventually_constant_atTop.mpr hg) n hn
+-- lemma eventually_constant.fn_eventual_index {g : ℕ → α} (hg : eventually_constant g atTop) :
+--   g (eventual_index g) = @eventual_value _ _ ⟨g 0⟩ g atTop :=
 -- (eventual_value_eq_fn $ λ n hn, (hg.eq_eventual_index hn : _)).symm
 -- lemma eventually_constant.eq_eventual_value_of_eventual_index_le {g : ℕ → α}
---   (hg : eventually_constant g at_top) {n : ℕ}
---   (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g at_top :=
+--   (hg : eventually_constant g atTop) {n : ℕ}
+--   (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g atTop :=
 -- (hg.eq_eventual_index hn).trans hg.fn_eventual_index
 -- lemma foo {g : α → β → γ} {s : set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
 --   (hy : y ∈ s) :
@@ -204,7 +204,7 @@ theorem EventuallyConstantOn.nonempty (hg : EventuallyConstantOn g f O) (hx : x 
 
 theorem eventuallyConstantOn_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ x, ∀ x', x ≤ x' → ∀ y ∈ O, g x' y = g x y) ↔ EventuallyConstantOn g atTop O := by
-  simp_rw [EventuallyConstantOn, ← eventually_constant_at_top, restrict_eq_restrict_iff, eq_on]
+  simp_rw [EventuallyConstantOn, ← eventually_constant_atTop, restrict_eq_restrict_iff, eq_on]
 
 theorem EventuallyConstantOn.exists_eventualValue_eq [f.ne_bot] (hg : EventuallyConstantOn g f O) :
     ∃ i, ∀ (x) (hx : x ∈ O), @eventualValue _ _ (hg.Nonempty hx) (fun n => g n x) f = g i x := by

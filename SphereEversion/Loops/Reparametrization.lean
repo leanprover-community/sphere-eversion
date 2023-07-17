@@ -75,7 +75,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     refine' ContDiffBump.convolution_tendsto_right _ _ _ tendsto_const_nhds
     · simp_rw [bump]; norm_cast
       exact
-        ((tendsto_add_at_top_iff_nat 2).2 (tendsto_const_div_atTop_nhds_0_nat 1)).comp tendsto_snd
+        ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_0_nat 1)).comp tendsto_snd
     · exact eventually_of_forall fun x => (hγ _).AEStronglyMeasurable
     · have := h.tendsto (x, t)
       rw [nhds_prod_eq] at this 
@@ -84,7 +84,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     have : Continuous fun z => intervalIntegral (γ z) 0 1 volume :=
       continuous_parametric_intervalIntegral_of_continuous (by apply h) continuous_const
     exact
-      (tendsto_one_div_add_at_top_nhds_0_nat.comp tendsto_snd).smul
+      (tendsto_one_div_add_atTop_nhds_0_nat.comp tendsto_snd).smul
         ((this.tendsto x).comp tendsto_fst)
 
 end MetricSpace
@@ -152,16 +152,16 @@ theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
       ∃ w, SurroundingPts (g z.1) (γ.approxSurroundingPointsAt x z.1 z.2) w :=
   by
   let a : ι → E × ℕ → F := fun i z => γ.approx_surrounding_points_at x z.1 z.2 i
-  suffices ∀ i, tendsto (a i) (𝓝 x ×ˢ at_top) (𝓝 (γ.surrounding_points_at x i))
+  suffices ∀ i, tendsto (a i) (𝓝 x ×ˢ atTop) (𝓝 (γ.surrounding_points_at x i))
     by
-    have hg : tendsto (fun z : E × ℕ => g z.fst) (𝓝 x ×ˢ at_top) (𝓝 (g x)) :=
+    have hg : tendsto (fun z : E × ℕ => g z.fst) (𝓝 x ×ˢ atTop) (𝓝 (g x)) :=
       tendsto.comp γ.smooth_surrounded.continuous.continuous_at tendsto_fst
     exact
       eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surround_pts_points_weights_at x⟩ this
         hg
   intro i
   let t := γ.surrounding_parameters_at x i
-  change tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ at_top) (𝓝 (γ x t))
+  change tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t))
   exact Loop.tendsto_mollify_apply γ γ.smooth.continuous x t
 
 /-- This is an auxiliary definition to help construct `centering_density` below.
@@ -175,7 +175,7 @@ def localCenteringDensity [DecidablePred (· ∈ affineBases ι ℝ F)] : E → 
     filter.eventually_iff_exists_mem.mp
       (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x)
   choose u hu v hv huv using mem_prod_iff.mp hn₁
-  choose m hmv using mem_at_top_sets.mp hv
+  choose m hmv using mem_atTop_sets.mp hv
   exact
     ∑ i,
       evalBarycentricCoords ι ℝ F (g y) (γ.approx_surrounding_points_at x y m) i •
@@ -188,7 +188,7 @@ def localCenteringDensityMp : ℕ :=
     filter.eventually_iff_exists_mem.mp
       (γ.eventually_exists_surrounding_pts_approx_surrounding_points_at x)
   choose u hu v hv huv using mem_prod_iff.mp hn₁
-  choose m hmv using mem_at_top_sets.mp hv
+  choose m hmv using mem_atTop_sets.mp hv
   exact m
 
 theorem localCenteringDensity_spec [DecidablePred (· ∈ affineBases ι ℝ F)] :
@@ -238,9 +238,9 @@ theorem approxSurroundingPointsAt_of_localCenteringDensityNhd
   let hn := Classical.choose_spec hnn
   change y ∈ interior n at hy 
   let v := Classical.choose (Classical.choose_spec hn)
-  let hv : v ∈ at_top := Classical.choose (Classical.choose_spec (Classical.choose_spec hn))
-  let m := Classical.choose (mem_at_top_sets.mp hv)
-  let hm := Classical.choose_spec (mem_at_top_sets.mp hv)
+  let hv : v ∈ atTop := Classical.choose (Classical.choose_spec (Classical.choose_spec hn))
+  let m := Classical.choose (mem_atTop_sets.mp hv)
+  let hm := Classical.choose_spec (mem_atTop_sets.mp hv)
   change ∃ w, SurroundingPts (g y) (γ.approx_surrounding_points_at x y m) w
   suffices (y, m) ∈ nn by exact Classical.choose_spec (Classical.choose_spec h) _ this
   apply Classical.choose_spec (Classical.choose_spec (Classical.choose_spec hn))
