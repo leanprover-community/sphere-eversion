@@ -86,7 +86,7 @@ theorem smooth_eta (F : OneJetSec I M I' M') :
   F.Smooth
 
 theorem smooth_bs (F : OneJetSec I M I' M') : Smooth I I' F.bs :=
-  smooth_one_jet_bundle_proj.snd.comp F.Smooth
+  smooth_one_jet_bundle_proj.snd.comp F.smooth
 
 /-- A section of J¹(M, M') is holonomic at (x : M) if its linear map part is the derivative
 of its base map at x. -/
@@ -141,7 +141,7 @@ def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop
 
 /-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/
 def oneJetExtSec (f : C^∞⟮I, M; I', M'⟯) : OneJetSec I M I' M' :=
-  ⟨f, mfderiv I I' f, f.Smooth.oneJetExt⟩
+  ⟨f, mfderiv I I' f, f.smooth.oneJetExt⟩
 
 end General
 
@@ -209,7 +209,7 @@ protected theorem smooth (S : FamilyOneJetSec I M I' M' J N) :
 
 theorem smooth_bs (S : FamilyOneJetSec I M I' M' J N) :
     Smooth (J.prod I) I' fun p : N × M => S.bs p.1 p.2 :=
-  smooth_one_jet_bundle_proj.snd.comp S.Smooth
+  smooth_one_jet_bundle_proj.snd.comp S.smooth
 
 theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : Smooth I I' (S.bs p) :=
   (S p).smooth_bs
@@ -219,7 +219,7 @@ def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) 
     FamilyOneJetSec I M I' M' J N where
   bs t := S.bs (f t)
   ϕ t := S.ϕ (f t)
-  smooth' x := (S.smooth' (f x.1, x.2)).comp x <| f.Smooth.SmoothAt.prod_map' smoothAt_id
+  smooth' x := (S.smooth' (f x.1, x.2)).comp x <| f.smooth.smoothAt.prod_map' smoothAt_id
 
 /-- Turn a family of sections of `J¹(M, M')` parametrized by `N` into a section of `J¹(N × M, M')`.
 -/

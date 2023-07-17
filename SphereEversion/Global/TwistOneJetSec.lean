@@ -153,7 +153,7 @@ def drop (s : OneJetSec I M 𝓘(𝕜, V) V) : OneJetEuclSec I M V
     where
   toFun := (proj I M V).comp s
   is_sec' p := rfl
-  smooth' := (smooth_proj I M V).comp s.Smooth
+  smooth' := (smooth_proj I M V).comp s.smooth
 
 end proj
 

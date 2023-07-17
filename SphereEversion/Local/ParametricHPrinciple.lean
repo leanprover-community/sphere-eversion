@@ -145,7 +145,7 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
   by
   simp_rw [S.uncurry_φ, fderiv_snd, add_left_inj]
   refine'
-    (fderiv_comp p ((S.f_diff.comp (cont_diff_id.prod contDiff_const)).Differentiable le_top p.1)
+    (fderiv_comp p ((S.f_diff.comp (cont_diff_id.prod contDiff_const)).differentiable le_top p.1)
           differentiableAt_fst).trans
       _
   rw [fderiv_fst]
@@ -172,7 +172,7 @@ theorem FamilyJetSec.isHolonomicAt_uncurry (S : FamilyJetSec E F P) {p : P × E}
     show (fun x : P × E => S.f x.1 x.2) = ↿S.f from rfl]
   simp_rw [fderiv_prod_eq_add (S.f_diff.differentiable le_top _), fderiv_snd]
   refine' (add_right_inj _).trans _
-  have := fderiv_comp p ((S p.1).f_diff.contDiffAt.DifferentiableAt le_top) differentiableAt_snd
+  have := fderiv_comp p ((S p.1).f_diff.contDiffAt.differentiableAt le_top) differentiableAt_snd
   rw [show D (fun z : P × E => (↿S.f) (p.fst, z.snd)) p = _ from this, fderiv_snd,
     (show surjective (ContinuousLinearMap.snd ℝ P E) from
           Prod.snd_surjective).clm_comp_injective.eq_iff]
@@ -229,7 +229,7 @@ theorem FamilyJetSec.isHolonomicAtCurry (S : FamilyJetSec (P × E) F G) {t : G} 
   rw [show (S.curry (t, s)).f = fun x => (S.curry (t, s)).f x from rfl, funext (S.curry_f _)]
   dsimp only
   refine'
-    (fderiv_comp x ((S t).f_diff.contDiffAt.DifferentiableAt le_top)
+    (fderiv_comp x ((S t).f_diff.contDiffAt.differentiableAt le_top)
           ((differentiableAt_const _).prod differentiableAt_id)).trans
       _
   rw [id, hS]

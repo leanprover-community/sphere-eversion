@@ -163,7 +163,7 @@ theorem Equiv.continuous_symm_of_cont_diff (φ : E ≃ F) {Dφ : E → E ≃L[�
 def Equiv.toHomeomorphOfContDiff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
     (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : E ≃ₜ F :=
   { φ with
-    continuous_toFun := Differentiable.continuous fun x => (hφ x).DifferentiableAt
+    continuous_toFun := Differentiable.continuous fun x => (hφ x).differentiableAt
     continuous_invFun := φ.continuous_symm_of_cont_diff hφ }
 
 end

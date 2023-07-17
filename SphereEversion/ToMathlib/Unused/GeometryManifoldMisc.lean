@@ -142,18 +142,18 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
 #print Trivialization.smoothOn /-
 theorem Trivialization.smoothOn (e : Trivialization F (π F E)) [MemTrivializationAtlas e] :
     SmoothOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e e.source := fun x hx =>
-  (e.SmoothAt IB <| e.mem_source.mp hx).SmoothWithinAt
+  (e.smoothAt IB <| e.mem_source.mp hx).smoothWithinAt
 -/
 
 theorem smoothAt_trivializationAt {x₀ : B} {x : TotalSpace F E}
     (hx : x.proj ∈ (trivializationAt F E x₀).baseSet) :
     SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) (trivializationAt F E x₀) x :=
-  (trivializationAt F E x₀).SmoothAt IB hx
+  (trivializationAt F E x₀).smoothAt IB hx
 
 theorem smoothOn_trivializationAt (x₀ : B) :
     SmoothOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) (trivializationAt F E x₀)
       (trivializationAt F E x₀).source :=
-  (trivializationAt F E x₀).SmoothOn IB
+  (trivializationAt F E x₀).smoothOn IB
 
 end VectorBundle
 
