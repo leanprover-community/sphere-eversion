@@ -4,7 +4,7 @@ import SphereEversion.ToMathlib.Partition
 import Mathlib.Analysis.LocallyConvex.WithSeminorms
 import Mathlib.Tactic.FinCases
 import Mathlib.Analysis.LocallyConvex.WithSeminorms
-import Mathlib.Topology.MetricSpace.EmetricParacompact
+import Mathlib.Topology.MetricSpace.EMetricParacompact
 import Mathlib.Topology.ShrinkingLemma
 import SphereEversion.ToMathlib.ExistsOfConvex
 
