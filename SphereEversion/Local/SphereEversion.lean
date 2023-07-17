@@ -320,10 +320,10 @@ def locFormalEversionAux : HtpyJetSec E E
       show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
       simp_rw [hx, zero_smul]
     refine' ContDiffAt.smul _ _
-    refine' (smooth_step.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).ContDiffAt
+    refine' (smooth_step.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
     exact
       (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
-        (smooth_step.smooth.prod_map contDiff_id).ContDiffAt
+        (smooth_step.smooth.prod_map contDiff_id).contDiffAt
 
 /-- A formal eversion of `𝕊²` into its ambient Euclidean space.
 The corresponding map `E → E` is roughly a linear homotopy from `id` at `t = 0` to `- id` at

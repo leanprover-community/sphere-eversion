@@ -151,10 +151,10 @@ theorem Accepts.open [FiniteDimensional ℝ E] {L : StepLandscape E} {𝓕 : Jet
   exact L.p.continuous_update 𝓕.φ_diff.continuous.fst' continuous_snd
 
 theorem smooth_b (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.b 𝓕) :=
-  (ContinuousLinearMap.apply ℝ F L.V).ContDiff.comp 𝓕.φ_diff
+  (ContinuousLinearMap.apply ℝ F L.V).contDiff.comp 𝓕.φ_diff
 
 theorem smooth_g (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.g 𝓕) :=
-  (ContinuousLinearMap.apply ℝ F L.V).ContDiff.comp (contDiff_top_iff_fderiv.mp 𝓕.f_diff).2
+  (ContinuousLinearMap.apply ℝ F L.V).contDiff.comp (contDiff_top_iff_fderiv.mp 𝓕.f_diff).2
 
 theorem Accepts.rel {L : StepLandscape E} {𝓕 : JetSec E F} (h : L.Accepts R 𝓕) :
     ∀ᶠ x : E near L.k, (L.g 𝓕) x = (L.b 𝓕) x :=

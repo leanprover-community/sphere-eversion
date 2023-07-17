@@ -10,7 +10,7 @@ theorem exists_contDiff_zero_one {E : Type _} [NormedAddCommGroup E] [NormedSpac
     [FiniteDimensional ℝ E] {s t : Set E} (hs : IsClosed s) (ht : IsClosed t) (hd : Disjoint s t) :
     ∃ f : E → ℝ, ContDiff ℝ ⊤ f ∧ EqOn f 0 s ∧ EqOn f 1 t ∧ ∀ x, f x ∈ Icc (0 : ℝ) 1 :=
   let ⟨f, hfs, hft, hf01⟩ := exists_smooth_zero_one_of_closed 𝓘(ℝ, E) hs ht hd
-  ⟨f, f.Smooth.ContDiff, hfs, hft, hf01⟩
+  ⟨f, f.Smooth.contDiff, hfs, hft, hf01⟩
 
 theorem exists_contDiff_zero_one_nhds {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] {s t : Set E} (hs : IsClosed s) (ht : IsClosed t) (hd : Disjoint s t) :

@@ -27,7 +27,7 @@ theorem SmoothPartitionOfUnity.cont_diff_at_sum (ρ : SmoothPartitionOfUnity ι 
   by
   refine' contMDiffAt_finsum (ρ.locally_finite.smul_left _) fun i => _
   by_cases hx : x₀ ∈ tsupport (ρ i)
-  · exact ContMDiffAt.smul ((ρ i).Smooth.of_le le_top).ContMDiffAt (hφ i hx)
+  · exact ContMDiffAt.smul ((ρ i).Smooth.of_le le_top).contMDiffAt (hφ i hx)
   · exact contMDiffAt_of_not_mem (compl_subset_compl.mpr (tsupport_smul_left (ρ i) (φ i)) hx) n
 
 theorem SmoothPartitionOfUnity.contDiffAt_sum' {s : Set E}

@@ -217,8 +217,8 @@ theorem contDiff_diffeomorphToNhd (c : F) (r : ℝ) {n : ℕ∞} : ContDiff ℝ 
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
     exact
-      (selfEquivL2 F).symm.ContDiff.comp
-        ((InnerProductSpace.contDiff_diffeomorphToNhd _ _).comp (selfEquivL2 F).ContDiff)
+      (selfEquivL2 F).symm.contDiff.comp
+        ((InnerProductSpace.contDiff_diffeomorphToNhd _ _).comp (selfEquivL2 F).contDiff)
   · rw [diffeomorphToNhd, dif_neg hr]
     exact contDiff_id
 
@@ -229,7 +229,7 @@ theorem cont_diff_diffeomorphToNhd_inv (c : F) (r : ℝ) {n : ℕ∞} :
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
     refine' ContDiffOn.comp_continuousLinearMap _ (selfEquivL2 F : F →L[ℝ] L2 F)
-    refine' (selfEquivL2 F).symm.ContDiff.comp_contDiffOn _
+    refine' (selfEquivL2 F).symm.contDiff.comp_contDiffOn _
     exact InnerProductSpace.cont_diff_diffeomorphToNhd_inv _ _
   · rw [diffeomorphToNhd, dif_neg hr]
     exact contDiffOn_id

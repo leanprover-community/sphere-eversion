@@ -39,7 +39,7 @@ between those vector spaces. -/
 def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     where
   f := F.bs
-  f_diff := F.smooth_bs.ContDiff
+  f_diff := F.smooth_bs.contDiff
   φ x := (F x).2
   φ_diff := by
     rw [contDiff_iff_contDiffAt]
@@ -50,7 +50,7 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this 
     dsimp only [TangentSpace] at this 
     simp_rw [ContinuousLinearMap.id_comp] at this 
-    exact this.2.2.ContDiffAt
+    exact this.2.2.contDiffAt
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
     F.Loc.IsHolonomicAt x ↔ F.IsHolonomicAt x :=

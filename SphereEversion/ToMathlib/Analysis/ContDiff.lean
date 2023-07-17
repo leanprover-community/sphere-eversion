@@ -256,7 +256,7 @@ variable (𝕜 : Type _) [NontriviallyNormedField 𝕜]
 
 theorem contDiff_toSpanSingleton (E : Type _) [NormedAddCommGroup E] [NormedSpace 𝕜 E] :
     ContDiff 𝕜 ⊤ (ContinuousLinearMap.toSpanSingleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
-  (ContinuousLinearMap.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.ContDiff
+  (ContinuousLinearMap.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.contDiff
 
 end
 
@@ -300,12 +300,12 @@ theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0
     rw [orthogonalProjection_singleton']
     rfl
   refine' ContDiffAt.smul _ _
-  · refine' cont_diff_at_const.div (contDiff_norm_sq ℝ).ContDiffAt _
+  · refine' cont_diff_at_const.div (contDiff_norm_sq ℝ).contDiffAt _
     apply pow_ne_zero
     exact norm_ne_zero_iff.mpr hv₀
   exact
     (ContDiff.clm_comp (contDiff_toSpanSingleton ℝ E)
-        (InnerProductSpace.toDual ℝ E).ContDiff).ContDiffAt
+        (InnerProductSpace.toDual ℝ E).contDiff).contDiffAt
 
 end
 

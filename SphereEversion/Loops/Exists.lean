@@ -209,7 +209,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     ·
       exact
         (hγ₅.comp₃ contDiff_fst smooth_transition.cont_diff.fst'.snd' <|
-                cont_diff_snd.snd'.sub contDiff_const).ContDiffAt.congr_of_eventuallyEq
+                cont_diff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
           ((eventually_eq.rfl.prod_mk <|
                 eventually_eq.rfl.prod_mk <|
                   (fract_eventuallyEq hs).comp_tendsto continuous_at_id.snd'.snd').fun_comp

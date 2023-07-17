@@ -60,7 +60,7 @@ theorem right_inv {y : M'} (hy : y ∈ range f) : f (f.invFun y) = y := by obtai
   rw [f.left_inv]
 
 theorem smoothAt_inv {y : M'} (hy : y ∈ range f) : SmoothAt I' I f.invFun y :=
-  (f.smooth_inv y hy).ContMDiffAt <| f.isOpen_range.mem_nhds hy
+  (f.smooth_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
 
 theorem smoothAt_inv' {x : M} : SmoothAt I' I f.invFun (f x) :=
   f.smoothAt_inv <| mem_range_self x
@@ -86,7 +86,7 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.smooth_inv (f x) (mem_range_self x)).MDifferentiableWithinAt le_top).MDifferentiableAt
       (f.open_map.range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := f.smooth_to.ContMDiff.MDifferentiable le_top _
+  have h₂ : MDifferentiableAt I I' f x := f.smooth_to.contMDiff.MDifferentiable le_top _
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
     (by
       intro v
@@ -487,7 +487,7 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
             hg.comp_cont_mdiff_on
               (smooth_on_id.prod_mk <| φ.smooth_inv.comp hk.smooth_on subset_rfl)⟩
   · refine'
-      ⟨k ⁻¹' V, h₂, _, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).ContMDiffOn⟩
+      ⟨k ⁻¹' V, h₂, _, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
     simpa [hx] using set.ext_iff.mp h₃ (k x)
 
 end NonMetric

@@ -38,7 +38,7 @@ theorem ContDiffAt.comp₂ {g : E₁ × E₂ → G} {f₁ : F → E₁} {f₂ : 
 
 theorem ContDiffAt.clm_comp {g : E' → F →L[𝕜] G} {f : E' → E →L[𝕜] F} {n : ℕ∞} {x : E'}
     (hg : ContDiffAt 𝕜 n g x) (hf : ContDiffAt 𝕜 n f x) : ContDiffAt 𝕜 n (fun x => g x ∘L f x) x :=
-  isBoundedBilinearMap_comp.ContDiff.ContDiffAt.comp₂ hg hf
+  isBoundedBilinearMap_comp.contDiff.contDiffAt.comp₂ hg hf
 
 theorem fderiv_comp {g : F → G} {f : E → F} (x : E) (hg : DifferentiableAt 𝕜 g (f x))
     (hf : DifferentiableAt 𝕜 f x) : fderiv 𝕜 (g ∘ f) x = (fderiv 𝕜 g (f x)).comp (fderiv 𝕜 f x) :=
@@ -182,7 +182,7 @@ theorem ContDiff.contDiff_partial_fst {φ : E → F → G} {n : ℕ}
 
 theorem ContDiff.contDiff_partial_fst_apply {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) {x : E} : ContDiff 𝕜 n ↿fun x' y => ∂₁ 𝕜 φ x' y x :=
-  (ContinuousLinearMap.apply 𝕜 G x).ContDiff.comp hF.contDiff_partial_fst
+  (ContinuousLinearMap.apply 𝕜 G x).contDiff.comp hF.contDiff_partial_fst
 
 theorem ContDiff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
     (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₁ 𝕜 φ) :=
@@ -198,7 +198,7 @@ theorem ContDiff.contDiff_partial_snd {φ : E → F → G} {n : ℕ}
 
 theorem ContDiff.contDiff_partial_snd_apply {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) {y : F} : ContDiff 𝕜 n ↿fun x y' => ∂₂ 𝕜 φ x y' y :=
-  (ContinuousLinearMap.apply 𝕜 G y).ContDiff.comp hF.contDiff_partial_snd
+  (ContinuousLinearMap.apply 𝕜 G y).contDiff.comp hF.contDiff_partial_snd
 
 theorem ContDiff.continuous_partial_snd {φ : E → F → G} {n : ℕ}
     (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₂ 𝕜 φ) :=
@@ -220,7 +220,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [N
 theorem ContDiff.lipschitzOnWith {s : Set E} {f : E → F} {n} (hf : ContDiff ℝ n f) (hn : 1 ≤ n)
     (hs : Convex ℝ s) (hs' : IsCompact s) : ∃ K, LipschitzOnWith K f s :=
   by
-  rcases(bddAbove_iff_exists_ge 0).mp (hs'.image (hf.continuous_fderiv hn).norm).BddAbove with
+  rcases(bddAbove_iff_exists_ge 0).mp (hs'.image (hf.continuous_fderiv hn).norm).bddAbove with
     ⟨M, M_nonneg, hM⟩
   simp_rw [ball_image_iff] at hM 
   use ⟨M, M_nonneg⟩

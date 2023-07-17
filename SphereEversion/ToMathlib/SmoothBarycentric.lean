@@ -130,12 +130,12 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     refine' cont_diff_pi.mpr fun j => cont_diff_pi.mpr fun j' => _
     exact (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
   apply ContDiffOn.mul
-  · apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).ContDiffOn.inv
+  · apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
     have hv : IsUnit (b.to_matrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
     rw [← isUnit_iff_ne_zero, ← Matrix.isUnit_iff_isUnit_det]
     exact hv
-  · refine' ((Matrix.smooth_det ι 𝕜 ⊤).comp _).ContDiffOn
+  · refine' ((Matrix.smooth_det ι 𝕜 ⊤).comp _).contDiffOn
     refine' cont_diff_pi.mpr fun j => cont_diff_pi.mpr fun j' => _
     simp only [Matrix.updateRow_apply, AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
     by_cases hij : j = i

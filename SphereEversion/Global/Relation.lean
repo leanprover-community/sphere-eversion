@@ -520,7 +520,7 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     ·
       exact fun x =>
         (ψ.smooth_at_inv <| hF <| mem_range_self x).oneJetExt.comp _
-          (F.smooth_bs.comp φ.smooth_to).ContMDiffAt
+          (F.smooth_bs.comp φ.smooth_to).contMDiffAt
     apply Smooth.one_jet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.one_jet_ext
 
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
