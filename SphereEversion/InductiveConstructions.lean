@@ -170,10 +170,10 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
     have cpct : IsClosed (⋃ j < i, K j) :=
       by
       rw [show (⋃ j < i, K j) = ⋃ j ∈ Finset.range i, K j by simp only [Finset.mem_range]]
-      apply (Finset.range i).isClosed_biUnion _ fun j _ => (K_cpct j).IsClosed
+      apply (Finset.range i).isClosed_biUnion _ fun j _ => (K_cpct j).isClosed
     rcases hU i with ⟨f', h₀f', h₁f'⟩
     rcases mem_nhds_set_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
-    rcases ind V_op (U_op i) cpct (K_cpct i).IsClosed hKV (hKU i) h₀f h₀f' h₁V h₁f' with
+    rcases ind V_op (U_op i) cpct (K_cpct i).isClosed hKV (hKU i) h₀f h₀f' h₁V h₁f' with
       ⟨F, h₀F, h₁F, hF⟩
     simp_rw [← bUnion_le] at h₁F 
     exact ⟨F, h₀F, h₁F, fun x hx => hF.on_set x (Or.inr hx)⟩

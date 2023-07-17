@@ -635,7 +635,7 @@ def jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsComp
     HtpyOneJetSec IM M IN N :=
   by
   refine' FamilyOneJetSec.mk' (fun t => JΘ F (G t)) (fun t => φ.Jupdate_aux ψ F (G t)) _
-  refine' φ.smooth_update _ _ _ (hK.image φ.continuous).IsClosed _ _ smooth_snd fun x => hFG x.1
+  refine' φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed _ _ smooth_snd fun x => hFG x.1
   · exact F.smooth.comp smooth_snd
   · exact G.smooth.comp (smooth_fst.prod_map smooth_id)
 

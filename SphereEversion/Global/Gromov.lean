@@ -126,7 +126,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     have hC :
       IsClosed C :=-- TODO: rewrite localization_data.is_closed_Union to match this.
         isClosed_biUnion
-        (finite_Iio _) fun j hj => (hK₀.image <| (L.φ j).continuous).IsClosed
+        (finite_Iio _) fun j hj => (hK₀.image <| (L.φ j).continuous).isClosed
     simp only [P₀, forall_and] at hf₀ 
     rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A 

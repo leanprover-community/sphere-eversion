@@ -454,7 +454,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
   haveI : FiniteDimensional ℝ E := finite_dimensional_of_finrank_eq_succ rankE
   let ω : Orientation ℝ E (Fin 3) :=
     ((stdOrthonormalBasis _ _).reindex <| finCongr (Fact.out _ : dim E = 3)).toBasis.Orientation
-  have is_closed_pair : IsClosed ({0, 1} : Set ℝ) := (by simp : ({0, 1} : Set ℝ).Finite).IsClosed
+  have is_closed_pair : IsClosed ({0, 1} : Set ℝ) := (by simp : ({0, 1} : Set ℝ).Finite).isClosed
   obtain ⟨f, h₁, h₂, h₃⟩ :=
     (locFormalEversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
       ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod is_closed_sphere) 𝕊² (isCompact_sphere 0 1)

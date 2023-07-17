@@ -160,7 +160,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     exact hPP' _ (hm _ rfl)
   · have op : IsOpen ((f '' K)ᶜ) := by
       rw [isOpen_compl_iff]
-      exact (hK.image f.continuous).IsClosed
+      exact (hK.image f.continuous).isClosed
     have : A ∩ range fᶜ ⊆ A ∩ (f '' K)ᶜ :=
       inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K))
     apply eventually_nhds_set_mono _ this

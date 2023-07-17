@@ -112,7 +112,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
         apply hx.congr
         symm
         have : ∀ᶠ y in 𝓝 x, y ∈ (φ '' K₁)ᶜ :=
-          is_open_iff_mem_nhds.mp (hK₁.image φ.continuous).IsClosed.isOpen_compl x hx'
+          is_open_iff_mem_nhds.mp (hK₁.image φ.continuous).isClosed.isOpen_compl x hx'
         apply this.mono
         exact hF'relK₁ _
       · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ :=

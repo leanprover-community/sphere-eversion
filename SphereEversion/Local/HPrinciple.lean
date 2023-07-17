@@ -201,13 +201,13 @@ variable (L : StepLandscape E)
 /-- The cut-off function associated to a step landscape, equal to one near K₀ and
 zero outside K₁. -/
 def ρ (L : StepLandscape E) : E → ℝ :=
-  (exists_contDiff_one_nhds_of_interior L.hK₀.IsClosed L.h₀₁).some
+  (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).some
 
 theorem ρ_smooth (L : StepLandscape E) : 𝒞 ∞ L.ρ :=
-  (exists_contDiff_one_nhds_of_interior L.hK₀.IsClosed L.h₀₁).choose_spec.1
+  (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.1
 
 theorem ρ_mem (L : StepLandscape E) (x : E) : L.ρ x ∈ I :=
-  (exists_contDiff_one_nhds_of_interior L.hK₀.IsClosed L.h₀₁).choose_spec.2.2.2 x
+  (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.2.2.2 x
 
 theorem ρ_le (L : StepLandscape E) (x : E) : |L.ρ x| ≤ 1 :=
   by
@@ -217,10 +217,10 @@ theorem ρ_le (L : StepLandscape E) (x : E) : |L.ρ x| ≤ 1 :=
   linarith
 
 theorem hρ₀ (L : StepLandscape E) : ∀ᶠ x near L.k₀, L.ρ x = 1 :=
-  (exists_contDiff_one_nhds_of_interior L.hK₀.IsClosed L.h₀₁).choose_spec.2.1
+  (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.2.1
 
 theorem hρ_compl_k₁ (L : StepLandscape E) {x : E} : x ∉ L.k₁ → L.ρ x = 0 :=
-  (exists_contDiff_one_nhds_of_interior L.hK₀.IsClosed L.h₀₁).choose_spec.2.2.1 x
+  (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.2.2.1 x
 
 /-- Homotopy of formal solutions obtained by corrugation in the direction of `p : dual_pair E`
 in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomic to
