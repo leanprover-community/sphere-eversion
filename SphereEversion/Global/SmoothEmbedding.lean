@@ -1,6 +1,6 @@
 import Mathlib.Topology.MetricSpace.HausdorffDistance
 import Mathlib.Topology.UniformSpace.Separation
-import Mathlib.Geometry.Manifold.ContMdiffMfderiv
+import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.Indexing
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact

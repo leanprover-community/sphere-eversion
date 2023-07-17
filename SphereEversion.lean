@@ -53,7 +53,7 @@ import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 import SphereEversion.ToMathlib.Geometry.Manifold.ChartedSpace
-import SphereEversion.ToMathlib.Geometry.Manifold.ContMdiff
+import SphereEversion.ToMathlib.Geometry.Manifold.ContMDiff
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners

@@ -74,12 +74,12 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   let P₀ : ∀ x : M, germ (𝓝 x) J¹ → Prop := fun x F =>
     F.value.1.1 = x ∧
       F.value ∈ R ∧
-        F.ContMdiffAt' IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
+        F.ContMDiffAt' IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
           RestrictGermPredicate (fun x F' => F'.value = 𝓕₀ x) A x F ∧
             dist F.value.1.2 (𝓕₀.bs x) < τ x
   let P₁ : ∀ x : M, germ (𝓝 x) J¹ → Prop := fun x F => IsHolonomicGerm F
   let P₂ : ∀ p : ℝ × M, germ (𝓝 p) J¹ → Prop := fun p F =>
-    F.ContMdiffAt' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
+    F.ContMDiffAt' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
   have hP₂ :
     ∀ (a b : ℝ) (p : ℝ × M) (f : ℝ × M → OneJetBundle IM M IX X),
       P₂ (a * p.1 + b, p.2) f → P₂ p fun p : ℝ × M => f (a * p.1 + b, p.2) :=

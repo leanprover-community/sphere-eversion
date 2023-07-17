@@ -60,7 +60,7 @@ local notation "𝓒_on" => ContMDiffOn I 𝓘(ℝ, F)
 
 variable (I)
 
-theorem reallyConvex_contMdiffAt (x : M) (n : ℕ∞) :
+theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
     ReallyConvex (smoothGerm I x) {φ : Germ (𝓝 x) F | φ.ContMDiffAt I n} := by
   classical
   rw [Nontrivial.reallyConvex_iff]
@@ -71,9 +71,9 @@ theorem reallyConvex_contMdiffAt (x : M) (n : ℕ∞) :
     exact support_smul_subset_left w id
   rw [finsum_eq_sum_of_support_subset _ this]
   clear this
-  apply Filter.Germ.ContMdiffAt.sum
+  apply Filter.Germ.ContMDiffAt.sum
   intro φ hφ
-  refine' (smoothGerm.contMdiffAt _).smul (w_supp _)
+  refine' (smoothGerm.contMDiffAt _).smul (w_supp _)
   simpa [fin_supp] using hφ
 
 theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex ℝ {y | P x y}) {n : ℕ∞}
@@ -85,7 +85,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
     by
     intro x
     apply ReallyConvex.inter
-    apply reallyConvex_contMdiffAt
+    apply reallyConvex_contMDiffAt
     dsimp only
     let v : germ (𝓝 x) F →ₛₗ[smoothGerm.valueRingHom I x] F := Filter.Germ.valueₛₗ I x
     change ReallyConvex (smoothGerm I x) (v ⁻¹' {y | P x y})
@@ -151,8 +151,8 @@ local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
 
 local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
 
-theorem reallyConvex_contMdiffAtProd {x : M₁} (n : ℕ∞) :
-    ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMdiffAtProd I₁ I₂ n} := by
+theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
+    ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMDiffAtProd I₁ I₂ n} := by
   classical
   rw [Nontrivial.reallyConvex_iff]
   rintro w w_pos w_supp w_sum
@@ -164,9 +164,9 @@ theorem reallyConvex_contMdiffAtProd {x : M₁} (n : ℕ∞) :
     exact support_smul_subset_left w id
   rw [finsum_eq_sum_of_support_subset _ this]
   clear this
-  apply Filter.Germ.ContMdiffAtProd.sum
+  apply Filter.Germ.ContMDiffAtProd.sum
   intro φ hφ
-  refine' (smoothGerm.contMdiffAt _).smul_prod (w_supp _)
+  refine' (smoothGerm.contMDiffAt _).smul_prod (w_supp _)
   simpa [fin_supp] using hφ
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
@@ -180,12 +180,12 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP :
     ∃ f : M₁ → M₂ → F, 𝓒 n (uncurry f) ∧ ∀ x, P x (f x) :=
   by
   let PP : (Σ x : M₁, germ (𝓝 x) (M₂ → F)) → Prop := fun p =>
-    p.2.ContMdiffAtProd I₁ I₂ n ∧ P p.1 p.2.value
+    p.2.ContMDiffAtProd I₁ I₂ n ∧ P p.1 p.2.value
   have hPP : ∀ x, ReallyConvex (smoothGerm I₁ x) {φ | PP ⟨x, φ⟩} :=
     by
     intro x
     apply ReallyConvex.inter
-    apply reallyConvex_contMdiffAtProd
+    apply reallyConvex_contMDiffAtProd
     dsimp only
     let v : germ (𝓝 x) (M₂ → F) →ₛₗ[smoothGerm.valueRingHom I₁ x] M₂ → F := Filter.Germ.valueₛₗ I₁ x
     change ReallyConvex (smoothGerm I₁ x) (v ⁻¹' {y | P x y})

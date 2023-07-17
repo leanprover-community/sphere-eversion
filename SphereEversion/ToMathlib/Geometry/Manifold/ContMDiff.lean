@@ -1,4 +1,4 @@
-import Mathlib.Geometry.Manifold.ContMdiff
+import Mathlib.Geometry.Manifold.ContMDiff
 
 open scoped Topology Filter Manifold BigOperators
 

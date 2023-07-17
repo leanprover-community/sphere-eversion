@@ -1,5 +1,5 @@
 import SphereEversion.ToMathlib.Analysis.Calculus
-import Mathlib.Geometry.Manifold.ContMdiffMfderiv
+import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import Mathlib.Geometry.Manifold.Algebra.Monoid
 import Mathlib.Geometry.Manifold.Metrizable
 

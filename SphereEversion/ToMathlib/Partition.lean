@@ -1,6 +1,6 @@
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.Tactic.FindUnused
-import SphereEversion.ToMathlib.Geometry.Manifold.ContMdiff
+import SphereEversion.ToMathlib.Geometry.Manifold.ContMDiff
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
