@@ -1,4 +1,4 @@
-import Mathbin.Logic.Equiv.LocalEquiv
+import Mathlib.Logic.Equiv.LocalEquiv
 
 open Set
 

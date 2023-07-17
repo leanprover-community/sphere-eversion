@@ -1,5 +1,5 @@
-import Mathbin.LinearAlgebra.Basis
-import Mathbin.LinearAlgebra.Dual
+import Mathlib.LinearAlgebra.Basis
+import Mathlib.LinearAlgebra.Dual
 
 noncomputable section
 

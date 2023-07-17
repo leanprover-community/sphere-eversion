@@ -1,7 +1,7 @@
-import Mathbin.Analysis.Calculus.BumpFunctionInner
-import Mathbin.Analysis.Calculus.ContDiff
-import Project.ToMathlib.Topology.Misc
-import Project.ToMathlib.Topology.Algebra.Module
+import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Analysis.Calculus.ContDiff
+import SphereEversion.ToMathlib.Topology.Misc
+import SphereEversion.ToMathlib.Topology.Algebra.Module
 
 noncomputable section
 

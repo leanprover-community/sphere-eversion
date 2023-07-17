@@ -1,10 +1,10 @@
-import Project.ToMathlib.Analysis.NormedGroup
-import Project.ToMathlib.LinearAlgebra.Basis
-import Project.ToMathlib.Topology.Algebra.Order.Basic
-import Project.Loops.Exists
-import Project.Local.Corrugation
-import Project.Local.AmpleRelation
-import Project.InteractiveExpr
+import SphereEversion.ToMathlib.Analysis.NormedGroup
+import SphereEversion.ToMathlib.LinearAlgebra.Basis
+import SphereEversion.ToMathlib.Topology.Algebra.Order.Basic
+import SphereEversion.Loops.Exists
+import SphereEversion.Local.Corrugation
+import SphereEversion.Local.AmpleRelation
+import SphereEversion.InteractiveExpr
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

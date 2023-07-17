@@ -5,11 +5,11 @@ Authors: Heather Macbeth
 
 ! This file was ported from Lean 3 source module to_mathlib.analysis.inner_product_space.rotation
 -/
-import Project.ToMathlib.LinearAlgebra.Basic
-import Project.ToMathlib.Analysis.ContDiff
-import Project.ToMathlib.Analysis.InnerProductSpace.CrossProduct
-import Mathbin.Analysis.SpecialFunctions.Trigonometric.Deriv
-import Mathbin.Tactic.LinearCombination
+import SphereEversion.ToMathlib.LinearAlgebra.Basic
+import SphereEversion.ToMathlib.Analysis.ContDiff
+import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Tactic.LinearCombination
 
 /-! # Rotation about an axis, considered as a function in that axis -/
 

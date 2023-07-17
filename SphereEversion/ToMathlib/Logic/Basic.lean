@@ -1,4 +1,4 @@
-import Mathbin.Logic.Basic
+import Mathlib.Logic.Basic
 
 -- `by simp [forall_and]` works in Lean 4
 -- `by simp [forall_and]` works in Lean 4

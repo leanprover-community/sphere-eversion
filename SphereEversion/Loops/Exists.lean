@@ -1,6 +1,6 @@
-import Project.Loops.Reparametrization
-import Project.ToMathlib.Analysis.CutOff
-import Project.ToMathlib.Topology.HausdorffDistance
+import SphereEversion.Loops.Reparametrization
+import SphereEversion.ToMathlib.Analysis.CutOff
+import SphereEversion.ToMathlib.Topology.HausdorffDistance
 
 noncomputable section
 

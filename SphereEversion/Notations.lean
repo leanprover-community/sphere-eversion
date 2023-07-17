@@ -1,5 +1,5 @@
-import Mathbin.Analysis.Calculus.ContDiff
-import Project.Lint
+import Mathlib.Analysis.Calculus.ContDiff
+import SphereEversion.Lint
 
 open scoped Topology
 

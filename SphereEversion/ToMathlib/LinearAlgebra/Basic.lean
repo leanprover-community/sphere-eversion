@@ -1,4 +1,4 @@
-import Mathbin.LinearAlgebra.Span
+import Mathlib.LinearAlgebra.Span
 
 /-! Note: some results should go to `linear_algebra.span`. -/
 

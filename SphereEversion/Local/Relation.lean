@@ -1,6 +1,6 @@
-import Mathbin.Analysis.Calculus.BumpFunctionInner
-import Mathbin.Topology.MetricSpace.HausdorffDistance
-import Project.Local.OneJet
+import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Topology.MetricSpace.HausdorffDistance
+import SphereEversion.Local.OneJet
 
 /-!
 # Local partial differential relations and their formal solutions

@@ -1,4 +1,4 @@
-import Mathbin.Topology.LocalHomeomorph
+import Mathlib.Topology.LocalHomeomorph
 
 variable {α β : Type _} [TopologicalSpace α] [TopologicalSpace β] (e : LocalHomeomorph α β)
 

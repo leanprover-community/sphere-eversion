@@ -1,4 +1,4 @@
-import Project.Local.HPrinciple
+import SphereEversion.Local.HPrinciple
 
 /-!
 In this file we prove the parametric version of the local h-principle.

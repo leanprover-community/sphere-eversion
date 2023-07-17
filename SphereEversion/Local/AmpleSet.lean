@@ -1,13 +1,13 @@
-import Mathbin.Analysis.Convex.Hull
-import Mathbin.Data.Real.Basic
-import Mathbin.Topology.Connected
-import Mathbin.Topology.PathConnected
-import Mathbin.Topology.Algebra.Affine
-import Mathbin.LinearAlgebra.Dimension
-import Mathbin.LinearAlgebra.AffineSpace.Midpoint
-import Mathbin.Data.Matrix.Notation
-import Mathbin.Analysis.Convex.Topology
-import Project.ToMathlib.Topology.Misc
+import Mathlib.Analysis.Convex.Hull
+import Mathlib.Data.Real.Basic
+import Mathlib.Topology.Connected
+import Mathlib.Topology.PathConnected
+import Mathlib.Topology.Algebra.Affine
+import Mathlib.LinearAlgebra.Dimension
+import Mathlib.LinearAlgebra.AffineSpace.Midpoint
+import Mathlib.Data.Matrix.Notation
+import Mathlib.Analysis.Convex.Topology
+import SphereEversion.ToMathlib.Topology.Misc
 
 /-!
 # Ample subsets of real vector spaces

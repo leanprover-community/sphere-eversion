@@ -1,4 +1,4 @@
-import Mathbin.SetTheory.Cardinal.Basic
+import Mathlib.SetTheory.Cardinal.Basic
 
 open Cardinal
 

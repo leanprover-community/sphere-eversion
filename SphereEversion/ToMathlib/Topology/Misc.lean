@@ -1,12 +1,12 @@
-import Mathbin.Topology.PathConnected
-import Mathbin.Topology.UrysohnsLemma
-import Mathbin.Topology.UniformSpace.Separation
-import Mathbin.LinearAlgebra.AffineSpace.Independent
-import Mathbin.Analysis.NormedSpace.FiniteDimension
-import Mathbin.Topology.Algebra.Order.Floor
-import Mathbin.Topology.ShrinkingLemma
-import Mathbin.Topology.MetricSpace.EmetricParacompact
-import Mathbin.Analysis.Convex.Normed
+import Mathlib.Topology.PathConnected
+import Mathlib.Topology.UrysohnsLemma
+import Mathlib.Topology.UniformSpace.Separation
+import Mathlib.LinearAlgebra.AffineSpace.Independent
+import Mathlib.Analysis.NormedSpace.FiniteDimension
+import Mathlib.Topology.Algebra.Order.Floor
+import Mathlib.Topology.ShrinkingLemma
+import Mathlib.Topology.MetricSpace.EmetricParacompact
+import Mathlib.Analysis.Convex.Normed
 
 noncomputable section
 

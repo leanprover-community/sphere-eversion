@@ -1,5 +1,5 @@
-import Mathbin.Topology.PathConnected
-import Project.ToMathlib.Topology.Misc
+import Mathlib.Topology.PathConnected
+import SphereEversion.ToMathlib.Topology.Misc
 
 open Set Function Int TopologicalSpace
 

@@ -1,5 +1,5 @@
-import Mathbin.Analysis.InnerProductSpace.Dual
-import Project.ToMathlib.Analysis.InnerProductSpace.Projection
+import Mathlib.Analysis.InnerProductSpace.Dual
+import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Projection
 
 open scoped RealInnerProductSpace
 

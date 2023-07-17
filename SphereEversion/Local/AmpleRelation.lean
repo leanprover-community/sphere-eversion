@@ -1,6 +1,6 @@
-import Project.Local.AmpleSet
-import Project.Local.DualPair
-import Project.Local.Relation
+import SphereEversion.Local.AmpleSet
+import SphereEversion.Local.DualPair
+import SphereEversion.Local.Relation
 
 /-! # Slices of first order relations
 

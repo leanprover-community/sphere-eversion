@@ -1,15 +1,15 @@
-import Mathbin.Topology.MetricSpace.HausdorffDistance
-import Mathbin.Topology.UniformSpace.Separation
-import Mathbin.Geometry.Manifold.ContMdiffMfderiv
-import Project.Indexing
-import Project.ToMathlib.Topology.Paracompact
-import Project.ToMathlib.Topology.Algebra.Order.Compact
-import Project.ToMathlib.Topology.NhdsSet
-import Project.ToMathlib.Topology.Misc
-import Project.ToMathlib.Geometry.Manifold.ChartedSpace
-import Project.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
-import Project.ToMathlib.Analysis.NormedSpace.Misc
-import Project.InteractiveExpr
+import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Topology.UniformSpace.Separation
+import Mathlib.Geometry.Manifold.ContMdiffMfderiv
+import SphereEversion.Indexing
+import SphereEversion.ToMathlib.Topology.Paracompact
+import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
+import SphereEversion.ToMathlib.Topology.NhdsSet
+import SphereEversion.ToMathlib.Topology.Misc
+import SphereEversion.ToMathlib.Geometry.Manifold.ChartedSpace
+import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
+import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
+import SphereEversion.InteractiveExpr
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

@@ -5,8 +5,8 @@ Authors: Floris van Doorn
 
 ! This file was ported from Lean 3 source module to_mathlib.unused.eventually_constant
 -/
-import Mathbin.Data.Nat.Lattice
-import Mathbin.Topology.Separation
+import Mathlib.Data.Nat.Lattice
+import Mathlib.Topology.Separation
 
 /-!
 # Eventually constant sequences

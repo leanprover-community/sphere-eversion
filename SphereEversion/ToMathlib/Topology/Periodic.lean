@@ -1,6 +1,6 @@
-import Mathbin.Algebra.Periodic
-import Mathbin.Analysis.NormedSpace.Basic
-import Project.ToMathlib.Topology.Separation
+import Mathlib.Algebra.Periodic
+import Mathlib.Analysis.NormedSpace.Basic
+import SphereEversion.ToMathlib.Topology.Separation
 
 /-!
 

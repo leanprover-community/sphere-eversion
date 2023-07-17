@@ -1,4 +1,4 @@
-import Mathbin.MeasureTheory.Constructions.BorelSpace.Basic
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 variable (α : Type _) [TopologicalSpace α]
 

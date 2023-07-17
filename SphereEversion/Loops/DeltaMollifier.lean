@@ -1,10 +1,10 @@
-import Mathbin.MeasureTheory.Integral.Periodic
-import Mathbin.MeasureTheory.Group.Integration
-import Mathbin.Analysis.Calculus.BumpFunctionInner
-import Mathbin.Analysis.Convolution
-import Project.ToMathlib.Topology.Periodic
-import Project.ToMathlib.Analysis.ContDiff
-import Project.Loops.Basic
+import Mathlib.MeasureTheory.Integral.Periodic
+import Mathlib.MeasureTheory.Group.Integration
+import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Analysis.Convolution
+import SphereEversion.ToMathlib.Topology.Periodic
+import SphereEversion.ToMathlib.Analysis.ContDiff
+import SphereEversion.Loops.Basic
 
 /-!
 # Delta mollifiers

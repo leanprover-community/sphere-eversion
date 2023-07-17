@@ -1,9 +1,9 @@
-import Mathbin.Analysis.Calculus.ContDiff
-import Mathbin.LinearAlgebra.Dual
-import Project.Notations
-import Project.ToMathlib.Analysis.NormedSpace.OperatorNorm
-import Project.ToMathlib.Analysis.Calculus
-import Project.ToMathlib.LinearAlgebra.Basic
+import Mathlib.Analysis.Calculus.ContDiff
+import Mathlib.LinearAlgebra.Dual
+import SphereEversion.Notations
+import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
+import SphereEversion.ToMathlib.Analysis.Calculus
+import SphereEversion.ToMathlib.LinearAlgebra.Basic
 
 /-! # Dual pairs
 

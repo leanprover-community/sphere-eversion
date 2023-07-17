@@ -1,5 +1,5 @@
-import Mathbin.Topology.Algebra.Order.Compact
-import Mathbin.Topology.Instances.Real
+import Mathlib.Topology.Algebra.Order.Compact
+import Mathlib.Topology.Instances.Real
 
 /-- A variant of `is_compact.exists_forall_le` for real-valued functions that does not require the
 assumption `s.nonempty`. -/

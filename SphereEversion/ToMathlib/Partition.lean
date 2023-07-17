@@ -1,12 +1,12 @@
-import Mathbin.Geometry.Manifold.PartitionOfUnity
-import Mathbin.Tactic.FindUnused
-import Project.ToMathlib.Geometry.Manifold.ContMdiff
-import Project.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
-import Project.ToMathlib.Geometry.Manifold.Algebra.LieGroup
-import Project.ToMathlib.Analysis.Convex.Basic
-import Project.ToMathlib.Topology.Support
-import Project.ToMathlib.Topology.LocallyFinite
-import Project.ToMathlib.Topology.PartitionOfUnity
+import Mathlib.Geometry.Manifold.PartitionOfUnity
+import Mathlib.Tactic.FindUnused
+import SphereEversion.ToMathlib.Geometry.Manifold.ContMdiff
+import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
+import SphereEversion.ToMathlib.Analysis.Convex.Basic
+import SphereEversion.ToMathlib.Topology.Support
+import SphereEversion.ToMathlib.Topology.LocallyFinite
+import SphereEversion.ToMathlib.Topology.PartitionOfUnity
 
 noncomputable section
 

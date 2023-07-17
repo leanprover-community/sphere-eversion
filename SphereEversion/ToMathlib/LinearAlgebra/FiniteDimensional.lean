@@ -1,4 +1,4 @@
-import Mathbin.LinearAlgebra.FiniteDimensional
+import Mathlib.LinearAlgebra.FiniteDimensional
 
 open FiniteDimensional Submodule
 

@@ -1,6 +1,6 @@
-import Project.Notations
-import Mathbin.Topology.Algebra.Order.Floor
-import Project.ToMathlib.Topology.Misc
+import SphereEversion.Notations
+import Mathlib.Topology.Algebra.Order.Floor
+import SphereEversion.ToMathlib.Topology.Misc
 
 noncomputable section
 

@@ -1,5 +1,5 @@
-import Mathbin.Geometry.Manifold.ChartedSpace
-import Project.ToMathlib.Topology.LocalHomeomorph
+import Mathlib.Geometry.Manifold.ChartedSpace
+import SphereEversion.ToMathlib.Topology.LocalHomeomorph
 
 namespace ChartedSpace
 

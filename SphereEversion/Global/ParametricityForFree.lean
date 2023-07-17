@@ -1,4 +1,4 @@
-import Project.Global.Relation
+import SphereEversion.Global.Relation
 
 noncomputable section
 

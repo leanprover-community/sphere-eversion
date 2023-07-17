@@ -1,6 +1,6 @@
-import Project.Main
-import Project.Local.SphereEversion
-import Mathbin.Tactic.FindUnused
+import SphereEversion.Main
+import SphereEversion.Local.SphereEversion
+import Mathlib.Tactic.FindUnused
 
 attribute [main_declaration] Smale Gromov RelMfld.Ample.satisfies_h_principle_with'
 

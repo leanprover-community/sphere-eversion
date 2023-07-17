@@ -1,12 +1,12 @@
-import Project.ToMathlib.Data.Set.Prod
-import Project.ToMathlib.Data.Nat.Basic
-import Project.ToMathlib.Geometry.Manifold.Metrizable
-import Project.ToMathlib.Topology.Constructions
-import Project.ToMathlib.Logic.Basic
-import Project.InductiveConstructions
-import Project.Global.ParametricityForFree
-import Project.Global.LocalizedConstruction
-import Project.Global.LocalisationData
+import SphereEversion.ToMathlib.Data.Set.Prod
+import SphereEversion.ToMathlib.Data.Nat.Basic
+import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
+import SphereEversion.ToMathlib.Topology.Constructions
+import SphereEversion.ToMathlib.Logic.Basic
+import SphereEversion.InductiveConstructions
+import SphereEversion.Global.ParametricityForFree
+import SphereEversion.Global.LocalizedConstruction
+import SphereEversion.Global.LocalisationData
 
 /-!
 # Gromov's theorem

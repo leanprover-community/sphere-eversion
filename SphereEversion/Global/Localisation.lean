@@ -1,5 +1,5 @@
-import Project.Local.AmpleRelation
-import Project.Global.Relation
+import SphereEversion.Local.AmpleRelation
+import SphereEversion.Global.Relation
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

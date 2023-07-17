@@ -1,4 +1,4 @@
-import Mathbin.Geometry.Manifold.SmoothManifoldWithCorners
+import Mathlib.Geometry.Manifold.SmoothManifoldWithCorners
 
 open scoped Topology
 

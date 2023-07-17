@@ -1,4 +1,4 @@
-import Project.Global.Immersion
+import SphereEversion.Global.Immersion
 
 open Metric FiniteDimensional Set ModelWithCorners
 

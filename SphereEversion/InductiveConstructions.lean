@@ -1,13 +1,13 @@
-import Project.ToMathlib.Data.Set.Prod
-import Project.ToMathlib.Data.Set.Lattice
-import Project.ToMathlib.Topology.Constructions
-import Project.ToMathlib.Topology.Germ
-import Project.ToMathlib.Topology.Misc
-import Project.ToMathlib.Order.Filter.Basic
-import Project.Indexing
-import Project.Notations
-import Project.InteractiveExpr
-import Mathbin.Tactic.Induction
+import SphereEversion.ToMathlib.Data.Set.Prod
+import SphereEversion.ToMathlib.Data.Set.Lattice
+import SphereEversion.ToMathlib.Topology.Constructions
+import SphereEversion.ToMathlib.Topology.Germ
+import SphereEversion.ToMathlib.Topology.Misc
+import SphereEversion.ToMathlib.Order.Filter.Basic
+import SphereEversion.Indexing
+import SphereEversion.Notations
+import SphereEversion.InteractiveExpr
+import Mathlib.Tactic.Induction
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

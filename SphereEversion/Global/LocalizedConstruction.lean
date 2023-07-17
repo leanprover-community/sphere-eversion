@@ -1,5 +1,5 @@
-import Project.Global.Localisation
-import Project.Local.HPrinciple
+import SphereEversion.Global.Localisation
+import SphereEversion.Local.HPrinciple
 
 noncomputable section
 

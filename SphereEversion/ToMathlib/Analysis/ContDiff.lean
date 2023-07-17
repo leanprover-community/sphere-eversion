@@ -1,9 +1,9 @@
-import Mathbin.Analysis.Calculus.Inverse
-import Mathbin.Analysis.Calculus.ContDiff
-import Mathbin.Analysis.InnerProductSpace.Calculus
-import Mathbin.Analysis.InnerProductSpace.Dual
-import Project.ToMathlib.Analysis.Calculus
-import Project.ToMathlib.Analysis.NormedSpace.OperatorNorm
+import Mathlib.Analysis.Calculus.Inverse
+import Mathlib.Analysis.Calculus.ContDiff
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.InnerProductSpace.Dual
+import SphereEversion.ToMathlib.Analysis.Calculus
+import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 
 noncomputable section
 

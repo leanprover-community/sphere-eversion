@@ -1,7 +1,7 @@
-import Project.Local.DualPair
-import Project.Local.AmpleSet
-import Project.Global.OneJetSec
-import Project.Global.SmoothEmbedding
+import SphereEversion.Local.DualPair
+import SphereEversion.Local.AmpleSet
+import SphereEversion.Global.OneJetSec
+import SphereEversion.Global.SmoothEmbedding
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

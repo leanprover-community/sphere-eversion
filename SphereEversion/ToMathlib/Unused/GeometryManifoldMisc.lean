@@ -1,4 +1,4 @@
-import Project.ToMathlib.Geometry.Manifold.MiscManifold
+import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 
 open Bundle Set Function Filter ContinuousLinearMap
 

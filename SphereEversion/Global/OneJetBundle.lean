@@ -5,8 +5,8 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_bundle
 -/
-import Project.ToMathlib.Geometry.Manifold.VectorBundle.Misc
-import Project.InteractiveExpr
+import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
+import SphereEversion.InteractiveExpr
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

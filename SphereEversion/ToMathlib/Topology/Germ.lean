@@ -1,8 +1,8 @@
-import Mathbin.Order.Filter.Germ
-import Mathbin.Topology.Algebra.Ring.Basic
-import Mathbin.Analysis.Calculus.Fderiv.Basic
-import Mathbin.Algebra.Order.Hom.Ring
-import Project.ToMathlib.Topology.NhdsSet
+import Mathlib.Order.Filter.Germ
+import Mathlib.Topology.Algebra.Ring.Basic
+import Mathlib.Analysis.Calculus.Fderiv.Basic
+import Mathlib.Algebra.Order.Hom.Ring
+import SphereEversion.ToMathlib.Topology.NhdsSet
 
 variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
 

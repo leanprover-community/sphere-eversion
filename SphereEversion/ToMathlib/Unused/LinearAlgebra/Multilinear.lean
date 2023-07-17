@@ -1,4 +1,4 @@
-import Mathbin.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Analysis.Calculus.BumpFunctionInner
 
 /-
 Multilinear map stuff that was meant as preliminaries for smooth functions gluing.

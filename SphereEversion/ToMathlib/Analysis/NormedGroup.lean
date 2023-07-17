@@ -1,4 +1,4 @@
-import Mathbin.Analysis.Normed.Group.Basic
+import Mathlib.Analysis.Normed.Group.Basic
 
 theorem norm_sub_le_add {G : Type _} [NormedAddCommGroup G] (a b c : G) :
     ‖a - b‖ ≤ ‖a - c‖ + ‖c - b‖ := by

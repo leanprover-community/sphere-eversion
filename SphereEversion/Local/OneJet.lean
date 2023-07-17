@@ -1,10 +1,10 @@
-import Mathbin.Analysis.Calculus.BumpFunctionInner
-import Mathbin.Topology.MetricSpace.HausdorffDistance
-import Project.ToMathlib.Topology.Misc
-import Project.ToMathlib.Topology.NhdsSet
-import Project.ToMathlib.Topology.HausdorffDistance
-import Project.ToMathlib.LinearAlgebra.Basic
-import Project.Notations
+import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Topology.MetricSpace.HausdorffDistance
+import SphereEversion.ToMathlib.Topology.Misc
+import SphereEversion.ToMathlib.Topology.NhdsSet
+import SphereEversion.ToMathlib.Topology.HausdorffDistance
+import SphereEversion.ToMathlib.LinearAlgebra.Basic
+import SphereEversion.Notations
 
 /-! # Spaces of 1-jets and their sections
 

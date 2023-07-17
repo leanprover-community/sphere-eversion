@@ -1,9 +1,9 @@
-import Mathbin.Analysis.Calculus.BumpFunctionInner
-import Mathbin.MeasureTheory.Integral.Periodic
-import Project.Loops.Surrounding
-import Project.Loops.DeltaMollifier
-import Project.ToMathlib.ExistsOfConvex
-import Project.ToMathlib.Analysis.ContDiff
+import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.MeasureTheory.Integral.Periodic
+import SphereEversion.Loops.Surrounding
+import SphereEversion.Loops.DeltaMollifier
+import SphereEversion.ToMathlib.ExistsOfConvex
+import SphereEversion.ToMathlib.Analysis.ContDiff
 
 /-!
 # The reparametrization lemma

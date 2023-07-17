@@ -1,7 +1,7 @@
-import Mathbin.Geometry.Manifold.Algebra.SmoothFunctions
-import Mathbin.Geometry.Manifold.Instances.Real
-import Mathbin.Topology.MetricSpace.PartitionOfUnity
-import Project.Global.SmoothEmbedding
+import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
+import Mathlib.Geometry.Manifold.Instances.Real
+import Mathlib.Topology.MetricSpace.PartitionOfUnity
+import SphereEversion.Global.SmoothEmbedding
 
 noncomputable section
 

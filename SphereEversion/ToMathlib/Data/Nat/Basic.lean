@@ -1,4 +1,4 @@
-import Mathbin.Data.Nat.Basic
+import Mathlib.Data.Nat.Basic
 
 -- The next lemma won't be used, it's a warming up exercise for the one below.
 -- The next lemma won't be used, it's a warming up exercise for the one below.

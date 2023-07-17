@@ -1,4 +1,4 @@
-import Project.Local.SphereEversion
+import SphereEversion.Local.SphereEversion
 
 open Set
 

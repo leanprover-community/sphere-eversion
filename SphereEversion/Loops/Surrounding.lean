@@ -1,12 +1,12 @@
-import Project.Loops.Basic
-import Project.InductiveConstructions
-import Project.ToMathlib.Partition
-import Mathbin.Analysis.LocallyConvex.WithSeminorms
-import Mathbin.Tactic.FinCases
-import Mathbin.Analysis.LocallyConvex.WithSeminorms
-import Mathbin.Topology.MetricSpace.EmetricParacompact
-import Mathbin.Topology.ShrinkingLemma
-import Project.ToMathlib.ExistsOfConvex
+import SphereEversion.Loops.Basic
+import SphereEversion.InductiveConstructions
+import SphereEversion.ToMathlib.Partition
+import Mathlib.Analysis.LocallyConvex.WithSeminorms
+import Mathlib.Tactic.FinCases
+import Mathlib.Analysis.LocallyConvex.WithSeminorms
+import Mathlib.Topology.MetricSpace.EmetricParacompact
+import Mathlib.Topology.ShrinkingLemma
+import SphereEversion.ToMathlib.ExistsOfConvex
 
 /-!
 # Surrounding families of loops

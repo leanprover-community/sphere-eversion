@@ -5,7 +5,7 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_sec
 -/
-import Project.Global.OneJetBundle
+import SphereEversion.Global.OneJetBundle
 
 /-!
 # Sections of 1-jet bundles

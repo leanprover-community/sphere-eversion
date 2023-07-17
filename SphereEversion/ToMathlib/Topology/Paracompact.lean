@@ -1,8 +1,8 @@
-import Mathbin.Topology.Paracompact
-import Mathbin.Data.Real.Basic
-import Mathbin.Data.Nat.Interval
-import Project.ToMathlib.Data.Set.Basic
-import Project.ToMathlib.Data.Set.Finite
+import Mathlib.Topology.Paracompact
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Nat.Interval
+import SphereEversion.ToMathlib.Data.Set.Basic
+import SphereEversion.ToMathlib.Data.Set.Finite
 
 open scoped Topology
 

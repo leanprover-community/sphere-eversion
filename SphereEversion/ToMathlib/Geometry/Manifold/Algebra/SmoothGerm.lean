@@ -1,9 +1,9 @@
-import Mathbin.Order.Filter.Germ
-import Mathbin.Algebra.Order.Hom.Ring
-import Mathbin.Geometry.Manifold.Algebra.SmoothFunctions
-import Mathbin.Geometry.Manifold.VectorBundle.Tangent
-import Mathbin.Geometry.Manifold.Mfderiv
-import Project.ToMathlib.Topology.Germ
+import Mathlib.Order.Filter.Germ
+import Mathlib.Algebra.Order.Hom.Ring
+import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
+import Mathlib.Geometry.Manifold.VectorBundle.Tangent
+import Mathlib.Geometry.Manifold.Mfderiv
+import SphereEversion.ToMathlib.Topology.Germ
 
 noncomputable section
 

@@ -1,10 +1,10 @@
-import Mathbin.Tactic.Linarith.Default
-import Mathbin.Algebra.Order.WithZero
-import Mathbin.Topology.LocallyFinite
-import Mathbin.Data.Fin.Interval
-import Mathbin.Data.Fin.SuccPred
-import Project.ToMathlib.Data.Nat.Basic
-import Project.ToMathlib.SetTheory.Cardinal.Basic
+import Mathlib.Tactic.Linarith.Default
+import Mathlib.Algebra.Order.WithZero
+import Mathlib.Topology.LocallyFinite
+import Mathlib.Data.Fin.Interval
+import Mathlib.Data.Fin.SuccPred
+import SphereEversion.ToMathlib.Data.Nat.Basic
+import SphereEversion.ToMathlib.SetTheory.Cardinal.Basic
 
 /-!
 # Indexing types

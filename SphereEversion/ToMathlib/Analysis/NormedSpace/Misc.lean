@@ -1,7 +1,7 @@
-import Mathbin.Analysis.InnerProductSpace.Calculus
-import Mathbin.Analysis.InnerProductSpace.L2Space
-import Project.ToMathlib.Analysis.Calculus.AffineMap
-import Project.ToMathlib.Logic.Equiv.LocalEquiv
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.InnerProductSpace.L2Space
+import SphereEversion.ToMathlib.Analysis.Calculus.AffineMap
+import SphereEversion.ToMathlib.Logic.Equiv.LocalEquiv
 
 variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
 

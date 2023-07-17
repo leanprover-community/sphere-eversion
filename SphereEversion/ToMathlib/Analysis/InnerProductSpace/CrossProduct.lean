@@ -5,9 +5,9 @@ Authors: Heather Macbeth
 
 ! This file was ported from Lean 3 source module to_mathlib.analysis.inner_product_space.cross_product
 -/
-import Mathbin.Analysis.InnerProductSpace.Dual
-import Mathbin.Analysis.InnerProductSpace.Orientation
-import Mathbin.Tactic.NormFin
+import Mathlib.Analysis.InnerProductSpace.Dual
+import Mathlib.Analysis.InnerProductSpace.Orientation
+import Mathlib.Tactic.NormFin
 
 /-! # The cross-product on an oriented real inner product space of dimension three -/
 

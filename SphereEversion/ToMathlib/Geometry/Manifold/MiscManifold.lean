@@ -1,7 +1,7 @@
-import Project.ToMathlib.Analysis.Calculus
-import Mathbin.Geometry.Manifold.ContMdiffMfderiv
-import Mathbin.Geometry.Manifold.Algebra.Monoid
-import Mathbin.Geometry.Manifold.Metrizable
+import SphereEversion.ToMathlib.Analysis.Calculus
+import Mathlib.Geometry.Manifold.ContMdiffMfderiv
+import Mathlib.Geometry.Manifold.Algebra.Monoid
+import Mathlib.Geometry.Manifold.Metrizable
 
 open Bundle Set Function Filter
 

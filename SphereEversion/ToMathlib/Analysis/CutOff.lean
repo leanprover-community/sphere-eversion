@@ -1,6 +1,6 @@
-import Mathbin.Geometry.Manifold.PartitionOfUnity
-import Mathbin.Topology.MetricSpace.EmetricParacompact
-import Project.ToMathlib.Topology.NhdsSet
+import Mathlib.Geometry.Manifold.PartitionOfUnity
+import Mathlib.Topology.MetricSpace.EmetricParacompact
+import SphereEversion.ToMathlib.Topology.NhdsSet
 
 open Set Filter
 

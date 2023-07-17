@@ -1,5 +1,5 @@
-import Mathbin.Data.Set.Finite
-import Mathbin.Data.Finite.Set
+import Mathlib.Data.Set.Finite
+import Mathlib.Data.Finite.Set
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (i «expr ∉ » t) -/
 theorem Set.finite_Union' {α ι : Type _} {s : ι → Set α} (hs : ∀ i, (s i).Finite) {t : Set ι}

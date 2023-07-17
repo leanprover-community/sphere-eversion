@@ -1,4 +1,4 @@
-import Project.ToMathlib.Partition
+import SphereEversion.ToMathlib.Partition
 
 noncomputable section
 

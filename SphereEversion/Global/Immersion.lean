@@ -1,8 +1,8 @@
-import Mathbin.Geometry.Manifold.Instances.Sphere
-import Project.ToMathlib.LinearAlgebra.FiniteDimensional
-import Project.ToMathlib.Analysis.InnerProductSpace.Rotation
-import Project.Global.Gromov
-import Project.Global.TwistOneJetSec
+import Mathlib.Geometry.Manifold.Instances.Sphere
+import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
+import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
+import SphereEversion.Global.Gromov
+import SphereEversion.Global.TwistOneJetSec
 
 -- import interactive_expr
 -- import interactive_expr

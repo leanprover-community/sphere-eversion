@@ -1,6 +1,6 @@
-import Mathbin.Analysis.Convex.Combination
-import Mathbin.Algebra.Module.BigOperators
-import Mathbin.Algebra.Order.Hom.Ring
+import Mathlib.Analysis.Convex.Combination
+import Mathlib.Algebra.Module.BigOperators
+import Mathlib.Algebra.Order.Hom.Ring
 
 open scoped BigOperators
 
