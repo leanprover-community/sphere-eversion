@@ -1,9 +1,7 @@
-src/all.lean
 decls.pickle
 decls.yaml
-*.olean
-/_target
-/leanpkg.path
+/build
+/lake-packages/*
 .python-version
 .vscode
 
