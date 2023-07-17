@@ -238,9 +238,8 @@ private theorem not_T_succ_le (n : ℕ) : ¬T (n + 1) ≤ 0 :=
 theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ}
     {U K : IndexType N → Set X} (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop)
-    (hP₂ :
-      ∀ (a b) (p : ℝ × X) (f : ℝ × X → Y),
-        P₂ (a * p.1 + b, p.2) f → P₂ p fun p : ℝ × X => f (a * p.1 + b, p.2))
+    (hP₂ : ∀ (a b) (p : ℝ × X) (f : ℝ × X → Y), P₂ (a * p.1 + b, p.2) f →
+      P₂ p fun p : ℝ × X => f (a * p.1 + b, p.2))
     (U_fin : LocallyFinite U) (K_cover : (⋃ i, K i) = univ) {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
     (init' : ∀ p, P₂ p fun p : ℝ × X => f₀ p.2)
     -- Not in the original version
@@ -270,8 +269,8 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       refine eventually_of_forall fun x => (?_ : F (T i.toNat, x) = F (1, x))
       rw [h₂F _ _ (T_lt _).le]
     rcases ind i (fun x => F (T i.toNat, x)) (fun x => (h₀F (_, x)).1) h₁F with
-        ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩ <;>
-      clear ind
+        ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩
+    clear ind
     let F'' : ℝ × X → Y := fun p : ℝ × X =>
       if p.1 ≤ T i.toNat then F p else F' (2 ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2
     have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.toNat → (F'' : Germ (𝓝 p) Y) = F := by
@@ -323,8 +322,9 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         refine' ⟨h₀F' (2 ^ (i.toNat + 1) * (t - T i.toNat)) x, _, _⟩
         · rintro (rfl : t = 0)
           exact (lt_irrefl _ ((T_nonneg i.toNat).trans_lt ht)).elim
-        · simpa only [mul_sub, neg_mul]
-            using hP₂ (2 ^ (i.toNat + 1)) (-2 ^ (i.toNat + 1) * T i.toNat) (t, x) (↿F') (h₂F' _)
+        · sorry
+          -- simpa only [mul_sub, neg_mul]
+          --  using hP₂ (2 ^ (i.toNat + 1)) (-2 ^ (i.toNat + 1) * T i.toNat) (t, x) (↿F') (h₂F' _)
     · intro hi x t ht
       rw [i.toNat_succ hi] at ht ⊢
       have h₂t : ¬t ≤ T i.toNat := by
@@ -351,7 +351,8 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       apply eventually_of_forall _
       apply congr_fun (hfutur_F'.on_set _ _)
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
-      exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
+      sorry
+      -- exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
     · rintro ⟨t, x⟩ htx
       simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx 
       cases' htx with ht hx

@@ -19,13 +19,12 @@ variable [Module R₁ M₁] [Module R₁ M₂] [Module R₁ M₃]
 theorem fst_prod_zero_add_zero_prod_snd [ContinuousAdd M₁] [ContinuousAdd M₂] :
     (ContinuousLinearMap.fst R₁ M₁ M₂).prod 0 +
         ContinuousLinearMap.prod 0 (ContinuousLinearMap.snd R₁ M₁ M₂) =
-      ContinuousLinearMap.id R₁ (M₁ × M₂) :=
-  by
+      ContinuousLinearMap.id R₁ (M₁ × M₂) := by
   rw [ContinuousLinearMap.ext_iff]
   intro x
   simp_rw [ContinuousLinearMap.add_apply, ContinuousLinearMap.id_apply,
     ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_fst', ContinuousLinearMap.coe_snd',
-    ContinuousLinearMap.zero_apply, Prod.mk_add_mk, add_zero, zero_add, Prod.mk.eta]
+    ContinuousLinearMap.zero_apply, Prod.mk_add_mk, add_zero, zero_add]
 
 end ContinuousLinearMap
 
@@ -42,9 +41,7 @@ variable {R₁ : Type _} {R₂ : Type _} {R₃ : Type _} [Semiring R₁] [Semiri
 section
 
 theorem Function.Surjective.clm_comp_injective {g : M₁ →SL[σ₁₂] M₂} (hg : Function.Surjective g) :
-    Function.Injective fun f : M₂ →SL[σ₂₃] M₃ => f.comp g :=
-  by
-  intro f f' hff'
+    Function.Injective fun f : M₂ →SL[σ₂₃] M₃ => f.comp g := fun f f' hff' ↦ by
   rw [ContinuousLinearMap.ext_iff] at hff' ⊢
   intro x
   obtain ⟨y, rfl⟩ := hg x
@@ -55,16 +52,14 @@ end
 namespace ContinuousLinearEquiv
 
 theorem cancel_right {f f' : M₂ →SL[σ₂₃] M₃} {e : M₁ ≃SL[σ₁₂] M₂} :
-    f.comp (e : M₁ →SL[σ₁₂] M₂) = f'.comp (e : M₁ →SL[σ₁₂] M₂) ↔ f = f' :=
-  by
+    f.comp (e : M₁ →SL[σ₁₂] M₂) = f'.comp (e : M₁ →SL[σ₁₂] M₂) ↔ f = f' := by
   constructor
   · simp_rw [ContinuousLinearMap.ext_iff, ContinuousLinearMap.comp_apply, coe_coe]
     intro h v; rw [← e.apply_symm_apply v, h]
   · rintro rfl; rfl
 
 theorem cancel_left {e : M₂ ≃SL[σ₂₃] M₃} {f f' : M₁ →SL[σ₁₂] M₂} :
-    (e : M₂ →SL[σ₂₃] M₃).comp f = (e : M₂ →SL[σ₂₃] M₃).comp f' ↔ f = f' :=
-  by
+    (e : M₂ →SL[σ₂₃] M₃).comp f = (e : M₂ →SL[σ₂₃] M₃).comp f' ↔ f = f' := by
   constructor
   · simp_rw [ContinuousLinearMap.ext_iff, ContinuousLinearMap.comp_apply, coe_coe]
     intro h v; rw [← e.symm_apply_apply (f v), h, e.symm_apply_apply]

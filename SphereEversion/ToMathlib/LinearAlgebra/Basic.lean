@@ -14,10 +14,9 @@ theorem Submodule.sup_eq_span_union (s t : Submodule R M) : s ⊔ t = span R (s 
   rw [span_union, span_eq s, span_eq t]
 
 theorem Submodule.sup_eq_top_iff (s t : Submodule R M) :
-    s ⊔ t = ⊤ ↔ ∀ m : M, ∃ u ∈ s, ∃ v ∈ t, m = u + v :=
-  by
+    s ⊔ t = ⊤ ↔ ∀ m : M, ∃ u ∈ s, ∃ v ∈ t, m = u + v := by
   rw [eq_top_iff']
-  apply forall_congr' fun m => _
+  refine forall_congr' fun m => ?_
   rw [mem_sup]
   tauto
 
@@ -44,14 +43,14 @@ theorem Submodule.map_inf {f : M →ₛₗ[σ₁₂] M₂} (h : Injective f) (p 
 
 theorem LinearMap.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (hpq : p ⊓ q = ⊥)
     (hpq' : p ⊔ q = ⊤) :
-    Injective f ↔ Disjoint p f.ker ∧ Disjoint q f.ker ∧ Disjoint (map f p) (map f q) :=
-  by
+    Injective f ↔ Disjoint p (LinearMap.ker f) ∧ Disjoint q (LinearMap.ker f) ∧
+      Disjoint (map f p) (map f q) := by
   constructor
   · intro h
-    simp [disjoint_iff_inf_le, linear_map.ker_eq_bot.mpr h, ← Submodule.map_inf h, hpq]
+    simp [disjoint_iff_inf_le, LinearMap.ker_eq_bot.mpr h, ← Submodule.map_inf h, hpq]
   · rintro ⟨hp, hq, h⟩
     rw [LinearMap.disjoint_ker] at *
-    rw [← LinearMap.ker_eq_bot, ← @inf_top_eq _ _ _ f.ker, ← hpq']
+    rw [← LinearMap.ker_eq_bot, ← @inf_top_eq _ _ _ (LinearMap.ker f), ← hpq']
     rw [← le_bot_iff]
     rintro x ⟨hx, hx' : x ∈ p ⊔ q⟩
     rcases mem_sup.mp hx' with ⟨u, hu, v, hv, rfl⟩
@@ -71,8 +70,7 @@ end
 
 theorem LinearMap.ker_inf_eq_bot {R : Type _} {R₂ : Type _} {M : Type _} {M₂ : Type _} [Ring R]
     [Ring R₂] [AddCommGroup M] [AddCommGroup M₂] [Module R M] [Module R₂ M₂] {τ₁₂ : R →+* R₂}
-    {f : M →ₛₗ[τ₁₂] M₂} {S : Submodule R M} : LinearMap.ker f ⊓ S = ⊥ ↔ Set.InjOn f S :=
-  by
+    {f : M →ₛₗ[τ₁₂] M₂} {S : Submodule R M} : LinearMap.ker f ⊓ S = ⊥ ↔ Set.InjOn f S := by
   rw [Set.injOn_iff_injective, inf_comm, ← disjoint_iff, LinearMap.disjoint_ker']
   constructor
   · intro h x y hxy
