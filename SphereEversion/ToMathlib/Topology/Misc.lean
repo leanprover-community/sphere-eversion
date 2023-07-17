@@ -471,7 +471,8 @@ theorem isOpen_affineIndependent (𝕜 E : Type _) {ι : Type _} [NontriviallyNo
   convert_to
     IsOpen ((fun (p : ι → E) (i : ι') => p i -ᵥ p i₀) ⁻¹' {p : ι' → E | LinearIndependent 𝕜 p})
   refine' IsOpen.preimage _ isOpen_setOf_linearIndependent
-  exact continuous_pi fun i' => (continuous_apply i'.1).vsub <| continuous_apply i₀
+  exact continuous_pi fun i' =>
+    (continuous_apply (π := fun _ : ι ↦ E) i'.1).vsub <| continuous_apply i₀
 
 end
 
@@ -514,7 +515,7 @@ theorem Continuous.image_connectedComponentIn_subset {f : α → β} {s : Set α
 theorem Homeomorph.image_connectedComponentIn (f : α ≃ₜ β) {s : Set α} {x : α} (hx : x ∈ s) :
     f '' connectedComponentIn s x = connectedComponentIn (f '' s) (f x) := by
   refine' (f.continuous.image_connectedComponentIn_subset hx).antisymm _
-  have := f.symm.continuous.image_connectedComponentIn_subset (mem_image_of_mem _ hx)
+  have := f.symm.continuous.image_connectedComponentIn_subset (mem_image_of_mem f hx)
   rwa [image_subset_iff, f.preimage_symm, f.image_symm, f.preimage_image, f.symm_apply_apply]
     at this 
 
