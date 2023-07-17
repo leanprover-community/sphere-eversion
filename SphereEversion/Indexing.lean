@@ -1,4 +1,4 @@
-import Mathlib.Tactic.Linarith.Default
+import Mathlib.Tactic.Linarith
 import Mathlib.Algebra.Order.WithZero
 import Mathlib.Topology.LocallyFinite
 import Mathlib.Data.Fin.Interval
@@ -23,11 +23,11 @@ def IndexType (n : ℕ) : Type :=
 
 def IndexType.fromNat : ∀ {N : ℕ}, ℕ → IndexType N
   | 0 => id
-  | N + 1 => (coe : ℕ → Fin (N + 1))
+  | N + 1 => (Nat.cast : ℕ → Fin (N + 1))
 
 def IndexType.toNat : ∀ {N}, IndexType N → ℕ
   | 0 => id
-  | N + 1 => Fin.val
+  | _ + 1 => Fin.val
 
 @[simp]
 theorem indexType_zero : IndexType 0 = ℕ :=
@@ -42,7 +42,7 @@ theorem indexType_of_zero_lt {n : ℕ} (h : 0 < n) : IndexType n = Fin n := by
   rw [← Nat.succ_pred_eq_of_pos h, indexType_succ]
 
 instance (n : ℕ) : LinearOrder (IndexType n) :=
-  Nat.casesOn n Nat.linearOrder fun _ => Fin.linearOrder
+  Nat.casesOn n Nat.linearOrder fun _ => inferInstanceAs (LinearOrder (Fin _))
 
 instance (n : ℕ) : LocallyFiniteOrder (IndexType n) :=
   Nat.casesOn n Nat.locallyFiniteOrder fun _ => Fin.locallyFiniteOrder _
@@ -80,7 +80,7 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type _} {s : Set
       exact set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩
 
 theorem IndexType.not_lt_zero {N : ℕ} (j : IndexType N) : ¬j < 0 :=
-  Nat.casesOn N Nat.not_lt_zero (fun n => Fin.not_lt_zero) j
+  Nat.casesOn N Nat.not_lt_zero (fun _ => Fin.not_lt_zero) j
 
 open Order Fin
 
@@ -91,7 +91,7 @@ instance {N : ℕ} : SuccOrder (IndexType N) := by cases N; · exact Nat.succOrd
 def IndexType.succ {N : ℕ} : IndexType N → IndexType N :=
   Order.succ
 
-theorem IndexType.succ_castSuccEmb {N} (i : Fin N) : @IndexType.succ (N + 1) i.cast_succ = i.succ :=
+theorem IndexType.succ_castSuccEmb {N} (i : Fin N) : @IndexType.succ (N + 1) i.castSucc = i.succ :=
   by
   refine' (succ_apply _).trans _
   rw [if_pos (cast_succ_lt_last i), Fin.coeSucc_eq_succ, Fin.succ_inj]
@@ -159,10 +159,9 @@ theorem IndexType.induction {N : ℕ} {P : IndexType N → Prop} (h₀ : P 0)
 theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N → α → Prop)
     (Q : IndexType N → α → α → Prop) (h₀ : ∃ a, P 0 a)
     (ih : ∀ n a, P n a → ¬IsMax n → ∃ a', P n.succ a' ∧ Q n a a') :
-    ∃ f : IndexType N → α, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) :=
-  by
+    ∃ f : IndexType N → α, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) := by
   revert P Q h₀ ih
-  cases N
+  cases' N with N
   · intro P Q h₀ ih
     rcases exists_by_induction' P Q h₀ _ with ⟨f, hf⟩
     exact ⟨f, fun n => ⟨(hf n).1, fun _ => (hf n).2⟩⟩
@@ -171,17 +170,16 @@ theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N �
     intro P Q h₀ ih
     choose f₀ hf₀ using h₀
     choose! F hF hF' using ih
-    let G := fun i : Fin N => F i.cast_succ
+    let G := fun i : Fin N => F i.castSucc
     let f : Fin (N + 1) → α := fun i => Fin.induction f₀ G i
-    have key : ∀ i, P i (f i) :=
-      by
+    have key : ∀ i, P i (f i) := by
       refine' fun i => Fin.induction hf₀ _ i
       intro i hi
-      simp_rw [f, induction_succ, ← IndexType.succ_castSuccEmb]
+      simp_rw [induction_succ, ← IndexType.succ_castSuccEmb]
       apply hF _ _ hi
       exact not_isMax_of_lt (cast_succ_lt_succ i)
     refine' ⟨f, fun i => ⟨key i, fun hi => _⟩⟩
     · convert hF' _ _ (key i) hi
-      rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩
+      rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩
       simp_rw [IndexType.succ_castSuccEmb, f, induction_succ]
 
