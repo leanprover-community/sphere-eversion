@@ -35,8 +35,8 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x
           simp only [extend_div_self, Icc.mk_zero, zero_le_one, id.def, zero_div, forall_eq,
             extend_extends, Path.source, left_mem_Icc, sub_self])
     -- TODO: the following are provable by `continuity` but it is too slow
-    exacts [γ.continuous_extend.comp (continuous_subtype_coe.div_const _),
-      γ'.continuous_extend.comp ((continuous_subtype_coe.sub continuous_const).div_const _)]
+    exacts [γ.continuous_extend.comp (continuous_subtype_val.div_const _),
+      γ'.continuous_extend.comp ((continuous_subtype_val.sub continuous_const).div_const _)]
   source' := by
     simp only [unitInterval.nonneg', Icc.coe_zero, Icc.mk_zero, zero_le_one, if_true, zero_div,
       comp_app, extend_extends, Path.source, left_mem_Icc]
@@ -130,8 +130,8 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
   · rw [continuous_iff_continuousAt]
     intro x
     refine'
-      (continuous_subtype_coe.comp hs).continuousAt.comp_div_cases (fun x s => (γ x).extend s)
-        (continuous_subtype_coe.comp ht).continuousAt _ _
+      (continuous_subtype_val.comp hs).continuousAt.comp_div_cases (fun x s => (γ x).extend s)
+        (continuous_subtype_val.comp ht).continuousAt _ _
     · intro h
       refine' ContinuousAt.path_extend _ _ continuousAt_snd
       exact hγ.continuous_at.comp (continuous_at_fst.fst.prod continuousAt_snd)
@@ -143,10 +143,10 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
   · rw [continuous_iff_continuousAt]
     intro x
     refine'
-      ((continuous_subtype_coe.comp hs).sub
-              (continuous_subtype_coe.comp ht)).continuousAt.comp_div_cases
+      ((continuous_subtype_val.comp hs).sub
+              (continuous_subtype_val.comp ht)).continuousAt.comp_div_cases
         (fun x s => (γ' x).extend s)
-        (continuous_const.sub <| continuous_subtype_coe.comp ht).continuousAt _ _
+        (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt _ _
     · intro h
       refine' ContinuousAt.path_extend _ _ continuousAt_snd
       exact hγ'.continuous_at.comp (continuous_at_fst.fst.prod continuousAt_snd)
