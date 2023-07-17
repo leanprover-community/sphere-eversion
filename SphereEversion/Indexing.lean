@@ -41,33 +41,30 @@ theorem indexType_succ (n : ℕ) : IndexType (n + 1) = Fin (n + 1) :=
 theorem indexType_of_zero_lt {n : ℕ} (h : 0 < n) : IndexType n = Fin n := by
   rw [← Nat.succ_pred_eq_of_pos h, indexType_succ]
 
-instance (n : ℕ) : LinearOrder (IndexType n) :=
-  Nat.casesOn n Nat.linearOrder fun _ => inferInstanceAs (LinearOrder (Fin _))
-
-instance (n : ℕ) : LocallyFiniteOrder (IndexType n) :=
-  Nat.casesOn n Nat.locallyFiniteOrder fun _ => Fin.locallyFiniteOrder _
-
-instance (n : ℕ) : OrderBot (IndexType n) :=
-  Nat.casesOn n Nat.orderBot fun k => show OrderBot <| Fin (k + 1) by infer_instance
-
-instance (N : ℕ) : Zero (IndexType N) :=
-  ⟨IndexType.fromNat 0⟩
+set_option hygiene false in
+run_cmd
+  for n in [`LinearOrder, `LocallyFiniteOrder, `OrderBot, `Zero, `SuccOrder].map Lean.mkIdent do
+  Lean.Elab.Command.elabCommand (← `(
+    instance : ∀ n, $n (IndexType n)
+    | 0 => inferInstanceAs ($n ℕ)
+    | (N + 1) => inferInstanceAs ($n (Fin (N + 1)))
+  ))
 
 theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type _} {s : Set α}
-    (hne : s.Nonempty) : s.Countable ↔ ∃ n, Nonempty (IndexType n ≃ s) :=
-  by
+    (hne : s.Nonempty) : s.Countable ↔ ∃ n, Nonempty (IndexType n ≃ s) := by
   -- Huge golfing opportunity.
-  cases @Set.finite_or_infinite _ s
-  · refine' ⟨fun hh => ⟨h.to_finset.card, _⟩, fun _ => h.countable⟩
-    have : 0 < h.to_finset.card := by rw [Finset.card_pos];
+  cases' s.finite_or_infinite with h h
+  · refine' ⟨fun _ => ⟨h.toFinset.card, _⟩, fun _ => h.countable⟩
+    have : 0 < h.toFinset.card := by
+      rw [Finset.card_pos]
       exact (Set.Finite.toFinset_nonempty h).mpr hne
     simp only [this, indexType_of_zero_lt]
-    have e₁ := Fintype.equivFin h.to_finset
-    rw [Fintype.card_coe, h.coe_sort_to_finset] at e₁ 
+    have e₁ := Fintype.equivFin h.toFinset
+    rw [Fintype.card_coe, h.coeSort_toFinset] at e₁ 
     exact ⟨e₁.symm⟩
   · refine' ⟨fun hh => ⟨0, _⟩, _⟩
     · simp only [indexType_zero]
-      obtain ⟨_i⟩ := set.countable_infinite_iff_nonempty_denumerable.mp ⟨hh, h⟩
+      obtain ⟨_i⟩ := Set.countable_infinite_iff_nonempty_denumerable.mp ⟨hh, h⟩
       haveI := _i
       exact ⟨(Denumerable.eqv s).symm⟩
     · rintro ⟨n, ⟨fn⟩⟩
@@ -75,9 +72,9 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type _} {s : Set
         by_contra hn
         replace hn : 0 < n := zero_lt_iff.mpr hn
         simp only [hn, indexType_of_zero_lt] at fn 
-        exact set.not_infinite.mpr ⟨Fintype.ofEquiv (Fin n) fn⟩ h
+        exact Set.not_infinite.mpr ⟨Fintype.ofEquiv (Fin n) fn⟩ h
       simp only [hn, indexType_zero] at fn 
-      exact set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩
+      exact Set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩
 
 theorem IndexType.not_lt_zero {N : ℕ} (j : IndexType N) : ¬j < 0 :=
   Nat.casesOn N Nat.not_lt_zero (fun _ => Fin.not_lt_zero) j
@@ -86,13 +83,10 @@ open Order Fin
 
 theorem IndexType.zero_le {N} (i : IndexType N) : 0 ≤ i := by cases N <;> dsimp at * <;> simp
 
-instance {N : ℕ} : SuccOrder (IndexType N) := by cases N; · exact Nat.succOrder; exact Fin.succOrder
+def IndexType.succ {N : ℕ} : IndexType N → IndexType N := Order.succ
 
-def IndexType.succ {N : ℕ} : IndexType N → IndexType N :=
-  Order.succ
-
-theorem IndexType.succ_castSuccEmb {N} (i : Fin N) : @IndexType.succ (N + 1) i.castSucc = i.succ :=
-  by
+theorem IndexType.succ_castSuccEmb {N} (i : Fin N) :
+    @IndexType.succ (N + 1) i.castSucc = i.succ := by
   refine' (succ_apply _).trans _
   rw [if_pos (castSucc_lt_last i), Fin.coeSucc_eq_succ, Fin.succ_inj]
 
@@ -103,18 +97,18 @@ theorem IndexType.lt_succ {N : ℕ} (i : IndexType N) (h : ¬IsMax i) : i < i.su
   Order.lt_succ_of_not_isMax h
 
 theorem IndexType.le_max {N : ℕ} {i : IndexType N} (h : IsMax i) (j) : j ≤ i :=
-  h.IsTop j
+  h.isTop j
 
-theorem IndexType.le_of_lt_succ {N : ℕ} (i : IndexType N) {j : IndexType N} (h : i < j.succ) :
-    i ≤ j :=
+nonrec theorem IndexType.le_of_lt_succ {N : ℕ} (i : IndexType N) {j : IndexType N}
+    (h : i < j.succ) : i ≤ j :=
   le_of_lt_succ h
 
-theorem IndexType.exists_castSuccEmb_eq {N : ℕ} (i : Fin (N + 1)) (hi : ¬IsMax i) :
+theorem IndexType.exists_castSucc_eq {N : ℕ} (i : IndexType (N + 1)) (hi : ¬IsMax i) :
     ∃ i' : Fin N, i'.castSucc = i := by
   revert hi
   refine' Fin.lastCases _ _ i
-  · intro hi; apply hi.elim; intro i hi; exact le_last i
-  intro i hi
+  · intro hi; apply hi.elim; intro i _; exact le_last i
+  intro i _
   exact ⟨_, rfl⟩
 
 theorem IndexType.toNat_succ {N : ℕ} (i : IndexType N) (hi : ¬IsMax i) :
@@ -122,7 +116,7 @@ theorem IndexType.toNat_succ {N : ℕ} (i : IndexType N) (hi : ¬IsMax i) :
   cases N; · rfl
   rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩
   rw [IndexType.succ_castSuccEmb]
-  exact coe_succ i
+  exact val_succ i
 
 @[simp]
 theorem IndexType.not_isMax (n : IndexType 0) : ¬IsMax n :=
@@ -163,9 +157,8 @@ theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N �
   revert P Q h₀ ih
   cases' N with N
   · intro P Q h₀ ih
-    rcases exists_by_induction' P Q h₀ _ with ⟨f, hf⟩
+    rcases exists_by_induction' P Q h₀ (by simpa using ih) with ⟨f, hf⟩
     exact ⟨f, fun n => ⟨(hf n).1, fun _ => (hf n).2⟩⟩
-    simpa using ih
   · --dsimp only [index_type, index_type.succ],
     intro P Q h₀ ih
     choose f₀ hf₀ using h₀
@@ -181,5 +174,5 @@ theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N �
     refine' ⟨f, fun i => ⟨key i, fun hi => _⟩⟩
     · convert hF' _ _ (key i) hi
       rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩
-      simp_rw [IndexType.succ_castSuccEmb, f, induction_succ]
+      simp_rw [IndexType.succ_castSuccEmb, induction_succ]
 
