@@ -6,7 +6,7 @@ import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Order.Filter.Basic
 import SphereEversion.Indexing
 import SphereEversion.Notations
-import SphereEversion.InteractiveExpr
+-- import SphereEversion.InteractiveExpr
 import Mathlib.Tactic.Induction
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/

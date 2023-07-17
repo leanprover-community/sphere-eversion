@@ -4,7 +4,7 @@ import SphereEversion.ToMathlib.Topology.Algebra.Order.Basic
 import SphereEversion.Loops.Exists
 import SphereEversion.Local.Corrugation
 import SphereEversion.Local.AmpleRelation
-import SphereEversion.InteractiveExpr
+-- import SphereEversion.InteractiveExpr
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true

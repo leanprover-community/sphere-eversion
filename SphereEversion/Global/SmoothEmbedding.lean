@@ -9,7 +9,7 @@ import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Geometry.Manifold.ChartedSpace
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
-import SphereEversion.InteractiveExpr
+-- import SphereEversion.InteractiveExpr
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
 set_option trace.filter_inst_type true
