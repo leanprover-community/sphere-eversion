@@ -220,7 +220,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   · intro x s; simp_rw [γ, Loop.coe_mk, smooth_transition.zero_of_nonpos le_rfl]; rw [hγ₅C]
     exact hγ₃.t₀ x (fract s)
     exact Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
-  · intro x t s; simp_rw [γ, Loop.coe_mk, smooth_transition_proj_I]
+  · intro x t s; simp_rw [γ, Loop.coe_mk, smooth_transition_projI]
   · rintro x -; apply hγε₁; intro s
     simp_rw [← (γ₃ x 1).fract_eq s, γ, Loop.coe_mk, smooth_transition.one_of_one_le le_rfl]
     exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans <| min_le_right _ _)
@@ -232,7 +232,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     rw [dist_comm, dist_prod_same_left]
     refine' (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le _ _)
     refine' (is_compact_Icc.prod is_compact_Icc).bddBelow_image (h2f x).continuousOn
-    rw [← hγ₃.proj_I]
+    rw [← hγ₃.projI]
     simp_rw [f, if_pos hΩ]
     apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
   · refine' eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s => _

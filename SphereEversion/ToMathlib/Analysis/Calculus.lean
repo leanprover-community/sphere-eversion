@@ -15,9 +15,9 @@ theorem smoothTransition_projI {x : ℝ} : smoothTransition (projI x) = smoothTr
   by
   cases' le_total (0 : ℝ) x with hx hx
   cases' le_total (1 : ℝ) x with h2x h2x
-  · rw [proj_I_eq_one.mpr h2x, smooth_transition.one_of_one_le h2x, smooth_transition.one]
-  · rw [proj_I_eq_self.mpr ⟨hx, h2x⟩]
-  · rw [proj_I_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx, smooth_transition.zero]
+  · rw [projI_eq_one.mpr h2x, smooth_transition.one_of_one_le h2x, smooth_transition.one]
+  · rw [projI_eq_self.mpr ⟨hx, h2x⟩]
+  · rw [projI_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx, smooth_transition.zero]
 
 end Real
 

@@ -138,7 +138,7 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
     · intro h
       have ht : t x = 0 := Subtype.ext h
       apply Filter.Tendsto.path_extend
-      dsimp only; rw [(proj_Icc_surjective _).filter_map_top, extend_zero]
+      dsimp only; rw [(projIcc_surjective _).filter_map_top, extend_zero]
       refine' tendsto_prod_top_iff.mpr (hγ0 ht)
   · rw [continuous_iff_continuousAt]
     intro x
@@ -153,7 +153,7 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
     · intro h
       have ht : t x = 1 := Subtype.ext (sub_eq_zero.mp h).symm
       apply Filter.Tendsto.path_extend
-      dsimp only; rw [(proj_Icc_surjective _).filter_map_top, extend_zero]
+      dsimp only; rw [(projIcc_surjective _).filter_map_top, extend_zero]
       refine' tendsto_prod_top_iff.mpr (hγ'1 ht)
   · rintro x h; rw [h, sub_self, zero_div, extend_div_self, extend_zero]
 

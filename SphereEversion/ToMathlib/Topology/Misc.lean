@@ -275,7 +275,7 @@ section projI
 
 variable {α β : Type _} [LinearOrderedSemiring α] {x c : α}
 
-/-- If `α` is a `linear_ordered_semiring`, then `proj_I : α → α` projection of `α` onto the unit
+/-- If `α` is a `linear_ordered_semiring`, then `projI : α → α` projection of `α` onto the unit
 interval `[0, 1]`. -/
 def projI : α → α := fun x => projIcc (0 : α) 1 zero_le_one x
 

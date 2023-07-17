@@ -183,13 +183,13 @@ theorem linearReparam_projI {t : ℝ} : linearReparam (projI t) = projI (linearR
   rw [eq_comm]
   rcases le_total 0 t with (h1t | h1t)
   rcases le_total t 1 with (h2t | h2t)
-  · rw [proj_I_eq_self.mpr ⟨h1t, h2t⟩, projI_eq_self]
+  · rw [projI_eq_self.mpr ⟨h1t, h2t⟩, projI_eq_self]
     refine'
       ⟨linearReparam_nonneg (le_trans (by norm_num1) h1t),
         linearReparam_le_one (h2t.trans (by norm_num1))⟩
-  · rw [proj_I_eq_one.mpr h2t, linearReparam_one, projI_eq_one]
+  · rw [projI_eq_one.mpr h2t, linearReparam_one, projI_eq_one]
     exact one_le_linearReparam (le_trans (by norm_num1) h2t)
-  · rw [proj_I_eq_zero.mpr h1t, linearReparam_zero, projI_eq_zero]
+  · rw [projI_eq_zero.mpr h1t, linearReparam_zero, projI_eq_zero]
     exact linearReparam_nonpos (h1t.trans (by norm_num1))
 
 @[simp]

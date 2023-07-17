@@ -463,12 +463,12 @@ theorem surroundingLoop_projI (t : ℝ) :
 -- unused
 theorem surroundingLoop_of_le_zero (s : ℝ) {t : ℝ} (ht : t ≤ 0) :
     surroundingLoop O_conn hp hb t s = b := by
-  rw [← surroundingLoop_projI, proj_I_eq_zero.mpr ht, surroundingLoop_zero_left]
+  rw [← surroundingLoop_projI, projI_eq_zero.mpr ht, surroundingLoop_zero_left]
 
 -- unused
 theorem surroundingLoop_of_ge_one (s : ℝ) {t : ℝ} (ht : 1 ≤ t) :
     surroundingLoop O_conn hp hb t s = surroundingLoop O_conn hp hb 1 s := by
-  rw [← surroundingLoop_projI t, proj_I_eq_one.mpr ht]
+  rw [← surroundingLoop_projI t, projI_eq_one.mpr ht]
 
 theorem surrounding_loop_of_convexHull [FiniteDimensional ℝ F] {f b : F} {O : Set F}
     (O_op : IsOpen O) (O_conn : IsConnected O) (hsf : f ∈ convexHull ℝ O) (hb : b ∈ O) :
@@ -510,13 +510,13 @@ protected theorem one (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : γ x 
   rw [Loop.one, h.base]
 
 protected theorem t_le_zero (h : SurroundingFamily g b γ U) (x : E) (s : ℝ) {t : ℝ} (ht : t ≤ 0) :
-    γ x t s = γ x 0 s := by rw [← h.proj_I, proj_I_eq_zero.mpr ht]
+    γ x t s = γ x 0 s := by rw [← h.projI, projI_eq_zero.mpr ht]
 
 protected theorem t_le_zero_eq_b (h : SurroundingFamily g b γ U) (x : E) (s : ℝ) {t : ℝ}
     (ht : t ≤ 0) : γ x t s = b x := by rw [h.t_le_zero x s ht, h.t₀]
 
 protected theorem t_ge_one (h : SurroundingFamily g b γ U) (x : E) (s : ℝ) {t : ℝ} (ht : 1 ≤ t) :
-    γ x t s = γ x 1 s := by rw [← h.proj_I, proj_I_eq_one.mpr ht]
+    γ x t s = γ x 1 s := by rw [← h.projI, projI_eq_one.mpr ht]
 
 protected theorem mono (h : SurroundingFamily g b γ U) {V : Set E} (hVU : V ⊆ U) :
     SurroundingFamily g b γ V :=
@@ -619,7 +619,7 @@ theorem to_sf (h : SurroundingFamilyIn g b γ U Ω) : SurroundingFamily g b γ U
 
 theorem val_in (h : SurroundingFamilyIn g b γ U Ω) {x : E} (hx : x ∈ U) {t : ℝ} {s : ℝ} :
     (x, γ x t s) ∈ Ω := by
-  rw [← Loop.fract_eq, ← h.proj_I]
+  rw [← Loop.fract_eq, ← h.projI]
   exact h.val_in' x hx (projI t) projI_mem_Icc (fract s) (unitInterval.fract_mem s)
 
 protected theorem mono (h : SurroundingFamilyIn g b γ U Ω) {V : Set E} (hVU : V ⊆ U) :
@@ -634,7 +634,7 @@ protected theorem reparam (h : SurroundingFamilyIn g b γ U Ω) :
   refine' ⟨⟨_, _, _, _, _⟩, _⟩
   · intro x t; simp_rw [Loop.reparam_apply, linearReparam_zero, h.base]
   · intro x s; simp_rw [Loop.reparam_apply, linearReparam_zero, h.t₀]
-  · intro x t s; simp_rw [Loop.reparam_apply, linearReparam_projI, h.proj_I]
+  · intro x t s; simp_rw [Loop.reparam_apply, linearReparam_projI, h.projI]
   · intro x hx; simp_rw [linearReparam_one]
     exact (h.surrounds x hx).reparam continuous_linearReparam
   ·
@@ -779,14 +779,14 @@ theorem sfHomotopy_zero : sfHomotopy h₀ h₁ 0 = γ₀ :=
   by
   ext x t s
   simp only [sfHomotopy, one_mul, ρ_eq_one_of_nonpos, SurroundingFamily.path_extend_fract, sub_zero,
-    Loop.ofPath_apply, Icc.mk_one, proj_Icc_right, Path.strans_one, h₀.proj_I]
+    Loop.ofPath_apply, Icc.mk_one, projIcc_right, Path.strans_one, h₀.projI]
 
 @[simp]
 theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ :=
   by
   ext x t s
   simp only [sfHomotopy, Path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos,
-    SurroundingFamily.path_extend_fract, proj_Icc_left, Loop.ofPath_apply, sub_self, h₁.proj_I]
+    SurroundingFamily.path_extend_fract, projIcc_left, Loop.ofPath_apply, sub_self, h₁.projI]
 
 theorem Continuous.sfHomotopy {X : Type _} [UniformSpace X] [SeparatedSpace X]
     [LocallyCompactSpace X] {τ t s : X → ℝ} {f : X → E} (hτ : Continuous τ) (hf : Continuous f)
@@ -796,15 +796,15 @@ theorem Continuous.sfHomotopy {X : Type _} [UniformSpace X] [SeparatedSpace X]
   refine' Continuous.ofPath _ _ _ _ hs
   refine' Continuous.path_strans _ _ _ _ _ continuous_snd
   · refine' h₀.continuous_path hf.fst'.fst' _ continuous_snd
-    exact (continuous_ρ.comp hτ.fst'.fst').mul (continuous_proj_I.comp ht.fst'.fst')
+    exact (continuous_ρ.comp hτ.fst'.fst').mul (continuous_projI.comp ht.fst'.fst')
   · refine' h₁.continuous_path hf.fst'.fst' _ continuous_snd
-    refine' (continuous_ρ.comp _).mul (continuous_proj_I.comp ht.fst'.fst')
+    refine' (continuous_ρ.comp _).mul (continuous_projI.comp ht.fst'.fst')
     exact continuous_const.sub hτ.fst'.fst'
   · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs 
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs 
     simp only [hs, h₁.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
-  · refine' continuous_proj_Icc.comp (continuous_const.sub hτ.fst')
+  · refine' continuous_projIcc.comp (continuous_const.sub hτ.fst')
 
 /-- In this lemmas and the lemmas below we add `finite_dimensional ℝ E` so that we can conclude
  `locally_compact_space E`. -/
@@ -854,7 +854,7 @@ theorem sfHomotopy_in' {ι} (h₀ : SurroundingFamily g b γ₀ U) (h₁ : Surro
   by_cases hτ1 : τ i = 1; · simp [hτ1]; exact h_in₁ i hx t ht s (by norm_num [hτ1])
   generalize hy : sfHomotopy h₀ h₁ (τ i) (x i) t s = y
   have h2y : y ∈ range (sfHomotopy h₀ h₁ (τ i) (x i) t) := by rw [← hy]; exact mem_range_self _
-  rw [sfHomotopy, Loop.range_ofPath, proj_I_eq_self.mpr ht] at h2y 
+  rw [sfHomotopy, Loop.range_ofPath, projI_eq_self.mpr ht] at h2y 
   replace h2y := range_strans_subset h2y
   rcases h2y with (⟨s', rfl⟩ | ⟨s', rfl⟩)
   · exact h_in₀ _ hx _ (unitInterval.mul_mem ρ_mem_I ht) _ hτ1
@@ -992,7 +992,7 @@ theorem surroundingFamilyIn_iff_germ {γ : E → ℝ → Loop F} :
       (∀ x, LoopFamilyGerm b x γ) ∧ ∀ x ∈ C, SurroundingFamilyGerm g Ω x γ :=
   by
   constructor
-  · rintro ⟨⟨base, t₀, proj_I, family_surrounds, family_cont⟩, H⟩
+  · rintro ⟨⟨base, t₀, projI, family_surrounds, family_cont⟩, H⟩
     exact
       ⟨fun x => ⟨base x, t₀ x, projI x, fun t s => family_cont.continuous_at⟩, fun x x_in =>
         ⟨family_surrounds x x_in, H x x_in⟩⟩
