@@ -1,5 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.InnerProductSpace.L2Space
+import Mathlib.Analysis.InnerProductSpace.l2Space
 import SphereEversion.ToMathlib.Analysis.Calculus.AffineMap
 import SphereEversion.ToMathlib.Logic.Equiv.LocalEquiv
 

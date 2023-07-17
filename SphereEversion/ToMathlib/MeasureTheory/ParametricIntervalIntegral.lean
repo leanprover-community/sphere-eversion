@@ -1,6 +1,6 @@
 import Mathlib.MeasureTheory.Integral.FundThmCalculus
 import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.Algebra.Module.Ulift
+import Mathlib.Algebra.Module.ULift
 import SphereEversion.ToMathlib.Analysis.Calculus
 
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
