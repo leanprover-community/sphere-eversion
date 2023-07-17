@@ -7,10 +7,9 @@ import SphereEversion.ToMathlib.Order.Filter.Basic
 import SphereEversion.Indexing
 import SphereEversion.Notations
 -- import SphereEversion.InteractiveExpr
-import Mathlib.Tactic.Induction
+-- import Mathlib.Tactic.Induction
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
-set_option trace.filter_inst_type true
+-- set_option trace.filter_inst_type true
 
 open Set Filter Prod TopologicalSpace Function
 
@@ -50,7 +49,7 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [Top
     ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F :=
   by
   choose U hUx hU using hV
-  choose i₀ hi₀ using fun x => (hU x).BddAbove
+  choose i₀ hi₀ using fun x => (hU x).bddAbove
   have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y :=
     by
     intro x
@@ -62,7 +61,7 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [Top
     replace hi₀ := mem_upper_bounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
     exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi)
   refine' ⟨fun x => f (i₀ x) x, fun x => _⟩
-  apply (eventually_ge_at_top (i₀ x)).mono fun n hn => _
+  apply (eventually_ge_atTop (i₀ x)).mono fun n hn => _
   apply mem_of_superset (hUx x) fun y hy => _
   calc
     f n y = f (i₀ x) y := key hn hy
@@ -112,7 +111,7 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
   · rcases(hF x).exists with ⟨n₀, hn₀⟩
     simp only [germ.coe_eq.mpr hn₀.symm, h₀f n₀ x]
   intro x
-  rcases((hF x).And <| eventually_ge_at_top j).exists with ⟨n₀, hn₀, hn₀'⟩
+  rcases((hF x).And <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
   exact eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U i) -/
