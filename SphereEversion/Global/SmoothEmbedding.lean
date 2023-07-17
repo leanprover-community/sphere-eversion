@@ -310,7 +310,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : LocalHomeomorph F F} (hf
     have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target :=
       by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
-      exact (LocalEquiv.image_symm_image_of_subset_target _ hf₄).Subset
+      exact (LocalEquiv.image_symm_image_of_subset_target _ hf₄).subset
     have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chart_at H x).source :=
       by
       rw [← extChartAt_source IF, range_comp, ← LocalEquiv.symm_image_target_eq_source]

@@ -140,7 +140,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     simp_rw [hsupp, hsupp', inter_comm (support f)]; clear hsupp hsupp'
     refine'
       (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
-            (is_compact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').Subset
+            (is_compact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset
         _
     intro i hi
     rw [mem_set_of_eq, ← nonempty_iff_ne_empty]

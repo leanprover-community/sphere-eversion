@@ -29,7 +29,7 @@ variable {ι X : Type _} [TopologicalSpace X]
 @[to_additive]
 theorem locallyFinite_mulSupport_iff {M : Type _} [CommMonoid M] {f : ι → X → M} :
     (LocallyFinite fun i => mulSupport <| f i) ↔ LocallyFinite fun i => mulTSupport <| f i :=
-  ⟨LocallyFinite.closure, fun H => H.Subset fun i => subset_closure⟩
+  ⟨LocallyFinite.closure, fun H => H.subset fun i => subset_closure⟩
 
 end
 

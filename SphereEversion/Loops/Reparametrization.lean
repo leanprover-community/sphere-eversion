@@ -291,7 +291,7 @@ theorem localCenteringDensity_smooth_on :
     have h₁ := smooth_barycentric ι ℝ F (Fintype.card_fin _)
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
     refine' (h₂.comp_cont_diff_on h₁).comp _ _
-    · have h₃ := (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm.Subset
+    · have h₃ := (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm.subset
       refine' ContDiffOn.comp _ (cont_diff_id.prod contDiff_id).ContDiffOn h₃
       refine' γ.smooth_surrounded.ContDiffOn.prod_map (ContDiff.contDiffOn _)
       exact γ.approx_surrounding_points_at_smooth x _

@@ -34,7 +34,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     is_open_interior.sdiff <| IsCompact.isClosed <| K.is_compact _
   have hU' : ∀ n, {m | (U m ∩ U n).Nonempty}.Finite := fun n =>
     by
-    suffices {m | (U m ∩ U n).Nonempty} ⊆ Icc (n - 2) (n + 2) by exact (finite_Icc _ _).Subset this
+    suffices {m | (U m ∩ U n).Nonempty} ⊆ Icc (n - 2) (n + 2) by exact (finite_Icc _ _).subset this
     rintro m ⟨x, ⟨⟨hx₁, hx₂⟩, ⟨hx₃, hx₄⟩⟩⟩
     simp only [mem_Icc, tsub_le_iff_right]
     suffices ∀ {a b : ℕ}, x ∉ K a → x ∈ interior (K b.succ) → a ≤ b by
