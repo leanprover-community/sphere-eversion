@@ -2,7 +2,7 @@ import Mathlib.Geometry.Manifold.SmoothManifoldWithCorners
 
 open scoped Topology
 
-open Metric hiding mem_nhds_iffₓ ball
+open Metric hiding mem_nhds_iff ball
 
 open Set
 

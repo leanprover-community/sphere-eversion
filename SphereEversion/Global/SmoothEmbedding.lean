@@ -233,7 +233,7 @@ end General
 
 section WithoutBoundary
 
-open Metric hiding mem_nhds_iffₓ
+open Metric hiding mem_nhds_iff
 
 open Function
 
