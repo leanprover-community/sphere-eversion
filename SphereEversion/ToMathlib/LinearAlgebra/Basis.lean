@@ -23,7 +23,7 @@ theorem Basis.flag_zero {n : ℕ} (b : Basis (Fin n) R M) : b.Flag 0 = ⊥ :=
   simp only [Basis.flag, Fin.coe_eq_castSucc]
   suffices {j : Fin n | Fin.castSuccEmb j < 0} = ∅ by simp [this]
   ext l
-  simp [l.cast_succ.zero_le]
+  simp [l.castSucc.zero_le]
 
 @[simp]
 theorem Basis.flag_last {n : ℕ} (b : Basis (Fin n) R M) : b.Flag (Fin.last n) = ⊤ :=

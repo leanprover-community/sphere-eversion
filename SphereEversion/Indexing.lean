@@ -94,7 +94,7 @@ def IndexType.succ {N : ℕ} : IndexType N → IndexType N :=
 theorem IndexType.succ_castSuccEmb {N} (i : Fin N) : @IndexType.succ (N + 1) i.castSucc = i.succ :=
   by
   refine' (succ_apply _).trans _
-  rw [if_pos (cast_succ_lt_last i), Fin.coeSucc_eq_succ, Fin.succ_inj]
+  rw [if_pos (castSucc_lt_last i), Fin.coeSucc_eq_succ, Fin.succ_inj]
 
 theorem IndexType.succ_eq {N} (i : IndexType N) : i.succ = i ↔ IsMax i :=
   Order.succ_eq_iff_isMax
@@ -110,7 +110,7 @@ theorem IndexType.le_of_lt_succ {N : ℕ} (i : IndexType N) {j : IndexType N} (h
   le_of_lt_succ h
 
 theorem IndexType.exists_castSuccEmb_eq {N : ℕ} (i : Fin (N + 1)) (hi : ¬IsMax i) :
-    ∃ i' : Fin N, i'.cast_succ = i := by
+    ∃ i' : Fin N, i'.castSucc = i := by
   revert hi
   refine' Fin.lastCases _ _ i
   · intro hi; apply hi.elim; intro i hi; exact le_last i
@@ -120,7 +120,7 @@ theorem IndexType.exists_castSuccEmb_eq {N : ℕ} (i : Fin (N + 1)) (hi : ¬IsMa
 theorem IndexType.toNat_succ {N : ℕ} (i : IndexType N) (hi : ¬IsMax i) :
     i.succ.toNat = i.toNat + 1 := by
   cases N; · rfl
-  rcases i.exists_cast_succ_eq hi with ⟨i, rfl⟩
+  rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩
   rw [IndexType.succ_castSuccEmb]
   exact coe_succ i
 
@@ -145,9 +145,9 @@ theorem IndexType.induction_from {N : ℕ} {P : IndexType N → Prop} {i₀ : In
     · exact h₀
     rw [← IndexType.succ_castSuccEmb]
     refine' ih _ _ _ _
-    · rwa [ge_iff_le, le_cast_succ_iff]
-    · exact not_isMax_of_lt (cast_succ_lt_succ i)
-    · apply hi; rwa [ge_iff_le, le_cast_succ_iff]
+    · rwa [ge_iff_le, le_castSucc_iff]
+    · exact not_isMax_of_lt (castSucc_lt_succ i)
+    · apply hi; rwa [ge_iff_le, le_castSucc_iff]
 
 @[elab_as_elim]
 theorem IndexType.induction {N : ℕ} {P : IndexType N → Prop} (h₀ : P 0)
@@ -177,7 +177,7 @@ theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N �
       intro i hi
       simp_rw [induction_succ, ← IndexType.succ_castSuccEmb]
       apply hF _ _ hi
-      exact not_isMax_of_lt (cast_succ_lt_succ i)
+      exact not_isMax_of_lt (castSucc_lt_succ i)
     refine' ⟨f, fun i => ⟨key i, fun hi => _⟩⟩
     · convert hF' _ _ (key i) hi
       rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩

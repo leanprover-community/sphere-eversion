@@ -95,7 +95,7 @@ protected theorem one (γ : Loop X) : γ 1 = γ 0 := by convert γ.per 0; rw [ze
 -- unused
 theorem add_nat_eq (γ : Loop X) (t : ℝ) : ∀ n : ℕ, γ (t + n) = γ t
   | 0 => by rw [Nat.cast_zero, add_zero]
-  | Nat.succ n => by rw [← add_nat_eq n, Nat.cast_succ, ← add_assoc, γ.per]
+  | Nat.succ n => by rw [← add_nat_eq n, Nat.castSucc, ← add_assoc, γ.per]
 
 theorem add_int_eq (γ : Loop X) (t : ℝ) (n : ℤ) : γ (t + n) = γ t :=
   by

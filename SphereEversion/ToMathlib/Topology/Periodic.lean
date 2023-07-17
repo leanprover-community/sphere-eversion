@@ -48,7 +48,7 @@ theorem OnePeriodic.add_nat {f : ℝ → α} (h : OnePeriodic f) : ∀ k : ℕ, 
   intro k x
   induction' k with k hk
   · simp
-  rw [Nat.cast_succ, ← add_assoc, h, hk]
+  rw [Nat.castSucc, ← add_assoc, h, hk]
 
 theorem OnePeriodic.add_int {f : ℝ → α} (h : OnePeriodic f) : ∀ k : ℤ, ∀ x, f (x + k) = f x :=
   by
