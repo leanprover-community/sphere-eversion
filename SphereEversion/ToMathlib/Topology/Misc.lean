@@ -109,7 +109,7 @@ instance : VAdd ℤ ℝ :=
   ⟨fun n x => (n : ℝ) + x⟩
 
 instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
-  ⟨fun K L hK hL ↦ by
+  ⟨fun {K L} hK hL ↦ by
     rcases eq_empty_or_nonempty K with (rfl | hK') <;>
         rcases eq_empty_or_nonempty L with (rfl | hL') <;>
       try simp
@@ -140,7 +140,7 @@ theorem floor_eq_self_iff {x : ℝ} : (⌊x⌋ : ℝ) = x ↔ ∃ n : ℤ, x = n
   · intro h
     exact ⟨⌊x⌋, h.symm⟩
   · rintro ⟨n, rfl⟩
-    rw [floor_int_cast]
+    rw [floor_intCast]
 
 theorem fract_eq_zero_iff {x : ℝ} : fract x = 0 ↔ ∃ n : ℤ, x = n := by
   rw [fract, sub_eq_zero, eq_comm, floor_eq_self_iff]
@@ -151,7 +151,7 @@ theorem fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n := 
 theorem Ioo_floor_mem_nhds {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
   Ioo_mem_nhds ((floor_le x).eq_or_lt.elim (fun H => (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
 
-theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun x' => ⌊x⌋ := by
+theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun _ => ⌊x⌋ := by
   filter_upwards [Ioo_floor_mem_nhds h]
   intro y hy
   rw [floor_eq_on_Ico]
@@ -160,12 +160,6 @@ theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[�
 theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' => x' - floor x := by
   rw [fract_ne_zero_iff] at h 
   exact EventuallyEq.rfl.sub ((loc_constant_floor h).fun_comp _)
-
-#print continuousAt_fract /-
--- todo: make iff
-theorem continuousAt_fract {x : ℝ} (h : fract x ≠ 0) : ContinuousAt fract x :=
-  (continuousAt_id.sub continuousAt_const).congr (fract_eventuallyEq h).symm
--/
 
 theorem Ioo_inter_Iio {α : Type _} [LinearOrder α] {a b c : α} :
     Ioo a b ∩ Iio c = Ioo a (min b c) := by ext; simp [and_assoc]
@@ -238,7 +232,7 @@ theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract 
     refine'
       ⟨fract ⁻¹' (u ∪ v), preimage_mono (union_subset hus hvs),
         (hu.union hv).preimage_fract fun _ => subset_union_right _ _ h1v, subset_union_left _ _ hxu⟩
-  · exact (continuousAt_fract hx).preimage_mem_nhds h1
+  · exact (continuousAt_fract (sub_ne_zero.1 hx)).preimage_mem_nhds h1
 
 end Fract
 
@@ -292,32 +286,32 @@ theorem projIcc_eq_projI : (projIcc (0 : α) 1 zero_le_one x : α) = projI x :=
   rfl
 
 theorem projI_of_le_zero (hx : x ≤ 0) : projI x = 0 :=
-  congr_arg coe <| projIcc_of_le_left _ hx
+  congr_arg Subtype.val <| projIcc_of_le_left _ hx
 
 @[simp]
 theorem projI_zero : projI (0 : α) = 0 :=
-  congr_arg coe <| projIcc_left _
+  congr_arg Subtype.val <| projIcc_left _
 
 theorem projI_of_one_le (hx : 1 ≤ x) : projI x = 1 :=
-  congr_arg coe <| projIcc_of_right_le _ hx
+  congr_arg Subtype.val <| projIcc_of_right_le _ hx
 
 @[simp]
 theorem projI_one : projI (1 : α) = 1 :=
-  congr_arg coe <| projIcc_right _
+  congr_arg Subtype.val <| projIcc_right _
 
 @[simp]
 theorem projI_eq_zero [Nontrivial α] : projI x = 0 ↔ x ≤ 0 := by
-  rw [← proj_Icc_eq_left (zero_lt_one' α), Subtype.ext_iff]; rfl
+  rw [← projIcc_eq_left (zero_lt_one' α), Subtype.ext_iff]; rfl
 
 @[simp]
 theorem projI_eq_one : projI x = 1 ↔ 1 ≤ x := by
-  rw [← proj_Icc_eq_right (zero_lt_one' α), Subtype.ext_iff]; rfl
+  rw [← projIcc_eq_right (zero_lt_one' α), Subtype.ext_iff]; rfl
 
 theorem projI_mem_Icc : projI x ∈ Icc (0 : α) 1 :=
-  (projIcc (0 : α) 1 zero_le_one x).Prop
+  (projIcc (0 : α) 1 zero_le_one x).prop
 
 theorem projI_eq_self : projI x = x ↔ x ∈ Icc (0 : α) 1 :=
-  ⟨fun h => h ▸ projI_mem_Icc, fun h => congr_arg coe <| projIcc_of_mem _ h⟩
+  ⟨fun h => h ▸ projI_mem_Icc, fun h => congr_arg Subtype.val <| projIcc_of_mem _ h⟩
 
 @[simp]
 theorem projI_projI : projI (projI x) = projI x :=
@@ -329,7 +323,8 @@ theorem projIcc_projI : projIcc (0 : α) 1 zero_le_one (projI x) = projIcc 0 1 z
 
 @[simp]
 theorem range_projI : range projI = Icc 0 1 := by
-  rw [projI, range_comp, range_proj_Icc, image_univ, Subtype.range_coe]
+  unfold projI
+  erw [range_comp, range_projIcc, image_univ, Subtype.range_coe]
 
 theorem monotone_projI : Monotone (projI : α → α) :=
   monotone_projIcc _
@@ -350,25 +345,23 @@ theorem projI_le_iff : projI x ≤ c ↔ 0 ≤ c ∧ (1 ≤ c ∨ x ≤ c) := by
 theorem projI_eq_min : projI x = min 1 x ↔ 0 ≤ x := by
   simp_rw [projI_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and_iff]
 
-theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) :=
-  by
-  cases' le_total c x with h3 h3 <;> simp [h2, h3, projI_le_iff, proj_I_eq_min.mpr]
-  simp [proj_I_eq_min.mpr, h2.trans h3, min_left_comm c, h3]
+theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
+  cases' le_total c x with h3 h3 <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]
+  simp [projI_eq_min.mpr, h2.trans h3, min_left_comm c, h3]
 
 theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (projI : α → α) :=
   continuous_projIcc.subtype_val
 
 theorem projI_mapsto {α : Type _} [LinearOrderedSemiring α] {s : Set α} (h0s : (0 : α) ∈ s)
     (h1s : (1 : α) ∈ s) : MapsTo projI s s := fun x hx =>
-  (le_total 1 x).elim (fun h2x => by rwa [proj_I_eq_one.mpr h2x]) fun h2x =>
-    (le_total 0 x).elim (fun h3x => by rwa [proj_I_eq_self.mpr ⟨h3x, h2x⟩]) fun h3x => by
-      rwa [proj_I_eq_zero.mpr h3x]
+  (le_total 1 x).elim (fun h2x => by rwa [projI_eq_one.mpr h2x]) fun h2x =>
+    (le_total 0 x).elim (fun h3x => by rwa [projI_eq_self.mpr ⟨h3x, h2x⟩]) fun h3x => by
+      rwa [projI_eq_zero.mpr h3x]
 
 -- about path.truncate
 theorem truncate_projI_right {X : Type _} [TopologicalSpace X] {a b : X} (γ : Path a b) (t₀ t₁ : ℝ)
-    (s : I) : γ.truncate t₀ (projI t₁) s = γ.truncate t₀ t₁ s :=
-  by
-  simp_rw [Path.truncate, Path.coe_mk_mk, Path.extend, Icc_extend, Function.comp]
+    (s : I) : γ.truncate t₀ (projI t₁) s = γ.truncate t₀ t₁ s := by
+  simp_rw [Path.truncate, Path.coe_mk_mk, Path.extend, IccExtend, Function.comp]
   rw [min_projI (s.prop.1.trans <| le_max_left _ _), projIcc_projI]
 
 end projI
@@ -384,20 +377,18 @@ variable {α β γ : Type _} [TopologicalSpace α] [TopologicalSpace β]
   this sequence to get a sequence indexed by `ℕ` (by adding some `∅` values).
   This new sequence is still locally finite. -/
 theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : LocallyFinite s) :
-    LocallyFinite fun i => (s <$> decode₂ ι i).getD ∅ :=
-  by
-  intro x
+    LocallyFinite fun i => (s <$> decode₂ ι i).getD ∅ := fun x ↦ by
   obtain ⟨U, hxU, hU⟩ := hs x
   refine' ⟨U, hxU, _⟩
   have :
     encode ⁻¹' {i : ℕ | ((s <$> decode₂ ι i).getD ∅ ∩ U).Nonempty} = {i : ι | (s i ∩ U).Nonempty} :=
-    by simp_rw [preimage_set_of_eq, decode₂_encode, map_some, get_or_else_some]
-  rw [← this] at hU 
+    by simp_rw [preimage_setOf_eq, decode₂_encode, map_some, getD_some]
+  rw [← this] at hU
   refine' finite_of_finite_preimage hU _
   intro n hn
   rw [← decode₂_ne_none_iff]
   intro h
-  simp_rw [mem_set_of_eq, h, map_none, get_or_else_none, empty_inter] at hn 
+  simp_rw [mem_setOf_eq, h, map_none, getD_none, empty_inter] at hn 
   exact (not_nonempty_empty hn).elim
 
 open TopologicalSpace
@@ -406,43 +397,41 @@ variable {X : Type _} [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableT
 
 theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {P : Set X → Prop}
     (hP : Antitone P) (h0 : P ∅) (hX : ∀ x ∈ C, ∃ V ∈ 𝓝 (x : X), P V) :
-    ∃ (K : ℕ → Set X) (W : ℕ → Set X),
-      (∀ n, IsCompact (K n)) ∧
-        (∀ n, IsOpen (W n)) ∧ (∀ n, P (W n)) ∧ (∀ n, K n ⊆ W n) ∧ LocallyFinite W ∧ C ⊆ ⋃ n, K n :=
-  by
-  choose V' hV' hPV' using set_coe.forall'.mp hX
+    ∃ (K : ℕ → Set X) (W : ℕ → Set X), (∀ n, IsCompact (K n)) ∧ (∀ n, IsOpen (W n)) ∧
+      (∀ n, P (W n)) ∧ (∀ n, K n ⊆ W n) ∧ LocallyFinite W ∧ C ⊆ ⋃ n, K n := by
+  choose V' hV' hPV' using SetCoe.forall'.mp hX
   choose V hV hVV' hcV using fun x : C => LocallyCompactSpace.local_compact_nhds (↑x) (V' x) (hV' x)
   simp_rw [← mem_interior_iff_mem_nhds] at hV 
-  have : C ⊆ ⋃ x : C, interior (V x) := fun x hx => by rw [mem_Union]; exact ⟨⟨x, hx⟩, hV _⟩
-  obtain ⟨s, hs, hsW₂⟩ := is_open_Union_countable (fun x => interior (V x)) fun x => isOpen_interior
-  rw [← hsW₂, bUnion_eq_Union] at this ; clear hsW₂
+  have : C ⊆ ⋃ x : C, interior (V x) := fun x hx => by rw [mem_iUnion]; exact ⟨⟨x, hx⟩, hV _⟩
+  obtain ⟨s, hs, hsW₂⟩ := isOpen_iUnion_countable (fun x => interior (V x)) fun x => isOpen_interior
+  rw [← hsW₂, biUnion_eq_iUnion] at this; clear hsW₂
   obtain ⟨W, hW, hUW, hlW, hWV⟩ :=
     precise_refinement_set hC (fun x : s => interior (V x)) (fun x => isOpen_interior) this
   obtain ⟨K, hCK, hK, hKW⟩ :=
     exists_subset_iUnion_closed_subset hC (fun x : s => hW x) (fun x _ => hlW.point_finite x) hUW
-  haveI : Encodable s := hs.to_encodable
+  haveI : Encodable s := hs.toEncodable
   let K' : ℕ → Set X := fun n => (K <$> decode₂ s n).getD ∅
   let W' : ℕ → Set X := fun n => (W <$> decode₂ s n).getD ∅
   refine' ⟨K', W', _, _, _, _, _, _⟩
   · intro n; cases' h : decode₂ s n with i
-    · simp_rw [K', h, map_none, get_or_else_none, isCompact_empty]
-    · simp_rw [K', h, map_some, get_or_else_some]
+    · simp_rw [h, map_none, getD_none, isCompact_empty]
+    · simp_rw [h, map_some, getD_some]
       exact
         isCompact_of_isClosed_subset (hcV i) (hK i) ((hKW i).trans <| (hWV i).trans interior_subset)
   · intro n; cases h : decode₂ s n
-    · simp_rw [W', h, map_none, get_or_else_none, isOpen_empty]
-    · simp_rw [W', h, map_some, get_or_else_some, hW]
+    · simp_rw [h, map_none, getD_none, isOpen_empty]
+    · simp_rw [h, map_some, getD_some, hW]
   · intro n; cases' h : decode₂ s n with i
-    · simp_rw [W', h, map_none, get_or_else_none, h0]
-    · simp_rw [W', h, map_some, get_or_else_some]; refine' hP _ (hPV' i)
+    · simp_rw [h, map_none, getD_none, h0]
+    · simp_rw [h, map_some, getD_some]; refine' hP _ (hPV' i)
       refine' (hWV i).trans (interior_subset.trans <| hVV' i)
   · intro n; cases h : decode₂ s n
-    · simp_rw [K', W', h, map_none]
-    · simp_rw [K', W', h, map_some, get_or_else_some, hKW]
+    · simp_rw [h, map_none]; rfl
+    · simp_rw [h, map_some, getD_some, hKW]
   · exact decode₂_locallyFinite hlW
-  · intro x hx; obtain ⟨i, hi⟩ := mem_Union.mp (hCK hx)
-    refine' mem_Union.mpr ⟨encode i, _⟩
-    simp_rw [K', decode₂_encode, map_some, get_or_else_some, hi]
+  · intro x hx; obtain ⟨i, hi⟩ := mem_iUnion.mp (hCK hx)
+    refine' mem_iUnion.mpr ⟨encode i, _⟩
+    simp_rw [decode₂_encode, map_some, getD_some, hi]
 
 end
 
@@ -455,7 +444,7 @@ theorem IsCompact.eventually_forall_mem {x₀ : α} {K : Set β} (hK : IsCompact
     (hf : Continuous ↿f) {U : Set γ} (hU : ∀ y ∈ K, U ∈ 𝓝 (f x₀ y)) :
     ∀ᶠ x in 𝓝 x₀, ∀ y ∈ K, f x y ∈ U :=
   hK.eventually_forall_of_forall_eventually fun y hy =>
-    (hf.Tendsto _).Eventually <| show U ∈ 𝓝 ((↿f) (x₀, y)) from hU y hy
+    (hf.tendsto _).eventually <| show U ∈ 𝓝 ((↿f) (x₀, y)) from hU y hy
 
 end
 
@@ -473,9 +462,8 @@ theorem isOpen_affineIndependent (𝕜 E : Type _) {ι : Type _} [NontriviallyNo
     [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace 𝕜] [Finite ι] :
     IsOpen {p : ι → E | AffineIndependent 𝕜 p} := by
   classical
-  cases isEmpty_or_nonempty ι
-  · skip; exact isOpen_discrete _
-  obtain ⟨i₀⟩ := h
+  rcases isEmpty_or_nonempty ι with h | ⟨⟨i₀⟩⟩
+  · exact isOpen_discrete _
   simp_rw [affineIndependent_iff_linearIndependent_vsub 𝕜 _ i₀]
   let ι' := { x // x ≠ i₀ }
   cases nonempty_fintype ι
@@ -483,7 +471,7 @@ theorem isOpen_affineIndependent (𝕜 E : Type _) {ι : Type _} [NontriviallyNo
   convert_to
     IsOpen ((fun (p : ι → E) (i : ι') => p i -ᵥ p i₀) ⁻¹' {p : ι' → E | LinearIndependent 𝕜 p})
   refine' IsOpen.preimage _ isOpen_setOf_linearIndependent
-  refine' continuous_pi fun i' => Continuous.vsub (continuous_apply i') <| continuous_apply i₀
+  exact continuous_pi fun i' => (continuous_apply i'.1).vsub <| continuous_apply i₀
 
 end
 
@@ -504,7 +492,7 @@ open Metric
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 theorem isPreconnected_ball (x : E) (r : ℝ) : IsPreconnected (ball x r) :=
-  (convex_ball x r).IsPreconnected
+  (convex_ball x r).isPreconnected
 
 theorem isConnected_ball {x : E} {r : ℝ} : IsConnected (ball x r) ↔ 0 < r := by
   simp [IsConnected, isPreconnected_ball]
@@ -524,12 +512,11 @@ theorem Continuous.image_connectedComponentIn_subset {f : α → β} {s : Set α
     (image_subset _ <| connectedComponentIn_subset _ _)
 
 theorem Homeomorph.image_connectedComponentIn (f : α ≃ₜ β) {s : Set α} {x : α} (hx : x ∈ s) :
-    f '' connectedComponentIn s x = connectedComponentIn (f '' s) (f x) :=
-  by
-  refine' (f.continuous.image_connected_component_in_subset hx).antisymm _
-  have := f.symm.continuous.image_connected_component_in_subset (mem_image_of_mem _ hx)
-  rwa [image_subset_iff, f.preimage_symm, f.image_symm, f.preimage_image, f.symm_apply_apply] at
-    this 
+    f '' connectedComponentIn s x = connectedComponentIn (f '' s) (f x) := by
+  refine' (f.continuous.image_connectedComponentIn_subset hx).antisymm _
+  have := f.symm.continuous.image_connectedComponentIn_subset (mem_image_of_mem _ hx)
+  rwa [image_subset_iff, f.preimage_symm, f.image_symm, f.preimage_image, f.symm_apply_apply]
+    at this 
 
 end connectedComponentIn
 
@@ -538,51 +525,45 @@ namespace TopologicalSpace
 -- to topology.bases
 theorem cover_nat_nhdsWithin {α} [TopologicalSpace α] [SecondCountableTopology α] {f : α → Set α}
     {s : Set α} (hf : ∀ x ∈ s, f x ∈ 𝓝[s] x) (hs : s.Nonempty) :
-    ∃ x : ℕ → α, range x ⊆ s ∧ s ⊆ ⋃ n, f (x n) :=
-  by
+    ∃ x : ℕ → α, range x ⊆ s ∧ s ⊆ ⋃ n, f (x n) := by
   obtain ⟨t, hts, ht, hsf⟩ := TopologicalSpace.countable_cover_nhdsWithin hf
-  have hnt : t.nonempty := by
-    by_contra
-    rw [not_nonempty_iff_eq_empty] at h 
-    rw [h, bUnion_empty, subset_empty_iff] at hsf 
-    exact hs.ne_empty hsf
+  rcases t.eq_empty_or_nonempty with rfl | hnt
+  · rw [biUnion_empty, subset_empty_iff] at hsf 
+    exact absurd hsf hs.ne_empty
   obtain ⟨x, rfl⟩ := ht.exists_eq_range hnt
-  rw [bUnion_range] at hsf 
+  rw [biUnion_range] at hsf 
   exact ⟨x, hts, hsf⟩
 
 /-- A version of `topological_space.cover_nat_nhds_within` where `f` is only defined on `s`. -/
 theorem cover_nat_nhds_within' {α} [TopologicalSpace α] [SecondCountableTopology α] {s : Set α}
     {f : ∀ x ∈ s, Set α} (hf : ∀ (x) (hx : x ∈ s), f x hx ∈ 𝓝[s] x) (hs : s.Nonempty) :
-    ∃ (x : ℕ → α) (hx : range x ⊆ s), s ⊆ ⋃ n, f (x n) (range_subset_iff.mp hx n) :=
-  by
+    ∃ (x : ℕ → α) (hx : range x ⊆ s), s ⊆ ⋃ n, f (x n) (range_subset_iff.mp hx n) := by
   let g x := if hx : x ∈ s then f x hx else ∅
-  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := by intro x hx; simp_rw [g, dif_pos hx]; exact hf x hx
+  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [dif_pos hx]; exact hf x hx
   obtain ⟨x, hx, h⟩ := TopologicalSpace.cover_nat_nhdsWithin hg hs
-  simp_rw [g, dif_pos (range_subset_iff.mp hx _)] at h 
+  simp_rw [dif_pos (range_subset_iff.mp hx _)] at h 
   refine' ⟨x, hx, h⟩
 
 end TopologicalSpace
 
 namespace Set
 
-namespace Subtype
+open Subtype
 
-open _Root_.Subtype
+namespace Subtype
 
 variable {α : Type _}
 
-theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : (coe : s → α) '' t = s ↔ t = univ := by
+theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : ((↑) : s → α) '' t = s ↔ t = univ := by
   convert coe_injective.image_injective.eq_iff; rw [coe_image_univ]
 
 @[simp]
-theorem preimage_coe_eq_univ {s t : Set α} : (coe : s → α) ⁻¹' t = univ ↔ s ⊆ t := by
+theorem preimage_coe_eq_univ {s t : Set α} : ((↑) : s → α) ⁻¹' t = univ ↔ s ⊆ t := by
   rw [← inter_eq_right_iff_subset, ← image_preimage_coe, image_coe_eq_iff_eq_univ]
 
 end Subtype
 
 end Set
-
-open Set
 
 section ParacompactSpace
 
@@ -593,28 +574,25 @@ section ParacompactSpace
  `s`). -/
 theorem precise_refinement_set' {ι X : Type _} [TopologicalSpace X] {s : Set X} [ParacompactSpace s]
     (hs : IsOpen s) (u : ι → Set X) (uo : ∀ i, IsOpen (u i)) (us : s ⊆ ⋃ i, u i) :
-    ∃ v : ι → Set X,
-      (∀ i, IsOpen (v i)) ∧
-        (s ⊆ ⋃ i, v i) ∧
-          (LocallyFinite fun i => (coe : s → X) ⁻¹' v i) ∧ (∀ i, v i ⊆ s) ∧ ∀ i, v i ⊆ u i :=
-  by
+    ∃ v : ι → Set X, (∀ i, IsOpen (v i)) ∧ (s ⊆ ⋃ i, v i) ∧
+      (LocallyFinite fun i => ((↑) : s → X) ⁻¹' v i) ∧ (∀ i, v i ⊆ s) ∧ ∀ i, v i ⊆ u i := by
   obtain ⟨v, vo, vs, vl, vu⟩ :=
-    precise_refinement (fun i => (coe : s → X) ⁻¹' u i)
+    precise_refinement (fun i => ((↑) : s → X) ⁻¹' u i)
       (fun i => (uo i).preimage continuous_subtype_val)
-      (by rwa [← preimage_Union, subtype.preimage_coe_eq_univ])
+      (by rwa [← preimage_iUnion, Subtype.preimage_coe_eq_univ])
   refine'
-    ⟨fun i => coe '' v i, fun i => hs.is_open_map_subtype_coe _ (vo i), by
-      rw [← image_Union, vs, Subtype.coe_image_univ], by
+    ⟨fun i => (↑) '' v i, fun i => hs.isOpenMap_subtype_val _ (vo i), by
+      rw [← image_iUnion, vs, Subtype.coe_image_univ], by
       simp_rw [preimage_image_eq _ Subtype.coe_injective, vl], fun i =>
       Subtype.coe_image_subset _ _, by intro i; rw [image_subset_iff]; exact vu i⟩
 
 theorem point_finite_of_locallyFinite_coe_preimage {ι X : Type _} [TopologicalSpace X] {s : Set X}
-    {f : ι → Set X} (hf : LocallyFinite fun i => (coe : s → X) ⁻¹' f i) (hfs : ∀ i, f i ⊆ s)
+    {f : ι → Set X} (hf : LocallyFinite fun i => ((↑) : s → X) ⁻¹' f i) (hfs : ∀ i, f i ⊆ s)
     {x : X} : {i | x ∈ f i}.Finite := by
   by_cases hx : x ∈ s
   · exact hf.point_finite ⟨x, hx⟩
   · have : ∀ i, x ∉ f i := fun i hxf => hx (hfs i hxf)
-    simp only [this, set_of_false, finite_empty]
+    simp only [this, setOf_false, finite_empty]
 
 end ParacompactSpace
 
@@ -635,23 +613,21 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
   by
   obtain ⟨v, vU, vo, hv⟩ :=
     exists_iUnion_eq_closure_subset
-      (fun i => (uo i).preimage (continuous_subtype_val : Continuous (coe : s → X)))
-      (fun x => uf x x.Prop) (by simp_rw [← preimage_Union, subtype.preimage_coe_eq_univ, uU])
-  have : ∀ i, IsCompact (closure ((coe : _ → X) '' v i)) :=
-    by
+      (fun i => (uo i).preimage (continuous_subtype_val : Continuous ((↑) : s → X)))
+      (fun x => uf x x.prop) (by simp_rw [← preimage_iUnion, Subtype.preimage_coe_eq_univ, uU])
+  have : ∀ i, IsCompact (closure (((↑) : _ → X) '' v i)) := by
     intro i; refine' isCompact_of_isClosed_subset (uc i) isClosed_closure _
     apply closure_mono; rw [image_subset_iff]; refine' subset_closure.trans (hv i)
-  refine' ⟨fun i => closure (coe '' v i), _, this, _⟩
-  · refine'
-      subset.trans _
-        (Union_mono fun i => interior_maximal subset_closure (hs.is_open_map_subtype_coe _ (vo i)))
-    simp_rw [← image_Union, vU, Subtype.coe_image_univ]
+  refine' ⟨fun i => closure ((↑) '' v i), _, this, _⟩
+  · refine' Subset.trans _
+      (iUnion_mono fun i => interior_maximal subset_closure (hs.isOpenMap_subtype_val _ (vo i)))
+    simp_rw [← image_iUnion, vU, Subtype.coe_image_univ]; rfl
   · intro i
-    have : coe '' v i ⊆ u i := by rintro _ ⟨x, hx, rfl⟩; exact hv i (subset_closure hx)
+    have : (↑) '' v i ⊆ u i := by rintro _ ⟨x, hx, rfl⟩; exact hv i (subset_closure hx)
     intro x hx
     have hxs : x ∈ s := us i (closure_mono this hx)
     have : (⟨x, hxs⟩ : s) ∈ closure (v i) := by
-      rw [embedding_subtype_coe.closure_eq_preimage_closure_image (v i)]; exact hx
+      rw [embedding_subtype_val.closure_eq_preimage_closure_image (v i)]; exact hx
     exact hv i this
 
 end ShrinkingLemma
