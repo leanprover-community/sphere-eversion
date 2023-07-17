@@ -156,7 +156,7 @@ local notation "𝓡_imm" => immersionRel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
 variable (ω : Orientation ℝ E (Fin 3))
 
 theorem smooth_bs :
-    Smooth (𝓘(ℝ, ℝ).Prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² => ((1 - p.1) • p.2 + p.1 • -p.2 : E) :=
+    Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² => ((1 - p.1) • p.2 + p.1 • -p.2 : E) :=
   by
   refine' (ContMDiff.smul _ _).add (cont_mdiff_fst.smul _)
   · exact (cont_diff_const.sub contDiff_id).ContMDiff.comp contMDiff_fst
@@ -232,7 +232,7 @@ theorem formalEversion_hol_near_zero_one :
   by
   have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ (univ : Set 𝕊²) ∈ 𝓝ˢ (({0, 1} : Set ℝ) ×ˢ univ) :=
     by
-    refine' ((is_open_Iio.union isOpen_Ioi).Prod isOpen_univ).mem_nhdsSet.mpr _
+    refine' ((is_open_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr _
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, mem_univ _⟩
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs 
@@ -246,7 +246,7 @@ theorem formalEversion_hol_near_zero_one :
 
 theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
-      ContMDiff (𝓘(ℝ, ℝ).Prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f) ∧
+      ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f) ∧
         (f 0 = fun x => x) ∧ (f 1 = fun x => -x) ∧ ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) :=
   by
   classical
@@ -263,7 +263,7 @@ theorem sphere_eversion :
   haveI : Nonempty ↥(sphere 0 1 : Set E) :=
     (normed_space.sphere_nonempty.mpr zero_le_one).to_subtype
   rcases(immersionRel_satisfiesHPrincipleWith (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ ineq_rank
-          ((finite.is_closed (by simp : ({0, 1} : Set ℝ).Finite)).Prod isClosed_univ) hε_pos
+          ((finite.is_closed (by simp : ({0, 1} : Set ℝ).Finite)).prod isClosed_univ) hε_pos
           hε_cont).bs
       (formalEversion E ω) (formalEversion_hol_near_zero_one E ω) with
     ⟨f, h₁, h₂, -, h₅⟩

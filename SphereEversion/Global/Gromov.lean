@@ -74,12 +74,12 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   let P₀ : ∀ x : M, germ (𝓝 x) J¹ → Prop := fun x F =>
     F.value.1.1 = x ∧
       F.value ∈ R ∧
-        F.ContMdiffAt' IM ((IM.prod IX).Prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
+        F.ContMdiffAt' IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
           RestrictGermPredicate (fun x F' => F'.value = 𝓕₀ x) A x F ∧
             dist F.value.1.2 (𝓕₀.bs x) < τ x
   let P₁ : ∀ x : M, germ (𝓝 x) J¹ → Prop := fun x F => IsHolonomicGerm F
   let P₂ : ∀ p : ℝ × M, germ (𝓝 p) J¹ → Prop := fun p F =>
-    F.ContMdiffAt' (𝓘(ℝ).Prod IM) ((IM.prod IX).Prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
+    F.ContMdiffAt' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
   have hP₂ :
     ∀ (a b : ℝ) (p : ℝ × M) (f : ℝ × M → OneJetBundle IM M IX X),
       P₂ (a * p.1 + b, p.2) f → P₂ p fun p : ℝ × M => f (a * p.1 + b, p.2) :=
@@ -88,7 +88,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     change ContMDiffAt _ _ _ (f ∘ fun p : ℝ × M => (a * p.1 + b, p.2)) (t, x)
     change ContMDiffAt _ _ _ f ((fun p : ℝ × M => (a * p.1 + b, p.2)) (t, x)) at h 
     have :
-      ContMDiffAt (𝓘(ℝ, ℝ).Prod IM) (𝓘(ℝ, ℝ).Prod IM) ∞ (fun p : ℝ × M => (a * p.1 + b, p.2))
+      ContMDiffAt (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (fun p : ℝ × M => (a * p.1 + b, p.2))
         (t, x) :=
       haveI h₁ : ContMDiffAt 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (fun t => a * t + b) t :=
         cont_mdiff_at_iff_cont_diff_at.mpr
@@ -154,7 +154,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     have η_pos : ∀ x, 0 < η x := fun x => sub_pos.mpr (hf_dist x)
     have η_cont : Continuous η :=
       by
-      have : ContMDiff IM ((IM.prod IX).Prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f := fun x => hf_smooth x
+      have : ContMDiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f := fun x => hf_smooth x
       apply τ_cont.sub
       exact (one_jet_bundle_proj_continuous.comp this.continuous).snd.dist 𝓕₀.smooth_bs.continuous
     rcases(L.φ i).improve_formalSol (L.ψj i) hRample hRopen (hA.union hC) η_pos η_cont hFφψ hFAC hK₀

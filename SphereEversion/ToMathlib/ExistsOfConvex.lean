@@ -147,9 +147,9 @@ variable [TopologicalSpace H₄] (I₄ : ModelWithCorners ℝ E₄ H₄)
 
 variable [TopologicalSpace M₄] [ChartedSpace H₄ M₄] [SmoothManifoldWithCorners I₄ M₄]
 
-local notation "𝓒" => ContMDiff (I₁.Prod I₂) 𝓘(ℝ, F)
+local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
 
-local notation "𝓒_on" => ContMDiffOn (I₁.Prod I₂) 𝓘(ℝ, F)
+local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
 
 theorem reallyConvex_contMdiffAtProd {x : M₁} (n : ℕ∞) :
     ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMdiffAtProd I₁ I₂ n} := by

@@ -420,7 +420,7 @@ theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF
     linarith [min_le_right a (s x₀)]
     linarith [le_max_right a (s x₀)]
   have cpct : IsCompact (closed_ball x₀ 1 ×ˢ Icc a₀ b₀) :=
-    (ProperSpace.isCompact_closedBall x₀ 1).Prod is_compact_Icc
+    (ProperSpace.isCompact_closedBall x₀ 1).prod is_compact_Icc
   obtain ⟨M, F_bound⟩ : ∃ M : ℝ, ∀ x ∈ ball x₀ 1, ∀ t ∈ Ioo a₀ b₀, ‖F x t‖ ≤ M :=
     by
     rcases cpct.bdd_above_image hF.continuous.norm.continuous_on with ⟨M, hM⟩
@@ -430,7 +430,7 @@ theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF
   obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, LipschitzOnWith K (fun x => F x t) (ball x₀ 1) :=
     by
     have conv : Convex ℝ (closed_ball x₀ 1 ×ˢ Icc a₀ b₀) :=
-      (convex_closedBall x₀ 1).Prod (convex_Icc a₀ b₀)
+      (convex_closedBall x₀ 1).prod (convex_Icc a₀ b₀)
     rcases hF.lipschitz_on_with le_rfl conv cpct with ⟨K, hK⟩
     use K
     intro t t_in
@@ -543,7 +543,7 @@ theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ
 
 theorem contDiff_parametric_primitive_of_cont_diff'' {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     (a : ℝ) : ContDiff ℝ n fun x : H × ℝ => ∫ t in a..x.2, F x.1 t :=
-  contDiff_parametric_primitive_of_contDiff (hF.comp (contDiff_fst.Prod_map contDiff_id))
+  contDiff_parametric_primitive_of_contDiff (hF.comp (contDiff_fst.prod_map contDiff_id))
     contDiff_snd a
 
 theorem contDiff_parametric_integral_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)

@@ -265,7 +265,7 @@ theorem Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) 
 /-- `loop.of_path` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
     Continuous ↿fun s => ofPath <| γ s :=
-  Continuous.ofPath _ _ (fun i : X × ℝ => γ i.1) (h.comp <| continuous_fst.Prod_map continuous_id)
+  Continuous.ofPath _ _ (fun i : X × ℝ => γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
     continuous_snd
 
 /-! ## Round trips -/

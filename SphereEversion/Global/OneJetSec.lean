@@ -48,7 +48,7 @@ variable (I M I' M')
 structure OneJetSec where
   bs : M → M'
   ϕ : ∀ x : M, TangentSpace I x →L[𝕜] TangentSpace I' (bs x)
-  smooth' : Smooth I ((I.Prod I').Prod 𝓘(𝕜, E →L[𝕜] E')) fun x => OneJetBundle.mk x (bs x) (ϕ x)
+  smooth' : Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x => OneJetBundle.mk x (bs x) (ϕ x)
 
 instance : CoeFun (OneJetSec I M I' M') fun S => M → OneJetBundle I M I' M' :=
   ⟨fun S x => OneJetBundle.mk x (S.bs x) (S.ϕ x)⟩
@@ -58,7 +58,7 @@ variable {I M I' M'}
 namespace OneJetSec
 
 protected def mk' (F : M → OneJetBundle I M I' M') (hF : ∀ m, (F m).1.1 = m)
-    (h2F : Smooth I ((I.Prod I').Prod 𝓘(𝕜, E →L[𝕜] E')) F) : OneJetSec I M I' M' :=
+    (h2F : Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) F) : OneJetSec I M I' M' :=
   ⟨fun x => (F x).1.2, fun x => (F x).2, by convert h2F; ext m; exact (hF m).symm; rfl; rfl⟩
 
 theorem coe_apply (F : OneJetSec I M I' M') (x : M) : F x = ⟨(x, F.bs x), F.ϕ x⟩ :=
@@ -77,11 +77,11 @@ theorem bs_eq (F : OneJetSec I M I' M') (x : M) : F.bs x = (F x).1.2 :=
   rfl
 
 protected theorem smooth (F : OneJetSec I M I' M') :
-    Smooth I ((I.Prod I').Prod 𝓘(𝕜, E →L[𝕜] E')) F :=
+    Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) F :=
   F.smooth'
 
 theorem smooth_eta (F : OneJetSec I M I' M') :
-    Smooth I ((I.Prod I').Prod 𝓘(𝕜, E →L[𝕜] E'))
+    Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
       (fun x => OneJetBundle.mk x (F.bs x) (F x).2 : M → OneJetBundle I M I' M') :=
   F.Smooth
 
@@ -167,7 +167,7 @@ structure FamilyOneJetSec where
   bs : N → M → M'
   ϕ : ∀ (n : N) (m : M), TangentSpace I m →L[ℝ] TangentSpace I' (bs n m)
   smooth' :
-    Smooth (J.Prod I) ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) fun p : N × M =>
+    Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) fun p : N × M =>
       OneJetBundle.mk p.2 (bs p.1 p.2) (ϕ p.1 p.2)
 
 instance : CoeFun (FamilyOneJetSec I M I' M' J N) fun S => N → OneJetSec I M I' M' :=
@@ -181,13 +181,13 @@ namespace FamilyOneJetSec
 variable {I M I' M' J N J' N'}
 
 protected def mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
-    (h2F : Smooth (J.Prod I) ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) :
+    (h2F : Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) :
     FamilyOneJetSec I M I' M' J N :=
   ⟨fun s x => (FF s x).1.2, fun s x => (FF s x).2, by convert h2F; ext ⟨s, m⟩; exact (hF s m).symm;
     rfl; rfl⟩
 
 theorem coe_mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
-    (h2F : Smooth (J.Prod I) ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) (x : N) :
+    (h2F : Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) (x : N) :
     FamilyOneJetSec.mk' FF hF h2F x =
       OneJetSec.mk' (FF x) (hF x) (h2F.comp (smooth_const.prod_mk smooth_id)) :=
   rfl
@@ -204,11 +204,11 @@ theorem coe_ϕ (S : FamilyOneJetSec I M I' M' J N) (s : N) : (S s).ϕ = S.ϕ s :
   rfl
 
 protected theorem smooth (S : FamilyOneJetSec I M I' M' J N) :
-    Smooth (J.Prod I) ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) fun p : N × M => S p.1 p.2 :=
+    Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) fun p : N × M => S p.1 p.2 :=
   S.smooth'
 
 theorem smooth_bs (S : FamilyOneJetSec I M I' M' J N) :
-    Smooth (J.Prod I) I' fun p : N × M => S.bs p.1 p.2 :=
+    Smooth (J.prod I) I' fun p : N × M => S.bs p.1 p.2 :=
   smooth_one_jet_bundle_proj.snd.comp S.Smooth
 
 theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : Smooth I I' (S.bs p) :=
@@ -224,18 +224,18 @@ def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) 
 /-- Turn a family of sections of `J¹(M, M')` parametrized by `N` into a section of `J¹(N × M, M')`.
 -/
 @[simps]
-def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.Prod I) (P × M) I' M'
+def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M) I' M'
     where
   bs p := S.bs p.1 p.2
   ϕ p :=
-    (show EP × E →L[ℝ] E' from mfderiv (IP.Prod I) I' (fun z : P × M => S.bs z.1 p.2) p) +
-      S.ϕ p.1 p.2 ∘L mfderiv (IP.Prod I) I Prod.snd p
+    (show EP × E →L[ℝ] E' from mfderiv (IP.prod I) I' (fun z : P × M => S.bs z.1 p.2) p) +
+      S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I Prod.snd p
   smooth' := by
     refine' Smooth.one_jet_add _ _
     · intro y
       refine' smooth_at_id.one_jet_bundle_mk (S.smooth_bs y) _
       have :
-        SmoothAt ((IP.prod I).Prod (IP.prod I)) I'
+        SmoothAt ((IP.prod I).prod (IP.prod I)) I'
           (Function.uncurry fun x z : P × M => S.bs z.1 x.2) (y, y) :=
         S.smooth_bs.comp (smooth_snd.fst.prod_mk smooth_fst.snd) (y, y)
       apply ContMDiffAt.mfderiv (fun x z : P × M => S.bs z.1 x.2) id this contMDiffAt_id le_top

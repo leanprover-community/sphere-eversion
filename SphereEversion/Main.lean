@@ -30,7 +30,7 @@ theorem
         𝕊² →
           ℝ³,-- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and
           ContMDiff
-          (𝓘(ℝ, ℝ).Prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f ∧
+          (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f ∧
         (-- `f 0` is the inclusion map, sending `x` to `x` and
               f
               0 =
@@ -80,7 +80,7 @@ theorem Gromov
     (hhol :
       ∀ᶠ p : P × M in 𝓝ˢ C,
         (𝓕₀ p.1).IsHolonomicAt p.2) :-- then there is a homotopy of such families
-    ∃ 𝓕 : FamilyFormalSol (𝓘(ℝ, ℝ).Prod 𝓘(ℝ, ℝ^d)) (ℝ × P) R,
+    ∃ 𝓕 : FamilyFormalSol (𝓘(ℝ, ℝ).prod 𝓘(ℝ, ℝ^d)) (ℝ × P) R,
       (-- that agrees with `𝓕₀` at time `t = 0` for every parameter and every point in the source
         ∀ (p : P) (x : M), 𝓕 (0, p) x = 𝓕₀ p x) ∧
         (-- is holonomic everywhere for `t = 1`,

@@ -29,21 +29,21 @@ variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddC
 variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
 
 theorem contMDiff_prod {f : M → M' × N'} :
-    ContMDiff I (I'.Prod J') n f ↔
+    ContMDiff I (I'.prod J') n f ↔
       (ContMDiff I I' n fun x => (f x).1) ∧ ContMDiff I J' n fun x => (f x).2 :=
   ⟨fun h => ⟨h.fst, h.snd⟩, fun h => by convert h.1.prod_mk h.2; ext x <;> rfl⟩
 
 theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
-    ContMDiffAt I (I'.Prod J') n f x ↔
+    ContMDiffAt I (I'.prod J') n f x ↔
       ContMDiffAt I I' n (fun x => (f x).1) x ∧ ContMDiffAt I J' n (fun x => (f x).2) x :=
   ⟨fun h => ⟨h.fst, h.snd⟩, fun h => by convert h.1.prod_mk h.2; ext x <;> rfl⟩
 
 theorem smooth_prod {f : M → M' × N'} :
-    Smooth I (I'.Prod J') f ↔ (Smooth I I' fun x => (f x).1) ∧ Smooth I J' fun x => (f x).2 :=
+    Smooth I (I'.prod J') f ↔ (Smooth I I' fun x => (f x).1) ∧ Smooth I J' fun x => (f x).2 :=
   contMDiff_prod
 
 theorem smoothAt_prod {f : M → M' × N'} {x : M} :
-    SmoothAt I (I'.Prod J') f x ↔
+    SmoothAt I (I'.prod J') f x ↔
       SmoothAt I I' (fun x => (f x).1) x ∧ SmoothAt I J' (fun x => (f x).2) x :=
   contMDiffAt_prod
 

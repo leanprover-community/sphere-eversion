@@ -263,9 +263,9 @@ variable [TopologicalSpace H₄] (I₄ : ModelWithCorners ℝ E₄ H₄)
 
 variable [TopologicalSpace M₄] [ChartedSpace H₄ M₄] [SmoothManifoldWithCorners I₄ M₄]
 
-local notation "𝓒" => ContMDiff (I₁.Prod I₂) 𝓘(ℝ, F)
+local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
 
-local notation "𝓒_on" => ContMDiffOn (I₁.Prod I₂) 𝓘(ℝ, F)
+local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
 
 open scoped Filter
 
@@ -274,7 +274,7 @@ open Function
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- TODO: generalize the next def?
 def Filter.Germ.ContMdiffAtProd {x : M₁} (φ : Germ (𝓝 x) <| M₂ → F) (n : ℕ∞) : Prop :=
-  Quotient.liftOn' φ (fun f => ∀ y : M₂, ContMDiffAt (I₁.Prod I₂) 𝓘(ℝ, F) n (uncurry f) (x, y))
+  Quotient.liftOn' φ (fun f => ∀ y : M₂, ContMDiffAt (I₁.prod I₂) 𝓘(ℝ, F) n (uncurry f) (x, y))
     fun f g h =>
     propext
       (by

@@ -74,7 +74,7 @@ instance (R : RelMfld I M I' M') : CoeFun (FormalSol R) fun S => M → OneJetBun
   ⟨fun F => F.toOneJetSec⟩
 
 def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x) (hsol : ∀ x, F x ∈ R)
-    (hsmooth : Smooth I ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) F) : FormalSol R
+    (hsmooth : Smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) F) : FormalSol R
     where
   bs m := (F m).1.2
   ϕ m := (F m).2
@@ -91,7 +91,7 @@ def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
 
 @[simp]
 theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
-    (hsol : ∀ x, F x ∈ R) (hsmooth : Smooth I ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) :
+    (hsol : ∀ x, F x ∈ R) (hsmooth : Smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) :
     (mkFormalSol F hsec hsol hsmooth : M → OneJetBundle I M I' M') = F :=
   by
   ext x <;> try rfl
@@ -100,7 +100,7 @@ theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x
 
 @[simp]
 theorem mkFormalSol_bs_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
-    (hsol : ∀ x, F x ∈ R) (hsmooth : Smooth I ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (x : M) :
+    (hsol : ∀ x, F x ∈ R) (hsmooth : Smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (x : M) :
     (mkFormalSol F hsec hsol hsmooth).bs x = (F x).1.2 :=
   rfl
 
@@ -236,7 +236,7 @@ def HtpyFormalSol (R : RelMfld I M I' M') :=
 
 def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
-    (hsmooth : Smooth (𝓘(ℝ).Prod I) ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) : HtpyFormalSol R
+    (hsmooth : Smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) : HtpyFormalSol R
     where
   bs t m := (F t m).1.2
   ϕ t m := (F t m).2
@@ -254,7 +254,7 @@ def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, 
 @[simp]
 theorem mkHtpyFormalSol_apply (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
-    (hsmooth : Smooth (𝓘(ℝ).Prod I) ((I.Prod I').Prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (t : ℝ) :
+    (hsmooth : Smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (t : ℝ) :
     (mkHtpyFormalSol F hsec hsol hsmooth t : M → OneJetBundle I M I' M') = F t :=
   by
   ext x <;> try rfl
@@ -336,7 +336,7 @@ def RelMfld.SatisfiesHPrincipleWith (R : RelMfld I M IX X) (C : Set (P × M)) (�
   ∀ 𝓕₀ : FamilyFormalSol IP P R,
     (-- given a family of formal solutions with parameters in `P`
       ∀ᶠ p : P × M in 𝓝ˢ C, (𝓕₀ p.1).toOneJetSec.IsHolonomicAt p.2) →-- holonomic near `C`
-      ∃ 𝓕 : FamilyFormalSol (𝓘(ℝ, ℝ).Prod IP) (ℝ × P) R,
+      ∃ 𝓕 : FamilyFormalSol (𝓘(ℝ, ℝ).prod IP) (ℝ × P) R,
         (-- then there is a homotopy of such families
           ∀ (s : P) (x : M), 𝓕 (0, s) x = 𝓕₀ s x) ∧
           (-- that agrees on `t = 0`
@@ -355,14 +355,14 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
     (h : R.SatisfiesHPrincipleWith IP C ε) (𝓕₀ : FamilyFormalSol IP P R)
     (h2 : ∀ᶠ p : P × M in 𝓝ˢ C, (𝓕₀ p.1).toOneJetSec.IsHolonomicAt p.2) :
     ∃ f : P → M → X,
-      (Smooth (IP.Prod I) IX <| uncurry f) ∧
+      (Smooth (IP.prod I) IX <| uncurry f) ∧
         (∀ᶠ p : P × M in 𝓝ˢ C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R :=
   by
   rcases h 𝓕₀ h2 with ⟨𝓕, h₁, h₂, h₃, h₄⟩
   refine' ⟨fun s => (𝓕 (1, s)).bs, _, _, _, _⟩
   · have := 𝓕.to_family_one_jet_sec.smooth
-    let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).Prod IP, ℝ × P⟯ :=
+    let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
       ⟨fun p => (1, p), Smooth.prod_mk smooth_const smooth_id⟩
     rw [show
         (uncurry fun s => (𝓕 (1, s)).bs) =
@@ -423,9 +423,9 @@ local notation "J¹XY" => OneJetBundle IX X IY Y
 
 local notation "J¹MN" => OneJetBundle IM M IN N
 
-local notation "IXY" => (IX.Prod IY).Prod 𝓘(ℝ, EX →L[ℝ] EY)
+local notation "IXY" => (IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)
 
-local notation "IMN" => (IM.Prod IN).Prod 𝓘(ℝ, EM →L[ℝ] EN)
+local notation "IMN" => (IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)
 
 /-! ## Transfer from J¹(X, Y) to J¹(M, N) and localized relations -/
 
@@ -437,7 +437,7 @@ def OpenSmoothEmbedding.transfer : OneJetBundle IX X IY Y → OneJetBundle IM M 
   OneJetBundle.map IY IN φ ψ fun x => (φ.fderiv x).symm
 
 theorem OpenSmoothEmbedding.smooth_transfer :
-    Smooth ((IX.Prod IY).Prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.Prod IN).Prod 𝓘(ℝ, EM →L[ℝ] EN))
+    Smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN))
       (φ.transfer ψ) :=
   by
   intro x

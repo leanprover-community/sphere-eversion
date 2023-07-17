@@ -50,7 +50,7 @@ A B
 C D. -/
 def ContinuousLinearMap.blocks (A : M₁ →L[𝕜] M₃) (B : M₂ →L[𝕜] M₃) (C : M₁ →L[𝕜] M₄)
     (D : M₂ →L[𝕜] M₄) : M₁ × M₂ →L[𝕜] M₃ × M₄ :=
-  (A.coprod B).Prod (C.coprod D)
+  (A.coprod B).prod (C.coprod D)
 
 /-- Given `(A : M₁ ≃L[𝕜] M₃)`, `(C : M₁ →L[𝕜] M₄)` and `(D : M₂ ≃L[𝕜] M₄)`,
 construct the continuous linear equiv with "matrix"
@@ -59,8 +59,8 @@ C D.
   -/
 def ContinuousLinearEquiv.lowerTriangular (A : M₁ ≃L[𝕜] M₃) (C : M₁ →L[𝕜] M₄) (D : M₂ ≃L[𝕜] M₄) :
     (M₁ × M₂) ≃L[𝕜] M₃ × M₄ :=
-  ContinuousLinearEquiv.equivOfInverse (((A : M₁ →L[𝕜] M₃).comp (fst 𝕜 M₁ M₂)).Prod (C.coprod D))
-    (((A.symm : M₃ →L[𝕜] M₁).comp (fst 𝕜 M₃ M₄)).Prod
+  ContinuousLinearEquiv.equivOfInverse (((A : M₁ →L[𝕜] M₃).comp (fst 𝕜 M₁ M₂)).prod (C.coprod D))
+    (((A.symm : M₃ →L[𝕜] M₁).comp (fst 𝕜 M₃ M₄)).prod
       ((-((D.symm : M₄ →L[𝕜] M₂).comp C).comp (A.symm : M₃ →L[𝕜] M₁)).coprod D.symm))
     (fun ⟨x, y⟩ => by
       simp only [prod_apply, coe_comp', ContinuousLinearEquiv.coe_coe, coe_fst', comp_app,

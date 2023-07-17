@@ -142,7 +142,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have hε₂ : ∀ {x}, 0 < ε₂ x := fun x =>
     lt_min (lt_min hε₀ (hε₁ x))
       ((hI.lt_Inf_iff_of_continuous
-            ((nonempty_Icc.mpr zero_le_one).Prod (nonempty_Icc.mpr zero_le_one))
+            ((nonempty_Icc.mpr zero_le_one).prod (nonempty_Icc.mpr zero_le_one))
             (h2f x).continuousOn _).mpr
         fun x hx => h3f)
   let γ₄ := ↿γ₃

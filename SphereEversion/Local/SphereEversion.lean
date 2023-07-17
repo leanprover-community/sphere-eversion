@@ -112,7 +112,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
   -- The following suffices looks stupid but is much faster than using the change tactic.
   suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) by exact this
   apply ContinuousAt.eventually
-  · refine' (continuous_at_const.inner continuousAt_fst).Prod _
+  · refine' (continuous_at_const.inner continuousAt_fst).prod _
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
       exact continuous_at_snd.comp continuousAt_snd
@@ -414,7 +414,7 @@ theorem locFormalEversion_hol :
     by
     refine' (IsOpen.mem_nhdsSet _).mpr _
     exact
-      (is_open_Iio.union isOpen_Ioi).Prod
+      (is_open_Iio.union isOpen_Ioi).prod
         (is_open_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, _⟩

@@ -38,7 +38,7 @@ variable {I M V} {f : N → J¹MV}
 
 -- todo: remove or use to prove `smooth_at_one_jet_eucl_bundle`
 theorem smoothAt_one_jet_eucl_bundle' {x₀ : N} :
-    SmoothAt J (I.Prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
+    SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
       SmoothAt J I (fun x => (f x).1) x₀ ∧
         SmoothAt J 𝓘(𝕜, E →L[𝕜] V)
           (fun x =>
@@ -53,7 +53,7 @@ theorem smoothAt_one_jet_eucl_bundle' {x₀ : N} :
   simp_rw [ContinuousLinearMap.id_comp]
 
 theorem smoothAt_one_jet_eucl_bundle {x₀ : N} :
-    SmoothAt J (I.Prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
+    SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
       SmoothAt J I (fun x => (f x).1) x₀ ∧
         SmoothAt J 𝓘(𝕜, E →L[𝕜] V)
           (fun x =>
@@ -82,7 +82,7 @@ theorem SmoothAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] 
           show E →L[𝕜] V from
             ϕ x ∘L (trivializationAt E (TangentSpace I : M → Type _) (f x₀)).symmL 𝕜 (f x))
         x₀) :
-    SmoothAt J (I.Prod 𝓘(𝕜, E →L[𝕜] V)) (fun x => Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
+    SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (fun x => Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
   smoothAt_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
 
 theorem SmoothAt.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
@@ -92,7 +92,7 @@ theorem SmoothAt.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V
         (fun x =>
           show E →L[𝕜] V from ϕ x ∘L (trivializationAt E (TangentSpace I) (f x₀)).symmL 𝕜 (f x))
         x₀) :
-    SmoothAt J (I.Prod 𝓘(𝕜, E →L[𝕜] V)) (fun x => Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
+    SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (fun x => Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
   smoothAt_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
 end Smoothness
@@ -104,7 +104,7 @@ section Sections
 structure OneJetEuclSec where
   toFun : M → J¹MV
   is_sec' : ∀ p, (to_fun p).1 = p
-  smooth' : Smooth I (I.Prod 𝓘(𝕜, E →L[𝕜] V)) to_fun
+  smooth' : Smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) to_fun
 
 variable {I M V}
 
@@ -116,7 +116,7 @@ theorem OneJetEuclSec.is_sec (s : OneJetEuclSec I M V) (p : M) : (s p).1 = p :=
   s.is_sec' p
 
 @[simp]
-theorem OneJetEuclSec.smooth (s : OneJetEuclSec I M V) : Smooth I (I.Prod 𝓘(𝕜, E →L[𝕜] V)) s :=
+theorem OneJetEuclSec.smooth (s : OneJetEuclSec I M V) : Smooth I (I.prod 𝓘(𝕜, E →L[𝕜] V)) s :=
   s.smooth'
 
 end Sections
@@ -137,10 +137,10 @@ def proj (v : OneJetBundle I M 𝓘(𝕜, V) V) : J¹MV :=
   ⟨v.1.1, v.2⟩
 
 theorem smooth_proj :
-    Smooth ((I.Prod 𝓘(𝕜, V)).Prod 𝓘(𝕜, E →L[𝕜] V)) (I.Prod 𝓘(𝕜, E →L[𝕜] V)) (proj I M V) :=
+    Smooth ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, E →L[𝕜] V)) (proj I M V) :=
   by
   intro x₀
-  have : SmoothAt ((I.prod 𝓘(𝕜, V)).Prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smoothAt_id
+  have : SmoothAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smoothAt_id
   simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, in_coordinates, tangentBundleCore_indexAt,
     TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this 
   dsimp only [TangentSpace] at this 
@@ -167,11 +167,11 @@ def incl (v : J¹MV × V) : OneJetBundle I M 𝓘(𝕜, V) V :=
   ⟨(v.1.1, v.2), v.1.2⟩
 
 theorem smooth_incl :
-    Smooth ((I.Prod 𝓘(𝕜, E →L[𝕜] V)).Prod 𝓘(𝕜, V)) ((I.Prod 𝓘(𝕜, V)).Prod 𝓘(𝕜, E →L[𝕜] V))
+    Smooth ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V))
       (incl I M V) :=
   by
   intro x₀
-  have : SmoothAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).Prod 𝓘(𝕜, V)) _ Prod.fst x₀ := smoothAt_fst
+  have : SmoothAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ Prod.fst x₀ := smoothAt_fst
   rw [smoothAt_one_jet_eucl_bundle] at this 
   refine' this.1.oneJetBundle_mk smoothAt_snd _
   dsimp only [inTangentCoordinates, in_coordinates, TangentSpace]
@@ -212,7 +212,7 @@ local notation "J¹MV" => TotalSpace (E →L[ℝ] V) FJ¹MV
 structure FamilyOneJetEuclSec where
   toFun : N × M → J¹MV
   is_sec' : ∀ p, (to_fun p).1 = p.2
-  smooth' : Smooth (J.Prod I) (I.Prod 𝓘(ℝ, E →L[ℝ] V)) to_fun
+  smooth' : Smooth (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) to_fun
 
 instance : CoeFun (FamilyOneJetEuclSec I M V J N) fun S => N × M → J¹MV :=
   ⟨fun S x => S.toFun x⟩
@@ -226,12 +226,12 @@ theorem FamilyOneJetEuclSec.is_sec (s : FamilyOneJetEuclSec I M V J N) (p : N ×
 
 @[simp]
 theorem FamilyOneJetEuclSec.smooth (s : FamilyOneJetEuclSec I M V J N) :
-    Smooth (J.Prod I) (I.Prod 𝓘(ℝ, E →L[ℝ] V)) s :=
+    Smooth (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) s :=
   s.smooth'
 
 variable {I M V J N V'}
 
-def familyJoin {f : N × M → V} (hf : Smooth (J.Prod I) 𝓘(ℝ, V) f)
+def familyJoin {f : N × M → V} (hf : Smooth (J.prod I) 𝓘(ℝ, V) f)
     (s : FamilyOneJetEuclSec I M V J N) : FamilyOneJetSec I M 𝓘(ℝ, V) V J N
     where
   bs n m := (incl I M V (s (n, m), f (n, m))).1.2
@@ -246,7 +246,7 @@ def familyJoin {f : N × M → V} (hf : Smooth (J.Prod I) 𝓘(ℝ, V) f)
     simp
 
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
-    (i_smooth : ∀ x₀ : N × M, SmoothAt (J.Prod I) 𝓘(ℝ, V →L[ℝ] V') i x₀) :
+    (i_smooth : ∀ x₀ : N × M, SmoothAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') i x₀) :
     FamilyOneJetEuclSec I M V' J N
     where
   toFun p := ⟨p.2, (i p).comp (s p.2).2⟩

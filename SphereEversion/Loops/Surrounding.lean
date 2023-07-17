@@ -280,7 +280,7 @@ local notation "ι" => Fin (FiniteDimensional.finrank ℝ F + 1)
 theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filter Y} {v : ι → F}
     {q : F} {p : ι → X → F} {f : Y → F} (hq : ∃ w, SurroundingPts q v w)
     (hp : ∀ i, Tendsto (p i) l (𝓝 (v i))) (hf : Tendsto f m (𝓝 q)) :
-    ∀ᶠ z : X × Y in l.Prod m, ∃ w, SurroundingPts (f z.2) (fun i => p i z.1) w := by
+    ∀ᶠ z : X × Y in l.prod m, ∃ w, SurroundingPts (f z.2) (fun i => p i z.1) w := by
   classical
   obtain ⟨w, hw⟩ := hq
   let V : Set (ι → ℝ) := Set.pi Set.univ fun i => Ioi (0 : ℝ)

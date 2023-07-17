@@ -63,7 +63,7 @@ section MetricSpace
 variable [MetricSpace E] [LocallyCompactSpace E]
 
 theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x : E) (t : ℝ) :
-    Tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) ((𝓝 x).Prod atTop) (𝓝 (γ x t)) :=
+    Tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t)) :=
   by
   have hγ : ∀ x, Continuous (γ x) := fun x => h.comp <| Continuous.Prod.mk _
   have h2γ : ∀ x, Continuous fun z => γ z x := fun x => h.comp <| Continuous.Prod.mk_left _
@@ -148,20 +148,20 @@ theorem approxSurroundingPointsAt_smooth (n : ℕ) : 𝒞 ∞ fun y => γ.approx
 /-- The key property from which it should be easy to construct `local_centering_density`,
 `local_centering_density_nhd` etc below. -/
 theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
-    ∀ᶠ z : E × ℕ in (𝓝 x).Prod atTop,
+    ∀ᶠ z : E × ℕ in 𝓝 x ×ˢ atTop,
       ∃ w, SurroundingPts (g z.1) (γ.approxSurroundingPointsAt x z.1 z.2) w :=
   by
   let a : ι → E × ℕ → F := fun i z => γ.approx_surrounding_points_at x z.1 z.2 i
-  suffices ∀ i, tendsto (a i) ((𝓝 x).Prod at_top) (𝓝 (γ.surrounding_points_at x i))
+  suffices ∀ i, tendsto (a i) (𝓝 x ×ˢ at_top) (𝓝 (γ.surrounding_points_at x i))
     by
-    have hg : tendsto (fun z : E × ℕ => g z.fst) ((𝓝 x).Prod at_top) (𝓝 (g x)) :=
+    have hg : tendsto (fun z : E × ℕ => g z.fst) (𝓝 x ×ˢ at_top) (𝓝 (g x)) :=
       tendsto.comp γ.smooth_surrounded.continuous.continuous_at tendsto_fst
     exact
       eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surround_pts_points_weights_at x⟩ this
         hg
   intro i
   let t := γ.surrounding_parameters_at x i
-  change tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) ((𝓝 x).Prod at_top) (𝓝 (γ x t))
+  change tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ at_top) (𝓝 (γ x t))
   exact Loop.tendsto_mollify_apply γ γ.smooth.continuous x t
 
 /-- This is an auxiliary definition to help construct `centering_density` below.
@@ -293,7 +293,7 @@ theorem localCenteringDensity_smooth_on :
     refine' (h₂.comp_cont_diff_on h₁).comp _ _
     · have h₃ := (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm.Subset
       refine' ContDiffOn.comp _ (cont_diff_id.prod contDiff_id).ContDiffOn h₃
-      refine' γ.smooth_surrounded.ContDiffOn.Prod_map (ContDiff.contDiffOn _)
+      refine' γ.smooth_surrounded.ContDiffOn.prod_map (ContDiff.contDiffOn _)
       exact γ.approx_surrounding_points_at_smooth x _
     · intro y hy
       simp [z, γ.approx_surrounding_points_at_mem_affine_bases x y hy]

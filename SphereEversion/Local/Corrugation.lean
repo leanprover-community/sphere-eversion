@@ -105,7 +105,7 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
     refine' (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub _
     refine' Loop.continuous_average _
     exact hγ_cont.comp₃ continuous_fst.fst.fst.fst continuous_fst.fst.fst.snd continuous_snd
-  rcases cont'.bounded_on_compact_of_one_periodic _ ((is_compact_Icc : IsCompact I).Prod hK) with
+  rcases cont'.bounded_on_compact_of_one_periodic _ ((is_compact_Icc : IsCompact I).prod hK) with
     ⟨C, hC⟩
   · apply (const_mul_one_div_lt ε_pos C).mono
     intro N hN x hx t

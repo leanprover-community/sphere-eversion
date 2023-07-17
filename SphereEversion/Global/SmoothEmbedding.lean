@@ -463,8 +463,8 @@ open Function
 
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
-    (hK : IsClosed (φ '' K)) (hf : Smooth (IM'.Prod IM) IN (uncurry f))
-    (hg : Smooth (IM'.Prod IX) IY (uncurry g)) (hk : Smooth IM' IM k)
+    (hK : IsClosed (φ '' K)) (hf : Smooth (IM'.prod IM) IN (uncurry f))
+    (hg : Smooth (IM'.prod IX) IY (uncurry g)) (hk : Smooth IM' IM k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
     Smooth IM' IN fun x => update φ ψ (f x) (g x) (k x) :=
   by

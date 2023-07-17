@@ -17,7 +17,7 @@ variable [TopologicalSpace M₃] [AddCommMonoid M₃]
 variable [Module R₁ M₁] [Module R₁ M₂] [Module R₁ M₃]
 
 theorem fst_prod_zero_add_zero_prod_snd [ContinuousAdd M₁] [ContinuousAdd M₂] :
-    (ContinuousLinearMap.fst R₁ M₁ M₂).Prod 0 +
+    (ContinuousLinearMap.fst R₁ M₁ M₂).prod 0 +
         ContinuousLinearMap.prod 0 (ContinuousLinearMap.snd R₁ M₁ M₂) =
       ContinuousLinearMap.id R₁ (M₁ × M₂) :=
   by

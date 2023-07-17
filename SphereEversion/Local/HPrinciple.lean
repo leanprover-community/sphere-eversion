@@ -190,7 +190,7 @@ theorem loop_smooth (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 
 theorem loop_smooth' (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) {t : G → ℝ}
     (ht : 𝒞 ∞ t) {s : G → ℝ} (hs : 𝒞 ∞ s) {x : G → E} (hx : 𝒞 ∞ x) :
     𝒞 ∞ fun g => L.Loop h (t g) (x g) (s g) :=
-  (L.loop_smooth h).comp (ht.Prod <| hx.Prod hs)
+  (L.loop_smooth h).comp (ht.prod <| hx.prod hs)
 
 theorem loop_C1 (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) :
     ∀ t, 𝒞 1 ↿(L.Loop h t) := fun t =>

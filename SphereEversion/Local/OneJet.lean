@@ -159,9 +159,9 @@ variable {E F P}
 instance : CoeFun (FamilyJetSec E F P) fun S => P → JetSec E F :=
   ⟨fun S t =>
     { f := S.f t
-      f_diff := S.f_diff.comp (contDiff_const.Prod contDiff_id)
+      f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
       φ := S.φ t
-      φ_diff := S.φ_diff.comp (contDiff_const.Prod contDiff_id) }⟩
+      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }⟩
 
 namespace FamilyJetSec
 

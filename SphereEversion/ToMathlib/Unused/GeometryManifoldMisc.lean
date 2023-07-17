@@ -97,7 +97,7 @@ variable (IB) [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
 
 theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializationAtlas e]
     {x₀ : TotalSpace F E} (hx₀ : x₀.proj ∈ e.baseSet) :
-    SmoothAt (IB.Prod 𝓘(𝕜, F)) (IB.Prod 𝓘(𝕜, F)) e x₀ :=
+    SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e x₀ :=
   by
   rw [smoothAt_prod]
   refine' ⟨(smooth_at_proj E).congr_of_eventuallyEq _, _⟩
@@ -141,17 +141,17 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
 
 #print Trivialization.smoothOn /-
 theorem Trivialization.smoothOn (e : Trivialization F (π F E)) [MemTrivializationAtlas e] :
-    SmoothOn (IB.Prod 𝓘(𝕜, F)) (IB.Prod 𝓘(𝕜, F)) e e.source := fun x hx =>
+    SmoothOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e e.source := fun x hx =>
   (e.SmoothAt IB <| e.mem_source.mp hx).SmoothWithinAt
 -/
 
 theorem smoothAt_trivializationAt {x₀ : B} {x : TotalSpace F E}
     (hx : x.proj ∈ (trivializationAt F E x₀).baseSet) :
-    SmoothAt (IB.Prod 𝓘(𝕜, F)) (IB.Prod 𝓘(𝕜, F)) (trivializationAt F E x₀) x :=
+    SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) (trivializationAt F E x₀) x :=
   (trivializationAt F E x₀).SmoothAt IB hx
 
 theorem smoothOn_trivializationAt (x₀ : B) :
-    SmoothOn (IB.Prod 𝓘(𝕜, F)) (IB.Prod 𝓘(𝕜, F)) (trivializationAt F E x₀)
+    SmoothOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) (trivializationAt F E x₀)
       (trivializationAt F E x₀).source :=
   (trivializationAt F E x₀).SmoothOn IB
 
