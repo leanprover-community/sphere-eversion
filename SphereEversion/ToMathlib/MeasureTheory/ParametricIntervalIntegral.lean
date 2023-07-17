@@ -337,7 +337,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           use Ioo a₀ b₀, Ioo_nhds, bound_integrable.1
         refine'
           (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀) M
-                    bound_cont).HasFDerivAt.IsBigO.congr'
+                    bound_cont).hasFDerivAt.IsBigO.congr'
             _ eventually_eq.rfl
         apply eventually.mono Ioo_nhds
         rintro t ht
@@ -451,10 +451,10 @@ theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF
       NNReal.coe_nonneg K
   · apply ae_of_all
     intro t
-    apply (ContDiff.hasStrictFDerivAt _ le_rfl).HasFDerivAt
+    apply (ContDiff.hasStrictFDerivAt _ le_rfl).hasFDerivAt
     rw [show (fun x => F x t) = uncurry F ∘ fun x => (x, t) by ext; simp]
     exact hF.comp ((contDiff_prod_mk_left t).of_le le_top)
-  · exact (ContDiff.hasStrictFDerivAt hs le_rfl).HasFDerivAt
+  · exact (ContDiff.hasStrictFDerivAt hs le_rfl).hasFDerivAt
   · rfl
   · apply Continuous.aestronglyMeasurable
     have :
@@ -464,7 +464,7 @@ theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF
       by
       ext t
       have : HasFDerivAt (fun e => F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀ :=
-        (hF.has_strict_fderiv_at le_rfl).HasFDerivAt.comp _ (hasFDerivAt_prod_mk_left _ _)
+        (hF.has_strict_fderiv_at le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prod_mk_left _ _)
       rw [this.fderiv]
     rw [this]; clear this
     exact

@@ -42,7 +42,7 @@ theorem ContDiffAt.clm_comp {g : E' → F →L[𝕜] G} {f : E' → E →L[𝕜]
 
 theorem fderiv_comp {g : F → G} {f : E → F} (x : E) (hg : DifferentiableAt 𝕜 g (f x))
     (hf : DifferentiableAt 𝕜 f x) : fderiv 𝕜 (g ∘ f) x = (fderiv 𝕜 g (f x)).comp (fderiv 𝕜 f x) :=
-  (hg.HasFDerivAt.comp x hf.HasFDerivAt).fderiv
+  (hg.hasFDerivAt.comp x hf.hasFDerivAt).fderiv
 
 theorem fderiv_prod_left {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun x => (x, y₀)) x₀ = ContinuousLinearMap.inl 𝕜 E F :=
@@ -108,7 +108,7 @@ theorem fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e�
 theorem DifferentiableAt.hasFDerivAt_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
     HasFDerivAt (fun e => φ e f₀) (partialFDerivFst 𝕜 φ e₀ f₀) e₀ :=
-  (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).HasFDerivAt
+  (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).hasFDerivAt
 
 theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
@@ -137,11 +137,11 @@ def ContinuousLinearMap.compLeftL (φ : F →L[𝕜] G) : (E →L[𝕜] F) →L[
 
 theorem Differentiable.fderiv_partial_fst {φ : E → F → G} (hF : Differentiable 𝕜 (uncurry φ)) :
     ↿(∂₁ 𝕜 φ) = (fun ψ : E × F →L[𝕜] G => ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
-  ext1 ⟨y, t⟩; exact fderiv_partial_fst (hF ⟨y, t⟩).HasFDerivAt
+  ext1 ⟨y, t⟩; exact fderiv_partial_fst (hF ⟨y, t⟩).hasFDerivAt
 
 theorem Differentiable.fderiv_partial_snd {φ : E → F → G} (hF : Differentiable 𝕜 (uncurry φ)) :
     ↿(∂₂ 𝕜 φ) = (fun ψ : E × F →L[𝕜] G => ψ.comp (inr 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
-  ext1 ⟨y, t⟩; exact fderiv_partial_snd (hF ⟨y, t⟩).HasFDerivAt
+  ext1 ⟨y, t⟩; exact fderiv_partial_snd (hF ⟨y, t⟩).hasFDerivAt
 
 /-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G`-/
 def partialDerivFst (φ : 𝕜 → F → G) : 𝕜 → F → G := fun k f => ∂₁ 𝕜 φ k f 1

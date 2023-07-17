@@ -101,7 +101,7 @@ variable {𝕜}
 
 theorem StrictDifferentiableAt.differentiableAt {f : E → F} {x : E}
     (h : StrictDifferentiableAt 𝕜 f x) : DifferentiableAt 𝕜 f x :=
-  Exists.elim h fun φ hφ => ⟨φ, hφ.HasFDerivAt⟩
+  Exists.elim h fun φ hφ => ⟨φ, hφ.hasFDerivAt⟩
 
 -- PR to linear_algebra.prod
 @[simp]
@@ -219,7 +219,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
         exact hff.cont_diff_top_partial_snd.continuous
   let φ := φ₀.to_homeomorph_of_cont_diff hderiv
   exact
-    cont_diff_snd.comp (φ.cont_diff_symm (fun x => (hderiv x).HasFDerivAt) (cont_diff_fst.prod hf))
+    cont_diff_snd.comp (φ.cont_diff_symm (fun x => (hderiv x).hasFDerivAt) (cont_diff_fst.prod hf))
 
 end
 
