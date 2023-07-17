@@ -25,20 +25,14 @@ theorem Function.LeftInverse.mem_preimage_iff (hfg : LeftInverse g f) {s : Set �
 
 -- to set.basic
 theorem Function.LeftInverse.image_eq (hfg : LeftInverse g f) (s : Set α) :
-    f '' s = range f ∩ g ⁻¹' s :=
-  by
-  -- begin
-  --   simp_rw [set.ext_iff, mem_image, mem_inter_iff, mem_range, and_comm (_ ∈ _),
-  --     @eq_comm _ (f _), ← exists_and_distrib_right, ← exists_prop],
-  --   simp only [hfg _, iff_true_intro iff.rfl, implies_true_iff, hfg.mem_preimage_iff] {contextual := tt},
-  -- end
-  ext x;
+    f '' s = range f ∩ g ⁻¹' s := by
+  ext x
   constructor
   · rintro ⟨x, hx, rfl⟩; exact ⟨mem_range_self x, hfg.mem_preimage_iff.mpr hx⟩
   · rintro ⟨⟨x, rfl⟩, b⟩; exact mem_image_of_mem f (hfg.mem_preimage_iff.mp b)
 
 theorem Function.LeftInverse.isOpenMap {f : α → β} {g : β → α} (hfg : LeftInverse g f)
-    (hf : IsOpen (range f)) (hg : ContinuousOn g (range f)) : IsOpenMap f := by intro U hU;
+    (hf : IsOpen (range f)) (hg : ContinuousOn g (range f)) : IsOpenMap f := fun U hU ↦ by
   rw [hfg.image_eq]; exact hg.preimage_open_of_open hf hU
 
 end Maps
@@ -48,13 +42,12 @@ section
 -- to separation
 theorem Filter.Eventually.closed_neighborhood {α} [TopologicalSpace α] [NormalSpace α] {C : Set α}
     {P : α → Prop} (hP : ∀ᶠ x in 𝓝ˢ C, P x) (hC : IsClosed C) :
-    ∃ C' ∈ 𝓝ˢ C, IsClosed C' ∧ ∀ᶠ x in 𝓝ˢ C', P x :=
-  by
-  obtain ⟨O, hO, hCO, hPO⟩ := mem_nhds_set_iff_exists.mp hP
+    ∃ C' ∈ 𝓝ˢ C, IsClosed C' ∧ ∀ᶠ x in 𝓝ˢ C', P x := by
+  obtain ⟨O, hO, hCO, hPO⟩ := mem_nhdsSet_iff_exists.mp hP
   obtain ⟨U, hU, hCU, hUO⟩ := normal_exists_closure_subset hC hO hCO
   exact
-    ⟨closure U, mem_of_superset (hU.mem_nhds_set.mpr hCU) subset_closure, isClosed_closure,
-      eventually_of_mem (hO.mem_nhds_set.mpr hUO) hPO⟩
+    ⟨closure U, mem_of_superset (hU.mem_nhdsSet.mpr hCU) subset_closure, isClosed_closure,
+      eventually_of_mem (hO.mem_nhdsSet.mpr hUO) hPO⟩
 
 end
 
@@ -67,19 +60,17 @@ theorem ContinuousAt.eventually {f : α → β} {a₀ : α} (hf : ContinuousAt f
   hf (isOpen_iff_mem_nhds.mp hP _ ha₀)
 
 theorem ContinuousAt.eventually' {f : α → β} {a₀ : α} (hf : ContinuousAt f a₀) (P : β → Prop)
-    (hP : ∀ᶠ y in 𝓝 (f a₀), P y) : ∀ᶠ a in 𝓝 a₀, P (f a) :=
-  by
+    (hP : ∀ᶠ y in 𝓝 (f a₀), P y) : ∀ᶠ a in 𝓝 a₀, P (f a) := by
   rw [ContinuousAt, tendsto_iff_comap] at hf 
-  exact eventually.filter_mono hf (hP.comap f)
+  exact Eventually.filter_mono hf (hP.comap f)
 
 theorem Continuous.eventually {f : α → β} {a₀ : α} (hf : Continuous f) (P : β → Prop)
     (hP : IsOpen {b | P b}) (ha₀ : P (f a₀)) : ∀ᶠ a in 𝓝 a₀, P (f a) :=
-  hf.continuousAt.Eventually P hP ha₀
+  hf.continuousAt.eventually P hP ha₀
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- (unused)
-theorem nhdsSet_prod_le {s : Set α} {t : Set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).Prod (𝓝ˢ t) :=
-  by
+theorem nhdsSet_prod_le {s : Set α} {t : Set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).prod (𝓝ˢ t) := by
   intro w hw
   obtain ⟨u, hu, v, hv, huv⟩ := mem_prod_iff.mp hw
   rw [← subset_interior_iff_mem_nhdsSet] at hu hv ⊢
@@ -93,14 +84,14 @@ section
 
 theorem support_norm {α E : Type _} [NormedAddCommGroup E] (f : α → E) :
     (support fun a => ‖f a‖) = support f :=
-  Function.support_comp_eq norm (fun x => norm_eq_zero) f
+  Function.support_comp_eq norm norm_eq_zero f
 
 @[to_additive]
 theorem hasCompactMulSupport_of_subset {α β : Type _} [TopologicalSpace α] [T2Space α] [One β]
     {f : α → β} {K : Set α} (hK : IsCompact K) (hf : mulSupport f ⊆ K) : HasCompactMulSupport f :=
-  isCompact_of_isClosed_subset hK (isClosed_mulTSupport f) (closure_minimal hf hK.IsClosed)
+  isCompact_of_isClosed_subset hK (isClosed_mulTSupport f) (closure_minimal hf hK.isClosed)
 
-theorem periodic_const {α β : Type _} [Add α] {a : α} {b : β} : Periodic (fun x => b) a := fun x =>
+theorem periodic_const {α β : Type _} [Add α] {a : α} {b : β} : Periodic (fun _ => b) a := fun _ =>
   rfl
 
 theorem Real.ball_zero_eq (r : ℝ) : Metric.ball (0 : ℝ) r = Ioo (-r) r := by simp [Real.ball_eq_Ioo]
@@ -114,21 +105,19 @@ section
 TODO: use that in to_mathlib.topology.periodic?
 -/
 
-
 instance : VAdd ℤ ℝ :=
   ⟨fun n x => (n : ℝ) + x⟩
 
 instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
-  ⟨by
-    intro K L hK hL
+  ⟨fun K L hK hL ↦ by
     rcases eq_empty_or_nonempty K with (rfl | hK') <;>
         rcases eq_empty_or_nonempty L with (rfl | hL') <;>
       try simp
-    have hSK := (hK.is_lub_Sup hK').1
-    have hIK := (hK.is_glb_Inf hK').1
-    have hSL := (hL.is_lub_Sup hL').1
-    have hIL := (hL.is_glb_Inf hL').1
-    apply (finite_Icc ⌈Inf L - Sup K⌉ ⌊Sup L - Inf K⌋).Subset
+    have hSK := (hK.isLUB_sSup hK').1
+    have hIK := (hK.isGLB_sInf hK').1
+    have hSL := (hL.isLUB_sSup hL').1
+    have hIL := (hL.isGLB_sInf hL').1
+    apply (finite_Icc ⌈sInf L - sSup K⌉ ⌊sSup L - sInf K⌋).subset
     rintro n (hn : VAdd.vadd n '' K ∩ L ≠ ∅)
     rcases nonempty_iff_ne_empty.mpr hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩
     constructor
@@ -146,8 +135,7 @@ open Int
 /- properties of the (dis)continuity of `int.fract` on `ℝ`.
 To be PRed to topology.algebra.floor_ring
 -/
-theorem floor_eq_self_iff {x : ℝ} : (⌊x⌋ : ℝ) = x ↔ ∃ n : ℤ, x = n :=
-  by
+theorem floor_eq_self_iff {x : ℝ} : (⌊x⌋ : ℝ) = x ↔ ∃ n : ℤ, x = n := by
   constructor
   · intro h
     exact ⟨⌊x⌋, h.symm⟩
@@ -163,17 +151,15 @@ theorem fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n := 
 theorem Ioo_floor_mem_nhds {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
   Ioo_mem_nhds ((floor_le x).eq_or_lt.elim (fun H => (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
 
-theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun x' => ⌊x⌋ :=
-  by
+theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun x' => ⌊x⌋ := by
   filter_upwards [Ioo_floor_mem_nhds h]
   intro y hy
   rw [floor_eq_on_Ico]
   exact mem_Ico_of_Ioo hy
 
-theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' => x' - floor x :=
-  by
+theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' => x' - floor x := by
   rw [fract_ne_zero_iff] at h 
-  exact eventually_eq.rfl.sub ((loc_constant_floor h).fun_comp _)
+  exact EventuallyEq.rfl.sub ((loc_constant_floor h).fun_comp _)
 
 #print continuousAt_fract /-
 -- todo: make iff
@@ -182,10 +168,9 @@ theorem continuousAt_fract {x : ℝ} (h : fract x ≠ 0) : ContinuousAt fract x 
 -/
 
 theorem Ioo_inter_Iio {α : Type _} [LinearOrder α] {a b c : α} :
-    Ioo a b ∩ Iio c = Ioo a (min b c) := by ext; simp [and_assoc']
+    Ioo a b ∩ Iio c = Ioo a (min b c) := by ext; simp [and_assoc]
 
-theorem fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y :=
-  by
+theorem fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y := by
   cases' le_total y 1 with hy hy
   · rw [← fract_sub_int x n, fract_eq_self.mpr]
     linarith
@@ -216,7 +201,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     set ε' := min ε (1 / 2)
     have ε'_pos : 0 < ε' := lt_min ε_pos (by norm_num : (0 : ℝ) < 1 / 2)
     have hε' : Ioo (1 - ε') 1 ⊆ s := by
-      apply subset.trans _ hε
+      apply Subset.trans _ hε
       apply Ioo_subset_Ioo_left
       linarith [min_le_left ε (1 / 2)]
     have mem : Ioo ((n : ℝ) - ε') (n + δ) ∈ 𝓝 (n : ℝ) := by apply Ioo_mem_nhds <;> linarith
@@ -224,7 +209,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     rintro x ⟨hx, hx'⟩
     cases' le_or_gt (n : ℝ) x with hx'' hx''
     · apply hδ
-      rw [mem_set_of_eq, abs_eq_self.mpr (fract_nonneg x)]
+      rw [mem_setOf_eq, abs_eq_self.mpr (fract_nonneg x)]
       exact fract_lt hx'' hx'
     · apply hε'
       constructor
@@ -245,8 +230,7 @@ theorem IsClosed.preimage_fract {s : Set ℝ} (hs : IsClosed s)
   isOpen_compl_iff.mp <| hs.isOpen_compl.preimage_fract' fun h => by_contra fun h' => h <| h2s h'
 
 theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract x))
-    (h2 : fract x = 0 → s ∈ 𝓝 (1 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x :=
-  by
+    (h2 : fract x = 0 → s ∈ 𝓝 (1 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x := by
   by_cases hx : fract x = 0
   · obtain ⟨u, hus, hu, hxu⟩ := mem_nhds_iff.mp h1
     obtain ⟨v, hvs, hv, h1v⟩ := mem_nhds_iff.mp (h2 hx)
