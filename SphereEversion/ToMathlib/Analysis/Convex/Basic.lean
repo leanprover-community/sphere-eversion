@@ -30,8 +30,7 @@ def reallyConvexHull (𝕜 : Type _) {E : Type _} [OrderedSemiring 𝕜] [AddCom
 
 -- https://xkcd.com/927/
 theorem finsum.exists_ne_zero_of_sum_ne_zero {β α : Type _} {s : Finset α} {f : α → β}
-    [AddCommMonoid β] : ∑ᶠ x ∈ s, f x ≠ 0 → ∃ (a : α) (H : a ∈ s), f a ≠ 0 :=
-  by
+    [AddCommMonoid β] : ∑ᶠ x ∈ s, f x ≠ 0 → ∃ a ∈ s, f a ≠ 0 := by
   rw [finsum_mem_finset_eq_sum]
   exact Finset.exists_ne_zero_of_sum_ne_zero
 
@@ -45,34 +44,32 @@ theorem finite_of_finprod_ne_one {M : Type _} {ι : Sort _} [CommMonoid M] {f : 
   rw [Classical.not_not, dif_neg h]
 
 theorem support_finite_of_finsum_eq_of_neZero {M : Type _} {ι : Sort _} [AddCommMonoid M]
-    {f : ι → M} {x : M} [NeZero x] (h : ∑ᶠ i, f i = x) : (support f).Finite :=
-  by
+    {f : ι → M} {x : M} [NeZero x] (h : ∑ᶠ i, f i = x) : (support f).Finite := by
   apply finite_of_finsum_ne_zero
   rw [h]
   apply NeZero.ne
 
 @[to_additive]
-theorem Subsingleton.mulSupport_eq {α β} [Subsingleton β] [One β] (f : α → β) : mulSupport f = ∅ :=
-  by rw [mul_support_eq_empty_iff]; ext; apply Subsingleton.elim
+theorem Subsingleton.mulSupport_eq {α β} [Subsingleton β] [One β] (f : α → β) :
+    mulSupport f = ∅ := by
+  rw [mulSupport_eq_empty_iff]; apply Subsingleton.elim
 
 theorem support_finite_of_finsum_eq_one {M : Type _} {ι : Sort _} [NonAssocSemiring M] {f : ι → M}
-    (h : ∑ᶠ i, f i = 1) : (support f).Finite :=
-  by
+    (h : ∑ᶠ i, f i = 1) : (support f).Finite := by
   cases subsingleton_or_nontrivial M
   · simp_rw [Subsingleton.support_eq, finite_empty]
   exact support_finite_of_finsum_eq_of_neZero h
 
 theorem finsum_sum_filter {α β M : Type _} [AddCommMonoid M] (f : β → α) (s : Finset β)
     [DecidableEq α] (g : β → M) :
-    ∑ᶠ x : α, ∑ y : β in Finset.filter (fun j : β => f j = x) s, g y = ∑ k in s, g k :=
-  by
+    ∑ᶠ x : α, ∑ y : β in Finset.filter (fun j : β => f j = x) s, g y = ∑ k in s, g k := by
   rw [finsum_eq_finset_sum_of_support_subset _ (show _ ⊆ ↑(s.image f) from _)]
   · rw [Finset.sum_image']
     intros
     rfl
   · intro x hx
     rw [mem_support] at hx 
-    obtain ⟨a, h, ha⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx
+    obtain ⟨a, h, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx
     simp at h ⊢
     exact ⟨a, h⟩
 
@@ -82,8 +79,7 @@ theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type _} {t : Finset ι} {w : 
   classical
   refine' ⟨fun e => ∑ᶠ i ∈ t.filter fun j => z j = e, w i, _, _, _, _⟩
   · rw [Pi.le_def]
-    intro e
-    apply finsum_nonneg fun i => _
+    refine fun e ↦ finsum_nonneg fun i => ?_
     exact finsum_nonneg fun hi => h₀ _ (Finset.mem_of_mem_filter i hi)
   · intro e he
     rw [mem_support] at he 
@@ -103,8 +99,7 @@ theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type _} {t : Finset ι} {w : 
     rw [Finset.mem_filter] at hy 
     rw [hy.2]
 
-theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set E) :=
-  by
+theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set E) := by
   rintro s t h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 
@@ -121,29 +116,26 @@ theorem reallyConvex_empty : ReallyConvex 𝕜 (∅ : Set E) :=
 
 @[simp]
 theorem reallyConvex_univ : ReallyConvex 𝕜 (univ : Set E) :=
-  Or.inr fun w h1w h2w h3w => mem_univ _
+  Or.inr fun _ _ _ _ => mem_univ _
 
 -- for every lemma that requires `nontrivial` should we also add a lemma that has the condition
 -- `s.nonempty` (or even `nontrivial 𝕜 ∨ s.nonempty`)?
 theorem Nontrivial.reallyConvex_iff [Nontrivial 𝕜] :
-    ReallyConvex 𝕜 s ↔ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s :=
-  by
+    ReallyConvex 𝕜 s ↔ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s := by
   rw [ReallyConvex, or_iff_right_iff_imp]
   rintro rfl w hw h2w h3w
   obtain rfl : w = 0 := by ext; simp [imp_false] at h2w ; simp [h2w]
-  simpa using h3w
+  simp at h3w
 
-theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s :=
-  by
+theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s := by
   rcases eq_empty_or_nonempty s with (rfl | ⟨z, hz⟩)
   · apply reallyConvex_empty
-  refine' Or.inr fun w hw h2w h3w => _
+  refine' Or.inr fun w _ _ _ => _
   convert hz
   haveI := Module.subsingleton 𝕜 E
   apply Subsingleton.elim
 
-theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ reallyConvexHull 𝕜 s ⊆ s :=
-  by
+theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ reallyConvexHull 𝕜 s ⊆ s := by
   rw [Nontrivial.reallyConvex_iff]
   constructor
   · rintro h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩
@@ -159,8 +151,7 @@ theorem ReallyConvex.sum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : 
 
 theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type _} {w : ι → 𝕜}
     {z : ι → E} (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
-    ∑ᶠ i, w i • z i ∈ s :=
-  by
+    ∑ᶠ i, w i • z i ∈ s := by
   have hw : (support w).Finite := support_finite_of_finsum_eq_one h₁
   have : (support fun i => w i • z i).Finite := hw.subset (support_smul_subset_left w z)
   rw [finsum_eq_sum_of_support_subset_of_finite _ _ hw]
@@ -171,10 +162,9 @@ theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι
 
 theorem ReallyConvex.add_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁ z₂ : E}
     (hw₁ : 0 ≤ w₁) (hw₂ : 0 ≤ w₂) (hw : w₁ + w₂ = 1) (hz₁ : z₁ ∈ s) (hz₂ : z₂ ∈ s) :
-    w₁ • z₁ + w₂ • z₂ ∈ s :=
-  by
-  suffices (∑ i, @Bool.rec (fun _ => 𝕜) w₂ w₁ i • show E from @Bool.rec (fun _ => E) z₂ z₁ i) ∈ s by
-    simpa using this
+    w₁ • z₁ + w₂ • z₂ ∈ s := by
+  suffices : (∑ i, @Bool.rec (fun _ => 𝕜) w₂ w₁ i • show E from @Bool.rec (fun _ => E) z₂ z₁ i) ∈ s
+  · simpa using this
   apply hs.sum_mem
   · rintro (_ | _) - <;> assumption
   · simp [hw]
@@ -185,14 +175,13 @@ theorem ReallyConvex.inter {t : Set E} (hs : ReallyConvex 𝕜 s) (ht : ReallyCo
   rcases hs with (rfl | hs); · simp
   rcases ht with (rfl | ht); · simp
   refine' Or.inr fun w w_pos supp_w sum_w => _
-  cases set.subset_inter_iff.mp supp_w
+  cases Set.subset_inter_iff.mp supp_w
   constructor
   · apply hs <;> assumption
   · apply ht <;> assumption
 
 theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set E'} (hs : ReallyConvex 𝕜' s) :
-    ReallyConvex 𝕜 (f ⁻¹' s) :=
-  by
+    ReallyConvex 𝕜 (f ⁻¹' s) := by
   -- this proof would be easier by casing on `s = ∅`, and
   cases subsingleton_or_nontrivial 𝕜'
   · haveI : Subsingleton E' := Module.subsingleton 𝕜' E'
@@ -222,8 +211,7 @@ section
 
 variable (𝕜 : Type _) {E : Type _} [LinearOrderedField 𝕜] [AddCommGroup E] [Module 𝕜 E]
 
-theorem reallyConvex_iff_convex {s : Set E} : ReallyConvex 𝕜 s ↔ Convex 𝕜 s :=
-  by
+theorem reallyConvex_iff_convex {s : Set E} : ReallyConvex 𝕜 s ↔ Convex 𝕜 s := by
   refine' ⟨fun h => _, fun h => _⟩
   · intro x hx y hy v w hv hw hvw; apply ReallyConvex.add_mem <;> assumption
   refine' Or.inr fun w hw h2w h3w => h.finsum_mem hw h3w fun i hi => h2w <| mem_support.mpr hi
