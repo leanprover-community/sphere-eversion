@@ -86,7 +86,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     by
     rintro a b ⟨t, x⟩ f h
     change ContMDiffAt _ _ _ (f ∘ fun p : ℝ × M => (a * p.1 + b, p.2)) (t, x)
-    change ContMDiffAt _ _ _ f ((fun p : ℝ × M => (a * p.1 + b, p.2)) (t, x)) at h 
+    change ContMDiffAt _ _ _ f ((fun p : ℝ × M => (a * p.1 + b, p.2)) (t, x)) at h
     have :
       ContMDiffAt (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (fun p : ℝ × M => (a * p.1 + b, p.2))
         (t, x) :=
@@ -127,16 +127,16 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       IsClosed C :=-- TODO: rewrite localization_data.is_closed_Union to match this.
         isClosed_biUnion
         (finite_Iio _) fun j hj => (hK₀.image <| (L.φ j).continuous).isClosed
-    simp only [P₀, forall_and] at hf₀ 
+    simp only [P₀, forall_and] at hf₀
     rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
-    rw [forall_restrictGermPredicate_iff] at hf_A 
+    rw [forall_restrictGermPredicate_iff] at hf_A
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
     have hFAC : ∀ᶠ x near A ∪ C, F.is_holonomic_at x :=
       by
       rw [eventually_nhds_set_union]
       refine' ⟨_, hf₁⟩
       apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx => _
-      rw [eventually_and] at hx 
+      rw [eventually_and] at hx
       apply hx.2.self_of_nhds.congr
       apply hx.1.mono fun x' hx' => _
       simp [F]
@@ -164,7 +164,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     · refine' fun t x => ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
-        rw [eventually_nhds_set_union] at hF'AC 
+        rw [eventually_nhds_set_union] at hF'AC
         apply (hF'AC.1.And hf_A).mono
         rintro x ⟨hx, hx'⟩
         change F' t x = _
@@ -176,9 +176,9 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
             dist_triangle _ _ _
           _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_right (hF'η t x) _)
           _ = τ x := by simp [η]
-    · rw [union_assoc, eventually_nhds_set_union] at hF'hol 
+    · rw [union_assoc, eventually_nhds_set_union] at hF'hol
       replace hF'hol := hF'hol.2
-      simp_rw [← L.Union_succ'] at hF'hol 
+      simp_rw [← L.Union_succ'] at hF'hol
       exact hF'hol
     · exact F'.smooth
     · intro t x hx
@@ -193,7 +193,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init (𝓕₀.smooth.comp contMDiff_snd)
       ind with
     ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
-  simp only [P₀, forall₂_and_distrib] at hFP₀ 
+  simp only [P₀, forall₂_and_distrib] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, hF_smooth, hF_A, hF_dist⟩
   refine' ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, _, _, _, _⟩
   · intro x

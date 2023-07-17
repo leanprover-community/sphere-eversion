@@ -86,7 +86,7 @@ theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q
     rw [map_add, p.update_ker_pi _ _ hv, p.update_v, oneJetSnd_eq]
     rfl
   have := preimage_vadd_neg (show F from σ.2.2 (p.v - (0, q.v))) (R.slice q (oneJetSnd σ))
-  dsimp only at this 
+  dsimp only at this
   simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize, h1]
   rfl
 

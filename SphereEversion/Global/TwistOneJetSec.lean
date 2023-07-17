@@ -142,9 +142,9 @@ theorem smooth_proj :
   intro x₀
   have : SmoothAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smoothAt_id
   simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, in_coordinates, tangentBundleCore_indexAt,
-    TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this 
-  dsimp only [TangentSpace] at this 
-  simp_rw [ContinuousLinearMap.id_comp] at this 
+    TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this
+  dsimp only [TangentSpace] at this
+  simp_rw [ContinuousLinearMap.id_comp] at this
   refine' this.1.one_jet_eucl_bundle_mk this.2.2
 
 variable {I M V}
@@ -172,7 +172,7 @@ theorem smooth_incl :
   by
   intro x₀
   have : SmoothAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ Prod.fst x₀ := smoothAt_fst
-  rw [smoothAt_one_jet_eucl_bundle] at this 
+  rw [smoothAt_one_jet_eucl_bundle] at this
   refine' this.1.oneJetBundle_mk smoothAt_snd _
   dsimp only [inTangentCoordinates, in_coordinates, TangentSpace]
   simp_rw [TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
@@ -256,7 +256,7 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     refine' smooth_at_snd.one_jet_eucl_bundle_mk' _
     simp_rw [ContinuousLinearMap.comp_assoc]
     have : SmoothAt (J.prod I) _ (fun x : N × M => _) x₀ := s.smooth.comp smooth_snd x₀
-    simp_rw [smoothAt_one_jet_eucl_bundle', s.is_sec] at this 
+    simp_rw [smoothAt_one_jet_eucl_bundle', s.is_sec] at this
     refine' (i_smooth x₀).clm_comp _
     convert this.2
     ext z

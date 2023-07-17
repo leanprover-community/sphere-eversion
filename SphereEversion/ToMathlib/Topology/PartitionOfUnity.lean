@@ -18,14 +18,14 @@ theorem PartitionOfUnity.exists_finset_nhd' {s : Set X} (ρ : PartitionOfUnity �
   refine' ⟨I, _, hI⟩
   refine' eventually_nhds_within_iff.mpr (hI.mono fun x hx x_in => _)
   have : ∑ᶠ i : ι, ρ i x = ∑ i : ι in I, ρ i x := finsum_eq_sum_of_support_subset _ hx
-  rwa [eq_comm, ρ.sum_eq_one x_in] at this 
+  rwa [eq_comm, ρ.sum_eq_one x_in] at this
 
 theorem PartitionOfUnity.exists_finset_nhd (ρ : PartitionOfUnity ι X univ) (x₀ : X) :
     ∃ I : Finset ι, ∀ᶠ x in 𝓝 x₀, ∑ i in I, ρ i x = 1 ∧ (support fun i => ρ i x) ⊆ I :=
   by
   rcases ρ.exists_finset_nhd' x₀ with ⟨I, H⟩
   use I
-  rwa [nhdsWithin_univ, ← eventually_and] at H 
+  rwa [nhdsWithin_univ, ← eventually_and] at H
 
 /-- The support of a partition of unity at a point as a `finset`. -/
 def PartitionOfUnity.finsupport {s : Set X} (ρ : PartitionOfUnity ι X s) (x₀ : X) : Finset ι :=
@@ -57,7 +57,7 @@ theorem PartitionOfUnity.sum_finsupport {s : Set X} (ρ : PartitionOfUnity ι X 
     ∑ i in ρ.finsupport x₀, ρ i x₀ = 1 :=
   by
   have := ρ.sum_eq_one hx₀
-  rwa [finsum_eq_sum_of_support_subset] at this 
+  rwa [finsum_eq_sum_of_support_subset] at this
   rw [ρ.coe_finsupport]
   exact subset.rfl
 
@@ -74,7 +74,7 @@ theorem PartitionOfUnity.sum_finsupport' {s : Set X} (ρ : PartitionOfUnity ι X
   rw [this, Finset.sum_const_zero]
   apply Finset.sum_congr rfl
   rintro x hx
-  simp only [Finset.mem_sdiff, ρ.mem_finsupport, mem_support, Classical.not_not] at hx 
+  simp only [Finset.mem_sdiff, ρ.mem_finsupport, mem_support, Classical.not_not] at hx
   exact hx.2
 
 theorem PartitionOfUnity.sum_finsupport_smul {s : Set X} (ρ : PartitionOfUnity ι X s) {x₀ : X}

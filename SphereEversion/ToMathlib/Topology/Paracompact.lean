@@ -57,12 +57,12 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     ⟨s, countable_iUnion fun n => Finset.countable_toSet _, fun z hz => _,
       Set.univ_subset_iff.mp fun x hx => _, fun x => _⟩
   · simp only [Pi.prod, mem_iUnion, Finset.coe_image, mem_image, Finset.mem_coe,
-      SetCoe.exists] at hz 
+      SetCoe.exists] at hz
     obtain ⟨n, x, hx, -, rfl⟩ := hz
     apply h₃
   · obtain ⟨n, hn⟩ := iUnion_eq_univ_iff.mp hC' x
     specialize hf n hn
-    simp only [iUnion_coe_set, mem_iUnion, exists_prop] at hf 
+    simp only [iUnion_coe_set, mem_iUnion, exists_prop] at hf
     obtain ⟨y, hy₁, hy₂, hy₃⟩ := hf
     simp only [Pi.prod, mem_iUnion, Finset.mem_coe, Finset.mem_image, exists_prop, SetCoe.exists,
       iUnion_exists, exists_and_right, Prod.exists, Prod.mk.inj_iff]
@@ -80,5 +80,5 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     rintro x hx₁ hx₂ rfl
     rw [Set.not_nonempty_iff_eq_empty]
     have := Set.inter_subset_inter_left (U n) (h₂ m ⟨x, hx₁⟩)
-    rwa [set.not_nonempty_iff_eq_empty.mp hm, Set.subset_empty_iff] at this 
+    rwa [set.not_nonempty_iff_eq_empty.mp hm, Set.subset_empty_iff] at this
 

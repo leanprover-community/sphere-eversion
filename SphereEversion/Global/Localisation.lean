@@ -47,9 +47,9 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     have : SmoothAt _ _ _ _ := F.smooth x₀
     simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, in_coordinates, tangentBundleCore_indexAt,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
-      ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this 
-    dsimp only [TangentSpace] at this 
-    simp_rw [ContinuousLinearMap.id_comp] at this 
+      ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this
+    dsimp only [TangentSpace] at this
+    simp_rw [ContinuousLinearMap.id_comp] at this
     exact this.2.2.contDiffAt
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
@@ -243,7 +243,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
           by_cases h'' : x ∈ p.K₁
           · exact hm h.hF x h'' rfl
           · exact h.hFF x h'' t
-        rw [Prod.ext_iff] at this 
+        rw [Prod.ext_iff] at this
         ext1; rfl; exact this.1; exact this.2
       change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F (p.φ x)
       rw [this, transfer_localize]
@@ -326,6 +326,6 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
   refine' ⟨η, η_pos, _⟩
   intro 𝓕 H e he t ht het
   simp only [this 𝓕 H]; clear this
-  rw [← dist_eq_norm] at het 
+  rw [← dist_eq_norm] at het
   exact hη (fun t e => (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, le_rfl⟩ t ht e he het
 

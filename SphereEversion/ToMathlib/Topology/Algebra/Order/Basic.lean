@@ -22,7 +22,7 @@ theorem hasBasis_nhdsSet_Iic (a : α) : (𝓝ˢ <| Iic a).HasBasis (fun b => a <
         exact ⟨(c, d), ⟨hc, hd⟩, H⟩
       choose! p hp using this
       rcases(nhds_basis_Ioo a).mem_iff.mp (h a le_rfl) with ⟨⟨c, d⟩, ⟨hc, hd⟩, H⟩
-      dsimp only at H hc hd 
+      dsimp only at H hc hd
       use d, hd
       rintro x (hx : x < d)
       cases' le_or_lt x c with hx' hx'

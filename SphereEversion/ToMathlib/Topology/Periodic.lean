@@ -136,7 +136,7 @@ theorem isClosed_int : IsClosed (range (coe : ℤ → ℝ)) :=
   by
   refine' isClosed_of_spaced_out (metric.uniformity_basis_dist.mem_of_mem <| zero_lt_one) _
   rintro - ⟨p, rfl⟩ - ⟨q, rfl⟩ h (H : dist p q < 1)
-  rw [Int.dist_eq] at H 
+  rw [Int.dist_eq] at H
   norm_cast at *
   exact h (eq_of_sub_eq_zero <| int.abs_lt_one_iff.mp H)
 
@@ -173,8 +173,8 @@ theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont
     let φ := ↿f
     -- avoid weird elaboration issue
     have : φ = F ∘ fun p : X × ℝ => (p.1, π p.2) := by ext p; rfl
-    dsimp [φ] at this 
-    rwa [this, ← qm.continuous_iff] at cont 
+    dsimp [φ] at this
+    rwa [this, ← qm.continuous_iff] at cont
   obtain ⟨C, hC⟩ :=
     (hK.prod isCompact_univ).bddAbove_image (continuous_norm.comp Fcont).continuousOn
   exact ⟨C, fun x x_in t => hC ⟨(x, π t), ⟨x_in, mem_univ _⟩, rfl⟩⟩

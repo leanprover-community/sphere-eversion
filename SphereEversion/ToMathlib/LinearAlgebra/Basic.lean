@@ -55,15 +55,15 @@ theorem LinearMap.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (
     rintro x ⟨hx, hx' : x ∈ p ⊔ q⟩
     rcases mem_sup.mp hx' with ⟨u, hu, v, hv, rfl⟩
     rw [mem_bot]
-    erw [← sub_neg_eq_add, LinearMap.sub_mem_ker_iff] at hx 
+    erw [← sub_neg_eq_add, LinearMap.sub_mem_ker_iff] at hx
     have hu' : f u ∈ map f p := mem_map_of_mem hu
     have hv' : f (-v) ∈ map f q := mem_map_of_mem (q.neg_mem hv)
-    rw [← hx] at hv' 
+    rw [← hx] at hv'
     have H : f u ∈ map f p ⊓ map f q
     apply mem_inf.mpr ⟨hu', hv'⟩
-    rw [disjoint_iff_inf_le] at h 
+    rw [disjoint_iff_inf_le] at h
     rw [hp u hu (h H), zero_add]
-    rw [hp u hu (h H), f.map_zero, f.map_neg, eq_comm, neg_eq_zero] at hx 
+    rw [hp u hu (h H), f.map_zero, f.map_neg, eq_comm, neg_eq_zero] at hx
     exact hq v hv hx
 
 end

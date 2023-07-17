@@ -161,7 +161,7 @@ theorem Accepts.rel {L : StepLandscape E} {𝓕 : JetSec E F} (h : L.Accepts R �
   by
   apply (h.hC.filter_mono <| monotone_nhdsSet (inter_subset_right L.K₁ L.C)).mono
   intro x hx
-  dsimp [JetSec.IsHolonomicAt] at hx 
+  dsimp [JetSec.IsHolonomicAt] at hx
   dsimp [StepLandscape.g, StepLandscape.b]
   rw [hx]
 

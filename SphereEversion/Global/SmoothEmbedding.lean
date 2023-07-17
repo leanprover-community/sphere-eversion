@@ -96,7 +96,7 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
       intro v
       have hx : x = f.inv_fun (f x) := by rw [f.left_inv]
       have hx' : f (f.inv_fun (f x)) = f x := by rw [f.left_inv]
-      rw [hx] at h₂ 
+      rw [hx] at h₂
       rw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
         ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
             (f.coe_comp_inv_fun_eventually_eq x)).mfderiv,
@@ -306,7 +306,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : LocalHomeomorph F F} (hf
     rw [extChartAt_target_eq_image_chart_target]
     exact hf₄ (mem_range_self y)
   smooth_inv := by
-    rw [← extChartAt_target_eq_image_chart_target] at hf₄ 
+    rw [← extChartAt_target_eq_image_chart_target] at hf₄
     have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target :=
       by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
@@ -399,7 +399,7 @@ theorem nice_atlas {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   have htne : t.nonempty := by
     by_contra contra
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
-      @eq_comm _ _ univ, univ_eq_empty_iff] at h₄ 
+      @eq_comm _ _ univ, univ_eq_empty_iff] at h₄
     exact not_isEmpty_of_nonempty M h₄
   obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
   refine' ⟨n, φ ∘ fn, fun i => h₂ (fn i), h₃.comp_injective fn.injective, _⟩

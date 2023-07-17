@@ -211,7 +211,7 @@ def support (γ : X → Loop X') : Set X :=
 theorem not_mem_support {γ : X → Loop X'} {x : X} (h : ∀ᶠ y in 𝓝 x, (γ y).IsConst) :
     x ∉ Loop.support γ := by
   intro hx
-  rw [support, mem_closure_iff_nhds] at hx 
+  rw [support, mem_closure_iff_nhds] at hx
   rcases hx _ h with ⟨z, hz, hz'⟩
   exact hz' hz
 
@@ -242,7 +242,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ :=
     norm_cast
     simp only [fract, floor_one, Path.extend_zero, Int.cast_one, sub_self, Subtype.coe_mk]
     exact γ.target.symm
-  · change (t : ℝ) ≠ 1 at ht1 
+  · change (t : ℝ) ≠ 1 at ht1
     have : fract ↑t = t.val := by
       rw [fract_eq_iff]
       refine' ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, _⟩⟩
@@ -447,7 +447,7 @@ variable [FiniteDimensional ℝ E]
 theorem Loop.average_diff {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
     (Loop.diff γ e).average = D (fun e => (γ e).average) e :=
   by
-  change 𝒞 1 ↿fun (e : E) (t : ℝ) => γ e t at hγ_diff 
+  change 𝒞 1 ↿fun (e : E) (t : ℝ) => γ e t at hγ_diff
   simpa only [Loop.average, hγ_diff.fderiv_parametric_integral]
 
 theorem ContDiff.loop_average {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :

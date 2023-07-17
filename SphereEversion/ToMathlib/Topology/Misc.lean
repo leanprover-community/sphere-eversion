@@ -61,7 +61,7 @@ theorem ContinuousAt.eventually {f : α → β} {a₀ : α} (hf : ContinuousAt f
 
 theorem ContinuousAt.eventually' {f : α → β} {a₀ : α} (hf : ContinuousAt f a₀) (P : β → Prop)
     (hP : ∀ᶠ y in 𝓝 (f a₀), P y) : ∀ᶠ a in 𝓝 a₀, P (f a) := by
-  rw [ContinuousAt, tendsto_iff_comap] at hf 
+  rw [ContinuousAt, tendsto_iff_comap] at hf
   exact Eventually.filter_mono hf (hP.comap f)
 
 theorem Continuous.eventually {f : α → β} {a₀ : α} (hf : Continuous f) (P : β → Prop)
@@ -158,7 +158,7 @@ theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[�
   exact mem_Ico_of_Ioo hy
 
 theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' => x' - floor x := by
-  rw [fract_ne_zero_iff] at h 
+  rw [fract_ne_zero_iff] at h
   exact EventuallyEq.rfl.sub ((loc_constant_floor h).fun_comp _)
 
 theorem Ioo_inter_Iio {α : Type _} [LinearOrder α] {a b c : α} :
@@ -175,7 +175,7 @@ theorem one_sub_lt_fract {x y : ℝ} {n : ℤ} (hy : y ≤ 1) (h1 : (n : ℝ) - 
     1 - y < fract x := by
   have I₁ : 1 - y < x - (n - 1) := by linarith
   have I₂ : x - (n - 1) < 1 := by linarith
-  norm_cast at I₁ I₂ 
+  norm_cast at I₁ I₂
   rw [← fract_sub_int x (n - 1), fract_eq_self.mpr]
   exact I₁
   constructor <;> linarith
@@ -185,13 +185,13 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
   rw [isOpen_iff_mem_nhds]
   rintro x (hx : fract x ∈ s)
   rcases eq_or_ne (fract x) 0 with (hx' | hx')
-  · have H : (0 : ℝ) ∈ s := by rwa [hx'] at hx 
+  · have H : (0 : ℝ) ∈ s := by rwa [hx'] at hx
     specialize h2s H
     rcases fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩; clear hx hx'
     have s_mem_0 := hs.mem_nhds H
     rcases(nhds_basis_zero_abs_sub_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩
     rcases(nhdsWithin_hasBasis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩
-    rw [Ioo_inter_Iio, min_eq_right (le_add_of_nonneg_right ε_pos.le)] at hε 
+    rw [Ioo_inter_Iio, min_eq_right (le_add_of_nonneg_right ε_pos.le)] at hε
     set ε' := min ε (1 / 2)
     have ε'_pos : 0 < ε' := lt_min ε_pos (by norm_num : (0 : ℝ) < 1 / 2)
     have hε' : Ioo (1 - ε') 1 ⊆ s := by
@@ -209,7 +209,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
       constructor
       · refine' one_sub_lt_fract (by linarith [min_le_right ε (1 / 2)]) (by linarith) hx''
       · exact fract_lt_one x
-  · rw [fract_ne_zero_iff] at hx' 
+  · rw [fract_ne_zero_iff] at hx'
     have H : Ico (⌊x⌋ : ℝ) (⌊x⌋ + 1) ∈ 𝓝 x :=
       mem_of_superset (Ioo_floor_mem_nhds hx') Ioo_subset_Ico_self
     exact (continuousOn_fract ⌊x⌋).continuousAt H (hs.mem_nhds hx)
@@ -388,7 +388,7 @@ theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : Lo
   intro n hn
   rw [← decode₂_ne_none_iff]
   intro h
-  simp_rw [mem_setOf_eq, h, map_none, getD_none, empty_inter] at hn 
+  simp_rw [mem_setOf_eq, h, map_none, getD_none, empty_inter] at hn
   exact (not_nonempty_empty hn).elim
 
 open TopologicalSpace
@@ -401,7 +401,7 @@ theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {
       (∀ n, P (W n)) ∧ (∀ n, K n ⊆ W n) ∧ LocallyFinite W ∧ C ⊆ ⋃ n, K n := by
   choose V' hV' hPV' using SetCoe.forall'.mp hX
   choose V hV hVV' hcV using fun x : C => LocallyCompactSpace.local_compact_nhds (↑x) (V' x) (hV' x)
-  simp_rw [← mem_interior_iff_mem_nhds] at hV 
+  simp_rw [← mem_interior_iff_mem_nhds] at hV
   have : C ⊆ ⋃ x : C, interior (V x) := fun x hx => by rw [mem_iUnion]; exact ⟨⟨x, hx⟩, hV _⟩
   obtain ⟨s, hs, hsW₂⟩ := isOpen_iUnion_countable (fun x => interior (V x)) fun x => isOpen_interior
   rw [← hsW₂, biUnion_eq_iUnion] at this; clear hsW₂
@@ -517,7 +517,7 @@ theorem Homeomorph.image_connectedComponentIn (f : α ≃ₜ β) {s : Set α} {x
   refine' (f.continuous.image_connectedComponentIn_subset hx).antisymm _
   have := f.symm.continuous.image_connectedComponentIn_subset (mem_image_of_mem f hx)
   rwa [image_subset_iff, f.preimage_symm, f.image_symm, f.preimage_image, f.symm_apply_apply]
-    at this 
+    at this
 
 end connectedComponentIn
 
@@ -529,10 +529,10 @@ theorem cover_nat_nhdsWithin {α} [TopologicalSpace α] [SecondCountableTopology
     ∃ x : ℕ → α, range x ⊆ s ∧ s ⊆ ⋃ n, f (x n) := by
   obtain ⟨t, hts, ht, hsf⟩ := TopologicalSpace.countable_cover_nhdsWithin hf
   rcases t.eq_empty_or_nonempty with rfl | hnt
-  · rw [biUnion_empty, subset_empty_iff] at hsf 
+  · rw [biUnion_empty, subset_empty_iff] at hsf
     exact absurd hsf hs.ne_empty
   obtain ⟨x, rfl⟩ := ht.exists_eq_range hnt
-  rw [biUnion_range] at hsf 
+  rw [biUnion_range] at hsf
   exact ⟨x, hts, hsf⟩
 
 /-- A version of `topological_space.cover_nat_nhds_within` where `f` is only defined on `s`. -/
@@ -542,7 +542,7 @@ theorem cover_nat_nhds_within' {α} [TopologicalSpace α] [SecondCountableTopolo
   let g x := if hx : x ∈ s then f x hx else ∅
   have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [dif_pos hx]; exact hf x hx
   obtain ⟨x, hx, h⟩ := TopologicalSpace.cover_nat_nhdsWithin hg hs
-  simp_rw [dif_pos (range_subset_iff.mp hx _)] at h 
+  simp_rw [dif_pos (range_subset_iff.mp hx _)] at h
   refine' ⟨x, hx, h⟩
 
 end TopologicalSpace

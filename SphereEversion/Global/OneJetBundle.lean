@@ -123,7 +123,7 @@ theorem OneJetBundle.ext {x y : J¹MM'} (h : x.1.1 = y.1.1) (h' : x.1.2 = y.1.2)
     x = y := by
   rcases x with ⟨⟨a, b⟩, c⟩
   rcases y with ⟨⟨d, e⟩, f⟩
-  dsimp only at h h' h'' 
+  dsimp only at h h' h''
   rw [h, h', h'']
 
 variable (I I' M M')
@@ -409,7 +409,7 @@ theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} 
     SmoothAt I'' ((J.prod J').prod 𝓘(𝕜, F →L[𝕜] F'))
       (fun z => OneJetBundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ :=
   by
-  rw [smoothAt_oneJetBundle] at hk 
+  rw [smoothAt_oneJetBundle] at hk
   refine' SmoothAt.one_jet_comp _ _ _ _
   refine' SmoothAt.one_jet_comp _ _ _ _
   · refine' hk.2.1.oneJetBundle_mk (hg.comp x₀ (smooth_at_id.prod_mk hk.2.1)) _

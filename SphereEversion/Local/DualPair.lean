@@ -91,7 +91,7 @@ def update (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : E →L[ℝ] F :=
 @[simp]
 theorem update_ker_pi (p : DualPair E) (φ : E →L[ℝ] F) (w : F) {u} (hu : u ∈ ker p.π) :
     p.update φ w u = φ u := by
-  rw [LinearMap.mem_ker] at hu 
+  rw [LinearMap.mem_ker] at hu
   simp only [update, hu, ContinuousLinearMap.toSpanSingleton_apply, add_zero,
     ContinuousLinearMap.coe_comp', comp_app, zero_smul, ContinuousLinearMap.add_apply]
 
@@ -120,7 +120,7 @@ theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ :=
   have : p.π x = 0 ∧ ∃ a : ℝ, a • p.v = x := by
     simpa [DualPair.spanV, Submodule.mem_span_singleton] using hx
   rcases this with ⟨H, t, rfl⟩
-  rw [p.π.map_smul, p.pairing, Algebra.id.smul_eq_mul, mul_one] at H 
+  rw [p.π.map_smul, p.pairing, Algebra.id.smul_eq_mul, mul_one] at H
   simp [H]
 
 theorem sup_eq_top (p : DualPair E) : ker p.π ⊔ p.spanV = ⊤ :=
@@ -135,7 +135,7 @@ theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u
   have : e ∈ ker p.π ⊔ p.span_v := by
     rw [p.sup_eq_top]
     exact Submodule.mem_top
-  simp_rw [Submodule.mem_sup, DualPair.mem_spanV] at this 
+  simp_rw [Submodule.mem_sup, DualPair.mem_spanV] at this
   rcases this with ⟨u, hu, -, ⟨t, rfl⟩, rfl⟩
   use u, hu, t, rfl
 
@@ -174,14 +174,14 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
   · rintro h ⟨u, hu, rfl⟩
     have : p.update φ (φ u) p.v = φ u := p.update_v φ (φ u)
     conv_rhs at this => rw [← p.update_ker_pi φ (φ u) hu]
-    rw [← h this] at hu 
-    simp only [SetLike.mem_coe, LinearMap.mem_ker] at hu 
-    rw [p.pairing] at hu 
+    rw [← h this] at hu
+    simp only [SetLike.mem_coe, LinearMap.mem_ker] at hu
+    rw [p.pairing] at hu
     linarith
   · intro hw
     apply (injective_iff_map_eq_zero (p.update φ w)).mpr fun x hx => _
     rcases p.decomp x with ⟨u, hu, t, rfl⟩
-    rw [map_add, map_smul, update_v, p.update_ker_pi _ _ hu] at hx 
+    rw [map_add, map_smul, update_v, p.update_ker_pi _ _ hu] at hx
     have ht : t = 0 := by
       by_contra ht
       apply hw
@@ -189,7 +189,7 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
       rw [map_smul]
       have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • 0 + w := congr_arg (fun u : F => -t⁻¹ • u + w) hx
       rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,
-        neg_add_cancel_right, ← neg_smul] at this 
+        neg_add_cancel_right, ← neg_smul] at this
     rw [ht, zero_smul, add_zero] at hx ⊢
     exact (injective_iff_map_eq_zero φ).mp hφ u hx
 

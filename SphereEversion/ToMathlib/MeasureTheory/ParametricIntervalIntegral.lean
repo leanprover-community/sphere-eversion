@@ -30,8 +30,8 @@ theorem hasFDerivAt_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
     (h_diff : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, HasFDerivAt (fun x => F x t) (F' x t) x) :
     HasFDerivAt (fun x => ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ :=
   by
-  erw [ae_restrict_uIoc_iff] at h_diff h_bound 
-  simp_rw [aEStronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas 
+  erw [ae_restrict_uIoc_iff] at h_diff h_bound
+  simp_rw [aEStronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
   exact
     (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
           bound_integrable.1 h_diff.1).sub
@@ -52,8 +52,8 @@ theorem hasFDerivAt_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
     IntervalIntegrable F' ν a b ∧
       HasFDerivAt (fun x => ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' t ∂ν) x₀ :=
   by
-  simp_rw [aEStronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas 
-  rw [ae_restrict_uIoc_iff] at h_lip h_diff 
+  simp_rw [aEStronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
+  rw [ae_restrict_uIoc_iff] at h_lip h_diff
   have H₁ :=
     hasFDerivAt_integral_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_lip.1
       bound_integrable.1 h_diff.1
@@ -198,8 +198,8 @@ theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩
   cases' exists_lt (min a₀ b₀) with a a_lt
   cases' exists_gt (max a₀ b₀) with b lt_b
-  rw [lt_min_iff] at a_lt 
-  rw [max_lt_iff] at lt_b 
+  rw [lt_min_iff] at a_lt
+  rw [max_lt_iff] at lt_b
   have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩
   have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩
   obtain ⟨M, hM⟩ :=
@@ -212,7 +212,7 @@ theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F
     simp_rw [ae_restrict_iff' measurableSet_uIoc]
     refine' eventually_of_forall fun t t_in => _
     refine' hM (mem_image_of_mem _ <| mk_mem_prod x_in _)
-    rw [uIoc_of_le (a_lt.1.trans lt_b.1).le] at t_in 
+    rw [uIoc_of_le (a_lt.1.trans lt_b.1).le] at t_in
     exact mem_Icc_of_Ioc t_in
   · apply intervalIntegrable_const
   · apply ae_of_all
@@ -295,7 +295,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       apply h_lipsch.mono
       intro t ht
       rw [norm_sub_rev]
-      rw [lipschitzOnWith_iff_norm_sub_le] at ht 
+      rw [lipschitzOnWith_iff_norm_sub_le] at ht
       simpa [bound_nonneg t] using ht hx x₀_in
     exact (this.mono_set <| ord_connected_Ioo.uIcc_subset hs hu).IntervalIntegrable
   constructor
@@ -360,8 +360,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           apply ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.uIoc_subset hsx₀ hsx)
           apply h_lipsch.mono
           intro t ht
-          rw [lipschitzOnWith_iff_norm_sub_le] at ht 
-          simp only [coe_nnabs] at ht 
+          rw [lipschitzOnWith_iff_norm_sub_le] at ht
+          simp only [coe_nnabs] at ht
           rw [← abs_of_nonneg (bound_nonneg t)]
           exact ht hx (mem_ball_self ε_pos)
         rw [← is_O_norm_right]

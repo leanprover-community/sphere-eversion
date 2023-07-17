@@ -86,8 +86,8 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
       rcases ind _ f h₀f (h₂f hn) fun j hj => h₁f _ <| j.le_of_lt_succ hj with
         ⟨f', h₀f', h₂f', h₁f', hf'⟩
       exact ⟨f', ⟨h₀f', h₂f', h₁f'⟩, hf'⟩
-  dsimp only at hf 
-  simp only [forall_and] at hf 
+  dsimp only at hf
+  simp only [forall_and] at hf
   rcases hf with ⟨⟨h₀f, -, h₁f⟩, hfU⟩
   rcases U_fin.exists_forall_eventually_of_indexType hfU with ⟨F, hF⟩
   refine' ⟨F, fun x => _, fun j => _⟩
@@ -137,12 +137,12 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
     rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
     rcases ind V_op (U_op i) cpct (K_cpct i).isClosed hKV (hKU i) h₀f h₀f' h₁V h₁f' with
       ⟨F, h₀F, h₁F, hF⟩
-    simp_rw [← bUnion_le] at h₁F 
+    simp_rw [← bUnion_le] at h₁F
     exact ⟨F, h₀F, h₁F, fun x hx => hF.on_set x (Or.inr hx)⟩
   have :=
     inductive_construction (fun x φ => P₀ x φ ∧ P₀' x φ)
       (fun j : 𝓘 0 => RestrictGermPredicate P₁ (K j)) (fun _ _ => True) U_loc ⟨f₀, hP₀f₀, trivial⟩
-  simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this 
+  simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this
   rcases this ind' with ⟨f, h, h'⟩
   refine' ⟨f, fun x => ⟨(h x).1, (h x).2, _⟩⟩
   rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
@@ -176,12 +176,12 @@ theorem relative_inductive_construction_of_loc {X Y : Type _} [EMetricSpace X]
         (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x := by
     intro U₁ U₂ K₁ K₂ f₁ f₂ U₁_op U₂_op K₁_cpct K₂_cpct hK₁U₁ hK₂U₂ hf₁ hf₂ hf₁U₁ hf₂U₂
     obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and.mp hf₁
-    rw [forall_restrictGermPredicate_iff] at h₀'f₁ 
+    rw [forall_restrictGermPredicate_iff] at h₀'f₁
     rcases(hasBasis_nhdsSet K).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U, ⟨U_op, hKU⟩, hU⟩
     rcases ind (U_op.union U₁_op) U₂_op (hK.union K₁_cpct) K₂_cpct (union_subset_union hKU hK₁U₁)
         hK₂U₂ h₀f₁ hf₂ (fun x hx => hx.elim (fun hx => hU hx) fun hx => hf₁U₁ x hx) hf₂U₂ with
       ⟨f, h₀f, hf, h'f⟩
-    rw [union_assoc, eventually_nhdsSet_union] at hf h'f 
+    rw [union_assoc, eventually_nhdsSet_union] at hf h'f
     exact ⟨f, fun x => ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 h'f.1⟩, hf.2, h'f.2⟩
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
@@ -274,7 +274,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     let F'' : ℝ × X → Y := fun p : ℝ × X =>
       if p.1 ≤ T i.toNat then F p else F' (2 ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2
     have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.toNat → (F'' : Germ (𝓝 p) Y) = F := by
-      dsimp only at h₂F 
+      dsimp only at h₂F
       rintro ⟨t, x⟩ (ht : t ≤ _)
       rcases eq_or_lt_of_le ht with (rfl | ht)
       · apply Quotient.sound
@@ -295,7 +295,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         rintro ⟨t, x⟩ h'
         split_ifs with h
         · rfl
-        · push_neg at h 
+        · push_neg at h
           change (↿F') (2 ^ (i.toNat + 1) * (t - T i.toNat), x) = _
           rw [h', h₂F x t h.le]
       · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i.toNat :=
@@ -316,7 +316,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       by_cases ht : p.1 ≤ T i.toNat
       · rw [loc₁ _ ht]
         apply h₀F
-      · push_neg at ht 
+      · push_neg at ht
         cases' p with t x
         rw [loc₂ _ ht]
         refine' ⟨h₀F' (2 ^ (i.toNat + 1) * (t - T i.toNat)) x, _, _⟩
@@ -354,7 +354,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       sorry
       -- exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
     · rintro ⟨t, x⟩ htx
-      simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx 
+      simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
       cases' htx with ht hx
       · change (↑F'' : Germ (𝓝 (t, x)) Y).value = (↑F : Germ (𝓝 (t, x)) Y).value
         rw [loc₁ (t, x) ht.le]
@@ -362,7 +362,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         split_ifs with ht
         · rfl
         · rw [hUF' _ x hx]
-          push_neg at ht 
+          push_neg at ht
           rw [h₂F x _ ht.le]
   rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left fun i => Ici (T i.toNat))
       ⟨fun p => f₀ p.2, hPP₀, fun x t ht => rfl⟩ ind' with

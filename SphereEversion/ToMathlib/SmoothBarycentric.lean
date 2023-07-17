@@ -62,13 +62,13 @@ theorem evalBarycentricCoords_eq_det [Fintype ι] [DecidableEq ι] (S : Type _) 
     erw [← b.det_smul_coords_eq_cramer_coords ⟨v, h.1, h.2⟩ p]
     simp only [Pi.smul_apply, AffineBasis.coords_apply, Algebra.id.smul_eq_mul]
     have hu := b.is_unit_to_matrix ⟨v, h.1, h.2⟩
-    rw [Matrix.isUnit_iff_isUnit_det] at hu 
+    rw [Matrix.isUnit_iff_isUnit_det] at hu
     erw [← mul_assoc, ← Ring.inverse_eq_inv, Ring.inverse_mul_cancel _ hu, one_mul]
   · simp only [evalBarycentricCoords, h, Algebra.id.smul_eq_mul, Pi.zero_apply, inv_eq_zero,
       dif_neg, not_false_iff, zero_eq_mul, Pi.smul_apply]
     left
     rwa [mem_affineBases_iff ι S P b v, Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero,
-      Classical.not_not] at h 
+      Classical.not_not] at h
 
 end BarycentricDet
 

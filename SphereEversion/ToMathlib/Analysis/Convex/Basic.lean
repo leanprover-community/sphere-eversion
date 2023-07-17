@@ -39,7 +39,7 @@ theorem finsum.exists_ne_zero_of_sum_ne_zero {β α : Type _} {s : Finset α} {f
 theorem finite_of_finprod_ne_one {M : Type _} {ι : Sort _} [CommMonoid M] {f : ι → M}
     (h : ∏ᶠ i, f i ≠ 1) : (mulSupport f).Finite := by
   classical
-  rw [finprod_def] at h 
+  rw [finprod_def] at h
   contrapose h
   rw [Classical.not_not, dif_neg h]
 
@@ -68,7 +68,7 @@ theorem finsum_sum_filter {α β M : Type _} [AddCommMonoid M] (f : β → α) (
     intros
     rfl
   · intro x hx
-    rw [mem_support] at hx 
+    rw [mem_support] at hx
     obtain ⟨a, h, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx
     simp at h ⊢
     exact ⟨a, h⟩
@@ -82,9 +82,9 @@ theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type _} {t : Finset ι} {w : 
     refine fun e ↦ finsum_nonneg fun i => ?_
     exact finsum_nonneg fun hi => h₀ _ (Finset.mem_of_mem_filter i hi)
   · intro e he
-    rw [mem_support] at he 
+    rw [mem_support] at he
     obtain ⟨a, h, ha⟩ := finsum.exists_ne_zero_of_sum_ne_zero he
-    rw [Finset.mem_filter] at h 
+    rw [Finset.mem_filter] at h
     rcases h with ⟨h, rfl⟩
     exact hz a h
   · rw [← h₁]
@@ -96,7 +96,7 @@ theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type _} {t : Finset ι} {w : 
     ext x
     rw [Finset.sum_congr rfl]
     intro y hy
-    rw [Finset.mem_filter] at hy 
+    rw [Finset.mem_filter] at hy
     rw [hy.2]
 
 theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set E) := by

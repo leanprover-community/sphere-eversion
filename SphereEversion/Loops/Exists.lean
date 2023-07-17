@@ -280,7 +280,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
   obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ :=
     exists_contDiff_one_nhds_of_interior hK.is_closed
       (subset_interior_iff_mem_nhds_set.mpr <| hgK.and h2γ₁)
-  simp_rw [← or_iff_not_imp_left] at h0χ 
+  simp_rw [← or_iff_not_imp_left] at h0χ
   let γ : ℝ → E → Loop F := fun t x => χ x • Loop.const (b x) + (1 - χ x) • γ₃ t x
   have h1γ : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x := by intro x t ht; ext s;
     simp [hγ₁.to_sf.t_le_zero _ _ ht]

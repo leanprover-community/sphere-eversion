@@ -86,7 +86,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     rfl
   have :=
     preimage_vadd_neg (show E' from σ.2 (p.v - (0, q.v))) (show Set E' from R.slice (bundleSnd σ) q)
-  dsimp only at this 
+  dsimp only at this
   simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize]
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
   congr

@@ -165,11 +165,11 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
       exact
         ⟨by intro h; use Fintype.equivFinOfCardEq hb ⟨x, h⟩; simp [p], by rintro ⟨y, rfl⟩;
           apply Subtype.coe_prop⟩
-    rw [hp] at h₀ h₂ h₃ 
+    rw [hp] at h₀ h₂ h₃
     replace h₁ : AffineIndependent ℝ p :=
       h₁.comp_embedding (Fintype.equivFinOfCardEq hb).symm.toEmbedding
     let basis : AffineBasis ι ℝ F := ⟨_, h₁, h₂⟩
-    erw [basis.interior_convex_hull, mem_set_of_eq] at h₃ 
+    erw [basis.interior_convex_hull, mem_set_of_eq] at h₃
     refine' ⟨p, fun i => Basis.coord i f, ⟨h₁, h₃, _, _⟩, fun i => h₀ (mem_range_self i)⟩
     · exact basis.sum_coord_apply_eq_one f
     ·
@@ -190,11 +190,11 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affine_independent_span_eq_top hts htne hai
   have hb₀ : b.finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
   obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_affine_span_eq_top.mpr hb₄
-  rw [← hs.interior_eq] at hb₂ 
+  rw [← hs.interior_eq] at hb₂
   obtain ⟨ε, hε, hcs⟩ :=
     (eventually_homothety_image_subset_of_finite_subset_interior ℝ c hb₀ hb₂).exists_gt
   have hbε := Convex.subset_interior_image_homothety_of_one_lt (convex_convexHull ℝ _) hc ε hε
-  rw [AffineMap.image_convexHull] at hbε 
+  rw [AffineMap.image_convexHull] at hbε
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine' ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, _, _, hbε (convexHull_mono hb₁ hf)⟩
   · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
@@ -321,7 +321,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto' {v : ι → F} {q : F} 
     ∀ᶠ y in l, ∃ w, SurroundingPts (f y) (fun i => p i y) w :=
   by
   have := eventually_surroundingPts_of_tendsto_of_tendsto hq hp hf
-  simp_rw [eventually_iff_exists_mem, mem_prod_iff] at this 
+  simp_rw [eventually_iff_exists_mem, mem_prod_iff] at this
   obtain ⟨nnn, ⟨n₁, hn₁, n₂, hn₂, hh⟩, h⟩ := this
   rw [eventually_iff_exists_mem]
   exact ⟨n₁ ∩ n₂, inter_mem hn₁ hn₂, fun y hy => h (y, y) (by apply hh; simpa using hy)⟩
@@ -343,7 +343,7 @@ theorem surrounds_iff_range_subset_range :
   constructor
   · exact fun ⟨t, w, h⟩ => ⟨γ ∘ t, w, h, range_comp_subset_range _ _⟩
   · rintro ⟨p, w, h₀, h₁⟩
-    rw [range_subset_iff] at h₁ 
+    rw [range_subset_iff] at h₁
     choose t ht using h₁
     have hpt : γ ∘ t = p := funext ht
     exact ⟨t, w, hpt.symm ▸ h₀⟩
@@ -355,7 +355,7 @@ theorem affineEquiv_surrounds_iff (e : F ≃ᵃ[ℝ] F) :
     by
     refine' ⟨this γ x e, fun h => _⟩
     specialize this (γ.transform e) (e x) e.symm h
-    rw [AffineEquiv.symm_apply_apply] at this 
+    rw [AffineEquiv.symm_apply_apply] at this
     convert this
     ext
     simp
@@ -479,7 +479,7 @@ theorem surrounding_loop_of_convexHull [FiniteDimensional ℝ F] {f b : F} {O : 
             (∀ s t, γ (projI t) s = γ t s) ∧ (∀ t s, γ t s ∈ O) ∧ (γ 1).Surrounds f :=
   by
   rcases surrounded_of_convexHull O_op hsf with ⟨p, w, h, hp⟩
-  rw [← O_op.is_connected_iff_is_path_connected] at O_conn 
+  rw [← O_op.is_connected_iff_is_path_connected] at O_conn
   exact
     ⟨surroundingLoop O_conn hp hb, continuous_surroundingLoop, surroundingLoop_zero_right,
       surroundingLoop_zero_left, fun s t => by rw [surroundingLoop_projI], surroundingLoop_mem,
@@ -556,7 +556,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
       hc.comp₂ continuous_const continuous_id
     simp_rw [is_compact_Icc.Sup_lt_iff_of_continuous (nonempty_Icc.mpr zero_le_one)
         (hc _).continuousOn] at
-      this 
+      this
     convert this
     ext y
     refine' ⟨fun h z hz => h z, fun h z => _⟩
@@ -567,7 +567,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
       ⟨half_pos hε, fun γ' hγ' => h2 _ _ (fun z => _) hy.2⟩⟩
   refine' (dist_triangle _ _ _).trans_lt ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le)
 
--- proof using `surrounds_of_close` 
+-- proof using `surrounds_of_close`
 -- begin
 --   obtain ⟨ε, hε, hcε, hγε⟩ := h.surrounds_of_close hg is_open_univ,
 --   exact ⟨ε, λ x, hε x (mem_univ _), continuous_iff_continuous_on_univ.mpr hcε,
@@ -711,7 +711,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
       hg.prod (((continuousAt_pi.2 fun _ => hbx₀).sub continuousAt_const).add continuousAt_const)
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
       simp only [c, hδx₀, Function.comp, Prod.mk.inj_iff, eq_self_iff_true, and_self_iff]
-    rw [← hcx₀] at hW 
+    rw [← hcx₀] at hW
     filter_upwards [hc.tendsto.eventually hW]; rintro x ⟨hW, hx⟩
     exact ⟨_, _, hx⟩
   exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, hδt1, fun x => And.right, hδ⟩, fun x => And.left⟩⟩
@@ -800,9 +800,9 @@ theorem Continuous.sfHomotopy {X : Type _} [UniformSpace X] [SeparatedSpace X]
   · refine' h₁.continuous_path hf.fst'.fst' _ continuous_snd
     refine' (continuous_ρ.comp _).mul (continuous_projI.comp ht.fst'.fst')
     exact continuous_const.sub hτ.fst'.fst'
-  · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs 
+  · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
-  · intro x s hs; simp only [projIcc_eq_one] at hs 
+  · intro x s hs; simp only [projIcc_eq_one] at hs
     simp only [hs, h₁.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · refine' continuous_projIcc.comp (continuous_const.sub hτ.fst')
 
@@ -854,7 +854,7 @@ theorem sfHomotopy_in' {ι} (h₀ : SurroundingFamily g b γ₀ U) (h₁ : Surro
   by_cases hτ1 : τ i = 1; · simp [hτ1]; exact h_in₁ i hx t ht s (by norm_num [hτ1])
   generalize hy : sfHomotopy h₀ h₁ (τ i) (x i) t s = y
   have h2y : y ∈ range (sfHomotopy h₀ h₁ (τ i) (x i) t) := by rw [← hy]; exact mem_range_self _
-  rw [sfHomotopy, Loop.range_ofPath, projI_eq_self.mpr ht] at h2y 
+  rw [sfHomotopy, Loop.range_ofPath, projI_eq_self.mpr ht] at h2y
   replace h2y := range_strans_subset h2y
   rcases h2y with (⟨s', rfl⟩ | ⟨s', rfl⟩)
   · exact h_in₀ _ hx _ (unitInterval.mul_mem ρ_mem_I ht) _ hτ1
@@ -904,7 +904,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
     normal_exists_closure_subset hL₁ (is_closed_closure.is_open_compl.inter hU₁)
       (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| (diff_subset _ _).trans hKU₁)
   obtain ⟨V₁, hV₁, hLV₁, hV₁₂⟩ := normal_exists_closure_subset hL₁ hV₂ hLV₂
-  rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂ 
+  rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂
   rcases h2V₂ with ⟨hV₀₂, hV₂U₁⟩
   have hVU₁ : V₁ ⊆ U₁ := subset_closure.trans (hV₁₂.trans <| subset_closure.trans hV₂U₁)
   have hdisj : Disjoint (closure V₀ ∪ V₂ᶜ) (closure V₁) :=

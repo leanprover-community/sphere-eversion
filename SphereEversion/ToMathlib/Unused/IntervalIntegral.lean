@@ -47,7 +47,7 @@ theorem integral_mono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (
     (hf : IntervalIntegrable f μ a b) (hg : IntervalIntegrable g μ a b)
     (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ :=
   by
-  rw [uIoc_of_le hab] at hfg 
+  rw [uIoc_of_le hab] at hfg
   let H := hfg.filter_mono (ae_mono le_rfl)
   simpa only [integral_of_le hab] using set_integral_mono_ae_restrict hf.1 hg.1 H
 
@@ -66,7 +66,7 @@ theorem integral_antimono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure �
   by
   cases' hab.eq_or_lt with hab hab
   · simp [hab]
-  · rw [uIoc_of_lt hab] at hfg 
+  · rw [uIoc_of_lt hab] at hfg
     rw [integral_symm b a]
     rw [integral_symm b a]
     apply neg_le_neg

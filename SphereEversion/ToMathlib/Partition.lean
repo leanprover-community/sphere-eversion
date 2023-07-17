@@ -138,7 +138,7 @@ theorem SmoothPartitionOfUnity.germ_combine_mem {s : Set M} (ρ : SmoothPartitio
     (ρ.combine φ : Germ (𝓝 x) F) ∈
       reallyConvexHull (smoothGerm I x) ((fun i => (φ i : Germ (𝓝 x) F)) '' ρ.fintsupport x) :=
   by
-  change x ∈ interior s at hx 
+  change x ∈ interior s at hx
   have :
     (ρ.combine φ : germ (𝓝 x) F) =
       ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) • (φ i : germ (𝓝 x) F) :=

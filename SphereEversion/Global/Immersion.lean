@@ -57,7 +57,7 @@ theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
 theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ (ψJ σ).source) :
     σ' ∈ immersionRel I M I' M' ↔ Injective (ψJ σ σ').2 :=
   by
-  simp only [FiberBundle.chartedSpace_chartAt, mfld_simps] at hσ' 
+  simp only [FiberBundle.chartedSpace_chartAt, mfld_simps] at hσ'
   simp_rw [mem_immersionRel_iff]
   rw [oneJetBundle_chartAt_apply, in_coordinates_eq]
   simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
@@ -235,7 +235,7 @@ theorem formalEversion_hol_near_zero_one :
     refine' ((is_open_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr _
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, mem_univ _⟩
-    simp_rw [mem_insert_iff, mem_singleton_iff] at hs 
+    simp_rw [mem_insert_iff, mem_singleton_iff] at hs
     rcases hs with (rfl | rfl)
     · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
     · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)

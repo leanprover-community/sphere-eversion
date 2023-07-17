@@ -13,7 +13,7 @@ theorem eq_zero_of_mem_disjoint {R : Type _} [CommRing R] {M : Type _} [AddCommG
     {F G : Submodule R M} (h : F ⊓ G = ⊥) {x : M} (hx : x ∈ F) (hx' : x ∈ G) : x = 0 :=
   by
   have := submodule.mem_inf.mpr ⟨hx, hx'⟩
-  rw [h] at this 
+  rw [h] at this
   simpa
 
 @[simp]
@@ -156,9 +156,9 @@ theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}�
   rw [sub_eq_add_neg, add_comm, ← neg_smul]
   congr 2
   have := orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y
-  rw [orthogonalProjection_singleton] at this 
-  apply_fun fun z => ⟪x₀, z⟫ at this 
-  rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right, eq_comm] at this 
+  rw [orthogonalProjection_singleton] at this
+  apply_fun fun z => ⟪x₀, z⟫ at this
+  rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right, eq_comm] at this
   symm
   apply eq_of_sub_eq_zero
   rw [sub_neg_eq_add]
@@ -288,14 +288,14 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     simp only [inner_smul_left, inner_sub_left, IsROrC.conj_to_real, smul_sub, sub_smul]
     field_simp
   simp only [key]
-  simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim 
+  simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim
   rcases limUnder (ε / 2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩
   refine' ⟨min (ε / 2 / ‖N x₀‖) (η / 2), _, _⟩
   · apply lt_min; positivity; exact half_pos η_pos
   intro y hy x
   have hy₁ := hy.trans (min_le_left _ _); have hy₂ := hy.trans (min_le_right _ _); clear hy
   specialize hη (by linarith : ‖y - x₀‖ < η)
-  rw [abs_of_nonneg] at hη 
+  rw [abs_of_nonneg] at hη
   calc
     ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ :=
       norm_add_le _ _

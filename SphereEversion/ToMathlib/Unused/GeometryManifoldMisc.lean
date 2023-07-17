@@ -132,7 +132,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
   have h1 :=
     (continuousAt_extChartAt_symm IB x₀.proj).preimage_mem_nhds
       ((trivialization_at F E _).open_baseSet.mem_nhds <| mem_base_set_trivialization_at _ _ _)
-  rw [h0] at h1 
+  rw [h0] at h1
   have h2 :=
     (continuousAt_extChartAt_symm IB x₀.proj).preimage_mem_nhds
       (e.open_base_set.mem_nhds <| by rwa [h0])

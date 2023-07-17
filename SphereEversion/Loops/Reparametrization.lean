@@ -78,7 +78,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
         ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_0_nat 1)).comp tendsto_snd
     · exact eventually_of_forall fun x => (hγ _).AEStronglyMeasurable
     · have := h.tendsto (x, t)
-      rw [nhds_prod_eq] at this 
+      rw [nhds_prod_eq] at this
       exact this.comp ((tendsto_fst.comp tendsto_fst).prod_mk tendsto_snd)
   · rw [← zero_smul ℝ (_ : F)]
     have : Continuous fun z => intervalIntegral (γ z) 0 1 volume :=
@@ -236,7 +236,7 @@ theorem approxSurroundingPointsAt_of_localCenteringDensityNhd
   let hnn := mem_prod_iff.mp (Classical.choose (Classical.choose_spec h))
   let n := Classical.choose hnn
   let hn := Classical.choose_spec hnn
-  change y ∈ interior n at hy 
+  change y ∈ interior n at hy
   let v := Classical.choose (Classical.choose_spec hn)
   let hv : v ∈ atTop := Classical.choose (Classical.choose_spec (Classical.choose_spec hn))
   let m := Classical.choose (mem_atTop_sets.mp hv)

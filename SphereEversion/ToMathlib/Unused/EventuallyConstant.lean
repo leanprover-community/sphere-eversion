@@ -245,7 +245,7 @@ theorem LocallyEventuallyConstantOn.continuousWithinAt [TopologicalSpace δ] [f.
   by
   obtain ⟨O, hO, hgO⟩ := hgf x hxU
   obtain ⟨i, hi⟩ := (eventually_eq_eventual_value hgO).exists
-  simp_rw [Function.funext_iff, eventual_value_apply hgO] at hi 
+  simp_rw [Function.funext_iff, eventual_value_apply hgO] at hi
   refine' (hg i).congr_nhds (eventually_of_mem hO fun y (hy : y ∈ O) => _)
   refine' Eq.trans _ (congr_arg F <| hi ⟨y, hy⟩).symm
   apply eventual_value_compose

@@ -77,7 +77,7 @@ theorem sphereImmersion_of_sol (f : E → F) :
   by
   intro h x x_in
   have : x ∉ B := by
-    rw [mem_sphere_zero_iff_norm] at x_in 
+    rw [mem_sphere_zero_iff_norm] at x_in
     norm_num [x_in]
   exact h x x_in this
 
@@ -155,7 +155,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) :=
     have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) := loc_immersion_rel_open_aux hx₀ H
     apply this.mono; clear this
     rintro ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ (hx : x ∉ B)
-    dsimp only [P, f] at Hφ 
+    dsimp only [P, f] at Hφ
     change inj_on φ (ℝ ∙ x)ᗮ
     have : range (subtypeL (ℝ ∙ x)ᗮ ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ :=
       by
@@ -203,7 +203,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       change ¬⟪u, pr[x]ᗮ u⟫ = 0
       rw [inner_projection_self_eq_zero_iff.not]
       contrapose! H
-      rw [orthogonal_orthogonal] at H 
+      rw [orthogonal_orthogonal] at H
       rw [← orthogonal_span_toDual_symm, span_singleton_eq_span_singleton_of_ne u_ne H]
       infer_instance
     have ne_z' : (p.π <| pr[x]ᗮ u)⁻¹ ≠ 0 := inv_ne_zero ne_z
@@ -235,7 +235,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       have eq₂ : ker p.π ⊓ (ℝ ∙ x)ᗮ ⊓ span ℝ {v'} = (⊥ : Submodule ℝ E) := by
         erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq]
       have eq₃ : dim (span ℝ {v'}) = 1; apply finrank_span_singleton p'.v_ne_zero
-      rw [← hv', eq₁, eq₃, eq₂] at eq 
+      rw [← hv', eq₁, eq₃, eq₂] at eq
       simpa only [finrank_bot] using Eq.symm
     have : dim E = n + 1 := Fact.out _
     linarith [finrank_map_le Φ (ker p.π ⊓ (ℝ ∙ x)ᗮ)]
@@ -316,7 +316,7 @@ def locFormalEversionAux : HtpyJetSec E E
         exact continuous_at_snd.preimage_mem_nhds this
       refine' eventually_of_mem this _
       rintro ⟨t, x⟩ hx
-      simp_rw [mem_preimage, mem_singleton_iff] at hx 
+      simp_rw [mem_preimage, mem_singleton_iff] at hx
       show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
       simp_rw [hx, zero_smul]
     refine' ContDiffAt.smul _ _
@@ -349,7 +349,7 @@ def locFormalEversion : HtpyFormalSol (immersionSphereRel E E) :=
       have h2x : smoothStep (‖x‖ ^ 2) = 1 :=
         by
         refine' smoothStep.of_gt _
-        rw [mem_ball, not_lt, dist_zero_right] at hx 
+        rw [mem_ball, not_lt, dist_zero_right] at hx
         refine' show (3 : ℝ) / 4 < 0.9 ^ 2 by norm_num.trans_le _
         rwa [sq_le_sq, show |(0.9 : ℝ)| = 0.9 by norm_num, abs_norm]
       rw [h2x, one_smul]
@@ -418,11 +418,11 @@ theorem locFormalEversion_hol :
         (is_open_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, _⟩
-    simp_rw [mem_insert_iff, mem_singleton_iff] at hs 
+    simp_rw [mem_insert_iff, mem_singleton_iff] at hs
     rcases hs with (rfl | rfl)
     exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
     exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
-    simp_rw [mem_sphere_zero_iff_norm] at hx 
+    simp_rw [mem_sphere_zero_iff_norm] at hx
     simp_rw [mem_preimage, hx, one_pow, mem_Ioi]
     norm_num
   have :

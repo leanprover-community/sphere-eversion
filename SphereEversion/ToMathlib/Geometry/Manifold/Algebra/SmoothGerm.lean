@@ -223,7 +223,7 @@ theorem Filter.Germ.ContMDiffAt.sum {x : M} {ι} {s : Finset ι} {n : ℕ∞} {f
   classical
   induction' s using Finset.induction_on with φ s hφs hs
   · rw [Finset.sum_empty]; exact contMDiffAt_const
-  simp only [Finset.mem_insert, forall_eq_or_imp] at h 
+  simp only [Finset.mem_insert, forall_eq_or_imp] at h
   rw [Finset.sum_insert hφs]
   exact h.1.add (hs h.2)
 
@@ -278,13 +278,13 @@ def Filter.Germ.ContMDiffAtProd {x : M₁} (φ : Germ (𝓝 x) <| M₂ → F) (n
     fun f g h =>
     propext
       (by
-        change {x' | f x' = g x'} ∈ 𝓝 x at h 
+        change {x' | f x' = g x'} ∈ 𝓝 x at h
         constructor
         all_goals
           refine' fun H y => (H y).congr_of_eventuallyEq _
           clear H
           replace h : {x' | f x' = g x'} ×ˢ (univ : Set M₂) ∈ 𝓝 x ×ᶠ 𝓝 y := prod_mem_prod h univ_mem
-          rw [← nhds_prod_eq] at h 
+          rw [← nhds_prod_eq] at h
           apply mem_of_superset h
           rintro ⟨x', y'⟩ ⟨hx' : f x' = g x', -⟩
           simp only [mem_set_of_eq, uncurry_apply_pair]
@@ -336,7 +336,7 @@ theorem Filter.Germ.ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ
   classical
   induction' s using Finset.induction_on with φ s hφs hs
   · rw [Finset.sum_empty]; intro y; exact contMDiffAt_const
-  simp only [Finset.mem_insert, forall_eq_or_imp] at h 
+  simp only [Finset.mem_insert, forall_eq_or_imp] at h
   rw [Finset.sum_insert hφs]
   exact h.1.add (hs h.2)
 

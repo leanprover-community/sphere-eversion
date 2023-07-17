@@ -67,9 +67,9 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
       exact (Set.inter_subset_left _ _).trans (Set.inter_subset_right _ _)
   · rintro ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩
     replace hr₀ : Metric.ball (extChartAt I x x) r ∈ 𝓝 (extChartAt I x x) := ball_mem_nhds _ hr₀
-    rw [← map_extChartAt_nhds_of_boundaryless, Filter.mem_map] at hr₀ 
+    rw [← map_extChartAt_nhds_of_boundaryless, Filter.mem_map] at hr₀
     replace hr₀ := Filter.inter_mem hx hr₀
-    rw [← (extChartAt I x).symm_image_eq_source_inter_preimage hr₁] at hr₀ 
+    rw [← (extChartAt I x).symm_image_eq_source_inter_preimage hr₁] at hr₀
     filter_upwards [hr₀] using hr₂
 
 end ChartedSpace

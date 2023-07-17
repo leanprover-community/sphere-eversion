@@ -178,7 +178,7 @@ theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
   simp_rw [RelMfld.Ample]
   refine' ⟨fun h σ p _ => h p, fun h σ p x hx => _⟩
   have := @h (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p hx
-  rw [slice_mk_update] at this 
+  rw [slice_mk_update] at this
   exact this x hx
 
 /-! ## Families of formal solutions. -/
@@ -599,7 +599,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
         (φ.smooth_to.smooth_at.comp _ smoothAt_snd)
         ((φ.smooth_at_inv _).comp _ (smooth_one_jet_bundle_proj.fst (φ.transfer ψ x))) le_top
     · dsimp only [id]
-      simp_rw [φ.left_inv] at this 
+      simp_rw [φ.left_inv] at this
       refine' this.congr_of_eventually_eq _
       refine' Filter.eventually_of_mem ((φ.is_open_range_transfer ψ).mem_nhds (mem_range_self _)) _
       rw [φ.range_transfer ψ]

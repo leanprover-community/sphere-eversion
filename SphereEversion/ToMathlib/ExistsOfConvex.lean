@@ -35,7 +35,7 @@ theorem exists_of_convex {P : (Σ x : M, Germ (𝓝 x) F) → Prop}
     (fun x : M => ∑ᶠ i, ρ i x • φ (b.c i) x : germ (𝓝 x₀) F) ∈
       reallyConvexHull (smoothGerm I x₀) (g '' ρ.fintsupport x₀) :=
     ρ.germ_combine_mem fun i x => φ (b.c i) x
-  simp_rw [reallyConvex_iff_hull] at hP 
+  simp_rw [reallyConvex_iff_hull] at hP
   apply hP x₀; clear hP
   have H : g '' ↑(ρ.fintsupport x₀) ⊆ {φ : (𝓝 x₀).Germ F | P ⟨x₀, φ⟩} :=
     by
@@ -89,7 +89,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
     dsimp only
     let v : germ (𝓝 x) F →ₛₗ[smoothGerm.valueRingHom I x] F := Filter.Germ.valueₛₗ I x
     change ReallyConvex (smoothGerm I x) (v ⁻¹' {y | P x y})
-    dsimp only [← smoothGerm.valueOrderRingHom_toRingHom] at v 
+    dsimp only [← smoothGerm.valueOrderRingHom_toRingHom] at v
     apply ReallyConvex.preimageₛₗ
     rw [reallyConvex_iff_convex]
     apply hP
@@ -189,7 +189,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP :
     dsimp only
     let v : germ (𝓝 x) (M₂ → F) →ₛₗ[smoothGerm.valueRingHom I₁ x] M₂ → F := Filter.Germ.valueₛₗ I₁ x
     change ReallyConvex (smoothGerm I₁ x) (v ⁻¹' {y | P x y})
-    dsimp only [← smoothGerm.valueOrderRingHom_toRingHom] at v 
+    dsimp only [← smoothGerm.valueOrderRingHom_toRingHom] at v
     apply ReallyConvex.preimageₛₗ
     rw [reallyConvex_iff_convex]
     apply hP
@@ -213,7 +213,7 @@ theorem exists_contDiff_of_convex₂ {P : E₁ → (E₂ → F) → Prop} (hP : 
             ContDiffOn ℝ n (uncurry f) (U ×ˢ (univ : Set E₂)) ∧ ∀ y ∈ U, P y (f y)) :
     ∃ f : E₁ → E₂ → F, ContDiff ℝ n (uncurry f) ∧ ∀ x, P x (f x) :=
   by
-  simp_rw [← contMDiffOn_iff_contDiffOn, modelWithCornersSelf_prod] at hP' 
+  simp_rw [← contMDiffOn_iff_contDiffOn, modelWithCornersSelf_prod] at hP'
   simp_rw [← contMDiff_iff_contDiff, modelWithCornersSelf_prod]
   rw [← chartedSpaceSelf_prod] at hP' ⊢
   -- Why does `simp_rw` not succeed here?

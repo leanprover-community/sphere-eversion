@@ -60,7 +60,7 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type _} {s : Set
       exact (Set.Finite.toFinset_nonempty h).mpr hne
     simp only [this, indexType_of_zero_lt]
     have e₁ := Fintype.equivFin h.toFinset
-    rw [Fintype.card_coe, h.coeSort_toFinset] at e₁ 
+    rw [Fintype.card_coe, h.coeSort_toFinset] at e₁
     exact ⟨e₁.symm⟩
   · refine' ⟨fun hh => ⟨0, _⟩, _⟩
     · simp only [indexType_zero]
@@ -71,9 +71,9 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type _} {s : Set
       have hn : n = 0 := by
         by_contra hn
         replace hn : 0 < n := zero_lt_iff.mpr hn
-        simp only [hn, indexType_of_zero_lt] at fn 
+        simp only [hn, indexType_of_zero_lt] at fn
         exact Set.not_infinite.mpr ⟨Fintype.ofEquiv (Fin n) fn⟩ h
-      simp only [hn, indexType_zero] at fn 
+      simp only [hn, indexType_zero] at fn
       exact Set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩
 
 theorem IndexType.not_lt_zero {N : ℕ} (j : IndexType N) : ¬j < 0 :=

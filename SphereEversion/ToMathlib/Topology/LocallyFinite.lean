@@ -45,6 +45,6 @@ theorem LocallyFinite.eventually_subset {ι X : Type _} [TopologicalSpace X] {s 
   by
   apply mem_of_superset (hs.Inter_compl_mem_nhds hs' x)
   intro y hy i hi
-  simp only [mem_Inter, mem_compl_iff] at hy 
+  simp only [mem_Inter, mem_compl_iff] at hy
   exact not_imp_not.mp (hy i) hi
 

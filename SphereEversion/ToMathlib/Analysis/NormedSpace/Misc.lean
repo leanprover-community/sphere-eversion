@@ -51,7 +51,7 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
         by
         have hx : ‖(homeomorphUnitBall x : E)‖ < 1 := by rw [← dist_zero_right];
           exact (homeomorphUnitBall x).property
-        rw [← mul_lt_mul_left hr, mul_one] at hx 
+        rw [← mul_lt_mul_left hr, mul_one] at hx
         simp only [homothety_apply, vsub_eq_sub, sub_zero, vadd_eq_add, add_zero, mem_ball,
           dist_self_add_left, norm_smul, Real.norm_eq_abs, abs_eq_self.2 hr.le, hx]
       map_target' := fun x h => mem_univ _

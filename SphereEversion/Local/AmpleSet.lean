@@ -50,7 +50,7 @@ def AmpleSet (s : Set F) : Prop :=
 /-- images of ample sets under continuous linear equivalences are ample. -/
 theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃L[ℝ] F) :
     AmpleSet (L '' s) := fun x hx ↦ by
-  rw [L.image_eq_preimage] at hx 
+  rw [L.image_eq_preimage] at hx
   have : L '' connectedComponentIn s (L.symm x) = connectedComponentIn (L '' s) x := by
     conv_rhs => rw [← L.apply_symm_apply x]
     exact L.toHomeomorph.image_connectedComponentIn hx
@@ -72,7 +72,7 @@ continuous affine equivalences -/
 theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} : AmpleSet (y +ᵥ s) :=
   by
   intro x hx
-  simp_rw [mem_vadd_set] at hx 
+  simp_rw [mem_vadd_set] at hx
   obtain ⟨x, hx, rfl⟩ := hx
   have : y +ᵥ connectedComponentIn s x = connectedComponentIn (y +ᵥ s) (y +ᵥ x) :=
     (Homeomorph.addLeft y).image_connectedComponentIn hx
@@ -134,19 +134,19 @@ theorem isPathConnected_compl_of_isPathConnected_compl_zero [TopologicalAddGroup
 `x` to `y` then `y` is on the line spanned by `x`.  -/
 theorem mem_span_of_zero_mem_segment {F : Type _} [AddCommGroup F] [Module ℝ F] {x y : F}
     (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) : y ∈ Submodule.span ℝ ({x} : Set F) := by
-  rw [segment_eq_image] at h 
+  rw [segment_eq_image] at h
   rcases h with ⟨t, -, htxy⟩
   rw [Submodule.mem_span_singleton]
-  dsimp only at htxy 
+  dsimp only at htxy
   use (t - 1) / t
   have : t ≠ 0 := by
     intro h
-    rw [h] at htxy 
+    rw [h] at htxy
     refine' hx _
     simpa using htxy
   rw [← smul_eq_zero_iff_eq' (neg_ne_zero.mpr <| inv_ne_zero this), smul_add, smul_smul, smul_smul,
     ← neg_one_mul, mul_assoc, mul_assoc, inv_mul_cancel this, mul_one, neg_one_smul,
-    add_neg_eq_zero] at htxy 
+    add_neg_eq_zero] at htxy
   convert htxy using 2
   ring
 
@@ -167,7 +167,7 @@ theorem isPathConnected_compl_zero_of_two_le_dim (hdim : 2 ≤ Module.rank ℝ F
     IsPathConnected ({0}ᶜ : Set F) := by
   rw [isPathConnected_iff]
   constructor
-  · suffices 0 < Module.rank ℝ F by rwa [rank_pos_iff_exists_ne_zero] at this 
+  · suffices 0 < Module.rank ℝ F by rwa [rank_pos_iff_exists_ne_zero] at this
     exact lt_of_lt_of_le (by norm_num) hdim
   · intro x hx y hy
     by_cases h : y ∈ Submodule.span ℝ ({x} : Set F)
@@ -177,13 +177,13 @@ theorem isPathConnected_compl_zero_of_two_le_dim (hdim : 2 ≤ Module.rank ℝ F
         exact (joinedIn_compl_zero_of_not_mem_span hx hzx).trans
           (joinedIn_compl_zero_of_not_mem_span hy hzy).symm
       by_contra h'
-      push_neg at h' 
-      rw [← Submodule.eq_top_iff'] at h' 
-      rw [← rank_top ℝ, ← h'] at hdim 
+      push_neg at h'
+      rw [← Submodule.eq_top_iff'] at h'
+      rw [← rank_top ℝ, ← h'] at hdim
       suffices : (2 : Cardinal) ≤ 1
       exact not_le_of_lt (by norm_num) this
       have := hdim.trans (rank_span_le _)
-      rwa [Cardinal.mk_singleton] at this 
+      rwa [Cardinal.mk_singleton] at this
     · exact joinedIn_compl_zero_of_not_mem_span hx h
 
 /-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
@@ -214,9 +214,9 @@ theorem ample_of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.rank 
   intro y
   by_cases h : y ∈ E
   · rcases E.exists_isCompl with ⟨E', hE'⟩
-    rw [(E.quotientEquivOfIsCompl E' hE').rank_eq] at hcodim 
+    rw [(E.quotientEquivOfIsCompl E' hE').rank_eq] at hcodim
     have hcodim' : 0 < Module.rank ℝ E' := lt_of_lt_of_le (by norm_num) hcodim
-    rw [rank_pos_iff_exists_ne_zero] at hcodim' 
+    rw [rank_pos_iff_exists_ne_zero] at hcodim'
     rcases hcodim' with ⟨z, hz⟩
     have : y ∈ [y + -z -[ℝ] y + z] := by
       rw [← sub_eq_add_neg]

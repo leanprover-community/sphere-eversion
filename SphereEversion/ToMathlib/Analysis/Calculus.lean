@@ -62,7 +62,7 @@ theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableA
     fderiv 𝕜 f p =
       fderiv 𝕜 (fun z : E × F => f (z.1, p.2)) p + fderiv 𝕜 (fun z : E × F => f (p.1, z.2)) p :=
   by
-  rw [← @Prod.mk.eta _ _ p] at hf 
+  rw [← @Prod.mk.eta _ _ p] at hf
   rw [fderiv_comp p (by apply hf) (differentiable_at_fst.prod <| differentiableAt_const _),
     fderiv_comp p (by apply hf) ((differentiableAt_const _).prod differentiableAt_snd), ←
     ContinuousLinearMap.comp_add, differentiable_at_fst.fderiv_prod (differentiableAt_const _),
@@ -222,7 +222,7 @@ theorem ContDiff.lipschitzOnWith {s : Set E} {f : E → F} {n} (hf : ContDiff �
   by
   rcases(bddAbove_iff_exists_ge 0).mp (hs'.image (hf.continuous_fderiv hn).norm).bddAbove with
     ⟨M, M_nonneg, hM⟩
-  simp_rw [ball_image_iff] at hM 
+  simp_rw [ball_image_iff] at hM
   use ⟨M, M_nonneg⟩
   exact Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x x_in => hf.differentiable hn x) hM hs
 

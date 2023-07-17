@@ -119,7 +119,7 @@ theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot 
   rw [AddMonoidHomClass.isometry_iff_norm]
   intro w
   obtain ⟨a, ha, w, hw, rfl⟩ := (ℝ ∙ (v : E)).exists_add_mem_mem_orthogonal w
-  rw [Submodule.mem_span_singleton] at ha 
+  rw [Submodule.mem_span_singleton] at ha
   obtain ⟨s, rfl⟩ := ha
   rw [← sq_eq_sq (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ,
@@ -139,24 +139,24 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
   change Set.InjOn (ω.rot (t, x)).toLinearMap (ℝ ∙ x)ᗮ
   simp_rw [← LinearMap.ker_inf_eq_bot, Submodule.eq_bot_iff, Submodule.mem_inf]
   rintro y ⟨hy, hy'⟩
-  rw [LinearMap.mem_ker] at hy 
+  rw [LinearMap.mem_ker] at hy
   change
     ↑((orthogonalProjection (span ℝ {x})) y) +
           cos (t * Real.pi) • ↑((orthogonalProjection (span ℝ {x})ᗮ) y) +
         Real.sin (t * Real.pi) • x×₃y =
       0 at
-    hy 
+    hy
   rw [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hy',
-    orthogonal_projection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy 
-  apply_fun fun x => ‖x‖ ^ 2 at hy 
-  rw [pow_two, @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ] at hy 
-  simp_rw [← pow_two, norm_smul, mul_pow] at hy 
-  change _ + _ * ‖x×₃(⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy 
-  rw [norm_cross_product] at hy 
+    orthogonal_projection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy
+  apply_fun fun x => ‖x‖ ^ 2 at hy
+  rw [pow_two, @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ] at hy
+  simp_rw [← pow_two, norm_smul, mul_pow] at hy
+  change _ + _ * ‖x×₃(⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy
+  rw [norm_cross_product] at hy
   simp only [norm_eq_abs, pow_bit0_abs, coe_mk, norm_zero, zero_pow', Ne.def, bit0_eq_zero,
-    Nat.one_ne_zero, not_false_iff] at hy 
-  change _ + _ * (_ * ‖y‖) ^ 2 = 0 at hy 
-  rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy 
+    Nat.one_ne_zero, not_false_iff] at hy
+  change _ + _ * (_ * ‖y‖) ^ 2 = 0 at hy
+  rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy
   have : 0 < cos (t * π) ^ 2 + sin (t * π) ^ 2 * ‖x‖ ^ 2 :=
     by
     have : 0 < ‖x‖ ^ 2 := pow_pos (norm_pos_iff.mpr hx) 2
@@ -174,7 +174,7 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
   exact norm_eq_zero.mp (pow_eq_zero hy)
   rw [inner_smul_left, inner_smul_right]
   have := inner_cross_product_apply_apply_self ω x ⟨y, hy'⟩
-  change ⟪x×₃y, y⟫ = 0 at this 
+  change ⟪x×₃y, y⟫ = 0 at this
   rw [real_inner_comm, this]
   simp
 

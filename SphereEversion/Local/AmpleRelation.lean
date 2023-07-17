@@ -72,9 +72,9 @@ theorem isAmple_iff :
   by
   simp_rw [is_ample]
   refine' ⟨fun h θ p hθ => h p θ, fun h p θ w hw => _⟩
-  dsimp [slice] at hw 
+  dsimp [slice] at hw
   have := h p hw
-  rw [slice_update] at this 
+  rw [slice_update] at this
   exact this w hw
 
 open scoped Pointwise

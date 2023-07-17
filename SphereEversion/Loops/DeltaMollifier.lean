@@ -197,7 +197,7 @@ theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (
     have : -1 < n
     exact_mod_cast this
     have : (n : ℝ) < 1 := by linarith
-    norm_cast at this 
+    norm_cast at this
     linarith
   simp [finsum_eq_sum_of_support_subset _ this]
 

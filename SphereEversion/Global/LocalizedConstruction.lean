@@ -89,7 +89,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     rcases Classical.em (x ∈ φ '' K₁) with (⟨e, he, rfl⟩ | hx)
     · by_cases ht : t ∈ (Icc 0 1 : Set ℝ)
       · exact hτ hcompat e he t ht (h𝓕'dist e t)
-      · rw [mem_Icc, not_and_or, not_le, not_le] at ht 
+      · rw [mem_Icc, not_and_or, not_le, not_le] at ht
         cases' ht with ht ht
         · erw [hF't0.on_set t ht.le, dist_self]
           apply hδ_pos
@@ -104,7 +104,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       rintro x ⟨hx, hx'⟩
       exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' => (hx' 1).symm)
     have : ∀ᶠ x near φ ⁻¹' C ∪ K₀, (𝓕' 1).IsHolonomicAt x := h𝓕'holC.union h𝓕'hol
-    rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at this 
+    rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at this
     apply φ.forall_near hK₁ this
     · apply Filter.Eventually.union
       · apply hFC.mono
