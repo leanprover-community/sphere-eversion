@@ -115,7 +115,7 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
     refine'
       ⟨smoothAt_snd,
         (𝓕.f_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smoothAt_snd), _⟩
-    dsimp [inTangentCoordinates, in_coordinates, chart_at]
+    dsimp [inTangentCoordinates, in_coordinates, chartAt]
     simp only [range_id, fderivWithin_univ, fderiv_id, TangentBundle.symmL_model_space,
       TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
       ContinuousLinearMap.comp_id]

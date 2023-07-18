@@ -29,16 +29,16 @@ variable [TopologicalSpace F] [TopologicalSpace (TotalSpace F E)] [∀ x, Topolo
 
 theorem chartedSpace_chartAt_fst' (x y : TotalSpace F E) :
     (chartAt (ModelProd HB F) x y).1 = chartAt HB x.proj (trivializationAt F E x.proj y).1 := by
-  rw [charted_space_chart_at]; rfl
+  rw [charted_space_chartAt]; rfl
 
 theorem chartedSpace_chartAt_fst {x y : TotalSpace F E}
     (hy : y.proj ∈ (trivializationAt F E x.proj).baseSet) :
     (chartAt (ModelProd HB F) x y).1 = chartAt HB x.proj y.proj := by
-  rw [charted_space_chart_at_fst', (trivialization_at F E x.proj).coe_fst' hy]
+  rw [charted_space_chartAt_fst', (trivialization_at F E x.proj).coe_fst' hy]
 
 theorem chartedSpace_chartAt_snd (x y : TotalSpace F E) :
     (chartAt (ModelProd HB F) x y).2 = (trivializationAt F E x.proj y).2 := by
-  rw [charted_space_chart_at]; rfl
+  rw [charted_space_chartAt]; rfl
 
 end FiberBundle
 

@@ -248,7 +248,7 @@ variable {𝕜 E H M : Type _} [NontriviallyNormedField 𝕜] [NormedAddCommGrou
 theorem extChartAt_target_eq_image_chart_target :
     (extChartAt I x).target = I '' (chartAt H x).target :=
   by
-  erw [(chart_at H x).toLocalEquiv.trans_target'' I.to_local_equiv, I.source_eq, univ_inter]
+  erw [(chartAt H x).toLocalEquiv.trans_target'' I.to_local_equiv, I.source_eq, univ_inter]
   rfl
 
 @[simp]
@@ -258,9 +258,9 @@ theorem modelWithCornersSelf.extChartAt {e : E} : extChartAt 𝓘(𝕜, E) e = L
 theorem contMDiffOn_ext_chart_symm :
     ContMDiffOn 𝓘(𝕜, E) I n (extChartAt I x).symm (extChartAt I x).target :=
   by
-  have hs : (extChartAt I x).target ⊆ (chart_at E (extChartAt I x x)).source := by
+  have hs : (extChartAt I x).target ⊆ (chartAt E (extChartAt I x x)).source := by
     simp only [subset_univ, mfld_simps]
-  have h2s : maps_to (extChartAt I x).symm (extChartAt I x).target (chart_at H x).source := by
+  have h2s : maps_to (extChartAt I x).symm (extChartAt I x).target (chartAt H x).source := by
     rw [← extChartAt_source I]; exact (extChartAt I x).symm_mapsTo
   refine' (contMDiffOn_iff_of_subset_source hs h2s).mpr ⟨continuousOn_extChartAt_symm I x, _⟩
   simp_rw [modelWithCornersSelf.extChartAt, LocalEquiv.refl_symm, LocalEquiv.refl_coe,
@@ -286,7 +286,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : LocalHomeomorph F F} (hf
   left_inv' y := by
     obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
     have aux : f.symm (IF z) = y := by rw [hz']; exact f.left_inv (hf₁.symm ▸ mem_univ _)
-    simp only [← hz', (chart_at H x).right_inv hz, aux, extChartAt, LocalHomeomorph.extend,
+    simp only [← hz', (chartAt H x).right_inv hz, aux, extChartAt, LocalHomeomorph.extend,
       LocalEquiv.coe_trans, LocalHomeomorph.invFun_eq_coe, ModelWithCorners.toLocalEquiv_coe,
       LocalHomeomorph.coe_coe, LocalEquiv.coe_trans_symm, LocalHomeomorph.coe_coe_symm,
       ModelWithCorners.left_inv, ModelWithCorners.toLocalEquiv_coe_symm, comp_app, aux]
@@ -311,11 +311,11 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : LocalHomeomorph F F} (hf
       by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
       exact (LocalEquiv.image_symm_image_of_subset_target _ hf₄).subset
-    have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chart_at H x).source :=
+    have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chartAt H x).source :=
       by
       rw [← extChartAt_source IF, range_comp, ← LocalEquiv.symm_image_target_eq_source]
       exact (monotone_image hf₄).trans Subset.rfl
-    exact hf₃.cont_mdiff_on.comp (cont_mdiff_on_ext_chart_at.mono hf'') hf'
+    exact hf₃.cont_mdiff_on.comp (cont_mdiff_on_extChartAt.mono hf'') hf'
 
 @[simp]
 theorem coe_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : LocalHomeomorph F F}

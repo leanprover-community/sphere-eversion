@@ -204,7 +204,7 @@ theorem oneJetBundle_chartAt_apply (v v' : OneJetBundle I M I' M') :
   by
   ext1
   · rfl
-  rw [charted_space_chart_at_snd]
+  rw [charted_space_chartAt_snd]
   exact oneJetBundle_trivializationAt v v'
 
 /-- In `J¹(M, M')`, the source of a chart has a nice formula -/
@@ -224,15 +224,15 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
   by
   simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_one_jet_bundle_target, mfld_simps]
   simp_rw [prod_univ, preimage_inter, preimage_preimage, inter_eq_left_iff_subset, subset_inter_iff]
-  rw [← @preimage_preimage _ _ _ fun x => (chart_at H x₀.proj.1).symm (Prod.fst x)]
-  rw [← @preimage_preimage _ _ _ fun x => (chart_at H' x₀.proj.2).symm (Prod.snd x)]
+  rw [← @preimage_preimage _ _ _ fun x => (chartAt H x₀.proj.1).symm (Prod.fst x)]
+  rw [← @preimage_preimage _ _ _ fun x => (chartAt H' x₀.proj.2).symm (Prod.snd x)]
   refine' ⟨preimage_mono _, preimage_mono _⟩
-  · rw [← @preimage_preimage _ _ _ (chart_at H x₀.proj.1).symm]
+  · rw [← @preimage_preimage _ _ _ (chartAt H x₀.proj.1).symm]
     refine' (prod_subset_preimage_fst _ _).trans (preimage_mono _)
-    exact (chart_at H x₀.proj.1).target_subset_preimage_source
-  · rw [← @preimage_preimage _ _ _ (chart_at H' x₀.proj.2).symm]
+    exact (chartAt H x₀.proj.1).target_subset_preimage_source
+  · rw [← @preimage_preimage _ _ _ (chartAt H' x₀.proj.2).symm]
     refine' (prod_subset_preimage_snd _ _).trans (preimage_mono _)
-    exact (chart_at H' x₀.proj.2).target_subset_preimage_source
+    exact (chartAt H' x₀.proj.2).target_subset_preimage_source
 
 section Maps
 
@@ -513,7 +513,7 @@ theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
 variable (I I')
 
 -- note: this proof works for all vector bundles where we have proven
--- `∀ p, chart_at _ p = f.to_local_equiv`
+-- `∀ p, chartAt _ p = f.to_local_equiv`
 /-- The canonical identification between the one_jet bundle to the model space and the product,
 as a homeomorphism -/
 def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
@@ -524,7 +524,7 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
     continuous_toFun :=
       by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
-      have : Continuous (chart_at 𝓜 p) :=
+      have : Continuous (chartAt 𝓜 p) :=
         by
         rw [continuous_iff_continuousOn_univ]
         convert LocalHomeomorph.continuousOn _
@@ -533,7 +533,7 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
     continuous_invFun :=
       by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
-      have : Continuous (chart_at 𝓜 p).symm :=
+      have : Continuous (chartAt 𝓜 p).symm :=
         by
         rw [continuous_iff_continuousOn_univ]
         convert LocalHomeomorph.continuousOn _
