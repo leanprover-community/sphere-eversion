@@ -152,7 +152,7 @@ def RelMfld.slice (R : RelMfld I M I' M') (σ : OneJetBundle I M I' M') (p : Dua
     Set (TM' σ.1.2) :=
   {w : TM' σ.1.2 | OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
-/-- For some reason `rw [mem_set_of_eq]` fails after unfolding `slice`,
+/-- For some reason `rw [mem_setOf_eq]` fails after unfolding `slice`,
 but rewriting with this lemma works. -/
 theorem mem_slice {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'} {p : DualPair <| TM σ.1.1}
     {w : TM' σ.1.2} : w ∈ R.slice σ p ↔ OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=

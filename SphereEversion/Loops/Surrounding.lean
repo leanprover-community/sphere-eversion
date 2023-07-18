@@ -155,10 +155,10 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
       basis.coord_apply_combination_of_mem (Finset.mem_univ i) w_sum]
     exact w_pos i
   · rintro ⟨b, h₀, h₁, h₂, h₃⟩
-    haveI : Fintype b := (finite_set_of_fin_dim_affineIndependent ℝ h₁).Fintype
+    haveI : Fintype b := (finite_setOf_fin_dim_affineIndependent ℝ h₁).Fintype
     have hb : Fintype.card b = d + 1 := by
       rw [← h₁.affine_span_eq_top_iff_card_eq_finrank_add_one, Subtype.range_coe_subtype,
-        set_of_mem_eq, h₂]
+        setOf_mem_eq, h₂]
     let p := (coe : _ → F) ∘ (Fintype.equivFinOfCardEq hb).symm
     have hp : b = range p := by
       ext x
@@ -169,7 +169,7 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
     replace h₁ : AffineIndependent ℝ p :=
       h₁.comp_embedding (Fintype.equivFinOfCardEq hb).symm.toEmbedding
     let basis : AffineBasis ι ℝ F := ⟨_, h₁, h₂⟩
-    erw [basis.interior_convex_hull, mem_set_of_eq] at h₃
+    erw [basis.interior_convex_hull, mem_setOf_eq] at h₃
     refine' ⟨p, fun i => Basis.coord i f, ⟨h₁, h₃, _, _⟩, fun i => h₀ (mem_range_self i)⟩
     · exact basis.sum_coord_apply_eq_one f
     ·
@@ -188,7 +188,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
         (t : Set F) ⊆ s ∧ AffineIndependent ℝ (coe : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
   have htne : (t : Set F).Nonempty := (@convexHull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affine_independent_span_eq_top hts htne hai
-  have hb₀ : b.finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
+  have hb₀ : b.finite := finite_setOf_fin_dim_affineIndependent ℝ hb₃
   obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_affine_span_eq_top.mpr hb₄
   rw [← hs.interior_eq] at hb₂
   obtain ⟨ε, hε, hcs⟩ :=
@@ -197,7 +197,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   rw [AffineMap.image_convexHull] at hbε
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine' ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, _, _, hbε (convexHull_mono hb₁ hf)⟩
-  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
+  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_setOf_eq_iff]
   · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
@@ -965,7 +965,7 @@ def ContinuousGerm {x : E} (φ : Germ (𝓝 x) (ℝ → Loop F)) : Prop :=
       rw [nhds_prod_eq]
       apply mem_of_superset (Filter.prod_mem_prod h univ_mem)
       rintro ⟨x', p⟩ ⟨hx' : γ x' = γ' x', -⟩
-      simp only [mem_set_of_eq, hx'])
+      simp only [mem_setOf_eq, hx'])
 
 variable (g b Ω)
 

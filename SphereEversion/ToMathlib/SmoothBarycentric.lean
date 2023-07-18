@@ -22,7 +22,7 @@ theorem affineBases_findim [Fintype ι] [Field k] [Module k M] [FiniteDimensiona
     affineBases ι k P = {v | AffineIndependent k v} :=
   by
   ext v
-  simp only [affineBases, mem_set_of_eq, and_iff_left_iff_imp]
+  simp only [affineBases, mem_setOf_eq, and_iff_left_iff_imp]
   exact fun h_ind => h_ind.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr h
 
 theorem mem_affineBases_iff [Fintype ι] [DecidableEq ι] [Nontrivial R] (b : AffineBasis ι R P)

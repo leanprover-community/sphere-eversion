@@ -148,7 +148,7 @@ instance : T2Space 𝕊₁ :=
   have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k} :=
     by
     ext ⟨a, b⟩
-    simp only [proj𝕊₁, Quotient.eq', mem_set_of_eq]
+    simp only [proj𝕊₁, Quotient.eq', mem_setOf_eq]
     exact transOne_rel_iff
   have :
     {q : ℝ × ℝ | π q.fst = π q.snd} = (fun q : ℝ × ℝ => q.2 - q.1) ⁻¹' (range <| (coe : ℤ → ℝ)) :=

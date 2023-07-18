@@ -71,12 +71,12 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     refine' ⟨U n, hU'' n x hn, _⟩
     let P : ι × ℝ → Prop := fun z => ((↿B) (z : ι × ℝ) ∩ U n).Nonempty
     rw [(Equiv.Set.sep s P).symm.set_finite_iff]
-    simp only [s, P, Set.iUnion_inter, sep_eq_inter_set_of]
+    simp only [s, P, Set.iUnion_inter, sep_eq_inter_setOf]
     refine' Set.Finite.iUnion (fun m => Set.toFinite _) (hU' n) fun m hm => _
     rw [Set.eq_empty_iff_forall_not_mem]
     intro z
     simp only [Pi.prod, Finset.coe_image, mem_inter_iff, mem_image, Finset.mem_coe, SetCoe.exists,
-      mem_set_of_eq, not_and, bex_imp, and_imp]
+      mem_setOf_eq, not_and, bex_imp, and_imp]
     rintro x hx₁ hx₂ rfl
     rw [Set.not_nonempty_iff_eq_empty]
     have := Set.inter_subset_inter_left (U n) (h₂ m ⟨x, hx₁⟩)

@@ -428,7 +428,7 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
   · apply hε
     rw [Metric.mem_thickening_iff]
     refine' ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), _, _⟩
-    · simp only [hxK₁, formal_sol.to_jet_sec_eq_coe, exists_prop, mem_set_of_eq, eq_self_iff_true,
+    · simp only [hxK₁, formal_sol.to_jet_sec_eq_coe, exists_prop, mem_setOf_eq, eq_self_iff_true,
         true_and_iff, K]
       exact
         ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
