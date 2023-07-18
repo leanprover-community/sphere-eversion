@@ -40,9 +40,8 @@ def ball_homeomorph_ball : ball (0 : F) 1 ≃ₜ ball c r :=
 def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
   if hr : 0 < r then
     { toFun := fun x => c +ᵥ homothety (0 : E) r (homeomorphUnitBall x)
-      invFun :=
-        (fun y => if hy : y ∈ ball (0 : E) 1 then homeomorphUnitBall.symm ⟨y, hy⟩ else 0) ∘ fun y =>
-          homothety c r⁻¹ y -ᵥ c
+      invFun := (fun y => if hy : y ∈ ball (0 : E) 1 then homeomorphUnitBall.symm ⟨y, hy⟩ else 0) ∘
+        fun y => homothety c r⁻¹ y -ᵥ c
       source := univ
       target := ball c r
       open_source := isOpen_univ
@@ -54,7 +53,7 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
         rw [← mul_lt_mul_left hr, mul_one] at hx
         simp only [homothety_apply, vsub_eq_sub, sub_zero, vadd_eq_add, add_zero, mem_ball,
           dist_self_add_left, norm_smul, Real.norm_eq_abs, abs_eq_self.2 hr.le, hx]
-      map_target' := fun x h => mem_univ _
+      map_target' := fun x _ => mem_univ _
       left_inv' := fun x => by
         simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
           inv_mul_cancel hr.ne']
@@ -70,9 +69,11 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
             (homothety_continuous 0 r).comp <|
               continuous_induced_dom.comp homeomorphUnitBall.continuous
       continuous_invFun := by
+        dsimp only
         refine' ContinuousOn.comp _ (Continuous.continuousOn _) (mapsTo_homothety_ball c hr)
         · rw [continuousOn_iff_continuous_restrict]
-          convert homeomorph_unit_ball.symm.continuous; ext; simp
+          refine homeomorphUnitBall.symm.continuous.congr fun x ↦ ?_
+          simp
         · simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel]
           exact continuous_const.smul (continuous_id.sub continuous_const) }
   else LocalHomeomorph.refl E
@@ -85,7 +86,7 @@ theorem diffeomorphToNhd_source (c : E) (r : ℝ) : (diffeomorphToNhd c r).sourc
 
 @[simp]
 theorem diffeomorphToNhd_apply_zero (c : E) {r : ℝ} (hr : 0 < r) : diffeomorphToNhd c r 0 = c := by
-  simp only [diffeomorphToNhd, dif_pos hr, vadd_eq_add, LocalHomeomorph.mk_coe, LocalEquiv.coe_mk,
+  simp only [diffeomorphToNhd, dif_pos hr, vadd_eq_add, LocalHomeomorph.mk_coe,
     coe_homeomorphUnitBall_apply_zero, homothety_apply_same, add_zero]
 
 @[simp]

@@ -54,7 +54,7 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
     obtain ⟨r, hr₀, hr₁⟩ :=
       (Filter.hasBasis_iff.mp (@nhds_basis_ball E _ (extChartAt I x x)) _).mp hm
     refine' ⟨r, ⟨hr₀, hr₁.trans _, ⟨j, _⟩⟩, _⟩
-    · exact ((extChartAt I x).MapsTo.mono (inter_subset_right _ _) Subset.rfl).image_subset
+    · exact ((extChartAt I x).mapsTo.mono (inter_subset_right _ _) Subset.rfl).image_subset
     · suffices m ⊆ s j by
         refine' Subset.trans _ this
         convert monotone_image hr₁
