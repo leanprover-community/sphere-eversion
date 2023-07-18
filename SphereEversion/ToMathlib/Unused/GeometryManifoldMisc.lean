@@ -270,7 +270,7 @@ attribute [mfld_simps] mem_insert_iff
 --       -- refine inter_subset_inter _ _,
 --       -- { sorry },
 --       -- exact set.prod_mono ((inter_subset_left _ _).trans $ ext_chart_at_target_subset_range J x₀)
---       --   subset_rfl
+--       --   Subset.rfl
 --          },
 --     { refine eventually_of_forall (λ x', mem_range_self _) },
 --     swap 2,

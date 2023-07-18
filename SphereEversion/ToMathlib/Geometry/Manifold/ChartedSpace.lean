@@ -17,7 +17,7 @@ theorem isOpen_iff (s : Set M) :
     IsOpen s ↔ ∀ x : M, IsOpen <| chartAt H x '' ((chartAt H x).source ∩ s) :=
   by
   refine' ⟨fun h x => (chart_at H x).image_open_of_open' h, fun h => _⟩
-  rw [← s.inter_univ, ← Union_source_eq_univ H M, s.inter_Union]
+  rw [← s.inter_univ, ← Union_source_eq_univ H M, s.inter_iUnion]
   refine' isOpen_iUnion fun x => _
   have : s ∩ (chart_at H x).source ⊆ (chart_at H x).source := inter_subset_right _ _
   rw [(chart_at H x).isOpen_image_iff_of_subset_source this, inter_comm]

@@ -314,7 +314,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : LocalHomeomorph F F} (hf
     have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chart_at H x).source :=
       by
       rw [← extChartAt_source IF, range_comp, ← LocalEquiv.symm_image_target_eq_source]
-      exact (monotone_image hf₄).trans subset.rfl
+      exact (monotone_image hf₄).trans Subset.rfl
     exact hf₃.cont_mdiff_on.comp (cont_mdiff_on_ext_chart_at.mono hf'') hf'
 
 @[simp]
@@ -485,7 +485,7 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
         (contMDiffOn_congr h₄).mpr <|
           ψ.smooth_to.comp_cont_mdiff_on <|
             hg.comp_cont_mdiff_on
-              (smooth_on_id.prod_mk <| φ.smooth_inv.comp hk.smooth_on subset_rfl)⟩
+              (smooth_on_id.prod_mk <| φ.smooth_inv.comp hk.smooth_on Subset.rfl)⟩
   · refine'
       ⟨k ⁻¹' V, h₂, _, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
     simpa [hx] using set.ext_iff.mp h₃ (k x)

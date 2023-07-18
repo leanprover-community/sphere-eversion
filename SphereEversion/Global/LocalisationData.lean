@@ -95,7 +95,7 @@ theorem nice_atlas_domain :
           (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   nice_atlas E I
     (fun i' => ((targetCharts E' I' M' i').open_map (ball 0 1) isOpen_ball).preimage hf)
-    (by rw [← preimage_Union, targetCharts_cover, preimage_univ])
+    (by rw [← preimage_iUnion, targetCharts_cover, preimage_univ])
 
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/

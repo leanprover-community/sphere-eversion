@@ -43,8 +43,8 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
       (ChartedSpace.ball I x) :=
   by
   -- TODO golf etc
-  obtain ⟨j, hj⟩ : ∃ j, x ∈ s j := by simpa only [mem_Union, ← cov] using mem_univ x
-  replace hj : s j ∈ 𝓝 x := mem_nhds_iff.mpr ⟨s j, subset.rfl, s_op j, hj⟩
+  obtain ⟨j, hj⟩ : ∃ j, x ∈ s j := by simpa only [mem_iUnion, ← cov] using mem_univ x
+  replace hj : s j ∈ 𝓝 x := mem_nhds_iff.mpr ⟨s j, Subset.rfl, s_op j, hj⟩
   have hx : (extChartAt I x).source ∈ 𝓝 x := extChartAt_source_mem_nhds I x
   refine' filter.has_basis_iff.mpr fun n => ⟨fun hn => _, _⟩
   · let m := s j ∩ n ∩ (extChartAt I x).source
@@ -54,7 +54,7 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
     obtain ⟨r, hr₀, hr₁⟩ :=
       (filter.has_basis_iff.mp (@nhds_basis_ball E _ (extChartAt I x x)) _).mp hm
     refine' ⟨r, ⟨hr₀, hr₁.trans _, ⟨j, _⟩⟩, _⟩
-    · exact ((extChartAt I x).MapsTo.mono (inter_subset_right _ _) subset.rfl).image_subset
+    · exact ((extChartAt I x).MapsTo.mono (inter_subset_right _ _) Subset.rfl).image_subset
     · suffices m ⊆ s j by
         refine' subset.trans _ this
         convert monotone_image hr₁

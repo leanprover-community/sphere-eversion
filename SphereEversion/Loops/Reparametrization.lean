@@ -287,7 +287,7 @@ theorem localCenteringDensity_smooth_on :
         fun x => (x, x)
     change smooth_on ((w ∘ z) ∘ Prod.fst) (γ.local_centering_density_nhd x ×ˢ univ)
     rw [prod_univ]
-    refine' ContDiffOn.comp _ cont_diff_fst.cont_diff_on subset.rfl
+    refine' ContDiffOn.comp _ cont_diff_fst.cont_diff_on Subset.rfl
     have h₁ := smooth_barycentric ι ℝ F (Fintype.card_fin _)
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
     refine' (h₂.comp_cont_diff_on h₁).comp _ _

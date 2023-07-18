@@ -429,7 +429,7 @@ theorem locFormalEversion_hol :
     (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {1}) ∈
       𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) :=
     by
-    refine' mem_of_superset this (prod_mono subset.rfl _)
+    refine' mem_of_superset this (prod_mono Subset.rfl _)
     rw [@preimage_comp _ _ _ _ smoothStep]
     refine' preimage_mono _
     intro x hx

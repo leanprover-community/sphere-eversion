@@ -183,7 +183,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   by
   rw [surrounded_iff_mem_interior_convexHull_aff_basis]
   obtain ⟨t, hts, hai, hf⟩ :=
-    (by simpa only [exists_prop, mem_Union] using convex_hull_eq_union.subst hsf :
+    (by simpa only [exists_prop, mem_iUnion] using convex_hull_eq_union.subst hsf :
       ∃ t : Finset F,
         (t : Set F) ⊆ s ∧ AffineIndependent ℝ (coe : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
   have htne : (t : Set F).Nonempty := (@convexHull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩
@@ -297,13 +297,13 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     exact is_open_univ.prod (isOpen_affineIndependent ℝ F)
   have hW' : ContinuousAt W' (q, v) :=
     (smooth_barycentric ι ℝ F hι).continuousOn.continuousAt
-      (mem_nhds_iff.mpr ⟨A, subset.rfl, hA, hqv⟩)
+      (mem_nhds_iff.mpr ⟨A, Subset.rfl, hA, hqv⟩)
   have hS : S ∈ 𝓝 (q, v) := hW'.preimage_mem_nhds hV'
   obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS
   have hn₁' := tendsto_def.mp hf _ hn₁
   have hn₂' := tendsto_def.mp (tendsto_pi_nhds.mpr hp) _ hn₂
   have come_on : (swap p ⁻¹' n₂) ×ˢ (f ⁻¹' n₁) ∈ l.prod m :=
-    mem_prod_iff.mpr ⟨_, hn₂', _, hn₁', subset.rfl⟩
+    mem_prod_iff.mpr ⟨_, hn₂', _, hn₁', Subset.rfl⟩
   refine' eventually_of_mem come_on _
   rintro ⟨y₂, y₁⟩ ⟨hy₂ : swap p y₂ ∈ n₂, hy₁ : f y₁ ∈ n₁⟩
   refine'
@@ -899,7 +899,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
   obtain ⟨V₀, hV₀, hKV₀, hVU₀⟩ := normal_exists_closure_subset hK₀ hU₀ hKU₀
   let L₁ := K₁ \ U₀
   have hL₁ : IsClosed L₁ := hK₁.sdiff hU₀
-  have hV₀L₁ : Disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ subset.rfl
+  have hV₀L₁ : Disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ Subset.rfl
   obtain ⟨V₂, hV₂, hLV₂, h2V₂⟩ :=
     normal_exists_closure_subset hL₁ (is_closed_closure.is_open_compl.inter hU₁)
       (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| (diff_subset _ _).trans hKU₁)
