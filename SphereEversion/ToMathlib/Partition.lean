@@ -149,7 +149,7 @@ theorem SmoothPartitionOfUnity.germ_combine_mem {s : Set M} (ρ : SmoothPartitio
     filter_upwards [ρ.eventually_finsupport_subset x] with x' hx'
     simp_rw [SmoothPartitionOfUnity.combine, Finset.sum_apply, Pi.smul_apply']
     rw [finsum_eq_sum_of_support_subset]
-    refine' subset_trans _ (Finset.coe_subset.mpr hx')
+    refine' Subset.trans _ (Finset.coe_subset.mpr hx')
     rw [SmoothPartitionOfUnity.finsupport, PartitionOfUnity.finsupport, finite.coe_to_finset]
     apply support_smul_subset_left
   rw [this]

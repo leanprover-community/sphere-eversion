@@ -40,7 +40,7 @@ theorem hasBasis_nhdsSet_Iic' [DenselyOrdered α] (a : α) :
     dsimp only
     constructor <;> rintro ⟨b, hb, hb'⟩
     · rcases exists_between hb with ⟨c, hc, hc'⟩
-      exact ⟨c, hc, subset_trans (Iic_subset_Iio.mpr hc') hb'⟩
+      exact ⟨c, hc, Subset.trans (Iic_subset_Iio.mpr hc') hb'⟩
     · exact ⟨b, hb, Iio_subset_Iic_self.trans hb'⟩⟩
 
 theorem hasBasis_nhdsSet_Ici (a : α) : (𝓝ˢ <| Ici a).HasBasis (fun b => b < a) fun b => Ioi b :=

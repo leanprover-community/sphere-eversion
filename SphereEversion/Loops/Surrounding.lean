@@ -391,7 +391,7 @@ theorem Surrounds.mono (h : γ.Surrounds x) (h2 : range γ ⊆ range γ') : γ'.
   revert h; simp_rw [Loop.surrounds_iff_range_subset_range]
   refine' Exists.imp fun t => _
   refine' Exists.imp fun w => _
-  exact And.imp_right fun h3 => subset.trans h3 h2
+  exact And.imp_right fun h3 => Subset.trans h3 h2
 
 protected theorem Surrounds.reparam (h : γ.Surrounds x) {φ : EquivariantMap} (hφ : Continuous φ) :
     (γ.reparam φ).Surrounds x := by
@@ -444,7 +444,7 @@ theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O
   rw [← range_subset_iff]
   simp only [surroundingLoop, Loop.roundTripFamily, Path.trans_range, Loop.roundTrip_range,
     cast_coe]
-  refine' subset.trans (truncate_range _) _
+  refine' Subset.trans (truncate_range _) _
   simp only [trans_range, union_subset_iff, O_conn.range_some_path_subset,
     O_conn.range_path_through_subset, true_and_iff]
 
@@ -832,14 +832,14 @@ theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
       refine' (h₀.surrounds x hx).mono _
       simp only [mul_one, Loop.range_ofPath, sfHomotopy, projI_one]
       refine'
-        subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le, h])
+        Subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le, h])
           (subset_range_strans_left <| by simp [this])
     · have : 0 < τ := lt_of_lt_of_le (by norm_num) h
       have h : 1 - τ ≤ 1 / 2 := by rw [sub_le_comm]; convert h; norm_num
       refine' (h₁.surrounds x hx).mono _
       simp only [mul_one, Loop.range_ofPath, sfHomotopy, projI_one]
       refine'
-        subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le, h])
+        Subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le, h])
           (subset_range_strans_right <| by simp [this])
   · exact continuous_const.sf_homotopy continuous_fst continuous_snd.fst continuous_snd.snd
 

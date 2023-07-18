@@ -357,7 +357,7 @@ theorem nice_atlas' {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s 
     have hV₁ : IsOpen V :=
       ((diffeomorphToNhd (extChartAt IF x x) r).isOpen_image_iff_of_subset_source (by simp)).mp hU₂
     have hV₂ : V ⊆ (extChartAt IF x).target :=
-      subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂
+      Subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂
     rw [(extChartAt IF x).symm_image_eq_source_inter_preimage hV₂]
     exact isOpen_extChartAt_preimage' IF x hV₁
   have hB : ∀ x, (𝓝 x).HasBasis (p x) (B x) := fun x =>
