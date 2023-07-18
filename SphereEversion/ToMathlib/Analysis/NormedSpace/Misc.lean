@@ -47,9 +47,9 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
       target := ball c r
       open_source := isOpen_univ
       open_target := isOpen_ball
-      map_source' := fun x _ =>
-        by
-        have hx : ‖(homeomorphUnitBall x : E)‖ < 1 := by rw [← dist_zero_right];
+      map_source' := fun x _ => by
+        have hx : ‖(homeomorphUnitBall x : E)‖ < 1 := by
+          rw [← dist_zero_right]
           exact (homeomorphUnitBall x).property
         rw [← mul_lt_mul_left hr, mul_one] at hx
         simp only [homothety_apply, vsub_eq_sub, sub_zero, vadd_eq_add, add_zero, mem_ball,
@@ -57,7 +57,7 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
       map_target' := fun x h => mem_univ _
       left_inv' := fun x => by
         simp [homothety_apply, norm_smul, abs_eq_self.mpr hr.le, ← mul_assoc, ← smul_assoc,
-          hr.ne.symm.is_unit.inv_mul_cancel]
+          inv_mul_cancel hr.ne']
       right_inv' := fun y hy => by
         replace hy : r⁻¹ * ‖y - c‖ < 1
         · rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel hr.ne.symm, mul_one, one_mul]
@@ -69,8 +69,7 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
           continuous_const.add <|
             (homothety_continuous 0 r).comp <|
               continuous_induced_dom.comp homeomorphUnitBall.continuous
-      continuous_invFun :=
-        by
+      continuous_invFun := by
         refine' ContinuousOn.comp _ (Continuous.continuousOn _) (mapsTo_homothety_ball c hr)
         · rw [continuousOn_iff_continuous_restrict]
           convert homeomorph_unit_ball.symm.continuous; ext; simp
@@ -79,8 +78,7 @@ def diffeomorphToNhd (c : E) (r : ℝ) : LocalHomeomorph E E :=
   else LocalHomeomorph.refl E
 
 @[simp]
-theorem diffeomorphToNhd_source (c : E) (r : ℝ) : (diffeomorphToNhd c r).source = univ :=
-  by
+theorem diffeomorphToNhd_source (c : E) (r : ℝ) : (diffeomorphToNhd c r).source = univ := by
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
   · rw [diffeomorphToNhd, dif_neg hr, LocalHomeomorph.refl_localEquiv, LocalEquiv.refl_source]
@@ -101,14 +99,13 @@ theorem contDiff_diffeomorphToNhd (c : E) (r : ℝ) {n : ℕ∞} : ContDiff ℝ 
   by
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
-    exact cont_diff_const.add ((contDiff_homothety 0 r).comp contDiff_homeomorphUnitBall)
+    exact contDiff_const.add ((contDiff_homothety 0 r).comp contDiff_homeomorphUnitBall)
   · rw [diffeomorphToNhd, dif_neg hr]
     exact contDiff_id
 
 @[simp]
-theorem cont_diff_diffeomorphToNhd_inv (c : E) (r : ℝ) {n : ℕ∞} :
-    ContDiffOn ℝ n (diffeomorphToNhd c r).symm (diffeomorphToNhd c r).target :=
-  by
+theorem contDiffOn_diffeomorphToNhd_inv (c : E) (r : ℝ) {n : ℕ∞} :
+    ContDiffOn ℝ n (diffeomorphToNhd c r).symm (diffeomorphToNhd c r).target := by
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
     have aux : ball c r ⊆ (fun x : E => (fun y : E => homothety c r⁻¹ y -ᵥ c) x) ⁻¹' ball 0 1 :=
@@ -116,13 +113,14 @@ theorem cont_diff_diffeomorphToNhd_inv (c : E) (r : ℝ) {n : ℕ∞} :
     refine' ContDiffOn.comp _ (ContDiff.contDiffOn _) aux
     · exact contDiffOn_homeomorphUnitBall_symm fun y hy => dif_pos hy
     · simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel]
-      exact cont_diff_const.smul (cont_diff_id.sub contDiff_const)
+      exact contDiff_const.smul (contDiff_id.sub contDiff_const)
   · rw [diffeomorphToNhd, dif_neg hr]
     exact contDiffOn_id
 
 end InnerProductSpace
 
-variable (F) [FiniteDimensional ℝ F]
+variable (F)
+variable [FiniteDimensional ℝ F]
 
 /-- The Euclidean space obtained by choosing a basis of `F` and declaring it to be orthnormal.  -/
 def L2 :=
@@ -158,52 +156,45 @@ def diffeomorphToNhd (c : F) (r : ℝ) : LocalHomeomorph F F :=
   if hr : 0 < r then by
     let B := selfEquivL2 F '' ball c r
     let f := (selfEquivL2 F).toHomeomorph
-    have hB : IsOpen B := f.isOpen_map _ isOpen_ball
+    have hB : IsOpen B := f.isOpenMap _ isOpen_ball
     have hc : selfEquivL2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr)
     let ε := Classical.choose (Metric.isOpen_iff.mp hB _ hc)
-    exact
-      (f.trans_local_homeomorph
+    exact (f.transLocalHomeomorph
             (InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε)).transHomeomorph
         f.symm
   else LocalHomeomorph.refl F
 
 @[simp]
-theorem diffeomorphToNhd_source (c : F) (r : ℝ) : (diffeomorphToNhd c r).source = univ :=
-  by
+theorem diffeomorphToNhd_source (c : F) (r : ℝ) : (diffeomorphToNhd c r).source = univ := by
   by_cases hr : 0 < r
   · simp [diffeomorphToNhd, dif_pos hr]
   · rw [diffeomorphToNhd, dif_neg hr, LocalHomeomorph.refl_localEquiv, LocalEquiv.refl_source]
 
 @[simp]
-theorem diffeomorphToNhd_apply_zero (c : F) {r : ℝ} (hr : 0 < r) : diffeomorphToNhd c r 0 = c :=
-  by
+theorem diffeomorphToNhd_apply_zero (c : F) {r : ℝ} (hr : 0 < r) : diffeomorphToNhd c r 0 = c := by
   rw [diffeomorphToNhd, dif_pos hr]
   let B := selfEquivL2 F '' ball c r
   let f := (selfEquivL2 F).toHomeomorph
-  have hB : IsOpen B := f.isOpen_map _ isOpen_ball
+  have hB : IsOpen B := f.isOpenMap _ isOpen_ball
   have hc : selfEquivL2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr)
   let ε := Classical.choose (Metric.isOpen_iff.mp hB _ hc)
-  have hε : 0 < ε := Classical.choose (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc))
-  change
-    (f.trans_local_homeomorph
-            (InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε)).transHomeomorph
-        f.symm 0 =
-      c
+  have hε : 0 < ε := (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc)).1
+  change (f.transLocalHomeomorph
+    (InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε)).transHomeomorph f.symm 0 = c
   simp [hε]
 
 @[simp]
 theorem range_diffeomorphToNhd_subset_ball (c : F) {r : ℝ} (hr : 0 < r) :
-    range (diffeomorphToNhd c r) ⊆ ball c r :=
-  by
+    range (diffeomorphToNhd c r) ⊆ ball c r := by
   rw [diffeomorphToNhd, dif_pos hr, ← image_univ]
   let B := selfEquivL2 F '' ball c r
   let f := (selfEquivL2 F).toHomeomorph
-  have hB : IsOpen B := f.isOpen_map _ isOpen_ball
+  have hB : IsOpen B := f.isOpenMap _ isOpen_ball
   have hc : selfEquivL2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr)
   let ε := Classical.choose (Metric.isOpen_iff.mp hB _ hc)
-  have hε : 0 < ε := Classical.choose (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc))
+  have hε : 0 < ε := (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc)).left
   have hε' : ball (selfEquivL2 F c) ε ⊆ B :=
-    Classical.choose_spec (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc))
+    (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc)).right
   change f.symm ∘ InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε ∘ f '' univ ⊆ _
   rw [image_comp f.symm _, image_comp _ f]
   erw [selfEquivL2_image_univ, image_univ, InnerProductSpace.range_diffeomorphToNhd_eq_ball _ hε]
@@ -212,25 +203,22 @@ theorem range_diffeomorphToNhd_subset_ball (c : F) {r : ℝ} (hr : 0 < r) :
   simp
 
 @[simp]
-theorem contDiff_diffeomorphToNhd (c : F) (r : ℝ) {n : ℕ∞} : ContDiff ℝ n <| diffeomorphToNhd c r :=
-  by
+theorem contDiff_diffeomorphToNhd (c : F) (r : ℝ) {n : ℕ∞} :
+    ContDiff ℝ n <| diffeomorphToNhd c r := by
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
-    exact
-      (selfEquivL2 F).symm.contDiff.comp
-        ((InnerProductSpace.contDiff_diffeomorphToNhd _ _).comp (selfEquivL2 F).contDiff)
+    exact (selfEquivL2 F).symm.contDiff.comp
+      ((InnerProductSpace.contDiff_diffeomorphToNhd _ _).comp (selfEquivL2 F).contDiff)
   · rw [diffeomorphToNhd, dif_neg hr]
     exact contDiff_id
 
 @[simp]
-theorem cont_diff_diffeomorphToNhd_inv (c : F) (r : ℝ) {n : ℕ∞} :
-    ContDiffOn ℝ n (diffeomorphToNhd c r).symm (diffeomorphToNhd c r).target :=
-  by
+theorem contDiffOn_diffeomorphToNhd_inv (c : F) (r : ℝ) {n : ℕ∞} :
+    ContDiffOn ℝ n (diffeomorphToNhd c r).symm (diffeomorphToNhd c r).target := by
   by_cases hr : 0 < r
   · rw [diffeomorphToNhd, dif_pos hr]
     refine' ContDiffOn.comp_continuousLinearMap _ (selfEquivL2 F : F →L[ℝ] L2 F)
     refine' (selfEquivL2 F).symm.contDiff.comp_contDiffOn _
-    exact InnerProductSpace.cont_diff_diffeomorphToNhd_inv _ _
+    exact InnerProductSpace.contDiff_diffeomorphToNhd_inv _ _
   · rw [diffeomorphToNhd, dif_neg hr]
     exact contDiffOn_id
-
