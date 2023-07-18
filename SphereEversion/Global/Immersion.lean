@@ -74,7 +74,7 @@ theorem immersionRel_open : IsOpen (immersionRel I M I' M') :=
   by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine' fun σ => (ψJ σ).open_target.inter _
-  convert is_open_univ.prod ContinuousLinearMap.isOpen_injective
+  convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
   · ext; simp
   · infer_instance
   · infer_instance
@@ -232,7 +232,7 @@ theorem formalEversion_hol_near_zero_one :
   by
   have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ (univ : Set 𝕊²) ∈ 𝓝ˢ (({0, 1} : Set ℝ) ×ˢ univ) :=
     by
-    refine' ((is_open_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr _
+    refine' ((isOpen_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr _
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, mem_univ _⟩
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs

@@ -15,7 +15,7 @@ theorem isOpen_symm_image_iff_of_subset_target {s : Set β} (hs : s ⊆ e.target
 
 theorem isOpen_image_iff_of_subset_source {s : Set α} (hs : s ⊆ e.source) :
     IsOpen s ↔ IsOpen (e '' s) := by
-  rw [← e.symm.is_open_symm_image_iff_of_subset_target (hs : s ⊆ e.symm.target), e.symm_symm]
+  rw [← e.symm.isOpen_symm_image_iff_of_subset_target (hs : s ⊆ e.symm.target), e.symm_symm]
 
 end LocalHomeomorph
 

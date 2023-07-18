@@ -251,7 +251,7 @@ theorem convex_setOf_imp_eq (P : Prop) (y : F) : Convex ℝ {x : F | P → x = y
 --   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
 -- begin
 --   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
---   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
+--   refine ⟨_, (isOpen_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
 -- end
 -- lemma exists_smooth_and_eq_on_aux2 {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : continuous f)
 --   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
@@ -260,7 +260,7 @@ theorem convex_setOf_imp_eq (P : Prop) (y : F) : Convex ℝ {x : F | P → x = y
 --   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
 -- begin
 --   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
---   refine ⟨_, (is_open_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
+--   refine ⟨_, (isOpen_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
 -- end
 theorem exists_smooth_and_eqOn {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : Continuous f)
     (hε : Continuous ε) (h2ε : ∀ x, 0 < ε x) {s : Set E} (hs : IsClosed s)

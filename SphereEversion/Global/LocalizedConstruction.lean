@@ -112,13 +112,13 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
         apply hx.congr
         symm
         have : ∀ᶠ y in 𝓝 x, y ∈ (φ '' K₁)ᶜ :=
-          is_open_iff_mem_nhds.mp (hK₁.image φ.continuous).isClosed.isOpen_compl x hx'
+          isOpen_iff_mem_nhds.mp (hK₁.image φ.continuous).isClosed.isOpen_compl x hx'
         apply this.mono
         exact hF'relK₁ _
       · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ :=
           by
           suffices : ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁); exact this.mono interior_subset
-          apply is_open_interior.forall_near_mem_of_subset
+          apply isOpen_interior.forall_near_mem_of_subset
           exact (image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁)
         apply this.mono
         exact fun a hx hx' => (hx' hx).elim

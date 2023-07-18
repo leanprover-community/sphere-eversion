@@ -8,7 +8,7 @@ Authors: Heather Macbeth
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 import SphereEversion.ToMathlib.Analysis.ContDiff
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Analysis.SpecialFunctions.TrigonoMetric.Deriv
 import Mathlib.Tactic.LinearCombination
 
 /-! # Rotation about an axis, considered as a function in that axis -/

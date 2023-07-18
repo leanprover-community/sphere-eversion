@@ -134,7 +134,7 @@ instance : CompactSpace 𝕊₁ :=
 
 theorem isClosed_int : IsClosed (range (coe : ℤ → ℝ)) :=
   by
-  refine' isClosed_of_spaced_out (metric.uniformity_basis_dist.mem_of_mem <| zero_lt_one) _
+  refine' isClosed_of_spaced_out (Metric.uniformity_basis_dist.mem_of_mem <| zero_lt_one) _
   rintro - ⟨p, rfl⟩ - ⟨q, rfl⟩ h (H : dist p q < 1)
   rw [Int.dist_eq] at H
   norm_cast at *

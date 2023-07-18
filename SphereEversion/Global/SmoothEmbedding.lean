@@ -154,7 +154,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
   rw [show A = A ∩ range f ∪ A ∩ range fᶜ by simp]
   apply Filter.Eventually.union
   · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
-      f.is_open_range.forall_near_mem_of_subset (inter_subset_right _ _)
+      f.isOpen_range.forall_near_mem_of_subset (inter_subset_right _ _)
     apply (this.and <| f.forall_near' hP).mono
     rintro _ ⟨⟨m, rfl⟩, hm⟩
     exact hPP' _ (hm _ rfl)
@@ -166,7 +166,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     apply eventually_nhdsSet_mono _ this
     rw [eventually_nhdsSet_iff] at hP' ⊢
     rintro x ⟨hx, hx'⟩
-    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ := is_open_iff_eventually.mp op x hx'
+    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ := isOpen_iff_eventually.mp op x hx'
     apply ((hP' x hx).And hx').mono
     rintro y ⟨hy, hy'⟩
     exact hy hy'
@@ -395,7 +395,7 @@ theorem nice_atlas {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   by
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) is_open_ball
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
   have htne : t.nonempty := by
     by_contra contra
     simp only [not_nonempty_iff_eq_empty.mp contra, Union_false, Union_coe_set, Union_empty,
@@ -473,7 +473,7 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
   refine' contMDiff_of_locally_contMDiffOn fun x => _
   let U := range φ
   let V := (φ '' K)ᶜ
-  have h₂ : IsOpen (k ⁻¹' V) := hK.is_open_compl.preimage hk.continuous
+  have h₂ : IsOpen (k ⁻¹' V) := hK.isOpen_compl.preimage hk.continuous
   have h₃ : V ∪ U = univ := by rw [← compl_subset_iff_union, compl_compl];
     exact image_subset_range φ K
   have h₄ : ∀ x, k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.inv_fun) (k x) := fun m hm =>
@@ -481,7 +481,7 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
   by_cases hx : k x ∈ U
   ·
     refine'
-      ⟨k ⁻¹' U, φ.is_open_range.preimage hk.continuous, hx,
+      ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
         (contMDiffOn_congr h₄).mpr <|
           ψ.smooth_to.comp_cont_mdiff_on <|
             hg.comp_cont_mdiff_on
@@ -526,7 +526,7 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type _} 
     hK₁.uniform_continuous_on_of_continuous ψ.continuous.continuous_on
   have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x hx => hε _
   obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).continuousOn hεφ
-  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀
+  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniform_continuous_on_iff.mp h₁ ε₀ hε₀
   refine' ⟨min τ 1, by simp [hτ], fun g p hp p' hp' x hx hη => _⟩
   cases' lt_min_iff.mp hη with H H'
   specialize hεφ x hx

@@ -297,7 +297,7 @@ theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Se
       hK₁ := (exists_compact_superset hK).choose_spec.1
       h₀₁ := (exists_compact_superset hK).choose_spec.2 }
   obtain ⟨𝓕, h₁, -, h₂, -, h₄, h₅⟩ :=
-    𝓕₀.uncurry.improve_htpy' (R.is_open_relativize h_op) (h_ample.relativize P) parametric_landscape
+    𝓕₀.uncurry.improve_htpy' (R.isOpen_relativize h_op) (h_ample.relativize P) parametric_landscape
       ε_pos (h_hol.mono fun p hp => 𝓕₀.is_holonomic_at_uncurry.mpr hp)
   have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p := by intro p; rw [h₁.on_set 0 right_mem_Iic]; rfl
   refine' ⟨𝓕.curry, _, _, _, _⟩

@@ -225,7 +225,7 @@ theorem RelMfld.Ample.satisfiesHPrincipleWith (hRample : R.Ample) (hRopen : IsOp
   by
   have hδ_pos' : ∀ x : P × M, 0 < δ x.2 := fun x : P × M => hδ_pos x.snd
   have hδ_cont' : Continuous fun x : P × M => δ x.2 := hδ_cont.comp continuous_snd
-  have is_op : IsOpen (RelMfld.relativize IP P R) := R.is_open_relativize hRopen
+  have is_op : IsOpen (RelMfld.relativize IP P R) := R.isOpen_relativize hRopen
   apply RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith
   exact (hRample.relativize IP P).SatisfiesHPrinciple is_op hC hδ_pos' hδ_cont'
 

@@ -113,7 +113,7 @@ theorem SmoothPartitionOfUnity.sum_germ {s : Set M} (ρ : SmoothPartitionOfUnity
         tactic.mem_interior_univ) :
     ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) = 1 :=
   by
-  have : ∀ᶠ y in 𝓝 x, y ∈ interior s := is_open_interior.eventually_mem hx
+  have : ∀ᶠ y in 𝓝 x, y ∈ interior s := isOpen_interior.eventually_mem hx
   have : ∀ᶠ y in 𝓝 x, (⇑(∑ i : ι in ρ.fintsupport x, ρ i)) y = 1 :=
     by
     apply ((ρ.eventually_finsupport_subset x).And this).mono

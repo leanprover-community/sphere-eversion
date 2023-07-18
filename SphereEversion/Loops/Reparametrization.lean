@@ -306,7 +306,7 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
   refine' continuous_iff_continuousAt.mpr fun t => _
   have hyt : γ.local_centering_density_nhd x ×ˢ univ ∈ 𝓝 (y, t) :=
     mem_nhds_prod_iff'.mpr
-      ⟨γ.local_centering_density_nhd x, univ, γ.local_centering_density_nhd_is_open x, hy,
+      ⟨γ.local_centering_density_nhd x, univ, γ.local_centering_density_nhd_isOpen x, hy,
         isOpen_univ, mem_univ t, rfl.subset⟩
   exact
     ((γ.local_centering_density_smooth_on x).continuousOn.continuousAt hyt).comp

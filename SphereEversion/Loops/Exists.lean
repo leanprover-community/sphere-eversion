@@ -168,8 +168,8 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have hUC : U ∈ 𝓝ˢ C :=
     haveI hU : IsOpen U :=
       by
-      refine' (is_open_Iio.preimage continuous_snd.fst).union _
-      refine' ((is_open_Iio.union isOpen_Ioi).preimage_fract _).preimage continuous_snd.snd
+      refine' (isOpen_Iio.preimage continuous_snd.fst).union _
+      refine' ((isOpen_Iio.union isOpen_Ioi).preimage_fract _).preimage continuous_snd.snd
       exact fun x => Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
     hU.mem_nhdsSet.mpr
       ((union_subset_union fun x hx => lt_of_le_of_lt hx (by norm_num)) <|

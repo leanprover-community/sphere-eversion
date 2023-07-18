@@ -476,7 +476,7 @@ theorem OpenSmoothEmbedding.range_transfer :
 theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer ψ)) :=
   by
   rw [φ.range_transfer ψ]
-  exact (φ.is_open_range.prod ψ.is_open_range).preimage one_jet_bundle_proj_continuous
+  exact (φ.isOpen_range.prod ψ.isOpen_range).preimage one_jet_bundle_proj_continuous
 
 /-- localize a relation -/
 def RelMfld.localize (R : RelMfld IM M IN N) : RelMfld IX X IY Y :=
@@ -601,7 +601,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     · dsimp only [id]
       simp_rw [φ.left_inv] at this
       refine' this.congr_of_eventually_eq _
-      refine' Filter.eventually_of_mem ((φ.is_open_range_transfer ψ).mem_nhds (mem_range_self _)) _
+      refine' Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) _
       rw [φ.range_transfer ψ]
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
       simp_rw [inTangentCoordinates, φ.fderiv_coe]

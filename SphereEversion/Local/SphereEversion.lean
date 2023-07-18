@@ -124,8 +124,8 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     exact continuousAt_const
   ·
     exact
-      (continuous_fst.is_open_preimage _ isOpen_compl_singleton).inter
-        (continuous_snd.is_open_preimage _ ContinuousLinearMap.isOpen_injective)
+      (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
+        (continuous_snd.isOpen_preimage _ ContinuousLinearMap.isOpen_injective)
   · constructor
     · change ⟪x₀, x₀⟫ ≠ 0
       apply inner_self_eq_zero.not.mpr x₀_ne
@@ -143,7 +143,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) :=
   · have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B :=
       by
       rw [nhds_prod_eq]
-      apply (is_open_ball.eventually_mem hx₀).prod_inl
+      apply (isOpen_ball.eventually_mem hx₀).prod_inl
     apply this.mono
     rintro ⟨x, y, φ⟩ (hx : x ∈ B) (Hx : x ∉ B)
     exact (Hx hx).elim
@@ -302,7 +302,7 @@ def locFormalEversionAux : HtpyJetSec E E
       have : (fun x => ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) :=
         by
         refine' IsOpen.mem_nhds _ _
-        exact is_open_Iio.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous
+        exact isOpen_Iio.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous
         simp_rw [mem_preimage, norm_zero, zero_pow two_pos, mem_Iio]
         norm_num
       have : (fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) :=
@@ -414,8 +414,8 @@ theorem locFormalEversion_hol :
     by
     refine' (IsOpen.mem_nhdsSet _).mpr _
     exact
-      (is_open_Iio.union isOpen_Ioi).prod
-        (is_open_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
+      (isOpen_Iio.union isOpen_Ioi).prod
+        (isOpen_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, _⟩
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs

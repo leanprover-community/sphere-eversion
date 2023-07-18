@@ -32,7 +32,7 @@ theorem IsCompact.exists_thickening_image {f : α → β} {K : Set α} {U : Set 
   rcases(hK.image hf).exists_thickening_subset_open ho hKU.image_subset with ⟨r, hr₀, hr⟩
   refine'
     ⟨r / 2, half_pos hr₀, f ⁻¹' thickening (r / 2) (f '' K),
-      (is_open_thickening.preimage hf).mem_nhdsSet.2 <|
+      (isOpen_thickening.preimage hf).mem_nhdsSet.2 <|
         image_subset_iff.mp <| self_subset_thickening (half_pos hr₀) _,
       _⟩
   calc

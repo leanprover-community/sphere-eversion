@@ -222,7 +222,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hxp : W' (x, p) ∈ V := by simp [W', hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
-    exact is_open_univ.prod (isOpen_affineIndependent ℝ F)
+    exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hU₁ : U ⊆ A := Set.inter_subset_left _ _
   have hU₂ : IsOpen U := hW'.preimage_open_of_open hA hV
   have hU₃ : U ∈ 𝓝 (x, p) :=
@@ -294,7 +294,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
   have hV' : V ∈ 𝓝 (W' (q, v)) := (isOpen_set_pi finite_univ fun _ _ => isOpen_Ioi).mem_nhds hxp
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
-    exact is_open_univ.prod (isOpen_affineIndependent ℝ F)
+    exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hW' : ContinuousAt W' (q, v) :=
     (smooth_barycentric ι ℝ F hι).continuousOn.continuousAt
       (mem_nhds_iff.mpr ⟨A, Subset.rfl, hA, hqv⟩)
@@ -407,7 +407,7 @@ theorem Surrounds.eventually_surrounds [FiniteDimensional ℝ F] (h : γ.Surroun
   by
   obtain ⟨t, w, h⟩ := h
   obtain ⟨W, hW⟩ := smooth_surroundingPts h
-  obtain ⟨ε, hε, h⟩ := metric.eventually_nhds_iff.mp hW
+  obtain ⟨ε, hε, h⟩ := Metric.eventually_nhds_iff.mp hW
   refine' ⟨ε, hε, fun γ' y hγ' hy => ⟨t, W y (γ' ∘ t), _⟩⟩
   refine' (@h ⟨y, γ' ∘ t⟩ _).2
   simp_rw [Prod.dist_eq, max_lt_iff, dist_pi_lt_iff hε]
@@ -542,7 +542,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
   intro x
   obtain ⟨ε, hε, h2⟩ := (h.surrounds x (mem_univ _)).eventually_surrounds
   have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=
-    (metric.is_open_ball.preimage hg).mem_nhds
+    (Metric.isOpen_ball.preimage hg).mem_nhds
       (by simp_rw [mem_preimage, Metric.mem_ball, dist_self, hε.lt])
   have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x :=
     by
@@ -569,7 +569,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
 
 -- proof using `surrounds_of_close`
 -- begin
---   obtain ⟨ε, hε, hcε, hγε⟩ := h.surrounds_of_close hg is_open_univ,
+--   obtain ⟨ε, hε, hcε, hγε⟩ := h.surrounds_of_close hg isOpen_univ,
 --   exact ⟨ε, λ x, hε x (mem_univ _), continuous_iff_continuous_on_univ.mpr hcε,
 --     λ x, hγε x (mem_univ _)⟩
 -- end
@@ -901,7 +901,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
   have hL₁ : IsClosed L₁ := hK₁.sdiff hU₀
   have hV₀L₁ : Disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ Subset.rfl
   obtain ⟨V₂, hV₂, hLV₂, h2V₂⟩ :=
-    normal_exists_closure_subset hL₁ (is_closed_closure.is_open_compl.inter hU₁)
+    normal_exists_closure_subset hL₁ (is_closed_closure.isOpen_compl.inter hU₁)
       (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| (diff_subset _ _).trans hKU₁)
   obtain ⟨V₁, hV₁, hLV₁, hV₁₂⟩ := normal_exists_closure_subset hL₁ hV₂ hLV₂
   rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂
@@ -950,7 +950,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
   ·
     refine'
       eventually_of_mem
-        (is_closed_closure.is_open_compl.mem_nhdsSet.mpr <| compl_subset_compl.mpr hV₂U₁)
+        (is_closed_closure.isOpen_compl.mem_nhdsSet.mpr <| compl_subset_compl.mpr hV₂U₁)
         fun x hx => heq1 x <| mem_union_right _ <| compl_subset_compl.mpr subset_closure hx
 
 end extend_loops

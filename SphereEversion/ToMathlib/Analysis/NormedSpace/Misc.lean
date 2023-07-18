@@ -158,9 +158,9 @@ def diffeomorphToNhd (c : F) (r : ℝ) : LocalHomeomorph F F :=
   if hr : 0 < r then by
     let B := selfEquivL2 F '' ball c r
     let f := (selfEquivL2 F).toHomeomorph
-    have hB : IsOpen B := f.is_open_map _ is_open_ball
+    have hB : IsOpen B := f.isOpen_map _ isOpen_ball
     have hc : selfEquivL2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr)
-    let ε := Classical.choose (metric.is_open_iff.mp hB _ hc)
+    let ε := Classical.choose (Metric.isOpen_iff.mp hB _ hc)
     exact
       (f.trans_local_homeomorph
             (InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε)).transHomeomorph
@@ -180,10 +180,10 @@ theorem diffeomorphToNhd_apply_zero (c : F) {r : ℝ} (hr : 0 < r) : diffeomorph
   rw [diffeomorphToNhd, dif_pos hr]
   let B := selfEquivL2 F '' ball c r
   let f := (selfEquivL2 F).toHomeomorph
-  have hB : IsOpen B := f.is_open_map _ is_open_ball
+  have hB : IsOpen B := f.isOpen_map _ isOpen_ball
   have hc : selfEquivL2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr)
-  let ε := Classical.choose (metric.is_open_iff.mp hB _ hc)
-  have hε : 0 < ε := Classical.choose (Classical.choose_spec (metric.is_open_iff.mp hB _ hc))
+  let ε := Classical.choose (Metric.isOpen_iff.mp hB _ hc)
+  have hε : 0 < ε := Classical.choose (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc))
   change
     (f.trans_local_homeomorph
             (InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε)).transHomeomorph
@@ -198,12 +198,12 @@ theorem range_diffeomorphToNhd_subset_ball (c : F) {r : ℝ} (hr : 0 < r) :
   rw [diffeomorphToNhd, dif_pos hr, ← image_univ]
   let B := selfEquivL2 F '' ball c r
   let f := (selfEquivL2 F).toHomeomorph
-  have hB : IsOpen B := f.is_open_map _ is_open_ball
+  have hB : IsOpen B := f.isOpen_map _ isOpen_ball
   have hc : selfEquivL2 F c ∈ B := mem_image_of_mem f (mem_ball_self hr)
-  let ε := Classical.choose (metric.is_open_iff.mp hB _ hc)
-  have hε : 0 < ε := Classical.choose (Classical.choose_spec (metric.is_open_iff.mp hB _ hc))
+  let ε := Classical.choose (Metric.isOpen_iff.mp hB _ hc)
+  have hε : 0 < ε := Classical.choose (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc))
   have hε' : ball (selfEquivL2 F c) ε ⊆ B :=
-    Classical.choose_spec (Classical.choose_spec (metric.is_open_iff.mp hB _ hc))
+    Classical.choose_spec (Classical.choose_spec (Metric.isOpen_iff.mp hB _ hc))
   change f.symm ∘ InnerProductSpace.diffeomorphToNhd (selfEquivL2 F c) ε ∘ f '' univ ⊆ _
   rw [image_comp f.symm _, image_comp _ f]
   erw [selfEquivL2_image_univ, image_univ, InnerProductSpace.range_diffeomorphToNhd_eq_ball _ hε]

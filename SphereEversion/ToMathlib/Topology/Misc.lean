@@ -498,7 +498,7 @@ theorem isPreconnected_ball (x : E) (r : ℝ) : IsPreconnected (ball x r) :=
 theorem isConnected_ball {x : E} {r : ℝ} : IsConnected (ball x r) ↔ 0 < r := by
   simp [IsConnected, isPreconnected_ball]
 
--- todo: make metric.mem_nhds_iff protected
+-- todo: make Metric.mem_nhds_iff protected
 end NormedSpace
 
 section connectedComponentIn
