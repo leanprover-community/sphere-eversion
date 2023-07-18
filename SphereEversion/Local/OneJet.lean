@@ -109,7 +109,7 @@ theorem Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E F} {s :
     (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) (E' : Submodule ℝ E) :
     ∀ᶠ x near s, 𝓕.IsPartHolonomicAt E' x ↔ 𝓕'.IsPartHolonomicAt E' x :=
   by
-  apply h.eventually_nhds_set.mono
+  apply h.eventually_nhdsSet.mono
   intro x hx
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
     apply hx.mono
@@ -324,7 +324,7 @@ theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ii
   by
   have : Iio (1 / 8 : ℝ) ∈ 𝓝ˢ (Iic (0 : ℝ)) :=
     by
-    apply mem_nhds_set_iff_forall.mpr fun (x : ℝ) (hx : x ≤ 0) => Iio_mem_nhds _
+    apply mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : x ≤ 0) => Iio_mem_nhds _
     linarith
   apply mem_of_superset this
   rintro t (ht : t < 1 / 8)
@@ -357,7 +357,7 @@ theorem HtpyJetSec.comp_ge_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ic
   by
   have : Ioi (7 / 8 : ℝ) ∈ 𝓝ˢ (Ici (1 : ℝ)) :=
     by
-    apply mem_nhds_set_iff_forall.mpr fun (x : ℝ) (hx : 1 ≤ x) => Ioi_mem_nhds _
+    apply mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : 1 ≤ x) => Ioi_mem_nhds _
     linarith
   apply mem_of_superset this
   rintro t (ht : 7 / 8 < t)

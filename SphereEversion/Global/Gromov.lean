@@ -133,7 +133,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
     have hFAC : ∀ᶠ x near A ∪ C, F.is_holonomic_at x :=
       by
-      rw [eventually_nhds_set_union]
+      rw [eventually_nhdsSet_union]
       refine' ⟨_, hf₁⟩
       apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx => _
       rw [eventually_and] at hx
@@ -164,7 +164,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     · refine' fun t x => ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
-        rw [eventually_nhds_set_union] at hF'AC
+        rw [eventually_nhdsSet_union] at hF'AC
         apply (hF'AC.1.And hf_A).mono
         rintro x ⟨hx, hx'⟩
         change F' t x = _
@@ -176,7 +176,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
             dist_triangle _ _ _
           _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_right (hF'η t x) _)
           _ = τ x := by simp [η]
-    · rw [union_assoc, eventually_nhds_set_union] at hF'hol
+    · rw [union_assoc, eventually_nhdsSet_union] at hF'hol
       replace hF'hol := hF'hol.2
       simp_rw [← L.Union_succ'] at hF'hol
       exact hF'hol

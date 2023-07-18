@@ -100,7 +100,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       apply hδ_pos
   · have h𝓕'holC : ∀ᶠ x : EM near L.C, (𝓕' 1).IsHolonomicAt x :=
       by
-      apply (h𝓕'relC.eventually_nhds_set.and h𝓕C).mono
+      apply (h𝓕'relC.eventually_nhdsSet.and h𝓕C).mono
       rintro x ⟨hx, hx'⟩
       exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' => (hx' 1).symm)
     have : ∀ᶠ x near φ ⁻¹' C ∪ K₀, (𝓕' 1).IsHolonomicAt x := h𝓕'holC.union h𝓕'hol

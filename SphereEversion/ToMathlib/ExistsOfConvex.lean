@@ -276,7 +276,7 @@ theorem exists_smooth_and_eqOn {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf :
   · intro x
     obtain ⟨U, hU, hfU⟩ := hfs
     by_cases hx : x ∈ s
-    · refine' ⟨U, mem_nhds_set_iff_forall.mp hU x hx, _⟩
+    · refine' ⟨U, mem_nhdsSet_iff_forall.mp hU x hx, _⟩
       refine' ⟨f, hfU, fun y _ => ⟨h0 y, fun _ => rfl⟩⟩
     · have : IsOpen {y : E | dist (f x) (f y) < ε y} := isOpen_lt (continuous_const.dist hf) hε
       exact

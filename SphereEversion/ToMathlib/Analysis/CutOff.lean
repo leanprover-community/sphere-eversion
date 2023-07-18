@@ -28,8 +28,8 @@ theorem exists_contDiff_zero_one_nhds {E : Type _} [NormedAddCommGroup E] [Norme
   rcases exists_contDiff_zero_one hcu hcv (subset_compl_iff_disjoint_left.mp hvu) with
     ⟨f, hfsmooth, hfu, hfv, hf⟩
   refine' ⟨f, hfsmooth, _, _, hf⟩
-  apply eventually_of_mem (mem_of_superset (u_op.mem_nhds_set.mpr hsu) subset_closure) hfu
-  apply eventually_of_mem (mem_of_superset (v_op.mem_nhds_set.mpr htv) subset_closure) hfv
+  apply eventually_of_mem (mem_of_superset (u_op.mem_nhdsSet.mpr hsu) subset_closure) hfu
+  apply eventually_of_mem (mem_of_superset (v_op.mem_nhdsSet.mpr htv) subset_closure) hfv
 
 /- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » t) -/
 theorem exists_contDiff_one_nhds_of_interior {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]

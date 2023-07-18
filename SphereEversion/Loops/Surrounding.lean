@@ -946,11 +946,11 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
         · exact (hρx <| h0ρ <| subset_closure.trans (subset_union_left _ _) hx).elim
         · exact hx
         · exact hVU₁ hx
-  · exact eventually_of_mem (hV₀.mem_nhds_set.mpr hKV₀) heq2
+  · exact eventually_of_mem (hV₀.mem_nhdsSet.mpr hKV₀) heq2
   ·
     refine'
       eventually_of_mem
-        (is_closed_closure.is_open_compl.mem_nhds_set.mpr <| compl_subset_compl.mpr hV₂U₁)
+        (is_closed_closure.is_open_compl.mem_nhdsSet.mpr <| compl_subset_compl.mpr hV₂U₁)
         fun x hx => heq1 x <| mem_union_right _ <| compl_subset_compl.mpr subset_closure hx
 
 end extend_loops
@@ -1030,7 +1030,7 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
         (surrounding_family_in_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with
       ⟨U, U_in, γ, H, H''⟩
     cases' surrounding_family_in_iff_germ.mp H with H H'
-    refine' ⟨γ, H, mem_of_superset U_in H', eventually_nhds_set_union.mpr H''⟩
+    refine' ⟨γ, H, mem_of_superset U_in H', eventually_nhdsSet_union.mpr H''⟩
 
 -- #lint
 -- #print axioms satisfied_or_refund

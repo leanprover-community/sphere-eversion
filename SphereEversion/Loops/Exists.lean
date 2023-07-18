@@ -171,7 +171,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
       refine' (is_open_Iio.preimage continuous_snd.fst).union _
       refine' ((is_open_Iio.union isOpen_Ioi).preimage_fract _).preimage continuous_snd.snd
       exact fun x => Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
-    hU.mem_nhds_set.mpr
+    hU.mem_nhdsSet.mpr
       ((union_subset_union fun x hx => lt_of_le_of_lt hx (by norm_num)) <|
         union_subset_union (fun x hx => lt_of_le_of_lt hx (by norm_num)) fun x hx =>
           lt_of_lt_of_le (by norm_num) hx)
@@ -204,7 +204,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         simp_rw [γ, Loop.coe_mk]
         refine'
           (hγ₅C hx).trans
-            (h2γ₄ <| (subset_interior_iff_mem_nhds_set.mpr hUC).trans interior_subset hx)
+            (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
       exact hb.fst'.cont_diff_at.congr_of_eventually_eq this
     ·
       exact
@@ -279,7 +279,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
   have hγ₃ : 𝒞 ∞ ↿γ₃ := hsγ₁.comp₃ cont_diff_snd.fst contDiff_fst γ₂.reparametrize_smooth.snd'
   obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ :=
     exists_contDiff_one_nhds_of_interior hK.is_closed
-      (subset_interior_iff_mem_nhds_set.mpr <| hgK.and h2γ₁)
+      (subset_interior_iff_mem_nhdsSet.mpr <| hgK.and h2γ₁)
   simp_rw [← or_iff_not_imp_left] at h0χ
   let γ : ℝ → E → Loop F := fun t x => χ x • Loop.const (b x) + (1 - χ x) • γ₃ t x
   have h1γ : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x := by intro x t ht; ext s;

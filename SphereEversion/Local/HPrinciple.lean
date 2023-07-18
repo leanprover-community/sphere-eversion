@@ -317,7 +317,7 @@ theorem improveStep_rel_k : ∀ᶠ x near L.k, ∀ t, L.improveStep h N t x = �
 
 theorem improveStep_rel_c : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = 𝓕 x :=
   by
-  apply eventually.filter_mono (L.hK₁.is_closed.nhds_set_le_sup' L.C)
+  apply eventually.filter_mono (L.hK₁.is_closed.nhdsSet_le_sup' L.C)
   rw [eventually_sup]
   constructor
   · apply improve_step_rel_K

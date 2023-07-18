@@ -88,7 +88,7 @@ def FormalSol.IsHolonomicAt (𝓕 : FormalSol R) (x : E) : Prop :=
 theorem FormalSol.isHolonomicAt_congr (𝓕 𝓕' : FormalSol R) {s : Set E}
     (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) : ∀ᶠ x near s, 𝓕.IsHolonomicAt x ↔ 𝓕'.IsHolonomicAt x :=
   by
-  apply h.eventually_nhds_set.mono
+  apply h.eventually_nhdsSet.mono
   intro x hx
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
     apply hx.mono

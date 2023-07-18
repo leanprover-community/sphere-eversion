@@ -326,10 +326,10 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
     𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (is_compact_Icc.prod hK) h_hol
   refine' ⟨fun s => (𝓕 (1, s)).f, _, _, _⟩
   · exact 𝓕.f_diff.comp ((cont_diff_const.prod contDiff_id).prod_map contDiff_id)
-  · intro p hp; exact (prod.ext_iff.mp (h₂.nhds_set_forall_mem p hp 1)).1
+  · intro p hp; exact (prod.ext_iff.mp (h₂.nhdsSet_forall_mem p hp 1)).1
   · intro x hx t ht
     rw [show D (𝓕 (1, t)).f x = (𝓕 (1, t)).φ x from
-        h₄.nhds_set_forall_mem (t, x) (mk_mem_prod ht hx)]
+        h₄.nhdsSet_forall_mem (t, x) (mk_mem_prod ht hx)]
     exact 𝓕.is_sol (1, t) x
 
 end ParametricHPrinciple
