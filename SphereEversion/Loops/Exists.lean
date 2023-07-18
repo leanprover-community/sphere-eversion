@@ -121,7 +121,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   by
   obtain ⟨γ₁, V, hV, ε₀, hε₀, hγ₁, hΩ, h2γ₁⟩ := exist_loops_aux1 hK hΩ_op hb hgK hconv
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
-    exists_surrounding_loops hK.is_closed hΩ_op (fun x => hg.continuous.continuous_at) hb.continuous
+    exists_surrounding_loops hK.is_closed hΩ_op (fun x => hg.continuous.continuousAt) hb.continuous
       (fun x => hconv x) ⟨V, hV, hγ₁⟩
   let γ₃ : E → ℝ → Loop F := fun x t => (γ₂ x (linearReparam t)).reparam linearReparam
   have hγ₃ : SurroundingFamilyIn g b γ₃ univ Ω := hγ₂.reparam
@@ -198,7 +198,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
           by
           simp_rw [C, @preimage_union _ _ _ (_ ⁻¹' _), preimage_preimage, fract_fract]
           refine' mem_of_superset _ (subset_union_right _ _)
-          refine' continuous_at_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
+          refine' continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
         refine' eventually_of_mem this _
         intro x hx
         simp_rw [γ, Loop.coe_mk]
@@ -212,7 +212,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
                 cont_diff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
           ((eventually_eq.rfl.prod_mk <|
                 eventually_eq.rfl.prod_mk <|
-                  (fract_eventuallyEq hs).comp_tendsto continuous_at_id.snd'.snd').fun_comp
+                  (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp
             ↿γ₅)
   refine' ⟨γ, ⟨⟨_, _, _, _, hγ.continuous⟩, _⟩, hγ, _⟩
   · intro x t; simp_rw [γ, Loop.coe_mk, fract_zero]; rw [hγ₅C]; exact hγ₃.base x _

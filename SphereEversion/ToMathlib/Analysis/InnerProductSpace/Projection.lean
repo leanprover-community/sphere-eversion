@@ -277,7 +277,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     apply tendsto.mul
     rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
     exact (tendsto_const_nhds.sub Cont).norm
-    exact continuous_norm.continuous_at
+    exact continuous_norm.continuousAt
   have key :
     ∀ x y,
       (⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y =

@@ -134,7 +134,7 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
         (continuous_subtype_val.comp ht).continuousAt _ _
     · intro h
       refine' ContinuousAt.path_extend _ _ continuousAt_snd
-      exact hγ.continuous_at.comp (continuous_at_fst.fst.prod continuousAt_snd)
+      exact hγ.continuousAt.comp (continuousAt_fst.fst.prod continuousAt_snd)
     · intro h
       have ht : t x = 0 := Subtype.ext h
       apply Filter.Tendsto.path_extend
@@ -149,7 +149,7 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
         (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt _ _
     · intro h
       refine' ContinuousAt.path_extend _ _ continuousAt_snd
-      exact hγ'.continuous_at.comp (continuous_at_fst.fst.prod continuousAt_snd)
+      exact hγ'.continuousAt.comp (continuousAt_fst.fst.prod continuousAt_snd)
     · intro h
       have ht : t x = 1 := Subtype.ext (sub_eq_zero.mp h).symm
       apply Filter.Tendsto.path_extend

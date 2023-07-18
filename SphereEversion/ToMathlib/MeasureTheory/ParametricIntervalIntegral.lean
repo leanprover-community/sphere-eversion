@@ -79,7 +79,7 @@ theorem continuous_parametric_integral_of_continuous {E : Type _} [NormedAddComm
   intro x₀
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩
   rcases(U_cpct.prod hs).bddAbove_image hF.norm.continuous_on with ⟨M, hM⟩
-  apply continuous_at_of_dominated
+  apply continuousAt_of_dominated
   · exact eventually_of_forall fun x => (hF.comp (Continuous.Prod.mk x)).AEStronglyMeasurable
   · apply eventually.mono U_nhds fun x x_in => _
     rw [ae_restrict_iff]
@@ -275,7 +275,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
     intro s u hs hu
     exact (bound_integrable.mono_set <| ord_connected_Ioo.uIcc_subset hs hu).IntervalIntegrable
   have mem_nhds : ball x₀ ε ∩ s ⁻¹' Ioo a₀ b₀ ∈ 𝓝 x₀ :=
-    Filter.inter_mem (ball_mem_nhds x₀ ε_pos) (s_diff.continuous_at.preimage_mem_nhds Ioo_nhds)
+    Filter.inter_mem (ball_mem_nhds x₀ ε_pos) (s_diff.continuousAt.preimage_mem_nhds Ioo_nhds)
   have x₀_in : x₀ ∈ ball x₀ ε := mem_ball_self ε_pos
   have hF_meas_ball :
     ∀ {x},
@@ -332,7 +332,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
         have : (fun x => s x - s x₀) =O[𝓝 x₀] fun x => ‖x - x₀‖ := s_diff.is_O_sub.norm_right
         refine' is_O.trans _ this
         show ((fun t => ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((fun t => t - s x₀) ∘ s)
-        refine' is_O.comp_tendsto _ s_diff.continuous_at
+        refine' is_O.comp_tendsto _ s_diff.continuousAt
         have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume := by
           use Ioo a₀ b₀, Ioo_nhds, bound_integrable.1
         refine'

@@ -392,7 +392,7 @@ theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     (continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
       (e.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
   have h2 :=
-    (hf.continuous_at.comp (continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
+    (hf.continuousAt.comp (continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
       (e'.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
   filter_upwards [h1, h2] with x hx h2x
   dsimp only [inTangentCoordinates, in_coordinates, id_def]

@@ -186,7 +186,7 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
           (smooth_at_fst.fst.snd.prod_mk smoothAt_snd :
             SmoothAt (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
           (smoothAt_snd : SmoothAt ((J.prod IP).prod I) _ _ _) le_top
-    exact h1.clm_comp_in_tangent_coordinates (continuous_at_fst.snd.prod continuousAt_snd) h2
+    exact h1.clm_comp_in_tangent_coordinates (continuousAt_fst.snd.prod continuousAt_snd) h2
 
 theorem FamilyOneJetSec.curry_bs (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
     (x : M) : (S.curry p).bs x = (S p.1).bs (p.2, x) :=

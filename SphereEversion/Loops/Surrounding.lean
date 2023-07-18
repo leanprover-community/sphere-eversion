@@ -663,7 +663,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     (hconv : g x₀ ∈ convexHull ℝ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀)) :
     ∃ γ : E → ℝ → Loop F, ∃ U ∈ 𝓝 x₀, SurroundingFamilyIn g b γ U Ω :=
   by
-  have hbx₀ : ContinuousAt b x₀ := hb.continuous_at
+  have hbx₀ : ContinuousAt b x₀ := hb.continuousAt
   have hΩ_op_x₀ : IsOpen (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     (isOpen_slice_of_isOpen_over hΩ_op).connectedComponentIn
   have b_in : b x₀ ∈ Prod.mk x₀ ⁻¹' Ω :=
@@ -994,14 +994,14 @@ theorem surroundingFamilyIn_iff_germ {γ : E → ℝ → Loop F} :
   constructor
   · rintro ⟨⟨base, t₀, projI, family_surrounds, family_cont⟩, H⟩
     exact
-      ⟨fun x => ⟨base x, t₀ x, projI x, fun t s => family_cont.continuous_at⟩, fun x x_in =>
+      ⟨fun x => ⟨base x, t₀ x, projI x, fun t s => family_cont.continuousAt⟩, fun x x_in =>
         ⟨family_surrounds x x_in, H x x_in⟩⟩
   · rintro ⟨h, h'⟩
     refine'
       ⟨⟨fun x => (h x).base, fun x => (h x).t₀, fun x => (h x).projI, fun x hx =>
           (h' x hx).Surrounds, _⟩,
         fun x hx => (h' x hx).val_in'⟩
-    apply continuous_iff_continuous_at.mpr
+    apply continuous_iff_continuousAt.mpr
     rintro ⟨x, t, s⟩
     apply (h x).cont
 

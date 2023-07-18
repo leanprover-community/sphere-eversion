@@ -65,7 +65,7 @@ theorem smoothAt_one_jet_eucl_bundle {x₀ : N} :
   intro hf
   refine' Filter.EventuallyEq.contMDiffAt_iff _
   have :=
-    hf.continuous_at.preimage_mem_nhds
+    hf.continuousAt.preimage_mem_nhds
       (((tangentBundleCore I M).isOpen_baseSet (achart H (f x₀).proj)).mem_nhds
         ((tangentBundleCore I M).mem_baseSet_at (f x₀).proj))
   filter_upwards [this] with x hx

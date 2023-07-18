@@ -155,7 +155,7 @@ theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
   suffices ∀ i, tendsto (a i) (𝓝 x ×ˢ atTop) (𝓝 (γ.surrounding_points_at x i))
     by
     have hg : tendsto (fun z : E × ℕ => g z.fst) (𝓝 x ×ˢ atTop) (𝓝 (g x)) :=
-      tendsto.comp γ.smooth_surrounded.continuous.continuous_at tendsto_fst
+      tendsto.comp γ.smooth_surrounded.continuous.continuousAt tendsto_fst
     exact
       eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surround_pts_points_weights_at x⟩ this
         hg
@@ -303,7 +303,7 @@ theorem localCenteringDensity_smooth_on :
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :
     Continuous fun t => γ.localCenteringDensity x y t :=
   by
-  refine' continuous_iff_continuous_at.mpr fun t => _
+  refine' continuous_iff_continuousAt.mpr fun t => _
   have hyt : γ.local_centering_density_nhd x ×ˢ univ ∈ 𝓝 (y, t) :=
     mem_nhds_prod_iff'.mpr
       ⟨γ.local_centering_density_nhd x, univ, γ.local_centering_density_nhd_is_open x, hy,

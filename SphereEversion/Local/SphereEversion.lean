@@ -112,10 +112,10 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
   -- The following suffices looks stupid but is much faster than using the change tactic.
   suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) by exact this
   apply ContinuousAt.eventually
-  · refine' (continuous_at_const.inner continuousAt_fst).prod _
+  · refine' (continuousAt_const.inner continuousAt_fst).prod _
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
-      exact continuous_at_snd.comp continuousAt_snd
+      exact continuousAt_snd.comp continuousAt_snd
       -- Faster than change.
       suffices ContinuousAt ((fun x => (ℝ ∙ x)ᗮ.subtypeL.comp pr[x]ᗮ) ∘ Prod.fst) (x₀, y₀, φ₀) by
         exact this
@@ -313,7 +313,7 @@ def locFormalEversionAux : HtpyJetSec E E
         intro x hx
         rw [mem_preimage, mem_singleton_iff, smoothStep.of_lt hx]
       have : (fun p : ℝ × E => smoothStep (‖p.2‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 x := by rw [← hx] at this ;
-        exact continuous_at_snd.preimage_mem_nhds this
+        exact continuousAt_snd.preimage_mem_nhds this
       refine' eventually_of_mem this _
       rintro ⟨t, x⟩ hx
       simp_rw [mem_preimage, mem_singleton_iff] at hx
