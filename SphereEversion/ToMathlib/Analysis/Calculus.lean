@@ -114,19 +114,21 @@ theorem ContDiff.partial_snd {φ : E → F → G} {n : ℕ∞} (h : ContDiff �
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
 def ContinuousLinearMap.compRightL (φ : E →L[𝕜] F) : (F →L[𝕜] G) →L[𝕜] E →L[𝕜] G :=
-  (compL 𝕜 E F G).flip φ
+  precomp G φ
 
 /-- Postcomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
 def ContinuousLinearMap.compLeftL (φ : F →L[𝕜] G) : (E →L[𝕜] F) →L[𝕜] E →L[𝕜] G :=
-  compL 𝕜 E F G φ
+  postcomp E φ
 
-theorem Differentiable.fderiv_partial_fst {φ : E → F → G} (hF : Differentiable 𝕜 (uncurry φ)) :
-    ↿(∂₁ 𝕜 φ) = (fun ψ : E × F →L[𝕜] G => ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
+nonrec theorem Differentiable.fderiv_partial_fst {φ : E → F → G}
+    (hF : Differentiable 𝕜 (uncurry φ)) :
+    (↿(∂₁ 𝕜 φ)) = (fun (ψ : (E × F →L[𝕜] G)) ↦ ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
   ext1 ⟨y, t⟩; exact fderiv_partial_fst (hF ⟨y, t⟩).hasFDerivAt
 
-theorem Differentiable.fderiv_partial_snd {φ : E → F → G} (hF : Differentiable 𝕜 (uncurry φ)) :
-    ↿(∂₂ 𝕜 φ) = (fun ψ : E × F →L[𝕜] G => ψ.comp (inr 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
+nonrec theorem Differentiable.fderiv_partial_snd {φ : E → F → G}
+    (hF : Differentiable 𝕜 (uncurry φ)) :
+    ↿(∂₂ 𝕜 φ) = (fun (ψ : E × F →L[𝕜] G) => ψ.comp (inr 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
   ext1 ⟨y, t⟩; exact fderiv_partial_snd (hF ⟨y, t⟩).hasFDerivAt
 
 /-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G`-/
@@ -219,4 +221,3 @@ theorem const_mul_one_div_lt {ε : ℝ} (ε_pos : 0 < ε) (C : ℝ) : ∀ᶠ N :
   have h : Tendsto (fun N : ℝ => C * ‖1 / N‖) atTop (𝓝 (C * ‖(0 : ℝ)‖)) :=
     tendsto_const_nhds.mul (tendsto_const_nhds.div_atTop tendsto_id).norm
   Filter.Tendsto.eventually_lt h tendsto_const_nhds <| by simpa
-
