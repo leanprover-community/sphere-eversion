@@ -1,7 +1,6 @@
 import SphereEversion.ToMathlib.Data.Set.Prod
 import SphereEversion.ToMathlib.Data.Nat.Basic
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
-import SphereEversion.ToMathlib.Topology.Constructions
 import SphereEversion.ToMathlib.Logic.Basic
 import SphereEversion.InductiveConstructions
 import SphereEversion.Global.ParametricityForFree

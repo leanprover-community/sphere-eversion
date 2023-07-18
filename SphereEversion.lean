@@ -71,7 +71,6 @@ import SphereEversion.ToMathlib.SmoothBarycentric
 import SphereEversion.ToMathlib.Topology.Algebra.Module
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Basic
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
-import SphereEversion.ToMathlib.Topology.Constructions
 import SphereEversion.ToMathlib.Topology.Germ
 import SphereEversion.ToMathlib.Topology.HausdorffDistance
 import SphereEversion.ToMathlib.Topology.LocalHomeomorph

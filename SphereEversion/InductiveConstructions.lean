@@ -1,6 +1,5 @@
 import SphereEversion.ToMathlib.Data.Set.Prod
 import SphereEversion.ToMathlib.Data.Set.Lattice
-import SphereEversion.ToMathlib.Topology.Constructions
 import SphereEversion.ToMathlib.Topology.Germ
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Order.Filter.Basic
