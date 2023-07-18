@@ -43,7 +43,7 @@ def valueOrderRingHom {X E : Type _} [OrderedSemiring E] [TopologicalSpace X] {x
     monotone' := fun φ ψ =>
       Germ.inductionOn φ fun _ => Germ.inductionOn ψ fun _ h => h.self_of_nhds }
 
-def Subring.orderedSubtype {R} [OrderedRing R] (s : Subring R) : s →+*o R :=
+def _root_.Subring.orderedSubtype {R} [OrderedRing R] (s : Subring R) : s →+*o R :=
   { s.subtype with monotone' := fun _ _ h => h }
 
 end Filter.Germ
@@ -63,8 +63,7 @@ def RestrictGermPredicate {X Y : Type _} [TopologicalSpace X] (P : ∀ x : X, Ge
     fun f f' hff' => propext <| forall_congr' fun _ => ⟨this f f' hff', this f' f hff'.symm⟩
 
 theorem Filter.Eventually.germ_congr {X Y : Type _} [TopologicalSpace X] {x : X}
-    {P : Germ (𝓝 x) Y → Prop} {f g : X → Y} (hf : P f) (h : ∀ᶠ z in 𝓝 x, g z = f z) : P g :=
-  by
+    {P : Germ (𝓝 x) Y → Prop} {f g : X → Y} (hf : P f) (h : ∀ᶠ z in 𝓝 x, g z = f z) : P g := by
   convert hf using 1
   apply Quotient.sound
   exact h
@@ -124,13 +123,12 @@ theorem Filter.Germ.sliceRight_coe {X Y Z : Type _} [TopologicalSpace X] [Topolo
   rfl
 
 def Filter.Germ.IsConstant {X Y : Type _} [TopologicalSpace X] {x : X} (P : Germ (𝓝 x) Y) : Prop :=
-  P.liftOn (fun f => ∀ᶠ x' in 𝓝 x, f x' = f x)
-    (by
-      suffices : ∀ f g : X → Y, f =ᶠ[𝓝 x] g → (∀ᶠ x' in 𝓝 x, f x' = f x) → ∀ᶠ x' in 𝓝 x, g x' = g x
-      exact fun f g hfg => propext ⟨fun h => this f g hfg h, fun h => this g f hfg.symm h⟩
-      rintro f g hfg hf
-      refine (hf.and hfg).mono fun x' hx' => ?_
-      rw [← hx'.2, hx'.1, hfg.eq_of_nhds])
+  P.liftOn (fun f => ∀ᶠ x' in 𝓝 x, f x' = f x) <| by
+    suffices : ∀ f g : X → Y, f =ᶠ[𝓝 x] g → (∀ᶠ x' in 𝓝 x, f x' = f x) → ∀ᶠ x' in 𝓝 x, g x' = g x
+    exact fun f g hfg => propext ⟨fun h => this f g hfg h, fun h => this g f hfg.symm h⟩
+    rintro f g hfg hf
+    refine (hf.and hfg).mono fun x' hx' => ?_
+    rw [← hx'.2, hx'.1, hfg.eq_of_nhds]
 
 theorem Filter.Germ.isConstant_coe {X Y : Type _} [TopologicalSpace X] {x : X} {y} {f : X → Y}
     (h : ∀ x', f x' = y) : (↑f : Germ (𝓝 x) Y).IsConstant :=
