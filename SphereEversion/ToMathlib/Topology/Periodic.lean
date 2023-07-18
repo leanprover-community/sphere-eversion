@@ -43,31 +43,23 @@ def transOne : Setoid ℝ :=
 def OnePeriodic (f : ℝ → α) : Prop :=
   Periodic f 1
 
-theorem OnePeriodic.add_nat {f : ℝ → α} (h : OnePeriodic f) : ∀ k : ℕ, ∀ x, f (x + k) = f x :=
-  by
-  intro k x
-  induction' k with k hk
-  · simp
-  rw [Nat.castSucc, ← add_assoc, h, hk]
+theorem OnePeriodic.add_nat {f : ℝ → α} (h : OnePeriodic f) (k : ℕ) (x : ℝ) : f (x + k) = f x := by
+  simpa using h.nat_mul k x
 
-theorem OnePeriodic.add_int {f : ℝ → α} (h : OnePeriodic f) : ∀ k : ℤ, ∀ x, f (x + k) = f x :=
-  by
-  intro k x
-  induction' k with k k
-  · erw [h.add_nat]
-  have : x + -[k+1] + (k + 1 : ℕ) = x := by simp; ring
-  rw [← h.add_nat (k + 1) (x + -[k+1]), this]
+theorem OnePeriodic.add_int {f : ℝ → α} (h : OnePeriodic f) (k : ℤ) (x : ℝ) : f (x + k) = f x := by
+  simpa using h.int_mul k x
 
-/-- The circle `𝕊₁ := ℝ/ℤ`. -/
+/-- The circle `𝕊₁ := ℝ/ℤ`.
+
+TODO [Yury]: use `AddCircle`. -/
 def 𝕊₁ :=
   Quotient transOne
 deriving TopologicalSpace, Inhabited
 
-theorem transOne_rel_iff {a b : ℝ} : transOne.Rel a b ↔ ∃ k : ℤ, b = a + k :=
-  by
-  refine' quotient_add_group.left_rel_apply.trans _
+theorem transOne_rel_iff {a b : ℝ} : transOne.Rel a b ↔ ∃ k : ℤ, b = a + k := by
+  refine' QuotientAddGroup.leftRel_apply.trans _
   refine' exists_congr fun k => _
-  rw [coe_cast_add_hom, eq_neg_add_iff_add_eq, eq_comm]
+  rw [coe_castAddHom, eq_neg_add_iff_add_eq, eq_comm]
 
 section
 
@@ -78,8 +70,7 @@ def proj𝕊₁ : ℝ → 𝕊₁ :=
   Quotient.mk'
 
 @[simp]
-theorem proj𝕊₁_add_int (t : ℝ) (k : ℤ) : proj𝕊₁ (t + k) = proj𝕊₁ t :=
-  by
+theorem proj𝕊₁_add_int (t : ℝ) (k : ℤ) : proj𝕊₁ (t + k) = proj𝕊₁ t := by
   symm
   apply Quotient.sound
   exact trans_one_rel_iff.mpr ⟨k, rfl⟩
@@ -93,18 +84,17 @@ def 𝕊₁.repr (x : 𝕊₁) : ℝ :=
 theorem 𝕊₁.repr_mem (x : 𝕊₁) : x.repr ∈ (Ico 0 1 : Set ℝ) :=
   ⟨fract_nonneg _, fract_lt_one _⟩
 
-theorem 𝕊₁.proj_repr (x : 𝕊₁) : proj𝕊₁ x.repr = x :=
-  by
+theorem 𝕊₁.proj_repr (x : 𝕊₁) : proj𝕊₁ x.repr = x := by
   symm
   conv_lhs => rw [← Quotient.out_eq x]
   rw [← fract_add_floor (Quotient.out x)]
   apply proj𝕊₁_add_int
 
-theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ :=
-  by
+theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ := by
   rw [eq_univ_iff_forall]
   intro x
-  use x.repr, x.repr_mem, x.proj_repr
+  -- Porting note: `use` unfolds too much
+  exact ⟨x.repr, x.repr_mem, x.proj_repr⟩
 
 theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
   eq_univ_of_subset (image_subset proj𝕊₁ Ico_subset_Icc_self) image_proj𝕊₁_Ico
@@ -119,43 +109,33 @@ theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ :=
 theorem quotientMap_id_proj𝕊₁ {X : Type _} [TopologicalSpace X] :
     QuotientMap fun p : X × ℝ => (p.1, proj𝕊₁ p.2) :=
   (IsOpenMap.id.prod isOpenMap_proj𝕊₁).to_quotientMap (continuous_id.prod_map continuous_proj𝕊₁)
-    (surjective_id.prod_map Quotient.exists_rep)
+    (surjective_id.Prod_map Quotient.exists_rep)
 
 /-- A one-periodic function on `ℝ` descends to a function on the circle `ℝ ⧸ ℤ`. -/
 def OnePeriodic.lift {f : ℝ → α} (h : OnePeriodic f) : 𝕊₁ → α :=
-  Quotient.lift f (by intro a b hab; rcases trans_one_rel_iff.mp hab with ⟨k, rfl⟩; rw [h.add_int])
+  Quotient.lift f (by intro a b hab; rcases transOne_rel_iff.mp hab with ⟨k, rfl⟩; rw [h.add_int])
 
 end
 
 local notation "π" => proj𝕊₁
 
 instance : CompactSpace 𝕊₁ :=
-  ⟨by rw [← image_proj𝕊₁_Icc]; exact is_compact_Icc.image continuous_proj𝕊₁⟩
+  ⟨by rw [← image_proj𝕊₁_Icc]; exact isCompact_Icc.image continuous_proj𝕊₁⟩
 
-theorem isClosed_int : IsClosed (range (coe : ℤ → ℝ)) :=
-  by
-  refine' isClosed_of_spaced_out (Metric.uniformity_basis_dist.mem_of_mem <| zero_lt_one) _
-  rintro - ⟨p, rfl⟩ - ⟨q, rfl⟩ h (H : dist p q < 1)
-  rw [Int.dist_eq] at H
-  norm_cast at *
-  exact h (eq_of_sub_eq_zero <| int.abs_lt_one_iff.mp H)
+theorem isClosed_int : IsClosed (range ((↑) : ℤ → ℝ)) :=
+  Int.closedEmbedding_coe_real.closed_range
 
-instance : T2Space 𝕊₁ :=
-  by
+instance : T2Space 𝕊₁ := by
   have πcont : Continuous π := continuous_quotient_mk'
   rw [t2Space_iff_of_continuous_surjective_open πcont Quotient.surjective_Quotient_mk''
       isOpenMap_proj𝕊₁]
-  have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k} :=
-    by
+  have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k}
+  · ext ⟨a, b⟩
+    exact Quotient.eq''.trans transOne_rel_iff
+  have : {q : ℝ × ℝ | π q.fst = π q.snd} = (fun q : ℝ × ℝ => q.2 - q.1) ⁻¹' (range <| ((↑) : ℤ → ℝ))
+  · rw [this]
     ext ⟨a, b⟩
-    simp only [proj𝕊₁, Quotient.eq', mem_setOf_eq]
-    exact transOne_rel_iff
-  have :
-    {q : ℝ × ℝ | π q.fst = π q.snd} = (fun q : ℝ × ℝ => q.2 - q.1) ⁻¹' (range <| (coe : ℤ → ℝ)) :=
-    by
-    rw [this]
-    ext ⟨a, b⟩
-    apply exists_congr fun k => _
+    refine exists_congr fun k => ?_
     conv_rhs => rw [eq_comm, sub_eq_iff_eq_add']
   rw [this]
   exact IsClosed.preimage (continuous_snd.sub continuous_fst) isClosed_int
@@ -164,27 +144,21 @@ variable {X E : Type _} [TopologicalSpace X] [NormedAddCommGroup E]
 
 theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont : Continuous ↿f)
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K) :
-    ∃ C, ∀ x ∈ K, ∀ t, ‖f x t‖ ≤ C :=
-  by
+    ∃ C, ∀ x ∈ K, ∀ t, ‖f x t‖ ≤ C := by
   let F : X × 𝕊₁ → E := fun p : X × 𝕊₁ => (hper p.1).lift p.2
-  have Fcont : Continuous F :=
-    by
-    have qm : QuotientMap fun p : X × ℝ => (p.1, π p.2) := quotientMap_id_proj𝕊₁
-    let φ := ↿f
+  have Fcont : Continuous F
+  · have qm : QuotientMap fun p : X × ℝ => (p.1, π p.2) := quotientMap_id_proj𝕊₁
     -- avoid weird elaboration issue
-    have : φ = F ∘ fun p : X × ℝ => (p.1, π p.2) := by ext p; rfl
-    dsimp [φ] at this
+    have : ↿f = F ∘ fun p : X × ℝ => (p.1, π p.2) := by ext p; rfl
     rwa [this, ← qm.continuous_iff] at cont
   obtain ⟨C, hC⟩ :=
     (hK.prod isCompact_univ).bddAbove_image (continuous_norm.comp Fcont).continuousOn
   exact ⟨C, fun x x_in t => hC ⟨(x, π t), ⟨x_in, mem_univ _⟩, rfl⟩⟩
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » K) -/
 theorem Continuous.bounded_of_onePeriodic_of_compact {f : X → ℝ → E} (cont : Continuous ↿f)
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K)
-    (hfK : ∀ (x) (_ : x ∉ K), f x = 0) : ∃ C, ∀ x t, ‖f x t‖ ≤ C :=
-  by
-  obtain ⟨C, hC⟩ := cont.bounded_on_compact_of_one_periodic hper hK
+    (hfK : ∀ x, x ∉ K → f x = 0) : ∃ C, ∀ x t, ‖f x t‖ ≤ C := by
+  obtain ⟨C, hC⟩ := cont.bounded_on_compact_of_onePeriodic hper hK
   use max C 0
   intro x t
   by_cases hx : x ∈ K
@@ -192,4 +166,3 @@ theorem Continuous.bounded_of_onePeriodic_of_compact {f : X → ℝ → E} (cont
   · simp [hfK, hx]
 
 end OnePeriodic
-
