@@ -156,7 +156,7 @@ theorem partialFDerivFst_eq_smulRight (φ : 𝕜 → F → G) (k : 𝕜) (f : F)
 @[simp]
 theorem partialFDerivFst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f 1 = partialDerivFst φ k f := by
-  simp only [partialFDerivFst_eq_smulRight, smul_right_apply, one_apply, one_smul]
+  simp only [partialFDerivFst_eq_smulRight, smulRight_apply, one_apply, one_smul]
 
 theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivSnd φ e k) :=
@@ -164,7 +164,7 @@ theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜)
 
 theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k 1 = partialDerivSnd φ e k := by
-  simp only [partialFDerivSnd_eq_smulRight, smul_right_apply, one_apply, one_smul]
+  simp only [partialFDerivSnd_eq_smulRight, smulRight_apply, one_apply, one_smul]
 
 @[to_additive]
 theorem WithTop.le_mul_self {α : Type _} [CanonicallyOrderedMonoid α] (n m : α) :

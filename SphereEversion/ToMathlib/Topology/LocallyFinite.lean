@@ -5,8 +5,7 @@ open Function Set
 theorem LocallyFinite.smul_left {ι : Type _} {α : Type _} [TopologicalSpace α] {M : Type _}
     {R : Type _} [Semiring R] [AddCommMonoid M] [Module R M] [NoZeroSMulDivisors R M]
     {s : ι → α → R} (h : LocallyFinite fun i => support <| s i) (f : ι → α → M) :
-    LocallyFinite fun i => support <| s i • f i :=
-  by
+    LocallyFinite fun i => support <| s i • f i := by
   apply h.subset fun i => _
   rw [support_smul]
   exact inter_subset_left _ _
@@ -14,8 +13,7 @@ theorem LocallyFinite.smul_left {ι : Type _} {α : Type _} [TopologicalSpace α
 theorem LocallyFinite.smul_right {ι : Type _} {α : Type _} [TopologicalSpace α] {M : Type _}
     {R : Type _} [Semiring R] [AddCommMonoid M] [Module R M] [NoZeroSMulDivisors R M]
     {f : ι → α → M} (h : LocallyFinite fun i => support <| f i) (s : ι → α → R) :
-    LocallyFinite fun i => support <| s i • f i :=
-  by
+    LocallyFinite fun i => support <| s i • f i := by
   apply h.subset fun i => _
   rw [support_smul]
   exact inter_subset_right _ _
