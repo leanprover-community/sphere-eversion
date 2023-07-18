@@ -21,25 +21,20 @@ variable {ι : Type _} {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {
 
 variable [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M]
 
-theorem SmoothPartitionOfUnity.cont_diff_at_sum (ρ : SmoothPartitionOfUnity ι I M s) {n : ℕ∞}
+theorem SmoothPartitionOfUnity.contMDiffAt_sum (ρ : SmoothPartitionOfUnity ι I M s) {n : ℕ∞}
     {x₀ : M} {φ : ι → M → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → ContMDiffAt I 𝓘(ℝ, F) n (φ i) x₀) :
-    ContMDiffAt I 𝓘(ℝ, F) n (fun x => ∑ᶠ i, ρ i x • φ i x) x₀ :=
-  by
-  refine' contMDiffAt_finsum (ρ.locally_finite.smul_left _) fun i => _
+    ContMDiffAt I 𝓘(ℝ, F) n (fun x => ∑ᶠ i, ρ i x • φ i x) x₀ := by
+  refine' contMDiffAt_finsum (ρ.locallyFinite.smul_left _) fun i => _
   by_cases hx : x₀ ∈ tsupport (ρ i)
   · exact ContMDiffAt.smul ((ρ i).smooth.of_le le_top).contMDiffAt (hφ i hx)
   · exact contMDiffAt_of_not_mem (compl_subset_compl.mpr (tsupport_smul_left (ρ i) (φ i)) hx) n
 
-theorem SmoothPartitionOfUnity.contDiffAt_sum' {s : Set E}
+theorem SmoothPartitionOfUnity.contDiffAt_sum {s : Set E}
     (ρ : SmoothPartitionOfUnity ι 𝓘(ℝ, E) E s) {n : ℕ∞} {x₀ : E} {φ : ι → E → F}
     (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → ContDiffAt ℝ n (φ i) x₀) :
-    ContDiffAt ℝ n (fun x => ∑ᶠ i, ρ i x • φ i x) x₀ :=
-  by
-  rw [← contMDiffAt_iff_contDiffAt]
-  apply ρ.cont_diff_at_sum
-  intro i
-  rw [contMDiffAt_iff_contDiffAt]
-  exact hφ i
+    ContDiffAt ℝ n (fun x => ∑ᶠ i, ρ i x • φ i x) x₀ := by
+  simp only [← contMDiffAt_iff_contDiffAt] at *
+  exact ρ.contMDiffAt_sum hφ
 
 end
 
@@ -55,10 +50,10 @@ section
 
 variable {F : Type _} [AddCommGroup F] [Module ℝ F]
 
+-- TODO [Yury]: this is true for a continuous partition of unity
 theorem SmoothPartitionOfUnity.finite_tsupport {s : Set M} (ρ : SmoothPartitionOfUnity ι I M s)
-    (x : M) : {i | x ∈ tsupport (ρ i)}.Finite :=
-  by
-  rcases ρ.locally_finite x with ⟨t, t_in, ht⟩
+    (x : M) : {i | x ∈ tsupport (ρ i)}.Finite := by
+  rcases ρ.locallyFinite x with ⟨t, t_in, ht⟩
   apply ht.subset
   rintro i hi
   simp only [inter_comm]
@@ -73,9 +68,9 @@ theorem SmoothPartitionOfUnity.mem_fintsupport_iff {s : Set M} (ρ : SmoothParti
   Finite.mem_toFinset _
 
 theorem SmoothPartitionOfUnity.eventually_fintsupport_subset {s : Set M}
-    (ρ : SmoothPartitionOfUnity ι I M s) (x : M) : ∀ᶠ y in 𝓝 x, ρ.fintsupport y ⊆ ρ.fintsupport x :=
-  by
-  apply (ρ.locally_finite.closure.eventually_subset (fun _ => isClosed_closure) x).mono
+    (ρ : SmoothPartitionOfUnity ι I M s) (x : M) :
+    ∀ᶠ y in 𝓝 x, ρ.fintsupport y ⊆ ρ.fintsupport x := by
+  apply (ρ.locallyFinite.closure.eventually_subset (fun _ => isClosed_closure) x).mono
   intro y hy z hz
   rw [SmoothPartitionOfUnity.mem_fintsupport_iff] at *
   exact hy hz
@@ -88,16 +83,15 @@ def SmoothPartitionOfUnity.finsupport {ι : Type _} {E : Type _} [NormedAddCommG
 
 /-- Weaker version of `smooth_partition_of_unity.eventually_fintsupport_subset`. -/
 theorem SmoothPartitionOfUnity.finsupport_subset_fintsupport {s : Set M}
-    (ρ : SmoothPartitionOfUnity ι I M s) (x : M) : ρ.finsupport x ⊆ ρ.fintsupport x :=
-  by
-  rintro i hi
+    (ρ : SmoothPartitionOfUnity ι I M s) (x : M) :
+    ρ.finsupport x ⊆ ρ.fintsupport x := fun i hi ↦ by
   rw [ρ.mem_fintsupport_iff]
   apply subset_closure
-  exact (ρ.to_partition_of_unity.mem_finsupport x).mp hi
+  exact (ρ.toPartitionOfUnity.mem_finsupport x).mp hi
 
 theorem SmoothPartitionOfUnity.eventually_finsupport_subset {s : Set M}
-    (ρ : SmoothPartitionOfUnity ι I M s) (x : M) : ∀ᶠ y in 𝓝 x, ρ.finsupport y ⊆ ρ.fintsupport x :=
-  by
+    (ρ : SmoothPartitionOfUnity ι I M s) (x : M) :
+    ∀ᶠ y in 𝓝 x, ρ.finsupport y ⊆ ρ.fintsupport x := by
   apply (ρ.eventually_fintsupport_subset x).mono
   exact fun y hy => (ρ.finsupport_subset_fintsupport y).trans hy
 
