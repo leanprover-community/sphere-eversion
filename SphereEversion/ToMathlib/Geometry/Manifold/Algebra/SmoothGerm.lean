@@ -1,4 +1,4 @@
-import Mathlib.Order.Filter.FilterProduct
+import Mathlib.Order.Filter.Germ
 import Mathlib.Algebra.Order.Hom.Ring
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.VectorBundle.Tangent
@@ -172,44 +172,38 @@ def Filter.Germ.valueₛₗ {F} [AddCommMonoid F] [Module ℝ F] (x : N) :
 
 variable (I)
 
+-- currently unused
+protected def Filter.Germ.ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : ℕ∞) : Prop :=
+  Quotient.liftOn' φ (fun f => ContMDiffAt I IG n f x) fun f g h =>
+    propext <| by
+      constructor
+      all_goals refine' fun H => H.congr_of_eventuallyEq _
+      exacts [h.symm, h]
+
 /-- The predicate selecting germs of `cont_mdiff_at` functions.
 TODO: merge with the next def that generalizes target space -/
-def Filter.Germ.ContMDiffAt {x : M} (φ : Germ (𝓝 x) F) (n : ℕ∞) : Prop :=
-  Quotient.liftOn' φ (fun f => ContMDiffAt I 𝓘(ℝ, F) n f x) fun f g h =>
-    propext
-      (by
-        constructor
-        all_goals refine' fun H => H.congr_of_eventuallyEq _
-        exacts [h.symm, h])
+protected nonrec def Filter.Germ.ContMDiffAt {x : M} (φ : Germ (𝓝 x) F) (n : ℕ∞) : Prop :=
+  φ.ContMDiffAt' I 𝓘(ℝ, F) n
 
 -- currently unused
-def Filter.Germ.ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : ℕ∞) : Prop :=
-  Quotient.liftOn' φ (fun f => ContMDiffAt I IG n f x) fun f g h =>
-    propext
-      (by
-        constructor
-        all_goals refine' fun H => H.congr_of_eventuallyEq _
-        exacts [h.symm, h])
-
--- currently unused
-def Filter.Germ.mfderiv {x : M} (φ : Germ (𝓝 x) N) :
+nonrec def Filter.Germ.mfderiv {x : M} (φ : Germ (𝓝 x) N) :
     TangentSpace I x →L[ℝ] TangentSpace IG φ.value :=
   @Quotient.hrecOn _ (germSetoid (𝓝 x) N)
     (fun φ : Germ (𝓝 x) N => TangentSpace I x →L[ℝ] TangentSpace IG φ.value) φ
-    (fun f => mfderiv I IG f x) fun f g hfg => hEq_of_eq (EventuallyEq.mfderiv_eq hfg : _)
+    (fun f => mfderiv I IG f x) fun _f _g hfg => heq_of_eq (EventuallyEq.mfderiv_eq hfg : _)
 
 variable {I}
 
 theorem smoothGerm.contMDiffAt {x : M} (φ : smoothGerm I x) {n : ℕ∞} :
     (φ : Germ (𝓝 x) ℝ).ContMDiffAt I n := by rcases φ with ⟨_, g, rfl⟩; apply g.smooth.of_le le_top
 
-theorem Filter.Germ.ContMDiffAt.add {x : M} {φ ψ : Germ (𝓝 x) F} {n : ℕ∞} (hφ : φ.ContMDiffAt I n)
-    (hψ : ψ.ContMDiffAt I n) : (φ + ψ).ContMDiffAt I n :=
-  Germ.inductionOn φ (fun f hf => Germ.inductionOn ψ fun g hg => hf.add hg) hφ hψ
+protected nonrec theorem Filter.Germ.ContMDiffAt.add {x : M} {φ ψ : Germ (𝓝 x) F} {n : ℕ∞} :
+    φ.ContMDiffAt I n → ψ.ContMDiffAt I n → (φ + ψ).ContMDiffAt I n :=
+  Germ.inductionOn φ fun _f hf => Germ.inductionOn ψ fun _g hg => hf.add hg
 
-theorem Filter.Germ.ContMDiffAt.smul {x : M} {φ : Germ (𝓝 x) ℝ} {ψ : Germ (𝓝 x) F} {n : ℕ∞}
-    (hφ : φ.ContMDiffAt I n) (hψ : ψ.ContMDiffAt I n) : (φ • ψ).ContMDiffAt I n :=
-  Germ.inductionOn φ (fun f hf => Germ.inductionOn ψ fun g hg => hf.smul hg) hφ hψ
+protected nonrec theorem Filter.Germ.ContMDiffAt.smul {x : M} {φ : Germ (𝓝 x) ℝ} {ψ : Germ (𝓝 x) F}
+    {n : ℕ∞} : φ.ContMDiffAt I n → ψ.ContMDiffAt I n → (φ • ψ).ContMDiffAt I n :=
+  Germ.inductionOn φ fun _f hf => Germ.inductionOn ψ fun _g hg => hf.smul hg
 
 theorem Filter.Germ.ContMDiffAt.sum {x : M} {ι} {s : Finset ι} {n : ℕ∞} {f : ι → Germ (𝓝 x) F}
     (h : ∀ i ∈ s, (f i).ContMDiffAt I n) : (∑ i in s, f i).ContMDiffAt I n := by
@@ -264,25 +258,22 @@ open scoped Filter
 
 open Function
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- TODO: generalize the next def?
-def Filter.Germ.ContMDiffAtProd {x : M₁} (φ : Germ (𝓝 x) <| M₂ → F) (n : ℕ∞) : Prop :=
+def Filter.Germ.ContMDiffAtProd {x : M₁} (φ : Germ (𝓝 x) (M₂ → F)) (n : ℕ∞) : Prop :=
   Quotient.liftOn' φ (fun f => ∀ y : M₂, ContMDiffAt (I₁.prod I₂) 𝓘(ℝ, F) n (uncurry f) (x, y))
-    fun f g h =>
-    propext
-      (by
+    fun f g h => propext <| by
         change {x' | f x' = g x'} ∈ 𝓝 x at h
         constructor
         all_goals
           refine' fun H y => (H y).congr_of_eventuallyEq _
           clear H
-          replace h : {x' | f x' = g x'} ×ˢ (univ : Set M₂) ∈ 𝓝 x ×ᶠ 𝓝 y := prod_mem_prod h univ_mem
+          replace h : {x' | f x' = g x'} ×ˢ (univ : Set M₂) ∈ 𝓝 x ×ˢ 𝓝 y := prod_mem_prod h univ_mem
           rw [← nhds_prod_eq] at h
           apply mem_of_superset h
           rintro ⟨x', y'⟩ ⟨hx' : f x' = g x', -⟩
           simp only [mem_setOf_eq, uncurry_apply_pair]
           apply congr_fun
-        exacts [hx'.symm, hx'])
+        exacts [hx'.symm, hx']
 
 /- potential generalization of the above
 def filter.germ.cont_mdiff_at_comp {x : M₁} (φ : germ (𝓝 x) M₂) (n : ℕ∞)
@@ -304,24 +295,19 @@ end)
 -/
 variable {I₁ I₂}
 
-theorem Filter.Germ.ContMDiffAtProd.add {x : M₁} {φ ψ : Germ (𝓝 x) <| M₂ → F} {n : ℕ∞}
-    (hφ : φ.ContMDiffAtProd I₁ I₂ n) (hψ : ψ.ContMDiffAtProd I₁ I₂ n) :
-    (φ + ψ).ContMDiffAtProd I₁ I₂ n :=
-  Germ.inductionOn φ (fun f hf => Germ.inductionOn ψ fun g hg y => (hf y).add (hg y)) hφ hψ
+theorem Filter.Germ.ContMDiffAtProd.add {x : M₁} {φ ψ : Germ (𝓝 x) <| M₂ → F} {n : ℕ∞} :
+    φ.ContMDiffAtProd I₁ I₂ n → ψ.ContMDiffAtProd I₁ I₂ n → (φ + ψ).ContMDiffAtProd I₁ I₂ n :=
+  Germ.inductionOn φ fun _f hf => Germ.inductionOn ψ fun _g hg y => (hf y).add (hg y)
 
 theorem Filter.Germ.ContMDiffAtProd.smul {x : M₁} {φ : Germ (𝓝 x) <| M₂ → ℝ}
-    {ψ : Germ (𝓝 x) <| M₂ → F} {n : ℕ∞} (hφ : φ.ContMDiffAtProd I₁ I₂ n)
-    (hψ : ψ.ContMDiffAtProd I₁ I₂ n) : (φ • ψ).ContMDiffAtProd I₁ I₂ n :=
-  Germ.inductionOn φ (fun f hf => Germ.inductionOn ψ fun g hg y => (hf y).smul (hg y)) hφ hψ
+    {ψ : Germ (𝓝 x) <| M₂ → F} {n : ℕ∞} :
+    φ.ContMDiffAtProd I₁ I₂ n → ψ.ContMDiffAtProd I₁ I₂ n → (φ • ψ).ContMDiffAtProd I₁ I₂ n :=
+  Germ.inductionOn φ fun _f hf => Germ.inductionOn ψ fun _g hg y => (hf y).smul (hg y)
 
-theorem Filter.Germ.ContMDiffAt.smul_prod {x : M₁} {φ : Germ (𝓝 x) ℝ} {ψ : Germ (𝓝 x) <| M₂ → F}
-    {n : ℕ∞} (hφ : φ.ContMDiffAt I₁ n) (hψ : ψ.ContMDiffAtProd I₁ I₂ n) :
-    (φ • ψ).ContMDiffAtProd I₁ I₂ n :=
-  Germ.inductionOn φ
-    (fun f hf =>
-      Germ.inductionOn ψ fun g hg y =>
-        ContMDiffAt.smul (ContMDiffAt.comp _ hf contMDiffAt_fst) (hg y))
-    hφ hψ
+theorem Filter.Germ.ContMDiffAt.smul_prod {x : M₁} {φ : Germ (𝓝 x) ℝ} {ψ : Germ (𝓝 x) (M₂ → F)}
+    {n : ℕ∞} : φ.ContMDiffAt I₁ n → ψ.ContMDiffAtProd I₁ I₂ n → (φ • ψ).ContMDiffAtProd I₁ I₂ n :=
+  Germ.inductionOn φ fun _f hf => Germ.inductionOn ψ fun _g hg y =>
+    .smul (.comp _ hf contMDiffAt_fst) (hg y)
 
 theorem Filter.Germ.ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ∞}
     {f : ι → Germ (𝓝 x) (M₂ → F)} (h : ∀ i ∈ s, (f i).ContMDiffAtProd I₁ I₂ n) :
@@ -334,4 +320,3 @@ theorem Filter.Germ.ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ
   exact h.1.add (hs h.2)
 
 end
-
