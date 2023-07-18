@@ -12,12 +12,7 @@ open scoped Topology
 namespace Real
 
 theorem smoothTransition_projI {x : ℝ} : smoothTransition (projI x) = smoothTransition x :=
-  by
-  cases' le_total (0 : ℝ) x with hx hx
-  cases' le_total (1 : ℝ) x with h2x h2x
-  · rw [projI_eq_one.mpr h2x, smooth_transition.one_of_one_le h2x, smooth_transition.one]
-  · rw [projI_eq_self.mpr ⟨hx, h2x⟩]
-  · rw [projI_eq_zero.mpr hx, smooth_transition.zero_of_nonpos hx, smooth_transition.zero]
+  smoothTransition.projIcc
 
 end Real
 
@@ -46,30 +41,11 @@ theorem fderiv_comp {g : F → G} {f : E → F} (x : E) (hg : DifferentiableAt �
 
 theorem fderiv_prod_left {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun x => (x, y₀)) x₀ = ContinuousLinearMap.inl 𝕜 E F :=
-  by
-  refine' (differentiable_at_id.fderiv_prod (differentiableAt_const y₀)).trans _
-  rw [fderiv_id, fderiv_const]
-  rfl
+  ((hasFDerivAt_id _).prod (hasFDerivAt_const _ _)).fderiv
 
 theorem fderiv_prod_right {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun y => (x₀, y)) y₀ = ContinuousLinearMap.inr 𝕜 E F :=
-  by
-  refine' ((differentiableAt_const x₀).fderiv_prod differentiableAt_id).trans _
-  rw [fderiv_id, fderiv_const]
-  rfl
-
-theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableAt 𝕜 f p) :
-    fderiv 𝕜 f p =
-      fderiv 𝕜 (fun z : E × F => f (z.1, p.2)) p + fderiv 𝕜 (fun z : E × F => f (p.1, z.2)) p :=
-  by
-  rw [← @Prod.mk.eta _ _ p] at hf
-  rw [fderiv_comp p (by apply hf) (differentiable_at_fst.prod <| differentiableAt_const _),
-    fderiv_comp p (by apply hf) ((differentiableAt_const _).prod differentiableAt_snd), ←
-    ContinuousLinearMap.comp_add, differentiable_at_fst.fderiv_prod (differentiableAt_const _),
-    (differentiableAt_const _).fderiv_prod differentiableAt_snd, fderiv_fst, fderiv_snd,
-    fderiv_const, fderiv_const]
-  dsimp only [Pi.zero_apply]
-  rw [Prod.mk.eta, ContinuousLinearMap.fst_prod_zero_add_zero_prod_snd, ContinuousLinearMap.comp_id]
+  ((hasFDerivAt_const _ _).prod (hasFDerivAt_id _)).fderiv
 
 theorem HasFDerivAt.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
@@ -80,6 +56,17 @@ theorem HasFDerivAt.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
     HasFDerivAt (fun f => φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
   h.comp f₀ <| hasFDerivAt_prod_mk_right e₀ f₀
+
+theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableAt 𝕜 f p) :
+    fderiv 𝕜 f p =
+      fderiv 𝕜 (fun z : E × F => f (z.1, p.2)) p + fderiv 𝕜 (fun z : E × F => f (p.1, z.2)) p := by
+  have H₁ : fderiv 𝕜 (fun z : E × F => f (z.1, p.2)) p =
+      (fderiv 𝕜 f p).comp (.comp (.inl 𝕜 E F) (.fst 𝕜 E F)) :=
+    (hf.hasFDerivAt.comp _ (hasFDerivAt_fst.prod (hasFDerivAt_const _ _))).fderiv
+  have H₂ : fderiv 𝕜 (fun z : E × F => f (p.1, z.2)) p =
+      (fderiv 𝕜 f p).comp (.comp (.inr 𝕜 E F) (.snd 𝕜 E F)) :=
+    (hf.hasFDerivAt.comp _ ((hasFDerivAt_const _ _).prod hasFDerivAt_snd)).fderiv
+  rw [H₁, H₂, ← comp_add, comp_fst_add_comp_snd, coprod_inl_inr, comp_id]
 
 variable (𝕜)
 
@@ -112,10 +99,9 @@ theorem DifferentiableAt.hasFDerivAt_partial_fst {φ : E → F → G} {e₀ : E}
 
 theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
-    HasFDerivAt (fun f => φ e₀ f) (partialFDerivSnd 𝕜 φ e₀ f₀) f₀ :=
-  by
-  rw [fderiv_partial_snd h.has_fderiv_at]
-  exact h.has_fderiv_at.partial_snd
+    HasFDerivAt (fun f => φ e₀ f) (partialFDerivSnd 𝕜 φ e₀ f₀) f₀ := by
+  rw [fderiv_partial_snd h.hasFDerivAt]
+  exact h.hasFDerivAt.partial_snd
 
 theorem ContDiff.partial_fst {φ : E → F → G} {n : ℕ∞} (h : ContDiff 𝕜 n <| uncurry φ) (f₀ : F) :
     ContDiff 𝕜 n fun e => φ e f₀ :=
@@ -167,12 +153,12 @@ theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
   simp only [partialFDerivSnd_eq_smulRight, smulRight_apply, one_apply, one_smul]
 
 @[to_additive]
-theorem WithTop.le_mul_self {α : Type _} [CanonicallyOrderedMonoid α] (n m : α) :
+nonrec theorem WithTop.le_mul_self {α : Type _} [CanonicallyOrderedMonoid α] (n m : α) :
     (n : WithTop α) ≤ (m * n : α) :=
   WithTop.coe_le_coe.mpr le_mul_self
 
 @[to_additive]
-theorem WithTop.le_self_mul {α : Type _} [CanonicallyOrderedMonoid α] (n m : α) :
+nonrec theorem WithTop.le_self_mul {α : Type _} [CanonicallyOrderedMonoid α] (n m : α) :
     (n : WithTop α) ≤ (n * m : α) :=
   WithTop.coe_le_coe.mpr le_self_mul
 
@@ -218,13 +204,12 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [N
   [NormedSpace ℝ F]
 
 theorem ContDiff.lipschitzOnWith {s : Set E} {f : E → F} {n} (hf : ContDiff ℝ n f) (hn : 1 ≤ n)
-    (hs : Convex ℝ s) (hs' : IsCompact s) : ∃ K, LipschitzOnWith K f s :=
-  by
-  rcases(bddAbove_iff_exists_ge 0).mp (hs'.image (hf.continuous_fderiv hn).norm).bddAbove with
-    ⟨M, M_nonneg, hM⟩
+    (hs : Convex ℝ s) (hs' : IsCompact s) : ∃ K, LipschitzOnWith K f s := by
+  rcases (bddAbove_iff_exists_ge (0 : ℝ)).mp (hs'.image (hf.continuous_fderiv hn).norm).bddAbove
+    with ⟨M, M_nonneg, hM⟩
   simp_rw [ball_image_iff] at hM
   use ⟨M, M_nonneg⟩
-  exact Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x x_in => hf.differentiable hn x) hM hs
+  exact Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x _ => hf.differentiable hn x) hM hs
 
 end RealCalculus
 
