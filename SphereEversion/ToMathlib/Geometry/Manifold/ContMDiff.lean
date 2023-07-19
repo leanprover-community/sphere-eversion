@@ -13,7 +13,7 @@ variable {ι : Type _} {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {
 theorem contMDiffWithinAt_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n : ℕ∞)
     (s : Set M) : ContMDiffWithinAt I 𝓘(ℝ, F) n f s x :=
   (contMDiffWithinAt_const :
-        ContMDiffWithinAt I 𝓘(ℝ, F) n (fun x => (0 : F)) s x).congr_of_eventuallyEq
+        ContMDiffWithinAt I 𝓘(ℝ, F) n (fun _ => (0 : F)) s x).congr_of_eventuallyEq
     (eventually_nhdsWithin_of_eventually_nhds <| not_mem_tsupport_iff_eventuallyEq.mp hx)
     (image_eq_zero_of_nmem_tsupport hx)
 
