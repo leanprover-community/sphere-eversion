@@ -160,15 +160,15 @@ theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι
   · rw [← finsum_eq_sum, h₁]
   · simp_rw [Set.Finite.mem_toFinset]; exact hz
 
-theorem ReallyConvex.add_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁ z₂ : E}
+theorem ReallyConvex.add_mem (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁ z₂ : E}
     (hw₁ : 0 ≤ w₁) (hw₂ : 0 ≤ w₂) (hw : w₁ + w₂ = 1) (hz₁ : z₁ ∈ s) (hz₂ : z₂ ∈ s) :
     w₁ • z₁ + w₂ • z₂ ∈ s := by
-  suffices : (∑ i, @Bool.rec (fun _ => 𝕜) w₂ w₁ i • show E from @Bool.rec (fun _ => E) z₂ z₁ i) ∈ s
+  cases subsingleton_or_nontrivial 𝕜
+  · have := Module.subsingleton 𝕜 E
+    rwa [Subsingleton.mem_iff_nonempty] at hz₁ ⊢
+  suffices : ∑ b : Bool, cond b w₁ w₂ • cond b z₁ z₂ ∈ s
   · simpa using this
-  apply hs.sum_mem
-  · rintro (_ | _) - <;> assumption
-  · simp [hw]
-  · rintro (_ | _) - <;> assumption
+  apply hs.sum_mem <;> simp [*]
 
 theorem ReallyConvex.inter {t : Set E} (hs : ReallyConvex 𝕜 s) (ht : ReallyConvex 𝕜 t) :
     ReallyConvex 𝕜 (s ∩ t) := by
