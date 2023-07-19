@@ -7,7 +7,6 @@ Authors: Heather Macbeth
 -/
 import Mathlib.Analysis.InnerProductSpace.Dual
 import Mathlib.Analysis.InnerProductSpace.Orientation
-import Mathlib.Tactic.NormFin
 
 /-! # The cross-product on an oriented real inner product space of dimension three -/
 
@@ -18,7 +17,7 @@ open scoped RealInnerProductSpace
 
 open FiniteDimensional
 
-attribute [local instance] fact_finite_dimensional_of_finrank_eq_succ
+attribute [local instance] fact_finiteDimensional_of_finrank_eq_succ
 
 variable (E : Type _) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
@@ -28,23 +27,23 @@ private def to_dual [FiniteDimensional ℝ E] : E ≃ₗ[ℝ] E →ₗ[ℝ] ℝ 
 
 namespace Orientation
 
-variable {E} [Fact (finrank ℝ E = 3)] (ω : Orientation ℝ E (Fin 3))
+variable {E}
+variable [Fact (finrank ℝ E = 3)] (ω : Orientation ℝ E (Fin 3))
 
 /-- Linear map from `E` to `E →ₗ[ℝ] E` constructed from a 3-form `Ω` on `E` and an identification of
 `E` with its dual.  Effectively, the Hodge star operation.  (Under appropriate hypotheses it turns
 out that the image of this map is in `𝔰𝔬(E)`, the skew-symmetric operators, which can be identified
 with `Λ²E`.) -/
-def crossProduct : E →ₗ[ℝ] E →ₗ[ℝ] E :=
-  by
+def crossProduct : E →ₗ[ℝ] E →ₗ[ℝ] E := by
   let z : AlternatingMap ℝ E ℝ (Fin 0) ≃ₗ[ℝ] ℝ :=
-    alternating_map.const_linear_equiv_of_is_empty.symm
+    AlternatingMap.constLinearEquivOfIsEmpty.symm
   let y : AlternatingMap ℝ E ℝ (Fin 1) →ₗ[ℝ] E →ₗ[ℝ] ℝ :=
     LinearMap.llcomp ℝ E (AlternatingMap ℝ E ℝ (Fin 0)) ℝ z ∘ₗ AlternatingMap.curryLeftLinearMap
   let y' : AlternatingMap ℝ E ℝ (Fin 1) →ₗ[ℝ] E :=
     (LinearMap.llcomp ℝ (AlternatingMap ℝ E ℝ (Fin 1)) (E →ₗ[ℝ] ℝ) E (to_dual E).symm) y
   let u : AlternatingMap ℝ E ℝ (Fin 2) →ₗ[ℝ] E →ₗ[ℝ] E :=
     LinearMap.llcomp ℝ E (AlternatingMap ℝ E ℝ (Fin 1)) _ y' ∘ₗ AlternatingMap.curryLeftLinearMap
-  exact u ∘ₗ AlternatingMap.curryLeftLinearMap ω.volume_form
+  exact u ∘ₗ AlternatingMap.curryLeftLinearMap (n := 2) ω.volumeForm
 
 local infixl:100 "×₃" => ω.crossProduct
 
@@ -59,15 +58,13 @@ theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm 
     AlternatingMap.constLinearEquivOfIsEmpty_symm_apply, eq_self_iff_true,
     LinearMap.coe_toContinuousLinearMap', Matrix.zero_empty]
 
-theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 :=
-  by
-  rw [ω.inner_cross_product_apply u v u]
-  refine' ω.volume_form.map_eq_zero_of_eq ![u, v, u] _ (by norm_num : (0 : Fin 3) ≠ 2)
+theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 := by
+  rw [ω.inner_crossProduct_apply u v u]
+  refine' ω.volumeForm.map_eq_zero_of_eq ![u, v, u] _ (by norm_num : (0 : Fin 3) ≠ 2)
   simp
 
-theorem inner_crossProduct_apply_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, v⟫ = 0 :=
-  by
-  rw [ω.inner_cross_product_apply u v v]
+theorem inner_crossProduct_apply_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, v⟫ = 0 := by
+  rw [ω.inner_crossProduct_apply u v v]
   refine' ω.volume_form.map_eq_zero_of_eq ![u, v, v] _ (by norm_num : (1 : Fin 3) ≠ 2)
   simp
 
