@@ -73,7 +73,7 @@ def proj𝕊₁ : ℝ → 𝕊₁ :=
 theorem proj𝕊₁_add_int (t : ℝ) (k : ℤ) : proj𝕊₁ (t + k) = proj𝕊₁ t := by
   symm
   apply Quotient.sound
-  exact trans_one_rel_iff.mpr ⟨k, rfl⟩
+  exact transOne_rel_iff.mpr ⟨k, rfl⟩
 
 /-- The unique representative in the half-open interval `[0, 1)` for each coset of `ℤ` in `ℝ`,
 regarded as a map from the circle `𝕊₁ → ℝ`. -/
