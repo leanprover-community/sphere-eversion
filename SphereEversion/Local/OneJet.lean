@@ -65,8 +65,7 @@ instance : CoeFun (JetSec E F) fun S => E → F × (E →L[ℝ] F) :=
 theorem coe_apply (𝓕 : JetSec E F) (x : E) : 𝓕 x = (𝓕.f x, 𝓕.φ x) :=
   rfl
 
-theorem eq_iff {𝓕 𝓕' : JetSec E F} {x : E} : 𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
-  by
+theorem eq_iff {𝓕 𝓕' : JetSec E F} {x : E} : 𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x := by
   constructor
   · intro h
     exact ⟨congr_arg Prod.fst h, congr_arg Prod.snd h⟩
@@ -74,14 +73,12 @@ theorem eq_iff {𝓕 𝓕' : JetSec E F} {x : E} : 𝓕 x = 𝓕' x ↔ 𝓕.f x
     ext1
     exacts [h, h']
 
-theorem ext' {𝓕 𝓕' : JetSec E F} (h : ∀ x, 𝓕 x = 𝓕' x) : 𝓕 = 𝓕' :=
-  by
+theorem ext' {𝓕 𝓕' : JetSec E F} (h : ∀ x, 𝓕 x = 𝓕' x) : 𝓕 = 𝓕' := by
   ext : 2
   · exact congr_arg Prod.fst (h x)
   · ext1 x; exact congr_arg Prod.snd (h x)
 
 /-! ## Holonomic sections-/
-
 
 /-- A jet section `𝓕` is holonomic if its linear map part at `x`
 is the derivative of its function part at `x`. -/
