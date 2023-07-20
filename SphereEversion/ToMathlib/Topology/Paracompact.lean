@@ -23,7 +23,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     ⟨K.subset_interior_succ _ hx.1, mt (fun hx₃ => K.subset_interior_succ _ hx₃) hx.2⟩
   have hC : ∀ n, IsCompact (C n) := fun n => (K.isCompact _).diff isOpen_interior
   have hC' : (⋃ n, C n) = univ
-  · refine' Set.univ_subset_iff.mp fun x hx => mem_iUnion.mpr ⟨K'.find x, _⟩
+  · refine' Set.univ_subset_iff.mp fun x _ => mem_iUnion.mpr ⟨K'.find x, _⟩
     simpa only [K'.find_shiftr] using
       diff_subset_diff_right interior_subset (K'.shiftr.mem_diff_shiftr_find x)
   have hU : ∀ n, IsOpen (U n) := fun n =>
@@ -55,7 +55,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
   let s : Set (ι × ℝ) := ⋃ n, (f n).image (Pi.prod (i n) (r n))
   refine'
     ⟨s, countable_iUnion fun n => Finset.countable_toSet _, fun z hz => _,
-      Set.univ_subset_iff.mp fun x hx => _, fun x => _⟩
+      Set.univ_subset_iff.mp fun x _ => _, fun x => _⟩
   · simp only [Pi.prod, mem_iUnion, Finset.coe_image, mem_image, Finset.mem_coe,
       SetCoe.exists] at hz
     obtain ⟨n, x, hx, -, rfl⟩ := hz
@@ -70,15 +70,15 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
   · obtain ⟨n, hn⟩ := iUnion_eq_univ_iff.mp hC' x
     refine' ⟨U n, hU'' n x hn, _⟩
     let P : ι × ℝ → Prop := fun z => ((↿B) (z : ι × ℝ) ∩ U n).Nonempty
-    rw [(Equiv.Set.sep s P).symm.set_finite_iff]
-    simp only [s, P, Set.iUnion_inter, sep_eq_inter_setOf]
-    refine' Set.Finite.iUnion (fun m => Set.toFinite _) (hU' n) fun m hm => _
+    erw [(Equiv.Set.sep s P).symm.set_finite_iff]
+    simp only [Set.iUnion_inter, sep_eq_inter_setOf]
+    refine'  (hU' n).iUnion (fun m _ => Set.toFinite _) fun m hm => _
     rw [Set.eq_empty_iff_forall_not_mem]
     intro z
     simp only [Pi.prod, Finset.coe_image, mem_inter_iff, mem_image, Finset.mem_coe, SetCoe.exists,
       mem_setOf_eq, not_and, bex_imp, and_imp]
-    rintro x hx₁ hx₂ rfl
+    rintro x hx₁ - rfl
     rw [Set.not_nonempty_iff_eq_empty]
     have := Set.inter_subset_inter_left (U n) (h₂ m ⟨x, hx₁⟩)
-    rwa [set.not_nonempty_iff_eq_empty.mp hm, Set.subset_empty_iff] at this
+    rwa [Set.not_nonempty_iff_eq_empty.mp hm, Set.subset_empty_iff] at this
 
