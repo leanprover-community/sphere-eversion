@@ -95,25 +95,14 @@ theorem SmoothPartitionOfUnity.eventually_finsupport_subset {s : Set M}
   apply (ρ.eventually_fintsupport_subset x).mono
   exact fun y hy => (ρ.finsupport_subset_fintsupport y).trans hy
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:336:4: warning: unsupported (TODO): `[tacs] -/
-/-- Try to prove something is in the interior of a set by using this set is `univ`. -/
-unsafe def tactic.mem_interior_univ : tactic Unit :=
-  sorry
-
-/- ./././Mathport/Syntax/Translate/Tactic/Builtin.lean:69:18: unsupported non-interactive tactic tactic.mem_interior_univ -/
 theorem SmoothPartitionOfUnity.sum_germ {s : Set M} (ρ : SmoothPartitionOfUnity ι I M s) {x : M}
-    (hx : x ∈ interior s := by
-      run_tac
-        tactic.mem_interior_univ) :
-    ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) = 1 :=
-  by
+    (hx : x ∈ interior s := by simp) :
+    ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) = 1 := by
   have : ∀ᶠ y in 𝓝 x, y ∈ interior s := isOpen_interior.eventually_mem hx
-  have : ∀ᶠ y in 𝓝 x, (⇑(∑ i : ι in ρ.fintsupport x, ρ i)) y = 1 :=
-    by
-    apply ((ρ.eventually_finsupport_subset x).And this).mono
-    rintro y ⟨hy, hy'⟩
+  have : ∀ᶠ y in 𝓝 x, (⇑(∑ i : ι in ρ.fintsupport x, ρ i)) y = 1 := by
+    filter_upwards [ρ.eventually_finsupport_subset x, this] with y hy hy'
     rw [SmoothMap.coe_sum, Finset.sum_apply]
-    apply ρ.to_partition_of_unity.sum_finsupport' (interior_subset hy') hy
+    apply ρ.toPartitionOfUnity.sum_finsupport' (interior_subset hy') hy
   rw [← smoothGerm.coe_sum]
   exact smoothGerm.coe_eq_coe _ _ 1 this
 
@@ -121,34 +110,28 @@ def SmoothPartitionOfUnity.combine {s : Set M} (ρ : SmoothPartitionOfUnity ι I
     (x : M) : F :=
   ∑ᶠ i, ρ i x • φ i x
 
-attribute [simps] SmoothPartitionOfUnity.toPartitionOfUnity
+-- TODO: move to Mathlib attribute [simps] SmoothPartitionOfUnity.toPartitionOfUnity
 
-/- ./././Mathport/Syntax/Translate/Tactic/Builtin.lean:69:18: unsupported non-interactive tactic tactic.mem_interior_univ -/
 theorem SmoothPartitionOfUnity.germ_combine_mem {s : Set M} (ρ : SmoothPartitionOfUnity ι I M s)
     (φ : ι → M → F) {x : M}
-    (hx : x ∈ interior s := by
-      run_tac
-        tactic.mem_interior_univ) :
+    (hx : x ∈ interior s := by simp) :
     (ρ.combine φ : Germ (𝓝 x) F) ∈
-      reallyConvexHull (smoothGerm I x) ((fun i => (φ i : Germ (𝓝 x) F)) '' ρ.fintsupport x) :=
-  by
+      reallyConvexHull (smoothGerm I x) ((fun i => (φ i : Germ (𝓝 x) F)) '' ρ.fintsupport x) := by
   change x ∈ interior s at hx
-  have :
-    (ρ.combine φ : germ (𝓝 x) F) =
-      ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) • (φ i : germ (𝓝 x) F) :=
-    by
-    suffices (ρ.combine φ : germ (𝓝 x) F) = ↑(∑ i in ρ.fintsupport x, ((ρ i : M → ℝ) • φ i : M → F))
+  have : (ρ.combine φ : Germ (𝓝 x) F) =
+      ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) • (φ i : Germ (𝓝 x) F) := by
+    suffices (ρ.combine φ : Germ (𝓝 x) F) = ↑(∑ i in ρ.fintsupport x, ((ρ i : M → ℝ) • φ i : M → F))
       by rw [this, Germ.coe_sum]; rfl
-    rw [germ.coe_eq]
+    rw [Germ.coe_eq]
     filter_upwards [ρ.eventually_finsupport_subset x] with x' hx'
     simp_rw [SmoothPartitionOfUnity.combine, Finset.sum_apply, Pi.smul_apply']
     rw [finsum_eq_sum_of_support_subset]
     refine' Subset.trans _ (Finset.coe_subset.mpr hx')
-    rw [SmoothPartitionOfUnity.finsupport, PartitionOfUnity.finsupport, finite.coe_to_finset]
+    rw [SmoothPartitionOfUnity.finsupport, PartitionOfUnity.finsupport, Finite.coe_toFinset]
     apply support_smul_subset_left
   rw [this]
   apply sum_mem_reallyConvexHull
-  · intro i hi
+  · intro i _
     apply eventually_of_forall
     apply ρ.nonneg
   · apply ρ.sum_germ hx
@@ -158,4 +141,3 @@ theorem SmoothPartitionOfUnity.germ_combine_mem {s : Set M} (ρ : SmoothPartitio
 end
 
 end
-
