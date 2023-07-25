@@ -55,7 +55,7 @@ theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃L[ℝ] F) :
     conv_rhs => rw [← L.apply_symm_apply x]
     exact L.toHomeomorph.image_connectedComponentIn hx
   rw [← this]
-  refine' (L.toLinearEquiv.toLinearMap.convexHull_image _).trans _
+  refine' (L.toLinearMap.convexHull_image _).trans _
   rw [h (L.symm x) hx, image_univ]
   exact L.surjective.range_eq
 
@@ -69,8 +69,8 @@ open scoped Pointwise
 /-- Translating a ample set is ample.
 We basically mimic `ample_set.image`. We could prove the common generalization using
 continuous affine equivalences -/
-theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} : AmpleSet (y +ᵥ s) :=
-  by
+theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
+    AmpleSet (y +ᵥ s) := by
   intro x hx
   simp_rw [mem_vadd_set] at hx
   obtain ⟨x, hx, rfl⟩ := hx
@@ -82,7 +82,6 @@ theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} : A
   exact (AffineEquiv.toEquiv _).range_eq_univ
 
 /-! ## Trivial examples -/
-
 
 /-- A whole vector space is ample. -/
 theorem ampleSet_univ {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] :
@@ -213,20 +212,12 @@ theorem ample_of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.rank 
   rw [E.connectedComponentIn_eq_self_of_two_le_codim hcodim hx, eq_univ_iff_forall]
   intro y
   by_cases h : y ∈ E
-  · rcases E.exists_isCompl with ⟨E', hE'⟩
-    rw [(E.quotientEquivOfIsCompl E' hE').rank_eq] at hcodim
-    have hcodim' : 0 < Module.rank ℝ E' := lt_of_lt_of_le (by norm_num) hcodim
-    rw [rank_pos_iff_exists_ne_zero] at hcodim'
-    rcases hcodim' with ⟨z, hz⟩
-    have : y ∈ [y + -z -[ℝ] y + z] := by
-      rw [← sub_eq_add_neg]
-      exact mem_segment_sub_add y z
-    refine' (convex_convexHull ℝ (Eᶜ : Set F)).segment_subset _ _ this <;>
-              refine' subset_convexHull ℝ (Eᶜ : Set F) _ <;>
-            change _ ∉ E <;>
-          rw [Submodule.add_mem_iff_right _ h] <;>
-        try rw [Submodule.neg_mem_iff] <;>
-      exact mt (Submodule.eq_zero_of_coe_mem_of_disjoint hE'.symm.disjoint) hz
+  · obtain ⟨z, hz⟩ : ∃ z, z ∉ E
+    · rw [← not_forall, ← Submodule.eq_top_iff']
+      rintro rfl
+      simp [rank_zero_iff.2 inferInstance] at hcodim
+    refine segment_subset_convexHull ?_ ?_ (mem_segment_sub_add y z) <;>
+      simpa [sub_eq_add_neg, Submodule.add_mem_iff_right _ h]
   · exact subset_convexHull ℝ (Eᶜ : Set F) h
 
 end Lemma213
