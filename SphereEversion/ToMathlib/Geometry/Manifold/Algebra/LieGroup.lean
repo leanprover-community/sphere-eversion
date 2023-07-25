@@ -21,8 +21,7 @@ theorem ContMDiffWithinAt.sum {ι : Type _} {f : ι → M → F} {J : Finset ι}
 
 theorem ContMDiffAt.sum {ι : Type _} {f : ι → M → F} {J : Finset ι} {n : ℕ∞} {x₀ : M}
     (h : ∀ i ∈ J, ContMDiffAt I 𝓘(ℝ, F) n (f i) x₀) :
-    ContMDiffAt I 𝓘(ℝ, F) n (fun x => ∑ i in J, f i x) x₀ :=
-  by
+    ContMDiffAt I 𝓘(ℝ, F) n (fun x => ∑ i in J, f i x) x₀ := by
   simp only [← contMDiffWithinAt_univ] at *
   exact ContMDiffWithinAt.sum h
 
@@ -34,8 +33,8 @@ theorem contMDiffWithinAt_finsum {ι : Type _} {f : ι → M → F}
     (lf : LocallyFinite fun i => support <| f i) {n : ℕ∞} {s : Set M} {x₀ : M}
     (h : ∀ i, ContMDiffWithinAt I 𝓘(ℝ, F) n (f i) s x₀) :
     ContMDiffWithinAt I 𝓘(ℝ, F) n (fun x => ∑ᶠ i, f i x) s x₀ :=
-  let ⟨I, hI⟩ := finsum_eventually_eq_sum lf x₀
-  ContMDiffWithinAt.congr_of_eventuallyEq (ContMDiffWithinAt.sum fun i hi => h i)
+  let ⟨_I, hI⟩ := finsum_eventually_eq_sum lf x₀
+  ContMDiffWithinAt.congr_of_eventuallyEq (ContMDiffWithinAt.sum fun i _hi => h i)
     (eventually_nhdsWithin_of_eventually_nhds hI) hI.self_of_nhds
 
 theorem contMDiffAt_finsum {ι : Type _} {f : ι → M → F} (lf : LocallyFinite fun i => support <| f i)

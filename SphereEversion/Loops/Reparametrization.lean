@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.MeasureTheory.Integral.Periodic
 import SphereEversion.Loops.Surrounding
 import SphereEversion.Loops.DeltaMollifier

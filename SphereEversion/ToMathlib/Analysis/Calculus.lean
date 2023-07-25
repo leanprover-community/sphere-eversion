@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Calculus.ContDiff
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Algebra.Module

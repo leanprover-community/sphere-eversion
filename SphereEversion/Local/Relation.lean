@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Calculus.BumpFunctionInner
+import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Topology.MetricSpace.HausdorffDistance
 import SphereEversion.Local.OneJet
 
