@@ -66,7 +66,7 @@ theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
   rw [Nontrivial.reallyConvex_iff]
   rintro w w_pos w_supp w_sum
   have : (support w).Finite := support_finite_of_finsum_eq_one w_sum
-  let fin_supp := this.to_finset
+  let fin_supp := this.toFinset
   have : (support fun i : (𝓝 x).Germ F => w i • i) ⊆ fin_supp := by rw [Set.Finite.coe_toFinset];
     exact support_smul_subset_left w id
   rw [finsum_eq_sum_of_support_subset _ this]
@@ -78,12 +78,9 @@ theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
 
 theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex ℝ {y | P x y}) {n : ℕ∞}
     (hP' : ∀ x : M, ∃ U ∈ 𝓝 x, ∃ f : M → F, 𝓒_on n f U ∧ ∀ x ∈ U, P x (f x)) :
-    ∃ f : M → F, 𝓒 n f ∧ ∀ x, P x (f x) :=
-  by
+    ∃ f : M → F, 𝓒 n f ∧ ∀ x, P x (f x) := by
   let PP : (Σ x : M, germ (𝓝 x) F) → Prop := fun p => p.2.ContMDiffAt I n ∧ P p.1 p.2.value
-  have hPP : ∀ x, ReallyConvex (smoothGerm I x) {φ | PP ⟨x, φ⟩} :=
-    by
-    intro x
+  have hPP : ∀ x, ReallyConvex (smoothGerm I x) {φ | PP ⟨x, φ⟩} := fun x ↦ by
     apply ReallyConvex.inter
     apply reallyConvex_contMDiffAt
     dsimp only
@@ -93,9 +90,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
     apply ReallyConvex.preimageₛₗ
     rw [reallyConvex_iff_convex]
     apply hP
-  have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ :=
-    by
-    intro x
+  have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ := fun x ↦ by
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f
     filter_upwards [eventually_mem_nhds.mpr U_in] with y hy
@@ -105,8 +100,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
 
 theorem exists_contDiff_of_convex {P : E → F → Prop} (hP : ∀ x, Convex ℝ {y | P x y}) {n : ℕ∞}
     (hP' : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ f : E → F, ContDiffOn ℝ n f U ∧ ∀ x ∈ U, P x (f x)) :
-    ∃ f : E → F, ContDiff ℝ n f ∧ ∀ x, P x (f x) :=
-  by
+    ∃ f : E → F, ContDiff ℝ n f ∧ ∀ x, P x (f x) := by
   simp_rw [← contMDiff_iff_contDiff]
   simp_rw [← contMDiffOn_iff_contDiffOn] at hP' ⊢
   exact exists_contMDiff_of_convex hP hP'
@@ -173,17 +167,12 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
 @[main_declaration]
 theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP : ∀ x, Convex ℝ {f | P x f})
     {n : ℕ∞}
-    (hP' :
-      ∀ x : M₁,
-        ∃ U ∈ 𝓝 x,
-          ∃ f : M₁ → M₂ → F, 𝓒_on n (uncurry f) (U ×ˢ (univ : Set M₂)) ∧ ∀ y ∈ U, P y (f y)) :
-    ∃ f : M₁ → M₂ → F, 𝓒 n (uncurry f) ∧ ∀ x, P x (f x) :=
-  by
+    (hP' : ∀ x : M₁, ∃ U ∈ 𝓝 x, ∃ f : M₁ → M₂ → F,
+      𝓒_on n (uncurry f) (U ×ˢ (univ : Set M₂)) ∧ ∀ y ∈ U, P y (f y)) :
+    ∃ f : M₁ → M₂ → F, 𝓒 n (uncurry f) ∧ ∀ x, P x (f x) := by
   let PP : (Σ x : M₁, germ (𝓝 x) (M₂ → F)) → Prop := fun p =>
     p.2.ContMDiffAtProd I₁ I₂ n ∧ P p.1 p.2.value
-  have hPP : ∀ x, ReallyConvex (smoothGerm I₁ x) {φ | PP ⟨x, φ⟩} :=
-    by
-    intro x
+  have hPP : ∀ x, ReallyConvex (smoothGerm I₁ x) {φ | PP ⟨x, φ⟩} := fun x ↦ by
     apply ReallyConvex.inter
     apply reallyConvex_contMDiffAtProd
     dsimp only
@@ -193,9 +182,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP :
     apply ReallyConvex.preimageₛₗ
     rw [reallyConvex_iff_convex]
     apply hP
-  have hPP' : ∀ x, ∃ f : M₁ → M₂ → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ :=
-    by
-    intro x
+  have hPP' : ∀ x, ∃ f : M₁ → M₂ → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ := fun x ↦ by
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f
     filter_upwards [eventually_mem_nhds.mpr U_in] with y hy
@@ -203,16 +190,11 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP :
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩
   exact ⟨f, fun ⟨x, y⟩ => (hf x).1 y, fun x => (hf x).2⟩
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 theorem exists_contDiff_of_convex₂ {P : E₁ → (E₂ → F) → Prop} (hP : ∀ x, Convex ℝ {f | P x f})
     {n : ℕ∞}
-    (hP' :
-      ∀ x : E₁,
-        ∃ U ∈ 𝓝 x,
-          ∃ f : E₁ → E₂ → F,
-            ContDiffOn ℝ n (uncurry f) (U ×ˢ (univ : Set E₂)) ∧ ∀ y ∈ U, P y (f y)) :
-    ∃ f : E₁ → E₂ → F, ContDiff ℝ n (uncurry f) ∧ ∀ x, P x (f x) :=
-  by
+    (hP' : ∀ x : E₁, ∃ U ∈ 𝓝 x, ∃ f : E₁ → E₂ → F,
+      ContDiffOn ℝ n (uncurry f) (U ×ˢ (univ : Set E₂)) ∧ ∀ y ∈ U, P y (f y)) :
+    ∃ f : E₁ → E₂ → F, ContDiff ℝ n (uncurry f) ∧ ∀ x, P x (f x) := by
   simp_rw [← contMDiffOn_iff_contDiffOn, modelWithCornersSelf_prod] at hP'
   simp_rw [← contMDiff_iff_contDiff, modelWithCornersSelf_prod]
   rw [← chartedSpaceSelf_prod] at hP' ⊢
@@ -232,8 +214,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensio
 open TopologicalSpace
 
 example {f : E → ℝ} (h : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ ε : ℝ, ∀ x' ∈ U, 0 < ε ∧ ε ≤ f x') :
-    ∃ f' : E → ℝ, ContDiff ℝ ⊤ f' ∧ ∀ x, 0 < f' x ∧ f' x ≤ f x :=
-  by
+    ∃ f' : E → ℝ, ContDiff ℝ ⊤ f' ∧ ∀ x, 0 < f' x ∧ f' x ≤ f x := by
   let P : E → ℝ → Prop := fun x t => 0 < t ∧ t ≤ f x
   have hP : ∀ x, Convex ℝ {y | P x y} := fun x => convex_Ioc _ _
   apply exists_contDiff_of_convex hP
@@ -265,8 +246,7 @@ theorem convex_setOf_imp_eq (P : Prop) (y : F) : Convex ℝ {x : F | P → x = y
 theorem exists_smooth_and_eqOn {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : Continuous f)
     (hε : Continuous ε) (h2ε : ∀ x, 0 < ε x) {s : Set E} (hs : IsClosed s)
     (hfs : ∃ U ∈ 𝓝ˢ s, ContDiffOn ℝ n f U) :
-    ∃ f' : E → F, ContDiff ℝ n f' ∧ (∀ x, dist (f' x) (f x) < ε x) ∧ EqOn f' f s :=
-  by
+    ∃ f' : E → F, ContDiff ℝ n f' ∧ (∀ x, dist (f' x) (f x) < ε x) ∧ EqOn f' f s := by
   have h0 : ∀ x, dist (f x) (f x) < ε x := fun x => by simp_rw [dist_self, h2ε]
   let P : E → F → Prop := fun x t => dist t (f x) < ε x ∧ (x ∈ s → t = f x)
   have hP : ∀ x, Convex ℝ {y | P x y} := fun x =>
@@ -279,9 +259,8 @@ theorem exists_smooth_and_eqOn {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf :
     · refine' ⟨U, mem_nhdsSet_iff_forall.mp hU x hx, _⟩
       refine' ⟨f, hfU, fun y _ => ⟨h0 y, fun _ => rfl⟩⟩
     · have : IsOpen {y : E | dist (f x) (f y) < ε y} := isOpen_lt (continuous_const.dist hf) hε
-      exact
-        ⟨_, (this.sdiff hs).mem_nhds ⟨h0 x, hx⟩, fun _ => f x, contDiffOn_const, fun y hy =>
-          ⟨hy.1, fun h2y => (hy.2 h2y).elim⟩⟩
+      exact ⟨_, (this.sdiff hs).mem_nhds ⟨h0 x, hx⟩, fun _ => f x, contDiffOn_const, fun y hy =>
+        ⟨hy.1, fun h2y => (hy.2 h2y).elim⟩⟩
 
 end
 
