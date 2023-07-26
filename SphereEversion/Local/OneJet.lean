@@ -45,7 +45,8 @@ variable (P : Type _) [NormedAddCommGroup P] [NormedSpace ℝ P]
 /-- The space of 1-jets of maps from `E` to `F`. -/
 def OneJet :=
   E × F × (E →L[ℝ] F)
-deriving MetricSpace
+
+instance : MetricSpace (OneJet E F) := inferInstanceAs (MetricSpace (E × F × (E →L[ℝ] F)))
 
 /-- A smooth section of J¹(E, F) → E. -/
 @[ext]
@@ -59,24 +60,23 @@ namespace JetSec
 
 variable {E F}
 
-instance : CoeFun (JetSec E F) fun S => E → F × (E →L[ℝ] F) :=
-  ⟨fun 𝓕 => fun x => (𝓕.f x, 𝓕.φ x)⟩
+instance : FunLike (JetSec E F) E fun _ ↦ F × (E →L[ℝ] F) where
+  coe 𝓕 := fun x => (𝓕.f x, 𝓕.φ x)
+  coe_injective' := by
+    rintro ⟨⟩ ⟨⟩ h; congr
+    exacts [congr_arg (Prod.fst ∘ ·) h, congr_arg (Prod.snd ∘ ·) h]
+
+@[simp]
+theorem mk_apply (f : E → F) (f_diff φ φ_diff) (x : E) : mk f f_diff φ φ_diff x = (f x, φ x) := rfl
+
+theorem eq_iff {𝓕 𝓕' : JetSec E F} {x : E} : 𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x :=
+  Prod.ext_iff
 
 theorem coe_apply (𝓕 : JetSec E F) (x : E) : 𝓕 x = (𝓕.f x, 𝓕.φ x) :=
   rfl
 
-theorem eq_iff {𝓕 𝓕' : JetSec E F} {x : E} : 𝓕 x = 𝓕' x ↔ 𝓕.f x = 𝓕'.f x ∧ 𝓕.φ x = 𝓕'.φ x := by
-  constructor
-  · intro h
-    exact ⟨congr_arg Prod.fst h, congr_arg Prod.snd h⟩
-  · rintro ⟨h, h'⟩
-    ext1
-    exacts [h, h']
-
-theorem ext' {𝓕 𝓕' : JetSec E F} (h : ∀ x, 𝓕 x = 𝓕' x) : 𝓕 = 𝓕' := by
-  ext : 2
-  · exact congr_arg Prod.fst (h x)
-  · ext1 x; exact congr_arg Prod.snd (h x)
+theorem ext' {𝓕 𝓕' : JetSec E F} (h : ∀ x, 𝓕 x = 𝓕' x) : 𝓕 = 𝓕' :=
+  FunLike.ext _ _ h
 
 /-! ## Holonomic sections-/
 
@@ -86,8 +86,7 @@ def IsHolonomicAt (𝓕 : JetSec E F) (x : E) : Prop :=
   D 𝓕.f x = 𝓕.φ x
 
 theorem IsHolonomicAt.congr {𝓕 𝓕' : JetSec E F} {x} (h : IsHolonomicAt 𝓕 x) (h' : 𝓕 =ᶠ[𝓝 x] 𝓕') :
-    IsHolonomicAt 𝓕' x :=
-  by
+    IsHolonomicAt 𝓕' x := by
   have h'' : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
     apply h'.mono
     dsimp only
@@ -104,8 +103,7 @@ def IsPartHolonomicAt (𝓕 : JetSec E F) (E' : Submodule ℝ E) (x : E) :=
 
 theorem Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E F} {s : Set E}
     (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) (E' : Submodule ℝ E) :
-    ∀ᶠ x near s, 𝓕.IsPartHolonomicAt E' x ↔ 𝓕'.IsPartHolonomicAt E' x :=
-  by
+    ∀ᶠ x near s, 𝓕.IsPartHolonomicAt E' x ↔ 𝓕'.IsPartHolonomicAt E' x := by
   apply h.eventually_nhdsSet.mono
   intro x hx
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
@@ -118,24 +116,21 @@ theorem Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E F} {s :
 
 theorem IsPartHolonomicAt.sup (𝓕 : JetSec E F) {E' E'' : Submodule ℝ E} {x : E}
     (h' : 𝓕.IsPartHolonomicAt E' x) (h'' : 𝓕.IsPartHolonomicAt E'' x) :
-    𝓕.IsPartHolonomicAt (E' ⊔ E'') x := fun v : E => LinearMap.eq_on_sup h' h''
+    𝓕.IsPartHolonomicAt (E' ⊔ E'') x := fun _ : E => LinearMap.eq_on_sup h' h''
 
-theorem is_part_holonomic_top {𝓕 : JetSec E F} {x : E} :
-    IsPartHolonomicAt 𝓕 ⊤ x ↔ IsHolonomicAt 𝓕 x :=
-  by
-  simp only [is_part_holonomic_at, Submodule.mem_top, forall_true_left, is_holonomic_at]
-  rw [← funext_iff, continuous_linear_map.coe_fn_injective.eq_iff]
+theorem isPartHolonomicAt_top {𝓕 : JetSec E F} {x : E} :
+    IsPartHolonomicAt 𝓕 ⊤ x ↔ IsHolonomicAt 𝓕 x := by
+  simp only [IsPartHolonomicAt, Submodule.mem_top, forall_true_left, IsHolonomicAt]
+  simp only [← funext_iff, FunLike.ext_iff]
 
 @[simp]
-theorem is_part_holonomic_bot (𝓕 : JetSec E F) : IsPartHolonomicAt 𝓕 ⊥ = fun x => True :=
-  by
+theorem isPartHolonomicAt_bot (𝓕 : JetSec E F) : IsPartHolonomicAt 𝓕 ⊥ = fun _ => True := by
   ext x
-  simp only [is_part_holonomic_at, Submodule.mem_bot, forall_eq, map_zero, eq_self_iff_true]
+  simp only [IsPartHolonomicAt, Submodule.mem_bot, forall_eq, map_zero, eq_self_iff_true]
 
 end JetSec
 
 /-! ## Homotopies of sections -/
-
 
 section HtpyJetSec
 
@@ -153,14 +148,30 @@ def HtpyJetSec :=
 
 variable {E F P}
 
-instance : CoeFun (FamilyJetSec E F P) fun S => P → JetSec E F :=
-  ⟨fun S t =>
+namespace FamilyJetSec
+
+instance : FunLike (FamilyJetSec E F P) P fun _ => JetSec E F where
+  coe S t :=
     { f := S.f t
       f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
       φ := S.φ t
-      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }⟩
+      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }
+  coe_injective' := by
+    rintro ⟨⟩ ⟨⟩ h
+    simp only [funext_iff, FunLike.ext_iff, JetSec.mk_apply, Prod.ext_iff] at h
+    congr <;> ext <;> simp [h]
 
-namespace FamilyJetSec
+@[simp] theorem mk_apply_apply (f : P → E → F) (f_diff φ φ_diff t x) :
+    mk f f_diff φ φ_diff t x = (f t x, φ t x) :=
+  rfl
+
+@[simp] theorem mk_apply_f (f : P → E → F) (f_diff φ φ_diff t) :
+    (mk f f_diff φ φ_diff t).f = f t :=
+  rfl
+
+@[simp] theorem mk_apply_φ (f : P → E → F) (f_diff φ φ_diff t) :
+    (mk f f_diff φ φ_diff t).φ = φ t :=
+  rfl
 
 theorem contDiff_f (𝓕 : FamilyJetSec E F P) {n : ℕ∞} : 𝒞 n ↿𝓕.f :=
   𝓕.f_diff.of_le le_top
@@ -173,11 +184,10 @@ end FamilyJetSec
 /-- The constant homotopy of formal solutions at a given formal solution. It will be used
 as junk value for constructions of formal homotopies that need additional assumptions and also
 for trivial induction initialization. -/
-def JetSec.constHtpy (𝓕 : JetSec E F) : HtpyJetSec E F
-    where
-  f t := 𝓕.f
+def JetSec.constHtpy (𝓕 : JetSec E F) : HtpyJetSec E F where
+  f _ := 𝓕.f
   f_diff := 𝓕.f_diff.snd'
-  φ t := 𝓕.φ
+  φ _ := 𝓕.φ
   φ_diff := 𝓕.φ_diff.snd'
 
 @[simp]
@@ -200,15 +210,13 @@ theorem smoothStep.smooth : 𝒞 ∞ smoothStep :=
   smoothTransition.contDiff.comp <| (contDiff_id.const_smul (2 : ℝ)).sub contDiff_const
 
 @[simp]
-theorem smoothStep.zero : smoothStep 0 = 0 :=
-  by
-  apply smooth_transition.zero_of_nonpos
+theorem smoothStep.zero : smoothStep 0 = 0 := by
+  apply smoothTransition.zero_of_nonpos
   norm_num
 
 @[simp]
-theorem smoothStep.one : smoothStep 1 = 1 :=
-  by
-  apply smooth_transition.one_of_one_le
+theorem smoothStep.one : smoothStep 1 = 1 := by
+  apply smoothTransition.one_of_one_le
   norm_num
 
 theorem smoothStep.mem (t : ℝ) : smoothStep t ∈ I :=
@@ -217,47 +225,28 @@ theorem smoothStep.mem (t : ℝ) : smoothStep t ∈ I :=
 theorem smoothStep.abs_le (t : ℝ) : |smoothStep t| ≤ 1 :=
   abs_le.mpr ⟨by linarith [(smoothStep.mem t).1], smoothTransition.le_one _⟩
 
-theorem smoothStep.of_lt {t : ℝ} (h : t < 1 / 4) : smoothStep t = 0 :=
-  by
-  apply smooth_transition.zero_of_nonpos
+theorem smoothStep.of_lt {t : ℝ} (h : t < 1 / 4) : smoothStep t = 0 := by
+  apply smoothTransition.zero_of_nonpos
   linarith
 
 -- unused
-theorem smoothStep.pos_of_gt {t : ℝ} (h : 1 / 4 < t) : 0 < smoothStep t :=
-  by
-  apply smooth_transition.pos_of_pos
+theorem smoothStep.pos_of_gt {t : ℝ} (h : 1 / 4 < t) : 0 < smoothStep t := by
+  apply smoothTransition.pos_of_pos
   linarith
 
-theorem smoothStep.of_gt {t : ℝ} (h : 3 / 4 < t) : smoothStep t = 1 :=
-  by
-  apply smooth_transition.one_of_one_le
+theorem smoothStep.of_gt {t : ℝ} (h : 3 / 4 < t) : smoothStep t = 1 := by
+  apply smoothTransition.one_of_one_le
   linarith
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg : 𝒞 ∞ ↿g) (hfg : f 1 = g 0) :
-    𝒞 ∞
-      ↿(fun t x => if t ≤ 1 / 2 then f (smoothStep <| 2 * t) x else g (smoothStep <| 2 * t - 1) x :
-          ℝ → E → F) :=
-  by
-  have s₁ : 𝒞 ∞ fun p : ℝ × E => (smoothStep <| 2 * p.1, p.2) :=
-    by
-    change 𝒞 ∞ (Prod.map smoothStep id ∘ fun p : ℝ × E => (2 * p.1, p.2))
-    apply (smooth_step.smooth.prod_map contDiff_id).comp
-    apply ContDiff.prod
-    apply cont_diff_const.mul contDiff_fst
-    apply contDiff_snd
+    𝒞 ∞ ↿(fun t x => if t ≤ 1 / 2 then f (smoothStep <| 2 * t) x
+      else g (smoothStep <| 2 * t - 1) x : ℝ → E → F) := by
+  have s₁ : 𝒞 ∞ (fun p => (smoothStep (2 * p.1), p.2) : ℝ × E → ℝ × E) :=
+    (smoothStep.smooth.comp (contDiff_const.mul contDiff_id)).prod_map contDiff_id
   replace hf := hf.comp s₁
-  have s₂ : 𝒞 ∞ fun p : ℝ × E => (smoothStep <| 2 * p.1 - 1, p.2) :=
-    by
-    change 𝒞 ∞ (Prod.map smoothStep id ∘ fun p : ℝ × E => (2 * p.1 - 1, p.2))
-    apply (smooth_step.smooth.prod_map contDiff_id).comp
-    apply ContDiff.prod
-    apply ContDiff.sub
-    apply cont_diff_const.mul contDiff_fst
-    apply contDiff_const
-    apply contDiff_snd
+  have s₂ : 𝒞 ∞ (fun p => (smoothStep <| 2 * p.1 - 1, p.2) : ℝ × E → ℝ × E) :=
+    (smoothStep.smooth.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)).prod_map
+      contDiff_id
   replace hg := hg.comp s₂
   rw [contDiff_iff_contDiffAt] at *
   rintro ⟨t₀, x₀⟩
@@ -289,15 +278,14 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
       prod_mem_nhds_iff.mpr ⟨Ioi_mem_nhds ht, univ_mem⟩
     filter_upwards [this] with p hp
     cases' p with t x
-    replace hp : ¬t ≤ 1 / 2 := by push_neg <;> exact (prod_mk_mem_set_prod_eq.mp hp).1
+    replace hp : ¬t ≤ 1 / 2 := by push_neg; exact (prod_mk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     rw [if_neg hp]
     rfl
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
 a smooth step function in order to keep smoothness with respect to the time parameter. -/
-def HtpyJetSec.comp (𝓕 𝓖 : HtpyJetSec E F) (h : 𝓕 1 = 𝓖 0) : HtpyJetSec E F
-    where
+def HtpyJetSec.comp (𝓕 𝓖 : HtpyJetSec E F) (h : 𝓕 1 = 𝓖 0) : HtpyJetSec E F where
   f t x := if t ≤ 1 / 2 then 𝓕.f (smoothStep <| 2 * t) x else 𝓖.f (smoothStep <| 2 * t - 1) x
   f_diff := htpy_jet_sec_comp_aux 𝓕.f_diff 𝓖.f_diff (show (𝓕 1).f = (𝓖 0).f by rw [h])
   φ t x := if t ≤ 1 / 2 then 𝓕.φ (smoothStep <| 2 * t) x else 𝓖.φ (smoothStep <| 2 * t - 1) x
@@ -305,24 +293,13 @@ def HtpyJetSec.comp (𝓕 𝓖 : HtpyJetSec E F) (h : 𝓕 1 = 𝓖 0) : HtpyJet
 
 @[simp]
 theorem HtpyJetSec.comp_of_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht : t ≤ 1 / 2) :
-    𝓕.comp 𝓖 h t = 𝓕 (smoothStep <| 2 * t) :=
-  by
-  dsimp [HtpyJetSec.comp]
-  ext x
-  change (if t ≤ 1 / 2 then _ else _) = _
-  rw [if_pos ht]
-  rfl
-  ext1 x
-  change (if t ≤ 1 / 2 then _ else _) = (𝓕 _).φ x
-  rw [if_pos ht]
-  rfl
+    𝓕.comp 𝓖 h t = 𝓕 (smoothStep <| 2 * t) := by
+  ext x : 2 <;> · dsimp [HtpyJetSec.comp]; exact if_pos ht
 
-theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Iic 0, 𝓕.comp 𝓖 h t = 𝓕 0 :=
-  by
+theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) :
+    ∀ᶠ t near Iic 0, 𝓕.comp 𝓖 h t = 𝓕 0 := by
   have : Iio (1 / 8 : ℝ) ∈ 𝓝ˢ (Iic (0 : ℝ)) :=
-    by
-    apply mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : x ≤ 0) => Iio_mem_nhds _
-    linarith
+    mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : x ≤ 0) => Iio_mem_nhds <| by linarith
   apply mem_of_superset this
   rintro t (ht : t < 1 / 8)
   have ht' : t ≤ 1 / 2 := by linarith
@@ -338,24 +315,13 @@ theorem HtpyJetSec.comp_0 (𝓕 𝓖 : HtpyJetSec E F) (h) : 𝓕.comp 𝓖 h 0 
 
 @[simp]
 theorem HtpyJetSec.comp_of_not_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht : ¬t ≤ 1 / 2) :
-    𝓕.comp 𝓖 h t = 𝓖 (smoothStep <| 2 * t - 1) :=
-  by
-  dsimp [HtpyJetSec.comp]
-  ext x
-  change (if t ≤ 1 / 2 then _ else _) = _
-  rw [if_neg ht]
-  rfl
-  ext1 x
-  change (if t ≤ 1 / 2 then _ else _) = (𝓖 _).φ x
-  rw [if_neg ht]
-  rfl
+    𝓕.comp 𝓖 h t = 𝓖 (smoothStep <| 2 * t - 1) := by
+  rw [one_div] at ht
+  ext x : 2 <;> simp [comp, if_neg ht] <;> rfl
 
-theorem HtpyJetSec.comp_ge_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ici 1, 𝓕.comp 𝓖 h t = 𝓖 1 :=
-  by
+theorem HtpyJetSec.comp_ge_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ici 1, 𝓕.comp 𝓖 h t = 𝓖 1 := by
   have : Ioi (7 / 8 : ℝ) ∈ 𝓝ˢ (Ici (1 : ℝ)) :=
-    by
-    apply mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : 1 ≤ x) => Ioi_mem_nhds _
-    linarith
+    mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : 1 ≤ x) => Ioi_mem_nhds <| by linarith
   apply mem_of_superset this
   rintro t (ht : 7 / 8 < t)
   have ht' : ¬t ≤ 1 / 2 := by linarith
