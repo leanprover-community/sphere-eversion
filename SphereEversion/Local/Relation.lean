@@ -32,8 +32,7 @@ variable (P : Type _) [NormedAddCommGroup P] [NormedSpace ℝ P]
 def RelLoc :=
   Set (OneJet E F)
 
-instance : Membership (E × F × (E →L[ℝ] F)) (RelLoc E F) :=
-  Set.hasMem
+instance : Membership (E × F × (E →L[ℝ] F)) (RelLoc E F) := by delta RelLoc; infer_instance
 
 variable {E F}
 
@@ -49,7 +48,7 @@ namespace RelLoc
 structure FormalSol (R : RelLoc E F) extends JetSec E F where
   is_sol : ∀ x, (x, f x, φ x) ∈ R
 
-instance (R : RelLoc E F) : Coe (FormalSol R) (JetSec E F) :=
+instance (R : RelLoc E F) : CoeOut (FormalSol R) (JetSec E F) :=
   ⟨FormalSol.toJetSec⟩
 
 @[simp]
@@ -67,7 +66,7 @@ def JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h : 𝓕.
     FormalSol R :=
   { 𝓕 with is_sol := h }
 
-instance (R : RelLoc E F) : CoeFun (FormalSol R) fun S => E → F × (E →L[ℝ] F) :=
+instance (R : RelLoc E F) : CoeFun (FormalSol R) fun _ => E → F × (E →L[ℝ] F) :=
   ⟨fun 𝓕 => fun x => (𝓕.f x, 𝓕.φ x)⟩
 
 @[simp]
@@ -95,9 +94,7 @@ theorem FormalSol.isHolonomicAt_congr (𝓕 𝓕' : FormalSol R) {s : Set E}
     simp_rw [RelLoc.FormalSol.eq_iff]
     tauto
   unfold RelLoc.FormalSol.IsHolonomicAt
-  rw [hf.fderiv_eq, (rel_loc.formal_sol.eq_iff.mp hx.self_of_nhds).2]
-
-variable (P)
+  rw [hf.fderiv_eq, (RelLoc.FormalSol.eq_iff.mp hx.self_of_nhds).2]
 
 /-- A family of formal solutions is a 1-parameter family of formal solutions. -/
 @[ext]
@@ -114,7 +111,7 @@ def HtpyFormalSol.toHtpyJetSec {R : RelLoc E F} (𝓕 : R.HtpyFormalSol) : HtpyJ
 
 open RelLoc
 
-instance (R : RelLoc E F) : CoeFun (FamilyFormalSol P R) fun S => P → JetSec E F :=
+instance (R : RelLoc E F) : CoeFun (FamilyFormalSol P R) fun _ => P → JetSec E F :=
   ⟨fun S t =>
     { f := S.f t
       f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
