@@ -36,7 +36,6 @@ open LinearMap (ker)
 
 /-! ## General theory -/
 
-
 section NoNorm
 
 variable (E : Type _) {E' F G : Type _}
@@ -51,125 +50,106 @@ variable [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedAddCommGroup G] [Norm
 hyperplane and `v` spans a complement of this hyperplane. -/
 structure DualPair where
   π : E →L[ℝ] ℝ
-  V : E
+  v : E
   pairing : π v = 1
 
 namespace DualPair
 
-variable {E F}
+variable {E}
 
 attribute [local simp] ContinuousLinearMap.toSpanSingleton_apply
 
-theorem ker_pi_ne_top (p : DualPair E) : ker p.π ≠ ⊤ :=
-  by
-  intro H
-  have : p.π.to_linear_map p.v = 1 := p.pairing
-  simpa [linear_map.ker_eq_top.mp H]
-
-theorem pi_ne_zero (p : DualPair E) : p.π ≠ 0 :=
-  by
-  intro H
+theorem pi_ne_zero (p : DualPair E) : p.π ≠ 0 := fun H ↦ by
   simpa [H] using p.pairing
 
-theorem v_ne_zero (p : DualPair E) : p.V ≠ 0 :=
-  by
-  intro H
-  simpa [H] using p.pairing
+theorem ker_pi_ne_top (p : DualPair E) : ker p.π ≠ ⊤ := fun H ↦ by
+  have : p.π.toLinearMap p.v = 1 := p.pairing
+  simpa [LinearMap.ker_eq_top.mp H]
+
+theorem v_ne_zero (p : DualPair E) : p.v ≠ 0 := fun H ↦ by simpa [H] using p.pairing
 
 /-- Given a dual pair `p`, `p.span_v` is the line spanned by `p.v`. -/
 def spanV (p : DualPair E) : Submodule ℝ E :=
-  Submodule.span ℝ {p.V}
+  Submodule.span ℝ {p.v}
 
-theorem mem_spanV (p : DualPair E) {u : E} : u ∈ p.spanV ↔ ∃ t : ℝ, u = t • p.V := by
+theorem mem_spanV (p : DualPair E) {u : E} : u ∈ p.spanV ↔ ∃ t : ℝ, u = t • p.v := by
   simp [DualPair.spanV, Submodule.mem_span_singleton, eq_comm]
 
 /-- Update a continuous linear map `φ : E →L[ℝ] F` using a dual pair `p` on `E` and a
 vector `w : F`. The new map coincides with `φ` on `ker p.π` and sends `p.v` to `w`. -/
 def update (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : E →L[ℝ] F :=
-  φ + (w - φ p.V) ⬝ p.π
+  φ + (w - φ p.v) ⬝ p.π
 
 @[simp]
 theorem update_ker_pi (p : DualPair E) (φ : E →L[ℝ] F) (w : F) {u} (hu : u ∈ ker p.π) :
     p.update φ w u = φ u := by
   rw [LinearMap.mem_ker] at hu
-  simp only [update, hu, ContinuousLinearMap.toSpanSingleton_apply, add_zero,
-    ContinuousLinearMap.coe_comp', comp_app, zero_smul, ContinuousLinearMap.add_apply]
+  simp [update, hu]
 
 @[simp]
-theorem update_v (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : p.update φ w p.V = w := by
-  simp only [update, p.pairing, ContinuousLinearMap.toSpanSingleton_apply,
-    ContinuousLinearMap.coe_comp', add_sub_cancel'_right, one_smul, comp_app,
-    ContinuousLinearMap.add_apply]
+theorem update_v (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : p.update φ w p.v = w := by
+  simp [update, p.pairing]
 
 @[simp]
-theorem update_self (p : DualPair E) (φ : E →L[ℝ] F) : p.update φ (φ p.V) = φ := by
+theorem update_self (p : DualPair E) (φ : E →L[ℝ] F) : p.update φ (φ p.v) = φ := by
   simp only [update, add_zero, ContinuousLinearMap.toSpanSingleton_zero,
     ContinuousLinearMap.zero_comp, sub_self]
 
 @[simp]
 theorem update_update (p : DualPair E) (φ : E →L[ℝ] F) (w w' : F) :
     p.update (p.update φ w') w = p.update φ w := by
-  simp_rw [update, add_apply, coe_comp', comp_app, to_span_singleton_apply, p.pairing, one_smul,
-    add_sub_cancel'_right, add_assoc, ← ContinuousLinearMap.add_comp, ← to_span_singleton_add,
+  simp_rw [update, add_apply, coe_comp', (· ∘ ·), toSpanSingleton_apply, p.pairing, one_smul,
+    add_sub_cancel'_right, add_assoc, ← ContinuousLinearMap.add_comp, ← toSpanSingleton_add,
     sub_add_eq_add_sub, add_sub_cancel'_right]
 
-theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ :=
-  by
-  rw [eq_bot_iff]
-  intro x hx
+theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ := bot_unique <| fun x hx ↦ by
   have : p.π x = 0 ∧ ∃ a : ℝ, a • p.v = x := by
     simpa [DualPair.spanV, Submodule.mem_span_singleton] using hx
   rcases this with ⟨H, t, rfl⟩
   rw [p.π.map_smul, p.pairing, Algebra.id.smul_eq_mul, mul_one] at H
   simp [H]
 
-theorem sup_eq_top (p : DualPair E) : ker p.π ⊔ p.spanV = ⊤ :=
-  by
+theorem sup_eq_top (p : DualPair E) : ker p.π ⊔ p.spanV = ⊤ := by
   rw [Submodule.sup_eq_top_iff]
   intro x
   refine' ⟨x - p.π x • p.v, _, p.π x • p.v, _, _⟩ <;>
     simp [DualPair.spanV, Submodule.mem_span_singleton, p.pairing]
 
-theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u + t • p.V :=
-  by
-  have : e ∈ ker p.π ⊔ p.span_v := by
+theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u + t • p.v := by
+  have : e ∈ ker p.π ⊔ p.spanV := by
     rw [p.sup_eq_top]
     exact Submodule.mem_top
   simp_rw [Submodule.mem_sup, DualPair.mem_spanV] at this
   rcases this with ⟨u, hu, -, ⟨t, rfl⟩, rfl⟩
-  use u, hu, t, rfl
+  exact ⟨u, hu, t, rfl⟩
 
 -- useful with `dual_pair.decomp`
 theorem update_apply (p : DualPair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ ker p.π) :
-    p.update φ w (u + t • p.V) = φ u + t • w := by
+    p.update φ w (u + t • p.v) = φ u + t • w := by
   rw [map_add, map_smul, p.update_v, p.update_ker_pi _ _ hu]
 
 /-- Map a dual pair under a linear equivalence. -/
 @[simps]
 def map (p : DualPair E) (L : E ≃L[ℝ] E') : DualPair E' :=
-  ⟨p.π ∘L ↑L.symm, L p.V, (congr_arg p.π <| L.symm_apply_apply p.V).trans p.pairing⟩
+  ⟨p.π ∘L ↑L.symm, L p.v, (congr_arg p.π <| L.symm_apply_apply p.v).trans p.pairing⟩
 
-theorem update_comp_left (p : DualPair E) (ψ : F →L[ℝ] G) (φ : E →L[ℝ] F) (w : F) :
-    p.update (ψ ∘L φ) (ψ w) = ψ ∘L p.update φ w :=
-  by
+theorem update_comp_left (p : DualPair E) (ψ' : F →L[ℝ] G) (φ : E →L[ℝ] F) (w : F) :
+    p.update (ψ' ∘L φ) (ψ' w) = ψ' ∘L p.update φ w := by
   ext1 u
-  simp only [update, add_apply, ContinuousLinearMap.comp_apply, to_span_singleton_apply, ψ.map_add,
-    ψ.map_smul, ψ.map_sub]
+  simp only [update, add_apply, ContinuousLinearMap.comp_apply, toSpanSingleton_apply, map_add,
+    map_smul, map_sub]
 
-theorem map_update_comp_right (p : DualPair E) (ψ : E →L[ℝ] F) (φ : E ≃L[ℝ] E') (w : F) :
-    (p.map φ).update (ψ ∘L ↑φ.symm) w = p.update ψ w ∘L ↑φ.symm :=
-  by
+theorem map_update_comp_right (p : DualPair E) (ψ' : E →L[ℝ] F) (φ : E ≃L[ℝ] E') (w : F) :
+    (p.map φ).update (ψ' ∘L ↑φ.symm) w = p.update ψ' w ∘L ↑φ.symm := by
   ext1 u
-  simp only [update, add_apply, ContinuousLinearMap.comp_apply, to_span_singleton_apply, map,
-    ContinuousLinearEquiv.coe_coe, φ.symm_apply_apply]
+  simp [update]
 
 /-! ## Injectivity criterion -/
 
 
 @[simp]
 theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Injective φ) {w : F} :
-    Injective (p.update φ w) ↔ w ∉ (ker p.π).map φ :=
-  by
+    Injective (p.update φ w) ↔ w ∉ (ker p.π).map φ := by
   constructor
   · rintro h ⟨u, hu, rfl⟩
     have : p.update φ (φ u) p.v = φ u := p.update_v φ (φ u)
@@ -179,18 +159,19 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
     rw [p.pairing] at hu
     linarith
   · intro hw
-    apply (injective_iff_map_eq_zero (p.update φ w)).mpr fun x hx => _
+    refine (injective_iff_map_eq_zero (p.update φ w)).mpr fun x hx => ?_
     rcases p.decomp x with ⟨u, hu, t, rfl⟩
     rw [map_add, map_smul, update_v, p.update_ker_pi _ _ hu] at hx
-    have ht : t = 0 := by
+    obtain rfl : t = 0 := by
       by_contra ht
       apply hw
       refine' ⟨-t⁻¹ • u, (ker p.π).smul_mem _ hu, _⟩
       rw [map_smul]
-      have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • 0 + w := congr_arg (fun u : F => -t⁻¹ • u + w) hx
+      have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • (0 : F) + w := congr_arg (-t⁻¹ • · + w) hx
       rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,
         neg_add_cancel_right, ← neg_smul] at this
-    rw [ht, zero_smul, add_zero] at hx ⊢
+    -- Porting note: `rw` silently fails
+    simp only [zero_smul, add_zero] at hx ⊢
     exact (injective_iff_map_eq_zero φ).mp hφ u hx
 
 end DualPair
@@ -217,8 +198,7 @@ theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type _} [N
 
 theorem continuous_update [FiniteDimensional ℝ E] (p : DualPair E) {X : Type _} [TopologicalSpace X]
     {φ : X → E →L[ℝ] F} (hφ : Continuous φ) {w : X → F} (hw : Continuous w) :
-    Continuous fun g => p.update (φ g) (w g) :=
-  by
+    Continuous fun g => p.update (φ g) (w g) := by
   apply hφ.add
   rw [continuous_clm_apply]
   intro y
@@ -232,11 +212,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [N
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair i`
 is given by the `i`th basis element and its dual. -/
 def Basis.dualPair [FiniteDimensional ℝ E] {ι : Type _} [Fintype ι] [DecidableEq ι]
-    (e : Basis ι ℝ E) (i : ι) : DualPair E
-    where
-  π := (e.dualBasis i).toContinuousLinearMap
-  V := e i
-  pairing := by
-    simp only [Basis.coord_apply, Finsupp.single_eq_same, Basis.repr_self,
-      LinearMap.coe_toContinuousLinearMap', Basis.coe_dualBasis]
-
+    (e : Basis ι ℝ E) (i : ι) : DualPair E where
+  π := LinearMap.toContinuousLinearMap (e.dualBasis i)
+  v := e i
+  pairing := by simp
