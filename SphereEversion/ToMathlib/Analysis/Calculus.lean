@@ -123,12 +123,12 @@ def ContinuousLinearMap.compLeftL (φ : F →L[𝕜] G) : (E →L[𝕜] F) →L[
 
 nonrec theorem Differentiable.fderiv_partial_fst {φ : E → F → G}
     (hF : Differentiable 𝕜 (uncurry φ)) :
-    (↿(∂₁ 𝕜 φ)) = (fun (ψ : (E × F →L[𝕜] G)) ↦ ψ.comp (inl 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
+    ↿(∂₁ 𝕜 φ) = precomp G (inl 𝕜 E F) ∘ (fderiv 𝕜 <| uncurry φ) := by
   ext1 ⟨y, t⟩; exact fderiv_partial_fst (hF ⟨y, t⟩).hasFDerivAt
 
 nonrec theorem Differentiable.fderiv_partial_snd {φ : E → F → G}
     (hF : Differentiable 𝕜 (uncurry φ)) :
-    ↿(∂₂ 𝕜 φ) = (fun (ψ : E × F →L[𝕜] G) => ψ.comp (inr 𝕜 E F)) ∘ (fderiv 𝕜 <| uncurry φ) := by
+    ↿(∂₂ 𝕜 φ) = precomp G (inr 𝕜 E F) ∘ (fderiv 𝕜 <| uncurry φ) := by
   ext1 ⟨y, t⟩; exact fderiv_partial_snd (hF ⟨y, t⟩).hasFDerivAt
 
 /-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G`-/
