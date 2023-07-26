@@ -19,7 +19,7 @@ section
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type _}
   [NormedAddCommGroup H] [NormedSpace ℝ H] (ν : Measure ℝ)
 
-/-- Interval version of `has_fderiv_at_of_dominated_of_fderiv_le` -/
+/-- Interval version of `hasFDerivAt_of_dominated_of_fderiv_le` -/
 theorem hasFDerivAt_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H → ℝ → H →L[ℝ] E} {x₀ : H}
     {a b : ℝ} {bound : ℝ → ℝ} {ε : ℝ} (ε_pos : 0 < ε)
     (hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) <| ν.restrict (Ι a b))
@@ -38,7 +38,7 @@ theorem hasFDerivAt_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
       (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
         bound_integrable.2 h_diff.2)
 
-/-- Interval version of `has_fderiv_at_of_dominated_loc_of_lip` -/
+/-- Interval version of `hasFDerivAt_of_dominated_loc_of_lip` -/
 theorem hasFDerivAt_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' : ℝ → H →L[ℝ] E} {x₀ : H}
     {a b : ℝ} {bound : ℝ → ℝ} {ε : ℝ} (ε_pos : 0 < ε)
     (hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) <| ν.restrict (Ι a b))
@@ -326,7 +326,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           ⟨Ioo a₀ b₀, Ioo_nhds, hF_meas x₀ x₀_in⟩ hF_cont
     have D₃ : HasFDerivAt (fun x => ∫ t in s x₀..s x, F x t - F x₀ t) 0 x₀ :=
       by
-      apply is_O.has_fderiv_at _ one_lt_two
+      apply is_O.hasFDerivAt _ one_lt_two
       have O₁ : (fun x => ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] fun x => ‖x - x₀‖ :=
         by
         have : (fun x => s x - s x₀) =O[𝓝 x₀] fun x => ‖x - x₀‖ := s_diff.is_O_sub.norm_right
@@ -464,7 +464,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
       by
       ext t
       have : HasFDerivAt (fun e => F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀ :=
-        (hF.has_strict_fderiv_at le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prod_mk_left _ _)
+        (hF.hasStrictFDerivAt le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prod_mk_left _ _)
       rw [this.fderiv]
     rw [this]; clear this
     exact

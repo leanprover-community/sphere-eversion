@@ -133,8 +133,8 @@ theorem DifferentiableAt.hasFDerivAt_coprod {f : E → F → G} {x : E} {y : F}
     (hφ : HasFDerivAt (fun p => f p y) φ x) (hψ : HasFDerivAt (f x) ψ y) :
     HasFDerivAt (uncurry f) (φ.coprod ψ) (x, y) :=
   by
-  rw [hφ.unique hf.has_fderiv_at_partial_fst, hψ.unique hf.has_fderiv_at_partial_snd]
-  exact hf.has_fderiv_at_coprod_partial
+  rw [hφ.unique hf.hasFDerivAt_partial_fst, hψ.unique hf.hasFDerivAt_partial_snd]
+  exact hf.hasFDerivAt_coprod_partial
 
 variable [CompleteSpace E]
 
@@ -207,10 +207,10 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       apply DifferentiableAt.hasFDerivAt_coprod
       · apply hf.differentiable le_top
       · dsimp [d₁f]
-        exact diff.differentiable_at.has_fderiv_at_partial_fst
+        exact diff.differentiable_at.hasFDerivAt_partial_fst
       · rw [← hf' x y]
         dsimp
-        exact diff.differentiable_at.has_fderiv_at_partial_snd
+        exact diff.differentiable_at.hasFDerivAt_partial_snd
     · apply Continuous.continuousAt
       apply ContinuousLinearEquiv.continuous_lowerTriangular
       · exact continuous_const
