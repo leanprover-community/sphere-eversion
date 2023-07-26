@@ -11,7 +11,7 @@ open scoped Affine Matrix BigOperators
 
 section BarycentricDet
 
-variable (ι R k P : Type _) {M : Type _} [Ring R] [AddCommGroup M] [Module R M] [affine_space M P]
+variable (ι R k P : Type _) {M : Type _} [Ring R] [AddCommGroup M] [Module R M] [AffineSpace M P]
 
 /-- The set of affine bases for an affine space. -/
 def affineBases : Set (ι → P) :=
@@ -19,11 +19,10 @@ def affineBases : Set (ι → P) :=
 
 theorem affineBases_findim [Fintype ι] [Field k] [Module k M] [FiniteDimensional k M]
     (h : Fintype.card ι = FiniteDimensional.finrank k M + 1) :
-    affineBases ι k P = {v | AffineIndependent k v} :=
-  by
+    affineBases ι k P = {v | AffineIndependent k v} := by
   ext v
   simp only [affineBases, mem_setOf_eq, and_iff_left_iff_imp]
-  exact fun h_ind => h_ind.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr h
+  exact fun h_ind => h_ind.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr h
 
 theorem mem_affineBases_iff [Fintype ι] [DecidableEq ι] [Nontrivial R] (b : AffineBasis ι R P)
     (v : ι → P) : v ∈ affineBases ι R P ↔ IsUnit (b.toMatrix v) :=
@@ -53,15 +52,15 @@ variable {ι R P}
 
 theorem evalBarycentricCoords_eq_det [Fintype ι] [DecidableEq ι] (S : Type _) [Field S] [Module S M]
     [∀ v, Decidable (v ∈ affineBases ι S P)] (b : AffineBasis ι S P) (p : P) (v : ι → P) :
-    evalBarycentricCoords ι S P p v = (b.toMatrix v).det⁻¹ • (b.toMatrix v)ᵀ.cramer (b.coords p) :=
-  by
+    evalBarycentricCoords ι S P p v =
+      (b.toMatrix v).det⁻¹ • (b.toMatrix v)ᵀ.cramer (b.coords p) := by
   ext i
   by_cases h : v ∈ affineBases ι S P
   · simp only [evalBarycentricCoords, h, dif_pos, Algebra.id.smul_eq_mul, Pi.smul_apply,
       AffineBasis.coords_apply]
     erw [← b.det_smul_coords_eq_cramer_coords ⟨v, h.1, h.2⟩ p]
     simp only [Pi.smul_apply, AffineBasis.coords_apply, Algebra.id.smul_eq_mul]
-    have hu := b.is_unit_to_matrix ⟨v, h.1, h.2⟩
+    have hu := b.isUnit_toMatrix ⟨v, h.1, h.2⟩
     rw [Matrix.isUnit_iff_isUnit_det] at hu
     erw [← mul_assoc, ← Ring.inverse_eq_inv, Ring.inverse_mul_cancel _ hu, one_mul]
   · simp only [evalBarycentricCoords, h, Algebra.id.smul_eq_mul, Pi.zero_apply, inv_eq_zero,
@@ -78,10 +77,8 @@ variable (ι k : Type _) [Fintype ι] [DecidableEq ι] [NontriviallyNormedField 
 
 attribute [instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) :=
-  by
-  suffices ∀ n : ℕ, ContDiff k m (det : Matrix (Fin n) (Fin n) k → k)
-    by
+theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
+  suffices ∀ n : ℕ, ContDiff k m (det : Matrix (Fin n) (Fin n) k → k) by
     have h : (det : Matrix ι ι k → k) = det ∘ reindex (Fintype.equivFin ι) (Fintype.equivFin ι) :=
       by ext; simp
     rw [h]
@@ -89,11 +86,11 @@ theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) :=
     exact contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => contDiff_apply_apply _ _ _ _
   intro n
   induction' n with n ih
-  · rw [coe_det_is_empty]
+  · rw [coe_det_isEmpty]
     exact contDiff_const
   change ContDiff k m fun A : Matrix (Fin n.succ) (Fin n.succ) k => A.det
   simp_rw [det_succ_column_zero]
-  apply ContDiff.sum fun l _ => _
+  apply ContDiff.sum fun l _ => ?_
   apply ContDiff.mul
   · refine' contDiff_const.mul _
     apply contDiff_apply_apply
@@ -112,7 +109,6 @@ variable [Fintype ι] [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
 
 variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- An alternative approach would be to prove the affine version of `contDiffAt_map_inverse`
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
@@ -120,29 +116,28 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     (h : Fintype.card ι = FiniteDimensional.finrank 𝕜 F + 1) :
     ContDiffOn 𝕜 ⊤ (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
   classical
-  obtain ⟨b : AffineBasis ι 𝕜 F⟩ := AffineBasis.exists_affineBasis_of_finiteDimensional h
+  obtain ⟨b⟩ : Nonempty (AffineBasis ι 𝕜 F) := AffineBasis.exists_affineBasis_of_finiteDimensional h
   simp_rw [uncurry_def, contDiffOn_pi, evalBarycentricCoords_eq_det 𝕜 b]
   intro i
   simp only [Algebra.id.smul_eq_mul, Pi.smul_apply, Matrix.cramer_transpose_apply]
-  have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) => b.to_matrix x.snd :=
-    by
-    refine' ContDiff.comp _ contDiff_snd
-    refine' contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' => _
-    exact (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
+  have hcont : ContDiff 𝕜 ⊤ fun x : ι → F ↦ b.toMatrix x :=
+    contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' =>
+      (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
+  have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) => b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
   · apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
-    have hv : IsUnit (b.to_matrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
-    rw [← isUnit_iff_ne_zero, ← Matrix.isUnit_iff_isUnit_det]
+    have hv : IsUnit (b.toMatrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
+    rw [← isUnit_iff_ne_zero, comp_apply, ← Matrix.isUnit_iff_isUnit_det]
     exact hv
   · refine' ((Matrix.smooth_det ι 𝕜 ⊤).comp _).contDiffOn
     refine' contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' => _
-    simp only [Matrix.updateRow_apply, AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
-    by_cases hij : j = i
+    simp only [Matrix.updateColumn_apply, AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
+    by_cases hij : j' = i
     · simp only [hij, if_true, eq_self_iff_true]
-      exact (smooth_barycentric_coord b j').fst'
+      exact (smooth_barycentric_coord b j).fst'
     · simp only [hij, if_false]
-      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j)
+      exact (smooth_barycentric_coord b j).comp (contDiff_pi.mp contDiff_snd j')
 
 end smooth_barycentric
 
