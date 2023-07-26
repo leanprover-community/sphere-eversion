@@ -5,6 +5,7 @@ import Mathlib.Analysis.InnerProductSpace.Dual
 import SphereEversion.ToMathlib.Analysis.Calculus
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 
+local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y) -- See Lean 4 issue #2220
 noncomputable section
 
 open scoped Topology Filter
@@ -26,8 +27,7 @@ theorem hasFDerivAt_of_not_mem (𝕜 : Type _) {E : Type _} {F : Type _} [Nontri
 theorem contDiffAt_of_not_mem (𝕜 : Type _) {E : Type _} {F : Type _} [NontriviallyNormedField 𝕜]
     [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [NormedSpace 𝕜 F] {f : E → F}
     {x} (hx : x ∉ tsupport f) (n : ℕ∞) : ContDiffAt 𝕜 n f x :=
-  (contDiffAt_const : ContDiffAt 𝕜 n (fun x => (0 : F)) x).congr_of_eventuallyEq
-    (not_mem_tsupport_iff_eventuallyEq.mp hx)
+  contDiffAt_const.congr_of_eventuallyEq (not_mem_tsupport_iff_eventuallyEq.mp hx)
 
 end
 
@@ -62,14 +62,8 @@ def ContinuousLinearEquiv.lowerTriangular (A : M₁ ≃L[𝕜] M₃) (C : M₁ �
   ContinuousLinearEquiv.equivOfInverse (((A : M₁ →L[𝕜] M₃).comp (fst 𝕜 M₁ M₂)).prod (C.coprod D))
     (((A.symm : M₃ →L[𝕜] M₁).comp (fst 𝕜 M₃ M₄)).prod
       ((-((D.symm : M₄ →L[𝕜] M₂).comp C).comp (A.symm : M₃ →L[𝕜] M₁)).coprod D.symm))
-    (fun ⟨x, y⟩ => by
-      simp only [prod_apply, coe_comp', ContinuousLinearEquiv.coe_coe, coe_fst', comp_app,
-        coprod_apply, ContinuousLinearEquiv.symm_apply_apply, neg_apply,
-        ContinuousLinearEquiv.map_add, neg_add_cancel_left])
-    fun ⟨x, y⟩ => by
-    simp only [prod_apply, coe_comp', ContinuousLinearEquiv.coe_coe, coe_fst', comp_app,
-      coprod_apply, neg_apply, ContinuousLinearEquiv.apply_symm_apply,
-      ContinuousLinearEquiv.map_add, ContinuousLinearEquiv.map_neg, add_neg_cancel_left]
+    (fun ⟨x, y⟩ => by simp)
+    fun ⟨x, y⟩ => by simp
 
 theorem ContinuousLinearEquiv.continuous_lowerTriangular {X : Type _} [TopologicalSpace X]
     {A : X → M₁ ≃L[𝕜] M₃} {C : X → M₁ →L[𝕜] M₄} {D : X → M₂ ≃L[𝕜] M₄}
@@ -123,16 +117,15 @@ theorem ContinuousLinearMap.coprod_comp_inl_inr {R₁ : Type _} [Semiring R₁] 
 
 theorem DifferentiableAt.hasFDerivAt_coprod_partial {f : E → F → G} {x : E} {y : F}
     (hf : DifferentiableAt 𝕜 (uncurry f) (x, y)) :
-    HasFDerivAt (uncurry f) ((partialFDerivFst 𝕜 f x y).coprod (partialFDerivSnd 𝕜 f x y)) (x, y) :=
-  by
+    HasFDerivAt (uncurry f)
+      ((partialFDerivFst 𝕜 f x y).coprod (partialFDerivSnd 𝕜 f x y)) (x, y) := by
   rcases hf with ⟨θ, hθ⟩
   rwa [fderiv_partial_fst hθ, fderiv_partial_snd hθ, θ.coprod_comp_inl_inr]
 
 theorem DifferentiableAt.hasFDerivAt_coprod {f : E → F → G} {x : E} {y : F}
     (hf : DifferentiableAt 𝕜 (uncurry f) (x, y)) {φ : E →L[𝕜] G} {ψ : F →L[𝕜] G}
     (hφ : HasFDerivAt (fun p => f p y) φ x) (hψ : HasFDerivAt (f x) ψ y) :
-    HasFDerivAt (uncurry f) (φ.coprod ψ) (x, y) :=
-  by
+    HasFDerivAt (uncurry f) (φ.coprod ψ) (x, y) := by
   rw [hφ.unique hf.hasFDerivAt_partial_fst, hψ.unique hf.hasFDerivAt_partial_snd]
   exact hf.hasFDerivAt_coprod_partial
 
@@ -144,8 +137,7 @@ theorem Homeomorph.contDiffAt_symm (f : Homeomorph E F) {f₀' : E ≃L[𝕜] F}
   f.toLocalHomeomorph.contDiffAt_symm trivial hf' hf
 
 theorem Equiv.continuous_symm_of_contDiff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
-    (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : Continuous φ.symm :=
-  by
+    (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : Continuous φ.symm := by
   rw [continuous_iff_continuousAt]
   intro x
   let y := φ.symm x
@@ -181,8 +173,7 @@ local notation "∂₂" => partialFDerivSnd 𝕜
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
     {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ⊤ fun p : E × F => f p.1 p.2)
     (hf' : ∀ x y, ∂₂ (fun x y => f x y) x y = f' x y) :
-    ContDiff 𝕜 ⊤ fun p : E × G => (f p.1).symm p.2 :=
-  by
+    ContDiff 𝕜 ⊤ fun p : E × G => (f p.1).symm p.2 := by
   let φ₀ : E × F ≃ E × G :=
     { toFun := fun p : E × F => (p.1, f p.1 p.2)
       invFun := fun p : E × G => (p.1, (f p.1).symm p.2)
@@ -194,9 +185,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
   let Dφ : E × F → (E × F) ≃L[𝕜] E × G := fun x =>
     (ContinuousLinearEquiv.refl 𝕜 E).lowerTriangular (d₁f x.1 x.2) (f' x.1 x.2)
   let Dφ' : E × F → E × F →L[𝕜] E × G := fun x => Dφ x
-  have hderiv : ∀ x : E × F, HasStrictFDerivAt φ₀ (Dφ' x) x :=
-    by
-    rintro p
+  have hderiv : ∀ x : E × F, HasStrictFDerivAt φ₀ (Dφ' x) x := fun p ↦ by
     apply hasStrictFDerivAt_of_hasFDerivAt_of_continuousAt
     · apply Filter.eventually_of_forall
       rintro ⟨x, y⟩
@@ -206,20 +195,19 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       rw [show (fun x : E × F => (f x.fst) x.snd) = uncurry fun x y => f x y by ext; rfl]
       apply DifferentiableAt.hasFDerivAt_coprod
       · apply hf.differentiable le_top
-      · dsimp [d₁f]
-        exact diff.differentiable_at.hasFDerivAt_partial_fst
+      · dsimp
+        exact diff.differentiableAt.hasFDerivAt_partial_fst
       · rw [← hf' x y]
         dsimp
-        exact diff.differentiable_at.hasFDerivAt_partial_snd
+        exact diff.differentiableAt.hasFDerivAt_partial_snd
     · apply Continuous.continuousAt
       apply ContinuousLinearEquiv.continuous_lowerTriangular
       · exact continuous_const
       · exact hff.contDiff_top_partial_fst.continuous
       · simp_rw [← hf']
         exact hff.contDiff_top_partial_snd.continuous
-  let φ := φ₀.to_homeomorph_of_contDiff hderiv
-  exact
-    contDiff_snd.comp (φ.contDiff_symm (fun x => (hderiv x).hasFDerivAt) (contDiff_fst.prod hf))
+  let φ := φ₀.toHomeomorphOfContDiff hderiv
+  exact contDiff_snd.comp (φ.contDiff_symm (fun x => (hderiv x).hasFDerivAt) (contDiff_fst.prod hf))
 
 end
 
@@ -231,22 +219,19 @@ theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : Cont
     (hderiv : ∀ x t, 0 < partialDerivSnd f x t) (hsurj : ∀ x, Surjective <| f x) :
     ContDiff ℝ ⊤ fun p : E × ℝ =>
       (StrictMono.orderIsoOfSurjective (f p.1) (strictMono_of_deriv_pos <| hderiv p.1)
-            (hsurj p.1)).symm
-        p.2 :=
-  by
+            (hsurj p.1)).symm p.2 := by
   have hmono := fun x => strictMono_of_deriv_pos (hderiv x)
   let F x := (StrictMono.orderIsoOfSurjective (f x) (hmono x) <| hsurj x).toEquiv
   change ContDiff ℝ ⊤ fun p : E × ℝ => (F p.1).symm p.snd
   refine' contDiff_parametric_symm hf _
-  exact fun x t =>
-    ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 (deriv (f x) t) <| ne_of_gt (hderiv x t))
-  intro x t
-  suffices partialFDerivSnd ℝ f x t 1 = partialDerivSnd f x t
-    by
-    ext v
-    simpa only [RelIso.coe_fn_toEquiv, ContinuousLinearEquiv.coe_coe,
-      ContinuousLinearEquiv.unitsEquivAut_apply, Units.val_mk0, one_mul]
-  apply partialFDerivSnd_one
+  · exact fun x t =>
+      ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 (deriv (f x) t) <| ne_of_gt (hderiv x t))
+  · intro x t
+    suffices : partialFDerivSnd ℝ f x t 1 = partialDerivSnd f x t
+    · ext
+      simpa only [RelIso.coe_fn_toEquiv, ContinuousLinearEquiv.coe_coe,
+        ContinuousLinearEquiv.unitsEquivAut_apply, Units.val_mk0, one_mul]
+    apply partialFDerivSnd_one
 
 end
 
@@ -269,13 +254,11 @@ variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [Complet
 -- variant of `orthogonal_projection_singleton`
 theorem orthogonalProjection_singleton' {v : E} :
     (𝕜 ∙ v).subtypeL.comp (orthogonalProjection (𝕜 ∙ v)) =
-      (1 / ‖v‖ ^ 2 : 𝕜) •
-        ContinuousLinearMap.toSpanSingleton 𝕜 v ∘L InnerProductSpace.toDual 𝕜 E v :=
-  by
+      (1 / (‖v‖ : 𝕜) ^ 2) • .toSpanSingleton 𝕜 v ∘L InnerProductSpace.toDual 𝕜 E v := by
   ext w
-  simp [ContinuousLinearMap.toSpanSingleton_apply, orthogonalProjection_singleton, ← mul_smul]
-  congr 1
-  field_simp
+  simp [ContinuousLinearMap.toSpanSingleton_apply, orthogonalProjection_singleton, ← mul_smul,
+    div_eq_inv_mul]
+  rfl
 
 end
 
@@ -286,15 +269,10 @@ variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Complete
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
 from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
-    ContDiffAt ℝ ⊤ (fun v : E => (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ :=
-  by
-  suffices
-    ContDiffAt ℝ ⊤
-      (fun v : E =>
-        (1 / ‖v‖ ^ 2) • ContinuousLinearMap.toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v)
-      v₀
-    by
-    refine' this.congr_of_eventually_eq _
+    ContDiffAt ℝ ⊤ (fun v : E => (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
+  suffices : ContDiffAt ℝ ⊤
+    (fun v : E => (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀
+  · refine' this.congr_of_eventuallyEq _
     refine' Filter.eventually_of_forall fun v => _
     dsimp
     rw [orthogonalProjection_singleton']
@@ -342,8 +320,8 @@ variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddC
 theorem contDiffWithinAt_finsum {ι : Type _} {f : ι → E → F}
     (lf : LocallyFinite fun i => support <| f i) {n : ℕ∞} {s : Set E} {x₀ : E}
     (h : ∀ i, ContDiffWithinAt 𝕜 n (f i) s x₀) : ContDiffWithinAt 𝕜 n (fun x => ∑ᶠ i, f i x) s x₀ :=
-  let ⟨I, hI⟩ := finsum_eventually_eq_sum lf x₀
-  ContDiffWithinAt.congr_of_eventuallyEq (ContDiffWithinAt.sum fun i hi => h i)
+  let ⟨_I, hI⟩ := finsum_eventually_eq_sum lf x₀
+  ContDiffWithinAt.congr_of_eventuallyEq (ContDiffWithinAt.sum fun i _ => h i)
     (eventually_nhdsWithin_of_eventually_nhds hI) hI.self_of_nhds
 
 theorem contDiffAt_finsum {ι : Type _} {f : ι → E → F} (lf : LocallyFinite fun i => support <| f i)
