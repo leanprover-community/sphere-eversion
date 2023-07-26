@@ -31,12 +31,12 @@ variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
 theorem contMDiff_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔
       (ContMDiff I I' n fun x => (f x).1) ∧ ContMDiff I J' n fun x => (f x).2 :=
-  ⟨fun h => ⟨h.fst, h.snd⟩, fun h => by convert h.1.prod_mk h.2; ext x <;> rfl⟩
+  ⟨fun h => ⟨h.fst, h.snd⟩, fun h => h.1.prod_mk h.2⟩
 
 theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
     ContMDiffAt I (I'.prod J') n f x ↔
       ContMDiffAt I I' n (fun x => (f x).1) x ∧ ContMDiffAt I J' n (fun x => (f x).2) x :=
-  ⟨fun h => ⟨h.fst, h.snd⟩, fun h => by convert h.1.prod_mk h.2; ext x <;> rfl⟩
+  ⟨fun h => ⟨h.fst, h.snd⟩, fun h => h.1.prod_mk h.2⟩
 
 theorem smooth_prod {f : M → M' × N'} :
     Smooth I (I'.prod J') f ↔ (Smooth I I' fun x => (f x).1) ∧ Smooth I J' fun x => (f x).2 :=
@@ -48,7 +48,7 @@ theorem smoothAt_prod {f : M → M' × N'} {x : M} :
   contMDiffAt_prod
 
 theorem ContMDiffWithinAt.congr_of_eventuallyEq_insert {f f' : M → M'}
-    (hf : ContMDiffWithinAt I I' n f s x) (h : f' =ᶠ[𝓝[insert x s] x] f) :
+    (hf : ContMDiffWithinAt I I' n f s x) (h : f' =ᶠ[𝓝[Insert.insert x s] x] f) :
     ContMDiffWithinAt I I' n f' s x :=
   hf.congr_of_eventuallyEq (h.filter_mono <| nhdsWithin_mono x <| subset_insert x s) <|
     h.self_of_nhdsWithin (mem_insert x s)

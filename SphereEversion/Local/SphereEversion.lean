@@ -283,8 +283,8 @@ variable [Fact (dim E = 3)] [FiniteDimensional ℝ E] (ω : Orientation ℝ E (F
 theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) :
     ContDiffAt ℝ ∞ (uncurry (locFormalEversionAuxφ ω)) p :=
   by
-  refine' (ω.cont_diff_rot hx).sub _
-  refine' ContDiffAt.smul (cont_diff_at_const.mul contDiffAt_fst) _
+  refine' (ω.contDiff_rot hx).sub _
+  refine' ContDiffAt.smul (contDiffAt_const.mul contDiffAt_fst) _
   exact (contDiffAt_orthogonalProjection_singleton hx).comp p contDiffAt_snd
 
 /-- A formal eversion of `𝕊²`, viewed as a homotopy. -/
@@ -296,9 +296,9 @@ def locFormalEversionAux : HtpyJetSec E E
     ContDiff.smul (contDiff_const.sub <| contDiff_const.mul <| smoothStep.smooth.comp contDiff_fst)
       contDiff_snd
   φ_diff := by
-    refine' cont_diff_iff_cont_diff_at.mpr fun x => _
+    refine' contDiff_iff_contDiffAt.mpr fun x => _
     cases' eq_or_ne x.2 0 with hx hx
-    · refine' cont_diff_at_const.congr_of_eventually_eq _; exact 0
+    · refine' contDiffAt_const.congr_of_eventually_eq _; exact 0
       have : (fun x => ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) :=
         by
         refine' IsOpen.mem_nhds _ _

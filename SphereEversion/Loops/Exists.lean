@@ -183,7 +183,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     · refine' hγ₂.to_sf.t_le_zero_eq_b x (linearReparam s) (linearReparam_nonpos (le_of_lt ht))
     · rw [← Loop.fract_eq, fract_linearReparam_eq_zero, hγ₂.base]
       exact Or.imp le_of_lt le_of_lt hs
-  have h3γ₄ : smooth_on γ₄ U := hb.fst'.cont_diff_on.congr h2γ₄
+  have h3γ₄ : SmoothOn γ₄ U := hb.fst'.contDiffOn.congr h2γ₄
   obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅C⟩ :=
     exists_smooth_and_eqOn hγ₄ hcε₂.fst' (fun x => hε₂) hC ⟨U, hUC, h3γ₄⟩
   let γ : E → ℝ → Loop F := fun x t =>
@@ -205,11 +205,11 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         refine'
           (hγ₅C hx).trans
             (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
-      exact hb.fst'.cont_diff_at.congr_of_eventually_eq this
+      exact hb.fst'.contDiffAt.congr_of_eventually_eq this
     ·
       exact
-        (hγ₅.comp₃ contDiff_fst smooth_transition.cont_diff.fst'.snd' <|
-                cont_diff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
+        (hγ₅.comp₃ contDiff_fst smooth_transition.contDiff.fst'.snd' <|
+                contDiff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
           ((eventually_eq.rfl.prod_mk <|
                 eventually_eq.rfl.prod_mk <|
                   (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp
@@ -276,7 +276,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       hγ₁.surrounds x (mem_univ _)⟩
   classical
   let γ₃ : ℝ → E → Loop F := fun t x => (γ₁ x t).reparam <| (γ₂.reparametrize x).EquivariantMap
-  have hγ₃ : 𝒞 ∞ ↿γ₃ := hsγ₁.comp₃ cont_diff_snd.fst contDiff_fst γ₂.reparametrize_smooth.snd'
+  have hγ₃ : 𝒞 ∞ ↿γ₃ := hsγ₁.comp₃ contDiff_snd.fst contDiff_fst γ₂.reparametrize_smooth.snd'
   obtain ⟨χ, hχ, h1χ, h0χ, h2χ⟩ :=
     exists_contDiff_one_nhds_of_interior hK.is_closed
       (subset_interior_iff_mem_nhdsSet.mpr <| hgK.and h2γ₁)
@@ -313,6 +313,6 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     rcases h0χ x with (⟨hx, h2x⟩ | hx)
     · refine' h2x t (γ₂.reparametrize x s) _; simp [γ, dist_smul_add_one_sub_smul_le (h2χ x)]
     · simp [hx]; apply hγ₁.val_in (mem_univ _)
-  · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((cont_diff_const.sub hχ.fst'.snd').smul hγ₃)
+  · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
   · exact h1χ.mono fun x (hx : χ x = 1) => by simp [hx]
 

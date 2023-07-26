@@ -21,8 +21,7 @@ theorem map_extChartAt_nhds_of_boundaryless [I.Boundaryless] {x : M} :
   rw [map_extChartAt_nhds I x, ModelWithCorners.Boundaryless.range_eq_univ, nhdsWithin_univ]
 
 theorem extChartAt_image_nhd_mem_nhds_of_boundaryless [I.Boundaryless] {x : M} {s : Set M}
-    (h : s ∈ 𝓝 x) : extChartAt I x '' s ∈ 𝓝 (extChartAt I x x) :=
-  by
+    (h : s ∈ 𝓝 x) : extChartAt I x '' s ∈ 𝓝 (extChartAt I x x) := by
   rw [← map_extChartAt_nhds_of_boundaryless, Filter.mem_map]
   filter_upwards [h] using subset_preimage_image (extChartAt I x) s
 
@@ -35,13 +34,9 @@ def ball (x : M) (r : ℝ) :=
 
 theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {s : ι → Set M}
     (s_op : ∀ j, IsOpen <| s j) (cov : (⋃ j, s j) = univ) :
-    (𝓝 x).HasBasis
-      (fun r =>
-        0 < r ∧
-          Metric.ball (extChartAt I x x) r ⊆ (extChartAt I x).target ∧
-            ∃ j, ChartedSpace.ball I x r ⊆ s j)
-      (ChartedSpace.ball I x) :=
-  by
+    (𝓝 x).HasBasis (fun r => 0 < r ∧ Metric.ball (extChartAt I x x) r ⊆ (extChartAt I x).target ∧
+        ∃ j, ChartedSpace.ball I x r ⊆ s j)
+      (ChartedSpace.ball I x) := by
   -- TODO golf etc
   obtain ⟨j, hj⟩ : ∃ j, x ∈ s j := by simpa only [mem_iUnion, ← cov] using mem_univ x
   replace hj : s j ∈ 𝓝 x := mem_nhds_iff.mpr ⟨s j, Subset.rfl, s_op j, hj⟩
@@ -83,7 +78,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensio
   [ChartedSpace H M]
 
 theorem locally_compact_manifold : LocallyCompactSpace M :=
-  @ChartedSpace.locallyCompact H M _ _ _ I.locallyCompact
+  @ChartedSpace.locallyCompact H M _ _ _ I.locally_compact
 
 end
 

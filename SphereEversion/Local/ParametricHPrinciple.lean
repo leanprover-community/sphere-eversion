@@ -135,8 +135,8 @@ def FamilyJetSec.uncurry (S : FamilyJetSec E F P) : JetSec (P × E) F
   f_diff := S.f_diff
   φ_diff := by
     refine' (ContDiff.fderiv _ contDiff_id le_top).add (S.φ_diff.clm_comp _)
-    · exact S.f_diff.comp (cont_diff_snd.fst.prod cont_diff_fst.snd)
-    · exact ContDiff.fderiv cont_diff_snd.snd contDiff_id le_top
+    · exact S.f_diff.comp (contDiff_snd.fst.prod contDiff_fst.snd)
+    · exact ContDiff.fderiv contDiff_snd.snd contDiff_id le_top
 
 theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
     S.uncurry.φ p =
@@ -145,7 +145,7 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
   by
   simp_rw [S.uncurry_φ, fderiv_snd, add_left_inj]
   refine'
-    (fderiv_comp p ((S.f_diff.comp (cont_diff_id.prod contDiff_const)).differentiable le_top p.1)
+    (fderiv_comp p ((S.f_diff.comp (contDiff_id.prod contDiff_const)).differentiable le_top p.1)
           differentiableAt_fst).trans
       _
   rw [fderiv_fst]
@@ -203,7 +203,7 @@ def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × 
     by
     refine' (S.φ_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))).clm_comp _
     refine' ContDiff.fderiv _ contDiff_snd le_top
-    exact cont_diff_fst.fst.snd.prod contDiff_snd
+    exact contDiff_fst.fst.snd.prod contDiff_snd
 
 theorem FamilyJetSec.curry_f (S : FamilyJetSec (P × E) F G) (p : G × P) (x : E) :
     (S.curry p).f x = (S p.1).f (p.2, x) :=
@@ -325,7 +325,7 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
   obtain ⟨𝓕, h₁, h₂, -, h₄⟩ :=
     𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (is_compact_Icc.prod hK) h_hol
   refine' ⟨fun s => (𝓕 (1, s)).f, _, _, _⟩
-  · exact 𝓕.f_diff.comp ((cont_diff_const.prod contDiff_id).prod_map contDiff_id)
+  · exact 𝓕.f_diff.comp ((contDiff_const.prod contDiff_id).prod_map contDiff_id)
   · intro p hp; exact (prod.ext_iff.mp (h₂.nhdsSet_forall_mem p hp 1)).1
   · intro x hx t ht
     rw [show D (𝓕 (1, t)).f x = (𝓕 (1, t)).φ x from

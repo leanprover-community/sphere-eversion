@@ -143,7 +143,7 @@ theorem Homeomorph.contDiffAt_symm (f : Homeomorph E F) {f₀' : E ≃L[𝕜] F}
     ContDiffAt 𝕜 n f.symm a :=
   f.toLocalHomeomorph.contDiffAt_symm trivial hf' hf
 
-theorem Equiv.continuous_symm_of_cont_diff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
+theorem Equiv.continuous_symm_of_contDiff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
     (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : Continuous φ.symm :=
   by
   rw [continuous_iff_continuousAt]
@@ -164,7 +164,7 @@ def Equiv.toHomeomorphOfContDiff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
     (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : E ≃ₜ F :=
   { φ with
     continuous_toFun := Differentiable.continuous fun x => (hφ x).differentiableAt
-    continuous_invFun := φ.continuous_symm_of_cont_diff hφ }
+    continuous_invFun := φ.continuous_symm_of_contDiff hφ }
 
 end
 
@@ -214,12 +214,12 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
     · apply Continuous.continuousAt
       apply ContinuousLinearEquiv.continuous_lowerTriangular
       · exact continuous_const
-      · exact hff.cont_diff_top_partial_fst.continuous
+      · exact hff.contDiff_top_partial_fst.continuous
       · simp_rw [← hf']
-        exact hff.cont_diff_top_partial_snd.continuous
-  let φ := φ₀.to_homeomorph_of_cont_diff hderiv
+        exact hff.contDiff_top_partial_snd.continuous
+  let φ := φ₀.to_homeomorph_of_contDiff hderiv
   exact
-    cont_diff_snd.comp (φ.cont_diff_symm (fun x => (hderiv x).hasFDerivAt) (cont_diff_fst.prod hf))
+    contDiff_snd.comp (φ.contDiff_symm (fun x => (hderiv x).hasFDerivAt) (contDiff_fst.prod hf))
 
 end
 
@@ -300,7 +300,7 @@ theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0
     rw [orthogonalProjection_singleton']
     rfl
   refine' ContDiffAt.smul _ _
-  · refine' cont_diff_at_const.div (contDiff_norm_sq ℝ).contDiffAt _
+  · refine' contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt _
     apply pow_ne_zero
     exact norm_ne_zero_iff.mpr hv₀
   exact

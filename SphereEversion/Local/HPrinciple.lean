@@ -232,7 +232,7 @@ def improveStep {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ) : HtpyJetS
   f_diff :=
     𝓕.f_diff.snd'.add <|
       (smoothStep.smooth.fst'.mul L.ρ_smooth.snd').smul <|
-        corrugation.cont_diff' N (L.loop_smooth h) contDiff_snd contDiff_fst
+        corrugation.contDiff' N (L.loop_smooth h) contDiff_snd contDiff_fst
   φ t x :=
     L.p.update (𝓕.φ x) (L.Loop h (smoothStep t * L.ρ x) x <| N * L.π x) +
       (smoothStep t * L.ρ x) • corrugation.remainder L.p.π N (L.Loop h 1) x
@@ -242,7 +242,7 @@ def improveStep {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ) : HtpyJetS
     apply 𝓕.φ_diff.snd'
     apply L.loop_smooth'
     exact smooth_step.smooth.fst'.mul L.ρ_smooth.snd'
-    apply cont_diff_const.mul L.π.cont_diff.snd'
+    apply contDiff_const.mul L.π.contDiff.snd'
     exact contDiff_snd
     apply ContDiff.smul
     exact smooth_step.smooth.fst'.mul L.ρ_smooth.snd'
@@ -360,7 +360,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
   have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   let 𝓕' : JetSec E F :=
     { f := fun x => 𝓕.f x + corrugation L.π N (L.loop h 1) x
-      f_diff := 𝓕.f_diff.add (corrugation.cont_diff' _ (L.loop_smooth h) contDiff_id contDiff_const)
+      f_diff := 𝓕.f_diff.add (corrugation.contDiff' _ (L.loop_smooth h) contDiff_id contDiff_const)
       φ := fun x =>
         L.p.update (𝓕.φ x) (L.loop h 1 x <| N * L.π x) +
           corrugation.remainder L.p.π N (L.loop h 1) x
@@ -370,7 +370,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
         apply 𝓕.φ_diff
         apply L.loop_smooth'
         apply contDiff_const
-        apply cont_diff_const.mul L.π.cont_diff
+        apply contDiff_const.mul L.π.contDiff
         exact contDiff_id
         exact Remainder.smooth _ _ (L.loop_smooth h) contDiff_id contDiff_const }
   have H : ∀ᶠ x near L.K₀, L.improve_step h N 1 x = 𝓕' x :=

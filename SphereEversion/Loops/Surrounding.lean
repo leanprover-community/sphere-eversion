@@ -538,7 +538,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
     rintro ε₁ hε₁ ε₂ hε₂ ε₃ ⟨hε₁₃, hε₃₂⟩
     refine' ⟨hε₁.1.trans_le hε₁₃, fun γ hγ => hε₂.2 γ fun z => (hγ z).trans_le hε₃₂⟩
   obtain ⟨ε, hε, hPε⟩ := exists_contDiff_of_convex hP _
-  · refine' ⟨ε, fun x => (hPε x).1, cont_diff_zero.mp hε, fun x => (hPε x).2⟩
+  · refine' ⟨ε, fun x => (hPε x).1, contDiff_zero.mp hε, fun x => (hPε x).2⟩
   intro x
   obtain ⟨ε, hε, h2⟩ := (h.surrounds x (mem_univ _)).eventually_surrounds
   have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=

@@ -86,7 +86,7 @@ theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) :=
       by ext; simp
     rw [h]
     apply (this (Fintype.card ι)).comp
-    exact cont_diff_pi.mpr fun i => cont_diff_pi.mpr fun j => contDiff_apply_apply _ _ _ _
+    exact contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => contDiff_apply_apply _ _ _ _
   intro n
   induction' n with n ih
   · rw [coe_det_is_empty]
@@ -95,10 +95,10 @@ theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) :=
   simp_rw [det_succ_column_zero]
   apply ContDiff.sum fun l _ => _
   apply ContDiff.mul
-  · refine' cont_diff_const.mul _
+  · refine' contDiff_const.mul _
     apply contDiff_apply_apply
   · apply ih.comp
-    refine' cont_diff_pi.mpr fun i => cont_diff_pi.mpr fun j => _
+    refine' contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => _
     simp only [submatrix_apply]
     apply contDiff_apply_apply
 
@@ -113,7 +113,7 @@ variable [Fintype ι] [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
 variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
--- An alternative approach would be to prove the affine version of `cont_diff_at_map_inverse`
+-- An alternative approach would be to prove the affine version of `contDiffAt_map_inverse`
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
@@ -127,7 +127,7 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
   have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) => b.to_matrix x.snd :=
     by
     refine' ContDiff.comp _ contDiff_snd
-    refine' cont_diff_pi.mpr fun j => cont_diff_pi.mpr fun j' => _
+    refine' contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' => _
     exact (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
   apply ContDiffOn.mul
   · apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
@@ -136,13 +136,13 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     rw [← isUnit_iff_ne_zero, ← Matrix.isUnit_iff_isUnit_det]
     exact hv
   · refine' ((Matrix.smooth_det ι 𝕜 ⊤).comp _).contDiffOn
-    refine' cont_diff_pi.mpr fun j => cont_diff_pi.mpr fun j' => _
+    refine' contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' => _
     simp only [Matrix.updateRow_apply, AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
     by_cases hij : j = i
     · simp only [hij, if_true, eq_self_iff_true]
       exact (smooth_barycentric_coord b j').fst'
     · simp only [hij, if_false]
-      exact (smooth_barycentric_coord b j').comp (cont_diff_pi.mp contDiff_snd j)
+      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j)
 
 end smooth_barycentric
 

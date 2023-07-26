@@ -401,7 +401,7 @@ variable [FiniteDimensional ℝ H]
 /-
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
 -/
-theorem hasFDerivAt_parametric_primitive_of_cont_diff' {F : H → ℝ → E} (hF : ContDiff ℝ 1 ↿F)
+theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF : ContDiff ℝ 1 ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ 1 s) (x₀ : H) (a : ℝ) :
     (IntervalIntegrable (fun t => fderiv ℝ (fun x => F x t) x₀) volume a <| s x₀) ∧
       HasFDerivAt (fun x : H => ∫ t in a..s x, F x t)
@@ -487,7 +487,7 @@ open Real ContinuousLinearMap Asymptotics
 
 local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
-theorem contDiff_parametric_primitive_of_cont_diff' {F : H → ℝ → E} {n : ℕ} (hF : ContDiff ℝ n ↿F)
+theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : ℕ} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H => ∫ t in a..s x, F x t :=
   by
   induction' n with n ih generalizing F
@@ -499,7 +499,7 @@ theorem contDiff_parametric_primitive_of_cont_diff' {F : H → ℝ → E} {n : �
       ∀ x,
         HasFDerivAt (fun x => ∫ t in a..s x, F x t)
           ((∫ t in a..s x, fderiv ℝ (fun x' => F x' t) x) + F x (s x) ⬝ fderiv ℝ s x) x :=
-      fun x => (hasFDerivAt_parametric_primitive_of_cont_diff' hF₁ hs₁ x a).2
+      fun x => (hasFDerivAt_parametric_primitive_of_contDiff' hF₁ hs₁ x a).2
     rw [contDiff_succ_iff_fderiv_apply]
     constructor
     · exact fun x₀ => ⟨_, h x₀⟩
@@ -508,7 +508,7 @@ theorem contDiff_parametric_primitive_of_cont_diff' {F : H → ℝ → E} {n : �
       apply ContDiff.add
       · simp only [ContinuousLinearMap.coe_coe]
         have hD' : ContDiff ℝ n ↿fun x₀ t => fderiv ℝ (fun x => F x t) x₀ :=
-          ContDiff.fderiv (hF.comp₂ contDiff_snd cont_diff_fst.snd) contDiff_fst le_rfl
+          ContDiff.fderiv (hF.comp₂ contDiff_snd contDiff_fst.snd) contDiff_fst le_rfl
         have hD : ContDiff ℝ n ↿fun x' a => (fderiv ℝ (fun e => F e a) x') x :=
           hD'.clm_apply contDiff_const
         convert ih hs.of_succ hD
@@ -517,8 +517,8 @@ theorem contDiff_parametric_primitive_of_cont_diff' {F : H → ℝ → E} {n : �
         exact (continuous_curry x' hD'.continuous).IntervalIntegrable _ _
       ·
         exact
-          ((cont_diff_succ_iff_fderiv.mp hs).2.smul_right
-                (hF.of_succ.comp <| cont_diff_id.prod hs.of_succ)).clm_apply
+          ((contDiff_succ_iff_fderiv.mp hs).2.smul_right
+                (hF.of_succ.comp <| contDiff_id.prod hs.of_succ)).clm_apply
             contDiff_const
 
 end
@@ -538,10 +538,10 @@ theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ
   by
   induction n using WithTop.recTopCoe
   · rw [contDiff_top] at *
-    exact fun n => contDiff_parametric_primitive_of_cont_diff' (hF n) (hs n) a
-  · exact contDiff_parametric_primitive_of_cont_diff' hF hs a
+    exact fun n => contDiff_parametric_primitive_of_contDiff' (hF n) (hs n) a
+  · exact contDiff_parametric_primitive_of_contDiff' hF hs a
 
-theorem contDiff_parametric_primitive_of_cont_diff'' {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
+theorem contDiff_parametric_primitive_of_contDiff'' {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     (a : ℝ) : ContDiff ℝ n fun x : H × ℝ => ∫ t in a..x.2, F x.1 t :=
   contDiff_parametric_primitive_of_contDiff (hF.comp (contDiff_fst.prod_map contDiff_id))
     contDiff_snd a
@@ -555,7 +555,7 @@ theorem ContDiff.fderiv_parametric_integral {F : H → ℝ → E} (hF : ContDiff
       ∫ t in a..b, fderiv ℝ (fun x' => F x' t) x :=
   by
   ext x₀
-  cases' hasFDerivAt_parametric_primitive_of_cont_diff' hF contDiff_const x₀ a with int h
+  cases' hasFDerivAt_parametric_primitive_of_contDiff' hF contDiff_const x₀ a with int h
   rw [h.fderiv, fderiv_const]
   simp only [ContinuousLinearMap.comp_zero, add_zero, Pi.zero_apply]
 

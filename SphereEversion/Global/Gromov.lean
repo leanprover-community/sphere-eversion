@@ -90,7 +90,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       ContMDiffAt (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (fun p : ℝ × M => (a * p.1 + b, p.2))
         (t, x) :=
       haveI h₁ : ContMDiffAt 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (fun t => a * t + b) t :=
-        cont_mdiff_at_iff_cont_diff_at.mpr
+        contMDiffAt_iff_contDiffAt.mpr
           (((contDiffAt_id : ContDiffAt ℝ ∞ id t).const_smul a).add contDiffAt_const)
       h₁.prod_map contMDiffAt_id
     exact h.comp (t, x) this

@@ -139,7 +139,7 @@ def approxSurroundingPointsAt (n : ℕ) (i : ι) : F :=
 
 theorem approxSurroundingPointsAt_smooth (n : ℕ) : 𝒞 ∞ fun y => γ.approxSurroundingPointsAt x y n :=
   by
-  refine' cont_diff_pi.mpr fun i => _
+  refine' contDiff_pi.mpr fun i => _
   suffices 𝒞 ∞ fun y => ∫ s in 0 ..1, deltaMollifier n (γ.surrounding_parameters_at x i) s • γ y s
     by simpa [approx_surrounding_points_at, Loop.mollify]
   refine' contDiff_parametric_integral_of_contDiff (ContDiff.smul _ γ.smooth) 0 1
@@ -287,12 +287,12 @@ theorem localCenteringDensity_smooth_on :
         fun x => (x, x)
     change smooth_on ((w ∘ z) ∘ Prod.fst) (γ.local_centering_density_nhd x ×ˢ univ)
     rw [prod_univ]
-    refine' ContDiffOn.comp _ cont_diff_fst.cont_diff_on Subset.rfl
+    refine' ContDiffOn.comp _ contDiff_fst.contDiffOn Subset.rfl
     have h₁ := smooth_barycentric ι ℝ F (Fintype.card_fin _)
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
-    refine' (h₂.comp_cont_diff_on h₁).comp _ _
+    refine' (h₂.comp_contDiffOn h₁).comp _ _
     · have h₃ := (diag_preimage_prod_self (γ.local_centering_density_nhd x)).symm.subset
-      refine' ContDiffOn.comp _ (cont_diff_id.prod contDiff_id).contDiffOn h₃
+      refine' ContDiffOn.comp _ (contDiff_id.prod contDiff_id).contDiffOn h₃
       refine' γ.smooth_surrounded.contDiffOn.prod_map (ContDiff.contDiffOn _)
       exact γ.approx_surrounding_points_at_smooth x _
     · intro y hy
@@ -515,7 +515,7 @@ theorem
   let f : E → ℝ → ℝ := fun x t => ∫ s in 0 ..t, γ.centering_density x s
   change 𝒞 ⊤ fun p : E × ℝ => (StrictMono.orderIsoOfSurjective (f p.1) _ _).symm p.2
   apply contDiff_parametric_symm_of_deriv_pos
-  · exact contDiff_parametric_primitive_of_cont_diff'' γ.centering_density_smooth 0
+  · exact contDiff_parametric_primitive_of_contDiff'' γ.centering_density_smooth 0
   · exact fun x => deriv_integral_centering_density_pos γ x
 
 @[simp]

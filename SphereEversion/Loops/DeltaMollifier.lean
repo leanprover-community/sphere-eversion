@@ -121,7 +121,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
 theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (h' : HasCompactSupport f) :
     ContDiff ℝ n (periodize f) :=
   by
-  apply cont_diff_iff_cont_diff_at.mpr fun x => contDiffAt_finsum _ _
+  apply contDiff_iff_contDiffAt.mpr fun x => contDiffAt_finsum _ _
   · intro y
     dsimp
     set N := Ioo (y - 1) (y + 1)
@@ -150,7 +150,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
       exact image_subset _ Ioo_subset_Icc_self
     exact subset_tsupport f
   · intro i
-    exact h.cont_diff_at.comp _ (cont_diff_at_id.add contDiffAt_const)
+    exact h.contDiffAt.comp _ (contDiffAt_id.add contDiffAt_const)
 
 theorem periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
     periodize (fun x' => f (x' - t)) x = periodize f (x - t) := by

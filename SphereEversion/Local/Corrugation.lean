@@ -127,7 +127,7 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
 
 variable {γ}
 
-theorem corrugation.cont_diff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
+theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
     (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h => 𝒯 N (γ <| g h) <| x h :=
   by
   apply ContDiff.const_smul
@@ -136,7 +136,7 @@ theorem corrugation.cont_diff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff 
     · exact hγ_diff.comp₃ hg.fst' hx.fst' contDiff_snd
     · apply contDiff_average
       exact hγ_diff.comp₃ hg.fst'.fst' hx.fst'.fst' contDiff_snd
-  · apply cont_diff_const.mul (π.cont_diff.comp hx)
+  · apply contDiff_const.mul (π.contDiff.comp hx)
 
 theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) :=
   (contDiff_parametric_primitive_of_contDiff (contDiff_sub_average hγ_diff)
@@ -175,9 +175,9 @@ theorem corrugation.fderiv_eq {N : ℝ} (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ)
     D (𝒯 N γ) = fun x : E => ((γ x (N * π x) - (γ x).average) ⬝ π) + R N γ x :=
   by
   ext1 x₀
-  have hπ_diff := π.cont_diff
+  have hπ_diff := π.contDiff
   have diff := contDiff_sub_average hγ_diff
-  have key := (hasFDerivAt_parametric_primitive_of_cont_diff' diff (hπ_diff.const_smul N) x₀ 0).2
+  have key := (hasFDerivAt_parametric_primitive_of_contDiff' diff (hπ_diff.const_smul N) x₀ 0).2
   erw [fderiv_const_smul key.differentiable_at, key.fderiv, smul_add, add_comm]
   congr 1
   rw [fderiv_const_smul (hπ_diff.differentiable le_rfl).differentiableAt N, π.fderiv]
@@ -207,13 +207,13 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
   apply contDiff_parametric_primitive_of_contDiff
   · let ψ : E → H × ℝ → F := fun x q => (γ (g q.1) x).normalize q.2
     change 𝒞 ⊤ fun q : H × ℝ => ∂₁ ψ (x q.1) (q.1, q.2)
-    refine' (ContDiff.contDiff_top_partial_fst _).comp₂ hx.fst' (cont_diff_fst.prod contDiff_snd)
+    refine' (ContDiff.contDiff_top_partial_fst _).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [ψ, Loop.normalize]
     apply ContDiff.sub
-    apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst cont_diff_snd.snd
+    apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
     apply contDiff_average
-    exact hγ_diff.comp₃ hg.fst'.snd'.fst' cont_diff_fst.fst' contDiff_snd
-  · exact cont_diff_const.mul (π.cont_diff.comp hx)
+    exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
+  · exact contDiff_const.mul (π.contDiff.comp hx)
 
 theorem remainder_c0_small_on {K : Set E} (hK : IsCompact K) (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ}
     (ε_pos : 0 < ε) : ∀ᶠ N in atTop, ∀ x ∈ K, ‖R N γ x‖ < ε :=

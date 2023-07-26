@@ -159,9 +159,9 @@ theorem smooth_bs :
     Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² => ((1 - p.1) • p.2 + p.1 • -p.2 : E) :=
   by
   refine' (ContMDiff.smul _ _).add (cont_mdiff_fst.smul _)
-  · exact (cont_diff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
+  · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact cont_mdiff_coe_sphere.comp contMDiff_snd
-  · exact (cont_diff_neg.cont_mdiff.comp contMDiff_coe_sphere).comp contMDiff_snd
+  · exact (contDiff_neg.contMDiff.comp contMDiff_coe_sphere).comp contMDiff_snd
 
 def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
   familyJoin (smooth_bs E) <|
@@ -171,7 +171,7 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
         intro p
         have : SmoothAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2) :=
           by
-          refine' (ω.cont_diff_rot _).contMDiffAt
+          refine' (ω.contDiff_rot _).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
         refine' this.comp p (Smooth.smoothAt _)
         exact smooth_fst.prod_mk (cont_mdiff_coe_sphere.comp smooth_snd))

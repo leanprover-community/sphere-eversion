@@ -113,7 +113,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
     ContMDiffWithinAt 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤ (fun x : EB × F => e'.coord_changeL 𝕜 e (c x.1) x.2)
       (Prod.fst ⁻¹' range IB) (extChartAt IB x₀.proj x₀.proj, (e' x₀).2) :=
     by
-    refine' ContMDiffWithinAt.clm_apply _ cont_diff_within_at_snd.cont_mdiff_within_at
+    refine' ContMDiffWithinAt.clm_apply _ contDiffWithinAt_snd.contMDiffWithinAt
     have h1 := smoothAt_coord_change IB e' e ⟨mem_base_set_trivialization_at F E x₀.proj, hx₀⟩
     refine' h1.cont_mdiff_within_at.comp_of_eq _ (maps_to_univ _ _) _
     · refine'
@@ -122,7 +122,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
               _).comp_of_eq
           _ (maps_to_preimage _ _) rfl
       · exact extChartAt_target_mem_nhdsWithin IB x₀.proj
-      exact cont_diff_within_at_fst.cont_mdiff_within_at
+      exact contDiffWithinAt_fst.contMDiffWithinAt
     exact h0
   refine' this.congr_of_eventually_eq_insert _
   rw [insert_eq_of_mem]
@@ -245,13 +245,13 @@ attribute [mfld_simps] mem_insert_iff
 --   have h2g : g ⁻¹' (extChartAt I (g x₀)).source ∈ 𝓝[s] x₀ :=
 --     hg.continuous_within_at.preimage_mem_nhds_within
 --       (extChartAt_source_mem_nhds I (g x₀)),
---   have : cont_diff_within_at 𝕜 m (λ x', fderiv_within 𝕜
+--   have : contDiffWithinAt 𝕜 m (λ x', fderivWithin 𝕜
 --     (extChartAt I' (f x₀ (g x₀)) ∘ f ((extChartAt J x₀).symm x') ∘ (extChartAt I (g x₀)).symm)
 --     (range I) (extChartAt I (g x₀) (g ((extChartAt J x₀).symm x'))))
 --     ((extChartAt J x₀).symm ⁻¹' s ∩ range J) (extChartAt J x₀ x₀),
 --   { rw [cont_mdiff_within_at_iff] at hf hg,
 --     simp_rw [function.comp, uncurry, extChartAt_prod, local_equiv.prod_coe_symm] at hf ⊢,
---     refine (cont_diff_within_at_fderiv_within _
+--     refine (contDiffWithinAt_fderivWithin _
 --       (hg.2.insert.mono_of_mem _) I.unique_diff hmn _ _ _ _).mono_of_mem _,
 --     swap 3,
 --     { simp_rw [function.comp, extChartAt_to_inv], exact hf.2.insert },
@@ -288,7 +288,7 @@ attribute [mfld_simps] mem_insert_iff
 --     (λ x', fderiv_within 𝕜 (extChartAt I' (f x₀ (g x₀)) ∘ f x' ∘ (extChartAt I (g x₀)).symm)
 --     (range I) (extChartAt I (g x₀) (g x'))) s x₀,
 --   { simp_rw [cont_mdiff_within_at_iff_source_of_mem_source (mem_chart_source G x₀),
---       cont_mdiff_within_at_iff_cont_diff_within_at, function.comp],
+--       contMDiffWithinAt_iff_contDiffWithinAt, function.comp],
 --     exact this },
 --   have : cont_mdiff_within_at J 𝓘(𝕜, E →L[𝕜] E') m
 --     (λ x', fderiv_within 𝕜 (extChartAt I' (f x₀ (g x₀)) ∘ (extChartAt I' (f x' (g x'))).symm ∘
@@ -324,10 +324,10 @@ attribute [mfld_simps] mem_insert_iff
 --   swap, { rwa [extChartAt_source] at h3x₂ },
 --   sorry,
 --   -- rw [(h2x₂.mdifferentiable_at le_rfl).mfderiv],
---   -- have hI := (cont_diff_within_at_ext_coord_change I (g x₂) (g x₀) $
+--   -- have hI := (contDiffWithinAt_ext_coord_change I (g x₂) (g x₀) $
 --   --   local_equiv.mem_symm_trans_source _ hx₂ $ mem_ext_chart_source I (g x₂))
 --   --   .differentiable_within_at le_top,
---   -- have hI' := (cont_diff_within_at_ext_coord_change I' (f x₀ (g x₀)) (f x₂ (g x₂)) $
+--   -- have hI' := (contDiffWithinAt_ext_coord_change I' (f x₀ (g x₀)) (f x₂ (g x₂)) $
 --   --   local_equiv.mem_symm_trans_source _
 --   --   (mem_ext_chart_source I' (f x₂ (g x₂))) h3x₂).differentiable_within_at le_top,
 --   -- have h3f := (h2x₂.mdifferentiable_at le_rfl).2,

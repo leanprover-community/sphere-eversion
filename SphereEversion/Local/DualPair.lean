@@ -206,14 +206,14 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [N
   [NormedSpace ℝ F]
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
-to use `cont_diff_clm_apply_iff` and `continuous_clm_apply`. -/
+to use `contDiff_clm_apply_iff` and `continuous_clm_apply`. -/
 theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type _} [NormedAddCommGroup G]
     [NormedSpace ℝ G] {φ : G → E →L[ℝ] F} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
     𝒞 ∞ fun g => p.update (φ g) (w g) := by
   apply hφ.add
   rw [contDiff_clm_apply_iff]
   intro y
-  exact (hw.sub (cont_diff_clm_apply_iff.mp hφ p.v)).const_smul _
+  exact (hw.sub (contDiff_clm_apply_iff.mp hφ p.v)).const_smul _
 
 theorem continuous_update [FiniteDimensional ℝ E] (p : DualPair E) {X : Type _} [TopologicalSpace X]
     {φ : X → E →L[ℝ] F} (hφ : Continuous φ) {w : X → F} (hw : Continuous w) :
