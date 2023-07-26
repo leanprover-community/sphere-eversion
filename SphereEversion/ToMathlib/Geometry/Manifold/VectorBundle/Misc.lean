@@ -147,7 +147,7 @@ theorem pullback_symm (e : Trivialization F (π F E)) (x : B') :
     (e.pullback f).symm x = e.symm (f x) := by
   ext y
   simp_rw [Trivialization.symm, Pretrivialization.symm]
-  congr; ext (hx : f x ∈ e.to_pretrivialization.base_set)
+  congr; ext (hx : f x ∈ e.toPretrivialization.base_set)
   change cast _ (e.symm (f x) y) = cast _ (e.to_local_homeomorph.symm (f x, y)).2
   simp_rw [Trivialization.symm, Pretrivialization.symm, dif_pos hx, cast_cast]
   rfl

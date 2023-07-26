@@ -120,7 +120,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
         ((contMDiffOn_extChartAt_symm x₀.proj _ <|
                   (extChartAt IB x₀.proj).mapsTo <| mem_extChartAt_source IB x₀.proj).mono_of_mem
               _).comp_of_eq
-          _ (maps_to_preimage _ _) rfl
+          _ (mapsTo_preimage _ _) rfl
       · exact extChartAt_target_mem_nhdsWithin IB x₀.proj
       exact contDiffWithinAt_fst.contMDiffWithinAt
     exact h0
