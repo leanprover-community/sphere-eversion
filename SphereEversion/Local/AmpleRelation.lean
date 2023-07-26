@@ -52,26 +52,22 @@ def IsAmple (R : RelLoc E F) : Prop :=
   ∀ (p : DualPair E) (θ : E × F × (E →L[ℝ] F)), AmpleSet (R.slice p θ)
 
 theorem IsAmple.mem_hull (h : IsAmple R) {θ : E × F × (E →L[ℝ] F)} (hθ : θ ∈ R) (v : F) (p) :
-    v ∈ hull (connectedComponentIn (R.slice p θ) (θ.2.2 p.V)) :=
-  by
+    v ∈ hull (connectedComponentIn (R.slice p θ) (θ.2.2 p.v)) := by
   rw [h p θ (θ.2.2 p.v)]
   exact mem_univ _
-  rw [mem_slice, p.update_self, Prod.mk.eta, Prod.mk.eta]
+  rw [mem_slice, p.update_self]
   exact hθ
 
 theorem slice_update {θ : E × F × (E →L[ℝ] F)} {p : DualPair E} (x : F) :
-    R.slice p (θ.1, θ.2.1, p.update θ.2.2 x) = R.slice p θ :=
-  by
+    R.slice p (θ.1, θ.2.1, p.update θ.2.2 x) = R.slice p θ := by
   ext1 w
   dsimp [slice]
   rw [p.update_update]
 
 /-- In order to check ampleness, it suffices to consider slices through elements of the relation. -/
 theorem isAmple_iff :
-    R.IsAmple ↔ ∀ ⦃θ : OneJet E F⦄ (p : DualPair E), θ ∈ R → AmpleSet (R.slice p θ) :=
-  by
-  simp_rw [is_ample]
-  refine' ⟨fun h θ p hθ => h p θ, fun h p θ w hw => _⟩
+    R.IsAmple ↔ ∀ ⦃θ : OneJet E F⦄ (p : DualPair E), θ ∈ R → AmpleSet (R.slice p θ) := by
+  refine' ⟨fun h θ p _ => h p θ, fun h p θ w hw => _⟩
   dsimp [slice] at hw
   have := h p hw
   rw [slice_update] at this
@@ -80,12 +76,9 @@ theorem isAmple_iff :
 open scoped Pointwise
 
 theorem slice_of_ker_eq_ker {θ : OneJet E F} {p p' : DualPair E} (hpp' : p.π = p'.π) :
-    R.slice p θ = θ.2.2 (p.V - p'.V) +ᵥ R.slice p' θ :=
-  by
+    R.slice p θ = θ.2.2 (p.v - p'.v) +ᵥ R.slice p' θ := by
   rcases θ with ⟨x, y, φ⟩
-  have key : ∀ w, p'.update φ w = p.update φ (w + φ (p.v - p'.v)) :=
-    by
-    intro w
+  have key : ∀ w, p'.update φ w = p.update φ (w + φ (p.v - p'.v)) := fun w ↦ by
     simp only [DualPair.update, hpp', map_sub, add_right_inj]
     congr 2
     abel
@@ -96,14 +89,12 @@ theorem slice_of_ker_eq_ker {θ : OneJet E F} {p p' : DualPair E} (hpp' : p.π =
   rw [this]
 
 theorem ample_slice_of_ample_slice {θ : OneJet E F} {p p' : DualPair E} (hpp' : p.π = p'.π)
-    (h : AmpleSet (R.slice p θ)) : AmpleSet (R.slice p' θ) :=
-  by
+    (h : AmpleSet (R.slice p θ)) : AmpleSet (R.slice p' θ) := by
   rw [slice_of_ker_eq_ker hpp'.symm]
   exact AmpleSet.vadd h
 
 theorem ample_slice_of_forall (R : RelLoc E F) {x y φ} (p : DualPair E)
-    (h : ∀ w, (x, y, p.update φ w) ∈ R) : AmpleSet (R.slice p (x, y, φ)) :=
-  by
+    (h : ∀ w, (x, y, p.update φ w) ∈ R) : AmpleSet (R.slice p (x, y, φ)) := by
   rw [show R.slice p (x, y, φ) = univ from eq_univ_of_forall h]
   exact ampleSet_univ
 
@@ -112,7 +103,6 @@ end RelLoc
 open RelLoc
 
 /-! ## Slices for 1-jet sections and formal solutions. -/
-
 
 namespace JetSec
 
@@ -124,7 +114,7 @@ def sliceAt (𝓕 : JetSec E F) (R : RelLoc E F) (p : DualPair E) (x : E) : Set 
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
 corresponding slice. -/
 def IsShortAt (𝓕 : JetSec E F) (R : RelLoc E F) (p : DualPair E) (x : E) : Prop :=
-  D 𝓕.f x p.V ∈ hull (connectedComponentIn (𝓕.sliceAt R p x) <| 𝓕.φ x p.V)
+  D 𝓕.f x p.v ∈ hull (connectedComponentIn (𝓕.sliceAt R p x) <| 𝓕.φ x p.v)
 
 end JetSec
 
@@ -138,7 +128,7 @@ def sliceAt (𝓕 : FormalSol R) (p : DualPair E) (x : E) : Set F :=
 the function `𝓕.f` at `x` is in the convex hull of the relevant connected component of the
 corresponding slice. -/
 def IsShortAt (𝓕 : FormalSol R) (p : DualPair E) (x : E) : Prop :=
-  D 𝓕.f x p.V ∈ hull (connectedComponentIn (𝓕.sliceAt p x) <| 𝓕.φ x p.V)
+  D 𝓕.f x p.v ∈ hull (connectedComponentIn (𝓕.sliceAt p x) <| 𝓕.φ x p.v)
 
 end RelLoc.FormalSol
 
