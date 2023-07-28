@@ -252,7 +252,6 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       HasFDerivAt (fun x : H => ∫ t in a..s x, F x t) G' x₀ := by
   subst hG'
   let φ : H → ℝ → E := fun x t => ∫ s in a..t, F x s
-  let ψ' : H →L[ℝ] E := ∫ t in a..s x₀, F' t
   have Ioo_nhds : Ioo a₀ b₀ ∈ 𝓝 (s x₀) := Ioo_mem_nhds hsx₀.1 hsx₀.2
   have bound_int : ∀ {s u}, s ∈ Ioo a₀ b₀ → u ∈ Ioo a₀ b₀ →
       IntervalIntegrable bound volume s u := fun hs hu ↦
@@ -291,39 +290,36 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
         (ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch)
         (bound_int ha hsx₀) h_diff).2
     have D₂ : HasFDerivAt (fun x => φ x₀ (s x)) ((toSpanSingleton ℝ (F x₀ (s x₀))).comp s') x₀ := by
-      refine' HasFDerivAt.comp _ _ s_diff
-      rw [hasFDerivAt_iff_hasDerivAt, to_span_singleton_apply, one_smul]
-      exact
-        intervalIntegral.integral_hasDerivAt_right (hF_int_ball x₀ x₀_in ha hsx₀)
-          ⟨Ioo a₀ b₀, Ioo_nhds, hF_meas x₀ x₀_in⟩ hF_cont
+      suffices HasFDerivAt (φ x₀) (toSpanSingleton ℝ (F x₀ (s x₀))) (s x₀) from this.comp _ s_diff
+      rw [hasFDerivAt_iff_hasDerivAt, toSpanSingleton_apply, one_smul]
+      exact intervalIntegral.integral_hasDerivAt_right (hF_int_ball x₀ x₀_in ha hsx₀)
+        ⟨Ioo a₀ b₀, Ioo_nhds, hF_meas x₀ x₀_in⟩ hF_cont
     have D₃ : HasFDerivAt (fun x => ∫ t in s x₀..s x, F x t - F x₀ t) 0 x₀ := by
-      apply IsBigO.hasFDerivAt _ one_lt_two
+      refine IsBigO.hasFDerivAt (𝕜 := ℝ) ?_ one_lt_two
       have O₁ : (fun x => ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] fun x => ‖x - x₀‖ := by
         have : (fun x => s x - s x₀) =O[𝓝 x₀] fun x => ‖x - x₀‖ := s_diff.isBigO_sub.norm_right
-        refine' is_O.trans _ this
+        refine' IsBigO.trans _ this
         show ((fun t => ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((fun t => t - s x₀) ∘ s)
-        refine' is_O.comp_tendsto _ s_diff.continuousAt
-        have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume := by
-          use Ioo a₀ b₀, Ioo_nhds, bound_integrable.1
-        refine'
-          (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀) M
-                    bound_cont).hasFDerivAt.IsBigO.congr'
-            _ eventually_eq.rfl
-        apply eventually.mono Ioo_nhds
+        refine' IsBigO.comp_tendsto _ s_diff.continuousAt
+        have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume :=
+          ⟨Ioo a₀ b₀, Ioo_nhds, bound_integrable.1⟩
+        refine' (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
+          M bound_cont).hasFDerivAt.isBigO.congr' _ EventuallyEq.rfl
+        apply Eventually.mono Ioo_nhds
         rintro t ht
         dsimp only
         rw [intervalIntegral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀)]
-      have O₂ : (fun x => ‖x - x₀‖) =O[𝓝 x₀] fun x => ‖x - x₀‖ := is_O_refl _ _
+      have O₂ : (fun x => ‖x - x₀‖) =O[𝓝 x₀] fun x => ‖x - x₀‖ := isBigO_refl _ _
       have O₃ : (fun x => ∫ t : ℝ in s x₀..s x, F x t - F x₀ t) =O[𝓝 x₀] fun x =>
           (∫ t' in s x₀..s x, bound t') * ‖x - x₀‖ := by
         have bdd : ∀ᶠ x in 𝓝 x₀,
             ‖∫ s in s x₀..s x, F x s - F x₀ s‖ ≤ |∫ s in s x₀..s x, bound s| * ‖x - x₀‖ := by
-          apply eventually.mono mem_nhds
+          apply Eventually.mono mem_nhds
           rintro x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩
           rw [← abs_of_nonneg (norm_nonneg <| x - x₀), ← abs_mul, ←
             intervalIntegral.integral_mul_const]
           apply intervalIntegral.norm_integral_le_of_norm_le _ ((bound_int hsx₀ hsx).mul_const _)
-          apply ae_restrict_of_ae_restrict_of_subset (ord_connected_Ioo.uIoc_subset hsx₀ hsx)
+          apply ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset hsx₀ hsx)
           apply h_lipsch.mono
           intro t ht
           rw [lipschitzOnWith_iff_norm_sub_le] at ht
@@ -344,14 +340,10 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       have int₂ : IntervalIntegrable (F x₀) volume (s x₀) (s x) := hF_int_ball x₀ x₀_in hsx₀ hsx
       have int₃ : IntervalIntegrable (F x) volume a (s x₀) := hF_int_ball x hx ha hsx₀
       have int₄ : IntervalIntegrable (F x) volume (s x₀) (s x) := hF_int_ball x hx hsx₀ hsx
-      dsimp (config := { eta := false }) [φ]
+      dsimp
       rw [intervalIntegral.integral_sub int₄ int₂, add_sub, add_right_comm, sub_sub,
-        intervalIntegral.integral_add_adjacent_intervals int₃ int₄]
-      conv_rhs =>
-        congr
-        skip
-        rw [add_comm]
-      rw [intervalIntegral.integral_add_adjacent_intervals int₁ int₂]
+        intervalIntegral.integral_add_adjacent_intervals int₃ int₄,
+        ← intervalIntegral.integral_add_adjacent_intervals int₁ int₂]
       abel
     apply HasFDerivAt.congr_of_eventuallyEq _ this
     simpa using ((D₁.add D₂).add D₃).sub (hasFDerivAt_const (φ x₀ (s x₀)) x₀)
@@ -360,8 +352,6 @@ local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.
 
 variable [FiniteDimensional ℝ H]
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 /-
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
 -/
