@@ -6,7 +6,7 @@ package «SphereEversion» {
 }
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git"@"YK-homeomorph-unit-ball"
+  "https://github.com/leanprover-community/mathlib4.git"
 
 @[default_target]
 lean_lib «SphereEversion» {
