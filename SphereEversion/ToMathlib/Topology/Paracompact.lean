@@ -1,7 +1,6 @@
 import Mathlib.Topology.Paracompact
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Nat.Interval
-import SphereEversion.ToMathlib.Data.Set.Basic
 
 open scoped Topology
 
@@ -71,7 +70,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     refine' ⟨U n, hU'' n x hn, _⟩
     let P : ι × ℝ → Prop := fun z => ((↿B) (z : ι × ℝ) ∩ U n).Nonempty
     erw [(Equiv.Set.sep s P).symm.set_finite_iff]
-    simp only [Set.iUnion_inter, sep_eq_inter_setOf]
+    simp only [Set.iUnion_inter, ← inter_setOf_eq_sep]
     refine'  (hU' n).iUnion (fun m _ => Set.toFinite _) fun m hm => _
     rw [Set.eq_empty_iff_forall_not_mem]
     intro z

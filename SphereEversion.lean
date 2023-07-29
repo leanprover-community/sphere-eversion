@@ -44,7 +44,6 @@ import SphereEversion.ToMathlib.Analysis.NormedGroup
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 import SphereEversion.ToMathlib.Data.Nat.Basic
-import SphereEversion.ToMathlib.Data.Set.Basic
 import SphereEversion.ToMathlib.Data.Set.Lattice
 import SphereEversion.ToMathlib.Data.Set.Prod
 import SphereEversion.ToMathlib.Equivariant
