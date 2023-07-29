@@ -1,8 +1,6 @@
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.InnerProductSpace.l2Space
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import SphereEversion.ToMathlib.Analysis.Calculus.AffineMap
-import SphereEversion.ToMathlib.Logic.Equiv.LocalEquiv
 
 variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
