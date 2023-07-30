@@ -7,14 +7,10 @@ open Filter
 
 open scoped Filter Topology
 
-theorem IsOpen.nhdsSet_eq_principal {s : Set α} (h : IsOpen s) : 𝓝ˢ s = 𝓟 s := by
-  apply le_antisymm _ principal_le_nhdsSet
-  rw [Filter.le_principal_iff, h.mem_nhdsSet]
-
 theorem IsOpen.forall_near_mem_of_subset {s t : Set α} (h : IsOpen s) (ht : t ⊆ s) :
     ∀ᶠ x in 𝓝ˢ t, x ∈ s := by
   apply Eventually.filter_mono (nhdsSet_mono ht)
-  rw [h.nhdsSet_eq_principal, eventually_principal]
+  rw [h.nhdsSet_eq, eventually_principal]
   exact fun x => id
 
 /-
@@ -37,7 +33,7 @@ theorem IsClosed.nhdsSet_le_sup {t : Set α} (h : IsClosed t) (s : Set α) :
     𝓝ˢ s = 𝓝ˢ (s ∩ t ∪ s ∩ tᶜ) := by rw [Set.inter_union_compl s t]
     _ = 𝓝ˢ (s ∩ t) ⊔ 𝓝ˢ (s ∩ tᶜ) := by rw [nhdsSet_union]
     _ ≤ 𝓝ˢ (s ∩ t) ⊔ 𝓝ˢ (tᶜ) := (sup_le_sup_left (monotone_nhdsSet (s.inter_subset_right (tᶜ))) _)
-    _ = 𝓝ˢ (s ∩ t) ⊔ 𝓟 (tᶜ) := by rw [h.isOpen_compl.nhdsSet_eq_principal]
+    _ = 𝓝ˢ (s ∩ t) ⊔ 𝓟 (tᶜ) := by rw [h.isOpen_compl.nhdsSet_eq]
 
 theorem IsClosed.nhdsSet_le_sup' {t : Set α} (h : IsClosed t) (s : Set α) :
     𝓝ˢ s ≤ 𝓝ˢ (t ∩ s) ⊔ 𝓟 (tᶜ) := by rw [Set.inter_comm]; exact h.nhdsSet_le_sup s
