@@ -1,6 +1,5 @@
 import SphereEversion.ToMathlib.Analysis.NormedGroup
 import SphereEversion.ToMathlib.LinearAlgebra.Basis
-import SphereEversion.ToMathlib.Topology.Algebra.Order.Basic
 import SphereEversion.Loops.Exists
 import SphereEversion.Local.Corrugation
 import SphereEversion.Local.AmpleRelation
