@@ -116,7 +116,7 @@ theorem Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E F} {s :
 
 theorem IsPartHolonomicAt.sup (𝓕 : JetSec E F) {E' E'' : Submodule ℝ E} {x : E}
     (h' : 𝓕.IsPartHolonomicAt E' x) (h'' : 𝓕.IsPartHolonomicAt E'' x) :
-    𝓕.IsPartHolonomicAt (E' ⊔ E'') x := fun _ : E => LinearMap.eq_on_sup h' h''
+    𝓕.IsPartHolonomicAt (E' ⊔ E'') x := LinearMap.eqOn_sup h' h''
 
 theorem isPartHolonomicAt_top {𝓕 : JetSec E F} {x : E} :
     IsPartHolonomicAt 𝓕 ⊤ x ↔ IsHolonomicAt 𝓕 x := by

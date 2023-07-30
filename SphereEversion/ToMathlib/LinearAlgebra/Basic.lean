@@ -20,11 +20,6 @@ theorem Submodule.sup_eq_top_iff (s t : Submodule R M) :
   rw [mem_sup]
   tauto
 
-theorem LinearMap.eq_on_sup {s t : Submodule R M} {f g : M →ₛₗ[σ₁₂] M₂} (hs : ∀ x ∈ s, f x = g x)
-    (ht : ∀ x ∈ t, f x = g x) {x : M} (hx : x ∈ s ⊔ t) : f x = g x :=
-  LinearMap.eqOn_span (show ∀ x ∈ (s : Set M) ∪ t, f x = g x by rintro x (h | h) <;> tauto)
-    (s.sup_eq_span_union t ▸ hx)
-
 end
 
 section
