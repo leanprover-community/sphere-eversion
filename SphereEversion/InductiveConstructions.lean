@@ -14,6 +14,8 @@ open Set Filter Prod TopologicalSpace Function
 
 open scoped Topology unitInterval
 
+local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y) -- See Lean 4 issue #2220
+
 /-!
 Notes by Patrick:
 
@@ -195,7 +197,7 @@ private noncomputable def T : ℕ → ℝ := fun n => Nat.rec 0 (fun k x => x + 
 open scoped BigOperators
 
 -- Note this is more painful than Patrick hoped for. Maybe this should be the definition of T.
-private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2) ^ n := by
+private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2 : ℝ) ^ n := by
   unfold T
   induction n with
   | zero => simp [Nat.zero_eq]
@@ -206,7 +208,7 @@ private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2) ^ n := by
 
 private theorem T_lt (n : ℕ) : T n < 1 := by
   rw [T_eq]
-  have : (0 : ℝ) < (1 / 2) ^ n := by positivity
+  have : (0 : ℝ) < (1 / 2 : ℝ) ^ n := by positivity
   linarith
 
 private theorem T_lt_succ (n : ℕ) : T n < T (n + 1) :=
@@ -215,9 +217,9 @@ private theorem T_lt_succ (n : ℕ) : T n < T (n + 1) :=
 private theorem T_le_succ (n : ℕ) : T n ≤ T (n + 1) :=
   (T_lt_succ n).le
 
-private theorem T_succ_sub (n : ℕ) : T (n + 1) - T n = 1 / 2 ^ (n + 1) := add_sub_cancel' ..
+private theorem T_succ_sub (n : ℕ) : T (n + 1) - T n = 1 / (2 : ℝ) ^ (n + 1) := add_sub_cancel' ..
 
-private theorem mul_T_succ_sub (n : ℕ) : 2 ^ (n + 1) * (T (n + 1) - T n) = 1 := by
+private theorem mul_T_succ_sub (n : ℕ) : (2 : ℝ) ^ (n + 1) * (T (n + 1) - T n) = 1 := by
   rw [T_succ_sub]
   field_simp
 
@@ -249,12 +251,12 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
   let PP₀ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun p φ =>
     P₀ p.2 φ.sliceRight ∧ (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ
-  let PP₁ : ∀ i : IndexType N, ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun i p φ =>
+  let PP₁ : IndexType N → ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun i p φ =>
     p.1 = 1 → RestrictGermPredicate P₁ (K i) p.2 φ.sliceRight
   let PP₂ : IndexType N → (ℝ × X → Y) → Prop := fun i f =>
     ∀ x, ∀ t ≥ T i.toNat, f (t, x) = f (T i.toNat, x)
   have hPP₀ : ∀ p : ℝ × X, PP₀ p fun p : ℝ × X => f₀ p.2 := fun (t, x) ↦
-    ⟨init x, fun h => rfl, init' _⟩
+    ⟨init x, fun _ => rfl, init' _⟩
   have ind' : ∀ (i) (f : ℝ × X → Y), (∀ p, PP₀ p f) → PP₂ i f → (∀ j < i, ∀ p, PP₁ j p f) →
       ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (¬IsMax i → PP₂ i.succ f') ∧
         (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ p, p ∉ Ici (T i.toNat) ×ˢ U i → f' p = f p := by
@@ -271,7 +273,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩
     clear ind
     let F'' : ℝ × X → Y := fun p : ℝ × X =>
-      if p.1 ≤ T i.toNat then F p else F' (2 ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2
+      if p.1 ≤ T i.toNat then F p else F' ((2 : ℝ) ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2
     have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.toNat → (F'' : Germ (𝓝 p) Y) = F := by
       dsimp only at h₂F
       rintro ⟨t, x⟩ (ht : t ≤ _)
@@ -280,13 +282,13 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X => F (T i.toNat, q.2)
         · have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet right_mem_Iic
           apply mem_of_superset (prod_mem_nhds (hpast_F'.filter_mono this) univ_mem)
-          rintro ⟨t', x'⟩ ⟨ht', hx'⟩
+          rintro ⟨t', x'⟩ ⟨ht', -⟩
           exact (congr_fun ht' x' : _)
-        have lim : Tendsto (fun x : ℝ × X => (2 ^ (i.toNat + 1) * (x.1 - T i.toNat), x.2))
+        have lim : Tendsto (fun x : ℝ × X => ((2 : ℝ) ^ (i.toNat + 1) * (x.1 - T i.toNat), x.2))
             (𝓝 (T i.toNat, x)) (𝓝 (0, x)) := by
           rw [nhds_prod_eq, nhds_prod_eq]
-          have limt :
-              Tendsto (fun t => 2 ^ (i.toNat + 1) * (t - T i.toNat)) (𝓝 (T i.toNat)) (𝓝 0) :=
+          have limt : Tendsto (fun t => (2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat))
+              (𝓝 (T i.toNat)) (𝓝 0) :=
             Continuous.tendsto' (by continuity) _ _ (by simp)
           exact limt.prod_map tendsto_id
         apply Eventually.mono (hpast_F'.comp_fun lim)
@@ -295,19 +297,19 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         split_ifs with h
         · rfl
         · push_neg at h
-          change (↿F') (2 ^ (i.toNat + 1) * (t - T i.toNat), x) = _
+          change (↿F') ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat), x) = _
           rw [h', h₂F x t h.le]
       · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i.toNat :=
           continuousAt_fst (p := (t, x)) (Iic_mem_nhds ht)
         apply Quotient.sound
         exact hp.mono fun p hp => if_pos hp
     have loc₂ : ∀ p : ℝ × X, p.1 > T i.toNat →
-          (F'' : Germ (𝓝 p) Y) =
-            fun p : ℝ × X ↦ F' (2 ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2 := fun (t, x) ht ↦ by
+        (F'' : Germ (𝓝 p) Y) = fun p : ℝ × X ↦
+          F' ((2 : ℝ) ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2 := fun (t, x) ht ↦ by
       apply Quotient.sound
       have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), ¬p.1 ≤ T i.toNat := by
         apply mem_of_superset (prod_mem_nhds (Ioi_mem_nhds ht) univ_mem)
-        rintro ⟨t', x'⟩ ⟨ht', hx'⟩
+        rintro ⟨t', x'⟩ ⟨ht', -⟩
         simpa using ht'
       exact hp.mono fun q hq => if_neg hq
     refine' ⟨F'', _, _, _, _⟩
@@ -318,17 +320,16 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       · push_neg at ht
         cases' p with t x
         rw [loc₂ _ ht]
-        refine' ⟨h₀F' (2 ^ (i.toNat + 1) * (t - T i.toNat)) x, _, _⟩
+        refine' ⟨h₀F' ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat)) x, _, _⟩
         · rintro (rfl : t = 0)
           exact (lt_irrefl _ ((T_nonneg i.toNat).trans_lt ht)).elim
-        · sorry
-          -- simpa only [mul_sub, neg_mul]
-          --  using hP₂ (2 ^ (i.toNat + 1)) (-2 ^ (i.toNat + 1) * T i.toNat) (t, x) (↿F') (h₂F' _)
+        · simpa only [mul_sub, neg_mul]
+            using hP₂ ((2 : ℝ) ^ (i.toNat + 1)) (-(2 : ℝ) ^ (i.toNat + 1) * T i.toNat)
+              (t, x) (↿F') (h₂F' _)
     · intro hi x t ht
       rw [i.toNat_succ hi] at ht ⊢
       have h₂t : ¬t ≤ T i.toNat := by
-        push_neg
-        exact (T_lt_succ i.toNat).trans_le ht
+        exact ((T_lt_succ i.toNat).trans_le ht).not_le
       dsimp only
       rw [if_neg h₂t, if_neg]
       · rw [hfutur_F'.on_set, mul_T_succ_sub]
@@ -344,14 +345,14 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       rw [loc₂ (1, x) (T_lt i.toNat)]
       revert x
       change ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' : X =>
-          F' (2 ^ (i.toNat + 1) * (1 - T i.toNat)) x'
+          F' ((2 : ℝ) ^ (i.toNat + 1) * (1 - T i.toNat)) x'
       rw [forall_restrictGermPredicate_iff]
       apply h₁F'.germ_congr_set
       apply eventually_of_forall _
       apply congr_fun (hfutur_F'.on_set _ _)
+      rw [mem_Ici]
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
-      sorry
-      -- exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
+      exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
     · rintro ⟨t, x⟩ htx
       simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
       cases' htx with ht hx
@@ -364,7 +365,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
           push_neg at ht
           rw [h₂F x _ ht.le]
   rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left fun i => Ici (T i.toNat))
-      ⟨fun p => f₀ p.2, hPP₀, fun x t ht => rfl⟩ ind' with
+      ⟨fun p => f₀ p.2, hPP₀, fun x t _ => rfl⟩ ind' with
     ⟨F, hF, h'F⟩
   clear ind ind' hPP₀
   refine' ⟨curry F, _, _, _, _⟩
