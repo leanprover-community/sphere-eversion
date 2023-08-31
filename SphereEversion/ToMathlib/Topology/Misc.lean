@@ -5,7 +5,7 @@ import Mathlib.LinearAlgebra.AffineSpace.Independent
 import Mathlib.Analysis.NormedSpace.FiniteDimension
 import Mathlib.Topology.Algebra.Order.Floor
 import Mathlib.Topology.ShrinkingLemma
-import Mathlib.Topology.MetricSpace.EMetricParacompact
+import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Analysis.Convex.Normed
 
 noncomputable section
