@@ -8,9 +8,6 @@ Authors: Patrick Massot, Floris van Doorn
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 -- import SphereEversion.InteractiveExpr
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
-set_option trace.filter_inst_type true
-
 /-!
 # 1-jet bundles
 
@@ -84,13 +81,20 @@ instance deleteme6 :
       (I.prod I') :=
   by infer_instance
 
+set_option linter.unusedVariables false in
 /-- The fibers of the one jet-bundle. -/
-@[nolint unused_arguments]
 def OneJetSpace (p : M × M') : Type _ :=
   Bundle.ContinuousLinearMap σ
     ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I))
     ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
-deriving AddCommGroup, TopologicalSpace
+
+instance (p : M × M') : TopologicalSpace (OneJetSpace I I' p) := by
+  delta OneJetSpace
+  infer_instance
+
+instance (p : M × M') : AddCommGroup (OneJetSpace I I' p) := by
+  delta OneJetSpace
+  infer_instance
 
 variable {I I'}
 
@@ -108,7 +112,7 @@ variable (M M')
 -- is empty if the base manifold is empty
 /-- The space of one jets of maps between two smooth manifolds.
 Defined in terms of `bundle.total_space` to be able to put a suitable topology on it. -/
-@[nolint has_inhabited_instance, reducible]
+@[reducible]
 def OneJetBundle :=
   TotalSpace (E →L[𝕜] E') (OneJetSpace I I' : M × M' → Type _)
 
@@ -134,33 +138,40 @@ section
 
 variable {M} (p : M × M')
 
-instance (x : M × M') : Module 𝕜 (FJ¹MM' x) := by delta_instance one_jet_space
+instance (x : M × M') : Module 𝕜 (FJ¹MM' x) := by
+  delta OneJetSpace
+  infer_instance
 
 end
 
-variable (M)
+instance : TopologicalSpace J¹MM' := by
+  delta OneJetSpace OneJetBundle
+  infer_instance
 
-instance : TopologicalSpace J¹MM' := by delta_instance one_jet_bundle one_jet_space
+instance : FiberBundle (E →L[𝕜] E') FJ¹MM' := by
+  delta OneJetSpace
+  infer_instance
 
-instance : FiberBundle (E →L[𝕜] E') FJ¹MM' := by delta_instance one_jet_space
-
-instance : VectorBundle 𝕜 (E →L[𝕜] E') FJ¹MM' := by delta_instance one_jet_space
+instance : VectorBundle 𝕜 (E →L[𝕜] E') FJ¹MM' := by
+  delta OneJetSpace
+  sorry
 
 instance : SmoothVectorBundle (E →L[𝕜] E') (OneJetSpace I I' : M × M' → Type _) (I.prod I') := by
-  delta_instance one_jet_space
+  delta OneJetSpace
+  sorry
 
-instance : ChartedSpace HJ J¹MM' := by delta_instance one_jet_bundle one_jet_space
+instance : ChartedSpace HJ J¹MM' := by
+  delta OneJetSpace OneJetBundle
+  infer_instance
 
 instance : SmoothManifoldWithCorners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) J¹MM' := by
   apply Bundle.TotalSpace.smoothManifoldWithCorners
 
 end OneJetBundleInstances
 
-variable (M)
-
 /-- The tangent bundle projection on the basis is a continuous map. -/
 theorem one_jet_bundle_proj_continuous : Continuous (π (E →L[𝕜] E') FJ¹MM') :=
-  continuous_proj (E →L[𝕜] E') FJ¹MM'
+  FiberBundle.continuous_proj (E →L[𝕜] E') FJ¹MM'
 
 variable {I M I' M' J J'}
 
@@ -204,7 +215,7 @@ theorem oneJetBundle_chartAt_apply (v v' : OneJetBundle I M I' M') :
   by
   ext1
   · rfl
-  rw [charted_space_chartAt_snd]
+  rw [FiberBundle.chartedSpace_chartAt_snd]
   exact oneJetBundle_trivializationAt v v'
 
 /-- In `J¹(M, M')`, the source of a chart has a nice formula -/
@@ -273,7 +284,7 @@ theorem smoothAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
               x₀)
             x₀ :=
   by
-  simp_rw [SmoothAt, cont_mdiff_at_total_space, contMDiffAt_prod_iff, and_assoc',
+  simp_rw [SmoothAt, Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc',
     oneJetBundle_trivializationAt]
   rfl
 
@@ -362,7 +373,7 @@ theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, One
   specialize hϕ x
   specialize hϕ' x
   rw [← SmoothAt, smoothAt_oneJetBundle_mk] at hϕ hϕ' ⊢
-  simp_rw [inTangentCoordinates, in_coordinates, ContinuousLinearMap.add_comp,
+  simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
     ContinuousLinearMap.comp_add]
   exact ⟨hϕ.1, hϕ.2.1, hϕ.2.2.add hϕ'.2.2⟩
 
@@ -383,14 +394,14 @@ theorem OneJetBundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M�
     OneJetBundle.map J' I₃ f₂ g₂ Df₂inv (OneJetBundle.map I' J' f g Dfinv x) =
       OneJetBundle.map I' I₃ (f₂ ∘ f) (g₂ ∘ g) (fun x => Dfinv x ∘L Df₂inv (f x)) x :=
   by
-  ext _; · rfl; · rfl
+  ext ; · rfl
   dsimp only [OneJetBundle.map, OneJetBundle.mk]
   simp_rw [← ContinuousLinearMap.comp_assoc, mfderiv_comp x.1.2 hg₂ hg]
 
 theorem OneJetBundle.map_id (x : J¹MM') :
-    OneJetBundle.map I' I' id id (fun x => ContinuousLinearMap.id 𝕜 (TangentSpace I x)) x = x :=
-  by
-  ext _; · rfl; · rfl
+    OneJetBundle.map I' I' id id (fun x => ContinuousLinearMap.id 𝕜 (TangentSpace I x)) x = x := by
+  -- Porting note: was `ext _` in Lean 3
+  refine OneJetBundle.ext rfl rfl ?_
   dsimp only [OneJetBundle.map, OneJetBundle.mk]
   simp_rw [mfderiv_id]
   -- note: rw fails since we have to unfold the type `bundle.pullback`
@@ -412,10 +423,10 @@ theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} 
   rw [smoothAt_oneJetBundle] at hk
   refine' SmoothAt.one_jet_comp _ _ _ _
   refine' SmoothAt.one_jet_comp _ _ _ _
-  · refine' hk.2.1.oneJetBundle_mk (hg.comp x₀ (smooth_at_id.prod_mk hk.2.1)) _
+  · refine' hk.2.1.oneJetBundle_mk (hg.comp x₀ (smoothAt_id.prod_mk hk.2.1)) _
     exact ContMDiffAt.mfderiv g (fun x => (k x).1.2) hg hk.2.1 le_rfl
   · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
-  exact (hf.comp x₀ (smooth_at_id.prod_mk hk.1)).oneJetBundle_mk hk.1 hDfinv
+  exact (hf.comp x₀ (smoothAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1 hDfinv
 
 /-- A useful definition to define maps between two one_jet_bundles. -/
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
@@ -437,11 +448,11 @@ theorem SmoothAt.mapLeft {f : N' → M → N} {x₀ : N'}
         x₀)
     (hg : SmoothAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) g x₀) :
     SmoothAt J' ((J.prod I').prod 𝓘(𝕜, F →L[𝕜] E')) (fun z => mapLeft (f z) (Dfinv z) (g z)) x₀ :=
-  by simp_rw [mapLeft_eq_map]; exact hf.one_jet_bundle_map smoothAt_snd hDfinv hg
+  by simp_rw [mapLeft_eq_map]; exact hf.oneJetBundle_map smoothAt_snd hDfinv hg
 
 /-- The projection `J¹(E × P, F) → J¹(E, F)`. Not actually used. -/
 def bundleFst : OneJetBundle (J.prod I) (N × M) I' M' → OneJetBundle J N I' M' :=
-  mapLeft Prod.fst fun x => ContinuousLinearMap.inl 𝕜 F E
+  mapLeft Prod.fst fun _ => ContinuousLinearMap.inl 𝕜 F E
 
 /-- The projection `J¹(P × E, F) → J¹(E, F)`. -/
 def bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM' :=
@@ -453,20 +464,19 @@ theorem bundleSnd_eq (x : OneJetBundle (J.prod I) (N × M) I' M') :
 
 theorem smooth_bundleSnd :
     Smooth (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
-      (bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM') :=
-  by
+      (bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM') := by
   intro x₀
   refine' SmoothAt.mapLeft _ _ smoothAt_id
-  · exact smooth_at_snd.snd
+  · exact smoothAt_snd.snd
   have :
     ContMDiffAt (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) 𝓘(𝕜, E →L[𝕜] F × E) ∞
       (inTangentCoordinates I (J.prod I) _ _ _ x₀) x₀ :=
     ContMDiffAt.mfderiv (fun (x : OneJetBundle (J.prod I) (N × M) I' M') (y : M) => (x.1.1.1, y))
-      (fun x : OneJetBundle (J.prod I) (N × M) I' M' => x.1.1.2) _ _ le_top
+      (fun x : OneJetBundle (J.prod I) (N × M) I' M' => x.1.1.2) ?_ ?_ le_top
   exact this
   · exact (smooth_one_jet_bundle_proj.fst.fst.prod_map smooth_id).smoothAt
   -- slow
-  · exact smooth_one_jet_bundle_proj.fst.snd.smooth_at
+  · exact smooth_one_jet_bundle_proj.fst.snd.smoothAt
 
 -- slow
 end Maps
@@ -476,7 +486,7 @@ theorem localEquiv_eq_equiv {α β} {f : LocalEquiv α β} {e : α ≃ β} (h1 :
     (h2 : f.source = univ) (h3 : f.target = univ) : f = e.toLocalEquiv :=
   by
   refine' LocalEquiv.ext h1 (fun y => _) h2
-  conv_rhs => rw [← f.right_inv ((set.ext_iff.mp h3 y).mpr (mem_univ y)), h1]
+  conv_rhs => rw [← f.right_inv ((Set.ext_iff.mp h3 y).mpr (mem_univ y)), h1]
   exact (e.left_inv _).symm
 
 local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
@@ -501,14 +511,16 @@ theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
 
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_coe_chartAt (p : OneJetBundle I H I' H') :
-    ⇑(chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by unfold_coes;
+    ⇑(chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by
+  unfold_coes
   simp only [mfld_simps]
 
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
     ((chartAt 𝓜 p).symm : 𝓜 → OneJetBundle I H I' H') =
-      (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm :=
-  by unfold_coes; simp only [mfld_simps]
+      (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm := by
+  unfold_coes
+  simp only [mfld_simps]
 
 variable (I I')
 
@@ -553,4 +565,3 @@ theorem oneJetBundleModelSpaceHomeomorph_coe_symm :
     ((oneJetBundleModelSpaceHomeomorph I I').symm : 𝓜 → OneJetBundle I H I' H') =
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm :=
   rfl
-
