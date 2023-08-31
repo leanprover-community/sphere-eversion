@@ -37,16 +37,16 @@ variable (X)
 /-- A loop is a function with domain `ℝ` and is periodic with period 1. -/
 structure Loop where
   toFun : ℝ → X
-  per' : ∀ t, to_fun (t + 1) = to_fun t
+  per' : ∀ t, toFun (t + 1) = toFun t
 
-instance : CoeFun (Loop X) fun _ => ℝ → X :=
-  ⟨fun γ => γ.toFun⟩
+instance : CoeFun (Loop X) fun _ ↦ ℝ → X :=
+  ⟨fun γ ↦ γ.toFun⟩
 
 initialize_simps_projections Loop (toFun → apply)
 
 /-- Any function `φ : α → loop X` can be seen as a function `α × ℝ → X`. -/
 instance hasUncurryLoop {α : Type _} : HasUncurry (α → Loop X) (α × ℝ) X :=
-  ⟨fun φ p => φ p.1 p.2⟩
+  ⟨fun φ p ↦ φ p.1 p.2⟩
 
 variable {X}
 
@@ -58,17 +58,17 @@ protected theorem coe_mk {γ : ℝ → X} (h : ∀ t, γ (t + 1) = γ t) : ⇑(�
 
 @[ext]
 protected theorem ext : ∀ {γ₁ γ₂ : Loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
-  | ⟨x, h1⟩, ⟨x, h2⟩, rfl => rfl
+  | ⟨_x, _h1⟩, ⟨.(_x), _h2⟩, rfl => rfl
 
 protected theorem ext_iff {γ₁ γ₂ : Loop X} : γ₁ = γ₂ ↔ (γ₁ : ℝ → X) = γ₂ :=
-  ⟨fun h => by rw [h], Loop.ext⟩
+  ⟨fun h ↦ by rw [h], Loop.ext⟩
 
 /-- The constant loop. -/
 @[simps]
 def const (f : X) : Loop X :=
-  ⟨fun t => f, fun t => rfl⟩
+  ⟨fun _ ↦ f, fun _ ↦ rfl⟩
 
-instance [Zero X] : Zero (Loop X) :=
+instance Loop.Zero [Zero X] : Zero (Loop X) :=
   ⟨const 0⟩
 
 @[simp]
@@ -95,7 +95,7 @@ protected theorem one (γ : Loop X) : γ 1 = γ 0 := by convert γ.per 0; rw [ze
 -- unused
 theorem add_nat_eq (γ : Loop X) (t : ℝ) : ∀ n : ℕ, γ (t + n) = γ t
   | 0 => by rw [Nat.cast_zero, add_zero]
-  | Nat.succ n => by rw [← add_nat_eq n, Nat.castSucc, ← add_assoc, γ.per]
+  | Nat.succ n => by rw [← γ.add_nat_eq t n, Nat.cast_succ, ← add_assoc, γ.per]
 
 theorem add_int_eq (γ : Loop X) (t : ℝ) (n : ℤ) : γ (t + n) = γ t :=
   by
@@ -115,37 +115,36 @@ theorem range_eq_image (γ : Loop X) : range γ = γ '' I :=
   by
   apply eq_of_subset_of_subset
   · rw [range_subset_iff]
-    exact fun y => ⟨fract y, unitInterval.fract_mem y, γ.fract_eq _⟩
-  · rintro y ⟨x, hx, hxy⟩
+    exact fun y ↦ ⟨fract y, unitInterval.fract_mem y, γ.fract_eq _⟩
+  · rintro y ⟨x, -, hxy⟩
     exact ⟨x, hxy⟩
 
 /-- Transforming a loop by applying function `f`. -/
 @[simps]
 def transform (γ : Loop X) (f : X → X') : Loop X' :=
-  ⟨fun t => f (γ t), fun t => by rw [γ.per]⟩
+  ⟨fun t ↦ f (γ t), fun t ↦ by dsimp only; rw [γ.per]⟩
 
 /-- Adding two loops pointwise. -/
 @[simps]
-instance [Add X] : Add (Loop X) :=
-  ⟨fun γ₁ γ₂ => ⟨fun t => γ₁ t + γ₂ t, fun t => by simp_rw [Loop.per]⟩⟩
+instance Loop.Add [Add X] : Add (Loop X) :=
+  ⟨fun γ₁ γ₂ ↦ ⟨fun t ↦ γ₁ t + γ₂ t, fun t ↦ by simp_rw [Loop.per]⟩⟩
 
 @[simps]
-instance [Neg X] : Neg (Loop X) :=
-  ⟨fun γ => ⟨fun t => -γ t, fun t => by simp_rw [Loop.per]⟩⟩
+instance Loop.Neg [Neg X] : Neg (Loop X) :=
+  ⟨fun γ ↦ ⟨fun t ↦ -γ t, fun t ↦ by simp_rw [Loop.per]⟩⟩
 
 instance [AddCommGroup X] : AddCommGroup (Loop X) :=
-  { Loop.hasAdd, Loop.hasZero,
-    Loop.hasNeg with
-    add_assoc := fun γ₁ γ₂ γ₃ => by ext t; apply add_assoc
-    add_comm := fun γ₁ γ₂ => by ext t; apply add_comm
-    add_comm := fun γ₁ γ₂ => by ext t; apply add_comm
-    zero_add := fun γ => by ext t; apply zero_add
-    add_zero := fun γ => by ext t; apply add_zero
-    add_left_neg := fun γ => by ext t; apply add_left_neg }
+  { Loop.Add, Loop.Zero,
+    Loop.Neg with
+    add_assoc := fun γ₁ γ₂ γ₃ ↦ by ext t; apply add_assoc
+    add_comm := fun γ₁ γ₂ ↦ by ext t; apply add_comm
+    zero_add := fun γ ↦ by ext t; apply zero_add
+    add_zero := fun γ ↦ by ext t; apply add_zero
+    add_left_neg := fun γ ↦ by ext t; apply add_left_neg }
 
 /-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
 instance [Add X] : VAdd X (Loop X) :=
-  ⟨fun x γ => γ.transform fun y => x + y⟩
+  ⟨fun x γ ↦ γ.transform fun y ↦ x + y⟩
 
 @[simp]
 theorem vadd_apply [Add X] {x : X} {γ : Loop X} {t : ℝ} : (x +ᵥ γ) t = x + γ t :=
@@ -153,13 +152,13 @@ theorem vadd_apply [Add X] {x : X} {γ : Loop X} {t : ℝ} : (x +ᵥ γ) t = x +
 
 /-- Multiplying a loop by a scalar value. -/
 instance [SMul K X] : SMul K (Loop X) :=
-  ⟨fun k γ => γ.transform fun y => k • y⟩
+  ⟨fun k γ ↦ γ.transform fun y ↦ k • y⟩
 
 instance [Semiring K] [AddCommGroup X] [Module K X] : Module K (Loop X)
     where
   one_smul γ := by ext t; apply one_smul
   mul_smul k₁ k₂ γ := by ext t; apply mul_smul
-  smul_zero k := by ext t; apply smul_zero
+  smul_zero k := by ext ; apply smul_zero
   smul_add k γ₁ γ₂ := by ext t; apply smul_add
   add_smul k₁ k₂ γ := by ext t; apply add_smul
   zero_smul γ := by ext t; apply zero_smul
@@ -168,24 +167,12 @@ instance [Semiring K] [AddCommGroup X] [Module K X] : Module K (Loop X)
 theorem smul_apply [SMul K X] {k : K} {γ : Loop X} {t : ℝ} : (k • γ) t = k • γ t :=
   rfl
 
--- unused
-theorem norm_at_le_iSup_norm_Icc (γ : Loop F) (hγ : Continuous γ) (t : ℝ) :
-    ‖γ t‖ ≤ ⨆ s : I, ‖γ s‖ :=
-  by
-  obtain ⟨u, hu, ht⟩ := γ.periodic.exists_mem_Ico₀ zero_lt_one t
-  replace hu := mem_Icc_of_Ico hu
-  rw [ht]
-  have h₁ : Set.Nonempty (range fun s : I => ‖γ s‖) := ⟨‖γ 0‖, 0, rfl⟩
-  have h₂ : BddAbove (range fun s : I => ‖γ s‖) := by
-    convert is_compact_Icc.bdd_above_image (continuous_norm.comp hγ).continuousOn; ext; simp
-  exact (Real.isLUB_sSup _ h₁ h₂).1 ⟨⟨u, hu⟩, rfl⟩
-
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
 @[simps (config := { simpRhs := true })]
 def reparam {F : Type _} (γ : Loop F) (φ : EquivariantMap) : Loop F
     where
   toFun := γ ∘ φ
-  per' t := by rw [comp_apply, φ.eqv, γ.per]
+  per' t := by rw [comp_apply, φ.eqv, γ.per] ; rfl
 
 /-! ## Support of a loop family -/
 
@@ -196,7 +183,7 @@ terms of average values. -/
 def IsConst (γ : Loop X) :=
   ∀ t s, γ t = γ s
 
-theorem isConst_of_eq {γ : Loop X} {f : X} (H : ∀ t, γ t = f) : γ.IsConst := fun t t' => by
+theorem isConst_of_eq {γ : Loop X} {f : X} (H : ∀ t, γ t = f) : γ.IsConst := fun t t' ↦ by
   rw [H, H]
 
 variable [TopologicalSpace X] [TopologicalSpace X']
@@ -225,16 +212,15 @@ noncomputable def ofPath {x : X} (γ : Path x x) : Loop X
   toFun t := γ.extend (fract t)
   per' := by
     intro t
+    dsimp
     congr 1
     exact_mod_cast fract_add_int t 1
 
 @[simp]
-theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ :=
-  by
+theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := by
   rw [Loop.range_eq_image]
-  unfold_coes
-  simp only [of_path, image_eq_range]
-  congr
+  simp only [ofPath, image_eq_range]
+  apply congrArg
   ext t
   by_cases ht1 : t.val = 1
   · have : t = ⟨1, right_mem_Icc.mpr zero_le_one⟩ := Subtype.ext_val ht1
@@ -246,26 +232,25 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ :=
     have : fract ↑t = t.val := by
       rw [fract_eq_iff]
       refine' ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, _⟩⟩
-      rw [Int.cast_zero, Subtype.val_eq_coe, sub_self]
+      rw [Int.cast_zero, sub_self]
     simp only [this, γ.extend_extends t.2]
-    congr
-    rw [Subtype.ext_iff_val]
 
-/-- `loop.of_path` is continuous, general version. -/
+/-- `loop.ofPath` is continuous, general version. -/
 theorem Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
-    (ht : Continuous t) : Continuous fun i => ofPath (γ i) (t i) :=
+    (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) :=
   by
-  change Continuous fun i => (fun s => (γ s).extend) i (fract (t i))
+  change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
   refine' ContinuousOn.comp_fract _ ht _
-  · exact (hγ.comp (continuous_id.prod_map continuous_projIcc)).continuousOn
-  ·
-    simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
+  · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
+      continuous_id.prod_map continuous_projIcc
+    exact (hγ.comp this).continuousOn
+  · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
-/-- `loop.of_path` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
+/-- `loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
-    Continuous ↿fun s => ofPath <| γ s :=
-  Continuous.ofPath _ _ (fun i : X × ℝ => γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
+    Continuous ↿fun s ↦ ofPath <| γ s :=
+  Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
     continuous_snd
 
 /-! ## Round trips -/
@@ -276,13 +261,10 @@ def roundTrip {x y : X} (γ : Path x y) : Loop X :=
   ofPath (γ.trans γ.symm)
 
 theorem roundTrip_range {x y : X} {γ : Path x y} : range (roundTrip γ) = range γ := by
-  simp [round_trip, range_of_path, Path.trans_range, Path.symm_range]
+  simp [roundTrip, range_ofPath, Path.trans_range, Path.symm_range]
 
-theorem roundTrip_based_at {x y : X} {γ : Path x y} : roundTrip γ 0 = x :=
-  by
-  unfold_coes
-  rw [round_trip, of_path]
-  simp [fract_zero]
+theorem roundTrip_based_at {x y : X} {γ : Path x y} : roundTrip γ 0 = x := by
+  simp [roundTrip, ofPath, fract_zero]
 
 theorem roundTrip_eq {x y x' y' : X} {γ : Path x y} {γ' : Path x' y'} (h : ∀ s, γ s = γ' s) :
     roundTrip γ = roundTrip γ' :=
@@ -295,8 +277,8 @@ theorem roundTrip_eq {x y x' y' : X} {γ : Path x y} {γ' : Path x' y'} (h : ∀
 /-- The round trip loop family associated to a path `γ`. For each parameter `t`,
 the loop `round_trip_family γ t` backtracks at `γ t`. -/
 noncomputable def roundTripFamily {x y : X} (γ : Path x y) : ℝ → Loop X :=
-  have key : ∀ {t}, x = γ.extend (min 0 t) := fun t => (γ.extend_of_le_zero <| min_le_left _ _).symm
-  fun t => roundTrip ((γ.truncate 0 t).cast key rfl)
+  have key : ∀ {t}, x = γ.extend (min 0 t) := (γ.extend_of_le_zero <| min_le_left _ _).symm
+  fun t ↦ roundTrip ((γ.truncate 0 t).cast key rfl)
 
 theorem roundTripFamily_continuous {x y : X} {γ : Path x y} : Continuous ↿(roundTripFamily γ) :=
   ofPath_continuous_family _
@@ -304,20 +286,20 @@ theorem roundTripFamily_continuous {x y : X} {γ : Path x y} : Continuous ↿(ro
       Path.symm_continuous_family _ <| γ.truncate_const_continuous_family 0)
 
 theorem roundTripFamily_based_at {x y : X} {γ : Path x y} : ∀ t, (roundTripFamily γ) t 0 = x :=
-  fun t => roundTrip_based_at
+  fun _ ↦ roundTrip_based_at
 
 theorem roundTripFamily_zero {x y : X} {γ : Path x y} :
-    (roundTripFamily γ) 0 = ofPath (Path.refl x) :=
-  by
-  simp only [round_trip_family, round_trip, Path.truncate_zero_zero, of_path]
+    (roundTripFamily γ) 0 = ofPath (Path.refl x) := by
+  simp only [roundTripFamily, roundTrip, Path.truncate_zero_zero, ofPath]
   ext z
   congr
   ext t
   simp [Path.refl_symm]
+  rfl
 
 theorem roundTripFamily_one {x y : X} {γ : Path x y} : (roundTripFamily γ) 1 = roundTrip γ :=
   by
-  simp only [round_trip_family, round_trip, Path.truncate_zero_one, of_path]
+  simp only [roundTripFamily, roundTrip, Path.truncate_zero_one, ofPath]
   rfl
 
 section Average
@@ -329,7 +311,7 @@ variable [MeasurableSpace F] [BorelSpace F] [SecondCountableTopology F] [Complet
 
 /-- The average value of a loop. -/
 noncomputable def average (γ : Loop F) : F :=
-  ∫ x in 0 ..1, γ x
+  ∫ x in (0 : ℝ)..1, γ x
 
 -- unused
 @[simp]
@@ -346,7 +328,7 @@ theorem isConst_iff_forall_avg {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.a
       rfl
     rw [this]
     simp only [average, const_apply, intervalIntegral.integral_const, one_smul, sub_zero]
-  · exact is_const_of_eq h
+  · exact isConst_of_eq h
 
 @[simp]
 theorem average_const {f : F} : (const f).average = f := by simp [Loop.average]
@@ -366,11 +348,11 @@ theorem isConst_iff_const_avg {γ : Loop F} : γ.IsConst ↔ γ = const γ.avera
   rw [Loop.isConst_iff_forall_avg, Loop.ext_iff, funext_iff]; rfl
 
 theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst :=
-  by classical exact Decidable.by_contradiction fun H => hx (subset_closure H)
+  by classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
 
 theorem continuous_average {E : Type _} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
-    Continuous fun x => (γ x).average :=
+    Continuous fun x ↦ (γ x).average :=
   continuous_parametric_intervalIntegral_of_continuous' hγ_cont _ _
 
 /-- The normalization of a loop `γ` is the loop `γ - γ.average`. -/
@@ -387,7 +369,7 @@ theorem normalize_apply (γ : Loop F) (t : ℝ) : Loop.normalize γ t = γ t - �
 theorem normalize_of_isConst {γ : Loop F} (h : γ.IsConst) : γ.normalize = 0 :=
   by
   ext t
-  simp [is_const_iff_forall_avg.mp h]
+  simp [isConst_iff_forall_avg.mp h]
 
 end Average
 
@@ -405,24 +387,23 @@ variable (π : E → ℝ) (N : ℝ) (γ : E → Loop F) (hγ : IsCompact (Loop.s
 /-- Differential of a loop family with respect to the parameter. -/
 def Loop.diff (γ : E → Loop F) (e : E) : Loop (E →L[ℝ] F)
     where
-  toFun t := ∂₁ (fun e t => γ e t) e t
+  toFun t := ∂₁ (fun e t ↦ γ e t) e t
   per' t := by simp only [partialFDerivFst, Loop.per]
 
 @[simp]
 theorem Loop.diff_apply (γ : E → Loop F) (e : E) (t : ℝ) :
-    Loop.diff γ e t = ∂₁ (fun e t => γ e t) e t :=
+    Loop.diff γ e t = ∂₁ (fun e t ↦ γ e t) e t :=
   rfl
 
 theorem Loop.continuous_diff {γ : E → Loop F} (h : 𝒞 1 ↿γ) : Continuous ↿(Loop.diff γ) :=
   ContDiff.continuous_partial_fst (h : _)
 
 theorem ContDiff.partial_loop {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-    ∀ t, 𝒞 n fun e => γ e t := fun t => hγ_diff.comp ((contDiff_prod_mk_left t).of_le le_top)
+    ∀ t, 𝒞 n fun e ↦ γ e t := fun t ↦ hγ_diff.comp ((contDiff_prod_mk_left t).of_le le_top)
 
 variable [MeasurableSpace F] [BorelSpace F] [FiniteDimensional ℝ F]
 
-theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ Loop.support γ :=
-  by
+theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ Loop.support γ := by
   unfold Loop.support
   erw [closure_compl, closure_compl]
   rw [compl_subset_compl]
@@ -432,30 +413,31 @@ theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ 
   have U_nhds : U ∈ 𝓝 x := IsOpen.mem_nhds U_op hxU
   apply Filter.mem_of_superset U_nhds
   intro y hy
-  have Hy : ∀ t, (fun z => γ z t) =ᶠ[𝓝 y] fun z => (γ z).average :=
+  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
     by
     intro t
     apply Filter.mem_of_superset (U_op.mem_nhds hy)
     intro z hz
-    exact loop.is_const_iff_forall_avg.mp (hU hz) t
-  have : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E => (γ z).average) y := fun t => (Hy t).fderiv_eq
+    exact Loop.isConst_iff_forall_avg.mp (hU hz) t
+  have : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E ↦ (γ z).average) y := fun t ↦ (Hy t).fderiv_eq
   intro t s
-  simp [this]
+  simp only [this]
+
 
 variable [FiniteDimensional ℝ E]
 
 theorem Loop.average_diff {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
-    (Loop.diff γ e).average = D (fun e => (γ e).average) e :=
-  by
-  change 𝒞 1 ↿fun (e : E) (t : ℝ) => γ e t at hγ_diff
-  simpa only [Loop.average, hγ_diff.fderiv_parametric_integral]
+    (Loop.diff γ e).average = D (fun e ↦ (γ e).average) e := by
+  change 𝒞 1 ↿fun (e : E) (t : ℝ) ↦ γ e t at hγ_diff
+  simp only [Loop.average, hγ_diff.fderiv_parametric_integral]
+  rfl
 
 theorem ContDiff.loop_average {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-    𝒞 n fun e => (γ e).average :=
+    𝒞 n fun e ↦ (γ e).average :=
   contDiff_parametric_integral_of_contDiff hγ_diff _ _
 
 theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
-    (Loop.diff γ e).normalize = Loop.diff (fun e => (γ e).normalize) e :=
+    (Loop.diff γ e).normalize = Loop.diff (fun e ↦ (γ e).normalize) e :=
   by
   ext t x
   simp only [Loop.diff_apply, Loop.normalize_apply, partialFDerivFst]
@@ -465,12 +447,11 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
 
 variable {γ}
 
-theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n fun x => (γ x).average :=
+theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n fun x ↦ (γ x).average :=
   contDiff_parametric_primitive_of_contDiff hγ_diff contDiff_const 0
 
 theorem contDiff_sub_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-    𝒞 n ↿fun (x : E) (t : ℝ) => (γ x) t - (γ x).average :=
+    𝒞 n ↿fun (x : E) (t : ℝ) ↦ (γ x) t - (γ x).average :=
   hγ_diff.sub (contDiff_average hγ_diff).fst'
 
 end C1
-
