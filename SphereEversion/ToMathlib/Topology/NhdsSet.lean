@@ -45,8 +45,9 @@ theorem Filter.Eventually.eventually_nhdsSet {p : α → Prop} (h : ∀ᶠ y in 
     ∀ᶠ y in 𝓝ˢ s, ∀ᶠ x in 𝓝 y, p x :=
   eventually_nhdsSet_iff.mpr fun x x_in => (eventually_nhdsSet_iff.mp h x x_in).eventually_nhds
 
+@[deprecated Filter.Eventually.self_of_nhdsSet]
 theorem Filter.Eventually.on_set {p : α → Prop} (h : ∀ᶠ y in 𝓝ˢ s, p y) : ∀ x ∈ s, p x :=
-  eventually_principal.mp <| Eventually.filter_mono principal_le_nhdsSet h
+  h.self_of_nhdsSet
 
 theorem Filter.eventually_nhdsSet_union {p : α → Prop} :
     (∀ᶠ x in 𝓝ˢ (s ∪ t), p x) ↔ (∀ᶠ x in 𝓝ˢ s, p x) ∧ ∀ᶠ x in 𝓝ˢ t, p x := by
@@ -105,6 +106,3 @@ theorem Filter.Eventually.forall_mem {α : Type _} {f : Filter α} {s : Set α} 
 theorem Filter.Eventually.nhdsSet_forall_mem {α : Type _} [TopologicalSpace α] {s : Set α}
     {P : α → Prop} (hP : ∀ᶠ x in nhdsSet s, P x) : ∀ x ∈ s, P x :=
   hP.forall_mem principal_le_nhdsSet
-
-theorem subset_of_mem_nhdsSet {α : Type _} [TopologicalSpace α] {s t : Set α} (h : t ∈ 𝓝ˢ s) :
-    s ⊆ t := fun x hx => mem_of_mem_nhds <| mem_nhdsSet_iff_forall.mp h x hx
