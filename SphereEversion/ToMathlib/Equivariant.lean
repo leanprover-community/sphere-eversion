@@ -38,7 +38,7 @@ protected theorem one : φ 1 = φ 0 + 1 := by rw [← cast_one, φ.coe_int]
 protected theorem not_bounded_above (y : ℝ) : ∃ x : ℝ, y ≤ φ x :=
   ⟨⌈y - φ 0⌉, by simp_rw [φ.coe_int, ← sub_le_iff_le_add', le_ceil]⟩
 
-protected theorem not_bounded_below (y : ℝ) : ∃ x : ℝ, φ x ≤ y := 
+protected theorem not_bounded_below (y : ℝ) : ∃ x : ℝ, φ x ≤ y :=
   ⟨⌊y - φ 0⌋, by simp_rw [φ.coe_int, ← le_sub_iff_add_le', floor_le]⟩
 
 @[simp]
@@ -90,7 +90,7 @@ theorem linearReparam_eq_zero {t : ℝ} (h1 : -4⁻¹ ≤ t) (h2 : t ≤ 4⁻¹)
         ⟨le_sub_iff_add_le.mpr <| le_trans (by norm_num) h1,
           sub_lt_iff_lt_add.mpr <| h2.trans_le (by norm_num)⟩
   have : (⌊t - 4⁻¹⌋ : ℝ) = -1 := by exact_mod_cast this
-  simp_rw [linearReparam, EquivariantMap.coe_mk, fract, this, sub_eq_zero]
+  simp_rw [linearReparam, fract, this, sub_eq_zero]
   refine' (abs_eq_self.mpr <| _).symm.trans (by ring_nf)
   rwa [← sub_le_iff_le_add, zero_sub]
 
@@ -120,7 +120,7 @@ theorem linearReparam_monotone : Monotone linearReparam := by
       floor_eq_iff.mpr ⟨le_sub_iff_add_le.mpr <| le_trans (by norm_num) hx.1,
         sub_lt_iff_lt_add.mpr <| hx.2.trans_lt (by norm_num)⟩
     have : (⌊x - 4⁻¹⌋ : ℝ) = 0 := by exact_mod_cast this
-    simp_rw [linearReparam, EquivariantMap.coe_mk, fract, this, sub_zero, sub_sub,
+    simp_rw [linearReparam, fract, this, sub_zero, sub_sub,
       show (4 : ℝ)⁻¹ + 2⁻¹ = 3 / 4 by norm_num, abs_eq_neg_self.mpr (sub_nonpos.mpr hx.2)]
     norm_num; linarith
   have : MonotoneOn linearReparam (Icc 4⁻¹ (3 / 4)) := fun x hx y hy hxy ↦ by
@@ -179,9 +179,9 @@ theorem fract_linearReparam_eq_zero {t : ℝ} (h : fract t ≤ 4⁻¹ ∨ 3 / 4 
   · rw [linearReparam_eq_one' h (fract_lt_one _).le, fract_one]
 
 theorem continuous_linearReparam : Continuous linearReparam := by
-  have h1 : Continuous (uncurry fun t x => t + 4⁻¹ - abs (x - 2⁻¹) : ℝ × ℝ → ℝ) :=
-    (continuous_fst.add continuous_const).sub (continuous_snd.sub continuous_const).abs
-  refine' h1.continuous_on.comp_fract (continuous_id.sub continuous_const) fun s => by norm_num
+  have h1 : Continuous (uncurry fun t x => t + 4⁻¹ - abs (x - 2⁻¹) : ℝ × ℝ → ℝ) := by
+    exact (continuous_fst.add continuous_const).sub (continuous_snd.sub continuous_const).abs
+  exact h1.continuousOn.comp_fract (continuous_id.sub continuous_const) fun s => by norm_num
 
 /-- A bijection from `ℝ` to itself that fixes `0` and is equivariant with respect to the `ℤ`
 action by translations.
@@ -239,7 +239,7 @@ def symm (e : EquivariantEquiv) : EquivariantEquiv :=
       change g (t + 1) = g t + 1
       calc
         g (t + 1) = g (f (g t) + 1) := by rw [(e : ℝ ≃ ℝ).apply_symm_apply]
-        _ = g (f (g t + 1)) := by erw [e.eqv]; rfl
+        _ = g (f (g t + 1)) := by congr ; exact (e.eqv (g t)).symm
         _ = g t + 1 := (e : ℝ ≃ ℝ).symm_apply_apply _ }
 
 instance : EquivLike EquivariantEquiv ℝ ℝ where
@@ -247,7 +247,13 @@ instance : EquivLike EquivariantEquiv ℝ ℝ where
   inv e := e.invFun
   left_inv e := e.left_inv
   right_inv e := e.right_inv
-  coe_injective' e₁ e₂ h₁ h₂ := by cases e₁; cases e₂; congr
+  coe_injective' e₁ e₂ h₁ h₂ := by
+    rcases e₁ with ⟨f₁, hf₁⟩
+    rcases e₂ with ⟨f₂, hf₂⟩
+    suffices : f₁ = f₂ ; · simpa
+    ext
+    change (f₁ : ℝ → ℝ)  = f₂ at h₁
+    rw [h₁]
 
 @[ext]
 theorem ext {e₁ e₂ : EquivariantEquiv} (h : ∀ x, e₁ x = e₂ x) : e₁ = e₂ :=
@@ -257,7 +263,8 @@ theorem ext {e₁ e₂ : EquivariantEquiv} (h : ∀ x, e₁ x = e₂ x) : e₁ =
 theorem symm_symm (e : EquivariantEquiv) : e.symm.symm = e := by
   ext x
   change (e : ℝ ≃ ℝ).symm.symm x = e x
-  simp only [Equiv.symm_symm, coe_to_equiv]
+  simp only [Equiv.symm_symm, coe_toEquiv]
+  rfl
 
 @[simp]
 theorem apply_symm_apply (e : EquivariantEquiv) : ∀ x, e (e.symm x) = x :=
@@ -268,4 +275,3 @@ theorem symm_apply_apply (e : EquivariantEquiv) : ∀ x, e.symm (e x) = x :=
   (e : ℝ ≃ ℝ).symm_apply_apply
 
 end EquivariantEquiv
-

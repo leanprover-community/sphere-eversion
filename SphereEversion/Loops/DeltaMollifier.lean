@@ -1,5 +1,5 @@
 import Mathlib.MeasureTheory.Integral.Periodic
-import Mathlib.MeasureTheory.Group.Integration
+import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Convolution
 import SphereEversion.ToMathlib.Topology.Periodic
@@ -327,4 +327,3 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
   · exact (continuous_const.smul hγ).IntervalIntegrable _ _
 
 end VersionOfDeltaMollifierUsingN
-
