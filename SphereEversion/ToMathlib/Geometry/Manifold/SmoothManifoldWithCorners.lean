@@ -52,12 +52,12 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
     · exact ((extChartAt I x).mapsTo.mono (inter_subset_right _ _) Subset.rfl).image_subset
     · suffices m ⊆ s j by
         refine' Subset.trans _ this
-        convert monotone_image hr₁
+        convert monotone_image (f := (extChartAt I x).symm) hr₁
         exact (LocalEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
       exact (Set.inter_subset_left _ _).trans (Set.inter_subset_left _ _)
     · suffices m ⊆ n by
         refine' Subset.trans _ this
-        convert monotone_image hr₁
+        convert monotone_image (f := (extChartAt I x).symm) hr₁
         exact (LocalEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
       exact (Set.inter_subset_left _ _).trans (Set.inter_subset_right _ _)
   · rintro ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩
@@ -78,7 +78,6 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensio
   [ChartedSpace H M]
 
 theorem locally_compact_manifold : LocallyCompactSpace M :=
-  @ChartedSpace.locallyCompact H M _ _ _ I.locally_compact
+  @ChartedSpace.locallyCompactSpace H M _ _ _ I.locallyCompactSpace
 
 end
-
