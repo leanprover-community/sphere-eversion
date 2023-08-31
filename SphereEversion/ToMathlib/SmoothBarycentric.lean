@@ -119,7 +119,13 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
   obtain ⟨b⟩ : Nonempty (AffineBasis ι 𝕜 F) := AffineBasis.exists_affineBasis_of_finiteDimensional h
   simp_rw [uncurry_def, contDiffOn_pi, evalBarycentricCoords_eq_det 𝕜 b]
   intro i
-  simp only [Algebra.id.smul_eq_mul, Pi.smul_apply, Matrix.cramer_transpose_apply]
+  change ContDiffOn 𝕜 ⊤
+    (fun x : F × (ι → F)  ↦
+      (Matrix.det (AffineBasis.toMatrix b x.snd))⁻¹ •
+        (Matrix.cramer (AffineBasis.toMatrix b x.snd)ᵀ : (ι → 𝕜) → ι → 𝕜)
+          ((AffineBasis.coords b : F → ι → 𝕜) x.1) i)
+    (univ ×ˢ affineBases ι 𝕜 F)
+  simp only [Pi.smul_apply, Matrix.cramer_transpose_apply]
   have hcont : ContDiff 𝕜 ⊤ fun x : ι → F ↦ b.toMatrix x :=
     contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' =>
       (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
@@ -132,12 +138,13 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     exact hv
   · refine' ((Matrix.smooth_det ι 𝕜 ⊤).comp _).contDiffOn
     refine' contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' => _
-    simp only [Matrix.updateColumn_apply, AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
-    by_cases hij : j' = i
+    simp only [Matrix.updateRow_apply]
+    simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
+    save
+    by_cases hij : j = i
     · simp only [hij, if_true, eq_self_iff_true]
-      exact (smooth_barycentric_coord b j).fst'
+      exact (smooth_barycentric_coord b j').fst'
     · simp only [hij, if_false]
-      exact (smooth_barycentric_coord b j).comp (contDiff_pi.mp contDiff_snd j')
+      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j)
 
 end smooth_barycentric
-
