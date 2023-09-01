@@ -17,7 +17,9 @@ open scoped RealInnerProductSpace
 
 open FiniteDimensional
 
+set_option synthInstance.checkSynthOrder false
 attribute [local instance] fact_finiteDimensional_of_finrank_eq_succ
+set_option synthInstance.checkSynthOrder true
 
 variable (E : Type _) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
@@ -65,17 +67,17 @@ theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v,
 
 theorem inner_crossProduct_apply_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, v⟫ = 0 := by
   rw [ω.inner_crossProduct_apply u v v]
-  refine' ω.volume_form.map_eq_zero_of_eq ![u, v, v] _ (by norm_num : (1 : Fin 3) ≠ 2)
+  refine' ω.volumeForm.map_eq_zero_of_eq ![u, v, v] _ (by norm_num : (1 : Fin 3) ≠ 2)
   simp
 
 /-- The map `cross_product`, upgraded from linear to continuous-linear; useful for calculus. -/
 def crossProduct' : E →L[ℝ] E →L[ℝ] E :=
-  (↑(LinearMap.toContinuousLinearMap : (E →ₗ[ℝ] E) ≃ₗ[ℝ] E →L[ℝ] E) ∘ₗ
-      ω.crossProduct).toContinuousLinearMap
+  LinearMap.toContinuousLinearMap
+    (↑(LinearMap.toContinuousLinearMap : (E →ₗ[ℝ] E) ≃ₗ[ℝ] E →L[ℝ] E) ∘ₗ ω.crossProduct)
 
 @[simp]
 theorem crossProduct'_apply (v : E) :
-    ω.crossProduct' v = (ω.crossProduct v).toContinuousLinearMap :=
+    ω.crossProduct' v = LinearMap.toContinuousLinearMap (ω.crossProduct v) :=
   rfl
 
 theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖ * ‖v‖ := by
@@ -86,23 +88,23 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       positivity
     refine' le_of_mul_le_mul_right _ h
     rw [← real_inner_self_eq_norm_mul_norm]
-    simpa only [inner_cross_product_apply, Fin.mk_zero, Fin.prod_univ_succ, Finset.card_singleton,
+    simpa only [inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Finset.card_singleton,
       Finset.prod_const, Fintype.univ_ofSubsingleton, Matrix.cons_val_fin_one, Matrix.cons_val_succ,
       Matrix.cons_val_zero, mul_assoc, Nat.zero_eq, pow_one, Submodule.coe_norm] using
-      ω.volume_form_apply_le ![u, v, u×₃v]
-  let K : Submodule ℝ E := Submodule.span ℝ ({u, v} : Set E)
+      ω.volumeForm_apply_le ![u, v, u×₃v]
+  let K : Submodule ℝ E := Submodule.span ℝ ({u, ↑v} : Set E)
   have : Nontrivial Kᗮ :=
     by
     apply @FiniteDimensional.nontrivial_of_finrank_pos ℝ
     have : finrank ℝ K ≤ Finset.card {u, (v : E)} := by
-      simpa [Set.toFinset_singleton] using finrank_span_le_card ({u, v} : Set E)
-    have : Finset.card {u, (v : E)} ≤ Finset.card {(v : E)} + 1 := Finset.card_insert_le u {v}
+      simpa [Set.toFinset_singleton] using finrank_span_le_card ({u, ↑v} : Set E)
+    have : Finset.card {u, (v : E)} ≤ Finset.card {(v : E)} + 1 := Finset.card_insert_le u {↑v}
     have : Finset.card {(v : E)} = 1 := Finset.card_singleton (v : E)
     have : finrank ℝ K + finrank ℝ Kᗮ = finrank ℝ E := K.finrank_add_finrank_orthogonal
-    have : finrank ℝ E = 3 := Fact.out _
+    have : finrank ℝ E = 3 := Fact.out
     linarith
   obtain ⟨w, hw⟩ : ∃ w : Kᗮ, w ≠ 0 := exists_ne 0
-  have hw' : (w : E) ≠ 0 := fun h => hw (submodule.coe_eq_zero.mp h)
+  have hw' : (w : E) ≠ 0 := fun h => hw (Submodule.coe_eq_zero.mp h)
   have H : Pairwise fun i j => ⟪![u, v, w] i, ![u, v, w] j⟫ = 0 :=
     by
     intro i j hij
@@ -114,13 +116,12 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       assumption
   refine' le_of_mul_le_mul_right _ (by rwa [norm_pos_iff] : 0 < ‖w‖)
   -- Cauchy-Schwarz inequality for `u ×₃ v` and `w`
-  simpa only [inner_cross_product_apply, ω.abs_volume_form_apply_of_pairwise_orthogonal H,
-    inner_cross_product_apply, Fin.mk_zero, Fin.prod_univ_succ, Finset.card_singleton,
+  simpa only [inner_crossProduct_apply, ω.abs_volumeForm_apply_of_pairwise_orthogonal H,
+    inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Finset.card_singleton,
     Finset.prod_const, Fintype.univ_ofSubsingleton, Matrix.cons_val_fin_one, Matrix.cons_val_succ,
     Matrix.cons_val_zero, Nat.zero_eq, pow_one, mul_assoc] using abs_real_inner_le_norm (u×₃v) w
 
 theorem isometry_on_crossProduct (u : Metric.sphere (0 : E) 1) (v : (ℝ ∙ (u : E))ᗮ) :
-    ‖u×₃v‖ = ‖v‖ := by simp [norm_cross_product]
+    ‖u×₃v‖ = ‖v‖ := by simp [norm_crossProduct]
 
 end Orientation
-
