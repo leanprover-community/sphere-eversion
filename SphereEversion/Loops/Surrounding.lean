@@ -50,38 +50,38 @@ variable {X : Type _} [TopologicalSpace X] {F : Set X}
 /-- An arbitrary path joining `x` and `y` in `F`. -/
 noncomputable def somePath (hF : IsPathConnected F) {x y : X} (hx : x ∈ F) (hy : y ∈ F) :
     Path x y :=
-  (hF.JoinedIn x hx y hy).somePath
+  (hF.joinedIn x hx y hy).somePath
 
 theorem somePath_mem (hF : IsPathConnected F) {x y : X} (hx : x ∈ F) (hy : y ∈ F) (t : I) :
     hF.somePath hx hy t ∈ F :=
   JoinedIn.somePath_mem _ t
 
 theorem range_somePath_subset (hF : IsPathConnected F) {x y : X} (hx : x ∈ F) (hy : y ∈ F) :
-    range (hF.somePath hx hy) ⊆ F := by rintro _ ⟨t, rfl⟩; apply some_path_mem
+    range (hF.somePath hx hy) ⊆ F := by rintro _ ⟨t, rfl⟩; apply somePath_mem
 
 /-- A path through `p 0`, ..., `p n`. Usually this is used with `n := m`. -/
 noncomputable def pathThrough (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) : ∀ n : ℕ, Path (p 0) (p n)
   | 0 => Path.refl (p 0)
-  | n + 1 => (path_through n).trans <| hF.somePath (hp _) (hp _)
+  | n + 1 => (pathThrough hF hp n).trans <| hF.somePath (hp _) (hp _)
 
 attribute [simp] Path.trans_range
 
 theorem range_pathThrough_subset (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) : ∀ {n : ℕ}, range (hF.pathThrough hp n) ⊆ F
-  | 0 => by simp [path_through, hp]
-  | n + 1 => by simp [path_through, hp, range_some_path_subset, @range_path_through_subset n]
+  | 0 => by simp [pathThrough, hp]
+  | n + 1 => by simpa [pathThrough, hp, range_somePath_subset]
+    using range_pathThrough_subset hF hp (n := n)
 
-theorem mem_range_path_through' (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
-    (hp : ∀ i, p i ∈ F) {i n : ℕ} (h : i ≤ n) : p i ∈ range (hF.pathThrough hp n) :=
-  by
-  induction' h with n hn ih
+theorem mem_range_pathThrough' (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
+    (hp : ∀ i, p i ∈ F) {i n : ℕ} (h : i ≤ n) : p i ∈ range (hF.pathThrough hp n) := by
+  induction' h with n _ ih
   · exact ⟨1, by simp⟩
-  · simp only [path_through, Path.trans_range, mem_union, ih, true_or_iff]
+  · simp only [pathThrough, Path.trans_range, mem_union, ih, true_or_iff]
 
 theorem mem_range_pathThrough (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) {i : Fin (m + 1)} : p i ∈ range (hF.pathThrough hp m) := by
-  convert hF.mem_range_path_through' hp (Nat.le_of_lt_succ i.2); simp
+  convert hF.mem_range_pathThrough' hp (Nat.le_of_lt_succ i.2); simp [Fin.cast_val_eq_self]
 
 end IsPathConnected
 
@@ -123,12 +123,11 @@ theorem SurroundingPts.mem_affineBases [FiniteDimensional ℝ F] {f : F} {p : ι
   ⟨h.indep, h.tot⟩
 
 theorem SurroundingPts.coord_eq_w [FiniteDimensional ℝ F] {f : F} {p : ι → F} {w : ι → ℝ}
-    (h : SurroundingPts f p w) : (⟨p, h.indep, h.tot⟩ : AffineBasis ι ℝ F).coords f = w :=
-  by
+    (h : SurroundingPts f p w) : (⟨p, h.indep, h.tot⟩ : AffineBasis ι ℝ F).coords f = w := by
   let b : AffineBasis ι ℝ F := ⟨p, h.indep, h.tot⟩
   change b.coords f = w
   ext i
-  rw [← h.avg, ← finset.univ.affine_combination_eq_linear_combination _ w h.w_sum,
+  rw [← h.avg, ← Finset.univ.affineCombination_eq_linear_combination _ w h.w_sum,
     AffineBasis.coords_apply]
   exact AffineBasis.coord_apply_combination_of_mem _ (Finset.mem_univ i) h.w_sum
 
@@ -140,56 +139,51 @@ def Surrounded (f : F) (s : Set F) : Prop :=
 theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ F] {f : F}
     {s : Set F} :
     Surrounded f s ↔
-      ∃ (b : Set F) (h₀ : b ⊆ s) (h₁ : AffineIndependent ℝ (coe : b → F)) (h₂ : affineSpan ℝ b = ⊤),
-        f ∈ interior (convexHull ℝ b) :=
-  by
+      ∃ b, b ⊆ s ∧ AffineIndependent ℝ ((↑) : b → F) ∧ affineSpan ℝ b = ⊤ ∧
+        f ∈ interior (convexHull ℝ b) := by
   constructor
   · rintro ⟨p, w, ⟨⟨indep, w_pos, w_sum, rfl⟩, h_mem⟩⟩
     have h_tot : affineSpan ℝ (range p) = ⊤ :=
-      indep.affine_span_eq_top_iff_card_eq_finrank_add_one.mpr (Fintype.card_fin _)
+      indep.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr (Fintype.card_fin _)
     refine' ⟨range p, range_subset_iff.mpr h_mem, indep.range, h_tot, _⟩
     let basis : AffineBasis ι ℝ F := ⟨p, indep, h_tot⟩
-    erw [basis.interior_convex_hull]
+    erw [basis.interior_convexHull]
     intro i
     erw [← Finset.affineCombination_eq_linear_combination _ _ _ w_sum,
       basis.coord_apply_combination_of_mem (Finset.mem_univ i) w_sum]
     exact w_pos i
   · rintro ⟨b, h₀, h₁, h₂, h₃⟩
-    haveI : Fintype b := (finite_setOf_fin_dim_affineIndependent ℝ h₁).Fintype
+    haveI : Fintype b := (finite_set_of_fin_dim_affineIndependent ℝ h₁).fintype
     have hb : Fintype.card b = d + 1 := by
-      rw [← h₁.affine_span_eq_top_iff_card_eq_finrank_add_one, Subtype.range_coe_subtype,
+      rw [← h₁.affineSpan_eq_top_iff_card_eq_finrank_add_one, Subtype.range_coe_subtype,
         setOf_mem_eq, h₂]
-    let p := (coe : _ → F) ∘ (Fintype.equivFinOfCardEq hb).symm
+    let p := ((↑) : _ → F) ∘ (Fintype.equivFinOfCardEq hb).symm
     have hp : b = range p := by
       ext x
-      exact
-        ⟨by intro h; use Fintype.equivFinOfCardEq hb ⟨x, h⟩; simp [p], by rintro ⟨y, rfl⟩;
-          apply Subtype.coe_prop⟩
+      exact ⟨by intro h; use Fintype.equivFinOfCardEq hb ⟨x, h⟩; simp, by
+        rintro ⟨y, rfl⟩; apply Subtype.coe_prop⟩
     rw [hp] at h₀ h₂ h₃
     replace h₁ : AffineIndependent ℝ p :=
       h₁.comp_embedding (Fintype.equivFinOfCardEq hb).symm.toEmbedding
     let basis : AffineBasis ι ℝ F := ⟨_, h₁, h₂⟩
-    erw [basis.interior_convex_hull, mem_setOf_eq] at h₃
-    refine' ⟨p, fun i => Basis.coord i f, ⟨h₁, h₃, _, _⟩, fun i => h₀ (mem_range_self i)⟩
+    erw [basis.interior_convexHull, mem_setOf_eq] at h₃
+    refine' ⟨p, fun i => basis.coord i f, ⟨h₁, h₃, _, _⟩, fun i => h₀ (mem_range_self i)⟩
     · exact basis.sum_coord_apply_eq_one f
-    ·
-      erw [←
-        finset.univ.affine_combination_eq_linear_combination p _ (basis.sum_coord_apply_eq_one f),
-        basis.affine_combination_coord_eq_self]
+    · erw [← Finset.univ.affineCombination_eq_linear_combination p _
+        (basis.sum_coord_apply_eq_one f), basis.affineCombination_coord_eq_self]
 
 --- prop:surrounded_by_open
 theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (hs : IsOpen s)
-    (hsf : f ∈ convexHull ℝ s) : Surrounded f s :=
-  by
+    (hsf : f ∈ convexHull ℝ s) : Surrounded f s := by
   rw [surrounded_iff_mem_interior_convexHull_aff_basis]
   obtain ⟨t, hts, hai, hf⟩ :=
-    (by simpa only [exists_prop, mem_iUnion] using convex_hull_eq_union.subst hsf :
+    (by simpa only [exists_prop, mem_iUnion] using convexHull_eq_union.subst hsf :
       ∃ t : Finset F,
-        (t : Set F) ⊆ s ∧ AffineIndependent ℝ (coe : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
+        (t : Set F) ⊆ s ∧ AffineIndependent ℝ ((↑) : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
   have htne : (t : Set F).Nonempty := (@convexHull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩
-  obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affine_independent_span_eq_top hts htne hai
-  have hb₀ : b.finite := finite_setOf_fin_dim_affineIndependent ℝ hb₃
-  obtain ⟨c, hc⟩ := interior_convex_hull_nonempty_iff_affine_span_eq_top.mpr hb₄
+  obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affineIndependent_span_eq_top hts htne hai
+  have hb₀ : b.Finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
+  obtain ⟨c, hc⟩ := interior_convexHull_nonempty_iff_affineSpan_eq_top.mpr hb₄
   rw [← hs.interior_eq] at hb₂
   obtain ⟨ε, hε, hcs⟩ :=
     (eventually_homothety_image_subset_of_finite_subset_interior ℝ c hb₀ hb₂).exists_gt
@@ -197,7 +191,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   rw [AffineMap.image_convexHull] at hbε
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine' ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, _, _, hbε (convexHull_mono hb₁ hf)⟩
-  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_setOf_eq_iff]
+  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
   · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
@@ -216,12 +210,12 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   let A : Set (F × (ι → F)) := univ ×ˢ affineBases ι ℝ F
   let U : Set (F × (ι → F)) := A ∩ W' ⁻¹' V
   have hι : Fintype.card ι = d + 1 := Fintype.card_fin _
-  have hp : p ∈ affineBases ι ℝ F := h.mem_affine_bases
+  have hp : p ∈ affineBases ι ℝ F := h.mem_affineBases
   have hV : IsOpen V := isOpen_set_pi finite_univ fun _ _ => isOpen_Ioi
   have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι).continuousOn
-  have hxp : W' (x, p) ∈ V := by simp [W', hp, h.coord_eq_w, h.w_pos]
+  have hxp : W' (x, p) ∈ V := by simp [hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
-    simp only [A, affineBases_findim ι ℝ F hι]
+    simp only [affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hU₁ : U ⊆ A := Set.inter_subset_left _ _
   have hU₂ : IsOpen U := hW'.preimage_open_of_open hA hV
@@ -242,8 +236,7 @@ theorem smooth_surroundingPts [FiniteDimensional ℝ F] {x : F} {p : ι → F} {
     (h : SurroundingPts x p w) :
     ∃ W : F → (ι → F) → ι → ℝ,
       ∀ᶠ yq : F × (ι → F) in 𝓝 (x, p),
-        SmoothAt' (uncurry W) yq ∧ SurroundingPts yq.1 yq.2 (W yq.1 yq.2) :=
-  by
+        SmoothAt' (uncurry W) yq ∧ SurroundingPts yq.1 yq.2 (W yq.1 yq.2) := by
   refine' Exists.imp (fun W hW => _) (smooth_surrounding h)
   rw [nhds_prod_eq] at hW ⊢
   have := (IsOpen.eventually_mem (isOpen_affineIndependent ℝ F) h.indep).prod_inr (𝓝 x)
@@ -253,8 +246,7 @@ theorem smooth_surroundingPts [FiniteDimensional ℝ F] {x : F} {p : ι → F} {
 theorem surroundingPts_evalBarycentricCoords_iff (q : F) (v : ι → F)
     [DecidablePred (· ∈ affineBases ι ℝ F)] :
     SurroundingPts q v (evalBarycentricCoords ι ℝ F q v) ↔
-      ∀ i, 0 < evalBarycentricCoords ι ℝ F q v i :=
-  by
+      ∀ i, 0 < evalBarycentricCoords ι ℝ F q v i := by
   refine' ⟨fun h => h.w_pos, fun h => _⟩
   have hv : v ∈ affineBases ι ℝ F := by
     by_contra contra
@@ -262,7 +254,7 @@ theorem surroundingPts_evalBarycentricCoords_iff (q : F) (v : ι → F)
   have hv' : ∑ i, evalBarycentricCoords ι ℝ F q v i = 1 := by
     simp [evalBarycentricCoords_apply_of_mem_bases ι ℝ F q hv]
   refine' ⟨hv.1, h, hv', _⟩
-  simp_rw [← finset.univ.affine_combination_eq_linear_combination v _ hv',
+  simp_rw [← Finset.univ.affineCombination_eq_linear_combination v _ hv',
     evalBarycentricCoords_apply_of_mem_bases ι ℝ F q hv]
   convert AffineBasis.affineCombination_coord_eq_self _ q
   rfl
@@ -667,7 +659,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have hΩ_op_x₀ : IsOpen (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     (isOpen_slice_of_isOpen_over hΩ_op).connectedComponentIn
   have b_in : b x₀ ∈ Prod.mk x₀ ⁻¹' Ω :=
-    connected_component_in_nonempty_iff.mp (convex_hull_nonempty_iff.mp ⟨g x₀, hconv⟩)
+    connected_component_in_nonempty_iff.mp (convexHull_nonempty_iff.mp ⟨g x₀, hconv⟩)
   have hΩ_conn : IsConnected (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     is_connected_connected_component_in_iff.mpr b_in
   have hb_in : b x₀ ∈ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
