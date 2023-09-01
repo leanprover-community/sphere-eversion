@@ -1,6 +1,6 @@
 import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.MeasureTheory.Group.Integral
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Convolution
 import SphereEversion.ToMathlib.Topology.Periodic
 import SphereEversion.ToMathlib.Analysis.ContDiff
@@ -30,7 +30,7 @@ noncomputable section
 
 open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap Filter
 
-open scoped Topology BigOperators Filter convolution
+open scoped Topology BigOperators Filter Convolution
 
 variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
 
@@ -48,34 +48,30 @@ In this section we construct `bump (n : ℕ)`, a bump function with support in
 /-- `bump n` is a bump function on `ℝ` which has support `Ioo (-(1/(n+2))) (1/(n+2))`
 and equals one on `Icc (-(1/(n+3))) (1/(n+3))`.
 -/
-def bump (n : ℕ) : ContDiffBump (0 : ℝ)
-    where
-  R := 1 / (n + 3)
+def bump (n : ℕ) : ContDiffBump (0 : ℝ) where
+  rIn := 1 / (n + 3)
   rOut := 1 / (n + 2)
-  rIn_pos := by
-    apply one_div_pos.mpr
-    exact_mod_cast Nat.succ_pos _
+  rIn_pos := by positivity
   rIn_lt_rOut := by
     apply one_div_lt_one_div_of_lt
     exact_mod_cast Nat.succ_pos _
     exact_mod_cast lt_add_one (n + 2)
 
-theorem support_bump (n : ℕ) : support (bump n) = Ioo (-(1 / (n + 2))) (1 / (n + 2)) := by
+theorem support_bump (n : ℕ) : support (bump n) = Ioo (-((1 : ℝ) / (n + 2))) (1 / (n + 2)) := by
   rw [(bump n).support_eq, Real.ball_eq_Ioo, zero_sub, zero_add, bump]
 
-theorem support_bump_subset (n : ℕ) : support (bump n) ⊆ Ioc (-(1 / 2)) (1 / 2) :=
-  by
+theorem support_bump_subset (n : ℕ) : support (bump n) ⊆ Ioc (-(1 / 2)) (1 / 2) := by
   have ineg : 1 / (n + 2 : ℝ) ≤ 1 / 2 := by apply one_div_le_one_div_of_le <;> norm_num
   rw [support_bump n]
   exact Ioo_subset_Ioc_self.trans (Ioc_subset_Ioc (neg_le_neg ineg) ineg)
 
 theorem support_shifted_normed_bump_subset (n : ℕ) (t : ℝ) :
-    (support fun x => (bump n).normed volume (x - t)) ⊆ Ioc (t - 1 / 2) (t + 1 / 2) :=
-  by
+    (support fun x => (bump n).normed volume (x - t)) ⊆ Ioc (t - 1 / 2) (t + 1 / 2) := by
+  change support ((bump n).normed volume ∘ (· - t)) ⊆ _
   rw [Function.support_comp_eq_preimage]
   simp_rw [(bump n).support_normed_eq, ← (bump n).support_eq]
   refine' (preimage_mono (support_bump_subset n)).trans _
-  simp_rw [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]
+  simp_rw [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]; rfl
 
 end
 
@@ -95,56 +91,47 @@ of length 1, then this will be that function made periodic with period 1. -/
 def periodize (f : ℝ → M) (t : ℝ) : M :=
   ∑ᶠ n : ℤ, f (t + n)
 
-theorem periodic_periodize (f : ℝ → M) : Periodic (periodize f) 1 :=
-  by
+theorem periodic_periodize (f : ℝ → M) : Periodic (periodize f) 1 := by
   intro t
   unfold periodize
-  have : (fun n : ℤ => f (t + 1 + ↑n)) = fun n => f (t + (n + 1 : ℤ)) := by ext n;
-    simp_rw [Int.cast_add, Int.cast_one, add_assoc, add_comm]
+  have : (fun n : ℤ => f (t + 1 + ↑n)) = fun n => f (t + (n + 1 : ℤ)) := by
+    ext n; simp_rw [Int.cast_add, Int.cast_one, add_assoc, add_comm]
   simp_rw [this]
   let e := Equiv.addRight (1 : ℤ)
   let F : ℤ → M := fun n => f (t + n)
   change ∑ᶠ n : ℤ, F (e n) = ∑ᶠ n : ℤ, f (t + ↑n)
   apply finsum_comp_equiv
 
-theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 ≤ periodize f t :=
-  by
+theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 ≤ periodize f t := by
   unfold periodize
   cases' (support fun i : ℤ => f (t + i)).finite_or_infinite with H H
   · rw [finsum_eq_sum _ H]
     apply Finset.sum_nonneg
-    exact fun i hi => h _
+    exact fun i _ => h _
   · rwa [finsum_of_infinite_support]
 
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (h' : HasCompactSupport f) :
-    ContDiff ℝ n (periodize f) :=
-  by
-  apply contDiff_iff_contDiffAt.mpr fun x => contDiffAt_finsum _ _
+    ContDiff ℝ n (periodize f) := by
+  refine contDiff_iff_contDiffAt.mpr fun x => contDiffAt_finsum ?_ ?_
   · intro y
     dsimp
     set N := Ioo (y - 1) (y + 1)
     refine' ⟨N, (nhds_basis_Ioo_pos y).mem_of_mem zero_lt_one, _⟩
     let e := fun i : ℤ => Equiv.addRight (i : ℝ)
     change {i : ℤ | ((support fun x : ℝ => f (e i x)) ∩ N).Nonempty}.Finite
-    have hsupp : ∀ i : ℤ, (support fun x : ℝ => f (e i x)) = e i ⁻¹' support f :=
-      by
-      intro i
-      rw [support_comp_eq_preimage]
-    have hsupp' : ∀ i, (e i ⁻¹' support f ∩ N).Nonempty ↔ (support f ∩ e i '' N).Nonempty :=
-      by
+    have hsupp : ∀ i : ℤ, (support fun x : ℝ => f (e i x)) = e i ⁻¹' support f := fun _ ↦ rfl
+    have hsupp' : ∀ i, (e i ⁻¹' support f ∩ N).Nonempty ↔ (support f ∩ e i '' N).Nonempty := by
       intro i
       conv_lhs => rw [← (e i).preimage_image N, ← preimage_inter]
-      rw [(e i).Surjective.nonempty_preimage]
+      rw [(e i).surjective.nonempty_preimage]
     simp_rw [hsupp, hsupp', inter_comm (support f)]; clear hsupp hsupp'
-    refine'
-      (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
-            (is_compact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset
-        _
+    refine' (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
+      (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset _
     intro i hi
     rw [mem_setOf_eq, ← nonempty_iff_ne_empty]
-    apply nonempty.mono _ hi
+    apply Nonempty.mono _ hi
     mono
     · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; exact add_comm x i]
       exact image_subset _ Ioo_subset_Icc_self
@@ -157,8 +144,7 @@ theorem periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
   simp_rw [periodize, sub_add_eq_add_sub]
 
 theorem periodize_smul_periodic (f : ℝ → ℝ) {g : ℝ → E} (hg : Periodic g 1) (t : ℝ) :
-    periodize f t • g t = periodize (fun x => f x • g x) t :=
-  by
+    periodize f t • g t = periodize (fun x => f x • g x) t := by
   dsimp only [periodize]
   rw [finsum_smul]
   congr 1
@@ -170,11 +156,9 @@ open MeasureTheory
 variable [CompleteSpace E]
 
 theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a + 1)) :
-    ∫ t in a..a + 1, periodize f t = ∫ t in a..a + 1, f t :=
-  by
+    ∫ t in a..a + 1, periodize f t = ∫ t in a..a + 1, f t := by
   apply intervalIntegral.integral_congr_ae
-  have : ∀ᵐ x : ℝ, x ∈ uIoc a (a + 1) → x ∈ Ioo a (a + 1) :=
-    by
+  have : ∀ᵐ x : ℝ, x ∈ uIoc a (a + 1) → x ∈ Ioo a (a + 1) := by
     rw [uIoc_of_le (le_add_of_nonneg_right (zero_le_one : (0 : ℝ) ≤ 1))]
     have : ∀ᵐ x : ℝ, x ≠ a + 1 := by
       rw [ae_iff]
@@ -186,9 +170,7 @@ theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (
   intro t ht ht'
   specialize ht ht'; clear ht'
   dsimp only [periodize]
-  have : (support fun n : ℤ => f (t + n)) ⊆ ({0} : Finset ℤ) :=
-    by
-    intro n hn
+  have : (support fun n : ℤ => f (t + n)) ⊆ ({0} : Finset ℤ) := fun n hn ↦ by
     suffices n = 0 by simpa
     replace hn : t + n ∈ Ioc a (a + 1) := hf (mem_support.mpr hn)
     cases ht
@@ -228,11 +210,7 @@ tends to the Dirac delta function located at `0`. -/
 def approxDirac (n : ℕ) : ℝ → ℝ :=
   periodize <| (bump n).normed volume
 
-theorem periodic_approxDirac (n : ℕ) : Periodic (approxDirac n) 1 :=
-  by
-  intro t
-  unfold approxDirac
-  rw [periodic_periodize]
+theorem periodic_approxDirac (n : ℕ) : Periodic (approxDirac n) 1 := periodic_periodize _
 
 theorem approxDirac_nonneg (n : ℕ) (t : ℝ) : 0 ≤ approxDirac n t :=
   periodize_nonneg (bump n).nonneg_normed t
@@ -241,15 +219,12 @@ theorem approxDirac_smooth (n : ℕ) : 𝒞 ∞ (approxDirac n) :=
   (bump n).contDiff_normed.periodize (bump n).hasCompactSupport_normed
 
 theorem approxDirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
-    ∫ s in a..b, approxDirac n s = 1 :=
-  by
-  have supp : support ((bump n).normed volume) ⊆ Ioc (-(1 / 2)) (-(1 / 2) + 1) :=
-    by
+    ∫ s in a..b, approxDirac n s = 1 := by
+  have supp : support ((bump n).normed volume) ⊆ Ioc (-(1 / 2)) (-(1 / 2) + 1) := by
     rw [show -(1 / 2 : ℝ) + 1 = 1 / 2 by norm_num,
       show support ((bump n).normed volume) = _ from (bump n).support_normed_eq, Real.ball_zero_eq,
       show (bump n).rOut = 1 / (n + 2 : ℝ) from rfl]
-    have key : 1 / (n + 2 : ℝ) ≤ 1 / 2 :=
-      by
+    have key : 1 / (n + 2 : ℝ) ≤ 1 / 2 := by
       apply one_div_le_one_div_of_le
       norm_num
       norm_cast
@@ -288,7 +263,7 @@ theorem deltaMollifier_smooth : 𝒞 ∞ (deltaMollifier n t) :=
 open intervalIntegral
 
 @[simp]
-theorem deltaMollifier_integral_eq_one : ∫ s in 0 ..1, deltaMollifier n t s = 1 :=
+theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s = 1 :=
   by
   simp_rw [deltaMollifier]
   rw [integral_comp_sub_right (fun x => (n : ℝ) / (n + 1) * approxDirac n x + 1 / (n + 1)) t,
@@ -296,7 +271,7 @@ theorem deltaMollifier_integral_eq_one : ∫ s in 0 ..1, deltaMollifier n t s = 
     one_smul, approxDirac_integral_eq_one, mul_one, div_add_div_same, div_self]
   · exact n.cast_add_one_pos.ne'
   · rw [sub_eq_add_neg, add_comm]
-  · exact ((approxDirac_smooth n).continuous.IntervalIntegrable _ _).const_mul _
+  · exact ((approxDirac_smooth n).continuous.intervalIntegrable _ _).const_mul _
   · exact intervalIntegrable_const
 
 /-- `γ.mollify n t` is a weighted average of `γ` using weights `delta_mollifier n t`.
@@ -304,13 +279,12 @@ This means that as `n → ∞` this value tends to `γ t`, but because `delta_mo
 we know that we can reparametrize `γ` to obtain a loop that has `γ.mollify n t` as its actual
 average. -/
 def Loop.mollify (γ : Loop F) (n : ℕ) (t : ℝ) : F :=
-  ∫ s in 0 ..1, deltaMollifier n t s • γ s
+  ∫ s in (0)..1, deltaMollifier n t s • γ s
 
 theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ) :
     γ.mollify n t =
       ((n : ℝ) / (n + 1)) • ((bump n).normed volume ⋆[lsmul ℝ ℝ]γ) t +
-        ((1 : ℝ) / (n + 1)) • ∫ t in 0 ..1, γ t :=
-  by
+        ((1 : ℝ) / (n + 1)) • ∫ t in (0)..1, γ t := by
   simp_rw [Loop.mollify, deltaMollifier, add_smul, mul_smul]
   rw [integral_add]
   simp_rw [integral_smul, approxDirac, ← periodize_comp_sub]
@@ -318,12 +292,8 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
   simp_rw [convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
   · linarith
   · rw [zero_add]
-  ·
-    exact
-      (continuous_const.smul
-            (((approxDirac_smooth n).continuous.comp (continuous_id.sub continuous_const)).smul
-              hγ)).IntervalIntegrable
-        _ _
-  · exact (continuous_const.smul hγ).IntervalIntegrable _ _
+  · exact (continuous_const.smul (((approxDirac_smooth n).continuous.comp
+      (continuous_id.sub continuous_const)).smul hγ)).intervalIntegrable _ _
+  · exact (continuous_const.smul hγ).intervalIntegrable _ _
 
 end VersionOfDeltaMollifierUsingN
