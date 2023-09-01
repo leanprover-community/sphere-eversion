@@ -198,14 +198,12 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
 -- lem:smooth_barycentric_coord
 theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
     (h : SurroundingPts x p w) :
-    ∃ W : F → (ι → F) → ι → ℝ,
-      ∀ᶠ yq : F × (ι → F) in 𝓝 (x, p),
-        SmoothAt' (uncurry W) yq ∧
-          (∀ i, 0 < W yq.1 yq.2 i) ∧ ∑ i, W yq.1 yq.2 i = 1 ∧ ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 :=
-  by
+    ∃ W : F → (ι → F) → ι → ℝ, ∀ᶠ yq : F × (ι → F) in 𝓝 (x, p),
+      SmoothAt' (uncurry W) yq ∧ (∀ i, 0 < W yq.1 yq.2 i) ∧ ∑ i, W yq.1 yq.2 i = 1 ∧
+        ∑ i, W yq.1 yq.2 i • yq.2 i = yq.1 := by
   classical
   use evalBarycentricCoords ι ℝ F
-  let V : Set (ι → ℝ) := Set.pi Set.univ fun i => Ioi (0 : ℝ)
+  let V : Set (ι → ℝ) := Set.pi Set.univ fun _ => Ioi (0 : ℝ)
   let W' : F × (ι → F) → ι → ℝ := uncurry (evalBarycentricCoords ι ℝ F)
   let A : Set (F × (ι → F)) := univ ×ˢ affineBases ι ℝ F
   let U : Set (F × (ι → F)) := A ∩ W' ⁻¹' V
@@ -265,7 +263,7 @@ section SurroundingPointsLimits
 
 variable {X Y : Type _} [FiniteDimensional ℝ F]
 
-local notation "ι" => Fin (FiniteDimensional.finrank ℝ F + 1)
+local macro:arg "ι" : term => `(Fin (FiniteDimensional.finrank ℝ F + 1))
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
@@ -275,17 +273,17 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     ∀ᶠ z : X × Y in l.prod m, ∃ w, SurroundingPts (f z.2) (fun i => p i z.1) w := by
   classical
   obtain ⟨w, hw⟩ := hq
-  let V : Set (ι → ℝ) := Set.pi Set.univ fun i => Ioi (0 : ℝ)
+  let V : Set (ι → ℝ) := Set.pi Set.univ fun _ => Ioi (0 : ℝ)
   let W' : F × (ι → F) → ι → ℝ := uncurry (evalBarycentricCoords ι ℝ F)
   let A : Set (F × (ι → F)) := (univ : Set F) ×ˢ affineBases ι ℝ F
   let S : Set (F × (ι → F)) := W' ⁻¹' V
   have hι : Fintype.card ι = FiniteDimensional.finrank ℝ F + 1 := Fintype.card_fin _
-  have hq' : v ∈ affineBases ι ℝ F := hw.mem_affine_bases
+  have hq' : v ∈ affineBases ι ℝ F := hw.mem_affineBases
   have hqv : (q, v) ∈ A := by simp [hq']
-  have hxp : W' (q, v) ∈ V := by simp [W', hq', hw.coord_eq_w, hw.w_pos]
+  have hxp : W' (q, v) ∈ V := by simp [hq', hw.coord_eq_w, hw.w_pos]
   have hV' : V ∈ 𝓝 (W' (q, v)) := (isOpen_set_pi finite_univ fun _ _ => isOpen_Ioi).mem_nhds hxp
   have hA : IsOpen A := by
-    simp only [A, affineBases_findim ι ℝ F hι]
+    simp only [affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hW' : ContinuousAt W' (q, v) :=
     (smooth_barycentric ι ℝ F hι).continuousOn.continuousAt
@@ -302,16 +300,14 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     ⟨W' (f y₁, swap p y₂),
       (surroundingPts_evalBarycentricCoords_iff (f y₁) (swap p y₂)).mpr fun i => _⟩
   change W' (f y₁, swap p y₂) i ∈ Ioi (0 : ℝ)
-  suffices (f y₁, swap p y₂) ∈ S by rw [Set.mem_preimage] at this ;
-    exact set.mem_pi.mp this i (mem_univ _)
+  suffices (f y₁, swap p y₂) ∈ S from this i (mem_univ _)
   apply hS'
   simp [hy₁, hy₂]
 
 theorem eventually_surroundingPts_of_tendsto_of_tendsto' {v : ι → F} {q : F} {p : ι → X → F}
     {l : Filter X} {f : X → F} (hq : ∃ w, SurroundingPts q v w)
     (hp : ∀ i, Tendsto (p i) l (𝓝 (v i))) (hf : Tendsto f l (𝓝 q)) :
-    ∀ᶠ y in l, ∃ w, SurroundingPts (f y) (fun i => p i y) w :=
-  by
+    ∀ᶠ y in l, ∃ w, SurroundingPts (f y) (fun i => p i y) w := by
   have := eventually_surroundingPts_of_tendsto_of_tendsto hq hp hf
   simp_rw [eventually_iff_exists_mem, mem_prod_iff] at this
   obtain ⟨nnn, ⟨n₁, hn₁, n₂, hn₂, hh⟩, h⟩ := this
@@ -330,8 +326,7 @@ def Surrounds (γ : Loop F) (x : F) : Prop :=
 
 theorem surrounds_iff_range_subset_range :
     γ.Surrounds x ↔
-      ∃ (p : Fin (d + 1) → F) (w : Fin (d + 1) → ℝ), SurroundingPts x p w ∧ range p ⊆ range γ :=
-  by
+      ∃ (p : Fin (d + 1) → F) (w : Fin (d + 1) → ℝ), SurroundingPts x p w ∧ range p ⊆ range γ := by
   constructor
   · exact fun ⟨t, w, h⟩ => ⟨γ ∘ t, w, h, range_comp_subset_range _ _⟩
   · rintro ⟨p, w, h₀, h₁⟩
@@ -341,10 +336,8 @@ theorem surrounds_iff_range_subset_range :
     exact ⟨t, w, hpt.symm ▸ h₀⟩
 
 theorem affineEquiv_surrounds_iff (e : F ≃ᵃ[ℝ] F) :
-    γ.Surrounds x ↔ (γ.transform e).Surrounds (e x) :=
-  by
-  suffices ∀ (γ : Loop F) (x) (e : F ≃ᵃ[ℝ] F), γ.Surrounds x → (γ.transform e).Surrounds (e x)
-    by
+    γ.Surrounds x ↔ (γ.transform e).Surrounds (e x) := by
+  suffices ∀ (γ : Loop F) (x) (e : F ≃ᵃ[ℝ] F), γ.Surrounds x → (γ.transform e).Surrounds (e x) by
     refine' ⟨this γ x e, fun h => _⟩
     specialize this (γ.transform e) (e x) e.symm h
     rw [AffineEquiv.symm_apply_apply] at this
@@ -352,34 +345,32 @@ theorem affineEquiv_surrounds_iff (e : F ≃ᵃ[ℝ] F) :
     ext
     simp
   rintro γ x e ⟨t, w, indep, w_pos, w_sum, rfl⟩
-  refine' ⟨t, w, ⟨e.affine_independent_iff.mpr indep, w_pos, w_sum, _⟩⟩
+  refine' ⟨t, w, ⟨e.affineIndependent_iff.mpr indep, w_pos, w_sum, _⟩⟩
   simp only [← Finset.affineCombination_eq_linear_combination _ _ _ w_sum]
   erw [Finset.map_affineCombination _ (γ ∘ t) _ w_sum (e : F →ᵃ[ℝ] F)]
   congr
 
-theorem vadd_surrounds : γ.Surrounds x ↔ (y +ᵥ γ).Surrounds (y + x) :=
-  by
+theorem vadd_surrounds : γ.Surrounds x ↔ (y +ᵥ γ).Surrounds (y + x) := by
   rw [add_comm]
-  convert affine_equiv_surrounds_iff (AffineEquiv.vaddConst ℝ y)
+  convert affineEquiv_surrounds_iff (AffineEquiv.vaddConst ℝ y) using 2
   ext u
   simp [add_comm y]
 
 theorem Surrounds.vadd (h : γ.Surrounds x) : (y +ᵥ γ).Surrounds (y + x) :=
   vadd_surrounds.mp h
 
-theorem Surrounds.vadd0 (h : γ.Surrounds 0) : (y +ᵥ γ).Surrounds y := by convert h.vadd;
+theorem Surrounds.vadd0 (h : γ.Surrounds 0) : (y +ᵥ γ).Surrounds y := by
+  convert h.vadd
   rw [add_zero]
 
-theorem Surrounds.smul0 (h : γ.Surrounds 0) (ht : t ≠ 0) : (t • γ).Surrounds 0 :=
-  by
-  rw [affine_equiv_surrounds_iff (AffineEquiv.homothetyUnitsMulHom (0 : F) (Units.mk0 t ht)⁻¹),
+theorem Surrounds.smul0 (h : γ.Surrounds 0) (ht : t ≠ 0) : (t • γ).Surrounds 0 := by
+  rw [affineEquiv_surrounds_iff (AffineEquiv.homothetyUnitsMulHom (0 : F) (Units.mk0 t ht)⁻¹),
     AffineEquiv.coe_homothetyUnitsMulHom_apply, AffineMap.homothety_apply_same]
   convert h
   ext u
   simp [AffineMap.homothety_apply, smul_smul, inv_mul_cancel ht]
 
-theorem Surrounds.mono (h : γ.Surrounds x) (h2 : range γ ⊆ range γ') : γ'.Surrounds x :=
-  by
+theorem Surrounds.mono (h : γ.Surrounds x) (h2 : range γ ⊆ range γ') : γ'.Surrounds x := by
   revert h; simp_rw [Loop.surrounds_iff_range_subset_range]
   refine' Exists.imp fun t => _
   refine' Exists.imp fun w => _
@@ -395,8 +386,7 @@ protected theorem Surrounds.reparam (h : γ.Surrounds x) {φ : EquivariantMap} (
   but not needed by itself. -/
 theorem Surrounds.eventually_surrounds [FiniteDimensional ℝ F] (h : γ.Surrounds x) :
     ∃ ε > 0,
-      ∀ (γ' : Loop F) (y : F), (∀ z, dist (γ' z) (γ z) < ε) → dist y x < ε → γ'.Surrounds y :=
-  by
+      ∀ (γ' : Loop F) (y : F), (∀ z, dist (γ' z) (γ z) < ε) → dist y x < ε → γ'.Surrounds y := by
   obtain ⟨t, w, h⟩ := h
   obtain ⟨W, hW⟩ := smooth_surroundingPts h
   obtain ⟨ε, hε, h⟩ := Metric.eventually_nhds_iff.mp hW
@@ -437,16 +427,15 @@ theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O
   simp only [surroundingLoop, Loop.roundTripFamily, Path.trans_range, Loop.roundTrip_range,
     cast_coe]
   refine' Subset.trans (truncate_range _) _
-  simp only [trans_range, union_subset_iff, O_conn.range_some_path_subset,
-    O_conn.range_path_through_subset, true_and_iff]
+  simp only [trans_range, union_subset_iff, O_conn.range_somePath_subset,
+    O_conn.range_pathThrough_subset, true_and_iff]
 
 theorem surroundingLoop_surrounds {w : Fin (d + 1) → ℝ} (h : SurroundingPts f p w) :
-    (surroundingLoop O_conn hp hb 1).Surrounds f :=
-  by
+    (surroundingLoop O_conn hp hb 1).Surrounds f := by
   rw [Loop.surrounds_iff_range_subset_range]
   refine' ⟨p, w, h, _⟩
   simp only [surroundingLoop, Loop.roundTripFamily_one, Loop.roundTrip_range, trans_range,
-    range_subset_iff, mem_union, O_conn.mem_range_path_through, or_true_iff, forall_true_iff]
+    range_subset_iff, mem_union, O_conn.mem_range_pathThrough, or_true_iff, forall_true_iff]
 
 theorem surroundingLoop_projI (t : ℝ) :
     surroundingLoop O_conn hp hb (projI t) = surroundingLoop O_conn hp hb t :=
@@ -481,13 +470,12 @@ end surroundingLoop
 
 /-- `γ` forms a family of loops surrounding `g` with base `b`.
 In contrast to the notes we assume that `base` and `t₀` hold universally. -/
-@[protect_proj]
 structure SurroundingFamily (g b : E → F) (γ : E → ℝ → Loop F) (U : Set E) : Prop where
-  base : ∀ (x : E) (t : ℝ), γ x t 0 = b x
-  t₀ : ∀ (x : E) (s : ℝ), γ x 0 s = b x
-  projI : ∀ (x : E) (t : ℝ) (s : ℝ), γ x (projI t) s = γ x t s
-  Surrounds : ∀ x ∈ U, (γ x 1).Surrounds <| g x
-  cont : Continuous ↿γ
+  protected base : ∀ (x : E) (t : ℝ), γ x t 0 = b x
+  protected t₀ : ∀ (x : E) (s : ℝ), γ x 0 s = b x
+  protected projI : ∀ (x : E) (t : ℝ) (s : ℝ), γ x (projI t) s = γ x t s
+  protected surrounds : ∀ x ∈ U, (γ x 1).Surrounds <| g x
+  protected cont : Continuous ↿γ
 
 /-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
 structure SurroundingFamilyIn (g b : E → F) (γ : E → ℝ → Loop F) (U : Set E)
@@ -512,15 +500,14 @@ protected theorem t_ge_one (h : SurroundingFamily g b γ U) (x : E) (s : ℝ) {t
 
 protected theorem mono (h : SurroundingFamily g b γ U) {V : Set E} (hVU : V ⊆ U) :
     SurroundingFamily g b γ V :=
-  ⟨h.base, h.t₀, h.projI, fun x hx => h.Surrounds x (hVU hx), h.cont⟩
+  ⟨h.base, h.t₀, h.projI, fun x hx => h.surrounds x (hVU hx), h.cont⟩
 
 protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
     (hg : Continuous g) (h : SurroundingFamily g b γ univ) :
     ∃ ε : E → ℝ,
       (∀ x, 0 < ε x) ∧
         Continuous ε ∧
-          ∀ (x) (γ' : Loop F), (∀ z, dist (γ' z) (γ x 1 z) < ε x) → γ'.Surrounds (g x) :=
-  by
+          ∀ (x) (γ' : Loop F), (∀ z, dist (γ' z) (γ x 1 z) < ε x) → γ'.Surrounds (g x) := by
   let P : E → ℝ → Prop := fun x t =>
     0 < t ∧ ∀ γ' : Loop F, (∀ z, dist (γ' z) (γ x 1 z) < t) → γ'.Surrounds (g x)
   have hP : ∀ x, Convex ℝ {t | P x t} := by
@@ -529,15 +516,15 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
     constructor
     rintro ε₁ hε₁ ε₂ hε₂ ε₃ ⟨hε₁₃, hε₃₂⟩
     refine' ⟨hε₁.1.trans_le hε₁₃, fun γ hγ => hε₂.2 γ fun z => (hγ z).trans_le hε₃₂⟩
-  obtain ⟨ε, hε, hPε⟩ := exists_contDiff_of_convex hP _
+  rsuffices ⟨ε, hε, hPε⟩ : ∃ ε : E → ℝ, 𝒞 0 ε ∧ ∀ x, P x (ε x)
+  -- obtain ⟨ε, hε, hPε⟩ := exists_contDiff_of_convex hP _
   · refine' ⟨ε, fun x => (hPε x).1, contDiff_zero.mp hε, fun x => (hPε x).2⟩
-  intro x
+  refine exists_contDiff_of_convex hP fun x ↦ ?_
   obtain ⟨ε, hε, h2⟩ := (h.surrounds x (mem_univ _)).eventually_surrounds
   have h3 : {y : E | dist (g y) (g x) < ε} ∈ 𝓝 x :=
     (Metric.isOpen_ball.preimage hg).mem_nhds
       (by simp_rw [mem_preimage, Metric.mem_ball, dist_self, hε.lt])
-  have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x :=
-    by
+  have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x := by
     refine' IsOpen.mem_nhds _ fun z => by simp_rw [dist_self, half_pos hε]
     have hc : Continuous ↿fun y s => dist (γ y 1 s) (γ x 1 s) :=
       (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
@@ -547,8 +534,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
     have hc : ∀ y, Continuous fun s => dist (γ y 1 s) (γ x 1 s) := fun y =>
       hc.comp₂ continuous_const continuous_id
     simp_rw [is_compact_Icc.Sup_lt_iff_of_continuous (nonempty_Icc.mpr zero_le_one)
-        (hc _).continuousOn] at
-      this
+        (hc _).continuousOn] at this
     convert this
     ext y
     refine' ⟨fun h z hz => h z, fun h z => _⟩
@@ -569,8 +555,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
 We defined the concatenation we need on `path`, so we need to turn a surrounding
 family into the family of paths. -/
 @[simps]
-protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b x) (b x)
-    where
+protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b x) (b x) where
   toFun s := γ x t s
   continuous_toFun :=
     (h.cont.comp₃ continuous_const continuous_const continuous_id).comp continuous_subtype_val
@@ -579,22 +564,23 @@ protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b 
 
 theorem continuous_path {X : Type _} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
-    (hs : Continuous s) : Continuous fun x => h.Path (f x) (t x) (s x) :=
+    (hs : Continuous s) : Continuous fun x => h.path (f x) (t x) (s x) :=
   h.cont.comp₃ hf ht hs.subtype_val
 
 @[simp]
 theorem path_extend_fract (h : SurroundingFamily g b γ U) (t s : ℝ) (x : E) :
-    (h.Path x t).extend (fract s) = γ x t s := by
+    (h.path x t).extend (fract s) = γ x t s := by
   rw [extend_extends _ (unitInterval.fract_mem s), ← Loop.fract_eq]; rfl
 
 @[simp]
 theorem range_path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) :
-    range (h.Path x t) = range (γ x t) := by
+    range (h.path x t) = range (γ x t) := by
   simp only [Path.coe_mk_mk, SurroundingFamily.path, range_comp _ coe, Subtype.range_coe,
     Loop.range_eq_image]
 
 @[simp]
-theorem path_t₀ (h : SurroundingFamily g b γ U) (x : E) : h.Path x 0 = refl (b x) := by ext t;
+theorem path_t₀ (h : SurroundingFamily g b γ U) (x : E) : h.path x 0 = .refl (b x) := by
+  ext t
   exact h.t₀ x t
 
 end SurroundingFamily
@@ -607,7 +593,7 @@ variable {γ : E → ℝ → Loop F}
 
 /-- Abbreviation for `to_surrounding_family` -/
 theorem to_sf (h : SurroundingFamilyIn g b γ U Ω) : SurroundingFamily g b γ U :=
-  h.to_surroundingFamily
+  h.toSurroundingFamily
 
 theorem val_in (h : SurroundingFamilyIn g b γ U Ω) {x : E} (hx : x ∈ U) {t : ℝ} {s : ℝ} :
     (x, γ x t s) ∈ Ω := by
@@ -621,19 +607,16 @@ protected theorem mono (h : SurroundingFamilyIn g b γ U Ω) {V : Set E} (hVU : 
 /-- Continuously reparameterize a `surrounding_family_in` so that it is constant near
   `s ∈ {0,1}` and `t ∈ {0,1}` -/
 protected theorem reparam (h : SurroundingFamilyIn g b γ U Ω) :
-    SurroundingFamilyIn g b (fun x t => (γ x (linearReparam t)).reparam linearReparam) U Ω :=
-  by
+    SurroundingFamilyIn g b (fun x t => (γ x (linearReparam t)).reparam linearReparam) U Ω := by
   refine' ⟨⟨_, _, _, _, _⟩, _⟩
   · intro x t; simp_rw [Loop.reparam_apply, linearReparam_zero, h.base]
   · intro x s; simp_rw [Loop.reparam_apply, linearReparam_zero, h.t₀]
   · intro x t s; simp_rw [Loop.reparam_apply, linearReparam_projI, h.projI]
   · intro x hx; simp_rw [linearReparam_one]
     exact (h.surrounds x hx).reparam continuous_linearReparam
-  ·
-    exact
-      h.cont.comp₃ continuous_fst continuous_linear_reparam.fst'.snd'
-        continuous_linear_reparam.snd'.snd'
-  · intro x hx t ht s hs; exact h.val_in hx
+  · exact h.cont.comp₃ continuous_fst continuous_linearReparam.fst'.snd'
+      continuous_linearReparam.snd'.snd'
+  · intro x hx t _ s _; exact h.val_in hx
 
 end SurroundingFamilyIn
 
@@ -653,8 +636,7 @@ TODO: use `local_loops_def`
 theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ fst ⁻¹' U))
     (hg : ContinuousAt g x₀) (hb : Continuous b)
     (hconv : g x₀ ∈ convexHull ℝ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀)) :
-    ∃ γ : E → ℝ → Loop F, ∃ U ∈ 𝓝 x₀, SurroundingFamilyIn g b γ U Ω :=
-  by
+    ∃ γ : E → ℝ → Loop F, ∃ U ∈ 𝓝 x₀, SurroundingFamilyIn g b γ U Ω := by
   have hbx₀ : ContinuousAt b x₀ := hb.continuousAt
   have hΩ_op_x₀ : IsOpen (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     (isOpen_slice_of_isOpen_over hΩ_op).connectedComponentIn
@@ -668,8 +650,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ, h6γ⟩
   have h5γ : ∀ t s : ℝ, γ t s ∈ mk x₀ ⁻¹' Ω := fun t s => connectedComponentIn_subset _ _ (h5γ t s)
   let δ : E → ℝ → Loop F := fun x t => b x - b x₀ +ᵥ γ t
-  have hδ : Continuous ↿δ :=
-    by
+  have hδ : Continuous ↿δ := by
     dsimp only [δ, has_uncurry.uncurry, Loop.vadd_apply]
     refine' (hb.fst'.sub continuous_const).add h1γ.snd'
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by intro t s;
@@ -677,13 +658,11 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have hδs0 : ∀ x t, δ x t 0 = b x := by intro x t; simp only [h2γ, Loop.vadd_apply, sub_add_cancel]
   have hδt0 : ∀ x s, δ x 0 s = b x := by intro x s; simp [h3γ, sub_add_cancel]
   have hδt1 : ∀ x t s, δ x (projI t) s = δ x t s := by intro x t s; simp [h4γ]
-  have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ t ∈ I, ∀ s ∈ I, (x, δ x t s) ∈ Ω :=
-    by
+  have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ t ∈ I, ∀ s ∈ I, (x, δ x t s) ∈ Ω := by
     rcases hΩ_op with ⟨U, hUx₀, hU⟩
     -- todo: this is nicer with `is_compact.eventually_forall_of_forall_eventually` twice, but then
     -- we need the continuity of `δ` with the arguments reassociated differently.
-    have : ∀ᶠ x : E in 𝓝 x₀, ∀ ts : ℝ × ℝ, ts ∈ I ×ˢ I → (x, δ x ts.1 ts.2) ∈ Ω :=
-      by
+    have : ∀ᶠ x : E in 𝓝 x₀, ∀ ts : ℝ × ℝ, ts ∈ I ×ˢ I → (x, δ x ts.1 ts.2) ∈ Ω := by
       refine'
         IsCompact.eventually_forall_mem (is_compact_Icc.prod is_compact_Icc)
           (continuous_fst.prod_mk hδ) _
@@ -694,8 +673,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
         mem_nhds_iff.mpr
           ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
     refine' this.mono _; intro x h t ht s hs; exact h (t, s) ⟨ht, hs⟩
-  have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).Surrounds (g x) :=
-    by
+  have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).Surrounds (g x) := by
     rcases h6γ with ⟨p, w, h⟩
     obtain ⟨W, hW⟩ := smooth_surroundingPts h
     let c : E → F × (Fin (d + 1) → F) := fun x => (g x, δ x 1 ∘ p)
@@ -712,8 +690,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
 theorem local_loops_open [FiniteDimensional ℝ F] {x₀ : E}
     (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ fst ⁻¹' U)) (hg : ContinuousAt g x₀) (hb : Continuous b)
     (hconv : g x₀ ∈ convexHull ℝ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀)) :
-    ∃ (γ : E → ℝ → Loop F) (U : Set E), IsOpen U ∧ x₀ ∈ U ∧ SurroundingFamilyIn g b γ U Ω :=
-  by
+    ∃ (γ : E → ℝ → Loop F) (U : Set E), IsOpen U ∧ x₀ ∈ U ∧ SurroundingFamilyIn g b γ U Ω := by
   obtain ⟨γ, U, hU, hγ⟩ := local_loops hΩ_op hg hb hconv
   obtain ⟨V, hVU, hV, hx₀V⟩ := mem_nhds_iff.mp hU
   exact ⟨γ, V, hV, hx₀V, hγ.mono hVU⟩
@@ -761,21 +738,19 @@ variable (h₀ : SurroundingFamily g b γ₀ U) (h₁ : SurroundingFamily g b γ
   more information about the homotopy than the theorem `satisfied_or_refund` gives. -/
 def sfHomotopy (τ : ℝ) (x : E) (t : ℝ) :=
   Loop.ofPath <|
-    (h₀.Path x <| ρ τ * projI t).strans (h₁.Path x <| ρ (1 - τ) * projI t) <|
+    (h₀.path x <| ρ τ * projI t).strans (h₁.path x <| ρ (1 - τ) * projI t) <|
       projIcc 0 1 zero_le_one (1 - τ)
 
 variable {h₀ h₁}
 
 @[simp]
-theorem sfHomotopy_zero : sfHomotopy h₀ h₁ 0 = γ₀ :=
-  by
+theorem sfHomotopy_zero : sfHomotopy h₀ h₁ 0 = γ₀ := by
   ext x t s
   simp only [sfHomotopy, one_mul, ρ_eq_one_of_nonpos, SurroundingFamily.path_extend_fract, sub_zero,
     Loop.ofPath_apply, Icc.mk_one, projIcc_right, Path.strans_one, h₀.projI]
 
 @[simp]
-theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ :=
-  by
+theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ := by
   ext x t s
   simp only [sfHomotopy, Path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos,
     SurroundingFamily.path_extend_fract, projIcc_left, Loop.ofPath_apply, sub_self, h₁.projI]
@@ -783,8 +758,7 @@ theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ :=
 theorem Continuous.sfHomotopy {X : Type _} [UniformSpace X] [SeparatedSpace X]
     [LocallyCompactSpace X] {τ t s : X → ℝ} {f : X → E} (hτ : Continuous τ) (hf : Continuous f)
     (ht : Continuous t) (hs : Continuous s) :
-    Continuous fun x => sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) :=
-  by
+    Continuous fun x => sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by
   refine' Continuous.ofPath _ _ _ _ hs
   refine' Continuous.path_strans _ _ _ _ _ continuous_snd
   · refine' h₀.continuous_path hf.fst'.fst' _ continuous_snd
@@ -805,8 +779,7 @@ theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomot
     continuous_snd.snd.snd
 
 theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
-    SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U :=
-  by
+    SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U := by
   constructor
   · intro x t;
     simp only [sfHomotopy, Icc.mk_zero, zero_le_one, extend_extends, Path.source, Loop.ofPath_apply,
@@ -838,10 +811,9 @@ theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
 /-- A more precise version of `sf_homotopy_in`. -/
 theorem sfHomotopy_in' {ι} (h₀ : SurroundingFamily g b γ₀ U) (h₁ : SurroundingFamily g b γ₁ U)
     (τ : ι → ℝ) (x : ι → E) (i : ι) {V : Set E} (hx : x i ∈ V) {t : ℝ} (ht : t ∈ I) {s : ℝ}
-    (h_in₀ : ∀ (i) (hx : x i ∈ V), ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 1 → (x i, γ₀ (x i) t s) ∈ Ω)
-    (h_in₁ : ∀ (i) (hx : x i ∈ V), ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 0 → (x i, γ₁ (x i) t s) ∈ Ω) :
-    (x i, sfHomotopy h₀ h₁ (τ i) (x i) t s) ∈ Ω :=
-  by
+    (h_in₀ : ∀ i, x i ∈ V → ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 1 → (x i, γ₀ (x i) t s) ∈ Ω)
+    (h_in₁ : ∀ i, x i ∈ V → ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 0 → (x i, γ₁ (x i) t s) ∈ Ω) :
+    (x i, sfHomotopy h₀ h₁ (τ i) (x i) t s) ∈ Ω := by
   by_cases hτ0 : τ i = 0; · simp [hτ0]; exact h_in₀ i hx t ht s (by norm_num [hτ0])
   by_cases hτ1 : τ i = 1; · simp [hτ1]; exact h_in₁ i hx t ht s (by norm_num [hτ1])
   generalize hy : sfHomotopy h₀ h₁ (τ i) (x i) t s = y
@@ -856,7 +828,7 @@ theorem sfHomotopy_in (h₀ : SurroundingFamilyIn g b γ₀ U Ω) (h₁ : Surrou
     (τ : ℝ) ⦃x : E⦄ (hx : x ∈ U) {t : ℝ} (ht : t ∈ I) {s : ℝ} :
     (x, sfHomotopy h₀.to_sf h₁.to_sf τ x t s) ∈ Ω :=
   sfHomotopy_in' h₀.to_sf h₁.to_sf (fun _ => τ) (fun _ => x) () hx ht
-    (fun i hx t ht s _ => h₀.val_in hx) fun i hx t ht s _ => h₁.val_in hx
+    (fun _i hx _t _ _s _ => h₀.val_in hx) fun _i hx _t _ _s _ => h₁.val_in hx
 
 theorem surroundingFamilyIn_sfHomotopy [FiniteDimensional ℝ E] (h₀ : SurroundingFamilyIn g b γ₀ U Ω)
     (h₁ : SurroundingFamilyIn g b γ₁ U Ω) (τ : ℝ) :
@@ -886,21 +858,19 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
     ∃ U ∈ 𝓝ˢ (K₀ ∪ K₁),
       ∃ γ : E → ℝ → Loop F,
         SurroundingFamilyIn g b γ U Ω ∧
-          (∀ᶠ x in 𝓝ˢ K₀, γ x = γ₀ x) ∧ ∀ᶠ x in 𝓝ˢ (U₁ᶜ), γ x = γ₀ x :=
-  by
+          (∀ᶠ x in 𝓝ˢ K₀, γ x = γ₀ x) ∧ ∀ᶠ x in 𝓝ˢ (U₁ᶜ), γ x = γ₀ x := by
   obtain ⟨V₀, hV₀, hKV₀, hVU₀⟩ := normal_exists_closure_subset hK₀ hU₀ hKU₀
   let L₁ := K₁ \ U₀
   have hL₁ : IsClosed L₁ := hK₁.sdiff hU₀
   have hV₀L₁ : Disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ Subset.rfl
   obtain ⟨V₂, hV₂, hLV₂, h2V₂⟩ :=
-    normal_exists_closure_subset hL₁ (is_closed_closure.isOpen_compl.inter hU₁)
+    normal_exists_closure_subset hL₁ (isClosed_closure.isOpen_compl.inter hU₁)
       (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| (diff_subset _ _).trans hKU₁)
   obtain ⟨V₁, hV₁, hLV₁, hV₁₂⟩ := normal_exists_closure_subset hL₁ hV₂ hLV₂
   rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂
   rcases h2V₂ with ⟨hV₀₂, hV₂U₁⟩
   have hVU₁ : V₁ ⊆ U₁ := subset_closure.trans (hV₁₂.trans <| subset_closure.trans hV₂U₁)
-  have hdisj : Disjoint (closure V₀ ∪ V₂ᶜ) (closure V₁) :=
-    by
+  have hdisj : Disjoint (closure V₀ ∪ V₂ᶜ) (closure V₁) := by
     refine' Disjoint.union_left (hV₀₂.mono_right (hV₁₂.trans subset_closure)) _
     rw [← subset_compl_iff_disjoint_left, compl_compl]; exact hV₁₂
   refine' ⟨V₀ ∪ U₁ ∩ U₀ ∪ V₁, ((hV₀.union <| hU₁.inter hU₀).union hV₁).mem_nhdsSet.mpr _, _⟩
@@ -908,7 +878,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
     rw [← inter_union_diff K₁];
     exact union_subset_union ((inter_subset_inter_left _ hKU₁).trans <| subset_union_right _ _) hLV₁
   obtain ⟨ρ, h0ρ, h1ρ, hρ⟩ :=
-    exists_continuous_zero_one_of_closed (is_closed_closure.union hV₂.is_closed_compl)
+    exists_continuous_zero_one_of_closed (isClosed_closure.union hV₂.isClosed_compl)
       isClosed_closure hdisj
   let h₀' : SurroundingFamilyIn g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _)
   let h₁' : SurroundingFamilyIn g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono (inter_subset_left _ _)
@@ -981,8 +951,7 @@ on one side and the two conditions depending on `C` on the other side as we do h
 -/
 theorem surroundingFamilyIn_iff_germ {γ : E → ℝ → Loop F} :
     SurroundingFamilyIn g b γ C Ω ↔
-      (∀ x, LoopFamilyGerm b x γ) ∧ ∀ x ∈ C, SurroundingFamilyGerm g Ω x γ :=
-  by
+      (∀ x, LoopFamilyGerm b x γ) ∧ ∀ x ∈ C, SurroundingFamilyGerm g Ω x γ := by
   constructor
   · rintro ⟨⟨base, t₀, projI, family_surrounds, family_cont⟩, H⟩
     exact
@@ -1003,8 +972,7 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
     (hb : Continuous b)
     (hconv : ∀ x, g x ∈ convexHull ℝ (connectedComponentIn (Prod.mk x ⁻¹' Ω) <| b x))
     {γ₀ : E → ℝ → Loop F} (hγ₀_surr : ∃ V ∈ 𝓝ˢ K, SurroundingFamilyIn g b γ₀ V Ω) :
-    ∃ γ : E → ℝ → Loop F, SurroundingFamilyIn g b γ univ Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x :=
-  by
+    ∃ γ : E → ℝ → Loop F, SurroundingFamilyIn g b γ univ Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x := by
   rcases hγ₀_surr with ⟨V, V_in, hV⟩
   cases' surrounding_family_in_iff_germ.mp hV with hV h'V
   simp only [surroundingFamilyIn_iff_germ, mem_univ, forall_true_left, ← forall_and]
