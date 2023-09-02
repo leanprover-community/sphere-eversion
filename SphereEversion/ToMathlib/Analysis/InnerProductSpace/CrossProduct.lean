@@ -52,13 +52,30 @@ local infixl:100 "×₃" => ω.crossProduct
 theorem crossProduct_apply_self (v : E) : v×₃v = 0 := by simp [crossProduct]
 
 theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm ![u, v, w] := by
-  simp only [crossProduct, to_dual, LinearEquiv.trans_symm, LinearEquiv.symm_symm,
-    LinearIsometryEquiv.toLinearEquiv_symm, AlternatingMap.curryLeftLinearMap, LinearMap.coe_comp,
-    Function.comp_apply, LinearMap.llcomp_apply, LinearEquiv.coe_coe, LinearEquiv.trans_apply,
-    LinearIsometryEquiv.coe_toLinearEquiv, LinearIsometryEquiv.norm_map, Submodule.coe_norm,
-    InnerProductSpace.toDual_symm_apply, AlternatingMap.curryLeft_apply_apply,
-    AlternatingMap.constLinearEquivOfIsEmpty_symm_apply, eq_self_iff_true,
-    LinearMap.coe_toContinuousLinearMap', Matrix.zero_empty]
+  simp only [crossProduct]
+  simp only [to_dual]
+  simp only [LinearEquiv.trans_symm]
+  simp only [LinearEquiv.symm_symm]
+  simp only [LinearIsometryEquiv.toLinearEquiv_symm]
+  simp only [AlternatingMap.curryLeftLinearMap_apply]
+  simp only [LinearMap.coe_comp]
+  simp only [Function.comp_apply]
+  simp only [LinearMap.llcomp_apply]
+  simp only [LinearEquiv.coe_coe]
+  simp only [LinearEquiv.trans_apply]
+  simp only [LinearIsometryEquiv.coe_toLinearEquiv]
+  simp only [AlternatingMap.curryLeftLinearMap_apply]
+  simp only [LinearMap.coe_comp]
+  rw [InnerProductSpace.toDual_symm_apply]
+  simp only [LinearMap.coe_toContinuousLinearMap'] -- does nothing
+  simp only [LinearMap.llcomp_apply]
+  simp only [LinearEquiv.coe_coe]
+  simp only [AlternatingMap.constLinearEquivOfIsEmpty_symm_apply]
+  simp only [Matrix.zero_empty]
+  simp only [AlternatingMap.curryLeftLinearMap_apply]
+  simp only [AlternatingMap.curryLeft_apply_apply]
+
+
 
 theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 := by
   rw [ω.inner_crossProduct_apply u v u]
