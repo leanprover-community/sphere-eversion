@@ -51,6 +51,78 @@ local infixl:100 "×₃" => ω.crossProduct
 
 theorem crossProduct_apply_self (v : E) : v×₃v = 0 := by simp [crossProduct]
 
+
+example {𝕜 : Type u} [NontriviallyNormedField 𝕜] {E : Type v} [AddCommGroup E] [Module 𝕜 E]
+  [TopologicalSpace E] [TopologicalAddGroup E] [ContinuousSMul 𝕜 E] {F' : Type x}
+  [AddCommGroup F'] [Module 𝕜 F'] [TopologicalSpace F'] [TopologicalAddGroup F']
+  [ContinuousSMul 𝕜 F'] [CompleteSpace 𝕜] [T2Space E] [FiniteDimensional 𝕜 E]
+  (f : E →ₗ[𝕜] F') : (LinearMap.toContinuousLinearMap f : E → F') = ↑f :=
+LinearMap.coe_toContinuousLinearMap' f
+
+#check LinearMap.coe_toContinuousLinearMap'
+section
+open Lean PrettyPrinter Delaborator SubExpr
+
+def withBetaReduced (d : Delab) : Delab := do
+  let e' ← Core.betaReduce (← getExpr)
+  withTheReader SubExpr (fun ctx => {ctx with expr := e'}) d
+
+/-- Fail if the arity is less than `n`, and collect arguments if the arity is more than `n`. -/
+partial def delabWithArity (n : Nat) (d : Delab) : Delab := do
+  if (← getExpr).getAppNumArgs < n then
+    failure
+  else
+    let rec loop (args : Array Term) : Delab := do
+      if (← getExpr).getAppNumArgs > n then
+        let arg ← withAppArg delab
+        withAppFn <| loop (args.push arg)
+      else
+        let s ← d
+        `($s $args*)
+    loop #[]
+
+/-- Delaborator for a coercion function of arity `arity` such that
+the coerced value is at argument index `coeArg`. -/
+def delabCoe (arity coeArg : Nat) : Delab := delabWithArity arity do
+  let arg ← withNaryArg coeArg delab
+  let ty ← withType <| withBetaReduced delab
+  `((↑$arg : $ty))
+
+namespace AnnotateFunLikecoe
+@[scoped delab app.FunLike.coe]
+def delabFunLikeCoe : Delab := delabCoe 5 4
+end AnnotateFunLikecoe
+end
+
+set_option quotPrecheck false in
+notation "𝒜" => AlternatingMap ℝ E ℝ (Fin 0)
+set_option quotPrecheck false in
+notation "𝒜'" => AlternatingMap ℝ E ℝ (Fin (Nat.succ 0))
+
+attribute [pp_dot] LinearEquiv.symm
+
+#check (LinearMap.toContinuousLinearMap : (E →ₗ[ℝ] ℝ) → NormedSpace.Dual ℝ E)
+--set_option pp.coercions false
+--open AnnotateFunLikecoe
+
+#check (↑LinearMap.toContinuousLinearMap : (E →ₗ[ℝ] ℝ) → NormedSpace.Dual ℝ E)
+
+#synth ContinuousSMul ℝ ℝ
+#check to_dual.proof_11
+#check ContinuousMul.to_continuousSMul
+
+example : to_dual.proof_11 = ContinuousMul.to_continuousSMul := rfl
+
+#check @LinearMap.toContinuousLinearMap ℝ _ E _ _ _ _ _ ℝ _ _ _ _ to_dual.proof_11 _ _ _
+
+lemma foo (φ : E →ₗ[ℝ] ℝ) (w: E) : (↑((LinearMap.toContinuousLinearMap : (E →ₗ[ℝ] ℝ) → NormedSpace.Dual ℝ E) φ) : E → ℝ) w = (↑φ : E → ℝ) w := by
+  rfl
+
+lemma bar (φ : E →ₗ[ℝ] ℝ) (w: E) : @FunLike.coe (NormedSpace.Dual ℝ E) E (fun _ ↦ ℝ) ContinuousMapClass.toFunLike
+  (@LinearMap.toContinuousLinearMap ℝ _ E _ _ _ _ _ ℝ _ _ _ _ to_dual.proof_11 _ _ _ φ) w = (↑φ : E → ℝ) w := by
+  rw [foo]
+
+--set_option pp.explicit true in
 theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm ![u, v, w] := by
   simp only [crossProduct]
   simp only [to_dual]
@@ -67,15 +139,18 @@ theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm 
   simp only [AlternatingMap.curryLeftLinearMap_apply]
   simp only [LinearMap.coe_comp]
   rw [InnerProductSpace.toDual_symm_apply]
-  simp only [LinearMap.coe_toContinuousLinearMap'] -- does nothing
+  set F' : 𝒜' → E →ₗ[ℝ] ℝ := (LinearMap.llcomp ℝ E 𝒜 ℝ ↑(AlternatingMap.constLinearEquivOfIsEmpty.symm : 𝒜 ≃ₗ[ℝ] ℝ)) ∘ AlternatingMap.curryLeftLinearMap
+  set K := (AlternatingMap.curryLeft ((AlternatingMap.curryLeft (volumeForm ω)) u)) v
+  have := bar (F' K) w
+  change (↑(F' K) : E → ℝ) w = _
+  --rw [LinearMap.coe_toContinuousLinearMap' (F' K)] -- does nothing
+  simp only [Function.comp_apply]
   simp only [LinearMap.llcomp_apply]
   simp only [LinearEquiv.coe_coe]
   simp only [AlternatingMap.constLinearEquivOfIsEmpty_symm_apply]
   simp only [Matrix.zero_empty]
   simp only [AlternatingMap.curryLeftLinearMap_apply]
   simp only [AlternatingMap.curryLeft_apply_apply]
-
-
 
 theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 := by
   rw [ω.inner_crossProduct_apply u v u]
@@ -121,7 +196,6 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
     have : finrank ℝ E = 3 := Fact.out
     linarith
   obtain ⟨w, hw⟩ : ∃ w : Kᗮ, w ≠ 0 := exists_ne 0
-  have hw' : (w : E) ≠ 0 := fun h => hw (Submodule.coe_eq_zero.mp h)
   have H : Pairwise fun i j => ⟪![u, v, w] i, ![u, v, w] j⟫ = 0 :=
     by
     intro i j hij
