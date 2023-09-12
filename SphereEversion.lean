@@ -11,14 +11,11 @@ import SphereEversion.Global.SmoothEmbedding
 import SphereEversion.Global.TwistOneJetSec
 import SphereEversion.Indexing
 import SphereEversion.InductiveConstructions
-import SphereEversion.Lint
-import SphereEversion.LintUnused
 import SphereEversion.Local.AmpleRelation
 import SphereEversion.Local.AmpleSet
 import SphereEversion.Local.Corrugation
 import SphereEversion.Local.DualPair
 import SphereEversion.Local.HPrinciple
-import SphereEversion.Local.LintLocal
 import SphereEversion.Local.OneJet
 import SphereEversion.Local.ParametricHPrinciple
 import SphereEversion.Local.Relation
