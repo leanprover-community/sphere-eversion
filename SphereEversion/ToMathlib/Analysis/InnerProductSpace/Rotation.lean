@@ -83,10 +83,17 @@ theorem rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : ω.rot (1, v) w = 
         orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hw]
 
 /-- The map `rot` sends `(v, t)` to a transformation fixing `v`. -/
+@[simp]
 theorem rot_self (p : ℝ × E) : ω.rot p p.2 = p.2 := by
   have H : orthogonalProjection (ℝ ∙ p.2) p.2 = p.2 :=
     orthogonalProjection_eq_self_iff.mpr (Submodule.mem_span_singleton_self p.2)
   simp [rot, crossProduct_apply_self, orthogonalProjection_orthogonalComplement_singleton_eq_zero,H]
+
+-- Porting note: the variation below works around a simp regression.
+-- See https://leanprover.zulipchat.com/#narrow/stream/270676-lean4/topic/simp.20.5BX.5D.20fails.2C.20rw.20.5BX.5D.20works/near/390536042.2E01
+/-- The map `rot` sends `(v, t)` to a transformation fixing `v`. -/
+@[simp]
+theorem rot_self' (t : ℝ) (e : E) : ω.rot (t, e) e = e := rot_self ω (t, e)
 
 /-- The map `rot` sends `(t, v)` to a transformation preserving `span v`. -/
 theorem rot_eq_of_mem_span (p : ℝ × E) {x : E} (hx : x ∈ ℝ ∙ p.2) : ω.rot p x = x := by
@@ -104,6 +111,12 @@ theorem inner_rot_apply_self (p : ℝ × E) (w : E) (hw : w ∈ (ℝ ∙ p.2)ᗮ
   have H₄ : ⟪p.2×₃w, p.2⟫ = 0 := ω.inner_crossProduct_apply_self p.2 ⟨w, hw⟩
   simp [rot, H₁, H₂, H₃, H₄, inner_smul_left, inner_add_left]
 
+-- Porting note: the variation below works around a simp regression.
+-- See https://leanprover.zulipchat.com/#narrow/stream/270676-lean4/topic/simp.20.5BX.5D.20fails.2C.20rw.20.5BX.5D.20works/near/390536042.2E01
+/-- The map `rot` sends `(v, t)` to a transformation preserving the subspace `(ℝ ∙ v)ᗮ`. -/
+theorem inner_rot_apply_self' (t : ℝ) (e w : E) (hw : w ∈ (ℝ ∙ e)ᗮ) : ⟪ω.rot (t, e) w, e⟫ = 0 :=
+inner_rot_apply_self _ _ _ hw
+
 theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v : E))ᗮ) :
     ‖ω.rot (t, v) w‖ = ‖(w : E)‖ := by
   have h1 : ⟪v×₃w, v×₃w⟫ = ⟪w, w⟫ := by
@@ -117,8 +130,9 @@ theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
       IsROrC.conj_to_real, Submodule.coe_inner]
     linear_combination ⟪(w : E), w⟫ * Real.cos_sq_add_sin_sq (t * Real.pi)
-  simp [rot, orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero w.prop, this]
-  sorry
+  dsimp [rot]
+  simp [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero w.prop, this]
+
 
 theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot (t, v)) := by
   rw [AddMonoidHomClass.isometry_iff_norm]
@@ -129,13 +143,11 @@ theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot 
   rw [← sq_eq_sq (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ]
-  · have hvw : ‖ω.rot (t, v) w‖ = ‖w‖ := sorry -- by simpa only using ω.isometry_on_rot t v ⟨w, hw⟩
-    simp [hvw, rot_self]
-    sorry
+  · have hvw : ‖ω.rot (t, v) w‖ = ‖w‖ :=  ω.isometry_on_rot t v ⟨w, hw⟩
+    simp [hvw]
   · simp [inner_smul_left, hw v (Submodule.mem_span_singleton_self _)]
   rw [real_inner_comm]
-  simp [rot_self, inner_smul_right, ω.inner_rot_apply_self (t, v) w hw]
-  sorry
+  simp [inner_smul_right, ω.inner_rot_apply_self' t v w hw]
 
 open Real Submodule
 
