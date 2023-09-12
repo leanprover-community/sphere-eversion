@@ -76,7 +76,3 @@ import SphereEversion.ToMathlib.Topology.Path
 import SphereEversion.ToMathlib.Topology.Periodic
 import SphereEversion.ToMathlib.Topology.Separation
 import SphereEversion.ToMathlib.Topology.Support
-import SphereEversion.ToMathlib.Unused.EventuallyConstant
-import SphereEversion.ToMathlib.Unused.GeometryManifoldMisc
-import SphereEversion.ToMathlib.Unused.IntervalIntegral
-import SphereEversion.ToMathlib.Unused.LinearAlgebra.Multilinear
