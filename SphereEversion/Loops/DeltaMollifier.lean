@@ -200,6 +200,8 @@ theorem intervalIntegral_periodize_smul (f : ℝ → ℝ) (γ : Loop E) {a b c d
 
 end
 
+local notation "∞" => (⊤ : ℕ∞)
+
 section DeltaApprox
 
 /-! ## An approximate Dirac "on the circle". -/
