@@ -258,7 +258,6 @@ theorem orthogonalProjection_singleton' {v : E} :
   ext w
   simp [ContinuousLinearMap.toSpanSingleton_apply, orthogonalProjection_singleton, ← mul_smul,
     div_eq_inv_mul]
-  rfl
 
 end
 
@@ -330,4 +329,3 @@ theorem contDiffAt_finsum {ι : Type _} {f : ι → E → F} (lf : LocallyFinite
   contDiffWithinAt_finsum lf h
 
 end
-

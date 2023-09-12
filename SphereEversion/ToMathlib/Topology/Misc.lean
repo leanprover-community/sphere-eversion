@@ -68,16 +68,6 @@ theorem Continuous.eventually {f : α → β} {a₀ : α} (hf : Continuous f) (P
     (hP : IsOpen {b | P b}) (ha₀ : P (f a₀)) : ∀ᶠ a in 𝓝 a₀, P (f a) :=
   hf.continuousAt.eventually P hP ha₀
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
--- (unused)
-theorem nhdsSet_prod_le {s : Set α} {t : Set β} : 𝓝ˢ (s ×ˢ t) ≤ (𝓝ˢ s).prod (𝓝ˢ t) := by
-  intro w hw
-  obtain ⟨u, hu, v, hv, huv⟩ := mem_prod_iff.mp hw
-  rw [← subset_interior_iff_mem_nhdsSet] at hu hv ⊢
-  refine' (prod_mono hu hv).trans _
-  rw [← interior_prod_eq]
-  exact interior_mono huv
-
 end
 
 section
@@ -652,7 +642,6 @@ section
 @[simp]
 nonrec theorem Finset.isClosed_biUnion {α} [TopologicalSpace α] {ι : Type _} (s : Finset ι)
     (f : ι → Set α) (hf : ∀ i ∈ s, IsClosed (f i)) : IsClosed (⋃ i ∈ s, f i) :=
-  isClosed_biUnion s.finite_toSet hf
+  isClosed_biUnion_finset hf
 
 end
-

@@ -133,7 +133,7 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
     simp_rw [forall_restrictGermPredicate_iff, ← eventually_nhdsSet_iUnion₂]
     rintro (i : ℕ) f h₀f h₁f
     have cpct : IsClosed (⋃ j < i, K j) :=
-      isClosed_biUnion (finite_lt_nat i) fun j _ => (K_cpct j).isClosed
+      (finite_lt_nat i).isClosed_biUnion fun j _ => (K_cpct j).isClosed
     rcases hU i with ⟨f', h₀f', h₁f'⟩
     rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
     rcases ind V_op (U_op i) cpct (K_cpct i).isClosed hKV (hKU i) h₀f h₀f' h₁V h₁f' with
@@ -377,4 +377,3 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
   · exact fun p ↦ (hF p).2.2
 
 end Htpy
-

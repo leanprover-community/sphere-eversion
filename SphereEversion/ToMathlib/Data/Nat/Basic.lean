@@ -1,4 +1,5 @@
 import Mathlib.Data.Nat.Basic
+import Mathlib.Tactic
 
 -- The next lemma won't be used, it's a warming up exercise for the one below.
 -- The next lemma won't be used, it's a warming up exercise for the one below.
@@ -21,4 +22,3 @@ theorem exists_by_induction' {α : Type _} (P : ℕ → α → Prop) (Q : ℕ �
   choose! F hF hF' using ih
   have key : ∀ n, P n (Nat.recOn n f₀ F) := fun n => Nat.rec hf₀ (fun n ih => hF n _ ih) n
   exact ⟨fun n => Nat.recOn n f₀ F, fun n => ⟨key n, hF' n _ (key n)⟩⟩
-

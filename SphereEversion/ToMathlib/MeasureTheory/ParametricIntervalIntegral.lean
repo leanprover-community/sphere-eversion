@@ -281,7 +281,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
     filter_upwards [h_lipsch, h_diff]
     intro t ht_lip ht_diff
     rw [show bound t = nnabs (bound t) by simp [bound_nonneg t] ]
-    exact ht_diff.le_of_lip (ball_mem_nhds x₀ ε_pos) ht_lip
+    exact ht_diff.le_of_lipschitzOn (ball_mem_nhds x₀ ε_pos) ht_lip
   · have D₁ : HasFDerivAt (fun x ↦ φ x (s x₀)) (∫ t in a..s x₀, F' t) x₀ := by
       replace hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) (volume.restrict (Ι a (s x₀)))
       exact Eventually.mono (ball_mem_nhds x₀ ε_pos) fun x hx ↦ hF_meas_ball hx ha hsx₀
