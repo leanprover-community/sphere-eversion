@@ -39,6 +39,8 @@ structure Loop where
   toFun : ℝ → X
   per' : ∀ t, toFun (t + 1) = toFun t
 
+attribute [coe] Loop.toFun
+
 instance : CoeFun (Loop X) fun _ ↦ ℝ → X :=
   ⟨fun γ ↦ γ.toFun⟩
 
@@ -236,7 +238,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
     simp only [this, γ.extend_extends t.2]
 
 /-- `loop.ofPath` is continuous, general version. -/
-theorem Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
+theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) :=
   by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
