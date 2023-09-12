@@ -11,7 +11,6 @@ import SphereEversion.Global.SmoothEmbedding
 import SphereEversion.Global.TwistOneJetSec
 import SphereEversion.Indexing
 import SphereEversion.InductiveConstructions
-import SphereEversion.InteractiveExpr
 import SphereEversion.Lint
 import SphereEversion.LintUnused
 import SphereEversion.Local.AmpleRelation
