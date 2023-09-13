@@ -337,16 +337,10 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       apply dist_nonneg
       exact dist_smul_add_one_sub_smul_le (h2χ x)
     · -- Porting note: Should be `simp [hx]; apply hγ₁.val_in (mem_univ _)`
-      simp only [Loop.Loop.Add_add_apply]
-      simp only [hx]
-      simp only [zero_smul]
-      simp only [Loop.zero_fun]
-      simp only [Pi.zero_apply]
-      simp only [tsub_zero]
-      simp only [one_smul]
-      simp only [Loop.reparam_apply]
-      simp only [EquivariantEquiv.equivariantMap_toFun]
-      simp only [zero_add]
-      apply hγ₁.val_in (mem_univ _)
+      unfold_let γ
+      simp (config := {zeta := false}) only [hx, Loop.Loop.Add_add_apply, zero_smul, Loop.zero_fun,
+        Pi.zero_apply, tsub_zero, one_smul, Loop.reparam_apply,
+        EquivariantEquiv.equivariantMap_toFun, zero_add]
+      exact hγ₁.val_in (mem_univ _)
   · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
   · exact h1χ.mono fun x (hx : χ x = 1) => by simp [hx]
