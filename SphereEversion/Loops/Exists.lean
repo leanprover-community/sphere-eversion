@@ -49,17 +49,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   have hε : 0 < ε := div_pos hε₁ h0
   have h2ε : ∀ t s : ℝ, ‖ε • γ₀ t s‖ < ε₁ := by
     intro t s
-    -- Porting note: simp is unfolding like crazy
-    -- Next 8 lines should be
-    -- `simp [norm_smul, mul_comm_div, Real.norm_eq_abs, abs_eq_self.mpr, hε.le]`
-    simp only [norm_smul]
-    change ‖ε‖ * ‖γ₀ t s‖ < ε₁
-    simp only [Real.norm_eq_abs]
-    change |ε| * ‖γ₀ t s‖ < ε₁
-    simp only [abs_eq_self.mpr hε.le]
-    change ε * ‖γ₀ t s‖ < ε₁
-    simp only [mul_comm_div]
-    change ε₁ * (‖γ₀ t s‖ / (1 + sSup range_γ₀)) < ε₁
+    simp (config := {zeta := false}) only [norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
     refine' lt_of_lt_of_le _ (mul_one _).le
     rw [mul_lt_mul_left hε₁, div_lt_one h0]
     refine' (zero_add _).symm.le.trans_lt _
