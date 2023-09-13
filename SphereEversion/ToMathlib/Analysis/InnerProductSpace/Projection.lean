@@ -10,9 +10,8 @@ section GeneralStuff
 
 -- Things in this section go to other files
 theorem eq_zero_of_mem_disjoint {R : Type _} [CommRing R] {M : Type _} [AddCommGroup M] [Module R M]
-    {F G : Submodule R M} (h : F ⊓ G = ⊥) {x : M} (hx : x ∈ F) (hx' : x ∈ G) : x = 0 :=
-  by
-  have := submodule.mem_inf.mpr ⟨hx, hx'⟩
+    {F G : Submodule R M} (h : F ⊓ G = ⊥) {x : M} (hx : x ∈ F) (hx' : x ∈ G) : x = 0 := by
+  have := Submodule.mem_inf.mpr ⟨hx, hx'⟩
   rw [h] at this
   simpa
 
@@ -26,8 +25,7 @@ open scoped Pointwise
 /- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (u «expr ≠ » 0) -/
 @[simp]
 theorem Field.exists_unit {𝕜 : Type _} [Field 𝕜] (P : 𝕜 → Prop) :
-    (∃ u : 𝕜ˣ, P u) ↔ ∃ (u : _) (_ : u ≠ 0), P u :=
-  by
+    (∃ u : 𝕜ˣ, P u) ↔ ∃ (u : _) (_ : u ≠ 0), P u := by
   constructor
   · rintro ⟨u, hu⟩
     exact ⟨u, u.ne_zero, hu⟩
@@ -36,8 +34,7 @@ theorem Field.exists_unit {𝕜 : Type _} [Field 𝕜] (P : 𝕜 → Prop) :
 
 theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type _} [Field 𝕜] {M : Type _} [AddCommGroup M]
     [Module 𝕜 M] {u v : M} (hu : u ≠ 0) (hu' : u ∈ span 𝕜 ({v} : Set M)) :
-    span 𝕜 ({u} : Set M) = span 𝕜 ({v} : Set M) :=
-  by
+    span 𝕜 ({u} : Set M) = span 𝕜 ({v} : Set M) := by
   rcases mem_span_singleton.mp hu' with ⟨a, rfl⟩
   by_cases hv : v = 0
   · subst hv
@@ -47,7 +44,7 @@ theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type _} [Field 𝕜] {M :
     exact hu (zero_smul 𝕜 v)
   symm
   erw [Submodule.span_singleton_eq_span_singleton, Field.exists_unit fun z : 𝕜 => z • v = a • v]
-  use a, this, rfl
+  use a, this
 
 end GeneralStuff
 
@@ -60,25 +57,15 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type _} [NormedAddCommGroup E] [N
   apply hx
   rw [← φ.symm_apply_apply x, H, φ.symm.map_zero]
 
--- ignore the next line which is fixing a pretty-printer bug
-local notation "Δ" v:55 => Submodule.span ℝ {v}
-
 local notation "Δ" v:55 => Submodule.span ℝ ({v} : Set E)
 
--- ignore the next line which is fixing a pretty-printer bug
-local notation "{." x "}ᗮ" => (Submodule.span ℝ {x})ᗮ
-
+set_option hygiene false
 local notation "{." x "}ᗮ" => (Submodule.span ℝ ({x} : Set E))ᗮ
 
 local notation "pr[" x "]ᗮ" => orthogonalProjection (Submodule.span ℝ {x})ᗮ
+set_option hygiene true
 
-#print orthogonalProjection_orthogonal /-
-theorem orthogonalProjection_orthogonal {U : Submodule ℝ E} {x : E} [CompleteSpace (U : Set E)] :
-    (orthogonalProjection Uᗮ x : E) = x - orthogonalProjection U x := by
-  rw [eq_sub_iff_add_eq, add_comm, ← orthogonalProjection_add_orthogonalProjection_orthogonal]
--/
-
-theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.pr[v]ᗮ u}ᗮ ⊓ {.v}ᗮ :=
+theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)}ᗮ ⊓ {.v}ᗮ :=
   by
   rw [inf_orthogonal, inf_orthogonal]
   refine' congr_arg _ (le_antisymm (sup_le _ le_sup_right) (sup_le _ le_sup_right)) <;>
@@ -311,4 +298,3 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
     exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)
   · positivity
-
