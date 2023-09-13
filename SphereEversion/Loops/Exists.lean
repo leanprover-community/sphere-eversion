@@ -133,11 +133,9 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have h2f : ∀ x : E, Continuous (f x) := fun x => h1f.comp₂ continuous_const continuous_id
   have h3f : ∀ {x y}, 0 < f x y := by
     intro x y; by_cases hΩ : Ωᶜ.Nonempty
-    · unfold_let f
-      simp_rw [if_pos hΩ, ← hΩ_op.isClosed_compl.not_mem_iff_infDist_pos hΩ, not_mem_compl_iff,
+    · simp_rw [if_pos hΩ, ← hΩ_op.isClosed_compl.not_mem_iff_infDist_pos hΩ, not_mem_compl_iff,
         hγ₃.val_in (mem_univ _)]
-    · unfold_let f
-      simp_rw [if_neg hΩ, zero_lt_one]
+    · simp_rw [if_neg hΩ, zero_lt_one]
   let ε₂ : E → ℝ := fun x => min (min ε₀ (ε₁ x)) (sInf (f x '' I ×ˢ I))
   have hcε₂ : Continuous ε₂ := (continuous_const.min hcε₁).min (hI.continuous_sInf h1f)
   have hε₂ : ∀ {x}, 0 < ε₂ x := fun {x} =>
@@ -183,7 +181,6 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     exact fun x hx ↦ lt_of_lt_of_le (by norm_num : (3 / 4 : ℝ) < 4 / 5) hx
   have h2γ₄ : EqOn γ₄ (fun x => b x.1) U :=  by
     rintro ⟨x, t, s⟩ hxts
-    unfold_let  γ₃
     simp_rw [h0γ₄, Loop.reparam_apply]
     cases' hxts with ht hs
     · refine' hγ₂.to_sf.t_le_zero_eq_b x (linearReparam s) (linearReparam_nonpos (le_of_lt ht))
@@ -202,13 +199,11 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         have :
           (fun x : E × ℝ × ℝ => (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) :=
           by
-          unfold_let C
           simp_rw [@preimage_union _ _ _ (_ ⁻¹' _), preimage_preimage, fract_fract]
           refine' mem_of_superset _ (subset_union_right _ _)
           refine' continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
         refine' eventually_of_mem this _
         intro x hx
-        unfold_let γ
         exact
           (hγ₅C hx).trans
             (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
@@ -222,14 +217,14 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
                   (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp
             ↿γ₅)
   refine' ⟨γ, ⟨⟨_, _, _, _, hγ.continuous⟩, _⟩, hγ, _⟩
-  · intro x t; unfold_let γ; simp_rw [fract_zero]; rw [hγ₅C]; exact hγ₃.base x _
+  · intro x t; simp_rw [fract_zero]; rw [hγ₅C]; exact hγ₃.base x _
     exact Or.inr (by rw [mem_preimage, fract_zero]; exact h0C₁)
-  · intro x s; unfold_let γ; simp_rw [smoothTransition.zero_of_nonpos le_rfl]; rw [hγ₅C]
+  · intro x s; simp_rw [smoothTransition.zero_of_nonpos le_rfl]; rw [hγ₅C]
     exact hγ₃.t₀ x (fract s)
     exact Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
-  · intro x t s; unfold_let γ; simp_rw [smoothTransition_projI]
+  · intro x t s; simp_rw [smoothTransition_projI]
   · rintro x -; apply hγε₁; intro s
-    unfold_let γ ; simp_rw [← (γ₃ x 1).fract_eq s, smoothTransition.one_of_one_le le_rfl]
+    simp_rw [← (γ₃ x 1).fract_eq s, smoothTransition.one_of_one_le le_rfl]
     exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans <| min_le_right _ _)
   · rintro x - t - s -; rw [← not_mem_compl_iff]
     by_cases hΩ : Ωᶜ.Nonempty; swap
@@ -240,7 +235,6 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     refine' (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le _ _)
     refine' (isCompact_Icc.prod isCompact_Icc).bddBelow_image (h2f x).continuousOn
     rw [← hγ₃.projI]
-    unfold_let f
     simp_rw [if_pos hΩ]
     apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
   · refine' eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s => _
@@ -249,7 +243,6 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
       (dist_triangle _ _ _).trans_lt
         (add_lt_add_of_le_of_lt
           ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left _ _) _)
-    unfold_let γ₄ γ₃
     simp_rw [HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
     exact h2γ₁ x hx.1 _ _
 
