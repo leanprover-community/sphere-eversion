@@ -72,16 +72,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   · refine' hb.continuous.fst'.add (continuous_const.smul <| hγ₀_cont.snd')
   · rintro x ⟨-, hx⟩ t _ht s _hs
     have : ‖ε • γ₀ t s‖ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀)
-    refine' h1 x hx t s (by
-      --Porting note: should be `simp [← h0ε₁, this]`
-      rw [←h0ε₁]
-      simp only [mem_ball]
-      simp only [dist_prod_same_left]
-      simp only [Loop.transform_apply]
-      simp only [dist_self_add_left]
-      simp only [add_halves']
-      simp only [this]
-      )
+    refine' h1 x hx t s (by simp (config := {zeta := false}) [← h0ε₁, this])
   · intro x hx
     rw [← h0ε₁, add_halves']
     refine' (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
