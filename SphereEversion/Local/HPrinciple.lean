@@ -280,6 +280,7 @@ theorem improveStep_of_support (t : ℝ) {x : E} (H : ∀ t, x ∉ Loop.support 
     remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)]
   simp only [FormalSol.toJetSec_eq_coe, smul_zero, add_zero, this]
   erw [L.p.update_self]
+  rfl
 
 theorem improveStep_rel_t_eq_0 : L.improveStep h N 0 = 𝓕 := by
   ext x : 2
@@ -290,11 +291,11 @@ theorem improveStep_rel_t_eq_0 : L.improveStep h N 0 = 𝓕 := by
       add_zero]
     erw [L.update_zero h]
 
-theorem improveStep_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improveStep h N t x = 𝓕 x :=
-  by
+theorem improveStep_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improveStep h N t x = 𝓕 x := by
   rw [improveStep_apply _ h, L.hρ_compl_K₁ hx]
   simp only [FormalSol.toJetSec_eq_coe, MulZeroClass.mul_zero, zero_smul, add_zero]
   erw [L.update_zero h]
+  rfl
 
 theorem improveStep_rel_K : ∀ᶠ x near L.K, ∀ t, L.improveStep h N t x = 𝓕 x :=
   by

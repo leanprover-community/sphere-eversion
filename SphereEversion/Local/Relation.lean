@@ -69,12 +69,12 @@ def _root_.JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h 
     FormalSol R :=
   { 𝓕 with is_sol := h }
 
-@[coe]
-abbrev foo (R : RelLoc E F) (𝓕 : FormalSol R) : E → F × (E →L[ℝ] F) :=
-  fun x => (𝓕.f x, 𝓕.φ x)
-
-instance (R : RelLoc E F) : CoeFun (FormalSol R) fun _ => E → F × (E →L[ℝ] F) :=
-  ⟨foo R⟩
+instance (R : RelLoc E F) : FunLike (FormalSol R) E (fun _ ↦ F × (E →L[ℝ] F)) :=
+  ⟨fun 𝓕 x => (𝓕.f x, 𝓕.φ x),
+   by
+     intros 𝓕 𝓕' h
+     ext x : 2 <;> replace h := Prod.mk.inj_iff.mp <|congrFun h x
+     exacts [h.1, h.2]⟩
 
 @[simp]
 theorem FormalSol.coe_apply {R : RelLoc E F} (𝓕 : FormalSol R) (x : E) : (𝓕 : JetSec E F) x = 𝓕 x :=
@@ -118,15 +118,11 @@ def HtpyFormalSol.toHtpyJetSec {R : RelLoc E F} (𝓕 : R.HtpyFormalSol) : HtpyJ
 
 open RelLoc
 
-@[coe]
-abbrev bar (R : RelLoc E F) (S : FamilyFormalSol P R) : P → JetSec E F :=
-  fun t =>
-    { f := S.f t
-      f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
-      φ := S.φ t
-      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }
-
-instance (R : RelLoc E F) : CoeFun (FamilyFormalSol P R) fun _ => P → JetSec E F :=
-  ⟨bar P R⟩
+instance (R : RelLoc E F) : FunLike (FamilyFormalSol P R) P fun _ => JetSec E F :=
+  ⟨fun S => S.toFamilyJetSec,
+    by
+      intros S S' h
+      ext p x : 3 <;> replace h := congrFun h p
+      exacts [congrFun ((JetSec.ext_iff _ _).1 h).1 x, congrFun ((JetSec.ext_iff _ _).1 h).2 x]⟩
 
 end RelLoc
