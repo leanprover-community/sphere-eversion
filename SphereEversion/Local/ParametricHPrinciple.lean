@@ -22,6 +22,8 @@ open LinearMap (ker)
 
 open scoped Topology Pointwise
 
+local notation "∞" => (⊤ : ℕ∞)
+
 section ParameterSpace
 
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
@@ -238,7 +240,7 @@ theorem FamilyJetSec.curry_φ' (S : FamilyJetSec (P × E) F G) (p : G × P) (x :
   rw [fderiv_id, fderiv_const]
   rfl
 
-theorem FamilyJetSec.isHolonomicAtCurry (S : FamilyJetSec (P × E) F G) {t : G} {s : P} {x : E}
+theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G} {s : P} {x : E}
     (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x :=
   by
   simp_rw [JetSec.IsHolonomicAt, S.curry_φ] at hS ⊢
@@ -276,9 +278,12 @@ theorem curry_eq_iff_eq_uncurry_loc {𝓕 : FamilyFormalSol G (R.relativize P)}
   simp_rw [Prod.ext_iff] at h ⊢
   change ((𝓕.curry (t, s)) x).1 = (𝓕₀ s x).1 ∧ ((𝓕.curry (t, s)) x).2 = (𝓕₀ s x).2
   refine' ⟨h.1, _⟩
-  -- Porting note: should be `simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']`
-  simp (config := {zeta := false}) only [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']
-
+  change (((𝓕.curry) (t, s)) x).snd = ((𝓕₀ s) x).snd
+  -- Porting note: Next three lines should be `simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']`
+  simp only [𝓕.curry_φ', h.2]
+  change ((𝓕₀.uncurry) (s, x)).snd.comp (inr ℝ P E) = ((𝓕₀ s) x).snd
+  rw [𝓕₀.uncurry_φ']
+  change ((D (λ (z : P) ↦ 𝓕₀.toFamilyJetSec.f z x) s).comp (fst ℝ P E) + (𝓕₀.toFamilyJetSec.φ s x).comp (snd ℝ P E)).comp (inr ℝ P E) = ((𝓕₀ s) x).snd
   ext v
   simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
@@ -308,27 +313,26 @@ theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Se
   by
   let parametric_landscape : Landscape (P × E) :=
     { C
-      k₀ := K
-      k₁ := (exists_compact_superset hK).some
+      K₀ := K
+      K₁ := (exists_compact_superset hK).choose
       hC
       hK₀ := hK
       hK₁ := (exists_compact_superset hK).choose_spec.1
       h₀₁ := (exists_compact_superset hK).choose_spec.2 }
   obtain ⟨𝓕, h₁, -, h₂, -, h₄, h₅⟩ :=
     𝓕₀.uncurry.improve_htpy' (R.isOpen_relativize h_op) (h_ample.relativize P) parametric_landscape
-      ε_pos (h_hol.mono fun p hp => 𝓕₀.is_holonomic_at_uncurry.mpr hp)
+      ε_pos (h_hol.mono fun p hp => 𝓕₀.isHolonomicAt_uncurry.mpr hp)
   have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p := by intro p; rw [h₁.on_set 0 right_mem_Iic]; rfl
   refine' ⟨𝓕.curry, _, _, _, _⟩
   · intro s x; exact curry_eq_iff_eq_uncurry_loc (h₁ (s, x))
   · refine' h₂.mono _; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry_loc (hp t)
   · intro s x t; exact (h₄ (s, x) t).le
-  · refine' h₅.mono _; rintro ⟨s, x⟩ hp; exact 𝓕.toFamilyJetSec.is_holonomic_at_curry hp
+  · refine' h₅.mono _; rintro ⟨s, x⟩ hp; exact 𝓕.toFamilyJetSec.isHolonomicAt_curry hp
 
 open Filter
 
 open scoped unitInterval
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 /-- A corollary of the local parametric h-principle, forgetting the homotopy and `ε`-closeness,
 and just stating the existence of a solution that is holonomic near `K`.
 Furthermore, we assume that `P = ℝ` and `K` is of the form `compact set × I`.
@@ -340,11 +344,11 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
         (∀ p ∈ C, f (p : ℝ × E).1 p.2 = (𝓕₀ p.1).f p.2) ∧
           ∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R :=
   by
-  obtain ⟨𝓕, h₁, h₂, -, h₄⟩ :=
-    𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (is_compact_Icc.prod hK) h_hol
+  obtain ⟨𝓕, _, h₂, -, h₄⟩ :=
+    𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (isCompact_Icc.prod hK) h_hol
   refine' ⟨fun s => (𝓕 (1, s)).f, _, _, _⟩
   · exact 𝓕.f_diff.comp ((contDiff_const.prod contDiff_id).prod_map contDiff_id)
-  · intro p hp; exact (prod.ext_iff.mp (h₂.nhdsSet_forall_mem p hp 1)).1
+  · intro p hp; exact (Prod.ext_iff.mp (h₂.nhdsSet_forall_mem p hp 1)).1
   · intro x hx t ht
     rw [show D (𝓕 (1, t)).f x = (𝓕 (1, t)).φ x from
         h₄.nhdsSet_forall_mem (t, x) (mk_mem_prod ht hx)]
