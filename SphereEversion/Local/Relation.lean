@@ -48,9 +48,12 @@ namespace RelLoc
 structure FormalSol (R : RelLoc E F) extends JetSec E F where
   is_sol : ∀ x, (x, f x, φ x) ∈ R
 
+attribute [coe] FormalSol.toJetSec
+
 instance (R : RelLoc E F) : CoeOut (FormalSol R) (JetSec E F) :=
   ⟨FormalSol.toJetSec⟩
 
+-- Note: syntactic tautology
 @[simp]
 theorem FormalSol.toJetSec_eq_coe {R : RelLoc E F} (𝓕 : FormalSol R) :
     𝓕.toJetSec = (𝓕 : JetSec E F) :=
@@ -66,8 +69,12 @@ def _root_.JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h 
     FormalSol R :=
   { 𝓕 with is_sol := h }
 
+@[coe]
+abbrev foo (R : RelLoc E F) (𝓕 : FormalSol R) : E → F × (E →L[ℝ] F) :=
+  fun x => (𝓕.f x, 𝓕.φ x)
+
 instance (R : RelLoc E F) : CoeFun (FormalSol R) fun _ => E → F × (E →L[ℝ] F) :=
-  ⟨fun 𝓕 => fun x => (𝓕.f x, 𝓕.φ x)⟩
+  ⟨foo R⟩
 
 @[simp]
 theorem FormalSol.coe_apply {R : RelLoc E F} (𝓕 : FormalSol R) (x : E) : (𝓕 : JetSec E F) x = 𝓕 x :=
@@ -111,11 +118,15 @@ def HtpyFormalSol.toHtpyJetSec {R : RelLoc E F} (𝓕 : R.HtpyFormalSol) : HtpyJ
 
 open RelLoc
 
-instance (R : RelLoc E F) : CoeFun (FamilyFormalSol P R) fun _ => P → JetSec E F :=
-  ⟨fun S t =>
+@[coe]
+abbrev bar (R : RelLoc E F) (S : FamilyFormalSol P R) : P → JetSec E F :=
+  fun t =>
     { f := S.f t
       f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
       φ := S.φ t
-      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }⟩
+      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }
+
+instance (R : RelLoc E F) : CoeFun (FamilyFormalSol P R) fun _ => P → JetSec E F :=
+  ⟨bar P R⟩
 
 end RelLoc
