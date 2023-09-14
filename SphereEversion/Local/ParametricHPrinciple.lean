@@ -260,6 +260,7 @@ theorem FamilyJetSec.curry_mem (S : FamilyJetSec (P × E) F G) {p : G × P} {x :
 
 /-- Turn a family of formal solutions of `R.relativize P` parametrized by `G` into a family of
 formal solutions of `R` parametrized by `G × P`. -/
+@[pp_dot]
 def RelLoc.FamilyFormalSol.curry (S : FamilyFormalSol G (R.relativize P)) :
     FamilyFormalSol (G × P) R :=
   ⟨S.toFamilyJetSec.curry, fun _ _ => S.toFamilyJetSec.curry_mem (S.is_sol _ _)⟩
@@ -276,9 +277,7 @@ theorem curry_eq_iff_eq_uncurry_loc {𝓕 : FamilyFormalSol G (R.relativize P)}
     {𝓕₀ : R.FamilyFormalSol P} {t : G} {x : E} {s : P} (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by
   simp_rw [Prod.ext_iff] at h ⊢
-  change ((𝓕.curry (t, s)) x).1 = (𝓕₀ s x).1 ∧ ((𝓕.curry (t, s)) x).2 = (𝓕₀ s x).2
   refine' ⟨h.1, _⟩
-  change (((𝓕.curry) (t, s)) x).snd = ((𝓕₀ s) x).snd
   -- Porting note: Next three lines should be `simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']`
   simp only [𝓕.curry_φ', h.2]
   change ((𝓕₀.uncurry) (s, x)).snd.comp (inr ℝ P E) = ((𝓕₀ s) x).snd
