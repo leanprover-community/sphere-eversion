@@ -33,6 +33,8 @@ open Set Function Real Filter
 
 open scoped unitInterval Topology
 
+local notation "∞" => (⊤ : ℕ∞)
+
 variable (E : Type _) [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 variable (F : Type _) [NormedAddCommGroup F] [NormedSpace ℝ F]
@@ -335,4 +337,3 @@ theorem HtpyJetSec.comp_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : 𝓕.comp 𝓖 h 1 
   (𝓕.comp_ge_1 𝓖 h).on_set 1 left_mem_Ici
 
 end HtpyJetSec
-
