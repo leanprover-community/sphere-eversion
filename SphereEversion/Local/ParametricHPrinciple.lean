@@ -166,13 +166,14 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
   rw [fderiv_fst]
   rfl
 
+attribute [pp_dot] ContinuousLinearMap.comp
+open ContinuousLinearMap
 theorem FamilyJetSec.uncurry_mem_relativize (S : FamilyJetSec E F P) {s : P} {x : E} :
-    ((s, x), S.uncurry (s, x)) ∈ R.relativize P ↔ (x, S s x) ∈ R :=
-  by
-  simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq, JetSec.coe_apply, S.uncurry_f,
-    S.uncurry_φ']
-  congr 2
-  refine' Prod.ext rfl (Prod.ext rfl _)
+    ((s, x), S.uncurry (s, x)) ∈ R.relativize P ↔ (x, S s x) ∈ R := by
+  rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq, JetSec.coe_apply,  JetSec.coe_apply, S.uncurry_f, S.uncurry_φ']
+  dsimp only
+  suffices : ((D (fun z ↦ f S z x) s).comp (fst ℝ P E) + (φ S s x).comp (snd ℝ P E)).comp (ContinuousLinearMap.inr ℝ P E) = JetSec.φ (S s) x
+  rw [this] ; rfl
   ext v
   simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
@@ -189,7 +190,7 @@ theorem FamilyJetSec.isHolonomicAt_uncurry (S : FamilyJetSec E F P) {p : P × E}
   refine' (add_right_inj _).trans _
   have := fderiv_comp p ((S p.1).f_diff.contDiffAt.differentiableAt le_top) differentiableAt_snd
   rw [show D (fun z : P × E => (↿S.f) (p.fst, z.snd)) p = _ from this, fderiv_snd,
-    (show surjective (ContinuousLinearMap.snd ℝ P E) from
+    (show Surjective (ContinuousLinearMap.snd ℝ P E) from
           Prod.snd_surjective).clm_comp_injective.eq_iff]
   rfl
 
@@ -197,9 +198,9 @@ theorem FamilyJetSec.isHolonomicAt_uncurry (S : FamilyJetSec E F P) {p : P × E}
 of `R.relativize P`. -/
 def RelLoc.FamilyFormalSol.uncurry (S : R.FamilyFormalSol P) : FormalSol (R.relativize P) :=
   by
-  refine' ⟨S.to_family_jet_sec.uncurry, _⟩
+  refine' ⟨S.toFamilyJetSec.uncurry, _⟩
   rintro ⟨s, x⟩
-  exact S.to_family_jet_sec.uncurry_mem_relativize.mpr (S.is_sol s x)
+  exact S.toFamilyJetSec.uncurry_mem_relativize.mpr (S.is_sol s x)
 
 theorem RelLoc.FamilyFormalSol.uncurry_φ' (S : R.FamilyFormalSol P) (p : P × E) :
     (S.uncurry p).2 =
@@ -247,20 +248,19 @@ theorem FamilyJetSec.isHolonomicAtCurry (S : FamilyJetSec (P × E) F G) {t : G} 
     (fderiv_comp x ((S t).f_diff.contDiffAt.differentiableAt le_top)
           ((differentiableAt_const _).prod differentiableAt_id)).trans
       _
-  rw [id, hS]
+  rw [_root_.id, hS]
   rfl
 
 theorem FamilyJetSec.curry_mem (S : FamilyJetSec (P × E) F G) {p : G × P} {x : E}
-    (hR : ((p.2, x), S p.1 (p.2, x)) ∈ R.relativize P) : (x, S.curry p x) ∈ R :=
-  by
-  simp_rw [RelLoc.relativize, mem_preimage, JetSec.coe_apply, oneJetSnd_eq, S.curry_φ'] at hR ⊢
-  exact hR
+    (hR : ((p.2, x), S p.1 (p.2, x)) ∈ R.relativize P) : (x, S.curry p x) ∈ R := by
+  unfold RelLoc.relativize at hR
+  rwa [mem_preimage, JetSec.coe_apply, oneJetSnd_eq, ← S.curry_φ'] at hR
 
 /-- Turn a family of formal solutions of `R.relativize P` parametrized by `G` into a family of
 formal solutions of `R` parametrized by `G × P`. -/
 def RelLoc.FamilyFormalSol.curry (S : FamilyFormalSol G (R.relativize P)) :
     FamilyFormalSol (G × P) R :=
-  ⟨S.toFamilyJetSec.curry, fun p x => S.toFamilyJetSec.curry_mem (S.is_sol _ _)⟩
+  ⟨S.toFamilyJetSec.curry, fun _ _ => S.toFamilyJetSec.curry_mem (S.is_sol _ _)⟩
 
 theorem RelLoc.FamilyFormalSol.curry_φ (S : FamilyFormalSol G (R.relativize P)) (p : G × P)
     (x : E) : (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L fderiv ℝ (fun x => (p.2, x)) x :=
@@ -274,8 +274,11 @@ theorem curry_eq_iff_eq_uncurry_loc {𝓕 : FamilyFormalSol G (R.relativize P)}
     {𝓕₀ : R.FamilyFormalSol P} {t : G} {x : E} {s : P} (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by
   simp_rw [Prod.ext_iff] at h ⊢
+  change ((𝓕.curry (t, s)) x).1 = (𝓕₀ s x).1 ∧ ((𝓕.curry (t, s)) x).2 = (𝓕₀ s x).2
   refine' ⟨h.1, _⟩
-  simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']
+  -- Porting note: should be `simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']`
+  simp (config := {zeta := false}) only [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']
+
   ext v
   simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
@@ -319,7 +322,7 @@ theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Se
   · intro s x; exact curry_eq_iff_eq_uncurry_loc (h₁ (s, x))
   · refine' h₂.mono _; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry_loc (hp t)
   · intro s x t; exact (h₄ (s, x) t).le
-  · refine' h₅.mono _; rintro ⟨s, x⟩ hp; exact 𝓕.to_family_jet_sec.is_holonomic_at_curry hp
+  · refine' h₅.mono _; rintro ⟨s, x⟩ hp; exact 𝓕.toFamilyJetSec.is_holonomic_at_curry hp
 
 open Filter
 
