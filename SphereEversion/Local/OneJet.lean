@@ -103,7 +103,7 @@ if its linear map part at `x` is the derivative of its function part at `x` in r
 def IsPartHolonomicAt (𝓕 : JetSec E F) (E' : Submodule ℝ E) (x : E) :=
   ∀ v ∈ E', D 𝓕.f x v = 𝓕.φ x v
 
-theorem Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E F} {s : Set E}
+theorem _root_.Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E F} {s : Set E}
     (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) (E' : Submodule ℝ E) :
     ∀ᶠ x near s, 𝓕.IsPartHolonomicAt E' x ↔ 𝓕'.IsPartHolonomicAt E' x := by
   apply h.eventually_nhdsSet.mono

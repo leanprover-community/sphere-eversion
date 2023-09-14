@@ -62,7 +62,7 @@ theorem FormalSol.coeIsFormalSol {R : RelLoc E F} (𝓕 : FormalSol R) :
   𝓕.is_sol
 
 /-- Bundling a formal solution from a 1-jet section that is a formal solution. -/
-def JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h : 𝓕.IsFormalSol R) :
+def _root_.JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h : 𝓕.IsFormalSol R) :
     FormalSol R :=
   { 𝓕 with is_sol := h }
 
@@ -119,4 +119,3 @@ instance (R : RelLoc E F) : CoeFun (FamilyFormalSol P R) fun _ => P → JetSec E
       φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }⟩
 
 end RelLoc
-
