@@ -186,6 +186,8 @@ theorem fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E �
   simp_rw [ContinuousLinearMap.add_apply, corrugation.fderiv_apply _ N hN hγ_diff, hfγ,
     DualPair.update, ContinuousLinearMap.add_apply, p.π.comp_toSpanSingleton_apply, add_assoc]
 
+local notation "∞" => (⊤ : ℕ∞)
+
 theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {x : H → E} (hx : 𝒞 ∞ x)
     {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h => R N (γ <| g h) <| x h := by
   apply ContDiff.const_smul
