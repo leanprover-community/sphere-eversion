@@ -22,10 +22,9 @@ theorem forall_mem_span_singleton {R : Type _} [CommRing R] {M : Type _} [AddCom
 
 open scoped Pointwise
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (u «expr ≠ » 0) -/
 @[simp]
 theorem Field.exists_unit {𝕜 : Type _} [Field 𝕜] (P : 𝕜 → Prop) :
-    (∃ u : 𝕜ˣ, P u) ↔ ∃ (u : _) (_ : u ≠ 0), P u := by
+    (∃ u : 𝕜ˣ, P u) ↔ ∃ u : 𝕜, u ≠ 0 ∧ P u := by
   constructor
   · rintro ⟨u, hu⟩
     exact ⟨u, u.ne_zero, hu⟩
@@ -70,14 +69,14 @@ theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)
   rw [inf_orthogonal, inf_orthogonal]
   refine' congr_arg _ (le_antisymm (sup_le _ le_sup_right) (sup_le _ le_sup_right)) <;>
     rw [span_singleton_le_iff_mem]
-  · nth_rw 1 [orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
+  · nth_rw 1 [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
   · rw [orthogonalProjection_orthogonal]
     refine' sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
-theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ pr[v]ᗮ u = {.v}ᗮ :=
+theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ :=
   by
-  rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_complete_space]
+  rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_completeSpace]
   rw [span_singleton_le_iff_mem]
   exact coe_mem _
 
@@ -91,10 +90,10 @@ theorem orthogonalProjection_eq_zero_of_mem {F : Submodule ℝ E} [CompleteSpace
 theorem inner_projection_self_eq_zero_iff {F : Submodule ℝ E} [CompleteSpace F] {x : E} :
     ⟪x, orthogonalProjection F x⟫ = 0 ↔ x ∈ Fᗮ :=
   by
-  obtain ⟨y, hy, z, hz, rfl⟩ := F.exists_sum_mem_mem_orthogonal x
+  obtain ⟨y, hy, z, hz, rfl⟩ := F.exists_add_mem_mem_orthogonal x
   rw [inner_add_left, map_add, coe_add, inner_add_right, inner_add_right]
   suffices y = 0 ↔ y + z ∈ Fᗮ by
-    simpa [orthogonalProjection_eq_zero_of_mem hz, orthogonal_projection_eq_self_iff.mpr hy,
+    simpa [orthogonalProjection_eq_zero_of_mem hz, orthogonalProjection_eq_self_iff.mpr hy,
       inner_eq_zero_symm.mp (hz y hy)]
   rw [add_mem_cancel_right hz]
   constructor
@@ -123,29 +122,25 @@ theorem orthogonalProjection_orthogonal_singleton {x y : E} :
         · simp
         simp [mem_orthogonal_span_singleton_iff]
         rw [inner_sub_right, inner_smul_right]
-        field_simp [inner_self_ne_zero.mpr hx]⟩ :=
-  by
+        field_simp [inner_self_ne_zero.mpr hx]⟩ := by
   apply Subtype.ext
   have := orthogonalProjection_add_orthogonalProjection_orthogonal (span ℝ ({x} : Set E)) y
-  simp [eq_sub_of_add_eq' this.symm, orthogonalProjection_singleton, real_inner_self_eq_norm_sq]
+  simp [eq_sub_of_add_eq' this, orthogonalProjection_singleton, real_inner_self_eq_norm_sq]
 
 theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
-    (pr[x]ᗮ y : E) = y - (⟪x, y⟫ / ⟪x, x⟫) • x :=
-  by
+    (pr[x]ᗮ y : E) = y - (⟪x, y⟫ / ⟪x, x⟫) • x := by
   rw [orthogonalProjection_orthogonal_singleton]
-  rfl
 
 theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}ᗮ) :
-    (pr[x]ᗮ y : E) - (⟪x₀, pr[x]ᗮ y⟫ / ⟪x₀, x⟫) • x = y :=
-  by
-  conv_rhs => rw [orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y]
+    (pr[x]ᗮ y : E) - (⟪x₀, pr[x]ᗮ y⟫ / ⟪x₀, x⟫) • x = y :=   by
+  conv_rhs => rw [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y]
   rw [orthogonalProjection_singleton]
   rw [sub_eq_add_neg, add_comm, ← neg_smul]
   congr 2
   have := orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y
   rw [orthogonalProjection_singleton] at this
   apply_fun fun z => ⟪x₀, z⟫ at this
-  rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right, eq_comm] at this
+  rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right] at this
   symm
   apply eq_of_sub_eq_zero
   rw [sub_neg_eq_add]
@@ -175,13 +170,23 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
       ext
       dsimp
       rw [map_sub, pr[x]ᗮ.map_smul, orthogonalProjection_orthogonalComplement_singleton_eq_zero,
-        smul_zero, sub_zero, orthogonal_projection_eq_self_iff.mpr hy]
+        smul_zero, sub_zero, orthogonalProjection_eq_self_iff.mpr hy]
     continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous
-    continuous_invFun := by continuity }
+    continuous_invFun := by
+      -- Porting note: this was `continuity`
+      apply Continuous.subtype_mk
+      apply Continuous.sub
+      exact continuous_subtype_val
+      apply Continuous.smul
+      apply Continuous.div_const
+      apply Continuous.comp
+      apply continuous_const.inner
+      apply continuous_id
+      exact continuous_subtype_val
+      exact continuous_const }
 
 theorem orthogonalProjection_comp_coe (K : Submodule ℝ E) [CompleteSpace K] :
-    orthogonalProjection K ∘ (coe : K → E) = id :=
-  by
+    orthogonalProjection K ∘ ((↑) : K → E) = id := by
   ext1 x
   exact orthogonalProjection_mem_subspace_eq_self x
 
@@ -195,8 +200,7 @@ theorem NormedSpace.continuousAt_iff {E F : Type _} [SeminormedAddCommGroup E]
 
 theorem NormedSpace.continuousAt_iff' {E F : Type _} [SeminormedAddCommGroup E]
     [SeminormedAddCommGroup F] (f : E → F) (x : E) :
-    ContinuousAt f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε :=
-  by
+    ContinuousAt f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε := by
   rw [NormedSpace.continuousAt_iff]
   constructor <;> intro h ε ε_pos
   · rcases h ε ε_pos with ⟨η, η_pos, hη⟩
@@ -221,13 +225,6 @@ theorem NormedSpace.continuous_iff' {E F : Type _} [SeminormedAddCommGroup E]
     Continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε := by
   simp_rw [continuous_iff_continuousAt, NormedSpace.continuousAt_iff']
 
-theorem ContinuousLinearMap.op_norm_le_iff {𝕜 : Type _} {𝕜₂ : Type _} {E : Type _} {F : Type _}
-    [SeminormedAddCommGroup E] [SeminormedAddCommGroup F] [NontriviallyNormedField 𝕜]
-    [NontriviallyNormedField 𝕜₂] [NormedSpace 𝕜 E] [NormedSpace 𝕜₂ F] {σ₁₂ : 𝕜 →+* 𝕜₂}
-    [RingHomIsometric σ₁₂] {M : ℝ} (hM : 0 ≤ M) (f : E →SL[σ₁₂] F) :
-    ‖f‖ ≤ M ↔ ∀ x, ‖f x‖ ≤ M * ‖x‖ :=
-  ⟨f.le_of_opNorm_le, f.opNorm_le_bound hM⟩
-
 variable {E}
 
 @[continuity]
@@ -243,11 +240,11 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     by
     simpa only [ContinuousLinearMap.op_norm_le_iff (le_of_lt ε_pos),
       orthogonalProjection_orthogonal_singleton, ContinuousLinearMap.coe_sub',
-      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, Pi.sub_apply, comp_app,
+      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, Pi.sub_apply, comp_apply,
       coe_mk, sub_sub_sub_cancel_left]
   let N : E → E := fun x => ⟪x, x⟫⁻¹ • x
   have hNx₀ : 0 < ‖N x₀‖ := by
-    dsimp [N]
+    unfold_let N
     -- and now let's suffer
     rw [norm_smul, real_inner_self_eq_norm_sq, norm_inv]
     apply mul_pos
@@ -255,15 +252,15 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     apply norm_pos_iff.mpr hNx₀2.ne'
     exact hNx₀
   have cont : ContinuousAt N x₀ := by
-    dsimp [N]
+    unfold_let N
     simp_rw [real_inner_self_eq_norm_sq]
     exact ((continuous_norm.pow 2).continuousAt.inv₀ hNx₀2.ne').smul continuousAt_id
-  have lim : tendsto (fun y => ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) :=
+  have lim : Tendsto (fun y => ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) :=
     by
     rw [← MulZeroClass.zero_mul ‖x₀‖]
-    apply tendsto.mul
+    apply Tendsto.mul
     rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
-    exact (tendsto_const_nhds.sub Cont).norm
+    exact (tendsto_const_nhds.sub cont).norm
     exact continuous_norm.continuousAt
   have key :
     ∀ x y,
@@ -271,12 +268,12 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
         ⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y :=
     by
     intro x y
-    dsimp only [N]
+    unfold_let N
     simp only [inner_smul_left, inner_sub_left, IsROrC.conj_to_real, smul_sub, sub_smul]
     field_simp
   simp only [key]
   simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim
-  rcases limUnder (ε / 2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩
+  rcases lim (ε / 2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩
   refine' ⟨min (ε / 2 / ‖N x₀‖) (η / 2), _, _⟩
   · apply lt_min; positivity; exact half_pos η_pos
   intro y hy x
@@ -286,8 +283,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   calc
     ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ :=
       norm_add_le _ _
-    _ ≤ ‖N x₀‖ * ‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ := (add_le_add _ _)
-    _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add _ _)
+    _ ≤ ‖N x₀‖ * ‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ := (add_le_add ?_ ?_)
+    _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add ?_ ?_)
     _ = ε * ‖x‖ := by linarith
   · rw [norm_smul]
     exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
