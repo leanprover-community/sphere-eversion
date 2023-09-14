@@ -54,18 +54,23 @@ induced by `R`. -/
 def RelLoc.relativize (R : RelLoc E F) : RelLoc (P × E) F :=
   oneJetSnd ⁻¹' R
 
-variable {P}
+variable {P} (R)
 
-theorem RelLoc.mem_relativize (R : RelLoc E F) (w : OneJet (P × E) F) :
+theorem RelLoc.mem_relativize  (w : OneJet (P × E) F) :
     w ∈ R.relativize P ↔ (w.1.2, w.2.1, w.2.2 ∘L ContinuousLinearMap.inr ℝ P E) ∈ R := by
-  simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
+  -- Porting note: should be simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
+  simp_rw [RelLoc.relativize]
+  rw [mem_preimage]
+  simp only [oneJetSnd_eq]
 
 theorem RelLoc.isOpen_relativize (R : RelLoc E F) (h2 : IsOpen R) : IsOpen (R.relativize P) :=
   h2.preimage continuous_oneJetSnd
 
+variable {R}
+
 theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q : DualPair E)
     (hpq : p.π.comp (ContinuousLinearMap.inr ℝ P E) = q.π) :
-    (R.relativize P).slice p σ = σ.2.2 (p.V - (0, q.V)) +ᵥ R.slice q (oneJetSnd σ) :=
+    (R.relativize P).slice p σ = σ.2.2 (p.v - (0, q.v)) +ᵥ R.slice q (oneJetSnd σ) :=
   by
   have h2pq : ∀ x : E, p.π ((0 : P), x) = q.π x := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hpq
   ext1 w
@@ -74,20 +79,22 @@ theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q
       q.update (oneJetSnd σ).2.2 (-σ.2.2 (p.v - (0, q.v)) +ᵥ w) :=
     by
     ext1 x
-    simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ←
-      ContinuousLinearMap.map_neg, neg_sub]
+    simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply]
+    rw [← ContinuousLinearMap.map_neg, neg_sub]
     obtain ⟨u, hu, t, rfl⟩ := q.decomp x
     have hv : (0, q.v) - p.v ∈ ker p.π := by
       rw [LinearMap.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self]
     have hup : ((0 : P), u) ∈ ker p.π := (h2pq u).trans hu
     rw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
       Prod.smul_zero_mk, map_smul, vadd_eq_add]
-    nth_rw 1 [← sub_add_cancel (0, q.v) p.v]
+    conv_lhs => { rw [← sub_add_cancel (0, q.v) p.v] }
     rw [map_add, p.update_ker_pi _ _ hv, p.update_v, oneJetSnd_eq]
     rfl
   have := preimage_vadd_neg (show F from σ.2.2 (p.v - (0, q.v))) (R.slice q (oneJetSnd σ))
   dsimp only at this
-  simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize, h1]
+  -- Porting note: should be `simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize, h1]`
+  simp_rw [← this, mem_preimage, mem_slice]
+  rw [R.mem_relativize, h1]
   rfl
 
 theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)}
@@ -95,17 +102,25 @@ theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P �
     ((R.relativize P).slice p σ).Nonempty ↔ (R.relativize P).slice p σ = univ :=
   by
   have h2p : ∀ x : E, p.π ((0 : P), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
-  have :
-    ∀ y : F,
+  have : ∀ y : F,
       (p.update σ.2.2 y).comp (ContinuousLinearMap.inr ℝ P E) =
-        σ.2.2.comp (ContinuousLinearMap.inr ℝ P E) :=
-    by
+        σ.2.2.comp (ContinuousLinearMap.inr ℝ P E) := by
     intro y
     ext1 x
     simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
       p.update_ker_pi _ _ (h2p x)]
-  simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize, this, exists_const,
-    forall_const]
+    rfl
+  -- Porting note: end of this proof should be
+  -- simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize, this, exists_const, forall_const]
+  simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice]
+  conv in ∃ _, _ =>
+    congr
+    ext
+    rw [R.mem_relativize]
+  conv in ∀ _, _ =>
+    ext
+    rw [R.mem_relativize]
+  simp_rw [this, exists_const, forall_const]
 
 variable (P)
 
@@ -333,4 +348,3 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
     exact 𝓕.is_sol (1, t) x
 
 end ParametricHPrinciple
-
