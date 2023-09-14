@@ -182,6 +182,7 @@ end NoNorm
 
 
 namespace DualPair
+local notation "∞" => (⊤ : ℕ∞)
 
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
   [NormedSpace ℝ F]
