@@ -285,27 +285,16 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
   let γ : ℝ → E → Loop F := fun t x => χ x • Loop.const (b x) + (1 - χ x) • γ₃ t x
   have h1γ : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x := by
     intro x t ht; ext s;
-    simp only [Loop.Loop.Add_add_apply]
-    simp only [Loop.smul_apply]
-    simp only [Loop.reparam_apply]
-    simp only [hγ₁.to_sf.t_le_zero _ _ ht]
+    simp [hγ₁.to_sf.t_le_zero _ _ ht]
   have h2γ : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x := by
     intro x t ht; ext s
-    simp only [Loop.Loop.Add_add_apply]
-    simp only [Loop.smul_apply]
-    simp only [Loop.reparam_apply]
-    simp only [hγ₁.to_sf.t_ge_one _ _ ht]
+    simp [hγ₁.to_sf.t_ge_one _ _ ht]
   refine' ⟨γ, h1γ, h2γ, _, _, _, _, _, _⟩
   · intro x t
-    -- Porting note: This should be `simp [hγ₁.t₀]` but this seems to... loop
-    simp only [Loop.Loop.Add_add_apply, Loop.smul_apply, Loop.reparam_apply, hγ₁.t₀,
-               Loop.const_apply, smul_add_one_sub_smul]
+    simp [hγ₁.t₀]
+
   · intro x t
-    -- Porting note: This should be `simp [hγ₁.base]` but this seems to... loop
-    simp only [Loop.Loop.Add_add_apply, Loop.smul_apply, Loop.reparam_apply,
-               Loop.const_apply, smul_add_one_sub_smul]
-    simp only [EquivariantEquiv.equivariantMap_toFun, EquivariantEquiv.map_zero]
-    rw [hγ₁.base x t, smul_add_one_sub_smul]
+    simp [hγ₁.base]
   · intro x
     have h1 : IntervalIntegrable (χ x • Loop.const (b x) : Loop F) volume 0 1 :=
       by
@@ -330,17 +319,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     rcases h0χ x with (⟨_hx, h2x⟩ | hx)
     · refine' h2x t (γ₂.reparametrize x s) _
       unfold_let γ
-      -- Porting note: should be `simp [dist_smul_add_one_sub_smul_le (h2χ x)]`
-      rw [mem_closedBall]
-      apply max_le
-      rw [dist_self]
-      apply dist_nonneg
-      exact dist_smul_add_one_sub_smul_le (h2χ x)
-    · -- Porting note: Should be `simp [hx]; apply hγ₁.val_in (mem_univ _)`
-      unfold_let γ
-      simp (config := {zeta := false}) only [hx, Loop.Loop.Add_add_apply, zero_smul, Loop.zero_fun,
-        Pi.zero_apply, tsub_zero, one_smul, Loop.reparam_apply,
-        EquivariantEquiv.equivariantMap_toFun, zero_add]
-      exact hγ₁.val_in (mem_univ _)
+      simp [dist_smul_add_one_sub_smul_le (h2χ x)]
+    · simp [hx]; apply hγ₁.val_in (mem_univ _)
   · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
   · exact h1χ.mono fun x (hx : χ x = 1) => by simp [hx]

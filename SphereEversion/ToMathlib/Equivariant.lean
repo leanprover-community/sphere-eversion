@@ -215,6 +215,10 @@ theorem map_zero : φ 0 = 0 :=
   φ.map_zero'
 
 @[simp]
+theorem map_zero'' : (⇑(φ : ℝ ≃ ℝ) : ℝ → ℝ) 0 = 0 :=
+  φ.map_zero'
+
+@[simp]
 theorem map_one : φ 1 = 1 := by conv_lhs => rw [← zero_add (1 : ℝ), eqv, map_zero, zero_add]
 
 instance {α : Type _} : HasUncurry (α → EquivariantEquiv) (α × ℝ) ℝ :=
@@ -223,7 +227,8 @@ instance {α : Type _} : HasUncurry (α → EquivariantEquiv) (α × ℝ) ℝ :=
 @[simp]
 theorem coe_mk (f : ℝ ≃ ℝ) (h₀ h₁) : ⇑(⟨f, h₀, h₁⟩ : EquivariantEquiv) = f := rfl
 
-@[simp]
+-- Warning: making this a simp lemma creates a loop with `Equiv.toFun_as_coe` or
+-- `Equiv.toFun_as_coe_apply`
 theorem coe_toEquiv (e : EquivariantEquiv) : (⇑(e : ℝ ≃ ℝ) : ℝ → ℝ) = e :=
   rfl
 
