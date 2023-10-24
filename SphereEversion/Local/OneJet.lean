@@ -45,7 +45,7 @@ variable (P : Type _) [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 
 /-- The space of 1-jets of maps from `E` to `F`. -/
-def OneJet :=
+abbrev OneJet :=
   E × F × (E →L[ℝ] F)
 
 instance : MetricSpace (OneJet E F) := inferInstanceAs (MetricSpace (E × F × (E →L[ℝ] F)))

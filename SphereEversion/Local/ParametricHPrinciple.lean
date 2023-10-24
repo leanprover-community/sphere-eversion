@@ -60,10 +60,7 @@ variable {P} (R)
 
 theorem RelLoc.mem_relativize  (w : OneJet (P × E) F) :
     w ∈ R.relativize P ↔ (w.1.2, w.2.1, w.2.2 ∘L ContinuousLinearMap.inr ℝ P E) ∈ R := by
-  -- Porting note: should be simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
-  simp_rw [RelLoc.relativize]
-  rw [mem_preimage]
-  simp only [oneJetSnd_eq]
+  simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
 
 theorem RelLoc.isOpen_relativize (R : RelLoc E F) (h2 : IsOpen R) : IsOpen (R.relativize P) :=
   h2.preimage continuous_oneJetSnd
@@ -94,9 +91,7 @@ theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q
     rfl
   have := preimage_vadd_neg (show F from σ.2.2 (p.v - (0, q.v))) (R.slice q (oneJetSnd σ))
   dsimp only at this
-  -- Porting note: should be `simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize, h1]`
-  simp_rw [← this, mem_preimage, mem_slice]
-  rw [R.mem_relativize, h1]
+  simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize, h1]
   rfl
 
 theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)}
@@ -112,17 +107,8 @@ theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P �
     simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
       p.update_ker_pi _ _ (h2p x)]
     rfl
-  -- Porting note: end of this proof should be
-  -- simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize, this, exists_const, forall_const]
-  simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice]
-  conv in ∃ _, _ =>
-    congr
-    ext
-    rw [R.mem_relativize]
-  conv in ∀ _, _ =>
-    ext
-    rw [R.mem_relativize]
-  simp_rw [this, exists_const, forall_const]
+  simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize, this, exists_const,
+           forall_const]
 
 variable (P)
 
@@ -278,10 +264,7 @@ theorem curry_eq_iff_eq_uncurry_loc {𝓕 : FamilyFormalSol G (R.relativize P)}
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by
   simp_rw [Prod.ext_iff] at h ⊢
   refine' ⟨h.1, _⟩
-  -- Porting note: Next three lines should be `simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']`
-  simp only [𝓕.curry_φ', h.2]
-  change ((𝓕₀.uncurry) (s, x)).snd.comp (inr ℝ P E) = ((𝓕₀ s) x).snd
-  rw [𝓕₀.uncurry_φ']
+  simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']
   change ((D (λ (z : P) ↦ 𝓕₀.toFamilyJetSec.f z x) s).comp (fst ℝ P E) + (𝓕₀.toFamilyJetSec.φ s x).comp (snd ℝ P E)).comp (inr ℝ P E) = ((𝓕₀ s) x).snd
   ext v
   simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,

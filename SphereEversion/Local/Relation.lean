@@ -29,7 +29,7 @@ variable (F : Type _) [NormedAddCommGroup F] [NormedSpace ℝ F]
 variable (P : Type _) [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 /-- A first order relation for maps between real vector spaces. -/
-def RelLoc :=
+abbrev RelLoc :=
   Set (OneJet E F)
 
 instance : Membership (E × F × (E →L[ℝ] F)) (RelLoc E F) := by delta RelLoc; infer_instance
