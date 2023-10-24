@@ -166,9 +166,11 @@ variable [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [Nontrivially
 namespace Trivialization
 
 theorem pullback_symmL (e : Trivialization F (π F E)) [e.IsLinear 𝕜] (x : B') :
-    (e.pullback f).symmL 𝕜 x = e.symmL 𝕜 (f x) := by ext y; simp_rw [symmL_apply, pullback_symm]
+    (e.pullback f).symmL 𝕜 x = e.symmL 𝕜 (f x) := by
+  ext y
+  simp only [symmL_apply, pullback_symm]
+  rfl
 
 end Trivialization
 
 end PullbackVb
-

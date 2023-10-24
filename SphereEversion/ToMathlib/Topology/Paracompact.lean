@@ -1,4 +1,4 @@
-import Mathlib.Topology.Paracompact
+import Mathlib.Topology.Compactness.Paracompact
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Nat.Interval
 

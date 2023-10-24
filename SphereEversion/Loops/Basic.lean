@@ -4,7 +4,7 @@ import Mathlib.Analysis.Calculus.ContDiff
 import Mathlib.MeasureTheory.Integral.IntervalIntegral
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Topology.Algebra.Order.Floor
-import Mathlib.Topology.PathConnected
+import Mathlib.Topology.Connected.PathConnected
 import Mathlib.LinearAlgebra.AffineSpace.Independent
 import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousLinearMap
 import SphereEversion.ToMathlib.SmoothBarycentric

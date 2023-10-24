@@ -1,4 +1,4 @@
-import Mathlib.Topology.PathConnected
+import Mathlib.Topology.Connected.PathConnected
 import SphereEversion.ToMathlib.Topology.Misc
 
 open Set Function Int TopologicalSpace

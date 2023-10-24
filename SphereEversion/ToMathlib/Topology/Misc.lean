@@ -1,4 +1,4 @@
-import Mathlib.Topology.PathConnected
+import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Topology.UrysohnsLemma
 import Mathlib.Topology.UniformSpace.Separation
 import Mathlib.LinearAlgebra.AffineSpace.Independent
@@ -79,7 +79,7 @@ theorem support_norm {α E : Type _} [NormedAddCommGroup E] (f : α → E) :
 @[to_additive]
 theorem hasCompactMulSupport_of_subset {α β : Type _} [TopologicalSpace α] [T2Space α] [One β]
     {f : α → β} {K : Set α} (hK : IsCompact K) (hf : mulSupport f ⊆ K) : HasCompactMulSupport f :=
-  isCompact_of_isClosed_subset hK (isClosed_mulTSupport f) (closure_minimal hf hK.isClosed)
+  hK.of_isClosed_subset (isClosed_mulTSupport f) (closure_minimal hf hK.isClosed)
 
 theorem periodic_const {α β : Type _} [Add α] {a : α} {b : β} : Periodic (fun _ => b) a := fun _ =>
   rfl
@@ -406,8 +406,7 @@ theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {
   · intro n; cases' h : decode₂ s n with i
     · simp_rw [h, map_none, getD_none, isCompact_empty]
     · simp_rw [h, map_some, getD_some]
-      exact
-        isCompact_of_isClosed_subset (hcV i) (hK i) ((hKW i).trans <| (hWV i).trans interior_subset)
+      exact (hcV i).of_isClosed_subset (hK i) ((hKW i).trans <| (hWV i).trans interior_subset)
   · intro n; cases h : decode₂ s n
     · simp_rw [h, map_none, getD_none, isOpen_empty]
     · simp_rw [h, map_some, getD_some, hW]
@@ -550,7 +549,7 @@ theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : ((↑) : s → α) '
 
 @[simp]
 theorem preimage_coe_eq_univ {s t : Set α} : ((↑) : s → α) ⁻¹' t = univ ↔ s ⊆ t := by
-  rw [← inter_eq_right_iff_subset, ← image_preimage_coe, image_coe_eq_iff_eq_univ]
+  rw [← inter_eq_right, ← image_preimage_coe, image_coe_eq_iff_eq_univ]
 
 end Subtype
 
@@ -607,7 +606,7 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
       (fun i => (uo i).preimage (continuous_subtype_val : Continuous ((↑) : s → X)))
       (fun x => uf x x.prop) (by simp_rw [← preimage_iUnion, Subtype.preimage_coe_eq_univ, uU])
   have : ∀ i, IsCompact (closure (((↑) : _ → X) '' v i)) := by
-    intro i; refine' isCompact_of_isClosed_subset (uc i) isClosed_closure _
+    intro i; refine' (uc i).of_isClosed_subset isClosed_closure _
     apply closure_mono; rw [image_subset_iff]; refine' subset_closure.trans (hv i)
   refine' ⟨fun i => closure ((↑) '' v i), _, this, _⟩
   · refine' Subset.trans _

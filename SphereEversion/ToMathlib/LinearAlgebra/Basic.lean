@@ -28,21 +28,13 @@ variable {R : Type _} {R₂ : Type _} {M : Type _} {M₂ : Type _} [Ring R] [Rin
   [AddCommGroup M₂] {σ₁₂ : R →+* R₂} [Module R M] [Module R₂ M₂] {p q : Submodule R M}
   [RingHomSurjective σ₁₂]
 
-theorem Submodule.map_inf_le (f : M →ₛₗ[σ₁₂] M₂) (p q : Submodule R M) :
-    map f (p ⊓ q) ≤ map f p ⊓ map f q :=
-  Set.image_inter_subset _ _ _
-
-theorem Submodule.map_inf {f : M →ₛₗ[σ₁₂] M₂} (h : Injective f) (p q : Submodule R M) :
-    map f (p ⊓ q) = map f p ⊓ map f q :=
-  SetLike.coe_injective (Set.image_inter h)
-
 theorem LinearMap.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (hpq : p ⊓ q = ⊥)
     (hpq' : p ⊔ q = ⊤) :
     Injective f ↔ Disjoint p (LinearMap.ker f) ∧ Disjoint q (LinearMap.ker f) ∧
       Disjoint (map f p) (map f q) := by
   constructor
   · intro h
-    simp [disjoint_iff_inf_le, LinearMap.ker_eq_bot.mpr h, ← Submodule.map_inf h, hpq]
+    simp [disjoint_iff_inf_le, LinearMap.ker_eq_bot.mpr h, ← Submodule.map_inf _ h, hpq]
   · rintro ⟨hp, hq, h⟩
     rw [LinearMap.disjoint_ker] at *
     rw [← LinearMap.ker_eq_bot, ← @inf_top_eq _ _ _ (LinearMap.ker f), ← hpq']
@@ -74,4 +66,3 @@ theorem LinearMap.ker_inf_eq_bot {R : Type _} {R₂ : Type _} {M : Type _} {M₂
     have : (S : Set M).restrict f ⟨x, hx⟩ = (S : Set M).restrict f ⟨y, hy⟩ := hxy
     cases h this
     rfl
-

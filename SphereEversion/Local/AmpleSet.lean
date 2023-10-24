@@ -1,7 +1,7 @@
 import Mathlib.Analysis.Convex.Hull
 import Mathlib.Data.Real.Basic
-import Mathlib.Topology.Connected
-import Mathlib.Topology.PathConnected
+import Mathlib.Topology.Connected.Basic
+import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Topology.Algebra.Affine
 import Mathlib.LinearAlgebra.Dimension
 import Mathlib.LinearAlgebra.AffineSpace.Midpoint

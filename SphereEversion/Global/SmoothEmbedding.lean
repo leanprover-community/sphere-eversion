@@ -89,14 +89,14 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
     (by
       intro v
-      rw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, f.invFun_comp_coe, mfderiv_id,
+      erw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, f.invFun_comp_coe, mfderiv_id,
         ContinuousLinearMap.coe_id', id.def])
     (by
       intro v
       have hx : x = f.invFun (f x) := by rw [f.left_inv]
       have hx' : f (f.invFun (f x)) = f x := by rw [f.left_inv]
       rw [hx] at h₂
-      rw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
+      erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
         ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
             (f.coe_comp_invFun_eventuallyEq x)).mfderiv,
         ContinuousLinearMap.coe_id', id.def])
@@ -210,10 +210,6 @@ end OpenSmoothEmbedding
 namespace ContinuousLinearEquiv
 
 variable (e : E ≃L[𝕜] E') [CompleteSpace E] [CompleteSpace E']
-
-@[simp]
-theorem isOpenMap : IsOpenMap e :=
-  (e : E →L[𝕜] E').isOpenMap e.surjective
 
 -- unused
 @[simps]
@@ -515,8 +511,8 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type _} 
   have hK₁ : IsCompact K₁ :=
     by
     refine'
-      Metric.isCompact_of_isClosed_bounded Metric.isClosed_cthickening
-        (Metric.Bounded.cthickening <| IsCompact.bounded <| _)
+      Metric.isCompact_of_isClosed_isBounded Metric.isClosed_cthickening
+        (Bornology.IsBounded.cthickening <| IsCompact.isBounded <| _)
     apply (hKP.prod hK).image
     exact
       ψ.smooth_inv.continuousOn.comp_continuous
