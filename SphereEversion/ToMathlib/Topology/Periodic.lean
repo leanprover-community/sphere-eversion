@@ -93,8 +93,7 @@ theorem 𝕊₁.proj_repr (x : 𝕊₁) : proj𝕊₁ x.repr = x := by
 theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ := by
   rw [eq_univ_iff_forall]
   intro x
-  -- Porting note: `use` unfolds too much
-  exact ⟨x.repr, x.repr_mem, x.proj_repr⟩
+  use x.repr, x.repr_mem, x.proj_repr
 
 theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
   eq_univ_of_subset (image_subset proj𝕊₁ Ico_subset_Icc_self) image_proj𝕊₁_Ico
