@@ -14,41 +14,35 @@ open Set Equiv Bundle ContinuousLinearMap
 open scoped Manifold Bundle Topology
 
 section ArbitraryField
+universe u v
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {H : Type _} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type _)
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type _} [TopologicalSpace G]
-  {J : ModelWithCorners 𝕜 F G} {N : Type _} [TopologicalSpace N] [ChartedSpace G N]
-  [SmoothManifoldWithCorners J N] (V : Type _) [NormedAddCommGroup V] [NormedSpace 𝕜 V]
-  (V' : Type _) [NormedAddCommGroup V'] [NormedSpace 𝕜 V']
-
-/- Given a smooth manifold `M` and a normed space `V`, the total space of the bundle Hom(TM, V) of
-homomorphisms from TM to V. This is naturally a smooth manifold. -/
-local notation "σ" => RingHom.id 𝕜
-
-local notation "FJ¹MV" =>
-  Bundle.ContinuousLinearMap σ (TangentSpace I : M → Type _) (Bundle.Trivial M V)
-
-local notation "J¹MV" => TotalSpace (E →L[𝕜] V) FJ¹MV
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type u} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
+  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {F : Type*}
+  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [TopologicalSpace G]
+  {J : ModelWithCorners 𝕜 F G} {N : Type*} [TopologicalSpace N] [ChartedSpace G N]
+  [SmoothManifoldWithCorners J N] (V : Type*) [NormedAddCommGroup V] [NormedSpace 𝕜 V]
+  (V' : Type*) [NormedAddCommGroup V'] [NormedSpace 𝕜 V']
 
 section Smoothness
 
-variable {I M V} {f : N → J¹MV}
+/- set_option hygiene false
+local notation "FJ¹MV" =>
+  Bundle.ContinuousLinearMap (RingHom.id 𝕜) (TangentSpace I : M → Type u) (Bundle.Trivial M V)
+set_option hygiene true
+
+local notation "J¹MV" => TotalSpace (E →L[𝕜] V) FJ¹MV -/
+
+variable {I M V}
+variable {f : N → TotalSpace (E →L[𝕜] V) (Bundle.ContinuousLinearMap (RingHom.id 𝕜) (TangentSpace I : M → Type u) (Bundle.Trivial M V))}
 
 -- todo: remove or use to prove `smooth_at_one_jet_eucl_bundle`
 theorem smoothAt_one_jet_eucl_bundle' {x₀ : N} :
-    SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔
-      SmoothAt J I (fun x => (f x).1) x₀ ∧
-        SmoothAt J 𝓘(𝕜, E →L[𝕜] V)
-          (fun x =>
-            show E →L[𝕜] V from
-              (f x).2 ∘L
-                (trivializationAt E (TangentSpace I : M → Type _) (f x₀).1).symmL 𝕜 (f x).1)
-          x₀ :=
-  by
-  simp_rw [smoothAt_hom_bundle, in_coordinates, trivial.trivialization_at,
-    trivial.trivialization_continuous_linear_map_at]
+    SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔ SmoothAt J I (fun x => (f x).1) x₀ ∧
+    SmoothAt J 𝓘(𝕜, E →L[𝕜] V)
+      (fun x => show E →L[𝕜] V from (f x).2 ∘L (trivializationAt E (TangentSpace I : M → Type u) (f x₀).1).symmL 𝕜 (f x).1) x₀ := by
+  simp_rw [smoothAt_hom_bundle, inCoordinates, Trivial.trivializationAt,
+    Trivial.trivialization_continuousLinearMapAt]
   dsimp only [Bundle.Trivial]
   simp_rw [ContinuousLinearMap.id_comp]
 
@@ -59,8 +53,7 @@ theorem smoothAt_one_jet_eucl_bundle {x₀ : N} :
           (fun x =>
             show E →L[𝕜] V from
               (f x).2 ∘L (trivializationAt E (TangentSpace I) (f x₀).proj).symmL 𝕜 (f x).proj)
-          x₀ :=
-  by
+          x₀ := by
   rw [smoothAt_hom_bundle, and_congr_right_iff]
   intro hf
   refine' Filter.EventuallyEq.contMDiffAt_iff _
@@ -68,9 +61,9 @@ theorem smoothAt_one_jet_eucl_bundle {x₀ : N} :
     hf.continuousAt.preimage_mem_nhds
       (((tangentBundleCore I M).isOpen_baseSet (achart H (f x₀).proj)).mem_nhds
         ((tangentBundleCore I M).mem_baseSet_at (f x₀).proj))
-  filter_upwards [this] with x hx
-  simp_rw [in_coordinates, trivial.trivialization_at,
-    trivial.trivialization_continuous_linear_map_at, ← ContinuousLinearMap.comp_assoc]
+  filter_upwards [this] with x _
+  simp_rw [inCoordinates, Trivial.trivializationAt,
+    Trivial.trivialization_continuousLinearMapAt, ← ContinuousLinearMap.comp_assoc]
   dsimp only [Bundle.Trivial]
   simp_rw [ContinuousLinearMap.id_comp]
 
@@ -80,7 +73,7 @@ theorem SmoothAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] 
       SmoothAt J 𝓘(𝕜, E →L[𝕜] V)
         (fun x =>
           show E →L[𝕜] V from
-            ϕ x ∘L (trivializationAt E (TangentSpace I : M → Type _) (f x₀)).symmL 𝕜 (f x))
+            ϕ x ∘L (trivializationAt E (TangentSpace I : M → Type*) (f x₀)).symmL 𝕜 (f x))
         x₀) :
     SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) (fun x => Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹MV) x₀ :=
   smoothAt_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
@@ -124,7 +117,7 @@ end Sections
 section proj
 
 instance piBugInstanceRestatement (x : M) :
-    TopologicalSpace (Bundle.ContinuousLinearMap σ (TangentSpace I) (trivial M V) x) := by
+    TopologicalSpace (Bundle.ContinuousLinearMap (RingHom.id 𝕜) (TangentSpace I) (Trivial M V) x) := by
   infer_instance
 
 instance piBugInstanceRestatement2 (x : M × V) : TopologicalSpace (OneJetSpace I 𝓘(𝕜, V) x) := by
@@ -193,19 +186,19 @@ end ArbitraryField
 
 section familyTwist
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type _} [TopologicalSpace H]
-  (I : ModelWithCorners ℝ E H) (M : Type _) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] (V : Type _) [NormedAddCommGroup V] [NormedSpace ℝ V]
-  (V' : Type _) [NormedAddCommGroup V'] [NormedSpace ℝ V'] {F : Type _} [NormedAddCommGroup F]
-  [NormedSpace ℝ F] {G : Type _} [TopologicalSpace G] (J : ModelWithCorners ℝ F G) (N : Type _)
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
+  (I : ModelWithCorners ℝ E H) (M : Type*) [TopologicalSpace M] [ChartedSpace H M]
+  [SmoothManifoldWithCorners I M] (V : Type*) [NormedAddCommGroup V] [NormedSpace ℝ V]
+  (V' : Type*) [NormedAddCommGroup V'] [NormedSpace ℝ V'] {F : Type*} [NormedAddCommGroup F]
+  [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G) (N : Type*)
   [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
 
-local notation "σ" => RingHom.id ℝ
+/- local notation "σ" => RingHom.id ℝ
 
 local notation "FJ¹MV" =>
-  Bundle.ContinuousLinearMap σ (TangentSpace I : M → Type _) (Bundle.Trivial M V)
+  Bundle.ContinuousLinearMap σ (TangentSpace I : M → Type*) (Bundle.Trivial M V)
 
-local notation "J¹MV" => TotalSpace (E →L[ℝ] V) FJ¹MV
+local notation "J¹MV" => TotalSpace (E →L[ℝ] V) FJ¹MV -/
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext]
@@ -263,4 +256,3 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     rw [s.is_sec]
 
 end familyTwist
-
