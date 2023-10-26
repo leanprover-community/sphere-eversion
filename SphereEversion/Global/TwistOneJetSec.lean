@@ -89,8 +89,11 @@ structure OneJetEuclSec where
 
 variable {I M V}
 
-instance : CoeFun (OneJetEuclSec I M V) fun _  ↦ M → J¹[𝕜, E, I, M, V] :=
-  ⟨fun S x  ↦ S.toFun x⟩
+instance : FunLike (OneJetEuclSec I M V) M fun _  ↦ J¹[𝕜, E, I, M, V] where
+  coe := OneJetEuclSec.toFun
+  coe_injective' := by
+    intro S T h
+    ext x <;> rw [h]
 
 @[simp]
 theorem OneJetEuclSec.is_sec (s : OneJetEuclSec I M V) (p : M) : (s p).1 = p :=
@@ -185,8 +188,11 @@ structure FamilyOneJetEuclSec where
   is_sec' : ∀ p, (toFun p).1 = p.2
   smooth' : Smooth (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) toFun
 
-instance : CoeFun (FamilyOneJetEuclSec I M V J N) fun S  ↦ N × M → J¹[ℝ, E, I, M, V] :=
-  ⟨fun S x  ↦ S.toFun x⟩
+instance : FunLike (FamilyOneJetEuclSec I M V J N) (N × M) fun _  ↦ J¹[ℝ, E, I, M, V] where
+  coe := FamilyOneJetEuclSec.toFun
+  coe_injective' := by
+    intro S T h
+    ext x <;> rw [h]
 
 variable {I M V J N}
 

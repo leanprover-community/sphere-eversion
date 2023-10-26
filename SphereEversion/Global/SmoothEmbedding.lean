@@ -1,6 +1,7 @@
 import Mathlib.Topology.MetricSpace.HausdorffDistance
 import Mathlib.Topology.UniformSpace.Separation
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
+import SphereEversion.Notations
 import SphereEversion.Indexing
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
@@ -33,6 +34,9 @@ structure OpenSmoothEmbedding where
   smooth_to : Smooth I I' toFun
   smooth_inv : SmoothOn I' I invFun (range toFun)
 
+attribute [coe] OpenSmoothEmbedding.toFun
+
+-- Note: this cannot be a `FunLike` instance since `toFun` is not injective in general.
 instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ => M → M' :=
   ⟨OpenSmoothEmbedding.toFun⟩
 
@@ -124,9 +128,6 @@ theorem openEmbedding : OpenEmbedding f :=
 
 theorem inducing : Inducing f :=
   f.openEmbedding.toInducing
-
--- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
-notation3 "∀ᶠ " (...) " near "s", "r:(scoped p => Filter.Eventually p <| nhdsSet s) => r
 
 theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A, P m) :
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m :=

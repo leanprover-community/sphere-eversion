@@ -103,9 +103,9 @@ local notation "FJ¹MM'" => (OneJetSpace I I' : M × M' → Type _)
 
 variable (I I')
 
-instance (p : M × M') :
-    CoeFun (OneJetSpace I I' p) fun _ ↦ TangentSpace I p.1 → TangentSpace I' p.2 :=
-  ⟨fun φ ↦ φ.toFun⟩
+instance (p : M × M') : FunLike (OneJetSpace I I' p) (TangentSpace I p.1) (fun _ ↦ TangentSpace I' p.2) where
+  coe := fun φ ↦ φ.toFun
+  coe_injective' := fun _ _ h ↦ ContinuousLinearMap.ext (congrFun h)
 
 variable (M M')
 
@@ -172,13 +172,14 @@ instance : SmoothManifoldWithCorners ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E
 
 end OneJetBundleInstances
 
+variable {I M I' M' J J'}
+
 /-- The tangent bundle projection on the basis is a continuous map. -/
 theorem one_jet_bundle_proj_continuous : Continuous (π (E →L[𝕜] E') FJ¹MM') :=
   FiberBundle.continuous_proj (E →L[𝕜] E') FJ¹MM'
 
-variable {I M I' M' J J'}
-
---attribute [simps] ContMDiffMap.fst ContMDiffMap.snd
+-- Porting note: removed next line
+-- attribute [simps] ContMDiffMap.fst ContMDiffMap.snd
 
 theorem oneJetBundle_trivializationAt (x₀ x : J¹MM') :
     (trivializationAt (E →L[𝕜] E') (OneJetSpace I I') x₀.proj x).2 =
@@ -545,8 +546,7 @@ variable (I I')
 as a homeomorphism -/
 def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
   { Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') with
-    continuous_toFun :=
-      by
+    continuous_toFun := by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
       have : Continuous (chartAt 𝓜 p) :=
         by
@@ -554,8 +554,7 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
         convert LocalHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this
-    continuous_invFun :=
-      by
+    continuous_invFun := by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
       have : Continuous (chartAt 𝓜 p).symm :=
         by

@@ -43,14 +43,20 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   [SmoothManifoldWithCorners I' M']
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
-@[ext]
-structure OneJetSec where
+@[ext] structure OneJetSec where
   bs : M → M'
   ϕ : ∀ x : M, TangentSpace I x →L[𝕜] TangentSpace I' (bs x)
   smooth' : Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk x (bs x) (ϕ x)
 
-instance : CoeFun (OneJetSec I M I' M') fun _S ↦ M → OneJetBundle I M I' M' :=
-  ⟨fun S x ↦ OneJetBundle.mk x (S.bs x) (S.ϕ x)⟩
+instance : FunLike (OneJetSec I M I' M') M fun _ ↦ OneJetBundle I M I' M' where
+  coe := fun S x ↦ OneJetBundle.mk x (S.bs x) (S.ϕ x)
+  coe_injective' := by
+    intro S T h
+    dsimp at h
+    ext x
+    simpa using (Bundle.TotalSpace.mk.inj (congrFun h x)).1
+    have := heq_eq_eq _ _ ▸ (Bundle.TotalSpace.mk.inj (congrFun h x)).2
+    exact congrFun (congrArg FunLike.coe this) _
 
 variable {I M I' M'}
 
@@ -163,18 +169,23 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
 
 /-- A family of jet sections indexed by manifold `N` is a function from `N` into jet sections
   in such a way that the function is smooth as a function of all arguments. -/
-structure FamilyOneJetSec where
+@[ext] structure FamilyOneJetSec where
   bs : N → M → M'
   ϕ : ∀ (n : N) (m : M), TangentSpace I m →L[ℝ] TangentSpace I' (bs n m)
   smooth' :
     Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) fun p : N × M ↦
       OneJetBundle.mk p.2 (bs p.1 p.2) (ϕ p.1 p.2)
 
-instance : CoeFun (FamilyOneJetSec I M I' M' J N) fun _S ↦ N → OneJetSec I M I' M' :=
-  ⟨fun S t ↦
+instance : FunLike (FamilyOneJetSec I M I' M' J N) N fun _ ↦ OneJetSec I M I' M' where
+  coe := fun S t ↦
     { bs := S.bs t
       ϕ := S.ϕ t
-      smooth' := fun x ↦ (S.smooth' (t, x)).comp x <| smoothAt_const.prod_mk smoothAt_id }⟩
+      smooth' := fun x ↦ (S.smooth' (t, x)).comp x <| smoothAt_const.prod_mk smoothAt_id }
+  coe_injective' := by
+    intro S T h
+    ext n : 2
+    exact (OneJetSec.mk.inj (congrFun h n)).1
+    exact (OneJetSec.mk.inj (congrFun h n)).2
 
 namespace FamilyOneJetSec
 
@@ -270,6 +281,6 @@ end FamilyOneJetSec
 def HtpyOneJetSec :=
   FamilyOneJetSec I M I' M' 𝓘(ℝ, ℝ) ℝ
 
-example : CoeFun (HtpyOneJetSec I M I' M') fun _S ↦ ℝ → OneJetSec I M I' M' := by infer_instance
+example : FunLike (HtpyOneJetSec I M I' M') ℝ fun _ ↦ OneJetSec I M I' M' := by infer_instance
 
 end Real
