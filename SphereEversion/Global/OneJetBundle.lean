@@ -224,13 +224,28 @@ theorem oneJetBundle_chartAt_apply (v v' : OneJetBundle I M I' M') :
 theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     (chartAt HJ x₀).source =
       π (E →L[𝕜] E') FJ¹MM' ⁻¹' (chartAt (ModelProd H H') x₀.proj).source := by
-  sorry
-  /- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_one_jet_bundle_source, mfld_simps]
-  simp_rw [prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left_iff_subset,
+  -- Porting note: was
+  -- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_one_jet_bundle_source, mfld_simps]
+  rw [FiberBundle.chartedSpace_chartAt]
+  simp_rw [
+    LocalHomeomorph.trans_toLocalEquiv,
+    LocalEquiv.trans_source,
+    LocalHomeomorph.prod_toLocalEquiv,
+    LocalEquiv.prod_source,
+    LocalHomeomorph.coe_coe,
+    Trivialization.coe_coe,
+    LocalHomeomorph.refl_localEquiv,
+    LocalEquiv.refl_source,
+    prodChartedSpace_chartAt,
+    LocalHomeomorph.prod_toLocalEquiv,
+    trivializationAt_one_jet_bundle_source,
+    LocalEquiv.prod_source,
+    Set.preimage_inter]
+  simp_rw [prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
     subset_def, mem_preimage]
   intro x hx
   rwa [Trivialization.coe_fst]
-  rwa [trivializationAt_one_jet_bundle_source, mem_preimage, ← Set.prod_eq] -/
+  rwa [trivializationAt_one_jet_bundle_source, mem_preimage, ← Set.prod_eq]
 
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
