@@ -49,7 +49,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   have hε : 0 < ε := div_pos hε₁ h0
   have h2ε : ∀ t s : ℝ, ‖ε • γ₀ t s‖ < ε₁ := by
     intro t s
-    simp (config := {zeta := false}) only [norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
+    simp only [norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
     refine' lt_of_lt_of_le _ (mul_one _).le
     rw [mul_lt_mul_left hε₁, div_lt_one h0]
     refine' (zero_add _).symm.le.trans_lt _
@@ -72,12 +72,15 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   · refine' hb.continuous.fst'.add (continuous_const.smul <| hγ₀_cont.snd')
   · rintro x ⟨-, hx⟩ t _ht s _hs
     have : ‖ε • γ₀ t s‖ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀)
-    refine' h1 x hx t s (by simp (config := {zeta := false}) [← h0ε₁, this])
+    exact h1 x hx t s (by simpa [← h0ε₁])
   · intro x hx
     rw [← h0ε₁, add_halves']
     refine' (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
   · rintro x ⟨-, -⟩ t s
-    simp (config := {zeta := false}) [h2ε]
+    -- Porting note: should be simp [h2ε]
+    simp
+    convert h2ε _ _
+    simp
 
 /- Some remarks about `exist_loops_aux2`:
   `δ`: loop after smoothing

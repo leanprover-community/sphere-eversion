@@ -1,9 +1,6 @@
 import SphereEversion.Local.AmpleRelation
 import SphereEversion.Global.Relation
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
-set_option trace.filter_inst_type true
-
 /-! # Link with the local story
 
 This file bridges the gap between Chapter 2 and Chapter 3. It builds on the
@@ -30,9 +27,9 @@ Now we really bridge the gap all the way to vector spaces.
 -/
 
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-variable {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
@@ -45,15 +42,15 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     rw [contDiff_iff_contDiffAt]
     intro x₀
     have : SmoothAt _ _ _ _ := F.smooth x₀
-    simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, in_coordinates, tangentBundleCore_indexAt,
+    sorry/- simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates, tangentBundleCore_indexAt,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this
     dsimp only [TangentSpace] at this
     simp_rw [ContinuousLinearMap.id_comp] at this
-    exact this.2.2.contDiffAt
+    exact this.2.2.contDiffAt -/
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
-    F.Loc.IsHolonomicAt x ↔ F.IsHolonomicAt x :=
+    F.loc.IsHolonomicAt x ↔ F.IsHolonomicAt x :=
   by
   dsimp only [OneJetSec.IsHolonomicAt]
   rw [mfderiv_eq_fderiv]
@@ -66,10 +63,10 @@ def RelMfld.relLoc (R : RelMfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : RelLoc E E' :
   (Homeomorph.prodAssoc _ _ _).symm ⁻¹'
     ((oneJetBundleModelSpaceHomeomorph 𝓘(ℝ, E) 𝓘(ℝ, E')).symm ⁻¹' R)
 
-theorem ample_of_ample (R : RelMfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : R.Ample) : R.RelLoc.IsAmple := by
+theorem ample_of_ample (R : RelMfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : R.Ample) : R.relLoc.IsAmple := by
   rintro p ⟨x, y, ϕ⟩; exact @hR ⟨(x, y), ϕ⟩ p
 
-theorem isOpen_of_isOpen (R : RelMfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : IsOpen R) : IsOpen R.RelLoc :=
+theorem isOpen_of_isOpen (R : RelMfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (hR : IsOpen R) : IsOpen R.relLoc :=
   (Homeomorph.isOpen_preimage _).mpr <| (Homeomorph.isOpen_preimage _).mpr hR
 
 end Loc
@@ -81,9 +78,9 @@ section Unloc
 -/
 
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-variable {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
 /-- Convert a 1-jet section between vector spaces to a 1-jet section
 between those vector spaces seen as manifolds. -/
@@ -93,10 +90,10 @@ def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E
   ϕ x := (𝓕 x).2
   smooth' := by
     intro a
-    refine' smooth_at_one_jet_bundle.mpr _
-    refine' ⟨smoothAt_id, 𝓕.f_diff.cont_mdiff a, _⟩
+    refine' smoothAt_oneJetBundle.mpr _
+    refine' ⟨smoothAt_id, 𝓕.f_diff.contMDiff a, _⟩
     simp_rw [inTangentCoordinates_model_space]
-    exact 𝓕.φ_diff.cont_mdiff a
+    exact 𝓕.φ_diff.contMDiff a
 
 theorem JetSec.unloc_hol_at_iff (𝓕 : JetSec E E') (x : E) :
     𝓕.unloc.IsHolonomicAt x ↔ 𝓕.IsHolonomicAt x :=
@@ -111,24 +108,26 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
   ϕ t x := (𝓕 t x).2
   smooth' := by
     intro a
-    refine' smooth_at_one_jet_bundle.mpr _
+    refine' smoothAt_oneJetBundle.mpr _
     refine'
       ⟨smoothAt_snd,
-        (𝓕.f_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smoothAt_snd), _⟩
-    dsimp [inTangentCoordinates, in_coordinates, chartAt]
+        (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd), _⟩
+    dsimp [inTangentCoordinates, inCoordinates, chartAt]
     simp only [range_id, fderivWithin_univ, fderiv_id, TangentBundle.symmL_model_space,
       TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
       ContinuousLinearMap.comp_id]
     dsimp only [TangentSpace]
     simp_rw [ContinuousLinearMap.id_comp]
-    exact (𝓕.φ_diff.cont_mdiff (a.fst, a.snd)).comp a (smooth_at_fst.prod_mk_space smoothAt_snd)
+    exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd)
 
 end Unloc
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type _} [TopologicalSpace H]
-  (I : ModelWithCorners ℝ E H) (M : Type _) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {H' : Type _} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') (M' : Type _) [MetricSpace M']
+universe u₁ u₂ u₃ u₄ u₅ u₆
+
+variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type u₂} [TopologicalSpace H]
+  (I : ModelWithCorners ℝ E H) (M : Type u₃) [TopologicalSpace M] [ChartedSpace H M]
+  [SmoothManifoldWithCorners I M] {E' : Type u₄} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H' : Type u₅} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') (M' : Type u₆) [MetricSpace M']
   [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
 
 variable {R : RelMfld I M I' M'}
@@ -137,35 +136,35 @@ variable {R : RelMfld I M I' M'}
 structure ChartPair where
   φ : OpenSmoothEmbedding 𝓘(ℝ, E) E I M
   ψ : OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M'
-  k₁ : Set E
+  K₁ : Set E
   hK₁ : IsCompact K₁
 
 variable (p : ChartPair I M I' M') {I M I' M'}
 
-variable (p)
-
 def FormalSol.localize (F : FormalSol R) (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :
-    (R.localize p.φ p.ψ).RelLoc.FormalSol :=
-  { (F.localize p.φ p.ψ hF).Loc with
-    is_sol := fun x => (F.localize_mem_iff p.φ p.ψ hF).mpr (F.is_sol _) }
+    (R.localize p.φ p.ψ).relLoc.FormalSol :=
+  { (F.toOneJetSec.localize p.φ p.ψ hF).loc with
+    is_sol := fun _ => (F.localize_mem_iff p.φ p.ψ hF).mpr (F.is_sol _) }
 
 theorem FormalSol.isHolonomicLocalize (F : FormalSol R) (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) (x)
     (hx : F.IsHolonomicAt (p.φ x)) : (F.localize p hF).IsHolonomicAt x :=
   (OneJetSec.loc_hol_at_iff _ _).mpr <|
     (isHolonomicAt_localize_iff F.toOneJetSec p.φ p.ψ hF x).mpr hx
 
-variable (F : HtpyFormalSol R) (𝓕 : (R.localize p.φ p.ψ).RelLoc.HtpyFormalSol)
+variable (F : HtpyFormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol)
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » p.K₁) -/
-structure ChartPair.Compat' (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).RelLoc.HtpyFormalSol) :
+structure ChartPair.Compat' (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol) :
     Prop where
   hF : range (F.bs ∘ p.φ) ⊆ range p.ψ
-  hFF : ∀ (x) (_ : x ∉ p.k₁), ∀ t, 𝓕 t x = F.localize p hF x
+  hFF : ∀ x ∉ p.K₁, ∀ t, 𝓕 t x = F.localize p hF x
+#check RelMfld.localize p.φ p.ψ R
+#check HtpyFormalSol
+#check HtpyFormalSol (RelMfld.localize p.φ p.ψ R) -- Type (max (max u₁ u₄) 0)
+nonrec def RelLoc.HtpyFormalSol.unloc : HtpyFormalSol (RelMfld.localize p.φ p.ψ R) :=
+  sorry--{ 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
 
-def RelLoc.HtpyFormalSol.unloc : HtpyFormalSol (RelMfld.localize p.φ p.ψ R) :=
-  { 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
-
-theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).RelLoc.HtpyFormalSol} {t t' x}
+#exit
+theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t' x}
     (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x :=
   by
   ext1
@@ -328,4 +327,3 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
   simp only [this 𝓕 H]; clear this
   rw [← dist_eq_norm] at het
   exact hη (fun t e => (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, le_rfl⟩ t ht e he het
-
