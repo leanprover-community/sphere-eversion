@@ -214,13 +214,7 @@ def familyJoin {f : N × M → V} (hf : Smooth (J.prod I) 𝓘(ℝ, V) f)
   ϕ n m := (incl I M V (s (n, m), f (n, m))).2
   smooth' := by
     convert (smooth_incl I M V).comp (s.smooth.prod_mk hf)
-    sorry
-    /- ext p
-    · simp
-    · simp
-    have : (p.1, p.2) = p := Prod.ext rfl rfl
-    rw [this]
-    simp -/
+    ext : 1 <;> simp
 
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     (i_smooth : ∀ x₀ : N × M, SmoothAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') i x₀) :
@@ -233,11 +227,8 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     refine' smoothAt_snd.one_jet_eucl_bundle_mk' _
     simp_rw [ContinuousLinearMap.comp_assoc]
     have : SmoothAt (J.prod I) _ (fun x : N × M  ↦ _) x₀ := s.smooth.comp smooth_snd x₀
-    sorry
-    /- simp_rw [smoothAt_one_jet_eucl_bundle', s.is_sec] at this
+    rw [smoothAt_one_jet_eucl_bundle'] at this
     refine' (i_smooth x₀).clm_comp _
-    convert this.2
-    ext z
-    rw [s.is_sec] -/
+    convert this.2 <;> simp [s.is_sec]
 
 end familyTwist
