@@ -7,9 +7,6 @@ open Set Filter ModelWithCorners Metric
 
 open scoped Topology Manifold
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
-set_option trace.filter_inst_type true
-
 variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
   {HM : Type _} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM] {M : Type _}
   [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M] [T2Space M]
@@ -37,10 +34,10 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
               (∀ t x, dist ((F' t).bs x) (F.bs x) < δ x) ∧
                 ∀ᶠ x near C ∪ φ '' K₀, (F' 1).IsHolonomicAt x :=
   by
-  let Rloc : RelLoc EM EX := (R.localize φ ψ).RelLoc
+  let Rloc : RelLoc EM EX := (R.localize φ ψ).relLoc
   have hRloc_op : IsOpen Rloc :=
     isOpen_of_isOpen _ (hRopen.preimage <| OneJetBundle.continuous_transfer _ _)
-  have hRloc_ample : Rloc.is_ample := ample_of_ample _ (hRample.localize _ _)
+  have hRloc_ample : Rloc.IsAmple := ample_of_ample _ (hRample.localize _ _)
   -- TODO: try to be consistent about how to state the hFφψ condition
   replace hFφψ : range (F.bs ∘ φ) ⊆ range ψ
   · rw [range_comp]
@@ -48,41 +45,41 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
   let p : ChartPair IM M IX X :=
     { φ
       ψ
-      k₁
+      K₁
       hK₁ }
   rcases p.dist_update' hδ_pos hδ_cont hFφψ with ⟨τ, τ_pos, hτ⟩
   let 𝓕 := F.localize p hFφψ
   let L : Landscape EM :=
     { C := φ ⁻¹' C
-      k₀
-      k₁
+      K₀
+      K₁
       hC := hC.preimage φ.continuous
       hK₀
       hK₁
       h₀₁ := hK₀K₁ }
-  have h𝓕C : ∀ᶠ x : EM near L.C, 𝓕.is_holonomic_at x :=
+  have h𝓕C : ∀ᶠ x : EM near L.C, 𝓕.IsHolonomicAt x :=
     by
     rw [eventually_nhdsSet_iff] at hFC ⊢
     intro e he
     rw [φ.inducing.nhds_eq_comap, eventually_comap]
     apply (hFC _ he).mono
     rintro x hx e rfl
-    exact F.is_holonomic_localize p hFφψ e hx
+    exact F.isHolonomicLocalize p hFφψ e hx
   rcases 𝓕.improve_htpy' hRloc_op hRloc_ample L τ_pos h𝓕C with
     ⟨𝓕', h𝓕't0, h𝓕't1, h𝓕'relC, h𝓕'relK₁, h𝓕'dist, h𝓕'hol⟩
   have hcompat : p.compat' F 𝓕' := ⟨hFφψ, h𝓕'relK₁⟩
-  let F' : HtpyFormalSol R := p.mk_htpy F 𝓕'
-  have hF'relK₁ : ∀ t, ∀ (x) (_ : x ∉ φ '' K₁), F' t x = F x := by apply p.mk_htpy_eq_of_not_mem
+  let F' : HtpyFormalSol R := p.mkHtpy F 𝓕'
+  have hF'relK₁ : ∀ t, ∀ (x) (_ : x ∉ φ '' K₁), F' t x = F x := by apply p.mkHtpy_eq_of_not_mem
   have hF't0 : ∀ᶠ t : ℝ near Iic 0, F' t = F :=
     by
     apply h𝓕't0.mono
     rintro t ht
-    exact p.mk_htpy_eq_of_forall hcompat ht
-  have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t => p.mk_htpy_congr _
+    exact p.mkHtpy_eq_of_forall hcompat ht
+  have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t => p.mkHtpy_congr _
   refine' ⟨F', hF't0, hF't1, _, _, _, _⟩
   · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t => hF'relK₁ t x hx)
     · intro e he t
-      rw [p.mk_htpy_eq_of_eq _ _ hcompat]
+      rw [p.mkHtpy_eq_of_eq _ _ hcompat]
       exact he t
   · exact hF'relK₁
   · intro t x
@@ -96,7 +93,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
         · rw [hF't1.on_set t ht.le]
           exact hτ hcompat e he 1 (right_mem_Icc.mpr zero_le_one) (h𝓕'dist e 1)
     · change dist (F' t x).1.2 (F.bs x) < δ x
-      erw [p.mk_htpy_eq_of_not_mem _ _ hx, dist_self]
+      erw [p.mkHtpy_eq_of_not_mem _ _ hx, dist_self]
       apply hδ_pos
   · have h𝓕'holC : ∀ᶠ x : EM near L.C, (𝓕' 1).IsHolonomicAt x :=
       by
@@ -122,5 +119,4 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
           exact (image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁)
         apply this.mono
         exact fun a hx hx' => (hx' hx).elim
-    · exact fun _ => (p.mk_htpy_is_holonomic_at_iff hcompat).mpr
-
+    · exact fun _ => (p.mkHtpy_isHolonomicAt_iff hcompat).mpr
