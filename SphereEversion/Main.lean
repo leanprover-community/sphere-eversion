@@ -23,23 +23,17 @@ notation "𝕊²" => sphere (0 : ℝ³) 1
 
 -- In the following statements, notation involving `𝓘` and `𝓡` denote smooth structures in the
 -- sense of differential geometry.
-theorem
-  Smale :-- There exists a family of functions `f t` indexed by `ℝ` going from `𝕊²` to `ℝ³` such that
-    ∃ f :
-      ℝ →
-        𝕊² →
-          ℝ³,-- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and
-          ContMDiff
-          (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f ∧
-        (-- `f 0` is the inclusion map, sending `x` to `x` and
-              f
-              0 =
-            fun x => x) ∧
-          (-- `f 1` is the antipodal map, sending `x` to `-x` and
-                f
-                1 =
-              fun x => -x) ∧-- every `f t` is an immersion.
-            ∀ t, Immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t) :=
+theorem Smale :
+    -- There exists a family of functions `f t` indexed by `ℝ` going from `𝕊²` to `ℝ³` such that
+    ∃ f : ℝ → 𝕊² → ℝ³,
+    -- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and
+    ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f ∧
+    (-- `f 0` is the inclusion map, sending `x` to `x` and
+    f 0 = fun x : 𝕊² ↦ (x : ℝ³)) ∧
+    (-- `f 1` is the antipodal map, sending `x` to `-x` and
+    f 1 = fun x : 𝕊² ↦ -(x : ℝ³)) ∧
+    -- every `f t` is an immersion.
+    ∀ t, Immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t) :=
   sphere_eversion ℝ³
 
 end Smale
@@ -83,14 +77,13 @@ theorem Gromov
     ∃ 𝓕 : FamilyFormalSol (𝓘(ℝ, ℝ).prod 𝓘(ℝ, ℝ^d)) (ℝ × P) R,
       (-- that agrees with `𝓕₀` at time `t = 0` for every parameter and every point in the source
         ∀ (p : P) (x : M), 𝓕 (0, p) x = 𝓕₀ p x) ∧
-        (-- is holonomic everywhere for `t = 1`,
-          ∀ p : P, (𝓕 (1, p)).toOneJetSec.IsHolonomic) ∧
-          (-- agrees with `𝓕₀` near `C`,
-            ∀ᶠ p : P × M in 𝓝ˢ C,
-              ∀ t : ℝ,
-                𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧-- and whose underlying maps are `ε`--close to `𝓕₀`.
-            ∀ (t : ℝ) (p : P) (x : M), dist ((𝓕 (t, p)).bs x) ((𝓕₀ p).bs x) ≤ ε x :=
+      (-- is holonomic everywhere for `t = 1`,
+        ∀ p : P, (𝓕 (1, p)).toOneJetSec.IsHolonomic) ∧
+      (-- agrees with `𝓕₀` near `C`,
+        ∀ᶠ p : P × M in 𝓝ˢ C,
+        ∀ t : ℝ, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
+      -- and whose underlying maps are `ε`--close to `𝓕₀`.
+        ∀ (t : ℝ) (p : P) (x : M), dist ((𝓕 (t, p)).bs x) ((𝓕₀ p).bs x) ≤ ε x :=
   by apply RelMfld.Ample.satisfiesHPrincipleWith <;> assumption
 
 end Gromov
-
