@@ -4,6 +4,7 @@ decls.yaml
 /lake-packages/*
 .python-version
 .vscode
+lakefile.olean
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
