@@ -18,8 +18,6 @@ variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimen
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [LocallyCompactSpace X]
   [SigmaCompactSpace X] [Nonempty X]
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » «expr '' »(φ, K₁)) -/
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » «expr '' »(φ, K₁)) -/
 theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) EM IM M)
     (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) EX IX X) {R : RelMfld IM M IX X} (hRample : R.Ample)
     (hRopen : IsOpen R) {C : Set M} (hC : IsClosed C) {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
@@ -30,7 +28,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       (∀ᶠ t near Iic (0 : ℝ), F' t = F) ∧
         (∀ᶠ t near Ici (1 : ℝ), F' t = F' 1) ∧
           (∀ᶠ x near C, ∀ t, F' t x = F x) ∧
-            (∀ t, ∀ (x) (_ : x ∉ φ '' K₁), F' t x = F x) ∧
+            (∀ t, ∀ x ∉ φ '' K₁, F' t x = F x) ∧
               (∀ t x, dist ((F' t).bs x) (F.bs x) < δ x) ∧
                 ∀ᶠ x near C ∪ φ '' K₀, (F' 1).IsHolonomicAt x :=
   by
@@ -69,7 +67,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     ⟨𝓕', h𝓕't0, h𝓕't1, h𝓕'relC, h𝓕'relK₁, h𝓕'dist, h𝓕'hol⟩
   have hcompat : p.compat' F 𝓕' := ⟨hFφψ, h𝓕'relK₁⟩
   let F' : HtpyFormalSol R := p.mkHtpy F 𝓕'
-  have hF'relK₁ : ∀ t, ∀ (x) (_ : x ∉ φ '' K₁), F' t x = F x := by apply p.mkHtpy_eq_of_not_mem
+  have hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F x := by apply p.mkHtpy_eq_of_not_mem
   have hF't0 : ∀ᶠ t : ℝ near Iic 0, F' t = F :=
     by
     apply h𝓕't0.mono

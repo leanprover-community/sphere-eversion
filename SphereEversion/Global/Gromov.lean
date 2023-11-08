@@ -31,15 +31,10 @@ variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimen
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [SigmaCompactSpace X]
   {R : RelMfld IM M IX X} {A : Set M} {δ : M → ℝ}
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:334:40: warning: unsupported option trace.filter_inst_type -/
-set_option trace.filter_inst_type true
-
 local notation "J¹" => OneJetBundle IM M IX X
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:638:2: warning: expanding binder collection (x «expr ∉ » U i) -/
 theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R) (hA : IsClosed A)
-    (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ :=
-  by
+    (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by
   borelize EX
   haveI := locally_compact_manifold IM M
   haveI := locally_compact_manifold IX X
@@ -61,23 +56,23 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     exact (IsEmpty.false <| 𝓕₀.bs default).elim
   -- We now start the main proof under the assumption that `M` and `X` are nonempty.
   have cont : Continuous 𝓕₀.bs := 𝓕₀.smooth_bs.continuous
-  let L : LocalisationData IM IX 𝓕₀.bs := stdLocalisationData EM IM EX IX Cont
-  let K : IndexType L.N → Set M := fun i => L.φ i '' closed_ball (0 : EM) 1
+  let L : LocalisationData IM IX 𝓕₀.bs := stdLocalisationData EM IM EX IX cont
+  let K : IndexType L.N → Set M := fun i => L.φ i '' closedBall (0 : EM) 1
   let U : IndexType L.N → Set M := fun i => range (L.φ i)
   have K_cover : (⋃ i, K i) = univ :=
-    eq_univ_of_subset (Union_mono fun i => image_subset _ ball_subset_closed_ball) L.h₁
+    eq_univ_of_subset (iUnion_mono fun i => image_subset _ ball_subset_closedBall) L.h₁
   let τ := fun x : M => min (δ x) (L.ε x)
   have τ_pos : ∀ x, 0 < τ x := fun x => lt_min (hδ_pos x) (L.ε_pos x)
   have τ_cont : Continuous τ := hδ_cont.min L.ε_cont
-  have := fun (x : M) (F' : germ (𝓝 x) J¹) => F'.value = 𝓕₀ x
-  let P₀ : ∀ x : M, germ (𝓝 x) J¹ → Prop := fun x F =>
+  have := fun (x : M) (F' : Germ (𝓝 x) J¹) => F'.value = 𝓕₀ x
+  let P₀ : ∀ x : M, Germ (𝓝 x) J¹ → Prop := fun x F =>
     F.value.1.1 = x ∧
       F.value ∈ R ∧
         F.ContMDiffAt' IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ ∧
           RestrictGermPredicate (fun x F' => F'.value = 𝓕₀ x) A x F ∧
             dist F.value.1.2 (𝓕₀.bs x) < τ x
-  let P₁ : ∀ x : M, germ (𝓝 x) J¹ → Prop := fun x F => IsHolonomicGerm F
-  let P₂ : ∀ p : ℝ × M, germ (𝓝 p) J¹ → Prop := fun p F =>
+  let P₁ : ∀ x : M, Germ (𝓝 x) J¹ → Prop := fun x F => IsHolonomicGerm F
+  let P₂ : ∀ p : ℝ × M, Germ (𝓝 p) J¹ → Prop := fun p F =>
     F.ContMDiffAt' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
   have hP₂ :
     ∀ (a b : ℝ) (p : ℝ × M) (f : ℝ × M → OneJetBundle IM M IX X),
@@ -109,35 +104,34 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
             (∀ t, ∀ x, P₀ x <| F t) ∧
               (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x <| F 1) ∧
                 (∀ p, P₂ p ↿F) ∧
-                  (∀ t, ∀ (x) (_ : x ∉ U i), F t x = f x) ∧
+                  (∀ t, ∀ x ∉ U i, F t x = f x) ∧
                     (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1 :=
     by
     intro i f hf₀ hf₁
-    let K₀ : Set EM := closed_ball 0 1
-    have hK₀ : IsCompact K₀ := is_compact_closed_ball 0 1
-    let K₁ : Set EM := closed_ball 0 2
-    have hK₁ : IsCompact K₁ := is_compact_closed_ball 0 2
+    let K₀ : Set EM := closedBall 0 1
+    have hK₀ : IsCompact K₀ := isCompact_closedBall 0 1
+    let K₁ : Set EM := closedBall 0 2
+    have hK₁ : IsCompact K₁ := isCompact_closedBall 0 2
     have hK₀K₁ : K₀ ⊆ interior K₁ := by
       dsimp [K₀, K₁]
       rw [interior_closedBall (0 : EM) (by norm_num : (2 : ℝ) ≠ 0)]
-      exact closed_ball_subset_ball (by norm_num)
-    let C := ⋃ j < i, L.φ j '' closed_ball 0 1
+      exact closedBall_subset_ball (by norm_num)
+    let C := ⋃ j < i, L.φ j '' closedBall 0 1
     have hC :
       IsClosed C :=-- TODO: rewrite localization_data.is_closed_Union to match this.
-        isClosed_biUnion
-        (finite_Iio _) fun j hj => (hK₀.image <| (L.φ j).continuous).isClosed
+        (finite_Iio _).isClosed_biUnion fun j hj => (hK₀.image <| (L.φ j).continuous).isClosed
     simp only [P₀, forall_and] at hf₀
     rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
-    have hFAC : ∀ᶠ x near A ∪ C, F.is_holonomic_at x :=
+    have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x :=
       by
       rw [eventually_nhdsSet_union]
       refine' ⟨_, hf₁⟩
-      apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx => _
+      apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx => ?_
       rw [eventually_and] at hx
       apply hx.2.self_of_nhds.congr
-      apply hx.1.mono fun x' hx' => _
+      apply hx.1.mono fun x' hx' => ?_
       simp [F]
       exact hx'.symm
     have hFφψ : F.bs '' (range <| L.φ i) ⊆ range (L.ψj i) :=
@@ -164,7 +158,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       · revert x
         rw [forall_restrictGermPredicate_iff]
         rw [eventually_nhdsSet_union] at hF'AC
-        apply (hF'AC.1.And hf_A).mono
+        apply (hF'AC.1.and hf_A).mono
         rintro x ⟨hx, hx'⟩
         change F' t x = _
         rw [hx t, ← hx', mkFormalSol_apply]
@@ -177,18 +171,18 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
           _ = τ x := by simp [η]
     · rw [union_assoc, eventually_nhdsSet_union] at hF'hol
       replace hF'hol := hF'hol.2
-      simp_rw [← L.Union_succ'] at hF'hol
+      simp_rw [← L.iUnion_succ'] at hF'hol
       exact hF'hol
     · exact F'.smooth
     · intro t x hx
-      rw [hF'K₁ t x ((mem_range_of_mem_image _ _).mt hx)]
-      simp [F]
-    · apply hF'₀.mono fun x hx => _
-      erw [hx]
+      sorry/- rw [hF'K₁ t x ((mem_range_of_mem_image _ _).mt hx)]
+      simp [F] -/
+    · apply hF'₀.mono fun x hx => ?_
+      sorry/- erw [hx]
       ext1 y
-      simp [F]
-    · apply hF'₁.mono fun x hx => _
-      rw [hx]
+      simp [F] -/
+    · apply hF'₁.mono fun x hx => ?_
+      sorry -- rw [hx]
   rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init (𝓕₀.smooth.comp contMDiff_snd)
       ind with
     ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
@@ -200,7 +194,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   · exact hFP₁
   · intro x hx t
     rw [mkHtpyFormalSol_apply]
-    exact (forall_restrict_germ_predicate_iff.mp <| hF_A t).on_set x hx
+    exact (forall_restrictGermPredicate_iff.mp <| hF_A t).on_set x hx
   · intro t x
     change dist (mkHtpyFormalSol F hF_sec hF_sol hFP₂ t x).1.2 (𝓕₀.bs x) ≤ δ x
     rw [mkHtpyFormalSol_apply]
@@ -226,7 +220,7 @@ theorem RelMfld.Ample.satisfiesHPrincipleWith (hRample : R.Ample) (hRopen : IsOp
   have hδ_cont' : Continuous fun x : P × M => δ x.2 := hδ_cont.comp continuous_snd
   have is_op : IsOpen (RelMfld.relativize IP P R) := R.isOpen_relativize hRopen
   apply RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith
-  exact (hRample.relativize IP P).SatisfiesHPrinciple is_op hC hδ_pos' hδ_cont'
+  exact (hRample.relativize IP P).satisfiesHPrinciple is_op hC hδ_pos' hδ_cont'
 
 variable {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
   {H' : Type _} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
@@ -240,6 +234,6 @@ Since every (sigma-compact) manifold is metrizable, the metric space assumption 
 theorem RelMfld.Ample.satisfies_h_principle_with' {R : RelMfld IM M I' M'} (hRample : R.Ample)
     (hRopen : IsOpen R) (hC : IsClosed C) (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) :
     letI := manifoldMetric I' M'
-    R.satisfies_h_principle_with IP C δ :=
-  by apply RelMfld.Ample.satisfiesHPrincipleWith <;> assumption
-
+    R.SatisfiesHPrincipleWith IP C δ := by
+  letI := manifoldMetric I' M'
+  apply RelMfld.Ample.satisfiesHPrincipleWith <;> assumption
