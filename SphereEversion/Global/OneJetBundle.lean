@@ -5,6 +5,8 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_bundle
 -/
+import Mathlib.Tactic
+
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 -- import SphereEversion.InteractiveExpr
 
@@ -386,7 +388,7 @@ theorem Smooth.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
 variable {I'}
 
 attribute [pp_dot] ContinuousLinearMap.comp
-
+open Trivialization in
 theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
     (hϕ : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ x))
     (hϕ' : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ' x)) :
@@ -396,15 +398,16 @@ theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, One
   specialize hϕ x
   specialize hϕ' x
   rw [← SmoothAt, smoothAt_oneJetBundle_mk] at hϕ hϕ' ⊢
+  refine ⟨hϕ.1, hϕ.2.1, ?_⟩
+  -- Porting note: next 5 lines should be
+  -- `simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
+  --           ContinuousLinearMap.comp_add]
   simp_rw [inTangentCoordinates, inCoordinates]
-  beta_reduce
-  have : ∀ x',  (ϕ x' + ϕ' x').comp (Trivialization.symmL 𝕜 (trivializationAt E (TangentSpace I) (f x)) (f x')) =
-    (ϕ x').comp (Trivialization.symmL 𝕜 (trivializationAt E (TangentSpace I) (f x)) (f x')) +
-    (ϕ' x').comp (Trivialization.symmL 𝕜 (trivializationAt E (TangentSpace I) (f x)) (f x')) :=
-  fun x' ↦ ContinuousLinearMap.add_comp _ _ _
-  sorry
-  -- simp only [this] -- simp only [ContinuousLinearMap.comp_add]
-  -- exact ⟨hϕ.1, hϕ.2.1, hϕ.2.2.add hϕ'.2.2⟩
+  conv =>
+    enter [3, x, 2]
+    rw [ContinuousLinearMap.add_comp]
+  simp only [ContinuousLinearMap.comp_add]
+  exact hϕ.2.2.add hϕ'.2.2
 
 variable (I' J')
 
@@ -422,11 +425,11 @@ theorem OneJetBundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M�
     (hg₂ : MDifferentiableAt J' I₃ g₂ (g x.1.2)) (hg : MDifferentiableAt I' J' g x.1.2) :
     OneJetBundle.map J' I₃ f₂ g₂ Df₂inv (OneJetBundle.map I' J' f g Dfinv x) =
       OneJetBundle.map I' I₃ (f₂ ∘ f) (g₂ ∘ g) (fun x ↦ Dfinv x ∘L Df₂inv (f x)) x := by
-  ext ; · rfl
-  dsimp only [OneJetBundle.map, OneJetBundle.mk]
-  sorry
-  sorry
-  -- simp_rw [← ContinuousLinearMap.comp_assoc, mfderiv_comp x.1.2 hg₂ hg]
+  ext
+  · rfl
+  · rfl
+  · dsimp only [OneJetBundle.map, OneJetBundle.mk]
+    simp_rw [← ContinuousLinearMap.comp_assoc, mfderiv_comp x.1.2 hg₂ hg]
 
 theorem OneJetBundle.map_id (x : J¹MM') :
     OneJetBundle.map I' I' id id (fun x ↦ ContinuousLinearMap.id 𝕜 (TangentSpace I x)) x = x := by
