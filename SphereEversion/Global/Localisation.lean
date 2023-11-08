@@ -151,19 +151,16 @@ theorem FormalSol.isHolonomicLocalize (F : FormalSol R) (hF : range (F.bs ∘ p.
   (OneJetSec.loc_hol_at_iff _ _).mpr <|
     (isHolonomicAt_localize_iff F.toOneJetSec p.φ p.ψ hF x).mpr hx
 
-variable (F : HtpyFormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol)
+variable (F : _root_.HtpyFormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol)
 
 structure ChartPair.Compat' (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol) :
     Prop where
   hF : range (F.bs ∘ p.φ) ⊆ range p.ψ
   hFF : ∀ x ∉ p.K₁, ∀ t, 𝓕 t x = F.localize p hF x
-#check RelMfld.localize p.φ p.ψ R
-#check HtpyFormalSol
-#check HtpyFormalSol (RelMfld.localize p.φ p.ψ R) -- Type (max (max u₁ u₄) 0)
-nonrec def RelLoc.HtpyFormalSol.unloc : HtpyFormalSol (RelMfld.localize p.φ p.ψ R) :=
-  sorry--{ 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
 
-#exit
+def RelLoc.HtpyFormalSol.unloc : _root_.HtpyFormalSol (RelMfld.localize p.φ p.ψ R) :=
+  { 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
+
 theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t' x}
     (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x :=
   by
@@ -174,8 +171,8 @@ theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).re
   change (𝓕 t x).2 = (𝓕' t' x).2
   rw [h]
 
-theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).RelLoc.HtpyFormalSol}
-    {𝓕' : (R.localize p.φ p.ψ).RelLoc.FormalSol} {t x} (h : 𝓕 t x = 𝓕' x) :
+theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
+    {𝓕' : (R.localize p.φ p.ψ).relLoc.FormalSol} {t x} (h : 𝓕 t x = 𝓕' x) :
     𝓕.unloc p t x = 𝓕'.unloc x := by
   ext1
   rfl
