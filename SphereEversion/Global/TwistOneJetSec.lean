@@ -124,18 +124,17 @@ theorem smooth_proj : Smooth ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜
     (proj I M V) := by
   intro x₀
   have : SmoothAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smoothAt_id
-  sorry
-  /- simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates, tangentBundleCore_indexAt,
+  simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
     TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this
   dsimp only [TangentSpace] at this
   simp_rw [ContinuousLinearMap.id_comp] at this
-  refine' this.1.one_jet_eucl_bundle_mk this.2.2 -/
+  refine' this.1.one_jet_eucl_bundle_mk this.2.2
 
 variable {I M V}
 
 def drop (s : OneJetSec I M 𝓘(𝕜, V) V) : OneJetEuclSec I M V where
   toFun := (proj I M V).comp s
-  is_sec' p := rfl
+  is_sec' _ := rfl
   smooth' := (smooth_proj I M V).comp s.smooth
 
 end proj
