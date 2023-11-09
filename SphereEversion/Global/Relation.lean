@@ -81,16 +81,14 @@ def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
   ϕ m := (F m).2
   smooth' := by
     convert hsmooth
-    sorry
-    /- ext x
+    ext
     rw [hsec]
-    all_goals rfl -/
+    all_goals rfl
   is_sol' m := by
-    convert hsol
-    sorry
-    /- refine' OneJetBundle.ext _ _ _
+    convert hsol m
+    ext
     rw [hsec]
-    all_goals rfl -/
+    all_goals rfl
 
 @[simp]
 theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
@@ -117,8 +115,8 @@ theorem coe_inj_iff {S T : FormalSol R} : S = T ↔ ∀ x, S x = T x :=
   by
   constructor
   · rintro rfl x; rfl
-  · intro h; ext x : 3; show (S x).1.2 = (T x).1.2; rw [h]
-    sorry -- apply hEq_of_eq; ext1; show (S x).2 = (T x).2; rw [h]
+  · intro h; ext x v : 3; show (S x).1.2 = (T x).1.2; rw [h]
+    show (S x).2 v = (T x).2 v; rw [h]
 
 theorem coe_inj {S T : FormalSol R} (h : ∀ x, S x = T x) : S = T :=
   coe_inj_iff.mpr h
@@ -149,7 +147,7 @@ end FormalSol
 
 /-! ## Ampleness -/
 
-open scoped Manifold
+open scoped Manifold Bundle
 
 /- The following four statement are defeq to existing assumption but not found by TC search. -/
 
@@ -172,6 +170,7 @@ instance (σ : OneJetBundle I M I' M') :
   assumption
 
 /-- The slice `R(σ,p)`. -/
+@[pp_dot]
 def RelMfld.slice (R : RelMfld I M I' M') (σ : OneJetBundle I M I' M') (p : DualPair <| TM σ.1.1) :
     Set (TM' σ.1.2) :=
   {w : TM' σ.1.2 | OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
@@ -182,14 +181,15 @@ theorem mem_slice {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'} {p : Dua
     {w : TM' σ.1.2} : w ∈ R.slice σ p ↔ OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
   Iff.rfl
 
+
 theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
     {p : DualPair <| TM σ.1.1} (x : E') :
-    R.slice (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p = (R.slice σ p : Set E') :=
-  by
+    R.slice (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p = (R.slice σ p : Set E') := by
   ext1 w
-  dsimp only [mem_slice]
-  congr 3
-  sorry -- simp_rw [one_jet_bundle_mk_snd, p.update_update]
+  rw [mem_slice]
+  change _ ↔ OneJetBundle.mk σ.proj.1 σ.proj.2 (DualPair.update p σ.snd w) ∈ R
+  convert Iff.rfl using 3
+  rw [one_jet_bundle_mk_snd, p.update_update]
 
 /-- A differential relation is ample if all its slices are ample sets. -/
 def RelMfld.Ample (R : RelMfld I M I' M') : Prop :=
@@ -276,23 +276,21 @@ def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, 
   bs t m := (F t m).1.2
   ϕ t m := (F t m).2
   smooth' := by
-    convert hsmooth
-    all_goals sorry
-    /- ext ⟨t, x⟩
+    convert hsmooth using 1
+    ext ⟨t, x⟩
     exact (hsec t x).symm
-    all_goals rfl -/
+    all_goals rfl
   is_sol' t m := by
     convert hsol t m
-    sorry/- refine' OneJetBundle.ext _ _ _
+    ext
     rw [hsec]
-    all_goals rfl -/
+    all_goals rfl
 
 @[simp]
 theorem mkHtpyFormalSol_apply (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
     (hsmooth : Smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (t : ℝ) :
-    (mkHtpyFormalSol F hsec hsol hsmooth t : M → OneJetBundle I M I' M') = F t :=
-  by
+    (mkHtpyFormalSol F hsec hsol hsmooth t : M → OneJetBundle I M I' M') = F t := by
   ext x <;> try rfl
   rw [hsec]
   rfl
