@@ -71,38 +71,32 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     (R.relativize IP P).slice σ p =
       σ.2 (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1)) +ᵥ
       (id (R.slice (bundleSnd σ) q) : Set <| TangentSpace I' σ.proj.2) := by
-  -- for some reason this is needed
-  let this₁ :
-    Module ℝ
-      (((ContMDiffMap.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ (TangentSpace I'))
-        σ.1) :=
-    by infer_instance
+  set z := (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1))
   have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := fun x =>
     congr_arg (fun f : E →L[ℝ] ℝ => f x) hpq
   ext1 w
-  sorry
-  /- have h1 :
+  have h1 :
     (p.update σ.2 w).comp (ContinuousLinearMap.inr ℝ EP E) =
-      q.update (bundleSnd σ).2 (-σ.2 ) + w) :=
-    by
+      q.update (bundleSnd σ).2 (-σ.2 z + w) := by
     ext1 x
-    simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ←
-      ContinuousLinearMap.map_neg, neg_sub]
+    erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
+         ← ContinuousLinearMap.map_neg, neg_sub]
     obtain ⟨u, hu, t, rfl⟩ := q.decomp x
-    have hv : (0, q.v) - p.v ∈ ker p.π := by
-      rw [LinearMap.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self]
+    have hv : (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1) - p.v ∈ ker p.π := by
+      simp [LinearMap.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self]
     have hup : ((0 : EP), u) ∈ ker p.π := (h2pq u).trans hu
-    rw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
+    erw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
       Prod.smul_zero_mk, map_smul]
-    nth_rw 1 [← sub_add_cancel (0, q.v) p.v]
-    rw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundleSnd_eq]
+    conv_lhs => rw [← sub_add_cancel (0, q.v) p.v]
+    erw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundleSnd_eq]
     rfl
-  have :=
-    preimage_vadd_neg (show E' from σ.2 (p.v - (0, q.v))) (show Set E' from R.slice (bundleSnd σ) q)
+  have := preimage_vadd_neg
+    (show E' from σ.2 (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1)))
+    (show Set E' from R.slice (bundleSnd σ) q)
   dsimp only at this
-  simp_rw [← this, mem_preimage, mem_slice, R.mem_relativize]
+  erw [← this, mem_preimage, mem_slice, R.mem_relativize]
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
-  congr -/
+  congr!
 
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
@@ -114,19 +108,22 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
       (((ContMDiffMap.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ (TangentSpace I'))
         σ.1) :=
     by infer_instance
-  have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
+  sorry/- have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
+  let T := @ContinuousLinearMap ℝ ℝ _ _ (RingHom.id ℝ) E _ _ _ _ _ _ this₁
+  let K := ((ContMDiffMap.fst : C^∞⟮(IP.prod I).prod I', (P × M) × M'; (IP.prod I), P × M⟯) *ᵖ (TangentSpace (IP.prod I))) (σ.proj.1, σ.proj.2)
+  let T' := @ContinuousLinearMap ℝ ℝ _ _ (RingHom.id ℝ) K _ _ _ _ _ _ this₁
   have :
-    ∀ y : E',
-      (p.update σ.snd y).comp (ContinuousLinearMap.inr ℝ EP E) =
-        σ.snd.comp (ContinuousLinearMap.inr ℝ EP E) :=
-    by
+    ∀ y : E', @Eq T ((p.update σ.snd y).comp (ContinuousLinearMap.inr ℝ EP E)) (σ.snd.comp (ContinuousLinearMap.inr ℝ EP E)) := by
     intro y
     ext1 x
-    sorry/- simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
-      p.update_ker_pi _ _ (h2p x)] -/
+    erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
+      p.update_ker_pi _ _ (h2p x)]
+    rfl
   simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize]
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
-  sorry -- simp_rw [this, exists_const, forall_const]
+  let φ := fun x : TangentSpace I' σ.proj.2 ↦ ((p.update σ.snd x).comp (ContinuousLinearMap.inr ℝ EP E) : OneJetSpace _ _ _)
+  change (∃ x, OneJetBundle.mk σ.proj.1.2 σ.proj.2 (φ x) ∈ R) ↔ _
+  simp [exists_const, forall_const] -/
 
 variable (IP P)
 
