@@ -729,10 +729,10 @@ theorem Jupdate_localize {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y}
         (G t).ϕ x v
     simp_rw [ContinuousLinearEquiv.symm_apply_apply]
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 /-- Update a global formal solutions `F` using a homotopy of local ones `G`. -/
+@[pp_dot]
 def updateFormalSol (F : FormalSol R) (G : HtpyFormalSol (R.localize φ ψ)) (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) : HtpyFormalSol R
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) : HtpyFormalSol R
     where
   toFamilyOneJetSec := φ.Jupdate ψ F.toOneJetSec G.toFamilyOneJetSec hK hFG
   is_sol' t x :=
@@ -742,23 +742,20 @@ def updateFormalSol (F : FormalSol R) (G : HtpyFormalSol (R.localize φ ψ)) (hK
     · exact G.is_sol
     · exact F.is_sol x
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 theorem updateFormalSol_apply {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t x) :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t x) :
     φ.updateFormalSol ψ F G hK hFG t x = ⟨⟨x, (JΘ F (G t) x).1.2⟩, (JΘ F (G t) x).2⟩ :=
   rfl
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 theorem updateFormalSol_bs' {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
     (φ.updateFormalSol ψ F G hK hFG t).bs = fun x => (JΘ F (G t) x).1.2 :=
   rfl
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 theorem updateFormalSol_bs {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)} (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
     (φ.updateFormalSol ψ F G hK hFG t).bs = φ.update ψ F.bs (G t).bs :=
   by
   rw [updateFormalSol_bs']
@@ -770,11 +767,10 @@ theorem updateFormalSol_bs {F : FormalSol R} {G : HtpyFormalSol (R.localize φ �
     rfl
     exacts [hx, hx]
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 @[simp]
 theorem updateFormalSol_apply_of_mem {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {m}
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {m}
     (hx : m ∈ range φ) : φ.updateFormalSol ψ F G hK hFG t m = φ.transfer ψ (G t <| φ.invFun m) :=
   by
   rw [updateFormalSol_apply, φ.update_of_mem_range _ _ _ hx]
@@ -784,11 +780,10 @@ theorem updateFormalSol_apply_of_mem {F : FormalSol R} {G : HtpyFormalSol (R.loc
   rfl
   rfl
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 @[simp]
 theorem updateFormalSol_apply_image {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {x} :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {x} :
     φ.updateFormalSol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) :=
   by
   rw [OpenSmoothEmbedding.updateFormalSol_apply_of_mem, φ.left_inv]

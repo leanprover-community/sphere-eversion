@@ -42,12 +42,12 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     rw [contDiff_iff_contDiffAt]
     intro x₀
     have : SmoothAt _ _ _ _ := F.smooth x₀
-    sorry/- simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates, tangentBundleCore_indexAt,
+    simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this
     dsimp only [TangentSpace] at this
     simp_rw [ContinuousLinearMap.id_comp] at this
-    exact this.2.2.contDiffAt -/
+    exact this.2.2.contDiffAt
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
     F.loc.IsHolonomicAt x ↔ F.IsHolonomicAt x :=
@@ -198,14 +198,16 @@ open scoped Classical
 
 variable [T2Space M]
 
+lemma ChartPair.mkHtpy_aux {F : FormalSol R} {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
+    (h : p.compat' F 𝓕) (t x) (hx : x ∉ p.K₁) :
+    F (p.φ x) = OneJetBundle.embedding p.φ p.ψ (RelLoc.HtpyFormalSol.unloc p 𝓕 t x) := by
+  rw [← F.transfer_unloc_localize p h.1, RelLoc.HtpyFormalSol.unloc_congr_const p (h.hFF x hx t)]
+  rfl
+
 def ChartPair.mkHtpy (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol) :
     HtpyFormalSol R :=
   if h : p.compat' F 𝓕 then
-    p.φ.updateFormalSol p.ψ F (𝓕.unloc p) p.hK₁ fun t x (hx : x ∉ p.K₁) =>
-      by
-      rw [← F.transfer_unloc_localize p h.1,
-        RelLoc.HtpyFormalSol.unloc_congr_const p (h.hFF x hx t)]
-      rfl
+    p.φ.updateFormalSol p.ψ F (𝓕.unloc p) p.hK₁ (p.mkHtpy_aux h)
   else F.constHtpy
 
 theorem ChartPair.mkHtpy_congr (F : FormalSol R) {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
@@ -221,21 +223,17 @@ theorem ChartPair.mkHtpy_congr (F : FormalSol R) {𝓕 : (R.localize p.φ p.ψ).
   · simp only [dif_neg hF]; rfl
 
 theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol)
-    {t m}
-    (hm :
-      ∀ hF : range (F.bs ∘ p.φ) ⊆ range p.ψ, ∀ x ∈ p.K₁, m = p.φ x → 𝓕 t x = F.localize p hF x) :
-    p.mkHtpy F 𝓕 t m = F m := by
+    {t m} (hm : ∀ hF : range (F.bs ∘ p.φ) ⊆ range p.ψ, ∀ x ∈ p.K₁,
+    m = p.φ x → 𝓕 t x = F.localize p hF x) : p.mkHtpy F 𝓕 t m = F m := by
   rw [ChartPair.mkHtpy]
-  split_ifs
-  sorry/- · refine' (p.φ.Jupdate_apply p.ψ p.hK₁ _ t m).trans _
-    dsimp [OpenSmoothEmbedding.update]
+  split_ifs with h
+  · refine' (p.φ.Jupdate_apply p.ψ p.hK₁ (p.mkHtpy_aux h) t m).trans _
+    unfold OpenSmoothEmbedding.update
     split_ifs with h'
     · obtain ⟨x, rfl⟩ := h'
       rw [OneJetBundle.embedding_toFun, p.φ.left_inv]
-      have : (𝓕 t).unloc x = F.to_one_jet_sec.localize p.φ p.ψ h.hF x :=
-        by
-        have : 𝓕 t x = F.localize p h.hF x :=
-          by
+      have : (𝓕 t).unloc x = F.toOneJetSec.localize p.φ p.ψ h.hF x := by
+        have : 𝓕 t x = F.localize p h.hF x := by
           by_cases h'' : x ∈ p.K₁
           · exact hm h.hF x h'' rfl
           · exact h.hFF x h'' t
@@ -244,7 +242,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
       change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F (p.φ x)
       rw [this, transfer_localize]
       rfl
-    rfl -/
+    rfl
   rfl
 
 theorem ChartPair.mkHtpy_eq_of_not_mem (F : FormalSol R)
@@ -265,13 +263,13 @@ theorem ChartPair.mkHtpy_eq_of_eq (F : FormalSol R) (𝓕 : (R.localize p.φ p.�
 theorem ChartPair.mkHtpy_eq_of_forall {F : FormalSol R}
     {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} (h𝓕 : p.compat' F 𝓕) {t}
     (h : 𝓕 t = F.localize p h𝓕.1) : p.mkHtpy F 𝓕 t = F :=
-  FormalSol.coe_inj fun m => ChartPair.mkHtpy_eq_self p F 𝓕 <| by rintro hF y hy rfl; · rw [h]; rfl
+  FormalSol.coe_inj fun m => ChartPair.mkHtpy_eq_self p F 𝓕 <| by rintro hF y _ rfl; · rw [h]; rfl
 
 theorem ChartPair.mkHtpy_localize {F : FormalSol R} {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     {t e} (h : p.compat' F 𝓕) (rg : range ((p.mkHtpy F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ) :
     (p.mkHtpy F 𝓕 t).toOneJetSec.localize p.φ p.ψ rg e = (𝓕 t).unloc e := by
   simp_rw [ChartPair.mkHtpy, dif_pos h] at rg ⊢
-  sorry -- exact p.φ.Jupdate_localize p.ψ _ _ t rg e
+  exact p.φ.Jupdate_localize p.ψ p.hK₁ (p.mkHtpy_aux h) t rg e
 
 theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
     {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} (h : p.compat' F 𝓕) {t e} :
@@ -290,20 +288,12 @@ theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
 theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
     (hδ_cont : Continuous δ) {F : FormalSol R} (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :
     ∃ η > (0 : ℝ),
-      ∀ {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol},
-        ∀ hF𝓕 : p.compat' F 𝓕,
-          ∀ e ∈ p.K₁,
-            ∀ t ∈ (Icc 0 1 : Set ℝ),
-              ‖(𝓕 t).f e - (F.localize p hF).f e‖ < η →
-                dist (((p.mkHtpy F 𝓕) t).bs <| p.φ e) (F.bs <| p.φ e) < δ (p.φ e) :=
-  by
+      ∀ {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}, p.compat' F 𝓕 →
+      ∀ e ∈ p.K₁,∀ t ∈ (Icc 0 1 : Set ℝ), ‖(𝓕 t).f e - (F.localize p hF).f e‖ < η →
+      dist (((p.mkHtpy F 𝓕) t).bs <| p.φ e) (F.bs <| p.φ e) < δ (p.φ e) := by
   let bsF m := F.bs m
-  have :
-    ∀ 𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol,
-      p.compat' F 𝓕 →
-        ∀ t e,
-          (p.mkHtpy F 𝓕 t).bs (p.φ e) = p.φ.update p.ψ bsF (fun e => (𝓕.unloc p t).bs e) (p.φ e) :=
-    by
+  have : ∀ 𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol, p.compat' F 𝓕 → ∀ t e,
+       (p.mkHtpy F 𝓕 t).bs (p.φ e) = p.φ.update p.ψ bsF (fun e ↦ (𝓕.unloc p t).bs e) (p.φ e) := by
     -- TODO: this proof needs more lemmas
     intro 𝓕 h𝓕 t e
     change (p.mkHtpy F 𝓕 t (p.φ e)).1.2 = p.φ.update p.ψ bsF (fun e => (𝓕.unloc p t).bs e) (p.φ e)
@@ -315,8 +305,8 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
       OpenSmoothEmbedding.transfer_proj_snd]
     rfl
   rcases p.φ.dist_update p.ψ p.hK₁ (isCompact_Icc : IsCompact (Icc 0 1 : Set ℝ))
-      (fun t m => F.bs m) (F.smooth_bs.continuous.comp continuous_snd)
-      (fun t => range_comp bsF p.φ ▸ hF) hδ_pos hδ_cont with
+      (fun _t m => F.bs m) (F.smooth_bs.continuous.comp continuous_snd)
+      (fun _t => range_comp bsF p.φ ▸ hF) hδ_pos hδ_cont with
     ⟨η, η_pos, hη⟩
   refine' ⟨η, η_pos, _⟩
   intro 𝓕 H e he t ht het

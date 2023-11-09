@@ -432,6 +432,7 @@ section
 attribute [local instance] Classical.dec
 
 /-- This is definition `def:update` in the blueprint. -/
+@[pp_dot]
 def update (m : M) : N :=
   if m ∈ range φ then ψ (g (φ.invFun m)) else f m
 
