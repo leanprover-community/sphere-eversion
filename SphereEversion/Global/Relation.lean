@@ -149,7 +149,8 @@ end FormalSol
 
 open scoped Manifold Bundle
 
-/- The following four statement are defeq to existing assumption but not found by TC search. -/
+/- Porting note: the following four statement are defeq to existing assumption but not found by TC
+search. There was no problem in Lean 3. -/
 
 instance (σ : OneJetBundle I M I' M') :
     NormedAddCommGroup (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM') σ.proj) := by
@@ -159,14 +160,14 @@ instance (σ : OneJetBundle I M I' M') :
     NormedSpace ℝ (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM') σ.proj) := by
   assumption
 
-instance (σ : OneJetBundle I M I' M') :
+instance (x : M) (x' : M') :
     NormedAddCommGroup (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM')
-    (σ.proj.1, σ.proj.2)) := by
+    (x, x')) := by
   assumption
 
-instance (σ : OneJetBundle I M I' M') :
+instance (x : M) (x' : M') :
     NormedSpace ℝ (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM')
-    (σ.proj.1, σ.proj.2)) := by
+    (x, x')) := by
   assumption
 
 /-- The slice `R(σ,p)`. -/
@@ -393,7 +394,7 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
         (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R :=
   by
-  rcases h 𝓕₀ h2 with ⟨𝓕, h₁, h₂, h₃, h₄⟩
+  rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
   refine' ⟨fun s => (𝓕 (1, s)).bs, _, _, _, _⟩
   · have := 𝓕.toFamilyOneJetSec.smooth
     let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
@@ -405,8 +406,8 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
     exact (𝓕.reindex j).toFamilyOneJetSec.smooth_bs
   · apply h₃.mono
     intro x hx
-    sorry/- simp_rw [OneJetSec.bs_eq, FormalSol.toOneJetSec_coe, hx, FamilyOneJetSec.bs_eq,
-      𝓕₀.toFamilyOneJetSec_coe] -/
+    simp_rw [OneJetSec.bs_eq, FormalSol.toOneJetSec_coe, hx, FamilyOneJetSec.bs_eq,
+      𝓕₀.toFamilyOneJetSec_coe]
   · intro p m
     apply h₄
   · intro p m
@@ -466,7 +467,7 @@ local notation "IMN" => ModelWithCorners.prod (ModelWithCorners.prod IM IN) 𝓘
 
 /-- Transfer map between one jet bundles induced by open smooth embedding into the source and
 targets. -/
-@[simps! proj_fst proj_snd]
+@[simps! proj_fst proj_snd, pp_dot]
 def OpenSmoothEmbedding.transfer : OneJetBundle IX X IY Y → OneJetBundle IM M IN N :=
   OneJetBundle.map IY IN φ ψ fun x => (φ.fderiv x).symm
 
@@ -488,22 +489,28 @@ theorem OpenSmoothEmbedding.smooth_transfer :
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
   (OpenSmoothEmbedding.smooth_transfer _ _).continuous
 
+attribute [pp_dot] ContinuousLinearEquiv.symm
+
 theorem OpenSmoothEmbedding.range_transfer :
     range (φ.transfer ψ) = π _ (OneJetSpace IM IN) ⁻¹' range φ ×ˢ range ψ := by
   ext σ; constructor
   · rintro ⟨σ, rfl⟩; exact mk_mem_prod (mem_range_self _) (mem_range_self _)
   · rcases σ with ⟨⟨x, y⟩, τ⟩
     rintro ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
-    sorry/- refine'
-      ⟨⟨(x, y),
-          ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
-            τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩,
-        _⟩
-    refine' congr_arg (Bundle.TotalSpace.mk _) _
-    ext1 v
-    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, OneJetBundle.mk]
-    simp_rw [ContinuousLinearMap.comp_apply, ← ψ.fderiv_coe, ContinuousLinearEquiv.coe_coe,
+    refine
+      ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
+            τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩, ?_⟩
+    refine congr_arg (Bundle.TotalSpace.mk _) (ContinuousLinearMap.ext fun v ↦ ?_)
+    /- Porting note: Lean 3 version was
+    dsimp only [open_smooth_embedding.transfer, one_jet_bundle.map, one_jet_bundle.mk],
+    simp_rw [continuous_linear_map.comp_apply, ← ψ.fderiv_coe, continuous_linear_equiv.coe_coe,
       (φ.fderiv x).apply_symm_apply, (ψ.fderiv y).apply_symm_apply] -/
+    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, OneJetBundle.mk]
+    simp only [ContinuousLinearMap.comp_apply, ← ψ.fderiv_coe]
+    erw [ContinuousLinearEquiv.coe_coe (fderiv ψ  y), (ψ.fderiv y).apply_symm_apply]
+    change τ _ = _
+    erw [(φ.fderiv x).apply_symm_apply]
+    rfl
 
 theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer ψ)) := by
   rw [φ.range_transfer ψ]
@@ -512,6 +519,13 @@ theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer �
 /-- localize a relation -/
 def RelMfld.localize (R : RelMfld IM M IN N) : RelMfld IX X IY Y :=
   φ.transfer ψ ⁻¹' R
+
+
+/- Porting note: the following two statements are defeq to existing assumption but not found by TC
+search. There was no problem in Lean 3. -/
+instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
+
+instance (y : Y) : NormedSpace ℝ (TY y) := by assumption
 
 /-- Ampleness survives localization -/
 theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample :=
@@ -523,10 +537,14 @@ theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample :=
     ext v
     simp_rw [RelMfld.localize, ContinuousLinearEquiv.image_symm_eq_preimage, mem_preimage,
       mem_slice, mem_preimage]
+    -- Porting note: the next `rw` should be part of the `simp_rw` above
+    rw [mem_slice]
     dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, one_jet_bundle_mk_fst,
       one_jet_bundle_mk_snd]
-    sorry/- simp_rw [p.map_update_comp_right, ← p.update_comp_left, OneJetBundle.mk, ← ψ.fderiv_coe,
-      ContinuousLinearEquiv.coe_coe] -/
+    -- Porting note: the next `rw` should be part of the `simp_rw` below
+    rw [p.map_update_comp_right, ← p.update_comp_left]
+    simp_rw [OneJetBundle.mk, ← ψ.fderiv_coe]
+    rfl
   rw [this]
   exact (hR _).image (ψ.fderiv x.1.2).symm
 
@@ -542,26 +560,37 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     let y := ψ.invFun (F.bs <| φ x)
     (↑(ψ.fderiv y).symm : TN (ψ y) →L[ℝ] TY y) ∘L (F <| φ x).2 ∘L (φ.fderiv x : TX x →L[ℝ] TM (φ x))
   smooth' := by
-    sorry /- simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe,
-      mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self _))]
+    -- Porting note: next 4 lines were
+    -- simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe,
+    --          mfderiv_congr_point (ψ.right_inv (hF $ mem_range_self _))]
+    simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe]
+    have : ∀ x, mfderiv IN IY ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
+      fun x ↦ mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self x))
+    simp only [this]
     refine' Smooth.one_jet_comp IN (fun x' => F.bs (φ x')) _ _
     ·
       exact fun x =>
         (ψ.smoothAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
           (F.smooth_bs.comp φ.smooth_to).contMDiffAt
-    apply Smooth.one_jet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.one_jet_ext -/
+    apply Smooth.one_jet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
 
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
   rw [OneJetSec.coe_apply, OneJetSec.localize_bs, OneJetSec.localize_ϕ,
     OpenSmoothEmbedding.transfer, OneJetBundle.map]
   dsimp only [OneJetBundle.mk]
-  sorry
-  /- ext
+  ext
   · rfl
-  · simp_rw [ψ.right_inv (hF <| mem_range_self x), Function.comp_apply, F.bs_eq]
-  · simp_rw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
-      ContinuousLinearEquiv.apply_symm_apply] -/
+  · dsimp only; erw [ψ.right_inv (hF <| mem_range_self x), Function.comp_apply, F.bs_eq]
+  · -- Porting note: was simp_rw [← ψ.fderiv_coe, continuous_linear_map.comp_apply,
+    --  continuous_linear_equiv.coe_coe, continuous_linear_equiv.apply_symm_apply]
+    dsimp only
+    -- Porting note: we are missing an ext lemma here.
+    apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
+    erw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
+      ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply]
+    rfl
 
 theorem OneJetSec.localize_bs_fun (hF : range (F.bs ∘ φ) ⊆ range ψ) :
     (F.localize φ ψ hF).bs = ψ.invFun ∘ F.bs ∘ φ :=
@@ -593,7 +622,7 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
 
 
 -- very slow to elaborate :-(
-@[simps]
+@[simps, pp_dot]
 def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     where
   toFun := φ.transfer ψ
@@ -610,7 +639,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
     · ext x v; simp_rw [ContinuousLinearMap.comp_apply]
       convert (φ.fderiv x).symm_apply_apply v
-      sorry -- simp_rw [φ.left_inv]
+      erw [φ.left_inv]; rfl
   isOpen_range := φ.isOpen_range_transfer ψ
   smooth_to := φ.smooth_transfer ψ
   smooth_inv := by
@@ -619,19 +648,18 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     · refine' (φ.smoothAt_inv _).comp _ smoothAt_snd; exact mem_range_self _
     · refine' (ψ.smoothAt_inv _).comp _ smoothAt_snd; exact mem_range_self _
     have' :=
-      ContMDiffAt.mfderiv (fun x => φ) (fun x : OneJetBundle IM M IN N => φ.invFun x.1.1)
+      ContMDiffAt.mfderiv (fun _ => φ) (fun x : OneJetBundle IM M IN N => φ.invFun x.1.1)
         (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
         ((φ.smoothAt_inv _).comp _ (smooth_one_jet_bundle_proj.fst (φ.transfer ψ x))) le_top
     · dsimp only [id]
-      sorry/- simp_rw [φ.left_inv] at this
-      refine' this.congr_of_eventually_eq _
+      refine' this.congr_of_eventuallyEq _
       refine' Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) _
       rw [φ.range_transfer ψ]
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
       simp_rw [inTangentCoordinates, φ.fderiv_coe]
       simp_rw [φ.transfer_proj_fst, φ.left_inv]
       congr 1
-      simp_rw [φ.left_inv] -/
+      simp_rw [φ.left_inv]
     exact mem_range_self _
 
 /-! ## Updating 1-jet sections and formal solutions -/
@@ -647,15 +675,14 @@ theorem Jupdate_aux (F : OneJetSec IM M IN N) (G : OneJetSec IX X IY Y) (m : M) 
     (JΘ F G m).1.1 = m := by
   simp_rw [OpenSmoothEmbedding.update]; split_ifs with h
   · rcases h with ⟨x, rfl⟩
-    sorry -- simp_rw [OneJetBundle.embedding_toFun, φ.transfer_proj_fst, φ.left_inv, G.fst_eq]
+    simp_rw [OneJetBundle.embedding_toFun, φ.transfer_proj_fst, φ.left_inv, G.fst_eq]
   · rfl
 
 variable [T2Space M]
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 /-- Update a global homotopy of 1-jet-sections `F` using a local one `G`. -/
 def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) :
     HtpyOneJetSec IM M IN N :=
   by
   refine' FamilyOneJetSec.mk' (fun t => JΘ F (G t)) (fun t => φ.Jupdate_aux ψ F (G t)) _
@@ -663,16 +690,14 @@ def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsComp
   · exact F.smooth.comp smooth_snd
   · exact G.smooth.comp (smooth_fst.prod_map smooth_id)
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 theorem Jupdate_apply {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
     φ.Jupdate ψ F G hK hFG t m = JΘ F (G t) m := by
-  sorry -- ext; exact (φ.Jupdate_aux ψ F (G t) m).symm; rfl; rfl
+  ext; exact (φ.Jupdate_aux ψ F (G t) m).symm; rfl; rfl
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 theorem Jupdate_bs (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (t : ℝ)
     (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = OneJetBundle.embedding φ ψ (G t x)) :
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = OneJetBundle.embedding φ ψ (G t x)) :
     (OpenSmoothEmbedding.Jupdate φ ψ F G hK hFG t).bs =
       OpenSmoothEmbedding.update φ ψ F.bs (G t).bs :=
   by
@@ -683,26 +708,26 @@ theorem Jupdate_bs (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (t : 
       if x ∈ range φ then _ else _
   split_ifs <;> rfl
 
--- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 theorem Jupdate_localize {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
-    (hFG : ∀ t, ∀ x, x ∉ K → F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ)
+    (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ)
     (rg : range ((φ.Jupdate ψ F G hK hFG t).bs ∘ φ) ⊆ range ψ) (x : X) :
     (φ.Jupdate ψ F G hK hFG t).localize φ ψ rg x = G t x := by
   have foo : ψ.invFun ((φ.Jupdate ψ F G hK hFG t).bs (φ x)) = (G t).bs x := by
-    sorry -- simp_rw [Jupdate_bs, OpenSmoothEmbedding.update_apply_embedding, OpenSmoothEmbedding.left_inv]
+    simp_rw [Jupdate_bs, OpenSmoothEmbedding.update_apply_embedding, OpenSmoothEmbedding.left_inv]
   ext -- This is partially failing compared to Lean 3.
   rfl
   · exact foo
-  · simp_rw [OneJetSec.snd_eq, OneJetSec.localize_ϕ]
+  · -- Porting note: we are missing an ext lemma here.
+    apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
+    simp_rw [OneJetSec.snd_eq, OneJetSec.localize_ϕ]
     rw [foo]
-    sorry
-   /-  change (ψ.fderiv ((G t).bs x)).symm ((JΘ F (G t) (φ x)).2 (φ.fderiv x x_1)) = ((G t).ϕ x) x_1
+    change (ψ.fderiv ((G t).bs x)).symm ((JΘ F (G t) (φ x)).2 (φ.fderiv x v)) = ((G t).ϕ x) v
     rw [φ.update_apply_embedding]
     change
       (ψ.fderiv ((G t).bs x)).symm
-          (ψ.fderiv ((G t).bs x) <| (G t).ϕ x <| (φ.fderiv x).symm <| φ.fderiv x x_1) =
-        (G t).ϕ x x_1
-    simp_rw [ContinuousLinearEquiv.symm_apply_apply] -/
+          (ψ.fderiv ((G t).bs x) <| (G t).ϕ x <| (φ.fderiv x).symm <| φ.fderiv x v) =
+        (G t).ϕ x v
+    simp_rw [ContinuousLinearEquiv.symm_apply_apply]
 
 -- Porting note: `∀ x, x ∉ K →` because of missing binder syntax.
 /-- Update a global formal solutions `F` using a homotopy of local ones `G`. -/

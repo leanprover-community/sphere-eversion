@@ -40,6 +40,8 @@ attribute [coe] OpenSmoothEmbedding.toFun
 instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ => M → M' :=
   ⟨OpenSmoothEmbedding.toFun⟩
 
+attribute [pp_dot] OpenSmoothEmbedding.invFun
+
 namespace OpenSmoothEmbedding
 
 variable {I I' M M'}
@@ -85,7 +87,7 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] i
 
 /- Note that we are slightly abusing the fact that `tangent_space I x` and
 `tangent_space I (f.inv_fun (f x))` are both definitionally `E` below. -/
-def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
+@[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.smooth_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       (f.open_map.range_mem_nhds x)

@@ -77,6 +77,7 @@ theorem mem_spanV (p : DualPair E) {u : E} : u ∈ p.spanV ↔ ∃ t : ℝ, u = 
 
 /-- Update a continuous linear map `φ : E →L[ℝ] F` using a dual pair `p` on `E` and a
 vector `w : F`. The new map coincides with `φ` on `ker p.π` and sends `p.v` to `w`. -/
+@[pp_dot]
 def update (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : E →L[ℝ] F :=
   φ + (w - φ p.v) ⬝ p.π
 
@@ -129,7 +130,7 @@ theorem update_apply (p : DualPair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u}
   rw [map_add, map_smul, p.update_v, p.update_ker_pi _ _ hu]
 
 /-- Map a dual pair under a linear equivalence. -/
-@[simps]
+@[simps, pp_dot]
 def map (p : DualPair E) (L : E ≃L[ℝ] E') : DualPair E' :=
   ⟨p.π ∘L ↑L.symm, L p.v, (congr_arg p.π <| L.symm_apply_apply p.v).trans p.pairing⟩
 
