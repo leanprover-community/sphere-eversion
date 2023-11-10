@@ -56,12 +56,11 @@ theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
 /-- A characterisation of the immersion relation in terms of a local chart. -/
 theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ (ψJ σ).source) :
     σ' ∈ immersionRel I M I' M' ↔ Injective (ψJ σ σ').2 := by
-  sorry/- simp only [FiberBundle.chartedSpace_chartAt, mfld_simps] at hσ'
   simp_rw [mem_immersionRel_iff]
-  rw [oneJetBundle_chartAt_apply, in_coordinates_eq]
+  rw [oneJetBundle_chartAt_apply, inCoordinates_eq]
   simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
     EquivLike.injective_comp]
-  exacts [hσ'.1.1, hσ'.1.2] -/
+  exacts [hσ'.1.1, hσ'.1.2]
 
 theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
     ψJ σ '' ((ψJ σ).source ∩ immersionRel I M I' M') = (ψJ σ).target ∩ {q : HJ | Injective q.2} :=

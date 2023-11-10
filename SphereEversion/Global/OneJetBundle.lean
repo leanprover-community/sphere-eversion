@@ -201,7 +201,6 @@ theorem trivializationAt_one_jet_bundle_source (x₀ : M × M') :
         (Prod.fst ⁻¹' (chartAt H x₀.1).source ∩ Prod.snd ⁻¹' (chartAt H' x₀.2).source) :=
   rfl
 
-@[simp, mfld_simps]
 theorem trivializationAt_one_jet_bundle_target (x₀ : M × M') :
     (trivializationAt (E →L[𝕜] E') FJ¹MM' x₀).target =
       (Prod.fst ⁻¹' (trivializationAt E (TangentSpace I) x₀.1).baseSet ∩
@@ -249,13 +248,79 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
   rwa [Trivialization.coe_fst]
   rwa [trivializationAt_one_jet_bundle_source, mem_preimage, ← Set.prod_eq]
 
+attribute [pp_dot] LocalEquiv.target LocalEquiv.symm LocalEquiv.prod
+
+section
+
+section
+
+universe u v w₁ w₂ U
+
+variable {B : Type u} {F : Type v} {E : B → Type w₁} {B' : Type w₂}
+  [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [TopologicalSpace F]
+  [TopologicalSpace B] [(_b : B) → Zero (E _b)] {K : Type U} [ContinuousMapClass K B' B]
+  [(x : B) → TopologicalSpace (E x)] [FiberBundle F E]
+
+lemma trivializationAt_pullBack_baseSet (f : K) (x : B') :
+    (trivializationAt F ((f : B' → B) *ᵖ E) x).baseSet =
+    f ⁻¹' (trivializationAt F E (f x)).baseSet :=
+  rfl
+end
+
+section
+#check ContMDiffMap.fst
+
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*}
+[NormedAddCommGroup E] [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+{H : Type*} [TopologicalSpace H] {H' : Type*} [TopologicalSpace H']
+{I : ModelWithCorners 𝕜 E H} {I' : ModelWithCorners 𝕜 E' H'} {M : Type*} [TopologicalSpace M]
+[ChartedSpace H M] {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] {n : ℕ∞}
+
+@[simp]
+lemma ContMDiffMap.coe_fst :
+    ((ContMDiffMap.fst : C^n⟮ModelWithCorners.prod I I', M × M'; I, M⟯) : M × M' → M) = Prod.fst :=
+  rfl
+
+@[simp]
+lemma ContMDiffMap.coe_snd :
+    ((ContMDiffMap.snd : C^n⟮ModelWithCorners.prod I I', M × M'; I', M'⟯) : M × M' → M') = Prod.snd :=
+  rfl
+
+@[simp]
+lemma ContMDiffMap.fst_apply (x : M) (x' : M') :
+  (ContMDiffMap.fst : C^n⟮ModelWithCorners.prod I I', M × M'; I, M⟯) (x, x') = x := rfl
+
+@[simp]
+lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
+  (ContMDiffMap.snd : C^n⟮ModelWithCorners.prod I I', M × M'; I', M'⟯) (x, x') = x' := rfl
+
+end
+
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
+  rw [FiberBundle.chartedSpace_chartAt]
+  --simp only [continuousLinearMap_trivializationAt]
+  simp only [prodChartedSpace_chartAt,
+    LocalHomeomorph.trans_toLocalEquiv, LocalHomeomorph.prod_toLocalEquiv,
+    LocalHomeomorph.refl_localEquiv, LocalEquiv.trans_target, LocalEquiv.prod_target,
+    LocalEquiv.refl_target]
+  erw [hom_trivializationAt_target]
+  --simp [mfld_simps]
+  simp only [trivializationAt_pullBack_baseSet, TangentBundle.trivializationAt_baseSet]
+  rcases x₀ with ⟨⟨m, m'⟩, φ⟩
+  dsimp only
+  simp only [ContMDiffMap.coe_fst, ContMDiffMap.fst_apply, ContMDiffMap.coe_snd,
+    ContMDiffMap.snd_apply]
+
+  erw [prod_univ, inter_eq_left]
+  have := (chartAt H m).target_subset_preimage_source
+  have := (chartAt H' m').target_subset_preimage_source
   sorry
-  /- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_one_jet_bundle_target, mfld_simps]
-  simp_rw [prod_univ, preimage_inter, preimage_preimage, inter_eq_left_iff_subset, subset_inter_iff]
-  rw [← @preimage_preimage _ _ _ fun x ↦ (chartAt H x₀.proj.1).symm (Prod.fst x)]
+  /- --, preimage_inter, preimage_preimage, inter_eq_left, subset_inter_iff]
+
+
+  rw [← @preimage_preimage _ _ _ fun x ↦ (chartAt H m).symm (Prod.fst x)]
   rw [← @preimage_preimage _ _ _ fun x ↦ (chartAt H' x₀.proj.2).symm (Prod.snd x)]
   refine' ⟨preimage_mono _, preimage_mono _⟩
   · rw [← @preimage_preimage _ _ _ (chartAt H x₀.proj.1).symm]
@@ -543,18 +608,22 @@ theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
 
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_coe_chartAt (p : OneJetBundle I H I' H') :
-    ⇑(chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by
-  sorry
-  -- unfold_coes
-  -- simp only [mfld_simps]
+    (chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by
+  ext q e
+  · rfl
+  · rfl
+  · rw [oneJetBundle_chartAt_apply, TotalSpace.toProd_apply,
+        inCoordinates_tangent_bundle_core_model_space]
 
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
     ((chartAt 𝓜 p).symm : 𝓜 → OneJetBundle I H I' H') =
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm := by
-  sorry
-  -- unfold_coes
-  -- simp only [mfld_simps]
+  ext x
+  · rfl
+  · rfl
+  · rw [← LocalHomeomorph.coe_coe_symm, oneJetBundle_model_space_chartAt]
+    rfl
 
 variable (I I')
 
