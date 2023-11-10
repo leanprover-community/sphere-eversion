@@ -102,31 +102,26 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
     ((R.relativize IP P).slice σ p).Nonempty ↔ (R.relativize IP P).slice σ p = univ := by
-  sorry
-/-   -- for some reason this is needed
-  let this₁ :
-    Module ℝ
-      (((ContMDiffMap.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ (TangentSpace I'))
-        σ.1) :=
-    by infer_instance
   rcases σ with ⟨⟨⟨q, m⟩,m'⟩, φ⟩
-  beta_reduce at *
   have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
-  let T := @ContinuousLinearMap ℝ ℝ _ _ (RingHom.id ℝ) E _ _ _ _ _ _ this₁
-  let K := ((ContMDiffMap.fst : C^∞⟮(IP.prod I).prod I', (P × M) × M'; (IP.prod I), P × M⟯) *ᵖ (TangentSpace (IP.prod I))) ((q, m), m')
-  let T' := @ContinuousLinearMap ℝ ℝ _ _ (RingHom.id ℝ) K _ _ _ _ _ _ this₁
   have :
-    ∀ y : E', @Eq T ((p.update φ y).comp (ContinuousLinearMap.inr ℝ EP E)) (φ.comp (ContinuousLinearMap.inr ℝ EP E)) := by
+    ∀ y : E', (p.update φ y).comp (ContinuousLinearMap.inr ℝ EP E) = φ.comp (ContinuousLinearMap.inr ℝ EP E) := by
     intro y
     ext1 x
     erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
       p.update_ker_pi _ _ (h2p x)]
     rfl
-  simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize]
+  simp_rw [Set.Nonempty, eq_univ_iff_forall]
+  -- Porting note: those conv were not needed in Lean 3.
+  conv_lhs =>
+    congr
+    ext x
+    erw [mem_slice, R.mem_relativize, this]
+  conv_rhs =>
+    ext
+    erw [mem_slice, R.mem_relativize, this]
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
-  set φ := fun x : TangentSpace I' σ.proj.2 ↦ ((p.update σ.snd x).comp (ContinuousLinearMap.inr ℝ EP E))
-  change (∃ x, OneJetBundle.mk σ.proj.1.2 σ.proj.2 (φ x) ∈ R) ↔ _
-  simp [exists_const, forall_const] -/
+  simp [this, exists_const, forall_const]
 
 variable (IP P)
 
