@@ -102,18 +102,21 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
     ((R.relativize IP P).slice σ p).Nonempty ↔ (R.relativize IP P).slice σ p = univ := by
-  -- for some reason this is needed
+  sorry
+/-   -- for some reason this is needed
   let this₁ :
     Module ℝ
       (((ContMDiffMap.snd : C^∞⟮(IP.prod I).prod I', (P × M) × M'; I', M'⟯) *ᵖ (TangentSpace I'))
         σ.1) :=
     by infer_instance
-  sorry/- have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
+  rcases σ with ⟨⟨⟨q, m⟩,m'⟩, φ⟩
+  beta_reduce at *
+  have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
   let T := @ContinuousLinearMap ℝ ℝ _ _ (RingHom.id ℝ) E _ _ _ _ _ _ this₁
-  let K := ((ContMDiffMap.fst : C^∞⟮(IP.prod I).prod I', (P × M) × M'; (IP.prod I), P × M⟯) *ᵖ (TangentSpace (IP.prod I))) (σ.proj.1, σ.proj.2)
+  let K := ((ContMDiffMap.fst : C^∞⟮(IP.prod I).prod I', (P × M) × M'; (IP.prod I), P × M⟯) *ᵖ (TangentSpace (IP.prod I))) ((q, m), m')
   let T' := @ContinuousLinearMap ℝ ℝ _ _ (RingHom.id ℝ) K _ _ _ _ _ _ this₁
   have :
-    ∀ y : E', @Eq T ((p.update σ.snd y).comp (ContinuousLinearMap.inr ℝ EP E)) (σ.snd.comp (ContinuousLinearMap.inr ℝ EP E)) := by
+    ∀ y : E', @Eq T ((p.update φ y).comp (ContinuousLinearMap.inr ℝ EP E)) (φ.comp (ContinuousLinearMap.inr ℝ EP E)) := by
     intro y
     ext1 x
     erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
@@ -121,7 +124,7 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     rfl
   simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize]
   dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
-  let φ := fun x : TangentSpace I' σ.proj.2 ↦ ((p.update σ.snd x).comp (ContinuousLinearMap.inr ℝ EP E) : OneJetSpace _ _ _)
+  set φ := fun x : TangentSpace I' σ.proj.2 ↦ ((p.update σ.snd x).comp (ContinuousLinearMap.inr ℝ EP E))
   change (∃ x, OneJetBundle.mk σ.proj.1.2 σ.proj.2 (φ x) ∈ R) ↔ _
   simp [exists_const, forall_const] -/
 
@@ -146,11 +149,15 @@ variable {IP P}
 theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP P) {s : P}
     {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R := by
   simp_rw [RelMfld.relativize, mem_preimage, bundleSnd_eq, OneJetSec.coe_apply, mapLeft]
-  congr
-  sorry/- ext v
-  simp_rw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
+  dsimp
+  congr!
+  -- Porting note: we are missing an ext lemma here.
+  apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
+  change ((S.uncurry.ϕ (s, x)).comp (ContinuousLinearMap.inr ℝ EP E)) v = _
+  erw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
-    ContinuousLinearMap.coe_snd', ContinuousLinearMap.map_zero, zero_add, S.coe_ϕ] -/
+    ContinuousLinearMap.comp_apply]
+  simp [S.coe_ϕ]
 
 def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) :=
   by
@@ -178,9 +185,9 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
           (fun p : (N × P) × M => (S p.1.1).bs (p.1.2, p.2))
           (fun p : (N × P) × M => (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
         ((t, s), x) := by
-      sorry/- apply
+      apply
         (smoothAt_oneJetBundle.mp <|
-              SmoothAt.comp _ (S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2 -/
+              SmoothAt.comp ((t, s), x) (S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2
     have h2 :
       SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
         (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M => (p.1.2, p.2))
@@ -213,9 +220,7 @@ theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
 
 theorem FormalSol.eq_iff {F₁ F₂ : FormalSol R} {x : M} :
     F₁ x = F₂ x ↔ F₁.bs x = F₂.bs x ∧ F₁.ϕ x = by apply F₂.ϕ x := by
-  sorry/- simp_rw [Bundle.TotalSpace.ext_iff, FormalSol.fst_eq, heq_iff_eq, Prod.ext_iff, eq_self_iff_true,
-    true_and_iff]
-  rfl -/
+  simp [Bundle.TotalSpace.ext_iff, FormalSol.fst_eq, FormalSol.snd_eq]
 
 theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N)
     {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x :=
@@ -235,12 +240,13 @@ theorem FamilyOneJetSec.curry_mem (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
     {x : M} (hR : S p.1 (p.2, x) ∈ R.relativize IP P) : S.curry p x ∈ R := by
   simp_rw [RelMfld.relativize, mem_preimage, bundleSnd_eq, OneJetSec.coe_apply, mapLeft] at hR ⊢
   convert hR
-  sorry/- ext v
-  simp_rw [S.curry_ϕ'] -/
+  -- Porting note: we are missing an ext lemma here.
+  apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
+  simp_rw [S.curry_ϕ']
 
 def FamilyFormalSol.curry (S : FamilyFormalSol J N (R.relativize IP P)) :
     FamilyFormalSol (J.prod IP) (N × P) R :=
-  ⟨S.toFamilyOneJetSec.curry, fun p x => S.toFamilyOneJetSec.curry_mem S.is_sol⟩
+  ⟨S.toFamilyOneJetSec.curry, fun _p _x => S.toFamilyOneJetSec.curry_mem S.is_sol⟩
 
 theorem FamilyFormalSol.curry_ϕ' (S : FamilyFormalSol J N (R.relativize IP P)) (p : N × P) (x : M) :
     (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E :=
@@ -253,10 +259,10 @@ theorem curry_eq_iff_eq_uncurry {𝓕 : FamilyFormalSol J N (R.relativize IP P)}
   refine' ⟨h.1, _⟩
   simp_rw [𝓕.curry_ϕ', h.2, 𝓕₀.uncurry_ϕ']
   ext v
-  sorry /- simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
+  erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
-    ContinuousLinearMap.coe_snd', ContinuousLinearMap.map_zero, zero_add]
-  rfl -/
+    ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd', ContinuousLinearMap.map_zero,
+    zero_add]
 
 theorem RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith (R : RelMfld I M IX X) {C : Set (P × M)}
     (ε : M → ℝ) (h : (R.relativize IP P).SatisfiesHPrinciple C fun x => ε x.2) :
