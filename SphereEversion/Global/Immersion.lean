@@ -74,7 +74,10 @@ theorem immersionRel_open : IsOpen (immersionRel I M I' M') :=
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine' fun σ => (ψJ σ).open_target.inter _
   convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
-  · sorry -- ext; simp
+  · ext x
+    -- Porting note: `mem_prod` is a simp lemma, but the next line is still needed.
+    rw [mem_prod]
+    simp
   · infer_instance
   · infer_instance
 
@@ -82,7 +85,7 @@ theorem immersionRel_open : IsOpen (immersionRel I M I' M') :=
 theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I m}
     {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
     (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ : Set $ TM' m')ᶜ :=
-  sorry -- Set.ext_iff.mpr fun w => p.injective_update_iff hφ
+  Set.ext_iff.mpr fun _ ↦ p.injective_update_iff hφ
 
 theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample :=
   by
@@ -218,15 +221,12 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
     ext y
     simp [smoothStep.of_gt ht]
   ext v
-  sorry/- simp_rw [mfderiv_neg, ContinuousLinearMap.coe_comp', comp_app, ContinuousLinearMap.neg_apply,
-    smoothStep.of_gt ht]
-  rw [ω.rot_one]
-  rw [← range_mfderiv_coe_sphere x]
-  exact LinearMap.mem_range_self _ _ -/
+  erw [mfderiv_neg, ContinuousLinearMap.coe_comp', Function.comp_apply,
+       ContinuousLinearMap.neg_apply, smoothStep.of_gt ht]
+  rw [ω.rot_one] ; rfl
+  rw [← range_mfderiv_coe_sphere (n := 2) x]
+  exact LinearMap.mem_range_self _ _
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 theorem formalEversion_hol_near_zero_one :
     ∀ᶠ s : ℝ × 𝕊² near {0, 1} ×ˢ univ, (formalEversion E ω s.1).toOneJetSec.IsHolonomicAt s.2 :=
   by
@@ -240,7 +240,7 @@ theorem formalEversion_hol_near_zero_one :
     · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
     · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
   refine' eventually_of_mem this _
-  rintro ⟨t, x⟩ ⟨ht | ht, hx⟩
+  rintro ⟨t, x⟩ ⟨ht | ht, _hx⟩
   · exact formalEversionHolAtZero E ω ht x
   · exact formalEversionHolAtOne E ω ht x
 
@@ -256,8 +256,8 @@ theorem sphere_eversion :
   have rankE : finrank ℝ E = 3 := Fact.out
   haveI : FiniteDimensional ℝ E := finiteDimensional_of_finrank_eq_succ rankE
   have ineq_rank : finrank ℝ (EuclideanSpace ℝ (Fin 2)) < finrank ℝ E := by simp [rankE]
-  let ε : 𝕊² → ℝ := fun x => 1
-  have hε_pos : ∀ x, 0 < ε x := fun x => zero_lt_one
+  let ε : 𝕊² → ℝ := fun _ ↦ 1
+  have hε_pos : ∀ x, 0 < ε x := fun _ ↦ zero_lt_one
   have hε_cont : Continuous ε := continuous_const
   haveI : Nontrivial E := nontrivial_of_finrank_eq_succ (Fact.out : finrank ℝ E = 3)
   haveI : Nonempty (sphere 0 1 : Set E) :=
