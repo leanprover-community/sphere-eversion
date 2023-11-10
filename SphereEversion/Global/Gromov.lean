@@ -119,7 +119,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     let C := ⋃ j < i, L.φ j '' closedBall 0 1
     have hC :
       IsClosed C :=-- TODO: rewrite localization_data.is_closed_Union to match this.
-        (finite_Iio _).isClosed_biUnion fun j hj => (hK₀.image <| (L.φ j).continuous).isClosed
+        (finite_Iio _).isClosed_biUnion fun j _hj => (hK₀.image <| (L.φ j).continuous).isClosed
     simp only [P₀, forall_and] at hf₀
     rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A
@@ -153,7 +153,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     rcases(L.φ i).improve_formalSol (L.ψj i) hRample hRopen (hA.union hC) η_pos η_cont hFφψ hFAC hK₀
         hK₁ hK₀K₁ with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
-    refine' ⟨fun t x => F' t x, _, _, _, _, _, _⟩
+    refine' ⟨fun t x => F' t x, _, _, _, _, _, _⟩ ; all_goals beta_reduce
     · refine' fun t x => ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
@@ -175,19 +175,19 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       exact hF'hol
     · exact F'.smooth
     · intro t x hx
-      sorry/- rw [hF'K₁ t x ((mem_range_of_mem_image _ _).mt hx)]
-      simp [F] -/
+      rw [hF'K₁ t x ((mem_range_of_mem_image _ _).mt hx)]
+      simp [F]
     · apply hF'₀.mono fun x hx => ?_
-      sorry/- erw [hx]
+      erw [hx]
       ext1 y
-      simp [F] -/
+      simp [F]
     · apply hF'₁.mono fun x hx => ?_
-      sorry -- rw [hx]
+      rw [hx]
   rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init (𝓕₀.smooth.comp contMDiff_snd)
       ind with
     ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
   simp only [P₀, forall₂_and_distrib] at hFP₀
-  rcases hFP₀ with ⟨hF_sec, hF_sol, hF_smooth, hF_A, hF_dist⟩
+  rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
   refine' ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, _, _, _, _⟩
   · intro x
     rw [mkHtpyFormalSol_apply, hF₀]
