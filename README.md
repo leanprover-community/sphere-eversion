@@ -5,15 +5,14 @@ eversions. It was carried out by Patrick Massot, Floris van Doorn and Oliver
 Nash, with crucial help from the wider Lean community. The proof of the main theorem was completed on November 12th 2022.
 Details can be found on the [project website.](https://leanprover-community.github.io/sphere-eversion/)
 
+This project originally used Lean 3 but was ported to Lean 4 with crucial help from Yury Kudryashov.
+
 # Build the Lean files
 
 To build the Lean files of this project, you need to have a working version of Lean.
 See [the installation instructions](https://leanprover-community.github.io/get_started.html) (under Regular install).
 
-To obtain this repo, run `leanproject get sphere-eversion`. If you already have the repo, you can
-update it with `git pull` followed by `leanproject get-mathlib-cache`.
-
-To build the repo, run `leanproject build`.
+To build the project, run `lake exe cache get` and then `lake build`.
 
 # Build the blueprint
 
@@ -32,8 +31,8 @@ cd sphere-eversion
 
 To actually build the blueprint, run
 ```
-leanproject get-mathlib-cache
-leanproject build
+lake exe cache get
+lake build
 inv all
 ```
 
