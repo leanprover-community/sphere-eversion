@@ -146,6 +146,11 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
   simp_rw [RelMfld.relativize, mem_preimage, bundleSnd_eq, OneJetSec.coe_apply, mapLeft]
   dsimp
   congr!
+  -- Porting note: the next two let shouldn't be needed.
+  let _this₁ :
+    Module ℝ (((Prod.fst : M × M' → M) *ᵖ (TangentSpace I)) (x, (S s).bs x)) := by infer_instance
+  let _this₂ :
+    Module ℝ (((Prod.snd : M × M' → M') *ᵖ (TangentSpace I')) (x, (S s).bs x)) := by infer_instance
   -- Porting note: we are missing an ext lemma here.
   apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
   change ((S.uncurry.ϕ (s, x)).comp (ContinuousLinearMap.inr ℝ EP E)) v = _

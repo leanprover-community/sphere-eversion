@@ -268,8 +268,6 @@ lemma trivializationAt_pullBack_baseSet (f : K) (x : B') :
 end
 
 section
-#check ContMDiffMap.fst
-
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*}
 [NormedAddCommGroup E] [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
 {H : Type*} [TopologicalSpace H] {H' : Type*} [TopologicalSpace H']
@@ -296,39 +294,33 @@ lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
 
 end
 
+attribute [pp_dot] LocalHomeomorph.symm
+
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
   rw [FiberBundle.chartedSpace_chartAt]
-  --simp only [continuousLinearMap_trivializationAt]
   simp only [prodChartedSpace_chartAt,
     LocalHomeomorph.trans_toLocalEquiv, LocalHomeomorph.prod_toLocalEquiv,
     LocalHomeomorph.refl_localEquiv, LocalEquiv.trans_target, LocalEquiv.prod_target,
     LocalEquiv.refl_target]
   erw [hom_trivializationAt_target]
-  --simp [mfld_simps]
   simp only [trivializationAt_pullBack_baseSet, TangentBundle.trivializationAt_baseSet]
   rcases x₀ with ⟨⟨m, m'⟩, φ⟩
   dsimp only
   simp only [ContMDiffMap.coe_fst, ContMDiffMap.fst_apply, ContMDiffMap.coe_snd,
     ContMDiffMap.snd_apply]
-
-  erw [prod_univ, inter_eq_left]
-  have := (chartAt H m).target_subset_preimage_source
-  have := (chartAt H' m').target_subset_preimage_source
-  sorry
-  /- --, preimage_inter, preimage_preimage, inter_eq_left, subset_inter_iff]
-
-
-  rw [← @preimage_preimage _ _ _ fun x ↦ (chartAt H m).symm (Prod.fst x)]
-  rw [← @preimage_preimage _ _ _ fun x ↦ (chartAt H' x₀.proj.2).symm (Prod.snd x)]
-  refine' ⟨preimage_mono _, preimage_mono _⟩
-  · rw [← @preimage_preimage _ _ _ (chartAt H x₀.proj.1).symm]
-    refine' (prod_subset_preimage_fst _ _).trans (preimage_mono _)
-    exact (chartAt H x₀.proj.1).target_subset_preimage_source
-  · rw [← @preimage_preimage _ _ _ (chartAt H' x₀.proj.2).symm]
-    refine' (prod_subset_preimage_snd _ _).trans (preimage_mono _)
-    exact (chartAt H' x₀.proj.2).target_subset_preimage_source -/
+  erw [prod_univ, inter_eq_left, prod_univ, LocalEquiv.prod_symm, LocalEquiv.prod_symm]
+  rw [preimage_preimage, ← Set.prod_eq, LocalEquiv.refl_symm, LocalEquiv.prod_coe,
+      LocalEquiv.refl_coe]
+  dsimp only
+  have : (fun x : ModelProd (ModelProd H H') (E →SL[σ] E') ↦ ((chartAt H m).toLocalEquiv.symm.prod (chartAt H' m').toLocalEquiv.symm) x.1) =
+      (Prod.map (chartAt H m).symm (chartAt H' m').symm) ∘ Prod.fst := by
+    ext x <;> rfl
+  rw [this, preimage_comp, preimage_prod_map_prod]
+  mono
+  exact (chartAt H m).target_subset_preimage_source
+  exact (chartAt H' m').target_subset_preimage_source
 
 section Maps
 
@@ -608,7 +600,7 @@ theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
 
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_coe_chartAt (p : OneJetBundle I H I' H') :
-    (chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by
+    ⇑(chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by
   ext q e
   · rfl
   · rfl
