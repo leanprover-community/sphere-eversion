@@ -155,6 +155,15 @@ theorem ε_spec (ld : LocalisationData I I' f) :
       range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
   (localisation_stability ld).choose_spec.choose_spec.choose_spec
 
+theorem exists_stability_dist {f : M → M'} (hf : Continuous f) :
+    ∃ ε > (0 : M → ℝ), Continuous ε ∧
+      ∀ x : M,
+        ∃ φ : OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
+        ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
+          x ∈ range φ ∧
+          ∀ (g : M → M'), (∀ m, dist (g m) (f m) < ε m) → range (g ∘ φ) ⊆ range ψ := by
+  sorry
+
 end LocalisationData
 
 end
