@@ -376,4 +376,46 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     exact (h'F j (1, x) rfl hj).self_of_nhds
   · exact fun p ↦ (hF p).2.2
 
+theorem inductive_htpy_construction' {X Y : Type _}
+    [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
+    (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
+    (P₂ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop)
+    (hP₂ : ∀ (a b) (p : ℝ × X) (f : ℝ × X → Y), P₂ (a * p.1 + b, p.2) f →
+      P₂ p fun p : ℝ × X => f (a * p.1 + b, p.2))
+    (hP₂' : ∀ t x (f : X → Y), P₀ x f → P₂ (t, x) fun p : ℝ × X => f p.2)
+    {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
+    (ind : ∀ x, ∃ V ∈ 𝓝 x, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
+      ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
+      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
+        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x, x ∉ K₁ → F t x = f x) ∧
+          (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
+    ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
+  let P (V : Set X) : Prop :=  ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
+      ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
+      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
+        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x, x ∉ K₁ → F t x = f x) ∧
+          (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1
+  have P_anti : Antitone P := fun U V UV hV K₁ K₁U ↦ hV K₁ (K₁U.trans UV)
+  have P_empty : P ∅ := by
+    intro K₁ K₁V K₀ K₀K₁ _ _ C f _ hf hf'
+    have K₀_eq : K₀ = ∅ := subset_empty_iff.mp <| K₀K₁.trans interior_subset |>.trans K₁V
+    use fun _ x ↦ f x
+    simp [hf, hf', K₀_eq]
+    tauto
+  rcases exists_locallyFinite_subcover_of_locally isClosed_univ P_anti P_empty
+    (by simpa only [mem_univ, forall_true_left] using ind) with
+    ⟨K : IndexType 0 → Set X, W : IndexType 0 → Set X, K_cpct, W_op, hW, K_subW, W_fin, K_cover⟩
+  apply inductive_htpy_construction P₀ P₁ P₂ hP₂ W_fin (univ_subset_iff.mp K_cover) init
+    (fun ⟨t, x⟩ ↦  hP₂' t x f₀ (init x))
+  intro i f hf₀ hf₁
+  obtain ⟨K₁, K₁_cpct, KiK₁, K₁W⟩ : ∃ K₁, IsCompact K₁ ∧ K i ⊆ interior K₁ ∧ K₁ ⊆ W i :=
+    exists_compact_between (K_cpct i) (W_op i) (K_subW i)
+  rcases hW i K₁ K₁W (K i) KiK₁ (K_cpct i) K₁_cpct (⋃ j < i, K j) f
+    ((finite_lt_nat i).isClosed_biUnion fun j _ => (K_cpct j).isClosed) hf₀ hf₁
+    with ⟨F, hF₀, hF₁, hF₂, hFK₁, ht⟩
+  refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
+  apply hF₁.filter_mono
+  mono
+  rw [bUnion_le]
+  exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
 end Htpy
