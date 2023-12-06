@@ -98,20 +98,12 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
   rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
   exact Eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
 
-/-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
-and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
-statisfy `P₀` everywhere. The goal is to turn a map `f₀` satisfying `P₁` near a compact set `K` into
-one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
-* For every `x` in `X` there is a map which satisfies `P₁` near `x`
-* One can patch two maps `f₁ f₂` satisfying `P₁` on open sets `U₁` and `U₂` respectively
-  and such that `f₁` satisfies `P₀'` everywhere into a map satisfying `P₁` on `K₁ ∪ K₂` for any
-  compact sets `Kᵢ ⊆ Uᵢ` and `P₀'` everywhere. -/
-theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCompactSpace X]
+theorem inductive_construction_of_loc' {X Y : Type _} [EMetricSpace X] [LocallyCompactSpace X]
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
     (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
     (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y}, IsOpen U₁ → IsOpen U₂ →
-      IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
       (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
       ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
         (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
@@ -132,11 +124,11 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
         (∀ j ≤ i, ∀ x, RestrictGermPredicate P₁ (K j) x f') ∧ ∀ x, x ∉ U i → f' x = f x := by
     simp_rw [forall_restrictGermPredicate_iff, ← eventually_nhdsSet_iUnion₂]
     rintro (i : ℕ) f h₀f h₁f
-    have cpct : IsClosed (⋃ j < i, K j) :=
-      (finite_lt_nat i).isClosed_biUnion fun j _ => (K_cpct j).isClosed
+    have cpct : IsCompact (⋃ j < i, K j) :=
+      (finite_lt_nat i).isCompact_biUnion fun j _ ↦ K_cpct j
     rcases hU i with ⟨f', h₀f', h₁f'⟩
     rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
-    rcases ind V_op (U_op i) cpct (K_cpct i).isClosed hKV (hKU i) h₀f h₀f' h₁V h₁f' with
+    rcases ind V_op (U_op i) cpct (K_cpct i) hKV (hKU i) h₀f h₀f' h₁V h₁f' with
       ⟨F, h₀F, h₁F, hF⟩
     simp_rw [← bUnion_le] at h₁F
     exact ⟨F, h₀F, h₁F, fun x hx => hF.on_set x (Or.inr hx)⟩
@@ -148,6 +140,32 @@ theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCo
   refine' ⟨f, fun x => ⟨(h x).1, (h x).2, _⟩⟩
   rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
   exact (h' j x hj).self_of_nhds
+
+
+/-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
+and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
+statisfy `P₀` everywhere. The goal is to turn a map `f₀` satisfying `P₁` near a compact set `K` into
+one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
+* For every `x` in `X` there is a map which satisfies `P₁` near `x`
+* One can patch two maps `f₁ f₂` satisfying `P₁` on open sets `U₁` and `U₂` respectively
+  and such that `f₁` satisfies `P₀'` everywhere into a map satisfying `P₁` on `K₁ ∪ K₂` for any
+  compact sets `Kᵢ ⊆ Uᵢ` and `P₀'` everywhere. -/
+theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCompactSpace X]
+    [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
+    (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
+    (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
+    (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y}, IsOpen U₁ → IsOpen U₂ →
+      IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+      ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
+        (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
+    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f := by
+  apply inductive_construction_of_loc' P₀ P₀' P₁ hP₀f₀ loc
+  intro U₁ U₂ K₁ K₂ f₁ f₂ hU₁ hU₂ hK₁ hK₂
+  replace hK₁ := hK₁.isClosed
+  replace hK₂ := hK₂.isClosed
+  solve_by_elim
+
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
