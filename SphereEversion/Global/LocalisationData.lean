@@ -164,7 +164,13 @@ theorem _root_.exists_stability_dist {f : M → M'} (hf : Continuous f) :
         ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
           x ∈ range φ ∧
           ∀ (g : M → M'), (∀ m, dist (g m) (f m) < ε m) → range (g ∘ φ) ⊆ range ψ := by
-  sorry
+  let L := stdLocalisationData E I E' I' hf
+  use L.ε, L.ε_pos, L.ε_cont
+  intro x
+  rcases mem_iUnion.mp <| eq_univ_iff_forall.mp L.h₁ x with ⟨i, hi⟩
+  use L.φ i, L.ψj i, mem_range_of_mem_image (φ L i) _ hi, ?_
+  have := L.ε_spec
+  tauto
 
 end LocalisationData
 
