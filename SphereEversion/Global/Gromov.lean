@@ -35,12 +35,12 @@ local notation "J¹" => OneJetBundle IM M IX X
 
 def IsEmpty.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [IsEmpty X] [IsEmpty Y] : Homeomorph X Y where
-      toFun := isEmptyElim
-      invFun := isEmptyElim
-      left_inv := isEmptyElim
-      right_inv := isEmptyElim
-      continuous_toFun := continuous_empty_function _
-      continuous_invFun := continuous_empty_function _
+  toFun := isEmptyElim
+  invFun := isEmptyElim
+  left_inv := isEmptyElim
+  right_inv := isEmptyElim
+  continuous_toFun := continuous_empty_function _
+  continuous_invFun := continuous_empty_function _
 
 def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (hf : OpenEmbedding f) : Homeomorph X (range f) := by
@@ -50,11 +50,6 @@ def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpac
   rw [not_nonempty_iff] at hX
   have : IsEmpty (range f) := by rw [isEmpty_coe_sort, range_eq_empty f]
   exact IsEmpty.homeomorph
-
-@[simp]
-lemma Subtype.image_preimage_coe_eq_of_subset {α : Type*} {p : α → Prop} {s : Set α}
-    (h : s ⊆ {x | p x}) : ((↑) : Subtype p → α) '' (((↑) : Subtype p → α) ⁻¹' s) = s := by
-  rwa [image_preimage_eq_iff, Subtype.range_coe_subtype]
 
 lemma OpenEmbedding.isCompact_preimage {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (hf : OpenEmbedding f) {K : Set Y} (K_cpct: IsCompact K) (Kf : K ⊆ range f) :
