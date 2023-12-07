@@ -33,35 +33,23 @@ variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimen
 
 local notation "J¹" => OneJetBundle IM M IX X
 
+def IsEmpty.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [IsEmpty X] [IsEmpty Y] : Homeomorph X Y where
+      toFun := isEmptyElim
+      invFun := isEmptyElim
+      left_inv := isEmptyElim
+      right_inv := isEmptyElim
+      continuous_toFun := continuous_empty_function _
+      continuous_invFun := continuous_empty_function _
 
--- TODO: cleanup the following awful mess
-lemma OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    {f : X → Y} (hf : OpenEmbedding f) : Homeomorph X (range f) where
-  toFun := rangeFactorization f
-  invFun := Function.surjInv surjective_onto_range
-  left_inv  := by
-    apply Function.leftInverse_surjInv
-    exact ⟨fun  x x' h ↦  hf.inj <| by simpa [rangeFactorization] using h,  surjective_onto_range⟩
-  right_inv := Function.rightInverse_surjInv surjective_onto_range
-  continuous_toFun := continuous_induced_rng.mpr hf.continuous
-  continuous_invFun := by
-    dsimp
-    refine continuous_def.mpr ?_
-    intro U U_op
-    rw [← image_eq_preimage_of_inverse]
-    swap
-    apply Function.leftInverse_surjInv
-    exact ⟨fun  x x' h ↦  hf.inj <| by simpa [rangeFactorization] using h,  surjective_onto_range⟩
-    rw [isOpen_induced_iff]
-    use f '' U, hf.isOpenMap U U_op
-    ext ⟨y, x, rfl⟩
-    apply exists_congr
-    intro x'
-    apply and_congr Iff.rfl
-    conv_lhs => rw [← rangeFactorization_eq (f := f)]
-    erw [Subtype.val_inj]
-    rfl
-    exact Function.rightInverse_surjInv surjective_onto_range
+def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} (hf : OpenEmbedding f) : Homeomorph X (range f) := by
+  by_cases hX : Nonempty X
+  · exact (Homeomorph.Set.univ X).symm.trans <|
+      (hf.toLocalHomeomorph f).homeomorphOfImageSubsetSource Subset.rfl image_univ
+  rw [not_nonempty_iff] at hX
+  have : IsEmpty (range f) := by rw [isEmpty_coe_sort, range_eq_empty f]
+  exact IsEmpty.homeomorph
 
 @[simp]
 lemma Subtype.image_preimage_coe_eq_of_subset {α : Type*} {p : α → Prop} {s : Set α}
@@ -71,16 +59,7 @@ lemma Subtype.image_preimage_coe_eq_of_subset {α : Type*} {p : α → Prop} {s 
 lemma OpenEmbedding.isCompact_preimage {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (hf : OpenEmbedding f) {K : Set Y} (K_cpct: IsCompact K) (Kf : K ⊆ range f) :
     IsCompact (f ⁻¹' K) := by
-  let K' : Set (range f) := {x | (x : Y) ∈ K}
-  have K'_cpct : IsCompact K':= by
-    rw [← Subtype.image_preimage_coe_eq_of_subset Kf] at K_cpct
-    exact Subtype.isCompact_iff.mpr K_cpct
-  convert hf.homeomorph.isCompact_preimage.mpr K'_cpct
-  ext x
-  change f x ∈ K ↔ ↑(hf.homeomorph x) ∈ K
-  unfold OpenEmbedding.homeomorph
-  simp only [Homeomorph.homeomorph_mk_coe, Equiv.coe_fn_mk, rangeFactorization_coe]
-
+  rwa [hf.toInducing.isCompact_iff, image_preimage_eq_of_subset Kf]
 
 theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen R) (hA : IsClosed A)
     (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by
