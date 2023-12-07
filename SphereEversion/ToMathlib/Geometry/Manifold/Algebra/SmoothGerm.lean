@@ -172,7 +172,6 @@ def Filter.Germ.valueₛₗ {F} [AddCommMonoid F] [Module ℝ F] (x : N) :
 
 variable (I)
 
--- currently unused
 protected def Filter.Germ.ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : ℕ∞) : Prop :=
   Quotient.liftOn' φ (fun f => ContMDiffAt I IG n f x) fun f g h =>
     propext <| by
