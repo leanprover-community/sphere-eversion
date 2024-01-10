@@ -71,21 +71,21 @@ def EventuallyConstant (g : α → β) (f : Filter α) : Prop :=
   ∃ y : β, ∀ᶠ x in f, g x = y
 
 theorem eventuallyConstant_iff_tendsto : EventuallyConstant g f ↔ ∃ x : β, Tendsto g f (pure x) :=
-  by simp_rw [eventually_constant, tendsto_pure]
+  by simp_rw [EventuallyConstant, tendsto_pure]
 
 theorem EventuallyConstant.nonempty (h : EventuallyConstant g f) : Nonempty β :=
   nonempty_of_exists h
 
 theorem eventuallyConstant_const (y₀ : β) : EventuallyConstant (fun x => y₀) f :=
-  ⟨y₀, eventually_of_forall fun x => rfl⟩
+  ⟨y₀, eventually_of_forall fun _ => rfl⟩
 
 theorem eventuallyConstant_of_unique [Unique β] : EventuallyConstant g f :=
-  ⟨default, eventually_of_forall fun x => Unique.uniq _ _⟩
+  ⟨default, eventually_of_forall fun _ => Unique.uniq _ _⟩
 
 theorem eventuallyConstant_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ i, ∀ j, i ≤ j → g j = g i) ↔ EventuallyConstant g atTop :=
   by
-  simp_rw [eventually_constant, eventually_atTop]
+  simp_rw [EventuallyConstant, eventually_atTop]
   constructor
   · rintro ⟨i, hi⟩; refine' ⟨g i, i, hi⟩
   · rintro ⟨y, i, hi⟩; use i; simp_rw [hi i le_rfl]; exact hi
@@ -93,7 +93,7 @@ theorem eventuallyConstant_atTop [SemilatticeSup α] [Nonempty α] :
 theorem eventuallyConstant_atTop_nat {g : ℕ → α} :
     (∃ n, ∀ m, n ≤ m → g (m + 1) = g m) ↔ EventuallyConstant g atTop :=
   by
-  rw [← eventually_constant_atTop]
+  rw [← eventuallyConstant_atTop]
   apply exists_congr; intro n
   constructor
   · intro h m hm; induction' hm with m hm ih; rfl; rw [Nat.succ_eq_add_one, h m hm, ih]
@@ -204,7 +204,7 @@ theorem EventuallyConstantOn.nonempty (hg : EventuallyConstantOn g f O) (hx : x 
 
 theorem eventuallyConstantOn_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ x, ∀ x', x ≤ x' → ∀ y ∈ O, g x' y = g x y) ↔ EventuallyConstantOn g atTop O := by
-  simp_rw [EventuallyConstantOn, ← eventually_constant_atTop, restrict_eq_restrict_iff, eq_on]
+  simp_rw [EventuallyConstantOn, ← eventuallyConstant_atTop, restrict_eq_restrict_iff, eq_on]
 
 theorem EventuallyConstantOn.exists_eventualValue_eq [f.ne_bot] (hg : EventuallyConstantOn g f O) :
     ∃ i, ∀ (x) (hx : x ∈ O), @eventualValue _ _ (hg.Nonempty hx) (fun n => g n x) f = g i x := by
@@ -254,7 +254,7 @@ theorem LocallyEventuallyConstantOn.exists_nhdsSet_of_isCompact
     (hgf : LocallyEventuallyConstantOn g f U) {K : Set β} (hK : IsCompact K) (hKU : K ⊆ U) :
     ∃ O ∈ 𝓝ˢ K, EventuallyConstantOn g f O :=
   by
-  refine' IsCompact.induction_on hK ⟨∅, mem_nhdsSet_empty, eventually_constant_of_unique⟩ _ _ _
+  refine' IsCompact.induction_on hK ⟨∅, mem_nhdsSet_empty, eventuallyConstant_of_unique⟩ _ _ _
   · rintro s t hst ⟨O, hO, hgO⟩; refine' ⟨O, _, hgO⟩; exact monotone_nhdsSet hst hO
   · rintro s t ⟨O, hO, y, hgO⟩ ⟨O', hO', y', hgO'⟩
     refine' ⟨O ∪ O', union_mem_nhdsSet hO hO', union_elim y y', _⟩
@@ -280,4 +280,3 @@ theorem LocallyEventuallyConstantOn.eventually_constant_nhd
   Classical.choose_spec <| Classical.choose_spec <| hgf x hx
 
 end LocallyEventuallyConstant
-

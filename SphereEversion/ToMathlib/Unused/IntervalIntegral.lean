@@ -33,7 +33,7 @@ theorem intervalIntegrable_of_nonneg_of_le {f g : ℝ → ℝ} {μ : Measure ℝ
     IntervalIntegrable f μ a b :=
   by
   rw [intervalIntegrable_iff] at *
-  apply integrable.mono' hg hf (h.mono _)
+  apply Integrable.mono' hg hf (h.mono _)
   rintro t ⟨H, H'⟩
   change abs (f t) ≤ _
   rwa [abs_of_nonneg H]
@@ -91,7 +91,7 @@ open intervalIntegral
 theorem norm_intervalIntegral_eq (f : ℝ → E) (a b : ℝ) (μ : Measure ℝ) :
     ‖∫ x in a..b, f x ∂μ‖ = ‖∫ x in Ι a b, f x ∂μ‖ :=
   by
-  simp_rw [interval_integral_eq_integral_uIoc, norm_smul]
+  simp_rw [intervalIntegral_eq_integral_uIoc, norm_smul]
   split_ifs <;> simp only [norm_neg, norm_one, one_mul]
 
 end

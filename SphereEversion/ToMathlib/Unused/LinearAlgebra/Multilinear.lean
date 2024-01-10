@@ -91,4 +91,3 @@ def zero_coprod_zero :
   ext; simp
 
 end ContinuousMultilinearMap
-
