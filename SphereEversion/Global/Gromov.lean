@@ -6,6 +6,7 @@ import SphereEversion.InductiveConstructions
 import SphereEversion.Global.ParametricityForFree
 import SphereEversion.Global.LocalizedConstruction
 import SphereEversion.Global.LocalisationData
+import Mathlib.Topology.Homeomorph
 
 /-!
 # Gromov's theorem
@@ -33,15 +34,6 @@ variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimen
 
 local notation "J¹" => OneJetBundle IM M IX X
 
-def IsEmpty.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    [IsEmpty X] [IsEmpty Y] : Homeomorph X Y where
-  toFun := isEmptyElim
-  invFun := isEmptyElim
-  left_inv := isEmptyElim
-  right_inv := isEmptyElim
-  continuous_toFun := continuous_empty_function _
-  continuous_invFun := continuous_empty_function _
-
 def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (hf : OpenEmbedding f) : Homeomorph X (range f) := by
   by_cases hX : Nonempty X
@@ -49,7 +41,7 @@ def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpac
       (hf.toPartialHomeomorph f).homeomorphOfImageSubsetSource Subset.rfl image_univ
   rw [not_nonempty_iff] at hX
   have : IsEmpty (range f) := by rw [isEmpty_coe_sort, range_eq_empty f]
-  exact IsEmpty.homeomorph
+  exact Homeomorph.empty
 
 lemma OpenEmbedding.isCompact_preimage {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (hf : OpenEmbedding f) {K : Set Y} (K_cpct: IsCompact K) (Kf : K ⊆ range f) :
