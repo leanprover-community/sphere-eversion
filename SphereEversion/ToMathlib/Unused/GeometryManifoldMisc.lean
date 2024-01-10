@@ -250,7 +250,7 @@ attribute [mfld_simps] mem_insert_iff
 --     (range I) (extChartAt I (g x₀) (g ((extChartAt J x₀).symm x'))))
 --     ((extChartAt J x₀).symm ⁻¹' s ∩ range J) (extChartAt J x₀ x₀),
 --   { rw [cont_mdiff_within_at_iff] at hf hg,
---     simp_rw [function.comp, uncurry, extChartAt_prod, local_equiv.prod_coe_symm] at hf ⊢,
+--     simp_rw [function.comp, uncurry, extChartAt_prod, PartialEquiv.prod_coe_symm] at hf ⊢,
 --     refine (contDiffWithinAt_fderivWithin _
 --       (hg.2.insert.mono_of_mem _) I.unique_diff hmn _ _ _ _).mono_of_mem _,
 --     swap 3,
@@ -262,7 +262,7 @@ attribute [mfld_simps] mem_insert_iff
 --       -- exact inter_subset_inter_right _ (extChartAt_target_subset_range J x₀)
 --       },
 --     { simp_rw [mem_inter_iff, mem_preimage, extChartAt_to_inv],
---       exact ⟨⟨hx₀, local_equiv.maps_to _ (mem_ext_chart_source J x₀)⟩,
+--       exact ⟨⟨hx₀, PartialEquiv.maps_to _ (mem_ext_chart_source J x₀)⟩,
 --         mem_ext_chart_source I (g x₀)⟩ },
 --     { simp_rw [model_with_corners.range_prod],
 --       rw [inter_assoc, inter_prod],
@@ -325,10 +325,10 @@ attribute [mfld_simps] mem_insert_iff
 --   sorry,
 --   -- rw [(h2x₂.mdifferentiable_at le_rfl).mfderiv],
 --   -- have hI := (contDiffWithinAt_ext_coord_change I (g x₂) (g x₀) $
---   --   local_equiv.mem_symm_trans_source _ hx₂ $ mem_ext_chart_source I (g x₂))
+--   --   PartialEquiv.mem_symm_trans_source _ hx₂ $ mem_ext_chart_source I (g x₂))
 --   --   .differentiable_within_at le_top,
 --   -- have hI' := (contDiffWithinAt_ext_coord_change I' (f x₀ (g x₀)) (f x₂ (g x₂)) $
---   --   local_equiv.mem_symm_trans_source _
+--   --   PartialEquiv.mem_symm_trans_source _
 --   --   (mem_ext_chart_source I' (f x₂ (g x₂))) h3x₂).differentiable_within_at le_top,
 --   -- have h3f := (h2x₂.mdifferentiable_at le_rfl).2,
 --   -- refine fderiv_within.comp₃ _ hI' h3f hI _ _ _ _ (I.unique_diff _ $ mem_range_self _),
@@ -400,4 +400,3 @@ theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     Trivialization.continuousLinearMapAt_apply, e'.coe_linear_map_at_of_mem h2x]
 
 end SmoothManifoldWithCorners
-

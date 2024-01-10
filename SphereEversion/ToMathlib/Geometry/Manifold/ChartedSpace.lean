@@ -1,5 +1,5 @@
 import Mathlib.Geometry.Manifold.ChartedSpace
-import SphereEversion.ToMathlib.Topology.LocalHomeomorph
+import SphereEversion.ToMathlib.Topology.PartialHomeomorph
 
 namespace ChartedSpace
 

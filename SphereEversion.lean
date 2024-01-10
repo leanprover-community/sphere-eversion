@@ -66,11 +66,11 @@ import SphereEversion.ToMathlib.Topology.Algebra.Module
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
 import SphereEversion.ToMathlib.Topology.Germ
 import SphereEversion.ToMathlib.Topology.HausdorffDistance
-import SphereEversion.ToMathlib.Topology.LocalHomeomorph
 import SphereEversion.ToMathlib.Topology.LocallyFinite
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.NhdsSet
 import SphereEversion.ToMathlib.Topology.Paracompact
+import SphereEversion.ToMathlib.Topology.PartialHomeomorph
 import SphereEversion.ToMathlib.Topology.PartitionOfUnity
 import SphereEversion.ToMathlib.Topology.Path
 import SphereEversion.ToMathlib.Topology.Periodic

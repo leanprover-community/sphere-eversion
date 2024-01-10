@@ -572,7 +572,7 @@ theorem smooth_bundleSnd :
 end Maps
 
 -- move
-theorem localEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (h1 : ∀ x, f x = e x)
+theorem partialEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (h1 : ∀ x, f x = e x)
     (h2 : f.source = univ) (h3 : f.target = univ) : f = e.toPartialEquiv := by
   refine' PartialEquiv.ext h1 (fun y ↦ _) h2
   conv_rhs => rw [← f.right_inv ((Set.ext_iff.mp h3 y).mpr (mem_univ y)), h1]
@@ -584,9 +584,8 @@ local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 between a product type and a bundle total space type, a.k.a. ` bundle.total_space.to_prod`. -/
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
-    (chartAt 𝓜 p).toPartialEquiv = (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv :=
-  by
-  apply localEquiv_eq_equiv
+    (chartAt 𝓜 p).toPartialEquiv = (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv := by
+  apply partialEquiv_eq_equiv
   · intro x
     rw [PartialHomeomorph.coe_coe, oneJetBundle_chartAt_apply p x,
       inCoordinates_tangent_bundle_core_model_space]
@@ -620,7 +619,7 @@ theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
 variable (I I')
 
 -- note: this proof works for all vector bundles where we have proven
--- `∀ p, chartAt _ p = f.to_local_equiv`
+-- `∀ p, chartAt _ p = f.toPartialEquiv`
 /-- The canonical identification between the one_jet bundle to the model space and the product,
 as a homeomorphism -/
 def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
