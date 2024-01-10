@@ -1,4 +1,4 @@
-import Mathlib.Geometry.Manifold.ContMDiff
+import Mathlib.Geometry.Manifold.ContMDiff.Basic
 
 open scoped Topology Filter Manifold BigOperators
 
@@ -22,4 +22,3 @@ theorem contMDiffAt_of_not_mem {f : M → F} {x : M} (hx : x ∉ tsupport f) (n 
   contMDiffWithinAt_of_not_mem hx n univ
 
 end
-

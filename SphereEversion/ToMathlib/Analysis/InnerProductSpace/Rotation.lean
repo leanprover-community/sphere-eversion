@@ -13,8 +13,6 @@ import SphereEversion.ToMathlib.Analysis.ContDiff
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
 
-local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y) -- See issue #2220
-
 /-! # Rotation about an axis, considered as a function in that axis -/
 
 
@@ -174,13 +172,13 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
     · rw [← H]
       norm_num
     · nlinarith
-  replace hy := hy this.ne'
-  exact norm_eq_zero.mp (pow_eq_zero hy)
-  rw [inner_smul_left, inner_smul_right]
-  have := inner_crossProduct_apply_apply_self ω x ⟨y, hy'⟩
-  change ⟪x×₃y, y⟫ = 0 at this
-  rw [real_inner_comm, this]
-  simp
+  · sorry /- TODO-BUMP replace hy := hy this.ne'
+    exact norm_eq_zero.mp (pow_eq_zero hy) -/
+  · rw [inner_smul_left, inner_smul_right]
+    have := inner_crossProduct_apply_apply_self ω x ⟨y, hy'⟩
+    change ⟪x×₃y, y⟫ = 0 at this
+    rw [real_inner_comm, this]
+    simp
 
 theorem injOn_rot (t : ℝ) (x : Metric.sphere (0 : E) 1) : Set.InjOn (ω.rot (t, x)) (ℝ ∙ (x : E))ᗮ :=
   by

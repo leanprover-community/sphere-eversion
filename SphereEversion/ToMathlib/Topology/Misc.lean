@@ -33,7 +33,7 @@ theorem Function.LeftInverse.image_eq (hfg : LeftInverse g f) (s : Set α) :
 
 theorem Function.LeftInverse.isOpenMap {f : α → β} {g : β → α} (hfg : LeftInverse g f)
     (hf : IsOpen (range f)) (hg : ContinuousOn g (range f)) : IsOpenMap f := fun U hU ↦ by
-  rw [hfg.image_eq]; exact hg.preimage_open_of_open hf hU
+  rw [hfg.image_eq]; exact hg.isOpen_inter_preimage hf hU
 
 end Maps
 

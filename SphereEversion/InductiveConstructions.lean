@@ -14,8 +14,6 @@ open Set Filter Prod TopologicalSpace Function
 
 open scoped Topology unitInterval
 
-local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y) -- See Lean 4 issue #2220
-
 /-!
 Notes by Patrick:
 

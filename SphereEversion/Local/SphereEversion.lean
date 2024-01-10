@@ -282,8 +282,6 @@ theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) :
   refine' ContDiffAt.smul (contDiffAt_const.mul contDiffAt_fst) _
   exact (contDiffAt_orthogonalProjection_singleton hx).comp p contDiffAt_snd
 
-local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y)  -- See issue #2220
-
 /-- A formal eversion of `𝕊²`, viewed as a homotopy. -/
 def locFormalEversionAux : HtpyJetSec E E
     where

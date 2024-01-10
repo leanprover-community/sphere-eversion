@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Calculus.ContDiff
+import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 import Mathlib.LinearAlgebra.Dual
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm

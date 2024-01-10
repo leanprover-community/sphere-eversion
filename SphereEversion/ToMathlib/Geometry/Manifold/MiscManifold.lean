@@ -24,7 +24,7 @@ variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddC
   [ChartedSpace G' N'] {F'' : Type _} [NormedAddCommGroup F''] [NormedSpace 𝕜 F''] {E'' : Type _}
   [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type _} [TopologicalSpace H'']
   {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type _} [TopologicalSpace M''] [ChartedSpace H'' M'']
-  {e : LocalHomeomorph M H}
+  {e : PartialHomeomorph M H}
 
 variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
 
@@ -54,4 +54,3 @@ theorem ContMDiffWithinAt.congr_of_eventuallyEq_insert {f f' : M → M'}
     h.self_of_nhdsWithin (mem_insert x s)
 
 end SmoothManifoldWithCorners
-

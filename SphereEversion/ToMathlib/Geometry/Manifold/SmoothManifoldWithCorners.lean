@@ -53,12 +53,12 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
     · suffices m ⊆ s j by
         refine' Subset.trans _ this
         convert monotone_image (f := (extChartAt I x).symm) hr₁
-        exact (LocalEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
+        exact (PartialEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
       exact (Set.inter_subset_left _ _).trans (Set.inter_subset_left _ _)
     · suffices m ⊆ n by
         refine' Subset.trans _ this
         convert monotone_image (f := (extChartAt I x).symm) hr₁
-        exact (LocalEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
+        exact (PartialEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
       exact (Set.inter_subset_left _ _).trans (Set.inter_subset_right _ _)
   · rintro ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩
     replace hr₀ : Metric.ball (extChartAt I x x) r ∈ 𝓝 (extChartAt I x x) := ball_mem_nhds _ hr₀

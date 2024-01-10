@@ -46,7 +46,7 @@ def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpac
     {f : X → Y} (hf : OpenEmbedding f) : Homeomorph X (range f) := by
   by_cases hX : Nonempty X
   · exact (Homeomorph.Set.univ X).symm.trans <|
-      (hf.toLocalHomeomorph f).homeomorphOfImageSubsetSource Subset.rfl image_univ
+      (hf.toPartialHomeomorph f).homeomorphOfImageSubsetSource Subset.rfl image_univ
   rw [not_nonempty_iff] at hX
   have : IsEmpty (range f) := by rw [isEmpty_coe_sort, range_eq_empty f]
   exact IsEmpty.homeomorph

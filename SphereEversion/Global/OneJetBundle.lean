@@ -229,18 +229,18 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
   -- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_one_jet_bundle_source, mfld_simps]
   rw [FiberBundle.chartedSpace_chartAt]
   simp_rw [
-    LocalHomeomorph.trans_toLocalEquiv,
-    LocalEquiv.trans_source,
-    LocalHomeomorph.prod_toLocalEquiv,
-    LocalEquiv.prod_source,
-    LocalHomeomorph.coe_coe,
+    PartialHomeomorph.trans_toPartialEquiv,
+    PartialEquiv.trans_source,
+    PartialHomeomorph.prod_toPartialEquiv,
+    PartialEquiv.prod_source,
+    PartialHomeomorph.coe_coe,
     Trivialization.coe_coe,
-    LocalHomeomorph.refl_localEquiv,
-    LocalEquiv.refl_source,
+    PartialHomeomorph.refl_localEquiv,
+    PartialEquiv.refl_source,
     prodChartedSpace_chartAt,
-    LocalHomeomorph.prod_toLocalEquiv,
+    PartialHomeomorph.prod_toPartialEquiv,
     trivializationAt_one_jet_bundle_source,
-    LocalEquiv.prod_source,
+    PartialEquiv.prod_source,
     Set.preimage_inter]
   simp_rw [prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
     subset_def, mem_preimage]
@@ -248,7 +248,7 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
   rwa [Trivialization.coe_fst]
   rwa [trivializationAt_one_jet_bundle_source, mem_preimage, ← Set.prod_eq]
 
-attribute [pp_dot] LocalEquiv.target LocalEquiv.symm LocalEquiv.prod
+attribute [pp_dot] PartialEquiv.target PartialEquiv.symm PartialEquiv.prod
 
 section
 
@@ -294,27 +294,27 @@ lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
 
 end
 
-attribute [pp_dot] LocalHomeomorph.symm
+attribute [pp_dot] PartialHomeomorph.symm
 
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
   rw [FiberBundle.chartedSpace_chartAt]
   simp only [prodChartedSpace_chartAt,
-    LocalHomeomorph.trans_toLocalEquiv, LocalHomeomorph.prod_toLocalEquiv,
-    LocalHomeomorph.refl_localEquiv, LocalEquiv.trans_target, LocalEquiv.prod_target,
-    LocalEquiv.refl_target]
+    PartialHomeomorph.trans_toPartialEquiv, PartialHomeomorph.prod_toPartialEquiv,
+    PartialHomeomorph.refl_localEquiv, PartialEquiv.trans_target, PartialEquiv.prod_target,
+    PartialEquiv.refl_target]
   erw [hom_trivializationAt_target]
   simp only [trivializationAt_pullBack_baseSet, TangentBundle.trivializationAt_baseSet]
   rcases x₀ with ⟨⟨m, m'⟩, φ⟩
   dsimp only
   simp only [ContMDiffMap.coe_fst, ContMDiffMap.fst_apply, ContMDiffMap.coe_snd,
     ContMDiffMap.snd_apply]
-  erw [prod_univ, inter_eq_left, prod_univ, LocalEquiv.prod_symm, LocalEquiv.prod_symm]
-  rw [preimage_preimage, ← Set.prod_eq, LocalEquiv.refl_symm, LocalEquiv.prod_coe,
-      LocalEquiv.refl_coe]
+  erw [prod_univ, inter_eq_left, prod_univ, PartialEquiv.prod_symm, PartialEquiv.prod_symm]
+  rw [preimage_preimage, ← Set.prod_eq, PartialEquiv.refl_symm, PartialEquiv.prod_coe,
+      PartialEquiv.refl_coe]
   dsimp only
-  have : (fun x : ModelProd (ModelProd H H') (E →SL[σ] E') ↦ ((chartAt H m).toLocalEquiv.symm.prod (chartAt H' m').toLocalEquiv.symm) x.1) =
+  have : (fun x : ModelProd (ModelProd H H') (E →SL[σ] E') ↦ ((chartAt H m).toPartialEquiv.symm.prod (chartAt H' m').toPartialEquiv.symm) x.1) =
       (Prod.map (chartAt H m).symm (chartAt H' m').symm) ∘ Prod.fst := by
     ext x <;> rfl
   rw [this, preimage_comp, preimage_prod_map_prod]
@@ -459,12 +459,12 @@ theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, One
   -- Porting note: next 5 lines should be
   -- `simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
   --           ContinuousLinearMap.comp_add]
-  simp_rw [inTangentCoordinates, inCoordinates]
+  sorry /- TODO-BUMP simp_rw [inTangentCoordinates, inCoordinates]
   conv =>
     enter [3, x, 2]
     rw [ContinuousLinearMap.add_comp]
   simp only [ContinuousLinearMap.comp_add]
-  exact hϕ.2.2.add hϕ'.2.2
+  exact hϕ.2.2.add hϕ'.2.2 -/
 
 variable (I' J')
 
@@ -572,9 +572,9 @@ theorem smooth_bundleSnd :
 end Maps
 
 -- move
-theorem localEquiv_eq_equiv {α β} {f : LocalEquiv α β} {e : α ≃ β} (h1 : ∀ x, f x = e x)
-    (h2 : f.source = univ) (h3 : f.target = univ) : f = e.toLocalEquiv := by
-  refine' LocalEquiv.ext h1 (fun y ↦ _) h2
+theorem localEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (h1 : ∀ x, f x = e x)
+    (h2 : f.source = univ) (h3 : f.target = univ) : f = e.toPartialEquiv := by
+  refine' PartialEquiv.ext h1 (fun y ↦ _) h2
   conv_rhs => rw [← f.right_inv ((Set.ext_iff.mp h3 y).mpr (mem_univ y)), h1]
   exact (e.left_inv _).symm
 
@@ -584,18 +584,18 @@ local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 between a product type and a bundle total space type, a.k.a. ` bundle.total_space.to_prod`. -/
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
-    (chartAt 𝓜 p).toLocalEquiv = (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toLocalEquiv :=
+    (chartAt 𝓜 p).toPartialEquiv = (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv :=
   by
   apply localEquiv_eq_equiv
   · intro x
-    rw [LocalHomeomorph.coe_coe, oneJetBundle_chartAt_apply p x,
+    rw [PartialHomeomorph.coe_coe, oneJetBundle_chartAt_apply p x,
       inCoordinates_tangent_bundle_core_model_space]
     ext <;> rfl
   · simp_rw [oneJetBundle_chart_source, prodChartedSpace_chartAt, chartAt_self_eq,
-      LocalHomeomorph.refl_prod_refl]
+      PartialHomeomorph.refl_prod_refl]
     rfl
   · simp_rw [oneJetBundle_chart_target, prodChartedSpace_chartAt, chartAt_self_eq,
-      LocalHomeomorph.refl_prod_refl]
+      PartialHomeomorph.refl_prod_refl]
     rfl
 
 @[simp, mfld_simps]
@@ -614,7 +614,7 @@ theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
   ext x
   · rfl
   · rfl
-  · rw [← LocalHomeomorph.coe_coe_symm, oneJetBundle_model_space_chartAt]
+  · rw [← PartialHomeomorph.coe_coe_symm, oneJetBundle_model_space_chartAt]
     rfl
 
 variable (I I')
@@ -630,7 +630,7 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
       have : Continuous (chartAt 𝓜 p) :=
         by
         rw [continuous_iff_continuousOn_univ]
-        convert LocalHomeomorph.continuousOn _
+        convert PartialHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this
     continuous_invFun := by
@@ -638,7 +638,7 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
       have : Continuous (chartAt 𝓜 p).symm :=
         by
         rw [continuous_iff_continuousOn_univ]
-        convert LocalHomeomorph.continuousOn _
+        convert PartialHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this }
 

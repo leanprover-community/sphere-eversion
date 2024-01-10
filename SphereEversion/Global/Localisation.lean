@@ -42,12 +42,12 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     rw [contDiff_iff_contDiffAt]
     intro x₀
     have : SmoothAt _ _ _ _ := F.smooth x₀
-    simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
+    sorry /- TODO-BUMP simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this
     dsimp only [TangentSpace] at this
     simp_rw [ContinuousLinearMap.id_comp] at this
-    exact this.2.2.contDiffAt
+    exact this.2.2.contDiffAt -/
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
     F.loc.IsHolonomicAt x ↔ F.IsHolonomicAt x :=
@@ -113,12 +113,12 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
       ⟨smoothAt_snd,
         (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd), _⟩
     dsimp [inTangentCoordinates, inCoordinates, chartAt]
-    simp only [range_id, fderivWithin_univ, fderiv_id, TangentBundle.symmL_model_space,
+    sorry /- TODO-BUMP simp only [range_id, fderivWithin_univ, fderiv_id, TangentBundle.symmL_model_space,
       TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
       ContinuousLinearMap.comp_id]
     dsimp only [TangentSpace]
     simp_rw [ContinuousLinearMap.id_comp]
-    exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd)
+    exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd) -/
 
 end Unloc
 

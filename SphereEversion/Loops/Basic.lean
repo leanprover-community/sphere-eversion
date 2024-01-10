@@ -1,6 +1,6 @@
 import Mathlib.Analysis.NormedSpace.AddTorsorBases
 import Mathlib.Analysis.Convex.Caratheodory
-import Mathlib.Analysis.Calculus.ContDiff
+import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Topology.Algebra.Order.Floor

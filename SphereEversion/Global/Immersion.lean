@@ -64,7 +64,7 @@ theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ 
 
 theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
     ψJ σ '' ((ψJ σ).source ∩ immersionRel I M I' M') = (ψJ σ).target ∩ {q : HJ | Injective q.2} :=
-  LocalEquiv.IsImage.image_eq fun _σ' hσ' => (mem_immersionRel_iff' I I' hσ').symm
+  PartialEquiv.IsImage.image_eq fun _σ' hσ' => (mem_immersionRel_iff' I I' hσ').symm
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 

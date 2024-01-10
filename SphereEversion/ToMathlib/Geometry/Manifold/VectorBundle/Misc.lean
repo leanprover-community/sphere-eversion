@@ -16,7 +16,7 @@ import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 
 noncomputable section
 
-open Bundle Set TopologicalSpace LocalHomeomorph
+open Bundle Set TopologicalSpace PartialHomeomorph
 
 open scoped Classical Manifold Bundle
 
@@ -140,7 +140,7 @@ theorem pullback_symm (e : Trivialization F (π F E)) (x : B') :
   ext y
   simp_rw [Trivialization.symm, Pretrivialization.symm]
   congr; ext (hx : f x ∈ e.toPretrivialization.baseSet)
-  change cast _ (e.symm (f x) y) = cast _ (e.toLocalHomeomorph.symm (f x, y)).2
+  change cast _ (e.symm (f x) y) = cast _ (e.toPartialHomeomorph.symm (f x, y)).2
   simp_rw [Trivialization.symm, Pretrivialization.symm, dif_pos hx, cast_cast]
   rfl
 

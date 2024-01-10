@@ -3,7 +3,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Topology.Connected.Basic
 import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Topology.Algebra.Affine
-import Mathlib.LinearAlgebra.Dimension
+import Mathlib.LinearAlgebra.Dimension.Basic
 import Mathlib.LinearAlgebra.AffineSpace.Midpoint
 import Mathlib.Data.Matrix.Notation
 import Mathlib.Analysis.Convex.Topology
@@ -143,11 +143,11 @@ theorem mem_span_of_zero_mem_segment {F : Type _} [AddCommGroup F] [Module ℝ F
     rw [h] at htxy
     refine' hx _
     simpa using htxy
-  rw [← smul_eq_zero_iff_eq' (neg_ne_zero.mpr <| inv_ne_zero this), smul_add, smul_smul, smul_smul,
+  sorry /- TODO-BUMP rw [← smul_eq_zero_iff_eq' (neg_ne_zero.mpr <| inv_ne_zero this), smul_add, smul_smul, smul_smul,
     ← neg_one_mul, mul_assoc, mul_assoc, inv_mul_cancel this, mul_one, neg_one_smul,
     add_neg_eq_zero] at htxy
   convert htxy using 2
-  ring
+  ring -/
 
 variable [TopologicalAddGroup F] [ContinuousSMul ℝ F]
 
@@ -221,4 +221,3 @@ theorem ample_of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.rank 
   · exact subset_convexHull ℝ (Eᶜ : Set F) h
 
 end Lemma213
-
