@@ -1,9 +1,6 @@
-import SphereEversion.ToMathlib.Analysis.Calculus
-import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
-import Mathlib.Geometry.Manifold.Algebra.Monoid
-import Mathlib.Geometry.Manifold.Metrizable
+import Mathlib.Geometry.Manifold.ContMDiff.Product
 
-open Bundle Set Function Filter
+open Set Function Filter
 
 open scoped Manifold Topology
 
@@ -30,21 +27,21 @@ variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
 
 theorem contMDiff_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔
-      (ContMDiff I I' n fun x => (f x).1) ∧ ContMDiff I J' n fun x => (f x).2 :=
-  ⟨fun h => ⟨h.fst, h.snd⟩, fun h => h.1.prod_mk h.2⟩
+      (ContMDiff I I' n fun x ↦ (f x).1) ∧ ContMDiff I J' n fun x ↦ (f x).2 :=
+  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prod_mk h.2⟩
 
 theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
     ContMDiffAt I (I'.prod J') n f x ↔
-      ContMDiffAt I I' n (fun x => (f x).1) x ∧ ContMDiffAt I J' n (fun x => (f x).2) x :=
-  ⟨fun h => ⟨h.fst, h.snd⟩, fun h => h.1.prod_mk h.2⟩
+      ContMDiffAt I I' n (fun x ↦ (f x).1) x ∧ ContMDiffAt I J' n (fun x ↦ (f x).2) x :=
+  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prod_mk h.2⟩
 
 theorem smooth_prod {f : M → M' × N'} :
-    Smooth I (I'.prod J') f ↔ (Smooth I I' fun x => (f x).1) ∧ Smooth I J' fun x => (f x).2 :=
+    Smooth I (I'.prod J') f ↔ (Smooth I I' fun x ↦ (f x).1) ∧ Smooth I J' fun x ↦ (f x).2 :=
   contMDiff_prod
 
 theorem smoothAt_prod {f : M → M' × N'} {x : M} :
     SmoothAt I (I'.prod J') f x ↔
-      SmoothAt I I' (fun x => (f x).1) x ∧ SmoothAt I J' (fun x => (f x).2) x :=
+      SmoothAt I I' (fun x ↦ (f x).1) x ∧ SmoothAt I J' (fun x ↦ (f x).2) x :=
   contMDiffAt_prod
 
 theorem ContMDiffWithinAt.congr_of_eventuallyEq_insert {f f' : M → M'}
