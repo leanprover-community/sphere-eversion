@@ -537,7 +537,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
     · apply (H.comp_le_0 _ _).mono
       intro t ht
       rw [ht]
-      exact hH₀.on_set 0 right_mem_Iic
+      exact hH₀.self_of_nhdsSet 0 right_mem_Iic
     -- t = 0
     · apply (H.comp_ge_1 _ _).mono
       intro t ht

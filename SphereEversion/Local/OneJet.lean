@@ -313,7 +313,7 @@ theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) :
 -- unused
 @[simp]
 theorem HtpyJetSec.comp_0 (𝓕 𝓖 : HtpyJetSec E F) (h) : 𝓕.comp 𝓖 h 0 = 𝓕 0 :=
-  (𝓕.comp_le_0 𝓖 h).on_set 0 right_mem_Iic
+  (𝓕.comp_le_0 𝓖 h).self_of_nhdsSet 0 right_mem_Iic
 
 @[simp]
 theorem HtpyJetSec.comp_of_not_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht : ¬t ≤ 1 / 2) :
@@ -334,6 +334,6 @@ theorem HtpyJetSec.comp_ge_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ic
 
 @[simp]
 theorem HtpyJetSec.comp_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : 𝓕.comp 𝓖 h 1 = 𝓖 1 :=
-  (𝓕.comp_ge_1 𝓖 h).on_set 1 left_mem_Ici
+  (𝓕.comp_ge_1 𝓖 h).self_of_nhdsSet 1 left_mem_Ici
 
 end HtpyJetSec

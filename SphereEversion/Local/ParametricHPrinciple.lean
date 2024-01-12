@@ -304,7 +304,7 @@ theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Se
   obtain ⟨𝓕, h₁, -, h₂, -, h₄, h₅⟩ :=
     𝓕₀.uncurry.improve_htpy' (R.isOpen_relativize h_op) (h_ample.relativize P) parametric_landscape
       ε_pos (h_hol.mono fun p hp => 𝓕₀.isHolonomicAt_uncurry.mpr hp)
-  have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p := by intro p; rw [h₁.on_set 0 right_mem_Iic]; rfl
+  have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p := by intro p; rw [h₁.self_of_nhdsSet 0 right_mem_Iic]; rfl
   refine' ⟨𝓕.curry, _, _, _, _⟩
   · intro s x; exact curry_eq_iff_eq_uncurry_loc (h₁ (s, x))
   · refine' h₂.mono _; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry_loc (hp t)

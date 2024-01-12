@@ -129,7 +129,7 @@ theorem inductive_construction_of_loc' {X Y : Type _} [EMetricSpace X] [LocallyC
     rcases ind V_op (U_op i) cpct (K_cpct i) hKV (hKU i) h₀f h₀f' h₁V h₁f' with
       ⟨F, h₀F, h₁F, hF⟩
     simp_rw [← bUnion_le] at h₁F
-    exact ⟨F, h₀F, h₁F, fun x hx => hF.on_set x (Or.inr hx)⟩
+    exact ⟨F, h₀F, h₁F, fun x hx => hF.self_of_nhdsSet x (Or.inr hx)⟩
   have :=
     inductive_construction (fun x φ => P₀ x φ ∧ P₀' x φ)
       (fun j : 𝓘 0 => RestrictGermPredicate P₁ (K j)) (fun _ _ => True) U_loc ⟨f₀, hP₀f₀, trivial⟩
@@ -348,7 +348,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
         exact ((T_lt_succ i.toNat).trans_le ht).not_le
       dsimp only
       rw [if_neg h₂t, if_neg]
-      · rw [hfutur_F'.on_set, mul_T_succ_sub]
+      · rw [hfutur_F'.self_of_nhdsSet, mul_T_succ_sub]
         conv =>
           rw [mem_Ici]
           congr
@@ -365,7 +365,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
       rw [forall_restrictGermPredicate_iff]
       apply h₁F'.germ_congr_set
       apply eventually_of_forall _
-      apply congr_fun (hfutur_F'.on_set _ _)
+      apply congr_fun (hfutur_F'.self_of_nhdsSet _ _)
       rw [mem_Ici]
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
       exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)

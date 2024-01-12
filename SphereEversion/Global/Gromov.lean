@@ -188,7 +188,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   · exact hFP₁
   · intro x hx t
     rw [mkHtpyFormalSol_apply]
-    exact (forall_restrictGermPredicate_iff.mp <| hF_A t).on_set x hx
+    exact (forall_restrictGermPredicate_iff.mp <| hF_A t).self_of_nhdsSet x hx
   · intro t x
     change dist (mkHtpyFormalSol F hF_sec hF_sol hFP₂ t x).1.2 (𝓕₀.bs x) ≤ δ x
     rw [mkHtpyFormalSol_apply]
@@ -355,7 +355,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   · exact hFP₁
   · intro x hx t
     rw [mkHtpyFormalSol_apply]
-    exact (forall_restrictGermPredicate_iff.mp <| hF_A t).on_set x hx
+    exact (forall_restrictGermPredicate_iff.mp <| hF_A t).self_of_nhdsSet x hx
   · intro t x
     change dist (mkHtpyFormalSol F hF_sec hF_sol hFP₂ t x).1.2 (𝓕₀.bs x) ≤ δ x
     rw [mkHtpyFormalSol_apply]

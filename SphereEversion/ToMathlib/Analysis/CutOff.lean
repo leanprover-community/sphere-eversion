@@ -37,6 +37,4 @@ theorem exists_contDiff_one_nhds_of_interior {E : Type _} [NormedAddCommGroup E]
   rcases exists_contDiff_zero_one_nhds this hs
     (by rwa [← subset_compl_iff_disjoint_left, compl_compl]) with ⟨f, hfsmooth, h0, h1, hf⟩
   refine ⟨f, hfsmooth, h1, fun x hx ↦ ?_, hf⟩
-  exact h0.on_set _ fun hx' => hx <| interior_subset hx'
-  
-
+  exact h0.self_of_nhdsSet _ fun hx' ↦ hx <| interior_subset hx'

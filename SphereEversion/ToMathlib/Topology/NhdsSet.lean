@@ -45,10 +45,6 @@ theorem Filter.Eventually.eventually_nhdsSet {p : α → Prop} (h : ∀ᶠ y in 
     ∀ᶠ y in 𝓝ˢ s, ∀ᶠ x in 𝓝 y, p x :=
   eventually_nhdsSet_iff.mpr fun x x_in => (eventually_nhdsSet_iff.mp h x x_in).eventually_nhds
 
-@[deprecated Filter.Eventually.self_of_nhdsSet]
-theorem Filter.Eventually.on_set {p : α → Prop} (h : ∀ᶠ y in 𝓝ˢ s, p y) : ∀ x ∈ s, p x :=
-  h.self_of_nhdsSet
-
 theorem Filter.eventually_nhdsSet_union {p : α → Prop} :
     (∀ᶠ x in 𝓝ˢ (s ∪ t), p x) ↔ (∀ᶠ x in 𝓝ˢ s, p x) ∧ ∀ᶠ x in 𝓝ˢ t, p x := by
   rw [nhdsSet_union, eventually_sup]
