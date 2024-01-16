@@ -28,7 +28,7 @@ theorem exists_of_convex {P : (Σ x : M, Germ (𝓝 x) F) → Prop}
   choose φ U hU hφ using hP'
   rcases SmoothBumpCovering.exists_isSubordinate I isClosed_univ fun x _ ↦ hU x with ⟨ι, b, hb⟩
   let ρ := b.toSmoothPartitionOfUnity
-  refine' ⟨fun x : M ↦ ∑ᶠ i, ρ i x • φ (b.c i) x, fun x₀ ↦ _⟩
+  refine ⟨fun x : M ↦ ∑ᶠ i, ρ i x • φ (b.c i) x, fun x₀ ↦ ?_⟩
   let g : ι → Germ (𝓝 x₀) F := fun i ↦ φ (b.c i)
   have :
     (fun x : M ↦ ∑ᶠ i, ρ i x • φ (b.c i) x : Germ (𝓝 x₀) F) ∈
@@ -69,7 +69,7 @@ theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
   clear this
   apply Filter.Germ.ContMDiffAt.sum
   intro φ hφ
-  refine' (smoothGerm.contMDiffAt _).smul (w_supp _)
+  refine (smoothGerm.contMDiffAt _).smul (w_supp ?_)
   simpa [H] using hφ
 
 theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex ℝ {y | P x y}) {n : ℕ∞}
@@ -156,7 +156,7 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
   clear this
   apply Filter.Germ.ContMDiffAtProd.sum
   intro φ hφ
-  refine' (smoothGerm.contMDiffAt _).smul_prod (w_supp _)
+  refine (smoothGerm.contMDiffAt _).smul_prod (w_supp ?_)
   simpa [H] using hφ
 
 theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP : ∀ x, Convex ℝ {f | P x f})
@@ -180,7 +180,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP :
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f
     filter_upwards [eventually_mem_nhds.mpr U_in] with y hy
-    refine' ⟨fun z ↦ hf.contMDiffAt (prod_mem_nhds hy univ_mem), hf' y (mem_of_mem_nhds hy)⟩
+    exact ⟨fun z ↦ hf.contMDiffAt (prod_mem_nhds hy univ_mem), hf' y (mem_of_mem_nhds hy)⟩
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩
   exact ⟨f, fun ⟨x, y⟩ ↦ (hf x).1 y, fun x ↦ (hf x).2⟩
 
@@ -250,8 +250,8 @@ theorem exists_smooth_and_eqOn {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf :
     intro x
     obtain ⟨U, hU, hfU⟩ := hfs
     by_cases hx : x ∈ s
-    · refine' ⟨U, mem_nhdsSet_iff_forall.mp hU x hx, _⟩
-      refine' ⟨f, hfU, fun y _ ↦ ⟨h0 y, fun _ ↦ rfl⟩⟩
+    · refine ⟨U, mem_nhdsSet_iff_forall.mp hU x hx, ?_⟩
+      exact ⟨f, hfU, fun y _ ↦ ⟨h0 y, fun _ ↦ rfl⟩⟩
     · have : IsOpen {y : E | dist (f x) (f y) < ε y} := isOpen_lt (continuous_const.dist hf) hε
       exact ⟨_, (this.sdiff hs).mem_nhds ⟨h0 x, hx⟩, fun _ ↦ f x, contDiffOn_const, fun y hy ↦
         ⟨hy.1, fun h2y ↦ (hy.2 h2y).elim⟩⟩
