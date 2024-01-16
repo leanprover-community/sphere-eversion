@@ -2,7 +2,7 @@ import Mathlib.Order.Filter.Germ
 import Mathlib.Algebra.Order.Hom.Ring
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.VectorBundle.Tangent
-import Mathlib.Geometry.Manifold.MFDeriv
+import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import SphereEversion.ToMathlib.Topology.Germ
 
 noncomputable section

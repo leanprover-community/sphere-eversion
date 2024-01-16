@@ -34,20 +34,6 @@ variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimen
 
 local notation "J¹" => OneJetBundle IM M IX X
 
-def OpenEmbedding.homeomorph {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    {f : X → Y} (hf : OpenEmbedding f) : Homeomorph X (range f) := by
-  by_cases hX : Nonempty X
-  · exact (Homeomorph.Set.univ X).symm.trans <|
-      (hf.toPartialHomeomorph f).homeomorphOfImageSubsetSource Subset.rfl image_univ
-  rw [not_nonempty_iff] at hX
-  have : IsEmpty (range f) := by rw [isEmpty_coe_sort, range_eq_empty f]
-  exact Homeomorph.empty
-
-lemma OpenEmbedding.isCompact_preimage {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    {f : X → Y} (hf : OpenEmbedding f) {K : Set Y} (K_cpct: IsCompact K) (Kf : K ⊆ range f) :
-    IsCompact (f ⁻¹' K) := by
-  rwa [hf.toInducing.isCompact_iff, image_preimage_eq_of_subset Kf]
-
 theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen R) (hA : IsClosed A)
     (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by
   borelize EX
@@ -127,8 +113,10 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     intro K₁ hK₁ K₀ K₀K₁ K₀_cpct K₁_cpct C f C_closed P₀f fC
     have K₁φ : K₁ ⊆ range φ := SurjOn.subset_range hK₁
     have K₀φ : K₀ ⊆ range φ := K₀K₁.trans interior_subset |>.trans K₁φ
-    replace K₀_cpct : IsCompact (φ ⁻¹' K₀) := φ.openEmbedding.isCompact_preimage K₀_cpct K₀φ
-    replace K₁_cpct : IsCompact (φ ⁻¹' K₁) := φ.openEmbedding.isCompact_preimage K₁_cpct K₁φ
+    replace K₀_cpct : IsCompact (φ ⁻¹' K₀) :=
+      φ.openEmbedding.toInducing.isCompact_preimage' K₀_cpct K₀φ
+    replace K₁_cpct : IsCompact (φ ⁻¹' K₁) :=
+      φ.openEmbedding.toInducing.isCompact_preimage' K₁_cpct K₁φ
     have K₀K₁' : φ ⁻¹' K₀ ⊆ interior (φ ⁻¹' K₁) := by
       rw [← φ.open_map.preimage_interior_eq_interior_preimage φ.continuous]
       mono

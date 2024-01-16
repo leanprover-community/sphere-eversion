@@ -262,7 +262,7 @@ theorem contMDiffOn_ext_chart_symm :
     rw [← extChartAt_source I]; exact (extChartAt I x).symm_mapsTo
   refine' (contMDiffOn_iff_of_subset_source hs h2s).mpr ⟨continuousOn_extChartAt_symm I x, _⟩
   simp_rw [modelWithCornersSelf.extChartAt, PartialEquiv.refl_symm, PartialEquiv.refl_coe,
-    comp.right_id, id.def, image_id']
+    comp_id, id.def, image_id']
   exact (contDiffOn_congr fun y hy => (extChartAt I x).right_inv hy).mpr contDiffOn_id
 
 end GeneralNonsense
@@ -291,7 +291,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
   isOpen_range :=
     IsOpenMap.isOpen_range fun u hu =>
       by
-      have aux : IsOpen (f '' u) := f.image_isOpen_of_isOpen hu (hf₁.symm ▸ subset_univ u)
+      have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
       convert isOpen_extChartAt_preimage' IF x aux
       rw [image_comp]
       refine'
@@ -354,7 +354,7 @@ theorem nice_atlas' {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s 
     let V := diffeomorphToNhd (extChartAt IF x x) r '' U
     change IsOpen ((extChartAt IF x).symm '' V)
     have hV₁ : IsOpen V :=
-      ((diffeomorphToNhd (extChartAt IF x x) r).isOpen_image_iff_of_subset_source (by simp)).mp hU₂
+      ((diffeomorphToNhd (extChartAt IF x x) r).isOpen_image_iff_of_subset_source (by simp)).mpr hU₂
     have hV₂ : V ⊆ (extChartAt IF x).target :=
       Subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂
     rw [(extChartAt IF x).symm_image_eq_source_inter_preimage hV₂]

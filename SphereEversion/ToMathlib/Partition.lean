@@ -1,5 +1,5 @@
 import Mathlib.Geometry.Manifold.PartitionOfUnity
-import SphereEversion.ToMathlib.Geometry.Manifold.ContMDiff
+import Mathlib.Geometry.Manifold.ContMDiff.Basic
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
 import SphereEversion.ToMathlib.Analysis.Convex.Basic

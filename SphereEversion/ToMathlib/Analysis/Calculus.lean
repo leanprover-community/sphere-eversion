@@ -66,7 +66,7 @@ theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableA
   have H₂ : fderiv 𝕜 (fun z : E × F => f (p.1, z.2)) p =
       (fderiv 𝕜 f p).comp (.comp (.inr 𝕜 E F) (.snd 𝕜 E F)) :=
     (hf.hasFDerivAt.comp _ ((hasFDerivAt_const _ _).prod hasFDerivAt_snd)).fderiv
-  rw [H₁, H₂, ← comp_add, comp_fst_add_comp_snd, coprod_inl_inr, comp_id]
+  rw [H₁, H₂, ← comp_add, comp_fst_add_comp_snd, coprod_inl_inr, ContinuousLinearMap.comp_id]
 
 variable (𝕜)
 

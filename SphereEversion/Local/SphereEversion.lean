@@ -124,7 +124,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     · change ⟪x₀, x₀⟫ ≠ 0
       apply inner_self_eq_zero.not.mpr x₀_ne
     · change Injective (φ₀ ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E) ∘ (orthogonalProjection (ℝ ∙ x₀)ᗮ) ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E))
-      erw [orthogonalProjection_comp_coe, comp.right_id]
+      erw [orthogonalProjection_comp_coe, comp_id]
       exact injOn_iff_injective.mp H
 
 theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) :=
