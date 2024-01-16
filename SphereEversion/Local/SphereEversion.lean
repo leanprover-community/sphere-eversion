@@ -39,11 +39,7 @@ local notation "𝕊²" => sphere (0 : E) 1
 
 local notation "dim" => finrank ℝ
 
-local notation "pr[" x "]ᗮ" => orthogonalProjection (ℝ ∙ x)ᗮ
-
---local notation:1000 R " ∙ " x => Submodule.span R {x}
-
---local notation:1000 R " ∙ " x => Submodule.span R (@singleton _ _ Set.hasSingleton x)
+local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
 local notation "B" => ball (0 : E) 0.9
 
@@ -202,7 +198,8 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       rw [inner_projection_self_eq_zero_iff.not]
       contrapose! H
       rw [orthogonal_orthogonal] at H
-      rw [← orthogonal_span_toDual_symm, span_singleton_eq_span_singleton_of_ne u_ne H]
+      rw [← orthogonal_span_toDual_symm, spanOrthogonal, spanLine,
+          span_singleton_eq_span_singleton_of_ne u_ne H]
     have ne_z' : (p.π <| pr[x]ᗮ u)⁻¹ ≠ 0 := inv_ne_zero ne_z
     refine' ⟨(p.π <| pr[x]ᗮ u)⁻¹ • (pr[x]ᗮ u : E), (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, _, _⟩
     · have := orthogonal_line_inf_sup_line u x

@@ -220,7 +220,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
     simp only [affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hU₁ : U ⊆ A := Set.inter_subset_left _ _
-  have hU₂ : IsOpen U := hW'.preimage_open_of_open hA hV
+  have hU₂ : IsOpen U := hW'.isOpen_inter_preimage hA hV
   have hU₃ : U ∈ 𝓝 (x, p) :=
     mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, Set.mem_inter (by simp [hp]) (mem_preimage.mpr hxp)⟩
   apply eventually_of_mem hU₃
@@ -891,7 +891,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
     rw [← inter_union_diff K₁];
     exact union_subset_union ((inter_subset_inter_left _ hKU₁).trans <| subset_union_right _ _) hLV₁
   obtain ⟨ρ, h0ρ, h1ρ, -⟩ :=
-    exists_continuous_zero_one_of_closed (isClosed_closure.union hV₂.isClosed_compl)
+    exists_continuous_zero_one_of_isClosed (isClosed_closure.union hV₂.isClosed_compl)
       isClosed_closure hdisj
   let h₀' : SurroundingFamilyIn g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _)
   let h₁' : SurroundingFamilyIn g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono (inter_subset_left _ _)

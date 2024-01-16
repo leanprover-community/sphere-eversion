@@ -20,8 +20,7 @@ variable {F : Type*} [AddCommGroup F] [Module ℝ F]
 
 theorem exists_of_convex {P : (Σ x : M, Germ (𝓝 x) F) → Prop}
     (hP : ∀ x : M, ReallyConvex (smoothGerm I x) {φ | P ⟨x, φ⟩})
-    (hP' : ∀ x : M, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, P ⟨x', f⟩) : ∃ f : M → F, ∀ x, P ⟨x, f⟩ :=
-  by
+    (hP' : ∀ x : M, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, P ⟨x', f⟩) : ∃ f : M → F, ∀ x, P ⟨x, f⟩ := by
   replace hP' : ∀ x : M, ∃ f : M → F, ∃ U ∈ 𝓝 x, ∀ x' ∈ U, P ⟨x', f⟩
   · intro x
     rcases hP' x with ⟨f, hf⟩
@@ -37,13 +36,9 @@ theorem exists_of_convex {P : (Σ x : M, Germ (𝓝 x) F) → Prop}
     ρ.germ_combine_mem fun i x ↦ φ (b.c i) x
   simp_rw [reallyConvex_iff_hull] at hP
   apply hP x₀; clear hP
-  have H : g '' ↑(ρ.fintsupport x₀) ⊆ {φ : (𝓝 x₀).Germ F | P ⟨x₀, φ⟩} :=
-    by
+  have H : g '' (ρ.fintsupport x₀) ⊆ {φ : (𝓝 x₀).Germ F | P ⟨x₀, φ⟩} := by
     rintro _ ⟨i, hi, rfl⟩
-    exact
-      hφ _ _
-        (SmoothBumpCovering.IsSubordinate.toSmoothPartitionOfUnity hb i <|
-          (ρ.mem_fintsupport_iff _ i).mp hi)
+    exact hφ _ _ (hb.toSmoothPartitionOfUnity  i <| (ρ.mem_fintsupport_iff _ i).mp hi)
   exact reallyConvexHull_mono H this
 
 end

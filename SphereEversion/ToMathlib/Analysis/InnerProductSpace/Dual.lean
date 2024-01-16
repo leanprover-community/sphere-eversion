@@ -9,11 +9,11 @@ open LinearMap (ker)
 
 variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
-local notation "Δ" v:55 => Submodule.span ℝ ({v} : Set E)
+local notation "Δ" => spanLine
 
-local notation "{." x "}ᗮ" => (Submodule.span ℝ ({x} : Set E))ᗮ
+local notation "{." x "}ᗮ" => spanOrthogonal x
 
-local notation "pr[" x "]ᗮ" => orthogonalProjection (Submodule.span ℝ {x})ᗮ
+local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
 theorem orthogonal_span_toDual_symm (π : E →L[ℝ] ℝ) :
     {.(InnerProductSpace.toDual ℝ E).symm π}ᗮ = ker π :=

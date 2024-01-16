@@ -1,3 +1,4 @@
+import Mathlib.Algebra.SMulWithZero
 import Mathlib.Topology.LocallyFinite
 
 open Function Set

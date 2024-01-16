@@ -255,7 +255,7 @@ theorem improveStep_apply (t : ℝ) (x : E) :
       (𝓕.f x + (smoothStep t * L.ρ x) • corrugation L.π N (L.loop h t) x,
         L.p.update (𝓕.φ x) (L.loop h (smoothStep t * L.ρ x) x <| N * L.π x) +
           (smoothStep t * L.ρ x) • corrugation.remainder L.p.π N (L.loop h 1) x) :=
-  by simp [h]; rfl
+  rfl
 
 @[simp]
 theorem improveStep_apply_f (t : ℝ) (x : E) :
@@ -421,10 +421,7 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
   · apply hε
     rw [Metric.mem_thickening_iff]
     refine' ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), _, _⟩
-    · unfold_let K
-      simp only [hxK₁, FormalSol.toJetSec_eq_coe, exists_prop, mem_setOf_eq, eq_self_iff_true,
-        true_and_iff]
-      exact
+    · exact
         ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
           ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩, by
           simp only [Loop.fract_eq]⟩

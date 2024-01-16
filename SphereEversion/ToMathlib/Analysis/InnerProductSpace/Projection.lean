@@ -56,13 +56,19 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type _} [NormedAddCommGroup E] [N
   apply hx
   rw [← φ.symm_apply_apply x, H, φ.symm.map_zero]
 
-local notation "Δ" v:55 => Submodule.span ℝ ({v} : Set E)
+@[reducible] def spanLine (x : E) : Submodule ℝ E := Submodule.span ℝ ({x} : Set E)
 
-set_option hygiene false
-local notation "{." x "}ᗮ" => (Submodule.span ℝ ({x} : Set E))ᗮ
+local notation "Δ" => spanLine
 
-local notation "pr[" x "]ᗮ" => orthogonalProjection (Submodule.span ℝ {x})ᗮ
-set_option hygiene true
+@[reducible] def spanOrthogonal (x : E) : Submodule ℝ E := (Δ x)ᗮ
+
+@[reducible] def projSpanOrthogonal (x : E) := orthogonalProjection (Submodule.span ℝ ({x} : Set E))ᗮ
+
+local notation "{." x "}ᗮ" => spanOrthogonal x
+
+local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
+
+variable (u v : E)
 
 theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)}ᗮ ⊓ {.v}ᗮ :=
   by
@@ -71,7 +77,7 @@ theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)
     rw [span_singleton_le_iff_mem]
   · nth_rw 1 [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
-  · rw [orthogonalProjection_orthogonal]
+  · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
     refine' sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
 theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ :=
