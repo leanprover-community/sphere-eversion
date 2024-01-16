@@ -198,7 +198,7 @@ theorem relative_inductive_construction_of_loc {X Y : Type _} [EMetricSpace X]
     rcases ind (U_op.union U₁_op) U₂_op (hK.union K₁_cpct) K₂_cpct (union_subset_union hKU hK₁U₁)
         hK₂U₂ h₀f₁ hf₂ (fun x hx => hx.elim (fun hx => hU hx) fun hx => hf₁U₁ x hx) hf₂U₂ with
       ⟨f, h₀f, hf, h'f⟩
-    rw [union_assoc, eventually_nhdsSet_union] at hf h'f
+    rw [union_assoc, Eventually.union_nhdsSet] at hf h'f
     exact ⟨f, fun x => ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 h'f.1⟩, hf.2, h'f.2⟩
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢

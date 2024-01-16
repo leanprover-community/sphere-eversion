@@ -1005,7 +1005,7 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
         (surroundingFamilyIn_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with
       ⟨U, U_in, γ, H, H''⟩
     cases' surroundingFamilyIn_iff_germ.mp H with H H'
-    refine' ⟨γ, H, mem_of_superset U_in H', eventually_nhdsSet_union.mpr H''⟩
+    refine' ⟨γ, H, mem_of_superset U_in H', Eventually.union_nhdsSet.mpr H''⟩
 
 -- #lint
 -- #print axioms satisfied_or_refund

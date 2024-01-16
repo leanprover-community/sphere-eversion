@@ -1,6 +1,6 @@
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.Topology.EMetricSpace.Paracompact
-import SphereEversion.ToMathlib.Topology.NhdsSet
+import Mathlib.Topology.NhdsSet
 
 open Set Filter
 

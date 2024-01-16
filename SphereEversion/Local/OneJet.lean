@@ -1,7 +1,7 @@
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Topology.NhdsSet
 import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Topology.NhdsSet
 import SphereEversion.ToMathlib.Topology.HausdorffDistance
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 import SphereEversion.Notations

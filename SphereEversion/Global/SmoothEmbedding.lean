@@ -1,4 +1,5 @@
 import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Topology.NhdsSet
 import Mathlib.Topology.UniformSpace.Separation
 import Mathlib.Geometry.Manifold.ChartedSpace
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
@@ -6,7 +7,6 @@ import SphereEversion.Notations
 import SphereEversion.Indexing
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
-import SphereEversion.ToMathlib.Topology.NhdsSet
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
@@ -134,7 +134,7 @@ theorem inducing : Inducing f :=
 theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A, P m) :
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m :=
   by
-  rw [eventually_nhdsSet_iff] at h ⊢
+  rw [eventually_nhdsSet_iff_forall] at h ⊢
   rintro _ ⟨hfm₀, m₀, rfl⟩
   have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U :=
     by
@@ -156,7 +156,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
   rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
   apply Filter.Eventually.union
   · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
-      f.isOpen_range.forall_near_mem_of_subset (inter_subset_right _ _)
+      f.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
     apply (this.and <| f.forall_near' hP).mono
     rintro _ ⟨⟨m, rfl⟩, hm⟩
     exact hPP' _ (hm _ rfl)
@@ -166,7 +166,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     have : A ∩ (range f)ᶜ ⊆ A ∩ (f '' K)ᶜ :=
       inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K))
     apply eventually_nhdsSet_mono _ this
-    rw [eventually_nhdsSet_iff] at hP' ⊢
+    rw [eventually_nhdsSet_iff_forall] at hP' ⊢
     rintro x ⟨hx, hx'⟩
     have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ := isOpen_iff_eventually.mp op x hx'
     apply ((hP' x hx).and hx').mono

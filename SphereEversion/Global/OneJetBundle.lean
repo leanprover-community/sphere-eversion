@@ -656,5 +656,3 @@ theorem oneJetBundleModelSpaceHomeomorph_coe_symm :
     ((oneJetBundleModelSpaceHomeomorph I I').symm : 𝓜 → OneJetBundle I H I' H') =
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm :=
   rfl
-
-#minimize_imports

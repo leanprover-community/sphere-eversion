@@ -266,7 +266,7 @@ theorem sphere_eversion :
           hε_cont).bs
       (formalEversion E ω) (formalEversion_hol_near_zero_one E ω) with
     ⟨f, h₁, h₂, -, h₅⟩
-  have := h₂.nhdsSet_forall_mem
+  have := h₂.forall_mem principal_le_nhdsSet
   refine' ⟨f, h₁, _, _, h₅⟩
   · ext x
     rw [this (0, x) (by simp)]

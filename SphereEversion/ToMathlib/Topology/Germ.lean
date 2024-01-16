@@ -2,7 +2,7 @@ import Mathlib.Order.Filter.Germ
 import Mathlib.Topology.Algebra.Ring.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Algebra.Order.Hom.Ring
-import SphereEversion.ToMathlib.Topology.NhdsSet
+import Mathlib.Topology.NhdsSet
 
 variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
@@ -71,7 +71,7 @@ theorem Filter.Eventually.germ_congr {X Y : Type _} [TopologicalSpace X] {x : X}
 theorem Filter.Eventually.germ_congr_set {X Y : Type _} [TopologicalSpace X]
     {P : ∀ x : X, Germ (𝓝 x) Y → Prop} {A : Set X} {f g : X → Y} (hf : ∀ᶠ x in 𝓝ˢ A, P x f)
     (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) : ∀ᶠ x in 𝓝ˢ A, P x g := by
-  rw [eventually_nhdsSet_iff] at *
+  rw [eventually_nhdsSet_iff_forall] at *
   intro x hx
   apply ((hf x hx).and (h x hx).eventually_nhds).mono
   exact fun y hy => hy.2.germ_congr hy.1
@@ -81,14 +81,14 @@ theorem restrictGermPredicate_congr {X Y : Type _} [TopologicalSpace X]
     (hf : RestrictGermPredicate P A x f) (h : ∀ᶠ z in 𝓝ˢ A, g z = f z) :
     RestrictGermPredicate P A x g := by
   intro hx
-  apply ((hf hx).and <| (eventually_nhdsSet_iff.mp h x hx).eventually_nhds).mono
+  apply ((hf hx).and <| (eventually_nhdsSet_iff_forall.mp h x hx).eventually_nhds).mono
   rintro y ⟨hy, h'y⟩
   rwa [Germ.coe_eq.mpr h'y]
 
 theorem forall_restrictGermPredicate_iff {X Y : Type _} [TopologicalSpace X]
     {P : ∀ x : X, Germ (𝓝 x) Y → Prop} {A : Set X} {f : X → Y} :
     (∀ x, RestrictGermPredicate P A x f) ↔ ∀ᶠ x in 𝓝ˢ A, P x f := by
-  rw [eventually_nhdsSet_iff]
+  rw [eventually_nhdsSet_iff_forall]
   rfl
 
 theorem forall_restrictGermPredicate_of_forall {X Y : Type _} [TopologicalSpace X]
