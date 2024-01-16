@@ -7,6 +7,8 @@ Authors: Patrick Massot, Floris van Doorn
 -/
 import Mathlib.Tactic
 
+import Mathlib.Analysis.NormedSpace.Completion
+import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 -- import SphereEversion.InteractiveExpr
 
@@ -654,3 +656,5 @@ theorem oneJetBundleModelSpaceHomeomorph_coe_symm :
     ((oneJetBundleModelSpaceHomeomorph I I').symm : 𝓜 → OneJetBundle I H I' H') =
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm :=
   rfl
+
+#minimize_imports

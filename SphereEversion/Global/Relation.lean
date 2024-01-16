@@ -1,3 +1,4 @@
+import Mathlib.Geometry.Manifold.Metrizable
 import SphereEversion.Local.DualPair
 import SphereEversion.Local.AmpleSet
 import SphereEversion.Global.OneJetSec

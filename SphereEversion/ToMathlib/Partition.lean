@@ -5,7 +5,6 @@ import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Topology.Support
 import SphereEversion.ToMathlib.Topology.LocallyFinite
-import SphereEversion.ToMathlib.Topology.PartitionOfUnity
 
 noncomputable section
 

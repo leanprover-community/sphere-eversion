@@ -1,5 +1,6 @@
 import Mathlib.Topology.MetricSpace.HausdorffDistance
 import Mathlib.Topology.UniformSpace.Separation
+import Mathlib.Geometry.Manifold.ChartedSpace
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.Notations
 import SphereEversion.Indexing
@@ -7,7 +8,6 @@ import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
 import SphereEversion.ToMathlib.Topology.NhdsSet
 import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Geometry.Manifold.ChartedSpace
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 
