@@ -66,7 +66,7 @@ variable {R : RelMfld I M I' M'}
 structure FormalSol (R : RelMfld I M I' M') extends OneJetSec I M I' M' where
   is_sol' : ∀ x : M, toOneJetSec x ∈ R
 
-instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M fun _ => OneJetBundle I M I' M'  where
+instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' M')  where
   coe := fun F ↦ F.toOneJetSec
   coe_injective' := by
     intro F G h
@@ -150,7 +150,7 @@ end FormalSol
 
 open scoped Manifold Bundle
 
-/- Porting note: the following four statement are defeq to existing assumption but not found by TC
+/- Porting note: the following four statements are defeq to existing assumption but not found by TC
 search. There was no problem in Lean 3. -/
 
 instance (σ : OneJetBundle I M I' M') :
@@ -218,7 +218,7 @@ structure FamilyFormalSol (R : RelMfld I M I' M') extends
   FamilyOneJetSec I M I' M' J N where
   is_sol' : ∀ (t : N) (x : M), toFamilyOneJetSec t x ∈ R
 
-instance : FunLike (FamilyFormalSol J N R) N fun _ ↦ FormalSol R where
+instance : FunLike (FamilyFormalSol J N R) N (FormalSol R) where
   coe := fun S n ↦ ⟨S.toFamilyOneJetSec n, S.is_sol' n⟩
   coe_injective' := by
     intro S T

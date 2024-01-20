@@ -262,7 +262,7 @@ instance : EquivLike EquivariantEquiv ℝ ℝ where
 
 @[ext]
 theorem ext {e₁ e₂ : EquivariantEquiv} (h : ∀ x, e₁ x = e₂ x) : e₁ = e₂ :=
-  FunLike.ext e₁ e₂ h
+  DFunLike.ext e₁ e₂ h
 
 @[simp]
 theorem symm_symm (e : EquivariantEquiv) : e.symm.symm = e := by

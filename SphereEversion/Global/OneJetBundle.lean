@@ -107,7 +107,7 @@ local notation "FJ¹MM'" => (OneJetSpace I I' : M × M' → Type _)
 
 variable (I I')
 
-instance (p : M × M') : FunLike (OneJetSpace I I' p) (TangentSpace I p.1) (fun _ ↦ TangentSpace I' p.2) where
+instance (p : M × M') : FunLike (OneJetSpace I I' p) (TangentSpace I p.1) (TangentSpace I' p.2) where
   coe := fun φ ↦ φ.toFun
   coe_injective' := fun _ _ h ↦ ContinuousLinearMap.ext (congrFun h)
 
@@ -237,7 +237,7 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     PartialEquiv.prod_source,
     PartialHomeomorph.coe_coe,
     Trivialization.coe_coe,
-    PartialHomeomorph.refl_localEquiv,
+    PartialHomeomorph.refl_partialEquiv,
     PartialEquiv.refl_source,
     prodChartedSpace_chartAt,
     PartialHomeomorph.prod_toPartialEquiv,
@@ -304,7 +304,7 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
   rw [FiberBundle.chartedSpace_chartAt]
   simp only [prodChartedSpace_chartAt,
     PartialHomeomorph.trans_toPartialEquiv, PartialHomeomorph.prod_toPartialEquiv,
-    PartialHomeomorph.refl_localEquiv, PartialEquiv.trans_target, PartialEquiv.prod_target,
+    PartialHomeomorph.refl_partialEquiv, PartialEquiv.trans_target, PartialEquiv.prod_target,
     PartialEquiv.refl_target]
   erw [hom_trivializationAt_target]
   simp only [trivializationAt_pullBack_baseSet, TangentBundle.trivializationAt_baseSet]

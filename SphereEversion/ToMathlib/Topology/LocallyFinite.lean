@@ -1,4 +1,5 @@
 import Mathlib.Algebra.SMulWithZero
+import Mathlib.GroupTheory.GroupAction.Pi
 import Mathlib.Topology.LocallyFinite
 
 open Function Set

@@ -21,15 +21,3 @@ theorem tsupport_smul_right {α : Type _} [TopologicalSpace α] {M : Type _} {R 
   exact inter_subset_right _ _
 
 end
-
-section
-
-variable {ι X : Type _} [TopologicalSpace X]
-
-@[to_additive]
-theorem locallyFinite_mulSupport_iff {M : Type _} [CommMonoid M] {f : ι → X → M} :
-    (LocallyFinite fun i => mulSupport <| f i) ↔ LocallyFinite fun i => mulTSupport <| f i :=
-  ⟨LocallyFinite.closure, fun H => H.subset fun _ => subset_closure⟩
-
-end
-

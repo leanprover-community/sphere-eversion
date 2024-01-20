@@ -51,7 +51,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 attribute [pp_dot] OneJetSec.bs OneJetSec.ϕ
 
-instance : FunLike (OneJetSec I M I' M') M fun _ ↦ OneJetBundle I M I' M' where
+instance : FunLike (OneJetSec I M I' M') M (OneJetBundle I M I' M') where
   coe := fun S x ↦ OneJetBundle.mk x (S.bs x) (S.ϕ x)
   coe_injective' := by
     intro S T h
@@ -59,7 +59,7 @@ instance : FunLike (OneJetSec I M I' M') M fun _ ↦ OneJetBundle I M I' M' wher
     ext x
     simpa using (Bundle.TotalSpace.mk.inj (congrFun h x)).1
     have := heq_eq_eq _ _ ▸ (Bundle.TotalSpace.mk.inj (congrFun h x)).2
-    exact congrFun (congrArg FunLike.coe this) _
+    exact congrFun (congrArg DFunLike.coe this) _
 
 variable {I M I' M'}
 
@@ -179,7 +179,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
     Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) fun p : N × M ↦
       OneJetBundle.mk p.2 (bs p.1 p.2) (ϕ p.1 p.2)
 
-instance : FunLike (FamilyOneJetSec I M I' M' J N) N fun _ ↦ OneJetSec I M I' M' where
+instance : FunLike (FamilyOneJetSec I M I' M' J N) N (OneJetSec I M I' M') where
   coe := fun S t ↦
     { bs := S.bs t
       ϕ := S.ϕ t
@@ -284,6 +284,6 @@ end FamilyOneJetSec
 def HtpyOneJetSec :=
   FamilyOneJetSec I M I' M' 𝓘(ℝ, ℝ) ℝ
 
-example : FunLike (HtpyOneJetSec I M I' M') ℝ fun _ ↦ OneJetSec I M I' M' := by infer_instance
+example : FunLike (HtpyOneJetSec I M I' M') ℝ (OneJetSec I M I' M') := by infer_instance
 
 end Real

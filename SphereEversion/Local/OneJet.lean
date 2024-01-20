@@ -62,7 +62,7 @@ namespace JetSec
 
 variable {E F}
 
-instance : FunLike (JetSec E F) E fun _ ↦ F × (E →L[ℝ] F) where
+instance : FunLike (JetSec E F) E (F × (E →L[ℝ] F)) where
   coe 𝓕 := fun x => (𝓕.f x, 𝓕.φ x)
   coe_injective' := by
     rintro ⟨⟩ ⟨⟩ h; congr
@@ -78,7 +78,7 @@ theorem coe_apply (𝓕 : JetSec E F) (x : E) : 𝓕 x = (𝓕.f x, 𝓕.φ x) :
   rfl
 
 theorem ext' {𝓕 𝓕' : JetSec E F} (h : ∀ x, 𝓕 x = 𝓕' x) : 𝓕 = 𝓕' :=
-  FunLike.ext _ _ h
+  DFunLike.ext _ _ h
 
 /-! ## Holonomic sections-/
 
@@ -123,7 +123,7 @@ theorem IsPartHolonomicAt.sup (𝓕 : JetSec E F) {E' E'' : Submodule ℝ E} {x 
 theorem isPartHolonomicAt_top {𝓕 : JetSec E F} {x : E} :
     IsPartHolonomicAt 𝓕 ⊤ x ↔ IsHolonomicAt 𝓕 x := by
   simp only [IsPartHolonomicAt, Submodule.mem_top, forall_true_left, IsHolonomicAt]
-  simp only [← funext_iff, FunLike.ext_iff]
+  simp only [← funext_iff, DFunLike.ext_iff]
 
 @[simp]
 theorem isPartHolonomicAt_bot (𝓕 : JetSec E F) : IsPartHolonomicAt 𝓕 ⊥ = fun _ => True := by
@@ -152,7 +152,7 @@ variable {E F P}
 
 namespace FamilyJetSec
 
-instance : FunLike (FamilyJetSec E F P) P fun _ => JetSec E F where
+instance : FunLike (FamilyJetSec E F P) P (JetSec E F) where
   coe S t :=
     { f := S.f t
       f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
@@ -160,7 +160,7 @@ instance : FunLike (FamilyJetSec E F P) P fun _ => JetSec E F where
       φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }
   coe_injective' := by
     rintro ⟨⟩ ⟨⟩ h
-    simp only [funext_iff, FunLike.ext_iff, JetSec.mk_apply, Prod.ext_iff] at h
+    simp only [funext_iff, DFunLike.ext_iff, JetSec.mk_apply, Prod.ext_iff] at h
     congr <;> ext <;> simp [h]
 
 @[simp] theorem mk_apply_apply (f : P → E → F) (f_diff φ φ_diff t x) :
