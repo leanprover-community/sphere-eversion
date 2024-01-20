@@ -1,6 +1,7 @@
 import Mathlib.Topology.Algebra.Order.Compact
 import Mathlib.Topology.Instances.Real
 
+-- generalised and PRed as isMinOn'
 /-- A variant of `IsCompact.exists_forall_le` for real-valued functions that does not require the
 assumption `s.Nonempty`. -/
 theorem IsCompact.exists_forall_le' {β : Type _} [TopologicalSpace β] {s : Set β} (hs : IsCompact s)
