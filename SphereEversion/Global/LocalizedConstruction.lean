@@ -30,8 +30,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
           (∀ᶠ x near C, ∀ t, F' t x = F x) ∧
             (∀ t, ∀ x ∉ φ '' K₁, F' t x = F x) ∧
               (∀ t x, dist ((F' t).bs x) (F.bs x) < δ x) ∧
-                ∀ᶠ x near C ∪ φ '' K₀, (F' 1).IsHolonomicAt x :=
-  by
+                ∀ᶠ x near C ∪ φ '' K₀, (F' 1).IsHolonomicAt x := by
   let Rloc : RelLoc EM EX := (R.localize φ ψ).relLoc
   have hRloc_op : IsOpen Rloc :=
     isOpen_of_isOpen _ (hRopen.preimage <| OneJetBundle.continuous_transfer _ _)
@@ -55,8 +54,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       hK₀
       hK₁
       h₀₁ := hK₀K₁ }
-  have h𝓕C : ∀ᶠ x : EM near L.C, 𝓕.IsHolonomicAt x :=
-    by
+  have h𝓕C : ∀ᶠ x : EM near L.C, 𝓕.IsHolonomicAt x := by
     rw [eventually_nhdsSet_iff_forall] at hFC ⊢
     intro e he
     rw [φ.inducing.nhds_eq_comap, eventually_comap]
@@ -93,8 +91,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     · change dist (F' t x).1.2 (F.bs x) < δ x
       erw [p.mkHtpy_eq_of_not_mem _ _ hx, dist_self]
       apply hδ_pos
-  · have h𝓕'holC : ∀ᶠ x : EM near L.C, (𝓕' 1).IsHolonomicAt x :=
-      by
+  · have h𝓕'holC : ∀ᶠ x : EM near L.C, (𝓕' 1).IsHolonomicAt x := by
       apply (h𝓕'relC.eventually_nhdsSet.and h𝓕C).mono
       rintro x ⟨hx, hx'⟩
       exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' => (hx' 1).symm)
@@ -110,12 +107,9 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
           isOpen_iff_mem_nhds.mp (hK₁.image φ.continuous).isClosed.isOpen_compl x hx'
         apply this.mono
         exact hF'relK₁ _
-      · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ :=
-          by
+      · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ := by
           suffices : ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁); exact this.mono interior_subset
-          apply isOpen_interior.mem_nhdsSet.mpr--forall_near_mem_of_subset
-          --(h.mem_nhdsSet).mpr ht
-          exact (image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁)
-        apply this.mono
-        exact fun a hx hx' => (hx' hx).elim
+          exact isOpen_interior.mem_nhdsSet.mpr
+            ((image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁))
+        exact this.mono (fun a hx hx' => (hx' hx).elim)
     · exact fun _ => (p.mkHtpy_isHolonomicAt_iff hcompat).mpr
