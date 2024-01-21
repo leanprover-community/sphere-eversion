@@ -17,19 +17,19 @@ section ParameterSpace
 /-! ## Fundamental definitions -/
 
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type _} [TopologicalSpace H]
-  {I : ModelWithCorners ℝ E H} {M : Type _} [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {H' : Type _} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} {M' : Type _}
-  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {EP : Type _}
-  [NormedAddCommGroup EP] [NormedSpace ℝ EP] {HP : Type _} [TopologicalSpace HP]
-  {IP : ModelWithCorners ℝ EP HP} {P : Type _} [TopologicalSpace P] [ChartedSpace HP P]
-  [SmoothManifoldWithCorners IP P] {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
-  {G : Type _} [TopologicalSpace G] {J : ModelWithCorners ℝ F G} {N : Type _} [TopologicalSpace N]
-  [ChartedSpace G N] [SmoothManifoldWithCorners J N] {EX : Type _} [NormedAddCommGroup EX]
-  [NormedSpace ℝ EX] {HX : Type _} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
+  {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
+  [SmoothManifoldWithCorners I M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} {M' : Type*}
+  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {EP : Type*}
+  [NormedAddCommGroup EP] [NormedSpace ℝ EP] {HP : Type*} [TopologicalSpace HP]
+  {IP : ModelWithCorners ℝ EP HP} {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
+  [SmoothManifoldWithCorners IP P] {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+  {G : Type*} [TopologicalSpace G] {J : ModelWithCorners ℝ F G} {N : Type*} [TopologicalSpace N]
+  [ChartedSpace G N] [SmoothManifoldWithCorners J N] {EX : Type*} [NormedAddCommGroup EX]
+  [NormedSpace ℝ EX] {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
   -- note: X is a metric space
-  {X : Type _}
+  {X : Type*}
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
 
 variable {R : RelMfld I M I' M'}

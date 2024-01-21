@@ -21,14 +21,14 @@ open Set Filter ModelWithCorners Metric
 
 open scoped Topology Manifold
 
-variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
-  {HM : Type _} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM] {M : Type _}
+variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
+  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM] {M : Type*}
   [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M] [T2Space M]
-  [SigmaCompactSpace M] {EX : Type _} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
-  [FiniteDimensional ℝ EX] {HX : Type _} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
+  [SigmaCompactSpace M] {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
+  [FiniteDimensional ℝ EX] {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
   [ModelWithCorners.Boundaryless IX]
   -- note: X is a metric space
-  {X : Type _}
+  {X : Type*}
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [SigmaCompactSpace X]
   {R : RelMfld IM M IX X} {A : Set M} {δ : M → ℝ}
 
@@ -361,8 +361,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     rw [mkHtpyFormalSol_apply]
     exact (hF_dist t x).le.trans (min_le_left _ _)
 
-variable {EP : Type _} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
-  {HP : Type _} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [Boundaryless IP] {P : Type _}
+variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
+  {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [Boundaryless IP] {P : Type*}
   [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P] [SigmaCompactSpace P]
   [T2Space P] {C : Set (P × M)}
 
@@ -382,9 +382,9 @@ theorem RelMfld.Ample.satisfiesHPrincipleWith (hRample : R.Ample) (hRopen : IsOp
   apply RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith
   exact (hRample.relativize IP P).satisfiesHPrinciple is_op hC hδ_pos' hδ_cont'
 
-variable {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
-  {H' : Type _} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
-  [ModelWithCorners.Boundaryless I'] {M' : Type _} [TopologicalSpace M'] [ChartedSpace H' M']
+variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
+  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
+  [ModelWithCorners.Boundaryless I'] {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
   [SmoothManifoldWithCorners I' M'] [SigmaCompactSpace M'] [T2Space M']
 
 /-

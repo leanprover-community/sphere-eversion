@@ -7,14 +7,14 @@ open Set Filter ModelWithCorners Metric
 
 open scoped Topology Manifold
 
-variable {EM : Type _} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
-  {HM : Type _} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM] {M : Type _}
+variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
+  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM] {M : Type*}
   [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M] [T2Space M]
-  [LocallyCompactSpace M] [Nonempty M] [SigmaCompactSpace M] {EX : Type _} [NormedAddCommGroup EX]
-  [NormedSpace ℝ EX] [FiniteDimensional ℝ EX] [MeasurableSpace EX] [BorelSpace EX] {HX : Type _}
+  [LocallyCompactSpace M] [Nonempty M] [SigmaCompactSpace M] {EX : Type*} [NormedAddCommGroup EX]
+  [NormedSpace ℝ EX] [FiniteDimensional ℝ EX] [MeasurableSpace EX] [BorelSpace EX] {HX : Type*}
   [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX} [ModelWithCorners.Boundaryless IX]
   -- note: X is a metric space
-  {X : Type _}
+  {X : Type*}
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [LocallyCompactSpace X]
   [SigmaCompactSpace X] [Nonempty X]
 

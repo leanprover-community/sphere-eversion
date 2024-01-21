@@ -16,13 +16,13 @@ open scoped Manifold Topology
 
 section General
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type _} [TopologicalSpace H]
-  (I : ModelWithCorners ℝ E H) {M : Type _} [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type _} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {H' : Type _} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') {M' : Type _}
-  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type _} [TopologicalSpace G]
-  (J : ModelWithCorners ℝ F G) (N : Type _) [TopologicalSpace N] [ChartedSpace G N]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
+  (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
+  [SmoothManifoldWithCorners I M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') {M' : Type*}
+  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {F : Type*}
+  [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
+  (J : ModelWithCorners ℝ F G) (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
   [SmoothManifoldWithCorners J N]
 
 local notation "TM" => TangentSpace I
@@ -105,18 +105,18 @@ end General
 
 section Generalbis
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type _}
-  [TopologicalSpace H] (I : ModelWithCorners ℝ E H) [ModelWithCorners.Boundaryless I] {M : Type _}
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type _}
-  [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E'] {H' : Type _}
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*}
+  [TopologicalSpace H] (I : ModelWithCorners ℝ E H) [ModelWithCorners.Boundaryless I] {M : Type*}
+  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type*}
+  [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E'] {H' : Type*}
   [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [ModelWithCorners.Boundaryless I']
-  {M' : Type _} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
-variable {EP : Type _} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
-  {HP : Type _} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP}
-  [ModelWithCorners.Boundaryless IP] {P : Type _} [TopologicalSpace P] [ChartedSpace HP P]
+variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
+  {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP}
+  [ModelWithCorners.Boundaryless IP] {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
   [SmoothManifoldWithCorners IP P] {C : Set (P × M)} {ε : M → ℝ}
 
 variable (M M' IP P)
@@ -133,7 +133,7 @@ end Generalbis
 
 section sphere_eversion
 
-variable (E : Type _) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)]
+variable (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)]
 
 set_option synthInstance.checkSynthOrder false
 attribute [local instance] fact_finiteDimensional_of_finrank_eq_succ

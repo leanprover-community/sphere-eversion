@@ -19,11 +19,11 @@ open scoped Manifold Topology
 
 section General
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {H : Type _} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type _)
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type _}
-  [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type _} [TopologicalSpace H']
-  (I' : ModelWithCorners 𝕜 E' H') (M' : Type _) [TopologicalSpace M'] [ChartedSpace H' M']
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
+  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type*}
+  [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*} [TopologicalSpace H']
+  (I' : ModelWithCorners 𝕜 E' H') (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M']
   [SmoothManifoldWithCorners I' M']
 
 structure OpenSmoothEmbedding where
@@ -144,7 +144,7 @@ theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A
   rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
   rwa [← f.injective hm₀']
 
-theorem eventually_nhdsSet_mono {α : Type _} [TopologicalSpace α] {s t : Set α} {P : α → Prop}
+theorem eventually_nhdsSet_mono {α : Type*} [TopologicalSpace α] {s t : Set α} {P : α → Prop}
     (h : ∀ᶠ x near t, P x) (h' : s ⊆ t) : ∀ᶠ x near s, P x :=
   h.filter_mono (nhdsSet_mono h')
 
@@ -190,8 +190,8 @@ variable {I M}
 
 /- -- unused
 @[simps!]
-def comp {E'' : Type _} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type _}
-    [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type _} [TopologicalSpace M'']
+def comp {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type*}
+    [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type*} [TopologicalSpace M'']
     [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
     (g : OpenSmoothEmbedding I' M' I'' M'') (f : OpenSmoothEmbedding I M I' M') :
     OpenSmoothEmbedding I M I'' M'' where
@@ -239,7 +239,7 @@ universe u
 
 section GeneralNonsense
 
-variable {𝕜 E H M : Type _} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+variable {𝕜 E H M : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} [TopologicalSpace M] [ChartedSpace H M]
   [SmoothManifoldWithCorners I M] {x : M} {n : ℕ∞}
 
@@ -267,7 +267,7 @@ theorem contMDiffOn_ext_chart_symm :
 
 end GeneralNonsense
 
-variable {F H : Type _} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
+variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
   [TopologicalSpace M] [ChartedSpace H M] [T2Space M] [LocallyCompactSpace M] [SigmaCompactSpace M]
   (IF : ModelWithCorners ℝ F H) [SmoothManifoldWithCorners IF M]
 
@@ -333,7 +333,7 @@ theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomo
 variable {M} (F)
 variable [ModelWithCorners.Boundaryless IF] [FiniteDimensional ℝ F]
 
-theorem nice_atlas' {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
+theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
     ∃ (ι' : Type u) (t : Set ι') (φ : t → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
       t.Countable ∧
@@ -387,7 +387,7 @@ theorem nice_atlas' {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s 
 
 variable [Nonempty M]
 
-theorem nice_atlas {ι : Type _} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
+theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) :
     ∃ n,
       ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
@@ -410,13 +410,13 @@ namespace OpenSmoothEmbedding
 
 section Updating
 
-variable {𝕜 EX EM EY EN EM' X M Y N M' : Type _} [NontriviallyNormedField 𝕜] [NormedAddCommGroup EX]
+variable {𝕜 EX EM EY EN EM' X M Y N M' : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup EX]
   [NormedSpace 𝕜 EX] [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] [NormedAddCommGroup EM']
   [NormedSpace 𝕜 EM'] [NormedAddCommGroup EY] [NormedSpace 𝕜 EY] [NormedAddCommGroup EN]
-  [NormedSpace 𝕜 EN] {HX : Type _} [TopologicalSpace HX] {IX : ModelWithCorners 𝕜 EX HX}
-  {HY : Type _} [TopologicalSpace HY] {IY : ModelWithCorners 𝕜 EY HY} {HM : Type _}
-  [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} {HM' : Type _} [TopologicalSpace HM']
-  {IM' : ModelWithCorners 𝕜 EM' HM'} {HN : Type _} [TopologicalSpace HN]
+  [NormedSpace 𝕜 EN] {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners 𝕜 EX HX}
+  {HY : Type*} [TopologicalSpace HY] {IY : ModelWithCorners 𝕜 EY HY} {HM : Type*}
+  [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} {HM' : Type*} [TopologicalSpace HM']
+  {IM' : ModelWithCorners 𝕜 EM' HM'} {HN : Type*} [TopologicalSpace HN]
   {IN : ModelWithCorners 𝕜 EN HN} [TopologicalSpace X] [ChartedSpace HX X]
   [SmoothManifoldWithCorners IX X] [TopologicalSpace M] [ChartedSpace HM M]
   [SmoothManifoldWithCorners IM M] [TopologicalSpace M'] [ChartedSpace HM' M']
@@ -499,7 +499,7 @@ variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [M
   (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 /-- This is `lem:dist_updating` in the blueprint. -/
-theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type _} [MetricSpace P]
+theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]
     {KP : Set P} (hKP : IsCompact KP) (f : P → M → N) (hf : Continuous ↿f)
     (hf' : ∀ p, f p '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : Continuous ε) :
     ∃ η > (0 : ℝ),
