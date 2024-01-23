@@ -43,7 +43,6 @@ import SphereEversion.ToMathlib.Data.Set.Lattice
 import SphereEversion.ToMathlib.Data.Set.Prod
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.ExistsOfConvex
-import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
@@ -69,4 +68,3 @@ import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Path
 import SphereEversion.ToMathlib.Topology.Periodic
 import SphereEversion.ToMathlib.Topology.Separation
-import SphereEversion.ToMathlib.Topology.Support

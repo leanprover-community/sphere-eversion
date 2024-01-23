@@ -1,10 +1,10 @@
+import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+import SphereEversion.ToMathlib.Analysis.Convex.Basic
+import SphereEversion.ToMathlib.Topology.LocallyFinite
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.Geometry.Manifold.ContMDiff.Basic
-import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
-import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.LieGroup
-import SphereEversion.ToMathlib.Analysis.Convex.Basic
-import SphereEversion.ToMathlib.Topology.Support
-import SphereEversion.ToMathlib.Topology.LocallyFinite
+import Mathlib.Geometry.Manifold.Algebra.LieGroup
+import Mathlib.Topology.Support
 
 noncomputable section
 
@@ -26,7 +26,7 @@ theorem SmoothPartitionOfUnity.contMDiffAt_sum (ρ : SmoothPartitionOfUnity ι I
   refine' contMDiffAt_finsum (ρ.locallyFinite.smul_left _) fun i => _
   by_cases hx : x₀ ∈ tsupport (ρ i)
   · exact ContMDiffAt.smul ((ρ i).smooth.of_le le_top).contMDiffAt (hφ i hx)
-  · exact contMDiffAt_of_not_mem (compl_subset_compl.mpr (tsupport_smul_left (ρ i) (φ i)) hx) n
+  · exact contMDiffAt_of_not_mem (compl_subset_compl.mpr (tsupport_smul_subset_left (ρ i) (φ i)) hx) n
 
 theorem SmoothPartitionOfUnity.contDiffAt_sum {s : Set E}
     (ρ : SmoothPartitionOfUnity ι 𝓘(ℝ, E) E s) {n : ℕ∞} {x₀ : E} {φ : ι → E → F}

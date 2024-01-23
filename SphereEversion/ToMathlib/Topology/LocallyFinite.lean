@@ -39,7 +39,7 @@ open scoped Topology
 
 open Filter
 
--- submitted as PR #9813
+-- submitted as PR mathlib4#9813
 theorem LocallyFinite.eventually_subset {ι X : Type*} [TopologicalSpace X] {s : ι → Set X}
     (hs : LocallyFinite s) (hs' : ∀ i, IsClosed (s i)) (x : X) :
     ∀ᶠ y in 𝓝 x, {i | y ∈ s i} ⊆ {i | x ∈ s i} := by
