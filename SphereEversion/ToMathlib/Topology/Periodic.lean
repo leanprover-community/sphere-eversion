@@ -156,7 +156,7 @@ theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont
 
 theorem Continuous.bounded_of_onePeriodic_of_compact {f : X → ℝ → E} (cont : Continuous ↿f)
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K)
-    (hfK : ∀ x, x ∉ K → f x = 0) : ∃ C, ∀ x t, ‖f x t‖ ≤ C := by
+    (hfK : ∀ x ∉ K, f x = 0) : ∃ C, ∀ x t, ‖f x t‖ ≤ C := by
   obtain ⟨C, hC⟩ := cont.bounded_on_compact_of_onePeriodic hper hK
   use max C 0
   intro x t

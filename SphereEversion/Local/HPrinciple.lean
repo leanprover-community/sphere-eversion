@@ -468,7 +468,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       (∀ᶠ t near Iic 0, H t = 𝓕) ∧
         (∀ᶠ t near Ici 1, H t = H 1) ∧
           (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x) ∧
-            (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+            (∀ x ∉ L.K₁, ∀ t, H t x = 𝓕 x) ∧
               (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ ε) ∧
                 (∀ t, (H t).IsFormalSol R) ∧ ∀ᶠ x near L.K₀, (H 1).IsHolonomicAt x := by
   let n := finrank ℝ E
@@ -481,7 +481,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
           (∀ᶠ t near Iic 0, H t = 𝓕) ∧
             (∀ᶠ t near Ici 1, H t = H 1) ∧
               (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x) ∧
-                (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+                (∀ x ∉ L.K₁, ∀ t, H t x = 𝓕 x) ∧
                   (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ δ) ∧
                     (∀ t, (H t).IsFormalSol R) ∧ ∀ᶠ x near L.K₀, (H 1).IsPartHolonomicAt (E' k) x
     by
@@ -517,20 +517,17 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
           apply hHC.mono
           intro x h
           exact (h 1).symm }
-    have hH₁_rel_C : ∀ᶠ x : E near S.C, H₁ x = 𝓕 x :=
-      by
+    have hH₁_rel_C : ∀ᶠ x : E near S.C, H₁ x = 𝓕 x := by
       apply hHC.mono
       intro x hx
       apply hx
-    have hH₁_K₁ : ∀ (x) (_ : x ∉ L.K₁), H₁ x = 𝓕 x :=
-      by
+    have hH₁_K₁ : ∀ x ∉ (L.K₁), H₁ x = 𝓕 x := by
       intro x hx
       apply hHK₁ x hx
     obtain ⟨N, ⟨hN_close, hN_sol⟩, hNneq⟩ :=
       (((improveStep_c0_close _ acc <| half_pos δ_pos).and (improveStep_formalSol _ acc)).and <|
           eventually_ne_atTop (0 : ℝ)).exists
-    have glue : H 1 = S.improveStep acc N 0 :=
-      by
+    have glue : H 1 = S.improveStep acc N 0 := by
       rw [improveStep_rel_t_eq_0]
       rfl
     refine' ⟨H.comp (S.improveStep acc N) glue, _, _, _, _, _, _, _⟩
@@ -579,7 +576,7 @@ theorem RelLoc.FormalSol.improve_htpy' (𝓕 : FormalSol R)
       (∀ᶠ t near Iic 0, H t = 𝓕) ∧
         (∀ᶠ t near Ici 1, H t = H 1) ∧
           (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x) ∧
-            (∀ x, x ∉ L.K₁ → ∀ t, H t x = 𝓕 x) ∧
+            (∀ x ∉ L.K₁, ∀ t, H t x = 𝓕 x) ∧
               (∀ x t, ‖(H t).f x - 𝓕.f x‖ < ε) ∧ ∀ᶠ x near L.K₀, (H 1).IsHolonomicAt x :=
   by
   rcases 𝓕.improve h_op h_ample L (half_pos ε_pos) h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩

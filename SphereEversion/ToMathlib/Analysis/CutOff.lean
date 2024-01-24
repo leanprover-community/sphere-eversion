@@ -22,7 +22,7 @@ theorem exists_smooth_zero_one_nhds_of_isClosed [T2Space M] [NormalSpace M] [Sig
 
 theorem exists_smooth_one_nhds_of_interior [T2Space M] [NormalSpace M] [SigmaCompactSpace M]
     {s t : Set M} (hs : IsClosed s) (hd : s ⊆ interior t) :
-    ∃ f : C^∞⟮I, M; 𝓘(ℝ), ℝ⟯, (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧ (∀ x, x ∉ t → f x = 0) ∧
+    ∃ f : C^∞⟮I, M; 𝓘(ℝ), ℝ⟯, (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧ (∀ x ∉ t, f x = 0) ∧
       ∀ x, f x ∈ Icc (0 : ℝ) 1 := sorry
 
 end PR9873
@@ -31,7 +31,7 @@ end PR9873
 theorem exists_contDiff_zero_one {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] {s t : Set E} (hs : IsClosed s) (ht : IsClosed t) (hd : Disjoint s t) :
     ∃ f : E → ℝ, ContDiff ℝ ∞ f ∧ EqOn f 0 s ∧ EqOn f 1 t ∧ ∀ x, f x ∈ Icc (0 : ℝ) 1 :=
-  let ⟨f, hfs, hft, hf01⟩ := exists_smooth_zero_one_of_closed 𝓘(ℝ, E) hs ht hd
+  let ⟨f, hfs, hft, hf01⟩ := exists_smooth_zero_one_of_isClosed 𝓘(ℝ, E) hs ht hd
   ⟨f, f.smooth.contDiff, hfs, hft, hf01⟩
 
 theorem exists_contDiff_zero_one_nhds {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -43,7 +43,7 @@ theorem exists_contDiff_zero_one_nhds {E : Type*} [NormedAddCommGroup E] [Normed
 
 theorem exists_contDiff_one_nhds_of_interior {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] {s t : Set E} (hs : IsClosed s) (hd : s ⊆ interior t) :
-    ∃ f : E → ℝ, ContDiff ℝ ∞ f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧ (∀ x, x ∉ t → f x = 0) ∧
+    ∃ f : E → ℝ, ContDiff ℝ ∞ f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧ (∀ x ∉ t, f x = 0) ∧
       ∀ x, f x ∈ Icc (0 : ℝ) 1 :=
   let ⟨f, hfs, hft, hf01⟩ := exists_smooth_one_nhds_of_interior 𝓘(ℝ, E) hs hd
   ⟨f, f.smooth.contDiff, hfs, hft, hf01⟩

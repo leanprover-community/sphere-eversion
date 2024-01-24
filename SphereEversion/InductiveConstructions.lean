@@ -43,7 +43,7 @@ section inductive_construction
 
 theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [TopologicalSpace X]
     {N : ℕ} {f : IndexType N → X → α} {V : IndexType N → Set X} (hV : LocallyFinite V)
-    (h : ∀ n : IndexType N, ¬IsMax n → ∀ (x) (_ : x ∉ V n.succ), f n.succ x = f n x) :
+    (h : ∀ n : IndexType N, ¬IsMax n → ∀ x ∉ (V n.succ), f n.succ x = f n x) :
     ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F := by
   choose U hUx hU using hV
   choose i₀ hi₀ using fun x => (hU x).bddAbove
@@ -71,11 +71,11 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
     (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
     (ind : ∀ (i : IndexType N) (f : X → Y), (∀ x, P₀ x f) → P₂ i f → (∀ j < i, ∀ x, P₁ j x f) →
       ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (¬IsMax i → P₂ i.succ f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧
-        ∀ x, x ∉ U i → f' x = f x) :
+        ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f := by
   let P : 𝓘 N → (X → Y) → Prop := fun n f =>
     (∀ x, P₀ x f) ∧ (¬IsMax n → P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f
-  let Q : 𝓘 N → (X → Y) → (X → Y) → Prop := fun n f f' => ∀ (x) (_ : x ∉ U n.succ), f' x = f x
+  let Q : 𝓘 N → (X → Y) → (X → Y) → Prop := fun n f f' => ∀ x ∉ (U n.succ), f' x = f x
   obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) := by
     apply IndexType.exists_by_induction
     · rcases init with ⟨f₀, h₀f₀, h₁f₀⟩
@@ -262,7 +262,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     -- Not in the original version
     (ind : ∀ (i : IndexType N) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x near ⋃ j < i, K j, P₁ x f) →
       ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x <| F 1) ∧
-        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x, x ∉ U i → F t x = f x) ∧
+        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ (U i), F t x = f x) ∧
           (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
     ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
   let PP₀ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun p φ =>
@@ -275,7 +275,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     ⟨init x, fun _ => rfl, init' _⟩
   have ind' : ∀ (i) (f : ℝ × X → Y), (∀ p, PP₀ p f) → PP₂ i f → (∀ j < i, ∀ p, PP₁ j p f) →
       ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (¬IsMax i → PP₂ i.succ f') ∧
-        (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ p, p ∉ Ici (T i.toNat) ×ˢ U i → f' p = f p := by
+        (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ p ∉ Ici (T i.toNat) ×ˢ U i, f' p = f p := by
     rintro i F h₀F h₂F h₁F
     replace h₁F : ∀ᶠ x : X near ⋃ j < i, K j, P₁ x fun x => F (T i.toNat, x)
     · rw [eventually_nhdsSet_iUnion₂]
@@ -403,13 +403,13 @@ theorem inductive_htpy_construction' {X Y : Type _}
     (ind : ∀ x, ∃ V ∈ 𝓝 x, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
       ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
       (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
-        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x, x ∉ K₁ → F t x = f x) ∧
+        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
           (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
     ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
   let P (V : Set X) : Prop :=  ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
       ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
       (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
-        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x, x ∉ K₁ → F t x = f x) ∧
+        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
           (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1
   have P_anti : Antitone P := fun U V UV hV K₁ K₁U ↦ hV K₁ (K₁U.trans UV)
   have P_empty : P ∅ := by
