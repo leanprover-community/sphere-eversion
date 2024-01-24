@@ -1,4 +1,3 @@
-import SphereEversion.ToMathlib.Analysis.NormedGroup
 import SphereEversion.ToMathlib.LinearAlgebra.Basis
 import SphereEversion.Loops.Exists
 import SphereEversion.Local.Corrugation
@@ -546,7 +545,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
         simp only [ht, hHc0, HtpyJetSec.comp_of_le]
       · simp only [ht, HtpyJetSec.comp_of_not_le, not_false_iff]
         rw [← add_halves δ]
-        exact norm_sub_le_add_of_le (hN_close _ _) (hHc0 _ _)
+        exact (norm_sub_le_norm_sub_add_norm_sub _ _ _).trans <| add_le_add (hN_close _ _) (hHc0 _ _)
     · -- formal solution
       intro t
       by_cases ht : t ≤ 1 / 2

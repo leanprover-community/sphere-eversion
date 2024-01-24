@@ -36,7 +36,6 @@ import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Projection
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
-import SphereEversion.ToMathlib.Analysis.NormedGroup
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 import SphereEversion.ToMathlib.Data.Nat.Basic
