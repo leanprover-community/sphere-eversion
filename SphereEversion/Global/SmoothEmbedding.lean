@@ -315,8 +315,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     ∃ (ι' : Type u) (t : Set ι') (φ : t → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
       t.Countable ∧
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
-          (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' U) = univ :=
-  by
+          (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
   set W : M → ℝ → Set M := fun x r =>
     (extChartAt IF x).symm ∘ diffeomorphToNhd (extChartAt IF x x) r '' U with W_def
   let B : M → ℝ → Set M := ChartedSpace.ball IF

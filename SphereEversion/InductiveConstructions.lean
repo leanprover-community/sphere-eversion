@@ -94,7 +94,8 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
     simp only [Germ.coe_eq.mpr hn₀.symm, h₀f n₀ x]
   intro x
   rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
-  exact Eventually.germ_congr (h₁f _ _ hn₀' x) hn₀.symm
+  convert (h₁f _ _ hn₀' x) using 1
+  exact Germ.coe_eq.mpr hn₀.symm
 
 theorem inductive_construction_of_loc' {X Y : Type _} [EMetricSpace X] [LocallyCompactSpace X]
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
