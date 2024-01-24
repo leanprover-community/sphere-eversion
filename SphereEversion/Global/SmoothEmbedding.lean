@@ -243,27 +243,8 @@ variable {𝕜 E H M : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup
   [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} [TopologicalSpace M] [ChartedSpace H M]
   [SmoothManifoldWithCorners I M] {x : M} {n : ℕ∞}
 
-theorem extChartAt_target_eq_image_chart_target :
-    (extChartAt I x).target = I '' (chartAt H x).target :=
-  by
-  erw [(chartAt H x).toPartialEquiv.trans_target'' I.toPartialEquiv, I.source_eq, univ_inter]
-  rfl
-
-@[simp]
-theorem modelWithCornersSelf.extChartAt {e : E} : extChartAt 𝓘(𝕜, E) e = PartialEquiv.refl E := by
-  simp
-
-theorem contMDiffOn_ext_chart_symm :
-    ContMDiffOn 𝓘(𝕜, E) I n (extChartAt I x).symm (extChartAt I x).target :=
-  by
-  have hs : (extChartAt I x).target ⊆ (chartAt E (extChartAt I x x)).source := by
-    simp only [subset_univ, mfld_simps]
-  have h2s : MapsTo (extChartAt I x).symm (extChartAt I x).target (chartAt H x).source := by
-    rw [← extChartAt_source I]; exact (extChartAt I x).symm_mapsTo
-  refine' (contMDiffOn_iff_of_subset_source hs h2s).mpr ⟨continuousOn_extChartAt_symm I x, _⟩
-  simp_rw [modelWithCornersSelf.extChartAt, PartialEquiv.refl_symm, PartialEquiv.refl_coe,
-    comp_id, id.def, image_id']
-  exact (contDiffOn_congr fun y hy => (extChartAt I x).right_inv hy).mpr contDiffOn_id
+-- PRed in mathlib4#9977
+theorem extend_target' {e : PartialHomeomorph M H} : (e.extend I).target = I '' e.target := sorry
 
 end GeneralNonsense
 
@@ -289,28 +270,24 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
       PartialHomeomorph.coe_coe, PartialEquiv.coe_trans_symm, PartialHomeomorph.coe_coe_symm,
       ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
   isOpen_range :=
-    IsOpenMap.isOpen_range fun u hu =>
-      by
+    IsOpenMap.isOpen_range fun u hu => by
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
       convert isOpen_extChartAt_preimage' IF x aux
       rw [image_comp]
       refine'
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans _)
-      rw [extChartAt_target_eq_image_chart_target]
+      rw [extChartAt, extend_target']
       exact hf₄
-  smooth_to :=
-    by
-    refine' contMDiffOn_ext_chart_symm.comp_contMDiff hf₂.contMDiff fun y => _
-    rw [extChartAt_target_eq_image_chart_target]
+  smooth_to := by
+    refine (contMDiffOn_extChartAt_symm x).comp_contMDiff hf₂.contMDiff fun y ↦ ?_
+    rw [extChartAt, extend_target']
     exact hf₄ (mem_range_self y)
   smooth_inv := by
-    rw [← extChartAt_target_eq_image_chart_target] at hf₄
-    have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target :=
-      by
+    rw [← extend_target'] at hf₄
+    have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target := by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
       exact (PartialEquiv.image_symm_image_of_subset_target _ hf₄).subset
-    have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chartAt H x).source :=
-      by
+    have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chartAt H x).source := by
       rw [← extChartAt_source IF, range_comp, ← PartialEquiv.symm_image_target_eq_source]
       exact (monotone_image hf₄).trans Subset.rfl
     exact hf₃.contMDiffOn.comp (contMDiffOn_extChartAt.mono hf'') hf'
@@ -372,7 +349,8 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
       fun z => _, _, _⟩
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
-    rw [← extChartAt_target_eq_image_chart_target]
+    simp_rw [extChartAt]
+    rw [← extend_target']
     exact (range_diffeomorphToNhd_subset_ball (extChartAt IF x x) hr).trans hr'
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr
