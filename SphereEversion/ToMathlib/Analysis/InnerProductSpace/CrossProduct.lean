@@ -95,8 +95,7 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       Matrix.cons_val_zero, mul_assoc, Nat.zero_eq, pow_one, Submodule.coe_norm] using
       ω.volumeForm_apply_le ![u, v, u×₃v]
   let K : Submodule ℝ E := Submodule.span ℝ ({u, ↑v} : Set E)
-  have : Nontrivial Kᗮ :=
-    by
+  have : Nontrivial Kᗮ := by
     apply @FiniteDimensional.nontrivial_of_finrank_pos ℝ
     have : finrank ℝ K ≤ Finset.card {u, (v : E)} := by
       simpa [Set.toFinset_singleton] using finrank_span_le_card ({u, ↑v} : Set E)
@@ -106,8 +105,7 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
     have : finrank ℝ E = 3 := Fact.out
     linarith
   obtain ⟨w, hw⟩ : ∃ w : Kᗮ, w ≠ 0 := exists_ne 0
-  have H : Pairwise fun i j => ⟪![u, v, w] i, ![u, v, w] j⟫ = 0 :=
-    by
+  have H : Pairwise fun i j => ⟪![u, v, w] i, ![u, v, w] j⟫ = 0 := by
     intro i j hij
     have h1 : ⟪u, v⟫ = 0 := v.2 _ (Submodule.mem_span_singleton_self _)
     have h2 : ⟪(v : E), w⟫ = 0 := w.2 _ (Submodule.subset_span (by simp))

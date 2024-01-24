@@ -71,7 +71,7 @@ def _root_.JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h 
 
 instance (R : RelLoc E F) : FunLike (FormalSol R) E (F × (E →L[ℝ] F)) :=
   ⟨fun 𝓕 x => (𝓕.f x, 𝓕.φ x),
-   by
+  by
      intros 𝓕 𝓕' h
      ext x : 2 <;> replace h := Prod.mk.inj_iff.mp <|congrFun h x
      exacts [h.1, h.2]⟩
@@ -92,8 +92,7 @@ def FormalSol.IsHolonomicAt (𝓕 : FormalSol R) (x : E) : Prop :=
 
 -- TODO: this should come from a lemma about `jet_sec`
 theorem FormalSol.isHolonomicAt_congr (𝓕 𝓕' : FormalSol R) {s : Set E}
-    (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) : ∀ᶠ x near s, 𝓕.IsHolonomicAt x ↔ 𝓕'.IsHolonomicAt x :=
-  by
+    (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) : ∀ᶠ x near s, 𝓕.IsHolonomicAt x ↔ 𝓕'.IsHolonomicAt x := by
   apply h.eventually_nhdsSet.mono
   intro x hx
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
@@ -119,8 +118,7 @@ def HtpyFormalSol.toHtpyJetSec {R : RelLoc E F} (𝓕 : R.HtpyFormalSol) : HtpyJ
 open RelLoc
 
 instance (R : RelLoc E F) : FunLike (FamilyFormalSol P R) P (JetSec E F) :=
-  ⟨fun S => S.toFamilyJetSec,
-    by
+  ⟨fun S => S.toFamilyJetSec, by
       intros S S' h
       ext p x : 3 <;> replace h := congrFun h p
       exacts [congrFun ((JetSec.ext_iff _ _).1 h).1 x, congrFun ((JetSec.ext_iff _ _).1 h).2 x]⟩

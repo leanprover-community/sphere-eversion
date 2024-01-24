@@ -67,8 +67,7 @@ theorem mem_loc_immersion_rel {x y φ} :
   Iff.rfl
 
 theorem sphereImmersion_of_sol (f : E → F) :
-    (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersionSphereRel E F) → SphereImmersion f :=
-  by
+    (∀ x ∈ 𝕊², (x, f x, fderiv ℝ f x) ∈ immersionSphereRel E F) → SphereImmersion f := by
   intro h x x_in
   have : x ∉ B := by
     rw [mem_sphere_zero_iff_norm] at x_in
@@ -76,8 +75,7 @@ theorem sphereImmersion_of_sol (f : E → F) :
   exact h x x_in this
 
 theorem mem_slice_iff_of_not_mem {x : E} {w : F} {φ : E →L[ℝ] F} {p : DualPair E} (hx : x ∉ B)
-    (y : F) : w ∈ slice R p (x, y, φ) ↔ InjOn (p.update φ w) (ℝ ∙ x)ᗮ :=
-  by
+    (y : F) : w ∈ slice R p (x, y, φ) ↔ InjOn (p.update φ w) (ℝ ∙ x)ᗮ := by
   change x ∉ B → InjOn (p.update φ w) (ℝ ∙ x)ᗮ ↔ InjOn (p.update φ w) (ℝ ∙ x)ᗮ
   simp_rw [eq_true hx, true_imp_iff]
 
@@ -90,8 +88,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     (H : InjOn φ₀ (ℝ ∙ x₀)ᗮ) :
     ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀),
       ⟪x₀, p.1⟫ ≠ 0 ∧
-        Injective ((p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) :=
-  by
+        Injective ((p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) := by
   -- This is true at (x₀, y₀, φ₀) and is an open condition because `p ↦ ⟪x₀, p.1⟫` and
   -- `p ↦ (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀` are continuous
   set j₀ := subtypeL (ℝ ∙ x₀)ᗮ
@@ -127,15 +124,13 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
       erw [orthogonalProjection_comp_coe, comp_id]
       exact injOn_iff_injective.mp H
 
-theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) :=
-  by
+theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
   dsimp only [immersionSphereRel]
   rw [isOpen_iff_mem_nhds]
   rintro ⟨x₀, y₀, φ₀⟩ (H : x₀ ∉ B → InjOn φ₀ (ℝ ∙ x₀)ᗮ)
   change ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), _
   by_cases hx₀ : x₀ ∈ B
-  · have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B :=
-      by
+  · have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B := by
       rw [nhds_prod_eq]
       apply (isOpen_ball.eventually_mem hx₀).prod_inl
     apply this.mono
@@ -151,8 +146,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) :=
     rintro ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ _
     unfold_let P f at Hφ
     change InjOn φ (ℝ ∙ x)ᗮ
-    have : range (subtypeL (ℝ ∙ x)ᗮ ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ :=
-      by
+    have : range (subtypeL (ℝ ∙ x)ᗮ ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ := by
       rw [Function.Surjective.range_comp]
       exact Subtype.range_coe
       exact (orthogonalProjectionOrthogonalLineIso hxx₀).surjective
@@ -184,8 +178,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   let u : E := (InnerProductSpace.toDual ℝ E).symm p.π
   have u_ne : u ≠ 0 := (InnerProductSpace.toDual ℝ E).symm.apply_ne_zero p.pi_ne_zero
   by_cases H : ker p.π = (ℝ ∙ x)ᗮ
-  · have key : ∀ w, EqOn (p.update φ w) φ (ℝ ∙ x)ᗮ :=
-      by
+  · have key : ∀ w, EqOn (p.update φ w) φ (ℝ ∙ x)ᗮ := by
       intro w x
       rw [← H]
       exact p.update_ker_pi φ w
@@ -215,8 +208,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
     rw [this]
     apply ample_of_two_le_codim
     let Φ := φ.toLinearMap
-    suffices 2 ≤ dim (F ⧸ map Φ (ker p.π ⊓ (ℝ ∙ x)ᗮ))
-      by
+    suffices 2 ≤ dim (F ⧸ map Φ (ker p.π ⊓ (ℝ ∙ x)ᗮ)) by
       rw [← finrank_eq_rank]
       exact_mod_cast this
     apply le_of_add_le_add_right
@@ -236,15 +228,12 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   rw [injOn_iff_injective]
   let j := (ℝ ∙ x)ᗮ.subtypeL
   let p'' : DualPair (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩
-  have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w :=
-    by
+  have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
     simp only [DualPair.update, restrict_apply, ContinuousLinearMap.add_apply,
       ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, comp_apply, coe_mk]
-  have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) :=
-    by
-    have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ :=
-      by
+  have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) := by
+    have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ := by
       ext z
       simp only [mem_map, LinearMap.mem_ker, ContinuousLinearMap.coe_comp', coe_subtypeL',
         Submodule.coeSubtype, comp_apply, mem_inf]
@@ -273,8 +262,7 @@ local notation "∞" => (⊤ : ℕ∞)
 variable [Fact (dim E = 3)] [FiniteDimensional ℝ E] (ω : Orientation ℝ E (Fin 3))
 
 theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) :
-    ContDiffAt ℝ ∞ (uncurry (locFormalEversionAuxφ ω)) p :=
-  by
+    ContDiffAt ℝ ∞ (uncurry (locFormalEversionAuxφ ω)) p := by
   refine' (ω.contDiff_rot hx).sub _
   refine' ContDiffAt.smul (contDiffAt_const.mul contDiffAt_fst) _
   exact (contDiffAt_orthogonalProjection_singleton hx).comp p contDiffAt_snd
@@ -291,14 +279,12 @@ def locFormalEversionAux : HtpyJetSec E E
     refine' contDiff_iff_contDiffAt.mpr fun x => _
     cases' eq_or_ne x.2 0 with hx hx
     · refine' contDiffAt_const.congr_of_eventuallyEq _; exact 0
-      have : (fun x => ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) :=
-        by
+      have : (fun x => ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) := by
         refine' IsOpen.mem_nhds _ _
         exact isOpen_Iio.preimage (contDiff_norm_sq ℝ (n :=∞)).continuous
         simp_rw [mem_preimage, norm_zero, zero_pow two_pos, mem_Iio]
         norm_num
-      have : (fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) :=
-        by
+      have : (fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) := by
         refine' mem_of_superset this _
         erw [@preimage_comp _ _ _ _ smoothStep]
         refine' preimage_mono _
@@ -340,8 +326,7 @@ def locFormalEversion : HtpyFormalSol (immersionSphereRel E E) :=
       change
         x ∉ B → InjOn (smoothStep (HPow.hPow ‖x‖ 2) • locFormalEversionAuxφ ω (smoothStep t) x) (ℝ ∙ x)ᗮ
       intro hx
-      have h2x : smoothStep (HPow.hPow ‖x‖ 2) = 1 :=
-        by
+      have h2x : smoothStep (HPow.hPow ‖x‖ 2) = 1 := by
         refine' smoothStep.of_gt _
         rw [mem_ball, not_lt, dist_zero_right] at hx
         refine' (show (3 : ℝ) / 4 < (0.9 : ℝ) ^ 2 by norm_num).trans_le _
@@ -398,8 +383,7 @@ theorem locFormalEversion_hol :
     ∀ᶠ p : ℝ × E near {0, 1} ×ˢ 𝕊², (locFormalEversion ω p.1).IsHolonomicAt p.2 := by
   have :
     (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x => ‖x‖ ^ 2) ⁻¹' Ioi (3 / 4)) ∈
-      𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) :=
-    by
+      𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) := by
     refine' (IsOpen.mem_nhdsSet _).mpr _
     exact
       (isOpen_Iio.union isOpen_Ioi).prod
@@ -415,8 +399,7 @@ theorem locFormalEversion_hol :
     norm_num
   have :
     (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {1}) ∈
-      𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) :=
-    by
+      𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) := by
     refine' mem_of_superset this (prod_mono Subset.rfl _)
     erw [@preimage_comp _ _ _ _ smoothStep]
     refine' preimage_mono _

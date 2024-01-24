@@ -427,8 +427,7 @@ theorem surroundingLoop_zero_right (t : ℝ) : surroundingLoop O_conn hp hb t 0 
 theorem surroundingLoop_zero_left (s : ℝ) : surroundingLoop O_conn hp hb 0 s = b := by
   simp only [surroundingLoop, Loop.roundTripFamily_zero]; rfl
 
-theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O :=
-  by
+theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O := by
   revert s
   rw [← range_subset_iff]
   simp only [surroundingLoop, Loop.roundTripFamily, Path.trans_range, Loop.roundTrip_range,
@@ -464,8 +463,7 @@ theorem surrounding_loop_of_convexHull [FiniteDimensional ℝ F] {f b : F} {O : 
       Continuous ↿γ ∧
         (∀ t, γ t 0 = b) ∧
           (∀ s, γ 0 s = b) ∧
-            (∀ s t, γ (projI t) s = γ t s) ∧ (∀ t s, γ t s ∈ O) ∧ (γ 1).Surrounds f :=
-  by
+            (∀ s t, γ (projI t) s = γ t s) ∧ (∀ t s, γ t s ∈ O) ∧ (γ 1).Surrounds f := by
   rcases surrounded_of_convexHull O_op hsf with ⟨p, w, h, hp⟩
   rw [← O_op.isConnected_iff_isPathConnected] at O_conn
   exact

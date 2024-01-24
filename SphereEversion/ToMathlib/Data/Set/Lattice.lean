@@ -21,10 +21,8 @@ theorem bUnion_le {α ι : Type _} [PartialOrder ι] (s : ι → Set α) (i : ι
   rfl
 
 theorem bUnion_ge {α ι : Type _} [PartialOrder ι] (s : ι → Set α) (i : ι) :
-    (⋃ j ≥ i, s j) = s i ∪ ⋃ j > i, s j :=
-  by
+    (⋃ j ≥ i, s j) = s i ∪ ⋃ j > i, s j := by
   erw [@bUnion_le α (OrderDual ι) _ s i, union_comm]
   rfl
 
 end Set
-

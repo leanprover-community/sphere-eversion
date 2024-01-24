@@ -92,7 +92,7 @@ theorem subset_range_strans_right {x : X} {γ γ' : Path x x} {t₀ : I} (h : t�
   have := mul_nonneg t.2.1 (sub_nonneg.mpr t₀.2.2)
   let t' : I :=
     ⟨t₀ + t * (1 - t₀), add_nonneg t₀.2.1 this,
-      by
+  by
       rw [add_comm, ← le_sub_iff_add_le]
       refine' (mul_le_mul_of_nonneg_right t.2.2 <| sub_nonneg.mpr t₀.2.2).trans_eq (one_mul _)⟩
   have h2 : t₀ ≤ t' := le_add_of_nonneg_right this
@@ -151,4 +151,3 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
   · rintro x h; rw [h, sub_self, zero_div, extend_div_self, extend_zero]
 
 end Path
-

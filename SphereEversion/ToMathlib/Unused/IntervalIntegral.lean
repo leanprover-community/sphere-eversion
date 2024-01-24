@@ -30,8 +30,7 @@ variable {E : Type _} [NormedAddCommGroup E]
 theorem intervalIntegrable_of_nonneg_of_le {f g : ℝ → ℝ} {μ : Measure ℝ} {a b : ℝ}
     (hf : AEStronglyMeasurable f <| μ.restrict (Ι a b))
     (h : ∀ᵐ t ∂μ.restrict <| Ι a b, 0 ≤ f t ∧ f t ≤ g t) (hg : IntervalIntegrable g μ a b) :
-    IntervalIntegrable f μ a b :=
-  by
+    IntervalIntegrable f μ a b := by
   rw [intervalIntegrable_iff] at *
   apply Integrable.mono' hg hf (h.mono _)
   rintro t ⟨H, H'⟩
@@ -45,8 +44,7 @@ namespace intervalIntegral
 
 theorem integral_mono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (hab : a ≤ b)
     (hf : IntervalIntegrable f μ a b) (hg : IntervalIntegrable g μ a b)
-    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ :=
-  by
+    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ := by
   rw [uIoc_of_le hab] at hfg
   let H := hfg.filter_mono (ae_mono le_rfl)
   simpa only [integral_of_le hab] using set_integral_mono_ae_restrict hf.1 hg.1 H
@@ -54,16 +52,14 @@ theorem integral_mono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (
 theorem integral_mono_of_le_of_nonneg {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (hab : a ≤ b)
     (hf : AEStronglyMeasurable f <| μ.restrict (Ι a b))
     (hfnonneg : ∀ᵐ t ∂μ.restrict <| Ι a b, 0 ≤ f t) (hg : IntervalIntegrable g μ a b)
-    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ :=
-  by
+    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ := by
   apply integral_mono_of_le hab _ hg hfg
   have : ∀ᵐ t ∂μ.restrict <| Ι a b, 0 ≤ f t ∧ f t ≤ g t := hfnonneg.and hfg
   apply intervalIntegrable_of_nonneg_of_le hf this hg
 
 theorem integral_antimono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (hab : b ≤ a)
     (hf : IntervalIntegrable f μ a b) (hg : IntervalIntegrable g μ a b)
-    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ :=
-  by
+    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ := by
   cases' hab.eq_or_lt with hab hab
   · simp [hab]
   · rw [uIoc_of_lt hab] at hfg
@@ -76,8 +72,7 @@ theorem integral_antimono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure �
 theorem integral_antimono_of_le_of_nonneg {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (hab : b ≤ a)
     (hf : AEStronglyMeasurable f <| μ.restrict (Ι a b))
     (hfnonneg : ∀ᵐ t ∂μ.restrict <| Ι a b, 0 ≤ f t) (hg : IntervalIntegrable g μ a b)
-    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ :=
-  by
+    (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ := by
   apply integral_antimono_of_le hab _ hg hfg
   have : ∀ᵐ t ∂μ.restrict <| Ι a b, 0 ≤ f t ∧ f t ≤ g t := hfnonneg.and hfg
   apply intervalIntegrable_of_nonneg_of_le hf this hg
@@ -89,8 +84,7 @@ section
 open intervalIntegral
 
 theorem norm_intervalIntegral_eq (f : ℝ → E) (a b : ℝ) (μ : Measure ℝ) :
-    ‖∫ x in a..b, f x ∂μ‖ = ‖∫ x in Ι a b, f x ∂μ‖ :=
-  by
+    ‖∫ x in a..b, f x ∂μ‖ = ‖∫ x in Ι a b, f x ∂μ‖ := by
   simp_rw [intervalIntegral_eq_integral_uIoc, norm_smul]
   split_ifs <;> simp only [norm_neg, norm_one, one_mul]
 
@@ -105,8 +99,7 @@ theorem intervalIntegrable_of_norm_sub_le {β : Type _} [NormedAddCommGroup β] 
     {g : ℝ → ℝ} {a b : ℝ} (hf₁_m : AEStronglyMeasurable f₁ (μ.restrict <| Ι a b))
     (hf₀_i : IntervalIntegrable f₀ μ a b) (hg_i : IntervalIntegrable g μ a b)
     (h : ∀ᵐ a ∂μ.restrict <| Ι a b, ‖f₀ a - f₁ a‖ ≤ g a) : IntervalIntegrable f₁ μ a b :=
-  haveI : ∀ᵐ a ∂μ.restrict <| Ι a b, ‖f₁ a‖ ≤ ‖f₀ a‖ + g a :=
-    by
+  haveI : ∀ᵐ a ∂μ.restrict <| Ι a b, ‖f₁ a‖ ≤ ‖f₀ a‖ + g a := by
     apply h.mono
     intro a ha
     calc

@@ -69,14 +69,12 @@ variable {R}
 
 theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q : DualPair E)
     (hpq : p.π.comp (ContinuousLinearMap.inr ℝ P E) = q.π) :
-    (R.relativize P).slice p σ = σ.2.2 (p.v - (0, q.v)) +ᵥ R.slice q (oneJetSnd σ) :=
-  by
+    (R.relativize P).slice p σ = σ.2.2 (p.v - (0, q.v)) +ᵥ R.slice q (oneJetSnd σ) := by
   have h2pq : ∀ x : E, p.π ((0 : P), x) = q.π x := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hpq
   ext1 w
   have h1 :
     (p.update σ.2.2 w).comp (ContinuousLinearMap.inr ℝ P E) =
-      q.update (oneJetSnd σ).2.2 (-σ.2.2 (p.v - (0, q.v)) +ᵥ w) :=
-    by
+      q.update (oneJetSnd σ).2.2 (-σ.2.2 (p.v - (0, q.v)) +ᵥ w) := by
     ext1 x
     simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply]
     rw [← ContinuousLinearMap.map_neg, neg_sub]
@@ -96,8 +94,7 @@ theorem relativize_slice_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)} (q
 
 theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P × E)}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ P E) = 0) :
-    ((R.relativize P).slice p σ).Nonempty ↔ (R.relativize P).slice p σ = univ :=
-  by
+    ((R.relativize P).slice p σ).Nonempty ↔ (R.relativize P).slice p σ = univ := by
   have h2p : ∀ x : E, p.π ((0 : P), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
   have : ∀ y : F,
       (p.update σ.2.2 y).comp (ContinuousLinearMap.inr ℝ P E) =
@@ -112,8 +109,7 @@ theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P �
 
 variable (P)
 
-theorem RelLoc.IsAmple.relativize (hR : R.IsAmple) : (R.relativize P).IsAmple :=
-  by
+theorem RelLoc.IsAmple.relativize (hR : R.IsAmple) : (R.relativize P).IsAmple := by
   intro p σ
   let p2 := p.π.comp (ContinuousLinearMap.inr ℝ P E)
   rcases eq_or_ne p2 0 with (h | h)
@@ -144,8 +140,7 @@ def FamilyJetSec.uncurry (S : FamilyJetSec E F P) : JetSec (P × E) F
 theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
     S.uncurry.φ p =
       fderiv ℝ (fun z => S.f z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ P E +
-        S.φ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ P E :=
-  by
+        S.φ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ P E := by
   simp_rw [S.uncurry_φ, fderiv_snd, add_left_inj]
   refine'
     (fderiv_comp p ((S.f_diff.comp (contDiff_id.prod contDiff_const)).differentiable le_top p.1)
@@ -169,8 +164,7 @@ theorem FamilyJetSec.uncurry_mem_relativize (S : FamilyJetSec E F P) {s : P} {x 
   rfl
 
 theorem FamilyJetSec.isHolonomicAt_uncurry (S : FamilyJetSec E F P) {p : P × E} :
-    S.uncurry.IsHolonomicAt p ↔ (S p.1).IsHolonomicAt p.2 :=
-  by
+    S.uncurry.IsHolonomicAt p ↔ (S p.1).IsHolonomicAt p.2 := by
   simp_rw [JetSec.IsHolonomicAt, S.uncurry_φ]
   rw [show S.uncurry.f = fun x => S.uncurry.f x from rfl, funext S.uncurry_f,
     show (fun x : P × E => S.f x.1 x.2) = ↿S.f from rfl]
@@ -184,8 +178,7 @@ theorem FamilyJetSec.isHolonomicAt_uncurry (S : FamilyJetSec E F P) {p : P × E}
 
 /-- Turn a family of formal solutions of `R ⊆ J¹(E, E')` parametrized by `P` into a formal solution
 of `R.relativize P`. -/
-def RelLoc.FamilyFormalSol.uncurry (S : R.FamilyFormalSol P) : FormalSol (R.relativize P) :=
-  by
+def RelLoc.FamilyFormalSol.uncurry (S : R.FamilyFormalSol P) : FormalSol (R.relativize P) := by
   refine' ⟨S.toFamilyJetSec.uncurry, _⟩
   rintro ⟨s, x⟩
   exact S.toFamilyJetSec.uncurry_mem_relativize.mpr (S.is_sol s x)
@@ -203,8 +196,7 @@ def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × 
   f p x := (S p.1).f (p.2, x)
   φ p x := (S p.1).φ (p.2, x) ∘L fderiv ℝ (fun x => (p.2, x)) x
   f_diff := S.f_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))
-  φ_diff :=
-    by
+  φ_diff := by
     refine' (S.φ_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))).clm_comp _
     refine' ContDiff.fderiv _ contDiff_snd le_top
     exact contDiff_fst.fst.snd.prod contDiff_snd
@@ -218,8 +210,7 @@ theorem FamilyJetSec.curry_φ (S : FamilyJetSec (P × E) F G) (p : G × P) (x : 
   rfl
 
 theorem FamilyJetSec.curry_φ' (S : FamilyJetSec (P × E) F G) (p : G × P) (x : E) :
-    (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L ContinuousLinearMap.inr ℝ P E :=
-  by
+    (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L ContinuousLinearMap.inr ℝ P E := by
   rw [S.curry_φ]
   congr 1
   refine' ((differentiableAt_const _).fderiv_prod differentiableAt_id).trans _
@@ -227,8 +218,7 @@ theorem FamilyJetSec.curry_φ' (S : FamilyJetSec (P × E) F G) (p : G × P) (x :
   rfl
 
 theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G} {s : P} {x : E}
-    (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x :=
-  by
+    (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [JetSec.IsHolonomicAt, S.curry_φ] at hS ⊢
   rw [show (S.curry (t, s)).f = fun x => (S.curry (t, s)).f x from rfl, funext (S.curry_f _)]
   dsimp only
@@ -291,8 +281,7 @@ theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Se
       (∀ s x, 𝓕 (0, s) x = 𝓕₀ s x) ∧
         (∀ᶠ p : P × E near C, ∀ t, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
           (∀ s x t, ‖(𝓕 (t, s)).f x - 𝓕₀.f s x‖ ≤ ε) ∧
-            ∀ᶠ p : P × E near K, (𝓕 (1, p.1)).IsHolonomicAt p.2 :=
-  by
+            ∀ᶠ p : P × E near K, (𝓕 (1, p.1)).IsHolonomicAt p.2 := by
   let parametric_landscape : Landscape (P × E) :=
     { C
       K₀ := K
@@ -324,8 +313,7 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
     ∃ f : ℝ → E → F,
       (𝒞 ∞ <| uncurry f) ∧
         (∀ p ∈ C, f (p : ℝ × E).1 p.2 = (𝓕₀ p.1).f p.2) ∧
-          ∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R :=
-  by
+          ∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R := by
   obtain ⟨𝓕, _, h₂, -, h₄⟩ :=
     𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (isCompact_Icc.prod hK) h_hol
   refine' ⟨fun s => (𝓕 (1, s)).f, _, _, _⟩

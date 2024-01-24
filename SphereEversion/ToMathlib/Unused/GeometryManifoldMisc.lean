@@ -19,8 +19,7 @@ theorem nhdsWithin_preimage_fst_le {x : α × β} {s : Set α} :
   exact le_comap_map
 
 theorem Filter.Eventually.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {p : α × β → Prop}
-    (h : ∀ᶠ x in 𝓝[s] z.1, ∀ y, p (x, y)) : ∀ᶠ z' in 𝓝[Prod.fst ⁻¹' s] z, p z' :=
-  by
+    (h : ∀ᶠ x in 𝓝[s] z.1, ∀ y, p (x, y)) : ∀ᶠ z' in 𝓝[Prod.fst ⁻¹' s] z, p z' := by
   refine' Eventually.filter_mono nhdsWithin_preimage_fst_le _
   simp_rw [eventually_comap, Prod.forall]
   simp (config := { singlePass := true }) only [forall_swap]
@@ -97,8 +96,7 @@ variable (IB) [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
 
 theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializationAtlas e]
     {x₀ : TotalSpace F E} (hx₀ : x₀.proj ∈ e.baseSet) :
-    SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e x₀ :=
-  by
+    SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e x₀ := by
   rw [smoothAt_prod]
   refine' ⟨(smoothAt_proj E).congr_of_eventuallyEq _, _⟩
   ·
@@ -111,8 +109,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
   have h0 := (extChartAt IB x₀.proj).left_inv (mem_extChartAt_source IB x₀.proj)
   have :
     ContMDiffWithinAt 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤ (fun x : EB × F => e'.coordChangeL 𝕜 e (c x.1) x.2)
-      (Prod.fst ⁻¹' range IB) (extChartAt IB x₀.proj x₀.proj, (e' x₀).2) :=
-    by
+      (Prod.fst ⁻¹' range IB) (extChartAt IB x₀.proj x₀.proj, (e' x₀).2) := by
     refine' ContMDiffWithinAt.clm_apply _ contDiffWithinAt_snd.contMDiffWithinAt
     have h1 := smoothAt_coord_change IB e' e ⟨mem_base_set_trivialization_at F E x₀.proj, hx₀⟩
     refine' h1.cont_mdiff_within_at.comp_of_eq _ (maps_to_univ _ _) _
@@ -192,8 +189,7 @@ variable [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
 /-- A function is `C^n` at a point, for `n : ℕ`, if and only if it is `C^n` on
 a neighborhood of this point. -/
 theorem contMDiffWithinAt_iff_contMDiffWithinAt_nhdsWithin {n : ℕ} :
-    ContMDiffWithinAt I I' n f s x ↔ ∀ᶠ x' in 𝓝[insert x s] x, ContMDiffWithinAt I I' n f s x' :=
-  by
+    ContMDiffWithinAt I I' n f s x ↔ ∀ᶠ x' in 𝓝[insert x s] x, ContMDiffWithinAt I I' n f s x' := by
   refine' ⟨_, fun h => h.self_of_nhdsWithin (mem_insert x s)⟩
   rw [contMDiffWithinAt_iff_contMDiffOn_nhds]
   rintro ⟨u, hu, h⟩
@@ -350,8 +346,7 @@ theorem contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap (x₀ : T
     ContMDiffAt I.tangent 𝓘(𝕜, E) m
       (fun x : TangentBundle I M =>
         (trivializationAt E (TangentSpace I) x₀.proj).continuousLinearMapAt 𝕜 x.proj x.2)
-      x₀ :=
-  by
+      x₀ := by
   let e := trivializationAt E (TangentSpace I) x₀.proj
   refine' ContMDiffAt.congr_of_eventuallyEq _ _
   pick_goal 3
@@ -365,8 +360,7 @@ theorem contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap (x₀ : T
 /-- Not useful by itself. TODO: generalize to `contMDiffWithinAt` of `tangentMapWithin` -/
 theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     (hf : ContMDiffAt I I' n f x₀.proj) (hmn : m + 1 ≤ n) :
-    ContMDiffAt I.tangent I'.tangent m (tangentMap I I' f) x₀ :=
-  by
+    ContMDiffAt I.tangent I'.tangent m (tangentMap I I' f) x₀ := by
   rw [contMDiffAt_totalSpace]
   refine'
     ⟨(hf.comp x₀ (contMDiffAt_proj (TangentSpace I))).of_le <| (self_le_add_right m 1).trans hmn,
@@ -379,8 +373,7 @@ theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
       (fun x : TangentBundle I M =>
         inTangentCoordinates I I' id f (mfderiv I I' f) x₀.proj x.proj <|
           e.continuousLinearMapAt 𝕜 x.proj x.2)
-      x₀ :=
-    by
+      x₀ := by
     refine'
       ContMDiffAt.mfderiv_apply (fun _ => f) id TotalSpace.proj
         (fun x => e.continuousLinearMapAt 𝕜 x.proj x.2) _ contMDiffAt_id (contMDiffAt_proj _) _

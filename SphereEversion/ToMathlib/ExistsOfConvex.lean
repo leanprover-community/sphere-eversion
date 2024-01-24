@@ -148,8 +148,7 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
   rintro w _w_pos w_supp w_sum
   have : (support w).Finite := support_finite_of_finsum_eq_one w_sum
   set fin_supp := this.toFinset with H
-  have : (support fun i : (𝓝 x).Germ (M₂ → F) ↦ w i • i) ⊆ fin_supp :=
-    by
+  have : (support fun i : (𝓝 x).Germ (M₂ → F) ↦ w i • i) ⊆ fin_supp := by
     rw [Set.Finite.coe_toFinset]
     exact support_smul_subset_left w id
   rw [finsum_eq_sum_of_support_subset _ this]

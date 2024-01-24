@@ -141,7 +141,7 @@ def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop
               (fun F : M → OneJetBundle I M I' M' ↦
                   mfderiv I I' (fun x' : M ↦ (F x').proj.snd) x = (F x).snd)
                 g :=
-        by
+    by
         intro f g hfg hf
         have hfg' : (fun x' ↦ (f x').1.2) =ᶠ[𝓝 x] fun x' ↦ (g x').1.2 :=
           hfg.fun_comp fun s ↦ s.1.2
@@ -198,7 +198,7 @@ protected def mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n
     (h2F : Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) :
     FamilyOneJetSec I M I' M' J N :=
   ⟨fun s x ↦ (FF s x).1.2, fun s x ↦ (FF s x).2,
-   by convert h2F using 1; ext ⟨s, m⟩; exact (hF s m).symm; rfl; rfl⟩
+  by convert h2F using 1; ext ⟨s, m⟩; exact (hF s m).symm; rfl; rfl⟩
 
 theorem coe_mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
     (h2F : Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) (x : N) :

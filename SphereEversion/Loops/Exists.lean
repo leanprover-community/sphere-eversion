@@ -24,8 +24,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
       ∃ V ∈ 𝓝ˢ K,
         ∃ ε > 0,
           SurroundingFamilyIn g b γ V Ω ∧
-            (∀ x ∈ V, ball (x, b x) (ε + ε) ⊆ Ω) ∧ ∀ x ∈ V, ∀ (t s), dist (γ x t s) (b x) < ε :=
-  by
+            (∀ x ∈ V, ball (x, b x) (ε + ε) ⊆ Ω) ∧ ∀ x ∈ V, ∀ (t s), dist (γ x t s) (b x) < ε := by
   have b_in : ∀ x, (x, b x) ∈ Ω := fun x =>
     (connectedComponentIn_nonempty_iff.mp (convexHull_nonempty_iff.mp ⟨g x, hconv x⟩) : _)
   -- we could probably get away with something simpler to get γ₀.
@@ -60,8 +59,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   -- `γ₁ x` is `γₓ` in notes
   refine' ⟨γ₁, _⟩
   have hbV : ∀ᶠ x near K, x ∈ V := hV
-  have h1 : ∀ x ∈ V, ∀ (_t _s : ℝ), ball (x, b x) (ε₁ + ε₁) ⊆ Ω :=
-    by
+  have h1 : ∀ x ∈ V, ∀ (_t _s : ℝ), ball (x, b x) (ε₁ + ε₁) ⊆ Ω := by
     intro x hx _t _s
     simp [← h0ε₁]
     refine' (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ
@@ -120,8 +118,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     (hconv : ∀ x, g x ∈ hull (connectedComponentIn (Prod.mk x ⁻¹' Ω) <| b x)) :
     ∃ γ : E → ℝ → Loop F,
       SurroundingFamilyIn g b γ univ Ω ∧
-        𝒞 ∞ ↿γ ∧ ∀ᶠ x near K, ∀ t s, closedBall (x, b x) (dist (γ x t s) (b x)) ⊆ Ω :=
-  by
+        𝒞 ∞ ↿γ ∧ ∀ᶠ x near K, ∀ t s, closedBall (x, b x) (dist (γ x t s) (b x)) ⊆ Ω := by
   obtain ⟨γ₁, V, hV, ε₀, hε₀, hγ₁, hΩ, h2γ₁⟩ := exist_loops_aux1 hK hΩ_op hb hgK hconv
   obtain ⟨γ₂, hγ₂, hγ₂₁⟩ :=
     exists_surrounding_loops hK.isClosed hΩ_op (fun x => hg.continuous.continuousAt) hb.continuous
@@ -152,15 +149,13 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have hγ₄ : Continuous γ₄ := hγ₃.cont
   let C₁ : Set ℝ := Iic (5⁻¹ : ℝ) ∪ Ici (4 / 5)
   have h0C₁ : (0 : ℝ) ∈ C₁ := Or.inl (by rw [mem_Iic]; norm_num1)
-  have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s :=
-    by
+  have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s := by
     intro s hs
     refine' fract_preimage_mem_nhds _ fun _ => _
     · rw [hs]; refine' mem_of_superset (Iic_mem_nhds <| by norm_num) (subset_union_left _ _)
     · refine' mem_of_superset (Ici_mem_nhds <| by norm_num) (subset_union_right _ _)
   let C : Set (E × ℝ × ℝ) := (fun x => x.2.1) ⁻¹' Iic (5⁻¹ : ℝ) ∪ (fun x => fract x.2.2) ⁻¹' C₁
-  have hC : IsClosed C :=
-    by
+  have hC : IsClosed C := by
     refine' (isClosed_Iic.preimage continuous_snd.fst).union _
     refine' ((isClosed_Iic.union isClosed_Ici).preimage_fract _).preimage continuous_snd.snd
     exact fun _ => Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
@@ -182,7 +177,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     refine (union_subset_union fun (x : E × ℝ × ℝ) (hx : x.2.1 ≤ 5⁻¹) => lt_of_le_of_lt hx (by norm_num)) ?_
     refine union_subset_union (fun (x : E × ℝ × ℝ) (hx : fract x.2.2 ≤ 5⁻¹) => lt_of_le_of_lt hx (by norm_num)) ?_
     exact fun x hx ↦ lt_of_lt_of_le (by norm_num : (3 / 4 : ℝ) < 4 / 5) hx
-  have h2γ₄ : EqOn γ₄ (fun x => b x.1) U :=  by
+  have h2γ₄ : EqOn γ₄ (fun x => b x.1) U := by
     rintro ⟨x, t, s⟩ hxts
     simp_rw [h0γ₄, Loop.reparam_apply]
     cases' hxts with ht hs
@@ -197,11 +192,9 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have hγ : 𝒞 ∞ ↿γ := by
     rw [contDiff_iff_contDiffAt]
     rintro ⟨x, t, s⟩; by_cases hs : fract s = 0
-    · have : (fun x => γ x.1 x.2.1 x.2.2) =ᶠ[𝓝 (x, t, s)] fun x => b x.1 :=
-        by
+    · have : (fun x => γ x.1 x.2.1 x.2.2) =ᶠ[𝓝 (x, t, s)] fun x => b x.1 := by
         have :
-          (fun x : E × ℝ × ℝ => (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) :=
-          by
+          (fun x : E × ℝ × ℝ => (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) := by
           simp_rw [@preimage_union _ _ _ (_ ⁻¹' _), preimage_preimage, fract_fract]
           refine' mem_of_superset _ (subset_union_right _ _)
           refine' continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
@@ -299,8 +292,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
   · intro x t
     simp [hγ₁.base]
   · intro x
-    have h1 : IntervalIntegrable (χ x • Loop.const (b x) : Loop F) volume 0 1 :=
-      by
+    have h1 : IntervalIntegrable (χ x • Loop.const (b x) : Loop F) volume 0 1 := by
       show IntervalIntegrable (fun _ => χ x • b x) volume (0 : ℝ) (1 : ℝ)
       exact intervalIntegrable_const
     have h2 : IntervalIntegrable ((1 - χ x) • γ₃ 1 x : Loop F) volume 0 1 :=

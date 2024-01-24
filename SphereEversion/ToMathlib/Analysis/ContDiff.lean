@@ -142,8 +142,7 @@ theorem Equiv.continuous_symm_of_contDiff (φ : E ≃ F) {Dφ : E → E ≃L[�
   let y := φ.symm x
   let g := (hφ y).localInverse φ (Dφ y) y
   rw [← φ.apply_symm_apply x]
-  have ev_eq : g =ᶠ[𝓝 (φ y)] φ.symm :=
-    by
+  have ev_eq : g =ᶠ[𝓝 (φ y)] φ.symm := by
     apply (hφ y).eventually_right_inverse.mono
     rintro x (hx : φ (g x) = x)
     exact (Equiv.eq_symm_apply φ).mpr hx

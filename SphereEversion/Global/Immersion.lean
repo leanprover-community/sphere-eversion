@@ -68,8 +68,7 @@ theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
-theorem immersionRel_open : IsOpen (immersionRel I M I' M') :=
-  by
+theorem immersionRel_open : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine' fun σ => (ψJ σ).open_target.inter _
   convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
@@ -86,8 +85,7 @@ theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I 
     (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ : Set $ TM' m')ᶜ :=
   Set.ext_iff.mpr fun _ ↦ p.injective_update_iff hφ
 
-theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample :=
-  by
+theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample := by
   rw [RelMfld.ample_iff]
   rintro ⟨⟨m, m'⟩, φ : TangentSpace I m →L[ℝ] TangentSpace I' m'⟩ (p : DualPair (TangentSpace I m))
     (hφ : Injective φ)
@@ -146,8 +144,7 @@ sanity checks. -/
 theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² => (x : E) :=
   mfderiv_coe_sphere_injective
 
-theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² => -(x : E) :=
-  by
+theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² => -(x : E) := by
   intro x
   change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² => (x : E)) x)
   rw [mfderiv_neg]
@@ -172,7 +169,7 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
       (by
         intro p
         have : SmoothAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2) :=
-          by
+      by
           refine' (ω.contDiff_rot _).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
         refine' this.comp p (Smooth.smoothAt _)
@@ -227,10 +224,8 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
   exact LinearMap.mem_range_self _ _
 
 theorem formalEversion_hol_near_zero_one :
-    ∀ᶠ s : ℝ × 𝕊² near {0, 1} ×ˢ univ, (formalEversion E ω s.1).toOneJetSec.IsHolonomicAt s.2 :=
-  by
-  have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ (univ : Set 𝕊²) ∈ 𝓝ˢ (({0, 1} : Set ℝ) ×ˢ univ) :=
-    by
+    ∀ᶠ s : ℝ × 𝕊² near {0, 1} ×ˢ univ, (formalEversion E ω s.1).toOneJetSec.IsHolonomicAt s.2 := by
+  have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ (univ : Set 𝕊²) ∈ 𝓝ˢ (({0, 1} : Set ℝ) ×ˢ univ) := by
     refine' ((isOpen_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr _
     rintro ⟨s, x⟩ ⟨hs, hx⟩
     refine' ⟨_, mem_univ _⟩

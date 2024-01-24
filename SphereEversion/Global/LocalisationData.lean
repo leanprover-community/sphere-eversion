@@ -44,8 +44,7 @@ def ι (L : LocalisationData I I' f) :=
   IndexType L.N
 
 theorem iUnion_succ' {β : Type*} (s : ld.ι → Set β) (i : IndexType ld.N) :
-    (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i :=
-  by
+    (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i := by
   simp only [(fun _ ↦ le_iff_lt_or_eq : ∀ j, j ≤ i ↔ j < i ∨ j = i)]
   erw [biUnion_union, biUnion_singleton]
   rfl
@@ -122,8 +121,7 @@ variable {E E' I I'}
 /-- Lemma `lem:localisation_stability`. -/
 theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :
     ∃ (ε : M → ℝ) (_hε : ∀ m, 0 < ε m) (_hε' : Continuous ε),
-      ∀ (g : M → M') (_hg : ∀ m, dist (g m) (f m) < ε m) (i), range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
-  by
+      ∀ (g : M → M') (_hg : ∀ m, dist (g m) (f m) < ε m) (i), range (g ∘ ld.φ i) ⊆ range (ld.ψj i) := by
   let K : ld.ι' → Set M' := fun i ↦ ld.ψ i '' closedBall 0 1
   let U : ld.ι' → Set M' := fun i ↦ range <| ld.ψ i
   have hK : ∀ i, IsClosed (K i) := fun i ↦

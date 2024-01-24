@@ -85,8 +85,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
           (((contDiffAt_id : ContDiffAt ℝ ∞ id t).const_smul a).add contDiffAt_const)
       h₁.prod_map contMDiffAt_id
     exact h.comp (t, x) this
-  have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) :=
-    by
+  have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
     refine' fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, _, _⟩
     · revert x
       exact forall_restrictGermPredicate_of_forall fun x ↦ rfl
@@ -124,8 +123,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     rcases P₀f with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
-    have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x :=
-      by
+    have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x := by
       rw [Eventually.union_nhdsSet]
       refine' ⟨_, fC⟩
       apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_
@@ -144,8 +142,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
         _ ≤ ε x := min_le_right _ _
     let η : M → ℝ := fun x ↦ τ x - dist (f x).1.2 (𝓕₀.bs x)
     have η_pos : ∀ x, 0 < η x := fun x ↦ sub_pos.mpr (hf_dist x)
-    have η_cont : Continuous η :=
-      by
+    have η_cont : Continuous η := by
       have : ContMDiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f := fun x ↦ hf_smooth x
       apply τ_cont.sub
       exact (one_jet_bundle_proj_continuous.comp this.continuous).snd.dist 𝓕₀.smooth_bs.continuous
@@ -237,8 +234,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     F.ContMDiffAt' (𝓘(ℝ).prod IM) ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞
   have hP₂ :
     ∀ (a b : ℝ) (p : ℝ × M) (f : ℝ × M → OneJetBundle IM M IX X),
-      P₂ (a * p.1 + b, p.2) f → P₂ p fun p : ℝ × M ↦ f (a * p.1 + b, p.2) :=
-    by
+      P₂ (a * p.1 + b, p.2) f → P₂ p fun p : ℝ × M ↦ f (a * p.1 + b, p.2) := by
     rintro a b ⟨t, x⟩ f h
     change ContMDiffAt _ _ _ (f ∘ fun p : ℝ × M ↦ (a * p.1 + b, p.2)) (t, x)
     change ContMDiffAt _ _ _ f ((fun p : ℝ × M ↦ (a * p.1 + b, p.2)) (t, x)) at h
@@ -250,8 +246,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
           (((contDiffAt_id : ContDiffAt ℝ ∞ id t).const_smul a).add contDiffAt_const)
       h₁.prod_map contMDiffAt_id
     exact h.comp (t, x) this
-  have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) :=
-    by
+  have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
     refine' fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, _, _⟩
     · revert x
       exact forall_restrictGermPredicate_of_forall fun x ↦ rfl
@@ -266,8 +261,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
               (∀ᶠ x near ⋃ j ≤ i, K j, P₁ x <| F 1) ∧
                 (∀ p, P₂ p ↿F) ∧
                   (∀ t, ∀ x ∉ U i, F t x = f x) ∧
-                    (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1 :=
-    by
+                    (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1 := by
     intro i f hf₀ hf₁
     let K₀ : Set EM := closedBall 0 1
     have hK₀ : IsCompact K₀ := isCompact_closedBall 0 1
@@ -285,8 +279,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     rcases hf₀ with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
-    have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x :=
-      by
+    have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x := by
       rw [Eventually.union_nhdsSet]
       refine' ⟨_, hf₁⟩
       apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_
@@ -295,8 +288,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       apply hx.1.mono fun x' hx' ↦ ?_
       simp [F]
       exact hx'.symm
-    have hFφψ : F.bs '' (range <| L.φ i) ⊆ range (L.ψj i) :=
-      by
+    have hFφψ : F.bs '' (range <| L.φ i) ⊆ range (L.ψj i) := by
       rw [← range_comp]
       apply L.ε_spec
       intro x
@@ -306,8 +298,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
         _ ≤ L.ε x := min_le_right _ _
     let η : M → ℝ := fun x ↦ τ x - dist (f x).1.2 (𝓕₀.bs x)
     have η_pos : ∀ x, 0 < η x := fun x ↦ sub_pos.mpr (hf_dist x)
-    have η_cont : Continuous η :=
-      by
+    have η_cont : Continuous η := by
       have : ContMDiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f := fun x ↦ hf_smooth x
       apply τ_cont.sub
       exact (one_jet_bundle_proj_continuous.comp this.continuous).snd.dist 𝓕₀.smooth_bs.continuous

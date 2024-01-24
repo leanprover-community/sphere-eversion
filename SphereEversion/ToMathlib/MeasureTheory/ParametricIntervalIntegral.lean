@@ -12,8 +12,7 @@ theorem aEStronglyMeasurable_uIoc_iff {α β : Type _} [MeasurableSpace α] [Lin
     [TopologicalSpace β] [MetrizableSpace β] {μ : Measure α} {f : α → β} {a b : α} :
     (AEStronglyMeasurable f <| μ.restrict <| Ι a b) ↔
       (AEStronglyMeasurable f <| μ.restrict <| Ioc a b) ∧
-        (AEStronglyMeasurable f <| μ.restrict <| Ioc b a) :=
-  by rw [uIoc_eq_union, aestronglyMeasurable_union_iff]
+        (AEStronglyMeasurable f <| μ.restrict <| Ioc b a) := by rw [uIoc_eq_union, aestronglyMeasurable_union_iff]
 
 section
 

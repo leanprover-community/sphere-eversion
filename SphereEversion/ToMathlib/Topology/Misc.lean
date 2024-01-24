@@ -253,8 +253,7 @@ section
 variable {α β γ δ ι : Type _} [TopologicalSpace α] [TopologicalSpace β] {x : α}
 
 theorem isOpen_slice_of_isOpen_over {Ω : Set (α × β)} {x₀ : α}
-    (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ Prod.fst ⁻¹' U)) : IsOpen (Prod.mk x₀ ⁻¹' Ω) :=
-  by
+    (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ Prod.fst ⁻¹' U)) : IsOpen (Prod.mk x₀ ⁻¹' Ω) := by
   rcases hΩ_op with ⟨U, hU, hU_op⟩; convert hU_op.preimage (Continuous.Prod.mk x₀) using 1
   simp_rw [preimage_inter, preimage_preimage, preimage_const, mem_of_mem_nhds hU, if_pos,
     inter_univ]
@@ -371,8 +370,7 @@ theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : Lo
   obtain ⟨U, hxU, hU⟩ := hs x
   refine' ⟨U, hxU, _⟩
   have :
-    encode ⁻¹' {i : ℕ | ((s <$> decode₂ ι i).getD ∅ ∩ U).Nonempty} = {i : ι | (s i ∩ U).Nonempty} :=
-    by simp_rw [preimage_setOf_eq, decode₂_encode, map_some, getD_some]
+    encode ⁻¹' {i : ℕ | ((s <$> decode₂ ι i).getD ∅ ∩ U).Nonempty} = {i : ι | (s i ∩ U).Nonempty} := by simp_rw [preimage_setOf_eq, decode₂_encode, map_some, getD_some]
   rw [← this] at hU
   refine' finite_of_finite_preimage hU _
   intro n hn
@@ -599,8 +597,7 @@ variable {u : ι → Set X} {s : Set X} [NormalSpace s]
 theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsOpen (u i))
     (uc : ∀ i, IsCompact (closure (u i))) (us : ∀ i, closure (u i) ⊆ s)
     (uf : ∀ x ∈ s, {i | x ∈ u i}.Finite) (uU : s ⊆ ⋃ i, u i) :
-    ∃ v : ι → Set X, (s ⊆ ⋃ i, interior (v i)) ∧ (∀ i, IsCompact (v i)) ∧ ∀ i, v i ⊆ u i :=
-  by
+    ∃ v : ι → Set X, (s ⊆ ⋃ i, interior (v i)) ∧ (∀ i, IsCompact (v i)) ∧ ∀ i, v i ⊆ u i := by
   obtain ⟨v, vU, vo, hv⟩ :=
     exists_iUnion_eq_closure_subset
       (fun i => (uo i).preimage (continuous_subtype_val : Continuous ((↑) : s → X)))

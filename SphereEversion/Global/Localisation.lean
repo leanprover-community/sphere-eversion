@@ -50,8 +50,7 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     exact this.2.2.contDiffAt -/
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
-    F.loc.IsHolonomicAt x ↔ F.IsHolonomicAt x :=
-  by
+    F.loc.IsHolonomicAt x ↔ F.IsHolonomicAt x := by
   dsimp only [OneJetSec.IsHolonomicAt]
   rw [mfderiv_eq_fderiv]
   exact Iff.rfl
@@ -96,8 +95,7 @@ def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E
     exact 𝓕.φ_diff.contMDiff a
 
 theorem JetSec.unloc_hol_at_iff (𝓕 : JetSec E E') (x : E) :
-    𝓕.unloc.IsHolonomicAt x ↔ 𝓕.IsHolonomicAt x :=
-  by
+    𝓕.unloc.IsHolonomicAt x ↔ 𝓕.IsHolonomicAt x := by
   dsimp only [OneJetSec.IsHolonomicAt]
   rw [mfderiv_eq_fderiv]
   exact Iff.rfl
@@ -162,8 +160,7 @@ def RelLoc.HtpyFormalSol.unloc : _root_.HtpyFormalSol (RelMfld.localize p.φ p.�
   { 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
 
 theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t' x}
-    (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x :=
-  by
+    (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x := by
   ext1
   rfl
   change (𝓕 t x).1 = (𝓕' t' x).1
@@ -182,8 +179,7 @@ theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).re
   rw [h]
 
 theorem RelLoc.HtpyFormalSol.unloc_congr' {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t'}
-    (h : 𝓕 t = 𝓕' t') : 𝓕.unloc p t = 𝓕'.unloc p t' :=
-  by
+    (h : 𝓕 t = 𝓕' t') : 𝓕.unloc p t = 𝓕'.unloc p t' := by
   apply FormalSol.coe_inj
   intro x
   apply RelLoc.HtpyFormalSol.unloc_congr
@@ -211,8 +207,7 @@ def ChartPair.mkHtpy (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.Htp
   else F.constHtpy
 
 theorem ChartPair.mkHtpy_congr (F : FormalSol R) {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
-    {t t' : ℝ} (h : 𝓕 t = 𝓕 t') : p.mkHtpy F 𝓕 t = p.mkHtpy F 𝓕 t' :=
-  by
+    {t t' : ℝ} (h : 𝓕 t = 𝓕 t') : p.mkHtpy F 𝓕 t = p.mkHtpy F 𝓕 t' := by
   unfold ChartPair.mkHtpy
   by_cases hF : p.compat' F 𝓕
   · simp only [dif_pos hF]
@@ -252,8 +247,7 @@ theorem ChartPair.mkHtpy_eq_of_not_mem (F : FormalSol R)
 
 theorem ChartPair.mkHtpy_eq_of_eq (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol)
     (h𝓕 : p.compat' F 𝓕) {t x} (h : 𝓕 t x = F.localize p h𝓕.1 x) :
-    p.mkHtpy F 𝓕 t (p.φ x) = F (p.φ x) :=
-  by
+    p.mkHtpy F 𝓕 t (p.φ x) = F (p.φ x) := by
   dsimp only [ChartPair.mkHtpy]
   split_ifs
   simp only [OpenSmoothEmbedding.updateFormalSol_apply_image]
@@ -273,10 +267,8 @@ theorem ChartPair.mkHtpy_localize {F : FormalSol R} {𝓕 : (R.localize p.φ p.�
 
 theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
     {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} (h : p.compat' F 𝓕) {t e} :
-    (p.mkHtpy F 𝓕 t).IsHolonomicAt (p.φ e) ↔ (𝓕 t).IsHolonomicAt e :=
-  by
-  have rg : range ((p.mkHtpy F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ :=
-    by
+    (p.mkHtpy F 𝓕 t).IsHolonomicAt (p.φ e) ↔ (𝓕 t).IsHolonomicAt e := by
+  have rg : range ((p.mkHtpy F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ := by
     rintro - ⟨e, rfl⟩
     dsimp only [ChartPair.mkHtpy]
     simp only [dif_pos h]

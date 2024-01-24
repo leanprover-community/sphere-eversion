@@ -66,8 +66,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
   have hcompat : p.compat' F 𝓕' := ⟨hFφψ, h𝓕'relK₁⟩
   let F' : HtpyFormalSol R := p.mkHtpy F 𝓕'
   have hF'relK₁ : ∀ t, ∀ x ∉ φ '' K₁, F' t x = F x := by apply p.mkHtpy_eq_of_not_mem
-  have hF't0 : ∀ᶠ t : ℝ near Iic 0, F' t = F :=
-    by
+  have hF't0 : ∀ᶠ t : ℝ near Iic 0, F' t = F := by
     apply h𝓕't0.mono
     rintro t ht
     exact p.mkHtpy_eq_of_forall hcompat ht

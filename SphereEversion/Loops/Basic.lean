@@ -99,22 +99,19 @@ theorem add_nat_eq (γ : Loop X) (t : ℝ) : ∀ n : ℕ, γ (t + n) = γ t
   | 0 => by rw [Nat.cast_zero, add_zero]
   | Nat.succ n => by rw [← γ.add_nat_eq t n, Nat.cast_succ, ← add_assoc, γ.per]
 
-theorem add_int_eq (γ : Loop X) (t : ℝ) (n : ℤ) : γ (t + n) = γ t :=
-  by
+theorem add_int_eq (γ : Loop X) (t : ℝ) (n : ℤ) : γ (t + n) = γ t := by
   induction' n using Int.induction_on with n hn n hn
   · norm_cast; rw [add_zero]
   · rw [← hn, Int.cast_add, ← add_assoc, Int.cast_one, γ.per]
   · rw [← hn, Int.cast_sub, add_sub, Int.cast_one, ← γ.per, sub_add_cancel]
 
-theorem fract_eq (γ : Loop X) : ∀ t, γ (fract t) = γ t :=
-  by
+theorem fract_eq (γ : Loop X) : ∀ t, γ (fract t) = γ t := by
   intro t
   unfold fract
   rw [sub_eq_add_neg, ← Int.cast_neg]
   exact γ.add_int_eq _ _
 
-theorem range_eq_image (γ : Loop X) : range γ = γ '' I :=
-  by
+theorem range_eq_image (γ : Loop X) : range γ = γ '' I := by
   apply eq_of_subset_of_subset
   · rw [range_subset_iff]
     exact fun y ↦ ⟨fract y, unitInterval.fract_mem y, γ.fract_eq _⟩
@@ -239,8 +236,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
 
 /-- `loop.ofPath` is continuous, general version. -/
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
-    (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) :=
-  by
+    (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
   refine' ContinuousOn.comp_fract _ ht _
   · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
@@ -269,8 +265,7 @@ theorem roundTrip_based_at {x y : X} {γ : Path x y} : roundTrip γ 0 = x := by
   simp [roundTrip, ofPath, fract_zero]
 
 theorem roundTrip_eq {x y x' y' : X} {γ : Path x y} {γ' : Path x' y'} (h : ∀ s, γ s = γ' s) :
-    roundTrip γ = roundTrip γ' :=
-  by
+    roundTrip γ = roundTrip γ' := by
   obtain rfl : x = x' := γ.source.symm.trans ((h 0).trans γ'.source)
   obtain rfl : y = y' := γ.target.symm.trans ((h 1).trans γ'.target)
   obtain rfl : γ = γ' := by ext; apply h
@@ -299,8 +294,7 @@ theorem roundTripFamily_zero {x y : X} {γ : Path x y} :
   simp [Path.refl_symm]
   rfl
 
-theorem roundTripFamily_one {x y : X} {γ : Path x y} : (roundTripFamily γ) 1 = roundTrip γ :=
-  by
+theorem roundTripFamily_one {x y : X} {γ : Path x y} : (roundTripFamily γ) 1 = roundTrip γ := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_one, ofPath]
   rfl
 
@@ -320,8 +314,7 @@ noncomputable def average (γ : Loop F) : F :=
 theorem zero_average : average (0 : Loop F) = 0 :=
   intervalIntegral.integral_zero
 
-theorem isConst_iff_forall_avg {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.average :=
-  by
+theorem isConst_iff_forall_avg {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.average := by
   constructor <;> intro h
   · intro t
     have : γ = Loop.const (γ t) := by
@@ -349,8 +342,8 @@ theorem average_smul {γ : Loop F} {c : ℝ} : (c • γ).average = c • γ.ave
 theorem isConst_iff_const_avg {γ : Loop F} : γ.IsConst ↔ γ = const γ.average := by
   rw [Loop.isConst_iff_forall_avg, Loop.ext_iff, funext_iff]; rfl
 
-theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst :=
-  by classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
+theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst := by
+  classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
 
 theorem continuous_average {E : Type _} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
@@ -368,8 +361,7 @@ theorem normalize_apply (γ : Loop F) (t : ℝ) : Loop.normalize γ t = γ t - �
   rfl
 
 @[simp]
-theorem normalize_of_isConst {γ : Loop F} (h : γ.IsConst) : γ.normalize = 0 :=
-  by
+theorem normalize_of_isConst {γ : Loop F} (h : γ.IsConst) : γ.normalize = 0 := by
   ext t
   simp [isConst_iff_forall_avg.mp h]
 
@@ -415,8 +407,7 @@ theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ 
   have U_nhds : U ∈ 𝓝 x := IsOpen.mem_nhds U_op hxU
   apply Filter.mem_of_superset U_nhds
   intro y hy
-  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
-    by
+  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average := by
     intro t
     apply Filter.mem_of_superset (U_op.mem_nhds hy)
     intro z hz
@@ -439,8 +430,7 @@ theorem ContDiff.loop_average {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 
   contDiff_parametric_integral_of_contDiff hγ_diff _ _
 
 theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
-    (Loop.diff γ e).normalize = Loop.diff (fun e ↦ (γ e).normalize) e :=
-  by
+    (Loop.diff γ e).normalize = Loop.diff (fun e ↦ (γ e).normalize) e := by
   ext t x
   simp only [Loop.diff_apply, Loop.normalize_apply, partialFDerivFst]
   rw [fderiv_sub ((hγ_diff.partial_loop t).differentiable le_rfl).differentiableAt,

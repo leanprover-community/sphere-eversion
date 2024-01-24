@@ -57,8 +57,7 @@ theorem rot_eq_aux : ω.rot = ω.rotAux := by
   abel
 
 /-- The map `rot` is smooth on `ℝ × (E \ {0})`. -/
-theorem contDiff_rot {p : ℝ × E} (hp : p.2 ≠ 0) : ContDiffAt ℝ ⊤ ω.rot p :=
-  by
+theorem contDiff_rot {p : ℝ × E} (hp : p.2 ≠ 0) : ContDiffAt ℝ ⊤ ω.rot p := by
   simp only [rot_eq_aux]
   refine' (contDiffAt_fst.mul_const.cos.smul contDiffAt_const).add _
   refine'
@@ -109,8 +108,7 @@ theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v
     simp only [inner_self_eq_norm_sq_to_K, ω.isometry_on_crossProduct v w]
   have h2 : ⟪v×₃w, w⟫ = 0 := ω.inner_crossProduct_apply_apply_self v w
   have h3 : ⟪(w : E), v×₃w⟫ = 0 := by rwa [real_inner_comm]
-  have : ‖Real.cos (t * Real.pi) • (w : E) + Real.sin (t * Real.pi) • v×₃w‖ = ‖(w : E)‖ :=
-    by
+  have : ‖Real.cos (t * Real.pi) • (w : E) + Real.sin (t * Real.pi) • v×₃w‖ = ‖(w : E)‖ := by
     simp only [@norm_eq_sqrt_inner ℝ]
     congr 2
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
@@ -138,8 +136,7 @@ open Real Submodule
 
 open scoped Real
 
-theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t, x)) (ℝ ∙ x)ᗮ :=
-  by
+theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t, x)) (ℝ ∙ x)ᗮ := by
   change Set.InjOn (ω.rot (t, x)).toLinearMap (ℝ ∙ x)ᗮ
   simp_rw [← LinearMap.ker_inf_eq_bot, Submodule.eq_bot_iff, Submodule.mem_inf]
   rintro y ⟨hy, hy'⟩
@@ -164,7 +161,7 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
     have : (0 : ℝ) < ‖x‖ ^ 2 := pow_pos (norm_pos_iff.mpr hx) 2
     rw [cos_sq']
     rw [show (1 : ℝ) - sin (t * π) ^ 2 + sin (t * π) ^ 2 * ‖x‖ ^ 2 = (1 : ℝ) + sin (t * π) ^ 2 * (‖x‖ ^ 2 - 1)
-        by ring]
+    by ring]
     have I₁ : ‖x‖ ^ 2 - 1 > -1 := by linarith
     have I₂ : sin (t * π) ^ 2 ≤ 1 := sin_sq_le_one (t * π)
     have I₃ : (0 : ℝ) ≤ sin (t * π) ^ 2 := sq_nonneg _
@@ -180,8 +177,7 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
     rw [real_inner_comm, this]
     simp
 
-theorem injOn_rot (t : ℝ) (x : Metric.sphere (0 : E) 1) : Set.InjOn (ω.rot (t, x)) (ℝ ∙ (x : E))ᗮ :=
-  by
+theorem injOn_rot (t : ℝ) (x : Metric.sphere (0 : E) 1) : Set.InjOn (ω.rot (t, x)) (ℝ ∙ (x : E))ᗮ := by
   intro v hv w hw h
   simpa [sub_eq_zero, h] using (ω.isometry_on_rot t x (⟨v, hv⟩ - ⟨w, hw⟩)).symm
 

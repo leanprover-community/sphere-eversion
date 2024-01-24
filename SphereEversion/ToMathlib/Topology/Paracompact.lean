@@ -80,4 +80,3 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     rw [Set.not_nonempty_iff_eq_empty]
     have := Set.inter_subset_inter_left (U n) (h₂ m ⟨x, hx₁⟩)
     rwa [Set.not_nonempty_iff_eq_empty.mp hm, Set.subset_empty_iff] at this
-

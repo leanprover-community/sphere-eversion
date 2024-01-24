@@ -51,8 +51,7 @@ theorem unionElim_eq_right_of_eq [DecidablePred (· ∈ s)] (hxt : x ∈ t)
   if hxs : x ∈ s then (unionElim_eq_left hxs).trans (hfg x hxs hxt) else unionElim_eq_right _ hxs
 
 theorem unionElim_restrict [DecidablePred (· ∈ s)] (f : α → β) :
-    unionElim (s.restrict f) (t.restrict f) = (s ∪ t).restrict f :=
-  by
+    unionElim (s.restrict f) (t.restrict f) = (s ∪ t).restrict f := by
   ext ⟨x, hx⟩
   cases (mem_union _ _ _).mp hx <;> simp [union_elim_eq_left, union_elim_eq_right_of_eq, h]
 
@@ -70,8 +69,7 @@ variable {α β γ : Type _} {g : α → β} {f : Filter α} {x : α} {y : β}
 def EventuallyConstant (g : α → β) (f : Filter α) : Prop :=
   ∃ y : β, ∀ᶠ x in f, g x = y
 
-theorem eventuallyConstant_iff_tendsto : EventuallyConstant g f ↔ ∃ x : β, Tendsto g f (pure x) :=
-  by simp_rw [EventuallyConstant, tendsto_pure]
+theorem eventuallyConstant_iff_tendsto : EventuallyConstant g f ↔ ∃ x : β, Tendsto g f (pure x) := by simp_rw [EventuallyConstant, tendsto_pure]
 
 theorem EventuallyConstant.nonempty (h : EventuallyConstant g f) : Nonempty β :=
   nonempty_of_exists h
@@ -83,16 +81,14 @@ theorem eventuallyConstant_of_unique [Unique β] : EventuallyConstant g f :=
   ⟨default, eventually_of_forall fun _ => Unique.uniq _ _⟩
 
 theorem eventuallyConstant_atTop [SemilatticeSup α] [Nonempty α] :
-    (∃ i, ∀ j, i ≤ j → g j = g i) ↔ EventuallyConstant g atTop :=
-  by
+    (∃ i, ∀ j, i ≤ j → g j = g i) ↔ EventuallyConstant g atTop := by
   simp_rw [EventuallyConstant, eventually_atTop]
   constructor
   · rintro ⟨i, hi⟩; refine' ⟨g i, i, hi⟩
   · rintro ⟨y, i, hi⟩; use i; simp_rw [hi i le_rfl]; exact hi
 
 theorem eventuallyConstant_atTop_nat {g : ℕ → α} :
-    (∃ n, ∀ m, n ≤ m → g (m + 1) = g m) ↔ EventuallyConstant g atTop :=
-  by
+    (∃ n, ∀ m, n ≤ m → g (m + 1) = g m) ↔ EventuallyConstant g atTop := by
   rw [← eventuallyConstant_atTop]
   apply exists_congr; intro n
   constructor
@@ -133,8 +129,7 @@ theorem eventualValue_eq_fn {g : ℕ → β} {hβ : Nonempty β} {n : ℕ} (h : 
   eventualValue_unique' <| eventually_of_mem (mem_atTop _) h
 
 theorem EventuallyConstant.exists_eventualValue_eq [f.ne_bot] (h : EventuallyConstant g f) :
-    ∃ i, @eventualValue _ _ h.Nonempty g f = g i :=
-  by
+    ∃ i, @eventualValue _ _ h.Nonempty g f = g i := by
   obtain ⟨y, hy⟩ := h
   obtain ⟨x, rfl⟩ := hy.exists
   exact ⟨x, (eventual_value_unique hy).symm⟩
@@ -241,8 +236,7 @@ theorem LocallyEventuallyConstantOn.nonempty (hg : LocallyEventuallyConstantOn g
 theorem LocallyEventuallyConstantOn.continuousWithinAt [TopologicalSpace δ] [f.ne_bot] [Nonempty δ]
     (F : γ → δ) (hgf : LocallyEventuallyConstantOn g f U) (hxU : x ∈ U)
     (hg : ∀ i, ContinuousWithinAt (F ∘ g i) U x) :
-    ContinuousWithinAt (fun x => eventualValue (fun i => F (g i x)) f) U x :=
-  by
+    ContinuousWithinAt (fun x => eventualValue (fun i => F (g i x)) f) U x := by
   obtain ⟨O, hO, hgO⟩ := hgf x hxU
   obtain ⟨i, hi⟩ := (eventually_eq_eventual_value hgO).exists
   simp_rw [Function.funext_iff, eventual_value_apply hgO] at hi
@@ -252,8 +246,7 @@ theorem LocallyEventuallyConstantOn.continuousWithinAt [TopologicalSpace δ] [f.
 
 theorem LocallyEventuallyConstantOn.exists_nhdsSet_of_isCompact
     (hgf : LocallyEventuallyConstantOn g f U) {K : Set β} (hK : IsCompact K) (hKU : K ⊆ U) :
-    ∃ O ∈ 𝓝ˢ K, EventuallyConstantOn g f O :=
-  by
+    ∃ O ∈ 𝓝ˢ K, EventuallyConstantOn g f O := by
   refine' IsCompact.induction_on hK ⟨∅, mem_nhdsSet_empty, eventuallyConstant_of_unique⟩ _ _ _
   · rintro s t hst ⟨O, hO, hgO⟩; refine' ⟨O, _, hgO⟩; exact monotone_nhdsSet hst hO
   · rintro s t ⟨O, hO, y, hgO⟩ ⟨O', hO', y', hgO'⟩

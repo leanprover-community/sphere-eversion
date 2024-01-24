@@ -124,8 +124,7 @@ theorem IndexType.not_isMax (n : IndexType 0) : ¬IsMax n :=
 
 @[elab_as_elim]
 theorem IndexType.induction_from {N : ℕ} {P : IndexType N → Prop} {i₀ : IndexType N} (h₀ : P i₀)
-    (ih : ∀ i ≥ i₀, ¬IsMax i → P i → P i.succ) : ∀ i ≥ i₀, P i :=
-  by
+    (ih : ∀ i ≥ i₀, ¬IsMax i → P i → P i.succ) : ∀ i ≥ i₀, P i := by
   cases N
   · intro i h
     induction' h with i hi₀i hi ih
@@ -175,4 +174,3 @@ theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N �
     · convert hF' _ _ (key i) hi
       rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩
       simp_rw [IndexType.succ_castSuccEmb, induction_succ]
-

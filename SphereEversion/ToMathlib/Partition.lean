@@ -119,8 +119,8 @@ theorem SmoothPartitionOfUnity.germ_combine_mem {s : Set M} (ρ : SmoothPartitio
   change x ∈ interior s at hx
   have : (ρ.combine φ : Germ (𝓝 x) F) =
       ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) • (φ i : Germ (𝓝 x) F) := by
-    suffices (ρ.combine φ : Germ (𝓝 x) F) = ↑(∑ i in ρ.fintsupport x, ((ρ i : M → ℝ) • φ i : M → F))
-      by rw [this, Germ.coe_sum]; rfl
+    suffices (ρ.combine φ : Germ (𝓝 x) F) = ↑(∑ i in ρ.fintsupport x, ((ρ i : M → ℝ) • φ i : M → F)) by
+      rw [this, Germ.coe_sum]; rfl
     rw [Germ.coe_eq]
     filter_upwards [ρ.eventually_finsupport_subset x] with x' hx'
     simp_rw [SmoothPartitionOfUnity.combine, Finset.sum_apply, Pi.smul_apply']

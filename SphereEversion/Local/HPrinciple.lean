@@ -139,8 +139,7 @@ theorem isCompact_K (L : StepLandscape E) : IsCompact L.K :=
 variable {R}
 
 theorem Accepts.open [FiniteDimensional ℝ E] {L : StepLandscape E} {𝓕 : JetSec E F}
-    (h : L.Accepts R 𝓕) : IsOpen (L.Ω R 𝓕) :=
-  by
+    (h : L.Accepts R 𝓕) : IsOpen (L.Ω R 𝓕) := by
   set ψ : E × F → OneJet E F := fun p => (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2)
   change IsOpen {p : E × F | ψ p ∈ R}
   apply IsOpen.preimage _ h.h_op
@@ -154,8 +153,7 @@ theorem smooth_g (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.g 𝓕)
   (ContinuousLinearMap.apply ℝ F L.v).contDiff.comp (contDiff_top_iff_fderiv.mp 𝓕.f_diff).2
 
 theorem Accepts.rel {L : StepLandscape E} {𝓕 : JetSec E F} (h : L.Accepts R 𝓕) :
-    ∀ᶠ x : E near L.K, (L.g 𝓕) x = (L.b 𝓕) x :=
-  by
+    ∀ᶠ x : E near L.K, (L.g 𝓕) x = (L.b 𝓕) x := by
   apply (h.hC.filter_mono <| monotone_nhdsSet (inter_subset_right L.K₁ L.C)).mono
   intro x hx
   dsimp [JetSec.IsHolonomicAt] at hx
@@ -177,8 +175,7 @@ theorem nice (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) :
     (exist_loops L.isCompact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕):) h.rel h.hShort
 
 theorem update_zero (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (x : E) (s : ℝ) :
-    L.p.update (𝓕.φ x) ((L.loop h 0 x) s) = 𝓕.φ x :=
-  by
+    L.p.update (𝓕.φ x) ((L.loop h 0 x) s) = 𝓕.φ x := by
   rw [(L.nice h).t_zero x s]
   exact L.p.update_self _
 
@@ -207,8 +204,7 @@ theorem ρ_smooth (L : StepLandscape E) : 𝒞 ∞ L.ρ :=
 theorem ρ_mem (L : StepLandscape E) (x : E) : L.ρ x ∈ I :=
   (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.2.2.2 x
 
-theorem ρ_le (L : StepLandscape E) (x : E) : |L.ρ x| ≤ 1 :=
-  by
+theorem ρ_le (L : StepLandscape E) (x : E) : |L.ρ x| ≤ 1 := by
   cases' L.ρ_mem x with h h'
   rw [abs_le]
   refine' ⟨_, h'⟩
@@ -270,8 +266,7 @@ theorem improveStep_apply_φ (t : ℝ) (x : E) :
   rfl
 
 theorem improveStep_of_support (t : ℝ) {x : E} (H : ∀ t, x ∉ Loop.support (L.loop h t)) :
-    L.improveStep h N t x = 𝓕 x :=
-  by
+    L.improveStep h N t x = 𝓕 x := by
   have : ∀ t s, L.loop h t x s = 𝓕.φ x L.v := by
     intro t s
     rw [Loop.isConst_of_not_mem_support (H t) s 0]
@@ -297,10 +292,8 @@ theorem improveStep_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improveStep h
   erw [L.update_zero h]
   rfl
 
-theorem improveStep_rel_K : ∀ᶠ x near L.K, ∀ t, L.improveStep h N t x = 𝓕 x :=
-  by
-  have : ∀ᶠ x near L.K, ∀ t, x ∉ Loop.support (L.loop h t) :=
-    by
+theorem improveStep_rel_K : ∀ᶠ x near L.K, ∀ t, L.improveStep h N t x = 𝓕 x := by
+  have : ∀ᶠ x near L.K, ∀ t, x ∉ Loop.support (L.loop h t) := by
     apply (L.nice h).rel_K.eventually_nhdsSet.mono
     intro x hx t
     apply Loop.not_mem_support
@@ -311,8 +304,7 @@ theorem improveStep_rel_K : ∀ᶠ x near L.K, ∀ t, L.improveStep h N t x = �
   intro x hx t
   exact improveStep_of_support _ _ _ _ hx
 
-theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = 𝓕 x :=
-  by
+theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = 𝓕 x := by
   apply Eventually.filter_mono (L.hK₁.isClosed.nhdsSet_le_sup' L.C)
   rw [eventually_sup]
   constructor
@@ -333,8 +325,7 @@ theorem bu_lt {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] (t : ℝ) 
     _ < ε := hv
 
 theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
-    ∀ᶠ N in atTop, ∀ x t, ‖(L.improveStep h N t).f x - 𝓕.f x‖ ≤ ε :=
-  by
+    ∀ᶠ N in atTop, ∀ x t, ‖(L.improveStep h N t).f x - 𝓕.f x‖ ≤ ε := by
   set γ := L.loop h
   have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.continuous
   have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
@@ -351,8 +342,7 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
     simp [ε_pos.le]
 
 theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
-    ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.E' ⊔ L.p.spanV) x :=
-  by
+    ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.E' ⊔ L.p.spanV) x := by
   have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   let 𝓕' : JetSec E F :=
     { f := fun x => 𝓕.f x + corrugation L.π N (L.loop h 1) x
@@ -369,8 +359,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
         apply contDiff_const.mul L.π.contDiff
         exact contDiff_id
         exact Remainder.smooth _ _ (L.loop_smooth h) contDiff_id contDiff_const }
-  have H : ∀ᶠ x near L.K₀, L.improveStep h N 1 x = 𝓕' x :=
-    by
+  have H : ∀ᶠ x near L.K₀, L.improveStep h N 1 x = 𝓕' x := by
     apply L.hρ₀.mono
     intro x hx
     simp [improveStep_apply _ h, hx]
@@ -401,8 +390,7 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
   set K :=
     (fun p : E × ℝ × ℝ => (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
       L.K₁ ×ˢ I ×ˢ I
-  have K_cpt : IsCompact K :=
-    by
+  have K_cpt : IsCompact K := by
     refine' (L.hK₁.prod (isCompact_Icc.prod isCompact_Icc)).image _
     refine' continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _)
     apply L.p.continuous_update 𝓕.φ_diff.continuous.fst'
@@ -483,8 +471,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
               (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x) ∧
                 (∀ x ∉ L.K₁, ∀ t, H t x = 𝓕 x) ∧
                   (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ δ) ∧
-                    (∀ t, (H t).IsFormalSol R) ∧ ∀ᶠ x near L.K₀, (H 1).IsPartHolonomicAt (E' k) x
-    by
+                    (∀ t, (H t).IsFormalSol R) ∧ ∀ᶠ x near L.K₀, (H 1).IsPartHolonomicAt (E' k) x by
     simpa only [show E' (Fin.last n) = ⊤ from e.flag_last, JetSec.isPartHolonomicAt_top] using
       this (Fin.last n) ε ε_pos
   intro k
@@ -577,8 +564,7 @@ theorem RelLoc.FormalSol.improve_htpy' (𝓕 : FormalSol R)
         (∀ᶠ t near Ici 1, H t = H 1) ∧
           (∀ᶠ x near L.C, ∀ t, H t x = 𝓕 x) ∧
             (∀ x ∉ L.K₁, ∀ t, H t x = 𝓕 x) ∧
-              (∀ x t, ‖(H t).f x - 𝓕.f x‖ < ε) ∧ ∀ᶠ x near L.K₀, (H 1).IsHolonomicAt x :=
-  by
+              (∀ x t, ‖(H t).f x - 𝓕.f x‖ < ε) ∧ ∀ᶠ x near L.K₀, (H 1).IsHolonomicAt x := by
   rcases 𝓕.improve h_op h_ample L (half_pos ε_pos) h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩
   exact
     ⟨{ H with is_sol := h₆ }, h₁, h₂, h₃, h₄, fun x t => (h₅ x t).trans_lt (half_lt_self ε_pos), h₇⟩

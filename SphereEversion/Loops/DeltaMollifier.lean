@@ -186,11 +186,9 @@ theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (
 -- if convenient we could set `[c,d] = [0,1]`
 theorem intervalIntegral_periodize_smul (f : ℝ → ℝ) (γ : Loop E) {a b c d : ℝ} (h : b ≤ a + 1)
     (h2 : d = c + 1) (hf : support f ⊆ Ioc a b) :
-    ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t :=
-  by
+    ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t := by
   rw [h2]
-  have : (support fun t => f t • γ t) ⊆ Ioc a (a + 1) :=
-    by
+  have : (support fun t => f t • γ t) ⊆ Ioc a (a + 1) := by
     erw [support_smul]
     exact ((inter_subset_left _ _).trans hf).trans (Ioc_subset_Ioc_right h)
   rw [← intervalIntegral.integral_eq_integral_of_support_subset this]
@@ -265,8 +263,7 @@ theorem deltaMollifier_smooth : 𝒞 ∞ (deltaMollifier n t) :=
 open intervalIntegral
 
 @[simp]
-theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s = 1 :=
-  by
+theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s = 1 := by
   simp_rw [deltaMollifier]
   rw [integral_comp_sub_right (fun x => (n : ℝ) / (n + 1) * approxDirac n x + 1 / (n + 1)) t,
     integral_add, integral_const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel,

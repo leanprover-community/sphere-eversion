@@ -159,8 +159,7 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
     ContinuousLinearMap.comp_apply]
   simp [S.coe_ϕ]
 
-def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) :=
-  by
+def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) := by
   refine' ⟨S.toFamilyOneJetSec.uncurry, _⟩
   rintro ⟨s, x⟩
   exact S.toFamilyOneJetSec.uncurry_mem_relativize.mpr (S.is_sol' s x)
@@ -192,8 +191,7 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
       SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
         (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M => (p.1.2, p.2))
           (fun p : (N × P) × M => mfderiv I (IP.prod I) (fun x : M => (p.1.2, x)) p.2) ((t, s), x))
-        ((t, s), x) :=
-      by
+        ((t, s), x) := by
       apply
         ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) => (p.1.2, x)) Prod.snd
           (smoothAt_fst.fst.snd.prod_mk smoothAt_snd :
@@ -210,8 +208,7 @@ theorem FamilyOneJetSec.curry_ϕ (S : FamilyOneJetSec (IP.prod I) (P × M) I' M'
   rfl
 
 theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
-    (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E :=
-  by
+    (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E := by
   rw [S.curry_ϕ]
   congr 1
   refine' ((mdifferentiableAt_const I IP).mfderiv_prod smooth_id.mdifferentiableAt).trans _
@@ -223,8 +220,7 @@ theorem FormalSol.eq_iff {F₁ F₂ : FormalSol R} {x : M} :
   simp [Bundle.TotalSpace.ext_iff, FormalSol.fst_eq, FormalSol.snd_eq]
 
 theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N)
-    {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x :=
-  by
+    {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   dsimp only
   rw [show (S.curry (t, s)).bs = fun x => (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
