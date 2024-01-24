@@ -18,7 +18,7 @@ section Maps
 
 open Function Set
 
-variable {α β : Type _} [TopologicalSpace α] [TopologicalSpace β] {f : α → β} {g : β → α}
+variable {α β : Type*} [TopologicalSpace α] [TopologicalSpace β] {f : α → β} {g : β → α}
 
 theorem Function.LeftInverse.mem_preimage_iff (hfg : LeftInverse g f) {s : Set α} {x : α} :
     f x ∈ g ⁻¹' s ↔ x ∈ s := by rw [Set.mem_preimage, hfg x]
@@ -51,37 +51,37 @@ theorem Filter.Eventually.closed_neighborhood {α} [TopologicalSpace α] [Normal
 
 end
 
-section
+section -- PRed in #9981
 
-variable {α β : Type _} [TopologicalSpace α] [TopologicalSpace β]
+variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 
-theorem ContinuousAt.eventually {f : α → β} {a₀ : α} (hf : ContinuousAt f a₀) (P : β → Prop)
-    (hP : IsOpen {b | P b}) (ha₀ : P (f a₀)) : ∀ᶠ a in 𝓝 a₀, P (f a) :=
-  hf (isOpen_iff_mem_nhds.mp hP _ ha₀)
+theorem ContinuousAt.eventually {f : X → Y} {x₀ : X} (hf : ContinuousAt f x₀) (P : Y → Prop)
+    (hP : IsOpen {y | P y}) (hx₀ : P (f x₀)) : ∀ᶠ x in 𝓝 x₀, P (f x) :=
+  hf (isOpen_iff_mem_nhds.mp hP _ hx₀)
 
-theorem ContinuousAt.eventually' {f : α → β} {a₀ : α} (hf : ContinuousAt f a₀) (P : β → Prop)
-    (hP : ∀ᶠ y in 𝓝 (f a₀), P y) : ∀ᶠ a in 𝓝 a₀, P (f a) := by
+theorem ContinuousAt.eventually' {f : X → Y} {x₀ : X} (hf : ContinuousAt f x₀) (P : Y → Prop)
+    (hP : ∀ᶠ y in 𝓝 (f x₀), P y) : ∀ᶠ x in 𝓝 x₀, P (f x) := by
   rw [ContinuousAt, tendsto_iff_comap] at hf
   exact Eventually.filter_mono hf (hP.comap f)
 
-theorem Continuous.eventually {f : α → β} {a₀ : α} (hf : Continuous f) (P : β → Prop)
-    (hP : IsOpen {b | P b}) (ha₀ : P (f a₀)) : ∀ᶠ a in 𝓝 a₀, P (f a) :=
-  hf.continuousAt.eventually P hP ha₀
+theorem Continuous.eventually {f : X → Y} {x₀ : X} (hf : Continuous f) (P : Y → Prop)
+    (hP : IsOpen {y | P y}) (hx₀ : P (f x₀)) : ∀ᶠ x in 𝓝 x₀, P (f x) :=
+  hf.continuousAt.eventually P hP hx₀
 
 end
 
 section
 
-theorem support_norm {α E : Type _} [NormedAddCommGroup E] (f : α → E) :
+theorem support_norm {α E : Type*} [NormedAddCommGroup E] (f : α → E) :
     (support fun a => ‖f a‖) = support f :=
   Function.support_comp_eq norm norm_eq_zero f
 
 @[to_additive]
-theorem hasCompactMulSupport_of_subset {α β : Type _} [TopologicalSpace α] [T2Space α] [One β]
+theorem hasCompactMulSupport_of_subset {α β : Type*} [TopologicalSpace α] [T2Space α] [One β]
     {f : α → β} {K : Set α} (hK : IsCompact K) (hf : mulSupport f ⊆ K) : HasCompactMulSupport f :=
   hK.of_isClosed_subset (isClosed_mulTSupport f) (closure_minimal hf hK.isClosed)
 
-theorem periodic_const {α β : Type _} [Add α] {a : α} {b : β} : Periodic (fun _ => b) a := fun _ =>
+theorem periodic_const {α β : Type*} [Add α] {a : α} {b : β} : Periodic (fun _ => b) a := fun _ =>
   rfl
 
 theorem Real.ball_zero_eq (r : ℝ) : Metric.ball (0 : ℝ) r = Ioo (-r) r := by simp [Real.ball_eq_Ioo]
@@ -151,7 +151,7 @@ theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fu
   rw [fract_ne_zero_iff] at h
   exact EventuallyEq.rfl.sub ((loc_constant_floor h).fun_comp _)
 
-theorem Ioo_inter_Iio {α : Type _} [LinearOrder α] {a b c : α} :
+theorem Ioo_inter_Iio {α : Type*} [LinearOrder α] {a b c : α} :
     Ioo a b ∩ Iio c = Ioo a (min b c) := by ext; simp [and_assoc]
 
 theorem fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y := by
@@ -226,10 +226,10 @@ theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract 
 
 end Fract
 
-section
+section -- PRed in ##9982
 
 -- to normed_space
-variable {E F : Type _} [NormedAddCommGroup E] [NormedAddCommGroup F]
+variable {E F : Type*} [NormedAddCommGroup E] [NormedAddCommGroup F]
 
 variable [NormedSpace ℝ E] [NormedSpace ℝ F]
 
@@ -250,7 +250,7 @@ section
 
 -- to ???
 -- needs classical
-variable {α β γ δ ι : Type _} [TopologicalSpace α] [TopologicalSpace β] {x : α}
+variable {α β γ δ ι : Type*} [TopologicalSpace α] [TopologicalSpace β] {x : α}
 
 theorem isOpen_slice_of_isOpen_over {Ω : Set (α × β)} {x₀ : α}
     (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ Prod.fst ⁻¹' U)) : IsOpen (Prod.mk x₀ ⁻¹' Ω) := by
@@ -262,7 +262,7 @@ end
 
 section projI
 
-variable {α β : Type _} [LinearOrderedSemiring α] {x c : α}
+variable {α β : Type*} [LinearOrderedSemiring α] {x c : α}
 
 /-- If `α` is a `linear_ordered_semiring`, then `projI : α → α` projection of `α` onto the unit
 interval `[0, 1]`. -/
@@ -341,14 +341,14 @@ theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
 theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (projI : α → α) :=
   continuous_projIcc.subtype_val
 
-theorem projI_mapsto {α : Type _} [LinearOrderedSemiring α] {s : Set α} (h0s : (0 : α) ∈ s)
+theorem projI_mapsto {α : Type*} [LinearOrderedSemiring α] {s : Set α} (h0s : (0 : α) ∈ s)
     (h1s : (1 : α) ∈ s) : MapsTo projI s s := fun x hx =>
   (le_total 1 x).elim (fun h2x => by rwa [projI_eq_one.mpr h2x]) fun h2x =>
     (le_total 0 x).elim (fun h3x => by rwa [projI_eq_self.mpr ⟨h3x, h2x⟩]) fun h3x => by
       rwa [projI_eq_zero.mpr h3x]
 
 -- about path.truncate
-theorem truncate_projI_right {X : Type _} [TopologicalSpace X] {a b : X} (γ : Path a b) (t₀ t₁ : ℝ)
+theorem truncate_projI_right {X : Type*} [TopologicalSpace X] {a b : X} (γ : Path a b) (t₀ t₁ : ℝ)
     (s : I) : γ.truncate t₀ (projI t₁) s = γ.truncate t₀ t₁ s := by
   simp_rw [Path.truncate, Path.coe_mk_mk, Path.extend, IccExtend, Function.comp]
   rw [min_projI (s.prop.1.trans <| le_max_left _ _), projIcc_projI]
@@ -359,7 +359,7 @@ section
 
 open Encodable Option
 
-variable {α β γ : Type _} [TopologicalSpace α] [TopologicalSpace β]
+variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
 
 -- can we restate this nicely?
 /-- Given a locally finite sequence of sets indexed by an encodable type, we can naturally reindex
@@ -381,7 +381,7 @@ theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : Lo
 
 open TopologicalSpace
 
-variable {X : Type _} [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
+variable {X : Type*} [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
 
 theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {P : Set X → Prop}
     (hP : Antitone P) (h0 : P ∅) (hX : ∀ x ∈ C, ∃ V ∈ 𝓝 (x : X), P V) :
@@ -425,7 +425,7 @@ end
 section
 
 -- to subset_properties
-variable {α β γ : Type _} [TopologicalSpace α] [TopologicalSpace β] [TopologicalSpace γ]
+variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β] [TopologicalSpace γ]
 
 theorem IsCompact.eventually_forall_mem {x₀ : α} {K : Set β} (hK : IsCompact K) {f : α → β → γ}
     (hf : Continuous ↿f) {U : Set γ} (hU : ∀ y ∈ K, U ∈ 𝓝 (f x₀ y)) :
@@ -438,14 +438,14 @@ end
 section
 
 -- to separation
-variable {α : Type _} [TopologicalSpace α]
+variable {α : Type*} [TopologicalSpace α]
 
 /-
 needs
 import linear_algebra.affine_space.independent
 import analysis.normed_space.finite_dimension
 -/
-theorem isOpen_affineIndependent (𝕜 E : Type _) {ι : Type _} [NontriviallyNormedField 𝕜]
+theorem isOpen_affineIndependent (𝕜 E : Type*) {ι : Type*} [NontriviallyNormedField 𝕜]
     [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace 𝕜] [Finite ι] :
     IsOpen {p : ι → E | AffineIndependent 𝕜 p} := by
   classical
@@ -467,7 +467,7 @@ section
 
 open Metric
 
-theorem Continuous.infDist {α β : Type _} [TopologicalSpace α] [PseudoMetricSpace β] {s : Set β}
+theorem Continuous.infDist {α β : Type*} [TopologicalSpace α] [PseudoMetricSpace β] {s : Set β}
     {f : α → β} (hf : Continuous f) : Continuous fun x => infDist (f x) s :=
   (continuous_infDist_pt _).comp hf
 
@@ -477,7 +477,7 @@ section NormedSpace
 
 open Metric
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 theorem isPreconnected_ball (x : E) (r : ℝ) : IsPreconnected (ball x r) :=
   (convex_ball x r).isPreconnected
@@ -488,9 +488,9 @@ theorem isConnected_ball {x : E} {r : ℝ} : IsConnected (ball x r) ↔ 0 < r :=
 -- todo: make Metric.mem_nhds_iff protected
 end NormedSpace
 
-section connectedComponentIn
+section connectedComponentIn -- PRed as #9983
 
-variable {α β : Type _} [TopologicalSpace α] [TopologicalSpace β]
+variable {α β : Type*} [TopologicalSpace α] [TopologicalSpace β]
 
 theorem Continuous.image_connectedComponentIn_subset {f : α → β} {s : Set α} {x : α}
     (hf : Continuous f) (hx : x ∈ s) :
@@ -540,7 +540,7 @@ open Subtype
 
 namespace Subtype
 
-variable {α : Type _}
+variable {α : Type*}
 
 theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : ((↑) : s → α) '' t = s ↔ t = univ := by
   convert coe_injective.image_injective.eq_iff; rw [coe_image_univ]
@@ -560,7 +560,7 @@ section ParacompactSpace
  in this case we only get the locally finiteness condition on `s`, which is weaker than the local
  finiteness condition on all of `X` (the collection might not be locally finite on the boundary of
  `s`). -/
-theorem precise_refinement_set' {ι X : Type _} [TopologicalSpace X] {s : Set X} [ParacompactSpace s]
+theorem precise_refinement_set' {ι X : Type*} [TopologicalSpace X] {s : Set X} [ParacompactSpace s]
     (hs : IsOpen s) (u : ι → Set X) (uo : ∀ i, IsOpen (u i)) (us : s ⊆ ⋃ i, u i) :
     ∃ v : ι → Set X, (∀ i, IsOpen (v i)) ∧ (s ⊆ ⋃ i, v i) ∧
       (LocallyFinite fun i => ((↑) : s → X) ⁻¹' v i) ∧ (∀ i, v i ⊆ s) ∧ ∀ i, v i ⊆ u i := by
@@ -574,7 +574,7 @@ theorem precise_refinement_set' {ι X : Type _} [TopologicalSpace X] {s : Set X}
       simp_rw [preimage_image_eq _ Subtype.coe_injective, vl], fun i =>
       Subtype.coe_image_subset _ _, by intro i; rw [image_subset_iff]; exact vu i⟩
 
-theorem point_finite_of_locallyFinite_coe_preimage {ι X : Type _} [TopologicalSpace X] {s : Set X}
+theorem point_finite_of_locallyFinite_coe_preimage {ι X : Type*} [TopologicalSpace X] {s : Set X}
     {f : ι → Set X} (hf : LocallyFinite fun i => ((↑) : s → X) ⁻¹' f i) (hfs : ∀ i, f i ⊆ s)
     {x : X} : {i | x ∈ f i}.Finite := by
   by_cases hx : x ∈ s
@@ -586,7 +586,7 @@ end ParacompactSpace
 
 section ShrinkingLemma
 
-variable {ι X : Type _} [TopologicalSpace X]
+variable {ι X : Type*} [TopologicalSpace X]
 
 variable {u : ι → Set X} {s : Set X} [NormalSpace s]
 
@@ -621,12 +621,12 @@ end ShrinkingLemma
 
 open scoped Filter
 
-theorem Filter.EventuallyEq.slice {α β γ : Type _} [TopologicalSpace α] [TopologicalSpace β]
+theorem Filter.EventuallyEq.slice {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
     {f g : α × β → γ} {a : α} {b : β} (h : f =ᶠ[𝓝 (a, b)] g) :
     (fun y => f (a, y)) =ᶠ[𝓝 b] fun y => g (a, y) :=
   h.curry_nhds.self_of_nhds
 
-theorem exists_compact_between' {α : Type _} [TopologicalSpace α] [LocallyCompactSpace α]
+theorem exists_compact_between' {α : Type*} [TopologicalSpace α] [LocallyCompactSpace α]
     {K U : Set α} (hK : IsCompact K) (hU : IsOpen U) (h_KU : K ⊆ U) :
     ∃ L, IsCompact L ∧ L ∈ 𝓝ˢ K ∧ L ⊆ U :=
   let ⟨L, L_cpct, L_in, LU⟩ := exists_compact_between hK hU h_KU
@@ -636,7 +636,7 @@ section
 
 -- to topology/basic
 @[simp]
-nonrec theorem Finset.isClosed_biUnion {α} [TopologicalSpace α] {ι : Type _} (s : Finset ι)
+nonrec theorem Finset.isClosed_biUnion {α} [TopologicalSpace α] {ι : Type*} (s : Finset ι)
     (f : ι → Set α) (hf : ∀ i ∈ s, IsClosed (f i)) : IsClosed (⋃ i ∈ s, f i) :=
   isClosed_biUnion_finset hf
 
