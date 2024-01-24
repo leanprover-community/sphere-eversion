@@ -1,7 +1,6 @@
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.NormedSpace.Completion
+import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Topology.Algebra.Module
 
 noncomputable section
 
