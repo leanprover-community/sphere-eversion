@@ -605,11 +605,3 @@ theorem exists_compact_between' {α : Type*} [TopologicalSpace α] [LocallyCompa
   ⟨L, L_cpct, subset_interior_iff_mem_nhdsSet.mp L_in, LU⟩
 
 section
-
--- to topology/basic
-@[simp]
-nonrec theorem Finset.isClosed_biUnion {α} [TopologicalSpace α] {ι : Type*} (s : Finset ι)
-    (f : ι → Set α) (hf : ∀ i ∈ s, IsClosed (f i)) : IsClosed (⋃ i ∈ s, f i) :=
-  isClosed_biUnion_finset hf
-
-end
