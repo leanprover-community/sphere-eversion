@@ -70,14 +70,3 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {
 end ChartedSpace
 
 end
-
-section
-
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type _}
-  [TopologicalSpace H] (I : ModelWithCorners ℝ E H) (M : Type _) [TopologicalSpace M]
-  [ChartedSpace H M]
-
-theorem locally_compact_manifold : LocallyCompactSpace M :=
-  @ChartedSpace.locallyCompactSpace H M _ _ _ I.locallyCompactSpace
-
-end

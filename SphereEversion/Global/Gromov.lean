@@ -38,8 +38,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by
   borelize EX
   letI := manifoldMetric IM M
-  haveI := locally_compact_manifold IM M
-  haveI := locally_compact_manifold IX X
+  haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
+  haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
   refine' RelMfld.satisfiesHPrinciple_of_weak hA _
   clear! A
   intro A hA 𝓕₀ h𝓕₀
@@ -194,8 +194,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
 theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R) (hA : IsClosed A)
     (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by
   borelize EX
-  haveI := locally_compact_manifold IM M
-  haveI := locally_compact_manifold IX X
+  haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
+  haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
   refine' RelMfld.satisfiesHPrinciple_of_weak hA _
   clear! A
   intro A hA 𝓕₀ h𝓕₀
