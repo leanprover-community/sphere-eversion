@@ -1,7 +1,6 @@
+import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.MeasureTheory.Integral.Periodic
-import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
-import Mathlib.Analysis.Convolution
 import SphereEversion.ToMathlib.Topology.Periodic
 import SphereEversion.ToMathlib.Analysis.ContDiff
 import SphereEversion.Loops.Basic

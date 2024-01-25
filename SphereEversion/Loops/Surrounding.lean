@@ -1,12 +1,7 @@
-import SphereEversion.Loops.Basic
 import SphereEversion.InductiveConstructions
-import SphereEversion.ToMathlib.Partition
-import Mathlib.Analysis.LocallyConvex.WithSeminorms
-import Mathlib.Tactic.FinCases
-import Mathlib.Analysis.LocallyConvex.WithSeminorms
-import Mathlib.Topology.EMetricSpace.Paracompact
-import Mathlib.Topology.ShrinkingLemma
+import SphereEversion.Loops.Basic
 import SphereEversion.ToMathlib.ExistsOfConvex
+import SphereEversion.ToMathlib.Analysis.NormedSpace.FiniteDimension
 
 /-!
 # Surrounding families of loops
