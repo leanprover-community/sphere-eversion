@@ -6,21 +6,15 @@ import SphereEversion.ToMathlib.Analysis.Calculus
 
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
 
-open scoped Topology Filter NNReal BigOperators Interval
+open scoped Topology Filter NNReal
 
-theorem aEStronglyMeasurable_uIoc_iff {α β : Type _} [MeasurableSpace α] [LinearOrder α]
-    [TopologicalSpace β] [MetrizableSpace β] {μ : Measure α} {f : α → β} {a b : α} :
-    (AEStronglyMeasurable f <| μ.restrict <| Ι a b) ↔
-      (AEStronglyMeasurable f <| μ.restrict <| Ioc a b) ∧
-        (AEStronglyMeasurable f <| μ.restrict <| Ioc b a) := by rw [uIoc_eq_union, aestronglyMeasurable_union_iff]
-
-section
+section -- PRed in #10004
 
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type _}
   [NormedAddCommGroup H] [NormedSpace ℝ H] (ν : Measure ℝ)
 
-/-- Interval version of `hasFDerivAt_of_dominated_of_fderiv_le` -/
-theorem hasFDerivAt_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H → ℝ → H →L[ℝ] E} {x₀ : H}
+/-- Interval version of `hasFDerivAt_integral_of_dominated_of_fderiv_le` -/
+theorem hasFDerivAt_integral_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H → ℝ → H →L[ℝ] E} {x₀ : H}
     {a b : ℝ} {bound : ℝ → ℝ} {ε : ℝ} (ε_pos : 0 < ε)
     (hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) <| ν.restrict (Ι a b))
     (hF_int : IntervalIntegrable (F x₀) ν a b)
@@ -30,15 +24,15 @@ theorem hasFDerivAt_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {F' : H �
     (h_diff : ∀ᵐ t ∂ν.restrict (Ι a b), ∀ x ∈ ball x₀ ε, HasFDerivAt (fun x ↦ F x t) (F' x t) x) :
     HasFDerivAt (fun x ↦ ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ := by
   erw [ae_restrict_uIoc_iff] at h_diff h_bound
-  simp_rw [aEStronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
+  simp_rw [AEStronglyMeasurable.aestronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
   exact
     (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
           bound_integrable.1 h_diff.1).sub
       (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
         bound_integrable.2 h_diff.2)
 
-/-- Interval version of `hasFDerivAt_of_dominated_loc_of_lip` -/
-theorem hasFDerivAt_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' : ℝ → H →L[ℝ] E} {x₀ : H}
+/-- Interval version of `hasFDerivAt_integral_of_dominated_loc_of_lip` -/
+theorem hasFDerivAt_integral_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' : ℝ → H →L[ℝ] E} {x₀ : H}
     {a b : ℝ} {bound : ℝ → ℝ} {ε : ℝ} (ε_pos : 0 < ε)
     (hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) <| ν.restrict (Ι a b))
     (hF_int : IntervalIntegrable (F x₀) ν a b)
@@ -49,7 +43,7 @@ theorem hasFDerivAt_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' :
     (h_diff : ∀ᵐ t ∂ν.restrict (Ι a b), HasFDerivAt (fun x ↦ F x t) (F' t) x₀) :
     IntervalIntegrable F' ν a b ∧
       HasFDerivAt (fun x ↦ ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' t ∂ν) x₀ := by
-  simp_rw [aEStronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
+  simp_rw [AEStronglyMeasurable.aestronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
   rw [ae_restrict_uIoc_iff] at h_lip h_diff
   have H₁ :=
     hasFDerivAt_integral_of_dominated_loc_of_lip ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_lip.1
@@ -222,7 +216,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace 
   [NormedAddCommGroup H] [NormedSpace ℝ H]
 
 /-!
-We could weaken `finite_dimensional ℝ H` with `second_countable (H →L[ℝ] E)` if needed,
+We could weaken `FiniteDimensional ℝ H` with `SecondCountable (H →L[ℝ] E)` if needed,
 but that is less convenient to work with.
 -/
 
@@ -286,7 +280,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       replace hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) (volume.restrict (Ι a (s x₀)))
       exact Eventually.mono (ball_mem_nhds x₀ ε_pos) fun x hx ↦ hF_meas_ball hx ha hsx₀
       replace hF_int : IntervalIntegrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀
-      exact (hasFDerivAt_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
+      exact (hasFDerivAt_integral_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
         (ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch)
         (bound_int ha hsx₀) h_diff).2
     have D₂ : HasFDerivAt (fun x ↦ φ x₀ (s x)) ((toSpanSingleton ℝ (F x₀ (s x₀))).comp s') x₀ := by
