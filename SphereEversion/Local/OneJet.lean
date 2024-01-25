@@ -31,11 +31,11 @@ open scoped unitInterval Topology
 
 local notation "∞" => (⊤ : ℕ∞)
 
-variable (E : Type _) [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-variable (F : Type _) [NormedAddCommGroup F] [NormedSpace ℝ F]
+variable (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-variable (P : Type _) [NormedAddCommGroup P] [NormedSpace ℝ P]
+variable (P : Type*) [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 /-! ## Spaces of 1-jets -/
 
