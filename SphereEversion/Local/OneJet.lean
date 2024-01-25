@@ -1,9 +1,5 @@
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.Topology.MetricSpace.HausdorffDistance
-import Mathlib.Topology.NhdsSet
-import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.HausdorffDistance
-import SphereEversion.ToMathlib.LinearAlgebra.Basic
 import SphereEversion.Notations
 
 /-! # Spaces of 1-jets and their sections

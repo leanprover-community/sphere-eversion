@@ -1,16 +1,5 @@
-import Mathlib.Analysis.NormedSpace.AddTorsorBases
-import Mathlib.Analysis.Convex.Caratheodory
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.MeasureTheory.Integral.IntervalIntegral
-import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-import Mathlib.Topology.Algebra.Order.Floor
-import Mathlib.Topology.Connected.PathConnected
-import Mathlib.LinearAlgebra.AffineSpace.Independent
-import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousLinearMap
-import SphereEversion.ToMathlib.SmoothBarycentric
-import SphereEversion.ToMathlib.Topology.Path
-import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 import SphereEversion.ToMathlib.Equivariant
+import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 
 /-!
 # Basic definitions and properties of loops

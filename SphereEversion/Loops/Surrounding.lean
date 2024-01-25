@@ -2,6 +2,10 @@ import SphereEversion.InductiveConstructions
 import SphereEversion.Loops.Basic
 import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.Analysis.NormedSpace.FiniteDimension
+import SphereEversion.ToMathlib.SmoothBarycentric
+import SphereEversion.ToMathlib.Topology.Path
+import Mathlib.Analysis.Convex.Caratheodory
+import Mathlib.Analysis.NormedSpace.AddTorsorBases
 
 /-!
 # Surrounding families of loops
