@@ -4,19 +4,17 @@ import Mathlib.Topology.LocallyFinite
 
 open Function Set
 
--- these two lemmas require additional imports compared to what's in mathlib
--- `Algebra.SMulWithZero` is not required in `Topology.LocallyFinite` so far;
--- so it remains to find a nice home for these lemmas...
-theorem LocallyFinite.smul_left {ι : Type*} {α : Type*} [TopologicalSpace α] {M : Type*}
+-- PRed in #10020
+theorem LocallyFinite.smul_left {ι : Type*} {X : Type*} [TopologicalSpace X] {M : Type*}
     {R : Type*} [Zero R] [Zero M] [SMulWithZero R M]
-    {s : ι → α → R} (h : LocallyFinite fun i => support <| s i) (f : ι → α → M) :
-    LocallyFinite fun i => support (s i • f i) :=
+    {s : ι → X → R} (h : LocallyFinite fun i ↦ support <| s i) (f : ι → X → M) :
+    LocallyFinite fun i ↦ support (s i • f i) :=
   h.subset fun i x ↦ mt <| fun h ↦ by rw [Pi.smul_apply', h, zero_smul]
 
-theorem LocallyFinite.smul_right {ι : Type*} {α : Type*} [TopologicalSpace α] {M : Type*}
+theorem LocallyFinite.smul_right {ι : Type*} {X : Type*} [TopologicalSpace X] {M : Type*}
     {R : Type*} [Zero R] [Zero M] [SMulZeroClass R M]
-    {f : ι → α → M} (h : LocallyFinite fun i => support <| f i) (s : ι → α → R) :
-    LocallyFinite fun i => support <| s i • f i :=
+    {f : ι → X → M} (h : LocallyFinite fun i ↦ support <| f i) (s : ι → X → R) :
+    LocallyFinite fun i ↦ support <| s i • f i :=
   h.subset fun i x ↦ mt <| fun h ↦ by rw [Pi.smul_apply', h, smul_zero]
 
 section
@@ -27,8 +25,8 @@ variable {ι X : Type*} [TopologicalSpace X]
 -- See https://github.com/leanprover-community/mathlib4/pull/9813#discussion_r1455617707.
 @[to_additive]
 theorem LocallyFinite.exists_finset_mulSupport_eq {M : Type*} [CommMonoid M] {ρ : ι → X → M}
-    (hρ : LocallyFinite fun i => mulSupport <| ρ i) (x₀ : X) :
-    ∃ I : Finset ι, (mulSupport fun i => ρ i x₀) = I := by
+    (hρ : LocallyFinite fun i ↦ mulSupport <| ρ i) (x₀ : X) :
+    ∃ I : Finset ι, (mulSupport fun i ↦ ρ i x₀) = I := by
   use (hρ.point_finite x₀).toFinset
   rw [Finite.coe_toFinset]
   rfl
