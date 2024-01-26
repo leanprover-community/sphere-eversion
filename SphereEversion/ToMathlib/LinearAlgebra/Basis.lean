@@ -15,7 +15,7 @@ section
 variable {R : Type _} [Semiring R] {M : Type _} [AddCommMonoid M] [Module R M]
 
 /-- The span of the first `n` elements of an ordered basis. -/
-def Basis.flag {n : ℕ} (b : Basis (Fin n) R M) : Fin (n + 1) → Submodule R M := fun k =>
+def Basis.flag {n : ℕ} (b : Basis (Fin n) R M) : Fin (n + 1) → Submodule R M := fun k ↦
   span R (b '' {j | (j : Fin (n + 1)) < k})
 
 @[simp]
@@ -75,4 +75,3 @@ theorem Basis.flag_le_ker_dual (k : Fin n) : b.flag k ≤ LinearMap.ker (b.dualB
   simp [(Fin.coe_succ_lt_iff_lt.mp hj).ne]
 
 end
-

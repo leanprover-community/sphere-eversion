@@ -59,10 +59,10 @@ theorem rot_eq_aux : ω.rot = ω.rotAux := by
 /-- The map `rot` is smooth on `ℝ × (E \ {0})`. -/
 theorem contDiff_rot {p : ℝ × E} (hp : p.2 ≠ 0) : ContDiffAt ℝ ⊤ ω.rot p := by
   simp only [rot_eq_aux]
-  refine' (contDiffAt_fst.mul_const.cos.smul contDiffAt_const).add _
-  refine'
-    ((contDiffAt_const.sub contDiffAt_fst.mul_const.cos).smul _).add
-      (contDiffAt_fst.mul_const.sin.smul _)
+  refine (contDiffAt_fst.mul_const.cos.smul contDiffAt_const).add ?_
+  refine
+    ((contDiffAt_const.sub contDiffAt_fst.mul_const.cos).smul ?_).add
+      (contDiffAt_fst.mul_const.sin.smul ?_)
   · exact (contDiffAt_orthogonalProjection_singleton hp).comp _ contDiffAt_snd
   · exact ω.crossProduct'.contDiff.contDiffAt.comp _ contDiffAt_snd
 
@@ -148,7 +148,7 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
       0 at hy
   rw [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hy',
     orthogonalProjection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy
-  apply_fun fun x => ‖x‖ ^ 2 at hy
+  apply_fun fun x ↦ ‖x‖ ^ 2 at hy
   rw [pow_two, @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ] at hy
   simp_rw [← pow_two, norm_smul, mul_pow] at hy
   change _ + _ * ‖x×₃(⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy

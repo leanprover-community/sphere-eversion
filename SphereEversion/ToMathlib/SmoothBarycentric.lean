@@ -22,7 +22,7 @@ theorem affineBases_findim [Fintype ι] [Field k] [Module k M] [FiniteDimensiona
     affineBases ι k P = {v | AffineIndependent k v} := by
   ext v
   simp only [affineBases, mem_setOf_eq, and_iff_left_iff_imp]
-  exact fun h_ind => h_ind.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr h
+  exact fun h_ind ↦ h_ind.affineSpan_eq_top_iff_card_eq_finrank_add_one.mpr h
 
 theorem mem_affineBases_iff [Fintype ι] [DecidableEq ι] [Nontrivial R] (b : AffineBasis ι R P)
     (v : ι → P) : v ∈ affineBases ι R P ↔ IsUnit (b.toMatrix v) :=
@@ -83,19 +83,19 @@ theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := b
   by ext; simp
     rw [h]
     apply (this (Fintype.card ι)).comp
-    exact contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => contDiff_apply_apply _ _ _ _
+    exact contDiff_pi.mpr fun i ↦ contDiff_pi.mpr fun j ↦ contDiff_apply_apply _ _ _ _
   intro n
   induction' n with n ih
   · rw [coe_det_isEmpty]
     exact contDiff_const
-  change ContDiff k m fun A : Matrix (Fin n.succ) (Fin n.succ) k => A.det
+  change ContDiff k m fun A : Matrix (Fin n.succ) (Fin n.succ) k ↦ A.det
   simp_rw [det_succ_column_zero]
-  apply ContDiff.sum fun l _ => ?_
+  apply ContDiff.sum fun l _ ↦ ?_
   apply ContDiff.mul
-  · refine' contDiff_const.mul _
+  · refine contDiff_const.mul ?_
     apply contDiff_apply_apply
   · apply ih.comp
-    refine' contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => _
+    refine contDiff_pi.mpr fun i ↦ contDiff_pi.mpr fun j ↦ ?_
     simp only [submatrix_apply]
     apply contDiff_apply_apply
 
@@ -127,17 +127,17 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     (univ ×ˢ affineBases ι 𝕜 F)
   simp only [Pi.smul_apply, Matrix.cramer_transpose_apply]
   have hcont : ContDiff 𝕜 ⊤ fun x : ι → F ↦ b.toMatrix x :=
-    contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' =>
+    contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦
       (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
-  have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) => b.toMatrix x.snd := hcont.comp contDiff_snd
+  have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
   · apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
     have hv : IsUnit (b.toMatrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
     rw [← isUnit_iff_ne_zero, comp_apply, ← Matrix.isUnit_iff_isUnit_det]
     exact hv
-  · refine' ((Matrix.smooth_det ι 𝕜 ⊤).comp _).contDiffOn
-    refine' contDiff_pi.mpr fun j => contDiff_pi.mpr fun j' => _
+  · refine ((Matrix.smooth_det ι 𝕜 ⊤).comp ?_).contDiffOn
+    refine contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦ ?_
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
     save

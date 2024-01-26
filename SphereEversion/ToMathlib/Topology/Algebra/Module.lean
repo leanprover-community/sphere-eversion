@@ -41,7 +41,7 @@ variable {R₁ : Type _} {R₂ : Type _} {R₃ : Type _} [Semiring R₁] [Semiri
 section
 
 theorem Function.Surjective.clm_comp_injective {g : M₁ →SL[σ₁₂] M₂} (hg : Function.Surjective g) :
-    Function.Injective fun f : M₂ →SL[σ₂₃] M₃ => f.comp g := fun f f' hff' ↦ by
+    Function.Injective fun f : M₂ →SL[σ₂₃] M₃ ↦ f.comp g := fun f f' hff' ↦ by
   rw [ContinuousLinearMap.ext_iff] at hff' ⊢
   intro x
   obtain ⟨y, rfl⟩ := hg x
@@ -66,4 +66,3 @@ theorem cancel_left {e : M₂ ≃SL[σ₂₃] M₃} {f f' : M₁ →SL[σ₁₂]
   · rintro rfl; rfl
 
 end ContinuousLinearEquiv
-

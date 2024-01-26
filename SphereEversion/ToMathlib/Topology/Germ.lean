@@ -17,22 +17,22 @@ namespace Filter.Germ
 /-- The value associated to a germ at a point. This is the common value
 shared by all representatives at the given point. -/
 def value {X α : Type _} [TopologicalSpace X] {x : X} (φ : Germ (𝓝 x) α) : α :=
-  Quotient.liftOn' φ (fun f => f x) fun f g h => by dsimp only; rw [Eventually.self_of_nhds h]
+  Quotient.liftOn' φ (fun f ↦ f x) fun f g h ↦ by dsimp only; rw [Eventually.self_of_nhds h]
 
 theorem value_smul {X α β : Type _} [TopologicalSpace X] {x : X} [SMul α β] (φ : Germ (𝓝 x) α)
     (ψ : Germ (𝓝 x) β) : (φ • ψ).value = φ.value • ψ.value :=
-  Germ.inductionOn φ fun _ => Germ.inductionOn ψ fun _ => rfl
+  Germ.inductionOn φ fun _ ↦ Germ.inductionOn ψ fun _ ↦ rfl
 
 @[to_additive]
 def valueMulHom {X E : Type _} [Monoid E] [TopologicalSpace X] {x : X} : Germ (𝓝 x) E →* E
     where
   toFun := Filter.Germ.value
   map_one' := rfl
-  map_mul' φ ψ := Germ.inductionOn φ fun _ => Germ.inductionOn ψ fun _ => rfl
+  map_mul' φ ψ := Germ.inductionOn φ fun _ ↦ Germ.inductionOn ψ fun _ ↦ rfl
 
 def valueₗ {X 𝕜 E : Type _} [Semiring 𝕜] [AddCommMonoid E] [Module 𝕜 E] [TopologicalSpace X]
     {x : X} : Germ (𝓝 x) E →ₗ[𝕜] E :=
-  { Filter.Germ.valueAddHom with map_smul' := fun _ φ => Germ.inductionOn φ fun _ => rfl }
+  { Filter.Germ.valueAddHom with map_smul' := fun _ φ ↦ Germ.inductionOn φ fun _ ↦ rfl }
 
 def valueRingHom {X E : Type _} [Semiring E] [TopologicalSpace X] {x : X} : Germ (𝓝 x) E →+* E :=
   { Filter.Germ.valueMulHom, Filter.Germ.valueAddHom with }
@@ -40,11 +40,11 @@ def valueRingHom {X E : Type _} [Semiring E] [TopologicalSpace X] {x : X} : Germ
 def valueOrderRingHom {X E : Type _} [OrderedSemiring E] [TopologicalSpace X] {x : X} :
     Germ (𝓝 x) E →+*o E :=
   { Filter.Germ.valueRingHom with
-    monotone' := fun φ ψ =>
-      Germ.inductionOn φ fun _ => Germ.inductionOn ψ fun _ h => h.self_of_nhds }
+    monotone' := fun φ ψ ↦
+      Germ.inductionOn φ fun _ ↦ Germ.inductionOn ψ fun _ h ↦ h.self_of_nhds }
 
 def _root_.Subring.orderedSubtype {R} [OrderedRing R] (s : Subring R) : s →+*o R :=
-  { s.subtype with monotone' := fun _ _ h => h }
+  { s.subtype with monotone' := fun _ _ h ↦ h }
 
 end Filter.Germ
 
@@ -53,14 +53,14 @@ build a new predicate on germs `restrict_germ_predicate P A` such that
 `(∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x near A, P x f`, see
 `forall_restrict_germ_predicate_iff` for this equivalence. -/
 def RestrictGermPredicate {X Y : Type _} [TopologicalSpace X] (P : ∀ x : X, Germ (𝓝 x) Y → Prop)
-    (A : Set X) : ∀ x : X, Germ (𝓝 x) Y → Prop := fun x φ =>
-  Quotient.liftOn' φ (fun f => x ∈ A → ∀ᶠ y in 𝓝 x, P y f)
+    (A : Set X) : ∀ x : X, Germ (𝓝 x) Y → Prop := fun x φ ↦
+  Quotient.liftOn' φ (fun f ↦ x ∈ A → ∀ᶠ y in 𝓝 x, P y f)
     haveI : ∀ f f' : X → Y, f =ᶠ[𝓝 x] f' → (∀ᶠ y in 𝓝 x, P y f) → ∀ᶠ y in 𝓝 x, P y f' := by
       intro f f' hff' hf
       apply (hf.and <| Eventually.eventually_nhds hff').mono
       rintro y ⟨hy, hy'⟩
       rwa [Germ.coe_eq.mpr (EventuallyEq.symm hy')]
-    fun f f' hff' => propext <| forall_congr' fun _ => ⟨this f f' hff', this f' f hff'.symm⟩
+    fun f f' hff' ↦ propext <| forall_congr' fun _ ↦ ⟨this f f' hff', this f' f hff'.symm⟩
 
 theorem Filter.Eventually.germ_congr {X Y : Type _} [TopologicalSpace X] {x : X}
     {P : Germ (𝓝 x) Y → Prop} {f g : X → Y} (hf : P f) (h : ∀ᶠ z in 𝓝 x, g z = f z) : P g := by
@@ -74,7 +74,7 @@ theorem Filter.Eventually.germ_congr_set {X Y : Type _} [TopologicalSpace X]
   rw [eventually_nhdsSet_iff_forall] at *
   intro x hx
   apply ((hf x hx).and (h x hx).eventually_nhds).mono
-  exact fun y hy => hy.2.germ_congr hy.1
+  exact fun y hy ↦ hy.2.germ_congr hy.1
 
 theorem restrictGermPredicate_congr {X Y : Type _} [TopologicalSpace X]
     {P : ∀ x : X, Germ (𝓝 x) Y → Prop} {A : Set X} {f g : X → Y} {x : X}
@@ -110,7 +110,7 @@ def Filter.Germ.sliceLeft {X Y Z : Type _} [TopologicalSpace X] [TopologicalSpac
 
 @[simp]
 theorem Filter.Germ.sliceLeft_coe {X Y Z : Type _} [TopologicalSpace X] [TopologicalSpace Y] {x : X}
-    {y : Y} (f : X × Y → Z) : (↑f : Germ (𝓝 (x, y)) Z).sliceLeft = fun x' => f (x', y) :=
+    {y : Y} (f : X × Y → Z) : (↑f : Germ (𝓝 (x, y)) Z).sliceLeft = fun x' ↦ f (x', y) :=
   rfl
 
 def Filter.Germ.sliceRight {X Y Z : Type _} [TopologicalSpace X] [TopologicalSpace Y] {p : X × Y}
@@ -119,25 +119,25 @@ def Filter.Germ.sliceRight {X Y Z : Type _} [TopologicalSpace X] [TopologicalSpa
 
 @[simp]
 theorem Filter.Germ.sliceRight_coe {X Y Z : Type _} [TopologicalSpace X] [TopologicalSpace Y]
-    {x : X} {y : Y} (f : X × Y → Z) : (↑f : Germ (𝓝 (x, y)) Z).sliceRight = fun y' => f (x, y') :=
+    {x : X} {y : Y} (f : X × Y → Z) : (↑f : Germ (𝓝 (x, y)) Z).sliceRight = fun y' ↦ f (x, y') :=
   rfl
 
 def Filter.Germ.IsConstant {X Y : Type _} [TopologicalSpace X] {x : X} (P : Germ (𝓝 x) Y) : Prop :=
-  P.liftOn (fun f => ∀ᶠ x' in 𝓝 x, f x' = f x) <| by
+  P.liftOn (fun f ↦ ∀ᶠ x' in 𝓝 x, f x' = f x) <| by
     suffices : ∀ f g : X → Y, f =ᶠ[𝓝 x] g → (∀ᶠ x' in 𝓝 x, f x' = f x) → ∀ᶠ x' in 𝓝 x, g x' = g x
-    exact fun f g hfg => propext ⟨fun h => this f g hfg h, fun h => this g f hfg.symm h⟩
+    exact fun f g hfg ↦ propext ⟨fun h ↦ this f g hfg h, fun h ↦ this g f hfg.symm h⟩
     rintro f g hfg hf
-    refine (hf.and hfg).mono fun x' hx' => ?_
+    refine (hf.and hfg).mono fun x' hx' ↦ ?_
     rw [← hx'.2, hx'.1, hfg.eq_of_nhds]
 
 theorem Filter.Germ.isConstant_coe {X Y : Type _} [TopologicalSpace X] {x : X} {y} {f : X → Y}
     (h : ∀ x', f x' = y) : (↑f : Germ (𝓝 x) Y).IsConstant :=
-  eventually_of_forall fun x' => by rw [h, h]
+  eventually_of_forall fun x' ↦ by rw [h, h]
 
 @[simp]
 theorem Filter.Germ.isConstant_coe_const {X Y : Type _} [TopologicalSpace X] {x : X} {y : Y} :
-    (fun _ : X => y : Germ (𝓝 x) Y).IsConstant :=
-  eventually_of_forall fun _ => rfl
+    (fun _ : X ↦ y : Germ (𝓝 x) Y).IsConstant :=
+  eventually_of_forall fun _ ↦ rfl
 
 theorem eq_of_germ_isConstant {X Y : Type _} [TopologicalSpace X] [PreconnectedSpace X] {f : X → Y}
     (h : ∀ x : X, (f : Germ (𝓝 x) Y).IsConstant) (x x' : X) : f x = f x' := by
@@ -145,7 +145,7 @@ theorem eq_of_germ_isConstant {X Y : Type _} [TopologicalSpace X] [PreconnectedS
   erw [← eq_univ_iff_forall]
   apply IsClopen.eq_univ _ (⟨x', rfl⟩ : {x | f x = f x'}.Nonempty)
   sorry /- TODO: gets rewritten in upstreaming PR
-  refine' ⟨isOpen_iff_eventually.mpr fun x hx => hx ▸ h x, _⟩
+  refine' ⟨isOpen_iff_eventually.mpr fun x hx ↦ hx ▸ h x, _⟩
   rw [isClosed_iff_frequently]
   rintro x hx
   rcases ((h x).and_frequently hx).exists with ⟨x'', H⟩

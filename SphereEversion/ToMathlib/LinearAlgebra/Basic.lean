@@ -16,7 +16,7 @@ theorem Submodule.sup_eq_span_union (s t : Submodule R M) : s ⊔ t = span R (s 
 theorem Submodule.sup_eq_top_iff (s t : Submodule R M) :
     s ⊔ t = ⊤ ↔ ∀ m : M, ∃ u ∈ s, ∃ v ∈ t, m = u + v := by
   rw [eq_top_iff']
-  refine forall_congr' fun m => ?_
+  refine forall_congr' fun m ↦ ?_
   rw [mem_sup]
   tauto
 

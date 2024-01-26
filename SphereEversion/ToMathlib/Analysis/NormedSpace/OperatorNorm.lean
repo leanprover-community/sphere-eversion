@@ -62,7 +62,7 @@ theorem add_le_twice_max (a b : ℝ) : a + b ≤ 2 * max a b :=
 theorem isBoundedLinearMap_coprod (𝕜 : Type _) [NontriviallyNormedField 𝕜] (E : Type _)
     [NormedAddCommGroup E] [NormedSpace 𝕜 E] (F : Type _) [NormedAddCommGroup F] [NormedSpace 𝕜 F]
     (G : Type _) [NormedAddCommGroup G] [NormedSpace 𝕜 G] :
-    IsBoundedLinearMap 𝕜 fun p : (E →L[𝕜] G) × (F →L[𝕜] G) => p.1.coprod p.2 :=
+    IsBoundedLinearMap 𝕜 fun p : (E →L[𝕜] G) × (F →L[𝕜] G) ↦ p.1.coprod p.2 :=
   { map_add := by
       intros
       apply ContinuousLinearMap.coeFn_injective
@@ -77,7 +77,7 @@ theorem isBoundedLinearMap_coprod (𝕜 : Type _) [NontriviallyNormedField 𝕜]
       simp only [Prod.smul_fst, Prod.smul_snd, ContinuousLinearMap.coprod_apply,
         ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_add]
     bound := by
-      refine' ⟨2, zero_lt_two, _⟩
+      refine ⟨2, zero_lt_two, ?_⟩
       rintro ⟨φ, ψ⟩
       apply ContinuousLinearMap.op_norm_le_bound; positivity
       rintro ⟨e, f⟩
@@ -98,7 +98,7 @@ def ContinuousLinearMap.coprodL : (E →L[𝕜] G) × (F →L[𝕜] G) →L[𝕜
 
 @[continuity]
 theorem Continuous.coprodL {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G} (hf : Continuous f)
-    (hg : Continuous g) : Continuous fun x => (f x).coprod (g x) :=
+    (hg : Continuous g) : Continuous fun x ↦ (f x).coprod (g x) :=
   ContinuousLinearMap.coprodL.continuous.comp₂ hf hg
 
 theorem Continuous.prodL' {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : Type _}
@@ -107,7 +107,7 @@ theorem Continuous.prodL' {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : T
     [Semiring R] [Module R Fₗ] [Module R Gₗ] [ContinuousConstSMul R Fₗ] [ContinuousConstSMul R Gₗ]
     [SMulCommClass 𝕜 R Fₗ] [SMulCommClass 𝕜 R Gₗ] {X : Type _} [TopologicalSpace X]
     {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f) (hg : Continuous g) :
-    Continuous fun x => (f x).prod (g x) :=
+    Continuous fun x ↦ (f x).prod (g x) :=
   (ContinuousLinearMap.prodₗᵢ 𝕜).continuous.comp₂ hf hg
 
 @[continuity]
@@ -115,19 +115,19 @@ theorem Continuous.prodL {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : Ty
     [SeminormedAddCommGroup E] [SeminormedAddCommGroup Fₗ] [SeminormedAddCommGroup Gₗ]
     [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] {X : Type _}
     [TopologicalSpace X] {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f)
-    (hg : Continuous g) : Continuous fun x => (f x).prod (g x) :=
+    (hg : Continuous g) : Continuous fun x ↦ (f x).prod (g x) :=
   hf.prodL' 𝕜 hg
 
 @[continuity]
 theorem ContinuousAt.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} {x₀ : X}
     (hf : ContinuousAt f x₀) (hg : ContinuousAt g x₀) :
-    ContinuousAt (fun x => (f x).comp (g x)) x₀ :=
+    ContinuousAt (fun x ↦ (f x).comp (g x)) x₀ :=
   ((ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous₂.tendsto (f x₀, g x₀)).comp
     (hf.prod_mk_nhds hg)
 
 @[continuity]
 theorem Continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} (hf : Continuous f)
-    (hg : Continuous g) : Continuous fun x => (f x).comp (g x) :=
+    (hg : Continuous g) : Continuous fun x ↦ (f x).comp (g x) :=
   (ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous₂.comp₂ hf hg
 
 section FiniteDimensional
@@ -163,8 +163,7 @@ theorem ContinuousLinearMap.isOpen_injective [CompleteSpace 𝕜] :
   · exact eventually_nnnorm_sub_lt _ <| inv_pos_of_pos K_pos
   filter_upwards [this] with φ hφ
   apply φ.inj_iff_antilip.mpr
-  refine' ⟨(K⁻¹ - ‖φ - φ₀‖₊)⁻¹, inv_pos_of_pos (tsub_pos_of_lt hφ), _⟩
-  exact AntilipschitzWith.add_sub_lipschitzWith H (φ - φ₀).lipschitz hφ
+  exact ⟨(K⁻¹ - ‖φ - φ₀‖₊)⁻¹, inv_pos_of_pos (tsub_pos_of_lt hφ),
+    AntilipschitzWith.add_sub_lipschitzWith H (φ - φ₀).lipschitz hφ⟩
 
 end FiniteDimensional
-

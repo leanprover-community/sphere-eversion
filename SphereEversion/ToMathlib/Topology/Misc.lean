@@ -73,7 +73,7 @@ end
 section
 
 theorem support_norm {α E : Type*} [NormedAddCommGroup E] (f : α → E) :
-    (support fun a => ‖f a‖) = support f :=
+    (support fun a ↦ ‖f a‖) = support f :=
   Function.support_comp_eq norm norm_eq_zero f
 
 @[to_additive]
@@ -81,7 +81,7 @@ theorem hasCompactMulSupport_of_subset {α β : Type*} [TopologicalSpace α] [T2
     {f : α → β} {K : Set α} (hK : IsCompact K) (hf : mulSupport f ⊆ K) : HasCompactMulSupport f :=
   hK.of_isClosed_subset (isClosed_mulTSupport f) (closure_minimal hf hK.isClosed)
 
-theorem periodic_const {α β : Type*} [Add α] {a : α} {b : β} : Periodic (fun _ => b) a := fun _ =>
+theorem periodic_const {α β : Type*} [Add α] {a : α} {b : β} : Periodic (fun _ ↦ b) a := fun _ ↦
   rfl
 
 theorem Real.ball_zero_eq (r : ℝ) : Metric.ball (0 : ℝ) r = Ioo (-r) r := by simp [Real.ball_eq_Ioo]
@@ -96,7 +96,7 @@ TODO: use that in to_mathlib.topology.periodic?
 -/
 
 instance : VAdd ℤ ℝ :=
-  ⟨fun n x => (n : ℝ) + x⟩
+  ⟨fun n x ↦ (n : ℝ) + x⟩
 
 instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
   ⟨fun {K L} hK hL ↦ by
@@ -139,15 +139,15 @@ theorem fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n := 
   rw [← not_exists, not_iff_not, fract_eq_zero_iff]
 
 theorem Ioo_floor_mem_nhds {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
-  Ioo_mem_nhds ((floor_le x).eq_or_lt.elim (fun H => (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
+  Ioo_mem_nhds ((floor_le x).eq_or_lt.elim (fun H ↦ (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
 
-theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun _ => ⌊x⌋ := by
+theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun _ ↦ ⌊x⌋ := by
   filter_upwards [Ioo_floor_mem_nhds h]
   intro y hy
   rw [floor_eq_on_Ico]
   exact mem_Ico_of_Ioo hy
 
-theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' => x' - floor x := by
+theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' ↦ x' - floor x := by
   rw [fract_ne_zero_iff] at h
   exact EventuallyEq.rfl.sub ((loc_constant_floor h).fun_comp _)
 
@@ -196,9 +196,8 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
       rw [mem_setOf_eq, abs_eq_self.mpr (fract_nonneg x)]
       exact fract_lt hx'' hx'
     · apply hε'
-      constructor
-      · refine' one_sub_lt_fract (by linarith [min_le_right ε (1 / 2)]) (by linarith) hx''
-      · exact fract_lt_one x
+      exact ⟨one_sub_lt_fract (by linarith [min_le_right ε (1 / 2)]) (by linarith) hx'',
+        fract_lt_one x⟩
   · rw [fract_ne_zero_iff] at hx'
     have H : Ico (⌊x⌋ : ℝ) (⌊x⌋ + 1) ∈ 𝓝 x :=
       mem_of_superset (Ioo_floor_mem_nhds hx') Ioo_subset_Ico_self
@@ -206,12 +205,12 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
 
 theorem IsOpen.preimage_fract {s : Set ℝ} (hs : IsOpen s) (h2s : (0 : ℝ) ∈ s → (1 : ℝ) ∈ s) :
     IsOpen (fract ⁻¹' s) :=
-  hs.preimage_fract' fun h => nhdsWithin_le_nhds <| hs.mem_nhds (h2s h)
+  hs.preimage_fract' fun h ↦ nhdsWithin_le_nhds <| hs.mem_nhds (h2s h)
 
 -- is `sᶜ ∉ 𝓝[<] (1 : ℝ)` equivalent to something like `cluster_pt (𝓝[Iio (1 : ℝ) ∩ s] (1 : ℝ)` ?
 theorem IsClosed.preimage_fract {s : Set ℝ} (hs : IsClosed s)
     (h2s : sᶜ ∉ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : IsClosed (fract ⁻¹' s) :=
-  isOpen_compl_iff.mp <| hs.isOpen_compl.preimage_fract' fun h => by_contra fun h' => h <| h2s h'
+  isOpen_compl_iff.mp <| hs.isOpen_compl.preimage_fract' fun h ↦ by_contra fun h' ↦ h <| h2s h'
 
 theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract x))
     (h2 : fract x = 0 → s ∈ 𝓝 (1 : ℝ)) : fract ⁻¹' s ∈ 𝓝 x := by
@@ -219,9 +218,8 @@ theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract 
   · obtain ⟨u, hus, hu, hxu⟩ := mem_nhds_iff.mp h1
     obtain ⟨v, hvs, hv, h1v⟩ := mem_nhds_iff.mp (h2 hx)
     rw [mem_nhds_iff]
-    refine'
-      ⟨fract ⁻¹' (u ∪ v), preimage_mono (union_subset hus hvs),
-        (hu.union hv).preimage_fract fun _ => subset_union_right _ _ h1v, subset_union_left _ _ hxu⟩
+    exact ⟨fract ⁻¹' (u ∪ v), preimage_mono (union_subset hus hvs),
+      (hu.union hv).preimage_fract fun _ ↦ subset_union_right _ _ h1v, subset_union_left _ _ hxu⟩
   · exact (continuousAt_fract (sub_ne_zero.1 hx)).preimage_mem_nhds h1
 
 end Fract
@@ -266,7 +264,7 @@ variable {α β : Type*} [LinearOrderedSemiring α] {x c : α}
 
 /-- If `α` is a `linear_ordered_semiring`, then `projI : α → α` projection of `α` onto the unit
 interval `[0, 1]`. -/
-def projI : α → α := fun x => projIcc (0 : α) 1 zero_le_one x
+def projI : α → α := fun x ↦ projIcc (0 : α) 1 zero_le_one x
 
 theorem projI_def : projI x = max 0 (min 1 x) :=
   rfl
@@ -300,7 +298,7 @@ theorem projI_mem_Icc : projI x ∈ Icc (0 : α) 1 :=
   (projIcc (0 : α) 1 zero_le_one x).prop
 
 theorem projI_eq_self : projI x = x ↔ x ∈ Icc (0 : α) 1 :=
-  ⟨fun h => h ▸ projI_mem_Icc, fun h => congr_arg Subtype.val <| projIcc_of_mem _ h⟩
+  ⟨fun h ↦ h ▸ projI_mem_Icc, fun h ↦ congr_arg Subtype.val <| projIcc_of_mem _ h⟩
 
 @[simp]
 theorem projI_projI : projI (projI x) = projI x :=
@@ -342,9 +340,9 @@ theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (
   continuous_projIcc.subtype_val
 
 theorem projI_mapsto {α : Type*} [LinearOrderedSemiring α] {s : Set α} (h0s : (0 : α) ∈ s)
-    (h1s : (1 : α) ∈ s) : MapsTo projI s s := fun x hx =>
-  (le_total 1 x).elim (fun h2x => by rwa [projI_eq_one.mpr h2x]) fun h2x =>
-    (le_total 0 x).elim (fun h3x => by rwa [projI_eq_self.mpr ⟨h3x, h2x⟩]) fun h3x => by
+    (h1s : (1 : α) ∈ s) : MapsTo projI s s := fun x hx ↦
+  (le_total 1 x).elim (fun h2x ↦ by rwa [projI_eq_one.mpr h2x]) fun h2x ↦
+    (le_total 0 x).elim (fun h3x ↦ by rwa [projI_eq_self.mpr ⟨h3x, h2x⟩]) fun h3x ↦ by
       rwa [projI_eq_zero.mpr h3x]
 
 -- about path.truncate
@@ -366,13 +364,13 @@ variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
   this sequence to get a sequence indexed by `ℕ` (by adding some `∅` values).
   This new sequence is still locally finite. -/
 theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : LocallyFinite s) :
-    LocallyFinite fun i => (s <$> decode₂ ι i).getD ∅ := fun x ↦ by
+    LocallyFinite fun i ↦ (s <$> decode₂ ι i).getD ∅ := fun x ↦ by
   obtain ⟨U, hxU, hU⟩ := hs x
-  refine' ⟨U, hxU, _⟩
+  refine ⟨U, hxU, ?_⟩
   have :
     encode ⁻¹' {i : ℕ | ((s <$> decode₂ ι i).getD ∅ ∩ U).Nonempty} = {i : ι | (s i ∩ U).Nonempty} := by simp_rw [preimage_setOf_eq, decode₂_encode, map_some, getD_some]
   rw [← this] at hU
-  refine' finite_of_finite_preimage hU _
+  refine finite_of_finite_preimage hU ?_
   intro n hn
   rw [← decode₂_ne_none_iff]
   intro h
@@ -388,19 +386,19 @@ theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {
     ∃ (K : ℕ → Set X) (W : ℕ → Set X), (∀ n, IsCompact (K n)) ∧ (∀ n, IsOpen (W n)) ∧
       (∀ n, P (W n)) ∧ (∀ n, K n ⊆ W n) ∧ LocallyFinite W ∧ C ⊆ ⋃ n, K n := by
   choose V' hV' hPV' using SetCoe.forall'.mp hX
-  choose V hV hVV' hcV using fun x : C => LocallyCompactSpace.local_compact_nhds (↑x) (V' x) (hV' x)
+  choose V hV hVV' hcV using fun x : C ↦ LocallyCompactSpace.local_compact_nhds (↑x) (V' x) (hV' x)
   simp_rw [← mem_interior_iff_mem_nhds] at hV
-  have : C ⊆ ⋃ x : C, interior (V x) := fun x hx => by rw [mem_iUnion]; exact ⟨⟨x, hx⟩, hV _⟩
-  obtain ⟨s, hs, hsW₂⟩ := isOpen_iUnion_countable (fun x => interior (V x)) fun x => isOpen_interior
+  have : C ⊆ ⋃ x : C, interior (V x) := fun x hx ↦ by rw [mem_iUnion]; exact ⟨⟨x, hx⟩, hV _⟩
+  obtain ⟨s, hs, hsW₂⟩ := isOpen_iUnion_countable (fun x ↦ interior (V x)) fun x ↦ isOpen_interior
   rw [← hsW₂, biUnion_eq_iUnion] at this; clear hsW₂
   obtain ⟨W, hW, hUW, hlW, hWV⟩ :=
-    precise_refinement_set hC (fun x : s => interior (V x)) (fun x => isOpen_interior) this
+    precise_refinement_set hC (fun x : s ↦ interior (V x)) (fun x ↦ isOpen_interior) this
   obtain ⟨K, hCK, hK, hKW⟩ :=
-    exists_subset_iUnion_closed_subset hC (fun x : s => hW x) (fun x _ => hlW.point_finite x) hUW
+    exists_subset_iUnion_closed_subset hC (fun x : s ↦ hW x) (fun x _ ↦ hlW.point_finite x) hUW
   haveI : Encodable s := hs.toEncodable
-  let K' : ℕ → Set X := fun n => (K <$> decode₂ s n).getD ∅
-  let W' : ℕ → Set X := fun n => (W <$> decode₂ s n).getD ∅
-  refine' ⟨K', W', _, _, _, _, _, _⟩
+  let K' : ℕ → Set X := fun n ↦ (K <$> decode₂ s n).getD ∅
+  let W' : ℕ → Set X := fun n ↦ (W <$> decode₂ s n).getD ∅
+  refine ⟨K', W', ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro n; cases' h : decode₂ s n with i
     · simp_rw [h, map_none, getD_none, isCompact_empty]
     · simp_rw [h, map_some, getD_some]
@@ -410,14 +408,14 @@ theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {
     · simp_rw [h, map_some, getD_some, hW]
   · intro n; cases' h : decode₂ s n with i
     · simp_rw [h, map_none, getD_none, h0]
-    · simp_rw [h, map_some, getD_some]; refine' hP _ (hPV' i)
-      refine' (hWV i).trans (interior_subset.trans <| hVV' i)
+    · simp_rw [h, map_some, getD_some]; refine hP ?_ (hPV' i)
+      exact (hWV i).trans (interior_subset.trans <| hVV' i)
   · intro n; cases h : decode₂ s n
     · simp_rw [h, map_none]; rfl
     · simp_rw [h, map_some, getD_some, hKW]
   · exact decode₂_locallyFinite hlW
   · intro x hx; obtain ⟨i, hi⟩ := mem_iUnion.mp (hCK hx)
-    refine' mem_iUnion.mpr ⟨encode i, _⟩
+    refine mem_iUnion.mpr ⟨encode i, ?_⟩
     simp_rw [decode₂_encode, map_some, getD_some, hi]
 
 end
@@ -430,7 +428,7 @@ variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β] [Topolog
 theorem IsCompact.eventually_forall_mem {x₀ : α} {K : Set β} (hK : IsCompact K) {f : α → β → γ}
     (hf : Continuous ↿f) {U : Set γ} (hU : ∀ y ∈ K, U ∈ 𝓝 (f x₀ y)) :
     ∀ᶠ x in 𝓝 x₀, ∀ y ∈ K, f x y ∈ U :=
-  hK.eventually_forall_of_forall_eventually fun y hy =>
+  hK.eventually_forall_of_forall_eventually fun y hy ↦
     (hf.tendsto _).eventually <| show U ∈ 𝓝 ((↿f) (x₀, y)) from hU y hy
 
 end
@@ -440,7 +438,7 @@ section
 open Metric
 
 theorem Continuous.infDist {α β : Type*} [TopologicalSpace α] [PseudoMetricSpace β] {s : Set β}
-    {f : α → β} (hf : Continuous f) : Continuous fun x => infDist (f x) s :=
+    {f : α → β} (hf : Continuous f) : Continuous fun x ↦ infDist (f x) s :=
   (continuous_infDist_pt _).comp hf
 
 end
@@ -482,7 +480,7 @@ theorem cover_nat_nhds_within' {α} [TopologicalSpace α] [SecondCountableTopolo
   have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [dif_pos hx]; exact hf x hx
   obtain ⟨x, hx, h⟩ := TopologicalSpace.cover_nat_nhdsWithin hg hs
   simp_rw [dif_pos (range_subset_iff.mp hx _)] at h
-  refine' ⟨x, hx, h⟩
+  exact ⟨x, hx, h⟩
 
 end TopologicalSpace
 
@@ -515,23 +513,23 @@ section ParacompactSpace
 theorem precise_refinement_set' {ι X : Type*} [TopologicalSpace X] {s : Set X} [ParacompactSpace s]
     (hs : IsOpen s) (u : ι → Set X) (uo : ∀ i, IsOpen (u i)) (us : s ⊆ ⋃ i, u i) :
     ∃ v : ι → Set X, (∀ i, IsOpen (v i)) ∧ (s ⊆ ⋃ i, v i) ∧
-      (LocallyFinite fun i => ((↑) : s → X) ⁻¹' v i) ∧ (∀ i, v i ⊆ s) ∧ ∀ i, v i ⊆ u i := by
+      (LocallyFinite fun i ↦ ((↑) : s → X) ⁻¹' v i) ∧ (∀ i, v i ⊆ s) ∧ ∀ i, v i ⊆ u i := by
   obtain ⟨v, vo, vs, vl, vu⟩ :=
-    precise_refinement (fun i => ((↑) : s → X) ⁻¹' u i)
-      (fun i => (uo i).preimage continuous_subtype_val)
+    precise_refinement (fun i ↦ ((↑) : s → X) ⁻¹' u i)
+      (fun i ↦ (uo i).preimage continuous_subtype_val)
       (by rwa [← preimage_iUnion, Subtype.preimage_coe_eq_univ])
-  refine'
-    ⟨fun i => (↑) '' v i, fun i => hs.isOpenMap_subtype_val _ (vo i), by
+  exact
+    ⟨fun i ↦ (↑) '' v i, fun i ↦ hs.isOpenMap_subtype_val _ (vo i), by
       rw [← image_iUnion, vs, Subtype.coe_image_univ], by
-      simp_rw [preimage_image_eq _ Subtype.coe_injective, vl], fun i =>
+      simp_rw [preimage_image_eq _ Subtype.coe_injective, vl], fun i ↦
       Subtype.coe_image_subset _ _, by intro i; rw [image_subset_iff]; exact vu i⟩
 
 theorem point_finite_of_locallyFinite_coe_preimage {ι X : Type*} [TopologicalSpace X] {s : Set X}
-    {f : ι → Set X} (hf : LocallyFinite fun i => ((↑) : s → X) ⁻¹' f i) (hfs : ∀ i, f i ⊆ s)
+    {f : ι → Set X} (hf : LocallyFinite fun i ↦ ((↑) : s → X) ⁻¹' f i) (hfs : ∀ i, f i ⊆ s)
     {x : X} : {i | x ∈ f i}.Finite := by
   by_cases hx : x ∈ s
   · exact hf.point_finite ⟨x, hx⟩
-  · have : ∀ i, x ∉ f i := fun i hxf => hx (hfs i hxf)
+  · have : ∀ i, x ∉ f i := fun i hxf ↦ hx (hfs i hxf)
     simp only [this, setOf_false, finite_empty]
 
 end ParacompactSpace
@@ -552,14 +550,14 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
     ∃ v : ι → Set X, (s ⊆ ⋃ i, interior (v i)) ∧ (∀ i, IsCompact (v i)) ∧ ∀ i, v i ⊆ u i := by
   obtain ⟨v, vU, vo, hv⟩ :=
     exists_iUnion_eq_closure_subset
-      (fun i => (uo i).preimage (continuous_subtype_val : Continuous ((↑) : s → X)))
-      (fun x => uf x x.prop) (by simp_rw [← preimage_iUnion, Subtype.preimage_coe_eq_univ, uU])
+      (fun i ↦ (uo i).preimage (continuous_subtype_val : Continuous ((↑) : s → X)))
+      (fun x ↦ uf x x.prop) (by simp_rw [← preimage_iUnion, Subtype.preimage_coe_eq_univ, uU])
   have : ∀ i, IsCompact (closure (((↑) : _ → X) '' v i)) := by
-    intro i; refine' (uc i).of_isClosed_subset isClosed_closure _
-    apply closure_mono; rw [image_subset_iff]; refine' subset_closure.trans (hv i)
-  refine' ⟨fun i => closure ((↑) '' v i), _, this, _⟩
-  · refine' Subset.trans _
-      (iUnion_mono fun i => interior_maximal subset_closure (hs.isOpenMap_subtype_val _ (vo i)))
+    intro i; refine (uc i).of_isClosed_subset isClosed_closure ?_
+    apply closure_mono; rw [image_subset_iff]; exact subset_closure.trans (hv i)
+  refine ⟨fun i ↦ closure ((↑) '' v i), ?_, this, ?_⟩
+  · refine Subset.trans ?_
+      (iUnion_mono fun i ↦ interior_maximal subset_closure (hs.isOpenMap_subtype_val _ (vo i)))
     simp_rw [← image_iUnion, vU, Subtype.coe_image_univ]; rfl
   · intro i
     have : (↑) '' v i ⊆ u i := by rintro _ ⟨x, hx, rfl⟩; exact hv i (subset_closure hx)
@@ -575,7 +573,7 @@ open scoped Filter
 
 theorem Filter.EventuallyEq.slice {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
     {f g : α × β → γ} {a : α} {b : β} (h : f =ᶠ[𝓝 (a, b)] g) :
-    (fun y => f (a, y)) =ᶠ[𝓝 b] fun y => g (a, y) :=
+    (fun y ↦ f (a, y)) =ᶠ[𝓝 b] fun y ↦ g (a, y) :=
   h.curry_nhds.self_of_nhds
 
 theorem exists_compact_between' {α : Type*} [TopologicalSpace α] [LocallyCompactSpace α]

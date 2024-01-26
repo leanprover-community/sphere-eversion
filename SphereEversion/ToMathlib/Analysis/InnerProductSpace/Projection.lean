@@ -41,7 +41,7 @@ theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type _} [Field 𝕜] {M :
     rintro rfl
     exact hu (zero_smul 𝕜 v)
   symm
-  erw [Submodule.span_singleton_eq_span_singleton, Field.exists_unit fun z : 𝕜 => z • v = a • v]
+  erw [Submodule.span_singleton_eq_span_singleton, Field.exists_unit fun z : 𝕜 ↦ z • v = a • v]
   use a, this
 
 end GeneralStuff
@@ -71,12 +71,12 @@ variable (u v : E)
 
 theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)}ᗮ ⊓ {.v}ᗮ := by
   rw [inf_orthogonal, inf_orthogonal]
-  refine' congr_arg _ (le_antisymm (sup_le _ le_sup_right) (sup_le _ le_sup_right)) <;>
+  refine congr_arg _ (le_antisymm (sup_le ?_ le_sup_right) (sup_le ?_ le_sup_right)) <;>
     rw [span_singleton_le_iff_mem]
   · nth_rw 1 [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
   · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
-    refine' sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
+    exact sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
 theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ := by
   rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_completeSpace]
@@ -85,7 +85,7 @@ theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[
 
 theorem orthogonalProjection_eq_zero_of_mem {F : Submodule ℝ E} [CompleteSpace F] {x : E}
     (h : x ∈ Fᗮ) : orthogonalProjection F x = 0 := by
-  refine' Subtype.coe_injective (eq_orthogonalProjection_of_mem_of_inner_eq_zero F.zero_mem _)
+  refine Subtype.coe_injective (eq_orthogonalProjection_of_mem_of_inner_eq_zero F.zero_mem ?_)
   simp only [coe_zero, sub_zero]
   exact (mem_orthogonal' F x).mp h
 
@@ -139,7 +139,7 @@ theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}�
   congr 2
   have := orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y
   rw [orthogonalProjection_singleton] at this
-  apply_fun fun z => ⟪x₀, z⟫ at this
+  apply_fun fun z ↦ ⟪x₀, z⟫ at this
   rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right] at this
   symm
   apply eq_of_sub_eq_zero
@@ -156,7 +156,7 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
     pr[x]ᗮ.comp
       (subtypeL
         {.x₀}ᗮ) with
-    invFun := fun y =>
+    invFun := fun y ↦
       ⟨y - (⟪x₀, y⟫ / ⟪x₀, x⟫) • x,
     by
         rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right]
@@ -229,7 +229,7 @@ variable {E}
 
 @[continuity]
 theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ ≠ 0) :
-    ContinuousAt (fun x : E => {.x}ᗮ.subtypeL.comp pr[x]ᗮ) x₀ := by
+    ContinuousAt (fun x : E ↦ {.x}ᗮ.subtypeL.comp pr[x]ᗮ) x₀ := by
   rw [NormedSpace.continuousAt_iff']
   intro ε ε_pos
   have hNx₀ : 0 < ‖x₀‖ := norm_pos_iff.mpr hx₀
@@ -240,7 +240,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
       orthogonalProjection_orthogonal_singleton, ContinuousLinearMap.coe_sub',
       ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, Pi.sub_apply, comp_apply,
       coe_mk, sub_sub_sub_cancel_left]
-  let N : E → E := fun x => ⟪x, x⟫⁻¹ • x
+  let N : E → E := fun x ↦ ⟪x, x⟫⁻¹ • x
   have hNx₀ : 0 < ‖N x₀‖ := by
     unfold_let N
     -- and now let's suffer
@@ -253,7 +253,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     unfold_let N
     simp_rw [real_inner_self_eq_norm_sq]
     exact ((continuous_norm.pow 2).continuousAt.inv₀ hNx₀2.ne').smul continuousAt_id
-  have lim : Tendsto (fun y => ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) := by
+  have lim : Tendsto (fun y ↦ ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) := by
     rw [← MulZeroClass.zero_mul ‖x₀‖]
     apply Tendsto.mul
     rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
@@ -270,24 +270,24 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   simp only [key]
   simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim
   rcases lim (ε / 2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩
-  refine' ⟨min (ε / 2 / ‖N x₀‖) (η / 2), _, _⟩
+  refine ⟨min (ε / 2 / ‖N x₀‖) (η / 2), ?_, ?_⟩
   · apply lt_min; positivity; exact half_pos η_pos
-  intro y hy x
-  have hy₁ := hy.trans (min_le_left _ _); have hy₂ := hy.trans (min_le_right _ _); clear hy
-  specialize hη (by linarith : ‖y - x₀‖ < η)
-  rw [abs_of_nonneg] at hη
-  calc
-    ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ :=
-      norm_add_le _ _
-    _ ≤ ‖N x₀‖ * ‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ := (add_le_add ?_ ?_)
-    _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add ?_ ?_)
-    _ = ε * ‖x‖ := by linarith
-  · rw [norm_smul]
-    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
-  · rw [norm_smul]
-    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
-  · rw [mul_comm, ← mul_assoc, norm_sub_rev]
-    exact mul_le_mul_of_nonneg_right ((_root_.le_div_iff hNx₀).mp hy₁) (norm_nonneg x)
-  · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
-    exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)
-  · positivity
+  · intro y hy x
+    have hy₁ := hy.trans (min_le_left _ _); have hy₂ := hy.trans (min_le_right _ _); clear hy
+    specialize hη (by linarith : ‖y - x₀‖ < η)
+    rw [abs_of_nonneg] at hη
+    calc
+      ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ :=
+        norm_add_le _ _
+      _ ≤ ‖N x₀‖ * ‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ := (add_le_add ?_ ?_)
+      _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add ?_ ?_)
+      _ = ε * ‖x‖ := by linarith
+    · rw [norm_smul]
+      exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
+    · rw [norm_smul]
+      exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
+    · rw [mul_comm, ← mul_assoc, norm_sub_rev]
+      exact mul_le_mul_of_nonneg_right ((_root_.le_div_iff hNx₀).mp hy₁) (norm_nonneg x)
+    · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
+      exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)
+    · positivity

@@ -90,11 +90,9 @@ theorem subset_range_strans_right {x : X} {γ γ' : Path x x} {t₀ : I} (h : t�
     range γ' ⊆ range (γ.strans γ' t₀) := by
   rintro _ ⟨t, rfl⟩
   have := mul_nonneg t.2.1 (sub_nonneg.mpr t₀.2.2)
-  let t' : I :=
-    ⟨t₀ + t * (1 - t₀), add_nonneg t₀.2.1 this,
-  by
+  let t' : I := ⟨t₀ + t * (1 - t₀), add_nonneg t₀.2.1 this, by
       rw [add_comm, ← le_sub_iff_add_le]
-      refine' (mul_le_mul_of_nonneg_right t.2.2 <| sub_nonneg.mpr t₀.2.2).trans_eq (one_mul _)⟩
+      exact (mul_le_mul_of_nonneg_right t.2.2 <| sub_nonneg.mpr t₀.2.2).trans_eq (one_mul _)⟩
   have h2 : t₀ ≤ t' := le_add_of_nonneg_right this
   have h3 := sub_ne_zero.mpr (unitInterval.coe_ne_one.mpr h).symm
   use t'
@@ -112,42 +110,42 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
     {γ γ' : ∀ x, Path (f x) (f x)} (hγ : Continuous ↿γ) (hγ' : Continuous ↿γ')
     (hγ0 : ∀ ⦃x s⦄, t x = 0 → γ x s = f x) (hγ'1 : ∀ ⦃x s⦄, t x = 1 → γ' x s = f x)
     (ht : Continuous t) (hs : Continuous s) :
-    Continuous fun x => strans (γ x) (γ' x) (t x) (s x) := by
+    Continuous fun x ↦ strans (γ x) (γ' x) (t x) (s x) := by
   have hγ0 : ∀ {x₀}, t x₀ = 0 →
-      TendstoUniformly (fun x => γ x) (fun _ => f x₀) (𝓝 x₀) := fun h₀ ↦ by
-    convert Continuous.tendstoUniformly (fun x => γ x) hγ _; rw [hγ0 h₀]
+      TendstoUniformly (fun x ↦ γ x) (fun _ ↦ f x₀) (𝓝 x₀) := fun h₀ ↦ by
+    convert Continuous.tendstoUniformly (fun x ↦ γ x) hγ _; rw [hγ0 h₀]
   have hγ'1 : ∀ {x₀}, t x₀ = 1 →
-      TendstoUniformly (fun x => γ' x) (fun _ => f x₀) (𝓝 x₀) := fun h₀ ↦ by
-    convert Continuous.tendstoUniformly (fun x => γ' x) hγ' _; rw [hγ'1 h₀]
-  refine' Continuous.if_le _ _ hs ht _
+      TendstoUniformly (fun x ↦ γ' x) (fun _ ↦ f x₀) (𝓝 x₀) := fun h₀ ↦ by
+    convert Continuous.tendstoUniformly (fun x ↦ γ' x) hγ' _; rw [hγ'1 h₀]
+  refine Continuous.if_le ?_ ?_ hs ht ?_
   · rw [continuous_iff_continuousAt]
     intro x
-    refine'
-      (continuous_subtype_val.comp hs).continuousAt.comp_div_cases (fun x s => (γ x).extend s)
-        (continuous_subtype_val.comp ht).continuousAt _ _
+    refine
+      (continuous_subtype_val.comp hs).continuousAt.comp_div_cases (fun x s ↦ (γ x).extend s)
+        (continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
-      refine' ContinuousAt.path_extend _ _ continuousAt_snd
+      refine ContinuousAt.path_extend _ ?_ continuousAt_snd
       exact hγ.continuousAt.comp (continuousAt_fst.fst.prod continuousAt_snd)
     · intro h
       have ht : t x = 0 := Subtype.ext h
       apply Filter.Tendsto.path_extend
       dsimp only; rw [(projIcc_surjective _).filter_map_top, extend_zero]
-      refine' tendsto_prod_top_iff.mpr (hγ0 ht)
+      exact tendsto_prod_top_iff.mpr (hγ0 ht)
   · rw [continuous_iff_continuousAt]
     intro x
-    refine'
+    refine
       ((continuous_subtype_val.comp hs).sub
               (continuous_subtype_val.comp ht)).continuousAt.comp_div_cases
-        (fun x s => (γ' x).extend s)
-        (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt _ _
+        (fun x s ↦ (γ' x).extend s)
+        (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
-      refine' ContinuousAt.path_extend _ _ continuousAt_snd
+      refine ContinuousAt.path_extend _ ?_ continuousAt_snd
       exact hγ'.continuousAt.comp (continuousAt_fst.fst.prod continuousAt_snd)
     · intro h
       have ht : t x = 1 := Subtype.ext (sub_eq_zero.mp h).symm
       apply Filter.Tendsto.path_extend
       dsimp only; rw [(projIcc_surjective _).filter_map_top, extend_zero]
-      refine' tendsto_prod_top_iff.mpr (hγ'1 ht)
+      exact tendsto_prod_top_iff.mpr (hγ'1 ht)
   · rintro x h; rw [h, sub_self, zero_div, extend_div_self, extend_zero]
 
 end Path

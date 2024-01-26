@@ -57,8 +57,8 @@ def 𝕊₁ :=
 deriving TopologicalSpace, Inhabited
 
 theorem transOne_rel_iff {a b : ℝ} : transOne.Rel a b ↔ ∃ k : ℤ, b = a + k := by
-  refine' QuotientAddGroup.leftRel_apply.trans _
-  refine' exists_congr fun k => _
+  refine QuotientAddGroup.leftRel_apply.trans ?_
+  refine exists_congr fun k ↦ ?_
   rw [coe_castAddHom, eq_neg_add_iff_add_eq, eq_comm]
 
 section
@@ -106,7 +106,7 @@ theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ :=
   QuotientAddGroup.isOpenMap_coe ℤSubℝ
 
 theorem quotientMap_id_proj𝕊₁ {X : Type _} [TopologicalSpace X] :
-    QuotientMap fun p : X × ℝ => (p.1, proj𝕊₁ p.2) :=
+    QuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
   (IsOpenMap.id.prod isOpenMap_proj𝕊₁).to_quotientMap (continuous_id.prod_map continuous_proj𝕊₁)
     (surjective_id.Prod_map Quotient.exists_rep)
 
@@ -131,10 +131,10 @@ instance : T2Space 𝕊₁ := by
   have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k}
   · ext ⟨a, b⟩
     exact Quotient.eq''.trans transOne_rel_iff
-  have : {q : ℝ × ℝ | π q.fst = π q.snd} = (fun q : ℝ × ℝ => q.2 - q.1) ⁻¹' (range <| ((↑) : ℤ → ℝ))
+  have : {q : ℝ × ℝ | π q.fst = π q.snd} = (fun q : ℝ × ℝ ↦ q.2 - q.1) ⁻¹' (range <| ((↑) : ℤ → ℝ))
   · rw [this]
     ext ⟨a, b⟩
-    refine exists_congr fun k => ?_
+    refine exists_congr fun k ↦ ?_
     conv_rhs => rw [eq_comm, sub_eq_iff_eq_add']
   rw [this]
   exact IsClosed.preimage (continuous_snd.sub continuous_fst) isClosed_int
@@ -144,15 +144,15 @@ variable {X E : Type _} [TopologicalSpace X] [NormedAddCommGroup E]
 theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont : Continuous ↿f)
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K) :
     ∃ C, ∀ x ∈ K, ∀ t, ‖f x t‖ ≤ C := by
-  let F : X × 𝕊₁ → E := fun p : X × 𝕊₁ => (hper p.1).lift p.2
+  let F : X × 𝕊₁ → E := fun p : X × 𝕊₁ ↦ (hper p.1).lift p.2
   have Fcont : Continuous F
-  · have qm : QuotientMap fun p : X × ℝ => (p.1, π p.2) := quotientMap_id_proj𝕊₁
+  · have qm : QuotientMap fun p : X × ℝ ↦ (p.1, π p.2) := quotientMap_id_proj𝕊₁
     -- avoid weird elaboration issue
-    have : ↿f = F ∘ fun p : X × ℝ => (p.1, π p.2) := by ext p; rfl
+    have : ↿f = F ∘ fun p : X × ℝ ↦ (p.1, π p.2) := by ext p; rfl
     rwa [this, ← qm.continuous_iff] at cont
   obtain ⟨C, hC⟩ :=
     (hK.prod isCompact_univ).bddAbove_image (continuous_norm.comp Fcont).continuousOn
-  exact ⟨C, fun x x_in t => hC ⟨(x, π t), ⟨x_in, mem_univ _⟩, rfl⟩⟩
+  exact ⟨C, fun x x_in t ↦ hC ⟨(x, π t), ⟨x_in, mem_univ _⟩, rfl⟩⟩
 
 theorem Continuous.bounded_of_onePeriodic_of_compact {f : X → ℝ → E} (cont : Continuous ↿f)
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K)

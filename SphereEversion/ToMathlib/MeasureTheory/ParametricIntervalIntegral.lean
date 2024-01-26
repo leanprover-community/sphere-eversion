@@ -106,7 +106,7 @@ theorem continuousAt_parametric_primitive_of_dominated {F : X → ℝ → E} (bo
         ∫ s in a₀..b₀, F p.1 s ∂μ + ∫ s in b₀..p.2, F x₀ s ∂μ +
           ∫ s in b₀..p.2, F p.1 s - F x₀ s ∂μ := by
     rw [nhds_prod_eq]
-    refine' (h_bound.prod_mk Ioo_nhds).mono _
+    refine (h_bound.prod_mk Ioo_nhds).mono ?_
     rintro ⟨x, t⟩ ⟨hx : ∀ᵐ t : ℝ ∂μ.restrict (Ι a b), ‖F x t‖ ≤ bound t, ht : t ∈ Ioo a b⟩
     dsimp (config := { eta := false })
     have hiF : ∀ {x a₀ b₀},
@@ -122,14 +122,14 @@ theorem continuousAt_parametric_primitive_of_dominated {F : X → ℝ → E} (bo
     · exact hiF hx hb₀ ht
     · exact hiF hx₀ hb₀ ht
   rw [continuousAt_congr this]; clear this
-  refine' (ContinuousAt.add _ _).add _
+  refine (ContinuousAt.add ?_ ?_).add ?_
   · exact (intervalIntegral.continuousAt_of_dominated_interval
         (eventually_of_forall fun x ↦ (hF_meas x).mono_set <| hsub ha₀ hb₀)
           (h_bound.mono fun x hx ↦
             ae_imp_of_ae_restrict <| ae_restrict_of_ae_restrict_of_subset (hsub ha₀ hb₀) hx)
           (bound_integrable.mono_set_ae <| eventually_of_forall <| hsub ha₀ hb₀) <|
           ae_imp_of_ae_restrict <| ae_restrict_of_ae_restrict_of_subset (hsub ha₀ hb₀) h_cont).fst'
-  · refine' (_ : ContinuousAt (fun t ↦ ∫ s in b₀..t, F x₀ s ∂μ) b₀).snd'
+  · refine (?_ : ContinuousAt (fun t ↦ ∫ s in b₀..t, F x₀ s ∂μ) b₀).snd'
     apply ContinuousWithinAt.continuousAt _ (Icc_mem_nhds hb₀.1 hb₀.2)
     apply intervalIntegral.continuousWithinAt_primitive hμb₀
     rw [min_eq_right hb₀.1.le, max_eq_right hb₀.2.le]
@@ -139,7 +139,7 @@ theorem continuousAt_parametric_primitive_of_dominated {F : X → ℝ → E} (bo
     have : ∀ᶠ p : X × ℝ in 𝓝 (x₀, b₀),
         ‖∫ s in b₀..p.2, F p.1 s - F x₀ s ∂μ‖ ≤ |∫ s in b₀..p.2, 2 * bound s ∂μ| := by
       rw [nhds_prod_eq]
-      refine' (h_bound.prod_mk Ioo_nhds).mono _
+      refine (h_bound.prod_mk Ioo_nhds).mono ?_
       rintro ⟨x, t⟩ ⟨hx : ∀ᵐ t ∂μ.restrict (Ι a b), ‖F x t‖ ≤ bound t, ht : t ∈ Ioo a b⟩
       have H : ∀ᵐ t : ℝ ∂μ.restrict (Ι b₀ t), ‖F x t - F x₀ t‖ ≤ 2 * bound t := by
         apply (ae_restrict_of_ae_restrict_of_subset (hsub hb₀ ht) (hx.and hx₀)).mono
@@ -183,13 +183,13 @@ theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F
   have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩
   obtain ⟨M, hM⟩ :=
     (U_cpct.prod (isCompact_Icc (a := a) (b := b))).bddAbove_image hF.norm.continuousOn
-  refine' continuousAt_parametric_primitive_of_dominated (fun _ ↦ M) a b _ _ _ _ a₀_in b₀_in
+  refine continuousAt_parametric_primitive_of_dominated (fun _ ↦ M) a b ?_ ?_ ?_ ?_ a₀_in b₀_in
     (measure_singleton b₀)
   · exact fun x ↦ (hF.comp (Continuous.Prod.mk x)).aestronglyMeasurable
   · refine Eventually.mono U_nhds fun x (x_in : x ∈ U) ↦ ?_
     simp_rw [ae_restrict_iff' measurableSet_uIoc]
-    refine' eventually_of_forall fun t t_in ↦ _
-    refine' hM (mem_image_of_mem _ <| mk_mem_prod x_in _)
+    refine eventually_of_forall fun t t_in ↦ ?_
+    refine hM (mem_image_of_mem _ <| mk_mem_prod x_in ?_)
     rw [uIoc_of_le (a_lt.1.trans lt_b.1).le] at t_in
     exact mem_Icc_of_Ioc t_in
   · apply intervalIntegrable_const
@@ -292,9 +292,9 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       refine IsBigO.hasFDerivAt (𝕜 := ℝ) ?_ one_lt_two
       have O₁ : (fun x ↦ ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := by
         have : (fun x ↦ s x - s x₀) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := s_diff.isBigO_sub.norm_right
-        refine' IsBigO.trans _ this
+        refine IsBigO.trans ?_ this
         show ((fun t ↦ ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((fun t ↦ t - s x₀) ∘ s)
-        refine' IsBigO.comp_tendsto _ s_diff.continuousAt
+        refine IsBigO.comp_tendsto ?_ s_diff.continuousAt
         have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume :=
           ⟨Ioo a₀ b₀, Ioo_nhds, bound_integrable.1⟩
         sorry /- TODO-BUMP refine' (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
@@ -379,7 +379,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     apply hK.comp ((LipschitzWith.prod_mk_right t).lipschitzOnWith <| ball x₀ 1)
     rw [mapsTo']
     rintro ⟨x, s⟩ ⟨x', hx, h⟩; cases h
-    refine' ⟨ball_subset_closedBall hx, mem_Icc_of_Ioo t_in⟩
+    exact ⟨ball_subset_closedBall hx, mem_Icc_of_Ioo t_in⟩
   have cont_x : ∀ x, Continuous (F x) := fun x ↦ hF.continuous.comp (Continuous.Prod.mk x)
   have int_Icc : ∀ x, IntegrableOn (F x) (Icc a₀ b₀) := fun x ↦
     (cont_x x).continuousOn.integrableOn_Icc
@@ -413,7 +413,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
       (inl ℝ H ℝ).compRightL.continuous.comp
         ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]
-    refine' eventually_of_forall fun t t_in ↦ _
+    refine eventually_of_forall fun t t_in ↦ ?_
     rw [nnabs_coe K]
     exact F_lip t t_in
   · exact integrableOn_const.mpr (Or.inr measure_Ioo_lt_top)
@@ -453,7 +453,7 @@ theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : �
         have hD : ContDiff ℝ n ↿fun x' a ↦ (fderiv ℝ (fun e ↦ F e a) x') x :=
           hD'.clm_apply contDiff_const
         convert ih hD hs.of_succ with x'
-        refine' ContinuousLinearMap.intervalIntegral_apply _ x
+        refine ContinuousLinearMap.intervalIntegral_apply ?_ x
         exact (continuous_curry x' hD'.continuous).intervalIntegrable _ _
       · exact ((contDiff_succ_iff_fderiv.mp hs).2.smulRight
           (hF.of_succ.comp <| contDiff_id.prod hs.of_succ)).clm_apply contDiff_const
@@ -479,7 +479,7 @@ theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ
 
 theorem contDiff_parametric_primitive_of_contDiff'' {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     (a : ℝ) : ContDiff ℝ n fun x : H × ℝ ↦ ∫ t in a..x.2, F x.1 t :=
-  have cd : ContDiff ℝ n ↿fun (x : H × ℝ) (t : ℝ) => F x.1 t :=
+  have cd : ContDiff ℝ n ↿fun (x : H × ℝ) (t : ℝ) ↦ F x.1 t :=
     hF.comp (contDiff_fst.prod_map contDiff_id)
   contDiff_parametric_primitive_of_contDiff cd contDiff_snd a
 
