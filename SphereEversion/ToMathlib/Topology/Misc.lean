@@ -460,26 +460,6 @@ theorem isConnected_ball {x : E} {r : ℝ} : IsConnected (ball x r) ↔ 0 < r :=
 -- todo: make Metric.mem_nhds_iff protected
 end NormedSpace
 
-section connectedComponentIn -- PRed as #9983
-
-variable {α β : Type*} [TopologicalSpace α] [TopologicalSpace β]
-
-theorem Continuous.image_connectedComponentIn_subset {f : α → β} {s : Set α} {x : α}
-    (hf : Continuous f) (hx : x ∈ s) :
-    f '' connectedComponentIn s x ⊆ connectedComponentIn (f '' s) (f x) :=
-  (isPreconnected_connectedComponentIn.image _ hf.continuousOn).subset_connectedComponentIn
-    (mem_image_of_mem _ <| mem_connectedComponentIn hx)
-    (image_subset _ <| connectedComponentIn_subset _ _)
-
-theorem Homeomorph.image_connectedComponentIn (f : α ≃ₜ β) {s : Set α} {x : α} (hx : x ∈ s) :
-    f '' connectedComponentIn s x = connectedComponentIn (f '' s) (f x) := by
-  refine' (f.continuous.image_connectedComponentIn_subset hx).antisymm _
-  have := f.symm.continuous.image_connectedComponentIn_subset (mem_image_of_mem f hx)
-  rwa [image_subset_iff, f.preimage_symm, f.image_symm, f.preimage_image, f.symm_apply_apply]
-    at this
-
-end connectedComponentIn
-
 namespace TopologicalSpace
 
 -- to topology.bases

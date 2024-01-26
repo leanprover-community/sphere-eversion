@@ -233,17 +233,6 @@ open Function
 
 universe u
 
-section GeneralNonsense
-
-variable {𝕜 E H M : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
-  [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {x : M} {n : ℕ∞}
-
--- PRed in mathlib4#9977
-theorem extend_target' {e : PartialHomeomorph M H} : (e.extend I).target = I '' e.target := sorry
-
-end GeneralNonsense
-
 variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
   [TopologicalSpace M] [ChartedSpace H M] [T2Space M] [LocallyCompactSpace M] [SigmaCompactSpace M]
   (IF : ModelWithCorners ℝ F H) [SmoothManifoldWithCorners IF M]
@@ -272,14 +261,14 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
       rw [image_comp]
       refine'
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans _)
-      rw [extChartAt, extend_target']
+      rw [extChartAt, PartialHomeomorph.extend_target']
       exact hf₄
   smooth_to := by
     refine (contMDiffOn_extChartAt_symm x).comp_contMDiff hf₂.contMDiff fun y ↦ ?_
-    rw [extChartAt, extend_target']
+    rw [extChartAt, PartialHomeomorph.extend_target']
     exact hf₄ (mem_range_self y)
   smooth_inv := by
-    rw [← extend_target'] at hf₄
+    rw [← PartialHomeomorph.extend_target'] at hf₄
     have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target := by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
       exact (PartialEquiv.image_symm_image_of_subset_target _ hf₄).subset
@@ -343,7 +332,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
     simp_rw [extChartAt]
-    rw [← extend_target']
+    rw [← PartialHomeomorph.extend_target']
     exact (range_diffeomorphToNhd_subset_ball (extChartAt IF x x) hr).trans hr'
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr

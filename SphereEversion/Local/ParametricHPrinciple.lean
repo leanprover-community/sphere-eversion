@@ -104,7 +104,6 @@ theorem relativize_slice_eq_univ_loc {σ : OneJet (P × E) F} {p : DualPair (P �
     ext1 x
     simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
       p.update_ker_pi _ _ (h2p x)]
-    rfl
   simp_rw [Set.Nonempty, eq_univ_iff_forall, mem_slice, R.mem_relativize, this, exists_const,
            forall_const]
 

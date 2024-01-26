@@ -144,11 +144,12 @@ theorem eq_of_germ_isConstant {X Y : Type _} [TopologicalSpace X] [PreconnectedS
   revert x
   erw [← eq_univ_iff_forall]
   apply IsClopen.eq_univ _ (⟨x', rfl⟩ : {x | f x = f x'}.Nonempty)
+  sorry /- TODO: gets rewritten in upstreaming PR
   refine' ⟨isOpen_iff_eventually.mpr fun x hx => hx ▸ h x, _⟩
   rw [isClosed_iff_frequently]
   rintro x hx
   rcases ((h x).and_frequently hx).exists with ⟨x'', H⟩
-  exact H.1.symm.trans H.2
+  exact H.1.symm.trans H.2 -/
 
 theorem eq_of_germ_isConstant_on {X Y : Type _} [TopologicalSpace X] {f : X → Y} {s : Set X}
     (h : ∀ x ∈ s, (f : Germ (𝓝 x) Y).IsConstant) (hs : IsPreconnected s) {x x' : X} (x_in : x ∈ s)

@@ -1,5 +1,4 @@
 import Mathlib.Geometry.Manifold.PartitionOfUnity
-import SphereEversion.ToMathlib.Topology.LocallyFinite
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 
