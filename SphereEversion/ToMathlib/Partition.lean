@@ -4,36 +4,9 @@ import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 
 noncomputable section
 
-open scoped Topology Filter Manifold BigOperators
+open scoped Topology Filter BigOperators
 
 open Set Function Filter
-
-section -- unused, but might be nice API: PRed in #10019 (depending on #10020)
-
-variable {ι : Type*} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*}
-  [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
-  [ChartedSpace H M] {s : Set M} {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
-
-variable [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M]
-
-theorem SmoothPartitionOfUnity.contMDiffAt_sum (ρ : SmoothPartitionOfUnity ι I M s) {n : ℕ∞}
-    {x₀ : M} {φ : ι → M → F} (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → ContMDiffAt I 𝓘(ℝ, F) n (φ i) x₀) :
-    ContMDiffAt I 𝓘(ℝ, F) n (fun x ↦ ∑ᶠ i, ρ i x • φ i x) x₀ := by
-  refine contMDiffAt_finsum (ρ.locallyFinite.smul_left _) fun i ↦ ?_
-  by_cases hx : x₀ ∈ tsupport (ρ i)
-  · exact ContMDiffAt.smul ((ρ i).smooth.of_le le_top).contMDiffAt (hφ i hx)
-  · exact contMDiffAt_of_not_mem (compl_subset_compl.mpr (tsupport_smul_subset_left (ρ i) (φ i)) hx) n
-
-theorem SmoothPartitionOfUnity.contDiffAt_sum {s : Set E}
-    (ρ : SmoothPartitionOfUnity ι 𝓘(ℝ, E) E s) {n : ℕ∞} {x₀ : E} {φ : ι → E → F}
-    (hφ : ∀ i, x₀ ∈ tsupport (ρ i) → ContDiffAt ℝ n (φ i) x₀) :
-    ContDiffAt ℝ n (fun x ↦ ∑ᶠ i, ρ i x • φ i x) x₀ := by
-  simp only [← contMDiffAt_iff_contDiffAt] at *
-  exact ρ.contMDiffAt_sum hφ
-
-end
-
-section
 
 variable {ι : Type*}
 
@@ -143,7 +116,5 @@ theorem germ_combine_mem (φ : ι → M → F) (hx : x ∈ interior s := by simp
     apply ρ.nonneg
 
 end SmoothPartitionOfUnity
-
-end
 
 end

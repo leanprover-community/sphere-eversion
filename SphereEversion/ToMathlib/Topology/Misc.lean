@@ -224,26 +224,6 @@ theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract 
 
 end Fract
 
-section -- PRed in ##9982
-
--- to normed_space
-variable {E F : Type*} [NormedAddCommGroup E] [NormedAddCommGroup F]
-
-variable [NormedSpace ℝ E] [NormedSpace ℝ F]
-
-theorem dist_smul_add_one_sub_smul_le {r : ℝ} {x y : E} (h : r ∈ I) :
-    dist (r • x + (1 - r) • y) x ≤ dist y x :=
-  calc
-    dist (r • x + (1 - r) • y) x = ‖1 - r‖ * ‖x - y‖ := by
-      simp_rw [dist_eq_norm', ← norm_smul, sub_smul, one_smul, smul_sub, ← sub_sub, ← sub_add,
-        sub_right_comm]
-    _ = (1 - r) * dist y x := by
-      rw [Real.norm_eq_abs, abs_eq_self.mpr (sub_nonneg.mpr h.2), dist_eq_norm']
-    _ ≤ (1 - 0) * dist y x := (mul_le_mul_of_nonneg_right (sub_le_sub_left h.1 _) dist_nonneg)
-    _ = dist y x := by rw [sub_zero, one_mul]
-
-end
-
 section
 
 -- to ???

@@ -280,10 +280,10 @@ def locFormalEversionAux : HtpyJetSec E E
     cases' eq_or_ne x.2 0 with hx hx
     · refine' contDiffAt_const.congr_of_eventuallyEq _; exact 0
       have : (fun x => ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) := by
-        refine' IsOpen.mem_nhds _ _
-        exact isOpen_Iio.preimage (contDiff_norm_sq ℝ (n :=∞)).continuous
-        simp_rw [mem_preimage, norm_zero, zero_pow two_pos, mem_Iio]
-        norm_num
+        refine IsOpen.mem_nhds ?_ ?_
+        · exact isOpen_Iio.preimage (contDiff_norm_sq ℝ (n :=∞)).continuous
+        · simp_rw [mem_preimage, norm_zero, mem_Iio]
+          norm_num
       have : (fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) := by
         refine' mem_of_superset this _
         erw [@preimage_comp _ _ _ _ smoothStep]

@@ -153,7 +153,7 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
   simp_rw [← pow_two, norm_smul, mul_pow] at hy
   change _ + _ * ‖x×₃(⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy
   rw [norm_crossProduct] at hy
-  simp only [norm_eq_abs, Even.pow_abs, coe_mk, norm_zero, zero_pow', Ne.def,
+  simp only [norm_eq_abs, Even.pow_abs, coe_mk, norm_zero, zero_pow, Ne.def,
     Nat.one_ne_zero, not_false_iff] at hy
   change _ + _ * (_ * ‖y‖) ^ 2 = 0 at hy
   rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy

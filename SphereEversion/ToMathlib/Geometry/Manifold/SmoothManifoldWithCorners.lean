@@ -16,16 +16,6 @@ variable [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 
 variable (I : ModelWithCorners 𝕜 E H)
 
--- these lemmas were tweaked and PRed in #10001
-theorem map_extChartAt_nhds_of_boundaryless [I.Boundaryless] {x : M} :
-    Filter.map (extChartAt I x) (𝓝 x) = 𝓝 (extChartAt I x x) := by
-  rw [map_extChartAt_nhds I x, ModelWithCorners.Boundaryless.range_eq_univ, nhdsWithin_univ]
-
-theorem extChartAt_image_nhd_mem_nhds_of_boundaryless [I.Boundaryless] {x : M} {s : Set M}
-    (h : s ∈ 𝓝 x) : extChartAt I x '' s ∈ 𝓝 (extChartAt I x x) := by
-  rw [← map_extChartAt_nhds_of_boundaryless, Filter.mem_map]
-  filter_upwards [h] using subset_preimage_image (extChartAt I x) s
-
 namespace ChartedSpace
 
 /-- If `M` is a `charted_space` we can use the preferred chart at any point to transfer a
