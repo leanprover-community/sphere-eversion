@@ -124,11 +124,11 @@ theorem smooth_proj : Smooth ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜
     (proj I M V) := by
   intro x₀
   have : SmoothAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ id x₀ := smoothAt_id
-  sorry /- TODO-BUMP simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
-    TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this
+  simp_rw (config := { unfoldPartialApp := true }) [smoothAt_oneJetBundle, inTangentCoordinates,
+    inCoordinates, TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this
   dsimp only [TangentSpace] at this
   simp_rw [ContinuousLinearMap.id_comp] at this
-  refine' this.1.one_jet_eucl_bundle_mk this.2.2 -/
+  exact this.1.one_jet_eucl_bundle_mk this.2.2
 
 variable {I M V}
 
@@ -153,7 +153,7 @@ theorem smooth_incl : Smooth ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜
   intro x₀
   have : SmoothAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ Prod.fst x₀ := smoothAt_fst
   rw [smoothAt_one_jet_eucl_bundle] at this
-  refine' this.1.oneJetBundle_mk smoothAt_snd _
+  refine this.1.oneJetBundle_mk smoothAt_snd ?_
   dsimp only [inTangentCoordinates, inCoordinates, TangentSpace]
   sorry /- TODO-BUMP simp_rw [TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
     ContinuousLinearMap.id_comp]

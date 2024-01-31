@@ -42,12 +42,12 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
     rw [contDiff_iff_contDiffAt]
     intro x₀
     have : SmoothAt _ _ _ _ := F.smooth x₀
-    sorry /- TODO-BUMP simp_rw [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
+    simp_rw (config := { unfoldPartialApp := true }) [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this
     dsimp only [TangentSpace] at this
     simp_rw [ContinuousLinearMap.id_comp] at this
-    exact this.2.2.contDiffAt -/
+    exact this.2.2.contDiffAt
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :
     F.loc.IsHolonomicAt x ↔ F.IsHolonomicAt x := by

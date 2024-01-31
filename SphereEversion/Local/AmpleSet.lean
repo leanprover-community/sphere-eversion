@@ -143,11 +143,11 @@ theorem mem_span_of_zero_mem_segment {F : Type _} [AddCommGroup F] [Module ℝ F
     rw [h] at htxy
     refine' hx _
     simpa using htxy
-  sorry /- TODO-BUMP rw [← smul_eq_zero_iff_eq' (neg_ne_zero.mpr <| inv_ne_zero this), smul_add, smul_smul, smul_smul,
+  rw [← smul_eq_zero_iff_right (neg_ne_zero.mpr <| inv_ne_zero this), smul_add, smul_smul, smul_smul,
     ← neg_one_mul, mul_assoc, mul_assoc, inv_mul_cancel this, mul_one, neg_one_smul,
     add_neg_eq_zero] at htxy
   convert htxy using 2
-  ring -/
+  ring
 
 variable [TopologicalAddGroup F] [ContinuousSMul ℝ F]
 

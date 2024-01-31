@@ -8,6 +8,7 @@ Authors: Patrick Massot, Floris van Doorn
 import Mathlib.Tactic
 
 import Mathlib.Analysis.NormedSpace.Completion
+import Mathlib.Geometry.Manifold.Algebra.Monoid
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 -- import SphereEversion.InteractiveExpr
@@ -457,12 +458,12 @@ theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, One
   -- Porting note: next 5 lines should be
   -- `simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
   --           ContinuousLinearMap.comp_add]
-  sorry /- TODO-BUMP simp_rw [inTangentCoordinates, inCoordinates]
+  simp_rw (config := { unfoldPartialApp := true }) [inTangentCoordinates, inCoordinates]
   conv =>
     enter [3, x, 2]
     rw [ContinuousLinearMap.add_comp]
   simp only [ContinuousLinearMap.comp_add]
-  exact hϕ.2.2.add hϕ'.2.2 -/
+  exact hϕ.2.2.add hϕ'.2.2
 
 variable (I' J')
 

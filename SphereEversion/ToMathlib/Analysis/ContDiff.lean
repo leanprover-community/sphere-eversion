@@ -192,12 +192,10 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       have diff : Differentiable 𝕜 (uncurry fun x y ↦ f x y) := hf.differentiable le_top
       rw [show (fun x : E × F ↦ (f x.fst) x.snd) = uncurry fun x y ↦ f x y by ext; rfl]
       apply DifferentiableAt.hasFDerivAt_coprod
-      · apply hf.differentiable le_top
-      · dsimp
-        exact diff.differentiableAt.hasFDerivAt_partial_fst
+      · exact hf.differentiable le_top _
+      · exact diff.differentiableAt.hasFDerivAt_partial_fst
       · rw [← hf' x y]
-        sorry /- TODO-BUMP dsimp
-        exact diff.differentiableAt.hasFDerivAt_partial_snd -/
+        exact diff.differentiableAt.hasFDerivAt_partial_snd
     · apply Continuous.continuousAt
       apply ContinuousLinearEquiv.continuous_lowerTriangular
       · exact continuous_const
