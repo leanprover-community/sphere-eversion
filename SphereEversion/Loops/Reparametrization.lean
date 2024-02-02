@@ -75,7 +75,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     refine' ContDiffBump.convolution_tendsto_right _ _ _ tendsto_const_nhds
     · simp_rw [bump]; norm_cast
       exact
-        ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_0_nat 1)).comp tendsto_snd
+        ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_zero_nat 1)).comp tendsto_snd
     · exact eventually_of_forall fun x => (hγ _).aestronglyMeasurable
     · have := h.tendsto (x, t)
       rw [nhds_prod_eq] at this
@@ -84,7 +84,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     have : Continuous fun z => intervalIntegral (γ z) 0 1 volume :=
       continuous_parametric_intervalIntegral_of_continuous (by apply h) continuous_const
     exact
-      (tendsto_one_div_add_atTop_nhds_0_nat.comp tendsto_snd).smul
+      (tendsto_one_div_add_atTop_nhds_zero_nat.comp tendsto_snd).smul
         ((this.tendsto x).comp tendsto_fst)
 
 end MetricSpace
