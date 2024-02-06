@@ -21,7 +21,7 @@ compatible distance function on every manifold.
 
 \begin{definition}
   \label{def:update}
-  \lean{open_smooth_embedding.update}
+  \lean{OpenSmoothEmbedding.update}
   \leanok
   Given smooth open embeddings $φ : X → M$ and $ψ : Y → N$, the update of a map
   $f : M → N$, using a map $g : X → Y$
@@ -32,7 +32,7 @@ compatible distance function on every manifold.
 \begin{lemma}
   \label{lem:smooth_updating}
   \uses{def:update}
-  \lean{open_smooth_embedding.smooth_update}
+  \lean{OpenSmoothEmbedding.smooth_update}
   \leanok
   Let $φ : P × X → M$ and $ψ : P × Y → N$ be families of smooth open embeddings.
   Let $K$ be a set in $X$ whose image in $M$ is closed. Let $f : P × M → N$
@@ -52,7 +52,7 @@ compatible distance function on every manifold.
 \begin{lemma}
   \label{lem:dist_updating}
   \uses{def:update}
-  \lean{open_smooth_embedding.dist_update}
+  \lean{OpenSmoothEmbedding.dist_update}
   \leanok
   Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings.
   Let $K_X$ and $K_P$ be compact sets in $X$ and $P$.
@@ -162,7 +162,7 @@ $N$ by:
 \begin{definition}
   \label{def:localisation_data}
   \uses{def:convenient_indexing}
-  \lean{localisation_data}
+  \lean{LocalisationData}
   \leanok
   Let $f : M → N$ be a continuous map between manifolds. A localisation data
   for $f$ is a tuple $(E, F, N, ι, φ, ψ, j)$ where $E$ and $F$ are normed
@@ -185,7 +185,7 @@ $N$ by:
 \begin{lemma}
   \label{lem:ex_localisation}
   \uses{def:localisation_data}
-  \lean{std_localisation_data}
+  \lean{stdLocalisationData}
   \leanok
   Any continuous map between manifolds has some localisation data.
 \end{lemma}
@@ -210,7 +210,7 @@ which is sufficient for our purposes).
 
 \begin{lemma}
   \label{lem:stability_cover}
-  \lean{metric.exists_continuous_real_forall_closed_ball_subset}
+  \lean{Metric.exists_continuous_real_forall_closedBall_subset}
   \leanok
   In a metric space $X$, let $U : ι → \set{X}$ be a
   family of open subsets of $X$ and let $K : ι → \set{X}$ be a locally-finite
@@ -272,7 +272,7 @@ fiber bundles constructions.
 \begin{definition}
 \label{def:pull_back_bundle}
 \leanok
-\lean{bundle.pullback}
+\lean{Bundle.Pullback}
 For every bundle $p : E → B$ and every map $f \co B' → B$,
 the pull-back bundle $f^*E → B'$ is defined by
 $f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
@@ -282,7 +282,7 @@ the obvious projection to $B'$.
 \begin{definition}
 \label{def:hom_bundle}
 \leanok
-\lean{bundle.continuous_linear_map}
+\lean{Bundle.ContinuousLinearMap}
 Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
 $B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
 $E_b$ to $F_b$ for some $b$ in $B$, with the obvious projection map.
@@ -297,7 +297,7 @@ will use other tricks here. The facts that really matter are listed in
 \begin{definition}
 \label{def:one_jet_space}
 \leanok
-\lean{one_jet_bundle}
+\lean{OneJetBundle}
 \uses{def:pull_back_bundle, def:hom_bundle}
 Let $M$ and $N$ be smooth manifolds. Denote by
 $p_1$ and $p_2$ the projections of $M × N$ to
@@ -317,7 +317,7 @@ since $φ$ lives in $\Hom(T_mM, T_nN)$ which depends on $m$ and $n$.
 \label{def:one_jet_extension}
 \uses{def:one_jet_space}
 \leanok
-\lean{one_jet_ext}
+\lean{oneJetExt}
 The $1$-jet of a smooth map $f \co M → N$ is the map from
 $m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
 \end{definition}
@@ -329,7 +329,7 @@ living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
 
 \begin{lemma}
 \label{lem:one_jet_extension_prop}
-\lean{smooth.one_jet_ext}
+\lean{Smooth.oneJetExt}
 \leanok
 \uses{def:one_jet_extension}
 For every smooth map $f \co M → N$,
@@ -366,7 +366,7 @@ For every smooth map $f \co M → N$,
 \begin{definition}
 \label{def:holonomic_section}
 \leanok
-\lean{one_jet_sec.is_holonomic_at, one_jet_sec.is_holonomic_at_iff}
+\lean{OneJetSet.IsHolonomicAt, OneJetSec.isHolonomicAt_iff}
 \uses{def:one_jet_space}
 A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
 $1$--jet of its base map.
@@ -380,7 +380,7 @@ necessarily $\bs \F$.
 \begin{definition}
   \label{def:rel}
   \leanok
-  \lean{rel_mfld}
+  \lean{RelMfld}
   \uses{def:one_jet_space}
   A first order differential relation for maps from $M$ to $N$ is a
   subset $\Rel$ of $J^1(M, N)$.
@@ -389,7 +389,7 @@ necessarily $\bs \F$.
 \begin{definition}
   \label{def:formal_sol}
   \leanok
-  \lean{formal_sol}
+  \lean{FormalSol}
   \uses{def:rel, def:one_jet_extension}
   A formal solution of a differential relation $\Rel ⊂ J^1(M, N)$ is a
   section of $J^1(M, N) → M$ taking values in $\Rel$.
@@ -399,7 +399,7 @@ necessarily $\bs \F$.
 \begin{definition}
   \label{def:htpy_formal_sol}
   \leanok
-  \lean{htpy_formal_sol}
+  \lean{HtpyFormalSol}
   \uses{def:formal_sol}
   A homotopy of formal solutions of $\Rel$ is a smooth family of sections
   $\F : ℝ × M → J^1(M, N)$ such that each $m ↦ \F(t, m)$ is a formal solution.
@@ -410,8 +410,8 @@ in order to relate the global theory to the local one.
 
 \begin{definition}
   \label{def:transfer_map}
-  \leanok
-  \lean{open_smooth_embedding.transfer, one_jet_sec.localize, rel_mfld.localize}
+  \leanok % TODO check onejetsec!
+  \lean{OpenSmoothEmbedding.transfer, OneJetSec.localize, RelMfld.localize}
   \uses{def:one_jet_space}
   Given manifolds $M$, $X$, $N$ and $Y$ and smooth open embeddings $g : Y → N$
   and $h : X → M$ we get a transfer map $ψ_{g, h} : J^1(X, Y) → J^1(M, N)$
@@ -434,7 +434,7 @@ from the previous chapter.
 \begin{lemma}
   \label{lem:transfer}
   \leanok
-  \lean{one_jet_sec.localize, is_holonomic_at_localize_iff, one_jet_sec.localize_mem_iff}
+  \lean{OneJetSec.localize, isHolonomicAt_localize_iff, OneJetSec.localize_mem_iff}
   \uses{def:transfer_map, def:holonomic_section, def:formal_sol}
   In the situation of the previous definition, given a section $\F : M → J^1(M, N)$:
   \begin{itemize}
@@ -468,7 +468,7 @@ from the previous chapter.
 \begin{definition}
   \label{def:h-princ}
   \leanok
-  \lean{rel_mfld.satisfies_h_principle, rel_mfld.satisfies_h_principle_with}
+  \lean{RelMfld.SatisfiesHPrinciple, RelMfld.SatisfiesHPrincipleWith}
   \uses{def:htpy_formal_sol}
   A first order differential relation $\Rel ⊂ J^1(M, N)$ satisfies the
   $h$-principle if every formal solution of $\Rel$ is homotopic to a
@@ -496,7 +496,7 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
   \label{lem:param_trick}
   \uses{def:holonomic_section, def:formal_sol}
   \leanok
-  \lean{family_one_jet_sec.is_holonomic_uncurry, family_one_jet_sec.uncurry_mem_relativize}
+  \lean{FamilyOneJetSec.is_holonomic_uncurry, FamilyOneJetSec.uncurry_mem_relativize}
   In the above setup, we have:
   \begin{itemize}
     \item
@@ -520,7 +520,7 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
   \label{lem:param_for_free}
   \uses{def:h-princ}
   \leanok
-  \lean{rel_mfld.satisfies_h_principle.satisfies_h_principle_with}
+  \lean{RelMfld.SatisfiesHPrinciple.SatisfiesHPrincipleWith}
   Let $\Rel$ be a first order differential relation for maps from $M$ to
   $N$.
   If, for every manifold with boundary $P$, $\Rel^P$ satisfies the
@@ -569,7 +569,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   \label{def:ample_relation}
   \uses{def:one_jet_space, def:ample_subset}
   \leanok
-  \lean{rel_mfld.ample}
+  \lean{RelMfld.Ample}
   A relation $\Rel$ is ample if, for every $σ = (x, y, φ)$ in $\Rel$ and every
   $(λ, v)$, the slice $\Rel_{σ, λ, v}$ is ample in $T_yY$.
 \end{definition}
@@ -578,7 +578,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   \label{lem:ample_iff_loc}
   \uses{def:ample_relation, def:transfer_map}
   \leanok
-  \lean{rel_mfld.ample.localize}
+  \lean{RelMfld.Ample.localize}
   Given manifolds $W$, $X$, $Y$ and $Z$ and smooth open embeddings $g : Z → Y$
   and $h : W → X$, the relation induced (in the sense of \Cref{def:transfer_map})
   in $J^1(W, Z)$ by a ample relation in $J^1(X, Y)$ is ample.
@@ -609,7 +609,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   \label{lem:open_ample_immersion}
   \uses{def:ample_relation}
   \leanok
-  \lean{immersion_rel_open_ample}
+  \lean{immersionRel_open_ample}
   The relation of immersions of $M$ into $N$ in positive codimension is open
   and ample.
 \end{lemma}
@@ -617,7 +617,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
 \begin{proof}
   \proves{lem:open_ample_immersion}
   \uses{lem:ample_codim_two}
-  \lean{immersion_rel_open_ample}
+  \lean{immersionRel_open_ample}
   \leanok
   For every $σ = (x, y, φ)$ in the immersion relation $\Rel$,
   and for every dual pair $(π, v)$, the slice
@@ -631,7 +631,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   \label{thm:open_ample}
   % \uses{def:h-princ} % causes transitive arrow in depgraph
   \leanok
-  \lean{rel_mfld.ample.satisfies_h_principle_with}
+  \lean{RelMfld.Ample.SatisfiesHPrincipleWith}
   For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
   and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
 \end{theorem}
@@ -642,7 +642,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
 \begin{lemma}
     \label{lem:ample_parameter}
     \uses{def:ample_relation}
-    \lean{rel_mfld.ample.relativize}
+    \lean{RelMfld.Ample.relativize}
     \leanok
     If $\Rel$ is ample then, for any parameter space $P$, $\Rel^P$ is also ample.
 \end{lemma}

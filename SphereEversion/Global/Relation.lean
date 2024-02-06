@@ -515,7 +515,7 @@ def RelMfld.localize (R : RelMfld IM M IN N) : RelMfld IX X IY Y :=
   φ.transfer ψ ⁻¹' R
 
 
-/- Porting note: the following two statements are defeq to existing assumption but not found by TC
+/- Porting note: the following two statements are defeq to existing assumptions but not found by TC
 search. There was no problem in Lean 3. -/
 instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
 
