@@ -134,7 +134,7 @@ section sphere_eversion
 variable (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)]
 
 set_option synthInstance.checkSynthOrder false
-attribute [local instance] fact_finiteDimensional_of_finrank_eq_succ
+attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ
 set_option synthInstance.checkSynthOrder true
 
 local notation "𝕊²" => sphere (0 : E) 1
@@ -248,7 +248,7 @@ theorem sphere_eversion :
     ((stdOrthonormalBasis _ _).reindex <|
           finCongr (Fact.out : finrank ℝ E = 3)).toBasis.orientation
   have rankE : finrank ℝ E = 3 := Fact.out
-  haveI : FiniteDimensional ℝ E := finiteDimensional_of_finrank_eq_succ rankE
+  haveI : FiniteDimensional ℝ E := FiniteDimensional.of_finrank_eq_succ rankE
   have ineq_rank : finrank ℝ (EuclideanSpace ℝ (Fin 2)) < finrank ℝ E := by simp [rankE]
   let ε : 𝕊² → ℝ := fun _ ↦ 1
   have hε_pos : ∀ x, 0 < ε x := fun _ ↦ zero_lt_one
@@ -262,7 +262,7 @@ theorem sphere_eversion :
       (formalEversion E ω) (formalEversion_hol_near_zero_one E ω) with
     ⟨f, h₁, h₂, -, h₅⟩
   have := h₂.forall_mem principal_le_nhdsSet
-  refine' ⟨f, h₁, _, _, h₅⟩
+  refine ⟨f, h₁, ?_, ?_, h₅⟩
   · ext x
     rw [this (0, x) (by simp)]
     convert formalEversion_zero E ω x

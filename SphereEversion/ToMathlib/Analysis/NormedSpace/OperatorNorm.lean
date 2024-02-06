@@ -79,7 +79,7 @@ theorem isBoundedLinearMap_coprod (𝕜 : Type _) [NontriviallyNormedField 𝕜]
     bound := by
       refine ⟨2, zero_lt_two, ?_⟩
       rintro ⟨φ, ψ⟩
-      apply ContinuousLinearMap.op_norm_le_bound; positivity
+      apply ContinuousLinearMap.opNorm_le_bound; positivity
       rintro ⟨e, f⟩
       calc
         ‖φ e + ψ f‖ ≤ ‖φ e‖ + ‖ψ f‖ := norm_add_le _ _

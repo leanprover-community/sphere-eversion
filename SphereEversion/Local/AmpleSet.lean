@@ -77,9 +77,9 @@ theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
   have : y +ᵥ connectedComponentIn s x = connectedComponentIn (y +ᵥ s) (y +ᵥ x) :=
     (Homeomorph.addLeft y).image_connectedComponentIn hx
   rw [← this]
-  refine' ((AffineEquiv.constVAdd ℝ E y).toAffineMap.image_convexHull _).symm.trans _
+  refine ((AffineEquiv.constVAdd ℝ E y).toAffineMap.image_convexHull _).symm.trans ?_
   rw [h x hx, image_univ]
-  exact (AffineEquiv.toEquiv _).range_eq_univ
+  exact (AffineEquiv.constVAdd ℝ E y).toEquiv.range_eq_univ
 
 /-! ## Trivial examples -/
 

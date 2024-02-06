@@ -130,7 +130,7 @@ instance {B B'} {E : B → Type _} {f : B' → B} {x : B'} [∀ x', Zero (E x')]
 
 variable {B F B' K : Type _} {E : B → Type _} {f : K} [TopologicalSpace B']
   [TopologicalSpace (TotalSpace F E)] [TopologicalSpace F] [TopologicalSpace B] [∀ b, Zero (E b)]
-  [ContinuousMapClass K B' B]
+  [FunLike K B' B] [ContinuousMapClass K B' B]
 
 namespace Trivialization
 
@@ -161,7 +161,7 @@ variable {R 𝕜 B F B' : Type _} {E : B → Type _}
 variable [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace B] [∀ x, AddCommMonoid (E x)]
   [∀ x, Module 𝕜 (E x)] [∀ x, TopologicalSpace (E x)] [FiberBundle F E] {K : Type _}
-  [ContinuousMapClass K B' B] (f : K)
+  [FunLike K B' B] [ContinuousMapClass K B' B] (f : K)
 
 namespace Trivialization
 

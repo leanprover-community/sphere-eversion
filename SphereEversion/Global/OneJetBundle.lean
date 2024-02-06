@@ -257,8 +257,9 @@ section
 universe u v w₁ w₂ U
 
 variable {B : Type u} {F : Type v} {E : B → Type w₁} {B' : Type w₂}
-  [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [TopologicalSpace F]
-  [TopologicalSpace B] [(_b : B) → Zero (E _b)] {K : Type U} [ContinuousMapClass K B' B]
+  [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)]
+  [TopologicalSpace F] [TopologicalSpace B] [(_b : B) → Zero (E _b)]
+  {K : Type U} [FunLike K B' B] [ContinuousMapClass K B' B]
   [(x : B) → TopologicalSpace (E x)] [FiberBundle F E]
 
 lemma trivializationAt_pullBack_baseSet (f : K) (x : B') :

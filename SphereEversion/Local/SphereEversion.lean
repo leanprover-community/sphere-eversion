@@ -422,7 +422,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
   classical
   borelize E
   have rankE : (dim E = 3) := Fact.out
-  haveI : FiniteDimensional ℝ E := finiteDimensional_of_finrank_eq_succ rankE
+  haveI : FiniteDimensional ℝ E := FiniteDimensional.of_finrank_eq_succ rankE
   let ω : Orientation ℝ E (Fin 3) :=
     ((stdOrthonormalBasis _ _).reindex <| finCongr rankE).toBasis.orientation
   have is_closed_pair : IsClosed ({0, 1} : Set ℝ) := (by simp : ({0, 1} : Set ℝ).Finite).isClosed

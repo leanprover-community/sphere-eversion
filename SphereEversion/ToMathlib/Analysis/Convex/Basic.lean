@@ -8,7 +8,7 @@ open Function Set
 
 -- move
 theorem map_finsum {β α γ : Type _} [AddCommMonoid β] [AddCommMonoid γ] {G : Type _}
-    [AddMonoidHomClass G β γ] (g : G) {f : α → β} (hf : (Function.support f).Finite) :
+    [FunLike G β γ] [AddMonoidHomClass G β γ] (g : G) {f : α → β} (hf : (Function.support f).Finite) :
     g (∑ᶠ i, f i) = ∑ᶠ i, g (f i) :=
   (g : β →+ γ).map_finsum hf
 

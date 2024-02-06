@@ -18,7 +18,7 @@ open scoped RealInnerProductSpace
 open FiniteDimensional
 
 set_option synthInstance.checkSynthOrder false
-attribute [local instance] fact_finiteDimensional_of_finrank_eq_succ
+attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ
 set_option synthInstance.checkSynthOrder true
 
 variable (E : Type _) [NormedAddCommGroup E] [InnerProductSpace ℝ E]

@@ -236,7 +236,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have hNx₀2 : 0 < ‖x₀‖ ^ 2 := by apply pow_pos hNx₀
   suffices
     ∃ δ > 0, ∀ y, ‖y - x₀‖ ≤ δ → ∀ x, ‖(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y‖ ≤ ε * ‖x‖ by
-    simpa only [ContinuousLinearMap.op_norm_le_iff (le_of_lt ε_pos),
+    simpa only [ContinuousLinearMap.opNorm_le_iff (le_of_lt ε_pos),
       orthogonalProjection_orthogonal_singleton, ContinuousLinearMap.coe_sub',
       ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, Pi.sub_apply, comp_apply,
       coe_mk, sub_sub_sub_cancel_left]
