@@ -17,10 +17,10 @@ import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 # 1-jet bundles
 
 This file contains the definition of the 1-jet bundle `J¹(M, M')`, also known as
-`one_jet_bundle I M I' M'`.
+`OneJetBundle I M I' M'`.
 
 We also define
-* `one_jet_ext I I' f : M → J¹(M, M')`: the 1-jet extension `j¹f` of a map `f : M → M'`
+* `OneJetExt I I' f : M → J¹(M, M')`: the 1-jet extension `j¹f` of a map `f : M → M'`
 
 We prove
 * If `f` is smooth, `j¹f` is smooth.
@@ -114,7 +114,7 @@ variable (M M')
 
 -- is empty if the base manifold is empty
 /-- The space of one jets of maps between two smooth manifolds.
-Defined in terms of `bundle.total_space` to be able to put a suitable topology on it. -/
+Defined in terms of `Bundle.TotalSpace` to be able to put a suitable topology on it. -/
 @[reducible]
 def OneJetBundle :=
   TotalSpace (E →L[𝕜] E') (OneJetSpace I I' : M × M' → Type _)
@@ -338,7 +338,7 @@ theorem SmoothAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
     SmoothAt J (I.prod I') (fun x ↦ (f x).1) x₀ :=
   (smooth_one_jet_bundle_proj _).comp x₀ hf
 
-/-- The constructor of one_jet_bundle, in case `sigma.mk` will not give the right type. -/
+/-- The constructor of `OneJetBundle`, in case `sigma.mk` will not give the right type. -/
 @[simp]
 def OneJetBundle.mk (x : M) (y : M') (f : OneJetSpace I I' (x, y)) : J¹MM' :=
   ⟨(x, y), f⟩
@@ -468,7 +468,7 @@ theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, One
 
 variable (I' J')
 
-/-- A useful definition to define maps between two one_jet_bundles. -/
+/-- A useful definition to define maps between two `OneJetBundle`s. -/
 protected def OneJetBundle.map (f : M → N) (g : M' → N')
     (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     OneJetBundle I M I' M' → OneJetBundle J N J' N' := fun p ↦
@@ -494,7 +494,7 @@ theorem OneJetBundle.map_id (x : J¹MM') :
   refine OneJetBundle.ext rfl rfl ?_
   dsimp only [OneJetBundle.map, OneJetBundle.mk]
   simp_rw [mfderiv_id]
-  -- note: rw fails since we have to unfold the type `bundle.pullback`
+  -- note: rw fails since we have to unfold the type `Bundle.Pullback`
   erw [ContinuousLinearMap.id_comp]
 
 theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
@@ -517,7 +517,7 @@ theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} 
   · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
   exact (hf.comp x₀ (smoothAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1 hDfinv
 
-/-- A useful definition to define maps between two one_jet_bundles. -/
+/-- A useful definition to define maps between two `OneJetBundle`s. -/
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     J¹MM' → OneJetBundle J N I' M' := fun p ↦ OneJetBundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
 
@@ -578,8 +578,8 @@ theorem partialEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (
 
 local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 
-/-- In the one_jet bundle to the model space, the charts are just the canonical identification
-between a product type and a bundle total space type, a.k.a. ` bundle.total_space.to_prod`. -/
+/-- In the `OneJetBundle` to the model space, the charts are just the canonical identification
+between a product type and a bundle total space type, a.k.a. ` Bundle.TotalSpace.toProd`. -/
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
     (chartAt 𝓜 p).toPartialEquiv = (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv := by

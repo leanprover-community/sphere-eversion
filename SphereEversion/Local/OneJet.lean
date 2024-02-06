@@ -4,16 +4,16 @@ import SphereEversion.Notations
 
 /-! # Spaces of 1-jets and their sections
 
-For real normed spaces `E` and `F`, this file defines the space `one_jet_sec E F` of 1-jets
+For real normed spaces `E` and `F`, this file defines the space `OneJetSec E F` of 1-jets
 of maps from `E` to `F` as `E × F × (E →L[ℝ] F)`.
 
-A section `𝓕 : jet_sec E F` of this space is a map `(𝓕.f, 𝓕.φ) : E → F × (E →L[ℝ] F)`.
+A section `𝓕 : JetSet E F` of this space is a map `(𝓕.f, 𝓕.φ) : E → F × (E →L[ℝ] F)`.
 
 It is holonomic at `x`, spelled `𝓕.is_holonomic_at x` if the differential of `𝓕.f` at `x`
 is `𝓕.φ x`.
 
 We then introduced parametrized families of sections, and especially homotopies of sections,
-with type `htpy_jet_sec E F` and their concatenation operation `htpy_jet_sec.comp`.
+with type `HtpyJetSec E F` and their concatenation operation `HtpyJetSec.comp`.
 
 
 Implementation note: the time parameter `t` for homotopies is any real number, but all the

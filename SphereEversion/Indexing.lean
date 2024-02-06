@@ -9,8 +9,8 @@ import SphereEversion.ToMathlib.SetTheory.Cardinal.Basic
 /-!
 # Indexing types
 
-This file introduces `index_type : ℕ → Type` such that `index_type 0 = ℕ` and
-`index_type (N+1) = fin (N+1)`. Each `index_type N` has a total order and and inductive principle
+This file introduces `IndexType : ℕ → Type` such that `IndexType 0 = ℕ` and
+`IndexType (N+1) = fin (N+1)`. Each `IndexType N` has a total order and and inductive principle
 together with supporting lemmas.
 -/
 
@@ -158,7 +158,7 @@ theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N �
   · intro P Q h₀ ih
     rcases exists_by_induction' P Q h₀ (by simpa using ih) with ⟨f, hf⟩
     exact ⟨f, fun n => ⟨(hf n).1, fun _ => (hf n).2⟩⟩
-  · --dsimp only [index_type, index_type.succ],
+  · --dsimp only [IndexType, IndexType.succ],
     intro P Q h₀ ih
     choose f₀ hf₀ using h₀
     choose! F hF hF' using ih

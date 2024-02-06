@@ -12,7 +12,7 @@ vector field (almost) without changing their derivative along some complementary
 
 In this file we introduce the linear algebra part of the story of such modifications.
 The main gadget here are dual pairs on a real topological vector space `E`.
-Each `p : dual_pair E` is made of a (continuous) linear form `p.π : E →L[ℝ] ℝ` and a vector
+Each `p : DualPair E` is made of a (continuous) linear form `p.π : E →L[ℝ] ℝ` and a vector
 `p.v : E` such that `p.π p.v = 1`.
 
 Those pairs are used to build the updating operation turning `φ : E →L[ℝ] F` into
@@ -124,7 +124,7 @@ theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u
   rcases this with ⟨u, hu, -, ⟨t, rfl⟩, rfl⟩
   exact ⟨u, hu, t, rfl⟩
 
--- useful with `dual_pair.decomp`
+-- useful with `DualPair.decomp`
 theorem update_apply (p : DualPair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ ker p.π) :
     p.update φ w (u + t • p.v) = φ u + t • w := by
   rw [map_add, map_smul, p.update_v, p.update_ker_pi _ _ hu]
@@ -211,8 +211,8 @@ end DualPair
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
   [NormedSpace ℝ F]
 
-/-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`, `e.dual_pair i`
-is given by the `i`th basis element and its dual. -/
+/-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`,
+`e.DualPair i` is given by the `i`th basis element and its dual. -/
 def Basis.dualPair [FiniteDimensional ℝ E] {ι : Type _} [Fintype ι] [DecidableEq ι]
     (e : Basis ι ℝ E) (i : ι) : DualPair E where
   π := LinearMap.toContinuousLinearMap (e.dualBasis i)

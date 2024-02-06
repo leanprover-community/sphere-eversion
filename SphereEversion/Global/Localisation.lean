@@ -3,8 +3,8 @@ import SphereEversion.Global.Relation
 
 /-! # Link with the local story
 
-This file bridges the gap between Chapter 2 and Chapter 3. It builds on the
-`smooth_embbeding` file but goes all the way to vector spaces (the previous file
+This file bridges the gap between Chapter 2 and Chapter 3. It builds on
+`SmoothEmbedding.lean` but goes all the way to vector spaces (the previous file
 is about embedding any manifold into another one).
 -/
 

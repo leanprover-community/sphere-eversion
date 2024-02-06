@@ -23,7 +23,7 @@ topological argument from the things specific to loops or homotopies of jet sect
 
 First there is a lemma `inductive_construction` which abstracts the locally ultimately constant
 arguments, assuming we work with a fixed covering. It builds on
-`locally_finite.exists_forall_eventually_of_index_type`.
+`LocallyFinite.exists_forall_eventually_of_indexType`.
 
 From `inductive_construction` alone we deduce `inductive_htpy_construction` which builds a homotopy
 in a similar context. This is meant to be used to go from Chapter 2 to Chapter 3.
@@ -33,8 +33,8 @@ get `inductive_construction_of_loc` building a function from local existence and
 assumptions. It also has a version `relative_inductive_construction_of_loc` which does this
 relative to a closed set. This is used for `exists_surrounding_loops`.
 
-This file also contains supporting lemmas about `index_type`. A short term goal will be to
-get rid of the `indexing` abstraction and do everything in terms of `index_type`, unless
+This file also contains supporting lemmas about `IndexType`. A short term goal will be to
+get rid of the `indexing` abstraction and do everything in terms of `IndexType`, unless
 `indexing` makes those supporting lemmas really cleaner to prove.
 -/
 

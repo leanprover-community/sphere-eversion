@@ -176,7 +176,7 @@ protected def Filter.Germ.ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : ℕ�
       all_goals refine fun H ↦ H.congr_of_eventuallyEq ?_
       exacts [h.symm, h]
 
-/-- The predicate selecting germs of `cont_mdiff_at` functions.
+/-- The predicate selecting germs of `ContMDiffAt` functions.
 TODO: merge with the next def that generalizes target space -/
 protected nonrec def Filter.Germ.ContMDiffAt {x : M} (φ : Germ (𝓝 x) F) (n : ℕ∞) : Prop :=
   φ.ContMDiffAt' I 𝓘(ℝ, F) n

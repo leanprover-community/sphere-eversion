@@ -15,14 +15,14 @@ One formalization issue is that the whole construction carries around a lot of d
 On paper it is easy to state one lemma listing once all this data and proving many properties.
 Here it is more convenient to give each property its own lemma so carrying around data,
 assumptions and constructions requires some planning. Our way to mitigate this issue
-is to use two ad-hoc structures `landscape` and `step_landscape` which partly bundle
+is to use two ad-hoc structures `Landscape` and `StepLandscape` which partly bundle
 all this.
 
-The `landscape` structure record three sets in a vector space, a closed
+The `Landscape` structure record three sets in a vector space, a closed
 set `C` and two nested compact sets `K₀` and `K₁`. This is the ambiant data for
 the local h-principle result. We call this partly bundled because it doesn't include
 the data of the formal solution we want to improve. Instead we have a Prop-valued
-structure `landscape.accepts` that takes a landscape and a formal solution and assert
+structure `Landscape.accepts` that takes a landscape and a formal solution and assert
 some compatibility conditions. There are four conditions, which is already enough
 motivation to introduce a structure instead of one definition using the logical
 conjunction operator that would lead to awkward and error prone access to the
@@ -30,18 +30,18 @@ individual conditions.
 
 The proof of this proposition involves an induction on a flag of subspaces (nested
 subspaces of increasing dimensions). For the purpose of this induction we use
-a second structure `step_landscape` that extends `landscape` with two more pieces
+a second structure `StepLandscape` that extends `Landscape` with two more pieces
 of data, a subspace and a dual pair, and a compatibility condition, namely the subspace
 has to be in the hyperplane defined by the dual pair.
 
-In this setup, given `(L : step_landscape E) {𝓕 : formal_sol R} (h : L.accepts R 𝓕)`,
+In this setup, given `(L : StepLandscape E) {𝓕 : FormalSol R} (h : L.accepts R 𝓕)`,
 the loop family constructed by Chapter 2 is `L.loop h`. Together with corrugation,
 it is used to build `L.improveStep h` which is the homotopy of 1-jet sections improving
 the formal solution `𝓕` in that step of the main inductive proof. A rather long series of
 lemmas prove all the required properties of that homotopy, corresponding to
 lemma lem:integration_step from the blueprint.
 
-The inductive proof itself is the proof of `rel_loc.FormalSol.improve`.
+The inductive proof itself is the proof of `RelLoc.FormalSol.improve`.
 Here all conclusions are stated at once this the induction requires to know about each
 of them to proceed to the next step. We could have introduced one more ad-hoc structure
 to record those conclusion but this isn't needed (at least in that Chapter) since we
@@ -111,11 +111,11 @@ def Ω (L : StepLandscape E) (𝓕 : JetSec E F) : Set (E × F) :=
   {p | p.2 ∈ 𝓕.sliceAt R L.p p.1}
 
 --⋃ x, ({x} : set E) ×ˢ (connected_component_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
-/-- The linear form in a `step_landscape`, coming from the underlying dual pair. -/
+/-- The linear form in a `StepLandscape`, coming from the underlying dual pair. -/
 def π (L : StepLandscape E) : E →L[ℝ] ℝ :=
   L.p.π
 
-/-- The vector in a `step_landscape`, coming from the underlying dual pair. -/
+/-- The vector in a `StepLandscape`, coming from the underlying dual pair. -/
 def v (L : StepLandscape E) : E :=
   L.p.v
 
@@ -555,7 +555,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       rw [← h_span, HtpyJetSec.comp_1]
       apply improveStep_part_hol _ acc hNneq
 
-/-- A repackaging of `rel_loc.FormalSol.improve` for convenience. -/
+/-- A repackaging of `RelLoc.FormalSol.improve` for convenience. -/
 theorem RelLoc.FormalSol.improve_htpy' (𝓕 : FormalSol R)
     (h_hol : ∀ᶠ x near L.C, 𝓕.IsHolonomicAt x) :
     ∃ H : HtpyFormalSol R,

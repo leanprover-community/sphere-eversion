@@ -5,14 +5,15 @@ import SphereEversion.Local.OneJet
 /-!
 # Local partial differential relations and their formal solutions
 
-This file defines `rel_loc E F`, the type of first order partial differential relations
+This file defines `RelLoc E F`, the type of first order partial differential relations
 for maps between two real normed spaces `E` and `F`.
 
-To any `R : rel_loc E F` we associate the type `sol R` of maps `f : E → F` of
-solutions of `R`, and its formal counterpart `formal_sol R`.
+To any `R : RelLoc E F` we associate the type `sol R` of maps `f : E → F` of
+solutions of `R`, and its formal counterpart `FormalSol R`.
+(FIXME(grunweg): `sol` is never mention; is this docstring outdated?)
 
 The h-principle question is whether we can deform any formal solution into a solution.
-The type of deformations is `htpy_jet_sec E F` (homotopies of 1-jet sections).
+The type of deformations is `HtpyJetSet E F` (homotopies of 1-jet sections).
 -/
 
 
@@ -90,7 +91,7 @@ theorem FormalSol.eq_iff {𝓕 𝓕' : FormalSol R} {x : E} :
 def FormalSol.IsHolonomicAt (𝓕 : FormalSol R) (x : E) : Prop :=
   D 𝓕.f x = 𝓕.φ x
 
--- TODO: this should come from a lemma about `jet_sec`
+-- TODO: this should come from a lemma about `JetSec`
 theorem FormalSol.isHolonomicAt_congr (𝓕 𝓕' : FormalSol R) {s : Set E}
     (h : ∀ᶠ x near s, 𝓕 x = 𝓕' x) : ∀ᶠ x near s, 𝓕.IsHolonomicAt x ↔ 𝓕'.IsHolonomicAt x := by
   apply h.eventually_nhdsSet.mono

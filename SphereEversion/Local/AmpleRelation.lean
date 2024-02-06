@@ -5,18 +5,18 @@ import SphereEversion.Local.Relation
 /-! # Slices of first order relations
 
 Recal that a first order partial differential relation for maps between real normed vector spaces
-`E` and `F` is a set `R` in `one_jet E F := E × F × (E →L[ℝ] F)`. In this file we study slices
+`E` and `F` is a set `R` in `OneJet E F := E × F × (E →L[ℝ] F)`. In this file we study slices
 of such relations. The word slice is meant to convey the idea of intersecting with an affine
-subspace. Here we fix `(x, y, φ) : one_jet E F` and some hyperplane `H` in `E`. The points
+subspace. Here we fix `(x, y, φ) : OneJet E F` and some hyperplane `H` in `E`. The points
 `x` and `y` are fixed and we will take a slice in `E →L[ℝ] F` by intersecting `R` with the affine
 subspace of linear maps that coincide with `φ` on `H`.
 
 It will be convenient for convex integration purposes to identify this slice with `F`. There is
 no natural identification but we can build one by fixing more data that a hyperplane in `E`.
-Namely we fix `p : dual_pair E` (where `ker p.π` is the relevant hyperplane) and reformulate
+Namely we fix `p : DualPair E` (where `ker p.π` is the relevant hyperplane) and reformulate
 "linear map that coincides with `φ` on `H`" as `p.update φ w` for some `w : F`.
 
-This `slice` definition allows to define `rel_loc.is_ample`, the ampleness condition for first
+This `slice` definition allows to define `RelLoc.isAmple`, the ampleness condition for first
 order relations: a relation is ample if all its slices are ample sets.
 
 At the end of the file we consider 1-jet sections and slices corresponding to points in their image.
@@ -38,7 +38,7 @@ open Set
 
 namespace RelLoc
 
-/-- The slice of a local relation `R : rel_loc E F` for a dual pair `p` at a jet `θ` is
+/-- The slice of a local relation `R : RelLoc E F` for a dual pair `p` at a jet `θ` is
 the set of `w` in `F` such that updating `θ` using `p` and `w` leads to a jet in `R`. -/
 def slice (R : RelLoc E F) (p : DualPair E) (θ : E × F × (E →L[ℝ] F)) : Set F :=
   {w | (θ.1, θ.2.1, p.update θ.2.2 w) ∈ R}
@@ -135,4 +135,3 @@ end RelLoc.FormalSol
 theorem RelLoc.IsAmple.isShortAt (hR : IsAmple R) (𝓕 : FormalSol R) (p : DualPair E) (x : E) :
     𝓕.IsShortAt p x :=
   hR.mem_hull (𝓕.is_sol x) _ p
-
