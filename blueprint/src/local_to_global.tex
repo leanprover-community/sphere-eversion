@@ -11,7 +11,7 @@ bigger parts of the source space. We actually want to also accommodate finite se
 so we start with a definition of the source of our sequences.
 
 \begin{definition}
-  \label{def:index_type}\lean{index_type}\leanok
+  \label{def:index_type}\lean{IndexType}\leanok
   For every natural number $N$ we set
   \[
     \IT{N} =
@@ -35,7 +35,7 @@ every point of $X$ has a neighborhood that intersects only finitely many $V_n$.
 
 \begin{lemma}
   \label{lem:exists_forall_eventually_of_index_type}
-  \lean{locally_finite.exists_forall_eventually_of_index_type}
+  \lean{LocallyFinite.exists_forall_eventually_of_indexType}
   \leanok
   Let $X$ be a topological space and let $Y$ be any set. Let
   $f$ be a sequence of functions from $X$ to $Y$ indexed by $\IT{N}$
@@ -72,7 +72,7 @@ language of germs of functions. One can define germs with respect to any filter 
 we will need only the case of neighborhood filters~: two functions $f$ and $g$
 define the same germ at some point $x$ if they coincide near $x$.
 
-\begin{definition}\label{def:germ}\lean{filter.germ}\leanok
+\begin{definition}\label{def:germ}\lean{Filter.Germ}\leanok
   Let $X$ be a topological space, $x$ a point in $X$ and $Y$ a set. A germ of function
   from $X$ to $Y$ at $x$ is an element of the quotient $(X → Y)_x$ of the set of functions
   from $X$ to $Y$ by the relation $f ∼ g$ if $f$ and $g$ coincide near $x$. The image
@@ -93,7 +93,7 @@ We also need to build local predicates by localizing some local predicates near
 some subsets.
 
 \begin{definition}
-  \label{def:restrict_germ_predicate}\lean{restrict_germ_predicate}\leanok
+  \label{def:restrict_germ_predicate}\lean{RestrictGermPredicate}\leanok
   Let $X$ be a topological space, $A$ a subset of $X$, $Y$ a set and $P$ a
   local predicate on functions from $X$ to $Y$. The restriction of $P$ to $A$
   is the local predicate $P_{|A}$ defined by the constraint that a function
@@ -264,7 +264,7 @@ result.
 
 \begin{lemma}
   \label{lem:exists_locally_finite_subcover_of_locally}
-  \lean{exists_locally_finite_subcover_of_locally}\leanok
+  \lean{exists_locallyFinite_subcover_of_locally}\leanok
   Let $X$ be a metrizable locally compact second countable topological space.
   Let $C$ be a closed subset in $X$. Let $P$ be a non-decreasing predicate on subsets
   of $X$ (meaning that if $U ⊂ V$ and $V$ satisfies $P$ then so does $U$). Assume

@@ -49,9 +49,9 @@ def _root_.Subring.orderedSubtype {R} [OrderedRing R] (s : Subring R) : s →+*o
 end Filter.Germ
 
 /-- Given a predicate on germs `P : Π x : X, germ (𝓝 x) Y → Prop` and `A : set X`,
-build a new predicate on germs `restrict_germ_predicate P A` such that
-`(∀ x, restrict_germ_predicate P A x f) ↔ ∀ᶠ x near A, P x f`, see
-`forall_restrict_germ_predicate_iff` for this equivalence. -/
+build a new predicate on germs `RestrictGermPredicate P A` such that
+`(∀ x, RestrictGermPredicate P A x f) ↔ ∀ᶠ x near A, P x f`, see
+`forall_restrictGermPredicate_iff` for this equivalence. -/
 def RestrictGermPredicate {X Y : Type _} [TopologicalSpace X] (P : ∀ x : X, Germ (𝓝 x) Y → Prop)
     (A : Set X) : ∀ x : X, Germ (𝓝 x) Y → Prop := fun x φ ↦
   Quotient.liftOn' φ (fun f ↦ x ∈ A → ∀ᶠ y in 𝓝 x, P y f)
