@@ -8,13 +8,13 @@ The goal of this chapter is to explain the local aspects of
 cover global aspects.
 
 The elementary step of convex integration modifies the derivative of a
-map in one direction. The precise meaning of ``one direction'' rely on the
+map in one direction. The precise meaning of ``one direction'' relies on the
 following definition.
 
 \begin{definition}
   \label{def:dual_pair}
   \leanok
-  \lean{dual_pair}
+  \lean{DualPair}
   A dual pair on a vector space $E$ is a pair $(π, v)$ where $π$ is a linear
   form on $E$ and $v$ a vector in $E$ such that $π(v) = 1$.
 \end{definition}
@@ -101,7 +101,7 @@ directions of $\ker π$, and almost without moving $f(x)$.
 \begin{definition}
   \label{def:hol_partial}
   \leanok
-  \lean{jet_sec.is_part_holonomic_at}
+  \lean{JetSet.IsPartHolonomicAt}
   Let $E'$ be a linear subspace of $E$.
   A map $\F = (f, φ) : E → F × \Hom(E, F)$ is $E'$--holonomic if,
   for every $v$ in $E'$ and every $x$, $Df(x)v = φ(x)v$.
@@ -110,7 +110,7 @@ directions of $\ker π$, and almost without moving $f(x)$.
 \begin{definition}
   \label{def:rel_loc}
   \leanok
-  \lean{rel_loc}
+  \lean{RelLoc}
   A first order differential relation for maps from $E$ to $F$ is a
   subset $\Rel$ of $E × F × \Hom(E, F)$.
 \end{definition}
@@ -121,7 +121,7 @@ differential relation for maps from $E$ to $F$.
 \begin{definition}
   \label{def:formal_sol_loc}
   \leanok
-  \lean{rel_loc.formal_sol}
+  \lean{RelLoc.FormalSol}
   \uses{def:rel_loc}
   A formal solution of a differential relation $\Rel$ is a map
   $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$,
@@ -148,7 +148,7 @@ $[0, 1] × E$ and every map from $[0, 1] × E$ could be extended.
 \begin{definition}
   \label{def:rel_slice}
   \leanok
-  \lean{rel_loc.slice}
+  \lean{RelMfld.slice}
   \uses{def:rel_loc}
   For every $σ = (x, y, φ)$, the slice of $\Rel$ at $σ$ with respect to $(π, v)$
   is:
@@ -160,7 +160,7 @@ $[0, 1] × E$ and every map from $[0, 1] × E$ could be extended.
 \begin{lemma}
   \label{lem:update_lin_map}
   \leanok
-  \lean{dual_pair.update_ker_pi, dual_pair.update_v, rel_loc.mem_slice}
+  \lean{DualPair.update_ker_pi, DualPair.update_v, mem_slice}
   The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$
   and sends $v$ to $w$.
   If $\sigma$ belongs to $\Rel$ then $φ(v)$ belongs to
@@ -178,7 +178,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{definition}
   \label{def:short_formal_sol}
   \leanok
-  \lean{rel_loc.formal_sol.is_short_at}
+  \lean{RelLoc.FormalSol.IsShortAt}
   \uses{def:formal_sol_loc, def:dual_pair}
   A formal solution $\F$ of $\Rel$ is $(π, v)$--short if,
   for every $x$, $Df(x)v$ belongs to the interior of the convex hull of
@@ -188,9 +188,9 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{lemma}
   \label{lem:integration_step}
   \leanok
-  \lean{step_landscape.improve_step_rel_t_eq_0, step_landscape.improve_step_rel_C,%
-    step_landscape.improve_step_rel_compl_K₁, step_landscape.improve_step_c0_close,%
-    step_landscape.improve_step_part_hol}
+  \lean{StepLandscape.improveStep_rel_t_eq_0, StepLandscape.improveStep_rel_C,%
+  StepLandscape.improveStep_rel_compl_K₁, StepLandscape.improveStep_c0_close,%
+  StepLandscape.improveStep_part_hol}
   \uses{def:short_formal_sol, def:hol_partial, def:htpy_jet_sec_loc}
   Let $\F$ be a formal solution of $\Rel$.
   Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
@@ -369,7 +369,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{definition}
   \label{def:ample_relation_loc}
   \leanok
-  \lean{rel_loc.is_ample}
+  \lean{RelLoc.isAmple}
   \uses{def:ample_subset, def:rel_slice}
   A first order differential relation $\Rel$ is ample if all its slices
   are ample.
@@ -378,7 +378,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{lemma}
   \label{lem:h_principle_open_ample_loc}
   \leanok
-  \lean{rel_loc.formal_sol.improve}
+  \lean{RelLoc.FormalSol.improve}
   \uses{def:ample_relation_loc, def:holonomic_loc}
   Let $\F$ be a formal solution of $\Rel$.
   Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
