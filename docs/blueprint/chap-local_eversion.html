@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -105,45 +106,58 @@
   \[  \mathcal{R}:= \{ (x, y, φ) ∈ J^1(E, E) \; |\;  x ∉ B ⇒ φ|_{x^⊥} \text{ is injective}\} .  \]
 </div>
 <p>Of course solutions of this relation restrict to immersions of \(𝕊\). </p>
-<p><div class="lemma_thmwrapper" id="lem:loc_immersion_rel_open">
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:loc_immersion_rel_open">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">A.1</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local_eversion.html#lem:loc_immersion_rel_open">#</a>
+    
     <a class="icon proof" href="chap-local_eversion.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/sphere_eversion.lean#L125">loc_immersion_rel_open</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/loc_immersion_rel_open" class="lean_decl">loc_immersion_rel_open</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="lemma_thmcontent">
   <p>  The relation \(\mathcal{R}\) above is open. </p>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000101">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p>The main task is to fix \(x_0 \notin B\) and \(\varphi _0 \in L(E, E)\) which is injective on \(x_0^\perp \) and prove that, for every \(x\) close to \(x_0\) and \(\varphi \) close to \(\varphi _0\), \(\varphi \) is injective on \(x^\perp \). This is a typical situation where geometric intuition makes it feel like there is nothing to prove. </p>
@@ -151,45 +165,58 @@
 
   </div>
 </div>
-<p><div class="lemma_thmwrapper" id="lem:loc_immersion_rel_ample">
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:loc_immersion_rel_ample">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">A.2</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local_eversion.html#lem:loc_immersion_rel_ample">#</a>
+    
     <a class="icon proof" href="chap-local_eversion.html#a0000000102"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/sphere_eversion.lean#L162">loc_immersion_rel_ample</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/loc_immersion_rel_ample" class="lean_decl">loc_immersion_rel_ample</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="lemma_thmcontent">
   <p>   The relation \(\mathcal{R}\) above is ample. </p>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000102">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p>The core fact here is that if one fixes vector spaces \(F\) and \(F'\), a dual pair \((\pi , v)\) on \(F\) and an injective linear map \(\varphi \! :F \to F'\) then the updated map \(\Upsilon _{p}\left(\varphi , w\right)\) is injective if and only if \(w\) is not in \(\varphi (\ker \pi )\). First we assume \(\Upsilon _{p}\left(\varphi , \varphi (u)\right)\) is injective for some \(u\) in \(\varphi (\ker \pi )\) and derive a contradiction. We have \(\Upsilon _{p}\left(\varphi , \varphi (u)\right)v = \varphi (u)\) by the general definition of updating and also \(\Upsilon _{p}\left(\varphi , \varphi (u)\right)u = \varphi (u)\) since \(u\) is in \(\ker \pi \). Hence injectivity of \(\varphi \) ensure \(u = v\), which is absurd since \(\pi (u) = 0\) and \(\pi (v) = 1\). Conversely assume \(w\) is not in \(\varphi (\ker \pi )\) and let us prove \(\Upsilon _{p}\left(\varphi , w\right)\) is injective. Assume \(x\) is in the kernel of \(\Upsilon _{p}\left(\varphi , w\right)\). Decompose \(x = u + tv\) with \(u \in \ker \pi \) and \(t\) a real number. We have \(\Upsilon _{p}\left(\varphi , w\right)(x) = \varphi (u) + tw\). Hence our assumption on \(x\) implies \(t\) vanishes otherwise we would have \(w = -t⁻¹\varphi (u)\) contradicting that \(w\) isn’t in \(\varphi (\ker \pi )\). This vanishing and the assumption on \(x\) then imply \(\varphi (u) = 0\). Since \(\varphi \) is injective we conclude that \(u = 0\) and finally \(x = 0\). </p>
@@ -197,46 +224,59 @@
 
   </div>
 </div>
-<p><div class="theorem_thmwrapper" id="sphere_eversion_of_loc">
+<div class="theorem_thmwrapper theorem-style-plain" id="sphere_eversion_of_loc">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
     <span class="theorem_thmlabel">A.3</span>
     <span class="theorem_thmtitle">Smale 1958</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local_eversion.html#sphere_eversion_of_loc">#</a>
+    
     <a class="icon proof" href="chap-local_eversion.html#a0000000103"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/sphere_eversion.lean#L420">sphere_eversion_of_loc</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/sphere_eversion_of_loc" class="lean_decl">sphere_eversion_of_loc</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="theorem_thmcontent">
   <p>   There is a homotopy of immersion of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a \! :q ↦ -q\). </p>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000103">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p> We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not an immersion for \(t=1/2\)). Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ : t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). Those formal solutions are holonomic when \(t\) is zero or one, so we can reparametrize the family to make such it is holonomic when \(t\) is close to zero or one. Then we can extend it to a homotopy of formal solutions of \(\mathcal{R}\) using a suitable cut-off ensuring smoothness near the orign. The relation \(\mathcal{R}\) is ample according to <a href="chap-local_eversion.html#lem:loc_immersion_rel_ample">Lemma A.2</a> and then <a href="chap-global.html#lem:param_trick">Lemma 3.21</a> ensures its 1-parameter version \(\mathcal{R}^ℝ\) is also ample. The relation \(\mathcal{R}\) is open according to <a href="chap-local_eversion.html#lem:loc_immersion_rel_open">Lemma A.1</a> hence \(\mathcal{R}^ℝ\) is also ample. So we can use <a href="chap-local.html#lem:h_principle_open_ample_loc">Lemma 2.15</a> to deform our family of formal solutions into a holonomic one. </p>

@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -103,79 +104,108 @@
 
 <p>The goal of this chapter is to explain the local aspects of (Theillière’s implementation of) convex integration, the next chapter will cover global aspects. </p>
 <p>The elementary step of convex integration modifies the derivative of a map in one direction. The precise meaning of “one direction” rely on the following definition. </p>
-<p><div class="definition_thmwrapper" id="def:dual_pair">
+<div class="definition_thmwrapper theorem-style-plain" id="def:dual_pair">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.1</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:dual_pair">#</a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/dual_pair.lean#L46">dual_pair</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/dual_pair" class="lean_decl">dual_pair</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>  A dual pair on a vector space \(E\) is a pair \((π, v)\) where \(π\) is a linear form on \(E\) and \(v\) a vector in \(E\) such that \(π(v) = 1\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>Let \(E\) and \(F\) be finite dimensional real normed vector spaces. Let \(f \! :E → F\) be a smooth map, and let \((π, v)\) be a dual pair on \(E\). We want to modify \(Df\) in the direction of \(v\) while almost preserving it on \(\ker π\). Say we wish \(Df(x)v\) could live in some open subset \(Ω_x ⊂ F\). Assume there is a smooth family of loops \(γ \! :E × 𝕊^1 → F\) such that each \(γ_x\) takes values in \(Ω_x\), and its average value \(\overline{γ}_x = \int _{𝕊^1} γ_x\) is \(Df(x)v\) for all \(x\). Obviously such loops can exist only if \(Df(x)v\) is in the convex hull of \(Ω_x\), and we saw in the previous chapter that this is almost sufficient (and we’ll see this is sufficiently almost sufficient for our purposes). Then we can modify \(f\) to fulfil our wish using the following construction. </p>
-<p><div class="definition_thmwrapper" id="def:corrugation">
+<div class="definition_thmwrapper theorem-style-plain" id="def:corrugation">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.2</span>
     <span class="definition_thmtitle">Theillière 2018</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:corrugation">#</a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-loops.html#def:loop">Definition 1.1</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/corrugation.lean#L52">corrugation</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/corrugation" class="lean_decl">corrugation</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>    The map obtained by corrugation of \(f\) in direction \((π, v)\) using \(γ\) with oscillation number \(N\) is </p>
@@ -184,55 +214,76 @@
 </div>
 
   </div>
-</div> </p>
+</div>
 <p>In the above definition, we mostly think of \(N\) as a large natural number. But we don’t actually require it, any positive real number will do. </p>
 <p>The next proposition implies that, provided \(N\) is large enough, we have achieved \(Df'(x)v ∈ Ω_x\), almost without modifying derivatives in the directions of \(\ker π\), and almost without moving \(f(x)\). </p>
-<p><div class="proposition_thmwrapper" id="prop:theilliere">
+<div class="proposition_thmwrapper theorem-style-plain" id="prop:theilliere">
   <div class="proposition_thmheading">
     <span class="proposition_thmcaption">
     Proposition
     </span>
     <span class="proposition_thmlabel">2.3</span>
     <span class="proposition_thmtitle">Theillière 2018</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#prop:theilliere">#</a>
+    
     <a class="icon proof" href="chap-local.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:corrugation">Definition 2.2</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/corrugation.lean#L204">fderiv_corrugated_map</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/corrugation.lean#L101">corrugation.c0_small_on</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/corrugation.lean#L233">remainder_c0_small_on</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/corrugation.lean#L89">corrugation.support</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/fderiv_corrugated_map" class="lean_decl">fderiv_corrugated_map</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/corrugation.c0_small_on" class="lean_decl">corrugation.c0_small_on</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/remainder_c0_small_on" class="lean_decl">remainder_c0_small_on</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/corrugation.support" class="lean_decl">corrugation.support</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="proposition_thmcontent">
   <p>   Let \(f\) be a \(\mathcal{C}^1\) function from \(E\) to \(F\). Let \((π, v)\) be a dual pair on \(E\). Let \(γ \! :E × 𝕊^1 → F\) be a \(\mathcal{C}^1\) family of loops such that \(\overline{γ_x} = Df(x)v\) for all \(x\). </p>
@@ -248,13 +299,13 @@
 <p> In addition, all the differences estimated above vanish if \(x\) is outside the support of \(γ\). </p>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000053">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p>We set \(Γ_x(t) = ∫_0^t \left(γ_x(s) - \overline{γ}_x\right)ds\), so that \(f'(x) = f(x) + Γ_x(Nπ(x))/N\). Because each \(Γ_x\) is \(1\)-periodic, and everything has compact support in \(E\), all derivatives of \(Γ\) are uniformly bounded. Item&#160;<a href="chap-local.html#CP:C0">1</a> in the statement is then obvious. Item&#160;<a href="chap-local.html#CP:kerpi">2</a> also follows since \(∂_if'(x) = ∂_if(x) + ∂_iΓ(x, Nπ(x))/N\). In order to prove Item&#160;<a href="chap-local.html#CP:v">3</a>, we compute: </p>
@@ -267,188 +318,258 @@
 </div>
 <h1 id="sec:inductive_step">2.2 The main inductive step</h1>
 
-<p><div class="definition_thmwrapper" id="def:hol_partial">
+<div class="definition_thmwrapper theorem-style-plain" id="def:hol_partial">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.4</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:hol_partial">#</a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/one_jet.lean#L101">jet_sec.is_part_holonomic_at</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/jet_sec.is_part_holonomic_at" class="lean_decl">jet_sec.is_part_holonomic_at</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>  Let \(E'\) be a linear subspace of \(E\). A map \(\mathcal{F}= (f, φ) : E → F × \operatorname{Hom}(E, F)\) is \(E'\)–holonomic if, for every \(v\) in \(E'\) and every \(x\), \(Df(x)v = φ(x)v\). </p>
 
   </div>
-</div> </p>
-<p><div class="definition_thmwrapper" id="def:rel_loc">
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:rel_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.5</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:rel_loc">#</a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/relation.lean#L29">rel_loc</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc" class="lean_decl">rel_loc</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>  A first order differential relation for maps from \(E\) to \(F\) is a subset \(\mathcal{R}\) of \(E × F × \operatorname{Hom}(E, F)\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>Until the end of this section, \(\mathcal{R}\) will always denote a first order differential relation for maps from \(E\) to \(F\). </p>
-<p><div class="definition_thmwrapper" id="def:formal_sol_loc">
+<div class="definition_thmwrapper theorem-style-plain" id="def:formal_sol_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.6</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:formal_sol_loc">#</a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:rel_loc">Definition 2.5</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/relation.lean#L44">rel_loc.formal_sol</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc.formal_sol" class="lean_decl">rel_loc.formal_sol</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>   A formal solution of a differential relation \(\mathcal{R}\) is a map \(\mathcal{F}= (f, φ) \! :E → F × \operatorname{Hom}(E, F)\) such that, for every \(x\), \((x, f(x), φ(x))\) is in \(\mathcal{R}\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>The first component of a map \(\mathcal{F}\! :E → F × \operatorname{Hom}(E, F)\) will sometimes be denoted by \(\operatorname{bs}\mathcal{F}\! :E → F\) and called the base map of \(\mathcal{F}\). </p>
-<p><div class="definition_thmwrapper" id="def:htpy_jet_sec_loc">
+<div class="definition_thmwrapper theorem-style-plain" id="def:htpy_jet_sec_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.7</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:htpy_jet_sec_loc">#</a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/one_jet.lean#L153">htpy_jet_sec</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/htpy_jet_sec" class="lean_decl">htpy_jet_sec</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>  A \(1\)-jet section from \(E\) to \(F\) is a function from \(E\) to \(F × \operatorname{Hom}(E, F)\). A homotopy of \(1\)-jet sections is a smooth map \(\mathcal{F}: ℝ × E → F × \operatorname{Hom}(E, F)\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>Typically, \(x ↦ \mathcal{F}(t, x)\) will be denoted by \(\mathcal{F}_t\). It could seem more natural to take \([0, 1] × E\) as the source of a homotopy but this would be less convenient for formalization and wouldn’t change anything since any map from \(ℝ × E\) can be restricted to \([0, 1] × E\) and every map from \([0, 1] × E\) could be extended. </p>
-<p><div class="definition_thmwrapper" id="def:rel_slice">
+<div class="definition_thmwrapper theorem-style-plain" id="def:rel_slice">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.8</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:rel_slice">#</a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:rel_loc">Definition 2.5</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/ample_relation.lean#L36">rel_loc.slice</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc.slice" class="lean_decl">rel_loc.slice</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>   For every \(σ = (x, y, φ)\), the slice of \(\mathcal{R}\) at \(σ\) with respect to \((π, v)\) is: </p>
@@ -457,48 +578,63 @@
 </div>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper" id="lem:update_lin_map">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:update_lin_map">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.9</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#lem:update_lin_map">#</a>
+    
     <a class="icon proof" href="chap-local.html#a0000000056"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/dual_pair.lean#L87">dual_pair.update_ker_pi</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/dual_pair.lean#L96">dual_pair.update_v</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/ample_relation.lean#L39">rel_loc.mem_slice</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/dual_pair.update_ker_pi" class="lean_decl">dual_pair.update_ker_pi</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/dual_pair.update_v" class="lean_decl">dual_pair.update_v</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc.mem_slice" class="lean_decl">rel_loc.mem_slice</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="lemma_thmcontent">
   <p>  The linear map \(φ + (w - φ(v)) ⊗ π)\) coincides with \(φ\) on \(\ker π\) and sends \(v\) to \(w\). If \(\sigma \) belongs to \(\mathcal{R}\) then \(φ(v)\) belongs to \(\{ w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \mathcal{R}\} \). </p>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000056">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p>These are direct checks. </p>
@@ -506,101 +642,149 @@
   </div>
 </div>
 <p>We’ll use the notation \(\operatorname{Conn}_w A\) to denote the connected component of \(A\) that contains \(w\), or the empty set if \(w\) doesn’t belong to \(A\). </p>
-<p><div class="definition_thmwrapper" id="def:short_formal_sol">
+<div class="definition_thmwrapper theorem-style-plain" id="def:short_formal_sol">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.10</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:short_formal_sol">#</a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:formal_sol_loc">Definition 2.6</a></li>
+          
           <li><a href="chap-local.html#def:dual_pair">Definition 2.1</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/ample_relation.lean#L140">rel_loc.formal_sol.is_short_at</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc.formal_sol.is_short_at" class="lean_decl">rel_loc.formal_sol.is_short_at</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>   A formal solution \(\mathcal{F}\) of \(\mathcal{R}\) is \((π, v)\)–short if, for every \(x\), \(Df(x)v\) belongs to the interior of the convex hull of \(\operatorname{Conn}_{φ(v)}\mathcal{R}((x, f(x), φ(x)), π, v)\). </p>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper" id="lem:integration_step">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:integration_step">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.11</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#lem:integration_step">#</a>
+    
     <a class="icon proof" href="chap-local.html#a0000000057"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:short_formal_sol">Definition 2.10</a></li>
+          
           <li><a href="chap-local.html#def:hol_partial">Definition 2.4</a></li>
+          
           <li><a href="chap-local.html#def:htpy_jet_sec_loc">Definition 2.7</a></li>
+          
+          <li><a href="chap-loops.html#prop:∃_loops">Proposition 1.2</a></li>
+          
+          <li><a href="chap-local.html#prop:theilliere">Proposition 2.3</a></li>
+          
+          <li><a href="chap-local.html#lem:update_lin_map">Lemma 2.9</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/h_principle.lean#L287">step_landscape.improve_step_rel_t_eq_0</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/h_principle.lean#L320">step_landscape.improve_step_rel_C</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/h_principle.lean#L298">step_landscape.improve_step_rel_compl_K₁</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/h_principle.lean#L342">step_landscape.improve_step_c0_close</a></li>
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/h_principle.lean#L359">step_landscape.improve_step_part_hol</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/step_landscape.improve_step_rel_t_eq_0" class="lean_decl">step_landscape.improve_step_rel_t_eq_0</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/step_landscape.improve_step_rel_C" class="lean_decl">step_landscape.improve_step_rel_C</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/step_landscape.improve_step_rel_compl_K₁" class="lean_decl">step_landscape.improve_step_rel_compl_K₁</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/step_landscape.improve_step_c0_close" class="lean_decl">step_landscape.improve_step_c0_close</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/step_landscape.improve_step_part_hol" class="lean_decl">step_landscape.improve_step_part_hol</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="lemma_thmcontent">
   <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\). Let \(K_1 ⊂ E\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Let \(C\) be a closed subset of \(E\). Let \(E'\) be a linear subspace of \(E\) contained in \(\ker π\). Let \(ε\) be a positive real number. </p>
@@ -619,13 +803,13 @@
 </ol>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000057">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p>  We denote the components of \(\mathcal{F}\) by \(f\) and \(φ\). Since \(\mathcal{F}\) is short, <a href="chap-loops.html#prop:∃_loops">proposition 1.2</a> applied to \(g \! :x ↦ Df(x)v\), \(β \! :x ↦ φ(x)v\), \(Ω_x = \mathcal{R}(\mathcal{F}(x), π, v)\), and \(K = C ∩ K_1\) gives us a smooth family of loops \(γ \! :E × [0, 1] × 𝕊^1 → F\) such that, for all \(x\): </p>
@@ -684,91 +868,121 @@
 </div>
 <h1 id="sec:ample_differential_relations">2.3 Ample differential relations</h1>
 
-<p><div class="definition_thmwrapper" id="def:ample_subset">
+<div class="definition_thmwrapper theorem-style-plain" id="def:ample_subset">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.12</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:ample_subset">#</a>
+    
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/ample_set.lean#L45">ample_set</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/AmpleSet" class="lean_decl">AmpleSet</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>  A subset \(Ω\) of a real vector space \(E\) is ample if the convex hull of each connected component of \(Ω\) is the whole \(E\). </p>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper" id="lem:ample_codim_two">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:ample_codim_two">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.13</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#lem:ample_codim_two">#</a>
+    
     <a class="icon proof" href="chap-local.html#a0000000066"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:ample_subset">Definition 2.12</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/ample_set.lean#L232">ample_of_two_le_codim</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/ample_of_two_le_codim" class="lean_decl">ample_of_two_le_codim</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="lemma_thmcontent">
   <p>   The complement of a linear subspace of codimension at least 2 is ample. </p>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000066">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p>Let \(F\) be subspace of \(E\) with codimension at least \(2\). Let \(F'\) be a complement subspace. Its dimension is at least \(2\) since it is isomorphic to \(E/F\) and \(\dim (E/F) = \operatorname{codim}(F) ≥ 2\). First note the complement of \(F\) is path-connected. Indeed let \(x\) and \(y\) be points outside \(F\). Decomposing on \(F ⊕ F'\), we get \(x = u + u'\) and \(y = v + v'\) with \(u' ≠ 0\) and \(v' ≠ 0\). The segments from \(x\) to \(u'\) and \(y\) to \(v'\) stay outside \(F\), so it suffices to connect \(u'\) and \(v'\) in \(F' ∖ \{ 0\} \). If the segment from \(u'\) to \(v'\) doesn’t contains the origin then we are done. Otherwise \(v' = μu'\) for some (negative) \(u'\). Since \(\dim (F') ≥ 2\) and \(u' ≠ 0\), there exists \(f ∈ F'\) which is linearly independent from \(u'\), hence from \(v'\). We can then connect both \(u'\) and \(v'\) to \(f\) by a segment away from zero. </p>
@@ -776,95 +990,133 @@
 
   </div>
 </div>
-<p><div class="definition_thmwrapper" id="def:ample_relation_loc">
+<div class="definition_thmwrapper theorem-style-plain" id="def:ample_relation_loc">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.14</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#def:ample_relation_loc">#</a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:ample_subset">Definition 2.12</a></li>
+          
           <li><a href="chap-local.html#def:rel_slice">Definition 2.8</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/ample_relation.lean#L44">rel_loc.is_ample</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc.is_ample" class="lean_decl">rel_loc.is_ample</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="definition_thmcontent">
   <p>   A first order differential relation \(\mathcal{R}\) is ample if all its slices are ample. </p>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper" id="lem:h_principle_open_ample_loc">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:h_principle_open_ample_loc">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">2.15</span>
+    <div class="thm_header_extras">
+
+    
     ✓
-    <div class="thm_icons">
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="chap-local.html#lem:h_principle_open_ample_loc">#</a>
+    
     <a class="icon proof" href="chap-local.html#a0000000067"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    
+    
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Uses</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
+        
+        <ul class="uses">
+          
           <li><a href="chap-local.html#def:ample_relation_loc">Definition 2.14</a></li>
+          
+          <li><a href="chap-local.html#lem:integration_step">Lemma 2.11</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
+
+    
+    
     <button class="modal lean">L∃∀N</button>
-    <div class="modal-container">
+        <div class="modal-container">
       <div class="modal-content">
         <header>
           <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
-                <ul class="uses">
-          <li><a href="https://github.com/leanprover-community/sphere-eversion//blob/0a56a0f1cca9684d31201658b2d1138babbd8ebc/src/local/h_principle.lean#L469">rel_loc.formal_sol.improve</a></li>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/rel_loc.formal_sol.improve" class="lean_decl">rel_loc.formal_sol.improve</a></li>
+          
         </ul>
-
+    
       </div>
     </div>
 
-  </div>
+    
+        </div>
   </div>
   <div class="lemma_thmcontent">
   <p>   Let \(\mathcal{F}\) be a formal solution of \(\mathcal{R}\). Let \(K_1 ⊂ E\) be a compact subset, and let \(K_0\) be a compact subset of the interior of \(K_1\). Assume \(\mathcal{F}\) is holonomic near a closed subset \(C\) of \(E\). Let \(ε\) be a positive real number. </p>
@@ -885,13 +1137,13 @@
 </ol>
 
   </div>
-</div> </p>
+</div>
 <div class="proof_wrapper" id="a0000000067">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p> This is a straightforward induction using <a href="chap-local.html#lem:integration_step">lemma 2.11</a>. Let \((e_1, \dots , e_n)\) be a basis of \(E\), and let \((π_1, \dots , π_n)\) be the dual basis. Let \(E'_i\) be the linear subspace of \(E\) spanned by \((e_1, \dots , e_i)\), for \(1 ≤ i ≤ n\), and let \(E'_0\) be the zero subspace of \(E\). Each \((π_i, e_i)\) is a dual pair and the kernel of \(π_i\) contains \(E'_{i - 1}\). </p>

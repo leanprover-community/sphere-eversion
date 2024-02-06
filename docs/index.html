@@ -45,25 +45,41 @@ MathJax = {
 
     <section class="main-content">
 
-			<p>This project is a formalization of the proof of existence of <a href="https://www.youtube.com/watch?v=wO61D9x6lNY">sphere eversions</a> using the <a href="https://leanprover.github.io/">Lean theorem prover</a>, mainly developed at <a href="https://www.microsoft.com/en-us/research/">Microsoft Research</a> by <a href="https://leodemoura.github.io/">Leonardo de Moura</a>. More precisely we formalized the full <em>h</em>-principle for open and ample first order differential relations, and deduce existence of sphere eversions as a corollary.</p>
+			<p>This project is a formalization of the proof of existence of <a
+   href="https://www.youtube.com/watch?v=wO61D9x6lNY">sphere
+   eversions</a> using the <a href="https://leanprover.github.io/">Lean
+   theorem prover</a>, mainly developed at <a
+   href="https://www.microsoft.com/en-us/research/">Microsoft
+   Research</a> by <a href="https://leodemoura.github.io/">Leonardo de
+   Moura</a>. More precisely we formalized the full <em>h</em>-principle
+   for open and ample first order differential relations, and deduce
+   existence of sphere eversions as a corollary.</p>
    <p>The main motivations are:</p>
    <ul>
-   <li>Demonstrating the proof assistant can handle geometric topology, and not only algebra or abstract nonsense. Note that Fabian Immler and Yong Kiam Tan already pioneered this direction by formalizing Poincaré-Bendixon, but this project has much larger scale.</li>
-   <li>Exploring new infrastructure for collaborations on formalization projects, using the <a href="blueprint/index.html">interactive blueprint</a>.</li>
-   <li>Producing a bilingual informal/formal document by keeping the blueprint and the formalization in sync.</li>
+   <li>Demonstrating the proof assistant can handle geometric topology,
+   and not only algebra or abstract nonsense. Note that Fabian Immler
+   and Yong Kiam Tan already pioneered this direction by formalizing
+   Poincaré-Bendixon, but this project has much larger scale.</li>
+   <li>Exploring new infrastructure for collaborations on formalization
+   projects, using the <a href="blueprint/index.html">interactive
+   blueprint</a>.</li>
+   <li>Producing a bilingual informal/formal document by keeping the
+   blueprint and the formalization in sync.</li>
    </ul>
-   <p>The main statements that we formalized appear in <a href="https://github.com/leanprover-community/sphere-eversion/blob/master/src/main.lean">main.lean</a>. In particular the sphere eversion statement is:</p>
+   <p>The main statements that we formalized appear in <a
+   href="https://github.com/leanprover-community/sphere-eversion/blob/master/src/main.lean">main.lean</a>.
+   In particular the sphere eversion statement is:</p>
    <pre class="lean"><code>theorem Smale :
-     -- There exists a family of functions `f t` indexed by `ℝ` going from `𝕊²` to `ℝ³` such that
-     ∃ f : ℝ → 𝕊² → ℝ³,
-       -- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and
-       (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f) ∧
-       -- `f 0` is the inclusion map, sending `x` to `x` and
-       (f 0 = λ x, x) ∧
-       -- `f 1` is the antipodal map, sending `x` to `-x` and
-       (f 1 = λ x, -x) ∧
-       -- every `f t` is an immersion.
-       ∀ t, immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t)</code></pre>
+  -- There exists a family of functions `f t` indexed by `ℝ` going from `𝕊²` to `ℝ³` such that
+  ∃ f : ℝ → 𝕊² → ℝ³,
+    -- it is smooth in both variables (for the obvious smooth structures on `ℝ × 𝕊²` and `ℝ³`) and
+    (cont_mdiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, ℝ³) ∞ ↿f) ∧
+    -- `f 0` is the inclusion map, sending `x` to `x` and
+    (f 0 = λ x, x) ∧
+    -- `f 1` is the antipodal map, sending `x` to `-x` and
+    (f 1 = λ x, -x) ∧
+    -- every `f t` is an immersion.
+    ∀ t, immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t)</code></pre>
 
       <footer class="site-footer">
           <span class="site-footer-owner"><a href="https://github.com/leanprover-community/sphere-eversion">sphere-eversion</a> is maintained by <a href="https://github.com/leanprover-community">leanprover-community</a>.</span>

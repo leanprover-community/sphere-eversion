@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="styles/theme-blue.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
 <link rel="stylesheet" href="styles/stylecours.css" />
 </head>
 
@@ -107,22 +108,28 @@
 <p>An important lesson from the above example is that algebraic topology can give us more than a necessary condition. Indeed the (one-dimensional) Hopf degree theorem ensures that, provided \(w(f'_0) = w(f'_1)\), there exists a homotopy \(g_p\) of nowhere vanishing maps relating \(f'_0\) and \(f'_1\). We also know from the topology of \(ℝ^2\) that \(f_0\) and \(f_1\) are homotopic, say using the straight-line homotopy \(p ↦ f_p = (1-p)f_0 + pf_0\). But there is no a priori relation between \(g_p\) and the derivative of \(f_p\) for \(p ∉ \{ 0, 1\} \). So we can restate the crucial part of the Whitney–Graustein theorem as: there is a homotopy of immersion from \(f_0\) to \(f_1\) as soon as there is (a homotopy from \(f_0\) to \(f_1\)) and a homotopy from \(f_0'\) to \(f_1'\) among nowhere vanishing maps. The parenthesis in the previous sentence indicated that this condition is always satisfied, but it is important to keep in mind for generalizations. Gromov says that such a homotopy of uncoupled pairs \((f, g)\) is a formal solution of the original problem. </p>
 <p>One can generalize this discussion of uncoupled maps replacing a map and its derivative for maps from a manifold \(M\) to a manifold \(N\). The so called \(1\)-jet space \(J^1(M, N)\) is the space of triples \((m, n, φ)\) with \(m ∈ M\), \(n ∈ N\), and \(φ ∈ \operatorname{Hom}(T_mM, T_nN)\), the space of linear maps from \(T_mM\) to \(T_nN\). One can define a smooth manifold structure on \(J^1(M, N)\), of dimension \(\dim (M) + \dim (N) + \dim (M)\dim (N)\) which fibers over \(M\), \(N\) and their product \(J^0(M, N) := M × N\). Beware that the notation \((m, n, φ)\) does not mean that \(J^1(M, N)\) is a product of three manifolds, the space where \(φ\) lives depends on \(m\) and \(n\). Any smooth map \(f \! :M → N\) gives rise to a section \(j^1f\) of \(J^1(M, N) → M\) defined by \(j^1f(m) = (m, f(m), T_m f)\). Such a section is called a <em>holonomic section</em> of \(J^1(M, N)\). In the Whitney–Graustein example, we use the canonical trivialization of \(T𝕊^1\) and \(Tℝ^2\) to represent \(j^1f\) has a pair of maps \((f, f')\). The role played by \((f, g)\) in this example is played in general by sections of \(J^1(M, N) → M\) which are not necessarily holonomic. </p>
 <p>One can generalize this discussion to \(J^r(M, N)\) which remembers derivatives of maps up to order \(r\) for some given \(r ≥ 0\). One can also consider sections of an arbitrary bundle \(E → M\) instead of functions from \(M\) to \(N\), which are sections of the trivial bundle \(M × N → N\). But the case of \(J^1(M, N)\) is sufficient for our purposes. </p>
-<p><div class="definition-intro_thmwrapper" id="a0000000003">
+<div class="definition-intro_thmwrapper theorem-style-plain" id="a0000000003">
   <div class="definition-intro_thmheading">
     <span class="definition-intro_thmcaption">
     Definition
     </span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000003">#</a>
+    <div class="thm_header_extras">
 
-  </div>
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#a0000000003">#</a>
+    
+    
+    
+        </div>
   </div>
   <div class="definition-intro_thmcontent">
   <p>A first order differential relation \(\mathcal{R}\) for maps from \(M\) to \(N\) is a subset of \(J^1(M, N)\). A solution of \(\mathcal{R}\) is a function \(f \! :M \to N\) such that \(j^1f(m)\) is in \(\mathcal{R}\) for all \(m\). A <em>formal solution</em> of \(\mathcal{R}\) is a non-necessarily holonomic section of \(J^1(M, N) → M\) which takes value in \(\mathcal{R}\). </p>
 <p>The partial differential relation \(\mathcal{R}\) satisfies the \(h\)-principle if any formal solution \(σ\) of \(\mathcal{R}\) is homotopic, among formal solutions, to some holonomic one \(j^1f\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>For instance, an immersion of \(M\) into \(N\) is a solution of </p>
 <div class="displaymath" id="a0000000004">
   \[  \mathcal{R}= \{ (m, n, φ) ∈ J^1(M, N) \; |\;  φ \text{ is injective}\} .  \]
@@ -130,42 +137,55 @@
 <p> As we saw with the Whitney–Graustein problem, we are not only interested to individual solutions, but also in families of solutions. In differential topology, a smooth family of maps between manifolds \(X\) and \(Y\) is a smooth map \(h \! :P × X → Y\) seen as the collection of maps \(h_p \! :x ↦ h(p, x)\). Here \(P\) stands for “parameter space”. A smooth family of sections of \(E → X\) is a smooth family of maps \(σ \! :P × X → E\) such that each \(σ_p\) is a section. </p>
 <p>In such a case it is important that we start with a family of formal solutions that is holonomic for some values of the parameter and we don’t modify it for those parameters. In the curve example \(P = [0, 1]\), the formal solution is holonomic for parameters \(0\) and \(1\), and we want to keep the start and end curves. In this work we don’t use manifolds with boundary when it is not necessary so we rather use \(ℝ\) as a parameter space. </p>
 <p>More generally it can also happen that a family of formal solutions \(σ : P × M → J^1(M, N)\) has the property that \(σ_p\) is holonomic at \(m ∈ M\) for some values of \(p\) and \(m\) and we want to preserve \(σ\) near the corresponding set in \(P × M\). This leads to the following definition. </p>
-<p><div class="definition-intro_thmwrapper" id="a0000000005">
+<div class="definition-intro_thmwrapper theorem-style-plain" id="a0000000005">
   <div class="definition-intro_thmheading">
     <span class="definition-intro_thmcaption">
     Definition
     </span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000005">#</a>
+    <div class="thm_header_extras">
 
-  </div>
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#a0000000005">#</a>
+    
+    
+    
+        </div>
   </div>
   <div class="definition-intro_thmcontent">
   <p>A partial differential relation \(\mathcal{R}⊂ J^1(M, N)\) satisfies the relative and parametric \(h\)-principle if every family of formal solutions \(σ \! :M × P → J^1(M, N)\) which are holonomic for \((p, m)\) near some closed set \(C ⊂ P × M\), is homotopic to a family of holonomic sections, and this homotopy can be chosen constant near \(C\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>One can also insist on the deformed solution to be \(C^0\)-close to the original one. In this case one talks about a \(C^0\)-dense \(h\)-principle. </p>
 <p>Using this vocabulary, we can state the Smale-Hirsch immersion theorem as saying that the relation of immersions satisfies all forms of the \(h\)-principle provided the dimension of the target manifold is larger than the dimension of the source. </p>
 <p>This theorem covers the Whitney–Graustein theorem (in its second form, assuming the existence of a homotopy between derivatives). But there are much less intuitive applications. The most famous one is the existence of sphere eversions: one can “turn \(𝕊^2\) inside-out among immersions of \(𝕊^2\) into \(ℝ^3\)). </p>
-<p><div class="corollary-intro_thmwrapper" id="a0000000006">
+<div class="corollary-intro_thmwrapper theorem-style-plain" id="a0000000006">
   <div class="corollary-intro_thmheading">
     <span class="corollary-intro_thmcaption">
     Corollary
     </span>
     <span class="corollary-intro_thmtitle">Smale 1958</span>
-    <div class="thm_icons">
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
     <a class="icon proof" href="sect0001.html#a0000000006">#</a>
+    
     <a class="icon proof" href="sect0001.html#a0000000007"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-
-  </div>
+    
+    
+    
+        </div>
   </div>
   <div class="corollary-intro_thmcontent">
   <p> There is a homotopy of immersion of \(𝕊^2\) into \(ℝ^3\) from the inclusion map to the antipodal map \(a \! :q ↦ -q\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>The reason why this is turning the sphere inside-out is that \(a\) extends as a map from \(ℝ^3 ∖ \{ 0\}  → ℝ^3 ∖ \{ 0\} \) by </p>
 <div class="displaymath" id="a0000000008">
   \[  \hat{a} \! :q ↦ -\frac{1}{‖q‖^2}q  \]
@@ -176,7 +196,7 @@
     <span class="proof_caption">
     Proof of the sphere eversion corollary
     </span>
-    <span class="expand-proof">▼</span>
+    <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
   <p> We denote by \(ι\) the inclusion of \(𝕊^2\) into \(ℝ^3\). We set \(j_t = (1-t)ι + ta\). This is a homotopy from \(ι\) to \(a\) (but not an immersion for \(t=1/2\)). We need to check there is no obstruction to building a homotopy of formal solutions above those maps. One could show that the relevant homotopy group (replacing \(π_1(𝕊^1)\) from the Whitney–Graustein example) is \(\pi _2(\operatorname{SO}_3(ℝ))\). This group is trivial, hence there is no obstruction. But actually we can write an explicit homotopy here, without computing \(\pi _2(\operatorname{SO}_3(ℝ))\). Using the canonical trivialization of the tangent bundle of \(ℝ^3\), we can set, for \((q, v) ∈ T𝕊^2\), \(G_t(q, v) = \mathrm{Rot}_{Oq}^{πt}(v)\), the rotation around axis \(Oq\) with angle \(πt\). The family \(σ \! :t ↦ (j_t, G_t)\) is a homotopy of formal immersions relating \(j^1ι\) to \(j^1a\). The above theorem ensures this family is homotopic, relative to \(t = 0\) and \(t = 1\), to a family of holonomic formal immersions, ie a family \(t ↦ j^1f_t\) with \(f_0 = ι\), \(f_1 = a\), and each \(f_t\) is an immersion. </p>
@@ -194,15 +214,21 @@
 <p>A wonderfully easy exercise shows that, provided \(N\) is large enough, we have achieved \(∂_j f(x) ∈ Ω_x\), almost without modifying derivatives \(∂_i f(x)\) for \(i ≠ j\), and almost without moving \(f(x)\). See <a href="chap-local.html#prop:theilliere">2.3</a> for a precise statement. This technique is called convex integration since we are taking an integral under the assumption that \(∂_jf(x)\) is in the convex hull of \(Ω_x\). </p>
 <p>In addition, if we assume that \(γ_x\) is constant (necessarily with value \(∂_j f(x)\)) for \(x\) near some subset \(K\) where \(∂_j f(x)\) was already good, then nothing changed on \(K\) since the integrand vanishes there. It is also easy to damp out this modification by multiplying the integral by a cut-off function. So this is a very local construction, and it isn’t obvious how the absence of homotopical obstruction, embodied by the existence of a formal solution, should enter the discussion. The answer is that is essentially provides a way to coherently choose base points for the \(γ_x\) loops. </p>
 <p>Now that we’ve seen how convex hulls enter the discussion we can provide one last definition and state the actual main theorem that we formalized. </p>
-<p><div class="definition-intro_thmwrapper" id="a0000000010">
+<div class="definition-intro_thmwrapper theorem-style-plain" id="a0000000010">
   <div class="definition-intro_thmheading">
     <span class="definition-intro_thmcaption">
     Definition
     </span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000010">#</a>
+    <div class="thm_header_extras">
 
-  </div>
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#a0000000010">#</a>
+    
+    
+    
+        </div>
   </div>
   <div class="definition-intro_thmcontent">
   <p>A relation \(\mathcal{R}⊂ J^1(M, N)\) is ample if, for every \((x, y, φ) ∈ \mathcal{R}\) and every hyperplane \(H ⊂ T_xM\), the convex hull of the connected component of \(φ\) in </p>
@@ -212,24 +238,30 @@
 <p> is the whole set of \(ψ\) such that \(ψ|_{H} = φ|_{H}\). </p>
 
   </div>
-</div> </p>
+</div>
 <p>We can now state our goal in its full glory. </p>
-<p><div class="theorem-intro_thmwrapper" id="a0000000012">
+<div class="theorem-intro_thmwrapper theorem-style-plain" id="a0000000012">
   <div class="theorem-intro_thmheading">
     <span class="theorem-intro_thmcaption">
     Theorem
     </span>
     <span class="theorem-intro_thmtitle">Gromov</span>
-    <div class="thm_icons">
-    <a class="icon proof" href="sect0001.html#a0000000012">#</a>
+    <div class="thm_header_extras">
 
-  </div>
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#a0000000012">#</a>
+    
+    
+    
+        </div>
   </div>
   <div class="theorem-intro_thmcontent">
   <p> For any manifolds \(M\) and \(N\), any relation \(\mathcal{R}⊂ J^1(M, N)\) that is open and ample satisfies the full \(h\)-principle (relative, parametric and \(C^0\)-dense). </p>
 
   </div>
-</div> </p>
+</div>
 <p><a href="chap-loops.html">Chapter 1</a> provides the loops supply. <a href="chap-local.html">Chapter 2</a> then discusses the local theory, including the key construction above, and <a href="chap-global.html">chapter 3</a> finally moves to manifolds, and proves the main theorem and its sphere eversion corollary. <a href="chap-local_eversion.html">Chapter A</a> explains how the first two chapters are already enough to derive Smale’s theorem, although in a slightly less natural way than using the manifold case. This served as an intermediate target in the formalization, and can be used for elementary teaching since it does not require any theory of manifolds.  </p>
 
 </div> <!--main-text -->
