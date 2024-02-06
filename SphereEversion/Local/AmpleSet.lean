@@ -67,7 +67,7 @@ theorem AmpleSet.preimage {s : Set F} (h : AmpleSet s) (L : E ≃L[ℝ] F) : Amp
 open scoped Pointwise
 
 /-- Translating a ample set is ample.
-We basically mimic `ample_set.image`. We could prove the common generalization using
+We basically mimic `AmpleSet.image`. We could prove the common generalization using
 continuous affine equivalences -/
 theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
     AmpleSet (y +ᵥ s) := by
