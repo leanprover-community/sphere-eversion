@@ -41,7 +41,7 @@ end Smale
 /-
 The above result is an easy corollary of a much more general theorem by Gromov.
 The next three paragraphs lines simply introduce three real dimensional manifolds
-`M`, `M'` and `P` and assume they are separated and sigma-compact. They are rather verbose because
+`M`, `M'` and `P` and assume they are separated and σ-compact. They are rather verbose because
 mathlib has a very general theory of manifolds (including manifolds with boundary and corners).
 We will consider families of maps from `M` to `M'` parametrized by `P`.
 Actually `M'` is assumed to be equipped with a preferred metric space structure in order to make it

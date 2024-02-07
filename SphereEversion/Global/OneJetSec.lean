@@ -267,7 +267,6 @@ theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
   simp_rw [mfderiv_fst]
   rfl
 
--- should this be `isHolonomic_uncurry` instead?
 theorem is_holonomic_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} :
     S.uncurry.IsHolonomicAt p ↔ (S p.1).IsHolonomicAt p.2 := by
   simp_rw [OneJetSec.IsHolonomicAt, OneJetSec.snd_eq, S.uncurry_ϕ]

@@ -375,7 +375,7 @@ variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimens
   [SmoothManifoldWithCorners I' M'] [SigmaCompactSpace M'] [T2Space M']
 
 /-
-Since every (sigma-compact) manifold is metrizable, the metric space assumption can be removed.
+Since every (σ-compact) manifold is metrizable, the metric space assumption can be removed.
 -/
 /-- Gromov's Theorem without metric space assumption -/
 theorem RelMfld.Ample.satisfies_h_principle_with' {R : RelMfld IM M I' M'} (hRample : R.Ample)

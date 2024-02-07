@@ -338,7 +338,7 @@ theorem SmoothAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
     SmoothAt J (I.prod I') (fun x ↦ (f x).1) x₀ :=
   (smooth_one_jet_bundle_proj _).comp x₀ hf
 
-/-- The constructor of `OneJetBundle`, in case `sigma.mk` will not give the right type. -/
+/-- The constructor of `OneJetBundle`, in case `Sigma.mk` will not give the right type. -/
 @[simp]
 def OneJetBundle.mk (x : M) (y : M') (f : OneJetSpace I I' (x, y)) : J¹MM' :=
   ⟨(x, y), f⟩
@@ -579,7 +579,7 @@ theorem partialEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (
 local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 
 /-- In the `OneJetBundle` to the model space, the charts are just the canonical identification
-between a product type and a bundle total space type, a.k.a. ` Bundle.TotalSpace.toProd`. -/
+between a product type and a bundle total space type, a.k.a. `Bundle.TotalSpace.toProd`. -/
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
     (chartAt 𝓜 p).toPartialEquiv = (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv := by
