@@ -166,7 +166,7 @@ def reparam {F : Type _} (γ : Loop F) (φ : EquivariantMap) : Loop F
 
 
 /-- A loop is constant if it takes the same value at every time.
-See also `loop.is_const_iff_forall_avg` and `loop.is_const_iff_const_avg` for characterizations in
+See also `Loop.isConst_iff_forall_avg` and `Loop.isConst_iff_const_avg` for characterizations in
 terms of average values. -/
 def IsConst (γ : Loop X) :=
   ∀ t s, γ t = γ s
@@ -223,7 +223,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
       rw [Int.cast_zero, sub_self]
     simp only [this, γ.extend_extends t.2]
 
-/-- `loop.ofPath` is continuous, general version. -/
+/-- `Loop.ofPath` is continuous, general version. -/
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
@@ -234,7 +234,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
   · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
-/-- `loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
+/-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
     Continuous ↿fun s ↦ ofPath <| γ s :=
   Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)

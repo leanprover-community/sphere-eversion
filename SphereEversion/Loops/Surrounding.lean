@@ -16,16 +16,16 @@ loops with various prescribed properties.
 This file begins the work of constructing such a family.
 
 The key definitions are:
- * `surrounded`
- * `surrounding_pts`
- * `surrounding_family`
+ * `Surrounded`
+ * `SurroundingPts`
+ * `SurroundingFamily`
 
 The key results are:
  * `surrounded_iff_mem_interior_convex_hull_aff_basis`
- * `surrounded_of_convex_hull`
+ * `surrounded_of_convexHull`
  * `smooth_surrounding`
  * `eventually_surrounding_pts_of_tendsto_of_tendsto`
- * `surrounding_loop_of_convex_hull`
+ * `surrounding_loop_of_convexHull`
  * `local_loops`
  * `satisfied_or_refund`
  * `extend_loops`
@@ -408,7 +408,7 @@ section surroundingLoop
 variable {O : Set F} {b : F} {p : Fin (d + 1) → F} (O_conn : IsPathConnected O)
   (hp : ∀ i, p i ∈ O) (hb : b ∈ O)
 
-/-- witness of `surrounding_loop_of_convex_hull` -/
+/-- witness of `surrounding_loop_of_convexHull` -/
 def surroundingLoop : ℝ → Loop F :=
   Loop.roundTripFamily <| (O_conn.somePath hb (hp 0)).trans <| O_conn.pathThrough hp d
 

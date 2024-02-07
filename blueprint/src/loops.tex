@@ -12,7 +12,7 @@ real vector spaces.
 
 \begin{definition}
   \label{def:loop}
-  \lean{loop, loop.average, loop.support}
+  \lean{Loop, Loop.average, Loop.support}
   \leanok
   A loop is a map defined on the circle $𝕊^1 = ℝ/ℤ$ with values in a
   finite-dimensional vector space.
@@ -84,7 +84,7 @@ our ulterior needs.
 
 \begin{definition}
   \label{def:surrounds_points}
-  \lean{surrounding_pts}
+  \lean{SurroundingPts}
   \leanok
   A point $x$ in $E$
   is surrounded by points $p_0$, \dots, $p_d$ if those points are
@@ -173,7 +173,7 @@ when $P$ is open.
 \begin{proposition}
   \label{prop:surrounded_by_open}
   \uses{def:surrounds_points}
-  \lean{surrounded_of_convex_hull}\leanok
+  \lean{surrounded_of_convexHull}\leanok
   If a point $x$ of $E$ lies in the convex hull of an open set $P$,
   then it is surrounded by some collection of points belonging to $P$.
 \end{proposition}
@@ -183,7 +183,7 @@ We'll first need the Carathéodory lemma:
 
 \begin{lemma}[Carathéodory's lemma]
 \label{lem:caratheodory}
-\lean{convex_hull_eq_union}
+\lean{convexHull_eq_union}
 \leanok
   If a point $x$ of $E$ lies in the convex hull of a set $P$, then $x$
   belongs to the convex hull of a finite set of affinely independent points
@@ -226,7 +226,7 @@ We'll first need the Carathéodory lemma:
 
 \begin{lemma}
   \label{lem:interior_chab}
-  \lean{affine_basis.interior_convex_hull}\leanok
+  \lean{AffineBasis.interior_convexHull}\leanok
   Given an affine basis $b$ of $E$, the interior of the convex hull of
   $b$ is the set of points with strictly positive barycentric coordinates.
 \end{lemma}
@@ -252,7 +252,7 @@ We'll first need the Carathéodory lemma:
 
 \begin{lemma}
   \label{lem:int_homothety_cvx}
-  \lean{convex.subset_interior_image_homothety_of_one_lt}\leanok
+  \lean{Convex.subset_interior_image_homothety_of_one_lt}\leanok
   Given a point $c$ of $E$ and a real number $t$, let:
   \[
     h^c_t \co E \to E
@@ -346,7 +346,7 @@ It will be convenient to introduce some more vocabulary.
 \begin{definition}
   \label{def:surrounds}
   \uses{def:loop, def:surrounds_points}
-  \lean{loop.surrounds}
+  \lean{Loop.Surrounds}
   \leanok
   We say a loop $γ$ surrounds a vector $v$ if $v$ is surrounded
   by a collection of points belonging to the image of $γ$.
@@ -371,7 +371,7 @@ convex hull of $O$.
 \begin{lemma}
   \label{lem:loop_of_hull}
   \uses{def:surrounds}
-  \lean{surrounding_loop_of_convex_hull}
+  \lean{surrounding_loop_of_convexHull}
   \leanok
   If a vector $v$ is in the convex hull of a connected open subset $O$
   then, for every base point $b ∈ O$, there is a continuous
@@ -409,7 +409,7 @@ convex hull of $O$.
 \begin{definition}
   \label{def:family_surrounds}
   \uses{def:surrounds}
-  \lean{surrounding_family}
+  \lean{SurroundingFamily}
   \leanok
   A continuous family of loops $γ \co E × [0, 1] × 𝕊^1 → F, (x, t, s) ↦ γ^t_x(s)$
   surrounds a map $g \co E → F$ with base $β \co E → F$
@@ -578,7 +578,7 @@ any partition of unity but directly state a local-to-global property.
 
 \begin{lemma}
   \label{lem:exists_cont_diff_of_convex}
-  \lean{exists_cont_diff_of_convex}
+  \lean{exists_contDiff_of_convex}
   \leanok
   Let $E$ and $F$ be real normed vector spaces. Assume that $E$ is finite
   dimensional. Let $P$ be a predicate on $E \times F$ such that for all $x$ in
@@ -604,7 +604,7 @@ from the above one.
 
 \begin{lemma}
   \label{lem:exists_cont_diff_of_convex₂}
-  \lean{exists_cont_diff_of_convex₂}
+  \lean{exists_contDiff_of_convex₂}
   \leanok
   Let $E₁$, $E₂$ and $F$ be real vector spaces. Assume $E₁$ and $E₂$ are finite dimensional.
   Let $n$ be a natural number or $+\infty$. Let $P$ be a property
@@ -624,7 +624,7 @@ from the above one.
 \begin{lemma}
 \label{lem:reparametrization}
 \uses{def:surrounds}
-\lean{smooth_surrounding_family.reparametrize_average}
+\lean{SmoothSurroundingFamily.reparametrize_average}
 \leanok
 Let $γ \co E × 𝕊^1 → F$ be a smooth family of loops surrounding
 a map $g$.
