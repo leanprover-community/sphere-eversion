@@ -96,11 +96,11 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   (a1) We need to ensure that an `ε₁ x`-ball around `(x, δ x s t)` lies in `Ω` for some
     continuous `ε₁`.
   (a4) Furthermore, `ε₁` should be small enough so that any function with that
-    distance from `γ` still surrounds `g`, using `surrounding_family.surrounds_of_close`.
+    distance from `γ` still surrounds `g`, using `SurroundingFamily.surrounds_of_close`.
   (a5): `ε₁ x < ε₀` (obtained from `exist_loops_aux1`)
-  (b) Replace `γ x t s` by `γ x (linear_reparam t) (linear_reparam s)`.
+  (b) Replace `γ x t s` by `γ x (linearReparam t) (linearReparam s)`.
   (e) Let `δ' x` be a family of loops that is at most `ε₁` away from `γ` using
-    `exists_smooth_and_eq_on`. Since `γ` is smooth near `s ∈ ℤ` and `t ≤ 0` we can also
+    `exists_smooth_and_eqOn`. Since `γ` is smooth near `s ∈ ℤ` and `t ≤ 0` we can also
     ensure that `δ' = γ` for those values (*).
     Now let `δ x t s = δ' x (smoothTransition t) (fract s)`
     We immediately get (0) and (3). We get (2) by (*).

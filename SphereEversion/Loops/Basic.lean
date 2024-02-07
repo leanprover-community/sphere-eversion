@@ -261,7 +261,7 @@ theorem roundTrip_eq {x y x' y' : X} {γ : Path x y} {γ' : Path x' y'} (h : ∀
   rfl
 
 /-- The round trip loop family associated to a path `γ`. For each parameter `t`,
-the loop `round_trip_family γ t` backtracks at `γ t`. -/
+the loop `roundTripFamily γ t` backtracks at `γ t`. -/
 noncomputable def roundTripFamily {x y : X} (γ : Path x y) : ℝ → Loop X :=
   have key : ∀ {t}, x = γ.extend (min 0 t) := (γ.extend_of_le_zero <| min_le_left _ _).symm
   fun t ↦ roundTrip ((γ.truncate 0 t).cast key rfl)

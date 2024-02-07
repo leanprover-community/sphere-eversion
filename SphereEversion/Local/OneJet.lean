@@ -9,7 +9,7 @@ of maps from `E` to `F` as `E × F × (E →L[ℝ] F)`.
 
 A section `𝓕 : JetSet E F` of this space is a map `(𝓕.f, 𝓕.φ) : E → F × (E →L[ℝ] F)`.
 
-It is holonomic at `x`, spelled `𝓕.is_holonomic_at x` if the differential of `𝓕.f` at `x`
+It is holonomic at `x`, spelled `𝓕.IsHolonomicAt x` if the differential of `𝓕.f` at `x`
 is `𝓕.φ x`.
 
 We then introduced parametrized families of sections, and especially homotopies of sections,

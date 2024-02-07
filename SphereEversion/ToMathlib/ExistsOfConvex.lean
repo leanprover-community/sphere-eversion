@@ -220,14 +220,14 @@ variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 theorem convex_setOf_imp_eq (P : Prop) (y : F) : Convex ℝ {x : F | P → x = y} := by
   by_cases hP : P <;> simp [hP, convex_singleton, convex_univ]
 
--- lemma exists_smooth_and_eq_on_aux1 {f : E → F} {ε : E → ℝ} (hf : continuous f)
+-- lemma exists_smooth_and_eqOn_aux1 {f : E → F} {ε : E → ℝ} (hf : continuous f)
 --   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x) (x₀ : E) :
 --   ∃ U ∈ 𝓝 x₀, ∀ x ∈ U, dist (f x₀) (f x) < ε x :=
 -- begin
 --   have h0 : ∀ x, dist (f x) (f x) < ε x := λ x, by simp_rw [dist_self, h2ε],
 --   refine ⟨_, (isOpen_lt (continuous_const.dist hf) hε).mem_nhds $ h0 x₀, λ x hx, hx⟩
 -- end
--- lemma exists_smooth_and_eq_on_aux2 {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : continuous f)
+-- lemma exists_smooth_and_eqOn_aux2 {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf : continuous f)
 --   (hε : continuous ε) (h2ε : ∀ x, 0 < ε x)
 --   {s : set E} (hs : is_closed s) (hfs : ∃ U ∈ 𝓝ˢ s, cont_diff_on ℝ n f U)
 --   (x₀ : E) :

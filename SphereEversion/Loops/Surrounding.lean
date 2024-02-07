@@ -21,10 +21,10 @@ The key definitions are:
  * `SurroundingFamily`
 
 The key results are:
- * `surrounded_iff_mem_interior_convex_hull_aff_basis`
+ * `surrounded_iff_mem_interior_convexHull_aff_basis`
  * `surrounded_of_convexHull`
  * `smooth_surrounding`
- * `eventually_surrounding_pts_of_tendsto_of_tendsto`
+ * `eventually_surroundingPts_of_tendsto_of_tendsto`
  * `surrounding_loop_of_convexHull`
  * `local_loops`
  * `satisfied_or_refund`
@@ -388,7 +388,7 @@ protected theorem Surrounds.reparam (h : γ.Surrounds x) {φ : EquivariantMap} (
   convert subset_of_eq (range_comp γ φ).symm
   rw [(φ.surjective hφ).range_eq, image_univ]
 
-/-- This is only a stepping stone potentially useful for `surrounding_family.surrounds_of_close`,
+/-- This is only a stepping stone potentially useful for `SurroundingFamily.surrounds_of_close`,
   but not needed by itself. -/
 theorem Surrounds.eventually_surrounds [FiniteDimensional ℝ F] (h : γ.Surrounds x) :
     ∃ ε > 0,
@@ -547,7 +547,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
   refine'
     ⟨_, inter_mem h4 h3, fun _ => ε / 2, contDiffOn_const, fun y hy =>
       ⟨half_pos hε, fun γ' hγ' => h2 _ _ (fun z => _) hy.2⟩⟩
-  refine' (dist_triangle _ _ _).trans_lt ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le)
+  exact (dist_triangle _ _ _).trans_lt ((add_lt_add (hγ' z) (hy.1 z)).trans_le (add_halves ε).le)
 
 -- proof using `surrounds_of_close`
 -- begin
@@ -596,7 +596,7 @@ namespace SurroundingFamilyIn
 
 variable {γ : E → ℝ → Loop F}
 
-/-- Abbreviation for `to_surrounding_family` -/
+/-- Abbreviation for `toSurroundingFamily` -/
 theorem to_sf (h : SurroundingFamilyIn g b γ U Ω) : SurroundingFamily g b γ U :=
   h.toSurroundingFamily
 
@@ -667,7 +667,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have hδt1 : ∀ x t s, δ x (projI t) s = δ x t s := by intro x t s; simp [h4γ]
   have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ t ∈ I, ∀ s ∈ I, (x, δ x t s) ∈ Ω := by
     rcases hΩ_op with ⟨U, hUx₀, hU⟩
-    -- todo: this is nicer with `is_compact.eventually_forall_of_forall_eventually` twice, but then
+    -- todo: this is nicer with `IsCompact.eventually_forall_of_forall_eventually` twice, but then
     -- we need the continuity of `δ` with the arguments reassociated differently.
     have : ∀ᶠ x : E in 𝓝 x₀, ∀ ts : ℝ × ℝ, ts ∈ I ×ˢ I → (x, δ x ts.1 ts.2) ∈ Ω := by
       apply (isCompact_Icc.prod isCompact_Icc).eventually_forall_mem
@@ -782,8 +782,8 @@ theorem Continuous.sfHomotopy {X : Type _} [UniformSpace X] [SeparatedSpace X]
     simp only [hs, h₁.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · refine' continuous_projIcc.comp (continuous_const.sub hτ.fst')
 
-/-- In this lemmas and the lemmas below we add `finite_dimensional ℝ E` so that we can conclude
- `locally_compact_space E`. -/
+/-- In this lemmas and the lemmas below we add `FiniteDimensional ℝ E` so that we can conclude
+ `LocallyCompactSpace E`. -/
 theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomotopy h₀ h₁) :=
   Continuous.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
     continuous_snd.snd.snd
@@ -801,7 +801,7 @@ theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
     simp only [sfHomotopy, Path.refl_strans_refl, Path.refl_extend, Loop.ofPath_apply, projI_zero,
       MulZeroClass.mul_zero, SurroundingFamily.path_t₀]
   · intro x t s; simp only [sfHomotopy, projI_projI]
-  -- { intros x t s ht, simp only [sf_homotopy, min_eq_left ht, min_self] },
+  -- { intros x t s ht, simp only [sfHomotopy, min_eq_left ht, min_self] },
   · intro x hx; cases' le_total τ (1 / 2) with h h
     · have : τ < 1 := h.trans_lt (by norm_num)
       refine' (h₀.surrounds x hx).mono _
@@ -818,7 +818,7 @@ theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
           (subset_range_strans_right <| by simp [this])
   · exact continuous_const.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd
 
-/-- A more precise version of `sf_homotopy_in`. -/
+/-- A more precise version of `sfHomotopy_in`. -/
 theorem sfHomotopy_in' {ι} (h₀ : SurroundingFamily g b γ₀ U) (h₁ : SurroundingFamily g b γ₁ U)
     (τ : ι → ℝ) (x : ι → E) (i : ι) {V : Set E} (hx : x i ∈ V) {t : ℝ} (ht : t ∈ I) {s : ℝ}
     (h_in₀ : ∀ i, x i ∈ V → ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 1 → (x i, γ₀ (x i) t s) ∈ Ω)
@@ -957,7 +957,7 @@ variable {g b Ω}
 
 /-
 The following proof is slightly tedious because the definition of `surroundingFamilyIn`
-splits weirdly into `surrounding_family` which includes one condition on `C`
+splits weirdly into `SurroundingFamily` which includes one condition on `C`
 and one extra condition on `C` instead of putting everything which does not depend on `C`
 on one side and the two conditions depending on `C` on the other side as we do here.
 -/

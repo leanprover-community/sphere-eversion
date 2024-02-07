@@ -118,8 +118,8 @@ theorem reallyConvex_empty : ReallyConvex 𝕜 (∅ : Set E) :=
 theorem reallyConvex_univ : ReallyConvex 𝕜 (univ : Set E) :=
   Or.inr fun _ _ _ _ ↦ mem_univ _
 
--- for every lemma that requires `nontrivial` should we also add a lemma that has the condition
--- `s.nonempty` (or even `nontrivial 𝕜 ∨ s.nonempty`)?
+-- for every lemma that requires `Nontrivial` should we also add a lemma that has the condition
+-- `s.Nonempty` (or even `Nontrivial 𝕜 ∨ s.Nonempty`)?
 theorem Nontrivial.reallyConvex_iff [Nontrivial 𝕜] :
     ReallyConvex 𝕜 s ↔ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s := by
   rw [ReallyConvex, or_iff_right_iff_imp]
@@ -202,7 +202,7 @@ theorem ReallyConvex.preimage (f : E →ₗ[𝕜] E₂) {s : Set E₂} (hs : Rea
   ReallyConvex.preimageₛₗ (OrderRingHom.id 𝕜) f hs
 
 /-  The next lemma would also be nice to have.
-lemma really_convex_really_convex_hull (s : set E) : really_convex 𝕜 (really_convex_hull 𝕜 s) :=
+lemma reallyConvex_reallyConvexHull (s : set E) : reallyConvex 𝕜 (reallyConvexHull 𝕜 s) :=
 sorry
  -/
 end

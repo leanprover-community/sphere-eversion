@@ -16,9 +16,9 @@ approximation to the Dirac delta function. Such an approximation is a sequence o
  * `∫ x in 0..1, (δᵢ x) = 1` for all `i`,
 * `∫ x in 0..1, (δᵢ x) • f x → f 0`, as `i → ∞` for any continuous function `f` on `S¹`.
 
-This file contains a construction `approx_dirac` of such a family `δ` together with code which
+This file contains a construction `approxDirac` of such a family `δ` together with code which
 packages this into the precise form required for the proof of the reparametrization lemma:
-`delta_mollifier`, `loop.mollify`.
+`deltaMollifier`, `Loop.mollify`.
 
 The key ingredients are the existence of smooth "bump functions" and a powerful theory of
 convolutions.
@@ -272,8 +272,8 @@ theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s =
   · exact ((approxDirac_smooth n).continuous.intervalIntegrable _ _).const_mul _
   · exact intervalIntegrable_const
 
-/-- `γ.mollify n t` is a weighted average of `γ` using weights `delta_mollifier n t`.
-This means that as `n → ∞` this value tends to `γ t`, but because `delta_mollifier n t` is positive,
+/-- `γ.mollify n t` is a weighted average of `γ` using weights `deltaMollifier n t`.
+This means that as `n → ∞` this value tends to `γ t`, but because `deltaMollifier n t` is positive,
 we know that we can reparametrize `γ` to obtain a loop that has `γ.mollify n t` as its actual
 average. -/
 def Loop.mollify (γ : Loop F) (n : ℕ) (t : ℝ) : F :=
