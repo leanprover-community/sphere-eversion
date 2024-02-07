@@ -115,13 +115,13 @@ theorem eventually_eq_eventualValue (h : EventuallyConstant g f) :
     ∀ᶠ i in f, g i = @eventualValue _ _ h.nonempty g f :=
   Classical.epsilon_spec h
 
-theorem eventualValue_unique [f.ne_bot] {y : β} (hy : ∀ᶠ i in f, g i = y) :
+theorem eventualValue_unique [f.NeBot] {y : β} (hy : ∀ᶠ i in f, g i = y) :
     y = @eventualValue _ _ ⟨y⟩ g f := by
-  obtain ⟨x, rfl, hx⟩ := (hy.and <| eventually_eq_eventual_value ⟨y, hy⟩).exists; exact hx
+  obtain ⟨x, rfl, hx⟩ := (hy.and <| eventually_eq_eventualValue ⟨y, hy⟩).exists; exact hx
 
 /-- This lemma is sometimes useful if the elaborator uses the nonempty instance in
   `eventual_value_unique` to find the implicit argument `y`. -/
-theorem eventualValue_unique' [f.ne_bot] {hβ : Nonempty β} {y : β} (hy : ∀ᶠ i in f, g i = y) :
+theorem eventualValue_unique' [f.NeBot] {hβ : Nonempty β} {y : β} (hy : ∀ᶠ i in f, g i = y) :
     eventualValue g f = y :=
   (eventualValue_unique hy).symm
 
@@ -129,53 +129,53 @@ theorem eventualValue_eq_fn {g : ℕ → β} {hβ : Nonempty β} {n : ℕ} (h : 
     eventualValue g atTop = g n :=
   eventualValue_unique' <| eventually_of_mem (mem_atTop _) h
 
-theorem EventuallyConstant.exists_eventualValue_eq [f.ne_bot] (h : EventuallyConstant g f) :
-    ∃ i, @eventualValue _ _ h.Nonempty g f = g i := by
+theorem EventuallyConstant.exists_eventualValue_eq [f.NeBot] (h : EventuallyConstant g f) :
+    ∃ i, @eventualValue _ _ h.nonempty g f = g i := by
   obtain ⟨y, hy⟩ := h
   obtain ⟨x, rfl⟩ := hy.exists
-  exact ⟨x, (eventual_value_unique hy).symm⟩
+  exact ⟨x, (eventualValue_unique hy).symm⟩
 
 theorem EventuallyConstant.tendsto [Nonempty β] (h : EventuallyConstant g f) :
     Tendsto g f (pure (eventualValue g f)) := by
   rw [tendsto_pure];
   exact eventually_eq_eventualValue h
 
-theorem eventualValue_compose [f.ne_bot] (h : EventuallyConstant g f) (g' : β → γ) :
-    @eventualValue _ _ (h.compose g').Nonempty (g' ∘ g) f =
-      g' (@eventualValue _ _ h.Nonempty g f) :=
+theorem eventualValue_compose [f.NeBot] (h : EventuallyConstant g f) (g' : β → γ) :
+    @eventualValue _ _ (h.compose g').nonempty (g' ∘ g) f =
+      g' (@eventualValue _ _ h.nonempty g f) :=
   (eventualValue_unique <| (eventually_eq_eventualValue h).mono fun x ↦ congr_arg g').symm
 
-theorem eventualValue_apply {ι : Type _} {p : ι → Type _} [f.ne_bot] {g : α → ∀ x, p x}
+theorem eventualValue_apply {ι : Type _} {p : ι → Type _} [f.NeBot] {g : α → ∀ x, p x}
     (h : EventuallyConstant g f) (i : ι) :
-    @eventualValue _ _ h.Nonempty g f i =
-      @eventualValue _ _ (h.apply i).Nonempty (fun x ↦ g x i) f :=
+    @eventualValue _ _ h.nonempty g f i =
+      @eventualValue _ _ (h.apply i).nonempty (fun x ↦ g x i) f :=
   (eventualValue_compose h fun p ↦ p i).symm
 
 theorem EventuallyConstant.tendsto_nhds [Nonempty β] [TopologicalSpace β]
     (h : EventuallyConstant g f) : Tendsto g f (𝓝 (eventualValue g f)) :=
   h.tendsto.mono_right <| pure_le_nhds _
 
-/-- todo: generalize to `t1_space`. -/
-theorem eventualValue_eq_limUnder [f.ne_bot] [Nonempty β] [TopologicalSpace β] [T2Space β]
+/-- todo: generalize to `T1Space`. -/
+theorem eventualValue_eq_limUnder [f.NeBot] [Nonempty β] [TopologicalSpace β] [T2Space β]
     (h : EventuallyConstant g f) : eventualValue g f = limUnder f g :=
   h.tendsto_nhds.limUnder_eq.symm
 
--- the following can be generalized a lot using `eventually_constant.exists_eventual_value_eq`.
+-- the following can be generalized a lot using `EventuallyConstant.exists_eventualValue_eq`.
 -- /-- The index from where a function `g : ℕ → α` is eventually constant. Equals `0` if `g` is not
 --   eventually constant. -/
 -- noncomputable def eventual_index (g : ℕ → α) : ℕ :=
 -- Inf {n : ℕ | ∀ m, n ≤ m → g m = g n}
--- lemma eventually_constant.eq_eventual_index {g : ℕ → α} (hg : eventually_constant g atTop) {n : ℕ}
+-- lemma EventuallyConstant.eq_eventual_index {g : ℕ → α} (hg : EventuallyConstant g atTop) {n : ℕ}
 --   (hn : eventual_index g ≤ n) : g n = g (eventual_index g) :=
--- nat.Inf_mem (eventually_constant_atTop.mpr hg) n hn
--- lemma eventually_constant.fn_eventual_index {g : ℕ → α} (hg : eventually_constant g atTop) :
---   g (eventual_index g) = @eventual_value _ _ ⟨g 0⟩ g atTop :=
--- (eventual_value_eq_fn $ λ n hn, (hg.eq_eventual_index hn : _)).symm
--- lemma eventually_constant.eq_eventual_value_of_eventual_index_le {g : ℕ → α}
---   (hg : eventually_constant g atTop) {n : ℕ}
---   (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g atTop :=
+-- nat.Inf_mem (eventuallyConstant_atTop.mpr hg) n hn
+-- lemma EventuallyConstant.fn_eventual_index {g : ℕ → α} (hg : EventuallyConstant g atTop) :
+--   g (eventual_index g) = @eventualValue _ _ ⟨g 0⟩ g atTop :=
+-- (eventualValue_eq_fn $ λ n hn, (hg.eq_eventual_index hn : _)).symm
+-- lemma EventuallyConstant.eq_eventualValue_of_eventual_index_le {g : ℕ → α}
+--   (hg : EventuallyConstant g atTop) {n : ℕ}
+--   (hn : eventual_index g ≤ n) : g n = @eventualValue _ _ ⟨g 0⟩ g atTop :=
 -- (hg.eq_eventual_index hn).trans hg.fn_eventual_index
--- lemma foo {g : α → β → γ} {s : Set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
+-- lemma foo {g : α → β → γ} {s : Set β} (hg : EventuallyConstant (λ n, s.restrict (g n)) f)
 --   (hy : y ∈ s) :
 -- unproved
 end Filter
@@ -204,17 +204,17 @@ theorem eventuallyConstantOn_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ x, ∀ x', x ≤ x' → ∀ y ∈ O, g x' y = g x y) ↔ EventuallyConstantOn g atTop O := by
   simp_rw [EventuallyConstantOn, ← eventuallyConstant_atTop, restrict_eq_restrict_iff, eq_on]
 
-theorem EventuallyConstantOn.exists_eventualValue_eq [f.ne_bot] (hg : EventuallyConstantOn g f O) :
-    ∃ i, ∀ (x) (hx : x ∈ O), @eventualValue _ _ (hg.Nonempty hx) (fun n ↦ g n x) f = g i x := by
-  simpa only [@eq_restrict_iff β fun _ ↦ γ, eventual_value_apply hg] using
-    hg.exists_eventual_value_eq
+theorem EventuallyConstantOn.exists_eventualValue_eq [f.NeBot] (hg : EventuallyConstantOn g f O) :
+    ∃ i, ∀ (x) (hx : x ∈ O), @eventualValue _ _ (hg.nonempty hx) (fun n ↦ g n x) f = g i x := by
+  simpa only [@eq_restrict_iff β fun _ ↦ γ, eventualValue_apply hg] using
+    hg.exists_eventualValue_eq
 
--- lemma eventually_constant_on.exists_eventual_value_eq [f.ne_bot] (h : eventually_constant g f) :
---   ∃ x, @eventual_value _ _ h.nonempty g f = g x :=
+-- lemma EventuallyConstantOn.exists_eventualValue_eq [f.NeBot] (h : EventuallyConstant g f) :
+--   ∃ x, @eventualValue _ _ h.nonempty g f = g x :=
 -- begin
 --   obtain ⟨y, hy⟩ := h,
 --   obtain ⟨x, rfl⟩ := hy.exists,
---   exact ⟨x, (eventual_value_unique hy).symm⟩
+--   exact ⟨x, (eventualValue_unique hy).symm⟩
 -- end
 end EventuallyConstantOn
 
@@ -237,16 +237,16 @@ theorem LocallyEventuallyConstantOn.nonempty (hg : LocallyEventuallyConstantOn g
     Nonempty γ :=
   Nonempty.intro (g i x)
 
-theorem LocallyEventuallyConstantOn.continuousWithinAt [TopologicalSpace δ] [f.ne_bot] [Nonempty δ]
+theorem LocallyEventuallyConstantOn.continuousWithinAt [TopologicalSpace δ] [f.NeBot] [Nonempty δ]
     (F : γ → δ) (hgf : LocallyEventuallyConstantOn g f U) (hxU : x ∈ U)
     (hg : ∀ i, ContinuousWithinAt (F ∘ g i) U x) :
     ContinuousWithinAt (fun x ↦ eventualValue (fun i ↦ F (g i x)) f) U x := by
   obtain ⟨O, hO, hgO⟩ := hgf x hxU
-  obtain ⟨i, hi⟩ := (eventually_eq_eventual_value hgO).exists
-  simp_rw [Function.funext_iff, eventual_value_apply hgO] at hi
+  obtain ⟨i, hi⟩ := (eventually_eq_eventualValue hgO).exists
+  simp_rw [Function.funext_iff, eventualValue_apply hgO] at hi
   refine (hg i).congr_nhds (eventually_of_mem hO fun y (hy : y ∈ O) ↦ ?_)
   refine Eq.trans ?_ (congr_arg F <| hi ⟨y, hy⟩).symm
-  apply eventual_value_compose
+  apply eventualValue_compose
 
 theorem LocallyEventuallyConstantOn.exists_nhdsSet_of_isCompact
     (hgf : LocallyEventuallyConstantOn g f U) {K : Set β} (hK : IsCompact K) (hKU : K ⊆ U) :
