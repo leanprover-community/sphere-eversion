@@ -189,7 +189,7 @@ theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
   rw [mem_slice]
   change _ ↔ OneJetBundle.mk σ.proj.1 σ.proj.2 (DualPair.update p σ.snd w) ∈ R
   convert Iff.rfl using 3
-  rw [one_jet_bundle_mk_snd, p.update_update]
+  rw [oneJetBundle_mk_snd, p.update_update]
 
 /-- A differential relation is ample if all its slices are ample sets. -/
 def RelMfld.Ample (R : RelMfld I M I' M') : Prop :=
@@ -476,7 +476,7 @@ theorem OpenSmoothEmbedding.smooth_transfer :
   have' :=
     ContMDiffAt.mfderiv (fun _ => φ.invFun) (fun x : OneJetBundle IX X IY Y => φ x.1.1)
       ((φ.smoothAt_inv <| _).comp (x, φ x.1.1) smoothAt_snd)
-      (φ.smooth_to.smoothAt.comp x (smooth_one_jet_bundle_proj.fst x)) le_top
+      (φ.smooth_to.smoothAt.comp x (smooth_oneJetBundle_proj.fst x)) le_top
   · simp_rw [φ.left_inv] at this ; exact this
   exact mem_range_self _
 
@@ -495,11 +495,10 @@ theorem OpenSmoothEmbedding.range_transfer :
       ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
             τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩, ?_⟩
     refine congr_arg (Bundle.TotalSpace.mk _) (ContinuousLinearMap.ext fun v ↦ ?_)
+    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, OneJetBundle.mk]
     /- Porting note: Lean 3 version was
-    dsimp only [open_smooth_embedding.transfer, one_jet_bundle.map, one_jet_bundle.mk],
     simp_rw [continuous_linear_map.comp_apply, ← ψ.fderiv_coe, continuous_linear_equiv.coe_coe,
       (φ.fderiv x).apply_symm_apply, (ψ.fderiv y).apply_symm_apply] -/
-    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, OneJetBundle.mk]
     simp only [ContinuousLinearMap.comp_apply, ← ψ.fderiv_coe]
     erw [ContinuousLinearEquiv.coe_coe (fderiv ψ  y), (ψ.fderiv y).apply_symm_apply]
     change τ _ = _
@@ -508,7 +507,7 @@ theorem OpenSmoothEmbedding.range_transfer :
 
 theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer ψ)) := by
   rw [φ.range_transfer ψ]
-  exact (φ.isOpen_range.prod ψ.isOpen_range).preimage one_jet_bundle_proj_continuous
+  exact (φ.isOpen_range.prod ψ.isOpen_range).preimage oneJetBundle_proj_continuous
 
 /-- localize a relation -/
 def RelMfld.localize (R : RelMfld IM M IN N) : RelMfld IX X IY Y :=
@@ -532,8 +531,8 @@ theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
       mem_slice, mem_preimage]
     -- Porting note: the next `rw` should be part of the `simp_rw` above
     rw [mem_slice]
-    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, one_jet_bundle_mk_fst,
-      one_jet_bundle_mk_snd]
+    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, oneJetBundle_mk_fst,
+      oneJetBundle_mk_snd]
     -- Porting note: the next `rw` should be part of the `simp_rw` below
     rw [p.map_update_comp_right, ← p.update_comp_left]
     simp_rw [OneJetBundle.mk, ← ψ.fderiv_coe]
@@ -642,7 +641,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     have' :=
       ContMDiffAt.mfderiv (fun _ => φ) (fun x : OneJetBundle IM M IN N => φ.invFun x.1.1)
         (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
-        ((φ.smoothAt_inv _).comp _ (smooth_one_jet_bundle_proj.fst (φ.transfer ψ x))) le_top
+        ((φ.smoothAt_inv _).comp _ (smooth_oneJetBundle_proj.fst (φ.transfer ψ x))) le_top
     · dsimp only [id]
       refine' this.congr_of_eventuallyEq _
       refine' Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) _

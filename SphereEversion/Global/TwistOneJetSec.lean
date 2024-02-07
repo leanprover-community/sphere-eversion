@@ -32,7 +32,7 @@ notation "J¹[" 𝕜 ", " E ", " I ", " M ", " V "]" => TotalSpace (E →L[𝕜]
 variable {I M V}
 variable {f : N → J¹[𝕜, E, I, M, V]}
 
--- todo: remove or use to prove `smooth_at_one_jet_eucl_bundle`
+-- todo: remove or use to prove `smoothAt_one_jet_eucl_bundle`
 theorem smoothAt_one_jet_eucl_bundle' {x₀ : N} :
     SmoothAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) f x₀ ↔ SmoothAt J I (fun x  ↦ (f x).1) x₀ ∧
     SmoothAt J 𝓘(𝕜, E →L[𝕜] V) (fun x  ↦ show E →L[𝕜] V from

@@ -95,7 +95,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     (show Set E' from R.slice (bundleSnd σ) q)
   dsimp only at this
   erw [← this, mem_preimage, mem_slice, R.mem_relativize]
-  dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
+  dsimp only [oneJetBundle_mk_fst, oneJetBundle_mk_snd]
   congr!
 
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
@@ -120,7 +120,7 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
   conv_rhs =>
     ext
     erw [mem_slice, R.mem_relativize, this]
-  dsimp only [one_jet_bundle_mk_fst, one_jet_bundle_mk_snd]
+  dsimp only [oneJetBundle_mk_fst, oneJetBundle_mk_snd]
   simp [this, exists_const, forall_const]
 
 variable (IP P)
@@ -265,7 +265,7 @@ theorem RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith (R : RelMfld I M IX 
     R.SatisfiesHPrincipleWith IP C ε := by
   intro 𝓕₀ h𝓕₀
   obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ :=
-    h 𝓕₀.uncurry (h𝓕₀.mono fun p hp => 𝓕₀.toFamilyOneJetSec.is_holonomic_uncurry.mpr hp)
+    h 𝓕₀.uncurry (h𝓕₀.mono fun p hp => 𝓕₀.toFamilyOneJetSec.isHolonomicAt_uncurry.mpr hp)
   refine' ⟨𝓕.curry, _, _, _, _⟩
   · intro s x; exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x))
   · intro s x; exact 𝓕.toFamilyOneJetSec.isHolonomicAt_curry (h2𝓕 (s, x))

@@ -94,7 +94,7 @@ theorem smooth_eta (F : OneJetSec I M I' M') :
   F.smooth
 
 theorem smooth_bs (F : OneJetSec I M I' M') : Smooth I I' F.bs :=
-  smooth_one_jet_bundle_proj.snd.comp F.smooth
+  smooth_oneJetBundle_proj.snd.comp F.smooth
 
 /-- A section of J¹(M, M') is holonomic at (x : M) if its linear map part is the derivative
 of its base map at x. -/
@@ -106,7 +106,7 @@ its base map at x. -/
 theorem isHolonomicAt_iff {F : OneJetSec I M I' M'} {x : M} :
     F.IsHolonomicAt x ↔ oneJetExt I I' F.bs x = F x := by
   simp_rw [IsHolonomicAt, oneJetExt, Bundle.TotalSpace.ext_iff, heq_iff_eq, F.fst_eq,
-    one_jet_bundle_mk_fst, true_and_iff, one_jet_bundle_mk_snd]
+    oneJetBundle_mk_fst, true_and_iff, oneJetBundle_mk_snd]
 
 theorem isHolonomicAt_congr {F F' : OneJetSec I M I' M'} {x : M} (h : F =ᶠ[𝓝 x] F') :
     F.IsHolonomicAt x ↔ F'.IsHolonomicAt x := by
@@ -223,7 +223,7 @@ protected theorem smooth (S : FamilyOneJetSec I M I' M' J N) :
 
 theorem smooth_bs (S : FamilyOneJetSec I M I' M' J N) :
     Smooth (J.prod I) I' fun p : N × M ↦ S.bs p.1 p.2 :=
-  smooth_one_jet_bundle_proj.snd.comp S.smooth
+  smooth_oneJetBundle_proj.snd.comp S.smooth
 
 theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : Smooth I I' (S.bs p) :=
   (S p).smooth_bs
@@ -267,7 +267,7 @@ theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
   simp_rw [mfderiv_fst]
   rfl
 
-theorem is_holonomic_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} :
+theorem isHolonomicAt_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} :
     S.uncurry.IsHolonomicAt p ↔ (S p.1).IsHolonomicAt p.2 := by
   simp_rw [OneJetSec.IsHolonomicAt, OneJetSec.snd_eq, S.uncurry_ϕ]
   rw [show S.uncurry.bs = fun x ↦ S.uncurry.bs x from rfl, funext S.uncurry_bs]

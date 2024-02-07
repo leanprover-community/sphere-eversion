@@ -178,7 +178,7 @@ end OneJetBundleInstances
 variable {I M I' M' J J'}
 
 /-- The tangent bundle projection on the basis is a continuous map. -/
-theorem one_jet_bundle_proj_continuous : Continuous (π (E →L[𝕜] E') FJ¹MM') :=
+theorem oneJetBundle_proj_continuous : Continuous (π (E →L[𝕜] E') FJ¹MM') :=
   FiberBundle.continuous_proj (E →L[𝕜] E') FJ¹MM'
 
 -- Porting note: removed next line
@@ -196,13 +196,13 @@ theorem oneJetBundle_trivializationAt (x₀ x : J¹MM') :
     Trivialization.pullback_symmL ContMDiffMap.fst (trivializationAt E (TangentSpace I) x₀.1.1)
       x.proj
 
-theorem trivializationAt_one_jet_bundle_source (x₀ : M × M') :
+theorem trivializationAt_oneJetBundle_source (x₀ : M × M') :
     (trivializationAt (E →L[𝕜] E') FJ¹MM' x₀).source =
       π (E →L[𝕜] E') FJ¹MM' ⁻¹'
         (Prod.fst ⁻¹' (chartAt H x₀.1).source ∩ Prod.snd ⁻¹' (chartAt H' x₀.2).source) :=
   rfl
 
-theorem trivializationAt_one_jet_bundle_target (x₀ : M × M') :
+theorem trivializationAt_oneJetBundle_target (x₀ : M × M') :
     (trivializationAt (E →L[𝕜] E') FJ¹MM' x₀).target =
       (Prod.fst ⁻¹' (trivializationAt E (TangentSpace I) x₀.1).baseSet ∩
           Prod.snd ⁻¹' (trivializationAt E' (TangentSpace I') x₀.2).baseSet) ×ˢ
@@ -226,7 +226,7 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     (chartAt HJ x₀).source =
       π (E →L[𝕜] E') FJ¹MM' ⁻¹' (chartAt (ModelProd H H') x₀.proj).source := by
   -- Porting note: was
-  -- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_one_jet_bundle_source, mfld_simps]
+  -- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_oneJetBundle_source, mfld_simps]
   rw [FiberBundle.chartedSpace_chartAt]
   simp_rw [
     PartialHomeomorph.trans_toPartialEquiv,
@@ -239,14 +239,14 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     PartialEquiv.refl_source,
     prodChartedSpace_chartAt,
     PartialHomeomorph.prod_toPartialEquiv,
-    trivializationAt_one_jet_bundle_source,
+    trivializationAt_oneJetBundle_source,
     PartialEquiv.prod_source,
     Set.preimage_inter]
   simp_rw [prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
     subset_def, mem_preimage]
   intro x hx
   rwa [Trivialization.coe_fst]
-  rwa [trivializationAt_one_jet_bundle_source, mem_preimage, ← Set.prod_eq]
+  rwa [trivializationAt_oneJetBundle_source, mem_preimage, ← Set.prod_eq]
 
 attribute [pp_dot] PartialEquiv.target PartialEquiv.symm PartialEquiv.prod
 
@@ -325,18 +325,18 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
 
 section Maps
 
-theorem smooth_one_jet_bundle_proj :
+theorem smooth_oneJetBundle_proj :
     Smooth ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') (π (E →L[𝕜] E') FJ¹MM') := by
   apply smooth_proj _
 
 theorem Smooth.oneJetBundle_proj {f : N → J¹MM'}
     (hf : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f) : Smooth J (I.prod I') fun x ↦ (f x).1 :=
-  smooth_one_jet_bundle_proj.comp hf
+  smooth_oneJetBundle_proj.comp hf
 
 theorem SmoothAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
     (hf : SmoothAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀) :
     SmoothAt J (I.prod I') (fun x ↦ (f x).1) x₀ :=
-  (smooth_one_jet_bundle_proj _).comp x₀ hf
+  (smooth_oneJetBundle_proj _).comp x₀ hf
 
 /-- The constructor of `OneJetBundle`, in case `Sigma.mk` will not give the right type. -/
 @[simp]
@@ -344,12 +344,12 @@ def OneJetBundle.mk (x : M) (y : M') (f : OneJetSpace I I' (x, y)) : J¹MM' :=
   ⟨(x, y), f⟩
 
 @[simp, mfld_simps]
-theorem one_jet_bundle_mk_fst {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
+theorem oneJetBundle_mk_fst {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).1 = (x, y) :=
   rfl
 
 @[simp, mfld_simps]
-theorem one_jet_bundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
+theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).2 = f :=
   rfl
 
@@ -523,7 +523,7 @@ def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] Ta
 
 theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     mapLeft f Dfinv = OneJetBundle.map I' I' f (id : M' → M') Dfinv := by
-  ext x; rfl; rfl; dsimp only [OneJetBundle.map, mapLeft, one_jet_bundle_mk_snd]
+  ext x; rfl; rfl; dsimp only [OneJetBundle.map, mapLeft, oneJetBundle_mk_snd]
   simp_rw [mfderiv_id, ContinuousLinearMap.id_comp]
 
 theorem SmoothAt.mapLeft {f : N' → M → N} {x₀ : N'}
@@ -562,9 +562,9 @@ theorem smooth_bundleSnd :
     ContMDiffAt.mfderiv (fun (x : OneJetBundle (J.prod I) (N × M) I' M') (y : M) ↦ (x.1.1.1, y))
       (fun x : OneJetBundle (J.prod I) (N × M) I' M' ↦ x.1.1.2) ?_ ?_ le_top
   exact this
-  · exact (smooth_one_jet_bundle_proj.fst.fst.prod_map smooth_id).smoothAt
+  · exact (smooth_oneJetBundle_proj.fst.fst.prod_map smooth_id).smoothAt
   -- slow
-  · exact smooth_one_jet_bundle_proj.fst.snd.smoothAt
+  · exact smooth_oneJetBundle_proj.fst.snd.smoothAt
 
 -- slow
 end Maps
@@ -618,7 +618,7 @@ variable (I I')
 
 -- note: this proof works for all vector bundles where we have proven
 -- `∀ p, chartAt _ p = f.toPartialEquiv`
-/-- The canonical identification between the one_jet bundle to the model space and the product,
+/-- The canonical identification between the one-jet bundle to the model space and the product,
 as a homeomorphism -/
 def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
   { Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') with
