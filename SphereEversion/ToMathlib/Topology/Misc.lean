@@ -92,7 +92,7 @@ section
 
 /-! ## The standard ℤ action on ℝ is properly discontinuous
 
-TODO: use that in to_mathlib.topology.periodic?
+TODO: use that in ToMathlib.Topology.Periodic?
 -/
 
 instance : VAdd ℤ ℝ :=
@@ -122,8 +122,8 @@ section Fract
 
 open Int
 
-/- properties of the (dis)continuity of `int.fract` on `ℝ`.
-To be PRed to topology.algebra.floor_ring
+/- properties of the (dis)continuity of `Int.fract` on `ℝ`.
+To be PRed to Topology.Algebra.FloorRing
 -/
 theorem floor_eq_self_iff {x : ℝ} : (⌊x⌋ : ℝ) = x ↔ ∃ n : ℤ, x = n := by
   constructor
@@ -207,7 +207,7 @@ theorem IsOpen.preimage_fract {s : Set ℝ} (hs : IsOpen s) (h2s : (0 : ℝ) ∈
     IsOpen (fract ⁻¹' s) :=
   hs.preimage_fract' fun h ↦ nhdsWithin_le_nhds <| hs.mem_nhds (h2s h)
 
--- is `sᶜ ∉ 𝓝[<] (1 : ℝ)` equivalent to something like `cluster_pt (𝓝[Iio (1 : ℝ) ∩ s] (1 : ℝ)` ?
+-- is `sᶜ ∉ 𝓝[<] (1 : ℝ)` equivalent to something like `ClusterPt (𝓝[Iio (1 : ℝ) ∩ s] (1 : ℝ)` ?
 theorem IsClosed.preimage_fract {s : Set ℝ} (hs : IsClosed s)
     (h2s : sᶜ ∉ 𝓝[<] (1 : ℝ) → (0 : ℝ) ∈ s) : IsClosed (fract ⁻¹' s) :=
   isOpen_compl_iff.mp <| hs.isOpen_compl.preimage_fract' fun h ↦ by_contra fun h' ↦ h <| h2s h'
@@ -242,7 +242,7 @@ section projI
 
 variable {α β : Type*} [LinearOrderedSemiring α] {x c : α}
 
-/-- If `α` is a `linear_ordered_semiring`, then `projI : α → α` projection of `α` onto the unit
+/-- If `α` is a `LinearOrderedSemiring`, then `projI : α → α` projection of `α` onto the unit
 interval `[0, 1]`. -/
 def projI : α → α := fun x ↦ projIcc (0 : α) 1 zero_le_one x
 
@@ -440,7 +440,7 @@ end NormedSpace
 
 namespace TopologicalSpace
 
--- to topology.bases
+-- move to Topology.Bases
 theorem cover_nat_nhdsWithin {α} [TopologicalSpace α] [SecondCountableTopology α] {f : α → Set α}
     {s : Set α} (hf : ∀ x ∈ s, f x ∈ 𝓝[s] x) (hs : s.Nonempty) :
     ∃ x : ℕ → α, range x ⊆ s ∧ s ⊆ ⋃ n, f (x n) := by
@@ -452,8 +452,8 @@ theorem cover_nat_nhdsWithin {α} [TopologicalSpace α] [SecondCountableTopology
   rw [biUnion_range] at hsf
   exact ⟨x, hts, hsf⟩
 
-/-- A version of `topological_space.cover_nat_nhds_within` where `f` is only defined on `s`. -/
-theorem cover_nat_nhds_within' {α} [TopologicalSpace α] [SecondCountableTopology α] {s : Set α}
+/-- A version of `TopologicalSpace.cover_nat_nhdsWithin` where `f` is only defined on `s`. -/
+theorem cover_nat_nhdsWithin' {α} [TopologicalSpace α] [SecondCountableTopology α] {s : Set α}
     {f : ∀ x ∈ s, Set α} (hf : ∀ (x) (hx : x ∈ s), f x hx ∈ 𝓝[s] x) (hs : s.Nonempty) :
     ∃ (x : ℕ → α) (hx : range x ⊆ s), s ⊆ ⋃ n, f (x n) (range_subset_iff.mp hx n) := by
   let g x := if hx : x ∈ s then f x hx else ∅
@@ -486,7 +486,7 @@ end Set
 section ParacompactSpace
 
 -- a version of `precise_refinement_set` for open `s`.
-/-- When `s : set X` is open and paracompact, we can find a precise refinement on `s`. Note that
+/-- When `s : Set X` is open and paracompact, we can find a precise refinement on `s`. Note that
  in this case we only get the locally finiteness condition on `s`, which is weaker than the local
  finiteness condition on all of `X` (the collection might not be locally finite on the boundary of
  `s`). -/

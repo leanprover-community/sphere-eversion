@@ -122,7 +122,7 @@ end
 -- `∀ φ : smooth_germ I x`, maybe even a tactic, but let's wait to see if they are really needed.
 
 lemma convex_smooth_germ_vec (x : N) : convex (smooth_germ I x)
-  (smooth_germ_vec I F x : set $ germ (𝓝 x) F) :=
+  (smooth_germ_vec I F x : Set $ germ (𝓝 x) F) :=
 begin
   refine smooth_germ_vec.induction_on _,
   intros f,
@@ -271,16 +271,17 @@ def Filter.Germ.ContMDiffAtProd {x : M₁} (φ : Germ (𝓝 x) (M₂ → F)) (n 
           apply congr_fun
         exacts [hx'.symm, hx']
 
-/- potential generalization of the above
-def filter.germ.cont_mdiff_at_comp {x : M₁} (φ : germ (𝓝 x) M₂) (n : ℕ∞)
+/- potential generalization of the above.
+note(grunweg): fixed some names for Lean 4, but not the core syntax
+def Filter.Germ.contMDiffAt_comp {x : M₁} (φ : germ (𝓝 x) M₂) (n : ℕ∞)
   (g : M₂ → M₃) (h : M₄ → M₁) : Prop :=
-quotient.lift_on' φ (λ f, ∀ y ∈ h⁻¹' {x}, cont_mdiff_at I₄ I₃ n (g ∘ f ∘ h) y) (λ f g h, propext begin
+quotient.lift_on' φ (λ f, ∀ y ∈ h⁻¹' {x}, ContMDiffAt I₄ I₃ n (g ∘ f ∘ h) y) (λ f g h, propext begin
   change {x' | f x' = g x'} ∈ 𝓝 x at h,
   split,
   all_goals
-  { refine λ H y, (H y).congr_of_eventually_eq _,
+  { refine λ H y, (H y).congr_of_eventuallyEq _,
     clear H,
-    replace h : {x' | f x' = g x'} ×ˢ (univ : set M₂) ∈ (𝓝 x) ×ᶠ (𝓝 y) := prod_mem_prod h univ_mem,
+    replace h : {x' | f x' = g x'} ×ˢ (univ : Set M₂) ∈ (𝓝 x) ×ᶠ (𝓝 y) := prod_mem_prod h univ_mem,
     rw ← nhds_prod_eq at h,
     apply mem_of_superset h,
     rintros ⟨x', y'⟩ ⟨(hx' : f x' = g x'), -⟩,

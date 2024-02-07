@@ -14,7 +14,7 @@ noncomputable section
 
 variable {K X X' Y Z : Type _}
 
--- variables [topological_space X'] [topological_space Y] [topological_space Z]
+-- variable [TopologicalSpace X'] [TopologicalSpace Y] [TopologicalSpace Z]
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
   [NormedSpace ℝ F] {F' : Type _} [NormedAddCommGroup F'] [NormedSpace ℝ F']
 

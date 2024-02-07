@@ -110,7 +110,7 @@ structure Accepts (L : StepLandscape E) (𝓕 : JetSec E F) : Prop where
 def Ω (L : StepLandscape E) (𝓕 : JetSec E F) : Set (E × F) :=
   {p | p.2 ∈ 𝓕.sliceAt R L.p p.1}
 
---⋃ x, ({x} : set E) ×ˢ (connected_component_in (𝓕.slice_at R L.p x) $ 𝓕.φ x L.p.v)
+-- ⋃ x, ({x} : Set E) ×ˢ (connectedComponentIn (𝓕.sliceAt R L.p x) $ 𝓕.φ x L.p.v)
 /-- The linear form in a `StepLandscape`, coming from the underlying dual pair. -/
 def π (L : StepLandscape E) : E →L[ℝ] ℝ :=
   L.p.π

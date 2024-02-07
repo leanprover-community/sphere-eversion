@@ -18,7 +18,7 @@ variable (I : ModelWithCorners 𝕜 E H)
 
 namespace ChartedSpace
 
-/-- If `M` is a `charted_space` we can use the preferred chart at any point to transfer a
+/-- If `M` is a `ChartedSpace` we can use the preferred chart at any point to transfer a
 ball in coordinate space into a set in `M`. These can be a useful neighbourhood basis. -/
 def ball (x : M) (r : ℝ) :=
   (extChartAt I x).symm '' Metric.ball (extChartAt I x x) r

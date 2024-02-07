@@ -16,9 +16,9 @@ Related: `monotonic_sequence_limit_index`
 
 
 -- in mathlib, this should probably import
--- import order.filter.atTop_bot
--- and topology.separation should import this
--- import topology.basic
+-- import Order.Filter.atTop_bot
+-- and Topology.Separation should import this
+-- import Topology.Basic
 open scoped Topology
 
 -- move
@@ -175,7 +175,7 @@ theorem eventualValue_eq_limUnder [f.ne_bot] [Nonempty β] [TopologicalSpace β]
 --   (hg : eventually_constant g atTop) {n : ℕ}
 --   (hn : eventual_index g ≤ n) : g n = @eventual_value _ _ ⟨g 0⟩ g atTop :=
 -- (hg.eq_eventual_index hn).trans hg.fn_eventual_index
--- lemma foo {g : α → β → γ} {s : set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
+-- lemma foo {g : α → β → γ} {s : Set β} (hg : eventually_constant (λ n, s.restrict (g n)) f)
 --   (hy : y ∈ s) :
 -- unproved
 end Filter

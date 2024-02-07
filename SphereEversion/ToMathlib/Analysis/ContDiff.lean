@@ -96,7 +96,7 @@ theorem StrictDifferentiableAt.differentiableAt {f : E → F} {x : E}
     (h : StrictDifferentiableAt 𝕜 f x) : DifferentiableAt 𝕜 f x :=
   Exists.elim h fun φ hφ ↦ ⟨φ, hφ.hasFDerivAt⟩
 
--- PR to linear_algebra.prod
+-- PR to LinearAlgebra.Prod
 @[simp]
 theorem LinearMap.coprod_comp_inl_inr {R : Type _} {M : Type _} {M₂ : Type _} {M₃ : Type _}
     [Semiring R] [AddCommMonoid M] [AddCommMonoid M₂] [AddCommMonoid M₃] [Module R M] [Module R M₂]
@@ -104,7 +104,7 @@ theorem LinearMap.coprod_comp_inl_inr {R : Type _} {M : Type _} {M₂ : Type _} 
     (f.comp (LinearMap.inl R M M₂)).coprod (f.comp (LinearMap.inr R M M₂)) = f := by
   rw [← LinearMap.comp_coprod, LinearMap.coprod_inl_inr, LinearMap.comp_id]
 
--- PR to topology.algebra.module.basic
+-- PR to Topology.Algebra.Module.Basic
 @[simp]
 theorem ContinuousLinearMap.coprod_comp_inl_inr {R₁ : Type _} [Semiring R₁] {M₁ : Type _}
     [TopologicalSpace M₁] [AddCommMonoid M₁] {M₂ : Type _} [TopologicalSpace M₂] [AddCommMonoid M₂]

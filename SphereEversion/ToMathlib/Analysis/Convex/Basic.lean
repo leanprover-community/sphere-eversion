@@ -202,8 +202,7 @@ theorem ReallyConvex.preimage (f : E →ₗ[𝕜] E₂) {s : Set E₂} (hs : Rea
   ReallyConvex.preimageₛₗ (OrderRingHom.id 𝕜) f hs
 
 /-  The next lemma would also be nice to have.
-lemma reallyConvex_reallyConvexHull (s : set E) : reallyConvex 𝕜 (reallyConvexHull 𝕜 s) :=
-sorry
+lemma reallyConvex_reallyConvexHull (s : Set E) : reallyConvex 𝕜 (reallyConvexHull 𝕜 s) := sorry
  -/
 end
 

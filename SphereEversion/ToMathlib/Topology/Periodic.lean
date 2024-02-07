@@ -9,7 +9,7 @@ import SphereEversion.ToMathlib.Topology.Separation
 The main purpose of that file it to prove
 ```
 lemma Continuous.bounded_of_onePeriodic_of_isCompact {f : X → ℝ → E} (cont : Continuous ↿f)
-  (hper : ∀ x, OnePeriodic (f x)) {K : set X} (hK : IsCompact K) (hfK : ∀ x ∉ K, f x = 0) :
+  (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K) (hfK : ∀ x ∉ K, f x = 0) :
   ∃ C, ∀ x t, ‖f x t‖ ≤ C
 ```
 
