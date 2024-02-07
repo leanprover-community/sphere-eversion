@@ -425,7 +425,7 @@ theorem SmoothAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h :
 
 variable (I')
 
-theorem SmoothAt.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
+theorem SmoothAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
     (hh : SmoothAt J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) (fun x ↦ OneJetBundle.mk _ _ (h x)) x₀)
     (hg : SmoothAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (fun x ↦ OneJetBundle.mk _ _ (g x)) x₀) :
@@ -434,19 +434,19 @@ theorem SmoothAt.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {
   rw [smoothAt_oneJetBundle_mk] at hh hg ⊢
   exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_inTangentCoordinates hg.2.1.continuousAt hg.2.2⟩
 
-theorem Smooth.one_jet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
+theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
     (hh : Smooth J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) fun x ↦ OneJetBundle.mk _ _ (h x))
     (hg : Smooth J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (g x)) :
     Smooth J' ((I.prod J).prod 𝓘(𝕜, E →L[𝕜] F))
       (fun x ↦ OneJetBundle.mk (f1 x) (f3 x) (h x ∘L g x) : N' → OneJetBundle I M J N) :=
-  fun x₀ ↦ hh.smoothAt.one_jet_comp I' f2 (hg x₀)
+  fun x₀ ↦ hh.smoothAt.oneJet_comp I' f2 (hg x₀)
 
 variable {I'}
 
 attribute [pp_dot] ContinuousLinearMap.comp
 open Trivialization in
-theorem Smooth.one_jet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
+theorem Smooth.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
     (hϕ : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ x))
     (hϕ' : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ' x)) :
     Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦
@@ -510,12 +510,12 @@ theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} 
     SmoothAt I'' ((J.prod J').prod 𝓘(𝕜, F →L[𝕜] F'))
       (fun z ↦ OneJetBundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ := by
   rw [smoothAt_oneJetBundle] at hk
-  refine' SmoothAt.one_jet_comp _ _ _ _
-  refine' SmoothAt.one_jet_comp _ _ _ _
-  · refine' hk.2.1.oneJetBundle_mk (hg.comp x₀ (smoothAt_id.prod_mk hk.2.1)) _
-    exact ContMDiffAt.mfderiv g (fun x ↦ (k x).1.2) hg hk.2.1 le_rfl
-  · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
-  exact (hf.comp x₀ (smoothAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1 hDfinv
+  refine SmoothAt.oneJet_comp _ _ ?_ ?_
+  · refine SmoothAt.oneJet_comp _ _ ?_ ?_
+    · refine hk.2.1.oneJetBundle_mk (hg.comp x₀ (smoothAt_id.prod_mk hk.2.1)) ?_
+      exact ContMDiffAt.mfderiv g (fun x ↦ (k x).1.2) hg hk.2.1 le_rfl
+    · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
+  · exact (hf.comp x₀ (smoothAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1 hDfinv
 
 /-- A useful definition to define maps between two `OneJetBundle`s. -/
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :

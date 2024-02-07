@@ -559,12 +559,10 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     have : ∀ x, mfderiv IN IY ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
       fun x ↦ mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self x))
     simp only [this]
-    refine' Smooth.one_jet_comp IN (fun x' => F.bs (φ x')) _ _
-    ·
-      exact fun x =>
-        (ψ.smoothAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
-          (F.smooth_bs.comp φ.smooth_to).contMDiffAt
-    apply Smooth.one_jet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
+    refine Smooth.oneJet_comp IN (fun x' => F.bs (φ x')) ?_ ?_
+    · exact fun x ↦ (ψ.smoothAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
+        (F.smooth_bs.comp φ.smooth_to).contMDiffAt
+    · exact Smooth.oneJet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
 
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by

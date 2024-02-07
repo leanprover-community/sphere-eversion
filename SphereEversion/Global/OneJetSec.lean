@@ -245,15 +245,14 @@ def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M
     (mfderiv (IP.prod I) I' (fun z : P × M ↦ S.bs z.1 p.2) p) +
       S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I Prod.snd p
   smooth' := by
-    refine' Smooth.one_jet_add _ _
+    refine Smooth.oneJet_add ?_ ?_
     · intro y
-      refine' smoothAt_id.oneJetBundle_mk (S.smooth_bs y) _
-      have :
-        SmoothAt ((IP.prod I).prod (IP.prod I)) I'
+      refine smoothAt_id.oneJetBundle_mk (S.smooth_bs y) ?_
+      have : SmoothAt ((IP.prod I).prod (IP.prod I)) I'
           (Function.uncurry fun x z : P × M ↦ S.bs z.1 x.2) (y, y) :=
         S.smooth_bs.comp (smooth_snd.fst.prod_mk smooth_fst.snd) (y, y)
       apply ContMDiffAt.mfderiv (fun x z : P × M ↦ S.bs z.1 x.2) id this contMDiffAt_id le_top
-    · refine' Smooth.one_jet_comp I (fun p : P × M ↦ p.2) S.smooth smooth_snd.oneJetExt
+    · exact Smooth.oneJet_comp I (fun p : P × M ↦ p.2) S.smooth smooth_snd.oneJetExt
 
 theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
     S.uncurry.ϕ p =
