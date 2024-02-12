@@ -90,14 +90,12 @@ theorem corrugation.support : support (𝒯 N γ) ⊆ Loop.support γ := fun x x
 theorem corrugation_eq_zero (x) (H : x ∉ Loop.support γ) : corrugation π N γ x = 0 :=
   nmem_support.mp fun hx ↦ H (corrugation.support π N γ hx)
 
-attribute [fun_prop] Loop.continuous_average
-
 theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace E]
     {γ : ℝ → E → Loop F} {K : Set E} (hK : IsCompact K) (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by
   set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
-  have cont' : Continuous ↿φ := by -- uncurrying, cannot use fun_prop yet
+  have cont' : Continuous ↿φ := by -- TODO(funprop): cannot use yet, uncurrying
     refine continuous_parametric_intervalIntegral_of_continuous ?_ continuous_snd
     refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
     refine Loop.continuous_average ?_

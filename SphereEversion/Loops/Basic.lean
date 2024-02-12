@@ -336,6 +336,7 @@ theorem isConst_iff_const_avg {γ : Loop F} : γ.IsConst ↔ γ = const γ.avera
 theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst := by
   classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
 
+@[fun_prop]
 theorem continuous_average {E : Type _} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
     Continuous fun x ↦ (γ x).average :=

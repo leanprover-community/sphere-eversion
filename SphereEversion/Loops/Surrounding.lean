@@ -530,6 +530,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
   have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x := by
     refine IsOpen.mem_nhds ?_ fun z ↦ by simp_rw [dist_self, half_pos hε]
     have hc : Continuous ↿fun y s ↦ dist (γ y 1 s) (γ x 1 s) :=
+      -- TODO(funprop): uncurrying bug
       (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
         (h.cont.comp₃ continuous_const continuous_const continuous_snd)
     have : IsOpen {y : E | sSup ((fun z ↦ dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2} :=
@@ -564,9 +565,13 @@ protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b 
   source' := h.base x t
   target' := h.one x t
 
+attribute [fun_prop] Continuous.subtype_val
+attribute [fun_prop] Continuous.comp₃
+
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
     (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) :=
+  -- TODO(funprop): why can't this be golfed?
   h.cont.comp₃ hf ht hs.subtype_val
 
 @[simp]
@@ -640,7 +645,6 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     (hg : ContinuousAt g x₀) (hb : Continuous b)
     (hconv : g x₀ ∈ convexHull ℝ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀)) :
     ∃ γ : E → ℝ → Loop F, ∃ U ∈ 𝓝 x₀, SurroundingFamilyIn g b γ U Ω := by
-  have hbx₀ : ContinuousAt b x₀ := hb.continuousAt
   have hΩ_op_x₀ : IsOpen (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     (isOpen_slice_of_isOpen_over hΩ_op).connectedComponentIn
   have b_in : b x₀ ∈ Prod.mk x₀ ⁻¹' Ω :=
@@ -656,7 +660,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have hδ : Continuous ↿δ := by
     unfold_let δ
     dsimp only [HasUncurry.uncurry, Loop.vadd_apply]
-    exact (hb.fst'.sub continuous_const).add h1γ.snd'
+    fun_prop
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by
     intro t s
     simp only [zero_add, Loop.vadd_apply, sub_self]
@@ -681,8 +685,9 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     rcases h6γ with ⟨p, w, h⟩
     obtain ⟨W, hW⟩ := smooth_surroundingPts h
     let c : E → F × (Fin (d + 1) → F) := fun x ↦ (g x, δ x 1 ∘ p)
-    have hc : ContinuousAt c x₀ :=
-      hg.prod (((continuousAt_pi.2 fun _ ↦ hbx₀).sub continuousAt_const).add continuousAt_const)
+    have hc : ContinuousAt c x₀ := by
+      apply hg.prod
+      fun_prop -- TODO(funprop): previous line shouldn't be needed
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
       unfold_let c
       simp [hδx₀]
@@ -707,8 +712,13 @@ end local_loops
 def ρ (t : ℝ) : ℝ :=
   projI <| 2 * (1 - t)
 
-theorem continuous_ρ : Continuous ρ :=
-  continuous_projI.comp <| continuous_const.mul <| continuous_const.sub continuous_id
+attribute [fun_prop] continuous_projIcc
+attribute [fun_prop] continuous_projI
+
+@[fun_prop]
+theorem continuous_ρ : Continuous ρ := by
+  apply continuous_projI.comp -- TODO(funprop): why is this line necessary?
+  fun_prop
 
 @[simp]
 theorem ρ_eq_one {x : ℝ} : ρ x = 1 ↔ x ≤ 1 / 2 := by
@@ -763,6 +773,7 @@ theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ := by
   simp only [sfHomotopy, Path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos le_rfl,
     SurroundingFamily.path_extend_fract, projIcc_left, Loop.ofPath_apply, sub_self, h₁.projI]
 
+@[fun_prop]
 theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
     [LocallyCompactSpace X] {τ t s : X → ℝ} {f : X → E} (hτ : Continuous τ) (hf : Continuous f)
     (ht : Continuous t) (hs : Continuous s) :
@@ -770,21 +781,19 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
   refine Continuous.ofPath _ _ _ ?_ hs
   refine Continuous.path_strans ?_ ?_ ?_ ?_ ?_ continuous_snd
   · refine h₀.continuous_path hf.fst'.fst' ?_ continuous_snd
-    exact (continuous_ρ.comp hτ.fst'.fst').mul (continuous_projI.comp ht.fst'.fst')
+    fun_prop -- TODO(funprop): make the previous line superfluous!
   · refine h₁.continuous_path hf.fst'.fst' ?_ continuous_snd
-    refine (continuous_ρ.comp ?_).mul (continuous_projI.comp ht.fst'.fst')
-    exact continuous_const.sub hτ.fst'.fst'
+    fun_prop -- TODO(funprop): make the previous line also superfluous!
   · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs
     simp only [hs, h₁.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
-  · exact continuous_projIcc.comp (continuous_const.sub hτ.fst')
+  · fun_prop
 
 /-- In this lemmas and the lemmas below we add `FiniteDimensional ℝ E` so that we can conclude
  `LocallyCompactSpace E`. -/
-theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomotopy h₀ h₁) :=
-  Continuous.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
-    continuous_snd.snd.snd
+theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomotopy h₀ h₁) := by
+  fun_prop
 
 theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
     SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U := by
