@@ -122,9 +122,7 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
 
 variable {γ}
 
-attribute [fun_prop] contDiff_parametric_primitive_of_contDiff
-attribute [fun_prop] contDiff_average
-attribute [fun_prop] ContDiff.clm_apply
+attribute [fun_prop] ContDiff.clm_apply -- add to mathlib
 
 theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n (fun (x,y,t) => γ x y t)) {x : H → E}
     (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
@@ -197,9 +195,9 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ (fun (x,
   apply contDiff_parametric_primitive_of_contDiff
   · let ψ : E → H × ℝ → F := fun x q ↦ (γ (g q.1) x).normalize q.2
     change 𝒞 ⊤ fun q : H × ℝ ↦ ∂₁ ψ (x q.1) (q.1, q.2)
-    refine' (ContDiff.contDiff_top_partial_fst _).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
+    refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [Loop.normalize]
-    apply ContDiff.sub -- uncurries
+    apply ContDiff.sub -- uncurries, so cannot use fun_prop
     · fun_prop
     · fun_prop
   · fun_prop

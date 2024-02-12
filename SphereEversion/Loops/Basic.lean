@@ -1,6 +1,8 @@
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 
+import Mathlib.Tactic.FunProp.ContDiff
+
 /-!
 # Basic definitions and properties of loops
 -/
@@ -428,9 +430,11 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
 
 variable {γ}
 
+@[fun_prop]
 theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n (fun (x,t) => γ x t)) : 𝒞 n fun x ↦ (γ x).average :=
   contDiff_parametric_primitive_of_contDiff hγ_diff contDiff_const 0
 
+@[fun_prop]
 theorem contDiff_sub_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
     𝒞 n ↿fun (x : E) (t : ℝ) ↦ (γ x) t - (γ x).average :=
   hγ_diff.sub (contDiff_average hγ_diff).fst'

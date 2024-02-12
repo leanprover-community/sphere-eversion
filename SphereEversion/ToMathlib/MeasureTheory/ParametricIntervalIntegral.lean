@@ -4,6 +4,8 @@ import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 import Mathlib.Algebra.Module.ULift
 import SphereEversion.ToMathlib.Analysis.Calculus
 
+import Mathlib.Tactic.FunProp.ContDiff
+
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
 
 open scoped Topology Filter NNReal
@@ -471,6 +473,7 @@ variable [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type 
   [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
 
 -- Should we directly prove the version below?
+@[fun_prop]
 theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n (fun (x,y) => F x y))
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
   induction n using WithTop.recTopCoe
