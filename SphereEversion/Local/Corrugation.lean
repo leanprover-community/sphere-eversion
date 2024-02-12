@@ -45,22 +45,22 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 open scoped Borelize
 
 /-- Theillière's corrugations. -/
-def corrugation (π : E →L[ℝ] ℝ) (N : ℝ) (γ : E → Loop F) : E → F := fun x =>
+def corrugation (π : E →L[ℝ] ℝ) (N : ℝ) (γ : E → Loop F) : E → F := fun x ↦
   (1 / N) • ∫ t in (0)..N * π x, γ x t - (γ x).average
 
 local notation "𝒯" => corrugation π
 
 /-- The integral appearing in corrugations is periodic. -/
 theorem per_corrugation (γ : Loop F) (hγ : ∀ s t, IntervalIntegrable γ volume s t) :
-    OnePeriodic fun s => ∫ t in (0)..s, γ t - γ.average := by
-  have int_avg : ∀ s t, IntervalIntegrable (fun _ : ℝ => γ.average) volume s t := fun s t =>
+    OnePeriodic fun s ↦ ∫ t in (0)..s, γ t - γ.average := by
+  have int_avg : ∀ s t, IntervalIntegrable (fun _ : ℝ ↦ γ.average) volume s t := fun s t ↦
     intervalIntegrable_const
   intro s
-  have int₁ : IntervalIntegrable (fun t => γ t - γ.average) volume 0 s := (hγ _ _).sub (int_avg _ _)
-  have int₂ : IntervalIntegrable (fun t => γ t - γ.average) volume s (s + 1) :=
+  have int₁ : IntervalIntegrable (fun t ↦ γ t - γ.average) volume 0 s := (hγ _ _).sub (int_avg _ _)
+  have int₂ : IntervalIntegrable (fun t ↦ γ t - γ.average) volume s (s + 1) :=
     (hγ _ _).sub (int_avg _ _)
   have int₃ : IntervalIntegrable γ volume s (s + 1) := hγ _ _
-  have int₄ : IntervalIntegrable (fun _ => γ.average) volume s (s + 1) := int_avg _ _
+  have int₄ : IntervalIntegrable (fun _ ↦ γ.average) volume s (s + 1) := int_avg _ _
   dsimp only
   /- Rmk: Lean doesn't want to rewrite using `interval_integral.integral_sub` without being
       given the integrability assumptions :-( -/
@@ -86,17 +86,17 @@ theorem corrugation.support : support (𝒯 N γ) ⊆ Loop.support γ := fun x x
   simp [h]
 
 theorem corrugation_eq_zero (x) (H : x ∉ Loop.support γ) : corrugation π N γ x = 0 :=
-  nmem_support.mp fun hx => H (corrugation.support π N γ hx)
+  nmem_support.mp fun hx ↦ H (corrugation.support π N γ hx)
 
 theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace E]
     {γ : ℝ → E → Loop F} {K : Set E} (hK : IsCompact K) (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by
-  set φ := fun (q : ℝ × E) t => ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
+  set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
   have cont' : Continuous ↿φ := by
-    refine' continuous_parametric_intervalIntegral_of_continuous _ continuous_snd
-    refine' (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub _
-    refine' Loop.continuous_average _
+    refine continuous_parametric_intervalIntegral_of_continuous ?_ continuous_snd
+    refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
+    refine Loop.continuous_average ?_
     exact hγ_cont.comp₃ continuous_fst.fst.fst.fst continuous_fst.fst.fst.snd continuous_snd
   have hper : ∀ q, OnePeriodic (φ q) := fun _ ↦ per_corrugation _ fun _ _ ↦
     (hγ_cont.comp₃ continuous_const continuous_const continuous_id).intervalIntegrable _ _
@@ -119,48 +119,48 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
 variable {γ}
 
 theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
-    (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h => 𝒯 N (γ <| g h) <| x h := by
+    (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
   apply ContDiff.const_smul
   apply contDiff_parametric_primitive_of_contDiff
   · apply ContDiff.sub
     · exact hγ_diff.comp₃ hg.fst' hx.fst' contDiff_snd
     · apply contDiff_average
       exact hγ_diff.comp₃ hg.fst'.fst' hx.fst'.fst' contDiff_snd
-  · apply contDiff_const.mul (π.contDiff.comp hx)
+  · exact contDiff_const.mul (π.contDiff.comp hx)
 
 theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) :=
   (contDiff_parametric_primitive_of_contDiff (contDiff_sub_average hγ_diff)
-        (π.contDiff.const_smul N) 0).const_smul _
+    (π.contDiff.const_smul N) 0).const_smul _
 
 notation "∂₁" => partialFDerivFst ℝ
 
 /-- The remainder appearing when differentiating a corrugation.
 -/
-def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → Loop F) : E → E →L[ℝ] F := fun x =>
-  (1 / N) • ∫ t in (0)..N * π x, ∂₁ (fun x t => (γ x).normalize t) x t
+def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → Loop F) : E → E →L[ℝ] F := fun x ↦
+  (1 / N) • ∫ t in (0)..N * π x, ∂₁ (fun x t ↦ (γ x).normalize t) x t
 
 local notation "R" => corrugation.remainder π
 
 variable [FiniteDimensional ℝ E]
 
 theorem remainder_eq (N : ℝ) {γ : E → Loop F} (h : 𝒞 1 ↿γ) :
-    R N γ = fun x => (1 / N) • ∫ t in (0)..N * π x, (Loop.diff γ x).normalize t := by
+    R N γ = fun x ↦ (1 / N) • ∫ t in (0)..N * π x, (Loop.diff γ x).normalize t := by
   simp_rw [Loop.diff_normalize h]; rfl
 
 -- The next lemma is a restatement of the above to emphasize that remainder is a corrugation
 -- unused
 theorem remainder_eq_corrugation (N : ℝ) {γ : E → Loop F} (h : 𝒞 1 ↿γ) :
-    R N γ = 𝒯 N fun x => Loop.diff γ x :=
+    R N γ = 𝒯 N fun x ↦ Loop.diff γ x :=
   remainder_eq _ _ h
 
 @[simp]
 theorem remainder_eq_zero (N : ℝ) {γ : E → Loop F} (h : 𝒞 1 ↿γ) {x : E} (hx : x ∉ Loop.support γ) :
     R N γ x = 0 := by
-  have hx' : x ∉ Loop.support (Loop.diff γ) := fun h => hx <| Loop.support_diff h
+  have hx' : x ∉ Loop.support (Loop.diff γ) := fun h ↦ hx <| Loop.support_diff h
   simp [remainder_eq π N h, Loop.normalize_of_isConst (Loop.isConst_of_not_mem_support hx')]
 
 theorem corrugation.fderiv_eq {N : ℝ} (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) :
-    D (𝒯 N γ) = fun x : E => ((γ x (N * π x) - (γ x).average) ⬝ π) + R N γ x := by
+    D (𝒯 N γ) = fun x : E ↦ ((γ x (N * π x) - (γ x).average) ⬝ π) + R N γ x := by
   ext1 x₀
   have hπ_diff : 𝒞 1 π := π.contDiff
   have diff := contDiff_sub_average hγ_diff
@@ -189,11 +189,11 @@ theorem fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E �
 local notation "∞" => (⊤ : ℕ∞)
 
 theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {x : H → E} (hx : 𝒞 ∞ x)
-    {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h => R N (γ <| g h) <| x h := by
+    {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h ↦ R N (γ <| g h) <| x h := by
   apply ContDiff.const_smul
   apply contDiff_parametric_primitive_of_contDiff
-  · let ψ : E → H × ℝ → F := fun x q => (γ (g q.1) x).normalize q.2
-    change 𝒞 ⊤ fun q : H × ℝ => ∂₁ ψ (x q.1) (q.1, q.2)
+  · let ψ : E → H × ℝ → F := fun x q ↦ (γ (g q.1) x).normalize q.2
+    change 𝒞 ⊤ fun q : H × ℝ ↦ ∂₁ ψ (x q.1) (q.1, q.2)
     refine' (ContDiff.contDiff_top_partial_fst _).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [Loop.normalize]
     apply ContDiff.sub
@@ -205,10 +205,10 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
 theorem remainder_c0_small_on {K : Set E} (hK : IsCompact K) (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ}
     (ε_pos : 0 < ε) : ∀ᶠ N in atTop, ∀ x ∈ K, ‖R N γ x‖ < ε := by
   have : ∀ N : ℝ, R N γ = 𝒯 N (Loop.diff γ) := fun N ↦ remainder_eq π N hγ_diff
-  simp_rw [fun N => remainder_eq π N hγ_diff]
-  let g : ℝ → E → Loop (E →L[ℝ] F) := fun _ => Loop.diff γ
-  have g_le : ∀ (x) (t : ℝ), t ≤ 0 → g t x = g 0 x := fun _ _ _ => rfl
-  have g_ge : ∀ (x) (t : ℝ), t ≥ 1 → g t x = g 1 x := fun _ _ _ => rfl
+  simp_rw [fun N ↦ remainder_eq π N hγ_diff]
+  let g : ℝ → E → Loop (E →L[ℝ] F) := fun _ ↦ Loop.diff γ
+  have g_le : ∀ (x) (t : ℝ), t ≤ 0 → g t x = g 0 x := fun _ _ _ ↦ rfl
+  have g_ge : ∀ (x) (t : ℝ), t ≥ 1 → g t x = g 1 x := fun _ _ _ ↦ rfl
   have g_cont : Continuous ↿g := (Loop.continuous_diff hγ_diff).snd'
   apply (corrugation.c0_small_on _ hK g_le g_ge g_cont ε_pos).mono
   intro N H x x_in
