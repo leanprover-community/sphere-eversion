@@ -7,6 +7,8 @@ import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.Loops.Basic
 import SphereEversion.Local.DualPair
 
+import Mathlib.Tactic.FunProp.ContDiff
+
 /-! # Theillière's corrugation operation
 
 This files introduces the fundamental calculus tool of convex integration. The version of convex
@@ -88,12 +90,14 @@ theorem corrugation.support : support (𝒯 N γ) ⊆ Loop.support γ := fun x x
 theorem corrugation_eq_zero (x) (H : x ∉ Loop.support γ) : corrugation π N γ x = 0 :=
   nmem_support.mp fun hx ↦ H (corrugation.support π N γ hx)
 
+attribute [fun_prop] Loop.continuous_average
+
 theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace E]
     {γ : ℝ → E → Loop F} {K : Set E} (hK : IsCompact K) (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by
   set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
-  have cont' : Continuous ↿φ := by
+  have cont' : Continuous ↿φ := by -- uncurrying, cannot use fun_prop yet
     refine continuous_parametric_intervalIntegral_of_continuous ?_ continuous_snd
     refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
     refine Loop.continuous_average ?_
@@ -118,19 +122,18 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
 
 variable {γ}
 
-theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
-    (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
-  apply ContDiff.const_smul
-  apply contDiff_parametric_primitive_of_contDiff
-  · apply ContDiff.sub
-    · exact hγ_diff.comp₃ hg.fst' hx.fst' contDiff_snd
-    · apply contDiff_average
-      exact hγ_diff.comp₃ hg.fst'.fst' hx.fst'.fst' contDiff_snd
-  · exact contDiff_const.mul (π.contDiff.comp hx)
+attribute [fun_prop] contDiff_parametric_primitive_of_contDiff
+attribute [fun_prop] contDiff_average
+attribute [fun_prop] ContDiff.clm_apply
 
-theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) :=
-  (contDiff_parametric_primitive_of_contDiff (contDiff_sub_average hγ_diff)
-    (π.contDiff.const_smul N) 0).const_smul _
+theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n (fun (x,y,t) => γ x y t)) {x : H → E}
+    (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
+  unfold corrugation
+  fun_prop
+
+theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) := by
+  unfold corrugation
+  fun_prop
 
 notation "∂₁" => partialFDerivFst ℝ
 
@@ -188,7 +191,7 @@ theorem fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E �
 
 local notation "∞" => (⊤ : ℕ∞)
 
-theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {x : H → E} (hx : 𝒞 ∞ x)
+theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ (fun (x,y,t) => γ x y t)) {x : H → E} (hx : 𝒞 ∞ x)
     {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h ↦ R N (γ <| g h) <| x h := by
   apply ContDiff.const_smul
   apply contDiff_parametric_primitive_of_contDiff
@@ -196,11 +199,10 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
     change 𝒞 ⊤ fun q : H × ℝ ↦ ∂₁ ψ (x q.1) (q.1, q.2)
     refine' (ContDiff.contDiff_top_partial_fst _).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [Loop.normalize]
-    apply ContDiff.sub
-    apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
-    apply contDiff_average
-    exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
-  · exact contDiff_const.mul (π.contDiff.comp hx)
+    apply ContDiff.sub -- uncurries
+    · fun_prop
+    · fun_prop
+  · fun_prop
 
 theorem remainder_c0_small_on {K : Set E} (hK : IsCompact K) (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ}
     (ε_pos : 0 < ε) : ∀ᶠ N in atTop, ∀ x ∈ K, ‖R N γ x‖ < ε := by

@@ -471,7 +471,7 @@ variable [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type 
   [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
 
 -- Should we directly prove the version below?
-theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
+theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n (fun (x,y) => F x y))
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
   induction n using WithTop.recTopCoe
   · rw [contDiff_top] at *
