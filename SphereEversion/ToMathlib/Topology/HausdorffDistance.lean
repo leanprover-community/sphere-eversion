@@ -1,11 +1,12 @@
-import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Topology.MetricSpace.Thickening
 
 open Set Metric
 
 open scoped Topology
 
-variable {α β : Type _} [PseudoMetricSpace α] [PseudoMetricSpace β]
+variable {α β : Type*} [PseudoMetricSpace α] [PseudoMetricSpace β]
 
+-- this whole file is being PRed in #10303
 namespace Metric
 
 theorem thickening_ball (x : α) (ε δ : ℝ) : thickening ε (ball x δ) ⊆ ball x (ε + δ) := by
