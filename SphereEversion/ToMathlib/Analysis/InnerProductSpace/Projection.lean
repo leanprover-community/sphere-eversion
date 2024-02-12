@@ -1,4 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.Projection
+import Mathlib.Tactic.FunProp.Continuous
 
 noncomputable section
 
@@ -148,19 +149,20 @@ theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}�
   dsimp only
   rwa [add_mul, MulZeroClass.zero_mul, div_mul_cancel _ h]
 
+-- TODO: add these to mathlib
+attribute [fun_prop] Continuous.div_const
+attribute [fun_prop] continuous_subtype_val
+attribute [fun_prop] Continuous.inner
+
 /-- Given two non-orthogonal vectors in an inner product space,
 `orthogonal_projection_orthogonal_line_iso` is the continuous linear equivalence between their
 orthogonal complements obtained from orthogonal projection. -/
 def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) : {.x₀}ᗮ ≃L[ℝ] {.x}ᗮ :=
   {
-    pr[x]ᗮ.comp
-      (subtypeL
-        {.x₀}ᗮ) with
-    invFun := fun y ↦
-      ⟨y - (⟪x₀, y⟫ / ⟪x₀, x⟫) • x,
-    by
-        rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right]
-        field_simp [h]⟩
+    pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ) with
+    invFun := fun y ↦ ⟨y - (⟪x₀, y⟫ / ⟪x₀, x⟫) • x, by
+      rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right]
+      field_simp [h]⟩
     left_inv := by
       rintro ⟨y, hy⟩
       ext
@@ -174,16 +176,7 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
     continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous
     continuous_invFun := by
       -- Porting note: this was `continuity`
-      apply Continuous.subtype_mk
-      apply Continuous.sub
-      exact continuous_subtype_val
-      apply Continuous.smul
-      apply Continuous.div_const
-      apply Continuous.comp
-      apply continuous_const.inner
-      apply continuous_id
-      exact continuous_subtype_val
-      exact continuous_const }
+      apply Continuous.subtype_mk (by fun_prop) }
 
 theorem orthogonalProjection_comp_coe (K : Submodule ℝ E) [CompleteSpace K] :
     orthogonalProjection K ∘ ((↑) : K → E) = id := by
