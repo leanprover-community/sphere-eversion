@@ -32,15 +32,15 @@ The main definition is `corrugation`. The main results are:
 
 noncomputable section
 
-open Set Function FiniteDimensional Asymptotics Filter TopologicalSpace Int MeasureTheory
-  ContinuousLinearMap
+open Set Function Filter MeasureTheory ContinuousLinearMap
 
 open scoped Topology unitInterval
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
-  [NormedSpace ℝ F] [FiniteDimensional ℝ F] {G : Type _} [NormedAddCommGroup G] [NormedSpace ℝ G]
-  {H : Type _} [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H] {π : E →L[ℝ] ℝ}
-  (N : ℝ) (γ : E → Loop F)
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+  {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
+  {H : Type*} [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
+  {π : E →L[ℝ] ℝ} (N : ℝ) (γ : E → Loop F)
 
 open scoped Borelize
 

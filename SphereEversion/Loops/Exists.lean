@@ -4,15 +4,13 @@ import SphereEversion.ToMathlib.Topology.HausdorffDistance
 
 noncomputable section
 
-open Set Function FiniteDimensional Prod Int TopologicalSpace Metric Filter
-
-open MeasureTheory MeasureTheory.Measure Real
+open Set Function Int TopologicalSpace Metric Filter MeasureTheory MeasureTheory.Measure Real
 
 open scoped Topology unitInterval
 
 local notation "∞" => (⊤ : ℕ∞)
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
   {g b : E → F} {Ω : Set (E × F)} {U K C : Set E}
 
 variable [NormedSpace ℝ F] [FiniteDimensional ℝ F]
