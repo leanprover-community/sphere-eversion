@@ -59,12 +59,13 @@ section
 
 open Function
 
-theorem continuous_parametric_integral_of_continuous {E : Type _} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [CompleteSpace E] {α : Type _} [TopologicalSpace α] [MeasurableSpace α]
-    [OpensMeasurableSpace α] [SecondCountableTopologyEither α E] {μ : MeasureTheory.Measure α}
-    [IsLocallyFiniteMeasure μ] {X : Type _} [TopologicalSpace X] [FirstCountableTopology X]
-    [LocallyCompactSpace X] {F : X → α → E} (hF : Continuous fun p : X × α ↦ F p.1 p.2) {s : Set α}
-    (hs : IsCompact s) : Continuous fun x ↦ ∫ a in s, F x a ∂μ := by
+theorem continuous_parametric_integral_of_continuous
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {α : Type*} [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α]
+    [SecondCountableTopologyEither α E] {μ : MeasureTheory.Measure α} [IsLocallyFiniteMeasure μ]
+    {X : Type*} [TopologicalSpace X] [FirstCountableTopology X] [LocallyCompactSpace X]
+    {F : X → α → E} (hF : Continuous fun p : X × α ↦ F p.1 p.2) {s : Set α} (hs : IsCompact s) :
+    Continuous fun x ↦ ∫ a in s, F x a ∂μ := by
   rw [continuous_iff_continuousAt]
   intro x₀
   rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩
@@ -78,7 +79,7 @@ theorem continuous_parametric_integral_of_continuous {E : Type _} [NormedAddComm
   · exact integrableOn_const.mpr (Or.inr hs.measure_lt_top)
   · apply ae_of_all
     intro a
-    apply (hF.comp₂ continuous_id continuous_const).continuousAt
+    exact (hF.comp₂ continuous_id continuous_const).continuousAt
 
 end
 
