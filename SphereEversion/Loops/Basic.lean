@@ -28,10 +28,10 @@ structure Loop where
   toFun : ℝ → X
   per' : ∀ t, toFun (t + 1) = toFun t
 
-attribute [coe] Loop.toFun
+instance : FunLike (Loop X) ℝ X where
+  coe := fun γ ↦ γ.toFun
+  coe_injective' := sorry
 
-instance : CoeFun (Loop X) fun _ ↦ ℝ → X :=
-  ⟨fun γ ↦ γ.toFun⟩
 
 initialize_simps_projections Loop (toFun → apply)
 
@@ -214,14 +214,14 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
   · have : t = ⟨1, right_mem_Icc.mpr zero_le_one⟩ := Subtype.ext_val ht1
     rw [this]
     norm_cast
-    simp only [fract, floor_one, Path.extend_zero, Int.cast_one, sub_self, Subtype.coe_mk]
-    exact γ.target.symm
+    simp only [Loop.coe_mk, fract_one, mem_Icc, le_refl, zero_le_one, and_self, Path.extend_extends,
+      Icc.mk_zero, Path.source, Icc.mk_one, Path.target]
   · change (t : ℝ) ≠ 1 at ht1
     have : fract ↑t = t.val := by
       rw [fract_eq_iff]
       refine' ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, _⟩⟩
       rw [Int.cast_zero, sub_self]
-    simp only [this, γ.extend_extends t.2]
+    simp only [Loop.coe_mk, this, Path.extend_extends']
 
 /-- `Loop.ofPath` is continuous, general version. -/
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
