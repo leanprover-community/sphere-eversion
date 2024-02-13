@@ -197,8 +197,7 @@ theorem not_mem_support {γ : X → Loop X'} {x : X} (h : ∀ᶠ y in 𝓝 x, (�
 
 /-- Turn a path into a loop. -/
 @[simps]
-noncomputable def ofPath {x : X} (γ : Path x x) : Loop X
-    where
+noncomputable def ofPath {x : X} (γ : Path x x) : Loop X where
   toFun t := γ.extend (fract t)
   per' := by
     intro t
@@ -225,20 +224,24 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
       rw [Int.cast_zero, sub_self]
     simp only [Loop.coe_mk, this, Path.extend_extends']
 
+attribute [fun_prop] continuous_projIcc
+attribute [fun_prop] Continuous.prod_map
+
 /-- `Loop.ofPath` is continuous, general version. -/
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
   refine' ContinuousOn.comp_fract _ ht _
-  · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
-      continuous_id.prod_map continuous_projIcc
-    exact (hγ.comp this).continuousOn
+  · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) := by
+      fun_prop
+    exact (hγ.comp this).continuousOn -- TODO: cannot use fun_prop, uncurrying?
   · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
     Continuous ↿fun s ↦ ofPath <| γ s :=
+  -- use by fun_prop
   Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
     continuous_snd
 
