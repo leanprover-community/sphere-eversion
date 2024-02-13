@@ -70,7 +70,7 @@ variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
 theorem immersionRel_open : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
-  refine' fun σ => (ψJ σ).open_target.inter _
+  refine fun σ ↦ (ψJ σ).open_target.inter ?_
   convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
   · ext x
     -- Porting note: `mem_prod` is a simp lemma, but the next line is still needed.

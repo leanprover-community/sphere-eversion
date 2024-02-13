@@ -94,24 +94,26 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
   set j₀ := subtypeL (ℝ ∙ x₀)ᗮ
   let f : OneJet E F → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) := fun p =>
     (⟪x₀, p.1⟫, (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀)
-  let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop := fun q => q.1 ≠ 0 ∧ Injective q.2
+  let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop := fun q ↦ q.1 ≠ 0 ∧ Injective q.2
   have x₀_ne : x₀ ≠ 0 := by
-    refine' fun hx₀' => hx₀ _
+    refine fun hx₀' ↦ hx₀ ?_
     rw [hx₀']
     apply mem_ball_self
     norm_num
   -- The following suffices looks stupid but is much faster than using the change tactic.
-  suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) by exact this
+  suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) from this
   apply ContinuousAt.eventually
-  · refine' (continuousAt_const.inner continuousAt_fst).prod _
+  -- TODO(funprop): revisit when the bug below is fixed
+  · refine (continuousAt_const.inner continuousAt_fst).prod ?_
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
-      exact continuousAt_snd.comp continuousAt_snd
-      -- Faster than change.
-      suffices ContinuousAt ((fun x => (ℝ ∙ x)ᗮ.subtypeL.comp pr[x]ᗮ) ∘ Prod.fst) (x₀, y₀, φ₀) by
-        exact this
-      apply ContinuousAt.comp _ continuousAt_fst
-      exact continuousAt_orthogonalProjection_orthogonal x₀_ne
+      · fun_prop
+      · -- Faster than change.
+        suffices ContinuousAt ((fun x => (ℝ ∙ x)ᗮ.subtypeL.comp pr[x]ᗮ) ∘ Prod.fst) (x₀, y₀, φ₀)
+          from this
+        apply ContinuousAt.comp _ continuousAt_fst
+        -- TODO(funprop): why can't this be added to fun_prop?
+        exact continuousAt_orthogonalProjection_orthogonal x₀_ne
     exact continuousAt_const
   · exact (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
       (continuous_snd.isOpen_preimage _ ContinuousLinearMap.isOpen_injective)
@@ -136,7 +138,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
     exact (Hx hx).elim
   · replace H := H hx₀
     set j₀ := subtypeL (ℝ ∙ x₀)ᗮ
-    let f : OneJet E F → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) := fun p =>
+    let f : OneJet E F → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) := fun p ↦
       (⟪x₀, p.1⟫, (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀)
     let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop := fun q => q.1 ≠ 0 ∧ Injective q.2
     have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) := loc_immersion_rel_open_aux hx₀ H
@@ -303,6 +305,7 @@ def locFormalEversionAux : HtpyJetSec E E
     exact
       (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
         (smoothStep.smooth.prod_map contDiff_id).contDiffAt
+
 /-- A formal eversion of `𝕊²` into its ambient Euclidean space.
 The corresponding map `E → E` is roughly a linear homotopy from `id` at `t = 0` to `- id` at
 `t = 1`. The continuous linear maps are roughly rotations with angle `t * π`. However, we have to
