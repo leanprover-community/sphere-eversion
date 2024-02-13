@@ -231,16 +231,16 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
   refine' ContinuousOn.comp_fract _ ht _
-  · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) := by
-      fun_prop
-    exact (hγ.comp this).continuousOn -- TODO: cannot use fun_prop, uncurrying?
+  · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) := by fun_prop
+    -- NB(grunweg): cannot use fun_prop, because dependently typed
+    -- but why did `this` work then?
+    exact (hγ.comp this).continuousOn
   · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
     Continuous ↿fun s ↦ ofPath <| γ s :=
-  -- use by fun_prop
   Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
     continuous_snd
 

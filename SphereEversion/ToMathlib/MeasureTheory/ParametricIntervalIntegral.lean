@@ -81,7 +81,7 @@ theorem continuous_parametric_integral_of_continuous
   · exact integrableOn_const.mpr (Or.inr hs.measure_lt_top)
   · apply ae_of_all
     intro a
-    dsimp -- TODO(funprop): this shouldn't be necessary
+    dsimp -- TODO(funprop): workaround, remove when the underlying metadata bug is fixed
     fun_prop
 
 end
@@ -201,12 +201,14 @@ theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F
     intro a
     apply (hF.comp₂ continuous_id continuous_const).continuousAt
 
+@[fun_prop]
 theorem continuous_parametric_intervalIntegral_of_continuous [LocallyCompactSpace X] {a₀ : ℝ}
     {F : X → ℝ → E} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) {s : X → ℝ} (hs : Continuous s) :
     Continuous fun x ↦ ∫ t in a₀..s x, F x t ∂μ :=
   show Continuous ((fun p : X × ℝ ↦ ∫ t in a₀..p.2, F p.1 t ∂μ) ∘ fun x ↦ (x, s x)) from
     (continuous_parametric_primitive_of_continuous hF).comp₂ continuous_id hs
 
+@[fun_prop]
 theorem continuous_parametric_intervalIntegral_of_continuous' [LocallyCompactSpace X]
     {F : X → ℝ → E} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) (a₀ b₀ : ℝ) :
     Continuous fun x ↦ ∫ t in a₀..b₀, F x t ∂μ :=

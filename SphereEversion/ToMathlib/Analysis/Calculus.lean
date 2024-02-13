@@ -2,7 +2,7 @@ import Mathlib.Analysis.NormedSpace.Completion
 import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import SphereEversion.ToMathlib.Topology.Misc
 
--- xxx: can I use fun_prop to golf the shit out of this?
+import Mathlib.Tactic.FunProp.ContDiff
 
 noncomputable section
 
@@ -29,8 +29,9 @@ variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddC
 
 theorem ContDiffAt.comp₂ {g : E₁ × E₂ → G} {f₁ : F → E₁} {f₂ : F → E₂} {x : F}
     (hg : ContDiffAt 𝕜 n g (f₁ x, f₂ x)) (hf₁ : ContDiffAt 𝕜 n f₁ x) (hf₂ : ContDiffAt 𝕜 n f₂ x) :
-    ContDiffAt 𝕜 n (fun x ↦ g (f₁ x, f₂ x)) x :=
-  hg.comp x <| hf₁.prod hf₂
+    ContDiffAt 𝕜 n (fun x ↦ g (f₁ x, f₂ x)) x := by fun_prop
+
+attribute [fun_prop] IsBoundedBilinearMap.contDiff
 
 theorem ContDiffAt.clm_comp {g : E' → F →L[𝕜] G} {f : E' → E →L[𝕜] F} {n : ℕ∞} {x : E'}
     (hg : ContDiffAt 𝕜 n g x) (hf : ContDiffAt 𝕜 n f x) : ContDiffAt 𝕜 n (fun x ↦ g x ∘L f x) x :=
@@ -105,12 +106,10 @@ theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E}
   exact h.hasFDerivAt.partial_snd
 
 theorem ContDiff.partial_fst {φ : E → F → G} {n : ℕ∞} (h : ContDiff 𝕜 n <| uncurry φ) (f₀ : F) :
-    ContDiff 𝕜 n fun e ↦ φ e f₀ :=
-  h.comp <| contDiff_prod_mk_left f₀
+    ContDiff 𝕜 n fun e ↦ φ e f₀ := by fun_prop
 
 theorem ContDiff.partial_snd {φ : E → F → G} {n : ℕ∞} (h : ContDiff 𝕜 n <| uncurry φ) (e₀ : E) :
-    ContDiff 𝕜 n fun f ↦ φ e₀ f :=
-  h.comp <| contDiff_prod_mk_right e₀
+    ContDiff 𝕜 n fun f ↦ φ e₀ f := by fun_prop
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/

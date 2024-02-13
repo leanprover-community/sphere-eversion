@@ -103,7 +103,6 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
   -- The following suffices looks stupid but is much faster than using the change tactic.
   suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) from this
   apply ContinuousAt.eventually
-  -- TODO(funprop): revisit when the bug below is fixed
   · refine (continuousAt_const.inner continuousAt_fst).prod ?_
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
@@ -111,9 +110,10 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
       · -- Faster than change.
         suffices ContinuousAt ((fun x => (ℝ ∙ x)ᗮ.subtypeL.comp pr[x]ᗮ) ∘ Prod.fst) (x₀, y₀, φ₀)
           from this
-        apply ContinuousAt.comp _ continuousAt_fst
-        -- TODO(funprop): why can't this be added to fun_prop?
-        exact continuousAt_orthogonalProjection_orthogonal x₀_ne
+        -- TODO(funprop): `continuousAt_orthogonalProjection_orthogonal` cannot be tagged
+        -- as it involves subtypes
+        -- TODO: why can't I call this with the disch option?
+        exact (continuousAt_orthogonalProjection_orthogonal x₀_ne).comp continuousAt_fst
     exact continuousAt_const
   · exact (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
       (continuous_snd.isOpen_preimage _ ContinuousLinearMap.isOpen_injective)

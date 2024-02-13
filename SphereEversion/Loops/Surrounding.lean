@@ -532,7 +532,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
   have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x := by
     refine IsOpen.mem_nhds ?_ fun z ↦ by simp_rw [dist_self, half_pos hε]
     have hc : Continuous ↿fun y s ↦ dist (γ y 1 s) (γ x 1 s) :=
-      -- TODO(funprop): uncurrying bug
+      -- TODO(funprop): why doesn't this work?
       (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
         (h.cont.comp₃ continuous_const continuous_const continuous_snd)
     have : IsOpen {y : E | sSup ((fun z ↦ dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2} :=
@@ -562,7 +562,7 @@ family into the family of paths. -/
 @[simps]
 protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b x) (b x) where
   toFun s := γ x t s
-  continuous_toFun := -- TODO(funprop): uncurrying
+  continuous_toFun := -- TODO(funprop): cannot use because subtypes are involved
     (h.cont.comp₃ continuous_const continuous_const continuous_id).comp continuous_subtype_val
   source' := h.base x t
   target' := h.one x t
@@ -570,7 +570,7 @@ protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b 
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
     (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) :=
-  -- TODO(funprop): why can't this be golfed?
+  -- TODO(funprop): cannot use because subtypes are involved
   h.cont.comp₃ hf ht hs.subtype_val
 
 @[simp]
@@ -683,9 +683,8 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     rcases h6γ with ⟨p, w, h⟩
     obtain ⟨W, hW⟩ := smooth_surroundingPts h
     let c : E → F × (Fin (d + 1) → F) := fun x ↦ (g x, δ x 1 ∘ p)
-    have hc : ContinuousAt c x₀ := by
-      apply hg.prod
-      fun_prop -- TODO(funprop): previous line shouldn't be needed
+    -- TODO(funprop): why is hg.prod needed?
+    have hc : ContinuousAt c x₀ := hg.prod (by fun_prop)
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
       unfold_let c
       simp [hδx₀]
@@ -775,10 +774,10 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
     Continuous fun x ↦ sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by
   refine Continuous.ofPath _ _ _ ?_ hs
   refine Continuous.path_strans ?_ ?_ ?_ ?_ (by fun_prop) continuous_snd
-  · refine h₀.continuous_path hf.fst'.fst' ?_ continuous_snd
-    fun_prop -- TODO(funprop): make the previous line superfluous!
-  · refine h₁.continuous_path hf.fst'.fst' ?_ continuous_snd
-    fun_prop -- TODO(funprop): make the previous line also superfluous!
+  · -- TODO(fun_prop): why can't this be just `fun_prop`?
+    exact h₀.continuous_path hf.fst'.fst' (by fun_prop) continuous_snd
+  · -- TODO(fun_prop): why can't this be just `fun_prop`?
+    exact h₁.continuous_path hf.fst'.fst' (by fun_prop) continuous_snd
   · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs

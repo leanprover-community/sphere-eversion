@@ -95,11 +95,9 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by
   set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
-  have cont' : Continuous ↿φ := by -- TODO(funprop): cannot use yet, uncurrying
-    refine continuous_parametric_intervalIntegral_of_continuous ?_ continuous_snd
-    refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
-    refine Loop.continuous_average ?_
-    exact hγ_cont.comp₃ continuous_fst.fst.fst.fst continuous_fst.fst.fst.snd continuous_snd
+  have cont' : Continuous ↿φ :=
+    -- TODO(funprop): why is this line needed? the lemma is tagged...
+    continuous_parametric_intervalIntegral_of_continuous (by fun_prop) (by fun_prop)
   have hper : ∀ q, OnePeriodic (φ q) := fun _ ↦ per_corrugation _ fun _ _ ↦
     (hγ_cont.comp₃ continuous_const continuous_const continuous_id).intervalIntegrable _ _
   rcases cont'.bounded_on_compact_of_onePeriodic hper ((isCompact_Icc : IsCompact I).prod hK)
@@ -195,7 +193,7 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
     change 𝒞 ⊤ fun q : H × ℝ ↦ ∂₁ ψ (x q.1) (q.1, q.2)
     refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [Loop.normalize]
-    apply ContDiff.sub -- uncurries, so cannot use fun_prop
+    apply ContDiff.sub -- TODO(funprop): why can't I use this?
     · fun_prop
     · fun_prop
   · fun_prop
