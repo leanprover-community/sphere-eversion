@@ -8,6 +8,8 @@ import Mathlib.Topology.ShrinkingLemma
 import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Analysis.Convex.Normed
 
+import SphereEversion.FunPropConfig
+
 noncomputable section
 
 open Set Function Filter TopologicalSpace
@@ -316,6 +318,7 @@ theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
   cases' le_total c x with h3 h3 <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]
   simp [projI_eq_min.mpr, h2.trans h3, min_left_comm c, h3]
 
+@[fun_prop]
 theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (projI : α → α) :=
   continuous_projIcc.subtype_val
 
@@ -418,8 +421,8 @@ section
 open Metric
 
 theorem Continuous.infDist {α β : Type*} [TopologicalSpace α] [PseudoMetricSpace β] {s : Set β}
-    {f : α → β} (hf : Continuous f) : Continuous fun x ↦ infDist (f x) s :=
-  (continuous_infDist_pt _).comp hf
+    {f : α → β} (hf : Continuous f) : Continuous fun x ↦ infDist (f x) s := by
+  fun_prop
 
 end
 

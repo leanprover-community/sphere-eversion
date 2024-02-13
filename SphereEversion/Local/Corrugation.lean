@@ -120,7 +120,7 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
 
 variable {γ}
 
-attribute [fun_prop] ContDiff.clm_apply -- add to mathlib
+attribute [fun_prop] ContDiff.clm_apply -- TODO: add to mathlib
 
 theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n (fun (x,y,t) => γ x y t)) {x : H → E}
     (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by

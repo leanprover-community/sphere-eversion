@@ -153,8 +153,10 @@ local notation "∂₁" => partialFDerivFst 𝕜
 
 local notation "∂₂" => partialFDerivSnd 𝕜
 
--- xxx: can I use fun_prop starting here?
-
+-- TODO(funprop): can I golf the next lemma? waiting on uncurry bug to be fixed
+-- attribute [fun_prop] ContDiff.contDiff_top_partial_fst
+-- attribute [fun_prop] ContDiff.continuous
+-- attribute [fun_prop] ContinuousLinearEquiv.continuous_lowerTriangular
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
     {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ⊤ fun p : E × F ↦ f p.1 p.2)
     (hf' : ∀ x y, ∂₂ (fun x y ↦ f x y) x y = f' x y) :
@@ -258,7 +260,7 @@ theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0
     dsimp
     rw [orthogonalProjection_singleton']
     rfl
-  -- xxx: can I use fun_prop here?
+  -- TODO(funprop): try golfing here
   refine ContDiffAt.smul ?_ ?_
   · refine contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt ?_
     apply pow_ne_zero

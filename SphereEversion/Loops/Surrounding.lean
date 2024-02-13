@@ -7,6 +7,8 @@ import SphereEversion.ToMathlib.Topology.Path
 import Mathlib.Analysis.Convex.Caratheodory
 import Mathlib.Analysis.NormedSpace.AddTorsorBases
 
+import SphereEversion.FunPropConfig
+
 /-!
 # Surrounding families of loops
 
@@ -560,13 +562,10 @@ family into the family of paths. -/
 @[simps]
 protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b x) (b x) where
   toFun s := γ x t s
-  continuous_toFun :=
+  continuous_toFun := -- TODO(funprop): uncurrying
     (h.cont.comp₃ continuous_const continuous_const continuous_id).comp continuous_subtype_val
   source' := h.base x t
   target' := h.one x t
-
-attribute [fun_prop] Continuous.subtype_val
-attribute [fun_prop] Continuous.comp₃
 
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
@@ -677,9 +676,8 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
       · rintro ⟨t, s⟩ _
         rw [hδx₀]
         show Ω ∈ 𝓝 (x₀, γ t s)
-        exact
-          mem_nhds_iff.mpr
-            ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
+        exact mem_nhds_iff.mpr
+          ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
     refine this.mono ?_; intro x h t ht s hs; exact h (t, s) ⟨ht, hs⟩
   have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).Surrounds (g x) := by
     rcases h6γ with ⟨p, w, h⟩
@@ -711,9 +709,6 @@ end local_loops
 /-- Function used in `satisfied_or_refund`. Rename. -/
 def ρ (t : ℝ) : ℝ :=
   projI <| 2 * (1 - t)
-
-attribute [fun_prop] continuous_projIcc
-attribute [fun_prop] continuous_projI
 
 @[fun_prop]
 theorem continuous_ρ : Continuous ρ := by
@@ -779,7 +774,7 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
     (ht : Continuous t) (hs : Continuous s) :
     Continuous fun x ↦ sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by
   refine Continuous.ofPath _ _ _ ?_ hs
-  refine Continuous.path_strans ?_ ?_ ?_ ?_ ?_ continuous_snd
+  refine Continuous.path_strans ?_ ?_ ?_ ?_ (by fun_prop) continuous_snd
   · refine h₀.continuous_path hf.fst'.fst' ?_ continuous_snd
     fun_prop -- TODO(funprop): make the previous line superfluous!
   · refine h₁.continuous_path hf.fst'.fst' ?_ continuous_snd
@@ -788,7 +783,6 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs
     simp only [hs, h₁.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
-  · fun_prop
 
 /-- In this lemmas and the lemmas below we add `FiniteDimensional ℝ E` so that we can conclude
  `LocallyCompactSpace E`. -/

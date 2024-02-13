@@ -1,5 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.Projection
-import Mathlib.Tactic.FunProp.Continuous
+import SphereEversion.FunPropConfig
 
 noncomputable section
 
@@ -148,11 +148,6 @@ theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}�
   apply mul_left_injective₀ h
   dsimp only
   rwa [add_mul, MulZeroClass.zero_mul, div_mul_cancel _ h]
-
--- TODO: add these to mathlib
-attribute [fun_prop] Continuous.div_const
-attribute [fun_prop] continuous_subtype_val
-attribute [fun_prop] Continuous.inner
 
 /-- Given two non-orthogonal vectors in an inner product space,
 `orthogonal_projection_orthogonal_line_iso` is the continuous linear equivalence between their

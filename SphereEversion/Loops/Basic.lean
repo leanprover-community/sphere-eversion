@@ -1,7 +1,7 @@
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 
-import Mathlib.Tactic.FunProp.ContDiff
+import SphereEversion.FunPropConfig
 
 /-!
 # Basic definitions and properties of loops
@@ -223,9 +223,6 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
       refine' ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, _⟩⟩
       rw [Int.cast_zero, sub_self]
     simp only [Loop.coe_mk, this, Path.extend_extends']
-
-attribute [fun_prop] continuous_projIcc
-attribute [fun_prop] Continuous.prod_map
 
 /-- `Loop.ofPath` is continuous, general version. -/
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
