@@ -2,6 +2,8 @@ import Mathlib.Algebra.Periodic
 import Mathlib.Analysis.Normed.Group.Basic
 import SphereEversion.ToMathlib.Topology.Separation
 
+import Mathlib.Topology.Instances.AddCircle
+
 /-!
 
 # Boundedness property of periodic function
@@ -29,16 +31,19 @@ open scoped Topology
 
 section OnePeriodic
 
-variable {α : Type _}
+variable {α : Type*}
 
+-- xxx: remove when using AddCircle
 /-- The integers as an additive subgroup of the reals. -/
 def ℤSubℝ : AddSubgroup ℝ :=
   AddMonoidHom.range (Int.castAddHom ℝ)
 
+-- xxx: remove when using AddCircle
 /-- The equivalence relation on `ℝ` corresponding to its partition as cosets of `ℤ`. -/
 def transOne : Setoid ℝ :=
   QuotientAddGroup.leftRel ℤSubℝ
 
+-- xxx: make an abbrev instead?
 /-- The proposition that a function on `ℝ` is periodic with period `1`. -/
 def OnePeriodic (f : ℝ → α) : Prop :=
   Periodic f 1
@@ -52,7 +57,7 @@ theorem OnePeriodic.add_int {f : ℝ → α} (h : OnePeriodic f) (k : ℤ) (x : 
 /-- The circle `𝕊₁ := ℝ/ℤ`.
 
 TODO [Yury]: use `AddCircle`. -/
-def 𝕊₁ :=
+def 𝕊₁ := --AddCircle
   Quotient transOne
 deriving TopologicalSpace, Inhabited
 
@@ -105,7 +110,7 @@ theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ :=
 theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ :=
   QuotientAddGroup.isOpenMap_coe ℤSubℝ
 
-theorem quotientMap_id_proj𝕊₁ {X : Type _} [TopologicalSpace X] :
+theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
     QuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
   (IsOpenMap.id.prod isOpenMap_proj𝕊₁).to_quotientMap (continuous_id.prod_map continuous_proj𝕊₁)
     (surjective_id.Prod_map Quotient.exists_rep)
@@ -138,7 +143,7 @@ instance : T2Space 𝕊₁ := by
   rw [this]
   exact IsClosed.preimage (continuous_snd.sub continuous_fst) isClosed_int
 
-variable {X E : Type _} [TopologicalSpace X] [NormedAddCommGroup E]
+variable {X E : Type*} [TopologicalSpace X] [NormedAddCommGroup E]
 
 theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont : Continuous ↿f)
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K) :
