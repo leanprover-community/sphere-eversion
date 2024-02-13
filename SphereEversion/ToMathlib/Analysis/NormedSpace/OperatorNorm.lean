@@ -136,9 +136,11 @@ open Function FiniteDimensional
 
 variable [FiniteDimensional 𝕜 E]
 
-theorem ContinuousLinearMap.injective_iff_antilipschitz [CompleteSpace 𝕜] (φ : E →L[𝕜] F) :
+-- PRed in #100xx, TODO
+/-- A `LinearMap` on a finite-dimensional space over a complete field
+  is injective iff it is anti-Lipschitz. -/
+theorem LinearMap.injective_iff_antilipschitz [CompleteSpace 𝕜] (φ : E →ₗ[𝕜] F) :
     Injective φ ↔ ∃ K > 0, AntilipschitzWith K φ := by
-  change Injective φ.toLinearMap ↔ _
   constructor
   · rw [← LinearMap.ker_eq_bot]
     exact φ.exists_antilipschitzWith
@@ -157,10 +159,9 @@ theorem eventually_norm_sub_lt (x₀ : E) {ε : ℝ} (ε_pos : 0 < ε) : ∀ᶠ 
 theorem ContinuousLinearMap.isOpen_injective [CompleteSpace 𝕜] :
     IsOpen {L : E →L[𝕜] F | Injective L} := by
   rw [isOpen_iff_eventually]
-  rintro φ₀ (hφ₀ : Injective φ₀)
+  rintro φ₀ hφ₀
   rcases φ₀.injective_iff_antilipschitz.mp hφ₀ with ⟨K, K_pos, H⟩
-  have : ∀ᶠ φ in 𝓝 φ₀, ‖φ - φ₀‖₊ < K⁻¹
-  · exact eventually_nnnorm_sub_lt _ <| inv_pos_of_pos K_pos
+  have : ∀ᶠ φ in 𝓝 φ₀, ‖φ - φ₀‖₊ < K⁻¹ := eventually_nnnorm_sub_lt _ <| inv_pos_of_pos K_pos
   filter_upwards [this] with φ hφ
   apply φ.injective_iff_antilipschitz.mpr
   exact ⟨(K⁻¹ - ‖φ - φ₀‖₊)⁻¹, inv_pos_of_pos (tsub_pos_of_lt hφ),

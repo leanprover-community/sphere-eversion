@@ -113,10 +113,8 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
       apply ContinuousAt.comp _ continuousAt_fst
       exact continuousAt_orthogonalProjection_orthogonal x₀_ne
     exact continuousAt_const
-  ·
-    exact
-      (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
-        (continuous_snd.isOpen_preimage _ ContinuousLinearMap.isOpen_injective)
+  · exact (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
+      (continuous_snd.isOpen_preimage _ ContinuousLinearMap.isOpen_injective)
   · constructor
     · change ⟪x₀, x₀⟫ ≠ 0
       apply inner_self_eq_zero.not.mpr x₀_ne
