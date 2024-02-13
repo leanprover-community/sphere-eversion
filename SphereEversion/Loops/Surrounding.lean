@@ -570,7 +570,7 @@ protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b 
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
     (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) :=
-  -- TODO(funprop): cannot use because subtypes are involved
+  -- TODO(funprop): cannot use h.path is complicated
   h.cont.comp₃ hf ht hs.subtype_val
 
 @[simp]
@@ -671,8 +671,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     -- todo: this is nicer with `IsCompact.eventually_forall_of_forall_eventually` twice, but then
     -- we need the continuity of `δ` with the arguments reassociated differently.
     have : ∀ᶠ x : E in 𝓝 x₀, ∀ ts : ℝ × ℝ, ts ∈ I ×ˢ I → (x, δ x ts.1 ts.2) ∈ Ω := by
-      apply (isCompact_Icc.prod isCompact_Icc).eventually_forall_mem
-      · exact (continuous_fst.prod_mk hδ)
+      apply (isCompact_Icc.prod isCompact_Icc).eventually_forall_mem (by fun_prop)
       · rintro ⟨t, s⟩ _
         rw [hδx₀]
         show Ω ∈ 𝓝 (x₀, γ t s)
@@ -683,7 +682,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     rcases h6γ with ⟨p, w, h⟩
     obtain ⟨W, hW⟩ := smooth_surroundingPts h
     let c : E → F × (Fin (d + 1) → F) := fun x ↦ (g x, δ x 1 ∘ p)
-    -- TODO(funprop): why is hg.prod needed?
+    -- TODO(funprop): why is applying ContinuousAt.prod needed?
     have hc : ContinuousAt c x₀ := hg.prod (by fun_prop)
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
       unfold_let c
@@ -711,7 +710,7 @@ def ρ (t : ℝ) : ℝ :=
 
 @[fun_prop]
 theorem continuous_ρ : Continuous ρ := by
-  apply continuous_projI.comp -- TODO(funprop): why is this line necessary?
+  unfold ρ
   fun_prop
 
 @[simp]
@@ -774,10 +773,10 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
     Continuous fun x ↦ sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by
   refine Continuous.ofPath _ _ _ ?_ hs
   refine Continuous.path_strans ?_ ?_ ?_ ?_ (by fun_prop) continuous_snd
-  · -- TODO(fun_prop): why can't this be just `fun_prop`?
-    exact h₀.continuous_path hf.fst'.fst' (by fun_prop) continuous_snd
-  · -- TODO(fun_prop): why can't this be just `fun_prop`?
-    exact h₁.continuous_path hf.fst'.fst' (by fun_prop) continuous_snd
+  -- NB(grunweg): continuous_path is dependently typed, hence the first two goals
+  -- cannot be solved just by `fun_prop`.
+  · exact h₀.continuous_path hf.fst'.fst' (by fun_prop) continuous_snd
+  · exact h₁.continuous_path hf.fst'.fst' (by fun_prop) continuous_snd
   · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs
