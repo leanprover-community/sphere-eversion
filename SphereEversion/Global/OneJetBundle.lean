@@ -192,9 +192,8 @@ theorem oneJetBundle_trivializationAt (x₀ x : J¹MM') :
   rw [continuousLinearMap_trivializationAt, Trivialization.continuousLinearMap_apply]
   simp only [inTangentCoordinates, inCoordinates]
   congr 2
-  exact
-    Trivialization.pullback_symmL ContMDiffMap.fst (trivializationAt E (TangentSpace I) x₀.1.1)
-      x.proj
+  exact Trivialization.pullback_symmL ContMDiffMap.fst
+    (trivializationAt E (TangentSpace I) x₀.1.1) x.proj
 
 theorem trivializationAt_oneJetBundle_source (x₀ : M × M') :
     (trivializationAt (E →L[𝕜] E') FJ¹MM' x₀).source =
@@ -403,11 +402,9 @@ theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h :
     {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} (hg : ContinuousAt g x₀) :
     inTangentCoordinates I J' f h (fun x ↦ ϕ' x ∘L ϕ x) x₀ =ᶠ[𝓝 x₀] fun x ↦
       inTangentCoordinates I' J' g h ϕ' x₀ x ∘L inTangentCoordinates I I' f g ϕ x₀ x := by
-  refine'
-    eventually_of_mem
-      (hg.preimage_mem_nhds <|
-        (achart H' (g x₀)).1.open_source.mem_nhds <| mem_achart_source H' (g x₀))
-      fun x hx ↦ _
+  refine eventually_of_mem (hg.preimage_mem_nhds <|
+    (achart H' (g x₀)).1.open_source.mem_nhds <| mem_achart_source H' (g x₀))
+    fun x hx ↦ ?_
   ext v
   beta_reduce
   simp_rw [inTangentCoordinates, inCoordinates,

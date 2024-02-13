@@ -407,11 +407,10 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
   by_cases hxK₁ : x ∈ L.K₁
   · apply hε
     rw [Metric.mem_thickening_iff]
-    refine' ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), _, _⟩
-    · exact
-        ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
-          ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩, by
-          simp only [Loop.fract_eq]⟩
+    refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), ?_, ?_⟩
+    · exact ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
+        ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩,
+         by simp only [Loop.fract_eq]⟩
     · simp only [h, improveStep_apply_f, FormalSol.toJetSec_eq_coe, improveStep_apply_φ]
       rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
       refine' ⟨by simpa using ε_pos, _, _⟩ <;> dsimp only <;> rw [dist_self_add_left]

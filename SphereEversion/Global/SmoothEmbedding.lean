@@ -259,8 +259,8 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
       convert isOpen_extChartAt_preimage' IF x aux
       rw [image_comp]
-      refine'
-        (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans _)
+      refine
+        (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
       rw [extChartAt, PartialHomeomorph.extend_target']
       exact hf₄
   smooth_to := by
@@ -325,10 +325,9 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   have hg₁ : ∀ z, (g z).source = univ := by simp
   have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp
   have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp
-  refine'
-    ⟨M × ℝ, t, fun z =>
-      openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) (hg₃ z.1) _, ht₁,
-      fun z => _, _, _⟩
+  refine ⟨M × ℝ, t,
+    fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) (hg₃ z.1) ?_, ht₁,
+    fun z ↦ ?_, ?_, ?_⟩
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
     simp_rw [extChartAt]
@@ -437,14 +436,11 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
     intros
     exact if_pos hm
   by_cases hx : k x ∈ U
-  · refine'
-      ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
-        (contMDiffOn_congr h₄).mpr <|
-          ψ.smooth_to.comp_contMDiffOn <|
-            hg.comp_contMDiffOn
-              (smoothOn_id.prod_mk <| φ.smooth_inv.comp hk.smoothOn Subset.rfl)⟩
-  · refine'
-      ⟨k ⁻¹' V, h₂, _, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
+  · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
+      (contMDiffOn_congr h₄).mpr <| ψ.smooth_to.comp_contMDiffOn <| hg.comp_contMDiffOn
+        (smoothOn_id.prod_mk <| φ.smooth_inv.comp hk.smoothOn Subset.rfl)⟩
+  · refine
+      ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
     exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx
 
 end NonMetric
@@ -472,10 +468,9 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
     refine Metric.isCompact_of_isClosed_isBounded Metric.isClosed_cthickening
         (Bornology.IsBounded.cthickening <| IsCompact.isBounded <| ?_)
     apply (hKP.prod hK).image
-    exact
-      ψ.smooth_inv.continuousOn.comp_continuous
-        (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q =>
-        hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
+    exact ψ.smooth_inv.continuousOn.comp_continuous
+      (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q =>
+      hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
     hK₁.uniformContinuousOn_of_continuous ψ.continuous.continuousOn
   have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x _hx => hε _

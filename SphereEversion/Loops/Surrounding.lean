@@ -296,9 +296,8 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     mem_prod_iff.mpr ⟨_, hn₂', _, hn₁', Subset.rfl⟩
   refine eventually_of_mem come_on ?_
   rintro ⟨y₂, y₁⟩ ⟨hy₂ : swap p y₂ ∈ n₂, hy₁ : f y₁ ∈ n₁⟩
-  refine
-    ⟨W' (f y₁, swap p y₂),
-      (surroundingPts_evalBarycentricCoords_iff (f y₁) (swap p y₂)).mpr fun i ↦ ?_⟩
+  refine ⟨W' (f y₁, swap p y₂),
+    (surroundingPts_evalBarycentricCoords_iff (f y₁) (swap p y₂)).mpr fun i ↦ ?_⟩
   change W' (f y₁, swap p y₂) i ∈ Ioi (0 : ℝ)
   suffices (f y₁, swap p y₂) ∈ S from this i (mem_univ _)
   apply hS'
@@ -464,10 +463,9 @@ theorem surrounding_loop_of_convexHull [FiniteDimensional ℝ F] {f b : F} {O : 
             (∀ s t, γ (projI t) s = γ t s) ∧ (∀ t s, γ t s ∈ O) ∧ (γ 1).Surrounds f := by
   rcases surrounded_of_convexHull O_op hsf with ⟨p, w, h, hp⟩
   rw [← O_op.isConnected_iff_isPathConnected] at O_conn
-  exact
-    ⟨surroundingLoop O_conn hp hb, continuous_surroundingLoop, surroundingLoop_zero_right,
-      surroundingLoop_zero_left, fun s t ↦ by rw [surroundingLoop_projI], surroundingLoop_mem,
-      surroundingLoop_surrounds h⟩
+  exact ⟨surroundingLoop O_conn hp hb, continuous_surroundingLoop, surroundingLoop_zero_right,
+    surroundingLoop_zero_left, fun s t ↦ by rw [surroundingLoop_projI], surroundingLoop_mem,
+    surroundingLoop_surrounds h⟩
 
 end surroundingLoop
 
@@ -673,9 +671,8 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
       · rintro ⟨t, s⟩ _
         rw [hδx₀]
         show Ω ∈ 𝓝 (x₀, γ t s)
-        exact
-          mem_nhds_iff.mpr
-            ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
+        exact mem_nhds_iff.mpr
+          ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
     refine this.mono ?_; intro x h t ht s hs; exact h (t, s) ⟨ht, hs⟩
   have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).Surrounds (g x) := by
     rcases h6γ with ⟨p, w, h⟩
@@ -960,9 +957,8 @@ theorem surroundingFamilyIn_iff_germ {γ : E → ℝ → Loop F} :
       (∀ x, LoopFamilyGerm b x γ) ∧ ∀ x ∈ C, SurroundingFamilyGerm g Ω x γ := by
   constructor
   · rintro ⟨⟨base, t₀, projI, family_surrounds, family_cont⟩, H⟩
-    exact
-      ⟨fun x ↦ ⟨base x, t₀ x, projI x, fun t s ↦ family_cont.continuousAt⟩, fun x x_in ↦
-        ⟨family_surrounds x x_in, H x x_in⟩⟩
+    exact ⟨fun x ↦ ⟨base x, t₀ x, projI x, fun t s ↦ family_cont.continuousAt⟩, fun x x_in ↦
+      ⟨family_surrounds x x_in, H x x_in⟩⟩
   · rintro ⟨h, h'⟩
     refine ⟨⟨fun x ↦ (h x).base, fun x ↦ (h x).t₀, fun x ↦ (h x).projI,
         fun x hx ↦ (h' x hx).Surrounds, ?_⟩,

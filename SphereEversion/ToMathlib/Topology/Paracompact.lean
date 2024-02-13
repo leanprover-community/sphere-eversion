@@ -36,9 +36,8 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     intro a b ha hb
     by_contra hab
     replace hab : b + 1 ≤ a; · simpa using hab
-    exact
-      Set.Nonempty.ne_empty (⟨x, interior_subset hb, ha⟩ : (K b.succ \ K a).Nonempty)
-        (Set.diff_eq_empty.mpr (K.subset hab))
+    exact Set.Nonempty.ne_empty (⟨x, interior_subset hb, ha⟩ : (K b.succ \ K a).Nonempty)
+      (Set.diff_eq_empty.mpr (K.subset hab))
   have hU'' : ∀ n x, x ∈ C n → U n ∈ 𝓝 x := fun n x hx ↦
     mem_nhds_iff.mpr ⟨U n, Subset.rfl, hU n, hCU n hx⟩
   have : ∀ (n) (x : C n), ∃ i r, ↑x ∈ W i r ∧ B i r ⊆ U n ∧ p i r := fun n ⟨x, hx⟩ ↦ by
@@ -52,9 +51,8 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
   choose f hf using fun n ↦ (hC n).elim_finite_subcover (V n) (hV₁ n) (hV₂ n)
   classical
   let s : Set (ι × ℝ) := ⋃ n, (f n).image (Pi.prod (i n) (r n))
-  refine
-    ⟨s, countable_iUnion fun n ↦ Finset.countable_toSet _, fun z hz ↦ ?_,
-      Set.univ_subset_iff.mp fun x _ ↦ ?_, fun x ↦ ?_⟩
+  refine ⟨s, countable_iUnion fun n ↦ Finset.countable_toSet _, fun z hz ↦ ?_,
+    Set.univ_subset_iff.mp fun x _ ↦ ?_, fun x ↦ ?_⟩
   · simp only [Pi.prod, mem_iUnion, Finset.coe_image, mem_image, Finset.mem_coe,
       SetCoe.exists] at hz
     obtain ⟨n, x, hx, -, rfl⟩ := hz

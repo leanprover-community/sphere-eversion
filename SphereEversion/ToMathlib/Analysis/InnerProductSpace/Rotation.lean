@@ -57,9 +57,8 @@ theorem rot_eq_aux : ω.rot = ω.rotAux := by
 theorem contDiff_rot {p : ℝ × E} (hp : p.2 ≠ 0) : ContDiffAt ℝ ⊤ ω.rot p := by
   simp only [rot_eq_aux]
   refine (contDiffAt_fst.mul_const.cos.smul contDiffAt_const).add ?_
-  refine
-    ((contDiffAt_const.sub contDiffAt_fst.mul_const.cos).smul ?_).add
-      (contDiffAt_fst.mul_const.sin.smul ?_)
+  refine ((contDiffAt_const.sub contDiffAt_fst.mul_const.cos).smul ?_).add
+    (contDiffAt_fst.mul_const.sin.smul ?_)
   · exact (contDiffAt_orthogonalProjection_singleton hp).comp _ contDiffAt_snd
   · exact ω.crossProduct'.contDiff.contDiffAt.comp _ contDiffAt_snd
 

@@ -296,13 +296,13 @@ def locFormalEversionAux : HtpyJetSec E E
       simp_rw [mem_preimage, mem_singleton_iff] at hx
       show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
       simp_rw [hx, zero_smul]
-    refine' ContDiffAt.smul _ _
+    refine ContDiffAt.smul ?_ ?_
     -- Porting note: the next hack wasn't necessary in Lean 3
     let _ : NormedSpace ℝ E := InnerProductSpace.toNormedSpace
-    refine' (smoothStep.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
-    exact
-      (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
+    · exact (smoothStep.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
+    · exact (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
         (smoothStep.smooth.prod_map contDiff_id).contDiffAt
+
 /-- A formal eversion of `𝕊²` into its ambient Euclidean space.
 The corresponding map `E → E` is roughly a linear homotopy from `id` at `t = 0` to `- id` at
 `t = 1`. The continuous linear maps are roughly rotations with angle `t * π`. However, we have to
@@ -382,12 +382,11 @@ theorem locFormalEversion_hol :
   have :
     (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x => ‖x‖ ^ 2) ⁻¹' Ioi (3 / 4)) ∈
       𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) := by
-    refine' (IsOpen.mem_nhdsSet _).mpr _
-    exact
-      (isOpen_Iio.union isOpen_Ioi).prod
+    refine (IsOpen.mem_nhdsSet ?_).mpr ?_
+    · exact (isOpen_Iio.union isOpen_Ioi).prod
         (isOpen_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
     rintro ⟨s, x⟩ ⟨hs, hx⟩
-    refine' ⟨_, _⟩
+    refine ⟨?_, ?_⟩
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs
     rcases hs with (rfl | rfl)
     exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
@@ -395,15 +394,14 @@ theorem locFormalEversion_hol :
     simp_rw [mem_sphere_zero_iff_norm] at hx
     simp_rw [mem_preimage, hx, one_pow, mem_Ioi]
     norm_num
-  have :
-    (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x => smoothStep (‖x‖ ^ 2)) ⁻¹' {1}) ∈
+  have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x ↦smoothStep (‖x‖ ^ 2)) ⁻¹' {1}) ∈
       𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) := by
-    refine' mem_of_superset this (prod_mono Subset.rfl _)
-    erw [@preimage_comp _ _ _ _ smoothStep]
-    refine' preimage_mono _
+    refine mem_of_superset this (prod_mono Subset.rfl ?_)
+    erw [preimage_comp (g := smoothStep)]
+    refine preimage_mono ?_
     intro x hx
     rw [mem_preimage, mem_singleton_iff, smoothStep.of_gt hx]
-  refine' eventually_of_mem this _
+  refine eventually_of_mem this ?_
   rintro ⟨t, x⟩ ⟨ht | ht, hx⟩
   · exact locFormalEversionHolAtZero ω ht hx
   · exact locFormalEversionHolAtOne ω ht hx

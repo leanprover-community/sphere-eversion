@@ -198,18 +198,13 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
           refine' continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
         refine' eventually_of_mem this _
         intro x hx
-        exact
-          (hγ₅C hx).trans
-            (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
+        exact (hγ₅C hx).trans
+          (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
       exact hb.fst'.contDiffAt.congr_of_eventuallyEq this
-    ·
-      exact
-        (hγ₅.comp₃ contDiff_fst smoothTransition.contDiff.fst'.snd' <|
-                contDiff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
-          ((EventuallyEq.rfl.prod_mk <|
-                EventuallyEq.rfl.prod_mk <|
-                  (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp
-            ↿γ₅)
+    · exact (hγ₅.comp₃ contDiff_fst smoothTransition.contDiff.fst'.snd' <|
+          contDiff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
+        ((EventuallyEq.rfl.prod_mk <| EventuallyEq.rfl.prod_mk <|
+              (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp ↿γ₅)
   refine' ⟨γ, ⟨⟨_, _, _, _, hγ.continuous⟩, _⟩, hγ, _⟩
   · intro x t; simp_rw [fract_zero]; rw [hγ₅C]; exact hγ₃.base x _
     exact Or.inr (by rw [mem_preimage, fract_zero]; exact h0C₁)
@@ -231,12 +226,10 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     rw [← hγ₃.projI]
     simp_rw [if_pos hΩ]
     apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
-  · refine' eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s => _
-    refine' (closedBall_subset_ball _).trans (hΩ x hx.1)
-    refine'
-      (dist_triangle _ _ _).trans_lt
-        (add_lt_add_of_le_of_lt
-          ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left _ _) _)
+  · refine eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s ↦ ?_
+    refine (closedBall_subset_ball ?_).trans (hΩ x hx.1)
+    refine (dist_triangle _ _ _).trans_lt (add_lt_add_of_le_of_lt
+      ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left _ _) ?_)
     simp_rw [HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
     exact h2γ₁ x hx.1 _ _
 

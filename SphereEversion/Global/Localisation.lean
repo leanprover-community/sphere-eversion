@@ -106,10 +106,8 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
   ϕ t x := (𝓕 t x).2
   smooth' := by
     intro a
-    refine' smoothAt_oneJetBundle.mpr _
-    refine'
-      ⟨smoothAt_snd,
-        (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd), _⟩
+    refine smoothAt_oneJetBundle.mpr ⟨smoothAt_snd,
+      (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd), ?_⟩
     dsimp [inTangentCoordinates, inCoordinates, chartAt]
     sorry /- TODO-BUMP simp only [range_id, fderivWithin_univ, fderiv_id, TangentBundle.symmL_model_space,
       TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,

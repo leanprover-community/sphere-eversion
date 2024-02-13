@@ -272,9 +272,8 @@ theorem isHolonomicAt_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} 
   rw [show S.uncurry.bs = fun x ↦ S.uncurry.bs x from rfl, funext S.uncurry_bs]
   simp_rw [mfderiv_prod_eq_add _ _ _ (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj]
   erw [mfderiv_comp p S.smooth_coe_bs.mdifferentiableAt smooth_snd.mdifferentiableAt, mfderiv_snd]
-  exact
-    (show Surjective (ContinuousLinearMap.snd ℝ EP E) from
-          Prod.snd_surjective).clm_comp_injective.eq_iff
+  exact (show Surjective (ContinuousLinearMap.snd ℝ EP E) from
+    Prod.snd_surjective).clm_comp_injective.eq_iff
 
 end FamilyOneJetSec
 

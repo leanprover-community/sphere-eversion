@@ -83,9 +83,8 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
   · rw [← zero_smul ℝ (_ : F)]
     have : Continuous fun z => intervalIntegral (γ z) 0 1 volume :=
       continuous_parametric_intervalIntegral_of_continuous (by apply h) continuous_const
-    exact
-      (tendsto_one_div_add_atTop_nhds_zero_nat.comp tendsto_snd).smul
-        ((this.tendsto x).comp tendsto_fst)
+    exact (tendsto_one_div_add_atTop_nhds_zero_nat.comp tendsto_snd).smul
+      ((this.tendsto x).comp tendsto_fst)
 
 end MetricSpace
 
@@ -151,9 +150,7 @@ theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
   suffices ∀ i, Tendsto (a i) (𝓝 x ×ˢ atTop) (𝓝 (γ.surroundingPointsAt x i)) by
     have hg : Tendsto (fun z : E × ℕ => g z.fst) (𝓝 x ×ˢ atTop) (𝓝 (g x)) :=
       Tendsto.comp γ.smooth_surrounded.continuous.continuousAt tendsto_fst
-    exact
-      eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surroundPtsPointsWeightsAt x⟩ this
-        hg
+    exact eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surroundPtsPointsWeightsAt x⟩ this hg
   intro i
   let t := γ.surroundingParametersAt x i
   change Tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t))
@@ -170,10 +167,8 @@ def localCenteringDensity [DecidablePred (· ∈ affineBases ι ℝ F)] : E → 
       (γ.eventually_exists_surroundingPts_approxSurroundingPointsAt x)
   choose u _u v hv _huv using mem_prod_iff.mp hn₁
   choose m _hmv using mem_atTop_sets.mp hv
-  exact
-    ∑ i,
-      evalBarycentricCoords ι ℝ F (g y) (γ.approxSurroundingPointsAt x y m) i •
-        deltaMollifier m (γ.surroundingParametersAt x i)
+  exact ∑ i, evalBarycentricCoords ι ℝ F (g y) (γ.approxSurroundingPointsAt x y m) i •
+      deltaMollifier m (γ.surroundingParametersAt x i)
 
 /-- This is an auxiliary definition to help construct `centeringDensity` below. -/
 def localCenteringDensityMp : ℕ := by
@@ -290,9 +285,8 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
     mem_nhds_prod_iff'.mpr
       ⟨γ.localCenteringDensityNhd x, univ, γ.localCenteringDensityNhd_isOpen x, hy,
         isOpen_univ, mem_univ t, rfl.subset⟩
-  exact
-    ((γ.localCenteringDensity_smooth_on x).continuousOn.continuousAt hyt).comp
-      (Continuous.Prod.mk y).continuousAt
+  exact ((γ.localCenteringDensity_smooth_on x).continuousOn.continuousAt hyt).comp
+    (Continuous.Prod.mk y).continuousAt
 
 @[simp]
 theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensityNhd x) :
@@ -342,7 +336,7 @@ structure IsCenteringDensity (x : E) (f : ℝ → ℝ) : Prop where
   Continuous : Continuous f
 
 -- Can drop if/when have `intervalIntegrable.smul_continuous_on`
-theorem isCenteringDensity_convex (x : E) : Convex ℝ {f | γ.IsCenteringDensity x f} := by
+theorem isCenteringDensity_convex (x : E) : Convex ℝ { f | γ.IsCenteringDensity x f } := by
   classical
   rintro f ⟨hf₁, hf₂, hf₃, hf₄, hf₅⟩ k ⟨hk₁, hk₂, hk₃, hk₄, hk₅⟩ a b ha hb hab
   have hf₆ : IntervalIntegrable f volume 0 1 := by
@@ -355,18 +349,18 @@ theorem isCenteringDensity_convex (x : E) : Convex ℝ {f | γ.IsCenteringDensit
     rw [hk₃]; exact one_ne_zero
   have hk₇ : IntervalIntegrable (k • (γ x : ℝ → F)) volume 0 1 :=
     (hk₅.smul (γ.continuous x)).intervalIntegrable 0 1
-  exact
-    { Pos := fun t => convex_Ioi (0 : ℝ) (hf₁ t) (hk₁ t) ha hb hab
-      Periodic := (hf₂.smul a).add (hk₂.smul b)
-      integral_one := by
-        simp_rw [Pi.add_apply]
-        rw [intervalIntegral.integral_add (hf₆.smul a) (hk₆.smul b)]
-        simp [intervalIntegral.integral_smul, hf₃, hk₃, hab]
-      average := by
-        simp_rw [Pi.add_apply, Pi.smul_apply, add_smul, smul_assoc]
-        erw [intervalIntegral.integral_add (hf₇.smul a) (hk₇.smul b)]
-        simp [intervalIntegral.integral_smul, ← add_smul, hf₄, hk₄, hab]
-      Continuous := Continuous.add (hf₅.const_smul a) (hk₅.const_smul b) }
+  exact {
+    Pos := fun t => convex_Ioi (0 : ℝ) (hf₁ t) (hk₁ t) ha hb hab
+    Periodic := (hf₂.smul a).add (hk₂.smul b)
+    integral_one := by
+      simp_rw [Pi.add_apply]
+      rw [intervalIntegral.integral_add (hf₆.smul a) (hk₆.smul b)]
+      simp [intervalIntegral.integral_smul, hf₃, hk₃, hab]
+    average := by
+      simp_rw [Pi.add_apply, Pi.smul_apply, add_smul, smul_assoc]
+      erw [intervalIntegral.integral_add (hf₇.smul a) (hk₇.smul b)]
+      simp [intervalIntegral.integral_smul, ← add_smul, hf₄, hk₄, hab]
+    Continuous := Continuous.add (hf₅.const_smul a) (hk₅.const_smul b) }
 
 theorem exists_smooth_isCenteringDensity (x : E) :
     ∃ U ∈ 𝓝 x,

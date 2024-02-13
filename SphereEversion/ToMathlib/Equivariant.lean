@@ -60,11 +60,10 @@ protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy �
     refine' add_le_add_right (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) _) _
     simp_rw [fract, h2]
     exact sub_le_sub_right hxy _
-  · refine'
-      (add_le_add_right (h (unitInterval.fract_mem _) unitInterval.one_mem (fract_lt_one _).le)
-            _).trans
-        (le_trans _ <|
-          add_le_add_right (h unitInterval.zero_mem (unitInterval.fract_mem _) (fract_nonneg _)) _)
+  · refine (add_le_add_right (h (unitInterval.fract_mem _) unitInterval.one_mem
+      (fract_lt_one _).le) _).trans
+      (le_trans ?_ <|
+        add_le_add_right (h unitInterval.zero_mem (unitInterval.fract_mem _) (fract_nonneg _)) _)
     rw [φ.one, add_assoc, add_comm (1 : ℝ)]
     refine' add_le_add_left _ _
     norm_cast
@@ -84,11 +83,9 @@ def linearReparam : EquivariantMap :=
 theorem linearReparam_eq_zero {t : ℝ} (h1 : -4⁻¹ ≤ t) (h2 : t ≤ 4⁻¹) : linearReparam t = 0 := by
   rcases h2.eq_or_lt with (rfl | h2)
   · rw [linearReparam]; norm_num; simp_rw [abs_of_pos (half_pos (zero_lt_one' ℝ)), sub_self]
-  have : ⌊t - 4⁻¹⌋ = -1 := by
-    refine'
-      floor_eq_iff.mpr
-        ⟨le_sub_iff_add_le.mpr <| le_trans (by norm_num) h1,
-          sub_lt_iff_lt_add.mpr <| h2.trans_le (by norm_num)⟩
+  have : ⌊t - 4⁻¹⌋ = -1 :=
+    floor_eq_iff.mpr ⟨le_sub_iff_add_le.mpr <| le_trans (by norm_num) h1,
+      sub_lt_iff_lt_add.mpr <| h2.trans_le (by norm_num)⟩
   have : (⌊t - 4⁻¹⌋ : ℝ) = -1 := by exact_mod_cast this
   simp_rw [linearReparam, fract, this, sub_eq_zero]
   refine' (abs_eq_self.mpr <| _).symm.trans (by ring_nf)
@@ -163,9 +160,8 @@ theorem linearReparam_projI {t : ℝ} : linearReparam (projI t) = projI (linearR
   rcases le_total 0 t with (h1t | h1t)
   rcases le_total t 1 with (h2t | h2t)
   · rw [projI_eq_self.mpr ⟨h1t, h2t⟩, projI_eq_self]
-    refine'
-      ⟨linearReparam_nonneg (le_trans (by norm_num1) h1t),
-        linearReparam_le_one (h2t.trans (by norm_num1))⟩
+    exact ⟨linearReparam_nonneg (le_trans (by norm_num1) h1t),
+      linearReparam_le_one (h2t.trans (by norm_num1))⟩
   · rw [projI_eq_one.mpr h2t, linearReparam_one, projI_eq_one]
     exact one_le_linearReparam (le_trans (by norm_num1) h2t)
   · rw [projI_eq_zero.mpr h1t, linearReparam_zero, projI_eq_zero]

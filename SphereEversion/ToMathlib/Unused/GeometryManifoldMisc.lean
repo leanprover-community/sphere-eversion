@@ -99,9 +99,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
     SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e x₀ := by
   rw [smoothAt_prod]
   refine' ⟨(smoothAt_proj E).congr_of_eventuallyEq _, _⟩
-  ·
-    exact
-      eventually_of_mem (e.open_source.mem_nhds <| e.mem_source.mpr hx₀) fun x hx ↦ e.coe_fst hx
+  · exact eventually_of_mem (e.open_source.mem_nhds <| e.mem_source.mpr hx₀) fun x hx ↦ e.coe_fst hx
   simp_rw [SmoothAt, contMDiffAt_iff_source_of_mem_source (mem_chart_source _ _)]
   simp only [FiberBundle.extChartAt, Function.comp, prod_univ, mfld_simps]
   let e' := trivializationAt F E x₀.proj
@@ -113,11 +111,9 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
     refine' ContMDiffWithinAt.clm_apply _ contDiffWithinAt_snd.contMDiffWithinAt
     have h1 := smoothAt_coord_change IB e' e ⟨mem_base_set_trivialization_at F E x₀.proj, hx₀⟩
     refine' h1.cont_mdiff_within_at.comp_of_eq _ (maps_to_univ _ _) _
-    · refine'
-        ((contMDiffOn_extChartAt_symm x₀.proj _ <|
-                  (extChartAt IB x₀.proj).mapsTo <| mem_extChartAt_source IB x₀.proj).mono_of_mem
-              _).comp_of_eq
-          _ (mapsTo_preimage _ _) rfl
+    · refine' ((contMDiffOn_extChartAt_symm x₀.proj _ <|
+          (extChartAt IB x₀.proj).mapsTo <| mem_extChartAt_source IB x₀.proj).mono_of_mem
+        _).comp_of_eq _ (mapsTo_preimage _ _) rfl
       · exact extChartAt_target_mem_nhdsWithin IB x₀.proj
       exact contDiffWithinAt_fst.contMDiffWithinAt
     exact h0
@@ -368,19 +364,16 @@ theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
   dsimp only [tangentMap]
   let e := trivializationAt E (TangentSpace I) x₀.proj
   let e' := trivializationAt E' (TangentSpace I') (f x₀.proj)
-  have :
-    ContMDiffAt I.tangent 𝓘(𝕜, E') m
+  have : ContMDiffAt I.tangent 𝓘(𝕜, E') m
       (fun x : TangentBundle I M ↦
         inTangentCoordinates I I' id f (mfderiv I I' f) x₀.proj x.proj <|
-          e.continuousLinearMapAt 𝕜 x.proj x.2)
-      x₀ := by
-    refine'
-      ContMDiffAt.mfderiv_apply (fun _ ↦ f) id TotalSpace.proj
-        (fun x ↦ e.continuousLinearMapAt 𝕜 x.proj x.2) _ contMDiffAt_id (contMDiffAt_proj _) _
-        hmn
+          e.continuousLinearMapAt 𝕜 x.proj x.2) x₀ :=
+    ContMDiffAt.mfderiv_apply (fun _ ↦ f) id TotalSpace.proj
+      (fun x ↦ e.continuousLinearMapAt 𝕜 x.proj x.2) _ contMDiffAt_id (contMDiffAt_proj _) _
+      hmn
     apply ContMDiffAt.comp (x₀.proj, x₀.proj) hf contMDiffAt_snd
     apply contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap
-  refine' this.congr_of_eventually_eq _
+  exact this.congr_of_eventually_eq _
   have h1 :=
     (continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
       (e.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)

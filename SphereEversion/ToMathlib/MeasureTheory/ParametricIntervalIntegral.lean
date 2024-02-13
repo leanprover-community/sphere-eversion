@@ -25,11 +25,10 @@ theorem hasFDerivAt_integral_of_dominated_of_fderiv_le'' {F : H → ℝ → E} {
     HasFDerivAt (fun x ↦ ∫ t in a..b, F x t ∂ν) (∫ t in a..b, F' x₀ t ∂ν) x₀ := by
   erw [ae_restrict_uIoc_iff] at h_diff h_bound
   simp_rw [AEStronglyMeasurable.aestronglyMeasurable_uIoc_iff, eventually_and] at hF_meas hF'_meas
-  exact
-    (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
-          bound_integrable.1 h_diff.1).sub
-      (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
-        bound_integrable.2 h_diff.2)
+  exact (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.1 hF_int.1 hF'_meas.1 h_bound.1
+      bound_integrable.1 h_diff.1).sub
+    (hasFDerivAt_integral_of_dominated_of_fderiv_le ε_pos hF_meas.2 hF_int.2 hF'_meas.2 h_bound.2
+      bound_integrable.2 h_diff.2)
 
 /-- Interval version of `hasFDerivAt_integral_of_dominated_loc_of_lip` -/
 theorem hasFDerivAt_integral_of_dominated_loc_of_lip_interval {F : H → ℝ → E} {F' : ℝ → H →L[ℝ] E} {x₀ : H}
@@ -148,9 +147,8 @@ theorem continuousAt_parametric_primitive_of_dominated {F : X → ℝ → E} (bo
         calc
           ‖F x s - F x₀ s‖ ≤ ‖F x s‖ + ‖F x₀ s‖ := norm_sub_le _ _
           _ ≤ 2 * bound s := by linarith only [hs₁, hs₂]
-      exact
-        intervalIntegral.norm_integral_le_of_norm_le H
-          ((bound_integrable.mono_set' <| hsub hb₀ ht).const_mul 2)
+      exact intervalIntegral.norm_integral_le_of_norm_le H
+        ((bound_integrable.mono_set' <| hsub hb₀ ht).const_mul 2)
     apply squeeze_zero_norm' this
     have : Tendsto (fun t ↦ ∫ s in b₀..t, 2 * bound s ∂μ) (𝓝 b₀) (𝓝 0) := by
       suffices ContinuousAt (fun t ↦ ∫ s in b₀..t, 2 * bound s ∂μ) b₀ by
@@ -410,9 +408,8 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
       rw [this.fderiv]
       rfl
     rw [this]; clear this
-    exact
-      (inl ℝ H ℝ).compRightL.continuous.comp
-        ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
+    exact (inl ℝ H ℝ).compRightL.continuous.comp
+      ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]
     refine eventually_of_forall fun t t_in ↦ ?_
     rw [nnabs_coe K]

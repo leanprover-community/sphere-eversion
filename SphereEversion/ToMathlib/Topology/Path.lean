@@ -120,9 +120,8 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
   refine Continuous.if_le ?_ ?_ hs ht ?_
   · rw [continuous_iff_continuousAt]
     intro x
-    refine
-      (continuous_subtype_val.comp hs).continuousAt.comp_div_cases (fun x s ↦ (γ x).extend s)
-        (continuous_subtype_val.comp ht).continuousAt ?_ ?_
+    refine (continuous_subtype_val.comp hs).continuousAt.comp_div_cases (fun x s ↦ (γ x).extend s)
+      (continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
       refine ContinuousAt.path_extend _ ?_ continuousAt_snd
       exact hγ.continuousAt.comp (continuousAt_fst.fst.prod continuousAt_snd)
@@ -133,11 +132,9 @@ theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X
       exact tendsto_prod_top_iff.mpr (hγ0 ht)
   · rw [continuous_iff_continuousAt]
     intro x
-    refine
-      ((continuous_subtype_val.comp hs).sub
-              (continuous_subtype_val.comp ht)).continuousAt.comp_div_cases
-        (fun x s ↦ (γ' x).extend s)
-        (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt ?_ ?_
+    refine ((continuous_subtype_val.comp hs).sub (continuous_subtype_val.comp ht)).continuousAt.comp_div_cases
+      (fun x s ↦ (γ' x).extend s)
+      (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
       refine ContinuousAt.path_extend _ ?_ continuousAt_snd
       exact hγ'.continuousAt.comp (continuousAt_fst.fst.prod continuousAt_snd)

@@ -225,10 +225,9 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
   dsimp only
   rw [show (S.curry (t, s)).bs = fun x => (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
   dsimp only
-  refine'
-    (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
-          ((mdifferentiableAt_const I IP).prod_mk smooth_id.mdifferentiableAt)).trans
-      _
+  refine (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
+    ((mdifferentiableAt_const I IP).prod_mk smooth_id.mdifferentiableAt)).trans
+    ?_
   rw [id, hS]
   rfl
 

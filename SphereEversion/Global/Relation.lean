@@ -470,9 +470,8 @@ theorem OpenSmoothEmbedding.smooth_transfer :
     Smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN))
       (φ.transfer ψ) := by
   intro x
-  refine'
-    SmoothAt.oneJetBundle_map (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
-      (ψ.smooth_to.smoothAt.comp _ smoothAt_snd) _ smoothAt_id
+  refine SmoothAt.oneJetBundle_map (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
+    (ψ.smooth_to.smoothAt.comp _ smoothAt_snd) ?_ smoothAt_id
   have' :=
     ContMDiffAt.mfderiv (fun _ => φ.invFun) (fun x : OneJetBundle IX X IY Y => φ x.1.1)
       ((φ.smoothAt_inv <| _).comp (x, φ x.1.1) smoothAt_snd)
@@ -491,9 +490,8 @@ theorem OpenSmoothEmbedding.range_transfer :
   · rintro ⟨σ, rfl⟩; exact mk_mem_prod (mem_range_self _) (mem_range_self _)
   · rcases σ with ⟨⟨x, y⟩, τ⟩
     rintro ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
-    refine
-      ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
-            τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩, ?_⟩
+    refine ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
+      τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩, ?_⟩
     refine congr_arg (Bundle.TotalSpace.mk _) (ContinuousLinearMap.ext fun v ↦ ?_)
     dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, OneJetBundle.mk]
     /- Porting note: Lean 3 version was

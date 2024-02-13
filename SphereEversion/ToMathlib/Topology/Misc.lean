@@ -45,9 +45,8 @@ theorem Filter.Eventually.closed_neighborhood {α} [TopologicalSpace α] [Normal
     ∃ C' ∈ 𝓝ˢ C, IsClosed C' ∧ ∀ᶠ x in 𝓝ˢ C', P x := by
   obtain ⟨O, hO, hCO, hPO⟩ := mem_nhdsSet_iff_exists.mp hP
   obtain ⟨U, hU, hCU, hUO⟩ := normal_exists_closure_subset hC hO hCO
-  exact
-    ⟨closure U, mem_of_superset (hU.mem_nhdsSet.mpr hCU) subset_closure, isClosed_closure,
-      eventually_of_mem (hO.mem_nhdsSet.mpr hUO) hPO⟩
+  exact ⟨closure U, mem_of_superset (hU.mem_nhdsSet.mpr hCU) subset_closure, isClosed_closure,
+    eventually_of_mem (hO.mem_nhdsSet.mpr hUO) hPO⟩
 
 end
 
@@ -498,8 +497,7 @@ theorem precise_refinement_set' {ι X : Type*} [TopologicalSpace X] {s : Set X} 
     precise_refinement (fun i ↦ ((↑) : s → X) ⁻¹' u i)
       (fun i ↦ (uo i).preimage continuous_subtype_val)
       (by rwa [← preimage_iUnion, Subtype.preimage_coe_eq_univ])
-  exact
-    ⟨fun i ↦ (↑) '' v i, fun i ↦ hs.isOpenMap_subtype_val _ (vo i), by
+  exact ⟨fun i ↦ (↑) '' v i, fun i ↦ hs.isOpenMap_subtype_val _ (vo i), by
       rw [← image_iUnion, vs, Subtype.coe_image_univ], by
       simp_rw [preimage_image_eq _ Subtype.coe_injective, vl], fun i ↦
       Subtype.coe_image_subset _ _, by intro i; rw [image_subset_iff]; exact vu i⟩
