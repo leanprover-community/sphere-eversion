@@ -434,7 +434,7 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
 variable {γ}
 
 @[fun_prop]
-theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n (fun (x,t) => γ x t)) : 𝒞 n fun x ↦ (γ x).average :=
+theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n fun x ↦ (γ x).average :=
   contDiff_parametric_primitive_of_contDiff hγ_diff contDiff_const 0
 
 @[fun_prop]

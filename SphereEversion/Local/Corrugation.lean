@@ -122,7 +122,7 @@ variable {γ}
 
 attribute [fun_prop] ContDiff.clm_apply -- TODO: add to mathlib
 
-theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n (fun (x,y,t) => γ x y t)) {x : H → E}
+theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
     (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
   unfold corrugation
   fun_prop
@@ -187,7 +187,7 @@ theorem fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E �
 
 local notation "∞" => (⊤ : ℕ∞)
 
-theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ (fun (x,y,t) => γ x y t)) {x : H → E} (hx : 𝒞 ∞ x)
+theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {x : H → E} (hx : 𝒞 ∞ x)
     {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h ↦ R N (γ <| g h) <| x h := by
   apply ContDiff.const_smul
   apply contDiff_parametric_primitive_of_contDiff
