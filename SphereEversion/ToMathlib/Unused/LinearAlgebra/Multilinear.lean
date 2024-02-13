@@ -42,8 +42,7 @@ variable [AddCommMonoid M₄] [Module R M₄]
 /-- The coproduct of two multilinear maps. -/
 @[simps]
 def coprod (L₁ : MultilinearMap R M₁ M₃) (L₂ : MultilinearMap R M₂ M₃) :
-    MultilinearMap R (fun i ↦ M₁ i × M₂ i) M₃
-    where
+    MultilinearMap R (fun i ↦ M₁ i × M₂ i) M₃ where
   toFun v := (L₁ fun i ↦ (v i).1) + L₂ fun i ↦ (v i).2
   map_add' _ v i p q := by
     skip

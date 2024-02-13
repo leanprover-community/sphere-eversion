@@ -32,8 +32,10 @@ structure Loop where
 
 instance : FunLike (Loop X) ℝ X where
   coe := fun γ ↦ γ.toFun
-  coe_injective' := sorry
-
+  coe_injective' := by
+    intro γ γ' h
+    have : γ.toFun = γ'.toFun := h
+    sorry -- this should be easy...
 
 initialize_simps_projections Loop (toFun → apply)
 
