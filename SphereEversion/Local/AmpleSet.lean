@@ -1,13 +1,6 @@
-import Mathlib.Analysis.Convex.Hull
-import Mathlib.Data.Real.Basic
-import Mathlib.Topology.Connected.Basic
-import Mathlib.Topology.Connected.PathConnected
-import Mathlib.Topology.Algebra.Affine
-import Mathlib.LinearAlgebra.Dimension.Basic
-import Mathlib.LinearAlgebra.AffineSpace.Midpoint
-import Mathlib.Data.Matrix.Notation
-import Mathlib.Analysis.Convex.Topology
-import SphereEversion.ToMathlib.Topology.Misc
+import Mathlib.Analysis.Convex.Normed
+import Mathlib.Data.IsROrC.Basic
+import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 
 /-!
 # Ample subsets of real vector spaces
