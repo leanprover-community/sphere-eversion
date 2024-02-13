@@ -14,69 +14,14 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
   [ChartedSpace H M] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
 
-section -- up to sum_germ, PRed in #10015 (the remainder needs smooth germs)
+section -- remaining file needs smooth germs
 
 variable {F : Type*} [AddCommGroup F] [Module ℝ F]
 
-namespace PartitionOfUnity
-
-variable {s : Set M} (ρ : PartitionOfUnity ι M s) (x : M)
-
-theorem finite_tsupport : {i | x ∈ tsupport (ρ i)}.Finite := by
-  rcases ρ.locallyFinite x with ⟨t, t_in, ht⟩
-  apply ht.subset
-  rintro i hi
-  simp only [inter_comm]
-  exact mem_closure_iff_nhds.mp hi t t_in
-
-def fintsupport : Finset ι :=
-  (ρ.finite_tsupport x).toFinset
-
-theorem mem_fintsupport_iff (i : ι) : i ∈ ρ.fintsupport x ↔ x ∈ tsupport (ρ i) :=
-  Finite.mem_toFinset _
-
-theorem eventually_fintsupport_subset : ∀ᶠ y in 𝓝 x, ρ.fintsupport y ⊆ ρ.fintsupport x := by
-  apply (ρ.locallyFinite.closure.eventually_subset (fun _ ↦ isClosed_closure) x).mono
-  intro y hy z hz
-  rw [PartitionOfUnity.mem_fintsupport_iff] at *
-  exact hy hz
-
-end PartitionOfUnity
-
 namespace SmoothPartitionOfUnity
 
-variable {s : Set M} (ρ : SmoothPartitionOfUnity ι I M s) (x : M)
+variable {s : Set M} (ρ : SmoothPartitionOfUnity ι I M s) {x : M}
 
-theorem finite_tsupport : {i | x ∈ tsupport (ρ i)}.Finite :=
-  PartitionOfUnity.finite_tsupport ρ.toPartitionOfUnity _
-
-def fintsupport {s : Set M} (ρ : SmoothPartitionOfUnity ι I M s) (x : M) :
-    Finset ι :=
-  (ρ.finite_tsupport x).toFinset
-
-theorem mem_fintsupport_iff (i : ι) : i ∈ ρ.fintsupport x ↔ x ∈ tsupport (ρ i) :=
-  Finite.mem_toFinset _
-
-theorem eventually_fintsupport_subset : ∀ᶠ y in 𝓝 x, ρ.fintsupport y ⊆ ρ.fintsupport x :=
-  ρ.toPartitionOfUnity.eventually_fintsupport_subset _
-
-def finsupport {ι : Type*} {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*} [TopologicalSpace H]
-    {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
-    [SmoothManifoldWithCorners I M] {s} (ρ : SmoothPartitionOfUnity ι I M s) (x : M) : Finset ι :=
-  ρ.toPartitionOfUnity.finsupport x
-
-/-- Weaker version of `smooth_partition_of_unity.eventually_fintsupport_subset`. -/
-theorem finsupport_subset_fintsupport : ρ.finsupport x ⊆ ρ.fintsupport x := fun i hi ↦ by
-  rw [ρ.mem_fintsupport_iff]
-  apply subset_closure
-  exact (ρ.toPartitionOfUnity.mem_finsupport x).mp hi
-
-theorem eventually_finsupport_subset : ∀ᶠ y in 𝓝 x, ρ.finsupport y ⊆ ρ.fintsupport x :=
-  (ρ.eventually_fintsupport_subset x).mono
-    fun y hy ↦ (ρ.finsupport_subset_fintsupport y).trans hy
-
-variable {x} in
 theorem sum_germ (hx : x ∈ interior s := by simp) :
     ∑ i in ρ.fintsupport x, (ρ i : smoothGerm I x) = 1 := by
   have : ∀ᶠ y in 𝓝 x, y ∈ interior s := isOpen_interior.eventually_mem hx
@@ -90,10 +35,6 @@ theorem sum_germ (hx : x ∈ interior s := by simp) :
 def combine (ρ : SmoothPartitionOfUnity ι I M s) (φ : ι → M → F) (x : M) : F :=
   ∑ᶠ i, ρ i x • φ i x
 
--- PRed to mathlib as well
--- TODO: move to Mathlib attribute [simps] SmoothPartitionOfUnity.toPartitionOfUnity
-
-variable {x} in
 theorem germ_combine_mem (φ : ι → M → F) (hx : x ∈ interior s := by simp) :
     (ρ.combine φ : Germ (𝓝 x) F) ∈
       reallyConvexHull (smoothGerm I x) ((fun i ↦ (φ i : Germ (𝓝 x) F)) '' ρ.fintsupport x) := by
