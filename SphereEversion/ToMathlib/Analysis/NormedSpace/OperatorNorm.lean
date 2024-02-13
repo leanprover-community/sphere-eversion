@@ -136,7 +136,7 @@ open Function FiniteDimensional
 
 variable [FiniteDimensional 𝕜 E]
 
-theorem ContinuousLinearMap.inj_iff_antilip [CompleteSpace 𝕜] (φ : E →L[𝕜] F) :
+theorem ContinuousLinearMap.injective_iff_antilipschitz [CompleteSpace 𝕜] (φ : E →L[𝕜] F) :
     Injective φ ↔ ∃ K > 0, AntilipschitzWith K φ := by
   change Injective φ.toLinearMap ↔ _
   constructor
@@ -158,11 +158,11 @@ theorem ContinuousLinearMap.isOpen_injective [CompleteSpace 𝕜] :
     IsOpen {L : E →L[𝕜] F | Injective L} := by
   rw [isOpen_iff_eventually]
   rintro φ₀ (hφ₀ : Injective φ₀)
-  rcases φ₀.inj_iff_antilip.mp hφ₀ with ⟨K, K_pos, H⟩
+  rcases φ₀.injective_iff_antilipschitz.mp hφ₀ with ⟨K, K_pos, H⟩
   have : ∀ᶠ φ in 𝓝 φ₀, ‖φ - φ₀‖₊ < K⁻¹
   · exact eventually_nnnorm_sub_lt _ <| inv_pos_of_pos K_pos
   filter_upwards [this] with φ hφ
-  apply φ.inj_iff_antilip.mpr
+  apply φ.injective_iff_antilipschitz.mpr
   exact ⟨(K⁻¹ - ‖φ - φ₀‖₊)⁻¹, inv_pos_of_pos (tsub_pos_of_lt hφ),
     AntilipschitzWith.add_sub_lipschitzWith H (φ - φ₀).lipschitz hφ⟩
 
