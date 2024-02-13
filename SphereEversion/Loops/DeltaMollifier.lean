@@ -128,13 +128,16 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
       conv_lhs => rw [← (e i).preimage_image N, ← preimage_inter]
       rw [(e i).surjective.nonempty_preimage]
     simp_rw [hsupp, hsupp', inter_comm (support f)]; clear hsupp hsupp'
+    -- TODO: add imports until this instance is found... mathlib has it!
+    haveI : VAdd ℤ ℝ := sorry
+    haveI : ProperlyDiscontinuousVAdd ℤ ℝ := sorry
     refine (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
       (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset ?_
     intro i hi
     rw [mem_setOf_eq, ← nonempty_iff_ne_empty]
     apply Nonempty.mono _ hi
     mono
-    · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; exact add_comm x i]
+    · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; sorry]
       exact image_subset _ Ioo_subset_Icc_self
     exact subset_tsupport f
   · intro i

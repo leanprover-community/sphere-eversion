@@ -66,37 +66,6 @@ theorem Real.ball_zero_eq (r : ℝ) : Metric.ball (0 : ℝ) r = Ioo (-r) r := by
 
 end
 
-section
-
-/-! ## The standard ℤ action on ℝ is properly discontinuous
-
-TODO: use that in ToMathlib.Topology.Periodic?
-ANSWER: no, re-use the instance in `Mathlib/Topology/Instances/AddCircle.lean` instead
--/
-
-instance : VAdd ℤ ℝ :=
-  ⟨fun n x ↦ (n : ℝ) + x⟩
-
-instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
-  ⟨fun {K L} hK hL ↦ by
-    rcases eq_empty_or_nonempty K with (rfl | hK') <;>
-        rcases eq_empty_or_nonempty L with (rfl | hL') <;>
-      try simp
-    have hSK := (hK.isLUB_sSup hK').1
-    have hIK := (hK.isGLB_sInf hK').1
-    have hSL := (hL.isLUB_sSup hL').1
-    have hIL := (hL.isGLB_sInf hL').1
-    apply (finite_Icc ⌈sInf L - sSup K⌉ ⌊sSup L - sInf K⌋).subset
-    rintro n (hn : VAdd.vadd n '' K ∩ L ≠ ∅)
-    rcases nonempty_iff_ne_empty.mpr hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩
-    constructor
-    · rw [Int.ceil_le]
-      linarith [hIL hnk, hSK hk]
-    · rw [Int.le_floor]
-      linarith [hSL hnk, hIK hk]⟩
-
-end
-
 section Fract
 
 open Int
