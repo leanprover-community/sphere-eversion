@@ -13,25 +13,6 @@ open Function
 
 section
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace ℝ F]
-
--- Not used here, but should be in mathlib
-theorem hasFDerivAt_of_not_mem (𝕜 : Type _) {E : Type _} {F : Type _} [NontriviallyNormedField 𝕜]
-    [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [NormedSpace 𝕜 F] {f : E → F}
-    {x} (hx : x ∉ tsupport f) : HasFDerivAt f (0 : E →L[𝕜] F) x :=
-  (hasFDerivAt_const (0 : F) x).congr_of_eventuallyEq (not_mem_tsupport_iff_eventuallyEq.mp hx)
-
--- Not used here, but should be in mathlib
-theorem contDiffAt_of_not_mem (𝕜 : Type _) {E : Type _} {F : Type _} [NontriviallyNormedField 𝕜]
-    [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [NormedSpace 𝕜 F] {f : E → F}
-    {x} (hx : x ∉ tsupport f) (n : ℕ∞) : ContDiffAt 𝕜 n f x :=
-  contDiffAt_const.congr_of_eventuallyEq (not_mem_tsupport_iff_eventuallyEq.mp hx)
-
-end
-
-section
-
 universe u₁ u₂ u₃ u₄ u₅
 
 open ContinuousLinearMap
