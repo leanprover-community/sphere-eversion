@@ -33,7 +33,7 @@ open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap Filter
 
 open scoped Topology BigOperators Filter Convolution
 
-variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
 
 variable [MeasurableSpace F] [BorelSpace F]
 
@@ -83,9 +83,10 @@ section
 In this section we turn any function `f : ℝ → E` into a 1-periodic function
 `fun t : ℝ ↦ ∑ᶠ n : ℤ, f (t+n)`.
 -/
+-- TODO: should this file be generalised to any period? wait, doesn't this mostly exist already?
 
 
-variable {M : Type _} [AddCommMonoid M]
+variable {M : Type*} [AddCommMonoid M]
 
 /-- Turn a function into a 1-periodic function. If its support lies in a (non-closed) interval
 of length 1, then this will be that function made periodic with period 1. -/
@@ -111,7 +112,7 @@ theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 
     exact fun i _ ↦ h _
   · rwa [finsum_of_infinite_support]
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (h' : HasCompactSupport f) :
     ContDiff ℝ n (periodize f) := by
@@ -129,8 +130,10 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
       rw [(e i).surjective.nonempty_preimage]
     simp_rw [hsupp, hsupp', inter_comm (support f)]; clear hsupp hsupp'
     -- TODO: add imports until this instance is found... mathlib has it!
-    haveI : VAdd ℤ ℝ := sorry
+    -- however, need to related ℤ with zmultiples 1...
+    haveI : VAdd ℤ ℝ := { vadd := fun a x ↦ a + x }
     haveI : ProperlyDiscontinuousVAdd ℤ ℝ := sorry
+    -- AddCircle.instProperlyDiscontinuousVAddSubtypeAddOppositeRealMemAddSubgroupAddGroupInstAddGroupRealInstMembershipInstSetLikeAddSubgroupOpZmultiplesToTopologicalSpaceToUniformSpacePseudoMetricSpaceVaddToAddZeroClassToAddMonoidToSubNegMonoidToHasOppositeVAddInstAddRealToAddSubmonoid 1
     refine (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
       (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset ?_
     intro i hi
