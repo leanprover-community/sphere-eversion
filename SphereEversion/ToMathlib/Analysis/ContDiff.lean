@@ -41,6 +41,12 @@ A 0
 C D.
   -/
 -- TODO: generalise this to larger constructors? or is this useful as-is?
+-- compare with mathlib: we have `BlockMatrix` and `Matrix.BlockTriangular` already.
+-- upper triangular matrices are precisely those which are block triangular w.r.t. id,
+-- so lower triangular matrices are the opposite (i.e., block triangular w.r.t. `OrderDual.toDual`)
+--> introduce an abbrev in mathlib (familiar to math people), extend docstring
+
+-- then rewrite these in terms of finite indexing types... means revising finite, fintype, finset etc.
 def ContinuousLinearEquiv.lowerTriangular (A : M₁ ≃L[𝕜] M₃) (C : M₁ →L[𝕜] M₄) (D : M₂ ≃L[𝕜] M₄) :
     (M₁ × M₂) ≃L[𝕜] M₃ × M₄ :=
   ContinuousLinearEquiv.equivOfInverse (((A : M₁ →L[𝕜] M₃).comp (fst 𝕜 M₁ M₂)).prod (C.coprod D))
@@ -66,6 +72,7 @@ variable (𝕜 : Type*) [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCom
   [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : ℕ∞}
 
 -- The next two definitions aren't used in the end, but they may still go to mathlib
+-- xxx: also do a manifold version?
 /-- The proposition that a function between two normed spaces has a strict derivative at a given
 point. -/
 def StrictDifferentiableAt (f : E → F) (x) :=

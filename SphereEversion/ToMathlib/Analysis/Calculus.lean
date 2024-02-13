@@ -37,10 +37,6 @@ theorem ContDiffAt.clm_comp {g : E' → F →L[𝕜] G} {f : E' → E →L[𝕜]
     (hg : ContDiffAt 𝕜 n g x) (hf : ContDiffAt 𝕜 n f x) : ContDiffAt 𝕜 n (fun x ↦ g x ∘L f x) x :=
   isBoundedBilinearMap_comp.contDiff.contDiffAt.comp₂ hg hf
 
-theorem fderiv_comp {g : F → G} {f : E → F} (x : E) (hg : DifferentiableAt 𝕜 g (f x))
-    (hf : DifferentiableAt 𝕜 f x) : fderiv 𝕜 (g ∘ f) x = (fderiv 𝕜 g (f x)).comp (fderiv 𝕜 f x) :=
-  (hg.hasFDerivAt.comp x hf.hasFDerivAt).fderiv
-
 theorem fderiv_prod_left {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun x ↦ (x, y₀)) x₀ = ContinuousLinearMap.inl 𝕜 E F :=
   ((hasFDerivAt_id _).prod (hasFDerivAt_const _ _)).fderiv
