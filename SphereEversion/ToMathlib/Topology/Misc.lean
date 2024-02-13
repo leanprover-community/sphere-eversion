@@ -71,6 +71,7 @@ section
 /-! ## The standard ℤ action on ℝ is properly discontinuous
 
 TODO: use that in ToMathlib.Topology.Periodic?
+ANSWER: no, re-use the instance in `Mathlib/Topology/Instances/AddCircle.lean` instead
 -/
 
 instance : VAdd ℤ ℝ :=

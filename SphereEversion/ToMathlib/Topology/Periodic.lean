@@ -33,20 +33,8 @@ section OnePeriodic
 
 variable {α : Type*}
 
--- xxx: remove when using AddCircle
-/-- The integers as an additive subgroup of the reals. -/
-def ℤSubℝ : AddSubgroup ℝ :=
-  AddMonoidHom.range (Int.castAddHom ℝ)
-
--- xxx: remove when using AddCircle
-/-- The equivalence relation on `ℝ` corresponding to its partition as cosets of `ℤ`. -/
-def transOne : Setoid ℝ :=
-  QuotientAddGroup.leftRel ℤSubℝ
-
--- xxx: make an abbrev instead?
 /-- The proposition that a function on `ℝ` is periodic with period `1`. -/
-def OnePeriodic (f : ℝ → α) : Prop :=
-  Periodic f 1
+abbrev OnePeriodic (f : ℝ → α) : Prop := Periodic f 1
 
 theorem OnePeriodic.add_nat {f : ℝ → α} (h : OnePeriodic f) (k : ℕ) (x : ℝ) : f (x + k) = f x := by
   simpa using h.nat_mul k x
@@ -54,25 +42,57 @@ theorem OnePeriodic.add_nat {f : ℝ → α} (h : OnePeriodic f) (k : ℕ) (x : 
 theorem OnePeriodic.add_int {f : ℝ → α} (h : OnePeriodic f) (k : ℤ) (x : ℝ) : f (x + k) = f x := by
   simpa using h.int_mul k x
 
-/-- The circle `𝕊₁ := ℝ/ℤ`.
-
-TODO [Yury]: use `AddCircle`. -/
-def 𝕊₁ := --AddCircle
-  Quotient transOne
-deriving TopologicalSpace, Inhabited
-
-theorem transOne_rel_iff {a b : ℝ} : transOne.Rel a b ↔ ∃ k : ℤ, b = a + k := by
-  refine QuotientAddGroup.leftRel_apply.trans ?_
-  refine exists_congr fun k ↦ ?_
-  rw [coe_castAddHom, eq_neg_add_iff_add_eq, eq_comm]
+/-- The circle `𝕊₁ := ℝ/ℤ`. -/
+abbrev 𝕊₁ := UnitAddCircle
 
 section
 
-attribute [local instance] transOne
-
 /-- The quotient map from the reals to the circle `ℝ ⧸ ℤ`. -/
-def proj𝕊₁ : ℝ → 𝕊₁ :=
-  Quotient.mk'
+def proj𝕊₁ := AddCircle.continuous_mk' (1 : ℝ) -- TODO: that's the continuity statement!
+
+open AddCommGroup AddSubgroup
+
+
+instance : CompactSpace 𝕊₁ := by
+  --have : (0 : ℝ) < (1 : ℝ) := by norm_num
+  sorry --exact AddCircle.compactSpace (p := 1) --(by norm_num)
+
+-- path-connected and other things
+
+instance : T2Space 𝕊₁ := sorry
+
+variable {X E : Type*} [TopologicalSpace X] [NormedAddCommGroup E]
+
+theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont : Continuous ↿f)
+    (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K) :
+    ∃ C, ∀ x ∈ K, ∀ t, ‖f x t‖ ≤ C := by
+  let F : X × 𝕊₁ → E := fun p : X × 𝕊₁ ↦ (hper p.1).lift p.2
+  have Fcont : Continuous F := by
+    sorry
+  --   have qm : QuotientMap fun p : X × ℝ ↦ (p.1, π p.2) := quotientMap_id_proj𝕊₁
+  --   -- avoid weird elaboration issue
+  --   have : ↿f = F ∘ fun p : X × ℝ ↦ (p.1, π p.2) := by ext p; rfl
+  --   rwa [this, ← qm.continuous_iff] at cont
+  obtain ⟨C, hC⟩ :=
+    (hK.prod isCompact_univ).bddAbove_image (continuous_norm.comp Fcont).continuousOn
+  sorry --exact ⟨C, fun x x_in t ↦ hC ⟨(x, _ t), ⟨x_in, mem_univ _⟩, rfl⟩⟩
+
+theorem Continuous.bounded_of_onePeriodic_of_compact {f : X → ℝ → E} (cont : Continuous ↿f)
+    (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K)
+    (hfK : ∀ x ∉ K, f x = 0) : ∃ C, ∀ x t, ‖f x t‖ ≤ C := by
+  obtain ⟨C, hC⟩ := cont.bounded_on_compact_of_onePeriodic hper hK
+  use max C 0
+  intro x t
+  by_cases hx : x ∈ K
+  · exact le_max_of_le_left (hC x hx t)
+  · simp [hfK, hx]
+
+#exit
+/-- The quotient map from the reals to the circle `ℝ ⧸ ℤ`. -/
+abbrev proj𝕊₁'' := QuotientAddGroup.mk' (zmultiples 1) : ℝ → AddCircle 1
+  --AddCircle.continuous_mk' (𝕜 := ℝ) 1--(AddCircle 1).continuous_mk'
+
+#exit
 
 @[simp]
 theorem proj𝕊₁_add_int (t : ℝ) (k : ℤ) : proj𝕊₁ (t + k) = proj𝕊₁ t := by
