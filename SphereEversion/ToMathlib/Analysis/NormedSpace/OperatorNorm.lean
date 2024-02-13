@@ -6,12 +6,12 @@ noncomputable section
 local notation:70 u " ⬝ " φ:65 =>
   ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
-variable {𝕜 E F G Fₗ Gₗ X : Type _} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E]
+variable {𝕜 E F G Fₗ Gₗ X : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E]
   [NormedAddCommGroup Fₗ] [NormedAddCommGroup Gₗ] [NormedAddCommGroup F] [NormedAddCommGroup G]
   [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] [NormedSpace 𝕜 F] [NormedSpace 𝕜 G]
   [TopologicalSpace X]
 
-theorem ContinuousLinearMap.le_op_norm_of_le' {𝕜 : Type _} {𝕜₂ : Type _} {E : Type _} {F : Type _}
+theorem ContinuousLinearMap.le_op_norm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E : Type*} {F : Type*}
     [NormedAddCommGroup E] [SeminormedAddCommGroup F] [NontriviallyNormedField 𝕜]
     [NontriviallyNormedField 𝕜₂] [NormedSpace 𝕜 E] [NormedSpace 𝕜₂ F] {σ₁₂ : 𝕜 →+* 𝕜₂}
     [RingHomIsometric σ₁₂] (f : E →SL[σ₁₂] F) {x : E} (hx : x ≠ 0) {C : ℝ} (h : C * ‖x‖ ≤ ‖f x‖) :
@@ -20,15 +20,15 @@ theorem ContinuousLinearMap.le_op_norm_of_le' {𝕜 : Type _} {𝕜₂ : Type _}
   rwa [norm_pos_iff']
 
 @[simp]
-theorem ContinuousLinearMap.toSpanSingleton_zero (𝕜 : Type _) {E : Type _}
+theorem ContinuousLinearMap.toSpanSingleton_zero (𝕜 : Type*) {E : Type*}
     [SeminormedAddCommGroup E] [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] :
     ContinuousLinearMap.toSpanSingleton 𝕜 (0 : E) = 0 := by
   ext
   simp only [ContinuousLinearMap.toSpanSingleton_apply, ContinuousLinearMap.zero_apply, smul_zero]
 
 @[simp]
-theorem ContinuousLinearMap.comp_toSpanSingleton_apply {E : Type _} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E →L[ℝ] ℝ) (v : E)
+theorem ContinuousLinearMap.comp_toSpanSingleton_apply {E : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E →L[ℝ] ℝ) (v : E)
     (u : F) : (u ⬝ φ) v = φ v • u :=
   rfl
 
@@ -59,9 +59,9 @@ theorem add_le_twice_max (a b : ℝ) : a + b ≤ 2 * max a b :=
     a + b ≤ max a b + max a b := add_le_add (le_max_left a b) (le_max_right a b)
     _ = _ := by ring
 
-theorem isBoundedLinearMap_coprod (𝕜 : Type _) [NontriviallyNormedField 𝕜] (E : Type _)
-    [NormedAddCommGroup E] [NormedSpace 𝕜 E] (F : Type _) [NormedAddCommGroup F] [NormedSpace 𝕜 F]
-    (G : Type _) [NormedAddCommGroup G] [NormedSpace 𝕜 G] :
+theorem isBoundedLinearMap_coprod (𝕜 : Type*) [NontriviallyNormedField 𝕜] (E : Type*)
+    [NormedAddCommGroup E] [NormedSpace 𝕜 E] (F : Type*) [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+    (G : Type*) [NormedAddCommGroup G] [NormedSpace 𝕜 G] :
     IsBoundedLinearMap 𝕜 fun p : (E →L[𝕜] G) × (F →L[𝕜] G) ↦ p.1.coprod p.2 :=
   { map_add := by
       intros
@@ -101,19 +101,19 @@ theorem Continuous.coprodL {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G}
     (hg : Continuous g) : Continuous fun x ↦ (f x).coprod (g x) :=
   ContinuousLinearMap.coprodL.continuous.comp₂ hf hg
 
-theorem Continuous.prodL' {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : Type _}
+theorem Continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*}
     [SeminormedAddCommGroup E] [SeminormedAddCommGroup Fₗ] [SeminormedAddCommGroup Gₗ]
-    [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] (R : Type _)
+    [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] (R : Type*)
     [Semiring R] [Module R Fₗ] [Module R Gₗ] [ContinuousConstSMul R Fₗ] [ContinuousConstSMul R Gₗ]
-    [SMulCommClass 𝕜 R Fₗ] [SMulCommClass 𝕜 R Gₗ] {X : Type _} [TopologicalSpace X]
+    [SMulCommClass 𝕜 R Fₗ] [SMulCommClass 𝕜 R Gₗ] {X : Type*} [TopologicalSpace X]
     {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f) (hg : Continuous g) :
     Continuous fun x ↦ (f x).prod (g x) :=
   (ContinuousLinearMap.prodₗᵢ 𝕜).continuous.comp₂ hf hg
 
 @[continuity]
-theorem Continuous.prodL {𝕜 : Type _} {E : Type _} {Fₗ : Type _} {Gₗ : Type _}
+theorem Continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*}
     [SeminormedAddCommGroup E] [SeminormedAddCommGroup Fₗ] [SeminormedAddCommGroup Gₗ]
-    [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] {X : Type _}
+    [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] {X : Type*}
     [TopologicalSpace X] {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f)
     (hg : Continuous g) : Continuous fun x ↦ (f x).prod (g x) :=
   hf.prodL' 𝕜 hg

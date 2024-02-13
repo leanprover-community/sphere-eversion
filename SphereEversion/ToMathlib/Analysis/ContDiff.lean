@@ -17,10 +17,11 @@ universe u₁ u₂ u₃ u₄ u₅
 
 open ContinuousLinearMap
 
-variable {𝕜 : Type u₁} [NontriviallyNormedField 𝕜] {M₁ : Type u₂} [NormedAddCommGroup M₁]
-  [NormedSpace 𝕜 M₁] {M₂ : Type u₃} [NormedAddCommGroup M₂] [NormedSpace 𝕜 M₂] {M₃ : Type u₄}
-  [NormedAddCommGroup M₃] [NormedSpace 𝕜 M₃] {M₄ : Type u₅} [NormedAddCommGroup M₄]
-  [NormedSpace 𝕜 M₄]
+variable {𝕜 : Type u₁} [NontriviallyNormedField 𝕜]
+  {M₁ : Type u₂} [NormedAddCommGroup M₁] [NormedSpace 𝕜 M₁]
+  {M₂ : Type u₃} [NormedAddCommGroup M₂] [NormedSpace 𝕜 M₂]
+  {M₃ : Type u₄} [NormedAddCommGroup M₃] [NormedSpace 𝕜 M₃]
+  {M₄ : Type u₅} [NormedAddCommGroup M₄] [NormedSpace 𝕜 M₄]
 
 -- The next definition won't be used here, it's practice before the next one.
 /-- Defines continuous linear maps between two products by blocks:
@@ -37,6 +38,7 @@ construct the continuous linear equiv with "matrix"
 A 0
 C D.
   -/
+-- TODO: generalise this to larger constructors? or is this useful as-is?
 def ContinuousLinearEquiv.lowerTriangular (A : M₁ ≃L[𝕜] M₃) (C : M₁ →L[𝕜] M₄) (D : M₂ ≃L[𝕜] M₄) :
     (M₁ × M₂) ≃L[𝕜] M₃ × M₄ :=
   ContinuousLinearEquiv.equivOfInverse (((A : M₁ →L[𝕜] M₃).comp (fst 𝕜 M₁ M₂)).prod (C.coprod D))
@@ -45,7 +47,7 @@ def ContinuousLinearEquiv.lowerTriangular (A : M₁ ≃L[𝕜] M₃) (C : M₁ �
     (fun ⟨x, y⟩ ↦ by simp)
     fun ⟨x, y⟩ ↦ by simp
 
-theorem ContinuousLinearEquiv.continuous_lowerTriangular {X : Type _} [TopologicalSpace X]
+theorem ContinuousLinearEquiv.continuous_lowerTriangular {X : Type*} [TopologicalSpace X]
     {A : X → M₁ ≃L[𝕜] M₃} {C : X → M₁ →L[𝕜] M₄} {D : X → M₂ ≃L[𝕜] M₄}
     (hA : Continuous fun x ↦ (A x : M₁ →L[𝕜] M₃)) (hC : Continuous C)
     (hD : Continuous fun x ↦ (D x : M₂ →L[𝕜] M₄)) :
@@ -56,8 +58,8 @@ end
 
 section
 
-variable (𝕜 : Type _) [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {F : Type _} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type _}
+variable (𝕜 : Type*) [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*}
   [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : ℕ∞}
 
 -- The next two definitions aren't used in the end, but they may still go to mathlib
@@ -79,7 +81,7 @@ theorem StrictDifferentiableAt.differentiableAt {f : E → F} {x : E}
 
 -- PR to LinearAlgebra.Prod
 @[simp]
-theorem LinearMap.coprod_comp_inl_inr {R : Type _} {M : Type _} {M₂ : Type _} {M₃ : Type _}
+theorem LinearMap.coprod_comp_inl_inr {R : Type*} {M : Type*} {M₂ : Type*} {M₃ : Type*}
     [Semiring R] [AddCommMonoid M] [AddCommMonoid M₂] [AddCommMonoid M₃] [Module R M] [Module R M₂]
     [Module R M₃] (f : M × M₂ →ₗ[R] M₃) :
     (f.comp (LinearMap.inl R M M₂)).coprod (f.comp (LinearMap.inr R M M₂)) = f := by
@@ -87,9 +89,9 @@ theorem LinearMap.coprod_comp_inl_inr {R : Type _} {M : Type _} {M₂ : Type _} 
 
 -- PR to Topology.Algebra.Module.Basic
 @[simp]
-theorem ContinuousLinearMap.coprod_comp_inl_inr {R₁ : Type _} [Semiring R₁] {M₁ : Type _}
-    [TopologicalSpace M₁] [AddCommMonoid M₁] {M₂ : Type _} [TopologicalSpace M₂] [AddCommMonoid M₂]
-    {M₃ : Type _} [TopologicalSpace M₃] [AddCommMonoid M₃] [Module R₁ M₁] [Module R₁ M₂]
+theorem ContinuousLinearMap.coprod_comp_inl_inr {R₁ : Type*} [Semiring R₁] {M₁ : Type*}
+    [TopologicalSpace M₁] [AddCommMonoid M₁] {M₂ : Type*} [TopologicalSpace M₂] [AddCommMonoid M₂]
+    {M₃ : Type*} [TopologicalSpace M₃] [AddCommMonoid M₃] [Module R₁ M₁] [Module R₁ M₂]
     [Module R₁ M₃] [ContinuousAdd M₃] (f : M₁ × M₂ →L[R₁] M₃) :
     (f.comp (ContinuousLinearMap.inl R₁ M₁ M₂)).coprod (f.comp (ContinuousLinearMap.inr R₁ M₁ M₂)) =
       f :=
@@ -141,8 +143,8 @@ end
 
 section
 
-variable {𝕜 : Type _} [IsROrC 𝕜] {E : Type _} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type _} [NormedAddCommGroup G] [NormedSpace 𝕜 G]
+variable {𝕜 : Type*} [IsROrC 𝕜] {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {F : Type*}
+  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [NormedAddCommGroup G] [NormedSpace 𝕜 G]
   {n : ℕ∞}
 
 local notation "∂₁" => partialFDerivFst 𝕜
@@ -190,7 +192,7 @@ end
 
 section
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : ContDiff ℝ ⊤ ↿f)
     (hderiv : ∀ x t, 0 < partialDerivSnd f x t) (hsurj : ∀ x, Surjective <| f x) :
@@ -214,9 +216,9 @@ end
 
 section
 
-variable (𝕜 : Type _) [NontriviallyNormedField 𝕜]
+variable (𝕜 : Type*) [NontriviallyNormedField 𝕜]
 
-theorem contDiff_toSpanSingleton (E : Type _) [NormedAddCommGroup E] [NormedSpace 𝕜 E] :
+theorem contDiff_toSpanSingleton (E : Type*) [NormedAddCommGroup E] [NormedSpace 𝕜 E] :
     ContDiff 𝕜 ⊤ (ContinuousLinearMap.toSpanSingleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
   (ContinuousLinearMap.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.contDiff
 
@@ -224,9 +226,9 @@ end
 
 section
 
-variable {𝕜 : Type _} [IsROrC 𝕜]
+variable {𝕜 : Type*} [IsROrC 𝕜]
 
-variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
 
 -- variant of `orthogonal_projection_singleton`
 theorem orthogonalProjection_singleton' {v : E} :
@@ -240,7 +242,7 @@ end
 
 section
 
-variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
 from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
@@ -263,8 +265,8 @@ end
 
 section Arithmetic
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {𝔸 : Type _} [NormedRing 𝔸] [NormedAlgebra 𝕜 𝔸] {n : ℕ∞} {f : E → 𝔸} {s : Set E}
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra 𝕜 𝔸] {n : ℕ∞} {f : E → 𝔸} {s : Set E}
   {x : E}
 
 theorem ContDiffWithinAt.mul_const (hf : ContDiffWithinAt 𝕜 n f s x) {c : 𝔸} :
@@ -288,17 +290,17 @@ section
 
 open scoped BigOperators
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {F : Type _} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-theorem contDiffWithinAt_finsum {ι : Type _} {f : ι → E → F}
+theorem contDiffWithinAt_finsum {ι : Type*} {f : ι → E → F}
     (lf : LocallyFinite fun i ↦ support <| f i) {n : ℕ∞} {s : Set E} {x₀ : E}
     (h : ∀ i, ContDiffWithinAt 𝕜 n (f i) s x₀) : ContDiffWithinAt 𝕜 n (fun x ↦ ∑ᶠ i, f i x) s x₀ :=
   let ⟨_I, hI⟩ := finsum_eventually_eq_sum lf x₀
   ContDiffWithinAt.congr_of_eventuallyEq (ContDiffWithinAt.sum fun i _ ↦ h i)
     (eventually_nhdsWithin_of_eventually_nhds hI) hI.self_of_nhds
 
-theorem contDiffAt_finsum {ι : Type _} {f : ι → E → F} (lf : LocallyFinite fun i ↦ support <| f i)
+theorem contDiffAt_finsum {ι : Type*} {f : ι → E → F} (lf : LocallyFinite fun i ↦ support <| f i)
     {n : ℕ∞} {x₀ : E} (h : ∀ i, ContDiffAt 𝕜 n (f i) x₀) :
     ContDiffAt 𝕜 n (fun x ↦ ∑ᶠ i, f i x) x₀ :=
   contDiffWithinAt_finsum lf h
