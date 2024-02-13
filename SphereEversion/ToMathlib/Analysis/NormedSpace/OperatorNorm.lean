@@ -1,6 +1,8 @@
 import Mathlib.Analysis.NormedSpace.BoundedLinearMaps
 import Mathlib.Analysis.NormedSpace.FiniteDimension
 
+import SphereEversion.FunPropConfig
+
 noncomputable section
 
 local notation:70 u " ⬝ " φ:65 =>
@@ -96,7 +98,7 @@ If `g₁ : E →L[𝕜] G` and `g₂ : F →L[𝕜] G` then `continuous_linear_m
 def ContinuousLinearMap.coprodL : (E →L[𝕜] G) × (F →L[𝕜] G) →L[𝕜] E × F →L[𝕜] G :=
   (isBoundedLinearMap_coprod 𝕜 E F G).toContinuousLinearMap
 
-@[continuity]
+@[continuity, fun_prop]
 theorem Continuous.coprodL {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G} (hf : Continuous f)
     (hg : Continuous g) : Continuous fun x ↦ (f x).coprod (g x) :=
   ContinuousLinearMap.coprodL.continuous.comp₂ hf hg
@@ -110,7 +112,7 @@ theorem Continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type
     Continuous fun x ↦ (f x).prod (g x) :=
   (ContinuousLinearMap.prodₗᵢ 𝕜).continuous.comp₂ hf hg
 
-@[continuity]
+@[continuity, fun_prop]
 theorem Continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*}
     [SeminormedAddCommGroup E] [SeminormedAddCommGroup Fₗ] [SeminormedAddCommGroup Gₗ]
     [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] {X : Type*}
@@ -118,14 +120,14 @@ theorem Continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*
     (hg : Continuous g) : Continuous fun x ↦ (f x).prod (g x) :=
   hf.prodL' 𝕜 hg
 
-@[continuity]
+@[continuity, fun_prop]
 theorem ContinuousAt.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} {x₀ : X}
     (hf : ContinuousAt f x₀) (hg : ContinuousAt g x₀) :
     ContinuousAt (fun x ↦ (f x).comp (g x)) x₀ :=
   ((ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous₂.tendsto (f x₀, g x₀)).comp
     (hf.prod_mk_nhds hg)
 
-@[continuity]
+@[continuity, fun_prop]
 theorem Continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} (hf : Continuous f)
     (hg : Continuous g) : Continuous fun x ↦ (f x).comp (g x) :=
   (ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous₂.comp₂ hf hg

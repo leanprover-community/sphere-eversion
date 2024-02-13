@@ -54,6 +54,8 @@ theorem ContinuousLinearEquiv.continuous_lowerTriangular {X : Type*} [Topologica
     (hA : Continuous fun x ↦ (A x : M₁ →L[𝕜] M₃)) (hC : Continuous C)
     (hD : Continuous fun x ↦ (D x : M₂ →L[𝕜] M₄)) :
     Continuous fun x ↦ ((A x).lowerTriangular (C x) (D x) : M₁ × M₂ →L[𝕜] M₃ × M₄) :=
+  -- TODO(fun_prop): doesn't work yet because uncurrying bug
+  -- by fun_prop
   (hA.compL continuous_const).prodL (hC.coprodL hD)
 
 end
@@ -134,6 +136,8 @@ theorem Equiv.continuous_symm_of_contDiff (φ : E ≃ F) {Dφ : E → E ≃L[�
   apply ContinuousAt.congr _ ev_eq
   apply (hφ y).localInverse_continuousAt
 
+attribute [fun_prop] Differentiable.continuous
+
 /-- A bijection that is strictly differentiable at every point is a homeomorphism. -/
 def Equiv.toHomeomorphOfContDiff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
     (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : E ≃ₜ F :=
@@ -155,6 +159,7 @@ local notation "∂₂" => partialFDerivSnd 𝕜
 
 -- TODO(funprop): can I golf the next lemma? waiting on uncurry bug to be fixed
 -- attribute [fun_prop] ContDiff.contDiff_top_partial_fst
+-- attribute [fun_prop] ContDiff.contDiff_top_partial_snd
 -- attribute [fun_prop] ContDiff.continuous
 -- attribute [fun_prop] ContinuousLinearEquiv.continuous_lowerTriangular
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
@@ -186,8 +191,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       · rw [← hf' x y]
         exact diff.differentiableAt.hasFDerivAt_partial_snd
     · apply Continuous.continuousAt
-      apply ContinuousLinearEquiv.continuous_lowerTriangular
-      · exact continuous_const
+      apply ContinuousLinearEquiv.continuous_lowerTriangular continuous_const
       · exact hff.contDiff_top_partial_fst.continuous
       · simp_rw [← hf']
         exact hff.contDiff_top_partial_snd.continuous
