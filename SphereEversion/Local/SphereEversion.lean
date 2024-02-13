@@ -206,7 +206,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   apply ample_slice_of_ample_slice (show p'.π = p.π from rfl)
   suffices slice R p' (x, y, φ) = (map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) : Set F)ᶜ by
     rw [this]
-    apply ample_of_two_le_codim
+    apply AmpleSet.of_two_le_codim
     let Φ := φ.toLinearMap
     suffices 2 ≤ dim (F ⧸ map Φ (ker p.π ⊓ (ℝ ∙ x)ᗮ)) by
       rw [← finrank_eq_rank]

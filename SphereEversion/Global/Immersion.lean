@@ -92,7 +92,7 @@ theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel 
   haveI : FiniteDimensional ℝ (TangentSpace I m) := (by infer_instance : FiniteDimensional ℝ E)
   have hcodim := two_le_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.toLinearMap
   rw [immersionRel_slice_eq I I' hφ]
-  exact ample_of_two_le_codim hcodim
+  exact AmpleSet.of_two_le_codim hcodim
 
 /-- This is lemma `lem:open_ample_immersion` from the blueprint. -/
 theorem immersionRel_open_ample (h : finrank ℝ E < finrank ℝ E') :

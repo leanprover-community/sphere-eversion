@@ -207,8 +207,7 @@ theorem Submodule.connectedComponentIn_eq_self_of_two_le_codim (E : Submodule �
 
 /-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
 least two then its complement is ample. -/
--- TODO: rename to `AmpleSet.of_two_le_codim`?
-theorem ample_of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.rank ℝ (F ⧸ E)) :
+theorem AmpleSet.of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.rank ℝ (F ⧸ E)) :
     AmpleSet (Eᶜ : Set F) := fun x hx ↦ by
   rw [E.connectedComponentIn_eq_self_of_two_le_codim hcodim hx, eq_univ_iff_forall]
   intro y
