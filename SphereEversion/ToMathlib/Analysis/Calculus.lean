@@ -2,6 +2,8 @@ import Mathlib.Analysis.NormedSpace.Completion
 import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import SphereEversion.ToMathlib.Topology.Misc
 
+-- xxx: can I use fun_prop to golf the shit out of this?
+
 noncomputable section
 
 open Set Function Filter

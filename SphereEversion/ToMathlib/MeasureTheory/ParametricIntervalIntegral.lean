@@ -81,7 +81,8 @@ theorem continuous_parametric_integral_of_continuous
   · exact integrableOn_const.mpr (Or.inr hs.measure_lt_top)
   · apply ae_of_all
     intro a
-    exact (hF.comp₂ continuous_id continuous_const).continuousAt
+    dsimp -- TODO(funprop): this shouldn't be necessary
+    fun_prop
 
 end
 
@@ -350,7 +351,8 @@ local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.
 variable [FiniteDimensional ℝ H]
 
 /-
-A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
+A version of the above lemma using Floris' style statement.
+This does not reuse the above lemma, but copies the proof.
 -/
 set_option synthInstance.maxHeartbeats 100000
 theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF : ContDiff ℝ 1 ↿F)

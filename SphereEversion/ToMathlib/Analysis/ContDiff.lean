@@ -5,13 +5,15 @@ import Mathlib.Analysis.InnerProductSpace.Dual
 import SphereEversion.ToMathlib.Analysis.Calculus
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 
+import Mathlib.Tactic.FunProp.Differentiable
+
 noncomputable section
 
 open scoped Topology Filter
 
 open Function
 
-section
+section -- XXX: didn't I PR this already to mathlib??
 
 universe u₁ u₂ u₃ u₄ u₅
 
@@ -151,6 +153,8 @@ local notation "∂₁" => partialFDerivFst 𝕜
 
 local notation "∂₂" => partialFDerivSnd 𝕜
 
+-- xxx: can I use fun_prop starting here?
+
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
     {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ⊤ fun p : E × F ↦ f p.1 p.2)
     (hf' : ∀ x y, ∂₂ (fun x y ↦ f x y) x y = f' x y) :
@@ -248,12 +252,13 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
     ContDiffAt ℝ ⊤ (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
-  suffices : ContDiffAt ℝ ⊤
-    (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀
-  · refine this.congr_of_eventuallyEq (Filter.eventually_of_forall fun v ↦ ?_)
+  suffices ContDiffAt ℝ ⊤
+      (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
+    refine this.congr_of_eventuallyEq (Filter.eventually_of_forall fun v ↦ ?_)
     dsimp
     rw [orthogonalProjection_singleton']
     rfl
+  -- xxx: can I use fun_prop here?
   refine ContDiffAt.smul ?_ ?_
   · refine contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt ?_
     apply pow_ne_zero

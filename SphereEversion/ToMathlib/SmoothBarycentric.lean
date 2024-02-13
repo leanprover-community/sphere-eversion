@@ -80,7 +80,7 @@ attribute [instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
   suffices ∀ n : ℕ, ContDiff k m (det : Matrix (Fin n) (Fin n) k → k) by
     have h : (det : Matrix ι ι k → k) = det ∘ reindex (Fintype.equivFin ι) (Fintype.equivFin ι) :=
-  by ext; simp
+      by ext; simp
     rw [h]
     apply (this (Fintype.card ι)).comp
     exact contDiff_pi.mpr fun i ↦ contDiff_pi.mpr fun j ↦ contDiff_apply_apply _ _ _ _
