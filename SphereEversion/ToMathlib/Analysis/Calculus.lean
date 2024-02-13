@@ -176,10 +176,12 @@ theorem ContDiff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
     (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₁ 𝕜 φ) :=
   h.contDiff_partial_fst.continuous
 
+@[fun_prop]
 theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
     ContDiff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
   contDiff_top.mpr fun n ↦ (contDiff_top.mp hF (n + 1)).contDiff_partial_fst
 
+@[fun_prop]
 theorem ContDiff.contDiff_partial_snd {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) : ContDiff 𝕜 n ↿(∂₂ 𝕜 φ) :=
   ContDiff.fderiv (hF.comp <| contDiff_fst.fst.prod contDiff_snd) contDiff_snd le_rfl

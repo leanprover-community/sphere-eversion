@@ -682,7 +682,8 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     rcases h6γ with ⟨p, w, h⟩
     obtain ⟨W, hW⟩ := smooth_surroundingPts h
     let c : E → F × (Fin (d + 1) → F) := fun x ↦ (g x, δ x 1 ∘ p)
-    -- TODO(funprop): why is applying ContinuousAt.prod needed?
+    -- TODO(funprop): why does `by dsimp; fun_prop` crash?
+    -- TODO(funprop): remove need for `dsimp`
     have hc : ContinuousAt c x₀ := hg.prod (by fun_prop)
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
       unfold_let c

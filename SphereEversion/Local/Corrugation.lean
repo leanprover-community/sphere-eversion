@@ -95,9 +95,8 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by
   set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
-  have cont' : Continuous ↿φ :=
-    -- TODO(funprop): why is this line needed? the lemma is tagged...
-    continuous_parametric_intervalIntegral_of_continuous (by fun_prop) (by fun_prop)
+  -- TODO(funprop): `dsimp` should not be needed
+  have cont' : Continuous ↿φ := by dsimp ; fun_prop
   have hper : ∀ q, OnePeriodic (φ q) := fun _ ↦ per_corrugation _ fun _ _ ↦
     (hγ_cont.comp₃ continuous_const continuous_const continuous_id).intervalIntegrable _ _
   rcases cont'.bounded_on_compact_of_onePeriodic hper ((isCompact_Icc : IsCompact I).prod hK)
