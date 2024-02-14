@@ -47,11 +47,11 @@ easier to state the `𝓒⁰` approximation property.
 section Gromov
 
 variable (n n' d : ℕ)
-  {M : Type _} [TopologicalSpace M] [ChartedSpace (ℝ^n) M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace (ℝ^n) M]
   [SmoothManifoldWithCorners (𝓡 n) M] [T2Space M] [SigmaCompactSpace M]
-  {M' : Type _} [MetricSpace M'] [ChartedSpace (ℝ^n') M'] [SmoothManifoldWithCorners (𝓡 n') M']
+  {M' : Type*} [MetricSpace M'] [ChartedSpace (ℝ^n') M'] [SmoothManifoldWithCorners (𝓡 n') M']
   [SigmaCompactSpace M']
-  {P : Type _} [TopologicalSpace P] [ChartedSpace (ℝ^d) P]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace (ℝ^d) P]
   [SmoothManifoldWithCorners (𝓡 d) P] [T2Space P] [SigmaCompactSpace P]
 
 /-- Gromov's flexibility theorem for open and ample first order partial differential relations

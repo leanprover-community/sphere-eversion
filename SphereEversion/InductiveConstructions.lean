@@ -41,7 +41,7 @@ get rid of the `indexing` abstraction and do everything in terms of `IndexType`,
 
 section inductive_construction
 
-theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [TopologicalSpace X]
+theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [TopologicalSpace X]
     {N : ℕ} {f : IndexType N → X → α} {V : IndexType N → Set X} (hV : LocallyFinite V)
     (h : ∀ n : IndexType N, ¬IsMax n → ∀ x ∉ (V n.succ), f n.succ x = f n x) :
     ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F := by
@@ -65,7 +65,7 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type _} [Top
 
 local notation "𝓘" => IndexType
 
-theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U : IndexType N → Set X}
+theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U : IndexType N → Set X}
     (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ i : IndexType N, ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : IndexType N → (X → Y) → Prop) (U_fin : LocallyFinite U)
     (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
@@ -97,7 +97,7 @@ theorem inductive_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ} {U 
   convert (h₁f _ _ hn₀' x) using 1
   exact Germ.coe_eq.mpr hn₀.symm
 
-theorem inductive_construction_of_loc' {X Y : Type _} [EMetricSpace X] [LocallyCompactSpace X]
+theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCompactSpace X]
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
     (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
@@ -149,7 +149,7 @@ one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
 * One can patch two maps `f₁ f₂` satisfying `P₁` on open sets `U₁` and `U₂` respectively
   and such that `f₁` satisfies `P₀'` everywhere into a map satisfying `P₁` on `K₁ ∪ K₂` for any
   compact sets `Kᵢ ⊆ Uᵢ` and `P₀'` everywhere. -/
-theorem inductive_construction_of_loc {X Y : Type _} [EMetricSpace X] [LocallyCompactSpace X]
+theorem inductive_construction_of_loc {X Y : Type*} [EMetricSpace X] [LocallyCompactSpace X]
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
     (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
@@ -175,7 +175,7 @@ one satisfying everywhere without changing `f₀` near `K`. The assumptions are:
   into a map satisfying `P₁` on `K₁ ∪ K₂` for any compact sets `Kᵢ ⊆ Uᵢ`.
 This is deduced this version from the version where `K` is empty but adding some `P'₀`, see
 `inductive_construction_of_loc`. -/
-theorem relative_inductive_construction_of_loc {X Y : Type _} [EMetricSpace X]
+theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     [LocallyCompactSpace X] [SecondCountableTopology X] (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
     {K : Set X} (hK : IsClosed K) {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
@@ -253,7 +253,7 @@ private theorem T_nonneg (n : ℕ) : 0 ≤ T n := by
 private theorem not_T_succ_le (n : ℕ) : ¬T (n + 1) ≤ 0 :=
   (T_pos n.succ_ne_zero).not_le
 
-theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ}
+theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
     {U K : IndexType N → Set X} (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop)
     (hP₂ : ∀ (a b) (p : ℝ × X) (f : ℝ × X → Y), P₂ (a * p.1 + b, p.2) f →
@@ -393,7 +393,7 @@ theorem inductive_htpy_construction {X Y : Type _} [TopologicalSpace X] {N : ℕ
     exact (h'F j (1, x) rfl hj).self_of_nhds
   · exact fun p ↦ (hF p).2.2
 
-theorem inductive_htpy_construction' {X Y : Type _}
+theorem inductive_htpy_construction' {X Y : Type*}
     [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
     (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop)

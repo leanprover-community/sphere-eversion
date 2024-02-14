@@ -50,7 +50,7 @@ run_cmd
     | (N + 1) => inferInstanceAs ($n (Fin (N + 1)))
   ))
 
-theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type _} {s : Set α}
+theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type*} {s : Set α}
     (hne : s.Nonempty) : s.Countable ↔ ∃ n, Nonempty (IndexType n ≃ s) := by
   -- Huge golfing opportunity.
   cases' s.finite_or_infinite with h h
@@ -149,7 +149,7 @@ theorem IndexType.induction {N : ℕ} {P : IndexType N → Prop} (h₀ : P 0)
 
 -- We make `P` and `Q` explicit to help the elaborator when applying the lemma
 -- (elab_as_eliminator isn't enough).
-theorem IndexType.exists_by_induction {N : ℕ} {α : Type _} (P : IndexType N → α → Prop)
+theorem IndexType.exists_by_induction {N : ℕ} {α : Type*} (P : IndexType N → α → Prop)
     (Q : IndexType N → α → α → Prop) (h₀ : ∃ a, P 0 a)
     (ih : ∀ n a, P n a → ¬IsMax n → ∃ a', P n.succ a' ∧ Q n a a') :
     ∃ f : IndexType N → α, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) := by
