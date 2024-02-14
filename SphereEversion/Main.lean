@@ -11,13 +11,10 @@ partial differential relation. A famous corollary of this theorem is Smale's sph
 theorem: you can turn a sphere inside-out. Let us state this corollary first.
 -/
 
-
 section Smale
 
-notation
-  "ℝ³" =>-- As usual, we denote by `ℝ³` the Euclidean 3-space and by `𝕊²` its unit sphere.
-    EuclideanSpace
-    ℝ (Fin 3)
+-- As usual, we denote by `ℝ³` the Euclidean 3-space and by `𝕊²` its unit sphere.
+notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
 
 notation "𝕊²" => sphere (0 : ℝ³) 1
 
@@ -49,10 +46,12 @@ easier to state the `𝓒⁰` approximation property.
 -/
 section Gromov
 
-variable (n n' d : ℕ) {M : Type _} [TopologicalSpace M] [ChartedSpace (ℝ^n) M]
-  [SmoothManifoldWithCorners (𝓡 n) M] [T2Space M] [SigmaCompactSpace M] {M' : Type _}
-  [MetricSpace M'] [ChartedSpace (ℝ^n') M'] [SmoothManifoldWithCorners (𝓡 n') M']
-  [SigmaCompactSpace M'] {P : Type _} [TopologicalSpace P] [ChartedSpace (ℝ^d) P]
+variable (n n' d : ℕ)
+  {M : Type _} [TopologicalSpace M] [ChartedSpace (ℝ^n) M]
+  [SmoothManifoldWithCorners (𝓡 n) M] [T2Space M] [SigmaCompactSpace M]
+  {M' : Type _} [MetricSpace M'] [ChartedSpace (ℝ^n') M'] [SmoothManifoldWithCorners (𝓡 n') M']
+  [SigmaCompactSpace M']
+  {P : Type _} [TopologicalSpace P] [ChartedSpace (ℝ^d) P]
   [SmoothManifoldWithCorners (𝓡 d) P] [T2Space P] [SigmaCompactSpace P]
 
 /-- Gromov's flexibility theorem for open and ample first order partial differential relations
