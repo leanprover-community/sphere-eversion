@@ -54,11 +54,6 @@ def LinearMap.coprodₗ (R : Type u₁) (M : Type u₂) (M₂ : Type u₃) (M₃
     simp only [Prod.smul_fst, Prod.smul_snd, LinearMap.coprod_apply, LinearMap.smul_apply,
       RingHom.id_apply, smul_add]
 
-theorem add_le_twice_max (a b : ℝ) : a + b ≤ 2 * max a b :=
-  calc
-    a + b ≤ max a b + max a b := add_le_add (le_max_left a b) (le_max_right a b)
-    _ = _ := by ring
-
 theorem isBoundedLinearMap_coprod (𝕜 : Type*) [NontriviallyNormedField 𝕜] (E : Type*)
     [NormedAddCommGroup E] [NormedSpace 𝕜 E] (F : Type*) [NormedAddCommGroup F] [NormedSpace 𝕜 F]
     (G : Type*) [NormedAddCommGroup G] [NormedSpace 𝕜 G] :
