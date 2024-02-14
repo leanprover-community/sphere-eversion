@@ -16,7 +16,7 @@ but in the ambient space `E ≃ ℝ³`.
 See `loc_formal_eversion` for the choice and constaints of the solution.
 
 Finally, we obtain the existence of sphere eversion from the parametric local h-principle,
-proven in `local.parametric_h_principle`.
+proven in `Local/ParametricHPrinciple`.
 -/
 
 

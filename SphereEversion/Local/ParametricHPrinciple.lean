@@ -5,7 +5,7 @@ import SphereEversion.ToMathlib.Topology.Algebra.Module
 In this file we prove the parametric version of the local h-principle.
 
 We will not use this to prove the global version of the h-principle, but we do use this to conclude
-the existence of sphere eversion from the local h-principle, which is proven in `local.h_principle`.
+the existence of sphere eversion from the local h-principle, which is proven in `Local.HPrinciple`.
 
 The parametric h-principle states the following: Suppose that `R` is a local relation,
 `𝓕₀ : P → J¹(E, F)` is a family of formal solutions of `R` that is holonomic near some set

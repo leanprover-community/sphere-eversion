@@ -355,8 +355,8 @@ variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimens
 
 /-
 We now deduce the parametric case from the unparametric one using
-`rel_mfld.satisfies_h_principle.satisfies_h_principle_with` which reduces the parametric
-`h`-principle to the non-parametric one for a different relation and `rel_mafld.ample.relativize`
+`RelMfld.satisfiesHPrinciple.satisfiesHPrincipleWith` which reduces the parametric
+`h`-principle to the non-parametric one for a different relation and `RelMfld.Ample.relativize`
 which ensures the ampleness assumption survives this reduction.
 -/
 /-- **Gromov's Theorem** -/
@@ -378,7 +378,7 @@ variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimens
 Since every (σ-compact) manifold is metrizable, the metric space assumption can be removed.
 -/
 /-- Gromov's Theorem without metric space assumption -/
-theorem RelMfld.Ample.satisfies_h_principle_with' {R : RelMfld IM M I' M'} (hRample : R.Ample)
+theorem RelMfld.Ample.satisfiesHPrincipleWith' {R : RelMfld IM M I' M'} (hRample : R.Ample)
     (hRopen : IsOpen R) (hC : IsClosed C) (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) :
     letI := manifoldMetric I' M'
     R.SatisfiesHPrincipleWith IP C δ := by

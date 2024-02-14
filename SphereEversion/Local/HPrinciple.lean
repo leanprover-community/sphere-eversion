@@ -6,7 +6,7 @@ import SphereEversion.Local.AmpleRelation
 /-!
 # Local h-principle for open and ample relations
 
-This file proves lem:h_principle_open_ample_loc from the blueprint. This is the local
+This file proves `lem:h_principle_open_ample_loc` from the blueprint. This is the local
 version of the h-principle for open and ample relations. The proof brings together the
 main result `exist_loops` from the loop folder (Chapter 1 in the blueprint) and
 the corrugation technique.
@@ -39,7 +39,7 @@ the loop family constructed by Chapter 2 is `L.loop h`. Together with corrugatio
 it is used to build `L.improveStep h` which is the homotopy of 1-jet sections improving
 the formal solution `𝓕` in that step of the main inductive proof. A rather long series of
 lemmas prove all the required properties of that homotopy, corresponding to
-lemma lem:integration_step from the blueprint.
+lemma `lem:integration_step` from the blueprint.
 
 The inductive proof itself is the proof of `RelLoc.FormalSol.improve`.
 Here all conclusions are stated at once this the induction requires to know about each
@@ -78,7 +78,7 @@ section ImproveStep
 /-!
 ## Improvement step
 
-This section proves lem:integration_step.
+This section proves `lem:integration_step`.
 -/
 
 
@@ -431,7 +431,7 @@ section Improve
 /-!
 ## Full improvement
 
-This section proves lem:h_principle_open_ample_loc.
+This section proves `lem:h_principle_open_ample_loc`.
 -/
 
 

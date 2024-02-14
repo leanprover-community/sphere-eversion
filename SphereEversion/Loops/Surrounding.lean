@@ -175,7 +175,7 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
     · erw [← Finset.univ.affineCombination_eq_linear_combination p _
         (basis.sum_coord_apply_eq_one f), basis.affineCombination_coord_eq_self]
 
---- prop:surrounded_by_open
+--- `prop:surrounded_by_open`
 theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (hs : IsOpen s)
     (hsf : f ∈ convexHull ℝ s) : Surrounded f s := by
   rw [surrounded_iff_mem_interior_convexHull_aff_basis]
@@ -198,7 +198,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
--- lem:smooth_barycentric_coord
+-- `lem:smooth_barycentric_coord`
 theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
     (h : SurroundingPts x p w) :
     ∃ W : F → (ι → F) → ι → ℝ, ∀ᶠ yq : F × (ι → F) in 𝓝 (x, p),

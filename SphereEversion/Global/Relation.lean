@@ -324,7 +324,7 @@ there is a homotopy between `𝓕₀` and a holonomic solution that is constant 
 `ε`-close to `𝓕₀`. This is a temporary version with a slightly weaker conclusion.
 The weak version has `∀ x ∈ C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x` while the strong one has
 `∀ᶠ x near C, ∀ t, 𝓕 t x = 𝓕₀ x`. The strong version is easy to derive from the weak one
-if we prove the weak one for *all* closed sets, see `rel_mfld.satisfies_h_principle_of_weak`
+if we prove the weak one for *all* closed sets, see `RelMfld.satisfiesHPrinciple_of_weak`
 below. The reason why the weak one is more convenient for us is we will prove
 the h-principle using a sequence of homotopy of formal solutions and we don't
 want to keep control of a fixed neighborhood of `C` independant from the sequence index. -/
