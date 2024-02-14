@@ -37,7 +37,7 @@ structure OpenSmoothEmbedding where
 attribute [coe] OpenSmoothEmbedding.toFun
 
 -- Note: this cannot be a `FunLike` instance since `toFun` is not injective in general.
-instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ => M → M' :=
+instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ ↦ M → M' :=
   ⟨OpenSmoothEmbedding.toFun⟩
 
 attribute [pp_dot] OpenSmoothEmbedding.invFun
@@ -83,7 +83,7 @@ theorem open_map : IsOpenMap f :=
   f.leftInverse.isOpenMap f.isOpen_range f.smooth_inv.continuousOn
 
 theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] id :=
-  Filter.eventually_of_mem (f.open_map.range_mem_nhds x) fun _ hy => f.right_inv hy
+  Filter.eventually_of_mem (f.open_map.range_mem_nhds x) fun _ hy ↦ f.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
@@ -255,7 +255,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
       PartialHomeomorph.coe_coe, PartialEquiv.coe_trans_symm, PartialHomeomorph.coe_coe_symm,
       ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
   isOpen_range :=
-    IsOpenMap.isOpen_range fun u hu => by
+    IsOpenMap.isOpen_range fun u hu ↦ by
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
       convert isOpen_extChartAt_preimage' IF x aux
       rw [image_comp]
@@ -299,13 +299,13 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     ∃ (ι' : Type u) (t : Set ι') (φ : t → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
       t.Countable ∧
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
-          (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
-  set W : M → ℝ → Set M := fun x r =>
+          (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
+  set W : M → ℝ → Set M := fun x r ↦
     (extChartAt IF x).symm ∘ diffeomorphToNhd (extChartAt IF x x) r '' U with W_def
   let B : M → ℝ → Set M := ChartedSpace.ball IF
-  let p : M → ℝ → Prop := fun x r =>
+  let p : M → ℝ → Prop := fun x r ↦
     0 < r ∧ ball (extChartAt IF x x) r ⊆ (extChartAt IF x).target ∧ ∃ j, B x r ⊆ s j
-  have hW₀ : ∀ x r, p x r → x ∈ W x r := fun x r h => ⟨0, hU₁, by simp [h.1]⟩
+  have hW₀ : ∀ x r, p x r → x ∈ W x r := fun x r h ↦ ⟨0, hU₁, by simp [h.1]⟩
   have hW₁ : ∀ x r, p x r → IsOpen (W x r) := by
     rintro x r ⟨h₁, h₂, -, -⟩
     simp only [W_def]
@@ -318,10 +318,10 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
       Subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂
     rw [(extChartAt IF x).symm_image_eq_source_inter_preimage hV₂]
     exact isOpen_extChartAt_preimage' IF x hV₁
-  have hB : ∀ x, (𝓝 x).HasBasis (p x) (B x) := fun x =>
+  have hB : ∀ x, (𝓝 x).HasBasis (p x) (B x) := fun x ↦
     ChartedSpace.nhds_hasBasis_balls_of_open_cov IF x s_op cov
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ := exists_countable_locallyFinite_cover surjective_id hW₀ hW₁ hB
-  let g : M × ℝ → PartialHomeomorph F F := fun z => diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
+  let g : M × ℝ → PartialHomeomorph F F := fun z ↦ diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
   have hg₁ : ∀ z, (g z).source = univ := by simp
   have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp
   have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp
@@ -338,7 +338,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
     exact ⟨j, (monotone_image (range_diffeomorphToNhd_subset_ball _ hr)).trans hj⟩
   · simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
-    refine' ht₄.subset _
+    refine ht₄.subset ?_
     rintro ⟨⟨x, r⟩, hxr⟩
     obtain ⟨hr : 0 < r, -, -⟩ := ht₂ _ hxr
     exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr)
@@ -348,10 +348,9 @@ variable [Nonempty M]
 
 theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) :
-    ∃ n,
-      ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
+    ∃ n, ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
-          (LocallyFinite fun i => range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
+          (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
   obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
   have htne : t.Nonempty := by
     by_contra contra
@@ -359,8 +358,8 @@ theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
       iUnion_of_empty, iUnion_empty, @eq_comm _ _ univ, univ_eq_empty_iff] at h₄
     exact not_isEmpty_of_nonempty M h₄
   obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
-  refine' ⟨n, φ ∘ fn, fun i => h₂ (fn i), h₃.comp_injective fn.injective, _⟩
-  erw [fn.surjective.iUnion_comp fun i => φ i '' ball 0 1, h₄]
+  refine ⟨n, φ ∘ fn, fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
+  erw [fn.surjective.iUnion_comp fun i ↦ φ i '' ball 0 1, h₄]
 
 end WithoutBoundary
 
@@ -422,17 +421,17 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
     (hK : IsClosed (φ '' K)) (hf : Smooth (IM'.prod IM) IN (uncurry f))
     (hg : Smooth (IM'.prod IX) IY (uncurry g)) (hk : Smooth IM' IM k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
-    Smooth IM' IN fun x => update φ ψ (f x) (g x) (k x) := by
-  have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx =>
+    Smooth IM' IN fun x ↦ update φ ψ (f x) (g x) (k x) := by
+  have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx ↦
     nice_update_of_eq_outside_compact_aux φ ψ (f x) (g x) (hg' x) hx
-  refine' contMDiff_of_locally_contMDiffOn fun x => _
+  refine contMDiff_of_locally_contMDiffOn fun x ↦ ?_
   let U := range φ
   let V := (φ '' K)ᶜ
   have h₂ : IsOpen (k ⁻¹' V) := hK.isOpen_compl.preimage hk.continuous
   have h₃ : V ∪ U = univ := by
     rw [← compl_subset_iff_union, compl_compl]
     exact image_subset_range φ K
-  have h₄ : ∀ x, k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.invFun) (k x) := fun m hm => by
+  have h₄ : ∀ x, k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.invFun) (k x) := fun m hm ↦ by
     intros
     exact if_pos hm
   by_cases hx : k x ∈ U
@@ -455,30 +454,26 @@ variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [M
 theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]
     {KP : Set P} (hKP : IsCompact KP) (f : P → M → N) (hf : Continuous ↿f)
     (hf' : ∀ p, f p '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : Continuous ε) :
-    ∃ η > (0 : ℝ),
-      ∀ g : P → X → Y,
-        ∀ p ∈ KP,
-          ∀ p' ∈ KP,
-            ∀ x ∈ K,
-              dist (g p' x) (ψ.invFun (f p (φ x))) < η →
-                dist (update φ ψ (f p') (g p') <| φ x) (f p <| φ x) < ε (φ x) := by
+    ∃ η > (0 : ℝ), ∀ g : P → X → Y, ∀ p ∈ KP, ∀ p' ∈ KP, ∀ x ∈ K,
+      dist (g p' x) (ψ.invFun (f p (φ x))) < η →
+        dist (update φ ψ (f p') (g p') <| φ x) (f p <| φ x) < ε (φ x) := by
   by_cases h : Set.Nonempty K ; swap
   · exact ⟨1, Real.zero_lt_one, fun g p _a _ _ x hx _ ↦ (h ⟨x, hx⟩).elim⟩
-  let F : P × X → Y := fun q => (ψ.invFun ∘ f q.1 ∘ φ) q.2
+  let F : P × X → Y := fun q ↦ (ψ.invFun ∘ f q.1 ∘ φ) q.2
   let K₁ := Metric.cthickening 1 (F '' KP.prod K)
   have hK₁ : IsCompact K₁ := by
     refine Metric.isCompact_of_isClosed_isBounded Metric.isClosed_cthickening
         (Bornology.IsBounded.cthickening <| IsCompact.isBounded <| ?_)
     apply (hKP.prod hK).image
     exact ψ.smooth_inv.continuousOn.comp_continuous
-      (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q =>
+      (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q ↦
       hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
     hK₁.uniformContinuousOn_of_continuous ψ.continuous.continuousOn
   obtain ⟨x, _hxK, hε₀'⟩ := hK.exists_isMinOn h (hε'.comp φ.continuous).continuousOn
   let ε₀ := (ε ∘ φ) x
   obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniformContinuousOn_iff.mp h₁ ε₀ (hε _)
-  refine' ⟨min τ 1, by simp [hτ], fun g p hp p' _hp' x hx hη => _⟩
+  refine ⟨min τ 1, by simp [hτ], fun g p hp p' _hp' x hx hη ↦ ?_⟩
   cases' lt_min_iff.mp hη with H H'
   have hε₀' : ∀ b ∈ K, ε₀ ≤ (ε ∘ ↑φ) b := hε₀'
   apply lt_of_lt_of_le _ (hε₀' x hx); clear hε₀'
