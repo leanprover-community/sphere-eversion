@@ -50,25 +50,6 @@ theorem Filter.Eventually.closed_neighborhood {α} [TopologicalSpace α] [Normal
 
 end
 
-section -- PRed in #9981
-
-variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-
-theorem ContinuousAt.eventually {f : X → Y} {x₀ : X} (hf : ContinuousAt f x₀) (P : Y → Prop)
-    (hP : IsOpen {y | P y}) (hx₀ : P (f x₀)) : ∀ᶠ x in 𝓝 x₀, P (f x) :=
-  hf (isOpen_iff_mem_nhds.mp hP _ hx₀)
-
-theorem ContinuousAt.eventually' {f : X → Y} {x₀ : X} (hf : ContinuousAt f x₀) (P : Y → Prop)
-    (hP : ∀ᶠ y in 𝓝 (f x₀), P y) : ∀ᶠ x in 𝓝 x₀, P (f x) := by
-  rw [ContinuousAt, tendsto_iff_comap] at hf
-  exact Eventually.filter_mono hf (hP.comap f)
-
-theorem Continuous.eventually {f : X → Y} {x₀ : X} (hf : Continuous f) (P : Y → Prop)
-    (hP : IsOpen {y | P y}) (hx₀ : P (f x₀)) : ∀ᶠ x in 𝓝 x₀, P (f x) :=
-  hf.continuousAt.eventually P hP hx₀
-
-end
-
 section
 
 theorem support_norm {α E : Type*} [NormedAddCommGroup E] (f : α → E) :

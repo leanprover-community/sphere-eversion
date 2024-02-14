@@ -102,8 +102,8 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     norm_num
   -- The following suffices looks stupid but is much faster than using the change tactic.
   suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) by exact this
-  apply ContinuousAt.eventually
-  · refine' (continuousAt_const.inner continuousAt_fst).prod _
+  have hf : ContinuousAt (fun x ↦ f x) (x₀, y₀, φ₀) := by
+    refine (continuousAt_const.inner continuousAt_fst).prod ?_
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
       exact continuousAt_snd.comp continuousAt_snd
@@ -113,14 +113,17 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
       apply ContinuousAt.comp _ continuousAt_fst
       exact continuousAt_orthogonalProjection_orthogonal x₀_ne
     exact continuousAt_const
-  · exact (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
+  have hP : IsOpen {y | P y} :=
+    (continuous_fst.isOpen_preimage _ isOpen_compl_singleton).inter
       (continuous_snd.isOpen_preimage _ ContinuousLinearMap.isOpen_injective)
-  · constructor
+  have : P (f (x₀, y₀, φ₀)) := by
+    constructor
     · change ⟪x₀, x₀⟫ ≠ 0
       apply inner_self_eq_zero.not.mpr x₀_ne
     · change Injective (φ₀ ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E) ∘ (orthogonalProjection (ℝ ∙ x₀)ᗮ) ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E))
       erw [orthogonalProjection_comp_coe, comp_id]
       exact injOn_iff_injective.mp H
+  exact hf (isOpen_iff_mem_nhds.mp hP _ this)
 
 theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
   dsimp only [immersionSphereRel]
