@@ -72,7 +72,7 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type*} {s : Set 
         by_contra hn
         replace hn : 0 < n := zero_lt_iff.mpr hn
         simp only [hn, indexType_of_zero_lt] at fn
-        exact Set.not_infinite.mpr ⟨Fintype.ofEquiv (Fin n) fn⟩ h
+        exact h (Finite.intro fn.symm)
       simp only [hn, indexType_zero] at fn
       exact Set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩
 
