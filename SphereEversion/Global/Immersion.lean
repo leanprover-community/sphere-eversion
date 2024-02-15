@@ -13,14 +13,15 @@ open scoped Manifold Topology
 
 section General
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
-  (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') {M' : Type*}
-  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {F : Type*}
-  [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
-  (J : ModelWithCorners ℝ F G) (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
-  [SmoothManifoldWithCorners J N]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M]
+  [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H')
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
+  (J : ModelWithCorners ℝ F G)
+  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
 
 local notation "TM" => TangentSpace I
 
