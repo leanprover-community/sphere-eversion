@@ -11,7 +11,6 @@ import Mathlib.Analysis.NormedSpace.Completion
 import Mathlib.Geometry.Manifold.Algebra.Monoid
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
--- import SphereEversion.InteractiveExpr
 
 /-!
 # 1-jet bundles

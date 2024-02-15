@@ -1,16 +1,13 @@
-import SphereEversion.ToMathlib.Data.Set.Prod
-import SphereEversion.ToMathlib.Data.Set.Lattice
 import SphereEversion.ToMathlib.Topology.Germ
 import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Order.Filter.Basic
+import SphereEversion.ToMathlib.Data.Set.Lattice
 import SphereEversion.Indexing
 import SphereEversion.Notations
--- import SphereEversion.InteractiveExpr
 -- import Mathlib.Tactic.Induction
 
 -- set_option trace.filter_inst_type true
 
-open Set Filter Prod TopologicalSpace Function
+open Set Filter Function
 
 open scoped Topology unitInterval
 

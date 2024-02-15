@@ -1,15 +1,12 @@
-import Mathlib.Topology.MetricSpace.HausdorffDistance
-import Mathlib.Topology.NhdsSet
-import Mathlib.Topology.UniformSpace.Separation
-import Mathlib.Geometry.Manifold.ChartedSpace
-import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
-import SphereEversion.Notations
 import SphereEversion.Indexing
-import SphereEversion.ToMathlib.Topology.Paracompact
-import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
-import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
+import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
+import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
+import SphereEversion.ToMathlib.Topology.Misc
+import SphereEversion.ToMathlib.Topology.Paracompact
+import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
+import Mathlib.Order.Filter.Basic
+
 
 noncomputable section
 

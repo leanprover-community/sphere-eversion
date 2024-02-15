@@ -4,9 +4,6 @@ import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
 import SphereEversion.Global.Gromov
 import SphereEversion.Global.TwistOneJetSec
 
--- import interactive_expr
--- import interactive_expr
--- set_option trace.filter_inst_type true
 -- set_option trace.filter_inst_type true
 noncomputable section
 
