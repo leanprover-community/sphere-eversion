@@ -27,8 +27,8 @@ theorem Basis.flag_zero {n : ℕ} (b : Basis (Fin n) R M) : b.flag 0 = ⊥ := by
 
 @[simp]
 theorem Basis.flag_last {n : ℕ} (b : Basis (Fin n) R M) : b.flag (Fin.last n) = ⊤ := by
-  have : {j : Fin n | (j : Fin <| n + 1) < Fin.last n} = univ
-  · ext l
+  have : {j : Fin n | (j : Fin <| n + 1) < Fin.last n} = univ := by
+    ext l
     simp [Fin.castSucc_lt_last l]
   simp_rw [Basis.flag, this]
   simp [b.span_eq]

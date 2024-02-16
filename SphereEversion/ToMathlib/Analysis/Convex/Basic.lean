@@ -166,8 +166,7 @@ theorem ReallyConvex.add_mem (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁
   cases subsingleton_or_nontrivial 𝕜
   · have := Module.subsingleton 𝕜 E
     rwa [Subsingleton.mem_iff_nonempty] at hz₁ ⊢
-  suffices : ∑ b : Bool, cond b w₁ w₂ • cond b z₁ z₂ ∈ s
-  · simpa using this
+  suffices ∑ b : Bool, cond b w₁ w₂ • cond b z₁ z₂ ∈ s by simpa using this
   apply hs.sum_mem <;> simp [*]
 
 theorem ReallyConvex.inter {t : Set E} (hs : ReallyConvex 𝕜 s) (ht : ReallyConvex 𝕜 t) :

@@ -124,8 +124,8 @@ theorem Filter.Germ.sliceRight_coe {X Y Z : Type _} [TopologicalSpace X] [Topolo
 
 def Filter.Germ.IsConstant {X Y : Type _} [TopologicalSpace X] {x : X} (P : Germ (𝓝 x) Y) : Prop :=
   P.liftOn (fun f ↦ ∀ᶠ x' in 𝓝 x, f x' = f x) <| by
-    suffices : ∀ f g : X → Y, f =ᶠ[𝓝 x] g → (∀ᶠ x' in 𝓝 x, f x' = f x) → ∀ᶠ x' in 𝓝 x, g x' = g x
-    exact fun f g hfg ↦ propext ⟨fun h ↦ this f g hfg h, fun h ↦ this g f hfg.symm h⟩
+    suffices ∀ f g : X → Y, f =ᶠ[𝓝 x] g → (∀ᶠ x' in 𝓝 x, f x' = f x) → ∀ᶠ x' in 𝓝 x, g x' = g x from
+      fun f g hfg ↦ propext ⟨fun h ↦ this f g hfg h, fun h ↦ this g f hfg.symm h⟩
     rintro f g hfg hf
     refine (hf.and hfg).mono fun x' hx' ↦ ?_
     rw [← hx'.2, hx'.1, hfg.eq_of_nhds]

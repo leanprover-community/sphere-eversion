@@ -206,8 +206,8 @@ theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : Cont
   · exact fun x t ↦
       ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 (deriv (f x) t) <| ne_of_gt (hderiv x t))
   · intro x t
-    suffices : partialFDerivSnd ℝ f x t 1 = partialDerivSnd f x t
-    · ext
+    suffices partialFDerivSnd ℝ f x t 1 = partialDerivSnd f x t by
+      ext
       simpa only [RelIso.coe_fn_toEquiv, ContinuousLinearEquiv.coe_coe,
         ContinuousLinearEquiv.unitsEquivAut_apply, Units.val_mk0, one_mul]
     apply partialFDerivSnd_one
@@ -248,9 +248,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
     ContDiffAt ℝ ⊤ (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
-  suffices : ContDiffAt ℝ ⊤
-    (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀
-  · refine this.congr_of_eventuallyEq (Filter.eventually_of_forall fun v ↦ ?_)
+  suffices ContDiffAt ℝ ⊤
+    (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
+    refine this.congr_of_eventuallyEq (Filter.eventually_of_forall fun v ↦ ?_)
     dsimp
     rw [orthogonalProjection_singleton']
     rfl

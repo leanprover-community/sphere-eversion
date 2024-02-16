@@ -21,8 +21,8 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
   have hCU : ∀ n, C n ⊆ U n := fun n x hx ↦
     ⟨K.subset_interior_succ _ hx.1, mt (fun hx₃ ↦ K.subset_interior_succ _ hx₃) hx.2⟩
   have hC : ∀ n, IsCompact (C n) := fun n ↦ (K.isCompact _).diff isOpen_interior
-  have hC' : (⋃ n, C n) = univ
-  · refine Set.univ_subset_iff.mp fun x _ ↦ mem_iUnion.mpr ⟨K'.find x, ?_⟩
+  have hC' : (⋃ n, C n) = univ := by
+    refine Set.univ_subset_iff.mp fun x _ ↦ mem_iUnion.mpr ⟨K'.find x, ?_⟩
     simpa only [K'.find_shiftr] using
       diff_subset_diff_right interior_subset (K'.shiftr.mem_diff_shiftr_find x)
   have hU : ∀ n, IsOpen (U n) := fun n ↦
@@ -35,7 +35,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
       exact ⟨this hx₄ hx₁, this hx₂ hx₃⟩
     intro a b ha hb
     by_contra hab
-    replace hab : b + 1 ≤ a; · simpa using hab
+    replace hab : b + 1 ≤ a := by simpa using hab
     exact Set.Nonempty.ne_empty (⟨x, interior_subset hb, ha⟩ : (K b.succ \ K a).Nonempty)
       (Set.diff_eq_empty.mpr (K.subset hab))
   have hU'' : ∀ n x, x ∈ C n → U n ∈ 𝓝 x := fun n x hx ↦

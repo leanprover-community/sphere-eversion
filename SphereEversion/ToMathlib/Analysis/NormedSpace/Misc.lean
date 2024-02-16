@@ -16,8 +16,8 @@ theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
     let e' := e.toHomeomorph
     rcases Euclidean.nhds_basis_ball.mem_iff.1 (ball_mem_nhds c hr) with ⟨ε, ε₀, hε⟩
     set f := (e'.transPartialHomeomorph (.univBall (e c) ε)).transHomeomorph e'.symm
-    have hf : f.target = Euclidean.ball c ε
-    · rw [transHomeomorph_target, Homeomorph.transPartialHomeomorph_target, univBall_target _ ε₀]
+    have hf : f.target = Euclidean.ball c ε := by
+      rw [transHomeomorph_target, Homeomorph.transPartialHomeomorph_target, univBall_target _ ε₀]
       rfl
     refine ⟨f, ?_, ?_, ?_, fun _ ↦ ?_, ?_⟩
     · exact e.symm.contDiff.comp <| contDiff_univBall.comp e.contDiff

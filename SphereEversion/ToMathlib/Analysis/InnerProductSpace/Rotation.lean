@@ -69,9 +69,8 @@ theorem rot_zero (v : E) : ω.rot (0, v) = ContinuousLinearMap.id ℝ E := by
 
 /-- The map `rot` sends `(1, v)` to a transformation which on `(ℝ ∙ v)ᗮ` acts as the negation. -/
 theorem rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : ω.rot (1, v) w = -w := by
-  suffices : (orthogonalProjection (Submodule.span ℝ {v}) w : E) +
-    -(orthogonalProjection (Submodule.span ℝ {v})ᗮ w) = -w
-  · simpa [rot]
+  suffices (orthogonalProjection (Submodule.span ℝ {v}) w : E) +
+    -(orthogonalProjection (Submodule.span ℝ {v})ᗮ w) = -w by simpa [rot]
   simp [orthogonalProjection_eq_self_iff.mpr hw,
         orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hw]
 

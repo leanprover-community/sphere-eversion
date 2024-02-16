@@ -21,8 +21,8 @@ variable {F : Type*} [AddCommGroup F] [Module ℝ F]
 theorem exists_of_convex {P : (Σ x : M, Germ (𝓝 x) F) → Prop}
     (hP : ∀ x : M, ReallyConvex (smoothGerm I x) {φ | P ⟨x, φ⟩})
     (hP' : ∀ x : M, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, P ⟨x', f⟩) : ∃ f : M → F, ∀ x, P ⟨x, f⟩ := by
-  replace hP' : ∀ x : M, ∃ f : M → F, ∃ U ∈ 𝓝 x, ∀ x' ∈ U, P ⟨x', f⟩
-  · intro x
+  replace hP' : ∀ x : M, ∃ f : M → F, ∃ U ∈ 𝓝 x, ∀ x' ∈ U, P ⟨x', f⟩ := by
+    intro x
     rcases hP' x with ⟨f, hf⟩
     exact ⟨f, {x' | P ⟨x', ↑f⟩}, hf, fun _ ↦ id⟩
   choose φ U hU hφ using hP'

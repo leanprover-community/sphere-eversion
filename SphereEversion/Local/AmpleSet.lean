@@ -172,8 +172,7 @@ theorem isPathConnected_compl_zero_of_two_le_dim (hdim : 2 ≤ Module.rank ℝ F
       push_neg at h'
       rw [← Submodule.eq_top_iff'] at h'
       rw [← rank_top ℝ, ← h'] at hdim
-      suffices : (2 : Cardinal) ≤ 1
-      exact not_le_of_lt (by norm_num) this
+      suffices (2 : Cardinal) ≤ 1 from not_le_of_lt (by norm_num) this
       have := hdim.trans (rank_span_le _)
       rwa [Cardinal.mk_singleton] at this
     · exact joinedIn_compl_zero_of_not_mem_span hx h

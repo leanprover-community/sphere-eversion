@@ -134,8 +134,8 @@ theorem continuousAt_parametric_primitive_of_dominated {F : X → ℝ → E} (bo
     apply intervalIntegral.continuousWithinAt_primitive hμb₀
     rw [min_eq_right hb₀.1.le, max_eq_right hb₀.2.le]
     exact bound_integrable.mono_fun' (hF_meas x₀) hx₀
-  · suffices : Tendsto (fun x : X × ℝ ↦ ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0)
-    · simpa [ContinuousAt]
+  · suffices Tendsto (fun x : X × ℝ ↦ ∫ s in b₀..x.2, F x.1 s - F x₀ s ∂μ) (𝓝 (x₀, b₀)) (𝓝 0) by
+      simpa [ContinuousAt]
     have : ∀ᶠ p : X × ℝ in 𝓝 (x₀, b₀),
         ‖∫ s in b₀..p.2, F p.1 s - F x₀ s ∂μ‖ ≤ |∫ s in b₀..p.2, 2 * bound s ∂μ| := by
       rw [nhds_prod_eq]
@@ -267,17 +267,16 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
     exact (this.mono_set <| ordConnected_Ioo.uIcc_subset hs hu).intervalIntegrable
   constructor
   · apply (bound_int ha hsx₀).mono_fun' hF'_meas _
-    replace h_lipsch :
-      ∀ᵐ t ∂volume.restrict (Ι a (s x₀)),
-        LipschitzOnWith (nnabs (bound t)) (fun x : H ↦ F x t) (ball x₀ ε)
-    exact ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch
+    replace h_lipsch : ∀ᵐ t ∂volume.restrict (Ι a (s x₀)),
+        LipschitzOnWith (nnabs (bound t)) (fun x : H ↦ F x t) (ball x₀ ε) :=
+      ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch
     filter_upwards [h_lipsch, h_diff]
     intro t ht_lip ht_diff
     rw [show bound t = nnabs (bound t) by simp [bound_nonneg t] ]
     exact ht_diff.le_of_lipschitzOn (ball_mem_nhds x₀ ε_pos) ht_lip
   · have D₁ : HasFDerivAt (fun x ↦ φ x (s x₀)) (∫ t in a..s x₀, F' t) x₀ := by
-      replace hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) (volume.restrict (Ι a (s x₀)))
-      exact Eventually.mono (ball_mem_nhds x₀ ε_pos) fun x hx ↦ hF_meas_ball hx ha hsx₀
+      replace hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) (volume.restrict (Ι a (s x₀))) :=
+        Eventually.mono (ball_mem_nhds x₀ ε_pos) fun x hx ↦ hF_meas_ball hx ha hsx₀
       replace hF_int : IntervalIntegrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀
       exact (hasFDerivAt_integral_of_dominated_loc_of_lip_interval _ ε_pos hF_meas hF_int hF'_meas
         (ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch)
@@ -382,8 +381,8 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
   have cont_x : ∀ x, Continuous (F x) := fun x ↦ hF.continuous.comp (Continuous.Prod.mk x)
   have int_Icc : ∀ x, IntegrableOn (F x) (Icc a₀ b₀) := fun x ↦
     (cont_x x).continuousOn.integrableOn_Icc
-  have int_Ioo : ∀ x, IntegrableOn (F x) (Ioo a₀ b₀)
-  · exact fun x ↦ (int_Icc x).mono_set Ioo_subset_Icc_self
+  have int_Ioo : ∀ x, IntegrableOn (F x) (Ioo a₀ b₀) := by
+    exact fun x ↦ (int_Icc x).mono_set Ioo_subset_Icc_self
   save
   apply
     hasFDerivAt_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀

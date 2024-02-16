@@ -251,7 +251,7 @@ instance : EquivLike EquivariantEquiv ℝ ℝ where
   coe_injective' e₁ e₂ h₁ h₂ := by
     rcases e₁ with ⟨f₁, hf₁⟩
     rcases e₂ with ⟨f₂, hf₂⟩
-    suffices : f₁ = f₂ ; · simpa
+    suffices f₁ = f₂ by simpa
     ext
     change (f₁ : ℝ → ℝ)  = f₂ at h₁
     rw [h₁]

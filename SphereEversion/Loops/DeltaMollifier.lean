@@ -175,8 +175,7 @@ theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (
     cases ht
     cases hn
     have : -(1 : ℝ) < n := by linarith
-    have : -1 < n
-    exact_mod_cast this
+    have : -1 < n := mod_cast this
     have : (n : ℝ) < 1 := by linarith
     norm_cast at this
     linarith
