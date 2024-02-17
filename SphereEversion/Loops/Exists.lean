@@ -47,31 +47,32 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   have h2ε : ∀ t s : ℝ, ‖ε • γ₀ t s‖ < ε₁ := by
     intro t s
     simp only [norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
-    refine' lt_of_lt_of_le _ (mul_one _).le
+    refine lt_of_lt_of_le ?_ (mul_one _).le
     rw [mul_lt_mul_left hε₁, div_lt_one h0]
-    refine' (zero_add _).symm.le.trans_lt _
-    refine' add_lt_add_of_lt_of_le zero_lt_one (le_csSup h4γ₀ _)
+    refine (zero_add _).symm.le.trans_lt ?_
+    refine add_lt_add_of_lt_of_le zero_lt_one (le_csSup h4γ₀ ?_)
     rw [← Loop.fract_eq, ← h3γ₀]
-    refine' mem_image_of_mem _ (mk_mem_prod projI_mem_Icc <| unitInterval.fract_mem _)
+    refine mem_image_of_mem _ (mk_mem_prod projI_mem_Icc <| unitInterval.fract_mem _)
   let γ₁ : E → ℝ → Loop F := fun x t ↦ (γ₀ t).transform fun y ↦ b x + ε • y
   -- `γ₁ x` is `γₓ` in notes
-  refine' ⟨γ₁, _⟩
+  refine ⟨γ₁, ?_⟩
   have hbV : ∀ᶠ x near K, x ∈ V := hV
   have h1 : ∀ x ∈ V, ∀ (_t _s : ℝ), ball (x, b x) (ε₁ + ε₁) ⊆ Ω := by
     intro x hx _t _s
     simp [← h0ε₁]
-    refine' (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ
-  refine' ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by unfold_let γ₁; simp [hγ₀], by unfold_let γ₁; simp [h2γ₀], _, _, _⟩, _⟩, _, _⟩
+    exact (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ
+  refine ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by unfold_let γ₁; simp [hγ₀], by unfold_let γ₁; simp [h2γ₀],
+    ?_, ?_, ?_⟩, ?_⟩, ?_, ?_⟩
   · intro x t s; unfold_let γ₁;  simp [h3γ₀]
   · rintro x ⟨hx, -⟩; unfold_let γ₁; simp_rw [hx]
     exact (hγ₀_surr.smul0 hε.ne').vadd0
-  · refine' hb.continuous.fst'.add (continuous_const.smul <| hγ₀_cont.snd')
+  · exact hb.continuous.fst'.add (continuous_const.smul <| hγ₀_cont.snd')
   · rintro x ⟨-, hx⟩ t _ht s _hs
     have : ‖ε • γ₀ t s‖ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀)
     exact h1 x hx t s (by simpa [← h0ε₁])
   · intro x hx
     rw [← h0ε₁, add_halves']
-    refine' (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
+    exact (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
   · rintro x ⟨-, -⟩ t s
     -- Porting note: should be simp [h2ε]
     simp
@@ -149,20 +150,20 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have h0C₁ : (0 : ℝ) ∈ C₁ := Or.inl (by rw [mem_Iic]; norm_num1)
   have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s := by
     intro s hs
-    refine' fract_preimage_mem_nhds _ fun _ ↦ _
-    · rw [hs]; refine' mem_of_superset (Iic_mem_nhds <| by norm_num) (subset_union_left _ _)
-    · refine' mem_of_superset (Ici_mem_nhds <| by norm_num) (subset_union_right _ _)
+    refine fract_preimage_mem_nhds ?_ fun _ ↦ ?_
+    · rw [hs]; exact mem_of_superset (Iic_mem_nhds <| by norm_num) (subset_union_left _ _)
+    · exact mem_of_superset (Ici_mem_nhds <| by norm_num) (subset_union_right _ _)
   let C : Set (E × ℝ × ℝ) := (fun x ↦ x.2.1) ⁻¹' Iic (5⁻¹ : ℝ) ∪ (fun x ↦ fract x.2.2) ⁻¹' C₁
   have hC : IsClosed C := by
-    refine' (isClosed_Iic.preimage continuous_snd.fst).union _
-    refine' ((isClosed_Iic.union isClosed_Ici).preimage_fract _).preimage continuous_snd.snd
+    refine (isClosed_Iic.preimage continuous_snd.fst).union ?_
+    refine ((isClosed_Iic.union isClosed_Ici).preimage_fract ?_).preimage continuous_snd.snd
     exact fun _ ↦ Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
   let U₁ : Set ℝ := Iio (4⁻¹ : ℝ) ∪ Ioi (3 / 4)
   let U : Set (E × ℝ × ℝ) := (fun x ↦ x.2.1) ⁻¹' Iio (4⁻¹ : ℝ) ∪ (fun x ↦ fract x.2.2) ⁻¹' U₁
   have hUC : U ∈ 𝓝ˢ C := by
     haveI hU : IsOpen U := by
-      refine' (isOpen_Iio.preimage continuous_snd.fst).union _
-      refine' ((isOpen_Iio.union isOpen_Ioi).preimage_fract _).preimage continuous_snd.snd
+      refine (isOpen_Iio.preimage continuous_snd.fst).union ?_
+      refine ((isOpen_Iio.union isOpen_Ioi).preimage_fract ?_).preimage continuous_snd.snd
       exact fun _ ↦ Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
     -- Porting note: the following four lines were
     /-
@@ -179,7 +180,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     rintro ⟨x, t, s⟩ hxts
     simp_rw [h0γ₄, Loop.reparam_apply]
     cases' hxts with ht hs
-    · refine' hγ₂.to_sf.t_le_zero_eq_b x (linearReparam s) (linearReparam_nonpos (le_of_lt ht))
+    · exact hγ₂.to_sf.t_le_zero_eq_b x (linearReparam s) (linearReparam_nonpos (le_of_lt ht))
     · rw [← Loop.fract_eq, fract_linearReparam_eq_zero, hγ₂.base]
       exact Or.imp le_of_lt le_of_lt hs
   have h3γ₄ : smooth_on γ₄ U := hb.fst'.contDiffOn.congr h2γ₄
@@ -194,9 +195,9 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         have :
           (fun x : E × ℝ × ℝ ↦ (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) := by
           simp_rw [@preimage_union _ _ _ (_ ⁻¹' _), preimage_preimage, fract_fract]
-          refine' mem_of_superset _ (subset_union_right _ _)
-          refine' continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
-        refine' eventually_of_mem this _
+          refine mem_of_superset ?_ (subset_union_right _ _)
+          refine continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
+        refine eventually_of_mem this ?_
         intro x hx
         exact (hγ₅C hx).trans
           (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
@@ -205,7 +206,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
           contDiff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
         ((EventuallyEq.rfl.prod_mk <| EventuallyEq.rfl.prod_mk <|
               (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp ↿γ₅)
-  refine' ⟨γ, ⟨⟨_, _, _, _, hγ.continuous⟩, _⟩, hγ, _⟩
+  refine ⟨γ, ⟨⟨?_, ?_, ?_, ?_, hγ.continuous⟩, ?_⟩, hγ, ?_⟩
   · intro x t; simp_rw [fract_zero]; rw [hγ₅C]; exact hγ₃.base x _
     exact Or.inr (by rw [mem_preimage, fract_zero]; exact h0C₁)
   · intro x s; simp_rw [smoothTransition.zero_of_nonpos le_rfl]; rw [hγ₅C]
@@ -218,14 +219,14 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   · rintro x - t - s -; rw [← not_mem_compl_iff]
     by_cases hΩ : Ωᶜ.Nonempty; swap
     · rw [not_nonempty_iff_eq_empty] at hΩ ; rw [hΩ]; apply not_mem_empty
-    refine' not_mem_of_dist_lt_infDist _
-    exact (x, γ₃ x (smoothTransition t) (fract s))
-    rw [dist_comm, dist_prod_same_left]
-    refine' (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le _ _)
-    refine' (isCompact_Icc.prod isCompact_Icc).bddBelow_image (h2f x).continuousOn
-    rw [← hγ₃.projI]
-    simp_rw [if_pos hΩ]
-    apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
+    refine' not_mem_of_dist_lt_infDist ?_
+    · exact (x, γ₃ x (smoothTransition t) (fract s))
+    · rw [dist_comm, dist_prod_same_left]
+      refine (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le ?_ ?_)
+      · exact (isCompact_Icc.prod isCompact_Icc).bddBelow_image (h2f x).continuousOn
+      · rw [← hγ₃.projI]
+        simp_rw [if_pos hΩ]
+        apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
   · refine eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s ↦ ?_
     refine (closedBall_subset_ball ?_).trans (hΩ x hx.1)
     refine (dist_triangle _ _ _).trans_lt (add_lt_add_of_le_of_lt
@@ -276,10 +277,9 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
   have h2γ : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x := by
     intro x t ht; ext s
     simp [hγ₁.to_sf.t_ge_one _ _ ht]
-  refine' ⟨γ, h1γ, h2γ, _, _, _, _, _, _⟩
+  refine ⟨γ, h1γ, h2γ, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x t
     simp [hγ₁.t₀]
-
   · intro x t
     simp [hγ₁.base]
   · intro x
@@ -301,9 +301,9 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       · exact hP t ⟨h1t, h2t⟩
       · rw [h2γ x t h2t]; exact hP 1 ⟨zero_le_one, le_rfl⟩
       · rw [h1γ x t h1t]; exact hP 0 ⟨le_rfl, zero_le_one⟩
-    refine' this (fun y ↦ (x, y) ∈ Ω) t fun t _ht ↦ _
+    refine this (fun y ↦ (x, y) ∈ Ω) t fun t _ht ↦ ?_
     rcases h0χ x with (⟨_hx, h2x⟩ | hx)
-    · refine' h2x t (γ₂.reparametrize x s) _
+    · refine h2x t (γ₂.reparametrize x s) ?_
       unfold_let γ
       simp [dist_smul_add_one_sub_smul_le (h2χ x)]
     · simp [hx]; apply hγ₁.val_in (mem_univ _)

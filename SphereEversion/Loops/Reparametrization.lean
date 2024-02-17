@@ -69,10 +69,10 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
   have hγ : ∀ x, Continuous (γ x) := fun x ↦ h.comp <| Continuous.Prod.mk _
   simp_rw [Loop.mollify_eq_convolution _ (hγ _)]
   rw [← add_zero (γ x t)]
-  refine' Tendsto.add _ _
+  refine Tendsto.add ?_ ?_
   · rw [← one_smul ℝ (γ x t)]
-    refine' ((tendsto_coe_nat_div_add_atTop 1).comp tendsto_snd).smul _
-    refine' ContDiffBump.convolution_tendsto_right _ _ _ tendsto_const_nhds
+    refine ((tendsto_coe_nat_div_add_atTop 1).comp tendsto_snd).smul ?_
+    refine ContDiffBump.convolution_tendsto_right ?_ ?_ ?_ tendsto_const_nhds
     · simp_rw [bump]; norm_cast
       exact
         ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_zero_nat 1)).comp tendsto_snd
@@ -136,7 +136,7 @@ def approxSurroundingPointsAt (n : ℕ) (i : ι) : F :=
 
 theorem approxSurroundingPointsAt_smooth (n : ℕ) :
     𝒞 ∞ fun y ↦ γ.approxSurroundingPointsAt x y n := by
-  refine' contDiff_pi.mpr fun i ↦ _
+  refine contDiff_pi.mpr fun i ↦ ?_
   suffices 𝒞 ∞ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s by simpa [approxSurroundingPointsAt, Loop.mollify]
   apply contDiff_parametric_integral_of_contDiff
   exact ContDiff.smul deltaMollifier_smooth.snd' γ.smooth
@@ -242,8 +242,8 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
     0 < γ.localCenteringDensity x y t := by
   simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
     Algebra.id.smul_eq_mul]
-  refine' Finset.sum_pos (fun i _ ↦ _) Finset.univ_nonempty
-  refine' mul_pos _ (deltaMollifier_pos _)
+  refine Finset.sum_pos (fun i _ ↦ ?_) Finset.univ_nonempty
+  refine mul_pos ?_ (deltaMollifier_pos _)
   obtain ⟨w, hw⟩ := γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy
   convert hw.w_pos i
   rw [← hw.coord_eq_w]
@@ -256,22 +256,22 @@ theorem localCenteringDensity_smooth_on :
     smooth_on ↿(γ.localCenteringDensity x) <| γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ) := by
   let h₀ (yt : E × ℝ) (_ : yt ∈ γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ)) :=
     congr_fun (γ.localCenteringDensity_spec x yt.fst) yt.snd
-  refine' ContDiffOn.congr _ h₀
+  refine ContDiffOn.congr ?_ h₀
   simp only [Fintype.sum_apply, Pi.smul_apply, Algebra.id.smul_eq_mul]
-  refine' ContDiffOn.sum fun i _ ↦ ContDiffOn.mul _ (ContDiff.contDiffOn _)
+  refine ContDiffOn.sum fun i _ ↦ ContDiffOn.mul ?_ (ContDiff.contDiffOn ?_)
   · let w : F × (ι → F) → ℝ := fun z ↦ evalBarycentricCoords ι ℝ F z.1 z.2 i
     let z : E → F × (ι → F) :=
       (Prod.map g fun y ↦ γ.approxSurroundingPointsAt x y (γ.localCenteringDensityMp x)) ∘
         fun x ↦ (x, x)
     change ContDiffOn ℝ ∞ ((w ∘ z) ∘ Prod.fst) (γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ))
     rw [prod_univ]
-    refine' ContDiffOn.comp _ contDiff_fst.contDiffOn Subset.rfl
+    refine ContDiffOn.comp ?_ contDiff_fst.contDiffOn Subset.rfl
     have h₁ := smooth_barycentric ι ℝ F (Fintype.card_fin _)
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
-    refine' (h₂.comp_contDiffOn h₁).comp _ _
+    refine (h₂.comp_contDiffOn h₁).comp ?_ ?_
     · have h₃ := (diag_preimage_prod_self (γ.localCenteringDensityNhd x)).symm.subset
-      refine' ContDiffOn.comp _ (contDiff_id.prod contDiff_id).contDiffOn h₃
-      refine' γ.smooth_surrounded.contDiffOn.prod_map (ContDiff.contDiffOn _)
+      refine ContDiffOn.comp ?_ (contDiff_id.prod contDiff_id).contDiffOn h₃
+      refine γ.smooth_surrounded.contDiffOn.prod_map (ContDiff.contDiffOn ?_)
       exact γ.approxSurroundingPointsAt_smooth x _
     · intro y hy
       unfold_let z
@@ -280,7 +280,7 @@ theorem localCenteringDensity_smooth_on :
 
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :
     Continuous fun t ↦ γ.localCenteringDensity x y t := by
-  refine' continuous_iff_continuousAt.mpr fun t ↦ _
+  refine continuous_iff_continuousAt.mpr fun t ↦ ?_
   have hyt : γ.localCenteringDensityNhd x ×ˢ univ ∈ 𝓝 (y, t) :=
     mem_nhds_prod_iff'.mpr
       ⟨γ.localCenteringDensityNhd x, univ, γ.localCenteringDensityNhd_isOpen x, hy,
@@ -301,7 +301,7 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
       Algebra.id.smul_eq_mul, mul_one, evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h,
       AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
   · simp_rw [← smul_eq_mul]
-    refine' fun i hi ↦ (Continuous.const_smul _ _).intervalIntegrable 0 1
+    refine fun i hi ↦ (Continuous.const_smul ?_ _).intervalIntegrable 0 1
     exact deltaMollifier_smooth.continuous
 
 @[simp]
@@ -319,7 +319,7 @@ theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x)
     simp only [AffineBasis.coords_apply]
     exact AffineBasis.linear_combination_coord_eq_self _ _
   · simp_rw [mul_smul]
-    refine' fun i hi ↦ ((Continuous.smul _ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
+    refine fun i hi ↦ ((Continuous.smul ?_ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
     exact deltaMollifier_smooth.continuous
 
 /-- Given `γ : SmoothSurroundingFamily g`, together with a point `x : E` and a map `f : ℝ → ℝ`,

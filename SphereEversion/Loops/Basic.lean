@@ -219,7 +219,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
   · change (t : ℝ) ≠ 1 at ht1
     have : fract ↑t = t.val := by
       rw [fract_eq_iff]
-      refine' ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, _⟩⟩
+      refine ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, ?_⟩⟩
       rw [Int.cast_zero, sub_self]
     simp only [this, γ.extend_extends t.2]
 
@@ -227,7 +227,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
-  refine' ContinuousOn.comp_fract _ ht _
+  refine ContinuousOn.comp_fract ?_ ht ?_
   · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
       continuous_id.prod_map continuous_projIcc
     exact (hγ.comp this).continuousOn

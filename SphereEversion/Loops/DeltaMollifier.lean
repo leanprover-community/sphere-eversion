@@ -69,7 +69,7 @@ theorem support_shifted_normed_bump_subset (n : ℕ) (t : ℝ) :
   change support ((bump n).normed volume ∘ (· - t)) ⊆ _
   rw [Function.support_comp_eq_preimage]
   simp_rw [(bump n).support_normed_eq, ← (bump n).support_eq]
-  refine' (preimage_mono (support_bump_subset n)).trans _
+  refine (preimage_mono (support_bump_subset n)).trans ?_
   simp_rw [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]; rfl
 
 end
@@ -117,7 +117,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
   · intro y
     dsimp
     set N := Ioo (y - 1) (y + 1)
-    refine' ⟨N, (nhds_basis_Ioo_pos y).mem_of_mem zero_lt_one, _⟩
+    refine ⟨N, (nhds_basis_Ioo_pos y).mem_of_mem zero_lt_one, ?_⟩
     let e := fun i : ℤ ↦ Equiv.addRight (i : ℝ)
     change {i : ℤ | ((support fun x : ℝ ↦ f (e i x)) ∩ N).Nonempty}.Finite
     have hsupp : ∀ i : ℤ, (support fun x : ℝ ↦ f (e i x)) = e i ⁻¹' support f := fun _ ↦ rfl
@@ -126,8 +126,8 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
       conv_lhs => rw [← (e i).preimage_image N, ← preimage_inter]
       rw [(e i).surjective.nonempty_preimage]
     simp_rw [hsupp, hsupp', inter_comm (support f)]; clear hsupp hsupp'
-    refine' (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
-      (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset _
+    refine (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
+      (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset ?_
     intro i hi
     rw [mem_setOf_eq, ← nonempty_iff_ne_empty]
     apply Nonempty.mono _ hi
