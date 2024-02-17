@@ -550,8 +550,7 @@ theorem smooth_bundleSnd :
     Smooth (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
       (bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM') := by
   intro x₀
-  refine' SmoothAt.mapLeft _ _ smoothAt_id
-  · exact smoothAt_snd.snd
+  refine SmoothAt.mapLeft smoothAt_snd.snd ?_ smoothAt_id
   have :
     ContMDiffAt (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) 𝓘(𝕜, E →L[𝕜] F × E) ∞
       (inTangentCoordinates I (J.prod I) _ _ _ x₀) x₀ :=
@@ -568,7 +567,7 @@ end Maps
 -- move
 theorem partialEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (h1 : ∀ x, f x = e x)
     (h2 : f.source = univ) (h3 : f.target = univ) : f = e.toPartialEquiv := by
-  refine' PartialEquiv.ext h1 (fun y ↦ _) h2
+  refine PartialEquiv.ext h1 (fun y ↦ ?_) h2
   conv_rhs => rw [← f.right_inv ((Set.ext_iff.mp h3 y).mpr (mem_univ y)), h1]
   exact (e.left_inv _).symm
 

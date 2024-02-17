@@ -49,7 +49,7 @@ theorem smoothAt_one_jet_eucl_bundle {x₀ : N} :
           (f x).2 ∘L (trivializationAt E (TangentSpace I) (f x₀).proj).symmL 𝕜 (f x).proj) x₀ := by
   rw [smoothAt_hom_bundle, and_congr_right_iff]
   intro hf
-  refine' Filter.EventuallyEq.contMDiffAt_iff _
+  refine Filter.EventuallyEq.contMDiffAt_iff ?_
   have :=
     hf.continuousAt.preimage_mem_nhds
       (((tangentBundleCore I M).isOpen_baseSet (achart H (f x₀).proj)).mem_nhds
@@ -224,11 +224,11 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
   is_sec' p := rfl
   smooth' := by
     intro x₀
-    refine' smoothAt_snd.one_jet_eucl_bundle_mk' _
+    refine smoothAt_snd.one_jet_eucl_bundle_mk' ?_
     simp_rw [ContinuousLinearMap.comp_assoc]
     have : SmoothAt (J.prod I) _ (fun x : N × M  ↦ _) x₀ := s.smooth.comp smooth_snd x₀
     rw [smoothAt_one_jet_eucl_bundle'] at this
-    refine' (i_smooth x₀).clm_comp _
+    refine (i_smooth x₀).clm_comp ?_
     convert this.2 <;> simp [s.is_sec]
 
 end familyTwist

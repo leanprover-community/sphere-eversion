@@ -199,7 +199,7 @@ theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
     R.Ample ↔
       ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), σ ∈ R → AmpleSet (R.slice σ p) := by
   simp_rw [RelMfld.Ample]
-  refine' ⟨fun h σ p _ ↦ h p, fun h σ p x hx ↦ _⟩
+  refine ⟨fun h σ p _ ↦ h p, fun h σ p x hx ↦ ?_⟩
   have := @h (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p hx
   rw [slice_mk_update] at this
   exact this x hx
@@ -391,7 +391,7 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
         (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
-  refine' ⟨fun s ↦ (𝓕 (1, s)).bs, _, _, _, _⟩
+  refine ⟨fun s ↦ (𝓕 (1, s)).bs, ?_, ?_, ?_, ?_⟩
   · have := 𝓕.toFamilyOneJetSec.smooth
     let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
       ⟨fun p ↦ (1, p), Smooth.prod_mk smooth_const smooth_id⟩
@@ -631,16 +631,16 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
   smooth_to := φ.smooth_transfer ψ
   smooth_inv := by
     rintro _ ⟨x, rfl⟩
-    refine' (SmoothAt.oneJetBundle_map _ _ _ smoothAt_id).smoothWithinAt
-    · refine' (φ.smoothAt_inv _).comp _ smoothAt_snd; exact mem_range_self _
-    · refine' (ψ.smoothAt_inv _).comp _ smoothAt_snd; exact mem_range_self _
+    refine (SmoothAt.oneJetBundle_map ?_ ?_ ?_ smoothAt_id).smoothWithinAt
+    · refine' (φ.smoothAt_inv _).comp ?_ smoothAt_snd; exact mem_range_self _
+    · refine' (ψ.smoothAt_inv _).comp ?_ smoothAt_snd; exact mem_range_self _
     have' :=
       ContMDiffAt.mfderiv (fun _ ↦ φ) (fun x : OneJetBundle IM M IN N ↦ φ.invFun x.1.1)
         (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
         ((φ.smoothAt_inv _).comp _ (smooth_oneJetBundle_proj.fst (φ.transfer ψ x))) le_top
     · dsimp only [id]
-      refine' this.congr_of_eventuallyEq _
-      refine' Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) _
+      refine this.congr_of_eventuallyEq ?_
+      refine Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) ?_
       rw [φ.range_transfer ψ]
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
       simp_rw [inTangentCoordinates, φ.fderiv_coe]
@@ -671,8 +671,8 @@ variable [T2Space M]
 def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) :
     HtpyOneJetSec IM M IN N := by
-  refine' FamilyOneJetSec.mk' (fun t ↦ JΘ F (G t)) (fun t ↦ φ.Jupdate_aux ψ F (G t)) _
-  refine' φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed _ _ smooth_snd fun x ↦ hFG x.1
+  refine FamilyOneJetSec.mk' (fun t ↦ JΘ F (G t)) (fun t ↦ φ.Jupdate_aux ψ F (G t)) ?_
+  refine φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed ?_ ?_ smooth_snd fun x ↦ hFG x.1
   · exact F.smooth.comp smooth_snd
   · exact G.smooth.comp (smooth_fst.prod_map smooth_id)
 

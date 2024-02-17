@@ -71,12 +71,11 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     rintro t ht
     exact p.mkHtpy_eq_of_forall hcompat ht
   have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t ↦ p.mkHtpy_congr _
-  refine' ⟨F', hF't0, hF't1, _, _, _, _⟩
+  refine ⟨F', hF't0, hF't1, ?_, hF'relK₁, ?_, ?_⟩
   · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
       rw [p.mkHtpy_eq_of_eq _ _ hcompat]
       exact he t
-  · exact hF'relK₁
   · intro t x
     rcases Classical.em (x ∈ φ '' K₁) with (⟨e, he, rfl⟩ | hx)
     · by_cases ht : t ∈ (Icc 0 1 : Set ℝ)

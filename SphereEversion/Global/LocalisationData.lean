@@ -131,7 +131,7 @@ theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :
   have hKU : ∀ i, K i ⊆ U i := fun i ↦ image_subset_range _ _
   obtain ⟨δ, hδ₀, hδ₁⟩ := exists_continuous_real_forall_closedBall_subset hK hU hKU hK'
   have := ld.cont
-  refine' ⟨δ ∘ f, fun m ↦ hδ₀ (f m), by continuity, fun g hg i ↦ _⟩
+  refine ⟨δ ∘ f, fun m ↦ hδ₀ (f m), by continuity, fun g hg i ↦ ?_⟩
   rintro - ⟨e, rfl⟩
   have hi : f (ld.φ i e) ∈ K (ld.j i) :=
     image_subset _ ball_subset_closedBall (ld.h₃ i (mem_range_self e))

@@ -196,7 +196,7 @@ def comp {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Ty
     (f.smooth_inv.comp' g.smooth_inv).mono
       (by
         change range (g ∘ f) ⊆ range g ∩ g.inv_fun ⁻¹' range f
-        refine' subset_inter_iff.mpr ⟨range_comp_subset_range f g, _⟩
+        refine subset_inter_iff.mpr ⟨range_comp_subset_range f g, ?_⟩
         rintro x' ⟨x, rfl⟩
         exact ⟨x, by simp only [left_inv]⟩) -/
 

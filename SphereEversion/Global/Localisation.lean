@@ -89,8 +89,8 @@ def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E
   ϕ x := (𝓕 x).2
   smooth' := by
     intro a
-    refine' smoothAt_oneJetBundle.mpr _
-    refine' ⟨smoothAt_id, 𝓕.f_diff.contMDiff a, _⟩
+    refine smoothAt_oneJetBundle.mpr ?_
+    refine ⟨smoothAt_id, 𝓕.f_diff.contMDiff a, ?_⟩
     simp_rw [inTangentCoordinates_model_space]
     exact 𝓕.φ_diff.contMDiff a
 
@@ -220,7 +220,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
     m = p.φ x → 𝓕 t x = F.localize p hF x) : p.mkHtpy F 𝓕 t m = F m := by
   rw [ChartPair.mkHtpy]
   split_ifs with h
-  · refine' (p.φ.Jupdate_apply p.ψ p.hK₁ (p.mkHtpy_aux h) t m).trans _
+  · refine (p.φ.Jupdate_apply p.ψ p.hK₁ (p.mkHtpy_aux h) t m).trans ?_
     unfold OpenSmoothEmbedding.update
     split_ifs with h'
     · obtain ⟨x, rfl⟩ := h'
@@ -298,7 +298,7 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
       (fun _t m ↦ F.bs m) (F.smooth_bs.continuous.comp continuous_snd)
       (fun _t ↦ range_comp bsF p.φ ▸ hF) hδ_pos hδ_cont with
     ⟨η, η_pos, hη⟩
-  refine' ⟨η, η_pos, _⟩
+  refine ⟨η, η_pos, ?_⟩
   intro 𝓕 H e he t ht het
   simp only [this 𝓕 H]; clear this
   rw [← dist_eq_norm] at het

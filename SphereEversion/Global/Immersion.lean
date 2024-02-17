@@ -68,7 +68,7 @@ variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
 theorem immersionRel_open : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
-  refine' fun σ ↦ (ψJ σ).open_target.inter _
+  refine fun σ ↦ (ψJ σ).open_target.inter ?_
   convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
   · ext x
     -- Porting note: `mem_prod` is a simp lemma, but the next line is still needed.
@@ -155,7 +155,7 @@ variable (ω : Orientation ℝ E (Fin 3))
 
 theorem smooth_bs :
     Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
-  refine' (ContMDiff.smul _ _).add (contMDiff_fst.smul _)
+  refine (ContMDiff.smul ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact contMDiff_coe_sphere.comp contMDiff_snd
   · exact (contDiff_neg.contMDiff.comp contMDiff_coe_sphere).comp contMDiff_snd
@@ -166,11 +166,10 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
       (fun p : ℝ × 𝕊² ↦ ω.rot (p.1, p.2))
       (by
         intro p
-        have : SmoothAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2) :=
-      by
-          refine' (ω.contDiff_rot _).contMDiffAt
+        have : SmoothAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2) := by
+          refine (ω.contDiff_rot ?_).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
-        refine' this.comp p (Smooth.smoothAt _)
+        refine this.comp p (Smooth.smoothAt ?_)
         exact smooth_fst.prod_mk (contMDiff_coe_sphere.comp smooth_snd))
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
@@ -224,14 +223,14 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
 theorem formalEversion_hol_near_zero_one :
     ∀ᶠ s : ℝ × 𝕊² near {0, 1} ×ˢ univ, (formalEversion E ω s.1).toOneJetSec.IsHolonomicAt s.2 := by
   have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ (univ : Set 𝕊²) ∈ 𝓝ˢ (({0, 1} : Set ℝ) ×ˢ univ) := by
-    refine' ((isOpen_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr _
+    refine ((isOpen_Iio.union isOpen_Ioi).prod isOpen_univ).mem_nhdsSet.mpr ?_
     rintro ⟨s, x⟩ ⟨hs, hx⟩
-    refine' ⟨_, mem_univ _⟩
+    refine ⟨?_, mem_univ _⟩
     simp_rw [mem_insert_iff, mem_singleton_iff] at hs
     rcases hs with (rfl | rfl)
     · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
     · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
-  refine' eventually_of_mem this _
+  refine eventually_of_mem this ?_
   rintro ⟨t, x⟩ ⟨ht | ht, _hx⟩
   · exact formalEversionHolAtZero E ω ht x
   · exact formalEversionHolAtOne E ω ht x

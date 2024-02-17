@@ -36,11 +36,11 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   letI := manifoldMetric IM M
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
-  refine' RelMfld.satisfiesHPrinciple_of_weak hA _
+  refine RelMfld.satisfiesHPrinciple_of_weak hA ?_
   clear! A
   intro A hA 𝓕₀ h𝓕₀
   cases' isEmpty_or_nonempty M with hM hM
-  · refine' ⟨emptyHtpyFormalSol R, _, _, _, _⟩
+  · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩
     all_goals try apply eventually_of_forall _
     all_goals try intro
     all_goals try intro
@@ -82,7 +82,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
       h₁.prod_map contMDiffAt_id
     exact h.comp (t, x) this
   have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
-    refine' fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, _, _⟩
+    refine fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, ?_, ?_⟩
     · revert x
       exact forall_restrictGermPredicate_of_forall fun x ↦ rfl
     · erw [dist_self]
@@ -121,7 +121,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
     have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x := by
       rw [Eventually.union_nhdsSet]
-      refine' ⟨_, fC⟩
+      refine ⟨?_, fC⟩
       apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_
       rw [eventually_and] at hx
       apply hx.2.self_of_nhds.congr
@@ -145,8 +145,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     rcases φ.improve_formalSol ψ hRample hRopen (hA.union C_closed) η_pos η_cont hFφψ hFAC K₀_cpct
         K₁_cpct K₀K₁' with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
-    refine' ⟨fun t x ↦ F' t x, _, _, _, _, _, _⟩ ; all_goals beta_reduce
-    · refine' fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩
+    refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩ ; all_goals beta_reduce
+    · refine fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, ?_, ?_⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
         rw [Eventually.union_nhdsSet] at hF'AC
@@ -175,7 +175,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   rcases inductive_htpy_construction' P₀ P₁ P₂ hP₂ hP₂' init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
   simp only [P₀, forall₂_and_distrib] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
-  refine' ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, _, _, _, _⟩
+  refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, ?_, ?_, ?_⟩
   · intro x
     rw [mkHtpyFormalSol_apply, hF₀]
   · exact hFP₁
@@ -192,11 +192,11 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   borelize EX
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
-  refine' RelMfld.satisfiesHPrinciple_of_weak hA _
+  refine RelMfld.satisfiesHPrinciple_of_weak hA ?_
   clear! A
   intro A hA 𝓕₀ h𝓕₀
   cases' isEmpty_or_nonempty M with hM hM
-  · refine' ⟨emptyHtpyFormalSol R, _, _, _, _⟩
+  · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩
     all_goals try apply eventually_of_forall _
     all_goals try intro
     all_goals try intro
@@ -243,7 +243,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       h₁.prod_map contMDiffAt_id
     exact h.comp (t, x) this
   have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
-    refine' fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, _, _⟩
+    refine fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, ?_, ?_⟩
     · revert x
       exact forall_restrictGermPredicate_of_forall fun x ↦ rfl
     · erw [dist_self]
@@ -277,7 +277,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
     have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x := by
       rw [Eventually.union_nhdsSet]
-      refine' ⟨_, hf₁⟩
+      refine ⟨?_, hf₁⟩
       apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_
       rw [eventually_and] at hx
       apply hx.2.self_of_nhds.congr
@@ -301,8 +301,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     rcases(L.φ i).improve_formalSol (L.ψj i) hRample hRopen (hA.union hC) η_pos η_cont hFφψ hFAC hK₀
         hK₁ hK₀K₁ with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
-    refine' ⟨fun t x ↦ F' t x, _, _, _, _, _, _⟩ ; all_goals beta_reduce
-    · refine' fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, _, _⟩
+    refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩ ; all_goals beta_reduce
+    · refine fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, ?_, ?_⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
         rw [Eventually.union_nhdsSet] at hF'AC
@@ -311,8 +311,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
         change F' t x = _
         rw [hx t, ← hx', mkFormalSol_apply]
         rfl
-      ·
-        calc
+      · calc
           dist (F' t x).1.2 (𝓕₀.bs x) ≤ dist (F' t x).1.2 (F.bs x) + dist (F.bs x) (𝓕₀.bs x) :=
             dist_triangle _ _ _
           _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_right (hF'η t x) _)
@@ -336,7 +335,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
   simp only [P₀, forall₂_and_distrib] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
-  refine' ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, _, _, _, _⟩
+  refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, ?_, ?_, ?_⟩
   · intro x
     rw [mkHtpyFormalSol_apply, hF₀]
   · exact hFP₁

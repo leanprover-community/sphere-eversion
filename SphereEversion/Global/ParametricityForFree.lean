@@ -137,7 +137,7 @@ theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := b
   let q : DualPair (TangentSpace I σ.1.1.2) :=
     ⟨p2, u, by erw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩
   rw [relativize_slice q rfl]
-  refine' (hR q).vadd
+  exact (hR q).vadd
 
 variable {IP P}
 
@@ -160,7 +160,7 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
   simp [S.coe_ϕ]
 
 def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) := by
-  refine' ⟨S.toFamilyOneJetSec.uncurry, _⟩
+  refine ⟨S.toFamilyOneJetSec.uncurry, ?_⟩
   rintro ⟨s, x⟩
   exact S.toFamilyOneJetSec.uncurry_mem_relativize.mpr (S.is_sol' s x)
 
@@ -177,7 +177,7 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
   ϕ p x := (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (fun x ↦ (p.2, x)) x
   smooth' := by
     rintro ⟨⟨t, s⟩, x⟩
-    refine' smoothAt_snd.oneJetBundle_mk (S.smooth_bs.comp smooth_prod_assoc _) _
+    refine smoothAt_snd.oneJetBundle_mk (S.smooth_bs.comp smooth_prod_assoc _) ?_
     have h1 :
       SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E')
         (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
@@ -211,7 +211,7 @@ theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
     (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E := by
   rw [S.curry_ϕ]
   congr 1
-  refine' ((mdifferentiableAt_const I IP).mfderiv_prod smooth_id.mdifferentiableAt).trans _
+  refine ((mdifferentiableAt_const I IP).mfderiv_prod smooth_id.mdifferentiableAt).trans ?_
   rw [mfderiv_id, mfderiv_const]
   rfl
 
@@ -251,7 +251,7 @@ theorem curry_eq_iff_eq_uncurry {𝓕 : FamilyFormalSol J N (R.relativize IP P)}
     {𝓕₀ : FamilyFormalSol IP P R} {t : N} {x : M} {s : P} (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by
   simp_rw [FormalSol.eq_iff] at h ⊢
-  refine' ⟨h.1, _⟩
+  refine ⟨h.1, ?_⟩
   simp_rw [𝓕.curry_ϕ', h.2, 𝓕₀.uncurry_ϕ']
   ext v
   erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
@@ -265,10 +265,10 @@ theorem RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith (R : RelMfld I M IX 
   intro 𝓕₀ h𝓕₀
   obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ :=
     h 𝓕₀.uncurry (h𝓕₀.mono fun p hp ↦ 𝓕₀.toFamilyOneJetSec.isHolonomicAt_uncurry.mpr hp)
-  refine' ⟨𝓕.curry, _, _, _, _⟩
+  refine ⟨𝓕.curry, ?_, ?_, ?_, ?_⟩
   · intro s x; exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x))
   · intro s x; exact 𝓕.toFamilyOneJetSec.isHolonomicAt_curry (h2𝓕 (s, x))
-  · refine' h3𝓕.mono _; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry (hp t)
+  · refine h3𝓕.mono ?_; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry (hp t)
   · intro t s x; exact h4𝓕 t (s, x)
 
 end ParameterSpace
