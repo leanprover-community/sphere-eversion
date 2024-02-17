@@ -65,7 +65,7 @@ theorem support_bump_subset (n : ℕ) : support (bump n) ⊆ Ioc (-(1 / 2)) (1 /
   exact Ioo_subset_Ioc_self.trans (Ioc_subset_Ioc (neg_le_neg ineg) ineg)
 
 theorem support_shifted_normed_bump_subset (n : ℕ) (t : ℝ) :
-    (support fun x => (bump n).normed volume (x - t)) ⊆ Ioc (t - 1 / 2) (t + 1 / 2) := by
+    (support fun x ↦ (bump n).normed volume (x - t)) ⊆ Ioc (t - 1 / 2) (t + 1 / 2) := by
   change support ((bump n).normed volume ∘ (· - t)) ⊆ _
   rw [Function.support_comp_eq_preimage]
   simp_rw [(bump n).support_normed_eq, ← (bump n).support_eq]
@@ -93,34 +93,34 @@ def periodize (f : ℝ → M) (t : ℝ) : M :=
 theorem periodic_periodize (f : ℝ → M) : Periodic (periodize f) 1 := by
   intro t
   unfold periodize
-  have : (fun n : ℤ => f (t + 1 + ↑n)) = fun n => f (t + (n + 1 : ℤ)) := by
+  have : (fun n : ℤ ↦ f (t + 1 + ↑n)) = fun n ↦ f (t + (n + 1 : ℤ)) := by
     ext n; simp_rw [Int.cast_add, Int.cast_one, add_assoc, add_comm]
   simp_rw [this]
   let e := Equiv.addRight (1 : ℤ)
-  let F : ℤ → M := fun n => f (t + n)
+  let F : ℤ → M := fun n ↦ f (t + n)
   change ∑ᶠ n : ℤ, F (e n) = ∑ᶠ n : ℤ, f (t + ↑n)
   apply finsum_comp_equiv
 
 theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 ≤ periodize f t := by
   unfold periodize
-  cases' (support fun i : ℤ => f (t + i)).finite_or_infinite with H H
+  cases' (support fun i : ℤ ↦ f (t + i)).finite_or_infinite with H H
   · rw [finsum_eq_sum _ H]
     apply Finset.sum_nonneg
-    exact fun i _ => h _
+    exact fun i _ ↦ h _
   · rwa [finsum_of_infinite_support]
 
 variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (h' : HasCompactSupport f) :
     ContDiff ℝ n (periodize f) := by
-  refine contDiff_iff_contDiffAt.mpr fun x => contDiffAt_finsum ?_ ?_
+  refine contDiff_iff_contDiffAt.mpr fun x ↦ contDiffAt_finsum ?_ ?_
   · intro y
     dsimp
     set N := Ioo (y - 1) (y + 1)
     refine' ⟨N, (nhds_basis_Ioo_pos y).mem_of_mem zero_lt_one, _⟩
-    let e := fun i : ℤ => Equiv.addRight (i : ℝ)
-    change {i : ℤ | ((support fun x : ℝ => f (e i x)) ∩ N).Nonempty}.Finite
-    have hsupp : ∀ i : ℤ, (support fun x : ℝ => f (e i x)) = e i ⁻¹' support f := fun _ ↦ rfl
+    let e := fun i : ℤ ↦ Equiv.addRight (i : ℝ)
+    change {i : ℤ | ((support fun x : ℝ ↦ f (e i x)) ∩ N).Nonempty}.Finite
+    have hsupp : ∀ i : ℤ, (support fun x : ℝ ↦ f (e i x)) = e i ⁻¹' support f := fun _ ↦ rfl
     have hsupp' : ∀ i, (e i ⁻¹' support f ∩ N).Nonempty ↔ (support f ∩ e i '' N).Nonempty := by
       intro i
       conv_lhs => rw [← (e i).preimage_image N, ← preimage_inter]
@@ -139,11 +139,11 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     exact h.contDiffAt.comp _ (contDiffAt_id.add contDiffAt_const)
 
 theorem periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
-    periodize (fun x' => f (x' - t)) x = periodize f (x - t) := by
+    periodize (fun x' ↦ f (x' - t)) x = periodize f (x - t) := by
   simp_rw [periodize, sub_add_eq_add_sub]
 
 theorem periodize_smul_periodic (f : ℝ → ℝ) {g : ℝ → E} (hg : Periodic g 1) (t : ℝ) :
-    periodize f t • g t = periodize (fun x => f x • g x) t := by
+    periodize f t • g t = periodize (fun x ↦ f x • g x) t := by
   dsimp only [periodize]
   rw [finsum_smul]
   congr 1
@@ -169,7 +169,7 @@ theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (
   intro t ht ht'
   specialize ht ht'; clear ht'
   dsimp only [periodize]
-  have : (support fun n : ℤ => f (t + n)) ⊆ ({0} : Finset ℤ) := fun n hn ↦ by
+  have : (support fun n : ℤ ↦ f (t + n)) ⊆ ({0} : Finset ℤ) := fun n hn ↦ by
     suffices n = 0 by simpa
     replace hn : t + n ∈ Ioc a (a + 1) := hf (mem_support.mpr hn)
     cases ht
@@ -186,12 +186,12 @@ theorem intervalIntegral_periodize_smul (f : ℝ → ℝ) (γ : Loop E) {a b c d
     (h2 : d = c + 1) (hf : support f ⊆ Ioc a b) :
     ∫ t in c..d, periodize f t • γ t = ∫ t, f t • γ t := by
   rw [h2]
-  have : (support fun t => f t • γ t) ⊆ Ioc a (a + 1) := by
+  have : (support fun t ↦ f t • γ t) ⊆ Ioc a (a + 1) := by
     erw [support_smul]
     exact ((inter_subset_left _ _).trans hf).trans (Ioc_subset_Ioc_right h)
   rw [← intervalIntegral.integral_eq_integral_of_support_subset this]
   simp_rw [periodize_smul_periodic _ γ.periodic,
-    Function.Periodic.intervalIntegral_add_eq (periodic_periodize fun x : ℝ => f x • γ x) c a]
+    Function.Periodic.intervalIntegral_add_eq (periodic_periodize fun x : ℝ ↦ f x • γ x) c a]
   exact integral_periodize _ this
 
 end
@@ -239,12 +239,12 @@ section VersionOfDeltaMollifierUsingN
 
 /-- A sequence of functions that converges to the Dirac delta function located at `t`, with the
 properties that this sequence is everywhere positive and -/
-def deltaMollifier (n : ℕ) (t : ℝ) : ℝ → ℝ := fun x =>
+def deltaMollifier (n : ℕ) (t : ℝ) : ℝ → ℝ := fun x ↦
   n / (n + 1) * approxDirac n (x - t) + 1 / (n + 1)
 
 variable {n : ℕ} {t : ℝ}
 
-theorem deltaMollifier_periodic : Periodic (deltaMollifier n t) 1 := fun x => by
+theorem deltaMollifier_periodic : Periodic (deltaMollifier n t) 1 := fun x ↦ by
   simp_rw [deltaMollifier, ← sub_add_eq_add_sub, periodic_approxDirac n (x - t)]
 
 theorem deltaMollifier_pos (s : ℝ) : 0 < deltaMollifier n t s :=
@@ -255,7 +255,7 @@ theorem deltaMollifier_pos (s : ℝ) : 0 < deltaMollifier n t s :=
 theorem deltaMollifier_smooth : 𝒞 ∞ (deltaMollifier n t) :=
   (contDiff_const.mul <|
         (approxDirac_smooth n).comp <|
-          (contDiff_id.sub contDiff_const : 𝒞 ∞ fun x : ℝ => x - t)).add
+          (contDiff_id.sub contDiff_const : 𝒞 ∞ fun x : ℝ ↦ x - t)).add
     contDiff_const
 
 open intervalIntegral
@@ -263,7 +263,7 @@ open intervalIntegral
 @[simp]
 theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s = 1 := by
   simp_rw [deltaMollifier]
-  rw [integral_comp_sub_right (fun x => (n : ℝ) / (n + 1) * approxDirac n x + 1 / (n + 1)) t,
+  rw [integral_comp_sub_right (fun x ↦ (n : ℝ) / (n + 1) * approxDirac n x + 1 / (n + 1)) t,
     integral_add, integral_const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel,
     one_smul, approxDirac_integral_eq_one, mul_one, div_add_div_same, div_self]
   · exact n.cast_add_one_pos.ne'

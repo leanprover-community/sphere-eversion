@@ -72,8 +72,8 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
       σ.2 (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1)) +ᵥ
       (id (R.slice (bundleSnd σ) q) : Set <| TangentSpace I' σ.proj.2) := by
   set z := (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1))
-  have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := fun x =>
-    congr_arg (fun f : E →L[ℝ] ℝ => f x) hpq
+  have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := fun x ↦
+    congr_arg (fun f : E →L[ℝ] ℝ ↦ f x) hpq
   ext1 w
   have h1 :
     (p.update σ.2 w).comp (ContinuousLinearMap.inr ℝ EP E) =
@@ -103,7 +103,7 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
     ((R.relativize IP P).slice σ p).Nonempty ↔ (R.relativize IP P).slice σ p = univ := by
   rcases σ with ⟨⟨⟨q, m⟩,m'⟩, φ⟩
-  have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x => congr_arg (fun f : E →L[ℝ] ℝ => f x) hp
+  have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x ↦ congr_arg (fun f : E →L[ℝ] ℝ ↦ f x) hp
   have :
     ∀ y : E', (p.update φ y).comp (ContinuousLinearMap.inr ℝ EP E) = φ.comp (ContinuousLinearMap.inr ℝ EP E) := by
     intro y
@@ -166,7 +166,7 @@ def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativi
 
 theorem FamilyFormalSol.uncurry_ϕ' (S : FamilyFormalSol IP P R) (p : P × M) :
     S.uncurry.ϕ p =
-      mfderiv IP I' (fun z => S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
+      mfderiv IP I' (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
         S.ϕ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ EP E :=
   S.toFamilyOneJetSec.uncurry_ϕ' p
 
@@ -174,26 +174,26 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
     FamilyOneJetSec I M I' M' (J.prod IP) (N × P)
     where
   bs p x := (S p.1).bs (p.2, x)
-  ϕ p x := (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (fun x => (p.2, x)) x
+  ϕ p x := (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (fun x ↦ (p.2, x)) x
   smooth' := by
     rintro ⟨⟨t, s⟩, x⟩
     refine' smoothAt_snd.oneJetBundle_mk (S.smooth_bs.comp smooth_prod_assoc _) _
     have h1 :
       SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E')
-        (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M => (p.1.2, p.2))
-          (fun p : (N × P) × M => (S p.1.1).bs (p.1.2, p.2))
-          (fun p : (N × P) × M => (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
+        (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
+          (fun p : (N × P) × M ↦ (S p.1.1).bs (p.1.2, p.2))
+          (fun p : (N × P) × M ↦ (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
         ((t, s), x) := by
       apply
         (smoothAt_oneJetBundle.mp <|
               SmoothAt.comp ((t, s), x) (S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2
     have h2 :
       SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
-        (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M => (p.1.2, p.2))
-          (fun p : (N × P) × M => mfderiv I (IP.prod I) (fun x : M => (p.1.2, x)) p.2) ((t, s), x))
+        (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
+          (fun p : (N × P) × M ↦ mfderiv I (IP.prod I) (fun x : M ↦ (p.1.2, x)) p.2) ((t, s), x))
         ((t, s), x) := by
       apply
-        ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) => (p.1.2, x)) Prod.snd
+        ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) ↦ (p.1.2, x)) Prod.snd
           (smoothAt_fst.fst.snd.prod_mk smoothAt_snd :
             SmoothAt (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
           (smoothAt_snd : SmoothAt ((J.prod IP).prod I) _ _ _) le_top
@@ -204,7 +204,7 @@ theorem FamilyOneJetSec.curry_bs (S : FamilyOneJetSec (IP.prod I) (P × M) I' M'
   rfl
 
 theorem FamilyOneJetSec.curry_ϕ (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
-    (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (fun x => (p.2, x)) x :=
+    (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (fun x ↦ (p.2, x)) x :=
   rfl
 
 theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
@@ -223,7 +223,7 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
     {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   dsimp only
-  rw [show (S.curry (t, s)).bs = fun x => (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
+  rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
   dsimp only
   refine (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
     ((mdifferentiableAt_const I IP).prod_mk smooth_id.mdifferentiableAt)).trans
@@ -241,7 +241,7 @@ theorem FamilyOneJetSec.curry_mem (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
 
 def FamilyFormalSol.curry (S : FamilyFormalSol J N (R.relativize IP P)) :
     FamilyFormalSol (J.prod IP) (N × P) R :=
-  ⟨S.toFamilyOneJetSec.curry, fun _p _x => S.toFamilyOneJetSec.curry_mem S.is_sol⟩
+  ⟨S.toFamilyOneJetSec.curry, fun _p _x ↦ S.toFamilyOneJetSec.curry_mem S.is_sol⟩
 
 theorem FamilyFormalSol.curry_ϕ' (S : FamilyFormalSol J N (R.relativize IP P)) (p : N × P) (x : M) :
     (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E :=
@@ -260,11 +260,11 @@ theorem curry_eq_iff_eq_uncurry {𝓕 : FamilyFormalSol J N (R.relativize IP P)}
     zero_add]
 
 theorem RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith (R : RelMfld I M IX X) {C : Set (P × M)}
-    (ε : M → ℝ) (h : (R.relativize IP P).SatisfiesHPrinciple C fun x => ε x.2) :
+    (ε : M → ℝ) (h : (R.relativize IP P).SatisfiesHPrinciple C fun x ↦ ε x.2) :
     R.SatisfiesHPrincipleWith IP C ε := by
   intro 𝓕₀ h𝓕₀
   obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ :=
-    h 𝓕₀.uncurry (h𝓕₀.mono fun p hp => 𝓕₀.toFamilyOneJetSec.isHolonomicAt_uncurry.mpr hp)
+    h 𝓕₀.uncurry (h𝓕₀.mono fun p hp ↦ 𝓕₀.toFamilyOneJetSec.isHolonomicAt_uncurry.mpr hp)
   refine' ⟨𝓕.curry, _, _, _, _⟩
   · intro s x; exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x))
   · intro s x; exact 𝓕.toFamilyOneJetSec.isHolonomicAt_curry (h2𝓕 (s, x))

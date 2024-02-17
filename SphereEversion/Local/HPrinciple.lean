@@ -126,11 +126,11 @@ def K (L : StepLandscape E) : Set E :=
 
 /-- The base function for the loop family associated in any jet section in a
 step landscape. -/
-def b (L : StepLandscape E) (𝓕 : JetSec E F) : E → F := fun x => 𝓕.φ x L.v
+def b (L : StepLandscape E) (𝓕 : JetSec E F) : E → F := fun x ↦ 𝓕.φ x L.v
 
 /-- The desired average for the loop family associated in any jet section in a
 step landscape. -/
-def g (L : StepLandscape E) (𝓕 : JetSec E F) : E → F := fun x => D 𝓕.f x L.v
+def g (L : StepLandscape E) (𝓕 : JetSec E F) : E → F := fun x ↦ D 𝓕.f x L.v
 
 theorem isCompact_K (L : StepLandscape E) : IsCompact L.K :=
   L.hK₁.inter_right L.hC
@@ -139,7 +139,7 @@ variable {R}
 
 theorem Accepts.open [FiniteDimensional ℝ E] {L : StepLandscape E} {𝓕 : JetSec E F}
     (h : L.Accepts R 𝓕) : IsOpen (L.Ω R 𝓕) := by
-  set ψ : E × F → OneJet E F := fun p => (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2)
+  set ψ : E × F → OneJet E F := fun p ↦ (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2)
   change IsOpen {p : E × F | ψ p ∈ R}
   apply IsOpen.preimage _ h.h_op
   apply continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _)
@@ -183,11 +183,11 @@ theorem loop_smooth (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 
 
 theorem loop_smooth' (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) {t : G → ℝ}
     (ht : 𝒞 ∞ t) {s : G → ℝ} (hs : 𝒞 ∞ s) {x : G → E} (hx : 𝒞 ∞ x) :
-    𝒞 ∞ fun g => L.loop h (t g) (x g) (s g) :=
+    𝒞 ∞ fun g ↦ L.loop h (t g) (x g) (s g) :=
   (L.loop_smooth h).comp (ht.prod <| hx.prod hs)
 
 theorem loop_C1 (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) :
-    ∀ t, 𝒞 1 ↿(L.loop h t) := fun _ =>
+    ∀ t, 𝒞 1 ↿(L.loop h t) := fun _ ↦
   (L.loop_smooth' h contDiff_const contDiff_snd contDiff_fst).of_le le_top
 
 variable (L : StepLandscape E)
@@ -309,7 +309,7 @@ theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = �
   constructor
   · apply improveStep_rel_K
   · rw [eventually_principal]
-    exact fun x => improveStep_rel_compl_K₁ _ h N
+    exact fun x ↦ improveStep_rel_compl_K₁ _ h N
 
 -- In the next lemma, we reintroduce `F` to appease the unused argument linter
 -- since `FiniteDimensional ℝ F` isn't needed here.
@@ -326,7 +326,7 @@ theorem bu_lt {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] (t : ℝ) 
 theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x t, ‖(L.improveStep h N t).f x - 𝓕.f x‖ ≤ ε := by
   set γ := L.loop h
-  have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.continuous
+  have γ_cont : Continuous ↿fun t x ↦ γ t x := (L.nice h).smooth.continuous
   have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   apply
     ((corrugation.c0_small_on _ L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and <|
@@ -344,9 +344,9 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.E' ⊔ L.p.spanV) x := by
   have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   let 𝓕' : JetSec E F :=
-    { f := fun x => 𝓕.f x + corrugation L.π N (L.loop h 1) x
+    { f := fun x ↦ 𝓕.f x + corrugation L.π N (L.loop h 1) x
       f_diff := 𝓕.f_diff.add (corrugation.contDiff' _ _ (L.loop_smooth h) contDiff_id contDiff_const)
-      φ := fun x =>
+      φ := fun x ↦
         L.p.update (𝓕.φ x) (L.loop h 1 x <| N * L.π x) +
           corrugation.remainder L.p.π N (L.loop h 1) x
       φ_diff := by
@@ -362,7 +362,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     apply L.hρ₀.mono
     intro x hx
     simp [improveStep_apply _ h, hx]
-  have fderiv_𝓕' := fun x =>
+  have fderiv_𝓕' := fun x ↦
     fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x)
   rw [eventually_congr (H.isPartHolonomicAt_congr (L.E' ⊔ L.p.spanV))]
   apply h.hK₀.mono
@@ -384,16 +384,16 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
 
 theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).IsFormalSol R := by
   set γ := L.loop h
-  have γ_cont : Continuous ↿fun t x => γ t x := (L.nice h).smooth.continuous
+  have γ_cont : Continuous ↿fun t x ↦ γ t x := (L.nice h).smooth.continuous
   have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   set K :=
-    (fun p : E × ℝ × ℝ => (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
+    (fun p : E × ℝ × ℝ ↦ (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
       L.K₁ ×ˢ I ×ˢ I
   have K_cpt : IsCompact K := by
     refine' (L.hK₁.prod (isCompact_Icc.prod isCompact_Icc)).image _
     refine' continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _)
     apply L.p.continuous_update 𝓕.φ_diff.continuous.fst'
-    change Continuous (↿(L.loop h) ∘ fun g : E × ℝ × ℝ => (g.snd.fst, g.fst, g.snd.snd))
+    change Continuous (↿(L.loop h) ∘ fun g : E × ℝ × ℝ ↦ (g.snd.fst, g.fst, g.snd.snd))
     exact (L.loop_smooth h).continuous.comp₃ continuous_snd.fst continuous_fst continuous_snd.snd
   have K_sub : K ⊆ R := by
     rintro _ ⟨⟨x, t, s⟩, _, rfl⟩
@@ -496,7 +496,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
           unfold_let S
           convert hx
           rw [← Fin.coe_eq_castSucc]
-        hShort := fun x => h_ample.isShortAt H₁ S.p x
+        hShort := fun x ↦ h_ample.isShortAt H₁ S.p x
         hC := by
           apply h_hol.congr (FormalSol.isHolonomicAt_congr _ _ _)
           apply hHC.mono
@@ -565,6 +565,6 @@ theorem RelLoc.FormalSol.improve_htpy' (𝓕 : FormalSol R)
               (∀ x t, ‖(H t).f x - 𝓕.f x‖ < ε) ∧ ∀ᶠ x near L.K₀, (H 1).IsHolonomicAt x := by
   rcases 𝓕.improve h_op h_ample L (half_pos ε_pos) h_hol with ⟨H, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩
   exact
-    ⟨{ H with is_sol := h₆ }, h₁, h₂, h₃, h₄, fun x t => (h₅ x t).trans_lt (half_lt_self ε_pos), h₇⟩
+    ⟨{ H with is_sol := h₆ }, h₁, h₂, h₃, h₄, fun x t ↦ (h₅ x t).trans_lt (half_lt_self ε_pos), h₇⟩
 
 end Improve

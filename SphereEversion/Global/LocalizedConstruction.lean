@@ -70,9 +70,9 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     apply h𝓕't0.mono
     rintro t ht
     exact p.mkHtpy_eq_of_forall hcompat ht
-  have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t => p.mkHtpy_congr _
+  have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t ↦ p.mkHtpy_congr _
   refine' ⟨F', hF't0, hF't1, _, _, _, _⟩
-  · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t => hF'relK₁ t x hx)
+  · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
       rw [p.mkHtpy_eq_of_eq _ _ hcompat]
       exact he t
@@ -93,7 +93,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
   · have h𝓕'holC : ∀ᶠ x : EM near L.C, (𝓕' 1).IsHolonomicAt x := by
       apply (h𝓕'relC.eventually_nhdsSet.and h𝓕C).mono
       rintro x ⟨hx, hx'⟩
-      exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' => (hx' 1).symm)
+      exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' ↦ (hx' 1).symm)
     have : ∀ᶠ x near φ ⁻¹' C ∪ K₀, (𝓕' 1).IsHolonomicAt x := h𝓕'holC.union h𝓕'hol
     rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at this
     apply φ.forall_near hK₁ this
@@ -110,5 +110,5 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
           suffices : ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁); exact this.mono interior_subset
           exact isOpen_interior.mem_nhdsSet.mpr
             ((image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁))
-        exact this.mono (fun a hx hx' => (hx' hx).elim)
-    · exact fun _ => (p.mkHtpy_isHolonomicAt_iff hcompat).mpr
+        exact this.mono (fun a hx hx' ↦ (hx' hx).elim)
+    · exact fun _ ↦ (p.mkHtpy_isHolonomicAt_iff hcompat).mpr

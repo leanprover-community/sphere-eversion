@@ -65,8 +65,8 @@ section MetricSpace
 variable [MetricSpace E] [LocallyCompactSpace E]
 
 theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x : E) (t : ℝ) :
-    Tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t)) := by
-  have hγ : ∀ x, Continuous (γ x) := fun x => h.comp <| Continuous.Prod.mk _
+    Tendsto (fun z : E × ℕ ↦ (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t)) := by
+  have hγ : ∀ x, Continuous (γ x) := fun x ↦ h.comp <| Continuous.Prod.mk _
   simp_rw [Loop.mollify_eq_convolution _ (hγ _)]
   rw [← add_zero (γ x t)]
   refine' Tendsto.add _ _
@@ -76,12 +76,12 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     · simp_rw [bump]; norm_cast
       exact
         ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_zero_nat 1)).comp tendsto_snd
-    · exact eventually_of_forall fun x => (hγ _).aestronglyMeasurable
+    · exact eventually_of_forall fun x ↦ (hγ _).aestronglyMeasurable
     · have := h.tendsto (x, t)
       rw [nhds_prod_eq] at this
       exact this.comp ((tendsto_fst.comp tendsto_fst).prod_mk tendsto_snd)
   · rw [← zero_smul ℝ (_ : F)]
-    have : Continuous fun z => intervalIntegral (γ z) 0 1 volume :=
+    have : Continuous fun z ↦ intervalIntegral (γ z) 0 1 volume :=
       continuous_parametric_intervalIntegral_of_continuous (by apply h) continuous_const
     exact (tendsto_one_div_add_atTop_nhds_zero_nat.comp tendsto_snd).smul
       ((this.tendsto x).comp tendsto_fst)
@@ -102,7 +102,7 @@ namespace SmoothSurroundingFamily
 
 variable {g : E → F} (γ : SmoothSurroundingFamily g) (x y : E)
 
-instance : CoeFun (SmoothSurroundingFamily g) fun _ => E → Loop F :=
+instance : CoeFun (SmoothSurroundingFamily g) fun _ ↦ E → Loop F :=
   ⟨toFun⟩
 
 protected theorem continuous : Continuous (γ x) := by
@@ -135,9 +135,9 @@ def approxSurroundingPointsAt (n : ℕ) (i : ι) : F :=
   (γ y).mollify n (γ.surroundingParametersAt x i)
 
 theorem approxSurroundingPointsAt_smooth (n : ℕ) :
-    𝒞 ∞ fun y => γ.approxSurroundingPointsAt x y n := by
-  refine' contDiff_pi.mpr fun i => _
-  suffices 𝒞 ∞ fun y => ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s by simpa [approxSurroundingPointsAt, Loop.mollify]
+    𝒞 ∞ fun y ↦ γ.approxSurroundingPointsAt x y n := by
+  refine' contDiff_pi.mpr fun i ↦ _
+  suffices 𝒞 ∞ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s by simpa [approxSurroundingPointsAt, Loop.mollify]
   apply contDiff_parametric_integral_of_contDiff
   exact ContDiff.smul deltaMollifier_smooth.snd' γ.smooth
 
@@ -146,14 +146,14 @@ theorem approxSurroundingPointsAt_smooth (n : ℕ) :
 theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
     ∀ᶠ z : E × ℕ in 𝓝 x ×ˢ atTop,
       ∃ w, SurroundingPts (g z.1) (γ.approxSurroundingPointsAt x z.1 z.2) w := by
-  let a : ι → E × ℕ → F := fun i z => γ.approxSurroundingPointsAt x z.1 z.2 i
+  let a : ι → E × ℕ → F := fun i z ↦ γ.approxSurroundingPointsAt x z.1 z.2 i
   suffices ∀ i, Tendsto (a i) (𝓝 x ×ˢ atTop) (𝓝 (γ.surroundingPointsAt x i)) by
-    have hg : Tendsto (fun z : E × ℕ => g z.fst) (𝓝 x ×ˢ atTop) (𝓝 (g x)) :=
+    have hg : Tendsto (fun z : E × ℕ ↦ g z.fst) (𝓝 x ×ˢ atTop) (𝓝 (g x)) :=
       Tendsto.comp γ.smooth_surrounded.continuous.continuousAt tendsto_fst
     exact eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surroundPtsPointsWeightsAt x⟩ this hg
   intro i
   let t := γ.surroundingParametersAt x i
-  change Tendsto (fun z : E × ℕ => (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t))
+  change Tendsto (fun z : E × ℕ ↦ (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t))
   exact Loop.tendsto_mollify_apply γ γ.smooth.continuous x t
 
 /-- This is an auxiliary definition to help construct `centeringDensity` below.
@@ -161,7 +161,7 @@ theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
 Given `x : E`, it represents a smooth probability distribution on the circle with the property that:
 `∫ s in 0..1, γ.localCenteringDensity x y s • γ y s = g y`
 for all `y` in a neighbourhood of `x` (see `localCenteringDensity_average` below). -/
-def localCenteringDensity [DecidablePred (· ∈ affineBases ι ℝ F)] : E → ℝ → ℝ := fun y => by
+def localCenteringDensity [DecidablePred (· ∈ affineBases ι ℝ F)] : E → ℝ → ℝ := fun y ↦ by
   choose n hn₁ _ using
     Filter.eventually_iff_exists_mem.mp
       (γ.eventually_exists_surroundingPts_approxSurroundingPointsAt x)
@@ -206,7 +206,7 @@ theorem localCenteringDensityNhd_self_mem : x ∈ γ.localCenteringDensityNhd x 
     (Classical.choose_spec <| mem_prod_iff.mp (Classical.choose_spec h).1).1
 
 -- unused
-theorem localCenteringDensityNhd_covers : univ ⊆ ⋃ x, γ.localCenteringDensityNhd x := fun x _ =>
+theorem localCenteringDensityNhd_covers : univ ⊆ ⋃ x, γ.localCenteringDensityNhd x := fun x _ ↦
   mem_iUnion.mpr ⟨x, γ.localCenteringDensityNhd_self_mem x⟩
 
 theorem approxSurroundingPointsAt_of_localCenteringDensityNhd
@@ -242,7 +242,7 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
     0 < γ.localCenteringDensity x y t := by
   simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
     Algebra.id.smul_eq_mul]
-  refine' Finset.sum_pos (fun i _ => _) Finset.univ_nonempty
+  refine' Finset.sum_pos (fun i _ ↦ _) Finset.univ_nonempty
   refine' mul_pos _ (deltaMollifier_pos _)
   obtain ⟨w, hw⟩ := γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy
   convert hw.w_pos i
@@ -250,7 +250,7 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
   simp [evalBarycentricCoords, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
 
 theorem localCenteringDensity_periodic : Periodic (γ.localCenteringDensity x y) 1 :=
-  Finset.univ.periodic_sum fun _ _ => Periodic.smul deltaMollifier_periodic _
+  Finset.univ.periodic_sum fun _ _ ↦ Periodic.smul deltaMollifier_periodic _
 
 theorem localCenteringDensity_smooth_on :
     smooth_on ↿(γ.localCenteringDensity x) <| γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ) := by
@@ -258,11 +258,11 @@ theorem localCenteringDensity_smooth_on :
     congr_fun (γ.localCenteringDensity_spec x yt.fst) yt.snd
   refine' ContDiffOn.congr _ h₀
   simp only [Fintype.sum_apply, Pi.smul_apply, Algebra.id.smul_eq_mul]
-  refine' ContDiffOn.sum fun i _ => ContDiffOn.mul _ (ContDiff.contDiffOn _)
-  · let w : F × (ι → F) → ℝ := fun z => evalBarycentricCoords ι ℝ F z.1 z.2 i
+  refine' ContDiffOn.sum fun i _ ↦ ContDiffOn.mul _ (ContDiff.contDiffOn _)
+  · let w : F × (ι → F) → ℝ := fun z ↦ evalBarycentricCoords ι ℝ F z.1 z.2 i
     let z : E → F × (ι → F) :=
-      (Prod.map g fun y => γ.approxSurroundingPointsAt x y (γ.localCenteringDensityMp x)) ∘
-        fun x => (x, x)
+      (Prod.map g fun y ↦ γ.approxSurroundingPointsAt x y (γ.localCenteringDensityMp x)) ∘
+        fun x ↦ (x, x)
     change ContDiffOn ℝ ∞ ((w ∘ z) ∘ Prod.fst) (γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ))
     rw [prod_univ]
     refine' ContDiffOn.comp _ contDiff_fst.contDiffOn Subset.rfl
@@ -279,8 +279,8 @@ theorem localCenteringDensity_smooth_on :
   · exact deltaMollifier_smooth.comp contDiff_snd
 
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :
-    Continuous fun t => γ.localCenteringDensity x y t := by
-  refine' continuous_iff_continuousAt.mpr fun t => _
+    Continuous fun t ↦ γ.localCenteringDensity x y t := by
+  refine' continuous_iff_continuousAt.mpr fun t ↦ _
   have hyt : γ.localCenteringDensityNhd x ×ˢ univ ∈ 𝓝 (y, t) :=
     mem_nhds_prod_iff'.mpr
       ⟨γ.localCenteringDensityNhd x, univ, γ.localCenteringDensityNhd_isOpen x, hy,
@@ -301,7 +301,7 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
       Algebra.id.smul_eq_mul, mul_one, evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h,
       AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
   · simp_rw [← smul_eq_mul]
-    refine' fun i hi => (Continuous.const_smul _ _).intervalIntegrable 0 1
+    refine' fun i hi ↦ (Continuous.const_smul _ _).intervalIntegrable 0 1
     exact deltaMollifier_smooth.continuous
 
 @[simp]
@@ -319,7 +319,7 @@ theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x)
     simp only [AffineBasis.coords_apply]
     exact AffineBasis.linear_combination_coord_eq_self _ _
   · simp_rw [mul_smul]
-    refine' fun i hi => ((Continuous.smul _ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
+    refine' fun i hi ↦ ((Continuous.smul _ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
     exact deltaMollifier_smooth.continuous
 
 /-- Given `γ : SmoothSurroundingFamily g`, together with a point `x : E` and a map `f : ℝ → ℝ`,
@@ -350,7 +350,7 @@ theorem isCenteringDensity_convex (x : E) : Convex ℝ { f | γ.IsCenteringDensi
   have hk₇ : IntervalIntegrable (k • (γ x : ℝ → F)) volume 0 1 :=
     (hk₅.smul (γ.continuous x)).intervalIntegrable 0 1
   exact {
-    Pos := fun t => convex_Ioi (0 : ℝ) (hf₁ t) (hk₁ t) ha hb hab
+    Pos := fun t ↦ convex_Ioi (0 : ℝ) (hf₁ t) (hk₁ t) ha hb hab
     Periodic := (hf₂.smul a).add (hk₂.smul b)
     integral_one := by
       simp_rw [Pi.add_apply]
@@ -369,7 +369,7 @@ theorem exists_smooth_isCenteringDensity (x : E) :
   ⟨γ.localCenteringDensityNhd x,
     mem_nhds_iff.mpr
       ⟨_, Subset.rfl, γ.localCenteringDensityNhd_isOpen x, γ.localCenteringDensityNhd_self_mem x⟩,
-    γ.localCenteringDensity x, γ.localCenteringDensity_smooth_on x, fun y hy =>
+    γ.localCenteringDensity x, γ.localCenteringDensity_smooth_on x, fun y hy ↦
     ⟨γ.localCenteringDensity_pos x y hy, γ.localCenteringDensity_periodic x y,
       γ.localCenteringDensity_integral_eq_one x y hy, γ.localCenteringDensity_average x y hy,
       γ.localCenteringDensity_continuous x y hy⟩⟩
@@ -382,7 +382,7 @@ def centeringDensity : E → ℝ → ℝ :=
   Classical.choose
     (exists_contDiff_of_convex₂ γ.isCenteringDensity_convex γ.exists_smooth_isCenteringDensity)
 
-theorem centeringDensity_smooth : 𝒞 ∞ <| uncurry fun x t => γ.centeringDensity x t :=
+theorem centeringDensity_smooth : 𝒞 ∞ <| uncurry fun x t ↦ γ.centeringDensity x t :=
   (Classical.choose_spec <|
       exists_contDiff_of_convex₂ γ.isCenteringDensity_convex γ.exists_smooth_isCenteringDensity).1
 
@@ -424,35 +424,35 @@ theorem integral_add_one_centeringDensity (t : ℝ) :
     (γ.centeringDensity_periodic x).intervalIntegral_add_eq t 0]
 
 theorem deriv_integral_centeringDensity_pos (t : ℝ) :
-    0 < deriv (fun t => ∫ s in (0)..t, γ.centeringDensity x s) t := by
+    0 < deriv (fun t ↦ ∫ s in (0)..t, γ.centeringDensity x s) t := by
   rw [intervalIntegral.deriv_integral_right (γ.centeringDensity_intervalIntegrable _ _ _)
       ((γ.centeringDensity_continuous x).stronglyMeasurableAtFilter volume (𝓝 t))
       (centeringDensity_continuous γ x).continuousAt]
   exact centeringDensity_pos γ x t
 
 theorem strictMono_integral_centeringDensity :
-    StrictMono fun t => ∫ s in (0)..t, γ.centeringDensity x s :=
+    StrictMono fun t ↦ ∫ s in (0)..t, γ.centeringDensity x s :=
   strictMono_of_deriv_pos (γ.deriv_integral_centeringDensity_pos x)
 
 theorem surjective_integral_centeringDensity :
-    Surjective fun t => ∫ s in (0)..t, γ.centeringDensity x s :=
-  haveI : Continuous fun t => ∫ s in (0)..t, γ.centeringDensity x s :=
+    Surjective fun t ↦ ∫ s in (0)..t, γ.centeringDensity x s :=
+  haveI : Continuous fun t ↦ ∫ s in (0)..t, γ.centeringDensity x s :=
     continuous_primitive (γ.centeringDensity_intervalIntegrable x) 0
   EquivariantMap.surjective
-    ⟨fun t => ∫ s in (0)..t, γ.centeringDensity x s, γ.integral_add_one_centeringDensity x⟩ this
+    ⟨fun t ↦ ∫ s in (0)..t, γ.centeringDensity x s, γ.integral_add_one_centeringDensity x⟩ this
 
 /-- Given `γ : SmoothSurroundingFamily g`, `x ↦ γ.reparametrize x` is a smooth family of
 diffeomorphisms of the circle such that reparametrizing `γₓ` by `γ.reparametrize x` gives a loop
 with average `g x`.
 
 This is the key construction and the main "output" of the reparametrization lemma. -/
-def reparametrize : E → EquivariantEquiv := fun x =>
-  ({ toFun := fun t => ∫ s in (0)..t, γ.centeringDensity x s
+def reparametrize : E → EquivariantEquiv := fun x ↦
+  ({ toFun := fun t ↦ ∫ s in (0)..t, γ.centeringDensity x s
      invFun :=
        (StrictMono.orderIsoOfSurjective _ (γ.strictMono_integral_centeringDensity x)
            (γ.surjective_integral_centeringDensity x)).symm
      left_inv := StrictMono.orderIsoOfSurjective_symm_apply_self _ _ _
-     right_inv := fun t => StrictMono.orderIsoOfSurjective_self_symm_apply _ (γ.strictMono_integral_centeringDensity x) _ t
+     right_inv := fun t ↦ StrictMono.orderIsoOfSurjective_self_symm_apply _ (γ.strictMono_integral_centeringDensity x) _ t
      map_zero' := integral_same
      eqv' := γ.integral_add_one_centeringDensity x } : EquivariantEquiv).symm
 
@@ -463,22 +463,22 @@ theorem hasDerivAt_reparametrize_symm (s : ℝ) :
     (γ.centeringDensity_continuous x).continuousAt
 
 -- 𝒞 ∞ ↿γ.reparametrize
-theorem reparametrize_smooth : 𝒞 ∞ <| uncurry fun (x : E) (t : ℝ) => γ.reparametrize x t := by
-  let f : E → ℝ → ℝ := fun x t => ∫ s in (0)..t, γ.centeringDensity x s
-  change 𝒞 ⊤ fun p : E × ℝ => (StrictMono.orderIsoOfSurjective (f p.1) _ _).symm p.2
+theorem reparametrize_smooth : 𝒞 ∞ <| uncurry fun (x : E) (t : ℝ) ↦ γ.reparametrize x t := by
+  let f : E → ℝ → ℝ := fun x t ↦ ∫ s in (0)..t, γ.centeringDensity x s
+  change 𝒞 ⊤ fun p : E × ℝ ↦ (StrictMono.orderIsoOfSurjective (f p.1) _ _).symm p.2
   apply contDiff_parametric_symm_of_deriv_pos
   · exact contDiff_parametric_primitive_of_contDiff'' γ.centeringDensity_smooth 0
-  · exact fun x => deriv_integral_centeringDensity_pos γ x
+  · exact fun x ↦ deriv_integral_centeringDensity_pos γ x
 
 @[simp]
 theorem reparametrize_average : ((γ x).reparam <| (γ.reparametrize x).equivariantMap).average = g x := by
   change ∫ s : ℝ in (0)..1, γ x (γ.reparametrize x s) = g x
   have h₁ :
     ∀ s, s ∈ uIcc 0 (1 : ℝ) → HasDerivAt (γ.reparametrize x).symm (γ.centeringDensity x s) s :=
-    fun s _ => γ.hasDerivAt_reparametrize_symm x s
-  have h₂ : ContinuousOn (fun s => γ.centeringDensity x s) (uIcc 0 1) :=
+    fun s _ ↦ γ.hasDerivAt_reparametrize_symm x s
+  have h₂ : ContinuousOn (fun s ↦ γ.centeringDensity x s) (uIcc 0 1) :=
     (γ.centeringDensity_continuous x).continuousOn
-  have h₃ : Continuous fun s => γ x (γ.reparametrize x s) :=
+  have h₃ : Continuous fun s ↦ γ x (γ.reparametrize x s) :=
     (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous)
   rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one, ←
     integral_comp_smul_deriv h₁ h₂ h₃]

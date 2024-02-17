@@ -160,7 +160,7 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
     rw [p.pairing] at hu
     linarith
   · intro hw
-    refine (injective_iff_map_eq_zero (p.update φ w)).mpr fun x hx => ?_
+    refine (injective_iff_map_eq_zero (p.update φ w)).mpr fun x hx ↦ ?_
     rcases p.decomp x with ⟨u, hu, t, rfl⟩
     rw [map_add, map_smul, update_v, p.update_ker_pi _ _ hu] at hx
     obtain rfl : t = 0 := by
@@ -192,7 +192,7 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [N
 to use `contDiff_clm_apply_iff` and `continuous_clm_apply`. -/
 theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type _} [NormedAddCommGroup G]
     [NormedSpace ℝ G] {φ : G → E →L[ℝ] F} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
-    𝒞 ∞ fun g => p.update (φ g) (w g) := by
+    𝒞 ∞ fun g ↦ p.update (φ g) (w g) := by
   apply hφ.add
   rw [contDiff_clm_apply_iff]
   intro y
@@ -200,7 +200,7 @@ theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type _} [N
 
 theorem continuous_update [FiniteDimensional ℝ E] (p : DualPair E) {X : Type _} [TopologicalSpace X]
     {φ : X → E →L[ℝ] F} (hφ : Continuous φ) {w : X → F} (hw : Continuous w) :
-    Continuous fun g => p.update (φ g) (w g) := by
+    Continuous fun g ↦ p.update (φ g) (w g) := by
   apply hφ.add
   rw [continuous_clm_apply]
   intro y

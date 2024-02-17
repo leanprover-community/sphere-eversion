@@ -62,13 +62,13 @@ theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ 
 
 theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
     ψJ σ '' ((ψJ σ).source ∩ immersionRel I M I' M') = (ψJ σ).target ∩ {q : HJ | Injective q.2} :=
-  PartialEquiv.IsImage.image_eq fun _σ' hσ' => (mem_immersionRel_iff' I I' hσ').symm
+  PartialEquiv.IsImage.image_eq fun _σ' hσ' ↦ (mem_immersionRel_iff' I I' hσ').symm
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
 theorem immersionRel_open : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
-  refine' fun σ => (ψJ σ).open_target.inter _
+  refine' fun σ ↦ (ψJ σ).open_target.inter _
   convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
   · ext x
     -- Porting note: `mem_prod` is a simp lemma, but the next line is still needed.
@@ -139,12 +139,12 @@ local notation "𝕊²" => sphere (0 : E) 1
 
 /- Maybe the next two lemmas won't be used directly, but they should be done first as
 sanity checks. -/
-theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² => (x : E) :=
+theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² ↦ (x : E) :=
   mfderiv_coe_sphere_injective
 
-theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² => -(x : E) := by
+theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² ↦ -(x : E) := by
   intro x
-  change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² => (x : E)) x)
+  change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² ↦ (x : E)) x)
   rw [mfderiv_neg]
   exact neg_injective.comp (mfderiv_coe_sphere_injective x)
 
@@ -154,7 +154,7 @@ local notation "𝓡_imm" => immersionRel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
 variable (ω : Orientation ℝ E (Fin 3))
 
 theorem smooth_bs :
-    Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² => (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
+    Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
   refine' (ContMDiff.smul _ _).add (contMDiff_fst.smul _)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact contMDiff_coe_sphere.comp contMDiff_snd
@@ -163,7 +163,7 @@ theorem smooth_bs :
 def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
   familyJoin (smooth_bs E) <|
     familyTwist (drop (oneJetExtSec ⟨((↑) : 𝕊² → E), contMDiff_coe_sphere⟩))
-      (fun p : ℝ × 𝕊² => ω.rot (p.1, p.2))
+      (fun p : ℝ × 𝕊² ↦ ω.rot (p.1, p.2))
       (by
         intro p
         have : SmoothAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2) :=
@@ -176,14 +176,14 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def formalEversionAux2 : HtpyFormalSol 𝓡_imm :=
   { formalEversionAux E ω with
-    is_sol' := fun t x => (ω.isometry_rot t x).injective.comp (mfderiv_coe_sphere_injective x) }
+    is_sol' := fun t x ↦ (ω.isometry_rot t x).injective.comp (mfderiv_coe_sphere_injective x) }
 
 def formalEversion : HtpyFormalSol 𝓡_imm :=
   (formalEversionAux2 E ω).reindex ⟨smoothStep, contMDiff_iff_contDiff.mpr smoothStep.smooth⟩
 
 @[simp]
 theorem formalEversion_bs (t : ℝ) :
-    (formalEversion E ω t).bs = fun x : 𝕊² =>
+    (formalEversion E ω t).bs = fun x : 𝕊² ↦
       (1 - smoothStep t : ℝ) • (x : E) + (smoothStep t : ℝ) • (-x : E) :=
   rfl
 
@@ -195,9 +195,9 @@ theorem formalEversionHolAtZero {t : ℝ} (ht : t < 1 / 4) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x
   change
-    mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² => ((1 : ℝ) - smoothStep t) • (y : E) +
+    mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ ((1 : ℝ) - smoothStep t) • (y : E) +
       smoothStep t • -(y : E)) x =
-      (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² => (y : E)) x)
+      (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ (y : E)) x)
   simp_rw [smoothStep.of_lt ht, ω.rot_zero, ContinuousLinearMap.id_comp]
   congr
   ext y
@@ -207,10 +207,10 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x
   change
-    mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² => ((1 : ℝ) - smoothStep t) • (y : E) +
+    mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ ((1 : ℝ) - smoothStep t) • (y : E) +
       smoothStep t • -(y : E)) x =
-      (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² => (y : E)) x)
-  trans mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun y : 𝕊² => (y : E)) x
+      (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ (y : E)) x)
+  trans mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun y : 𝕊² ↦ (y : E)) x
   · congr 2
     ext y
     simp [smoothStep.of_gt ht]
@@ -239,7 +239,7 @@ theorem formalEversion_hol_near_zero_one :
 theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
       ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f) ∧
-        (f 0 = fun x : 𝕊² => (x : E)) ∧ (f 1 = fun x : 𝕊² => -(x : E)) ∧
+        (f 0 = fun x : 𝕊² ↦ (x : E)) ∧ (f 1 = fun x : 𝕊² ↦ -(x : E)) ∧
         ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) := by
   classical
   let ω : Orientation ℝ E (Fin 3) :=
@@ -272,7 +272,7 @@ theorem sphere_eversion :
 instance (n : ℕ) : Fact (finrank ℝ (EuclideanSpace ℝ <| Fin n) = n) :=
   ⟨finrank_euclideanSpace_fin⟩
 
-notation "ℝ^" -- The next notation will be used in the main file
-n:arg => EuclideanSpace ℝ (Fin n)
+-- The next notation will be used in the main file
+notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 
 end sphere_eversion

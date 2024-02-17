@@ -464,7 +464,7 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
       hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
     hK₁.uniformContinuousOn_of_continuous ψ.continuous.continuousOn
-  have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x _hx => hε _
+  have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x _hx ↦ hε _
   obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).continuousOn hεφ
   obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniformContinuousOn_iff.mp h₁ ε₀ hε₀
   refine ⟨min τ 1, by simp [hτ], fun g p hp p' _hp' x hx hη ↦ ?_⟩

@@ -199,7 +199,7 @@ theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
     R.Ample ↔
       ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), σ ∈ R → AmpleSet (R.slice σ p) := by
   simp_rw [RelMfld.Ample]
-  refine' ⟨fun h σ p _ => h p, fun h σ p x hx => _⟩
+  refine' ⟨fun h σ p _ ↦ h p, fun h σ p x hx ↦ _⟩
   have := @h (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p hx
   rw [slice_mk_update] at this
   exact this x hx
@@ -257,7 +257,7 @@ theorem is_sol (S : FamilyFormalSol J N R) {t : N} {x : M} : S t x ∈ R :=
 
 /-- Reindex a family along a smooth function `f`. -/
 def reindex (S : FamilyFormalSol J' N' R) (f : C^∞⟮J, N; J', N'⟯) : FamilyFormalSol J N R :=
-  ⟨S.toFamilyOneJetSec.reindex f, fun t => S.is_sol' (f t)⟩
+  ⟨S.toFamilyOneJetSec.reindex f, fun t ↦ S.is_sol' (f t)⟩
 
 end FamilyFormalSol
 
@@ -310,7 +310,7 @@ def emptyHtpyFormalSol [IsEmpty M] : HtpyFormalSol R
     where
   bs _t x := (IsEmpty.false x).elim
   ϕ _t x := (IsEmpty.false x).elim
-  smooth' := fun ⟨_t, x⟩ => (IsEmpty.false x).elim
+  smooth' := fun ⟨_t, x⟩ ↦ (IsEmpty.false x).elim
   is_sol' _t x := (IsEmpty.false x).elim
 
 /-! ## The h-principle -/
@@ -391,13 +391,13 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
         (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
-  refine' ⟨fun s => (𝓕 (1, s)).bs, _, _, _, _⟩
+  refine' ⟨fun s ↦ (𝓕 (1, s)).bs, _, _, _, _⟩
   · have := 𝓕.toFamilyOneJetSec.smooth
     let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
-      ⟨fun p => (1, p), Smooth.prod_mk smooth_const smooth_id⟩
+      ⟨fun p ↦ (1, p), Smooth.prod_mk smooth_const smooth_id⟩
     rw [show
-        (uncurry fun s => (𝓕 (1, s)).bs) =
-          Prod.snd ∘ π _ (OneJetSpace I IX) ∘ fun p : P × M => 𝓕.reindex j p.1 p.2
+        (uncurry fun s ↦ (𝓕 (1, s)).bs) =
+          Prod.snd ∘ π _ (OneJetSpace I IX) ∘ fun p : P × M ↦ 𝓕.reindex j p.1 p.2
           by ext; rfl]
     exact (𝓕.reindex j).toFamilyOneJetSec.smooth_bs
   · apply h₃.mono
@@ -464,7 +464,7 @@ local notation "IMN" => ModelWithCorners.prod (ModelWithCorners.prod IM IN) 𝓘
 targets. -/
 @[simps! proj_fst proj_snd, pp_dot]
 def OpenSmoothEmbedding.transfer : OneJetBundle IX X IY Y → OneJetBundle IM M IN N :=
-  OneJetBundle.map IY IN φ ψ fun x => (φ.fderiv x).symm
+  OneJetBundle.map IY IN φ ψ fun x ↦ (φ.fderiv x).symm
 
 theorem OpenSmoothEmbedding.smooth_transfer :
     Smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN))
@@ -473,7 +473,7 @@ theorem OpenSmoothEmbedding.smooth_transfer :
   refine SmoothAt.oneJetBundle_map (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
     (ψ.smooth_to.smoothAt.comp _ smoothAt_snd) ?_ smoothAt_id
   have' :=
-    ContMDiffAt.mfderiv (fun _ => φ.invFun) (fun x : OneJetBundle IX X IY Y => φ x.1.1)
+    ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.smoothAt_inv <| _).comp (x, φ x.1.1) smoothAt_snd)
       (φ.smooth_to.smoothAt.comp x (smooth_oneJetBundle_proj.fst x)) le_top
   · simp_rw [φ.left_inv] at this ; exact this
@@ -557,7 +557,7 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     have : ∀ x, mfderiv IN IY ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
       fun x ↦ mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self x))
     simp only [this]
-    refine Smooth.oneJet_comp IN (fun x' => F.bs (φ x')) ?_ ?_
+    refine Smooth.oneJet_comp IN (fun x' ↦ F.bs (φ x')) ?_ ?_
     · exact fun x ↦ (ψ.smoothAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
         (F.smooth_bs.comp φ.smooth_to).contMDiffAt
     · exact Smooth.oneJet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
@@ -614,7 +614,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     where
   toFun := φ.transfer ψ
   invFun :=
-    OneJetBundle.map IN IY φ.invFun ψ.invFun fun x =>
+    OneJetBundle.map IN IY φ.invFun ψ.invFun fun x ↦
       (φ.fderiv <| φ.invFun x : TX (φ.invFun x) →L[ℝ] TM (φ <| φ.invFun x))
   left_inv' {σ} := by
     rw [OpenSmoothEmbedding.transfer,
@@ -635,7 +635,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
     · refine' (φ.smoothAt_inv _).comp _ smoothAt_snd; exact mem_range_self _
     · refine' (ψ.smoothAt_inv _).comp _ smoothAt_snd; exact mem_range_self _
     have' :=
-      ContMDiffAt.mfderiv (fun _ => φ) (fun x : OneJetBundle IM M IN N => φ.invFun x.1.1)
+      ContMDiffAt.mfderiv (fun _ ↦ φ) (fun x : OneJetBundle IM M IN N ↦ φ.invFun x.1.1)
         (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
         ((φ.smoothAt_inv _).comp _ (smooth_oneJetBundle_proj.fst (φ.transfer ψ x))) le_top
     · dsimp only [id]
@@ -671,8 +671,8 @@ variable [T2Space M]
 def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) :
     HtpyOneJetSec IM M IN N := by
-  refine' FamilyOneJetSec.mk' (fun t => JΘ F (G t)) (fun t => φ.Jupdate_aux ψ F (G t)) _
-  refine' φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed _ _ smooth_snd fun x => hFG x.1
+  refine' FamilyOneJetSec.mk' (fun t ↦ JΘ F (G t)) (fun t ↦ φ.Jupdate_aux ψ F (G t)) _
+  refine' φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed _ _ smooth_snd fun x ↦ hFG x.1
   · exact F.smooth.comp smooth_snd
   · exact G.smooth.comp (smooth_fst.prod_map smooth_id)
 
@@ -735,7 +735,7 @@ theorem updateFormalSol_apply {F : FormalSol R} {G : HtpyFormalSol (R.localize �
 theorem updateFormalSol_bs' {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
-    (φ.updateFormalSol ψ F G hK hFG t).bs = fun x => (JΘ F (G t) x).1.2 :=
+    (φ.updateFormalSol ψ F G hK hFG t).bs = fun x ↦ (JΘ F (G t) x).1.2 :=
   rfl
 
 theorem updateFormalSol_bs {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)} (hK : IsCompact K)

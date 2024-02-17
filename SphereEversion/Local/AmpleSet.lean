@@ -85,7 +85,7 @@ theorem ampleSet_univ {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] :
 -- unused
 /-- The empty set in a vector space is ample. -/
 theorem ampleSet_empty {F : Type _} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] :
-    AmpleSet (∅ : Set F) := fun _ h => False.elim h
+    AmpleSet (∅ : Set F) := fun _ h ↦ False.elim h
 
 /-! ## Codimension at least 2 subspaces have ample complement. -/
 
@@ -151,7 +151,7 @@ theorem joinedIn_compl_zero_of_not_mem_span {x y : F} (hx : x ≠ 0)
   refine' JoinedIn.ofLine lineMap_continuous.continuousOn (lineMap_apply_zero _ _)
       (lineMap_apply_one _ _) _
   rw [← segment_eq_image_lineMap]
-  exact fun t ht (h' : t = 0) => (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
+  exact fun t ht (h' : t = 0) ↦ (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 
 /-- In a vector space whose dimension is at least 2, the complement of
 `{0}` is ample. -/
@@ -164,7 +164,7 @@ theorem isPathConnected_compl_zero_of_two_le_dim (hdim : 2 ≤ Module.rank ℝ F
   · intro x hx y hy
     by_cases h : y ∈ Submodule.span ℝ ({x} : Set F)
     · rsuffices ⟨z, hzx⟩ : ∃ z, z ∉ Submodule.span ℝ ({x} : Set F)
-      · have hzy : z ∉ Submodule.span ℝ ({y} : Set F) := fun h' =>
+      · have hzy : z ∉ Submodule.span ℝ ({y} : Set F) := fun h' ↦
           hzx (Submodule.mem_span_singleton_trans h' h)
         exact (joinedIn_compl_zero_of_not_mem_span hx hzx).trans
           (joinedIn_compl_zero_of_not_mem_span hy hzy).symm

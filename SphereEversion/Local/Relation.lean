@@ -71,7 +71,7 @@ def _root_.JetSec.IsFormalSol.formalSol {𝓕 : JetSec E F} {R : RelLoc E F} (h 
   { 𝓕 with is_sol := h }
 
 instance (R : RelLoc E F) : FunLike (FormalSol R) E (F × (E →L[ℝ] F)) :=
-  ⟨fun 𝓕 x => (𝓕.f x, 𝓕.φ x),
+  ⟨fun 𝓕 x ↦ (𝓕.f x, 𝓕.φ x),
   by
      intros 𝓕 𝓕' h
      ext x : 2 <;> replace h := Prod.mk.inj_iff.mp <|congrFun h x
@@ -119,7 +119,7 @@ def HtpyFormalSol.toHtpyJetSec {R : RelLoc E F} (𝓕 : R.HtpyFormalSol) : HtpyJ
 open RelLoc
 
 instance (R : RelLoc E F) : FunLike (FamilyFormalSol P R) P (JetSec E F) :=
-  ⟨fun S => S.toFamilyJetSec, by
+  ⟨fun S ↦ S.toFamilyJetSec, by
       intros S S' h
       ext p x : 3 <;> replace h := congrFun h p
       exacts [congrFun ((JetSec.ext_iff _ _).1 h).1 x, congrFun ((JetSec.ext_iff _ _).1 h).2 x]⟩

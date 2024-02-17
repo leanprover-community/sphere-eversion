@@ -59,7 +59,7 @@ namespace JetSec
 variable {E F}
 
 instance : FunLike (JetSec E F) E (F × (E →L[ℝ] F)) where
-  coe 𝓕 := fun x => (𝓕.f x, 𝓕.φ x)
+  coe 𝓕 := fun x ↦ (𝓕.f x, 𝓕.φ x)
   coe_injective' := by
     rintro ⟨⟩ ⟨⟩ h; congr
     exacts [congr_arg (Prod.fst ∘ ·) h, congr_arg (Prod.snd ∘ ·) h]
@@ -122,7 +122,7 @@ theorem isPartHolonomicAt_top {𝓕 : JetSec E F} {x : E} :
   simp only [← funext_iff, DFunLike.ext_iff]
 
 @[simp]
-theorem isPartHolonomicAt_bot (𝓕 : JetSec E F) : IsPartHolonomicAt 𝓕 ⊥ = fun _ => True := by
+theorem isPartHolonomicAt_bot (𝓕 : JetSec E F) : IsPartHolonomicAt 𝓕 ⊥ = fun _ ↦ True := by
   ext x
   simp only [IsPartHolonomicAt, Submodule.mem_bot, forall_eq, map_zero, eq_self_iff_true]
 
@@ -189,7 +189,7 @@ def JetSec.constHtpy (𝓕 : JetSec E F) : HtpyJetSec E F where
   φ_diff := 𝓕.φ_diff.snd'
 
 @[simp]
-theorem JetSec.constHtpy_apply (𝓕 : JetSec E F) : ∀ t, 𝓕.constHtpy t = 𝓕 := fun t => by
+theorem JetSec.constHtpy_apply (𝓕 : JetSec E F) : ∀ t, 𝓕.constHtpy t = 𝓕 := fun t ↦ by
   ext x <;> rfl
 
 /-! ## Concatenation of homotopies of sections
@@ -202,7 +202,7 @@ near `0` and `1`, which is not convenient enough for gluing purposes.
 
 
 /-- A smooth step function on `ℝ`. -/
-def smoothStep : ℝ → ℝ := fun t => smoothTransition (2 * t - 1 / 2)
+def smoothStep : ℝ → ℝ := fun t ↦ smoothTransition (2 * t - 1 / 2)
 
 theorem smoothStep.smooth : 𝒞 ∞ smoothStep :=
   smoothTransition.contDiff.comp <| (contDiff_id.const_smul (2 : ℝ)).sub contDiff_const
@@ -237,12 +237,12 @@ theorem smoothStep.of_gt {t : ℝ} (h : 3 / 4 < t) : smoothStep t = 1 := by
   linarith
 
 theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg : 𝒞 ∞ ↿g) (hfg : f 1 = g 0) :
-    𝒞 ∞ ↿(fun t x => if t ≤ 1 / 2 then f (smoothStep <| 2 * t) x
+    𝒞 ∞ ↿(fun t x ↦ if t ≤ 1 / 2 then f (smoothStep <| 2 * t) x
       else g (smoothStep <| 2 * t - 1) x : ℝ → E → F) := by
-  have s₁ : 𝒞 ∞ (fun p => (smoothStep (2 * p.1), p.2) : ℝ × E → ℝ × E) :=
+  have s₁ : 𝒞 ∞ (fun p ↦ (smoothStep (2 * p.1), p.2) : ℝ × E → ℝ × E) :=
     (smoothStep.smooth.comp (contDiff_const.mul contDiff_id)).prod_map contDiff_id
   replace hf := hf.comp s₁
-  have s₂ : 𝒞 ∞ (fun p => (smoothStep <| 2 * p.1 - 1, p.2) : ℝ × E → ℝ × E) :=
+  have s₂ : 𝒞 ∞ (fun p ↦ (smoothStep <| 2 * p.1 - 1, p.2) : ℝ × E → ℝ × E) :=
     (smoothStep.smooth.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)).prod_map
       contDiff_id
   replace hg := hg.comp s₂
@@ -297,7 +297,7 @@ theorem HtpyJetSec.comp_of_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht : t
 theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) :
     ∀ᶠ t near Iic 0, 𝓕.comp 𝓖 h t = 𝓕 0 := by
   have : Iio (1 / 8 : ℝ) ∈ 𝓝ˢ (Iic (0 : ℝ)) :=
-    mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : x ≤ 0) => Iio_mem_nhds <| by linarith
+    mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : x ≤ 0) ↦ Iio_mem_nhds <| by linarith
   apply mem_of_superset this
   rintro t (ht : t < 1 / 8)
   have ht' : t ≤ 1 / 2 := by linarith
@@ -319,7 +319,7 @@ theorem HtpyJetSec.comp_of_not_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht
 
 theorem HtpyJetSec.comp_ge_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ici 1, 𝓕.comp 𝓖 h t = 𝓖 1 := by
   have : Ioi (7 / 8 : ℝ) ∈ 𝓝ˢ (Ici (1 : ℝ)) :=
-    mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : 1 ≤ x) => Ioi_mem_nhds <| by linarith
+    mem_nhdsSet_iff_forall.mpr fun (x : ℝ) (hx : 1 ≤ x) ↦ Ioi_mem_nhds <| by linarith
   apply mem_of_superset this
   rintro t (ht : 7 / 8 < t)
   have ht' : ¬t ≤ 1 / 2 := by linarith
