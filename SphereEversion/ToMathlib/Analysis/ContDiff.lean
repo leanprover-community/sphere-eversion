@@ -202,7 +202,7 @@ theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : Cont
   have hmono := fun x ↦ strictMono_of_deriv_pos (hderiv x)
   let F x := (StrictMono.orderIsoOfSurjective (f x) (hmono x) <| hsurj x).toEquiv
   change ContDiff ℝ ⊤ fun p : E × ℝ ↦ (F p.1).symm p.snd
-  refine' contDiff_parametric_symm hf _
+  refine' contDiff_parametric_symm hf ?_
   · exact fun x t ↦
       ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 (deriv (f x) t) <| ne_of_gt (hderiv x t))
   · intro x t

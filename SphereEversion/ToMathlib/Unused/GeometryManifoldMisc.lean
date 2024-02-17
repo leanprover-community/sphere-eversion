@@ -6,6 +6,7 @@ open scoped Manifold Topology
 
 noncomputable section
 
+open Function
 section Topology
 
 variable {α β γ : Type _} [TopologicalSpace α] [TopologicalSpace β]
@@ -20,11 +21,11 @@ theorem nhdsWithin_preimage_fst_le {x : α × β} {s : Set α} :
 
 theorem Filter.Eventually.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {p : α × β → Prop}
     (h : ∀ᶠ x in 𝓝[s] z.1, ∀ y, p (x, y)) : ∀ᶠ z' in 𝓝[Prod.fst ⁻¹' s] z, p z' := by
-  refine' Eventually.filter_mono nhdsWithin_preimage_fst_le _
+  refine Eventually.filter_mono nhdsWithin_preimage_fst_le ?_
   simp_rw [eventually_comap, Prod.forall]
   simp (config := { singlePass := true }) only [forall_swap]
   convert h; ext x
-  refine' forall_congr' fun y ↦ _
+  refine forall_congr' fun y ↦ ?_
   simp_rw [forall_eq]
 
 theorem Filter.EventuallyEq.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {f g : α × β → γ}
@@ -61,7 +62,7 @@ theorem VectorBundleCore.smoothAt_coordChange {ι} (Z : VectorBundleCore 𝕜 B 
   (Z.smoothOn_coordChangeL IB i j).SmoothAt <|
     ((Z.isOpen_baseSet i).inter (Z.isOpen_baseSet j)).mem_nhds hx₀
 
-variable (IB) [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
+variable (IB) [TopologicalSpace B] [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
 
 theorem smoothAt_coord_change (e e' : Trivialization F (π F E)) {x₀ : B}
     (hx₀ : x₀ ∈ e.baseSet ∩ e'.baseSet) [MemTrivializationAtlas e] [MemTrivializationAtlas e'] :

@@ -26,7 +26,7 @@ theorem eqv : ∀ t, φ (t + 1) = φ t + 1 :=
 theorem sub_one (t : ℝ) : φ (t - 1) = φ t - 1 := by rw [eq_sub_iff_add_eq, ← eqv, sub_add_cancel]
 
 theorem add_coe (t : ℝ) (n : ℤ) : φ (t + n) = φ t + n := by
-  refine' Int.inductionOn' n 0 _ _ _
+  refine Int.inductionOn' n 0 ?_ ?_ ?_
   · simp_rw [cast_zero, add_zero]
   · intro k _ h; simp_rw [cast_add, cast_one, ← add_assoc, eqv, h]
   · intro k _ h; simp_rw [cast_sub, cast_one, ← add_sub_assoc, sub_one, h]
@@ -57,7 +57,7 @@ protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy �
   rw [← φ.fract_add_floor x, ← φ.fract_add_floor y]
   cases' (floor_mono hxy).eq_or_lt with h2 h2
   · rw [h2]
-    refine' add_le_add_right (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) _) _
+    refine add_le_add_right (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) ?_) _
     simp_rw [fract, h2]
     exact sub_le_sub_right hxy _
   · refine (add_le_add_right (h (unitInterval.fract_mem _) unitInterval.one_mem
@@ -65,7 +65,7 @@ protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy �
       (le_trans ?_ <|
         add_le_add_right (h unitInterval.zero_mem (unitInterval.fract_mem _) (fract_nonneg _)) _)
     rw [φ.one, add_assoc, add_comm (1 : ℝ)]
-    refine' add_le_add_left _ _
+    refine add_le_add_left ?_ _
     norm_cast
 
 protected theorem fract_fract (t : ℝ) : fract (φ (fract t)) = fract (φ t) := by
@@ -88,7 +88,7 @@ theorem linearReparam_eq_zero {t : ℝ} (h1 : -4⁻¹ ≤ t) (h2 : t ≤ 4⁻¹)
       sub_lt_iff_lt_add.mpr <| h2.trans_le (by norm_num)⟩
   have : (⌊t - 4⁻¹⌋ : ℝ) = -1 := by exact_mod_cast this
   simp_rw [linearReparam, fract, this, sub_eq_zero]
-  refine' (abs_eq_self.mpr <| _).symm.trans (by ring_nf)
+  refine (abs_eq_self.mpr <| ?_).symm.trans (by ring_nf)
   rwa [← sub_le_iff_le_add, zero_sub]
 
 theorem linearReparam_eq_zero' {t : ℝ} (h1 : 0 ≤ t) (h2 : t ≤ 4⁻¹) : linearReparam t = 0 :=

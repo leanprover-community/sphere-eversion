@@ -295,8 +295,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
         refine IsBigO.comp_tendsto ?_ s_diff.continuousAt
         have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume :=
           ⟨Ioo a₀ b₀, Ioo_nhds, bound_integrable.1⟩
-        sorry /- TODO-BUMP refine' (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
-          M bound_cont).hasFDerivAt.isBigO.congr' _ EventuallyEq.rfl
+        sorry /- TODO-BUMP refine (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
+          M bound_cont).hasFDerivAt.isBigO.congr' ?_ EventuallyEq.rfl
         apply Eventually.mono Ioo_nhds
         rintro t ht
         dsimp only

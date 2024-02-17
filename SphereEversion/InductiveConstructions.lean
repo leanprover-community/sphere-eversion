@@ -52,7 +52,7 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [Topo
     intro h'y
     replace hi₀ := mem_upperBounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
     exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi)
-  refine' ⟨fun x ↦ f (i₀ x) x, fun x ↦ _⟩
+  refine ⟨fun x ↦ f (i₀ x) x, fun x ↦ ?_⟩
   refine (eventually_ge_atTop (i₀ x)).mono fun n hn ↦ ?_
   refine mem_of_superset (hUx x) fun y hy ↦ ?_
   calc
@@ -86,13 +86,13 @@ theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U :
   simp only [forall_and] at hf
   rcases hf with ⟨⟨h₀f, -, h₁f⟩, hfU⟩
   rcases U_fin.exists_forall_eventually_of_indexType hfU with ⟨F, hF⟩
-  refine' ⟨F, fun x ↦ _, fun j ↦ _⟩
+  refine ⟨F, fun x ↦ ?_, fun j ↦ ?_⟩
   · rcases(hF x).exists with ⟨n₀, hn₀⟩
     simp only [Germ.coe_eq.mpr hn₀.symm, h₀f n₀ x]
-  intro x
-  rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
-  convert (h₁f _ _ hn₀' x) using 1
-  exact Germ.coe_eq.mpr hn₀.symm
+  · intro x
+    rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
+    convert (h₁f _ _ hn₀' x) using 1
+    exact Germ.coe_eq.mpr hn₀.symm
 
 theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCompactSpace X]
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
@@ -133,7 +133,7 @@ theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCo
       (fun j : 𝓘 0 ↦ RestrictGermPredicate P₁ (K j)) (fun _ _ ↦ True) U_loc ⟨f₀, hP₀f₀, trivial⟩
   simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this
   rcases this ind' with ⟨f, h, h'⟩
-  refine' ⟨f, fun x ↦ ⟨(h x).1, (h x).2, _⟩⟩
+  refine ⟨f, fun x ↦ ⟨(h x).1, (h x).2, ?_⟩⟩
   rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
   exact (h' j x hj).self_of_nhds
 
@@ -326,7 +326,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
         rintro ⟨t', x'⟩ ⟨ht', -⟩
         simpa using ht'
       exact hp.mono fun q hq ↦ if_neg hq
-    refine' ⟨F'', _, _, _, _⟩
+    refine ⟨F'', ?_, ?_, ?_, ?_⟩
     · rintro p
       by_cases ht : p.1 ≤ T i.toNat
       · rw [loc₁ _ ht]
@@ -334,7 +334,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       · push_neg at ht
         cases' p with t x
         rw [loc₂ _ ht]
-        refine' ⟨h₀F' ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat)) x, _, _⟩
+        refine ⟨h₀F' ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat)) x, ?_, ?_⟩
         · rintro (rfl : t = 0)
           exact (lt_irrefl _ ((T_nonneg i.toNat).trans_lt ht)).elim
         · simpa only [mul_sub, neg_mul]
@@ -382,7 +382,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       ⟨fun p ↦ f₀ p.2, hPP₀, fun x t _ ↦ rfl⟩ ind' with
     ⟨F, hF, h'F⟩
   clear ind ind' hPP₀
-  refine' ⟨curry F, _, _, _, _⟩
+  refine ⟨curry F, ?_, ?_, ?_, ?_⟩
   · exact funext fun x ↦ (hF (0, x)).2.1 rfl
   · exact fun t x ↦ (hF (t, x)).1
   · intro x

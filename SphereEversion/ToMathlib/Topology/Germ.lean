@@ -145,7 +145,7 @@ theorem eq_of_germ_isConstant {X Y : Type _} [TopologicalSpace X] [PreconnectedS
   erw [← eq_univ_iff_forall]
   apply IsClopen.eq_univ _ (⟨x', rfl⟩ : {x | f x = f x'}.Nonempty)
   sorry /- TODO: gets rewritten in upstreaming PR
-  refine' ⟨isOpen_iff_eventually.mpr fun x hx ↦ hx ▸ h x, _⟩
+  refine ⟨isOpen_iff_eventually.mpr fun x hx ↦ hx ▸ h x, ?_⟩
   rw [isClosed_iff_frequently]
   rintro x hx
   rcases ((h x).and_frequently hx).exists with ⟨x'', H⟩
