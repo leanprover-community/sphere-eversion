@@ -206,8 +206,7 @@ theorem ρ_mem (L : StepLandscape E) (x : E) : L.ρ x ∈ I :=
 theorem ρ_le (L : StepLandscape E) (x : E) : |L.ρ x| ≤ 1 := by
   cases' L.ρ_mem x with h h'
   rw [abs_le]
-  refine' ⟨_, h'⟩
-  linarith
+  exact ⟨by linarith, h'⟩
 
 theorem hρ₀ (L : StepLandscape E) : ∀ᶠ x near L.K₀, L.ρ x = 1 :=
   (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.2.1
@@ -390,8 +389,8 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
     (fun p : E × ℝ × ℝ ↦ (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
       L.K₁ ×ˢ I ×ˢ I
   have K_cpt : IsCompact K := by
-    refine' (L.hK₁.prod (isCompact_Icc.prod isCompact_Icc)).image _
-    refine' continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _)
+    refine (L.hK₁.prod (isCompact_Icc.prod isCompact_Icc)).image ?_
+    refine continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk ?_)
     apply L.p.continuous_update 𝓕.φ_diff.continuous.fst'
     change Continuous (↿(L.loop h) ∘ fun g : E × ℝ × ℝ ↦ (g.snd.fst, g.fst, g.snd.snd))
     exact (L.loop_smooth h).continuous.comp₃ continuous_snd.fst continuous_fst continuous_snd.snd
@@ -413,7 +412,7 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
          by simp only [Loop.fract_eq]⟩
     · simp only [h, improveStep_apply_f, FormalSol.toJetSec_eq_coe, improveStep_apply_φ]
       rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
-      refine' ⟨by simpa using ε_pos, _, _⟩ <;> dsimp only <;> rw [dist_self_add_left]
+      refine ⟨by simpa using ε_pos, ?_, ?_⟩ <;> dsimp only <;> rw [dist_self_add_left]
       · exact bu_lt _ _ _ <| H _ hxK₁ _
       · exact bu_lt _ _ _ <| H' _ hxK₁
   · rw [show ((L.improveStep h N) t).f x = 𝓕.f x from
@@ -515,7 +514,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
     have glue : H 1 = S.improveStep acc N 0 := by
       rw [improveStep_rel_t_eq_0]
       rfl
-    refine' ⟨H.comp (S.improveStep acc N) glue, _, _, _, _, _, _, _⟩
+    refine ⟨H.comp (S.improveStep acc N) glue, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · apply (H.comp_le_0 _ _).mono
       intro t ht
       rw [ht]

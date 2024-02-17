@@ -48,7 +48,7 @@ theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃L[ℝ] F) :
     conv_rhs => rw [← L.apply_symm_apply x]
     exact L.toHomeomorph.image_connectedComponentIn hx
   rw [← this]
-  refine' (L.toLinearMap.convexHull_image _).trans _
+  refine (L.toLinearMap.convexHull_image _).trans ?_
   rw [h (L.symm x) hx, image_univ]
   exact L.surjective.range_eq
 
@@ -134,7 +134,7 @@ theorem mem_span_of_zero_mem_segment {F : Type _} [AddCommGroup F] [Module ℝ F
   have : t ≠ 0 := by
     intro h
     rw [h] at htxy
-    refine' hx _
+    refine hx ?_
     simpa using htxy
   rw [← smul_eq_zero_iff_right (neg_ne_zero.mpr <| inv_ne_zero this), smul_add, smul_smul, smul_smul,
     ← neg_one_mul, mul_assoc, mul_assoc, inv_mul_cancel this, mul_one, neg_one_smul,
@@ -148,8 +148,8 @@ variable [TopologicalAddGroup F] [ContinuousSMul ℝ F]
 spanned by `x` then `x` and `y` can be joined by a path in the complement of `{0}`.  -/
 theorem joinedIn_compl_zero_of_not_mem_span {x y : F} (hx : x ≠ 0)
     (hy : y ∉ Submodule.span ℝ ({x} : Set F)) : JoinedIn ({0}ᶜ : Set F) x y := by
-  refine' JoinedIn.ofLine lineMap_continuous.continuousOn (lineMap_apply_zero _ _)
-      (lineMap_apply_one _ _) _
+  refine JoinedIn.ofLine lineMap_continuous.continuousOn (lineMap_apply_zero _ _)
+    (lineMap_apply_one _ _) ?_
   rw [← segment_eq_image_lineMap]
   exact fun t ht (h' : t = 0) ↦ (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 
@@ -182,8 +182,8 @@ least two then its complement is path-connected. -/
 theorem isPathConnected_compl_of_two_le_codim {E : Submodule ℝ F}
     (hcodim : 2 ≤ Module.rank ℝ (F ⧸ E)) : IsPathConnected (Eᶜ : Set F) := by
   rcases E.exists_isCompl with ⟨E', hE'⟩
-  refine' isPathConnected_compl_of_isPathConnected_compl_zero hE'.symm _
-  refine' isPathConnected_compl_zero_of_two_le_dim _
+  refine isPathConnected_compl_of_isPathConnected_compl_zero hE'.symm ?_
+  refine isPathConnected_compl_zero_of_two_le_dim ?_
   rwa [← (E.quotientEquivOfIsCompl E' hE').rank_eq]
 
 /-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at

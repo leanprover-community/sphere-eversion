@@ -67,7 +67,7 @@ theorem slice_update {θ : E × F × (E →L[ℝ] F)} {p : DualPair E} (x : F) :
 /-- In order to check ampleness, it suffices to consider slices through elements of the relation. -/
 theorem isAmple_iff :
     R.IsAmple ↔ ∀ ⦃θ : OneJet E F⦄ (p : DualPair E), θ ∈ R → AmpleSet (R.slice p θ) := by
-  refine' ⟨fun h θ p _ ↦ h p θ, fun h p θ w hw ↦ _⟩
+  refine ⟨fun h θ p _ ↦ h p θ, fun h p θ w hw ↦ ?_⟩
   dsimp [slice] at hw
   have := h p hw
   rw [slice_update] at this

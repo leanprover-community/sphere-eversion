@@ -96,7 +96,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     (⟪x₀, p.1⟫, (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀)
   let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop := fun q ↦ q.1 ≠ 0 ∧ Injective q.2
   have x₀_ne : x₀ ≠ 0 := by
-    refine' fun hx₀' ↦ hx₀ _
+    refine fun hx₀' ↦ hx₀ ?_
     rw [hx₀']
     apply mem_ball_self
     norm_num
@@ -195,7 +195,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       rw [← orthogonal_span_toDual_symm, spanOrthogonal, spanLine,
           span_singleton_eq_span_singleton_of_ne u_ne H]
     have ne_z' : (p.π <| pr[x]ᗮ u)⁻¹ ≠ 0 := inv_ne_zero ne_z
-    refine' ⟨(p.π <| pr[x]ᗮ u)⁻¹ • (pr[x]ᗮ u : E), (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, _, _⟩
+    refine ⟨(p.π <| pr[x]ᗮ u)⁻¹ • (pr[x]ᗮ u : E), (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, ?_, ?_⟩
     · have := orthogonal_line_inf_sup_line u x
       rw [← orthogonal_span_toDual_symm p.π, span_singleton_smul_eq ne_z'.isUnit]
       exact (orthogonal_line_inf_sup_line u x).symm
@@ -264,8 +264,8 @@ variable [Fact (dim E = 3)] [FiniteDimensional ℝ E] (ω : Orientation ℝ E (F
 
 theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) :
     ContDiffAt ℝ ∞ (uncurry (locFormalEversionAuxφ ω)) p := by
-  refine' (ω.contDiff_rot hx).sub _
-  refine' ContDiffAt.smul (contDiffAt_const.mul contDiffAt_fst) _
+  refine (ω.contDiff_rot hx).sub ?_
+  refine ContDiffAt.smul (contDiffAt_const.mul contDiffAt_fst) ?_
   exact (contDiffAt_orthogonalProjection_singleton hx).comp p contDiffAt_snd
 
 /-- A formal eversion of `𝕊²`, viewed as a homotopy. -/
@@ -277,24 +277,24 @@ def locFormalEversionAux : HtpyJetSec E E
     ContDiff.smul (contDiff_const.sub <| contDiff_const.mul <| smoothStep.smooth.comp contDiff_fst)
       contDiff_snd
   φ_diff := by
-    refine' contDiff_iff_contDiffAt.mpr fun x ↦ _
+    refine contDiff_iff_contDiffAt.mpr fun x ↦ ?_
     cases' eq_or_ne x.2 0 with hx hx
-    · refine' contDiffAt_const.congr_of_eventuallyEq _; exact 0
+    · refine' contDiffAt_const.congr_of_eventuallyEq ?_; exact 0
       have : (fun x ↦ ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) := by
         refine IsOpen.mem_nhds ?_ ?_
         · exact isOpen_Iio.preimage (contDiff_norm_sq ℝ (n :=∞)).continuous
         · simp_rw [mem_preimage, norm_zero, mem_Iio]
           norm_num
       have : (fun x ↦ smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) := by
-        refine' mem_of_superset this _
+        refine mem_of_superset this ?_
         erw [@preimage_comp _ _ _ _ smoothStep]
-        refine' preimage_mono _
+        refine preimage_mono ?_
         intro x hx
         rw [mem_preimage, mem_singleton_iff, smoothStep.of_lt hx]
       have : (fun p : ℝ × E ↦ smoothStep (‖p.2‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 x := by
         rw [← hx] at this
         exact continuousAt_snd.preimage_mem_nhds this
-      refine' eventually_of_mem this _
+      refine eventually_of_mem this ?_
       rintro ⟨t, x⟩ hx
       simp_rw [mem_preimage, mem_singleton_iff] at hx
       show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
@@ -328,13 +328,13 @@ def locFormalEversion : HtpyFormalSol (immersionSphereRel E E) :=
         x ∉ B → InjOn (smoothStep (HPow.hPow ‖x‖ 2) • locFormalEversionAuxφ ω (smoothStep t) x) (ℝ ∙ x)ᗮ
       intro hx
       have h2x : smoothStep (HPow.hPow ‖x‖ 2) = 1 := by
-        refine' smoothStep.of_gt _
+        refine smoothStep.of_gt ?_
         rw [mem_ball, not_lt, dist_zero_right] at hx
-        refine' (show (3 : ℝ) / 4 < (0.9 : ℝ) ^ 2 by norm_num).trans_le _
+        refine (show (3 : ℝ) / 4 < (0.9 : ℝ) ^ 2 by norm_num).trans_le ?_
         rwa [sq_le_sq, show |(0.9 : ℝ)| = 0.9 by norm_num, abs_norm]
       rw [h2x, one_smul]
       have h3x : x ≠ 0 := by rintro rfl; apply hx; exact mem_ball_self (by norm_num)
-      refine' (EqOn.injOn_iff _).mpr (ω.injOn_rot_of_ne (smoothStep t) h3x)
+      refine (EqOn.injOn_iff ?_).mpr (ω.injOn_rot_of_ne (smoothStep t) h3x)
       intro v hv
       simp_rw [locFormalEversionAuxφ, ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
         ContinuousLinearMap.comp_apply,
@@ -429,7 +429,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
     (locFormalEversion ω).exists_sol loc_immersion_rel_open (loc_immersion_rel_ample 2 le_rfl)
       ({0, 1} ×ˢ 𝕊²) (is_closed_pair.prod isClosed_sphere) 𝕊² (isCompact_sphere 0 1)
       (locFormalEversion_hol ω)
-  refine' ⟨f, h₁, _, _, _⟩
+  refine ⟨f, h₁, ?_, ?_, ?_⟩
   · intro x hx; rw [h₂ (0, x) (mk_mem_prod (by simp) hx), locFormalEversion_zero]
   · intro x hx; rw [h₂ (1, x) (mk_mem_prod (by simp) hx), locFormalEversion_one]
   · exact fun t ht ↦ sphereImmersion_of_sol _ fun x hx ↦ h₃ x hx t ht

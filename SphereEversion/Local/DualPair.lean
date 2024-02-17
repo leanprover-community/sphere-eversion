@@ -113,7 +113,7 @@ theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ := bot_unique <
 theorem sup_eq_top (p : DualPair E) : ker p.π ⊔ p.spanV = ⊤ := by
   rw [Submodule.sup_eq_top_iff]
   intro x
-  refine' ⟨x - p.π x • p.v, _, p.π x • p.v, _, _⟩ <;>
+  refine ⟨x - p.π x • p.v, ?_, p.π x • p.v, ?_, ?_⟩ <;>
     simp [DualPair.spanV, Submodule.mem_span_singleton, p.pairing]
 
 theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u + t • p.v := by
@@ -166,7 +166,7 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
     obtain rfl : t = 0 := by
       by_contra ht
       apply hw
-      refine' ⟨-t⁻¹ • u, (ker p.π).smul_mem _ hu, _⟩
+      refine ⟨-t⁻¹ • u, (ker p.π).smul_mem _ hu, ?_⟩
       rw [map_smul]
       have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • (0 : F) + w := congr_arg (-t⁻¹ • · + w) hx
       rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,

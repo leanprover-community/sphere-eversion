@@ -133,7 +133,7 @@ def FamilyJetSec.uncurry (S : FamilyJetSec E F P) : JetSec (P × E) F
   φ p := fderiv ℝ (fun z : P × E ↦ S.f z.1 p.2) p + S.φ p.1 p.2 ∘L fderiv ℝ Prod.snd p
   f_diff := S.f_diff
   φ_diff := by
-    refine' (ContDiff.fderiv _ contDiff_id le_top).add (S.φ_diff.clm_comp _)
+    refine (ContDiff.fderiv ?_ contDiff_id le_top).add (S.φ_diff.clm_comp ?_)
     · exact S.f_diff.comp (contDiff_snd.fst.prod contDiff_fst.snd)
     · exact ContDiff.fderiv contDiff_snd.snd contDiff_id le_top
 
@@ -177,7 +177,7 @@ theorem FamilyJetSec.isHolonomicAt_uncurry (S : FamilyJetSec E F P) {p : P × E}
 /-- Turn a family of formal solutions of `R ⊆ J¹(E, E')` parametrized by `P` into a formal solution
 of `R.relativize P`. -/
 def RelLoc.FamilyFormalSol.uncurry (S : R.FamilyFormalSol P) : FormalSol (R.relativize P) := by
-  refine' ⟨S.toFamilyJetSec.uncurry, _⟩
+  refine ⟨S.toFamilyJetSec.uncurry, ?_⟩
   rintro ⟨s, x⟩
   exact S.toFamilyJetSec.uncurry_mem_relativize.mpr (S.is_sol s x)
 
@@ -195,8 +195,8 @@ def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × 
   φ p x := (S p.1).φ (p.2, x) ∘L fderiv ℝ (fun x ↦ (p.2, x)) x
   f_diff := S.f_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))
   φ_diff := by
-    refine' (S.φ_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))).clm_comp _
-    refine' ContDiff.fderiv _ contDiff_snd le_top
+    refine (S.φ_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))).clm_comp ?_
+    refine ContDiff.fderiv ?_ contDiff_snd le_top
     exact contDiff_fst.fst.snd.prod contDiff_snd
 
 theorem FamilyJetSec.curry_f (S : FamilyJetSec (P × E) F G) (p : G × P) (x : E) :
@@ -211,7 +211,7 @@ theorem FamilyJetSec.curry_φ' (S : FamilyJetSec (P × E) F G) (p : G × P) (x :
     (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L ContinuousLinearMap.inr ℝ P E := by
   rw [S.curry_φ]
   congr 1
-  refine' ((differentiableAt_const _).fderiv_prod differentiableAt_id).trans _
+  refine ((differentiableAt_const _).fderiv_prod differentiableAt_id).trans ?_
   rw [fderiv_id, fderiv_const]
   rfl
 
@@ -249,7 +249,7 @@ theorem curry_eq_iff_eq_uncurry_loc {𝓕 : FamilyFormalSol G (R.relativize P)}
     {𝓕₀ : R.FamilyFormalSol P} {t : G} {x : E} {s : P} (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by
   simp_rw [Prod.ext_iff] at h ⊢
-  refine' ⟨h.1, _⟩
+  refine ⟨h.1, ?_⟩
   simp_rw [𝓕.curry_φ', h.2, 𝓕₀.uncurry_φ']
   change ((D (λ (z : P) ↦ 𝓕₀.toFamilyJetSec.f z x) s).comp (fst ℝ P E) + (𝓕₀.toFamilyJetSec.φ s x).comp (snd ℝ P E)).comp (inr ℝ P E) = ((𝓕₀ s) x).snd
   ext v
@@ -290,11 +290,11 @@ theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Se
     𝓕₀.uncurry.improve_htpy' (R.isOpen_relativize h_op) (h_ample.relativize P) parametric_landscape
       ε_pos (h_hol.mono fun p hp ↦ 𝓕₀.isHolonomicAt_uncurry.mpr hp)
   have h₁ : ∀ p, 𝓕 0 p = 𝓕₀.uncurry p := by intro p; rw [h₁.self_of_nhdsSet 0 right_mem_Iic]; rfl
-  refine' ⟨𝓕.curry, _, _, _, _⟩
+  refine ⟨𝓕.curry, ?_, ?_, ?_, ?_⟩
   · intro s x; exact curry_eq_iff_eq_uncurry_loc (h₁ (s, x))
-  · refine' h₂.mono _; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry_loc (hp t)
+  · refine h₂.mono ?_; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry_loc (hp t)
   · intro s x t; exact (h₄ (s, x) t).le
-  · refine' h₅.mono _; rintro ⟨s, x⟩ hp; exact 𝓕.toFamilyJetSec.isHolonomicAt_curry hp
+  · refine h₅.mono ?_; rintro ⟨s, x⟩ hp; exact 𝓕.toFamilyJetSec.isHolonomicAt_curry hp
 
 open Filter
 
@@ -312,7 +312,7 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
           ∀ x ∈ K, ∀ t ∈ I, (x, f t x, D (f t) x) ∈ R := by
   obtain ⟨𝓕, _, h₂, -, h₄⟩ :=
     𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (isCompact_Icc.prod hK) h_hol
-  refine' ⟨fun s ↦ (𝓕 (1, s)).f, _, _, _⟩
+  refine ⟨fun s ↦ (𝓕 (1, s)).f, ?_, ?_, ?_⟩
   · exact 𝓕.f_diff.comp ((contDiff_const.prod contDiff_id).prod_map contDiff_id)
   · intro p hp
     exact (Prod.ext_iff.mp ((h₂.forall_mem principal_le_nhdsSet) p hp 1)).1

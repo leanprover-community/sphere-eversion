@@ -260,7 +260,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     rfl
   · apply (hf (1 / 2, x₀)).congr_of_eventuallyEq
     have : (Ioo (3 / 8) (5 / 8) : Set ℝ) ×ˢ univ ∈ 𝓝 (1 / (2 : ℝ), x₀) := by
-      refine' prod_mem_nhds_iff.mpr ⟨Ioo_mem_nhds _ _, univ_mem⟩ <;> norm_num
+      refine prod_mem_nhds_iff.mpr ⟨Ioo_mem_nhds ?_ ?_, univ_mem⟩ <;> norm_num
     filter_upwards [this] with p hp
     cases' p with t x
     cases' (prod_mk_mem_set_prod_eq.mp hp).1 with lt_t t_lt
