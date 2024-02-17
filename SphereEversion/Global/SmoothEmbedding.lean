@@ -1,12 +1,11 @@
+import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
+import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
-import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
-import Mathlib.Order.Filter.Basic
-
 
 noncomputable section
 
@@ -454,8 +453,6 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
     ∃ η > (0 : ℝ), ∀ g : P → X → Y, ∀ p ∈ KP, ∀ p' ∈ KP, ∀ x ∈ K,
       dist (g p' x) (ψ.invFun (f p (φ x))) < η →
         dist (update φ ψ (f p') (g p') <| φ x) (f p <| φ x) < ε (φ x) := by
-  by_cases h : Set.Nonempty K ; swap
-  · exact ⟨1, Real.zero_lt_one, fun g p _a _ _ x hx _ ↦ (h ⟨x, hx⟩).elim⟩
   let F : P × X → Y := fun q ↦ (ψ.invFun ∘ f q.1 ∘ φ) q.2
   let K₁ := Metric.cthickening 1 (F '' KP.prod K)
   have hK₁ : IsCompact K₁ := by
@@ -467,12 +464,11 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
       hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
     hK₁.uniformContinuousOn_of_continuous ψ.continuous.continuousOn
-  obtain ⟨x, _hxK, hε₀'⟩ := hK.exists_isMinOn h (hε'.comp φ.continuous).continuousOn
-  let ε₀ := (ε ∘ φ) x
-  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniformContinuousOn_iff.mp h₁ ε₀ (hε _)
+  have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x _hx => hε _
+  obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).continuousOn hεφ
+  obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniformContinuousOn_iff.mp h₁ ε₀ hε₀
   refine ⟨min τ 1, by simp [hτ], fun g p hp p' _hp' x hx hη ↦ ?_⟩
   cases' lt_min_iff.mp hη with H H'
-  have hε₀' : ∀ b ∈ K, ε₀ ≤ (ε ∘ ↑φ) b := hε₀'
   apply lt_of_lt_of_le _ (hε₀' x hx); clear hε₀'
   simp only [update_apply_embedding]
   have h₁ : g p' x ∈ K₁ :=
