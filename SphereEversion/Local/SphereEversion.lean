@@ -90,7 +90,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
       ⟪x₀, p.1⟫ ≠ 0 ∧
         Injective ((p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) := by
   -- This is true at (x₀, y₀, φ₀) and is an open condition because `p ↦ ⟪x₀, p.1⟫` and
-  -- `p ↦ (p.2.2.comp $ (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀` are continuous
+  -- `p ↦ (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀` are continuous
   set j₀ := subtypeL (ℝ ∙ x₀)ᗮ
   let f : OneJet E F → ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) := fun p ↦
     (⟪x₀, p.1⟫, (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀)

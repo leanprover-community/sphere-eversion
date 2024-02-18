@@ -80,7 +80,7 @@ theorem immersionRel_open : IsOpen (immersionRel I M I' M') := by
 @[simp]
 theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I m}
     {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
-    (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ : Set $ TM' m')ᶜ :=
+    (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ : Set <| TM' m')ᶜ :=
   Set.ext_iff.mpr fun _ ↦ p.injective_update_iff hφ
 
 theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample := by

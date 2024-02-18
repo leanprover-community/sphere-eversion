@@ -552,7 +552,7 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
   smooth' := by
     -- Porting note: next 4 lines were
     -- simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe,
-    --          mfderiv_congr_point (ψ.right_inv (hF $ mem_range_self _))]
+    --          mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self _))]
     simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe]
     have : ∀ x, mfderiv IN IY ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
       fun x ↦ mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self x))

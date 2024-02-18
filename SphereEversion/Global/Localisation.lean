@@ -56,7 +56,7 @@ theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E')
   exact Iff.rfl
 
 /-- Turns a relation between `E` and `E'` seen as manifolds into a relation between them
-seen as vector spaces. One annoying bit is `equiv.prod_assoc E E' $ E →L[ℝ] E'` that is needed
+seen as vector spaces. One annoying bit is `equiv.prod_assoc E E' (E →L[ℝ] E')` that is needed
 to reassociate a product of types. -/
 def RelMfld.relLoc (R : RelMfld 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : RelLoc E E' :=
   (Homeomorph.prodAssoc _ _ _).symm ⁻¹'
