@@ -1,5 +1,7 @@
 import Mathlib.Geometry.Manifold.Instances.Sphere
+
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
+import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
 import SphereEversion.Local.AmpleSet
 import SphereEversion.Global.Gromov
@@ -31,13 +33,6 @@ local notation "TM'" => TangentSpace I'
 local notation "HJ" => ModelProd (ModelProd H H') (E →L[ℝ] E')
 
 local notation "ψJ" => chartAt HJ
-
-/-- A map between manifolds is an immersion if it is differentiable and its differential at
-any point is injective. Note the formalized definition doesn't require differentiability.
-If `f` is not differentiable at `m` then, by definition, `mfderiv I I' f m` is zero, which
-is not injective unless the source dimension is zero, which implies differentiability. -/
-def Immersion (f : M → M') : Prop :=
-  ∀ m, Injective (mfderiv I I' f m)
 
 variable (M M')
 
@@ -137,14 +132,26 @@ local notation "𝕊²" => sphere (0 : E) 1
 
 /- Maybe the next two lemmas won't be used directly, but they should be done first as
 sanity checks. -/
-theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² ↦ (x : E) :=
-  mfderiv_coe_sphere_injective
+-- TODO: generalise them (and most statements about RelImmersion) to `n` dimensions!
 
-theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) fun x : 𝕊² ↦ -(x : E) := by
-  intro x
-  change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² ↦ (x : E)) x)
-  rw [mfderiv_neg]
-  exact neg_injective.comp (mfderiv_coe_sphere_injective x)
+/-- The inclusion of 𝕊² into ℝ³ is an immersion. -/
+theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) (fun x : 𝕊² ↦ (x : E)) ⊤ where
+  differentiable := contMDiff_coe_sphere
+  diff_injective := mfderiv_coe_sphere_injective
+
+/-- The antipodal map on `𝕊² ⊆ ℝ³` is an immersion. -/
+theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) (fun x : 𝕊² ↦ -(x : E)) ⊤ where
+  differentiable := by
+    letI : Fact (finrank ℝ (EuclideanSpace ℝ (Fin 3)) = 2 + 1) :=
+      fact_iff.mpr finrank_euclideanSpace_fin
+    let r := contMDiff_neg_sphere (E := EuclideanSpace ℝ (Fin 3)) (n := 2)
+    -- morally: the coercion is the composition with the standard coercion...
+    let s := contMDiff_coe_sphere (E := EuclideanSpace ℝ (Fin 3)) (n := 2)
+    sorry -- morally, is `apply ContMDiff.comp s r`
+  diff_injective x := by
+    change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² ↦ (x : E)) x)
+    rw [mfderiv_neg]
+    exact neg_injective.comp (mfderiv_coe_sphere_injective x)
 
 -- The relation of immersion of a two-sphere into its ambient Euclidean space.
 local notation "𝓡_imm" => immersionRel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
@@ -237,7 +244,7 @@ theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
       ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f) ∧
         (f 0 = fun x : 𝕊² ↦ (x : E)) ∧ (f 1 = fun x : 𝕊² ↦ -(x : E)) ∧
-        ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) := by
+        ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) ⊤ := by
   classical
   let ω : Orientation ℝ E (Fin 3) :=
     ((stdOrthonormalBasis _ _).reindex <|
@@ -257,19 +264,24 @@ theorem sphere_eversion :
       (formalEversion E ω) (formalEversion_hol_near_zero_one E ω) with
     ⟨f, h₁, h₂, -, h₅⟩
   have := h₂.forall_mem principal_le_nhdsSet
-  refine ⟨f, h₁, ?_, ?_, h₅⟩
+  save
+  refine ⟨f, h₁, ?_, ?_, ?_/-h₅-/⟩
   · ext x
     rw [this (0, x) (by simp)]
     convert formalEversion_zero E ω x
   · ext x
     rw [this (1, x) (by simp)]
     convert formalEversion_one E ω x
+  · exact fun t ↦ {
+      differentiable := sorry -- use h₁ at first coordinate t
+      diff_injective := h₅ t
+    }
 
--- The next instance will be used in the main file
+-- The next instance will be used in the main file.
 instance (n : ℕ) : Fact (finrank ℝ (EuclideanSpace ℝ <| Fin n) = n) :=
   ⟨finrank_euclideanSpace_fin⟩
 
--- The next notation will be used in the main file
+-- The next notation will be used in the main file.
 notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 
 end sphere_eversion

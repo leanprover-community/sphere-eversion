@@ -30,7 +30,7 @@ theorem Smale :
     (-- `f 1` is the antipodal map, sending `x` to `-x` and
     f 1 = fun x : 𝕊² ↦ -(x : ℝ³)) ∧
     -- every `f t` is an immersion.
-    ∀ t, Immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t) :=
+    ∀ t, Immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t) ⊤ :=
   sphere_eversion ℝ³
 
 end Smale
