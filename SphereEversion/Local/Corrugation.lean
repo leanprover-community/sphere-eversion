@@ -7,6 +7,9 @@ import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.Loops.Basic
 import SphereEversion.Local.DualPair
 
+import SphereEversion.FunPropConfig
+import SphereEversion.FunPropConfig2
+
 /-! # Theillière's corrugation operation
 
 This files introduces the fundamental calculus tool of convex integration. The version of convex
@@ -93,6 +96,8 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by
   set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
+  -- TODO: this fails! (And the dsimp shouldn't be needed either.)
+  --have cont' : Continuous ↿φ := by dsimp ; fun_prop
   have cont' : Continuous ↿φ := by
     refine continuous_parametric_intervalIntegral_of_continuous ?_ continuous_snd
     refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
@@ -118,19 +123,15 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
 
 variable {γ}
 
+-- set_option trace.Meta.Tactic.fun_prop true
 theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
     (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
-  apply ContDiff.const_smul
-  apply contDiff_parametric_primitive_of_contDiff
-  · apply ContDiff.sub
-    · exact hγ_diff.comp₃ hg.fst' hx.fst' contDiff_snd
-    · apply contDiff_average
-      exact hγ_diff.comp₃ hg.fst'.fst' hx.fst'.fst' contDiff_snd
-  · exact contDiff_const.mul (π.contDiff.comp hx)
+  unfold corrugation
+  sorry -- TODO: this fails! fun_prop
 
-theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) :=
-  (contDiff_parametric_primitive_of_contDiff (contDiff_sub_average hγ_diff)
-    (π.contDiff.const_smul N) 0).const_smul _
+theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) := by
+  unfold corrugation
+  sorry -- TODO: this fails! fun_prop
 
 notation "∂₁" => partialFDerivFst ℝ
 
