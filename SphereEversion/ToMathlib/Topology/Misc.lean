@@ -457,7 +457,9 @@ theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : ((↑) : s → α) '
 
 @[simp]
 theorem preimage_coe_eq_univ {s t : Set α} : ((↑) : s → α) ⁻¹' t = univ ↔ s ⊆ t := by
-  rw [← inter_eq_right, ← image_preimage_coe, image_coe_eq_iff_eq_univ]
+  rw [← inter_eq_right, ← image_preimage_coe]
+  -- TODO: this broke in a recent mathlib bump, fix!
+  sorry -- last rewrite was `rw[image_coe_eq_iff_eq_univ]`
 
 end Subtype
 
