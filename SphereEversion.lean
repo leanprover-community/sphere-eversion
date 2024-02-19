@@ -1,3 +1,5 @@
+import SphereEversion.FunPropConfig
+import SphereEversion.FunPropConfig2
 import SphereEversion.Global.Gromov
 import SphereEversion.Global.Immersion
 import SphereEversion.Global.Localisation
