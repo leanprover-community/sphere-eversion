@@ -79,7 +79,7 @@ section
 /-! # Periodize
 
 In this section we turn any function `f : ℝ → E` into a 1-periodic function
-`λ t : ℝ, ∑ᶠ n : ℤ, f (t+n)`.
+`fun t : ℝ ↦ ∑ᶠ n : ℤ, f (t+n)`.
 -/
 
 
