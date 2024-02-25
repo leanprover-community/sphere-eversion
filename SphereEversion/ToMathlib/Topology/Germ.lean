@@ -3,6 +3,7 @@ import Mathlib.Topology.Algebra.Ring.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Algebra.Order.Hom.Ring
 import Mathlib.Topology.NhdsSet
+import Mathlib.Topology.ContinuousFunction.Algebra
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
@@ -161,3 +162,22 @@ theorem eq_of_germ_isConstant_on {X Y : Type*} [TopologicalSpace X] {f : X → Y
   rintro ⟨x, hx⟩
   have : ContinuousAt ((↑) : s → X) ⟨x, hx⟩ := continuousAt_subtype_val
   exact this (h x hx)
+
+
+section new -- added after #7474
+
+variable {X R : Type*} [TopologicalSpace X]
+
+/-- The map `C(M, R) → Germ (𝓝 x) R` as a ring homomorphism (for a topological semiring `R`). -/
+-- XXX: does this generalise to any filter?
+def RingHom.germOfContMap (R : Type*) [TopologicalSpace R] [Semiring R] [TopologicalSemiring R]
+    (x : X) : C(X, R) →+* Germ (𝓝 x) R :=
+   RingHom.comp (Germ.coeRingHom _) ContinuousMap.coeFnRingHom
+
+/-- `Germ (𝓝 x) R` as a subring of `Germ (𝓝 x) R`. -/
+-- TODO: this seems very silly, is this needed or useful at all?
+def Filter.Germ.toSubring {R : Type*} [TopologicalSpace R] [Ring R] [TopologicalRing R] (x : X) :
+    Subring (Germ (𝓝 x) R) :=
+  (RingHom.germOfContMap R x).range
+
+end new

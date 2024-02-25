@@ -29,11 +29,6 @@ variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*}
 
 section ringhom
 
-/-- The map `C^0(M, R) → Germ (𝓝 x) R` as a ring homomorphism (for a topological ring `R`). -/
-def RingHom.germOfContMap (x : M) (R : Type*) [TopologicalSpace R] [Ring R] [TopologicalRing R] :
-    (ContinuousMap M R) →+* Germ (𝓝 x) R :=
-   RingHom.comp (Germ.coeRingHom _) ContinuousMap.coeFnRingHom
-
 variable (I' : ModelWithCorners 𝕜 E' H')
   (R : Type*) [CommRing R] [TopologicalSpace R] [ChartedSpace H' R] [SmoothRing I' R]
 
@@ -83,12 +78,40 @@ section germRing
 variable (I' : ModelWithCorners 𝕜 E' H')
   (R : Type*) [CommRing R] [TopologicalSpace R] [ChartedSpace H' R] [SmoothRing I' R]
 
--- If `R` is a smooth ring, `smoothGerm I I' N x` is a subring.
+-- TODO: add variants of this for semirings, commutative etc
 
--- old copy-paste is this:
-/-- All germs of smooth functions `M → R` at `x : M`, as a subring of `Germ (𝓝 x) R`. -/
-def smoothGermRingHom (x : M) : Subring (Germ (𝓝 x) R) :=
-  (RingHom.germOfContMDiffMap I I' R x).range
+/-- If `R` is a smooth ring, `smoothGerm I I' R x` is a subring. -/
+def smoothGerm.toSubring (x : M) : Subring (Germ (𝓝 x) R) where
+  carrier := smoothGerm I I' R x
+  mul_mem' ha hb := by
+    -- Choose functions `f` and `g` whose germs `a` and `b` are: then `f g` has the desired germ.
+    choose f hf using ha
+    choose g hg using hb
+    use f * g
+    rw [← hf, ← hg]
+    rw [SmoothMap.coe_mul, Germ.coe_mul]
+  one_mem' := ⟨1, by rw [SmoothMap.coe_one, Germ.coe_one]⟩
+  zero_mem' := ⟨0, by rw [SmoothMap.coe_zero, Germ.coe_zero]⟩
+  add_mem' ha hb := by
+    choose f hf using ha
+    choose g hg using hb
+    use f + g
+    rw [← hf, ← hg]
+    rw [SmoothMap.coe_add, Germ.coe_add]
+  neg_mem' {a} h := by
+    choose f hf using h
+    use -f
+    rw [← hf]
+    rw [SmoothMap.coe_neg, Germ.coe_neg]
+
+-- coe lemmas? x : subring iff mem in range
+--lemma smoothGerm.toSubring_mem_coe
+
+lemma toSubring_eq_range (x : M) :
+    smoothGerm.toSubring I I' R x = (RingHom.germOfContMDiffMap I I' R x).range := by
+  rfl
+  -- TODO: add an explicit proof; this step is good: rw [RingHom.range_eq_map]
+
 
 -- coercion lemmas for that map
 -- module structure (continue from line 100)
