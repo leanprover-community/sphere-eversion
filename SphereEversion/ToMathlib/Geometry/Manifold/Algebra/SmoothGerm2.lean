@@ -38,7 +38,7 @@ def RingHom.germOfContMDiffMap (x : M) : C^∞⟮I, M; I', R⟯ →+* Germ (𝓝
 
 end ringhom
 
--- Definition of germs of smooth maps, between any two manifolds. TODO: very wip!!
+-- Definition of germs of smooth maps, between any two manifolds.
 section definition
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
@@ -115,16 +115,33 @@ def smoothGerm.toSubring (x : M) : Subring (Germ (𝓝 x) R) where
     rw [← hf]
     rw [SmoothMap.coe_neg, Germ.coe_neg]
 
--- coe lemmas? x : subring iff mem in range
---lemma smoothGerm.toSubring_mem_coe
+-- TODO: do I want further coercion lemmas? e.g.
+-- x : subring iff it is a member of the carrier, named sth like `smoothGerm.toSubring_mem_coe`
 
 lemma toSubring_eq_range (x : M) :
     smoothGerm.toSubring I I' R x = (RingHom.germOfContMDiffMap I I' R x).range := by
   rfl
   -- TODO: add an explicit proof; this step is good: rw [RingHom.range_eq_map]
 
+-- failed to infer: AddCommMonoid { x_1 // x_1 ∈ smoothGerm I I' R x }
+-- @[simp]
+-- theorem smoothGerm.coe_sum {ι} (f : ι → C^∞⟮I, M; I', R⟯) (s : Finset ι) (x : M) :
+--     ((∑ i in s, f i : C^∞⟮I, M; I', R⟯) : smoothGerm I I' R x) = ∑ i in s, (f i : smoothGerm I I' R x) :=
+--   map_sum (RingHom.rangeRestrict (RingHom.germOfContMDiffMap I I' R x)) f s
 
--- coercion lemmas for that map
--- module structure (continue from line 100)
+-- failed to synthesize instance Semiring ↑(smoothGerm I I' R x)
+-- example (x : M) : Module (smoothGerm I I' R x) (Germ (𝓝 x) G) := by infer_instance
+-- example (x : N) : Module (Germ (𝓝 x) ℝ) (Germ (𝓝 x) F) := by infer_instance
+
+-- next, after that: adapt the following lines; then PR to mathlib (or so)
+-- def smoothGerm.valueOrderRingHom (x : N) : smoothGerm IG x →+*o ℝ :=
+--   Filter.Germ.valueOrderRingHom.comp <| Subring.orderedSubtype _
+
+-- def smoothGerm.valueRingHom (x : N) : smoothGerm IG x →+* ℝ :=
+--   Filter.Germ.valueRingHom.comp <| Subring.subtype _
+
+-- theorem smoothGerm.valueOrderRingHom_toRingHom (x : N) :
+--     (smoothGerm.valueOrderRingHom IG x).toRingHom = smoothGerm.valueRingHom IG x :=
+--   rfl
 
 end germRing
