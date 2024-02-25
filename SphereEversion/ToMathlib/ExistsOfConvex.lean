@@ -105,37 +105,16 @@ end
 
 section
 
-variable {E₁ E₂ E₃ E₄ F : Type*}
+variable {E₁ E₂ F : Type*}
+  [NormedAddCommGroup E₁] [NormedSpace ℝ E₁] [FiniteDimensional ℝ E₁]
+  [NormedAddCommGroup E₂] [NormedSpace ℝ E₂] [FiniteDimensional ℝ E₂]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-variable [NormedAddCommGroup E₁] [NormedSpace ℝ E₁] [FiniteDimensional ℝ E₁]
-
-variable [NormedAddCommGroup E₂] [NormedSpace ℝ E₂] [FiniteDimensional ℝ E₂]
-
-variable [NormedAddCommGroup E₃] [NormedSpace ℝ E₃] [FiniteDimensional ℝ E₃]
-
-variable [NormedAddCommGroup E₄] [NormedSpace ℝ E₄] [FiniteDimensional ℝ E₄]
-
-variable [NormedAddCommGroup F] [NormedSpace ℝ F]
-
-variable {H₁ M₁ H₂ M₂ H₃ M₃ H₄ M₄ : Type*}
-
-variable [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
-
-variable [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [SmoothManifoldWithCorners I₁ M₁]
-
-variable [SigmaCompactSpace M₁] [T2Space M₁]
-
-variable [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
-
-variable [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
-
-variable [TopologicalSpace H₃] (I₃ : ModelWithCorners ℝ E₃ H₃)
-
-variable [TopologicalSpace M₃] [ChartedSpace H₃ M₃] [SmoothManifoldWithCorners I₃ M₃]
-
-variable [TopologicalSpace H₄] (I₄ : ModelWithCorners ℝ E₄ H₄)
-
-variable [TopologicalSpace M₄] [ChartedSpace H₄ M₄] [SmoothManifoldWithCorners I₄ M₄]
+variable {H₁ M₁ H₂ M₂ : Type*}
+  [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
+  [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [SmoothManifoldWithCorners I₁ M₁]
+  [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
+  [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
 
 local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
 
@@ -158,8 +137,8 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
   refine (smoothGerm.contMDiffAt _).smul_prod (w_supp ?_)
   simpa [H] using hφ
 
-theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} (hP : ∀ x, Convex ℝ {f | P x f})
-    {n : ℕ∞}
+theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [SigmaCompactSpace M₁] [T2Space M₁]
+    (hP : ∀ x, Convex ℝ {f | P x f}) {n : ℕ∞}
     (hP' : ∀ x : M₁, ∃ U ∈ 𝓝 x, ∃ f : M₁ → M₂ → F,
       𝓒_on n (uncurry f) (U ×ˢ (univ : Set M₂)) ∧ ∀ y ∈ U, P y (f y)) :
     ∃ f : M₁ → M₂ → F, 𝓒 n (uncurry f) ∧ ∀ x, P x (f x) := by
