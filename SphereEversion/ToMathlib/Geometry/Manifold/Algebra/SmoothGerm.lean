@@ -11,13 +11,13 @@ open scoped Manifold Topology BigOperators
 -- to smooth_functions
 section
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {E' : Type _} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H : Type _}
-  [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} {H' : Type _} [TopologicalSpace H']
-  {I' : ModelWithCorners 𝕜 E' H'} {N : Type _} [TopologicalSpace N] [ChartedSpace H N]
-  {E'' : Type _} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type _} [TopologicalSpace H'']
-  {I'' : ModelWithCorners 𝕜 E'' H''} {N' : Type _} [TopologicalSpace N'] [ChartedSpace H'' N']
-  {G : Type _} [CommMonoid G] [TopologicalSpace G] [ChartedSpace H' G] [SmoothMul I' G]
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H : Type*}
+  [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} {H' : Type*} [TopologicalSpace H']
+  {I' : ModelWithCorners 𝕜 E' H'} {N : Type*} [TopologicalSpace N] [ChartedSpace H N]
+  {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type*} [TopologicalSpace H'']
+  {I'' : ModelWithCorners 𝕜 E'' H''} {N' : Type*} [TopologicalSpace N'] [ChartedSpace H'' N']
+  {G : Type*} [CommMonoid G] [TopologicalSpace G] [ChartedSpace H' G] [SmoothMul I' G]
 
 @[to_additive]
 theorem SmoothMap.coe_prod {ι} (f : ι → C^∞⟮I, N; I', G⟯) (s : Finset ι) :
@@ -30,7 +30,7 @@ section
 
 -- This should be in `order.filter.germ` (and the end of the module docstring of that file
 -- should be fixed, it currently refers to things that are in the filter_product file).
-instance Filter.Germ.orderedCommRing' {α : Type _} (l : Filter α) (R : Type _) [OrderedCommRing R] :
+instance Filter.Germ.orderedCommRing' {α : Type*} (l : Filter α) (R : Type*) [OrderedCommRing R] :
     OrderedCommRing (Germ l R) :=
   { Filter.Germ.partialOrder, inferInstanceAs (CommRing (Germ l R)) with
     add_le_add_left := by
@@ -42,16 +42,16 @@ instance Filter.Germ.orderedCommRing' {α : Type _} (l : Filter α) (R : Type _)
       exact Eventually.mono (ha.and hb) fun x hx ↦ mul_nonneg hx.1 hx.2 }
 
 @[to_additive (attr := simp)]
-theorem Germ.coe_prod {α : Type _} (l : Filter α) (R : Type _) [CommMonoid R] {ι} (f : ι → α → R)
+theorem Germ.coe_prod {α : Type*} (l : Filter α) (R : Type*) [CommMonoid R] {ι} (f : ι → α → R)
     (s : Finset ι) : ((∏ i in s, f i : α → R) : Germ l R) = ∏ i in s, (f i : Germ l R) :=
   map_prod (Germ.coeMulHom l : (α → R) →* Germ l R) f s
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {E' : Type _} [NormedAddCommGroup E']
-  [NormedSpace ℝ E'] {H : Type _} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) {H' : Type _}
-  [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} {N : Type _} [TopologicalSpace N]
-  [ChartedSpace H N] {E'' : Type _} [NormedAddCommGroup E''] [NormedSpace ℝ E''] {H'' : Type _}
-  [TopologicalSpace H''] {I'' : ModelWithCorners ℝ E'' H''} {N' : Type _} [TopologicalSpace N']
-  [ChartedSpace H'' N'] (F : Type _) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type _)
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {E' : Type*} [NormedAddCommGroup E']
+  [NormedSpace ℝ E'] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) {H' : Type*}
+  [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} {N : Type*} [TopologicalSpace N]
+  [ChartedSpace H N] {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace ℝ E''] {H'' : Type*}
+  [TopologicalSpace H''] {I'' : ModelWithCorners ℝ E'' H''} {N' : Type*} [TopologicalSpace N']
+  [ChartedSpace H'' N'] (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type*)
   [AddCommGroup G] [Module ℝ G]
 
 def RingHom.germOfContMDiffMap (x : N) : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
@@ -135,16 +135,16 @@ end
 
 section
 
-variable {ι : Type _}
+variable {ι : Type*}
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type _}
-  [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type _} [TopologicalSpace M]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*}
+  [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
   [ChartedSpace H M] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
 
-variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-variable {G : Type _} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type _} [TopologicalSpace HG]
-  (IG : ModelWithCorners ℝ G HG) {N : Type _} [TopologicalSpace N] [ChartedSpace HG N]
+variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [TopologicalSpace HG]
+  (IG : ModelWithCorners ℝ G HG) {N : Type*} [TopologicalSpace N] [ChartedSpace HG N]
   [SmoothManifoldWithCorners IG N]
 
 local notation "𝓒"  => ContMDiff I 𝓘(ℝ, F)
@@ -214,7 +214,7 @@ end
 
 section
 
-variable {E₁ E₂ E₃ E₄ F : Type _}
+variable {E₁ E₂ E₃ E₄ F : Type*}
 
 variable [NormedAddCommGroup E₁] [NormedSpace ℝ E₁] [FiniteDimensional ℝ E₁]
 
@@ -226,7 +226,7 @@ variable [NormedAddCommGroup E₄] [NormedSpace ℝ E₄] [FiniteDimensional ℝ
 
 variable [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-variable {H₁ M₁ H₂ M₂ H₃ M₃ H₄ M₄ : Type _}
+variable {H₁ M₁ H₂ M₂ H₃ M₃ H₄ M₄ : Type*}
 
 variable [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
 
