@@ -1,6 +1,19 @@
+/-
+Copyright (c) 2023 Patrick Massot. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Patrick Massot
+-/
+
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import SphereEversion.ToMathlib.Topology.Germ
+
+/-!
+## Germs of smooth functions
+under construction: might need further refactoring to be usable!
+-/
+
+-- TODO: please confirm authorship and copyright are appropriate
 
 noncomputable section
 
@@ -8,7 +21,7 @@ open Filter Set
 
 open scoped Manifold Topology BigOperators
 
--- to smooth_functions
+-- FIXME: move to `Manifold/Algebra/SmoothFunctions`, around line 46
 section
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
@@ -58,9 +71,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {N' : Type*} [TopologicalSpace N'] [ChartedSpace H'' N']
   (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type*) [AddCommGroup G] [Module ℝ G]
 
+/-- The map `C^∞(N, ℝ) → Germ (𝓝 x) ℝ` as a ring homomorphism. -/
 def RingHom.germOfContMDiffMap (x : N) : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
   RingHom.comp (Germ.coeRingHom _) SmoothMap.coeFnRingHom
 
+/-- All germs of smooth functions `N → ℝ` at `x : N`, as a subring of `Germ (𝓝 x) ℝ`. -/
 def smoothGerm (x : N) : Subring (Germ (𝓝 x) ℝ) :=
   (RingHom.germOfContMDiffMap I x).range
 
