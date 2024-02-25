@@ -11,10 +11,12 @@ open scoped Manifold Topology BigOperators
 -- to smooth_functions
 section
 
-variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H : Type*}
-  [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} {H' : Type*} [TopologicalSpace H']
-  {I' : ModelWithCorners 𝕜 E' H'} {N : Type*} [TopologicalSpace N] [ChartedSpace H N]
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+  {H : Type*} [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H}
+  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners 𝕜 E' H'}
+  {N : Type*} [TopologicalSpace N] [ChartedSpace H N]
   {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type*} [TopologicalSpace H'']
   {I'' : ModelWithCorners 𝕜 E'' H''} {N' : Type*} [TopologicalSpace N'] [ChartedSpace H'' N']
   {G : Type*} [CommMonoid G] [TopologicalSpace G] [ChartedSpace H' G] [SmoothMul I' G]
@@ -46,13 +48,15 @@ theorem Germ.coe_prod {α : Type*} (l : Filter α) (R : Type*) [CommMonoid R] {�
     (s : Finset ι) : ((∏ i in s, f i : α → R) : Germ l R) = ∏ i in s, (f i : Germ l R) :=
   map_prod (Germ.coeMulHom l : (α → R) →* Germ l R) f s
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {E' : Type*} [NormedAddCommGroup E']
-  [NormedSpace ℝ E'] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) {H' : Type*}
-  [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} {N : Type*} [TopologicalSpace N]
-  [ChartedSpace H N] {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace ℝ E''] {H'' : Type*}
-  [TopologicalSpace H''] {I'' : ModelWithCorners ℝ E'' H''} {N' : Type*} [TopologicalSpace N']
-  [ChartedSpace H'' N'] (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type*)
-  [AddCommGroup G] [Module ℝ G]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
+  {N : Type*} [TopologicalSpace N] [ChartedSpace H N]
+  {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace ℝ E'']
+  {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners ℝ E'' H''}
+  {N' : Type*} [TopologicalSpace N'] [ChartedSpace H'' N']
+  (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type*) [AddCommGroup G] [Module ℝ G]
 
 def RingHom.germOfContMDiffMap (x : N) : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
   RingHom.comp (Germ.coeRingHom _) SmoothMap.coeFnRingHom
@@ -214,37 +218,15 @@ end
 
 section
 
-variable {E₁ E₂ E₃ E₄ F : Type*}
-
-variable [NormedAddCommGroup E₁] [NormedSpace ℝ E₁] [FiniteDimensional ℝ E₁]
-
-variable [NormedAddCommGroup E₂] [NormedSpace ℝ E₂] [FiniteDimensional ℝ E₂]
-
-variable [NormedAddCommGroup E₃] [NormedSpace ℝ E₃] [FiniteDimensional ℝ E₃]
-
-variable [NormedAddCommGroup E₄] [NormedSpace ℝ E₄] [FiniteDimensional ℝ E₄]
-
-variable [NormedAddCommGroup F] [NormedSpace ℝ F]
-
-variable {H₁ M₁ H₂ M₂ H₃ M₃ H₄ M₄ : Type*}
-
-variable [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
-
-variable [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [SmoothManifoldWithCorners I₁ M₁]
-
-variable [SigmaCompactSpace M₁] [T2Space M₁]
-
-variable [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
-
-variable [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
-
-variable [TopologicalSpace H₃] (I₃ : ModelWithCorners ℝ E₃ H₃)
-
-variable [TopologicalSpace M₃] [ChartedSpace H₃ M₃] [SmoothManifoldWithCorners I₃ M₃]
-
-variable [TopologicalSpace H₄] (I₄ : ModelWithCorners ℝ E₄ H₄)
-
-variable [TopologicalSpace M₄] [ChartedSpace H₄ M₄] [SmoothManifoldWithCorners I₄ M₄]
+variable {E₁ E₂ F H₁ M₁ H₂ M₂ : Type*}
+  [NormedAddCommGroup E₁] [NormedSpace ℝ E₁] [FiniteDimensional ℝ E₁]
+  [NormedAddCommGroup E₂] [NormedSpace ℝ E₂] [FiniteDimensional ℝ E₂]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
+  [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
+  [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [SmoothManifoldWithCorners I₁ M₁]
+  [SigmaCompactSpace M₁] [T2Space M₁]
+  [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
+  [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
 
 open scoped Filter
 
