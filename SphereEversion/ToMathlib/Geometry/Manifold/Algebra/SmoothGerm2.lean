@@ -80,17 +80,24 @@ variable (I' : ModelWithCorners 𝕜 E' H')
 
 -- TODO: add variants of this for semirings, commutative etc
 
-/-- If `R` is a smooth ring, `smoothGerm I I' R x` is a subring. -/
-def smoothGerm.toSubring (x : M) : Subring (Germ (𝓝 x) R) where
+-- If `R` has the appropriate structure, `smoothGerm I I' R x` is a subgroup etc.
+-- Proofs of the axioms are easy by choosing explicit representatives.
+
+def smoothGerm.toSubsemigroup (x : M) : Subsemigroup (Germ (𝓝 x) R) where
   carrier := smoothGerm I I' R x
   mul_mem' ha hb := by
-    -- Choose functions `f` and `g` whose germs `a` and `b` are: then `f g` has the desired germ.
     choose f hf using ha
     choose g hg using hb
     use f * g
     rw [← hf, ← hg]
     rw [SmoothMap.coe_mul, Germ.coe_mul]
+
+def smoothGerm.toAddSubgroup (x : M) : Submonoid (Germ (𝓝 x) R) where
+  toSubsemigroup := smoothGerm.toSubsemigroup I I' R x
   one_mem' := ⟨1, by rw [SmoothMap.coe_one, Germ.coe_one]⟩
+
+def smoothGerm.toSubsemiring (x : M) : Subsemiring (Germ (𝓝 x) R) where
+  __ := smoothGerm.toAddSubgroup I I' R x
   zero_mem' := ⟨0, by rw [SmoothMap.coe_zero, Germ.coe_zero]⟩
   add_mem' ha hb := by
     choose f hf using ha
@@ -98,6 +105,10 @@ def smoothGerm.toSubring (x : M) : Subring (Germ (𝓝 x) R) where
     use f + g
     rw [← hf, ← hg]
     rw [SmoothMap.coe_add, Germ.coe_add]
+
+/-- If `R` is a smooth ring, `smoothGerm I I' R x` is a subring of `Germ (𝓝 x) R`. -/
+def smoothGerm.toSubring (x : M) : Subring (Germ (𝓝 x) R) where
+  toSubsemiring := smoothGerm.toSubsemiring I I' R x
   neg_mem' {a} h := by
     choose f hf using h
     use -f
