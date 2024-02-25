@@ -1,6 +1,8 @@
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+import Mathlib.Algebra.Algebra.Subalgebra.Order
+
 
 noncomputable section
 
@@ -14,7 +16,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
   [ChartedSpace H M] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
 
-section -- remaining file needs smooth germs
+section
 
 variable {F : Type*} [AddCommGroup F] [Module ℝ F]
 
