@@ -10,6 +10,6 @@ variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensio
 
 /-- A metric defining the topology on a σ-compact T₂ real manifold. -/
 def manifoldMetric [T2Space M] [SigmaCompactSpace M] : MetricSpace M :=
-  @TopologicalSpace.metrizableSpaceMetric _ _ (ManifoldWithCorners.metrizableSpace I M)
+  TopologicalSpace.metrizableSpaceMetric (h := ManifoldWithCorners.metrizableSpace I M)
 
 end

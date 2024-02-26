@@ -183,7 +183,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
     (by simpa only [exists_prop, mem_iUnion] using convexHull_eq_union.subst hsf :
       ∃ t : Finset F,
         (t : Set F) ⊆ s ∧ AffineIndependent ℝ ((↑) : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
-  have htne : (t : Set F).Nonempty := (@convexHull_nonempty_iff ℝ _ _ _ _ _).mp ⟨f, hf⟩
+  have htne : (t : Set F).Nonempty := convexHull_nonempty_iff.mp ⟨f, hf⟩
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affineIndependent_span_eq_top hts htne hai
   have hb₀ : b.Finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
   obtain ⟨c, hc⟩ := interior_convexHull_nonempty_iff_affineSpan_eq_top.mpr hb₄

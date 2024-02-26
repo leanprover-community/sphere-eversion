@@ -8,4 +8,3 @@ theorem borelSpace_borel : @BorelSpace α _ (borel α) :=
   letI := borel α; ⟨rfl⟩
 
 scoped[Borelize] attribute [instance] borelSpace_borel
-

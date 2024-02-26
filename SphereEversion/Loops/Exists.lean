@@ -194,7 +194,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     · have : (fun x ↦ γ x.1 x.2.1 x.2.2) =ᶠ[𝓝 (x, t, s)] fun x ↦ b x.1 := by
         have :
           (fun x : E × ℝ × ℝ ↦ (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) := by
-          simp_rw [@preimage_union _ _ _ (_ ⁻¹' _), preimage_preimage, fract_fract]
+          simp_rw [preimage_union, preimage_preimage, fract_fract]
           refine mem_of_superset ?_ (subset_union_right _ _)
           refine continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
         refine eventually_of_mem this ?_

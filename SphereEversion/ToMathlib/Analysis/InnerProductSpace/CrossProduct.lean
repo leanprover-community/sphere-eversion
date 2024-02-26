@@ -95,7 +95,7 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
         ω.volumeForm_apply_le ![u, v, u×₃v]
   let K : Submodule ℝ E := Submodule.span ℝ ({u, ↑v} : Set E)
   have : Nontrivial Kᗮ := by
-    apply @FiniteDimensional.nontrivial_of_finrank_pos ℝ
+    apply FiniteDimensional.nontrivial_of_finrank_pos (R := ℝ)
     have : finrank ℝ K ≤ Finset.card {u, (v : E)} := by
       simpa [Set.toFinset_singleton] using finrank_span_le_card ({u, ↑v} : Set E)
     have : Finset.card {u, (v : E)} ≤ Finset.card {(v : E)} + 1 := Finset.card_insert_le u {↑v}

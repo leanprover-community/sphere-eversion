@@ -287,7 +287,7 @@ def locFormalEversionAux : HtpyJetSec E E
           norm_num
       have : (fun x ↦ smoothStep (‖x‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 (0 : E) := by
         refine mem_of_superset this ?_
-        erw [@preimage_comp _ _ _ _ smoothStep]
+        erw [preimage_comp (g := smoothStep)]
         refine preimage_mono ?_
         intro x hx
         rw [mem_preimage, mem_singleton_iff, smoothStep.of_lt hx]
