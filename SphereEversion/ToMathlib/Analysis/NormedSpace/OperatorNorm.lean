@@ -1,5 +1,5 @@
 import Mathlib.Analysis.NormedSpace.BoundedLinearMaps
-import Mathlib.Analysis.NormedSpace.FiniteDimension
+import Mathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 noncomputable section
 

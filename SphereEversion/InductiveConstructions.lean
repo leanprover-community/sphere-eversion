@@ -305,7 +305,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
               (𝓝 (T i.toNat)) (𝓝 0) :=
             Continuous.tendsto' (by continuity) _ _ (by simp)
           exact limt.prod_map tendsto_id
-        apply Eventually.mono (hpast_F'.comp_fun lim)
+        apply Eventually.mono (hpast_F'.comp_tendsto lim)
         dsimp
         rintro ⟨t, x⟩ h'
         split_ifs with h

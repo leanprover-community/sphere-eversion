@@ -6,7 +6,8 @@ Authors: Patrick Massot
 
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
-import SphereEversion.ToMathlib.Topology.Germ
+import Mathlib.Topology.Germ
+import Mathlib.RingTheory.Subring.Order
 
 /-!
 ## Germs of smooth functions
@@ -39,13 +40,6 @@ theorem SmoothMap.coe_prod {ι : Type*} (f : ι → C^∞⟮I, N; I', G⟯) (s :
     ⇑(∏ i in s, f i) = ∏ i in s, ⇑(f i) :=
   map_prod (SmoothMap.coeFnMonoidHom : C^∞⟮I, N; I', G⟯ →* N → G) f s
 
-end
-
-section -- PRed to mathlib in #9747
-@[to_additive (attr := simp)]
-theorem Germ.coe_prod {α : Type*} (l : Filter α) (R : Type*) [CommMonoid R] {ι} (f : ι → α → R)
-    (s : Finset ι) : ((∏ i in s, f i : α → R) : Germ l R) = ∏ i in s, (f i : Germ l R) :=
-  map_prod (Germ.coeMulHom l : (α → R) →* Germ l R) f s
 end
 
 section
