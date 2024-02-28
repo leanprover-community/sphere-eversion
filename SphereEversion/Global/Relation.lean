@@ -700,7 +700,7 @@ theorem Jupdate_localize {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y}
   have foo : ψ.invFun ((φ.Jupdate ψ F G hK hFG t).bs (φ x)) = (G t).bs x := by
     simp_rw [Jupdate_bs, OpenSmoothEmbedding.update_apply_embedding, OpenSmoothEmbedding.left_inv]
   ext -- This is partially failing compared to Lean 3.
-  rfl
+  · rfl
   · exact foo
   · -- Porting note: we are missing an ext lemma here.
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
@@ -759,8 +759,8 @@ theorem updateFormalSol_apply_of_mem {F : FormalSol R} {G : HtpyFormalSol (R.loc
   ext
   · change m = φ (φ.invFun m)
     rw [φ.right_inv hx]
-  rfl
-  rfl
+  · rfl
+  · rfl
 
 @[simp]
 theorem updateFormalSol_apply_image {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}

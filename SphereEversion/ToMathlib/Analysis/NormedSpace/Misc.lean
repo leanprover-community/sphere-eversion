@@ -19,13 +19,11 @@ theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
     have hf : f.target = Euclidean.ball c ε := by
       rw [transHomeomorph_target, Homeomorph.transPartialHomeomorph_target, univBall_target _ ε₀]
       rfl
-    refine ⟨f, ?_, ?_, ?_, fun _ ↦ ?_, ?_⟩
+    refine ⟨f, ?_, ?_, ?_, fun _ ↦ by rwa [hf], by simp⟩
     · exact e.symm.contDiff.comp <| contDiff_univBall.comp e.contDiff
     · exact e.symm.contDiff.comp_contDiffOn <| contDiffOn_univBall_symm.comp
         e.contDiff.contDiffOn hf.subset
     · rw [transHomeomorph_source, Homeomorph.transPartialHomeomorph_source, univBall_source]; rfl
-    · rwa [hf]
-    · simp
   · use (IsometryEquiv.vaddConst c).toHomeomorph.toPartialHomeomorph, contDiff_id.add contDiff_const,
       contDiffOn_id.sub contDiffOn_const
     simp [hr]

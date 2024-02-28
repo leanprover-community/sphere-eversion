@@ -175,10 +175,9 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   rcases inductive_htpy_construction' P₀ P₁ P₂ hP₂ hP₂' init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
   simp only [P₀, forall₂_and_distrib] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
-  refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, ?_, ?_, ?_⟩
+  refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, hFP₁, ?_, ?_⟩
   · intro x
     rw [mkHtpyFormalSol_apply, hF₀]
-  · exact hFP₁
   · intro x hx t
     rw [mkHtpyFormalSol_apply]
     exact (forall_restrictGermPredicate_iff.mp <| hF_A t).self_of_nhdsSet x hx
@@ -335,10 +334,9 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
   simp only [P₀, forall₂_and_distrib] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
-  refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, ?_, ?_, ?_⟩
+  refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, hFP₁, ?_, ?_⟩
   · intro x
     rw [mkHtpyFormalSol_apply, hF₀]
-  · exact hFP₁
   · intro x hx t
     rw [mkHtpyFormalSol_apply]
     exact (forall_restrictGermPredicate_iff.mp <| hF_A t).self_of_nhdsSet x hx

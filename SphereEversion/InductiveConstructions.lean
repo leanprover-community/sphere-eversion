@@ -47,11 +47,11 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [Topo
   have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y := fun {x} ↦ by
     refine @IndexType.induction_from N (fun i ↦ ∀ {y}, y ∈ U x → f i y = f (i₀ x) y) _ ?_ ?_
     · exact fun _ ↦ rfl
-    intro i hi h'i ih y hy
-    rw [h i h'i, ih hy]
-    intro h'y
-    replace hi₀ := mem_upperBounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
-    exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi)
+    · intro i hi h'i ih y hy
+      rw [h i h'i, ih hy]
+      intro h'y
+      replace hi₀ := mem_upperBounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
+      exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi)
   refine ⟨fun x ↦ f (i₀ x) x, fun x ↦ ?_⟩
   refine (eventually_ge_atTop (i₀ x)).mono fun n hn ↦ ?_
   refine mem_of_superset (hUx x) fun y hy ↦ ?_

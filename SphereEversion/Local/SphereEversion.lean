@@ -388,15 +388,15 @@ theorem locFormalEversion_hol :
     refine (IsOpen.mem_nhdsSet ?_).mpr ?_
     · exact (isOpen_Iio.union isOpen_Ioi).prod
         (isOpen_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
-    rintro ⟨s, x⟩ ⟨hs, hx⟩
-    refine ⟨?_, ?_⟩
-    simp_rw [mem_insert_iff, mem_singleton_iff] at hs
-    rcases hs with (rfl | rfl)
-    exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
-    exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
-    simp_rw [mem_sphere_zero_iff_norm] at hx
-    simp_rw [mem_preimage, hx, one_pow, mem_Ioi]
-    norm_num
+    · rintro ⟨s, x⟩ ⟨hs, hx⟩
+      refine ⟨?_, ?_⟩
+      simp_rw [mem_insert_iff, mem_singleton_iff] at hs
+      rcases hs with (rfl | rfl)
+      · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
+      · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
+      simp_rw [mem_sphere_zero_iff_norm] at hx
+      simp_rw [mem_preimage, hx, one_pow, mem_Ioi]
+      norm_num
   have : (Iio (1 / 4 : ℝ) ∪ Ioi (3 / 4)) ×ˢ ((fun x ↦smoothStep (‖x‖ ^ 2)) ⁻¹' {1}) ∈
       𝓝ˢ (({0, 1} : Set ℝ) ×ˢ 𝕊²) := by
     refine mem_of_superset this (prod_mono Subset.rfl ?_)
