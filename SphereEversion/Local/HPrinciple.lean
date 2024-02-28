@@ -397,8 +397,8 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
   have K_sub : K ⊆ R := by
     rintro _ ⟨⟨x, t, s⟩, _, rfl⟩
     exact (L.nice h).mem_Ω x t s
-  obtain ⟨ε, ε_pos, hε⟩ : ∃ ε, 0 < ε ∧ Metric.thickening ε K ⊆ R
-  exact K_cpt.exists_thickening_subset_open h.h_op K_sub
+  obtain ⟨ε, ε_pos, hε⟩ : ∃ ε, 0 < ε ∧ Metric.thickening ε K ⊆ R :=
+    K_cpt.exists_thickening_subset_open h.h_op K_sub
   apply
     ((corrugation.c0_small_on _ L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and <|
         remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono

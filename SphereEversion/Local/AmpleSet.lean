@@ -204,8 +204,8 @@ theorem AmpleSet.of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.ra
   rw [E.connectedComponentIn_eq_self_of_two_le_codim hcodim hx, eq_univ_iff_forall]
   intro y
   by_cases h : y ∈ E
-  · obtain ⟨z, hz⟩ : ∃ z, z ∉ E
-    · rw [← not_forall, ← Submodule.eq_top_iff']
+  · obtain ⟨z, hz⟩ : ∃ z, z ∉ E := by
+      rw [← not_forall, ← Submodule.eq_top_iff']
       rintro rfl
       simp [rank_zero_iff.2 inferInstance] at hcodim
     refine segment_subset_convexHull ?_ ?_ (mem_segment_sub_add y z) <;>

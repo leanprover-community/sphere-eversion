@@ -223,8 +223,8 @@ theorem exists_smooth_and_eqOn {n : ℕ∞} {f : E → F} {ε : E → ℝ} (hf :
   let P : E → F → Prop := fun x t ↦ dist t (f x) < ε x ∧ (x ∈ s → t = f x)
   have hP : ∀ x, Convex ℝ {y | P x y} := fun x ↦
     (convex_ball (f x) (ε x)).inter (convex_setOf_imp_eq _ _)
-  obtain ⟨f', hf', hPf'⟩ : ∃ f' : E → F, ContDiff ℝ n f' ∧  ∀ x, P x (f' x)
-  · apply exists_contDiff_of_convex hP
+  obtain ⟨f', hf', hPf'⟩ : ∃ f' : E → F, ContDiff ℝ n f' ∧  ∀ x, P x (f' x) := by
+    apply exists_contDiff_of_convex hP
     intro x
     obtain ⟨U, hU, hfU⟩ := hfs
     by_cases hx : x ∈ s
