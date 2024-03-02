@@ -8,9 +8,7 @@ open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Fun
 
 open scoped Topology Filter NNReal
 
-section
-
-open Function
+section -- PRed in #11108
 
 theorem continuous_parametric_integral_of_continuous
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -27,21 +25,20 @@ theorem continuous_parametric_integral_of_continuous
   · exact eventually_of_forall fun x ↦ (hF.comp (Continuous.Prod.mk x)).aestronglyMeasurable
   · refine Eventually.mono U_nhds fun x x_in ↦ ?_
     rw [ae_restrict_iff]
-    exact eventually_of_forall fun t t_in ↦ hM (mem_image_of_mem _ <| mk_mem_prod x_in t_in)
-    exact (isClosed_le (hF.comp <| Continuous.Prod.mk x).norm continuous_const).measurableSet
+    · exact eventually_of_forall fun t t_in ↦ hM (mem_image_of_mem _ <| mk_mem_prod x_in t_in)
+    · exact (isClosed_le (hF.comp <| Continuous.Prod.mk x).norm continuous_const).measurableSet
   · exact integrableOn_const.mpr (Or.inr hs.measure_lt_top)
   · apply ae_of_all
     intro a
+    -- FIXME: can fun_prop do this?
     exact (hF.comp₂ continuous_id continuous_const).continuousAt
 
 end
 
-section
+section  -- PRed in #11110
 
-open MeasureTheory
-
-variable {μ : Measure ℝ} {X : Type _} [TopologicalSpace X] [FirstCountableTopology X] {E : Type _}
-  [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+variable {μ : Measure ℝ} {X : Type*} [TopologicalSpace X] [FirstCountableTopology X]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 theorem continuousAt_parametric_primitive_of_dominated {F : X → ℝ → E} (bound : ℝ → ℝ) (a b : ℝ)
     {a₀ b₀ : ℝ} {x₀ : X} (hF_meas : ∀ x, AEStronglyMeasurable (F x) (μ.restrict <| Ι a b))
@@ -119,8 +116,9 @@ end
 
 section
 
-variable {μ : Measure ℝ} [IsLocallyFiniteMeasure μ] [NoAtoms μ] {X : Type _} [TopologicalSpace X]
-  [FirstCountableTopology X] {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+variable {μ : Measure ℝ} [IsLocallyFiniteMeasure μ] [NoAtoms μ]
+  {X : Type*} [TopologicalSpace X] [FirstCountableTopology X]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F : X → ℝ → E}
     {a₀ : ℝ} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) :
@@ -165,8 +163,8 @@ end
 
 section
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type _}
-  [NormedAddCommGroup H] [NormedSpace ℝ H]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+  {H : Type*} [NormedAddCommGroup H] [NormedSpace ℝ H]
 
 /-!
 We could weaken `FiniteDimensional ℝ H` with `SecondCountable (H →L[ℝ] E)` if needed,
@@ -373,8 +371,8 @@ end
 
 section
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type _}
-  [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+  {H : Type*} [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
 
 open Real ContinuousLinearMap Asymptotics
 
