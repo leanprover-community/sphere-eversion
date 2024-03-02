@@ -58,7 +58,7 @@
   {"url": "https://github.com/leanprover-community/mathlib4.git",
    "type": "git",
    "subDir": null,
-   "rev": "c7394bfb27f466a0cd35d0003d4dba824b94b3d4",
+   "rev": "17a992713f19a07bad69df14cbf00fdcd6dac084",
    "name": "mathlib",
    "manifestFile": "lake-manifest.json",
    "inputRev": null,
