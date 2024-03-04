@@ -82,7 +82,7 @@ theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U :
       rcases ind _ f h₀f (h₂f hn) fun j hj ↦ h₁f _ <| j.le_of_lt_succ hj with
         ⟨f', h₀f', h₂f', h₁f', hf'⟩
       exact ⟨f', ⟨h₀f', h₂f', h₁f'⟩, hf'⟩
-  dsimp only at hf
+  dsimp only [P] at hf
   simp only [forall_and] at hf
   rcases hf with ⟨⟨h₀f, -, h₁f⟩, hfU⟩
   rcases U_fin.exists_forall_eventually_of_indexType hfU with ⟨F, hF⟩
@@ -289,7 +289,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
     let F'' : ℝ × X → Y := fun p : ℝ × X ↦
       if p.1 ≤ T i.toNat then F p else F' ((2 : ℝ) ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2
     have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i.toNat → (F'' : Germ (𝓝 p) Y) = F := by
-      dsimp only at h₂F
+      dsimp only [PP₂] at h₂F
       rintro ⟨t, x⟩ (ht : t ≤ _)
       rcases eq_or_lt_of_le ht with (rfl | ht)
       · apply Quotient.sound
@@ -306,7 +306,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
             Continuous.tendsto' (by continuity) _ _ (by simp)
           exact limt.prod_map tendsto_id
         apply Eventually.mono (hpast_F'.comp_tendsto lim)
-        dsimp
+        dsimp [F'']
         rintro ⟨t, x⟩ h'
         split_ifs with h
         · rfl
@@ -344,7 +344,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       rw [i.toNat_succ hi] at ht ⊢
       have h₂t : ¬t ≤ T i.toNat := by
         exact ((T_lt_succ i.toNat).trans_le ht).not_le
-      dsimp only
+      dsimp only [F'']
       rw [if_neg h₂t, if_neg]
       · rw [hfutur_F'.self_of_nhdsSet, mul_T_succ_sub]
         conv =>
@@ -372,7 +372,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       cases' htx with ht hx
       · change (↑F'' : Germ (𝓝 (t, x)) Y).value = (↑F : Germ (𝓝 (t, x)) Y).value
         rw [loc₁ (t, x) ht.le]
-      · dsimp only
+      · dsimp only [F'']
         split_ifs with ht
         · rfl
         · rw [hUF' _ x hx]

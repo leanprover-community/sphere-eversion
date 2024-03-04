@@ -360,23 +360,23 @@ theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {
   let W' : ℕ → Set X := fun n ↦ (W <$> decode₂ s n).getD ∅
   refine ⟨K', W', ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro n; cases' h : decode₂ s n with i
-    · simp_rw [h, map_none, getD_none, isCompact_empty]
-    · simp_rw [h, map_some, getD_some]
+    · simp_rw [K', h, map_none, getD_none, isCompact_empty]
+    · simp_rw [K', h, map_some, getD_some]
       exact (hcV i).of_isClosed_subset (hK i) ((hKW i).trans <| (hWV i).trans interior_subset)
   · intro n; cases h : decode₂ s n
-    · simp_rw [h, map_none, getD_none, isOpen_empty]
-    · simp_rw [h, map_some, getD_some, hW]
+    · simp_rw [W', h, map_none, getD_none, isOpen_empty]
+    · simp_rw [W', h, map_some, getD_some, hW]
   · intro n; cases' h : decode₂ s n with i
-    · simp_rw [h, map_none, getD_none, h0]
-    · simp_rw [h, map_some, getD_some]; refine hP ?_ (hPV' i)
+    · simp_rw [W', h, map_none, getD_none, h0]
+    · simp_rw [W', h, map_some, getD_some]; refine hP ?_ (hPV' i)
       exact (hWV i).trans (interior_subset.trans <| hVV' i)
   · intro n; cases h : decode₂ s n
-    · simp_rw [h, map_none]; rfl
-    · simp_rw [h, map_some, getD_some, hKW]
+    · simp_rw [K', W', h, map_none]; rfl
+    · simp_rw [K', W', h, map_some, getD_some, hKW]
   · exact decode₂_locallyFinite hlW
   · intro x hx; obtain ⟨i, hi⟩ := mem_iUnion.mp (hCK hx)
     refine mem_iUnion.mpr ⟨encode i, ?_⟩
-    simp_rw [decode₂_encode, map_some, getD_some, hi]
+    simp_rw [K', decode₂_encode, map_some, getD_some, hi]
 
 end
 
@@ -437,9 +437,9 @@ theorem cover_nat_nhdsWithin' {α} [TopologicalSpace α] [SecondCountableTopolog
     {f : ∀ x ∈ s, Set α} (hf : ∀ (x) (hx : x ∈ s), f x hx ∈ 𝓝[s] x) (hs : s.Nonempty) :
     ∃ (x : ℕ → α) (hx : range x ⊆ s), s ⊆ ⋃ n, f (x n) (range_subset_iff.mp hx n) := by
   let g x := if hx : x ∈ s then f x hx else ∅
-  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [dif_pos hx]; exact hf x hx
+  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [g, dif_pos hx]; exact hf x hx
   obtain ⟨x, hx, h⟩ := TopologicalSpace.cover_nat_nhdsWithin hg hs
-  simp_rw [dif_pos (range_subset_iff.mp hx _)] at h
+  simp_rw [g, dif_pos (range_subset_iff.mp hx _)] at h
   exact ⟨x, hx, h⟩
 
 end TopologicalSpace

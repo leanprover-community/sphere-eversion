@@ -159,13 +159,13 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
           dist (F' t x).1.2 (𝓕₀.bs x) ≤ dist (F' t x).1.2 (F.bs x) + dist (F.bs x) (𝓕₀.bs x) :=
             dist_triangle _ _ _
           _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_right (hF'η t x) _)
-          _ = τ x := by simp [η]
+          _ = τ x := by simp [F, η]
     · rw [union_assoc, Eventually.union_nhdsSet, image_preimage_eq_of_subset K₀φ] at hF'hol
       exact hF'hol.2
     · exact F'.smooth
     · intro t x hx
       replace hx : x ∉ φ '' (φ ⁻¹' K₁) := by rwa [image_preimage_eq_of_subset K₁φ]
-      simpa using hF'K₁ t x hx
+      simpa [F] using hF'K₁ t x hx
     · apply hF'₀.mono fun x hx ↦ ?_
       erw [hx]
       ext1 y
@@ -314,7 +314,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
           dist (F' t x).1.2 (𝓕₀.bs x) ≤ dist (F' t x).1.2 (F.bs x) + dist (F.bs x) (𝓕₀.bs x) :=
             dist_triangle _ _ _
           _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_right (hF'η t x) _)
-          _ = τ x := by simp [η]
+          _ = τ x := by simp [F, η]
     · rw [union_assoc, Eventually.union_nhdsSet] at hF'hol
       replace hF'hol := hF'hol.2
       simp_rw [← L.iUnion_succ'] at hF'hol

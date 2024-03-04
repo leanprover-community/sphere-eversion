@@ -163,7 +163,7 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
     let p := ((↑) : _ → F) ∘ (Fintype.equivFinOfCardEq hb).symm
     have hp : b = range p := by
       ext x
-      exact ⟨by intro h; use Fintype.equivFinOfCardEq hb ⟨x, h⟩; simp, by
+      exact ⟨by intro h; use Fintype.equivFinOfCardEq hb ⟨x, h⟩; simp [p], by
         rintro ⟨y, rfl⟩; apply Subtype.coe_prop⟩
     rw [hp] at h₀ h₂ h₃
     replace h₁ : AffineIndependent ℝ p :=
@@ -214,21 +214,21 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hp : p ∈ affineBases ι ℝ F := h.mem_affineBases
   have hV : IsOpen V := isOpen_set_pi finite_univ fun _ _ ↦ isOpen_Ioi
   have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι).continuousOn
-  have hxp : W' (x, p) ∈ V := by simp [hp, h.coord_eq_w, h.w_pos]
+  have hxp : W' (x, p) ∈ V := by simp [W', V, hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
-    simp only [affineBases_findim ι ℝ F hι]
+    simp only [A, affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hU₁ : U ⊆ A := Set.inter_subset_left _ _
   have hU₂ : IsOpen U := hW'.isOpen_inter_preimage hA hV
   have hU₃ : U ∈ 𝓝 (x, p) :=
-    mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, Set.mem_inter (by simp [hp]) (mem_preimage.mpr hxp)⟩
+    mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, Set.mem_inter (by simp [hp, A]) (mem_preimage.mpr hxp)⟩
   apply eventually_of_mem hU₃
   rintro ⟨y, q⟩ hyq
-  have hq : q ∈ affineBases ι ℝ F := by simpa using hU₁ hyq
+  have hq : q ∈ affineBases ι ℝ F := by simpa [A] using hU₁ hyq
   have hyq' : (y, q) ∈ W' ⁻¹' V := (Set.inter_subset_right _ _) hyq
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩, (smooth_barycentric ι ℝ F hι).mono hU₁⟩,
     ?_, ?_, ?_⟩
-  · simpa using hyq'
+  · simpa [V] using hyq'
   · simp [hq]
   · simp [hq]; exact AffineBasis.linear_combination_coord_eq_self _ y
 
@@ -279,11 +279,11 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
   let S : Set (F × (ι → F)) := W' ⁻¹' V
   have hι : Fintype.card ι = FiniteDimensional.finrank ℝ F + 1 := Fintype.card_fin _
   have hq' : v ∈ affineBases ι ℝ F := hw.mem_affineBases
-  have hqv : (q, v) ∈ A := by simp [hq']
-  have hxp : W' (q, v) ∈ V := by simp [hq', hw.coord_eq_w, hw.w_pos]
+  have hqv : (q, v) ∈ A := by simp [A, hq']
+  have hxp : W' (q, v) ∈ V := by simp [W', V, hq', hw.coord_eq_w, hw.w_pos]
   have hV' : V ∈ 𝓝 (W' (q, v)) := (isOpen_set_pi finite_univ fun _ _ ↦ isOpen_Ioi).mem_nhds hxp
   have hA : IsOpen A := by
-    simp only [affineBases_findim ι ℝ F hι]
+    simp only [A, affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hW' : ContinuousAt W' (q, v) :=
     (smooth_barycentric ι ℝ F hι).continuousOn.continuousAt
@@ -657,10 +657,10 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     exact (hb.fst'.sub continuous_const).add h1γ.snd'
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by
     intro t s
-    simp only [zero_add, Loop.vadd_apply, sub_self]
-  have hδs0 : ∀ x t, δ x t 0 = b x := by intro x t; simp only [h2γ, Loop.vadd_apply, sub_add_cancel]
-  have hδt0 : ∀ x s, δ x 0 s = b x := by intro x s; simp [h3γ, sub_add_cancel]
-  have hδt1 : ∀ x t s, δ x (projI t) s = δ x t s := by intro x t s; simp [h4γ]
+    simp only [δ, zero_add, Loop.vadd_apply, sub_self]
+  have hδs0 : ∀ x t, δ x t 0 = b x := by intro x t; simp only [δ, h2γ, Loop.vadd_apply, sub_add_cancel]
+  have hδt0 : ∀ x s, δ x 0 s = b x := by intro x s; simp [δ, h3γ, sub_add_cancel]
+  have hδt1 : ∀ x t s, δ x (projI t) s = δ x t s := by intro x t s; simp [δ, h4γ]
   have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ t ∈ I, ∀ s ∈ I, (x, δ x t s) ∈ Ω := by
     rcases hΩ_op with ⟨U, hUx₀, hU⟩
     -- todo: this is nicer with `IsCompact.eventually_forall_of_forall_eventually` twice, but then
@@ -681,8 +681,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     have hc : ContinuousAt c x₀ :=
       hg.prod (((continuousAt_pi.2 fun _ ↦ hbx₀).sub continuousAt_const).add continuousAt_const)
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
-      unfold_let c
-      simp [hδx₀]
+      simp [c, δ, hδx₀]
     rw [← hcx₀] at hW
     filter_upwards [hc.tendsto.eventually hW]
     rintro x ⟨_, hx⟩

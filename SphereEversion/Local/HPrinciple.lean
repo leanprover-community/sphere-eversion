@@ -360,7 +360,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
   have H : ∀ᶠ x near L.K₀, L.improveStep h N 1 x = 𝓕' x := by
     apply L.hρ₀.mono
     intro x hx
-    simp [improveStep_apply _ h, hx]
+    simp [𝓕', improveStep_apply _ h, hx]
   have fderiv_𝓕' := fun x ↦
     fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x)
   rw [eventually_congr (H.isPartHolonomicAt_congr (L.E' ⊔ L.p.spanV))]

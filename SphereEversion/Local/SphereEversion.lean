@@ -231,7 +231,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   let p'' : DualPair (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩
   have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
-    simp only [DualPair.update, restrict_apply, ContinuousLinearMap.add_apply,
+    simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply,
       ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, comp_apply, coe_mk]
   have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) := by
     have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ := by

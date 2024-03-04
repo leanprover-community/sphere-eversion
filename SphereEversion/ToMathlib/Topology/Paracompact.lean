@@ -54,7 +54,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
   refine ⟨s, countable_iUnion fun n ↦ Finset.countable_toSet _, fun z hz ↦ ?_,
     Set.univ_subset_iff.mp fun x _ ↦ ?_, fun x ↦ ?_⟩
   · simp only [Pi.prod, mem_iUnion, Finset.coe_image, mem_image, Finset.mem_coe,
-      SetCoe.exists] at hz
+      SetCoe.exists, s] at hz
     obtain ⟨n, x, hx, -, rfl⟩ := hz
     apply h₃
   · obtain ⟨n, hn⟩ := iUnion_eq_univ_iff.mp hC' x
@@ -62,13 +62,13 @@ theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X
     simp only [iUnion_coe_set, mem_iUnion, exists_prop] at hf
     obtain ⟨y, hy₁, hy₂, hy₃⟩ := hf
     simp only [Pi.prod, mem_iUnion, Finset.mem_coe, Finset.mem_image, exists_prop, SetCoe.exists,
-      iUnion_exists, exists_and_right, Prod.exists, Prod.mk.inj_iff]
+      iUnion_exists, exists_and_right, Prod.exists, Prod.mk.inj_iff, s]
     exact ⟨i n ⟨y, hy₁⟩, r n ⟨y, hy₁⟩, ⟨n, y, hy₁, hy₂, rfl, rfl⟩, hy₃⟩
   · obtain ⟨n, hn⟩ := iUnion_eq_univ_iff.mp hC' x
     refine ⟨U n, hU'' n x hn, ?_⟩
     let P : ι × ℝ → Prop := fun z ↦ ((↿B) (z : ι × ℝ) ∩ U n).Nonempty
     erw [(Equiv.Set.sep s P).symm.set_finite_iff]
-    simp only [Set.iUnion_inter, ← inter_setOf_eq_sep]
+    simp only [Set.iUnion_inter, ← inter_setOf_eq_sep, s]
     refine  (hU' n).iUnion (fun m _ ↦ Set.toFinite _) fun m hm ↦ ?_
     rw [Set.eq_empty_iff_forall_not_mem]
     intro z

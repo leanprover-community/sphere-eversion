@@ -1,9 +1,9 @@
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
+import Mathlib.Topology.Algebra.Order.Compact
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
-import SphereEversion.ToMathlib.Topology.Algebra.Order.Compact
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
 
@@ -318,15 +318,15 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     ChartedSpace.nhds_hasBasis_balls_of_open_cov IF x s_op cov
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ := exists_countable_locallyFinite_cover surjective_id hW₀ hW₁ hB
   let g : M × ℝ → PartialHomeomorph F F := fun z ↦ diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
-  have hg₁ : ∀ z, (g z).source = univ := by simp
-  have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp
-  have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp
+  have hg₁ : ∀ z, (g z).source = univ := by simp [g]
+  have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp [g]
+  have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
   refine ⟨M × ℝ, t,
     fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) (hg₃ z.1) ?_, ht₁,
     fun z ↦ ?_, ?_, ?_⟩
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
-    simp_rw [extChartAt]
+    simp_rw [g, extChartAt]
     rw [← PartialHomeomorph.extend_target']
     exact (range_diffeomorphToNhd_subset_ball (extChartAt IF x x) hr).trans hr'
   · obtain ⟨⟨x, r⟩, hxr⟩ := z

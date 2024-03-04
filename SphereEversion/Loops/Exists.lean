@@ -46,7 +46,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   have hε : 0 < ε := div_pos hε₁ h0
   have h2ε : ∀ t s : ℝ, ‖ε • γ₀ t s‖ < ε₁ := by
     intro t s
-    simp only [norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
+    simp only [ε, norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
     refine lt_of_lt_of_le ?_ (mul_one _).le
     rw [mul_lt_mul_left hε₁, div_lt_one h0]
     refine (zero_add _).symm.le.trans_lt ?_
@@ -69,15 +69,14 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   · exact hb.continuous.fst'.add (continuous_const.smul <| hγ₀_cont.snd')
   · rintro x ⟨-, hx⟩ t _ht s _hs
     have : ‖ε • γ₀ t s‖ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀)
-    exact h1 x hx t s (by simpa [← h0ε₁])
+    exact h1 x hx t s (by simpa [γ₁, ← h0ε₁])
   · intro x hx
     rw [← h0ε₁, add_halves']
     exact (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
   · rintro x ⟨-, -⟩ t s
     -- Porting note: should be simp [h2ε]
-    simp
+    simp [γ₁]
     convert h2ε _ _
-    simp
 
 /- Some remarks about `exist_loops_aux2`:
   `δ`: loop after smoothing
@@ -132,9 +131,9 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have h2f : ∀ x : E, Continuous (f x) := fun x ↦ h1f.comp₂ continuous_const continuous_id
   have h3f : ∀ {x y}, 0 < f x y := by
     intro x y; by_cases hΩ : Ωᶜ.Nonempty
-    · simp_rw [if_pos hΩ, ← hΩ_op.isClosed_compl.not_mem_iff_infDist_pos hΩ, not_mem_compl_iff,
+    · simp_rw [f, if_pos hΩ, ← hΩ_op.isClosed_compl.not_mem_iff_infDist_pos hΩ, not_mem_compl_iff,
         hγ₃.val_in (mem_univ _)]
-    · simp_rw [if_neg hΩ, zero_lt_one]
+    · simp_rw [f, if_neg hΩ, zero_lt_one]
   let ε₂ : E → ℝ := fun x ↦ min (min ε₀ (ε₁ x)) (sInf (f x '' I ×ˢ I))
   have hcε₂ : Continuous ε₂ := (continuous_const.min hcε₁).min (hI.continuous_sInf h1f)
   have hε₂ : ∀ {x}, 0 < ε₂ x := fun {x} ↦
@@ -178,7 +177,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     exact fun x hx ↦ lt_of_lt_of_le (by norm_num : (3 / 4 : ℝ) < 4 / 5) hx
   have h2γ₄ : EqOn γ₄ (fun x ↦ b x.1) U := by
     rintro ⟨x, t, s⟩ hxts
-    simp_rw [h0γ₄, Loop.reparam_apply]
+    simp_rw [h0γ₄, γ₃, Loop.reparam_apply]
     cases' hxts with ht hs
     · exact hγ₂.to_sf.t_le_zero_eq_b x (linearReparam s) (linearReparam_nonpos (le_of_lt ht))
     · rw [← Loop.fract_eq, fract_linearReparam_eq_zero, hγ₂.base]
@@ -194,7 +193,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     · have : (fun x ↦ γ x.1 x.2.1 x.2.2) =ᶠ[𝓝 (x, t, s)] fun x ↦ b x.1 := by
         have :
           (fun x : E × ℝ × ℝ ↦ (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) := by
-          simp_rw [preimage_union, preimage_preimage, fract_fract]
+          simp_rw [C, preimage_union, preimage_preimage, fract_fract]
           refine mem_of_superset ?_ (subset_union_right _ _)
           refine continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
         refine eventually_of_mem this ?_
@@ -225,13 +224,13 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
       refine (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le ?_ ?_)
       · exact (isCompact_Icc.prod isCompact_Icc).bddBelow_image (h2f x).continuousOn
       · rw [← hγ₃.projI]
-        simp_rw [if_pos hΩ]
+        simp_rw [f, if_pos hΩ]
         apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
   · refine eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s ↦ ?_
     refine (closedBall_subset_ball ?_).trans (hΩ x hx.1)
     refine (dist_triangle _ _ _).trans_lt (add_lt_add_of_le_of_lt
       ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left _ _) ?_)
-    simp_rw [HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
+    simp_rw [γ₄, γ₃, HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
     exact h2γ₁ x hx.1 _ _
 
 variable (g b Ω U K)
@@ -273,15 +272,15 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
   let γ : ℝ → E → Loop F := fun t x ↦ χ x • Loop.const (b x) + (1 - χ x) • γ₃ t x
   have h1γ : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x := by
     intro x t ht; ext s;
-    simp [hγ₁.to_sf.t_le_zero _ _ ht]
+    simp [γ, γ₃, hγ₁.to_sf.t_le_zero _ _ ht]
   have h2γ : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x := by
     intro x t ht; ext s
-    simp [hγ₁.to_sf.t_ge_one _ _ ht]
+    simp [γ, γ₃, hγ₁.to_sf.t_ge_one _ _ ht]
   refine ⟨γ, h1γ, h2γ, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x t
-    simp [hγ₁.t₀]
+    simp [γ, γ₃, hγ₁.t₀]
   · intro x t
-    simp [hγ₁.base]
+    simp [γ, γ₃, hγ₁.base]
   · intro x
     have h1 : IntervalIntegrable (χ x • Loop.const (b x) : Loop F) volume 0 1 := by
       show IntervalIntegrable (fun _ ↦ χ x • b x) volume (0 : ℝ) (1 : ℝ)
@@ -290,7 +289,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).continuous.intervalIntegrable _ _).smul
         _
     have h3 : (γ₃ 1 x).average = g x := γ₂.reparametrize_average x
-    simp [h1, h2, h3]
+    simp [γ, γ₃, h1, h2, h3]
     rcases h0χ x with (⟨hx, -⟩ | hx)
     · rw [hx, smul_add_one_sub_smul]
     · simp [hx]
@@ -305,7 +304,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     rcases h0χ x with (⟨_hx, h2x⟩ | hx)
     · refine h2x t (γ₂.reparametrize x s) ?_
       unfold_let γ
-      simp [dist_smul_add_one_sub_smul_le (h2χ x)]
-    · simp [hx]; apply hγ₁.val_in (mem_univ _)
+      simp [γ₃, dist_smul_add_one_sub_smul_le (h2χ x)]
+    · simp [γ, hx]; apply hγ₁.val_in (mem_univ _)
   · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
-  · exact h1χ.mono fun x (hx : χ x = 1) ↦ by simp [hx]
+  · exact h1χ.mono fun x (hx : χ x = 1) ↦ by simp [γ, hx]
