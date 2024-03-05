@@ -6,15 +6,12 @@ open scoped Topology BigOperators Filter
 
 namespace ContinuousLinearMap
 
-variable {R₁ M₁ M₂ M₃ : Type _} [Semiring R₁]
+variable {R₁ M₁ M₂ M₃ : Type*} [Semiring R₁]
 
 variable [TopologicalSpace M₁] [AddCommMonoid M₁]
-
-variable [TopologicalSpace M₂] [AddCommMonoid M₂]
-
-variable [TopologicalSpace M₃] [AddCommMonoid M₃]
-
-variable [Module R₁ M₁] [Module R₁ M₂] [Module R₁ M₃]
+  [TopologicalSpace M₂] [AddCommMonoid M₂]
+  [TopologicalSpace M₃] [AddCommMonoid M₃]
+  [Module R₁ M₁] [Module R₁ M₂] [Module R₁ M₃]
 
 theorem fst_prod_zero_add_zero_prod_snd [ContinuousAdd M₁] [ContinuousAdd M₂] :
     (ContinuousLinearMap.fst R₁ M₁ M₂).prod 0 +
@@ -28,15 +25,16 @@ theorem fst_prod_zero_add_zero_prod_snd [ContinuousAdd M₁] [ContinuousAdd M₂
 
 end ContinuousLinearMap
 
-variable {R₁ : Type _} {R₂ : Type _} {R₃ : Type _} [Semiring R₁] [Semiring R₂] [Semiring R₃]
+variable {R₁ R₂ R₃ : Type*} [Semiring R₁] [Semiring R₂] [Semiring R₃]
   {σ₁₂ : R₁ →+* R₂} {σ₂₁ : R₂ →+* R₁} [RingHomInvPair σ₁₂ σ₂₁] [RingHomInvPair σ₂₁ σ₁₂]
   {σ₂₃ : R₂ →+* R₃} {σ₃₂ : R₃ →+* R₂} [RingHomInvPair σ₂₃ σ₃₂] [RingHomInvPair σ₃₂ σ₂₃]
   {σ₁₃ : R₁ →+* R₃} {σ₃₁ : R₃ →+* R₁} [RingHomInvPair σ₁₃ σ₃₁] [RingHomInvPair σ₃₁ σ₁₃]
-  [RingHomCompTriple σ₁₂ σ₂₃ σ₁₃] [RingHomCompTriple σ₃₂ σ₂₁ σ₃₁] {M₁ : Type _}
-  [TopologicalSpace M₁] [AddCommMonoid M₁] {M'₁ : Type _} [TopologicalSpace M'₁] [AddCommMonoid M'₁]
-  {M₂ : Type _} [TopologicalSpace M₂] [AddCommMonoid M₂] {M₃ : Type _} [TopologicalSpace M₃]
-  [AddCommMonoid M₃] {M₄ : Type _} [TopologicalSpace M₄] [AddCommMonoid M₄] [Module R₁ M₁]
-  [Module R₁ M'₁] [Module R₂ M₂] [Module R₃ M₃]
+  [RingHomCompTriple σ₁₂ σ₂₃ σ₁₃] [RingHomCompTriple σ₃₂ σ₂₁ σ₃₁]
+  {M₁ : Type*} [TopologicalSpace M₁] [AddCommMonoid M₁]
+  {M'₁ : Type*} [TopologicalSpace M'₁] [AddCommMonoid M'₁]
+  {M₂ : Type*} [TopologicalSpace M₂] [AddCommMonoid M₂]
+  {M₃ : Type*} [TopologicalSpace M₃] [AddCommMonoid M₃]
+  [Module R₁ M₁] [Module R₁ M'₁] [Module R₂ M₂] [Module R₃ M₃]
 
 section
 
