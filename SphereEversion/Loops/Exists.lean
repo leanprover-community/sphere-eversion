@@ -74,9 +74,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
     rw [← h0ε₁, add_halves']
     exact (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
   · rintro x ⟨-, -⟩ t s
-    -- Porting note: should be simp [h2ε]
-    simp [γ₁]
-    convert h2ε _ _
+    simp [γ₁, h2ε]
 
 /- Some remarks about `exist_loops_aux2`:
   `δ`: loop after smoothing

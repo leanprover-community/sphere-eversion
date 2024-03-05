@@ -171,8 +171,7 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
       have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • (0 : F) + w := congr_arg (-t⁻¹ • · + w) hx
       rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,
         neg_add_cancel_right, ← neg_smul] at this
-    -- Porting note: `rw` silently fails
-    simp only [zero_smul, add_zero] at hx ⊢
+    rw [zero_smul, add_zero] at hx ⊢
     exact (injective_iff_map_eq_zero φ).mp hφ u hx
 
 end DualPair

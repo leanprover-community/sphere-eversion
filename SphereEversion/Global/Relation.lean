@@ -531,9 +531,7 @@ theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
     rw [mem_slice]
     dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, oneJetBundle_mk_fst,
       oneJetBundle_mk_snd]
-    -- Porting note: the next `rw` should be part of the `simp_rw` below
-    rw [p.map_update_comp_right, ← p.update_comp_left]
-    simp_rw [OneJetBundle.mk, ← ψ.fderiv_coe]
+    simp_rw [p.map_update_comp_right, ← p.update_comp_left, OneJetBundle.mk, ← ψ.fderiv_coe]
     rfl
   rw [this]
   exact (hR _).image (ψ.fderiv x.1.2).symm

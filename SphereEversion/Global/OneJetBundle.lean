@@ -360,10 +360,7 @@ theorem smoothAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
           SmoothAt J 𝓘(𝕜, E →L[𝕜] E')
             (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2)
               x₀) x₀ := by
-  -- Porting note: next three lines were a single `simp_rw` in Lean 3.
-  simp_rw [SmoothAt]
-  rw [Bundle.contMDiffAt_totalSpace]
-  simp_rw [contMDiffAt_prod_iff, and_assoc,
+  simp_rw [SmoothAt, Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc,
     oneJetBundle_trivializationAt]
   rfl
 
@@ -487,7 +484,9 @@ theorem OneJetBundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M�
 theorem OneJetBundle.map_id (x : J¹MM') :
     OneJetBundle.map I' I' id id (fun x ↦ ContinuousLinearMap.id 𝕜 (TangentSpace I x)) x = x := by
   -- Porting note: was `ext _` in Lean 3
-  refine OneJetBundle.ext rfl rfl ?_
+  ext
+  · rfl
+  · rfl
   dsimp only [OneJetBundle.map, OneJetBundle.mk]
   simp_rw [mfderiv_id]
   -- note: rw fails since we have to unfold the type `Bundle.Pullback`
