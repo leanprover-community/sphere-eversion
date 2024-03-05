@@ -58,7 +58,6 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   let τ := fun x : M ↦ min (δ x) (ε x)
   have τ_pos : ∀ x, 0 < τ x := fun x ↦ lt_min (hδ_pos x) (ε_pos x)
   have τ_cont : Continuous τ := hδ_cont.min ε_cont
-  have := fun (x : M) (F' : Germ (𝓝 x) J¹) ↦ F'.value = 𝓕₀ x
   let P₀ : ∀ x : M, Germ (𝓝 x) J¹ → Prop := fun x F ↦
     F.value.1.1 = x ∧
       F.value ∈ R ∧
@@ -217,7 +216,6 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   let τ := fun x : M ↦ min (δ x) (L.ε x)
   have τ_pos : ∀ x, 0 < τ x := fun x ↦ lt_min (hδ_pos x) (L.ε_pos x)
   have τ_cont : Continuous τ := hδ_cont.min L.ε_cont
-  have := fun (x : M) (F' : Germ (𝓝 x) J¹) ↦ F'.value = 𝓕₀ x
   let P₀ : ∀ x : M, Germ (𝓝 x) J¹ → Prop := fun x F ↦
     F.value.1.1 = x ∧
       F.value ∈ R ∧

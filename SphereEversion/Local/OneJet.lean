@@ -307,7 +307,7 @@ theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) :
   rw [smoothStep.of_lt ht'']
 
 -- unused
-@[simp]
+-- @[simp] can prove this
 theorem HtpyJetSec.comp_0 (𝓕 𝓖 : HtpyJetSec E F) (h) : 𝓕.comp 𝓖 h 0 = 𝓕 0 :=
   (𝓕.comp_le_0 𝓖 h).self_of_nhdsSet 0 right_mem_Iic
 

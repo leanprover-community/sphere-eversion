@@ -760,13 +760,10 @@ theorem updateFormalSol_apply_of_mem {F : FormalSol R} {G : HtpyFormalSol (R.loc
   · rfl
   · rfl
 
-@[simp]
 theorem updateFormalSol_apply_image {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {x} :
-    φ.updateFormalSol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) := by
-  rw [OpenSmoothEmbedding.updateFormalSol_apply_of_mem, φ.left_inv]
-  exact mem_range_self x
+    φ.updateFormalSol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) := by simp
 
 end OpenSmoothEmbedding
 

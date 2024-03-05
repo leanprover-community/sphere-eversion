@@ -23,7 +23,7 @@ set_option synthInstance.checkSynthOrder false
 attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ
 set_option synthInstance.checkSynthOrder true
 
-variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)]
   (ω : Orientation ℝ E (Fin 3))
 
 local infixl:100 "×₃" => ω.crossProduct

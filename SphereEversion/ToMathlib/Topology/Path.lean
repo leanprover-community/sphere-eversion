@@ -71,7 +71,6 @@ theorem strans_one {x : X} (γ γ' : Path x x) : γ.strans γ' 1 = γ := by
   simp only [strans, unitInterval.le_one', Path.coe_mk_mk, if_pos, div_one, extend_extends',
     Icc.coe_one]
 
-@[simp]
 theorem strans_self {x : X} (γ γ' : Path x x) (t₀ : I) : γ.strans γ' t₀ t₀ = x := by
   simp only [strans, Path.coe_mk_mk, extend_div_self, if_pos, le_rfl]
 
@@ -105,7 +104,7 @@ theorem range_strans_subset {x : X} {γ γ' : Path x x} {t₀ : I} :
   · rw [strans_def, dif_pos h]; exact Or.inl (mem_range_self _)
   · rw [strans_def, dif_neg h]; exact Or.inr (mem_range_self _)
 
-theorem Continuous.path_strans {X Y : Type _} [UniformSpace X] [SeparatedSpace X]
+theorem Continuous.path_strans {X Y : Type _} [UniformSpace X]
     [LocallyCompactSpace X] [UniformSpace Y] {f : X → Y} {t : X → I} {s : X → I}
     {γ γ' : ∀ x, Path (f x) (f x)} (hγ : Continuous ↿γ) (hγ' : Continuous ↿γ')
     (hγ0 : ∀ ⦃x s⦄, t x = 0 → γ x s = f x) (hγ'1 : ∀ ⦃x s⦄, t x = 1 → γ' x s = f x)

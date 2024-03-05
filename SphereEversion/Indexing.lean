@@ -116,7 +116,7 @@ theorem IndexType.toNat_succ (i : IndexType n) (hi : ¬IsMax i) :
   rw [IndexType.succ_castSuccEmb]
   exact val_succ i
 
-@[simp]
+-- @[simp] can prove this
 theorem IndexType.not_isMax (n : IndexType 0) : ¬IsMax n :=
   not_isMax_of_lt <| Nat.lt_succ_self n
 

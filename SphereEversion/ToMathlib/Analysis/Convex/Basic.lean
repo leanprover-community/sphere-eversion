@@ -153,7 +153,6 @@ theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι
     {z : ι → E} (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
     ∑ᶠ i, w i • z i ∈ s := by
   have hw : (support w).Finite := support_finite_of_finsum_eq_one h₁
-  have : (support fun i ↦ w i • z i).Finite := hw.subset (support_smul_subset_left w z)
   rw [finsum_eq_sum_of_support_subset_of_finite _ _ hw]
   swap; · exact support_smul_subset_left w z
   apply hs.sum_mem fun i _ ↦ h₀ i

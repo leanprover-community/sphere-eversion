@@ -118,9 +118,8 @@ variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimens
 variable (M M' IP P)
 
 /-- parametric h-principle for immersions. -/
-theorem immersionRel_satisfiesHPrincipleWith [Nonempty P] [T2Space P] [SigmaCompactSpace P]
-    [LocallyCompactSpace P] [Nonempty M] [T2Space M] [SigmaCompactSpace M] [LocallyCompactSpace M]
-    [Nonempty M'] [T2Space M'] [LocallyCompactSpace M'] [SigmaCompactSpace M']
+theorem immersionRel_satisfiesHPrincipleWith
+    [T2Space P] [SigmaCompactSpace P] [T2Space M] [SigmaCompactSpace M] [SigmaCompactSpace M']
     (h : finrank ℝ E < finrank ℝ E') (hC : IsClosed C) (hε_pos : ∀ x, 0 < ε x)
     (hε_cont : Continuous ε) : (immersionRel I M I' M').SatisfiesHPrincipleWith IP C ε :=
   (immersionRel_ample I I' h).satisfiesHPrincipleWith (immersionRel_open I I') hC hε_pos hε_cont

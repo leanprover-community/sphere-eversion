@@ -196,8 +196,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
           span_singleton_eq_span_singleton_of_ne u_ne H]
     have ne_z' : (p.π <| pr[x]ᗮ u)⁻¹ ≠ 0 := inv_ne_zero ne_z
     refine ⟨(p.π <| pr[x]ᗮ u)⁻¹ • (pr[x]ᗮ u : E), (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, ?_, ?_⟩
-    · have := orthogonal_line_inf_sup_line u x
-      rw [← orthogonal_span_toDual_symm p.π, span_singleton_smul_eq ne_z'.isUnit]
+    · rw [← orthogonal_span_toDual_symm p.π, span_singleton_smul_eq ne_z'.isUnit]
       exact (orthogonal_line_inf_sup_line u x).symm
     rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z]
   let p' : DualPair E :=
@@ -435,7 +434,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
   · exact fun t ht ↦ sphereImmersion_of_sol _ fun x hx ↦ h₃ x hx t ht
 
 -- Stating the full statement with all type-class arguments and no uncommon notation.
-example (E : Type _) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)] :
+example (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)] :
     ∃ f : ℝ → E → E,
       ContDiff ℝ ⊤ (uncurry f) ∧
         (∀ x ∈ sphere (0 : E) 1, f 0 x = x) ∧

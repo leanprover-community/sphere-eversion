@@ -10,7 +10,7 @@ for maps between two real normed spaces `E` and `F`.
 
 To any `R : RelLoc E F` we associate the type `sol R` of maps `f : E → F` of
 solutions of `R`, and its formal counterpart `FormalSol R`.
-(FIXME(grunweg): `sol` is never mention; is this docstring outdated?)
+(FIXME(grunweg): `sol` is never mentioned; is this docstring outdated?)
 
 The h-principle question is whether we can deform any formal solution into a solution.
 The type of deformations is `HtpyJetSet E F` (homotopies of 1-jet sections).
@@ -23,11 +23,9 @@ open Set Function Real Filter
 
 open scoped unitInterval Topology
 
-variable (E : Type _) [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-variable (F : Type _) [NormedAddCommGroup F] [NormedSpace ℝ F]
-
-variable (P : Type _) [NormedAddCommGroup P] [NormedSpace ℝ P]
+variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
+  (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F]
+  (P : Type*) [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 /-- A first order relation for maps between real vector spaces. -/
 abbrev RelLoc :=

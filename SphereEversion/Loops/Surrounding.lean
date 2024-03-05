@@ -758,7 +758,7 @@ theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ := by
   simp only [sfHomotopy, Path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos le_rfl,
     SurroundingFamily.path_extend_fract, projIcc_left, Loop.ofPath_apply, sub_self, h₁.projI]
 
-theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
+theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X]
     [LocallyCompactSpace X] {τ t s : X → ℝ} {f : X → E} (hτ : Continuous τ) (hf : Continuous f)
     (ht : Continuous t) (hs : Continuous s) :
     Continuous fun x ↦ sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by

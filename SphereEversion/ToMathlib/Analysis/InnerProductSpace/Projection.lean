@@ -46,10 +46,10 @@ theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type _} [Field 𝕜] {M :
 
 end GeneralStuff
 
-variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
-theorem LinearIsometryEquiv.apply_ne_zero {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F] (φ : E ≃ₗᵢ⋆[ℝ] F)
+theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E ≃ₗᵢ⋆[ℝ] F)
     {x : E} (hx : x ≠ 0) : φ x ≠ 0 := by
   intro H
   apply hx

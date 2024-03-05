@@ -12,7 +12,7 @@ open scoped Topology Filter NNReal
 section -- PRed in #11108
 
 theorem continuous_parametric_integral_of_continuous
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {α : Type*} [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α]
     [SecondCountableTopologyEither α E] {μ : MeasureTheory.Measure α} [IsLocallyFiniteMeasure μ]
     {X : Type*} [TopologicalSpace X] [FirstCountableTopology X] [LocallyCompactSpace X]

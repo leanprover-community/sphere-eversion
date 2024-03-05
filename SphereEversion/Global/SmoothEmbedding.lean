@@ -398,8 +398,7 @@ theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m 
 theorem update_of_mem_range {m : M} (hm : m ∈ range φ) : update φ ψ f g m = ψ (g (φ.invFun m)) :=
   if_pos hm
 
-@[simp]
-theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by simp [update]
+theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by simp
 
 -- This small auxiliary result is used in the next two lemmas.
 theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)

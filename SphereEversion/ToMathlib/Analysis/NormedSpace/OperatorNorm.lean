@@ -98,9 +98,8 @@ theorem Continuous.coprodL {f : X → E →L[𝕜] G} {g : X → F →L[𝕜] G}
 
 theorem Continuous.prodL' {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*}
     [SeminormedAddCommGroup E] [SeminormedAddCommGroup Fₗ] [SeminormedAddCommGroup Gₗ]
-    [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] (R : Type*)
-    [Semiring R] [Module R Fₗ] [Module R Gₗ] [ContinuousConstSMul R Fₗ] [ContinuousConstSMul R Gₗ]
-    [SMulCommClass 𝕜 R Fₗ] [SMulCommClass 𝕜 R Gₗ] {X : Type*} [TopologicalSpace X]
+    [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ]
+    {X : Type*} [TopologicalSpace X]
     {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f) (hg : Continuous g) :
     Continuous fun x ↦ (f x).prod (g x) :=
   (ContinuousLinearMap.prodₗᵢ 𝕜).continuous.comp₂ hf hg
@@ -111,7 +110,7 @@ theorem Continuous.prodL {𝕜 : Type*} {E : Type*} {Fₗ : Type*} {Gₗ : Type*
     [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] {X : Type*}
     [TopologicalSpace X] {f : X → E →L[𝕜] Fₗ} {g : X → E →L[𝕜] Gₗ} (hf : Continuous f)
     (hg : Continuous g) : Continuous fun x ↦ (f x).prod (g x) :=
-  hf.prodL' 𝕜 hg
+  hf.prodL' hg
 
 @[continuity]
 theorem ContinuousAt.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} {x₀ : X}

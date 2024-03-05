@@ -204,7 +204,6 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
 
 theorem remainder_c0_small_on {K : Set E} (hK : IsCompact K) (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ}
     (ε_pos : 0 < ε) : ∀ᶠ N in atTop, ∀ x ∈ K, ‖R N γ x‖ < ε := by
-  have : ∀ N : ℝ, R N γ = 𝒯 N (Loop.diff γ) := fun N ↦ remainder_eq π N hγ_diff
   simp_rw [fun N ↦ remainder_eq π N hγ_diff]
   let g : ℝ → E → Loop (E →L[ℝ] F) := fun _ ↦ Loop.diff γ
   have g_le : ∀ (x) (t : ℝ), t ≤ 0 → g t x = g 0 x := fun _ _ _ ↦ rfl

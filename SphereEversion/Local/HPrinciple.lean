@@ -60,8 +60,8 @@ open LinearMap (ker)
 
 local notation "∞" => (⊤ : ℕ∞)
 
-variable (E : Type _) [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
-  [NormedSpace ℝ F] {G : Type _} [NormedAddCommGroup G] [NormedSpace ℝ G]
+variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]{G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
 
 /-- The setup for local h-principle is two compact subsets `K₀ ⊆ K₁` in `E` with
 `K₀ ⊆ interior K₁` and a closed subset `C`.

@@ -247,7 +247,7 @@ theorem projI_one : projI (1 : α) = 1 :=
   congr_arg Subtype.val <| projIcc_right _
 
 @[simp]
-theorem projI_eq_zero [Nontrivial α] : projI x = 0 ↔ x ≤ 0 := by
+theorem projI_eq_zero : projI x = 0 ↔ x ≤ 0 := by
   rw [← projIcc_eq_left (zero_lt_one' α), Subtype.ext_iff]; rfl
 
 @[simp]
@@ -455,11 +455,8 @@ variable {α : Type*}
 theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : ((↑) : s → α) '' t = s ↔ t = univ := by
   convert coe_injective.image_injective.eq_iff; rw [coe_image_univ]
 
-@[simp]
 theorem preimage_coe_eq_univ {s t : Set α} : ((↑) : s → α) ⁻¹' t = univ ↔ s ⊆ t := by
-  rw [← inter_eq_right, ← image_preimage_coe]
-  -- TODO: this broke in a recent mathlib bump, fix!
-  sorry -- last rewrite was `rw[image_coe_eq_iff_eq_univ]`
+  simp only [preimage_eq_univ_iff, range_coe_subtype, setOf_mem_eq]
 
 end Subtype
 

@@ -1,10 +1,10 @@
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
-variable (α : Type _) [TopologicalSpace α]
+variable (X : Type*) [TopologicalSpace X]
 
 scoped[Borelize] attribute [instance] borel
 
-theorem borelSpace_borel : @BorelSpace α _ (borel α) :=
-  letI := borel α; ⟨rfl⟩
+theorem borelSpace_borel : @BorelSpace X _ (borel X) :=
+  letI := borel X; ⟨rfl⟩
 
 scoped[Borelize] attribute [instance] borelSpace_borel

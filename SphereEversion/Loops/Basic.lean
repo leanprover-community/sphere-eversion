@@ -114,11 +114,11 @@ def transform (γ : Loop X) (f : X → X') : Loop X' :=
 
 /-- Adding two loops pointwise. -/
 @[simps]
-instance Loop.Add [Add X] : Add (Loop X) :=
+instance Add [Add X] : Add (Loop X) :=
   ⟨fun γ₁ γ₂ ↦ ⟨fun t ↦ γ₁ t + γ₂ t, fun t ↦ by simp_rw [Loop.per]⟩⟩
 
 @[simps]
-instance Loop.Neg [Neg X] : Neg (Loop X) :=
+instance Neg [Neg X] : Neg (Loop X) :=
   ⟨fun γ ↦ ⟨fun t ↦ -γ t, fun t ↦ by simp_rw [Loop.per]⟩⟩
 
 instance [AddCommGroup X] : AddCommGroup (Loop X) :=
@@ -131,11 +131,11 @@ instance [AddCommGroup X] : AddCommGroup (Loop X) :=
     add_left_neg := fun γ ↦ by ext t; apply add_left_neg }
 
 /-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
-instance [Add X] : VAdd X (Loop X) :=
+instance [_root_.Add X] : VAdd X (Loop X) :=
   ⟨fun x γ ↦ γ.transform fun y ↦ x + y⟩
 
 @[simp]
-theorem vadd_apply [Add X] {x : X} {γ : Loop X} {t : ℝ} : (x +ᵥ γ) t = x + γ t :=
+theorem vadd_apply [_root_.Add X] {x : X} {γ : Loop X} {t : ℝ} : (x +ᵥ γ) t = x + γ t :=
   rfl
 
 /-- Multiplying a loop by a scalar value. -/
