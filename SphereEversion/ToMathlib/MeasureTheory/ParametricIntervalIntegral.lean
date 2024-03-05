@@ -1,13 +1,10 @@
-import Mathlib.MeasureTheory.Integral.FundThmCalculus
 import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
-import Mathlib.Algebra.Module.ULift
+import Mathlib.MeasureTheory.Integral.FundThmCalculus
 import SphereEversion.ToMathlib.Analysis.Calculus
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
-
-open scoped Topology Filter NNReal
+open scoped Topology
 
 section -- PRed in #11108
 
@@ -42,6 +39,7 @@ variable {μ : Measure ℝ} [IsLocallyFiniteMeasure μ] [NoAtoms μ]
   {X : Type*} [TopologicalSpace X] [FirstCountableTopology X]
   {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
+-- move to DominatedConvergence
 theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F : X → ℝ → E}
     {a₀ : ℝ} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) :
     Continuous fun p : X × ℝ ↦ ∫ t in a₀..p.2, F p.1 t ∂μ := by
