@@ -799,7 +799,7 @@ theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
     · have : τ < 1 := h.trans_lt (by norm_num)
       refine (h₀.surrounds x hx).mono ?_
       simp only [mul_one, Loop.range_ofPath, sfHomotopy, projI_one]
-      exact Subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le h] ; rfl)
+      exact Subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le h]; rfl)
         (subset_range_strans_left <| by simp [this])
     · have : 0 < τ := lt_of_lt_of_le (by norm_num) h
       have h : 1 - τ ≤ 1 / 2 := by linarith

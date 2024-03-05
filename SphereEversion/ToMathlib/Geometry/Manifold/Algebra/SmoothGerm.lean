@@ -104,7 +104,7 @@ variables {I F}
 
 @[elab_as_eliminator]
 lemma smooth_germ_vec.induction_on {x : N} {P : germ (𝓝 x) F → Prop}
-  (h : ∀  f : C^∞⟮I, N; 𝓘(ℝ, F), F⟯, P (f : N → F)) :
+  (h : ∀ f : C^∞⟮I, N; 𝓘(ℝ, F), F⟯, P (f : N → F)) :
   ∀ φ ∈ smooth_germ_vec I F x, P φ :=
 begin
   rintros _ ⟨f, rfl⟩,
@@ -113,7 +113,7 @@ end
 
 @[elab_as_eliminator]
 lemma smooth_germ.induction_on {x : N} {P : germ (𝓝 x) ℝ → Prop}
-  (h : ∀  f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯, P (f : N → ℝ)) :
+  (h : ∀ f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯, P (f : N → ℝ)) :
   ∀ φ ∈ smooth_germ I x, P φ :=
 begin
   rintros _ ⟨f, rfl⟩,

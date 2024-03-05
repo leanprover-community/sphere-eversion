@@ -104,7 +104,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     have : φ '' ball e 1 ∈ 𝓝 (φ e) := by
       rw [← φ.openEmbedding.map_nhds_eq]
       exact image_mem_map (ball_mem_nhds e zero_lt_one)
-    use φ '' (ball e 1), this ; clear this
+    use φ '' (ball e 1), this; clear this
     intro K₁ hK₁ K₀ K₀K₁ K₀_cpct K₁_cpct C f C_closed P₀f fC
     have K₁φ : K₁ ⊆ range φ := SurjOn.subset_range hK₁
     have K₀φ : K₀ ⊆ range φ := K₀K₁.trans interior_subset |>.trans K₁φ
@@ -145,7 +145,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     rcases φ.improve_formalSol ψ hRample hRopen (hA.union C_closed) η_pos η_cont hFφψ hFAC K₀_cpct
         K₁_cpct K₀K₁' with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
-    refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩ ; all_goals beta_reduce
+    refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩; all_goals beta_reduce
     · refine fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, ?_, ?_⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
@@ -300,7 +300,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     rcases(L.φ i).improve_formalSol (L.ψj i) hRample hRopen (hA.union hC) η_pos η_cont hFφψ hFAC hK₀
         hK₁ hK₀K₁ with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
-    refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩ ; all_goals beta_reduce
+    refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩; all_goals beta_reduce
     · refine fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, ?_, ?_⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]

@@ -370,7 +370,7 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
   simp_rw [JetSec.IsHolonomicAt, locFormalEversion_f, ContinuousLinearMap.ext_iff,
     locFormalEversion_φ, smoothStep.of_gt ht, hx]
   intro v
-  have : (fun x : E ↦ ((1 : ℝ) - 2) • x) = fun x ↦ -x := by ext x ; norm_num
+  have : (fun x : E ↦ ((1 : ℝ) - 2) • x) = fun x ↦ -x := by ext x; norm_num
   simp [this]
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']

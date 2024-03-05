@@ -184,7 +184,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅C⟩ :=
     exists_smooth_and_eqOn hγ₄ hcε₂.fst' (fun x ↦ hε₂) hC ⟨U, hUC, h3γ₄⟩
   let γ : E → ℝ → Loop F := fun x t ↦
-    ⟨fun s ↦ γ₅ (x, smoothTransition t, fract s), fun s ↦ by dsimp ; rw [fract_add_one s]⟩
+    ⟨fun s ↦ γ₅ (x, smoothTransition t, fract s), fun s ↦ by dsimp; rw [fract_add_one s]⟩
   have hγ : 𝒞 ∞ ↿γ := by
     rw [contDiff_iff_contDiffAt]
     rintro ⟨x, t, s⟩; by_cases hs : fract s = 0
@@ -215,7 +215,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans <| min_le_right _ _)
   · rintro x - t - s -; rw [← not_mem_compl_iff]
     by_cases hΩ : Ωᶜ.Nonempty; swap
-    · rw [not_nonempty_iff_eq_empty] at hΩ ; rw [hΩ]; apply not_mem_empty
+    · rw [not_nonempty_iff_eq_empty] at hΩ; rw [hΩ]; apply not_mem_empty
     refine' not_mem_of_dist_lt_infDist ?_
     · exact (x, γ₃ x (smoothTransition t) (fract s))
     · rw [dist_comm, dist_prod_same_left]

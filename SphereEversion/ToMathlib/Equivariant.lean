@@ -240,7 +240,7 @@ def symm (e : EquivariantEquiv) : EquivariantEquiv :=
       change g (t + 1) = g t + 1
       calc
         g (t + 1) = g (f (g t) + 1) := by rw [(e : ℝ ≃ ℝ).apply_symm_apply]
-        _ = g (f (g t + 1)) := by congr ; exact (e.eqv (g t)).symm
+        _ = g (f (g t + 1)) := by congr; exact (e.eqv (g t)).symm
         _ = g t + 1 := (e : ℝ ≃ ℝ).symm_apply_apply _ }
 
 instance : EquivLike EquivariantEquiv ℝ ℝ where

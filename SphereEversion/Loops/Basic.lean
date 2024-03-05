@@ -146,7 +146,7 @@ instance [Semiring K] [AddCommGroup X] [Module K X] : Module K (Loop X)
     where
   one_smul γ := by ext t; apply one_smul
   mul_smul k₁ k₂ γ := by ext t; apply mul_smul
-  smul_zero k := by ext ; apply smul_zero
+  smul_zero k := by ext; apply smul_zero
   smul_add k γ₁ γ₂ := by ext t; apply smul_add
   add_smul k₁ k₂ γ := by ext t; apply add_smul
   zero_smul γ := by ext t; apply zero_smul
@@ -160,7 +160,7 @@ theorem smul_apply [SMul K X] {k : K} {γ : Loop X} {t : ℝ} : (k • γ) t = k
 def reparam {F : Type _} (γ : Loop F) (φ : EquivariantMap) : Loop F
     where
   toFun := γ ∘ φ
-  per' t := by rw [comp_apply, φ.eqv, γ.per] ; rfl
+  per' t := by rw [comp_apply, φ.eqv, γ.per]; rfl
 
 /-! ## Support of a loop family -/
 

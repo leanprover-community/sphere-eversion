@@ -216,7 +216,7 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
   ext v
   erw [mfderiv_neg, ContinuousLinearMap.coe_comp', Function.comp_apply,
        ContinuousLinearMap.neg_apply, smoothStep.of_gt ht]
-  rw [ω.rot_one] ; rfl
+  rw [ω.rot_one]; rfl
   rw [← range_mfderiv_coe_sphere (n := 2) x]
   exact LinearMap.mem_range_self _ _
 
