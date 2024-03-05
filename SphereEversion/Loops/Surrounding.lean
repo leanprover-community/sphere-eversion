@@ -652,8 +652,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have h5γ : ∀ t s : ℝ, γ t s ∈ mk x₀ ⁻¹' Ω := fun t s ↦ connectedComponentIn_subset _ _ (h5γ t s)
   let δ : E → ℝ → Loop F := fun x t ↦ b x - b x₀ +ᵥ γ t
   have hδ : Continuous ↿δ := by
-    unfold_let δ
-    dsimp only [HasUncurry.uncurry, Loop.vadd_apply]
+    dsimp only [δ, HasUncurry.uncurry, Loop.vadd_apply]
     exact (hb.fst'.sub continuous_const).add h1γ.snd'
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by
     intro t s
@@ -888,8 +887,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
   have hγ : ∀ τ, SurroundingFamilyIn g b (γ τ) (U₁ ∩ U₀) Ω := surroundingFamilyIn_sfHomotopy h₀' h₁'
   have heq1 : ∀ x ∈ closure V₀ ∪ V₂ᶜ, γ (ρ x) x = γ₀ x := by
     intro x hx
-    unfold_let γ
-    simp_rw [h0ρ hx, Pi.zero_apply, sfHomotopy_zero]
+    simp_rw [γ, h0ρ hx, Pi.zero_apply, sfHomotopy_zero]
   have heq2 : ∀ x ∈ V₀, γ (ρ x) x = γ₀ x := fun x hx ↦
     heq1 x (subset_closure.trans (subset_union_left _ _) hx)
   refine ⟨fun x t ↦ γ (ρ x) x t, ?_, ?_, ?_⟩
@@ -897,10 +895,8 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
       ?_, ?_⟩, ?_⟩
     · rintro x ((hx | hx) | hx)
       · simp_rw [heq2 x hx, h₀.surrounds x (hVU₀ <| subset_closure hx)]
-      · unfold_let γ
-        simp_rw [(hγ <| ρ x).surrounds x hx]
-      · unfold_let γ
-        simp_rw [h1ρ (subset_closure hx), Pi.one_apply, sfHomotopy_one, h₁.surrounds x (hVU₁ hx)]
+      · simp_rw [γ, (hγ <| ρ x).surrounds x hx]
+      · simp_rw [γ, h1ρ (subset_closure hx), Pi.one_apply, sfHomotopy_one, h₁.surrounds x (hVU₁ hx)]
     · exact
         Continuous.sfHomotopy ρ.continuous.fst' continuous_fst continuous_snd.fst continuous_snd.snd
     · intro x hx t ht s _; refine sfHomotopy_in' _ _ _ id _ hx ht ?_ ?_

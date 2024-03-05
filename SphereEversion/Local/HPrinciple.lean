@@ -484,7 +484,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       { L with
         E' := E' k
         p := e.dualPair k
-        hEp := by unfold_let E'; simpa only [Basis.dualPair] using e.flag_le_ker_dual k }
+        hEp := by simpa only [E', Basis.dualPair] using e.flag_le_ker_dual k }
     set H₁ : FormalSol R := (hH_sol 1).formalSol
     have h_span : S.E' ⊔ S.p.spanV = E' k.succ := e.flag_span_succ k
     have acc : S.Accepts R H₁ :=

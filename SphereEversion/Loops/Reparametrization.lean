@@ -274,8 +274,7 @@ theorem localCenteringDensity_smooth_on :
       refine γ.smooth_surrounded.contDiffOn.prod_map (ContDiff.contDiffOn ?_)
       exact γ.approxSurroundingPointsAt_smooth x _
     · intro y hy
-      unfold_let z
-      simp [γ.approxSurroundingPointsAt_mem_affineBases x y hy]
+      simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
   · exact deltaMollifier_smooth.comp contDiff_snd
 
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :

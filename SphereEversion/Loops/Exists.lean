@@ -61,10 +61,10 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
     intro x hx _t _s
     simp [← h0ε₁]
     exact (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ
-  refine ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by unfold_let γ₁; simp [hγ₀], by unfold_let γ₁; simp [h2γ₀],
+  refine ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀],
     ?_, ?_, ?_⟩, ?_⟩, ?_, ?_⟩
-  · intro x t s; unfold_let γ₁;  simp [h3γ₀]
-  · rintro x ⟨hx, -⟩; unfold_let γ₁; simp_rw [hx]
+  · intro x t s; simp [γ₁, h3γ₀]
+  · rintro x ⟨hx, -⟩; simp_rw [γ₁, hx]
     exact (hγ₀_surr.smul0 hε.ne').vadd0
   · exact hb.continuous.fst'.add (continuous_const.smul <| hγ₀_cont.snd')
   · rintro x ⟨-, hx⟩ t _ht s _hs
@@ -303,8 +303,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     refine this (fun y ↦ (x, y) ∈ Ω) t fun t _ht ↦ ?_
     rcases h0χ x with (⟨_hx, h2x⟩ | hx)
     · refine h2x t (γ₂.reparametrize x s) ?_
-      unfold_let γ
-      simp [γ₃, dist_smul_add_one_sub_smul_le (h2χ x)]
+      simp [γ, γ₃, dist_smul_add_one_sub_smul_le (h2χ x)]
     · simp [γ, hx]; apply hγ₁.val_in (mem_univ _)
   · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
   · exact h1χ.mono fun x (hx : χ x = 1) ↦ by simp [γ, hx]

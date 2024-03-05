@@ -250,8 +250,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     apply norm_pos_iff.mpr hNx₀2.ne'
     exact hNx₀
   have cont : ContinuousAt N x₀ := by
-    unfold_let N
-    simp_rw [real_inner_self_eq_norm_sq]
+    simp_rw [N, real_inner_self_eq_norm_sq]
     exact ((continuous_norm.pow 2).continuousAt.inv₀ hNx₀2.ne').smul continuousAt_id
   have lim : Tendsto (fun y ↦ ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) := by
     rw [← MulZeroClass.zero_mul ‖x₀‖]
@@ -264,8 +263,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
       (⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y =
         ⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y := by
     intro x y
-    unfold_let N
-    simp only [inner_smul_left, inner_sub_left, IsROrC.conj_to_real, smul_sub, sub_smul]
+    simp only [N, inner_smul_left, inner_sub_left, IsROrC.conj_to_real, smul_sub, sub_smul]
     field_simp
   simp only [key]
   simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim
