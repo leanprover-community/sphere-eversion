@@ -533,8 +533,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       intro x hx t
       by_cases ht : t ≤ 1 / 2
       · simp only [ht, hx, hHK₁, HtpyJetSec.comp_of_le, not_false_iff]
-      ·
-        simp only [ht, hx, hH₁_K₁, improveStep_rel_compl_K₁, HtpyJetSec.comp_of_not_le,
+      · simp only [ht, hx, hH₁_K₁, improveStep_rel_compl_K₁, HtpyJetSec.comp_of_not_le,
           not_false_iff]
     · -- C⁰-close
       intro x t

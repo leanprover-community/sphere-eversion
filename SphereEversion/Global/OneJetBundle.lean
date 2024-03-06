@@ -5,7 +5,7 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_bundle
 -/
-import Mathlib.Tactic
+import Mathlib.Tactic.Common
 
 import Mathlib.Analysis.NormedSpace.Completion
 import Mathlib.Geometry.Manifold.Algebra.Monoid
@@ -285,11 +285,11 @@ lemma ContMDiffMap.coe_snd :
 
 @[simp]
 lemma ContMDiffMap.fst_apply (x : M) (x' : M') :
-  (ContMDiffMap.fst : C^n⟮ModelWithCorners.prod I I', M × M'; I, M⟯) (x, x') = x := rfl
+    (ContMDiffMap.fst : C^n⟮ModelWithCorners.prod I I', M × M'; I, M⟯) (x, x') = x := rfl
 
 @[simp]
 lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
-  (ContMDiffMap.snd : C^n⟮ModelWithCorners.prod I I', M × M'; I', M'⟯) (x, x') = x' := rfl
+    (ContMDiffMap.snd : C^n⟮ModelWithCorners.prod I I', M × M'; I', M'⟯) (x, x') = x' := rfl
 
 end
 

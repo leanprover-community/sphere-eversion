@@ -1,5 +1,5 @@
-import Mathlib.Data.Nat.Basic
-import Mathlib.Tactic
+import Mathlib.Logic.Function.Basic
+import Mathlib.Tactic.Common
 
 -- The next lemma won't be used, it's a warming up exercise for the one below.
 -- It could go to mathlib.

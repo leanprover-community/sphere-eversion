@@ -1,11 +1,11 @@
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic -- for run_cmd, FIXME minimise
 import Mathlib.Algebra.Order.WithZero
 import Mathlib.Topology.LocallyFinite
 import Mathlib.Data.Fin.Interval
 import Mathlib.Data.Fin.SuccPred
 import SphereEversion.ToMathlib.Data.Nat.Basic
 import SphereEversion.ToMathlib.SetTheory.Cardinal.Basic
-
 /-!
 # Indexing types
 
