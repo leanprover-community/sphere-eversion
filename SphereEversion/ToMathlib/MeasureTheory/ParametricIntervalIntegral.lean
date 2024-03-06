@@ -33,13 +33,12 @@ theorem continuous_parametric_integral_of_continuous
 
 end
 
-section
+section -- PRed in #11185
 
 variable {μ : Measure ℝ} [IsLocallyFiniteMeasure μ] [NoAtoms μ]
   {X : Type*} [TopologicalSpace X] [FirstCountableTopology X]
   {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
--- move to DominatedConvergence
 theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F : X → ℝ → E}
     {a₀ : ℝ} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) :
     Continuous fun p : X × ℝ ↦ ∫ t in a₀..p.2, F p.1 t ∂μ := by
@@ -169,7 +168,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           ⟨Ioo a₀ b₀, Ioo_nhds, bound_integrable.1⟩
         sorry /- TODO-BUMP refine (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
           M bound_cont).hasFDerivAt.isBigO.congr' ?_ EventuallyEq.rfl
-        apply Eventually.mono Ioo_nhds
+        apply Eventually.mono Ioo_nhds -- does this work? filter_upwards [Ioo_nhds]
         rintro t ht
         dsimp only
         rw [intervalIntegral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀)] -/
@@ -178,7 +177,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           (∫ t' in s x₀..s x, bound t') * ‖x - x₀‖ := by
         have bdd : ∀ᶠ x in 𝓝 x₀,
             ‖∫ s in s x₀..s x, F x s - F x₀ s‖ ≤ |∫ s in s x₀..s x, bound s| * ‖x - x₀‖ := by
-          apply Eventually.mono mem_nhds
+          filter_upwards [mem_nhds]
           rintro x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩
           rw [← abs_of_nonneg (norm_nonneg <| x - x₀), ← abs_mul, ←
             intervalIntegral.integral_mul_const]
@@ -198,7 +197,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
     have : ∀ᶠ x in 𝓝 x₀,
         ∫ t in a..s x, F x t =
           (φ x (s x₀) + φ x₀ (s x) + ∫ t in s x₀..s x, F x t - F x₀ t) - φ x₀ (s x₀) := by
-      apply Eventually.mono mem_nhds
+      filter_upwards [mem_nhds]
       rintro x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩
       have int₁ : IntervalIntegrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀
       have int₂ : IntervalIntegrable (F x₀) volume (s x₀) (s x) := hF_int_ball x₀ x₀_in hsx₀ hsx
@@ -282,7 +281,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     exact (inl ℝ H ℝ).compRightL.continuous.comp
       ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]
-    refine eventually_of_forall fun t t_in ↦ ?_
+    filter_upwards with t t_in
     rw [nnabs_coe K]
     exact F_lip t t_in
   · exact integrableOn_const.mpr (Or.inr measure_Ioo_lt_top)

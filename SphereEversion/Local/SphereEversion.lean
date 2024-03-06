@@ -293,7 +293,7 @@ def locFormalEversionAux : HtpyJetSec E E
       have : (fun p : ℝ × E ↦ smoothStep (‖p.2‖ ^ 2)) ⁻¹' {0} ∈ 𝓝 x := by
         rw [← hx] at this
         exact continuousAt_snd.preimage_mem_nhds this
-      refine eventually_of_mem this ?_
+      filter_upwards [this]
       rintro ⟨t, x⟩ hx
       simp_rw [mem_preimage, mem_singleton_iff] at hx
       show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
@@ -403,7 +403,7 @@ theorem locFormalEversion_hol :
     refine preimage_mono ?_
     intro x hx
     rw [mem_preimage, mem_singleton_iff, smoothStep.of_gt hx]
-  refine eventually_of_mem this ?_
+  filter_upwards [this]
   rintro ⟨t, x⟩ ⟨ht | ht, hx⟩
   · exact locFormalEversionHolAtZero ω ht hx
   · exact locFormalEversionHolAtOne ω ht hx

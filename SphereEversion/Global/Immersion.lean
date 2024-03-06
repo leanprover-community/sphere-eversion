@@ -229,7 +229,7 @@ theorem formalEversion_hol_near_zero_one :
     rcases hs with (rfl | rfl)
     · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
     · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
-  refine eventually_of_mem this ?_
+  filter_upwards [this]
   rintro ⟨t, x⟩ ⟨ht | ht, _hx⟩
   · exact formalEversionHolAtZero E ω ht x
   · exact formalEversionHolAtOne E ω ht x

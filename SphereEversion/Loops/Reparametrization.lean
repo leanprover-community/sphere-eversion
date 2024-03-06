@@ -76,7 +76,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     · simp_rw [bump]; norm_cast
       exact
         ((tendsto_add_atTop_iff_nat 2).2 (tendsto_const_div_atTop_nhds_zero_nat 1)).comp tendsto_snd
-    · exact eventually_of_forall fun x ↦ (hγ _).aestronglyMeasurable
+    · filter_upwards with x using (hγ _).aestronglyMeasurable
     · have := h.tendsto (x, t)
       rw [nhds_prod_eq] at this
       exact this.comp ((tendsto_fst.comp tendsto_fst).prod_mk tendsto_snd)

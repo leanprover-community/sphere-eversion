@@ -294,7 +294,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
   have hn₂' := tendsto_def.mp (tendsto_pi_nhds.mpr hp) _ hn₂
   have come_on : (swap p ⁻¹' n₂) ×ˢ (f ⁻¹' n₁) ∈ l.prod m :=
     mem_prod_iff.mpr ⟨_, hn₂', _, hn₁', Subset.rfl⟩
-  refine eventually_of_mem come_on ?_
+  filter_upwards [come_on]
   rintro ⟨y₂, y₁⟩ ⟨hy₂ : swap p y₂ ∈ n₂, hy₁ : f y₁ ∈ n₁⟩
   refine ⟨W' (f y₁, swap p y₂),
     (surroundingPts_evalBarycentricCoords_iff (f y₁) (swap p y₂)).mpr fun i ↦ ?_⟩

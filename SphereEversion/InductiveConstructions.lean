@@ -281,7 +281,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       have : ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' ↦ F (1, x') := fun x ↦
         h₁F j hj (1, x) rfl
       apply (forall_restrictGermPredicate_iff.mp this).germ_congr_set
-      refine eventually_of_forall fun x ↦ (?_ : F (T i.toNat, x) = F (1, x))
+      filter_upwards with x
       rw [h₂F _ _ (T_lt _).le]
     rcases ind i (fun x ↦ F (T i.toNat, x)) (fun x ↦ (h₀F (_, x)).1) h₁F with
         ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩
@@ -305,7 +305,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
               (𝓝 (T i.toNat)) (𝓝 0) :=
             Continuous.tendsto' (by continuity) _ _ (by simp)
           exact limt.prod_map tendsto_id
-        apply Eventually.mono (hpast_F'.comp_tendsto lim)
+        filter_upwards [hpast_F'.comp_tendsto lim]
         dsimp [F'']
         rintro ⟨t, x⟩ h'
         split_ifs with h
@@ -362,7 +362,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
           F' ((2 : ℝ) ^ (i.toNat + 1) * (1 - T i.toNat)) x'
       rw [forall_restrictGermPredicate_iff]
       apply h₁F'.germ_congr_set
-      apply eventually_of_forall _
+      filter_upwards
       apply congr_fun (hfutur_F'.self_of_nhdsSet _ _)
       rw [mem_Ici]
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]

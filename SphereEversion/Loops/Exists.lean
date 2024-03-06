@@ -194,8 +194,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
           simp_rw [C, preimage_union, preimage_preimage, fract_fract]
           refine mem_of_superset ?_ (subset_union_right _ _)
           refine continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
-        refine eventually_of_mem this ?_
-        intro x hx
+        filter_upwards [this] with x hx
         exact (hγ₅C hx).trans
           (h2γ₄ <| (subset_interior_iff_mem_nhdsSet.mpr hUC).trans interior_subset hx)
       exact hb.fst'.contDiffAt.congr_of_eventuallyEq this

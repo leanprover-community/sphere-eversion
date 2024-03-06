@@ -168,7 +168,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
   let Dφ' : E × F → E × F →L[𝕜] E × G := fun x ↦ Dφ x
   have hderiv : ∀ x : E × F, HasStrictFDerivAt φ₀ (Dφ' x) x := fun p ↦ by
     apply hasStrictFDerivAt_of_hasFDerivAt_of_continuousAt
-    · apply Filter.eventually_of_forall
+    · filter_upwards
       rintro ⟨x, y⟩
       apply HasFDerivAt.prod
       · simp only [ContinuousLinearEquiv.coe_refl, ContinuousLinearMap.id_comp, hasFDerivAt_fst]
@@ -250,8 +250,8 @@ theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0
     ContDiffAt ℝ ⊤ (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
   suffices ContDiffAt ℝ ⊤
     (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
-    refine this.congr_of_eventuallyEq (Filter.eventually_of_forall fun v ↦ ?_)
-    dsimp
+    refine this.congr_of_eventuallyEq ?_
+    filter_upwards with v
     rw [orthogonalProjection_singleton']
     rfl
   refine ContDiffAt.smul ?_ ?_
