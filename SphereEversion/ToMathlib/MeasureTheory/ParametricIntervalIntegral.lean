@@ -6,33 +6,6 @@ import SphereEversion.ToMathlib.Analysis.Calculus
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
 open scoped Topology
 
-section -- PRed in #11108
-
-theorem continuous_parametric_integral_of_continuous
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {α : Type*} [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α]
-    [SecondCountableTopologyEither α E] {μ : MeasureTheory.Measure α} [IsLocallyFiniteMeasure μ]
-    {X : Type*} [TopologicalSpace X] [FirstCountableTopology X] [LocallyCompactSpace X]
-    {F : X → α → E} (hF : Continuous fun p : X × α ↦ F p.1 p.2) {s : Set α} (hs : IsCompact s) :
-    Continuous fun x ↦ ∫ a in s, F x a ∂μ := by
-  rw [continuous_iff_continuousAt]
-  intro x₀
-  rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩
-  rcases(U_cpct.prod hs).bddAbove_image hF.norm.continuousOn with ⟨M, hM⟩
-  apply continuousAt_of_dominated
-  · exact eventually_of_forall fun x ↦ (hF.comp (Continuous.Prod.mk x)).aestronglyMeasurable
-  · refine Eventually.mono U_nhds fun x x_in ↦ ?_
-    rw [ae_restrict_iff]
-    · exact eventually_of_forall fun t t_in ↦ hM (mem_image_of_mem _ <| mk_mem_prod x_in t_in)
-    · exact (isClosed_le (hF.comp <| Continuous.Prod.mk x).norm continuous_const).measurableSet
-  · exact integrableOn_const.mpr (Or.inr hs.measure_lt_top)
-  · apply ae_of_all
-    intro a
-    -- FIXME: can fun_prop do this?
-    exact (hF.comp₂ continuous_id continuous_const).continuousAt
-
-end
-
 section -- PRed in #11185
 
 variable {μ : Measure ℝ} [IsLocallyFiniteMeasure μ] [NoAtoms μ]

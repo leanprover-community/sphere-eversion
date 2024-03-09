@@ -122,13 +122,14 @@ instance Neg [Neg X] : Neg (Loop X) :=
   ⟨fun γ ↦ ⟨fun t ↦ -γ t, fun t ↦ by simp_rw [Loop.per]⟩⟩
 
 instance [AddCommGroup X] : AddCommGroup (Loop X) :=
-  { Loop.Add, Loop.Zero,
-    Loop.Neg with
+  { Loop.Add, Loop.Zero, Loop.Neg with
     add_assoc := fun γ₁ γ₂ γ₃ ↦ by ext t; apply add_assoc
     add_comm := fun γ₁ γ₂ ↦ by ext t; apply add_comm
     zero_add := fun γ ↦ by ext t; apply zero_add
     add_zero := fun γ ↦ by ext t; apply add_zero
-    add_left_neg := fun γ ↦ by ext t; apply add_left_neg }
+    add_left_neg := fun γ ↦ by ext t; apply add_left_neg
+    nsmul := nsmulRec
+    zsmul := zsmulRec }
 
 /-- Shifting a loop, or equivalently, adding a constant value to a loop. -/
 instance [_root_.Add X] : VAdd X (Loop X) :=
