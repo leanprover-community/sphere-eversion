@@ -31,7 +31,7 @@ open Set AffineMap
 
 open scoped Convex Matrix
 
-variable {E F : Type _} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
+variable {E F : Type*} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
 
 variable [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
 
@@ -40,7 +40,7 @@ connected components is the full space. -/
 def AmpleSet (s : Set F) : Prop :=
   ∀ x ∈ s, convexHull ℝ (connectedComponentIn s x) = univ
 
-/-- images of ample sets under continuous linear equivalences are ample. -/
+/-- Images of ample sets under continuous linear equivalences are ample. -/
 theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃L[ℝ] F) :
     AmpleSet (L '' s) := fun x hx ↦ by
   rw [L.image_eq_preimage] at hx
@@ -53,7 +53,7 @@ theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃L[ℝ] F) :
   exact L.surjective.range_eq
 
 -- unused
-/-- preimages of ample sets under continuous linear equivalences are ample. -/
+/-- Preimages of ample sets under continuous linear equivalences are ample. -/
 theorem AmpleSet.preimage {s : Set F} (h : AmpleSet s) (L : E ≃L[ℝ] F) : AmpleSet (L ⁻¹' s) := by
   rw [← L.image_symm_eq_preimage]; exact h.image L.symm
 
@@ -77,18 +77,17 @@ theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
 /-! ## Trivial examples -/
 
 /-- A whole vector space is ample. -/
-theorem ampleSet_univ {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] :
+theorem ampleSet_univ {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] :
     AmpleSet (univ : Set F) := by
   intro x _
   rw [connectedComponentIn_univ, PreconnectedSpace.connectedComponent_eq_univ, convexHull_univ]
 
 -- unused
 /-- The empty set in a vector space is ample. -/
-theorem ampleSet_empty {F : Type _} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] :
-    AmpleSet (∅ : Set F) := fun _ h ↦ False.elim h
+theorem ampleSet_empty : AmpleSet (∅ : Set F) := fun _ h ↦ False.elim h
 
-/-! ## Codimension at least 2 subspaces have ample complement. -/
 
+/-! ## Subspaces of codimension at least 2 have ample complement -/
 
 section Lemma213
 
@@ -107,7 +106,7 @@ theorem isPathConnected_compl_of_isPathConnected_compl_zero [TopologicalAddGroup
     exact ⟨a, mt (Submodule.eq_zero_of_coe_mem_of_disjoint hpq.disjoint) ha⟩
   · intro x hx y hy
     have : π hpq x ≠ 0 ∧ π hpq y ≠ 0 := by
-      constructor <;> intro h <;> rw [Submodule.linearProjOfIsCompl_apply_eq_zero_iff hpq] at h  <;>
+      constructor <;> intro h <;> rw [Submodule.linearProjOfIsCompl_apply_eq_zero_iff hpq] at h <;>
         [exact hx h; exact hy h]
     rcases hpc.2 (π hpq x) this.1 (π hpq y) this.2 with ⟨γ₁, hγ₁⟩
     let γ₂ := PathConnectedSpace.somePath (π hpq.symm x) (π hpq.symm y)
@@ -124,8 +123,8 @@ theorem isPathConnected_compl_of_isPathConnected_compl_zero [TopologicalAddGroup
 
 /-- For `x` and `y` in a real vector space, if `x ≠ 0` and `0` is in the segment from
 `x` to `y` then `y` is on the line spanned by `x`.  -/
-theorem mem_span_of_zero_mem_segment {F : Type _} [AddCommGroup F] [Module ℝ F] {x y : F}
-    (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) : y ∈ Submodule.span ℝ ({x} : Set F) := by
+theorem mem_span_of_zero_mem_segment {x y : F} (hx : x ≠ 0) (h : (0 : F) ∈ [x -[ℝ] y]) :
+    y ∈ Submodule.span ℝ ({x} : Set F) := by
   rw [segment_eq_image] at h
   rcases h with ⟨t, -, htxy⟩
   rw [Submodule.mem_span_singleton]
