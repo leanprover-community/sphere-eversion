@@ -23,11 +23,9 @@ At the end of the file we consider 1-jet sections and slices corresponding to po
 -/
 
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
-
-variable {X : Type _} [NormedAddCommGroup X] [InnerProductSpace ℝ X]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+  {X : Type*} [NormedAddCommGroup X] [InnerProductSpace ℝ X]
 
 variable {R : RelLoc E F}
 
