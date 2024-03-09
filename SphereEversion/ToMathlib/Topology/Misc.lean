@@ -1,8 +1,6 @@
 import Mathlib.Topology.Connected.PathConnected
-import Mathlib.Topology.UrysohnsLemma
 import Mathlib.Topology.UniformSpace.Separation
 import Mathlib.LinearAlgebra.AffineSpace.Independent
-import Mathlib.Analysis.NormedSpace.FiniteDimension
 import Mathlib.Topology.Algebra.Order.Floor
 import Mathlib.Topology.ShrinkingLemma
 import Mathlib.Topology.EMetricSpace.Paracompact

@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.MeasureTheory.Integral.Periodic
 import SphereEversion.Loops.Surrounding

@@ -1,5 +1,3 @@
-import Mathlib.Logic.Basic
-
 -- `by simp [forall_and]` works in Lean 4
 theorem forall₂_and_distrib {α β : Sort _} {p q : α → β → Prop} :
     (∀ x y, p x y ∧ q x y) ↔ (∀ x y, p x y) ∧ ∀ x y, q x y :=

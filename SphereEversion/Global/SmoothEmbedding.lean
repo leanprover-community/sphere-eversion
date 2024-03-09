@@ -405,7 +405,7 @@ theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
     (hg : ∀ x : X, x ∉ K → f (φ x) = ψ (g x)) {m : M} (hm : m ∉ φ '' K) : φ.update ψ f g m = f m := by
   by_cases hm' : m ∈ range φ
   · obtain ⟨x, rfl⟩ := hm'
-    replace hm : x ∉ K; · contrapose! hm; exact mem_image_of_mem φ hm
+    replace hm : x ∉ K := by contrapose! hm; exact mem_image_of_mem φ hm
     simp [hg x hm]
   · exact if_neg hm'
 

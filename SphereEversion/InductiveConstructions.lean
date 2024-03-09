@@ -1,9 +1,10 @@
-import SphereEversion.ToMathlib.Topology.Germ
+import Mathlib.Topology.Germ
+import Mathlib.Data.Complex.Abs
+import Mathlib.Data.IsROrC.Basic
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Data.Set.Lattice
 import SphereEversion.Indexing
 import SphereEversion.Notations
--- import Mathlib.Tactic.Induction
 
 -- set_option trace.filter_inst_type true
 
@@ -275,8 +276,8 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (¬IsMax i → PP₂ i.succ f') ∧
         (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ p ∉ Ici (T i.toNat) ×ˢ U i, f' p = f p := by
     rintro i F h₀F h₂F h₁F
-    replace h₁F : ∀ᶠ x : X near ⋃ j < i, K j, P₁ x fun x ↦ F (T i.toNat, x)
-    · rw [eventually_nhdsSet_iUnion₂]
+    replace h₁F : ∀ᶠ x : X near ⋃ j < i, K j, P₁ x fun x ↦ F (T i.toNat, x) := by
+      rw [eventually_nhdsSet_iUnion₂]
       intro j hj
       have : ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' ↦ F (1, x') := fun x ↦
         h₁F j hj (1, x) rfl
@@ -293,8 +294,8 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       rintro ⟨t, x⟩ (ht : t ≤ _)
       rcases eq_or_lt_of_le ht with (rfl | ht)
       · apply Quotient.sound
-        replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X ↦ F (T i.toNat, q.2)
-        · have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet right_mem_Iic
+        replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X ↦ F (T i.toNat, q.2) := by
+          have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet right_mem_Iic
           apply mem_of_superset (prod_mem_nhds (hpast_F'.filter_mono this) univ_mem)
           rintro ⟨t', x'⟩ ⟨ht', -⟩
           exact (congr_fun ht' x' : _)

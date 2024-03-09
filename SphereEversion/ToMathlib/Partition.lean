@@ -1,8 +1,6 @@
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
-import Mathlib.Algebra.Algebra.Subalgebra.Order
-
 
 noncomputable section
 

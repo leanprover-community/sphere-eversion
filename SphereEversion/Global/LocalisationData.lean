@@ -1,5 +1,3 @@
-import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
-import Mathlib.Geometry.Manifold.Instances.Real
 import Mathlib.Topology.MetricSpace.PartitionOfUnity
 import SphereEversion.Global.SmoothEmbedding
 

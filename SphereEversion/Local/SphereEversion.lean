@@ -218,7 +218,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       have eq₁ : dim (ℝ ∙ x)ᗮ = n := finrank_orthogonal_span_singleton x_ne
       have eq₂ : ker p.π ⊓ (ℝ ∙ x)ᗮ ⊓ span ℝ {v'} = (⊥ : Submodule ℝ E) := by
         erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq]
-      have eq₃ : dim (span ℝ {v'}) = 1; apply finrank_span_singleton p'.v_ne_zero
+      have eq₃ : dim (span ℝ {v'}) = 1 := finrank_span_singleton p'.v_ne_zero
       rw [← hv', eq₁, eq₃, eq₂] at eq
       simpa only [finrank_bot] using eq.symm
     have : dim E = n + 1 := Fact.out

@@ -2,7 +2,10 @@ import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 import Mathlib.LinearAlgebra.Dual
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
-import SphereEversion.ToMathlib.Analysis.Calculus
+import Mathlib.Data.Complex.Module
+import Mathlib.Data.Complex.Abs
+import Mathlib.Data.IsROrC.Basic
+import Mathlib.Analysis.NormedSpace.Completion
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 
 /-! # Dual pairs

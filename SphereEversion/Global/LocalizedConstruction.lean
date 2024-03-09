@@ -36,8 +36,8 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     isOpen_of_isOpen _ (hRopen.preimage <| OneJetBundle.continuous_transfer _ _)
   have hRloc_ample : Rloc.IsAmple := ample_of_ample _ (hRample.localize _ _)
   -- TODO: try to be consistent about how to state the hFφψ condition
-  replace hFφψ : range (F.bs ∘ φ) ⊆ range ψ
-  · rw [range_comp]
+  replace hFφψ : range (F.bs ∘ φ) ⊆ range ψ := by
+    rw [range_comp]
     exact hFφψ
   let p : ChartPair IM M IX X :=
     { φ
@@ -106,7 +106,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
         apply this.mono
         exact hF'relK₁ _
       · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ := by
-          suffices : ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁); exact this.mono interior_subset
+          suffices ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁) from this.mono interior_subset
           exact isOpen_interior.mem_nhdsSet.mpr
             ((image_subset φ hK₀K₁).trans (φ.open_map.image_interior_subset K₁))
         exact this.mono (fun a hx hx' ↦ (hx' hx).elim)

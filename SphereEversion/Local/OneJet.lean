@@ -1,5 +1,5 @@
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import SphereEversion.ToMathlib.Topology.HausdorffDistance
+import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import SphereEversion.Notations
 
 /-! # Spaces of 1-jets and their sections

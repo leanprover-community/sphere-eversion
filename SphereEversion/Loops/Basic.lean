@@ -1,3 +1,4 @@
+import SphereEversion.Notations
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 

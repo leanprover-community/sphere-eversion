@@ -1,7 +1,6 @@
 import Mathlib.Analysis.Matrix
 import Mathlib.LinearAlgebra.AffineSpace.Matrix
 import Mathlib.Analysis.NormedSpace.AddTorsorBases
-import SphereEversion.ToMathlib.Analysis.Calculus
 
 noncomputable section
 

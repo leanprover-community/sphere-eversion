@@ -1,5 +1,5 @@
 import Mathlib.Topology.Connected.PathConnected
-import SphereEversion.ToMathlib.Topology.Misc
+import Mathlib.Analysis.Normed.Field.Basic
 
 open Set Function Int TopologicalSpace
 

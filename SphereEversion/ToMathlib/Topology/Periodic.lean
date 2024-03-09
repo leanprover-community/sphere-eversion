@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Periodic
-import Mathlib.Analysis.NormedSpace.Basic
+import Mathlib.Analysis.Normed.Group.Basic
 import SphereEversion.ToMathlib.Topology.Separation
 
 /-!

@@ -1,4 +1,3 @@
-import SphereEversion.Notations
 import Mathlib.Topology.Algebra.Order.Floor
 import SphereEversion.ToMathlib.Topology.Misc
 
