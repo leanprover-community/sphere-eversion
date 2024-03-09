@@ -19,7 +19,7 @@ is to use two ad-hoc structures `Landscape` and `StepLandscape` which partly bun
 all this.
 
 The `Landscape` structure record three sets in a vector space, a closed
-set `C` and two nested compact sets `K₀` and `K₁`. This is the ambiant data for
+set `C` and two nested compact sets `K₀` and `K₁`. This is the ambient data for
 the local h-principle result. We call this partly bundled because it doesn't include
 the data of the formal solution we want to improve. Instead we have a Prop-valued
 structure `Landscape.accepts` that takes a landscape and a formal solution and assert

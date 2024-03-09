@@ -18,7 +18,7 @@ All vector spaces in the file (and more generally in this folder) are real vecto
 
 ## Implementation notes
 
-The definition of ample subset asks for a vector space structure and a topology on the ambiant type
+The definition of ample subset asks for a vector space structure and a topology on the ambient type
 without any link between those structures, but we will only be using these for finite dimensional
 vector spaces with their natural topology.
 -/
