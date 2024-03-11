@@ -1,6 +1,5 @@
 import Mathlib.Analysis.Convex.Normed
-import Mathlib.Data.IsROrC.Basic
-import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
+import SphereEversion.ToMathlib.LinearAlgebra.AffineSpace.ContinuousAffineEquiv
 
 /-!
 # Ample subsets of real vector spaces
@@ -40,39 +39,31 @@ connected components is the full space. -/
 def AmpleSet (s : Set F) : Prop :=
   ∀ x ∈ s, convexHull ℝ (connectedComponentIn s x) = univ
 
-/-- Images of ample sets under continuous linear equivalences are ample. -/
-theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃L[ℝ] F) :
-    AmpleSet (L '' s) := fun x hx ↦ by
+/-- Images of ample sets under continuous affine equivalences are ample. -/
+theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃ᵃL[ℝ] F) :
+    AmpleSet (L '' s) := by
+  intro x hx
   rw [L.image_eq_preimage] at hx
   have : L '' connectedComponentIn s (L.symm x) = connectedComponentIn (L '' s) x := by
     conv_rhs => rw [← L.apply_symm_apply x]
-    exact L.toHomeomorph.image_connectedComponentIn hx
+    exact (L.toHomeomorph).image_connectedComponentIn hx
   rw [← this]
-  refine (L.toLinearMap.convexHull_image _).trans ?_
+  -- if/when #11298 lands, switch order of this lemma
+  refine (AffineMap.image_convexHull _ L.toAffineMap).symm.trans ?_
   rw [h (L.symm x) hx, image_univ]
   exact L.surjective.range_eq
 
--- unused
-/-- Preimages of ample sets under continuous linear equivalences are ample. -/
-theorem AmpleSet.preimage {s : Set F} (h : AmpleSet s) (L : E ≃L[ℝ] F) : AmpleSet (L ⁻¹' s) := by
+/-- Preimages of ample sets under continuous affine equivalences are ample. -/
+theorem AmpleSet.preimage {s : Set F} (h : AmpleSet s) (L : E ≃ᵃL[ℝ] F) : AmpleSet (L ⁻¹' s) := by
   rw [← L.image_symm_eq_preimage]; exact h.image L.symm
 
 open scoped Pointwise
 
-/-- Translating an ample set is ample.
-We basically mimic `AmpleSet.image`. We could prove the common generalization using
-continuous affine equivalences -/
+/-- Translating an ample set is ample. -/
 theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
     AmpleSet (y +ᵥ s) := by
-  intro x hx
-  simp_rw [mem_vadd_set] at hx
-  obtain ⟨x, hx, rfl⟩ := hx
-  have : y +ᵥ connectedComponentIn s x = connectedComponentIn (y +ᵥ s) (y +ᵥ x) :=
-    (Homeomorph.addLeft y).image_connectedComponentIn hx
-  rw [← this]
-  refine ((AffineEquiv.constVAdd ℝ E y).toAffineMap.image_convexHull _).symm.trans ?_
-  rw [h x hx, image_univ]
-  exact (AffineEquiv.constVAdd ℝ E y).toEquiv.range_eq_univ
+  show AmpleSet ((ContinuousAffineEquiv.constVAdd ℝ E y) '' s)
+  exact AmpleSet.image h _
 
 /-! ## Trivial examples -/
 
