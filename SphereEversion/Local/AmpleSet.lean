@@ -1,5 +1,4 @@
-import Mathlib.Analysis.Convex.Normed
-import SphereEversion.ToMathlib.LinearAlgebra.AffineSpace.ContinuousAffineEquiv
+import SphereEversion.ToMathlib.Analysis.Convex.AmpleSet
 
 /-!
 # Ample subsets of real vector spaces
@@ -22,63 +21,13 @@ without any link between those structures, but we will only be using these for f
 vector spaces with their natural topology.
 -/
 
-
-/-! ## Definition and invariance -/
-
+/-! ## Subspaces of codimension at least 2 have ample complement -/
 
 open Set AffineMap
-
 open scoped Convex Matrix
 
 variable {E F : Type*} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
-
-variable [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
-
-/-- A subset of a topological real vector space is ample if the convex hull of each of its
-connected components is the full space. -/
-def AmpleSet (s : Set F) : Prop :=
-  ∀ x ∈ s, convexHull ℝ (connectedComponentIn s x) = univ
-
-/-- Images of ample sets under continuous affine equivalences are ample. -/
-theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃ᵃL[ℝ] F) :
-    AmpleSet (L '' s) := by
-  intro x hx
-  rw [L.image_eq_preimage] at hx
-  have : L '' connectedComponentIn s (L.symm x) = connectedComponentIn (L '' s) x := by
-    conv_rhs => rw [← L.apply_symm_apply x]
-    exact (L.toHomeomorph).image_connectedComponentIn hx
-  rw [← this]
-  -- if/when #11298 lands, switch order of this lemma
-  refine (AffineMap.image_convexHull _ L.toAffineMap).symm.trans ?_
-  rw [h (L.symm x) hx, image_univ]
-  exact L.surjective.range_eq
-
-/-- Preimages of ample sets under continuous affine equivalences are ample. -/
-theorem AmpleSet.preimage {s : Set F} (h : AmpleSet s) (L : E ≃ᵃL[ℝ] F) : AmpleSet (L ⁻¹' s) := by
-  rw [← L.image_symm_eq_preimage]; exact h.image L.symm
-
-open scoped Pointwise
-
-/-- Translating an ample set is ample. -/
-theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
-    AmpleSet (y +ᵥ s) := by
-  show AmpleSet ((ContinuousAffineEquiv.constVAdd ℝ E y) '' s)
-  exact AmpleSet.image h _
-
-/-! ## Trivial examples -/
-
-/-- A whole vector space is ample. -/
-theorem ampleSet_univ {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] :
-    AmpleSet (univ : Set F) := by
-  intro x _
-  rw [connectedComponentIn_univ, PreconnectedSpace.connectedComponent_eq_univ, convexHull_univ]
-
--- unused
-/-- The empty set in a vector space is ample. -/
-theorem ampleSet_empty : AmpleSet (∅ : Set F) := fun _ h ↦ False.elim h
-
-
-/-! ## Subspaces of codimension at least 2 have ample complement -/
+  [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
 
 section Lemma213
 
