@@ -1,5 +1,6 @@
 import SphereEversion.Local.HPrinciple
 import SphereEversion.ToMathlib.Topology.Algebra.Module
+import SphereEversion.ToMathlib.Analysis.Convex.AmpleSet
 
 /-!
 In this file we prove the parametric version of the local h-principle.

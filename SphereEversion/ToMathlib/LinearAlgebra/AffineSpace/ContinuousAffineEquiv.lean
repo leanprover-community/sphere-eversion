@@ -5,6 +5,7 @@ Authors: Michael Rothgang
 -/
 import Mathlib.LinearAlgebra.AffineSpace.AffineEquiv
 import Mathlib.Topology.Algebra.Module.Basic
+import Mathlib.Data.Real.Basic
 
 /-!
 # Continuous affine equivalences
@@ -223,6 +224,21 @@ end ReflSymmTrans
 def toHomeomorph (e : P₁ ≃ᵃL[k] P₂) : P₁ ≃ₜ P₂ where
   __ := e
 
+section temp
+variable {E F : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
+  [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
+
+/-- Reinterpret a `ContinuousLinearEquiv` as a `ContinuousAffineEquiv`. -/
+def _root_.ContinuousLinearEquiv.toContinuousAffineEquiv (L : E ≃L[ℝ] F) : E ≃ᵃL[ℝ] F where
+  toAffineEquiv := L.toAffineEquiv
+  continuous_toFun := L.continuous_toFun
+  continuous_invFun := L.continuous_invFun
+
+-- conversely, interpret a linear `ContinuousAffineEquiv` as a `ContinuousLinearEquiv`
+-- toLinearEquiv := e.toAffineEquiv.toLinearEquiv (linear yada yada)
+
+end temp
+
 variable (k P₁) in
 /- The map `p ↦ v +ᵥ p` as a continuous affine automorphism of an affine space
   on which addition is continuous. -/
@@ -236,20 +252,3 @@ lemma constVAdd_coe /-[AddGroup P₁] [ContinuousAdd P₁]-/ (v : V₁) :
   (constVAdd k P₁ v).toAffineEquiv = .constVAdd k P₁ v := rfl
 
 end ContinuousAffineEquiv
-
-variable [AddCommGroup P₁] [AddCommGroup P₂] [Module k P₂] [Module k P₁]
-  [Module k V₂] [Module k V₁]
-
-/-- Reinterpret a `ContinuousLinearEquiv` as a `ContinuousAffineEquiv`. -/
-@[coe]
-def _root_.ContinuousLinearEquiv.toAffineLinearEquiv [Module k P₁] (e : P₁ ≃L[k] P₂) : P₁ ≃ᵃL[k] P₂ where
-  toAffineEquiv := by
-    sorry
-    --let f := e.toLinearEquiv
-    --exact f.toAffineEquiv (k := k) (V₁ := P₁) (V₂ := P₂)--(e.toLinearEquiv).toAffineEquiv (k := k)
-  -- __ := e.toAffineEquiv.toLinearEquiv
-  continuous_toFun := sorry-- e.continuous_toFun
-  continuous_invFun := sorry --e.continuous_invFun
-
--- conversely, interpret a linear `ContinuousAffineEquiv` as a `ContinuousLinearEquiv`
--- toLinearEquiv := e.toAffineEquiv.toLinearEquiv (linear yada yada)

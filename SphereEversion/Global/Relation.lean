@@ -1,8 +1,8 @@
 import Mathlib.Geometry.Manifold.Metrizable
 import SphereEversion.Local.DualPair
-import SphereEversion.Local.AmpleSet
 import SphereEversion.Global.OneJetSec
 import SphereEversion.Global.SmoothEmbedding
+import SphereEversion.ToMathlib.Analysis.Convex.AmpleSet
 
 /-!
 # First order partial differential relations for maps between manifolds
@@ -534,10 +534,9 @@ theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
     simp_rw [p.map_update_comp_right, ← p.update_comp_left, OneJetBundle.mk, ← ψ.fderiv_coe]
     rfl
   rw [this]
-  exact (hR _).image (ψ.fderiv x.1.2).symm
+  exact (hR _).image ((ψ.fderiv x.1.2).symm).toContinuousAffineEquiv
 
 /-! ## Localized 1-jet sections -/
-
 
 /-- Localize a one-jet section in two open embeddings.
   It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(φ x) ∘ D_x(φ))` where `y : M := g⁻¹(F_{bs}(φ x))`. -/

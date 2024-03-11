@@ -1,6 +1,7 @@
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
 import SphereEversion.Local.ParametricHPrinciple
+import SphereEversion.Local.AmpleSet
 
 /-!
 This is file proves the existence of a sphere eversion from the local verson of the h-principle.
