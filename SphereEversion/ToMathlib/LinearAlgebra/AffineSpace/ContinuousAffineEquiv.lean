@@ -24,8 +24,7 @@ which are continuous with continuous inverse.
 - equip `AffineEquiv k P P` with a `Group` structure,
 with multiplication corresponding to composition in `AffineEquiv.group`.
 
-- am I missing further basic API? fix remaining (few) sorries
-- relate continuous linear equivalences and continuous affine equivalences
+- am I missing further basic API?
 
 -/
 
@@ -224,7 +223,8 @@ end ReflSymmTrans
 def toHomeomorph (e : P₁ ≃ᵃL[k] P₂) : P₁ ≃ₜ P₂ where
   __ := e
 
-section temp
+section
+
 variable {E F : Type*} [AddCommGroup E] [Module k E] [TopologicalSpace E]
   [AddCommGroup F] [Module k F] [TopologicalSpace F]
 
@@ -240,18 +240,17 @@ theorem _root_.ContinuousLinearEquiv.coe_toContinuousAffineEquiv (e : E ≃L[k] 
     ⇑e.toContinuousAffineEquiv = e :=
   rfl
 
-end temp
+end
 
 variable (k P₁) in
-/- The map `p ↦ v +ᵥ p` as a continuous affine automorphism of an affine space
+/-- The map `p ↦ v +ᵥ p` as a continuous affine automorphism of an affine space
   on which addition is continuous. -/
-def constVAdd /-[AddGroup P₁] [ContinuousAdd P₁]-/ (v : V₁) : P₁ ≃ᵃL[k] P₁ where
+def constVAdd [ContinuousConstVAdd V₁ P₁] (v : V₁) : P₁ ≃ᵃL[k] P₁ where
   toAffineEquiv := AffineEquiv.constVAdd k P₁ v
-  -- can I use the proofs in `Homeomorph.addLeft y`? I haven't managed to...
-  continuous_toFun := sorry
-  continuous_invFun := sorry
+  continuous_toFun := continuous_const_vadd v
+  continuous_invFun := continuous_const_vadd (-v)
 
-lemma constVAdd_coe [TopologicalSpace V₁] [ContinuousAdd V₁]/-[AddGroup P₁] [ContinuousAdd P₁]-/ (v : V₁) :
+lemma constVAdd_coe [ContinuousConstVAdd V₁ P₁] (v : V₁) :
   (constVAdd k P₁ v).toAffineEquiv = .constVAdd k P₁ v := rfl
 
 end ContinuousAffineEquiv
