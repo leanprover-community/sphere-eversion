@@ -184,8 +184,8 @@ theorem symm_refl : (refl k P₁).symm = refl k P₁ :=
 @[trans]
 def trans (e : P₁ ≃ᵃL[k] P₂) (e' : P₂ ≃ᵃL[k] P₃) : P₁ ≃ᵃL[k] P₃ where
   toAffineEquiv := e.toAffineEquiv.trans e'.toAffineEquiv
-  continuous_toFun := sorry
-  continuous_invFun := sorry
+  continuous_toFun := e'.continuous_toFun.comp (e.continuous_toFun)
+  continuous_invFun := e.continuous_invFun.comp (e'.continuous_invFun)
 
 @[simp]
 theorem coe_trans (e : P₁ ≃ᵃL[k] P₂) (e' : P₂ ≃ᵃL[k] P₃) : ⇑(e.trans e') = e' ∘ e :=
@@ -225,17 +225,20 @@ def toHomeomorph (e : P₁ ≃ᵃL[k] P₂) : P₁ ≃ₜ P₂ where
   __ := e
 
 section temp
-variable {E F : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
-  [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
+variable {E F : Type*} [AddCommGroup E] [Module k E] [TopologicalSpace E]
+  [AddCommGroup F] [Module k F] [TopologicalSpace F]
 
-/-- Reinterpret a `ContinuousLinearEquiv` as a `ContinuousAffineEquiv`. -/
-def _root_.ContinuousLinearEquiv.toContinuousAffineEquiv (L : E ≃L[ℝ] F) : E ≃ᵃL[ℝ] F where
+/-- Reinterpret a continuous linear equivalence between modules
+as a continuous affine equivalence. -/
+def _root_.ContinuousLinearEquiv.toContinuousAffineEquiv (L : E ≃L[k] F) : E ≃ᵃL[k] F where
   toAffineEquiv := L.toAffineEquiv
   continuous_toFun := L.continuous_toFun
   continuous_invFun := L.continuous_invFun
 
--- conversely, interpret a linear `ContinuousAffineEquiv` as a `ContinuousLinearEquiv`
--- toLinearEquiv := e.toAffineEquiv.toLinearEquiv (linear yada yada)
+@[simp]
+theorem _root_.ContinuousLinearEquiv.coe_toContinuousAffineEquiv (e : E ≃L[k] F) :
+    ⇑e.toContinuousAffineEquiv = e :=
+  rfl
 
 end temp
 
@@ -248,7 +251,7 @@ def constVAdd /-[AddGroup P₁] [ContinuousAdd P₁]-/ (v : V₁) : P₁ ≃ᵃL
   continuous_toFun := sorry
   continuous_invFun := sorry
 
-lemma constVAdd_coe /-[AddGroup P₁] [ContinuousAdd P₁]-/ (v : V₁) :
+lemma constVAdd_coe [TopologicalSpace V₁] [ContinuousAdd V₁]/-[AddGroup P₁] [ContinuousAdd P₁]-/ (v : V₁) :
   (constVAdd k P₁ v).toAffineEquiv = .constVAdd k P₁ v := rfl
 
 end ContinuousAffineEquiv

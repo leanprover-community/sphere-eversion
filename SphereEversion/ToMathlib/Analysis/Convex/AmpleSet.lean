@@ -95,7 +95,7 @@ theorem AmpleSet.preimage {s : Set F} (h : AmpleSet s) (L : E ≃ᵃL[ℝ] F) : 
 
 open scoped Pointwise
 /-- Affine translations of ample sets are ample. -/
-theorem AmpleSet.vadd {s : Set E} (h : AmpleSet s) {y : E} :
+theorem AmpleSet.vadd [ContinuousAdd E] {s : Set E} (h : AmpleSet s) {y : E} :
     AmpleSet (y +ᵥ s) := by
   show AmpleSet ((ContinuousAffineEquiv.constVAdd ℝ E y) '' s)
   exact AmpleSet.image h _
