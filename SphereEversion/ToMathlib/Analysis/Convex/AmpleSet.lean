@@ -38,7 +38,7 @@ ample set
 
 /-! ## Definition and invariance -/
 
-open Set
+open Set -- PRed in #11344
 
 variable {F : Type*} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
 

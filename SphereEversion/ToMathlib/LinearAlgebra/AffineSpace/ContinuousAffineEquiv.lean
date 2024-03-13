@@ -29,7 +29,7 @@ with multiplication corresponding to composition in `AffineEquiv.group`.
 
 -/
 
-open Function
+open Function -- PRed in #11341
 
 /-- A continuous affine equivalence between two affine topological spaces is an affine equivalence
 such that forward and inverse maps are continuous. -/

@@ -34,7 +34,7 @@ open scoped Convex Matrix
 variable {E F : Type*} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
   [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
 
-section Lemma213
+section Lemma213 -- PRed in #11337
 
 local notation "π" => Submodule.linearProjOfIsCompl _ _
 
@@ -97,8 +97,8 @@ theorem joinedIn_compl_zero_of_not_mem_span {x y : F} (hx : x ≠ 0)
   rw [← segment_eq_image_lineMap]
   exact fun t ht (h' : t = 0) ↦ (mt (mem_span_of_zero_mem_segment hx) hy) (h' ▸ ht)
 
-/-- In a vector space whose dimension is at least 2, the complement of
-`{0}` is ample. -/
+/-- In a real vector space whose dimension is at least two,
+the complement of `{0}` is path-connected. -/
 theorem isPathConnected_compl_zero_of_two_le_dim (hdim : 2 ≤ Module.rank ℝ F) :
     IsPathConnected ({0}ᶜ : Set F) := by
   rw [isPathConnected_iff]
@@ -141,6 +141,7 @@ theorem Submodule.connectedComponentIn_eq_self_of_two_le_codim (E : Submodule �
     connectedComponentIn ((E : Set F)ᶜ) x = (E : Set F)ᶜ :=
   IsPreconnected.connectedComponentIn (isConnected_compl_of_two_le_codim hcodim).2 hx
 
+-- PRed in #11342
 /-- Let `E` be a linear subspace in a real vector space. If `E` has codimension at
 least two then its complement is ample. -/
 theorem AmpleSet.of_two_le_codim {E : Submodule ℝ F} (hcodim : 2 ≤ Module.rank ℝ (F ⧸ E)) :
