@@ -4,9 +4,8 @@ import SphereEversion.ToMathlib.Topology.HausdorffDistance
 
 noncomputable section
 
-open Set Function Int TopologicalSpace Metric Filter MeasureTheory MeasureTheory.Measure Real
-
-open scoped Topology unitInterval
+open Set Function Int Metric Filter Real MeasureTheory
+open scoped  MeasureTheory.Measure Topology unitInterval
 
 local notation "∞" => (⊤ : ℕ∞)
 
