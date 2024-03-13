@@ -453,9 +453,9 @@ local notation "J¹XY" => OneJetBundle IX X IY Y
 
 local notation "J¹MN" => OneJetBundle IM M IN N
 
-local notation "IXY" => ModelWithCorners.prod (ModelWithCorners.prod IX IY) 𝓘(ℝ, EX →L[ℝ] EY)
+local notation "IXY" => ModelWithCorners.prod (IX.prod IY) 𝓘(ℝ, EX →L[ℝ] EY)
 
-local notation "IMN" => ModelWithCorners.prod (ModelWithCorners.prod IM IN) 𝓘(ℝ, EM →L[ℝ] EN)
+local notation "IMN" => ModelWithCorners.prod (IM.prod IN) 𝓘(ℝ, EM →L[ℝ] EN)
 
 /-! ## Transfer from J¹(X, Y) to J¹(M, N) and localized relations -/
 

@@ -279,21 +279,21 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*}
 
 @[simp]
 lemma ContMDiffMap.coe_fst :
-    ((ContMDiffMap.fst : C^n⟮ModelWithCorners.prod I I', M × M'; I, M⟯) : M × M' → M) = Prod.fst :=
+    ((ContMDiffMap.fst : C^n⟮I.prod I', M × M'; I, M⟯) : M × M' → M) = Prod.fst :=
   rfl
 
 @[simp]
 lemma ContMDiffMap.coe_snd :
-    ((ContMDiffMap.snd : C^n⟮ModelWithCorners.prod I I', M × M'; I', M'⟯) : M × M' → M') = Prod.snd :=
+    ((ContMDiffMap.snd : C^n⟮I.prod I', M × M'; I', M'⟯) : M × M' → M') = Prod.snd :=
   rfl
 
 @[simp]
 lemma ContMDiffMap.fst_apply (x : M) (x' : M') :
-    (ContMDiffMap.fst : C^n⟮ModelWithCorners.prod I I', M × M'; I, M⟯) (x, x') = x := rfl
+    (ContMDiffMap.fst : C^n⟮I.prod I', M × M'; I, M⟯) (x, x') = x := rfl
 
 @[simp]
 lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
-    (ContMDiffMap.snd : C^n⟮ModelWithCorners.prod I I', M × M'; I', M'⟯) (x, x') = x' := rfl
+    (ContMDiffMap.snd : C^n⟮I.prod I', M × M'; I', M'⟯) (x, x') = x' := rfl
 
 end
 

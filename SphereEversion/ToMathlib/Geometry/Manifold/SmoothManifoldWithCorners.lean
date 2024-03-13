@@ -9,12 +9,8 @@ open Set
 section
 
 variable {𝕜 E M H : Type*} [NontriviallyNormedField 𝕜]
-
-variable [TopologicalSpace H] [TopologicalSpace M] [ChartedSpace H M]
-
-variable [NormedAddCommGroup E] [NormedSpace 𝕜 E]
-
-variable (I : ModelWithCorners 𝕜 E H)
+  [TopologicalSpace H] [TopologicalSpace M] [ChartedSpace H M]
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E] (I : ModelWithCorners 𝕜 E H)
 
 namespace ChartedSpace
 

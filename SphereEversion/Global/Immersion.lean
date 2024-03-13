@@ -102,19 +102,17 @@ end General
 
 section Generalbis
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*}
-  [TopologicalSpace H] (I : ModelWithCorners ℝ E H) [ModelWithCorners.Boundaryless I] {M : Type*}
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type*}
-  [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E'] {H' : Type*}
-  [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [ModelWithCorners.Boundaryless I']
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) [I.Boundaryless]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [I'.Boundaryless]
   {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
-
-variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
-
-variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
-  {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP}
-  [ModelWithCorners.Boundaryless IP] {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
-  [SmoothManifoldWithCorners IP P] {C : Set (P × M)} {ε : M → ℝ}
+  [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
+  {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
+  {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [IP.Boundaryless]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  {C : Set (P × M)} {ε : M → ℝ}
 
 variable (M M' IP P)
 

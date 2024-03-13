@@ -18,11 +18,11 @@ open Set Filter ModelWithCorners Metric
 open scoped Topology Manifold
 
 variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
-  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM] {M : Type*}
-  [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M] [T2Space M]
-  [SigmaCompactSpace M] {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
-  [FiniteDimensional ℝ EX] {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
-  [ModelWithCorners.Boundaryless IX]
+  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  [T2Space M] [SigmaCompactSpace M]
+  {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX] [FiniteDimensional ℝ EX]
+  {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX} [Boundaryless IX]
   -- note: X is a metric space
   {X : Type*}
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [SigmaCompactSpace X]
@@ -344,9 +344,9 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     exact (hF_dist t x).le.trans (min_le_left _ _)
 
 variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
-  {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [Boundaryless IP] {P : Type*}
-  [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P] [SigmaCompactSpace P]
-  [T2Space P] {C : Set (P × M)}
+  {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [Boundaryless IP]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  [SigmaCompactSpace P] [T2Space P] {C : Set (P × M)}
 
 /-
 We now deduce the parametric case from the unparametric one using
@@ -365,8 +365,8 @@ theorem RelMfld.Ample.satisfiesHPrincipleWith (hRample : R.Ample) (hRopen : IsOp
   exact (hRample.relativize IP P).satisfiesHPrinciple is_op hC hδ_pos' hδ_cont'
 
 variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
-  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'}
-  [ModelWithCorners.Boundaryless I'] {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
+  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} [I'.Boundaryless]
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
   [SmoothManifoldWithCorners I' M'] [SigmaCompactSpace M'] [T2Space M']
 
 /-

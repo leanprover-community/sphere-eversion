@@ -288,7 +288,7 @@ theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomo
   rw [coe_openSmoothEmbOfDiffeoSubsetChartTarget, range_comp]
 
 variable {M} (F)
-variable [ModelWithCorners.Boundaryless IF] [FiniteDimensional ℝ F]
+variable [IF.Boundaryless] [FiniteDimensional ℝ F]
 
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
