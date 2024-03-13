@@ -48,12 +48,12 @@ theorem unionElim_eq_right [DecidablePred (· ∈ s)] (h1x : x ∈ s ∪ t) (h2x
 theorem unionElim_eq_right_of_eq [DecidablePred (· ∈ s)] (hxt : x ∈ t)
     (hfg : ∀ (x) (hxs : x ∈ s) (hxt : x ∈ t), f ⟨x, hxs⟩ = g ⟨x, hxt⟩) :
     unionElim f g ⟨x, mem_union_right _ hxt⟩ = g ⟨x, hxt⟩ :=
-  if hxs : x ∈ s then (unionElim_eq_left hxs).trans (hfg x hxs hxt) else unionElim_eq_right _ hxs
+  if hxs : x ∈ s then (unionElim_eq_left hxs).trans (hfg x hxs hxt) else unionElim_eq_right _ hxs _
 
 theorem unionElim_restrict [DecidablePred (· ∈ s)] (f : α → β) :
     unionElim (s.restrict f) (t.restrict f) = (s ∪ t).restrict f := by
   ext ⟨x, hx⟩
-  cases (mem_union _ _ _).mp hx <;> simp [union_elim_eq_left, union_elim_eq_right_of_eq, h]
+  --cases (mem_union _ _ _).mp hx <;> simp [union_elim_eq_left, union_elim_eq_right_of_eq, h]
 
 end Set
 
@@ -121,11 +121,11 @@ theorem eventualValue_unique [f.NeBot] {y : β} (hy : ∀ᶠ i in f, g i = y) :
 
 /-- This lemma is sometimes useful if the elaborator uses the nonempty instance in
   `eventual_value_unique` to find the implicit argument `y`. -/
-theorem eventualValue_unique' [f.NeBot] {hβ : Nonempty β} {y : β} (hy : ∀ᶠ i in f, g i = y) :
+theorem eventualValue_unique' [f.NeBot] {_ : Nonempty β} {y : β} (hy : ∀ᶠ i in f, g i = y) :
     eventualValue g f = y :=
   (eventualValue_unique hy).symm
 
-theorem eventualValue_eq_fn {g : ℕ → β} {hβ : Nonempty β} {n : ℕ} (h : ∀ m, n ≤ m → g m = g n) :
+theorem eventualValue_eq_fn {g : ℕ → β} {_ : Nonempty β} {n : ℕ} (h : ∀ m, n ≤ m → g m = g n) :
     eventualValue g atTop = g n :=
   eventualValue_unique' <| eventually_of_mem (mem_atTop _) h
 
@@ -233,7 +233,7 @@ theorem LocallyEventuallyConstantOn.eventuallyConstant (hgf : LocallyEventuallyC
   obtain ⟨O, hO, hg⟩ := hgf x hx;
   exact hg.eventuallyConstant (mem_of_mem_nhds hO)
 
-theorem LocallyEventuallyConstantOn.nonempty (hg : LocallyEventuallyConstantOn g f U) (hx : x ∈ U) :
+theorem LocallyEventuallyConstantOn.nonempty (_ : LocallyEventuallyConstantOn g f U) :
     Nonempty γ :=
   Nonempty.intro (g i x)
 
@@ -246,7 +246,8 @@ theorem LocallyEventuallyConstantOn.continuousWithinAt [TopologicalSpace δ] [f.
   simp_rw [Function.funext_iff, eventualValue_apply hgO] at hi
   refine (hg i).congr_nhds (eventually_of_mem hO fun y (hy : y ∈ O) ↦ ?_)
   refine Eq.trans ?_ (congr_arg F <| hi ⟨y, hy⟩).symm
-  apply eventualValue_compose
+  apply eventualValue_compose _
+  exact EventuallyConstantOn.eventuallyConstant hgO hy
 
 theorem LocallyEventuallyConstantOn.exists_nhdsSet_of_isCompact
     (hgf : LocallyEventuallyConstantOn g f U) {K : Set β} (hK : IsCompact K) (hKU : K ⊆ U) :

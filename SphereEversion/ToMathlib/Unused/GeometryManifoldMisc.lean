@@ -9,7 +9,7 @@ noncomputable section
 open Function
 section Topology
 
-variable {α β γ : Type _} [TopologicalSpace α] [TopologicalSpace β]
+variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
 
 theorem map_fst_nhdsWithin_eq {x : α × β} {s : Set α} :
     map Prod.fst (𝓝[Prod.fst ⁻¹' s] x) = 𝓝[s] x.1 := by cases x;
@@ -48,11 +48,11 @@ open SmoothManifoldWithCorners VectorBundleCore
 
 open scoped Bundle
 
-variable {𝕜 B F M : Type _} {E : B → Type _} [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)]
+variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)]
   [∀ x, Module 𝕜 (E x)] [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace (TotalSpace F E)]
-  [∀ x, TopologicalSpace (E x)] {EB : Type _} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
-  {HB : Type _} [TopologicalSpace HB] {IB : ModelWithCorners 𝕜 EB HB} [TopologicalSpace B]
-  [ChartedSpace HB B] {EM : Type _} [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] {HM : Type _}
+  [∀ x, TopologicalSpace (E x)] {EB : Type*} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
+  {HB : Type*} [TopologicalSpace HB] {IB : ModelWithCorners 𝕜 EB HB} [TopologicalSpace B]
+  [ChartedSpace HB B] {EM : Type*} [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] {HM : Type*}
   [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} [TopologicalSpace M] [ChartedSpace HM M]
   {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E] {e e' : Trivialization F (π F E)}
 
@@ -85,11 +85,11 @@ open SmoothManifoldWithCorners
 
 open scoped Bundle
 
-variable {𝕜 B F M : Type _} {E : B → Type _} [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)]
+variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)]
   [∀ x, Module 𝕜 (E x)] [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace (TotalSpace F E)]
-  [∀ x, TopologicalSpace (E x)] {EB : Type _} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
-  {HB : Type _} [TopologicalSpace HB] {IB : ModelWithCorners 𝕜 EB HB} [TopologicalSpace B]
-  [ChartedSpace HB B] {EM : Type _} [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] {HM : Type _}
+  [∀ x, TopologicalSpace (E x)] {EB : Type*} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
+  {HB : Type*} [TopologicalSpace HB] {IB : ModelWithCorners 𝕜 EB HB} [TopologicalSpace B]
+  [ChartedSpace HB B] {EM : Type*} [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] {HM : Type*}
   [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} [TopologicalSpace M] [ChartedSpace HM M]
   {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E] {e e' : Trivialization F (π F E)}
 
@@ -155,20 +155,20 @@ section SmoothManifoldWithCorners
 
 open SmoothManifoldWithCorners
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {E' : Type _} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {F' : Type _} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
-  {H : Type _} [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} {H' : Type _} [TopologicalSpace H']
-  {I' : ModelWithCorners 𝕜 E' H'} {G : Type _} [TopologicalSpace G] {J : ModelWithCorners 𝕜 F G}
-  {G' : Type _} [TopologicalSpace G'] {J' : ModelWithCorners 𝕜 F' G'} {M : Type _}
-  [TopologicalSpace M] [ChartedSpace H M] {M' : Type _} [TopologicalSpace M'] [ChartedSpace H' M']
-  {N : Type _} [TopologicalSpace N] [ChartedSpace G N] {N' : Type _} [TopologicalSpace N']
-  [ChartedSpace G' N'] {F'' : Type _} [NormedAddCommGroup F''] [NormedSpace 𝕜 F'']
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {F : Type*}
+  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {F' : Type*} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
+  {H : Type*} [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} {H' : Type*} [TopologicalSpace H']
+  {I' : ModelWithCorners 𝕜 E' H'} {G : Type*} [TopologicalSpace G] {J : ModelWithCorners 𝕜 F G}
+  {G' : Type*} [TopologicalSpace G'] {J' : ModelWithCorners 𝕜 F' G'} {M : Type*}
+  [TopologicalSpace M] [ChartedSpace H M] {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
+  {N : Type*} [TopologicalSpace N] [ChartedSpace G N] {N' : Type*} [TopologicalSpace N']
+  [ChartedSpace G' N'] {F'' : Type*} [NormedAddCommGroup F''] [NormedSpace 𝕜 F'']
 
 variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
   -- declare some additional normed spaces, used for fibers of vector bundles
-  {F₁ : Type _}
-  [NormedAddCommGroup F₁] [NormedSpace 𝕜 F₁] {F₂ : Type _} [NormedAddCommGroup F₂]
+  {F₁ : Type*}
+  [NormedAddCommGroup F₁] [NormedSpace 𝕜 F₁] {F₂ : Type*} [NormedAddCommGroup F₂]
   [NormedSpace 𝕜 F₂]
 
 variable [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
@@ -195,9 +195,9 @@ theorem contMDiffWithinAt_iff_contMDiffWithinAt_nhdsWithin {n : ℕ} :
 
 open Bundle
 
-variable {Z : M → Type _} [TopologicalSpace (TotalSpace F₁ Z)] [∀ b, TopologicalSpace (Z b)]
+variable {Z : M → Type*} [TopologicalSpace (TotalSpace F₁ Z)] [∀ b, TopologicalSpace (Z b)]
   [∀ b, AddCommMonoid (Z b)] [∀ b, Module 𝕜 (Z b)] [FiberBundle F₁ Z] [VectorBundle 𝕜 F₁ Z]
-  [SmoothVectorBundle F₁ Z I] {Z₂ : M' → Type _} [TopologicalSpace (TotalSpace F₂ Z₂)]
+  [SmoothVectorBundle F₁ Z I] {Z₂ : M' → Type*} [TopologicalSpace (TotalSpace F₂ Z₂)]
   [∀ b, TopologicalSpace (Z₂ b)] [∀ b, AddCommMonoid (Z₂ b)] [∀ b, Module 𝕜 (Z₂ b)]
   [FiberBundle F₂ Z₂] [VectorBundle 𝕜 F₂ Z₂] [SmoothVectorBundle F₂ Z₂ I']
 
