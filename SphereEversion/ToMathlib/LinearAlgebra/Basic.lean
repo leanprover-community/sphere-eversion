@@ -7,7 +7,7 @@ open Submodule Function
 
 section
 
-variable {R : Type _} {R₂ : Type _} {M : Type _} {M₂ : Type _} [Semiring R] [Semiring R₂]
+variable {R : Type*} {R₂ : Type*} {M : Type*} {M₂ : Type*} [Semiring R] [Semiring R₂]
   [AddCommMonoid M] [AddCommMonoid M₂] {σ₁₂ : R →+* R₂} [Module R M] [Module R₂ M₂]
 
 theorem Submodule.sup_eq_span_union (s t : Submodule R M) : s ⊔ t = span R (s ∪ t) := by
@@ -24,7 +24,7 @@ end
 
 section
 
-variable {R : Type _} {R₂ : Type _} {M : Type _} {M₂ : Type _} [Ring R] [Ring R₂] [AddCommGroup M]
+variable {R : Type*} {R₂ : Type*} {M : Type*} {M₂ : Type*} [Ring R] [Ring R₂] [AddCommGroup M]
   [AddCommGroup M₂] {σ₁₂ : R →+* R₂} [Module R M] [Module R₂ M₂] {p q : Submodule R M}
   [RingHomSurjective σ₁₂]
 
@@ -54,7 +54,7 @@ theorem LinearMap.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (
 
 end
 
-theorem LinearMap.ker_inf_eq_bot {R : Type _} {R₂ : Type _} {M : Type _} {M₂ : Type _} [Ring R]
+theorem LinearMap.ker_inf_eq_bot {R : Type*} {R₂ : Type*} {M : Type*} {M₂ : Type*} [Ring R]
     [Ring R₂] [AddCommGroup M] [AddCommGroup M₂] [Module R M] [Module R₂ M₂] {τ₁₂ : R →+* R₂}
     {f : M →ₛₗ[τ₁₂] M₂} {S : Submodule R M} : LinearMap.ker f ⊓ S = ⊥ ↔ Set.InjOn f S := by
   rw [Set.injOn_iff_injective, inf_comm, ← disjoint_iff, LinearMap.disjoint_ker']

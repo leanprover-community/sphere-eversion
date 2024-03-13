@@ -10,7 +10,7 @@ open scoped Affine Matrix BigOperators
 
 section BarycentricDet
 
-variable (ι R k P : Type _) {M : Type _} [Ring R] [AddCommGroup M] [Module R M] [AffineSpace M P]
+variable (ι R k P : Type*) {M : Type*} [Ring R] [AddCommGroup M] [Module R M] [AffineSpace M P]
 
 /-- The set of affine bases for an affine space. -/
 def affineBases : Set (ι → P) :=
@@ -49,7 +49,7 @@ theorem evalBarycentricCoords_apply_of_not_mem_bases [DecidablePred (· ∈ affi
 
 variable {ι R P}
 
-theorem evalBarycentricCoords_eq_det [Fintype ι] [DecidableEq ι] (S : Type _) [Field S] [Module S M]
+theorem evalBarycentricCoords_eq_det [Fintype ι] [DecidableEq ι] (S : Type*) [Field S] [Module S M]
     [∀ v, Decidable (v ∈ affineBases ι S P)] (b : AffineBasis ι S P) (p : P) (v : ι → P) :
     evalBarycentricCoords ι S P p v =
       (b.toMatrix v).det⁻¹ • (b.toMatrix v)ᵀ.cramer (b.coords p) := by
@@ -72,7 +72,7 @@ end BarycentricDet
 
 namespace Matrix
 
-variable (ι k : Type _) [Fintype ι] [DecidableEq ι] [NontriviallyNormedField k]
+variable (ι k : Type*) [Fintype ι] [DecidableEq ι] [NontriviallyNormedField k]
 
 attribute [instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
@@ -102,7 +102,7 @@ end Matrix
 
 section smooth_barycentric
 
-variable (ι 𝕜 F : Type _)
+variable (ι 𝕜 F : Type*)
 
 variable [Fintype ι] [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
 

@@ -19,10 +19,10 @@ section Calculus
 
 open ContinuousLinearMap
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {E₁ : Type _} [NormedAddCommGroup E₁] [NormedSpace 𝕜 E₁] {E₂ : Type _}
-  [NormedAddCommGroup E₂] [NormedSpace 𝕜 E₂] {E' : Type _} [NormedAddCommGroup E']
-  [NormedSpace 𝕜 E'] {F : Type _} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type _}
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
+  [NormedSpace 𝕜 E] {E₁ : Type*} [NormedAddCommGroup E₁] [NormedSpace 𝕜 E₁] {E₂ : Type*}
+  [NormedAddCommGroup E₂] [NormedSpace 𝕜 E₂] {E' : Type*} [NormedAddCommGroup E']
+  [NormedSpace 𝕜 E'] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*}
   [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : ℕ∞}
 
 theorem ContDiffAt.comp₂ {g : E₁ × E₂ → G} {f₁ : F → E₁} {f₂ : F → E₂} {x : F}
@@ -66,11 +66,11 @@ theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableA
 variable (𝕜)
 
 /-- The first partial derivative of a binary function. -/
-def partialFDerivFst {F : Type _} (φ : E → F → G) : E → F → E →L[𝕜] G := fun (e₀ : E) (f₀ : F) ↦
+def partialFDerivFst {F : Type*} (φ : E → F → G) : E → F → E →L[𝕜] G := fun (e₀ : E) (f₀ : F) ↦
   fderiv 𝕜 (fun e ↦ φ e f₀) e₀
 
 /-- The second partial derivative of a binary function. -/
-def partialFDerivSnd {E : Type _} (φ : E → F → G) : E → F → F →L[𝕜] G := fun (e₀ : E) (f₀ : F) ↦
+def partialFDerivSnd {E : Type*} (φ : E → F → G) : E → F → F →L[𝕜] G := fun (e₀ : E) (f₀ : F) ↦
   fderiv 𝕜 (fun f ↦ φ e₀ f) f₀
 
 local notation "∂₁" => partialFDerivFst
@@ -150,12 +150,12 @@ theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
   simp only [partialFDerivSnd_eq_smulRight, smulRight_apply, one_apply, one_smul]
 
 @[to_additive]
-nonrec theorem WithTop.le_mul_self {α : Type _} [CanonicallyOrderedCommMonoid α] (n m : α) :
+nonrec theorem WithTop.le_mul_self {α : Type*} [CanonicallyOrderedCommMonoid α] (n m : α) :
     (n : WithTop α) ≤ (m * n : α) :=
   WithTop.coe_le_coe.mpr le_mul_self
 
 @[to_additive]
-nonrec theorem WithTop.le_self_mul {α : Type _} [CanonicallyOrderedCommMonoid α] (n m : α) :
+nonrec theorem WithTop.le_self_mul {α : Type*} [CanonicallyOrderedCommMonoid α] (n m : α) :
     (n : WithTop α) ≤ (n * m : α) :=
   WithTop.coe_le_coe.mpr le_self_mul
 
@@ -197,7 +197,7 @@ section RealCalculus
 
 open ContinuousLinearMap
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
   [NormedSpace ℝ F]
 
 theorem ContDiff.lipschitzOnWith {s : Set E} {f : E → F} {n} (hf : ContDiff ℝ n f) (hn : 1 ≤ n)

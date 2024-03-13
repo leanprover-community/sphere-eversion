@@ -216,7 +216,7 @@ theorem map_zero'' : (⇑(φ : ℝ ≃ ℝ) : ℝ → ℝ) 0 = 0 :=
 @[simp]
 theorem map_one : φ 1 = 1 := by conv_lhs => rw [← zero_add (1 : ℝ), eqv, map_zero, zero_add]
 
-instance {α : Type _} : HasUncurry (α → EquivariantEquiv) (α × ℝ) ℝ :=
+instance {α : Type*} : HasUncurry (α → EquivariantEquiv) (α × ℝ) ℝ :=
   ⟨fun φ p => φ p.1 p.2⟩
 
 @[simp]

@@ -7,7 +7,7 @@ We no longer intend to use this file in the sphere eversion project.
 -/
 namespace Function
 
-variable {ι : Sort _} [DecidableEq ι] {α β : ι → Type _}
+variable {ι : Sort _} [DecidableEq ι] {α β : ι → Type*}
 
 /-- Special case of `function.apply_update`. Useful for `rw`/`simp`. -/
 theorem update_fst (g : ∀ i, α i × β i) (i : ι) (v : α i × β i) (j : ι) :
@@ -25,7 +25,7 @@ open Function
 
 namespace MultilinearMap
 
-variable {R ι ι' M₃ M₄ : Type _} {M₁ M₂ : ι → Type _} {N : ι' → Type _}
+variable {R ι ι' M₃ M₄ : Type*} {M₁ M₂ : ι → Type*} {N : ι' → Type*}
 
 variable [Semiring R]
 
@@ -56,7 +56,7 @@ end MultilinearMap
 
 namespace ContinuousMultilinearMap
 
-variable {R ι ι' : Type _} {M₁ M₂ : ι → Type _} {M₃ M₄ : Type _} {N : ι' → Type _}
+variable {R ι ι' : Type*} {M₁ M₂ : ι → Type*} {M₃ M₄ : Type*} {N : ι' → Type*}
 
 variable [Semiring R]
 

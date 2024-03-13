@@ -9,7 +9,7 @@ open scoped Topology Filter NNReal BigOperators Interval
 
 section
 
-variable {E : Type _} [NormedAddCommGroup E]
+variable {E : Type*} [NormedAddCommGroup E]
 
 -- lemma interval_integrable_of_integral_ne_zero
 --   [complete_space E] [normed_space ℝ E] {a b : ℝ}
@@ -95,7 +95,7 @@ theorem abs_intervalIntegral_eq (f : ℝ → ℝ) (a b : ℝ) (μ : Measure ℝ)
   norm_intervalIntegral_eq f a b μ
 
 -- not ported
-theorem intervalIntegrable_of_norm_sub_le {β : Type _} [NormedAddCommGroup β] {f₀ f₁ : ℝ → β}
+theorem intervalIntegrable_of_norm_sub_le {β : Type*} [NormedAddCommGroup β] {f₀ f₁ : ℝ → β}
     {g : ℝ → ℝ} {a b : ℝ} (hf₁_m : AEStronglyMeasurable f₁ (μ.restrict <| Ι a b))
     (hf₀_i : IntervalIntegrable f₀ μ a b) (hg_i : IntervalIntegrable g μ a b)
     (h : ∀ᵐ a ∂μ.restrict <| Ι a b, ‖f₀ a - f₁ a‖ ≤ g a) : IntervalIntegrable f₁ μ a b :=

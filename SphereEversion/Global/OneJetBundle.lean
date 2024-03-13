@@ -36,26 +36,28 @@ open Filter Set Equiv Bundle ContinuousLinearMap
 
 open scoped Manifold Topology Bundle
 
-variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type _}
-  [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type _} [TopologicalSpace H']
-  (I' : ModelWithCorners 𝕜 E' H') (M' : Type _) [TopologicalSpace M'] [ChartedSpace H' M']
-  [SmoothManifoldWithCorners I' M'] {E'' : Type _} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
-  {H'' : Type _} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type _}
-  [TopologicalSpace M''] [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M''] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type _} [TopologicalSpace G]
-  (J : ModelWithCorners 𝕜 F G) {N : Type _} [TopologicalSpace N] [ChartedSpace G N]
-  [SmoothManifoldWithCorners J N] {F' : Type _} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
-  {G' : Type _} [TopologicalSpace G'] (J' : ModelWithCorners 𝕜 F' G') {N' : Type _}
-  [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N'] {E₂ : Type _}
-  [NormedAddCommGroup E₂] [NormedSpace 𝕜 E₂] {H₂ : Type _} [TopologicalSpace H₂]
-  {I₂ : ModelWithCorners 𝕜 E₂ H₂} {M₂ : Type _} [TopologicalSpace M₂] [ChartedSpace H₂ M₂]
-  [SmoothManifoldWithCorners I₂ M₂] {E₃ : Type _} [NormedAddCommGroup E₃] [NormedSpace 𝕜 E₃]
-  {H₃ : Type _} [TopologicalSpace H₃] {I₃ : ModelWithCorners 𝕜 E₃ H₃} {M₃ : Type _}
-  [TopologicalSpace M₃] [ChartedSpace H₃ M₃] [SmoothManifoldWithCorners I₃ M₃]
-
-variable {M M'}
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
+  {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''}
+  {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+  {G : Type*} [TopologicalSpace G] (J : ModelWithCorners 𝕜 F G)
+  {N : Type*} [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  {F' : Type*} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
+  {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners 𝕜 F' G')
+  {N' : Type*} [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
+  {E₂ : Type*} [NormedAddCommGroup E₂] [NormedSpace 𝕜 E₂]
+  {H₂ : Type*} [TopologicalSpace H₂] {I₂ : ModelWithCorners 𝕜 E₂ H₂}
+  {M₂ : Type*} [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
+  {E₃ : Type*} [NormedAddCommGroup E₃] [NormedSpace 𝕜 E₃]
+  {H₃ : Type*} [TopologicalSpace H₃] {I₃ : ModelWithCorners 𝕜 E₃ H₃}
+  {M₃ : Type*} [TopologicalSpace M₃] [ChartedSpace H₃ M₃] [SmoothManifoldWithCorners I₃ M₃]
 
 local notation "σ" => RingHom.id 𝕜
 

@@ -8,7 +8,7 @@ open Set Function
 
 /-- We could generalise and replace `ι × ℝ` with a dependent family of types but it doesn't seem
 worth it. Proof partly based on `refinement_of_locallyCompact_sigmaCompact_of_nhds_basis_set`. -/
-theorem exists_countable_locallyFinite_cover {ι X : Type _} [TopologicalSpace X] [T2Space X]
+theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X] [T2Space X]
     [LocallyCompactSpace X] [SigmaCompactSpace X] {c : ι → X} {W : ι → ℝ → Set X}
     {B : ι → ℝ → Set X} {p : ι → ℝ → Prop} (hc : Surjective c) (hW₀ : ∀ i r, p i r → c i ∈ W i r)
     (hW₁ : ∀ i r, p i r → IsOpen (W i r)) (hB : ∀ i, (𝓝 (c i)).HasBasis (p i) (B i)) :

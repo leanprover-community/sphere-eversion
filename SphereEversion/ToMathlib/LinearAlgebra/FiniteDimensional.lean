@@ -2,7 +2,7 @@ import Mathlib.LinearAlgebra.FiniteDimensional
 
 open FiniteDimensional Submodule
 
-variable {𝕜 : Type _} [Field 𝕜] {E : Type _} [AddCommGroup E] [Module 𝕜 E] {E' : Type _}
+variable {𝕜 : Type*} [Field 𝕜] {E : Type*} [AddCommGroup E] [Module 𝕜 E] {E' : Type*}
   [AddCommGroup E'] [Module 𝕜 E']
 
 theorem two_le_rank_of_rank_lt_rank [FiniteDimensional 𝕜 E] [FiniteDimensional 𝕜 E'] {π : E →ₗ[𝕜] 𝕜}

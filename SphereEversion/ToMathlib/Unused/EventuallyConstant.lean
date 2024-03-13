@@ -30,7 +30,7 @@ theorem ContinuousWithinAt.congr_nhds {α β} [TopologicalSpace α] [Topological
 namespace Set
 
 -- move
-variable {α β γ : Type _} {s t : Set α} {f : s → β} {g : t → β} {x : α}
+variable {α β γ : Type*} {s t : Set α} {f : s → β} {g : t → β} {x : α}
 
 /-- The union `f ∪ g` of two functions `f : s → β` and `g : t → β`.
   On the intersection `s ∩ t`, the function `f ∪ g` corresponds to `f`. -/
@@ -63,7 +63,7 @@ open Set
 
 namespace Filter
 
-variable {α β γ : Type _} {g : α → β} {f : Filter α} {x : α} {y : β}
+variable {α β γ : Type*} {g : α → β} {f : Filter α} {x : α} {y : β}
 
 /-- The proposition that a function is eventually constant along a fitler on the domain. -/
 def EventuallyConstant (g : α → β) (f : Filter α) : Prop :=
@@ -100,7 +100,7 @@ theorem EventuallyConstant.compose (h : EventuallyConstant g f) (g' : β → γ)
   cases' h with y hy;
   exact ⟨g' y, hy.mono fun x ↦ congr_arg g'⟩
 
-theorem EventuallyConstant.apply {ι : Type _} {p : ι → Type _} {g : α → ∀ x, p x}
+theorem EventuallyConstant.apply {ι : Type*} {p : ι → Type*} {g : α → ∀ x, p x}
     (h : EventuallyConstant g f) (i : ι) : EventuallyConstant (fun x ↦ g x i) f :=
   h.compose fun p ↦ p i
 
@@ -145,7 +145,7 @@ theorem eventualValue_compose [f.NeBot] (h : EventuallyConstant g f) (g' : β �
       g' (@eventualValue _ _ h.nonempty g f) :=
   (eventualValue_unique <| (eventually_eq_eventualValue h).mono fun x ↦ congr_arg g').symm
 
-theorem eventualValue_apply {ι : Type _} {p : ι → Type _} [f.NeBot] {g : α → ∀ x, p x}
+theorem eventualValue_apply {ι : Type*} {p : ι → Type*} [f.NeBot] {g : α → ∀ x, p x}
     (h : EventuallyConstant g f) (i : ι) :
     @eventualValue _ _ h.nonempty g f i =
       @eventualValue _ _ (h.apply i).nonempty (fun x ↦ g x i) f :=
@@ -182,7 +182,7 @@ end Filter
 
 open Filter
 
-variable {α β γ δ : Type _} {g : α → β → γ} {f : Filter α} {O U : Set β} {i : α} {x : β}
+variable {α β γ δ : Type*} {g : α → β → γ} {f : Filter α} {O U : Set β} {i : α} {x : β}
 
 section EventuallyConstantOn
 

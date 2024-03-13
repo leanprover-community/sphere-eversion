@@ -41,7 +41,7 @@ open LinearMap (ker)
 
 section NoNorm
 
-variable (E : Type _) {E' F G : Type _}
+variable (E : Type*) {E' F G : Type*}
 
 variable [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
 
@@ -187,12 +187,12 @@ end NoNorm
 namespace DualPair
 local notation "∞" => (⊤ : ℕ∞)
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
   [NormedSpace ℝ F]
 
 /- In the next two lemmas, finite dimensionality of `E` is clearly uneeded, but allows
 to use `contDiff_clm_apply_iff` and `continuous_clm_apply`. -/
-theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type _} [NormedAddCommGroup G]
+theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type*} [NormedAddCommGroup G]
     [NormedSpace ℝ G] {φ : G → E →L[ℝ] F} (hφ : 𝒞 ∞ φ) {w : G → F} (hw : 𝒞 ∞ w) :
     𝒞 ∞ fun g ↦ p.update (φ g) (w g) := by
   apply hφ.add
@@ -200,7 +200,7 @@ theorem smooth_update [FiniteDimensional ℝ E] (p : DualPair E) {G : Type _} [N
   intro y
   exact (hw.sub (contDiff_clm_apply_iff.mp hφ p.v)).const_smul _
 
-theorem continuous_update [FiniteDimensional ℝ E] (p : DualPair E) {X : Type _} [TopologicalSpace X]
+theorem continuous_update [FiniteDimensional ℝ E] (p : DualPair E) {X : Type*} [TopologicalSpace X]
     {φ : X → E →L[ℝ] F} (hφ : Continuous φ) {w : X → F} (hw : Continuous w) :
     Continuous fun g ↦ p.update (φ g) (w g) := by
   apply hφ.add
@@ -210,12 +210,12 @@ theorem continuous_update [FiniteDimensional ℝ E] (p : DualPair E) {X : Type _
 
 end DualPair
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
   [NormedSpace ℝ F]
 
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`,
 `e.DualPair i` is given by the `i`th basis element and its dual. -/
-def Basis.dualPair [FiniteDimensional ℝ E] {ι : Type _} [Fintype ι] [DecidableEq ι]
+def Basis.dualPair [FiniteDimensional ℝ E] {ι : Type*} [Fintype ι] [DecidableEq ι]
     (e : Basis ι ℝ E) (i : ι) : DualPair E where
   π := LinearMap.toContinuousLinearMap (e.dualBasis i)
   v := e i

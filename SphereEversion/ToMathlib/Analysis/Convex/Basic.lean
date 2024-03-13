@@ -7,7 +7,7 @@ open scoped BigOperators
 open Function Set
 
 -- move
-theorem map_finsum {β α γ : Type _} [AddCommMonoid β] [AddCommMonoid γ] {G : Type _}
+theorem map_finsum {β α γ : Type*} [AddCommMonoid β] [AddCommMonoid γ] {G : Type*}
     [FunLike G β γ] [AddMonoidHomClass G β γ] (g : G) {f : α → β} (hf : (Function.support f).Finite) :
     g (∑ᶠ i, f i) = ∑ᶠ i, g (f i) :=
   (g : β →+ γ).map_finsum hf
@@ -20,30 +20,30 @@ theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f 
 -- end move
 section
 
-variable {𝕜 𝕜' : Type _} {E : Type _} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
-  {E₂ : Type _} [AddCommMonoid E₂] [Module 𝕜 E₂] {E' : Type _} [AddCommMonoid E']
+variable {𝕜 𝕜' : Type*} {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
+  {E₂ : Type*} [AddCommMonoid E₂] [Module 𝕜 E₂] {E' : Type*} [AddCommMonoid E']
   [OrderedSemiring 𝕜'] [Module 𝕜' E'] (σ : 𝕜 →+*o 𝕜')
 
-def reallyConvexHull (𝕜 : Type _) {E : Type _} [OrderedSemiring 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
+def reallyConvexHull (𝕜 : Type*) {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
     (s : Set E) : Set E :=
   {e | ∃ w : E → 𝕜, 0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
 
 -- https://xkcd.com/927/
-theorem finsum.exists_ne_zero_of_sum_ne_zero {β α : Type _} {s : Finset α} {f : α → β}
+theorem finsum.exists_ne_zero_of_sum_ne_zero {β α : Type*} {s : Finset α} {f : α → β}
     [AddCommMonoid β] : ∑ᶠ x ∈ s, f x ≠ 0 → ∃ a ∈ s, f a ≠ 0 := by
   rw [finsum_mem_finset_eq_sum]
   exact Finset.exists_ne_zero_of_sum_ne_zero
 
 -- rename: `mul_support_finite_of_finprod_ne_one`?
 @[to_additive]
-theorem finite_of_finprod_ne_one {M : Type _} {ι : Sort _} [CommMonoid M] {f : ι → M}
+theorem finite_of_finprod_ne_one {M : Type*} {ι : Sort _} [CommMonoid M] {f : ι → M}
     (h : ∏ᶠ i, f i ≠ 1) : (mulSupport f).Finite := by
   classical
   rw [finprod_def] at h
   contrapose h
   rw [Classical.not_not, dif_neg h]
 
-theorem support_finite_of_finsum_eq_of_neZero {M : Type _} {ι : Sort _} [AddCommMonoid M]
+theorem support_finite_of_finsum_eq_of_neZero {M : Type*} {ι : Sort _} [AddCommMonoid M]
     {f : ι → M} {x : M} [NeZero x] (h : ∑ᶠ i, f i = x) : (support f).Finite := by
   apply finite_of_finsum_ne_zero
   rw [h]
@@ -54,13 +54,13 @@ theorem Subsingleton.mulSupport_eq {α β} [Subsingleton β] [One β] (f : α �
     mulSupport f = ∅ := by
   rw [mulSupport_eq_empty_iff]; apply Subsingleton.elim
 
-theorem support_finite_of_finsum_eq_one {M : Type _} {ι : Sort _} [NonAssocSemiring M] {f : ι → M}
+theorem support_finite_of_finsum_eq_one {M : Type*} {ι : Sort _} [NonAssocSemiring M] {f : ι → M}
     (h : ∑ᶠ i, f i = 1) : (support f).Finite := by
   cases subsingleton_or_nontrivial M
   · simp_rw [Subsingleton.support_eq, finite_empty]
   exact support_finite_of_finsum_eq_of_neZero h
 
-theorem finsum_sum_filter {α β M : Type _} [AddCommMonoid M] (f : β → α) (s : Finset β)
+theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s : Finset β)
     [DecidableEq α] (g : β → M) :
     ∑ᶠ x : α, ∑ y : β in Finset.filter (fun j : β ↦ f j = x) s, g y = ∑ k in s, g k := by
   rw [finsum_eq_finset_sum_of_support_subset _ (show _ ⊆ ↑(s.image f) from _)]
@@ -73,7 +73,7 @@ theorem finsum_sum_filter {α β M : Type _} [AddCommMonoid M] (f : β → α) (
     simp at h ⊢
     exact ⟨a, h⟩
 
-theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type _} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
+theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type*} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
     (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
     ∑ i in t, w i • z i ∈ reallyConvexHull 𝕜 s := by
   classical
@@ -104,7 +104,7 @@ theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set 
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 
 /-- Generalization of `convex` to semirings. We only add the `s = ∅` clause if `𝕜` is trivial. -/
-def ReallyConvex (𝕜 : Type _) {E : Type _} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
+def ReallyConvex (𝕜 : Type*) {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
     (s : Set E) : Prop :=
   s = ∅ ∨ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
 
@@ -144,12 +144,12 @@ theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ really
     exact h ⟨w, w_pos, supp_w, sum_w, rfl⟩
 
 -- turn this into an iff
-theorem ReallyConvex.sum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type _} {t : Finset ι}
+theorem ReallyConvex.sum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {t : Finset ι}
     {w : ι → 𝕜} {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1)
     (hz : ∀ i ∈ t, z i ∈ s) : ∑ i in t, w i • z i ∈ s :=
   reallyConvex_iff_hull.mp hs (sum_mem_reallyConvexHull h₀ h₁ hz)
 
-theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type _} {w : ι → 𝕜}
+theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜}
     {z : ι → E} (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
     ∑ᶠ i, w i • z i ∈ s := by
   have hw : (support w).Finite := support_finite_of_finsum_eq_one h₁
@@ -206,7 +206,7 @@ end
 
 section
 
-variable (𝕜 : Type _) {E : Type _} [LinearOrderedField 𝕜] [AddCommGroup E] [Module 𝕜 E]
+variable (𝕜 : Type*) {E : Type*} [LinearOrderedField 𝕜] [AddCommGroup E] [Module 𝕜 E]
 
 theorem reallyConvex_iff_convex {s : Set E} : ReallyConvex 𝕜 s ↔ Convex 𝕜 s := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩

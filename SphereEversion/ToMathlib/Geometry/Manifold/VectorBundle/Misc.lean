@@ -21,10 +21,10 @@ open scoped Classical Manifold Bundle
 
 namespace FiberBundle
 
-variable {𝕜 B B' F M : Type _} {E : B → Type _}
+variable {𝕜 B B' F M : Type*} {E : B → Type*}
 
 variable [TopologicalSpace F] [TopologicalSpace (TotalSpace F E)] [∀ x, TopologicalSpace (E x)]
-  {HB : Type _} [TopologicalSpace HB] [TopologicalSpace B] [ChartedSpace HB B] [FiberBundle F E]
+  {HB : Type*} [TopologicalSpace HB] [TopologicalSpace B] [ChartedSpace HB B] [FiberBundle F E]
 
 theorem chartedSpace_chartAt_fst' (x y : TotalSpace F E) :
     (chartAt (ModelProd HB F) x y).1 = chartAt HB x.proj (trivializationAt F E x.proj y).1 := by
@@ -43,7 +43,7 @@ end FiberBundle
 
 section VectorBundle
 
-variable {𝕜 B F F₁ F₂ : Type _} {E : B → Type _} {E₁ : B → Type _} {E₂ : B → Type _}
+variable {𝕜 B F F₁ F₂ : Type*} {E : B → Type*} {E₁ : B → Type*} {E₂ : B → Type*}
   [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)] [∀ x, Module 𝕜 (E x)]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace (TotalSpace F E)]
   [∀ x, TopologicalSpace (E x)] [∀ x, AddCommMonoid (E₁ x)] [∀ x, Module 𝕜 (E₁ x)]
@@ -58,7 +58,7 @@ end VectorBundle
 
 namespace VectorBundleCore
 
-variable {R 𝕜 B F ι : Type _} [NontriviallyNormedField R] [NormedAddCommGroup F] [NormedSpace R F]
+variable {R 𝕜 B F ι : Type*} [NontriviallyNormedField R] [NormedAddCommGroup F] [NormedSpace R F]
   [TopologicalSpace B] (Z : VectorBundleCore R B F ι)
 
 /-- `Z.coord_change j i` is a partial inverse of `Z.coord_change i j`. -/
@@ -70,7 +70,7 @@ end VectorBundleCore
 
 namespace Bundle.Trivial
 
-variable {𝕜 B F : Type _}
+variable {𝕜 B F : Type*}
 
 variable [NontriviallyNormedField 𝕜] [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace B]
 
@@ -91,15 +91,15 @@ end Bundle.Trivial
 
 section Hom
 
-variable {𝕜₁ : Type _} [NontriviallyNormedField 𝕜₁] {𝕜₂ : Type _} [NontriviallyNormedField 𝕜₂]
+variable {𝕜₁ : Type*} [NontriviallyNormedField 𝕜₁] {𝕜₂ : Type*} [NontriviallyNormedField 𝕜₂]
   (σ : 𝕜₁ →+* 𝕜₂) [iσ : RingHomIsometric σ]
 
-variable {B : Type _} [TopologicalSpace B]
+variable {B : Type*} [TopologicalSpace B]
 
-variable (F₁ : Type _) [NormedAddCommGroup F₁] [NormedSpace 𝕜₁ F₁] (E₁ : B → Type _)
+variable (F₁ : Type*) [NormedAddCommGroup F₁] [NormedSpace 𝕜₁ F₁] (E₁ : B → Type*)
   [∀ x, AddCommGroup (E₁ x)] [∀ x, Module 𝕜₁ (E₁ x)] [TopologicalSpace (TotalSpace F₁ E₁)]
 
-variable (F₂ : Type _) [NormedAddCommGroup F₂] [NormedSpace 𝕜₂ F₂] (E₂ : B → Type _)
+variable (F₂ : Type*) [NormedAddCommGroup F₂] [NormedSpace 𝕜₂ F₂] (E₂ : B → Type*)
   [∀ x, AddCommGroup (E₂ x)] [∀ x, Module 𝕜₂ (E₂ x)] [TopologicalSpace (TotalSpace F₂ E₂)]
 
 variable [RingHomIsometric σ]
@@ -121,13 +121,13 @@ end Hom
 section Pullback
 
 /-- We need some instances like this to work with negation on pullbacks -/
-instance {B B'} {E : B → Type _} {f : B' → B} {x : B'} [∀ x', AddCommGroup (E x')] :
+instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', AddCommGroup (E x')] :
     AddCommGroup ((f *ᵖ E) x) := by delta Bundle.Pullback; infer_instance
 
-instance {B B'} {E : B → Type _} {f : B' → B} {x : B'} [∀ x', Zero (E x')] : Zero ((f *ᵖ E) x) := by
+instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', Zero (E x')] : Zero ((f *ᵖ E) x) := by
   delta Bundle.Pullback; infer_instance
 
-variable {B F B' K : Type _} {E : B → Type _} {f : K} [TopologicalSpace B']
+variable {B F B' K : Type*} {E : B → Type*} {f : K} [TopologicalSpace B']
   [TopologicalSpace (TotalSpace F E)] [TopologicalSpace F] [TopologicalSpace B] [∀ b, Zero (E b)]
   [FunLike K B' B] [ContinuousMapClass K B' B]
 
@@ -155,11 +155,11 @@ end Pullback
 
 section PullbackVb
 
-variable {R 𝕜 B F B' : Type _} {E : B → Type _}
+variable {R 𝕜 B F B' : Type*} {E : B → Type*}
 
 variable [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace B] [∀ x, AddCommMonoid (E x)]
-  [∀ x, Module 𝕜 (E x)] [∀ x, TopologicalSpace (E x)] [FiberBundle F E] {K : Type _}
+  [∀ x, Module 𝕜 (E x)] [∀ x, TopologicalSpace (E x)] [FiberBundle F E] {K : Type*}
   [FunLike K B' B] [ContinuousMapClass K B' B] (f : K)
 
 namespace Trivialization

@@ -23,7 +23,7 @@ ball in coordinate space into a set in `M`. These can be a useful neighbourhood 
 def ball (x : M) (r : ℝ) :=
   (extChartAt I x).symm '' Metric.ball (extChartAt I x x) r
 
-theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type _} {s : ι → Set M}
+theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type*} {s : ι → Set M}
     (s_op : ∀ j, IsOpen <| s j) (cov : (⋃ j, s j) = univ) :
     (𝓝 x).HasBasis (fun r ↦ 0 < r ∧ Metric.ball (extChartAt I x x) r ⊆ (extChartAt I x).target ∧
         ∃ j, ChartedSpace.ball I x r ⊆ s j)

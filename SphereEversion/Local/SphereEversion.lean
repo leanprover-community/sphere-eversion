@@ -33,7 +33,7 @@ open scoped Topology RealInnerProductSpace
 
 section SphereEversion
 
-variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {F : Type _}
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {F : Type*}
   [NormedAddCommGroup F] [InnerProductSpace ℝ F]
 
 local notation "𝕊²" => sphere (0 : E) 1

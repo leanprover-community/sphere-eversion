@@ -11,7 +11,7 @@ TODO Generalise these lemmas appropriately.
 
 open Set Function Metric AffineMap
 
-variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F]
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 -- Unused
 -- @[simp]

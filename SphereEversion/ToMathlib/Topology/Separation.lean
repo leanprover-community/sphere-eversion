@@ -8,7 +8,7 @@ variable [TopologicalSpace X] [TopologicalSpace Y]
 TODO? State a specialized version for quotient maps? Note the open map assumption is still
 a separate assumption there, because there is no `QuotientMap.prod_map`.
 -/
-theorem t2Space_iff_of_continuous_surjective_open {α β : Type _} [TopologicalSpace α]
+theorem t2Space_iff_of_continuous_surjective_open {α β : Type*} [TopologicalSpace α]
     [TopologicalSpace β] {π : α → β} (hcont : Continuous π) (hsurj : Surjective π)
     (hop : IsOpenMap π) : T2Space β ↔ IsClosed {q : α × α | π q.1 = π q.2} := by
   rw [t2_iff_isClosed_diagonal]

@@ -3,7 +3,7 @@ import Mathlib.Tactic.Choose
 
 -- The next lemma won't be used, it's a warming up exercise for the one below.
 -- It could go to mathlib.
-theorem exists_by_induction {α : Type _} {P : ℕ → α → Prop} (h₀ : ∃ a, P 0 a)
+theorem exists_by_induction {α : Type*} {P : ℕ → α → Prop} (h₀ : ∃ a, P 0 a)
     (ih : ∀ n a, P n a → ∃ a', P (n + 1) a') : ∃ f : ℕ → α, ∀ n, P n (f n) := by
   choose f₀ hf₀ using h₀
   choose! F hF using ih
@@ -11,7 +11,7 @@ theorem exists_by_induction {α : Type _} {P : ℕ → α → Prop} (h₀ : ∃ 
 
 -- We make `P` and `Q` explicit to help the elaborator when applying the lemma
 -- (elab_as_eliminator isn't enough).
-theorem exists_by_induction' {α : Type _} (P : ℕ → α → Prop) (Q : ℕ → α → α → Prop)
+theorem exists_by_induction' {α : Type*} (P : ℕ → α → Prop) (Q : ℕ → α → α → Prop)
     (h₀ : ∃ a, P 0 a) (ih : ∀ n a, P n a → ∃ a', P (n + 1) a' ∧ Q n a a') :
     ∃ f : ℕ → α, ∀ n, P n (f n) ∧ Q n (f n) (f <| n + 1) := by
   choose f₀ hf₀ using h₀

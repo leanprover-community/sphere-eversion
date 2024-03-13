@@ -9,20 +9,20 @@ open Submodule Function Set Filter
 section GeneralStuff
 
 -- Things in this section go to other files
-theorem eq_zero_of_mem_disjoint {R : Type _} [CommRing R] {M : Type _} [AddCommGroup M] [Module R M]
+theorem eq_zero_of_mem_disjoint {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
     {F G : Submodule R M} (h : F ⊓ G = ⊥) {x : M} (hx : x ∈ F) (hx' : x ∈ G) : x = 0 := by
   have := Submodule.mem_inf.mpr ⟨hx, hx'⟩
   rw [h] at this
   simpa
 
 @[simp]
-theorem forall_mem_span_singleton {R : Type _} [CommRing R] {M : Type _} [AddCommGroup M]
+theorem forall_mem_span_singleton {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M]
     [Module R M] (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : Set M), P x) ↔ ∀ t : R, P (t • u) := by simp [mem_span_singleton]
 
 open scoped Pointwise
 
 @[simp]
-theorem Field.exists_unit {𝕜 : Type _} [Field 𝕜] (P : 𝕜 → Prop) :
+theorem Field.exists_unit {𝕜 : Type*} [Field 𝕜] (P : 𝕜 → Prop) :
     (∃ u : 𝕜ˣ, P u) ↔ ∃ u : 𝕜, u ≠ 0 ∧ P u := by
   constructor
   · rintro ⟨u, hu⟩
@@ -30,7 +30,7 @@ theorem Field.exists_unit {𝕜 : Type _} [Field 𝕜] (P : 𝕜 → Prop) :
   · rintro ⟨u, u_ne, hu⟩
     exact ⟨Units.mk0 u u_ne, hu⟩
 
-theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type _} [Field 𝕜] {M : Type _} [AddCommGroup M]
+theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type*} [Field 𝕜] {M : Type*} [AddCommGroup M]
     [Module 𝕜 M] {u v : M} (hu : u ≠ 0) (hu' : u ∈ span 𝕜 ({v} : Set M)) :
     span 𝕜 ({u} : Set M) = span 𝕜 ({v} : Set M) := by
   rcases mem_span_singleton.mp hu' with ⟨a, rfl⟩
@@ -193,12 +193,12 @@ theorem orthogonalProjection_comp_coe (K : Submodule ℝ E) [CompleteSpace K] :
 variable (E)
 
 -- Is this really missing??
-theorem NormedSpace.continuousAt_iff {E F : Type _} [SeminormedAddCommGroup E]
+theorem NormedSpace.continuousAt_iff {E F : Type*} [SeminormedAddCommGroup E]
     [SeminormedAddCommGroup F] (f : E → F) (x : E) :
     ContinuousAt f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ < δ → ‖f y - f x‖ < ε := by
   simp_rw [Metric.continuousAt_iff, dist_eq_norm]
 
-theorem NormedSpace.continuousAt_iff' {E F : Type _} [SeminormedAddCommGroup E]
+theorem NormedSpace.continuousAt_iff' {E F : Type*} [SeminormedAddCommGroup E]
     [SeminormedAddCommGroup F] (f : E → F) (x : E) :
     ContinuousAt f x ↔ ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε := by
   rw [NormedSpace.continuousAt_iff]
@@ -215,12 +215,12 @@ theorem NormedSpace.continuousAt_iff' {E F : Type _} [SeminormedAddCommGroup E]
     linarith [hδ y (by linarith)]
 
 -- Is this really missing??
-theorem NormedSpace.continuous_iff {E F : Type _} [SeminormedAddCommGroup E]
+theorem NormedSpace.continuous_iff {E F : Type*} [SeminormedAddCommGroup E]
     [SeminormedAddCommGroup F] (f : E → F) :
     Continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ < δ → ‖f y - f x‖ < ε := by
   simp_rw [Metric.continuous_iff, dist_eq_norm]
 
-theorem NormedSpace.continuous_iff' {E F : Type _} [SeminormedAddCommGroup E]
+theorem NormedSpace.continuous_iff' {E F : Type*} [SeminormedAddCommGroup E]
     [SeminormedAddCommGroup F] (f : E → F) :
     Continuous f ↔ ∀ x, ∀ ε > 0, ∃ δ > 0, ∀ y, ‖y - x‖ ≤ δ → ‖f y - f x‖ ≤ ε := by
   simp_rw [continuous_iff_continuousAt, NormedSpace.continuousAt_iff']

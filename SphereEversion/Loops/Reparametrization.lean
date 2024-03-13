@@ -51,11 +51,9 @@ open Set Function MeasureTheory intervalIntegral Filter
 
 open scoped Topology unitInterval Manifold BigOperators
 
-variable {E F : Type _}
-
-variable [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
-
-variable [MeasurableSpace F] [BorelSpace F]
+variable {E F : Type*}
+  [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+  [MeasurableSpace F] [BorelSpace F]
 
 set_option hygiene false
 notation "ι" => Fin (FiniteDimensional.finrank ℝ F + 1)

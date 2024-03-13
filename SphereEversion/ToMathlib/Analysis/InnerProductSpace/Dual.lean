@@ -7,7 +7,7 @@ open Submodule InnerProductSpace
 
 open LinearMap (ker)
 
-variable {E : Type _} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 local notation "Δ" => spanLine
 

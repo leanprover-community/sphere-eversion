@@ -13,11 +13,11 @@ open scoped BigOperators Topology unitInterval
 
 noncomputable section
 
-variable {K X X' Y Z : Type _}
+variable {K X X' Y Z : Type*}
 
 -- variable [TopologicalSpace X'] [TopologicalSpace Y] [TopologicalSpace Z]
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
-  [NormedSpace ℝ F] {F' : Type _} [NormedAddCommGroup F'] [NormedSpace ℝ F']
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
+  [NormedSpace ℝ F] {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
 
 /-! ## Definition and periodicity lemmas -/
 
@@ -37,7 +37,7 @@ instance : CoeFun (Loop X) fun _ ↦ ℝ → X :=
 initialize_simps_projections Loop (toFun → apply)
 
 /-- Any function `φ : α → loop X` can be seen as a function `α × ℝ → X`. -/
-instance hasUncurryLoop {α : Type _} : HasUncurry (α → Loop X) (α × ℝ) X :=
+instance hasUncurryLoop {α : Type*} : HasUncurry (α → Loop X) (α × ℝ) X :=
   ⟨fun φ p ↦ φ p.1 p.2⟩
 
 variable {X}
@@ -159,7 +159,7 @@ theorem smul_apply [SMul K X] {k : K} {γ : Loop X} {t : ℝ} : (k • γ) t = k
 
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
 @[simps (config := { simpRhs := true })]
-def reparam {F : Type _} (γ : Loop F) (φ : EquivariantMap) : Loop F
+def reparam {F : Type*} (γ : Loop F) (φ : EquivariantMap) : Loop F
     where
   toFun := γ ∘ φ
   per' t := by rw [comp_apply, φ.eqv, γ.per]; rfl
@@ -176,9 +176,7 @@ def IsConst (γ : Loop X) :=
 theorem isConst_of_eq {γ : Loop X} {f : X} (H : ∀ t, γ t = f) : γ.IsConst := fun t t' ↦ by
   rw [H, H]
 
-variable [TopologicalSpace X] [TopologicalSpace X']
-
-variable [TopologicalSpace Y] [TopologicalSpace Z]
+variable [TopologicalSpace X] [TopologicalSpace X'] [TopologicalSpace Y] [TopologicalSpace Z]
 
 /-- The support of a loop family is the closure of the set of parameters where
 the loop is not constant. -/
@@ -336,7 +334,7 @@ theorem isConst_iff_const_avg {γ : Loop F} : γ.IsConst ↔ γ = const γ.avera
 theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst := by
   classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
 
-theorem continuous_average {E : Type _} [TopologicalSpace E] [FirstCountableTopology E]
+theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
     Continuous fun x ↦ (γ x).average :=
   continuous_parametric_intervalIntegral_of_continuous' hγ_cont _ _

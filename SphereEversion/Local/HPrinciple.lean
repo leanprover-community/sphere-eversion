@@ -313,7 +313,7 @@ theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = �
 
 -- In the next lemma, we reintroduce `F` to appease the unused argument linter
 -- since `FiniteDimensional ℝ F` isn't needed here.
-theorem bu_lt {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] (t : ℝ) (x : E) {v : F} {ε : ℝ}
+theorem bu_lt {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (t : ℝ) (x : E) {v : F} {ε : ℝ}
     (hv : ‖v‖ < ε) : ‖(smoothStep t * L.ρ x) • v‖ < ε :=
   calc
     ‖(smoothStep t * L.ρ x) • v‖ = |smoothStep t| * |L.ρ x| * ‖v‖ := by

@@ -7,7 +7,7 @@ open scoped BigOperators Topology unitInterval
 
 noncomputable section
 
-variable {X X' Y Z : Type _} [TopologicalSpace X]
+variable {X X' Y Z : Type*} [TopologicalSpace X]
 
 variable [TopologicalSpace X'] [TopologicalSpace Y] [TopologicalSpace Z]
 
@@ -104,7 +104,7 @@ theorem range_strans_subset {x : X} {γ γ' : Path x x} {t₀ : I} :
   · rw [strans_def, dif_pos h]; exact Or.inl (mem_range_self _)
   · rw [strans_def, dif_neg h]; exact Or.inr (mem_range_self _)
 
-theorem Continuous.path_strans {X Y : Type _} [UniformSpace X]
+theorem Continuous.path_strans {X Y : Type*} [UniformSpace X]
     [LocallyCompactSpace X] [UniformSpace Y] {f : X → Y} {t : X → I} {s : X → I}
     {γ γ' : ∀ x, Path (f x) (f x)} (hγ : Continuous ↿γ) (hγ' : Continuous ↿γ')
     (hγ0 : ∀ ⦃x s⦄, t x = 0 → γ x s = f x) (hγ'1 : ∀ ⦃x s⦄, t x = 1 → γ' x s = f x)

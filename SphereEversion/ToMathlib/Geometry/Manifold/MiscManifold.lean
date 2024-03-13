@@ -10,20 +10,24 @@ section SmoothManifoldWithCorners
 
 open SmoothManifoldWithCorners
 
-variable {𝕜 : Type _} [NontriviallyNormedField 𝕜] {E : Type _} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {E' : Type _} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace 𝕜 F] {F' : Type _} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
-  {H : Type _} [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H} {H' : Type _} [TopologicalSpace H']
-  {I' : ModelWithCorners 𝕜 E' H'} {G : Type _} [TopologicalSpace G] {J : ModelWithCorners 𝕜 F G}
-  {G' : Type _} [TopologicalSpace G'] {J' : ModelWithCorners 𝕜 F' G'} {M : Type _}
-  [TopologicalSpace M] [ChartedSpace H M] {M' : Type _} [TopologicalSpace M'] [ChartedSpace H' M']
-  {N : Type _} [TopologicalSpace N] [ChartedSpace G N] {N' : Type _} [TopologicalSpace N']
-  [ChartedSpace G' N'] {F'' : Type _} [NormedAddCommGroup F''] [NormedSpace 𝕜 F''] {E'' : Type _}
-  [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type _} [TopologicalSpace H'']
-  {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type _} [TopologicalSpace M''] [ChartedSpace H'' M'']
-  {e : PartialHomeomorph M H}
-
-variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+  {F' : Type*} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
+  {H : Type*} [TopologicalSpace H] {I : ModelWithCorners 𝕜 E H}
+  {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners 𝕜 E' H'}
+  {G : Type*} [TopologicalSpace G] {J : ModelWithCorners 𝕜 F G}
+  {G' : Type*} [TopologicalSpace G'] {J' : ModelWithCorners 𝕜 F' G'}
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
+  {N : Type*} [TopologicalSpace N] [ChartedSpace G N]
+  {N' : Type*} [TopologicalSpace N'] [ChartedSpace G' N']
+  {F'' : Type*} [NormedAddCommGroup F''] [NormedSpace 𝕜 F'']
+  {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
+  {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''}
+  {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M'']
+  {e : PartialHomeomorph M H} {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
 
 theorem contMDiff_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔

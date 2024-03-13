@@ -33,9 +33,8 @@ open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap Filter
 
 open scoped Topology BigOperators Filter Convolution
 
-variable {F : Type _} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
-
-variable [MeasurableSpace F] [BorelSpace F]
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+  [MeasurableSpace F] [BorelSpace F]
 
 section
 
@@ -85,7 +84,7 @@ In this section we turn any function `f : ℝ → E` into a 1-periodic function
 -/
 
 
-variable {M : Type _} [AddCommMonoid M]
+variable {M : Type*} [AddCommMonoid M]
 
 /-- Turn a function into a 1-periodic function. If its support lies in a (non-closed) interval
 of length 1, then this will be that function made periodic with period 1. -/
@@ -111,7 +110,7 @@ theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 
     exact fun i _ ↦ h _
   · rwa [finsum_of_infinite_support]
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (h' : HasCompactSupport f) :
     ContDiff ℝ n (periodize f) := by

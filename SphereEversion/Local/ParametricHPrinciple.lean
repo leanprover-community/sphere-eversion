@@ -28,12 +28,12 @@ local notation "∞" => (⊤ : ℕ∞)
 
 section ParameterSpace
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type _} [NormedAddCommGroup F]
-  [NormedSpace ℝ F]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
   -- `G` will be `ℝ` in the proof of the parametric h-principle.
   -- It indicates the homotopy variable `t`.
-  {G : Type _}
-  [NormedAddCommGroup G] [NormedSpace ℝ G] {P : Type _} [NormedAddCommGroup P] [NormedSpace ℝ P]
+  {G : Type*}
+  [NormedAddCommGroup G] [NormedSpace ℝ G] {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 
 variable {R : RelLoc E F}
 
@@ -263,9 +263,9 @@ end ParameterSpace
 
 section ParametricHPrinciple
 
-variable {E : Type _} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {F : Type _}
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F] {G : Type _}
-  [NormedAddCommGroup G] [NormedSpace ℝ G] {P : Type _} [NormedAddCommGroup P] [NormedSpace ℝ P]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {F : Type*}
+  [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F] {G : Type*}
+  [NormedAddCommGroup G] [NormedSpace ℝ G] {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
   [FiniteDimensional ℝ P]
 
 variable {R : RelLoc E F} (h_op : IsOpen R) (h_ample : R.IsAmple) (L : Landscape E)

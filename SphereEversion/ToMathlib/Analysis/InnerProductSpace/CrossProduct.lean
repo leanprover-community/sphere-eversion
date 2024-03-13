@@ -21,7 +21,7 @@ set_option synthInstance.checkSynthOrder false
 attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ
 set_option synthInstance.checkSynthOrder true
 
-variable (E : Type _) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+variable (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 /-- The identification of a finite-dimensional inner product space with its algebraic dual. -/
 private def to_dual [FiniteDimensional ℝ E] : E ≃ₗ[ℝ] E →ₗ[ℝ] ℝ :=
