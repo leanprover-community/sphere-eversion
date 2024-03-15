@@ -341,7 +341,7 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
     simp [ε_pos.le]
 
 theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
-    ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.E' ⊔ L.p.spanV) x := by
+    ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.p.spanV ⊔ L.E') x := by
   have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
   let 𝓕' : JetSec E F :=
     { f := fun x ↦ 𝓕.f x + corrugation L.π N (L.loop h 1) x
@@ -364,15 +364,10 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     simp [𝓕', improveStep_apply _ h, hx]
   have fderiv_𝓕' := fun x ↦
     fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x)
-  rw [eventually_congr (H.isPartHolonomicAt_congr (L.E' ⊔ L.p.spanV))]
+  rw [eventually_congr (H.isPartHolonomicAt_congr (L.p.spanV ⊔ L.E'))]
   apply h.hK₀.mono
   intro x hx
   apply JetSec.IsPartHolonomicAt.sup
-  · intro u hu
-    have hu_ker := L.hEp hu
-    unfold_let 𝓕'
-    erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker,
-      ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker, hx u hu]
   · intro u hu
     rcases Submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul]
@@ -381,6 +376,11 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_v, ContinuousLinearMap.add_apply,
          L.p.update_v]
     rfl
+  · intro u hu
+    have hu_ker := L.hEp hu
+    unfold_let 𝓕'
+    erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker,
+      ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker, hx u hu]
 
 theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).IsFormalSol R := by
   set γ := L.loop h
@@ -487,7 +487,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
         p := e.dualPair k
         hEp := by simpa only [E', Basis.dualPair] using e.flag_le_ker_dual k }
     set H₁ : FormalSol R := (hH_sol 1).formalSol
-    have h_span : S.E' ⊔ S.p.spanV = E' k.succ := e.flag_span_succ k
+    have h_span : E' k.succ = S.p.spanV ⊔ S.E' := e.flag_span_succ k
     have acc : S.Accepts R H₁ :=
       { h_op
         hK₀ := by
@@ -550,7 +550,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       · simp only [ht, hH_sol, HtpyJetSec.comp_of_le]
       · simp only [ht, hN_sol, HtpyJetSec.comp_of_not_le, not_false_iff]
     · -- part-hol E' (k + 1)
-      rw [← h_span, HtpyJetSec.comp_1]
+      rw [h_span, HtpyJetSec.comp_1]
       apply improveStep_part_hol _ acc hNneq
 
 /-- A repackaging of `RelLoc.FormalSol.improve` for convenience. -/

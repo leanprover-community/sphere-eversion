@@ -24,7 +24,8 @@ theorem Fin.coe_lt_succ {n : ℕ} (k : Fin n) : (k : Fin <| n + 1) < k.succ := b
 
 -- PRed to mathlib in #11264
 theorem Basis.flag_span_succ {n : ℕ} (b : Basis (Fin n) R M) (k : Fin n) :
-    b.flag k ⊔ span R {b k} = b.flag k.succ := by
+    b.flag k.succ = span R {b k} ⊔ b.flag k := by
+  symm
   rw [Basis.flag, ← span_union, ← image_singleton, ← image_union, flag]
   refine congr_arg (span R <| b '' ·) <| Set.ext fun j ↦ ?_
   have : j = k ∨ j < k ↔ ↑j < k.succ := by
