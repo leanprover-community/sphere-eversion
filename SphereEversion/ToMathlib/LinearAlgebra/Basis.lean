@@ -43,12 +43,8 @@ variable {n : ℕ}
 
 -- PRed in #11265
 theorem Basis.flag_le_ker_dual (b : Basis (Fin n) R M) (k : Fin n) :
-    b.flag k ≤ LinearMap.ker (b.dualBasis k) := by
-  erw [span_le]
-  rintro _ ⟨j, hj : j.castSucc < k, rfl⟩
-  have : j < k := by rw [← Fin.coe_eq_castSucc, Fin.coe_succ_lt_iff_lt] at hj; exact hj
-  simp only [coe_dualBasis, SetLike.mem_coe, LinearMap.mem_ker, coord_apply, repr_self]
-  rw [Finsupp.single_apply_eq_zero]
-  exact fun h ↦ False.elim (by omega)
+    b.flag k.castSucc ≤ LinearMap.ker (b.dualBasis k) := by
+  nontriviality R
+  rw [coe_dualBasis, b.flag_le_ker_coord_iff]
 
 end
