@@ -487,24 +487,15 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
         p := e.dualPair k
         hEp := by simpa only [E', Basis.dualPair] using e.flag_le_ker_dual k }
     set H₁ : FormalSol R := (hH_sol 1).formalSol
-    have h_span : E' k.succ = S.p.spanV ⊔ S.E' := e.flag_span_succ k
+    have h_span : E' k.succ = S.p.spanV ⊔ S.E' := e.flag_succ k
     have acc : S.Accepts R H₁ :=
       { h_op
-        hK₀ := by
-          apply hH_hol.mono
-          intro x hx
-          unfold_let S
-          convert hx
+        hK₀ := hH_hol.mono (fun x hx ↦ hx)
         hShort := fun x ↦ h_ample.isShortAt H₁ S.p x
         hC := by
           apply h_hol.congr (FormalSol.isHolonomicAt_congr _ _ _)
-          apply hHC.mono
-          intro x h
-          exact (h 1).symm }
-    have hH₁_rel_C : ∀ᶠ x : E near S.C, H₁ x = 𝓕 x := by
-      apply hHC.mono
-      intro x hx
-      apply hx
+          apply hHC.mono (fun x h ↦ (h 1).symm) }
+    have hH₁_rel_C : ∀ᶠ x : E near S.C, H₁ x = 𝓕 x := hHC.mono (fun x hx ↦ hx _)
     have hH₁_K₁ : ∀ x ∉ (L.K₁), H₁ x = 𝓕 x := by
       intro x hx
       apply hHK₁ x hx
