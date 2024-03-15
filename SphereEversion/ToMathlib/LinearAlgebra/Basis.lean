@@ -22,9 +22,9 @@ theorem Fin.coe_lt_succ {n : ℕ} (k : Fin n) : (k : Fin <| n + 1) < k.succ := b
   rw [Fin.coe_eq_castSucc]
   exact Nat.lt_succ_self _
 
--- PRed to mathlib in #11264
+-- not used any more: now identical to Basis.flag_succ
 theorem Basis.flag_span_succ {n : ℕ} (b : Basis (Fin n) R M) (k : Fin n) :
-    b.flag k.succ = span R {b k} ⊔ b.flag k := by
+    b.flag k.succ = span R {b k} ⊔ b.flag k.castSucc := by
   symm
   rw [Basis.flag, ← span_union, ← image_singleton, ← image_union, flag]
   refine congr_arg (span R <| b '' ·) <| Set.ext fun j ↦ ?_

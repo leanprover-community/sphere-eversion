@@ -483,7 +483,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
     rcases HH (δ / 2) (half_pos δ_pos) with ⟨H, hH₀, _, hHC, hHK₁, hHc0, hH_sol, hH_hol⟩; clear HH
     let S : StepLandscape E :=
       { L with
-        E' := E' k
+        E' := E' k.castSucc
         p := e.dualPair k
         hEp := by simpa only [E', Basis.dualPair] using e.flag_le_ker_dual k }
     set H₁ : FormalSol R := (hH_sol 1).formalSol
@@ -495,7 +495,6 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
           intro x hx
           unfold_let S
           convert hx
-          rw [← Fin.coe_eq_castSucc]
         hShort := fun x ↦ h_ample.isShortAt H₁ S.p x
         hC := by
           apply h_hol.congr (FormalSol.isHolonomicAt_congr _ _ _)
