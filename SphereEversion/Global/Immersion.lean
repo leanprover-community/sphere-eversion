@@ -1,5 +1,4 @@
 import Mathlib.Geometry.Manifold.Instances.Sphere
-
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
 import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
@@ -141,13 +140,10 @@ theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) (fun x : �
 
 /-- The antipodal map on `𝕊² ⊆ ℝ³` is an immersion. -/
 theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) (fun x : 𝕊² ↦ -(x : E)) ⊤ where
-  differentiable := by
-    letI : Fact (finrank ℝ (EuclideanSpace ℝ (Fin 3)) = 2 + 1) :=
-      fact_iff.mpr finrank_euclideanSpace_fin
-    let r := contMDiff_neg_sphere (E := EuclideanSpace ℝ (Fin 3)) (n := 2)
-    -- morally: the coercion is the composition with the standard coercion...
-    let s := contMDiff_coe_sphere (E := EuclideanSpace ℝ (Fin 3)) (n := 2)
-    sorry -- morally, is `apply ContMDiff.comp s r`
+  differentiable :=
+    -- Write this as the composition of `coe_sphere` and the antipodal map on `E`.
+    -- The other direction elaborates much worse.
+    (contDiff_neg.contMDiff).comp contMDiff_coe_sphere
   diff_injective x := by
     change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² ↦ (x : E)) x)
     rw [mfderiv_neg]
