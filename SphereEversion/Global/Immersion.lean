@@ -119,6 +119,32 @@ theorem immersionRel_satisfiesHPrincipleWith
 
 end Generalbis
 
+/-! The inclusion and antipodal map on a sphere are immersions:
+these results are not used directly, but are good sanity checks. -/
+section sanitycheck
+
+variable {n : ℕ} (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = n + 1)]
+
+/-- The inclusion of `𝕊^n` into `ℝ^{n+1}` is an immersion. -/
+theorem immersion_inclusion_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
+    (fun x : sphere (0 : E) 1 ↦ (x : E)) ⊤ where
+  differentiable := contMDiff_coe_sphere
+  diff_injective := mfderiv_coe_sphere_injective
+
+/-- The antipodal map on `𝕊^n ⊆ ℝ^{n+1}` is an immersion. -/
+theorem immersion_antipodal_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
+    (fun x : sphere (0 : E) 1 ↦ -(x : E)) ⊤ where
+  differentiable :=
+    -- Write this as the composition of `coe_sphere` and the antipodal map on `E`.
+    -- The other direction elaborates much worse.
+    (contDiff_neg.contMDiff).comp contMDiff_coe_sphere
+  diff_injective x := by
+    change Injective (mfderiv (𝓡 n) 𝓘(ℝ, E) (-fun x : sphere (0 : E) 1 ↦ (x : E)) x)
+    rw [mfderiv_neg]
+    exact neg_injective.comp (mfderiv_coe_sphere_injective x)
+
+end sanitycheck
+
 section sphere_eversion
 
 variable (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)]
@@ -129,33 +155,18 @@ set_option synthInstance.checkSynthOrder true
 
 local notation "𝕊²" => sphere (0 : E) 1
 
-/- Maybe the next two lemmas won't be used directly, but they should be done first as
-sanity checks. -/
--- TODO: generalise them (and most statements about RelImmersion) to `n` dimensions!
-
-/-- The inclusion of 𝕊² into ℝ³ is an immersion. -/
-theorem immersion_inclusion_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) (fun x : 𝕊² ↦ (x : E)) ⊤ where
-  differentiable := contMDiff_coe_sphere
-  diff_injective := mfderiv_coe_sphere_injective
-
-/-- The antipodal map on `𝕊² ⊆ ℝ³` is an immersion. -/
-theorem immersion_antipodal_sphere : Immersion (𝓡 2) 𝓘(ℝ, E) (fun x : 𝕊² ↦ -(x : E)) ⊤ where
-  differentiable :=
-    -- Write this as the composition of `coe_sphere` and the antipodal map on `E`.
-    -- The other direction elaborates much worse.
-    (contDiff_neg.contMDiff).comp contMDiff_coe_sphere
-  diff_injective x := by
-    change Injective (mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun x : 𝕊² ↦ (x : E)) x)
-    rw [mfderiv_neg]
-    exact neg_injective.comp (mfderiv_coe_sphere_injective x)
+-- TODO: generalise these statements to `n` dimensions
+-- the only obstacle is the construction of rotations requires working on ℝ³.
 
 -- The relation of immersion of a two-sphere into its ambient Euclidean space.
 local notation "𝓡_imm" => immersionRel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
 
 variable (ω : Orientation ℝ E (Fin 3))
 
+-- this result holds mutatis mutandis in `ℝ^n`
 theorem smooth_bs :
-    Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) fun p : ℝ × 𝕊² ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
+    Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E)
+      fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
   refine (ContMDiff.smul ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact contMDiff_coe_sphere.comp contMDiff_snd
