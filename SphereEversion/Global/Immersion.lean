@@ -247,6 +247,66 @@ theorem formalEversion_hol_near_zero_one :
   · exact formalEversionHolAtZero E ω ht x
   · exact formalEversionHolAtOne E ω ht x
 
+-- general helper lemmas, useful for showing smoothness of the formal immersions below
+section helper
+
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {E F G : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+  [NormedAddCommGroup G] [NormedSpace 𝕜 G]
+
+-- move to Analysis.Calculus.ContDiff.Basic, or so
+theorem contDiff_prod_iff (f : E → F × G) (n : ℕ∞) :
+    ContDiff 𝕜 n f ↔
+      ContDiff 𝕜 n (Prod.fst ∘ f) ∧ ContDiff 𝕜 n (Prod.snd ∘ f) :=
+  -- xxx: ContMDiff.prod_mk corresponds to ContDiff.prod
+  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prod h.2⟩
+
+-- move to Analysis.Calculus.ContDiff.Defs, or so
+lemma ContDiff.inr (x : E) (n : ℕ∞) : ContDiff 𝕜 n fun p : F ↦ (⟨x, p⟩ : E × F) := by
+  rw [contDiff_prod_iff]
+  exact ⟨contDiff_const, contDiff_id⟩
+
+-- is this form actually useful, compared to `uncurry_left`?
+theorem ContDiff.uncurry_left' (n : ℕ∞) {f : E × F → G}
+    (hf : ContDiff 𝕜 n f) (x : E) :
+    ContDiff 𝕜 n (fun p : F ↦ f ⟨x, p⟩) :=
+  hf.comp (ContDiff.inr x n)
+
+theorem ContDiff.uncurry_left {f : E → F → G} (n : ℕ∞) (hf : ContDiff 𝕜 n (uncurry f)) (x : E) :
+    ContDiff 𝕜 n (f x) := by
+  have : f x = (uncurry f) ∘ fun p : F ↦ (⟨x, p⟩ : E × F) := by ext; simp
+  rw [this] ; exact hf.comp (ContDiff.inr x n)
+
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
+  {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {EP : Type*} [NormedAddCommGroup EP] [NormedSpace 𝕜 EP]
+  {HP : Type*} [TopologicalSpace HP] (IP : ModelWithCorners 𝕜 EP HP)
+  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+
+-- move to Mathlib.Geometry.Manifold.ContMDiff.Product
+lemma Smooth.inr (x : M) :
+    Smooth I' (I.prod I') fun p : M' ↦ (⟨x, p⟩ : M × M') := by
+  rw [smooth_prod_iff]
+  exact ⟨smooth_const, smooth_id⟩
+
+-- xxx: is one better than the other?
+alias Smooth.prod_left := Smooth.inr
+
+-- move to Mathlib.Geometry.Manifold.ContMDiff.Product
+theorem Smooth.uncurry_left
+    {f : M → M' → P} (hf : Smooth (I.prod I') IP (uncurry f)) (x : M) :
+    Smooth I' IP (f x) := by
+  have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
+  -- or just `apply hf.comp (Smooth.inr I I' x)`
+  rw [this] ; exact hf.comp (Smooth.inr I I' x)
+
+end helper
+
 theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
       ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f) ∧
@@ -280,7 +340,7 @@ theorem sphere_eversion :
     rw [this (1, x) (by simp)]
     convert formalEversion_one E ω x
   · exact fun t ↦ {
-      differentiable := sorry -- use h₁ at first coordinate t
+      differentiable := Smooth.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) h₁ t
       diff_injective := h₅ t
     }
 
