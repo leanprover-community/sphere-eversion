@@ -99,21 +99,21 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
                           (∀ᶠ t in 𝓝ˢ (Iic 0), F t = f) ∧
                           ∀ᶠ t in 𝓝ˢ (Ici 1), F t = F 1 := by
     intro m
-    rcases hε m with ⟨φ, ψ, ⟨e, rfl⟩, hφψ⟩
+    rcases hε m with ⟨φfun, φ, ψfun, ψ, ⟨e, rfl⟩, hφψ⟩
     have : φ '' ball e 1 ∈ 𝓝 (φ e) := by
-      rw [← φ.openEmbedding.map_nhds_eq]
-      exact image_mem_map (ball_mem_nhds e zero_lt_one)
+      sorry /- TODO fix: was rw [← φ.toOpenEmbedding.map_nhds_eq]
+      exact image_mem_map (ball_mem_nhds e zero_lt_one) -/
     use φ '' (ball e 1), this; clear this
     intro K₁ hK₁ K₀ K₀K₁ K₀_cpct K₁_cpct C f C_closed P₀f fC
     have K₁φ : K₁ ⊆ range φ := SurjOn.subset_range hK₁
     have K₀φ : K₀ ⊆ range φ := K₀K₁.trans interior_subset |>.trans K₁φ
     replace K₀_cpct : IsCompact (φ ⁻¹' K₀) :=
-      φ.openEmbedding.toInducing.isCompact_preimage' K₀_cpct K₀φ
+      φ.inducing.isCompact_preimage' K₀_cpct K₀φ
     replace K₁_cpct : IsCompact (φ ⁻¹' K₁) :=
-      φ.openEmbedding.toInducing.isCompact_preimage' K₁_cpct K₁φ
+      φ.inducing.isCompact_preimage' K₁_cpct K₁φ
     have K₀K₁' : φ ⁻¹' K₀ ⊆ interior (φ ⁻¹' K₁) := by
-      rw [← φ.isOpenMap.preimage_interior_eq_interior_preimage φ.continuous]
-      mono
+      sorry /- TODO fix! was rw [← (φ.isOpenMap).preimage_interior_eq_interior_preimage φ.continuous]
+      mono -/
     simp only [P₀, forall_and] at P₀f
     rcases P₀f with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A
