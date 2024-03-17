@@ -226,21 +226,22 @@ variable {F H : Type*} (M : Type u)
 
 /- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms.
 
-Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `ContDiff`
+Note that the input `f` is morally an `OpenSmoothEmbeddingMR` but stated in terms of `ContDiff`
 instead of `ContMDiff`. This is more convenient for our purposes. -/
 def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (hf₁ : f.source = univ)
-    (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
-    (hf₄ : range f ⊆ IF '' (chartAt H x).target) : OpenSmoothEmbedding 𝓘(ℝ, F) F IF M
-    where
-  toFun := (extChartAt IF x).symm ∘ f
-  invFun := f.invFun ∘ extChartAt IF x
-  left_inv' {y} := by
-    obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
-    have aux : f.symm (IF z) = y := by rw [hz']; exact f.left_inv (hf₁.symm ▸ mem_univ _)
-    simp only [← hz', (chartAt H x).right_inv hz, aux, extChartAt, PartialHomeomorph.extend,
-      PartialEquiv.coe_trans, PartialHomeomorph.invFun_eq_coe, ModelWithCorners.toPartialEquiv_coe,
-      PartialHomeomorph.coe_coe, PartialEquiv.coe_trans_symm, PartialHomeomorph.coe_coe_symm,
-      ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
+    (hf₂ : ContDiff ℝ ∞ f) --(hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+    (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
+    OpenSmoothEmbeddingMR 𝓘(ℝ, F) IF ((extChartAt IF x).symm ∘ f) ⊤ where
+  -- old proofs, using `OpenSmoothEmbedding`
+  --toFun := (extChartAt IF x).symm ∘ f
+  --invFun := f.invFun ∘ extChartAt IF x
+  -- left_inv' {y} := by
+  --   obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
+  --   have aux : f.symm (IF z) = y := by rw [hz']; exact f.left_inv (hf₁.symm ▸ mem_univ _)
+  --   simp only [← hz', (chartAt H x).right_inv hz, aux, extChartAt, PartialHomeomorph.extend,
+  --     PartialEquiv.coe_trans, PartialHomeomorph.invFun_eq_coe, ModelWithCorners.toPartialEquiv_coe,
+  --     PartialHomeomorph.coe_coe, PartialEquiv.coe_trans_symm, PartialHomeomorph.coe_coe_symm,
+  --     ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
   isOpen_range :=
     IsOpenMap.isOpen_range fun u hu ↦ by
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
@@ -250,40 +251,48 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
       rw [extChartAt, PartialHomeomorph.extend_target']
       exact hf₄
-  smooth_to := by
+  differentiable := by
     refine (contMDiffOn_extChartAt_symm x).comp_contMDiff hf₂.contMDiff fun y ↦ ?_
     rw [extChartAt, PartialHomeomorph.extend_target']
     exact hf₄ (mem_range_self y)
-  smooth_inv := by
-    rw [← PartialHomeomorph.extend_target'] at hf₄
-    have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target := by
-      rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
-      exact (PartialEquiv.image_symm_image_of_subset_target _ hf₄).subset
-    have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chartAt H x).source := by
-      rw [← extChartAt_source IF, range_comp, ← PartialEquiv.symm_image_target_eq_source]
-      exact (monotone_image hf₄).trans Subset.rfl
-    exact hf₃.contMDiffOn.comp (contMDiffOn_extChartAt.mono hf'') hf'
+  induced := sorry
+  inj := sorry
+  diff_injective := sorry
+  -- smoothOn_inv := by
+  --   rw [← PartialHomeomorph.extend_target'] at hf₄
+  --   have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target := by
+  --     rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
+  --     exact (PartialEquiv.image_symm_image_of_subset_target _ hf₄).subset
+  --   have hf'' : range ((extChartAt IF x).symm ∘ f) ⊆ (chartAt H x).source := by
+  --     rw [← extChartAt_source IF, range_comp, ← PartialEquiv.symm_image_target_eq_source]
+  --     exact (monotone_image hf₄).trans Subset.rfl
+  --   exact hf₃.contMDiffOn.comp (contMDiffOn_extChartAt.mono hf'') hf'
 
 @[simp]
 theorem coe_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
-    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) --(hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
-    (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ hf₃ hf₄ : F → M) =
-      (extChartAt IF x).symm ∘ f := by simp [openSmoothEmbOfDiffeoSubsetChartTarget]
+    (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ /-hf₃-/ hf₄ : F → M) =
+      (extChartAt IF x).symm ∘ f := by rfl
 
 theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
-    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) --(hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
-    range (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ hf₃ hf₄) =
+    range (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ /-hf₃-/ hf₄) =
       (extChartAt IF x).symm '' range f := by
   rw [coe_openSmoothEmbOfDiffeoSubsetChartTarget, range_comp]
+  -- TODO: why do these side goals appear?
+  exact hf₁
+  exact hf₂
+  exact hf₄
 
 variable {M} (F)
 variable [IF.Boundaryless] [FiniteDimensional ℝ F]
 
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
-    ∃ (ι' : Type u) (t : Set ι') (φ : t → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
+    ∃ (ι' : Type u) (t : Set ι') (φfun : t → (F → M))
+      (φ : (i : t) → OpenSmoothEmbeddingMR 𝓘(ℝ, F) IF (φfun i) ⊤),
       t.Countable ∧
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
@@ -312,8 +321,10 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   have hg₁ : ∀ z, (g z).source = univ := by simp [g]
   have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp [g]
   have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
-  refine ⟨M × ℝ, t,
-    fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) (hg₃ z.1) ?_, ht₁,
+  refine ⟨M × ℝ, t, fun z ↦ PartialEquiv.symm (extChartAt IF z.1.1) ∘ (g z),
+    -- smoothness of these functions
+    fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) /-(hg₃ z.1)-/ ?_,
+        ht₁,
     fun z ↦ ?_, ?_, ?_⟩
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
@@ -322,30 +333,32 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     exact (range_diffeomorphToNhd_subset_ball (extChartAt IF x x) hr).trans hr'
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr
+    sorry /- was: simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
+    exact ⟨j, (monotone_image (range_diffeomorphToNhd_subset_ball _ hr)).trans hj⟩ -/
+  · sorry /- old proof for some goal was
     simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
-    exact ⟨j, (monotone_image (range_diffeomorphToNhd_subset_ball _ hr)).trans hj⟩
-  · simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
     refine ht₄.subset ?_
     rintro ⟨⟨x, r⟩, hxr⟩
     obtain ⟨hr : 0 < r, -, -⟩ := ht₂ _ hxr
-    exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr)
+    exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr) -/
   · simpa only [iUnion_coe_set] using ht₃
 
 variable [Nonempty M]
 
 theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) :
-    ∃ n, ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
+    ∃ n, ∃ φfun : IndexType n → (F → M),
+      ∃ φ : (i : IndexType n) → OpenSmoothEmbeddingMR 𝓘(ℝ, F) IF (φfun i) ⊤,
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
+  obtain ⟨ι', t, φfun, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
   have htne : t.Nonempty := by
     by_contra contra
     simp only [iUnion_coe_set, not_nonempty_iff_eq_empty.mp contra, mem_empty_iff_false,
       iUnion_of_empty, iUnion_empty, eq_comm (b := univ), univ_eq_empty_iff] at h₄
     exact not_isEmpty_of_nonempty M h₄
   obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
-  refine ⟨n, φ ∘ fn, fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
+  refine ⟨n, φfun ∘ fn, fun i ↦ φ (fn i), fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
   erw [fn.surjective.iUnion_comp fun i ↦ φ i '' ball 0 1, h₄]
 
 end WithoutBoundary

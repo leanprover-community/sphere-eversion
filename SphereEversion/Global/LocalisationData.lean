@@ -22,8 +22,10 @@ structure LocalisationData (f : M → M') where
   cont : Continuous f
   ι' : Type*
   N : ℕ
-  φ : IndexType N → OpenSmoothEmbedding 𝓘(𝕜, E) E I M
-  ψ : ι' → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M'
+  φfun : IndexType N → (E → M)
+  φ : (i : IndexType N) → OpenSmoothEmbeddingMR 𝓘(𝕜, E) I (φfun i) ⊤
+  ψfun : ι' → (E' → M')
+  ψ : (i : ι') → OpenSmoothEmbeddingMR 𝓘(𝕜, E') I' (ψfun i) ⊤
   j : IndexType N → ι'
   h₁ : (⋃ i, φ i '' ball (0 : E) 1) = univ
   h₂ : (⋃ i', ψ i' '' ball (0 : E') 1) = univ
@@ -35,8 +37,8 @@ namespace LocalisationData
 
 variable {f : M → M'} {I I'} (ld : LocalisationData I I' f)
 
-abbrev ψj : IndexType ld.N → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M' :=
-  ld.ψ ∘ ld.j
+abbrev ψj : (n : IndexType ld.N) → OpenSmoothEmbeddingMR 𝓘(𝕜, E') I' (ld.ψfun (ld.j n)) ⊤ :=
+  fun n ↦ ld.ψ (ld.j n)
 
 /-- The type indexing the source charts of the given localisation data. -/
 def ι (L : LocalisationData I I' f) :=
@@ -90,13 +92,14 @@ variable {f : M → M'} (hf : Continuous f)
 
 theorem nice_atlas_domain :
     ∃ n,
-      ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
+      ∃ φf : IndexType n → (E → M),
+      ∃ φ : (i : IndexType n) → OpenSmoothEmbeddingMR 𝓘(ℝ, E) I (φf i) ⊤,
         (∀ i, ∃ i', range (φ i) ⊆ f ⁻¹' (targetCharts E' I' M' i' '' ball (0 : E') 1)) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   nice_atlas E I
     (fun i' ↦ ((targetCharts E' I' M' i').isOpenMap (ball 0 1) isOpen_ball).preimage hf)
     (by rw [← preimage_iUnion, targetCharts_cover, preimage_univ])
-
+#exit
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
 def stdLocalisationData : LocalisationData I I' f where
