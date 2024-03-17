@@ -45,36 +45,9 @@ namespace OpenSmoothEmbedding
 variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbedding I I' f ⊤) [Nonempty M]
 variable {I I' M M'}
 
--- @[simp] -- old definition
+-- @[simp]
 -- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbeddingOld I M I' M') = f :=
 --   rfl
-
-@[simp]
-theorem invFun_comp_coe : h.invFun ∘ h = id := by
-  ext
-  apply h.left_inv
-
-@[simp]
-theorem right_inv {y : M'} (hy : y ∈ range h) : h (h.invFun y) = y := by
-  obtain ⟨x, rfl⟩ := hy
-  erw [h.left_inv]
-
-theorem smoothAt_inv {y : M'} (hy : y ∈ range h) : SmoothAt I' I h.invFun y :=
-  (h.smoothOn_inv y hy).contMDiffAt <| h.isOpen_range.mem_nhds hy
-
-theorem smoothAt_inv' {x : M} : SmoothAt I' I h.invFun (h x) :=
-  h.smoothAt_inv <| mem_range_self x
-
-theorem leftInverse : Function.LeftInverse h.invFun h := fun x ↦ left_inv h x
-
-theorem injective : Function.Injective h :=
-  (h.leftInverse).injective
-
-protected theorem continuous : Continuous h :=
-  (h.smooth).continuous
-
-theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
-  Filter.eventually_of_mem (h.isOpenMap.range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (h.invFun (h x))` are both definitionally `E` below. -/
@@ -111,47 +84,6 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range h) :
         TangentSpace I' (h (h.invFun x)) →L[𝕜] TangentSpace I (h.invFun x)) =
       (mfderiv I' I h.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (h.invFun x)) :=
   by rw [fderiv_symm_coe, h.right_inv hx]
-
-open Filter
-
-theorem forall_near' {P : M → Prop} {A : Set M'} (hyp : ∀ᶠ m near f ⁻¹' A, P m) :
-    ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
-  rw [eventually_nhdsSet_iff_forall] at hyp ⊢
-  rintro _ ⟨hfm₀, m₀, rfl⟩
-  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
-    intro U U_in
-    exact h.isOpenMap.image_mem_nhds U_in
-  apply (this _ <| hyp m₀ hfm₀).mono
-  rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
-  rwa [← h.injective hm₀']
-
-theorem eventually_nhdsSet_mono {α : Type*} [TopologicalSpace α] {s t : Set α} {P : α → Prop}
-    (h : ∀ᶠ x near t, P x) (h' : s ⊆ t) : ∀ᶠ x near s, P x :=
-  h.filter_mono (nhdsSet_mono h')
-
--- TODO: optimize this proof which is probably more complicated than it needs to be
-theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M} (hK : IsCompact K)
-    {A : Set M'} (hP : ∀ᶠ m near f ⁻¹' A, P m) (hP' : ∀ᶠ m' near A, m' ∉ f '' K → P' m')
-    (hPP' : ∀ m, P m → P' (f m)) : ∀ᶠ m' near A, P' m' := by
-  rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
-  apply Filter.Eventually.union
-  · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
-      h.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
-    apply (this.and <| h.forall_near' hP).mono
-    rintro _ ⟨⟨m, rfl⟩, hm⟩
-    exact hPP' _ (hm _ rfl)
-  · have op : IsOpen ((f '' K)ᶜ) := by
-      rw [isOpen_compl_iff]
-      exact (hK.image h.continuous).isClosed
-    have : A ∩ (range f)ᶜ ⊆ A ∩ (f '' K)ᶜ :=
-      inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K))
-    apply eventually_nhdsSet_mono _ this
-    rw [eventually_nhdsSet_iff_forall] at hP' ⊢
-    rintro x ⟨hx, hx'⟩
-    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ := isOpen_iff_eventually.mp op x hx'
-    apply ((hP' x hx).and hx').mono
-    rintro y ⟨hy, hy'⟩
-    exact hy hy'
 
 variable (I) in
 -- unused

@@ -5,7 +5,7 @@ Authors: Michael Rothgang
 -/
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
 import Mathlib.Topology.ProperMap
-
+import SphereEversion.Notations
 /-! ## Smooth immersions and embeddings
 
 In this file, we define immersions and smooth embeddings and prove some of their basic properties.
@@ -135,7 +135,15 @@ instance : FunLike (OpenSmoothEmbedding I I' f n) M M' where
     intro h h' hyp
     apply coe_injective (DFunLike.coe_injective hyp)
 
--- Wait: this doesn't make *any* sense if the codomain is empty!
+lemma injective (h : OpenSmoothEmbedding I I' f n) : Injective h := h.toEmbedding.inj
+
+protected theorem continuous (h : OpenSmoothEmbedding I I' f n) : Continuous h :=
+  (h.smooth).continuous
+
+lemma isOpenMap (h : OpenSmoothEmbedding I I' f n) : IsOpenMap f := h.toOpenEmbedding.isOpenMap
+
+theorem inducing (h : OpenSmoothEmbedding I I' f n) : Inducing f :=
+  h.toOpenEmbedding.toInducing
 
 /-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
 def toPartialHomeomorph [Nonempty M]
@@ -166,11 +174,85 @@ lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) (x : M) :
 
 lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
     SmoothOn I' I h.invFun (range f) := by
-  sorry -- TODO: prove this!
+  -- This will follow from a good theory of embedded submanifolds and diffeomorphisms:
+  -- - the image of a smooth embedding is a submanifold
+  -- - a smooth embedding `f` is a diffeomorphism to its image,
+  --   hence has a smooth inverse function
+  -- - on `im(f)`, this inverse coincides with `f.invFun`
+  sorry
 
-lemma isOpenMap (h : OpenSmoothEmbedding I I' f n) : IsOpenMap f := h.toOpenEmbedding.isOpenMap
+variable [Nonempty M]
 
-theorem inducing (h : OpenSmoothEmbedding I I' f n) : Inducing f :=
-  h.toOpenEmbedding.toInducing
+@[simp]
+theorem invFun_comp_coe (h : OpenSmoothEmbedding I I' f n) : h.invFun ∘ h = id := by
+  ext
+  apply h.left_inv
+
+@[simp]
+theorem right_inv {y : M'} (h : OpenSmoothEmbedding I I' f n) (hy : y ∈ range h) : h (h.invFun y) = y := by
+  obtain ⟨x, rfl⟩ := hy
+  erw [h.left_inv]
+
+theorem smoothAt_inv {y : M'} (h : OpenSmoothEmbedding I I' f n) (hy : y ∈ range h) : SmoothAt I' I h.invFun y :=
+  (h.smoothOn_inv y hy).contMDiffAt <| h.isOpen_range.mem_nhds hy
+
+theorem smoothAt_inv' {x : M} (h : OpenSmoothEmbedding I I' f n) : SmoothAt I' I h.invFun (h x) :=
+  h.smoothAt_inv <| mem_range_self x
+
+theorem leftInverse (h : OpenSmoothEmbedding I I' f n) : Function.LeftInverse h.invFun h := fun x ↦ left_inv h x
+
+section filters
+
+open Topology in
+theorem coe_comp_invFun_eventuallyEq (h : OpenSmoothEmbedding I I' f n) (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
+  Filter.eventually_of_mem (h.isOpenMap.range_mem_nhds x) fun _ hy ↦ h.right_inv hy
+
+open Filter
+open scoped Topology
+
+theorem forall_near' (h : OpenSmoothEmbedding I I' f n) {P : M → Prop} {A : Set M'} (hyp : ∀ᶠ m near f ⁻¹' A, P m) :
+    ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
+  rw [eventually_nhdsSet_iff_forall] at hyp ⊢
+  rintro _ ⟨hfm₀, m₀, rfl⟩
+  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
+    intro U U_in
+    exact (h.isOpenMap).image_mem_nhds U_in
+  apply (this _ <| hyp m₀ hfm₀).mono
+  rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
+  rwa [← h.injective hm₀']
+
+variable {X : Type*} [TopologicalSpace X]
+
+-- belongs to Topology.NhdsSet
+theorem eventually_nhdsSet_mono {s t : Set X} {P : X → Prop}
+    (h : ∀ᶠ x near t, P x) (h' : s ⊆ t) : ∀ᶠ x near s, P x :=
+  h.filter_mono (nhdsSet_mono h')
+
+-- TODO: optimize this proof which is probably more complicated than it needs to be
+theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
+    (h : OpenSmoothEmbedding I I' f n) (hK : IsCompact K) {A : Set M'}
+    (hP : ∀ᶠ m near f ⁻¹' A, P m) (hP' : ∀ᶠ m' near A, m' ∉ f '' K → P' m')
+    (hPP' : ∀ m, P m → P' (f m)) : ∀ᶠ m' near A, P' m' := by
+  rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
+  apply Filter.Eventually.union
+  · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
+      h.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
+    apply (this.and <| h.forall_near' hP).mono
+    rintro _ ⟨⟨m, rfl⟩, hm⟩
+    exact hPP' _ (hm _ rfl)
+  · have op : IsOpen ((f '' K)ᶜ) := by
+      rw [isOpen_compl_iff]
+      exact (hK.image h.continuous).isClosed
+    have : A ∩ (range f)ᶜ ⊆ A ∩ (f '' K)ᶜ :=
+      inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K))
+    apply eventually_nhdsSet_mono _ this
+    rw [eventually_nhdsSet_iff_forall] at hP' ⊢
+    rintro x ⟨hx, hx'⟩
+    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ := isOpen_iff_eventually.mp op x hx'
+    apply ((hP' x hx).and hx').mono
+    rintro y ⟨hy, hy'⟩
+    exact hy hy'
+
+end filters
 
 end OpenSmoothEmbedding
