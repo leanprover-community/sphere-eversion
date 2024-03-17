@@ -5,7 +5,7 @@ Authors: Michael Rothgang
 -/
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
 import Mathlib.Topology.ProperMap
-import SphereEversion.Notations
+
 /-! ## Smooth immersions and embeddings
 
 In this file, we define immersions and smooth embeddings and prove some of their basic properties.
@@ -209,9 +209,11 @@ theorem coe_comp_invFun_eventuallyEq (h : OpenSmoothEmbedding I I' f n) (x : M) 
 
 open Filter
 open scoped Topology
+-- XXX: is the custom notation in Notations useful and should be kept?
 
-theorem forall_near' (h : OpenSmoothEmbedding I I' f n) {P : M → Prop} {A : Set M'} (hyp : ∀ᶠ m near f ⁻¹' A, P m) :
-    ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
+theorem forall_near' (h : OpenSmoothEmbedding I I' f n) {P : M → Prop} {A : Set M'}
+    (hyp : ∀ᶠ (m : M) in 𝓝ˢ (f ⁻¹' A), P m) :
+    ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range f), ∀ (m : M), m' = f m → P m := by
   rw [eventually_nhdsSet_iff_forall] at hyp ⊢
   rintro _ ⟨hfm₀, m₀, rfl⟩
   have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
@@ -225,17 +227,17 @@ variable {X : Type*} [TopologicalSpace X]
 
 -- belongs to Topology.NhdsSet
 theorem eventually_nhdsSet_mono {s t : Set X} {P : X → Prop}
-    (h : ∀ᶠ x near t, P x) (h' : s ⊆ t) : ∀ᶠ x near s, P x :=
+    (h : ∀ᶠ (x : X) in 𝓝ˢ t, P x) (h' : s ⊆ t) : ∀ᶠ (x : X) in 𝓝ˢ s, P x :=
   h.filter_mono (nhdsSet_mono h')
 
 -- TODO: optimize this proof which is probably more complicated than it needs to be
 theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     (h : OpenSmoothEmbedding I I' f n) (hK : IsCompact K) {A : Set M'}
-    (hP : ∀ᶠ m near f ⁻¹' A, P m) (hP' : ∀ᶠ m' near A, m' ∉ f '' K → P' m')
-    (hPP' : ∀ m, P m → P' (f m)) : ∀ᶠ m' near A, P' m' := by
+    (hP : ∀ᶠ (m : M) in 𝓝ˢ (f ⁻¹' A), P m) (hP' : ∀ᶠ (m' : M') in 𝓝ˢ A, m' ∉ f '' K → P' m')
+    (hPP' : ∀ m, P m → P' (f m)) : ∀ᶠ (m' : M') in 𝓝ˢ A, P' m' := by
   rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
   apply Filter.Eventually.union
-  · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
+  · have : ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range f), m' ∈ range f :=
       h.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
     apply (this.and <| h.forall_near' hP).mono
     rintro _ ⟨⟨m, rfl⟩, hm⟩
