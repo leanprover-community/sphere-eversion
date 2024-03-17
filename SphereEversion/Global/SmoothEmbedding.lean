@@ -413,14 +413,28 @@ theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
 
 open Function
 
-variable [Nonempty X]
-
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
     (hK : IsClosed (φ '' K)) (hf : Smooth (IM'.prod IM) IN (uncurry f))
     (hg : Smooth (IM'.prod IX) IY (uncurry g)) (hk : Smooth IM' IM k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
     Smooth IM' IN fun x ↦ update φ ψ (f x) (g x) (k x) := by
+  by_cases hK_nonempty : Nonempty K
+  swap
+  · -- This is a simplified version of the second proof case below.
+    -- (If `K` is empty, so is `φ '' K`, hence `V=univ` and the construction simplifies a bit.)
+    -- FIXME: more elegant approaches avoiding this duplication are welcome.
+    have : IsEmpty K := not_nonempty_iff.mp hK_nonempty
+    have hK' (x) : update φ ψ (f x) (g x) (k x) = f x (k x) := by
+      apply nice_update_of_eq_outside_compact_aux φ ψ (f x) (g x) (hg' x)
+      -- Golfs for these last two lines are also welcome.
+      have : IsEmpty (φ '' K) := by aesop
+      simp_all only [isEmpty_subtype, not_false_eq_true]
+    refine contMDiff_of_locally_contMDiffOn fun x ↦ ⟨univ, isOpen_univ, trivial,
+      (contMDiffOn_congr (fun x _ ↦ hK' x)).mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
+  have : Nonempty X := by
+    let myk := Classical.choice hK_nonempty
+    use myk
   have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx ↦
     nice_update_of_eq_outside_compact_aux φ ψ (f x) (g x) (hg' x) hx
   refine contMDiff_of_locally_contMDiffOn fun x ↦ ?_
