@@ -73,9 +73,6 @@ theorem injective : Function.Injective h :=
 protected theorem continuous : Continuous h :=
   (h.smooth).continuous
 
-theorem isOpenMap : IsOpenMap h :=
-  h.toOpenEmbedding.isOpenMap
-
 theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
   Filter.eventually_of_mem (h.isOpenMap.range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
