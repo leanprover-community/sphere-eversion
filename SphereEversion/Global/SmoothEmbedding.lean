@@ -73,7 +73,7 @@ theorem injective : Function.Injective h :=
   (h.leftInverse).injective
 
 protected theorem continuous : Continuous h :=
-  (h.differentiable).continuous
+  (h.smooth).continuous
 
 theorem isOpenMap : IsOpenMap h :=
   h.toOpenEmbedding.isOpenMap
@@ -87,7 +87,7 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] i
   have h₁ : MDifferentiableAt I' I h.invFun (h x) :=
     ((h.smoothOn_inv (h x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       ((h.isOpenMap).range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' h x := h.differentiable.mdifferentiable le_top _
+  have h₂ : MDifferentiableAt I I' h x := by apply h.smooth.mdifferentiable
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' h x) (mfderiv I' I h.invFun (h x))
     (by
       intro v
@@ -251,7 +251,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
       rw [extChartAt, PartialHomeomorph.extend_target']
       exact hf₄
-  differentiable := by
+  smooth := by
     refine (contMDiffOn_extChartAt_symm x).comp_contMDiff hf₂.contMDiff fun y ↦ ?_
     rw [extChartAt, PartialHomeomorph.extend_target']
     exact hf₄ (mem_range_self y)
@@ -462,7 +462,7 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
     exact dif_pos hm
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
-      (contMDiffOn_congr h₄).mpr <| ψ.differentiable.comp_contMDiffOn <| hg.comp_contMDiffOn
+      (contMDiffOn_congr h₄).mpr <| ψ.smooth.comp_contMDiffOn <| hg.comp_contMDiffOn
         (smoothOn_id.prod_mk <| φ.smoothOn_inv.comp hk.smoothOn Subset.rfl)⟩
   · refine
       ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩

@@ -67,7 +67,8 @@ structure InjImmersion (f : M → M') (n : ℕ∞) extends Immersion I I' f n : 
   embedding. (We do not assume smoothness of the inverse, as this follows automatically.
   See `SmoothEmbedding.diffeomorph_of_surjective` and variants.) -/
 structure SmoothEmbedding (f : M → M') (n : ℕ∞) extends Embedding f : Prop :=
-  differentiable : ContMDiff I I' n f
+  --differentiable : ContMDiff I I' n f
+  smooth : Smooth I I' f
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
 /-- A `SmoothEmbedding` with open range. -/
@@ -89,7 +90,7 @@ variable {f : M → M'} {n : ℕ∞}
 
 /-- A smooth embedding is an injective immersion. -/
 lemma SmoothEmbedding.toInjImmersion (h : SmoothEmbedding I I' f n) : InjImmersion I I' f n where
-  differentiable := h.differentiable
+  differentiable := h.smooth.contMDiff
   diff_injective := h.diff_injective
   injective := h.toEmbedding.inj
 
@@ -101,7 +102,7 @@ lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f n) (hp : IsP
   -- TODO: use "a proper injective continuous map is a closed embedding"
   -- does mathlib have this and the converse already?
   toEmbedding := sorry
-  differentiable := h.differentiable
+  smooth := sorry -- h.differentiable
   diff_injective := h.diff_injective
 
 end ImmersionEmbeddings
