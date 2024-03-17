@@ -2,7 +2,7 @@ import Mathlib.Topology.Separation
 
 open Set Function
 
-variable [TopologicalSpace X] [TopologicalSpace Y]
+variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 
 /-
 TODO? State a specialized version for quotient maps? Note the open map assumption is still

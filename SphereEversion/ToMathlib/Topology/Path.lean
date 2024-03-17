@@ -8,8 +8,7 @@ open scoped BigOperators Topology unitInterval
 noncomputable section
 
 variable {X X' Y Z : Type*} [TopologicalSpace X]
-
-variable [TopologicalSpace X'] [TopologicalSpace Y] [TopologicalSpace Z]
+  [TopologicalSpace X'] [TopologicalSpace Y] [TopologicalSpace Z]
 
 namespace Path
 
@@ -41,7 +40,7 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x where
 
 /-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
   arguments to `γ` lie in `I` after this. -/
-theorem strans_def (γ γ' : Path x x) :
+theorem strans_def {x : X} {t₀ t : I} (γ γ' : Path x x) :
     γ.strans γ' t₀ t =
       if h : t ≤ t₀ then γ ⟨t / t₀, unitInterval.div_mem t.2.1 t₀.2.1 h⟩
       else γ' ⟨(t - t₀) / (1 - t₀),
@@ -50,7 +49,7 @@ theorem strans_def (γ γ' : Path x x) :
   split_ifs with h <;> simp [strans, h, ← extend_extends]
 
 @[simp]
-theorem strans_of_ge (h : t₀ ≤ t) : γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) := by
+theorem strans_of_ge {t t₀ : I} (h : t₀ ≤ t) : γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) := by
   simp only [Path.coe_mk_mk, Path.strans, ite_eq_right_iff]
   intro h2; obtain rfl := le_antisymm h h2; simp
 

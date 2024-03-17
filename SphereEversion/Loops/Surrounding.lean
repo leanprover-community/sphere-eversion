@@ -433,7 +433,7 @@ theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O
   simp only [trans_range, union_subset_iff, O_conn.range_somePath_subset,
     O_conn.range_pathThrough_subset, true_and_iff]
 
-theorem surroundingLoop_surrounds {w : Fin (d + 1) → ℝ} (h : SurroundingPts f p w) :
+theorem surroundingLoop_surrounds {f : F} {w : Fin (d + 1) → ℝ} (h : SurroundingPts f p w) :
     (surroundingLoop O_conn hp hb 1).Surrounds f := by
   rw [Loop.surrounds_iff_range_subset_range]
   refine ⟨p, w, h, ?_⟩
