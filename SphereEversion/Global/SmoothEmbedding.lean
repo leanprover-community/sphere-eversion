@@ -15,12 +15,13 @@ open scoped Manifold Topology
 
 section General
 
-variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type*}
-  [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*} [TopologicalSpace H']
-  (I' : ModelWithCorners 𝕜 E' H') (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M']
-  [SmoothManifoldWithCorners I' M']
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
+  (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
+  (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
 
 structure OpenSmoothEmbedding where
   toFun : M → M'
@@ -165,8 +166,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     rintro y ⟨hy, hy'⟩
     exact hy hy'
 
-variable (I M)
-
+variable (I M) in
 -- unused
 /-- The identity map is a smooth open embedding. -/
 @[simps]
@@ -177,8 +177,6 @@ nonrec def id : OpenSmoothEmbedding I M I M where
   isOpen_range := IsOpenMap.id.isOpen_range
   smooth_to := smooth_id
   smooth_inv := smoothOn_id
-
-variable {I M}
 
 /- -- unused
 @[simps!]
@@ -228,7 +226,8 @@ open Function
 
 universe u
 
-variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
+variable {F H : Type*} (M : Type u)
+  [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
   [TopologicalSpace M] [ChartedSpace H M] [T2Space M] [LocallyCompactSpace M] [SigmaCompactSpace M]
   (IF : ModelWithCorners ℝ F H) [SmoothManifoldWithCorners IF M]
 
