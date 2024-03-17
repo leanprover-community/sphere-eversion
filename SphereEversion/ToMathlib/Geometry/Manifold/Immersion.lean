@@ -72,13 +72,13 @@ structure SmoothEmbedding (f : M → M') (n : ℕ∞) extends Embedding f : Prop
 
 /-- A `SmoothEmbedding` with open range. -/
 structure OpenSmoothEmbeddingMR (f : M → M') (n : ℕ∞) extends SmoothEmbedding I I' f n : Prop :=
-  open_range : IsOpen <| range f
+  isOpen_range : IsOpen <| range f
 
 variable {I I'} in
 lemma OpenSmoothEmbeddingMR.toOpenEmbedding {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbeddingMR I I' f n) :
     OpenEmbedding f where
   toEmbedding := h.toEmbedding
-  open_range := h.open_range
+  open_range := h.isOpen_range
 
 end Definition
 
@@ -109,6 +109,7 @@ end ImmersionEmbeddings
 namespace OpenSmoothEmbeddingMR
 
 variable {f : M → M'} {n : ℕ∞}
+variable {I I'}
 
 /-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
 def toPartialHomeomorph [Nonempty M]
@@ -131,6 +132,7 @@ lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f 
 def invFun [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) : M' → M :=
   (h.toPartialHomeomorph).invFun
 
+@[simp]
 lemma left_inv [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) {x : M}:
     h.invFun (f x) = x := by
   apply (h.toOpenEmbedding).toPartialHomeomorph_left_inv
@@ -138,5 +140,10 @@ lemma left_inv [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) {x : M}:
 lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) :
     SmoothOn I' I h.invFun (range f) := by
   sorry -- TODO: prove this!
+
+lemma isOpenMap (h : OpenSmoothEmbeddingMR I I' f n) : IsOpenMap f := h.toOpenEmbedding.isOpenMap
+
+theorem inducing (h : OpenSmoothEmbeddingMR I I' f n) : Inducing f :=
+  h.toOpenEmbedding.toInducing
 
 end OpenSmoothEmbeddingMR

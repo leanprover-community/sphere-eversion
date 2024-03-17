@@ -3,6 +3,7 @@ import Mathlib.Topology.Algebra.Order.Compact
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
+import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
@@ -39,104 +40,104 @@ instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ ↦ M → M' :=
 
 attribute [pp_dot] OpenSmoothEmbedding.invFun
 
-namespace OpenSmoothEmbedding
+namespace OpenSmoothEmbeddingMR
 
-variable {I I' M M'}
+--variable {I I' M M'}
 
-variable (f : OpenSmoothEmbedding I M I' M')
+variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbeddingMR I I' f ⊤) [Nonempty M]
+variable {I I'}
 
 @[simp]
 theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
   rfl
 
-@[simp]
-theorem left_inv (x : M) : f.invFun (f x) = x := by apply f.left_inv'
+-- @[simp]
+-- theorem left_inv (x : M) : f.invFun (f x) = x := by apply f.left_inv'
 
 @[simp]
-theorem invFun_comp_coe : f.invFun ∘ f = id :=
-  funext f.left_inv
+theorem invFun_comp_coe : h.invFun ∘ f = id := by
+  ext
+  apply h.left_inv
 
 @[simp]
-theorem right_inv {y : M'} (hy : y ∈ range f) : f (f.invFun y) = y := by
-  obtain ⟨x, rfl⟩ := hy;
-  rw [f.left_inv]
+theorem right_inv {y : M'} (hy : y ∈ range f) : f (h.invFun y) = y := by
+  obtain ⟨x, rfl⟩ := hy
+  rw [h.left_inv]
 
-theorem smoothAt_inv {y : M'} (hy : y ∈ range f) : SmoothAt I' I f.invFun y :=
-  (f.smooth_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
+theorem smoothAt_inv {y : M'} (hy : y ∈ range f) : SmoothAt I' I h.invFun y :=
+  (h.smoothOn_inv y hy).contMDiffAt <| h.isOpen_range.mem_nhds hy
 
-theorem smoothAt_inv' {x : M} : SmoothAt I' I f.invFun (f x) :=
-  f.smoothAt_inv <| mem_range_self x
+theorem smoothAt_inv' {x : M} : SmoothAt I' I h.invFun (f x) :=
+  h.smoothAt_inv <| mem_range_self x
 
-theorem leftInverse : Function.LeftInverse f.invFun f :=
-  left_inv f
+theorem leftInverse : Function.LeftInverse h.invFun f := fun _ ↦ left_inv h
 
 theorem injective : Function.Injective f :=
-  f.leftInverse.injective
+  (h.leftInverse).injective
 
 protected theorem continuous : Continuous f :=
-  f.smooth_to.continuous
+  (h.differentiable).continuous
 
 theorem isOpenMap : IsOpenMap f :=
-  f.leftInverse.isOpenMap f.isOpen_range f.smooth_inv.continuousOn
+  h.toOpenEmbedding.isOpenMap
 
-theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] id :=
-  Filter.eventually_of_mem (f.isOpenMap.range_mem_nhds x) fun _ hy ↦ f.right_inv hy
+theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ h.invFun =ᶠ[𝓝 (f x)] id :=
+  Filter.eventually_of_mem ((h.isOpenMap).range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
-`TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
+`TangentSpace I (h.invFun (f x))` are both definitionally `E` below. -/
 @[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
-  have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
-    ((f.smooth_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
-      (f.isOpenMap.range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := f.smooth_to.contMDiff.mdifferentiable le_top _
-  ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
+  have h₁ : MDifferentiableAt I' I h.invFun (f x) :=
+    ((h.smoothOn_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
+      ((h.isOpenMap).range_mem_nhds x)
+  have h₂ : MDifferentiableAt I I' f x := h.differentiable.mdifferentiable le_top _
+  ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I h.invFun (f x))
     (by
       intro v
-      erw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, f.invFun_comp_coe, mfderiv_id,
+      erw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, h.invFun_comp_coe, mfderiv_id,
         ContinuousLinearMap.coe_id', id.def])
     (by
       intro v
-      have hx : x = f.invFun (f x) := by rw [f.left_inv]
-      have hx' : f (f.invFun (f x)) = f x := by rw [f.left_inv]
+      have hx : x = h.invFun (f x) := by rw [h.left_inv]
+      have hx' : f (h.invFun (f x)) = f x := by rw [h.left_inv]
       rw [hx] at h₂
       erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
         ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
-            (f.coe_comp_invFun_eventuallyEq x)).mfderiv,
+            (h.coe_comp_invFun_eventuallyEq x)).mfderiv,
         ContinuousLinearMap.coe_id', id.def])
 
 @[simp]
 theorem fderiv_coe (x : M) :
-    (f.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv I I' f x := by ext; rfl
+    (h.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv I I' f x := by ext; rfl
 
 @[simp]
 theorem fderiv_symm_coe (x : M) :
-    ((f.fderiv x).symm : TangentSpace I' (f x) →L[𝕜] TangentSpace I x) =
-      mfderiv I' I f.invFun (f x) := by ext; rfl
+    ((h.fderiv x).symm : TangentSpace I' (f x) →L[𝕜] TangentSpace I x) =
+      mfderiv I' I h.invFun (f x) := by ext; rfl
 
 theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
-    ((f.fderiv (f.invFun x)).symm :
-        TangentSpace I' (f (f.invFun x)) →L[𝕜] TangentSpace I (f.invFun x)) =
-      (mfderiv I' I f.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (f.invFun x)) :=
-  by rw [fderiv_symm_coe, f.right_inv hx]
+    ((h.fderiv (h.invFun x)).symm :
+        TangentSpace I' (f (h.invFun x)) →L[𝕜] TangentSpace I (h.invFun x)) =
+      (mfderiv I' I h.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (h.invFun x)) :=
+  by rw [fderiv_symm_coe, h.right_inv hx]
 
 open Filter
 
-theorem openEmbedding : OpenEmbedding f :=
-  openEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
+--theorem openEmbedding : OpenEmbedding f := h.toOpenEmbedding
 
-theorem inducing : Inducing f :=
-  f.openEmbedding.toInducing
+-- theorem inducing : Inducing f :=
+--   h.toOpenEmbedding.toInducing
 
-theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A, P m) :
+theorem forall_near' {P : M → Prop} {A : Set M'} (hyp : ∀ᶠ m near f ⁻¹' A, P m) :
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
-  rw [eventually_nhdsSet_iff_forall] at h ⊢
+  rw [eventually_nhdsSet_iff_forall] at hyp ⊢
   rintro _ ⟨hfm₀, m₀, rfl⟩
   have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
     intro U U_in
-    exact f.isOpenMap.image_mem_nhds U_in
-  apply (this _ <| h m₀ hfm₀).mono
+    exact (h.isOpenMap).image_mem_nhds U_in
+  apply (this _ <| hyp m₀ hfm₀).mono
   rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
-  rwa [← f.injective hm₀']
+  rwa [← h.injective hm₀']
 
 theorem eventually_nhdsSet_mono {α : Type*} [TopologicalSpace α] {s t : Set α} {P : α → Prop}
     (h : ∀ᶠ x near t, P x) (h' : s ⊆ t) : ∀ᶠ x near s, P x :=
@@ -149,13 +150,13 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
   rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
   apply Filter.Eventually.union
   · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
-      f.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
-    apply (this.and <| f.forall_near' hP).mono
+      h.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
+    apply (this.and <| h.forall_near' hP).mono
     rintro _ ⟨⟨m, rfl⟩, hm⟩
     exact hPP' _ (hm _ rfl)
   · have op : IsOpen ((f '' K)ᶜ) := by
       rw [isOpen_compl_iff]
-      exact (hK.image f.continuous).isClosed
+      exact (hK.image h.continuous).isClosed
     have : A ∩ (range f)ᶜ ⊆ A ∩ (f '' K)ᶜ :=
       inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K))
     apply eventually_nhdsSet_mono _ this
@@ -166,7 +167,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     rintro y ⟨hy, hy'⟩
     exact hy hy'
 
-variable (I M) in
+variable (I) in
 -- unused
 /-- The identity map is a smooth open embedding. -/
 @[simps]
@@ -198,7 +199,7 @@ def comp {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Ty
         rintro x' ⟨x, rfl⟩
         exact ⟨x, by simp only [left_inv]⟩) -/
 
-end OpenSmoothEmbedding
+end OpenSmoothEmbeddingMR
 
 namespace ContinuousLinearEquiv
 
@@ -442,11 +443,11 @@ end NonMetric
 section Metric
 
 variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [MetricSpace N]
-  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] (φ : OpenSmoothEmbedding IX X IM M)
-  (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
+  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] {f : X → M} (φ : OpenSmoothEmbeddingMR IX IM f ⊤)
+  {gg : Y → N} (ψ : OpenSmoothEmbeddingMR IY IN gg ⊤) (f : M → N) (g : X → Y)
 
 /-- This is `lem:dist_updating` in the blueprint. -/
-theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]
+theorem dist_update [Nonempty Y] [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]
     {KP : Set P} (hKP : IsCompact KP) (f : P → M → N) (hf : Continuous ↿f)
     (hf' : ∀ p, f p '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : Continuous ε) :
     ∃ η > (0 : ℝ), ∀ g : P → X → Y, ∀ p ∈ KP, ∀ p' ∈ KP, ∀ x ∈ K,
