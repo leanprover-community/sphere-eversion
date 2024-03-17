@@ -74,7 +74,8 @@ structure SmoothEmbedding (f : M → M') (n : ℕ∞) extends Embedding f : Prop
 structure OpenSmoothEmbedding (f : M → M') (n : ℕ∞) extends SmoothEmbedding I I' f n : Prop :=
   open_range : IsOpen <| range f
 
-lemma OpenSmoothEmbedding.toOpenEmbedding (f : M → M') (n : ℕ∞) (h : OpenSmoothEmbedding I I' f n) :
+variable {I I'} in
+lemma OpenSmoothEmbedding.toOpenEmbedding {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbedding I I' f n) :
     OpenEmbedding f where
   toEmbedding := h.toEmbedding
   open_range := h.open_range
@@ -104,3 +105,38 @@ lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f n) (hp : IsP
   diff_injective := h.diff_injective
 
 end ImmersionEmbeddings
+
+namespace OpenSmoothEmbedding
+
+variable {f : M → M'} {n : ℕ∞}
+
+/-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
+def toPartialHomeomorph [Nonempty M]
+    (h : OpenSmoothEmbedding I I' f n) : PartialHomeomorph M M' :=
+  h.toOpenEmbedding.toPartialHomeomorph
+
+-- currently unused; is this lemma needed? what's a good name?
+lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
+  h.toPartialHomeomorph = h.toOpenEmbedding.toPartialHomeomorph := rfl
+
+lemma toPartialHomeomorph_coeFn [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
+  h.toPartialHomeomorph = f := rfl
+
+ -- currently unused; is this lemma needed?
+lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
+    (h.toPartialHomeomorph).source = univ := by
+  rw [h.toPartialHomeomorph_coe, OpenEmbedding.toPartialHomeomorph_source]
+
+/-- A choice of inverse function: values outside `f.range` are arbitrary. -/
+def invFun [Nonempty M] (h : OpenSmoothEmbedding I I' f n) : M' → M :=
+  (h.toPartialHomeomorph).invFun
+
+lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) {x : M}:
+    h.invFun (f x) = x := by
+  apply (h.toOpenEmbedding).toPartialHomeomorph_left_inv
+
+lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
+    SmoothOn I' I h.invFun (range f) := by
+  sorry -- TODO: prove this!
+
+end OpenSmoothEmbedding
