@@ -379,22 +379,25 @@ section
 
 attribute [local instance] Classical.dec
 
---variable [Nonempty X] -- TODO: can I remove this?
 /-- This is definition `def:update` in the blueprint. -/
 @[pp_dot]
-def update (m : M) : N :=
-  if m ∈ range φ then ψ (g (φ.invFun m)) else f m
+def update (m : M) : N := by
+  by_cases hyp : m ∈ range φ
+  · have : Nonempty X := by choose y _ using hyp; use y
+    exact ψ (g (φ.invFun m))
+  · exact f m
 
 end
 
-variable [Nonempty X] -- TODO: can I remove this?
+@[simp]
+theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m = f m := by
+  rw [update, dif_neg hm]
 
 @[simp]
-theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m = f m := if_neg hm
-
-@[simp]
-theorem update_of_mem_range {m : M} (hm : m ∈ range φ) : update φ ψ f g m = ψ (g (φ.invFun m)) :=
-  if_pos hm
+-- Note. `Nonempty X` follows from `hm`, but Lean cannot synthesize this.
+theorem update_of_mem_range [Nonempty X] {m : M} (hm : m ∈ range φ) :
+    update φ ψ f g m = ψ (g (φ.invFun m)) := by
+  rw [update, dif_pos hm]
 
 theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by sorry -- TODO! simp
 
@@ -406,9 +409,11 @@ theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
     replace hm : x ∉ K := by contrapose! hm; exact mem_image_of_mem φ hm
     simp [hg x hm]
     sorry -- TODO: fix this!
-  · exact if_neg hm'
+  · exact dif_neg hm'
 
 open Function
+
+variable [Nonempty X]
 
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
@@ -427,7 +432,7 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
     exact image_subset_range φ K
   have h₄ : ∀ x, k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.invFun) (k x) := fun m hm ↦ by
     intros
-    exact if_pos hm
+    exact dif_pos hm
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
       (contMDiffOn_congr h₄).mpr <| ψ.differentiable.comp_contMDiffOn <| hg.comp_contMDiffOn
