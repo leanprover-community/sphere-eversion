@@ -6,7 +6,7 @@ Authors: Michael Rothgang
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
 import Mathlib.Topology.ProperMap
 
-/-! ## Smooth immersions
+/-! ## Smooth immersions and embeddings
 
 In this file, we define immersions and smooth embeddings and prove some of their basic properties.
 

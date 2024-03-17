@@ -1,6 +1,6 @@
 import Mathlib.Geometry.Manifold.Instances.Sphere
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
-import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
+import SphereEversion.ToMathlib.Geometry.Manifold.Maps
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
 import SphereEversion.Local.AmpleSet
 import SphereEversion.Global.Gromov

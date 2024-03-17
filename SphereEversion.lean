@@ -46,7 +46,7 @@ import SphereEversion.ToMathlib.Data.Set.Prod
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
-import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
+import SphereEversion.ToMathlib.Geometry.Manifold.Maps
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners

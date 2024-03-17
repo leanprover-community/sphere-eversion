@@ -3,7 +3,7 @@ import Mathlib.Topology.Algebra.Order.Compact
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
-import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
+import SphereEversion.ToMathlib.Geometry.Manifold.Maps
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
