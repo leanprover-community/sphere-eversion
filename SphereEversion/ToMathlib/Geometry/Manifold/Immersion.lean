@@ -111,6 +111,29 @@ namespace OpenSmoothEmbeddingMR
 variable {f : M → M'} {n : ℕ∞}
 variable {I I'}
 
+instance : FunLike (SmoothEmbedding I I' f n) M M' where
+  coe := fun _ ↦ f
+  coe_injective' := by
+    intro h _ _
+    congr
+
+attribute [coe] OpenSmoothEmbeddingMR.toSmoothEmbedding
+/-- Coerce open smooth embeddings to smooth embeddings. -/
+instance coe : Coe (OpenSmoothEmbeddingMR I I' f n) (SmoothEmbedding I I' f n) :=
+  ⟨toSmoothEmbedding⟩
+
+theorem coe_injective : Function.Injective ((↑) : (OpenSmoothEmbeddingMR I I' f n) → (SmoothEmbedding I I' f n)) := by
+  intro h h' _
+  congr
+
+-- Note. Contrary to the previous definition, `invFun` is not part of the data, so we cna
+-- have a `FunLike` coercion!
+instance : FunLike (OpenSmoothEmbeddingMR I I' f n) M M' where
+  coe := fun _ ↦ f
+  coe_injective' := by
+    intro h h' hyp
+    apply coe_injective (DFunLike.coe_injective hyp)
+
 /-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
 def toPartialHomeomorph [Nonempty M]
     (h : OpenSmoothEmbeddingMR I I' f n) : PartialHomeomorph M M' :=
@@ -129,6 +152,7 @@ lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f 
   rw [h.toPartialHomeomorph_coe, OpenEmbedding.toPartialHomeomorph_source]
 
 /-- A choice of inverse function: values outside `f.range` are arbitrary. -/
+@[pp_dot]
 def invFun [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) : M' → M :=
   (h.toPartialHomeomorph).invFun
 

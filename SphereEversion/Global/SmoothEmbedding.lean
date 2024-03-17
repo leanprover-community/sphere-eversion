@@ -123,11 +123,6 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
 
 open Filter
 
---theorem openEmbedding : OpenEmbedding f := h.toOpenEmbedding
-
--- theorem inducing : Inducing f :=
---   h.toOpenEmbedding.toInducing
-
 theorem forall_near' {P : M → Prop} {A : Set M'} (hyp : ∀ᶠ m near f ⁻¹' A, P m) :
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
   rw [eventually_nhdsSet_iff_forall] at hyp ⊢
