@@ -3,7 +3,7 @@ Copyright (c) 2024 Michael Rothgang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael Rothgang
 -/
-import Mathlib.Geometry.Manifold.MFDeriv.Defs
+import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Mathlib.Topology.ProperMap
 
 /-! ## Smooth immersions and embeddings
@@ -59,9 +59,32 @@ structure Immersion (f : M → M') (n : ℕ∞) : Prop :=
   contMDiff : ContMDiff I I' n f
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
+instance {f : M → M'} {n : ℕ∞} : FunLike (Immersion I I' f n) M M' where
+  coe := fun _ ↦ f
+  coe_injective' := by
+    intro h _ _
+    congr
+
 /-- An injective `C^n` immersion -/
 structure InjImmersion (f : M → M') (n : ℕ∞) extends Immersion I I' f n : Prop :=
   injective : Injective f
+
+attribute [coe] InjImmersion.toImmersion
+/-- Coerce injective immersions to immersions. -/
+instance coe {f : M → M'} {n : ℕ∞} : Coe (InjImmersion I I' f n) (Immersion I I' f n) :=
+  ⟨InjImmersion.toImmersion⟩
+
+
+theorem coe_injective {f : M → M'} {n : ℕ∞} : Function.Injective ((↑) : (InjImmersion I I' f n) → (Immersion I I' f n)) := by
+  intro h h' _
+  congr
+
+-- this errors; is this instance useful?
+-- instance {f : M → M'} {n : ℕ∞} : FunLike (InjImmersion I I' f n) M M' where
+--   coe := fun _ ↦ f
+--   coe_injective' := by
+--     intro h h' hyp
+--     apply coe_injective (DFunLike.coe_injective hyp)
 
 /-- A `C^n` embedding `f : M → M'` is a `C^n` map which is both an immersion and a topological
   embedding. (We do not assume smoothness of the inverse, as this follows automatically.
@@ -258,3 +281,65 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
 end filters
 
 end OpenSmoothEmbedding
+
+section composition
+
+variable {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
+  {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''}
+  {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
+variable {g' : M' → M''} {f' : M → M'}
+
+variable {I I'}
+
+@[simps!]
+def Immersion.comp
+    (g : Immersion I' I'' g' ⊤) (f : Immersion I I' f' ⊤) :
+    Immersion I I'' (g ∘ f) ⊤ where
+  differentiable := g.differentiable.comp f.differentiable
+  diff_injective p := by
+    -- the same argument as below, FIXME deduplicate
+    have aux : MDifferentiableAt I' I'' g' (f' p) := sorry --g.differentiable.mdifferentiableAt
+    have : MDifferentiableAt I I' f' p := sorry --f.differentiably.mdifferentiableAt
+    have : mfderiv I I'' (g ∘ f) p = (mfderiv I' I'' g (f p)).comp (mfderiv I I' f p) := by
+      apply mfderiv_comp
+      -- XXX what is going on here? something's not set up right...
+      apply aux
+      apply this
+    rw [this]
+    apply Injective.comp (g.diff_injective (f p)) (f.diff_injective p)
+
+@[simps!]
+def InjImmersion.comp
+    (g : InjImmersion I' I'' g' ⊤) (f : InjImmersion I I' f' ⊤) :
+    InjImmersion I I'' (g' ∘ f') ⊤ where
+  toImmersion := g.toImmersion.comp f.toImmersion
+  injective := g.injective.comp f.injective
+
+@[simps!]
+def SmoothEmbedding.comp
+    (g : SmoothEmbedding I' I'' g' ⊤) (f : SmoothEmbedding I I' f' ⊤) :
+    SmoothEmbedding I I'' (g ∘ f) ⊤ where
+  toEmbedding := g.toEmbedding.comp (f.toEmbedding)
+  smooth := g.smooth.comp f.smooth
+  diff_injective p := by
+    have aux : MDifferentiableAt I' I'' g' (f' p) := g.smooth.mdifferentiableAt
+    have : MDifferentiableAt I I' f' p := f.smooth.mdifferentiableAt
+    have : mfderiv I I'' (g ∘ f) p = (mfderiv I' I'' g (f p)).comp (mfderiv I I' f p) := by
+      apply mfderiv_comp
+      -- XXX what is going on here? something's not set up right...
+      apply aux
+      apply this
+    rw [this]
+    apply Injective.comp (g.diff_injective (f p)) (f.diff_injective p)
+
+@[simps!]
+def OpenSmoothEmbedding.comp
+    (g : OpenSmoothEmbedding I' I'' g' ⊤) (f : OpenSmoothEmbedding I I' f' ⊤) :
+    OpenSmoothEmbedding I I'' (g ∘ f) ⊤ where
+  toSmoothEmbedding := g.toSmoothEmbedding.comp (f.toSmoothEmbedding)
+  isOpen_range := (g.isOpenMap.comp f.isOpenMap).isOpen_range
+
+end composition
+
+-- other sanity check: identity; continuous linear equivalences
+-- and more generally, local diffeomorphisms: all done on a branch

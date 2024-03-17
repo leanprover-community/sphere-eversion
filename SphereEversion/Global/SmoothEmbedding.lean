@@ -85,55 +85,7 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range h) :
       (mfderiv I' I h.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (h.invFun x)) :=
   by rw [fderiv_symm_coe, h.right_inv hx]
 
-variable (I) in
--- unused
-/-- The identity map is a smooth open embedding. -/
-@[simps]
-nonrec def id : OpenSmoothEmbeddingOld I M I M where
-  toFun := id
-  invFun := id
-  left_inv' := rfl
-  isOpen_range := IsOpenMap.id.isOpen_range
-  smooth_to := smooth_id
-  smooth_inv := smoothOn_id
-
-/- -- unused
-@[simps!]
-def comp {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type*}
-    [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type*} [TopologicalSpace M'']
-    [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
-    (g : OpenSmoothEmbeddingOld I' M' I'' M'') (f : OpenSmoothEmbeddingOld I M I' M') :
-    OpenSmoothEmbeddingOld I M I'' M'' where
-  toFun := g ∘ f
-  invFun := f.invFun ∘ g.invFun
-  left_inv' x := by simp only [Function.comp_apply, left_inv]
-  isOpen_range := (g.isOpenMap.comp f.isOpenMap).isOpen_range
-  smooth_to := g.smooth_to.comp f.smooth_to
-  smooth_inv :=
-    (f.smooth_inv.comp' g.smooth_inv).mono
-      (by
-        change range (g ∘ f) ⊆ range g ∩ g.inv_fun ⁻¹' range f
-        refine subset_inter_iff.mpr ⟨range_comp_subset_range f g, ?_⟩
-        rintro x' ⟨x, rfl⟩
-        exact ⟨x, by simp only [left_inv]⟩) -/
-
 end OpenSmoothEmbedding
-
-namespace ContinuousLinearEquiv
-
-variable (e : E ≃L[𝕜] E') [CompleteSpace E] [CompleteSpace E']
-
--- unused
-@[simps]
-def toOpenSmoothEmbeddingOld : OpenSmoothEmbeddingOld 𝓘(𝕜, E) E 𝓘(𝕜, E') E' where
-  toFun := e
-  invFun := e.symm
-  left_inv' {x} := e.symm_apply_apply x
-  isOpen_range := e.isOpenMap.isOpen_range
-  smooth_to := (e : E →L[𝕜] E').contMDiff
-  smooth_inv := (e.symm : E' →L[𝕜] E).contMDiff.contMDiffOn
-
-end ContinuousLinearEquiv
 
 end General
 
