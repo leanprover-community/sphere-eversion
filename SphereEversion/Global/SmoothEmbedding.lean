@@ -47,79 +47,76 @@ namespace OpenSmoothEmbeddingMR
 variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbeddingMR I I' f ⊤) [Nonempty M]
 variable {I I'}
 
-@[simp]
-theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
-  rfl
-
--- @[simp]
--- theorem left_inv (x : M) : f.invFun (f x) = x := by apply f.left_inv'
+-- @[simp] -- old definition
+-- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
+--   rfl
 
 @[simp]
-theorem invFun_comp_coe : h.invFun ∘ f = id := by
+theorem invFun_comp_coe : h.invFun ∘ h = id := by
   ext
   apply h.left_inv
 
-@[simp]
+@[simp] -- TODO: this is still brittle
 theorem right_inv {y : M'} (hy : y ∈ range f) : f (h.invFun y) = y := by
   obtain ⟨x, rfl⟩ := hy
   rw [h.left_inv]
 
-theorem smoothAt_inv {y : M'} (hy : y ∈ range f) : SmoothAt I' I h.invFun y :=
+theorem smoothAt_inv {y : M'} (hy : y ∈ range h) : SmoothAt I' I h.invFun y :=
   (h.smoothOn_inv y hy).contMDiffAt <| h.isOpen_range.mem_nhds hy
 
 theorem smoothAt_inv' {x : M} : SmoothAt I' I h.invFun (f x) :=
   h.smoothAt_inv <| mem_range_self x
 
-theorem leftInverse : Function.LeftInverse h.invFun f := fun _ ↦ left_inv h
+theorem leftInverse : Function.LeftInverse h.invFun h := fun _ ↦ left_inv h
 
-theorem injective : Function.Injective f :=
+theorem injective : Function.Injective h :=
   (h.leftInverse).injective
 
-protected theorem continuous : Continuous f :=
+protected theorem continuous : Continuous h :=
   (h.differentiable).continuous
 
-theorem isOpenMap : IsOpenMap f :=
+theorem isOpenMap : IsOpenMap h :=
   h.toOpenEmbedding.isOpenMap
 
-theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ h.invFun =ᶠ[𝓝 (f x)] id :=
+theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
   Filter.eventually_of_mem ((h.isOpenMap).range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (h.invFun (f x))` are both definitionally `E` below. -/
-@[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
-  have h₁ : MDifferentiableAt I' I h.invFun (f x) :=
-    ((h.smoothOn_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
+@[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (h x) :=
+  have h₁ : MDifferentiableAt I' I h.invFun (h x) :=
+    ((h.smoothOn_inv (h x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       ((h.isOpenMap).range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := h.differentiable.mdifferentiable le_top _
-  ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I h.invFun (f x))
+  have h₂ : MDifferentiableAt I I' h x := h.differentiable.mdifferentiable le_top _
+  ContinuousLinearEquiv.equivOfInverse (mfderiv I I' h x) (mfderiv I' I h.invFun (h x))
     (by
       intro v
       erw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, h.invFun_comp_coe, mfderiv_id,
         ContinuousLinearMap.coe_id', id.def])
     (by
       intro v
-      have hx : x = h.invFun (f x) := by rw [h.left_inv]
-      have hx' : f (h.invFun (f x)) = f x := by rw [h.left_inv]
+      have hx : x = h.invFun (h x) := by sorry -- TODO rw [h.left_inv]
+      have hx' : h (h.invFun (h x)) = h x := by sorry -- TODO rw [h.left_inv]
       rw [hx] at h₂
-      erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
+      erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (h x) h₂ h₁,
         ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
             (h.coe_comp_invFun_eventuallyEq x)).mfderiv,
         ContinuousLinearMap.coe_id', id.def])
 
 @[simp]
 theorem fderiv_coe (x : M) :
-    (h.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv I I' f x := by ext; rfl
+    (h.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (h x)) = mfderiv I I' h x := by ext; rfl
 
 @[simp]
 theorem fderiv_symm_coe (x : M) :
-    ((h.fderiv x).symm : TangentSpace I' (f x) →L[𝕜] TangentSpace I x) =
-      mfderiv I' I h.invFun (f x) := by ext; rfl
+    ((h.fderiv x).symm : TangentSpace I' (h x) →L[𝕜] TangentSpace I x) =
+      mfderiv I' I h.invFun (h x) := by ext; rfl
 
-theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
+theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range h) :
     ((h.fderiv (h.invFun x)).symm :
-        TangentSpace I' (f (h.invFun x)) →L[𝕜] TangentSpace I (h.invFun x)) =
+        TangentSpace I' (h (h.invFun x)) →L[𝕜] TangentSpace I (h.invFun x)) =
       (mfderiv I' I h.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (h.invFun x)) :=
-  by rw [fderiv_symm_coe, h.right_inv hx]
+  by rw [fderiv_symm_coe] ; sorry-- TODO: fix, h.right_inv hx]
 
 open Filter
 
