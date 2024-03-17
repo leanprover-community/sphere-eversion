@@ -718,12 +718,11 @@ theorem Jupdate_localize [Nonempty X] [Nonempty Y]
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
     simp_rw [OneJetSec.snd_eq, OneJetSec.localize_ϕ]
     rw [foo]
-    -- TODO: remove those two extra _ from OpenSmoothEmbeddingMR.fderiv!
-    change (ψ.fderiv ((G t).bs x)).symm ((JΘ F (G t) (φ x)).2 (φ.fderiv _ _ x v)) = ((G t).ϕ x) v
+    change (ψ.fderiv ((G t).bs x)).symm ((JΘ F (G t) (φ x)).2 (φ.fderiv x v)) = ((G t).ϕ x) v
     rw [φ.update_apply_embedding]
     change
       (ψ.fderiv ((G t).bs x)).symm
-          (ψ.fderiv _ _ ((G t).bs x) <| (G t).ϕ x <| (φ.fderiv x).symm <| φ.fderiv _ _ x v) =
+          (ψ.fderiv ((G t).bs x) <| (G t).ϕ x <| (φ.fderiv x).symm <| φ.fderiv x v) =
         (G t).ϕ x v
     simp_rw [ContinuousLinearEquiv.symm_apply_apply]
 

@@ -75,8 +75,7 @@ theorem OpenSmoothEmbeddingMR.improve_formalSol
     exact p.mkHtpy_eq_of_forall hcompat ht
   have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t ↦ p.mkHtpy_congr _
   refine ⟨F', hF't0, hF't1, ?_, hF'relK₁, ?_, ?_⟩
-  -- TODO: remove superfluous _ _ in forall_near!
-  · apply φ.forall_near _ _ hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
+  · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
       sorry /- TODO: fix this, was rw [p.mkHtpy_eq_of_eq _ _ hcompat]
       exact he t -/
@@ -99,7 +98,7 @@ theorem OpenSmoothEmbeddingMR.improve_formalSol
       exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' ↦ (hx' 1).symm)
     have : ∀ᶠ x near φ ⁻¹' C ∪ K₀, (𝓕' 1).IsHolonomicAt x := h𝓕'holC.union h𝓕'hol
     rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at this
-    apply φ.forall_near _ _ hK₁ this
+    apply φ.forall_near hK₁ this
     · apply Filter.Eventually.union
       · apply hFC.mono
         intro x hx hx'
@@ -112,7 +111,6 @@ theorem OpenSmoothEmbeddingMR.improve_formalSol
       · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ := by
           suffices ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁) from this.mono interior_subset
           exact isOpen_interior.mem_nhdsSet.mpr
-            -- TODO: remove superfluous _ _ in open_map!
-            ((image_subset φ hK₀K₁).trans ((φ.isOpenMap _ _).image_interior_subset K₁))
+            ((image_subset φ hK₀K₁).trans (φ.isOpenMap.image_interior_subset K₁))
         exact this.mono (fun a hx hx' ↦ (hx' hx).elim)
     · exact fun _ ↦ (p.mkHtpy_isHolonomicAt_iff hcompat).mpr

@@ -42,10 +42,8 @@ attribute [pp_dot] OpenSmoothEmbedding.invFun
 
 namespace OpenSmoothEmbeddingMR
 
---variable {I I' M M'}
-
 variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbeddingMR I I' f ⊤) [Nonempty M]
-variable {I I'}
+variable {I I' M M'}
 
 -- @[simp] -- old definition
 -- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
@@ -79,14 +77,14 @@ theorem isOpenMap : IsOpenMap h :=
   h.toOpenEmbedding.isOpenMap
 
 theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
-  Filter.eventually_of_mem ((h.isOpenMap).range_mem_nhds x) fun _ hy ↦ h.right_inv hy
+  Filter.eventually_of_mem (h.isOpenMap.range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (h.invFun (f x))` are both definitionally `E` below. -/
 @[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (h x) :=
   have h₁ : MDifferentiableAt I' I h.invFun (h x) :=
     ((h.smoothOn_inv (h x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
-      ((h.isOpenMap).range_mem_nhds x)
+      (h.isOpenMap.range_mem_nhds x)
   have h₂ : MDifferentiableAt I I' h x := by apply h.smooth.mdifferentiable
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' h x) (mfderiv I' I h.invFun (h x))
     (by
@@ -126,7 +124,7 @@ theorem forall_near' {P : M → Prop} {A : Set M'} (hyp : ∀ᶠ m near f ⁻¹'
   rintro _ ⟨hfm₀, m₀, rfl⟩
   have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
     intro U U_in
-    exact (h.isOpenMap).image_mem_nhds U_in
+    exact h.isOpenMap.image_mem_nhds U_in
   apply (this _ <| hyp m₀ hfm₀).mono
   rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
   rwa [← h.injective hm₀']
