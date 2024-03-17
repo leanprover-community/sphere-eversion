@@ -26,20 +26,14 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
 
 local notation "TM" => TangentSpace I
-
 local notation "TM'" => TangentSpace I'
-
 local notation "HJ" => ModelProd (ModelProd H H') (E →L[ℝ] E')
-
 local notation "ψJ" => chartAt HJ
 
-variable (M M')
-
+variable (M M') in
 /-- The relation of immersions for maps between two manifolds. -/
 def immersionRel : RelMfld I M I' M' :=
   {σ | Injective σ.2}
-
-variable {M M'}
 
 @[simp]
 theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
@@ -272,7 +266,7 @@ theorem ContDiff.uncurry_left' (n : ℕ∞) {f : E × F → G}
     ContDiff 𝕜 n (fun p : F ↦ f ⟨x, p⟩) :=
   hf.comp (ContDiff.inr x n)
 
-theorem ContDiff.uncurry_left {f : E → F → G} (n : ℕ∞) (hf : ContDiff 𝕜 n (uncurry f)) (x : E) :
+theorem ContDiff.uncurry_left {f : E → F → G} (n : ℕ∞) (hf : ContDiff 𝕜 n ↿f) (x : E) :
     ContDiff 𝕜 n (f x) := by
   have : f x = (uncurry f) ∘ fun p : F ↦ (⟨x, p⟩ : E × F) := by ext; simp
   rw [this] ; exact hf.comp (ContDiff.inr x n)
@@ -299,7 +293,7 @@ alias Smooth.prod_left := Smooth.inr
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
 theorem Smooth.uncurry_left
-    {f : M → M' → P} (hf : Smooth (I.prod I') IP (uncurry f)) (x : M) :
+    {f : M → M' → P} (hf : Smooth (I.prod I') IP ↿f) (x : M) :
     Smooth I' IP (f x) := by
   have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
   -- or just `apply hf.comp (Smooth.inr I I' x)`
@@ -309,7 +303,7 @@ end helper
 
 theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
-      ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ (uncurry f) ∧
+      ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ ↿f ∧
         (f 0 = fun x : 𝕊² ↦ (x : E)) ∧ (f 1 = fun x : 𝕊² ↦ -(x : E)) ∧
         ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) ⊤ := by
   classical
