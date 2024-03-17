@@ -84,7 +84,7 @@ theorem nice_atlas_target :
 /-- A collection of charts on a manifold `M'` which are smooth open embeddings with domain the whole
 model space, and which cover the manifold when restricted in each case to the unit ball. -/
 def targetCharts (i' : IndexType (nice_atlas_target E' I' M').choose) :
-    OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M' :=
+    OpenSmoothEmbeddingOld 𝓘(ℝ, E') E' I' M' :=
   sorry --(nice_atlas_target E' I' M').choose_spec.choose i'
 
 theorem targetCharts_cover : (⋃ i', targetCharts E' I' M' i' '' ball (0 : E') 1) = univ :=

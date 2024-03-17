@@ -24,7 +24,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
   (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
 
-structure OpenSmoothEmbedding where
+structure OpenSmoothEmbeddingOld where
   toFun : M → M'
   invFun : M' → M
   left_inv' : ∀ {x}, invFun (toFun x) = x
@@ -32,13 +32,13 @@ structure OpenSmoothEmbedding where
   smooth_to : Smooth I I' toFun
   smooth_inv : SmoothOn I' I invFun (range toFun)
 
-attribute [coe] OpenSmoothEmbedding.toFun
+attribute [coe] OpenSmoothEmbeddingOld.toFun
 
 -- Note: this cannot be a `FunLike` instance since `toFun` is not injective in general.
-instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ ↦ M → M' :=
-  ⟨OpenSmoothEmbedding.toFun⟩
+instance : CoeFun (OpenSmoothEmbeddingOld I M I' M') fun _ ↦ M → M' :=
+  ⟨OpenSmoothEmbeddingOld.toFun⟩
 
-attribute [pp_dot] OpenSmoothEmbedding.invFun
+attribute [pp_dot] OpenSmoothEmbeddingOld.invFun
 
 namespace OpenSmoothEmbeddingMR
 
@@ -46,7 +46,7 @@ variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbeddingMR I I' f ⊤) [Non
 variable {I I' M M'}
 
 -- @[simp] -- old definition
--- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
+-- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbeddingOld I M I' M') = f :=
 --   rfl
 
 @[simp]
@@ -158,7 +158,7 @@ variable (I) in
 -- unused
 /-- The identity map is a smooth open embedding. -/
 @[simps]
-nonrec def id : OpenSmoothEmbedding I M I M where
+nonrec def id : OpenSmoothEmbeddingOld I M I M where
   toFun := id
   invFun := id
   left_inv' := rfl
@@ -171,8 +171,8 @@ nonrec def id : OpenSmoothEmbedding I M I M where
 def comp {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type*}
     [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''} {M'' : Type*} [TopologicalSpace M'']
     [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
-    (g : OpenSmoothEmbedding I' M' I'' M'') (f : OpenSmoothEmbedding I M I' M') :
-    OpenSmoothEmbedding I M I'' M'' where
+    (g : OpenSmoothEmbeddingOld I' M' I'' M'') (f : OpenSmoothEmbeddingOld I M I' M') :
+    OpenSmoothEmbeddingOld I M I'' M'' where
   toFun := g ∘ f
   invFun := f.invFun ∘ g.invFun
   left_inv' x := by simp only [Function.comp_apply, left_inv]
@@ -194,7 +194,7 @@ variable (e : E ≃L[𝕜] E') [CompleteSpace E] [CompleteSpace E']
 
 -- unused
 @[simps]
-def toOpenSmoothEmbedding : OpenSmoothEmbedding 𝓘(𝕜, E) E 𝓘(𝕜, E') E' where
+def toOpenSmoothEmbeddingOld : OpenSmoothEmbeddingOld 𝓘(𝕜, E) E 𝓘(𝕜, E') E' where
   toFun := e
   invFun := e.symm
   left_inv' {x} := e.symm_apply_apply x

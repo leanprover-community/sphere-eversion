@@ -414,7 +414,7 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
 
 end Defs
 
-section OpenSmoothEmbedding
+section OpenSmoothEmbeddingMR
 
 /-! ## Localisation of one jet sections
 
@@ -782,4 +782,4 @@ theorem updateFormalSol_apply_image [Nonempty X] [Nonempty Y] {F : FormalSol R} 
 
 end OpenSmoothEmbeddingMR
 
-end OpenSmoothEmbedding
+end OpenSmoothEmbeddingMR
