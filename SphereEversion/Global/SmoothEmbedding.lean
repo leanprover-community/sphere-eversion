@@ -350,7 +350,7 @@ theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
 
 end WithoutBoundary
 
-namespace OpenSmoothEmbedding
+namespace OpenSmoothEmbeddingMR
 
 section Updating
 
@@ -371,18 +371,23 @@ section NonMetric
 
 variable [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
   [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
-  (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
+  -- TODO: better names than φfun, ψfun?
+  {φfun : X → M} (φ : OpenSmoothEmbeddingMR IX IM φfun ⊤)
+  {ψfun : Y → N} (ψ : OpenSmoothEmbeddingMR IY IN ψfun ⊤) (f : M → N) (g : X → Y)
 
 section
 
 attribute [local instance] Classical.dec
 
+variable [Nonempty X] -- TODO: can I remove this?
 /-- This is definition `def:update` in the blueprint. -/
 @[pp_dot]
 def update (m : M) : N :=
   if m ∈ range φ then ψ (g (φ.invFun m)) else f m
 
 end
+
+variable [Nonempty X] -- TODO: can I remove this?
 
 @[simp]
 theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m = f m := if_neg hm
@@ -391,7 +396,7 @@ theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m 
 theorem update_of_mem_range {m : M} (hm : m ∈ range φ) : update φ ψ f g m = ψ (g (φ.invFun m)) :=
   if_pos hm
 
-theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by simp
+theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by sorry -- TODO! simp
 
 -- This small auxiliary result is used in the next two lemmas.
 theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
@@ -400,6 +405,7 @@ theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
   · obtain ⟨x, rfl⟩ := hm'
     replace hm : x ∉ K := by contrapose! hm; exact mem_image_of_mem φ hm
     simp [hg x hm]
+    sorry -- TODO: fix this!
   · exact if_neg hm'
 
 open Function
@@ -424,8 +430,8 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
     exact if_pos hm
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
-      (contMDiffOn_congr h₄).mpr <| ψ.smooth_to.comp_contMDiffOn <| hg.comp_contMDiffOn
-        (smoothOn_id.prod_mk <| φ.smooth_inv.comp hk.smoothOn Subset.rfl)⟩
+      (contMDiffOn_congr h₄).mpr <| ψ.differentiable.comp_contMDiffOn <| hg.comp_contMDiffOn
+        (smoothOn_id.prod_mk <| φ.smoothOn_inv.comp hk.smoothOn Subset.rfl)⟩
   · refine
       ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
     exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx
@@ -439,7 +445,8 @@ variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [M
   {gg : Y → N} (ψ : OpenSmoothEmbeddingMR IY IN gg ⊤) (f : M → N) (g : X → Y)
 
 /-- This is `lem:dist_updating` in the blueprint. -/
-theorem dist_update [Nonempty Y] [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]
+-- TODO: can I remove `Nonempty X`
+theorem dist_update [Nonempty X] [Nonempty Y] [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]
     {KP : Set P} (hKP : IsCompact KP) (f : P → M → N) (hf : Continuous ↿f)
     (hf' : ∀ p, f p '' range φ ⊆ range ψ) {ε : M → ℝ} (hε : ∀ m, 0 < ε m) (hε' : Continuous ε) :
     ∃ η > (0 : ℝ), ∀ g : P → X → Y, ∀ p ∈ KP, ∀ p' ∈ KP, ∀ x ∈ K,
@@ -451,11 +458,11 @@ theorem dist_update [Nonempty Y] [ProperSpace Y] {K : Set X} (hK : IsCompact K) 
     refine Metric.isCompact_of_isClosed_isBounded Metric.isClosed_cthickening
         (Bornology.IsBounded.cthickening <| IsCompact.isBounded <| ?_)
     apply (hKP.prod hK).image
-    exact ψ.smooth_inv.continuousOn.comp_continuous
-      (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q ↦
+    exact ψ.smoothOn_inv.continuousOn.comp_continuous
+      (hf.comp <| continuous_fst.prod_mk <| (φ.continuous).comp continuous_snd) fun q ↦
       hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
-    hK₁.uniformContinuousOn_of_continuous ψ.continuous.continuousOn
+    hK₁.uniformContinuousOn_of_continuous (ψ.continuous).continuousOn
   have hεφ : ∀ x ∈ K, 0 < (ε ∘ φ) x := fun x _hx ↦ hε _
   obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).continuousOn hεφ
   obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniformContinuousOn_iff.mp h₁ ε₀ hε₀
@@ -473,4 +480,4 @@ end Metric
 
 end Updating
 
-end OpenSmoothEmbedding
+end OpenSmoothEmbeddingMR
