@@ -72,11 +72,11 @@ structure SmoothEmbedding (f : M → M') (n : ℕ∞) extends Embedding f : Prop
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
 /-- A `SmoothEmbedding` with open range. -/
-structure OpenSmoothEmbeddingMR (f : M → M') (n : ℕ∞) extends SmoothEmbedding I I' f n : Prop :=
+structure OpenSmoothEmbedding (f : M → M') (n : ℕ∞) extends SmoothEmbedding I I' f n : Prop :=
   isOpen_range : IsOpen <| range f
 
 variable {I I'} in
-lemma OpenSmoothEmbeddingMR.toOpenEmbedding {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbeddingMR I I' f n) :
+lemma OpenSmoothEmbedding.toOpenEmbedding {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbedding I I' f n) :
     OpenEmbedding f where
   toEmbedding := h.toEmbedding
   open_range := h.isOpen_range
@@ -107,7 +107,7 @@ lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f n) (hp : IsP
 
 end ImmersionEmbeddings
 
-namespace OpenSmoothEmbeddingMR
+namespace OpenSmoothEmbedding
 
 variable {f : M → M'} {n : ℕ∞}
 variable {I I'}
@@ -118,18 +118,18 @@ instance : FunLike (SmoothEmbedding I I' f n) M M' where
     intro h _ _
     congr
 
-attribute [coe] OpenSmoothEmbeddingMR.toSmoothEmbedding
+attribute [coe] OpenSmoothEmbedding.toSmoothEmbedding
 /-- Coerce open smooth embeddings to smooth embeddings. -/
-instance coe : Coe (OpenSmoothEmbeddingMR I I' f n) (SmoothEmbedding I I' f n) :=
+instance coe : Coe (OpenSmoothEmbedding I I' f n) (SmoothEmbedding I I' f n) :=
   ⟨toSmoothEmbedding⟩
 
-theorem coe_injective : Function.Injective ((↑) : (OpenSmoothEmbeddingMR I I' f n) → (SmoothEmbedding I I' f n)) := by
+theorem coe_injective : Function.Injective ((↑) : (OpenSmoothEmbedding I I' f n) → (SmoothEmbedding I I' f n)) := by
   intro h h' _
   congr
 
 -- Note. Contrary to the previous definition, `invFun` is not part of the data, so we cna
 -- have a `FunLike` coercion!
-instance : FunLike (OpenSmoothEmbeddingMR I I' f n) M M' where
+instance : FunLike (OpenSmoothEmbedding I I' f n) M M' where
   coe := fun _ ↦ f
   coe_injective' := by
     intro h h' hyp
@@ -139,38 +139,38 @@ instance : FunLike (OpenSmoothEmbeddingMR I I' f n) M M' where
 
 /-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
 def toPartialHomeomorph [Nonempty M]
-    (h : OpenSmoothEmbeddingMR I I' f n) : PartialHomeomorph M M' :=
+    (h : OpenSmoothEmbedding I I' f n) : PartialHomeomorph M M' :=
   h.toOpenEmbedding.toPartialHomeomorph
 
 -- currently unused; is this lemma needed? what's a good name?
-lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) :
+lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
   h.toPartialHomeomorph = h.toOpenEmbedding.toPartialHomeomorph := rfl
 
-lemma toPartialHomeomorph_coeFn [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) :
+lemma toPartialHomeomorph_coeFn [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
   h.toPartialHomeomorph = f := rfl
 
  -- currently unused; is this lemma needed?
-lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) :
+lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
     (h.toPartialHomeomorph).source = univ := by
   rw [h.toPartialHomeomorph_coe, OpenEmbedding.toPartialHomeomorph_source]
 
 /-- A choice of inverse function: values outside `f.range` are arbitrary. -/
 @[pp_dot]
-def invFun [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) : M' → M :=
+def invFun [Nonempty M] (h : OpenSmoothEmbedding I I' f n) : M' → M :=
   (h.toPartialHomeomorph).invFun
 
 @[simp]
-lemma left_inv [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) {x : M}:
+lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) {x : M}:
     h.invFun (f x) = x := by
   apply (h.toOpenEmbedding).toPartialHomeomorph_left_inv
 
-lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) :
+lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :
     SmoothOn I' I h.invFun (range f) := by
   sorry -- TODO: prove this!
 
-lemma isOpenMap (h : OpenSmoothEmbeddingMR I I' f n) : IsOpenMap f := h.toOpenEmbedding.isOpenMap
+lemma isOpenMap (h : OpenSmoothEmbedding I I' f n) : IsOpenMap f := h.toOpenEmbedding.isOpenMap
 
-theorem inducing (h : OpenSmoothEmbeddingMR I I' f n) : Inducing f :=
+theorem inducing (h : OpenSmoothEmbedding I I' f n) : Inducing f :=
   h.toOpenEmbedding.toInducing
 
-end OpenSmoothEmbeddingMR
+end OpenSmoothEmbedding

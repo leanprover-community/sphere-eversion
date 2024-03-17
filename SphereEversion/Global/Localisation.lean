@@ -117,9 +117,9 @@ variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E]
 /-- A pair of charts together with a compact subset of the first vector space. -/
 structure ChartPair where
   φfun : E → M
-  φ : OpenSmoothEmbeddingMR 𝓘(ℝ, E) I φfun ⊤
+  φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun ⊤
   ψfun : E' → M'
-  ψ : OpenSmoothEmbeddingMR 𝓘(ℝ, E') I' ψfun ⊤
+  ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun ⊤
   K₁ : Set E
   hK₁ : IsCompact K₁
 
@@ -209,7 +209,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
   rw [ChartPair.mkHtpy]
   split_ifs with h
   · refine (p.φ.Jupdate_apply p.ψ p.hK₁ (p.mkHtpy_aux h) t m).trans ?_
-    unfold OpenSmoothEmbeddingMR.update
+    unfold OpenSmoothEmbedding.update
     split_ifs with h'
     · obtain ⟨x, rfl⟩ := h'
       sorry /- TODO: fix this, old proof was rw [OneJetBundle.embedding_toFun, p.φ.left_inv]
@@ -236,7 +236,7 @@ theorem ChartPair.mkHtpy_eq_of_eq (F : FormalSol R) (𝓕 : (R.localize p.φ p.�
     p.mkHtpy F 𝓕 t (p.φ x) = F (p.φ x) := by
   dsimp only [ChartPair.mkHtpy]
   split_ifs
-  simp only [OpenSmoothEmbeddingMR.updateFormalSol_apply_image]
+  simp only [OpenSmoothEmbedding.updateFormalSol_apply_image]
   rw [RelLoc.HtpyFormalSol.unloc_congr_const p, FormalSol.transfer_unloc_localize p F h𝓕.1 x]
   exact h
 
@@ -259,7 +259,7 @@ theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
     dsimp only [ChartPair.mkHtpy]
     simp only [dif_pos h]
     rw [p.φ.updateFormalSol_bs p.ψ p.hK₁]
-    simp only [Function.comp_apply, OpenSmoothEmbeddingMR.update_apply_embedding, mem_range_self]
+    simp only [Function.comp_apply, OpenSmoothEmbedding.update_apply_embedding, mem_range_self]
   rw [← isHolonomicAt_localize_iff _ p.φ p.ψ rg e, ← JetSec.unloc_hol_at_iff]
   exact OneJetSec.isHolonomicAt_congr (Filter.eventually_of_forall fun e ↦ p.mkHtpy_localize h rg)
 
@@ -275,12 +275,12 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
     -- TODO: this proof needs more lemmas
     intro 𝓕 h𝓕 t e
     change (p.mkHtpy F 𝓕 t (p.φ e)).1.2 = p.φ.update p.ψ bsF (fun e ↦ (𝓕.unloc p t).bs e) (p.φ e)
-    simp only [OpenSmoothEmbeddingMR.update_apply_embedding]
+    simp only [OpenSmoothEmbedding.update_apply_embedding]
     dsimp only [ChartPair.mkHtpy]
-    rw [dif_pos h𝓕, OpenSmoothEmbeddingMR.updateFormalSol_apply]
+    rw [dif_pos h𝓕, OpenSmoothEmbedding.updateFormalSol_apply]
     dsimp only
-    simp_rw [OpenSmoothEmbeddingMR.update_apply_embedding, OneJetBundle.embedding_toFun,
-      OpenSmoothEmbeddingMR.transfer_proj_snd]
+    simp_rw [OpenSmoothEmbedding.update_apply_embedding, OneJetBundle.embedding_toFun,
+      OpenSmoothEmbedding.transfer_proj_snd]
     rfl
   rcases p.φ.dist_update p.ψ p.hK₁ (isCompact_Icc : IsCompact (Icc 0 1 : Set ℝ))
       (fun _t m ↦ F.bs m) (F.smooth_bs.continuous.comp continuous_snd)
