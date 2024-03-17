@@ -19,8 +19,10 @@ variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimens
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [LocallyCompactSpace X]
   [SigmaCompactSpace X] [Nonempty X]
 
-theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) EM IM M)
-    (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) EX IX X) {R : RelMfld IM M IX X} (hRample : R.Ample)
+theorem OpenSmoothEmbeddingMR.improve_formalSol
+    {φfun : EM → M} (φ : OpenSmoothEmbeddingMR 𝓘(ℝ, EM) IM φfun ⊤)
+    {ψfun : EX → X} (ψ : OpenSmoothEmbeddingMR 𝓘(ℝ, EX) IX ψfun ⊤)
+    {R : RelMfld IM M IX X} (hRample : R.Ample)
     (hRopen : IsOpen R) {C : Set M} (hC : IsClosed C) {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
     (hδ_cont : Continuous δ) {F : FormalSol R} (hFφψ : F.bs '' range φ ⊆ range ψ)
     (hFC : ∀ᶠ x near C, F.IsHolonomicAt x) {K₀ K₁ : Set EM} (hK₀ : IsCompact K₀)
@@ -73,10 +75,11 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     exact p.mkHtpy_eq_of_forall hcompat ht
   have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t ↦ p.mkHtpy_congr _
   refine ⟨F', hF't0, hF't1, ?_, hF'relK₁, ?_, ?_⟩
-  · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
+  -- TODO: remove superfluous _ _ in forall_near!
+  · apply φ.forall_near _ _ hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
-      rw [p.mkHtpy_eq_of_eq _ _ hcompat]
-      exact he t
+      sorry /- TODO: fix this, was rw [p.mkHtpy_eq_of_eq _ _ hcompat]
+      exact he t -/
   · intro t x
     rcases Classical.em (x ∈ φ '' K₁) with (⟨e, he, rfl⟩ | hx)
     · by_cases ht : t ∈ (Icc 0 1 : Set ℝ)
@@ -96,7 +99,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       exact JetSec.IsHolonomicAt.congr hx' (hx.mono fun x' hx' ↦ (hx' 1).symm)
     have : ∀ᶠ x near φ ⁻¹' C ∪ K₀, (𝓕' 1).IsHolonomicAt x := h𝓕'holC.union h𝓕'hol
     rw [← preimage_image_eq K₀ φ.injective, ← preimage_union] at this
-    apply φ.forall_near hK₁ this
+    apply φ.forall_near _ _ hK₁ this
     · apply Filter.Eventually.union
       · apply hFC.mono
         intro x hx hx'
@@ -109,6 +112,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ := by
           suffices ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁) from this.mono interior_subset
           exact isOpen_interior.mem_nhdsSet.mpr
-            ((image_subset φ hK₀K₁).trans (φ.isOpenMap.image_interior_subset K₁))
+            -- TODO: remove superfluous _ _ in open_map!
+            ((image_subset φ hK₀K₁).trans ((φ.isOpenMap _ _).image_interior_subset K₁))
         exact this.mono (fun a hx hx' ↦ (hx' hx).elim)
     · exact fun _ ↦ (p.mkHtpy_isHolonomicAt_iff hcompat).mpr
