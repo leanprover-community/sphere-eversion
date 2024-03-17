@@ -479,7 +479,7 @@ theorem OpenSmoothEmbedding.smooth_transfer [Nonempty X] :
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.smoothAt_inv <| _).comp (x, φ x.1.1) smoothAt_snd)
       (φ.smooth.smoothAt.comp x (smooth_oneJetBundle_proj.fst x)) le_top
-  · sorry -- TODO: fix! simp_rw [φ.left_inv] at this; exact this
+  · simp_rw [φ.left_inv] at this; exact this
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer [Nonempty X] : Continuous (φ.transfer ψ) :=
@@ -569,7 +569,7 @@ theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) [Nonem
   dsimp only [OneJetBundle.mk]
   ext
   · rfl
-  · sorry -- TODO: fix! dsimp only; erw [ψ.right_inv (hF <| mem_range_self x), Function.comp_apply, F.bs_eq]
+  · dsimp only; erw [ψ.right_inv (hF <| mem_range_self x), Function.comp_apply, F.bs_eq]
   · -- Porting note: was simp_rw [← ψ.fderiv_coe, continuous_linear_map.comp_apply,
     --  continuous_linear_equiv.coe_coe, continuous_linear_equiv.apply_symm_apply]
     dsimp only
@@ -696,12 +696,11 @@ theorem Jupdate_bs [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : Htpy
       OpenSmoothEmbedding.update φ ψ F.bs (G t).bs := by
   classical
   ext x
-  -- TODO fix this, will be fun... related to changed def of update
-  sorry
-  /-change
+  -- TODO fix this: related to changed definition of update
+  sorry /- change
     (if x ∈ range φ then φ.transfer ψ (G t (φ.invFun x)) else F x).1.2 =
       if x ∈ range φ then _ else _
-  split_ifs <;> rfl-/
+  split_ifs <;> rfl -/
 
 theorem Jupdate_localize [Nonempty X] [Nonempty Y]
     {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
@@ -709,8 +708,7 @@ theorem Jupdate_localize [Nonempty X] [Nonempty Y]
     (rg : range ((φ.Jupdate ψ F G hK hFG t).bs ∘ φ) ⊆ range ψ) (x : X) :
     (φ.Jupdate ψ F G hK hFG t).localize φ ψ rg x = G t x := by
   have foo : ψ.invFun ((φ.Jupdate ψ F G hK hFG t).bs (φ x)) = (G t).bs x := by
-    simp_rw [Jupdate_bs, OpenSmoothEmbedding.update_apply_embedding]
-    sorry -- TODO fix, was `, OpenSmoothEmbedding.left_inv]`
+    simp_rw [Jupdate_bs, OpenSmoothEmbedding.update_apply_embedding, OpenSmoothEmbedding.left_inv]
   ext -- This is partially failing compared to Lean 3.
   · rfl
   · exact foo
@@ -770,15 +768,14 @@ theorem updateFormalSol_apply_of_mem [Nonempty X] [Nonempty Y] {F : FormalSol R}
   rw [updateFormalSol_apply, φ.update_of_mem_range _ _ _ hx]
   ext
   · change m = φ (φ.invFun m)
-    sorry -- TODO: fix this! rw [φ.right_inv hx]
+    rw [φ.right_inv hx]
   · rfl
   · rfl
 
 theorem updateFormalSol_apply_image [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {x} :
-    φ.updateFormalSol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) := by sorry
-    -- TODO: fix this, was `simp`
+    φ.updateFormalSol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) := by simp
 
 end OpenSmoothEmbedding
 

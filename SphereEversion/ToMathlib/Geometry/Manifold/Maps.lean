@@ -160,8 +160,8 @@ def invFun [Nonempty M] (h : OpenSmoothEmbedding I I' f n) : M' → M :=
   (h.toPartialHomeomorph).invFun
 
 @[simp]
-lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) {x : M}:
-    h.invFun (f x) = x := by
+lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) (x : M) :
+    h.invFun (h x) = x := by
   apply (h.toOpenEmbedding).toPartialHomeomorph_left_inv
 
 lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f n) :

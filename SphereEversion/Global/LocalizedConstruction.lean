@@ -78,6 +78,7 @@ theorem OpenSmoothEmbedding.improve_formalSol
   · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
       sorry /- TODO: fix this, was rw [p.mkHtpy_eq_of_eq _ _ hcompat]
+      -- using erw applies the first, but then the second lemma fails
       exact he t -/
   · intro t x
     rcases Classical.em (x ∈ φ '' K₁) with (⟨e, he, rfl⟩ | hx)

@@ -54,18 +54,18 @@ theorem invFun_comp_coe : h.invFun ∘ h = id := by
   ext
   apply h.left_inv
 
-@[simp] -- TODO: this is still brittle
-theorem right_inv {y : M'} (hy : y ∈ range f) : f (h.invFun y) = y := by
+@[simp]
+theorem right_inv {y : M'} (hy : y ∈ range h) : h (h.invFun y) = y := by
   obtain ⟨x, rfl⟩ := hy
-  rw [h.left_inv]
+  erw [h.left_inv]
 
 theorem smoothAt_inv {y : M'} (hy : y ∈ range h) : SmoothAt I' I h.invFun y :=
   (h.smoothOn_inv y hy).contMDiffAt <| h.isOpen_range.mem_nhds hy
 
-theorem smoothAt_inv' {x : M} : SmoothAt I' I h.invFun (f x) :=
+theorem smoothAt_inv' {x : M} : SmoothAt I' I h.invFun (h x) :=
   h.smoothAt_inv <| mem_range_self x
 
-theorem leftInverse : Function.LeftInverse h.invFun h := fun _ ↦ left_inv h
+theorem leftInverse : Function.LeftInverse h.invFun h := fun x ↦ left_inv h x
 
 theorem injective : Function.Injective h :=
   (h.leftInverse).injective
@@ -77,7 +77,7 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] i
   Filter.eventually_of_mem (h.isOpenMap.range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
-`TangentSpace I (h.invFun (f x))` are both definitionally `E` below. -/
+`TangentSpace I (h.invFun (h x))` are both definitionally `E` below. -/
 @[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (h x) :=
   have h₁ : MDifferentiableAt I' I h.invFun (h x) :=
     ((h.smoothOn_inv (h x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
@@ -90,11 +90,10 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] i
         ContinuousLinearMap.coe_id', id.def])
     (by
       intro v
-      have hx : x = h.invFun (h x) := by sorry -- TODO rw [h.left_inv]
-      have hx' : h (h.invFun (h x)) = h x := by sorry -- TODO rw [h.left_inv]
-      rw [hx] at h₂
-      erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (h x) h₂ h₁,
-        ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
+      have hx' : h (h.invFun (h x)) = h x := by erw [h.left_inv x]
+      rw [← h.left_inv x] at h₂
+      erw [← h.left_inv x, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (h x) h₂ h₁,
+        ((hasMFDerivAt_id I' (h x)).congr_of_eventuallyEq
             (h.coe_comp_invFun_eventuallyEq x)).mfderiv,
         ContinuousLinearMap.coe_id', id.def])
 
@@ -111,7 +110,7 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range h) :
     ((h.fderiv (h.invFun x)).symm :
         TangentSpace I' (h (h.invFun x)) →L[𝕜] TangentSpace I (h.invFun x)) =
       (mfderiv I' I h.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (h.invFun x)) :=
-  by rw [fderiv_symm_coe] ; sorry-- TODO: fix, h.right_inv hx]
+  by rw [fderiv_symm_coe, h.right_inv hx]
 
 open Filter
 
@@ -275,11 +274,7 @@ theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomo
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
     range (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ /-hf₃-/ hf₄) =
       (extChartAt IF x).symm '' range f := by
-  rw [coe_openSmoothEmbOfDiffeoSubsetChartTarget, range_comp]
-  -- TODO: why do these side goals appear?
-  exact hf₁
-  exact hf₂
-  exact hf₄
+  rw [coe_openSmoothEmbOfDiffeoSubsetChartTarget _ _ _ hf₁ hf₂ hf₄, range_comp]
 
 variable {M} (F)
 variable [IF.Boundaryless] [FiniteDimensional ℝ F]
@@ -407,7 +402,8 @@ theorem update_of_mem_range [Nonempty X] {m : M} (hm : m ∈ range φ) :
     update φ ψ f g m = ψ (g (φ.invFun m)) := by
   rw [update, dif_pos hm]
 
-theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by sorry -- TODO! simp
+theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by
+  sorry -- TODO! was `simp`
 
 -- This small auxiliary result is used in the next two lemmas.
 theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)

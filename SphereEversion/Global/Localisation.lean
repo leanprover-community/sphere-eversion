@@ -212,7 +212,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
     unfold OpenSmoothEmbedding.update
     split_ifs with h'
     · obtain ⟨x, rfl⟩ := h'
-      sorry /- TODO: fix this, old proof was rw [OneJetBundle.embedding_toFun, p.φ.left_inv]
+      rw [OneJetBundle.embedding_toFun] -- TODO fix! was, p.φ.left_inv]
       have : (𝓕 t).unloc x = F.toOneJetSec.localize p.φ p.ψ h.hF x := by
         have : 𝓕 t x = F.localize p h.hF x := by
           by_cases h'' : x ∈ p.K₁
@@ -220,7 +220,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
           · exact h.hFF x h'' t
         rw [Prod.ext_iff] at this
         ext1; rfl; exact this.1; exact this.2
-      change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F (p.φ x)
+      sorry /- change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F (p.φ x)
       rw [this, transfer_localize]
       rfl -/
     rfl
