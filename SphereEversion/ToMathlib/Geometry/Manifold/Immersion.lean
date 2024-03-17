@@ -4,18 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael Rothgang
 -/
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
+import Mathlib.Topology.ProperMap
 
 /-! ## Smooth immersions
 
-In this file, we define immersions and prove some of their basic properties.
+In this file, we define immersions and smooth embeddings and prove some of their basic properties.
 
 ## Main definitions
 * `Immersion I I' f n`: a `C^n` map `f : M → M'` is an immersion iff
 its `mfderiv` is injective at each point
 * `InjImmersion`: an immersion which is also injective
+* `OpenSmoothEmbedding`, `SmoothEmbedding`: (open) smooth embeddings
 
 ## Main results
-
+* `SmoothEmbedding.toInjImmersion`: smooth embeddings are injective immersions
+* `Embedding.of_proper_injective_immersion`: proper injective immersions are smooth embeddings
 
 ## Implementation notes
 The initial design of immersions only assumed injectivity of the differential.
@@ -60,4 +63,44 @@ structure Immersion (f : M → M') (n : ℕ∞) : Prop :=
 structure InjImmersion (f : M → M') (n : ℕ∞) extends Immersion I I' f n : Prop :=
   injective : Injective f
 
+/-- A `C^n` embedding `f : M → M'` is a `C^n` map which is both an immersion and a topological
+  embedding. (We do not assume smoothness of the inverse, as this follows automatically.
+  See `SmoothEmbedding.diffeomorph_of_surjective` and variants.) -/
+structure SmoothEmbedding (f : M → M') (n : ℕ∞) extends Embedding f : Prop :=
+  differentiable : ContMDiff I I' n f
+  diff_injective : ∀ p, Injective (mfderiv I I' f p)
+
+/-- A `SmoothEmbedding` with open range. -/
+structure OpenSmoothEmbedding (f : M → M') (n : ℕ∞) extends SmoothEmbedding I I' f n : Prop :=
+  open_range : IsOpen <| range f
+
+lemma OpenSmoothEmbedding.toOpenEmbedding (f : M → M') (n : ℕ∞) (h : OpenSmoothEmbedding I I' f n) :
+    OpenEmbedding f where
+  toEmbedding := h.toEmbedding
+  open_range := h.open_range
+
 end Definition
+
+/-! Immersions and embeddings -/
+section ImmersionEmbeddings
+
+variable {f : M → M'} {n : ℕ∞}
+
+/-- A smooth embedding is an injective immersion. -/
+lemma SmoothEmbedding.toInjImmersion (h : SmoothEmbedding I I' f n) : InjImmersion I I' f n where
+  differentiable := h.differentiable
+  diff_injective := h.diff_injective
+  injective := h.toEmbedding.inj
+
+-- an injective immersion need not be an embedding: cue the standard example
+
+/-- A proper injective immersion is an embedding, in fact a closed embedding. -/
+lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f n) (hp : IsProperMap f)
+    (hf : Injective f) : SmoothEmbedding I I' f n where
+  -- TODO: use "a proper injective continuous map is a closed embedding"
+  -- does mathlib have this and the converse already?
+  toEmbedding := sorry
+  differentiable := h.differentiable
+  diff_injective := h.diff_injective
+
+end ImmersionEmbeddings
