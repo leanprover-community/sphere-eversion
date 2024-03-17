@@ -134,10 +134,32 @@ instance : FunLike (OpenSmoothEmbeddingMR I I' f n) M M' where
     intro h h' hyp
     apply coe_injective (DFunLike.coe_injective hyp)
 
+-- Wait: this doesn't make *any* sense if the codomain is empty!
+section temp
+
+variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+
+protected def _root_.PartialHomeomorph.empty [IsEmpty X] : PartialHomeomorph X Y where
+  toFun := isEmptyElim
+  invFun := sorry--sorry--__ := sorry--PartialEquiv.equivOfIsEmpty X Y
+  source := univ
+  target := ∅
+  map_source' := isEmptyElim
+  map_target' := sorry --isEmptyElim
+  left_inv' := isEmptyElim
+  right_inv' := sorry --isEmptyElim
+  open_source := isOpen_univ
+  open_target := isOpen_empty
+  continuousOn_toFun := isEmptyElim
+  continuousOn_invFun := sorry -- isEmptyElim
+
+
 /-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
-def toPartialHomeomorph [Nonempty M]
-    (h : OpenSmoothEmbeddingMR I I' f n) : PartialHomeomorph M M' :=
-  h.toOpenEmbedding.toPartialHomeomorph
+def toPartialHomeomorph --[Nonempty M]
+    (h : OpenSmoothEmbeddingMR I I' f n) : PartialHomeomorph M M' := by
+  by_cases hyp : Nonempty M
+  · exact h.toOpenEmbedding.toPartialHomeomorph
+  · sorry --exact PartialHomeomorph.empty
 
 -- currently unused; is this lemma needed? what's a good name?
 lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbeddingMR I I' f n) :
