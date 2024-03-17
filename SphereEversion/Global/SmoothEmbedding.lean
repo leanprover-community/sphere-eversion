@@ -1,7 +1,6 @@
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
 import Mathlib.Topology.Algebra.Order.Compact
 import SphereEversion.Indexing
-import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 import SphereEversion.ToMathlib.Geometry.Manifold.Maps
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
@@ -287,7 +286,8 @@ theorem update_of_mem_range [Nonempty X] {m : M} (hm : m ∈ range φ) :
   rw [update, dif_pos hm]
 
 theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by
-  sorry -- TODO! was `simp`
+  sorry -- I'm missing some simp lemma... old proof was `simp`,
+  -- expanding to simp only [φ, ψ, mem_range, exists_apply_eq_apply, update_of_mem_range, left_inv]
 
 -- This small auxiliary result is used in the next two lemmas.
 theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)

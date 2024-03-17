@@ -74,7 +74,6 @@ attribute [coe] InjImmersion.toImmersion
 instance coe {f : M → M'} {n : ℕ∞} : Coe (InjImmersion I I' f n) (Immersion I I' f n) :=
   ⟨InjImmersion.toImmersion⟩
 
-
 theorem coe_injective {f : M → M'} {n : ℕ∞} : Function.Injective ((↑) : (InjImmersion I I' f n) → (Immersion I I' f n)) := by
   intro h h' _
   congr
