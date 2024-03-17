@@ -379,7 +379,7 @@ section
 
 attribute [local instance] Classical.dec
 
-variable [Nonempty X] -- TODO: can I remove this?
+--variable [Nonempty X] -- TODO: can I remove this?
 /-- This is definition `def:update` in the blueprint. -/
 @[pp_dot]
 def update (m : M) : N :=
