@@ -171,6 +171,11 @@ attribute [coe] OpenSmoothEmbedding.toSmoothEmbedding
 instance coe : Coe (OpenSmoothEmbedding I M I' M') (SmoothEmbedding I M I' M') :=
   ⟨toSmoothEmbedding⟩
 
+-- xxx: the previous design had this lemma; useful?
+-- @[simp]
+-- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
+--   rfl
+
 theorem coe_injective : Function.Injective
     ((↑) : (OpenSmoothEmbedding I M I' M') → (SmoothEmbedding I M I' M')) := by
   intro h h' _

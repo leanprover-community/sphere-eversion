@@ -20,8 +20,7 @@ variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimens
   [SigmaCompactSpace X] [Nonempty X]
 
 theorem OpenSmoothEmbedding.improve_formalSol
-    {φfun : EM → M} (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) IM φfun)
-    {ψfun : EX → X} (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) IX ψfun)
+    (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) EM IM M) (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) EX IX X)
     {R : RelMfld IM M IX X} (hRample : R.Ample)
     (hRopen : IsOpen R) {C : Set M} (hC : IsClosed C) {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
     (hδ_cont : Continuous δ) {F : FormalSol R} (hFφψ : F.bs '' range φ ⊆ range ψ)
@@ -77,9 +76,8 @@ theorem OpenSmoothEmbedding.improve_formalSol
   refine ⟨F', hF't0, hF't1, ?_, hF'relK₁, ?_, ?_⟩
   · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
-      sorry /- TODO: fix this, was rw [p.mkHtpy_eq_of_eq _ _ hcompat]
-      -- using erw applies the first, but then the second lemma fails
-      exact he t -/
+      rw [p.mkHtpy_eq_of_eq _ _ hcompat]
+      exact he t
   · intro t x
     rcases Classical.em (x ∈ φ '' K₁) with (⟨e, he, rfl⟩ | hx)
     · by_cases ht : t ∈ (Icc 0 1 : Set ℝ)

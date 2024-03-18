@@ -23,30 +23,10 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
   (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
 
-structure OpenSmoothEmbeddingOld where
-  toFun : M → M'
-  invFun : M' → M
-  left_inv' : ∀ {x}, invFun (toFun x) = x
-  isOpen_range : IsOpen (range toFun)
-  smooth_to : Smooth I I' toFun
-  smooth_inv : SmoothOn I' I invFun (range toFun)
-
-attribute [coe] OpenSmoothEmbeddingOld.toFun
-
--- Note: this cannot be a `FunLike` instance since `toFun` is not injective in general.
-instance : CoeFun (OpenSmoothEmbeddingOld I M I' M') fun _ ↦ M → M' :=
-  ⟨OpenSmoothEmbeddingOld.toFun⟩
-
-attribute [pp_dot] OpenSmoothEmbeddingOld.invFun
-
 namespace OpenSmoothEmbedding
 
 variable (h : OpenSmoothEmbedding I M I' M') [Nonempty M]
 variable {I I' M M'}
-
--- @[simp]
--- theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbeddingOld I M I' M') = f :=
---   rfl
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (h.invFun (h x))` are both definitionally `E` below. -/
@@ -110,7 +90,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
     OpenSmoothEmbedding 𝓘(ℝ, F) F IF M where
   toFun := ((extChartAt IF x).symm ∘ f)
-  -- old proofs, using `OpenSmoothEmbeddingOld`
+  -- previous proofs, using older design
   --invFun := f.invFun ∘ extChartAt IF x
   -- left_inv' {y} := by
   --   obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)

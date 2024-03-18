@@ -99,7 +99,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
                           (∀ᶠ t in 𝓝ˢ (Iic 0), F t = f) ∧
                           ∀ᶠ t in 𝓝ˢ (Ici 1), F t = F 1 := by
     intro m
-    rcases hε m with ⟨φfun, φ, ψfun, ψ, ⟨e, rfl⟩, hφψ⟩
+    rcases hε m with ⟨φ, ψ, ⟨e, rfl⟩, hφψ⟩
     have : φ '' ball e 1 ∈ 𝓝 (φ e) := by
       sorry /- TODO fix: was rw [← φ.toOpenEmbedding.map_nhds_eq]
       exact image_mem_map (ball_mem_nhds e zero_lt_one) -/
@@ -112,8 +112,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     replace K₁_cpct : IsCompact (φ ⁻¹' K₁) :=
       φ.inducing.isCompact_preimage' K₁_cpct K₁φ
     have K₀K₁' : φ ⁻¹' K₀ ⊆ interior (φ ⁻¹' K₁) := by
-      sorry /- TODO fix! was rw [← (φ.isOpenMap).preimage_interior_eq_interior_preimage φ.continuous]
-      mono -/
+      rw [← (φ.isOpenMap).preimage_interior_eq_interior_preimage φ.continuous]
+      mono
     simp only [P₀, forall_and] at P₀f
     rcases P₀f with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩
     rw [forall_restrictGermPredicate_iff] at hf_A
