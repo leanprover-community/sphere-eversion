@@ -116,10 +116,8 @@ variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- A pair of charts together with a compact subset of the first vector space. -/
 structure ChartPair where
-  φfun : E → M
-  φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun
-  ψfun : E' → M'
-  ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun
+  φ : OpenSmoothEmbedding 𝓘(ℝ, E) E I M
+  ψ : OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M'
   K₁ : Set E
   hK₁ : IsCompact K₁
 
@@ -212,7 +210,7 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
     unfold OpenSmoothEmbedding.update
     split_ifs with h'
     · obtain ⟨x, rfl⟩ := h'
-      rw [OneJetBundle.embedding_toFun] -- TODO fix! was, p.φ.left_inv]
+      -- TODO fix! was `rw [OneJetBundle.embedding_toFun] -- TODO fix! was, p.φ.left_inv]
       have : (𝓕 t).unloc x = F.toOneJetSec.localize p.φ p.ψ h.hF x := by
         have : 𝓕 t x = F.localize p h.hF x := by
           by_cases h'' : x ∈ p.K₁

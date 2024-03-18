@@ -41,7 +41,7 @@ attribute [pp_dot] OpenSmoothEmbeddingOld.invFun
 
 namespace OpenSmoothEmbedding
 
-variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbedding I I' f) [Nonempty M]
+variable (h : OpenSmoothEmbedding I M I' M') [Nonempty M]
 variable {I I' M M'}
 
 -- @[simp]
@@ -108,9 +108,9 @@ instead of `ContMDiff`. This is more convenient for our purposes. -/
 def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (hf₁ : f.source = univ)
     (hf₂ : ContDiff ℝ ∞ f) --(hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
-    OpenSmoothEmbedding 𝓘(ℝ, F) IF ((extChartAt IF x).symm ∘ f) where
-  -- old proofs, using `OpenSmoothEmbedding`
-  --toFun := (extChartAt IF x).symm ∘ f
+    OpenSmoothEmbedding 𝓘(ℝ, F) F IF M where
+  toFun := ((extChartAt IF x).symm ∘ f)
+  -- old proofs, using `OpenSmoothEmbeddingOld`
   --invFun := f.invFun ∘ extChartAt IF x
   -- left_inv' {y} := by
   --   obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
@@ -164,8 +164,7 @@ variable [IF.Boundaryless] [FiniteDimensional ℝ F]
 
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
-    ∃ (ι' : Type u) (t : Set ι') (φfun : t → (F → M))
-      (φ : (i : t) → OpenSmoothEmbedding 𝓘(ℝ, F) IF (φfun i)),
+    ∃ (ι' : Type u) (t : Set ι') (φ : (i : t) → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
       t.Countable ∧
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
@@ -193,9 +192,8 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   let g : M × ℝ → PartialHomeomorph F F := fun z ↦ diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
   have hg₁ : ∀ z, (g z).source = univ := by simp [g]
   have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp [g]
-  have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
-  refine ⟨M × ℝ, t, fun z ↦ PartialEquiv.symm (extChartAt IF z.1.1) ∘ (g z),
-    -- smoothness of these functions
+  -- have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
+  refine ⟨M × ℝ, t,
     fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) /-(hg₃ z.1)-/ ?_,
         ht₁,
     fun z ↦ ?_, ?_, ?_⟩
@@ -206,32 +204,31 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     exact (range_diffeomorphToNhd_subset_ball (extChartAt IF x x) hr).trans hr'
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr
-    sorry /- was: simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
-    exact ⟨j, (monotone_image (range_diffeomorphToNhd_subset_ball _ hr)).trans hj⟩ -/
-  · sorry /- old proof for some goal was
     simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
+    exact ⟨j, (monotone_image (range_diffeomorphToNhd_subset_ball _ hr)).trans hj⟩
+  · simp_rw [range_openSmoothEmbOfDiffeoSubsetChartTarget]
     refine ht₄.subset ?_
     rintro ⟨⟨x, r⟩, hxr⟩
     obtain ⟨hr : 0 < r, -, -⟩ := ht₂ _ hxr
-    exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr) -/
+    exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr)
   · simpa only [iUnion_coe_set] using ht₃
 
 variable [Nonempty M]
 
 theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) :
-    ∃ n, ∃ φfun : IndexType n → (F → M),
-      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, F) IF (φfun i),
+    ∃ n,
+      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
-  obtain ⟨ι', t, φfun, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
+  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
   have htne : t.Nonempty := by
     by_contra contra
     simp only [iUnion_coe_set, not_nonempty_iff_eq_empty.mp contra, mem_empty_iff_false,
       iUnion_of_empty, iUnion_empty, eq_comm (b := univ), univ_eq_empty_iff] at h₄
     exact not_isEmpty_of_nonempty M h₄
   obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
-  refine ⟨n, φfun ∘ fn, fun i ↦ φ (fn i), fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
+  refine ⟨n, fun i ↦ φ (fn i), fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
   erw [fn.surjective.iUnion_comp fun i ↦ φ i '' ball 0 1, h₄]
 
 end WithoutBoundary
@@ -257,9 +254,8 @@ section NonMetric
 
 variable [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
   [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
-  -- TODO: better names than φfun, ψfun?
-  {φfun : X → M} (φ : OpenSmoothEmbedding IX IM φfun)
-  {ψfun : Y → N} (ψ : OpenSmoothEmbedding IY IN ψfun) (f : M → N) (g : X → Y)
+  (φ : OpenSmoothEmbedding IX X IM M)
+  (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 section
 
@@ -348,8 +344,8 @@ end NonMetric
 section Metric
 
 variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [MetricSpace N]
-  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] {f : X → M} (φ : OpenSmoothEmbedding IX IM f)
-  {gg : Y → N} (ψ : OpenSmoothEmbedding IY IN gg) (f : M → N) (g : X → Y)
+  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] {f : X → M} (φ : OpenSmoothEmbedding IX X IM M)
+  {gg : Y → N} (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 /-- This is `lem:dist_updating` in the blueprint. -/
 -- TODO: can I remove `Nonempty X`

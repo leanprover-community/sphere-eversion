@@ -441,7 +441,7 @@ variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners ℝ EN HN}
   {N : Type*} [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
   (F : OneJetSec IM M IN N)
-  {φfun : X → M} (φ : OpenSmoothEmbedding IX IM φfun) {ψfun : Y → N} (ψ : OpenSmoothEmbedding IY IN ψfun)
+  (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N)
   {R : RelMfld IM M IN N}
 
 local notation "TM" => TangentSpace IM
@@ -610,7 +610,8 @@ theorem isHolonomicAt_localize_iff [Nonempty X] [Nonempty Y] (hF : range (F.bs �
 
 -- very slow to elaborate :-(
 @[simps, pp_dot]
-def OneJetBundle.embedding [Nonempty X] [Nonempty Y] : OpenSmoothEmbedding IXY IMN (φ.transfer ψ) where
+def OneJetBundle.embedding [Nonempty X] [Nonempty Y] : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
+  toFun := φ.transfer ψ
   isOpen_range := φ.isOpen_range_transfer ψ
   smooth := φ.smooth_transfer ψ
   -- TODO: fill these in!
@@ -652,9 +653,6 @@ def OneJetBundle.embedding [Nonempty X] [Nonempty Y] : OpenSmoothEmbedding IXY I
   --     simp_rw [φ.left_inv]
   --   exact mem_range_self _
 
-lemma OneJetBundle.embedding_toFun [Nonempty X] [Nonempty Y] :
-    (OneJetBundle.embedding φ ψ) = (φ.transfer ψ) := rfl
-
 
 /-! ## Updating 1-jet sections and formal solutions -/
 
@@ -668,8 +666,7 @@ theorem Jupdate_aux [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : One
     (JΘ F G m).1.1 = m := by
   simp_rw [OpenSmoothEmbedding.update]; split_ifs with h
   · rcases h with ⟨x, rfl⟩
-    simp_rw [OneJetBundle.embedding_toFun, φ.transfer_proj_fst]
-    sorry-- TODO: fix, was `simp_rw[... φ.left_inv, G.fst_eq]`
+    simp_rw [OneJetBundle.embedding_toFun, φ.transfer_proj_fst, φ.left_inv, G.fst_eq]
   · rfl
 
 variable [T2Space M]

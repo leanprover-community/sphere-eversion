@@ -22,10 +22,8 @@ structure LocalisationData (f : M → M') where
   cont : Continuous f
   ι' : Type*
   N : ℕ
-  φfun : IndexType N → (E → M)
-  φ : (i : IndexType N) → OpenSmoothEmbedding 𝓘(𝕜, E) I (φfun i)
-  ψfun : ι' → (E' → M')
-  ψ : (i : ι') → OpenSmoothEmbedding 𝓘(𝕜, E') I' (ψfun i)
+  φ : IndexType N → OpenSmoothEmbedding 𝓘(𝕜, E) E I M
+  ψ : ι' → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M'
   j : IndexType N → ι'
   h₁ : (⋃ i, φ i '' ball (0 : E) 1) = univ
   h₂ : (⋃ i', ψ i' '' ball (0 : E') 1) = univ
@@ -37,8 +35,8 @@ namespace LocalisationData
 
 variable {f : M → M'} {I I'} (ld : LocalisationData I I' f)
 
-abbrev ψj : (n : IndexType ld.N) → OpenSmoothEmbedding 𝓘(𝕜, E') I' (ld.ψfun (ld.j n)) :=
-  fun n ↦ ld.ψ (ld.j n)
+abbrev ψj : (n : IndexType ld.N) → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M' :=
+  ld.ψ ∘ ld.j
 
 /-- The type indexing the source charts of the given localisation data. -/
 def ι (L : LocalisationData I I' f) :=
@@ -73,55 +71,50 @@ variable (M')
 
 theorem nice_atlas_target :
     ∃ n,
-      ∃ ψfun : IndexType n → (E' → M'),
-      ∃ ψ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E') I' (ψfun i),
+      ∃ ψ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
         (LocallyFinite fun i' ↦ range (ψ i')) ∧ (⋃ i', ψ i' '' ball 0 1) = univ := by
   let h := nice_atlas E' I' (fun _ : Unit ↦ isOpen_univ (X := M')) (by simp [eq_univ_iff_forall])
-  choose n ψfun ψ _ hloc hunion using h
-  exact ⟨n, ψfun, ψ, hloc, hunion⟩
+  choose n ψ _ hloc hunion using h
+  exact ⟨n, ψ, hloc, hunion⟩
 
--- TODO: need to adapt this; the unbundled design is getting *really* painful here...
 /-- A collection of charts on a manifold `M'` which are smooth open embeddings with domain the whole
 model space, and which cover the manifold when restricted in each case to the unit ball. -/
 def targetCharts (i' : IndexType (nice_atlas_target E' I' M').choose) :
-    OpenSmoothEmbeddingOld 𝓘(ℝ, E') E' I' M' :=
-  sorry --(nice_atlas_target E' I' M').choose_spec.choose i'
+    OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M' :=
+  (nice_atlas_target E' I' M').choose_spec.choose i'
 
 theorem targetCharts_cover : (⋃ i', targetCharts E' I' M' i' '' ball (0 : E') 1) = univ :=
-  sorry --(nice_atlas_target E' I' M').choose_spec.choose_spec.2
+  (nice_atlas_target E' I' M').choose_spec.choose_spec.2
 
 variable (E) {M'}
 variable {f : M → M'} (hf : Continuous f)
 
 theorem nice_atlas_domain :
     ∃ n,
-      ∃ φf : IndexType n → (E → M),
-      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E) I (φf i),
+      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
         (∀ i, ∃ i', range (φ i) ⊆ f ⁻¹' (targetCharts E' I' M' i' '' ball (0 : E') 1)) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
-  -- TODO: update!
-  sorry /-nice_atlas E I
+  nice_atlas E I
     (fun i' ↦ ((targetCharts E' I' M' i').isOpenMap (ball 0 1) isOpen_ball).preimage hf)
-    (by rw [← preimage_iUnion, targetCharts_cover, preimage_univ]) -/
+    (by rw [← preimage_iUnion, targetCharts_cover, preimage_univ])
 
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
 def stdLocalisationData : LocalisationData I I' f where
   cont := hf
-  N := sorry --(nice_atlas_domain E I E' I' hf).choose
+  N := (nice_atlas_domain E I E' I' hf).choose
   ι' := IndexType (nice_atlas_target E' I' M').choose
-  φfun := sorry
-  φ := sorry --(nice_atlas_domain E I E' I' hf).choose_spec.choose
-  ψ := sorry -- targetCharts E' I' M'
-  j i := sorry --((nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.1 i).choose
-  h₁ := sorry --(nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.2.2
+  φ := (nice_atlas_domain E I E' I' hf).choose_spec.choose
+  ψ := targetCharts E' I' M'
+  j i := ((nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.1 i).choose
+  h₁ := (nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.2.2
   h₂ := targetCharts_cover E' I' M'
   h₃ i := by
     rw [range_comp]
     rintro - ⟨y, hy, rfl⟩
-    sorry --exact ((nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.1 i).choose_spec hy
-  h₄ := sorry --(nice_atlas_target E' I' M').choose_spec.choose_spec.1
-  lf_φ := sorry --(nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.2.1
+    exact ((nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.1 i).choose_spec hy
+  h₄ := (nice_atlas_target E' I' M').choose_spec.choose_spec.1
+  lf_φ := (nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.2.1
 
 variable {E E' I I'}
 
@@ -165,15 +158,15 @@ variable (I I')
 theorem _root_.exists_stability_dist {f : M → M'} (hf : Continuous f) :
     ∃ ε : M → ℝ, (∀ m, 0 < ε m) ∧ Continuous ε ∧
       ∀ x : M,
-        ∃ φfun : E → M, ∃ φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun,
-        ∃ ψfun : E' → M', ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun,
+        ∃ φ : OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
+        ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
           x ∈ range φ ∧
           ∀ (g : M → M'), (∀ m, dist (g m) (f m) < ε m) → range (g ∘ φ) ⊆ range ψ := by
   let L := stdLocalisationData E I E' I' hf
   use L.ε, L.ε_pos, L.ε_cont
   intro x
   rcases mem_iUnion.mp <| eq_univ_iff_forall.mp L.h₁ x with ⟨i, hi⟩
-  use L.φfun i, L.φ i, L.ψ (L.j i), L.ψj i, mem_range_of_mem_image (φ L i) _ hi
+  use L.φ i, L.ψj i, mem_range_of_mem_image (φ L i) _ hi
   have := L.ε_spec
   tauto
 
