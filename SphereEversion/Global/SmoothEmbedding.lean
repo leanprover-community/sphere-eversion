@@ -144,7 +144,7 @@ variable [IF.Boundaryless] [FiniteDimensional ℝ F]
 
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
-    ∃ (ι' : Type u) (t : Set ι') (φ : (i : t) → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
+    ∃ (ι' : Type u) (t : Set ι') (φ : t → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
       t.Countable ∧
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
@@ -175,8 +175,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   -- have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
   refine ⟨M × ℝ, t,
     fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) /-(hg₃ z.1)-/ ?_,
-        ht₁,
-    fun z ↦ ?_, ?_, ?_⟩
+    ht₁, fun z ↦ ?_, ?_, ?_⟩
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
     simp_rw [g, extChartAt]
@@ -197,8 +196,7 @@ variable [Nonempty M]
 
 theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) :
-    ∃ n,
-      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
+    ∃ n, ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
   obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
@@ -208,7 +206,7 @@ theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
       iUnion_of_empty, iUnion_empty, eq_comm (b := univ), univ_eq_empty_iff] at h₄
     exact not_isEmpty_of_nonempty M h₄
   obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
-  refine ⟨n, fun i ↦ φ (fn i), fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
+  refine ⟨n, φ ∘ fn, fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
   erw [fn.surjective.iUnion_comp fun i ↦ φ i '' ball 0 1, h₄]
 
 end WithoutBoundary
@@ -234,8 +232,7 @@ section NonMetric
 
 variable [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
   [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
-  (φ : OpenSmoothEmbedding IX X IM M)
-  (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
+  (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 section
 
@@ -324,8 +321,8 @@ end NonMetric
 section Metric
 
 variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [MetricSpace N]
-  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] {f : X → M} (φ : OpenSmoothEmbedding IX X IM M)
-  {gg : Y → N} (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
+  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] (φ : OpenSmoothEmbedding IX X IM M)
+  (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 /-- This is `lem:dist_updating` in the blueprint. -/
 -- TODO: can I remove `Nonempty X`

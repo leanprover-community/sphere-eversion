@@ -112,7 +112,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     replace K₁_cpct : IsCompact (φ ⁻¹' K₁) :=
       φ.inducing.isCompact_preimage' K₁_cpct K₁φ
     have K₀K₁' : φ ⁻¹' K₀ ⊆ interior (φ ⁻¹' K₁) := by
-      rw [← (φ.isOpenMap).preimage_interior_eq_interior_preimage φ.continuous]
+      rw [← φ.isOpenMap.preimage_interior_eq_interior_preimage φ.continuous]
       mono
     simp only [P₀, forall_and] at P₀f
     rcases P₀f with ⟨hf_sec, hf_sol, hf_smooth, hf_A, hf_dist⟩

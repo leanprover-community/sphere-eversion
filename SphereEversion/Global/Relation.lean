@@ -521,8 +521,10 @@ instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
 
 instance (y : Y) : NormedSpace ℝ (TY y) := by assumption
 
+variable [Nonempty X] [Nonempty Y]
+
 /-- Ampleness survives localization -/
-theorem RelMfld.Ample.localize (hR : R.Ample) [Nonempty X] [Nonempty Y] : (R.localize φ ψ).Ample := by
+theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
   intro x p
   have :
     (RelMfld.localize φ ψ R).slice x p =
@@ -544,7 +546,7 @@ theorem RelMfld.Ample.localize (hR : R.Ample) [Nonempty X] [Nonempty Y] : (R.loc
 /-- Localize a one-jet section in two open embeddings.
   It maps `x` to `(x, y, (D_y(g))⁻¹ ∘ F_φ(φ x) ∘ D_x(φ))` where `y : M := g⁻¹(F_{bs}(φ x))`. -/
 @[simps]
-def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) [Nonempty X] [Nonempty Y] : OneJetSec IX X IY Y where
+def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X IY Y where
   bs x := ψ.invFun (F.bs <| φ x)
   ϕ x :=
     let y := ψ.invFun (F.bs <| φ x)
@@ -562,7 +564,7 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) [Nonempty X] [Non
         (F.smooth_bs.comp φ.smooth).contMDiffAt
     · exact Smooth.oneJet_comp IM φ (F.smooth_eta.comp φ.smooth) φ.smooth.oneJetExt
 
-theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) [Nonempty X] [Nonempty Y] :
+theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
   rw [OneJetSec.coe_apply, OneJetSec.localize_bs, OneJetSec.localize_ϕ,
     OpenSmoothEmbedding.transfer, OneJetBundle.map]
@@ -580,15 +582,15 @@ theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) [Nonem
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply]
     rfl -/
 
-theorem OneJetSec.localize_bs_fun (hF : range (F.bs ∘ φ) ⊆ range ψ) [Nonempty X] [Nonempty Y] :
+theorem OneJetSec.localize_bs_fun (hF : range (F.bs ∘ φ) ⊆ range ψ) :
     (F.localize φ ψ hF).bs = ψ.invFun ∘ F.bs ∘ φ :=
   rfl
 
-theorem OneJetSec.localize_mem_iff [Nonempty X] [Nonempty Y] (hF : range (F.bs ∘ φ) ⊆ range ψ) {x : X} :
+theorem OneJetSec.localize_mem_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) {x : X} :
     F.localize φ ψ hF x ∈ R.localize φ ψ ↔ F (φ x) ∈ R := by
   rw [RelMfld.localize, mem_preimage, transfer_localize F φ ψ hF]
 
-theorem isHolonomicAt_localize_iff [Nonempty X] [Nonempty Y] (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
+theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     (F.localize φ ψ hF).IsHolonomicAt x ↔ F.IsHolonomicAt (φ x) := by
   have :
     mfderiv IX IY (ψ.invFun ∘ F.bs ∘ φ) x =
@@ -610,7 +612,7 @@ theorem isHolonomicAt_localize_iff [Nonempty X] [Nonempty Y] (hF : range (F.bs �
 
 -- very slow to elaborate :-(
 @[simps, pp_dot]
-def OneJetBundle.embedding [Nonempty X] [Nonempty Y] : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
+def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   toFun := φ.transfer ψ
   isOpen_range := φ.isOpen_range_transfer ψ
   smooth := φ.smooth_transfer ψ
@@ -662,7 +664,7 @@ variable {K : Set X}
 
 namespace OpenSmoothEmbedding
 
-theorem Jupdate_aux [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : OneJetSec IX X IY Y) (m : M) :
+theorem Jupdate_aux (F : OneJetSec IM M IN N) (G : OneJetSec IX X IY Y) (m : M) :
     (JΘ F G m).1.1 = m := by
   simp_rw [OpenSmoothEmbedding.update]; split_ifs with h
   · rcases h with ⟨x, rfl⟩
@@ -672,7 +674,7 @@ theorem Jupdate_aux [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : One
 variable [T2Space M]
 
 /-- Update a global homotopy of 1-jet-sections `F` using a local one `G`. -/
-def Jupdate [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsCompact K)
+def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) :
     HtpyOneJetSec IM M IN N := by
   refine FamilyOneJetSec.mk' (fun t ↦ JΘ F (G t)) (fun t ↦ φ.Jupdate_aux ψ F (G t)) ?_
@@ -680,12 +682,12 @@ def Jupdate [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : HtpyOneJetS
   · exact F.smooth.comp smooth_snd
   · exact G.smooth.comp (smooth_fst.prod_map smooth_id)
 
-theorem Jupdate_apply [Nonempty X] [Nonempty Y] {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
+theorem Jupdate_apply {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
     φ.Jupdate ψ F G hK hFG t m = JΘ F (G t) m := by
   ext; exact (φ.Jupdate_aux ψ F (G t) m).symm; rfl; rfl
 
-theorem Jupdate_bs [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (t : ℝ)
+theorem Jupdate_bs (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (t : ℝ)
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = OneJetBundle.embedding φ ψ (G t x)) :
     (OpenSmoothEmbedding.Jupdate φ ψ F G hK hFG t).bs =
@@ -698,7 +700,7 @@ theorem Jupdate_bs [Nonempty X] [Nonempty Y] (F : OneJetSec IM M IN N) (G : Htpy
       if x ∈ range φ then _ else _
   split_ifs <;> rfl -/
 
-theorem Jupdate_localize [Nonempty X] [Nonempty Y]
+theorem Jupdate_localize
     {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ)
     (rg : range ((φ.Jupdate ψ F G hK hFG t).bs ∘ φ) ⊆ range ψ) (x : X) :
@@ -722,7 +724,7 @@ theorem Jupdate_localize [Nonempty X] [Nonempty Y]
 
 /-- Update a global formal solutions `F` using a homotopy of local ones `G`. -/
 @[pp_dot]
-def updateFormalSol [Nonempty X] [Nonempty Y] (F : FormalSol R) (G : HtpyFormalSol (R.localize φ ψ)) (hK : IsCompact K)
+def updateFormalSol (F : FormalSol R) (G : HtpyFormalSol (R.localize φ ψ)) (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) : HtpyFormalSol R
     where
   toFamilyOneJetSec := φ.Jupdate ψ F.toOneJetSec G.toFamilyOneJetSec hK hFG
@@ -732,19 +734,19 @@ def updateFormalSol [Nonempty X] [Nonempty Y] (F : FormalSol R) (G : HtpyFormalS
     · exact G.is_sol
     · exact F.is_sol x
 
-theorem updateFormalSol_apply [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
+theorem updateFormalSol_apply {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t x) :
     φ.updateFormalSol ψ F G hK hFG t x = ⟨⟨x, (JΘ F (G t) x).1.2⟩, (JΘ F (G t) x).2⟩ :=
   rfl
 
-theorem updateFormalSol_bs' [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
+theorem updateFormalSol_bs' {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
     (φ.updateFormalSol ψ F G hK hFG t).bs = fun x ↦ (JΘ F (G t) x).1.2 :=
   rfl
 
-theorem updateFormalSol_bs [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)} (hK : IsCompact K)
+theorem updateFormalSol_bs {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) :
     (φ.updateFormalSol ψ F G hK hFG t).bs = φ.update ψ F.bs (G t).bs := by
   rw [updateFormalSol_bs']
@@ -757,7 +759,7 @@ theorem updateFormalSol_bs [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : Htpy
     exacts [hx, hx]
 
 @[simp]
-theorem updateFormalSol_apply_of_mem [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
+theorem updateFormalSol_apply_of_mem {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {m}
     (hx : m ∈ range φ) : φ.updateFormalSol ψ F G hK hFG t m = φ.transfer ψ (G t <| φ.invFun m) := by
@@ -768,7 +770,7 @@ theorem updateFormalSol_apply_of_mem [Nonempty X] [Nonempty Y] {F : FormalSol R}
   · rfl
   · rfl
 
-theorem updateFormalSol_apply_image [Nonempty X] [Nonempty Y] {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
+theorem updateFormalSol_apply_image {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}
     (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t) {x} :
     φ.updateFormalSol ψ F G hK hFG t (φ x) = φ.transfer ψ (G t x) := by simp

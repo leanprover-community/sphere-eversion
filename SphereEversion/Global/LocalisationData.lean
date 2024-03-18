@@ -71,7 +71,7 @@ variable (M')
 
 theorem nice_atlas_target :
     ∃ n,
-      ∃ ψ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
+      ∃ ψ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
         (LocallyFinite fun i' ↦ range (ψ i')) ∧ (⋃ i', ψ i' '' ball 0 1) = univ := by
   let h := nice_atlas E' I' (fun _ : Unit ↦ isOpen_univ (X := M')) (by simp [eq_univ_iff_forall])
   choose n ψ _ hloc hunion using h
@@ -91,7 +91,7 @@ variable {f : M → M'} (hf : Continuous f)
 
 theorem nice_atlas_domain :
     ∃ n,
-      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
+      ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
         (∀ i, ∃ i', range (φ i) ⊆ f ⁻¹' (targetCharts E' I' M' i' '' ball (0 : E') 1)) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   nice_atlas E I
