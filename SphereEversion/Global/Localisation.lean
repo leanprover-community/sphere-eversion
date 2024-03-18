@@ -117,9 +117,9 @@ variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E]
 /-- A pair of charts together with a compact subset of the first vector space. -/
 structure ChartPair where
   φfun : E → M
-  φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun ⊤
+  φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun
   ψfun : E' → M'
-  ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun ⊤
+  ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun
   K₁ : Set E
   hK₁ : IsCompact K₁
 

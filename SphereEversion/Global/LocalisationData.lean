@@ -23,9 +23,9 @@ structure LocalisationData (f : M → M') where
   ι' : Type*
   N : ℕ
   φfun : IndexType N → (E → M)
-  φ : (i : IndexType N) → OpenSmoothEmbedding 𝓘(𝕜, E) I (φfun i) ⊤
+  φ : (i : IndexType N) → OpenSmoothEmbedding 𝓘(𝕜, E) I (φfun i)
   ψfun : ι' → (E' → M')
-  ψ : (i : ι') → OpenSmoothEmbedding 𝓘(𝕜, E') I' (ψfun i) ⊤
+  ψ : (i : ι') → OpenSmoothEmbedding 𝓘(𝕜, E') I' (ψfun i)
   j : IndexType N → ι'
   h₁ : (⋃ i, φ i '' ball (0 : E) 1) = univ
   h₂ : (⋃ i', ψ i' '' ball (0 : E') 1) = univ
@@ -37,7 +37,7 @@ namespace LocalisationData
 
 variable {f : M → M'} {I I'} (ld : LocalisationData I I' f)
 
-abbrev ψj : (n : IndexType ld.N) → OpenSmoothEmbedding 𝓘(𝕜, E') I' (ld.ψfun (ld.j n)) ⊤ :=
+abbrev ψj : (n : IndexType ld.N) → OpenSmoothEmbedding 𝓘(𝕜, E') I' (ld.ψfun (ld.j n)) :=
   fun n ↦ ld.ψ (ld.j n)
 
 /-- The type indexing the source charts of the given localisation data. -/
@@ -74,7 +74,7 @@ variable (M')
 theorem nice_atlas_target :
     ∃ n,
       ∃ ψfun : IndexType n → (E' → M'),
-      ∃ ψ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E') I' (ψfun i) ⊤,
+      ∃ ψ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E') I' (ψfun i),
         (LocallyFinite fun i' ↦ range (ψ i')) ∧ (⋃ i', ψ i' '' ball 0 1) = univ := by
   let h := nice_atlas E' I' (fun _ : Unit ↦ isOpen_univ (X := M')) (by simp [eq_univ_iff_forall])
   choose n ψfun ψ _ hloc hunion using h
@@ -96,7 +96,7 @@ variable {f : M → M'} (hf : Continuous f)
 theorem nice_atlas_domain :
     ∃ n,
       ∃ φf : IndexType n → (E → M),
-      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E) I (φf i) ⊤,
+      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, E) I (φf i),
         (∀ i, ∃ i', range (φ i) ⊆ f ⁻¹' (targetCharts E' I' M' i' '' ball (0 : E') 1)) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   -- TODO: update!
@@ -165,8 +165,8 @@ variable (I I')
 theorem _root_.exists_stability_dist {f : M → M'} (hf : Continuous f) :
     ∃ ε : M → ℝ, (∀ m, 0 < ε m) ∧ Continuous ε ∧
       ∀ x : M,
-        ∃ φfun : E → M, ∃ φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun ⊤,
-        ∃ ψfun : E' → M', ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun ⊤,
+        ∃ φfun : E → M, ∃ φ : OpenSmoothEmbedding 𝓘(ℝ, E) I φfun,
+        ∃ ψfun : E' → M', ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') I' ψfun,
           x ∈ range φ ∧
           ∀ (g : M → M'), (∀ m, dist (g m) (f m) < ε m) → range (g ∘ φ) ⊆ range ψ := by
   let L := stdLocalisationData E I E' I' hf

@@ -441,7 +441,7 @@ variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners ℝ EN HN}
   {N : Type*} [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
   (F : OneJetSec IM M IN N)
-  {φfun : X → M} (φ : OpenSmoothEmbedding IX IM φfun ⊤) {ψfun : Y → N} (ψ : OpenSmoothEmbedding IY IN ψfun ⊤)
+  {φfun : X → M} (φ : OpenSmoothEmbedding IX IM φfun) {ψfun : Y → N} (ψ : OpenSmoothEmbedding IY IN ψfun)
   {R : RelMfld IM M IN N}
 
 local notation "TM" => TangentSpace IM
@@ -610,8 +610,7 @@ theorem isHolonomicAt_localize_iff [Nonempty X] [Nonempty Y] (hF : range (F.bs �
 
 -- very slow to elaborate :-(
 @[simps, pp_dot]
-def OneJetBundle.embedding [Nonempty X] [Nonempty Y] :
-    OpenSmoothEmbedding IXY IMN (φ.transfer ψ) ⊤ where
+def OneJetBundle.embedding [Nonempty X] [Nonempty Y] : OpenSmoothEmbedding IXY IMN (φ.transfer ψ) where
   isOpen_range := φ.isOpen_range_transfer ψ
   smooth := φ.smooth_transfer ψ
   -- TODO: fill these in!

@@ -20,8 +20,8 @@ variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimens
   [SigmaCompactSpace X] [Nonempty X]
 
 theorem OpenSmoothEmbedding.improve_formalSol
-    {φfun : EM → M} (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) IM φfun ⊤)
-    {ψfun : EX → X} (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) IX ψfun ⊤)
+    {φfun : EM → M} (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) IM φfun)
+    {ψfun : EX → X} (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) IX ψfun)
     {R : RelMfld IM M IX X} (hRample : R.Ample)
     (hRopen : IsOpen R) {C : Set M} (hC : IsClosed C) {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
     (hδ_cont : Continuous δ) {F : FormalSol R} (hFφψ : F.bs '' range φ ⊆ range ψ)

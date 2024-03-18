@@ -41,7 +41,7 @@ attribute [pp_dot] OpenSmoothEmbeddingOld.invFun
 
 namespace OpenSmoothEmbedding
 
-variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbedding I I' f ⊤) [Nonempty M]
+variable {f : M → M'} {n : ℕ∞} (h : OpenSmoothEmbedding I I' f) [Nonempty M]
 variable {I I' M M'}
 
 -- @[simp]
@@ -108,7 +108,7 @@ instead of `ContMDiff`. This is more convenient for our purposes. -/
 def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (hf₁ : f.source = univ)
     (hf₂ : ContDiff ℝ ∞ f) --(hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
-    OpenSmoothEmbedding 𝓘(ℝ, F) IF ((extChartAt IF x).symm ∘ f) ⊤ where
+    OpenSmoothEmbedding 𝓘(ℝ, F) IF ((extChartAt IF x).symm ∘ f) where
   -- old proofs, using `OpenSmoothEmbedding`
   --toFun := (extChartAt IF x).symm ∘ f
   --invFun := f.invFun ∘ extChartAt IF x
@@ -165,7 +165,7 @@ variable [IF.Boundaryless] [FiniteDimensional ℝ F]
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
     ∃ (ι' : Type u) (t : Set ι') (φfun : t → (F → M))
-      (φ : (i : t) → OpenSmoothEmbedding 𝓘(ℝ, F) IF (φfun i) ⊤),
+      (φ : (i : t) → OpenSmoothEmbedding 𝓘(ℝ, F) IF (φfun i)),
       t.Countable ∧
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' U) = univ := by
@@ -221,7 +221,7 @@ variable [Nonempty M]
 theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) :
     ∃ n, ∃ φfun : IndexType n → (F → M),
-      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, F) IF (φfun i) ⊤,
+      ∃ φ : (i : IndexType n) → OpenSmoothEmbedding 𝓘(ℝ, F) IF (φfun i),
         (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
   obtain ⟨ι', t, φfun, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
@@ -258,8 +258,8 @@ section NonMetric
 variable [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
   [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
   -- TODO: better names than φfun, ψfun?
-  {φfun : X → M} (φ : OpenSmoothEmbedding IX IM φfun ⊤)
-  {ψfun : Y → N} (ψ : OpenSmoothEmbedding IY IN ψfun ⊤) (f : M → N) (g : X → Y)
+  {φfun : X → M} (φ : OpenSmoothEmbedding IX IM φfun)
+  {ψfun : Y → N} (ψ : OpenSmoothEmbedding IY IN ψfun) (f : M → N) (g : X → Y)
 
 section
 
@@ -348,8 +348,8 @@ end NonMetric
 section Metric
 
 variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [MetricSpace N]
-  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] {f : X → M} (φ : OpenSmoothEmbedding IX IM f ⊤)
-  {gg : Y → N} (ψ : OpenSmoothEmbedding IY IN gg ⊤) (f : M → N) (g : X → Y)
+  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] {f : X → M} (φ : OpenSmoothEmbedding IX IM f)
+  {gg : Y → N} (ψ : OpenSmoothEmbedding IY IN gg) (f : M → N) (g : X → Y)
 
 /-- This is `lem:dist_updating` in the blueprint. -/
 -- TODO: can I remove `Nonempty X`
