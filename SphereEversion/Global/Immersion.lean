@@ -122,13 +122,13 @@ variable {n : ℕ} (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] 
 /-- The inclusion of `𝕊^n` into `ℝ^{n+1}` is an immersion. -/
 theorem immersion_inclusion_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
     (fun x : sphere (0 : E) 1 ↦ (x : E)) ⊤ where
-  differentiable := contMDiff_coe_sphere
+  contMDiff := contMDiff_coe_sphere
   diff_injective := mfderiv_coe_sphere_injective
 
 /-- The antipodal map on `𝕊^n ⊆ ℝ^{n+1}` is an immersion. -/
 theorem immersion_antipodal_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
     (fun x : sphere (0 : E) 1 ↦ -(x : E)) ⊤ where
-  differentiable :=
+  contMDiff :=
     -- Write this as the composition of `coe_sphere` and the antipodal map on `E`.
     -- The other direction elaborates much worse.
     (contDiff_neg.contMDiff).comp contMDiff_coe_sphere
@@ -334,7 +334,7 @@ theorem sphere_eversion :
     rw [this (1, x) (by simp)]
     convert formalEversion_one E ω x
   · exact fun t ↦ {
-      differentiable := Smooth.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) h₁ t
+      contMDiff := Smooth.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) h₁ t
       diff_injective := h₅ t
     }
 
