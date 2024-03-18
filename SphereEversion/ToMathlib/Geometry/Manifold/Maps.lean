@@ -85,11 +85,12 @@ theorem coe_injective {f : M → M'} {n : ℕ∞} : Function.Injective ((↑) : 
 --     intro h h' hyp
 --     apply coe_injective (DFunLike.coe_injective hyp)
 
-/-- A `C^n` embedding `f : M → M'` is a `C^n` map which is both an immersion and a topological
+-- TODO: add ContDiffEmbedding and OpenContDiffEmbedding also? how to avoid API duplication?
+
+/-- A smooth embedding `f : M → M'` is a smooth map which is both an immersion and a topological
   embedding. (We do not assume smoothness of the inverse, as this follows automatically.
   See `SmoothEmbedding.diffeomorph_of_surjective` and variants.) -/
 structure SmoothEmbedding (f : M → M') (n : ℕ∞) extends Embedding f : Prop :=
-  --differentiable : ContMDiff I I' n f
   smooth : Smooth I I' f
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
@@ -112,19 +113,19 @@ variable {f : M → M'} {n : ℕ∞}
 
 /-- A smooth embedding is an injective immersion. -/
 lemma SmoothEmbedding.toInjImmersion (h : SmoothEmbedding I I' f n) : InjImmersion I I' f n where
-  differentiable := h.smooth.contMDiff
+  contMDiff := h.smooth.contMDiff
   diff_injective := h.diff_injective
   injective := h.toEmbedding.inj
 
 -- an injective immersion need not be an embedding: cue the standard example
 
-/-- A proper injective immersion is an embedding, in fact a closed embedding. -/
-lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f n) (hp : IsProperMap f)
+/-- A proper smooth injective immersion is an embedding, in fact a closed embedding. -/
+lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f ∞) (hp : IsProperMap f)
     (hf : Injective f) : SmoothEmbedding I I' f n where
   -- TODO: use "a proper injective continuous map is a closed embedding"
   -- does mathlib have this and the converse already?
   toEmbedding := sorry
-  smooth := sorry -- h.differentiable
+  smooth := h.contMDiff
   diff_injective := h.diff_injective
 
 end ImmersionEmbeddings
@@ -294,11 +295,11 @@ variable {I I'}
 def Immersion.comp
     (g : Immersion I' I'' g' ⊤) (f : Immersion I I' f' ⊤) :
     Immersion I I'' (g ∘ f) ⊤ where
-  differentiable := g.differentiable.comp f.differentiable
+  contMDiff := g.contMDiff.comp f.contMDiff
   diff_injective p := by
     -- the same argument as below, FIXME deduplicate
-    have aux : MDifferentiableAt I' I'' g' (f' p) := sorry --g.differentiable.mdifferentiableAt
-    have : MDifferentiableAt I I' f' p := sorry --f.differentiably.mdifferentiableAt
+    have aux : MDifferentiableAt I' I'' g' (f' p) := sorry --g.contMDiff.mdifferentiableAt
+    have : MDifferentiableAt I I' f' p := sorry --f.contMDiff.mdifferentiableAt
     have : mfderiv I I'' (g ∘ f) p = (mfderiv I' I'' g (f p)).comp (mfderiv I I' f p) := by
       apply mfderiv_comp
       -- XXX what is going on here? something's not set up right...
