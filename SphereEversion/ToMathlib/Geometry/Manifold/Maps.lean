@@ -100,6 +100,11 @@ theorem BundledEmbedding.toEmbedding (h : BundledEmbedding X Y): Embedding h.toF
   induced := h.induced
   inj := h.inj
 
+theorem Embedding.toBundledEmbedding {f : X → Y} (h : Embedding f) : BundledEmbedding X Y where
+  toFun := f
+  induced := h.induced
+  inj := h.inj
+
 end
 
 variable (M M')
@@ -186,7 +191,6 @@ protected theorem continuous (h : OpenSmoothEmbedding I M I' M') : Continuous h 
 
 lemma isOpenMap (h : OpenSmoothEmbedding I M I' M') : IsOpenMap h := h.toOpenEmbedding.isOpenMap
 
-#exit
 theorem inducing (h : OpenSmoothEmbedding I M I' M') : Inducing h :=
   h.toOpenEmbedding.toInducing
 
@@ -200,7 +204,7 @@ lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
   h.toPartialHomeomorph = h.toOpenEmbedding.toPartialHomeomorph := rfl
 
 lemma toPartialHomeomorph_coeFn [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
-  h.toPartialHomeomorph = f := rfl
+  h.toPartialHomeomorph = h.toFun := rfl
 
  -- currently unused; is this lemma needed?
 lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
@@ -218,12 +222,12 @@ lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I M I' M') (x : M) :
   apply (h.toOpenEmbedding).toPartialHomeomorph_left_inv
 
 lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
-    SmoothOn I' I h.invFun (range f) := by
+    SmoothOn I' I h.invFun (range h) := by
   -- This will follow from a good theory of embedded submanifolds and diffeomorphisms:
   -- - the image of a smooth embedding is a submanifold
-  -- - a smooth embedding `f` is a diffeomorphism to its image,
+  -- - a smooth embedding `h` is a diffeomorphism to its image,
   --   hence has a smooth inverse function
-  -- - on `im(f)`, this inverse coincides with `f.invFun`
+  -- - on `im(h)`, this inverse coincides with `h.invFun`
   sorry
 
 variable [Nonempty M]
@@ -257,11 +261,11 @@ open scoped Topology
 -- XXX: is the custom notation in Notations useful and should be kept?
 
 theorem forall_near' (h : OpenSmoothEmbedding I M I' M') {P : M → Prop} {A : Set M'}
-    (hyp : ∀ᶠ (m : M) in 𝓝ˢ (f ⁻¹' A), P m) :
-    ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range f), ∀ (m : M), m' = f m → P m := by
+    (hyp : ∀ᶠ (m : M) in 𝓝ˢ (h ⁻¹' A), P m) :
+    ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range h), ∀ (m : M), m' = h m → P m := by
   rw [eventually_nhdsSet_iff_forall] at hyp ⊢
   rintro _ ⟨hfm₀, m₀, rfl⟩
-  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
+  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (h m₀), m' ∈ h '' U := by
     intro U U_in
     exact (h.isOpenMap).image_mem_nhds U_in
   apply (this _ <| hyp m₀ hfm₀).mono
@@ -278,24 +282,24 @@ theorem eventually_nhdsSet_mono {s t : Set X} {P : X → Prop}
 -- TODO: optimize this proof which is probably more complicated than it needs to be
 theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
     (h : OpenSmoothEmbedding I M I' M') (hK : IsCompact K) {A : Set M'}
-    (hP : ∀ᶠ (m : M) in 𝓝ˢ (f ⁻¹' A), P m) (hP' : ∀ᶠ (m' : M') in 𝓝ˢ A, m' ∉ f '' K → P' m')
-    (hPP' : ∀ m, P m → P' (f m)) : ∀ᶠ (m' : M') in 𝓝ˢ A, P' m' := by
-  rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
+    (hP : ∀ᶠ (m : M) in 𝓝ˢ (h ⁻¹' A), P m) (hP' : ∀ᶠ (m' : M') in 𝓝ˢ A, m' ∉ h '' K → P' m')
+    (hPP' : ∀ m, P m → P' (h m)) : ∀ᶠ (m' : M') in 𝓝ˢ A, P' m' := by
+  rw [show A = A ∩ range h ∪ A ∩ (range h)ᶜ by simp]
   apply Filter.Eventually.union
-  · have : ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range f), m' ∈ range f :=
+  · have : ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range h), m' ∈ range h :=
       h.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
     apply (this.and <| h.forall_near' hP).mono
     rintro _ ⟨⟨m, rfl⟩, hm⟩
     exact hPP' _ (hm _ rfl)
-  · have op : IsOpen ((f '' K)ᶜ) := by
+  · have op : IsOpen ((h '' K)ᶜ) := by
       rw [isOpen_compl_iff]
       exact (hK.image h.continuous).isClosed
-    have : A ∩ (range f)ᶜ ⊆ A ∩ (f '' K)ᶜ :=
-      inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range f K))
+    have : A ∩ (range h)ᶜ ⊆ A ∩ (h '' K)ᶜ :=
+      inter_subset_inter_right _ (compl_subset_compl.mpr (image_subset_range h K))
     apply eventually_nhdsSet_mono _ this
     rw [eventually_nhdsSet_iff_forall] at hP' ⊢
     rintro x ⟨hx, hx'⟩
-    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (f '' K)ᶜ := isOpen_iff_eventually.mp op x hx'
+    have hx' : ∀ᶠ y in 𝓝 x, y ∈ (h '' K)ᶜ := isOpen_iff_eventually.mp op x hx'
     apply ((hP' x hx).and hx').mono
     rintro y ⟨hy, hy'⟩
     exact hy hy'
@@ -309,12 +313,11 @@ section composition
 variable {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
   {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''}
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
-variable {g' : M' → M''} {f' : M → M'}
 
 variable {I I'}
 
 @[simps!]
-def Immersion.comp
+def Immersion.comp {g' : M' → M''} {f' : M → M'}
     (g : Immersion I' I'' g' ⊤) (f : Immersion I I' f' ⊤) :
     Immersion I I'' (g ∘ f) ⊤ where
   contMDiff := g.contMDiff.comp f.contMDiff
@@ -331,20 +334,23 @@ def Immersion.comp
     apply Injective.comp (g.diff_injective (f p)) (f.diff_injective p)
 
 @[simps!]
-def InjImmersion.comp
+def InjImmersion.comp {g' : M' → M''} {f' : M → M'}
     (g : InjImmersion I' I'' g' ⊤) (f : InjImmersion I I' f' ⊤) :
     InjImmersion I I'' (g' ∘ f') ⊤ where
   toImmersion := g.toImmersion.comp f.toImmersion
   injective := g.injective.comp f.injective
 
 @[simps!]
-def SmoothEmbedding.comp (g : SmoothEmbedding I' I'' g') (f : SmoothEmbedding I I' f') :
-    SmoothEmbedding I I'' (g ∘ f) where
-  toEmbedding := g.toEmbedding.comp (f.toEmbedding)
+def SmoothEmbedding.comp (g : SmoothEmbedding I' M' I'' M'') (f : SmoothEmbedding I M I' M') :
+    SmoothEmbedding I M I'' M'' where
+  toFun := g ∘ f
+  induced := sorry --g.induced.comp f.induced
+  inj := g.inj.comp f.inj
+  -- toBundledEmbedding := (g.toEmbedding.comp (f.toEmbedding)).toBundledEmbedding
   smooth := g.smooth.comp f.smooth
   diff_injective p := by
-    have aux : MDifferentiableAt I' I'' g' (f' p) := g.smooth.mdifferentiableAt
-    have : MDifferentiableAt I I' f' p := f.smooth.mdifferentiableAt
+    have aux : MDifferentiableAt I' I'' g (f p) := g.smooth.mdifferentiableAt
+    have : MDifferentiableAt I I' f p := f.smooth.mdifferentiableAt
     have : mfderiv I I'' (g ∘ f) p = (mfderiv I' I'' g (f p)).comp (mfderiv I I' f p) := by
       apply mfderiv_comp
       -- XXX what is going on here? something's not set up right...
@@ -354,8 +360,8 @@ def SmoothEmbedding.comp (g : SmoothEmbedding I' I'' g') (f : SmoothEmbedding I 
     apply Injective.comp (g.diff_injective (f p)) (f.diff_injective p)
 
 @[simps!]
-def OpenSmoothEmbedding.comp (g : OpenSmoothEmbedding I' I'' g') (f : OpenSmoothEmbedding I I' f') :
-    OpenSmoothEmbedding I I'' (g ∘ f) where
+def OpenSmoothEmbedding.comp (g : OpenSmoothEmbedding I' M' I'' M'') (f : OpenSmoothEmbedding I M I' M') :
+    OpenSmoothEmbedding I M I'' M'' where
   toSmoothEmbedding := g.toSmoothEmbedding.comp (f.toSmoothEmbedding)
   isOpen_range := (g.isOpenMap.comp f.isOpenMap).isOpen_range
 
