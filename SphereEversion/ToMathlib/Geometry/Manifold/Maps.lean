@@ -87,20 +87,37 @@ theorem coe_injective {f : M → M'} {n : ℕ∞} : Function.Injective ((↑) : 
 
 -- TODO: add ContDiffEmbedding and OpenContDiffEmbedding also? how to avoid API duplication?
 
+section
+
+structure BundledEmbedding (X Y : Type*) [tX : TopologicalSpace X] [tY : TopologicalSpace Y] :=
+  toFun : X → Y
+  induced : tX = tY.induced toFun
+  inj : Function.Injective toFun
+
+variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+
+theorem BundledEmbedding.toEmbedding (h : BundledEmbedding X Y): Embedding h.toFun where
+  induced := h.induced
+  inj := h.inj
+
+end
+
+variable (M M')
+
 /-- A smooth embedding `f : M → M'` is a smooth map which is both an immersion and a topological
   embedding. (We do not assume smoothness of the inverse, as this follows automatically.
   See `SmoothEmbedding.diffeomorph_of_surjective` and variants.) -/
-structure SmoothEmbedding (f : M → M') extends Embedding f : Prop :=
-  smooth : Smooth I I' f
-  diff_injective : ∀ p, Injective (mfderiv I I' f p)
+structure SmoothEmbedding extends BundledEmbedding M M' :=
+  smooth : Smooth I I' toFun
+  diff_injective : ∀ p, Injective (mfderiv I I' toFun p)
 
 /-- A `SmoothEmbedding` with open range. -/
-structure OpenSmoothEmbedding (f : M → M') extends SmoothEmbedding I I' f : Prop :=
-  isOpen_range : IsOpen <| range f
+structure OpenSmoothEmbedding extends SmoothEmbedding I M I' M' :=
+  isOpen_range : IsOpen <| range toFun
 
-variable {I I'} in
-lemma OpenSmoothEmbedding.toOpenEmbedding {f : M → M'} (h : OpenSmoothEmbedding I I' f) :
-    OpenEmbedding f where
+variable {I I' M M'} in
+lemma OpenSmoothEmbedding.toOpenEmbedding (h : OpenSmoothEmbedding I M I' M') :
+    OpenEmbedding h.toFun where
   toEmbedding := h.toEmbedding
   open_range := h.isOpen_range
 
@@ -109,10 +126,9 @@ end Definition
 /-! Immersions and embeddings -/
 section ImmersionEmbeddings
 
-variable {f : M → M'}
-
 /-- A smooth embedding is an injective immersion. -/
-lemma SmoothEmbedding.toInjImmersion {n : ℕ∞} (h : SmoothEmbedding I I' f) : InjImmersion I I' f n where
+lemma SmoothEmbedding.toInjImmersion {n : ℕ∞} (h : SmoothEmbedding I M I' M') :
+    InjImmersion I I' h.toFun n where
   contMDiff := h.smooth.contMDiff
   diff_injective := h.diff_injective
   injective := h.toEmbedding.inj
@@ -120,11 +136,13 @@ lemma SmoothEmbedding.toInjImmersion {n : ℕ∞} (h : SmoothEmbedding I I' f) :
 -- an injective immersion need not be an embedding: cue the standard example
 
 /-- A proper smooth injective immersion is an embedding, in fact a closed embedding. -/
-lemma Embedding.of_proper_injective_immersion (h : Immersion I I' f ∞) (hp : IsProperMap f)
-    (hf : Injective f) : SmoothEmbedding I I' f where
+lemma Embedding.of_proper_injective_immersion {f : M → M'} (h : Immersion I I' f ∞)
+    (hp : IsProperMap f) (hf : Injective f) : SmoothEmbedding I M I' M' where
   -- TODO: use "a proper injective continuous map is a closed embedding"
   -- does mathlib have this and the converse already?
-  toEmbedding := sorry
+  toFun := f
+  induced := sorry
+  inj := hf
   smooth := h.contMDiff
   diff_injective := h.diff_injective
 
@@ -132,71 +150,74 @@ end ImmersionEmbeddings
 
 namespace OpenSmoothEmbedding
 
-variable {f : M → M'}
 variable {I I'}
 
-instance : FunLike (SmoothEmbedding I I' f) M M' where
-  coe := fun _ ↦ f
+instance : FunLike (SmoothEmbedding I M I' M') M M' where
+  coe := fun h ↦ h.toFun
   coe_injective' := by
-    intro h _ _
-    congr
+    intro h h' H
+    sorry /-congr
+    cases h
+    cases h'
+    congr-/
 
 attribute [coe] OpenSmoothEmbedding.toSmoothEmbedding
 /-- Coerce open smooth embeddings to smooth embeddings. -/
-instance coe : Coe (OpenSmoothEmbedding I I' f) (SmoothEmbedding I I' f) :=
+instance coe : Coe (OpenSmoothEmbedding I M I' M') (SmoothEmbedding I M I' M') :=
   ⟨toSmoothEmbedding⟩
 
 theorem coe_injective : Function.Injective
-    ((↑) : (OpenSmoothEmbedding I I' f) → (SmoothEmbedding I I' f)) := by
+    ((↑) : (OpenSmoothEmbedding I M I' M') → (SmoothEmbedding I M I' M')) := by
   intro h h' _
-  congr
+  sorry -- congr
 
 -- Note. Contrary to the previous definition, `invFun` is not part of the data, so we cna
 -- have a `FunLike` coercion!
-instance : FunLike (OpenSmoothEmbedding I I' f) M M' where
-  coe := fun _ ↦ f
+instance : FunLike (OpenSmoothEmbedding I M I' M') M M' where
+  coe := fun h ↦ h.toFun
   coe_injective' := by
     intro h h' hyp
     apply coe_injective (DFunLike.coe_injective hyp)
 
-lemma injective (h : OpenSmoothEmbedding I I' f) : Injective h := h.toEmbedding.inj
+lemma injective (h : OpenSmoothEmbedding I M I' M') : Injective h := h.toEmbedding.inj
 
-protected theorem continuous (h : OpenSmoothEmbedding I I' f) : Continuous h :=
+protected theorem continuous (h : OpenSmoothEmbedding I M I' M') : Continuous h :=
   (h.smooth).continuous
 
-lemma isOpenMap (h : OpenSmoothEmbedding I I' f) : IsOpenMap f := h.toOpenEmbedding.isOpenMap
+lemma isOpenMap (h : OpenSmoothEmbedding I M I' M') : IsOpenMap h := h.toOpenEmbedding.isOpenMap
 
-theorem inducing (h : OpenSmoothEmbedding I I' f) : Inducing f :=
+#exit
+theorem inducing (h : OpenSmoothEmbedding I M I' M') : Inducing h :=
   h.toOpenEmbedding.toInducing
 
 /-- An open smooth embedding on a non-empty domain is a partial homeomorphism. -/
 def toPartialHomeomorph [Nonempty M]
-    (h : OpenSmoothEmbedding I I' f) : PartialHomeomorph M M' :=
+    (h : OpenSmoothEmbedding I M I' M') : PartialHomeomorph M M' :=
   h.toOpenEmbedding.toPartialHomeomorph
 
 -- currently unused; is this lemma needed? what's a good name?
-lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbedding I I' f) :
+lemma toPartialHomeomorph_coe [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
   h.toPartialHomeomorph = h.toOpenEmbedding.toPartialHomeomorph := rfl
 
-lemma toPartialHomeomorph_coeFn [Nonempty M] (h : OpenSmoothEmbedding I I' f) :
+lemma toPartialHomeomorph_coeFn [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
   h.toPartialHomeomorph = f := rfl
 
  -- currently unused; is this lemma needed?
-lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbedding I I' f) :
+lemma toPartialHomeomorph_source [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
     (h.toPartialHomeomorph).source = univ := by
   rw [h.toPartialHomeomorph_coe, OpenEmbedding.toPartialHomeomorph_source]
 
 /-- A choice of inverse function: values outside `f.range` are arbitrary. -/
 @[pp_dot]
-def invFun [Nonempty M] (h : OpenSmoothEmbedding I I' f) : M' → M :=
+def invFun [Nonempty M] (h : OpenSmoothEmbedding I M I' M') : M' → M :=
   (h.toPartialHomeomorph).invFun
 
 @[simp]
-lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f) (x : M) :
+lemma left_inv [Nonempty M] (h : OpenSmoothEmbedding I M I' M') (x : M) :
     h.invFun (h x) = x := by
   apply (h.toOpenEmbedding).toPartialHomeomorph_left_inv
 
-lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f) :
+lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I M I' M') :
     SmoothOn I' I h.invFun (range f) := by
   -- This will follow from a good theory of embedded submanifolds and diffeomorphisms:
   -- - the image of a smooth embedding is a submanifold
@@ -208,34 +229,34 @@ lemma smoothOn_inv [Nonempty M] (h : OpenSmoothEmbedding I I' f) :
 variable [Nonempty M]
 
 @[simp]
-theorem invFun_comp_coe (h : OpenSmoothEmbedding I I' f) : h.invFun ∘ h = id := by
+theorem invFun_comp_coe (h : OpenSmoothEmbedding I M I' M') : h.invFun ∘ h = id := by
   ext
   apply h.left_inv
 
 @[simp]
-theorem right_inv {y : M'} (h : OpenSmoothEmbedding I I' f) (hy : y ∈ range h) : h (h.invFun y) = y := by
+theorem right_inv {y : M'} (h : OpenSmoothEmbedding I M I' M') (hy : y ∈ range h) : h (h.invFun y) = y := by
   obtain ⟨x, rfl⟩ := hy
   erw [h.left_inv]
 
-theorem smoothAt_inv {y : M'} (h : OpenSmoothEmbedding I I' f) (hy : y ∈ range h) : SmoothAt I' I h.invFun y :=
+theorem smoothAt_inv {y : M'} (h : OpenSmoothEmbedding I M I' M') (hy : y ∈ range h) : SmoothAt I' I h.invFun y :=
   (h.smoothOn_inv y hy).contMDiffAt <| h.isOpen_range.mem_nhds hy
 
-theorem smoothAt_inv' {x : M} (h : OpenSmoothEmbedding I I' f) : SmoothAt I' I h.invFun (h x) :=
+theorem smoothAt_inv' {x : M} (h : OpenSmoothEmbedding I M I' M') : SmoothAt I' I h.invFun (h x) :=
   h.smoothAt_inv <| mem_range_self x
 
-theorem leftInverse (h : OpenSmoothEmbedding I I' f) : Function.LeftInverse h.invFun h := fun x ↦ left_inv h x
+theorem leftInverse (h : OpenSmoothEmbedding I M I' M') : Function.LeftInverse h.invFun h := fun x ↦ left_inv h x
 
 section filters
 
 open Topology in
-theorem coe_comp_invFun_eventuallyEq (h : OpenSmoothEmbedding I I' f) (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
+theorem coe_comp_invFun_eventuallyEq (h : OpenSmoothEmbedding I M I' M') (x : M) : h ∘ h.invFun =ᶠ[𝓝 (h x)] id :=
   Filter.eventually_of_mem (h.isOpenMap.range_mem_nhds x) fun _ hy ↦ h.right_inv hy
 
 open Filter
 open scoped Topology
 -- XXX: is the custom notation in Notations useful and should be kept?
 
-theorem forall_near' (h : OpenSmoothEmbedding I I' f) {P : M → Prop} {A : Set M'}
+theorem forall_near' (h : OpenSmoothEmbedding I M I' M') {P : M → Prop} {A : Set M'}
     (hyp : ∀ᶠ (m : M) in 𝓝ˢ (f ⁻¹' A), P m) :
     ∀ᶠ (m' : M') in 𝓝ˢ (A ∩ range f), ∀ (m : M), m' = f m → P m := by
   rw [eventually_nhdsSet_iff_forall] at hyp ⊢
@@ -256,7 +277,7 @@ theorem eventually_nhdsSet_mono {s t : Set X} {P : X → Prop}
 
 -- TODO: optimize this proof which is probably more complicated than it needs to be
 theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
-    (h : OpenSmoothEmbedding I I' f) (hK : IsCompact K) {A : Set M'}
+    (h : OpenSmoothEmbedding I M I' M') (hK : IsCompact K) {A : Set M'}
     (hP : ∀ᶠ (m : M) in 𝓝ˢ (f ⁻¹' A), P m) (hP' : ∀ᶠ (m' : M') in 𝓝ˢ A, m' ∉ f '' K → P' m')
     (hPP' : ∀ m, P m → P' (f m)) : ∀ᶠ (m' : M') in 𝓝ˢ A, P' m' := by
   rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
