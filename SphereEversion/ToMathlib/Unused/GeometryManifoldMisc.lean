@@ -1,4 +1,7 @@
+import Mathlib.Geometry.Manifold.VectorBundle.Tangent
 import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
+import Mathlib.Geometry.Manifold.MFDeriv.Defs
+import Mathlib.Analysis.Calculus.ContDiff.Defs
 
 open Bundle Set Function Filter ContinuousLinearMap
 
@@ -12,11 +15,13 @@ section Topology
 variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
 
 theorem map_fst_nhdsWithin_eq {x : α × β} {s : Set α} :
-    map Prod.fst (𝓝[Prod.fst ⁻¹' s] x) = 𝓝[s] x.1 := by cases x;
+    map Prod.fst (𝓝[Prod.fst ⁻¹' s] x) = 𝓝[s] x.1 := by
+  cases x
   rw [← prod_univ, nhdsWithin_prod_eq, nhdsWithin_univ, map_fst_prod]
 
 theorem nhdsWithin_preimage_fst_le {x : α × β} {s : Set α} :
-    𝓝[Prod.fst ⁻¹' s] x ≤ comap Prod.fst (𝓝[s] x.1) := by rw [← map_fst_nhdsWithin_eq];
+    𝓝[Prod.fst ⁻¹' s] x ≤ comap Prod.fst (𝓝[s] x.1) := by
+  rw [← map_fst_nhdsWithin_eq]
   exact le_comap_map
 
 theorem Filter.Eventually.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {p : α × β → Prop}
@@ -24,9 +29,10 @@ theorem Filter.Eventually.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {p
   refine Eventually.filter_mono nhdsWithin_preimage_fst_le ?_
   simp_rw [eventually_comap, Prod.forall]
   simp (config := { singlePass := true }) only [forall_swap]
-  convert h; ext x
+  convert h
+  sorry /- ext x
   refine forall_congr' fun y ↦ ?_
-  simp_rw [forall_eq]
+  simp_rw [forall_eq] -/
 
 theorem Filter.EventuallyEq.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {f g : α × β → γ}
     (h : curry f =ᶠ[𝓝[s] z.1] curry g) : f =ᶠ[𝓝[Prod.fst ⁻¹' s] z] g :=
@@ -52,22 +58,26 @@ variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [
   [∀ x, Module 𝕜 (E x)] [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace (TotalSpace F E)]
   [∀ x, TopologicalSpace (E x)] {EB : Type*} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
   {HB : Type*} [TopologicalSpace HB] {IB : ModelWithCorners 𝕜 EB HB} [TopologicalSpace B]
-  [ChartedSpace HB B] {EM : Type*} [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] {HM : Type*}
+  [ChartedSpace HB B]
+  {EM : Type*} [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] {HM : Type*}
   [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} [TopologicalSpace M] [ChartedSpace HM M]
-  {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E] {e e' : Trivialization F (π F E)}
+  {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E]
+  {e e' : Trivialization F (π F E)}
 
 theorem VectorBundleCore.smoothAt_coordChange {ι} (Z : VectorBundleCore 𝕜 B F ι) [Z.IsSmooth IB]
     (i j : ι) {x₀ : B} (hx₀ : x₀ ∈ Z.baseSet i ∩ Z.baseSet j) :
     SmoothAt IB 𝓘(𝕜, F →L[𝕜] F) (Z.coordChange i j) x₀ :=
-  (Z.smoothOn_coordChangeL IB i j).SmoothAt <|
-    ((Z.isOpen_baseSet i).inter (Z.isOpen_baseSet j)).mem_nhds hx₀
+  sorry -- proof was:
+  -- (/-Z.-/smoothOn_coordChangeL IB i j).SmoothAt <|
+  --  ((Z.isOpen_baseSet i).inter (Z.isOpen_baseSet j)).mem_nhds hx₀ -/
 
-variable (IB) [TopologicalSpace B] [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
+variable (IB)
+variable [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
 
 theorem smoothAt_coord_change (e e' : Trivialization F (π F E)) {x₀ : B}
     (hx₀ : x₀ ∈ e.baseSet ∩ e'.baseSet) [MemTrivializationAtlas e] [MemTrivializationAtlas e'] :
     SmoothAt IB 𝓘(𝕜, F →L[𝕜] F) (fun b : B ↦ (e.coordChangeL 𝕜 e' b : F →L[𝕜] F)) x₀ :=
-  (smoothOn_coordChangeL e e').SmoothAt <| (e.open_baseSet.inter e'.open_baseSet).mem_nhds hx₀
+  sorry -- was: (smoothOn_coordChangeL e e').SmoothAt <| (e.open_baseSet.inter e'.open_baseSet).mem_nhds hx₀
 
 variable {IB}
 
@@ -93,23 +103,24 @@ variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [
   [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} [TopologicalSpace M] [ChartedSpace HM M]
   {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E] {e e' : Trivialization F (π F E)}
 
-variable (IB) [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
+variable (IB)
+variable [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
 
 theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializationAtlas e]
     {x₀ : TotalSpace F E} (hx₀ : x₀.proj ∈ e.baseSet) :
     SmoothAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e x₀ := by
   rw [smoothAt_prod]
-  refine' ⟨(smoothAt_proj E).congr_of_eventuallyEq _, _⟩
+  refine ⟨(smoothAt_proj E).congr_of_eventuallyEq ?_, ?_⟩
   · exact eventually_of_mem (e.open_source.mem_nhds <| e.mem_source.mpr hx₀) fun x hx ↦ e.coe_fst hx
   simp_rw [SmoothAt, contMDiffAt_iff_source_of_mem_source (mem_chart_source _ _)]
   simp only [FiberBundle.extChartAt, Function.comp, prod_univ, mfld_simps]
   let e' := trivializationAt F E x₀.proj
   let c := (extChartAt IB x₀.proj).symm
   have h0 := (extChartAt IB x₀.proj).left_inv (mem_extChartAt_source IB x₀.proj)
-  have :
-    ContMDiffWithinAt 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤ (fun x : EB × F ↦ e'.coordChangeL 𝕜 e (c x.1) x.2)
+  have : ContMDiffWithinAt 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤
+      (fun x : EB × F ↦ e'.coordChangeL 𝕜 e (c x.1) x.2)
       (Prod.fst ⁻¹' range IB) (extChartAt IB x₀.proj x₀.proj, (e' x₀).2) := by
-    refine' ContMDiffWithinAt.clm_apply _ contDiffWithinAt_snd.contMDiffWithinAt
+    sorry /-refine ContMDiffWithinAt.clm_apply (𝕜 := 𝕜) ?_ contDiffWithinAt_snd.contMDiffWithinAt
     have h1 := smoothAt_coord_change IB e' e ⟨mem_base_set_trivialization_at F E x₀.proj, hx₀⟩
     refine' h1.cont_mdiff_within_at.comp_of_eq _ (maps_to_univ _ _) _
     · refine' ((contMDiffOn_extChartAt_symm x₀.proj _ <|
@@ -117,8 +128,8 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
         _).comp_of_eq _ (mapsTo_preimage _ _) rfl
       · exact extChartAt_target_mem_nhdsWithin IB x₀.proj
       exact contDiffWithinAt_fst.contMDiffWithinAt
-    exact h0
-  refine' this.congr_of_eventuallyEq_insert _
+    · exact h0 -/
+  sorry /- was: refine this.congr_of_eventuallyEq_insert ?_
   rw [insert_eq_of_mem]
   swap; exact mem_range_self _
   refine' Filter.Eventually.nhdsWithin_preimage_fst _
@@ -131,7 +142,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
     (continuousAt_extChartAt_symm IB x₀.proj).preimage_mem_nhds
       (e.open_base_set.mem_nhds <| by rwa [h0])
   filter_upwards [nhdsWithin_le_nhds h1, nhdsWithin_le_nhds h2] with b h1b h2b y
-  rw [e'.coord_changeL_apply e ⟨h1b, h2b⟩, e'.mk_symm h1b]
+  rw [e'.coord_changeL_apply e ⟨h1b, h2b⟩, e'.mk_symm h1b] -/
 
 #print Trivialization.smoothOn /-
 theorem Trivialization.smoothOn (e : Trivialization F (π F E)) [MemTrivializationAtlas e] :
@@ -187,7 +198,7 @@ variable [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
 a neighborhood of this point. -/
 theorem contMDiffWithinAt_iff_contMDiffWithinAt_nhdsWithin {n : ℕ} :
     ContMDiffWithinAt I I' n f s x ↔ ∀ᶠ x' in 𝓝[insert x s] x, ContMDiffWithinAt I I' n f s x' := by
-  refine' ⟨_, fun h ↦ h.self_of_nhdsWithin (mem_insert x s)⟩
+  refine ⟨?_, fun h ↦ h.self_of_nhdsWithin (mem_insert x s)⟩
   rw [contMDiffWithinAt_iff_contMDiffOn_nhds]
   rintro ⟨u, hu, h⟩
   filter_upwards [eventually_mem_nhds_within'.mpr hu, hu] with x' hx' h2x'
@@ -345,45 +356,45 @@ theorem contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap (x₀ : T
         (trivializationAt E (TangentSpace I) x₀.proj).continuousLinearMapAt 𝕜 x.proj x.2)
       x₀ := by
   let e := trivializationAt E (TangentSpace I) x₀.proj
-  refine' ContMDiffAt.congr_of_eventuallyEq _ _
+  refine' ContMDiffAt.congr_of_eventuallyEq ?_ ?_
   pick_goal 3
   have h1 :=
-    (continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
-      (e.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
+    (FiberBundle.continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
+      (e.open_baseSet.mem_nhds <| mem_baseSet_trivializationAt _ _ _)
   filter_upwards [h1] with x hx
-  rw [Trivialization.continuousLinearMapAt_apply, e.coe_linear_map_at_of_mem hx]
-  exact (e.smooth_at I <| mem_base_set_trivialization_at E _ _).snd.of_le le_top
+  rw [Trivialization.continuousLinearMapAt_apply, e.coe_linearMapAt_of_mem hx]
+  exact (e.smoothAt I <| mem_baseSet_trivializationAt E _ _).snd.of_le le_top
 
 /-- Not useful by itself. TODO: generalize to `contMDiffWithinAt` of `tangentMapWithin` -/
 theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     (hf : ContMDiffAt I I' n f x₀.proj) (hmn : m + 1 ≤ n) :
     ContMDiffAt I.tangent I'.tangent m (tangentMap I I' f) x₀ := by
   rw [contMDiffAt_totalSpace]
-  refine'
+  refine
     ⟨(hf.comp x₀ (contMDiffAt_proj (TangentSpace I))).of_le <| (self_le_add_right m 1).trans hmn,
-      _⟩
+      ?_⟩
   dsimp only [tangentMap]
   let e := trivializationAt E (TangentSpace I) x₀.proj
   let e' := trivializationAt E' (TangentSpace I') (f x₀.proj)
   have : ContMDiffAt I.tangent 𝓘(𝕜, E') m
       (fun x : TangentBundle I M ↦
         inTangentCoordinates I I' id f (mfderiv I I' f) x₀.proj x.proj <|
-          e.continuousLinearMapAt 𝕜 x.proj x.2) x₀ :=
-    ContMDiffAt.mfderiv_apply (fun _ ↦ f) id TotalSpace.proj
+          e.continuousLinearMapAt 𝕜 x.proj x.2) x₀ := by
+    sorry /-apply ContMDiffAt.mfderiv_apply (fun _ ↦ f) id TotalSpace.proj
       (fun x ↦ e.continuousLinearMapAt 𝕜 x.proj x.2) _ contMDiffAt_id (contMDiffAt_proj _) _
       hmn
     apply ContMDiffAt.comp (x₀.proj, x₀.proj) hf contMDiffAt_snd
-    apply contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap
-  exact this.congr_of_eventually_eq _
+    apply contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap -/
+    --exact this.congr_of_eventually_eq _
   have h1 :=
-    (continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
-      (e.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
+    (FiberBundle.continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
+      (e.open_baseSet.mem_nhds <| mem_baseSet_trivializationAt _ _ _)
   have h2 :=
-    (hf.continuousAt.comp (continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
-      (e'.open_base_set.mem_nhds <| mem_base_set_trivialization_at _ _ _)
-  filter_upwards [h1, h2] with x hx h2x
+    (hf.continuousAt.comp (FiberBundle.continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
+      (e'.open_baseSet.mem_nhds <| mem_baseSet_trivializationAt _ _ _)
+  sorry /-filter_upwards [h1, h2] with x hx h2x
   dsimp only [inTangentCoordinates, in_coordinates, id_def]
   simp_rw [ContinuousLinearMap.comp_apply, e.symmL_continuous_linear_map_at hx,
-    Trivialization.continuousLinearMapAt_apply, e'.coe_linear_map_at_of_mem h2x]
+    Trivialization.continuousLinearMapAt_apply, e'.coe_linear_map_at_of_mem h2x] -/
 
 end SmoothManifoldWithCorners
