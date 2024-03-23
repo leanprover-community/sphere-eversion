@@ -128,8 +128,7 @@ variable {P}
 /-- Turn a family of sections of `J¹(E, E')` parametrized by `P` into a section of `J¹(P × E, E')`.
 -/
 @[simps]
-def FamilyJetSec.uncurry (S : FamilyJetSec E F P) : JetSec (P × E) F
-    where
+def FamilyJetSec.uncurry (S : FamilyJetSec E F P) : JetSec (P × E) F where
   f p := S.f p.1 p.2
   φ p := fderiv ℝ (fun z : P × E ↦ S.f z.1 p.2) p + S.φ p.1 p.2 ∘L fderiv ℝ Prod.snd p
   f_diff := S.f_diff
@@ -190,8 +189,7 @@ theorem RelLoc.FamilyFormalSol.uncurry_φ' (S : R.FamilyFormalSol P) (p : P × E
 
 /-- Turn a family of sections of `J¹(P × E, F)` parametrized by `G` into a family of sections of
 `J¹(E, F)` parametrized by `G × P`. -/
-def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × P)
-    where
+def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × P) where
   f p x := (S p.1).f (p.2, x)
   φ p x := (S p.1).φ (p.2, x) ∘L fderiv ℝ (fun x ↦ (p.2, x)) x
   f_diff := S.f_diff.comp (contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E))

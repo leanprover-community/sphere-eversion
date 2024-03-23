@@ -295,8 +295,7 @@ theorem mkHtpyFormalSol_apply (F : ℝ → M → OneJetBundle I M I' M') (hsec :
   rfl
 
 /-- The constant homotopy of formal solution associated to a formal solution. -/
-def FormalSol.constHtpy (F : FormalSol R) : HtpyFormalSol R
-    where
+def FormalSol.constHtpy (F : FormalSol R) : HtpyFormalSol R where
   bs _ := F.bs
   ϕ _ := F.ϕ
   smooth' := F.smooth.comp smooth_snd
@@ -306,8 +305,7 @@ variable (R)
 
 /-- The empty homotopy of formal solution associated to any relation whose source manifold
 is empty. This is required to avoid a silly nonemptyness assumption in the main theorems. -/
-def emptyHtpyFormalSol [IsEmpty M] : HtpyFormalSol R
-    where
+def emptyHtpyFormalSol [IsEmpty M] : HtpyFormalSol R where
   bs _t x := (IsEmpty.false x).elim
   ϕ _t x := (IsEmpty.false x).elim
   smooth' := fun ⟨_t, x⟩ ↦ (IsEmpty.false x).elim
@@ -607,8 +605,7 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
 
 -- very slow to elaborate :-(
 @[simps, pp_dot]
-def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN
-    where
+def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   toFun := φ.transfer ψ
   invFun :=
     OneJetBundle.map IN IY φ.invFun ψ.invFun fun x ↦

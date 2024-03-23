@@ -238,8 +238,7 @@ def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) 
 /-- Turn a family of sections of `J¹(M, M')` parametrized by `N` into a section of `J¹(N × M, M')`.
 -/
 @[simps]
-def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M) I' M'
-    where
+def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M) I' M' where
   bs p := S.bs p.1 p.2
   ϕ p :=
     (mfderiv (IP.prod I) I' (fun z : P × M ↦ S.bs z.1 p.2) p) +

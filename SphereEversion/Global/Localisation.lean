@@ -33,8 +33,7 @@ variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
-def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E'
-    where
+def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' where
   f := F.bs
   f_diff := F.smooth_bs.contDiff
   φ x := (F x).2
@@ -73,18 +72,14 @@ end Loc
 section Unloc
 
 /-! ## Unlocalizing relations and 1-jet sections
-
 -/
 
-
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
 /-- Convert a 1-jet section between vector spaces to a 1-jet section
 between those vector spaces seen as manifolds. -/
-def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E'
-    where
+def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' where
   bs := 𝓕.f
   ϕ x := (𝓕 x).2
   smooth' := by
@@ -100,8 +95,7 @@ theorem JetSec.unloc_hol_at_iff (𝓕 : JetSec E E') (x : E) :
   rw [mfderiv_eq_fderiv]
   exact Iff.rfl
 
-def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E'
-    where
+def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' where
   bs t := (𝓕 t).f
   ϕ t x := (𝓕 t x).2
   smooth' := by

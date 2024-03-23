@@ -269,8 +269,7 @@ theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) :
   exact (contDiffAt_orthogonalProjection_singleton hx).comp p contDiffAt_snd
 
 /-- A formal eversion of `𝕊²`, viewed as a homotopy. -/
-def locFormalEversionAux : HtpyJetSec E E
-    where
+def locFormalEversionAux : HtpyJetSec E E where
   f (t : ℝ) (x : E) := (1 - 2 * smoothStep t) • x
   φ t x := smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x
   f_diff :=

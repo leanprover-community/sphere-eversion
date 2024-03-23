@@ -219,8 +219,7 @@ theorem hρ_compl_K₁ (L : StepLandscape E) {x : E} : x ∉ L.K₁ → L.ρ x =
 in some landscape to improve a formal solution `𝓕` from being `L.E'`-holonomic to
 `L.E' ⊔ span {p.v}`-holonomic near `L.K₀`.
 -/
-def improveStep {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ) : HtpyJetSec E F
-    where
+def improveStep {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ) : HtpyJetSec E F where
   f t x := 𝓕.f x + (smoothStep t * L.ρ x) • corrugation L.π N (L.loop h t) x
   f_diff :=
     𝓕.f_diff.snd'.add <|

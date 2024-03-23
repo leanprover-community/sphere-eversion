@@ -208,8 +208,7 @@ variable (e : E ≃L[𝕜] E') [CompleteSpace E] [CompleteSpace E']
 
 -- unused
 @[simps]
-def toOpenSmoothEmbedding : OpenSmoothEmbedding 𝓘(𝕜, E) E 𝓘(𝕜, E') E'
-    where
+def toOpenSmoothEmbedding : OpenSmoothEmbedding 𝓘(𝕜, E) E 𝓘(𝕜, E') E' where
   toFun := e
   invFun := e.symm
   left_inv' {x} := e.symm_apply_apply x

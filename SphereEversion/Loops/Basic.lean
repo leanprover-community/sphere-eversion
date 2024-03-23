@@ -144,8 +144,7 @@ theorem vadd_apply [_root_.Add X] {x : X} {γ : Loop X} {t : ℝ} : (x +ᵥ γ) 
 instance [SMul K X] : SMul K (Loop X) :=
   ⟨fun k γ ↦ γ.transform fun y ↦ k • y⟩
 
-instance [Semiring K] [AddCommGroup X] [Module K X] : Module K (Loop X)
-    where
+instance [Semiring K] [AddCommGroup X] [Module K X] : Module K (Loop X) where
   one_smul γ := by ext t; apply one_smul
   mul_smul k₁ k₂ γ := by ext t; apply mul_smul
   smul_zero k := by ext; apply smul_zero
@@ -159,8 +158,7 @@ theorem smul_apply [SMul K X] {k : K} {γ : Loop X} {t : ℝ} : (k • γ) t = k
 
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
 @[simps (config := { simpRhs := true })]
-def reparam {F : Type*} (γ : Loop F) (φ : EquivariantMap) : Loop F
-    where
+def reparam {F : Type*} (γ : Loop F) (φ : EquivariantMap) : Loop F where
   toFun := γ ∘ φ
   per' t := by rw [comp_apply, φ.eqv, γ.per]; rfl
 
@@ -195,8 +193,7 @@ theorem not_mem_support {γ : X → Loop X'} {x : X} (h : ∀ᶠ y in 𝓝 x, (�
 
 /-- Turn a path into a loop. -/
 @[simps]
-noncomputable def ofPath {x : X} (γ : Path x x) : Loop X
-    where
+noncomputable def ofPath {x : X} (γ : Path x x) : Loop X where
   toFun t := γ.extend (fract t)
   per' := by
     intro t
@@ -340,8 +337,7 @@ theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopol
   continuous_parametric_intervalIntegral_of_continuous' hγ_cont _ _
 
 /-- The normalization of a loop `γ` is the loop `γ - γ.average`. -/
-def normalize (γ : Loop F) : Loop F
-    where
+def normalize (γ : Loop F) : Loop F where
   toFun t := γ t - γ.average
   per' t := by simp [γ.per]
 
@@ -368,8 +364,7 @@ local notation "∂₁" => partialFDerivFst ℝ
 variable (π : E → ℝ) (N : ℝ) (γ : E → Loop F) (hγ : IsCompact (Loop.support γ))
 
 /-- Differential of a loop family with respect to the parameter. -/
-def Loop.diff (γ : E → Loop F) (e : E) : Loop (E →L[ℝ] F)
-    where
+def Loop.diff (γ : E → Loop F) (e : E) : Loop (E →L[ℝ] F) where
   toFun t := ∂₁ (fun e t ↦ γ e t) e t
   per' t := by simp only [partialFDerivFst, Loop.per]
 

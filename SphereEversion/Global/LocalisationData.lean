@@ -99,8 +99,7 @@ theorem nice_atlas_domain :
 
 /-- Lemma `lem:ex_localisation`
   Any continuous map between manifolds has some localisation data. -/
-def stdLocalisationData : LocalisationData I I' f
-    where
+def stdLocalisationData : LocalisationData I I' f where
   cont := hf
   N := (nice_atlas_domain E I E' I' hf).choose
   ι' := IndexType (nice_atlas_target E' I' M').choose
