@@ -362,16 +362,18 @@ namespace OpenSmoothEmbedding
 
 section Updating
 
-variable {𝕜 EX EM EY EN EM' X M Y N M' : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup EX]
-  [NormedSpace 𝕜 EX] [NormedAddCommGroup EM] [NormedSpace 𝕜 EM] [NormedAddCommGroup EM']
-  [NormedSpace 𝕜 EM'] [NormedAddCommGroup EY] [NormedSpace 𝕜 EY] [NormedAddCommGroup EN]
-  [NormedSpace 𝕜 EN] {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners 𝕜 EX HX}
-  {HY : Type*} [TopologicalSpace HY] {IY : ModelWithCorners 𝕜 EY HY} {HM : Type*}
-  [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM} {HM' : Type*} [TopologicalSpace HM']
-  {IM' : ModelWithCorners 𝕜 EM' HM'} {HN : Type*} [TopologicalSpace HN]
-  {IN : ModelWithCorners 𝕜 EN HN} [TopologicalSpace X] [ChartedSpace HX X]
-  [SmoothManifoldWithCorners IX X] [TopologicalSpace M] [ChartedSpace HM M]
-  [SmoothManifoldWithCorners IM M] [TopologicalSpace M'] [ChartedSpace HM' M']
+variable {𝕜 EX EM EY EN EM' X M Y N M' : Type*} [NontriviallyNormedField 𝕜]
+  [NormedAddCommGroup EX] [NormedSpace 𝕜 EX] [NormedAddCommGroup EM] [NormedSpace 𝕜 EM]
+  [NormedAddCommGroup EM'] [NormedSpace 𝕜 EM'] [NormedAddCommGroup EY] [NormedSpace 𝕜 EY]
+  [NormedAddCommGroup EN] [NormedSpace 𝕜 EN]
+  {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners 𝕜 EX HX}
+  {HY : Type*} [TopologicalSpace HY] {IY : ModelWithCorners 𝕜 EY HY}
+  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM}
+  {HM' : Type*} [TopologicalSpace HM'] {IM' : ModelWithCorners 𝕜 EM' HM'}
+  {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners 𝕜 EN HN}
+  [TopologicalSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  [TopologicalSpace M'] [ChartedSpace HM' M']
 
 section NonMetric
 

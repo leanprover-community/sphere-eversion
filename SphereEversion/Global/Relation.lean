@@ -32,23 +32,25 @@ section Defs
 /-! ## Fundamental definitions -/
 
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
-  (I : ModelWithCorners ℝ E H) (M : Type*) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') (M' : Type*)
-  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {F : Type*}
-  [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
-  (J : ModelWithCorners ℝ F G) (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
-  [SmoothManifoldWithCorners J N] {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
-  {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G') (N' : Type*)
-  [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N'] {EP : Type*}
-  [NormedAddCommGroup EP] [NormedSpace ℝ EP] {HP : Type*} [TopologicalSpace HP]
-  (IP : ModelWithCorners ℝ EP HP) (P : Type*) [TopologicalSpace P] [ChartedSpace HP P]
-  [SmoothManifoldWithCorners IP P] {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+  (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H')
+  (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+  {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G)
+  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
+  {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G')
+  (N' : Type*) [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
+  {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP]
+  {HP : Type*} [TopologicalSpace HP] (IP : ModelWithCorners ℝ EP HP)
+  (P : Type*) [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
   -- note: X is a metric space
-  {X : Type*}
-  [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  {X : Type*} [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
 
 local notation "TM" => TangentSpace I
 
@@ -426,17 +428,20 @@ there are manifolds `X` and `Y` that will be vector spaces in the next section.
 -/
 
 
-variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX] {HX : Type*}
-  [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX} {X : Type*} [TopologicalSpace X]
-  [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] {EM : Type*} [NormedAddCommGroup EM]
-  [NormedSpace ℝ EM] {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM}
+variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
+  {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
+  {X : Type*} [TopologicalSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM]
+  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM}
   {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
-  {EY : Type*} [NormedAddCommGroup EY] [NormedSpace ℝ EY] {HY : Type*} [TopologicalSpace HY]
-  {IY : ModelWithCorners ℝ EY HY} {Y : Type*} [TopologicalSpace Y] [ChartedSpace HY Y]
-  [SmoothManifoldWithCorners IY Y] {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
-  {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners ℝ EN HN} {N : Type*}
-  [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
-  (F : OneJetSec IM M IN N) (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N)
+  {EY : Type*} [NormedAddCommGroup EY] [NormedSpace ℝ EY]
+  {HY : Type*} [TopologicalSpace HY] {IY : ModelWithCorners ℝ EY HY}
+  {Y : Type*} [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
+  {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
+  {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners ℝ EN HN}
+  {N : Type*} [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
+  (F : OneJetSec IM M IN N)
+  (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N)
   {R : RelMfld IM M IN N}
 
 local notation "TM" => TangentSpace IM

@@ -26,10 +26,8 @@ section Loc
 Now we really bridge the gap all the way to vector spaces.
 -/
 
-
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
@@ -113,14 +111,13 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
 end Unloc
 
 universe u₁ u₂ u₃ u₄ u₅ u₆
-
-variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type u₂} [TopologicalSpace H]
-  (I : ModelWithCorners ℝ E H) (M : Type u₃) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type u₄} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {H' : Type u₅} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') (M' : Type u₆) [MetricSpace M']
-  [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
-
-variable {R : RelMfld I M I' M'}
+variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {H : Type u₂} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+  (M : Type u₃) [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {E' : Type u₄} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  {H' : Type u₅} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H')
+  (M' : Type u₆) [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {R : RelMfld I M I' M'}
 
 /-- A pair of charts together with a compact subset of the first vector space. -/
 structure ChartPair where
