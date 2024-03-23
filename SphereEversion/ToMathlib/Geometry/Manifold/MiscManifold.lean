@@ -48,10 +48,4 @@ theorem smoothAt_prod {f : M → M' × N'} {x : M} :
       SmoothAt I I' (fun x ↦ (f x).1) x ∧ SmoothAt I J' (fun x ↦ (f x).2) x :=
   contMDiffAt_prod
 
-theorem ContMDiffWithinAt.congr_of_eventuallyEq_insert {f f' : M → M'}
-    (hf : ContMDiffWithinAt I I' n f s x) (h : f' =ᶠ[𝓝[Insert.insert x s] x] f) :
-    ContMDiffWithinAt I I' n f' s x :=
-  hf.congr_of_eventuallyEq (h.filter_mono <| nhdsWithin_mono x <| subset_insert x s) <|
-    h.self_of_nhdsWithin (mem_insert x s)
-
 end SmoothManifoldWithCorners
