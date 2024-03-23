@@ -206,8 +206,8 @@ theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
   rw [slice_mk_update] at this
   exact this x hx
 
-/-! ## Families of formal solutions. -/
 
+/-! ## Families of formal solutions. -/
 
 /- ./././Mathport/Syntax/Translate/Command.lean:422:11: unsupported: advanced extends in structure -/
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
@@ -263,8 +263,8 @@ def reindex (S : FamilyFormalSol J' N' R) (f : C^∞⟮J, N; J', N'⟯) : Family
 
 end FamilyFormalSol
 
-/-! ## Homotopies of formal solutions. -/
 
+/-! ## Homotopies of formal solutions. -/
 
 /-- A homotopy of formal solutions is a family indexed by `ℝ` -/
 abbrev HtpyFormalSol (R : RelMfld I M I' M') :=
@@ -313,8 +313,8 @@ def emptyHtpyFormalSol [IsEmpty M] : HtpyFormalSol R where
   smooth' := fun ⟨_t, x⟩ ↦ (IsEmpty.false x).elim
   is_sol' _t x := (IsEmpty.false x).elim
 
-/-! ## The h-principle -/
 
+/-! ## The h-principle -/
 
 variable {P}
 
@@ -460,8 +460,8 @@ local notation "IXY" => ModelWithCorners.prod (IX.prod IY) 𝓘(ℝ, EX →L[ℝ
 
 local notation "IMN" => ModelWithCorners.prod (IM.prod IN) 𝓘(ℝ, EM →L[ℝ] EN)
 
-/-! ## Transfer from J¹(X, Y) to J¹(M, N) and localized relations -/
 
+/-! ## Transfer from J¹(X, Y) to J¹(M, N) and localized relations -/
 
 /-- Transfer map between one jet bundles induced by open smooth embedding into the source and
 targets. -/
@@ -605,8 +605,8 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
   rw [mfderiv_congr (F.localize_bs_fun φ ψ hF), OneJetSec.snd_eq, F.localize_ϕ, this]
   simp_rw [ContinuousLinearEquiv.cancel_left, ContinuousLinearEquiv.cancel_right]
 
-/-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
+/-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
 -- very slow to elaborate :-(
 @[simps, pp_dot]
@@ -648,8 +648,8 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
       simp_rw [φ.left_inv]
     exact mem_range_self _
 
-/-! ## Updating 1-jet sections and formal solutions -/
 
+/-! ## Updating 1-jet sections and formal solutions -/
 
 local notation "JΘ" => φ.update (OneJetBundle.embedding φ ψ)
 

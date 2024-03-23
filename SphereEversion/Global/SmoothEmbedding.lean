@@ -234,7 +234,7 @@ variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [
 
 /- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms.
 
-Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `cont_diff`
+Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `ContDiff`
 instead of `ContMDiff`. This is more convenient for our purposes. -/
 def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (hf₁ : f.source = univ)
     (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)

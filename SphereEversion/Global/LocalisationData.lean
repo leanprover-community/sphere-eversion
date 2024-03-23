@@ -35,7 +35,7 @@ namespace LocalisationData
 
 variable {f : M → M'} {I I'} (ld : LocalisationData I I' f)
 
-abbrev ψj :=
+abbrev ψj : IndexType ld.N → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M' :=
   ld.ψ ∘ ld.j
 
 /-- The type indexing the source charts of the given localisation data. -/

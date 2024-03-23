@@ -11,13 +11,8 @@ is about embedding any manifold into another one).
 
 noncomputable section
 
-open Set Function
-
-open Filter hiding map_smul
-
-open ChartedSpace SmoothManifoldWithCorners ContinuousLinearMap
-
 open scoped Topology Manifold
+open Set ContinuousLinearMap
 
 section Loc
 
