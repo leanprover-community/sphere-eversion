@@ -124,7 +124,7 @@ variable {I I' M M'} in
 lemma OpenSmoothEmbedding.toOpenEmbedding (h : OpenSmoothEmbedding I M I' M') :
     OpenEmbedding h.toFun where
   toEmbedding := h.toEmbedding
-  open_range := h.isOpen_range
+  isOpen_range := h.isOpen_range
 
 end Definition
 
