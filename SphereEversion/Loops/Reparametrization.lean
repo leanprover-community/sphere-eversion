@@ -105,7 +105,7 @@ instance : CoeFun (SmoothSurroundingFamily g) fun _ ↦ E → Loop F :=
   ⟨toFun⟩
 
 protected theorem continuous : Continuous (γ x) := by
-  apply continuous_uncurry_left x
+  apply Continuous.uncurry_left x
   exact γ.smooth.continuous
 
 /-- Given `γ : SmoothSurroundingFamily g` and `x : E`, `γ.surroundingParametersAt x` are the
@@ -405,9 +405,8 @@ theorem centeringDensity_integral_eq_one : ∫ s in (0)..1, γ.centeringDensity 
 theorem centeringDensity_average : ∫ s in (0)..1, γ.centeringDensity x s • γ x s = g x :=
   (γ.isCenteringDensityCenteringDensity x).average
 
-theorem centeringDensity_continuous : Continuous (γ.centeringDensity x) := by
-  apply continuous_uncurry_left x
-  exact γ.centeringDensity_smooth.continuous
+theorem centeringDensity_continuous : Continuous (γ.centeringDensity x) :=
+  (γ.centeringDensity_smooth.continuous).uncurry_left x
 
 theorem centeringDensity_intervalIntegrable (t₁ t₂ : ℝ) :
     IntervalIntegrable (γ.centeringDensity x) volume t₁ t₂ :=
@@ -477,7 +476,7 @@ theorem reparametrize_average : ((γ x).reparam <| (γ.reparametrize x).equivari
   have h₂ : ContinuousOn (fun s ↦ γ.centeringDensity x s) (uIcc 0 1) :=
     (γ.centeringDensity_continuous x).continuousOn
   have h₃ : Continuous fun s ↦ γ x (γ.reparametrize x s) :=
-    (γ.continuous x).comp (continuous_uncurry_left x γ.reparametrize_smooth.continuous)
+    (γ.continuous x).comp (γ.reparametrize_smooth.continuous.uncurry_left x)
   rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one, ←
     integral_comp_smul_deriv h₁ h₂ h₃]
   simp only [comp_apply, EquivariantEquiv.apply_symm_apply, centeringDensity_average]
