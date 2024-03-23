@@ -204,7 +204,7 @@ theorem ContDiff.lipschitzOnWith {s : Set E} {f : E → F} {n} (hf : ContDiff �
     (hs : Convex ℝ s) (hs' : IsCompact s) : ∃ K, LipschitzOnWith K f s := by
   rcases (bddAbove_iff_exists_ge (0 : ℝ)).mp (hs'.image (hf.continuous_fderiv hn).norm).bddAbove
     with ⟨M, M_nonneg, hM⟩
-  simp_rw [ball_image_iff] at hM
+  simp_rw [forall_mem_image] at hM
   use ⟨M, M_nonneg⟩
   exact Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x _ ↦ hf.differentiable hn x) hM hs
 

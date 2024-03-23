@@ -13,10 +13,6 @@ variable {R : Type*} [Semiring R] {M : Type*} [AddCommMonoid M] [Module R M]
 theorem Fin.coe_succ_le_iff_le {n : ℕ} {j k : Fin n} : (j : Fin <| n + 1) ≤ k ↔ j ≤ k := by
   simp only [Fin.coe_eq_castSucc]; rfl
 
--- PRed in #11265
-theorem Fin.coe_succ_lt_iff_lt {n : ℕ} {j k : Fin n} : (j : Fin <| n + 1) < k ↔ j < k := by
-  simp only [Fin.coe_eq_castSucc]; rfl
-
 -- not directly used
 theorem Fin.coe_lt_succ {n : ℕ} (k : Fin n) : (k : Fin <| n + 1) < k.succ := by
   rw [Fin.coe_eq_castSucc]
@@ -32,19 +28,5 @@ theorem Basis.flag_span_succ {n : ℕ} (b : Basis (Fin n) R M) (k : Fin n) :
     rw [← le_iff_eq_or_lt, Fin.coe_eq_castSucc, Fin.lt_iff_val_lt_val]
     exact Nat.lt_succ_iff.symm
   simp [this]
-
-end
-
-section
-
-variable {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
-
-variable {n : ℕ}
-
--- PRed in #11265
-theorem Basis.flag_le_ker_dual (b : Basis (Fin n) R M) (k : Fin n) :
-    b.flag k.castSucc ≤ LinearMap.ker (b.dualBasis k) := by
-  nontriviality R
-  rw [coe_dualBasis, b.flag_le_ker_coord_iff]
 
 end

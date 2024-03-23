@@ -122,7 +122,7 @@ instance : CompactSpace 𝕊₁ :=
   ⟨by rw [← image_proj𝕊₁_Icc]; exact isCompact_Icc.image continuous_proj𝕊₁⟩
 
 theorem isClosed_int : IsClosed (range ((↑) : ℤ → ℝ)) :=
-  Int.closedEmbedding_coe_real.closed_range
+  Int.closedEmbedding_coe_real.isClosed_range
 
 instance : T2Space 𝕊₁ := by
   have πcont : Continuous π := continuous_quotient_mk'

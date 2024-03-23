@@ -83,8 +83,7 @@ theorem AmpleSet.image {s : Set E} (h : AmpleSet s) (L : E ≃ᵃL[ℝ] F) :
     conv_rhs => rw [← L.apply_symm_apply x]
     exact (L.toHomeomorph).image_connectedComponentIn hx
   rw [← this]
-  -- when mathlib4#11298 lands, switch order of argument
-  refine (AffineMap.image_convexHull _ L.toAffineMap).symm.trans ?_
+  refine (L.toAffineMap.image_convexHull _).symm.trans ?_
   rw [h (L.symm x) hx, image_univ]
   exact L.surjective.range_eq
 
