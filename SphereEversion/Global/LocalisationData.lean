@@ -94,7 +94,7 @@ theorem nice_atlas_domain :
         (∀ i, ∃ i', range (φ i) ⊆ f ⁻¹' (targetCharts E' I' M' i' '' ball (0 : E') 1)) ∧
           (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ :=
   nice_atlas E I
-    (fun i' ↦ ((targetCharts E' I' M' i').open_map (ball 0 1) isOpen_ball).preimage hf)
+    (fun i' ↦ ((targetCharts E' I' M' i').isOpenMap (ball 0 1) isOpen_ball).preimage hf)
     (by rw [← preimage_iUnion, targetCharts_cover, preimage_univ])
 
 /-- Lemma `lem:ex_localisation`

@@ -75,18 +75,18 @@ theorem injective : Function.Injective f :=
 protected theorem continuous : Continuous f :=
   f.smooth_to.continuous
 
-theorem open_map : IsOpenMap f :=
+theorem isOpenMap : IsOpenMap f :=
   f.leftInverse.isOpenMap f.isOpen_range f.smooth_inv.continuousOn
 
 theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] id :=
-  Filter.eventually_of_mem (f.open_map.range_mem_nhds x) fun _ hy ↦ f.right_inv hy
+  Filter.eventually_of_mem (f.isOpenMap.range_mem_nhds x) fun _ hy ↦ f.right_inv hy
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
 @[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.smooth_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
-      (f.open_map.range_mem_nhds x)
+      (f.isOpenMap.range_mem_nhds x)
   have h₂ : MDifferentiableAt I I' f x := f.smooth_to.contMDiff.mdifferentiable le_top _
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
     (by
@@ -121,7 +121,7 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
 open Filter
 
 theorem openEmbedding : OpenEmbedding f :=
-  openEmbedding_of_continuous_injective_open f.continuous f.injective f.open_map
+  openEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
 
 theorem inducing : Inducing f :=
   f.openEmbedding.toInducing
@@ -132,7 +132,7 @@ theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A
   rintro _ ⟨hfm₀, m₀, rfl⟩
   have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
     intro U U_in
-    exact f.open_map.image_mem_nhds U_in
+    exact f.isOpenMap.image_mem_nhds U_in
   apply (this _ <| h m₀ hfm₀).mono
   rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
   rwa [← f.injective hm₀']
@@ -190,7 +190,7 @@ def comp {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Ty
   toFun := g ∘ f
   invFun := f.invFun ∘ g.invFun
   left_inv' x := by simp only [Function.comp_apply, left_inv]
-  isOpen_range := (g.open_map.comp f.open_map).isOpen_range
+  isOpen_range := (g.isOpenMap.comp f.isOpenMap).isOpen_range
   smooth_to := g.smooth_to.comp f.smooth_to
   smooth_inv :=
     (f.smooth_inv.comp' g.smooth_inv).mono
