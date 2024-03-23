@@ -352,7 +352,7 @@ theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     simp only [iUnion_coe_set, not_nonempty_iff_eq_empty.mp contra, mem_empty_iff_false,
       iUnion_of_empty, iUnion_empty, eq_comm (b := univ), univ_eq_empty_iff] at h₄
     exact not_isEmpty_of_nonempty M h₄
-  obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
+  obtain ⟨n, ⟨fn⟩⟩ := (countable_iff_exists_nonempty_indexType_equiv htne.to_subtype).mp h₁
   refine ⟨n, φ ∘ fn, fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
   erw [fn.surjective.iUnion_comp fun i ↦ φ i '' ball 0 1, h₄]
 

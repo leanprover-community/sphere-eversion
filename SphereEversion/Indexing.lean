@@ -4,7 +4,7 @@ import Mathlib.Data.Fin.SuccPred
 import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.ZMod.Defs
 import SphereEversion.ToMathlib.Data.Nat.Basic
-import SphereEversion.ToMathlib.SetTheory.Cardinal.Basic
+import Mathlib.SetTheory.Cardinal.Basic
 /-!
 # Indexing types
 
@@ -49,31 +49,26 @@ run_cmd
     | (N + 1) => inferInstanceAs ($n (Fin (N + 1)))
   ))
 
-theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type*} {s : Set α}
-    (hne : s.Nonempty) : s.Countable ↔ ∃ n, Nonempty (IndexType n ≃ s) := by
-  -- Huge golfing opportunity.
-  cases' s.finite_or_infinite with h h
-  · refine ⟨fun _ ↦ ⟨h.toFinset.card, ?_⟩, fun _ ↦ h.countable⟩
-    have : 0 < h.toFinset.card := by
-      rw [Finset.card_pos]
-      exact (Set.Finite.toFinset_nonempty h).mpr hne
+-- large opportunity for golfing remains
+-- note: previously, had a lemma `Set.countable_iff_exists_nonempty_indexType_equiv` instead
+theorem countable_iff_exists_nonempty_indexType_equiv {α : Type*}
+    (hne : Nonempty α) : Countable α ↔ ∃ n, Nonempty (IndexType n ≃ α) := by
+  cases' finite_or_infinite α with h h
+  · refine ⟨fun _ ↦ ?_, fun _ ↦ Finite.to_countable⟩
+    obtain ⟨n, ⟨e⟩⟩ := finite_iff_exists_equiv_fin.mp h
+    refine ⟨n, ?_⟩
+    have : 0 < n := pos_iff_nonempty.mpr <| (e.nonempty_congr).mp hne
     simp only [this, indexType_of_zero_lt]
-    have e₁ := Fintype.equivFin h.toFinset
-    rw [Fintype.card_coe, h.coeSort_toFinset] at e₁
-    exact ⟨e₁.symm⟩
-  · refine ⟨fun hh ↦ ⟨0, ?_⟩, ?_⟩
-    · simp only [indexType_zero]
-      obtain ⟨_i⟩ := Set.countable_infinite_iff_nonempty_denumerable.mp ⟨hh, h⟩
-      haveI := _i
-      exact ⟨(Denumerable.eqv s).symm⟩
-    · rintro ⟨n, ⟨fn⟩⟩
-      have hn : n = 0 := by
+    exact ⟨e.symm⟩
+  · refine ⟨fun hh ↦ ⟨0, ?_⟩, fun ⟨n, ⟨fn⟩⟩ ↦ ?_⟩
+    · simpa only [indexType_zero] using nonempty_equiv_of_countable
+    · have hn : n = 0 := by
         by_contra hn
         replace hn : 0 < n := zero_lt_iff.mpr hn
         simp only [hn, indexType_of_zero_lt] at fn
-        exact h (Finite.intro fn.symm)
+        exact h.not_finite (Finite.intro fn.symm)
       simp only [hn, indexType_zero] at fn
-      exact Set.countable_iff_exists_injective.mpr ⟨fn.symm, fn.symm.injective⟩
+      exact Function.Injective.countable fn.symm.injective
 
 variable {n : ℕ}
 
