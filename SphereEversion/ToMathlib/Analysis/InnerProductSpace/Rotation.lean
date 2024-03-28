@@ -107,7 +107,7 @@ theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v
     simp only [@norm_eq_sqrt_inner ℝ]
     congr 2
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
-      IsROrC.conj_to_real, Submodule.coe_inner]
+      RCLike.conj_to_real, Submodule.coe_inner]
     linear_combination ⟪(w : E), w⟫ * Real.cos_sq_add_sin_sq (t * Real.pi)
   dsimp [rot]
   simp [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero w.prop, this]

@@ -143,7 +143,7 @@ end
 
 section
 
-variable {𝕜 : Type*} [IsROrC 𝕜] {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {F : Type*}
+variable {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [NormedAddCommGroup G] [NormedSpace 𝕜 G]
   {n : ℕ∞}
 
@@ -226,7 +226,7 @@ end
 
 section
 
-variable {𝕜 : Type*} [IsROrC 𝕜]
+variable {𝕜 : Type*} [RCLike 𝕜]
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
 

@@ -414,7 +414,8 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
       rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
       refine ⟨by simpa using ε_pos, ?_, ?_⟩ <;> dsimp only <;> rw [dist_self_add_left]
       · exact bu_lt _ _ _ <| H _ hxK₁ _
-      · exact bu_lt _ _ _ <| H' _ hxK₁
+      -- adaptation note(2024-03-28): `exact` used to work; started failing after mathlib bump
+      · apply bu_lt _ _ _ <| H' _ hxK₁
   · rw [show ((L.improveStep h N) t).f x = 𝓕.f x from
         congr_arg Prod.fst <| improveStep_rel_compl_K₁ _ h N hxK₁ t,
       show ((L.improveStep h N) t).φ x = 𝓕.φ x from

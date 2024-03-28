@@ -4,8 +4,8 @@ import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 import Mathlib.Data.Complex.Module
 import Mathlib.Data.Complex.Abs
-import Mathlib.Data.IsROrC.Basic
 import Mathlib.Analysis.NormedSpace.Completion
+import Mathlib.Analysis.RCLike.Basic
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 
 /-! # Dual pairs
@@ -103,8 +103,8 @@ theorem update_self (p : DualPair E) (φ : E →L[ℝ] F) : p.update φ (φ p.v)
 theorem update_update (p : DualPair E) (φ : E →L[ℝ] F) (w w' : F) :
     p.update (p.update φ w') w = p.update φ w := by
   simp_rw [update, add_apply, coe_comp', (· ∘ ·), toSpanSingleton_apply, p.pairing, one_smul,
-    add_sub_cancel'_right, add_assoc, ← ContinuousLinearMap.add_comp, ← toSpanSingleton_add,
-    sub_add_eq_add_sub, add_sub_cancel'_right]
+    add_sub_cancel, add_assoc, ← ContinuousLinearMap.add_comp, ← toSpanSingleton_add,
+    sub_add_eq_add_sub, add_sub_cancel]
 
 theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ := bot_unique <| fun x hx ↦ by
   have : p.π x = 0 ∧ ∃ a : ℝ, a • p.v = x := by

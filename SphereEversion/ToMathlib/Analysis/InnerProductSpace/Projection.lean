@@ -106,7 +106,7 @@ variable {x₀ x : E}
 
 @[simp]
 theorem mem_orthogonal_span_singleton_iff {x₀ x : E} : x ∈ {.x₀}ᗮ ↔ ⟪x₀, x⟫ = 0 := by
-  simp only [mem_orthogonal, forall_mem_span_singleton, inner_smul_left, IsROrC.conj_to_real,
+  simp only [mem_orthogonal, forall_mem_span_singleton, inner_smul_left, RCLike.conj_to_real,
     mul_eq_zero]
   constructor
   · intro h
@@ -146,7 +146,7 @@ theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}�
   rw [sub_neg_eq_add]
   apply mul_left_injective₀ h
   dsimp only
-  rwa [add_mul, MulZeroClass.zero_mul, div_mul_cancel _ h]
+  rwa [add_mul, MulZeroClass.zero_mul, div_mul_cancel₀ _ h]
 
 /-- Given two non-orthogonal vectors in an inner product space,
 `orthogonal_projection_orthogonal_line_iso` is the continuous linear equivalence between their
@@ -263,7 +263,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
       (⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y =
         ⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y := by
     intro x y
-    simp only [N, inner_smul_left, inner_sub_left, IsROrC.conj_to_real, smul_sub, sub_smul]
+    simp only [N, inner_smul_left, inner_sub_left, RCLike.conj_to_real, smul_sub, sub_smul]
     field_simp
   simp only [key]
   simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim

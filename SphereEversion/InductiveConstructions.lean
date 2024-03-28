@@ -1,6 +1,6 @@
 import Mathlib.Topology.Germ
+import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Data.Complex.Abs
-import Mathlib.Data.IsROrC.Basic
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Data.Set.Lattice
 import SphereEversion.Indexing
@@ -232,7 +232,8 @@ private theorem T_lt_succ (n : ℕ) : T n < T (n + 1) :=
 private theorem T_le_succ (n : ℕ) : T n ≤ T (n + 1) :=
   (T_lt_succ n).le
 
-private theorem T_succ_sub (n : ℕ) : T (n + 1) - T n = 1 / (2 : ℝ) ^ (n + 1) := add_sub_cancel' ..
+private theorem T_succ_sub (n : ℕ) : T (n + 1) - T n = 1 / (2 : ℝ) ^ (n + 1) :=
+  add_sub_cancel_left ..
 
 private theorem mul_T_succ_sub (n : ℕ) : (2 : ℝ) ^ (n + 1) * (T (n + 1) - T n) = 1 := by
   rw [T_succ_sub]

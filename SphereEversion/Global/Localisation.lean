@@ -259,7 +259,7 @@ theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
     rw [p.φ.updateFormalSol_bs p.ψ p.hK₁]
     simp only [Function.comp_apply, OpenSmoothEmbedding.update_apply_embedding, mem_range_self]
   rw [← isHolonomicAt_localize_iff _ p.φ p.ψ rg e, ← JetSec.unloc_hol_at_iff]
-  exact OneJetSec.isHolonomicAt_congr (eventually_of_forall fun e ↦ p.mkHtpy_localize h rg)
+  exact OneJetSec.isHolonomicAt_congr (Filter.eventually_of_forall fun e ↦ p.mkHtpy_localize h rg)
 
 theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
     (hδ_cont : Continuous δ) {F : FormalSol R} (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :

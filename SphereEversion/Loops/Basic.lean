@@ -60,16 +60,16 @@ protected theorem ext_iff {γ₁ γ₂ : Loop X} : γ₁ = γ₂ ↔ (γ₁ : �
 def const (f : X) : Loop X :=
   ⟨fun _ ↦ f, fun _ ↦ rfl⟩
 
-instance Loop.Zero [Zero X] : Zero (Loop X) :=
+instance Zero [Zero X] : Zero (Loop X) :=
   ⟨const 0⟩
 
 @[simp]
-theorem zero_fun [Zero X] : ((0 : Loop X) : ℝ → X) = (0 : ℝ → X) :=
+theorem zero_fun [_root_.Zero X] : ((0 : Loop X) : ℝ → X) = (0 : ℝ → X) :=
   rfl
 
 -- unused
 @[simp]
-theorem const_zero [Zero X] : const (0 : X) = (0 : Loop X) :=
+theorem const_zero [_root_.Zero X] : const (0 : X) = (0 : Loop X) :=
   rfl
 
 instance [Inhabited X] : Inhabited (Loop X) :=
