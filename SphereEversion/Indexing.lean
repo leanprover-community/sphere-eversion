@@ -2,8 +2,8 @@ import Mathlib.Data.Fin.Interval
 import Mathlib.Data.Fin.SuccPred
 import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.ZMod.Defs
+import Mathlib.SetTheory.Cardinal.Basic
 import SphereEversion.ToMathlib.Data.Nat.Basic
-import SphereEversion.ToMathlib.SetTheory.Cardinal.Basic
 /-!
 # Indexing types
 
@@ -170,4 +170,3 @@ theorem IndexType.exists_by_induction {α : Type*} (P : IndexType n → α → P
     convert hF' _ _ (key i) hi
     rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩
     simp_rw [IndexType.succ_castSuccEmb, f, induction_succ]
-#minimize_imports

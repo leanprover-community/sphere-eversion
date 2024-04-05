@@ -1,10 +1,7 @@
-import Mathlib.Topology.Connected.PathConnected
-import Mathlib.Topology.UniformSpace.Separation
-import Mathlib.LinearAlgebra.AffineSpace.Independent
-import Mathlib.Topology.Algebra.Order.Floor
 import Mathlib.Topology.ShrinkingLemma
-import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Analysis.Convex.Normed
+import Mathlib.Topology.EMetricSpace.Paracompact
+import Mathlib.Topology.Algebra.Order.Floor
 
 noncomputable section
 
@@ -159,7 +156,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     have s_mem_0 := hs.mem_nhds H
     rcases(nhds_basis_zero_abs_sub_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩
     rcases(nhdsWithin_hasBasis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩
-    rw [Ioo_inter_Iio, min_eq_right (le_add_of_nonneg_right ε_pos.le)] at hε
+    rw [Set.Ioo_inter_Iio, min_eq_right (le_add_of_nonneg_right ε_pos.le)] at hε
     set ε' := min ε (1 / 2)
     have ε'_pos : 0 < ε' := lt_min ε_pos (by norm_num : (0 : ℝ) < 1 / 2)
     have hε' : Ioo (1 - ε') 1 ⊆ s := by
@@ -537,5 +534,3 @@ theorem exists_compact_between' {α : Type*} [TopologicalSpace α] [LocallyCompa
     ∃ L, IsCompact L ∧ L ∈ 𝓝ˢ K ∧ L ⊆ U :=
   let ⟨L, L_cpct, L_in, LU⟩ := exists_compact_between hK hU h_KU
   ⟨L, L_cpct, subset_interior_iff_mem_nhdsSet.mp L_in, LU⟩
-
-section

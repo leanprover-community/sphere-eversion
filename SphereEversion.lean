@@ -51,7 +51,6 @@ import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
-import SphereEversion.ToMathlib.LinearAlgebra.AffineSpace.ContinuousAffineEquiv
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 import SphereEversion.ToMathlib.LinearAlgebra.Basis
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
@@ -60,7 +59,6 @@ import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 import SphereEversion.ToMathlib.Order.Filter.Basic
 import SphereEversion.ToMathlib.Partition
-import SphereEversion.ToMathlib.SetTheory.Cardinal.Basic
 import SphereEversion.ToMathlib.SmoothBarycentric
 import SphereEversion.ToMathlib.Topology.Algebra.Module
 import SphereEversion.ToMathlib.Topology.Germ
