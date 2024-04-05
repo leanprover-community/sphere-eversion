@@ -15,10 +15,11 @@ open Function Set
 
 variable {α β : Type*} [TopologicalSpace α] [TopologicalSpace β] {f : α → β} {g : β → α}
 
+-- TODO: move to Data.Set.Defs
 theorem Function.LeftInverse.mem_preimage_iff (hfg : LeftInverse g f) {s : Set α} {x : α} :
     f x ∈ g ⁻¹' s ↔ x ∈ s := by rw [Set.mem_preimage, hfg x]
 
--- to set.basic
+-- TODO: move to Data.Set.Basic
 theorem Function.LeftInverse.image_eq (hfg : LeftInverse g f) (s : Set α) :
     f '' s = range f ∩ g ⁻¹' s := by
   ext x
@@ -34,7 +35,7 @@ end Maps
 
 section
 
--- to separation
+-- TODO: move to Topology.Separation
 theorem Filter.Eventually.closed_neighborhood {α} [TopologicalSpace α] [NormalSpace α] {C : Set α}
     {P : α → Prop} (hP : ∀ᶠ x in 𝓝ˢ C, P x) (hC : IsClosed C) :
     ∃ C' ∈ 𝓝ˢ C, IsClosed C' ∧ ∀ᶠ x in 𝓝ˢ C', P x := by
@@ -201,7 +202,7 @@ end Fract
 
 section
 
--- to ???
+-- TODO: move to Mathlib.Topology.Constructions
 -- needs classical
 variable {α β γ δ ι : Type*} [TopologicalSpace α] [TopologicalSpace β] {x : α}
 
@@ -377,7 +378,7 @@ end
 
 section
 
--- to subset_properties
+-- TODO: move to Topology.Compactness.Compact
 variable {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β] [TopologicalSpace γ]
 
 theorem IsCompact.eventually_forall_mem {x₀ : α} {K : Set β} (hK : IsCompact K) {f : α → β → γ}
@@ -415,7 +416,7 @@ end NormedSpace
 
 namespace TopologicalSpace
 
--- move to Topology.Bases
+-- TODO: move to Topology.Bases
 theorem cover_nat_nhdsWithin {α} [TopologicalSpace α] [SecondCountableTopology α] {f : α → Set α}
     {s : Set α} (hf : ∀ x ∈ s, f x ∈ 𝓝[s] x) (hs : s.Nonempty) :
     ∃ x : ℕ → α, range x ⊆ s ∧ s ⊆ ⋃ n, f (x n) := by
