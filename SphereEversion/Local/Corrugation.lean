@@ -62,7 +62,7 @@ theorem per_corrugation (γ : Loop F) (hγ : ∀ s t, IntervalIntegrable γ volu
   have int₃ : IntervalIntegrable γ volume s (s + 1) := hγ _ _
   have int₄ : IntervalIntegrable (fun _ ↦ γ.average) volume s (s + 1) := int_avg _ _
   dsimp only
-  /- Rmk: Lean doesn't want to rewrite using `interval_integral.integral_sub` without being
+  /- Rmk: Lean doesn't want to rewrite using `intervalIntegral.integral_sub` without being
       given the integrability assumptions :-( -/
   rw [← intervalIntegral.integral_add_adjacent_intervals int₁ int₂,
     intervalIntegral.integral_sub int₃ int₄, γ.periodic.intervalIntegral_add_eq s 0, zero_add,
