@@ -147,9 +147,9 @@ variable {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E] [Normed
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [NormedAddCommGroup G] [NormedSpace 𝕜 G]
   {n : ℕ∞}
 
-local notation "∂₁" => partialFDerivFst 𝕜
+@[inherit_doc] local notation "∂₁" => partialFDerivFst 𝕜
 
-local notation "∂₂" => partialFDerivSnd 𝕜
+@[inherit_doc] local notation "∂₂" => partialFDerivSnd 𝕜
 
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
     {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ⊤ fun p : E × F ↦ f p.1 p.2)

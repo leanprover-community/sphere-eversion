@@ -48,7 +48,7 @@ open scoped Borelize
 def corrugation (π : E →L[ℝ] ℝ) (N : ℝ) (γ : E → Loop F) : E → F := fun x ↦
   (1 / N) • ∫ t in (0)..N * π x, γ x t - (γ x).average
 
-local notation "𝒯" => corrugation π
+@[inherit_doc] local notation "𝒯" => corrugation π
 
 /-- The integral appearing in corrugations is periodic. -/
 theorem per_corrugation (γ : Loop F) (hγ : ∀ s t, IntervalIntegrable γ volume s t) :
@@ -139,7 +139,7 @@ notation "∂₁" => partialFDerivFst ℝ
 def corrugation.remainder (π : E → ℝ) (N : ℝ) (γ : E → Loop F) : E → E →L[ℝ] F := fun x ↦
   (1 / N) • ∫ t in (0)..N * π x, ∂₁ (fun x t ↦ (γ x).normalize t) x t
 
-local notation "R" => corrugation.remainder π
+@[inherit_doc] local notation "R" => corrugation.remainder π
 
 variable [FiniteDimensional ℝ E]
 

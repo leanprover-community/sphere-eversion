@@ -25,10 +25,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (J : ModelWithCorners ℝ F G)
   (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
 
-local notation "TM" => TangentSpace I
-local notation "TM'" => TangentSpace I'
-local notation "HJ" => ModelProd (ModelProd H H') (E →L[ℝ] E')
-local notation "ψJ" => chartAt HJ
+@[inherit_doc] local notation "TM" => TangentSpace I
+@[inherit_doc] local notation "TM'" => TangentSpace I'
+@[inherit_doc] local notation "HJ" => ModelProd (ModelProd H H') (E →L[ℝ] E')
+@[inherit_doc] local notation "ψJ" => chartAt HJ
 
 variable (M M') in
 /-- The relation of immersions for maps between two manifolds. -/
@@ -147,13 +147,13 @@ set_option synthInstance.checkSynthOrder false
 attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ
 set_option synthInstance.checkSynthOrder true
 
-local notation "𝕊²" => sphere (0 : E) 1
+@[inherit_doc] local notation "𝕊²" => sphere (0 : E) 1
 
 -- TODO: generalise these statements to `n` dimensions
 -- the only obstacle is the construction of rotations requires working on ℝ³.
 
 -- The relation of immersion of a two-sphere into its ambient Euclidean space.
-local notation "𝓡_imm" => immersionRel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
+@[inherit_doc] local notation "𝓡_imm" => immersionRel (𝓡 2) 𝕊² 𝓘(ℝ, E) E
 
 variable (ω : Orientation ℝ E (Fin 3))
 

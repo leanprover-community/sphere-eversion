@@ -49,9 +49,9 @@ variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [To
   (IG : ModelWithCorners ℝ G HG) {N : Type*} [TopologicalSpace N] [ChartedSpace HG N]
   [SmoothManifoldWithCorners IG N]
 
-local notation "𝓒" => ContMDiff I 𝓘(ℝ, F)
+@[inherit_doc] local notation "𝓒" => ContMDiff I 𝓘(ℝ, F)
 
-local notation "𝓒_on" =>ContMDiffOn I 𝓘(ℝ, F)
+@[inherit_doc] local notation "𝓒_on" =>ContMDiffOn I 𝓘(ℝ, F)
 
 variable (I)
 
@@ -116,9 +116,9 @@ variable {H₁ M₁ H₂ M₂ : Type*}
   [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
   [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
 
-local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
+@[inherit_doc] local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
 
-local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
+@[inherit_doc] local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
 
 theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
     ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMDiffAtProd I₁ I₂ n} := by

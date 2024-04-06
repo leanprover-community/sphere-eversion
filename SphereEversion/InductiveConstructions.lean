@@ -61,7 +61,7 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [Topo
     _ = f (max (i₀ x) (i₀ y)) y := (key (le_max_left _ _) hy).symm
     _ = f (i₀ y) y := key (le_max_right _ _) (mem_of_mem_nhds <| hUx y)
 
-local notation "𝓘" => IndexType
+@[inherit_doc] local notation "𝓘" => IndexType
 
 theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U : IndexType N → Set X}
     (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ i : IndexType N, ∀ x : X, Germ (𝓝 x) Y → Prop)

@@ -28,7 +28,7 @@ variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimens
   [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [SigmaCompactSpace X]
   {R : RelMfld IM M IX X} {A : Set M} {δ : M → ℝ}
 
-local notation "J¹" => OneJetBundle IM M IX X
+@[inherit_doc] local notation "J¹" => OneJetBundle IM M IX X
 
 theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen R) (hA : IsClosed A)
     (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by

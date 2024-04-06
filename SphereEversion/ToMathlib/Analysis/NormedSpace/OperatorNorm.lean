@@ -3,7 +3,7 @@ import Mathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 noncomputable section
 
-local notation:70 u " ⬝ " φ:65 =>
+@[inherit_doc] local notation:70 u " ⬝ " φ:65 =>
   ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
 variable {𝕜 E F G Fₗ Gₗ X : Type*} [NontriviallyNormedField 𝕜] [NormedAddCommGroup E]

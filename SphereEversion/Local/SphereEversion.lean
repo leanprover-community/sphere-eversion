@@ -36,13 +36,13 @@ section SphereEversion
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {F : Type*}
   [NormedAddCommGroup F] [InnerProductSpace ℝ F]
 
-local notation "𝕊²" => sphere (0 : E) 1
+@[inherit_doc] local notation "𝕊²" => sphere (0 : E) 1
 
-local notation "dim" => finrank ℝ
+@[inherit_doc] local notation "dim" => finrank ℝ
 
-local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
+@[inherit_doc] local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
-local notation "B" => ball (0 : E) 0.9
+@[inherit_doc] local notation "B" => ball (0 : E) 0.9
 
 /-- A map between vector spaces is a immersion viewed as a map on the sphere, when its
 derivative at `x ∈ 𝕊²` is injective on the orthogonal complement of `x`
@@ -58,7 +58,7 @@ variable (E F)
 def immersionSphereRel : RelLoc E F :=
   {w : OneJet E F | w.1 ∉ B → InjOn w.2.2 (ℝ ∙ w.1)ᗮ}
 
-local notation "R" => immersionSphereRel E F
+@[inherit_doc] local notation "R" => immersionSphereRel E F
 
 variable {E F}
 

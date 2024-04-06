@@ -116,7 +116,7 @@ def OnePeriodic.lift {f : ℝ → α} (h : OnePeriodic f) : 𝕊₁ → α :=
 
 end
 
-local notation "π" => proj𝕊₁
+@[inherit_doc] local notation "π" => proj𝕊₁
 
 instance : CompactSpace 𝕊₁ :=
   ⟨by rw [← image_proj𝕊₁_Icc]; exact isCompact_Icc.image continuous_proj𝕊₁⟩

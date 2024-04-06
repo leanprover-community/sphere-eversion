@@ -57,15 +57,15 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [No
 
 @[reducible] def spanLine (x : E) : Submodule ℝ E := Submodule.span ℝ ({x} : Set E)
 
-local notation "Δ" => spanLine
+@[inherit_doc] local notation "Δ" => spanLine
 
 @[reducible] def spanOrthogonal (x : E) : Submodule ℝ E := (Δ x)ᗮ
 
 @[reducible] def projSpanOrthogonal (x : E) := orthogonalProjection (Submodule.span ℝ ({x} : Set E))ᗮ
 
-local notation "{." x "}ᗮ" => spanOrthogonal x
+@[inherit_doc] local notation "{." x "}ᗮ" => spanOrthogonal x
 
-local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
+@[inherit_doc] local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
 variable (u v : E)
 

@@ -59,7 +59,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {H₃ : Type*} [TopologicalSpace H₃] {I₃ : ModelWithCorners 𝕜 E₃ H₃}
   {M₃ : Type*} [TopologicalSpace M₃] [ChartedSpace H₃ M₃] [SmoothManifoldWithCorners I₃ M₃]
 
-local notation "σ" => RingHom.id 𝕜
+@[inherit_doc] local notation "σ" => RingHom.id 𝕜
 
 instance deleteme1 :
     ∀ x : M × M',
@@ -105,6 +105,7 @@ instance (p : M × M') : AddCommGroup (OneJetSpace I I' p) := by
 variable {I I'}
 
 -- what is better notation for this?
+/-- Local notation for the `OneJetSpace` on `M × M'`, w.r.t. `I` and `I'` -/
 local notation "FJ¹MM'" => (OneJetSpace I I' : M × M' → Type _)
 
 variable (I I')
@@ -124,9 +125,9 @@ def OneJetBundle :=
 
 variable {I I' M M'}
 
-local notation "J¹MM'" => OneJetBundle I M I' M'
+@[inherit_doc] local notation "J¹MM'" => OneJetBundle I M I' M'
 
-local notation "HJ" => ModelProd (ModelProd H H') (E →L[𝕜] E')
+@[inherit_doc] local notation "HJ" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 
 @[ext]
 theorem OneJetBundle.ext {x y : J¹MM'} (h : x.1.1 = y.1.1) (h' : x.1.2 = y.1.2) (h'' : x.2 = y.2) :
@@ -574,7 +575,7 @@ theorem partialEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (
   conv_rhs => rw [← f.right_inv ((Set.ext_iff.mp h3 y).mpr (mem_univ y)), h1]
   exact (e.left_inv _).symm
 
-local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
+@[inherit_doc] local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 
 /-- In the `OneJetBundle` to the model space, the charts are just the canonical identification
 between a product type and a bundle total space type, a.k.a. `Bundle.TotalSpace.toProd`. -/

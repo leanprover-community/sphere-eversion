@@ -52,9 +52,9 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   -- note: X is a metric space
   {X : Type*} [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
 
-local notation "TM" => TangentSpace I
+@[inherit_doc] local notation "TM" => TangentSpace I
 
-local notation "TM'" => TangentSpace I'
+@[inherit_doc] local notation "TM'" => TangentSpace I'
 
 /-- A first-order differential relation for maps from `M` to `N` is a subset of the 1-jet bundle. -/
 @[reducible]
@@ -444,21 +444,21 @@ variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N)
   {R : RelMfld IM M IN N}
 
-local notation "TM" => TangentSpace IM
+@[inherit_doc] local notation "TM" => TangentSpace IM
 
-local notation "TN" => TangentSpace IN
+@[inherit_doc] local notation "TN" => TangentSpace IN
 
-local notation "TX" => TangentSpace IX
+@[inherit_doc] local notation "TX" => TangentSpace IX
 
-local notation "TY" => TangentSpace IY
+@[inherit_doc] local notation "TY" => TangentSpace IY
 
-local notation "J¹XY" => OneJetBundle IX X IY Y
+@[inherit_doc] local notation "J¹XY" => OneJetBundle IX X IY Y
 
-local notation "J¹MN" => OneJetBundle IM M IN N
+@[inherit_doc] local notation "J¹MN" => OneJetBundle IM M IN N
 
-local notation "IXY" => ModelWithCorners.prod (IX.prod IY) 𝓘(ℝ, EX →L[ℝ] EY)
+@[inherit_doc] local notation "IXY" => ModelWithCorners.prod (IX.prod IY) 𝓘(ℝ, EX →L[ℝ] EY)
 
-local notation "IMN" => ModelWithCorners.prod (IM.prod IN) 𝓘(ℝ, EM →L[ℝ] EN)
+@[inherit_doc] local notation "IMN" => ModelWithCorners.prod (IM.prod IN) 𝓘(ℝ, EM →L[ℝ] EN)
 
 
 /-! ## Transfer from J¹(X, Y) to J¹(M, N) and localized relations -/
@@ -651,6 +651,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
 
 /-! ## Updating 1-jet sections and formal solutions -/
 
+/-- Local notation for `φ.update (OneJetBundle.embedding φ ψ)` -/
 local notation "JΘ" => φ.update (OneJetBundle.embedding φ ψ)
 
 variable {K : Set X}

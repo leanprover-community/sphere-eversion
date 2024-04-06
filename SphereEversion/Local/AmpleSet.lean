@@ -36,7 +36,7 @@ variable {E F : Type*} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
 
 section Lemma213 -- PRed in #11337
 
-local notation "π" => Submodule.linearProjOfIsCompl _ _
+@[inherit_doc] local notation "π" => Submodule.linearProjOfIsCompl _ _
 
 attribute [local instance 100] TopologicalAddGroup.pathConnectedSpace
 

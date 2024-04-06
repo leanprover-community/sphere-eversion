@@ -9,11 +9,11 @@ open LinearMap (ker)
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
-local notation "Δ" => spanLine
+@[inherit_doc] local notation "Δ" => spanLine
 
-local notation "{." x "}ᗮ" => spanOrthogonal x
+@[inherit_doc] local notation "{." x "}ᗮ" => spanOrthogonal x
 
-local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
+@[inherit_doc] local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
 theorem orthogonal_span_toDual_symm (π : E →L[ℝ] ℝ) :
     {.(InnerProductSpace.toDual ℝ E).symm π}ᗮ = ker π := by

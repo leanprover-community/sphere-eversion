@@ -73,9 +73,9 @@ def partialFDerivFst {F : Type*} (φ : E → F → G) : E → F → E →L[𝕜]
 def partialFDerivSnd {E : Type*} (φ : E → F → G) : E → F → F →L[𝕜] G := fun (e₀ : E) (f₀ : F) ↦
   fderiv 𝕜 (fun f ↦ φ e₀ f) f₀
 
-local notation "∂₁" => partialFDerivFst
+@[inherit_doc] local notation "∂₁" => partialFDerivFst
 
-local notation "∂₂" => partialFDerivSnd
+@[inherit_doc] local notation "∂₂" => partialFDerivSnd
 
 variable {𝕜}
 

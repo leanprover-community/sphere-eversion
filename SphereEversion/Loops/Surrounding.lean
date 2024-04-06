@@ -90,7 +90,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [Nor
   [NormedSpace ℝ F]
 
 set_option hygiene false
-local notation "d" => finrank ℝ F
+@[inherit_doc] local notation "d" => finrank ℝ F
 set_option hygiene true
 
 /-
@@ -104,7 +104,7 @@ def SmoothAt' (f : E → F) (x : E) : Prop :=
 section SurroundingPoints
 
 set_option hygiene false
-local notation "ι" => Fin (d + 1)
+@[inherit_doc] local notation "ι" => Fin (d + 1)
 set_option hygiene true
 
 -- def:surrounds_points

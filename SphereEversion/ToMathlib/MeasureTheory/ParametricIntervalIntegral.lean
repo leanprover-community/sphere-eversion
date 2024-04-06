@@ -184,7 +184,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
     apply HasFDerivAt.congr_of_eventuallyEq _ this
     simpa using ((D₁.add D₂).add D₃).sub (hasFDerivAt_const (φ x₀ (s x₀)) x₀)
 
-local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
+@[inherit_doc] local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
 variable [FiniteDimensional ℝ H]
 
@@ -268,7 +268,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E
 
 open Real ContinuousLinearMap Asymptotics
 
-local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
+@[inherit_doc] local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
 theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : ℕ} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by

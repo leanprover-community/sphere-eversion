@@ -359,7 +359,7 @@ section C1
 /-! ## Differentiation of loop families -/
 
 
-local notation "∂₁" => partialFDerivFst ℝ
+@[inherit_doc] local notation "∂₁" => partialFDerivFst ℝ
 
 variable (π : E → ℝ) (N : ℝ) (γ : E → Loop F) (hγ : IsCompact (Loop.support γ))
 
