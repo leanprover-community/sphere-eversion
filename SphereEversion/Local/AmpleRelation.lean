@@ -3,9 +3,9 @@ Copyright (c) 2021 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
+import SphereEversion.Local.AmpleSet
 import SphereEversion.Local.DualPair
 import SphereEversion.Local.Relation
-import SphereEversion.ToMathlib.Analysis.Convex.AmpleSet
 
 /-! # Slices of first order relations
 
@@ -93,7 +93,7 @@ theorem slice_of_ker_eq_ker {θ : OneJet E F} {p p' : DualPair E} (hpp' : p.π =
 theorem ample_slice_of_ample_slice {θ : OneJet E F} {p p' : DualPair E} (hpp' : p.π = p'.π)
     (h : AmpleSet (R.slice p θ)) : AmpleSet (R.slice p' θ) := by
   rw [slice_of_ker_eq_ker hpp'.symm]
-  exact AmpleSet.vadd h
+  exact h.vadd --h
 
 theorem ample_slice_of_forall (R : RelLoc E F) {x y φ} (p : DualPair E)
     (h : ∀ w, (x, y, p.update φ w) ∈ R) : AmpleSet (R.slice p (x, y, φ)) := by

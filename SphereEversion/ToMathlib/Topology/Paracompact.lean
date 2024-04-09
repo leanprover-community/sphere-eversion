@@ -73,7 +73,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X]
     rw [Set.eq_empty_iff_forall_not_mem]
     intro z
     simp only [Pi.prod, Finset.coe_image, mem_inter_iff, mem_image, Finset.mem_coe, SetCoe.exists,
-      mem_setOf_eq, not_and, bex_imp, and_imp]
+      mem_setOf_eq, not_and, exists₂_imp, and_imp]
     rintro x hx₁ - rfl
     rw [Set.not_nonempty_iff_eq_empty]
     have := Set.inter_subset_inter_left (U n) (h₂ m ⟨x, hx₁⟩)

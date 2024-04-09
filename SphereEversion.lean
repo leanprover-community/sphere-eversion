@@ -30,7 +30,6 @@ import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.Calculus
 import SphereEversion.ToMathlib.Analysis.Calculus.AffineMap
 import SphereEversion.ToMathlib.Analysis.ContDiff
-import SphereEversion.ToMathlib.Analysis.Convex.AmpleSet
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Analysis.CutOff
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct

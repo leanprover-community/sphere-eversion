@@ -2,7 +2,7 @@ import Mathlib.Geometry.Manifold.Metrizable
 import SphereEversion.Local.DualPair
 import SphereEversion.Global.OneJetSec
 import SphereEversion.Global.SmoothEmbedding
-import SphereEversion.ToMathlib.Analysis.Convex.AmpleSet
+import Mathlib.Analysis.Convex.AmpleSet
 
 /-!
 # First order partial differential relations for maps between manifolds

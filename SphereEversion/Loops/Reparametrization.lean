@@ -70,7 +70,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
   rw [← add_zero (γ x t)]
   refine Tendsto.add ?_ ?_
   · rw [← one_smul ℝ (γ x t)]
-    refine ((tendsto_coe_nat_div_add_atTop 1).comp tendsto_snd).smul ?_
+    refine ((tendsto_natCast_div_add_atTop 1).comp tendsto_snd).smul ?_
     refine ContDiffBump.convolution_tendsto_right ?_ ?_ ?_ tendsto_const_nhds
     · simp_rw [bump]; norm_cast
       exact
