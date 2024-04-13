@@ -53,8 +53,7 @@ theorem germ_combine_mem (φ : ι → M → F) (hx : x ∈ interior s := by simp
   rw [this]
   refine sum_mem_reallyConvexHull ?_ (ρ.sum_germ hx) (fun i hi ↦ mem_image_of_mem _ hi)
   · intro i _
-    filter_upwards
-    apply ρ.nonneg
+    filter_upwards using fun a ↦ ρ.nonneg i a
 
 end SmoothPartitionOfUnity
 
