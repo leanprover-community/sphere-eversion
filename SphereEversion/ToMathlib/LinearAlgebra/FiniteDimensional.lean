@@ -5,9 +5,9 @@ open FiniteDimensional Submodule
 variable {𝕜 : Type*} [Field 𝕜] {E : Type*} [AddCommGroup E] [Module 𝕜 E] {E' : Type*}
   [AddCommGroup E'] [Module 𝕜 E']
 
-theorem two_le_rank_of_rank_lt_rank [FiniteDimensional 𝕜 E] [FiniteDimensional 𝕜 E'] {π : E →ₗ[𝕜] 𝕜}
+theorem one_lt_rank_of_rank_lt_rank [FiniteDimensional 𝕜 E] [FiniteDimensional 𝕜 E'] {π : E →ₗ[𝕜] 𝕜}
     (hπ : LinearMap.ker π ≠ ⊤) (h : finrank 𝕜 E < finrank 𝕜 E') (φ : E →ₗ[𝕜] E') :
-    2 ≤ Module.rank 𝕜 (E' ⧸ Submodule.map φ (LinearMap.ker π)) := by
+    1 < Module.rank 𝕜 (E' ⧸ Submodule.map φ (LinearMap.ker π)) := by
   suffices 2 ≤ finrank 𝕜 (E' ⧸ π.ker.map φ) by
     rw [← finrank_eq_rank]
     exact_mod_cast this

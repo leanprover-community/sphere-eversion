@@ -77,13 +77,9 @@ theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel 
   rintro ⟨⟨m, m'⟩, φ : TangentSpace I m →L[ℝ] TangentSpace I' m'⟩ (p : DualPair (TangentSpace I m))
     (hφ : Injective φ)
   haveI : FiniteDimensional ℝ (TangentSpace I m) := (by infer_instance : FiniteDimensional ℝ E)
-  have hcodim := two_le_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.toLinearMap
-  -- FIXME: prove an analogue of `two_le_rank_of_rank_lt_rank` with `1 < ...` instead
-  have hcodim' : 1 < Module.rank ℝ (E' ⧸ Submodule.map (↑φ) (LinearMap.ker ↑p.π)) := by
-    rw [← Cardinal.two_le_iff_one_lt]
-    exact hcodim
+  have hcodim := one_lt_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.toLinearMap
   rw [immersionRel_slice_eq I I' hφ]
-  exact AmpleSet.of_one_lt_codim hcodim'
+  exact AmpleSet.of_one_lt_codim hcodim
 
 /-- This is lemma `lem:open_ample_immersion` from the blueprint. -/
 theorem immersionRel_open_ample (h : finrank ℝ E < finrank ℝ E') :
