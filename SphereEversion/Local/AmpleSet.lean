@@ -51,11 +51,3 @@ theorem AmpleSet.of_one_lt_codim {E : Submodule ℝ F} (hcodim : 1 < Module.rank
   · exact subset_convexHull ℝ (Eᶜ : Set F) h
 
 end Lemma213
-
-open scoped Pointwise
--- PRed in #12046
-/-- Affine translations of ample sets are ample. -/
-theorem AmpleSet.vadd {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [ContinuousAdd E]
-    {s : Set E} (h : AmpleSet s) {y : E} :
-    AmpleSet (y +ᵥ s) :=
-  h.image (ContinuousAffineEquiv.constVAdd ℝ E y)

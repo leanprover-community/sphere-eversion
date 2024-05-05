@@ -193,7 +193,7 @@ theorem ContDiff.contDiff_top_partial_snd {φ : E → F → G} (hF : ContDiff �
 
 end Calculus
 
-section RealCalculus
+section RealCalculus -- PRed in #12673
 
 open ContinuousLinearMap
 

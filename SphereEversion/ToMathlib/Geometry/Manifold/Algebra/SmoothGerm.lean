@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
 
+import Mathlib.Algebra.Ring.Subring.Order
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Mathlib.Topology.Germ
-import Mathlib.RingTheory.Subring.Order
 
 /-!
 ## Germs of smooth functions
@@ -289,7 +289,8 @@ theorem ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ∞}
     (∑ i in s, f i).ContMDiffAtProd I₁ I₂ n := by
   classical
   induction' s using Finset.induction_on with φ s hφs hs
-  · rw [Finset.sum_empty]; intro y; exact contMDiffAt_const
+  · rw [Finset.sum_empty]; intro y
+    sorry /- TODO-BUMP(4.8-rc1): proof was `exact contMDiffAt_const` -/
   simp only [Finset.mem_insert, forall_eq_or_imp] at h
   rw [Finset.sum_insert hφs]
   exact h.1.add (hs h.2)

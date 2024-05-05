@@ -92,7 +92,7 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] i
     (by
       intro v
       erw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, f.invFun_comp_coe, mfderiv_id,
-        ContinuousLinearMap.coe_id', id.def])
+        ContinuousLinearMap.coe_id', id])
     (by
       intro v
       have hx : x = f.invFun (f x) := by rw [f.left_inv]
@@ -101,7 +101,7 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] i
       erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
         ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
             (f.coe_comp_invFun_eventuallyEq x)).mfderiv,
-        ContinuousLinearMap.coe_id', id.def])
+        ContinuousLinearMap.coe_id', id])
 
 @[simp]
 theorem fderiv_coe (x : M) :

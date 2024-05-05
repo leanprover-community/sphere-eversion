@@ -29,7 +29,7 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x where
     refine Continuous.if_le ?_ ?_ continuous_id continuous_const ?_
     · continuity
     · continuity
-    · simp only [extend_div_self, Icc.mk_zero, zero_le_one, id.def, zero_div, forall_eq,
+    · simp only [extend_div_self, Icc.mk_zero, zero_le_one, id, zero_div, forall_eq,
         extend_extends, Path.source, left_mem_Icc, sub_self]
   source' := by
     simp only [unitInterval.nonneg', Icc.coe_zero, Icc.mk_zero, zero_le_one, if_true, zero_div,
