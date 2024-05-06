@@ -176,7 +176,7 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
           refine (ω.contDiff_rot ?_).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
         refine this.comp p (Smooth.smoothAt ?_)
-        sorry /- TODO-BUMP(4.8-rc1) was `exact smooth_fst.prod_mk (contMDiff_coe_sphere.comp smooth_snd))` -/)
+        exact smooth_fst.prod_mk_space (contMDiff_coe_sphere.comp smooth_snd))
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def formalEversionAux2 : HtpyFormalSol 𝓡_imm :=

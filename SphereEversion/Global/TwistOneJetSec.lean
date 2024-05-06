@@ -154,10 +154,10 @@ theorem smooth_incl : Smooth ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜
   have : SmoothAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ Prod.fst x₀ := smoothAt_fst
   rw [smoothAt_one_jet_eucl_bundle] at this
   refine this.1.oneJetBundle_mk smoothAt_snd ?_
-  dsimp only [inTangentCoordinates, inCoordinates, TangentSpace]
-  sorry /- TODO-BUMP simp_rw [TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
+  unfold inTangentCoordinates inCoordinates TangentSpace
+  simp_rw [TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
     ContinuousLinearMap.id_comp]
-  exact this.2 -/
+  exact this.2
 
 @[simp]
 theorem incl_fst_fst (v : J¹[𝕜, E, I, M, V] × V) : (incl I M V v).1.1 = v.1.1 :=

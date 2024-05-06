@@ -139,12 +139,11 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
         refine IsBigO.comp_tendsto ?_ s_diff.continuousAt
         have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume :=
           ⟨Ioo a₀ b₀, Ioo_nhds, bound_integrable.1⟩
-        sorry /- TODO-BUMP refine (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
-          M bound_cont).hasFDerivAt.isBigO.congr' ?_ EventuallyEq.rfl
-        apply Eventually.mono Ioo_nhds -- does this work? filter_upwards [Ioo_nhds]
+        refine (intervalIntegral.integral_hasDerivAt_right (bound_int ha hsx₀)
+          M bound_cont).hasFDerivAt.isBigO_sub.congr' ?_ EventuallyEq.rfl
+        filter_upwards [Ioo_nhds]
         rintro t ht
-        dsimp only
-        rw [intervalIntegral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀)] -/
+        rw [intervalIntegral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀)] 
       have O₂ : (fun x ↦ ‖x - x₀‖) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := isBigO_refl _ _
       have O₃ : (fun x ↦ ∫ t : ℝ in s x₀..s x, F x t - F x₀ t) =O[𝓝 x₀] fun x ↦
           (∫ t' in s x₀..s x, bound t') * ‖x - x₀‖ := by

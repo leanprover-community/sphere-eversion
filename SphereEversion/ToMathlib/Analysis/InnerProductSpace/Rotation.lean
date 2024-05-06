@@ -147,8 +147,8 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
   simp_rw [← pow_two, norm_smul, mul_pow] at hy
   change _ + _ * ‖x×₃(⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy
   rw [norm_crossProduct] at hy
-  simp only [norm_eq_abs, Even.pow_abs, coe_mk, norm_zero, zero_pow, Ne,
-    Nat.one_ne_zero, not_false_iff] at hy
+  simp (config := {decide := true}) only [norm_eq_abs, Even.pow_abs, coe_mk, norm_zero, zero_pow, 
+    Ne, Nat.one_ne_zero, not_false_iff] at hy
   change _ + _ * (_ * ‖y‖) ^ 2 = 0 at hy
   rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy
   have : (0 : ℝ) < cos (t * π) ^ 2 + sin (t * π) ^ 2 * ‖x‖ ^ 2 := by
@@ -163,8 +163,8 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
     · rw [← H]
       norm_num
     · nlinarith
-  · sorry /- TODO-BUMP replace hy := hy this.ne'
-    exact norm_eq_zero.mp (pow_eq_zero hy) -/
+  · replace hy := hy this.ne'
+    exact norm_eq_zero.mp (pow_eq_zero hy)
   · rw [inner_smul_left, inner_smul_right]
     have := inner_crossProduct_apply_apply_self ω x ⟨y, hy'⟩
     change ⟪x×₃y, y⟫ = 0 at this

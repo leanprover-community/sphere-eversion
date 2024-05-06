@@ -290,7 +290,7 @@ theorem ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ∞}
   classical
   induction' s using Finset.induction_on with φ s hφs hs
   · rw [Finset.sum_empty]; intro y
-    sorry /- TODO-BUMP(4.8-rc1): proof was `exact contMDiffAt_const` -/
+    exact contMDiffAt_const (x := (x, y)) (c := (0 : F))
   simp only [Finset.mem_insert, forall_eq_or_imp] at h
   rw [Finset.sum_insert hφs]
   exact h.1.add (hs h.2)

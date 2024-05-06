@@ -575,10 +575,10 @@ theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     dsimp only
     -- Porting note: we are missing an ext lemma here.
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
-    sorry /- TODO-BUMP erw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
+    erw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply,
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply]
-    rfl -/
+    rfl
 
 theorem OneJetSec.localize_bs_fun (hF : range (F.bs ∘ φ) ⊆ range ψ) :
     (F.localize φ ψ hF).bs = ψ.invFun ∘ F.bs ∘ φ :=

@@ -92,17 +92,9 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     conv_lhs => rw [← sub_add_cancel (0, q.v) p.v]
     erw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundleSnd_eq]
     rfl
-  have := preimage_vadd_neg
-    (show E' from σ.2 (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1)))
-    (show Set E' from R.slice (bundleSnd σ) q)
-  dsimp only at this
-  save
-  erw [← this]
-  rw [mem_preimage]
-  sorry /- TODO-BUMP(4.8-rc1): remaining proof was
-  erw [mem_slice, R.mem_relativize]
-  dsimp only [oneJetBundle_mk_fst, oneJetBundle_mk_snd]
-  congr! -/
+  erw [← preimage_vadd_neg, mem_preimage, mem_slice, R.mem_relativize]
+  congr!
+
 
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}

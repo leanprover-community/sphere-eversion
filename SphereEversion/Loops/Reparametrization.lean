@@ -466,7 +466,7 @@ theorem reparametrize_smooth : 𝒞 ∞ <| uncurry fun (x : E) (t : ℝ) ↦ γ.
   apply contDiff_parametric_symm_of_deriv_pos
   · exact contDiff_parametric_primitive_of_contDiff'' γ.centeringDensity_smooth 0
   · exact fun x ↦ deriv_integral_centeringDensity_pos γ x
-  sorry /- TODO-BUMP(4.8-rc1); original proof was done now -/
+  · exact fun x ↦ surjective_integral_centeringDensity γ x
 
 @[simp]
 theorem reparametrize_average : ((γ x).reparam <| (γ.reparametrize x).equivariantMap).average = g x := by
