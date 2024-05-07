@@ -287,7 +287,7 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
   rw [integral_add]
   simp_rw [integral_smul, approxDirac, ← periodize_comp_sub]
   rw [intervalIntegral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)]
-  simp_rw [convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
+  simp_rw [MeasureTheory.convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
   · linarith
   · rw [zero_add]
   · exact (continuous_const.smul (((approxDirac_smooth n).continuous.comp
