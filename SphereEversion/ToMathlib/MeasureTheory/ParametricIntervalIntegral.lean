@@ -143,7 +143,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           M bound_cont).hasFDerivAt.isBigO_sub.congr' ?_ EventuallyEq.rfl
         filter_upwards [Ioo_nhds]
         rintro t ht
-        rw [intervalIntegral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀)] 
+        rw [intervalIntegral.integral_interval_sub_left (bound_int ha ht) (bound_int ha hsx₀)]
       have O₂ : (fun x ↦ ‖x - x₀‖) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := isBigO_refl _ _
       have O₃ : (fun x ↦ ∫ t : ℝ in s x₀..s x, F x t - F x₀ t) =O[𝓝 x₀] fun x ↦
           (∫ t' in s x₀..s x, bound t') * ‖x - x₀‖ := by
@@ -190,7 +190,7 @@ variable [FiniteDimensional ℝ H]
 /-
 A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
 -/
-set_option synthInstance.maxHeartbeats 100000
+set_option synthInstance.maxHeartbeats 25000
 theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF : ContDiff ℝ 1 ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ 1 s) (x₀ : H) (a : ℝ) :
     (IntervalIntegrable (fun t ↦ fderiv ℝ (fun x ↦ F x t) x₀) volume a <| s x₀) ∧

@@ -162,12 +162,12 @@ instance : FiberBundle (E →L[𝕜] E') FJ¹MM' := by
 
 instance : VectorBundle 𝕜 (E →L[𝕜] E') FJ¹MM' := by
   delta OneJetSpace
-  set_option synthInstance.maxHeartbeats 30000 in
+  set_option synthInstance.maxHeartbeats 3 in
   infer_instance
 
 instance : SmoothVectorBundle (E →L[𝕜] E') (OneJetSpace I I' : M × M' → Type _) (I.prod I') := by
   delta OneJetSpace
-  set_option synthInstance.maxHeartbeats 30000 in
+  set_option synthInstance.maxHeartbeats 1200 in
   infer_instance
 
 instance : ChartedSpace HJ J¹MM' := by
