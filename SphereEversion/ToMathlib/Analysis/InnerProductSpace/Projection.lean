@@ -55,12 +55,15 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [No
   apply hx
   rw [← φ.symm_apply_apply x, H, φ.symm.map_zero]
 
+/-- The line (one-dimensional submodule of `E`) spanned by `x : E`. -/
 @[reducible] def spanLine (x : E) : Submodule ℝ E := Submodule.span ℝ ({x} : Set E)
 
 @[inherit_doc] local notation "Δ" => spanLine
 
+/-- The orthogonal complement of the line spanned by `x : E`. -/
 @[reducible] def spanOrthogonal (x : E) : Submodule ℝ E := (Δ x)ᗮ
 
+/-- The orthogonal projection to the complement of `span x`. -/
 @[reducible] def projSpanOrthogonal (x : E) := orthogonalProjection (Submodule.span ℝ ({x} : Set E))ᗮ
 
 @[inherit_doc] local notation "{." x "}ᗮ" => spanOrthogonal x
