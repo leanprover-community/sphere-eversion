@@ -146,7 +146,6 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
   rw [fderiv_fst]
   rfl
 
-attribute [pp_dot] ContinuousLinearMap.comp
 open ContinuousLinearMap
 theorem FamilyJetSec.uncurry_mem_relativize (S : FamilyJetSec E F P) {s : P} {x : E} :
     ((s, x), S.uncurry (s, x)) ∈ R.relativize P ↔ (x, S s x) ∈ R := by
@@ -230,7 +229,6 @@ theorem FamilyJetSec.curry_mem (S : FamilyJetSec (P × E) F G) {p : G × P} {x :
 
 /-- Turn a family of formal solutions of `R.relativize P` parametrized by `G` into a family of
 formal solutions of `R` parametrized by `G × P`. -/
-@[pp_dot]
 def RelLoc.FamilyFormalSol.curry (S : FamilyFormalSol G (R.relativize P)) :
     FamilyFormalSol (G × P) R :=
   ⟨S.toFamilyJetSec.curry, fun _ _ ↦ S.toFamilyJetSec.curry_mem (S.is_sol _ _)⟩

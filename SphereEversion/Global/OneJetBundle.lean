@@ -249,8 +249,6 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
   rwa [Trivialization.coe_fst]
   rwa [trivializationAt_oneJetBundle_source, mem_preimage, ← Set.prod_eq]
 
-attribute [pp_dot] PartialEquiv.target PartialEquiv.symm PartialEquiv.prod
-
 section
 
 section
@@ -295,8 +293,6 @@ lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
     (ContMDiffMap.snd : C^n⟮I.prod I', M × M'; I', M'⟯) (x, x') = x' := rfl
 
 end
-
-attribute [pp_dot] PartialHomeomorph.symm
 
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
@@ -353,8 +349,6 @@ theorem oneJetBundle_mk_fst {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
 theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).2 = f :=
   rfl
-
-attribute [pp_dot] ModelWithCorners.prod
 
 theorem smoothAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
     SmoothAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀ ↔
@@ -440,7 +434,6 @@ theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
 
 variable {I'}
 
-attribute [pp_dot] ContinuousLinearMap.comp
 open Trivialization in
 theorem Smooth.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
     (hϕ : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ x))

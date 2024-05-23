@@ -49,8 +49,6 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   ϕ : ∀ x : M, TangentSpace I x →L[𝕜] TangentSpace I' (bs x)
   smooth' : Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk x (bs x) (ϕ x)
 
-attribute [pp_dot] OneJetSec.bs OneJetSec.ϕ
-
 instance : FunLike (OneJetSec I M I' M') M (OneJetBundle I M I' M') where
   coe := fun S x ↦ OneJetBundle.mk x (S.bs x) (S.ϕ x)
   coe_injective' := by

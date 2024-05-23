@@ -40,4 +40,4 @@ theorem mapsTo_homothety_ball (c : F) {r : ℝ} (hr : 0 < r) :
     norm_smul, Real.norm_eq_abs, abs_eq_self.2 (inv_pos.mpr hr).le, hy]
 
 theorem contDiff_homothety {n : ℕ∞} (c : F) (r : ℝ) : ContDiff ℝ n (homothety c r) :=
-  (⟨homothety c r, homothety_continuous c r⟩ : F →A[ℝ] F).contDiff
+  (⟨homothety c r, homothety_continuous c r⟩ : F →ᴬ[ℝ] F).contDiff

@@ -36,8 +36,6 @@ attribute [coe] OpenSmoothEmbedding.toFun
 instance : CoeFun (OpenSmoothEmbedding I M I' M') fun _ ↦ M → M' :=
   ⟨OpenSmoothEmbedding.toFun⟩
 
-attribute [pp_dot] OpenSmoothEmbedding.invFun
-
 namespace OpenSmoothEmbedding
 
 variable {I I' M M'}
@@ -83,7 +81,7 @@ theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] i
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
-@[pp_dot] def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
+def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.smooth_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       (f.isOpenMap.range_mem_nhds x)
@@ -386,7 +384,6 @@ section
 attribute [local instance] Classical.dec
 
 /-- This is definition `def:update` in the blueprint. -/
-@[pp_dot]
 def update (m : M) : N :=
   if m ∈ range φ then ψ (g (φ.invFun m)) else f m
 

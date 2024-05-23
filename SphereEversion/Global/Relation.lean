@@ -172,7 +172,6 @@ instance (x : M) (x' : M') :
   assumption
 
 /-- The slice `R(σ,p)`. -/
-@[pp_dot]
 def RelMfld.slice (R : RelMfld I M I' M') (σ : OneJetBundle I M I' M') (p : DualPair <| TM σ.1.1) :
     Set (TM' σ.1.2) :=
   {w : TM' σ.1.2 | OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
@@ -464,7 +463,7 @@ variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
 
 /-- Transfer map between one jet bundles induced by open smooth embedding into the source and
 targets. -/
-@[simps! proj_fst proj_snd, pp_dot]
+@[simps! proj_fst proj_snd]
 def OpenSmoothEmbedding.transfer : OneJetBundle IX X IY Y → OneJetBundle IM M IN N :=
   OneJetBundle.map IY IN φ ψ fun x ↦ (φ.fderiv x).symm
 
@@ -483,8 +482,6 @@ theorem OpenSmoothEmbedding.smooth_transfer :
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
   (OpenSmoothEmbedding.smooth_transfer _ _).continuous
-
-attribute [pp_dot] ContinuousLinearEquiv.symm
 
 theorem OpenSmoothEmbedding.range_transfer :
     range (φ.transfer ψ) = π _ (OneJetSpace IM IN) ⁻¹' range φ ×ˢ range ψ := by
@@ -608,7 +605,7 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
 /-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
 -- very slow to elaborate :-(
-@[simps, pp_dot]
+@[simps]
 def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   toFun := φ.transfer ψ
   invFun :=
@@ -714,7 +711,6 @@ theorem Jupdate_localize {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y}
     simp_rw [ContinuousLinearEquiv.symm_apply_apply]
 
 /-- Update a global formal solutions `F` using a homotopy of local ones `G`. -/
-@[pp_dot]
 def updateFormalSol (F : FormalSol R) (G : HtpyFormalSol (R.localize φ ψ)) (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) : HtpyFormalSol R
     where
