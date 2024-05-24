@@ -74,6 +74,17 @@ jobs:
         run: |
           sudo chown -R runner docs
           cp -r .lake/build/doc docs/docs
+      
+      - name: Install pandoc
+        run: |
+          sudo apt update
+          sudo apt install pandoc
+
+      - name: Build webpage
+        run: |
+          cd docs_src
+          pandoc -t html --mathjax -f markdown+tex_math_dollars+raw_tex index.md --template template.html -o ../docs/index.html}
+          cp *.css ../docs
 
       - name: Upload docs & blueprint artifact
         uses: actions/upload-pages-artifact@v1
