@@ -101,7 +101,7 @@ directions of $\ker π$, and almost without moving $f(x)$.
 \begin{definition}
   \label{def:hol_partial}
   \leanok
-  \lean{JetSet.IsPartHolonomicAt}
+  \lean{JetSec.IsPartHolonomicAt}
   Let $E'$ be a linear subspace of $E$.
   A map $\F = (f, φ) : E → F × \Hom(E, F)$ is $E'$--holonomic if,
   for every $v$ in $E'$ and every $x$, $Df(x)v = φ(x)v$.
@@ -134,7 +134,7 @@ be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
 \begin{definition}
   \label{def:htpy_jet_sec_loc}
   \leanok
-  \lean{htpy_jet_sec}
+  \lean{HtpyJetSec}
   A $1$-jet section from $E$ to $F$ is a function from $E$ to $F × \Hom(E, F)$.
   A homotopy of $1$-jet sections is a smooth map
   $\F : ℝ × E → F × \Hom(E, F)$.
@@ -327,7 +327,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{lemma}
   \label{lem:ample_codim_two}
   \uses{def:ample_subset}
-  \lean{ample_of_two_le_codim}
+  \lean{AmpleSet.of_one_lt_codim}
   \leanok
   The complement of a linear subspace of codimension at least 2 is
   ample.
@@ -369,7 +369,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \begin{definition}
   \label{def:ample_relation_loc}
   \leanok
-  \lean{RelLoc.isAmple}
+  \lean{RelLoc.IsAmple}
   \uses{def:ample_subset, def:rel_slice}
   A first order differential relation $\Rel$ is ample if all its slices
   are ample.

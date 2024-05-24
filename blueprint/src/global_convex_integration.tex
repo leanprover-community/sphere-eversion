@@ -366,7 +366,7 @@ For every smooth map $f \co M → N$,
 \begin{definition}
 \label{def:holonomic_section}
 \leanok
-\lean{OneJetSet.IsHolonomicAt, OneJetSec.isHolonomicAt_iff}
+\lean{OneJetSec.IsHolonomicAt, OneJetSec.isHolonomicAt_iff}
 \uses{def:one_jet_space}
 A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
 $1$--jet of its base map.
@@ -520,7 +520,7 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
   \label{lem:param_for_free}
   \uses{def:h-princ}
   \leanok
-  \lean{RelMfld.SatisfiesHPrinciple.SatisfiesHPrincipleWith}
+  \lean{RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith}
   Let $\Rel$ be a first order differential relation for maps from $M$ to
   $N$.
   If, for every manifold with boundary $P$, $\Rel^P$ satisfies the
@@ -631,7 +631,7 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   \label{thm:open_ample}
   % \uses{def:h-princ} % causes transitive arrow in depgraph
   \leanok
-  \lean{RelMfld.Ample.SatisfiesHPrincipleWith}
+  \lean{RelMfld.Ample.satisfiesHPrincipleWith}
   For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
   and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
 \end{theorem}
