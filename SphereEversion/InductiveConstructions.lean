@@ -152,17 +152,51 @@ theorem inductive_construction_of_loc {X Y : Type*} [EMetricSpace X] [LocallyCom
     (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
     (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y}, IsOpen U₁ → IsOpen U₂ →
-      IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
       (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
       ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
         (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
     ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f := by
   apply inductive_construction_of_loc' P₀ P₀' P₁ hP₀f₀ loc
   intro U₁ U₂ K₁ K₂ f₁ f₂ hU₁ hU₂ hK₁ hK₂
-  replace hK₁ := hK₁.isClosed
-  replace hK₂ := hK₂.isClosed
   solve_by_elim
 
+theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X]
+    {K : Set X} (hK : IsClosed K) {U₁ U₂ K₁ K₂ : Set X} (U₁_op : IsOpen U₁)
+    (U₂_op : IsOpen U₂) (K₁_cpct : IsCompact K₁) (K₂_cpct : IsCompact K₂) (hK₁U₁ : K₁ ⊆ U₁)
+    (hK₂U₂ : K₂ ⊆ U₂) (U : Set X) (U_op : IsOpen U) (hKU : K ⊆ U) :
+    ∃ K₁' K₂' U₁' U₂',
+      IsOpen U₁' ∧ IsOpen U₂' ∧ IsCompact K₁' ∧ IsCompact K₂' ∧ K₁ ⊆ K₁' ∧ K₁' ⊆ U₁' ∧ K₂' ⊆ U₂' ∧
+      K₁' ∪ K₂' = K₁ ∪ K₂ ∧ K ⊆ U₂'ᶜ ∧ U₁' ⊆ U ∪ U₁ ∧ U₂' ⊆ U₂ := by
+  obtain ⟨U', U'_op, hKU', hU'U⟩ : ∃ U' : Set X, IsOpen U' ∧ K ⊆ U' ∧ closure U' ⊆ U :=
+    normal_exists_closure_subset hK U_op hKU
+  refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact IsOpen.union U₁_op U_op
+  · exact IsOpen.sdiff U₂_op hK
+  · refine IsCompact.union K₁_cpct ?_
+    refine K₂_cpct.closure_of_subset ?_
+    exact inter_subset_left K₂ U'
+  · exact IsCompact.diff K₂_cpct U'_op
+  · exact subset_union_left K₁ (closure (K₂ ∩ U'))
+  · apply union_subset_union
+    exact hK₁U₁
+    apply subset_trans _ hU'U
+    gcongr
+    exact inter_subset_right K₂ U'
+  · exact diff_subset_diff hK₂U₂ hKU'
+  · rw [union_assoc]
+    congr
+    apply subset_antisymm
+    · apply union_subset
+      · apply K₂_cpct.isClosed.closure_subset_iff.mpr
+        exact inter_subset_left K₂ U'
+      · exact diff_subset K₂ U'
+    · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
+        _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
+  · intro x hx hx'
+    exact hx'.2 hx
+  · rw [union_comm]
+  · exact diff_subset U₂ K
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
@@ -178,7 +212,7 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     {K : Set X} (hK : IsClosed K) {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
     (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
-      IsOpen U₁ → IsOpen U₂ → IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      IsOpen U₁ → IsOpen U₂ → IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
       (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
       ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x := by
@@ -186,19 +220,30 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
   have hf₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀ := fun x ↦
     ⟨hP₀f₀ x, fun _ ↦ eventually_of_forall fun x' ↦ rfl⟩
   have ind' : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
-      IsOpen U₁ → IsOpen U₂ → IsClosed K₁ → IsClosed K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      IsOpen U₁ → IsOpen U₂ → IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
       (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
       ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
         (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x := by
     intro U₁ U₂ K₁ K₂ f₁ f₂ U₁_op U₂_op K₁_cpct K₂_cpct hK₁U₁ hK₂U₂ hf₁ hf₂ hf₁U₁ hf₂U₂
     obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and.mp hf₁
     rw [forall_restrictGermPredicate_iff] at h₀'f₁
-    rcases(hasBasis_nhdsSet K).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U, ⟨U_op, hKU⟩, hU⟩
-    rcases ind (U_op.union U₁_op) U₂_op (hK.union K₁_cpct) K₂_cpct (union_subset_union hKU hK₁U₁)
-        hK₂U₂ h₀f₁ hf₂ (fun x hx ↦ hx.elim (fun hx ↦ hU hx) fun hx ↦ hf₁U₁ x hx) hf₂U₂ with
-      ⟨f, h₀f, hf, h'f⟩
-    rw [union_assoc, Eventually.union_nhdsSet] at hf h'f
-    exact ⟨f, fun x ↦ ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 h'f.1⟩, hf.2, h'f.2⟩
+    rcases(hasBasis_nhdsSet K).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U,
+      ⟨U_op, hKU⟩, hU : ∀ {x}, x ∈ U → P₁ x f₁⟩
+    obtain ⟨K₁', K₂', U₁', U₂', U₁'_op, U₂'_op, K₁'_cpct, K₂'_cpct, hK₁K₁', hK₁'U₁', hK₂'U₂',
+        hK₁'K₂', hKU₂', hU₁'U, hU₂'U₂⟩ : ∃ (K₁' K₂' U₁' U₂' : Set X),
+        IsOpen U₁' ∧ IsOpen U₂' ∧ IsCompact K₁' ∧ IsCompact K₂' ∧
+        K₁ ⊆ K₁' ∧ K₁' ⊆ U₁' ∧ K₂' ⊆ U₂' ∧ K₁' ∪ K₂' = K₁ ∪ K₂ ∧ K ⊆ U₂'ᶜ ∧
+        U₁' ⊆ U ∪ U₁ ∧ U₂' ⊆ U₂ := by
+      apply set_juggling <;> assumption
+    have hU₁'P₁ : ∀ x ∈ U₁', P₁ x ↑f₁ :=
+      fun x hx ↦ (hU₁'U hx).casesOn (fun h _ ↦ hU h) (fun h _ ↦ hf₁U₁ x h) (hU₁'U hx)
+    rcases ind U₁'_op U₂'_op K₁'_cpct K₂'_cpct hK₁'U₁' hK₂'U₂' h₀f₁ hf₂ hU₁'P₁
+      (fun x hx ↦ hf₂U₂ x (hU₂'U₂ hx)) with ⟨f, h₀f, hf, h'f⟩
+    refine ⟨f, fun x ↦ ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 ?_⟩, ?_, ?_⟩
+    · exact h'f.filter_mono (nhdsSet_mono <| subset_union_of_subset_right hKU₂' K₁')
+    · rwa [hK₁'K₂'] at hf
+    · apply h'f.filter_mono (nhdsSet_mono <| ?_)
+      exact union_subset_union hK₁K₁' <| compl_subset_compl_of_subset hU₂'U₂
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
   exact ⟨f, ⟨hf.1, hf.2.2⟩, hf.2.1⟩

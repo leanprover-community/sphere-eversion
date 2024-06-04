@@ -982,10 +982,10 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
     cases' surroundingFamilyIn_iff_germ.mp H with H H'
     exact ⟨γ, H, mem_of_superset U_in H'⟩
   · intro U₁ U₂ K₁ K₂ γ₁ γ₂ hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ hγ₁ hγ₂ h'γ₁ h'γ₂
-    rcases extend_loops hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ (surroundingFamilyIn_iff_germ.mpr ⟨hγ₁, h'γ₁⟩)
-        (surroundingFamilyIn_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with
-      ⟨U, U_in, γ, H, H''⟩
-    cases' surroundingFamilyIn_iff_germ.mp H with H H'
+    rcases extend_loops hU₁ hU₂ hK₁.isClosed hK₂.isClosed hKU₁ hKU₂
+      (surroundingFamilyIn_iff_germ.mpr ⟨hγ₁, h'γ₁⟩)
+      (surroundingFamilyIn_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with ⟨U, U_in, γ, H, H''⟩
+    rcases surroundingFamilyIn_iff_germ.mp H with ⟨H, H'⟩
     exact ⟨γ, H, mem_of_superset U_in H', Eventually.union_nhdsSet.mpr H''⟩
 
 -- #lint
