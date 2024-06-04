@@ -35,6 +35,7 @@ every point of $X$ has a neighborhood that intersects only finitely many $V_n$.
 
 \begin{lemma}
   \label{lem:exists_forall_eventually_of_index_type}
+  \uses{def:index_type}
   \lean{LocallyFinite.exists_forall_eventually_of_indexType}
   \leanok
   Let $X$ be a topological space and let $Y$ be any set. Let
@@ -114,6 +115,7 @@ flexibility in the main inductive assumption. One can read ``$f$ satisfies
 $P₂^i$'' as ``$f$ can be improved in $Uᵢ$''.
 
 \begin{lemma}
+  \uses{def:index_type}
   \label{lem:inductive_construction}\uses{def:germ}\lean{inductive_construction}\leanok
   Let $X$ be a topological space and $Y$ be any set. Let $U$ be a locally
   finite family of subsets of $X$ indexed by some $\IT{N}$. Let $P₀$ be a local
@@ -204,7 +206,7 @@ arbitrary local predicates.
   \end{itemize}
 \end{lemma}
 
-\begin{proof}\leanok\uses{lem:inductive_construction}
+\begin{proof}\leanok\uses{lem:inductive_construction, def:restrict_germ_predicate}
   Carefully checking all details is a bit technical but the strategy is as follows.
   We fix an increasing sequence $T \co \IT{N} → [0, 1)$ starting at $0$,
   say $i ↦ 1 - 1/2^i$.
@@ -309,7 +311,7 @@ and will allows to deduce a relative version of the lemma.
 \end{lemma}
 
 \begin{proof}
-  \leanok\uses{lem:inductive_construction,lem:exists_locally_finite_subcover_of_locally}
+  \leanok\uses{lem:inductive_construction,lem:exists_locally_finite_subcover_of_locally,def:restrict_germ_predicate}
   The assumptions on the topology of $X$ and local existence of solutions
   allow to apply \Cref{lem:exists_locally_finite_subcover_of_locally} to get sequences
   of subsets $K$ and $U$ of $X$ indexed by natural numbers such that $K$ covers

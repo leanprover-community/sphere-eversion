@@ -97,6 +97,7 @@ $N$ by:
 \begin{lemma}
   \label{lem:nice_atlas}
   \lean{nice_atlas}
+  \uses{def:index_type}
   \leanok
   Let $M$ be a manifold modelled on the normed space $E$ and $(V_j)_{j ∈ J}$
   a cover of $M$ by open sets. There exists some natural number $N$ and
@@ -161,7 +162,7 @@ $N$ by:
 
 \begin{definition}
   \label{def:localisation_data}
-  \uses{def:convenient_indexing}
+  \uses{def:index_type}
   \lean{LocalisationData}
   \leanok
   Let $f : M → N$ be a continuous map between manifolds. A localisation data
@@ -673,7 +674,7 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   \uses{lem:param_for_free, lem:ample_parameter, lem:transfer,
   lem:ex_localisation, lem:localisation_stability,
   lem:smooth_updating, lem:dist_updating, lem:inductive_htpy_construction,
-  lem:ample_iff_loc, lem:improve_htpy_loc}
+  lem:ample_iff_loc, lem:h_principle_open_ample_loc}
   Lemmas~\ref{lem:param_for_free} and~\ref{lem:ample_parameter} prove we can
   assume there are no parameters. So we start with a single formal solution $F₀$
   of $\Rel$, which is holonomic near some closed subset $A ⊂ X$. We also
