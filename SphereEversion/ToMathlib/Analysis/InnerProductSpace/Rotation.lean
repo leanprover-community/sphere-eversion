@@ -147,7 +147,7 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
   simp_rw [← pow_two, norm_smul, mul_pow] at hy
   change _ + _ * ‖x×₃(⟨y, hy'⟩ : (span ℝ {x})ᗮ)‖ ^ 2 = ‖(0 : E)‖ ^ 2 at hy
   rw [norm_crossProduct] at hy
-  simp (config := {decide := true}) only [norm_eq_abs, Even.pow_abs, coe_mk, norm_zero, zero_pow, 
+  simp (config := {decide := true}) only [norm_eq_abs, Even.pow_abs, coe_mk, norm_zero, zero_pow,
     Ne, Nat.one_ne_zero, not_false_iff] at hy
   change _ + _ * (_ * ‖y‖) ^ 2 = 0 at hy
   rw [mul_pow, ← mul_assoc, ← add_mul, mul_eq_zero, or_iff_not_imp_left] at hy
@@ -156,7 +156,6 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
     rw [cos_sq']
     rw [show (1 : ℝ) - sin (t * π) ^ 2 + sin (t * π) ^ 2 * ‖x‖ ^ 2 = (1 : ℝ) + sin (t * π) ^ 2 * (‖x‖ ^ 2 - 1)
     by ring]
-    have I₁ : ‖x‖ ^ 2 - 1 > -1 := by linarith
     have I₂ : sin (t * π) ^ 2 ≤ 1 := sin_sq_le_one (t * π)
     have I₃ : (0 : ℝ) ≤ sin (t * π) ^ 2 := sq_nonneg _
     rcases I₃.eq_or_lt with (H | H)
