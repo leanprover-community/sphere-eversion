@@ -181,7 +181,7 @@ arbitrary local predicates.
   Let $P₀$ and $P₁$ be local predicates on maps from $X$ to $Y$.
   Let $P₀'$ be a local predicate on maps from $ℝ × X → Y$. Assume that
   for every $a$, $b$ and $t$ in $ℝ$, every $x$ in $X$ and every
-  $f \co ℝ × X → Y$, if $f$ satisfies $P₂$ at $(at + b, x)$ then
+  $f \co ℝ × X → Y$, if $f$ satisfies $P₀'$ at $(at + b, x)$ then
   $(t, x) ↦ f(at+b, x)$ satisfies $P₀'$ at $(t, x)$. Let $f₀ \co X → Y$ be a function
   satisfying $P₀$ and such that $(t, x) ↦ f₀(x)$ satisfies $P₀'$.
 
@@ -301,7 +301,7 @@ and will allows to deduce a relative version of the lemma.
       For every $x$ in $X$, there exists a function $f \co X → Y$ which
       satisfies $P₀$ and satisfies $P₁$ near $x$.
     \item
-      For every closed subsets $K₁$ and $K₂$ of $X$ and every open subsets $U₁$ and $U₂$
+      For every compact subsets $K₁$ and $K₂$ of $X$ and every open subsets $U₁$ and $U₂$
       containing $K₁$ and $K₂$, for every function $f₁$ and $f₂$ satisfying $P₀$,
       if $f₁$ satisfies $P₀'$ and satisfies $P₁$ on $U₁$ and if $f₂$ satisfies $P₁$ on $U₂$
       then there exists $f$ which satisfies $P₀$ and $P₀'$, and satisfies $P₁$ near
@@ -330,7 +330,7 @@ and will allows to deduce a relative version of the lemma.
   For this we need to explain how the patching assumption of the current lemma
   implies the induction assumption of \Cref{lem:inductive_construction}. So we fix
   an index $i ∈ ℕ$ and a function $f$ which satisfies $\hat{P}₀$ and satisfies all
-  $\hat{P}₁^j$ for $j < i$. We denote by $K$ the closed subset
+  $\hat{P}₁^j$ for $j < i$. We denote by $K$ the compact subset
   $\bigcup_{j < i} K_j$ and denote by $V$ an open neighborhood of $K$ such that
   $f$ satisfies $P₁$ on $V$. The patching assumption applied to $K$, $K_i$, $V$
   and $U_i$ with functions $f$ and the local solution on $U_i$ gives a suitable
@@ -354,9 +354,9 @@ subset $K$. The is the version that is actually used in our application.
       For every $x$ in $X$, there exists a function $f \co X → Y$ which
       satisfies $P₀$ and satisfies $P₁$ near $x$.
     \item
-      For every closed subsets $K₁$ and $K₂$ of $X$ and every open subsets $U₁$ and $U₂$
+      For every compact subsets $K₁$ and $K₂$ of $X$ and every open subsets $U₁$ and $U₂$
       containing $K₁$ and $K₂$, for every function $f₁$ and $f₂$ satisfying $P₀$,
-      if $f₁$ satisfies $P₁$ on $U₁$ and if $f₂$ satisfies $P₁$ on $U₁$
+      if $f₁$ satisfies $P₁$ on $U₁$ and if $f₂$ satisfies $P₁$ on $U₂$
       then there exists $f$ which satisfies $P₀$, and satisfies $P₁$ near
       $K₁ ∪ K₂$ and coincides with $f₁$ near $K₁ ∪ U₂^c$.
   \end{itemize}
@@ -367,7 +367,5 @@ subset $K$. The is the version that is actually used in our application.
   We reduce this to \Cref{lem:inductive_construction_of_loc} using as auxilliary
   local predicate $P₀'$ the constraint to coincide with $f₀$ near $K$.
 
-  Our patching condition almost matches the one from \Cref{lem:inductive_construction_of_loc}
-  except that each $(K₁, K₂, U₁, U₂)$ should be replaced by $(K ∪ K₁, U ∪ U₁, K₂, U₂)$
-  where $U$ is a suitable neighborhood of $K$.
+  Details will come soon (they are already formalized).
 \end{proof}
