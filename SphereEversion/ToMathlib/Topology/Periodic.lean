@@ -107,7 +107,7 @@ theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ :=
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
     QuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
   (IsOpenMap.id.prod isOpenMap_proj𝕊₁).to_quotientMap (continuous_id.prod_map continuous_proj𝕊₁)
-    (surjective_id.Prod_map Quotient.exists_rep)
+    (surjective_id.prodMap Quotient.exists_rep)
 
 /-- A one-periodic function on `ℝ` descends to a function on the circle `ℝ ⧸ ℤ`. -/
 def OnePeriodic.lift {f : ℝ → α} (h : OnePeriodic f) : 𝕊₁ → α :=

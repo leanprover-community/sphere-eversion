@@ -130,8 +130,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       rw [hasFDerivAt_iff_hasDerivAt, toSpanSingleton_apply, one_smul]
       exact intervalIntegral.integral_hasDerivAt_right (hF_int_ball x₀ x₀_in ha hsx₀)
         ⟨Ioo a₀ b₀, Ioo_nhds, hF_meas x₀ x₀_in⟩ hF_cont
-    have D₃ : HasFDerivAt (fun x ↦ ∫ t in s x₀..s x, F x t - F x₀ t) 0 x₀ := by
-      refine IsBigO.hasFDerivAt (𝕜 := ℝ) ?_ one_lt_two
+    have D₃ : HasFDerivAt (𝕜 := ℝ) (fun x ↦ ∫ t in s x₀..s x, F x t - F x₀ t) 0 x₀ := by
+      refine IsBigO.hasFDerivAt ?_ one_lt_two
       have O₁ : (fun x ↦ ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := by
         have : (fun x ↦ s x - s x₀) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := s_diff.isBigO_sub.norm_right
         refine IsBigO.trans ?_ this

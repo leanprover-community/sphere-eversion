@@ -1,6 +1,6 @@
 import Mathlib.Topology.Separation
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Nat.Interval
+import Mathlib.Order.Interval.Finset.Nat
 
 open scoped Topology
 

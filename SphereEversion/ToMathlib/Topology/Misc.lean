@@ -195,7 +195,7 @@ theorem fract_preimage_mem_nhds {s : Set ℝ} {x : ℝ} (h1 : s ∈ 𝓝 (fract 
     obtain ⟨v, hvs, hv, h1v⟩ := mem_nhds_iff.mp (h2 hx)
     rw [mem_nhds_iff]
     exact ⟨fract ⁻¹' (u ∪ v), preimage_mono (union_subset hus hvs),
-      (hu.union hv).preimage_fract fun _ ↦ subset_union_right _ _ h1v, subset_union_left _ _ hxu⟩
+      (hu.union hv).preimage_fract fun _ ↦ subset_union_right h1v, subset_union_left hxu⟩
   · exact (continuousAt_fract (sub_ne_zero.1 hx)).preimage_mem_nhds h1
 
 end Fract

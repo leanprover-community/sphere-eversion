@@ -39,20 +39,22 @@ get rid of the `indexing` abstraction and do everything in terms of `IndexType`,
 
 section inductive_construction
 
+-- step 3
 theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [TopologicalSpace X]
-    {N : ℕ} {f : IndexType N → X → α} {V : IndexType N → Set X} (hV : LocallyFinite V)
-    (h : ∀ n : IndexType N, ¬IsMax n → ∀ x ∉ (V n.succ), f n.succ x = f n x) :
+    {f : ℕ → X → α} {V : ℕ → Set X} (hV : LocallyFinite V)
+    (h : ∀ n : ℕ, ∀ x ∉ V (n + 1), f (n + 1) x = f n x) :
     ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F := by
   choose U hUx hU using hV
   choose i₀ hi₀ using fun x ↦ (hU x).bddAbove
-  have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y := fun {x} ↦ by
-    refine @IndexType.induction_from N (fun i ↦ ∀ {y}, y ∈ U x → f i y = f (i₀ x) y) _ ?_ ?_
-    · exact fun _ ↦ rfl
-    · intro i hi h'i ih y hy
-      rw [h i h'i, ih hy]
+  have key : ∀ {x} {n}, n ≥ i₀ x → ∀ {y}, y ∈ U x → f n y = f (i₀ x) y := by
+    intro x n h y hy
+    induction h generalizing y
+    · rfl
+    case step i hi ih =>
+      rw [h i, ih hy]
       intro h'y
       replace hi₀ := mem_upperBounds.mp (hi₀ x) i.succ ⟨y, h'y, hy⟩
-      exact lt_irrefl _ (((i.lt_succ h'i).trans_le hi₀).trans_le hi)
+      exact lt_irrefl _ (((lt_add_one i).trans_le hi₀).trans_le hi)
   refine ⟨fun x ↦ f (i₀ x) x, fun x ↦ ?_⟩
   refine (eventually_ge_atTop (i₀ x)).mono fun n hn ↦ ?_
   refine mem_of_superset (hUx x) fun y hy ↦ ?_
@@ -61,26 +63,24 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [Topo
     _ = f (max (i₀ x) (i₀ y)) y := (key (le_max_left _ _) hy).symm
     _ = f (i₀ y) y := key (le_max_right _ _) (mem_of_mem_nhds <| hUx y)
 
-@[inherit_doc] local notation "𝓘" => IndexType
-
-theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U : IndexType N → Set X}
-    (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ i : IndexType N, ∀ x : X, Germ (𝓝 x) Y → Prop)
-    (P₂ : IndexType N → (X → Y) → Prop) (U_fin : LocallyFinite U)
+theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {U : ℕ → Set X}
+    (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ i : ℕ, ∀ x : X, Germ (𝓝 x) Y → Prop)
+    (P₂ : ℕ → (X → Y) → Prop) (U_fin : LocallyFinite U)
     (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
-    (ind : ∀ (i : IndexType N) (f : X → Y), (∀ x, P₀ x f) → P₂ i f → (∀ j < i, ∀ x, P₁ j x f) →
-      ∃ f' : X → Y, (∀ x, P₀ x f') ∧ (¬IsMax i → P₂ i.succ f') ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧
+    (ind : ∀ (i : ℕ) (f : X → Y), (∀ x, P₀ x f) → P₂ i f → (∀ j < i, ∀ x, P₁ j x f) →
+      ∃ f' : X → Y, (∀ x, P₀ x f') ∧ P₂ i.succ f' ∧ (∀ j ≤ i, ∀ x, P₁ j x f') ∧
         ∀ x ∉ U i, f' x = f x) :
     ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ j, ∀ x, P₁ j x f := by
-  let P : 𝓘 N → (X → Y) → Prop := fun n f ↦
-    (∀ x, P₀ x f) ∧ (¬IsMax n → P₂ n.succ f) ∧ ∀ j ≤ n, ∀ x, P₁ j x f
-  let Q : 𝓘 N → (X → Y) → (X → Y) → Prop := fun n f f' ↦ ∀ x ∉ (U n.succ), f' x = f x
-  obtain ⟨f, hf⟩ : ∃ f : 𝓘 N → X → Y, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) := by
-    apply IndexType.exists_by_induction
+  let P : ℕ → (X → Y) → Prop := fun n f ↦
+    (∀ x, P₀ x f) ∧ P₂ n.succ f ∧ ∀ j ≤ n, ∀ x, P₁ j x f
+  let Q : ℕ → (X → Y) → (X → Y) → Prop := fun n f f' ↦ ∀ x ∉ (U n.succ), f' x = f x
+  obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f n.succ) := by
+    apply exists_by_induction'
     · rcases init with ⟨f₀, h₀f₀, h₁f₀⟩
       rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [IndexType.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', -⟩
       exact ⟨f', h₀f', h₂f', h₁f'⟩
-    · rintro n f ⟨h₀f, h₂f, h₁f⟩ hn
-      rcases ind _ f h₀f (h₂f hn) fun j hj ↦ h₁f _ <| j.le_of_lt_succ hj with
+    · rintro n f ⟨h₀f, h₂f, h₁f⟩
+      rcases ind _ f h₀f h₂f fun j hj ↦ h₁f _ <| j.le_of_lt_succ hj with
         ⟨f', h₀f', h₂f', h₁f', hf'⟩
       exact ⟨f', ⟨h₀f', h₂f', h₁f'⟩, hf'⟩
   dsimp only [P] at hf
@@ -94,50 +94,6 @@ theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U :
     rcases((hF x).and <| eventually_ge_atTop j).exists with ⟨n₀, hn₀, hn₀'⟩
     convert (h₁f _ _ hn₀' x) using 1
     exact Germ.coe_eq.mpr hn₀.symm
-
-theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCompactSpace X]
-    [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
-    (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
-    (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
-    (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y}, IsOpen U₁ → IsOpen U₂ →
-      IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
-      (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
-      ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
-        (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
-    ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f := by
-  let P : Set X → Prop := fun U ↦ ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ x ∈ U, P₁ x f
-  have hP₁ : Antitone P := by
-    rintro U V hUV ⟨f, h, h'⟩
-    exact ⟨f, h, fun x hx ↦ h' x (hUV hx)⟩
-  have hP₂ : P ∅ := ⟨f₀, fun x ↦ (hP₀f₀ x).1, fun x h ↦ h.elim⟩
-  have hP₃ : ∀ x : X, x ∈ univ → ∃ V ∈ 𝓝 x, P V := fun x _ ↦ by
-    rcases loc x with ⟨f, h₀f, h₁f⟩
-    exact ⟨_, h₁f, f, h₀f, fun x ↦ id⟩
-  rcases exists_locallyFinite_subcover_of_locally isClosed_univ hP₁ hP₂ hP₃ with
-    ⟨K, U : IndexType 0 → Set X, K_cpct, U_op, hU, hKU, U_loc, hK⟩
-  have ind' : ∀ (i : 𝓘 0) (f : X → Y), (∀ x, P₀ x f ∧ P₀' x f) →
-      (∀ j < i, ∀ x, RestrictGermPredicate P₁ (K j) x ↑f) →
-      ∃ f' : X → Y, (∀ x : X, P₀ x ↑f' ∧ P₀' x ↑f') ∧
-        (∀ j ≤ i, ∀ x, RestrictGermPredicate P₁ (K j) x f') ∧ ∀ x, x ∉ U i → f' x = f x := by
-    simp_rw [forall_restrictGermPredicate_iff, ← eventually_nhdsSet_iUnion₂]
-    rintro (i : ℕ) f h₀f h₁f
-    have cpct : IsCompact (⋃ j < i, K j) :=
-      (finite_lt_nat i).isCompact_biUnion fun j _ ↦ K_cpct j
-    rcases hU i with ⟨f', h₀f', h₁f'⟩
-    rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
-    rcases ind V_op (U_op i) cpct (K_cpct i) hKV (hKU i) h₀f h₀f' h₁V h₁f' with
-      ⟨F, h₀F, h₁F, hF⟩
-    simp_rw [← bUnion_le] at h₁F
-    exact ⟨F, h₀F, h₁F, fun x hx ↦ hF.self_of_nhdsSet x (Or.inr hx)⟩
-  have :=
-    inductive_construction (fun x φ ↦ P₀ x φ ∧ P₀' x φ)
-      (fun j : 𝓘 0 ↦ RestrictGermPredicate P₁ (K j)) (fun _ _ ↦ True) U_loc ⟨f₀, hP₀f₀, trivial⟩
-  simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this
-  rcases this ind' with ⟨f, h, h'⟩
-  refine ⟨f, fun x ↦ ⟨(h x).1, (h x).2, ?_⟩⟩
-  rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
-  exact (h' j x hj).self_of_nhds
-
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
@@ -157,9 +113,38 @@ theorem inductive_construction_of_loc {X Y : Type*} [EMetricSpace X] [LocallyCom
       ∃ f : X → Y, (∀ x, P₀ x f ∧ P₀' x f) ∧
         (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
     ∃ f : X → Y, ∀ x, P₀ x f ∧ P₀' x f ∧ P₁ x f := by
-  apply inductive_construction_of_loc' P₀ P₀' P₁ hP₀f₀ loc
-  intro U₁ U₂ K₁ K₂ f₁ f₂ hU₁ hU₂ hK₁ hK₂
-  solve_by_elim
+  let P : Set X → Prop := fun U ↦ ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ x ∈ U, P₁ x f
+  have hP₁ : Antitone P := by
+    rintro U V hUV ⟨f, h, h'⟩
+    exact ⟨f, h, fun x hx ↦ h' x (hUV hx)⟩
+  have hP₂ : P ∅ := ⟨f₀, fun x ↦ (hP₀f₀ x).1, fun x h ↦ h.elim⟩
+  have hP₃ : ∀ x : X, x ∈ univ → ∃ V ∈ 𝓝 x, P V := fun x _ ↦ by
+    rcases loc x with ⟨f, h₀f, h₁f⟩
+    exact ⟨_, h₁f, f, h₀f, fun x ↦ id⟩
+  rcases exists_locallyFinite_subcover_of_locally isClosed_univ hP₁ hP₂ hP₃ with
+    ⟨K, U : ℕ → Set X, K_cpct, U_op, hU, hKU, U_loc, hK⟩
+  have ind' : ∀ (i : ℕ) (f : X → Y), (∀ x, P₀ x f ∧ P₀' x f) →
+      (∀ j < i, ∀ x, RestrictGermPredicate P₁ (K j) x ↑f) →
+      ∃ f' : X → Y, (∀ x : X, P₀ x ↑f' ∧ P₀' x ↑f') ∧
+        (∀ j ≤ i, ∀ x, RestrictGermPredicate P₁ (K j) x f') ∧ ∀ x, x ∉ U i → f' x = f x := by
+    simp_rw [forall_restrictGermPredicate_iff, ← eventually_nhdsSet_iUnion₂]
+    rintro (i : ℕ) f h₀f h₁f
+    have cpct : IsCompact (⋃ j < i, K j) :=
+      (finite_lt_nat i).isCompact_biUnion fun j _ ↦ K_cpct j
+    rcases hU i with ⟨f', h₀f', h₁f'⟩
+    rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
+    rcases ind V_op (U_op i) cpct (K_cpct i) hKV (hKU i) h₀f h₀f' h₁V h₁f' with
+      ⟨F, h₀F, h₁F, hF⟩
+    simp_rw [← bUnion_le] at h₁F
+    exact ⟨F, h₀F, h₁F, fun x hx ↦ hF.self_of_nhdsSet x (Or.inr hx)⟩
+  have :=
+    inductive_construction (fun x φ ↦ P₀ x φ ∧ P₀' x φ)
+      (fun j : ℕ ↦ RestrictGermPredicate P₁ (K j)) (fun _ _ ↦ True) U_loc ⟨f₀, hP₀f₀, trivial⟩
+  simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this
+  rcases this ind' with ⟨f, h, h'⟩
+  refine ⟨f, fun x ↦ ⟨(h x).1, (h x).2, ?_⟩⟩
+  rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩
+  exact (h' j x hj).self_of_nhds
 
 theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X]
     {K : Set X} (hK : IsClosed K) {U₁ U₂ K₁ K₂ : Set X} (U₁_op : IsOpen U₁)
@@ -175,28 +160,28 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
   · exact IsOpen.sdiff U₂_op hK
   · refine IsCompact.union K₁_cpct ?_
     refine K₂_cpct.closure_of_subset ?_
-    exact inter_subset_left K₂ U'
+    exact inter_subset_left
   · exact IsCompact.diff K₂_cpct U'_op
-  · exact subset_union_left K₁ (closure (K₂ ∩ U'))
+  · exact subset_union_left
   · apply union_subset_union
     exact hK₁U₁
     apply subset_trans _ hU'U
     gcongr
-    exact inter_subset_right K₂ U'
+    exact inter_subset_right
   · exact diff_subset_diff hK₂U₂ hKU'
   · rw [union_assoc]
     congr
     apply subset_antisymm
     · apply union_subset
       · apply K₂_cpct.isClosed.closure_subset_iff.mpr
-        exact inter_subset_left K₂ U'
-      · exact diff_subset K₂ U'
+        exact inter_subset_left
+      · exact diff_subset
     · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
         _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
   · intro x hx hx'
     exact hx'.2 hx
   · rw [union_comm]
-  · exact diff_subset U₂ K
+  · exact diff_subset
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
@@ -247,6 +232,18 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
   exact ⟨f, ⟨hf.1, hf.2.2⟩, hf.2.1⟩
+
+theorem relative_inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X]
+    [LocallyCompactSpace X] [SecondCountableTopology X] (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
+    {K : Set X} (hK : IsClosed K) {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
+    (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
+    (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
+      IsOpen U₁ → IsOpen U₂ → IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
+      (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
+      ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
+    ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x := by sorry
+
+
 
 end inductive_construction
 
@@ -425,17 +422,18 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
         · rw [hUF' _ x hx]
           push_neg at ht
           rw [h₂F x _ ht.le]
-  rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left fun i ↦ Ici (T i.toNat))
-      ⟨fun p ↦ f₀ p.2, hPP₀, fun x t _ ↦ rfl⟩ ind' with
-    ⟨F, hF, h'F⟩
-  clear ind ind' hPP₀
-  refine ⟨curry F, ?_, ?_, ?_, ?_⟩
-  · exact funext fun x ↦ (hF (0, x)).2.1 rfl
-  · exact fun t x ↦ (hF (t, x)).1
-  · intro x
-    obtain ⟨j, hj⟩ : ∃ j, x ∈ K j := by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j)
-    exact (h'F j (1, x) rfl hj).self_of_nhds
-  · exact fun p ↦ (hF p).2.2
+  sorry
+  -- rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left fun i ↦ Ici (T i.toNat))
+  --     ⟨fun p ↦ f₀ p.2, hPP₀, fun x t _ ↦ rfl⟩ ind' with
+  --   ⟨F, hF, h'F⟩
+  -- clear ind ind' hPP₀
+  -- refine ⟨curry F, ?_, ?_, ?_, ?_⟩
+  -- · exact funext fun x ↦ (hF (0, x)).2.1 rfl
+  -- · exact fun t x ↦ (hF (t, x)).1
+  -- · intro x
+  --   obtain ⟨j, hj⟩ : ∃ j, x ∈ K j := by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j)
+  --   exact (h'F j (1, x) rfl hj).self_of_nhds
+  -- · exact fun p ↦ (hF p).2.2
 
 theorem inductive_htpy_construction' {X Y : Type*}
     [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]

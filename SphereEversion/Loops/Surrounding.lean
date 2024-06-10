@@ -218,14 +218,14 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
-  have hU₁ : U ⊆ A := Set.inter_subset_left _ _
+  have hU₁ : U ⊆ A := Set.inter_subset_left
   have hU₂ : IsOpen U := hW'.isOpen_inter_preimage hA hV
   have hU₃ : U ∈ 𝓝 (x, p) :=
     mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, Set.mem_inter (by simp [hp, A]) (mem_preimage.mpr hxp)⟩
   apply eventually_of_mem hU₃
   rintro ⟨y, q⟩ hyq
   have hq : q ∈ affineBases ι ℝ F := by simpa [A] using hU₁ hyq
-  have hyq' : (y, q) ∈ W' ⁻¹' V := (Set.inter_subset_right _ _) hyq
+  have hyq' : (y, q) ∈ W' ⁻¹' V := Set.inter_subset_right hyq
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩, (smooth_barycentric ι ℝ F hι).mono hU₁⟩,
     ?_, ?_, ?_⟩
   · simpa [V] using hyq'
@@ -671,7 +671,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
         rw [hδx₀]
         show Ω ∈ 𝓝 (x₀, γ t s)
         exact mem_nhds_iff.mpr
-          ⟨_, inter_subset_left _ _, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
+          ⟨_, inter_subset_left, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
     refine this.mono ?_; intro x h t ht s hs; exact h (t, s) ⟨ht, hs⟩
   have hδsurr : ∀ᶠ x in 𝓝 x₀, (δ x 1).Surrounds (g x) := by
     rcases h6γ with ⟨p, w, h⟩
@@ -866,7 +866,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
   have hV₀L₁ : Disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ Subset.rfl
   obtain ⟨V₂, hV₂, hLV₂, h2V₂⟩ :=
     normal_exists_closure_subset hL₁ (isClosed_closure.isOpen_compl.inter hU₁)
-      (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| (diff_subset _ _).trans hKU₁)
+      (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| diff_subset.trans hKU₁)
   obtain ⟨V₁, hV₁, hLV₁, hV₁₂⟩ := normal_exists_closure_subset hL₁ hV₂ hLV₂
   rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂
   rcases h2V₂ with ⟨hV₀₂, hV₂U₁⟩
@@ -875,21 +875,21 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
     refine Disjoint.union_left (hV₀₂.mono_right (hV₁₂.trans subset_closure)) ?_
     rw [← subset_compl_iff_disjoint_left, compl_compl]; exact hV₁₂
   refine ⟨V₀ ∪ U₁ ∩ U₀ ∪ V₁, ((hV₀.union <| hU₁.inter hU₀).union hV₁).mem_nhdsSet.mpr ?_, ?_⟩
-  · refine union_subset (hKV₀.trans <| (subset_union_left _ _).trans <| subset_union_left _ _) ?_
+  · refine union_subset (hKV₀.trans <| subset_union_left.trans subset_union_left) ?_
     rw [← inter_union_diff K₁];
-    exact union_subset_union ((inter_subset_inter_left _ hKU₁).trans <| subset_union_right _ _) hLV₁
+    exact union_subset_union ((inter_subset_inter_left _ hKU₁).trans subset_union_right) hLV₁
   obtain ⟨ρ, h0ρ, h1ρ, -⟩ :=
     exists_continuous_zero_one_of_isClosed (isClosed_closure.union hV₂.isClosed_compl)
       isClosed_closure hdisj
-  let h₀' : SurroundingFamilyIn g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono (inter_subset_right _ _)
-  let h₁' : SurroundingFamilyIn g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono (inter_subset_left _ _)
+  let h₀' : SurroundingFamilyIn g b γ₀ (U₁ ∩ U₀) Ω := h₀.mono inter_subset_right
+  let h₁' : SurroundingFamilyIn g b γ₁ (U₁ ∩ U₀) Ω := h₁.mono inter_subset_left
   let γ := sfHomotopy h₀'.to_sf h₁'.to_sf
   have hγ : ∀ τ, SurroundingFamilyIn g b (γ τ) (U₁ ∩ U₀) Ω := surroundingFamilyIn_sfHomotopy h₀' h₁'
   have heq1 : ∀ x ∈ closure V₀ ∪ V₂ᶜ, γ (ρ x) x = γ₀ x := by
     intro x hx
     simp_rw [γ, h0ρ hx, Pi.zero_apply, sfHomotopy_zero]
   have heq2 : ∀ x ∈ V₀, γ (ρ x) x = γ₀ x := fun x hx ↦
-    heq1 x (subset_closure.trans (subset_union_left _ _) hx)
+    heq1 x (subset_closure.trans subset_union_left hx)
   refine ⟨fun x t ↦ γ (ρ x) x t, ?_, ?_, ?_⟩
   · refine ⟨⟨fun x ↦ (hγ <| ρ x).base x, fun x ↦ (hγ <| ρ x).t₀ x, fun x ↦ (hγ <| ρ x).projI x,
       ?_, ?_⟩, ?_⟩
@@ -905,7 +905,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
         · exact hx
         · exact (hρx <| h1ρ <| subset_closure hx).elim
       · intro x hx t _ht s hρx; refine h₁.val_in ?_; rcases hx with ((hx | ⟨hx, -⟩) | hx)
-        · exact (hρx <| h0ρ <| subset_closure.trans (subset_union_left _ _) hx).elim
+        · exact (hρx <| h0ρ <| subset_closure.trans subset_union_left hx).elim
         · exact hx
         · exact hVU₁ hx
   · exact eventually_of_mem (hV₀.mem_nhdsSet.mpr hKV₀) heq2

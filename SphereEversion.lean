@@ -12,7 +12,6 @@ import SphereEversion.Global.TwistOneJetSec
 import SphereEversion.Indexing
 import SphereEversion.InductiveConstructions
 import SphereEversion.Local.AmpleRelation
-import SphereEversion.Local.AmpleSet
 import SphereEversion.Local.Corrugation
 import SphereEversion.Local.DualPair
 import SphereEversion.Local.HPrinciple

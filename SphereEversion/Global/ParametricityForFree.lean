@@ -1,6 +1,6 @@
 import SphereEversion.Global.Relation
 import Mathlib.Analysis.Convex.AmpleSet
-import SphereEversion.Local.AmpleSet
+import Mathlib.Analysis.Convex.AmpleSet
 
 noncomputable section
 
@@ -220,9 +220,7 @@ theorem FormalSol.eq_iff {F₁ F₂ : FormalSol R} {x : M} :
 theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N)
     {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
-  dsimp only
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
-  dsimp only
   refine (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
     ((mdifferentiableAt_const I IP).prod_mk smooth_id.mdifferentiableAt)).trans
     ?_
