@@ -90,7 +90,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     exact SmoothAt.comp (t, x) hf.2.2.1 contMDiffAt_snd
   have ind : ∀ m : M,
     ∃ V ∈ 𝓝 m, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ → ∀ (C : Set M) (f : M → J¹),
-      IsClosed C → (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ C, P₁ x f) →
+      IsCompact C → (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ C, P₁ x f) →
         ∃ F : ℝ → M → J¹, (∀ t x, P₀ x (F t)) ∧
                           (∀ᶠ x in 𝓝ˢ (C ∪ K₀), P₁ x (F 1)) ∧
                           (∀ (p : ℝ × M), P₂ p ↿F) ∧
@@ -103,7 +103,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       rw [← φ.openEmbedding.map_nhds_eq]
       exact image_mem_map (ball_mem_nhds e zero_lt_one)
     use φ '' (ball e 1), this; clear this
-    intro K₁ hK₁ K₀ K₀K₁ K₀_cpct K₁_cpct C f C_closed P₀f fC
+    intro K₁ hK₁ K₀ K₀K₁ K₀_cpct K₁_cpct C f C_cpct P₀f fC
     have K₁φ : K₁ ⊆ range φ := SurjOn.subset_range hK₁
     have K₀φ : K₀ ⊆ range φ := K₀K₁.trans interior_subset |>.trans K₁φ
     replace K₀_cpct : IsCompact (φ ⁻¹' K₀) :=
@@ -140,7 +140,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       have : ContMDiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f := fun x ↦ hf_smooth x
       apply τ_cont.sub
       exact (oneJetBundle_proj_continuous.comp this.continuous).snd.dist 𝓕₀.smooth_bs.continuous
-    rcases φ.improve_formalSol ψ hRample hRopen (hA.union C_closed) η_pos η_cont hFφψ hFAC K₀_cpct
+    rcases φ.improve_formalSol ψ hRample hRopen (hA.union C_cpct.isClosed) η_pos η_cont hFφψ hFAC K₀_cpct
         K₁_cpct K₀K₁' with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
     refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩; all_goals beta_reduce
