@@ -441,18 +441,149 @@ theorem inductive_htpy_construction {X Y : Type*}
   rcases exists_locallyFinite_subcover_of_locally isClosed_univ P_anti P_empty
     (by simpa only [mem_univ, forall_true_left] using ind) with
     ⟨K : ℕ → Set X, W : ℕ → Set X, K_cpct, W_op, hW, K_subW, W_fin, K_cover⟩
-  apply inductive_htpy_construction' P₀ P₁ P₂ hP₂ W_fin (univ_subset_iff.mp K_cover) init
-    (fun ⟨t, x⟩ ↦  hP₂' t x f₀ (init x))
-  intro i f hf₀ hf₁
-  obtain ⟨K₁, K₁_cpct, KiK₁, K₁W⟩ : ∃ K₁, IsCompact K₁ ∧ K i ⊆ interior K₁ ∧ K₁ ⊆ W i :=
-    exists_compact_between (K_cpct i) (W_op i) (K_subW i)
-  rcases hW i K₁ K₁W (K i) KiK₁ (K_cpct i) K₁_cpct (⋃ j < i, K j) f
-    ((finite_lt_nat i).isCompact_biUnion fun j _ ↦ K_cpct j) hf₀ hf₁
-    with ⟨F, hF₀, hF₁, hF₂, hFK₁, ht⟩
-  refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
-  apply hF₁.filter_mono
-  mono
-  rw [bUnion_le]
-  exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
+  replace ind : ∀ (i : ℕ) (f : X → Y), (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ (⋃ j < i, K j), P₁ x f) →
+      ∃ F : ℝ → X → Y,
+        (∀ t x, P₀ x (F t)) ∧
+        (∀ᶠ x in 𝓝ˢ (⋃ j ≤ i, K j), P₁ x (F 1)) ∧
+        (∀ p : ℝ × X, P₂ p (↿F)) ∧
+        (∀ t, ∀ x ∉ W i, F t x = f x) ∧
+        (∀ᶠ t in 𝓝ˢ (Iic 0), F t = f) ∧ ∀ᶠ t in 𝓝ˢ (Ici 1), F t = F 1 := by
+    intro i f hf₀ hf₁
+    obtain ⟨K₁, K₁_cpct, KiK₁, K₁W⟩ : ∃ K₁, IsCompact K₁ ∧ K i ⊆ interior K₁ ∧ K₁ ⊆ W i :=
+      exists_compact_between (K_cpct i) (W_op i) (K_subW i)
+    rcases hW i K₁ K₁W (K i) KiK₁ (K_cpct i) K₁_cpct (⋃ j < i, K j) f
+      ((finite_lt_nat i).isCompact_biUnion fun j _ ↦ K_cpct j) hf₀ hf₁
+      with ⟨F, hF₀, hF₁, hF₂, hFK₁, ht⟩
+    refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
+    apply hF₁.filter_mono
+    mono
+    rw [bUnion_le]
+    exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
+  replace K_cover := univ_subset_iff.mp K_cover
+  have init' : ∀ (p : ℝ × X), P₂ p fun (p : ℝ × X) ↦ f₀ p.2 := fun ⟨t, x⟩ ↦  hP₂' t x f₀ (init x)
+  -- apply inductive_htpy_construction' P₀ P₁ P₂ hP₂ W_fin K_cover init init' ind
+  let PP₀ : ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun p φ ↦
+    P₀ p.2 φ.sliceRight ∧ (p.1 = 0 → φ.value = f₀ p.2) ∧ P₂ p φ
+  let PP₁ : ℕ → ∀ p : ℝ × X, Germ (𝓝 p) Y → Prop := fun i p φ ↦
+    p.1 = 1 → RestrictGermPredicate P₁ (K i) p.2 φ.sliceRight
+  let PP₂ : ℕ → (ℝ × X → Y) → Prop := fun i f ↦
+    ∀ x, ∀ t ≥ T i, f (t, x) = f (T i, x)
+  have hPP₀ : ∀ p : ℝ × X, PP₀ p fun p : ℝ × X ↦ f₀ p.2 := fun (t, x) ↦
+    ⟨init x, fun _ ↦ rfl, init' _⟩
+  have ind' : ∀ (i : ℕ) (f : ℝ × X → Y), (∀ p, PP₀ p f) → PP₂ i f → (∀ j < i, ∀ p, PP₁ j p f) →
+      ∃ f' : ℝ × X → Y, (∀ p, PP₀ p f') ∧ (PP₂ i.succ f') ∧
+        (∀ j ≤ i, ∀ p, PP₁ j p f') ∧ ∀ p ∉ Ici (T i) ×ˢ W i, f' p = f p := by
+    rintro i F h₀F h₂F h₁F
+    replace h₁F : ∀ᶠ x : X near ⋃ j < i, K j, P₁ x fun x ↦ F (T i, x) := by
+      rw [eventually_nhdsSet_iUnion₂]
+      intro j hj
+      have : ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' ↦ F (1, x') := fun x ↦
+        h₁F j hj (1, x) rfl
+      apply (forall_restrictGermPredicate_iff.mp this).germ_congr_set
+      filter_upwards with x
+      rw [h₂F _ _ (T_lt _).le]
+    specialize ind i (fun x ↦ F (T i, x)) (fun x ↦ (h₀F (_, x)).1) h₁F
+    rcases ind with ⟨F', h₀F', h₁F', h₂F', hWF', hpast_F', hfutur_F'⟩
+    let F'' : ℝ × X → Y := fun p : ℝ × X ↦
+      if p.1 ≤ T i then F p else F' ((2 : ℝ) ^ (i + 1) * (p.1 - T i)) p.2
+    have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i → (F'' : Germ (𝓝 p) Y) = F := by
+      dsimp only [PP₂] at h₂F
+      rintro ⟨t, x⟩ (ht : t ≤ _)
+      rcases eq_or_lt_of_le ht with (rfl | ht)
+      · apply Quotient.sound
+        replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X ↦ F (T i, q.2) := by
+          have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet right_mem_Iic
+          apply mem_of_superset (prod_mem_nhds (hpast_F'.filter_mono this) univ_mem)
+          rintro ⟨t', x'⟩ ⟨ht', -⟩
+          exact (congr_fun ht' x' : _)
+        have lim : Tendsto (fun x : ℝ × X ↦ ((2 : ℝ) ^ (i + 1) * (x.1 - T i), x.2))
+            (𝓝 (T i, x)) (𝓝 (0, x)) := by
+          rw [nhds_prod_eq, nhds_prod_eq]
+          have limt : Tendsto (fun t ↦ (2 : ℝ) ^ (i + 1) * (t - T i)) (𝓝 (T i)) (𝓝 0) :=
+            Continuous.tendsto' (by continuity) _ _ (by simp)
+          exact limt.prod_map tendsto_id
+        filter_upwards [hpast_F'.comp_tendsto lim]
+        dsimp [F'']
+        rintro ⟨t, x⟩ h'
+        split_ifs with h
+        · rfl
+        · push_neg at h
+          change (↿F') ((2 : ℝ) ^ (i + 1) * (t - T i), x) = _
+          rw [h', h₂F x t h.le]
+      · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i :=
+          continuousAt_fst (p := (t, x)) (Iic_mem_nhds ht)
+        apply Quotient.sound
+        exact hp.mono fun p hp ↦ if_pos hp
+    have loc₂ : ∀ p : ℝ × X, p.1 > T i →
+        (F'' : Germ (𝓝 p) Y) = fun p : ℝ × X ↦ F' ((2 : ℝ) ^ (i + 1) * (p.1 - T i)) p.2 := by
+      rintro ⟨t, x⟩ ht
+      apply Quotient.sound
+      have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), ¬p.1 ≤ T i := by
+        apply mem_of_superset (prod_mem_nhds (Ioi_mem_nhds ht) univ_mem)
+        rintro ⟨t', x'⟩ ⟨ht', -⟩
+        simpa using ht'
+      exact hp.mono fun q hq ↦ if_neg hq
+    refine ⟨F'', ?_, ?_, ?_, ?_⟩
+    · rintro p
+      by_cases ht : p.1 ≤ T i
+      · rw [loc₁ _ ht]
+        apply h₀F
+      · push_neg at ht
+        cases' p with t x
+        rw [loc₂ _ ht]
+        refine ⟨h₀F' ((2 : ℝ) ^ (i + 1) * (t - T i)) x, ?_, ?_⟩
+        · rintro (rfl : t = 0)
+          exact (lt_irrefl _ ((T_nonneg i).trans_lt ht)).elim
+        · simpa only [mul_sub, neg_mul]
+            using hP₂ ((2 : ℝ) ^ (i + 1)) (-(2 : ℝ) ^ (i + 1) * T i)
+              (t, x) (↿F') (h₂F' _)
+    · intro x t ht
+      have h₂t : ¬t ≤ T i := by
+        exact ((T_lt_succ i).trans_le ht).not_le
+      dsimp only [F'']
+      rw [if_neg h₂t, if_neg]
+      · rw [hfutur_F'.self_of_nhdsSet, mul_T_succ_sub]
+        conv =>
+          rw [mem_Ici]
+          congr
+          rw [← mul_T_succ_sub i]
+        exact mul_le_mul_of_nonneg_left (sub_le_sub_right ht _) (pow_nonneg zero_le_two _)
+      · push_neg
+        apply T_lt_succ
+    · rintro j hj ⟨t, x⟩ (rfl : t = 1)
+      replace h₁F' := eventually_nhdsSet_iUnion₂.mp h₁F' j hj
+      rw [loc₂ (1, x) (T_lt i)]
+      revert x
+      change ∀ x : X, RestrictGermPredicate P₁ (K j) x fun x' : X ↦
+          F' ((2 : ℝ) ^ (i + 1) * (1 - T i)) x'
+      rw [forall_restrictGermPredicate_iff]
+      apply h₁F'.germ_congr_set
+      filter_upwards
+      apply congr_fun (hfutur_F'.self_of_nhdsSet _ _)
+      rw [mem_Ici]
+      conv => congr; skip; rw [← mul_T_succ_sub i]
+      exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
+    · rintro ⟨t, x⟩ htx
+      simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
+      cases' htx with ht hx
+      · change (↑F'' : Germ (𝓝 (t, x)) Y).value = (↑F : Germ (𝓝 (t, x)) Y).value
+        rw [loc₁ (t, x) ht.le]
+      · dsimp only [F'']
+        split_ifs with ht
+        · rfl
+        · rw [hWF' _ x hx]
+          push_neg at ht
+          rw [h₂F x _ ht.le]
+  rcases inductive_construction PP₀ PP₁ PP₂ (W_fin.prod_left fun i ↦ Ici (T i))
+      ⟨fun p ↦ f₀ p.2, hPP₀, fun x t _ ↦ rfl⟩ ind' with
+    ⟨F, hF, h'F⟩
+  clear ind ind' hPP₀
+  refine ⟨curry F, ?_, ?_, ?_, ?_⟩
+  · exact funext fun x ↦ (hF (0, x)).2.1 rfl
+  · exact fun t x ↦ (hF (t, x)).1
+  · intro x
+    obtain ⟨j, hj⟩ : ∃ j, x ∈ K j := by simpa using (by simp [K_cover] : x ∈ ⋃ j, K j)
+    exact (h'F j (1, x) rfl hj).self_of_nhds
+  · exact fun p ↦ (hF p).2.2
 
 end Htpy
