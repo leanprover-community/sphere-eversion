@@ -1,11 +1,11 @@
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
 import Mathlib.Topology.Algebra.Order.Compact
-import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
+import Mathlib.Topology.MetricSpace.PartitionOfUnity
 
 noncomputable section
 
@@ -226,10 +226,11 @@ open Function
 
 universe u
 
-variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
+variable {F H : Type*} {M : Type u} [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
   [TopologicalSpace M] [ChartedSpace H M] [T2Space M] [LocallyCompactSpace M] [SigmaCompactSpace M]
   (IF : ModelWithCorners ℝ F H) [SmoothManifoldWithCorners IF M]
 
+variable (M) in
 /- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms.
 
 Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `ContDiff`
@@ -284,9 +285,9 @@ theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomo
       (extChartAt IF x).symm '' range f := by
   rw [coe_openSmoothEmbOfDiffeoSubsetChartTarget, range_comp]
 
-variable {M} (F)
 variable [IF.Boundaryless] [FiniteDimensional ℝ F]
 
+variable (F) in
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
     ∃ (ι' : Type u) (t : Set ι') (φ : t → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M),
@@ -337,22 +338,41 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr)
   · simpa only [iUnion_coe_set] using ht₃
 
-variable [Nonempty M]
+variable
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
+  {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [I'.Boundaryless]
+  {M' : Type*} [MetricSpace M'] [SigmaCompactSpace M'] [LocallyCompactSpace M']
+  [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
 
-theorem nice_atlas {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
-    (cov : (⋃ j, s j) = univ) :
-    ∃ n, ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
-        (∀ i, ∃ j, range (φ i) ⊆ s j) ∧
-          (LocallyFinite fun i ↦ range (φ i)) ∧ (⋃ i, φ i '' ball 0 1) = univ := by
-  obtain ⟨ι', t, φ, h₁, h₂, h₃, h₄⟩ := nice_atlas' F IF s_op cov (ball 0 1) (by simp) isOpen_ball
-  have htne : t.Nonempty := by
-    by_contra contra
-    simp only [iUnion_coe_set, not_nonempty_iff_eq_empty.mp contra, mem_empty_iff_false,
-      iUnion_of_empty, iUnion_empty, eq_comm (b := univ), univ_eq_empty_iff] at h₄
-    exact not_isEmpty_of_nonempty M h₄
-  obtain ⟨n, ⟨fn⟩⟩ := (Set.countable_iff_exists_nonempty_indexType_equiv htne).mp h₁
-  refine ⟨n, φ ∘ fn, fun i ↦ h₂ (fn i), h₃.comp_injective fn.injective, ?_⟩
-  erw [fn.surjective.iUnion_comp fun i ↦ φ i '' ball 0 1, h₄]
+theorem exists_stability_dist {f : M → M'} (hf : Continuous f) :
+    ∃ ε : M → ℝ, (∀ m, 0 < ε m) ∧ Continuous ε ∧
+      ∀ x : M,
+        ∃ φ : OpenSmoothEmbedding 𝓘(ℝ, F) F IF M,
+        ∃ ψ : OpenSmoothEmbedding 𝓘(ℝ, E') E' I' M',
+          x ∈ range φ ∧
+          ∀ (g : M → M'), (∀ m, dist (g m) (f m) < ε m) → range (g ∘ φ) ⊆ range ψ := by
+  obtain ⟨ι', t, ψ, -, -, hψ, h2ψ⟩ := nice_atlas' (M := M') E' I' (fun _ : Unit ↦ isOpen_univ)
+    (iUnion_const univ) (ball 0 1) (by simp) isOpen_ball
+  obtain ⟨ι, s, φ, -, hψφ, -, h2φ⟩ := nice_atlas' (M := M) F IF
+    (fun i' ↦ ((ψ i').isOpenMap _ isOpen_ball).preimage hf)
+    (by rw [← preimage_iUnion, h2ψ, preimage_univ])
+    (ball 0 1) (by simp) isOpen_ball --_ (mem_univ _) isOpen_univ
+  let K : t → Set M' := fun i ↦ ψ i '' closedBall 0 1
+  let U : t → Set M' := fun i ↦ range (ψ i)
+  have hK : ∀ i, IsClosed (K i) := fun i ↦
+    (isCompact_closedBall 0 1).image (ψ i).continuous |>.isClosed
+  have hK' : LocallyFinite K := hψ.subset fun i ↦ image_subset_range (ψ i) (closedBall 0 1)
+  have hU : ∀ i, IsOpen (U i) := fun i ↦ (ψ i).isOpen_range
+  have hKU : ∀ i, K i ⊆ U i := fun i ↦ image_subset_range _ _
+  obtain ⟨δ, hδ₀, hδ₁⟩ := exists_continuous_real_forall_closedBall_subset hK hU hKU hK'
+  refine ⟨δ ∘ f, fun m ↦ hδ₀ (f m), by fun_prop, fun x ↦ ?_⟩
+  obtain ⟨i, hi⟩ := mem_iUnion.mp <| eq_univ_iff_forall.mp h2φ x
+  obtain ⟨j, hj⟩ := hψφ i
+  use φ i, ψ j, mem_range_of_mem_image (φ i) _ hi, fun g hg ↦ ?_
+  rintro - ⟨e, rfl⟩
+  have hi : f (φ i e) ∈ K j :=
+    image_subset _ ball_subset_closedBall (hj (mem_range_self e))
+  exact hδ₁ j (f <| φ i e) hi (le_of_lt (hg _))
 
 end WithoutBoundary
 

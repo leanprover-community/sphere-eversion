@@ -3,10 +3,8 @@ import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Data.Complex.Abs
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Data.Set.Lattice
-import SphereEversion.Indexing
+import SphereEversion.ToMathlib.Data.Nat.Basic
 import SphereEversion.Notations
-
--- set_option trace.filter_inst_type true
 
 open Set Filter Function
 
@@ -21,7 +19,7 @@ topological argument from the things specific to loops or homotopies of jet sect
 
 First there is a lemma `inductive_construction` which abstracts the locally ultimately constant
 arguments, assuming we work with a fixed covering. It builds on
-`LocallyFinite.exists_forall_eventually_of_indexType`.
+`LocallyFinite.exists_forall_eventually`.
 
 From `inductive_construction` alone we deduce `inductive_htpy_construction` which builds a homotopy
 in a similar context. This is meant to be used to go from Chapter 2 to Chapter 3.
@@ -30,17 +28,12 @@ Combining `inductive_construction` with an argument using local existence and ex
 get `inductive_construction_of_loc` building a function from local existence and patching
 assumptions. It also has a version `relative_inductive_construction_of_loc` which does this
 relative to a closed set. This is used for `exists_surrounding_loops`.
-
-This file also contains supporting lemmas about `IndexType`. A short term goal will be to
-get rid of the `indexing` abstraction and do everything in terms of `IndexType`, unless
-`indexing` makes those supporting lemmas really cleaner to prove.
 -/
 
 
 section inductive_construction
 
--- step 3
-theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [TopologicalSpace X]
+theorem LocallyFinite.exists_forall_eventually {α X : Type*} [TopologicalSpace X]
     {f : ℕ → X → α} {V : ℕ → Set X} (hV : LocallyFinite V)
     (h : ∀ n : ℕ, ∀ x ∉ V (n + 1), f (n + 1) x = f n x) :
     ∃ F : X → α, ∀ x : X, ∀ᶠ n in Filter.atTop, f n =ᶠ[𝓝 x] F := by
@@ -77,7 +70,7 @@ theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {U : ℕ → S
   obtain ⟨f, hf⟩ : ∃ f : ℕ → X → Y, ∀ n, P n (f n) ∧ Q n (f n) (f n.succ) := by
     apply exists_by_induction'
     · rcases init with ⟨f₀, h₀f₀, h₁f₀⟩
-      rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp [IndexType.not_lt_zero]) with ⟨f', h₀f', h₂f', h₁f', -⟩
+      rcases ind 0 f₀ h₀f₀ h₁f₀ (by simp) with ⟨f', h₀f', h₂f', h₁f', -⟩
       exact ⟨f', h₀f', h₂f', h₁f'⟩
     · rintro n f ⟨h₀f, h₂f, h₁f⟩
       rcases ind _ f h₀f h₂f fun j hj ↦ h₁f _ <| j.le_of_lt_succ hj with
@@ -86,7 +79,7 @@ theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {U : ℕ → S
   dsimp only [P] at hf
   simp only [forall_and] at hf
   rcases hf with ⟨⟨h₀f, -, h₁f⟩, hfU⟩
-  rcases U_fin.exists_forall_eventually_of_indexType hfU with ⟨F, hF⟩
+  rcases U_fin.exists_forall_eventually hfU with ⟨F, hF⟩
   refine ⟨F, fun x ↦ ?_, fun j ↦ ?_⟩
   · rcases(hF x).exists with ⟨n₀, hn₀⟩
     simp only [Germ.coe_eq.mpr hn₀.symm, h₀f n₀ x]

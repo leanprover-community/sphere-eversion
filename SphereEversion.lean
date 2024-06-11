@@ -1,7 +1,6 @@
 import SphereEversion.Global.Gromov
 import SphereEversion.Global.Immersion
 import SphereEversion.Global.Localisation
-import SphereEversion.Global.LocalisationData
 import SphereEversion.Global.LocalizedConstruction
 import SphereEversion.Global.OneJetBundle
 import SphereEversion.Global.OneJetSec
@@ -9,7 +8,6 @@ import SphereEversion.Global.ParametricityForFree
 import SphereEversion.Global.Relation
 import SphereEversion.Global.SmoothEmbedding
 import SphereEversion.Global.TwistOneJetSec
-import SphereEversion.Indexing
 import SphereEversion.InductiveConstructions
 import SphereEversion.Local.AmpleRelation
 import SphereEversion.Local.Corrugation

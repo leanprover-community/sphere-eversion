@@ -1,4 +1,3 @@
-import SphereEversion.Global.LocalisationData
 import SphereEversion.Global.LocalizedConstruction
 import SphereEversion.Global.ParametricityForFree
 import SphereEversion.ToMathlib.Logic.Basic
