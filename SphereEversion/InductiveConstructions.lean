@@ -499,8 +499,8 @@ theorem inductive_htpy_construction {X Y : Type*}
         have lim : Tendsto (fun x : ℝ × X ↦ ((2 : ℝ) ^ (i + 1) * (x.1 - T i), x.2))
             (𝓝 (T i, x)) (𝓝 (0, x)) := by
           rw [nhds_prod_eq, nhds_prod_eq]
-          have limt : Tendsto (fun t ↦ (2 : ℝ) ^ (i + 1) * (t - T i)) (𝓝 (T i)) (𝓝 0) :=
-            Continuous.tendsto' (by continuity) _ _ (by simp)
+          have limt : Tendsto (fun t : ℝ ↦ (2 : ℝ) ^ (i + 1) * (t - T i)) (𝓝 (T i)) (𝓝 0) :=
+            Continuous.tendsto' (by fun_prop) _ _ (by simp)
           exact limt.prod_map tendsto_id
         filter_upwards [hpast_F'.comp_tendsto lim]
         dsimp [F'']
