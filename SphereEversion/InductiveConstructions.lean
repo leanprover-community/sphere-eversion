@@ -140,24 +140,24 @@ theorem inductive_construction_of_loc {X Y : Type*} [EMetricSpace X] [LocallyCom
   exact (h' j x hj).self_of_nhds
 
 theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X]
-    {K : Set X} (hK : IsClosed K) {U₁ U₂ K₁ K₂ : Set X} (U₁_op : IsOpen U₁)
+    {C : Set X} (hC : IsClosed C) {U₁ U₂ K₁ K₂ : Set X} (U₁_op : IsOpen U₁)
     (U₂_op : IsOpen U₂) (K₁_cpct : IsCompact K₁) (K₂_cpct : IsCompact K₂) (hK₁U₁ : K₁ ⊆ U₁)
-    (hK₂U₂ : K₂ ⊆ U₂) (U : Set X) (U_op : IsOpen U) (hKU : K ⊆ U) :
+    (hK₂U₂ : K₂ ⊆ U₂) (U : Set X) (U_op : IsOpen U) (hKU : C ⊆ U) :
     ∃ K₁' K₂' U₁' U₂',
       IsOpen U₁' ∧ IsOpen U₂' ∧ IsCompact K₁' ∧ IsCompact K₂' ∧ K₁ ⊆ K₁' ∧ K₁' ⊆ U₁' ∧ K₂' ⊆ U₂' ∧
-      K₁' ∪ K₂' = K₁ ∪ K₂ ∧ K ⊆ U₂'ᶜ ∧ U₁' ⊆ U ∪ U₁ ∧ U₂' ⊆ U₂ := by
-  obtain ⟨U', U'_op, hKU', hU'U⟩ : ∃ U' : Set X, IsOpen U' ∧ K ⊆ U' ∧ closure U' ⊆ U :=
-    normal_exists_closure_subset hK U_op hKU
-  refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact IsOpen.union U₁_op U_op
-  · exact IsOpen.sdiff U₂_op hK
-  · refine IsCompact.union K₁_cpct ?_
+      K₁' ∪ K₂' = K₁ ∪ K₂ ∧ U₁' ⊆ U₁ ∪ U ∧ U₂' ⊆ U₂ \ C := by
+  obtain ⟨U', U'_op, hKU', hU'U⟩ : ∃ U' : Set X, IsOpen U' ∧ C ⊆ U' ∧ closure U' ⊆ U :=
+    normal_exists_closure_subset hC U_op hKU
+  refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ C,
+    ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, subset_rfl, subset_rfl⟩
+  · exact U₁_op.union U_op
+  · exact U₂_op.sdiff hC
+  · refine K₁_cpct.union ?_
     refine K₂_cpct.closure_of_subset ?_
     exact inter_subset_left
-  · exact IsCompact.diff K₂_cpct U'_op
+  · exact K₂_cpct.diff U'_op
   · exact subset_union_left
-  · apply union_subset_union
-    exact hK₁U₁
+  · apply union_subset_union hK₁U₁
     apply subset_trans _ hU'U
     gcongr
     exact inter_subset_right
@@ -171,10 +171,6 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
       · exact diff_subset
     · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
         _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
-  · intro x hx hx'
-    exact hx'.2 hx
-  · rw [union_comm]
-  · exact diff_subset
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
@@ -187,14 +183,14 @@ This is deduced this version from the version where `K` is empty but adding some
 `inductive_construction_of_loc`. -/
 theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     [LocallyCompactSpace X] [SecondCountableTopology X] (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
-    {K : Set X} (hK : IsClosed K) {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near K, P₁ x f₀)
+    {C : Set X} (hC : IsClosed C) {f₀ : X → Y} (hP₀f₀ : ∀ x, P₀ x f₀) (hP₁f₀ : ∀ᶠ x near C, P₁ x f₀)
     (loc : ∀ x, ∃ f : X → Y, (∀ x, P₀ x f) ∧ ∀ᶠ x' in 𝓝 x, P₁ x' f)
     (ind : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
       IsOpen U₁ → IsOpen U₂ → IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
       (∀ x, P₀ x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →
       ∃ f : X → Y, (∀ x, P₀ x f) ∧ (∀ᶠ x near K₁ ∪ K₂, P₁ x f) ∧ ∀ᶠ x near K₁ ∪ U₂ᶜ, f x = f₁ x) :
-    ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x := by
-  let P₀' : ∀ x : X, Germ (𝓝 x) Y → Prop := RestrictGermPredicate (fun x φ ↦ φ.value = f₀ x) K
+    ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near C, f x = f₀ x := by
+  let P₀' : ∀ x : X, Germ (𝓝 x) Y → Prop := RestrictGermPredicate (fun x φ ↦ φ.value = f₀ x) C
   have hf₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀ := fun x ↦
     ⟨hP₀f₀ x, fun _ ↦ eventually_of_forall fun x' ↦ rfl⟩
   have ind' : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
@@ -205,23 +201,26 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     intro U₁ U₂ K₁ K₂ f₁ f₂ U₁_op U₂_op K₁_cpct K₂_cpct hK₁U₁ hK₂U₂ hf₁ hf₂ hf₁U₁ hf₂U₂
     obtain ⟨h₀f₁, h₀'f₁⟩ := forall_and.mp hf₁
     rw [forall_restrictGermPredicate_iff] at h₀'f₁
-    rcases(hasBasis_nhdsSet K).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U,
+    rcases(hasBasis_nhdsSet C).mem_iff.mp (hP₁f₀.germ_congr_set h₀'f₁) with ⟨U,
       ⟨U_op, hKU⟩, hU : ∀ {x}, x ∈ U → P₁ x f₁⟩
     obtain ⟨K₁', K₂', U₁', U₂', U₁'_op, U₂'_op, K₁'_cpct, K₂'_cpct, hK₁K₁', hK₁'U₁', hK₂'U₂',
-        hK₁'K₂', hKU₂', hU₁'U, hU₂'U₂⟩ : ∃ (K₁' K₂' U₁' U₂' : Set X),
+        hK₁'K₂', hU₁'U, hU₂'⟩ : ∃ (K₁' K₂' U₁' U₂' : Set X),
         IsOpen U₁' ∧ IsOpen U₂' ∧ IsCompact K₁' ∧ IsCompact K₂' ∧
-        K₁ ⊆ K₁' ∧ K₁' ⊆ U₁' ∧ K₂' ⊆ U₂' ∧ K₁' ∪ K₂' = K₁ ∪ K₂ ∧ K ⊆ U₂'ᶜ ∧
-        U₁' ⊆ U ∪ U₁ ∧ U₂' ⊆ U₂ := by
+        K₁ ⊆ K₁' ∧ K₁' ⊆ U₁' ∧ K₂' ⊆ U₂' ∧ K₁' ∪ K₂' = K₁ ∪ K₂ ∧
+        U₁' ⊆ U₁ ∪ U ∧ U₂' ⊆ U₂ \ C := by
       apply set_juggling <;> assumption
     have hU₁'P₁ : ∀ x ∈ U₁', P₁ x ↑f₁ :=
-      fun x hx ↦ (hU₁'U hx).casesOn (fun h _ ↦ hU h) (fun h _ ↦ hf₁U₁ x h) (hU₁'U hx)
+      fun x hx ↦ (hU₁'U hx).casesOn (fun h _ ↦ hf₁U₁ x h) (fun h _ ↦ hU h) (hU₁'U hx)
     rcases ind U₁'_op U₂'_op K₁'_cpct K₂'_cpct hK₁'U₁' hK₂'U₂' h₀f₁ hf₂ hU₁'P₁
-      (fun x hx ↦ hf₂U₂ x (hU₂'U₂ hx)) with ⟨f, h₀f, hf, h'f⟩
+      (fun x hx ↦ hf₂U₂ x (mem_of_mem_diff (hU₂' hx))) with ⟨f, h₀f, hf, h'f⟩
     refine ⟨f, fun x ↦ ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 ?_⟩, ?_, ?_⟩
-    · exact h'f.filter_mono (nhdsSet_mono <| subset_union_of_subset_right hKU₂' K₁')
+    · refine h'f.filter_mono <| nhdsSet_mono ?_
+      refine subset_union_of_subset_right ?_ K₁'
+      rw [subset_compl_comm]
+      exact hU₂'.trans <| diff_subset_compl ..
     · rwa [hK₁'K₂'] at hf
     · apply h'f.filter_mono (nhdsSet_mono <| ?_)
-      exact union_subset_union hK₁K₁' <| compl_subset_compl_of_subset hU₂'U₂
+      exact union_subset_union hK₁K₁' <| compl_subset_compl.mpr <| hU₂'.trans diff_subset
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
   exact ⟨f, ⟨hf.1, hf.2.2⟩, hf.2.1⟩
@@ -308,9 +307,8 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X]
       apply (forall_restrictGermPredicate_iff.mp this).germ_congr_set
       filter_upwards with x
       rw [h₂F _ _ (T_lt _).le]
-    rcases ind i (fun x ↦ F (T i, x)) (fun x ↦ (h₀F (_, x)).1) h₁F with
-        ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩
-    clear ind
+    specialize ind i (fun x ↦ F (T i, x)) (fun x ↦ (h₀F (_, x)).1) h₁F
+    rcases ind with ⟨F', h₀F', h₁F', h₂F', hUF', hpast_F', hfutur_F'⟩
     let F'' : ℝ × X → Y := fun p : ℝ × X ↦
       if p.1 ≤ T i then F p else F' ((2 : ℝ) ^ (i + 1) * (p.1 - T i)) p.2
     have loc₁ : ∀ p : ℝ × X, p.1 ≤ T i → (F'' : Germ (𝓝 p) Y) = F := by
@@ -326,8 +324,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X]
         have lim : Tendsto (fun x : ℝ × X ↦ ((2 : ℝ) ^ (i + 1) * (x.1 - T i), x.2))
             (𝓝 (T i, x)) (𝓝 (0, x)) := by
           rw [nhds_prod_eq, nhds_prod_eq]
-          have limt : Tendsto (fun t ↦ (2 : ℝ) ^ (i + 1) * (t - T i))
-              (𝓝 (T i)) (𝓝 0) :=
+          have limt : Tendsto (fun t ↦ (2 : ℝ) ^ (i + 1) * (t - T i)) (𝓝 (T i)) (𝓝 0) :=
             Continuous.tendsto' (by continuity) _ _ (by simp)
           exact limt.prod_map tendsto_id
         filter_upwards [hpast_F'.comp_tendsto lim]
@@ -343,8 +340,8 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X]
         apply Quotient.sound
         exact hp.mono fun p hp ↦ if_pos hp
     have loc₂ : ∀ p : ℝ × X, p.1 > T i →
-        (F'' : Germ (𝓝 p) Y) = fun p : ℝ × X ↦
-          F' ((2 : ℝ) ^ (i + 1) * (p.1 - T i)) p.2 := fun (t, x) ht ↦ by
+        (F'' : Germ (𝓝 p) Y) = fun p : ℝ × X ↦ F' ((2 : ℝ) ^ (i + 1) * (p.1 - T i)) p.2 := by
+      rintro ⟨t, x⟩ ht
       apply Quotient.sound
       have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), ¬p.1 ≤ T i := by
         apply mem_of_superset (prod_mem_nhds (Ioi_mem_nhds ht) univ_mem)
@@ -423,16 +420,17 @@ theorem inductive_htpy_construction {X Y : Type*}
     (hP₂' : ∀ t x (f : X → Y), P₀ x f → P₂ (t, x) fun p : ℝ × X ↦ f p.2)
     {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
     (ind : ∀ x, ∃ V ∈ 𝓝 x, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
-      ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
-      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
+      ∀ (K : Set X) (f : X → Y), IsCompact K → (∀ x, P₀ x f) →
+      (∀ᶠ x near K, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near K ∪ K₀, P₁ x <| F 1) ∧
         (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
           (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
     ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
-  let P (V : Set X) : Prop :=  ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
-      ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
-      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
-        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
-          (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1
+  let P (V : Set X) : Prop :=
+    ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
+    ∀ (K : Set X) (f : X → Y), IsCompact K → (∀ x, P₀ x f) → (∀ᶠ x near K, P₁ x f) →
+      ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near K ∪ K₀, P₁ x <| F 1) ∧
+      (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
+      (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1
   have P_anti : Antitone P := fun U V UV hV K₁ K₁U ↦ hV K₁ (K₁U.trans UV)
   have P_empty : P ∅ := by
     intro K₁ K₁V K₀ K₀K₁ _ _ C f _ hf hf'
@@ -449,7 +447,7 @@ theorem inductive_htpy_construction {X Y : Type*}
   obtain ⟨K₁, K₁_cpct, KiK₁, K₁W⟩ : ∃ K₁, IsCompact K₁ ∧ K i ⊆ interior K₁ ∧ K₁ ⊆ W i :=
     exists_compact_between (K_cpct i) (W_op i) (K_subW i)
   rcases hW i K₁ K₁W (K i) KiK₁ (K_cpct i) K₁_cpct (⋃ j < i, K j) f
-    ((finite_lt_nat i).isClosed_biUnion fun j _ ↦ (K_cpct j).isClosed) hf₀ hf₁
+    ((finite_lt_nat i).isCompact_biUnion fun j _ ↦ K_cpct j) hf₀ hf₁
     with ⟨F, hF₀, hF₁, hF₂, hFK₁, ht⟩
   refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
   apply hF₁.filter_mono
