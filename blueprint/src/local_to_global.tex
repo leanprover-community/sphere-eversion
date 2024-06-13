@@ -1,6 +1,10 @@
 \chapter{From local to global}%
 \label{cha:from_local_to_global}
 
+\section{Main definitions and results}%
+\label{sec:Main definitions and results}
+
+
 In this chapter, we gather some topological preliminaries allowing to build
 global objects from local ones. This is usually not discussed in informal expositions
 where such arguments are either implicit or interspersed with more specific arguments.
@@ -61,13 +65,13 @@ This extra control explains why the gluing assumption is slightly assymmetrical.
 
 We will also need a version of the above lemma that builds a homotopy of
 functions from the initial function $f₀$ to the final one $f$. In our
-application of this lemma, the predicate $P₀$ will caracterize formal solutions
+application of this lemma, the predicate $P₀$ will characterize formal solutions
 of a partial differential relations that are close to a given one, the
 predicate $P₂$ will simply be smoothness, and $P₁$ will be being holonomic.
 
 
 \begin{lemma}
-  \label{lem:inductive_htpy_construction}\lean{inductive_htpy_construction}\leanok
+  \label{lem:inductive_htpy_construction_of_loc}\lean{inductive_htpy_construction}\leanok
   Let $X$ be a second countable locally compact metrizable topological space.
   Let $P₀$ and $P₁$ be local predicates on maps from $X$ to a set $Y$.
 
@@ -327,7 +331,8 @@ arbitrary local predicates.
   \end{itemize}
 \end{lemma}
 
-\begin{proof}\leanok\uses{lem:inductive_construction, def:restrict_germ_predicate}
+\begin{proof}[Proof of \cref{lem:inductive_htpy_construction}]
+  \leanok\uses{lem:inductive_construction, def:restrict_germ_predicate}
   Carefully checking all details is a bit technical but the strategy is as follows.
   We fix an increasing sequence $T \co \IT{N} → [0, 1)$ starting at $0$,
   say $i ↦ 1 - 1/2^i$.
