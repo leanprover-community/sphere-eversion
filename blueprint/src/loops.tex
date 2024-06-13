@@ -574,50 +574,6 @@ explicit use of a partition of unity. Motivated in particular by formalization
 purposes, we will first state more abstract versions whose statements do not involve
 any partition of unity but directly state a local-to-global property.
 
-\begin{lemma}
-  \label{lem:exists_cont_diff_of_convex}
-  \lean{exists_contDiff_of_convex}
-  \leanok
-  Let $E$ and $F$ be real normed vector spaces. Assume that $E$ is finite
-  dimensional. Let $P$ be a predicate on $E \times F$ such that for all $x$ in
-  $E$, $\{y ~|~ P (x, y) \}$ is convex. Let $n$ be a natural number or $+\infty$.
-  Assume that every $x$ has a neighbourhood $U$ on which there exists a $\C^n$
-  function $f$ such that $\forall x ∈ U, P(x, f(x))$. Then there is a global
-  $\C^n$ function $f$ such that $\forall x, P(x, f(x))$.
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  The assumption give us an open cover $(U_i)_{i ∈ I}$ of $E$ and functions
-  $f_i \co E → F$ that are smooth on $U_i$ and such that $P(x, f_i(x))$ for all $x$ in $U_i$.
-  Let $ρ$ be a smooth partition of unity associated to this cover. The function
-  $f = ∑ ρ_i f_i$ is smooth on $E$ and the convexity assumption on $P$ ensures
-  it satisfies $\forall x, P(x, f(x))$. Indeed each value $f(x)$ is a convex combination
-  of finitely many values $f_i(x)$ where $i$ satisfies that $x$ is in $U_i$.
-\end{proof}
-
-We will also need a version where $F$ is a space of smooth functions. Since
-there is no relevant norm to put on such a space, we cannot deduce this version
-from the above one.
-
-\begin{lemma}
-  \label{lem:exists_cont_diff_of_convex₂}
-  \lean{exists_contDiff_of_convex₂}
-  \leanok
-  Let $E₁$, $E₂$ and $F$ be real vector spaces. Assume $E₁$ and $E₂$ are finite dimensional.
-  Let $n$ be a natural number or $+\infty$. Let $P$ be a property
-  of pairs $(x, f)$ with $x ∈ E₁$ and $f : E₂ → F$. Assume that, for every $x$, the space
-  of functions $f$ such that $P(x, f)$ holds is convex. Assume that for every $x₀$
-  in $E₁$ there is a neighborhood $U$ of $x₀$ and a function $φ : E₁ × E₂ → F$ which is
-  $\C^n$ on $U × E₂$ and such that $P(x, φ(x, \cdot))$ holds for every $x$ in $U$.
-  There there is a global $\C^n$ function $φ \co E₁ × E₂ → F$ such that
-  $P(x, φ(x, \cdot))$ holds for every $x$.
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  This is completely analogous to the previous proof.
-\end{proof}
 
 \begin{lemma}
 \label{lem:reparametrization}

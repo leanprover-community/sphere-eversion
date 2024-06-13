@@ -5,6 +5,147 @@ In this chapter, we gather some topological preliminaries allowing to build
 global objects from local ones. This is usually not discussed in informal expositions
 where such arguments are either implicit or interspersed with more specific arguments.
 
+Before going from local to global, we need to define precisely what is a local
+property. We will use the language of germs of functions.
+One can define germs with respect to any filter but
+we will need only the case of neighborhood filters~: two functions $f$ and $g$
+define the same germ at some point $x$ if they coincide near $x$.
+
+\begin{definition}\label{def:germ}\lean{Filter.Germ}\leanok
+  Let $X$ be a topological space, $x$ a point in $X$ and $Y$ a set. A germ of function
+  from $X$ to $Y$ at $x$ is an element of the quotient $(X → Y)_x$ of the set of functions
+  from $X$ to $Y$ by the relation $f ∼ g$ if $f$ and $g$ coincide near $x$. The image
+  of a function $f$ in this quotient will be denoted by $[f]_x$.
+
+  A local predicate on functions from $X$ to $Y$ is a family $P$ of predicates on the
+  germ set $(X → Y)_x$ for every $x$ in $X$. We say that a function $f$
+  satisfies $P$ at $x$ if $P [f]_x$ holds, and $f$ satisfies $P$ if it
+  satisfies $P$ at every point.
+\end{definition}
+
+For instance if $Y$ is also equipped with a topology then continuity is
+(equivalent to) a local predicate on functions from $X$ to $Y$ since a function
+is continuous if and only if it is continuous at every point $x$ and this
+condition only depends on the germ of the function at $x$.
+
+The first main result of this chapter is constructing a constrained global
+function on a nice topological space (for instance a manifold). It features a
+background local predicate $P₀$ statisfied by all maps entering the discussion.
+This could be continuity or differentiability of the map for instance. The
+assumptions are that local solutions exist near each points and that solutions
+can be glued. We also assume we start with a function $f₀$ that is a solution
+near a closed set $C$, and we want a global solution that matches $f₀$ near $C$.
+This extra control explains why the gluing assumption is slightly assymmetrical.
+
+\begin{lemma}
+  \label{lem:relative_inductive_construction_of_loc}
+  \lean{relative_inductive_construction_of_loc}\leanok
+  Let $X$ a second countable locally compact metrizable topological space. Let $P₀$
+  and $P₁$ be local predicates on functions from $X$ to a set $Y$.
+  Let $K$ be a closed subset of $X$.
+  Let $f₀ \co X → Y$ be a function satisfying $P₀$ and satisfying $P₁$ near $K$.
+  Assume that
+  \begin{itemize}
+    \item
+      For every $x$ in $X$, there exists a function $f \co X → Y$ which
+      satisfies $P₀$ and satisfies $P₁$ near $x$.
+    \item
+      For every compact subsets $K₁$ and $K₂$ of $X$ and every open subsets $U₁$ and $U₂$
+      containing $K₁$ and $K₂$, for every function $f₁$ and $f₂$ satisfying $P₀$,
+      if $f₁$ satisfies $P₁$ on $U₁$ and if $f₂$ satisfies $P₁$ on $U₂$
+      then there exists $f$ which satisfies $P₀$, and satisfies $P₁$ near
+      $K₁ ∪ K₂$ and coincides with $f₁$ near $K₁$ and outside of $U₂$.
+  \end{itemize}
+  Then there exists $f$ which satisfies $P₀$ and $P₁$ and coincides with $f₀$ near $K$.
+\end{lemma}
+
+We will also need a version of the above lemma that builds a homotopy of
+functions from the initial function $f₀$ to the final one $f$. In our
+application of this lemma, the predicate $P₀$ will caracterize formal solutions
+of a partial differential relations that are close to a given one, the
+predicate $P₂$ will simply be smoothness, and $P₁$ will be being holonomic.
+
+
+\begin{lemma}
+  \label{lem:inductive_htpy_construction}\lean{inductive_htpy_construction}\leanok
+  Let $X$ be a second countable locally compact metrizable topological space.
+  Let $P₀$ and $P₁$ be local predicates on maps from $X$ to a set $Y$.
+
+  Let $P₂$ be a local predicate on maps from $ℝ × X → Y$. Assume that
+  for every $a$, $b$ and $t$ in $ℝ$, every $x$ in $X$ and every
+  $f \co ℝ × X → Y$, if $f$ satisfies $P“$ at $(at + b, x)$ then
+  $(t, x) ↦ f(at+b, x)$ satisfies $P₂$ at $(t, x)$. 
+  Assume also that, for every function $f : X → Y$ that satisfies $P₀$,
+  the function $(t, x) ↦ f(x)$ satisfies $P₂$.
+
+  Assume that every $x$ in $X$ has a neighborhood $V$ such that, for every
+  compact sets $K₀$ and $K₁$ with $K₀ ⊆ \mathrm{interior}(K₁)$ and $K₁ ⊆ V$,
+  for every compact set $K$ in $X$ and for every $f : X → Y$ that satisfies $P₀$ 
+  and satisfies $P₁$ near $K$, there is a homotopy $F : ℝ × X → Y$ relative to
+  $K₁$ of maps satisfying $P₀$ starting at $f$ which satisfies $P₂$ and such that 
+  $F(1, ·)$ satifies $P₁$ near $K ∪ K₀$.
+
+  Then there is a homotopy $F : ℝ × X → Y$ of maps satisfying $P₀$ starting at
+  $f₀$ which satisfies $P₂$ and such that 
+  $F(1, ·)$ satifies $P₁$.
+\end{lemma}
+
+The above inductive construction lemmas ask almost nothing about the local
+properties but explicitly ask for existence of gluings or local homotopies.
+We can also go from local to global by asking some convexity of the local
+properties, which allows to use partitions of unity techniques.
+
+In order to minimize the number of definitions in this section, we will now
+state two versions of this idea, but we will prove them using the same general
+lemma.
+
+\textbf{FIXME} we do not have a formalization of this general version. 
+Note in the master branch this is stated for trivial vector bundle over a vector
+space, but used also for trivial bundles over manifolds…
+The case of non-trivial bundles is useful to prove existence of Riemannian
+metrics for instance. Also note the blueprint does not say $M$ is finite
+dimensional because all manifolds are finite dimensional here.
+
+\begin{lemma}
+  \label{lem:exists_cont_diff_of_convex}
+  %\lean{exists_contDiff_of_convex}
+  %\leanok
+  Let $E$ be a vector bundle over a manifold $M$. 
+  Let $P$ be a predicate on $E$ such that for all $x$ in
+  $M$, $\{v \in E_x  \mid P v \}$ is convex. Let $n$ be a natural number or $+\infty$.
+  Assume that every $x$ has a neighbourhood $U$ on which there exists a $\C^n$
+  function $f$ such that $\forall x ∈ U, P(f(x))$. Then there is a global
+  $\C^n$ function $f$ such that $\forall x, P(f(x))$.
+\end{lemma}
+
+We will also need a parametric version of the above lemma. The version below is
+enough for our purposes, we won’t need a version for non-trivial bundles. In fact 
+we do not even need manifolds here, vector spaces would be enough.
+
+\begin{lemma}
+  \label{lem:exists_cont_diff_of_convex₂}
+  \lean{exists_contDiff_of_convex₂}
+  \leanok
+  Let $M₁$, $M₂$ be manifolds. Let $F$ be a real vector space.
+  Let $n$ be a natural number or $+\infty$. Let $P$ be a property
+  of pairs $(x, f)$ with $x ∈ M₁$ and $f : M₂ → F$. Assume that, for every $x$, the space
+  of functions $f$ such that $P(x, f)$ holds is convex. Assume that for every $x₀$
+  in $M₁$ there is a neighborhood $U$ of $x₀$ and a function $φ : M₁ × M₂ → F$ which is
+  $\C^n$ on $U × M₂$ and such that $P(x, φ(x, \cdot))$ holds for every $x$ in $U$.
+  There there is a global $\C^n$ function $φ \co M₁ × M₂ → F$ such that
+  $P(x, φ(x, \cdot))$ holds for every $x$.
+\end{lemma}
+
+\textbf{FIXME}: With the version above, the second lemma does not imply the
+first one, because it deals only with trivial bundles. We could either state the
+general version of the second lemma (but it would require formalization work) or
+downgrade the first lemma. We need the first lemma only in the trivial bundle
+case in this project, but the being able to say we cover existence of Riemannian
+metrics would be really nice.
+
+\section{Inductive constructions}%
+\label{sec:Inductive constructions}
+
 We first need to discuss how to build a function having everywhere some local
 properties from a sequence of functions having those properties on bigger and
 bigger parts of the source space. We actually want to also accommodate finite sequences
@@ -69,26 +210,6 @@ every point of $X$ has a neighborhood that intersects only finitely many $V_n$.
 
 In the preceding lemma, the limit function $F$ inherits all local properties of
 the elements of the sequence. In order to make this precise, we need the
-language of germs of functions. One can define germs with respect to any filter but
-we will need only the case of neighborhood filters~: two functions $f$ and $g$
-define the same germ at some point $x$ if they coincide near $x$.
-
-\begin{definition}\label{def:germ}\lean{Filter.Germ}\leanok
-  Let $X$ be a topological space, $x$ a point in $X$ and $Y$ a set. A germ of function
-  from $X$ to $Y$ at $x$ is an element of the quotient $(X → Y)_x$ of the set of functions
-  from $X$ to $Y$ by the relation $f ∼ g$ if $f$ and $g$ coincide near $x$. The image
-  of a function $f$ in this quotient will be denoted by $[f]_x$.
-
-  A local predicate on functions from $X$ to $Y$ is a family $P$ of predicates on the
-  germ set $(X → Y)_x$ for every $x$ in $X$. We say that a function $f$
-  satisfies $P$ at $x$ if $P [f]_x$ holds, and $f$ satisfies $P$ if it
-  satisfies $P$ at every point.
-\end{definition}
-
-For instance if $Y$ is also equipped with a topology then continuity is
-(equivalent to) a local predicate on functions from $X$ to $Y$ since a function
-is continuous if and only if it is continuous at every point $x$ and this
-condition only depends on the germ of the function at $x$.
 
 We also need to build local predicates by localizing some local predicates near
 some subsets.
@@ -341,31 +462,28 @@ From the above lemma we can deduce a version with only a base local predicate $P
 a target one $P₁$ and starting from a function which is already good near some closed
 subset $K$. The is the version that is actually used in our application.
 
-\begin{lemma}
-  \label{lem:relative_inductive_construction_of_loc}
-  \lean{relative_inductive_construction_of_loc}\leanok
-  Let $X$ a second countable locally compact metrizable topological space. Let $P₀$
-  and $P₁$ be local predicates on functions from $X$ to a set $Y$.
-  Let $K$ be a closed subset of $X$.
-  Let $f₀ \co X → Y$ be a function satisfying $P₀$ and satisfying $P₁$ near $K$.
-  Assume that
-  \begin{itemize}
-    \item
-      For every $x$ in $X$, there exists a function $f \co X → Y$ which
-      satisfies $P₀$ and satisfies $P₁$ near $x$.
-    \item
-      For every compact subsets $K₁$ and $K₂$ of $X$ and every open subsets $U₁$ and $U₂$
-      containing $K₁$ and $K₂$, for every function $f₁$ and $f₂$ satisfying $P₀$,
-      if $f₁$ satisfies $P₁$ on $U₁$ and if $f₂$ satisfies $P₁$ on $U₂$
-      then there exists $f$ which satisfies $P₀$, and satisfies $P₁$ near
-      $K₁ ∪ K₂$ and coincides with $f₁$ near $K₁ ∪ U₂^c$.
-  \end{itemize}
-  Then there exists $f$ which satisfies $P₀$ and $P₁$ and coincides with $f₀$ near $K$.
-\end{lemma}
 
 \begin{proof}\uses{lem:inductive_construction_of_loc}\leanok
   We reduce this to \Cref{lem:inductive_construction_of_loc} using as auxilliary
   local predicate $P₀'$ the constraint to coincide with $f₀$ near $K$.
 
   Details will come soon (they are already formalized).
+\end{proof}
+
+\section{Convexity and partitions of unity}%
+\label{sec:Convexity and partitions of unity}
+
+
+\begin{proof}[Proof of \ref{lem:exists_cont_diff_of_convex}]
+  \leanok
+  The assumption give us an open cover $(U_i)_{i ∈ I}$ of $E$ and functions
+  $f_i \co E → F$ that are smooth on $U_i$ and such that $P(x, f_i(x))$ for all $x$ in $U_i$.
+  Let $ρ$ be a smooth partition of unity associated to this cover. The function
+  $f = ∑ ρ_i f_i$ is smooth on $E$ and the convexity assumption on $P$ ensures
+  it satisfies $\forall x, P(x, f(x))$. Indeed each value $f(x)$ is a convex combination
+  of finitely many values $f_i(x)$ where $i$ satisfies that $x$ is in $U_i$.
+\end{proof}
+\begin{proof}[Proof of \ref{lem:exists_cont_diff_of_convex₂}]
+  \leanok
+  This is completely analogous to the previous proof.
 \end{proof}
