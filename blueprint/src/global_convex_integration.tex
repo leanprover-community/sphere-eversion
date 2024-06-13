@@ -1,6 +1,206 @@
 \chapter{Global theory of open and ample relations}
 \label{chap:global}
 
+\section{Main definitions and statements}%
+\label{sec:global_statements}
+In this chapter, we upgrade the previous work to the global setting of
+manifolds.
+We first need to introduce the bundles that will replace the jet spaces
+$E × F × \Hom(E, F)$ from the previous chapter. We need a couple of
+fiber bundles constructions.
+
+\begin{definition}
+\label{def:pull_back_bundle}
+\leanok
+\lean{Bundle.Pullback}
+For every bundle $p : E → B$ and every map $f \co B' → B$,
+the pull-back bundle $f^*E → B'$ is defined by
+$f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
+the obvious projection to $B'$.
+\end{definition}
+
+\begin{definition}
+\label{def:hom_bundle}
+\leanok
+\lean{Bundle.ContinuousLinearMap}
+Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
+$B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
+$E_b$ to $F_b$ for some $b$ in $B$, with the obvious projection map.
+\end{definition}
+
+Set-theoretically, one can define $\Hom(E, F)$ as the set of subsets
+$S$ of $E × F$ such that there exists $b$ such that $S ⊂ E_b × F_b$
+and $S$ is the graph of a linear map. But the type theory formalization
+will use other tricks here. The facts that really matter are listed in
+\cref{lem:one_jet_extension_prop} below.
+
+\begin{definition}
+\label{def:one_jet_space}
+\leanok
+\lean{OneJetBundle}
+\uses{def:pull_back_bundle, def:hom_bundle}
+Let $M$ and $N$ be smooth manifolds. Denote by
+$p_1$ and $p_2$ the projections of $M × N$ to
+$M$ and $N$ respectively.
+
+The space $J^1(M, N)$ of $1$-jets of maps from $M$ to $N$ is
+$Hom(p_1^*TM, p_2^*TN)$
+\end{definition}
+
+We will use notations like $(m, n, φ)$ to denote an element
+of $J^1(M, N)$,
+but one should keep in mind that $J^1(M, N)$ is not a product,
+since $φ$ lives in $\Hom(T_mM, T_nN)$ which depends on $m$ and $n$.
+
+
+\begin{definition}
+\label{def:one_jet_extension}
+\uses{def:one_jet_space}
+\leanok
+\lean{oneJetExt}
+The $1$-jet of a smooth map $f \co M → N$ is the map from
+$m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
+\end{definition}
+
+The composition of a section $\F \co M → J^1(M, N)$ with the projection
+onto $N$ will sometimes be denoted by $\bs \F \co M → N$ and called the
+base map of $\F$. For any $m$, $\F(m)_φ$ will denote the component of $\F(m)$
+living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
+
+\begin{lemma}
+\label{lem:one_jet_extension_prop}
+\lean{Smooth.oneJetExt}
+\leanok
+\uses{def:one_jet_extension}
+For every smooth map $f \co M → N$,
+\begin{enumerate}
+  \item
+    \label{lem:one_jet_smooth}\uses{def:one_jet_space, def:one_jet_extension}
+    $j^1f$ is smooth
+  \item
+    \label{lem:one_jet_section}\uses{def:one_jet_space, def:one_jet_extension}
+    $j^1f$ is a section of $J^1(M, N) → M$
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Points 2 and 3 are obvious by construction.
+
+  To show that $j^1f$ is smooth, suppose that $M$ is modelled over $E$ with charts
+  $C_x : M \to E$ and coordinate change functions
+  $C_{x,x'}=C_{x'}C_x^{-1} : E \to E$ and similarly let $C'_y$ be charts for $N$.
+  By construction of the 1-jet bundle, we need to check that for each $x_0$ the map
+  $$x\mapsto TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ
+    T_{C_{x_0}(x)}(C_{x_0,x}): M \to L(E,E)$$
+  is smooth at $x_0$ (we occasionally omit the point where the tangent maps are taken).
+  For $x$ close to $x_0$ the coordinate changes are smooth, so we can write
+  \begin{align*}
+  TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ T(C_{x_0,x})
+  &= T_{C_{x_0}(x)}(C'_{f(x),f(x_0)}C'_{f(x)}fC_x^{-1}C_{x_0,x})\\
+  &= T_{C_{x_0}(x)}(C'_{f(x_0)}fC_{x_0})
+  \end{align*}
+  This is smooth since $C'_{f(x_0)}fC_{x_0}$ is smooth.
+\end{proof}
+
+\begin{definition}
+\label{def:holonomic_section}
+\leanok
+\lean{OneJetSec.IsHolonomicAt, OneJetSec.isHolonomicAt_iff}
+\uses{def:one_jet_space}
+A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
+$1$--jet of its base map.
+Equivalently, $\F$ is holonomic if there exists
+$f \co M → N$ such that $\F = j^1f$, since such a map is
+necessarily $\bs \F$.
+\end{definition}
+
+\section{First order differential relations}
+
+\begin{definition}
+  \label{def:rel}
+  \leanok
+  \lean{RelMfld}
+  \uses{def:one_jet_space}
+  A first order differential relation for maps from $M$ to $N$ is a
+  subset $\Rel$ of $J^1(M, N)$.
+\end{definition}
+
+\begin{definition}
+  \label{def:formal_sol}
+  \leanok
+  \lean{FormalSol}
+  \uses{def:rel, def:one_jet_extension}
+  A formal solution of a differential relation $\Rel ⊂ J^1(M, N)$ is a
+  section of $J^1(M, N) → M$ taking values in $\Rel$.
+\end{definition}
+
+
+\begin{definition}
+  \label{def:htpy_formal_sol}
+  \leanok
+  \lean{HtpyFormalSol}
+  \uses{def:formal_sol}
+  A homotopy of formal solutions of $\Rel$ is a smooth family of sections
+  $\F : ℝ × M → J^1(M, N)$ such that each $m ↦ \F(t, m)$ is a formal solution.
+\end{definition}
+
+\begin{definition}
+  \label{def:h-princ}
+  \leanok
+  \lean{RelMfld.SatisfiesHPrinciple, RelMfld.SatisfiesHPrincipleWith}
+  \uses{def:htpy_formal_sol}
+  A first order differential relation $\Rel ⊂ J^1(M, N)$ satisfies the
+  $h$-principle if every formal solution of $\Rel$ is homotopic to a
+  holonomic one.
+  It satisfies the parametric $h$-principle if, for every manifold $P$
+  and every closed set $C$ in $P × M$, every family $\F : P × M → J^1(M, N)$ of formal
+  solutions which are holonomic for $(p, m)$ near $C$
+  is homotopic to a family of holonomic ones relative to $C$.
+\end{definition}
+
+
+In this chapter, $X$ and $Y$ are smooth manifolds and $\Rel$ is a first order
+differential relation on maps from $X$ to $Y$: $\Rel ⊂ J^1(X, Y)$.
+For any $σ = (x, y, φ)$ in $\Rel$ and any dual pair
+$(λ, v) ∈ T^*_xX × T_xX$,
+we set:
+\[
+    \Rel_{σ, λ, v} =
+     \Conn_{φ(v)}\left\{w ∈ T_yY \;;\;
+       \big(x,\; y,\; φ + (w - φ(v))⊗λ\big) ∈ \Rel\right\}
+\]
+where $\Conn_a A$ is the connected component of $A$ containing $a$. In order to
+decipher this definition, it suffices to notice that $φ + (w - φ(v))⊗λ$ is the
+unique linear map from $T_xX$ to $T_yY$ which coincides with $φ$ on $\ker λ$
+and sends $v$ to $w$. In particular, $w = φ(v)$ gives back $φ$.
+
+Of course we will want to deal with more than one point, so we will consider a
+vector field $V$ and a $1$--form $λ$ such that $λ(V) = 1$ on some subset $U$ of
+$X$, a formal solution $F$ (defined at least on $U$), and get the corresponding
+$\Rel_{F, λ, v}$ over $U$.
+
+One easily checks that $\Rel_{σ, κ^{-1}λ, κv} = κ\Rel_{σ, λ, v}$ hence the above
+definition only depends on $\ker λ$ and the direction $ℝV$.
+
+\begin{definition}
+  \label{def:ample_relation}
+  \uses{def:one_jet_space, def:ample_subset}
+  \leanok
+  \lean{RelMfld.Ample}
+  A relation $\Rel$ is ample if, for every $σ = (x, y, φ)$ in $\Rel$ and every
+  $(λ, v)$, the slice $\Rel_{σ, λ, v}$ is ample in $T_yY$.
+\end{definition}
+
+\begin{theorem}[Gromov]
+  \label{thm:open_ample}
+  % \uses{def:h-princ} % causes transitive arrow in depgraph
+  \leanok
+  \lean{RelMfld.Ample.satisfiesHPrincipleWith}
+  For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
+  and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
+\end{theorem}
+
 \section{Preliminaries}
 
 \subsection{Localisation}%
@@ -390,146 +590,6 @@ compatible distance function on every manifold.
 
 \subsection{Jets spaces}
 
-We now need to introduce the bundles that will replace the jet spaces
-$E × F × \Hom(E, F)$ from the previous chapter. We need a couple of
-fiber bundles constructions.
-
-\begin{definition}
-\label{def:pull_back_bundle}
-\leanok
-\lean{Bundle.Pullback}
-For every bundle $p : E → B$ and every map $f \co B' → B$,
-the pull-back bundle $f^*E → B'$ is defined by
-$f^*E = \{(b', e) ∈ B' × E \;|\; p(e) = f(b')\}$ with
-the obvious projection to $B'$.
-\end{definition}
-
-\begin{definition}
-\label{def:hom_bundle}
-\leanok
-\lean{Bundle.ContinuousLinearMap}
-Let $E → B$ and $F → B$ be two vector bundles over some smooth manifold
-$B$. The bundle $\Hom(E, F) → B$ is the set of linear maps from
-$E_b$ to $F_b$ for some $b$ in $B$, with the obvious projection map.
-\end{definition}
-
-Set-theoretically, one can define $\Hom(E, F)$ as the set of subsets
-$S$ of $E × F$ such that there exists $b$ such that $S ⊂ E_b × F_b$
-and $S$ is the graph of a linear map. But the type theory formalization
-will use other tricks here. The facts that really matter are listed in
-\cref{lem:one_jet_extension_prop} below.
-
-\begin{definition}
-\label{def:one_jet_space}
-\leanok
-\lean{OneJetBundle}
-\uses{def:pull_back_bundle, def:hom_bundle}
-Let $M$ and $N$ be smooth manifolds. Denote by
-$p_1$ and $p_2$ the projections of $M × N$ to
-$M$ and $N$ respectively.
-
-The space $J^1(M, N)$ of $1$-jets of maps from $M$ to $N$ is
-$Hom(p_1^*TM, p_2^*TN)$
-\end{definition}
-
-We will use notations like $(m, n, φ)$ to denote an element
-of $J^1(M, N)$,
-but one should keep in mind that $J^1(M, N)$ is not a product,
-since $φ$ lives in $\Hom(T_mM, T_nN)$ which depends on $m$ and $n$.
-
-
-\begin{definition}
-\label{def:one_jet_extension}
-\uses{def:one_jet_space}
-\leanok
-\lean{oneJetExt}
-The $1$-jet of a smooth map $f \co M → N$ is the map from
-$m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
-\end{definition}
-
-The composition of a section $\F \co M → J^1(M, N)$ with the projection
-onto $N$ will sometimes be denoted by $\bs \F \co M → N$ and called the
-base map of $\F$. For any $m$, $\F(m)_φ$ will denote the component of $\F(m)$
-living in $\Hom(T_mM, T_{\bs\F(m)}N)$.
-
-\begin{lemma}
-\label{lem:one_jet_extension_prop}
-\lean{Smooth.oneJetExt}
-\leanok
-\uses{def:one_jet_extension}
-For every smooth map $f \co M → N$,
-\begin{enumerate}
-  \item
-    \label{lem:one_jet_smooth}\uses{def:one_jet_space, def:one_jet_extension}
-    $j^1f$ is smooth
-  \item
-    \label{lem:one_jet_section}\uses{def:one_jet_space, def:one_jet_extension}
-    $j^1f$ is a section of $J^1(M, N) → M$
-\end{enumerate}
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  Points 2 and 3 are obvious by construction.
-
-  To show that $j^1f$ is smooth, suppose that $M$ is modelled over $E$ with charts
-  $C_x : M \to E$ and coordinate change functions
-  $C_{x,x'}=C_{x'}C_x^{-1} : E \to E$ and similarly let $C'_y$ be charts for $N$.
-  By construction of the 1-jet bundle, we need to check that for each $x_0$ the map
-  $$x\mapsto TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ
-    T_{C_{x_0}(x)}(C_{x_0,x}): M \to L(E,E)$$
-  is smooth at $x_0$ (we occasionally omit the point where the tangent maps are taken).
-  For $x$ close to $x_0$ the coordinate changes are smooth, so we can write
-  \begin{align*}
-  TC'_{f(x),f(x_0)}\circ T(C'_{f(x)}fC_x^{-1})\circ T(C_{x_0,x})
-  &= T_{C_{x_0}(x)}(C'_{f(x),f(x_0)}C'_{f(x)}fC_x^{-1}C_{x_0,x})\\
-  &= T_{C_{x_0}(x)}(C'_{f(x_0)}fC_{x_0})
-  \end{align*}
-  This is smooth since $C'_{f(x_0)}fC_{x_0}$ is smooth.
-\end{proof}
-
-\begin{definition}
-\label{def:holonomic_section}
-\leanok
-\lean{OneJetSec.IsHolonomicAt, OneJetSec.isHolonomicAt_iff}
-\uses{def:one_jet_space}
-A section $\F$ of $J^1(M, N) → M$ is called holonomic if it is the
-$1$--jet of its base map.
-Equivalently, $\F$ is holonomic if there exists
-$f \co M → N$ such that $\F = j^1f$, since such a map is
-necessarily $\bs \F$.
-\end{definition}
-
-\section{First order differential relations}
-
-\begin{definition}
-  \label{def:rel}
-  \leanok
-  \lean{RelMfld}
-  \uses{def:one_jet_space}
-  A first order differential relation for maps from $M$ to $N$ is a
-  subset $\Rel$ of $J^1(M, N)$.
-\end{definition}
-
-\begin{definition}
-  \label{def:formal_sol}
-  \leanok
-  \lean{FormalSol}
-  \uses{def:rel, def:one_jet_extension}
-  A formal solution of a differential relation $\Rel ⊂ J^1(M, N)$ is a
-  section of $J^1(M, N) → M$ taking values in $\Rel$.
-\end{definition}
-
-
-\begin{definition}
-  \label{def:htpy_formal_sol}
-  \leanok
-  \lean{HtpyFormalSol}
-  \uses{def:formal_sol}
-  A homotopy of formal solutions of $\Rel$ is a smooth family of sections
-  $\F : ℝ × M → J^1(M, N)$ such that each $m ↦ \F(t, m)$ is a formal solution.
-\end{definition}
-
 The next definition will be used in cases where $X$ and $Y$ are vector spaces,
 in order to relate the global theory to the local one.
 
@@ -590,19 +650,6 @@ from the previous chapter.
   The third point is a direct consequence of the easy formula $ψ_{g, h} ∘ Ψ_{g, h}(\F) = F ∘ h$.
 \end{proof}
 
-\begin{definition}
-  \label{def:h-princ}
-  \leanok
-  \lean{RelMfld.SatisfiesHPrinciple, RelMfld.SatisfiesHPrincipleWith}
-  \uses{def:htpy_formal_sol}
-  A first order differential relation $\Rel ⊂ J^1(M, N)$ satisfies the
-  $h$-principle if every formal solution of $\Rel$ is homotopic to a
-  holonomic one.
-  It satisfies the parametric $h$-principle if, for every manifold $P$
-  and every closed set $C$ in $P × M$, every family $\F : P × M → J^1(M, N)$ of formal
-  solutions which are holonomic for $(p, m)$ near $C$
-  is homotopic to a family of holonomic ones relative to $C$.
-\end{definition}
 
 
 \subsection*{Parametricity for free}
@@ -667,38 +714,6 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
 \section{The $h$-principle for open and ample differential relations}
 \label{sec:general_theory}
 
-In this chapter, $X$ and $Y$ are smooth manifolds and $\Rel$ is a first order
-differential relation on maps from $X$ to $Y$: $\Rel ⊂ J^1(X, Y)$.
-For any $σ = (x, y, φ)$ in $\Rel$ and any dual pair
-$(λ, v) ∈ T^*_xX × T_xX$,
-we set:
-\[
-    \Rel_{σ, λ, v} =
-     \Conn_{φ(v)}\left\{w ∈ T_yY \;;\;
-       \big(x,\; y,\; φ + (w - φ(v))⊗λ\big) ∈ \Rel\right\}
-\]
-where $\Conn_a A$ is the connected component of $A$ containing $a$. In order to
-decipher this definition, it suffices to notice that $φ + (w - φ(v))⊗λ$ is the
-unique linear map from $T_xX$ to $T_yY$ which coincides with $φ$ on $\ker λ$
-and sends $v$ to $w$. In particular, $w = φ(v)$ gives back $φ$.
-
-Of course we will want to deal with more than one point, so we will consider a
-vector field $V$ and a $1$--form $λ$ such that $λ(V) = 1$ on some subset $U$ of
-$X$, a formal solution $F$ (defined at least on $U$), and get the corresponding
-$\Rel_{F, λ, v}$ over $U$.
-
-One easily checks that $\Rel_{σ, κ^{-1}λ, κv} = κ\Rel_{σ, λ, v}$ hence the above
-definition only depends on $\ker λ$ and the direction $ℝV$.
-
-\begin{definition}
-  \label{def:ample_relation}
-  \uses{def:one_jet_space, def:ample_subset}
-  \leanok
-  \lean{RelMfld.Ample}
-  A relation $\Rel$ is ample if, for every $σ = (x, y, φ)$ in $\Rel$ and every
-  $(λ, v)$, the slice $\Rel_{σ, λ, v}$ is ample in $T_yY$.
-\end{definition}
-
 \begin{lemma}
   \label{lem:ample_iff_loc}
   \uses{def:ample_relation, def:transfer_map}
@@ -752,14 +767,14 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   $T_yN$, and \cref{lem:ample_codim_two} concludes.
 \end{proof}
 
-\begin{theorem}[Gromov]
-  \label{thm:open_ample}
-  % \uses{def:h-princ} % causes transitive arrow in depgraph
-  \leanok
-  \lean{RelMfld.Ample.satisfiesHPrincipleWith}
-  For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
-  and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
-\end{theorem}
+% \begin{theorem}[Gromov]
+%   \label{thm:open_ample}
+%   % \uses{def:h-princ} % causes transitive arrow in depgraph
+%   \leanok
+%   \lean{RelMfld.Ample.satisfiesHPrincipleWith}
+%   For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
+%   and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
+% \end{theorem}
 
 We first explain how to get rid of parameters, using the
 relation $\Rel^P$ for families of solutions parametrized by $P$.
