@@ -3,9 +3,6 @@
 \subsection{Key construction}
 \label{sec:convex_integration_intro}
 
-The goal of this section is to explain the local aspects of
-(Theillière's implementation of) convex integration, the next chapter will
-cover global aspects.
 
 The elementary step of convex integration modifies the derivative of a
 map in one direction. The precise meaning of ``one direction'' relies on the
@@ -18,6 +15,32 @@ following definition.
   A dual pair on a vector space $E$ is a pair $(π, v)$ where $π$ is a linear
   form on $E$ and $v$ a vector in $E$ such that $π(v) = 1$.
 \end{definition}
+
+\begin{definition}
+  \label{def:rel_slice}
+  \leanok
+  \lean{RelMfld.slice}
+  \uses{def:rel_loc}
+  For every $σ = (x, y, φ)$, the slice of $\Rel$ at $σ$ with respect to $(π, v)$
+  is:
+  \[
+    \Rel(σ, π, v) = \{w ∈ F \;|\; (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}.
+  \]
+\end{definition}
+
+\begin{lemma}
+  \label{lem:update_lin_map}
+  \leanok
+  \lean{DualPair.update_ker_pi, DualPair.update_v, mem_slice}
+  The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$
+  and sends $v$ to $w$.
+  If $\sigma$ belongs to $\Rel$ then $φ(v)$ belongs to
+  $\{w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}$.
+\end{lemma}
+
+\begin{proof}\leanok
+  These are direct checks.
+\end{proof}
 
 Let $E$ and $F$ be finite dimensional real normed vector spaces.
 Let $f \co E → F$ be a smooth map, and let $(π, v)$ be a dual pair on $E$.
@@ -107,29 +130,18 @@ directions of $\ker π$, and almost without moving $f(x)$.
   for every $v$ in $E'$ and every $x$, $Df(x)v = φ(x)v$.
 \end{definition}
 
-\begin{definition}
-  \label{def:rel_loc}
-  \leanok
-  \lean{RelLoc}
-  A first order differential relation for maps from $E$ to $F$ is a
-  subset $\Rel$ of $E × F × \Hom(E, F)$.
-\end{definition}
-
-Until the end of this section, $\Rel$ will always denote a first order
-differential relation for maps from $E$ to $F$.
+We'll use the notation $\Conn_w A$ to denote the connected component of $A$
+that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 
 \begin{definition}
-  \label{def:formal_sol_loc}
+  \label{def:short_formal_sol}
   \leanok
-  \lean{RelLoc.FormalSol}
-  \uses{def:rel_loc}
-  A formal solution of a differential relation $\Rel$ is a map
-  $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$,
-  $(x, f(x), φ(x))$ is in $\Rel$.
+  \lean{RelLoc.FormalSol.IsShortAt}
+  \uses{def:formal_sol_loc, def:dual_pair}
+  A formal solution $\F$ of $\Rel$ is $(π, v)$--short if,
+  for every $x$, $Df(x)v$ belongs to the interior of the convex hull of
+  $\Conn_{φ(v)}\Rel((x, f(x), φ(x)), π, v)$.
 \end{definition}
-
-The first component of a map $\F \co E → F × \Hom(E, F)$ will sometimes
-be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
 
 \begin{definition}
   \label{def:htpy_jet_sec_loc}
@@ -144,46 +156,6 @@ Typically, $x ↦ \F(t, x)$ will be denoted by $\F_t$. It could seem more natura
 $[0, 1] × E$ as the source of a homotopy but this would be less convenient for
 formalization and wouldn't change anything since any map from $ℝ × E$ can be restricted to
 $[0, 1] × E$ and every map from $[0, 1] × E$ could be extended.
-
-\begin{definition}
-  \label{def:rel_slice}
-  \leanok
-  \lean{RelMfld.slice}
-  \uses{def:rel_loc}
-  For every $σ = (x, y, φ)$, the slice of $\Rel$ at $σ$ with respect to $(π, v)$
-  is:
-  \[
-    \Rel(σ, π, v) = \{w ∈ F \;|\; (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}.
-  \]
-\end{definition}
-
-\begin{lemma}
-  \label{lem:update_lin_map}
-  \leanok
-  \lean{DualPair.update_ker_pi, DualPair.update_v, mem_slice}
-  The linear map $φ + (w - φ(v)) ⊗ π)$ coincides with $φ$ on $\ker π$
-  and sends $v$ to $w$.
-  If $\sigma$ belongs to $\Rel$ then $φ(v)$ belongs to
-  $\{w ∈ F, (x, y, φ + (w - φ(v)) ⊗ π) ∈ \Rel\}$.
-\end{lemma}
-
-\begin{proof}\leanok
-  These are direct checks.
-\end{proof}
-
-
-We'll use the notation $\Conn_w A$ to denote the connected component of $A$
-that contains $w$, or the empty set if $w$ doesn't belong to $A$.
-
-\begin{definition}
-  \label{def:short_formal_sol}
-  \leanok
-  \lean{RelLoc.FormalSol.IsShortAt}
-  \uses{def:formal_sol_loc, def:dual_pair}
-  A formal solution $\F$ of $\Rel$ is $(π, v)$--short if,
-  for every $x$, $Df(x)v$ belongs to the interior of the convex hull of
-  $\Conn_{φ(v)}\Rel((x, f(x), φ(x)), π, v)$.
-\end{definition}
 
 \begin{lemma}
   \label{lem:integration_step}
@@ -207,7 +179,7 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
       $\F_0 = \F$~;
     \item
       $\F_t$ is a formal solution of $\Rel$ for all $t$~;
-    \item
+\item
       $\F_t(x) = \F(x)$ for all $t$ when $x$ is near $C$ or outside
       $K_1$~;
     \item
@@ -316,13 +288,6 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
 \subsection{Ample differential relations}
 \label{sec:ample_differential_relations}
 
-\begin{definition}
-  \label{def:ample_subset}
-  \leanok
-  \lean{AmpleSet}
-  A subset $Ω$ of a real vector space $E$ is ample if the convex
-  hull of each connected component of $Ω$ is the whole $E$.
-\end{definition}
 
 \begin{lemma}
   \label{lem:ample_codim_two}
@@ -366,44 +331,8 @@ that contains $w$, or the empty set if $w$ doesn't belong to $A$.
   All these points are in $E ∖ F$ and $e = p_1/3 + p_2/3 + p_3/3$.
 \end{proof}
 
-\begin{definition}
-  \label{def:ample_relation_loc}
-  \leanok
-  \lean{RelLoc.IsAmple}
-  \uses{def:ample_subset, def:rel_slice}
-  A first order differential relation $\Rel$ is ample if all its slices
-  are ample.
-\end{definition}
 
-\begin{lemma}
-  \label{lem:h_principle_open_ample_loc}
-  \leanok
-  \lean{RelLoc.FormalSol.improve}
-  \uses{def:ample_relation_loc, def:holonomic_loc}
-  Let $\F$ be a formal solution of $\Rel$.
-  Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
-  the interior of $K_1$.
-  Assume $\F$ is holonomic near a closed subset $C$ of $E$.
-  Let $ε$ be a positive real number.
-
-  If $\Rel$ is open and ample then there is a homotopy $\F_t$ such that:
-  \begin{enumerate}
-    \item
-      $\F_0 = \F$
-    \item
-      $\F_t$ is a formal solution of $\Rel$ for all $t$~;
-    \item
-      $\F_t(x) = \F(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$.
-    \item
-      $d(\bs\F_t(x), \bs \F(x)) ≤ ε$ for all $t$ and all $x$~;
-    \item
-      $\F_1$ is holonomic near $K_0$~;
-    \item
-      $t ↦ F_t$ is constant near $0$ and $1$.
-  \end{enumerate}
-\end{lemma}
-
-\begin{proof}
+\begin{proof}[Proof of \cref{lem:h_principle_open_ample_loc}]
   \leanok
   \uses{lem:integration_step}
   This is a straightforward induction using \cref{lem:integration_step}.

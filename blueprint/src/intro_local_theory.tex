@@ -1,5 +1,113 @@
 \section{Main definitions and result}
 
+The goal of this chapter is to explain the local aspects of
+(Theillière's implementation of) convex integration, the next chapter will
+cover global aspects. However convex integration can be completely hidden as a
+proof detail. In this section we will give all definitions and statements that
+will be used in the next chapter, and convex integration does not appear.
+It is useful to know that nothing else is required later, but of course the
+assumptions of the main result will be rather mysterious to readers who
+completely skip the next sections of this chapter.
+
 \begin{definition}
-  Test
+  \label{def:rel_loc}
+  \leanok
+  \lean{RelLoc, RelLoc.FormalSol}
+  A first order differential relation for maps from $E$ to $F$ is a
+  subset $\Rel$ of $E × F × \Hom(E, F)$.
+
+  A solution of $\Rel$ is a function $f : E → F$ such that, for every $x$ in
+  $E$, $(x, f(x), Df(x))$ is in $\Rel$.
+
+  A \emph{formal} solution of $\Rel$ is a map
+  $\F = (f, φ) \co E → F × \Hom(E, F)$ such that, for every $x$,
+  $(x, f(x), φ(x))$ is in $\Rel$.
 \end{definition}
+
+Until the end of this chapter, $\Rel$ will always denote a first order
+differential relation for maps from $E$ to $F$.
+
+The first component of a map $\F \co E → F × \Hom(E, F)$ will sometimes
+be denoted by $\bs \F \co E → F$ and called the base map of $\F$.
+
+Note that every solution $f$ of a $\Rel$ leads to the formal solution $(f, Df)$.
+The following definition distinguishes functions from $E$ to $F × \Hom(E, F)$
+that have this shape.
+
+\begin{definition}
+  \label{def:hol_loc}
+  \leanok
+  \lean{JetSec.IsHolonomicAt}
+  Let $E$ and $F$ be real normed spaces.
+  A map $\F = (f, φ) : E → F × \Hom(E, F)$ is holonomic if,
+  for every $x$, $Df(x) = φ(x)$.
+\end{definition}
+
+With these definitions we can state that our goal is to deform formal solutions
+into holonomic ones in order to get solutions. The main result of this chapter
+says that some criterion on the geometry of $\Rel$ ensures such deformations
+exist. The following notion enters the description of this geometric criterion.
+
+\begin{definition}
+  \label{def:ample_subset}
+  \leanok
+  \lean{AmpleSet}
+  A subset $Ω$ of a real vector space $E$ is ample if the convex
+  hull of each connected component of $Ω$ is the whole $E$.
+\end{definition}
+
+\begin{definition}
+  \label{def:ample_relation_loc}
+  \leanok
+  \lean{RelLoc.IsAmple}
+  \uses{def:ample_subset, def:rel_slice}
+  A first order differential relation $\Rel$ is ample if, for every $(x, y, φ)$
+  in $E × F × \Hom(E, F)$ and for every hyperplane $H$ in $E$, the set
+  \[
+    \Big\{ ψ ∈ \Hom(E, F) \mid 
+      ψ_{|H} = φ_{|H} \text{ and } (x, y, φ) ∈ \Rel\Big\}
+  \]
+  is ample.
+\end{definition}
+
+We can now state precisely how this above geometric criterion allows to locally
+deform formal solutions into holonomic ones. In this statement we have nested
+compact sets in $E$ and a formal solution that is already holonomic near some
+closed set. We want to make it holonomic near the small compact set while
+keeping it near the closed set and outside the large compact set.
+
+\begin{proposition}
+  \label{lem:h_principle_open_ample_loc}
+  \leanok
+  \lean{RelLoc.FormalSol.improve}
+  \uses{def:ample_relation_loc, def:holonomic_loc}
+  Let $\F$ be a formal solution of $\Rel$.
+  Let $K_1 ⊂ E$ be a compact subset, and let $K_0$ be a compact subset of
+  the interior of $K_1$.
+  Assume $\F$ is holonomic near a closed subset $C$ of $E$.
+  Let $ε$ be a positive real number.
+
+  If $\Rel$ is open and ample then there is a homotopy $\F_t$ such that:
+  \begin{enumerate}
+    \item
+      $\F_0 = \F$
+    \item
+      $\F_t$ is a formal solution of $\Rel$ for all $t$~;
+    \item
+      $\F_t(x) = \F(x)$ for all $t$ when $x$ is near $C$ or outside $K_1$.
+    \item
+      $d(\bs\F_t(x), \bs \F(x)) ≤ ε$ for all $t$ and all $x$~;
+    \item
+      $\F_1$ is holonomic near $K_0$~;
+    \item
+      $t ↦ F_t$ is constant near $0$ and $1$.
+  \end{enumerate}
+\end{proposition}
+
+The above result is really the heart of the $h$-principle for open and ample
+first order differential relations.
+It will be used in the next chapter to get the global result for maps between
+manifolds.
+But we will also see that it is enough to deduce Smale’s sphere eversion
+theorem, which is indeed about compact sets in vector spaces so require nothing
+more global.
