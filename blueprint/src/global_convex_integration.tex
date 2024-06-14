@@ -59,7 +59,7 @@ since $φ$ lives in $\Hom(T_mM, T_nN)$ which depends on $m$ and $n$.
 \leanok
 \lean{oneJetExt}
 The $1$-jet of a smooth map $f \co M → N$ is the map from
-$m$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
+$M$ to $J^1(M, N)$ defined by $j^1f(m) = (m, f(m), T_mf)$.
 \end{definition}
 
 The composition of a section $\F \co M → J^1(M, N)$ with the projection
@@ -115,7 +115,6 @@ $f \co M → N$ such that $\F = j^1f$, since such a map is
 necessarily $\bs \F$.
 \end{definition}
 
-\section{First order differential relations}
 
 \begin{definition}
   \label{def:rel}
@@ -160,20 +159,25 @@ necessarily $\bs \F$.
 \end{definition}
 
 
-In this chapter, $X$ and $Y$ are smooth manifolds and $\Rel$ is a first order
-differential relation on maps from $X$ to $Y$: $\Rel ⊂ J^1(X, Y)$.
-For any $σ = (x, y, φ)$ in $\Rel$ and any dual pair
-$(λ, v) ∈ T^*_xX × T_xX$,
-we set:
-\[
-    \Rel_{σ, λ, v} =
-     \Conn_{φ(v)}\left\{w ∈ T_yY \;;\;
-       \big(x,\; y,\; φ + (w - φ(v))⊗λ\big) ∈ \Rel\right\}
-\]
-where $\Conn_a A$ is the connected component of $A$ containing $a$. In order to
-decipher this definition, it suffices to notice that $φ + (w - φ(v))⊗λ$ is the
-unique linear map from $T_xX$ to $T_yY$ which coincides with $φ$ on $\ker λ$
-and sends $v$ to $w$. In particular, $w = φ(v)$ gives back $φ$.
+\begin{definition}
+  \label{def:slice}
+  \lean{RelMfld.slice}
+  \leanok
+  Let $\Rel ⊂ J^1(M, N)$ be a first order partial differential relation.
+  For any $σ = (x, y, φ)$ in $\Rel$ and any dual pair
+  $(λ, v) ∈ T^*_xX × T_xX$, the slice of $\Rel$ at $(σ, λ, v)$ is.
+  \[
+      \Rel_{σ, λ, v} =
+       \Conn_{φ(v)}\left\{w ∈ T_yY \;;\;
+         \big(x,\; y,\; φ + (w - φ(v))⊗λ\big) ∈ \Rel\right\}
+  \]
+  where $\Conn_a A$ is the connected component of $A$ containing $a$. 
+\end{definition}
+
+In order to decipher this definition, it suffices to notice that 
+$φ + (w - φ(v))⊗λ$ is the unique linear map from $T_xX$ to $T_yY$ which
+coincides with $φ$ on $\ker λ$ and sends $v$ to $w$. In particular, $w = φ(v)$
+gives back $φ$.
 
 Of course we will want to deal with more than one point, so we will consider a
 vector field $V$ and a $1$--form $λ$ such that $λ(V) = 1$ on some subset $U$ of
@@ -201,10 +205,12 @@ definition only depends on $\ker λ$ and the direction $ℝV$.
   and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
 \end{theorem}
 
-\section{Preliminaries}
-
-\subsection{Localisation}%
+\section{Localisation}%
 \label{sub:localisation_data}
+
+\subsection{Localisation of maps}%
+\label{sub:LocalisationMaps}
+
 
 In order to conveniently globalize the theory of the previous chapter, we'll
 need a number of constructions and lemmas. By definition, manifolds are covered
@@ -247,6 +253,47 @@ makes the following definition well-behaved in the sense of the following lemma.
   those sets are open and the updated maps coincide with
   $(p, m) ↦ ψ ∘ g_p ∘ φ⁻¹(m)$ on the first one and $f$ on the second one.
 \end{proof}
+
+Note that in this whole text, every manifold is paracompact by definition. In
+particular their topology are metrizable and we will arbitrarily fix a
+compatible distance function on every manifold.
+
+\begin{lemma}
+  \label{lem:dist_updating}
+  \uses{def:update}
+  \lean{OpenSmoothEmbedding.dist_update}
+  \leanok
+  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings.
+  Let $K_X$ and $K_P$ be compact sets in $X$ and $P$.
+  Let $f : P × M → N$ be a continuous family of
+  maps such that, for each $p$, $f_p(φ(X)) ⊂ ψ(Y)$.
+  For every continuous function $ε : M → ℝ_{> 0}$, there is some positive
+  number $η$ such that, for every map $g : P × X → Y$ and every $(p, p', x)$ in
+  $K_P × K_P × K_X$, $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < η$ implies
+  $d(f'_{p'}(φ(x)), f_p(φ(x))) < ε(φ(x))$ where $f'$ is obtained by updating $f$
+  using $g$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Let $ε$ be a positive continuous function on $M$. Since $K_X$ is compact, we get
+  a positive number $ε₀$ such that $ε(m) ≥ ε₀$ for each $m$ in $K_X$. We denote by
+  $K₁$ the closed $1$-thickening of the image of $K_P × K_X$ under
+  $(p, x) ↦ ψ⁻¹∘f_p∘φ(x)$. This is a compact set
+  so $ψ$ is uniformly continuous on $K₁$ and we get a positive $τ$ such that
+  for all $x$ and $y$ in $K₁$, $d(x, y) < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
+
+  We now prove that $η = \min(τ, 1)$ is suitable. Fix $(p, p', x)$ in
+  $K_P × K_P × K_X$ such that $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < η$.
+  In particular $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < 1$ hence $g_{p'}(x)$ is in $K₁$. Since
+  $ψ⁻¹∘f_p∘φ(x)$ is also in $K₁$ and $d(g_{p'}(x), ψ⁻¹∘f∘φ(x)) < τ$, we get
+  $d(ψ∘ g_{p'}(x), ψ ∘ ψ⁻¹∘f_p∘φ(x)) < ε₀$. This precisely means that
+  $d(f'_{p'}(φ(x)), f_p(φ(x)) < ε₀$. Since $(p, p', x)$ is in $K_P × K_P × K_X$,
+  this is less than $ε(m)$.
+\end{proof}
+
+All this allows us to modify a given map using one chart. But we need more
+control in order to do it for all charts of some atlas.
 
 \begin{lemma}
   \label{lem:exists_chart}
@@ -314,14 +361,11 @@ The next statement is slightly weaker than the “nice atlas” one we used befo
     \item $(W_i)_{i \in \iota}$ covers $M$.
   \end{itemize}
   Given $i = (n, x_j) \in \iota$, the required map $φ_i : E \to M$ is just:
-  \begin{align*}
-    E \simeq B_E(y_j, r) \simeq B_{n,j} \subseteq M.
-  \end{align*}
+  \[
+    E \simeq B_E(y_j, r) \simeq B_{n,j} \subseteq M. \qedhere
+  \]
 \end{proof}
 
-Note that in this whole text, every manifold is paracompact by definition. In
-particular their topology are metrizable and we will arbitrarily fix a
-compatible distance function on every manifold.
 
 \begin{lemma}
   Let $M$ and $M'$ be manifolds without boundary. For every continuous map
@@ -373,222 +417,8 @@ compatible distance function on every manifold.
   And $g(x)$ is in this ball by assumption so we are done.
 \end{proof}
 
-\begin{lemma}
-  \label{lem:dist_updating}
-  \uses{def:update}
-  \lean{OpenSmoothEmbedding.dist_update}
-  \leanok
-  Let $φ : X → M$ and $ψ : Y → N$ be smooth open embeddings.
-  Let $K_X$ and $K_P$ be compact sets in $X$ and $P$.
-  Let $f : P × M → N$ be a continuous family of
-  maps such that, for each $p$, $f_p(φ(X)) ⊂ ψ(Y)$.
-  For every continuous function $ε : M → ℝ_{> 0}$, there is some positive
-  number $η$ such that, for every map $g : P × X → Y$ and every $(p, p', x)$ in
-  $K_P × K_P × K_X$, $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < η$ implies
-  $d(f'_{p'}(φ(x)), f_p(φ(x))) < ε(φ(x))$ where $f'$ is obtained by updating $f$
-  using $g$.
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  Let $ε$ be a positive continuous function on $M$. Since $K_X$ is compact, we get
-  a positive number $ε₀$ such that $ε(m) ≥ ε₀$ for each $m$ in $K_X$. We denote by
-  $K₁$ the closed $1$-thickening of the image of $K_P × K_X$ under
-  $(p, x) ↦ ψ⁻¹∘f_p∘φ(x)$. This is a compact set
-  so $ψ$ is uniformly continuous on $K₁$ and we get a positive $τ$ such that
-  for all $x$ and $y$ in $K₁$, $d(x, y) < τ ⇒ d(ψ(x), ψ(y)) < ε₀$.
-
-  We now prove that $η = \min(τ, 1)$ is suitable. Fix $(p, p', x)$ in
-  $K_P × K_P × K_X$ such that $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < η$.
-  In particular $d(g_{p'}(x), ψ⁻¹∘f_p∘φ(x)) < 1$ hence $g_{p'}(x)$ is in $K₁$. Since
-  $ψ⁻¹∘f_p∘φ(x)$ is also in $K₁$ and $d(g_{p'}(x), ψ⁻¹∘f∘φ(x)) < τ$, we get
-  $d(ψ∘ g_{p'}(x), ψ ∘ ψ⁻¹∘f_p∘φ(x)) < ε₀$. This precisely means that
-  $d(f'_{p'}(φ(x)), f_p(φ(x)) < ε₀$. Since $(p, p', x)$ is in $K_P × K_P × K_X$,
-  this is less than $ε(m)$.
-\end{proof}
-
-% In order to handle in a uniform way compact and non-compact manifolds, we will
-% index sequences by the family of sets $\IT{N}$ defined for each natural number
-% $N$ by:
-%   \[
-%     \IT{N} =
-%     \begin{cases}
-%       ℕ \text{ if $N = 0$}\\
-%       \{0, \dots, N - 1\} \text{otherwise}
-%     \end{cases}
-%   \]
-% 
-% \begin{lemma}
-%   \label{lem:nice_atlas}
-%   \lean{nice_atlas}
-%   \uses{def:index_type}
-%   \leanok
-%   Let $M$ be a manifold modelled on the normed space $E$ and $(V_j)_{j ∈ J}$
-%   a cover of $M$ by open sets. There exists some natural number $N$ and
-%   a family of smooth open embeddings $φ : \IT{N} × E → M$ such that
-%   \begin{itemize}
-%     \item for each $i$ there is some $j$ such that $φ_i(E) \subseteq V_j$,
-%     \item $i ↦ φ_i(E)$ is a locally-finite collection of sets in $M$,
-%     \item $⋃_i φ_i(B_E(0, 1)) = M$ where $B_E(0, 1)$ is the open unit ball in $E$.
-%   \end{itemize}
-% \end{lemma}
-% 
-% \begin{proof}
-%   \leanok
-%   The proof is a standard compact-exhaustion argument.
-%   Let $K_0, K_1, K_2, \ldots $ be a compact exhaustion of $M$ and define:
-%   \begin{align*}
-%     C_n &= K_{n+2} \smallsetminus K_{n+1}^o,\\
-%     U_n &= K_{n+3}^o \smallsetminus K_n.
-%   \end{align*}
-%   Thus:
-%   \begin{itemize}
-%     \item $C_n$ is compact,
-%     \item $U_n$ is open,
-%     \item $C_n \subseteq U_n$,
-%     \item $\bigcup_n C_n = M$,
-%     \item $U_n \cap U_m = \emptyset$ if $|n - m| > 2$.
-%   \end{itemize}
-%   For any $y \in E$ and $r > 0$, fix a smooth diffeomorphism $f_{y,r} : E \simeq B_E(y, r)$ such
-%   that $f_{y,r}(0) = y$.
-%   For each $n$ and $x \in C_n$, let $\psi_x$  be a smooth chart mapping an open
-%   neighbourhood of $x$ to an open set of the model space $E$.
-%   Writing $y = \psi_x (x) \in E$, let:
-%   \begin{align*}
-%     B_{n, x} &= \psi_x^{-1} (B_E(y, r)),\\
-%     W_{n, x} &= \psi_x^{-1} (f_{y,r} (B_E (0, 1))),\\
-%   \end{align*}
-%   for some $r > 0$ (which may depend on $n$, $x$) sufficiently small that:
-%   \begin{itemize}
-%     \item $B_E(y, r)$ lies in the target of the chart $\psi_x$,
-%     \item $B_{n,x}$ is contained in $U_n$,
-%     \item $B_{n,x}$ is contained in $V_j$ for some $j$.
-%   \end{itemize}
-%   Note that $x \in W_{n,x}$. For each $n$, choose a finite subcovering of $C_n$ by
-%   $W_{n, x_1}, \ldots, W_{n, x_{l_n}}$ and define $\iota \subseteq ℕ \times M$ by:
-%   \begin{align*}
-%     \iota = \bigcup_n \{ (n, x_1), \ldots, (n, x_{l_n}) \} .
-%   \end{align*}
-%   Note that $\iota$ is countable and furthermore:
-%   \begin{itemize}
-%     \item for each $i \in \iota$, there is some $j$ such that $B_i \subseteq V_j$,
-%     \item $(B_i)_{i \in \iota}$ is locally-finite
-%     (indeed more is true: $B_i$ meets only finitely-many $B_{i'}$ for $i, i' \in \iota$
-%     since $B_{m, x} \cap B_{n, x'} = \emptyset$ if $|n - m| > 2$),
-%     \item $(W_i)_{i \in \iota}$ covers $M$.
-%   \end{itemize}
-%   Given $i = (n, x_j) \in \iota$, the required map $\phi_i : E \to M$ is just:
-%   \begin{align*}
-%     E \simeq B_E(y_j, r) \simeq B_{n,j} \subseteq M.
-%   \end{align*}
-%   Since $ι$ is countable, it is in bijection with some $\IT{N}$.
-% \end{proof}
-% 
-% \begin{definition}
-%   \label{def:localisation_data}
-%   \uses{def:index_type}
-%   \lean{LocalisationData}
-%   \leanok
-%   Let $f : M → N$ be a continuous map between manifolds. A localisation data
-%   for $f$ is a tuple $(E, F, N, ι, φ, ψ, j)$ where $E$ and $F$ are normed
-%   vector spaces, $N$ is a natural number, $ι$ is a set, $φ : \IT{N} × E → M$
-%   and $ψ : ι × F → N$  are families of smooth open embeddings, and
-%   $j : \IT{N} → ι$ such that:
-%   \begin{itemize}
-%     \item
-%       $⋃_i φ_i(B_E) = M$ where $B_E$ is the open unit ball in $E$,
-%       \item
-%       $⋃_i ψ_i(B_F) = N$ where $B_F$ is the open unit ball in $F$,
-%     \item
-%       $∀ i, f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)$ where $B_F$ is the open unit ball in $F$,
-%     \item
-%       $i \mapsto ψ_i(F)$ is locally finite.
-%   \end{itemize}
-%   Such a tuple will be denoted by $(φ, ψ, j)$ for brevity.
-% \end{definition}
-% 
-% \begin{lemma}
-%   \label{lem:ex_localisation}
-%   \uses{def:localisation_data}
-%   \lean{stdLocalisationData}
-%   \leanok
-%   Any continuous map between manifolds has some localisation data.
-% \end{lemma}
-% 
-% \begin{proof}
-%   \uses{lem:nice_atlas}
-%   \leanok
-%   The preceding lemma (applied to the trivial cover of $N$ by itself) gives a
-%   family of $ψ : ι' × F → N$ of open smooth embeddings that the images of
-%   $B_F$ cover $N$. We then apply this lemma again to the cover of $M$ given by all
-%   $f⁻¹(ψ_j(B_F))$.
-% \end{proof}
-% 
-% The general idea will be to apply the results of the previous chapters to
-% all the $ψ_{j(i)}⁻¹ ∘ f ∘ φ_i : E → F$ for some maps $f$. However we must be
-% careful that doing this for some $i$ does not ruin the setup for the next $i$.
-% This is easier to control using a distance function on the target manifold as
-% in \Cref{lem:localisation_stability} below. First we need a general lemma about
-% a single metric space (actually the formalized statement is stronger, it assumes
-% only closed sets instead of compact ones, but here we explain the easier proof
-% which is sufficient for our purposes).
-% 
-% \begin{lemma}
-%   \label{lem:stability_cover}
-%   \lean{Metric.exists_continuous_real_forall_closedBall_subset}
-%   \leanok
-%   In a metric space $X$, let $U : ι → \set{X}$ be a
-%   family of open subsets of $X$ and let $K : ι → \set{X}$ be a locally-finite
-%   family of closed subsets such that $K_i ⊂ U_i$ for all $i$. There exists a continuous
-%   function $δ : X → ℝ_{> 0}$ such that:
-%   \[
-%     ∀ x\, x',\; ∀ i, \left[x ∈ K_i \text{ and } d(x, x') < δ(x)\right] ⇒ x' ∈ U_i.
-%   \]
-% \end{lemma}
-% 
-% \begin{proof}
-%   \leanok
-%   We first note that, for any given $i$, compactness of $K$ and openness of
-%   $V_i$ give a positive number $δ_i$ such that the $δ_i$-neighborhood of $K_i$
-%   is contained in $V_i$. We now prove that solutions exist locally. Let $x$ be
-%   any point in $X$. From the local finiteness assumption, we get a neighborhood
-%   $U$ of $x$ such that $\{i | U ∩ V_i ≠ ∅\}$ is finite. The constant function
-%   with value the minimum of the corresponding $δ_i$ is a solution on $U$. Since
-%   the condition we put on $δ$ is convex, we can glue those local solutions using
-%   \Cref{lem:exists_cont_diff_of_convex}.
-% \end{proof}
-% 
-% \begin{lemma}
-%   \label{lem:localisation_stability}
-%   \lean{localisation_stability}
-%   \leanok
-%   \uses{def:localisation_data}
-%   Let $f : M → N$ be a continuous map between manifolds, and let
-%   $(φ, ψ, i)$ be some localisation data for $f$. There exists a continuous
-%   positive function $ε : M → ℝ_{>0}$ such that:
-%   \[
-%     ∀ g : M → N, \big[∀ m,\; d(f(m), g(m)) < ε(m)\big] ⇒ ∀ i,\; g(φ_i(E)) ⊂ ψ_{j(i)}(F).
-%   \]
-% \end{lemma}
-% Note that, in the preceding lemma, the conclusion $g(φ_i(E)) ⊂ ψ_{j(i)}(F)$ is
-% weaker than the condition $f(φ_i(E)) ⊂ ψ_{j(i)}(B_F)$ that appears in the
-% definition of localisation data.
-% 
-% The condition $∀ m,\; d(g(m), f(m)) < ε(m)$ will be abbreviated $d(g, f) < ε$.
-% 
-% \begin{proof}
-%   \leanok
-%   \uses{lem:stability_cover}
-%   The preceding lemma applied to the family of open sets $ψ_j(F)$ and the
-%   family of compact sets $ψ_j(\overline{B_F})$ give a positive continuous
-%   function $δ : N → ℝ$ such that $ε = δ ∘ f$ is suitable. Indeed, assume
-%   $g : M → N$ satisfies $d(g, f) < ε$ and fix some $i$ and some $m ∈ φ_i(E)$.
-%   We know $f(m) ∈ ψ_{j(i)}(\overline{B_F})$ and our assumption on $g$ gives
-%   $d(g(m), f(m)) < δ(f(m))$. So the property of $δ$ ensures $g(m) ∈ ψ_{j(i)}(F)$.
-% \end{proof}
-
-
-\subsection{Jets spaces}
+\subsection{Localisation of jet spaces and relation}%
+\label{sub:LocalisationMaps}
 
 The next definition will be used in cases where $X$ and $Y$ are vector spaces,
 in order to relate the global theory to the local one.
@@ -650,9 +480,39 @@ from the previous chapter.
   The third point is a direct consequence of the easy formula $ψ_{g, h} ∘ Ψ_{g, h}(\F) = F ∘ h$.
 \end{proof}
 
+\begin{lemma}
+  \label{lem:ample_iff_loc}
+  \uses{def:ample_relation, def:transfer_map}
+  \leanok
+  \lean{RelMfld.Ample.localize}
+  Given manifolds $W$, $X$, $Y$ and $Z$ and smooth open embeddings $g : Z → Y$
+  and $h : W → X$, the relation induced (in the sense of \Cref{def:transfer_map})
+  in $J^1(W, Z)$ by an ample relation in $J^1(X, Y)$ is ample.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  By definition, the relation induced by $\Rel$ is
+  $ψ_{g, h}⁻¹\Rel$ where
+  $ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)$.
+  Fix $σ =(w, z, φ) ∈ ψ_{g, h}⁻¹\Rel$
+  and a dual pair $(λ, v)$ on $T_wW$. We set $G = T_z g$ and $H = T_w h$. Both
+  those maps are linear isomorphisms. We compute the slice corresponding to $(σ, λ, v)$:
+  \begin{align*}
+    ψ_{g, h}⁻¹\Rel(σ, λ, v)
+    &= \Conn_{φv}\left\{u ∈ T_wW \;\left|\; (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\Rel \right.\right\}\\
+    &= \Conn_{φv}\left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ (φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \Rel \right.\right\}\\
+%    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
+%    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
+%    &= \left\{u ∈ T_wW \;\left|\; Gu ∈ \Rel((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu) \right.\right\}\\
+    &= G⁻¹\Rel(ψ_{g, h}σ, λ ∘ H⁻¹, Hv).
+  \end{align*}
+  Hence the slice $ψ_{g, h}⁻¹\Rel(σ, λ, v)$ is the image of a slice of $\Rel$
+  under a linear isomorphism, hence ample.
+\end{proof}
 
 
-\subsection*{Parametricity for free}
+\section{Parametricity for free}
 
 In many cases, relative parametric $h$-principles can be deduced from relative
 non-parametric ones with a larger source manifold.
@@ -710,72 +570,6 @@ $\bar F(x, p) := (f_p(x), φ_{p, x} ⊕ ∂f/∂p(x, p))$.
   a homotopy of the original formal solution.
 \end{proof}
 
-
-\section{The $h$-principle for open and ample differential relations}
-\label{sec:general_theory}
-
-\begin{lemma}
-  \label{lem:ample_iff_loc}
-  \uses{def:ample_relation, def:transfer_map}
-  \leanok
-  \lean{RelMfld.Ample.localize}
-  Given manifolds $W$, $X$, $Y$ and $Z$ and smooth open embeddings $g : Z → Y$
-  and $h : W → X$, the relation induced (in the sense of \Cref{def:transfer_map})
-  in $J^1(W, Z)$ by an ample relation in $J^1(X, Y)$ is ample.
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  By definition, the relation induced by $\Rel$ is
-  $ψ_{g, h}⁻¹\Rel$ where
-  $ψ_{g, h}(w, z, φ) = (h(w), g(z), T_zg ∘ φ ∘ (T_wh)⁻¹)$.
-  Fix $σ =(w, z, φ) ∈ ψ_{g, h}⁻¹\Rel$
-  and a dual pair $(λ, v)$ on $T_wW$. We set $G = T_z g$ and $H = T_w h$. Both
-  those maps are linear isomorphisms. We compute the slice corresponding to $(σ, λ, v)$:
-  \begin{align*}
-    ψ_{g, h}⁻¹\Rel(σ, λ, v)
-    &= \Conn_{φv}\left\{u ∈ T_wW \;\left|\; (w, z, φ + (u - φv)⊗λ) ∈ ψ_{g, h}⁻¹\Rel \right.\right\}\\
-    &= \Conn_{φv}\left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ (φ + (u - φv)⊗λ)∘ H⁻¹) ∈ \Rel \right.\right\}\\
-%    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
-%    &= \left\{u ∈ T_wW \;\left|\; (h(w), g(z), G ∘ φ ∘ H⁻¹ + (Gu - G ∘ φ ∘ H⁻¹ ∘ Hv)⊗(λ ∘ H⁻¹)) ∈ \Rel \right.\right\}\\
-%    &= \left\{u ∈ T_wW \;\left|\; Gu ∈ \Rel((h(w), g(z), G ∘ φ ∘ H⁻¹), λ ∘ H⁻¹, Gu) \right.\right\}\\
-    &= G⁻¹\Rel(ψ_{g, h}σ, λ ∘ H⁻¹, Hv).
-  \end{align*}
-  Hence the slice $ψ_{g, h}⁻¹\Rel(σ, λ, v)$ is the image of a slice of $\Rel$
-  under a linear isomorphism, hence ample.
-\end{proof}
-
-\begin{lemma}
-  \label{lem:open_ample_immersion}
-  \uses{def:ample_relation}
-  \leanok
-  \lean{immersionRel_open_ample}
-  The relation of immersions of $M$ into $N$ in positive codimension is open
-  and ample.
-\end{lemma}
-
-\begin{proof}
-  \proves{lem:open_ample_immersion}
-  \uses{lem:ample_codim_two}
-  \lean{immersionRel_open_ample}
-  \leanok
-  For every $σ = (x, y, φ)$ in the immersion relation $\Rel$,
-  and for every dual pair $(π, v)$, the slice
-  $\Rel(σ, π, v)$ is the set of $w$ which do not belong to
-  the image of $\ker π$ under $φ$.
-  Since $\dim M > \dim N$, this image has codimension at least $2$ in
-  $T_yN$, and \cref{lem:ample_codim_two} concludes.
-\end{proof}
-
-% \begin{theorem}[Gromov]
-%   \label{thm:open_ample}
-%   % \uses{def:h-princ} % causes transitive arrow in depgraph
-%   \leanok
-%   \lean{RelMfld.Ample.satisfiesHPrincipleWith}
-%   For any manifolds $X$ and $Y$, any relation $\Rel ⊂ J^1(X, Y)$ that is open
-%   and ample satisfies the full $h$-principle (relative, parametric and $C^0$-dense).
-% \end{theorem}
-
 We first explain how to get rid of parameters, using the
 relation $\Rel^P$ for families of solutions parametrized by $P$.
 
@@ -806,6 +600,12 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   Because $\Rel$ is ample and taking convex hull commutes with translation, we
   get that $\Conv\Rel^P_{σ, λ, v} = T_yY$.
 \end{proof}
+
+
+\section{The $h$-principle for open and ample differential relations}
+\label{sec:general_theory}
+
+
 
 \begin{proof}[Proof of Theorem~\ref{thm:open_ample}]
   \leanok
@@ -872,6 +672,29 @@ relation $\Rel^P$ for families of solutions parametrized by $P$.
   $‖\bs \HH_t(e) - \bs \F(e)‖ < η$ for some positive $η$ given by
   \Cref{lem:dist_updating} (applied to $P = ℝ$, $M$ and $N$).
 \end{proof}
+
+\begin{lemma}
+  \label{lem:open_ample_immersion}
+  \uses{def:ample_relation}
+  \leanok
+  \lean{immersionRel_open_ample}
+  The relation of immersions of $M$ into $N$ in positive codimension is open
+  and ample.
+\end{lemma}
+
+\begin{proof}
+  \proves{lem:open_ample_immersion}
+  \uses{lem:ample_codim_two}
+  \lean{immersionRel_open_ample}
+  \leanok
+  For every $σ = (x, y, φ)$ in the immersion relation $\Rel$,
+  and for every dual pair $(π, v)$, the slice
+  $\Rel(σ, π, v)$ is the set of $w$ which do not belong to
+  the image of $\ker π$ under $φ$.
+  Since $\dim M > \dim N$, this image has codimension at least $2$ in
+  $T_yN$, and \cref{lem:ample_codim_two} concludes.
+\end{proof}
+
 
 \begin{theorem}[Smale 1958]
   \label{thm:sphere_eversion}
