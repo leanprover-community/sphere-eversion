@@ -216,7 +216,6 @@ theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G}
     (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [JetSec.IsHolonomicAt, S.curry_φ] at hS ⊢
   rw [show (S.curry (t, s)).f = fun x ↦ (S.curry (t, s)).f x from rfl, funext (S.curry_f _)]
-  dsimp only
   refine (fderiv.comp x ((S t).f_diff.contDiffAt.differentiableAt le_top)
     ((differentiableAt_const _).prod differentiableAt_id)).trans ?_
   rw [_root_.id, hS]

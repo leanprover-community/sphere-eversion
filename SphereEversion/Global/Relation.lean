@@ -568,7 +568,6 @@ theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
   · dsimp only; erw [ψ.right_inv (hF <| mem_range_self x), Function.comp_apply, F.bs_eq]
   · -- Porting note: was simp_rw [← ψ.fderiv_coe, continuous_linear_map.comp_apply,
     --  continuous_linear_equiv.coe_coe, continuous_linear_equiv.apply_symm_apply]
-    dsimp only
     -- Porting note: we are missing an ext lemma here.
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
     erw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,

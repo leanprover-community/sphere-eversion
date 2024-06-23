@@ -278,7 +278,6 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
     simp only [OpenSmoothEmbedding.update_apply_embedding]
     dsimp only [ChartPair.mkHtpy]
     rw [dif_pos h𝓕, OpenSmoothEmbedding.updateFormalSol_apply]
-    dsimp only
     simp_rw [OpenSmoothEmbedding.update_apply_embedding, OneJetBundle.embedding_toFun,
       OpenSmoothEmbedding.transfer_proj_snd]
     rfl
