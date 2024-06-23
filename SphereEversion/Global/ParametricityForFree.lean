@@ -1,6 +1,5 @@
 import SphereEversion.Global.Relation
 import Mathlib.Analysis.Convex.AmpleSet
-import SphereEversion.Local.AmpleSet
 
 noncomputable section
 

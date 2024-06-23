@@ -3,7 +3,7 @@ import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Convolution
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.Analysis.Calculus.BumpFunction.Normed
-import SphereEversion.ToMathlib.Topology.Periodic
+import SphereEversion.ToMathlib.Algebra.Periodic
 import SphereEversion.ToMathlib.Analysis.ContDiff
 import SphereEversion.Loops.Basic
 
@@ -189,7 +189,7 @@ theorem intervalIntegral_periodize_smul (f : ℝ → ℝ) (γ : Loop E) {a b c d
   rw [h2]
   have : (support fun t ↦ f t • γ t) ⊆ Ioc a (a + 1) := by
     erw [support_smul]
-    exact ((inter_subset_left _ _).trans hf).trans (Ioc_subset_Ioc_right h)
+    exact (inter_subset_left.trans hf).trans (Ioc_subset_Ioc_right h)
   rw [← intervalIntegral.integral_eq_integral_of_support_subset this]
   simp_rw [periodize_smul_periodic _ γ.periodic,
     Function.Periodic.intervalIntegral_add_eq (periodic_periodize fun x : ℝ ↦ f x • γ x) c a]

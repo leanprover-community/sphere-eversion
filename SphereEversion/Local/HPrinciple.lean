@@ -154,7 +154,7 @@ theorem smooth_g (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.g 𝓕)
 
 theorem Accepts.rel {L : StepLandscape E} {𝓕 : JetSec E F} (h : L.Accepts R 𝓕) :
     ∀ᶠ x : E near L.K, (L.g 𝓕) x = (L.b 𝓕) x := by
-  apply (h.hC.filter_mono <| monotone_nhdsSet (inter_subset_right L.K₁ L.C)).mono
+  apply (h.hC.filter_mono <| monotone_nhdsSet inter_subset_right).mono
   intro x hx
   dsimp [JetSec.IsHolonomicAt] at hx
   dsimp [StepLandscape.g, StepLandscape.b]

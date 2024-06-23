@@ -1,4 +1,4 @@
-import Mathlib.Data.Fin.Interval
+import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Data.Fin.SuccPred
 import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.ZMod.Defs

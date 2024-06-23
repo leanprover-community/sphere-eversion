@@ -147,8 +147,8 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s := by
     intro s hs
     refine fract_preimage_mem_nhds ?_ fun _ ↦ ?_
-    · rw [hs]; exact mem_of_superset (Iic_mem_nhds <| by norm_num) (subset_union_left _ _)
-    · exact mem_of_superset (Ici_mem_nhds <| by norm_num) (subset_union_right _ _)
+    · rw [hs]; exact mem_of_superset (Iic_mem_nhds <| by norm_num) subset_union_left
+    · exact mem_of_superset (Ici_mem_nhds <| by norm_num) subset_union_right
   let C : Set (E × ℝ × ℝ) := (fun x ↦ x.2.1) ⁻¹' Iic (5⁻¹ : ℝ) ∪ (fun x ↦ fract x.2.2) ⁻¹' C₁
   have hC : IsClosed C := by
     refine (isClosed_Iic.preimage continuous_snd.fst).union ?_
@@ -191,7 +191,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         have :
           (fun x : E × ℝ × ℝ ↦ (x.1, smoothTransition x.2.1, fract x.2.2)) ⁻¹' C ∈ 𝓝 (x, t, s) := by
           simp_rw [C, preimage_union, preimage_preimage, fract_fract]
-          refine mem_of_superset ?_ (subset_union_right _ _)
+          refine mem_of_superset ?_ subset_union_right
           refine continuousAt_id.snd'.snd'.preimage_mem_nhds (h2C₁ s hs)
         filter_upwards [this] with x hx
         exact (hγ₅C hx).trans
