@@ -2,7 +2,7 @@ import Mathlib.Analysis.Asymptotics.Asymptotics
 import Mathlib.LinearAlgebra.Dual
 import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Calculus.ParametricIntegral
-import SphereEversion.ToMathlib.Topology.Periodic
+import SphereEversion.ToMathlib.Algebra.Periodic
 import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.Loops.Basic
 import SphereEversion.Local.DualPair

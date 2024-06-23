@@ -12,7 +12,6 @@ import SphereEversion.Global.TwistOneJetSec
 import SphereEversion.Indexing
 import SphereEversion.InductiveConstructions
 import SphereEversion.Local.AmpleRelation
-import SphereEversion.Local.AmpleSet
 import SphereEversion.Local.Corrugation
 import SphereEversion.Local.DualPair
 import SphereEversion.Local.HPrinciple
@@ -27,6 +26,7 @@ import SphereEversion.Loops.Reparametrization
 import SphereEversion.Loops.Surrounding
 import SphereEversion.Main
 import SphereEversion.Notations
+import SphereEversion.ToMathlib.Algebra.Periodic
 import SphereEversion.ToMathlib.Analysis.Calculus
 import SphereEversion.ToMathlib.Analysis.Calculus.AffineMap
 import SphereEversion.ToMathlib.Analysis.ContDiff
@@ -65,5 +65,4 @@ import SphereEversion.ToMathlib.Topology.HausdorffDistance
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Path
-import SphereEversion.ToMathlib.Topology.Periodic
 import SphereEversion.ToMathlib.Topology.Separation
