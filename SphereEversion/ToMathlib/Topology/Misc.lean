@@ -68,7 +68,7 @@ section
 
 /-! ## The standard ℤ action on ℝ is properly discontinuous
 
-TODO: use that in ToMathlib.Topology.Periodic?
+TODO: use that in ToMathlib.Algebra.Periodic?
 -/
 
 instance : VAdd ℤ ℝ :=

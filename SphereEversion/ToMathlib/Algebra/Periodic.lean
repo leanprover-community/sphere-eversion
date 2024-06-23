@@ -1,6 +1,6 @@
-import Mathlib.Algebra.Periodic
-import Mathlib.Analysis.Normed.Group.Basic
 import SphereEversion.ToMathlib.Topology.Separation
+import Mathlib.Analysis.Normed.Order.Lattice
+-- TODO: the file this references doesn't exist in mathlib any more; rename this one appropriately!
 
 /-!
 
@@ -101,8 +101,7 @@ theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
 theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ :=
   continuous_quotient_mk'
 
-theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ :=
-  QuotientAddGroup.isOpenMap_coe ℤSubℝ
+theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe ℤSubℝ
 
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
     QuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
