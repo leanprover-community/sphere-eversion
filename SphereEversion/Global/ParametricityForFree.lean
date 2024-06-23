@@ -95,7 +95,6 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
   erw [← preimage_vadd_neg, mem_preimage, mem_slice, R.mem_relativize]
   congr!
 
-
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
@@ -220,9 +219,7 @@ theorem FormalSol.eq_iff {F₁ F₂ : FormalSol R} {x : M} :
 theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N)
     {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
-  dsimp only
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
-  dsimp only
   refine (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
     ((mdifferentiableAt_const I IP).prod_mk smooth_id.mdifferentiableAt)).trans
     ?_

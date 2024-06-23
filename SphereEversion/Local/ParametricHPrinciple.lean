@@ -149,9 +149,10 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
 open ContinuousLinearMap
 theorem FamilyJetSec.uncurry_mem_relativize (S : FamilyJetSec E F P) {s : P} {x : E} :
     ((s, x), S.uncurry (s, x)) ∈ R.relativize P ↔ (x, S s x) ∈ R := by
-  rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq, JetSec.coe_apply,  JetSec.coe_apply, S.uncurry_f, S.uncurry_φ']
-  dsimp only
-  suffices ((D (fun z ↦ f S z x) s).comp (fst ℝ P E) + (φ S s x).comp (snd ℝ P E)).comp (ContinuousLinearMap.inr ℝ P E) = JetSec.φ (S s) x by
+  rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq, JetSec.coe_apply, JetSec.coe_apply,
+    S.uncurry_f, S.uncurry_φ']
+  suffices ((D (fun z ↦ f S z x) s).comp (fst ℝ P E) + (φ S s x).comp (snd ℝ P E)).comp
+      (ContinuousLinearMap.inr ℝ P E) = JetSec.φ (S s) x by
     rw [this]; rfl
   ext v
   simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
@@ -216,7 +217,6 @@ theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G}
     (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [JetSec.IsHolonomicAt, S.curry_φ] at hS ⊢
   rw [show (S.curry (t, s)).f = fun x ↦ (S.curry (t, s)).f x from rfl, funext (S.curry_f _)]
-  dsimp only
   refine (fderiv.comp x ((S t).f_diff.contDiffAt.differentiableAt le_top)
     ((differentiableAt_const _).prod differentiableAt_id)).trans ?_
   rw [_root_.id, hS]

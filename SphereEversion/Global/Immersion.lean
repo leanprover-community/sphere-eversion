@@ -269,7 +269,7 @@ theorem ContDiff.uncurry_left' (n : ℕ∞) {f : E × F → G}
 theorem ContDiff.uncurry_left {f : E → F → G} (n : ℕ∞) (hf : ContDiff 𝕜 n ↿f) (x : E) :
     ContDiff 𝕜 n (f x) := by
   have : f x = (uncurry f) ∘ fun p : F ↦ (⟨x, p⟩ : E × F) := by ext; simp
-  rw [this] ; exact hf.comp (ContDiff.inr x n)
+  rw [this]; exact hf.comp (ContDiff.inr x n)
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
@@ -297,7 +297,7 @@ theorem Smooth.uncurry_left
     Smooth I' IP (f x) := by
   have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
   -- or just `apply hf.comp (Smooth.inr I I' x)`
-  rw [this] ; exact hf.comp (Smooth.inr I I' x)
+  rw [this]; exact hf.comp (Smooth.inr I I' x)
 
 end helper
 

@@ -305,20 +305,18 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
   erw [hom_trivializationAt_target]
   simp only [trivializationAt_pullBack_baseSet, TangentBundle.trivializationAt_baseSet]
   rcases x₀ with ⟨⟨m, m'⟩, φ⟩
-  dsimp only
   simp only [ContMDiffMap.coe_fst, ContMDiffMap.fst_apply, ContMDiffMap.coe_snd,
     ContMDiffMap.snd_apply]
   erw [prod_univ, inter_eq_left, prod_univ, PartialEquiv.prod_symm, PartialEquiv.prod_symm]
   rw [preimage_preimage, ← Set.prod_eq, PartialEquiv.refl_symm, PartialEquiv.prod_coe,
       PartialEquiv.refl_coe]
-  dsimp only
   have : (fun x : ModelProd (ModelProd H H') (E →SL[σ] E') ↦ ((chartAt H m).toPartialEquiv.symm.prod (chartAt H' m').toPartialEquiv.symm) x.1) =
       (Prod.map (chartAt H m).symm (chartAt H' m').symm) ∘ Prod.fst := by
     ext x <;> rfl
   rw [this, preimage_comp, preimage_prod_map_prod]
   mono
-  exact (chartAt H m).target_subset_preimage_source
-  exact (chartAt H' m').target_subset_preimage_source
+  · exact (chartAt H m).target_subset_preimage_source
+  · exact (chartAt H' m').target_subset_preimage_source
 
 section Maps
 

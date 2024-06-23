@@ -85,7 +85,6 @@ theorem IsHolonomicAt.congr {𝓕 𝓕' : JetSec E F} {x} (h : IsHolonomicAt �
     IsHolonomicAt 𝓕' x := by
   have h'' : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
     apply h'.mono
-    dsimp only
     simp_rw [eq_iff]
     tauto
   unfold JetSec.IsHolonomicAt
@@ -104,7 +103,6 @@ theorem _root_.Filter.Eventually.isPartHolonomicAt_congr {𝓕 𝓕' : JetSec E 
   intro x hx
   have hf : 𝓕.f =ᶠ[𝓝 x] 𝓕'.f := by
     apply hx.mono
-    dsimp only
     simp_rw [eq_iff]
     tauto
   unfold JetSec.IsPartHolonomicAt
