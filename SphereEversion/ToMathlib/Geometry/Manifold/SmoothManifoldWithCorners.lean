@@ -36,17 +36,17 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type*} {s
     obtain ⟨r, hr₀, hr₁⟩ :=
       (Filter.hasBasis_iff.mp (@nhds_basis_ball E _ (extChartAt I x x)) _).mp hm
     refine ⟨r, ⟨hr₀, hr₁.trans ?_, ⟨j, ?_⟩⟩, ?_⟩
-    · exact ((extChartAt I x).mapsTo.mono (inter_subset_right _ _) Subset.rfl).image_subset
+    · exact ((extChartAt I x).mapsTo.mono inter_subset_right Subset.rfl).image_subset
     · suffices m ⊆ s j by
         refine Subset.trans ?_ this
         convert monotone_image (f := (extChartAt I x).symm) hr₁
-        exact (PartialEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
-      exact (Set.inter_subset_left _ _).trans (Set.inter_subset_left _ _)
+        exact (PartialEquiv.symm_image_image_of_subset_source _ inter_subset_right).symm
+      exact inter_subset_left.trans inter_subset_left
     · suffices m ⊆ n by
         refine Subset.trans ?_ this
         convert monotone_image (f := (extChartAt I x).symm) hr₁
-        exact (PartialEquiv.symm_image_image_of_subset_source _ (Set.inter_subset_right _ _)).symm
-      exact (Set.inter_subset_left _ _).trans (Set.inter_subset_right _ _)
+        exact (PartialEquiv.symm_image_image_of_subset_source _ inter_subset_right).symm
+      exact inter_subset_left.trans inter_subset_right
   · rintro ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩
     replace hr₀ : Metric.ball (extChartAt I x x) r ∈ 𝓝 (extChartAt I x x) := ball_mem_nhds _ hr₀
     rw [← map_extChartAt_nhds_of_boundaryless, Filter.mem_map] at hr₀
