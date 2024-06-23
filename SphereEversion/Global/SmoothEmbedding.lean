@@ -146,7 +146,7 @@ theorem forall_near [T2Space M'] {P : M → Prop} {P' : M' → Prop} {K : Set M}
   rw [show A = A ∩ range f ∪ A ∩ (range f)ᶜ by simp]
   apply Filter.Eventually.union
   · have : ∀ᶠ m' near A ∩ range f, m' ∈ range f :=
-      f.isOpen_range.mem_nhdsSet.mpr (inter_subset_right _ _)
+      f.isOpen_range.mem_nhdsSet.mpr inter_subset_right
     apply (this.and <| f.forall_near' hP).mono
     rintro _ ⟨⟨m, rfl⟩, hm⟩
     exact hPP' _ (hm _ rfl)

@@ -174,29 +174,26 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
   · exact IsOpen.union U₁_op U_op
   · exact IsOpen.sdiff U₂_op hK
   · refine IsCompact.union K₁_cpct ?_
-    refine K₂_cpct.closure_of_subset ?_
-    exact inter_subset_left K₂ U'
+    exact K₂_cpct.closure_of_subset inter_subset_left
   · exact IsCompact.diff K₂_cpct U'_op
-  · exact subset_union_left K₁ (closure (K₂ ∩ U'))
+  · exact subset_union_left
   · apply union_subset_union
     exact hK₁U₁
     apply subset_trans _ hU'U
     gcongr
-    exact inter_subset_right K₂ U'
+    exact inter_subset_right
   · exact diff_subset_diff hK₂U₂ hKU'
   · rw [union_assoc]
     congr
     apply subset_antisymm
-    · apply union_subset
-      · apply K₂_cpct.isClosed.closure_subset_iff.mpr
-        exact inter_subset_left K₂ U'
-      · exact diff_subset K₂ U'
+    · apply union_subset ?_ diff_subset
+      exact K₂_cpct.isClosed.closure_subset_iff.mpr inter_subset_left
     · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
         _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
   · intro x hx hx'
     exact hx'.2 hx
   · rw [union_comm]
-  · exact diff_subset U₂ K
+  · exact diff_subset
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
