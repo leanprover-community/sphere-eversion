@@ -132,7 +132,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     intro i hi
     rw [mem_setOf_eq, ← nonempty_iff_ne_empty]
     apply Nonempty.mono _ hi
-    mono
+    gcongr
     · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; exact add_comm x i]
       exact image_subset _ Ioo_subset_Icc_self
     exact subset_tsupport f

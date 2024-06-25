@@ -8,6 +8,8 @@ import SphereEversion.Notations
 
 -- set_option trace.filter_inst_type true
 
+attribute [gcongr] nhdsSet_mono
+
 open Set Filter Function
 
 open scoped Topology unitInterval
@@ -239,8 +241,7 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     refine ⟨f, fun x ↦ ⟨h₀f x, restrictGermPredicate_congr (hf₁ x).2 ?_⟩, ?_, ?_⟩
     · exact h'f.filter_mono (nhdsSet_mono <| subset_union_of_subset_right hKU₂' K₁')
     · rwa [hK₁'K₂'] at hf
-    · apply h'f.filter_mono (nhdsSet_mono <| ?_)
-      exact union_subset_union hK₁K₁' <| compl_subset_compl_of_subset hU₂'U₂
+    · apply h'f.filter_mono; gcongr
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
   simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
   exact ⟨f, ⟨hf.1, hf.2.2⟩, hf.2.1⟩
@@ -473,7 +474,7 @@ theorem inductive_htpy_construction' {X Y : Type*}
     with ⟨F, hF₀, hF₁, hF₂, hFK₁, ht⟩
   refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
   apply hF₁.filter_mono
-  mono
+  gcongr
   rw [bUnion_le]
   exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
 end Htpy

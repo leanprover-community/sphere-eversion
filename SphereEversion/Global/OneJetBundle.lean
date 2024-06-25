@@ -294,6 +294,8 @@ lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
 
 end
 
+attribute [gcongr] preimage_mono Set.prod_mono
+
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
