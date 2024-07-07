@@ -217,7 +217,7 @@ theorem smoothStep.mem (t : ℝ) : smoothStep t ∈ I :=
   ⟨smoothTransition.nonneg _, smoothTransition.le_one _⟩
 
 theorem smoothStep.abs_le (t : ℝ) : |smoothStep t| ≤ 1 :=
-  abs_le.mpr ⟨by linarith [(smoothStep.mem t).1], smoothTransition.le_one _⟩
+  _root_.abs_le.mpr ⟨by linarith [(smoothStep.mem t).1], by apply smoothTransition.le_one _⟩
 
 theorem smoothStep.of_lt {t : ℝ} (h : t < 1 / 4) : smoothStep t = 0 := by
   apply smoothTransition.zero_of_nonpos
