@@ -70,7 +70,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
     have : ‖ε • γ₀ t s‖ < ε₀ := (h2ε t s).trans (h0ε₁ ▸ half_lt_self hε₀)
     exact h1 x hx t s (by simpa [γ₁, ← h0ε₁])
   · intro x hx
-    rw [← h0ε₁, add_halves']
+    rw [← h0ε₁, add_halves]
     exact (ball_subset_thickening (mem_image_of_mem _ hx.2) _).trans hεΩ
   · rintro x ⟨-, -⟩ t s
     simp [γ₁, h2ε]
@@ -214,7 +214,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   · rintro x - t - s -; rw [← not_mem_compl_iff]
     by_cases hΩ : Ωᶜ.Nonempty; swap
     · rw [not_nonempty_iff_eq_empty] at hΩ; rw [hΩ]; apply not_mem_empty
-    refine' not_mem_of_dist_lt_infDist ?_
+    refine not_mem_of_dist_lt_infDist (x := ?_) ?_
     · exact (x, γ₃ x (smoothTransition t) (fract s))
     · rw [dist_comm, dist_prod_same_left]
       refine (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le ?_ ?_)

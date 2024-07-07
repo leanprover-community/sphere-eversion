@@ -6,53 +6,6 @@ import SphereEversion.ToMathlib.Analysis.Calculus
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
 open scoped Topology
 
-section -- PRed in #11185
-
-variable {μ : Measure ℝ} [IsLocallyFiniteMeasure μ] [NoAtoms μ]
-  {X : Type*} [TopologicalSpace X] [FirstCountableTopology X]
-  {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-
-theorem continuous_parametric_primitive_of_continuous [LocallyCompactSpace X] {F : X → ℝ → E}
-    {a₀ : ℝ} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) :
-    Continuous fun p : X × ℝ ↦ ∫ t in a₀..p.2, F p.1 t ∂μ := by
-  rw [continuous_iff_continuousAt]
-  rintro ⟨x₀, b₀⟩
-  rcases exists_compact_mem_nhds x₀ with ⟨U, U_cpct, U_nhds⟩
-  cases' exists_lt (min a₀ b₀) with a a_lt
-  cases' exists_gt (max a₀ b₀) with b lt_b
-  rw [lt_min_iff] at a_lt
-  rw [max_lt_iff] at lt_b
-  have a₀_in : a₀ ∈ Ioo a b := ⟨a_lt.1, lt_b.1⟩
-  have b₀_in : b₀ ∈ Ioo a b := ⟨a_lt.2, lt_b.2⟩
-  obtain ⟨M, hM⟩ :=
-    (U_cpct.prod (isCompact_Icc (a := a) (b := b))).bddAbove_image hF.norm.continuousOn
-  refine intervalIntegral.continuousAt_parametric_primitive_of_dominated
-    (fun _ ↦ M) a b ?_ ?_ ?_ ?_ a₀_in b₀_in (measure_singleton b₀)
-  · exact fun x ↦ (hF.comp (Continuous.Prod.mk x)).aestronglyMeasurable
-  · refine Eventually.mono U_nhds fun x (x_in : x ∈ U) ↦ ?_
-    simp_rw [ae_restrict_iff' measurableSet_uIoc]
-    refine eventually_of_forall fun t t_in ↦ ?_
-    refine hM (mem_image_of_mem _ <| mk_mem_prod x_in ?_)
-    rw [uIoc_of_le (a_lt.1.trans lt_b.1).le] at t_in
-    exact mem_Icc_of_Ioc t_in
-  · apply intervalIntegrable_const
-  · apply ae_of_all
-    intro a
-    apply (hF.comp₂ continuous_id continuous_const).continuousAt
-
-theorem continuous_parametric_intervalIntegral_of_continuous [LocallyCompactSpace X] {a₀ : ℝ}
-    {F : X → ℝ → E} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) {s : X → ℝ} (hs : Continuous s) :
-    Continuous fun x ↦ ∫ t in a₀..s x, F x t ∂μ :=
-  show Continuous ((fun p : X × ℝ ↦ ∫ t in a₀..p.2, F p.1 t ∂μ) ∘ fun x ↦ (x, s x)) from
-    (continuous_parametric_primitive_of_continuous hF).comp₂ continuous_id hs
-
-theorem continuous_parametric_intervalIntegral_of_continuous' [LocallyCompactSpace X]
-    {F : X → ℝ → E} (hF : Continuous fun p : X × ℝ ↦ F p.1 p.2) (a₀ b₀ : ℝ) :
-    Continuous fun x ↦ ∫ t in a₀..b₀, F x t ∂μ :=
-  continuous_parametric_intervalIntegral_of_continuous hF continuous_const
-
-end
-
 section
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -62,7 +15,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E
 We could weaken `FiniteDimensional ℝ H` with `SecondCountable (H →L[ℝ] E)` if needed,
 but that is less convenient to work with.
 -/
-
 
 open Real ContinuousLinearMap Asymptotics
 
@@ -270,7 +222,7 @@ theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : �
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
   induction' n with n ih generalizing F
   · rw [Nat.cast_zero, contDiff_zero] at *
-    exact continuous_parametric_intervalIntegral_of_continuous hF hs
+    exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous hF hs
   · have hF₁ : ContDiff ℝ 1 ↿F := hF.one_of_succ
     have hs₁ : ContDiff ℝ 1 s := hs.one_of_succ
     have h :

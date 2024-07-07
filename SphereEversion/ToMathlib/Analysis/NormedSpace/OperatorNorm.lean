@@ -11,12 +11,12 @@ variable {𝕜 E F G Fₗ Gₗ X : Type*} [NontriviallyNormedField 𝕜] [Normed
   [NormedSpace 𝕜 E] [NormedSpace 𝕜 Fₗ] [NormedSpace 𝕜 Gₗ] [NormedSpace 𝕜 F] [NormedSpace 𝕜 G]
   [TopologicalSpace X]
 
-theorem ContinuousLinearMap.le_op_norm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E : Type*} {F : Type*}
+theorem ContinuousLinearMap.le_opNorm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E : Type*} {F : Type*}
     [NormedAddCommGroup E] [SeminormedAddCommGroup F] [NontriviallyNormedField 𝕜]
     [NontriviallyNormedField 𝕜₂] [NormedSpace 𝕜 E] [NormedSpace 𝕜₂ F] {σ₁₂ : 𝕜 →+* 𝕜₂}
     [RingHomIsometric σ₁₂] (f : E →SL[σ₁₂] F) {x : E} (hx : x ≠ 0) {C : ℝ} (h : C * ‖x‖ ≤ ‖f x‖) :
     C ≤ ‖f‖ := by
-  apply le_of_mul_le_mul_right (h.trans (f.le_op_norm x))
+  apply le_of_mul_le_mul_right (h.trans (f.le_opNorm x))
   rwa [norm_pos_iff']
 
 @[simp]
@@ -78,7 +78,7 @@ theorem isBoundedLinearMap_coprod (𝕜 : Type*) [NontriviallyNormedField 𝕜] 
       rintro ⟨e, f⟩
       calc
         ‖φ e + ψ f‖ ≤ ‖φ e‖ + ‖ψ f‖ := norm_add_le _ _
-        _ ≤ ‖φ‖ * ‖e‖ + ‖ψ‖ * ‖f‖ := (add_le_add (φ.le_op_norm e) (ψ.le_op_norm f))
+        _ ≤ ‖φ‖ * ‖e‖ + ‖ψ‖ * ‖f‖ := (add_le_add (φ.le_opNorm e) (ψ.le_opNorm f))
         _ ≤ 2 * max ‖φ‖ ‖ψ‖ * max ‖e‖ ‖f‖ := by
           rw [two_mul, add_mul]
           gcongr <;> first | apply le_max_left | apply le_max_right }

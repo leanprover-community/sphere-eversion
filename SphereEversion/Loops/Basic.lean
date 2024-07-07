@@ -6,10 +6,9 @@ import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 # Basic definitions and properties of loops
 -/
 
-
 open Set Function FiniteDimensional Int TopologicalSpace
 
-open scoped BigOperators Topology unitInterval
+open scoped Topology unitInterval
 
 noncomputable section
 
@@ -334,7 +333,7 @@ theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ suppo
 theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
     Continuous fun x ↦ (γ x).average :=
-  continuous_parametric_intervalIntegral_of_continuous' hγ_cont _ _
+  intervalIntegral.continuous_parametric_intervalIntegral_of_continuous' (by apply hγ_cont) _ _
 
 /-- The normalization of a loop `γ` is the loop `γ - γ.average`. -/
 def normalize (γ : Loop F) : Loop F where

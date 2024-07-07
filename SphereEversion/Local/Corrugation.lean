@@ -33,7 +33,6 @@ The main definition is `corrugation`. The main results are:
 noncomputable section
 
 open Set Function Filter MeasureTheory ContinuousLinearMap
-
 open scoped Topology unitInterval
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -88,6 +87,7 @@ theorem corrugation.support : support (𝒯 N γ) ⊆ Loop.support γ := fun x x
 theorem corrugation_eq_zero (x) (H : x ∉ Loop.support γ) : corrugation π N γ x = 0 :=
   nmem_support.mp fun hx ↦ H (corrugation.support π N γ hx)
 
+open intervalIntegral in
 theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace E]
     {γ : ℝ → E → Loop F} {K : Set E} (hK : IsCompact K) (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :

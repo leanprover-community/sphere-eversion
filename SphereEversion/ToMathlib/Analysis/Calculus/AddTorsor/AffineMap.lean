@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Calculus.AffineMap
+import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
 
 /-!
 

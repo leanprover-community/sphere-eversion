@@ -1,12 +1,13 @@
+import Mathlib.Analysis.Calculus.AddTorsor.Coord
 import Mathlib.Analysis.Matrix
-import Mathlib.LinearAlgebra.AffineSpace.Matrix
 import Mathlib.Analysis.NormedSpace.AddTorsorBases
+import Mathlib.LinearAlgebra.AffineSpace.Matrix
 
 noncomputable section
 
 open Set Function
 
-open scoped Affine Matrix BigOperators
+open scoped Affine Matrix
 
 section BarycentricDet
 

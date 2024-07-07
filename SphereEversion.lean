@@ -28,7 +28,7 @@ import SphereEversion.Main
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Algebra.Periodic
 import SphereEversion.ToMathlib.Analysis.Calculus
-import SphereEversion.ToMathlib.Analysis.Calculus.AffineMap
+import SphereEversion.ToMathlib.Analysis.Calculus.AddTorsor.AffineMap
 import SphereEversion.ToMathlib.Analysis.ContDiff
 import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Analysis.CutOff
