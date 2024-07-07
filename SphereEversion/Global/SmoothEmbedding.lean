@@ -424,9 +424,8 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
   have h₃ : V ∪ U = univ := by
     rw [← compl_subset_iff_union, compl_compl]
     exact image_subset_range φ K
-  have h₄ : ∀ x, k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.invFun) (k x) := fun m hm ↦ by
-    intros
-    exact if_pos hm
+  have h₄ (x) : k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.invFun) (k x) :=
+    fun hm ↦ if_pos hm
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
       (contMDiffOn_congr h₄).mpr <| ψ.smooth_to.comp_contMDiffOn <| hg.comp_contMDiffOn

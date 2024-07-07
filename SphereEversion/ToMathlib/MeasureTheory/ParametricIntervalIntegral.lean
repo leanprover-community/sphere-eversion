@@ -221,12 +221,9 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     rw [mapsTo']
     rintro ⟨x, s⟩ ⟨x', hx, h⟩; cases h
     exact ⟨ball_subset_closedBall hx, mem_Icc_of_Ioo t_in⟩
-  have cont_x : ∀ x, Continuous (F x) := fun x ↦ hF.continuous.comp (Continuous.Prod.mk x)
-  have int_Icc : ∀ x, IntegrableOn (F x) (Icc a₀ b₀) := fun x ↦
-    (cont_x x).continuousOn.integrableOn_Icc
-  have int_Ioo : ∀ x, IntegrableOn (F x) (Ioo a₀ b₀) := by
-    exact fun x ↦ (int_Icc x).mono_set Ioo_subset_Icc_self
-  save
+  have cont_x (x) : Continuous (F x) := hF.continuous.comp (Continuous.Prod.mk x)
+  have int_Icc (x) : IntegrableOn (F x) (Icc a₀ b₀) := (cont_x x).continuousOn.integrableOn_Icc
+  have int_Ioo (x) : IntegrableOn (F x) (Ioo a₀ b₀) := (int_Icc x).mono_set Ioo_subset_Icc_self
   apply
     hasFDerivAt_parametric_primitive_of_lip' _ _ zero_lt_one ha ht₀
       (fun x _hx ↦ (cont_x x).aestronglyMeasurable) (int_Ioo x₀) (cont_x x₀).continuousAt _ _ _

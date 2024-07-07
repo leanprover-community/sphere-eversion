@@ -40,9 +40,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   clear! A
   intro A hA 𝓕₀ h𝓕₀
   cases' isEmpty_or_nonempty M with hM hM
-  · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩
-    all_goals try apply eventually_of_forall _
-    all_goals try intro
+  · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro
     all_goals try intro
     all_goals
       first
@@ -194,9 +192,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   clear! A
   intro A hA 𝓕₀ h𝓕₀
   cases' isEmpty_or_nonempty M with hM hM
-  · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩
-    all_goals try apply eventually_of_forall _
-    all_goals try intro
+  · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro
     all_goals try intro
     all_goals
       first
