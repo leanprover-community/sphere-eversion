@@ -139,7 +139,6 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     refine contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦ ?_
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
-    save
     by_cases hij : j = i
     · simp only [hij, if_true, eq_self_iff_true]
       exact (smooth_barycentric_coord b j').fst'
