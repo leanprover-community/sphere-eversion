@@ -6,12 +6,9 @@ import Mathlib.Topology.Algebra.Order.Floor
 noncomputable section
 
 open Set Function Filter TopologicalSpace
-
-open scoped unitInterval Topology uniformity Filter Classical
+open scoped unitInterval Topology uniformity
 
 section Maps
-
-open Function Set
 
 variable {α β : Type*} [TopologicalSpace α] [TopologicalSpace β] {f : α → β} {g : β → α}
 
@@ -205,7 +202,7 @@ section
 -- TODO: move to Mathlib.Topology.Constructions
 -- needs classical
 variable {α β γ δ ι : Type*} [TopologicalSpace α] [TopologicalSpace β] {x : α}
-
+open scoped Classical in
 theorem isOpen_slice_of_isOpen_over {Ω : Set (α × β)} {x₀ : α}
     (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ Prod.fst ⁻¹' U)) : IsOpen (Prod.mk x₀ ⁻¹' Ω) := by
   rcases hΩ_op with ⟨U, hU, hU_op⟩; convert hU_op.preimage (Continuous.Prod.mk x₀) using 1
@@ -333,8 +330,6 @@ theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : Lo
   simp_rw [mem_setOf_eq, h, map_none, getD_none, empty_inter] at hn
   exact (not_nonempty_empty hn).elim
 
-open TopologicalSpace
-
 variable {X : Type*} [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
 
 theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {P : Set X → Prop}
@@ -428,6 +423,7 @@ theorem cover_nat_nhdsWithin {α} [TopologicalSpace α] [SecondCountableTopology
   rw [biUnion_range] at hsf
   exact ⟨x, hts, hsf⟩
 
+open scoped Classical in
 /-- A version of `TopologicalSpace.cover_nat_nhdsWithin` where `f` is only defined on `s`. -/
 theorem cover_nat_nhdsWithin' {α} [TopologicalSpace α] [SecondCountableTopology α] {s : Set α}
     {f : ∀ x ∈ s, Set α} (hf : ∀ (x) (hx : x ∈ s), f x hx ∈ 𝓝[s] x) (hs : s.Nonempty) :
@@ -522,8 +518,6 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
     exact hv i this
 
 end ShrinkingLemma
-
-open scoped Filter
 
 theorem Filter.EventuallyEq.slice {α β γ : Type*} [TopologicalSpace α] [TopologicalSpace β]
     {f g : α × β → γ} {a : α} {b : β} (h : f =ᶠ[𝓝 (a, b)] g) :

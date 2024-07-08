@@ -53,7 +53,7 @@ need to access its components only once.
 
 noncomputable section
 
-open scoped unitInterval Classical Filter Topology
+open scoped unitInterval Filter Topology
 
 open Filter Set RelLoc
 
@@ -93,8 +93,6 @@ structure StepLandscape extends Landscape E where
   hEp : E' ≤ ker p.π
 
 variable {E}
-
-open scoped Classical
 
 variable (R : RelLoc E F)
 

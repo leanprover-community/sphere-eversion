@@ -12,12 +12,9 @@ import Mathlib.Topology.VectorBundle.Hom
 # Various operations on and properties of smooth vector bundles
 -/
 
-
 noncomputable section
 
-open Bundle Set TopologicalSpace PartialHomeomorph
-
-open scoped Classical Manifold Bundle
+open Bundle Set
 
 namespace FiberBundle
 
