@@ -9,7 +9,7 @@ theorem const_prod_iUnion {s : ι → Set α} {t : Set β} : (t ×ˢ ⋃ i, s i)
   ext; simp
 
 -- Put next to Union₂_prod_const...
-theorem const_prod_iUnion₂ {κ : ι → Sort _} {s : ∀ i, κ i → Set α} {t : Set β} :
+theorem const_prod_iUnion₂ {κ : ι → Sort*} {s : ∀ i, κ i → Set α} {t : Set β} :
     (t ×ˢ ⋃ (i) (j), s i j) = ⋃ (i) (j), t ×ˢ s i j := by simp_rw [const_prod_iUnion]
 
 -- the next 2 lemmas should be generalized from `Set α` to a `CompleteLattice`

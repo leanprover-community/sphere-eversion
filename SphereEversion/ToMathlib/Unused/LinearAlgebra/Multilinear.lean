@@ -7,7 +7,7 @@ We no longer intend to use this file in the sphere eversion project.
 -/
 namespace Function
 
-variable {ι : Sort _} [DecidableEq ι] {α β : ι → Type*}
+variable {ι : Sort*} [DecidableEq ι] {α β : ι → Type*}
 
 /-- Special case of `function.apply_update`. Useful for `rw`/`simp`. -/
 theorem update_fst (g : ∀ i, α i × β i) (i : ι) (v : α i × β i) (j : ι) :
