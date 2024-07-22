@@ -5,7 +5,7 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_sec
 -/
-import Mathlib.Order.Filter.Germ
+import Mathlib.Order.Filter.Germ.Basic
 import SphereEversion.ToMathlib.Topology.Algebra.Module
 import SphereEversion.Global.OneJetBundle
 
