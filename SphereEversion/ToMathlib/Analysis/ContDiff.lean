@@ -230,7 +230,7 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
 
--- variant of `orthogonal_projection_singleton`
+-- variant of `orthogonalProjection_singleton`
 theorem orthogonalProjection_singleton' {v : E} :
     (𝕜 ∙ v).subtypeL.comp (orthogonalProjection (𝕜 ∙ v)) =
       (1 / (‖v‖ : 𝕜) ^ 2) • .toSpanSingleton 𝕜 v ∘L InnerProductSpace.toDual 𝕜 E v := by

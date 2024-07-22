@@ -103,7 +103,7 @@ theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set 
   rintro s t h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 
-/-- Generalization of `convex` to semirings. We only add the `s = ∅` clause if `𝕜` is trivial. -/
+/-- Generalization of `Convex` to semirings. We only add the `s = ∅` clause if `𝕜` is trivial. -/
 def ReallyConvex (𝕜 : Type*) {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
     (s : Set E) : Prop :=
   s = ∅ ∨ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s

@@ -71,7 +71,7 @@ theorem inner_crossProduct_apply_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u�
   rw [ω.inner_crossProduct_apply u v v]
   exact ω.volumeForm.map_eq_zero_of_eq ![u, v, v] (by simp) (by norm_num; decide : (1 : Fin 3) ≠ 2)
 
-/-- The map `cross_product`, upgraded from linear to continuous-linear; useful for calculus. -/
+/-- The map `crossProduct`, upgraded from linear to continuous-linear; useful for calculus. -/
 def crossProduct' : E →L[ℝ] E →L[ℝ] E :=
   LinearMap.toContinuousLinearMap
     (↑(LinearMap.toContinuousLinearMap : (E →ₗ[ℝ] E) ≃ₗ[ℝ] E →L[ℝ] E) ∘ₗ ω.crossProduct)

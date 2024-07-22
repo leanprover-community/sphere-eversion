@@ -1,6 +1,6 @@
 import Mathlib.LinearAlgebra.Span
 
-/-! Note: some results should go to `linear_algebra.span`. -/
+/-! Note: some results should go to `LinearAlgebra.Span`. -/
 
 
 open Submodule Function
