@@ -48,8 +48,7 @@ existence of delta mollifiers, partitions of unity, and the inverse function the
 noncomputable section
 
 open Set Function MeasureTheory intervalIntegral Filter
-
-open scoped Topology unitInterval Manifold BigOperators
+open scoped Topology Manifold
 
 variable {E F : Type*}
   [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]

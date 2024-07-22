@@ -21,7 +21,7 @@ noncomputable section
 
 open Filter Set
 
-open scoped Manifold Topology BigOperators
+open scoped Manifold Topology
 
 -- FIXME: move to `Manifold/Algebra/SmoothFunctions`, around line 46
 section

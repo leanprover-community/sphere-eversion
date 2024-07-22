@@ -2,11 +2,9 @@ import Mathlib.Analysis.Convex.Combination
 import Mathlib.Algebra.Module.BigOperators
 import Mathlib.Algebra.Order.Hom.Ring
 
-open scoped BigOperators
-
 open Function Set
 
--- move
+-- TODO: move this lemma and the following one
 theorem map_finsum {β α γ : Type*} [AddCommMonoid β] [AddCommMonoid γ] {G : Type*}
     [FunLike G β γ] [AddMonoidHomClass G β γ] (g : G) {f : α → β} (hf : (Function.support f).Finite) :
     g (∑ᶠ i, f i) = ∑ᶠ i, g (f i) :=
@@ -17,7 +15,6 @@ theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f 
     (h : mulSupport f ⊆ s) (hs : s.Finite) : ∏ᶠ i, f i = ∏ i in hs.toFinset, f i := by
   apply finprod_eq_prod_of_mulSupport_subset f; rwa [Set.Finite.coe_toFinset]
 
--- end move
 section
 
 variable {𝕜 𝕜' : Type*} {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]

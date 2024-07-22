@@ -4,8 +4,7 @@ import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 
 noncomputable section
 
-open scoped Topology Filter BigOperators
-
+open scoped Topology
 open Set Function Filter
 
 variable {ι : Type*}

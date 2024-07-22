@@ -1,9 +1,5 @@
 import Mathlib.Topology.Algebra.Module.Basic
 
-open Filter ContinuousLinearMap Function
-
-open scoped Topology BigOperators Filter
-
 namespace ContinuousLinearMap
 
 variable {R₁ M₁ M₂ M₃ : Type*} [Semiring R₁]

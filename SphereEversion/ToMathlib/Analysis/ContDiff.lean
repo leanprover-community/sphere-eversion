@@ -8,7 +8,6 @@ import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
 noncomputable section
 
 open scoped Topology Filter
-
 open Function
 
 section
@@ -287,8 +286,6 @@ theorem ContDiff.mul_const (hf : ContDiff 𝕜 n f) {c : 𝔸} : ContDiff 𝕜 n
 end Arithmetic
 
 section
-
-open scoped BigOperators
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
   [NormedSpace 𝕜 E] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]

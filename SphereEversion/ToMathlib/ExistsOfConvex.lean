@@ -2,7 +2,7 @@ import SphereEversion.ToMathlib.Partition
 
 noncomputable section
 
-open scoped Topology Filter Manifold BigOperators
+open scoped Topology Manifold
 
 open Set Function Filter
 

@@ -29,9 +29,8 @@ convolutions.
 
 noncomputable section
 
-open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap Filter
-
-open scoped Topology BigOperators Filter Convolution
+open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap
+open scoped Topology Filter Convolution
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
   [MeasurableSpace F] [BorelSpace F]

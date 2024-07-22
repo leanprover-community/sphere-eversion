@@ -11,7 +11,6 @@ import SphereEversion.Notations
 attribute [gcongr] nhdsSet_mono
 
 open Set Filter Function
-
 open scoped Topology unitInterval
 
 /-!
@@ -251,8 +250,6 @@ end inductive_construction
 section Htpy
 
 private noncomputable def T : ℕ → ℝ := fun n ↦ Nat.rec 0 (fun k x ↦ x + 1 / (2 : ℝ) ^ (k + 1)) n
-
-open scoped BigOperators
 
 -- Note this is more painful than Patrick hoped for. Maybe this should be the definition of T.
 private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2 : ℝ) ^ n := by

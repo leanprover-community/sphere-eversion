@@ -3,9 +3,7 @@ import Mathlib.MeasureTheory.Integral.Periodic
 
 noncomputable section
 
-open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
-
-open scoped Topology Filter NNReal BigOperators Interval
+open MeasureTheory Set
 
 section
 
@@ -47,7 +45,7 @@ theorem integral_mono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (
     (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, f u ∂μ ≤ ∫ u in a..b, g u ∂μ := by
   rw [uIoc_of_le hab] at hfg
   let H := hfg.filter_mono (ae_mono le_rfl)
-  simpa only [integral_of_le hab] using set_integral_mono_ae_restrict hf.1 hg.1 H
+  simpa only [integral_of_le hab] using setIntegral_mono_ae_restrict hf.1 hg.1 H
 
 theorem integral_mono_of_le_of_nonneg {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (hab : a ≤ b)
     (hf : AEStronglyMeasurable f <| μ.restrict (Ι a b))
@@ -62,12 +60,13 @@ theorem integral_antimono_of_le {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure �
     (hfg : f ≤ᵐ[μ.restrict (Ι a b)] g) : ∫ u in a..b, g u ∂μ ≤ ∫ u in a..b, f u ∂μ := by
   cases' hab.eq_or_lt with hab hab
   · simp [hab]
-  · rw [uIoc_of_lt hab] at hfg
-    rw [integral_symm b a]
-    rw [integral_symm b a]
+  · rw [uIoc_of_ge hab.le] at hfg
+    rw [integral_symm b a, integral_symm b a]
     apply neg_le_neg
     apply integral_mono_of_le hab.le hf.symm hg.symm
-    rwa [uIoc_swap, uIoc_of_lt hab]
+    have : Ioc b a = uIoc b a := by rw [uIoc_of_le hab.le]
+    rw [← this]
+    exact hfg
 
 theorem integral_antimono_of_le_of_nonneg {f g : ℝ → ℝ} {a b : ℝ} {μ : Measure ℝ} (hab : b ≤ a)
     (hf : AEStronglyMeasurable f <| μ.restrict (Ι a b))

@@ -32,14 +32,9 @@ The key results are:
  * `exists_surrounding_loops`
 -/
 
-
 -- to obtain that normed spaces are locally connected
--- to obtain that normed spaces are locally connected
--- to obtain that normed spaces are locally connected
--- to obtain that normed spaces are locally connected
-open Set Function FiniteDimensional Int Prod Function Path Filter TopologicalSpace
-
-open scoped Classical Topology unitInterval BigOperators
+open Set Function FiniteDimensional Int Prod Path Filter
+open scoped Topology unitInterval
 
 namespace IsPathConnected
 

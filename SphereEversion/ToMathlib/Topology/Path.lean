@@ -1,9 +1,9 @@
 import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Analysis.Normed.Field.Basic
 
-open Set Function Int TopologicalSpace
+open Set Function
 
-open scoped BigOperators Topology unitInterval
+open scoped Topology unitInterval
 
 noncomputable section
 
