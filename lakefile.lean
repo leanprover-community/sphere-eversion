@@ -10,6 +10,8 @@ package «SphereEversion» where
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "v4.9.0"
 
+require UpdateDeprecations from git "https://github.com/adomani/UpdateDeprecations" @ "master"
+
 @[default_target]
 lean_lib «SphereEversion» where
 
