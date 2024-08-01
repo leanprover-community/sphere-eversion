@@ -60,7 +60,6 @@ import SphereEversion.ToMathlib.Order.Filter.Basic
 import SphereEversion.ToMathlib.Partition
 import SphereEversion.ToMathlib.SmoothBarycentric
 import SphereEversion.ToMathlib.Topology.Algebra.Module
-import SphereEversion.ToMathlib.Topology.Germ
 import SphereEversion.ToMathlib.Topology.HausdorffDistance
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
