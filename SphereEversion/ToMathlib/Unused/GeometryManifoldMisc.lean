@@ -26,16 +26,11 @@ theorem nhdsWithin_preimage_fst_le {x : α × β} {s : Set α} :
 
 theorem Filter.Eventually.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {p : α × β → Prop}
     (h : ∀ᶠ x in 𝓝[s] z.1, ∀ y, p (x, y)) : ∀ᶠ z' in 𝓝[Prod.fst ⁻¹' s] z, p z' := by
-  refine Eventually.filter_mono nhdsWithin_preimage_fst_le ?_
-  simp_rw [eventually_comap, Prod.forall]
-  simp (config := { singlePass := true }) only [forall_swap]
-  convert h
-  sorry /- ext x
-  refine forall_congr' fun y ↦ ?_
-  simp_rw [forall_eq] -/
+  rw [← map_fst_nhdsWithin_eq, eventually_map] at h
+  exact h.mono fun z hz ↦ hz _
 
 theorem Filter.EventuallyEq.nhdsWithin_preimage_fst {z : α × β} {s : Set α} {f g : α × β → γ}
-    (h : curry f =ᶠ[𝓝[s] z.1] curry g) : f =ᶠ[𝓝[Prod.fst ⁻¹' s] z] g :=
+    (h : f.curry =ᶠ[𝓝[s] z.1] g.curry) : f =ᶠ[𝓝[Prod.fst ⁻¹' s] z] g :=
   Filter.Eventually.nhdsWithin_preimage_fst <| by simp_rw [← funext_iff]; exact h
 
 theorem eventually_mem_nhds_within' {α} [TopologicalSpace α] {s t : Set α} {a : α} :
