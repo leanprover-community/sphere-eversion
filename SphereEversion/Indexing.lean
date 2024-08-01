@@ -1,7 +1,6 @@
 import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Data.Fin.SuccPred
 import Mathlib.Data.Nat.SuccPred
-import Mathlib.Data.ZMod.Defs
 import Mathlib.SetTheory.Cardinal.Basic
 import SphereEversion.ToMathlib.Data.Nat.Basic
 /-!
