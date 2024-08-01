@@ -40,17 +40,10 @@ variable [AddCommMonoid M₃] [Module R M₃]
 variable [AddCommMonoid M₄] [Module R M₄]
 
 /-- The coproduct of two multilinear maps. -/
-@[simps]
+@[simps!]
 def coprod (L₁ : MultilinearMap R M₁ M₃) (L₂ : MultilinearMap R M₂ M₃) :
-    MultilinearMap R (fun i ↦ M₁ i × M₂ i) M₃
-    where
-  toFun v := (L₁ fun i ↦ (v i).1) + L₂ fun i ↦ (v i).2
-  map_add' _ v i p q := by
-    skip
-    simp_rw [update_fst, update_snd, add_add_add_comm, ← L₁.map_add, ← L₂.map_add, Prod.add_def]
-  map_smul' _ v i c p := by
-    skip
-    simp_rw [update_fst, update_snd, smul_add, ← L₁.map_smul, ← L₂.map_smul, Prod.smul_def]
+    MultilinearMap R (fun i ↦ M₁ i × M₂ i) M₃ :=
+  (L₁.compLinearMap fun _ ↦ .fst ..) + L₂.compLinearMap fun _ ↦ .snd ..
 
 end MultilinearMap
 
@@ -74,11 +67,10 @@ variable [∀ i, AddCommMonoid (N i)] [∀ i, Module R (N i)] [∀ i, Topologica
 
 variable [ContinuousAdd M₃]
 
-@[simps]
+@[simps!]
 def coprod (L₁ : ContinuousMultilinearMap R M₁ M₃) (L₂ : ContinuousMultilinearMap R M₂ M₃) :
     ContinuousMultilinearMap R (fun i ↦ M₁ i × M₂ i) M₃ :=
-  { L₁.toMultilinearMap.coprod L₂.toMultilinearMap with
-    cont := (L₁.cont.comp <| by continuity).add (L₂.cont.comp <| by continuity) }
+  (L₁.compContinuousLinearMap fun _ ↦ .fst ..) + L₂.compContinuousLinearMap fun _ ↦ .snd ..
 
 @[simp]
 def zero_coprod_zero :
