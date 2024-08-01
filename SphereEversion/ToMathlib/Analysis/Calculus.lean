@@ -1,4 +1,4 @@
-import Mathlib.Analysis.NormedSpace.Completion
+import Mathlib.Analysis.Normed.Module.Completion
 import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import SphereEversion.ToMathlib.Topology.Misc
 

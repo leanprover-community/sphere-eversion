@@ -1,4 +1,4 @@
-import Mathlib.Analysis.NormedSpace.BoundedLinearMaps
+import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 noncomputable section

@@ -1,4 +1,4 @@
-import Mathlib.Analysis.NormedSpace.FiniteDimension
+import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 -- being affinely independent is an open condition
 section

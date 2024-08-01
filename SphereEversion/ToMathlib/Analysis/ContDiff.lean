@@ -3,7 +3,7 @@ import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.InnerProductSpace.Dual
 import SphereEversion.ToMathlib.Analysis.Calculus
-import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm
+import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 noncomputable section
 
