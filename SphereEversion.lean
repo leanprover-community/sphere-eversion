@@ -50,7 +50,6 @@ import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
-import SphereEversion.ToMathlib.LinearAlgebra.Basis
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
 import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
@@ -63,3 +62,4 @@ import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Path
 import SphereEversion.ToMathlib.Topology.Separation
+import SphereEversion.ToMathlib.Unused.Fin
