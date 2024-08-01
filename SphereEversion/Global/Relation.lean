@@ -626,8 +626,10 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   smooth_inv := by
     rintro _ ⟨x, rfl⟩
     refine (SmoothAt.oneJetBundle_map ?_ ?_ ?_ smoothAt_id).smoothWithinAt
-    · refine' (φ.smoothAt_inv _).comp ?_ smoothAt_snd; exact mem_range_self _
-    · refine' (ψ.smoothAt_inv _).comp ?_ smoothAt_snd; exact mem_range_self _
+    · refine (φ.smoothAt_inv ?_).comp (φ.transfer ψ x, (φ.transfer ψ x).proj.1) smoothAt_snd
+      exact mem_range_self _
+    · refine (ψ.smoothAt_inv ?_).comp (φ.transfer ψ x, (φ.transfer ψ x).proj.2) smoothAt_snd
+      exact mem_range_self _
     have' :=
       ContMDiffAt.mfderiv (fun _ ↦ φ) (fun x : OneJetBundle IM M IN N ↦ φ.invFun x.1.1)
         (φ.smooth_to.smoothAt.comp _ smoothAt_snd)

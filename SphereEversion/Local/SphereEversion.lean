@@ -278,7 +278,7 @@ def locFormalEversionAux : HtpyJetSec E E where
   φ_diff := by
     refine contDiff_iff_contDiffAt.mpr fun x ↦ ?_
     cases' eq_or_ne x.2 0 with hx hx
-    · refine' contDiffAt_const.congr_of_eventuallyEq ?_; exact 0
+    · refine (contDiffAt_const (c := 0)).congr_of_eventuallyEq ?_
       have : (fun x ↦ ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) := by
         refine IsOpen.mem_nhds ?_ ?_
         · exact isOpen_Iio.preimage (contDiff_norm_sq ℝ (n :=∞)).continuous
@@ -299,8 +299,6 @@ def locFormalEversionAux : HtpyJetSec E E where
       show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
       simp_rw [hx, zero_smul]
     refine ContDiffAt.smul ?_ ?_
-    -- Porting note: the next hack wasn't necessary in Lean 3
-    let _ : NormedSpace ℝ E := InnerProductSpace.toNormedSpace
     · exact (smoothStep.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
     · exact (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
         (smoothStep.smooth.prod_map contDiff_id).contDiffAt
