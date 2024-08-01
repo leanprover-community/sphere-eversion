@@ -1,7 +1,7 @@
 import SphereEversion.InductiveConstructions
 import SphereEversion.Loops.Basic
-import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.Analysis.Normed.Module.FiniteDimension
+import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.SmoothBarycentric
 import SphereEversion.ToMathlib.Topology.Path
 import Mathlib.Analysis.Convex.Caratheodory

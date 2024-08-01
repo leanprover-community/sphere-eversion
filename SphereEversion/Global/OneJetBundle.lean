@@ -11,8 +11,8 @@ import Mathlib.Analysis.Normed.Module.Completion
 import Mathlib.Geometry.Manifold.Algebra.Monoid
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
-import Mathlib.Geometry.Manifold.VectorBundle.Pullback
 import Mathlib.Geometry.Manifold.VectorBundle.Hom
+import Mathlib.Geometry.Manifold.VectorBundle.Pullback
 
 /-!
 # 1-jet bundles
