@@ -53,7 +53,6 @@ import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 import SphereEversion.ToMathlib.LinearAlgebra.Basis
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
-import SphereEversion.ToMathlib.Logic.Basic
 import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 import SphereEversion.ToMathlib.Order.Filter.Basic

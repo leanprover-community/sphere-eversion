@@ -1,7 +1,6 @@
 import SphereEversion.Global.LocalisationData
 import SphereEversion.Global.LocalizedConstruction
 import SphereEversion.Global.ParametricityForFree
-import SphereEversion.ToMathlib.Logic.Basic
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 
 /-!
@@ -170,7 +169,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     · apply hF'₁.mono fun x hx ↦ ?_
       rw [hx]
   rcases inductive_htpy_construction' P₀ P₁ P₂ hP₂ hP₂' init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
-  simp only [P₀, forall₂_and_distrib] at hFP₀
+  simp only [P₀, forall_and] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
   refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, hFP₁, ?_, ?_⟩
   · intro x
@@ -326,7 +325,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   rcases inductive_htpy_construction P₀ P₁ P₂ hP₂ L.lf_φ K_cover init (𝓕₀.smooth.comp contMDiff_snd)
       ind with
     ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
-  simp only [P₀, forall₂_and_distrib] at hFP₀
+  simp only [P₀, forall_and] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
   refine ⟨mkHtpyFormalSol F hF_sec hF_sol hFP₂, ?_, hFP₁, ?_, ?_⟩
   · intro x
