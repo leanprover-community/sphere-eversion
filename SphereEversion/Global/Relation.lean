@@ -40,7 +40,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
   {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
   {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G)
-  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] /-[SmoothManifoldWithCorners J N]-/
   {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G')
   (N' : Type*) [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
@@ -74,7 +74,7 @@ instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' 
     intro F G h
     ext x : 2
     · exact congrArg Prod.snd (congrArg Bundle.TotalSpace.proj (congrFun h x))
-    · simpa using ((Bundle.TotalSpace.ext_iff _ _).mp (congrFun h x)).2
+    · simpa using (Bundle.TotalSpace.ext_iff.mp (congrFun h x)).2
 
 
 def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x) (hsol : ∀ x, F x ∈ R)

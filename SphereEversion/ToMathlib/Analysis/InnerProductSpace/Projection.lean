@@ -46,7 +46,7 @@ theorem span_singleton_eq_span_singleton_of_ne {𝕜 : Type*} [Field 𝕜] {M : 
 
 end GeneralStuff
 
-variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] --[CompleteSpace E]
 
 theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E ≃ₗᵢ⋆[ℝ] F)
@@ -72,6 +72,7 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [No
 
 variable (u v : E)
 
+variable [CompleteSpace E] in
 theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)}ᗮ ⊓ {.v}ᗮ := by
   rw [inf_orthogonal, inf_orthogonal]
   refine congr_arg _ (le_antisymm (sup_le ?_ le_sup_right) (sup_le ?_ le_sup_right)) <;>
@@ -81,6 +82,7 @@ theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)
   · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
     exact sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
+variable [CompleteSpace E] in
 theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ := by
   rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_completeSpace]
   rw [span_singleton_le_iff_mem]
@@ -288,7 +290,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     · rw [norm_smul]
       exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
     · rw [mul_comm, ← mul_assoc, norm_sub_rev]
-      exact mul_le_mul_of_nonneg_right ((_root_.le_div_iff hNx₀).mp hy₁) (norm_nonneg x)
+      exact mul_le_mul_of_nonneg_right ((le_div_iff₀ hNx₀).mp hy₁) (norm_nonneg x)
     · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
       exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)
     · positivity

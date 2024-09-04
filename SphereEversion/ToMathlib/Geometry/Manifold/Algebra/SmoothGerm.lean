@@ -156,6 +156,7 @@ def smoothGerm.valueOrderRingHom (x : N) : smoothGerm IG x →+*o ℝ :=
 def smoothGerm.valueRingHom (x : N) : smoothGerm IG x →+* ℝ :=
   Filter.Germ.valueRingHom.comp <| Subring.subtype _
 
+omit [SmoothManifoldWithCorners IG N] in
 theorem smoothGerm.valueOrderRingHom_toRingHom (x : N) :
     (smoothGerm.valueOrderRingHom IG x).toRingHom = smoothGerm.valueRingHom IG x :=
   rfl
@@ -190,6 +191,8 @@ nonrec def mfderiv {x : M} (φ : Germ (𝓝 x) N) :
     (fun f ↦ mfderiv I IG f x) fun _f _g hfg ↦ heq_of_eq (EventuallyEq.mfderiv_eq hfg : _)
 
 variable {I}
+
+omit [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
 
 theorem _root_.smoothGerm.contMDiffAt {x : M} (φ : smoothGerm I x) {n : ℕ∞} :
     (φ : Germ (𝓝 x) ℝ).ContMDiffAt I n := by rcases φ with ⟨_, g, rfl⟩; apply g.smooth.of_le le_top
@@ -270,6 +273,9 @@ quotient.lift_on' φ (λ f, ∀ y ∈ h⁻¹' {x}, ContMDiffAt I₄ I₃ n (g �
 end)
 -/
 variable {I₁ I₂}
+
+omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂] [SmoothManifoldWithCorners I₁ M₁]
+  [SigmaCompactSpace M₁] [T2Space M₁] [SmoothManifoldWithCorners I₂ M₂]
 
 theorem ContMDiffAtProd.add {x : M₁} {φ ψ : Germ (𝓝 x) <| M₂ → F} {n : ℕ∞} :
     φ.ContMDiffAtProd I₁ I₂ n → ψ.ContMDiffAtProd I₁ I₂ n → (φ + ψ).ContMDiffAtProd I₁ I₂ n :=

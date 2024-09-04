@@ -55,6 +55,7 @@ variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [To
 
 variable (I)
 
+omit [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M] in
 theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
     ReallyConvex (smoothGerm I x) {φ : Germ (𝓝 x) F | φ.ContMDiffAt I n} := by
   classical
@@ -119,6 +120,8 @@ variable {H₁ M₁ H₂ M₂ : Type*}
 
 @[inherit_doc] local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
 
+omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂]
+  [SmoothManifoldWithCorners I₁ M₁] [SmoothManifoldWithCorners I₂ M₂] in
 theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
     ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMDiffAtProd I₁ I₂ n} := by
   classical
@@ -136,6 +139,7 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
   refine (smoothGerm.contMDiffAt _).smul_prod (w_supp ?_)
   simpa [H] using hφ
 
+omit [FiniteDimensional ℝ E₂] [SmoothManifoldWithCorners I₂ M₂] in
 theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [SigmaCompactSpace M₁] [T2Space M₁]
     (hP : ∀ x, Convex ℝ {f | P x f}) {n : ℕ∞}
     (hP' : ∀ x : M₁, ∃ U ∈ 𝓝 x, ∃ f : M₁ → M₂ → F,
@@ -160,6 +164,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [Sigm
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩
   exact ⟨f, fun ⟨x, y⟩ ↦ (hf x).1 y, fun x ↦ (hf x).2⟩
 
+omit [FiniteDimensional ℝ E₂] in
 theorem exists_contDiff_of_convex₂ {P : E₁ → (E₂ → F) → Prop} (hP : ∀ x, Convex ℝ {f | P x f})
     {n : ℕ∞}
     (hP' : ∀ x : E₁, ∃ U ∈ 𝓝 x, ∃ f : E₁ → E₂ → F,

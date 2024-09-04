@@ -1,6 +1,5 @@
 import Mathlib.Analysis.Calculus.AddTorsor.Coord
 import Mathlib.Analysis.Matrix
-import Mathlib.Analysis.NormedSpace.AddTorsorBases
 import Mathlib.LinearAlgebra.AffineSpace.Matrix
 
 noncomputable section

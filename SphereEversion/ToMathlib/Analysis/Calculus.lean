@@ -132,19 +132,23 @@ def partialDerivFst (φ : 𝕜 → F → G) : 𝕜 → F → G := fun k f ↦ �
 /-- The second partial derivative of `φ : E → 𝕜 → G` seen as a function from `E → 𝕜 → G`-/
 def partialDerivSnd (φ : E → 𝕜 → G) : E → 𝕜 → G := fun e k ↦ ∂₂ 𝕜 φ e k 1
 
+omit [NormedAddCommGroup F] [NormedSpace 𝕜 F] in
 theorem partialFDerivFst_eq_smulRight (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivFst φ k f) :=
   deriv_fderiv.symm
 
+omit [NormedAddCommGroup F] [NormedSpace 𝕜 F] in
 @[simp]
 theorem partialFDerivFst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f 1 = partialDerivFst φ k f := by
   simp only [partialFDerivFst_eq_smulRight, smulRight_apply, one_apply, one_smul]
 
+omit [NormedAddCommGroup E] [NormedSpace 𝕜 E] in
 theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivSnd φ e k) :=
   deriv_fderiv.symm
 
+omit [NormedAddCommGroup E] [NormedSpace 𝕜 E] in
 theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k 1 = partialDerivSnd φ e k := by
   simp only [partialFDerivSnd_eq_smulRight, smulRight_apply, one_apply, one_smul]

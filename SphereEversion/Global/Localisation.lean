@@ -178,13 +178,13 @@ theorem FormalSol.transfer_unloc_localize (F : FormalSol R) (hF : range (F.bs �
 
 open scoped Classical
 
-variable [T2Space M]
-
 lemma ChartPair.mkHtpy_aux {F : FormalSol R} {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     (h : p.compat' F 𝓕) (t x) (hx : x ∉ p.K₁) :
     F (p.φ x) = OneJetBundle.embedding p.φ p.ψ (RelLoc.HtpyFormalSol.unloc p 𝓕 t x) := by
   rw [← F.transfer_unloc_localize p h.1, RelLoc.HtpyFormalSol.unloc_congr_const p (h.hFF x hx t)]
   rfl
+
+variable [T2Space M]
 
 def ChartPair.mkHtpy (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol) :
     HtpyFormalSol R :=
@@ -261,7 +261,7 @@ theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
     rw [p.φ.updateFormalSol_bs p.ψ p.hK₁]
     simp only [Function.comp_apply, OpenSmoothEmbedding.update_apply_embedding, mem_range_self]
   rw [← isHolonomicAt_localize_iff _ p.φ p.ψ rg e, ← JetSec.unloc_hol_at_iff]
-  exact OneJetSec.isHolonomicAt_congr (Filter.eventually_of_forall fun e ↦ p.mkHtpy_localize h rg)
+  exact OneJetSec.isHolonomicAt_congr (Filter.Eventually.of_forall fun e ↦ p.mkHtpy_localize h rg)
 
 theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_pos : ∀ x, 0 < δ x)
     (hδ_cont : Continuous δ) {F : FormalSol R} (hF : range (F.bs ∘ p.φ) ⊆ range p.ψ) :

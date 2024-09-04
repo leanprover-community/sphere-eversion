@@ -21,7 +21,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type u} [NormedAddCo
   [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [TopologicalSpace G]
   {J : ModelWithCorners 𝕜 F G} {N : Type*} [TopologicalSpace N] [ChartedSpace G N]
-  [SmoothManifoldWithCorners J N] (V : Type*) [NormedAddCommGroup V] [NormedSpace 𝕜 V]
+  /-[SmoothManifoldWithCorners J N]-/ (V : Type*) [NormedAddCommGroup V] [NormedSpace 𝕜 V]
   (V' : Type*) [NormedAddCommGroup V'] [NormedSpace 𝕜 V']
 
 section Smoothness
@@ -178,7 +178,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
   [SmoothManifoldWithCorners I M] (V : Type*) [NormedAddCommGroup V] [NormedSpace ℝ V]
   (V' : Type*) [NormedAddCommGroup V'] [NormedSpace ℝ V'] {F : Type*} [NormedAddCommGroup F]
   [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G) (N : Type*)
-  [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  [TopologicalSpace N] [ChartedSpace G N] /-[SmoothManifoldWithCorners J N]-/
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext]

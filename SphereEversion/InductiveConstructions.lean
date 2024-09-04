@@ -216,7 +216,7 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     ∃ f : X → Y, (∀ x, P₀ x f ∧ P₁ x f) ∧ ∀ᶠ x near K, f x = f₀ x := by
   let P₀' : ∀ x : X, Germ (𝓝 x) Y → Prop := RestrictGermPredicate (fun x φ ↦ φ.value = f₀ x) K
   have hf₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀ := fun x ↦
-    ⟨hP₀f₀ x, fun _ ↦ eventually_of_forall fun x' ↦ rfl⟩
+    ⟨hP₀f₀ x, fun _ ↦ Eventually.of_forall fun x' ↦ rfl⟩
   have ind' : ∀ {U₁ U₂ K₁ K₂ : Set X} {f₁ f₂ : X → Y},
       IsOpen U₁ → IsOpen U₂ → IsCompact K₁ → IsCompact K₂ → K₁ ⊆ U₁ → K₂ ⊆ U₂ →
       (∀ x, P₀ x f₁ ∧ P₀' x f₁) → (∀ x, P₀ x f₂) → (∀ x ∈ U₁, P₁ x f₁) → (∀ x ∈ U₂, P₁ x f₂) →

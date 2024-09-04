@@ -131,7 +131,7 @@ theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := b
   obtain ⟨u', hu'⟩ := ContinuousLinearMap.exists_ne_zero h
   let u := (p2 u')⁻¹ • u'
   let q : DualPair (TangentSpace I σ.1.1.2) :=
-    ⟨p2, u, by erw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩
+    ⟨p2, u, by erw [p2.map_smul, smul_eq_mul, inv_mul_cancel₀ hu']⟩
   rw [relativize_slice q rfl]
   exact (hR q).vadd
 

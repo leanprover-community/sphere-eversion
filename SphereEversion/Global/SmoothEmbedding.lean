@@ -17,10 +17,10 @@ section General
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
   [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {E' : Type*}
+  [TopologicalSpace M] [ChartedSpace H M] /-[SmoothManifoldWithCorners I M]-/ {E' : Type*}
   [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*} [TopologicalSpace H']
   (I' : ModelWithCorners 𝕜 E' H') (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M']
-  [SmoothManifoldWithCorners I' M']
+  --[SmoothManifoldWithCorners I' M']
 
 structure OpenSmoothEmbedding where
   toFun : M → M'
@@ -79,6 +79,10 @@ theorem isOpenMap : IsOpenMap f :=
 theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] id :=
   Filter.eventually_of_mem (f.isOpenMap.range_mem_nhds x) fun _ hy ↦ f.right_inv hy
 
+section
+
+variable [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
+
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
 def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
@@ -115,6 +119,8 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
         TangentSpace I' (f (f.invFun x)) →L[𝕜] TangentSpace I (f.invFun x)) =
       (mfderiv I' I f.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (f.invFun x)) :=
   by rw [fderiv_symm_coe, f.right_inv hx]
+
+end
 
 open Filter
 
@@ -227,7 +233,7 @@ open Function
 universe u
 
 variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [TopologicalSpace H]
-  [TopologicalSpace M] [ChartedSpace H M] [T2Space M] [LocallyCompactSpace M] [SigmaCompactSpace M]
+  [TopologicalSpace M] [ChartedSpace H M]
   (IF : ModelWithCorners ℝ F H) [SmoothManifoldWithCorners IF M]
 
 /- Clearly should be generalised. Maybe what we really want is a theory of local diffeomorphisms.
@@ -286,6 +292,7 @@ theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomo
 
 variable {M} (F)
 variable [IF.Boundaryless] [FiniteDimensional ℝ F]
+variable [T2Space M] [LocallyCompactSpace M] [SigmaCompactSpace M]
 
 theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j)
     (cov : (⋃ j, s j) = univ) (U : Set F) (hU₁ : (0 : F) ∈ U) (hU₂ : IsOpen U) :
@@ -369,14 +376,14 @@ variable {𝕜 EX EM EY EN EM' X M Y N M' : Type*} [NontriviallyNormedField 𝕜
   {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM}
   {HM' : Type*} [TopologicalSpace HM'] {IM' : ModelWithCorners 𝕜 EM' HM'}
   {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners 𝕜 EN HN}
-  [TopologicalSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
-  [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  [TopologicalSpace X] [ChartedSpace HX X] --[SmoothManifoldWithCorners IX X]
+  [TopologicalSpace M] [ChartedSpace HM M] --[SmoothManifoldWithCorners IM M]
   [TopologicalSpace M'] [ChartedSpace HM' M']
 
 section NonMetric
 
-variable [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
-  [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
+variable [TopologicalSpace Y] [ChartedSpace HY Y] --[SmoothManifoldWithCorners IY Y]
+  [TopologicalSpace N] [ChartedSpace HN N] --[SmoothManifoldWithCorners IN N]
   (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 section
@@ -438,9 +445,10 @@ end NonMetric
 
 section Metric
 
-variable [MetricSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y] [MetricSpace N]
-  [ChartedSpace HN N] [SmoothManifoldWithCorners IN N] (φ : OpenSmoothEmbedding IX X IM M)
+variable [MetricSpace Y] [ChartedSpace HY Y] /- [SmoothManifoldWithCorners IY Y]-/ [MetricSpace N]
+  [ChartedSpace HN N] /-[SmoothManifoldWithCorners IN N]-/ (φ : OpenSmoothEmbedding IX X IM M)
   (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
+
 
 /-- This is `lem:dist_updating` in the blueprint. -/
 theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]

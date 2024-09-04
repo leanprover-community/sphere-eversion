@@ -44,6 +44,7 @@ abbrev ψj : IndexType ld.N → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M' :=
 def ι (L : LocalisationData I I' f) :=
   IndexType L.N
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem iUnion_succ' {β : Type*} (s : ld.ι → Set β) (i : IndexType ld.N) :
     (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i := by
   simp only [(fun _ ↦ le_iff_lt_or_eq : ∀ j, j ≤ i ↔ j < i ∨ j = i)]
@@ -90,6 +91,7 @@ theorem targetCharts_cover : (⋃ i', targetCharts E' I' M' i' '' ball (0 : E') 
 variable (E) {M'}
 variable {f : M → M'} (hf : Continuous f)
 
+include hf in
 theorem nice_atlas_domain :
     ∃ n,
       ∃ φ : IndexType n → OpenSmoothEmbedding 𝓘(ℝ, E) E I M,
@@ -118,6 +120,12 @@ def stdLocalisationData : LocalisationData I I' f where
   lf_φ := (nice_atlas_domain E I E' I' hf).choose_spec.choose_spec.2.1
 
 variable {E E' I I'}
+
+section
+
+omit [FiniteDimensional ℝ E] [SigmaCompactSpace M] [LocallyCompactSpace M] [T2Space M]
+  [I.Boundaryless] [Nonempty M] [SmoothManifoldWithCorners I M] [I'.Boundaryless]
+  [SigmaCompactSpace M'] [LocallyCompactSpace M'] [Nonempty M'] [SmoothManifoldWithCorners I' M']
 
 /-- Lemma `lem:localisation_stability`. -/
 theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :
@@ -154,8 +162,12 @@ theorem ε_spec (ld : LocalisationData I I' f) :
       range (g ∘ ld.φ i) ⊆ range (ld.ψj i) :=
   (localisation_stability ld).choose_spec.choose_spec.choose_spec
 
+end LocalisationData
+end
+
 variable (I I')
 
+open LocalisationData in
 theorem _root_.exists_stability_dist {f : M → M'} (hf : Continuous f) :
     ∃ ε : M → ℝ, (∀ m, 0 < ε m) ∧ Continuous ε ∧
       ∀ x : M,
@@ -170,7 +182,5 @@ theorem _root_.exists_stability_dist {f : M → M'} (hf : Continuous f) :
   use L.φ i, L.ψj i, mem_range_of_mem_image (φ L i) _ hi, ?_
   have := L.ε_spec
   tauto
-
-end LocalisationData
 
 end
