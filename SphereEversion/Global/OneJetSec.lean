@@ -104,7 +104,7 @@ its base map at x. -/
 theorem isHolonomicAt_iff {F : OneJetSec I M I' M'} {x : M} :
     F.IsHolonomicAt x ↔ oneJetExt I I' F.bs x = F x := by
   simp_rw [IsHolonomicAt, oneJetExt, Bundle.TotalSpace.ext_iff, heq_iff_eq, F.fst_eq,
-    oneJetBundle_mk_fst, true_and_iff, oneJetBundle_mk_snd]
+    oneJetBundle_mk_fst, true_and, oneJetBundle_mk_snd]
 
 theorem isHolonomicAt_congr {F F' : OneJetSec I M I' M'} {x : M} (h : F =ᶠ[𝓝 x] F') :
     F.IsHolonomicAt x ↔ F'.IsHolonomicAt x := by

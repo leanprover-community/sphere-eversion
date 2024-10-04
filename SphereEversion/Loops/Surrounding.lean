@@ -70,7 +70,7 @@ theorem mem_range_pathThrough' (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 
     (hp : ∀ i, p i ∈ F) {i n : ℕ} (h : i ≤ n) : p i ∈ range (hF.pathThrough hp n) := by
   induction' h with n _ ih
   · exact ⟨1, by simp⟩
-  · simp only [pathThrough, Path.trans_range, mem_union, ih, true_or_iff]
+  · simp only [pathThrough, Path.trans_range, mem_union, ih, true_or]
 
 theorem mem_range_pathThrough (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) {i : Fin (m + 1)} : p i ∈ range (hF.pathThrough hp m) := by
@@ -426,14 +426,14 @@ theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O
     cast_coe]
   refine Subset.trans (truncate_range _) ?_
   simp only [trans_range, union_subset_iff, O_conn.range_somePath_subset,
-    O_conn.range_pathThrough_subset, true_and_iff]
+    O_conn.range_pathThrough_subset, true_and]
 
 theorem surroundingLoop_surrounds {f : F} {w : Fin (d + 1) → ℝ} (h : SurroundingPts f p w) :
     (surroundingLoop O_conn hp hb 1).Surrounds f := by
   rw [Loop.surrounds_iff_range_subset_range]
   refine ⟨p, w, h, ?_⟩
   simp only [surroundingLoop, Loop.roundTripFamily_one, Loop.roundTrip_range, trans_range,
-    range_subset_iff, mem_union, O_conn.mem_range_pathThrough, or_true_iff, forall_true_iff]
+    range_subset_iff, mem_union, O_conn.mem_range_pathThrough, or_true, forall_true_iff]
 
 theorem surroundingLoop_projI (t : ℝ) :
     surroundingLoop O_conn hp hb (projI t) = surroundingLoop O_conn hp hb t :=

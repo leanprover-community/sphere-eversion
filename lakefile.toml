@@ -9,6 +9,7 @@ relaxedAutoImplicit = false
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
+rev = "v4.12.0"
 
 [[require]]
 name = "checkdecls"

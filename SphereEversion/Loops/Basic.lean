@@ -323,7 +323,8 @@ theorem isConst_iff_const_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ �
 
 omit [NormedAddCommGroup F] [NormedSpace ℝ F] in
 theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst := by
-  classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
+  by_contra H
+  exact hx (subset_closure H)
 
 theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :

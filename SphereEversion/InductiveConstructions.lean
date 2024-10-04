@@ -133,7 +133,7 @@ theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCo
   have :=
     inductive_construction (fun x φ ↦ P₀ x φ ∧ P₀' x φ)
       (fun j : 𝓘 0 ↦ RestrictGermPredicate P₁ (K j)) (fun _ _ ↦ True) U_loc ⟨f₀, hP₀f₀, trivial⟩
-  simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and_iff] at this
+  simp only [IndexType.not_isMax, not_false_iff, forall_true_left, true_and] at this
   rcases this ind' with ⟨f, h, h'⟩
   refine ⟨f, fun x ↦ ⟨(h x).1, (h x).2, ?_⟩⟩
   rcases mem_iUnion.mp (hK trivial : x ∈ ⋃ j, K j) with ⟨j, hj⟩

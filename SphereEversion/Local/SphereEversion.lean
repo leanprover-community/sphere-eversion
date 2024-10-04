@@ -232,12 +232,12 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
     simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply,
-      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, comp_apply, coe_mk]
+      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, comp_apply, coe_mk]
   have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) := by
     have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ := by
       ext z
       simp only [mem_map, LinearMap.mem_ker, ContinuousLinearMap.coe_comp', coe_subtypeL',
-        Submodule.coeSubtype, comp_apply, mem_inf]
+        Submodule.coe_subtype, comp_apply, mem_inf]
       constructor
       · rintro ⟨t, ht, rfl⟩
         exact ⟨ht, t.2⟩
