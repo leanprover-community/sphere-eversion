@@ -17,10 +17,9 @@ section General
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
   [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
-  [TopologicalSpace M] [ChartedSpace H M] /-[SmoothManifoldWithCorners I M]-/ {E' : Type*}
-  [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*} [TopologicalSpace H']
+  [TopologicalSpace M] [ChartedSpace H M]
+  {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*} [TopologicalSpace H']
   (I' : ModelWithCorners 𝕜 E' H') (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M']
-  --[SmoothManifoldWithCorners I' M']
 
 structure OpenSmoothEmbedding where
   toFun : M → M'
@@ -376,14 +375,13 @@ variable {𝕜 EX EM EY EN EM' X M Y N M' : Type*} [NontriviallyNormedField 𝕜
   {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners 𝕜 EM HM}
   {HM' : Type*} [TopologicalSpace HM'] {IM' : ModelWithCorners 𝕜 EM' HM'}
   {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners 𝕜 EN HN}
-  [TopologicalSpace X] [ChartedSpace HX X] --[SmoothManifoldWithCorners IX X]
-  [TopologicalSpace M] [ChartedSpace HM M] --[SmoothManifoldWithCorners IM M]
+  [TopologicalSpace X] [ChartedSpace HX X]
+  [TopologicalSpace M] [ChartedSpace HM M]
   [TopologicalSpace M'] [ChartedSpace HM' M']
 
 section NonMetric
 
-variable [TopologicalSpace Y] [ChartedSpace HY Y] --[SmoothManifoldWithCorners IY Y]
-  [TopologicalSpace N] [ChartedSpace HN N] --[SmoothManifoldWithCorners IN N]
+variable [TopologicalSpace Y] [ChartedSpace HY Y] [TopologicalSpace N] [ChartedSpace HN N]
   (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
 
 section
@@ -445,10 +443,9 @@ end NonMetric
 
 section Metric
 
-variable [MetricSpace Y] [ChartedSpace HY Y] /- [SmoothManifoldWithCorners IY Y]-/ [MetricSpace N]
-  [ChartedSpace HN N] /-[SmoothManifoldWithCorners IN N]-/ (φ : OpenSmoothEmbedding IX X IM M)
+variable [MetricSpace Y] [ChartedSpace HY Y] [MetricSpace N] [ChartedSpace HN N]
+  (φ : OpenSmoothEmbedding IX X IM M)
   (ψ : OpenSmoothEmbedding IY Y IN N) (f : M → N) (g : X → Y)
-
 
 /-- This is `lem:dist_updating` in the blueprint. -/
 theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [MetricSpace P]

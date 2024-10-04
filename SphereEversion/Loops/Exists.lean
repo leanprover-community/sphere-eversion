@@ -231,8 +231,6 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
 
 variable (g b Ω U K)
 
-variable [MeasurableSpace F] [BorelSpace F]
-
 /-- A "nice" family of loops consists of all the properties we want from the `exist_loops` lemma:
 it is a smooth homotopy in `Ω` with fixed endpoints from the constant loop at `b x` to a loop with
 average `g x` that is also constantly `b x` near `K`.

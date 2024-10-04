@@ -4,6 +4,7 @@ import SphereEversion.ToMathlib.Analysis.Normed.Module.FiniteDimension
 import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.SmoothBarycentric
 import SphereEversion.ToMathlib.Topology.Path
+import Mathlib.Analysis.Convex.Caratheodory
 
 /-!
 # Surrounding families of loops
@@ -172,11 +173,11 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
 theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (hs : IsOpen s)
     (hsf : f ∈ convexHull ℝ s) : Surrounded f s := by
   rw [surrounded_iff_mem_interior_convexHull_aff_basis]
-  sorry /- TODO fix! old proof was; type mismatch on `hsf` now
-  obtain ⟨t, hts, hai, hf⟩ :=
-    (by simpa only [exists_prop, mem_iUnion] using convexHull_eq_union.subst hsf :
-      ∃ t : Finset F,
-        (t : Set F) ⊆ s ∧ AffineIndependent ℝ ((↑) : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
+  obtain ⟨t, hts, hai, hf⟩ :
+    ∃ t : Finset F,
+      (t : Set F) ⊆ s ∧ AffineIndependent ℝ ((↑) : t → F) ∧ f ∈ convexHull ℝ (t : Set F) := by
+    simp_rw [← exists_prop, ← mem_iUnion, ← convexHull_eq_union]
+    exact hsf
   have htne : (t : Set F).Nonempty := convexHull_nonempty_iff.mp ⟨f, hf⟩
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affineIndependent_span_eq_top hts htne hai
   have hb₀ : b.Finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
@@ -189,7 +190,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, ?_, ?_, hbε (convexHull_mono hb₁ hf)⟩
   · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
-  · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄ -/
+  · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- `lem:smooth_barycentric_coord`

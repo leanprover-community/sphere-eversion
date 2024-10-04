@@ -32,9 +32,7 @@ noncomputable section
 open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap
 open scoped Topology Filter Convolution
 
-variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
-  [MeasurableSpace F] [BorelSpace F]
-
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 section
 
 /-! ## Bump family
@@ -151,8 +149,6 @@ theorem periodize_smul_periodic (f : ℝ → ℝ) {g : ℝ → E} (hg : Periodic
   rw [OnePeriodic.add_int hg]
 
 open MeasureTheory
-
-variable [CompleteSpace E]
 
 theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (a + 1)) :
     ∫ t in a..a + 1, periodize f t = ∫ t in a..a + 1, f t := by

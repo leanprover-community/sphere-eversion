@@ -72,17 +72,15 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [No
 
 variable (u v : E)
 
-variable [CompleteSpace E] in
 theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)}ᗮ ⊓ {.v}ᗮ := by
   rw [inf_orthogonal, inf_orthogonal]
   refine congr_arg _ (le_antisymm (sup_le ?_ le_sup_right) (sup_le ?_ le_sup_right)) <;>
     rw [span_singleton_le_iff_mem]
-  · nth_rw 1 [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
+  · nth_rw 2 [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
   · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
     exact sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
-variable [CompleteSpace E] in
 theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ := by
   rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_completeSpace]
   rw [span_singleton_le_iff_mem]

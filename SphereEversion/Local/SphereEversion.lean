@@ -199,7 +199,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
     refine ⟨(p.π <| pr[x]ᗮ u)⁻¹ • (pr[x]ᗮ u : E), (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, ?_, ?_⟩
     · rw [← orthogonal_span_toDual_symm p.π, span_singleton_smul_eq ne_z'.isUnit]
       exact (orthogonal_line_inf_sup_line u x).symm
-    rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z]
+    rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel₀ ne_z]
   let p' : DualPair E :=
     { π := p.π
       v := v'

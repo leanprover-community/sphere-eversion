@@ -8,16 +8,12 @@ open Set Filter ModelWithCorners Metric
 open scoped Topology Manifold
 
 variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
-  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM]
+  {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM}
   {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
-  [T2Space M] [LocallyCompactSpace M] [Nonempty M] [SigmaCompactSpace M]
+  [T2Space M]
   {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX] [FiniteDimensional ℝ EX]
-  [MeasurableSpace EX] [BorelSpace EX]
-  {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX} [Boundaryless IX]
-  -- note: X is a metric space
-  {X : Type*}
-  [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [LocallyCompactSpace X]
-  [SigmaCompactSpace X] [Nonempty X]
+  {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
+  {X : Type*} [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
 
 theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) EM IM M)
     (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) EX IX X) {R : RelMfld IM M IX X} (hRample : R.Ample)
@@ -73,7 +69,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     exact p.mkHtpy_eq_of_forall hcompat ht
   have hF't1 : ∀ᶠ t : ℝ near Ici 1, F' t = F' 1 := h𝓕't1.mono fun t ↦ p.mkHtpy_congr _
   refine ⟨F', hF't0, hF't1, ?_, hF'relK₁, ?_, ?_⟩
-  · apply φ.forall_near hK₁ h𝓕'relC (eventually_of_forall fun x hx t ↦ hF'relK₁ t x hx)
+  · apply φ.forall_near hK₁ h𝓕'relC (Eventually.of_forall fun x hx t ↦ hF'relK₁ t x hx)
     · intro e he t
       rw [p.mkHtpy_eq_of_eq _ _ hcompat]
       exact he t

@@ -48,7 +48,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
   {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
   {G : Type*} [TopologicalSpace G] (J : ModelWithCorners 𝕜 F G)
-  {N : Type*} [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  {N : Type*} [TopologicalSpace N] [ChartedSpace G N]
   {F' : Type*} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners 𝕜 F' G')
   {N' : Type*} [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
@@ -415,6 +415,9 @@ theorem SmoothAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h :
 
 variable (I')
 
+variable [SmoothManifoldWithCorners J N]
+
+omit [SmoothManifoldWithCorners J' N'] in
 theorem SmoothAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
     (hh : SmoothAt J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) (fun x ↦ OneJetBundle.mk _ _ (h x)) x₀)
@@ -424,6 +427,7 @@ theorem SmoothAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x
   rw [smoothAt_oneJetBundle_mk] at hh hg ⊢
   exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_inTangentCoordinates hg.2.1.continuousAt hg.2.2⟩
 
+omit [SmoothManifoldWithCorners J' N'] in
 theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
     (hh : Smooth J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) fun x ↦ OneJetBundle.mk _ _ (h x))
@@ -435,6 +439,7 @@ theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
 variable {I'}
 
 open Trivialization in
+omit [SmoothManifoldWithCorners J N] in
 theorem Smooth.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
     (hϕ : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ x))
     (hϕ' : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ' x)) :

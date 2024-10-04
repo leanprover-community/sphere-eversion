@@ -89,7 +89,7 @@ end Bundle.Trivial
 section Hom
 
 variable {𝕜₁ : Type*} [NontriviallyNormedField 𝕜₁] {𝕜₂ : Type*} [NontriviallyNormedField 𝕜₂]
-  (σ : 𝕜₁ →+* 𝕜₂) [iσ : RingHomIsometric σ]
+  (σ : 𝕜₁ →+* 𝕜₂)
 
 variable {B : Type*} [TopologicalSpace B]
 

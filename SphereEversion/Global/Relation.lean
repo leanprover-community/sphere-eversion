@@ -40,13 +40,13 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
   {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
   {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G)
-  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] /-[SmoothManifoldWithCorners J N]-/
+  (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
   {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G')
   (N' : Type*) [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
   {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP]
   {HP : Type*} [TopologicalSpace HP] (IP : ModelWithCorners ℝ EP HP)
-  (P : Type*) [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  (P : Type*) [TopologicalSpace P] [ChartedSpace HP P]
   {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
   -- note: X is a metric space
