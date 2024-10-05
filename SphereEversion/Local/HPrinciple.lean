@@ -261,7 +261,8 @@ theorem improveStep_apply_φ (t : ℝ) (x : E) :
         (smoothStep t * L.ρ x) • corrugation.remainder L.p.π N (L.loop h 1) x :=
   rfl
 
-theorem improveStep_of_support (t : ℝ) {x : E} (H : ∀ t, x ∉ Loop.support (L.loop h t)) :
+variable {h N} in
+theorem improveStep_of_support {t : ℝ} {x : E} (H : ∀ t, x ∉ Loop.support (L.loop h t)) :
     L.improveStep h N t x = 𝓕 x := by
   have : ∀ t s, L.loop h t x s = 𝓕.φ x L.v := by
     intro t s
@@ -298,7 +299,7 @@ theorem improveStep_rel_K : ∀ᶠ x near L.K, ∀ t, L.improveStep h N t x = �
     exact Loop.isConst_of_eq (hy t)
   apply this.mono
   intro x hx t
-  exact improveStep_of_support _ _ _ hx
+  exact improveStep_of_support hx
 
 theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = 𝓕 x := by
   apply Eventually.filter_mono (L.hK₁.isClosed.nhdsSet_le_sup' L.C)
