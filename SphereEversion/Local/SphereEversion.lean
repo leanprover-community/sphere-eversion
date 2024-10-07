@@ -199,7 +199,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
     refine ⟨(p.π <| pr[x]ᗮ u)⁻¹ • (pr[x]ᗮ u : E), (ℝ ∙ x)ᗮ.smul_mem _ (pr[x]ᗮ u).2, ?_, ?_⟩
     · rw [← orthogonal_span_toDual_symm p.π, span_singleton_smul_eq ne_z'.isUnit]
       exact (orthogonal_line_inf_sup_line u x).symm
-    rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel ne_z]
+    rw [p.π.map_smul, smul_eq_mul, inv_mul_cancel₀ ne_z]
   let p' : DualPair E :=
     { π := p.π
       v := v'
@@ -232,12 +232,12 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
     simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply,
-      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coeSubtype, comp_apply, coe_mk]
+      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, comp_apply, coe_mk]
   have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) := by
     have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ := by
       ext z
       simp only [mem_map, LinearMap.mem_ker, ContinuousLinearMap.coe_comp', coe_subtypeL',
-        Submodule.coeSubtype, comp_apply, mem_inf]
+        Submodule.coe_subtype, comp_apply, mem_inf]
       constructor
       · rintro ⟨t, ht, rfl⟩
         exact ⟨ht, t.2⟩

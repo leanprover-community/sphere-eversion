@@ -261,13 +261,14 @@ theorem improveStep_apply_φ (t : ℝ) (x : E) :
         (smoothStep t * L.ρ x) • corrugation.remainder L.p.π N (L.loop h 1) x :=
   rfl
 
-theorem improveStep_of_support (t : ℝ) {x : E} (H : ∀ t, x ∉ Loop.support (L.loop h t)) :
+variable {h N} in
+theorem improveStep_of_support {t : ℝ} {x : E} (H : ∀ t, x ∉ Loop.support (L.loop h t)) :
     L.improveStep h N t x = 𝓕 x := by
   have : ∀ t s, L.loop h t x s = 𝓕.φ x L.v := by
     intro t s
     rw [Loop.isConst_of_not_mem_support (H t) s 0]
     apply (L.nice h).s_zero x t
-  rw [improveStep_apply L h, corrugation_eq_zero _ _ _ _ (H t),
+  rw [improveStep_apply (L := L) h, corrugation_eq_zero _ _ _ _ (H t),
     remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)]
   simp only [FormalSol.toJetSec_eq_coe, smul_zero, add_zero, this]
   erw [L.p.update_self]
@@ -275,15 +276,15 @@ theorem improveStep_of_support (t : ℝ) {x : E} (H : ∀ t, x ∉ Loop.support 
 
 theorem improveStep_rel_t_eq_0 : L.improveStep h N 0 = 𝓕 := by
   ext x : 2
-  · rw [improveStep_apply_f _ h]
+  · rw [improveStep_apply_f h]
     simp [(L.nice h).t_zero x]
-  · rw [improveStep_apply_φ _ h]
+  · rw [improveStep_apply_φ h]
     simp only [FormalSol.toJetSec_eq_coe, MulZeroClass.zero_mul, smoothStep.zero, zero_smul,
       add_zero]
     erw [L.update_zero h]
 
 theorem improveStep_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improveStep h N t x = 𝓕 x := by
-  rw [improveStep_apply _ h, L.hρ_compl_K₁ hx]
+  rw [improveStep_apply h, L.hρ_compl_K₁ hx]
   simp only [FormalSol.toJetSec_eq_coe, MulZeroClass.mul_zero, zero_smul, add_zero]
   erw [L.update_zero h]
   rfl
@@ -298,7 +299,7 @@ theorem improveStep_rel_K : ∀ᶠ x near L.K, ∀ t, L.improveStep h N t x = �
     exact Loop.isConst_of_eq (hy t)
   apply this.mono
   intro x hx t
-  exact improveStep_of_support _ _ _ _ hx
+  exact improveStep_of_support hx
 
 theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = 𝓕 x := by
   apply Eventually.filter_mono (L.hK₁.isClosed.nhdsSet_le_sup' L.C)
@@ -306,7 +307,7 @@ theorem improveStep_rel_C : ∀ᶠ x near L.C, ∀ t, L.improveStep h N t x = �
   constructor
   · apply improveStep_rel_K
   · rw [eventually_principal]
-    exact fun x ↦ improveStep_rel_compl_K₁ _ h N
+    exact fun x ↦ improveStep_rel_compl_K₁ h N
 
 -- In the next lemma, we reintroduce `F` to appease the unused argument linter
 -- since `FiniteDimensional ℝ F` isn't needed here.
@@ -330,11 +331,11 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
         remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono
   rintro N ⟨H, _⟩ x t
   by_cases hx : x ∈ L.K₁
-  · rw [improveStep_apply_f _ h]
+  · rw [improveStep_apply_f h]
     suffices ‖(smoothStep t * L.ρ x) • corrugation L.π N (L.loop h t) x‖ ≤ ε by simpa
-    exact (bu_lt _ _ _ <| H _ hx t).le
+    exact (bu_lt _ _ <| H _ hx t).le
   · rw [show (L.improveStep h N t).f x = 𝓕.f x from
-        congr_arg Prod.fst (improveStep_rel_compl_K₁ _ h N hx t)]
+        congr_arg Prod.fst (improveStep_rel_compl_K₁ h N hx t)]
     simp [ε_pos.le]
 
 theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
@@ -358,7 +359,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
   have H : ∀ᶠ x near L.K₀, L.improveStep h N 1 x = 𝓕' x := by
     apply L.hρ₀.mono
     intro x hx
-    simp [𝓕', improveStep_apply _ h, hx]
+    simp [𝓕', improveStep_apply h, hx]
   have fderiv_𝓕' := fun x ↦
     fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x)
   rw [eventually_congr (H.isPartHolonomicAt_congr (L.p.spanV ⊔ L.E'))]
@@ -411,13 +412,13 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
     · simp only [h, improveStep_apply_f, FormalSol.toJetSec_eq_coe, improveStep_apply_φ]
       rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
       refine ⟨by simpa using ε_pos, ?_, ?_⟩ <;> dsimp only <;> rw [dist_self_add_left]
-      · exact bu_lt _ _ _ <| H _ hxK₁ _
+      · exact bu_lt _ _ <| H _ hxK₁ _
       -- adaptation note(2024-03-28): `exact` used to work; started failing after mathlib bump
-      · apply bu_lt _ _ _ <| H' _ hxK₁
+      · apply bu_lt _ _ <| H' _ hxK₁
   · rw [show ((L.improveStep h N) t).f x = 𝓕.f x from
-        congr_arg Prod.fst <| improveStep_rel_compl_K₁ _ h N hxK₁ t,
+        congr_arg Prod.fst <| improveStep_rel_compl_K₁ h N hxK₁ t,
       show ((L.improveStep h N) t).φ x = 𝓕.φ x from
-        congr_arg Prod.snd <| improveStep_rel_compl_K₁ _ h N hxK₁ t]
+        congr_arg Prod.snd <| improveStep_rel_compl_K₁ h N hxK₁ t]
     exact 𝓕.is_sol _
 
 end StepLandscape
@@ -443,6 +444,7 @@ variable (L : Landscape E)
 
 variable {ε : ℝ} (ε_pos : 0 < ε)
 
+include ε_pos h_op h_ample in
 /--
 Homotopy of formal solutions obtained by successive corrugations in some landscape `L` to improve a
 formal solution `𝓕` until it becomes holonomic near `L.K₀`.
@@ -498,7 +500,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       intro x hx
       apply hHK₁ x hx
     obtain ⟨N, ⟨hN_close, hN_sol⟩, hNneq⟩ :=
-      (((improveStep_c0_close _ acc <| half_pos δ_pos).and (improveStep_formalSol _ acc)).and <|
+      (((improveStep_c0_close acc <| half_pos δ_pos).and (improveStep_formalSol acc)).and <|
           eventually_ne_atTop (0 : ℝ)).exists
     have glue : H 1 = S.improveStep acc N 0 := by
       rw [improveStep_rel_t_eq_0]
@@ -513,7 +515,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       intro t ht
       rw [ht, H.comp_1]
     · -- rel C
-      apply (hHC.and <| hH₁_rel_C.and <| improveStep_rel_C _ acc N).mono
+      apply (hHC.and <| hH₁_rel_C.and <| improveStep_rel_C acc N).mono
       rintro x ⟨hx, hx', hx''⟩ t
       by_cases ht : t ≤ 1 / 2
       · simp only [ht, hx, HtpyJetSec.comp_of_le]
@@ -539,8 +541,9 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       · simp only [ht, hN_sol, HtpyJetSec.comp_of_not_le, not_false_iff]
     · -- part-hol E' (k + 1)
       rw [h_span, HtpyJetSec.comp_1]
-      apply improveStep_part_hol _ acc hNneq
+      apply improveStep_part_hol acc hNneq
 
+include ε_pos h_op h_ample in
 /-- A repackaging of `RelLoc.FormalSol.improve` for convenience. -/
 theorem RelLoc.FormalSol.improve_htpy' (𝓕 : FormalSol R)
     (h_hol : ∀ᶠ x near L.C, 𝓕.IsHolonomicAt x) :

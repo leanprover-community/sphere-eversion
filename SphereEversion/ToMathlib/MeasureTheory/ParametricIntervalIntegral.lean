@@ -169,7 +169,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     use K
     intro t t_in
     rw [show (fun x : H ↦ F x t) = uncurry F ∘ fun x : H ↦ (x, t) by ext; simp, ← mul_one K]
-    apply hK.comp ((LipschitzWith.prod_mk_right t).lipschitzOnWith <| ball x₀ 1)
+    apply hK.comp (LipschitzWith.prod_mk_right t).lipschitzOnWith
     rw [mapsTo']
     rintro ⟨x, s⟩ ⟨x', hx, h⟩; cases h
     exact ⟨ball_subset_closedBall hx, mem_Icc_of_Ioo t_in⟩

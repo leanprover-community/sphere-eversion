@@ -5,7 +5,6 @@ import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.SmoothBarycentric
 import SphereEversion.ToMathlib.Topology.Path
 import Mathlib.Analysis.Convex.Caratheodory
-import Mathlib.Analysis.NormedSpace.AddTorsorBases
 
 /-!
 # Surrounding families of loops
@@ -71,7 +70,7 @@ theorem mem_range_pathThrough' (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 
     (hp : ∀ i, p i ∈ F) {i n : ℕ} (h : i ≤ n) : p i ∈ range (hF.pathThrough hp n) := by
   induction' h with n _ ih
   · exact ⟨1, by simp⟩
-  · simp only [pathThrough, Path.trans_range, mem_union, ih, true_or_iff]
+  · simp only [pathThrough, Path.trans_range, mem_union, ih, true_or]
 
 theorem mem_range_pathThrough (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) {i : Fin (m + 1)} : p i ∈ range (hF.pathThrough hp m) := by
@@ -174,10 +173,11 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
 theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (hs : IsOpen s)
     (hsf : f ∈ convexHull ℝ s) : Surrounded f s := by
   rw [surrounded_iff_mem_interior_convexHull_aff_basis]
-  obtain ⟨t, hts, hai, hf⟩ :=
-    (by simpa only [exists_prop, mem_iUnion] using convexHull_eq_union.subst hsf :
-      ∃ t : Finset F,
-        (t : Set F) ⊆ s ∧ AffineIndependent ℝ ((↑) : t → F) ∧ f ∈ convexHull ℝ (t : Set F))
+  obtain ⟨t, hts, hai, hf⟩ :
+    ∃ t : Finset F,
+      (t : Set F) ⊆ s ∧ AffineIndependent ℝ ((↑) : t → F) ∧ f ∈ convexHull ℝ (t : Set F) := by
+    simp_rw [← exists_prop, ← mem_iUnion, ← convexHull_eq_union]
+    exact hsf
   have htne : (t : Set F).Nonempty := convexHull_nonempty_iff.mp ⟨f, hf⟩
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affineIndependent_span_eq_top hts htne hai
   have hb₀ : b.Finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
@@ -343,6 +343,7 @@ theorem affineEquiv_surrounds_iff (e : F ≃ᵃ[ℝ] F) :
   erw [Finset.map_affineCombination _ (γ ∘ t) _ w_sum (e : F →ᵃ[ℝ] F)]
   congr
 
+omit [NormedSpace ℝ F] in
 @[simp]
 theorem zero_vadd : (0 : F) +ᵥ γ = γ := by
   ext t
@@ -366,7 +367,7 @@ theorem Surrounds.smul0 (h : γ.Surrounds 0) (ht : t ≠ 0) : (t • γ).Surroun
     AffineEquiv.coe_homothetyUnitsMulHom_apply, AffineMap.homothety_apply_same]
   convert h
   ext u
-  simp [AffineMap.homothety_apply, smul_smul, inv_mul_cancel ht]
+  simp [AffineMap.homothety_apply, smul_smul, inv_mul_cancel₀ ht]
 
 theorem Surrounds.mono (h : γ.Surrounds x) (h2 : range γ ⊆ range γ') : γ'.Surrounds x := by
   revert h; simp_rw [Loop.surrounds_iff_range_subset_range]
@@ -425,14 +426,14 @@ theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O
     cast_coe]
   refine Subset.trans (truncate_range _) ?_
   simp only [trans_range, union_subset_iff, O_conn.range_somePath_subset,
-    O_conn.range_pathThrough_subset, true_and_iff]
+    O_conn.range_pathThrough_subset, true_and]
 
 theorem surroundingLoop_surrounds {f : F} {w : Fin (d + 1) → ℝ} (h : SurroundingPts f p w) :
     (surroundingLoop O_conn hp hb 1).Surrounds f := by
   rw [Loop.surrounds_iff_range_subset_range]
   refine ⟨p, w, h, ?_⟩
   simp only [surroundingLoop, Loop.roundTripFamily_one, Loop.roundTrip_range, trans_range,
-    range_subset_iff, mem_union, O_conn.mem_range_pathThrough, or_true_iff, forall_true_iff]
+    range_subset_iff, mem_union, O_conn.mem_range_pathThrough, or_true, forall_true_iff]
 
 theorem surroundingLoop_projI (t : ℝ) :
     surroundingLoop O_conn hp hb (projI t) = surroundingLoop O_conn hp hb t :=
@@ -481,6 +482,8 @@ namespace SurroundingFamily
 
 variable {g b : E → F} {γ : E → ℝ → Loop F} {U : Set E}
 
+omit [NormedSpace ℝ E]
+
 protected theorem one (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : γ x t 1 = b x := by
   rw [Loop.one, h.base]
 
@@ -497,6 +500,7 @@ protected theorem mono (h : SurroundingFamily g b γ U) {V : Set E} (hVU : V ⊆
     SurroundingFamily g b γ V :=
   ⟨h.base, h.t₀, h.projI, fun x hx ↦ h.surrounds x (hVU hx), h.cont⟩
 
+variable [NormedSpace ℝ E] in
 protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
     (hg : Continuous g) (h : SurroundingFamily g b γ univ) :
     ∃ ε : E → ℝ,
@@ -586,6 +590,8 @@ namespace SurroundingFamilyIn
 
 variable {γ : E → ℝ → Loop F}
 
+omit [NormedSpace ℝ E]
+
 /-- Abbreviation for `toSurroundingFamily` -/
 theorem to_sf (h : SurroundingFamilyIn g b γ U Ω) : SurroundingFamily g b γ U :=
   h.toSurroundingFamily
@@ -619,6 +625,8 @@ section local_loops
 
 variable {x₀ : E} (hΩ_conn : IsPathConnected (Prod.mk x₀ ⁻¹' Ω)) (hb_in : (x₀, b x₀) ∈ Ω)
   {p : Fin (d + 1) → F} (hp : ∀ i, p i ∈ Prod.mk x₀ ⁻¹' Ω)
+
+omit [NormedSpace ℝ E]
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
 -- /-- The witness of `local_loops`. -/
@@ -740,6 +748,8 @@ def sfHomotopy (τ : ℝ) (x : E) (t : ℝ) :=
 
 variable {h₀ h₁}
 
+omit [NormedSpace ℝ E]
+
 @[simp]
 theorem sfHomotopy_zero : sfHomotopy h₀ h₁ 0 = γ₀ := by
   ext x t s
@@ -771,11 +781,12 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X]
 
 /-- In this lemmas and the lemmas below we add `FiniteDimensional ℝ E` so that we can conclude
  `LocallyCompactSpace E`. -/
-theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomotopy h₀ h₁) :=
+theorem continuous_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ E] :
+    Continuous ↿(sfHomotopy h₀ h₁) :=
   Continuous.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
     continuous_snd.snd.snd
 
-theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
+theorem surroundingFamily_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ E] (τ : ℝ) :
     SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U := by
   constructor
   · intro x t;
@@ -825,12 +836,12 @@ theorem sfHomotopy_in (h₀ : SurroundingFamilyIn g b γ₀ U Ω) (h₁ : Surrou
   sfHomotopy_in' h₀.to_sf h₁.to_sf (fun _ ↦ τ) (fun _ ↦ x) () hx ht
     (fun _i hx _t _ _s _ ↦ h₀.val_in hx) fun _i hx _t _ _s _ ↦ h₁.val_in hx
 
-theorem surroundingFamilyIn_sfHomotopy [FiniteDimensional ℝ E] (h₀ : SurroundingFamilyIn g b γ₀ U Ω)
-    (h₁ : SurroundingFamilyIn g b γ₁ U Ω) (τ : ℝ) :
+theorem surroundingFamilyIn_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    (h₀ : SurroundingFamilyIn g b γ₀ U Ω) (h₁ : SurroundingFamilyIn g b γ₁ U Ω) (τ : ℝ) :
     SurroundingFamilyIn g b (sfHomotopy h₀.to_sf h₁.to_sf τ) U Ω :=
   ⟨surroundingFamily_sfHomotopy _, fun _x hx _t ht _s _hs ↦ sfHomotopy_in h₀ h₁ _ hx ht⟩
 
-theorem satisfied_or_refund [FiniteDimensional ℝ E] {γ₀ γ₁ : E → ℝ → Loop F}
+theorem satisfied_or_refund [NormedSpace ℝ E] [FiniteDimensional ℝ E] {γ₀ γ₁ : E → ℝ → Loop F}
     (h₀ : SurroundingFamilyIn g b γ₀ U Ω) (h₁ : SurroundingFamilyIn g b γ₁ U Ω) :
     ∃ γ : ℝ → E → ℝ → Loop F,
       (∀ τ, SurroundingFamilyIn g b (γ τ) U Ω) ∧ γ 0 = γ₀ ∧ γ 1 = γ₁ ∧ Continuous ↿γ :=
@@ -922,6 +933,7 @@ def ContinuousGerm {x : E} (φ : Germ (𝓝 x) (ℝ → Loop F)) : Prop :=
       simp only [mem_setOf_eq, hx'])
 
 variable (g b Ω)
+omit [NormedSpace ℝ E]
 
 structure LoopFamilyGerm (x : E) (φ : Germ (𝓝 x) (ℝ → Loop F)) : Prop where
   base : ∀ t, φ.value t 0 = b x
@@ -956,7 +968,7 @@ theorem surroundingFamilyIn_iff_germ {γ : E → ℝ → Loop F} :
     rintro ⟨x, t, s⟩
     apply (h x).cont
 
-variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] [SecondCountableTopology E]
+variable [NormedSpace ℝ E] [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] [SecondCountableTopology E]
 
 theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : ∀ x, ContinuousAt g x)
     (hb : Continuous b)

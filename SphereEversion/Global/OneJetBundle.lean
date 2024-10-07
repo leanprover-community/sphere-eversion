@@ -13,6 +13,7 @@ import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 import Mathlib.Geometry.Manifold.VectorBundle.Hom
 import Mathlib.Geometry.Manifold.VectorBundle.Pullback
+import Mathlib.Tactic.Monotonicity.Lemmas
 
 /-!
 # 1-jet bundles
@@ -48,7 +49,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M''] [SmoothManifoldWithCorners I'' M'']
   {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
   {G : Type*} [TopologicalSpace G] (J : ModelWithCorners 𝕜 F G)
-  {N : Type*} [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  {N : Type*} [TopologicalSpace N] [ChartedSpace G N]
   {F' : Type*} [NormedAddCommGroup F'] [NormedSpace 𝕜 F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners 𝕜 F' G')
   {N' : Type*} [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
@@ -294,8 +295,6 @@ lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
 
 end
 
-attribute [gcongr] preimage_mono Set.prod_mono
-
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
@@ -415,6 +414,9 @@ theorem SmoothAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h :
 
 variable (I')
 
+variable [SmoothManifoldWithCorners J N]
+
+omit [SmoothManifoldWithCorners J' N'] in
 theorem SmoothAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
     (hh : SmoothAt J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) (fun x ↦ OneJetBundle.mk _ _ (h x)) x₀)
@@ -424,6 +426,7 @@ theorem SmoothAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x
   rw [smoothAt_oneJetBundle_mk] at hh hg ⊢
   exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_inTangentCoordinates hg.2.1.continuousAt hg.2.2⟩
 
+omit [SmoothManifoldWithCorners J' N'] in
 theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
     (hh : Smooth J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) fun x ↦ OneJetBundle.mk _ _ (h x))
@@ -435,6 +438,7 @@ theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
 variable {I'}
 
 open Trivialization in
+omit [SmoothManifoldWithCorners J N] in
 theorem Smooth.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
     (hϕ : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ x))
     (hϕ' : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ' x)) :

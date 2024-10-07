@@ -11,7 +11,7 @@ TODO Generalise these lemmas appropriately.
 
 open Set Function Metric AffineMap
 
-variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+variable {F : Type*} [NormedAddCommGroup F]
 
 -- Unused
 -- @[simp]
@@ -31,10 +31,12 @@ theorem norm_coe_ball_lt (r : ℝ) (x : ball (0 : F) r) : ‖(x : F)‖ < r := b
   cases' x with x hx
   simpa using hx
 
+variable [NormedSpace ℝ F]
+
 theorem mapsTo_homothety_ball (c : F) {r : ℝ} (hr : 0 < r) :
     MapsTo (fun y ↦ homothety c r⁻¹ y -ᵥ c) (ball c r) (ball 0 1) := fun y hy ↦ by
   replace hy : r⁻¹ * ‖y - c‖ < 1 := by
-    rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel hr.ne.symm, mul_one, one_mul]
+    rw [← mul_lt_mul_left hr, ← mul_assoc, mul_inv_cancel₀ hr.ne.symm, mul_one, one_mul]
     simpa [dist_eq_norm] using hy
   simp only [homothety_apply, vsub_eq_sub, vadd_eq_add, add_sub_cancel_right, mem_ball_zero_iff,
     norm_smul, Real.norm_eq_abs, abs_eq_self.2 (inv_pos.mpr hr).le, hy]

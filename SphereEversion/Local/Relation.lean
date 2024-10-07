@@ -119,6 +119,6 @@ instance (R : RelLoc E F) : FunLike (FamilyFormalSol P R) P (JetSec E F) :=
   ⟨fun S ↦ S.toFamilyJetSec, by
       intros S S' h
       ext p x : 3 <;> replace h := congrFun h p
-      exacts [congrFun ((JetSec.ext_iff _ _).1 h).1 x, congrFun ((JetSec.ext_iff _ _).1 h).2 x]⟩
+      exacts [congrFun (JetSec.ext_iff.1 h).1 x, congrFun (JetSec.ext_iff.1 h).2 x]⟩
 
 end RelLoc

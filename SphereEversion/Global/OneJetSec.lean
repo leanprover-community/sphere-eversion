@@ -104,7 +104,7 @@ its base map at x. -/
 theorem isHolonomicAt_iff {F : OneJetSec I M I' M'} {x : M} :
     F.IsHolonomicAt x ↔ oneJetExt I I' F.bs x = F x := by
   simp_rw [IsHolonomicAt, oneJetExt, Bundle.TotalSpace.ext_iff, heq_iff_eq, F.fst_eq,
-    oneJetBundle_mk_fst, true_and_iff, oneJetBundle_mk_snd]
+    oneJetBundle_mk_fst, true_and, oneJetBundle_mk_snd]
 
 theorem isHolonomicAt_congr {F F' : OneJetSec I M I' M'} {x : M} (h : F =ᶠ[𝓝 x] F') :
     F.IsHolonomicAt x ↔ F'.IsHolonomicAt x := by
@@ -161,7 +161,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
   [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
   (J : ModelWithCorners ℝ F G) (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
-  [SmoothManifoldWithCorners J N] {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
+  {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G') (N' : Type*)
   [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N'] {EP : Type*}
   [NormedAddCommGroup EP] [NormedSpace ℝ EP] {HP : Type*} [TopologicalSpace HP]

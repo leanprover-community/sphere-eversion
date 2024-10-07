@@ -10,7 +10,7 @@ open scoped unitInterval Topology uniformity
 
 section Maps
 
-variable {α β : Type*} [TopologicalSpace α] [TopologicalSpace β] {f : α → β} {g : β → α}
+variable {α β : Type*} {f : α → β} {g : β → α}
 
 -- TODO: move to Data.Set.Defs
 theorem Function.LeftInverse.mem_preimage_iff (hfg : LeftInverse g f) {s : Set α} {x : α} :
@@ -20,6 +20,8 @@ theorem Function.LeftInverse.mem_preimage_iff (hfg : LeftInverse g f) {s : Set �
 theorem Function.LeftInverse.image_eq (hfg : LeftInverse g f) (s : Set α) :
     f '' s = range f ∩ g ⁻¹' s := by
   rw [inter_comm, ← image_preimage_eq_inter_range, hfg.preimage_preimage]
+
+variable [TopologicalSpace α] [TopologicalSpace β]
 
 theorem Function.LeftInverse.isOpenMap {f : α → β} {g : β → α} (hfg : LeftInverse g f)
     (hf : IsOpen (range f)) (hg : ContinuousOn g (range f)) : IsOpenMap f := fun U hU ↦ by
@@ -280,7 +282,7 @@ theorem projI_le_iff : projI x ≤ c ↔ 0 ≤ c ∧ (1 ≤ c ∨ x ≤ c) := by
 
 @[simp]
 theorem projI_eq_min : projI x = min 1 x ↔ 0 ≤ x := by
-  simp_rw [projI_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and_iff]
+  simp_rw [projI_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and]
 
 theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
   cases' le_total c x with h3 h3 <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]

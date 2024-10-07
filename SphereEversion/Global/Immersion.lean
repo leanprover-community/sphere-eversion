@@ -53,9 +53,7 @@ theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
     ψJ σ '' ((ψJ σ).source ∩ immersionRel I M I' M') = (ψJ σ).target ∩ {q : HJ | Injective q.2} :=
   PartialEquiv.IsImage.image_eq fun _σ' hσ' ↦ (mem_immersionRel_iff' I I' hσ').symm
 
-variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
-
-theorem immersionRel_open : IsOpen (immersionRel I M I' M') := by
+theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine fun σ ↦ (ψJ σ).open_target.inter ?_
   convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
@@ -71,6 +69,8 @@ theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I 
     {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
     (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ : Set <| TM' m')ᶜ :=
   Set.ext_iff.mpr fun _ ↦ p.injective_update_iff hφ
+
+variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
 theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample := by
   rw [RelMfld.ample_iff]
@@ -96,7 +96,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [I'.Boundaryless]
   {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
-  [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
   {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
   {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [IP.Boundaryless]
   {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
@@ -274,13 +273,13 @@ theorem ContDiff.uncurry_left {f : E → F → G} (n : ℕ∞) (hf : ContDiff �
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
-  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
-  {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {M' : Type*} [MetricSpace M'] [ChartedSpace H' M']
   {EP : Type*} [NormedAddCommGroup EP] [NormedSpace 𝕜 EP]
   {HP : Type*} [TopologicalSpace HP] (IP : ModelWithCorners 𝕜 EP HP)
-  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
 lemma Smooth.inr (x : M) :

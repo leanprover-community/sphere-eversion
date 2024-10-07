@@ -118,7 +118,7 @@ theorem RelLoc.IsAmple.relativize (hR : R.IsAmple) : (R.relativize P).IsAmple :=
       PreconnectedSpace.connectedComponent_eq_univ, convexHull_univ]
   obtain ⟨u', hu'⟩ := ContinuousLinearMap.exists_ne_zero h
   let u := (p2 u')⁻¹ • u'
-  let q : DualPair E := ⟨p2, u, by rw [p2.map_smul, smul_eq_mul, inv_mul_cancel hu']⟩
+  let q : DualPair E := ⟨p2, u, by rw [p2.map_smul, smul_eq_mul, inv_mul_cancel₀ hu']⟩
   rw [relativize_slice_loc q rfl]
   exact (hR q _).vadd
 
@@ -265,6 +265,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
 
 variable {R : RelLoc E F} (h_op : IsOpen R) (h_ample : R.IsAmple) (L : Landscape E)
 
+include h_op h_ample in
 -- The local parametric h-principle.
 theorem RelLoc.FamilyFormalSol.improve_htpy {ε : ℝ} (ε_pos : 0 < ε) (C : Set (P × E))
     (hC : IsClosed C) (K : Set (P × E)) (hK : IsCompact K) (𝓕₀ : FamilyFormalSol P R)
@@ -296,6 +297,7 @@ open Filter
 
 open scoped unitInterval
 
+include h_op h_ample in
 /-- A corollary of the local parametric h-principle, forgetting the homotopy and `ε`-closeness,
 and just stating the existence of a solution that is holonomic near `K`.
 Furthermore, we assume that `P = ℝ` and `K` is of the form `compact set × I`.

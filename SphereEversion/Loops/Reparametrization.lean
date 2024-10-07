@@ -50,9 +50,7 @@ noncomputable section
 open Set Function MeasureTheory intervalIntegral Filter
 open scoped Topology Manifold
 
-variable {E F : Type*}
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
-  [MeasurableSpace F] [BorelSpace F]
+variable {E F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 set_option hygiene false
 notation "ι" => Fin (FiniteDimensional.finrank ℝ F + 1)
@@ -60,7 +58,7 @@ set_option hygiene true
 
 section MetricSpace
 
-variable [MetricSpace E] [LocallyCompactSpace E]
+variable [MetricSpace E] [FiniteDimensional ℝ F]
 
 theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x : E) (t : ℝ) :
     Tendsto (fun z : E × ℕ ↦ (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t)) := by
@@ -86,7 +84,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
 
 end MetricSpace
 
-variable [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+variable [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- Given a smooth function `g : E → F` between normed vector spaces, a smooth surrounding family
 is a smooth family of loops `E → loop F`, `x ↦ γₓ` such that `γₓ` surrounds `g x` for all `x`. -/
@@ -132,12 +130,15 @@ theorem surroundPtsPointsWeightsAt :
 def approxSurroundingPointsAt (n : ℕ) (i : ι) : F :=
   (γ y).mollify n (γ.surroundingParametersAt x i)
 
+variable [FiniteDimensional ℝ E] [CompleteSpace F] in
 theorem approxSurroundingPointsAt_smooth (n : ℕ) :
     𝒞 ∞ fun y ↦ γ.approxSurroundingPointsAt x y n := by
   refine contDiff_pi.mpr fun i ↦ ?_
   suffices 𝒞 ∞ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s by simpa [approxSurroundingPointsAt, Loop.mollify]
   apply contDiff_parametric_integral_of_contDiff
   exact ContDiff.smul deltaMollifier_smooth.snd' γ.smooth
+
+variable [FiniteDimensional ℝ F]
 
 /-- The key property from which it should be easy to construct `localCenteringDensity`,
 `localCenteringDensityNhd` etc below. -/
@@ -250,6 +251,7 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
 theorem localCenteringDensity_periodic : Periodic (γ.localCenteringDensity x y) 1 :=
   Finset.univ.periodic_sum fun _ _ ↦ Periodic.smul deltaMollifier_periodic _
 
+variable [FiniteDimensional ℝ E] in
 theorem localCenteringDensity_smooth_on :
     smooth_on ↿(γ.localCenteringDensity x) <| γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ) := by
   let h₀ (yt : E × ℝ) (_ : yt ∈ γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ)) :=
@@ -275,6 +277,7 @@ theorem localCenteringDensity_smooth_on :
       simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
   · exact deltaMollifier_smooth.comp contDiff_snd
 
+variable [FiniteDimensional ℝ E] in
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :
     Continuous fun t ↦ γ.localCenteringDensity x y t := by
   refine continuous_iff_continuousAt.mpr fun t ↦ ?_
@@ -332,6 +335,7 @@ structure IsCenteringDensity (x : E) (f : ℝ → ℝ) : Prop where
   average : ∫ s in (0 : ℝ)..1, f s • γ x s = g x
   Continuous : Continuous f
 
+omit [FiniteDimensional ℝ F] [DecidablePred fun x ↦ x ∈ affineBases ι ℝ F] in
 -- Can drop if/when have `intervalIntegrable.smul_continuous_on`
 theorem isCenteringDensity_convex (x : E) : Convex ℝ { f | γ.IsCenteringDensity x f } := by
   classical
@@ -358,6 +362,8 @@ theorem isCenteringDensity_convex (x : E) : Convex ℝ { f | γ.IsCenteringDensi
       erw [intervalIntegral.integral_add (hf₇.smul a) (hk₇.smul b)]
       simp [intervalIntegral.integral_smul, ← add_smul, hf₄, hk₄, hab]
     Continuous := Continuous.add (hf₅.const_smul a) (hk₅.const_smul b) }
+
+variable [FiniteDimensional ℝ E]
 
 theorem exists_smooth_isCenteringDensity (x : E) :
     ∃ U ∈ 𝓝 x,

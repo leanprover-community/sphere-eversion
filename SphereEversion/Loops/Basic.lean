@@ -51,9 +51,6 @@ protected theorem coe_mk {γ : ℝ → X} (h : ∀ t, γ (t + 1) = γ t) : ⇑(�
 protected theorem ext : ∀ {γ₁ γ₂ : Loop X}, (γ₁ : ℝ → X) = γ₂ → γ₁ = γ₂
   | ⟨_x, _h1⟩, ⟨.(_x), _h2⟩, rfl => rfl
 
-protected theorem ext_iff {γ₁ γ₂ : Loop X} : γ₁ = γ₂ ↔ (γ₁ : ℝ → X) = γ₂ :=
-  ⟨fun h ↦ by rw [h], Loop.ext⟩
-
 /-- The constant loop. -/
 @[simps]
 def const (f : X) : Loop X :=
@@ -127,7 +124,7 @@ instance [AddCommGroup X] : AddCommGroup (Loop X) :=
     add_comm := fun γ₁ γ₂ ↦ by ext t; apply add_comm
     zero_add := fun γ ↦ by ext t; apply zero_add
     add_zero := fun γ ↦ by ext t; apply add_zero
-    add_left_neg := fun γ ↦ by ext t; apply add_left_neg
+    neg_add_cancel := fun γ ↦ by ext t; apply neg_add_cancel
     nsmul := nsmulRec
     zsmul := zsmulRec }
 
@@ -180,6 +177,7 @@ the loop is not constant. -/
 def support (γ : X → Loop X') : Set X :=
   closure {x | ¬(γ x).IsConst}
 
+omit [TopologicalSpace X'] in
 theorem not_mem_support {γ : X → Loop X'} {x : X} (h : ∀ᶠ y in 𝓝 x, (γ y).IsConst) :
     x ∉ Loop.support γ := by
   intro hx
@@ -283,12 +281,8 @@ theorem roundTripFamily_one {x y : X} {γ : Path x y} : (roundTripFamily γ) 1 =
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_one, ofPath]
   rfl
 
-section Average
-
 /-! ## Average value of a loop -/
-
-
-variable [MeasurableSpace F] [BorelSpace F] [SecondCountableTopology F] [CompleteSpace F]
+section Average
 
 /-- The average value of a loop. -/
 noncomputable def average (γ : Loop F) : F :=
@@ -299,7 +293,7 @@ noncomputable def average (γ : Loop F) : F :=
 theorem zero_average : average (0 : Loop F) = 0 :=
   intervalIntegral.integral_zero
 
-theorem isConst_iff_forall_avg {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.average := by
+theorem isConst_iff_forall_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.average := by
   constructor <;> intro h
   · intro t
     have : γ = Loop.const (γ t) := by
@@ -311,7 +305,7 @@ theorem isConst_iff_forall_avg {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.a
   · exact isConst_of_eq h
 
 @[simp]
-theorem average_const {f : F} : (const f).average = f := by simp [Loop.average]
+theorem average_const [CompleteSpace F] {f : F} : (const f).average = f := by simp [Loop.average]
 
 open MeasureTheory
 
@@ -324,11 +318,13 @@ theorem average_add {γ₁ γ₂ : Loop F} (hγ₁ : IntervalIntegrable γ₁ vo
 theorem average_smul {γ : Loop F} {c : ℝ} : (c • γ).average = c • γ.average := by
   simp [Loop.average, intervalIntegral.integral_smul]
 
-theorem isConst_iff_const_avg {γ : Loop F} : γ.IsConst ↔ γ = const γ.average := by
+theorem isConst_iff_const_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ γ = const γ.average := by
   rw [Loop.isConst_iff_forall_avg, Loop.ext_iff, funext_iff]; rfl
 
+omit [NormedAddCommGroup F] [NormedSpace ℝ F] in
 theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst := by
-  classical exact Decidable.by_contradiction fun H ↦ hx (subset_closure H)
+  by_contra H
+  exact hx (subset_closure H)
 
 theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
@@ -345,7 +341,7 @@ theorem normalize_apply (γ : Loop F) (t : ℝ) : Loop.normalize γ t = γ t - �
   rfl
 
 @[simp]
-theorem normalize_of_isConst {γ : Loop F} (h : γ.IsConst) : γ.normalize = 0 := by
+theorem normalize_of_isConst [CompleteSpace F] {γ : Loop F} (h : γ.IsConst) : γ.normalize = 0 := by
   ext t
   simp [isConst_iff_forall_avg.mp h]
 
@@ -378,7 +374,7 @@ theorem Loop.continuous_diff {γ : E → Loop F} (h : 𝒞 1 ↿γ) : Continuous
 theorem ContDiff.partial_loop {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
     ∀ t, 𝒞 n fun e ↦ γ e t := fun t ↦ hγ_diff.comp ((contDiff_prod_mk_left t).of_le le_top)
 
-variable [MeasurableSpace F] [BorelSpace F] [FiniteDimensional ℝ F]
+variable [FiniteDimensional ℝ F]
 
 theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ Loop.support γ := by
   unfold Loop.support
