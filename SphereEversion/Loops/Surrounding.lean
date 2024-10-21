@@ -32,7 +32,7 @@ The key results are:
 -/
 
 -- to obtain that normed spaces are locally connected
-open Set Function FiniteDimensional Int Prod Path Filter
+open Set Function Module Int Prod Path Filter
 open scoped Topology unitInterval
 
 namespace IsPathConnected
@@ -259,7 +259,7 @@ section SurroundingPointsLimits
 
 variable {X Y : Type*} [FiniteDimensional ℝ F]
 
-local macro:arg "ι" : term => `(Fin (FiniteDimensional.finrank ℝ F + 1))
+local macro:arg "ι" : term => `(Fin (finrank ℝ F + 1))
 
 theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filter Y} {v : ι → F}
     {q : F} {p : ι → X → F} {f : Y → F} (hq : ∃ w, SurroundingPts q v w)
@@ -271,7 +271,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
   let W' : F × (ι → F) → ι → ℝ := uncurry (evalBarycentricCoords ι ℝ F)
   let A : Set (F × (ι → F)) := (univ : Set F) ×ˢ affineBases ι ℝ F
   let S : Set (F × (ι → F)) := W' ⁻¹' V
-  have hι : Fintype.card ι = FiniteDimensional.finrank ℝ F + 1 := Fintype.card_fin _
+  have hι : Fintype.card ι = finrank ℝ F + 1 := Fintype.card_fin _
   have hq' : v ∈ affineBases ι ℝ F := hw.mem_affineBases
   have hqv : (q, v) ∈ A := by simp [A, hq']
   have hxp : W' (q, v) ∈ V := by simp [W', V, hq', hw.coord_eq_w, hw.w_pos]
@@ -457,7 +457,7 @@ theorem surrounding_loop_of_convexHull [FiniteDimensional ℝ F] {f b : F} {O : 
           (∀ s, γ 0 s = b) ∧
             (∀ s t, γ (projI t) s = γ t s) ∧ (∀ t s, γ t s ∈ O) ∧ (γ 1).Surrounds f := by
   rcases surrounded_of_convexHull O_op hsf with ⟨p, w, h, hp⟩
-  rw [← O_op.isConnected_iff_isPathConnected] at O_conn
+  rw [O_op.isConnected_iff_isPathConnected] at O_conn
   exact ⟨surroundingLoop O_conn hp hb, continuous_surroundingLoop, surroundingLoop_zero_right,
     surroundingLoop_zero_left, fun s t ↦ by rw [surroundingLoop_projI], surroundingLoop_mem,
     surroundingLoop_surrounds h⟩

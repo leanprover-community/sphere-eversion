@@ -61,5 +61,5 @@ import SphereEversion.ToMathlib.Topology.HausdorffDistance
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Path
-import SphereEversion.ToMathlib.Topology.Separation
+import SphereEversion.ToMathlib.Topology.Separation.Basic
 import SphereEversion.ToMathlib.Unused.Fin

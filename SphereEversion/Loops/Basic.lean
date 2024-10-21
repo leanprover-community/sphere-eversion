@@ -223,7 +223,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
   refine ContinuousOn.comp_fract ?_ ht ?_
   · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
-      continuous_id.prod_map continuous_projIcc
+      continuous_id.prodMap continuous_projIcc
     exact (hγ.comp this).continuousOn
   · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
@@ -231,7 +231,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
     Continuous ↿fun s ↦ ofPath <| γ s :=
-  Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
+  Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prodMap continuous_id)
     continuous_snd
 
 /-! ## Round trips -/

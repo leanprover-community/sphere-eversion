@@ -17,7 +17,7 @@ def affineBases : Set (ι → P) :=
   {v | AffineIndependent R v ∧ affineSpan R (range v) = ⊤}
 
 theorem affineBases_findim [Fintype ι] [Field k] [Module k M] [FiniteDimensional k M]
-    (h : Fintype.card ι = FiniteDimensional.finrank k M + 1) :
+    (h : Fintype.card ι = Module.finrank k M + 1) :
     affineBases ι k P = {v | AffineIndependent k v} := by
   ext v
   simp only [affineBases, mem_setOf_eq, and_iff_left_iff_imp]
@@ -112,7 +112,7 @@ variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
-    (h : Fintype.card ι = FiniteDimensional.finrank 𝕜 F + 1) :
+    (h : Fintype.card ι = Module.finrank 𝕜 F + 1) :
     ContDiffOn 𝕜 ⊤ (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
   classical
   obtain ⟨b⟩ : Nonempty (AffineBasis ι 𝕜 F) := AffineBasis.exists_affineBasis_of_finiteDimensional h

@@ -159,10 +159,12 @@ theorem smooth_incl : Smooth ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜
     ContinuousLinearMap.id_comp]
   exact this.2
 
+omit [SmoothManifoldWithCorners I M] in
 @[simp]
 theorem incl_fst_fst (v : J¹[𝕜, E, I, M, V] × V) : (incl I M V v).1.1 = v.1.1 :=
   rfl
 
+omit [SmoothManifoldWithCorners I M] in
 @[simp]
 theorem incl_snd (v : J¹[𝕜, E, I, M, V] × V) : (incl I M V v).1.2 = v.2 :=
   rfl

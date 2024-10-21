@@ -283,11 +283,11 @@ private theorem T_one : T 1 = 1 / 2 := by simp [T]
 
 private theorem T_pos {n : ℕ} (hn : n ≠ 0) : 0 < T n := by
   rw [T_eq, sub_pos]
-  apply pow_lt_one <;> first | assumption | norm_num
+  apply pow_lt_one₀ <;> first | assumption | norm_num
 
 private theorem T_nonneg (n : ℕ) : 0 ≤ T n := by
   rw [T_eq, sub_nonneg]
-  apply pow_le_one <;> norm_num
+  apply pow_le_one₀ <;> norm_num
 
 private theorem not_T_succ_le (n : ℕ) : ¬T (n + 1) ≤ 0 :=
   (T_pos n.succ_ne_zero).not_le

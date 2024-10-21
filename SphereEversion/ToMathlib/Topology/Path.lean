@@ -1,5 +1,6 @@
-import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Analysis.Normed.Field.Basic
+import Mathlib.Analysis.Normed.Order.Lattice
+import Mathlib.Topology.Connected.PathConnected
 
 open Set Function
 

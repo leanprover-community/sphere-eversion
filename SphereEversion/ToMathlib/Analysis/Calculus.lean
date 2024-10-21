@@ -25,16 +25,6 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCom
   [NormedSpace 𝕜 E'] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*}
   [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : ℕ∞}
 
-theorem ContDiffAt.comp₂ {g : E₁ × E₂ → G} {f₁ : F → E₁} {f₂ : F → E₂} {x : F}
-    (hg : ContDiffAt 𝕜 n g (f₁ x, f₂ x)) (hf₁ : ContDiffAt 𝕜 n f₁ x) (hf₂ : ContDiffAt 𝕜 n f₂ x) :
-    ContDiffAt 𝕜 n (fun x ↦ g (f₁ x, f₂ x)) x :=
-  hg.comp x <| hf₁.prod hf₂
-
-theorem ContDiffAt.clm_comp {g : E' → F →L[𝕜] G} {f : E' → E →L[𝕜] F} {n : ℕ∞} {x : E'}
-    (hg : ContDiffAt 𝕜 n g x) (hf : ContDiffAt 𝕜 n f x) : ContDiffAt 𝕜 n (fun x ↦ g x ∘L f x) x :=
-  isBoundedBilinearMap_comp.contDiff.contDiffAt.comp₂
-    (g := fun p => ContinuousLinearMap.comp p.1 p.2) hg hf
-
 theorem fderiv_prod_left {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun x ↦ (x, y₀)) x₀ = ContinuousLinearMap.inl 𝕜 E F :=
   ((hasFDerivAt_id _).prod (hasFDerivAt_const _ _)).fderiv

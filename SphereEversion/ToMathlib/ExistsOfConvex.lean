@@ -89,7 +89,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
   have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ := fun x ↦ by
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f
-    filter_upwards [eventually_mem_nhds.mpr U_in] with y hy
+    filter_upwards [eventually_mem_nhds_iff.mpr U_in] with y hy
     exact ⟨hf.contMDiffAt hy, hf' y (mem_of_mem_nhds hy)⟩
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩
   exact ⟨f, fun x ↦ (hf x).1, fun x ↦ (hf x).2⟩
@@ -159,7 +159,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [Sigm
   have hPP' : ∀ x, ∃ f : M₁ → M₂ → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ := fun x ↦ by
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f
-    filter_upwards [eventually_mem_nhds.mpr U_in] with y hy
+    filter_upwards [eventually_mem_nhds_iff.mpr U_in] with y hy
     exact ⟨fun z ↦ hf.contMDiffAt (prod_mem_nhds hy univ_mem), hf' y (mem_of_mem_nhds hy)⟩
   rcases exists_of_convex hPP hPP' with ⟨f, hf⟩
   exact ⟨f, fun ⟨x, y⟩ ↦ (hf x).1 y, fun x ↦ (hf x).2⟩

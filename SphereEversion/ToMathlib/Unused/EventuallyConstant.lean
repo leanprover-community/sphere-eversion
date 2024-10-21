@@ -6,7 +6,7 @@ Authors: Floris van Doorn
 ! This file was ported from Lean 3 source module to_mathlib.unused.eventually_constant
 -/
 import Mathlib.Data.Nat.Lattice
-import Mathlib.Topology.Separation
+import Mathlib.Topology.Separation.Basic
 
 /-!
 # Eventually constant sequences
@@ -17,15 +17,9 @@ Related: `monotonic_sequence_limit_index`
 
 -- in mathlib, this should probably import
 -- import Order.Filter.atTop_bot
--- and Topology.Separation should import this
+-- and Topology.Separation.Basic should import this
 -- import Topology.Basic
 open scoped Topology
-
--- move
-theorem ContinuousWithinAt.congr_nhds {α β} [TopologicalSpace α] [TopologicalSpace β] {f f₁ : α → β}
-    {s : Set α} {x : α} (h : ContinuousWithinAt f s x) (h₁ : f₁ =ᶠ[𝓝 x] f) :
-    ContinuousWithinAt f₁ s x :=
-  h.congr_of_eventuallyEq (nhdsWithin_le_nhds h₁) h₁.self_of_nhds
 
 namespace Set
 

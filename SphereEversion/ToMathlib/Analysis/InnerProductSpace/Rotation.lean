@@ -16,7 +16,7 @@ noncomputable section
 
 open scoped RealInnerProductSpace
 
-open FiniteDimensional
+open Module
 
 set_option synthInstance.checkSynthOrder false
 attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ

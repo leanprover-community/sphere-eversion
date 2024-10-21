@@ -105,9 +105,9 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     have K₁φ : K₁ ⊆ range φ := SurjOn.subset_range hK₁
     have K₀φ : K₀ ⊆ range φ := K₀K₁.trans interior_subset |>.trans K₁φ
     replace K₀_cpct : IsCompact (φ ⁻¹' K₀) :=
-      φ.openEmbedding.toInducing.isCompact_preimage' K₀_cpct K₀φ
+      φ.openEmbedding.toIsInducing.isCompact_preimage' K₀_cpct K₀φ
     replace K₁_cpct : IsCompact (φ ⁻¹' K₁) :=
-      φ.openEmbedding.toInducing.isCompact_preimage' K₁_cpct K₁φ
+      φ.openEmbedding.toIsInducing.isCompact_preimage' K₁_cpct K₁φ
     have K₀K₁' : φ ⁻¹' K₀ ⊆ interior (φ ⁻¹' K₁) := by
       rw [← φ.isOpenMap.preimage_interior_eq_interior_preimage φ.continuous]
       gcongr

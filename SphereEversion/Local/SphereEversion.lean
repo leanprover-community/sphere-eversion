@@ -23,7 +23,7 @@ proven in `Local/ParametricHPrinciple`.
 
 noncomputable section
 
-open Metric FiniteDimensional Set Function RelLoc InnerProductSpace Submodule
+open Metric Module Set Function RelLoc InnerProductSpace Submodule
 
 open Filter hiding mem_map
 
@@ -38,7 +38,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {F : Type*
 
 @[inherit_doc] local notation "𝕊²" => sphere (0 : E) 1
 
-@[inherit_doc] local notation "dim" => finrank ℝ
+@[inherit_doc] local notation "dim" => Module.finrank ℝ
 
 @[inherit_doc] local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
@@ -432,7 +432,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
   · exact fun t ht ↦ sphereImmersion_of_sol _ fun x hx ↦ h₃ x hx t ht
 
 -- Stating the full statement with all type-class arguments and no uncommon notation.
-example (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = 3)] :
+example (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (Module.finrank ℝ E = 3)] :
     ∃ f : ℝ → E → E,
       ContDiff ℝ ⊤ (uncurry f) ∧
         (∀ x ∈ sphere (0 : E) 1, f 0 x = x) ∧

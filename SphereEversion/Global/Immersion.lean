@@ -9,7 +9,7 @@ import SphereEversion.Global.TwistOneJetSec
 -- set_option trace.filter_inst_type true
 noncomputable section
 
-open Metric FiniteDimensional Set Function LinearMap Filter ContinuousLinearMap
+open Metric Module Set Function LinearMap Filter ContinuousLinearMap
 
 open scoped Manifold Topology
 

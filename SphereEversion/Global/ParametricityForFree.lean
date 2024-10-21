@@ -207,7 +207,7 @@ theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
     (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E := by
   rw [S.curry_ϕ]
   congr 1
-  refine ((mdifferentiableAt_const I IP).mfderiv_prod smooth_id.mdifferentiableAt).trans ?_
+  refine (mdifferentiableAt_const.mfderiv_prod smooth_id.mdifferentiableAt).trans ?_
   rw [mfderiv_id, mfderiv_const]
   rfl
 
@@ -220,7 +220,7 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
   refine (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
-    ((mdifferentiableAt_const I IP).prod_mk smooth_id.mdifferentiableAt)).trans
+    (mdifferentiableAt_const.prod_mk smooth_id.mdifferentiableAt)).trans
     ?_
   rw [id, hS]
   rfl

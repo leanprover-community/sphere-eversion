@@ -188,7 +188,8 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     exact hF.comp ((contDiff_prod_mk_left t).of_le le_top)
   · exact (ContDiff.hasStrictFDerivAt hs le_rfl).hasFDerivAt
   · rfl
-  · apply Continuous.aestronglyMeasurable
+  · set_option synthInstance.maxHeartbeats 30000 in
+    apply Continuous.aestronglyMeasurable
     have :
       (fun t ↦ fderiv ℝ (fun x : H ↦ F x t) x₀) =
         (fun φ : H × ℝ →L[ℝ] E ↦ φ.comp (inl ℝ H ℝ)) ∘

@@ -47,13 +47,13 @@ existence of delta mollifiers, partitions of unity, and the inverse function the
 
 noncomputable section
 
-open Set Function MeasureTheory intervalIntegral Filter
+open Set Function MeasureTheory Module intervalIntegral Filter
 open scoped Topology Manifold
 
 variable {E F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 set_option hygiene false
-notation "ι" => Fin (FiniteDimensional.finrank ℝ F + 1)
+notation "ι" => Fin (finrank ℝ F + 1)
 set_option hygiene true
 
 section MetricSpace

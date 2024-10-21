@@ -1,5 +1,7 @@
+import Mathlib.Analysis.Normed.Order.Lattice
+import Mathlib.Geometry.Manifold.ContMDiff.Atlas
+import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
-import Mathlib.Topology.Algebra.Order.Compact
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
@@ -100,19 +102,22 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
       have hx' : f (f.invFun (f x)) = f x := by rw [f.left_inv]
       rw [hx] at h₂
       erw [hx, hx', ← ContinuousLinearMap.comp_apply, ← mfderiv_comp (f x) h₂ h₁,
-        ((hasMFDerivAt_id I' (f x)).congr_of_eventuallyEq
+        ((hasMFDerivAt_id (f x)).congr_of_eventuallyEq
             (f.coe_comp_invFun_eventuallyEq x)).mfderiv,
         ContinuousLinearMap.coe_id', id])
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[simp]
 theorem fderiv_coe (x : M) :
     (f.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv I I' f x := by ext; rfl
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[simp]
 theorem fderiv_symm_coe (x : M) :
     ((f.fderiv x).symm : TangentSpace I' (f x) →L[𝕜] TangentSpace I x) =
       mfderiv I' I f.invFun (f x) := by ext; rfl
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
     ((f.fderiv (f.invFun x)).symm :
         TangentSpace I' (f (f.invFun x)) →L[𝕜] TangentSpace I (f.invFun x)) =
@@ -123,11 +128,11 @@ end
 
 open Filter
 
-theorem openEmbedding : OpenEmbedding f :=
-  openEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
+theorem openEmbedding : IsOpenEmbedding f :=
+  isOpenEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
 
-theorem inducing : Inducing f :=
-  f.openEmbedding.toInducing
+theorem inducing : IsInducing f :=
+  f.openEmbedding.toIsInducing
 
 theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A, P m) :
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
@@ -255,7 +260,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
   isOpen_range :=
     IsOpenMap.isOpen_range fun u hu ↦ by
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
-      convert isOpen_extChartAt_preimage' IF x aux
+      convert isOpen_extChartAt_preimage' x aux
       rw [image_comp]
       refine
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
@@ -316,7 +321,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     have hV₂ : V ⊆ (extChartAt IF x).target :=
       Subset.trans ((image_subset_range _ _).trans (by simp [h₁])) h₂
     rw [(extChartAt IF x).symm_image_eq_source_inter_preimage hV₂]
-    exact isOpen_extChartAt_preimage' IF x hV₁
+    exact isOpen_extChartAt_preimage' x hV₁
   have hB : ∀ x, (𝓝 x).HasBasis (p x) (B x) := fun x ↦
     ChartedSpace.nhds_hasBasis_balls_of_open_cov IF x s_op cov
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ := exists_countable_locallyFinite_cover surjective_id hW₀ hW₁ hB

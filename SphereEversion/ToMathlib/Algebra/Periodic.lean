@@ -1,5 +1,5 @@
-import SphereEversion.ToMathlib.Topology.Separation
 import Mathlib.Analysis.Normed.Order.Lattice
+import SphereEversion.ToMathlib.Topology.Separation.Basic
 -- TODO: the file this references doesn't exist in mathlib any more; rename this one appropriately!
 
 /-!
@@ -101,11 +101,11 @@ theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
 theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ :=
   continuous_quotient_mk'
 
-theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe ℤSubℝ
+theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe
 
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
-    QuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
-  (IsOpenMap.id.prod isOpenMap_proj𝕊₁).to_quotientMap (continuous_id.prod_map continuous_proj𝕊₁)
+    IsQuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
+  (IsOpenMap.id.prodMap isOpenMap_proj𝕊₁).isQuotientMap (continuous_id.prodMap continuous_proj𝕊₁)
     (surjective_id.prodMap Quotient.exists_rep)
 
 /-- A one-periodic function on `ℝ` descends to a function on the circle `ℝ ⧸ ℤ`. -/
@@ -120,7 +120,7 @@ instance : CompactSpace 𝕊₁ :=
   ⟨by rw [← image_proj𝕊₁_Icc]; exact isCompact_Icc.image continuous_proj𝕊₁⟩
 
 theorem isClosed_int : IsClosed (range ((↑) : ℤ → ℝ)) :=
-  Int.closedEmbedding_coe_real.isClosed_range
+  Int.isClosedEmbedding_coe_real.isClosed_range
 
 instance : T2Space 𝕊₁ := by
   have πcont : Continuous π := continuous_quotient_mk'
@@ -143,7 +143,7 @@ theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont
     ∃ C, ∀ x ∈ K, ∀ t, ‖f x t‖ ≤ C := by
   let F : X × 𝕊₁ → E := fun p : X × 𝕊₁ ↦ (hper p.1).lift p.2
   have Fcont : Continuous F := by
-    have qm : QuotientMap fun p : X × ℝ ↦ (p.1, π p.2) := quotientMap_id_proj𝕊₁
+    have qm : IsQuotientMap fun p : X × ℝ ↦ (p.1, π p.2) := quotientMap_id_proj𝕊₁
     -- avoid weird elaboration issue
     have : ↿f = F ∘ fun p : X × ℝ ↦ (p.1, π p.2) := by ext p; rfl
     rwa [this, ← qm.continuous_iff] at cont

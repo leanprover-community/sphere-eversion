@@ -31,7 +31,7 @@ end Maps
 
 section
 
--- TODO: move to Topology.Separation
+-- TODO: move to Topology.Separation.Basic
 theorem Filter.Eventually.closed_neighborhood {α} [TopologicalSpace α] [NormalSpace α] {C : Set α}
     {P : α → Prop} (hP : ∀ᶠ x in 𝓝ˢ C, P x) (hC : IsClosed C) :
     ∃ C' ∈ 𝓝ˢ C, IsClosed C' ∧ ∀ᶠ x in 𝓝ˢ C', P x := by
@@ -513,7 +513,7 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
     intro x hx
     have hxs : x ∈ s := us i (closure_mono this hx)
     have : (⟨x, hxs⟩ : s) ∈ closure (v i) := by
-      rw [embedding_subtype_val.closure_eq_preimage_closure_image (v i)]; exact hx
+      rw [IsEmbedding.subtypeVal.closure_eq_preimage_closure_image (v i)]; exact hx
     exact hv i this
 
 end ShrinkingLemma

@@ -318,7 +318,7 @@ theorem bu_lt {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (t : ℝ) (
       rw [norm_smul, Real.norm_eq_abs, abs_mul]
     _ ≤ ‖v‖ :=
       (mul_le_of_le_one_left (norm_nonneg _)
-        (mul_le_one (smoothStep.abs_le t) (abs_nonneg _) (L.ρ_le x)))
+        (mul_le_one₀ (smoothStep.abs_le t) (abs_nonneg _) (L.ρ_le x)))
     _ < ε := hv
 
 theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
@@ -433,8 +433,7 @@ section Improve
 This section proves `lem:h_principle_open_ample_loc`.
 -/
 
-
-open FiniteDimensional Submodule StepLandscape
+open Submodule StepLandscape
 
 variable {E}
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] {R : RelLoc E F} (h_op : IsOpen R)
@@ -457,8 +456,8 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
             (∀ x ∉ L.K₁, ∀ t, H t x = 𝓕 x) ∧
               (∀ x t, ‖(H t).f x - 𝓕.f x‖ ≤ ε) ∧
                 (∀ t, (H t).IsFormalSol R) ∧ ∀ᶠ x near L.K₀, (H 1).IsHolonomicAt x := by
-  let n := finrank ℝ E
-  let e := finBasis ℝ E
+  let n := Module.finrank ℝ E
+  let e := Module.finBasis ℝ E
   let E' := e.flag
   suffices
     ∀ k : Fin (n + 1),
