@@ -107,6 +107,7 @@ theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
+@[fun_prop]
 theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (h' : HasCompactSupport f) :
     ContDiff ℝ n (periodize f) := by
   refine contDiff_iff_contDiffAt.mpr fun x ↦ contDiffAt_finsum ?_ ?_
@@ -130,7 +131,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; exact add_comm x i]
       exact image_subset _ Ioo_subset_Icc_self
     exact subset_tsupport f
-  · exact fun i ↦ h.contDiffAt.comp _ (contDiffAt_id.add contDiffAt_const)
+  · fun_prop
 
 theorem periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
     periodize (fun x' ↦ f (x' - t)) x = periodize f (x - t) := by
@@ -201,6 +202,7 @@ theorem periodic_approxDirac (n : ℕ) : Periodic (approxDirac n) 1 := periodic_
 theorem approxDirac_nonneg (n : ℕ) (t : ℝ) : 0 ≤ approxDirac n t :=
   periodize_nonneg (bump n).nonneg_normed t
 
+@[fun_prop]
 theorem approxDirac_smooth (n : ℕ) : 𝒞 ∞ (approxDirac n) :=
   (bump n).contDiff_normed.periodize (bump n).hasCompactSupport_normed
 
@@ -240,11 +242,8 @@ theorem deltaMollifier_pos (s : ℝ) : 0 < deltaMollifier n t s :=
     (mul_nonneg (div_nonneg n.cast_nonneg n.cast_add_one_pos.le) (approxDirac_nonneg n _))
     (div_pos zero_lt_one n.cast_add_one_pos)
 
-theorem deltaMollifier_smooth : 𝒞 ∞ (deltaMollifier n t) :=
-  (contDiff_const.mul <|
-        (approxDirac_smooth n).comp <|
-          (contDiff_id.sub contDiff_const : 𝒞 ∞ fun x : ℝ ↦ x - t)).add
-    contDiff_const
+@[fun_prop]
+theorem deltaMollifier_smooth : 𝒞 ∞ (deltaMollifier n t) := by unfold deltaMollifier; fun_prop
 
 open intervalIntegral
 
@@ -279,6 +278,6 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
   · rw [zero_add]
   · exact (continuous_const.smul (((approxDirac_smooth n).continuous.comp
       (continuous_id.sub continuous_const)).smul hγ)).intervalIntegrable _ _
-  · exact (continuous_const.smul hγ).intervalIntegrable _ _
+  · apply Continuous.intervalIntegrable (by fun_prop)
 
 end VersionOfDeltaMollifierUsingN

@@ -1,6 +1,7 @@
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
+import Mathlib.Tactic.FunProp.ContDiff
 
 /-!
 # Basic definitions and properties of loops
@@ -217,6 +218,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
     simp only [this, γ.extend_extends t.2]
 
 /-- `Loop.ofPath` is continuous, general version. -/
+@[fun_prop]
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
@@ -228,6 +230,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
       eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
+@[fun_prop]
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
     Continuous ↿fun s ↦ ofPath <| γ s :=
   Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prodMap continuous_id)
@@ -259,10 +262,12 @@ noncomputable def roundTripFamily {x y : X} (γ : Path x y) : ℝ → Loop X :=
   have key : ∀ {t}, x = γ.extend (min 0 t) := (γ.extend_of_le_zero <| min_le_left _ _).symm
   fun t ↦ roundTrip ((γ.truncate 0 t).cast key rfl)
 
+attribute [fun_prop] Path.trans_continuous_family Path.symm_continuous_family Path.truncate_const_continuous_family
+@[fun_prop]
 theorem roundTripFamily_continuous {x y : X} {γ : Path x y} : Continuous ↿(roundTripFamily γ) :=
   ofPath_continuous_family _
     (Path.trans_continuous_family _ (γ.truncate_const_continuous_family 0) _ <|
-      Path.symm_continuous_family _ <| γ.truncate_const_continuous_family 0)
+      Path.symm_continuous_family _ <| (by fun_prop))
 
 theorem roundTripFamily_based_at {x y : X} {γ : Path x y} : ∀ t, (roundTripFamily γ) t 0 = x :=
   fun _ ↦ roundTrip_based_at
@@ -322,6 +327,7 @@ theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ suppo
   by_contra H
   exact hx (subset_closure H)
 
+@[fun_prop]
 theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopology E]
     [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
     Continuous fun x ↦ (γ x).average :=
@@ -364,11 +370,13 @@ theorem Loop.diff_apply (γ : E → Loop F) (e : E) (t : ℝ) :
     Loop.diff γ e t = ∂₁ (fun e t ↦ γ e t) e t :=
   rfl
 
+@[fun_prop]
 theorem Loop.continuous_diff {γ : E → Loop F} (h : 𝒞 1 ↿γ) : Continuous ↿(Loop.diff γ) :=
   ContDiff.continuous_partial_fst (h : _)
 
 theorem ContDiff.partial_loop {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-    ∀ t, 𝒞 n fun e ↦ γ e t := fun t ↦ hγ_diff.comp ((contDiff_prod_mk_left t).of_le le_top)
+    ∀ t, 𝒞 n fun e ↦ γ e t := by
+  fun_prop
 
 variable [FiniteDimensional ℝ F]
 
@@ -379,7 +387,7 @@ theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ 
   intro x hx
   rw [mem_interior_iff_mem_nhds] at *
   rcases mem_nhds_iff.mp hx with ⟨U, hU, U_op, hxU⟩
-  apply Filter.mem_of_superset (IsOpen.mem_nhds U_op hxU) fun y hy ↦ ?_
+  apply Filter.mem_of_superset (U_op.mem_nhds hxU) fun y hy ↦ ?_
   have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
     fun t ↦ Filter.mem_of_superset (U_op.mem_nhds hy)
       (fun z hz ↦ Loop.isConst_iff_forall_avg.mp (hU hz) t)
@@ -396,9 +404,10 @@ theorem Loop.average_diff {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) 
   simp only [Loop.average, hγ_diff.fderiv_parametric_integral]
   rfl
 
+attribute [fun_prop] contDiff_parametric_integral_of_contDiff
 theorem ContDiff.loop_average {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-    𝒞 n fun e ↦ (γ e).average :=
-  contDiff_parametric_integral_of_contDiff hγ_diff _ _
+    𝒞 n fun e ↦ (γ e).average := by
+  unfold Loop.average; fun_prop
 
 theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E) :
     (Loop.diff γ e).normalize = Loop.diff (fun e ↦ (γ e).normalize) e := by
@@ -410,11 +419,11 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
 
 variable {γ}
 
-theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n fun x ↦ (γ x).average :=
-  contDiff_parametric_primitive_of_contDiff hγ_diff contDiff_const 0
+theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n fun x ↦ (γ x).average := by
+  unfold Loop.average; fun_prop
 
 theorem contDiff_sub_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
-    𝒞 n ↿fun (x : E) (t : ℝ) ↦ (γ x) t - (γ x).average :=
-  hγ_diff.sub (contDiff_average hγ_diff).fst'
+    𝒞 n ↿fun (x : E) (t : ℝ) ↦ (γ x) t - (γ x).average := by
+  unfold Loop.average; fun_prop
 
 end C1

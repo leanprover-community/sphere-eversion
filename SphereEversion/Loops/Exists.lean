@@ -32,7 +32,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
       (fun x hx ↦ (continuous_id.prod_mk hb.continuous).continuousAt) fun x _ ↦ b_in x
   let range_γ₀ := (fun i : ℝ × ℝ ↦ ‖γ₀ i.1 i.2‖) '' I ×ˢ I
   have h4γ₀ : BddAbove range_γ₀ :=
-    (isCompact_Icc.prod isCompact_Icc).bddAbove_image hγ₀_cont.norm.continuousOn
+    (isCompact_Icc.prod isCompact_Icc).bddAbove_image (by fun_prop)
   have h0 : 0 < 1 + sSup range_γ₀ :=
     add_pos_of_pos_of_nonneg zero_lt_one
       (le_csSup_of_le h4γ₀
@@ -73,6 +73,8 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   · rintro x ⟨-, -⟩ t s
     simp [γ₁, h2ε]
 
+attribute [fun_prop] Continuous.infDist Continuous.if_const
+
 /- Some remarks about `exist_loops_aux2`:
   `δ`: loop after smoothing
   `γ`: loop before smoothing (defined on all of `E`)
@@ -104,8 +106,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   (ensuring that `γ` is locally constant in the `t` and `s` directions)
   didn't work. Indeed it needed to take the convolution in the `x`-direction,
   meaning that the value won't stay the same, since `γ` is not constant in the `x`-direction.
-
-  -/
+-/
 theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hg : 𝒞 ∞ g)
     (hb : 𝒞 ∞ b) (hgK : ∀ᶠ x near K, g x = b x)
     (hconv : ∀ x, g x ∈ hull (connectedComponentIn (Prod.mk x ⁻¹' Ω) <| b x)) :

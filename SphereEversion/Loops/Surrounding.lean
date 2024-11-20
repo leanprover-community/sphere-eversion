@@ -408,8 +408,9 @@ def surroundingLoop : ℝ → Loop F :=
 variable {O_conn hp hb}
 
 /-- TODO: continuity note -/
-theorem continuous_surroundingLoop : Continuous ↿(surroundingLoop O_conn hp hb) :=
-  Loop.roundTripFamily_continuous
+@[fun_prop]
+theorem continuous_surroundingLoop : Continuous ↿(surroundingLoop O_conn hp hb) := by
+  unfold surroundingLoop; fun_prop
 
 @[simp]
 theorem surroundingLoop_zero_right (t : ℝ) : surroundingLoop O_conn hp hb t 0 = b :=
@@ -560,6 +561,7 @@ protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b 
   source' := h.base x t
   target' := h.one x t
 
+@[fun_prop]
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
     (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) :=
@@ -640,7 +642,6 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     (hg : ContinuousAt g x₀) (hb : Continuous b)
     (hconv : g x₀ ∈ convexHull ℝ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀)) :
     ∃ γ : E → ℝ → Loop F, ∃ U ∈ 𝓝 x₀, SurroundingFamilyIn g b γ U Ω := by
-  have hbx₀ : ContinuousAt b x₀ := hb.continuousAt
   have hΩ_op_x₀ : IsOpen (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     (isOpen_slice_of_isOpen_over hΩ_op).connectedComponentIn
   have b_in : b x₀ ∈ Prod.mk x₀ ⁻¹' Ω :=
@@ -655,7 +656,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   let δ : E → ℝ → Loop F := fun x t ↦ (b x - b x₀) +ᵥ γ t
   have hδ : Continuous ↿δ := by
     dsimp only [δ, HasUncurry.uncurry, Loop.vadd_apply]
-    exact (hb.fst'.sub continuous_const).add h1γ.snd'
+    fun_prop
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by
     intro t s
     simp only [δ, zero_add, Loop.vadd_apply, sub_self]
@@ -668,7 +669,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     -- we need the continuity of `δ` with the arguments reassociated differently.
     have : ∀ᶠ x : E in 𝓝 x₀, ∀ ts : ℝ × ℝ, ts ∈ I ×ˢ I → (x, δ x ts.1 ts.2) ∈ Ω := by
       apply (isCompact_Icc.prod isCompact_Icc).eventually_forall_mem
-      · exact (continuous_fst.prod_mk hδ)
+      · fun_prop
       · rintro ⟨t, s⟩ _
         rw [hδx₀]
         show Ω ∈ 𝓝 (x₀, γ t s)
@@ -679,8 +680,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     rcases h6γ with ⟨p, w, h⟩
     obtain ⟨W, hW⟩ := smooth_surroundingPts h
     let c : E → F × (Fin (d + 1) → F) := fun x ↦ (g x, δ x 1 ∘ p)
-    have hc : ContinuousAt c x₀ :=
-      hg.prod (((continuousAt_pi.2 fun _ ↦ hbx₀).sub continuousAt_const).add continuousAt_const)
+    have hc : ContinuousAt c x₀ := by fun_prop
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
       simp [c, δ, hδx₀]
     rw [← hcx₀] at hW
@@ -704,8 +704,10 @@ end local_loops
 def ρ (t : ℝ) : ℝ :=
   projI <| 2 * (1 - t)
 
-theorem continuous_ρ : Continuous ρ :=
-  continuous_projI.comp <| continuous_const.mul <| continuous_const.sub continuous_id
+attribute [fun_prop] continuous_projI
+
+@[fun_prop]
+theorem continuous_ρ : Continuous ρ := by unfold ρ; fun_prop
 
 @[simp]
 theorem ρ_eq_one {x : ℝ} : ρ x = 1 ↔ x ≤ 1 / 2 := by
@@ -762,29 +764,28 @@ theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ := by
   simp only [sfHomotopy, Path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos le_rfl,
     SurroundingFamily.path_extend_fract, projIcc_left, Loop.ofPath_apply, sub_self, h₁.projI]
 
+attribute [fun_prop] continuous_projIcc
+
+@[fun_prop]
 theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X]
     [LocallyCompactSpace X] {τ t s : X → ℝ} {f : X → E} (hτ : Continuous τ) (hf : Continuous f)
     (ht : Continuous t) (hs : Continuous s) :
     Continuous fun x ↦ sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by
   refine Continuous.ofPath _ _ _ ?_ hs
   refine Continuous.path_strans ?_ ?_ ?_ ?_ ?_ continuous_snd
-  · refine h₀.continuous_path hf.fst'.fst' ?_ continuous_snd
-    exact (continuous_ρ.comp hτ.fst'.fst').mul (continuous_projI.comp ht.fst'.fst')
-  · refine h₁.continuous_path hf.fst'.fst' ?_ continuous_snd
-    refine (continuous_ρ.comp ?_).mul (continuous_projI.comp ht.fst'.fst')
-    exact continuous_const.sub hτ.fst'.fst'
+  · fun_prop
+  · fun_prop
   · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs
     simp only [hs, h₁.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
-  · exact continuous_projIcc.comp (continuous_const.sub hτ.fst')
+  · fun_prop
 
 /-- In this lemmas and the lemmas below we add `FiniteDimensional ℝ E` so that we can conclude
  `LocallyCompactSpace E`. -/
+@[fun_prop]
 theorem continuous_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ E] :
-    Continuous ↿(sfHomotopy h₀ h₁) :=
-  Continuous.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
-    continuous_snd.snd.snd
+    Continuous ↿(sfHomotopy h₀ h₁) := by fun_prop
 
 theorem surroundingFamily_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ E] (τ : ℝ) :
     SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U := by
@@ -812,7 +813,7 @@ theorem surroundingFamily_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ 
       simp only [mul_one, Loop.range_ofPath, sfHomotopy, projI_one]
       exact Subset.trans (by simp only [SurroundingFamily.range_path, ρ_eq_one_of_le h]; rfl)
         (subset_range_strans_right <| by simp [this])
-  · exact continuous_const.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd
+  · fun_prop
 
 /-- A more precise version of `sfHomotopy_in`. -/
 theorem sfHomotopy_in' {ι} (h₀ : SurroundingFamily g b γ₀ U) (h₁ : SurroundingFamily g b γ₁ U)
@@ -903,8 +904,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
       · simp_rw [γ]
         exact (hγ <| ρ x).surrounds x hx
       · simp_rw [γ, h1ρ (subset_closure hx), Pi.one_apply, sfHomotopy_one, h₁.surrounds x (hVU₁ hx)]
-    · exact
-        Continuous.sfHomotopy ρ.continuous.fst' continuous_fst continuous_snd.fst continuous_snd.snd
+    · fun_prop
     · intro x hx t ht s _; refine sfHomotopy_in' _ _ _ id _ hx ht ?_ ?_
       · intro x hx t _ht s hρx; refine h₀.val_in ?_; rcases hx with ((hx | ⟨-, hx⟩) | hx)
         · exact (subset_closure.trans hVU₀) hx

@@ -208,7 +208,9 @@ theorem NormedSpace.continuous_iff' {E F : Type*} [SeminormedAddCommGroup E]
 
 variable {E}
 
-@[continuity]
+attribute [fun_prop] continuous_norm' continuous_norm
+
+@[continuity, fun_prop]
 theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ ≠ 0) :
     ContinuousAt (fun x : E ↦ {.x}ᗮ.subtypeL.comp pr[x]ᗮ) x₀ := by
   rw [NormedSpace.continuousAt_iff']
@@ -228,7 +230,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     exact mul_pos (inv_pos_of_pos (norm_pos_iff.mpr hNx₀2.ne')) hNx₀
   have cont : ContinuousAt N x₀ := by
     simp_rw [N, real_inner_self_eq_norm_sq]
-    exact ((continuous_norm.pow 2).continuousAt.inv₀ hNx₀2.ne').smul continuousAt_id
+    fun_prop (disch := exact hNx₀2.ne')
   have lim : Tendsto (fun y ↦ ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) := by
     rw [← MulZeroClass.zero_mul ‖x₀‖]
     apply Tendsto.mul

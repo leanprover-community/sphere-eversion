@@ -387,9 +387,10 @@ section
 
 open Metric
 
+attribute [fun_prop] continuous_infDist_pt
+
 theorem Continuous.infDist {α β : Type*} [TopologicalSpace α] [PseudoMetricSpace β] {s : Set β}
-    {f : α → β} (hf : Continuous f) : Continuous fun x ↦ infDist (f x) s :=
-  (continuous_infDist_pt _).comp hf
+    {f : α → β} (hf : Continuous f) : Continuous fun x ↦ infDist (f x) s := by fun_prop
 
 end
 
