@@ -5,6 +5,9 @@ defaultTargets = ["SphereEversion"]
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
+linter.oldObtain = true
+linter.refine = true
+linter.style.multiGoal = true
 
 [[require]]
 name = "mathlib"
