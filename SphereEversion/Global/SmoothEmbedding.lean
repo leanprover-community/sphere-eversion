@@ -128,11 +128,11 @@ end
 
 open Filter
 
-theorem openEmbedding : IsOpenEmbedding f :=
+theorem isOpenEmbedding : IsOpenEmbedding f :=
   isOpenEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
 
-theorem inducing : IsInducing f :=
-  f.openEmbedding.toIsInducing
+theorem isInducing : IsInducing f :=
+  f.isOpenEmbedding.toIsInducing
 
 theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A, P m) :
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by

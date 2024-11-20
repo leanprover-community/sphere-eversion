@@ -54,7 +54,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
   have h𝓕C : ∀ᶠ x : EM near L.C, 𝓕.IsHolonomicAt x := by
     rw [eventually_nhdsSet_iff_forall] at hFC ⊢
     intro e he
-    rw [φ.inducing.nhds_eq_comap, eventually_comap]
+    rw [φ.isInducing.nhds_eq_comap, eventually_comap]
     apply (hFC _ he).mono
     rintro x hx e rfl
     exact F.isHolonomicLocalize p hFφψ e hx
