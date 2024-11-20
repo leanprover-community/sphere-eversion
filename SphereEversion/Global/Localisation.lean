@@ -145,6 +145,7 @@ structure ChartPair.compat' (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).rel
 def RelLoc.HtpyFormalSol.unloc : _root_.HtpyFormalSol (RelMfld.localize p.φ p.ψ R) :=
   { 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t' x}
     (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x := by
   ext1
@@ -154,6 +155,7 @@ theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).re
   change (𝓕 t x).2 = (𝓕' t' x).2
   rw [h]
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     {𝓕' : (R.localize p.φ p.ψ).relLoc.FormalSol} {t x} (h : 𝓕 t x = 𝓕' x) :
     𝓕.unloc p t x = 𝓕'.unloc x := by
@@ -164,6 +166,7 @@ theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).re
   change (𝓕 t x).2 = (𝓕' x).2
   rw [h]
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr' {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t'}
     (h : 𝓕 t = 𝓕' t') : 𝓕.unloc p t = 𝓕'.unloc p t' := by
   apply FormalSol.coe_inj

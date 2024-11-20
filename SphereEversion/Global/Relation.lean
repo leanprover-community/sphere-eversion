@@ -176,13 +176,14 @@ def RelMfld.slice (R : RelMfld I M I' M') (σ : OneJetBundle I M I' M') (p : Dua
     Set (TM' σ.1.2) :=
   {w : TM' σ.1.2 | OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 /-- For some reason `rw [mem_setOf_eq]` fails after unfolding `slice`,
 but rewriting with this lemma works. -/
 theorem mem_slice {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'} {p : DualPair <| TM σ.1.1}
     {w : TM' σ.1.2} : w ∈ R.slice σ p ↔ OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
   Iff.rfl
 
-
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
     {p : DualPair <| TM σ.1.1} (x : E') :
     R.slice (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p = (R.slice σ p : Set E') := by
@@ -196,6 +197,7 @@ theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
 def RelMfld.Ample (R : RelMfld I M I' M') : Prop :=
   ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), AmpleSet (R.slice σ p)
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
     R.Ample ↔
       ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), σ ∈ R → AmpleSet (R.slice σ p) := by
@@ -483,6 +485,8 @@ theorem OpenSmoothEmbedding.smooth_transfer :
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
   (OpenSmoothEmbedding.smooth_transfer _ _).continuous
 
+omit [SmoothManifoldWithCorners IX X] [SmoothManifoldWithCorners IM M]
+  [SmoothManifoldWithCorners IY Y] [SmoothManifoldWithCorners IN N] in
 theorem OpenSmoothEmbedding.range_transfer :
     range (φ.transfer ψ) = π _ (OneJetSpace IM IN) ⁻¹' range φ ×ˢ range ψ := by
   ext σ; constructor
@@ -502,6 +506,7 @@ theorem OpenSmoothEmbedding.range_transfer :
     erw [(φ.fderiv x).apply_symm_apply]
     rfl
 
+omit [SmoothManifoldWithCorners IX X] [SmoothManifoldWithCorners IY Y] in
 theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer ψ)) := by
   rw [φ.range_transfer ψ]
   exact (φ.isOpen_range.prod ψ.isOpen_range).preimage oneJetBundle_proj_continuous
@@ -517,6 +522,8 @@ instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
 
 instance (y : Y) : NormedSpace ℝ (TY y) := by assumption
 
+omit [SmoothManifoldWithCorners IX X] [SmoothManifoldWithCorners IM M]
+  [SmoothManifoldWithCorners IY Y] [SmoothManifoldWithCorners IN N] in
 /-- Ampleness survives localization -/
 theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
   intro x p

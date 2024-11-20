@@ -35,14 +35,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
 
 variable {R : RelMfld I M I' M'}
 
-variable (IP P)
-
+variable (IP P) in
 /-- The relation `𝓡 ^ P` -/
 def RelMfld.relativize (R : RelMfld I M I' M') : RelMfld (IP.prod I) (P × M) I' M' :=
   bundleSnd ⁻¹' R
 
-variable {IP P}
-
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
 theorem RelMfld.mem_relativize (R : RelMfld I M I' M')
     (w : OneJetBundle (IP.prod I) (P × M) I' M') :
     w ∈ R.relativize IP P ↔
@@ -66,6 +64,7 @@ variable {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
 #check (R.relativize IP P).slice σ p
 #check (R.slice (bundleSnd σ) q : Set <| TangentSpace I' σ.proj.2) -/
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
 theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1} (q : DualPair <| TangentSpace I σ.1.1.2)
     (hpq : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = q.π) :
@@ -94,6 +93,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
   erw [← preimage_vadd_neg, mem_preimage, mem_slice, R.mem_relativize]
   congr!
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
@@ -119,8 +119,8 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
   dsimp only [oneJetBundle_mk_fst, oneJetBundle_mk_snd]
   simp [this, exists_const, forall_const]
 
-variable (IP P)
-
+variable (IP P) in
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
 theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := by
   intro σ p
   let p2 := p.π.comp (ContinuousLinearMap.inr ℝ EP E)
@@ -134,8 +134,6 @@ theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := b
     ⟨p2, u, by erw [p2.map_smul, smul_eq_mul, inv_mul_cancel₀ hu']⟩
   rw [relativize_slice q rfl]
   exact (hR q).vadd
-
-variable {IP P}
 
 theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP P) {s : P}
     {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R := by

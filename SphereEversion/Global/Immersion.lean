@@ -35,6 +35,7 @@ variable (M M') in
 def immersionRel : RelMfld I M I' M' :=
   {σ | Injective σ.2}
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[simp]
 theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
     σ ∈ immersionRel I M I' M' ↔ Injective (σ.2 : TangentSpace I _ →L[ℝ] TangentSpace I' _) :=
@@ -64,6 +65,7 @@ theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I
   · infer_instance
   · infer_instance
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[simp]
 theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I m}
     {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
@@ -72,6 +74,7 @@ theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I 
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample := by
   rw [RelMfld.ample_iff]
   rintro ⟨⟨m, m'⟩, φ : TangentSpace I m →L[ℝ] TangentSpace I' m'⟩ (p : DualPair (TangentSpace I m))

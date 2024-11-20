@@ -130,6 +130,7 @@ variable {I I' M M'}
 
 @[inherit_doc] local notation "HJ" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[ext]
 theorem OneJetBundle.ext {x y : J¹MM'} (h : x.1.1 = y.1.1) (h' : x.1.2 = y.1.2) (h'' : x.2 = y.2) :
     x = y := by
@@ -339,11 +340,13 @@ theorem SmoothAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
 def OneJetBundle.mk (x : M) (y : M') (f : OneJetSpace I I' (x, y)) : J¹MM' :=
   ⟨(x, y), f⟩
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[simp, mfld_simps]
 theorem oneJetBundle_mk_fst {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).1 = (x, y) :=
   rfl
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 @[simp, mfld_simps]
 theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).2 = f :=
@@ -469,6 +472,9 @@ protected def OneJetBundle.map (f : M → N) (g : M' → N')
 
 variable {I' J'}
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
+  [SmoothManifoldWithCorners I₂ M₂] [SmoothManifoldWithCorners I₃ M₃]
+  [SmoothManifoldWithCorners J' N'] [SmoothManifoldWithCorners J N] in
 theorem OneJetBundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M₃} {g : M' → N'}
     {Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x}
     {Df₂inv : ∀ x : N, TangentSpace I₂ (f₂ x) →L[𝕜] TangentSpace J x} {x : J¹MM'}
@@ -481,6 +487,9 @@ theorem OneJetBundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M�
   · dsimp only [OneJetBundle.map, OneJetBundle.mk]
     simp_rw [← ContinuousLinearMap.comp_assoc, mfderiv_comp x.1.2 hg₂ hg]
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
+  [SmoothManifoldWithCorners I₂ M₂] [SmoothManifoldWithCorners I₃ M₃]
+  [SmoothManifoldWithCorners J' N'] [SmoothManifoldWithCorners J N] in
 theorem OneJetBundle.map_id (x : J¹MM') :
     OneJetBundle.map I' I' id id (fun x ↦ ContinuousLinearMap.id 𝕜 (TangentSpace I x)) x = x := by
   -- Porting note: was `ext _` in Lean 3
@@ -516,6 +525,9 @@ theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} 
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     J¹MM' → OneJetBundle J N I' M' := fun p ↦ OneJetBundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
+  [SmoothManifoldWithCorners I₂ M₂] [SmoothManifoldWithCorners I₃ M₃]
+  [SmoothManifoldWithCorners J' N'] [SmoothManifoldWithCorners J N] in
 theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     mapLeft f Dfinv = OneJetBundle.map I' I' f (id : M' → M') Dfinv := by
   ext x; rfl; rfl; dsimp only [OneJetBundle.map, mapLeft, oneJetBundle_mk_snd]
@@ -541,6 +553,9 @@ def bundleFst : OneJetBundle (J.prod I) (N × M) I' M' → OneJetBundle J N I' M
 def bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM' :=
   mapLeft Prod.snd fun x ↦ mfderiv I (J.prod I) (fun y ↦ (x.1, y)) x.2
 
+omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
+  [SmoothManifoldWithCorners I₂ M₂] [SmoothManifoldWithCorners I₃ M₃]
+  [SmoothManifoldWithCorners J' N'] [SmoothManifoldWithCorners J N] in
 theorem bundleSnd_eq (x : OneJetBundle (J.prod I) (N × M) I' M') :
     bundleSnd x = (mapLeft Prod.snd (fun _ ↦ ContinuousLinearMap.inr 𝕜 F E) x : J¹MM') := by
   simp_rw [bundleSnd, mfderiv_prod_right]; rfl
