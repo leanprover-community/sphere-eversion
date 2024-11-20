@@ -175,18 +175,7 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
       rw [map_sub, pr[x]ᗮ.map_smul, orthogonalProjection_orthogonalComplement_singleton_eq_zero,
         smul_zero, sub_zero, orthogonalProjection_eq_self_iff.mpr hy]
     continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous
-    continuous_invFun := by
-      -- Porting note: this was `continuity`
-      apply Continuous.subtype_mk
-      apply Continuous.sub
-      exact continuous_subtype_val
-      apply Continuous.smul
-      apply Continuous.div_const
-      apply Continuous.comp
-      apply continuous_const.inner
-      apply continuous_id
-      exact continuous_subtype_val
-      exact continuous_const }
+    continuous_invFun := by fun_prop }
 
 theorem orthogonalProjection_comp_coe (K : Submodule ℝ E) [CompleteSpace K] :
     orthogonalProjection K ∘ ((↑) : K → E) = id := by
