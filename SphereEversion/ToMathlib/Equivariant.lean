@@ -153,6 +153,7 @@ theorem linearReparam_le_one {t : ℝ} (ht : t ≤ 5 / 4) : linearReparam t ≤ 
 theorem one_le_linearReparam {t : ℝ} (ht : 3 / 4 ≤ t) : 1 ≤ linearReparam t :=
   (linearReparam_eq_one le_rfl (by norm_num1)).symm.trans_le (linearReparam_monotone ht)
 
+set_option linter.style.multiGoal false in
 @[simp]
 theorem linearReparam_projI {t : ℝ} : linearReparam (projI t) = projI (linearReparam t) := by
   rw [eq_comm]

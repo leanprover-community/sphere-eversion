@@ -55,7 +55,7 @@ instance : FunLike (OneJetSec I M I' M') M (OneJetBundle I M I' M') where
     intro S T h
     dsimp at h
     ext x
-    simpa using (Bundle.TotalSpace.mk.inj (congrFun h x)).1
+    · simpa using (Bundle.TotalSpace.mk.inj (congrFun h x)).1
     have := heq_eq_eq _ _ ▸ (Bundle.TotalSpace.mk.inj (congrFun h x)).2
     exact congrFun (congrArg DFunLike.coe this) _
 
@@ -65,7 +65,7 @@ namespace OneJetSec
 
 protected def mk' (F : M → OneJetBundle I M I' M') (hF : ∀ m, (F m).1.1 = m)
     (h2F : Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) F) : OneJetSec I M I' M' :=
-  ⟨fun x ↦ (F x).1.2, fun x ↦ (F x).2, by convert h2F using 1; ext m; exact (hF m).symm; rfl; rfl⟩
+  ⟨fun x ↦ (F x).1.2, fun x ↦ (F x).2, by convert h2F using 1; ext m; exacts [(hF m).symm, rfl, rfl]⟩
 
 theorem coe_apply (F : OneJetSec I M I' M') (x : M) : F x = ⟨(x, F.bs x), F.ϕ x⟩ :=
   rfl
@@ -185,8 +185,8 @@ instance : FunLike (FamilyOneJetSec I M I' M' J N) N (OneJetSec I M I' M') where
   coe_injective' := by
     intro S T h
     ext n : 2
-    exact (OneJetSec.mk.inj (congrFun h n)).1
-    exact (OneJetSec.mk.inj (congrFun h n)).2
+    · exact (OneJetSec.mk.inj (congrFun h n)).1
+    · exact (OneJetSec.mk.inj (congrFun h n)).2
 
 namespace FamilyOneJetSec
 
@@ -196,7 +196,7 @@ protected def mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n
     (h2F : Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) :
     FamilyOneJetSec I M I' M' J N :=
   ⟨fun s x ↦ (FF s x).1.2, fun s x ↦ (FF s x).2,
-  by convert h2F using 1; ext ⟨s, m⟩; exact (hF s m).symm; rfl; rfl⟩
+   by convert h2F using 1; ext ⟨s, m⟩; exacts [(hF s m).symm, rfl, rfl]⟩
 
 theorem coe_mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
     (h2F : Smooth (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) (uncurry FF)) (x : N) :

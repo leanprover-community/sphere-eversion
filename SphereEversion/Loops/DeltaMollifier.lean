@@ -51,8 +51,8 @@ def bump (n : ℕ) : ContDiffBump (0 : ℝ) where
   rIn_pos := by positivity
   rIn_lt_rOut := by
     apply one_div_lt_one_div_of_lt
-    exact_mod_cast Nat.succ_pos _
-    exact_mod_cast lt_add_one (n + 2)
+    · exact_mod_cast Nat.succ_pos _
+    · exact_mod_cast lt_add_one (n + 2)
 
 theorem support_bump (n : ℕ) : support (bump n) = Ioo (-((1 : ℝ) / (n + 2))) (1 / (n + 2)) := by
   rw [(bump n).support_eq, Real.ball_eq_Ioo, zero_sub, zero_add, bump]
@@ -280,9 +280,9 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
         ((1 : ℝ) / (n + 1)) • ∫ t in (0)..1, γ t := by
   simp_rw [Loop.mollify, deltaMollifier, add_smul, mul_smul]
   rw [integral_add]
-  simp_rw [integral_smul, approxDirac, ← periodize_comp_sub]
-  rw [intervalIntegral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)]
-  simp_rw [MeasureTheory.convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
+  on_goal 1 => simp_rw [integral_smul, approxDirac, ← periodize_comp_sub]
+  on_goal 1 => rw [intervalIntegral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)]
+  on_goal 1 => simp_rw [MeasureTheory.convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
   · linarith
   · rw [zero_add]
   · exact (continuous_const.smul (((approxDirac_smooth n).continuous.comp

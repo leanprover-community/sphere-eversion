@@ -151,17 +151,16 @@ theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}�
   dsimp only
   rwa [add_mul, MulZeroClass.zero_mul, div_mul_cancel₀ _ h]
 
+attribute [fun_prop] Continuous.inner
+
 /-- Given two non-orthogonal vectors in an inner product space,
 `orthogonal_projection_orthogonal_line_iso` is the continuous linear equivalence between their
 orthogonal complements obtained from orthogonal projection. -/
 def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) : {.x₀}ᗮ ≃L[ℝ] {.x}ᗮ :=
   {
-    pr[x]ᗮ.comp
-      (subtypeL
-        {.x₀}ᗮ) with
+    pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ) with
     invFun := fun y ↦
-      ⟨y - (⟪x₀, y⟫ / ⟪x₀, x⟫) • x,
-    by
+      ⟨y - (⟪x₀, y⟫ / ⟪x₀, x⟫) • x, by
         rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right]
         field_simp [h]⟩
     left_inv := by
@@ -260,24 +259,22 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   simp only [key]
   simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim
   rcases lim (ε / 2) (half_pos ε_pos) with ⟨η, η_pos, hη⟩
-  refine ⟨min (ε / 2 / ‖N x₀‖) (η / 2), ?_, ?_⟩
-  · apply lt_min; positivity; exact half_pos η_pos
-  · intro y hy x
-    have hy₁ := hy.trans (min_le_left _ _); have hy₂ := hy.trans (min_le_right _ _); clear hy
-    specialize hη (by linarith : ‖y - x₀‖ < η)
-    rw [abs_of_nonneg] at hη
-    calc
+  refine ⟨min (ε / 2 / ‖N x₀‖) (η / 2), by positivity, ?_⟩
+  intro y hy x
+  have hy₁ := hy.trans (min_le_left _ _); have hy₂ := hy.trans (min_le_right _ _); clear hy
+  specialize hη (by linarith : ‖y - x₀‖ < η)
+  rw [abs_of_nonneg (by positivity)] at hη
+  calc
       ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ :=
         norm_add_le _ _
       _ ≤ ‖N x₀‖ * ‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ := (add_le_add ?_ ?_)
       _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add ?_ ?_)
       _ = ε * ‖x‖ := by linarith
-    · rw [norm_smul]
-      exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
-    · rw [norm_smul]
-      exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
-    · rw [mul_comm, ← mul_assoc, norm_sub_rev]
-      exact mul_le_mul_of_nonneg_right ((le_div_iff₀ hNx₀).mp hy₁) (norm_nonneg x)
-    · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
-      exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)
-    · positivity
+  · rw [norm_smul]
+    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
+  · rw [norm_smul]
+    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
+  · rw [mul_comm, ← mul_assoc, norm_sub_rev]
+    exact mul_le_mul_of_nonneg_right ((le_div_iff₀ hNx₀).mp hy₁) (norm_nonneg x)
+  · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
+    exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)

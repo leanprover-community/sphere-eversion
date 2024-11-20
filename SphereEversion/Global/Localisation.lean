@@ -149,22 +149,22 @@ omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t' x}
     (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x := by
   ext1
-  rfl
-  change (𝓕 t x).1 = (𝓕' t' x).1
-  rw [h]
-  change (𝓕 t x).2 = (𝓕' t' x).2
-  rw [h]
+  · rfl
+  · change (𝓕 t x).1 = (𝓕' t' x).1
+    rw [h]
+  · change (𝓕 t x).2 = (𝓕' t' x).2
+    rw [h]
 
 omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     {𝓕' : (R.localize p.φ p.ψ).relLoc.FormalSol} {t x} (h : 𝓕 t x = 𝓕' x) :
     𝓕.unloc p t x = 𝓕'.unloc x := by
   ext1
-  rfl
-  change (𝓕 t x).1 = (𝓕' x).1
-  rw [h]
-  change (𝓕 t x).2 = (𝓕' x).2
-  rw [h]
+  · rfl
+  · change (𝓕 t x).1 = (𝓕' x).1
+    rw [h]
+  · change (𝓕 t x).2 = (𝓕' x).2
+    rw [h]
 
 omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr' {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t'}

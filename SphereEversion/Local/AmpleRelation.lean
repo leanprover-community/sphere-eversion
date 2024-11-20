@@ -57,7 +57,7 @@ def IsAmple (R : RelLoc E F) : Prop :=
 theorem IsAmple.mem_hull (h : IsAmple R) {θ : E × F × (E →L[ℝ] F)} (hθ : θ ∈ R) (v : F) (p) :
     v ∈ hull (connectedComponentIn (R.slice p θ) (θ.2.2 p.v)) := by
   rw [h p θ (θ.2.2 p.v)]
-  exact mem_univ _
+  · exact mem_univ _
   rw [mem_slice, p.update_self]
   exact hθ
 

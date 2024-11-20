@@ -55,7 +55,7 @@ def 𝕊₁ :=
   Quotient transOne
 deriving TopologicalSpace, Inhabited
 
-theorem transOne_rel_iff {a b : ℝ} : transOne.Rel a b ↔ ∃ k : ℤ, b = a + k := by
+theorem transOne_rel_iff {a b : ℝ} : transOne.r a b ↔ ∃ k : ℤ, b = a + k := by
   refine QuotientAddGroup.leftRel_apply.trans ?_
   refine exists_congr fun k ↦ ?_
   rw [coe_castAddHom, eq_neg_add_iff_add_eq, eq_comm]

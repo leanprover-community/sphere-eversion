@@ -172,14 +172,13 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
   obtain ⟨U', U'_op, hKU', hU'U⟩ : ∃ U' : Set X, IsOpen U' ∧ K ⊆ U' ∧ closure U' ⊆ U :=
     normal_exists_closure_subset hK U_op hKU
   refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact IsOpen.union U₁_op U_op
-  · exact IsOpen.sdiff U₂_op hK
-  · refine IsCompact.union K₁_cpct ?_
+  · exact U₁_op.union U_op
+  · exact U₂_op.sdiff hK
+  · refine K₁_cpct.union ?_
     exact K₂_cpct.closure_of_subset inter_subset_left
-  · exact IsCompact.diff K₂_cpct U'_op
+  · exact K₂_cpct.diff U'_op
   · exact subset_union_left
-  · apply union_subset_union
-    exact hK₁U₁
+  · apply union_subset_union hK₁U₁
     apply subset_trans _ hU'U
     gcongr
     exact inter_subset_right
@@ -470,8 +469,8 @@ theorem inductive_htpy_construction' {X Y : Type*}
     ((finite_lt_nat i).isClosed_biUnion fun j _ ↦ (K_cpct j).isClosed) hf₀ hf₁
     with ⟨F, hF₀, hF₁, hF₂, hFK₁, ht⟩
   refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
-  apply hF₁.filter_mono
-  gcongr
-  rw [bUnion_le]
-  exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
+  · apply hF₁.filter_mono
+    gcongr
+    rw [bUnion_le]
+  · exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
 end Htpy

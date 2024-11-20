@@ -129,8 +129,8 @@ theorem Ioo_inter_Iio {α : Type*} [LinearOrder α] {a b c : α} :
 theorem fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y := by
   cases' le_total y 1 with hy hy
   · rw [← fract_sub_int x n, fract_eq_self.mpr]
-    linarith
-    constructor <;> linarith
+    · linarith
+    · constructor <;> linarith
   · exact (fract_lt_one x).trans_le hy
 
 theorem one_sub_lt_fract {x y : ℝ} {n : ℤ} (hy : y ≤ 1) (h1 : (n : ℝ) - y < x) (h2 : x < n) :
@@ -139,8 +139,8 @@ theorem one_sub_lt_fract {x y : ℝ} {n : ℤ} (hy : y ≤ 1) (h1 : (n : ℝ) - 
   have I₂ : x - (n - 1) < 1 := by linarith
   norm_cast at I₁ I₂
   rw [← fract_sub_int x (n - 1), fract_eq_self.mpr]
-  exact I₁
-  constructor <;> linarith
+  · exact I₁
+  · constructor <;> linarith
 
 theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → s ∈ 𝓝[<] (1 : ℝ)) :
     IsOpen (fract ⁻¹' s) := by

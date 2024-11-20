@@ -85,12 +85,12 @@ def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
   smooth' := by
     convert hsmooth
     ext
-    rw [hsec]
+    on_goal 1 => rw [hsec]
     all_goals rfl
   is_sol' m := by
     convert hsol m
     ext
-    rw [hsec]
+    on_goal 1 => rw [hsec]
     all_goals rfl
 
 @[simp]
@@ -116,7 +116,7 @@ theorem coe_mk {S : OneJetSec I M I' M'} {h : ∀ x, S x ∈ R} {x : M} : Formal
 theorem coe_inj_iff {S T : FormalSol R} : S = T ↔ ∀ x, S x = T x := by
   constructor
   · rintro rfl x; rfl
-  · intro h; ext x v : 3; show (S x).1.2 = (T x).1.2; rw [h]
+  · intro h; ext x v : 3; · show (S x).1.2 = (T x).1.2; rw [h]
     show (S x).2 v = (T x).2 v; rw [h]
 
 theorem coe_inj {S T : FormalSol R} (h : ∀ x, S x = T x) : S = T :=
@@ -230,8 +230,7 @@ instance : FunLike (FamilyFormalSol J N R) N (FormalSol R) where
       exact congrArg FormalSol.toOneJetSec (congrFun h n)
     congr! 1
     ext n : 2
-    exact (OneJetSec.mk.inj <| fact n).1
-    exact (OneJetSec.mk.inj <| fact n).2
+    exacts [(OneJetSec.mk.inj <| fact n).1, (OneJetSec.mk.inj <| fact n).2]
 
 namespace FamilyFormalSol
 
@@ -280,12 +279,12 @@ def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, 
   smooth' := by
     convert hsmooth using 1
     ext ⟨t, x⟩
-    exact (hsec t x).symm
+    · exact (hsec t x).symm
     all_goals rfl
   is_sol' t m := by
     convert hsol t m
     ext
-    rw [hsec]
+    on_goal 1 => rw [hsec]
     all_goals rfl
 
 @[simp]
@@ -683,7 +682,7 @@ def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsComp
 theorem Jupdate_apply {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
     φ.Jupdate ψ F G hK hFG t m = JΘ F (G t) m := by
-  ext; exact (φ.Jupdate_aux ψ F (G t) m).symm; rfl; rfl
+  ext; exacts [(φ.Jupdate_aux ψ F (G t) m).symm, rfl, rfl]
 
 theorem Jupdate_bs (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (t : ℝ)
     (hK : IsCompact K)
@@ -750,8 +749,7 @@ theorem updateFormalSol_bs {F : FormalSol R} {G : HtpyFormalSol (R.localize φ �
   · simp only [hx, update_of_mem_range, OneJetBundle.embedding_toFun, transfer_proj_snd]
     rfl
   · rw [update_of_nmem_range, update_of_nmem_range]
-    rfl
-    exacts [hx, hx]
+    exacts [rfl, hx, hx]
 
 @[simp]
 theorem updateFormalSol_apply_of_mem {F : FormalSol R} {G : HtpyFormalSol (R.localize φ ψ)}

@@ -246,7 +246,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
     erw [← this, map_comp]
     rfl
   rw [eq, p''.injective_update_iff, mem_compl_iff, eq']
-  exact Iff.rfl
+  · exact Iff.rfl
   rw [← show ((ℝ ∙ x)ᗮ : Set E).restrict φ = φ.comp j by ext; rfl]
   exact hφ.injective
 

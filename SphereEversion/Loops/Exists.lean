@@ -202,11 +202,11 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         ((EventuallyEq.rfl.prod_mk <| EventuallyEq.rfl.prod_mk <|
               (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp ↿γ₅)
   refine ⟨γ, ⟨⟨?_, ?_, ?_, ?_, hγ.continuous⟩, ?_⟩, hγ, ?_⟩
-  · intro x t; simp_rw [fract_zero]; rw [hγ₅C]; exact hγ₃.base x _
+  · intro x t; simp_rw [fract_zero]; rw [hγ₅C]; · exact hγ₃.base x _
     exact Or.inr (by rw [mem_preimage, fract_zero]; exact h0C₁)
   · intro x s; simp_rw [smoothTransition.zero_of_nonpos le_rfl]; rw [hγ₅C]
-    exact hγ₃.t₀ x (fract s)
-    exact Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
+    · exact hγ₃.t₀ x (fract s)
+    · exact Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
   · intro x t s; simp_rw [smoothTransition_projI]
   · rintro x -; apply hγε₁; intro s
     simp_rw [← (γ₃ x 1).fract_eq s, smoothTransition.one_of_one_le le_rfl]

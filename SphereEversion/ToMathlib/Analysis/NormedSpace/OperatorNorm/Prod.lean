@@ -72,9 +72,8 @@ theorem isBoundedLinearMap_coprod (𝕜 : Type*) [NontriviallyNormedField 𝕜] 
       simp only [Prod.smul_fst, Prod.smul_snd, ContinuousLinearMap.coprod_apply,
         ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_add]
     bound := by
-      refine ⟨2, zero_lt_two, ?_⟩
-      rintro ⟨φ, ψ⟩
-      apply ContinuousLinearMap.opNorm_le_bound; positivity
+      refine ⟨2, zero_lt_two, fun ⟨φ, ψ⟩ ↦ ?_⟩
+      apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)
       rintro ⟨e, f⟩
       calc
         ‖φ e + ψ f‖ ≤ ‖φ e‖ + ‖ψ f‖ := norm_add_le _ _

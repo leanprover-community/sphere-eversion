@@ -261,7 +261,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
     IsOpenMap.isOpen_range fun u hu ↦ by
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
       convert isOpen_extChartAt_preimage' x aux
-      rw [image_comp]
+      on_goal 1 => rw [image_comp]
       refine
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
       rw [extChartAt, PartialHomeomorph.extend_target']

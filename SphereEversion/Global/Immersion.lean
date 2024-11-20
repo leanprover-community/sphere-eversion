@@ -46,7 +46,7 @@ theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ 
     σ' ∈ immersionRel I M I' M' ↔ Injective (ψJ σ σ').2 := by
   simp_rw [mem_immersionRel_iff]
   rw [oneJetBundle_chartAt_apply, inCoordinates_eq]
-  simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
+  · simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
     EquivLike.injective_comp]
   exacts [hσ'.1.1, hσ'.1.2]
 
@@ -224,7 +224,7 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
   ext v
   erw [mfderiv_neg, ContinuousLinearMap.coe_comp', Function.comp_apply,
        ContinuousLinearMap.neg_apply, smoothStep.of_gt ht]
-  rw [ω.rot_one]; rfl
+  rw [ω.rot_one]; · rfl
   rw [← range_mfderiv_coe_sphere (n := 2) x]
   exact LinearMap.mem_range_self _ _
 

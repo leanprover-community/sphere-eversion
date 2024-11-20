@@ -197,11 +197,12 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
     refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [Loop.normalize]
     apply ContDiff.sub
-    apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
-    apply contDiff_average
-    exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
+    · apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
+    · apply contDiff_average
+      exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
   · exact contDiff_const.mul (π.contDiff.comp hx)
 
+set_option linter.style.multiGoal false in
 theorem remainder_c0_small_on {K : Set E} (hK : IsCompact K) (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ}
     (ε_pos : 0 < ε) : ∀ᶠ N in atTop, ∀ x ∈ K, ‖R N γ x‖ < ε := by
   simp_rw [fun N ↦ remainder_eq π N hγ_diff]

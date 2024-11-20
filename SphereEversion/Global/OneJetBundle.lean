@@ -405,7 +405,7 @@ theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h :
   simp_rw [inTangentCoordinates, inCoordinates,
     ContinuousLinearMap.comp_apply]
   rw [Trivialization.symmL_continuousLinearMapAt]
-  rfl
+  · rfl
   exact hx
 
 theorem SmoothAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h : N → N'}
@@ -525,6 +525,7 @@ theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} 
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     J¹MM' → OneJetBundle J N I' M' := fun p ↦ OneJetBundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
 
+set_option linter.style.multiGoal false in
 omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
   [SmoothManifoldWithCorners I₂ M₂] [SmoothManifoldWithCorners I₃ M₃]
   [SmoothManifoldWithCorners J' N'] [SmoothManifoldWithCorners J N] in
@@ -570,7 +571,7 @@ theorem smooth_bundleSnd :
       (inTangentCoordinates I (J.prod I) _ _ _ x₀) x₀ :=
     ContMDiffAt.mfderiv (fun (x : OneJetBundle (J.prod I) (N × M) I' M') (y : M) ↦ (x.1.1.1, y))
       (fun x : OneJetBundle (J.prod I) (N × M) I' M' ↦ x.1.1.2) ?_ ?_ le_top
-  exact this
+  · exact this
   · exact (smooth_oneJetBundle_proj.fst.fst.prod_map smooth_id).smoothAt
   -- slow
   · exact smooth_oneJetBundle_proj.fst.snd.smoothAt
