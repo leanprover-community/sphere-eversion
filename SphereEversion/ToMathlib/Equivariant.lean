@@ -175,9 +175,8 @@ theorem fract_linearReparam_eq_zero {t : ℝ} (h : fract t ≤ 4⁻¹ ∨ 3 / 4 
   · rw [linearReparam_eq_one' h (fract_lt_one _).le, fract_one]
 
 theorem continuous_linearReparam : Continuous linearReparam := by
-  have h1 : Continuous (uncurry fun t x => t + 4⁻¹ - abs (x - 2⁻¹) : ℝ × ℝ → ℝ) := by
-    exact (continuous_fst.add continuous_const).sub (continuous_snd.sub continuous_const).abs
-  exact h1.continuousOn.comp_fract (continuous_id.sub continuous_const) fun s => by norm_num
+  have h1 : Continuous (uncurry fun t x ↦ t + 4⁻¹ - abs (x - 2⁻¹) : ℝ × ℝ → ℝ) := by fun_prop
+  exact h1.continuousOn.comp_fract (by fun_prop) fun s ↦ by norm_num
 
 /-- A bijection from `ℝ` to itself that fixes `0` and is equivariant with respect to the `ℤ`
 action by translations.

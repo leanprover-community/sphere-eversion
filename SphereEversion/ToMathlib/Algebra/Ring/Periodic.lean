@@ -92,14 +92,16 @@ theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ := by
 theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
   eq_univ_of_subset (image_subset proj𝕊₁ Ico_subset_Icc_self) image_proj𝕊₁_Ico
 
-@[continuity]
+@[continuity, fun_prop]
 theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ := continuous_quotient_mk'
 
 theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe
 
+attribute [fun_prop] Continuous.prod_map
+
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
     Topology.IsQuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
-  (IsOpenMap.id.prodMap isOpenMap_proj𝕊₁).isQuotientMap (continuous_id.prodMap continuous_proj𝕊₁)
+  (IsOpenMap.id.prodMap isOpenMap_proj𝕊₁).isQuotientMap (by fun_prop)
     (surjective_id.prodMap Quotient.exists_rep)
 
 /-- A one-periodic function on `ℝ` descends to a function on the circle `ℝ ⧸ ℤ`. -/
