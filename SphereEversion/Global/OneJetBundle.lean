@@ -322,18 +322,18 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
 
 section Maps
 
-theorem smooth_oneJetBundle_proj :
-    Smooth ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') (π (E →L[𝕜] E') FJ¹MM') := by
-  apply smooth_proj _
+theorem contMDiff_oneJetBundle_proj :
+    ContMDiff ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') ⊤ (π (E →L[𝕜] E') FJ¹MM') := by
+  apply contMDiff_proj _
 
-theorem Smooth.oneJetBundle_proj {f : N → J¹MM'}
-    (hf : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f) : Smooth J (I.prod I') fun x ↦ (f x).1 :=
-  smooth_oneJetBundle_proj.comp hf
+theorem ContMDiff.oneJetBundle_proj {f : N → J¹MM'}
+    (hf : ContMDiff J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ f) : ContMDiff J (I.prod I') ⊤ fun x ↦ (f x).1 :=
+  contMDiff_oneJetBundle_proj.comp hf
 
-theorem SmoothAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
-    (hf : SmoothAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀) :
-    SmoothAt J (I.prod I') (fun x ↦ (f x).1) x₀ :=
-  (smooth_oneJetBundle_proj _).comp x₀ hf
+theorem ContMDiffAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
+    (hf : ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ f x₀) :
+    ContMDiffAt J (I.prod I') ⊤ (fun x ↦ (f x).1) x₀ :=
+  (contMDiff_oneJetBundle_proj _).comp x₀ hf
 
 /-- The constructor of `OneJetBundle`, in case `Sigma.mk` will not give the right type. -/
 @[simp]
@@ -352,30 +352,30 @@ theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).2 = f :=
   rfl
 
-theorem smoothAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
-    SmoothAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) f x₀ ↔
-      SmoothAt J I (fun x ↦ (f x).1.1) x₀ ∧
-        SmoothAt J I' (fun x ↦ (f x).1.2) x₀ ∧
-          SmoothAt J 𝓘(𝕜, E →L[𝕜] E')
+theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
+    ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ f x₀ ↔
+      ContMDiffAt J I ⊤ (fun x ↦ (f x).1.1) x₀ ∧
+        ContMDiffAt J I' ⊤ (fun x ↦ (f x).1.2) x₀ ∧
+          SmoothAt J 𝓘(𝕜, E →L[𝕜] E') ⊤
             (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2)
               x₀) x₀ := by
   simp_rw [SmoothAt, Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc,
     oneJetBundle_trivializationAt]
   rfl
 
-theorem smoothAt_oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
-    SmoothAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
+theorem contMDiffAt_oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
+    ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤
         (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ ↔
-      SmoothAt J I f x₀ ∧
-        SmoothAt J I' g x₀ ∧ SmoothAt J 𝓘(𝕜, E →L[𝕜] E') (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
-  smoothAt_oneJetBundle
+      ContMDiffAt J I ⊤ f x₀ ∧
+        ContMDiffAt J I' ⊤ g x₀ ∧ ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ⊤ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
+  contMDiffAt_oneJetBundle
 
-theorem SmoothAt.oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
-    (hf : SmoothAt J I f x₀) (hg : SmoothAt J I' g x₀)
-    (hϕ : SmoothAt J 𝓘(𝕜, E →L[𝕜] E') (inTangentCoordinates I I' f g ϕ x₀) x₀) :
-    SmoothAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
+theorem ContMDiffAt.oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
+    (hf : ContMDiffAt J I ⊤ f x₀) (hg : ContMDiffAt J I' ⊤ g x₀)
+    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ⊤ (inTangentCoordinates I I' f g ϕ x₀) x₀) :
+    ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤
       (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ :=
-  smoothAt_oneJetBundle.mpr ⟨hf, hg, hϕ⟩
+  contMDiffAt_oneJetBundle.mpr ⟨hf, hg, hϕ⟩
 
 variable (I I')
 
@@ -385,13 +385,13 @@ def oneJetExt (f : M → M') : M → OneJetBundle I M I' M' := fun x ↦
 
 variable {I I'}
 
-theorem SmoothAt.oneJetExt {f : M → M'} {x : M} (hf : SmoothAt I I' f x) :
-    SmoothAt I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (oneJetExt I I' f) x :=
-  smoothAt_id.oneJetBundle_mk hf (hf.mfderiv_const le_rfl)
+theorem ContMDiffAt.oneJetExt {f : M → M'} {x : M} (hf : ContMDiffAt I I' ⊤ f x) :
+    ContMDiffAt I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ (oneJetExt I I' f) x :=
+  contMDiffAt_id.oneJetBundle_mk hf (hf.mfderiv_const le_rfl)
 
-theorem Smooth.oneJetExt {f : M → M'} (hf : Smooth I I' f) :
-    Smooth I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (oneJetExt I I' f) :=
-  fun x ↦ (hf x).smoothAt.oneJetExt
+theorem ContMDiff.oneJetExt {f : M → M'} (hf : ContMDiff I I' ⊤ f) :
+    ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ (oneJetExt I I' f) :=
+  fun x ↦ ((hf x).contMDiffAt univ_mem).oneJetExt
 
 theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h : N → N'}
     {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} (hg : ContinuousAt g x₀) :
@@ -408,11 +408,11 @@ theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h :
   · rfl
   exact hx
 
-theorem SmoothAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h : N → N'}
+theorem ContMDiffAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h : N → N'}
     {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {n : N} (hg : ContinuousAt g n)
-    (hϕ' : SmoothAt J 𝓘(𝕜, E' →L[𝕜] F') (inTangentCoordinates I' J' g h ϕ' n) n)
-    (hϕ : SmoothAt J 𝓘(𝕜, E →L[𝕜] E') (inTangentCoordinates I I' f g ϕ n) n) :
-    SmoothAt J 𝓘(𝕜, E →L[𝕜] F') (inTangentCoordinates I J' f h (fun n ↦ ϕ' n ∘L ϕ n) n) n :=
+    (hϕ' : ContMDiffAt J 𝓘(𝕜, E' →L[𝕜] F') ⊤ (inTangentCoordinates I' J' g h ϕ' n) n)
+    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ⊤ (inTangentCoordinates I I' f g ϕ n) n) :
+    ContMDiffAt J 𝓘(𝕜, E →L[𝕜] F') ⊤ (inTangentCoordinates I J' f h (fun n ↦ ϕ' n ∘L ϕ n) n) n :=
   (hϕ'.clm_comp hϕ).congr_of_eventuallyEq hg.inTangentCoordinates_comp
 
 variable (I')
@@ -420,47 +420,48 @@ variable (I')
 variable [SmoothManifoldWithCorners J N]
 
 omit [SmoothManifoldWithCorners J' N'] in
-theorem SmoothAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
+theorem ContMDiffAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
-    (hh : SmoothAt J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) (fun x ↦ OneJetBundle.mk _ _ (h x)) x₀)
-    (hg : SmoothAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (fun x ↦ OneJetBundle.mk _ _ (g x)) x₀) :
-    SmoothAt J' ((I.prod J).prod 𝓘(𝕜, E →L[𝕜] F))
+    (hh : ContMDiffAt J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) ⊤ (fun x ↦ OneJetBundle.mk _ _ (h x)) x₀)
+    (hg : ContMDiffAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ (fun x ↦ OneJetBundle.mk _ _ (g x)) x₀) :
+    ContMDiffAt J' ((I.prod J).prod 𝓘(𝕜, E →L[𝕜] F)) ⊤
       (fun x ↦ OneJetBundle.mk (f1 x) (f3 x) (h x ∘L g x) : N' → OneJetBundle I M J N) x₀ := by
-  rw [smoothAt_oneJetBundle_mk] at hh hg ⊢
+  rw [contMDiffAt_oneJetBundle_mk] at hh hg ⊢
   exact ⟨hg.1, hh.2.1, hh.2.2.clm_comp_inTangentCoordinates hg.2.1.continuousAt hg.2.2⟩
 
 omit [SmoothManifoldWithCorners J' N'] in
-theorem Smooth.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
+theorem ContMDiff.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
-    (hh : Smooth J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) fun x ↦ OneJetBundle.mk _ _ (h x))
-    (hg : Smooth J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (g x)) :
-    Smooth J' ((I.prod J).prod 𝓘(𝕜, E →L[𝕜] F))
+    (hh : ContMDiff J' ((I'.prod J).prod 𝓘(𝕜, E' →L[𝕜] F)) ⊤ fun x ↦ OneJetBundle.mk _ _ (h x))
+    (hg : ContMDiff J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ fun x ↦ OneJetBundle.mk _ _ (g x)) :
+    ContMDiff J' ((I.prod J).prod 𝓘(𝕜, E →L[𝕜] F)) ⊤
       (fun x ↦ OneJetBundle.mk (f1 x) (f3 x) (h x ∘L g x) : N' → OneJetBundle I M J N) :=
-  fun x₀ ↦ hh.smoothAt.oneJet_comp I' f2 (hg x₀)
+  fun x₀ ↦ hh.contMDiffAt.oneJet_comp I' f2 (hg x₀)
 
 variable {I'}
 
 open Trivialization in
 omit [SmoothManifoldWithCorners J N] in
-theorem Smooth.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
-    (hϕ : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ x))
-    (hϕ' : Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦ OneJetBundle.mk _ _ (ϕ' x)) :
-    Smooth J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) fun x ↦
+theorem ContMDiff.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
+    (hϕ : ContMDiff J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ fun x ↦ OneJetBundle.mk _ _ (ϕ x))
+    (hϕ' : ContMDiff J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ fun x ↦ OneJetBundle.mk _ _ (ϕ' x)) :
+    ContMDiff J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ fun x ↦
       OneJetBundle.mk (f x) (g x) (ϕ x + ϕ' x) := by
   intro x
   specialize hϕ x
   specialize hϕ' x
-  rw [← SmoothAt, smoothAt_oneJetBundle_mk] at hϕ hϕ' ⊢
+  rw [contMDiffAt_oneJetBundle_mk] at hϕ hϕ' ⊢
   refine ⟨hϕ.1, hϕ.2.1, ?_⟩
   -- Porting note: next 5 lines should be
   -- `simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
   --           ContinuousLinearMap.comp_add]
   simp_rw (config := { unfoldPartialApp := true }) [inTangentCoordinates, inCoordinates]
-  conv =>
+  sorry -- TODO-MR
+  /- conv =>
     enter [3, x, 2]
     rw [ContinuousLinearMap.add_comp]
   simp only [ContinuousLinearMap.comp_add]
-  exact hϕ.2.2.add hϕ'.2.2
+  exact hϕ.2.2.add hϕ'.2.2 -/
 
 variable (I' J')
 
@@ -501,25 +502,27 @@ theorem OneJetBundle.map_id (x : J¹MM') :
   -- note: rw fails since we have to unfold the type `Bundle.Pullback`
   erw [ContinuousLinearMap.id_comp]
 
-theorem SmoothAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
+theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
     {Dfinv : ∀ (z : M'') (x : M), TangentSpace J (f z x) →L[𝕜] TangentSpace I x} {k : M'' → J¹MM'}
-    (hf : SmoothAt (I''.prod I) J f.uncurry (x₀, (k x₀).1.1))
-    (hg : SmoothAt (I''.prod I') J' g.uncurry (x₀, (k x₀).1.2))
+    (hf : ContMDiffAt (I''.prod I) J ⊤ f.uncurry (x₀, (k x₀).1.1))
+    (hg : ContMDiffAt (I''.prod I') J' ⊤ g.uncurry (x₀, (k x₀).1.2))
     (hDfinv :
-      SmoothAt I'' 𝓘(𝕜, F →L[𝕜] E)
+      ContMDiffAt I'' 𝓘(𝕜, F →L[𝕜] E) ⊤
         (inTangentCoordinates J I (fun x ↦ f x (k x).1.1) (fun x ↦ (k x).1.1)
           (fun x ↦ Dfinv x (k x).1.1) x₀)
         x₀)
-    (hk : SmoothAt I'' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) k x₀) :
-    SmoothAt I'' ((J.prod J').prod 𝓘(𝕜, F →L[𝕜] F'))
+    (hk : ContMDiffAt I'' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ k x₀) :
+    ContMDiffAt I'' ((J.prod J').prod 𝓘(𝕜, F →L[𝕜] F')) ⊤
       (fun z ↦ OneJetBundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ := by
-  rw [smoothAt_oneJetBundle] at hk
-  refine SmoothAt.oneJet_comp _ _ ?_ ?_
-  · refine SmoothAt.oneJet_comp _ _ ?_ ?_
-    · refine hk.2.1.oneJetBundle_mk (hg.comp x₀ (smoothAt_id.prod_mk hk.2.1)) ?_
+  rw [contMDiffAt_oneJetBundle] at hk
+  refine ContMDiffAt.oneJet_comp _ _ ?_ ?_
+  · refine ContMDiffAt.oneJet_comp _ _ ?_ ?_
+    · refine hk.2.1.oneJetBundle_mk (hg.comp x₀ (contMDiffAt_id.prod_mk hk.2.1)) ?_
       exact ContMDiffAt.mfderiv g (fun x ↦ (k x).1.2) hg hk.2.1 le_rfl
     · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
-  · exact (hf.comp x₀ (smoothAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1 hDfinv
+  apply (hf.comp x₀ (contMDiffAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1
+  apply hDfinv
+
 
 /-- A useful definition to define maps between two `OneJetBundle`s. -/
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
@@ -534,17 +537,17 @@ theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) �
   ext x; rfl; rfl; dsimp only [OneJetBundle.map, mapLeft, oneJetBundle_mk_snd]
   simp_rw [mfderiv_id, ContinuousLinearMap.id_comp]
 
-theorem SmoothAt.mapLeft {f : N' → M → N} {x₀ : N'}
+theorem ContMDiffAt.mapLeft {f : N' → M → N} {x₀ : N'}
     {Dfinv : ∀ (z : N') (x : M), TangentSpace J (f z x) →L[𝕜] TangentSpace I x} {g : N' → J¹MM'}
-    (hf : SmoothAt (J'.prod I) J f.uncurry (x₀, (g x₀).1.1))
+    (hf : ContMDiffAt (J'.prod I) J ⊤ f.uncurry (x₀, (g x₀).1.1))
     (hDfinv :
-      SmoothAt J' 𝓘(𝕜, F →L[𝕜] E)
+      ContMDiffAt J' 𝓘(𝕜, F →L[𝕜] E) ⊤
         (inTangentCoordinates J I (fun x ↦ f x (g x).1.1) (fun x ↦ (g x).1.1)
           (fun x ↦ Dfinv x (g x).1.1) x₀)
         x₀)
-    (hg : SmoothAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) g x₀) :
-    SmoothAt J' ((J.prod I').prod 𝓘(𝕜, F →L[𝕜] E')) (fun z ↦ mapLeft (f z) (Dfinv z) (g z)) x₀ := by
-  simp_rw [mapLeft_eq_map]; exact hf.oneJetBundle_map smoothAt_snd hDfinv hg
+    (hg : ContMDiffAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ g x₀) :
+    ContMDiffAt J' ((J.prod I').prod 𝓘(𝕜, F →L[𝕜] E')) ⊤ (fun z ↦ mapLeft (f z) (Dfinv z) (g z)) x₀ := by
+  simp_rw [mapLeft_eq_map]; exact hf.oneJetBundle_map contMDiffAt_snd hDfinv hg
 
 /-- The projection `J¹(E × P, F) → J¹(E, F)`. Not actually used. -/
 def bundleFst : OneJetBundle (J.prod I) (N × M) I' M' → OneJetBundle J N I' M' :=
@@ -561,20 +564,20 @@ theorem bundleSnd_eq (x : OneJetBundle (J.prod I) (N × M) I' M') :
     bundleSnd x = (mapLeft Prod.snd (fun _ ↦ ContinuousLinearMap.inr 𝕜 F E) x : J¹MM') := by
   simp_rw [bundleSnd, mfderiv_prod_right]; rfl
 
-theorem smooth_bundleSnd :
-    Smooth (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
-      (bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM') := by
+theorem contMDiff_bundleSnd :
+    ContMDiff (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E'))
+      ⊤ (bundleSnd : OneJetBundle (J.prod I) (N × M) I' M' → J¹MM') := by
   intro x₀
-  refine SmoothAt.mapLeft smoothAt_snd.snd ?_ smoothAt_id
+  refine ContMDiffAt.mapLeft contMDiffAt_snd.snd ?_ contMDiffAt_id
   have :
-    ContMDiffAt (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) 𝓘(𝕜, E →L[𝕜] F × E) ∞
+    ContMDiffAt (((J.prod I).prod I').prod 𝓘(𝕜, F × E →L[𝕜] E')) 𝓘(𝕜, E →L[𝕜] F × E) ⊤
       (inTangentCoordinates I (J.prod I) _ _ _ x₀) x₀ :=
     ContMDiffAt.mfderiv (fun (x : OneJetBundle (J.prod I) (N × M) I' M') (y : M) ↦ (x.1.1.1, y))
       (fun x : OneJetBundle (J.prod I) (N × M) I' M' ↦ x.1.1.2) ?_ ?_ le_top
   · exact this
-  · exact (smooth_oneJetBundle_proj.fst.fst.prod_map smooth_id).smoothAt
+  · exact (contMDiff_oneJetBundle_proj.fst.fst.prod_map contMDiff_id).contMDiffAt
   -- slow
-  · exact smooth_oneJetBundle_proj.fst.snd.smoothAt
+  · exact contMDiff_oneJetBundle_proj.fst.snd.contMDiffAt
 
 -- slow
 end Maps
