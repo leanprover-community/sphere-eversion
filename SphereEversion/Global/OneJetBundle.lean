@@ -356,10 +356,10 @@ theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ f x₀ ↔
       ContMDiffAt J I ⊤ (fun x ↦ (f x).1.1) x₀ ∧
         ContMDiffAt J I' ⊤ (fun x ↦ (f x).1.2) x₀ ∧
-          SmoothAt J 𝓘(𝕜, E →L[𝕜] E') ⊤
+          ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ⊤
             (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2)
               x₀) x₀ := by
-  simp_rw [SmoothAt, Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc,
+  simp_rw [Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc,
     oneJetBundle_trivializationAt]
   rfl
 

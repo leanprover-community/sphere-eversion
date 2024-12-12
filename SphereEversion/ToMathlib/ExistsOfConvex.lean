@@ -189,7 +189,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
 open TopologicalSpace
 
 example {f : E → ℝ} (h : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ ε : ℝ, ∀ x' ∈ U, 0 < ε ∧ ε ≤ f x') :
-    ∃ f' : E → ℝ, ContDiff ℝ ⊤ f' ∧ ∀ x, 0 < f' x ∧ f' x ≤ f x := by
+    ∃ f' : E → ℝ, ContDiff ℝ (⊤: ℕ∞) f' ∧ ∀ x, 0 < f' x ∧ f' x ≤ f x := by
   let P : E → ℝ → Prop := fun x t ↦ 0 < t ∧ t ≤ f x
   have hP : ∀ x, Convex ℝ {y | P x y} := fun x ↦ convex_Ioc _ _
   apply exists_contDiff_of_convex hP

@@ -224,8 +224,8 @@ theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : �
   induction' n with n ih generalizing F
   · rw [Nat.cast_zero, contDiff_zero] at *
     exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous hF hs
-  · have hF₁ : ContDiff ℝ 1 ↿F := hF.one_of_succ
-    have hs₁ : ContDiff ℝ 1 s := hs.one_of_succ
+  · have hF₁ : ContDiff ℝ 1 ↿F := sorry -- TODO-MR, was: hF.one_of_succex
+    have hs₁ : ContDiff ℝ 1 s := sorry -- TODO-MR, was: hs.one_of_succ
     have h :
       ∀ x,
         HasFDerivAt (fun x ↦ ∫ t in a..s x, F x t)
@@ -263,7 +263,7 @@ variable [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type 
 theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
   induction n using WithTop.recTopCoe
-  · rw [contDiff_top] at *
+  · rw [contDiff_infty] at *
     exact fun n ↦ contDiff_parametric_primitive_of_contDiff' (hF n) (hs n) a
   · exact contDiff_parametric_primitive_of_contDiff' hF hs a
 

@@ -117,7 +117,7 @@ theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot 
   obtain ⟨a, ha, w, hw, rfl⟩ := (ℝ ∙ (v : E)).exists_add_mem_mem_orthogonal w
   rw [Submodule.mem_span_singleton] at ha
   obtain ⟨s, rfl⟩ := ha
-  rw [← sq_eq_sq (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
+  rw [← sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ]
   · have hvw : ‖ω.rot (t, v) w‖ = ‖w‖ :=  ω.isometry_on_rot t v ⟨w, hw⟩
