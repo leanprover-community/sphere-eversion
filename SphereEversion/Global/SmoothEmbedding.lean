@@ -28,8 +28,9 @@ structure OpenSmoothEmbedding where
   invFun : M' → M
   left_inv' : ∀ {x}, invFun (toFun x) = x
   isOpen_range : IsOpen (range toFun)
-  smooth_to : Smooth I I' toFun
-  smooth_inv : SmoothOn I' I invFun (range toFun)
+  -- TODO-port rename these!
+  smooth_to : ContMDiff I I' ⊤ toFun
+  smooth_inv : ContMDiffOn I' I ⊤ invFun (range toFun)
 
 attribute [coe] OpenSmoothEmbedding.toFun
 
@@ -59,11 +60,11 @@ theorem right_inv {y : M'} (hy : y ∈ range f) : f (f.invFun y) = y := by
   obtain ⟨x, rfl⟩ := hy;
   rw [f.left_inv]
 
-theorem smoothAt_inv {y : M'} (hy : y ∈ range f) : SmoothAt I' I f.invFun y :=
+theorem contMDiffAt_inv {y : M'} (hy : y ∈ range f) : ContMDiffAt I' I ⊤ f.invFun y :=
   (f.smooth_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
 
-theorem smoothAt_inv' {x : M} : SmoothAt I' I f.invFun (f x) :=
-  f.smoothAt_inv <| mem_range_self x
+theorem contMDiff_inv' {x : M} : ContMDiffAt I' I ⊤ f.invFun (f x) :=
+  f.contMDiffAt_inv <| mem_range_self x
 
 theorem leftInverse : Function.LeftInverse f.invFun f :=
   left_inv f
@@ -90,7 +91,7 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.smooth_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       (f.isOpenMap.range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := f.smooth_to.contMDiff.mdifferentiable le_top _
+  have h₂ : MDifferentiableAt I I' f x := sorry -- TODO-MR fix, easy f.smooth_to.contMDiff.mdifferentiable le_top _
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
     (by
       intro v
@@ -126,7 +127,7 @@ theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
 
 end
 
-open Filter
+open Filter Topology
 
 theorem isOpenEmbedding : IsOpenEmbedding f :=
   isOpenEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
@@ -183,8 +184,8 @@ nonrec def id : OpenSmoothEmbedding I M I M where
   invFun := id
   left_inv' := rfl
   isOpen_range := IsOpenMap.id.isOpen_range
-  smooth_to := smooth_id
-  smooth_inv := smoothOn_id
+  smooth_to := contMDiff_id
+  smooth_inv := contMDiffOn_id
 
 variable {I M}
 
@@ -245,7 +246,7 @@ variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [
 Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `ContDiff`
 instead of `ContMDiff`. This is more convenient for our purposes. -/
 def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (hf₁ : f.source = univ)
-    (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+    (hf₂ : ContDiff ℝ (⊤: ℕ∞) f) (hf₃ : ContDiffOn ℝ (⊤: ℕ∞) f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) : OpenSmoothEmbedding 𝓘(ℝ, F) F IF M
     where
   toFun := (extChartAt IF x).symm ∘ f
@@ -282,13 +283,13 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
 
 @[simp]
 theorem coe_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
-    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ (⊤: ℕ∞) f) (hf₃ : ContDiffOn ℝ (⊤: ℕ∞) f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
     (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ hf₃ hf₄ : F → M) =
       (extChartAt IF x).symm ∘ f := by simp [openSmoothEmbOfDiffeoSubsetChartTarget]
 
 theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
-    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ (⊤: ℕ∞) f) (hf₃ : ContDiffOn ℝ (⊤: ℕ∞) f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
     range (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ hf₃ hf₄) =
       (extChartAt IF x).symm '' range f := by
@@ -327,8 +328,8 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ := exists_countable_locallyFinite_cover surjective_id hW₀ hW₁ hB
   let g : M × ℝ → PartialHomeomorph F F := fun z ↦ diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
   have hg₁ : ∀ z, (g z).source = univ := by simp [g]
-  have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp [g]
-  have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
+  have hg₂ : ∀ z, ContDiff ℝ (⊤: ℕ∞) (g z) := by simp [g]
+  have hg₃ : ∀ z, ContDiffOn ℝ (⊤: ℕ∞) (g z).symm (g z).target := by simp [g]
   refine ⟨M × ℝ, t,
     fun z ↦ openSmoothEmbOfDiffeoSubsetChartTarget M IF z.1.1 (hg₁ z.1) (hg₂ z.1) (hg₃ z.1) ?_, ht₁,
     fun z ↦ ?_, ?_, ?_⟩
@@ -421,10 +422,10 @@ open Function
 
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
-    (hK : IsClosed (φ '' K)) (hf : Smooth (IM'.prod IM) IN (uncurry f))
-    (hg : Smooth (IM'.prod IX) IY (uncurry g)) (hk : Smooth IM' IM k)
+    (hK : IsClosed (φ '' K)) (hf : ContMDiff (IM'.prod IM) IN ⊤ (uncurry f))
+    (hg : ContMDiff (IM'.prod IX) IY ⊤ (uncurry g)) (hk : ContMDiff IM' IM ⊤ k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
-    Smooth IM' IN fun x ↦ update φ ψ (f x) (g x) (k x) := by
+    ContMDiff IM' IN ⊤ fun x ↦ update φ ψ (f x) (g x) (k x) := by
   have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx ↦
     nice_update_of_eq_outside_compact_aux φ ψ (f x) (g x) (hg' x) hx
   refine contMDiff_of_locally_contMDiffOn fun x ↦ ?_
@@ -439,10 +440,11 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
       (contMDiffOn_congr h₄).mpr <| ψ.smooth_to.comp_contMDiffOn <| hg.comp_contMDiffOn
-        (smoothOn_id.prod_mk <| φ.smooth_inv.comp hk.smoothOn Subset.rfl)⟩
-  · refine
-      ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp (smooth_id.prod_mk hk)).contMDiffOn⟩
-    exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx
+        (contMDiffOn_id.prod_mk <| φ.smooth_inv.comp hk.contMDiffOn Subset.rfl)⟩
+  · sorry -- TODO-MR
+    /- refine
+      ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp ((contMDiffOn_id (n := ⊤)).prod_mk hk)).contMDiffOn⟩
+    exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx -/
 
 end NonMetric
 
