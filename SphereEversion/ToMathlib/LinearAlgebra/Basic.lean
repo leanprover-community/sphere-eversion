@@ -1,4 +1,5 @@
-import Mathlib.LinearAlgebra.Span
+import Mathlib.Algebra.Module.Submodule.Ker
+import Mathlib.LinearAlgebra.Span.Defs
 
 /-! Note: some results should go to `LinearAlgebra.Span`. -/
 

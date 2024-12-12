@@ -233,7 +233,6 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
       coe_mk, sub_sub_sub_cancel_left]
   let N : E → E := fun x ↦ ⟪x, x⟫⁻¹ • x
   have hNx₀ : 0 < ‖N x₀‖ := by
-    unfold_let N
     -- and now let's suffer
     rw [norm_smul, real_inner_self_eq_norm_sq, norm_inv]
     apply mul_pos
