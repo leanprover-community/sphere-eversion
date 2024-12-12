@@ -17,7 +17,7 @@ theorem ContinuousLinearMap.le_opNorm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E
     [RingHomIsometric σ₁₂] (f : E →SL[σ₁₂] F) {x : E} (hx : x ≠ 0) {C : ℝ} (h : C * ‖x‖ ≤ ‖f x‖) :
     C ≤ ‖f‖ := by
   apply le_of_mul_le_mul_right (h.trans (f.le_opNorm x))
-  rwa [norm_pos_iff']
+  rwa [norm_pos_iff]
 
 @[simp]
 theorem ContinuousLinearMap.toSpanSingleton_zero (𝕜 : Type*) {E : Type*}

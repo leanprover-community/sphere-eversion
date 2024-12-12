@@ -1,5 +1,6 @@
 import Mathlib.Analysis.Normed.Order.Lattice
 import SphereEversion.ToMathlib.Topology.Separation.Basic
+
 -- TODO: the file this references doesn't exist in mathlib any more; rename this one appropriately!
 
 /-!
@@ -104,7 +105,7 @@ theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ :=
 theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe
 
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
-    IsQuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
+    Topology.IsQuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
   (IsOpenMap.id.prodMap isOpenMap_proj𝕊₁).isQuotientMap (continuous_id.prodMap continuous_proj𝕊₁)
     (surjective_id.prodMap Quotient.exists_rep)
 
@@ -143,7 +144,7 @@ theorem Continuous.bounded_on_compact_of_onePeriodic {f : X → ℝ → E} (cont
     ∃ C, ∀ x ∈ K, ∀ t, ‖f x t‖ ≤ C := by
   let F : X × 𝕊₁ → E := fun p : X × 𝕊₁ ↦ (hper p.1).lift p.2
   have Fcont : Continuous F := by
-    have qm : IsQuotientMap fun p : X × ℝ ↦ (p.1, π p.2) := quotientMap_id_proj𝕊₁
+    have qm : Topology.IsQuotientMap fun p : X × ℝ ↦ (p.1, π p.2) := quotientMap_id_proj𝕊₁
     -- avoid weird elaboration issue
     have : ↿f = F ∘ fun p : X × ℝ ↦ (p.1, π p.2) := by ext p; rfl
     rwa [this, ← qm.continuous_iff] at cont

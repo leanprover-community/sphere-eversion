@@ -64,36 +64,36 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 instance deleteme1 :
     ∀ x : M × M',
-      Module 𝕜 (((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) x) := by
+      Module 𝕜 (((ContMDiffMap.fst : C^⊤⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) x) := by
         infer_instance
 
 instance deleteme2 :
     ∀ x : M × M',
-      Module 𝕜 (((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) x) := by
+      Module 𝕜 (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) x) := by
         infer_instance
 
 instance deleteme3 :
-    VectorBundle 𝕜 E ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) := by
+    VectorBundle 𝕜 E ((ContMDiffMap.fst : C^⊤⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) := by
   infer_instance
 
 instance deleteme4 :
-    VectorBundle 𝕜 E' ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) := by
+    VectorBundle 𝕜 E' ((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) := by
   infer_instance
 
 instance deleteme5 :
-    SmoothVectorBundle E ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I))
+    SmoothVectorBundle E ((ContMDiffMap.fst : C^⊤⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I))
       (I.prod I') := by infer_instance
 
 instance deleteme6 :
-    SmoothVectorBundle E' ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I'))
+    SmoothVectorBundle E' ((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I'))
       (I.prod I') := by infer_instance
 
 set_option linter.unusedVariables false in
 /-- The fibers of the one jet-bundle. -/
 def OneJetSpace (p : M × M') : Type _ :=
   Bundle.ContinuousLinearMap σ
-    ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I))
-    ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
+    ((ContMDiffMap.fst : C^⊤⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I))
+    ((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
 
 instance (p : M × M') : TopologicalSpace (OneJetSpace I I' p) := by
   delta OneJetSpace

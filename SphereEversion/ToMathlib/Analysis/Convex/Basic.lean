@@ -60,7 +60,7 @@ theorem support_finite_of_finsum_eq_one {M : Type*} {ι : Sort _} [NonAssocSemir
 theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s : Finset β)
     [DecidableEq α] (g : β → M) :
     ∑ᶠ x : α, ∑ y : β in Finset.filter (fun j : β ↦ f j = x) s, g y = ∑ k in s, g k := by
-  rw [finsum_eq_finset_sum_of_support_subset _ (show _ ⊆ ↑(s.image f) from _)]
+  rw [finsum_eq_finset_sum_of_support_subset]
   · rw [Finset.sum_image']
     intros
     rfl

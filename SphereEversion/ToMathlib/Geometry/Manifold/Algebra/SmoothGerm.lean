@@ -37,9 +37,9 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {G : Type*} [CommMonoid G] [TopologicalSpace G] [ChartedSpace H' G] [SmoothMul I' G]
 
 @[to_additive]
-theorem SmoothMap.coe_prod {ι : Type*} (f : ι → C^∞⟮I, N; I', G⟯) (s : Finset ι) :
+theorem SmoothMap.coe_prod {ι : Type*} (f : ι → C^⊤⟮I, N; I', G⟯) (s : Finset ι) :
     ⇑(∏ i in s, f i) = ∏ i in s, ⇑(f i) :=
-  map_prod (SmoothMap.coeFnMonoidHom : C^∞⟮I, N; I', G⟯ →* N → G) f s
+  map_prod (SmoothMap.coeFnMonoidHom : C^⊤⟮I, N; I', G⟯ →* N → G) f s
 
 end
 
@@ -56,28 +56,28 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type*) [AddCommGroup G] [Module ℝ G]
 
 /-- The map `C^∞(N, ℝ) → Germ (𝓝 x) ℝ` as a ring homomorphism. -/
-def RingHom.germOfContMDiffMap (x : N) : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
+def RingHom.germOfContMDiffMap (x : N) : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
   RingHom.comp (Germ.coeRingHom _) SmoothMap.coeFnRingHom
 
 /-- All germs of smooth functions `N → ℝ` at `x : N`, as a subring of `Germ (𝓝 x) ℝ`. -/
 def smoothGerm (x : N) : Subring (Germ (𝓝 x) ℝ) :=
   (RingHom.germOfContMDiffMap I x).range
 
-instance (x : N) : Coe C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ (smoothGerm I x) :=
+instance (x : N) : Coe C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯ (smoothGerm I x) :=
   ⟨fun f ↦ ⟨(f : N → ℝ), ⟨f, rfl⟩⟩⟩
 
 @[simp]
-theorem smoothGerm.coe_coe (f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
+theorem smoothGerm.coe_coe (f : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
     ((f : smoothGerm I x) : (𝓝 x).Germ ℝ) = (f : (𝓝 x).Germ ℝ) :=
   rfl
 
 @[simp]
-theorem smoothGerm.coe_sum {ι} (f : ι → C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (s : Finset ι) (x : N) :
-    ((∑ i in s, f i : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smoothGerm I x) = ∑ i in s, (f i : smoothGerm I x) :=
+theorem smoothGerm.coe_sum {ι} (f : ι → C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) (s : Finset ι) (x : N) :
+    ((∑ i in s, f i : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) : smoothGerm I x) = ∑ i in s, (f i : smoothGerm I x) :=
   map_sum (RingHom.rangeRestrict (RingHom.germOfContMDiffMap I x)) f s
 
 @[simp]
-theorem smoothGerm.coe_eq_coe (f g : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
+theorem smoothGerm.coe_eq_coe (f g : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
     (f : smoothGerm I x) = (g : smoothGerm I x) := by
   ext
   apply Quotient.sound
@@ -195,7 +195,7 @@ variable {I}
 omit [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
 
 theorem _root_.smoothGerm.contMDiffAt {x : M} (φ : smoothGerm I x) {n : ℕ∞} :
-    (φ : Germ (𝓝 x) ℝ).ContMDiffAt I n := by rcases φ with ⟨_, g, rfl⟩; apply g.smooth.of_le le_top
+    (φ : Germ (𝓝 x) ℝ).ContMDiffAt I n := by rcases φ with ⟨_, g, rfl⟩; apply g.contMDiff.of_le le_top
 
 protected nonrec theorem ContMDiffAt.add {x : M} {φ ψ : Germ (𝓝 x) F} {n : ℕ∞} :
     φ.ContMDiffAt I n → ψ.ContMDiffAt I n → (φ + ψ).ContMDiffAt I n :=

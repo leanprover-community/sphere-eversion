@@ -168,10 +168,10 @@ instance : FunLike (FamilyJetSec E F P) P (JetSec E F) where
   rfl
 
 theorem contDiff_f (𝓕 : FamilyJetSec E F P) {n : ℕ∞} : 𝒞 n ↿𝓕.f :=
-  𝓕.f_diff.of_le le_top
+  𝓕.f_diff.of_le (by simp)
 
 theorem contDiff_φ (𝓕 : FamilyJetSec E F P) {n : ℕ∞} : 𝒞 n ↿𝓕.φ :=
-  𝓕.φ_diff.of_le le_top
+  𝓕.φ_diff.of_le (by simp)
 
 end FamilyJetSec
 
