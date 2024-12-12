@@ -62,7 +62,7 @@ theorem right_inv {y : M'} (hy : y ∈ range f) : f (f.invFun y) = y := by
 theorem contMDiffAt_inv {y : M'} (hy : y ∈ range f) : ContMDiffAt I' I ⊤ f.invFun y :=
   (f.contMDiffOn_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
 
-theorem contMDiff_inv' {x : M} : ContMDiffAt I' I ⊤ f.invFun (f x) :=
+theorem contMDiffAt_inv' {x : M} : ContMDiffAt I' I ⊤ f.invFun (f x) :=
   f.contMDiffAt_inv <| mem_range_self x
 
 theorem leftInverse : Function.LeftInverse f.invFun f :=
