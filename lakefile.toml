@@ -12,7 +12,6 @@ linter.style.multiGoal = true
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "bded1a9eb3fc57b04f6ff80b7449c55ed2a1baa4"
 
 [[require]]
 name = "checkdecls"
