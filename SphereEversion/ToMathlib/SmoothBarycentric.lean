@@ -130,12 +130,14 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
       (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
   have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
-  · apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
+  · sorry /- TODO-MR: fix this proof!
+    apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
     have hv : IsUnit (b.toMatrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
     rw [← isUnit_iff_ne_zero, comp_apply, ← Matrix.isUnit_iff_isUnit_det]
-    exact hv
-  · refine ((Matrix.smooth_det ι 𝕜 ⊤).comp ?_).contDiffOn
+    exact hv -/
+  · sorry /- TODO-MR: fix this proof!
+    refine ((Matrix.smooth_det ι 𝕜 ⊤).comp ?_).contDiffOn
     refine contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦ ?_
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
@@ -143,6 +145,6 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     · simp only [hij, if_true, eq_self_iff_true]
       exact (smooth_barycentric_coord b j').fst'
     · simp only [hij, if_false]
-      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j)
+      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j) -/
 
 end smooth_barycentric

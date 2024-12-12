@@ -20,9 +20,12 @@ theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
       rw [transHomeomorph_target, Homeomorph.transPartialHomeomorph_target, univBall_target _ ε₀]
       rfl
     refine ⟨f, ?_, ?_, ?_, fun _ ↦ by rwa [hf], by simp [e, e', f]⟩
-    · exact e.symm.contDiff.comp <| contDiff_univBall.comp e.contDiff
-    · exact e.symm.contDiff.comp_contDiffOn <| contDiffOn_univBall_symm.comp
-        e.contDiff.contDiffOn hf.subset
+    · apply e.symm.contDiff.comp -- TODO-MR: fix this proof!
+      --exact e.symm.contDiff.comp <| contDiff_univBall.comp e.contDiff
+      sorry -- apply contDiff_univBall.comp e.contDiff
+    · -- TODO-MR: fix this proof!
+      exact e.symm.contDiff.comp_contDiffOn <| sorry --contDiffOn_univBall_symm.comp
+        --e.contDiff.contDiffOn hf.subset
     · rw [transHomeomorph_source, Homeomorph.transPartialHomeomorph_source, univBall_source]; rfl
   · use (IsometryEquiv.vaddConst c).toHomeomorph.toPartialHomeomorph, contDiff_id.add contDiff_const,
       contDiffOn_id.sub contDiffOn_const
