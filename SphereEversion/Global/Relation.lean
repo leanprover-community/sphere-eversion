@@ -78,7 +78,7 @@ instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' 
 
 
 def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x) (hsol : ∀ x, F x ∈ R)
-    (hsmooth : Smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) F) : FormalSol R
+    (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ F) : FormalSol R
     where
   bs m := (F m).1.2
   ϕ m := (F m).2
@@ -95,7 +95,7 @@ def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
 
 @[simp]
 theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
-    (hsol : ∀ x, F x ∈ R) (hsmooth : Smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) :
+    (hsol : ∀ x, F x ∈ R) (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) :
     (mkFormalSol F hsec hsol hsmooth : M → OneJetBundle I M I' M') = F := by
   ext x <;> try rfl
   rw [hsec]
@@ -103,7 +103,7 @@ theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x
 
 @[simp]
 theorem mkFormalSol_bs_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
-    (hsol : ∀ x, F x ∈ R) (hsmooth : Smooth I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (x : M) :
+    (hsol : ∀ x, F x ∈ R) (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) (x : M) :
     (mkFormalSol F hsec hsol hsmooth).bs x = (F x).1.2 :=
   rfl
 
@@ -258,7 +258,7 @@ theorem is_sol (S : FamilyFormalSol J N R) {t : N} {x : M} : S t x ∈ R :=
   S.is_sol' t x
 
 /-- Reindex a family along a smooth function `f`. -/
-def reindex (S : FamilyFormalSol J' N' R) (f : C^∞⟮J, N; J', N'⟯) : FamilyFormalSol J N R :=
+def reindex (S : FamilyFormalSol J' N' R) (f : C^⊤⟮J, N; J', N'⟯) : FamilyFormalSol J N R :=
   ⟨S.toFamilyOneJetSec.reindex f, fun t ↦ S.is_sol' (f t)⟩
 
 end FamilyFormalSol
@@ -272,7 +272,7 @@ abbrev HtpyFormalSol (R : RelMfld I M I' M') :=
 
 def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
-    (hsmooth : Smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) : HtpyFormalSol R
+    (hsmooth : ContMDiff (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) : HtpyFormalSol R
     where
   bs t m := (F t m).1.2
   ϕ t m := (F t m).2
@@ -290,7 +290,7 @@ def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, 
 @[simp]
 theorem mkHtpyFormalSol_apply (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
-    (hsmooth : Smooth (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ↿F) (t : ℝ) :
+    (hsmooth : ContMDiff (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) (t : ℝ) :
     (mkHtpyFormalSol F hsec hsol hsmooth t : M → OneJetBundle I M I' M') = F t := by
   ext x <;> try rfl
   rw [hsec]
@@ -300,7 +300,7 @@ theorem mkHtpyFormalSol_apply (F : ℝ → M → OneJetBundle I M I' M') (hsec :
 def FormalSol.constHtpy (F : FormalSol R) : HtpyFormalSol R where
   bs _ := F.bs
   ϕ _ := F.ϕ
-  smooth' := F.smooth.comp smooth_snd
+  smooth' := F.smooth.comp contMDiff_snd
   is_sol' _ := F.is_sol
 
 variable (R)
@@ -351,7 +351,7 @@ def RelMfld.SatisfiesHPrinciple (R : RelMfld I M IX X) (C : Set M) (ε : M → �
 theorem RelMfld.satisfiesHPrinciple_of_weak [FiniteDimensional ℝ E] [T2Space M]
     [SigmaCompactSpace M] {R : RelMfld I M IX X} {ε : M → ℝ} {C : Set M} (hC : IsClosed C)
     (h : ∀ A : Set M, IsClosed A → R.SatisfiesHPrincipleWeak A ε) : R.SatisfiesHPrinciple C ε := by
-  haveI := ManifoldWithCorners.metrizableSpace I M
+  haveI := Manifold.metrizableSpace I M
   letI : MetricSpace M := TopologicalSpace.metrizableSpaceMetric M
   intro 𝓕₀ h𝓕₀
   obtain ⟨C', hCC', hC', h𝓕₀C'⟩ := h𝓕₀.closed_neighborhood hC
@@ -387,13 +387,13 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
     (h : R.SatisfiesHPrincipleWith IP C ε) (𝓕₀ : FamilyFormalSol IP P R)
     (h2 : ∀ᶠ p : P × M near C, (𝓕₀ p.1).toOneJetSec.IsHolonomicAt p.2) :
     ∃ f : P → M → X,
-      (Smooth (IP.prod I) IX <| uncurry f) ∧
+      (ContMDiff (IP.prod I) IX ⊤ <| uncurry f) ∧
         (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
   refine ⟨fun s ↦ (𝓕 (1, s)).bs, ?_, ?_, ?_, ?_⟩
-  · let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
-      ⟨fun p ↦ (1, p), Smooth.prod_mk smooth_const smooth_id⟩
+  · let j : C^⊤⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
+      ⟨fun p ↦ (1, p), ContMDiff.prod_mk contMDiff_const contMDiff_id⟩
     rw [show
         (uncurry fun s ↦ (𝓕 (1, s)).bs) =
           Prod.snd ∘ π _ (OneJetSpace I IX) ∘ fun p : P × M ↦ 𝓕.reindex j p.1 p.2
@@ -469,16 +469,17 @@ def OpenSmoothEmbedding.transfer : OneJetBundle IX X IY Y → OneJetBundle IM M 
   OneJetBundle.map IY IN φ ψ fun x ↦ (φ.fderiv x).symm
 
 theorem OpenSmoothEmbedding.smooth_transfer :
-    Smooth ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN))
+    ContMDiff ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) ⊤
       (φ.transfer ψ) := by
   intro x
-  refine SmoothAt.oneJetBundle_map (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
-    (ψ.smooth_to.smoothAt.comp _ smootcontMDiff_to?_ smoothAt_id
-  have'contMDiff_to
+  refine ContMDiffAt.oneJetBundle_map (φ.contMDiff_to.contMDiffAt.comp _ contMDiffAt_snd)
+     (ψ.contMDiff_to.contMDiffAt.comp _ contMDiffAt_snd) ?_ contMDiffAt_id
+
+  have' :=
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
-      ((φ.smoothAt_inv <| _).comp (x, φ x.1.1) smoothAt_snd)
-      (φ.smooth_to.smoothAt.comp x (smooth_oneJetBundle_proj.fst x)) le_top
-  · simp_contMDiff_tot_inv] at this; exact this
+      ((φ.contMDiffAt_inv <| _).comp (x, φ x.1.1) contMDiffAt_snd)
+      (φ.contMDiff_to.contMDiffAt.comp x (contMDiff_oneJetBundle_proj.fst x)) le_top
+  · simp [contMDiffOn_inv] at this; exact this
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
@@ -559,11 +560,11 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     have : ∀ x, mfderiv IN IY ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
       fun x ↦ mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self x))
     simp only [this]
-    refine Smooth.oneJet_comp IN (fun x' ↦ F.bs (φ x')) ?_ ?_
-    · exact fun x ↦ (ψ.smoothAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
-        (F.smooth_bs.comp φ.smooth_to).contMDiffAt
-    · exact Smooth.oneJet_cocontMDiff_toF.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
-contMDiff_tocontMDiff_to
+    refine ContMDiff.oneJet_comp IN (fun x' ↦ F.bs (φ x')) ?_ ?_
+    · exact fun x ↦ (ψ.contMDiffAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
+        (F.smooth_bs.comp φ.contMDiff_to).contMDiffAt
+    · exact ContMDiff.oneJet_comp IM φ (F.smooth_eta.comp φ.contMDiff_to) φ.contMDiff_to.oneJetExt
+
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
   rw [OneJetSec.coe_apply, OneJetSec.localize_bs, OneJetSec.localize_ϕ,
@@ -596,10 +597,10 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
       (ψ.fderiv (ψ.invFun (F.bs (φ x)))).symm.toContinuousLinearMap.comp
         ((mfderiv IM IN F.bs (φ x)).comp (φ.fderiv x).toContinuousLinearMap) := by
     have h1 : MDifferentiableAt IN IY ψ.invFun (F.bs (φ x)) :=
-      (ψ.smoothAt_inv <| hF <| mem_range_self _).mdifferentiableAt
-    have h2 : MDifferentiableAt IM IN F.bs (φ x) := F.smooth_bs.mdifferentiableAt
-    have h3 : MDifferentiableAt IX IM φ x := φ.smooth_to.mdifferentiableAt
-    rw [mfderiv_comp x h1 (h2.comp x h3), mfdercontMDiff_to h2 h3, ←
+      (ψ.contMDiffAt_inv <| hF <| mem_range_self _).mdifferentiableAt (by simp)
+    have h2 : MDifferentiableAt IM IN F.bs (φ x) := F.smooth_bs.mdifferentiableAt (by simp)
+    have h3 : MDifferentiableAt IX IM φ x := φ.contMDiff_to.mdifferentiableAt (by simp)
+    rw [mfderiv_comp x h1 (h2.comp x h3), mfderiv_comp x h2 h3, ←
       ψ.fderiv_symm_coe' (hF <| mem_range_self _)]
     rfl
   simp_rw [OneJetSec.IsHolonomicAt]
@@ -619,8 +620,8 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   left_inv' {σ} := by
     rw [OpenSmoothEmbedding.transfer,
       OneJetBundle.map_map ψ.smoothAt_inv'.mdifferentiableAt
-        ψ.smooth_to.smoothAt.mdifferentiableAt]
-    conv_rcontMDiff_to[← OneJetBundle.map_id σ]
+        ψ.contMDiff_to.contMDiffAt.mdifferentiableAt]
+    conv_rhs => rw [← OneJetBundle.map_id σ]
     congr 1
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
@@ -628,18 +629,18 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
       convert (φ.fderiv x).symm_apply_apply v
       erw [φ.left_inv]; rfl
   isOpen_range := φ.isOpen_range_transfer ψ
-  smooth_to := φ.smooth_transfer ψ
-  smooth_inv := by
+  contMDiff_to := φ.smooth_transfer ψ
+  contMDiffOn_inv := by
     rintro _ ⟨x, rfl⟩
-    refine (SmoothAt.oneJetBundle_map ?_ ?_ ?_ smoothAt_id).smoothWithinAt
+    refine (ContMDiffAt.oneJetBundle_map ?_ ?_ ?_ smoothAt_id).smoothWithinAt
     · refine (φ.smoothAt_inv ?_).comp (φ.transfer ψ x, (φ.transfer ψ x).proj.1) smoothAt_snd
       exact mem_range_self _
     · refine (ψ.smoothAt_inv ?_).comp (φ.transfer ψ x, (φ.transfer ψ x).proj.2) smoothAt_snd
       exact mem_range_self _
     have' :=
       ContMDiffAt.mfderiv (fun _ ↦ φ) (fun x : OneJetBundle IM M IN N ↦ φ.invFun x.1.1)
-        (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
-        ((φ.smoothAt_inv _).comp _ (smooth_oneJetBundle_proj.fst (φ.transfer ψ x))) le_top
+        (φ.contMDiff_to.smoothAt.comp _ smoothAt_snd)
+        ((φ.contMDiffAt_to_inv _).comp _ (smooth_oneJetBundle_proj.fst (φ.transfer ψ x))) le_top
     · dsimp only [id]
       refine this.congr_of_eventuallyEq ?_
       refine Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) ?_
@@ -675,9 +676,9 @@ def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsComp
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) :
     HtpyOneJetSec IM M IN N := by
   refine FamilyOneJetSec.mk' (fun t ↦ JΘ F (G t)) (fun t ↦ φ.Jupdate_aux ψ F (G t)) ?_
-  refine φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed ?_ ?_ smooth_snd fun x ↦ hFG x.1
-  · exact F.smooth.comp smooth_snd
-  · exact G.smooth.comp (smooth_fst.prod_map smooth_id)
+  refine φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed ?_ ?_ contMDiff_snd fun x ↦ hFG x.1
+  · exact F.smooth.comp contMDiff_snd
+  · exact G.smooth.comp (contMDiff_fst.prod_map contMDiff_id)
 
 theorem Jupdate_apply {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :
