@@ -28,9 +28,8 @@ structure OpenSmoothEmbedding where
   invFun : M' → M
   left_inv' : ∀ {x}, invFun (toFun x) = x
   isOpen_range : IsOpen (range toFun)
-  -- TODO-port rename these!
-  smooth_to : ContMDiff I I' ⊤ toFun
-  smooth_inv : ContMDiffOn I' I ⊤ invFun (range toFun)
+  contMDiff_to : ContMDiff I I' ⊤ toFun
+  contMDiffOn_inv : ContMDiffOn I' I ⊤ invFun (range toFun)
 
 attribute [coe] OpenSmoothEmbedding.toFun
 
@@ -61,7 +60,7 @@ theorem right_inv {y : M'} (hy : y ∈ range f) : f (f.invFun y) = y := by
   rw [f.left_inv]
 
 theorem contMDiffAt_inv {y : M'} (hy : y ∈ range f) : ContMDiffAt I' I ⊤ f.invFun y :=
-  (f.smooth_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
+  (f.contMDiffOn_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
 
 theorem contMDiff_inv' {x : M} : ContMDiffAt I' I ⊤ f.invFun (f x) :=
   f.contMDiffAt_inv <| mem_range_self x
@@ -73,10 +72,10 @@ theorem injective : Function.Injective f :=
   f.leftInverse.injective
 
 protected theorem continuous : Continuous f :=
-  f.smooth_to.continuous
+  f.contMDiff_to.continuous
 
 theorem isOpenMap : IsOpenMap f :=
-  f.leftInverse.isOpenMap f.isOpen_range f.smooth_inv.continuousOn
+  f.leftInverse.isOpenMap f.isOpen_range f.contMDiffOn_inv.continuousOn
 
 theorem coe_comp_invFun_eventuallyEq (x : M) : f ∘ f.invFun =ᶠ[𝓝 (f x)] id :=
   Filter.eventually_of_mem (f.isOpenMap.range_mem_nhds x) fun _ hy ↦ f.right_inv hy
@@ -89,7 +88,7 @@ variable [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
 def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
-    ((f.smooth_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
+    ((f.contMDiffOn_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       (f.isOpenMap.range_mem_nhds x)
   have h₂ : MDifferentiableAt I I' f x := sorry -- TODO-MR fix, easy f.smooth_to.contMDiff.mdifferentiable le_top _
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
@@ -130,7 +129,7 @@ end
 open Filter Topology
 
 theorem isOpenEmbedding : IsOpenEmbedding f :=
-  isOpenEmbedding_of_continuous_injective_open f.continuous f.injective f.isOpenMap
+  .of_continuous_injective_isOpenMap f.continuous f.injective f.isOpenMap
 
 theorem isInducing : IsInducing f :=
   f.isOpenEmbedding.toIsInducing
@@ -184,8 +183,8 @@ nonrec def id : OpenSmoothEmbedding I M I M where
   invFun := id
   left_inv' := rfl
   isOpen_range := IsOpenMap.id.isOpen_range
-  smooth_to := contMDiff_id
-  smooth_inv := contMDiffOn_id
+  contMDiff_to := contMDiff_id
+  contMDiffOn_inv := contMDiffOn_id
 
 variable {I M}
 
@@ -222,8 +221,8 @@ def toOpenSmoothEmbedding : OpenSmoothEmbedding 𝓘(𝕜, E) E 𝓘(𝕜, E') E
   invFun := e.symm
   left_inv' {x} := e.symm_apply_apply x
   isOpen_range := e.isOpenMap.isOpen_range
-  smooth_to := (e : E →L[𝕜] E').contMDiff
-  smooth_inv := (e.symm : E' →L[𝕜] E).contMDiff.contMDiffOn
+  contMDiff_to := (e : E →L[𝕜] E').contMDiff
+  contMDiffOn_inv := (e.symm : E' →L[𝕜] E).contMDiff.contMDiffOn
 
 end ContinuousLinearEquiv
 
@@ -267,11 +266,11 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
       rw [extChartAt, PartialHomeomorph.extend_target']
       exact hf₄
-  smooth_to := by
+  contMDiff_to := by
     refine (contMDiffOn_extChartAt_symm x).comp_contMDiff hf₂.contMDiff fun y ↦ ?_
     rw [extChartAt, PartialHomeomorph.extend_target']
     exact hf₄ (mem_range_self y)
-  smooth_inv := by
+  contMDiffOn_inv := by
     rw [← PartialHomeomorph.extend_target'] at hf₄
     have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target := by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
@@ -439,8 +438,8 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
     fun hm ↦ if_pos hm
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
-      (contMDiffOn_congr h₄).mpr <| ψ.smooth_to.comp_contMDiffOn <| hg.comp_contMDiffOn
-        (contMDiffOn_id.prod_mk <| φ.smooth_inv.comp hk.contMDiffOn Subset.rfl)⟩
+      (contMDiffOn_congr h₄).mpr <| ψ.contMDiff_to.comp_contMDiffOn <| hg.comp_contMDiffOn
+        (contMDiffOn_id.prod_mk <| φ.contMDiffOn_inv.comp hk.contMDiffOn Subset.rfl)⟩
   · sorry -- TODO-MR
     /- refine
       ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp ((contMDiffOn_id (n := ⊤)).prod_mk hk)).contMDiffOn⟩
@@ -467,7 +466,7 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
     refine Metric.isCompact_of_isClosed_isBounded Metric.isClosed_cthickening
         (Bornology.IsBounded.cthickening <| IsCompact.isBounded <| ?_)
     apply (hKP.prod hK).image
-    exact ψ.smooth_inv.continuousOn.comp_continuous
+    exact ψ.contMDiffOn_inv.continuousOn.comp_continuous
       (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q ↦
       hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
