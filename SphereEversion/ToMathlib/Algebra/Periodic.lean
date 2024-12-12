@@ -124,7 +124,7 @@ theorem isClosed_int : IsClosed (range ((↑) : ℤ → ℝ)) :=
 
 instance : T2Space 𝕊₁ := by
   have πcont : Continuous π := continuous_quotient_mk'
-  rw [t2Space_iff_of_continuous_surjective_open πcont Quotient.surjective_Quotient_mk'' isOpenMap_proj𝕊₁]
+  rw [t2Space_iff_of_continuous_surjective_open πcont Quotient.mk''_surjective isOpenMap_proj𝕊₁]
   have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k} := by
     ext ⟨a, b⟩
     exact Quotient.eq''.trans transOne_rel_iff

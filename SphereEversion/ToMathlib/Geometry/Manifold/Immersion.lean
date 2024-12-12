@@ -53,12 +53,12 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 section Definition
 
 /-- A `C^n` immersion `f : M → M` is a `C^n` map whose differential is injective at every point. -/
-structure Immersion (f : M → M') (n : ℕ∞) : Prop :=
+structure Immersion (f : M → M') (n : ℕ∞) : Prop where
   contMDiff : ContMDiff I I' n f
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
 /-- An injective `C^n` immersion -/
-structure InjImmersion (f : M → M') (n : ℕ∞) extends Immersion I I' f n : Prop :=
+structure InjImmersion (f : M → M') (n : ℕ∞) extends Immersion I I' f n : Prop where
   injective : Injective f
 
 end Definition
