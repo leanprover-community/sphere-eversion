@@ -513,7 +513,7 @@ theorem exists_subset_iUnion_interior_of_isOpen (hs : IsOpen s) (uo : ∀ i, IsO
     intro x hx
     have hxs : x ∈ s := us i (closure_mono this hx)
     have : (⟨x, hxs⟩ : s) ∈ closure (v i) := by
-      rw [IsEmbedding.subtypeVal.closure_eq_preimage_closure_image (v i)]; exact hx
+      rw [Topology.IsEmbedding.subtypeVal.closure_eq_preimage_closure_image (v i)]; exact hx
     exact hv i this
 
 end ShrinkingLemma

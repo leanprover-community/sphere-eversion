@@ -45,7 +45,7 @@ theorem coe_mk (f : ℝ → ℝ) {eqv} : ((⟨f, eqv⟩ : EquivariantMap) : ℝ 
   rfl
 
 protected theorem surjective (h : Continuous φ) : Surjective φ := by
-  rw [← range_iff_surjective, eq_univ_iff_forall]
+  rw [← range_eq_univ, eq_univ_iff_forall]
   exact fun y =>
     mem_range_of_exists_le_of_exists_ge h (φ.not_bounded_below y) (φ.not_bounded_above y)
 

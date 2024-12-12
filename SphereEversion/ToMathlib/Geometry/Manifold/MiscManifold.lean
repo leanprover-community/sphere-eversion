@@ -40,12 +40,13 @@ theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prod_mk h.2⟩
 
 theorem smooth_prod {f : M → M' × N'} :
-    Smooth I (I'.prod J') f ↔ (Smooth I I' fun x ↦ (f x).1) ∧ Smooth I J' fun x ↦ (f x).2 :=
+    ContMDiff I (I'.prod J') (⊤: ℕ∞) f ↔
+      (ContMDiff I I' ⊤ fun x ↦ (f x).1) ∧ ContMDiff I J' ⊤ fun x ↦ (f x).2 :=
   contMDiff_prod
 
 theorem smoothAt_prod {f : M → M' × N'} {x : M} :
-    SmoothAt I (I'.prod J') f x ↔
-      SmoothAt I I' (fun x ↦ (f x).1) x ∧ SmoothAt I J' (fun x ↦ (f x).2) x :=
+    ContMDiffAt I (I'.prod J') (⊤: ℕ∞) f x ↔
+      ContMDiffAt I I' ⊤ (fun x ↦ (f x).1) x ∧ ContMDiffAt I J' ⊤ (fun x ↦ (f x).2) x :=
   contMDiffAt_prod
 
 end SmoothManifoldWithCorners

@@ -65,7 +65,7 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [Topo
 @[inherit_doc] local notation "𝓘" => IndexType
 
 theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U : IndexType N → Set X}
-    (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ i : IndexType N, ∀ x : X, Germ (𝓝 x) Y → Prop)
+    (P₀ : ∀ x : X, Germ (𝓝 x) Y → Prop) (P₁ : ∀ _i : IndexType N, ∀ x : X, Germ (𝓝 x) Y → Prop)
     (P₂ : IndexType N → (X → Y) → Prop) (U_fin : LocallyFinite U)
     (init : ∃ f : X → Y, (∀ x, P₀ x f) ∧ P₂ 0 f)
     (ind : ∀ (i : IndexType N) (f : X → Y), (∀ x, P₀ x f) → P₂ i f → (∀ j < i, ∀ x, P₁ j x f) →
