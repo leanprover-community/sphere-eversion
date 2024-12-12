@@ -473,12 +473,12 @@ theorem OpenSmoothEmbedding.smooth_transfer :
       (φ.transfer ψ) := by
   intro x
   refine SmoothAt.oneJetBundle_map (φ.smooth_to.smoothAt.comp _ smoothAt_snd)
-    (ψ.smooth_to.smoothAt.comp _ smoothAt_snd) ?_ smoothAt_id
-  have' :=
+    (ψ.smooth_to.smoothAt.comp _ smootcontMDiff_to?_ smoothAt_id
+  have'contMDiff_to
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.smoothAt_inv <| _).comp (x, φ x.1.1) smoothAt_snd)
       (φ.smooth_to.smoothAt.comp x (smooth_oneJetBundle_proj.fst x)) le_top
-  · simp_rw [φ.left_inv] at this; exact this
+  · simp_contMDiff_tot_inv] at this; exact this
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
@@ -562,8 +562,8 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     refine Smooth.oneJet_comp IN (fun x' ↦ F.bs (φ x')) ?_ ?_
     · exact fun x ↦ (ψ.smoothAt_inv <| hF <| mem_range_self x).oneJetExt.comp _
         (F.smooth_bs.comp φ.smooth_to).contMDiffAt
-    · exact Smooth.oneJet_comp IM φ (F.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
-
+    · exact Smooth.oneJet_cocontMDiff_toF.smooth_eta.comp φ.smooth_to) φ.smooth_to.oneJetExt
+contMDiff_tocontMDiff_to
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
   rw [OneJetSec.coe_apply, OneJetSec.localize_bs, OneJetSec.localize_ϕ,
@@ -599,7 +599,7 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
       (ψ.smoothAt_inv <| hF <| mem_range_self _).mdifferentiableAt
     have h2 : MDifferentiableAt IM IN F.bs (φ x) := F.smooth_bs.mdifferentiableAt
     have h3 : MDifferentiableAt IX IM φ x := φ.smooth_to.mdifferentiableAt
-    rw [mfderiv_comp x h1 (h2.comp x h3), mfderiv_comp x h2 h3, ←
+    rw [mfderiv_comp x h1 (h2.comp x h3), mfdercontMDiff_to h2 h3, ←
       ψ.fderiv_symm_coe' (hF <| mem_range_self _)]
     rfl
   simp_rw [OneJetSec.IsHolonomicAt]
@@ -620,7 +620,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
     rw [OpenSmoothEmbedding.transfer,
       OneJetBundle.map_map ψ.smoothAt_inv'.mdifferentiableAt
         ψ.smooth_to.smoothAt.mdifferentiableAt]
-    conv_rhs => rw [← OneJetBundle.map_id σ]
+    conv_rcontMDiff_to[← OneJetBundle.map_id σ]
     congr 1
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
