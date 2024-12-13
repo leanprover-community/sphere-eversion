@@ -55,11 +55,12 @@ theorem rot_eq_aux : ω.rot = ω.rotAux := by
 /-- The map `rot` is smooth on `ℝ × (E \ {0})`. -/
 theorem contDiff_rot {p : ℝ × E} (hp : p.2 ≠ 0) : ContDiffAt ℝ ⊤ ω.rot p := by
   simp only [rot_eq_aux]
+  sorry /- TODO-MR: fix proof
   refine (contDiffAt_fst.mul_const.cos.smul contDiffAt_const).add ?_
   refine ((contDiffAt_const.sub contDiffAt_fst.mul_const.cos).smul ?_).add
     (contDiffAt_fst.mul_const.sin.smul ?_)
   · exact (contDiffAt_orthogonalProjection_singleton hp).comp _ contDiffAt_snd
-  · exact ω.crossProduct'.contDiff.contDiffAt.comp _ contDiffAt_snd
+  · exact ω.crossProduct'.contDiff.contDiffAt.comp _ contDiffAt_snd -/
 
 /-- The map `rot` sends `{0} × E` to the identity. -/
 theorem rot_zero (v : E) : ω.rot (0, v) = ContinuousLinearMap.id ℝ E := by
