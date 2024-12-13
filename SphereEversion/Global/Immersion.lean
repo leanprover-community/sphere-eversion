@@ -13,6 +13,8 @@ open Metric Module Set Function LinearMap Filter ContinuousLinearMap
 
 open scoped Manifold Topology
 
+local notation "∞" => (⊤ : ℕ∞)
+
 section General
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -161,7 +163,7 @@ variable (ω : Orientation ℝ E (Fin 3))
 
 -- this result holds mutatis mutandis in `ℝ^n`
 theorem smooth_bs :
-    Smooth (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E)
+    ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞
       fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
   refine (ContMDiff.smul ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
@@ -174,11 +176,11 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
       (fun p : ℝ × 𝕊² ↦ ω.rot (p.1, p.2))
       (by
         intro p
-        have : SmoothAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ω.rot (p.1, p.2) := by
-          refine (ω.contDiff_rot ?_).contMDiffAt
+        have : ContMDiffAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ∞ ω.rot (p.1, p.2) := by
+          refine ((ω.contDiff_rot ?_).of_le le_top).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
-        refine this.comp p (Smooth.smoothAt ?_)
-        exact smooth_fst.prod_mk_space (contMDiff_coe_sphere.comp smooth_snd))
+        apply this.comp p (f := fun (p : ℝ × sphere 0 1) ↦ (p.1, (p.2 : E)))
+        apply contMDiff_fst.prod_mk_space (contMDiff_coe_sphere.comp contMDiff_snd))
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def formalEversionAux2 : HtpyFormalSol 𝓡_imm :=
@@ -285,21 +287,21 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
-lemma Smooth.inr (x : M) :
-    Smooth I' (I.prod I') fun p : M' ↦ (⟨x, p⟩ : M × M') := by
-  rw [smooth_prod_iff]
-  exact ⟨smooth_const, smooth_id⟩
+lemma ContMDiff.inr {n : ℕ∞} (x : M) :
+    ContMDiff I' (I.prod I') n fun p : M' ↦ (⟨x, p⟩ : M × M') := by
+  rw [contMDiff_prod_iff]
+  exact ⟨contMDiff_const, contMDiff_id⟩
 
 -- xxx: is one better than the other?
-alias Smooth.prod_left := Smooth.inr
+alias ContMDiff.prod_left := ContMDiff.inr
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
-theorem Smooth.uncurry_left
-    {f : M → M' → P} (hf : Smooth (I.prod I') IP ↿f) (x : M) :
-    Smooth I' IP (f x) := by
+theorem ContMDiff.uncurry_left {n : ℕ∞}
+    {f : M → M' → P} (hf : ContMDiff (I.prod I') IP n ↿f) (x : M) :
+    ContMDiff I' IP n (f x) := by
   have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
-  -- or just `apply hf.comp (Smooth.inr I I' x)`
-  rw [this]; exact hf.comp (Smooth.inr I I' x)
+  -- or just `apply hf.comp (ContMDiff.inr I I' x)`
+  rw [this]; exact hf.comp (ContMDiff.inr I I' x)
 
 end helper
 
@@ -335,7 +337,7 @@ theorem sphere_eversion :
     rw [this (1, x) (by simp)]
     convert formalEversion_one E ω x
   · exact fun t ↦ {
-      contMDiff := Smooth.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) h₁ t
+      contMDiff := ContMDiff.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) h₁ t
       diff_injective := h₅ t
     }
 

@@ -148,7 +148,7 @@ theorem smooth_b (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.b 𝓕)
   (ContinuousLinearMap.apply ℝ F L.v).contDiff.comp 𝓕.φ_diff
 
 theorem smooth_g (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.g 𝓕) :=
-  (ContinuousLinearMap.apply ℝ F L.v).contDiff.comp (contDiff_top_iff_fderiv.mp 𝓕.f_diff).2
+  (ContinuousLinearMap.apply ℝ F L.v).contDiff.comp (contDiff_infty_iff_fderiv.mp 𝓕.f_diff).2
 
 theorem Accepts.rel {L : StepLandscape E} {𝓕 : JetSec E F} (h : L.Accepts R 𝓕) :
     ∀ᶠ x : E near L.K, (L.g 𝓕) x = (L.b 𝓕) x := by
@@ -187,7 +187,7 @@ theorem loop_smooth' (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R
 
 theorem loop_C1 (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) :
     ∀ t, 𝒞 1 ↿(L.loop h t) := fun _ ↦
-  (L.loop_smooth' h contDiff_const contDiff_snd contDiff_fst).of_le le_top
+  (L.loop_smooth' h contDiff_const contDiff_snd contDiff_fst).of_le (mod_cast le_top)
 
 variable (L : StepLandscape E)
 
@@ -228,15 +228,15 @@ def improveStep {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ) : HtpyJetS
       (smoothStep t * L.ρ x) • corrugation.remainder L.p.π N (L.loop h 1) x
   φ_diff := by
     apply ContDiff.add
-    apply L.p.smooth_update
-    apply 𝓕.φ_diff.snd'
-    apply L.loop_smooth'
-    exact smoothStep.smooth.fst'.mul L.ρ_smooth.snd'
-    apply contDiff_const.mul L.π.contDiff.snd'
-    exact contDiff_snd
-    apply ContDiff.smul
-    exact smoothStep.smooth.fst'.mul L.ρ_smooth.snd'
-    exact Remainder.smooth _ _ (L.loop_smooth h) contDiff_snd contDiff_const
+    · apply L.p.smooth_update
+      · exact 𝓕.φ_diff.snd'
+      apply L.loop_smooth'
+      · exact smoothStep.smooth.fst'.mul L.ρ_smooth.snd'
+      · apply contDiff_const.mul L.π.contDiff.snd'
+      · exact contDiff_snd
+    · apply ContDiff.smul
+      · exact smoothStep.smooth.fst'.mul L.ρ_smooth.snd'
+      · exact Remainder.smooth _ _ (L.loop_smooth h) contDiff_snd contDiff_const
 
 variable {L}
 variable {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ)
@@ -325,22 +325,24 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x t, ‖(L.improveStep h N t).f x - 𝓕.f x‖ ≤ ε := by
   set γ := L.loop h
   have γ_cont : Continuous ↿fun t x ↦ γ t x := (L.nice h).smooth.continuous
-  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
+  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le
+    (mod_cast le_top)
   apply
     ((corrugation.c0_small_on _ L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and <|
         remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono
-  rintro N ⟨H, _⟩ x t
-  by_cases hx : x ∈ L.K₁
-  · rw [improveStep_apply_f h]
-    suffices ‖(smoothStep t * L.ρ x) • corrugation L.π N (L.loop h t) x‖ ≤ ε by simpa
-    exact (bu_lt _ _ <| H _ hx t).le
-  · rw [show (L.improveStep h N t).f x = 𝓕.f x from
-        congr_arg Prod.fst (improveStep_rel_compl_K₁ h N hx t)]
-    simp [ε_pos.le]
+  · rintro N ⟨H, _⟩ x t
+    by_cases hx : x ∈ L.K₁
+    · rw [improveStep_apply_f h]
+      suffices ‖(smoothStep t * L.ρ x) • corrugation L.π N (L.loop h t) x‖ ≤ ε by simpa
+      exact (bu_lt _ _ <| H _ hx t).le
+    · rw [show (L.improveStep h N t).f x = 𝓕.f x from
+          congr_arg Prod.fst (improveStep_rel_compl_K₁ h N hx t)]
+      simp [ε_pos.le]
 
 theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.p.spanV ⊔ L.E') x := by
-  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
+  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le
+    (mod_cast le_top)
   let 𝓕' : JetSec E F :=
     { f := fun x ↦ 𝓕.f x + corrugation L.π N (L.loop h 1) x
       f_diff := 𝓕.f_diff.add (corrugation.contDiff' _ _ (L.loop_smooth h) contDiff_id contDiff_const)
@@ -361,7 +363,7 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     intro x hx
     simp [𝓕', improveStep_apply h, hx]
   have fderiv_𝓕' := fun x ↦
-    fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le le_top) L.p ((L.nice h).avg x)
+    fderiv_corrugated_map N hN γ_C1 (𝓕.f_diff.of_le (mod_cast le_top)) L.p ((L.nice h).avg x)
   rw [eventually_congr (H.isPartHolonomicAt_congr (L.p.spanV ⊔ L.E'))]
   apply h.hK₀.mono
   intro x hx
@@ -370,20 +372,21 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     rcases Submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul]
     apply congr_arg
-    unfold_let 𝓕'
+    unfold 𝓕'
     erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_v, ContinuousLinearMap.add_apply,
          L.p.update_v]
     rfl
   · intro u hu
     have hu_ker := L.hEp hu
-    unfold_let 𝓕'
+    unfold 𝓕'
     erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker,
       ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker, hx u hu]
 
 theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).IsFormalSol R := by
   set γ := L.loop h
   have γ_cont : Continuous ↿fun t x ↦ γ t x := (L.nice h).smooth.continuous
-  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le le_top
+  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le
+    (mod_cast le_top)
   set K :=
     (fun p : E × ℝ × ℝ ↦ (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
       L.K₁ ×ˢ I ×ˢ I
@@ -401,25 +404,25 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
   apply
     ((corrugation.c0_small_on _ L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and <|
         remainder_c0_small_on L.π L.hK₁ γ_C1 ε_pos).mono
-  rintro N ⟨H, H'⟩ t x
-  by_cases hxK₁ : x ∈ L.K₁
-  · apply hε
-    rw [Metric.mem_thickening_iff]
-    refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), ?_, ?_⟩
-    · exact ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
-        ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩,
-         by simp only [Loop.fract_eq]⟩
-    · simp only [h, improveStep_apply_f, FormalSol.toJetSec_eq_coe, improveStep_apply_φ]
-      rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
-      refine ⟨by simpa using ε_pos, ?_, ?_⟩ <;> dsimp only <;> rw [dist_self_add_left]
-      · exact bu_lt _ _ <| H _ hxK₁ _
-      -- adaptation note(2024-03-28): `exact` used to work; started failing after mathlib bump
-      · apply bu_lt _ _ <| H' _ hxK₁
-  · rw [show ((L.improveStep h N) t).f x = 𝓕.f x from
-        congr_arg Prod.fst <| improveStep_rel_compl_K₁ h N hxK₁ t,
-      show ((L.improveStep h N) t).φ x = 𝓕.φ x from
-        congr_arg Prod.snd <| improveStep_rel_compl_K₁ h N hxK₁ t]
-    exact 𝓕.is_sol _
+  · rintro N ⟨H, H'⟩ t x
+    by_cases hxK₁ : x ∈ L.K₁
+    · apply hε
+      rw [Metric.mem_thickening_iff]
+      refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), ?_, ?_⟩
+      · exact ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
+          ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩,
+          by simp only [Loop.fract_eq]⟩
+      · simp only [h, improveStep_apply_f, FormalSol.toJetSec_eq_coe, improveStep_apply_φ]
+        rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
+        refine ⟨by simpa using ε_pos, ?_, ?_⟩ <;> dsimp only <;> rw [dist_self_add_left]
+        · exact bu_lt _ _ <| H _ hxK₁ _
+        -- adaptation note(2024-03-28): `exact` used to work; started failing after mathlib bump
+        · apply bu_lt _ _ <| H' _ hxK₁
+    · rw [show ((L.improveStep h N) t).f x = 𝓕.f x from
+          congr_arg Prod.fst <| improveStep_rel_compl_K₁ h N hxK₁ t,
+        show ((L.improveStep h N) t).φ x = 𝓕.φ x from
+          congr_arg Prod.snd <| improveStep_rel_compl_K₁ h N hxK₁ t]
+      exact 𝓕.is_sol _
 
 end StepLandscape
 
@@ -506,13 +509,13 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       rfl
     refine ⟨H.comp (S.improveStep acc N) glue, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · apply (H.comp_le_0 _ _).mono
-      intro t ht
-      rw [ht]
-      exact hH₀.self_of_nhdsSet 0 right_mem_Iic
+      · intro t ht
+        rw [ht]
+        exact hH₀.self_of_nhdsSet 0 right_mem_Iic
     -- t = 0
     · apply (H.comp_ge_1 _ _).mono
-      intro t ht
-      rw [ht, H.comp_1]
+      · intro t ht
+        rw [ht, H.comp_1]
     · -- rel C
       apply (hHC.and <| hH₁_rel_C.and <| improveStep_rel_C acc N).mono
       rintro x ⟨hx, hx', hx''⟩ t
