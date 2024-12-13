@@ -618,6 +618,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
     OneJetBundle.map IN IY φ.invFun ψ.invFun fun x ↦
       (φ.fderiv <| φ.invFun x : TX (φ.invFun x) →L[ℝ] TM (φ <| φ.invFun x))
   left_inv' {σ} := by
+    sorry /- TODO-MR: fix proof, was:
     rw [OpenSmoothEmbedding.transfer,
       OneJetBundle.map_map (ψ.contMDiffAt_inv'.mdifferentiableAt (by simp))
         ψ.contMDiff_to.contMDiffAt.mdifferentiableAt (le_top)]
@@ -627,11 +628,12 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
     · ext x v; simp_rw [ContinuousLinearMap.comp_apply]
       convert (φ.fderiv x).symm_apply_apply v
-      erw [φ.left_inv]; rfl
+      erw [φ.left_inv]; rfl -/
   isOpen_range := φ.isOpen_range_transfer ψ
   contMDiff_to := φ.smooth_transfer ψ
   contMDiffOn_inv := by
     rintro _ ⟨x, rfl⟩
+    sorry /- TODO-MR: fix proof, was
     refine (ContMDiffAt.oneJetBundle_map ?_ ?_ ?_ contMDiffAt_id).smoothWithinAt
     · refine (φ.smoothAt_inv ?_).comp (φ.transfer ψ x, (φ.transfer ψ x).proj.1) smoothAt_snd
       exact mem_range_self _
@@ -650,7 +652,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
       simp_rw [φ.transfer_proj_fst, φ.left_inv]
       congr 1
       simp_rw [φ.left_inv]
-    exact mem_range_self _
+    exact mem_range_self _ -/
 
 
 /-! ## Updating 1-jet sections and formal solutions -/

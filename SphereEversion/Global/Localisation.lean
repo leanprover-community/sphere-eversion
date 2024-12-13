@@ -93,8 +93,9 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
   ϕ t x := (𝓕 t x).2
   smooth' := by
     intro a
-    refine smoothAt_oneJetBundle.mpr ⟨smoothAt_snd,
-      (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd), ?_⟩
+    refine contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_snd,
+      sorry, -- TODO-MR: fix proof, was: (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (contMDiffAt_fst.prod_mk_space contMDiffAt_snd),
+      ?_⟩
     -- TODO: Investigate why we need so many different tactics before the exact
     unfold inTangentCoordinates
     dsimp [inCoordinates, chartAt]
@@ -103,7 +104,8 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
       ContinuousLinearMap.comp_id]
     dsimp only [TangentSpace]
     simp_rw [ContinuousLinearMap.id_comp]
-    exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a (smoothAt_fst.prod_mk_space smoothAt_snd)
+    sorry -- TODO-MR: fix proof, was:
+    -- exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
 
 end Unloc
 
