@@ -93,19 +93,19 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
   ϕ t x := (𝓕 t x).2
   smooth' := by
     intro a
-    refine contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_snd,
-      sorry, -- TODO-MR: fix proof, was: (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a (contMDiffAt_fst.prod_mk_space contMDiffAt_snd),
-      ?_⟩
-    -- TODO: Investigate why we need so many different tactics before the exact
-    unfold inTangentCoordinates
-    dsimp [inCoordinates, chartAt]
-    simp  [range_id, fderivWithin_univ, fderiv_id, TangentBundle.symmL_model_space,
-      TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
-      ContinuousLinearMap.comp_id]
-    dsimp only [TangentSpace]
-    simp_rw [ContinuousLinearMap.id_comp]
-    sorry -- TODO-MR: fix proof, was:
-    -- exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
+    refine contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_snd, ?_, ?_⟩
+    · apply (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a
+        (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
+    · -- TODO: Investigate why we need so many different tactics before the apply
+      unfold inTangentCoordinates
+      dsimp [inCoordinates, chartAt]
+      simp only [TangentBundle.trivializationAt_baseSet, PartialHomeomorph.refl_partialEquiv,
+        PartialEquiv.refl_source, PartialHomeomorph.singletonChartedSpace_chartAt_eq, mem_univ,
+        VectorBundleCore.trivializationAt_continuousLinearMapAt, tangentBundleCore_indexAt,
+        TangentBundle.coordChange_model_space, one_def, VectorBundleCore.trivializationAt_symmL,
+        comp_id]
+      apply (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a
+        (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
 
 end Unloc
 

@@ -224,17 +224,19 @@ theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : �
   induction' n with n ih generalizing F
   · rw [Nat.cast_zero, contDiff_zero] at *
     exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous hF hs
-  · have hF₁ : ContDiff ℝ 1 ↿F := sorry -- TODO-MR, was: hF.one_of_succex
-    have hs₁ : ContDiff ℝ 1 s := sorry -- TODO-MR, was: hs.one_of_succ
+  · have hF₁ : ContDiff ℝ 1 ↿F := hF.one_of_succ (n := n)
+    have hs₁ : ContDiff ℝ 1 s := hs.one_of_succ (n := n)
     have h :
       ∀ x,
         HasFDerivAt (fun x ↦ ∫ t in a..s x, F x t)
           ((∫ t in a..s x, fderiv ℝ (fun x' ↦ F x' t) x) + F x (s x) ⬝ fderiv ℝ s x) x :=
       fun x ↦ (hasFDerivAt_parametric_primitive_of_contDiff' hF₁ hs₁ x a).2
-    sorry /- TODO-MR: fix proof! rw [contDiff_succ_iff_fderiv_apply]
+    rw [show ((n + 1 : ℕ) : WithTop ℕ∞) = n + 1 by rfl] at hs ⊢
+    rw [contDiff_succ_iff_fderiv_apply]
     constructor
     · exact fun x₀ ↦ ⟨_, h x₀⟩
-    · intro x
+    · simp only [WithTop.natCast_ne_top, IsEmpty.forall_iff, true_and]
+      intro x
       rw [fderiv_eq h]
       apply ContDiff.add
       · simp only [ContinuousLinearMap.coe_coe]
@@ -245,8 +247,8 @@ theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : �
         convert ih hD hs.of_succ with x'
         refine ContinuousLinearMap.intervalIntegral_apply ?_ x
         exact (continuous_curry x' hD'.continuous).intervalIntegrable _ _
-      · exact ((contDiff_succ_iff_fderiv.mp hs).2.smulRight
-          (hF.of_succ.comp <| contDiff_id.prod hs.of_succ)).clm_apply contDiff_const -/
+      · exact ((contDiff_succ_iff_fderiv.mp hs).2.2.smulRight
+          (hF.of_succ.comp <| contDiff_id.prod hs.of_succ)).clm_apply contDiff_const
 
 end
 

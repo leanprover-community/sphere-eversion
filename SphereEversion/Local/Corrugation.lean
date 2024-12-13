@@ -186,10 +186,10 @@ theorem fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E �
   simp_rw [ContinuousLinearMap.add_apply, corrugation.fderiv_apply _ N hN hγ_diff, hfγ,
     DualPair.update, ContinuousLinearMap.add_apply, p.π.comp_toSpanSingleton_apply, add_assoc]
 
-local notation "∞" => (⊤ : ℕ∞)
+open scoped ContDiff
 
 theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {x : H → E} (hx : 𝒞 ∞ x)
-    {g : H → G} (hg : 𝒞 ⊤ g) : 𝒞 ∞ fun h ↦ R N (γ <| g h) <| x h := by
+    {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h ↦ R N (γ <| g h) <| x h := by
   apply ContDiff.const_smul
   apply contDiff_parametric_primitive_of_contDiff
   · let ψ : E → H × ℝ → F := fun x q ↦ (γ (g q.1) x).normalize q.2
@@ -197,9 +197,9 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
     refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
     dsimp [Loop.normalize]
     apply ContDiff.sub
-    · sorry -- TODO-MR fix, was: apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
-    · sorry -- TODO-MR fix, was: apply contDiff_average
-      -- exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
+    · apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
+    · apply contDiff_average
+      exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
   · exact contDiff_const.mul (π.contDiff.comp hx)
 
 set_option linter.style.multiGoal false in
