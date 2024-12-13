@@ -48,7 +48,7 @@ existence of delta mollifiers, partitions of unity, and the inverse function the
 noncomputable section
 
 open Set Function MeasureTheory Module intervalIntegral Filter
-open scoped Topology Manifold
+open scoped Topology Manifold ContDiff
 
 variable {E F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
@@ -89,9 +89,9 @@ variable [NormedAddCommGroup E] [NormedSpace ℝ E]
 /-- Given a smooth function `g : E → F` between normed vector spaces, a smooth surrounding family
 is a smooth family of loops `E → loop F`, `x ↦ γₓ` such that `γₓ` surrounds `g x` for all `x`. -/
 structure SmoothSurroundingFamily (g : E → F) where
-  smooth_surrounded : 𝒞 ⊤ g
+  smooth_surrounded : 𝒞 ∞ g
   toFun : E → Loop F
-  smooth : 𝒞 ⊤ ↿toFun
+  smooth : 𝒞 ∞ ↿toFun
   Surrounds : ∀ x, (toFun x).Surrounds <| g x
 
 namespace SmoothSurroundingFamily
@@ -132,12 +132,12 @@ def approxSurroundingPointsAt (n : ℕ) (i : ι) : F :=
 
 variable [FiniteDimensional ℝ E] [CompleteSpace F] in
 theorem approxSurroundingPointsAt_smooth (n : ℕ) :
-    𝒞 ⊤ fun y ↦ γ.approxSurroundingPointsAt x y n := by
+    𝒞 ∞ fun y ↦ γ.approxSurroundingPointsAt x y n := by
   refine contDiff_pi.mpr fun i ↦ ?_
-  suffices 𝒞 ⊤ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s by simpa [approxSurroundingPointsAt, Loop.mollify]
-  sorry /- TODO-MR: fix proof, was:
+  suffices 𝒞 ∞ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s
+    by simpa [approxSurroundingPointsAt, Loop.mollify]
   apply contDiff_parametric_integral_of_contDiff
-  exact ContDiff.smul deltaMollifier_smooth.snd' γ.smooth -/
+  exact ContDiff.smul deltaMollifier_smooth.snd' (γ.smooth.of_le le_top)
 
 variable [FiniteDimensional ℝ F]
 
@@ -264,11 +264,11 @@ theorem localCenteringDensity_smooth_on :
     let z : E → F × (ι → F) :=
       (Prod.map g fun y ↦ γ.approxSurroundingPointsAt x y (γ.localCenteringDensityMp x)) ∘
         fun x ↦ (x, x)
-    change ContDiffOn ℝ ⊤ ((w ∘ z) ∘ Prod.fst) (γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ))
+    change ContDiffOn ℝ ∞ ((w ∘ z) ∘ Prod.fst) (γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ))
     rw [prod_univ]
     refine ContDiffOn.comp ?_ contDiff_fst.contDiffOn Subset.rfl
-    have h₁ := smooth_barycentric ι ℝ F (Fintype.card_fin _)
-    have h₂ : 𝒞 ⊤ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
+    have h₁ := smooth_barycentric ι ℝ F (Fintype.card_fin _) (n := ∞)
+    have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
     refine (h₂.comp_contDiffOn h₁).comp ?_ ?_
     · have h₃ := (diag_preimage_prod_self (γ.localCenteringDensityNhd x)).symm.subset
       refine ContDiffOn.comp ?_ (contDiff_id.prod contDiff_id).contDiffOn h₃
@@ -276,7 +276,7 @@ theorem localCenteringDensity_smooth_on :
       exact γ.approxSurroundingPointsAt_smooth x _
     · intro y hy
       simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
-  · sorry -- TODO-MR: fix proof, was: exact deltaMollifier_smooth.comp contDiff_snd
+  · exact deltaMollifier_smooth.comp contDiff_snd
 
 variable [FiniteDimensional ℝ E] in
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :
@@ -386,7 +386,7 @@ def centeringDensity : E → ℝ → ℝ :=
   Classical.choose
     (exists_contDiff_of_convex₂ γ.isCenteringDensity_convex γ.exists_smooth_isCenteringDensity)
 
-theorem centeringDensity_smooth : 𝒞 ⊤ <| uncurry fun x t ↦ γ.centeringDensity x t :=
+theorem centeringDensity_smooth : 𝒞 ∞ <| uncurry fun x t ↦ γ.centeringDensity x t :=
   (Classical.choose_spec <|
       exists_contDiff_of_convex₂ γ.isCenteringDensity_convex γ.exists_smooth_isCenteringDensity).1
 
@@ -466,12 +466,11 @@ theorem hasDerivAt_reparametrize_symm (s : ℝ) :
     (γ.centeringDensity_continuous x).continuousAt
 
 -- 𝒞 ∞ ↿γ.reparametrize
-theorem reparametrize_smooth : 𝒞 ⊤ <| uncurry fun (x : E) (t : ℝ) ↦ γ.reparametrize x t := by
+theorem reparametrize_smooth : 𝒞 ∞ <| uncurry fun (x : E) (t : ℝ) ↦ γ.reparametrize x t := by
   let f : E → ℝ → ℝ := fun x t ↦ ∫ s in (0)..t, γ.centeringDensity x s
-  change 𝒞 ⊤ fun p : E × ℝ ↦ (StrictMono.orderIsoOfSurjective (f p.1) _ _).symm p.2
+  change 𝒞 ∞ fun p : E × ℝ ↦ (StrictMono.orderIsoOfSurjective (f p.1) _ _).symm p.2
   apply contDiff_parametric_symm_of_deriv_pos
-  · sorry -- TODO-MR: fix, was (mismatch about ∞ vs ⊤)
-    -- exact contDiff_parametric_primitive_of_contDiff'' γ.centeringDensity_smooth 0
+  · exact contDiff_parametric_primitive_of_contDiff'' γ.centeringDensity_smooth 0
   · exact fun x ↦ deriv_integral_centeringDensity_pos γ x
   · exact fun x ↦ surjective_integral_centeringDensity γ x
 

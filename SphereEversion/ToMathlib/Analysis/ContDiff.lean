@@ -218,7 +218,7 @@ section
 variable (𝕜 : Type*) [NontriviallyNormedField 𝕜]
 
 theorem contDiff_toSpanSingleton (E : Type*) [NormedAddCommGroup E] [NormedSpace 𝕜 E] :
-    ContDiff 𝕜 ∞ (ContinuousLinearMap.toSpanSingleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
+    ContDiff 𝕜 ω (ContinuousLinearMap.toSpanSingleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
   (ContinuousLinearMap.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.contDiff
 
 end
@@ -244,10 +244,10 @@ section
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
-from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
+from `E` to `E →L[ℝ] E`, is analytic away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
-    ContDiffAt ℝ ∞ (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
-  suffices ContDiffAt ℝ ∞
+    ContDiffAt ℝ ω (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
+  suffices ContDiffAt ℝ ω
     (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
     refine this.congr_of_eventuallyEq ?_
     filter_upwards with v

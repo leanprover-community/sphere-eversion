@@ -208,7 +208,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hι : Fintype.card ι = d + 1 := Fintype.card_fin _
   have hp : p ∈ affineBases ι ℝ F := h.mem_affineBases
   have hV : IsOpen V := isOpen_set_pi finite_univ fun _ _ ↦ isOpen_Ioi
-  have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι).continuousOn
+  have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι (n := 0)).continuousOn
   have hxp : W' (x, p) ∈ V := by simp [W', V, hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
@@ -221,7 +221,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hq : q ∈ affineBases ι ℝ F := by simpa [A] using inter_subset_left hyq
   have hyq' : (y, q) ∈ W' ⁻¹' V := inter_subset_right hyq
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩,
-    (smooth_barycentric ι ℝ F hι).mono inter_subset_left⟩, ?_, ?_, ?_⟩
+    ((smooth_barycentric ι ℝ F hι).mono inter_subset_left).of_le le_top⟩, ?_, ?_, ?_⟩
   · simpa [V] using hyq'
   · simp [hq]
   · simp [hq]; exact AffineBasis.linear_combination_coord_eq_self _ y
@@ -280,7 +280,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     simp only [A, affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod (isOpen_affineIndependent ℝ F)
   have hW' : ContinuousAt W' (q, v) :=
-    (smooth_barycentric ι ℝ F hι).continuousOn.continuousAt
+    (smooth_barycentric ι ℝ F hι (n := 0)).continuousOn.continuousAt
       (mem_nhds_iff.mpr ⟨A, Subset.rfl, hA, hqv⟩)
   have hS : S ∈ 𝓝 (q, v) := hW'.preimage_mem_nhds hV'
   obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS
@@ -640,7 +640,6 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     (hg : ContinuousAt g x₀) (hb : Continuous b)
     (hconv : g x₀ ∈ convexHull ℝ (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀)) :
     ∃ γ : E → ℝ → Loop F, ∃ U ∈ 𝓝 x₀, SurroundingFamilyIn g b γ U Ω := by
-  sorry /- TODO-MR fix proof, "stuck at solving universe constraint
   have hbx₀ : ContinuousAt b x₀ := hb.continuousAt
   have hΩ_op_x₀ : IsOpen (connectedComponentIn (Prod.mk x₀ ⁻¹' Ω) <| b x₀) :=
     (isOpen_slice_of_isOpen_over hΩ_op).connectedComponentIn
@@ -653,7 +652,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   rcases surrounding_loop_of_convexHull hΩ_op_x₀ hΩ_conn hconv hb_in with
     ⟨γ, h1γ, h2γ, h3γ, h4γ, h5γ, h6γ⟩
   have h5γ : ∀ t s : ℝ, γ t s ∈ mk x₀ ⁻¹' Ω := fun t s ↦ connectedComponentIn_subset _ _ (h5γ t s)
-  let δ : E → ℝ → Loop F := fun x t ↦ b x - b x₀ +ᵥ γ t
+  let δ : E → ℝ → Loop F := fun x t ↦ (b x - b x₀) +ᵥ γ t
   have hδ : Continuous ↿δ := by
     dsimp only [δ, HasUncurry.uncurry, Loop.vadd_apply]
     exact (hb.fst'.sub continuous_const).add h1γ.snd'
@@ -688,7 +687,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     filter_upwards [hc.tendsto.eventually hW]
     rintro x ⟨_, hx⟩
     exact ⟨_, _, hx⟩
-  exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, hδt1, fun x ↦ And.right, hδ⟩, fun x ↦ And.left⟩⟩ -/
+  exact ⟨δ, _, hδΩ.and hδsurr, ⟨⟨hδs0, hδt0, hδt1, fun x ↦ And.right, hδ⟩, fun x ↦ And.left⟩⟩
 
 /-- A tiny reformulation of `local_loops` where the existing `U` is open. -/
 theorem local_loops_open [FiniteDimensional ℝ F] {x₀ : E}
