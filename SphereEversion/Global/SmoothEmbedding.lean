@@ -90,7 +90,7 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.contMDiffOn_inv (f x) (mem_range_self x)).mdifferentiableWithinAt le_top).mdifferentiableAt
       (f.isOpenMap.range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := sorry -- TODO-MR fix, easy f.smooth_to.contMDiff.mdifferentiable le_top _
+  have h₂ : MDifferentiableAt I I' f x := f.contMDiff_to.mdifferentiableAt le_top
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
     (by
       intro v
