@@ -257,21 +257,21 @@ theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
         S.ϕ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ EP E := by
   simp_rw [S.uncurry_ϕ, mfderiv_snd]
   congr 1
-  sorry /-- TODO-MR
   convert
-    mfderiv_comp p ((S.smooth_bs.comp (contMDiff_id.prod_mk contMDiff_const)).mdifferentiable (by simp) p.1)
-      (contMDiff_fst.mdifferentiable (sorry) p)
+    mfderiv_comp p ((S.smooth_bs.comp (contMDiff_id.prod_mk contMDiff_const)).mdifferentiable
+      (by simp) p.1) (contMDiff_fst.mdifferentiable le_top p)
   simp_rw [mfderiv_fst]
-  rfl -/
+  rfl
 
 theorem isHolonomicAt_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} :
     S.uncurry.IsHolonomicAt p ↔ (S p.1).IsHolonomicAt p.2 := by
   simp_rw [OneJetSec.IsHolonomicAt, OneJetSec.snd_eq, S.uncurry_ϕ]
   rw [show S.uncurry.bs = fun x ↦ S.uncurry.bs x from rfl, funext S.uncurry_bs]
-  sorry /- TODO-MR simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiable _), mfderiv_snd, add_right_inj]
-  erw [mfderiv_comp p S.smooth_coe_bs.mdifferentiableAt contMDiff_snd.mdifferentiableAt, mfderiv_snd]
+  simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiableAt le_top), mfderiv_snd, add_right_inj]
+  erw [mfderiv_comp p (S.smooth_coe_bs.mdifferentiableAt le_top)
+    (contMDiff_snd.mdifferentiableAt le_top), mfderiv_snd]
   exact (show Surjective (ContinuousLinearMap.snd ℝ EP E) from
-    Prod.snd_surjective).clm_comp_injective.eq_iff -/
+    Prod.snd_surjective).clm_comp_injective.eq_iff
 
 end FamilyOneJetSec
 

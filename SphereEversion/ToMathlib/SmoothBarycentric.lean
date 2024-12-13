@@ -112,30 +112,30 @@ variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
-    (h : Fintype.card ι = Module.finrank 𝕜 F + 1) :
-    ContDiffOn 𝕜 ω (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
+    (h : Fintype.card ι = Module.finrank 𝕜 F + 1) {n : WithTop ℕ∞} :
+    ContDiffOn 𝕜 n (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
   classical
   obtain ⟨b⟩ : Nonempty (AffineBasis ι 𝕜 F) := AffineBasis.exists_affineBasis_of_finiteDimensional h
   simp_rw [uncurry_def, contDiffOn_pi, evalBarycentricCoords_eq_det 𝕜 b]
   intro i
-  change ContDiffOn 𝕜 ⊤
+  change ContDiffOn 𝕜 n
     (fun x : F × (ι → F)  ↦
       (Matrix.det (AffineBasis.toMatrix b x.snd))⁻¹ •
         (Matrix.cramer (AffineBasis.toMatrix b x.snd)ᵀ : (ι → 𝕜) → ι → 𝕜)
           ((AffineBasis.coords b : F → ι → 𝕜) x.1) i)
     (univ ×ˢ affineBases ι 𝕜 F)
   simp only [Pi.smul_apply, Matrix.cramer_transpose_apply]
-  have hcont : ContDiff 𝕜 ⊤ fun x : ι → F ↦ b.toMatrix x :=
+  have hcont : ContDiff 𝕜 n fun x : ι → F ↦ b.toMatrix x :=
     contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦
       (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
-  have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
+  have h_snd : ContDiff 𝕜 n fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
-  · apply ((Matrix.smooth_det ι 𝕜 ω).comp h_snd).contDiffOn.inv
+  · apply ((Matrix.smooth_det ι 𝕜 n).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
     have hv : IsUnit (b.toMatrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
     rw [← isUnit_iff_ne_zero, comp_apply, ← Matrix.isUnit_iff_isUnit_det]
     exact hv
-  · refine ((Matrix.smooth_det ι 𝕜 ω).comp ?_).contDiffOn
+  · refine ((Matrix.smooth_det ι 𝕜 n).comp ?_).contDiffOn
     refine contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦ ?_
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]

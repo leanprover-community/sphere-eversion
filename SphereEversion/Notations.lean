@@ -8,7 +8,7 @@ notation "hull" => convexHull ℝ
 
 notation "D" => fderiv ℝ
 
-notation "smooth_on" => ContDiffOn ℝ ⊤
+notation "smooth_on" => ContDiffOn ℝ (⊤ : ℕ∞)
 
 -- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
 notation3 (prettyPrint := false)
