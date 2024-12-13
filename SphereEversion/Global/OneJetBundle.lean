@@ -456,12 +456,11 @@ theorem ContMDiff.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, O
   -- `simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
   --           ContinuousLinearMap.comp_add]
   simp_rw (config := { unfoldPartialApp := true }) [inTangentCoordinates, inCoordinates]
-  sorry -- TODO-MR
-  /- conv =>
-    enter [3, x, 2]
+  conv =>
+    enter [4, x, 2]
     rw [ContinuousLinearMap.add_comp]
   simp only [ContinuousLinearMap.comp_add]
-  exact hϕ.2.2.add hϕ'.2.2 -/
+  exact hϕ.2.2.add hϕ'.2.2
 
 variable (I' J')
 

@@ -6,7 +6,7 @@ noncomputable section
 
 open Set Function Filter
 
-open scoped Topology
+open scoped Topology ContDiff
 
 namespace Real
 
@@ -35,9 +35,8 @@ theorem fderiv_prod_right {x₀ : E} {y₀ : F} :
 
 theorem HasFDerivAt.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
-    HasFDerivAt (fun e ↦ φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ :=
-  sorry -- TODO-MR
-  -- h.comp e₀ <| hasFDerivAt_prod_mk_left e₀ f₀
+    HasFDerivAt (fun e ↦ φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ := by
+  apply h.comp e₀ <| hasFDerivAt_prod_mk_left e₀ f₀
 
 theorem HasFDerivAt.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
@@ -81,9 +80,8 @@ theorem fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e�
 
 theorem DifferentiableAt.hasFDerivAt_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
-    HasFDerivAt (fun e ↦ φ e f₀) (partialFDerivFst 𝕜 φ e₀ f₀) e₀ :=
-  sorry -- TODO-MR
-  -- (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).hasFDerivAt
+    HasFDerivAt (fun e ↦ φ e f₀) (partialFDerivFst 𝕜 φ e₀ f₀) e₀ := by
+  apply (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).hasFDerivAt
 
 theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
@@ -169,9 +167,9 @@ theorem ContDiff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
   h.contDiff_partial_fst.continuous
 
 -- XXX: fix this!
-theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
-    ContDiff 𝕜 (⊤: ℕ∞) ↿(∂₁ 𝕜 φ) :=
-  sorry --contDiff_top.mpr fun n ↦ (contDiff_top.mp hF (n + 1)).contDiff_partial_fst
+theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff 𝕜 ∞ (uncurry φ)) :
+    ContDiff 𝕜 ∞ ↿(∂₁ 𝕜 φ) :=
+  contDiff_infty.mpr fun n ↦ (contDiff_infty.mp hF (n + 1)).contDiff_partial_fst
 
 theorem ContDiff.contDiff_partial_snd {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) : ContDiff 𝕜 n ↿(∂₂ 𝕜 φ) :=
@@ -186,8 +184,8 @@ theorem ContDiff.continuous_partial_snd {φ : E → F → G} {n : ℕ}
   h.contDiff_partial_snd.continuous
 
 -- FIXME: upgrade again to include analyticity
-theorem ContDiff.contDiff_top_partial_snd {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
-    ContDiff 𝕜 (⊤: ℕ∞) ↿(∂₂ 𝕜 φ) :=
+theorem ContDiff.contDiff_top_partial_snd {φ : E → F → G} (hF : ContDiff 𝕜 ∞ (uncurry φ)) :
+    ContDiff 𝕜 ∞ ↿(∂₂ 𝕜 φ) :=
   contDiff_infty.mpr fun n ↦ (contDiff_infty.mp (hF.of_le (by simp)) (n + 1)).contDiff_partial_snd
 
 end Calculus
