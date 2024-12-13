@@ -440,10 +440,9 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
       (contMDiffOn_congr h₄).mpr <| ψ.contMDiff_to.comp_contMDiffOn <| hg.comp_contMDiffOn
         (contMDiffOn_id.prod_mk <| φ.contMDiffOn_inv.comp hk.contMDiffOn Subset.rfl)⟩
-  · sorry -- TODO-MR
-    /- refine
-      ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr (hf.comp ((contMDiffOn_id (n := ⊤)).prod_mk hk)).contMDiffOn⟩
-    exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx -/
+  · refine ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr
+      (hf.comp ((contMDiff_id (n := ⊤)).prod_mk hk)).contMDiffOn⟩
+    exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx
 
 end NonMetric
 
