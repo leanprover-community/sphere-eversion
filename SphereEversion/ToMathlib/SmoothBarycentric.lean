@@ -6,7 +6,7 @@ noncomputable section
 
 open Set Function
 
-open scoped Affine Matrix
+open scoped Affine Matrix ContDiff
 
 section BarycentricDet
 
@@ -76,7 +76,7 @@ variable (ι k : Type*) [Fintype ι] [DecidableEq ι] [NontriviallyNormedField k
 
 attribute [instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-theorem smooth_det (m : ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
+theorem smooth_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
   suffices ∀ n : ℕ, ContDiff k m (det : Matrix (Fin n) (Fin n) k → k) by
     have h : (det : Matrix ι ι k → k) = det ∘ reindex (Fintype.equivFin ι) (Fintype.equivFin ι) :=
   by ext; simp
@@ -113,7 +113,7 @@ variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
 theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
     (h : Fintype.card ι = Module.finrank 𝕜 F + 1) :
-    ContDiffOn 𝕜 ⊤ (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
+    ContDiffOn 𝕜 ω (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
   classical
   obtain ⟨b⟩ : Nonempty (AffineBasis ι 𝕜 F) := AffineBasis.exists_affineBasis_of_finiteDimensional h
   simp_rw [uncurry_def, contDiffOn_pi, evalBarycentricCoords_eq_det 𝕜 b]
@@ -130,14 +130,12 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
       (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
   have h_snd : ContDiff 𝕜 ⊤ fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
-  · sorry /- TODO-MR: fix this proof!
-    apply ((Matrix.smooth_det ι 𝕜 ⊤).comp h_snd).contDiffOn.inv
+  · apply ((Matrix.smooth_det ι 𝕜 ω).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
     have hv : IsUnit (b.toMatrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
     rw [← isUnit_iff_ne_zero, comp_apply, ← Matrix.isUnit_iff_isUnit_det]
-    exact hv -/
-  · sorry /- TODO-MR: fix this proof!
-    refine ((Matrix.smooth_det ι 𝕜 ⊤).comp ?_).contDiffOn
+    exact hv
+  · refine ((Matrix.smooth_det ι 𝕜 ω).comp ?_).contDiffOn
     refine contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦ ?_
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
@@ -145,6 +143,6 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     · simp only [hij, if_true, eq_self_iff_true]
       exact (smooth_barycentric_coord b j').fst'
     · simp only [hij, if_false]
-      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j) -/
+      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j)
 
 end smooth_barycentric

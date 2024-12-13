@@ -7,7 +7,7 @@ import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 noncomputable section
 
-open scoped Topology Filter
+open scoped Topology Filter ContDiff
 open Function
 
 section
@@ -59,7 +59,7 @@ section
 
 variable (𝕜 : Type*) [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
   [NormedSpace 𝕜 E] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*}
-  [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : ℕ∞}
+  [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : WithTop ℕ∞}
 
 -- The next two definitions aren't used in the end, but they may still go to mathlib
 /-- The proposition that a function between two normed spaces has a strict derivative at a given
@@ -144,23 +144,23 @@ section
 
 variable {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [NormedAddCommGroup G] [NormedSpace 𝕜 G]
-  {n : ℕ∞}
+  {n : WithTop ℕ∞}
 
 @[inherit_doc] local notation "∂₁" => partialFDerivFst 𝕜
 
 @[inherit_doc] local notation "∂₂" => partialFDerivSnd 𝕜
 
 theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → F ≃ G}
-    {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ⊤ fun p : E × F ↦ f p.1 p.2)
+    {f' : E → F → F ≃L[𝕜] G} (hf : ContDiff 𝕜 ∞ fun p : E × F ↦ f p.1 p.2)
     (hf' : ∀ x y, ∂₂ (fun x y ↦ f x y) x y = f' x y) :
-    ContDiff 𝕜 ⊤ fun p : E × G ↦ (f p.1).symm p.2 := by
+    ContDiff 𝕜 ∞ fun p : E × G ↦ (f p.1).symm p.2 := by
   let φ₀ : E × F ≃ E × G :=
     { toFun := fun p : E × F ↦ (p.1, f p.1 p.2)
       invFun := fun p : E × G ↦ (p.1, (f p.1).symm p.2)
       left_inv := fun x ↦ by simp
       right_inv := fun x ↦ by simp }
   let ff x y := f x y
-  have hff : ContDiff 𝕜 ⊤ (uncurry ff) := hf
+  have hff : ContDiff 𝕜 ∞ (uncurry ff) := hf
   let d₁f := ∂₁ ff
   let Dφ : E × F → (E × F) ≃L[𝕜] E × G := fun x ↦
     (ContinuousLinearEquiv.refl 𝕜 E).lowerTriangular (d₁f x.1 x.2) (f' x.1 x.2)
@@ -171,10 +171,10 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       rintro ⟨x, y⟩
       apply HasFDerivAt.prod
       · simp only [ContinuousLinearEquiv.coe_refl, ContinuousLinearMap.id_comp, hasFDerivAt_fst]
-      have diff : Differentiable 𝕜 (uncurry fun x y ↦ f x y) := hf.differentiable le_top
+      have diff : Differentiable 𝕜 (uncurry fun x y ↦ f x y) := hf.differentiable (mod_cast le_top)
       rw [show (fun x : E × F ↦ (f x.fst) x.snd) = uncurry fun x y ↦ f x y by ext; rfl]
       apply DifferentiableAt.hasFDerivAt_coprod
-      · exact hf.differentiable le_top _
+      · exact hf.differentiable (mod_cast le_top) _
       · exact diff.differentiableAt.hasFDerivAt_partial_fst
       · rw [← hf' x y]
         exact diff.differentiableAt.hasFDerivAt_partial_snd
@@ -193,14 +193,14 @@ section
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
-theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : ContDiff ℝ ⊤ ↿f)
+theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : ContDiff ℝ ∞ ↿f)
     (hderiv : ∀ x t, 0 < partialDerivSnd f x t) (hsurj : ∀ x, Surjective <| f x) :
-    ContDiff ℝ ⊤ fun p : E × ℝ ↦
+    ContDiff ℝ ∞ fun p : E × ℝ ↦
       (StrictMono.orderIsoOfSurjective (f p.1) (strictMono_of_deriv_pos <| hderiv p.1)
             (hsurj p.1)).symm p.2 := by
   have hmono := fun x ↦ strictMono_of_deriv_pos (hderiv x)
   let F x := (StrictMono.orderIsoOfSurjective (f x) (hmono x) <| hsurj x).toEquiv
-  change ContDiff ℝ ⊤ fun p : E × ℝ ↦ (F p.1).symm p.snd
+  change ContDiff ℝ ∞ fun p : E × ℝ ↦ (F p.1).symm p.snd
   refine contDiff_parametric_symm hf (f' := ?_) ?_
   · exact fun x t ↦
       ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 (deriv (f x) t) <| ne_of_gt (hderiv x t))
@@ -218,7 +218,7 @@ section
 variable (𝕜 : Type*) [NontriviallyNormedField 𝕜]
 
 theorem contDiff_toSpanSingleton (E : Type*) [NormedAddCommGroup E] [NormedSpace 𝕜 E] :
-    ContDiff 𝕜 ⊤ (ContinuousLinearMap.toSpanSingleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
+    ContDiff 𝕜 ∞ (ContinuousLinearMap.toSpanSingleton 𝕜 : E → 𝕜 →L[𝕜] E) :=
   (ContinuousLinearMap.lsmul 𝕜 𝕜 : 𝕜 →L[𝕜] E →L[𝕜] E).flip.contDiff
 
 end
@@ -246,8 +246,8 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
 from `E` to `E →L[ℝ] E`, is smooth away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
-    ContDiffAt ℝ ⊤ (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
-  suffices ContDiffAt ℝ ⊤
+    ContDiffAt ℝ ∞ (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
+  suffices ContDiffAt ℝ ∞
     (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
     refine this.congr_of_eventuallyEq ?_
     filter_upwards with v
@@ -265,8 +265,8 @@ end
 section Arithmetic
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
-  [NormedSpace 𝕜 E] {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra 𝕜 𝔸] {n : ℕ∞} {f : E → 𝔸} {s : Set E}
-  {x : E}
+  [NormedSpace 𝕜 E] {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra 𝕜 𝔸] {n : WithTop ℕ∞}
+  {f : E → 𝔸} {s : Set E} {x : E}
 
 theorem ContDiffWithinAt.mul_const (hf : ContDiffWithinAt 𝕜 n f s x) {c : 𝔸} :
     ContDiffWithinAt 𝕜 n (fun x : E ↦ f x * c) s x :=
@@ -291,14 +291,14 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCom
   [NormedSpace 𝕜 E] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
 theorem contDiffWithinAt_finsum {ι : Type*} {f : ι → E → F}
-    (lf : LocallyFinite fun i ↦ support <| f i) {n : ℕ∞} {s : Set E} {x₀ : E}
+    (lf : LocallyFinite fun i ↦ support <| f i) {n : WithTop ℕ∞} {s : Set E} {x₀ : E}
     (h : ∀ i, ContDiffWithinAt 𝕜 n (f i) s x₀) : ContDiffWithinAt 𝕜 n (fun x ↦ ∑ᶠ i, f i x) s x₀ :=
   let ⟨_I, hI⟩ := finsum_eventually_eq_sum lf x₀
   ContDiffWithinAt.congr_of_eventuallyEq (ContDiffWithinAt.sum fun i _ ↦ h i)
     (eventually_nhdsWithin_of_eventually_nhds hI) hI.self_of_nhds
 
 theorem contDiffAt_finsum {ι : Type*} {f : ι → E → F} (lf : LocallyFinite fun i ↦ support <| f i)
-    {n : ℕ∞} {x₀ : E} (h : ∀ i, ContDiffAt 𝕜 n (f i) x₀) :
+    {n : WithTop ℕ∞} {x₀ : E} (h : ∀ i, ContDiffAt 𝕜 n (f i) x₀) :
     ContDiffAt 𝕜 n (fun x ↦ ∑ᶠ i, f i x) x₀ :=
   contDiffWithinAt_finsum lf h
 

@@ -3,13 +3,14 @@ import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 open Set Metric
+open scoped ContDiff
 
 noncomputable section
 
 variable [FiniteDimensional ℝ F] (c : F) (r : ℝ)
 
 theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
-    ∃ f : PartialHomeomorph F F, ContDiff ℝ ⊤ f ∧ ContDiffOn ℝ ⊤ f.symm f.target ∧
+    ∃ f : PartialHomeomorph F F, ContDiff ℝ ∞ f ∧ ContDiffOn ℝ ∞ f.symm f.target ∧
       f.source = univ ∧ (0 < r → f.target ⊆ ball c r) ∧ f 0 = c := by
   by_cases hr : 0 < r
   · let e := toEuclidean (E := F)
@@ -20,12 +21,9 @@ theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
       rw [transHomeomorph_target, Homeomorph.transPartialHomeomorph_target, univBall_target _ ε₀]
       rfl
     refine ⟨f, ?_, ?_, ?_, fun _ ↦ by rwa [hf], by simp [e, e', f]⟩
-    · apply e.symm.contDiff.comp -- TODO-MR: fix this proof!
-      --exact e.symm.contDiff.comp <| contDiff_univBall.comp e.contDiff
-      sorry -- apply contDiff_univBall.comp e.contDiff
-    · -- TODO-MR: fix this proof!
-      exact e.symm.contDiff.comp_contDiffOn <| sorry --contDiffOn_univBall_symm.comp
-        --e.contDiff.contDiffOn hf.subset
+    · exact e.symm.contDiff.comp <| contDiff_univBall.comp e.contDiff
+    · exact e.symm.contDiff.comp_contDiffOn <| contDiffOn_univBall_symm.comp
+        e.contDiff.contDiffOn hf.subset
     · rw [transHomeomorph_source, Homeomorph.transPartialHomeomorph_source, univBall_source]; rfl
   · use (IsometryEquiv.vaddConst c).toHomeomorph.toPartialHomeomorph, contDiff_id.add contDiff_const,
       contDiffOn_id.sub contDiffOn_const
@@ -61,9 +59,11 @@ theorem range_diffeomorphToNhd_subset_ball (hr : 0 < r) :
 @[simp]
 theorem contDiff_diffeomorphToNhd {n : ℕ∞} :
     ContDiff ℝ n <| diffeomorphToNhd c r :=
-  (PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball c r).choose_spec.1.of_le le_top
+  (PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball c r).choose_spec.1.of_le
+    (mod_cast le_top)
 
 @[simp]
 theorem contDiffOn_diffeomorphToNhd_inv {n : ℕ∞} :
     ContDiffOn ℝ n (diffeomorphToNhd c r).symm (diffeomorphToNhd c r).target :=
-  (PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball c r).choose_spec.2.1.of_le le_top
+  (PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball c r).choose_spec.2.1.of_le
+    (mod_cast le_top)
