@@ -146,7 +146,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
     have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) := loc_immersion_rel_open_aux hx₀ H
     apply this.mono; clear this
     rintro ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ _
-    unfold_let P f at Hφ
+    unfold P f at Hφ
     change InjOn φ (ℝ ∙ x)ᗮ
     have : range (subtypeL (ℝ ∙ x)ᗮ ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ := by
       rw [Function.Surjective.range_comp]
@@ -262,8 +262,9 @@ local notation "∞" => (⊤ : ℕ∞)
 
 variable [Fact (dim E = 3)] [FiniteDimensional ℝ E] (ω : Orientation ℝ E (Fin 3))
 
-theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) :
-    ContDiffAt ℝ ∞ (uncurry (locFormalEversionAuxφ ω)) p := by
+theorem smooth_at_locFormalEversionAuxφ {p : ℝ × E} (hx : p.2 ≠ 0) {n : WithTop ℕ∞} :
+    ContDiffAt ℝ n (uncurry (locFormalEversionAuxφ ω)) p := by
+  apply ContDiffAt.of_le _ le_top
   refine (ω.contDiff_rot hx).sub ?_
   refine ContDiffAt.smul (contDiffAt_const.mul contDiffAt_fst) ?_
   exact (contDiffAt_orthogonalProjection_singleton hx).comp p contDiffAt_snd
@@ -434,7 +435,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
 -- Stating the full statement with all type-class arguments and no uncommon notation.
 example (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (Module.finrank ℝ E = 3)] :
     ∃ f : ℝ → E → E,
-      ContDiff ℝ ⊤ (uncurry f) ∧
+      ContDiff ℝ ∞ (uncurry f) ∧
         (∀ x ∈ sphere (0 : E) 1, f 0 x = x) ∧
           (∀ x ∈ sphere (0 : E) 1, f 1 x = -x) ∧ ∀ t ∈ unitInterval, SphereImmersion (f t) :=
   sphere_eversion_of_loc

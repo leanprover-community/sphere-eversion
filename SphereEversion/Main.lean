@@ -3,6 +3,7 @@ import SphereEversion.Global.Immersion
 open Metric FiniteDimensional Set ModelWithCorners
 
 open scoped Manifold Topology
+local notation "∞" => (⊤ : ℕ∞)
 
 /-! # The sphere eversion project
 
