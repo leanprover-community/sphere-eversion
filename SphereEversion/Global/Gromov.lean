@@ -16,6 +16,8 @@ open Set Filter ModelWithCorners Metric
 
 open scoped Topology Manifold
 
+local notation "∞" => (⊤ : ℕ∞)
+
 variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
   {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM]
   {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
@@ -85,7 +87,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
       exact τ_pos x
   have hP₂' : ∀ (t : ℝ) (x : M) (f : M → J¹), P₀ x f → P₂ (t, x) fun p : ℝ × M ↦ f p.2 := by
     intro t x f hf
-    exact SmoothAt.comp (t, x) hf.2.2.1 contMDiffAt_snd
+    exact ContMDiffAt.comp (t, x) hf.2.2.1 contMDiffAt_snd
   have ind : ∀ m : M,
     ∃ V ∈ 𝓝 m, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ → ∀ (C : Set M) (f : M → J¹),
       IsClosed C → (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ C, P₁ x f) →

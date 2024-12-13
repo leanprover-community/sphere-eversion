@@ -127,7 +127,7 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
   simp only [Pi.smul_apply, Matrix.cramer_transpose_apply]
   have hcont : ContDiff 𝕜 n fun x : ι → F ↦ b.toMatrix x :=
     contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦
-      (smooth_barycentric_coord b j').comp (contDiff_apply 𝕜 F j)
+      ((smooth_barycentric_coord b j').of_le le_top).comp (contDiff_apply 𝕜 F j)
   have h_snd : ContDiff 𝕜 n fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
   · apply ((Matrix.smooth_det ι 𝕜 n).comp h_snd).contDiffOn.inv
@@ -141,8 +141,8 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
     by_cases hij : j = i
     · simp only [hij, if_true, eq_self_iff_true]
-      exact (smooth_barycentric_coord b j').fst'
+      exact (smooth_barycentric_coord b j').fst'.of_le le_top
     · simp only [hij, if_false]
-      exact (smooth_barycentric_coord b j').comp (contDiff_pi.mp contDiff_snd j)
+      exact ((smooth_barycentric_coord b j').of_le le_top).comp (contDiff_pi.mp contDiff_snd j)
 
 end smooth_barycentric

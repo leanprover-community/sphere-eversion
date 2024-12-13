@@ -137,7 +137,7 @@ theorem approxSurroundingPointsAt_smooth (n : ℕ) :
   suffices 𝒞 ∞ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s
     by simpa [approxSurroundingPointsAt, Loop.mollify]
   apply contDiff_parametric_integral_of_contDiff
-  exact ContDiff.smul deltaMollifier_smooth.snd' (γ.smooth.of_le le_top)
+  exact ContDiff.smul deltaMollifier_smooth.snd' γ.smooth
 
 variable [FiniteDimensional ℝ F]
 
@@ -455,7 +455,8 @@ def reparametrize : E → EquivariantEquiv := fun x ↦
        (StrictMono.orderIsoOfSurjective _ (γ.strictMono_integral_centeringDensity x)
            (γ.surjective_integral_centeringDensity x)).symm
      left_inv := StrictMono.orderIsoOfSurjective_symm_apply_self _ _ _
-     right_inv := fun t ↦ StrictMono.orderIsoOfSurjective_self_symm_apply _ (γ.strictMono_integral_centeringDensity x) _ t
+     right_inv := fun t ↦ StrictMono.orderIsoOfSurjective_self_symm_apply _
+       (γ.strictMono_integral_centeringDensity x) _ t
      map_zero' := integral_same
      eqv' := γ.integral_add_one_centeringDensity x } : EquivariantEquiv).symm
 
@@ -475,7 +476,8 @@ theorem reparametrize_smooth : 𝒞 ∞ <| uncurry fun (x : E) (t : ℝ) ↦ γ.
   · exact fun x ↦ surjective_integral_centeringDensity γ x
 
 @[simp]
-theorem reparametrize_average : ((γ x).reparam <| (γ.reparametrize x).equivariantMap).average = g x := by
+theorem reparametrize_average :
+    ((γ x).reparam <| (γ.reparametrize x).equivariantMap).average = g x := by
   change ∫ s : ℝ in (0)..1, γ x (γ.reparametrize x s) = g x
   have h₁ :
     ∀ s, s ∈ uIcc 0 (1 : ℝ) → HasDerivAt (γ.reparametrize x).symm (γ.centeringDensity x s) s :=
