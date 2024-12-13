@@ -50,7 +50,7 @@ theorem RelMfld.mem_relativize (R : RelMfld I M I' M')
 
 theorem RelMfld.isOpen_relativize (R : RelMfld I M I' M') (h2 : IsOpen R) :
     IsOpen (R.relativize IP P) :=
-  h2.preimage smooth_bundleSnd.continuous
+  h2.preimage contMDiff_bundleSnd.continuous
 
 /-
 Porting note: the next statement has huge elaboration issue because of defEq abuse.
@@ -171,26 +171,26 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
   ϕ p x := (S p.1).ϕ (p.2, x) ∘L mfderiv I (IP.prod I) (fun x ↦ (p.2, x)) x
   smooth' := by
     rintro ⟨⟨t, s⟩, x⟩
-    refine smoothAt_snd.oneJetBundle_mk (S.smooth_bs.comp smooth_prod_assoc _) ?_
+    refine contMDiffAt_snd.oneJetBundle_mk (S.smooth_bs.comp contMDiff_prod_assoc _) ?_
     have h1 :
-      SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E')
+      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E') ⊤
         (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).bs (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
         ((t, s), x) := by
       apply
-        (smoothAt_oneJetBundle.mp <|
-              SmoothAt.comp ((t, s), x) (S.smooth (t, (s, x))) (smooth_prod_assoc ((t, s), x))).2.2
+        (contMDiffAt_oneJetBundle.mp <|
+              ContMDiffAt.comp ((t, s), x) (S.smooth (t, (s, x))) (contMDiff_prod_assoc ((t, s), x))).2.2
     have h2 :
-      SmoothAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E)
+      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E) ⊤
         (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ mfderiv I (IP.prod I) (fun x : M ↦ (p.1.2, x)) p.2) ((t, s), x))
         ((t, s), x) := by
       apply
         ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) ↦ (p.1.2, x)) Prod.snd
-          (smoothAt_fst.fst.snd.prod_mk smoothAt_snd :
-            SmoothAt (((J.prod IP).prod I).prod I) (IP.prod I) _ (((t, s), x), x))
-          (smoothAt_snd : SmoothAt ((J.prod IP).prod I) _ _ _) le_top
+          (contMDiffAt_fst.fst.snd.prod_mk contMDiffAt_snd :
+            ContMDiffAt (((J.prod IP).prod I).prod I) (IP.prod I) ⊤ _ (((t, s), x), x))
+          (contMDiffAt_snd : ContMDiffAt ((J.prod IP).prod I) _ ⊤ _ _) le_top
     exact h1.clm_comp_inTangentCoordinates (continuousAt_fst.snd.prod continuousAt_snd) h2
 
 theorem FamilyOneJetSec.curry_bs (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
@@ -205,7 +205,7 @@ theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
     (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E := by
   rw [S.curry_ϕ]
   congr 1
-  refine (mdifferentiableAt_const.mfderiv_prod smooth_id.mdifferentiableAt).trans ?_
+  refine (mdifferentiableAt_const.mfderiv_prod (contMDiff_id.mdifferentiableAt le_top)).trans ?_
   rw [mfderiv_id, mfderiv_const]
   rfl
 
@@ -217,8 +217,8 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
     {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
-  refine (mfderiv_comp x (S t).smooth_bs.mdifferentiableAt
-    (mdifferentiableAt_const.prod_mk smooth_id.mdifferentiableAt)).trans
+  refine (mfderiv_comp x ((S t).smooth_bs.mdifferentiableAt le_top)
+    (mdifferentiableAt_const.prod_mk (contMDiff_id.mdifferentiableAt le_top))).trans
     ?_
   rw [id, hS]
   rfl

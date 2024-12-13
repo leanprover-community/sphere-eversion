@@ -33,8 +33,8 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' 
   φ_diff := by
     rw [contDiff_iff_contDiffAt]
     intro x₀
-    have : SmoothAt _ _ _ _ := F.smooth x₀
-    simp_rw (config := { unfoldPartialApp := true }) [smoothAt_oneJetBundle, inTangentCoordinates, inCoordinates,
+    have : ContMDiffAt _ _ _ _ _ := F.smooth x₀
+    simp_rw (config := { unfoldPartialApp := true }) [contMDiffAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id] at this
     dsimp only [TangentSpace] at this
@@ -77,8 +77,8 @@ def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E
   ϕ x := (𝓕 x).2
   smooth' := by
     intro a
-    refine smoothAt_oneJetBundle.mpr ?_
-    refine ⟨smoothAt_id, 𝓕.f_diff.contMDiff a, ?_⟩
+    refine contMDiffAt_oneJetBundle.mpr ?_
+    refine ⟨contMDiffAt_id, 𝓕.f_diff.contMDiff a, ?_⟩
     simp_rw [inTangentCoordinates_model_space]
     exact 𝓕.φ_diff.contMDiff a
 

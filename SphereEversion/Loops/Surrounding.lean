@@ -286,7 +286,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
   obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS
   have hn₁' := tendsto_def.mp hf _ hn₁
   have hn₂' := tendsto_def.mp (tendsto_pi_nhds.mpr hp) _ hn₂
-  have come_on : (swap p ⁻¹' n₂) ×ˢ (f ⁻¹' n₁) ∈ l.prod m :=
+  have come_on : (swap p ⁻¹' n₂) ×ˢ (f ⁻¹' n₁) ∈ l  ×ˢ m :=
     mem_prod_iff.mpr ⟨_, hn₂', _, hn₁', Subset.rfl⟩
   filter_upwards [come_on]
   rintro ⟨y₂, y₁⟩ ⟨hy₂ : swap p y₂ ∈ n₂, hy₁ : f y₁ ∈ n₁⟩
