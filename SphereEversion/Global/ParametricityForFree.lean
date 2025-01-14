@@ -11,7 +11,7 @@ open ChartedSpace SmoothManifoldWithCorners
 
 open LinearMap (ker)
 
-open scoped Topology Manifold Pointwise
+open scoped Topology Manifold Pointwise ContDiff
 
 section ParameterSpace
 
@@ -20,18 +20,18 @@ section ParameterSpace
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
   {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  [IsManifold I ∞ M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
   {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} {M' : Type*}
-  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {EP : Type*}
+  [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M'] {EP : Type*}
   [NormedAddCommGroup EP] [NormedSpace ℝ EP] {HP : Type*} [TopologicalSpace HP]
   {IP : ModelWithCorners ℝ EP HP} {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
-  [SmoothManifoldWithCorners IP P] {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+  [IsManifold IP ∞ P] {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
   {G : Type*} [TopologicalSpace G] {J : ModelWithCorners ℝ F G} {N : Type*} [TopologicalSpace N]
-  [ChartedSpace G N] [SmoothManifoldWithCorners J N] {EX : Type*} [NormedAddCommGroup EX]
+  [ChartedSpace G N] [IsManifold J ∞ N] {EX : Type*} [NormedAddCommGroup EX]
   [NormedSpace ℝ EX] {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
   -- note: X is a metric space
   {X : Type*}
-  [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  [MetricSpace X] [ChartedSpace HX X] [IsManifold IX ∞ X]
 
 variable {R : RelMfld I M I' M'}
 
@@ -40,7 +40,7 @@ variable (IP P) in
 def RelMfld.relativize (R : RelMfld I M I' M') : RelMfld (IP.prod I) (P × M) I' M' :=
   bundleSnd ⁻¹' R
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem RelMfld.mem_relativize (R : RelMfld I M I' M')
     (w : OneJetBundle (IP.prod I) (P × M) I' M') :
     w ∈ R.relativize IP P ↔
@@ -64,7 +64,7 @@ variable {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
 #check (R.relativize IP P).slice σ p
 #check (R.slice (bundleSnd σ) q : Set <| TangentSpace I' σ.proj.2) -/
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1} (q : DualPair <| TangentSpace I σ.1.1.2)
     (hpq : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = q.π) :
@@ -93,7 +93,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
   erw [← preimage_vadd_neg, mem_preimage, mem_slice, R.mem_relativize]
   congr!
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
@@ -120,7 +120,7 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
   simp [this, exists_const, forall_const]
 
 variable (IP P) in
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] [SmoothManifoldWithCorners IP P] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := by
   intro σ p
   let p2 := p.π.comp (ContinuousLinearMap.inr ℝ EP E)
@@ -173,7 +173,7 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
     rintro ⟨⟨t, s⟩, x⟩
     refine contMDiffAt_snd.oneJetBundle_mk (S.smooth_bs.comp contMDiff_prod_assoc _) ?_
     have h1 :
-      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E') ⊤
+      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E') ∞
         (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).bs (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
@@ -182,15 +182,15 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
         (contMDiffAt_oneJetBundle.mp <|
               ContMDiffAt.comp ((t, s), x) (S.smooth (t, (s, x))) (contMDiff_prod_assoc ((t, s), x))).2.2
     have h2 :
-      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E) ⊤
+      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E) ∞
         (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ mfderiv I (IP.prod I) (fun x : M ↦ (p.1.2, x)) p.2) ((t, s), x))
         ((t, s), x) := by
       apply
         ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) ↦ (p.1.2, x)) Prod.snd
           (contMDiffAt_fst.fst.snd.prod_mk contMDiffAt_snd :
-            ContMDiffAt (((J.prod IP).prod I).prod I) (IP.prod I) ⊤ _ (((t, s), x), x))
-          (contMDiffAt_snd : ContMDiffAt ((J.prod IP).prod I) _ ⊤ _ _) le_top
+            ContMDiffAt (((J.prod IP).prod I).prod I) (IP.prod I) ∞ _ (((t, s), x), x))
+          (contMDiffAt_snd : ContMDiffAt ((J.prod IP).prod I) _ ∞ _ _) (mod_cast le_top)
     exact h1.clm_comp_inTangentCoordinates (continuousAt_fst.snd.prod continuousAt_snd) h2
 
 theorem FamilyOneJetSec.curry_bs (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
@@ -217,7 +217,7 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
     {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
-  refine (mfderiv_comp x ((S t).smooth_bs.mdifferentiableAt le_top)
+  refine (mfderiv_comp x ((S t).smooth_bs.mdifferentiableAt (mod_cast le_top))
     (mdifferentiableAt_const.prod_mk (contMDiff_id.mdifferentiableAt le_top))).trans
     ?_
   rw [id, hS]

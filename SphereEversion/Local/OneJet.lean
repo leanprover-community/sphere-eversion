@@ -27,9 +27,8 @@ noncomputable section
 
 open Set Function Real Filter
 
-open scoped unitInterval Topology
+open scoped unitInterval Topology ContDiff
 
-local notation "∞" => (⊤ : ℕ∞)
 
 variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
   (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F]

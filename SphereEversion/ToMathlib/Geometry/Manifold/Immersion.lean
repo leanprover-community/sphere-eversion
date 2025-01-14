@@ -36,7 +36,7 @@ noncomputable section
 
 open Set Function
 
-open scoped Manifold
+open scoped Manifold ContDiff
 
 -- Let `M` be a manifold with corners over the pair `(E, H)`.
 -- Let `M'` be a manifold with corners over the pair `(E', H')`.
@@ -44,21 +44,19 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E : Type*} [instE: NormedAddCommGroup E] [instE': NormedSpace 𝕜 E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
   {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
-  [SmoothManifoldWithCorners I' M']
 
 section Definition
 
 /-- A `C^n` immersion `f : M → M` is a `C^n` map whose differential is injective at every point. -/
-structure Immersion (f : M → M') (n : ℕ∞) : Prop where
+structure Immersion (f : M → M') (n : WithTop ℕ∞) : Prop where
   contMDiff : ContMDiff I I' n f
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
 /-- An injective `C^n` immersion -/
-structure InjImmersion (f : M → M') (n : ℕ∞) extends Immersion I I' f n : Prop where
+structure InjImmersion (f : M → M') (n : WithTop ℕ∞) extends Immersion I I' f n : Prop where
   injective : Injective f
 
 end Definition

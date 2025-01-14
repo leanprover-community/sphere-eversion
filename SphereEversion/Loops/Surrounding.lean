@@ -33,7 +33,7 @@ The key results are:
 
 -- to obtain that normed spaces are locally connected
 open Set Function Module Int Prod Path Filter
-open scoped Topology unitInterval
+open scoped Topology unitInterval ContDiff
 
 namespace IsPathConnected
 
@@ -900,7 +900,8 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
       ?_, ?_⟩, ?_⟩
     · rintro x ((hx | hx) | hx)
       · simp_rw [heq2 x hx, h₀.surrounds x (hVU₀ <| subset_closure hx)]
-      · simp_rw [γ, (hγ <| ρ x).surrounds x hx]
+      · simp_rw [γ]
+        exact (hγ <| ρ x).surrounds x hx
       · simp_rw [γ, h1ρ (subset_closure hx), Pi.one_apply, sfHomotopy_one, h₁.surrounds x (hVU₁ hx)]
     · exact
         Continuous.sfHomotopy ρ.continuous.fst' continuous_fst continuous_snd.fst continuous_snd.snd

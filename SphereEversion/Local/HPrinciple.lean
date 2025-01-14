@@ -53,13 +53,11 @@ need to access its components only once.
 
 noncomputable section
 
-open scoped unitInterval Filter Topology
+open scoped unitInterval Filter Topology ContDiff
 
 open Filter Set RelLoc
 
 open LinearMap (ker)
-
-local notation "∞" => (⊤ : ℕ∞)
 
 variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
   {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]{G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
@@ -527,7 +525,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       by_cases ht : t ≤ 1 / 2
       · simp only [ht, hx, hHK₁, HtpyJetSec.comp_of_le, not_false_iff]
       · simp only [ht, hx, hH₁_K₁, improveStep_rel_compl_K₁, HtpyJetSec.comp_of_not_le,
-          not_false_iff]
+          not_false_iff, S]
     · -- C⁰-close
       intro x t
       by_cases ht : t ≤ 1 / 2

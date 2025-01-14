@@ -27,7 +27,7 @@ noncomputable section
 
 open Set Function Filter ChartedSpace SmoothManifoldWithCorners
 
-open scoped Topology Manifold
+open scoped Topology Manifold ContDiff
 
 section General
 
@@ -36,18 +36,18 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E : Type*}
   [NormedAddCommGroup E] [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H]
   (I : ModelWithCorners 𝕜 E H) (M : Type*) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M]
+  [IsManifold I ∞ M]
   -- declare a smooth manifold `M'` over the pair `(E', H')`.
   {E' : Type*}
   [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {H' : Type*} [TopologicalSpace H']
   (I' : ModelWithCorners 𝕜 E' H') (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M']
-  [SmoothManifoldWithCorners I' M']
+  [IsManifold I' ∞ M']
 
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext] structure OneJetSec where
   bs : M → M'
   ϕ : ∀ x : M, TangentSpace I x →L[𝕜] TangentSpace I' (bs x)
-  smooth' : ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ fun x ↦ OneJetBundle.mk x (bs x) (ϕ x)
+  smooth' : ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ fun x ↦ OneJetBundle.mk x (bs x) (ϕ x)
 
 instance : FunLike (OneJetSec I M I' M') M (OneJetBundle I M I' M') where
   coe := fun S x ↦ OneJetBundle.mk x (S.bs x) (S.ϕ x)
@@ -64,7 +64,7 @@ variable {I M I' M'}
 namespace OneJetSec
 
 protected def mk' (F : M → OneJetBundle I M I' M') (hF : ∀ m, (F m).1.1 = m)
-    (h2F : ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ F) : OneJetSec I M I' M' :=
+    (h2F : ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ F) : OneJetSec I M I' M' :=
   ⟨fun x ↦ (F x).1.2, fun x ↦ (F x).2, by convert h2F using 1; ext m; exacts [(hF m).symm, rfl, rfl]⟩
 
 theorem coe_apply (F : OneJetSec I M I' M') (x : M) : F x = ⟨(x, F.bs x), F.ϕ x⟩ :=
@@ -83,15 +83,15 @@ theorem bs_eq (F : OneJetSec I M I' M') (x : M) : F.bs x = (F x).1.2 :=
   rfl
 
 protected theorem smooth (F : OneJetSec I M I' M') :
-    ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤ F :=
+    ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ F :=
   F.smooth'
 
 theorem smooth_eta (F : OneJetSec I M I' M') :
-    ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ⊤
+    ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
       (fun x ↦ OneJetBundle.mk x (F.bs x) (F x).2 : M → OneJetBundle I M I' M') :=
   F.smooth
 
-theorem smooth_bs (F : OneJetSec I M I' M') : ContMDiff I I' ⊤ F.bs :=
+theorem smooth_bs (F : OneJetSec I M I' M') : ContMDiff I I' ∞ F.bs :=
   contMDiff_oneJetBundle_proj.snd.comp F.smooth
 
 /-- A section of J¹(M, M') is holonomic at (x : M) if its linear map part is the derivative
@@ -147,7 +147,7 @@ def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop
       exact fun f g H ↦ propext ⟨key f g H, key g f H.symm⟩)
 
 /-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/
-def oneJetExtSec (f : C^⊤⟮I, M; I', M'⟯) : OneJetSec I M I' M' :=
+def oneJetExtSec (f : C^∞⟮I, M; I', M'⟯) : OneJetSec I M I' M' :=
   ⟨f, mfderiv I I' f, f.contMDiff.oneJetExt⟩
 
 end General
@@ -156,17 +156,17 @@ section Real
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
   (I : ModelWithCorners ℝ E H) (M : Type*) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+  [IsManifold I ∞ M] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') (M' : Type*)
-  [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M'] {F : Type*}
+  [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M'] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
   (J : ModelWithCorners ℝ F G) (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
   {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G') (N' : Type*)
-  [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N'] {EP : Type*}
+  [TopologicalSpace N'] [ChartedSpace G' N'] [IsManifold J' ∞ N'] {EP : Type*}
   [NormedAddCommGroup EP] [NormedSpace ℝ EP] {HP : Type*} [TopologicalSpace HP]
   {IP : ModelWithCorners ℝ EP HP} {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
-  [SmoothManifoldWithCorners IP P]
+  [IsManifold IP ∞ P]
 
 /-- A family of jet sections indexed by manifold `N` is a function from `N` into jet sections
   in such a way that the function is smooth as a function of all arguments. -/
@@ -174,7 +174,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
   bs : N → M → M'
   ϕ : ∀ (n : N) (m : M), TangentSpace I m →L[ℝ] TangentSpace I' (bs n m)
   smooth' :
-    ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ fun p : N × M ↦
+    ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ fun p : N × M ↦
       OneJetBundle.mk p.2 (bs p.1 p.2) (ϕ p.1 p.2)
 
 instance : FunLike (FamilyOneJetSec I M I' M' J N) N (OneJetSec I M I' M') where
@@ -193,13 +193,13 @@ namespace FamilyOneJetSec
 variable {I M I' M' J N J' N'}
 
 protected def mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
-    (h2F : ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ (uncurry FF)) :
+    (h2F : ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ (uncurry FF)) :
     FamilyOneJetSec I M I' M' J N :=
   ⟨fun s x ↦ (FF s x).1.2, fun s x ↦ (FF s x).2,
    by convert h2F using 1; ext ⟨s, m⟩; exacts [(hF s m).symm, rfl, rfl]⟩
 
 theorem coe_mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
-    (h2F : ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ (uncurry FF)) (x : N) :
+    (h2F : ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ (uncurry FF)) (x : N) :
     FamilyOneJetSec.mk' FF hF h2F x =
       OneJetSec.mk' (FF x) (hF x) (h2F.comp (contMDiff_const.prod_mk contMDiff_id)) :=
   rfl
@@ -216,18 +216,18 @@ theorem coe_ϕ (S : FamilyOneJetSec I M I' M' J N) (s : N) : (S s).ϕ = S.ϕ s :
   rfl
 
 protected theorem smooth (S : FamilyOneJetSec I M I' M' J N) :
-    ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ fun p : N × M ↦ S p.1 p.2 :=
+    ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ fun p : N × M ↦ S p.1 p.2 :=
   S.smooth'
 
 theorem smooth_bs (S : FamilyOneJetSec I M I' M' J N) :
-    ContMDiff (J.prod I) I' ⊤ fun p : N × M ↦ S.bs p.1 p.2 :=
+    ContMDiff (J.prod I) I' ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
   contMDiff_oneJetBundle_proj.snd.comp S.smooth
 
-theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : ContMDiff I I' ⊤ (S.bs p) :=
+theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : ContMDiff I I' ∞ (S.bs p) :=
   (S p).smooth_bs
 
 /-- Reindex a family along a smooth function `f`. -/
-def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^⊤⟮J, N; J', N'⟯) :
+def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) :
     FamilyOneJetSec I M I' M' J N where
   bs t := S.bs (f t)
   ϕ t := S.ϕ (f t)
@@ -245,10 +245,11 @@ def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M
     refine ContMDiff.oneJet_add ?_ ?_
     · intro y
       refine contMDiffAt_id.oneJetBundle_mk (S.smooth_bs y) ?_
-      have : ContMDiffAt ((IP.prod I).prod (IP.prod I)) I' ⊤
+      have : ContMDiffAt ((IP.prod I).prod (IP.prod I)) I' ∞
           (Function.uncurry fun x z : P × M ↦ S.bs z.1 x.2) (y, y) :=
         S.smooth_bs.comp (contMDiff_snd.fst.prod_mk contMDiff_fst.snd) (y, y)
-      apply ContMDiffAt.mfderiv (fun x z : P × M ↦ S.bs z.1 x.2) id this contMDiffAt_id le_top
+      apply ContMDiffAt.mfderiv (fun x z : P × M ↦ S.bs z.1 x.2) id this contMDiffAt_id
+        (mod_cast le_top)
     · exact ContMDiff.oneJet_comp I (fun p : P × M ↦ p.2) S.smooth contMDiff_snd.oneJetExt
 
 theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
@@ -267,8 +268,9 @@ theorem isHolonomicAt_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} 
     S.uncurry.IsHolonomicAt p ↔ (S p.1).IsHolonomicAt p.2 := by
   simp_rw [OneJetSec.IsHolonomicAt, OneJetSec.snd_eq, S.uncurry_ϕ]
   rw [show S.uncurry.bs = fun x ↦ S.uncurry.bs x from rfl, funext S.uncurry_bs]
-  simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiableAt le_top), mfderiv_snd, add_right_inj]
-  erw [mfderiv_comp p (S.smooth_coe_bs.mdifferentiableAt le_top)
+  simp_rw [mfderiv_prod_eq_add (S.smooth_bs.mdifferentiableAt (mod_cast le_top)),
+    mfderiv_snd, add_right_inj]
+  erw [mfderiv_comp p (S.smooth_coe_bs.mdifferentiableAt (mod_cast le_top))
     (contMDiff_snd.mdifferentiableAt le_top), mfderiv_snd]
   exact (show Surjective (ContinuousLinearMap.snd ℝ EP E) from
     Prod.snd_surjective).clm_comp_injective.eq_iff

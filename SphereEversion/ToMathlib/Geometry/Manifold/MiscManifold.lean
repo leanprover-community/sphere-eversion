@@ -2,13 +2,13 @@ import Mathlib.Geometry.Manifold.ContMDiff.Product
 
 open Set Function Filter
 
-open scoped Manifold Topology
+open scoped Manifold Topology ContDiff
 
 noncomputable section
 
-section SmoothManifoldWithCorners
+section IsManifold
 
-open SmoothManifoldWithCorners
+open IsManifold
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
@@ -27,7 +27,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
   {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''}
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M'']
-  {e : PartialHomeomorph M H} {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
+  {e : PartialHomeomorph M H} {f : M → M'} {m n : WithTop ℕ∞} {s : Set M} {x x' : M}
 
 theorem contMDiff_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔
@@ -40,13 +40,13 @@ theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prod_mk h.2⟩
 
 theorem smooth_prod {f : M → M' × N'} :
-    ContMDiff I (I'.prod J') (⊤: ℕ∞) f ↔
-      (ContMDiff I I' ⊤ fun x ↦ (f x).1) ∧ ContMDiff I J' ⊤ fun x ↦ (f x).2 :=
+    ContMDiff I (I'.prod J') ∞ f ↔
+      (ContMDiff I I' ∞ fun x ↦ (f x).1) ∧ ContMDiff I J' ∞ fun x ↦ (f x).2 :=
   contMDiff_prod
 
 theorem smoothAt_prod {f : M → M' × N'} {x : M} :
-    ContMDiffAt I (I'.prod J') (⊤: ℕ∞) f x ↔
-      ContMDiffAt I I' ⊤ (fun x ↦ (f x).1) x ∧ ContMDiffAt I J' ⊤ (fun x ↦ (f x).2) x :=
+    ContMDiffAt I (I'.prod J') ∞ f x ↔
+      ContMDiffAt I I' ∞ (fun x ↦ (f x).1) x ∧ ContMDiffAt I J' ∞ (fun x ↦ (f x).2) x :=
   contMDiffAt_prod
 
-end SmoothManifoldWithCorners
+end IsManifold

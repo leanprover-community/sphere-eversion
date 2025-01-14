@@ -25,7 +25,7 @@ open Filter hiding map_smul
 
 open ChartedSpace SmoothManifoldWithCorners
 
-open scoped Topology Manifold Bundle
+open scoped Topology Manifold Bundle ContDiff
 
 section Defs
 
@@ -34,23 +34,23 @@ section Defs
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-  (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H')
-  (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  (M' : Type*) [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
   {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
   {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G)
   (N : Type*) [TopologicalSpace N] [ChartedSpace G N]
   {F' : Type*} [NormedAddCommGroup F'] [NormedSpace ℝ F']
   {G' : Type*} [TopologicalSpace G'] (J' : ModelWithCorners ℝ F' G')
-  (N' : Type*) [TopologicalSpace N'] [ChartedSpace G' N'] [SmoothManifoldWithCorners J' N']
+  (N' : Type*) [TopologicalSpace N'] [ChartedSpace G' N'] [IsManifold J' ∞ N']
   {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP]
   {HP : Type*} [TopologicalSpace HP] (IP : ModelWithCorners ℝ EP HP)
   (P : Type*) [TopologicalSpace P] [ChartedSpace HP P]
   {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
   -- note: X is a metric space
-  {X : Type*} [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  {X : Type*} [MetricSpace X] [ChartedSpace HX X] [IsManifold IX ∞ X]
 
 @[inherit_doc] local notation "TM" => TangentSpace I
 
@@ -78,7 +78,7 @@ instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' 
 
 
 def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x) (hsol : ∀ x, F x ∈ R)
-    (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ F) : FormalSol R
+    (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ F) : FormalSol R
     where
   bs m := (F m).1.2
   ϕ m := (F m).2
@@ -95,7 +95,7 @@ def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
 
 @[simp]
 theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
-    (hsol : ∀ x, F x ∈ R) (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) :
+    (hsol : ∀ x, F x ∈ R) (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ ↿F) :
     (mkFormalSol F hsec hsol hsmooth : M → OneJetBundle I M I' M') = F := by
   ext x <;> try rfl
   rw [hsec]
@@ -103,7 +103,7 @@ theorem mkFormalSol_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x
 
 @[simp]
 theorem mkFormalSol_bs_apply (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x)
-    (hsol : ∀ x, F x ∈ R) (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) (x : M) :
+    (hsol : ∀ x, F x ∈ R) (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ ↿F) (x : M) :
     (mkFormalSol F hsec hsol hsmooth).bs x = (F x).1.2 :=
   rfl
 
@@ -154,20 +154,20 @@ open scoped Manifold Bundle
 search. There was no problem in Lean 3. -/
 
 instance (σ : OneJetBundle I M I' M') :
-    NormedAddCommGroup (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM') σ.proj) := by
+    NormedAddCommGroup (((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM') σ.proj) := by
   assumption
 
 instance (σ : OneJetBundle I M I' M') :
-    NormedSpace ℝ (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM') σ.proj) := by
+    NormedSpace ℝ (((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM') σ.proj) := by
   assumption
 
 instance (x : M) (x' : M') :
-    NormedAddCommGroup (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM')
+    NormedAddCommGroup (((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM')
     (x, x')) := by
   assumption
 
 instance (x : M) (x' : M') :
-    NormedSpace ℝ (((ContMDiffMap.snd : C^⊤⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM')
+    NormedSpace ℝ (((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ TM')
     (x, x')) := by
   assumption
 
@@ -176,14 +176,14 @@ def RelMfld.slice (R : RelMfld I M I' M') (σ : OneJetBundle I M I' M') (p : Dua
     Set (TM' σ.1.2) :=
   {w : TM' σ.1.2 | OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 /-- For some reason `rw [mem_setOf_eq]` fails after unfolding `slice`,
 but rewriting with this lemma works. -/
 theorem mem_slice {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'} {p : DualPair <| TM σ.1.1}
     {w : TM' σ.1.2} : w ∈ R.slice σ p ↔ OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
   Iff.rfl
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
     {p : DualPair <| TM σ.1.1} (x : E') :
     R.slice (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p = (R.slice σ p : Set E') := by
@@ -197,7 +197,7 @@ theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
 def RelMfld.Ample (R : RelMfld I M I' M') : Prop :=
   ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), AmpleSet (R.slice σ p)
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
     R.Ample ↔
       ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), σ ∈ R → AmpleSet (R.slice σ p) := by
@@ -258,7 +258,7 @@ theorem is_sol (S : FamilyFormalSol J N R) {t : N} {x : M} : S t x ∈ R :=
   S.is_sol' t x
 
 /-- Reindex a family along a smooth function `f`. -/
-def reindex (S : FamilyFormalSol J' N' R) (f : C^⊤⟮J, N; J', N'⟯) : FamilyFormalSol J N R :=
+def reindex (S : FamilyFormalSol J' N' R) (f : C^∞⟮J, N; J', N'⟯) : FamilyFormalSol J N R :=
   ⟨S.toFamilyOneJetSec.reindex f, fun t ↦ S.is_sol' (f t)⟩
 
 end FamilyFormalSol
@@ -272,7 +272,7 @@ abbrev HtpyFormalSol (R : RelMfld I M I' M') :=
 
 def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
-    (hsmooth : ContMDiff (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) : HtpyFormalSol R
+    (hsmooth : ContMDiff (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ ↿F) : HtpyFormalSol R
     where
   bs t m := (F t m).1.2
   ϕ t m := (F t m).2
@@ -290,7 +290,7 @@ def mkHtpyFormalSol (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, 
 @[simp]
 theorem mkHtpyFormalSol_apply (F : ℝ → M → OneJetBundle I M I' M') (hsec : ∀ t x, (F t x).1.1 = x)
     (hsol : ∀ t x, F t x ∈ R)
-    (hsmooth : ContMDiff (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ⊤ ↿F) (t : ℝ) :
+    (hsmooth : ContMDiff (𝓘(ℝ).prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ ↿F) (t : ℝ) :
     (mkHtpyFormalSol F hsec hsol hsmooth t : M → OneJetBundle I M I' M') = F t := by
   ext x <;> try rfl
   rw [hsec]
@@ -387,12 +387,12 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
     (h : R.SatisfiesHPrincipleWith IP C ε) (𝓕₀ : FamilyFormalSol IP P R)
     (h2 : ∀ᶠ p : P × M near C, (𝓕₀ p.1).toOneJetSec.IsHolonomicAt p.2) :
     ∃ f : P → M → X,
-      (ContMDiff (IP.prod I) IX ⊤ <| uncurry f) ∧
+      (ContMDiff (IP.prod I) IX ∞ <| uncurry f) ∧
         (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
   refine ⟨fun s ↦ (𝓕 (1, s)).bs, ?_, ?_, ?_, ?_⟩
-  · let j : C^⊤⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
+  · let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
       ⟨fun p ↦ (1, p), ContMDiff.prod_mk contMDiff_const contMDiff_id⟩
     rw [show
         (uncurry fun s ↦ (𝓕 (1, s)).bs) =
@@ -429,16 +429,16 @@ there are manifolds `X` and `Y` that will be vector spaces in the next section.
 
 variable {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX]
   {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
-  {X : Type*} [TopologicalSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  {X : Type*} [TopologicalSpace X] [ChartedSpace HX X] [IsManifold IX ∞ X]
   {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM]
   {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM}
-  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [IsManifold IM ∞ M]
   {EY : Type*} [NormedAddCommGroup EY] [NormedSpace ℝ EY]
   {HY : Type*} [TopologicalSpace HY] {IY : ModelWithCorners ℝ EY HY}
-  {Y : Type*} [TopologicalSpace Y] [ChartedSpace HY Y] [SmoothManifoldWithCorners IY Y]
+  {Y : Type*} [TopologicalSpace Y] [ChartedSpace HY Y] [IsManifold IY ∞ Y]
   {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
   {HN : Type*} [TopologicalSpace HN] {IN : ModelWithCorners ℝ EN HN}
-  {N : Type*} [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
+  {N : Type*} [TopologicalSpace N] [ChartedSpace HN N] [IsManifold IN ∞ N]
   (F : OneJetSec IM M IN N)
   (φ : OpenSmoothEmbedding IX X IM M) (ψ : OpenSmoothEmbedding IY Y IN N)
   {R : RelMfld IM M IN N}
@@ -469,7 +469,7 @@ def OpenSmoothEmbedding.transfer : OneJetBundle IX X IY Y → OneJetBundle IM M 
   OneJetBundle.map IY IN φ ψ fun x ↦ (φ.fderiv x).symm
 
 theorem OpenSmoothEmbedding.smooth_transfer :
-    ContMDiff ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) ⊤
+    ContMDiff ((IX.prod IY).prod 𝓘(ℝ, EX →L[ℝ] EY)) ((IM.prod IN).prod 𝓘(ℝ, EM →L[ℝ] EN)) ∞
       (φ.transfer ψ) := by
   intro x
   refine ContMDiffAt.oneJetBundle_map (φ.contMDiff_to.contMDiffAt.comp _ contMDiffAt_snd)
@@ -478,15 +478,15 @@ theorem OpenSmoothEmbedding.smooth_transfer :
   have' :=
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.contMDiffAt_inv <| _).comp (x, φ x.1.1) contMDiffAt_snd)
-      (φ.contMDiff_to.contMDiffAt.comp x (contMDiff_oneJetBundle_proj.fst x)) le_top
+      (φ.contMDiff_to.contMDiffAt.comp x (contMDiff_oneJetBundle_proj.fst x)) (mod_cast le_top)
   · simp [contMDiffOn_inv] at this; exact this
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
   (OpenSmoothEmbedding.smooth_transfer _ _).continuous
 
-omit [SmoothManifoldWithCorners IX X] [SmoothManifoldWithCorners IM M]
-  [SmoothManifoldWithCorners IY Y] [SmoothManifoldWithCorners IN N] in
+omit [IsManifold IX ∞ X] [IsManifold IM ∞ M]
+  [IsManifold IY ∞ Y] [IsManifold IN ∞ N] in
 theorem OpenSmoothEmbedding.range_transfer :
     range (φ.transfer ψ) = π _ (OneJetSpace IM IN) ⁻¹' range φ ×ˢ range ψ := by
   ext σ; constructor
@@ -506,7 +506,7 @@ theorem OpenSmoothEmbedding.range_transfer :
     erw [(φ.fderiv x).apply_symm_apply]
     rfl
 
-omit [SmoothManifoldWithCorners IX X] [SmoothManifoldWithCorners IY Y] in
+omit [IsManifold IX ∞ X] [IsManifold IY ∞ Y] in
 theorem OpenSmoothEmbedding.isOpen_range_transfer : IsOpen (range (φ.transfer ψ)) := by
   rw [φ.range_transfer ψ]
   exact (φ.isOpen_range.prod ψ.isOpen_range).preimage oneJetBundle_proj_continuous
@@ -522,8 +522,8 @@ instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
 
 instance (y : Y) : NormedSpace ℝ (TY y) := by assumption
 
-omit [SmoothManifoldWithCorners IX X] [SmoothManifoldWithCorners IM M]
-  [SmoothManifoldWithCorners IY Y] [SmoothManifoldWithCorners IN N] in
+omit [IsManifold IX ∞ X] [IsManifold IM ∞ M]
+  [IsManifold IY ∞ Y] [IsManifold IN ∞ N] in
 /-- Ampleness survives localization -/
 theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
   intro x p
@@ -620,7 +620,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   left_inv' {σ} := by
     rw [OpenSmoothEmbedding.transfer, OneJetBundle.map_map]; rotate_left
     · exact (ψ.contMDiffAt_inv'.mdifferentiableAt (by simp))
-    · exact ψ.contMDiff_to.contMDiffAt.mdifferentiableAt (le_top)
+    · exact ψ.contMDiff_to.contMDiffAt.mdifferentiableAt (mod_cast le_top)
     conv_rhs => rw [← OneJetBundle.map_id σ]
     congr 1
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
@@ -640,7 +640,8 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
     have' :=
       ContMDiffAt.mfderiv (fun _ ↦ φ) (fun x : OneJetBundle IM M IN N ↦ φ.invFun x.1.1)
         (φ.contMDiff_to.contMDiffAt.comp _ contMDiffAt_snd)
-        ((φ.contMDiffAt_inv _).comp _ (contMDiff_oneJetBundle_proj.fst (φ.transfer ψ x))) le_top
+        ((φ.contMDiffAt_inv _).comp _ (contMDiff_oneJetBundle_proj.fst (φ.transfer ψ x)))
+        (mod_cast le_top)
     · dsimp only [id]
       refine this.congr_of_eventuallyEq ?_
       refine Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) ?_

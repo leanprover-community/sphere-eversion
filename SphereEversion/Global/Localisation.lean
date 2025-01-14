@@ -11,7 +11,7 @@ is about embedding any manifold into another one).
 
 noncomputable section
 
-open scoped Topology Manifold
+open scoped Topology Manifold ContDiff
 open Set ContinuousLinearMap
 
 section Loc
@@ -112,10 +112,10 @@ end Unloc
 universe u₁ u₂ u₃ u₄ u₅ u₆
 variable {E : Type u₁} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {H : Type u₂} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-  (M : Type u₃) [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  (M : Type u₃) [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
   {E' : Type u₄} [NormedAddCommGroup E'] [NormedSpace ℝ E']
   {H' : Type u₅} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H')
-  (M' : Type u₆) [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  (M' : Type u₆) [MetricSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
   {R : RelMfld I M I' M'}
 
 /-- A pair of charts together with a compact subset of the first vector space. -/
@@ -147,7 +147,7 @@ structure ChartPair.compat' (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).rel
 def RelLoc.HtpyFormalSol.unloc : _root_.HtpyFormalSol (RelMfld.localize p.φ p.ψ R) :=
   { 𝓕.toHtpyJetSec.unloc with is_sol' := 𝓕.is_sol }
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t' x}
     (h : 𝓕 t x = 𝓕' t' x) : 𝓕.unloc p t x = 𝓕'.unloc p t' x := by
   ext1
@@ -157,7 +157,7 @@ theorem RelLoc.HtpyFormalSol.unloc_congr {𝓕 𝓕' : (R.localize p.φ p.ψ).re
   · change (𝓕 t x).2 = (𝓕' t' x).2
     rw [h]
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     {𝓕' : (R.localize p.φ p.ψ).relLoc.FormalSol} {t x} (h : 𝓕 t x = 𝓕' x) :
     𝓕.unloc p t x = 𝓕'.unloc x := by
@@ -168,7 +168,7 @@ theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).re
   · change (𝓕 t x).2 = (𝓕' x).2
     rw [h]
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr' {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t'}
     (h : 𝓕 t = 𝓕' t') : 𝓕.unloc p t = 𝓕'.unloc p t' := by
   apply FormalSol.coe_inj

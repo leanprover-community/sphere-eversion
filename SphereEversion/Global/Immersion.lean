@@ -13,19 +13,20 @@ open Metric Module Set Function LinearMap Filter ContinuousLinearMap
 
 open scoped Manifold Topology
 
-local notation "∞" => (⊤ : ℕ∞)
+-- Can't open ContDiff because `ω` conflicts with the notation for orientation below
+local notation "∞" => ((⊤ : ℕ∞) : WithTop ℕ∞)
 
 section General
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M]
-  [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  [ChartedSpace H M] [IsManifold I ∞ M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H')
-  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
   {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G]
   (J : ModelWithCorners ℝ F G)
-  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [SmoothManifoldWithCorners J N]
+  (N : Type*) [TopologicalSpace N] [ChartedSpace G N] [IsManifold J ∞ N]
 
 @[inherit_doc] local notation "TM" => TangentSpace I
 @[inherit_doc] local notation "TM'" => TangentSpace I'
@@ -37,7 +38,7 @@ variable (M M') in
 def immersionRel : RelMfld I M I' M' :=
   {σ | Injective σ.2}
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
     σ ∈ immersionRel I M I' M' ↔ Injective (σ.2 : TangentSpace I _ →L[ℝ] TangentSpace I' _) :=
@@ -67,7 +68,7 @@ theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I
   · infer_instance
   · infer_instance
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I m}
     {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
@@ -76,7 +77,7 @@ theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I 
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample := by
   rw [RelMfld.ample_iff]
   rintro ⟨⟨m, m'⟩, φ : TangentSpace I m →L[ℝ] TangentSpace I' m'⟩ (p : DualPair (TangentSpace I m))
@@ -97,13 +98,13 @@ section Generalbis
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) [I.Boundaryless]
-  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [I'.Boundaryless]
-  {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {M' : Type*} [MetricSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
   {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
   {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [IP.Boundaryless]
-  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [IsManifold IP ∞ P]
   {C : Set (P × M)} {ε : M → ℝ}
 
 variable (M M' IP P)
@@ -125,17 +126,17 @@ variable {n : ℕ} (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] 
 
 /-- The inclusion of `𝕊^n` into `ℝ^{n+1}` is an immersion. -/
 theorem immersion_inclusion_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
-    (fun x : sphere (0 : E) 1 ↦ (x : E)) ⊤ where
-  contMDiff := contMDiff_coe_sphere
+    (fun x : sphere (0 : E) 1 ↦ (x : E)) ∞ where
+  contMDiff := contMDiff_coe_sphere.of_le le_top
   diff_injective := mfderiv_coe_sphere_injective
 
 /-- The antipodal map on `𝕊^n ⊆ ℝ^{n+1}` is an immersion. -/
 theorem immersion_antipodal_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
-    (fun x : sphere (0 : E) 1 ↦ -(x : E)) ⊤ where
+    (fun x : sphere (0 : E) 1 ↦ -(x : E)) ∞ where
   contMDiff :=
     -- Write this as the composition of `coe_sphere` and the antipodal map on `E`.
     -- The other direction elaborates much worse.
-    (contDiff_neg.contMDiff).comp contMDiff_coe_sphere
+    (contDiff_neg.contMDiff).comp (contMDiff_coe_sphere.of_le le_top)
   diff_injective x := by
     change Injective (mfderiv (𝓡 n) 𝓘(ℝ, E) (-fun x : sphere (0 : E) 1 ↦ (x : E)) x)
     rw [mfderiv_neg]
@@ -167,12 +168,12 @@ theorem smooth_bs :
       fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
   refine (ContMDiff.smul ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
-  · exact contMDiff_coe_sphere.comp contMDiff_snd
-  · exact (contDiff_neg.contMDiff.comp contMDiff_coe_sphere).comp contMDiff_snd
+  · exact (contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd
+  · exact (contDiff_neg.contMDiff.comp (contMDiff_coe_sphere.of_le le_top)).comp contMDiff_snd
 
 def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ :=
   familyJoin (smooth_bs E) <|
-    familyTwist (drop (oneJetExtSec ⟨((↑) : 𝕊² → E), contMDiff_coe_sphere⟩))
+    familyTwist (drop (oneJetExtSec ⟨((↑) : 𝕊² → E), contMDiff_coe_sphere.of_le le_top⟩))
       (fun p : ℝ × 𝕊² ↦ ω.rot (p.1, p.2))
       (by
         intro p
@@ -180,7 +181,7 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
           refine ((ω.contDiff_rot ?_).of_le le_top).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
         apply this.comp p (f := fun (p : ℝ × sphere 0 1) ↦ (p.1, (p.2 : E)))
-        apply contMDiff_fst.prod_mk_space (contMDiff_coe_sphere.comp contMDiff_snd))
+        apply contMDiff_fst.prod_mk_space ((contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd))
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def formalEversionAux2 : HtpyFormalSol 𝓡_imm :=
@@ -309,7 +310,7 @@ theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
       ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ ↿f ∧
         (f 0 = fun x : 𝕊² ↦ (x : E)) ∧ (f 1 = fun x : 𝕊² ↦ -(x : E)) ∧
-        ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) ⊤ := by
+        ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) ∞ := by
   classical
   let ω : Orientation ℝ E (Fin 3) :=
     ((stdOrthonormalBasis _ _).reindex <|

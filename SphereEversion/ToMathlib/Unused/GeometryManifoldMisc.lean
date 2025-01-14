@@ -61,7 +61,7 @@ variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [
 
 theorem VectorBundleCore.smoothAt_coordChange {ι} (Z : VectorBundleCore 𝕜 B F ι) [Z.IsSmooth IB]
     (i j : ι) {x₀ : B} (hx₀ : x₀ ∈ Z.baseSet i ∩ Z.baseSet j) :
-    ContMDiffAt IB 𝓘(𝕜, F →L[𝕜] F) ⊤ (Z.coordChange i j) x₀ :=
+    ContMDiffAt IB 𝓘(𝕜, F →L[𝕜] F) ∞ (Z.coordChange i j) x₀ :=
   (Z.contMDiffOn_coordChange IB i j).contMDiffAt <|
     ((Z.isOpen_baseSet i).inter (Z.isOpen_baseSet j)).mem_nhds hx₀
 
@@ -70,7 +70,7 @@ variable [SmoothVectorBundle F E IB]
 
 theorem smoothAt_coord_change (e e' : Trivialization F (π F E)) {x₀ : B}
     (hx₀ : x₀ ∈ e.baseSet ∩ e'.baseSet) [MemTrivializationAtlas e] [MemTrivializationAtlas e'] :
-    ContMDiffAt IB 𝓘(𝕜, F →L[𝕜] F) ⊤ (fun b : B ↦ (e.coordChangeL 𝕜 e' b : F →L[𝕜] F)) x₀ :=
+    ContMDiffAt IB 𝓘(𝕜, F →L[𝕜] F) ∞ (fun b : B ↦ (e.coordChangeL 𝕜 e' b : F →L[𝕜] F)) x₀ :=
   (contMDiffOn_coordChangeL e e').contMDiffAt <| (e.open_baseSet.inter e'.open_baseSet).mem_nhds hx₀
 
 variable {IB}
@@ -98,11 +98,11 @@ variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [
   {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E] {e e' : Trivialization F (π F E)}
 
 variable (IB)
-variable [SmoothManifoldWithCorners IB B] [SmoothVectorBundle F E IB]
+variable [IsManifold IB ∞B] [SmoothVectorBundle F E IB]
 
 theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializationAtlas e]
     {x₀ : TotalSpace F E} (hx₀ : x₀.proj ∈ e.baseSet) :
-    ContMDiffAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ⊤ e x₀ := by
+    ContMDiffAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ∞ e x₀ := by
   rw [smoothAt_prod]
   refine ⟨(contMDiffAt_proj E).congr_of_eventuallyEq ?_, ?_⟩
   · exact eventually_of_mem (e.open_source.mem_nhds <| e.mem_source.mpr hx₀) fun x hx ↦ e.coe_fst hx
@@ -111,7 +111,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
   let e' := trivializationAt F E x₀.proj
   let c := (extChartAt IB x₀.proj).symm
   have h0 := (extChartAt IB x₀.proj).left_inv (mem_extChartAt_source x₀.proj)
-  have : ContMDiffWithinAt 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ⊤
+  have : ContMDiffWithinAt 𝓘(𝕜, EB × F) 𝓘(𝕜, F) ∞
       (fun x : EB × F ↦ e'.coordChangeL 𝕜 e (c x.1) x.2)
       (Prod.fst ⁻¹' range IB) (extChartAt IB x₀.proj x₀.proj, (e' x₀).2) := by
     sorry /-refine ContMDiffWithinAt.clm_apply (𝕜 := 𝕜) ?_ contDiffWithinAt_snd.contMDiffWithinAt
@@ -146,12 +146,12 @@ theorem Trivialization.smoothOn (e : Trivialization F (π F E)) [MemTrivializati
 
 theorem smoothAt_trivializationAt {x₀ : B} {x : TotalSpace F E}
     (hx : x.proj ∈ (trivializationAt F E x₀).baseSet) :
-    ContMDiffAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ⊤ (trivializationAt F E x₀) x :=
+    ContMDiffAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ∞ (trivializationAt F E x₀) x :=
   (trivializationAt F E x₀).smoothAt IB hx
 
-omit [SmoothManifoldWithCorners IB B] in
+omit [IsManifold IB ∞B] in
 theorem smoothOn_trivializationAt (x₀ : B) :
-    ContMDiffOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ⊤ (trivializationAt F E x₀)
+    ContMDiffOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ∞ (trivializationAt F E x₀)
       (trivializationAt F E x₀).source :=
   (trivializationAt F E x₀).contMDiffOn
 
@@ -177,8 +177,8 @@ variable {f : M → M'} {m n : ℕ∞} {s : Set M} {x x' : M}
   [NormedAddCommGroup F₁] [NormedSpace 𝕜 F₁] {F₂ : Type*} [NormedAddCommGroup F₂]
   [NormedSpace 𝕜 F₂]
 
-variable [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M']
-  [SmoothManifoldWithCorners J N]
+variable [IsManifold I ∞ M] [IsManifold I' ∞ M']
+  [IsManifold J ∞ N]
 
 -- lemma cont_mdiff_within_at_insert :
 --   cont_mdiff_within_at I I' n f (insert x' s) x ↔ cont_mdiff_within_at I I' n f s x :=

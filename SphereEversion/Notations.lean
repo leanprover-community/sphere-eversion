@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 
-open scoped Topology
+open scoped Topology ContDiff
 
 notation "𝒞" => ContDiff ℝ
 
@@ -8,7 +8,7 @@ notation "hull" => convexHull ℝ
 
 notation "D" => fderiv ℝ
 
-notation "smooth_on" => ContDiffOn ℝ (⊤ : ℕ∞)
+notation "smooth_on" => ContDiffOn ℝ ∞
 
 -- `∀ᶠ x near s, p x` means property `p` holds at every point in a neighborhood of the set `s`.
 notation3 (prettyPrint := false)

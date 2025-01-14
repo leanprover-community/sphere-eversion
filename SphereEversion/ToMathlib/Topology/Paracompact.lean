@@ -1,4 +1,4 @@
-import Mathlib.Topology.Separation.Basic
+import Mathlib.Topology.Separation.Hausdorff
 import Mathlib.Data.Real.Basic
 import Mathlib.Order.Interval.Finset.Nat
 

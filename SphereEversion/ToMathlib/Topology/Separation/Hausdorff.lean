@@ -1,5 +1,4 @@
-import Mathlib.Topology.Separation.Basic
-
+import Mathlib.Topology.Separation.Hausdorff
 open Set Function
 
 variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]

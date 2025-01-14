@@ -1,13 +1,11 @@
 import SphereEversion.Loops.Reparametrization
 import SphereEversion.ToMathlib.Analysis.CutOff
-import SphereEversion.ToMathlib.Topology.HausdorffDistance
+import Mathlib.Topology.MetricSpace.HausdorffDistance
 
 noncomputable section
 
 open Set Function Int Metric Filter Real MeasureTheory
-open scoped  MeasureTheory.Measure Topology unitInterval
-
-local notation "∞" => (⊤ : ℕ∞)
+open scoped  MeasureTheory.Measure Topology unitInterval ContDiff
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
   {g b : E → F} {Ω : Set (E × F)} {U K C : Set E}
@@ -30,7 +28,8 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
       surrounding_loop_of_convexHull
       isOpen_univ isConnected_univ (by rw [convexHull_univ]; exact mem_univ 0) (mem_univ (0 : F))
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
-    hK.exists_thickening_image hΩ_op (continuous_id.prod_mk hb.continuous) fun x _ ↦ b_in x
+    hK.exists_thickening_image_subset hΩ_op
+      (fun x hx ↦ (continuous_id.prod_mk hb.continuous).continuousAt) fun x _ ↦ b_in x
   let range_γ₀ := (fun i : ℝ × ℝ ↦ ‖γ₀ i.1 i.2‖) '' I ×ˢ I
   have h4γ₀ : BddAbove range_γ₀ :=
     (isCompact_Icc.prod isCompact_Icc).bddAbove_image hγ₀_cont.norm.continuousOn
@@ -202,14 +201,22 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         ((EventuallyEq.rfl.prod_mk <| EventuallyEq.rfl.prod_mk <|
               (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp ↿γ₅)
   refine ⟨γ, ⟨⟨?_, ?_, ?_, ?_, hγ.continuous⟩, ?_⟩, hγ, ?_⟩
-  · intro x t; simp_rw [fract_zero]; rw [hγ₅C]; · exact hγ₃.base x _
-    exact Or.inr (by rw [mem_preimage, fract_zero]; exact h0C₁)
-  · intro x s; simp_rw [smoothTransition.zero_of_nonpos le_rfl]; rw [hγ₅C]
+  · intro x t
+    simp_rw [γ, fract_zero]
+    rw [hγ₅C]
+    · exact hγ₃.base x _
+    · exact Or.inr (by rw [mem_preimage, fract_zero]; exact h0C₁)
+  · intro x s
+    simp_rw [γ, smoothTransition.zero_of_nonpos le_rfl]
+    rw [hγ₅C]
     · exact hγ₃.t₀ x (fract s)
     · exact Or.inl (show (0 : ℝ) ≤ 5⁻¹ by norm_num)
-  · intro x t s; simp_rw [smoothTransition_projI]
-  · rintro x -; apply hγε₁; intro s
-    simp_rw [← (γ₃ x 1).fract_eq s, smoothTransition.one_of_one_le le_rfl]
+  · intro x t s
+    simp_rw [γ, smoothTransition_projI]
+  · rintro x -
+    apply hγε₁
+    intro s
+    simp_rw [← (γ₃ x 1).fract_eq s, γ, smoothTransition.one_of_one_le le_rfl]
     exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans <| min_le_right _ _)
   · rintro x - t - s -; rw [← not_mem_compl_iff]
     by_cases hΩ : Ωᶜ.Nonempty; swap

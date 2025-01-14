@@ -21,9 +21,7 @@ open Metric FiniteDimensional Set Function RelLoc
 
 open LinearMap (ker)
 
-open scoped Topology Pointwise
-
-local notation "∞" => (⊤ : ℕ∞)
+open scoped Topology Pointwise ContDiff
 
 section ParameterSpace
 
@@ -192,10 +190,10 @@ theorem RelLoc.FamilyFormalSol.uncurry_φ' (S : R.FamilyFormalSol P) (p : P × E
 def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × P) where
   f p x := (S p.1).f (p.2, x)
   φ p x := (S p.1).φ (p.2, x) ∘L fderiv ℝ (fun x ↦ (p.2, x)) x
-  f_diff := S.f_diff.comp ((contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E)).of_le le_top)
+  f_diff := S.f_diff.comp ((contDiff_prodAssoc : ContDiff ℝ ω (Equiv.prodAssoc G P E)).of_le le_top)
   φ_diff := by
     refine (S.φ_diff.comp
-      ((contDiff_prodAssoc : ContDiff ℝ ⊤ (Equiv.prodAssoc G P E)).of_le le_top)).clm_comp ?_
+      ((contDiff_prodAssoc : ContDiff ℝ ω (Equiv.prodAssoc G P E)).of_le le_top)).clm_comp ?_
     refine ContDiff.fderiv ?_ contDiff_snd le_top
     exact contDiff_fst.fst.snd.prod contDiff_snd
 

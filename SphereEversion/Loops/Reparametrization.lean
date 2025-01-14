@@ -299,8 +299,9 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
   · have h : γ.approxSurroundingPointsAt x y n ∈ affineBases ι ℝ F :=
       γ.approxSurroundingPointsAt_mem_affineBases x y hy
     simp_rw [← smul_eq_mul, intervalIntegral.integral_smul, deltaMollifier_integral_eq_one,
-      Algebra.id.smul_eq_mul, mul_one, evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h,
-      AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
+      Algebra.id.smul_eq_mul, mul_one]
+    rw [evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h]
+    simp_rw [AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
   · simp_rw [← smul_eq_mul]
     refine fun i hi ↦ (Continuous.const_smul ?_ _).intervalIntegrable 0 1
     exact deltaMollifier_smooth.continuous

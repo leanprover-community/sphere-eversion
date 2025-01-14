@@ -21,7 +21,7 @@ noncomputable section
 
 open Filter Set
 
-open scoped Manifold Topology
+open scoped Manifold Topology ContDiff
 
 -- FIXME: move to `Manifold/Algebra/SmoothFunctions`, around line 46
 section
@@ -34,12 +34,12 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {N : Type*} [TopologicalSpace N] [ChartedSpace H N]
   {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E''] {H'' : Type*} [TopologicalSpace H'']
   {I'' : ModelWithCorners 𝕜 E'' H''} {N' : Type*} [TopologicalSpace N'] [ChartedSpace H'' N']
-  {G : Type*} [CommMonoid G] [TopologicalSpace G] [ChartedSpace H' G] [SmoothMul I' G]
+  {G : Type*} [CommMonoid G] [TopologicalSpace G] [ChartedSpace H' G] [ContMDiffMul I' ∞ G]
 
 @[to_additive]
-theorem SmoothMap.coe_prod {ι : Type*} (f : ι → C^⊤⟮I, N; I', G⟯) (s : Finset ι) :
+theorem SmoothMap.coe_prod {ι : Type*} (f : ι → C^∞⟮I, N; I', G⟯) (s : Finset ι) :
     ⇑(∏ i in s, f i) = ∏ i in s, ⇑(f i) :=
-  map_prod (SmoothMap.coeFnMonoidHom : C^⊤⟮I, N; I', G⟯ →* N → G) f s
+  map_prod (ContMDiffMap.coeFnMonoidHom : C^∞⟮I, N; I', G⟯ →* N → G) f s
 
 end
 
@@ -56,28 +56,28 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (F : Type*) [NormedAddCommGroup F] [NormedSpace ℝ F] (G : Type*) [AddCommGroup G] [Module ℝ G]
 
 /-- The map `C^∞(N, ℝ) → Germ (𝓝 x) ℝ` as a ring homomorphism. -/
-def RingHom.germOfContMDiffMap (x : N) : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
-  RingHom.comp (Germ.coeRingHom _) SmoothMap.coeFnRingHom
+def RingHom.germOfContMDiffMap (x : N) : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ →+* Germ (𝓝 x) ℝ :=
+  RingHom.comp (Germ.coeRingHom _) ContMDiffMap.coeFnRingHom
 
 /-- All germs of smooth functions `N → ℝ` at `x : N`, as a subring of `Germ (𝓝 x) ℝ`. -/
 def smoothGerm (x : N) : Subring (Germ (𝓝 x) ℝ) :=
   (RingHom.germOfContMDiffMap I x).range
 
-instance (x : N) : Coe C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯ (smoothGerm I x) :=
+instance (x : N) : Coe C^∞⟮I, N; 𝓘(ℝ), ℝ⟯ (smoothGerm I x) :=
   ⟨fun f ↦ ⟨(f : N → ℝ), ⟨f, rfl⟩⟩⟩
 
 @[simp]
-theorem smoothGerm.coe_coe (f : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
+theorem smoothGerm.coe_coe (f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
     ((f : smoothGerm I x) : (𝓝 x).Germ ℝ) = (f : (𝓝 x).Germ ℝ) :=
   rfl
 
 @[simp]
-theorem smoothGerm.coe_sum {ι} (f : ι → C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) (s : Finset ι) (x : N) :
-    ((∑ i in s, f i : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) : smoothGerm I x) = ∑ i in s, (f i : smoothGerm I x) :=
+theorem smoothGerm.coe_sum {ι} (f : ι → C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (s : Finset ι) (x : N) :
+    ((∑ i in s, f i : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smoothGerm I x) = ∑ i in s, (f i : smoothGerm I x) :=
   map_sum (RingHom.rangeRestrict (RingHom.germOfContMDiffMap I x)) f s
 
 @[simp]
-theorem smoothGerm.coe_eq_coe (f g : C^⊤⟮I, N; 𝓘(ℝ), ℝ⟯) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
+theorem smoothGerm.coe_eq_coe (f g : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) {x : N} (h : ∀ᶠ y in 𝓝 x, f y = g y) :
     (f : smoothGerm I x) = (g : smoothGerm I x) := by
   ext
   apply Quotient.sound
@@ -142,13 +142,13 @@ variable {ι : Type*}
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*}
   [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
-  [ChartedSpace H M] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
+  [ChartedSpace H M] [IsManifold I ∞ M] [SigmaCompactSpace M] [T2Space M]
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [TopologicalSpace HG]
   (IG : ModelWithCorners ℝ G HG) {N : Type*} [TopologicalSpace N] [ChartedSpace HG N]
-  [SmoothManifoldWithCorners IG N]
+  [IsManifold IG ∞ N]
 
 def smoothGerm.valueOrderRingHom (x : N) : smoothGerm IG x →+*o ℝ :=
   Filter.Germ.valueOrderRingHom.comp <| Subring.orderedSubtype _
@@ -156,7 +156,7 @@ def smoothGerm.valueOrderRingHom (x : N) : smoothGerm IG x →+*o ℝ :=
 def smoothGerm.valueRingHom (x : N) : smoothGerm IG x →+* ℝ :=
   Filter.Germ.valueRingHom.comp <| Subring.subtype _
 
-omit [SmoothManifoldWithCorners IG N] in
+omit [IsManifold IG ∞ N] in
 theorem smoothGerm.valueOrderRingHom_toRingHom (x : N) :
     (smoothGerm.valueOrderRingHom IG x).toRingHom = smoothGerm.valueRingHom IG x :=
   rfl
@@ -171,7 +171,7 @@ def valueₛₗ {F} [AddCommMonoid F] [Module ℝ F] (x : N) :
 
 variable (I)
 
-protected def ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : ℕ∞) : Prop :=
+protected def ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : WithTop ℕ∞) : Prop :=
   Quotient.liftOn' φ (fun f ↦ ContMDiffAt I IG n f x) fun f g h ↦
     propext <| by
       constructor
@@ -180,7 +180,7 @@ protected def ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : ℕ∞) : Prop :=
 
 /-- The predicate selecting germs of `ContMDiffAt` functions.
 TODO: merge with the next def that generalizes target space -/
-protected nonrec def ContMDiffAt {x : M} (φ : Germ (𝓝 x) F) (n : ℕ∞) : Prop :=
+protected nonrec def ContMDiffAt {x : M} (φ : Germ (𝓝 x) F) (n : WithTop ℕ∞) : Prop :=
   φ.ContMDiffAt' I 𝓘(ℝ, F) n
 
 -- currently unused
@@ -192,10 +192,12 @@ nonrec def mfderiv {x : M} (φ : Germ (𝓝 x) N) :
 
 variable {I}
 
-omit [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
+omit [FiniteDimensional ℝ E] [IsManifold I ∞ M] [SigmaCompactSpace M] [T2Space M]
 
 theorem _root_.smoothGerm.contMDiffAt {x : M} (φ : smoothGerm I x) {n : ℕ∞} :
-    (φ : Germ (𝓝 x) ℝ).ContMDiffAt I n := by rcases φ with ⟨_, g, rfl⟩; apply g.contMDiff.of_le le_top
+    (φ : Germ (𝓝 x) ℝ).ContMDiffAt I n := by
+  rcases φ with ⟨_, g, rfl⟩
+  apply g.contMDiff.of_le (mod_cast le_top)
 
 protected nonrec theorem ContMDiffAt.add {x : M} {φ ψ : Germ (𝓝 x) F} {n : ℕ∞} :
     φ.ContMDiffAt I n → ψ.ContMDiffAt I n → (φ + ψ).ContMDiffAt I n :=
@@ -225,10 +227,10 @@ variable {E₁ E₂ F H₁ M₁ H₂ M₂ : Type*}
   [NormedAddCommGroup E₂] [NormedSpace ℝ E₂] [FiniteDimensional ℝ E₂]
   [NormedAddCommGroup F] [NormedSpace ℝ F]
   [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
-  [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [SmoothManifoldWithCorners I₁ M₁]
+  [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [IsManifold I₁ ∞ M₁]
   [SigmaCompactSpace M₁] [T2Space M₁]
   [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
-  [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
+  [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [IsManifold I₂ ∞ M₂]
 
 open scoped Filter
 
@@ -274,8 +276,8 @@ end)
 -/
 variable {I₁ I₂}
 
-omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂] [SmoothManifoldWithCorners I₁ M₁]
-  [SigmaCompactSpace M₁] [T2Space M₁] [SmoothManifoldWithCorners I₂ M₂]
+omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂] [IsManifold I₁ ∞ M₁]
+  [SigmaCompactSpace M₁] [T2Space M₁] [IsManifold I₂ ∞ M₂]
 
 theorem ContMDiffAtProd.add {x : M₁} {φ ψ : Germ (𝓝 x) <| M₂ → F} {n : ℕ∞} :
     φ.ContMDiffAtProd I₁ I₂ n → ψ.ContMDiffAtProd I₁ I₂ n → (φ + ψ).ContMDiffAtProd I₁ I₂ n :=
