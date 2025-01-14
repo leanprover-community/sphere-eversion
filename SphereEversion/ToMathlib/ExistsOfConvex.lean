@@ -2,7 +2,7 @@ import SphereEversion.ToMathlib.Partition
 
 noncomputable section
 
-open scoped Topology Manifold
+open scoped Topology Manifold ContDiff
 
 open Set Function Filter
 
@@ -12,7 +12,7 @@ variable {ι : Type*}
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*}
   [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
-  [ChartedSpace H M] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
+  [ChartedSpace H M] [IsManifold I ∞ M] [SigmaCompactSpace M] [T2Space M]
 
 section
 
@@ -47,7 +47,7 @@ variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [TopologicalSpace HG]
   (IG : ModelWithCorners ℝ G HG) {N : Type*} [TopologicalSpace N] [ChartedSpace HG N]
-  [SmoothManifoldWithCorners IG N]
+  [IsManifold IG ∞ N]
 
 @[inherit_doc] local notation "𝓒" => ContMDiff I 𝓘(ℝ, F)
 
@@ -55,7 +55,7 @@ variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [To
 
 variable (I)
 
-omit [FiniteDimensional ℝ E] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M] in
+omit [FiniteDimensional ℝ E] [IsManifold I ∞ M] [SigmaCompactSpace M] [T2Space M] in
 theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
     ReallyConvex (smoothGerm I x) {φ : Germ (𝓝 x) F | φ.ContMDiffAt I n} := by
   classical
@@ -112,16 +112,16 @@ variable {E₁ E₂ F : Type*}
 
 variable {H₁ M₁ H₂ M₂ : Type*}
   [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
-  [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [SmoothManifoldWithCorners I₁ M₁]
+  [TopologicalSpace M₁] [ChartedSpace H₁ M₁] [IsManifold I₁ ∞ M₁]
   [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
-  [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [SmoothManifoldWithCorners I₂ M₂]
+  [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [IsManifold I₂ ∞ M₂]
 
 @[inherit_doc] local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
 
 @[inherit_doc] local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
 
 omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂]
-  [SmoothManifoldWithCorners I₁ M₁] [SmoothManifoldWithCorners I₂ M₂] in
+  [IsManifold I₁ ∞ M₁] [IsManifold I₂ ∞ M₂] in
 theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
     ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMDiffAtProd I₁ I₂ n} := by
   classical
@@ -139,7 +139,7 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
   refine (smoothGerm.contMDiffAt _).smul_prod (w_supp ?_)
   simpa [H] using hφ
 
-omit [FiniteDimensional ℝ E₂] [SmoothManifoldWithCorners I₂ M₂] in
+omit [FiniteDimensional ℝ E₂] [IsManifold I₂ ∞ M₂] in
 theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [SigmaCompactSpace M₁] [T2Space M₁]
     (hP : ∀ x, Convex ℝ {f | P x f}) {n : ℕ∞}
     (hP' : ∀ x : M₁, ∃ U ∈ 𝓝 x, ∃ f : M₁ → M₂ → F,
@@ -184,12 +184,12 @@ variable {ι : Type*}
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E] {H : Type*}
   [TopologicalSpace H] {I : ModelWithCorners ℝ E H} {M : Type*} [TopologicalSpace M]
-  [ChartedSpace H M] [SmoothManifoldWithCorners I M] [SigmaCompactSpace M] [T2Space M]
+  [ChartedSpace H M] [IsManifold I ∞ M] [SigmaCompactSpace M] [T2Space M]
 
 open TopologicalSpace
 
 example {f : E → ℝ} (h : ∀ x : E, ∃ U ∈ 𝓝 x, ∃ ε : ℝ, ∀ x' ∈ U, 0 < ε ∧ ε ≤ f x') :
-    ∃ f' : E → ℝ, ContDiff ℝ (⊤: ℕ∞) f' ∧ ∀ x, 0 < f' x ∧ f' x ≤ f x := by
+    ∃ f' : E → ℝ, ContDiff ℝ ∞ f' ∧ ∀ x, 0 < f' x ∧ f' x ≤ f x := by
   let P : E → ℝ → Prop := fun x t ↦ 0 < t ∧ t ≤ f x
   have hP : ∀ x, Convex ℝ {y | P x y} := fun x ↦ convex_Ioc _ _
   apply exists_contDiff_of_convex hP

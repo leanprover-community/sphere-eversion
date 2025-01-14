@@ -5,15 +5,15 @@ noncomputable section
 
 open Set Filter ModelWithCorners Metric
 
-open scoped Topology Manifold
+open scoped Topology Manifold ContDiff
 
 variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
   {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM}
-  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [IsManifold IM ∞ M]
   [T2Space M]
   {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX] [FiniteDimensional ℝ EX]
   {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX}
-  {X : Type*} [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X]
+  {X : Type*} [MetricSpace X] [ChartedSpace HX X] [IsManifold IX ∞ X]
 
 theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ, EM) EM IM M)
     (ψ : OpenSmoothEmbedding 𝓘(ℝ, EX) EX IX X) {R : RelMfld IM M IX X} (hRample : R.Ample)

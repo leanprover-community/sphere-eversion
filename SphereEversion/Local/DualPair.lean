@@ -35,6 +35,8 @@ open Function ContinuousLinearMap
 
 open LinearMap (ker)
 
+open scoped ContDiff
+
 /-! ## General theory -/
 
 section NoNorm
@@ -182,7 +184,6 @@ end NoNorm
 
 
 namespace DualPair
-local notation "∞" => (⊤ : ℕ∞)
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F]
   [NormedSpace ℝ F]

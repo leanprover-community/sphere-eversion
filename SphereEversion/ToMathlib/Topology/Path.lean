@@ -95,7 +95,7 @@ theorem subset_range_strans_right {x : X} {γ γ' : Path x x} {t₀ : I} (h : t�
   have h2 : t₀ ≤ t' := le_add_of_nonneg_right this
   have h3 := sub_ne_zero.mpr (unitInterval.coe_ne_one.mpr h).symm
   use t'
-  simp [h2, unitInterval.coe_ne_one.mpr h, h3]
+  simp [h2, unitInterval.coe_ne_one.mpr h, h3, t']
 
 theorem range_strans_subset {x : X} {γ γ' : Path x x} {t₀ : I} :
     range (γ.strans γ' t₀) ⊆ range γ ∪ range γ' := by

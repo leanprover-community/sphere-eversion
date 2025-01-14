@@ -23,7 +23,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCom
   [NormedSpace 𝕜 E] {E₁ : Type*} [NormedAddCommGroup E₁] [NormedSpace 𝕜 E₁] {E₂ : Type*}
   [NormedAddCommGroup E₂] [NormedSpace 𝕜 E₂] {E' : Type*} [NormedAddCommGroup E']
   [NormedSpace 𝕜 E'] {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*}
-  [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : ℕ∞}
+  [NormedAddCommGroup G] [NormedSpace 𝕜 G] {n : WithTop ℕ∞}
 
 theorem fderiv_prod_left {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun x ↦ (x, y₀)) x₀ = ContinuousLinearMap.inl 𝕜 E F :=
@@ -36,7 +36,7 @@ theorem fderiv_prod_right {x₀ : E} {y₀ : F} :
 theorem HasFDerivAt.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
     HasFDerivAt (fun e ↦ φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ := by
-  apply h.comp e₀ <| hasFDerivAt_prod_mk_left e₀ f₀
+  exact h.comp e₀ <| hasFDerivAt_prod_mk_left (𝕜 := 𝕜) e₀ f₀
 
 theorem HasFDerivAt.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
@@ -48,10 +48,12 @@ theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableA
       fderiv 𝕜 (fun z : E × F ↦ f (z.1, p.2)) p + fderiv 𝕜 (fun z : E × F ↦ f (p.1, z.2)) p := by
   have H₁ : fderiv 𝕜 (fun z : E × F ↦ f (z.1, p.2)) p =
       (fderiv 𝕜 f p).comp (.comp (.inl 𝕜 E F) (.fst 𝕜 E F)) :=
-    (hf.hasFDerivAt.comp _ (hasFDerivAt_fst.prod (hasFDerivAt_const _ _))).fderiv
+    (hf.hasFDerivAt.comp p
+      ((hasFDerivAt_fst (𝕜 := 𝕜) (E := E) (F := F)).prod (hasFDerivAt_const p.2 _))).fderiv
   have H₂ : fderiv 𝕜 (fun z : E × F ↦ f (p.1, z.2)) p =
       (fderiv 𝕜 f p).comp (.comp (.inr 𝕜 E F) (.snd 𝕜 E F)) :=
-    (hf.hasFDerivAt.comp _ ((hasFDerivAt_const _ _).prod hasFDerivAt_snd)).fderiv
+    (hf.hasFDerivAt.comp _ ((hasFDerivAt_const p.1 _).prod
+      (hasFDerivAt_snd (𝕜 := 𝕜) (E := E) (F := F)))).fderiv
   rw [H₁, H₂, ← comp_add, comp_fst_add_comp_snd, coprod_inl_inr, ContinuousLinearMap.comp_id]
 
 variable (𝕜)
@@ -81,7 +83,7 @@ theorem fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e�
 theorem DifferentiableAt.hasFDerivAt_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
     HasFDerivAt (fun e ↦ φ e f₀) (partialFDerivFst 𝕜 φ e₀ f₀) e₀ := by
-  apply (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).hasFDerivAt
+  apply (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).hasFDerivAt (𝕜 := 𝕜)
 
 theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :

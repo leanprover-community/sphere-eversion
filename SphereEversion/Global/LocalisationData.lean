@@ -3,7 +3,7 @@ import SphereEversion.Global.SmoothEmbedding
 
 noncomputable section
 
-open scoped Manifold
+open scoped Manifold ContDiff
 
 open Set Metric
 
@@ -12,10 +12,10 @@ section
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
-  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners 𝕜 E' H')
-  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
 
 /-- Definition `def:localisation_data`. -/
 structure LocalisationData (f : M → M') where
@@ -44,7 +44,7 @@ abbrev ψj : IndexType ld.N → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M' :=
 def ι (L : LocalisationData I I' f) :=
   IndexType L.N
 
-omit [SmoothManifoldWithCorners I M] [SmoothManifoldWithCorners I' M'] in
+omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem iUnion_succ' {β : Type*} (s : ld.ι → Set β) (i : IndexType ld.N) :
     (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i := by
   simp only [(fun _ ↦ le_iff_lt_or_eq : ∀ j, j ≤ i ↔ j < i ∨ j = i)]
@@ -64,11 +64,11 @@ open ModelWithCorners
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   {M : Type*} [TopologicalSpace M] [SigmaCompactSpace M] [LocallyCompactSpace M] [T2Space M]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H) [Boundaryless I] [Nonempty M]
-  [ChartedSpace H M] [SmoothManifoldWithCorners I M]
+  [ChartedSpace H M] [IsManifold I ∞ M]
   (E' : Type*) [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
   {H' : Type*} [TopologicalSpace H'] (I' : ModelWithCorners ℝ E' H') [Boundaryless I']
   {M' : Type*} [MetricSpace M'] [SigmaCompactSpace M'] [LocallyCompactSpace M']
-  [Nonempty M'] [ChartedSpace H' M'] [SmoothManifoldWithCorners I' M']
+  [Nonempty M'] [ChartedSpace H' M'] [IsManifold I' ∞ M']
 
 variable (M')
 
@@ -124,8 +124,8 @@ variable {E E' I I'}
 section
 
 omit [FiniteDimensional ℝ E] [SigmaCompactSpace M] [LocallyCompactSpace M] [T2Space M]
-  [I.Boundaryless] [Nonempty M] [SmoothManifoldWithCorners I M] [I'.Boundaryless]
-  [SigmaCompactSpace M'] [LocallyCompactSpace M'] [Nonempty M'] [SmoothManifoldWithCorners I' M']
+  [I.Boundaryless] [Nonempty M] [IsManifold I ∞ M] [I'.Boundaryless]
+  [SigmaCompactSpace M'] [LocallyCompactSpace M'] [Nonempty M'] [IsManifold I' ∞ M']
 
 /-- Lemma `lem:localisation_stability`. -/
 theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :

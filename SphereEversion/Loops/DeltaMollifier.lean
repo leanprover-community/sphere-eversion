@@ -30,7 +30,7 @@ convolutions.
 noncomputable section
 
 open Set Function MeasureTheory.MeasureSpace ContinuousLinearMap
-open scoped Topology Filter Convolution
+open scoped Topology Filter Convolution ContDiff
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 section
@@ -191,8 +191,6 @@ theorem intervalIntegral_periodize_smul (f : ℝ → ℝ) (γ : Loop E) {a b c d
   exact integral_periodize _ this
 
 end
-
-local notation "∞" => (⊤ : ℕ∞)
 
 section DeltaApprox
 

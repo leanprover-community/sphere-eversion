@@ -241,7 +241,7 @@ theorem relative_inductive_construction_of_loc {X Y : Type*} [EMetricSpace X]
     · rwa [hK₁'K₂'] at hf
     · apply h'f.filter_mono; gcongr
   rcases inductive_construction_of_loc P₀ P₀' P₁ hf₀ loc ind' with ⟨f, hf⟩
-  simp only [forall_and, forall_restrictGermPredicate_iff] at hf ⊢
+  simp only [forall_and, forall_restrictGermPredicate_iff, P₀'] at hf ⊢
   exact ⟨f, ⟨hf.1, hf.2.2⟩, hf.2.1⟩
 
 end inductive_construction

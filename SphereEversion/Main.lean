@@ -2,8 +2,7 @@ import SphereEversion.Global.Immersion
 
 open Metric FiniteDimensional Set ModelWithCorners
 
-open scoped Manifold Topology
-local notation "∞" => (⊤ : ℕ∞)
+open scoped Manifold Topology ContDiff
 
 /-! # The sphere eversion project
 
@@ -31,7 +30,7 @@ theorem Smale :
     (-- `f 1` is the antipodal map, sending `x` to `-x` and
     f 1 = fun x : 𝕊² ↦ -(x : ℝ³)) ∧
     -- every `f t` is an immersion.
-    ∀ t, Immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t) ⊤ :=
+    ∀ t, Immersion (𝓡 2) 𝓘(ℝ, ℝ³) (f t) ∞ :=
   sphere_eversion ℝ³
 
 end Smale
@@ -49,11 +48,11 @@ section Gromov
 
 variable (n n' d : ℕ)
   {M : Type*} [TopologicalSpace M] [ChartedSpace (ℝ^n) M]
-  [SmoothManifoldWithCorners (𝓡 n) M] [T2Space M] [SigmaCompactSpace M]
-  {M' : Type*} [MetricSpace M'] [ChartedSpace (ℝ^n') M'] [SmoothManifoldWithCorners (𝓡 n') M']
+  [IsManifold (𝓡 n) ∞ M] [T2Space M] [SigmaCompactSpace M]
+  {M' : Type*} [MetricSpace M'] [ChartedSpace (ℝ^n') M'] [IsManifold (𝓡 n') ∞ M']
   [SigmaCompactSpace M']
   {P : Type*} [TopologicalSpace P] [ChartedSpace (ℝ^d) P]
-  [SmoothManifoldWithCorners (𝓡 d) P] [T2Space P] [SigmaCompactSpace P]
+  [IsManifold (𝓡 d) ∞ P] [T2Space P] [SigmaCompactSpace P]
 
 /-- Gromov's flexibility theorem for open and ample first order partial differential relations
 for maps between manifolds. -/

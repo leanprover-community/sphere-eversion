@@ -11,14 +11,14 @@ noncomputable section
 
 open Set Equiv Bundle ContinuousLinearMap
 
-open scoped Manifold Bundle Topology
+open scoped Manifold Bundle Topology ContDiff
 
 section ArbitraryField
 universe u v
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type u} [NormedAddCommGroup E]
   [NormedSpace 𝕜 E] {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H) (M : Type*)
-  [TopologicalSpace M] [ChartedSpace H M] [SmoothManifoldWithCorners I M] {F : Type*}
+  [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] {G : Type*} [TopologicalSpace G]
   {J : ModelWithCorners 𝕜 F G} {N : Type*} [TopologicalSpace N] [ChartedSpace G N]
   (V : Type*) [NormedAddCommGroup V] [NormedSpace 𝕜 V]
@@ -34,8 +34,8 @@ variable {f : N → J¹[𝕜, E, I, M, V]}
 
 -- todo: remove or use to prove `contMDiff_one_jet_eucl_bundle`
 theorem contMDiffAt_one_jet_eucl_bundle' {x₀ : N} :
-    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ⊤ f x₀ ↔ ContMDiffAt J I ⊤ (fun x  ↦ (f x).1) x₀ ∧
-    ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ⊤ (fun x  ↦ show E →L[𝕜] V from
+    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔ ContMDiffAt J I ∞ (fun x  ↦ (f x).1) x₀ ∧
+    ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x  ↦ show E →L[𝕜] V from
       (f x).2 ∘L (trivializationAt E (TangentSpace I : M → _) (f x₀).1).symmL 𝕜 (f x).1) x₀ := by
   simp_rw [contMDiffAt_hom_bundle, inCoordinates, Trivial.trivializationAt,
     Trivial.trivialization_continuousLinearMapAt]
@@ -43,9 +43,9 @@ theorem contMDiffAt_one_jet_eucl_bundle' {x₀ : N} :
   simp_rw [ContinuousLinearMap.id_comp]
 
 theorem contMDiffAt_one_jet_eucl_bundle {x₀ : N} :
-    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ⊤ f x₀ ↔
-      ContMDiffAt J I ⊤ (fun x  ↦ (f x).1) x₀ ∧
-        ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ⊤ (fun x  ↦ show E →L[𝕜] V from
+    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔
+      ContMDiffAt J I ∞ (fun x  ↦ (f x).1) x₀ ∧
+        ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x  ↦ show E →L[𝕜] V from
           (f x).2 ∘L (trivializationAt E (TangentSpace I) (f x₀).proj).symmL 𝕜 (f x).proj) x₀ := by
   rw [contMDiffAt_hom_bundle, and_congr_right_iff]
   intro hf
@@ -61,18 +61,18 @@ theorem contMDiffAt_one_jet_eucl_bundle {x₀ : N} :
   simp_rw [ContinuousLinearMap.id_comp]
 
 theorem ContMDiffAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
-    (hf : ContMDiffAt J I ⊤ f x₀)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ⊤ (fun x ↦ show E →L[𝕜] V from
+    (hf : ContMDiffAt J I ∞ f x₀)
+    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x ↦ show E →L[𝕜] V from
             ϕ x ∘L (trivializationAt E (TangentSpace I : M → _) (f x₀)).symmL 𝕜 (f x)) x₀) :
-    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ⊤
+    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞
       (fun x ↦ Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹[𝕜, E, I, M, V]) x₀ :=
   contMDiffAt_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
 
 theorem ContMDiffAt.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
-    (hf : ContMDiffAt J I ⊤ f x₀)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ⊤ (fun x ↦ show E →L[𝕜] V from
+    (hf : ContMDiffAt J I ∞ f x₀)
+    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x ↦ show E →L[𝕜] V from
       ϕ x ∘L (trivializationAt E (TangentSpace I) (f x₀)).symmL 𝕜 (f x)) x₀) :
-    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ⊤
+    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞
       (fun x ↦ Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹[𝕜, E, I, M, V]) x₀ :=
   contMDiffAt_one_jet_eucl_bundle.mpr ⟨hf, hϕ⟩
 
@@ -85,7 +85,7 @@ section Sections
 structure OneJetEuclSec where
   toFun : M → J¹[𝕜, E, I, M, V]
   is_sec' : ∀ p, (toFun p).1 = p
-  smooth' : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ⊤ toFun
+  smooth' : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ toFun
 
 variable {I M V}
 
@@ -100,7 +100,7 @@ theorem OneJetEuclSec.is_sec (s : OneJetEuclSec I M V) (p : M) : (s p).1 = p :=
   s.is_sec' p
 
 @[simp]
-theorem OneJetEuclSec.smooth (s : OneJetEuclSec I M V) : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ⊤ s :=
+theorem OneJetEuclSec.smooth (s : OneJetEuclSec I M V) : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ s :=
   s.smooth'
 
 end Sections
@@ -121,9 +121,9 @@ def proj (v : OneJetBundle I M 𝓘(𝕜, V) V) : J¹[𝕜, E, I, M, V] :=
   ⟨v.1.1, v.2⟩
 
 theorem smooth_proj : ContMDiff ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, E →L[𝕜] V))
-    ⊤ (proj I M V) := by
+    ∞ (proj I M V) := by
   intro x₀
-  have : ContMDiffAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ ⊤ id x₀ := contMDiffAt_id
+  have : ContMDiffAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ ∞ id x₀ := contMDiffAt_id
   simp_rw (config := { unfoldPartialApp := true }) [contMDiffAt_oneJetBundle, inTangentCoordinates,
     inCoordinates, TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this
   dsimp only [TangentSpace] at this
@@ -149,9 +149,9 @@ def incl (v : J¹[𝕜, E, I, M, V] × V) : OneJetBundle I M 𝓘(𝕜, V) V :=
   ⟨(v.1.1, v.2), v.1.2⟩
 
 theorem smooth_incl : ContMDiff ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V))
-    ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) ⊤ (incl I M V) := by
+    ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) ∞ (incl I M V) := by
   intro x₀
-  have : ContMDiffAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ ⊤ Prod.fst x₀ := contMDiffAt_fst
+  have : ContMDiffAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ ∞ Prod.fst x₀ := contMDiffAt_fst
   rw [contMDiffAt_one_jet_eucl_bundle] at this
   refine this.1.oneJetBundle_mk contMDiffAt_snd ?_
   unfold inTangentCoordinates inCoordinates TangentSpace
@@ -159,12 +159,12 @@ theorem smooth_incl : ContMDiff ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(�
     ContinuousLinearMap.id_comp]
   exact this.2
 
-omit [SmoothManifoldWithCorners I M] in
+omit [IsManifold I ∞ M] in
 @[simp]
 theorem incl_fst_fst (v : J¹[𝕜, E, I, M, V] × V) : (incl I M V v).1.1 = v.1.1 :=
   rfl
 
-omit [SmoothManifoldWithCorners I M] in
+omit [IsManifold I ∞ M] in
 @[simp]
 theorem incl_snd (v : J¹[𝕜, E, I, M, V] × V) : (incl I M V v).1.2 = v.2 :=
   rfl
@@ -177,7 +177,7 @@ section familyTwist
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [TopologicalSpace H]
   (I : ModelWithCorners ℝ E H) (M : Type*) [TopologicalSpace M] [ChartedSpace H M]
-  [SmoothManifoldWithCorners I M] (V : Type*) [NormedAddCommGroup V] [NormedSpace ℝ V]
+  [IsManifold I ∞ M] (V : Type*) [NormedAddCommGroup V] [NormedSpace ℝ V]
   (V' : Type*) [NormedAddCommGroup V'] [NormedSpace ℝ V'] {F : Type*} [NormedAddCommGroup F]
   [NormedSpace ℝ F] {G : Type*} [TopologicalSpace G] (J : ModelWithCorners ℝ F G) (N : Type*)
   [TopologicalSpace N] [ChartedSpace G N]
@@ -187,7 +187,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
 structure FamilyOneJetEuclSec where
   toFun : N × M → J¹[ℝ, E, I, M, V]
   is_sec' : ∀ p, (toFun p).1 = p.2
-  smooth' : ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ⊤ toFun
+  smooth' : ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ∞ toFun
 
 instance : FunLike (FamilyOneJetEuclSec I M V J N) (N × M) J¹[ℝ, E, I, M, V] where
   coe := FamilyOneJetEuclSec.toFun
@@ -204,12 +204,12 @@ theorem FamilyOneJetEuclSec.is_sec (s : FamilyOneJetEuclSec I M V J N) (p : N ×
 
 @[simp]
 theorem FamilyOneJetEuclSec.smooth (s : FamilyOneJetEuclSec I M V J N) :
-    ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ⊤ s :=
+    ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ∞ s :=
   s.smooth'
 
 variable {V'}
 
-def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ⊤ f)
+def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ∞ f)
     (s : FamilyOneJetEuclSec I M V J N) : FamilyOneJetSec I M 𝓘(ℝ, V) V J N
     where
   bs n m := (incl I M V (s (n, m), f (n, m))).1.2
@@ -219,7 +219,7 @@ def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ⊤ f)
     ext : 1 <;> simp
 
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
-    (i_smooth : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ⊤ i x₀) :
+    (i_smooth : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ∞ i x₀) :
     FamilyOneJetEuclSec I M V' J N
     where
   toFun p := ⟨p.2, (i p).comp (s p.2).2⟩
@@ -228,7 +228,7 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     intro x₀
     refine contMDiffAt_snd.one_jet_eucl_bundle_mk' ?_
     simp_rw [ContinuousLinearMap.comp_assoc]
-    have : ContMDiffAt (J.prod I) _ ⊤ (fun x : N × M  ↦ _) x₀ := s.smooth.comp contMDiff_snd x₀
+    have : ContMDiffAt (J.prod I) _ ∞ (fun x : N × M  ↦ _) x₀ := s.smooth.comp contMDiff_snd x₀
     rw [contMDiffAt_one_jet_eucl_bundle'] at this
     refine (i_smooth x₀).clm_comp ?_
     convert this.2 <;> simp [s.is_sec]

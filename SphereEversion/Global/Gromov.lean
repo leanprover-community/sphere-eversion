@@ -14,19 +14,17 @@ noncomputable section
 
 open Set Filter ModelWithCorners Metric
 
-open scoped Topology Manifold
-
-local notation "∞" => (⊤ : ℕ∞)
+open scoped Topology Manifold ContDiff
 
 variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimensional ℝ EM]
   {HM : Type*} [TopologicalSpace HM] {IM : ModelWithCorners ℝ EM HM} [Boundaryless IM]
-  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace HM M] [IsManifold IM ∞ M]
   [T2Space M] [SigmaCompactSpace M]
   {EX : Type*} [NormedAddCommGroup EX] [NormedSpace ℝ EX] [FiniteDimensional ℝ EX]
   {HX : Type*} [TopologicalSpace HX] {IX : ModelWithCorners ℝ EX HX} [Boundaryless IX]
   -- note: X is a metric space
   {X : Type*}
-  [MetricSpace X] [ChartedSpace HX X] [SmoothManifoldWithCorners IX X] [SigmaCompactSpace X]
+  [MetricSpace X] [ChartedSpace HX X] [IsManifold IX ∞ X] [SigmaCompactSpace X]
   {R : RelMfld IM M IX X} {A : Set M} {δ : M → ℝ}
 
 @[inherit_doc] local notation "J¹" => OneJetBundle IM M IX X
@@ -312,7 +310,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
           _ = τ x := by simp [F, η]
     · rw [union_assoc, Eventually.union_nhdsSet] at hF'hol
       replace hF'hol := hF'hol.2
-      simp_rw [← L.iUnion_succ'] at hF'hol
+      simp_rw [L.iUnion_succ']
       exact hF'hol
     · exact F'.smooth
     · intro t x hx
@@ -342,7 +340,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
 
 variable {EP : Type*} [NormedAddCommGroup EP] [NormedSpace ℝ EP] [FiniteDimensional ℝ EP]
   {HP : Type*} [TopologicalSpace HP] {IP : ModelWithCorners ℝ EP HP} [Boundaryless IP]
-  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [SmoothManifoldWithCorners IP P]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace HP P] [IsManifold IP ∞ P]
   [SigmaCompactSpace P] [T2Space P] {C : Set (P × M)}
 
 /-
@@ -364,7 +362,7 @@ theorem RelMfld.Ample.satisfiesHPrincipleWith (hRample : R.Ample) (hRopen : IsOp
 variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimensional ℝ E']
   {H' : Type*} [TopologicalSpace H'] {I' : ModelWithCorners ℝ E' H'} [I'.Boundaryless]
   {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
-  [SmoothManifoldWithCorners I' M'] [SigmaCompactSpace M'] [T2Space M']
+  [IsManifold I' ∞ M'] [SigmaCompactSpace M'] [T2Space M']
 
 /-
 Since every (σ-compact) manifold is metrizable, the metric space assumption can be removed.
