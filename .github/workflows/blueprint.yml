@@ -15,7 +15,7 @@ jobs:
     name: Build project
     steps:
       - name: Checkout project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -87,13 +87,13 @@ jobs:
           cp *.css ../docs
 
       - name: Upload docs & blueprint artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: docs/
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
 
       - name: Make sure the cache works
         run: |
