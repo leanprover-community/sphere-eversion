@@ -28,29 +28,26 @@ jobs:
       - name: Build project
         run: ~/.elan/bin/lake build SphereEversion
 
-      - name: Cache mathlib docs
-        uses: actions/cache@v3
+      - name: Cache API docs
+        uses: actions/cache@v4
         with:
           path: |
-            .lake/build/doc/Init
-            .lake/build/doc/Lake
-            .lake/build/doc/Lean
-            .lake/build/doc/Std
-            .lake/build/doc/Mathlib
-            .lake/build/doc/declarations
-            !.lake/build/doc/declarations/declaration-data-SphereEversion*
-          key: MathlibDoc-${{ hashFiles('lake-manifest.json') }}
-          restore-keys: |
-            MathlibDoc-
+            docbuild/.lake/build/doc
+          key: LakeBuildDoc-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+          restore-keys: LakeBuildDoc-
 
-      - name: Build documentation
-        run: ~/.elan/bin/lake -R -Kenv=dev build SphereEversion:docs
+      - name: Build project documentation
+        working-directory: docbuild
+        run: |
+          MATHLIB_NO_CACHE_ON_UPDATE=1 ~/.elan/bin/lake update SphereEversion || true
+          ~/.elan/bin/lake build SphereEversion:docs
 
       - name: Build blueprint and copy to `docs/blueprint`
         uses: xu-cheng/texlive-action@v2
         with:
           docker_image: ghcr.io/xu-cheng/texlive-full:20231201
           run: |
+            export PIP_BREAK_SYSTEM_PACKAGES=1
             apk update
             apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
             git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -61,20 +58,18 @@ jobs:
             pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
             pip install leanblueprint
             leanblueprint pdf
-            mkdir docs
             cp blueprint/print/print.pdf docs/blueprint.pdf
             leanblueprint web
             cp -r blueprint/web docs/blueprint
 
       - name: Check declarations
-        run: |
-            ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
+        run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
 
-      - name: Move documentation to `docs/docs`
+      - name: Copy documentation to `docs/docs`
         run: |
           sudo chown -R runner docs
-          cp -r .lake/build/doc docs/docs
-      
+          cp -r docbuild/.lake/build/doc docs/docs
+
       - name: Install pandoc
         run: |
           sudo apt update
@@ -95,6 +90,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Make sure the cache works
-        run: |
-          mv docs/docs .lake/build/doc
+      # - name: Make sure the cache works
+      #   run: mv docs/docs .lake/build/doc
