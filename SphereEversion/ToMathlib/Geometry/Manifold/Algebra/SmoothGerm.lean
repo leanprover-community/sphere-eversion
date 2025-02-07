@@ -38,7 +38,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 @[to_additive]
 theorem SmoothMap.coe_prod {ι : Type*} (f : ι → C^∞⟮I, N; I', G⟯) (s : Finset ι) :
-    ⇑(∏ i in s, f i) = ∏ i in s, ⇑(f i) :=
+    ⇑(∏ i ∈ s, f i) = ∏ i ∈ s, ⇑(f i) :=
   map_prod (ContMDiffMap.coeFnMonoidHom : C^∞⟮I, N; I', G⟯ →* N → G) f s
 
 end
@@ -73,7 +73,7 @@ theorem smoothGerm.coe_coe (f : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (x : N) :
 
 @[simp]
 theorem smoothGerm.coe_sum {ι} (f : ι → C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) (s : Finset ι) (x : N) :
-    ((∑ i in s, f i : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smoothGerm I x) = ∑ i in s, (f i : smoothGerm I x) :=
+    ((∑ i ∈ s, f i : C^∞⟮I, N; 𝓘(ℝ), ℝ⟯) : smoothGerm I x) = ∑ i ∈ s, (f i : smoothGerm I x) :=
   map_sum (RingHom.rangeRestrict (RingHom.germOfContMDiffMap I x)) f s
 
 @[simp]
@@ -208,7 +208,7 @@ protected nonrec theorem ContMDiffAt.smul {x : M} {φ : Germ (𝓝 x) ℝ} {ψ :
   Germ.inductionOn φ fun _f hf ↦ Germ.inductionOn ψ fun _g hg ↦ hf.smul hg
 
 theorem ContMDiffAt.sum {x : M} {ι} {s : Finset ι} {n : ℕ∞} {f : ι → Germ (𝓝 x) F}
-    (h : ∀ i ∈ s, (f i).ContMDiffAt I n) : (∑ i in s, f i).ContMDiffAt I n := by
+    (h : ∀ i ∈ s, (f i).ContMDiffAt I n) : (∑ i ∈ s, f i).ContMDiffAt I n := by
   classical
   induction' s using Finset.induction_on with φ s hφs hs
   · rw [Finset.sum_empty]; exact contMDiffAt_const
@@ -295,7 +295,7 @@ theorem ContMDiffAt.smul_prod {x : M₁} {φ : Germ (𝓝 x) ℝ} {ψ : Germ (�
 
 theorem ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ∞}
     {f : ι → Germ (𝓝 x) (M₂ → F)} (h : ∀ i ∈ s, (f i).ContMDiffAtProd I₁ I₂ n) :
-    (∑ i in s, f i).ContMDiffAtProd I₁ I₂ n := by
+    (∑ i ∈ s, f i).ContMDiffAtProd I₁ I₂ n := by
   classical
   induction' s using Finset.induction_on with φ s hφs hs
   · rw [Finset.sum_empty]; intro y

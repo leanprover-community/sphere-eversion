@@ -12,7 +12,7 @@ theorem map_finsum {β α γ : Type*} [AddCommMonoid β] [AddCommMonoid γ] {G :
 
 @[to_additive]
 theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f : α → M) {s : Set α}
-    (h : mulSupport f ⊆ s) (hs : s.Finite) : ∏ᶠ i, f i = ∏ i in hs.toFinset, f i := by
+    (h : mulSupport f ⊆ s) (hs : s.Finite) : ∏ᶠ i, f i = ∏ i ∈ hs.toFinset, f i := by
   apply finprod_eq_prod_of_mulSupport_subset f; rwa [Set.Finite.coe_toFinset]
 
 section
@@ -59,7 +59,7 @@ theorem support_finite_of_finsum_eq_one {M : Type*} {ι : Sort _} [NonAssocSemir
 
 theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s : Finset β)
     [DecidableEq α] (g : β → M) :
-    ∑ᶠ x : α, ∑ y : β in Finset.filter (fun j : β ↦ f j = x) s, g y = ∑ k in s, g k := by
+    ∑ᶠ x : α, ∑ y ∈ Finset.filter (fun j : β ↦ f j = x) s, g y = ∑ k ∈ s, g k := by
   rw [finsum_eq_finset_sum_of_support_subset]
   · rw [Finset.sum_image']
     intros
@@ -71,8 +71,8 @@ theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s
     exact ⟨a, h⟩
 
 theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type*} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
-    (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
-    ∑ i in t, w i • z i ∈ reallyConvexHull 𝕜 s := by
+    (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i ∈ t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
+    ∑ i ∈ t, w i • z i ∈ reallyConvexHull 𝕜 s := by
   classical
   refine ⟨fun e ↦ ∑ᶠ i ∈ t.filter fun j ↦ z j = e, w i, ?_, ?_, ?_, ?_⟩
   · rw [Pi.le_def]
@@ -142,8 +142,8 @@ theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ really
 
 -- turn this into an iff
 theorem ReallyConvex.sum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {t : Finset ι}
-    {w : ι → 𝕜} {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i in t, w i = 1)
-    (hz : ∀ i ∈ t, z i ∈ s) : ∑ i in t, w i • z i ∈ s :=
+    {w : ι → 𝕜} {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i ∈ t, w i = 1)
+    (hz : ∀ i ∈ t, z i ∈ s) : ∑ i ∈ t, w i • z i ∈ s :=
   reallyConvex_iff_hull.mp hs (sum_mem_reallyConvexHull h₀ h₁ hz)
 
 theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜}

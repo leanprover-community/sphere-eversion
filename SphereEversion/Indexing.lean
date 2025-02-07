@@ -67,7 +67,7 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type*} {s : Set 
     · rintro ⟨n, ⟨fn⟩⟩
       have hn : n = 0 := by
         by_contra hn
-        replace hn : 0 < n := zero_lt_iff.mpr hn
+        replace hn : 0 < n := Nat.pos_iff_ne_zero.mpr hn
         simp only [hn, indexType_of_zero_lt] at fn
         exact h (Finite.intro fn.symm)
       simp only [hn, indexType_zero] at fn
