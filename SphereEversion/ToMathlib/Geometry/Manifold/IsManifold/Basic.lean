@@ -1,4 +1,4 @@
-import Mathlib.Geometry.Manifold.IsManifold
+import Mathlib.Geometry.Manifold.IsManifold.Basic
 
 open scoped Topology
 

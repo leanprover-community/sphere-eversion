@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Asymptotics.Asymptotics
+import Mathlib.Analysis.Asymptotics.Lemmas
 import Mathlib.LinearAlgebra.Dual
 import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Calculus.ParametricIntegral
