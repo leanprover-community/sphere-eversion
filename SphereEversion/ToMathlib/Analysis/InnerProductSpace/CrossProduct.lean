@@ -56,15 +56,11 @@ theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm 
              LinearMap.coe_comp, Function.comp_apply, LinearMap.llcomp_apply, LinearEquiv.coe_coe,
              LinearEquiv.trans_apply, LinearIsometryEquiv.coe_toLinearEquiv, LinearMap.coe_comp]
   rw [InnerProductSpace.toDual_symm_apply]
-  simp only [LinearMap.coe_toContinuousLinearMap', Function.comp_apply, LinearMap.llcomp_apply,
-             LinearEquiv.coe_coe, AlternatingMap.constLinearEquivOfIsEmpty_symm_apply,
-             Matrix.zero_empty, AlternatingMap.curryLeftLinearMap_apply,
-             AlternatingMap.curryLeft_apply_apply]
+  simp
 
 theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 := by
   rw [ω.inner_crossProduct_apply u v u]
-  exact ω.volumeForm.map_eq_zero_of_eq ![u, v, u] (by simp)
-    (by norm_num; decide : (0 : Fin 3) ≠ 2)
+  exact ω.volumeForm.map_eq_zero_of_eq ![u, v, u] (by simp) (by norm_num; decide : (0 : Fin 3) ≠ 2)
 
 theorem inner_crossProduct_apply_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, v⟫ = 0 := by
   rw [ω.inner_crossProduct_apply u v v]
@@ -88,10 +84,8 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       positivity
     · refine le_of_mul_le_mul_right ?_ h
       rw [← real_inner_self_eq_norm_mul_norm]
-      simpa only [inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Finset.card_singleton,
-        Finset.prod_const, Fintype.univ_ofSubsingleton, Matrix.cons_val_fin_one, Matrix.cons_val_succ,
-        Matrix.cons_val_zero, mul_assoc, Nat.zero_eq, pow_one, Submodule.coe_norm] using
-        ω.volumeForm_apply_le ![u, v, u×₃v]
+      simpa [inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Matrix.cons_val_zero,
+        mul_assoc] using ω.volumeForm_apply_le ![u, v, u×₃v]
   let K : Submodule ℝ E := Submodule.span ℝ ({u, ↑v} : Set E)
   have : Nontrivial Kᗮ := by
     apply Module.nontrivial_of_finrank_pos (R := ℝ)
@@ -113,10 +107,9 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       assumption
   refine le_of_mul_le_mul_right ?_ (by rwa [norm_pos_iff] : 0 < ‖w‖)
   -- Cauchy-Schwarz inequality for `u ×₃ v` and `w`
-  simpa only [inner_crossProduct_apply, ω.abs_volumeForm_apply_of_pairwise_orthogonal H,
-    inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Finset.card_singleton,
-    Finset.prod_const, Fintype.univ_ofSubsingleton, Matrix.cons_val_fin_one, Matrix.cons_val_succ,
-    Matrix.cons_val_zero, Nat.zero_eq, pow_one, mul_assoc] using abs_real_inner_le_norm (u×₃v) w
+  simpa [inner_crossProduct_apply, ω.abs_volumeForm_apply_of_pairwise_orthogonal H,
+    Fin.prod_univ_succ, Fintype.univ_ofSubsingleton, Matrix.cons_val_fin_one, Matrix.cons_val_succ,
+    mul_assoc] using abs_real_inner_le_norm (u×₃v) w
 
 theorem isometry_on_crossProduct (u : Metric.sphere (0 : E) 1) (v : (ℝ ∙ (u : E))ᗮ) :
     ‖u×₃v‖ = ‖v‖ := by simp [norm_crossProduct]
