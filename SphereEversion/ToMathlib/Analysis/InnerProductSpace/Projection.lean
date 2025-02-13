@@ -111,8 +111,7 @@ variable {x₀ x : E}
 theorem mem_orthogonal_span_singleton_iff {x₀ x : E} : x ∈ {.x₀}ᗮ ↔ ⟪x₀, x⟫ = 0 := by
   simp only [mem_orthogonal, forall_mem_span_singleton, inner_smul_left, RCLike.conj_to_real,
     mul_eq_zero]
-  refine ⟨fun h ↦ ?_, fun h t ↦ Or.inr h⟩
-  simpa using h 1
+  refine ⟨fun h ↦ ?_, fun h t ↦ Or.inr h⟩; simpa using h 1
 
 @[simp]
 theorem orthogonalProjection_orthogonal_singleton {x y : E} :
