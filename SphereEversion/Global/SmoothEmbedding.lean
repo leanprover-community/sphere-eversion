@@ -5,7 +5,7 @@ import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
-import SphereEversion.ToMathlib.Geometry.Manifold.SmoothManifoldWithCorners
+import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.Basic
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
 
