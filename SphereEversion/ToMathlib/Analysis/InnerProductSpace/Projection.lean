@@ -17,7 +17,8 @@ theorem eq_zero_of_mem_disjoint {R : Type*} [CommRing R] {M : Type*} [AddCommGro
 
 @[simp]
 theorem forall_mem_span_singleton {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M]
-    [Module R M] (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : Set M), P x) ↔ ∀ t : R, P (t • u) := by simp [mem_span_singleton]
+    [Module R M] (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : Set M), P x) ↔ ∀ t : R, P (t • u) := by
+  simp [mem_span_singleton]
 
 open scoped Pointwise
 
@@ -51,8 +52,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] --[Complet
 theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E ≃ₗᵢ⋆[ℝ] F)
     {x : E} (hx : x ≠ 0) : φ x ≠ 0 := by
-  intro H
-  apply hx
+  refine fun H ↦ hx ?_
   rw [← φ.symm_apply_apply x, H, φ.symm.map_zero]
 
 /-- The line (one-dimensional submodule of `E`) spanned by `x : E`. -/
@@ -111,11 +111,7 @@ variable {x₀ x : E}
 theorem mem_orthogonal_span_singleton_iff {x₀ x : E} : x ∈ {.x₀}ᗮ ↔ ⟪x₀, x⟫ = 0 := by
   simp only [mem_orthogonal, forall_mem_span_singleton, inner_smul_left, RCLike.conj_to_real,
     mul_eq_zero]
-  constructor
-  · intro h
-    simpa using h 1
-  · intro h t
-    exact Or.inr h
+  refine ⟨fun h ↦ by simpa using h 1, fun h t ↦ Or.inr h⟩
 
 @[simp]
 theorem orthogonalProjection_orthogonal_singleton {x y : E} :
@@ -137,15 +133,13 @@ theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
 theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}ᗮ) :
     (pr[x]ᗮ y : E) - (⟪x₀, pr[x]ᗮ y⟫ / ⟪x₀, x⟫) • x = y :=  by
   conv_rhs => rw [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y]
-  rw [orthogonalProjection_singleton]
-  rw [sub_eq_add_neg, add_comm, ← neg_smul]
+  rw [orthogonalProjection_singleton, sub_eq_add_neg, add_comm, ← neg_smul]
   congr 2
   have := orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y
   rw [orthogonalProjection_singleton] at this
   apply_fun fun z ↦ ⟪x₀, z⟫ at this
   rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right] at this
-  symm
-  apply eq_of_sub_eq_zero
+  apply (eq_of_sub_eq_zero _).symm
   rw [sub_neg_eq_add]
   apply mul_left_injective₀ h
   dsimp only
@@ -195,14 +189,10 @@ theorem NormedSpace.continuousAt_iff' {E F : Type*} [SeminormedAddCommGroup E]
   rw [NormedSpace.continuousAt_iff]
   constructor <;> intro h ε ε_pos
   · rcases h ε ε_pos with ⟨η, η_pos, hη⟩
-    use η / 2, half_pos η_pos
-    intro h hy
-    apply le_of_lt
-    apply hη
+    refine ⟨η / 2, half_pos η_pos, fun h hy ↦ le_of_lt (hη  _ ?_)⟩
     linarith
   · rcases h (ε / 2) (half_pos ε_pos) with ⟨δ, δ_pos, hδ⟩
-    use δ, δ_pos
-    intro y hy
+    refine ⟨δ, δ_pos, fun y hy ↦ ?_⟩
     linarith [hδ y (by linarith)]
 
 -- Is this really missing??
@@ -235,10 +225,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have hNx₀ : 0 < ‖N x₀‖ := by
     -- and now let's suffer
     rw [norm_smul, real_inner_self_eq_norm_sq, norm_inv]
-    apply mul_pos
-    apply inv_pos_of_pos
-    apply norm_pos_iff.mpr hNx₀2.ne'
-    exact hNx₀
+    exact mul_pos (inv_pos_of_pos (norm_pos_iff.mpr hNx₀2.ne')) hNx₀
   have cont : ContinuousAt N x₀ := by
     simp_rw [N, real_inner_self_eq_norm_sq]
     exact ((continuous_norm.pow 2).continuousAt.inv₀ hNx₀2.ne').smul continuousAt_id

@@ -134,7 +134,7 @@ omit [NormedAddCommGroup F] [NormedSpace 𝕜 F] in
 @[simp]
 theorem partialFDerivFst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f 1 = partialDerivFst φ k f := by
-  simp only [partialFDerivFst_eq_smulRight, smulRight_apply, one_apply, one_smul]
+  simp [partialFDerivFst_eq_smulRight]
 
 omit [NormedAddCommGroup E] [NormedSpace 𝕜 E] in
 theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
@@ -144,7 +144,7 @@ theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜)
 omit [NormedAddCommGroup E] [NormedSpace 𝕜 E] in
 theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k 1 = partialDerivSnd φ e k := by
-  simp only [partialFDerivSnd_eq_smulRight, smulRight_apply, one_apply, one_smul]
+  simp [partialFDerivSnd_eq_smulRight]
 
 @[to_additive]
 nonrec theorem WithTop.le_mul_self {α : Type*} [OrderedCommMonoid α] [CanonicallyOrderedMul α] (n m : α) :

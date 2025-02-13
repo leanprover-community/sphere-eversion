@@ -178,8 +178,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       · exact diff.differentiableAt.hasFDerivAt_partial_fst
       · rw [← hf' x y]
         exact diff.differentiableAt.hasFDerivAt_partial_snd
-    · apply Continuous.continuousAt
-      apply ContinuousLinearEquiv.continuous_lowerTriangular
+    · apply Continuous.continuousAt (ContinuousLinearEquiv.continuous_lowerTriangular ..)
       · exact continuous_const
       · exact hff.contDiff_top_partial_fst.continuous
       · simp_rw [← hf']
@@ -207,8 +206,7 @@ theorem contDiff_parametric_symm_of_deriv_pos {f : E → ℝ → ℝ} (hf : Cont
   · intro x t
     suffices partialFDerivSnd ℝ f x t 1 = partialDerivSnd f x t by
       ext
-      simpa only [RelIso.coe_fn_toEquiv, ContinuousLinearEquiv.coe_coe,
-        ContinuousLinearEquiv.unitsEquivAut_apply, Units.val_mk0, one_mul]
+      simpa
     apply partialFDerivSnd_one
 
 end
@@ -254,9 +252,8 @@ theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0
     rw [orthogonalProjection_singleton']
     rfl
   refine ContDiffAt.smul ?_ ?_
-  · refine contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt ?_
-    apply pow_ne_zero
-    exact norm_ne_zero_iff.mpr hv₀
+  · exact contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt
+      (pow_ne_zero _ (norm_ne_zero_iff.mpr hv₀))
   · exact ((contDiff_toSpanSingleton ℝ E).clm_comp
       (InnerProductSpace.toDual ℝ E).contDiff).contDiffAt
 

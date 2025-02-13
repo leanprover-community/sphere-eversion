@@ -33,16 +33,13 @@ section OnePeriodic
 variable {α : Type*}
 
 /-- The integers as an additive subgroup of the reals. -/
-def ℤSubℝ : AddSubgroup ℝ :=
-  AddMonoidHom.range (Int.castAddHom ℝ)
+def ℤSubℝ : AddSubgroup ℝ := AddMonoidHom.range (Int.castAddHom ℝ)
 
 /-- The equivalence relation on `ℝ` corresponding to its partition as cosets of `ℤ`. -/
-def transOne : Setoid ℝ :=
-  QuotientAddGroup.leftRel ℤSubℝ
+def transOne : Setoid ℝ := QuotientAddGroup.leftRel ℤSubℝ
 
 /-- The proposition that a function on `ℝ` is periodic with period `1`. -/
-def OnePeriodic (f : ℝ → α) : Prop :=
-  Periodic f 1
+def OnePeriodic (f : ℝ → α) : Prop := Periodic f 1
 
 theorem OnePeriodic.add_nat {f : ℝ → α} (h : OnePeriodic f) (k : ℕ) (x : ℝ) : f (x + k) = f x := by
   simpa using h.nat_mul k x
@@ -58,8 +55,7 @@ def 𝕊₁ :=
 deriving TopologicalSpace, Inhabited
 
 theorem transOne_rel_iff {a b : ℝ} : transOne.r a b ↔ ∃ k : ℤ, b = a + k := by
-  refine QuotientAddGroup.leftRel_apply.trans ?_
-  refine exists_congr fun k ↦ ?_
+  refine QuotientAddGroup.leftRel_apply.trans (exists_congr fun k ↦ ?_)
   rw [coe_castAddHom, eq_neg_add_iff_add_eq, eq_comm]
 
 section
@@ -71,10 +67,8 @@ def proj𝕊₁ : ℝ → 𝕊₁ :=
   Quotient.mk'
 
 @[simp]
-theorem proj𝕊₁_add_int (t : ℝ) (k : ℤ) : proj𝕊₁ (t + k) = proj𝕊₁ t := by
-  symm
-  apply Quotient.sound
-  exact transOne_rel_iff.mpr ⟨k, rfl⟩
+theorem proj𝕊₁_add_int (t : ℝ) (k : ℤ) : proj𝕊₁ (t + k) = proj𝕊₁ t :=
+  (Quotient.sound (transOne_rel_iff.mpr ⟨k, rfl⟩)).symm
 
 /-- The unique representative in the half-open interval `[0, 1)` for each coset of `ℤ` in `ℝ`,
 regarded as a map from the circle `𝕊₁ → ℝ`. -/
@@ -93,15 +87,13 @@ theorem 𝕊₁.proj_repr (x : 𝕊₁) : proj𝕊₁ x.repr = x := by
 
 theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ := by
   rw [eq_univ_iff_forall]
-  intro x
-  use x.repr, x.repr_mem, x.proj_repr
+  exact fun x ↦ ⟨x.repr, x.repr_mem, x.proj_repr⟩
 
 theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
   eq_univ_of_subset (image_subset proj𝕊₁ Ico_subset_Icc_self) image_proj𝕊₁_Ico
 
 @[continuity]
-theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ :=
-  continuous_quotient_mk'
+theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ := continuous_quotient_mk'
 
 theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe
 
@@ -157,8 +149,7 @@ theorem Continuous.bounded_of_onePeriodic_of_compact {f : X → ℝ → E} (cont
     (hper : ∀ x, OnePeriodic (f x)) {K : Set X} (hK : IsCompact K)
     (hfK : ∀ x ∉ K, f x = 0) : ∃ C, ∀ x t, ‖f x t‖ ≤ C := by
   obtain ⟨C, hC⟩ := cont.bounded_on_compact_of_onePeriodic hper hK
-  use max C 0
-  intro x t
+  refine ⟨max C 0, fun x t ↦ ?_⟩
   by_cases hx : x ∈ K
   · exact le_max_of_le_left (hC x hx t)
   · simp [hfK, hx]

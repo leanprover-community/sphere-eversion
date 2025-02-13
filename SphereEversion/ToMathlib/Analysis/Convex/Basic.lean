@@ -62,8 +62,7 @@ theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s
     ∑ᶠ x : α, ∑ y ∈ Finset.filter (fun j : β ↦ f j = x) s, g y = ∑ k ∈ s, g k := by
   rw [finsum_eq_finset_sum_of_support_subset]
   · rw [Finset.sum_image']
-    intros
-    rfl
+    exact fun _ _ ↦ rfl
   · intro x hx
     rw [mem_support] at hx
     obtain ⟨a, h, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx
@@ -76,21 +75,17 @@ theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type*} {t : Finset ι} {w : �
   classical
   refine ⟨fun e ↦ ∑ᶠ i ∈ t.filter fun j ↦ z j = e, w i, ?_, ?_, ?_, ?_⟩
   · rw [Pi.le_def]
-    refine fun e ↦ finsum_nonneg fun i ↦ ?_
-    exact finsum_nonneg fun hi ↦ h₀ _ (Finset.mem_of_mem_filter i hi)
+    exact fun e ↦ finsum_nonneg fun i ↦ finsum_nonneg fun hi ↦ h₀ _ (Finset.mem_of_mem_filter i hi)
   · intro e he
     rw [mem_support] at he
     obtain ⟨a, h, ha⟩ := finsum.exists_ne_zero_of_sum_ne_zero he
     rw [Finset.mem_filter] at h
     rcases h with ⟨h, rfl⟩
     exact hz a h
-  · rw [← h₁]
-    simp_rw [finsum_mem_finset_eq_sum]
-    rw [finsum_sum_filter z _ _]
+  · simp_rw [← h₁, finsum_mem_finset_eq_sum, finsum_sum_filter z ..]
   · simp_rw [finsum_mem_finset_eq_sum, Finset.sum_smul]
     rw [← finsum_sum_filter z]
-    congr
-    ext x
+    congr with x
     rw [Finset.sum_congr rfl]
     intro y hy
     rw [Finset.mem_filter] at hy
@@ -108,12 +103,10 @@ def ReallyConvex (𝕜 : Type*) {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoi
 variable {s : Set E}
 
 @[simp]
-theorem reallyConvex_empty : ReallyConvex 𝕜 (∅ : Set E) :=
-  Or.inl rfl
+theorem reallyConvex_empty : ReallyConvex 𝕜 (∅ : Set E) := Or.inl rfl
 
 @[simp]
-theorem reallyConvex_univ : ReallyConvex 𝕜 (univ : Set E) :=
-  Or.inr fun _ _ _ _ ↦ mem_univ _
+theorem reallyConvex_univ : ReallyConvex 𝕜 (univ : Set E) := Or.inr fun _ _ _ _ ↦ mem_univ _
 
 -- for every lemma that requires `Nontrivial` should we also add a lemma that has the condition
 -- `s.Nonempty` (or even `Nontrivial 𝕜 ∨ s.Nonempty`)?
@@ -126,11 +119,11 @@ theorem Nontrivial.reallyConvex_iff [Nontrivial 𝕜] :
 
 theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s := by
   rcases eq_empty_or_nonempty s with (rfl | ⟨z, hz⟩)
-  · apply reallyConvex_empty
+  · exact reallyConvex_empty
   · refine Or.inr fun w _ _ _ ↦ ?_
     convert hz
     haveI := Module.subsingleton 𝕜 E
-    exact Subsingleton.elim _ _
+    exact Subsingleton.elim ..
 
 theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ reallyConvexHull 𝕜 s ⊆ s := by
   rw [Nontrivial.reallyConvex_iff]
@@ -149,8 +142,7 @@ theorem ReallyConvex.sum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : 
 theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜}
     {z : ι → E} (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
     ∑ᶠ i, w i • z i ∈ s := by
-  have hw : (support w).Finite := support_finite_of_finsum_eq_one h₁
-  rw [finsum_eq_sum_of_support_subset_of_finite _ _ hw]
+  rw [finsum_eq_sum_of_support_subset_of_finite _ _ (support_finite_of_finsum_eq_one h₁)]
   swap; · exact support_smul_subset_left w z
   apply hs.sum_mem fun i _ ↦ h₀ i
   · rw [← finsum_eq_sum, h₁]

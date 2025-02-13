@@ -21,10 +21,7 @@ theorem orthogonal_span_toDual_symm (π : E →L[ℝ] ℝ) :
   suffices (∀ a : ℝ, ⟪a • (toDual ℝ E).symm π, x⟫ = 0) ↔ π x = 0 by
     simp only [orthogonal, mem_mk, Set.mem_setOf_eq, LinearMap.mem_ker, ← toDual_symm_apply]
     change (∀ (u : E), u ∈ span ℝ {(LinearIsometryEquiv.symm (toDual ℝ E)) π} → inner u x = 0) ↔ _
-    simpa only [mem_span_singleton, forall_exists_index, forall_apply_eq_imp_iff, toDual_symm_apply]
-  constructor
-  · intro h
-    simpa using h 1
-  · intro h a
-    rw [inner_smul_left]
-    simp [h]
+    simpa
+  refine ⟨fun h ↦ ?_, fun h _ ↦ ?_⟩
+  · simpa using h 1
+  · simp [inner_smul_left, h]
