@@ -229,7 +229,7 @@ theorem FamilyOneJetSec.curry_mem (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
   convert hR
   -- Porting note: we are missing an ext lemma here.
   apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
-  simp_rw [S.curry_ϕ']
+  rw [S.curry_ϕ']
 
 def FamilyFormalSol.curry (S : FamilyFormalSol J N (R.relativize IP P)) :
     FamilyFormalSol (J.prod IP) (N × P) R :=
@@ -242,9 +242,9 @@ theorem FamilyFormalSol.curry_ϕ' (S : FamilyFormalSol J N (R.relativize IP P)) 
 theorem curry_eq_iff_eq_uncurry {𝓕 : FamilyFormalSol J N (R.relativize IP P)}
     {𝓕₀ : FamilyFormalSol IP P R} {t : N} {x : M} {s : P} (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by
-  simp_rw [FormalSol.eq_iff] at h ⊢
+  rw [FormalSol.eq_iff] at h ⊢
   refine ⟨h.1, ?_⟩
-  simp_rw [𝓕.curry_ϕ', h.2, 𝓕₀.uncurry_ϕ']
+  rw [𝓕.curry_ϕ', h.2, 𝓕₀.uncurry_ϕ']
   ext v
   erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
@@ -258,9 +258,9 @@ theorem RelMfld.SatisfiesHPrinciple.satisfiesHPrincipleWith (R : RelMfld I M IX 
   obtain ⟨𝓕, h1𝓕, h2𝓕, h3𝓕, h4𝓕⟩ :=
     h 𝓕₀.uncurry (h𝓕₀.mono fun p hp ↦ 𝓕₀.toFamilyOneJetSec.isHolonomicAt_uncurry.mpr hp)
   refine ⟨𝓕.curry, ?_, ?_, ?_, ?_⟩
-  · intro s x; exact curry_eq_iff_eq_uncurry (h1𝓕 (s, x))
-  · intro s x; exact 𝓕.toFamilyOneJetSec.isHolonomicAt_curry (h2𝓕 (s, x))
+  · exact fun s x ↦ curry_eq_iff_eq_uncurry (h1𝓕 (s, x))
+  · exact fun s x ↦ 𝓕.toFamilyOneJetSec.isHolonomicAt_curry (h2𝓕 (s, x))
   · refine h3𝓕.mono ?_; rintro ⟨s, x⟩ hp t; exact curry_eq_iff_eq_uncurry (hp t)
-  · intro t s x; exact h4𝓕 t (s, x)
+  · exact fun t s x ↦ h4𝓕 t (s, x)
 
 end ParameterSpace

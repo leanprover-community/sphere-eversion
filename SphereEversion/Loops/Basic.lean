@@ -200,8 +200,7 @@ noncomputable def ofPath {x : X} (γ : Path x x) : Loop X where
 
 @[simp]
 theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := by
-  rw [Loop.range_eq_image]
-  simp only [ofPath, image_eq_range]
+  rw [Loop.range_eq_image, ofPath, image_eq_range]
   apply congrArg
   ext t
   by_cases ht1 : t.val = 1
@@ -271,9 +270,7 @@ theorem roundTripFamily_based_at {x y : X} {γ : Path x y} : ∀ t, (roundTripFa
 theorem roundTripFamily_zero {x y : X} {γ : Path x y} :
     (roundTripFamily γ) 0 = ofPath (Path.refl x) := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_zero, ofPath]
-  ext z
-  congr
-  ext t
+  congr with t
   simp [Path.refl_symm]
   rfl
 
