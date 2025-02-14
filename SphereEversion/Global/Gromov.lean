@@ -35,16 +35,14 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
   letI := manifoldMetric IM M
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
-  refine RelMfld.satisfiesHPrinciple_of_weak hA ?_
-  clear! A
-  intro A hA 𝓕₀ h𝓕₀
+  refine RelMfld.satisfiesHPrinciple_of_weak hA fun A hA 𝓕₀ h𝓕₀ ↦ ?_
   cases' isEmpty_or_nonempty M with hM hM
   · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro
     all_goals try intro
     all_goals
       first
-      | apply empty_htpy_formal_sol_eq
-      | apply (IsEmpty.false ‹M›).elim
+      | exact empty_htpy_formal_sol_eq
+      | exact (IsEmpty.false ‹M›).elim
   cases' isEmpty_or_nonempty X with hX hX
   · exfalso
     inhabit M
@@ -83,9 +81,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
       exact forall_restrictGermPredicate_of_forall fun x ↦ rfl
     · erw [dist_self]
       exact τ_pos x
-  have hP₂' : ∀ (t : ℝ) (x : M) (f : M → J¹), P₀ x f → P₂ (t, x) fun p : ℝ × M ↦ f p.2 := by
-    intro t x f hf
-    exact ContMDiffAt.comp (t, x) hf.2.2.1 contMDiffAt_snd
+  have hP₂' : ∀ (t : ℝ) (x : M) (f : M → J¹), P₀ x f → P₂ (t, x) fun p : ℝ × M ↦ f p.2 :=
+    fun t x f hf ↦ ContMDiffAt.comp (t, x) hf.2.2.1 contMDiffAt_snd
   have ind : ∀ m : M,
     ∃ V ∈ 𝓝 m, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ → ∀ (C : Set M) (f : M → J¹),
       IsClosed C → (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ C, P₁ x f) →
@@ -100,7 +97,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     have : φ '' ball e 1 ∈ 𝓝 (φ e) := by
       rw [← φ.isOpenEmbedding.map_nhds_eq]
       exact image_mem_map (ball_mem_nhds e zero_lt_one)
-    use φ '' (ball e 1), this; clear this
+    use φ '' (ball e 1), this
     intro K₁ hK₁ K₀ K₀K₁ K₀_cpct K₁_cpct C f C_closed P₀f fC
     have K₁φ : K₁ ⊆ range φ := SurjOn.subset_range hK₁
     have K₀φ : K₀ ⊆ range φ := K₀K₁.trans interior_subset |>.trans K₁φ
@@ -117,12 +114,10 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
     let F : FormalSol R := mkFormalSol f hf_sec hf_sol hf_smooth
     have hFAC : ∀ᶠ x near A ∪ C, F.IsHolonomicAt x := by
       rw [Eventually.union_nhdsSet]
-      refine ⟨?_, fC⟩
-      apply (hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_
+      refine ⟨(hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_, fC⟩
       rw [eventually_and] at hx
-      apply hx.2.self_of_nhds.congr
-      apply hx.1.mono fun x' hx' ↦ ?_
-      simp [F]
+      refine hx.2.self_of_nhds.congr (hx.1.mono fun x' hx' ↦ ?_)
+      simp only [FormalSol.toOneJetSec_coe, mkFormalSol_apply, F, P₀]
       exact hx'.symm
     have hFφψ : F.bs '' (range φ) ⊆ range ψ := by
       rw [← range_comp]
@@ -166,8 +161,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
       erw [hx]
       ext1 y
       simp [F]
-    · apply hF'₁.mono fun x hx ↦ ?_
-      rw [hx]
+    · exact hF'₁.mono (fun _ hx ↦ DFunLike.ext'_iff.mp hx)
   rcases inductive_htpy_construction' P₀ P₁ P₂ hP₂ hP₂' init ind with ⟨F, hF₀, hFP₀, hFP₁, hFP₂⟩
   simp only [P₀, forall_and] at hFP₀
   rcases hFP₀ with ⟨hF_sec, hF_sol, _hF_smooth, hF_A, hF_dist⟩
@@ -188,7 +182,6 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
   refine RelMfld.satisfiesHPrinciple_of_weak hA ?_
-  clear! A
   intro A hA 𝓕₀ h𝓕₀
   cases' isEmpty_or_nonempty M with hM hM
   · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro

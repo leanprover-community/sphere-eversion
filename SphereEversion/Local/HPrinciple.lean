@@ -370,13 +370,11 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     rcases Submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul]
     apply congr_arg
-    unfold 𝓕'
     erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_v, ContinuousLinearMap.add_apply,
          L.p.update_v]
     rfl
   · intro u hu
     have hu_ker := L.hEp hu
-    unfold 𝓕'
     erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker,
       ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker, hx u hu]
 

@@ -76,10 +76,8 @@ def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E
   bs := 𝓕.f
   ϕ x := (𝓕 x).2
   smooth' := by
-    intro a
-    refine contMDiffAt_oneJetBundle.mpr ?_
-    refine ⟨contMDiffAt_id, 𝓕.f_diff.contMDiff a, ?_⟩
-    simp_rw [inTangentCoordinates_model_space]
+    refine fun a ↦ contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_id, 𝓕.f_diff.contMDiff a, ?_⟩
+    rw [inTangentCoordinates_model_space]
     exact 𝓕.φ_diff.contMDiff a
 
 theorem JetSec.unloc_hol_at_iff (𝓕 : JetSec E E') (x : E) :
@@ -104,7 +102,7 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
         VectorBundleCore.trivializationAt_continuousLinearMapAt, tangentBundleCore_indexAt,
         TangentBundle.coordChange_model_space, one_def, VectorBundleCore.trivializationAt_symmL,
         comp_id]
-      apply (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a
+      exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a
         (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
 
 end Unloc
@@ -171,9 +169,7 @@ theorem RelLoc.HtpyFormalSol.unloc_congr_const {𝓕 : (R.localize p.φ p.ψ).re
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelLoc.HtpyFormalSol.unloc_congr' {𝓕 𝓕' : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol} {t t'}
     (h : 𝓕 t = 𝓕' t') : 𝓕.unloc p t = 𝓕'.unloc p t' := by
-  apply FormalSol.coe_inj
-  intro x
-  apply RelLoc.HtpyFormalSol.unloc_congr
+  apply FormalSol.coe_inj fun x ↦ RelLoc.HtpyFormalSol.unloc_congr _ ?_
   rw [h]
 
 @[simp]
@@ -202,8 +198,7 @@ theorem ChartPair.mkHtpy_congr (F : FormalSol R) {𝓕 : (R.localize p.φ p.ψ).
   unfold ChartPair.mkHtpy
   by_cases hF : p.compat' F 𝓕
   · simp only [dif_pos hF]
-    apply FormalSol.coe_inj
-    intro x
+    apply FormalSol.coe_inj fun x ↦ ?_
     rw [p.φ.updateFormalSol_apply, p.φ.updateFormalSol_apply,
       RelLoc.HtpyFormalSol.unloc_congr' p h]
   · simp only [dif_neg hF]; rfl
@@ -280,7 +275,6 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
     -- TODO: this proof needs more lemmas
     intro 𝓕 h𝓕 t e
     change (p.mkHtpy F 𝓕 t (p.φ e)).1.2 = p.φ.update p.ψ bsF (fun e ↦ (𝓕.unloc p t).bs e) (p.φ e)
-    simp only [OpenSmoothEmbedding.update_apply_embedding]
     dsimp only [ChartPair.mkHtpy]
     rw [dif_pos h𝓕, OpenSmoothEmbedding.updateFormalSol_apply]
     simp_rw [OpenSmoothEmbedding.update_apply_embedding, OneJetBundle.embedding_toFun,
@@ -292,6 +286,6 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
     ⟨η, η_pos, hη⟩
   refine ⟨η, η_pos, ?_⟩
   intro 𝓕 H e he t ht het
-  simp only [this 𝓕 H]; clear this
+  simp only [this 𝓕 H]
   rw [← dist_eq_norm] at het
   exact hη (fun t e ↦ (𝓕.unloc p t).bs e) 1 ⟨zero_le_one, le_rfl⟩ t ht e he het

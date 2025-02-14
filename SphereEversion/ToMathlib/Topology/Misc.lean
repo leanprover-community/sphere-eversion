@@ -263,7 +263,6 @@ theorem projIcc_projI : projIcc (0 : α) 1 zero_le_one (projI x) = projIcc 0 1 z
 
 @[simp]
 theorem range_projI : range projI = Icc 0 1 := by
-  unfold projI
   erw [range_comp, range_projIcc, image_univ, Subtype.range_coe]
 
 theorem monotone_projI : Monotone (projI : α → α) :=
@@ -273,10 +272,10 @@ theorem strictMonoOn_projI : StrictMonoOn projI (Icc (0 : α) 1) :=
   strictMonoOn_projIcc _
 
 theorem projI_le_max : projI x ≤ max 0 x :=
-  max_le_max le_rfl <| min_le_right _ _
+  max_le_max le_rfl <| min_le_right ..
 
 theorem min_le_projI : min 1 x ≤ projI x :=
-  le_max_right _ _
+  le_max_right ..
 
 theorem projI_le_iff : projI x ≤ c ↔ 0 ≤ c ∧ (1 ≤ c ∨ x ≤ c) := by
   simp_rw [projI_def, max_le_iff, min_le_iff]

@@ -67,10 +67,7 @@ theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
     rw [Set.Finite.coe_toFinset]
     exact support_smul_subset_left w id
   rw [finsum_eq_sum_of_support_subset _ this]
-  clear this
-  apply Filter.Germ.ContMDiffAt.sum
-  intro φ hφ
-  refine (smoothGerm.contMDiffAt _).smul (w_supp ?_)
+  apply Filter.Germ.ContMDiffAt.sum fun φ hφ ↦ (smoothGerm.contMDiffAt _).smul (w_supp ?_)
   simpa [H] using hφ
 
 theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex ℝ {y | P x y}) {n : ℕ∞}

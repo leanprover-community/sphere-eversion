@@ -95,7 +95,7 @@ theorem fract_eq (γ : Loop X) : ∀ t, γ (fract t) = γ t := by
   intro t
   unfold fract
   rw [sub_eq_add_neg, ← Int.cast_neg]
-  exact γ.add_int_eq _ _
+  exact γ.add_int_eq ..
 
 theorem range_eq_image (γ : Loop X) : range γ = γ '' I := by
   apply eq_of_subset_of_subset

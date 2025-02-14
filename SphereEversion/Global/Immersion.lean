@@ -209,8 +209,7 @@ theorem formalEversionHolAtZero {t : ℝ} (ht : t < 1 / 4) :
       smoothStep t • -(y : E)) x =
       (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ (y : E)) x)
   simp_rw [smoothStep.of_lt ht, ω.rot_zero, ContinuousLinearMap.id_comp]
-  congr
-  ext y
+  congr with y
   simp [smoothStep.of_lt ht]
 
 theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
@@ -221,15 +220,14 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
       smoothStep t • -(y : E)) x =
       (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ (y : E)) x)
   trans mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun y : 𝕊² ↦ (y : E)) x
-  · congr 2
-    ext y
+  · congr 2 with y
     simp [smoothStep.of_gt ht]
   ext v
   erw [mfderiv_neg, ContinuousLinearMap.coe_comp', Function.comp_apply,
        ContinuousLinearMap.neg_apply, smoothStep.of_gt ht]
   rw [ω.rot_one]; · rfl
   rw [← range_mfderiv_coe_sphere (n := 2) x]
-  exact LinearMap.mem_range_self _ _
+  exact LinearMap.mem_range_self ..
 
 theorem formalEversion_hol_near_zero_one :
     ∀ᶠ s : ℝ × 𝕊² near {0, 1} ×ˢ univ, (formalEversion E ω s.1).toOneJetSec.IsHolonomicAt s.2 := by
