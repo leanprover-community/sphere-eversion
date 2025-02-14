@@ -130,10 +130,8 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
     rw [Set.Finite.coe_toFinset]
     exact support_smul_subset_left w id
   rw [finsum_eq_sum_of_support_subset _ this]
-  clear this
   apply Filter.Germ.ContMDiffAtProd.sum
-  intro φ hφ
-  refine (smoothGerm.contMDiffAt _).smul_prod (w_supp ?_)
+  refine fun φ hφ ↦ (smoothGerm.contMDiffAt _).smul_prod (w_supp ?_)
   simpa [H] using hφ
 
 omit [FiniteDimensional ℝ E₂] [IsManifold I₂ ∞ M₂] in

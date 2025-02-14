@@ -59,8 +59,8 @@ theorem LocallyFinite.exists_forall_eventually_of_indexType {α X : Type*} [Topo
   refine mem_of_superset (hUx x) fun y hy ↦ ?_
   calc
     f n y = f (i₀ x) y := key hn hy
-    _ = f (max (i₀ x) (i₀ y)) y := (key (le_max_left _ _) hy).symm
-    _ = f (i₀ y) y := key (le_max_right _ _) (mem_of_mem_nhds <| hUx y)
+    _ = f (max (i₀ x) (i₀ y)) y := (key (le_max_left ..) hy).symm
+    _ = f (i₀ y) y := key (le_max_right ..) (mem_of_mem_nhds <| hUx y)
 
 @[inherit_doc] local notation "𝓘" => IndexType
 
@@ -174,24 +174,20 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
   refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact U₁_op.union U_op
   · exact U₂_op.sdiff hK
-  · refine K₁_cpct.union ?_
-    exact K₂_cpct.closure_of_subset inter_subset_left
+  · exact K₁_cpct.union (K₂_cpct.closure_of_subset inter_subset_left)
   · exact K₂_cpct.diff U'_op
   · exact subset_union_left
-  · apply union_subset_union hK₁U₁
-    apply subset_trans _ hU'U
+  · apply union_subset_union hK₁U₁ (subset_trans _ hU'U)
     gcongr
     exact inter_subset_right
   · exact diff_subset_diff hK₂U₂ hKU'
   · rw [union_assoc]
     congr
     apply subset_antisymm
-    · apply union_subset ?_ diff_subset
-      exact K₂_cpct.isClosed.closure_subset_iff.mpr inter_subset_left
+    · exact union_subset (K₂_cpct.isClosed.closure_subset_iff.mpr inter_subset_left) diff_subset
     · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
         _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
-  · intro x hx hx'
-    exact hx'.2 hx
+  · exact fun x hx hx' ↦ hx'.2 hx
   · rw [union_comm]
   · exact diff_subset
 
@@ -404,7 +400,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       rw [forall_restrictGermPredicate_iff]
       apply h₁F'.germ_congr_set
       filter_upwards
-      apply congr_fun (hfutur_F'.self_of_nhdsSet _ _)
+      apply congr_fun (hfutur_F'.self_of_nhdsSet ..)
       rw [mem_Ici]
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
       exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)

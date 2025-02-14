@@ -138,9 +138,8 @@ theorem forall_near' {P : M → Prop} {A : Set M'} (h : ∀ᶠ m near f ⁻¹' A
     ∀ᶠ m' near A ∩ range f, ∀ m, m' = f m → P m := by
   rw [eventually_nhdsSet_iff_forall] at h ⊢
   rintro _ ⟨hfm₀, m₀, rfl⟩
-  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U := by
-    intro U U_in
-    exact f.isOpenMap.image_mem_nhds U_in
+  have : ∀ U ∈ 𝓝 m₀, ∀ᶠ m' in 𝓝 (f m₀), m' ∈ f '' U :=
+    fun U U_in ↦ f.isOpenMap.image_mem_nhds U_in
   apply (this _ <| h m₀ hfm₀).mono
   rintro _ ⟨m₀, hm₀, hm₀'⟩ m₁ rfl
   rwa [← f.injective hm₀']

@@ -225,8 +225,7 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
   toFun p := ⟨p.2, (i p).comp (s p.2).2⟩
   is_sec' p := rfl
   smooth' := by
-    intro x₀
-    refine contMDiffAt_snd.one_jet_eucl_bundle_mk' ?_
+    refine fun x₀ ↦ contMDiffAt_snd.one_jet_eucl_bundle_mk' ?_
     simp_rw [ContinuousLinearMap.comp_assoc]
     have : ContMDiffAt (J.prod I) _ ∞ (fun x : N × M  ↦ _) x₀ := s.smooth.comp contMDiff_snd x₀
     rw [contMDiffAt_one_jet_eucl_bundle'] at this
