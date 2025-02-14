@@ -65,10 +65,9 @@ theorem support_bump_subset (n : ℕ) : support (bump n) ⊆ Ioc (-(1 / 2)) (1 /
 theorem support_shifted_normed_bump_subset (n : ℕ) (t : ℝ) :
     (support fun x ↦ (bump n).normed volume (x - t)) ⊆ Ioc (t - 1 / 2) (t + 1 / 2) := by
   change support ((bump n).normed volume ∘ (· - t)) ⊆ _
-  rw [Function.support_comp_eq_preimage]
-  simp_rw [(bump n).support_normed_eq, ← (bump n).support_eq]
+  rw [Function.support_comp_eq_preimage, (bump n).support_normed_eq, ← (bump n).support_eq]
   refine (preimage_mono (support_bump_subset n)).trans ?_
-  simp_rw [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]; rfl
+  simp [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]
 
 end
 
@@ -103,8 +102,7 @@ theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 
   unfold periodize
   cases' (support fun i : ℤ ↦ f (t + i)).finite_or_infinite with H H
   · rw [finsum_eq_sum _ H]
-    apply Finset.sum_nonneg
-    exact fun i _ ↦ h _
+    exact Finset.sum_nonneg fun i _ ↦ h _
   · rwa [finsum_of_infinite_support]
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -113,7 +111,6 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     ContDiff ℝ n (periodize f) := by
   refine contDiff_iff_contDiffAt.mpr fun x ↦ contDiffAt_finsum ?_ ?_
   · intro y
-    dsimp
     set N := Ioo (y - 1) (y + 1)
     refine ⟨N, (nhds_basis_Ioo_pos y).mem_of_mem zero_lt_one, ?_⟩
     let e := fun i : ℤ ↦ Equiv.addRight (i : ℝ)
@@ -123,7 +120,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
       intro i
       conv_lhs => rw [← (e i).preimage_image N, ← preimage_inter]
       rw [(e i).surjective.nonempty_preimage]
-    simp_rw [hsupp, hsupp', inter_comm (support f)]; clear hsupp hsupp'
+    simp_rw [hsupp, hsupp', inter_comm (support f)]
     refine (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
       (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset ?_
     intro i hi
@@ -133,8 +130,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; exact add_comm x i]
       exact image_subset _ Ioo_subset_Icc_self
     exact subset_tsupport f
-  · intro i
-    exact h.contDiffAt.comp _ (contDiffAt_id.add contDiffAt_const)
+  · exact fun i ↦ h.contDiffAt.comp _ (contDiffAt_id.add contDiffAt_const)
 
 theorem periodize_comp_sub (f : ℝ → M) (x t : ℝ) :
     periodize (fun x' ↦ f (x' - t)) x = periodize f (x - t) := by
@@ -155,15 +151,13 @@ theorem integral_periodize (f : ℝ → E) {a : ℝ} (hf : support f ⊆ Ioc a (
   apply intervalIntegral.integral_congr_ae
   have : ∀ᵐ x : ℝ, x ∈ uIoc a (a + 1) → x ∈ Ioo a (a + 1) := by
     rw [uIoc_of_le (le_add_of_nonneg_right (zero_le_one : (0 : ℝ) ≤ 1))]
-    have : ∀ᵐ x : ℝ, x ≠ a + 1 := by
-      rw [ae_iff]
-      simp
+    have : ∀ᵐ x : ℝ, x ≠ a + 1 := by simp [ae_iff]
     apply this.mono
     rintro x (x_ne : x ≠ a + 1) ⟨hx, hx'⟩
     exact ⟨hx, x_ne.le_iff_lt.mp hx'⟩
   apply this.mono
   intro t ht ht'
-  specialize ht ht'; clear ht'
+  specialize ht ht'
   dsimp only [periodize]
   have : (support fun n : ℤ ↦ f (t + n)) ⊆ ({0} : Finset ℤ) := fun n hn ↦ by
     suffices n = 0 by simpa

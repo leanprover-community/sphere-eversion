@@ -295,10 +295,9 @@ theorem isConst_iff_forall_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ 
   · intro t
     have : γ = Loop.const (γ t) := by
       ext s
-      rw [h s t]
-      rfl
+      exact h s t
     rw [this]
-    simp only [average, const_apply, intervalIntegral.integral_const, one_smul, sub_zero]
+    simp [average, const_apply, intervalIntegral.integral_const, one_smul, sub_zero]
   · exact isConst_of_eq h
 
 @[simp]
@@ -380,14 +379,10 @@ theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ 
   intro x hx
   rw [mem_interior_iff_mem_nhds] at *
   rcases mem_nhds_iff.mp hx with ⟨U, hU, U_op, hxU⟩
-  have U_nhds : U ∈ 𝓝 x := IsOpen.mem_nhds U_op hxU
-  apply Filter.mem_of_superset U_nhds
-  intro y hy
-  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average := by
-    intro t
-    apply Filter.mem_of_superset (U_op.mem_nhds hy)
-    intro z hz
-    exact Loop.isConst_iff_forall_avg.mp (hU hz) t
+  apply Filter.mem_of_superset (IsOpen.mem_nhds U_op hxU) fun y hy ↦ ?_
+  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
+    fun t ↦ Filter.mem_of_superset (U_op.mem_nhds hy)
+      (fun z hz ↦ Loop.isConst_iff_forall_avg.mp (hU hz) t)
   have : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E ↦ (γ z).average) y := fun t ↦ (Hy t).fderiv_eq
   intro t s
   simp only [this]
