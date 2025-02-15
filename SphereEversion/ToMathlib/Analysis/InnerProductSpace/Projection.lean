@@ -257,10 +257,13 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
       _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add ?_ ?_)
       _ = ε * ‖x‖ := by linarith
   · rw [norm_smul]
-    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
+    gcongr
+    exact norm_inner_le_norm _ _
   · rw [norm_smul]
-    exact mul_le_mul_of_nonneg_right (norm_inner_le_norm _ _) (norm_nonneg _)
+    gcongr
+    exact norm_inner_le_norm _ _
   · rw [mul_comm, ← mul_assoc, norm_sub_rev]
-    exact mul_le_mul_of_nonneg_right ((le_div_iff₀ hNx₀).mp hy₁) (norm_nonneg x)
+    gcongr
+    exact (le_div_iff₀ hNx₀).mp hy₁
   · rw [mul_comm, ← mul_assoc, mul_comm ‖y‖]
-    exact mul_le_mul_of_nonneg_right hη.le (norm_nonneg x)
+    gcongr
