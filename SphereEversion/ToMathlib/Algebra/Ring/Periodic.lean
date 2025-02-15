@@ -1,5 +1,5 @@
 import Mathlib.Analysis.Normed.Order.Lattice
-import Mathlib.Algebra.Periodic
+import Mathlib.Algebra.Ring.Periodic
 import SphereEversion.ToMathlib.Topology.Separation.Hausdorff
 
 -- TODO: the file this references doesn't exist in mathlib any more; rename this one appropriately!
@@ -18,7 +18,7 @@ lemma Continuous.bounded_of_onePeriodic_of_isCompact {f : X → ℝ → E} (cont
 This is done by introducing the quotient 𝕊₁ = ℝ/ℤ as a compact topological space. Patrick is not sure
 this is the optimal version.
 
-In the first part, generalize many lemmas to any period and add to `Algebra.Periodic.lean`?
+In the first part, generalize many lemmas to any period and add to `Algebra.Ring.Periodic.lean`?
 -/
 
 

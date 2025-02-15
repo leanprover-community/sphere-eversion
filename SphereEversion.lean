@@ -26,7 +26,7 @@ import SphereEversion.Loops.Reparametrization
 import SphereEversion.Loops.Surrounding
 import SphereEversion.Main
 import SphereEversion.Notations
-import SphereEversion.ToMathlib.Algebra.Periodic
+import SphereEversion.ToMathlib.Algebra.Ring.Periodic
 import SphereEversion.ToMathlib.Analysis.Calculus
 import SphereEversion.ToMathlib.Analysis.Calculus.AddTorsor.AffineMap
 import SphereEversion.ToMathlib.Analysis.ContDiff
@@ -45,7 +45,7 @@ import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.ExistsOfConvex
 import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
-import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.Basic
+import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.ExtChartAt
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc

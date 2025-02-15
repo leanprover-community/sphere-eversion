@@ -3,7 +3,7 @@ import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Convolution
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.Analysis.Calculus.BumpFunction.Normed
-import SphereEversion.ToMathlib.Algebra.Periodic
+import SphereEversion.ToMathlib.Algebra.Ring.Periodic
 import SphereEversion.ToMathlib.Analysis.ContDiff
 import SphereEversion.Loops.Basic
 

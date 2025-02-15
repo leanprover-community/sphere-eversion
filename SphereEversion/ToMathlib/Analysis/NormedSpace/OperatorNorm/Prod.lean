@@ -1,4 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 import Mathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 noncomputable section
@@ -47,7 +48,7 @@ def LinearMap.coprodₗ (R : Type u₁) (M : Type u₂) (M₂ : Type u₃) (M₃
     apply LinearMap.coe_injective
     ext x
     simp only [Prod.fst_add, LinearMap.coprod_apply, LinearMap.add_apply, Prod.snd_add]
-    ac_rfl
+    module
   map_smul' r p := by
     apply LinearMap.coe_injective
     ext x
