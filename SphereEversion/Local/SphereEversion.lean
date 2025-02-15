@@ -134,7 +134,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
   by_cases hx₀ : x₀ ∈ B
   · have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), p.1 ∈ B := by
       rw [nhds_prod_eq]
-      apply (isOpen_ball.eventually_mem hx₀).prod_inl
+      exact (isOpen_ball.eventually_mem hx₀).prod_inl ..
     apply this.mono
     rintro ⟨x, y, φ⟩ (hx : x ∈ B) (Hx : x ∉ B)
     exact (Hx hx).elim
@@ -144,15 +144,14 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
       (⟪x₀, p.1⟫, (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀)
     let P : ℝ × ((ℝ ∙ x₀)ᗮ →L[ℝ] F) → Prop := fun q ↦ q.1 ≠ 0 ∧ Injective q.2
     have : ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) := loc_immersion_rel_open_aux hx₀ H
-    apply this.mono; clear this
+    apply this.mono
     rintro ⟨x, y, φ⟩ ⟨hxx₀ : ⟪x₀, x⟫ ≠ 0, Hφ⟩ _
-    unfold P f at Hφ
     change InjOn φ (ℝ ∙ x)ᗮ
     have : range (subtypeL (ℝ ∙ x)ᗮ ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ := by
       rw [Function.Surjective.range_comp]
       exact Subtype.range_coe
       exact (orthogonalProjectionOrthogonalLineIso hxx₀).surjective
-    rw [← this]; clear this
+    rw [← this]
     exact Function.Injective.injOn_range Hφ
 
 variable [FiniteDimensional ℝ F]

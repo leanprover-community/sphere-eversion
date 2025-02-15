@@ -225,9 +225,7 @@ instance : FunLike (FamilyFormalSol J N R) N (FormalSol R) where
     rcases S with ⟨S, -⟩
     rcases T with ⟨T, -⟩
     intro h
-    have fact : ∀ n, S n = T n := by
-      intro n
-      exact congrArg FormalSol.toOneJetSec (congrFun h n)
+    have fact : ∀ n, S n = T n := fun n ↦ congrArg FormalSol.toOneJetSec (congrFun h n)
     congr! 1
     ext n : 2
     exacts [(OneJetSec.mk.inj <| fact n).1, (OneJetSec.mk.inj <| fact n).2]
@@ -399,12 +397,10 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
           Prod.snd ∘ π _ (OneJetSpace I IX) ∘ fun p : P × M ↦ 𝓕.reindex j p.1 p.2
           by ext; rfl]
     exact (𝓕.reindex j).toFamilyOneJetSec.smooth_bs
-  · apply h₃.mono
-    intro x hx
+  · refine h₃.mono fun x hx ↦ ?_
     simp_rw [OneJetSec.bs_eq, FormalSol.toOneJetSec_coe, hx, FamilyOneJetSec.bs_eq,
       𝓕₀.toFamilyOneJetSec_coe]
-  · intro p m
-    apply h₄
+  · exact fun p m ↦ h₄ ..
   · intro p m
     suffices oneJetExt I IX (𝓕 (1, p)).bs m = (𝓕.toFamilyOneJetSec (1, p)) m by
       rw [this]
@@ -496,7 +492,6 @@ theorem OpenSmoothEmbedding.range_transfer :
     refine ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
       τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩, ?_⟩
     refine congr_arg (Bundle.TotalSpace.mk _) (ContinuousLinearMap.ext fun v ↦ ?_)
-    dsimp only [OpenSmoothEmbedding.transfer, OneJetBundle.map, OneJetBundle.mk]
     /- Porting note: Lean 3 version was
     simp_rw [continuous_linear_map.comp_apply, ← ψ.fderiv_coe, continuous_linear_equiv.coe_coe,
       (φ.fderiv x).apply_symm_apply, (ψ.fderiv y).apply_symm_apply] -/
@@ -647,10 +642,9 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
       refine Filter.eventually_of_mem ((φ.isOpen_range_transfer ψ).mem_nhds (mem_range_self _)) ?_
       rw [φ.range_transfer ψ]
       rintro ⟨⟨x, y⟩, τ⟩ ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
-      simp_rw [inTangentCoordinates, φ.fderiv_coe]
-      simp_rw [φ.transfer_proj_fst, φ.left_inv]
+      simp_rw [inTangentCoordinates, φ.fderiv_coe, φ.transfer_proj_fst, φ.left_inv]
       congr 1
-      simp_rw [φ.left_inv]
+      rw [φ.left_inv]
     exact mem_range_self _
 
 
@@ -709,8 +703,7 @@ theorem Jupdate_localize {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y}
   · exact foo
   · -- Porting note: we are missing an ext lemma here.
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
-    simp_rw [OneJetSec.snd_eq, OneJetSec.localize_ϕ]
-    rw [foo]
+    rw [OneJetSec.snd_eq, OneJetSec.localize_ϕ, foo]
     change (ψ.fderiv ((G t).bs x)).symm ((JΘ F (G t) (φ x)).2 (φ.fderiv x v)) = ((G t).ϕ x) v
     rw [φ.update_apply_embedding]
     change

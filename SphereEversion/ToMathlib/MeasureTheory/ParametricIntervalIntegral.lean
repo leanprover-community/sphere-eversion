@@ -199,7 +199,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
         (hF.hasStrictFDerivAt le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prod_mk_left _ _)
       rw [this.fderiv]
       rfl
-    rw [this]; clear this
+    rw [this]
     exact (inl ℝ H ℝ).compRightL.continuous.comp
       ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]

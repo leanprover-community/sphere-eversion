@@ -47,17 +47,16 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
     simp only [ε, norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
     refine lt_of_lt_of_le ?_ (mul_one _).le
     rw [mul_lt_mul_left hε₁, div_lt_one h0]
-    refine (zero_add _).symm.le.trans_lt ?_
-    refine add_lt_add_of_lt_of_le zero_lt_one (le_csSup h4γ₀ ?_)
+    refine (zero_add _).symm.le.trans_lt (add_lt_add_of_lt_of_le zero_lt_one (le_csSup h4γ₀ ?_))
     rw [← Loop.fract_eq, ← h3γ₀]
-    refine mem_image_of_mem _ (mk_mem_prod projI_mem_Icc <| unitInterval.fract_mem _)
+    exact mem_image_of_mem _ (mk_mem_prod projI_mem_Icc <| unitInterval.fract_mem _)
   let γ₁ : E → ℝ → Loop F := fun x t ↦ (γ₀ t).transform fun y ↦ b x + ε • y
   -- `γ₁ x` is `γₓ` in notes
   refine ⟨γ₁, ?_⟩
   have hbV : ∀ᶠ x near K, x ∈ V := hV
   have h1 : ∀ x ∈ V, ∀ (_t _s : ℝ), ball (x, b x) (ε₁ + ε₁) ⊆ Ω := by
     intro x hx _t _s
-    simp [← h0ε₁]
+    simp only [← h0ε₁, add_halves, ε]
     exact (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ
   refine ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀],
     ?_, ?_, ?_⟩, ?_⟩, ?_, ?_⟩
@@ -144,9 +143,8 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   let C₁ : Set ℝ := Iic (5⁻¹ : ℝ) ∪ Ici (4 / 5)
   have h0C₁ : (0 : ℝ) ∈ C₁ := Or.inl (by rw [mem_Iic]; norm_num1)
   have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s := by
-    intro s hs
-    refine fract_preimage_mem_nhds ?_ fun _ ↦ ?_
-    · rw [hs]; exact mem_of_superset (Iic_mem_nhds <| by norm_num) subset_union_left
+    refine fun s hs ↦ fract_preimage_mem_nhds ?_ fun _ ↦ ?_
+    · exact hs ▸ mem_of_superset (Iic_mem_nhds <| by norm_num) subset_union_left
     · exact mem_of_superset (Ici_mem_nhds <| by norm_num) subset_union_right
   let C : Set (E × ℝ × ℝ) := (fun x ↦ x.2.1) ⁻¹' Iic (5⁻¹ : ℝ) ∪ (fun x ↦ fract x.2.2) ⁻¹' C₁
   have hC : IsClosed C := by
@@ -214,8 +212,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   · intro x t s
     simp_rw [γ, smoothTransition_projI]
   · rintro x -
-    apply hγε₁
-    intro s
+    refine hγε₁ _ _ fun s ↦ ?_
     simp_rw [← (γ₃ x 1).fract_eq s, γ, smoothTransition.one_of_one_le le_rfl]
     exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans <| min_le_right _ _)
   · rintro x - t - s -; rw [← not_mem_compl_iff]
@@ -231,10 +228,10 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
         apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
   · refine eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s ↦ ?_
     refine (closedBall_subset_ball ?_).trans (hΩ x hx.1)
-    refine (dist_triangle _ _ _).trans_lt (add_lt_add_of_le_of_lt
-      ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left _ _) ?_)
+    refine (dist_triangle ..).trans_lt (add_lt_add_of_le_of_lt
+      ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left ..) ?_)
     simp_rw [γ₄, γ₃, HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
-    exact h2γ₁ x hx.1 _ _
+    exact h2γ₁ x hx.1 ..
 
 variable (g b Ω U K)
 
@@ -287,7 +284,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       show IntervalIntegrable (fun _ ↦ χ x • b x) volume (0 : ℝ) (1 : ℝ)
       exact intervalIntegrable_const
     have h2 : IntervalIntegrable ((1 - χ x) • γ₃ 1 x : Loop F) volume 0 1 :=
-      ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).continuous.intervalIntegrable _ _).smul
+      ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).continuous.intervalIntegrable ..).smul
         _
     have h3 : (γ₃ 1 x).average = g x := γ₂.reparametrize_average x
     simp [γ, γ₃, h1, h2, h3]
@@ -305,6 +302,6 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     rcases h0χ x with (⟨_hx, h2x⟩ | hx)
     · refine h2x t (γ₂.reparametrize x s) ?_
       simp [γ, γ₃, dist_smul_add_one_sub_smul_le (h2χ x)]
-    · simp [γ, hx]; apply hγ₁.val_in (mem_univ _)
+    · simp [γ, hx]; exact hγ₁.val_in (mem_univ _)
   · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
   · exact h1χ.mono fun x (hx : χ x = 1) ↦ by simp [γ, hx]

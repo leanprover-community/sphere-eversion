@@ -102,8 +102,7 @@ instance : CoeFun (SmoothSurroundingFamily g) fun _ ↦ E → Loop F :=
   ⟨toFun⟩
 
 protected theorem continuous : Continuous (γ x) := by
-  apply Continuous.uncurry_left x
-  exact γ.smooth.continuous
+  apply Continuous.uncurry_left x γ.smooth.continuous
 
 /-- Given `γ : SmoothSurroundingFamily g` and `x : E`, `γ.surroundingParametersAt x` are the
 `tᵢ : ℝ`, for `i = 0, 1, ..., dim F` such that `γ x tᵢ` surround `g x`. -/
@@ -242,8 +241,7 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
     0 < γ.localCenteringDensity x y t := by
   simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
     Algebra.id.smul_eq_mul]
-  refine Finset.sum_pos (fun i _ ↦ ?_) Finset.univ_nonempty
-  refine mul_pos ?_ (deltaMollifier_pos _)
+  refine Finset.sum_pos (fun i _ ↦ mul_pos ?_ (deltaMollifier_pos _)) Finset.univ_nonempty
   obtain ⟨w, hw⟩ := γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy
   convert hw.w_pos i
   rw [← hw.coord_eq_w]
@@ -319,7 +317,7 @@ theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x)
       γ.approxSurroundingPointsAt_mem_affineBases x y hy
     erw [evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h]
     simp only [AffineBasis.coords_apply]
-    exact AffineBasis.linear_combination_coord_eq_self _ _
+    exact AffineBasis.linear_combination_coord_eq_self ..
   · simp_rw [mul_smul]
     refine fun i hi ↦ ((Continuous.smul ?_ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
     exact deltaMollifier_smooth.continuous

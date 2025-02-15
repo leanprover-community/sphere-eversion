@@ -610,14 +610,14 @@ protected theorem mono (h : SurroundingFamilyIn g b γ U Ω) {V : Set E} (hVU : 
 protected theorem reparam (h : SurroundingFamilyIn g b γ U Ω) :
     SurroundingFamilyIn g b (fun x t ↦ (γ x (linearReparam t)).reparam linearReparam) U Ω := by
   refine ⟨⟨?_, ?_, ?_, ?_, ?_⟩, ?_⟩
-  · intro x t; simp_rw [Loop.reparam_apply, linearReparam_zero, h.base]
-  · intro x s; simp_rw [Loop.reparam_apply, linearReparam_zero, h.t₀]
+  · intro x t; rw [Loop.reparam_apply, linearReparam_zero, h.base]
+  · intro x s; rw [Loop.reparam_apply, linearReparam_zero, h.t₀]
   · intro x t s; simp_rw [Loop.reparam_apply, linearReparam_projI, h.projI]
-  · intro x hx; simp_rw [linearReparam_one]
+  · intro x hx; rw [linearReparam_one]
     exact (h.surrounds x hx).reparam continuous_linearReparam
   · exact h.cont.comp₃ continuous_fst continuous_linearReparam.fst'.snd'
       continuous_linearReparam.snd'.snd'
-  · intro x hx t _ s _; exact h.val_in hx
+  · exact fun x hx t _ s _ ↦ h.val_in hx
 
 end SurroundingFamilyIn
 

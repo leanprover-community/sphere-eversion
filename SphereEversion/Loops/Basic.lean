@@ -95,7 +95,7 @@ theorem fract_eq (γ : Loop X) : ∀ t, γ (fract t) = γ t := by
   intro t
   unfold fract
   rw [sub_eq_add_neg, ← Int.cast_neg]
-  exact γ.add_int_eq _ _
+  exact γ.add_int_eq ..
 
 theorem range_eq_image (γ : Loop X) : range γ = γ '' I := by
   apply eq_of_subset_of_subset
@@ -200,8 +200,7 @@ noncomputable def ofPath {x : X} (γ : Path x x) : Loop X where
 
 @[simp]
 theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := by
-  rw [Loop.range_eq_image]
-  simp only [ofPath, image_eq_range]
+  rw [Loop.range_eq_image, ofPath, image_eq_range]
   apply congrArg
   ext t
   by_cases ht1 : t.val = 1
@@ -271,9 +270,7 @@ theorem roundTripFamily_based_at {x y : X} {γ : Path x y} : ∀ t, (roundTripFa
 theorem roundTripFamily_zero {x y : X} {γ : Path x y} :
     (roundTripFamily γ) 0 = ofPath (Path.refl x) := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_zero, ofPath]
-  ext z
-  congr
-  ext t
+  congr with t
   simp [Path.refl_symm]
   rfl
 
@@ -298,10 +295,9 @@ theorem isConst_iff_forall_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ 
   · intro t
     have : γ = Loop.const (γ t) := by
       ext s
-      rw [h s t]
-      rfl
+      exact h s t
     rw [this]
-    simp only [average, const_apply, intervalIntegral.integral_const, one_smul, sub_zero]
+    simp [average, const_apply, intervalIntegral.integral_const, one_smul, sub_zero]
   · exact isConst_of_eq h
 
 @[simp]
@@ -383,14 +379,10 @@ theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ 
   intro x hx
   rw [mem_interior_iff_mem_nhds] at *
   rcases mem_nhds_iff.mp hx with ⟨U, hU, U_op, hxU⟩
-  have U_nhds : U ∈ 𝓝 x := IsOpen.mem_nhds U_op hxU
-  apply Filter.mem_of_superset U_nhds
-  intro y hy
-  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average := by
-    intro t
-    apply Filter.mem_of_superset (U_op.mem_nhds hy)
-    intro z hz
-    exact Loop.isConst_iff_forall_avg.mp (hU hz) t
+  apply Filter.mem_of_superset (IsOpen.mem_nhds U_op hxU) fun y hy ↦ ?_
+  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
+    fun t ↦ Filter.mem_of_superset (U_op.mem_nhds hy)
+      (fun z hz ↦ Loop.isConst_iff_forall_avg.mp (hU hz) t)
   have : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E ↦ (γ z).average) y := fun t ↦ (Hy t).fderiv_eq
   intro t s
   simp only [this]
