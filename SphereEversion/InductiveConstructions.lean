@@ -340,7 +340,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
           rw [nhds_prod_eq, nhds_prod_eq]
           have limt : Tendsto (fun t ↦ (2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat))
               (𝓝 (T i.toNat)) (𝓝 0) :=
-            Continuous.tendsto' (by continuity) _ _ (by simp)
+            Continuous.tendsto' (by fun_prop) _ _ (by simp)
           exact limt.prod_map tendsto_id
         filter_upwards [hpast_F'.comp_tendsto lim]
         dsimp [F'']
