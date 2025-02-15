@@ -83,9 +83,8 @@ theorem IndexType.zero_le (i : IndexType n) : 0 ≤ i := by cases n <;> dsimp at
 def IndexType.succ {N : ℕ} : IndexType N → IndexType N := Order.succ
 
 theorem IndexType.succ_castSuccEmb (i : Fin n) :
-    @IndexType.succ (n + 1) i.castSucc = i.succ := by
-  refine (succ_apply _).trans ?_
-  rw [if_pos (castSucc_lt_last i), Fin.coeSucc_eq_succ, Fin.succ_inj]
+    @IndexType.succ (n + 1) i.castSucc = i.succ :=
+  (Fin.orderSucc_apply _).trans (lastCases_castSucc i)
 
 theorem IndexType.succ_eq (i : IndexType n) : i.succ = i ↔ IsMax i :=
   Order.succ_eq_iff_isMax

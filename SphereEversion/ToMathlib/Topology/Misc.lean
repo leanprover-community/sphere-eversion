@@ -1,8 +1,8 @@
-import Mathlib.Topology.ShrinkingLemma
+import Mathlib.Algebra.Ring.Periodic
 import Mathlib.Analysis.Convex.Normed
-import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Topology.Algebra.Order.Floor
-import Mathlib.Algebra.Periodic
+import Mathlib.Topology.EMetricSpace.Paracompact
+import Mathlib.Topology.ShrinkingLemma
 
 noncomputable section
 
