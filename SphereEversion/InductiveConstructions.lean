@@ -128,7 +128,7 @@ theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCo
     rcases mem_nhdsSet_iff_exists.mp h₁f with ⟨V, V_op, hKV, h₁V⟩
     rcases ind V_op (U_op i) cpct (K_cpct i) hKV (hKU i) h₀f h₀f' h₁V h₁f' with
       ⟨F, h₀F, h₁F, hF⟩
-    rw [← bUnion_le] at h₁F
+    rw [← biUnion_le] at h₁F
     exact ⟨F, h₀F, h₁F, fun x hx ↦ hF.self_of_nhdsSet x (Or.inr hx)⟩
   have :=
     inductive_construction (fun x φ ↦ P₀ x φ ∧ P₀' x φ)
@@ -467,6 +467,6 @@ theorem inductive_htpy_construction' {X Y : Type*}
   refine ⟨F, hF₀, ?_, hF₂, ?_, ht⟩
   · apply hF₁.filter_mono
     gcongr
-    rw [bUnion_le]
+    rw [biUnion_le]
   · exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
 end Htpy
