@@ -1,13 +1,19 @@
+name: Compile blueprint
+
 on:
   push:
     branches:
-      - master
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages and modify PR labels
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read          # Read access to repository contents
+  pages: write            # Write access to GitHub Pages
+  id-token: write         # Write access to ID tokens
 
 jobs:
   build_project:
@@ -20,7 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install elan
-        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.5.0
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 
       - name: Get cache
         run: ~/.elan/bin/lake exe cache get || true
@@ -31,8 +37,7 @@ jobs:
       - name: Cache API docs
         uses: actions/cache@v4
         with:
-          path: |
-            docbuild/.lake/build/doc
+          path: docbuild/.lake/build/doc
           key: LakeBuildDoc-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
           restore-keys: LakeBuildDoc-
 
@@ -72,22 +77,26 @@ jobs:
           cp -r docbuild/.lake/build/doc docs/docs
 
       - name: Install pandoc
+        if: github.event_name == 'push'
         run: |
           sudo apt update
           sudo apt install pandoc
 
       - name: Build webpage
+        if: github.event_name == 'push'
         run: |
           cd docs_src
           pandoc -t html --mathjax -f markdown+tex_math_dollars+raw_tex index.md --template template.html -o ../docs/index.html
           cp *.css ../docs
 
       - name: Upload docs & blueprint artifact
+        if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs/
 
       - name: Deploy to GitHub Pages
+        if: github.event_name == 'push'
         id: deployment
         uses: actions/deploy-pages@v4
 
