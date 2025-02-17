@@ -139,10 +139,6 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
 
 variable [FiniteDimensional ℝ H]
 
-/-
-A version of the above lemma using Floris' style statement. This does not reuse the above lemma, but copies the proof.
--/
-set_option synthInstance.maxHeartbeats 25000
 theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF : ContDiff ℝ 1 ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ 1 s) (x₀ : H) (a : ℝ) :
     (IntervalIntegrable (fun t ↦ fderiv ℝ (fun x ↦ F x t) x₀) volume a <| s x₀) ∧
