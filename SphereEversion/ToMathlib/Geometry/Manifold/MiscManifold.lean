@@ -1,4 +1,4 @@
-import Mathlib.Geometry.Manifold.ContMDiff.Product
+import Mathlib.Geometry.Manifold.ContMDiff.Constructions
 
 open Set Function Filter
 

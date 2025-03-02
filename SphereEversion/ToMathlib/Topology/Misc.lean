@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Ring.Periodic
-import Mathlib.Analysis.Convex.Normed
+import Mathlib.Analysis.Normed.Affine.Convex
 import Mathlib.Topology.Algebra.Order.Floor
 import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Topology.ShrinkingLemma

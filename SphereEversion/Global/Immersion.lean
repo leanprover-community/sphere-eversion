@@ -286,13 +286,13 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {P : Type*} [TopologicalSpace P] [ChartedSpace HP P]
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
-lemma ContMDiff.inr {n : ℕ∞} (x : M) :
+lemma ContMDiff.inr' {n : ℕ∞} (x : M) :
     ContMDiff I' (I.prod I') n fun p : M' ↦ (⟨x, p⟩ : M × M') := by
   rw [contMDiff_prod_iff]
   exact ⟨contMDiff_const, contMDiff_id⟩
 
 -- xxx: is one better than the other?
-alias ContMDiff.prod_left := ContMDiff.inr
+alias ContMDiff.prod_left := ContMDiff.inr'
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
 theorem ContMDiff.uncurry_left {n : ℕ∞}
@@ -300,7 +300,7 @@ theorem ContMDiff.uncurry_left {n : ℕ∞}
     ContMDiff I' IP n (f x) := by
   have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
   -- or just `apply hf.comp (ContMDiff.inr I I' x)`
-  rw [this]; exact hf.comp (ContMDiff.inr I I' x)
+  rw [this]; exact hf.comp (ContMDiff.inr' I I' x)
 
 end helper
 
