@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 import Mathlib.Analysis.Normed.Module.Completion
-import Mathlib.Data.Complex.Abs
+import Mathlib.Data.Complex.Norm
 import Mathlib.LinearAlgebra.Dual
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod

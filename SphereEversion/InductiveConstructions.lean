@@ -1,6 +1,6 @@
 import Mathlib.Topology.Germ
 import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Data.Complex.Abs
+import Mathlib.Data.Complex.Norm
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.Indexing
 import SphereEversion.Notations
