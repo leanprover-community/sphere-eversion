@@ -1,5 +1,6 @@
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+import Mathlib.MeasureTheory.Integral.IntegrationByParts
 import Mathlib.MeasureTheory.Integral.Periodic
 import SphereEversion.Loops.Surrounding
 import SphereEversion.Loops.DeltaMollifier
@@ -62,7 +63,7 @@ variable [MetricSpace E] [FiniteDimensional ℝ F]
 
 theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x : E) (t : ℝ) :
     Tendsto (fun z : E × ℕ ↦ (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t)) := by
-  have hγ : ∀ x, Continuous (γ x) := fun x ↦ h.comp <| Continuous.Prod.mk _
+  have hγ : ∀ x, Continuous (γ x) := fun x ↦ h.comp <| Continuous.prodMk_right _
   simp_rw [Loop.mollify_eq_convolution _ (hγ _)]
   rw [← add_zero (γ x t)]
   refine Tendsto.add ?_ ?_
@@ -75,7 +76,7 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
     · filter_upwards with x using (hγ _).aestronglyMeasurable
     · have := h.tendsto (x, t)
       rw [nhds_prod_eq] at this
-      exact this.comp ((tendsto_fst.comp tendsto_fst).prod_mk tendsto_snd)
+      exact this.comp ((tendsto_fst.comp tendsto_fst).prodMk tendsto_snd)
   · have : Continuous fun z ↦ intervalIntegral (γ z) 0 1 volume :=
       intervalIntegral.continuous_parametric_intervalIntegral_of_continuous (by apply h) continuous_const
     rw [← zero_smul ℝ (_ : F)]
@@ -269,8 +270,8 @@ theorem localCenteringDensity_smooth_on :
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
     refine (h₂.comp_contDiffOn h₁).comp ?_ ?_
     · have h₃ := (diag_preimage_prod_self (γ.localCenteringDensityNhd x)).symm.subset
-      refine ContDiffOn.comp ?_ (contDiff_id.prod contDiff_id).contDiffOn h₃
-      refine γ.smooth_surrounded.contDiffOn.prod_map (ContDiff.contDiffOn ?_)
+      refine ContDiffOn.comp ?_ (contDiff_id.prodMk contDiff_id).contDiffOn h₃
+      refine γ.smooth_surrounded.contDiffOn.prodMap (ContDiff.contDiffOn ?_)
       exact γ.approxSurroundingPointsAt_smooth x _
     · intro y hy
       simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
@@ -285,7 +286,7 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
       ⟨γ.localCenteringDensityNhd x, univ, γ.localCenteringDensityNhd_isOpen x, hy,
         isOpen_univ, mem_univ t, rfl.subset⟩
   exact ((γ.localCenteringDensity_smooth_on x).continuousOn.continuousAt hyt).comp
-    (Continuous.Prod.mk y).continuousAt
+    (Continuous.prodMk_right y).continuousAt
 
 @[simp]
 theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensityNhd x) :

@@ -71,7 +71,7 @@ instance (R : RelLoc E F) : FunLike (FormalSol R) E (F × (E →L[ℝ] F)) :=
   ⟨fun 𝓕 x ↦ (𝓕.f x, 𝓕.φ x),
   by
      intros 𝓕 𝓕' h
-     ext x : 2 <;> replace h := Prod.mk.inj_iff.mp <|congrFun h x
+     ext x : 2 <;> replace h := Prod.mk_inj.mp <| congrFun h x
      exacts [h.1, h.2]⟩
 
 @[simp]

@@ -1,7 +1,7 @@
 import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 import Mathlib.Analysis.Normed.Module.Completion
 import Mathlib.Data.Complex.Norm
-import Mathlib.LinearAlgebra.Dual
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
 import SphereEversion.ToMathlib.LinearAlgebra.Basic

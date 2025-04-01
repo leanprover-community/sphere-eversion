@@ -391,7 +391,7 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
   refine ⟨fun s ↦ (𝓕 (1, s)).bs, ?_, ?_, ?_, ?_⟩
   · let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
-      ⟨fun p ↦ (1, p), ContMDiff.prod_mk contMDiff_const contMDiff_id⟩
+      ⟨fun p ↦ (1, p), ContMDiff.prodMk contMDiff_const contMDiff_id⟩
     rw [show
         (uncurry fun s ↦ (𝓕 (1, s)).bs) =
           Prod.snd ∘ π _ (OneJetSpace I IX) ∘ fun p : P × M ↦ 𝓕.reindex j p.1 p.2
@@ -673,7 +673,7 @@ def Jupdate (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (hK : IsComp
   refine FamilyOneJetSec.mk' (fun t ↦ JΘ F (G t)) (fun t ↦ φ.Jupdate_aux ψ F (G t)) ?_
   refine φ.smooth_update _ _ _ (hK.image φ.continuous).isClosed ?_ ?_ contMDiff_snd fun x ↦ hFG x.1
   · exact F.smooth.comp contMDiff_snd
-  · exact G.smooth.comp (contMDiff_fst.prod_map contMDiff_id)
+  · exact G.smooth.comp (contMDiff_fst.prodMap contMDiff_id)
 
 theorem Jupdate_apply {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ) (m : M) :

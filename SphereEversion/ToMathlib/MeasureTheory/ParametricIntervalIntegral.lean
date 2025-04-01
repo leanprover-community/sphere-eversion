@@ -165,11 +165,11 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     use K
     intro t t_in
     rw [show (fun x : H ↦ F x t) = uncurry F ∘ fun x : H ↦ (x, t) by ext; simp, ← mul_one K]
-    apply hK.comp (LipschitzWith.prod_mk_right t).lipschitzOnWith
+    apply hK.comp (LipschitzWith.prodMk_right t).lipschitzOnWith
     rw [mapsTo']
     rintro ⟨x, s⟩ ⟨x', hx, h⟩; cases h
     exact ⟨ball_subset_closedBall hx, mem_Icc_of_Ioo t_in⟩
-  have cont_x (x) : Continuous (F x) := hF.continuous.comp (Continuous.Prod.mk x)
+  have cont_x (x) : Continuous (F x) := hF.continuous.comp (Continuous.prodMk_right x)
   have int_Icc (x) : IntegrableOn (F x) (Icc a₀ b₀) := (cont_x x).continuousOn.integrableOn_Icc
   have int_Ioo (x) : IntegrableOn (F x) (Ioo a₀ b₀) := (int_Icc x).mono_set Ioo_subset_Icc_self
   apply
@@ -181,7 +181,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     intro t
     apply (ContDiff.hasStrictFDerivAt _ le_rfl).hasFDerivAt
     rw [show (fun x ↦ F x t) = uncurry F ∘ fun x ↦ (x, t) by ext; simp]
-    exact hF.comp ((contDiff_prod_mk_left t).of_le le_top)
+    exact hF.comp ((contDiff_prodMk_left t).of_le le_top)
   · exact (ContDiff.hasStrictFDerivAt hs le_rfl).hasFDerivAt
   · rfl
   · set_option synthInstance.maxHeartbeats 30000 in
@@ -192,12 +192,12 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
           (fderiv ℝ <| uncurry F) ∘ fun t ↦ (x₀, t) := by
       ext t
       have : HasFDerivAt (fun e ↦ F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀ :=
-        (hF.hasStrictFDerivAt le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prod_mk_left _ _)
+        (hF.hasStrictFDerivAt le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prodMk_left _ _)
       rw [this.fderiv]
       rfl
     rw [this]
     exact (inl ℝ H ℝ).compRightL.continuous.comp
-      ((hF.continuous_fderiv le_rfl).comp <| Continuous.Prod.mk x₀)
+      ((hF.continuous_fderiv le_rfl).comp <| Continuous.prodMk_right x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]
     filter_upwards with t t_in
     rw [nnabs_coe K]
@@ -244,7 +244,7 @@ theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : �
         refine ContinuousLinearMap.intervalIntegral_apply ?_ x
         exact (continuous_curry x' hD'.continuous).intervalIntegrable _ _
       · exact ((contDiff_succ_iff_fderiv.mp hs).2.2.smulRight
-          (hF.of_succ.comp <| contDiff_id.prod hs.of_succ)).clm_apply contDiff_const
+          (hF.of_succ.comp <| contDiff_id.prodMk hs.of_succ)).clm_apply contDiff_const
 
 end
 
@@ -268,7 +268,7 @@ theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ
 theorem contDiff_parametric_primitive_of_contDiff'' {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     (a : ℝ) : ContDiff ℝ n fun x : H × ℝ ↦ ∫ t in a..x.2, F x.1 t :=
   have cd : ContDiff ℝ n ↿fun (x : H × ℝ) (t : ℝ) ↦ F x.1 t :=
-    hF.comp (contDiff_fst.prod_map contDiff_id)
+    hF.comp (contDiff_fst.prodMap contDiff_id)
   contDiff_parametric_primitive_of_contDiff cd contDiff_snd a
 
 theorem contDiff_parametric_integral_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)

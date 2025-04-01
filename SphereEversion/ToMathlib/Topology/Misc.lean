@@ -152,7 +152,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     specialize h2s H
     rcases fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩; clear hx hx'
     have s_mem_0 := hs.mem_nhds H
-    rcases(nhds_basis_zero_abs_sub_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩
+    rcases(nhds_basis_zero_abs_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩
     rcases(nhdsWithin_hasBasis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩
     rw [Set.Ioo_inter_Iio, min_eq_right (le_add_of_nonneg_right ε_pos.le)] at hε
     set ε' := min ε (1 / 2)
@@ -205,7 +205,7 @@ variable {α β γ δ ι : Type*} [TopologicalSpace α] [TopologicalSpace β] {x
 open scoped Classical in
 theorem isOpen_slice_of_isOpen_over {Ω : Set (α × β)} {x₀ : α}
     (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ Prod.fst ⁻¹' U)) : IsOpen (Prod.mk x₀ ⁻¹' Ω) := by
-  rcases hΩ_op with ⟨U, hU, hU_op⟩; convert hU_op.preimage (Continuous.Prod.mk x₀) using 1
+  rcases hΩ_op with ⟨U, hU, hU_op⟩; convert hU_op.preimage (Continuous.prodMk_right x₀) using 1
   simp_rw [preimage_inter, preimage_preimage, preimage_const, mem_of_mem_nhds hU, if_pos,
     inter_univ]
 

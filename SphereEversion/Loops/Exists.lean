@@ -29,7 +29,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
       isOpen_univ isConnected_univ (by rw [convexHull_univ]; exact mem_univ 0) (mem_univ (0 : F))
   obtain ⟨ε₀, hε₀, V, hV, hεΩ⟩ :=
     hK.exists_thickening_image_subset hΩ_op
-      (fun x hx ↦ (continuous_id.prod_mk hb.continuous).continuousAt) fun x _ ↦ b_in x
+      (fun x hx ↦ (continuous_id.prodMk hb.continuous).continuousAt) fun x _ ↦ b_in x
   let range_γ₀ := (fun i : ℝ × ℝ ↦ ‖γ₀ i.1 i.2‖) '' I ×ˢ I
   have h4γ₀ : BddAbove range_γ₀ :=
     (isCompact_Icc.prod isCompact_Icc).bddAbove_image (by fun_prop)
@@ -123,7 +123,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   classical
   let f : E → ℝ × ℝ → ℝ := fun x y ↦ if Ωᶜ.Nonempty then infDist (x, γ₃ x y.1 y.2) (Ωᶜ) else 1
   have hI : IsCompact (I ×ˢ I) := isCompact_Icc.prod isCompact_Icc
-  have h1f : Continuous ↿f := (continuous_fst.prod_mk hγ₃.cont).infDist.if_const _ continuous_const
+  have h1f : Continuous ↿f := (continuous_fst.prodMk hγ₃.cont).infDist.if_const _ continuous_const
   have h2f : ∀ x : E, Continuous (f x) := fun x ↦ h1f.comp₂ continuous_const continuous_id
   have h3f : ∀ {x y}, 0 < f x y := by
     intro x y; by_cases hΩ : Ωᶜ.Nonempty
@@ -197,7 +197,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
       exact hb.fst'.contDiffAt.congr_of_eventuallyEq this
     · exact (hγ₅.comp₃ contDiff_fst smoothTransition.contDiff.fst'.snd' <|
           contDiff_snd.snd'.sub contDiff_const).contDiffAt.congr_of_eventuallyEq
-        ((EventuallyEq.rfl.prod_mk <| EventuallyEq.rfl.prod_mk <|
+        ((EventuallyEq.rfl.prodMk <| EventuallyEq.rfl.prodMk <|
               (fract_eventuallyEq hs).comp_tendsto continuousAt_id.snd'.snd').fun_comp ↿γ₅)
   refine ⟨γ, ⟨⟨?_, ?_, ?_, ?_, hγ.continuous⟩, ?_⟩, hγ, ?_⟩
   · intro x t

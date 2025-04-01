@@ -181,7 +181,7 @@ instance : FunLike (FamilyOneJetSec I M I' M' J N) N (OneJetSec I M I' M') where
   coe := fun S t ↦
     { bs := S.bs t
       ϕ := S.ϕ t
-      smooth' := fun x ↦ (S.smooth' (t, x)).comp x <| contMDiffAt_const.prod_mk contMDiffAt_id }
+      smooth' := fun x ↦ (S.smooth' (t, x)).comp x <| contMDiffAt_const.prodMk contMDiffAt_id }
   coe_injective' := by
     intro S T h
     ext n : 2
@@ -201,7 +201,7 @@ protected def mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n
 theorem coe_mk' (FF : N → M → OneJetBundle I M I' M') (hF : ∀ n m, (FF n m).1.1 = m)
     (h2F : ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ (uncurry FF)) (x : N) :
     FamilyOneJetSec.mk' FF hF h2F x =
-      OneJetSec.mk' (FF x) (hF x) (h2F.comp (contMDiff_const.prod_mk contMDiff_id)) :=
+      OneJetSec.mk' (FF x) (hF x) (h2F.comp (contMDiff_const.prodMk contMDiff_id)) :=
   rfl
 
 @[simp]
@@ -231,7 +231,7 @@ def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) 
     FamilyOneJetSec I M I' M' J N where
   bs t := S.bs (f t)
   ϕ t := S.ϕ (f t)
-  smooth' x := (S.smooth' (f x.1, x.2)).comp x <| f.contMDiff.contMDiffAt.prod_map' contMDiffAt_id
+  smooth' x := (S.smooth' (f x.1, x.2)).comp x <| f.contMDiff.contMDiffAt.prodMap' contMDiffAt_id
 
 /-- Turn a family of sections of `J¹(M, M')` parametrized by `N` into a section of `J¹(N × M, M')`.
 -/
@@ -247,7 +247,7 @@ def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M
       refine contMDiffAt_id.oneJetBundle_mk (S.smooth_bs y) ?_
       have : ContMDiffAt ((IP.prod I).prod (IP.prod I)) I' ∞
           (Function.uncurry fun x z : P × M ↦ S.bs z.1 x.2) (y, y) :=
-        S.smooth_bs.comp (contMDiff_snd.fst.prod_mk contMDiff_fst.snd) (y, y)
+        S.smooth_bs.comp (contMDiff_snd.fst.prodMk contMDiff_fst.snd) (y, y)
       apply ContMDiffAt.mfderiv (fun x z : P × M ↦ S.bs z.1 x.2) id this contMDiffAt_id
         (mod_cast le_top)
     · exact ContMDiff.oneJet_comp I (fun p : P × M ↦ p.2) S.smooth contMDiff_snd.oneJetExt
@@ -259,7 +259,7 @@ theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
   simp_rw [S.uncurry_ϕ, mfderiv_snd]
   congr 1
   convert
-    mfderiv_comp p ((S.smooth_bs.comp (contMDiff_id.prod_mk contMDiff_const)).mdifferentiable
+    mfderiv_comp p ((S.smooth_bs.comp (contMDiff_id.prodMk contMDiff_const)).mdifferentiable
       (by simp) p.1) (contMDiff_fst.mdifferentiable le_top p)
   simp_rw [mfderiv_fst]
   rfl

@@ -56,7 +56,7 @@ structure Immersion (f : M → M') (n : WithTop ℕ∞) : Prop where
   diff_injective : ∀ p, Injective (mfderiv I I' f p)
 
 /-- An injective `C^n` immersion -/
-structure InjImmersion (f : M → M') (n : WithTop ℕ∞) extends Immersion I I' f n : Prop where
+structure InjImmersion (f : M → M') (n : WithTop ℕ∞) : Prop extends Immersion I I' f n where
   injective : Injective f
 
 end Definition

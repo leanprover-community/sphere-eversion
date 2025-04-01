@@ -93,7 +93,7 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
     intro a
     refine contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_snd, ?_, ?_⟩
     · apply (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a
-        (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
+        (contMDiffAt_fst.prodMk_space contMDiffAt_snd)
     · -- TODO: Investigate why we need so many different tactics before the apply
       unfold inTangentCoordinates
       dsimp [inCoordinates, chartAt]
@@ -103,7 +103,7 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
         TangentBundle.coordChange_model_space, one_def, VectorBundleCore.trivializationAt_symmL,
         comp_id]
       exact (𝓕.φ_diff.contMDiff (a.fst, a.snd)).comp a
-        (contMDiffAt_fst.prod_mk_space contMDiffAt_snd)
+        (contMDiffAt_fst.prodMk_space contMDiffAt_snd)
 
 end Unloc
 

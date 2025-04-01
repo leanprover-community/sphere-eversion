@@ -104,7 +104,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
   -- The following suffices looks stupid but is much faster than using the change tactic.
   suffices ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀), P (f p) by exact this
   have hf : ContinuousAt (fun x ↦ f x) (x₀, y₀, φ₀) := by
-    refine (continuousAt_const.inner continuousAt_fst).prod ?_
+    refine (continuousAt_const.inner continuousAt_fst).prodMk ?_
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
       exact continuousAt_snd.comp continuousAt_snd
@@ -301,7 +301,7 @@ def locFormalEversionAux : HtpyJetSec E E where
     refine ContDiffAt.smul ?_ ?_
     · exact (smoothStep.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
     · exact (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
-        (smoothStep.smooth.prod_map contDiff_id).contDiffAt
+        (smoothStep.smooth.prodMap contDiff_id).contDiffAt
 
 /-- A formal eversion of `𝕊²` into its ambient Euclidean space.
 The corresponding map `E → E` is roughly a linear homotopy from `id` at `t = 0` to `- id` at

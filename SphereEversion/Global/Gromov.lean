@@ -73,7 +73,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple' (hRample : R.Ample) (hRopen : IsOpen 
       haveI h₁ : ContMDiffAt 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (fun t ↦ a * t + b) t :=
         contMDiffAt_iff_contDiffAt.mpr
           (((contDiffAt_id : ContDiffAt ℝ ∞ id t).const_smul a).add contDiffAt_const)
-      h₁.prod_map contMDiffAt_id
+      h₁.prodMap contMDiffAt_id
     exact h.comp (t, x) this
   have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
     refine fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, ?_, ?_⟩
@@ -225,7 +225,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       haveI h₁ : ContMDiffAt 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (fun t ↦ a * t + b) t :=
         contMDiffAt_iff_contDiffAt.mpr
           (((contDiffAt_id : ContDiffAt ℝ ∞ id t).const_smul a).add contDiffAt_const)
-      h₁.prod_map contMDiffAt_id
+      h₁.prodMap contMDiffAt_id
     exact h.comp (t, x) this
   have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
     refine fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, ?_, ?_⟩

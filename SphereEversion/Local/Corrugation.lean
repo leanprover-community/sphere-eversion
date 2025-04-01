@@ -1,5 +1,5 @@
 import Mathlib.Analysis.Asymptotics.Lemmas
-import Mathlib.LinearAlgebra.Dual
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Calculus.ParametricIntegral
 import SphereEversion.ToMathlib.Algebra.Ring.Periodic
@@ -194,7 +194,7 @@ theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {
   apply contDiff_parametric_primitive_of_contDiff
   · let ψ : E → H × ℝ → F := fun x q ↦ (γ (g q.1) x).normalize q.2
     change  𝒞 ∞ fun q : H × ℝ ↦ ∂₁ ψ (x q.1) (q.1, q.2)
-    refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
+    refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prodMk contDiff_snd)
     dsimp [Loop.normalize]
     apply ContDiff.sub
     · apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
