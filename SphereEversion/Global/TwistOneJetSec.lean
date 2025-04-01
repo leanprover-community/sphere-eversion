@@ -215,7 +215,7 @@ def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ∞ f)
   bs n m := (incl I M V (s (n, m), f (n, m))).1.2
   ϕ n m := (incl I M V (s (n, m), f (n, m))).2
   smooth' := by
-    convert (smooth_incl I M V).comp (s.smooth.prod_mk hf)
+    convert (smooth_incl I M V).comp (s.smooth.prodMk hf)
     ext : 1 <;> simp
 
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')

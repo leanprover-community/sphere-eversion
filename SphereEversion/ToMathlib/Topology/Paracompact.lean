@@ -62,7 +62,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X]
     simp only [iUnion_coe_set, mem_iUnion, exists_prop] at hf
     obtain ⟨y, hy₁, hy₂, hy₃⟩ := hf
     simp only [Pi.prod, mem_iUnion, Finset.mem_coe, Finset.mem_image, exists_prop, SetCoe.exists,
-      iUnion_exists, exists_and_right, Prod.exists, Prod.mk.inj_iff, s]
+      iUnion_exists, exists_and_right, Prod.exists, Prod.mk_inj, s]
     exact ⟨i n ⟨y, hy₁⟩, r n ⟨y, hy₁⟩, ⟨n, y, hy₁, hy₂, rfl, rfl⟩, hy₃⟩
   · obtain ⟨n, hn⟩ := iUnion_eq_univ_iff.mp hC' x
     refine ⟨U n, hU'' n x hn, ?_⟩

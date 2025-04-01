@@ -181,7 +181,7 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
           refine ((ω.contDiff_rot ?_).of_le le_top).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
         apply this.comp p (f := fun (p : ℝ × sphere 0 1) ↦ (p.1, (p.2 : E)))
-        apply contMDiff_fst.prod_mk_space ((contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd))
+        apply contMDiff_fst.prodMk_space ((contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd))
 
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def formalEversionAux2 : HtpyFormalSol 𝓡_imm :=
@@ -255,8 +255,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 theorem contDiff_prod_iff (f : E → F × G) (n : ℕ∞) :
     ContDiff 𝕜 n f ↔
       ContDiff 𝕜 n (Prod.fst ∘ f) ∧ ContDiff 𝕜 n (Prod.snd ∘ f) :=
-  -- xxx: ContMDiff.prod_mk corresponds to ContDiff.prod
-  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prod h.2⟩
+  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
 
 -- move to Analysis.Calculus.ContDiff.Defs, or so
 lemma ContDiff.inr (x : E) (n : ℕ∞) : ContDiff 𝕜 n fun p : F ↦ (⟨x, p⟩ : E × F) := by

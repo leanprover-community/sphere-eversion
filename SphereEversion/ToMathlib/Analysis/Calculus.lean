@@ -27,21 +27,21 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCom
 
 theorem fderiv_prod_left {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun x ↦ (x, y₀)) x₀ = ContinuousLinearMap.inl 𝕜 E F :=
-  ((hasFDerivAt_id _).prod (hasFDerivAt_const _ _)).fderiv
+  ((hasFDerivAt_id _).prodMk (hasFDerivAt_const _ _)).fderiv
 
 theorem fderiv_prod_right {x₀ : E} {y₀ : F} :
     fderiv 𝕜 (fun y ↦ (x₀, y)) y₀ = ContinuousLinearMap.inr 𝕜 E F :=
-  ((hasFDerivAt_const _ _).prod (hasFDerivAt_id _)).fderiv
+  ((hasFDerivAt_const _ _).prodMk (hasFDerivAt_id _)).fderiv
 
 theorem HasFDerivAt.partial_fst {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
     HasFDerivAt (fun e ↦ φ e f₀) (φ'.comp (inl 𝕜 E F)) e₀ := by
-  exact h.comp e₀ <| hasFDerivAt_prod_mk_left (𝕜 := 𝕜) e₀ f₀
+  exact h.comp e₀ <| hasFDerivAt_prodMk_left (𝕜 := 𝕜) e₀ f₀
 
 theorem HasFDerivAt.partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e₀ : E} {f₀ : F}
     (h : HasFDerivAt (uncurry φ) φ' (e₀, f₀)) :
     HasFDerivAt (fun f ↦ φ e₀ f) (φ'.comp (inr 𝕜 E F)) f₀ :=
-  h.comp f₀ <| hasFDerivAt_prod_mk_right e₀ f₀
+  h.comp f₀ <| hasFDerivAt_prodMk_right e₀ f₀
 
 theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableAt 𝕜 f p) :
     fderiv 𝕜 f p =
@@ -49,10 +49,10 @@ theorem fderiv_prod_eq_add {f : E × F → G} {p : E × F} (hf : DifferentiableA
   have H₁ : fderiv 𝕜 (fun z : E × F ↦ f (z.1, p.2)) p =
       (fderiv 𝕜 f p).comp (.comp (.inl 𝕜 E F) (.fst 𝕜 E F)) :=
     (hf.hasFDerivAt.comp p
-      ((hasFDerivAt_fst (𝕜 := 𝕜) (E := E) (F := F)).prod (hasFDerivAt_const p.2 _))).fderiv
+      ((hasFDerivAt_fst (𝕜 := 𝕜) (E := E) (F := F)).prodMk (hasFDerivAt_const p.2 _))).fderiv
   have H₂ : fderiv 𝕜 (fun z : E × F ↦ f (p.1, z.2)) p =
       (fderiv 𝕜 f p).comp (.comp (.inr 𝕜 E F) (.snd 𝕜 E F)) :=
-    (hf.hasFDerivAt.comp _ ((hasFDerivAt_const p.1 _).prod
+    (hf.hasFDerivAt.comp _ ((hasFDerivAt_const p.1 _).prodMk
       (hasFDerivAt_snd (𝕜 := 𝕜) (E := E) (F := F)))).fderiv
   rw [H₁, H₂, ← comp_add, comp_fst_add_comp_snd, coprod_inl_inr, ContinuousLinearMap.comp_id]
 
@@ -83,7 +83,7 @@ theorem fderiv_partial_snd {φ : E → F → G} {φ' : E × F →L[𝕜] G} {e�
 theorem DifferentiableAt.hasFDerivAt_partial_fst {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
     HasFDerivAt (fun e ↦ φ e f₀) (partialFDerivFst 𝕜 φ e₀ f₀) e₀ := by
-  apply (h.comp e₀ <| differentiableAt_id.prod <| differentiableAt_const f₀).hasFDerivAt (𝕜 := 𝕜)
+  apply (h.comp e₀ <| differentiableAt_id.prodMk <| differentiableAt_const f₀).hasFDerivAt (𝕜 := 𝕜)
 
 theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E} {f₀ : F}
     (h : DifferentiableAt 𝕜 (uncurry φ) (e₀, f₀)) :
@@ -93,11 +93,11 @@ theorem DifferentiableAt.hasFDerivAt_partial_snd {φ : E → F → G} {e₀ : E}
 
 theorem ContDiff.partial_fst {φ : E → F → G} {n : ℕ∞} (h : ContDiff 𝕜 n <| uncurry φ) (f₀ : F) :
     ContDiff 𝕜 n fun e ↦ φ e f₀ :=
-  h.comp <| contDiff_prod_mk_left f₀
+  h.comp <| contDiff_prodMk_left f₀
 
 theorem ContDiff.partial_snd {φ : E → F → G} {n : ℕ∞} (h : ContDiff 𝕜 n <| uncurry φ) (e₀ : E) :
     ContDiff 𝕜 n fun f ↦ φ e₀ f :=
-  h.comp <| contDiff_prod_mk_right e₀
+  h.comp <| contDiff_prodMk_right e₀
 
 /-- Precomposition by a continuous linear map as a continuous linear map between spaces of
 continuous linear maps. -/
@@ -158,7 +158,7 @@ nonrec theorem WithTop.le_self_mul {α : Type*} [OrderedCommMonoid α] [Canonica
 
 theorem ContDiff.contDiff_partial_fst {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) : ContDiff 𝕜 n ↿(∂₁ 𝕜 φ) :=
-  ContDiff.fderiv (hF.comp <| contDiff_snd.prod contDiff_fst.snd) contDiff_fst le_rfl
+  ContDiff.fderiv (hF.comp <| contDiff_snd.prodMk contDiff_fst.snd) contDiff_fst le_rfl
 
 theorem ContDiff.contDiff_partial_fst_apply {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) {x : E} : ContDiff 𝕜 n ↿fun x' y ↦ ∂₁ 𝕜 φ x' y x :=
@@ -175,7 +175,7 @@ theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff �
 
 theorem ContDiff.contDiff_partial_snd {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) : ContDiff 𝕜 n ↿(∂₂ 𝕜 φ) :=
-  ContDiff.fderiv (hF.comp <| contDiff_fst.fst.prod contDiff_snd) contDiff_snd le_rfl
+  ContDiff.fderiv (hF.comp <| contDiff_fst.fst.prodMk contDiff_snd) contDiff_snd le_rfl
 
 theorem ContDiff.contDiff_partial_snd_apply {φ : E → F → G} {n : ℕ}
     (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) {y : F} : ContDiff 𝕜 n ↿fun x y' ↦ ∂₂ 𝕜 φ x y' y :=

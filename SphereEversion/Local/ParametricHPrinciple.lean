@@ -39,10 +39,10 @@ def oneJetSnd : OneJet (P × E) F → OneJet E F := fun p ↦
   (p.1.2, p.2.1, p.2.2 ∘L fderiv ℝ (fun y ↦ (p.1.1, y)) p.1.2)
 
 theorem continuous_oneJetSnd : Continuous (oneJetSnd : OneJet (P × E) F → OneJet E F) :=
-  continuous_fst.snd.prod_mk <|
-    continuous_snd.fst.prod_mk <|
+  continuous_fst.snd.prodMk <|
+    continuous_snd.fst.prodMk <|
       continuous_snd.snd.clm_comp <|
-        Continuous.fderiv (contDiff_fst.fst.prod_map contDiff_id) continuous_fst.snd le_top
+        Continuous.fderiv (contDiff_fst.fst.prodMap contDiff_id) continuous_fst.snd le_top
 
 theorem oneJetSnd_eq (p : OneJet (P × E) F) :
     oneJetSnd p = (p.1.2, p.2.1, p.2.2 ∘L ContinuousLinearMap.inr ℝ P E) := by
@@ -131,7 +131,7 @@ def FamilyJetSec.uncurry (S : FamilyJetSec E F P) : JetSec (P × E) F where
   f_diff := S.f_diff
   φ_diff := by
     refine (ContDiff.fderiv ?_ contDiff_id (m := ∞) le_rfl).add (S.φ_diff.clm_comp ?_)
-    · exact S.f_diff.comp (contDiff_snd.fst.prod contDiff_fst.snd)
+    · exact S.f_diff.comp (contDiff_snd.fst.prodMk contDiff_fst.snd)
     · exact ContDiff.fderiv contDiff_snd.snd contDiff_id le_top
 
 theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
@@ -139,7 +139,7 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
       fderiv ℝ (fun z ↦ S.f z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ P E +
         S.φ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ P E := by
   simp_rw [S.uncurry_φ, fderiv_snd, add_left_inj]
-  refine (fderiv_comp p ((S.f_diff.comp (contDiff_id.prod contDiff_const)).differentiable
+  refine (fderiv_comp p ((S.f_diff.comp (contDiff_id.prodMk contDiff_const)).differentiable
     (mod_cast le_top) p.1) differentiableAt_fst).trans ?_
   rw [fderiv_fst]
   rfl
@@ -195,7 +195,7 @@ def FamilyJetSec.curry (S : FamilyJetSec (P × E) F G) : FamilyJetSec E F (G × 
     refine (S.φ_diff.comp
       ((contDiff_prodAssoc : ContDiff ℝ ω (Equiv.prodAssoc G P E)).of_le le_top)).clm_comp ?_
     refine ContDiff.fderiv ?_ contDiff_snd le_top
-    exact contDiff_fst.fst.snd.prod contDiff_snd
+    exact contDiff_fst.fst.snd.prodMk contDiff_snd
 
 theorem FamilyJetSec.curry_f (S : FamilyJetSec (P × E) F G) (p : G × P) (x : E) :
     (S.curry p).f x = (S p.1).f (p.2, x) :=
@@ -209,7 +209,7 @@ theorem FamilyJetSec.curry_φ' (S : FamilyJetSec (P × E) F G) (p : G × P) (x :
     (S.curry p).φ x = (S p.1).φ (p.2, x) ∘L ContinuousLinearMap.inr ℝ P E := by
   rw [S.curry_φ]
   congr 1
-  refine ((differentiableAt_const _).fderiv_prod differentiableAt_id).trans ?_
+  refine ((differentiableAt_const _).fderiv_prodMk differentiableAt_id).trans ?_
   rw [fderiv_id, fderiv_const]
   rfl
 
@@ -218,7 +218,7 @@ theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G}
   simp_rw [JetSec.IsHolonomicAt, S.curry_φ] at hS ⊢
   rw [show (S.curry (t, s)).f = fun x ↦ (S.curry (t, s)).f x from rfl, funext (S.curry_f _)]
   refine (fderiv_comp x ((S t).f_diff.contDiffAt.differentiableAt (mod_cast le_top))
-    ((differentiableAt_const _).prod differentiableAt_id)).trans ?_
+    ((differentiableAt_const _).prodMk differentiableAt_id)).trans ?_
   rw [_root_.id, hS]
   rfl
 
@@ -311,7 +311,7 @@ theorem RelLoc.HtpyFormalSol.exists_sol (𝓕₀ : R.HtpyFormalSol) (C : Set (�
   obtain ⟨𝓕, _, h₂, -, h₄⟩ :=
     𝓕₀.improve_htpy h_op h_ample zero_lt_one C hC (I ×ˢ K) (isCompact_Icc.prod hK) h_hol
   refine ⟨fun s ↦ (𝓕 (1, s)).f, ?_, ?_, ?_⟩
-  · exact 𝓕.f_diff.comp ((contDiff_const.prod contDiff_id).prod_map contDiff_id)
+  · exact 𝓕.f_diff.comp ((contDiff_const.prodMk contDiff_id).prodMap contDiff_id)
   · intro p hp
     exact (Prod.ext_iff.mp ((h₂.forall_mem principal_le_nhdsSet) p hp 1)).1
   · intro x hx t ht

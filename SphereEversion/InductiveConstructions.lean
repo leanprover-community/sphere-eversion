@@ -340,7 +340,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
           have limt : Tendsto (fun t ↦ (2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat))
               (𝓝 (T i.toNat)) (𝓝 0) :=
             Continuous.tendsto' (by fun_prop) _ _ (by simp)
-          exact limt.prod_map tendsto_id
+          exact limt.prodMap tendsto_id
         filter_upwards [hpast_F'.comp_tendsto lim]
         dsimp [F'']
         rintro ⟨t, x⟩ h'
@@ -404,7 +404,7 @@ theorem inductive_htpy_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ}
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
       exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
     · rintro ⟨t, x⟩ htx
-      simp only [prod_mk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
+      simp only [prodMk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
       cases' htx with ht hx
       · change (↑F'' : Germ (𝓝 (t, x)) Y).value = (↑F : Germ (𝓝 (t, x)) Y).value
         rw [loc₁ (t, x) ht.le]

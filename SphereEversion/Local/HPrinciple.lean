@@ -139,7 +139,7 @@ theorem Accepts.open [FiniteDimensional ℝ E] {L : StepLandscape E} {𝓕 : Jet
   set ψ : E × F → OneJet E F := fun p ↦ (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) p.2)
   change IsOpen {p : E × F | ψ p ∈ R}
   apply IsOpen.preimage _ h.h_op
-  apply continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk _)
+  apply continuous_fst.prodMk (𝓕.f_diff.continuous.fst'.prodMk _)
   exact L.p.continuous_update 𝓕.φ_diff.continuous.fst' continuous_snd
 
 theorem smooth_b (L : StepLandscape E) (𝓕 : JetSec E F) : 𝒞 ∞ (L.b 𝓕) :=
@@ -181,7 +181,7 @@ theorem loop_smooth (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 
 theorem loop_smooth' (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) {t : G → ℝ}
     (ht : 𝒞 ∞ t) {s : G → ℝ} (hs : 𝒞 ∞ s) {x : G → E} (hx : 𝒞 ∞ x) :
     𝒞 ∞ fun g ↦ L.loop h (t g) (x g) (s g) :=
-  (L.loop_smooth h).comp (ht.prod <| hx.prod hs)
+  (L.loop_smooth h).comp (ht.prodMk <| hx.prodMk hs)
 
 theorem loop_C1 (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) :
     ∀ t, 𝒞 1 ↿(L.loop h t) := fun _ ↦
@@ -323,7 +323,7 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x t, ‖(L.improveStep h N t).f x - 𝓕.f x‖ ≤ ε := by
   set γ := L.loop h
   have γ_cont : Continuous ↿fun t x ↦ γ t x := (L.nice h).smooth.continuous
-  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le
+  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prodMk_right 1)).of_le
     (mod_cast le_top)
   apply
     ((corrugation.c0_small_on _ L.hK₁ (L.nice h).t_le_zero (L.nice h).t_ge_one γ_cont ε_pos).and <|
@@ -339,7 +339,7 @@ theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :
 
 theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     ∀ᶠ x near L.K₀, (L.improveStep h N 1).IsPartHolonomicAt (L.p.spanV ⊔ L.E') x := by
-  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le
+  have γ_C1 : 𝒞 1 ↿(L.loop h 1) := ((L.nice h).smooth.comp (contDiff_prodMk_right 1)).of_le
     (mod_cast le_top)
   let 𝓕' : JetSec E F :=
     { f := fun x ↦ 𝓕.f x + corrugation L.π N (L.loop h 1) x
@@ -381,14 +381,14 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
 theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).IsFormalSol R := by
   set γ := L.loop h
   have γ_cont : Continuous ↿fun t x ↦ γ t x := (L.nice h).smooth.continuous
-  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prod_mk_right 1)).of_le
+  have γ_C1 : 𝒞 1 ↿(γ 1) := ((L.nice h).smooth.comp (contDiff_prodMk_right 1)).of_le
     (mod_cast le_top)
   set K :=
     (fun p : E × ℝ × ℝ ↦ (p.1, 𝓕.f p.1, L.p.update (𝓕.φ p.1) (L.loop h p.2.1 p.1 p.2.2))) ''
       L.K₁ ×ˢ I ×ˢ I
   have K_cpt : IsCompact K := by
     refine (L.hK₁.prod (isCompact_Icc.prod isCompact_Icc)).image ?_
-    refine continuous_fst.prod_mk (𝓕.f_diff.continuous.fst'.prod_mk ?_)
+    refine continuous_fst.prodMk (𝓕.f_diff.continuous.fst'.prodMk ?_)
     apply L.p.continuous_update 𝓕.φ_diff.continuous.fst'
     change Continuous (↿(L.loop h) ∘ fun g : E × ℝ × ℝ ↦ (g.snd.fst, g.fst, g.snd.snd))
     exact (L.loop_smooth h).continuous.comp₃ continuous_snd.fst continuous_fst continuous_snd.snd

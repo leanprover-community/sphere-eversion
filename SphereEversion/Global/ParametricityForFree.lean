@@ -188,10 +188,10 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
         ((t, s), x) := by
       apply
         ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) ↦ (p.1.2, x)) Prod.snd
-          (contMDiffAt_fst.fst.snd.prod_mk contMDiffAt_snd :
+          (contMDiffAt_fst.fst.snd.prodMk contMDiffAt_snd :
             ContMDiffAt (((J.prod IP).prod I).prod I) (IP.prod I) ∞ _ (((t, s), x), x))
           (contMDiffAt_snd : ContMDiffAt ((J.prod IP).prod I) _ ∞ _ _) (mod_cast le_top)
-    exact h1.clm_comp_inTangentCoordinates (continuousAt_fst.snd.prod continuousAt_snd) h2
+    exact h1.clm_comp_inTangentCoordinates (continuousAt_fst.snd.prodMk continuousAt_snd) h2
 
 theorem FamilyOneJetSec.curry_bs (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) (p : N × P)
     (x : M) : (S.curry p).bs x = (S p.1).bs (p.2, x) :=
@@ -218,7 +218,7 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
   refine (mfderiv_comp x ((S t).smooth_bs.mdifferentiableAt (mod_cast le_top))
-    (mdifferentiableAt_const.prod_mk (contMDiff_id.mdifferentiableAt le_top))).trans
+    (mdifferentiableAt_const.prodMk (contMDiff_id.mdifferentiableAt le_top))).trans
     ?_
   rw [id, hS]
   rfl

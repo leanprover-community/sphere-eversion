@@ -516,10 +516,10 @@ theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N
   rw [contMDiffAt_oneJetBundle] at hk
   refine ContMDiffAt.oneJet_comp _ _ ?_ ?_
   · refine ContMDiffAt.oneJet_comp _ _ ?_ ?_
-    · refine hk.2.1.oneJetBundle_mk (hg.comp x₀ (contMDiffAt_id.prod_mk hk.2.1)) ?_
+    · refine hk.2.1.oneJetBundle_mk (hg.comp x₀ (contMDiffAt_id.prodMk hk.2.1)) ?_
       exact ContMDiffAt.mfderiv g (fun x ↦ (k x).1.2) hg hk.2.1 le_rfl
     · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
-  apply (hf.comp x₀ (contMDiffAt_id.prod_mk hk.1)).oneJetBundle_mk hk.1
+  apply (hf.comp x₀ (contMDiffAt_id.prodMk hk.1)).oneJetBundle_mk hk.1
   apply hDfinv
 
 
@@ -574,7 +574,7 @@ theorem contMDiff_bundleSnd :
       (fun (x : OneJetBundle (J.prod I) (N × M) I' M') (y : M) ↦ (x.1.1.1, y))
       (fun x : OneJetBundle (J.prod I) (N × M) I' M' ↦ x.1.1.2) ?_ ?_ le_rfl
   · exact this
-  · exact (contMDiff_oneJetBundle_proj.fst.fst.prod_map contMDiff_id).contMDiffAt
+  · exact (contMDiff_oneJetBundle_proj.fst.fst.prodMap contMDiff_id).contMDiffAt
   · exact contMDiff_oneJetBundle_proj.fst.snd.contMDiffAt
 
 -- slow

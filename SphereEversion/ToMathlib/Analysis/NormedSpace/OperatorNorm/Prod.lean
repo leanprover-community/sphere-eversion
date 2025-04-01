@@ -117,7 +117,7 @@ theorem ContinuousAt.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[�
     (hf : ContinuousAt f x₀) (hg : ContinuousAt g x₀) :
     ContinuousAt (fun x ↦ (f x).comp (g x)) x₀ :=
   ((ContinuousLinearMap.compL 𝕜 E Fₗ Gₗ).continuous₂.tendsto (f x₀, g x₀)).comp
-    (hf.prod_mk_nhds hg)
+    (hf.prodMk_nhds hg)
 
 @[continuity, fun_prop]
 theorem Continuous.compL {f : X → Fₗ →L[𝕜] Gₗ} {g : X → E →L[𝕜] Fₗ} (hf : Continuous f)

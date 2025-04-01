@@ -476,7 +476,7 @@ structure SurroundingFamily (g b : E → F) (γ : E → ℝ → Loop F) (U : Set
 
 /-- `γ` forms a family of loops surrounding `g` with base `b` in `Ω`. -/
 structure SurroundingFamilyIn (g b : E → F) (γ : E → ℝ → Loop F) (U : Set E)
-    (Ω : Set <| E × F) extends SurroundingFamily g b γ U : Prop where
+    (Ω : Set <| E × F) : Prop extends SurroundingFamily g b γ U where
   val_in' : ∀ x ∈ U, ∀ t ∈ I, ∀ s ∈ I, (x, γ x t s) ∈ Ω
 
 namespace SurroundingFamily

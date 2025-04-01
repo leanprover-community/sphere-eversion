@@ -169,7 +169,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
     apply hasStrictFDerivAt_of_hasFDerivAt_of_continuousAt
     · filter_upwards
       rintro ⟨x, y⟩
-      apply HasFDerivAt.prod
+      apply HasFDerivAt.prodMk
       · simp only [ContinuousLinearEquiv.coe_refl, ContinuousLinearMap.id_comp, hasFDerivAt_fst]
       have diff : Differentiable 𝕜 (uncurry fun x y ↦ f x y) := hf.differentiable (mod_cast le_top)
       rw [show (fun x : E × F ↦ (f x.fst) x.snd) = uncurry fun x y ↦ f x y by ext; rfl]
@@ -184,7 +184,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       · simp_rw [← hf']
         exact hff.contDiff_top_partial_snd.continuous
   let φ := φ₀.toHomeomorphOfContDiff hderiv
-  exact contDiff_snd.comp (φ.contDiff_symm (fun x ↦ (hderiv x).hasFDerivAt) (contDiff_fst.prod hf))
+  exact contDiff_snd.comp (φ.contDiff_symm (fun x ↦ (hderiv x).hasFDerivAt) (contDiff_fst.prodMk hf))
 
 end
 

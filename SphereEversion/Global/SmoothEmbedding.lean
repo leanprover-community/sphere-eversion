@@ -438,9 +438,9 @@ theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
       (contMDiffOn_congr h₄).mpr <| ψ.contMDiff_to.comp_contMDiffOn <| hg.comp_contMDiffOn
-        (contMDiffOn_id.prod_mk <| φ.contMDiffOn_inv.comp hk.contMDiffOn Subset.rfl)⟩
+        (contMDiffOn_id.prodMk <| φ.contMDiffOn_inv.comp hk.contMDiffOn Subset.rfl)⟩
   · refine ⟨k ⁻¹' V, h₂, ?_, (contMDiffOn_congr hK').mpr
-      (hf.comp ((contMDiff_id (n := ∞)).prod_mk hk)).contMDiffOn⟩
+      (hf.comp ((contMDiff_id (n := ∞)).prodMk hk)).contMDiffOn⟩
     exact ((Set.ext_iff.mp h₃ (k x)).mpr trivial).resolve_right hx
 
 end NonMetric
@@ -465,7 +465,7 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
         (Bornology.IsBounded.cthickening <| IsCompact.isBounded <| ?_)
     apply (hKP.prod hK).image
     exact ψ.contMDiffOn_inv.continuousOn.comp_continuous
-      (hf.comp <| continuous_fst.prod_mk <| φ.continuous.comp continuous_snd) fun q ↦
+      (hf.comp <| continuous_fst.prodMk <| φ.continuous.comp continuous_snd) fun q ↦
       hf' q.1 ⟨φ q.2, mem_range_self _, rfl⟩
   have h₁ : UniformContinuousOn ψ K₁ :=
     hK₁.uniformContinuousOn_of_continuous ψ.continuous.continuousOn

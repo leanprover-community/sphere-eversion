@@ -146,9 +146,9 @@ namespace FamilyJetSec
 instance : FunLike (FamilyJetSec E F P) P (JetSec E F) where
   coe S t :=
     { f := S.f t
-      f_diff := S.f_diff.comp (contDiff_const.prod contDiff_id)
+      f_diff := S.f_diff.comp (contDiff_const.prodMk contDiff_id)
       φ := S.φ t
-      φ_diff := S.φ_diff.comp (contDiff_const.prod contDiff_id) }
+      φ_diff := S.φ_diff.comp (contDiff_const.prodMk contDiff_id) }
   coe_injective' := by
     rintro ⟨⟩ ⟨⟩ h
     simp only [funext_iff, DFunLike.ext_iff, JetSec.mk_apply, Prod.ext_iff] at h
@@ -235,10 +235,10 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     𝒞 ∞ ↿(fun t x ↦ if t ≤ 1 / 2 then f (smoothStep <| 2 * t) x
       else g (smoothStep <| 2 * t - 1) x : ℝ → E → F) := by
   have s₁ : 𝒞 ∞ (fun p ↦ (smoothStep (2 * p.1), p.2) : ℝ × E → ℝ × E) :=
-    (smoothStep.smooth.comp (contDiff_const.mul contDiff_id)).prod_map contDiff_id
+    (smoothStep.smooth.comp (contDiff_const.mul contDiff_id)).prodMap contDiff_id
   replace hf := hf.comp s₁
   have s₂ : 𝒞 ∞ (fun p ↦ (smoothStep <| 2 * p.1 - 1, p.2) : ℝ × E → ℝ × E) :=
-    (smoothStep.smooth.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)).prod_map
+    (smoothStep.smooth.comp ((contDiff_const.mul contDiff_id).sub contDiff_const)).prodMap
       contDiff_id
   replace hg := hg.comp s₂
   rw [contDiff_iff_contDiffAt] at *
@@ -249,7 +249,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
       prod_mem_nhds_iff.mpr ⟨Iio_mem_nhds ht, univ_mem⟩
     filter_upwards [this] with p hp
     cases' p with t x
-    replace hp : t < 1 / 2 := (prod_mk_mem_set_prod_eq.mp hp).1
+    replace hp : t < 1 / 2 := (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     rw [if_pos hp.le]
     rfl
@@ -258,7 +258,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
       refine prod_mem_nhds_iff.mpr ⟨Ioo_mem_nhds ?_ ?_, univ_mem⟩ <;> norm_num
     filter_upwards [this] with p hp
     cases' p with t x
-    cases' (prod_mk_mem_set_prod_eq.mp hp).1 with lt_t t_lt
+    cases' (prodMk_mem_set_prod_eq.mp hp).1 with lt_t t_lt
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     split_ifs
     · rfl
@@ -271,7 +271,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
       prod_mem_nhds_iff.mpr ⟨Ioi_mem_nhds ht, univ_mem⟩
     filter_upwards [this] with p hp
     cases' p with t x
-    replace hp : ¬t ≤ 1 / 2 := by push_neg; exact (prod_mk_mem_set_prod_eq.mp hp).1
+    replace hp : ¬t ≤ 1 / 2 := by push_neg; exact (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     rw [if_neg hp]
     rfl
