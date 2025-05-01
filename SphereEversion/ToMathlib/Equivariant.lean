@@ -68,7 +68,7 @@ protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy �
     norm_cast
 
 protected theorem fract_fract (t : ℝ) : fract (φ (fract t)) = fract (φ t) := by
-  rw [← φ.fract_add_floor t, fract_add_int]
+  rw [← φ.fract_add_floor t, fract_add_intCast]
 
 end EquivariantMap
 

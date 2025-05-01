@@ -1,7 +1,7 @@
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.MeasureTheory.Integral.IntegrationByParts
-import Mathlib.MeasureTheory.Integral.Periodic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 import SphereEversion.Loops.Surrounding
 import SphereEversion.Loops.DeltaMollifier
 import SphereEversion.ToMathlib.ExistsOfConvex

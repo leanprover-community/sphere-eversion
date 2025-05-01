@@ -97,8 +97,6 @@ theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ := continuous_quotient_m
 
 theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe
 
-attribute [fun_prop] Continuous.prod_map
-
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
     Topology.IsQuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
   (IsOpenMap.id.prodMap isOpenMap_proj𝕊₁).isQuotientMap (by fun_prop)

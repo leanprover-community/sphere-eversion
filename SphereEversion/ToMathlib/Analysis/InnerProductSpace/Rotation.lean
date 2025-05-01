@@ -16,7 +16,7 @@ noncomputable section
 
 open scoped RealInnerProductSpace
 
-open Module
+open Module Submodule
 
 set_option synthInstance.checkSynthOrder false
 attribute [local instance] FiniteDimensional.of_fact_finrank_eq_succ
@@ -103,7 +103,7 @@ theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v
   have h2 : ⟪v×₃w, w⟫ = 0 := ω.inner_crossProduct_apply_apply_self v w
   have h3 : ⟪(w : E), v×₃w⟫ = 0 := by rwa [real_inner_comm]
   have : ‖Real.cos (t * Real.pi) • (w : E) + Real.sin (t * Real.pi) • v×₃w‖ = ‖(w : E)‖ := by
-    simp only [@norm_eq_sqrt_inner ℝ]
+    simp only [@norm_eq_sqrt_re_inner ℝ]
     congr 2
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
       RCLike.conj_to_real, Submodule.coe_inner]

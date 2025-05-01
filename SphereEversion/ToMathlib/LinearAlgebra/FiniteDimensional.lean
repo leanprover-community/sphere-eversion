@@ -16,5 +16,5 @@ theorem one_lt_rank_of_rank_lt_rank [FiniteDimensional 𝕜 E] [FiniteDimensiona
   have :=
     calc
       finrank 𝕜 (π.ker.map φ) ≤ finrank 𝕜 (LinearMap.ker π) := finrank_map_le φ (LinearMap.ker π)
-      _ < finrank 𝕜 E := Submodule.finrank_lt (le_top.lt_of_ne hπ)
+      _ < finrank 𝕜 E := Submodule.finrank_lt hπ
   linarith
