@@ -228,7 +228,7 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
 
--- variant of `orthogonalProjection_singleton`
+-- variant of `Submodule.orthogonalProjection_singleton`
 theorem Submodule.orthogonalProjection_singleton' {v : E} :
     (𝕜 ∙ v).subtypeL.comp (orthogonalProjection (𝕜 ∙ v)) =
       (1 / (‖v‖ : 𝕜) ^ 2) • .toSpanSingleton 𝕜 v ∘L InnerProductSpace.toDual 𝕜 E v := by
@@ -240,18 +240,19 @@ end
 
 section
 
+open Submodule
+
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
 
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
 from `E` to `E →L[ℝ] E`, is analytic away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
-    ContDiffAt ℝ ω
-      (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (Submodule.orthogonalProjection (ℝ ∙ v))) v₀ := by
+    ContDiffAt ℝ ω (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
   suffices ContDiffAt ℝ ω
     (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
     refine this.congr_of_eventuallyEq ?_
     filter_upwards with v
-    rw [Submodule.orthogonalProjection_singleton', RCLike.ofReal_real_eq_id, _root_.id_def]
+    rw [orthogonalProjection_singleton', RCLike.ofReal_real_eq_id, _root_.id_def]
   refine ContDiffAt.smul ?_ ?_
   · exact contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt
       (pow_ne_zero _ (norm_ne_zero_iff.mpr hv₀))
