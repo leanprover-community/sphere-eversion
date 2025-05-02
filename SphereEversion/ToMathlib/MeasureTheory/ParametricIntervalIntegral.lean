@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
-import Mathlib.MeasureTheory.Integral.FundThmCalculus
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import SphereEversion.ToMathlib.Analysis.Calculus
 
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
@@ -16,7 +16,7 @@ We could weaken `FiniteDimensional ℝ H` with `SecondCountable (H →L[ℝ] E)`
 but that is less convenient to work with.
 -/
 
-open Real ContinuousLinearMap Asymptotics
+open Real ContinuousLinearMap Asymptotics Interval
 
 /-- This statement is a new version using the continuity note in mathlib.
 See commit `39e3f3f` for an older version

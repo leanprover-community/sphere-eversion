@@ -129,7 +129,7 @@ theorem Ioo_inter_Iio {α : Type*} [LinearOrder α] {a b c : α} :
 
 theorem fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y := by
   cases' le_total y 1 with hy hy
-  · rw [← fract_sub_int x n, fract_eq_self.mpr]
+  · rw [← fract_sub_intCast x n, fract_eq_self.mpr]
     · linarith
     · constructor <;> linarith
   · exact (fract_lt_one x).trans_le hy
@@ -139,7 +139,7 @@ theorem one_sub_lt_fract {x y : ℝ} {n : ℤ} (hy : y ≤ 1) (h1 : (n : ℝ) - 
   have I₁ : 1 - y < x - (n - 1) := by linarith
   have I₂ : x - (n - 1) < 1 := by linarith
   norm_cast at I₁ I₂
-  rw [← fract_sub_int x (n - 1), fract_eq_self.mpr]
+  rw [← fract_sub_intCast x (n - 1), fract_eq_self.mpr]
   · exact I₁
   · constructor <;> linarith
 
@@ -213,7 +213,7 @@ end
 
 section projI
 
-variable {α β : Type*} [LinearOrderedSemiring α] {x c : α}
+variable {α β : Type*} [Semiring α] [LinearOrder α] [IsStrictOrderedRing α] {x c : α}
 
 /-- If `α` is a `LinearOrderedSemiring`, then `projI : α → α` projection of `α` onto the unit
 interval `[0, 1]`. -/
@@ -291,7 +291,7 @@ theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
 theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (projI : α → α) :=
   continuous_projIcc.subtype_val
 
-theorem projI_mapsto {α : Type*} [LinearOrderedSemiring α] {s : Set α} (h0s : (0 : α) ∈ s)
+theorem projI_mapsto {s : Set α} (h0s : (0 : α) ∈ s)
     (h1s : (1 : α) ∈ s) : MapsTo projI s s := fun x hx ↦
   (le_total 1 x).elim (fun h2x ↦ by rwa [projI_eq_one.mpr h2x]) fun h2x ↦
     (le_total 0 x).elim (fun h3x ↦ by rwa [projI_eq_self.mpr ⟨h3x, h2x⟩]) fun h3x ↦ by

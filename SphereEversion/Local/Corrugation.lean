@@ -1,7 +1,7 @@
 import Mathlib.Analysis.Asymptotics.Lemmas
 import Mathlib.LinearAlgebra.Dual.Lemmas
-import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 import SphereEversion.ToMathlib.Algebra.Ring.Periodic
 import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 import SphereEversion.Loops.Basic

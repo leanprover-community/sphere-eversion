@@ -17,11 +17,11 @@ theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f 
 
 section
 
-variable {𝕜 𝕜' : Type*} {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
+variable {𝕜 𝕜' : Type*} {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [Module 𝕜 E]
   {E₂ : Type*} [AddCommMonoid E₂] [Module 𝕜 E₂] {E' : Type*} [AddCommMonoid E']
-  [OrderedSemiring 𝕜'] [Module 𝕜' E'] (σ : 𝕜 →+*o 𝕜')
+  [Semiring 𝕜'] [PartialOrder 𝕜'] [IsOrderedRing 𝕜'] [Module 𝕜' E'] (σ : 𝕜 →+*o 𝕜')
 
-def reallyConvexHull (𝕜 : Type*) {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
+def reallyConvexHull (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
     (s : Set E) : Set E :=
   {e | ∃ w : E → 𝕜, 0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
 
@@ -96,7 +96,8 @@ theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set 
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 
 /-- Generalization of `Convex` to semirings. We only add the `s = ∅` clause if `𝕜` is trivial. -/
-def ReallyConvex (𝕜 : Type*) {E : Type*} [OrderedSemiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
+def ReallyConvex (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜]
+    [AddCommMonoid E] [Module 𝕜 E]
     (s : Set E) : Prop :=
   s = ∅ ∨ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
 
@@ -195,7 +196,8 @@ end
 
 section
 
-variable (𝕜 : Type*) {E : Type*} [LinearOrderedField 𝕜] [AddCommGroup E] [Module 𝕜 E]
+variable (𝕜 : Type*) {E : Type*} [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] [AddCommGroup E]
+  [Module 𝕜 E]
 
 theorem reallyConvex_iff_convex {s : Set E} : ReallyConvex 𝕜 s ↔ Convex 𝕜 s := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩

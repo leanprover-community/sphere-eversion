@@ -193,11 +193,7 @@ theorem not_mem_support {γ : X → Loop X'} {x : X} (h : ∀ᶠ y in 𝓝 x, (�
 @[simps]
 noncomputable def ofPath {x : X} (γ : Path x x) : Loop X where
   toFun t := γ.extend (fract t)
-  per' := by
-    intro t
-    dsimp
-    congr 1
-    exact_mod_cast fract_add_int t 1
+  per' t := by rw [fract_add_one]
 
 @[simp]
 theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := by

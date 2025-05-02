@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.MeasureTheory.Integral.Periodic
 import Mathlib.Analysis.Convolution
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.Analysis.Calculus.BumpFunction.Normed
 import SphereEversion.ToMathlib.Algebra.Ring.Periodic
