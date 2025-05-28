@@ -1,7 +1,6 @@
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
-import Mathlib.Tactic.FunProp.ContDiff
 
 /-!
 # Basic definitions and properties of loops
@@ -272,8 +271,7 @@ theorem roundTripFamily_zero {x y : X} {γ : Path x y} :
     (roundTripFamily γ) 0 = ofPath (Path.refl x) := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_zero, ofPath]
   congr with t
-  simp [Path.refl_symm]
-  rfl
+  simp
 
 theorem roundTripFamily_one {x y : X} {γ : Path x y} : (roundTripFamily γ) 1 = roundTrip γ := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_one, ofPath]

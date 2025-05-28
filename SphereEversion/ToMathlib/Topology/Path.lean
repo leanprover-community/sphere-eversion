@@ -122,11 +122,11 @@ theorem Continuous.path_strans {X Y : Type*} [UniformSpace X]
     refine (continuous_subtype_val.comp hs).continuousAt.comp_div_cases (fun x s ↦ (γ x).extend s)
       (continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
-      refine ContinuousAt.path_extend _ ?_ continuousAt_snd
+      refine ContinuousAt.pathExtend _ ?_ continuousAt_snd
       exact hγ.continuousAt.comp (continuousAt_fst.fst.prodMk continuousAt_snd)
     · intro h
       have ht : t x = 0 := Subtype.ext h
-      apply Filter.Tendsto.path_extend
+      apply Filter.Tendsto.pathExtend
       dsimp only; rw [(projIcc_surjective _).filter_map_top, extend_zero]
       exact tendsto_prod_top_iff.mpr (hγ0 ht)
   · rw [continuous_iff_continuousAt]
@@ -135,11 +135,11 @@ theorem Continuous.path_strans {X Y : Type*} [UniformSpace X]
       (fun x s ↦ (γ' x).extend s)
       (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
-      refine ContinuousAt.path_extend _ ?_ continuousAt_snd
+      refine ContinuousAt.pathExtend _ ?_ continuousAt_snd
       exact hγ'.continuousAt.comp (continuousAt_fst.fst.prodMk continuousAt_snd)
     · intro h
       have ht : t x = 1 := Subtype.ext (sub_eq_zero.mp h).symm
-      apply Filter.Tendsto.path_extend
+      apply Filter.Tendsto.pathExtend
       dsimp only; rw [(projIcc_surjective _).filter_map_top, extend_zero]
       exact tendsto_prod_top_iff.mpr (hγ'1 ht)
   · rintro x h; rw [h, sub_self, zero_div, extend_div_self, extend_zero]
