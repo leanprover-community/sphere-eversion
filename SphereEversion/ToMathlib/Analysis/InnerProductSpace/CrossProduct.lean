@@ -7,6 +7,7 @@ Authors: Heather Macbeth
 -/
 import Mathlib.Analysis.InnerProductSpace.Dual
 import Mathlib.Analysis.InnerProductSpace.Orientation
+import Mathlib.LinearAlgebra.Alternating.Curry
 
 /-! # The cross-product on an oriented real inner product space of dimension three -/
 

@@ -105,7 +105,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           rintro x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩
           rw [← abs_of_nonneg (norm_nonneg <| x - x₀), ← abs_mul, ←
             intervalIntegral.integral_mul_const]
-          apply intervalIntegral.norm_integral_le_of_norm_le _ ((bound_int hsx₀ hsx).mul_const _)
+          apply intervalIntegral.norm_integral_le_abs_of_norm_le _ ((bound_int hsx₀ hsx).mul_const _)
           apply ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset hsx₀ hsx)
           apply h_lipsch.mono
           intro t ht
@@ -202,7 +202,7 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
     filter_upwards with t t_in
     rw [nnabs_coe K]
     exact F_lip t t_in
-  · exact integrableOn_const.mpr (Or.inr measure_Ioo_lt_top)
+  · exact integrableOn_const measure_Ioo_lt_top.ne
 
 end
 
@@ -280,7 +280,7 @@ theorem ContDiff.fderiv_parametric_integral {F : H → ℝ → E} (hF : ContDiff
       ∫ t in a..b, fderiv ℝ (fun x' ↦ F x' t) x := by
   ext x₀
   cases' hasFDerivAt_parametric_primitive_of_contDiff' hF contDiff_const x₀ a with int h
-  rw [h.fderiv, fderiv_const]
+  rw [h.fderiv, fderiv_fun_const]
   simp only [ContinuousLinearMap.comp_zero, add_zero, Pi.zero_apply]
 
 end

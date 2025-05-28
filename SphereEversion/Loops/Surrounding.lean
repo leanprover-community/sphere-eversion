@@ -797,8 +797,7 @@ theorem surroundingFamily_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ 
     -- have h2t : ρ τ * t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (ρ_nonneg τ) ht,
     -- have h3t : ρ (1 - τ) * t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (ρ_nonneg _) ht,
     -- have h4t : t ≤ 1 := ht.trans zero_le_one,
-    simp only [sfHomotopy, Path.refl_strans_refl, Path.refl_extend, Loop.ofPath_apply, projI_zero,
-      MulZeroClass.mul_zero, SurroundingFamily.path_t₀]
+    simp [sfHomotopy]
   · intro x t s; simp only [sfHomotopy, projI_projI]
   -- { intros x t s ht, simp only [sfHomotopy, min_eq_left ht, min_self] },
   · intro x hx; cases' le_total τ (1 / 2) with h h
