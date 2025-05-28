@@ -32,7 +32,7 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type*} {s
   · let m := s j ∩ n ∩ (extChartAt I x).source
     have hm : m ∈ 𝓝 x := Filter.inter_mem (Filter.inter_mem hj hn) hx
     replace hm : extChartAt I x '' m ∈ 𝓝 (extChartAt I x x) :=
-      extChartAt_image_nhd_mem_nhds_of_boundaryless hm
+      extChartAt_image_nhds_mem_nhds_of_boundaryless hm
     obtain ⟨r, hr₀, hr₁⟩ :=
       (Filter.hasBasis_iff.mp (@nhds_basis_ball E _ (extChartAt I x x)) _).mp hm
     refine ⟨r, ⟨hr₀, hr₁.trans ?_, ⟨j, ?_⟩⟩, ?_⟩

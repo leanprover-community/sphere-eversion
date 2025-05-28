@@ -467,5 +467,5 @@ theorem inductive_htpy_construction {X Y : Type*}
   · apply hF₁.filter_mono
     gcongr
     rw [biUnion_le]
-  · exact fun t x hx ↦ hFK₁ t x (not_mem_subset K₁W hx)
+  · exact fun t x hx ↦ hFK₁ t x (notMem_subset K₁W hx)
 end Htpy

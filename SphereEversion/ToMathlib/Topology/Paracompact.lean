@@ -70,7 +70,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X]
     erw [(Equiv.Set.sep s P).symm.set_finite_iff]
     simp only [Set.iUnion_inter, ← inter_setOf_eq_sep, s]
     refine  (hU' n).iUnion (fun m _ ↦ Set.toFinite _) fun m hm ↦ ?_
-    rw [Set.eq_empty_iff_forall_not_mem]
+    rw [Set.eq_empty_iff_forall_notMem]
     intro z
     simp only [Pi.prod, Finset.coe_image, mem_inter_iff, mem_image, Finset.mem_coe, SetCoe.exists,
       mem_setOf_eq, not_and, exists₂_imp, and_imp]

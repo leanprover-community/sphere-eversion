@@ -210,7 +210,7 @@ theorem FamilyJetSec.curry_φ' (S : FamilyJetSec (P × E) F G) (p : G × P) (x :
   rw [S.curry_φ]
   congr 1
   refine ((differentiableAt_const _).fderiv_prodMk differentiableAt_id).trans ?_
-  rw [fderiv_id, fderiv_const]
+  rw [fderiv_id, fderiv_fun_const]
   rfl
 
 theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G} {s : P} {x : E}
