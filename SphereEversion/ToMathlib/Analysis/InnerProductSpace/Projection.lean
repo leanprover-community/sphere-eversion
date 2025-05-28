@@ -9,12 +9,6 @@ open Submodule Function Set Filter
 section GeneralStuff
 
 -- Things in this section go to other files
-theorem eq_zero_of_mem_disjoint {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
-    {F G : Submodule R M} (h : F ⊓ G = ⊥) {x : M} (hx : x ∈ F) (hx' : x ∈ G) : x = 0 := by
-  have := Submodule.mem_inf.mpr ⟨hx, hx'⟩
-  rw [h] at this
-  simpa
-
 @[simp]
 theorem forall_mem_span_singleton {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M]
     [Module R M] (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : Set M), P x) ↔ ∀ t : R, P (t • u) := by
@@ -103,7 +97,7 @@ theorem inner_projection_self_eq_zero_iff {F : Submodule ℝ E} [CompleteSpace F
   constructor
   · rintro rfl
     exact Fᗮ.zero_mem
-  · exact eq_zero_of_mem_disjoint (inf_orthogonal_eq_bot F) hy
+  · exact Submodule.disjoint_def.mp (orthogonal_disjoint F) _ hy
 
 variable {x₀ x : E}
 
