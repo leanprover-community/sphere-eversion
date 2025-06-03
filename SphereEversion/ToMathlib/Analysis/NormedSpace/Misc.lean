@@ -25,8 +25,8 @@ theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
     · exact e.symm.contDiff.comp_contDiffOn <| contDiffOn_univBall_symm.comp
         e.contDiff.contDiffOn hf.subset
     · rw [transHomeomorph_source, Homeomorph.transPartialHomeomorph_source, univBall_source]; rfl
-  · use (IsometryEquiv.vaddConst c).toHomeomorph.toPartialHomeomorph, contDiff_id.add contDiff_const,
-      contDiffOn_id.sub contDiffOn_const
+  · use (IsometryEquiv.vaddConst c).toHomeomorph.toPartialHomeomorph,
+      contDiff_id.add contDiff_const, contDiffOn_id.sub contDiffOn_const
     simp [hr]
 
 /-- A variant of `InnerProductSpace.diffeomorphToNhd` which provides a function satisfying the

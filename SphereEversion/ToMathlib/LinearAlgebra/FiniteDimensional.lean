@@ -13,8 +13,7 @@ theorem one_lt_rank_of_rank_lt_rank [FiniteDimensional 𝕜 E] [FiniteDimensiona
     exact_mod_cast this
   apply le_of_add_le_add_right
   rw [Submodule.finrank_quotient_add_finrank ((LinearMap.ker π).map φ)]
-  have :=
-    calc
-      finrank 𝕜 ((LinearMap.ker π).map φ) ≤ finrank 𝕜 (LinearMap.ker π) := finrank_map_le φ (LinearMap.ker π)
+  have := calc finrank 𝕜 ((LinearMap.ker π).map φ)
+      _ ≤ finrank 𝕜 (LinearMap.ker π) := finrank_map_le φ (LinearMap.ker π)
       _ < finrank 𝕜 E := Submodule.finrank_lt hπ
   linarith

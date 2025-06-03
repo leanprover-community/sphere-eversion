@@ -88,7 +88,8 @@ example (x : N) : Module (smoothGerm I x) (Germ (𝓝 x) G) := by infer_instance
 example (x : N) : Module (Germ (𝓝 x) ℝ) (Germ (𝓝 x) F) := by infer_instance
 
 -- def linear_map.germ_of_cont_mdiff_map (x : N) :
---   C^∞⟮I, N; 𝓘(ℝ, F), F⟯ →ₛₗ[(germ.coe_ring_hom (𝓝 x) : (N → ℝ) →+* germ (𝓝 x) ℝ).comp (pi.const_ring_hom N ℝ)] germ (𝓝 x) F :=
+--   C^∞⟮I, N; 𝓘(ℝ, F), F⟯ →ₛₗ[(germ.coe_ring_hom (𝓝 x) : (N → ℝ) →+*
+--    germ (𝓝 x) ℝ).comp (pi.const_ring_hom N ℝ)] germ (𝓝 x) F :=
 -- sorry -- linear_map.comp (germ.coe_linear_map _) smooth_map.coe_fn_linear_map
 /-
 def smooth_germ_vec (x : N) : submodule (smooth_germ I x) (germ (𝓝 x) F) :=

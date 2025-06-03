@@ -5,8 +5,9 @@ import Mathlib.Algebra.Order.Hom.Ring
 open Function Set
 
 -- TODO: move this lemma and the following one
-theorem map_finsum {β α γ : Type*} [AddCommMonoid β] [AddCommMonoid γ] {G : Type*}
-    [FunLike G β γ] [AddMonoidHomClass G β γ] (g : G) {f : α → β} (hf : (Function.support f).Finite) :
+theorem map_finsum {β α γ : Type*} [AddCommMonoid β] [AddCommMonoid γ]
+    {G : Type*} [FunLike G β γ] [AddMonoidHomClass G β γ] (g : G)
+    {f : α → β} (hf : (Function.support f).Finite) :
     g (∑ᶠ i, f i) = ∑ᶠ i, g (f i) :=
   (g : β →+ γ).map_finsum hf
 
@@ -17,11 +18,12 @@ theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f 
 
 section
 
-variable {𝕜 𝕜' : Type*} {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [Module 𝕜 E]
-  {E₂ : Type*} [AddCommMonoid E₂] [Module 𝕜 E₂] {E' : Type*} [AddCommMonoid E']
+variable {𝕜 𝕜' E E₂ E' : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜]
+  [AddCommMonoid E] [Module 𝕜 E] [AddCommMonoid E₂] [Module 𝕜 E₂] [AddCommMonoid E']
   [Semiring 𝕜'] [PartialOrder 𝕜'] [IsOrderedRing 𝕜'] [Module 𝕜' E'] (σ : 𝕜 →+*o 𝕜')
 
-def reallyConvexHull (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
+def reallyConvexHull (𝕜 : Type*) {E : Type*}
+    [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
     (s : Set E) : Set E :=
   {e | ∃ w : E → 𝕜, 0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
 
