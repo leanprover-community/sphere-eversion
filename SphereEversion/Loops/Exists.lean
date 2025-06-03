@@ -127,7 +127,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have h2f : ∀ x : E, Continuous (f x) := fun x ↦ h1f.comp₂ continuous_const continuous_id
   have h3f : ∀ {x y}, 0 < f x y := by
     intro x y; by_cases hΩ : Ωᶜ.Nonempty
-    · simp_rw [f, if_pos hΩ, ← hΩ_op.isClosed_compl.not_mem_iff_infDist_pos hΩ, not_mem_compl_iff,
+    · simp_rw [f, if_pos hΩ, ← hΩ_op.isClosed_compl.notMem_iff_infDist_pos hΩ, notMem_compl_iff,
         hγ₃.val_in (mem_univ _)]
     · simp_rw [f, if_neg hΩ, zero_lt_one]
   let ε₂ : E → ℝ := fun x ↦ min (min ε₀ (ε₁ x)) (sInf (f x '' I ×ˢ I))
@@ -216,10 +216,10 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     refine hγε₁ _ _ fun s ↦ ?_
     simp_rw [← (γ₃ x 1).fract_eq s, γ, smoothTransition.one_of_one_le le_rfl]
     exact (hγ₅₄ (x, 1, fract s)).trans_le ((min_le_left _ _).trans <| min_le_right _ _)
-  · rintro x - t - s -; rw [← not_mem_compl_iff]
+  · rintro x - t - s -; rw [← notMem_compl_iff]
     by_cases hΩ : Ωᶜ.Nonempty; swap
-    · rw [not_nonempty_iff_eq_empty] at hΩ; rw [hΩ]; apply not_mem_empty
-    refine not_mem_of_dist_lt_infDist (x := ?_) ?_
+    · rw [not_nonempty_iff_eq_empty] at hΩ; rw [hΩ]; apply notMem_empty
+    refine notMem_of_dist_lt_infDist (x := ?_) ?_
     · exact (x, γ₃ x (smoothTransition t) (fract s))
     · rw [dist_comm, dist_prod_same_left]
       refine (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le ?_ ?_)

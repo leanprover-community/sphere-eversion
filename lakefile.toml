@@ -12,7 +12,7 @@ linter.style.refine = true
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.19.0"
+rev = "v4.20.0"
 
 [[require]]
 name = "checkdecls"
