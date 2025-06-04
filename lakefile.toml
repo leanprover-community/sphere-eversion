@@ -5,14 +5,11 @@ defaultTargets = ["SphereEversion"]
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
-linter.oldObtain = true
-linter.style.multiGoal = true
-linter.style.refine = true
+linter.mathlibStandardSet = true
 
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.20.0"
 
 [[require]]
 name = "checkdecls"
