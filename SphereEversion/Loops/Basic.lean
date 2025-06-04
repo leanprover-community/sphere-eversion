@@ -153,7 +153,7 @@ theorem smul_apply [SMul K X] {k : K} {γ : Loop X} {t : ℝ} : (k • γ) t = k
   rfl
 
 /-- Reparametrizing loop `γ` using an equivariant map `φ`. -/
-@[simps (config := { simpRhs := true })]
+@[simps +simpRhs]
 def reparam {F : Type*} (γ : Loop F) (φ : EquivariantMap) : Loop F where
   toFun := γ ∘ φ
   per' t := by rw [comp_apply, φ.eqv, γ.per]; rfl
