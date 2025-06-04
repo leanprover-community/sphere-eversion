@@ -455,7 +455,7 @@ theorem ContMDiff.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, O
   -- Porting note: next 5 lines should be
   -- `simp_rw [inTangentCoordinates, inCoordinates, ContinuousLinearMap.add_comp,
   --           ContinuousLinearMap.comp_add]
-  simp_rw (config := { unfoldPartialApp := true }) [inTangentCoordinates, inCoordinates]
+  simp_rw +unfoldPartialApp [inTangentCoordinates, inCoordinates]
   conv =>
     enter [4, x, 2]
     rw [ContinuousLinearMap.add_comp]

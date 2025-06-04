@@ -32,11 +32,9 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x where
     · continuity
     · simp only [extend_div_self, Icc.mk_zero, zero_le_one, id, zero_div, forall_eq,
         extend_extends, Path.source, left_mem_Icc, sub_self]
-  source' := by
-    simp only [unitInterval.nonneg', Icc.coe_zero, Icc.mk_zero, zero_le_one, if_true, zero_div,
-      comp_apply, extend_extends, Path.source, left_mem_Icc]
+  source' := by simp
   target' := by
-    simp (config := { contextual := true }) only [unitInterval.le_one'.le_iff_eq.trans eq_comm,
+    simp +contextual only [unitInterval.le_one'.le_iff_eq.trans eq_comm,
       extend_div_self, Icc.coe_one, imp_true_iff, eq_self_iff_true, comp_apply, ite_eq_right_iff]
 
 /-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
@@ -60,9 +58,9 @@ theorem unitInterval.zero_le (x : I) : 0 ≤ x :=
 @[simp]
 theorem strans_zero (γ γ' : Path x x) : γ.strans γ' 0 = γ' := by
   ext t
-  simp (config := { contextual := true }) only [strans_of_ge (unitInterval.zero_le t),
-    Icc.coe_zero, div_one, extend_extends', unitInterval.nonneg'.le_iff_eq, sub_zero, div_zero,
-    extend_zero, ite_eq_right_iff, show (t : ℝ) = 0 ↔ t = 0 from (@Subtype.ext_iff _ _ t 0).symm,
+  simp +contextual only [strans_of_ge (unitInterval.zero_le t), Icc.coe_zero, div_one,
+    extend_extends', unitInterval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero,
+    ite_eq_right_iff, show (t : ℝ) = 0 ↔ t = 0 from (@Subtype.ext_iff _ _ t 0).symm,
     Path.source, eq_self_iff_true, imp_true_iff]
 
 @[simp]
