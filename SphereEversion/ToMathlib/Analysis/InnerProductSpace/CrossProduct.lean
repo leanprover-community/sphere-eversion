@@ -80,7 +80,7 @@ theorem crossProduct'_apply (v : E) :
 theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖ * ‖v‖ := by
   classical
   refine le_antisymm ?_ ?_
-  · cases' eq_or_lt_of_le (norm_nonneg (u×₃v)) with h h
+  · obtain (h | h) := eq_or_lt_of_le (norm_nonneg (u×₃v))
     · rw [← h]
       positivity
     · refine le_of_mul_le_mul_right ?_ h

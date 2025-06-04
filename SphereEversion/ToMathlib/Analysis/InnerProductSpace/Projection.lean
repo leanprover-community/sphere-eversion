@@ -10,8 +10,8 @@ section GeneralStuff
 
 -- Things in this section go to other files
 @[simp]
-theorem forall_mem_span_singleton {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M]
-    [Module R M] (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : Set M), P x) ↔ ∀ t : R, P (t • u) := by
+theorem forall_mem_span_singleton {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M]
+    (P : M → Prop) (u : M) : (∀ x ∈ span R ({u} : Set M), P x) ↔ ∀ t : R, P (t • u) := by
   simp [mem_span_singleton]
 
 open scoped Pointwise
@@ -58,7 +58,8 @@ theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [No
 @[reducible] def spanOrthogonal (x : E) : Submodule ℝ E := (Δ x)ᗮ
 
 /-- The orthogonal projection to the complement of `span x`. -/
-@[reducible] def projSpanOrthogonal (x : E) := orthogonalProjection (Submodule.span ℝ ({x} : Set E))ᗮ
+@[reducible] def projSpanOrthogonal (x : E) :=
+  orthogonalProjection (Submodule.span ℝ ({x} : Set E))ᗮ
 
 @[inherit_doc] local notation "{." x "}ᗮ" => spanOrthogonal x
 
@@ -212,7 +213,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have hNx₀ : 0 < ‖x₀‖ := norm_pos_iff.mpr hx₀
   have hNx₀2 : 0 < ‖x₀‖ ^ 2 := by apply pow_pos hNx₀
   suffices
-    ∃ δ > 0, ∀ y, ‖y - x₀‖ ≤ δ → ∀ x, ‖(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y‖ ≤ ε * ‖x‖ by
+    ∃ δ > 0, ∀ y, ‖y - x₀‖ ≤ δ → ∀ x, ‖(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y‖ ≤ ε * ‖x‖
+    by
     simpa only [ContinuousLinearMap.opNorm_le_iff (le_of_lt ε_pos),
       orthogonalProjection_orthogonal_singleton, ContinuousLinearMap.coe_sub',
       ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, Pi.sub_apply, comp_apply,
@@ -246,9 +248,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have hy₁ := hy.trans (min_le_left _ _); have hy₂ := hy.trans (min_le_right _ _); clear hy
   specialize hη (by linarith : ‖y - x₀‖ < η)
   rw [abs_of_nonneg (by positivity)] at hη
-  calc
-      ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ :=
-        norm_add_le _ _
+  calc ‖⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y‖
+      _ ≤ ‖⟪N x₀, x⟫ • (x₀ - y)‖ + ‖⟪N x₀ - N y, x⟫ • y‖ := norm_add_le _ _
       _ ≤ ‖N x₀‖ * ‖x‖ * ‖x₀ - y‖ + ‖N x₀ - N y‖ * ‖x‖ * ‖y‖ := (add_le_add ?_ ?_)
       _ ≤ ε / 2 * ‖x‖ + ε / 2 * ‖x‖ := (add_le_add ?_ ?_)
       _ = ε * ‖x‖ := by linarith

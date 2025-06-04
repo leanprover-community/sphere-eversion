@@ -15,8 +15,8 @@ lemma Continuous.bounded_of_onePeriodic_of_isCompact {f : X → ℝ → E} (cont
   ∃ C, ∀ x t, ‖f x t‖ ≤ C
 ```
 
-This is done by introducing the quotient 𝕊₁ = ℝ/ℤ as a compact topological space. Patrick is not sure
-this is the optimal version.
+This is done by introducing the quotient 𝕊₁ = ℝ/ℤ as a compact topological space.
+Patrick is not sure this is the optimal version.
 
 In the first part, generalize many lemmas to any period and add to `Algebra.Ring.Periodic.lean`?
 -/
@@ -122,7 +122,8 @@ instance : T2Space 𝕊₁ := by
   have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k} := by
     ext ⟨a, b⟩
     exact Quotient.eq''.trans transOne_rel_iff
-  have : {q : ℝ × ℝ | π q.fst = π q.snd} = (fun q : ℝ × ℝ ↦ q.2 - q.1) ⁻¹' (range <| ((↑) : ℤ → ℝ)) := by
+  have : {q : ℝ × ℝ | π q.fst = π q.snd} =
+      (fun q : ℝ × ℝ ↦ q.2 - q.1) ⁻¹' (range <| ((↑) : ℤ → ℝ)) := by
     rw [this]
     ext ⟨a, b⟩
     refine exists_congr fun k ↦ ?_

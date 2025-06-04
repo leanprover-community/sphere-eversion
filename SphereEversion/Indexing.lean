@@ -14,7 +14,7 @@ together with supporting lemmas.
 
 open Fin Set
 
-/-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `Fin n` otherwise-/
+/-- Our model indexing type depending on `n : ℕ` is `ℕ` if `n = 0` and `Fin n` otherwise -/
 def IndexType (n : ℕ) : Type :=
   Nat.casesOn n ℕ fun k ↦ Fin <| k + 1
 
@@ -50,7 +50,7 @@ run_cmd
 theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type*} {s : Set α}
     (hne : s.Nonempty) : s.Countable ↔ ∃ n, Nonempty (IndexType n ≃ s) := by
   -- Huge golfing opportunity.
-  cases' s.finite_or_infinite with h h
+  obtain (h | h) := s.finite_or_infinite
   · refine ⟨fun _ ↦ ⟨h.toFinset.card, ?_⟩, fun _ ↦ h.countable⟩
     have : 0 < h.toFinset.card := by
       rw [Finset.card_pos]

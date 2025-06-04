@@ -89,7 +89,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     (H : InjOn φ₀ (ℝ ∙ x₀)ᗮ) :
     ∀ᶠ p : OneJet E F in 𝓝 (x₀, y₀, φ₀),
       ⟪x₀, p.1⟫ ≠ 0 ∧
-        Injective ((p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) := by
+      Injective ((p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp (ℝ ∙ x₀)ᗮ.subtypeL) := by
   -- This is true at (x₀, y₀, φ₀) and is an open condition because `p ↦ ⟪x₀, p.1⟫` and
   -- `p ↦ (p.2.2.comp <| (subtypeL (ℝ ∙ p.1)ᗮ).comp pr[p.1]ᗮ).comp j₀` are continuous
   set j₀ := subtypeL (ℝ ∙ x₀)ᗮ
@@ -121,7 +121,8 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     constructor
     · change ⟪x₀, x₀⟫ ≠ 0
       apply inner_self_eq_zero.not.mpr x₀_ne
-    · change Injective (φ₀ ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E) ∘ (orthogonalProjection (ℝ ∙ x₀)ᗮ) ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E))
+    · change Injective (φ₀ ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E) ∘ (orthogonalProjection (ℝ ∙ x₀)ᗮ) ∘
+        (Subtype.val : (ℝ ∙ x₀)ᗮ → E))
       erw [orthogonalProjection_comp_coe, comp_id]
       exact injOn_iff_injective.mp H
   exact hf (isOpen_iff_mem_nhds.mp hP _ this)
@@ -276,7 +277,7 @@ def locFormalEversionAux : HtpyJetSec E E where
       contDiff_snd
   φ_diff := by
     refine contDiff_iff_contDiffAt.mpr fun x ↦ ?_
-    cases' eq_or_ne x.2 0 with hx hx
+    obtain (hx | hx) := eq_or_ne x.2 0
     · refine (contDiffAt_const (c := 0)).congr_of_eventuallyEq ?_
       have : (fun x ↦ ‖x‖ ^ 2) ⁻¹' Iio (1 / 4) ∈ 𝓝 (0 : E) := by
         refine IsOpen.mem_nhds ?_ ?_
@@ -299,7 +300,8 @@ def locFormalEversionAux : HtpyJetSec E E where
       simp_rw [hx, zero_smul]
     refine ContDiffAt.smul ?_ ?_
     · exact (smoothStep.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
-    · exact (smooth_at_locFormalEversionAuxφ ω (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
+    · exact (smooth_at_locFormalEversionAuxφ ω
+        (show (Prod.map smoothStep id x).2 ≠ 0 from hx)).comp x
         (smoothStep.smooth.prodMap contDiff_id).contDiffAt
 
 /-- A formal eversion of `𝕊²` into its ambient Euclidean space.
@@ -320,8 +322,8 @@ def locFormalEversion : HtpyFormalSol (immersionSphereRel E E) :=
   { locFormalEversionAux ω with
     is_sol := by
       intro t x
-      change
-        x ∉ B → InjOn (smoothStep (HPow.hPow ‖x‖ 2) • locFormalEversionAuxφ ω (smoothStep t) x) (ℝ ∙ x)ᗮ
+      change x ∉ B →
+        InjOn (smoothStep (HPow.hPow ‖x‖ 2) • locFormalEversionAuxφ ω (smoothStep t) x) (ℝ ∙ x)ᗮ
       intro hx
       have h2x : smoothStep (HPow.hPow ‖x‖ 2) = 1 := by
         refine smoothStep.of_gt ?_

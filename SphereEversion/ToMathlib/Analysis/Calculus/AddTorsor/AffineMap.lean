@@ -28,7 +28,7 @@ variable {F : Type*} [NormedAddCommGroup F]
 
 @[simp]
 theorem norm_coe_ball_lt (r : ℝ) (x : ball (0 : F) r) : ‖(x : F)‖ < r := by
-  cases' x with x hx
+  obtain ⟨x, hx⟩ := x
   simpa using hx
 
 variable [NormedSpace ℝ F]

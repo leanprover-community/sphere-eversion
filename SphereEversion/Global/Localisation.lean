@@ -176,8 +176,6 @@ theorem FormalSol.transfer_unloc_localize (F : FormalSol R) (hF : range (F.bs �
     (x : E) : p.φ.transfer p.ψ ((F.localize p hF).unloc x) = F (p.φ x) :=
   transfer_localize F.toOneJetSec p.φ p.ψ hF x
 
-open scoped Classical
-
 lemma ChartPair.mkHtpy_aux {F : FormalSol R} {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     (h : p.compat' F 𝓕) (t x) (hx : x ∉ p.K₁) :
     F (p.φ x) = OneJetBundle.embedding p.φ p.ψ (RelLoc.HtpyFormalSol.unloc p 𝓕 t x) := by
@@ -187,8 +185,8 @@ lemma ChartPair.mkHtpy_aux {F : FormalSol R} {𝓕 : (R.localize p.φ p.ψ).relL
 variable [T2Space M]
 
 def ChartPair.mkHtpy (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol) :
-    HtpyFormalSol R :=
-  if h : p.compat' F 𝓕 then
+    HtpyFormalSol R := by
+  classical exact if h : p.compat' F 𝓕 then
     p.φ.updateFormalSol p.ψ F (𝓕.unloc p) p.hK₁ (p.mkHtpy_aux h)
   else F.constHtpy
 

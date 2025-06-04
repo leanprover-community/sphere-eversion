@@ -37,7 +37,7 @@ def ContinuousLinearMap.blocks (A : M₁ →L[𝕜] M₃) (B : M₂ →L[𝕜] M
 construct the continuous linear equiv with "matrix"
 A 0
 C D.
-  -/
+-/
 -- TODO: generalise this to larger constructors? or is this useful as-is?
 def ContinuousLinearEquiv.lowerTriangular (A : M₁ ≃L[𝕜] M₃) (C : M₁ →L[𝕜] M₄) (D : M₂ ≃L[𝕜] M₄) :
     (M₁ × M₂) ≃L[𝕜] M₃ × M₄ :=
@@ -177,7 +177,8 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       · simp_rw [← hf']
         exact hff.contDiff_top_partial_snd.continuous
   let φ := φ₀.toHomeomorphOfContDiff hderiv
-  exact contDiff_snd.comp (φ.contDiff_symm (fun x ↦ (hderiv x).hasFDerivAt) (contDiff_fst.prodMk hf))
+  exact contDiff_snd.comp (φ.contDiff_symm (fun x ↦ (hderiv x).hasFDerivAt)
+    (contDiff_fst.prodMk hf))
 
 end
 

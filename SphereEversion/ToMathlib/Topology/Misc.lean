@@ -128,7 +128,7 @@ theorem Ioo_inter_Iio {α : Type*} [LinearOrder α] {a b c : α} :
     Ioo a b ∩ Iio c = Ioo a (min b c) := by ext; simp [and_assoc]
 
 theorem fract_lt {x y : ℝ} {n : ℤ} (h1 : (n : ℝ) ≤ x) (h2 : x < n + y) : fract x < y := by
-  cases' le_total y 1 with hy hy
+  obtain (hy | hy) := le_total y 1
   · rw [← fract_sub_intCast x n, fract_eq_self.mpr]
     · linarith
     · constructor <;> linarith
@@ -164,7 +164,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     have mem : Ioo ((n : ℝ) - ε') (n + δ) ∈ 𝓝 (n : ℝ) := by apply Ioo_mem_nhds <;> linarith
     apply mem_of_superset mem
     rintro x ⟨hx, hx'⟩
-    cases' le_or_gt (n : ℝ) x with hx'' hx''
+    obtain (hx'' | hx'') := le_or_gt (n : ℝ) x
     · apply hδ
       rw [mem_setOf_eq, abs_eq_self.mpr (fract_nonneg x)]
       exact fract_lt hx'' hx'
@@ -285,7 +285,7 @@ theorem projI_eq_min : projI x = min 1 x ↔ 0 ≤ x := by
   simp_rw [projI_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and]
 
 theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
-  cases' le_total c x with h3 h3 <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]
+  obtain (h3 | h3) := le_total c x <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]
   simp [projI_eq_min.mpr, h2.trans h3, min_left_comm c, h3]
 
 theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (projI : α → α) :=

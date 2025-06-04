@@ -110,7 +110,8 @@ variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
 -- An alternative approach would be to prove the affine version of `contDiffAt_map_inverse`
 -- and prove that barycentric coordinates give a continuous affine equivalence to
--- `{ f : ι →₀ 𝕜 | f.sum = 1 }`. This should obviate the need for the finite-dimensionality assumption.
+-- `{ f : ι →₀ 𝕜 | f.sum = 1 }`.
+-- This should obviate the need for the finite-dimensionality assumption.
 theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
     (h : Fintype.card ι = Module.finrank 𝕜 F + 1) {n : WithTop ℕ∞} :
     ContDiffOn 𝕜 n (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by

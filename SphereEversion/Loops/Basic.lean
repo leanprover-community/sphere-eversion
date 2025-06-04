@@ -214,8 +214,8 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
 
 /-- `Loop.ofPath` is continuous, general version. -/
 @[fun_prop]
-theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
-    (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
+theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i))
+    (hγ : Continuous ↿γ) (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
   refine ContinuousOn.comp_fract ?_ ht ?_
   · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
@@ -257,7 +257,8 @@ noncomputable def roundTripFamily {x y : X} (γ : Path x y) : ℝ → Loop X :=
   have key : ∀ {t}, x = γ.extend (min 0 t) := (γ.extend_of_le_zero <| min_le_left _ _).symm
   fun t ↦ roundTrip ((γ.truncate 0 t).cast key rfl)
 
-attribute [fun_prop] Path.trans_continuous_family Path.symm_continuous_family Path.truncate_const_continuous_family
+attribute [fun_prop] Path.trans_continuous_family Path.truncate_const_continuous_family
+
 @[fun_prop]
 theorem roundTripFamily_continuous {x y : X} {γ : Path x y} : Continuous ↿(roundTripFamily γ) :=
   ofPath_continuous_family _
@@ -289,7 +290,8 @@ noncomputable def average (γ : Loop F) : F :=
 theorem zero_average : average (0 : Loop F) = 0 :=
   intervalIntegral.integral_zero
 
-theorem isConst_iff_forall_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ ∀ t, γ t = γ.average := by
+theorem isConst_iff_forall_avg [CompleteSpace F] {γ : Loop F} :
+    γ.IsConst ↔ ∀ t, γ t = γ.average := by
   constructor <;> intro h
   · intro t
     have : γ = Loop.const (γ t) := by
@@ -317,7 +319,8 @@ theorem isConst_iff_const_avg [CompleteSpace F] {γ : Loop F} : γ.IsConst ↔ �
   rw [Loop.isConst_iff_forall_avg, Loop.ext_iff, funext_iff]; rfl
 
 omit [NormedAddCommGroup F] [NormedSpace ℝ F] in
-theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) : (γ x).IsConst := by
+theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ support γ) :
+    (γ x).IsConst := by
   by_contra H
   exact hx (subset_closure H)
 

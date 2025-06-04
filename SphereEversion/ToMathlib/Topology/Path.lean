@@ -48,7 +48,8 @@ theorem strans_def {x : X} {t₀ t : I} (γ γ' : Path x x) :
   split_ifs with h <;> simp [strans, h, ← extend_extends]
 
 @[simp]
-theorem strans_of_ge {t t₀ : I} (h : t₀ ≤ t) : γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) := by
+theorem strans_of_ge {t t₀ : I} (h : t₀ ≤ t) :
+    γ.strans γ' t₀ t = γ'.extend ((t - t₀) / (1 - t₀)) := by
   simp only [Path.coe_mk_mk, Path.strans, ite_eq_right_iff]
   intro h2; obtain rfl := le_antisymm h h2; simp
 
@@ -129,8 +130,8 @@ theorem Continuous.path_strans {X Y : Type*} [UniformSpace X]
       exact tendsto_prod_top_iff.mpr (hγ0 ht)
   · rw [continuous_iff_continuousAt]
     intro x
-    refine ((continuous_subtype_val.comp hs).sub (continuous_subtype_val.comp ht)).continuousAt.comp_div_cases
-      (fun x s ↦ (γ' x).extend s)
+    refine (continuous_subtype_val.comp hs).sub (continuous_subtype_val.comp ht)
+      |>.continuousAt.comp_div_cases (fun x s ↦ (γ' x).extend s)
       (continuous_const.sub <| continuous_subtype_val.comp ht).continuousAt ?_ ?_
     · intro _
       refine ContinuousAt.pathExtend _ ?_ continuousAt_snd

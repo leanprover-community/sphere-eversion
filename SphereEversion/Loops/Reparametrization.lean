@@ -78,7 +78,8 @@ theorem Loop.tendsto_mollify_apply (γ : E → Loop F) (h : Continuous ↿γ) (x
       rw [nhds_prod_eq] at this
       exact this.comp ((tendsto_fst.comp tendsto_fst).prodMk tendsto_snd)
   · have : Continuous fun z ↦ intervalIntegral (γ z) 0 1 volume :=
-      intervalIntegral.continuous_parametric_intervalIntegral_of_continuous (by apply h) continuous_const
+      intervalIntegral.continuous_parametric_intervalIntegral_of_continuous (by apply h)
+        continuous_const
     rw [← zero_smul ℝ (_ : F)]
     exact (tendsto_one_div_add_atTop_nhds_zero_nat.comp tendsto_snd).smul
       ((this.tendsto x).comp tendsto_fst)

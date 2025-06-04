@@ -78,7 +78,7 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
     · by_cases ht : t ∈ (Icc 0 1 : Set ℝ)
       · exact hτ hcompat e he t ht (h𝓕'dist e t)
       · rw [mem_Icc, not_and_or, not_le, not_le] at ht
-        cases' ht with ht ht
+        obtain (ht | ht) := ht
         · erw [hF't0.self_of_nhdsSet t ht.le, dist_self]
           apply hδ_pos
         · rw [hF't1.self_of_nhdsSet t ht.le]

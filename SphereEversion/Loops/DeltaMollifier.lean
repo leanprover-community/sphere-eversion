@@ -100,7 +100,7 @@ theorem periodic_periodize (f : ℝ → M) : Periodic (periodize f) 1 := by
 
 theorem periodize_nonneg {f : ℝ → ℝ} (h : ∀ t, 0 ≤ f t) (t : ℝ) : 0 ≤ periodize f t := by
   unfold periodize
-  cases' (support fun i : ℤ ↦ f (t + i)).finite_or_infinite with H H
+  obtain (H | H) := (support fun i : ℤ ↦ f (t + i)).finite_or_infinite
   · rw [finsum_eq_sum _ H]
     exact Finset.sum_nonneg fun i _ ↦ h _
   · rwa [finsum_of_infinite_support]
@@ -271,9 +271,10 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
         ((1 : ℝ) / (n + 1)) • ∫ t in (0)..1, γ t := by
   simp_rw [Loop.mollify, deltaMollifier, add_smul, mul_smul]
   rw [integral_add]
-  on_goal 1 => simp_rw [integral_smul, approxDirac, ← periodize_comp_sub]
-  on_goal 1 => rw [intervalIntegral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)]
-  on_goal 1 => simp_rw [MeasureTheory.convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
+  on_goal 1 =>
+    simp_rw [integral_smul, approxDirac, ← periodize_comp_sub]
+    rw [intervalIntegral_periodize_smul _ γ _ _ (support_shifted_normed_bump_subset n t)]
+  · simp_rw [MeasureTheory.convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
   · linarith
   · rw [zero_add]
   · exact (continuous_const.smul (((approxDirac_smooth n).continuous.comp

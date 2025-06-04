@@ -660,8 +660,8 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by
     intro t s
     simp only [δ, zero_add, Loop.vadd_apply, sub_self]
-  have hδs0 : ∀ x t, δ x t 0 = b x := by intro x t; simp only [δ, h2γ, Loop.vadd_apply, sub_add_cancel]
-  have hδt0 : ∀ x s, δ x 0 s = b x := by intro x s; simp [δ, h3γ, sub_add_cancel]
+  have hδs0 : ∀ x t, δ x t 0 = b x := by intro x t; simp [δ, h2γ]
+  have hδt0 : ∀ x s, δ x 0 s = b x := by intro x s; simp [δ, h3γ]
   have hδt1 : ∀ x t s, δ x (projI t) s = δ x t s := by intro x t s; simp [δ, h4γ]
   have hδΩ : ∀ᶠ x in 𝓝 x₀, ∀ t ∈ I, ∀ s ∈ I, (x, δ x t s) ∈ Ω := by
     rcases hΩ_op with ⟨U, hUx₀, hU⟩
@@ -800,7 +800,7 @@ theorem surroundingFamily_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ 
     simp [sfHomotopy]
   · intro x t s; simp only [sfHomotopy, projI_projI]
   -- { intros x t s ht, simp only [sfHomotopy, min_eq_left ht, min_self] },
-  · intro x hx; cases' le_total τ (1 / 2) with h h
+  · intro x hx; obtain (h | h) := le_total τ (1 / 2)
     · have : τ < 1 := h.trans_lt (by norm_num)
       refine (h₀.surrounds x hx).mono ?_
       simp only [mul_one, Loop.range_ofPath, sfHomotopy, projI_one]
@@ -968,7 +968,8 @@ theorem surroundingFamilyIn_iff_germ {γ : E → ℝ → Loop F} :
     rintro ⟨x, t, s⟩
     apply (h x).cont
 
-variable [NormedSpace ℝ E] [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] [SecondCountableTopology E]
+variable [NormedSpace ℝ E] [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
+  [SecondCountableTopology E]
 
 theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : ∀ x, ContinuousAt g x)
     (hb : Continuous b)
@@ -976,7 +977,7 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
     {γ₀ : E → ℝ → Loop F} (hγ₀_surr : ∃ V ∈ 𝓝ˢ K, SurroundingFamilyIn g b γ₀ V Ω) :
     ∃ γ : E → ℝ → Loop F, SurroundingFamilyIn g b γ univ Ω ∧ ∀ᶠ x in 𝓝ˢ K, γ x = γ₀ x := by
   rcases hγ₀_surr with ⟨V, V_in, hV⟩
-  cases' surroundingFamilyIn_iff_germ.mp hV with hV h'V
+  obtain ⟨hV, h'V⟩ := surroundingFamilyIn_iff_germ.mp hV
   simp only [surroundingFamilyIn_iff_germ, mem_univ, forall_true_left, ← forall_and]
   apply
     relative_inductive_construction_of_loc (LoopFamilyGerm b) (SurroundingFamilyGerm g Ω) hK hV
@@ -985,7 +986,7 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
     rcases local_loops ⟨univ, univ_mem, by simp only [preimage_univ, inter_univ, hΩ_op]⟩ (hg x) hb
         (hconv x) with
       ⟨γ, U, U_in, H⟩
-    cases' surroundingFamilyIn_iff_germ.mp H with H H'
+    obtain ⟨H, H'⟩ := surroundingFamilyIn_iff_germ.mp H
     exact ⟨γ, H, mem_of_superset U_in H'⟩
   · intro U₁ U₂ K₁ K₂ γ₁ γ₂ hU₁ hU₂ hK₁ hK₂ hKU₁ hKU₂ hγ₁ hγ₂ h'γ₁ h'γ₂
     rcases extend_loops hU₁ hU₂ hK₁.isClosed hK₂.isClosed hKU₁ hKU₂
@@ -993,8 +994,3 @@ theorem exists_surrounding_loops (hK : IsClosed K) (hΩ_op : IsOpen Ω) (hg : �
       (surroundingFamilyIn_iff_germ.mpr ⟨hγ₂, h'γ₂⟩) with ⟨U, U_in, γ, H, H''⟩
     rcases surroundingFamilyIn_iff_germ.mp H with ⟨H, H'⟩
     exact ⟨γ, H, mem_of_superset U_in H', Eventually.union_nhdsSet.mpr H''⟩
-
--- #lint
--- #print axioms satisfied_or_refund
--- #print axioms extend_loops
--- #print axioms exists_surrounding_loops

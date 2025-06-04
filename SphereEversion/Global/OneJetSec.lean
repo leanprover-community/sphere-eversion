@@ -65,7 +65,8 @@ namespace OneJetSec
 
 protected def mk' (F : M → OneJetBundle I M I' M') (hF : ∀ m, (F m).1.1 = m)
     (h2F : ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ F) : OneJetSec I M I' M' :=
-  ⟨fun x ↦ (F x).1.2, fun x ↦ (F x).2, by convert h2F using 1; ext m; exacts [(hF m).symm, rfl, rfl]⟩
+  ⟨fun x ↦ (F x).1.2, fun x ↦ (F x).2,
+   by convert h2F using 1; ext m; exacts [(hF m).symm, rfl, rfl]⟩
 
 theorem coe_apply (F : OneJetSec I M I' M') (x : M) : F x = ⟨(x, F.bs x), F.ϕ x⟩ :=
   rfl

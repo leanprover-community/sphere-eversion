@@ -167,13 +167,15 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     in Lean 3.
     -/
     apply hU.mem_nhdsSet.mpr
-    refine (union_subset_union fun (x : E × ℝ × ℝ) (hx : x.2.1 ≤ 5⁻¹) ↦ lt_of_le_of_lt hx (by norm_num)) ?_
-    refine union_subset_union (fun (x : E × ℝ × ℝ) (hx : fract x.2.2 ≤ 5⁻¹) ↦ lt_of_le_of_lt hx (by norm_num)) ?_
+    refine (union_subset_union fun (x : E × ℝ × ℝ)
+      (hx : x.2.1 ≤ 5⁻¹) ↦ lt_of_le_of_lt hx (by norm_num)) ?_
+    refine union_subset_union (fun (x : E × ℝ × ℝ)
+      (hx : fract x.2.2 ≤ 5⁻¹) ↦ lt_of_le_of_lt hx (by norm_num)) ?_
     exact fun x hx ↦ lt_of_lt_of_le (by norm_num : (3 / 4 : ℝ) < 4 / 5) hx
   have h2γ₄ : EqOn γ₄ (fun x ↦ b x.1) U := by
     rintro ⟨x, t, s⟩ hxts
     simp_rw [h0γ₄, γ₃, Loop.reparam_apply]
-    cases' hxts with ht hs
+    obtain (ht | hs) := hxts
     · exact hγ₂.to_sf.t_le_zero_eq_b x (linearReparam s) (linearReparam_nonpos (le_of_lt ht))
     · rw [← Loop.fract_eq, fract_linearReparam_eq_zero, hγ₂.base]
       exact Or.imp le_of_lt le_of_lt hs

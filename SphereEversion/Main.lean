@@ -82,6 +82,7 @@ theorem Gromov
         ∀ᶠ p : P × M in 𝓝ˢ C,
         ∀ t : ℝ, 𝓕 (t, p.1) p.2 = 𝓕₀ p.1 p.2) ∧
       -- and whose underlying maps are `ε`--close to `𝓕₀`.
-        ∀ (t : ℝ) (p : P) (x : M), dist ((𝓕 (t, p)).bs x) ((𝓕₀ p).bs x) ≤ ε x := by apply RelMfld.Ample.satisfiesHPrincipleWith <;> assumption
+        ∀ (t : ℝ) (p : P) (x : M), dist ((𝓕 (t, p)).bs x) ((𝓕₀ p).bs x) ≤ ε x := by
+  apply RelMfld.Ample.satisfiesHPrincipleWith <;> assumption
 
 end Gromov

@@ -36,14 +36,14 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
   haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
   refine RelMfld.satisfiesHPrinciple_of_weak hA fun A hA 𝓕₀ h𝓕₀ ↦ ?_
-  cases' isEmpty_or_nonempty M with hM hM
+  obtain (hM | hM) := isEmpty_or_nonempty M
   · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro
     all_goals try intro
     all_goals
       first
       | exact empty_htpy_formal_sol_eq
       | exact (IsEmpty.false ‹M›).elim
-  cases' isEmpty_or_nonempty X with hX hX
+  obtain (hX | hX) := isEmpty_or_nonempty X
   · exfalso
     inhabit M
     exact (IsEmpty.false <| 𝓕₀.bs default).elim
@@ -83,9 +83,9 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       exact τ_pos x
   have hP₂' : ∀ (t : ℝ) (x : M) (f : M → J¹), P₀ x f → P₂ (t, x) fun p : ℝ × M ↦ f p.2 :=
     fun t x f hf ↦ ContMDiffAt.comp (t, x) hf.2.2.1 contMDiffAt_snd
-  have ind : ∀ m : M,
-    ∃ V ∈ 𝓝 m, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ → ∀ (C : Set M) (f : M → J¹),
-      IsClosed C → (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ C, P₁ x f) →
+  have ind : ∀ m : M, ∃ V ∈ 𝓝 m, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
+      ∀ (C : Set M) (f : M → J¹), IsClosed C →
+      (∀ x, P₀ x f) → (∀ᶠ x in 𝓝ˢ C, P₁ x f) →
         ∃ F : ℝ → M → J¹, (∀ t x, P₀ x (F t)) ∧
                           (∀ᶠ x in 𝓝ˢ (C ∪ K₀), P₁ x (F 1)) ∧
                           (∀ (p : ℝ × M), P₂ p ↿F) ∧
