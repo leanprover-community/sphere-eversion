@@ -105,7 +105,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
           rintro x ⟨hx : x ∈ ball x₀ ε, hsx : s x ∈ Ioo a₀ b₀⟩
           rw [← abs_of_nonneg (norm_nonneg <| x - x₀), ← abs_mul, ←
             intervalIntegral.integral_mul_const]
-          apply intervalIntegral.norm_integral_le_abs_of_norm_le _ ((bound_int hsx₀ hsx).mul_const _)
+          apply intervalIntegral.norm_integral_le_abs_of_norm_le _
+            ((bound_int hsx₀ hsx).mul_const _)
           apply ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset hsx₀ hsx)
           apply h_lipsch.mono
           intro t ht
@@ -135,7 +136,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
     apply HasFDerivAt.congr_of_eventuallyEq _ this
     simpa using ((D₁.add D₂).add D₃).sub (hasFDerivAt_const (φ x₀ (s x₀)) x₀)
 
-@[inherit_doc] local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
+@[inherit_doc] local notation:70 u " ⬝ " φ =>
+  ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
 variable [FiniteDimensional ℝ H]
 
@@ -213,7 +215,8 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E
 
 open Real ContinuousLinearMap Asymptotics
 
-@[inherit_doc] local notation:70 u " ⬝ " φ => ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
+@[inherit_doc] local notation:70 u " ⬝ " φ =>
+  ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
 
 theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : ℕ} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
@@ -279,7 +282,7 @@ theorem ContDiff.fderiv_parametric_integral {F : H → ℝ → E} (hF : ContDiff
     (fderiv ℝ fun x : H ↦ ∫ t in a..b, F x t) = fun x : H ↦
       ∫ t in a..b, fderiv ℝ (fun x' ↦ F x' t) x := by
   ext x₀
-  cases' hasFDerivAt_parametric_primitive_of_contDiff' hF contDiff_const x₀ a with int h
+  obtain ⟨int, h⟩ := hasFDerivAt_parametric_primitive_of_contDiff' hF contDiff_const x₀ a
   rw [h.fderiv, fderiv_fun_const]
   simp only [ContinuousLinearMap.comp_zero, add_zero, Pi.zero_apply]
 

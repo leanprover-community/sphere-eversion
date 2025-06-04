@@ -200,7 +200,7 @@ def RelMfld.Ample (R : RelMfld I M I' M') : Prop :=
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
     R.Ample ↔
-      ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), σ ∈ R → AmpleSet (R.slice σ p) := by
+    ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), σ ∈ R → AmpleSet (R.slice σ p) := by
   simp_rw [RelMfld.Ample]
   refine ⟨fun h σ p _ ↦ h p, fun h σ p x hx ↦ ?_⟩
   have := @h (OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 x)) p hx
@@ -214,8 +214,7 @@ theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
 @[ext]
-structure FamilyFormalSol (R : RelMfld I M I' M') extends
-  FamilyOneJetSec I M I' M' J N where
+structure FamilyFormalSol (R : RelMfld I M I' M') extends FamilyOneJetSec I M I' M' J N where
   is_sol' : ∀ (t : N) (x : M), toFamilyOneJetSec t x ∈ R
 
 instance : FunLike (FamilyFormalSol J N R) N (FormalSol R) where
@@ -343,8 +342,9 @@ def RelMfld.SatisfiesHPrinciple (R : RelMfld I M IX X) (C : Set M) (ε : M → �
     (∀ᶠ x near C, 𝓕₀.toOneJetSec.IsHolonomicAt x) →
       ∃ 𝓕 : HtpyFormalSol R,
         (∀ x : M, 𝓕 0 x = 𝓕₀ x) ∧
-          (𝓕 1).toOneJetSec.IsHolonomic ∧
-            (∀ᶠ x near C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧ ∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x
+        (𝓕 1).toOneJetSec.IsHolonomic ∧
+        (∀ᶠ x near C, ∀ t : ℝ, 𝓕 t x = 𝓕₀ x) ∧
+        ∀ (t : ℝ) (x : M), dist ((𝓕 t).bs x) (𝓕₀.bs x) ≤ ε x
 
 theorem RelMfld.satisfiesHPrinciple_of_weak [FiniteDimensional ℝ E] [T2Space M]
     [SigmaCompactSpace M] {R : RelMfld I M IX X} {ε : M → ℝ} {C : Set M} (hC : IsClosed C)

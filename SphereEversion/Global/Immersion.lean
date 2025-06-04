@@ -122,7 +122,8 @@ end Generalbis
 these results are not used directly, but are good sanity checks. -/
 section sanitycheck
 
-variable {n : ℕ} (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Fact (finrank ℝ E = n + 1)]
+variable {n : ℕ} (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+  [Fact (finrank ℝ E = n + 1)]
 
 /-- The inclusion of `𝕊^n` into `ℝ^{n+1}` is an immersion. -/
 theorem immersion_inclusion_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)

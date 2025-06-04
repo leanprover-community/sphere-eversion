@@ -170,11 +170,9 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
       K₁' ∪ K₂' = K₁ ∪ K₂ ∧ K ⊆ U₂'ᶜ ∧ U₁' ⊆ U ∪ U₁ ∧ U₂' ⊆ U₂ := by
   obtain ⟨U', U'_op, hKU', hU'U⟩ : ∃ U' : Set X, IsOpen U' ∧ K ⊆ U' ∧ closure U' ⊆ U :=
     normal_exists_closure_subset hK U_op hKU
-  refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact U₁_op.union U_op
-  · exact U₂_op.sdiff hK
+  refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K,
+    U₁_op.union U_op, U₂_op.sdiff hK, ?_, K₂_cpct.diff U'_op, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact K₁_cpct.union (K₂_cpct.closure_of_subset inter_subset_left)
-  · exact K₂_cpct.diff U'_op
   · exact subset_union_left
   · apply union_subset_union hK₁U₁ (subset_trans _ hU'U)
     gcongr
@@ -368,7 +366,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
       · rw [loc₁ _ ht]
         apply h₀F
       · push_neg at ht
-        cases' p with t x
+        obtain ⟨t, x⟩ :=p
         rw [loc₂ _ ht]
         refine ⟨h₀F' ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat)) x, ?_, ?_⟩
         · rintro (rfl : t = 0)
@@ -405,7 +403,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
       exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
     · rintro ⟨t, x⟩ htx
       simp only [prodMk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
-      cases' htx with ht hx
+      obtain (ht | hx) := htx
       · change (↑F'' : Germ (𝓝 (t, x)) Y).value = (↑F : Germ (𝓝 (t, x)) Y).value
         rw [loc₁ (t, x) ht.le]
       · dsimp only [F'']
@@ -436,15 +434,17 @@ theorem inductive_htpy_construction {X Y : Type*}
     {f₀ : X → Y} (init : ∀ x, P₀ x f₀)
     (ind : ∀ x, ∃ V ∈ 𝓝 x, ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
       ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
-      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
-        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
-          (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
+      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t)
+        ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
+      (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
+      (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1) :
     ∃ F : ℝ → X → Y, F 0 = f₀ ∧ (∀ t x, P₀ x (F t)) ∧ (∀ x, P₁ x (F 1)) ∧ ∀ p, P₂ p ↿F := by
   let P (V : Set X) : Prop :=  ∀ K₁ ⊆ V, ∀ K₀ ⊆ interior K₁, IsCompact K₀ → IsCompact K₁ →
       ∀ (C : Set X) (f : X → Y), IsClosed C → (∀ x, P₀ x f) →
-      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t) ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
-        (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
-          (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1
+      (∀ᶠ x near C, P₁ x f) → ∃ F : ℝ → X → Y, (∀ t, ∀ x, P₀ x <| F t)
+        ∧ (∀ᶠ x near C ∪ K₀, P₁ x <| F 1) ∧
+      (∀ p, P₂ p ↿F) ∧ (∀ t, ∀ x ∉ K₁, F t x = f x) ∧
+      (∀ᶠ t near Iic 0, F t = f) ∧ ∀ᶠ t near Ici 1, F t = F 1
   have P_anti : Antitone P := fun U V UV hV K₁ K₁U ↦ hV K₁ (K₁U.trans UV)
   have P_empty : P ∅ := by
     intro K₁ K₁V K₀ K₀K₁ _ _ C f _ hf hf'

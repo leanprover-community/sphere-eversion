@@ -88,8 +88,9 @@ variable [IsManifold I ∞ M] [IsManifold I' ∞ M']
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
 def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
-    ((f.contMDiffOn_inv (f x) (mem_range_self x)).mdifferentiableWithinAt (mod_cast le_top)).mdifferentiableAt
-      (f.isOpenMap.range_mem_nhds x)
+    ((f.contMDiffOn_inv (f x)
+    (mem_range_self x)).mdifferentiableWithinAt (mod_cast le_top)).mdifferentiableAt
+    (f.isOpenMap.range_mem_nhds x)
   have h₂ : MDifferentiableAt I I' f x := f.contMDiff_to.mdifferentiableAt (mod_cast le_top)
   ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
     (by
@@ -243,8 +244,8 @@ variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [
 
 Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `ContDiff`
 instead of `ContMDiff`. This is more convenient for our purposes. -/
-def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F} (hf₁ : f.source = univ)
-    (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
+def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
+    (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) : OpenSmoothEmbedding 𝓘(ℝ, F) F IF M
     where
   toFun := (extChartAt IF x).symm ∘ f
@@ -409,7 +410,8 @@ theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := b
 
 -- This small auxiliary result is used in the next two lemmas.
 theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
-    (hg : ∀ x : X, x ∉ K → f (φ x) = ψ (g x)) {m : M} (hm : m ∉ φ '' K) : φ.update ψ f g m = f m := by
+    (hg : ∀ x : X, x ∉ K → f (φ x) = ψ (g x)) {m : M} (hm : m ∉ φ '' K) :
+    φ.update ψ f g m = f m := by
   by_cases hm' : m ∈ range φ
   · obtain ⟨x, rfl⟩ := hm'
     replace hm : x ∉ K := by contrapose! hm; exact mem_image_of_mem φ hm
@@ -473,7 +475,7 @@ theorem dist_update [ProperSpace Y] {K : Set X} (hK : IsCompact K) {P : Type*} [
   obtain ⟨ε₀, hε₀, hε₀'⟩ := hK.exists_forall_le' (hε'.comp φ.continuous).continuousOn hεφ
   obtain ⟨τ, hτ : 0 < τ, hτ'⟩ := Metric.uniformContinuousOn_iff.mp h₁ ε₀ hε₀
   refine ⟨min τ 1, by simp [hτ], fun g p hp p' _hp' x hx hη ↦ ?_⟩
-  cases' lt_min_iff.mp hη with H H'
+  obtain ⟨H, H'⟩ := lt_min_iff.mp hη
   apply lt_of_lt_of_le _ (hε₀' x hx); clear hε₀'
   simp only [update_apply_embedding]
   have h₁ : g p' x ∈ K₁ :=

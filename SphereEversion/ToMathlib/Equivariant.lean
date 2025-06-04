@@ -54,7 +54,7 @@ protected theorem fract_add_floor (t : ℝ) : φ (fract t) + ⌊t⌋ = φ t := b
 
 protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy ↦ by
   rw [← φ.fract_add_floor x, ← φ.fract_add_floor y]
-  cases' (floor_mono hxy).eq_or_lt with h2 h2
+  obtain (h2 | h2) := (floor_mono hxy).eq_or_lt
   · rw [h2]
     refine add_le_add_right (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) ?_) _
     simp_rw [fract, h2]
@@ -123,18 +123,18 @@ theorem linearReparam_monotone : Monotone linearReparam := by
     rw [this x hx, this y hy]
     exact sub_le_sub_right (mul_le_mul_of_nonneg_left hxy zero_le_two) _
   have : MonotoneOn linearReparam (Icc 4⁻¹ 1) := fun x hx y hy hxy ↦ by
-    cases' le_total y (3 / 4) with h1y h1y
+    obtain (h1y | h1y) := le_total y (3 / 4)
     · exact this ⟨hx.1, hxy.trans h1y⟩ ⟨hy.1, h1y⟩ hxy
     rw [linearReparam_eq_one' h1y hy.2]
-    cases' le_total x (3 / 4) with h1x h1x
+    obtain (h1x | h1x) := le_total x (3 / 4)
     · rw [← linearReparam_eq_one le_rfl (by norm_num)]
       exact this ⟨hx.1, h1x⟩ ⟨by norm_num, le_rfl⟩ h1x
     rw [linearReparam_eq_one' h1x hx.2]
   have : MonotoneOn linearReparam I := by
     intro x hx y hy hxy
-    cases' le_total x 4⁻¹ with h1x h1x
+    obtain (h1x | h1x) := le_total x 4⁻¹
     · rw [linearReparam_eq_zero' hx.1 h1x]
-      cases' le_total y 4⁻¹ with h1y h1y
+      obtain (h1y | h1y) := le_total y 4⁻¹
       · rw [linearReparam_eq_zero' hy.1 h1y]
       rw [← linearReparam_eq_zero (by norm_num) le_rfl]
       exact this ⟨le_rfl, by norm_num⟩ ⟨h1y, hy.2⟩ h1y

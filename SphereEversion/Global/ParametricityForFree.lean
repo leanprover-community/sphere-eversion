@@ -100,9 +100,8 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     ((R.relativize IP P).slice σ p).Nonempty ↔ (R.relativize IP P).slice σ p = univ := by
   rcases σ with ⟨⟨⟨q, m⟩,m'⟩, φ⟩
   have h2p : ∀ x : E, p.π ((0 : EP), x) = 0 := fun x ↦ congr_arg (fun f : E →L[ℝ] ℝ ↦ f x) hp
-  have :
-    ∀ y : E', (p.update φ y).comp (ContinuousLinearMap.inr ℝ EP E) = φ.comp (ContinuousLinearMap.inr ℝ EP E) := by
-    intro y
+  have (y : E') : (p.update φ y).comp (ContinuousLinearMap.inr ℝ EP E) =
+      φ.comp (ContinuousLinearMap.inr ℝ EP E) := by
     ext1 x
     erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
       p.update_ker_pi _ _ (h2p x)]
@@ -178,9 +177,8 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
           (fun p : (N × P) × M ↦ (S p.1.1).bs (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
         ((t, s), x) := by
-      apply
-        (contMDiffAt_oneJetBundle.mp <|
-              ContMDiffAt.comp ((t, s), x) (S.smooth (t, (s, x))) (contMDiff_prod_assoc ((t, s), x))).2.2
+      apply (contMDiffAt_oneJetBundle.mp <|
+        ContMDiffAt.comp ((t, s), x) (S.smooth (t, (s, x))) (contMDiff_prod_assoc ((t, s), x))).2.2
     have h2 :
       ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E) ∞
         (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
@@ -214,7 +212,8 @@ theorem FormalSol.eq_iff {F₁ F₂ : FormalSol R} {x : M} :
   simp [Bundle.TotalSpace.ext_iff, FormalSol.fst_eq, FormalSol.snd_eq]
 
 theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N)
-    {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) : (S.curry (t, s)).IsHolonomicAt x := by
+    {t : N} {s : P} {x : M} (hS : (S t).IsHolonomicAt (s, x)) :
+    (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
   refine (mfderiv_comp x ((S t).smooth_bs.mdifferentiableAt (mod_cast le_top))

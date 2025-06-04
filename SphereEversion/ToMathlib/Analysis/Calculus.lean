@@ -119,10 +119,10 @@ nonrec theorem Differentiable.fderiv_partial_snd {φ : E → F → G}
     ↿(∂₂ 𝕜 φ) = precomp G (inr 𝕜 E F) ∘ (fderiv 𝕜 <| uncurry φ) := by
   ext1 ⟨y, t⟩; exact fderiv_partial_snd (hF ⟨y, t⟩).hasFDerivAt
 
-/-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G`-/
+/-- The first partial derivative of `φ : 𝕜 → F → G` seen as a function from `𝕜 → F → G` -/
 def partialDerivFst (φ : 𝕜 → F → G) : 𝕜 → F → G := fun k f ↦ ∂₁ 𝕜 φ k f 1
 
-/-- The second partial derivative of `φ : E → 𝕜 → G` seen as a function from `E → 𝕜 → G`-/
+/-- The second partial derivative of `φ : E → 𝕜 → G` seen as a function from `E → 𝕜 → G` -/
 def partialDerivSnd (φ : E → 𝕜 → G) : E → 𝕜 → G := fun e k ↦ ∂₂ 𝕜 φ e k 1
 
 omit [NormedAddCommGroup F] [NormedSpace 𝕜 F] in

@@ -130,7 +130,8 @@ omit [FiniteDimensional ℝ E] [SigmaCompactSpace M] [LocallyCompactSpace M] [T2
 /-- Lemma `lem:localisation_stability`. -/
 theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :
     ∃ (ε : M → ℝ) (_hε : ∀ m, 0 < ε m) (_hε' : Continuous ε),
-      ∀ (g : M → M') (_hg : ∀ m, dist (g m) (f m) < ε m) (i), range (g ∘ ld.φ i) ⊆ range (ld.ψj i) := by
+      ∀ (g : M → M') (_hg : ∀ m, dist (g m) (f m) < ε m) (i),
+        range (g ∘ ld.φ i) ⊆ range (ld.ψj i) := by
   let K : ld.ι' → Set M' := fun i ↦ ld.ψ i '' closedBall 0 1
   let U : ld.ι' → Set M' := fun i ↦ range <| ld.ψ i
   have hK : ∀ i, IsClosed (K i) := fun i ↦

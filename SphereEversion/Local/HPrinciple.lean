@@ -60,7 +60,8 @@ open Filter Set RelLoc
 open LinearMap (ker)
 
 variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
-  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]{G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
+  {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+  {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
 
 /-- The setup for local h-principle is two compact subsets `K₀ ⊆ K₁` in `E` with
 `K₀ ⊆ interior K₁` and a closed subset `C`.
@@ -163,7 +164,8 @@ variable (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕)
 -- Porting note: the elaboration smiley below was not necessary in Lean 3.
 /-- The loop family to use in some landscape to improve a formal solution. -/
 def loop (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) : ℝ → E → Loop F :=
-  Classical.choose ((exist_loops L.isCompact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕):) h.rel h.hShort)
+  Classical.choose <|
+    (exist_loops L.isCompact_K h.open (L.smooth_g 𝓕) (L.smooth_b 𝓕):) h.rel h.hShort
 
 theorem nice (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) :
     NiceLoop (L.g ↑𝓕) (L.b ↑𝓕) (Ω R L 𝓕) L.K (L.loop h) :=
@@ -201,7 +203,7 @@ theorem ρ_mem (L : StepLandscape E) (x : E) : L.ρ x ∈ I :=
   (exists_contDiff_one_nhds_of_interior L.hK₀.isClosed L.h₀₁).choose_spec.2.2.2 x
 
 theorem ρ_le (L : StepLandscape E) (x : E) : |L.ρ x| ≤ 1 := by
-  cases' L.ρ_mem x with h h'
+  obtain ⟨h, h'⟩ := L.ρ_mem x
   rw [abs_le]
   exact ⟨by linarith, h'⟩
 
@@ -343,7 +345,8 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     (mod_cast le_top)
   let 𝓕' : JetSec E F :=
     { f := fun x ↦ 𝓕.f x + corrugation L.π N (L.loop h 1) x
-      f_diff := 𝓕.f_diff.add (corrugation.contDiff' _ _ (L.loop_smooth h) contDiff_id contDiff_const)
+      f_diff := 𝓕.f_diff.add (corrugation.contDiff' _ _ (L.loop_smooth h) contDiff_id
+        contDiff_const)
       φ := fun x ↦
         L.p.update (𝓕.φ x) (L.loop h 1 x <| N * L.π x) +
           corrugation.remainder L.p.π N (L.loop h 1) x
@@ -404,7 +407,8 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
     by_cases hxK₁ : x ∈ L.K₁
     · apply hε
       rw [Metric.mem_thickening_iff]
-      refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x), ?_, ?_⟩
+      refine ⟨(x, 𝓕.f x, L.p.update (𝓕.φ x) <| L.loop h (smoothStep t * L.ρ x) x <| N * L.π x),
+        ?_, ?_⟩
       · exact ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
           ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩,
           by simp only [Loop.fract_eq]⟩
@@ -531,7 +535,8 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
         simp only [ht, hHc0, HtpyJetSec.comp_of_le]
       · simp only [ht, HtpyJetSec.comp_of_not_le, not_false_iff]
         rw [← add_halves δ]
-        exact (norm_sub_le_norm_sub_add_norm_sub _ _ _).trans <| add_le_add (hN_close _ _) (hHc0 _ _)
+        exact (norm_sub_le_norm_sub_add_norm_sub _ _ _).trans <| add_le_add (hN_close _ _)
+          (hHc0 _ _)
     · -- formal solution
       intro t
       by_cases ht : t ≤ 1 / 2
