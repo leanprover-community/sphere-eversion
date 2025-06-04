@@ -158,7 +158,6 @@ variable [FiniteDimensional ℝ F]
 
 -- In the next lemma the assumption `dim E = n + 1` is for convenience
 -- using `finrank_orthogonal_span_singleton`. We could remove it to treat empty spheres...
-set_option maxHeartbeats 200000 in
 theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank ℝ E ≤ finrank ℝ F) :
     (immersionSphereRel E F).IsAmple := by
   classical
