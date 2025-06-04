@@ -124,10 +124,9 @@ theorem smooth_proj : ContMDiff ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[�
     ∞ (proj I M V) := by
   intro x₀
   have : ContMDiffAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ ∞ id x₀ := contMDiffAt_id
-  simp_rw (config := { unfoldPartialApp := true }) [contMDiffAt_oneJetBundle, inTangentCoordinates,
-    inCoordinates, TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def] at this
-  dsimp only [TangentSpace] at this
-  simp_rw [ContinuousLinearMap.id_comp] at this
+  simp_rw +unfoldPartialApp [contMDiffAt_oneJetBundle, inTangentCoordinates, inCoordinates,
+    TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
+    TangentSpace, ContinuousLinearMap.id_comp] at this
   exact this.1.one_jet_eucl_bundle_mk this.2.2
 
 variable {I M V}
