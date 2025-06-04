@@ -248,7 +248,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     have : (Iio (1 / 2) : Set ℝ) ×ˢ univ ∈ 𝓝 (t₀, x₀) :=
       prod_mem_nhds_iff.mpr ⟨Iio_mem_nhds ht, univ_mem⟩
     filter_upwards [this] with p hp
-    cases' p with t x
+    obtain ⟨t, x⟩ := p
     replace hp : t < 1 / 2 := (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     rw [if_pos hp.le]
@@ -257,8 +257,8 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     have : (Ioo (3 / 8) (5 / 8) : Set ℝ) ×ˢ univ ∈ 𝓝 (1 / (2 : ℝ), x₀) := by
       refine prod_mem_nhds_iff.mpr ⟨Ioo_mem_nhds ?_ ?_, univ_mem⟩ <;> norm_num
     filter_upwards [this] with p hp
-    cases' p with t x
-    cases' (prodMk_mem_set_prod_eq.mp hp).1 with lt_t t_lt
+    obtain ⟨t, x⟩ := p
+    obtain ⟨lt_t, t_lt⟩ := (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     split_ifs
     · rfl
@@ -270,7 +270,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     have : (Ioi (1 / 2) : Set ℝ) ×ˢ univ ∈ 𝓝 (t₀, x₀) :=
       prod_mem_nhds_iff.mpr ⟨Ioi_mem_nhds ht, univ_mem⟩
     filter_upwards [this] with p hp
-    cases' p with t x
+    obtain ⟨t, x⟩ := p
     replace hp : ¬t ≤ 1 / 2 := by push_neg; exact (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     rw [if_neg hp]

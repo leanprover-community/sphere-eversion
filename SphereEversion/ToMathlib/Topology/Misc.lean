@@ -285,7 +285,7 @@ theorem projI_eq_min : projI x = min 1 x ↔ 0 ≤ x := by
   simp_rw [projI_def, max_eq_right_iff, le_min_iff, zero_le_one, true_and]
 
 theorem min_projI (h2 : 0 ≤ c) : min c (projI x) = projI (min c x) := by
-  cases' le_total c x with h3 h3 <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]
+  obtain (h3 | h3) := le_total c x <;> simp [h2, h3, projI_le_iff, projI_eq_min.mpr]
   simp [projI_eq_min.mpr, h2.trans h3, min_left_comm c, h3]
 
 theorem continuous_projI [TopologicalSpace α] [OrderTopology α] : Continuous (projI : α → α) :=
