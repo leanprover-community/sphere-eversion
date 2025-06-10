@@ -43,7 +43,7 @@ theorem strans_def {x : X} {t₀ t : I} (γ γ' : Path x x) :
     γ.strans γ' t₀ t =
       if h : t ≤ t₀ then γ ⟨t / t₀, unitInterval.div_mem t.2.1 t₀.2.1 h⟩
       else γ' ⟨(t - t₀) / (1 - t₀),
-        unitInterval.div_mem (sub_nonneg.mpr <| le_of_not_le h) (sub_nonneg.mpr t₀.2.2)
+        unitInterval.div_mem (sub_nonneg.mpr <| le_of_not_ge h) (sub_nonneg.mpr t₀.2.2)
           (sub_le_sub_right t.2.2 t₀)⟩ := by
   split_ifs with h <;> simp [strans, h, ← extend_extends]
 
