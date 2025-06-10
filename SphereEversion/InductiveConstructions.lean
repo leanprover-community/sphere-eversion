@@ -382,7 +382,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
           rw [mem_Ici]
           congr
           rw [← mul_T_succ_sub i.toNat]
-        exact mul_le_mul_of_nonneg_left (sub_le_sub_right ht _) (pow_nonneg zero_le_two _)
+        gcongr
       · push_neg
         apply T_lt_succ
     · rintro j hj ⟨t, x⟩ (rfl : t = 1)
@@ -397,7 +397,8 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
       apply congr_fun (hfutur_F'.self_of_nhdsSet ..)
       rw [mem_Ici]
       conv => congr; skip; rw [← mul_T_succ_sub i.toNat]
-      exact mul_le_mul_of_nonneg_left (sub_le_sub_right (T_lt _).le _) (pow_nonneg zero_le_two _)
+      gcongr
+      exact (T_lt _).le
     · rintro ⟨t, x⟩ htx
       simp only [prodMk_mem_set_prod_eq, mem_Ici, not_and_or, not_le] at htx
       obtain (ht | hx) := htx

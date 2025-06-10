@@ -31,8 +31,8 @@ theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X]
     suffices {m | (U m ∩ U n).Nonempty} ⊆ Icc (n - 2) (n + 2) by exact (finite_Icc _ _).subset this
     rintro m ⟨x, ⟨⟨hx₁, hx₂⟩, ⟨hx₃, hx₄⟩⟩⟩
     simp only [mem_Icc, tsub_le_iff_right]
-    suffices ∀ {a b : ℕ}, x ∉ K a → x ∈ interior (K b.succ) → a ≤ b by
-      exact ⟨this hx₄ hx₁, this hx₂ hx₃⟩
+    suffices ∀ {a b : ℕ}, x ∉ K a → x ∈ interior (K b.succ) → a ≤ b from
+      ⟨this hx₄ hx₁, this hx₂ hx₃⟩
     intro a b ha hb
     by_contra hab
     replace hab : b + 1 ≤ a := by simpa using hab

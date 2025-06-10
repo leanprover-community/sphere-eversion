@@ -58,13 +58,13 @@ protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy �
   · rw [h2]
     refine add_le_add_right (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) ?_) _
     simp_rw [fract, h2]
-    exact sub_le_sub_right hxy _
+    gcongr
   · refine (add_le_add_right (h (unitInterval.fract_mem _) unitInterval.one_mem
       (fract_lt_one _).le) _).trans
       (le_trans ?_ <|
         add_le_add_right (h unitInterval.zero_mem (unitInterval.fract_mem _) (fract_nonneg _)) _)
     rw [φ.one, add_assoc, add_comm (1 : ℝ)]
-    refine add_le_add_left ?_ _
+    gcongr
     norm_cast
 
 protected theorem fract_fract (t : ℝ) : fract (φ (fract t)) = fract (φ t) := by
@@ -121,7 +121,7 @@ theorem linearReparam_monotone : Monotone linearReparam := by
     norm_num; linarith
   have : MonotoneOn linearReparam (Icc 4⁻¹ (3 / 4)) := fun x hx y hy hxy ↦ by
     rw [this x hx, this y hy]
-    exact sub_le_sub_right (mul_le_mul_of_nonneg_left hxy zero_le_two) _
+    gcongr
   have : MonotoneOn linearReparam (Icc 4⁻¹ 1) := fun x hx y hy hxy ↦ by
     obtain (h1y | h1y) := le_total y (3 / 4)
     · exact this ⟨hx.1, hxy.trans h1y⟩ ⟨hy.1, h1y⟩ hxy
