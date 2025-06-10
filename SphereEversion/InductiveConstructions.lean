@@ -7,8 +7,6 @@ import SphereEversion.Notations
 
 -- set_option trace.filter_inst_type true
 
-attribute [gcongr] nhdsSet_mono
-
 open Set Filter Function
 open scoped Topology unitInterval
 
