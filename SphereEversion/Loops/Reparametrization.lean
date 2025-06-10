@@ -151,7 +151,8 @@ theorem eventually_exists_surroundingPts_approxSurroundingPointsAt :
   suffices ∀ i, Tendsto (a i) (𝓝 x ×ˢ atTop) (𝓝 (γ.surroundingPointsAt x i)) by
     have hg : Tendsto (fun z : E × ℕ ↦ g z.fst) (𝓝 x ×ˢ atTop) (𝓝 (g x)) :=
       Tendsto.comp γ.smooth_surrounded.continuous.continuousAt tendsto_fst
-    exact eventually_surroundingPts_of_tendsto_of_tendsto' ⟨_, γ.surroundPtsPointsWeightsAt x⟩ this hg
+    exact eventually_surroundingPts_of_tendsto_of_tendsto'
+      ⟨_, γ.surroundPtsPointsWeightsAt x⟩ this hg
   intro i
   let t := γ.surroundingParametersAt x i
   change Tendsto (fun z : E × ℕ ↦ (γ z.1).mollify z.2 t) (𝓝 x ×ˢ atTop) (𝓝 (γ x t))
@@ -212,7 +213,8 @@ theorem localCenteringDensityNhd_covers : univ ⊆ ⋃ x, γ.localCenteringDensi
 
 theorem approxSurroundingPointsAt_of_localCenteringDensityNhd
     (hy : y ∈ γ.localCenteringDensityNhd x) :
-    ∃ w, SurroundingPts (g y) (γ.approxSurroundingPointsAt x y (γ.localCenteringDensityMp x)) w := by
+    ∃ w, SurroundingPts (g y)
+      (γ.approxSurroundingPointsAt x y (γ.localCenteringDensityMp x)) w := by
   let h :=
     Filter.eventually_iff_exists_mem.mp
       (γ.eventually_exists_surroundingPts_approxSurroundingPointsAt x)

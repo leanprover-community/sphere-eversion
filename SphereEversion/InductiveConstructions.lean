@@ -282,7 +282,7 @@ private theorem T_nonneg (n : ℕ) : 0 ≤ T n := by
   apply pow_le_one₀ <;> norm_num
 
 private theorem not_T_succ_le (n : ℕ) : ¬T (n + 1) ≤ 0 :=
-  (T_pos n.succ_ne_zero).not_le
+  (T_pos n.succ_ne_zero).not_ge
 
 theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ}
     {U K : IndexType N → Set X} (P₀ P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop)
@@ -376,8 +376,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
               (t, x) (↿F') (h₂F' _)
     · intro hi x t ht
       rw [i.toNat_succ hi] at ht ⊢
-      have h₂t : ¬t ≤ T i.toNat := by
-        exact ((T_lt_succ i.toNat).trans_le ht).not_le
+      have h₂t : ¬t ≤ T i.toNat := ((T_lt_succ i.toNat).trans_le ht).not_ge
       dsimp only [F'']
       rw [if_neg h₂t, if_neg]
       · rw [hfutur_F'.self_of_nhdsSet, mul_T_succ_sub]

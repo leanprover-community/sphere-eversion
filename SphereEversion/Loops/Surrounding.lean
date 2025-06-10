@@ -52,6 +52,7 @@ theorem somePath_mem (hF : IsPathConnected F) {x y : X} (hx : x ∈ F) (hy : y �
 theorem range_somePath_subset (hF : IsPathConnected F) {x y : X} (hx : x ∈ F) (hy : y ∈ F) :
     range (hF.somePath hx hy) ⊆ F := by rintro _ ⟨t, rfl⟩; apply somePath_mem
 
+open Fin.NatCast in -- TODO: fix this
 /-- A path through `p 0`, ..., `p n`. Usually this is used with `n := m`. -/
 noncomputable def pathThrough (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) : ∀ n : ℕ, Path (p 0) (p n)
@@ -66,6 +67,7 @@ theorem range_pathThrough_subset (hF : IsPathConnected F) {m : ℕ} {p : Fin (m 
   | n + 1 => by simpa [pathThrough, hp, range_somePath_subset]
     using range_pathThrough_subset hF hp (n := n)
 
+open Fin.NatCast in -- TODO: fix this
 theorem mem_range_pathThrough' (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) {i n : ℕ} (h : i ≤ n) : p i ∈ range (hF.pathThrough hp n) := by
   induction' h with n _ ih

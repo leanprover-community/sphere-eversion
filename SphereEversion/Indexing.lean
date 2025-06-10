@@ -18,6 +18,7 @@ open Fin Set
 def IndexType (n : ℕ) : Type :=
   Nat.casesOn n ℕ fun k ↦ Fin <| k + 1
 
+open Fin.NatCast in -- TODO: remove this, by making the cast explicit
 def IndexType.fromNat : ∀ {N : ℕ}, ℕ → IndexType N
   | 0 => id
   | N + 1 => (Nat.cast : ℕ → Fin (N + 1))

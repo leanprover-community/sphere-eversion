@@ -106,11 +106,11 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
     intro N hN x hx t
     rw [corrugation, norm_smul, mul_comm]
     apply (mul_le_mul_of_nonneg_right _ (norm_nonneg <| 1 / N)).trans_lt hN
-    obtain (ht | ht) := le_or_lt t 0
+    obtain (ht | ht) := le_or_gt t 0
     · rw [h_le x t ht]
       apply hC (0, x)
       simp [hx]
-    · obtain (ht' | ht') := le_or_lt 1 t
+    · obtain (ht' | ht') := le_or_gt 1 t
       · rw [h_ge x t ht']
         apply hC (1, x)
         simp [hx]

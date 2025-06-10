@@ -76,8 +76,8 @@ instance deleteme3 :
     VectorBundle 𝕜 E ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) := by
   infer_instance
 
-instance deleteme4 :
-    VectorBundle 𝕜 E' ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) := by
+instance deleteme4 : VectorBundle 𝕜 E'
+    ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) := by
   infer_instance
 
 instance deleteme5 : ContMDiffVectorBundle ∞ E
@@ -167,7 +167,8 @@ instance : VectorBundle 𝕜 (E →L[𝕜] E') FJ¹MM' := by
   delta OneJetSpace
   infer_instance
 
-instance : ContMDiffVectorBundle ∞ (E →L[𝕜] E') (OneJetSpace I I' : M × M' → Type _) (I.prod I') := by
+instance : ContMDiffVectorBundle ∞ (E →L[𝕜] E')
+    (OneJetSpace I I' : M × M' → Type _) (I.prod I') := by
   delta OneJetSpace
   infer_instance
 
