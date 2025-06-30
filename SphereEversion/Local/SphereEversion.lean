@@ -372,7 +372,7 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
   simp [this]
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']
-  rw [fderiv_neg, fderiv_id']
+  rw [fderiv_fun_neg, fderiv_id']
   simp [Submodule.coe_add, orthogonalProjection_eq_self_iff.mpr hv',
     orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hv, Submodule.coe_zero, add_zero,
     two_smul, one_smul]

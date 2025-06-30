@@ -167,7 +167,7 @@ theorem corrugation.fderiv_eq {N : ℝ} (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ)
   have key := (hasFDerivAt_parametric_primitive_of_contDiff' diff (hπ_diff.const_smul N) x₀ 0).2
   erw [fderiv_const_smul key.differentiableAt, key.fderiv, smul_add, add_comm]
   congr 1
-  rw [fderiv_const_smul (hπ_diff.differentiable le_rfl).differentiableAt N, π.fderiv]
+  rw [fderiv_fun_const_smul (hπ_diff.differentiable le_rfl).differentiableAt N, π.fderiv]
   simp only [smul_smul, inv_mul_cancel₀ hN, one_div, Algebra.id.smul_eq_mul, one_smul,
     ContinuousLinearMap.comp_smul]
 

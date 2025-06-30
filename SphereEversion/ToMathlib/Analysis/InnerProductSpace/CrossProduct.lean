@@ -53,9 +53,9 @@ theorem crossProduct_apply_self (v : E) : v×₃v = 0 := by simp [crossProduct]
 
 theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm ![u, v, w] := by
   simp only [crossProduct, to_dual, LinearEquiv.trans_symm, LinearEquiv.symm_symm,
-             LinearIsometryEquiv.toLinearEquiv_symm, AlternatingMap.curryLeftLinearMap_apply,
-             LinearMap.coe_comp, Function.comp_apply, LinearMap.llcomp_apply, LinearEquiv.coe_coe,
-             LinearEquiv.trans_apply, LinearIsometryEquiv.coe_toLinearEquiv, LinearMap.coe_comp]
+    Nat.succ_eq_add_one, Nat.reduceAdd, AlternatingMap.curryLeftLinearMap_apply, LinearMap.coe_comp,
+    Function.comp_apply, LinearMap.llcomp_apply, LinearEquiv.coe_coe, LinearEquiv.trans_apply,
+    LinearIsometryEquiv.coe_symm_toLinearEquiv]
   rw [InnerProductSpace.toDual_symm_apply]
   simp
 

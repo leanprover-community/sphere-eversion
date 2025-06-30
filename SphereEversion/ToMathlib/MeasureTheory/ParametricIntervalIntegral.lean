@@ -134,7 +134,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
         ← intervalIntegral.integral_add_adjacent_intervals int₁ int₂]
       abel
     apply HasFDerivAt.congr_of_eventuallyEq _ this
-    simpa using ((D₁.add D₂).add D₃).sub (hasFDerivAt_const (φ x₀ (s x₀)) x₀)
+    simpa [Pi.sub_def] using ((D₁.add D₂).add D₃).sub (hasFDerivAt_const (φ x₀ (s x₀)) x₀)
 
 @[inherit_doc] local notation:70 u " ⬝ " φ =>
   ContinuousLinearMap.comp (ContinuousLinearMap.toSpanSingleton ℝ u) φ
