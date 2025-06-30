@@ -41,7 +41,7 @@ open scoped Manifold ContDiff
 -- Let `M` be a manifold with corners over the pair `(E, H)`.
 -- Let `M'` be a manifold with corners over the pair `(E', H')`.
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
-  {E : Type*} [instE: NormedAddCommGroup E] [instE': NormedSpace 𝕜 E]
+  {E : Type*} [instE : NormedAddCommGroup E] [instE' : NormedSpace 𝕜 E]
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners 𝕜 E H)
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']

@@ -333,6 +333,7 @@ theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : Lo
 
 variable {X : Type*} [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
 
+set_option linter.style.cases false in
 theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {P : Set X → Prop}
     (hP : Antitone P) (h0 : P ∅) (hX : ∀ x ∈ C, ∃ V ∈ 𝓝 (x : X), P V) :
     ∃ (K : ℕ → Set X) (W : ℕ → Set X), (∀ n, IsCompact (K n)) ∧ (∀ n, IsOpen (W n)) ∧

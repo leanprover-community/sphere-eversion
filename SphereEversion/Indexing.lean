@@ -149,11 +149,13 @@ theorem IndexType.exists_by_induction {α : Type*} (P : IndexType n → α → P
     (ih : ∀ n a, P n a → ¬IsMax n → ∃ a', P n.succ a' ∧ Q n a a') :
     ∃ f : IndexType n → α, ∀ n, P n (f n) ∧ (¬IsMax n → Q n (f n) (f n.succ)) := by
   revert P Q h₀ ih
-  cases' n with N
-  · intro P Q h₀ ih
+  cases n with
+  | zero =>
+    intro P Q h₀ ih
     rcases exists_by_induction' P Q h₀ (by simpa using ih) with ⟨f, hf⟩
     exact ⟨f, fun n ↦ ⟨(hf n).1, fun _ ↦ (hf n).2⟩⟩
-  · -- dsimp only [IndexType, IndexType.succ]
+  | succ N =>
+    -- dsimp only [IndexType, IndexType.succ]
     intro P Q h₀ ih
     choose f₀ hf₀ using h₀
     choose! F hF hF' using ih

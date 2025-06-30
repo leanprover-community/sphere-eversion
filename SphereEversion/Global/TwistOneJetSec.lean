@@ -28,7 +28,7 @@ section Smoothness
 
 
 notation "J¹[" 𝕜 ", " E ", " I ", " M ", " V "]" => TotalSpace (E →L[𝕜] V)
-  (Bundle.ContinuousLinearMap (RingHom.id 𝕜) (TangentSpace I : M → _) (Bundle.Trivial M V))
+  (fun b ↦ (TangentSpace I : M → _) b →L[𝕜] (Bundle.Trivial M V) b)
 variable {I M V}
 variable {f : N → J¹[𝕜, E, I, M, V]}
 
@@ -108,7 +108,7 @@ end Sections
 section proj
 
 instance piBugInstanceRestatement (x : M) : TopologicalSpace
-    (Bundle.ContinuousLinearMap (RingHom.id 𝕜) (TangentSpace I) (Trivial M V) x) := by
+    (TangentSpace I x →L[𝕜] Trivial M V x) := by
   infer_instance
 
 instance piBugInstanceRestatement2 (x : M × V) : TopologicalSpace (OneJetSpace I 𝓘(𝕜, V) x) := by

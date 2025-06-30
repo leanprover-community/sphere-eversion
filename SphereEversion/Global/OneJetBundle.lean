@@ -91,9 +91,8 @@ instance deleteme6 : ContMDiffVectorBundle ∞ E'
 set_option linter.unusedVariables false in
 /-- The fibers of the one jet-bundle. -/
 def OneJetSpace (p : M × M') : Type _ :=
-  Bundle.ContinuousLinearMap σ
-    ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I))
-    ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
+  ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) p →SL[σ]
+  ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
 
 instance (p : M × M') : TopologicalSpace (OneJetSpace I I' p) := by
   delta OneJetSpace

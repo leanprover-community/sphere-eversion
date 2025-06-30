@@ -210,7 +210,6 @@ theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
 
 /-! ## Families of formal solutions. -/
 
-/- ./././Mathport/Syntax/Translate/Command.lean:422:11: unsupported: advanced extends in structure -/
 /-- A family of formal solutions indexed by manifold `N` is a function from `N` into formal
   solutions in such a way that the function is smooth as a function of all arguments. -/
 @[ext]

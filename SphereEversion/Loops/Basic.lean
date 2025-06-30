@@ -257,13 +257,15 @@ noncomputable def roundTripFamily {x y : X} (γ : Path x y) : ℝ → Loop X :=
   have key : ∀ {t}, x = γ.extend (min 0 t) := (γ.extend_of_le_zero <| min_le_left _ _).symm
   fun t ↦ roundTrip ((γ.truncate 0 t).cast key rfl)
 
-attribute [fun_prop] Path.trans_continuous_family Path.truncate_const_continuous_family
+attribute [fun_prop] Path.trans_continuous_family
 
 @[fun_prop]
 theorem roundTripFamily_continuous {x y : X} {γ : Path x y} : Continuous ↿(roundTripFamily γ) :=
   ofPath_continuous_family _
     (Path.trans_continuous_family _ (γ.truncate_const_continuous_family 0) _ <|
-      Path.symm_continuous_family _ <| (by fun_prop))
+      Path.symm_continuous_family _ <|
+        -- Was `fun_prop` before v4.21.0
+        (by continuity))
 
 theorem roundTripFamily_based_at {x y : X} {γ : Path x y} : ∀ t, (roundTripFamily γ) t 0 = x :=
   fun _ ↦ roundTrip_based_at
@@ -410,7 +412,7 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
     (Loop.diff γ e).normalize = Loop.diff (fun e ↦ (γ e).normalize) e := by
   ext t x
   simp only [Loop.diff_apply, Loop.normalize_apply, partialFDerivFst]
-  rw [fderiv_sub ((hγ_diff.partial_loop t).differentiable le_rfl).differentiableAt,
+  rw [fderiv_fun_sub ((hγ_diff.partial_loop t).differentiable le_rfl).differentiableAt,
     Loop.average_diff hγ_diff]
   exact (hγ_diff.loop_average.differentiable le_rfl).differentiableAt
 

@@ -33,9 +33,7 @@ structure LocalisationData (f : M → M') where
 
 namespace LocalisationData
 
--- Adaptation note(version 4.10-rc1): previously, specifying 𝕜, E, E', H and H' was not needed
-variable {f : M → M'} {I I'}
-  (ld : LocalisationData (𝕜 := 𝕜) (E := E) (E' := E') (H := H) (H' := H')  I I' f)
+variable {f : M → M'} {I I'} (ld : LocalisationData I I' f)
 
 abbrev ψj : IndexType ld.N → OpenSmoothEmbedding 𝓘(𝕜, E') E' I' M' :=
   ld.ψ ∘ ld.j

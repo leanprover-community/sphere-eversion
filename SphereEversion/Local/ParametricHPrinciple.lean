@@ -57,7 +57,7 @@ def RelLoc.relativize (R : RelLoc E F) : RelLoc (P × E) F :=
 
 variable {P} (R)
 
-theorem RelLoc.mem_relativize  (w : OneJet (P × E) F) :
+theorem RelLoc.mem_relativize (w : OneJet (P × E) F) :
     w ∈ R.relativize P ↔ (w.1.2, w.2.1, w.2.2 ∘L ContinuousLinearMap.inr ℝ P E) ∈ R := by
   simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
 
