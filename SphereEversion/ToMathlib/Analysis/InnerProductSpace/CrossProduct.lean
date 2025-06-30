@@ -56,7 +56,7 @@ theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm 
              LinearIsometryEquiv.toLinearEquiv_symm, AlternatingMap.curryLeftLinearMap_apply,
              LinearMap.coe_comp, Function.comp_apply, LinearMap.llcomp_apply, LinearEquiv.coe_coe,
              LinearEquiv.trans_apply, LinearIsometryEquiv.coe_toLinearEquiv, LinearMap.coe_comp]
-  rw [InnerProductSpace.toDual_symm_apply]
+  rw [LinearIsometryEquiv.coe_symm_toLinearEquiv, InnerProductSpace.toDual_symm_apply]
   simp
 
 theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 := by

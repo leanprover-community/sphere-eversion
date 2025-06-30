@@ -9,7 +9,7 @@ noncomputable section
 
 variable [FiniteDimensional ℝ F] (c : F) (r : ℝ)
 
-theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball  :
+theorem PartialHomeomorph.exists_contDiff_source_univ_target_subset_ball :
     ∃ f : PartialHomeomorph F F, ContDiff ℝ ∞ f ∧ ContDiffOn ℝ ∞ f.symm f.target ∧
       f.source = univ ∧ (0 < r → f.target ⊆ ball c r) ∧ f 0 = c := by
   by_cases hr : 0 < r
