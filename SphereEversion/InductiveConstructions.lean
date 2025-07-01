@@ -245,7 +245,7 @@ private noncomputable def T : ℕ → ℝ := fun n ↦ Nat.rec 0 (fun k x ↦ x 
 private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2 : ℝ) ^ n := by
   unfold T
   induction n with
-  | zero => simp [Nat.zero_eq]
+  | zero => simp
   | succ n ihn =>
     simp_rw [ihn, pow_succ']
     field_simp

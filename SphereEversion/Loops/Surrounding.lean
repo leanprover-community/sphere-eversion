@@ -425,7 +425,7 @@ theorem surroundingLoop_zero_left (s : ℝ) : surroundingLoop O_conn hp hb 0 s =
 theorem surroundingLoop_mem (t s : ℝ) : surroundingLoop O_conn hp hb t s ∈ O := by
   revert s
   rw [← range_subset_iff]
-  simp only [surroundingLoop, Loop.roundTripFamily, Path.trans_range, Loop.roundTrip_range,
+  simp only [surroundingLoop, Loop.roundTripFamily, Loop.roundTrip_range,
     cast_coe]
   refine Subset.trans (truncate_range _) ?_
   simp only [trans_range, union_subset_iff, O_conn.range_somePath_subset,
@@ -674,7 +674,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
       · fun_prop
       · rintro ⟨t, s⟩ _
         rw [hδx₀]
-        show Ω ∈ 𝓝 (x₀, γ t s)
+        change Ω ∈ 𝓝 (x₀, γ t s)
         exact mem_nhds_iff.mpr
           ⟨_, inter_subset_left, hU, ⟨h5γ t s, show x₀ ∈ U from mem_of_mem_nhds hUx₀⟩⟩
     refine this.mono ?_; intro x h t ht s hs; exact h (t, s) ⟨ht, hs⟩
@@ -684,7 +684,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
     let c : E → F × (Fin (d + 1) → F) := fun x ↦ (g x, δ x 1 ∘ p)
     have hc : ContinuousAt c x₀ := by fun_prop
     have hcx₀ : c x₀ = (g x₀, γ 1 ∘ p) := by
-      simp [c, δ, hδx₀]
+      simp [c, δ]
     rw [← hcx₀] at hW
     filter_upwards [hc.tendsto.eventually hW]
     rintro x ⟨_, hx⟩

@@ -119,7 +119,7 @@ theorem isPartHolonomicAt_top {𝓕 : JetSec E F} {x : E} :
 @[simp]
 theorem isPartHolonomicAt_bot (𝓕 : JetSec E F) : IsPartHolonomicAt 𝓕 ⊥ = fun _ ↦ True := by
   ext x
-  simp only [IsPartHolonomicAt, Submodule.mem_bot, forall_eq, map_zero, eq_self_iff_true]
+  simp only [IsPartHolonomicAt, Submodule.mem_bot, forall_eq, map_zero]
 
 end JetSec
 

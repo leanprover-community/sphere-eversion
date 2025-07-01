@@ -116,7 +116,7 @@ theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     ext
     erw [mem_slice, R.mem_relativize, this]
   dsimp only [oneJetBundle_mk_fst, oneJetBundle_mk_snd]
-  simp [this, exists_const, forall_const]
+  simp [exists_const, forall_const]
 
 variable (IP P) in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
@@ -150,7 +150,7 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
   erw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.comp_apply]
-  simp [S.coe_ϕ]
+  simp
 
 def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) := by
   refine ⟨S.toFamilyOneJetSec.uncurry, ?_⟩

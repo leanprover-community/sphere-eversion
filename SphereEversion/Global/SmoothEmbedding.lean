@@ -253,7 +253,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
   left_inv' {y} := by
     obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
     have aux : f.symm (IF z) = y := by rw [hz']; exact f.left_inv (hf₁.symm ▸ mem_univ _)
-    simp only [← hz', (chartAt H x).right_inv hz, aux, extChartAt, PartialHomeomorph.extend,
+    simp only [← hz', (chartAt H x).right_inv hz, extChartAt, PartialHomeomorph.extend,
       PartialEquiv.coe_trans, PartialHomeomorph.invFun_eq_coe, ModelWithCorners.toPartialEquiv_coe,
       PartialHomeomorph.coe_coe, PartialEquiv.coe_trans_symm, PartialHomeomorph.coe_coe_symm,
       ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
@@ -309,7 +309,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   let B : M → ℝ → Set M := ChartedSpace.ball IF
   let p : M → ℝ → Prop := fun x r ↦
     0 < r ∧ ball (extChartAt IF x x) r ⊆ (extChartAt IF x).target ∧ ∃ j, B x r ⊆ s j
-  have hW₀ : ∀ x r, p x r → x ∈ W x r := fun x r h ↦ ⟨0, hU₁, by simp [h.1]⟩
+  have hW₀ : ∀ x r, p x r → x ∈ W x r := fun x r h ↦ ⟨0, hU₁, by simp⟩
   have hW₁ : ∀ x r, p x r → IsOpen (W x r) := by
     rintro x r ⟨h₁, h₂, -, -⟩
     simp only [W_def]

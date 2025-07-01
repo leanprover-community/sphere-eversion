@@ -56,7 +56,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
   have hbV : ∀ᶠ x near K, x ∈ V := hV
   have h1 : ∀ x ∈ V, ∀ (_t _s : ℝ), ball (x, b x) (ε₁ + ε₁) ⊆ Ω := by
     intro x hx _t _s
-    simp only [← h0ε₁, add_halves, ε]
+    simp only [← h0ε₁, add_halves]
     exact (ball_subset_thickening (mem_image_of_mem _ hx) _).trans hεΩ
   refine ⟨_, hgK.and hbV, ε₁, hε₁, ⟨⟨by simp [γ₁, hγ₀], by simp [γ₁, h2γ₀],
     ?_, ?_, ?_⟩, ?_⟩, ?_, ?_⟩
@@ -284,7 +284,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     simp [γ, γ₃, hγ₁.base]
   · intro x
     have h1 : IntervalIntegrable (χ x • Loop.const (b x) : Loop F) volume 0 1 := by
-      show IntervalIntegrable (fun _ ↦ χ x • b x) volume (0 : ℝ) (1 : ℝ)
+      change IntervalIntegrable (fun _ ↦ χ x • b x) volume (0 : ℝ) (1 : ℝ)
       exact intervalIntegrable_const
     have h2 : IntervalIntegrable ((1 - χ x) • γ₃ 1 x : Loop F) volume 0 1 :=
       ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).continuous.intervalIntegrable ..).smul

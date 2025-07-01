@@ -270,22 +270,21 @@ theorem improveStep_of_support {t : ℝ} {x : E} (H : ∀ t, x ∉ Loop.support 
     apply (L.nice h).s_zero x t
   rw [improveStep_apply (L := L) h, corrugation_eq_zero _ _ _ _ (H t),
     remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)]
-  simp only [FormalSol.toJetSec_eq_coe, smul_zero, add_zero, this]
+  simp only [smul_zero, add_zero, this]
   erw [L.p.update_self]
   rfl
 
 theorem improveStep_rel_t_eq_0 : L.improveStep h N 0 = 𝓕 := by
   ext x : 2
-  · rw [improveStep_apply_f h]
-    simp [(L.nice h).t_zero x]
+  · simp [improveStep_apply_f h]
   · rw [improveStep_apply_φ h]
-    simp only [FormalSol.toJetSec_eq_coe, MulZeroClass.zero_mul, smoothStep.zero, zero_smul,
+    simp only [MulZeroClass.zero_mul, smoothStep.zero, zero_smul,
       add_zero]
     erw [L.update_zero h]
 
 theorem improveStep_rel_compl_K₁ {x} (hx : x ∉ L.K₁) (t) : L.improveStep h N t x = 𝓕 x := by
   rw [improveStep_apply h, L.hρ_compl_K₁ hx]
-  simp only [FormalSol.toJetSec_eq_coe, MulZeroClass.mul_zero, zero_smul, add_zero]
+  simp only [MulZeroClass.mul_zero, zero_smul, add_zero]
   erw [L.update_zero h]
   rfl
 
@@ -412,7 +411,7 @@ theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).
       · exact ⟨⟨x, smoothStep t * L.ρ x, Int.fract (N * L.π x)⟩,
           ⟨hxK₁, unitInterval.mul_mem (smoothStep.mem t) (L.ρ_mem x), unitInterval.fract_mem _⟩,
           by simp only [Loop.fract_eq]⟩
-      · simp only [h, improveStep_apply_f, FormalSol.toJetSec_eq_coe, improveStep_apply_φ]
+      · simp only [improveStep_apply_f, improveStep_apply_φ]
         rw [Prod.dist_eq, max_lt_iff, Prod.dist_eq, max_lt_iff]
         refine ⟨by simpa using ε_pos, ?_, ?_⟩ <;> dsimp only <;> rw [dist_self_add_left]
         · exact bu_lt _ _ <| H _ hxK₁ _

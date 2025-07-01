@@ -231,12 +231,11 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
     simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply, p'',
-      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, comp_apply, coe_mk]
+      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, comp_apply]
   have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) := by
     have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ := by
       ext z
-      simp only [mem_map, LinearMap.mem_ker, ContinuousLinearMap.coe_comp', coe_subtypeL',
-        Submodule.coe_subtype, comp_apply, mem_inf]
+      simp only [mem_map, LinearMap.mem_ker, mem_inf]
       constructor
       · rintro ⟨t, ht, rfl⟩
         exact ⟨ht, t.2⟩
@@ -296,7 +295,7 @@ def locFormalEversionAux : HtpyJetSec E E where
       filter_upwards [this]
       rintro ⟨t, x⟩ hx
       simp_rw [mem_preimage, mem_singleton_iff] at hx
-      show smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
+      change smoothStep (‖x‖ ^ 2) • locFormalEversionAuxφ ω (smoothStep t) x = 0
       simp_rw [hx, zero_smul]
     refine ContDiffAt.smul ?_ ?_
     · exact (smoothStep.smooth.comp <| (contDiff_norm_sq ℝ).comp contDiff_snd).contDiffAt
@@ -373,9 +372,9 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']
   rw [fderiv_fun_neg, fderiv_id']
-  simp [Submodule.coe_add, orthogonalProjection_eq_self_iff.mpr hv',
-    orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hv, Submodule.coe_zero, add_zero,
-    two_smul, one_smul]
+  simp only [ContinuousLinearMap.neg_apply, ContinuousLinearMap.coe_id', id_eq,
+    orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hv, add_zero,
+    orthogonalProjection_eq_self_iff.mpr hv', two_smul, add_sub_add_left_eq_sub]
   abel
 
 theorem locFormalEversion_hol :

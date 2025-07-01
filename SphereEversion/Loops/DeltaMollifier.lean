@@ -67,7 +67,7 @@ theorem support_shifted_normed_bump_subset (n : ℕ) (t : ℝ) :
   change support ((bump n).normed volume ∘ (· - t)) ⊆ _
   rw [Function.support_comp_eq_preimage, (bump n).support_normed_eq, ← (bump n).support_eq]
   refine (preimage_mono (support_bump_subset n)).trans ?_
-  simp [preimage_sub_const_Ioc, sub_eq_add_neg, add_comm]
+  simp [sub_eq_add_neg, add_comm]
 
 end
 
