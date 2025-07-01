@@ -116,8 +116,8 @@ theorem coe_mk {S : OneJetSec I M I' M'} {h : ∀ x, S x ∈ R} {x : M} : Formal
 theorem coe_inj_iff {S T : FormalSol R} : S = T ↔ ∀ x, S x = T x := by
   constructor
   · rintro rfl x; rfl
-  · intro h; ext x v : 3; · show (S x).1.2 = (T x).1.2; rw [h]
-    show (S x).2 v = (T x).2 v; rw [h]
+  · intro h; ext x v : 3; · change (S x).1.2 = (T x).1.2; rw [h]
+    change (S x).2 v = (T x).2 v; rw [h]
 
 theorem coe_inj {S T : FormalSol R} (h : ∀ x, S x = T x) : S = T :=
   coe_inj_iff.mpr h
@@ -474,7 +474,7 @@ theorem OpenSmoothEmbedding.smooth_transfer :
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.contMDiffAt_inv <| _).comp (x, φ x.1.1) contMDiffAt_snd)
       (φ.contMDiff_to.contMDiffAt.comp x (contMDiff_oneJetBundle_proj.fst x)) (mod_cast le_top)
-  · simp [contMDiffOn_inv] at this; exact this
+  · simp only [left_inv] at this; exact this
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=

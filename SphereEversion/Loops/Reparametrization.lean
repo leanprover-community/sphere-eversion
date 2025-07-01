@@ -295,8 +295,8 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
 theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensityNhd x) :
     ∫ s in (0 : ℝ)..1, γ.localCenteringDensity x y s = 1 := by
   let n := γ.localCenteringDensityMp x
-  simp only [γ.localCenteringDensity_spec x, Prod.forall, exists_prop, gt_iff_lt,
-    Fintype.sum_apply, Pi.smul_apply, Algebra.id.smul_eq_mul, Finset.sum_smul]
+  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
+    Algebra.id.smul_eq_mul]
   rw [intervalIntegral.integral_finset_sum]
   · have h : γ.approxSurroundingPointsAt x y n ∈ affineBases ι ℝ F :=
       γ.approxSurroundingPointsAt_mem_affineBases x y hy
@@ -312,8 +312,8 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
 theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x) :
     ∫ s in (0 : ℝ)..1, γ.localCenteringDensity x y s • γ y s = g y := by
   let n := γ.localCenteringDensityMp x
-  simp only [γ.localCenteringDensity_spec x, Prod.forall, exists_prop, gt_iff_lt,
-    Fintype.sum_apply, Pi.smul_apply, Algebra.id.smul_eq_mul, Finset.sum_smul]
+  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
+    Algebra.id.smul_eq_mul, Finset.sum_smul]
   rw [intervalIntegral.integral_finset_sum]
   · simp_rw [mul_smul, intervalIntegral.integral_smul]
     change ∑ i, _ • γ.approxSurroundingPointsAt x y n i = _
@@ -360,7 +360,7 @@ theorem isCenteringDensity_convex (x : E) : Convex ℝ { f | γ.IsCenteringDensi
     integral_one := by
       simp_rw [Pi.add_apply]
       rw [intervalIntegral.integral_add (hf₆.smul a) (hk₆.smul b)]
-      simp [intervalIntegral.integral_smul, hf₃, hk₃, hab]
+      simp [hf₃, hk₃, hab]
     average := by
       simp_rw [Pi.add_apply, Pi.smul_apply, add_smul, smul_assoc]
       erw [intervalIntegral.integral_add (hf₇.smul a) (hk₇.smul b)]

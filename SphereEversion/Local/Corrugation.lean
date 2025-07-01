@@ -73,7 +73,7 @@ theorem corrugation_const {x : E} (h : (γ x).IsConst) : 𝒯 N γ x = 0 := by
   unfold corrugation
   rw [Loop.isConst_iff_const_avg] at h
   rw [h]
-  simp only [add_zero, intervalIntegral.integral_const, Loop.const_apply, Loop.average_const,
+  simp only [intervalIntegral.integral_const, Loop.const_apply, Loop.average_const,
     smul_zero, sub_self]
 
 variable (π)

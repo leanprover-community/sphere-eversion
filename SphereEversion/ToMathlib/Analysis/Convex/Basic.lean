@@ -117,7 +117,7 @@ theorem Nontrivial.reallyConvex_iff [Nontrivial 𝕜] :
     ReallyConvex 𝕜 s ↔ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s := by
   rw [ReallyConvex, or_iff_right_iff_imp]
   rintro rfl w hw h2w h3w
-  obtain rfl : w = 0 := by ext; simp [imp_false] at h2w; simp [h2w]
+  obtain rfl : w = 0 := by ext; simp at h2w; simp [h2w]
   simp at h3w
 
 theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s := by

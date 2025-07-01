@@ -117,7 +117,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       refine ⟨(hf_A.and h𝓕₀).eventually_nhdsSet.mono fun x hx ↦ ?_, fC⟩
       rw [eventually_and] at hx
       refine hx.2.self_of_nhds.congr (hx.1.mono fun x' hx' ↦ ?_)
-      simp only [FormalSol.toOneJetSec_coe, mkFormalSol_apply, F, P₀]
+      simp only [FormalSol.toOneJetSec_coe, mkFormalSol_apply, F]
       exact hx'.symm
     have hFφψ : F.bs '' (range φ) ⊆ range ψ := by
       rw [← range_comp]

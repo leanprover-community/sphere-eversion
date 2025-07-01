@@ -195,7 +195,7 @@ theorem oneJetBundle_trivializationAt (x₀ x : J¹MM') :
         x.2 := by
   delta OneJetSpace
   rw [continuousLinearMap_trivializationAt, Trivialization.continuousLinearMap_apply]
-  simp only [inTangentCoordinates, inCoordinates]
+  simp only [inCoordinates]
   congr 2
   exact Trivialization.pullback_symmL ContMDiffMap.fst
     (trivializationAt E (TangentSpace I) x₀.1.1) x.proj

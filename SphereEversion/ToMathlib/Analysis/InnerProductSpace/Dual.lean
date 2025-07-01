@@ -19,7 +19,7 @@ theorem orthogonal_span_toDual_symm (π : E →L[ℝ] ℝ) :
     {.(InnerProductSpace.toDual ℝ E).symm π}ᗮ = ker π := by
   ext x
   suffices (∀ a : ℝ, ⟪a • (toDual ℝ E).symm π, x⟫ = 0) ↔ π x = 0 by
-    simp only [orthogonal, mem_mk, Set.mem_setOf_eq, LinearMap.mem_ker, ← toDual_symm_apply]
+    simp only [orthogonal, mem_mk, LinearMap.mem_ker, ← toDual_symm_apply]
     change (∀ (u : E), u ∈ span ℝ {(LinearIsometryEquiv.symm (toDual ℝ E)) π} → inner _ u x = 0) ↔ _
     simpa
   refine ⟨fun h ↦ ?_, fun h _ ↦ ?_⟩
