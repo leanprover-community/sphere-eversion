@@ -263,7 +263,7 @@ theorem ext {e₁ e₂ : EquivariantEquiv} (h : ∀ x, e₁ x = e₂ x) : e₁ =
 theorem symm_symm (e : EquivariantEquiv) : e.symm.symm = e := by
   ext x
   change (e : ℝ ≃ ℝ).symm.symm x = e x
-  simp only [Equiv.symm_symm, coe_toEquiv]
+  simp only [Equiv.symm_symm]
   rfl
 
 @[simp]

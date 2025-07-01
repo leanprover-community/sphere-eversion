@@ -203,7 +203,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
   · have : t = ⟨1, right_mem_Icc.mpr zero_le_one⟩ := Subtype.ext_val ht1
     rw [this]
     norm_cast
-    simp only [fract, floor_one, Path.extend_zero, Int.cast_one, sub_self, Subtype.coe_mk]
+    simp only [fract, floor_one, Path.extend_zero, Int.cast_one, sub_self]
     exact γ.target.symm
   · change (t : ℝ) ≠ 1 at ht1
     have : fract ↑t = t.val := by
@@ -222,7 +222,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
       continuous_id.prodMap continuous_projIcc
     exact (hγ.comp this).continuousOn
   · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
-      eq_self_iff_true, Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
+      Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 @[fun_prop]

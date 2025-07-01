@@ -30,12 +30,12 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x where
     refine Continuous.if_le ?_ ?_ continuous_id continuous_const ?_
     · continuity
     · continuity
-    · simp only [extend_div_self, Icc.mk_zero, zero_le_one, id, zero_div, forall_eq,
+    · simp only [extend_div_self, Icc.mk_zero, zero_le_one, zero_div, forall_eq,
         extend_extends, Path.source, left_mem_Icc, sub_self]
   source' := by simp
   target' := by
     simp +contextual only [unitInterval.le_one'.le_iff_eq.trans eq_comm,
-      extend_div_self, Icc.coe_one, imp_true_iff, eq_self_iff_true, comp_apply, ite_eq_right_iff]
+      extend_div_self, Icc.coe_one, imp_true_iff, ite_eq_right_iff]
 
 /-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
   arguments to `γ` lie in `I` after this. -/
@@ -60,9 +60,7 @@ theorem unitInterval.zero_le (x : I) : 0 ≤ x :=
 theorem strans_zero (γ γ' : Path x x) : γ.strans γ' 0 = γ' := by
   ext t
   simp +contextual only [strans_of_ge (unitInterval.zero_le t), Icc.coe_zero, div_one,
-    extend_extends', unitInterval.nonneg'.le_iff_eq, sub_zero, div_zero, extend_zero,
-    ite_eq_right_iff, show (t : ℝ) = 0 ↔ t = 0 from (@Subtype.ext_iff _ _ t 0).symm,
-    Path.source, eq_self_iff_true, imp_true_iff]
+    extend_extends', sub_zero]
 
 @[simp]
 theorem strans_one {x : X} (γ γ' : Path x x) : γ.strans γ' 1 = γ := by
@@ -94,7 +92,7 @@ theorem subset_range_strans_right {x : X} {γ γ' : Path x x} {t₀ : I} (h : t�
   have h2 : t₀ ≤ t' := le_add_of_nonneg_right this
   have h3 := sub_ne_zero.mpr (unitInterval.coe_ne_one.mpr h).symm
   use t'
-  simp [h2, unitInterval.coe_ne_one.mpr h, h3, t']
+  simp [h2, h3, t']
 
 theorem range_strans_subset {x : X} {γ γ' : Path x x} {t₀ : I} :
     range (γ.strans γ' t₀) ⊆ range γ ∪ range γ' := by

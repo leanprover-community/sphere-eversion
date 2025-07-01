@@ -87,7 +87,7 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       have O₁ : (fun x ↦ ∫ s in s x₀..s x, bound s) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := by
         have : (fun x ↦ s x - s x₀) =O[𝓝 x₀] fun x ↦ ‖x - x₀‖ := s_diff.isBigO_sub.norm_right
         refine IsBigO.trans ?_ this
-        show ((fun t ↦ ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((fun t ↦ t - s x₀) ∘ s)
+        change ((fun t ↦ ∫ s in s x₀..t, bound s) ∘ s) =O[𝓝 x₀] ((fun t ↦ t - s x₀) ∘ s)
         refine IsBigO.comp_tendsto ?_ s_diff.continuousAt
         have M : StronglyMeasurableAtFilter bound (𝓝 (s x₀)) volume :=
           ⟨Ioo a₀ b₀, Ioo_nhds, bound_integrable.1⟩

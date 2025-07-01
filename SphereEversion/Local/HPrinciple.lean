@@ -270,7 +270,7 @@ theorem improveStep_of_support {t : ℝ} {x : E} (H : ∀ t, x ∉ Loop.support 
     apply (L.nice h).s_zero x t
   rw [improveStep_apply (L := L) h, corrugation_eq_zero _ _ _ _ (H t),
     remainder_eq_zero _ _ (L.loop_C1 h 1) (H 1)]
-  simp only [FormalSol.toJetSec_eq_coe, smul_zero, add_zero, this]
+  simp only [smul_zero, add_zero, this]
   erw [L.p.update_self]
   rfl
 
