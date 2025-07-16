@@ -10,6 +10,7 @@ linter.mathlibStandardSet = true
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
+rev = "v4.22.0-rc3"
 
 [[require]]
 name = "checkdecls"
