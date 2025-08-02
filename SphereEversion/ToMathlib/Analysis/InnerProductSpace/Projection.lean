@@ -71,19 +71,19 @@ theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)
   rw [inf_orthogonal, inf_orthogonal]
   refine congr_arg _ (le_antisymm (sup_le ?_ le_sup_right) (sup_le ?_ le_sup_right)) <;>
     rw [span_singleton_le_iff_mem]
-  · nth_rw 2 [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ v) u]
+  · nth_rw 2 [← starProjection_add_starProjection_orthogonal (Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
   · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
     exact sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
 theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ := by
-  rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_completeSpace]
+  rw [orthogonal_line_inf, sup_comm, sup_orthogonal_inf_of_hasOrthogonalProjection]
   rw [span_singleton_le_iff_mem]
   exact coe_mem _
 
 theorem orthogonalProjection_eq_zero_of_mem {F : Submodule ℝ E} [CompleteSpace F] {x : E}
     (h : x ∈ Fᗮ) : orthogonalProjection F x = 0 := by
-  refine Subtype.coe_injective (eq_orthogonalProjection_of_mem_of_inner_eq_zero F.zero_mem ?_)
+  refine Subtype.coe_injective (eq_starProjection_of_mem_of_inner_eq_zero F.zero_mem ?_)
   simp only [coe_zero, sub_zero]
   exact (mem_orthogonal' F x).mp h
 
@@ -92,7 +92,7 @@ theorem inner_projection_self_eq_zero_iff {F : Submodule ℝ E} [CompleteSpace F
   obtain ⟨y, hy, z, hz, rfl⟩ := F.exists_add_mem_mem_orthogonal x
   rw [inner_add_left, map_add, coe_add, inner_add_right, inner_add_right]
   suffices y = 0 ↔ y + z ∈ Fᗮ by
-    simpa [orthogonalProjection_eq_zero_of_mem hz, orthogonalProjection_eq_self_iff.mpr hy,
+    simpa [orthogonalProjection_eq_zero_of_mem hz, starProjection_eq_self_iff.mpr hy,
       inner_eq_zero_symm.mp (hz y hy)]
   rw [add_mem_cancel_right hz]
   constructor
@@ -118,8 +118,8 @@ theorem orthogonalProjection_orthogonal_singleton {x y : E} :
         rw [inner_sub_right, inner_smul_right]
         field_simp [inner_self_ne_zero.mpr hx]⟩ := by
   apply Subtype.ext
-  have := orthogonalProjection_add_orthogonalProjection_orthogonal (span ℝ ({x} : Set E)) y
-  simp [eq_sub_of_add_eq' this, orthogonalProjection_singleton, real_inner_self_eq_norm_sq]
+  have := starProjection_add_starProjection_orthogonal (span ℝ ({x} : Set E)) y
+  simp [eq_sub_of_add_eq' this, starProjection_singleton, real_inner_self_eq_norm_sq]
 
 theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
     (pr[x]ᗮ y : E) = y - (⟪x, y⟫ / ⟪x, x⟫) • x := by
@@ -127,11 +127,11 @@ theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
 
 theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}ᗮ) :
     (pr[x]ᗮ y : E) - (⟪x₀, pr[x]ᗮ y⟫ / ⟪x₀, x⟫) • x = y :=  by
-  conv_rhs => rw [← orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y]
-  rw [orthogonalProjection_singleton, sub_eq_add_neg, add_comm, ← neg_smul]
+  conv_rhs => rw [← starProjection_add_starProjection_orthogonal (Δ x) y]
+  rw [starProjection_singleton, sub_eq_add_neg, add_comm, ← neg_smul]
   congr 2
-  have := orthogonalProjection_add_orthogonalProjection_orthogonal (Δ x) y
-  rw [orthogonalProjection_singleton] at this
+  have := starProjection_add_starProjection_orthogonal (Δ x) y
+  rw [starProjection_singleton] at this
   apply_fun fun z ↦ ⟪x₀, z⟫ at this
   rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right] at this
   apply (eq_of_sub_eq_zero _).symm
@@ -160,8 +160,9 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
       rintro ⟨y, hy⟩
       ext
       dsimp
-      rw [map_sub, pr[x]ᗮ.map_smul, orthogonalProjection_orthogonalComplement_singleton_eq_zero,
-        smul_zero, sub_zero, orthogonalProjection_eq_self_iff.mpr hy]
+      rw [map_sub, map_smul, starProjection_apply, starProjection_apply,
+        orthogonalProjection_orthogonalComplement_singleton_eq_zero, coe_zero,
+        ← starProjection_apply, smul_zero, sub_zero, starProjection_eq_self_iff.mpr hy]
     continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous
     continuous_invFun := by fun_prop }
 

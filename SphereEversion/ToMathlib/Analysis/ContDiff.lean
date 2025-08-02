@@ -226,7 +226,7 @@ theorem Submodule.orthogonalProjection_singleton' {v : E} :
     (𝕜 ∙ v).subtypeL.comp (orthogonalProjection (𝕜 ∙ v)) =
       (1 / (‖v‖ : 𝕜) ^ 2) • .toSpanSingleton 𝕜 v ∘L InnerProductSpace.toDual 𝕜 E v := by
   ext w
-  simp [ContinuousLinearMap.toSpanSingleton_apply, orthogonalProjection_singleton, ← mul_smul,
+  simp [ContinuousLinearMap.toSpanSingleton_apply, starProjection_singleton, ← mul_smul,
     div_eq_inv_mul]
 
 end

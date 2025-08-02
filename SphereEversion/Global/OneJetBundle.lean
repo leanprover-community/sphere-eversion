@@ -643,14 +643,14 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
     continuous_toFun := by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
       have : Continuous (chartAt 𝓜 p) := by
-        rw [continuous_iff_continuousOn_univ]
+        rw [← continuousOn_univ]
         convert PartialHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this
     continuous_invFun := by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
       have : Continuous (chartAt 𝓜 p).symm := by
-        rw [continuous_iff_continuousOn_univ]
+        rw [← continuousOn_univ]
         convert PartialHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this }

@@ -17,6 +17,6 @@ theorem isOpen_affineIndependent : IsOpen {p : ι → E | AffineIndependent 𝕜
       IsOpen ((fun (p : ι → E) (i : ι') ↦ p i -ᵥ p i₀) ⁻¹' {p : ι' → E | LinearIndependent 𝕜 p})
     refine isOpen_setOf_linearIndependent.preimage ?_
     exact continuous_pi fun i' ↦
-      (continuous_apply (π := fun _ : ι ↦ E) i'.1).vsub <| continuous_apply i₀
+      (continuous_apply (A := fun _ : ι ↦ E) i'.1).vsub <| continuous_apply i₀
 
 end
