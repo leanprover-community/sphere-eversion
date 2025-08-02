@@ -48,8 +48,8 @@ def rotAux (p : ℝ × E) : E →L[ℝ] E :=
 theorem rot_eq_aux : ω.rot = ω.rotAux := by
   ext1 p
   dsimp [rot, rotAux]
-  rw [id_eq_sum_orthogonalProjection_self_orthogonalComplement (ℝ ∙ p.2)]
-  simp only [smul_add, sub_smul, one_smul]
+  rw [id_eq_sum_starProjection_self_orthogonalComplement (ℝ ∙ p.2)]
+  simp only [smul_add, sub_smul, one_smul, starProjection]
   abel
 
 /-- The map `rot` is smooth on `ℝ × (E \ {0})`. -/
@@ -70,14 +70,14 @@ theorem rot_zero (v : E) : ω.rot (0, v) = ContinuousLinearMap.id ℝ E := by
 theorem rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : ω.rot (1, v) w = -w := by
   suffices (orthogonalProjection (Submodule.span ℝ {v}) w : E) +
     -(orthogonalProjection (Submodule.span ℝ {v})ᗮ w) = -w by simpa [rot]
-  simp [orthogonalProjection_eq_self_iff.mpr hw,
+  simp [starProjection_eq_self_iff.mpr hw,
         orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hw]
 
 /-- The map `rot` sends `(v, t)` to a transformation fixing `v`. -/
 @[simp]
 theorem rot_self (p : ℝ × E) : ω.rot p (no_index p.2) = p.2 := by
   have H : orthogonalProjection (ℝ ∙ p.2) p.2 = p.2 :=
-    orthogonalProjection_eq_self_iff.mpr (Submodule.mem_span_singleton_self p.2)
+    starProjection_eq_self_iff.mpr (Submodule.mem_span_singleton_self p.2)
   simp [rot, crossProduct_apply_self, orthogonalProjection_orthogonalComplement_singleton_eq_zero,H]
 
 /-- The map `rot` sends `(t, v)` to a transformation preserving `span v`. -/
@@ -109,7 +109,8 @@ theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v
       RCLike.conj_to_real, Submodule.coe_inner]
     linear_combination ⟪(w : E), w⟫ * Real.cos_sq_add_sin_sq (t * Real.pi)
   dsimp [rot]
-  simp [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero w.prop, this]
+  simp [starProjection_apply, orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero w.prop,
+    this]
 
 theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot (t, v)) := by
   rw [AddMonoidHomClass.isometry_iff_norm]
@@ -141,8 +142,8 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
           cos (t * Real.pi) • ↑((orthogonalProjection (span ℝ {x})ᗮ) y) +
         Real.sin (t * Real.pi) • x×₃y =
       0 at hy
-  rw [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hy',
-    orthogonalProjection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy
+  rw [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hy', ← starProjection_apply,
+    starProjection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy
   apply_fun fun x ↦ ‖x‖ ^ 2 at hy
   rw [pow_two, @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ] at hy
   simp_rw [← pow_two, norm_smul, mul_pow] at hy

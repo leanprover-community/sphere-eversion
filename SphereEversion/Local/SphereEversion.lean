@@ -372,9 +372,9 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']
   rw [fderiv_fun_neg, fderiv_id']
-  simp only [ContinuousLinearMap.neg_apply, ContinuousLinearMap.coe_id', id_eq,
-    orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hv, add_zero,
-    orthogonalProjection_eq_self_iff.mpr hv', two_smul, add_sub_add_left_eq_sub]
+  simp only [ContinuousLinearMap.neg_apply, ContinuousLinearMap.coe_id', id_eq, add_zero,
+    starProjection_eq_self_iff.mpr hv', two_smul, add_sub_add_left_eq_sub,
+    (Submodule.starProjection_apply_eq_zero_iff _).mpr hv]
   abel
 
 theorem locFormalEversion_hol :

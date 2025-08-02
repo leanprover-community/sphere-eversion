@@ -213,7 +213,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [Nor
 
 /-- Given a finite basis `e : basis ι ℝ E`, and `i : ι`,
 `e.DualPair i` is given by the `i`th basis element and its dual. -/
-def Basis.dualPair [FiniteDimensional ℝ E] {ι : Type*} [Fintype ι] [DecidableEq ι]
+def Module.Basis.dualPair [FiniteDimensional ℝ E] {ι : Type*} [Fintype ι] [DecidableEq ι]
     (e : Basis ι ℝ E) (i : ι) : DualPair E where
   π := LinearMap.toContinuousLinearMap (e.dualBasis i)
   v := e i

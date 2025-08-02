@@ -34,7 +34,7 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x where
         extend_extends, Path.source, left_mem_Icc, sub_self]
   source' := by simp
   target' := by
-    simp +contextual only [unitInterval.le_one'.le_iff_eq.trans eq_comm,
+    simp +contextual only [unitInterval.le_one'.ge_iff_eq.trans eq_comm,
       extend_div_self, Icc.coe_one, imp_true_iff, ite_eq_right_iff]
 
 /-- Reformulate `strans` without using `extend`. This is useful to not have to prove that the
