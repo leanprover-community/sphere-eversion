@@ -177,7 +177,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   have hφ : InjOn φ (ℝ ∙ x)ᗮ := h_mem hx
   clear h_mem
   let u : E := (InnerProductSpace.toDual ℝ E).symm p.π
-  have u_ne : u ≠ 0 := (InnerProductSpace.toDual ℝ E).symm.apply_ne_zero p.pi_ne_zero
+  have u_ne : u ≠ 0 := EmbeddingLike.map_ne_zero_iff.mpr p.pi_ne_zero
   by_cases H : ker p.π = (ℝ ∙ x)ᗮ
   · have key : ∀ w, EqOn (p.update φ w) φ (ℝ ∙ x)ᗮ := by
       intro w x

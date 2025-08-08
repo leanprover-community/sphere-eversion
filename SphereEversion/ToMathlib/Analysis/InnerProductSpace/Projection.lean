@@ -43,12 +43,6 @@ end GeneralStuff
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] --[CompleteSpace E]
 
-theorem LinearIsometryEquiv.apply_ne_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E ≃ₗᵢ⋆[ℝ] F)
-    {x : E} (hx : x ≠ 0) : φ x ≠ 0 := by
-  refine fun H ↦ hx ?_
-  rw [← φ.symm_apply_apply x, H, φ.symm.map_zero]
-
 /-- The line (one-dimensional submodule of `E`) spanned by `x : E`. -/
 @[reducible] def spanLine (x : E) : Submodule ℝ E := Submodule.span ℝ ({x} : Set E)
 
