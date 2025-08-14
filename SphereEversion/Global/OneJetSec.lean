@@ -25,7 +25,7 @@ In this file we consider two manifolds `M` and `M'` with models `I` and `I'`
 
 noncomputable section
 
-open Set Function Filter ChartedSpace SmoothManifoldWithCorners
+open Set Function Filter ChartedSpace
 
 open scoped Topology Manifold ContDiff
 

@@ -90,7 +90,7 @@ theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ := by
   exact fun x ↦ ⟨x.repr, x.repr_mem, x.proj_repr⟩
 
 theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
-  eq_univ_of_subset (image_subset proj𝕊₁ Ico_subset_Icc_self) image_proj𝕊₁_Ico
+  eq_univ_of_subset (image_mono Ico_subset_Icc_self) image_proj𝕊₁_Ico
 
 @[continuity, fun_prop]
 theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ := continuous_quotient_mk'
