@@ -1,4 +1,4 @@
-import Mathlib.Analysis.InnerProductSpace.Projection
+import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 
 noncomputable section
 
@@ -65,7 +65,7 @@ theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)
   rw [inf_orthogonal, inf_orthogonal]
   refine congr_arg _ (le_antisymm (sup_le ?_ le_sup_right) (sup_le ?_ le_sup_right)) <;>
     rw [span_singleton_le_iff_mem]
-  · nth_rw 2 [← starProjection_add_starProjection_orthogonal (Δ v) u]
+  · nth_rw 2 [← starProjection_add_starProjection_orthogonal (K := Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
   · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
     exact sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
@@ -112,7 +112,7 @@ theorem orthogonalProjection_orthogonal_singleton {x y : E} :
         rw [inner_sub_right, inner_smul_right]
         field_simp [inner_self_ne_zero.mpr hx]⟩ := by
   apply Subtype.ext
-  have := starProjection_add_starProjection_orthogonal (span ℝ ({x} : Set E)) y
+  have := starProjection_add_starProjection_orthogonal (K := span ℝ ({x} : Set E)) y
   simp [eq_sub_of_add_eq' this, starProjection_singleton, real_inner_self_eq_norm_sq]
 
 theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
@@ -121,10 +121,10 @@ theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
 
 theorem foo {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0) (y : E) (hy : y ∈ {.x₀}ᗮ) :
     (pr[x]ᗮ y : E) - (⟪x₀, pr[x]ᗮ y⟫ / ⟪x₀, x⟫) • x = y :=  by
-  conv_rhs => rw [← starProjection_add_starProjection_orthogonal (Δ x) y]
+  conv_rhs => rw [← starProjection_add_starProjection_orthogonal (K := Δ x) y]
   rw [starProjection_singleton, sub_eq_add_neg, add_comm, ← neg_smul]
   congr 2
-  have := starProjection_add_starProjection_orthogonal (Δ x) y
+  have := starProjection_add_starProjection_orthogonal (K := Δ x) y
   rw [starProjection_singleton] at this
   apply_fun fun z ↦ ⟪x₀, z⟫ at this
   rw [mem_orthogonal_span_singleton_iff.mp hy, inner_add_right, inner_smul_right] at this

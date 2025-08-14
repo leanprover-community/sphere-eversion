@@ -105,6 +105,6 @@ theorem OpenSmoothEmbedding.improve_formalSol (φ : OpenSmoothEmbedding 𝓘(ℝ
       · have : ∀ᶠ x near φ '' K₀, x ∈ p.φ '' K₁ := by
           suffices ∀ᶠ x near φ '' K₀, x ∈ interior (p.φ '' K₁) from this.mono interior_subset
           exact isOpen_interior.mem_nhdsSet.mpr
-            ((image_subset φ hK₀K₁).trans (φ.isOpenMap.image_interior_subset K₁))
+            ((image_mono hK₀K₁).trans (φ.isOpenMap.image_interior_subset K₁))
         exact this.mono (fun a hx hx' ↦ (hx' hx).elim)
     · exact fun _ ↦ (p.mkHtpy_isHolonomicAt_iff hcompat).mpr

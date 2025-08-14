@@ -23,7 +23,7 @@ open Set Function
 
 open Filter hiding map_smul
 
-open ChartedSpace SmoothManifoldWithCorners
+open ChartedSpace
 
 open scoped Topology Manifold Bundle ContDiff
 

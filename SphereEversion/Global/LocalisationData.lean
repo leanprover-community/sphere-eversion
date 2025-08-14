@@ -142,7 +142,7 @@ theorem localisation_stability {f : M → M'} (ld : LocalisationData I I' f) :
   refine ⟨δ ∘ f, fun m ↦ hδ₀ (f m), by fun_prop, fun g hg i ↦ ?_⟩
   rintro - ⟨e, rfl⟩
   have hi : f (ld.φ i e) ∈ K (ld.j i) :=
-    image_subset _ ball_subset_closedBall (ld.h₃ i (mem_range_self e))
+    image_mono ball_subset_closedBall (ld.h₃ i (mem_range_self e))
   exact hδ₁ (ld.j i) (f <| ld.φ i e) hi (le_of_lt (hg _))
 
 namespace LocalisationData

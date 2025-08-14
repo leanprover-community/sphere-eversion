@@ -48,7 +48,7 @@ def rotAux (p : ℝ × E) : E →L[ℝ] E :=
 theorem rot_eq_aux : ω.rot = ω.rotAux := by
   ext1 p
   dsimp [rot, rotAux]
-  rw [id_eq_sum_starProjection_self_orthogonalComplement (ℝ ∙ p.2)]
+  rw [id_eq_sum_starProjection_self_orthogonalComplement (K := ℝ ∙ p.2)]
   simp only [smul_add, sub_smul, one_smul, starProjection]
   abel
 

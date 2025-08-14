@@ -34,7 +34,7 @@ import SphereEversion.ToMathlib.Analysis.Convex.Basic
 import SphereEversion.ToMathlib.Analysis.CutOff
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Projection
+import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Projection.Submodule
 import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
 import SphereEversion.ToMathlib.Analysis.Normed.Module.FiniteDimension
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
