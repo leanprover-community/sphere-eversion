@@ -1,6 +1,6 @@
 import Mathlib.Topology.Germ
+import Mathlib.Analysis.Complex.Norm
 import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Data.Complex.Norm
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.Indexing
 import SphereEversion.Notations
@@ -247,7 +247,7 @@ private theorem T_eq (n : ℕ) : T n = 1 - (1 / 2 : ℝ) ^ n := by
   induction n with
   | zero => simp
   | succ n ihn =>
-    simp_rw [ihn, pow_succ']
+    simp_rw [ihn, pow_succ', one_div, inv_pow]
     field_simp
     ring
 

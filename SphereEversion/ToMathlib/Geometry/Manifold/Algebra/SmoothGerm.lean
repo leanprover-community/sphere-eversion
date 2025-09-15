@@ -8,6 +8,7 @@ import Mathlib.Algebra.Ring.Subring.Order
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Mathlib.Order.Filter.Ring
+import Mathlib.Tactic.Cases
 import Mathlib.Topology.Germ
 
 /-!

@@ -200,7 +200,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
   apply congrArg
   ext t
   by_cases ht1 : t.val = 1
-  · have : t = ⟨1, right_mem_Icc.mpr zero_le_one⟩ := Subtype.ext_val ht1
+  · have : t = ⟨1, right_mem_Icc.mpr zero_le_one⟩ := Subtype.ext ht1
     rw [this]
     norm_cast
     simp only [fract, floor_one, Path.extend_zero, Int.cast_one, sub_self]

@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Calculus.AddTorsor.Coord
 import Mathlib.Analysis.Matrix
 import Mathlib.LinearAlgebra.AffineSpace.Matrix
+import Mathlib.Tactic.Cases
 
 noncomputable section
 

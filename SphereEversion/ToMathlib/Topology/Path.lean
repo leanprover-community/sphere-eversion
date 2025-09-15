@@ -80,7 +80,7 @@ theorem subset_range_strans_left {x : X} {γ γ' : Path x x} {t₀ : I} (h : t�
     range γ ⊆ range (γ.strans γ' t₀) := by
   rintro _ ⟨t, rfl⟩
   use t * t₀
-  field_simp [strans, unitInterval.mul_le_right, unitInterval.coe_ne_zero.mpr h]
+  simp [strans, unitInterval.mul_le_right, unitInterval.coe_ne_zero.mpr h]
 
 theorem subset_range_strans_right {x : X} {γ γ' : Path x x} {t₀ : I} (h : t₀ ≠ 1) :
     range γ' ⊆ range (γ.strans γ' t₀) := by
