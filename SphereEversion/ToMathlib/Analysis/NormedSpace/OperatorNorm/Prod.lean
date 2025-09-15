@@ -1,6 +1,6 @@
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
-import Mathlib.Analysis.NormedSpace.OperatorNorm.Prod
+import Mathlib.Analysis.Normed.Operator.Prod
 
 noncomputable section
 

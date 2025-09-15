@@ -110,7 +110,7 @@ theorem orthogonalProjection_orthogonal_singleton {x y : E} :
         · simp
         simp [mem_orthogonal_span_singleton_iff]
         rw [inner_sub_right, inner_smul_right]
-        field_simp [inner_self_ne_zero.mpr hx]⟩ := by
+        simp [inner_self_ne_zero.mpr hx]⟩ := by
   apply Subtype.ext
   have := starProjection_add_starProjection_orthogonal (K := span ℝ ({x} : Set E)) y
   simp [eq_sub_of_add_eq' this, starProjection_singleton, real_inner_self_eq_norm_sq]
@@ -145,7 +145,7 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
     invFun := fun y ↦
       ⟨y - (⟪x₀, y⟫ / ⟪x₀, x⟫) • x, by
         rw [mem_orthogonal_span_singleton_iff, inner_sub_right, inner_smul_right]
-        field_simp [h]⟩
+        simp [h]⟩
     left_inv := by
       rintro ⟨y, hy⟩
       ext
@@ -233,7 +233,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
       (⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y =
         ⟪N x₀, x⟫ • (x₀ - y) + ⟪N x₀ - N y, x⟫ • y := by
     intro x y
-    simp only [N, inner_smul_left, inner_sub_left, RCLike.conj_to_real, smul_sub, sub_smul]
+    simp only [N, inner_smul_left, inner_sub_left, RCLike.conj_to_real, smul_sub, sub_smul,
+      sub_add_sub_cancel]
     field_simp
   simp only [key]
   simp_rw [Metric.tendsto_nhds_nhds, Real.dist_0_eq_abs, dist_eq_norm] at lim
