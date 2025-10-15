@@ -244,7 +244,7 @@ variable {F H : Type*} (M : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [
 
 Note that the input `f` is morally an `OpenSmoothEmbedding` but stated in terms of `ContDiff`
 instead of `ContMDiff`. This is more convenient for our purposes. -/
-def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
+def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : OpenPartialHomeomorph F F}
     (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) : OpenSmoothEmbedding 𝓘(ℝ, F) F IF M
     where
@@ -253,9 +253,10 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
   left_inv' {y} := by
     obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
     have aux : f.symm (IF z) = y := by rw [hz']; exact f.left_inv (hf₁.symm ▸ mem_univ _)
-    simp only [← hz', (chartAt H x).right_inv hz, extChartAt, PartialHomeomorph.extend,
-      PartialEquiv.coe_trans, PartialHomeomorph.invFun_eq_coe, ModelWithCorners.toPartialEquiv_coe,
-      PartialHomeomorph.coe_coe, PartialEquiv.coe_trans_symm, PartialHomeomorph.coe_coe_symm,
+    simp only [← hz', (chartAt H x).right_inv hz, extChartAt, OpenPartialHomeomorph.extend,
+      PartialEquiv.coe_trans, OpenPartialHomeomorph.invFun_eq_coe,
+      ModelWithCorners.toPartialEquiv_coe, OpenPartialHomeomorph.coe_coe,
+      PartialEquiv.coe_trans_symm, OpenPartialHomeomorph.coe_coe_symm,
       ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
   isOpen_range :=
     IsOpenMap.isOpen_range fun u hu ↦ by
@@ -264,14 +265,14 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
       on_goal 1 => rw [image_comp]
       refine
         (extChartAt IF x).symm_image_eq_source_inter_preimage ((image_subset_range f u).trans ?_)
-      rw [extChartAt, PartialHomeomorph.extend_target']
+      rw [extChartAt, OpenPartialHomeomorph.extend_target']
       exact hf₄
   contMDiff_to := by
     refine (contMDiffOn_extChartAt_symm x).comp_contMDiff hf₂.contMDiff fun y ↦ ?_
-    rw [extChartAt, PartialHomeomorph.extend_target']
+    rw [extChartAt, OpenPartialHomeomorph.extend_target']
     exact hf₄ (mem_range_self y)
   contMDiffOn_inv := by
-    rw [← PartialHomeomorph.extend_target'] at hf₄
+    rw [← OpenPartialHomeomorph.extend_target'] at hf₄
     have hf' : range ((extChartAt IF x).symm ∘ f) ⊆ extChartAt IF x ⁻¹' f.target := by
       rw [range_comp, ← image_subset_iff, ← f.image_source_eq_target, hf₁, image_univ]
       exact (PartialEquiv.image_symm_image_of_subset_target _ hf₄).subset
@@ -281,13 +282,13 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
     exact hf₃.contMDiffOn.comp (contMDiffOn_extChartAt.mono hf'') hf'
 
 @[simp]
-theorem coe_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
+theorem coe_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : OpenPartialHomeomorph F F}
     (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
     (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ hf₃ hf₄ : F → M) =
       (extChartAt IF x).symm ∘ f := by simp [openSmoothEmbOfDiffeoSubsetChartTarget]
 
-theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : PartialHomeomorph F F}
+theorem range_openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : OpenPartialHomeomorph F F}
     (hf₁ : f.source = univ) (hf₂ : ContDiff ℝ ∞ f) (hf₃ : ContDiffOn ℝ ∞ f.symm f.target)
     (hf₄ : range f ⊆ IF '' (chartAt H x).target) :
     range (openSmoothEmbOfDiffeoSubsetChartTarget M IF x hf₁ hf₂ hf₃ hf₄) =
@@ -325,7 +326,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   have hB : ∀ x, (𝓝 x).HasBasis (p x) (B x) := fun x ↦
     ChartedSpace.nhds_hasBasis_balls_of_open_cov IF x s_op cov
   obtain ⟨t, ht₁, ht₂, ht₃, ht₄⟩ := exists_countable_locallyFinite_cover surjective_id hW₀ hW₁ hB
-  let g : M × ℝ → PartialHomeomorph F F := fun z ↦ diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
+  let g : M × ℝ → OpenPartialHomeomorph F F := fun z ↦ diffeomorphToNhd (extChartAt IF z.1 z.1) z.2
   have hg₁ : ∀ z, (g z).source = univ := by simp [g]
   have hg₂ : ∀ z, ContDiff ℝ ∞ (g z) := by simp [g]
   have hg₃ : ∀ z, ContDiffOn ℝ ∞ (g z).symm (g z).target := by simp [g]
@@ -335,7 +336,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, hr' : ball (extChartAt IF x x) r ⊆ _, -⟩ := ht₂ _ hxr
     simp_rw [g, extChartAt]
-    rw [← PartialHomeomorph.extend_target']
+    rw [← OpenPartialHomeomorph.extend_target']
     exact (range_diffeomorphToNhd_subset_ball (extChartAt IF x x) hr).trans hr'
   · obtain ⟨⟨x, r⟩, hxr⟩ := z
     obtain ⟨hr : 0 < r, -, j, hj : B x r ⊆ s j⟩ := ht₂ _ hxr

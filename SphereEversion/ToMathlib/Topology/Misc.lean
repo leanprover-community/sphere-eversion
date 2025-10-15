@@ -440,9 +440,9 @@ theorem cover_nat_nhdsWithin' {α} [TopologicalSpace α] [SecondCountableTopolog
 
 end TopologicalSpace
 
-namespace Set
-
 open Subtype
+
+namespace Set
 
 namespace Subtype
 

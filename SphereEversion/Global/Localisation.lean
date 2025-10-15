@@ -96,8 +96,8 @@ def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E �
     · -- TODO: Investigate why we need so many different tactics before the apply
       unfold inTangentCoordinates
       dsimp [inCoordinates, chartAt]
-      simp only [TangentBundle.trivializationAt_baseSet, PartialHomeomorph.refl_partialEquiv,
-        PartialEquiv.refl_source, PartialHomeomorph.singletonChartedSpace_chartAt_eq, mem_univ,
+      simp only [TangentBundle.trivializationAt_baseSet, OpenPartialHomeomorph.refl_partialEquiv,
+        PartialEquiv.refl_source, OpenPartialHomeomorph.singletonChartedSpace_chartAt_eq, mem_univ,
         VectorBundleCore.trivializationAt_continuousLinearMapAt, tangentBundleCore_indexAt,
         TangentBundle.coordChange_model_space, one_def, VectorBundleCore.trivializationAt_symmL,
         comp_id]

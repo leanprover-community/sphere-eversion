@@ -81,7 +81,7 @@ def linearReparam : EquivariantMap :=
 
 theorem linearReparam_eq_zero {t : ℝ} (h1 : -4⁻¹ ≤ t) (h2 : t ≤ 4⁻¹) : linearReparam t = 0 := by
   rcases h2.eq_or_lt with (rfl | h2)
-  · rw [linearReparam]; norm_num; simp_rw [abs_of_pos (half_pos (zero_lt_one' ℝ)), sub_self]
+  · rw [linearReparam]; norm_num
   have : ⌊t - 4⁻¹⌋ = -1 :=
     floor_eq_iff.mpr ⟨le_sub_iff_add_le.mpr <| le_trans (by norm_num) h1,
       sub_lt_iff_lt_add.mpr <| h2.trans_le (by norm_num)⟩
