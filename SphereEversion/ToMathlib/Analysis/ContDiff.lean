@@ -108,7 +108,7 @@ variable [CompleteSpace E]
 theorem Homeomorph.contDiffAt_symm (f : Homeomorph E F) {f₀' : E ≃L[𝕜] F} {a : F}
     (hf' : HasFDerivAt f (f₀' : E →L[𝕜] F) (f.symm a)) (hf : ContDiffAt 𝕜 n f (f.symm a)) :
     ContDiffAt 𝕜 n f.symm a :=
-  f.toPartialHomeomorph.contDiffAt_symm trivial hf' hf
+  f.toOpenPartialHomeomorph.contDiffAt_symm trivial hf' hf
 
 theorem Equiv.continuous_symm_of_contDiff (φ : E ≃ F) {Dφ : E → E ≃L[𝕜] F}
     (hφ : ∀ x, HasStrictFDerivAt φ (Dφ x : E →L[𝕜] F) x) : Continuous φ.symm := by

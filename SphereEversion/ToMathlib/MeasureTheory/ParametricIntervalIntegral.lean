@@ -219,10 +219,12 @@ open Real ContinuousLinearMap Asymptotics
 
 theorem contDiff_parametric_primitive_of_contDiff' {F : H → ℝ → E} {n : ℕ} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
-  induction' n with n ih generalizing F
-  · rw [Nat.cast_zero, contDiff_zero] at *
+  induction n generalizing F with
+  | zero =>
+    rw [Nat.cast_zero, contDiff_zero] at *
     exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous hF hs
-  · have hF₁ : ContDiff ℝ 1 ↿F := hF.one_of_succ (n := n)
+  | succ n ih =>
+    have hF₁ : ContDiff ℝ 1 ↿F := hF.one_of_succ (n := n)
     have hs₁ : ContDiff ℝ 1 s := hs.one_of_succ (n := n)
     have h :
       ∀ x,
