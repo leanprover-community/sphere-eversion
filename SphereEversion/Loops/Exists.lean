@@ -46,7 +46,7 @@ theorem exist_loops_aux1 (hK : IsCompact K) (hΩ_op : IsOpen Ω) (hb : 𝒞 ∞ 
     intro t s
     simp only [ε, norm_smul, Real.norm_eq_abs, abs_eq_self.mpr hε.le, mul_comm_div]
     refine lt_of_lt_of_le ?_ (mul_one _).le
-    rw [mul_lt_mul_left hε₁, div_lt_one h0]
+    rw [mul_lt_mul_iff_right₀ hε₁, div_lt_one h0]
     refine (zero_add _).symm.le.trans_lt (add_lt_add_of_lt_of_le zero_lt_one (le_csSup h4γ₀ ?_))
     rw [← Loop.fract_eq, ← h3γ₀]
     exact mem_image_of_mem _ (mk_mem_prod projI_mem_Icc <| unitInterval.fract_mem _)

@@ -136,7 +136,7 @@ theorem pullback_symm (e : Trivialization F (π F E)) (x : B') :
   ext y
   simp_rw [Trivialization.symm, Pretrivialization.symm]
   congr; ext (hx : f x ∈ e.toPretrivialization.baseSet)
-  change cast _ (e.symm (f x) y) = cast _ (e.toPartialHomeomorph.symm (f x, y)).2
+  change cast _ (e.symm (f x) y) = cast _ (e.toOpenPartialHomeomorph.symm (f x, y)).2
   simp_rw [Trivialization.symm, Pretrivialization.symm, dif_pos hx, cast_cast]
   rfl
 

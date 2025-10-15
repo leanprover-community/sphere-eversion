@@ -233,16 +233,16 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
   -- simp only [FiberBundle.chartedSpace_chartAt, trivializationAt_oneJetBundle_source, mfld_simps]
   rw [FiberBundle.chartedSpace_chartAt]
   simp_rw [
-    PartialHomeomorph.trans_toPartialEquiv,
+    OpenPartialHomeomorph.trans_toPartialEquiv,
     PartialEquiv.trans_source,
-    PartialHomeomorph.prod_toPartialEquiv,
+    OpenPartialHomeomorph.prod_toPartialEquiv,
     PartialEquiv.prod_source,
-    PartialHomeomorph.coe_coe,
+    OpenPartialHomeomorph.coe_coe,
     Trivialization.coe_coe,
-    PartialHomeomorph.refl_partialEquiv,
+    OpenPartialHomeomorph.refl_partialEquiv,
     PartialEquiv.refl_source,
     prodChartedSpace_chartAt,
-    PartialHomeomorph.prod_toPartialEquiv,
+    OpenPartialHomeomorph.prod_toPartialEquiv,
     trivializationAt_oneJetBundle_source,
     PartialEquiv.prod_source,
     Set.preimage_inter]
@@ -302,8 +302,8 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
   rw [FiberBundle.chartedSpace_chartAt]
   simp only [prodChartedSpace_chartAt,
-    PartialHomeomorph.trans_toPartialEquiv, PartialHomeomorph.prod_toPartialEquiv,
-    PartialHomeomorph.refl_partialEquiv, PartialEquiv.trans_target, PartialEquiv.prod_target,
+    OpenPartialHomeomorph.trans_toPartialEquiv, OpenPartialHomeomorph.prod_toPartialEquiv,
+    OpenPartialHomeomorph.refl_partialEquiv, PartialEquiv.trans_target, PartialEquiv.prod_target,
     PartialEquiv.refl_target]
   erw [hom_trivializationAt_target]
   simp only [trivializationAt_pullBack_baseSet, TangentBundle.trivializationAt_baseSet]
@@ -603,14 +603,14 @@ theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv := by
   apply partialEquiv_eq_equiv
   · intro x
-    rw [PartialHomeomorph.coe_coe, oneJetBundle_chartAt_apply p x,
+    rw [OpenPartialHomeomorph.coe_coe, oneJetBundle_chartAt_apply p x,
       inCoordinates_tangent_bundle_core_model_space]
     ext <;> rfl
   · simp_rw [oneJetBundle_chart_source, prodChartedSpace_chartAt, chartAt_self_eq,
-      PartialHomeomorph.refl_prod_refl]
+      OpenPartialHomeomorph.refl_prod_refl]
     rfl
   · simp_rw [oneJetBundle_chart_target, prodChartedSpace_chartAt, chartAt_self_eq,
-      PartialHomeomorph.refl_prod_refl]
+      OpenPartialHomeomorph.refl_prod_refl]
     rfl
 
 @[simp, mfld_simps]
@@ -629,7 +629,7 @@ theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
   ext x
   · rfl
   · rfl
-  · rw [← PartialHomeomorph.coe_coe_symm, oneJetBundle_model_space_chartAt]
+  · rw [← OpenPartialHomeomorph.coe_coe_symm, oneJetBundle_model_space_chartAt]
     rfl
 
 variable (I I')
@@ -644,14 +644,14 @@ def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
       have : Continuous (chartAt 𝓜 p) := by
         rw [← continuousOn_univ]
-        convert PartialHomeomorph.continuousOn _
+        convert OpenPartialHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this
     continuous_invFun := by
       let p : OneJetBundle I H I' H' := ⟨(I.symm (0 : E), I'.symm (0 : E')), 0⟩
       have : Continuous (chartAt 𝓜 p).symm := by
         rw [← continuousOn_univ]
-        convert PartialHomeomorph.continuousOn _
+        convert OpenPartialHomeomorph.continuousOn _
         simp only [mfld_simps]
       simpa only [mfld_simps] using this }
 

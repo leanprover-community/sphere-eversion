@@ -85,9 +85,11 @@ theorem smooth_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k →
     apply (this (Fintype.card ι)).comp
     exact contDiff_pi.mpr fun i ↦ contDiff_pi.mpr fun j ↦ contDiff_apply_apply _ _ _ _
   intro n
-  induction' n with n ih
-  · rw [coe_det_isEmpty]
+  induction n with
+  | zero =>
+    rw [coe_det_isEmpty]
     exact contDiff_const
+  | succ n ih =>
   change ContDiff k m fun A : Matrix (Fin n.succ) (Fin n.succ) k ↦ A.det
   simp_rw [det_succ_column_zero]
   apply ContDiff.sum fun l _ ↦ ?_

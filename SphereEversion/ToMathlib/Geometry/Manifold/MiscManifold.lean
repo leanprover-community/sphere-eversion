@@ -27,7 +27,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace 𝕜 E'']
   {H'' : Type*} [TopologicalSpace H''] {I'' : ModelWithCorners 𝕜 E'' H''}
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M'']
-  {e : PartialHomeomorph M H} {f : M → M'} {m n : WithTop ℕ∞} {s : Set M} {x x' : M}
+  {e : OpenPartialHomeomorph M H} {f : M → M'} {m n : WithTop ℕ∞} {s : Set M} {x x' : M}
 
 theorem contMDiff_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔

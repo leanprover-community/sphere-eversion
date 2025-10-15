@@ -212,8 +212,9 @@ protected nonrec theorem ContMDiffAt.smul {x : M} {φ : Germ (𝓝 x) ℝ} {ψ :
 theorem ContMDiffAt.sum {x : M} {ι} {s : Finset ι} {n : ℕ∞} {f : ι → Germ (𝓝 x) F}
     (h : ∀ i ∈ s, (f i).ContMDiffAt I n) : (∑ i ∈ s, f i).ContMDiffAt I n := by
   classical
-  induction' s using Finset.induction_on with φ s hφs hs
-  · rw [Finset.sum_empty]; exact contMDiffAt_const
+  induction s using Finset.induction_on with
+  | empty => rw [Finset.sum_empty]; exact contMDiffAt_const
+  | insert φ s hφs hs =>
   simp only [Finset.mem_insert, forall_eq_or_imp] at h
   rw [Finset.sum_insert hφs]
   exact h.1.add (hs h.2)
@@ -299,9 +300,11 @@ theorem ContMDiffAtProd.sum {x : M₁} {ι} {s : Finset ι} {n : ℕ∞}
     {f : ι → Germ (𝓝 x) (M₂ → F)} (h : ∀ i ∈ s, (f i).ContMDiffAtProd I₁ I₂ n) :
     (∑ i ∈ s, f i).ContMDiffAtProd I₁ I₂ n := by
   classical
-  induction' s using Finset.induction_on with φ s hφs hs
-  · rw [Finset.sum_empty]; intro y
+  induction s using Finset.induction_on with
+  | empty =>
+    rw [Finset.sum_empty]; intro y
     exact contMDiffAt_const (x := (x, y)) (c := (0 : F))
+  | insert φ s hφs hs =>
   simp only [Finset.mem_insert, forall_eq_or_imp] at h
   rw [Finset.sum_insert hφs]
   exact h.1.add (hs h.2)

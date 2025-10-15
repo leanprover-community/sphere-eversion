@@ -123,9 +123,9 @@ theorem IndexType.induction_from {P : IndexType n → Prop} {i₀ : IndexType n}
     (ih : ∀ i ≥ i₀, ¬IsMax i → P i → P i.succ) : ∀ i ≥ i₀, P i := by
   cases n
   · intro i h
-    induction' h with i hi₀i hi ih
-    · exact h₀
-    exact ih i hi₀i (IndexType.not_isMax i) hi
+    induction h with
+    | refl => exact h₀
+    | step hi₀i hi => exact ih _ hi₀i (IndexType.not_isMax _) hi
   intro i
   refine Fin.induction ?_ ?_ i
   · intro hi; convert h₀; exact (hi.le.antisymm <| Fin.zero_le _).symm

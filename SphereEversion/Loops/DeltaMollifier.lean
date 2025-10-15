@@ -252,7 +252,7 @@ theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s =
   simp_rw [deltaMollifier]
   rw [integral_comp_sub_right (fun x ↦ (n : ℝ) / (n + 1) * approxDirac n x + 1 / (n + 1)) t,
     integral_add, integral_const_mul, integral_const, zero_sub, sub_neg_eq_add, sub_add_cancel,
-    one_smul, approxDirac_integral_eq_one, mul_one, div_add_div_same, div_self]
+    one_smul, approxDirac_integral_eq_one, mul_one, ← add_div, div_self]
   · exact n.cast_add_one_pos.ne'
   · rw [sub_eq_add_neg, add_comm]
   · exact ((approxDirac_smooth n).continuous.intervalIntegrable _ _).const_mul _

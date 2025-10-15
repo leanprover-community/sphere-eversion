@@ -70,9 +70,9 @@ theorem range_pathThrough_subset (hF : IsPathConnected F) {m : ℕ} {p : Fin (m 
 open Fin.NatCast in -- TODO: fix this
 theorem mem_range_pathThrough' (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) {i n : ℕ} (h : i ≤ n) : p i ∈ range (hF.pathThrough hp n) := by
-  induction' h with n _ ih
-  · exact ⟨1, by simp⟩
-  · simp only [pathThrough, Path.trans_range, mem_union, ih, true_or]
+  induction h with
+  | refl => exact ⟨1, by simp⟩
+  | step _ ih => simp only [pathThrough, Path.trans_range, mem_union, ih, true_or]
 
 theorem mem_range_pathThrough (hF : IsPathConnected F) {m : ℕ} {p : Fin (m + 1) → X}
     (hp : ∀ i, p i ∈ F) {i : Fin (m + 1)} : p i ∈ range (hF.pathThrough hp m) := by
