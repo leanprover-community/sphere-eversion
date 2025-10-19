@@ -1,4 +1,5 @@
 import SphereEversion.ToMathlib.Partition
+import Mathlib.Geometry.Manifold.Notation
 
 noncomputable section
 
@@ -49,10 +50,6 @@ variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] {HG : Type*} [To
   (IG : ModelWithCorners ℝ G HG) {N : Type*} [TopologicalSpace N] [ChartedSpace HG N]
   [IsManifold IG ∞ N]
 
-@[inherit_doc] local notation "𝓒" => ContMDiff I 𝓘(ℝ, F)
-
-@[inherit_doc] local notation "𝓒_on" =>ContMDiffOn I 𝓘(ℝ, F)
-
 variable (I)
 
 omit [FiniteDimensional ℝ E] [IsManifold I ∞ M] [SigmaCompactSpace M] [T2Space M] in
@@ -71,8 +68,8 @@ theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
   simpa [H] using hφ
 
 theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex ℝ {y | P x y}) {n : ℕ∞}
-    (hP' : ∀ x : M, ∃ U ∈ 𝓝 x, ∃ f : M → F, 𝓒_on n f U ∧ ∀ x ∈ U, P x (f x)) :
-    ∃ f : M → F, 𝓒 n f ∧ ∀ x, P x (f x) := by
+    (hP' : ∀ x : M, ∃ U ∈ 𝓝 x, ∃ f : M → F, CMDiff[U] n f ∧ ∀ x ∈ U, P x (f x)) :
+    ∃ f : M → F, CMDiff n f ∧ ∀ x, P x (f x) := by
   let PP : (Σ x : M, Germ (𝓝 x) F) → Prop := fun p ↦ p.2.ContMDiffAt I n ∧ P p.1 p.2.value
   have hPP : ∀ x : M, ReallyConvex (smoothGerm I x) {φ | PP ⟨x, φ⟩} := fun x ↦ by
     apply ReallyConvex.inter
