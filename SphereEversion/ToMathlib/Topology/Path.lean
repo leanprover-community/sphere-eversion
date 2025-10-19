@@ -53,13 +53,10 @@ theorem strans_of_ge {t t₀ : I} (h : t₀ ≤ t) :
   simp only [Path.coe_mk_mk, Path.strans, ite_eq_right_iff]
   intro h2; obtain rfl := le_antisymm h h2; simp
 
-theorem unitInterval.zero_le (x : I) : 0 ≤ x :=
-  x.prop.1
-
 @[simp]
 theorem strans_zero (γ γ' : Path x x) : γ.strans γ' 0 = γ' := by
   ext t
-  simp +contextual only [strans_of_ge (unitInterval.zero_le t), Icc.coe_zero, div_one,
+  simp +contextual only [strans_of_ge unitInterval.nonneg', Icc.coe_zero, div_one,
     extend_extends', sub_zero]
 
 @[simp]
