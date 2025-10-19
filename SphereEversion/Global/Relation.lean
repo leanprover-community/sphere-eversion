@@ -551,7 +551,7 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
     -- simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe,
     --          mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self _))]
     simp_rw [φ.fderiv_coe, ψ.fderiv_symm_coe]
-    have : ∀ x, mfderiv IN IY ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
+    have : ∀ x, mfderiv% ψ.invFun (ψ (ψ.invFun (bs F (φ x)))) = mfderiv _ _ _ (F.bs (φ x)) :=
       fun x ↦ mfderiv_congr_point (ψ.right_inv (hF <| mem_range_self x))
     simp only [this]
     refine ContMDiff.oneJet_comp IN (fun x' ↦ F.bs (φ x')) ?_ ?_
@@ -587,9 +587,9 @@ theorem OneJetSec.localize_mem_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) {x : 
 theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     (F.localize φ ψ hF).IsHolonomicAt x ↔ F.IsHolonomicAt (φ x) := by
   have :
-    mfderiv IX IY (ψ.invFun ∘ F.bs ∘ φ) x =
+    mfderiv% (ψ.invFun ∘ F.bs ∘ φ) x =
       (ψ.fderiv (ψ.invFun (F.bs (φ x)))).symm.toContinuousLinearMap.comp
-        ((mfderiv IM IN F.bs (φ x)).comp (φ.fderiv x).toContinuousLinearMap) := by
+        ((mfderiv% F.bs (φ x)).comp (φ.fderiv x).toContinuousLinearMap) := by
     have h1 : MDifferentiableAt IN IY ψ.invFun (F.bs (φ x)) :=
       (ψ.contMDiffAt_inv <| hF <| mem_range_self _).mdifferentiableAt (by simp)
     have h2 : MDifferentiableAt IM IN F.bs (φ x) := F.smooth_bs.mdifferentiableAt (by simp)

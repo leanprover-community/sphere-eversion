@@ -292,9 +292,8 @@ lemma ContMDiff.prod_left {n : ℕ∞} (x : M) :
   exact ⟨contMDiff_const, contMDiff_id⟩
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
-theorem ContMDiff.uncurry_left {n : ℕ∞}
-    {f : M → M' → P} (hf : ContMDiff (I.prod I') IP n ↿f) (x : M) :
-    ContMDiff I' IP n (f x) := by
+theorem ContMDiff.uncurry_left {n : ℕ∞} {f : M → M' → P}
+    (hf : ContMDiff (I.prod I') IP n ↿f) (x : M) : CMDiff n (f x) := by
   have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
   -- or just `apply hf.comp (ContMDiff.prod_left I I' x)`
   rw [this]; exact hf.comp (ContMDiff.prod_left I I' x)

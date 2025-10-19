@@ -1,4 +1,5 @@
 import Mathlib.Geometry.Manifold.ContMDiff.Constructions
+import Mathlib.Geometry.Manifold.Notation
 
 open Set Function Filter
 
@@ -31,22 +32,22 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 theorem contMDiff_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔
-      (ContMDiff I I' n fun x ↦ (f x).1) ∧ ContMDiff I J' n fun x ↦ (f x).2 :=
+      (CMDiff n fun x ↦ (f x).1) ∧ CMDiff n fun x ↦ (f x).2 :=
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
 
 theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
     ContMDiffAt I (I'.prod J') n f x ↔
-      ContMDiffAt I I' n (fun x ↦ (f x).1) x ∧ ContMDiffAt I J' n (fun x ↦ (f x).2) x :=
+      CMDiffAt n (fun x ↦ (f x).1) x ∧ CMDiffAt n (fun x ↦ (f x).2) x :=
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
 
 theorem smooth_prod {f : M → M' × N'} :
     ContMDiff I (I'.prod J') ∞ f ↔
-      (ContMDiff I I' ∞ fun x ↦ (f x).1) ∧ ContMDiff I J' ∞ fun x ↦ (f x).2 :=
+      (CMDiff ∞ fun x ↦ (f x).1) ∧ CMDiff ∞ fun x ↦ (f x).2 :=
   contMDiff_prod
 
 theorem smoothAt_prod {f : M → M' × N'} {x : M} :
     ContMDiffAt I (I'.prod J') ∞ f x ↔
-      ContMDiffAt I I' ∞ (fun x ↦ (f x).1) x ∧ ContMDiffAt I J' ∞ (fun x ↦ (f x).2) x :=
+      CMDiffAt ∞ (fun x ↦ (f x).1) x ∧ CMDiffAt ∞ (fun x ↦ (f x).2) x :=
   contMDiffAt_prod
 
 end IsManifold

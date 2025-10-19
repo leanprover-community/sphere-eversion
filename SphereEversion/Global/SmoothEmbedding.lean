@@ -2,6 +2,7 @@ import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Geometry.Manifold.ContMDiff.Atlas
 import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
+import Mathlib.Geometry.Manifold.Notation
 import SphereEversion.Indexing
 import SphereEversion.Notations
 import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
@@ -28,8 +29,8 @@ structure OpenSmoothEmbedding where
   invFun : M' → M
   left_inv' : ∀ {x}, invFun (toFun x) = x
   isOpen_range : IsOpen (range toFun)
-  contMDiff_to : ContMDiff I I' ∞ toFun
-  contMDiffOn_inv : ContMDiffOn I' I ∞ invFun (range toFun)
+  contMDiff_to : CMDiff ∞ toFun
+  contMDiffOn_inv : CMDiff[range toFun] ∞ invFun
 
 attribute [coe] OpenSmoothEmbedding.toFun
 
@@ -59,10 +60,10 @@ theorem right_inv {y : M'} (hy : y ∈ range f) : f (f.invFun y) = y := by
   obtain ⟨x, rfl⟩ := hy;
   rw [f.left_inv]
 
-theorem contMDiffAt_inv {y : M'} (hy : y ∈ range f) : ContMDiffAt I' I ∞ f.invFun y :=
+theorem contMDiffAt_inv {y : M'} (hy : y ∈ range f) : CMDiffAt ∞ f.invFun y :=
   (f.contMDiffOn_inv y hy).contMDiffAt <| f.isOpen_range.mem_nhds hy
 
-theorem contMDiffAt_inv' {x : M} : ContMDiffAt I' I ∞ f.invFun (f x) :=
+theorem contMDiffAt_inv' {x : M} : CMDiffAt ∞ f.invFun (f x) :=
   f.contMDiffAt_inv <| mem_range_self x
 
 theorem leftInverse : Function.LeftInverse f.invFun f :=
@@ -92,7 +93,7 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
     (mem_range_self x)).mdifferentiableWithinAt (mod_cast le_top)).mdifferentiableAt
     (f.isOpenMap.range_mem_nhds x)
   have h₂ : MDifferentiableAt I I' f x := f.contMDiff_to.mdifferentiableAt (mod_cast le_top)
-  ContinuousLinearEquiv.equivOfInverse (mfderiv I I' f x) (mfderiv I' I f.invFun (f x))
+  ContinuousLinearEquiv.equivOfInverse (mfderiv% f x) (mfderiv% f.invFun (f x))
     (by
       intro v
       erw [← ContinuousLinearMap.comp_apply, ← mfderiv_comp x h₁ h₂, f.invFun_comp_coe, mfderiv_id,
@@ -110,19 +111,19 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem fderiv_coe (x : M) :
-    (f.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv I I' f x := by ext; rfl
+    (f.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv% f x := by ext; rfl
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem fderiv_symm_coe (x : M) :
     ((f.fderiv x).symm : TangentSpace I' (f x) →L[𝕜] TangentSpace I x) =
-      mfderiv I' I f.invFun (f x) := by ext; rfl
+      mfderiv% f.invFun (f x) := by ext; rfl
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
     ((f.fderiv (f.invFun x)).symm :
         TangentSpace I' (f (f.invFun x)) →L[𝕜] TangentSpace I (f.invFun x)) =
-      (mfderiv I' I f.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (f.invFun x)) :=
+      (mfderiv% f.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (f.invFun x)) :=
   by rw [fderiv_symm_coe, f.right_inv hx]
 
 end
@@ -424,9 +425,9 @@ open Function
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
     (hK : IsClosed (φ '' K)) (hf : ContMDiff (IM'.prod IM) IN ∞ (uncurry f))
-    (hg : ContMDiff (IM'.prod IX) IY ∞ (uncurry g)) (hk : ContMDiff IM' IM ∞ k)
+    (hg : ContMDiff (IM'.prod IX) IY ∞ (uncurry g)) (hk : CMDiff ∞ k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
-    ContMDiff IM' IN ∞ fun x ↦ update φ ψ (f x) (g x) (k x) := by
+    CMDiff ∞ fun x ↦ update φ ψ (f x) (g x) (k x) := by
   have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx ↦
     nice_update_of_eq_outside_compact_aux φ ψ (f x) (g x) (hg' x) hx
   refine contMDiff_of_locally_contMDiffOn fun x ↦ ?_

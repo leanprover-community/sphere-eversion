@@ -5,6 +5,7 @@ Authors: Michael Rothgang
 -/
 import Mathlib.Geometry.Manifold.ContMDiff.Defs
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
+import Mathlib.Geometry.Manifold.Notation
 
 /-! ## Smooth immersions
 
@@ -52,8 +53,8 @@ section Definition
 
 /-- A `C^n` immersion `f : M → M` is a `C^n` map whose differential is injective at every point. -/
 structure Immersion (f : M → M') (n : WithTop ℕ∞) : Prop where
-  contMDiff : ContMDiff I I' n f
-  diff_injective : ∀ p, Injective (mfderiv I I' f p)
+  contMDiff : CMDiff n f
+  diff_injective : ∀ p, Injective (mfderiv% f p)
 
 /-- An injective `C^n` immersion -/
 structure InjImmersion (f : M → M') (n : WithTop ℕ∞) : Prop extends Immersion I I' f n where

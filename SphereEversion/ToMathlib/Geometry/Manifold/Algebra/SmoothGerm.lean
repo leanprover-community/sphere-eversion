@@ -7,6 +7,7 @@ Authors: Patrick Massot
 import Mathlib.Algebra.Ring.Subring.Order
 import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
+import Mathlib.Geometry.Manifold.Notation
 import Mathlib.Order.Filter.Ring
 import Mathlib.Tactic.Cases
 import Mathlib.Topology.Germ
@@ -174,7 +175,7 @@ def valueₛₗ {F} [AddCommMonoid F] [Module ℝ F] (x : N) :
 variable (I)
 
 protected def ContMDiffAt' {x : M} (φ : Germ (𝓝 x) N) (n : WithTop ℕ∞) : Prop :=
-  Quotient.liftOn' φ (fun f ↦ ContMDiffAt I IG n f x) fun f g h ↦
+  Quotient.liftOn' φ (fun f ↦ CMDiffAt n f x) fun f g h ↦
     propext <| by
       constructor
       all_goals refine fun H ↦ H.congr_of_eventuallyEq ?_
@@ -190,7 +191,7 @@ nonrec def mfderiv {x : M} (φ : Germ (𝓝 x) N) :
     TangentSpace I x →L[ℝ] TangentSpace IG φ.value :=
   @Quotient.hrecOn _ (germSetoid (𝓝 x) N)
     (fun φ : Germ (𝓝 x) N ↦ TangentSpace I x →L[ℝ] TangentSpace IG φ.value) φ
-    (fun f ↦ mfderiv I IG f x) fun _f _g hfg ↦ heq_of_eq (EventuallyEq.mfderiv_eq hfg : _)
+    (fun f ↦ mfderiv% f x) fun _f _g hfg ↦ heq_of_eq (EventuallyEq.mfderiv_eq hfg : _)
 
 variable {I}
 

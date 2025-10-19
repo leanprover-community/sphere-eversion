@@ -10,6 +10,7 @@ import Mathlib.Tactic.Common
 import Mathlib.Analysis.Normed.Module.Completion
 import Mathlib.Geometry.Manifold.Algebra.Monoid
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
+import Mathlib.Geometry.Manifold.Notation
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 import Mathlib.Geometry.Manifold.VectorBundle.Hom
 import Mathlib.Geometry.Manifold.VectorBundle.Pullback
@@ -357,8 +358,8 @@ theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
 
 theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f x₀ ↔
-      ContMDiffAt J I ∞ (fun x ↦ (f x).1.1) x₀ ∧
-        ContMDiffAt J I' ∞ (fun x ↦ (f x).1.2) x₀ ∧
+      CMDiffAt ∞ (fun x ↦ (f x).1.1) x₀ ∧
+        CMDiffAt ∞ (fun x ↦ (f x).1.2) x₀ ∧
           ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞
             (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2)
               x₀) x₀ := by
@@ -369,12 +370,12 @@ theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
 theorem contMDiffAt_oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
         (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ ↔
-      ContMDiffAt J I ∞ f x₀ ∧ ContMDiffAt J I' ∞ g x₀ ∧
+      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧
         ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
   contMDiffAt_oneJetBundle
 
 theorem ContMDiffAt.oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
-    (hf : ContMDiffAt J I ∞ f x₀) (hg : ContMDiffAt J I' ∞ g x₀)
+    (hf : CMDiffAt ∞ f x₀) (hg : CMDiffAt ∞ g x₀)
     (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀) :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
       (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ :=
@@ -384,15 +385,15 @@ variable (I I')
 
 /-- The one-jet extension of a function -/
 def oneJetExt (f : M → M') : M → OneJetBundle I M I' M' := fun x ↦
-  OneJetBundle.mk x (f x) (mfderiv I I' f x)
+  OneJetBundle.mk x (f x) (mfderiv% f x)
 
 variable {I I'}
 
-theorem ContMDiffAt.oneJetExt {f : M → M'} {x : M} (hf : ContMDiffAt I I' ∞ f x) :
+theorem ContMDiffAt.oneJetExt {f : M → M'} {x : M} (hf : CMDiffAt ∞ f x) :
     ContMDiffAt I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ (oneJetExt I I' f) x :=
   contMDiffAt_id.oneJetBundle_mk hf (hf.mfderiv_const le_rfl)
 
-theorem ContMDiff.oneJetExt {f : M → M'} (hf : ContMDiff I I' ∞ f) :
+theorem ContMDiff.oneJetExt {f : M → M'} (hf : CMDiff ∞ f) :
     ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ (oneJetExt I I' f) :=
   fun x ↦ ((hf x).contMDiffAt univ_mem).oneJetExt
 
@@ -473,7 +474,7 @@ variable (I' J')
 protected def OneJetBundle.map (f : M → N) (g : M' → N')
     (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     OneJetBundle I M I' M' → OneJetBundle J N J' N' := fun p ↦
-  OneJetBundle.mk (f p.1.1) (g p.1.2) ((mfderiv I' J' g p.1.2 ∘L p.2) ∘L Dfinv p.1.1)
+  OneJetBundle.mk (f p.1.1) (g p.1.2) ((mfderiv% g p.1.2 ∘L p.2) ∘L Dfinv p.1.1)
 
 variable {I' J'}
 

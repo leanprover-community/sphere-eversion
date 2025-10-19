@@ -6,6 +6,7 @@ Authors: Patrick Massot, Floris van Doorn
 ! This file was ported from Lean 3 source module global.one_jet_sec
 -/
 import Mathlib.Order.Filter.Germ.Basic
+import Mathlib.Geometry.Manifold.Notation
 import SphereEversion.ToMathlib.Topology.Algebra.Module
 import SphereEversion.Global.OneJetBundle
 
@@ -92,13 +93,13 @@ theorem smooth_eta (F : OneJetSec I M I' M') :
       (fun x ↦ OneJetBundle.mk x (F.bs x) (F x).2 : M → OneJetBundle I M I' M') :=
   F.smooth
 
-theorem smooth_bs (F : OneJetSec I M I' M') : ContMDiff I I' ∞ F.bs :=
+theorem smooth_bs (F : OneJetSec I M I' M') : CMDiff ∞ F.bs :=
   contMDiff_oneJetBundle_proj.snd.comp F.smooth
 
 /-- A section of J¹(M, M') is holonomic at (x : M) if its linear map part is the derivative
 of its base map at x. -/
 def IsHolonomicAt (F : OneJetSec I M I' M') (x : M) : Prop :=
-  mfderiv I I' F.bs x = (F x).2
+  mfderiv% F.bs x = (F x).2
 
 /-- A section of J¹(M, M') is holonomic at (x : M) iff it coincides with the 1-jet extension of
 its base map at x. -/
@@ -128,17 +129,17 @@ def IsHolonomic (F : OneJetSec I M I' M') : Prop :=
 end OneJetSec
 
 def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop :=
-  Quotient.liftOn' φ (fun F ↦ mfderiv I I' (fun x' ↦ (F x').1.2) x = (F x).2)
+  Quotient.liftOn' φ (fun F ↦ mfderiv% (fun x' ↦ (F x').1.2) x = (F x).2)
     (by
       letI : Setoid (M → OneJetBundle I M I' M') := (𝓝 x).germSetoid (OneJetBundle I M I' M')
       have key :
         ∀ f g,
           f ≈ g →
             (fun F : M → OneJetBundle I M I' M' ↦
-                  mfderiv I I' (fun x' : M ↦ (F x').proj.snd) x = (F x).snd)
+                  mfderiv% (fun x' : M ↦ (F x').proj.snd) x = (F x).snd)
                 f →
               (fun F : M → OneJetBundle I M I' M' ↦
-                  mfderiv I I' (fun x' : M ↦ (F x').proj.snd) x = (F x).snd)
+                  mfderiv% (fun x' : M ↦ (F x').proj.snd) x = (F x).snd)
                 g :=
     by
         intro f g hfg hf
@@ -149,7 +150,7 @@ def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop
 
 /-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/
 def oneJetExtSec (f : C^∞⟮I, M; I', M'⟯) : OneJetSec I M I' M' :=
-  ⟨f, mfderiv I I' f, f.contMDiff.oneJetExt⟩
+  ⟨f, mfderiv% f, f.contMDiff.oneJetExt⟩
 
 end General
 
@@ -224,7 +225,7 @@ theorem smooth_bs (S : FamilyOneJetSec I M I' M' J N) :
     ContMDiff (J.prod I) I' ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
   contMDiff_oneJetBundle_proj.snd.comp S.smooth
 
-theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : ContMDiff I I' ∞ (S.bs p) :=
+theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : CMDiff ∞ (S.bs p) :=
   (S p).smooth_bs
 
 /-- Reindex a family along a smooth function `f`. -/
@@ -255,7 +256,7 @@ def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M
 
 theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
     S.uncurry.ϕ p =
-      mfderiv IP I' (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
+      mfderiv% (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
         S.ϕ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ EP E := by
   simp_rw [S.uncurry_ϕ, mfderiv_snd]
   congr 1

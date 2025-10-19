@@ -34,7 +34,7 @@ variable {f : N → J¹[𝕜, E, I, M, V]}
 
 -- todo: remove or use to prove `contMDiff_one_jet_eucl_bundle`
 theorem contMDiffAt_one_jet_eucl_bundle' {x₀ : N} :
-    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔ ContMDiffAt J I ∞ (fun x  ↦ (f x).1) x₀ ∧
+    ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔ CMDiffAt ∞ (fun x  ↦ (f x).1) x₀ ∧
     ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x  ↦ show E →L[𝕜] V from
       (f x).2 ∘L (trivializationAt E (TangentSpace I : M → _) (f x₀).1).symmL 𝕜 (f x).1) x₀ := by
   simp_rw [contMDiffAt_hom_bundle, inCoordinates, Trivial.trivializationAt,
@@ -44,7 +44,7 @@ theorem contMDiffAt_one_jet_eucl_bundle' {x₀ : N} :
 
 theorem contMDiffAt_one_jet_eucl_bundle {x₀ : N} :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔
-      ContMDiffAt J I ∞ (fun x  ↦ (f x).1) x₀ ∧
+      CMDiffAt ∞ (fun x  ↦ (f x).1) x₀ ∧
         ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x  ↦ show E →L[𝕜] V from
           (f x).2 ∘L (trivializationAt E (TangentSpace I) (f x₀).proj).symmL 𝕜 (f x).proj) x₀ := by
   rw [contMDiffAt_hom_bundle, and_congr_right_iff]
@@ -61,7 +61,7 @@ theorem contMDiffAt_one_jet_eucl_bundle {x₀ : N} :
   simp_rw [ContinuousLinearMap.id_comp]
 
 theorem ContMDiffAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
-    (hf : ContMDiffAt J I ∞ f x₀)
+    (hf : CMDiffAt ∞ f x₀)
     (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x ↦ show E →L[𝕜] V from
             ϕ x ∘L (trivializationAt E (TangentSpace I : M → _) (f x₀)).symmL 𝕜 (f x)) x₀) :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞
@@ -69,7 +69,7 @@ theorem ContMDiffAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[�
   contMDiffAt_one_jet_eucl_bundle'.mpr ⟨hf, hϕ⟩
 
 theorem ContMDiffAt.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
-    (hf : ContMDiffAt J I ∞ f x₀)
+    (hf : CMDiffAt ∞ f x₀)
     (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x ↦ show E →L[𝕜] V from
       ϕ x ∘L (trivializationAt E (TangentSpace I) (f x₀)).symmL 𝕜 (f x)) x₀) :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞
