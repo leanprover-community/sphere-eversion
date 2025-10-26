@@ -9,7 +9,8 @@ linter.mathlibStandardSet = true
 
 [[require]]
 name = "mathlib"
-scope = "leanprover-community"
+git = "https://github.com/grunweg/mathlib4.git"
+rev = "diffgeo-use-custom-elaborators"
 
 [[require]]
 name = "checkdecls"

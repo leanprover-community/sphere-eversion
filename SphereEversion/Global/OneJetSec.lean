@@ -222,7 +222,7 @@ protected theorem smooth (S : FamilyOneJetSec I M I' M' J N) :
   S.smooth'
 
 theorem smooth_bs (S : FamilyOneJetSec I M I' M' J N) :
-    ContMDiff (J.prod I) I' ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
+    CMDiff ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
   contMDiff_oneJetBundle_proj.snd.comp S.smooth
 
 theorem smooth_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : CMDiff ∞ (S.bs p) :=

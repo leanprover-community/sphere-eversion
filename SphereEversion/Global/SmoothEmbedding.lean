@@ -424,8 +424,8 @@ open Function
 
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
-    (hK : IsClosed (φ '' K)) (hf : ContMDiff (IM'.prod IM) IN ∞ (uncurry f))
-    (hg : ContMDiff (IM'.prod IX) IY ∞ (uncurry g)) (hk : CMDiff ∞ k)
+    (hK : IsClosed (φ '' K))
+    (hf : CMDiff ∞ (uncurry f)) (hg : CMDiff ∞ (uncurry g)) (hk : CMDiff ∞ k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
     CMDiff ∞ fun x ↦ update φ ψ (f x) (g x) (k x) := by
   have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx ↦
