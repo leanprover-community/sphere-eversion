@@ -35,7 +35,7 @@ variable {f : N → J¹[𝕜, E, I, M, V]}
 -- todo: remove or use to prove `contMDiff_one_jet_eucl_bundle`
 theorem contMDiffAt_one_jet_eucl_bundle' {x₀ : N} :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔ CMDiffAt ∞ (fun x  ↦ (f x).1) x₀ ∧
-    ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x  ↦ show E →L[𝕜] V from
+    CMDiffAt ∞ (fun x  ↦ show E →L[𝕜] V from
       (f x).2 ∘L (trivializationAt E (TangentSpace I : M → _) (f x₀).1).symmL 𝕜 (f x).1) x₀ := by
   simp_rw [contMDiffAt_hom_bundle, inCoordinates, Trivial.trivializationAt,
     Trivial.trivialization_continuousLinearMapAt]
@@ -45,7 +45,7 @@ theorem contMDiffAt_one_jet_eucl_bundle' {x₀ : N} :
 theorem contMDiffAt_one_jet_eucl_bundle {x₀ : N} :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ f x₀ ↔
       CMDiffAt ∞ (fun x  ↦ (f x).1) x₀ ∧
-        ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x  ↦ show E →L[𝕜] V from
+        CMDiffAt ∞ (fun x ↦ show E →L[𝕜] V from
           (f x).2 ∘L (trivializationAt E (TangentSpace I) (f x₀).proj).symmL 𝕜 (f x).proj) x₀ := by
   rw [contMDiffAt_hom_bundle, and_congr_right_iff]
   intro hf
@@ -62,7 +62,7 @@ theorem contMDiffAt_one_jet_eucl_bundle {x₀ : N} :
 
 theorem ContMDiffAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
     (hf : CMDiffAt ∞ f x₀)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x ↦ show E →L[𝕜] V from
+    (hϕ : CMDiffAt ∞ (fun x ↦ show E →L[𝕜] V from
             ϕ x ∘L (trivializationAt E (TangentSpace I : M → _) (f x₀)).symmL 𝕜 (f x)) x₀) :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞
       (fun x ↦ Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹[𝕜, E, I, M, V]) x₀ :=
@@ -70,7 +70,7 @@ theorem ContMDiffAt.one_jet_eucl_bundle_mk' {f : N → M} {ϕ : N → E →L[�
 
 theorem ContMDiffAt.one_jet_eucl_bundle_mk {f : N → M} {ϕ : N → E →L[𝕜] V} {x₀ : N}
     (hf : CMDiffAt ∞ f x₀)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] V) ∞ (fun x ↦ show E →L[𝕜] V from
+    (hϕ : CMDiffAt ∞ (fun x ↦ show E →L[𝕜] V from
       ϕ x ∘L (trivializationAt E (TangentSpace I) (f x₀)).symmL 𝕜 (f x)) x₀) :
     ContMDiffAt J (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞
       (fun x ↦ Bundle.TotalSpace.mk (f x) (ϕ x) : N → J¹[𝕜, E, I, M, V]) x₀ :=
@@ -218,9 +218,8 @@ def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ∞ f)
     ext : 1 <;> simp
 
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
-    (i_smooth : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ∞ i x₀) :
-    FamilyOneJetEuclSec I M V' J N
-    where
+    (i_smooth : ∀ x₀ : N × M, CMDiffAt ∞ i x₀) :
+    FamilyOneJetEuclSec I M V' J N where
   toFun p := ⟨p.2, (i p).comp (s p.2).2⟩
   is_sec' p := rfl
   smooth' := by

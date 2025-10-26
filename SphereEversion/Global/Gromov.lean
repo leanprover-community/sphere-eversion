@@ -67,10 +67,8 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     rintro a b ⟨t, x⟩ f h
     change ContMDiffAt _ _ _ (f ∘ fun p : ℝ × M ↦ (a * p.1 + b, p.2)) (t, x)
     change ContMDiffAt _ _ _ f ((fun p : ℝ × M ↦ (a * p.1 + b, p.2)) (t, x)) at h
-    have :
-      ContMDiffAt (𝓘(ℝ, ℝ).prod IM) (𝓘(ℝ, ℝ).prod IM) ∞ (fun p : ℝ × M ↦ (a * p.1 + b, p.2))
-        (t, x) :=
-      haveI h₁ : ContMDiffAt 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ) ∞ (fun t ↦ a * t + b) t :=
+    have : CMDiffAt ∞ (fun p : ℝ × M ↦ (a * p.1 + b, p.2)) (t, x) :=
+      haveI h₁ : CMDiffAt ∞ (fun t ↦ a * t + b) t :=
         contMDiffAt_iff_contDiffAt.mpr
           (((contDiffAt_id : ContDiffAt ℝ ∞ id t).const_smul a).add contDiffAt_const)
       h₁.prodMap contMDiffAt_id
