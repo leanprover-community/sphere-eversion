@@ -171,16 +171,13 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
   smooth' := by
     rintro ⟨⟨t, s⟩, x⟩
     refine contMDiffAt_snd.oneJetBundle_mk (S.smooth_bs.comp contMDiff_prod_assoc _) ?_
-    have h1 :
-      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E') ∞
-        (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
+    have h1 : CMDiffAt ∞ (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).bs (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
         ((t, s), x) := by
       apply (contMDiffAt_oneJetBundle.mp <|
         ContMDiffAt.comp ((t, s), x) (S.smooth (t, (s, x))) (contMDiff_prod_assoc ((t, s), x))).2.2
-    have h2 :
-      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E) ∞
+    have h2 : CMDiffAt ∞
         (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ mfderiv I (IP.prod I) (fun x : M ↦ (p.1.2, x)) p.2) ((t, s), x))
         ((t, s), x) := by
