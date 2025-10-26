@@ -224,7 +224,7 @@ protected theorem contMDiff (S : FamilyOneJetSec I M I' M' J N) :
   S.contMDiff'
 
 theorem contMDiff_bs (S : FamilyOneJetSec I M I' M' J N) :
-    ContMDiff (J.prod I) I' ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
+    CMDiff ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
   contMDiff_oneJetBundle_proj.snd.comp S.contMDiff
 
 theorem contMDiff_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : CMDiff ∞ (S.bs p) :=
