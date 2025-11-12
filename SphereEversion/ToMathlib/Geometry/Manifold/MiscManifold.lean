@@ -30,12 +30,12 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M'']
   {e : OpenPartialHomeomorph M H} {f : M → M'} {m n : WithTop ℕ∞} {s : Set M} {x x' : M}
 
-theorem contMDiff_prod {f : M → M' × N'} :
+theorem contMDiff_prodMk {f : M → M' × N'} :
     ContMDiff I (I'.prod J') n f ↔
       (CMDiff n fun x ↦ (f x).1) ∧ CMDiff n fun x ↦ (f x).2 :=
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
 
-theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
+theorem contMDiffAt_prodMk {f : M → M' × N'} {x : M} :
     ContMDiffAt I (I'.prod J') n f x ↔
       CMDiffAt n (fun x ↦ (f x).1) x ∧ CMDiffAt n (fun x ↦ (f x).2) x :=
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
