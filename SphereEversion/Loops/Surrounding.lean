@@ -92,10 +92,11 @@ set_option hygiene true
 /-
 The definition below gets a prime because it clashes with a manifold definition
 in mathlib which is in the root namespace.
+XXX: this is no longer true.
 -/
 /-- `f` is smooth at `x` if `f` is smooth on some neighborhood of `x`. -/
 def SmoothAt' (f : E → F) (x : E) : Prop :=
-  ∃ s ∈ 𝓝 x, smooth_on f s
+  ∃ s ∈ 𝓝 x, ContDiffOn ℝ ∞ f s
 
 section SurroundingPoints
 
