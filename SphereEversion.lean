@@ -45,7 +45,6 @@ import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
 import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
 import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.ExtChartAt
 import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
-import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 import SphereEversion.ToMathlib.LinearAlgebra.Basic
 import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional

@@ -1,5 +1,4 @@
 import Mathlib.Geometry.Manifold.VectorBundle.Tangent
-import SphereEversion.ToMathlib.Geometry.Manifold.MiscManifold
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
 import Mathlib.Analysis.Calculus.ContDiff.Defs
 
