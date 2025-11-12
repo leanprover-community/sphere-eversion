@@ -40,14 +40,4 @@ theorem contMDiffAt_prod {f : M → M' × N'} {x : M} :
       CMDiffAt n (fun x ↦ (f x).1) x ∧ CMDiffAt n (fun x ↦ (f x).2) x :=
   ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
 
-theorem smooth_prod {f : M → M' × N'} :
-    ContMDiff I (I'.prod J') ∞ f ↔
-      (CMDiff ∞ fun x ↦ (f x).1) ∧ CMDiff ∞ fun x ↦ (f x).2 :=
-  contMDiff_prod
-
-theorem smoothAt_prod {f : M → M' × N'} {x : M} :
-    ContMDiffAt I (I'.prod J') ∞ f x ↔
-      CMDiffAt ∞ (fun x ↦ (f x).1) x ∧ CMDiffAt ∞ (fun x ↦ (f x).2) x :=
-  contMDiffAt_prod
-
 end IsManifold
