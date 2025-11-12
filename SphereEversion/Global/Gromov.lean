@@ -48,7 +48,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     inhabit M
     exact (IsEmpty.false <| 𝓕₀.bs default).elim
   -- We now start the main proof under the assumption that `M` and `X` are nonempty.
-  have cont : Continuous 𝓕₀.bs := 𝓕₀.smooth_bs.continuous
+  have cont : Continuous 𝓕₀.bs := 𝓕₀.contMDiff_bs.continuous
   rcases exists_stability_dist IM IX cont with ⟨ε, ε_pos, ε_cont, hε⟩
   let τ := fun x : M ↦ min (δ x) (ε x)
   have τ_pos : ∀ x, 0 < τ x := fun x ↦ lt_min (hδ_pos x) (ε_pos x)
@@ -76,7 +76,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       h₁.prodMap contMDiffAt_id
     exact h.comp (t, x) this
   have init : ∀ x : M, P₀ x (𝓕₀ : M → J¹) := by
-    refine fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.smooth x, ?_, ?_⟩
+    refine fun x ↦ ⟨rfl, 𝓕₀.is_sol x, 𝓕₀.contMDiff x, ?_, ?_⟩
     · revert x
       exact forall_restrictGermPredicate_of_forall fun x ↦ rfl
     · erw [dist_self]
@@ -132,12 +132,12 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
     have η_cont : Continuous η := by
       have : ContMDiff IM ((IM.prod IX).prod 𝓘(ℝ, EM →L[ℝ] EX)) ∞ f := fun x ↦ hf_smooth x
       apply τ_cont.sub
-      exact (oneJetBundle_proj_continuous.comp this.continuous).snd.dist 𝓕₀.smooth_bs.continuous
+      exact (oneJetBundle_proj_continuous.comp this.continuous).snd.dist 𝓕₀.contMDiff_bs.continuous
     rcases φ.improve_formalSol ψ hRample hRopen (hA.union C_closed) η_pos η_cont hFφψ hFAC K₀_cpct
         K₁_cpct K₀K₁' with
       ⟨F', hF'₀, hF'₁, hF'AC, hF'K₁, hF'η, hF'hol⟩
     refine ⟨fun t x ↦ F' t x, ?_, ?_, ?_, ?_, ?_, ?_⟩; all_goals beta_reduce
-    · refine fun t x ↦ ⟨rfl, F'.is_sol, (F' t).smooth x, ?_, ?_⟩
+    · refine fun t x ↦ ⟨rfl, F'.is_sol, (F' t).contMDiff x, ?_, ?_⟩
       · revert x
         rw [forall_restrictGermPredicate_iff]
         rw [Eventually.union_nhdsSet] at hF'AC
@@ -153,7 +153,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
           _ = τ x := by simp [F, η]
     · rw [union_assoc, Eventually.union_nhdsSet, image_preimage_eq_of_subset K₀φ] at hF'hol
       exact hF'hol.2
-    · exact F'.smooth
+    · exact F'.contMDiff
     · intro t x hx
       replace hx : x ∉ φ '' (φ ⁻¹' K₁) := by rwa [image_preimage_eq_of_subset K₁φ]
       simpa [F] using hF'K₁ t x hx

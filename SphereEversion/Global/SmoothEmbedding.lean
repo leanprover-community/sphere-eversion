@@ -423,7 +423,7 @@ theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
 open Function
 
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
-theorem smooth_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
+theorem contMDiff_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
     (hK : IsClosed (φ '' K)) (hf : ContMDiff (IM'.prod IM) IN ∞ (uncurry f))
     (hg : ContMDiff (IM'.prod IX) IY ∞ (uncurry g)) (hk : CMDiff ∞ k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :

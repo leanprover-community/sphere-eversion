@@ -28,12 +28,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 between those vector spaces. -/
 def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' where
   f := F.bs
-  f_diff := F.smooth_bs.contDiff
+  f_diff := F.contMDiff_bs.contDiff
   φ x := (F x).2
   φ_diff := by
     rw [contDiff_iff_contDiffAt]
     intro x₀
-    have : ContMDiffAt _ _ _ _ _ := F.smooth x₀
+    have : ContMDiffAt _ _ _ _ _ := F.contMDiff x₀
     simp_rw +unfoldPartialApp [contMDiffAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
       ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id, TangentSpace,
@@ -74,7 +74,7 @@ between those vector spaces seen as manifolds. -/
 def JetSec.unloc (𝓕 : JetSec E E') : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' where
   bs := 𝓕.f
   ϕ x := (𝓕 x).2
-  smooth' := by
+  contMDiff' := by
     refine fun a ↦ contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_id, 𝓕.f_diff.contMDiff a, ?_⟩
     rw [inTangentCoordinates_model_space]
     exact 𝓕.φ_diff.contMDiff a
@@ -88,7 +88,7 @@ theorem JetSec.unloc_hol_at_iff (𝓕 : JetSec E E') (x : E) :
 def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' where
   bs t := (𝓕 t).f
   ϕ t x := (𝓕 t x).2
-  smooth' := by
+  contMDiff' := by
     intro a
     refine contMDiffAt_oneJetBundle.mpr ⟨contMDiffAt_snd, ?_, ?_⟩
     · apply (𝓕.f_diff.contMDiff (a.fst, a.snd)).comp a
@@ -278,7 +278,7 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
       OpenSmoothEmbedding.transfer_proj_snd]
     rfl
   rcases p.φ.dist_update p.ψ p.hK₁ (isCompact_Icc : IsCompact (Icc 0 1 : Set ℝ))
-      (fun _t m ↦ F.bs m) (F.smooth_bs.continuous.comp continuous_snd)
+      (fun _t m ↦ F.bs m) (F.contMDiff_bs.continuous.comp continuous_snd)
       (fun _t ↦ range_comp bsF p.φ ▸ hF) hδ_pos hδ_cont with
     ⟨η, η_pos, hη⟩
   refine ⟨η, η_pos, ?_⟩

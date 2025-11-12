@@ -85,7 +85,7 @@ section Sections
 structure OneJetEuclSec where
   toFun : M → J¹[𝕜, E, I, M, V]
   is_sec' : ∀ p, (toFun p).1 = p
-  smooth' : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ toFun
+  contMDiff' : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ toFun
 
 variable {I M V}
 
@@ -100,8 +100,9 @@ theorem OneJetEuclSec.is_sec (s : OneJetEuclSec I M V) (p : M) : (s p).1 = p :=
   s.is_sec' p
 
 @[simp]
-theorem OneJetEuclSec.smooth (s : OneJetEuclSec I M V) : ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ s :=
-  s.smooth'
+theorem OneJetEuclSec.contMDiff (s : OneJetEuclSec I M V) :
+    ContMDiff I (I.prod 𝓘(𝕜, E →L[𝕜] V)) ∞ s :=
+  s.contMDiff'
 
 end Sections
 
@@ -120,7 +121,7 @@ constructed using the fact that each tangent space to `V` is canonically isomorp
 def proj (v : OneJetBundle I M 𝓘(𝕜, V) V) : J¹[𝕜, E, I, M, V] :=
   ⟨v.1.1, v.2⟩
 
-theorem smooth_proj : ContMDiff ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, E →L[𝕜] V))
+theorem contMDiff_proj : ContMDiff ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) (I.prod 𝓘(𝕜, E →L[𝕜] V))
     ∞ (proj I M V) := by
   intro x₀
   have : ContMDiffAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ ∞ id x₀ := contMDiffAt_id
@@ -134,7 +135,7 @@ variable {I M V}
 def drop (s : OneJetSec I M 𝓘(𝕜, V) V) : OneJetEuclSec I M V where
   toFun := (proj I M V).comp s
   is_sec' _ := rfl
-  smooth' := (smooth_proj I M V).comp s.smooth
+  contMDiff' := (contMDiff_proj I M V).comp s.contMDiff
 
 end proj
 
@@ -147,7 +148,7 @@ tangent space to `V` is canonically isomorphic to `V`. -/
 def incl (v : J¹[𝕜, E, I, M, V] × V) : OneJetBundle I M 𝓘(𝕜, V) V :=
   ⟨(v.1.1, v.2), v.1.2⟩
 
-theorem smooth_incl : ContMDiff ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V))
+theorem contMDiff_incl : ContMDiff ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V))
     ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) ∞ (incl I M V) := by
   intro x₀
   have : ContMDiffAt ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V)) _ ∞ Prod.fst x₀ := contMDiffAt_fst
@@ -186,7 +187,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
 structure FamilyOneJetEuclSec where
   toFun : N × M → J¹[ℝ, E, I, M, V]
   is_sec' : ∀ p, (toFun p).1 = p.2
-  smooth' : ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ∞ toFun
+  contMDiff' : ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ∞ toFun
 
 instance : FunLike (FamilyOneJetEuclSec I M V J N) (N × M) J¹[ℝ, E, I, M, V] where
   coe := FamilyOneJetEuclSec.toFun
@@ -202,9 +203,9 @@ theorem FamilyOneJetEuclSec.is_sec (s : FamilyOneJetEuclSec I M V J N) (p : N ×
   s.is_sec' p
 
 @[simp]
-theorem FamilyOneJetEuclSec.smooth (s : FamilyOneJetEuclSec I M V J N) :
+theorem FamilyOneJetEuclSec.contMDiff (s : FamilyOneJetEuclSec I M V J N) :
     ContMDiff (J.prod I) (I.prod 𝓘(ℝ, E →L[ℝ] V)) ∞ s :=
-  s.smooth'
+  s.contMDiff'
 
 variable {V'}
 
@@ -213,22 +214,22 @@ def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ∞ f)
     where
   bs n m := (incl I M V (s (n, m), f (n, m))).1.2
   ϕ n m := (incl I M V (s (n, m), f (n, m))).2
-  smooth' := by
-    convert (smooth_incl I M V).comp (s.smooth.prodMk hf)
+  contMDiff' := by
+    convert (contMDiff_incl I M V).comp (s.contMDiff.prodMk hf)
     ext : 1 <;> simp
 
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
-    (i_smooth : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ∞ i x₀) :
+    (hi : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ∞ i x₀) :
     FamilyOneJetEuclSec I M V' J N
     where
   toFun p := ⟨p.2, (i p).comp (s p.2).2⟩
   is_sec' p := rfl
-  smooth' := by
+  contMDiff' := by
     refine fun x₀ ↦ contMDiffAt_snd.one_jet_eucl_bundle_mk' ?_
     simp_rw [ContinuousLinearMap.comp_assoc]
-    have : ContMDiffAt (J.prod I) _ ∞ (fun x : N × M  ↦ _) x₀ := s.smooth.comp contMDiff_snd x₀
+    have : ContMDiffAt (J.prod I) _ ∞ (fun x : N × M  ↦ _) x₀ := s.contMDiff.comp contMDiff_snd x₀
     rw [contMDiffAt_one_jet_eucl_bundle'] at this
-    refine (i_smooth x₀).clm_comp ?_
+    refine (hi x₀).clm_comp ?_
     convert this.2 <;> simp [s.is_sec]
 
 end familyTwist
