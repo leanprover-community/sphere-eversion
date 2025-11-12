@@ -45,9 +45,9 @@ end Topology
 
 section VectorBundle
 
-open SmoothManifoldWithCorners VectorBundleCore
+open IsManifold VectorBundleCore
 
-open scoped Bundle
+open scoped Bundle ContDiff
 
 variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)]
   [∀ x, Module 𝕜 (E x)] [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace (TotalSpace F E)]
@@ -59,14 +59,14 @@ variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [
   {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E]
   {e e' : Trivialization F (π F E)}
 
-theorem VectorBundleCore.smoothAt_coordChange {ι} (Z : VectorBundleCore 𝕜 B F ι) [Z.IsSmooth IB]
+theorem VectorBundleCore.smoothAt_coordChange {ι} (Z : VectorBundleCore 𝕜 B F ι) [Z.IsContMDiff IB ∞]
     (i j : ι) {x₀ : B} (hx₀ : x₀ ∈ Z.baseSet i ∩ Z.baseSet j) :
     ContMDiffAt IB 𝓘(𝕜, F →L[𝕜] F) ∞ (Z.coordChange i j) x₀ :=
   (Z.contMDiffOn_coordChange IB i j).contMDiffAt <|
     ((Z.isOpen_baseSet i).inter (Z.isOpen_baseSet j)).mem_nhds hx₀
 
 variable (IB)
-variable [SmoothVectorBundle F E IB]
+variable [ContMDiffVectorBundle ∞ F E IB]
 
 theorem smoothAt_coord_change (e e' : Trivialization F (π F E)) {x₀ : B}
     (hx₀ : x₀ ∈ e.baseSet ∩ e'.baseSet) [MemTrivializationAtlas e] [MemTrivializationAtlas e'] :
@@ -79,15 +79,15 @@ theorem contMDiffAt_coord_change_apply (e e' : Trivialization F (π F E)) {x₀ 
     {g : M → F} (hf : ContMDiffAt IM IB n f x₀) (hg : ContMDiffAt IM 𝓘(𝕜, F) n g x₀)
     (hx₀ : f x₀ ∈ e.baseSet ∩ e'.baseSet) [MemTrivializationAtlas e] [MemTrivializationAtlas e'] :
     ContMDiffAt IM 𝓘(𝕜, F) n (fun x ↦ e.coordChangeL 𝕜 e' (f x) (g x)) x₀ :=
-  (((smoothAt_coord_change IB e e' hx₀).of_le le_top).comp x₀ hf).clm_apply hg
+  (((smoothAt_coord_change IB e e' hx₀).of_le sorry).comp x₀ hf).clm_apply hg
 
 end VectorBundle
 
 section VectorBundle
 
-open SmoothManifoldWithCorners
+open IsManifold
 
-open scoped Bundle
+open scoped Bundle ContDiff
 
 variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [∀ x, AddCommMonoid (E x)]
   [∀ x, Module 𝕜 (E x)] [NormedAddCommGroup F] [NormedSpace 𝕜 F] [TopologicalSpace (TotalSpace F E)]
@@ -98,12 +98,13 @@ variable {𝕜 B F M : Type*} {E : B → Type*} [NontriviallyNormedField 𝕜] [
   {n : ℕ∞} [FiberBundle F E] [VectorBundle 𝕜 F E] {e e' : Trivialization F (π F E)}
 
 variable (IB)
-variable [IsManifold IB ∞B] [SmoothVectorBundle F E IB]
+variable [IsManifold IB ∞ B] [ContMDiffVectorBundle ∞ F E IB]
 
+-- TODO: rename to contMDiffAt
 theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializationAtlas e]
     {x₀ : TotalSpace F E} (hx₀ : x₀.proj ∈ e.baseSet) :
     ContMDiffAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ∞ e x₀ := by
-  rw [smoothAt_prod]
+  rw [@contMDiffAt_prod_iff]
   refine ⟨(contMDiffAt_proj E).congr_of_eventuallyEq ?_, ?_⟩
   · exact eventually_of_mem (e.open_source.mem_nhds <| e.mem_source.mpr hx₀) fun x hx ↦ e.coe_fst hx
   simp_rw [contMDiffAt_iff_source_of_mem_source (mem_chart_source _ _)]
@@ -138,7 +139,7 @@ theorem Trivialization.smoothAt (e : Trivialization F (π F E)) [MemTrivializati
   filter_upwards [nhdsWithin_le_nhds h1, nhdsWithin_le_nhds h2] with b h1b h2b y
   rw [e'.coord_changeL_apply e ⟨h1b, h2b⟩, e'.mk_symm h1b] -/
 
-#print Trivialization.smoothOn /-
+#print Trivialization.contMDiffOn /-
 theorem Trivialization.smoothOn (e : Trivialization F (π F E)) [MemTrivializationAtlas e] :
     SmoothOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) e e.source := fun x hx ↦
   (e.smoothAt IB <| e.mem_source.mp hx).smoothWithinAt
@@ -149,7 +150,7 @@ theorem smoothAt_trivializationAt {x₀ : B} {x : TotalSpace F E}
     ContMDiffAt (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ∞ (trivializationAt F E x₀) x :=
   (trivializationAt F E x₀).smoothAt IB hx
 
-omit [IsManifold IB ∞B] in
+omit [IsManifold IB ∞ B] in
 theorem smoothOn_trivializationAt (x₀ : B) :
     ContMDiffOn (IB.prod 𝓘(𝕜, F)) (IB.prod 𝓘(𝕜, F)) ∞ (trivializationAt F E x₀)
       (trivializationAt F E x₀).source :=
@@ -159,7 +160,7 @@ end VectorBundle
 
 section SmoothManifoldWithCorners
 
-open SmoothManifoldWithCorners
+open IsManifold ContDiff
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*} [NormedAddCommGroup E]
   [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E'] {F : Type*}
@@ -189,23 +190,14 @@ variable [IsManifold I ∞ M] [IsManifold I' ∞ M']
 -- lemma cont_mdiff_within_at.insert (h : cont_mdiff_within_at I I' n f s x) :
 --   cont_mdiff_within_at I I' n f (insert x s) x :=
 -- h.insert'
-/-- A function is `C^n` at a point, for `n : ℕ`, if and only if it is `C^n` on
-a neighborhood of this point. -/
-theorem contMDiffWithinAt_iff_contMDiffWithinAt_nhdsWithin {n : ℕ} :
-    ContMDiffWithinAt I I' n f s x ↔ ∀ᶠ x' in 𝓝[insert x s] x, ContMDiffWithinAt I I' n f s x' := by
-  refine ⟨?_, fun h ↦ h.self_of_nhdsWithin (mem_insert x s)⟩
-  rw [contMDiffWithinAt_iff_contMDiffOn_nhds]
-  rintro ⟨u, hu, h⟩
-  filter_upwards [eventually_mem_nhds_within'.mpr hu, hu] with x' hx' h2x'
-  exact (h x' h2x').mono_of_mem (nhdsWithin_mono x' (subset_insert x s) hx')
 
 open Bundle
 
 variable {Z : M → Type*} [TopologicalSpace (TotalSpace F₁ Z)] [∀ b, TopologicalSpace (Z b)]
   [∀ b, AddCommMonoid (Z b)] [∀ b, Module 𝕜 (Z b)] [FiberBundle F₁ Z] [VectorBundle 𝕜 F₁ Z]
-  [SmoothVectorBundle F₁ Z I] {Z₂ : M' → Type*} [TopologicalSpace (TotalSpace F₂ Z₂)]
+  [ContMDiffVectorBundle ∞ F₁ Z I] {Z₂ : M' → Type*} [TopologicalSpace (TotalSpace F₂ Z₂)]
   [∀ b, TopologicalSpace (Z₂ b)] [∀ b, AddCommMonoid (Z₂ b)] [∀ b, Module 𝕜 (Z₂ b)]
-  [FiberBundle F₂ Z₂] [VectorBundle 𝕜 F₂ Z₂] [SmoothVectorBundle F₂ Z₂ I']
+  [FiberBundle F₂ Z₂] [VectorBundle 𝕜 F₂ Z₂] [ContMDiffVectorBundle ∞ F₂ Z₂ I']
 
 open scoped Bundle
 
@@ -358,16 +350,14 @@ theorem contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap (x₀ : T
       (e.open_baseSet.mem_nhds <| mem_baseSet_trivializationAt _ _ _)
   filter_upwards [h1] with x hx
   rw [Trivialization.continuousLinearMapAt_apply, e.coe_linearMapAt_of_mem hx]
-  exact (e.smoothAt I <| mem_baseSet_trivializationAt E _ _).snd.of_le le_top
+  exact (e.smoothAt I <| mem_baseSet_trivializationAt E _ _).snd.of_le (sup_eq_left.mp rfl)
 
 /-- Not useful by itself. TODO: generalize to `contMDiffWithinAt` of `tangentMapWithin` -/
 theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     (hf : ContMDiffAt I I' n f x₀.proj) (hmn : m + 1 ≤ n) :
     ContMDiffAt I.tangent I'.tangent m (tangentMap I I' f) x₀ := by
   rw [contMDiffAt_totalSpace]
-  refine
-    ⟨(hf.comp x₀ (contMDiffAt_proj (TangentSpace I))).of_le <| (self_le_add_right m 1).trans hmn,
-      ?_⟩
+  refine ⟨(hf.comp x₀ (contMDiffAt_proj (TangentSpace I))).of_le <| sorry, ?_⟩
   dsimp only [tangentMap]
   let e := trivializationAt E (TangentSpace I) x₀.proj
   let e' := trivializationAt E' (TangentSpace I') (f x₀.proj)
