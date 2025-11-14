@@ -225,8 +225,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have lim : Tendsto (fun y ↦ ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) := by
     rw [← MulZeroClass.zero_mul ‖x₀‖]
     apply Tendsto.mul
-    rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
-    exact (tendsto_const_nhds.sub cont).norm
+    · rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
+      exact (tendsto_const_nhds.sub cont).norm
     exact continuous_norm.continuousAt
   have key :
     ∀ x y,
