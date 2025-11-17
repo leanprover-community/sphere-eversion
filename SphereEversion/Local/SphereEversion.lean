@@ -107,7 +107,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     refine (continuousAt_const.inner continuousAt_fst).prodMk ?_
     apply ContinuousAt.compL
     · apply ContinuousAt.compL
-      exact continuousAt_snd.comp continuousAt_snd
+      · exact continuousAt_snd.comp continuousAt_snd
       -- Faster than change.
       suffices ContinuousAt ((fun x ↦ (ℝ ∙ x)ᗮ.subtypeL.comp pr[x]ᗮ) ∘ Prod.fst) (x₀, y₀, φ₀) by
         exact this
@@ -150,7 +150,7 @@ theorem loc_immersion_rel_open : IsOpen (immersionSphereRel E F) := by
     change InjOn φ (ℝ ∙ x)ᗮ
     have : range (subtypeL (ℝ ∙ x)ᗮ ∘ pr[x]ᗮ ∘ j₀) = (ℝ ∙ x)ᗮ := by
       rw [Function.Surjective.range_comp]
-      exact Subtype.range_coe
+      · exact Subtype.range_coe
       exact (orthogonalProjectionOrthogonalLineIso hxx₀).surjective
     rw [← this]
     exact Function.Injective.injOn_range Hφ
@@ -387,10 +387,10 @@ theorem locFormalEversion_hol :
         (isOpen_Ioi.preimage (contDiff_norm_sq ℝ : 𝒞 ∞ _).continuous)
     · rintro ⟨s, x⟩ ⟨hs, hx⟩
       refine ⟨?_, ?_⟩
-      simp_rw [mem_insert_iff, mem_singleton_iff] at hs
-      rcases hs with (rfl | rfl)
-      · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
-      · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
+      · simp_rw [mem_insert_iff, mem_singleton_iff] at hs
+        rcases hs with (rfl | rfl)
+        · exact Or.inl (show (0 : ℝ) < 1 / 4 by norm_num)
+        · exact Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)
       simp_rw [mem_sphere_zero_iff_norm] at hx
       simp_rw [mem_preimage, hx, one_pow, mem_Ioi]
       norm_num

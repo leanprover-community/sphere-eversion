@@ -47,15 +47,3 @@ theorem LinearMap.injective_iff_of_direct_sum (f : M →ₛₗ[σ₁₂] M₂) (
     exact hq v hv hx
 
 end
-
-theorem LinearMap.ker_inf_eq_bot {R : Type*} {R₂ : Type*} {M : Type*} {M₂ : Type*} [Ring R]
-    [Ring R₂] [AddCommGroup M] [AddCommGroup M₂] [Module R M] [Module R₂ M₂] {τ₁₂ : R →+* R₂}
-    {f : M →ₛₗ[τ₁₂] M₂} {S : Submodule R M} : LinearMap.ker f ⊓ S = ⊥ ↔ Set.InjOn f S := by
-  rw [Set.injOn_iff_injective, inf_comm, ← disjoint_iff, LinearMap.disjoint_ker']
-  constructor
-  · intro h x y hxy
-    exact Subtype.coe_injective (h x x.prop y y.prop hxy)
-  · intro h x hx y hy hxy
-    have : (S : Set M).restrict f ⟨x, hx⟩ = (S : Set M).restrict f ⟨y, hy⟩ := hxy
-    cases h this
-    rfl

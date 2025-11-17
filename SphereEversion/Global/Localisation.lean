@@ -216,7 +216,10 @@ theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ
           · exact hm h.hF x h'' rfl
           · exact h.hFF x h'' t
         rw [Prod.ext_iff] at this
-        ext1; rfl; exact this.1; exact this.2
+        ext1
+        · rfl
+        · exact this.1
+        · exact this.2
       change p.φ.transfer p.ψ ((𝓕 t).unloc x) = F (p.φ x)
       rw [this, transfer_localize]
       rfl

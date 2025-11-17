@@ -351,12 +351,12 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
           corrugation.remainder L.p.π N (L.loop h 1) x
       φ_diff := by
         apply ContDiff.add
-        apply L.p.smooth_update
-        apply 𝓕.φ_diff
-        apply L.loop_smooth'
-        apply contDiff_const
-        apply contDiff_const.mul L.π.contDiff
-        exact contDiff_id
+        · apply L.p.smooth_update
+          · apply 𝓕.φ_diff
+          apply L.loop_smooth'
+          · apply contDiff_const
+          · apply contDiff_const.mul L.π.contDiff
+          · exact contDiff_id
         exact Remainder.smooth _ _ (L.loop_smooth h) contDiff_id contDiff_const }
   have H : ∀ᶠ x near L.K₀, L.improveStep h N 1 x = 𝓕' x := by
     apply L.hρ₀.mono

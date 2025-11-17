@@ -151,13 +151,13 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
   have ha : a ∈ Ioo a₀ b₀ := by
     dsimp [a₀, b₀]
     constructor
-    linarith [min_le_left a (s x₀)]
-    linarith [le_max_left a (s x₀)]
+    · linarith [min_le_left a (s x₀)]
+    · linarith [le_max_left a (s x₀)]
   have ht₀ : s x₀ ∈ Ioo a₀ b₀ := by
     dsimp [a₀, b₀]
     constructor
-    linarith [min_le_right a (s x₀)]
-    linarith [le_max_right a (s x₀)]
+    · linarith [min_le_right a (s x₀)]
+    · linarith [le_max_right a (s x₀)]
   have cpct : IsCompact (closedBall x₀ 1 ×ˢ Icc a₀ b₀) :=
     (ProperSpace.isCompact_closedBall x₀ 1).prod isCompact_Icc
   obtain ⟨K, F_lip⟩ : ∃ K, ∀ t ∈ Ioo a₀ b₀, LipschitzOnWith K (fun x ↦ F x t) (ball x₀ 1) := by
