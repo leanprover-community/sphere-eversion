@@ -18,12 +18,12 @@ theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f 
 
 section
 
-variable {𝕜 𝕜' E E₂ E' : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜]
+variable {𝕜 𝕜' E E₂ E' : Type*} [Semiring 𝕜] [PartialOrder 𝕜] --[IsOrderedRing 𝕜]
   [AddCommMonoid E] [Module 𝕜 E] [AddCommMonoid E₂] [Module 𝕜 E₂] [AddCommMonoid E']
   [Semiring 𝕜'] [PartialOrder 𝕜'] [IsOrderedRing 𝕜'] [Module 𝕜' E'] (σ : 𝕜 →+*o 𝕜')
 
 def reallyConvexHull (𝕜 : Type*) {E : Type*}
-    [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
+    [Semiring 𝕜] [PartialOrder 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
     (s : Set E) : Set E :=
   {e | ∃ w : E → 𝕜, 0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
 
@@ -71,7 +71,8 @@ theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s
     simp at h ⊢
     exact ⟨a, h⟩
 
-theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type*} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
+theorem sum_mem_reallyConvexHull [IsOrderedRing 𝕜]
+    {s : Set E} {ι : Type*} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
     (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i ∈ t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
     ∑ i ∈ t, w i • z i ∈ reallyConvexHull 𝕜 s := by
   classical
@@ -98,9 +99,8 @@ theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set 
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 
 /-- Generalization of `Convex` to semirings. We only add the `s = ∅` clause if `𝕜` is trivial. -/
-def ReallyConvex (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜]
-    [AddCommMonoid E] [Module 𝕜 E]
-    (s : Set E) : Prop :=
+def ReallyConvex (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜]
+    [AddCommMonoid E] [Module 𝕜 E] (s : Set E) : Prop :=
   s = ∅ ∨ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
 
 variable {s : Set E}
@@ -137,13 +137,15 @@ theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ really
     exact h ⟨w, w_pos, supp_w, sum_w, rfl⟩
 
 -- turn this into an iff
-theorem ReallyConvex.sum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {t : Finset ι}
-    {w : ι → 𝕜} {z : ι → E} (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i ∈ t, w i = 1)
-    (hz : ∀ i ∈ t, z i ∈ s) : ∑ i ∈ t, w i • z i ∈ s :=
+theorem ReallyConvex.sum_mem [Nontrivial 𝕜] [IsOrderedRing 𝕜]
+    (hs : ReallyConvex 𝕜 s) {ι : Type*} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
+    (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : ∑ i ∈ t, w i = 1) (hz : ∀ i ∈ t, z i ∈ s) :
+    ∑ i ∈ t, w i • z i ∈ s :=
   reallyConvex_iff_hull.mp hs (sum_mem_reallyConvexHull h₀ h₁ hz)
 
-theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜}
-    {z : ι → E} (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
+theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] [IsOrderedRing 𝕜]
+    (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜} {z : ι → E}
+    (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
     ∑ᶠ i, w i • z i ∈ s := by
   rw [finsum_eq_sum_of_support_subset_of_finite _ _ (support_finite_of_finsum_eq_one h₁)]
   swap; · exact support_smul_subset_left w z
@@ -151,7 +153,7 @@ theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] (hs : ReallyConvex 𝕜 s) {ι
   · rw [← finsum_eq_sum, h₁]
   · simp_rw [Set.Finite.mem_toFinset]; exact hz
 
-theorem ReallyConvex.add_mem (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁ z₂ : E}
+theorem ReallyConvex.add_mem [IsOrderedRing 𝕜] (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁ z₂ : E}
     (hw₁ : 0 ≤ w₁) (hw₂ : 0 ≤ w₂) (hw : w₁ + w₂ = 1) (hz₁ : z₁ ∈ s) (hz₂ : z₂ ∈ s) :
     w₁ • z₁ + w₂ • z₂ ∈ s := by
   cases subsingleton_or_nontrivial 𝕜
@@ -187,7 +189,8 @@ theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set 
     · rw [← map_finsum _ h4w, h3w, map_one]
     · intro i hi; apply h2w; rw [mem_support] at hi ⊢; contrapose! hi; rw [hi, map_zero]
 
-theorem ReallyConvex.preimage (f : E →ₗ[𝕜] E₂) {s : Set E₂} (hs : ReallyConvex 𝕜 s) :
+theorem ReallyConvex.preimage [IsOrderedRing 𝕜]
+    (f : E →ₗ[𝕜] E₂) {s : Set E₂} (hs : ReallyConvex 𝕜 s) :
     ReallyConvex 𝕜 (f ⁻¹' s) :=
   ReallyConvex.preimageₛₗ (OrderRingHom.id 𝕜) f hs
 
