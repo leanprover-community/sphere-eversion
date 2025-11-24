@@ -44,7 +44,6 @@ variable {I I' M M'}
 
 variable (f : OpenSmoothEmbedding I M I' M')
 
-@[simp]
 theorem coe_mk (f g h₁ h₂ h₃ h₄) : ⇑(⟨f, g, h₁, h₂, h₃, h₄⟩ : OpenSmoothEmbedding I M I' M') = f :=
   rfl
 

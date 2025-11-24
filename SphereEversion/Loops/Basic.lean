@@ -43,7 +43,6 @@ variable {X}
 
 namespace Loop
 
-@[simp]
 protected theorem coe_mk {γ : ℝ → X} (h : ∀ t, γ (t + 1) = γ t) : ⇑(⟨γ, h⟩ : Loop X) = γ :=
   rfl
 

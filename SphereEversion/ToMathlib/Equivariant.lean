@@ -40,7 +40,6 @@ protected theorem not_bounded_above (y : ℝ) : ∃ x : ℝ, y ≤ φ x :=
 protected theorem not_bounded_below (y : ℝ) : ∃ x : ℝ, φ x ≤ y :=
   ⟨⌊y - φ 0⌋, by simp_rw [φ.coe_int, ← le_sub_iff_add_le', floor_le]⟩
 
-@[simp]
 theorem coe_mk (f : ℝ → ℝ) {eqv} : ((⟨f, eqv⟩ : EquivariantMap) : ℝ → ℝ) = f :=
   rfl
 
