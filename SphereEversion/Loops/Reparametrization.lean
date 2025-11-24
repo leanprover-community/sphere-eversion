@@ -138,7 +138,7 @@ theorem approxSurroundingPointsAt_smooth (n : ℕ) :
   suffices 𝒞 ∞ fun y ↦ ∫ s in (0 : ℝ)..1, deltaMollifier n (γ.surroundingParametersAt x i) s • γ y s
     by simpa [approxSurroundingPointsAt, Loop.mollify]
   apply contDiff_parametric_integral_of_contDiff
-  exact ContDiff.smul deltaMollifier_smooth.snd' γ.smooth
+  exact ContDiff.smul contDiff_deltaMollifier.snd' γ.smooth
 
 variable [FiniteDimensional ℝ F]
 
@@ -255,8 +255,10 @@ theorem localCenteringDensity_periodic : Periodic (γ.localCenteringDensity x y)
   Finset.univ.periodic_sum fun _ _ ↦ Periodic.smul deltaMollifier_periodic _
 
 variable [FiniteDimensional ℝ E] in
-theorem localCenteringDensity_smooth_on :
-    smooth_on ↿(γ.localCenteringDensity x) <| γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ) := by
+@[fun_prop]
+theorem contDiffOn_localCenteringDensity :
+    ContDiffOn ℝ ∞ ↿(γ.localCenteringDensity x)
+      <| γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ) := by
   let h₀ (yt : E × ℝ) (_ : yt ∈ γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ)) :=
     congr_fun (γ.localCenteringDensity_spec x yt.fst) yt.snd
   refine ContDiffOn.congr ?_ h₀
@@ -278,9 +280,10 @@ theorem localCenteringDensity_smooth_on :
       exact γ.approxSurroundingPointsAt_smooth x _
     · intro y hy
       simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
-  · exact deltaMollifier_smooth.comp contDiff_snd
+  · exact contDiff_deltaMollifier.comp contDiff_snd
 
 variable [FiniteDimensional ℝ E] in
+@[fun_prop]
 theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd x) :
     Continuous fun t ↦ γ.localCenteringDensity x y t := by
   refine continuous_iff_continuousAt.mpr fun t ↦ ?_
@@ -288,8 +291,8 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
     mem_nhds_prod_iff'.mpr
       ⟨γ.localCenteringDensityNhd x, univ, γ.localCenteringDensityNhd_isOpen x, hy,
         isOpen_univ, mem_univ t, rfl.subset⟩
-  exact ((γ.localCenteringDensity_smooth_on x).continuousOn.continuousAt hyt).comp
-    (Continuous.prodMk_right y).continuousAt
+  have := γ.contDiffOn_localCenteringDensity x |>.continuousOn.continuousAt hyt
+  fun_prop
 
 @[simp]
 theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensityNhd x) :
@@ -306,7 +309,7 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
     simp_rw [AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
   · simp_rw [← smul_eq_mul]
     refine fun i hi ↦ (Continuous.const_smul ?_ _).intervalIntegrable 0 1
-    exact deltaMollifier_smooth.continuous
+    exact contDiff_deltaMollifier.continuous
 
 @[simp]
 theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x) :
@@ -324,7 +327,7 @@ theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x)
     exact AffineBasis.linear_combination_coord_eq_self ..
   · simp_rw [mul_smul]
     refine fun i hi ↦ ((Continuous.smul ?_ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
-    exact deltaMollifier_smooth.continuous
+    exact contDiff_deltaMollifier.continuous
 
 /-- Given `γ : SmoothSurroundingFamily g`, together with a point `x : E` and a map `f : ℝ → ℝ`,
 `γ.is_centeringDensity x f` is the proposition that `f` is periodic, strictly positive, and
@@ -372,11 +375,11 @@ variable [FiniteDimensional ℝ E]
 theorem exists_smooth_isCenteringDensity (x : E) :
     ∃ U ∈ 𝓝 x,
       ∃ f : E → ℝ → ℝ,
-        smooth_on (uncurry f) (U ×ˢ (univ : Set ℝ)) ∧ ∀ y ∈ U, γ.IsCenteringDensity y (f y) :=
+        ContDiffOn ℝ ∞ (uncurry f) (U ×ˢ (univ : Set ℝ)) ∧ ∀ y ∈ U, γ.IsCenteringDensity y (f y) :=
   ⟨γ.localCenteringDensityNhd x,
     mem_nhds_iff.mpr
       ⟨_, Subset.rfl, γ.localCenteringDensityNhd_isOpen x, γ.localCenteringDensityNhd_self_mem x⟩,
-    γ.localCenteringDensity x, γ.localCenteringDensity_smooth_on x, fun y hy ↦
+    γ.localCenteringDensity x, γ.contDiffOn_localCenteringDensity x, fun y hy ↦
     ⟨γ.localCenteringDensity_pos x y hy, γ.localCenteringDensity_periodic x y,
       γ.localCenteringDensity_integral_eq_one x y hy, γ.localCenteringDensity_average x y hy,
       γ.localCenteringDensity_continuous x y hy⟩⟩

@@ -203,7 +203,7 @@ theorem approxDirac_nonneg (n : ℕ) (t : ℝ) : 0 ≤ approxDirac n t :=
   periodize_nonneg (bump n).nonneg_normed t
 
 @[fun_prop]
-theorem approxDirac_smooth (n : ℕ) : 𝒞 ∞ (approxDirac n) :=
+theorem contDiff_approxDirac (n : ℕ) : ContDiff ℝ ∞ (approxDirac n) :=
   (bump n).contDiff_normed.periodize (bump n).hasCompactSupport_normed
 
 theorem approxDirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
@@ -237,13 +237,13 @@ variable {n : ℕ} {t : ℝ}
 theorem deltaMollifier_periodic : Periodic (deltaMollifier n t) 1 := fun x ↦ by
   simp_rw [deltaMollifier, ← sub_add_eq_add_sub, periodic_approxDirac n (x - t)]
 
-theorem deltaMollifier_pos (s : ℝ) : 0 < deltaMollifier n t s :=
-  add_pos_of_nonneg_of_pos
-    (mul_nonneg (div_nonneg n.cast_nonneg n.cast_add_one_pos.le) (approxDirac_nonneg n _))
-    (div_pos zero_lt_one n.cast_add_one_pos)
+theorem deltaMollifier_pos (s : ℝ) : 0 < deltaMollifier n t s := by
+  have := approxDirac_nonneg n (s - t)
+  exact add_pos_of_nonneg_of_pos (by positivity) (by positivity)
 
 @[fun_prop]
-theorem deltaMollifier_smooth : 𝒞 ∞ (deltaMollifier n t) := by unfold deltaMollifier; fun_prop
+theorem contDiff_deltaMollifier : ContDiff ℝ ∞ (deltaMollifier n t) := by
+  unfold deltaMollifier; fun_prop
 
 open intervalIntegral
 
@@ -255,7 +255,7 @@ theorem deltaMollifier_integral_eq_one : ∫ s in (0)..1, deltaMollifier n t s =
     one_smul, approxDirac_integral_eq_one, mul_one, ← add_div, div_self]
   · exact n.cast_add_one_pos.ne'
   · rw [sub_eq_add_neg, add_comm]
-  · exact ((approxDirac_smooth n).continuous.intervalIntegrable _ _).const_mul _
+  · exact ((contDiff_approxDirac n).continuous.intervalIntegrable _ _).const_mul _
   · exact intervalIntegrable_const
 
 /-- `γ.mollify n t` is a weighted average of `γ` using weights `deltaMollifier n t`.
@@ -277,8 +277,8 @@ theorem Loop.mollify_eq_convolution (γ : Loop F) (hγ : Continuous γ) (t : ℝ
   · simp_rw [MeasureTheory.convolution_eq_swap, ← neg_sub t, (bump n).normed_neg, lsmul_apply]
   · linarith
   · rw [zero_add]
-  · exact (continuous_const.smul (((approxDirac_smooth n).continuous.comp
-      (continuous_id.sub continuous_const)).smul hγ)).intervalIntegrable _ _
+  · exact (continuous_const.smul
+      (((contDiff_approxDirac n).continuous.comp (by fun_prop)).smul hγ)).intervalIntegrable _ _
   · apply Continuous.intervalIntegrable (by fun_prop)
 
 end VersionOfDeltaMollifierUsingN
