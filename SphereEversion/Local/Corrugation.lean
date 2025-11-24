@@ -88,7 +88,7 @@ theorem corrugation_eq_zero (x) (H : x ∉ Loop.support γ) : corrugation π N �
   notMem_support.mp fun hx ↦ H (corrugation.support π N γ hx)
 
 open intervalIntegral in
-theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace E]
+theorem corrugation.c0_small_on
     {γ : ℝ → E → Loop F} {K : Set E} (hK : IsCompact K) (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
     ∀ᶠ N in atTop, ∀ x ∈ K, ∀ (t), ‖𝒯 N (γ t) x‖ < ε := by

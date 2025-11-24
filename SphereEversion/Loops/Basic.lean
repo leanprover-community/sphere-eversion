@@ -326,8 +326,8 @@ theorem isConst_of_not_mem_support {γ : X → Loop F} {x : X} (hx : x ∉ suppo
   exact hx (subset_closure H)
 
 @[fun_prop]
-theorem continuous_average {E : Type*} [TopologicalSpace E] [FirstCountableTopology E]
-    [LocallyCompactSpace E] {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
+theorem continuous_average {E : Type*} [TopologicalSpace E]
+    {γ : E → Loop F} (hγ_cont : Continuous ↿γ) :
     Continuous fun x ↦ (γ x).average :=
   intervalIntegral.continuous_parametric_intervalIntegral_of_continuous' (by apply hγ_cont) _ _
 

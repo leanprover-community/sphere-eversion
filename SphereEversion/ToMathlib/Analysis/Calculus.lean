@@ -147,13 +147,13 @@ theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
   simp [partialFDerivSnd_eq_smulRight]
 
 @[to_additive]
-nonrec theorem WithTop.le_mul_self {α : Type*} [CommMonoid α] [PartialOrder α] [IsOrderedMonoid α]
+nonrec theorem WithTop.le_mul_self {α : Type*} [CommMonoid α] [PartialOrder α]
     [CanonicallyOrderedMul α] (n m : α) :
     (n : WithTop α) ≤ (m * n : α) :=
   WithTop.coe_le_coe.mpr le_mul_self
 
 @[to_additive]
-nonrec theorem WithTop.le_self_mul {α : Type*} [CommMonoid α] [PartialOrder α] [IsOrderedMonoid α]
+nonrec theorem WithTop.le_self_mul {α : Type*} [CommMonoid α] [PartialOrder α]
     [CanonicallyOrderedMul α] (n m : α) :
     (n : WithTop α) ≤ (n * m : α) :=
   WithTop.coe_le_coe.mpr le_self_mul

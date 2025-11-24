@@ -23,7 +23,7 @@ variable {𝕜 𝕜' E E₂ E' : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsO
   [Semiring 𝕜'] [PartialOrder 𝕜'] [IsOrderedRing 𝕜'] [Module 𝕜' E'] (σ : 𝕜 →+*o 𝕜')
 
 def reallyConvexHull (𝕜 : Type*) {E : Type*}
-    [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
+    [Semiring 𝕜] [PartialOrder 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
     (s : Set E) : Set E :=
   {e | ∃ w : E → 𝕜, 0 ≤ w ∧ support w ⊆ s ∧ ∑ᶠ x, w x = 1 ∧ e = ∑ᶠ x, w x • x}
 
@@ -93,26 +93,30 @@ theorem sum_mem_reallyConvexHull {s : Set E} {ι : Type*} {t : Finset ι} {w : �
     rw [Finset.mem_filter] at hy
     rw [hy.2]
 
+omit [IsOrderedRing 𝕜] in
 theorem reallyConvexHull_mono : Monotone (reallyConvexHull 𝕜 : Set E → Set E) := by
   rintro s t h _ ⟨w, w_pos, supp_w, sum_w, rfl⟩
   exact ⟨w, w_pos, supp_w.trans h, sum_w, rfl⟩
 
 /-- Generalization of `Convex` to semirings. We only add the `s = ∅` clause if `𝕜` is trivial. -/
-def ReallyConvex (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜] [IsOrderedRing 𝕜]
+def ReallyConvex (𝕜 : Type*) {E : Type*} [Semiring 𝕜] [PartialOrder 𝕜]
     [AddCommMonoid E] [Module 𝕜 E]
     (s : Set E) : Prop :=
   s = ∅ ∨ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s
 
 variable {s : Set E}
 
+omit [IsOrderedRing 𝕜] in
 @[simp]
 theorem reallyConvex_empty : ReallyConvex 𝕜 (∅ : Set E) := Or.inl rfl
 
+omit [IsOrderedRing 𝕜] in
 @[simp]
 theorem reallyConvex_univ : ReallyConvex 𝕜 (univ : Set E) := Or.inr fun _ _ _ _ ↦ mem_univ _
 
 -- for every lemma that requires `Nontrivial` should we also add a lemma that has the condition
 -- `s.Nonempty` (or even `Nontrivial 𝕜 ∨ s.Nonempty`)?
+omit [IsOrderedRing 𝕜] in
 theorem Nontrivial.reallyConvex_iff [Nontrivial 𝕜] :
     ReallyConvex 𝕜 s ↔ ∀ w : E → 𝕜, 0 ≤ w → support w ⊆ s → ∑ᶠ x, w x = 1 → ∑ᶠ x, w x • x ∈ s := by
   rw [ReallyConvex, or_iff_right_iff_imp]
@@ -120,6 +124,7 @@ theorem Nontrivial.reallyConvex_iff [Nontrivial 𝕜] :
   obtain rfl : w = 0 := by ext; simp at h2w; simp [h2w]
   simp at h3w
 
+omit [IsOrderedRing 𝕜] in
 theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s := by
   rcases eq_empty_or_nonempty s with (rfl | ⟨z, hz⟩)
   · exact reallyConvex_empty
@@ -128,6 +133,7 @@ theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s := b
     haveI := Module.subsingleton 𝕜 E
     exact Subsingleton.elim ..
 
+omit [IsOrderedRing 𝕜] in
 theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ reallyConvexHull 𝕜 s ⊆ s := by
   rw [Nontrivial.reallyConvex_iff]
   constructor
@@ -160,6 +166,7 @@ theorem ReallyConvex.add_mem (hs : ReallyConvex 𝕜 s) {w₁ w₂ : 𝕜} {z₁
   suffices ∑ b : Bool, cond b w₁ w₂ • cond b z₁ z₂ ∈ s by simpa using this
   apply hs.sum_mem <;> simp [*]
 
+omit [IsOrderedRing 𝕜] in
 theorem ReallyConvex.inter {t : Set E} (hs : ReallyConvex 𝕜 s) (ht : ReallyConvex 𝕜 t) :
     ReallyConvex 𝕜 (s ∩ t) := by
   rcases hs with (rfl | hs); · simp
@@ -170,6 +177,7 @@ theorem ReallyConvex.inter {t : Set E} (hs : ReallyConvex 𝕜 s) (ht : ReallyCo
   · apply hs <;> assumption
   · apply ht <;> assumption
 
+omit [IsOrderedRing 𝕜] in
 theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set E'} (hs : ReallyConvex 𝕜' s) :
     ReallyConvex 𝕜 (f ⁻¹' s) := by
   -- this proof would be easier by casing on `s = ∅`, and
