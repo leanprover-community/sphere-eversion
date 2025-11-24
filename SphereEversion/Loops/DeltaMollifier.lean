@@ -214,7 +214,7 @@ theorem approxDirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
       show (bump n).rOut = 1 / (n + 2 : ℝ) from rfl]
     have key : 1 / (n + 2 : ℝ) ≤ 1 / 2 := by
       apply one_div_le_one_div_of_le
-      norm_num
+      · norm_num
       norm_cast
       norm_num
     exact (Ioo_subset_Ioo (neg_le_neg key) key).trans Ioo_subset_Ioc_self

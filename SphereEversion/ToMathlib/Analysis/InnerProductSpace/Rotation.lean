@@ -133,10 +133,8 @@ open scoped Real
 
 set_option linter.style.multiGoal false in
 theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t, x)) (ℝ ∙ x)ᗮ := by
-  change Set.InjOn (ω.rot (t, x)).toLinearMap (ℝ ∙ x)ᗮ
-  simp_rw [← LinearMap.ker_inf_eq_bot, Submodule.eq_bot_iff, Submodule.mem_inf]
-  rintro y ⟨hy, hy'⟩
-  rw [LinearMap.mem_ker] at hy
+  rw [← ContinuousLinearMap.coe_coe, ← LinearMap.disjoint_ker_iff_injOn, LinearMap.disjoint_ker]
+  intro y hy' hy
   change
     ↑((orthogonalProjection (span ℝ {x})) y) +
           cos (t * Real.pi) • ↑((orthogonalProjection (span ℝ {x})ᗮ) y) +

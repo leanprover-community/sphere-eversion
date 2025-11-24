@@ -319,7 +319,7 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
       (Prod.map (chartAt H m).symm (chartAt H' m').symm) ∘ Prod.fst := by
     ext x <;> rfl
   rw [this, preimage_comp, preimage_prod_map_prod]
-  mono
+  gcongr
   · exact (chartAt H m).target_subset_preimage_source
   · exact (chartAt H' m').target_subset_preimage_source
 

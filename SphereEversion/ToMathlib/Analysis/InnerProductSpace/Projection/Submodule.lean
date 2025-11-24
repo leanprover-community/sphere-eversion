@@ -110,10 +110,10 @@ theorem orthogonalProjection_orthogonal_singleton {x y : E} :
         · simp
         simp [mem_orthogonal_span_singleton_iff]
         rw [inner_sub_right, inner_smul_right]
-        simp [inner_self_ne_zero.mpr hx]⟩ := by
+        simp [norm_ne_zero_iff.mpr hx]⟩ := by
   apply Subtype.ext
   have := starProjection_add_starProjection_orthogonal (K := span ℝ ({x} : Set E)) y
-  simp [eq_sub_of_add_eq' this, starProjection_singleton, real_inner_self_eq_norm_sq]
+  simp [eq_sub_of_add_eq' this, starProjection_singleton]
 
 theorem coe_orthogonalProjection_orthogonal_singleton {x y : E} :
     (pr[x]ᗮ y : E) = y - (⟪x, y⟫ / ⟪x, x⟫) • x := by
@@ -225,8 +225,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
   have lim : Tendsto (fun y ↦ ‖N x₀ - N y‖ * ‖y‖) (𝓝 x₀) (𝓝 0) := by
     rw [← MulZeroClass.zero_mul ‖x₀‖]
     apply Tendsto.mul
-    rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
-    exact (tendsto_const_nhds.sub cont).norm
+    · rw [← show ‖N x₀ - N x₀‖ = 0 by simp]
+      exact (tendsto_const_nhds.sub cont).norm
     exact continuous_norm.continuousAt
   have key :
     ∀ x y,

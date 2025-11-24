@@ -85,8 +85,13 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       positivity
     · refine le_of_mul_le_mul_right ?_ h
       rw [← real_inner_self_eq_norm_mul_norm]
-      simpa [inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Matrix.cons_val_zero,
-        mul_assoc] using ω.volumeForm_apply_le ![u, v, u×₃v]
+      -- Adaptation note(v4.25.0): proof was
+      -- simpa [inner_crossProduct_apply, Fin.mk_zero, Fin.prod_univ_succ, Matrix.cons_val_zero,
+      --  mul_assoc] using ω.volumeForm_apply_le ![u, v, u×₃v]
+      simpa only [inner_crossProduct_apply, AddSubgroupClass.coe_norm, mul_assoc,
+        Fin.prod_univ_succ, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_succ,
+        Finset.univ_unique, Fin.default_eq_zero, Matrix.cons_val_fin_one, Finset.prod_const,
+        Finset.card_singleton, pow_one] using ω.volumeForm_apply_le ![u, v, u×₃v]
   let K : Submodule ℝ E := Submodule.span ℝ ({u, ↑v} : Set E)
   have : Nontrivial Kᗮ := by
     apply Module.nontrivial_of_finrank_pos (R := ℝ)
