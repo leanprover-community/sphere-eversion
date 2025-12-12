@@ -108,7 +108,8 @@ theorem orthogonalProjection_orthogonal_singleton {x y : E} :
       ⟨y - (⟪x, y⟫ / ⟪x, x⟫) • x, by
         rcases eq_or_ne x 0 with (rfl | hx)
         · simp
-        simp [mem_orthogonal_span_singleton_iff]
+        simp only [inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq,
+          mem_orthogonal_span_singleton_iff]
         rw [inner_sub_right, inner_smul_right]
         simp [norm_ne_zero_iff.mpr hx]⟩ := by
   apply Subtype.ext

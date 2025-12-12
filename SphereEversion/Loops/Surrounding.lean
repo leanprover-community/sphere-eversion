@@ -227,7 +227,8 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
     ((smooth_barycentric ι ℝ F hι).mono inter_subset_left).of_le le_top⟩, ?_, ?_, ?_⟩
   · simpa [V] using hyq'
   · simp [hq]
-  · simp [hq]; exact AffineBasis.linear_combination_coord_eq_self _ y
+  · simp only [hq, evalBarycentricCoords_apply_of_mem_bases, AffineBasis.coords_apply]
+    exact AffineBasis.linear_combination_coord_eq_self _ y
 
 theorem smooth_surroundingPts [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w : ι → ℝ}
     (h : SurroundingPts x p w) :
@@ -823,8 +824,10 @@ theorem sfHomotopy_in' {ι} (h₀ : SurroundingFamily g b γ₀ U) (h₁ : Surro
     (h_in₀ : ∀ i, x i ∈ V → ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 1 → (x i, γ₀ (x i) t s) ∈ Ω)
     (h_in₁ : ∀ i, x i ∈ V → ∀ t ∈ I, ∀ (s : ℝ), τ i ≠ 0 → (x i, γ₁ (x i) t s) ∈ Ω) :
     (x i, sfHomotopy h₀ h₁ (τ i) (x i) t s) ∈ Ω := by
-  by_cases hτ0 : τ i = 0; · simp [hτ0]; exact h_in₀ i hx t ht s (by norm_num [hτ0])
-  by_cases hτ1 : τ i = 1; · simp [hτ1]; exact h_in₁ i hx t ht s (by norm_num [hτ1])
+  by_cases hτ0 : τ i = 0
+  · simp only [hτ0, sfHomotopy_zero]; exact h_in₀ i hx t ht s (by norm_num [hτ0])
+  by_cases hτ1 : τ i = 1
+  · simp only [hτ1, sfHomotopy_one]; exact h_in₁ i hx t ht s (by norm_num [hτ1])
   generalize hy : sfHomotopy h₀ h₁ (τ i) (x i) t s = y
   have h2y : y ∈ range (sfHomotopy h₀ h₁ (τ i) (x i) t) := by rw [← hy]; exact mem_range_self _
   rw [sfHomotopy, Loop.range_ofPath, projI_eq_self.mpr ht] at h2y

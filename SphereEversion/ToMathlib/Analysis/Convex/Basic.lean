@@ -68,7 +68,7 @@ theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s
   · intro x hx
     rw [mem_support] at hx
     obtain ⟨a, h, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx
-    simp at h ⊢
+    simp only [Finset.mem_filter, Finset.coe_image, mem_image, SetLike.mem_coe] at h ⊢
     exact ⟨a, h⟩
 
 theorem sum_mem_reallyConvexHull [IsOrderedRing 𝕜]
