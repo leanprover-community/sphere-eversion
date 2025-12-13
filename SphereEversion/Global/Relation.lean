@@ -469,7 +469,6 @@ theorem OpenSmoothEmbedding.smooth_transfer :
   intro x
   refine ContMDiffAt.oneJetBundle_map (φ.contMDiff_to.contMDiffAt.comp _ contMDiffAt_snd)
      (ψ.contMDiff_to.contMDiffAt.comp _ contMDiffAt_snd) ?_ contMDiffAt_id
-
   have' :=
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.contMDiffAt_inv <| _).comp (x, φ x.1.1) contMDiffAt_snd)

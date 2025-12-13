@@ -238,13 +238,14 @@ theorem approxSurroundingPointsAt_mem_affineBases (hy : y ∈ γ.localCenteringD
   (Classical.choose_spec
       (γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy)).mem_affineBases
 
+section DecidablePred
+
 variable [DecidablePred (· ∈ affineBases ι ℝ F)]
 
 @[simp]
 theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t : ℝ) :
     0 < γ.localCenteringDensity x y t := by
-  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
-    Algebra.id.smul_eq_mul]
+  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply, smul_eq_mul]
   refine Finset.sum_pos (fun i _ ↦ mul_pos ?_ (deltaMollifier_pos _)) Finset.univ_nonempty
   obtain ⟨w, hw⟩ := γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy
   convert hw.w_pos i
@@ -262,7 +263,7 @@ theorem contDiffOn_localCenteringDensity :
   let h₀ (yt : E × ℝ) (_ : yt ∈ γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ)) :=
     congr_fun (γ.localCenteringDensity_spec x yt.fst) yt.snd
   refine ContDiffOn.congr ?_ h₀
-  simp only [Fintype.sum_apply, Pi.smul_apply, Algebra.id.smul_eq_mul]
+  simp only [Fintype.sum_apply, Pi.smul_apply, smul_eq_mul]
   refine ContDiffOn.sum fun i _ ↦ ContDiffOn.mul ?_ (ContDiff.contDiffOn ?_)
   · let w : F × (ι → F) → ℝ := fun z ↦ evalBarycentricCoords ι ℝ F z.1 z.2 i
     let z : E → F × (ι → F) :=
@@ -298,13 +299,12 @@ theorem localCenteringDensity_continuous (hy : y ∈ γ.localCenteringDensityNhd
 theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensityNhd x) :
     ∫ s in (0 : ℝ)..1, γ.localCenteringDensity x y s = 1 := by
   let n := γ.localCenteringDensityMp x
-  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
-    Algebra.id.smul_eq_mul]
+  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply, smul_eq_mul]
   rw [intervalIntegral.integral_finset_sum]
   · have h : γ.approxSurroundingPointsAt x y n ∈ affineBases ι ℝ F :=
       γ.approxSurroundingPointsAt_mem_affineBases x y hy
     simp_rw [← smul_eq_mul, intervalIntegral.integral_smul, deltaMollifier_integral_eq_one,
-      Algebra.id.smul_eq_mul, mul_one]
+      smul_eq_mul, mul_one]
     rw [evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h]
     simp_rw [AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
   · simp_rw [← smul_eq_mul]
@@ -315,8 +315,8 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
 theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x) :
     ∫ s in (0 : ℝ)..1, γ.localCenteringDensity x y s • γ y s = g y := by
   let n := γ.localCenteringDensityMp x
-  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply,
-    Algebra.id.smul_eq_mul, Finset.sum_smul]
+  simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply, smul_eq_mul,
+    Finset.sum_smul]
   rw [intervalIntegral.integral_finset_sum]
   · simp_rw [mul_smul, intervalIntegral.integral_smul]
     change ∑ i, _ • γ.approxSurroundingPointsAt x y n i = _
@@ -328,6 +328,8 @@ theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x)
   · simp_rw [mul_smul]
     refine fun i hi ↦ ((Continuous.smul ?_ (γ.continuous y)).const_smul _).intervalIntegrable 0 1
     exact contDiff_deltaMollifier.continuous
+
+end DecidablePred
 
 /-- Given `γ : SmoothSurroundingFamily g`, together with a point `x : E` and a map `f : ℝ → ℝ`,
 `γ.is_centeringDensity x f` is the proposition that `f` is periodic, strictly positive, and
@@ -342,7 +344,7 @@ structure IsCenteringDensity (x : E) (f : ℝ → ℝ) : Prop where
   average : ∫ s in (0 : ℝ)..1, f s • γ x s = g x
   Continuous : Continuous f
 
-omit [FiniteDimensional ℝ F] [DecidablePred fun x ↦ x ∈ affineBases ι ℝ F] in
+omit [FiniteDimensional ℝ F] in
 -- Can drop if/when have `intervalIntegrable.smul_continuous_on`
 theorem isCenteringDensity_convex (x : E) : Convex ℝ { f | γ.IsCenteringDensity x f } := by
   classical
@@ -375,8 +377,10 @@ variable [FiniteDimensional ℝ E]
 theorem exists_smooth_isCenteringDensity (x : E) :
     ∃ U ∈ 𝓝 x,
       ∃ f : E → ℝ → ℝ,
-        ContDiffOn ℝ ∞ (uncurry f) (U ×ˢ (univ : Set ℝ)) ∧ ∀ y ∈ U, γ.IsCenteringDensity y (f y) :=
-  ⟨γ.localCenteringDensityNhd x,
+        ContDiffOn ℝ ∞ (uncurry f) (U ×ˢ (univ : Set ℝ)) ∧
+          ∀ y ∈ U, γ.IsCenteringDensity y (f y) := by
+  classical
+  exact ⟨γ.localCenteringDensityNhd x,
     mem_nhds_iff.mpr
       ⟨_, Subset.rfl, γ.localCenteringDensityNhd_isOpen x, γ.localCenteringDensityNhd_self_mem x⟩,
     γ.localCenteringDensity x, γ.contDiffOn_localCenteringDensity x, fun y hy ↦

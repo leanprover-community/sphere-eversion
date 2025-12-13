@@ -209,7 +209,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
       rw [fract_eq_iff]
       refine ⟨t.2.1, t.2.2.lt_of_ne ht1, ⟨0, ?_⟩⟩
       rw [Int.cast_zero, sub_self]
-    simp only [this, γ.extend_extends t.2]
+    simp only [this, γ.extend_apply t.2]
 
 /-- `Loop.ofPath` is continuous, general version. -/
 @[fun_prop]
@@ -220,7 +220,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
   · have : Continuous (fun x : X × ℝ ↦ (x.1, projIcc 0 1 zero_le_one x.2)) :=
       continuous_id.prodMap continuous_projIcc
     exact (hγ.comp this).continuousOn
-  · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_extends, imp_true_iff,
+  · simp only [Icc.mk_zero, zero_le_one, Path.target, Path.extend_apply, imp_true_iff,
       Path.source, right_mem_Icc, left_mem_Icc, Icc.mk_one]
 
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
@@ -273,7 +273,7 @@ theorem roundTripFamily_zero {x y : X} {γ : Path x y} :
     (roundTripFamily γ) 0 = ofPath (Path.refl x) := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_zero, ofPath]
   congr with t
-  simp
+  simp [← Path.cast_symm, ← Path.cast_trans]
 
 theorem roundTripFamily_one {x y : X} {γ : Path x y} : (roundTripFamily γ) 1 = roundTrip γ := by
   simp only [roundTripFamily, roundTrip, Path.truncate_zero_one, ofPath]

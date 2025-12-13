@@ -31,7 +31,7 @@ def strans (γ γ' : Path x x) (t₀ : I) : Path x x where
     · continuity
     · continuity
     · simp only [extend_div_self, Icc.mk_zero, zero_le_one, zero_div, forall_eq,
-        extend_extends, Path.source, left_mem_Icc, sub_self]
+        extend_apply, Path.source, left_mem_Icc, sub_self]
   source' := by simp
   target' := by
     simp +contextual only [unitInterval.le_one'.ge_iff_eq.trans eq_comm,
@@ -45,7 +45,7 @@ theorem strans_def {x : X} {t₀ t : I} (γ γ' : Path x x) :
       else γ' ⟨(t - t₀) / (1 - t₀),
         unitInterval.div_mem (sub_nonneg.mpr <| le_of_not_ge h) (sub_nonneg.mpr t₀.2.2)
           (sub_le_sub_right t.2.2 t₀)⟩ := by
-  split_ifs with h <;> simp [strans, h, ← extend_extends]
+  split_ifs with h <;> simp [strans, h, ← extend_apply]
 
 @[simp]
 theorem strans_of_ge {t t₀ : I} (h : t₀ ≤ t) :

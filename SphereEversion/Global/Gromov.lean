@@ -149,7 +149,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
       · calc
           dist (F' t x).1.2 (𝓕₀.bs x) ≤ dist (F' t x).1.2 (F.bs x) + dist (F.bs x) (𝓕₀.bs x) :=
             dist_triangle _ _ _
-          _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_right (hF'η t x) _)
+          _ < η x + dist (F.bs x) (𝓕₀.bs x) := (add_lt_add_left (hF'η t x) _)
           _ = τ x := by simp [F, η]
     · rw [union_assoc, Eventually.union_nhdsSet, image_preimage_eq_of_subset K₀φ] at hF'hol
       exact hF'hol.2

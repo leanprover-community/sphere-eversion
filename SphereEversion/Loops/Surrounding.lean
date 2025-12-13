@@ -574,7 +574,7 @@ theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily 
 @[simp]
 theorem path_extend_fract (h : SurroundingFamily g b γ U) (t s : ℝ) (x : E) :
     (h.path x t).extend (fract s) = γ x t s := by
-  rw [extend_extends _ (unitInterval.fract_mem s), ← Loop.fract_eq]; rfl
+  rw [extend_apply _ (unitInterval.fract_mem s), ← Loop.fract_eq]; rfl
 
 @[simp]
 theorem range_path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) :
@@ -795,7 +795,7 @@ theorem surroundingFamily_sfHomotopy [NormedSpace ℝ E] [FiniteDimensional ℝ 
     SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U := by
   constructor
   · intro x t;
-    simp only [sfHomotopy, Icc.mk_zero, zero_le_one, extend_extends, Path.source, Loop.ofPath_apply,
+    simp only [sfHomotopy, Icc.mk_zero, zero_le_one, extend_apply, Path.source, Loop.ofPath_apply,
       left_mem_Icc, fract_zero]
   · intro x s
     -- have h2t : ρ τ * t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (ρ_nonneg τ) ht,
