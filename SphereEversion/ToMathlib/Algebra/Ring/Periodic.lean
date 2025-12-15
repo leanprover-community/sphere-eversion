@@ -92,10 +92,12 @@ theorem image_proj𝕊₁_Ico : proj𝕊₁ '' Ico 0 1 = univ := by
 theorem image_proj𝕊₁_Icc : proj𝕊₁ '' Icc 0 1 = univ :=
   eq_univ_of_subset (image_mono Ico_subset_Icc_self) image_proj𝕊₁_Ico
 
-@[continuity, fun_prop]
-theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ := continuous_quotient_mk'
+theorem isOpenQuotientMap_proj𝕊₁ : IsOpenQuotientMap proj𝕊₁ := QuotientAddGroup.isOpenQuotientMap_mk
 
-theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := QuotientAddGroup.isOpenMap_coe
+@[continuity, fun_prop]
+theorem continuous_proj𝕊₁ : Continuous proj𝕊₁ := isOpenQuotientMap_proj𝕊₁.continuous
+
+theorem isOpenMap_proj𝕊₁ : IsOpenMap proj𝕊₁ := isOpenQuotientMap_proj𝕊₁.isOpenMap
 
 theorem quotientMap_id_proj𝕊₁ {X : Type*} [TopologicalSpace X] :
     Topology.IsQuotientMap fun p : X × ℝ ↦ (p.1, proj𝕊₁ p.2) :=
@@ -117,8 +119,7 @@ theorem isClosed_int : IsClosed (range ((↑) : ℤ → ℝ)) :=
   Int.isClosedEmbedding_coe_real.isClosed_range
 
 instance : T2Space 𝕊₁ := by
-  have πcont : Continuous π := continuous_quotient_mk'
-  rw [t2Space_iff_of_continuous_surjective_open πcont Quotient.mk''_surjective isOpenMap_proj𝕊₁]
+  rw [t2Space_iff_of_isOpenQuotientMap isOpenQuotientMap_proj𝕊₁]
   have : {q : ℝ × ℝ | π q.fst = π q.snd} = {q : ℝ × ℝ | ∃ k : ℤ, q.2 = q.1 + k} := by
     ext ⟨a, b⟩
     exact Quotient.eq''.trans transOne_rel_iff
