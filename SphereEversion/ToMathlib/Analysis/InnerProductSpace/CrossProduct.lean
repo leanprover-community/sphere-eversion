@@ -109,7 +109,6 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
     have h2 : ⟪(v : E), w⟫ = 0 := w.2 _ (Submodule.subset_span (by simp))
     have h3 : ⟪u, w⟫ = 0 := w.2 _ (Submodule.subset_span (by simp))
     fin_cases i <;> fin_cases j <;> simp_all [real_inner_comm]
-
   refine le_of_mul_le_mul_right ?_ (by rwa [norm_pos_iff] : 0 < ‖w‖)
   -- Cauchy-Schwarz inequality for `u ×₃ v` and `w`
   simpa [inner_crossProduct_apply, ω.abs_volumeForm_apply_of_pairwise_orthogonal H,
