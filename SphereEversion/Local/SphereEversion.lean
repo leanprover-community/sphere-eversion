@@ -368,7 +368,7 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
     locFormalEversion_φ, smoothStep.of_gt ht, hx]
   intro v
   have : (fun x : E ↦ ((1 : ℝ) - 2) • x) = fun x ↦ -x := by ext x; norm_num
-  simp [this]
+  simp only [mul_one, this, coe_orthogonalProjection_apply, one_smul]
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (K := ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']
   rw [fderiv_fun_neg, fderiv_id']

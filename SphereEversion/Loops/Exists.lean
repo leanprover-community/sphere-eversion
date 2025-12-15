@@ -290,7 +290,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
       ((hγ₃.comp₃ contDiff_const contDiff_const contDiff_id).continuous.intervalIntegrable ..).smul
         _
     have h3 : (γ₃ 1 x).average = g x := γ₂.reparametrize_average x
-    simp [γ, γ₃, h1, h2, h3]
+    simp only [h1, h2, Loop.average_add, Loop.average_smul, Loop.average_const, h3, γ, γ₃]
     rcases h0χ x with (⟨hx, -⟩ | hx)
     · rw [hx, smul_add_one_sub_smul]
     · simp [hx]
@@ -306,6 +306,7 @@ theorem exist_loops [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : IsOpe
     rcases h0χ x with (⟨_hx, h2x⟩ | hx)
     · refine h2x t (γ₂.reparametrize x s) ?_
       simp [γ, γ₃, dist_smul_add_one_sub_smul_le (h2χ x)]
-    · simp [γ, hx]; exact hγ₁.val_in (mem_univ _)
+    · simp only [hx, zero_smul, sub_zero, one_smul, zero_add, γ]
+      exact hγ₁.val_in (mem_univ _)
   · exact (hχ.fst'.snd'.smul hb.fst'.snd').add ((contDiff_const.sub hχ.fst'.snd').smul hγ₃)
   · exact h1χ.mono fun x (hx : χ x = 1) ↦ by simp [γ, hx]

@@ -76,7 +76,8 @@ instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
   ⟨fun {K L} hK hL ↦ by
     rcases eq_empty_or_nonempty K with (rfl | hK') <;>
         rcases eq_empty_or_nonempty L with (rfl | hL') <;>
-      try simp
+      try simp only [image_empty, inter_self, setOf_false, finite_empty, empty_inter, inter_empty,
+        ne_eq, not_true_eq_false]
     have hSK := (hK.isLUB_sSup hK').1
     have hIK := (hK.isGLB_sInf hK').1
     have hSL := (hL.isLUB_sSup hL').1
