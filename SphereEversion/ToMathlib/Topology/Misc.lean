@@ -77,14 +77,15 @@ instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
     rcases eq_empty_or_nonempty K with (rfl | hK') <;>
         rcases eq_empty_or_nonempty L with (rfl | hL') <;>
       try simp only [image_empty, inter_self, setOf_false, finite_empty, empty_inter, inter_empty,
-        ne_eq, not_true_eq_false]
+        Set.not_nonempty_empty, image_inter_nonempty_iff]
     have hSK := (hK.isLUB_sSup hK').1
     have hIK := (hK.isGLB_sInf hK').1
     have hSL := (hL.isLUB_sSup hL').1
     have hIL := (hL.isGLB_sInf hL').1
     apply (finite_Icc ⌈sInf L - sSup K⌉ ⌊sSup L - sInf K⌋).subset
-    rintro n (hn : VAdd.vadd n '' K ∩ L ≠ ∅)
-    rcases nonempty_iff_ne_empty.mpr hn with ⟨l, ⟨k, hk, rfl⟩, hnk : (n : ℝ) + k ∈ L⟩
+    intro n hn
+    simp only [mem_setOf_eq, Set.Nonempty, mem_inter_iff, mem_preimage] at hn
+    obtain ⟨x, hk, hnk : (n : ℝ) + x ∈ L⟩ := hn
     constructor
     · rw [Int.ceil_le]
       linarith [hIL hnk, hSK hk]

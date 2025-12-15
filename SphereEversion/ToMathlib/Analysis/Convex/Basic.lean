@@ -40,7 +40,7 @@ theorem finite_of_finprod_ne_one {M : Type*} {ι : Sort _} [CommMonoid M] {f : �
   classical
   rw [finprod_def] at h
   contrapose h
-  rw [Classical.not_not, dif_neg h]
+  rw [dif_neg h]
 
 theorem support_finite_of_finsum_eq_of_neZero {M : Type*} {ι : Sort _} [AddCommMonoid M]
     {f : ι → M} {x : M} [NeZero x] (h : ∑ᶠ i, f i = x) : (support f).Finite := by

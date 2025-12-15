@@ -21,13 +21,6 @@ theorem ContinuousLinearMap.le_opNorm_of_le' {𝕜 : Type*} {𝕜₂ : Type*} {E
   rwa [norm_pos_iff]
 
 @[simp]
-theorem ContinuousLinearMap.toSpanSingleton_zero (𝕜 : Type*) {E : Type*}
-    [SeminormedAddCommGroup E] [NontriviallyNormedField 𝕜] [NormedSpace 𝕜 E] :
-    ContinuousLinearMap.toSpanSingleton 𝕜 (0 : E) = 0 := by
-  ext
-  simp only [ContinuousLinearMap.toSpanSingleton_apply, ContinuousLinearMap.zero_apply, smul_zero]
-
-@[simp]
 theorem ContinuousLinearMap.comp_toSpanSingleton_apply {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (φ : E →L[ℝ] ℝ) (v : E)
     (u : F) : (u ⬝ φ) v = φ v • u :=

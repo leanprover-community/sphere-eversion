@@ -109,7 +109,7 @@ theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ := bot_unique <
   have : p.π x = 0 ∧ ∃ a : ℝ, a • p.v = x := by
     simpa [DualPair.spanV, Submodule.mem_span_singleton] using hx
   rcases this with ⟨H, t, rfl⟩
-  rw [p.π.map_smul, p.pairing, Algebra.id.smul_eq_mul, mul_one] at H
+  rw [p.π.map_smul, p.pairing, smul_eq_mul, mul_one] at H
   simp [H]
 
 theorem sup_eq_top (p : DualPair E) : ker p.π ⊔ p.spanV = ⊤ := by

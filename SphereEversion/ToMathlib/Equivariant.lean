@@ -55,13 +55,13 @@ protected theorem monotone (h : MonotoneOn φ I) : Monotone φ := fun x y hxy �
   rw [← φ.fract_add_floor x, ← φ.fract_add_floor y]
   obtain (h2 | h2) := (floor_mono hxy).eq_or_lt
   · rw [h2]
-    refine add_le_add_right (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) ?_) _
+    refine add_le_add_left (h (unitInterval.fract_mem _) (unitInterval.fract_mem _) ?_) _
     simp_rw [fract, h2]
     gcongr
-  · refine (add_le_add_right (h (unitInterval.fract_mem _) unitInterval.one_mem
+  · refine (add_le_add_left (h (unitInterval.fract_mem _) unitInterval.one_mem
       (fract_lt_one _).le) _).trans
       (le_trans ?_ <|
-        add_le_add_right (h unitInterval.zero_mem (unitInterval.fract_mem _) (fract_nonneg _)) _)
+        add_le_add_left (h unitInterval.zero_mem (unitInterval.fract_mem _) (fract_nonneg _)) _)
     rw [φ.one, add_assoc, add_comm (1 : ℝ)]
     gcongr
     norm_cast

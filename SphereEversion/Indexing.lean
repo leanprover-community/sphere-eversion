@@ -135,7 +135,7 @@ theorem IndexType.induction_from {P : IndexType n → Prop} {i₀ : IndexType n}
     rw [← IndexType.succ_castSuccEmb]
     refine ih _ ?_ ?_ ?_
     · rwa [ge_iff_le, le_castSucc_iff]
-    · exact not_isMax_of_lt (castSucc_lt_succ i)
+    · exact not_isMax_of_lt castSucc_lt_succ
     · apply hi; rwa [ge_iff_le, le_castSucc_iff]
 
 @[elab_as_elim]
@@ -166,7 +166,7 @@ theorem IndexType.exists_by_induction {α : Type*} (P : IndexType n → α → P
       refine fun i ↦ Fin.induction hf₀ ?_ i
       intro i hi
       simp_rw [f, induction_succ, ← IndexType.succ_castSuccEmb]
-      exact hF _ _ hi (not_isMax_of_lt (castSucc_lt_succ i))
+      exact hF _ _ hi (not_isMax_of_lt castSucc_lt_succ)
     refine ⟨f, fun i ↦ ⟨key i, fun hi ↦ ?_⟩⟩
     convert hF' _ _ (key i) hi
     rcases i.exists_castSucc_eq hi with ⟨i, rfl⟩

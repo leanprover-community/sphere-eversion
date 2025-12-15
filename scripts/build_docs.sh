@@ -22,7 +22,7 @@ path = "../"
 [[require]]
 scope = "leanprover"
 name = "doc-gen4"
-rev = "v4.25.1"
+rev = "TOOLCHAIN"
 EOF
 }
 
@@ -33,8 +33,7 @@ mkdir -p docbuild
 template > docbuild/lakefile.toml
 
 # Substitute the toolchain from lean-toolchain into docbuild/lakefile.toml
-# Temporarily disabled for 4.25.2.
-# sed -i s/TOOLCHAIN/`grep -oP 'v4\..*' lean-toolchain`/ docbuild/lakefile.toml
+sed -i s/TOOLCHAIN/`grep -oP 'v4\..*' lean-toolchain`/ docbuild/lakefile.toml
 
 # Initialise docbuild as a Lean project
 cd docbuild
