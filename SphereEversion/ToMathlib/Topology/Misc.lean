@@ -83,9 +83,8 @@ instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
     have hSL := (hL.isLUB_sSup hL').1
     have hIL := (hL.isGLB_sInf hL').1
     apply (finite_Icc ⌈sInf L - sSup K⌉ ⌊sSup L - sInf K⌋).subset
-    intro n hn
-    simp only [mem_setOf_eq, Set.Nonempty, mem_inter_iff, mem_preimage] at hn
-    obtain ⟨x, hk, hnk : (n : ℝ) + x ∈ L⟩ := hn
+    intro n ⟨x, hk, hnk⟩
+    replace hnk : (n : ℝ) + x ∈ L := hnk
     constructor
     · rw [Int.ceil_le]
       linarith [hIL hnk, hSK hk]
