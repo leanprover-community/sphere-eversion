@@ -57,5 +57,4 @@ import SphereEversion.ToMathlib.Topology.Algebra.Module
 import SphereEversion.ToMathlib.Topology.Misc
 import SphereEversion.ToMathlib.Topology.Paracompact
 import SphereEversion.ToMathlib.Topology.Path
-import SphereEversion.ToMathlib.Topology.Separation.Hausdorff
 import SphereEversion.ToMathlib.Unused.Fin

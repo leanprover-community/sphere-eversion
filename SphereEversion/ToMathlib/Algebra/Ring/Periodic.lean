@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Algebra.Ring.Periodic
-import SphereEversion.ToMathlib.Topology.Separation.Hausdorff
+import Mathlib.Topology.Separation.Hausdorff
 
 -- TODO: the file this references doesn't exist in mathlib any more; rename this one appropriately!
 

@@ -10,5 +10,5 @@ theorem exists_contDiff_one_nhds_of_interior {E : Type*} [NormedAddCommGroup E] 
     [FiniteDimensional ℝ E] {s t : Set E} (hs : IsClosed s) (hd : s ⊆ interior t) :
     ∃ f : E → ℝ, ContDiff ℝ ∞ f ∧ (∀ᶠ x in 𝓝ˢ s, f x = 1) ∧ (∀ x ∉ t, f x = 0) ∧
       ∀ x, f x ∈ Icc (0 : ℝ) 1 :=
-  let ⟨f, hfs, hft, hf01⟩ := exists_smooth_one_nhds_of_subset_interior 𝓘(ℝ, E) hs hd
+  let ⟨f, hfs, hft, hf01⟩ := exists_contMDiffMap_one_nhds_of_subset_interior 𝓘(ℝ, E) hs hd
   ⟨f, f.contMDiff.contDiff, hfs, hft, hf01⟩

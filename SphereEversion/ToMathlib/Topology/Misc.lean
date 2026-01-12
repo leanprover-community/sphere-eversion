@@ -14,15 +14,6 @@ section Maps
 
 variable {α β : Type*} {f : α → β} {g : β → α}
 
--- TODO: move to Data.Set.Defs
-theorem Function.LeftInverse.mem_preimage_iff (hfg : LeftInverse g f) {s : Set α} {x : α} :
-    f x ∈ g ⁻¹' s ↔ x ∈ s := by rw [Set.mem_preimage, hfg x]
-
--- TODO: move to Data.Set.Basic
-theorem Function.LeftInverse.image_eq (hfg : LeftInverse g f) (s : Set α) :
-    f '' s = range f ∩ g ⁻¹' s := by
-  rw [inter_comm, ← image_preimage_eq_inter_range, hfg.preimage_preimage]
-
 variable [TopologicalSpace α] [TopologicalSpace β]
 
 theorem Function.LeftInverse.isOpenMap {f : α → β} {g : β → α} (hfg : LeftInverse g f)
@@ -152,7 +143,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
   rcases eq_or_ne (fract x) 0 with (hx' | hx')
   · have H : (0 : ℝ) ∈ s := by rwa [hx'] at hx
     specialize h2s H
-    rcases fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩; clear hx hx'
+    rcases _root_.fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩; clear hx hx'
     have s_mem_0 := hs.mem_nhds H
     rcases(nhds_basis_zero_abs_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩
     rcases(nhdsWithin_hasBasis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩
