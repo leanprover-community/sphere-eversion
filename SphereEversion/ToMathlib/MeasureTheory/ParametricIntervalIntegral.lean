@@ -74,7 +74,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       replace hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) (volume.restrict (Ι a (s x₀))) :=
         Eventually.mono (ball_mem_nhds x₀ ε_pos) fun x hx ↦ hF_meas_ball hx ha hsx₀
       replace hF_int : IntervalIntegrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀
-      exact (hasFDerivAt_integral_of_dominated_loc_of_lip_interval ε_pos hF_meas hF_int hF'_meas
+      exact (hasFDerivAt_integral_of_dominated_loc_of_lip_interval (ball_mem_nhds x₀ ε_pos)
+        hF_meas hF_int hF'_meas
         (ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch)
         (bound_int ha hsx₀) h_diff).2
     have D₂ : HasFDerivAt (fun x ↦ φ x₀ (s x)) ((toSpanSingleton ℝ (F x₀ (s x₀))).comp s') x₀ := by
