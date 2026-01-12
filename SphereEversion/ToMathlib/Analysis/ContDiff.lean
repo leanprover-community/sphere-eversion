@@ -164,10 +164,10 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       rintro ⟨x, y⟩
       apply HasFDerivAt.prodMk
       · simp only [ContinuousLinearEquiv.coe_refl, ContinuousLinearMap.id_comp, hasFDerivAt_fst]
-      have diff : Differentiable 𝕜 (uncurry fun x y ↦ f x y) := hf.differentiable (mod_cast le_top)
+      have diff : Differentiable 𝕜 (uncurry fun x y ↦ f x y) := hf.differentiable (by simp)
       rw [show (fun x : E × F ↦ (f x.fst) x.snd) = uncurry fun x y ↦ f x y by ext; rfl]
       apply DifferentiableAt.hasFDerivAt_coprod
-      · exact hf.differentiable (mod_cast le_top) _
+      · exact hf.differentiable (by simp) _
       · exact diff.differentiableAt.hasFDerivAt_partial_fst
       · rw [← hf' x y]
         exact diff.differentiableAt.hasFDerivAt_partial_snd

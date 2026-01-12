@@ -89,9 +89,9 @@ variable [IsManifold I ∞ M] [IsManifold I' ∞ M']
 def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
     ((f.contMDiffOn_inv (f x)
-    (mem_range_self x)).mdifferentiableWithinAt (mod_cast le_top)).mdifferentiableAt
+    (mem_range_self x)).mdifferentiableWithinAt (by simp)).mdifferentiableAt
     (f.isOpenMap.range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := f.contMDiff_to.mdifferentiableAt (mod_cast le_top)
+  have h₂ : MDifferentiableAt I I' f x := f.contMDiff_to.mdifferentiableAt (by simp)
   ContinuousLinearEquiv.equivOfInverse (mfderiv% f x) (mfderiv% f.invFun (f x))
     (by
       intro v
