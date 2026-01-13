@@ -128,7 +128,7 @@ def partialDerivSnd (φ : E → 𝕜 → G) : E → 𝕜 → G := fun e k ↦ �
 omit [NormedAddCommGroup F] [NormedSpace 𝕜 F] in
 theorem partialFDerivFst_eq_smulRight (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
     ∂₁ 𝕜 φ k f = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivFst φ k f) :=
-  deriv_fderiv.symm
+  toSpanSingleton_deriv.symm
 
 omit [NormedAddCommGroup F] [NormedSpace 𝕜 F] in
 @[simp]
@@ -139,7 +139,7 @@ theorem partialFDerivFst_one (φ : 𝕜 → F → G) (k : 𝕜) (f : F) :
 omit [NormedAddCommGroup E] [NormedSpace 𝕜 E] in
 theorem partialFDerivSnd_eq_smulRight (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
     ∂₂ 𝕜 φ e k = smulRight (1 : 𝕜 →L[𝕜] 𝕜) (partialDerivSnd φ e k) :=
-  deriv_fderiv.symm
+  toSpanSingleton_deriv.symm
 
 omit [NormedAddCommGroup E] [NormedSpace 𝕜 E] in
 theorem partialFDerivSnd_one (φ : E → 𝕜 → G) (e : E) (k : 𝕜) :
@@ -203,11 +203,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {F : Type*} [Nor
 
 theorem ContDiff.lipschitzOnWith {s : Set E} {f : E → F} {n} (hf : ContDiff ℝ n f) (hn : 1 ≤ n)
     (hs : Convex ℝ s) (hs' : IsCompact s) : ∃ K, LipschitzOnWith K f s := by
-  rcases (bddAbove_iff_exists_ge (0 : ℝ)).mp (hs'.image (hf.continuous_fderiv hn).norm).bddAbove
-    with ⟨M, M_nonneg, hM⟩
+  obtain ⟨M, M_nonneg, hM⟩ := (bddAbove_iff_exists_ge (0 : ℝ)).mp
+    (hs'.image (hf.continuous_fderiv (by positivity)).norm).bddAbove
   simp_rw [forall_mem_image] at hM
   use ⟨M, M_nonneg⟩
-  exact Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x _ ↦ hf.differentiable hn x) hM hs
+  exact Convex.lipschitzOnWith_of_nnnorm_fderiv_le
+    (fun x _ ↦ hf.differentiable (by positivity) x) hM hs
 
 end RealCalculus
 

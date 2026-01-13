@@ -4,18 +4,6 @@ import Mathlib.Algebra.Order.Hom.Ring
 
 open Function Set
 
--- TODO: move this lemma and the following one
-theorem map_finsum {β α γ : Type*} [AddCommMonoid β] [AddCommMonoid γ]
-    {G : Type*} [FunLike G β γ] [AddMonoidHomClass G β γ] (g : G)
-    {f : α → β} (hf : (Function.support f).Finite) :
-    g (∑ᶠ i, f i) = ∑ᶠ i, g (f i) :=
-  (g : β →+ γ).map_finsum hf
-
-@[to_additive]
-theorem finprod_eq_prod_of_mulSupport_subset_of_finite {α M} [CommMonoid M] (f : α → M) {s : Set α}
-    (h : mulSupport f ⊆ s) (hs : s.Finite) : ∏ᶠ i, f i = ∏ i ∈ hs.toFinset, f i := by
-  apply finprod_eq_prod_of_mulSupport_subset f; rwa [Set.Finite.coe_toFinset]
-
 section
 
 variable {𝕜 𝕜' E E₂ E' : Type*} [Semiring 𝕜] [PartialOrder 𝕜] --[IsOrderedRing 𝕜]
@@ -47,29 +35,6 @@ theorem support_finite_of_finsum_eq_of_neZero {M : Type*} {ι : Sort _} [AddComm
   apply finite_of_finsum_ne_zero
   rw [h]
   apply NeZero.ne
-
-@[to_additive]
-theorem Subsingleton.mulSupport_eq {α β} [Subsingleton β] [One β] (f : α → β) :
-    mulSupport f = ∅ := by
-  rw [mulSupport_eq_empty_iff]; apply Subsingleton.elim
-
-theorem support_finite_of_finsum_eq_one {M : Type*} {ι : Sort _} [NonAssocSemiring M] {f : ι → M}
-    (h : ∑ᶠ i, f i = 1) : (support f).Finite := by
-  cases subsingleton_or_nontrivial M
-  · simp_rw [Subsingleton.support_eq, finite_empty]
-  exact support_finite_of_finsum_eq_of_neZero h
-
-theorem finsum_sum_filter {α β M : Type*} [AddCommMonoid M] (f : β → α) (s : Finset β)
-    [DecidableEq α] (g : β → M) :
-    ∑ᶠ x : α, ∑ y ∈ Finset.filter (fun j : β ↦ f j = x) s, g y = ∑ k ∈ s, g k := by
-  rw [finsum_eq_finset_sum_of_support_subset]
-  · rw [Finset.sum_image']
-    exact fun _ _ ↦ rfl
-  · intro x hx
-    rw [mem_support] at hx
-    obtain ⟨a, h, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx
-    simp only [Finset.mem_filter, Finset.coe_image, mem_image, SetLike.mem_coe] at h ⊢
-    exact ⟨a, h⟩
 
 theorem sum_mem_reallyConvexHull [IsOrderedRing 𝕜]
     {s : Set E} {ι : Type*} {t : Finset ι} {w : ι → 𝕜} {z : ι → E}
@@ -147,7 +112,7 @@ theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] [IsOrderedRing 𝕜]
     (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜} {z : ι → E}
     (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
     ∑ᶠ i, w i • z i ∈ s := by
-  rw [finsum_eq_sum_of_support_subset_of_finite _ _ (support_finite_of_finsum_eq_one h₁)]
+  rw [finsum_eq_sum_of_support_subset_of_finite _ _ (finite_support_of_finsum_eq_one h₁)]
   swap; · exact support_smul_subset_left w z
   apply hs.sum_mem fun i _ ↦ h₀ i
   · rw [← finsum_eq_sum, h₁]
@@ -181,7 +146,7 @@ theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set 
     · simp_rw [preimage_empty, reallyConvex_empty]
     · simp_rw [preimage_univ, reallyConvex_univ]
   · refine Or.inr fun w hw h2w h3w ↦ ?_
-    have h4w : (support w).Finite := support_finite_of_finsum_eq_one h3w
+    have h4w : (support w).Finite := finite_support_of_finsum_eq_one h3w
     have : (support fun x ↦ w x • x).Finite := h4w.subset (support_smul_subset_left w id)
     simp_rw [mem_preimage, map_finsum f this, map_smulₛₗ f]
     apply hs.finsum_mem

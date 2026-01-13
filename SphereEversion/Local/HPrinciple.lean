@@ -89,7 +89,7 @@ together with a dual pair `p` and a subspace `E'` of the corresponding hyperplan
 structure StepLandscape extends Landscape E where
   E' : Submodule ℝ E
   p : DualPair E
-  hEp : E' ≤ ker p.π
+  hEp : E' ≤ p.π.ker
 
 variable {E}
 
@@ -510,7 +510,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
     · apply (H.comp_le_0 _ _).mono
       · intro t ht
         rw [ht]
-        exact hH₀.self_of_nhdsSet 0 right_mem_Iic
+        exact hH₀.self_of_nhdsSet 0 self_mem_Iic
     -- t = 0
     · apply (H.comp_ge_1 _ _).mono
       · intro t ht

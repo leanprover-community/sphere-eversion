@@ -326,7 +326,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
       rcases eq_or_lt_of_le ht with (rfl | ht)
       · apply Quotient.sound
         replace hpast_F' : ↿F' =ᶠ[𝓝 (0, x)] fun q : ℝ × X ↦ F (T i.toNat, q.2) := by
-          have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet right_mem_Iic
+          have : 𝓝 (0 : ℝ) ≤ 𝓝ˢ (Iic 0) := nhds_le_nhdsSet self_mem_Iic
           apply mem_of_superset (prod_mem_nhds (hpast_F'.filter_mono this) univ_mem)
           rintro ⟨t', x'⟩ ⟨ht', -⟩
           exact (congr_fun ht' x' : _)

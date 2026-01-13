@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Notation
 import Mathlib.Logic.Function.Basic
 import Mathlib.Tactic.Choose
 

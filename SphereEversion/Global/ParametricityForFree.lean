@@ -82,9 +82,9 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
          ← ContinuousLinearMap.map_neg, neg_sub]
     obtain ⟨u, hu, t, rfl⟩ := q.decomp x
-    have hv : (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1) - p.v ∈ ker p.π := by
+    have hv : (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1) - p.v ∈ p.π.ker := by
       simp [LinearMap.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self]
-    have hup : ((0 : EP), u) ∈ ker p.π := (h2pq u).trans hu
+    have hup : ((0 : EP), u) ∈ p.π.ker := (h2pq u).trans hu
     erw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
       Prod.smul_zero_mk, map_smul]
     conv_lhs => rw [← sub_add_cancel (0, q.v) p.v]
@@ -203,7 +203,7 @@ theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
     (x : M) : (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E := by
   rw [S.curry_ϕ]
   congr 1
-  refine (mdifferentiableAt_const.mfderiv_prod (contMDiff_id.mdifferentiableAt le_top)).trans ?_
+  refine (mdifferentiableAt_const.mfderiv_prod mdifferentiableAt_id).trans ?_
   rw [mfderiv_id, mfderiv_const]
   rfl
 
@@ -216,9 +216,8 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
     (S.curry (t, s)).IsHolonomicAt x := by
   simp_rw [OneJetSec.IsHolonomicAt, (S.curry _).snd_eq, S.curry_ϕ] at hS ⊢
   rw [show (S.curry (t, s)).bs = fun x ↦ (S.curry (t, s)).bs x from rfl, funext (S.curry_bs _)]
-  refine (mfderiv_comp x ((S t).contMDiff_bs.mdifferentiableAt (mod_cast le_top))
-    (mdifferentiableAt_const.prodMk (contMDiff_id.mdifferentiableAt le_top))).trans
-    ?_
+  refine (mfderiv_comp x ((S t).contMDiff_bs.mdifferentiableAt (by simp))
+    (mdifferentiableAt_const.prodMk mdifferentiableAt_id)).trans ?_
   rw [id, hS]
   rfl
 

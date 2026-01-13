@@ -411,9 +411,9 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
     (Loop.diff γ e).normalize = Loop.diff (fun e ↦ (γ e).normalize) e := by
   ext t x
   simp only [Loop.diff_apply, Loop.normalize_apply, partialFDerivFst]
-  rw [fderiv_fun_sub ((hγ_diff.partial_loop t).differentiable le_rfl).differentiableAt,
+  rw [fderiv_fun_sub ((hγ_diff.partial_loop t).differentiable (by simp)).differentiableAt,
     Loop.average_diff hγ_diff]
-  exact (hγ_diff.loop_average.differentiable le_rfl).differentiableAt
+  exact (hγ_diff.loop_average.differentiable (by simp)).differentiableAt
 
 variable {γ}
 

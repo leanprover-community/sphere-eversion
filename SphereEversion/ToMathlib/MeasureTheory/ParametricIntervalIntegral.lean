@@ -74,7 +74,8 @@ theorem hasFDerivAt_parametric_primitive_of_lip' (F : H → ℝ → E) (F' : ℝ
       replace hF_meas : ∀ᶠ x in 𝓝 x₀, AEStronglyMeasurable (F x) (volume.restrict (Ι a (s x₀))) :=
         Eventually.mono (ball_mem_nhds x₀ ε_pos) fun x hx ↦ hF_meas_ball hx ha hsx₀
       replace hF_int : IntervalIntegrable (F x₀) volume a (s x₀) := hF_int_ball x₀ x₀_in ha hsx₀
-      exact (hasFDerivAt_integral_of_dominated_loc_of_lip_interval ε_pos hF_meas hF_int hF'_meas
+      exact (hasFDerivAt_integral_of_dominated_loc_of_lip_interval (ball_mem_nhds x₀ ε_pos)
+        hF_meas hF_int hF'_meas
         (ae_restrict_of_ae_restrict_of_subset (ordConnected_Ioo.uIoc_subset ha hsx₀) h_lipsch)
         (bound_int ha hsx₀) h_diff).2
     have D₂ : HasFDerivAt (fun x ↦ φ x₀ (s x)) ((toSpanSingleton ℝ (F x₀ (s x₀))).comp s') x₀ := by
@@ -181,10 +182,10 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
       NNReal.coe_nonneg K
   · apply ae_of_all
     intro t
-    apply (ContDiff.hasStrictFDerivAt _ le_rfl).hasFDerivAt
+    apply (ContDiff.hasStrictFDerivAt _ one_ne_zero).hasFDerivAt
     rw [show (fun x ↦ F x t) = uncurry F ∘ fun x ↦ (x, t) by ext; simp]
     exact hF.comp ((contDiff_prodMk_left t).of_le le_top)
-  · exact (ContDiff.hasStrictFDerivAt hs le_rfl).hasFDerivAt
+  · exact (ContDiff.hasStrictFDerivAt hs (by simp)).hasFDerivAt
   · rfl
   · apply Continuous.aestronglyMeasurable
     have :
@@ -193,12 +194,12 @@ theorem hasFDerivAt_parametric_primitive_of_contDiff' {F : H → ℝ → E} (hF 
           (fderiv ℝ <| uncurry F) ∘ fun t ↦ (x₀, t) := by
       ext t
       have : HasFDerivAt (fun e ↦ F e t) ((fderiv ℝ (uncurry F) (x₀, t)).comp (inl ℝ H ℝ)) x₀ :=
-        (hF.hasStrictFDerivAt le_rfl).hasFDerivAt.comp _ (hasFDerivAt_prodMk_left _ _)
+        (hF.hasStrictFDerivAt (by norm_num)).hasFDerivAt.comp _ (hasFDerivAt_prodMk_left _ _)
       rw [this.fderiv]
       rfl
     rw [this]
     exact (inl ℝ H ℝ).compRightL.continuous.comp
-      ((hF.continuous_fderiv le_rfl).comp <| Continuous.prodMk_right x₀)
+      ((hF.continuous_fderiv (by norm_num)).comp <| Continuous.prodMk_right x₀)
   · simp_rw [ae_restrict_iff' measurableSet_Ioo]
     filter_upwards with t t_in
     rw [nnabs_coe K]
