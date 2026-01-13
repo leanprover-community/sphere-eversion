@@ -178,14 +178,14 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   clear h_mem
   let u : E := (InnerProductSpace.toDual ℝ E).symm p.π
   have u_ne : u ≠ 0 := EmbeddingLike.map_ne_zero_iff.mpr p.pi_ne_zero
-  by_cases H : ker p.π = (ℝ ∙ x)ᗮ
+  by_cases H : p.π.ker = (ℝ ∙ x)ᗮ
   · have key : ∀ w, EqOn (p.update φ w) φ (ℝ ∙ x)ᗮ := by
       intro w x
       rw [← H]
       exact p.update_ker_pi φ w
     exact ample_slice_of_forall _ p fun w _ ↦ hφ.congr (key w).symm
   obtain ⟨v', v'_in, hv', hπv'⟩ :
-    ∃ v' : E, v' ∈ (ℝ ∙ x)ᗮ ∧ ((ℝ ∙ x)ᗮ = ker p.π ⊓ (ℝ ∙ x)ᗮ ⊔ ℝ ∙ v') ∧ p.π v' = 1 := by
+    ∃ v' : E, v' ∈ (ℝ ∙ x)ᗮ ∧ ((ℝ ∙ x)ᗮ = p.π.ker ⊓ (ℝ ∙ x)ᗮ ⊔ ℝ ∙ v') ∧ p.π v' = 1 := by
     have ne_z : p.π (pr[x]ᗮ u) ≠ 0 := by
       rw [← toDual_symm_apply]
       change ¬⟪u, pr[x]ᗮ u⟫ = 0
@@ -204,25 +204,25 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       v := v'
       pairing := hπv' }
   apply ample_slice_of_ample_slice (show p'.π = p.π from rfl)
-  suffices slice R p' (x, y, φ) = (map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) : Set F)ᶜ by
+  suffices slice R p' (x, y, φ) = (((p.π.ker ⊓ (ℝ ∙ x)ᗮ).map ((φ : E →ₛₗ[.id ℝ] F))) : Set F)ᶜ by
     rw [this]
     apply AmpleSet.of_one_lt_codim
     let Φ := φ.toLinearMap
-    suffices 2 ≤ dim (F ⧸ map Φ (ker p.π ⊓ (ℝ ∙ x)ᗮ)) by
+    suffices 2 ≤ dim (F ⧸ map Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)) by
       rw [← finrank_eq_rank]
       exact_mod_cast this
     apply le_of_add_le_add_right
-    rw [Submodule.finrank_quotient_add_finrank (map Φ <| ker p.π ⊓ (ℝ ∙ x)ᗮ)]
-    have : dim (ker p.π ⊓ (ℝ ∙ x)ᗮ : Submodule ℝ E) + 1 = n := by
-      have eq := Submodule.finrank_sup_add_finrank_inf_eq (ker p.π ⊓ (ℝ ∙ x)ᗮ) (span ℝ {v'})
+    rw [Submodule.finrank_quotient_add_finrank (map Φ <| p.π.ker ⊓ (ℝ ∙ x)ᗮ)]
+    have : dim (p.π.ker ⊓ (ℝ ∙ x)ᗮ : Submodule ℝ E) + 1 = n := by
+      have eq := Submodule.finrank_sup_add_finrank_inf_eq (p.π.ker ⊓ (ℝ ∙ x)ᗮ) (span ℝ {v'})
       have eq₁ : dim (ℝ ∙ x)ᗮ = n := finrank_orthogonal_span_singleton x_ne
-      have eq₂ : ker p.π ⊓ (ℝ ∙ x)ᗮ ⊓ span ℝ {v'} = (⊥ : Submodule ℝ E) := by
+      have eq₂ : p.π.ker ⊓ (ℝ ∙ x)ᗮ ⊓ span ℝ {v'} = (⊥ : Submodule ℝ E) := by
         erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq]
       have eq₃ : dim (span ℝ {v'}) = 1 := finrank_span_singleton p'.v_ne_zero
       rw [← hv', eq₁, eq₃, eq₂] at eq
       simpa only [finrank_bot] using eq.symm
     have : dim E = n + 1 := Fact.out
-    linarith [finrank_map_le Φ (ker p.π ⊓ (ℝ ∙ x)ᗮ)]
+    linarith [finrank_map_le Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)]
   ext w
   rw [mem_slice_iff_of_not_mem hx y]
   rw [injOn_iff_injective]
@@ -232,8 +232,9 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
     ext z
     simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply, p'',
       ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, comp_apply]
-  have eq' : map (φ.comp j) (ker p''.π) = map φ (ker p.π ⊓ (ℝ ∙ x)ᗮ) := by
-    have : map (↑j) (ker p''.π) = ker p.π ⊓ (ℝ ∙ x)ᗮ := by
+  have eq' : (p''.π.ker).map (φ.comp j : _ →ₛₗ[.id ℝ] F) =
+      (p.π.ker ⊓ (ℝ ∙ x)ᗮ).map (φ : E →ₛₗ[.id ℝ] F) := by
+    have : (p''.π.ker).map (j : _ →ₛₗ[.id ℝ] _) = p.π.ker ⊓ (ℝ ∙ x)ᗮ := by
       ext z
       simp only [mem_map, LinearMap.mem_ker, mem_inf]
       constructor
@@ -242,7 +243,6 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       · rintro ⟨hz, z_in⟩
         exact ⟨⟨z, z_in⟩, hz, rfl⟩
     erw [← this, map_comp]
-    rfl
   rw [eq, p''.injective_update_iff, mem_compl_iff, eq']
   · exact Iff.rfl
   rw [← show ((ℝ ∙ x)ᗮ : Set E).restrict φ = φ.comp j by ext; rfl]

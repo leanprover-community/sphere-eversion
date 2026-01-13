@@ -72,7 +72,8 @@ omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I m}
     {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
-    (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p = ((ker p.π).map φ : Set <| TM' m')ᶜ :=
+    (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p =
+      (((p.π.ker).map (φ : TM m →ₛₗ[.id ℝ] TM' m')): Set <| TM' m')ᶜ :=
   Set.ext_iff.mpr fun _ ↦ p.injective_update_iff hφ
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
