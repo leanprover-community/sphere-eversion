@@ -167,7 +167,7 @@ theorem corrugation.fderiv_eq {N : ℝ} (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ)
   have key := (hasFDerivAt_parametric_primitive_of_contDiff' diff (hπ_diff.const_smul N) x₀ 0).2
   erw [fderiv_const_smul key.differentiableAt, key.fderiv, smul_add, add_comm]
   congr 1
-  rw [fderiv_fun_const_smul (hπ_diff.differentiable le_rfl).differentiableAt N, π.fderiv]
+  rw [fderiv_fun_const_smul (hπ_diff.differentiable (by simp)).differentiableAt N, π.fderiv]
   simp only [smul_smul, inv_mul_cancel₀ hN, one_div, smul_eq_mul, one_smul,
     ContinuousLinearMap.comp_smul]
 
@@ -181,8 +181,8 @@ theorem fderiv_corrugated_map (hN : N ≠ 0) (hγ_diff : 𝒞 1 ↿γ) {f : E �
     D (f + corrugation p.π N γ) x =
       p.update (D f x) (γ x (N * p.π x)) + corrugation.remainder p.π N γ x := by
   ext v
-  erw [fderiv_add (hf.differentiable le_rfl).differentiableAt
-      ((corrugation.contDiff _ N hγ_diff).differentiable le_rfl).differentiableAt]
+  erw [fderiv_add (hf.differentiable (by simp)).differentiableAt
+      ((corrugation.contDiff _ N hγ_diff).differentiable (by simp)).differentiableAt]
   simp_rw [ContinuousLinearMap.add_apply, corrugation.fderiv_apply _ N hN hγ_diff, hfγ,
     DualPair.update, ContinuousLinearMap.add_apply, p.π.comp_toSpanSingleton_apply, add_assoc]
 

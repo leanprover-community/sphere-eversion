@@ -16,12 +16,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 @[inherit_doc] local notation "pr[" x "]ᗮ" => projSpanOrthogonal x
 
 theorem orthogonal_span_toDual_symm (π : E →L[ℝ] ℝ) :
-    {.(InnerProductSpace.toDual ℝ E).symm π}ᗮ = ker π := by
+    {.(InnerProductSpace.toDual ℝ E).symm π}ᗮ = π.ker := by
   ext x
-  suffices (∀ a : ℝ, ⟪a • (toDual ℝ E).symm π, x⟫ = 0) ↔ π x = 0 by
-    simp only [orthogonal, mem_mk, LinearMap.mem_ker, ← toDual_symm_apply]
-    change (∀ (u : E), u ∈ span ℝ {(LinearIsometryEquiv.symm (toDual ℝ E)) π} → inner _ u x = 0) ↔ _
-    simpa
+  suffices (∀ a : ℝ, ⟪a • (toDual ℝ E).symm π, x⟫ = 0) ↔ π x = 0 by simp
   refine ⟨fun h ↦ ?_, fun h _ ↦ ?_⟩
   · simpa using h 1
   · simp [inner_smul_left, h]

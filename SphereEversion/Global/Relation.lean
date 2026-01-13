@@ -613,7 +613,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   left_inv' {σ} := by
     rw [OpenSmoothEmbedding.transfer, OneJetBundle.map_map]; rotate_left
     · exact (ψ.contMDiffAt_inv'.mdifferentiableAt (by simp))
-    · exact ψ.contMDiff_to.contMDiffAt.mdifferentiableAt (mod_cast le_top)
+    · exact ψ.contMDiff_to.contMDiffAt.mdifferentiableAt (by simp)
     conv_rhs => rw [← OneJetBundle.map_id σ]
     congr 1
     · rw [OpenSmoothEmbedding.invFun_comp_coe]

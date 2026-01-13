@@ -65,7 +65,7 @@ attribute [local simp] ContinuousLinearMap.toSpanSingleton_apply
 theorem pi_ne_zero (p : DualPair E) : p.π ≠ 0 := fun H ↦ by
   simpa [H] using p.pairing
 
-theorem ker_pi_ne_top (p : DualPair E) : ker p.π ≠ ⊤ := fun H ↦ by
+theorem ker_pi_ne_top (p : DualPair E) : p.π.ker ≠ ⊤ := fun H ↦ by
   have : p.π.toLinearMap p.v = 1 := p.pairing
   simpa [LinearMap.ker_eq_top.mp H]
 
@@ -84,10 +84,10 @@ def update (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : E →L[ℝ] F :=
   φ + (w - φ p.v) ⬝ p.π
 
 @[simp]
-theorem update_ker_pi (p : DualPair E) (φ : E →L[ℝ] F) (w : F) {u} (hu : u ∈ ker p.π) :
+theorem update_ker_pi (p : DualPair E) (φ : E →L[ℝ] F) (w : F) {u} (hu : u ∈ p.π.ker) :
     p.update φ w u = φ u := by
   rw [LinearMap.mem_ker] at hu
-  simp [update, hu]
+  simpa [update] using Or.inl hu
 
 @[simp]
 theorem update_v (p : DualPair E) (φ : E →L[ℝ] F) (w : F) : p.update φ w p.v = w := by
@@ -105,21 +105,21 @@ theorem update_update (p : DualPair E) (φ : E →L[ℝ] F) (w w' : F) :
     add_sub_cancel, add_assoc, ← ContinuousLinearMap.add_comp, ← toSpanSingleton_add,
     sub_add_eq_add_sub, add_sub_cancel]
 
-theorem inf_eq_bot (p : DualPair E) : ker p.π ⊓ p.spanV = ⊥ := bot_unique <| fun x hx ↦ by
+theorem inf_eq_bot (p : DualPair E) : p.π.ker ⊓ p.spanV = ⊥ := bot_unique <| fun x hx ↦ by
   have : p.π x = 0 ∧ ∃ a : ℝ, a • p.v = x := by
     simpa [DualPair.spanV, Submodule.mem_span_singleton] using hx
   rcases this with ⟨H, t, rfl⟩
   rw [p.π.map_smul, p.pairing, smul_eq_mul, mul_one] at H
   simp [H]
 
-theorem sup_eq_top (p : DualPair E) : ker p.π ⊔ p.spanV = ⊤ := by
+theorem sup_eq_top (p : DualPair E) : p.π.ker ⊔ p.spanV = ⊤ := by
   rw [Submodule.sup_eq_top_iff]
   intro x
   refine ⟨x - p.π x • p.v, ?_, p.π x • p.v, ?_, ?_⟩ <;>
     simp [DualPair.spanV, Submodule.mem_span_singleton, p.pairing]
 
-theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u + t • p.v := by
-  have : e ∈ ker p.π ⊔ p.spanV := by
+theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ p.π.ker, ∃ t : ℝ, e = u + t • p.v := by
+  have : e ∈ p.π.ker ⊔ p.spanV := by
     rw [p.sup_eq_top]
     exact Submodule.mem_top
   simp_rw [Submodule.mem_sup, DualPair.mem_spanV] at this
@@ -127,7 +127,7 @@ theorem decomp (p : DualPair E) (e : E) : ∃ u ∈ ker p.π, ∃ t : ℝ, e = u
   exact ⟨u, hu, t, rfl⟩
 
 -- useful with `DualPair.decomp`
-theorem update_apply (p : DualPair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ ker p.π) :
+theorem update_apply (p : DualPair E) (φ : E →L[ℝ] F) {w : F} {t : ℝ} {u} (hu : u ∈ p.π.ker) :
     p.update φ w (u + t • p.v) = φ u + t • w := by
   rw [map_add, map_smul, p.update_v, p.update_ker_pi _ _ hu]
 
@@ -152,15 +152,12 @@ theorem map_update_comp_right (p : DualPair E) (ψ' : E →L[ℝ] F) (φ : E ≃
 
 @[simp]
 theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Injective φ) {w : F} :
-    Injective (p.update φ w) ↔ w ∉ (ker p.π).map φ := by
+    Injective (p.update φ w) ↔ w ∉ (p.π.ker).map (φ : E →ₛₗ[.id ℝ] F) := by
   constructor
   · rintro h ⟨u, hu, rfl⟩
     have : p.update φ (φ u) p.v = φ u := p.update_v φ (φ u)
-    conv_rhs at this => rw [← p.update_ker_pi φ (φ u) hu]
-    rw [← h this] at hu
-    simp only [SetLike.mem_coe, LinearMap.mem_ker] at hu
-    rw [p.pairing] at hu
-    linarith
+    nth_rw 2 [← p.update_ker_pi φ (φ u) hu] at this
+    simp [← h this, p.pairing] at hu
   · intro hw
     refine (injective_iff_map_eq_zero (p.update φ w)).mpr fun x hx ↦ ?_
     rcases p.decomp x with ⟨u, hu, t, rfl⟩
@@ -168,7 +165,7 @@ theorem injective_update_iff (p : DualPair E) {φ : E →L[ℝ] F} (hφ : Inject
     obtain rfl : t = 0 := by
       by_contra ht
       apply hw
-      refine ⟨-t⁻¹ • u, (ker p.π).smul_mem _ hu, ?_⟩
+      refine ⟨-t⁻¹ • u, (p.π.ker).smul_mem _ hu, ?_⟩
       rw [map_smul]
       have : -t⁻¹ • (φ u + t • w) + w = -t⁻¹ • (0 : F) + w := congr_arg (-t⁻¹ • · + w) hx
       rwa [smul_add, neg_smul, neg_smul, inv_smul_smul₀ ht, smul_zero, zero_add,
