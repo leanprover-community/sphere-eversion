@@ -49,8 +49,6 @@ theorem hasCompactMulSupport_of_subset {α β : Type*} [TopologicalSpace α] [T2
 theorem periodic_const {α β : Type*} [Add α] {a : α} {b : β} : Periodic (fun _ ↦ b) a := fun _ ↦
   rfl
 
-theorem Real.ball_zero_eq (r : ℝ) : Metric.ball (0 : ℝ) r = Ioo (-r) r := by simp [Real.ball_eq_Ioo]
-
 end
 
 section
@@ -91,30 +89,18 @@ open Int
 /- properties of the (dis)continuity of `Int.fract` on `ℝ`.
 To be PRed to Topology.Algebra.FloorRing
 -/
-theorem floor_eq_self_iff {x : ℝ} : (⌊x⌋ : ℝ) = x ↔ ∃ n : ℤ, x = n := by
-  constructor
-  · intro h
-    exact ⟨⌊x⌋, h.symm⟩
-  · rintro ⟨n, rfl⟩
-    rw [floor_intCast]
 
-theorem fract_eq_zero_iff {x : ℝ} : fract x = 0 ↔ ∃ n : ℤ, x = n := by
-  rw [fract, sub_eq_zero, eq_comm, floor_eq_self_iff]
+theorem Ioo_floor_mem_nhds {x : ℝ} (h : x ∉ range Int.cast) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
+  Ioo_mem_nhds (floor_lt_self_iff.mpr h) (lt_floor_add_one x)
 
-theorem fract_ne_zero_iff {x : ℝ} : fract x ≠ 0 ↔ ∀ n : ℤ, x ≠ n := by
-  rw [← not_exists, not_iff_not, fract_eq_zero_iff]
-
-theorem Ioo_floor_mem_nhds {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : Ioo (⌊x⌋ : ℝ) (⌊x⌋ + 1 : ℝ) ∈ 𝓝 x :=
-  Ioo_mem_nhds ((floor_le x).eq_or_lt.elim (fun H ↦ (h ⌊x⌋ H.symm).elim) id) (lt_floor_add_one x)
-
-theorem loc_constant_floor {x : ℝ} (h : ∀ n : ℤ, x ≠ n) : floor =ᶠ[𝓝 x] fun _ ↦ ⌊x⌋ := by
+theorem loc_constant_floor {x : ℝ} (h : x ∉ range Int.cast) : floor =ᶠ[𝓝 x] fun _ ↦ ⌊x⌋ := by
   filter_upwards [Ioo_floor_mem_nhds h]
   intro y hy
   rw [floor_eq_on_Ico]
   exact mem_Ico_of_Ioo hy
 
 theorem fract_eventuallyEq {x : ℝ} (h : fract x ≠ 0) : fract =ᶠ[𝓝 x] fun x' ↦ x' - floor x := by
-  rw [fract_ne_zero_iff] at h
+  rw [Int.fract_ne_zero_iff] at h
   exact EventuallyEq.rfl.sub ((loc_constant_floor h).fun_comp _)
 
 theorem Ioo_inter_Iio {α : Type*} [LinearOrder α] {a b c : α} :
@@ -143,7 +129,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
   rcases eq_or_ne (fract x) 0 with (hx' | hx')
   · have H : (0 : ℝ) ∈ s := by rwa [hx'] at hx
     specialize h2s H
-    rcases _root_.fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩; clear hx hx'
+    rcases Int.fract_eq_zero_iff.mp hx' with ⟨n, rfl⟩; clear hx hx'
     have s_mem_0 := hs.mem_nhds H
     rcases(nhds_basis_zero_abs_lt ℝ).mem_iff.mp s_mem_0 with ⟨δ, δ_pos, hδ⟩
     rcases(nhdsWithin_hasBasis (nhds_basis_Ioo_pos (1 : ℝ)) _).mem_iff.mp h2s with ⟨ε, ε_pos, hε⟩
@@ -164,7 +150,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     · apply hε'
       exact ⟨one_sub_lt_fract (by linarith [min_le_right ε (1 / 2)]) (by linarith) hx'',
         fract_lt_one x⟩
-  · rw [fract_ne_zero_iff] at hx'
+  · rw [Int.fract_ne_zero_iff] at hx'
     have H : Ico (⌊x⌋ : ℝ) (⌊x⌋ + 1) ∈ 𝓝 x :=
       mem_of_superset (Ioo_floor_mem_nhds hx') Ioo_subset_Ico_self
     exact (continuousOn_fract ⌊x⌋).continuousAt H (hs.mem_nhds hx)
