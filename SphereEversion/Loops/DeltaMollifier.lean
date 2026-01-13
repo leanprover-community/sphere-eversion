@@ -210,8 +210,8 @@ theorem approxDirac_integral_eq_one (n : ℕ) {a b : ℝ} (h : b = a + 1) :
     ∫ s in a..b, approxDirac n s = 1 := by
   have supp : support ((bump n).normed volume) ⊆ Ioc (-(1 / 2)) (-(1 / 2) + 1) := by
     rw [show -(1 / 2 : ℝ) + 1 = 1 / 2 by norm_num,
-      show support ((bump n).normed volume) = _ from (bump n).support_normed_eq, Real.ball_zero_eq,
-      show (bump n).rOut = 1 / (n + 2 : ℝ) from rfl]
+      show support ((bump n).normed volume) = _ from (bump n).support_normed_eq,
+      Real.ball_zero_eq_Ioo, show (bump n).rOut = 1 / (n + 2 : ℝ) from rfl]
     have key : 1 / (n + 2 : ℝ) ≤ 1 / 2 := by
       apply one_div_le_one_div_of_le
       · norm_num
