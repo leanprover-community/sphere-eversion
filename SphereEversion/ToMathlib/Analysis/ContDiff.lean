@@ -246,7 +246,7 @@ theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0
     refine this.congr_of_eventuallyEq ?_
     filter_upwards with v
     rw [orthogonalProjection_singleton', RCLike.ofReal_real_eq_id, _root_.id_def]
-  refine ContDiffAt.smul ?_ ?_
+  refine ContDiffAt.fun_smul ?_ ?_
   · exact contDiffAt_const.div (contDiff_norm_sq ℝ).contDiffAt
       (pow_ne_zero _ (norm_ne_zero_iff.mpr hv₀))
   · exact ((contDiff_toSpanSingleton ℝ E).clm_comp

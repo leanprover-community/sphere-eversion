@@ -234,7 +234,7 @@ def improveStep {𝓕 : FormalSol R} (h : L.Accepts R 𝓕) (N : ℝ) : HtpyJetS
       · exact smoothStep.smooth.fst'.mul L.ρ_smooth.snd'
       · apply contDiff_const.mul L.π.contDiff.snd'
       · exact contDiff_snd
-    · apply ContDiff.smul
+    · apply ContDiff.fun_smul
       · exact smoothStep.smooth.fst'.mul L.ρ_smooth.snd'
       · exact Remainder.smooth _ _ (L.loop_smooth h) contDiff_snd contDiff_const
 
