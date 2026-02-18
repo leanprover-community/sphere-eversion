@@ -79,16 +79,6 @@ theorem StrictDifferentiableAt.differentiableAt {f : E → F} {x : E}
     (h : StrictDifferentiableAt 𝕜 f x) : DifferentiableAt 𝕜 f x :=
   Exists.elim h fun φ hφ ↦ ⟨φ, hφ.hasFDerivAt⟩
 
--- PR to Topology.Algebra.Module.Basic
-@[simp]
-theorem ContinuousLinearMap.coprod_comp_inl_inr {R₁ : Type*} [Semiring R₁] {M₁ : Type*}
-    [TopologicalSpace M₁] [AddCommMonoid M₁] {M₂ : Type*} [TopologicalSpace M₂] [AddCommMonoid M₂]
-    {M₃ : Type*} [TopologicalSpace M₃] [AddCommMonoid M₃] [Module R₁ M₁] [Module R₁ M₂]
-    [Module R₁ M₃] [ContinuousAdd M₃] (f : M₁ × M₂ →L[R₁] M₃) :
-    (f.comp (ContinuousLinearMap.inl R₁ M₁ M₂)).coprod (f.comp (ContinuousLinearMap.inr R₁ M₁ M₂)) =
-      f :=
-  ContinuousLinearMap.coe_injective (f : M₁ × M₂ →ₗ[R₁] M₃).coprod_comp_inl_inr
-
 theorem DifferentiableAt.hasFDerivAt_coprod_partial {f : E → F → G} {x : E} {y : F}
     (hf : DifferentiableAt 𝕜 (uncurry f) (x, y)) :
     HasFDerivAt (uncurry f)
