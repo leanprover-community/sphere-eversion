@@ -57,6 +57,7 @@ def RelLoc.relativize (R : RelLoc E F) : RelLoc (P × E) F :=
 
 variable {P} (R)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem RelLoc.mem_relativize (w : OneJet (P × E) F) :
     w ∈ R.relativize P ↔ (w.1.2, w.2.1, w.2.2 ∘L ContinuousLinearMap.inr ℝ P E) ∈ R := by
   simp_rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq]
@@ -145,6 +146,7 @@ theorem FamilyJetSec.uncurry_φ' (S : FamilyJetSec E F P) (p : P × E) :
   rfl
 
 open ContinuousLinearMap
+set_option backward.isDefEq.respectTransparency false in
 theorem FamilyJetSec.uncurry_mem_relativize (S : FamilyJetSec E F P) {s : P} {x : E} :
     ((s, x), S.uncurry (s, x)) ∈ R.relativize P ↔ (x, S s x) ∈ R := by
   rw [RelLoc.relativize, mem_preimage, oneJetSnd_eq, JetSec.coe_apply, JetSec.coe_apply,
@@ -221,6 +223,7 @@ theorem FamilyJetSec.isHolonomicAt_curry (S : FamilyJetSec (P × E) F G) {t : G}
   rw [_root_.id, hS]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem FamilyJetSec.curry_mem (S : FamilyJetSec (P × E) F G) {p : G × P} {x : E}
     (hR : ((p.2, x), S p.1 (p.2, x)) ∈ R.relativize P) : (x, S.curry p x) ∈ R := by
   unfold RelLoc.relativize at hR

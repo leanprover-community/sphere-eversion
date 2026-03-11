@@ -68,6 +68,7 @@ variable {R : RelMfld I M I' M'}
 structure FormalSol (R : RelMfld I M I' M') extends OneJetSec I M I' M' where
   is_sol' : ∀ x : M, toOneJetSec x ∈ R
 
+set_option backward.isDefEq.respectTransparency false in
 instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' M')  where
   coe := fun F ↦ F.toOneJetSec
   coe_injective' := by
@@ -183,6 +184,7 @@ theorem mem_slice {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'} {p : Dua
     {w : TM' σ.1.2} : w ∈ R.slice σ p ↔ OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
   Iff.rfl
 
+set_option backward.isDefEq.respectTransparency false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
     {p : DualPair <| TM σ.1.1} (x : E') :
@@ -383,10 +385,9 @@ family of formal solutions. -/
 theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P × M)} {ε : M → ℝ}
     (h : R.SatisfiesHPrincipleWith IP C ε) (𝓕₀ : FamilyFormalSol IP P R)
     (h2 : ∀ᶠ p : P × M near C, (𝓕₀ p.1).toOneJetSec.IsHolonomicAt p.2) :
-    ∃ f : P → M → X,
-      (ContMDiff (IP.prod I) IX ∞ <| uncurry f) ∧
-        (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
-          (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
+    ∃ f : P → M → X, (CMDiff ∞ (uncurry f)) ∧
+      (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
+        (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
   refine ⟨fun s ↦ (𝓕 (1, s)).bs, ?_, ?_, ?_, ?_⟩
   · let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
@@ -515,6 +516,7 @@ instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
 
 instance (y : Y) : NormedSpace ℝ (TY y) := by assumption
 
+set_option backward.isDefEq.respectTransparency false in
 omit [IsManifold IX ∞ X] [IsManifold IM ∞ M]
   [IsManifold IY ∞ Y] [IsManifold IN ∞ N] in
 /-- Ampleness survives localization -/
@@ -558,6 +560,9 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
         (F.contMDiff_bs.comp φ.contMDiff_to).contMDiffAt
     · exact .oneJet_comp IM φ (F.contMDiff_eta.comp φ.contMDiff_to) φ.contMDiff_to.oneJetExt
 
+set_option maxHeartbeats 800000 in -- adaptation note: this is required since the bump
+-- from version 4.28.0 to version 4.29.0-rc6
+set_option backward.isDefEq.respectTransparency false in
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
   rw [OneJetSec.coe_apply, OneJetSec.localize_bs, OneJetSec.localize_ϕ,
@@ -570,7 +575,9 @@ theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     --  continuous_linear_equiv.coe_coe, continuous_linear_equiv.apply_symm_apply]
     -- Porting note: we are missing an ext lemma here.
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
-    erw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
+    rw [← ψ.fderiv_coe]
+    rw [ContinuousLinearMap.comp_apply]
+    erw [ContinuousLinearEquiv.coe_coe,
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply,
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply]
     rfl
@@ -583,6 +590,7 @@ theorem OneJetSec.localize_mem_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) {x : 
     F.localize φ ψ hF x ∈ R.localize φ ψ ↔ F (φ x) ∈ R := by
   rw [RelMfld.localize, mem_preimage, transfer_localize F φ ψ hF]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     (F.localize φ ψ hF).IsHolonomicAt x ↔ F.IsHolonomicAt (φ x) := by
   have :
@@ -604,6 +612,7 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
 /-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
 -- very slow to elaborate :-(
+set_option backward.isDefEq.respectTransparency false in
 @[simps]
 def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
   toFun := φ.transfer ψ

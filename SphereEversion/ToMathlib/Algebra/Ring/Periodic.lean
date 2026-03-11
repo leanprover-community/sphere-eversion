@@ -36,6 +36,7 @@ variable {α : Type*}
 def ℤSubℝ : AddSubgroup ℝ := AddMonoidHom.range (Int.castAddHom ℝ)
 
 /-- The equivalence relation on `ℝ` corresponding to its partition as cosets of `ℤ`. -/
+@[implicit_reducible]
 def transOne : Setoid ℝ := QuotientAddGroup.leftRel ℤSubℝ
 
 /-- The proposition that a function on `ℝ` is periodic with period `1`. -/

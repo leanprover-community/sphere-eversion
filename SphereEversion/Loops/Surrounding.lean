@@ -192,7 +192,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   rw [AffineMap.image_convexHull] at hbε
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, ?_, ?_, hbε (convexHull_mono hb₁ hf)⟩
-  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
+  · erw [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]; assumption
   · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/

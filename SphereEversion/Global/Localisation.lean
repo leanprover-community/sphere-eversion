@@ -24,6 +24,7 @@ Now we really bridge the gap all the way to vector spaces.
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
 def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' where
@@ -85,6 +86,7 @@ theorem JetSec.unloc_hol_at_iff (𝓕 : JetSec E E') (x : E) :
   rw [mfderiv_eq_fderiv]
   exact Iff.rfl
 
+set_option backward.isDefEq.respectTransparency false in
 def HtpyJetSec.unloc (𝓕 : HtpyJetSec E E') : HtpyOneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E' where
   bs t := (𝓕 t).f
   ϕ t x := (𝓕 t x).2

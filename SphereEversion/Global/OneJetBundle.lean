@@ -95,10 +95,12 @@ def OneJetSpace (p : M × M') : Type _ :=
   ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) p →SL[σ]
   ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
 
+set_option backward.isDefEq.respectTransparency false in
 instance (p : M × M') : TopologicalSpace (OneJetSpace I I' p) := by
   delta OneJetSpace
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance (p : M × M') : AddCommGroup (OneJetSpace I I' p) := by
   delta OneJetSpace
   infer_instance
@@ -144,6 +146,8 @@ variable (I I' M M')
 
 section OneJetBundleInstances
 
+set_option backward.isDefEq.respectTransparency false
+
 section
 
 variable {M} (p : M × M')
@@ -161,7 +165,6 @@ instance : TopologicalSpace J¹MM' := by
 instance : FiberBundle (E →L[𝕜] E') FJ¹MM' := by
   delta OneJetSpace
   infer_instance
-
 
 instance : VectorBundle 𝕜 (E →L[𝕜] E') FJ¹MM' := by
   delta OneJetSpace
@@ -195,7 +198,7 @@ theorem oneJetBundle_trivializationAt (x₀ x : J¹MM') :
       inCoordinates E (TangentSpace I) E' (TangentSpace I') x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2
         x.2 := by
   delta OneJetSpace
-  rw [continuousLinearMap_trivializationAt, Trivialization.continuousLinearMap_apply]
+  erw [continuousLinearMap_trivializationAt, Trivialization.continuousLinearMap_apply]
   simp only [inCoordinates]
   congr 2
   exact Trivialization.pullback_symmL ContMDiffMap.fst
@@ -214,6 +217,7 @@ theorem trivializationAt_oneJetBundle_target (x₀ : M × M') :
         Set.univ :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Computing the value of a chart around `v` at point `v'` in `J¹(M, M')`.
   The last component equals the continuous linear map `v'.2`, composed on both sides by an
   appropriate coordinate change function. -/
@@ -226,6 +230,7 @@ theorem oneJetBundle_chartAt_apply (v v' : OneJetBundle I M I' M') :
   rw [FiberBundle.chartedSpace_chartAt_snd]
   exact oneJetBundle_trivializationAt v v'
 
+set_option backward.isDefEq.respectTransparency false in
 /-- In `J¹(M, M')`, the source of a chart has a nice formula -/
 theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     (chartAt HJ x₀).source =
@@ -298,6 +303,7 @@ lemma ContMDiffMap.snd_apply (x : M) (x' : M') :
 
 end
 
+set_option backward.isDefEq.respectTransparency false in
 /-- In `J¹(M, M')`, the target of a chart has a nice formula -/
 theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
@@ -325,18 +331,19 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
 
 section Maps
 
+set_option backward.isDefEq.respectTransparency false in
 theorem contMDiff_oneJetBundle_proj :
     ContMDiff ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) (I.prod I') ∞ (π (E →L[𝕜] E') FJ¹MM') := by
   apply contMDiff_proj _
 
 theorem ContMDiff.oneJetBundle_proj {f : N → J¹MM'}
     (hf : ContMDiff J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f) :
-    ContMDiff J (I.prod I') ∞ fun x ↦ (f x).1 :=
+    CMDiff ∞ fun x ↦ (f x).1 :=
   contMDiff_oneJetBundle_proj.comp hf
 
 theorem ContMDiffAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
     (hf : ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f x₀) :
-    ContMDiffAt J (I.prod I') ∞ (fun x ↦ (f x).1) x₀ :=
+    CMDiffAt ∞ (fun x ↦ (f x).1) x₀ :=
   (contMDiff_oneJetBundle_proj _).comp x₀ hf
 
 /-- The constructor of `OneJetBundle`, in case `Sigma.mk` will not give the right type. -/
@@ -356,13 +363,13 @@ theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
     (OneJetBundle.mk x y f).2 = f :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f x₀ ↔
       CMDiffAt ∞ (fun x ↦ (f x).1.1) x₀ ∧
         CMDiffAt ∞ (fun x ↦ (f x).1.2) x₀ ∧
-          ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞
-            (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2)
-              x₀) x₀ := by
+          CMDiffAt ∞ (inTangentCoordinates I I' (fun x ↦ (f x).1.1)
+            (fun x ↦ (f x).1.2) (fun x ↦ (f x).2) x₀) x₀ := by
   simp_rw [Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc,
     oneJetBundle_trivializationAt]
   rfl
@@ -370,13 +377,12 @@ theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
 theorem contMDiffAt_oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
         (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ ↔
-      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧
-        ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
+      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧ CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
   contMDiffAt_oneJetBundle
 
 theorem ContMDiffAt.oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
     (hf : CMDiffAt ∞ f x₀) (hg : CMDiffAt ∞ g x₀)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀) :
+    (hϕ : CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀) :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
       (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ :=
   contMDiffAt_oneJetBundle.mpr ⟨hf, hg, hϕ⟩
@@ -414,9 +420,9 @@ theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h :
 
 theorem ContMDiffAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h : N → N'}
     {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {n : N} (hg : ContinuousAt g n)
-    (hϕ' : ContMDiffAt J 𝓘(𝕜, E' →L[𝕜] F') ∞ (inTangentCoordinates I' J' g h ϕ' n) n)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ n) n) :
-    ContMDiffAt J 𝓘(𝕜, E →L[𝕜] F') ∞ (inTangentCoordinates I J' f h (fun n ↦ ϕ' n ∘L ϕ n) n) n :=
+    (hϕ' : CMDiffAt ∞ (inTangentCoordinates I' J' g h ϕ' n) n)
+    (hϕ : CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ n) n) :
+    CMDiffAt ∞ (inTangentCoordinates I J' f h (fun n ↦ ϕ' n ∘L ϕ n) n) n :=
   (hϕ'.clm_comp hϕ).congr_of_eventuallyEq hg.inTangentCoordinates_comp
 
 variable (I')
@@ -464,7 +470,7 @@ theorem ContMDiff.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, O
   simp_rw +unfoldPartialApp [inTangentCoordinates, inCoordinates]
   conv =>
     enter [4, x, 2]
-    rw [ContinuousLinearMap.add_comp]
+    erw [ContinuousLinearMap.add_comp]
   simp only [ContinuousLinearMap.comp_add]
   exact hϕ.2.2.add hϕ'.2.2
 
@@ -478,6 +484,7 @@ protected def OneJetBundle.map (f : M → N) (g : M' → N')
 
 variable {I' J'}
 
+set_option backward.isDefEq.respectTransparency false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M']
   [IsManifold I₂ ∞ M₂] [IsManifold I₃ ∞ M₃]
   [IsManifold J' ∞ N'] [IsManifold J ∞ N] in
@@ -509,13 +516,10 @@ theorem OneJetBundle.map_id (x : J¹MM') :
 
 theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
     {Dfinv : ∀ (z : M'') (x : M), TangentSpace J (f z x) →L[𝕜] TangentSpace I x} {k : M'' → J¹MM'}
-    (hf : ContMDiffAt (I''.prod I) J ∞ f.uncurry (x₀, (k x₀).1.1))
-    (hg : ContMDiffAt (I''.prod I') J' ∞ g.uncurry (x₀, (k x₀).1.2))
-    (hDfinv :
-      ContMDiffAt I'' 𝓘(𝕜, F →L[𝕜] E) ∞
-        (inTangentCoordinates J I (fun x ↦ f x (k x).1.1) (fun x ↦ (k x).1.1)
-          (fun x ↦ Dfinv x (k x).1.1) x₀)
-        x₀)
+    (hf : CMDiffAt ∞ f.uncurry (x₀, (k x₀).1.1))
+    (hg : CMDiffAt ∞ g.uncurry (x₀, (k x₀).1.2))
+    (hDfinv : CMDiffAt ∞ (inTangentCoordinates J I (fun x ↦ f x (k x).1.1) (fun x ↦ (k x).1.1)
+          (fun x ↦ Dfinv x (k x).1.1) x₀) x₀)
     (hk : ContMDiffAt I'' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ k x₀) :
     ContMDiffAt I'' ((J.prod J').prod 𝓘(𝕜, F →L[𝕜] F')) ∞
       (fun z ↦ OneJetBundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ := by
@@ -533,6 +537,7 @@ theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N
 def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
     J¹MM' → OneJetBundle J N I' M' := fun p ↦ OneJetBundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
 
+set_option backward.isDefEq.respectTransparency false in
 set_option linter.style.multiGoal false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M']
   [IsManifold I₂ ∞ M₂] [IsManifold I₃ ∞ M₃]
@@ -544,12 +549,9 @@ theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) �
 
 theorem ContMDiffAt.mapLeft {f : N' → M → N} {x₀ : N'}
     {Dfinv : ∀ (z : N') (x : M), TangentSpace J (f z x) →L[𝕜] TangentSpace I x} {g : N' → J¹MM'}
-    (hf : ContMDiffAt (J'.prod I) J ∞ f.uncurry (x₀, (g x₀).1.1))
-    (hDfinv :
-      ContMDiffAt J' 𝓘(𝕜, F →L[𝕜] E) ∞
-        (inTangentCoordinates J I (fun x ↦ f x (g x).1.1) (fun x ↦ (g x).1.1)
-          (fun x ↦ Dfinv x (g x).1.1) x₀)
-        x₀)
+    (hf : CMDiffAt ∞ f.uncurry (x₀, (g x₀).1.1))
+    (hDfinv : CMDiffAt ∞ (inTangentCoordinates J I (fun x ↦ f x (g x).1.1) (fun x ↦ (g x).1.1)
+          (fun x ↦ Dfinv x (g x).1.1) x₀) x₀)
     (hg : ContMDiffAt J' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ g x₀) :
     ContMDiffAt J' ((J.prod I').prod 𝓘(𝕜, F →L[𝕜] E')) ∞
       (fun z ↦ mapLeft (f z) (Dfinv z) (g z)) x₀ := by
@@ -637,6 +639,7 @@ variable (I I')
 
 -- note: this proof works for all vector bundles where we have proven
 -- `∀ p, chartAt _ p = f.toPartialEquiv`
+set_option backward.isDefEq.respectTransparency false in
 /-- The canonical identification between the one-jet bundle to the model space and the product,
 as a homeomorphism -/
 def oneJetBundleModelSpaceHomeomorph : OneJetBundle I H I' H' ≃ₜ 𝓜 :=

@@ -77,6 +77,7 @@ variable (ι k : Type*) [Fintype ι] [DecidableEq ι] [NontriviallyNormedField k
 
 attribute [instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
+set_option backward.isDefEq.respectTransparency false in
 theorem smooth_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
   suffices ∀ n : ℕ, ContDiff k m (det : Matrix (Fin n) (Fin n) k → k) by
     have h : (det : Matrix ι ι k → k) = det ∘ reindex (Fintype.equivFin ι) (Fintype.equivFin ι) :=
@@ -115,6 +116,7 @@ variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`.
 -- This should obviate the need for the finite-dimensionality assumption.
+set_option backward.isDefEq.respectTransparency false in
 theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
     (h : Fintype.card ι = Module.finrank 𝕜 F + 1) {n : WithTop ℕ∞} :
     ContDiffOn 𝕜 n (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
