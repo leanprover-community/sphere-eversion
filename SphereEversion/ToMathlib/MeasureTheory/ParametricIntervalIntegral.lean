@@ -266,7 +266,7 @@ variable [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type 
 theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
   induction n using WithTop.recTopCoe
-  · rw [contDiff_infty] at *
+  · erw [contDiff_infty] at *
     exact fun n ↦ contDiff_parametric_primitive_of_contDiff' (hF n) (hs n) a
   · exact contDiff_parametric_primitive_of_contDiff' hF hs a
 

@@ -148,6 +148,7 @@ tangent space to `V` is canonically isomorphic to `V`. -/
 def incl (v : J¹[𝕜, E, I, M, V] × V) : OneJetBundle I M 𝓘(𝕜, V) V :=
   ⟨(v.1.1, v.2), v.1.2⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem contMDiff_incl : ContMDiff ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V))
     ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) ∞ (incl I M V) := by
   intro x₀
@@ -218,6 +219,7 @@ def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ∞ f)
     convert (contMDiff_incl I M V).comp (s.contMDiff.prodMk hf)
     ext : 1 <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     (hi : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ∞ i x₀) :
     FamilyOneJetEuclSec I M V' J N

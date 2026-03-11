@@ -44,6 +44,7 @@ theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
     σ ∈ immersionRel I M I' M' ↔ Injective (σ.2 : TangentSpace I _ →L[ℝ] TangentSpace I' _) :=
   Iff.rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A characterisation of the immersion relation in terms of a local chart. -/
 theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ (ψJ σ).source) :
     σ' ∈ immersionRel I M I' M' ↔ Injective (ψJ σ σ').2 := by
@@ -57,6 +58,7 @@ theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
     ψJ σ '' ((ψJ σ).source ∩ immersionRel I M I' M') = (ψJ σ).target ∩ {q : HJ | Injective q.2} :=
   PartialEquiv.IsImage.image_eq fun _σ' hσ' ↦ (mem_immersionRel_iff' I I' hσ').symm
 
+set_option backward.isDefEq.respectTransparency false in
 theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine fun σ ↦ (ψJ σ).open_target.inter ?_
@@ -214,6 +216,7 @@ theorem formalEversionHolAtZero {t : ℝ} (ht : t < 1 / 4) :
   congr with y
   simp [smoothStep.of_lt ht]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x

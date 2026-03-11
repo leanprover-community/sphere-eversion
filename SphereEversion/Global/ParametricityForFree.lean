@@ -87,7 +87,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     have hup : ((0 : EP), u) ∈ p.π.ker := (h2pq u).trans hu
     erw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
       Prod.smul_zero_mk, map_smul]
-    conv_lhs => rw [← sub_add_cancel (0, q.v) p.v]
+    conv_lhs => erw [← sub_add_cancel (0, q.v) p.v]
     erw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundleSnd_eq]
     rfl
   erw [← preimage_vadd_neg, mem_preimage, mem_slice, R.mem_relativize]
@@ -134,6 +134,7 @@ theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := b
   rw [relativize_slice q rfl]
   exact (hR q).vadd
 
+set_option backward.isDefEq.respectTransparency false in
 theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP P) {s : P}
     {x : M} : S.uncurry (s, x) ∈ R.relativize IP P ↔ S s x ∈ R := by
   simp_rw [RelMfld.relativize, mem_preimage, bundleSnd_eq, OneJetSec.coe_apply, mapLeft]
@@ -207,6 +208,7 @@ theorem FamilyOneJetSec.curry_ϕ' (S : FamilyOneJetSec (IP.prod I) (P × M) I' M
   rw [mfderiv_id, mfderiv_const]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem FormalSol.eq_iff {F₁ F₂ : FormalSol R} {x : M} :
     F₁ x = F₂ x ↔ F₁.bs x = F₂.bs x ∧ F₁.ϕ x = by apply F₂.ϕ x := by
   simp [Bundle.TotalSpace.ext_iff, FormalSol.fst_eq, FormalSol.snd_eq]
@@ -221,6 +223,7 @@ theorem FamilyOneJetSec.isHolonomicAt_curry (S : FamilyOneJetSec (IP.prod I) (P 
   rw [id, hS]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 theorem FamilyOneJetSec.curry_mem (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) {p : N × P}
     {x : M} (hR : S p.1 (p.2, x) ∈ R.relativize IP P) : S.curry p x ∈ R := by
   simp_rw [RelMfld.relativize, mem_preimage, bundleSnd_eq, OneJetSec.coe_apply, mapLeft] at hR ⊢
@@ -237,6 +240,7 @@ theorem FamilyFormalSol.curry_ϕ' (S : FamilyFormalSol J N (R.relativize IP P)) 
     (S.curry p).ϕ x = (S p.1).ϕ (p.2, x) ∘L ContinuousLinearMap.inr ℝ EP E :=
   S.toFamilyOneJetSec.curry_ϕ' p x
 
+set_option backward.isDefEq.respectTransparency false in
 theorem curry_eq_iff_eq_uncurry {𝓕 : FamilyFormalSol J N (R.relativize IP P)}
     {𝓕₀ : FamilyFormalSol IP P R} {t : N} {x : M} {s : P} (h : 𝓕 t (s, x) = 𝓕₀.uncurry (s, x)) :
     (𝓕.curry (t, s)) x = 𝓕₀ s x := by

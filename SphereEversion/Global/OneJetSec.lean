@@ -102,6 +102,7 @@ of its base map at x. -/
 def IsHolonomicAt (F : OneJetSec I M I' M') (x : M) : Prop :=
   mfderiv% F.bs x = (F x).2
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A section of J¹(M, M') is holonomic at (x : M) iff it coincides with the 1-jet extension of
 its base map at x. -/
 theorem isHolonomicAt_iff {F : OneJetSec I M I' M'} {x : M} :
@@ -256,6 +257,7 @@ def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M
         (mod_cast le_top)
     · exact ContMDiff.oneJet_comp I (fun p : P × M ↦ p.2) S.contMDiff contMDiff_snd.oneJetExt
 
+set_option backward.isDefEq.respectTransparency false in
 theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
     S.uncurry.ϕ p =
       mfderiv% (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
