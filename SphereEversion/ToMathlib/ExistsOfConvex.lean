@@ -58,7 +58,7 @@ theorem reallyConvex_contMDiffAt (x : M) (n : ℕ∞) :
   classical
   rw [Nontrivial.reallyConvex_iff]
   rintro w _w_pos w_supp w_sum
-  have : (support w).Finite := finite_support_of_finsum_eq_one w_sum
+  have : (support w).Finite := hasFiniteSupport_of_finsum_eq_one w_sum
   set fin_supp := this.toFinset with H
   have : (support fun i : (𝓝 x).Germ F ↦ w i • i) ⊆ fin_supp := by
     rw [Set.Finite.coe_toFinset]
@@ -121,8 +121,7 @@ theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
   classical
   rw [Nontrivial.reallyConvex_iff]
   rintro w _w_pos w_supp w_sum
-  have : (support w).Finite := finite_support_of_finsum_eq_one w_sum
-  set fin_supp := this.toFinset with H
+  set fin_supp := (hasFiniteSupport_of_finsum_eq_one w_sum).toFinset with H
   have : (support fun i : (𝓝 x).Germ (M₂ → F) ↦ w i • i) ⊆ fin_supp := by
     rw [Set.Finite.coe_toFinset]
     exact support_smul_subset_left w id

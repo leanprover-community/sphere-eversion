@@ -256,12 +256,6 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E F G : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [NormedSpace 𝕜 F]
   [NormedAddCommGroup G] [NormedSpace 𝕜 G]
 
--- move to Analysis.Calculus.ContDiff.Basic, or so
-theorem contDiff_prod_iff (f : E → F × G) (n : ℕ∞) :
-    ContDiff 𝕜 n f ↔
-      ContDiff 𝕜 n (Prod.fst ∘ f) ∧ ContDiff 𝕜 n (Prod.snd ∘ f) :=
-  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
-
 -- move to Analysis.Calculus.ContDiff.Defs, or so
 lemma ContDiff.inr (x : E) (n : ℕ∞) : ContDiff 𝕜 n fun p : F ↦ (⟨x, p⟩ : E × F) := by
   rw [contDiff_prod_iff]

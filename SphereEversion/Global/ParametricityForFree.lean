@@ -151,8 +151,9 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
   erw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.comp_apply]
-  simp
-  sorry -- TODO: proof used to be done now
+  simp only [uncurry_bs, bs_eq_coe_bs, add_eq_right]
+  -- adaptation note: the proof used to be done now!
+  exact ContinuousLinearMap.map_zero _
 
 def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) := by
   refine ⟨S.toFamilyOneJetSec.uncurry, ?_⟩

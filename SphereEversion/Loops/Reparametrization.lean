@@ -496,8 +496,8 @@ theorem reparametrize_average :
     (γ.centeringDensity_continuous x).continuousOn
   have h₃ : Continuous fun s ↦ γ x (γ.reparametrize x s) :=
     (γ.continuous x).comp (γ.reparametrize_smooth.continuous.uncurry_left x)
-  rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one, ←
-    integral_comp_smul_deriv h₁ h₂ h₃]
+  rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one,
+    ← integral_deriv_smul_comp h₁ h₂ h₃]
   simp only [comp_apply, EquivariantEquiv.apply_symm_apply, centeringDensity_average]
 
 end SmoothSurroundingFamily

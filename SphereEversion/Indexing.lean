@@ -155,7 +155,7 @@ theorem IndexType.exists_by_induction {α : Type*} (P : IndexType n → α → P
   cases n with
   | zero =>
     intro P Q h₀ ih
-    rcases exists_by_induction' P Q h₀ (by simpa using ih) with ⟨f, hf⟩
+    rcases exists_by_induction' P Q h₀ (fun n a hn ↦ ih n a hn (not_isMax n)) with ⟨f, hf⟩
     exact ⟨f, fun n ↦ ⟨(hf n).1, fun _ ↦ (hf n).2⟩⟩
   | succ N =>
     -- dsimp only [IndexType, IndexType.succ]

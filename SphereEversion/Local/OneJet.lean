@@ -271,7 +271,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
       prod_mem_nhds_iff.mpr ⟨Ioi_mem_nhds ht, univ_mem⟩
     filter_upwards [this] with p hp
     obtain ⟨t, x⟩ := p
-    replace hp : ¬t ≤ 1 / 2 := by push_neg; exact (prodMk_mem_set_prod_eq.mp hp).1
+    replace hp : ¬t ≤ 1 / 2 := by push Not; exact (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
     rw [if_neg hp]
     rfl
