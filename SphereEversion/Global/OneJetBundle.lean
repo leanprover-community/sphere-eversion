@@ -142,8 +142,6 @@ variable (I I' M M')
 
 section OneJetBundleInstances
 
-set_option backward.isDefEq.respectTransparency false
-
 section
 
 variable {M} (p : M × M')
@@ -153,27 +151,33 @@ instance (x : M × M') : Module 𝕜 (FJ¹MM' x) :=
 
 end
 
+set_option backward.isDefEq.respectTransparency false in
 instance : TopologicalSpace J¹MM' := by
   delta OneJetSpace OneJetBundle
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance : FiberBundle (E →L[𝕜] E') FJ¹MM' := by
   delta OneJetSpace
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance : VectorBundle 𝕜 (E →L[𝕜] E') FJ¹MM' := by
   delta OneJetSpace
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance : ContMDiffVectorBundle ∞ (E →L[𝕜] E')
     (OneJetSpace I I' : M × M' → Type _) (I.prod I') := by
   delta OneJetSpace
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance : ChartedSpace HJ J¹MM' := by
   delta OneJetSpace OneJetBundle
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance : IsManifold ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ J¹MM' := by
   apply Bundle.TotalSpace.isManifold
 
