@@ -95,15 +95,11 @@ def OneJetSpace (p : M × M') : Type _ :=
   ((ContMDiffMap.fst : C^∞⟮I.prod I', M × M'; I, M⟯) *ᵖ (TangentSpace I)) p →SL[σ]
   ((ContMDiffMap.snd : C^∞⟮I.prod I', M × M'; I', M'⟯) *ᵖ (TangentSpace I')) p
 
-set_option backward.isDefEq.respectTransparency false in
-instance (p : M × M') : TopologicalSpace (OneJetSpace I I' p) := by
-  delta OneJetSpace
-  infer_instance
+instance (p : M × M') : TopologicalSpace (OneJetSpace I I' p) :=
+  inferInstanceAs <| TopologicalSpace (E →L[𝕜] E')
 
-set_option backward.isDefEq.respectTransparency false in
-instance (p : M × M') : AddCommGroup (OneJetSpace I I' p) := by
-  delta OneJetSpace
-  infer_instance
+instance (p : M × M') : AddCommGroup (OneJetSpace I I' p) :=
+  inferInstanceAs <| AddCommGroup (E →L[𝕜] E')
 
 variable {I I'}
 
@@ -152,9 +148,8 @@ section
 
 variable {M} (p : M × M')
 
-instance (x : M × M') : Module 𝕜 (FJ¹MM' x) := by
-  delta OneJetSpace
-  infer_instance
+instance (x : M × M') : Module 𝕜 (FJ¹MM' x) :=
+  inferInstanceAs <| Module 𝕜 (E →L[𝕜] E')
 
 end
 
