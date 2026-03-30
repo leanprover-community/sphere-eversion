@@ -51,7 +51,7 @@ theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ 
   simp_rw [mem_immersionRel_iff]
   rw [oneJetBundle_chartAt_apply, inCoordinates_eq]
   · simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
-    EquivLike.injective_comp]
+      EquivLike.injective_comp]
   exacts [hσ'.1.1, hσ'.1.2]
 
 theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :

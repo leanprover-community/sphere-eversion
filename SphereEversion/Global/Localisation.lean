@@ -24,7 +24,6 @@ Now we really bridge the gap all the way to vector spaces.
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
 
-set_option backward.isDefEq.respectTransparency false in
 /-- Convert a 1-jet section between vector spaces seen as manifold to a 1-jet section
 between those vector spaces. -/
 def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' where
@@ -37,7 +36,7 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' 
     have : ContMDiffAt _ _ _ _ _ := F.contMDiff x₀
     simp_rw +unfoldPartialApp [contMDiffAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
-      ContinuousLinearMap.one_def, ContinuousLinearMap.comp_id, TangentSpace,
+      ContinuousLinearMap.one_def, TangentSpace,
       ContinuousLinearMap.id_comp] at this
     exact this.2.2.contDiffAt
 

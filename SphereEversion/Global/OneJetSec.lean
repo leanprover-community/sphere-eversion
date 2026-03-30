@@ -257,7 +257,6 @@ def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M
         (mod_cast le_top)
     · exact ContMDiff.oneJet_comp I (fun p : P × M ↦ p.2) S.contMDiff contMDiff_snd.oneJetExt
 
-set_option backward.isDefEq.respectTransparency false in
 theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
     S.uncurry.ϕ p =
       mfderiv% (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
@@ -267,7 +266,7 @@ theorem uncurry_ϕ' (S : FamilyOneJetSec I M I' M' IP P) (p : P × M) :
   convert
     mfderiv_comp p ((S.contMDiff_bs.comp (contMDiff_id.prodMk contMDiff_const)).mdifferentiable
       (by simp) p.1) (contMDiff_fst.mdifferentiable one_ne_zero p)
-  simp_rw [mfderiv_fst]
+  on_goal 1 => simp_rw [mfderiv_fst]
   rfl
 
 theorem isHolonomicAt_uncurry (S : FamilyOneJetSec I M I' M' IP P) {p : P × M} :
