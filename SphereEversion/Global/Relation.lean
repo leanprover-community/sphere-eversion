@@ -77,7 +77,6 @@ instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' 
     · exact congrArg Prod.snd (congrArg Bundle.TotalSpace.proj (congrFun h x))
     · simpa using (Bundle.TotalSpace.ext_iff.mp (congrFun h x)).2
 
-
 def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x) (hsol : ∀ x, F x ∈ R)
     (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ F) : FormalSol R
     where
@@ -518,8 +517,7 @@ instance (y : Y) : NormedAddCommGroup (TY y) := by assumption
 instance (y : Y) : NormedSpace ℝ (TY y) := by assumption
 
 set_option backward.isDefEq.respectTransparency false in
-omit [IsManifold IX ∞ X] [IsManifold IM ∞ M]
-  [IsManifold IY ∞ Y] [IsManifold IN ∞ N] in
+omit [IsManifold IX ∞ X] [IsManifold IM ∞ M] [IsManifold IY ∞ Y] [IsManifold IN ∞ N] in
 /-- Ampleness survives localization -/
 theorem RelMfld.Ample.localize (hR : R.Ample) : (R.localize φ ψ).Ample := by
   intro x p
@@ -561,8 +559,8 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
         (F.contMDiff_bs.comp φ.contMDiff_to).contMDiffAt
     · exact .oneJet_comp IM φ (F.contMDiff_eta.comp φ.contMDiff_to) φ.contMDiff_to.oneJetExt
 
-set_option maxHeartbeats 800000 in -- adaptation note: this is required since the bump
--- from version 4.28.0 to version 4.29.0-rc6
+#adaptation_note /-- In Lean 4.28, this declaration was still reasonably fast -/
+set_option maxHeartbeats 600000 in
 set_option backward.isDefEq.respectTransparency false in
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
@@ -576,11 +574,16 @@ theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     --  continuous_linear_equiv.coe_coe, continuous_linear_equiv.apply_symm_apply]
     -- Porting note: we are missing an ext lemma here.
     apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
-    rw [← ψ.fderiv_coe]
-    rw [ContinuousLinearMap.comp_apply]
-    erw [ContinuousLinearEquiv.coe_coe,
+    /- adaptation note: in Lean 4.28, this was
+    erw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply,
       ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.apply_symm_apply]
+    and much faster -/
+    rw [← ψ.fderiv_coe, ContinuousLinearMap.comp_apply]
+    erw [ContinuousLinearEquiv.coe_coe (e := (φ.fderiv x).symm)]
+    rw [ContinuousLinearMap.comp_apply]
+    erw [ContinuousLinearEquiv.apply_symm_apply, ContinuousLinearMap.comp_apply,
+      ContinuousLinearEquiv.apply_symm_apply]
     rfl
 
 theorem OneJetSec.localize_bs_fun (hF : range (F.bs ∘ φ) ⊆ range ψ) :
@@ -612,7 +615,7 @@ theorem isHolonomicAt_localize_iff (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : 
 
 /-! ## From embeddings `X ↪ M` and `Y ↪ N` to `J¹(X, Y) ↪ J¹(M, N)` -/
 
--- very slow to elaborate :-(
+-- slow to elaborate :-(
 set_option backward.isDefEq.respectTransparency false in
 @[simps]
 def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
