@@ -385,13 +385,13 @@ theorem RelMfld.SatisfiesHPrincipleWith.bs {R : RelMfld I M IX X} {C : Set (P ×
     (h : R.SatisfiesHPrincipleWith IP C ε) (𝓕₀ : FamilyFormalSol IP P R)
     (h2 : ∀ᶠ p : P × M near C, (𝓕₀ p.1).toOneJetSec.IsHolonomicAt p.2) :
     ∃ f : P → M → X,
-      (ContMDiff (IP.prod I) IX ∞ <| uncurry f) ∧
+      (CMDiff ∞ (uncurry f)) ∧
         (∀ᶠ p : P × M near C, f p.1 p.2 = 𝓕₀.bs p.1 p.2) ∧
           (∀ p m, dist (f p m) ((𝓕₀ p).bs m) ≤ ε m) ∧ ∀ p m, oneJetExt I IX (f p) m ∈ R := by
   rcases h 𝓕₀ h2 with ⟨𝓕, _, h₂, h₃, h₄⟩
   refine ⟨fun s ↦ (𝓕 (1, s)).bs, ?_, ?_, ?_, ?_⟩
   · let j : C^∞⟮IP, P; 𝓘(ℝ, ℝ).prod IP, ℝ × P⟯ :=
-      ⟨fun p ↦ (1, p), ContMDiff.prodMk contMDiff_const contMDiff_id⟩
+      ⟨fun p ↦ (1, p), contMDiff_const.prodMk contMDiff_id⟩
     rw [show
         (uncurry fun s ↦ (𝓕 (1, s)).bs) =
           Prod.snd ∘ π _ (OneJetSpace I IX) ∘ fun p : P × M ↦ 𝓕.reindex j p.1 p.2

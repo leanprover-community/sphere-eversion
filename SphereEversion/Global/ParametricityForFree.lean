@@ -156,7 +156,7 @@ def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativi
 
 theorem FamilyFormalSol.uncurry_ϕ' (S : FamilyFormalSol IP P R) (p : P × M) :
     S.uncurry.ϕ p =
-      mfderiv IP I' (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
+      mfderiv% (fun z ↦ S.bs z p.2) p.1 ∘L ContinuousLinearMap.fst ℝ EP E +
         S.ϕ p.1 p.2 ∘L ContinuousLinearMap.snd ℝ EP E :=
   S.toFamilyOneJetSec.uncurry_ϕ' p
 
@@ -169,17 +169,15 @@ def FamilyOneJetSec.curry (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) :
     rintro ⟨⟨t, s⟩, x⟩
     refine contMDiffAt_snd.oneJetBundle_mk (S.contMDiff_bs.comp contMDiff_prod_assoc _) ?_
     have h1 :
-      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, EP × E →L[ℝ] E') ∞
-        (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
+      CMDiffAt ∞ (inTangentCoordinates (IP.prod I) I' (fun p : (N × P) × M ↦ (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).bs (p.1.2, p.2))
           (fun p : (N × P) × M ↦ (S p.1.1).ϕ (p.1.2, p.2)) ((t, s), x))
         ((t, s), x) := by
       apply (contMDiffAt_oneJetBundle.mp <|
         (S.contMDiff (t, (s, x))).comp ((t, s), x) (contMDiff_prod_assoc ((t, s), x))).2.2
     have h2 :
-      ContMDiffAt ((J.prod IP).prod I) 𝓘(ℝ, E →L[ℝ] EP × E) ∞
-        (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
-          (fun p : (N × P) × M ↦ mfderiv I (IP.prod I) (fun x : M ↦ (p.1.2, x)) p.2) ((t, s), x))
+      CMDiffAt ∞ (inTangentCoordinates I (IP.prod I) Prod.snd (fun p : (N × P) × M ↦ (p.1.2, p.2))
+          (fun p : (N × P) × M ↦ mfderiv% (fun x : M ↦ (p.1.2, x)) p.2) ((t, s), x))
         ((t, s), x) := by
       apply
         ContMDiffAt.mfderiv (fun (p : (N × P) × M) (x : M) ↦ (p.1.2, x)) Prod.snd

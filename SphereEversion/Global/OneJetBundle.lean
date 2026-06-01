@@ -376,8 +376,7 @@ theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
 theorem contMDiffAt_oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
         (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ ↔
-      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧
-        ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
+      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧ CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
   contMDiffAt_oneJetBundle
 
 theorem ContMDiffAt.oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
