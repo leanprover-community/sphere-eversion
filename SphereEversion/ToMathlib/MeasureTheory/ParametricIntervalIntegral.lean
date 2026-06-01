@@ -263,10 +263,11 @@ variable [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {H : Type 
   [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
 
 -- Should we directly prove the version below?
+set_option backward.isDefEq.respectTransparency false in
 theorem contDiff_parametric_primitive_of_contDiff {F : H → ℝ → E} {n : ℕ∞} (hF : ContDiff ℝ n ↿F)
     {s : H → ℝ} (hs : ContDiff ℝ n s) (a : ℝ) : ContDiff ℝ n fun x : H ↦ ∫ t in a..s x, F x t := by
   induction n using WithTop.recTopCoe
-  · erw [contDiff_infty] at *
+  · rw [contDiff_infty] at *
     exact fun n ↦ contDiff_parametric_primitive_of_contDiff' (hF n) (hs n) a
   · exact contDiff_parametric_primitive_of_contDiff' hF hs a
 

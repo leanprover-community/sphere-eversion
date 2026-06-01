@@ -49,12 +49,13 @@ local infixl:100 "×₃" => ω.crossProduct
 
 theorem crossProduct_apply_self (v : E) : v×₃v = 0 := by simp [crossProduct]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm ![u, v, w] := by
   simp only [crossProduct, to_dual, LinearEquiv.trans_symm, LinearEquiv.symm_symm,
     Nat.succ_eq_add_one, Nat.reduceAdd, AlternatingMap.curryLeftLinearMap_apply, LinearMap.coe_comp,
     Function.comp_apply, LinearMap.llcomp_apply, LinearEquiv.coe_coe, LinearEquiv.trans_apply,
     LinearIsometryEquiv.coe_symm_toLinearEquiv]
-  erw [InnerProductSpace.toDual_symm_apply]
+  rw [InnerProductSpace.toDual_symm_apply]
   simp
 
 theorem inner_crossProduct_apply_self (u : E) (v : (ℝ ∙ u)ᗮ) : ⟪u×₃v, u⟫ = 0 := by

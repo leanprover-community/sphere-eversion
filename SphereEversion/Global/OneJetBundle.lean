@@ -192,12 +192,13 @@ theorem oneJetBundle_proj_continuous : Continuous (π (E →L[𝕜] E') FJ¹MM')
 -- Porting note: removed next line
 -- attribute [simps] ContMDiffMap.fst ContMDiffMap.snd
 
+set_option backward.isDefEq.respectTransparency false in
 theorem oneJetBundle_trivializationAt (x₀ x : J¹MM') :
     (trivializationAt (E →L[𝕜] E') (OneJetSpace I I') x₀.proj x).2 =
       inCoordinates E (TangentSpace I) E' (TangentSpace I') x₀.proj.1 x.proj.1 x₀.proj.2 x.proj.2
         x.2 := by
   delta OneJetSpace
-  erw [continuousLinearMap_trivializationAt, Trivialization.continuousLinearMap_apply]
+  rw [continuousLinearMap_trivializationAt, Trivialization.continuousLinearMap_apply]
   simp only [inCoordinates]
   congr 2
   exact Trivialization.pullback_symmL ContMDiffMap.fst
@@ -453,6 +454,7 @@ theorem ContMDiff.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N}
 
 variable {I'}
 
+set_option backward.isDefEq.respectTransparency false in
 open Trivialization in
 omit [IsManifold J ∞ N] in
 theorem ContMDiff.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, OneJetSpace I I' (f x, g x)}
@@ -471,7 +473,7 @@ theorem ContMDiff.oneJet_add {f : N → M} {g : N → M'} {ϕ ϕ' : ∀ x : N, O
   simp_rw +unfoldPartialApp [inTangentCoordinates, inCoordinates]
   conv =>
     enter [4, x, 2]
-    erw [ContinuousLinearMap.add_comp]
+    rw [ContinuousLinearMap.add_comp]
   simp only [ContinuousLinearMap.comp_add]
   exact hϕ.2.2.add hϕ'.2.2
 
