@@ -10,8 +10,7 @@ import SphereEversion.Global.OneJetSec
 noncomputable section
 
 open Set Equiv Bundle ContinuousLinearMap
-
-open scoped Manifold Bundle Topology ContDiff
+open scoped Manifold Topology ContDiff
 
 section ArbitraryField
 universe u v
@@ -25,7 +24,6 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type u} [NormedAddCo
   (V' : Type*) [NormedAddCommGroup V'] [NormedSpace 𝕜 V']
 
 section Smoothness
-
 
 notation "J¹[" 𝕜 ", " E ", " I ", " M ", " V "]" => TotalSpace (E →L[𝕜] V)
   (fun b ↦ (TangentSpace I : M → _) b →L[𝕜] (Bundle.Trivial M V) b)
