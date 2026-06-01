@@ -36,8 +36,7 @@ def OneJetSec.loc (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') : JetSec E E' 
     have : ContMDiffAt _ _ _ _ _ := F.contMDiff x₀
     simp_rw +unfoldPartialApp [contMDiffAt_oneJetBundle, inTangentCoordinates, inCoordinates,
       TangentBundle.symmL_model_space, TangentBundle.continuousLinearMapAt_model_space,
-      ContinuousLinearMap.one_def, TangentSpace,
-      ContinuousLinearMap.id_comp] at this
+      ContinuousLinearMap.one_def, TangentSpace] at this
     exact this.2.2.contDiffAt
 
 theorem OneJetSec.loc_hol_at_iff (F : OneJetSec 𝓘(ℝ, E) E 𝓘(ℝ, E') E') (x : E) :

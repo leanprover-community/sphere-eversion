@@ -170,7 +170,7 @@ variable (ω : Orientation ℝ E (Fin 3))
 theorem smooth_bs :
     ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞
       fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
-  refine (ContMDiff.smul ?_ ?_).add (contMDiff_fst.smul ?_)
+  refine (ContMDiff.smul (I := 𝓘(ℝ)) ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact (contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd
   · exact (contDiff_neg.contMDiff.comp (contMDiff_coe_sphere.of_le le_top)).comp contMDiff_snd
