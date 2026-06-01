@@ -64,6 +64,7 @@ variable {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
 #check (R.relativize IP P).slice σ p
 #check (R.slice (bundleSnd σ) q : Set <| TangentSpace I' σ.proj.2) -/
 
+set_option backward.isDefEq.respectTransparency false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     {p : DualPair <| TangentSpace (IP.prod I) σ.1.1} (q : DualPair <| TangentSpace I σ.1.1.2)
@@ -87,7 +88,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     have hup : ((0 : EP), u) ∈ p.π.ker := (h2pq u).trans hu
     erw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
       Prod.smul_zero_mk, map_smul]
-    conv_lhs => erw [← sub_add_cancel (0, q.v) p.v]
+    conv_lhs => rw [← sub_add_cancel (0, q.v) p.v]
     erw [map_add, p.update_ker_pi _ _ hv, p.update_v, bundleSnd_eq]
     rfl
   erw [← preimage_vadd_neg, mem_preimage, mem_slice, R.mem_relativize]
@@ -151,8 +152,8 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
   erw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.comp_apply]
+  -- adaptation note: in Lean 4.28, all this proof was just `simp`
   simp only [uncurry_bs, bs_eq_coe_bs, add_eq_right]
-  -- adaptation note: the proof used to be done now!
   exact ContinuousLinearMap.map_zero _
 
 def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) := by
