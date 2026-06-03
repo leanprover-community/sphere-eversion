@@ -161,10 +161,11 @@ variable [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [Nontrivially
 
 namespace Trivialization
 
+set_option backward.isDefEq.respectTransparency false in
 theorem pullback_symmL (e : Trivialization F (π F E)) [e.IsLinear 𝕜] (x : B') :
     (e.pullback f).symmL 𝕜 x = e.symmL 𝕜 (f x) := by
   ext y
-  simp only [symmL_apply, pullback_symm]
+  simp only [Trivialization.symmL_apply, pullback_symm]
   rfl
 
 end Trivialization

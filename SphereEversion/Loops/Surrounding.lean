@@ -173,6 +173,7 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
         (basis.sum_coord_apply_eq_one f), basis.affineCombination_coord_eq_self]
 
 --- `prop:surrounded_by_open`
+set_option backward.isDefEq.respectTransparency false in
 theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (hs : IsOpen s)
     (hsf : f ∈ convexHull ℝ s) : Surrounded f s := by
   rw [surrounded_iff_mem_interior_convexHull_aff_basis]
@@ -192,7 +193,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   rw [AffineMap.image_convexHull] at hbε
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, ?_, ?_, hbε (convexHull_mono hb₁ hf)⟩
-  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
+  · rw [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]; assumption
   · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/

@@ -9,6 +9,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [ChartedSpace H M]
 
 /-- A metric defining the topology on a σ-compact T₂ real manifold. -/
+@[implicit_reducible]
 def manifoldMetric [T2Space M] [SigmaCompactSpace M] : MetricSpace M :=
   letI := Manifold.metrizableSpace I M
   TopologicalSpace.metrizableSpaceMetric _

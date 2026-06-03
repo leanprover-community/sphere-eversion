@@ -44,19 +44,21 @@ theorem mem_immersionRel_iff {σ : OneJetBundle I M I' M'} :
     σ ∈ immersionRel I M I' M' ↔ Injective (σ.2 : TangentSpace I _ →L[ℝ] TangentSpace I' _) :=
   Iff.rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- A characterisation of the immersion relation in terms of a local chart. -/
 theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ (ψJ σ).source) :
     σ' ∈ immersionRel I M I' M' ↔ Injective (ψJ σ σ').2 := by
   simp_rw [mem_immersionRel_iff]
   rw [oneJetBundle_chartAt_apply, inCoordinates_eq]
   · simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
-    EquivLike.injective_comp]
+      EquivLike.injective_comp]
   exacts [hσ'.1.1, hσ'.1.2]
 
 theorem chartAt_image_immersionRel_eq {σ : OneJetBundle I M I' M'} :
     ψJ σ '' ((ψJ σ).source ∩ immersionRel I M I' M') = (ψJ σ).target ∩ {q : HJ | Injective q.2} :=
   PartialEquiv.IsImage.image_eq fun _σ' hσ' ↦ (mem_immersionRel_iff' I I' hσ').symm
 
+set_option backward.isDefEq.respectTransparency false in
 theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine fun σ ↦ (ψJ σ).open_target.inter ?_
@@ -168,7 +170,7 @@ variable (ω : Orientation ℝ E (Fin 3))
 theorem smooth_bs :
     ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞
       fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
-  refine (ContMDiff.smul ?_ ?_).add (contMDiff_fst.smul ?_)
+  refine (ContMDiff.smul (I := 𝓘(ℝ)) ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact (contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd
   · exact (contDiff_neg.contMDiff.comp (contMDiff_coe_sphere.of_le le_top)).comp contMDiff_snd
@@ -214,6 +216,7 @@ theorem formalEversionHolAtZero {t : ℝ} (ht : t < 1 / 4) :
   congr with y
   simp [smoothStep.of_lt ht]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x
@@ -252,12 +255,6 @@ section helper
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {E F G : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [NormedAddCommGroup F] [NormedSpace 𝕜 F]
   [NormedAddCommGroup G] [NormedSpace 𝕜 G]
-
--- move to Analysis.Calculus.ContDiff.Basic, or so
-theorem contDiff_prod_iff (f : E → F × G) (n : ℕ∞) :
-    ContDiff 𝕜 n f ↔
-      ContDiff 𝕜 n (Prod.fst ∘ f) ∧ ContDiff 𝕜 n (Prod.snd ∘ f) :=
-  ⟨fun h ↦ ⟨h.fst, h.snd⟩, fun h ↦ h.1.prodMk h.2⟩
 
 -- move to Analysis.Calculus.ContDiff.Defs, or so
 lemma ContDiff.inr (x : E) (n : ℕ∞) : ContDiff 𝕜 n fun p : F ↦ (⟨x, p⟩ : E × F) := by

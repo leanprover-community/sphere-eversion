@@ -2,8 +2,6 @@
 Copyright (c) 2022 Heather Macbeth. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Heather Macbeth
-
-! This file was ported from Lean 3 source module to_mathlib.analysis.inner_product_space.cross_product
 -/
 import Mathlib.Analysis.InnerProductSpace.Dual
 import Mathlib.Analysis.InnerProductSpace.Orientation
@@ -51,6 +49,7 @@ local infixl:100 "×₃" => ω.crossProduct
 
 theorem crossProduct_apply_self (v : E) : v×₃v = 0 := by simp [crossProduct]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem inner_crossProduct_apply (u v w : E) : ⟪u×₃v, w⟫ = ω.volumeForm ![u, v, w] := by
   simp only [crossProduct, to_dual, LinearEquiv.trans_symm, LinearEquiv.symm_symm,
     Nat.succ_eq_add_one, Nat.reduceAdd, AlternatingMap.curryLeftLinearMap_apply, LinearMap.coe_comp,

@@ -300,7 +300,7 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
     ∫ s in (0 : ℝ)..1, γ.localCenteringDensity x y s = 1 := by
   let n := γ.localCenteringDensityMp x
   simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply, smul_eq_mul]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · have h : γ.approxSurroundingPointsAt x y n ∈ affineBases ι ℝ F :=
       γ.approxSurroundingPointsAt_mem_affineBases x y hy
     simp_rw [← smul_eq_mul, intervalIntegral.integral_smul, deltaMollifier_integral_eq_one,
@@ -317,7 +317,7 @@ theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x)
   let n := γ.localCenteringDensityMp x
   simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply, smul_eq_mul,
     Finset.sum_smul]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · simp_rw [mul_smul, intervalIntegral.integral_smul]
     change ∑ i, _ • γ.approxSurroundingPointsAt x y n i = _
     have h : γ.approxSurroundingPointsAt x y n ∈ affineBases ι ℝ F :=
@@ -496,8 +496,8 @@ theorem reparametrize_average :
     (γ.centeringDensity_continuous x).continuousOn
   have h₃ : Continuous fun s ↦ γ x (γ.reparametrize x s) :=
     (γ.continuous x).comp (γ.reparametrize_smooth.continuous.uncurry_left x)
-  rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one, ←
-    integral_comp_smul_deriv h₁ h₂ h₃]
+  rw [← (γ.reparametrize x).symm.map_zero, ← (γ.reparametrize x).symm.map_one,
+    ← integral_deriv_smul_comp h₁ h₂ h₃]
   simp only [comp_apply, EquivariantEquiv.apply_symm_apply, centeringDensity_average]
 
 end SmoothSurroundingFamily

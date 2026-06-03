@@ -80,6 +80,7 @@ variable {n : ℕ}
 theorem IndexType.not_lt_zero (j : IndexType n) : ¬j < 0 :=
   Nat.casesOn n Nat.not_lt_zero (fun _ ↦ Fin.not_lt_zero) j
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IndexType.zero_le (i : IndexType n) : 0 ≤ i := by cases n <;> dsimp at * <;> simp
 
 def IndexType.succ {N : ℕ} : IndexType N → IndexType N := Order.succ
@@ -118,6 +119,7 @@ theorem IndexType.toNat_succ (i : IndexType n) (hi : ¬IsMax i) :
 theorem IndexType.not_isMax (n : IndexType 0) : ¬IsMax n :=
   not_isMax_of_lt <| Nat.lt_succ_self n
 
+set_option backward.isDefEq.respectTransparency false in
 @[elab_as_elim]
 theorem IndexType.induction_from {P : IndexType n → Prop} {i₀ : IndexType n} (h₀ : P i₀)
     (ih : ∀ i ≥ i₀, ¬IsMax i → P i → P i.succ) : ∀ i ≥ i₀, P i := by
@@ -153,7 +155,7 @@ theorem IndexType.exists_by_induction {α : Type*} (P : IndexType n → α → P
   cases n with
   | zero =>
     intro P Q h₀ ih
-    rcases exists_by_induction' P Q h₀ (by simpa using ih) with ⟨f, hf⟩
+    rcases exists_by_induction' P Q h₀ (fun n a hn ↦ ih n a hn (not_isMax n)) with ⟨f, hf⟩
     exact ⟨f, fun n ↦ ⟨(hf n).1, fun _ ↦ (hf n).2⟩⟩
   | succ N =>
     -- dsimp only [IndexType, IndexType.succ]

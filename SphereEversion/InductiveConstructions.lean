@@ -342,7 +342,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
         rintro ⟨t, x⟩ h'
         split_ifs with h
         · rfl
-        · push_neg at h
+        · push Not at h
           change (↿F') ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat), x) = _
           rw [h', h₂F x t h.le]
       · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i.toNat :=
@@ -359,12 +359,11 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
         simpa using ht'
       exact hp.mono fun q hq ↦ if_neg hq
     refine ⟨F'', ?_, ?_, ?_, ?_⟩
-    · rintro p
-      by_cases ht : p.1 ≤ T i.toNat
+    · intro p
+      by_cases! ht : p.1 ≤ T i.toNat
       · rw [loc₁ _ ht]
         apply h₀F
-      · push_neg at ht
-        obtain ⟨t, x⟩ :=p
+      · obtain ⟨t, x⟩ :=p
         rw [loc₂ _ ht]
         refine ⟨h₀F' ((2 : ℝ) ^ (i.toNat + 1) * (t - T i.toNat)) x, ?_, ?_⟩
         · rintro (rfl : t = 0)
@@ -383,7 +382,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
           congr
           rw [← mul_T_succ_sub i.toNat]
         gcongr
-      · push_neg
+      · push Not
         apply T_lt_succ
     · rintro j hj ⟨t, x⟩ (rfl : t = 1)
       replace h₁F' := eventually_nhdsSet_iUnion₂.mp h₁F' j hj
@@ -408,7 +407,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
         split_ifs with ht
         · rfl
         · rw [hUF' _ x hx]
-          push_neg at ht
+          push Not at ht
           rw [h₂F x _ ht.le]
   rcases inductive_construction PP₀ PP₁ PP₂ (U_fin.prod_left fun i ↦ Ici (T i.toNat))
       ⟨fun p ↦ f₀ p.2, hPP₀, fun x t _ ↦ rfl⟩ ind' with

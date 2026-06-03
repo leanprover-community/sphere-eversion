@@ -213,7 +213,7 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     by
     simpa only [ContinuousLinearMap.opNorm_le_iff (le_of_lt ε_pos),
       orthogonalProjection_orthogonal_singleton, ContinuousLinearMap.coe_sub',
-      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, Pi.sub_apply, comp_apply,
+      ContinuousLinearMap.coe_comp', coe_subtypeL, Submodule.coe_subtype, Pi.sub_apply, comp_apply,
       coe_mk, sub_sub_sub_cancel_left]
   let N : E → E := fun x ↦ ⟪x, x⟫⁻¹ • x
   have hNx₀ : 0 < ‖N x₀‖ := by

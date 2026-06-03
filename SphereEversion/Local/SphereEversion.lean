@@ -231,7 +231,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
     simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply, p'',
-      ContinuousLinearMap.coe_comp', coe_subtypeL', Submodule.coe_subtype, comp_apply]
+      ContinuousLinearMap.coe_comp', coe_subtypeL, Submodule.coe_subtype, comp_apply]
   have eq' : (p''.π.ker).map (φ.comp j : _ →ₛₗ[.id ℝ] F) =
       (p.π.ker ⊓ (ℝ ∙ x)ᗮ).map (φ : E →ₛₗ[.id ℝ] F) := by
     have : (p''.π.ker).map (j : _ →ₛₗ[.id ℝ] _) = p.π.ker ⊓ (ℝ ∙ x)ᗮ := by
@@ -371,7 +371,7 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
   simp only [mul_one, this, coe_orthogonalProjection_apply, one_smul]
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (K := ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']
-  rw [fderiv_fun_neg, fderiv_id']
+  rw [fderiv_fun_neg, fderiv_fun_id]
   simp only [ContinuousLinearMap.neg_apply, ContinuousLinearMap.coe_id', id_eq, add_zero,
     starProjection_eq_self_iff.mpr hv', two_smul, add_sub_add_left_eq_sub,
     (Submodule.starProjection_apply_eq_zero_iff _).mpr hv]

@@ -10,8 +10,7 @@ import SphereEversion.Global.OneJetSec
 noncomputable section
 
 open Set Equiv Bundle ContinuousLinearMap
-
-open scoped Manifold Bundle Topology ContDiff
+open scoped Manifold Topology ContDiff
 
 section ArbitraryField
 universe u v
@@ -25,7 +24,6 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type u} [NormedAddCo
   (V' : Type*) [NormedAddCommGroup V'] [NormedSpace 𝕜 V']
 
 section Smoothness
-
 
 notation "J¹[" 𝕜 ", " E ", " I ", " M ", " V "]" => TotalSpace (E →L[𝕜] V)
   (fun b ↦ (TangentSpace I : M → _) b →L[𝕜] (Bundle.Trivial M V) b)
@@ -127,7 +125,7 @@ theorem contMDiff_proj : ContMDiff ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →
   have : ContMDiffAt ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) _ ∞ id x₀ := contMDiffAt_id
   simp_rw +unfoldPartialApp [contMDiffAt_oneJetBundle, inTangentCoordinates, inCoordinates,
     TangentBundle.continuousLinearMapAt_model_space, ContinuousLinearMap.one_def,
-    TangentSpace, ContinuousLinearMap.id_comp] at this
+    TangentSpace] at this
   exact this.1.one_jet_eucl_bundle_mk this.2.2
 
 variable {I M V}
@@ -148,6 +146,7 @@ tangent space to `V` is canonically isomorphic to `V`. -/
 def incl (v : J¹[𝕜, E, I, M, V] × V) : OneJetBundle I M 𝓘(𝕜, V) V :=
   ⟨(v.1.1, v.2), v.1.2⟩
 
+set_option backward.isDefEq.respectTransparency false in
 theorem contMDiff_incl : ContMDiff ((I.prod 𝓘(𝕜, E →L[𝕜] V)).prod 𝓘(𝕜, V))
     ((I.prod 𝓘(𝕜, V)).prod 𝓘(𝕜, E →L[𝕜] V)) ∞ (incl I M V) := by
   intro x₀
@@ -218,6 +217,7 @@ def familyJoin {f : N × M → V} (hf : ContMDiff (J.prod I) 𝓘(ℝ, V) ∞ f)
     convert (contMDiff_incl I M V).comp (s.contMDiff.prodMk hf)
     ext : 1 <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     (hi : ∀ x₀ : N × M, ContMDiffAt (J.prod I) 𝓘(ℝ, V →L[ℝ] V') ∞ i x₀) :
     FamilyOneJetEuclSec I M V' J N

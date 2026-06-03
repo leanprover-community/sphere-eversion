@@ -28,7 +28,7 @@ theorem finite_of_finprod_ne_one {M : Type*} {ι : Sort _} [CommMonoid M] {f : �
   classical
   rw [finprod_def] at h
   contrapose h
-  rw [dif_neg h]
+  rw [dif_neg (by exact h)]
 
 theorem support_finite_of_finsum_eq_of_neZero {M : Type*} {ι : Sort _} [AddCommMonoid M]
     {f : ι → M} {x : M} [NeZero x] (h : ∑ᶠ i, f i = x) : (support f).Finite := by
@@ -112,7 +112,7 @@ theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] [IsOrderedRing 𝕜]
     (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜} {z : ι → E}
     (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
     ∑ᶠ i, w i • z i ∈ s := by
-  rw [finsum_eq_sum_of_support_subset_of_finite _ _ (finite_support_of_finsum_eq_one h₁)]
+  rw [finsum_eq_sum_of_support_subset_of_finite _ _ (hasFiniteSupport_of_finsum_eq_one h₁)]
   swap; · exact support_smul_subset_left w z
   apply hs.sum_mem fun i _ ↦ h₀ i
   · rw [← finsum_eq_sum, h₁]
@@ -146,7 +146,7 @@ theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set 
     · simp_rw [preimage_empty, reallyConvex_empty]
     · simp_rw [preimage_univ, reallyConvex_univ]
   · refine Or.inr fun w hw h2w h3w ↦ ?_
-    have h4w : (support w).Finite := finite_support_of_finsum_eq_one h3w
+    have h4w : (support w).Finite := hasFiniteSupport_of_finsum_eq_one h3w
     have : (support fun x ↦ w x • x).Finite := h4w.subset (support_smul_subset_left w id)
     simp_rw [mem_preimage, map_finsum f this, map_smulₛₗ f]
     apply hs.finsum_mem
