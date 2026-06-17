@@ -561,6 +561,8 @@ def OneJetSec.localize (hF : range (F.bs ∘ φ) ⊆ range ψ) : OneJetSec IX X 
 
 #adaptation_note /-- In Lean 4.28, this declaration was still reasonably fast -/
 set_option maxHeartbeats 600000 in
+-- This declaration became much slower in 4.29, presumably due to latent defeq abuse becoming
+-- exposed now. TODO diagnose this and fix it!
 set_option backward.isDefEq.respectTransparency false in
 theorem transfer_localize (hF : range (F.bs ∘ φ) ⊆ range ψ) (x : X) :
     φ.transfer ψ (F.localize φ ψ hF x) = F (φ x) := by
