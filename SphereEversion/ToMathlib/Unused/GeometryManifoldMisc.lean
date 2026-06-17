@@ -337,7 +337,7 @@ attribute [mfld_simps] mem_insert_iff
 --   sorry
 -- end
 theorem contMDiffAt_tangentBundle_trivializationAt_continuousLinearMap (x₀ : TangentBundle I M) :
-    ContMDiffAt I.tangent 𝓘(𝕜, E) m
+    CMDiffAt m
       (fun x : TangentBundle I M ↦
         (trivializationAt E (TangentSpace I) x₀.proj).continuousLinearMapAt 𝕜 x.proj x.2)
       x₀ := by
@@ -374,7 +374,8 @@ theorem ContMDiffAt.contMDiffAt_tangentMap (x₀ : TangentBundle I M)
     (FiberBundle.continuous_proj E (TangentSpace I)).continuousAt.preimage_mem_nhds
       (e.open_baseSet.mem_nhds <| mem_baseSet_trivializationAt _ _ _)
   have h2 :=
-    (hf.continuousAt.comp (FiberBundle.continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
+    (hf.continuousAt.comp
+      (FiberBundle.continuous_proj E (TangentSpace I)).continuousAt).preimage_mem_nhds
       (e'.open_baseSet.mem_nhds <| mem_baseSet_trivializationAt _ _ _)
   sorry /-filter_upwards [h1, h2] with x hx h2x
   dsimp only [inTangentCoordinates, in_coordinates, id_def]

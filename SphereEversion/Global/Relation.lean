@@ -488,8 +488,8 @@ theorem OpenSmoothEmbedding.range_transfer :
   · rintro ⟨σ, rfl⟩; exact mk_mem_prod (mem_range_self _) (mem_range_self _)
   · rcases σ with ⟨⟨x, y⟩, τ⟩
     rintro ⟨⟨x, rfl⟩ : x ∈ range φ, ⟨y, rfl⟩ : y ∈ range ψ⟩
-    refine ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace IN (ψ y) →L[ℝ] TangentSpace IY y) ∘L
-      τ ∘L (φ.fderiv x : TangentSpace IX x →L[ℝ] TangentSpace IM (φ x))⟩, ?_⟩
+    refine ⟨⟨(x, y), ((ψ.fderiv y).symm : TangentSpace% (ψ y) →L[ℝ] TangentSpace% y) ∘L
+      τ ∘L (φ.fderiv x : TangentSpace% x →L[ℝ] TangentSpace% (φ x))⟩, ?_⟩
     refine congr_arg (Bundle.TotalSpace.mk _) (ContinuousLinearMap.ext fun v ↦ ?_)
     /- Porting note: Lean 3 version was
     simp_rw [continuous_linear_map.comp_apply, ← ψ.fderiv_coe, continuous_linear_equiv.coe_coe,

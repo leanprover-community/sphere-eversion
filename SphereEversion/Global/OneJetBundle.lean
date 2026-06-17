@@ -109,7 +109,7 @@ local notation "FJ¹MM'" => (OneJetSpace I I' : M × M' → Type _)
 
 variable (I I')
 
-instance (p : M × M') : FunLike (OneJetSpace I I' p) (TangentSpace I p.1) (TangentSpace I' p.2)
+instance (p : M × M') : FunLike (OneJetSpace I I' p) (TangentSpace% p.1) (TangentSpace% p.2)
 where
   coe := fun φ ↦ φ.toFun
   coe_injective := fun _ _ h ↦ ContinuousLinearMap.ext (congrFun h)
@@ -480,7 +480,7 @@ variable (I' J')
 
 /-- A useful definition to define maps between two `OneJetBundle`s. -/
 protected def OneJetBundle.map (f : M → N) (g : M' → N')
-    (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
+    (Dfinv : ∀ x : M, TangentSpace% (f x) →L[𝕜] TangentSpace% x) :
     OneJetBundle I M I' M' → OneJetBundle J N J' N' := fun p ↦
   OneJetBundle.mk (f p.1.1) (g p.1.2) ((mfderiv% g p.1.2 ∘L p.2) ∘L Dfinv p.1.1)
 
@@ -491,9 +491,9 @@ omit [IsManifold I ∞ M] [IsManifold I' ∞ M']
   [IsManifold I₂ ∞ M₂] [IsManifold I₃ ∞ M₃]
   [IsManifold J' ∞ N'] [IsManifold J ∞ N] in
 theorem OneJetBundle.map_map {f₂ : N → M₂} {f : M → N} {g₂ : N' → M₃} {g : M' → N'}
-    {Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x}
-    {Df₂inv : ∀ x : N, TangentSpace I₂ (f₂ x) →L[𝕜] TangentSpace J x} {x : J¹MM'}
-    (hg₂ : MDifferentiableAt J' I₃ g₂ (g x.1.2)) (hg : MDifferentiableAt I' J' g x.1.2) :
+    {Dfinv : ∀ x : M, TangentSpace% (f x) →L[𝕜] TangentSpace% x}
+    {Df₂inv : ∀ x : N, TangentSpace% (f₂ x) →L[𝕜] TangentSpace% x} {x : J¹MM'}
+    (hg₂ : MDiffAt g₂ (g x.1.2)) (hg : MDiffAt g x.1.2) :
     OneJetBundle.map J' I₃ f₂ g₂ Df₂inv (OneJetBundle.map I' J' f g Dfinv x) =
       OneJetBundle.map I' I₃ (f₂ ∘ f) (g₂ ∘ g) (fun x ↦ Dfinv x ∘L Df₂inv (f x)) x := by
   ext
@@ -517,7 +517,7 @@ theorem OneJetBundle.map_id (x : J¹MM') :
   erw [ContinuousLinearMap.id_comp]
 
 theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
-    {Dfinv : ∀ (z : M'') (x : M), TangentSpace J (f z x) →L[𝕜] TangentSpace I x} {k : M'' → J¹MM'}
+    {Dfinv : ∀ (z : M'') (x : M), TangentSpace% (f z x) →L[𝕜] TangentSpace% x} {k : M'' → J¹MM'}
     (hf : ContMDiffAt (I''.prod I) J ∞ f.uncurry (x₀, (k x₀).1.1))
     (hg : ContMDiffAt (I''.prod I') J' ∞ g.uncurry (x₀, (k x₀).1.2))
     (hDfinv :
@@ -539,7 +539,7 @@ theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N
 
 
 /-- A useful definition to define maps between two `OneJetBundle`s. -/
-def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
+def mapLeft (f : M → N) (Dfinv : ∀ x : M, TangentSpace% (f x) →L[𝕜] TangentSpace% x) :
     J¹MM' → OneJetBundle J N I' M' := fun p ↦ OneJetBundle.mk (f p.1.1) p.1.2 (p.2 ∘L Dfinv p.1.1)
 
 set_option backward.isDefEq.respectTransparency false in
@@ -547,13 +547,13 @@ set_option linter.style.multiGoal false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M']
   [IsManifold I₂ ∞ M₂] [IsManifold I₃ ∞ M₃]
   [IsManifold J' ∞ N'] [IsManifold J ∞ N] in
-theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace J (f x) →L[𝕜] TangentSpace I x) :
+theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace% (f x) →L[𝕜] TangentSpace% x) :
     mapLeft f Dfinv = OneJetBundle.map I' I' f (id : M' → M') Dfinv := by
   ext x; rfl; rfl; dsimp only [OneJetBundle.map, mapLeft, oneJetBundle_mk_snd]
   simp_rw [mfderiv_id, ContinuousLinearMap.id_comp]
 
 theorem ContMDiffAt.mapLeft {f : N' → M → N} {x₀ : N'}
-    {Dfinv : ∀ (z : N') (x : M), TangentSpace J (f z x) →L[𝕜] TangentSpace I x} {g : N' → J¹MM'}
+    {Dfinv : ∀ (z : N') (x : M), TangentSpace% (f z x) →L[𝕜] TangentSpace% x} {g : N' → J¹MM'}
     (hf : ContMDiffAt (J'.prod I) J ∞ f.uncurry (x₀, (g x₀).1.1))
     (hDfinv :
       ContMDiffAt J' 𝓘(𝕜, F →L[𝕜] E) ∞

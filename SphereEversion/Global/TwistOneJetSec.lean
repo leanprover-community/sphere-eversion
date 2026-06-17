@@ -106,8 +106,8 @@ end Sections
 
 section proj
 
-instance piBugInstanceRestatement (x : M) : TopologicalSpace
-    (TangentSpace I x →L[𝕜] Trivial M V x) := by
+instance piBugInstanceRestatement (x : M) :
+    TopologicalSpace (TangentSpace% x →L[𝕜] Trivial M V x) := by
   infer_instance
 
 instance piBugInstanceRestatement2 (x : M × V) : TopologicalSpace (OneJetSpace I 𝓘(𝕜, V) x) := by
