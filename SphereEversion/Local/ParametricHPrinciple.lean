@@ -151,7 +151,7 @@ theorem FamilyJetSec.uncurry_mem_relativize (S : FamilyJetSec E F P) {s : P} {x 
       (ContinuousLinearMap.inr ℝ P E) = JetSec.φ (S s) x by
     rw [this]; rfl
   ext v
-  simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
+  simp_rw [ContinuousLinearMap.comp_apply, add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.coe_snd', ContinuousLinearMap.map_zero, zero_add]
   rfl
@@ -248,7 +248,7 @@ theorem curry_eq_iff_eq_uncurry_loc {𝓕 : FamilyFormalSol G (R.relativize P)}
   change ((D (fun (z : P) ↦ 𝓕₀.toFamilyJetSec.f z x) s).comp (fst ℝ P E)
     + (𝓕₀.toFamilyJetSec.φ s x).comp (snd ℝ P E)).comp (inr ℝ P E) = ((𝓕₀ s) x).snd
   ext v
-  simp_rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
+  simp_rw [ContinuousLinearMap.comp_apply, add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.coe_snd', ContinuousLinearMap.map_zero, zero_add]
   rfl

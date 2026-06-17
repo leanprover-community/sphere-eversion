@@ -57,7 +57,7 @@ variable {E F}
 
 instance : FunLike (JetSec E F) E (F × (E →L[ℝ] F)) where
   coe 𝓕 := fun x ↦ (𝓕.f x, 𝓕.φ x)
-  coe_injective' := by
+  coe_injective := by
     rintro ⟨⟩ ⟨⟩ h; congr
     exacts [congr_arg (Prod.fst ∘ ·) h, congr_arg (Prod.snd ∘ ·) h]
 
@@ -149,7 +149,7 @@ instance : FunLike (FamilyJetSec E F P) P (JetSec E F) where
       f_diff := S.f_diff.comp (contDiff_const.prodMk contDiff_id)
       φ := S.φ t
       φ_diff := S.φ_diff.comp (contDiff_const.prodMk contDiff_id) }
-  coe_injective' := by
+  coe_injective := by
     rintro ⟨⟩ ⟨⟩ h
     simp only [funext_iff, DFunLike.ext_iff, JetSec.mk_apply, Prod.ext_iff] at h
     congr <;> ext <;> simp [h]

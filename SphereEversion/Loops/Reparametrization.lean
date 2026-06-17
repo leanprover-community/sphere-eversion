@@ -248,7 +248,7 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
   simp only [γ.localCenteringDensity_spec x, Fintype.sum_apply, Pi.smul_apply, smul_eq_mul]
   refine Finset.sum_pos (fun i _ ↦ mul_pos ?_ (deltaMollifier_pos _)) Finset.univ_nonempty
   obtain ⟨w, hw⟩ := γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy
-  convert hw.w_pos i
+  convert! hw.w_pos i
   rw [← hw.coord_eq_w]
   simp [evalBarycentricCoords, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
 

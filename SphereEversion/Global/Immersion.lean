@@ -50,7 +50,7 @@ theorem mem_immersionRel_iff' {σ σ' : OneJetBundle I M I' M'} (hσ' : σ' ∈ 
     σ' ∈ immersionRel I M I' M' ↔ Injective (ψJ σ σ').2 := by
   simp_rw [mem_immersionRel_iff]
   rw [oneJetBundle_chartAt_apply, inCoordinates_eq]
-  · simp_rw [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
+  · simp_rw [ContinuousLinearMap.coe_comp, ContinuousLinearEquiv.coe_coe, EquivLike.comp_injective,
       EquivLike.injective_comp]
   exacts [hσ'.1.1, hσ'.1.2]
 
@@ -62,7 +62,7 @@ set_option backward.isDefEq.respectTransparency false in
 theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I' M') := by
   simp_rw [ChartedSpace.isOpen_iff HJ (immersionRel I M I' M'), chartAt_image_immersionRel_eq]
   refine fun σ ↦ (ψJ σ).open_target.inter ?_
-  convert isOpen_univ.prod ContinuousLinearMap.isOpen_injective
+  convert! isOpen_univ.prod ContinuousLinearMap.isOpen_injective
   · ext x
     -- Porting note: `mem_prod` is a simp lemma, but the next line is still needed.
     rw [mem_prod]
@@ -228,8 +228,8 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
   · congr 2 with y
     simp [smoothStep.of_gt ht]
   ext v
-  erw [mfderiv_neg, ContinuousLinearMap.coe_comp', Function.comp_apply,
-       ContinuousLinearMap.neg_apply, smoothStep.of_gt ht]
+  erw [mfderiv_neg, ContinuousLinearMap.coe_comp, Function.comp_apply, _root_.neg_apply,
+    smoothStep.of_gt ht]
   rw [ω.rot_one]; · rfl
   rw [← range_mfderiv_coe_sphere (n := 2) x]
   exact LinearMap.mem_range_self ..
@@ -325,12 +325,12 @@ theorem sphere_eversion :
   refine ⟨f, h₁, ?_, ?_, ?_/-h₅-/⟩
   · ext x
     rw [this (0, x) (by simp)]
-    convert formalEversion_zero E ω x
+    convert! formalEversion_zero E ω x
   · ext x
     rw [this (1, x) (by simp)]
-    convert formalEversion_one E ω x
+    convert! formalEversion_one E ω x
   · exact fun t ↦ {
-      contMDiff := ContMDiff.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) h₁ t
+      contMDiff := h₁.uncurry_left 𝓘(ℝ, ℝ) (𝓡 2) 𝓘(ℝ, E) t
       diff_injective := h₅ t
     }
 

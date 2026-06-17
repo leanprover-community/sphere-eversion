@@ -112,7 +112,7 @@ variable (I I')
 instance (p : M × M') : FunLike (OneJetSpace I I' p) (TangentSpace I p.1) (TangentSpace I' p.2)
 where
   coe := fun φ ↦ φ.toFun
-  coe_injective' := fun _ _ h ↦ ContinuousLinearMap.ext (congrFun h)
+  coe_injective := fun _ _ h ↦ ContinuousLinearMap.ext (congrFun h)
 
 variable (M M')
 
@@ -243,7 +243,7 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     PartialEquiv.trans_source,
     OpenPartialHomeomorph.prod_toPartialEquiv,
     PartialEquiv.prod_source,
-    OpenPartialHomeomorph.coe_coe,
+    OpenPartialHomeomorph.coe_toPartialEquiv,
     Trivialization.coe_coe,
     OpenPartialHomeomorph.refl_partialEquiv,
     PartialEquiv.refl_source,
@@ -278,10 +278,10 @@ end
 
 section
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {E : Type*}
-[NormedAddCommGroup E] [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
-{H : Type*} [TopologicalSpace H] {H' : Type*} [TopologicalSpace H']
-{I : ModelWithCorners 𝕜 E H} {I' : ModelWithCorners 𝕜 E' H'} {M : Type*} [TopologicalSpace M]
-[ChartedSpace H M] {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] {n : ℕ∞}
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+  {H : Type*} [TopologicalSpace H] {H' : Type*} [TopologicalSpace H']
+  {I : ModelWithCorners 𝕜 E H} {I' : ModelWithCorners 𝕜 E' H'} {M : Type*} [TopologicalSpace M]
+  [ChartedSpace H M] {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M'] {n : ℕ∞}
 
 @[simp]
 lemma ContMDiffMap.coe_fst :
@@ -615,7 +615,7 @@ theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).toPartialEquiv := by
   apply partialEquiv_eq_equiv
   · intro x
-    rw [OpenPartialHomeomorph.coe_coe, oneJetBundle_chartAt_apply p x,
+    rw [OpenPartialHomeomorph.coe_toPartialEquiv, oneJetBundle_chartAt_apply p x,
       inCoordinates_tangent_bundle_core_model_space]
     ext <;> rfl
   · simp_rw [oneJetBundle_chart_source, prodChartedSpace_chartAt, chartAt_self_eq,
@@ -641,7 +641,7 @@ theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
   ext x
   · rfl
   · rfl
-  · rw [← OpenPartialHomeomorph.coe_coe_symm, oneJetBundle_model_space_chartAt]
+  · rw [← OpenPartialHomeomorph.coe_toPartialEquiv_symm, oneJetBundle_model_space_chartAt]
     rfl
 
 variable (I I')

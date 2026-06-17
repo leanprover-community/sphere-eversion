@@ -56,15 +56,13 @@ theorem isBoundedLinearMap_coprod (𝕜 : Type*) [NontriviallyNormedField 𝕜] 
       intros
       apply ContinuousLinearMap.coeFn_injective
       ext u
-      simp only [Prod.fst_add, Prod.snd_add, ContinuousLinearMap.coprod_apply,
-        ContinuousLinearMap.add_apply]
+      simp only [Prod.fst_add, Prod.snd_add, ContinuousLinearMap.coprod_apply, add_apply]
       ac_rfl
     map_smul := by
       intro r p
       apply ContinuousLinearMap.coeFn_injective
       ext x
-      simp only [Prod.smul_fst, Prod.smul_snd, ContinuousLinearMap.coprod_apply,
-        ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_add]
+      simp
     bound := by
       refine ⟨2, zero_lt_two, fun ⟨φ, ψ⟩ ↦ ?_⟩
       apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)

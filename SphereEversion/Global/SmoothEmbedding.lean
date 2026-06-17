@@ -253,11 +253,7 @@ def openSmoothEmbOfDiffeoSubsetChartTarget (x : M) {f : OpenPartialHomeomorph F 
   left_inv' {y} := by
     obtain ⟨z, hz, hz'⟩ := hf₄ (mem_range_self y)
     have aux : f.symm (IF z) = y := by rw [hz']; exact f.left_inv (hf₁.symm ▸ mem_univ _)
-    simp only [← hz', (chartAt H x).right_inv hz, extChartAt, OpenPartialHomeomorph.extend,
-      PartialEquiv.coe_trans, OpenPartialHomeomorph.invFun_eq_coe,
-      ModelWithCorners.toPartialEquiv_coe, OpenPartialHomeomorph.coe_coe,
-      PartialEquiv.coe_trans_symm, OpenPartialHomeomorph.coe_coe_symm,
-      ModelWithCorners.left_inv, ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply, aux]
+    simp [← hz', (chartAt H x).right_inv hz, aux]
   isOpen_range :=
     IsOpenMap.isOpen_range fun u hu ↦ by
       have aux : IsOpen (f '' u) := f.isOpen_image_of_subset_source hu (hf₁.symm ▸ subset_univ u)
@@ -347,7 +343,7 @@ theorem nice_atlas' {ι : Type*} {s : ι → Set M} (s_op : ∀ j, IsOpen <| s j
     rintro ⟨⟨x, r⟩, hxr⟩
     obtain ⟨hr : 0 < r, -, -⟩ := ht₂ _ hxr
     exact monotone_image (range_diffeomorphToNhd_subset_ball _ hr)
-  · simpa only [iUnion_coe_set] using ht₃
+  · simpa only [iUnion_coe_set] using! ht₃
 
 variable [Nonempty M]
 

@@ -53,7 +53,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] --[Complet
 
 /-- The orthogonal projection to the complement of `span x`. -/
 @[reducible] def projSpanOrthogonal (x : E) :=
-  orthogonalProjection (Submodule.span ℝ ({x} : Set E))ᗮ
+  orthogonalProjectionOnto (Submodule.span ℝ ({x} : Set E))ᗮ
 
 @[inherit_doc] local notation "{." x "}ᗮ" => spanOrthogonal x
 
@@ -67,7 +67,7 @@ theorem orthogonal_line_inf {u v : E} : {.u}ᗮ ⊓ {.v}ᗮ = {.(pr[v]ᗮ u : E)
     rw [span_singleton_le_iff_mem]
   · nth_rw 2 [← starProjection_add_starProjection_orthogonal (K := Δ v) u]
     exact add_mem (mem_sup_right <| coe_mem _) (mem_sup_left <| mem_span_singleton_self _)
-  · rw [projSpanOrthogonal, orthogonalProjection_orthogonal]
+  · rw [projSpanOrthogonal, orthogonalProjectionOnto_orthogonal]
     exact sub_mem (mem_sup_left <| mem_span_singleton_self _) (mem_sup_right <| coe_mem _)
 
 theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[v]ᗮ u : E) = {.v}ᗮ := by
@@ -76,13 +76,13 @@ theorem orthogonal_line_inf_sup_line (u v : E) : {.u}ᗮ ⊓ {.v}ᗮ ⊔ Δ (pr[
   exact coe_mem _
 
 theorem orthogonalProjection_eq_zero_of_mem {F : Submodule ℝ E} [CompleteSpace F] {x : E}
-    (h : x ∈ Fᗮ) : orthogonalProjection F x = 0 := by
+    (h : x ∈ Fᗮ) : orthogonalProjectionOnto F x = 0 := by
   refine Subtype.coe_injective (eq_starProjection_of_mem_of_inner_eq_zero F.zero_mem ?_)
   simp only [coe_zero, sub_zero]
   exact (mem_orthogonal' F x).mp h
 
 theorem inner_projection_self_eq_zero_iff {F : Submodule ℝ E} [CompleteSpace F] {x : E} :
-    ⟪x, orthogonalProjection F x⟫ = 0 ↔ x ∈ Fᗮ := by
+    ⟪x, orthogonalProjectionOnto F x⟫ = 0 ↔ x ∈ Fᗮ := by
   obtain ⟨y, hy, z, hz, rfl⟩ := F.exists_add_mem_mem_orthogonal x
   rw [inner_add_left, map_add, coe_add, inner_add_right, inner_add_right]
   suffices y = 0 ↔ y + z ∈ Fᗮ by
@@ -156,15 +156,15 @@ def orthogonalProjectionOrthogonalLineIso {x₀ x : E} (h : ⟪x₀, x⟫ ≠ 0)
       ext
       dsimp
       rw [map_sub, map_smul, starProjection_apply, starProjection_apply,
-        orthogonalProjection_orthogonalComplement_singleton_eq_zero, coe_zero,
+        orthogonalProjectionOnto_orthogonalComplement_singleton_eq_zero, coe_zero,
         ← starProjection_apply, smul_zero, sub_zero, starProjection_eq_self_iff.mpr hy]
     continuous_toFun := (pr[x]ᗮ.comp (subtypeL {.x₀}ᗮ)).continuous
     continuous_invFun := by fun_prop }
 
 theorem orthogonalProjection_comp_coe (K : Submodule ℝ E) [CompleteSpace K] :
-    orthogonalProjection K ∘ ((↑) : K → E) = id := by
+    orthogonalProjectionOnto K ∘ ((↑) : K → E) = id := by
   ext1 x
-  exact orthogonalProjection_mem_subspace_eq_self x
+  exact orthogonalProjectionOnto_mem_subspace_eq_self x
 
 variable (E)
 
@@ -212,8 +212,8 @@ theorem continuousAt_orthogonalProjection_orthogonal {x₀ : E} (hx₀ : x₀ �
     ∃ δ > 0, ∀ y, ‖y - x₀‖ ≤ δ → ∀ x, ‖(⟪x₀, x⟫ / ⟪x₀, x₀⟫) • x₀ - (⟪y, x⟫ / ⟪y, y⟫) • y‖ ≤ ε * ‖x‖
     by
     simpa only [ContinuousLinearMap.opNorm_le_iff (le_of_lt ε_pos),
-      orthogonalProjection_orthogonal_singleton, ContinuousLinearMap.coe_sub',
-      ContinuousLinearMap.coe_comp', coe_subtypeL, Submodule.coe_subtype, Pi.sub_apply, comp_apply,
+      orthogonalProjection_orthogonal_singleton, FunLike.coe_sub,
+      ContinuousLinearMap.coe_comp, coe_subtypeL, Submodule.coe_subtype, Pi.sub_apply, comp_apply,
       coe_mk, sub_sub_sub_cancel_left]
   let N : E → E := fun x ↦ ⟪x, x⟫⁻¹ • x
   have hNx₀ : 0 < ‖N x₀‖ := by

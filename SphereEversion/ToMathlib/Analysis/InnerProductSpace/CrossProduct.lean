@@ -90,7 +90,7 @@ theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖
       simpa only [inner_crossProduct_apply, AddSubgroupClass.coe_norm, mul_assoc,
         Fin.prod_univ_succ, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_succ,
         Finset.univ_unique, Fin.default_eq_zero, Matrix.cons_val_fin_one, Finset.prod_const,
-        Finset.card_singleton, pow_one] using ω.volumeForm_apply_le ![u, v, u×₃v]
+        Finset.card_singleton, pow_one] using! ω.volumeForm_apply_le ![u, v, u×₃v]
   let K : Submodule ℝ E := Submodule.span ℝ ({u, ↑v} : Set E)
   have : Nontrivial Kᗮ := by
     apply Module.nontrivial_of_finrank_pos (R := ℝ)

@@ -53,7 +53,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 instance : FunLike (OneJetSec I M I' M') M (OneJetBundle I M I' M') where
   coe := fun S x ↦ OneJetBundle.mk x (S.bs x) (S.ϕ x)
-  coe_injective' := by
+  coe_injective := by
     intro S T h
     dsimp at h
     ext x
@@ -186,7 +186,7 @@ instance : FunLike (FamilyOneJetSec I M I' M' J N) N (OneJetSec I M I' M') where
     { bs := S.bs t
       ϕ := S.ϕ t
       contMDiff' x := (S.contMDiff' (t, x)).comp x <| contMDiffAt_const.prodMk contMDiffAt_id }
-  coe_injective' := by
+  coe_injective := by
     intro S T h
     ext n : 2
     · exact (OneJetSec.mk.inj (congrFun h n)).1
