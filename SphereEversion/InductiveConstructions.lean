@@ -169,22 +169,19 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
   obtain ⟨U', U'_op, hKU', hU'U⟩ : ∃ U' : Set X, IsOpen U' ∧ K ⊆ U' ∧ closure U' ⊆ U :=
     normal_exists_closure_subset hK U_op hKU
   refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K,
-    U₁_op.union U_op, U₂_op.sdiff hK, ?_, K₂_cpct.diff U'_op, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    U₁_op.union U_op, U₂_op.sdiff hK, ?_, K₂_cpct.diff U'_op, subset_union_left,
+    ?_, by gcongr, ?_, by grind, ?_, diff_subset⟩
   · exact K₁_cpct.union (K₂_cpct.closure_of_subset inter_subset_left)
-  · exact subset_union_left
-  · apply union_subset_union hK₁U₁ (subset_trans _ hU'U)
+  · gcongr; grw [← hU'U]
     gcongr
     exact inter_subset_right
-  · exact diff_subset_diff hK₂U₂ hKU'
   · rw [union_assoc]
     congr
     apply subset_antisymm
     · exact union_subset (K₂_cpct.isClosed.closure_subset_iff.mpr inter_subset_left) diff_subset
     · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
         _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
-  · exact fun x hx hx' ↦ hx'.2 hx
   · rw [union_comm]
-  · exact diff_subset
 
 /-- We are given a suitably nice extended metric space `X` and three local constraints `P₀`,`P₀'`
 and `P₁` on maps from `X` to some type `Y`. All maps entering the discussion are required to
