@@ -3,15 +3,8 @@ import Mathlib.Analysis.Convex.AmpleSet
 
 noncomputable section
 
-open Set Function
-
-open Filter hiding map_smul
-
-open ChartedSpace
-
-open LinearMap (ker)
-
-open scoped Topology Manifold Pointwise ContDiff
+open Set
+open scoped Manifold Pointwise ContDiff
 
 section ParameterSpace
 

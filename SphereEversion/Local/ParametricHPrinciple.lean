@@ -14,13 +14,9 @@ then there exists a homotopy `𝓕 : ℝ × P → J¹(E, F)` between `𝓕` and 
 near `K`, that agrees with `𝓕₀` near `C` and is everywhere `ε`-close to `𝓕₀`
 -/
 
-
 noncomputable section
 
-open Metric FiniteDimensional Set Function RelLoc
-
-open LinearMap (ker)
-
+open Set Function RelLoc
 open scoped Topology Pointwise ContDiff
 
 section ParameterSpace
