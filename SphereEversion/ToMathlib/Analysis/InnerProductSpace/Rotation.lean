@@ -33,16 +33,16 @@ namespace Orientation
 and `t : ℝ` this endomorphism will be the rotation by the angle `t` about the axis spanned by `v`.
 -/
 def rot (p : ℝ × E) : E →L[ℝ] E :=
-  (ℝ ∙ p.2).subtypeL ∘L (orthogonalProjection (ℝ ∙ p.2) : E →L[ℝ] ℝ ∙ p.2) +
+  (ℝ ∙ p.2).subtypeL ∘L (orthogonalProjectionOnto (ℝ ∙ p.2) : E →L[ℝ] ℝ ∙ p.2) +
       Real.cos (p.1 * Real.pi) •
-        (ℝ ∙ p.2)ᗮ.subtypeL ∘L (orthogonalProjection (ℝ ∙ p.2)ᗮ : E →L[ℝ] (ℝ ∙ p.2)ᗮ) +
+        (ℝ ∙ p.2)ᗮ.subtypeL ∘L (orthogonalProjectionOnto (ℝ ∙ p.2)ᗮ : E →L[ℝ] (ℝ ∙ p.2)ᗮ) +
     Real.sin (p.1 * Real.pi) • LinearMap.toContinuousLinearMap (ω.crossProduct p.2)
 
 /-- Alternative form of the construction `rot`, convenient for the smoothness calculation. -/
 def rotAux (p : ℝ × E) : E →L[ℝ] E :=
   Real.cos (p.1 * Real.pi) • ContinuousLinearMap.id ℝ E +
     ((1 - Real.cos (p.1 * Real.pi)) •
-        (ℝ ∙ p.2).subtypeL ∘L (orthogonalProjection (ℝ ∙ p.2) : E →L[ℝ] ℝ ∙ p.2) +
+        (ℝ ∙ p.2).subtypeL ∘L (orthogonalProjectionOnto (ℝ ∙ p.2) : E →L[ℝ] ℝ ∙ p.2) +
       Real.sin (p.1 * Real.pi) • ω.crossProduct' p.2)
 
 theorem rot_eq_aux : ω.rot = ω.rotAux := by
@@ -68,17 +68,17 @@ theorem rot_zero (v : E) : ω.rot (0, v) = ContinuousLinearMap.id ℝ E := by
 
 /-- The map `rot` sends `(1, v)` to a transformation which on `(ℝ ∙ v)ᗮ` acts as the negation. -/
 theorem rot_one (v : E) {w : E} (hw : w ∈ (ℝ ∙ v)ᗮ) : ω.rot (1, v) w = -w := by
-  suffices (orthogonalProjection (Submodule.span ℝ {v}) w : E) +
-    -(orthogonalProjection (Submodule.span ℝ {v})ᗮ w) = -w by simpa [rot]
-  simp [starProjection_eq_self_iff.mpr hw,
-        orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hw]
+  suffices (orthogonalProjectionOnto (Submodule.span ℝ {v}) w : E) +
+    -(orthogonalProjectionOnto (Submodule.span ℝ {v})ᗮ w) = -w by simpa [rot]
+  simp [starProjection_eq_self_iff.mpr hw, orthogonalProjectionOnto_apply_of_mem_orthogonal hw]
 
 /-- The map `rot` sends `(v, t)` to a transformation fixing `v`. -/
 @[simp]
 theorem rot_self (p : ℝ × E) : ω.rot p (no_index p.2) = p.2 := by
-  have H : orthogonalProjection (ℝ ∙ p.2) p.2 = p.2 :=
+  have H : orthogonalProjectionOnto (ℝ ∙ p.2) p.2 = p.2 :=
     starProjection_eq_self_iff.mpr (Submodule.mem_span_singleton_self p.2)
-  simp [rot, crossProduct_apply_self, orthogonalProjection_orthogonalComplement_singleton_eq_zero,H]
+  simp [rot, crossProduct_apply_self,
+    orthogonalProjectionOnto_orthogonalComplement_singleton_eq_zero, H]
 
 /-- The map `rot` sends `(t, v)` to a transformation preserving `span v`. -/
 theorem rot_eq_of_mem_span (p : ℝ × E) {x : E} (hx : x ∈ ℝ ∙ p.2) : ω.rot p x = x := by
@@ -87,10 +87,10 @@ theorem rot_eq_of_mem_span (p : ℝ × E) {x : E} (hx : x ∈ ℝ ∙ p.2) : ω.
 /-- The map `rot` sends `(v, t)` to a transformation preserving the subspace `(ℝ ∙ v)ᗮ`. -/
 theorem inner_rot_apply_self (p : ℝ × E) (w : E) (hw : w ∈ (ℝ ∙ p.2)ᗮ) :
     ⟪ω.rot p w, no_index p.2⟫ = 0 := by
-  have H₁ : orthogonalProjection (ℝ ∙ p.2) w = 0 :=
-    orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hw
-  have H₂ : (orthogonalProjection (ℝ ∙ p.2)ᗮ w : E) = w :=
-    congr_arg (_ : (ℝ ∙ p.2)ᗮ → E) (orthogonalProjection_mem_subspace_eq_self ⟨w, hw⟩)
+  have H₁ : orthogonalProjectionOnto (ℝ ∙ p.2) w = 0 :=
+    orthogonalProjectionOnto_apply_of_mem_orthogonal hw
+  have H₂ : (orthogonalProjectionOnto (ℝ ∙ p.2)ᗮ w : E) = w :=
+    congr_arg (_ : (ℝ ∙ p.2)ᗮ → E) (orthogonalProjectionOnto_mem_subspace_eq_self ⟨w, hw⟩)
   have H₃ : ⟪w, p.2⟫ = 0 := by
     simpa only [real_inner_comm] using hw p.2 (Submodule.mem_span_singleton_self _)
   have H₄ : ⟪p.2×₃w, p.2⟫ = 0 := ω.inner_crossProduct_apply_self p.2 ⟨w, hw⟩
@@ -108,9 +108,7 @@ theorem isometry_on_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) (w : (ℝ ∙ (v
     simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, h1, h2, h3,
       RCLike.conj_to_real, Submodule.coe_inner]
     linear_combination ⟪(w : E), w⟫ * Real.cos_sq_add_sin_sq (t * Real.pi)
-  dsimp [rot]
-  simp [starProjection_apply, orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero w.prop,
-    this]
+  simp [rot, orthogonalProjectionOnto_apply_of_mem_orthogonal w.prop, this]
 
 theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot (t, v)) := by
   rw [AddMonoidHomClass.isometry_iff_norm]
@@ -121,8 +119,7 @@ theorem isometry_rot (t : ℝ) (v : Metric.sphere (0 : E) 1) : Isometry (ω.rot 
   rw [← sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _), sq, sq, map_add,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ,
     @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ]
-  · have hvw : ‖ω.rot (t, v) w‖ = ‖w‖ :=  ω.isometry_on_rot t v ⟨w, hw⟩
-    simp [hvw]
+  · simp [ω.isometry_on_rot t v ⟨w, hw⟩]
   · simp [inner_smul_left, hw v (Submodule.mem_span_singleton_self _)]
   rw [real_inner_comm]
   simp [inner_smul_right, ω.inner_rot_apply_self (t, v) w hw]
@@ -136,11 +133,11 @@ theorem injOn_rot_of_ne (t : ℝ) {x : E} (hx : x ≠ 0) : Set.InjOn (ω.rot (t,
   rw [← ContinuousLinearMap.coe_coe, ← LinearMap.disjoint_ker_iff_injOn, LinearMap.disjoint_ker]
   intro y hy' hy
   change
-    ↑((orthogonalProjection (span ℝ {x})) y) +
-          cos (t * Real.pi) • ↑((orthogonalProjection (span ℝ {x})ᗮ) y) +
+    ↑((orthogonalProjectionOnto (span ℝ {x})) y) +
+          cos (t * Real.pi) • ↑((orthogonalProjectionOnto (span ℝ {x})ᗮ) y) +
         Real.sin (t * Real.pi) • x×₃y =
       0 at hy
-  rw [orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hy', ← starProjection_apply,
+  rw [orthogonalProjectionOnto_apply_of_mem_orthogonal hy', ← starProjection_apply,
     starProjection_eq_self_iff.mpr hy', coe_zero, zero_add] at hy
   apply_fun fun x ↦ ‖x‖ ^ 2 at hy
   rw [pow_two, @norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero ℝ] at hy

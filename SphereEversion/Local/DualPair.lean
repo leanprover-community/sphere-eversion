@@ -101,7 +101,7 @@ theorem update_self (p : DualPair E) (φ : E →L[ℝ] F) : p.update φ (φ p.v)
 @[simp]
 theorem update_update (p : DualPair E) (φ : E →L[ℝ] F) (w w' : F) :
     p.update (p.update φ w') w = p.update φ w := by
-  simp_rw [update, add_apply, coe_comp', (· ∘ ·), toSpanSingleton_apply, p.pairing, one_smul,
+  simp_rw [update, add_apply, coe_comp, (· ∘ ·), toSpanSingleton_apply, p.pairing, one_smul,
     add_sub_cancel, add_assoc, ← ContinuousLinearMap.add_comp, ← toSpanSingleton_add,
     sub_add_eq_add_sub, add_sub_cancel]
 

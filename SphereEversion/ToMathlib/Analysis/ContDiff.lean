@@ -213,7 +213,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [Complete
 
 -- variant of `Submodule.orthogonalProjection_singleton`
 theorem Submodule.orthogonalProjection_singleton' {v : E} :
-    (𝕜 ∙ v).subtypeL.comp (orthogonalProjection (𝕜 ∙ v)) =
+    (𝕜 ∙ v).subtypeL.comp (orthogonalProjectionOnto (𝕜 ∙ v)) =
       (1 / (‖v‖ : 𝕜) ^ 2) • .toSpanSingleton 𝕜 v ∘L InnerProductSpace.toDual 𝕜 E v := by
   ext w
   simp [ContinuousLinearMap.toSpanSingleton_apply, starProjection_singleton, ← mul_smul,
@@ -230,7 +230,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteS
 /-- The orthogonal projection onto a vector in a real inner product space `E`, considered as a map
 from `E` to `E →L[ℝ] E`, is analytic away from 0. -/
 theorem contDiffAt_orthogonalProjection_singleton {v₀ : E} (hv₀ : v₀ ≠ 0) :
-    ContDiffAt ℝ ω (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjection (ℝ ∙ v))) v₀ := by
+    ContDiffAt ℝ ω (fun v : E ↦ (ℝ ∙ v).subtypeL.comp (orthogonalProjectionOnto (ℝ ∙ v))) v₀ := by
   suffices ContDiffAt ℝ ω
     (fun v : E ↦ (1 / ‖v‖ ^ 2) • .toSpanSingleton ℝ v ∘L InnerProductSpace.toDual ℝ E v) v₀ by
     refine this.congr_of_eventuallyEq ?_

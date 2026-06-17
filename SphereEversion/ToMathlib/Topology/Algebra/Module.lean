@@ -15,9 +15,9 @@ theorem fst_prod_zero_add_zero_prod_snd [ContinuousAdd M₁] [ContinuousAdd M₂
       ContinuousLinearMap.id R₁ (M₁ × M₂) := by
   rw [ContinuousLinearMap.ext_iff]
   intro x
-  simp_rw [ContinuousLinearMap.add_apply, ContinuousLinearMap.id_apply,
-    ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_fst', ContinuousLinearMap.coe_snd',
-    ContinuousLinearMap.zero_apply, Prod.mk_add_mk, add_zero, zero_add]
+  simp_rw [add_apply, ContinuousLinearMap.id_apply, ContinuousLinearMap.prod_apply,
+    ContinuousLinearMap.coe_fst', ContinuousLinearMap.coe_snd',
+    zero_apply, Prod.mk_add_mk, add_zero, zero_add]
 
 end ContinuousLinearMap
 

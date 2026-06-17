@@ -142,11 +142,11 @@ theorem FamilyOneJetSec.uncurry_mem_relativize (S : FamilyOneJetSec I M I' M' IP
   -- Porting note: we are missing an ext lemma here.
   apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
   change ((S.uncurry.ϕ (s, x)).comp (ContinuousLinearMap.inr ℝ EP E)) v = _
-  erw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
+  erw [S.uncurry_ϕ', ContinuousLinearMap.comp_apply, add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.comp_apply]
   -- adaptation note: in Lean 4.28, all this proof was just `simp`
-  simp only [uncurry_bs, bs_eq_coe_bs, add_eq_right]
+  simp only [bs_eq_coe_bs, add_eq_right]
   exact ContinuousLinearMap.map_zero _
 
 def FamilyFormalSol.uncurry (S : FamilyFormalSol IP P R) : FormalSol (R.relativize IP P) := by
@@ -223,7 +223,7 @@ set_option backward.isDefEq.respectTransparency false in
 theorem FamilyOneJetSec.curry_mem (S : FamilyOneJetSec (IP.prod I) (P × M) I' M' J N) {p : N × P}
     {x : M} (hR : S p.1 (p.2, x) ∈ R.relativize IP P) : S.curry p x ∈ R := by
   simp_rw [RelMfld.relativize, mem_preimage, bundleSnd_eq, OneJetSec.coe_apply, mapLeft] at hR ⊢
-  convert hR
+  convert! hR
   -- Porting note: we are missing an ext lemma here.
   apply ContinuousLinearMap.ext_iff.2 (fun v ↦ ?_)
   rw [S.curry_ϕ']
@@ -244,7 +244,7 @@ theorem curry_eq_iff_eq_uncurry {𝓕 : FamilyFormalSol J N (R.relativize IP P)}
   refine ⟨h.1, ?_⟩
   rw [𝓕.curry_ϕ', h.2, 𝓕₀.uncurry_ϕ']
   ext v
-  erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.add_apply,
+  erw [ContinuousLinearMap.comp_apply, add_apply,
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply, ContinuousLinearMap.coe_fst',
     ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd', ContinuousLinearMap.map_zero,
     zero_add]

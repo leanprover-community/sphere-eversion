@@ -71,11 +71,11 @@ structure FormalSol (R : RelMfld I M I' M') extends OneJetSec I M I' M' where
 set_option backward.isDefEq.respectTransparency false in
 instance (R : RelMfld I M I' M') : FunLike (FormalSol R) M (OneJetBundle I M I' M')  where
   coe := fun F ↦ F.toOneJetSec
-  coe_injective' := by
+  coe_injective := by
     intro F G h
     ext x : 2
     · exact congrArg Prod.snd (congrArg Bundle.TotalSpace.proj (congrFun h x))
-    · simpa using (Bundle.TotalSpace.ext_iff.mp (congrFun h x)).2
+    · simpa using! (Bundle.TotalSpace.ext_iff.mp (congrFun h x)).2
 
 def mkFormalSol (F : M → OneJetBundle I M I' M') (hsec : ∀ x, (F x).1.1 = x) (hsol : ∀ x, F x ∈ R)
     (hsmooth : ContMDiff I ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ F) : FormalSol R
@@ -191,7 +191,7 @@ theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
   ext1 w
   rw [mem_slice]
   change _ ↔ OneJetBundle.mk σ.proj.1 σ.proj.2 (DualPair.update p σ.snd w) ∈ R
-  convert Iff.rfl using 3
+  convert! Iff.rfl using 3
   rw [oneJetBundle_mk_snd, p.update_update]
 
 /-- A differential relation is ample if all its slices are ample sets. -/
@@ -219,7 +219,7 @@ structure FamilyFormalSol (R : RelMfld I M I' M') extends FamilyOneJetSec I M I'
 
 instance : FunLike (FamilyFormalSol J N R) N (FormalSol R) where
   coe := fun S n ↦ ⟨S.toFamilyOneJetSec n, S.is_sol' n⟩
-  coe_injective' := by
+  coe_injective := by
     intro S T
     rcases S with ⟨S, -⟩
     rcases T with ⟨T, -⟩
@@ -634,7 +634,7 @@ def OneJetBundle.embedding : OpenSmoothEmbedding IXY J¹XY IMN J¹MN where
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
     · rw [OpenSmoothEmbedding.invFun_comp_coe]
     · ext x v; simp_rw [ContinuousLinearMap.comp_apply]
-      convert (φ.fderiv x).symm_apply_apply v
+      convert! (φ.fderiv x).symm_apply_apply v
       erw [φ.left_inv]; rfl
   isOpen_range := φ.isOpen_range_transfer ψ
   contMDiff_to := φ.smooth_transfer ψ

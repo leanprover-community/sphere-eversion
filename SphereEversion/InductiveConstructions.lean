@@ -170,7 +170,7 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
     normal_exists_closure_subset hK U_op hKU
   refine ⟨K₁ ∪ closure (K₂ ∩ U'), K₂ \ U', U₁ ∪ U, U₂ \ K,
     U₁_op.union U_op, U₂_op.sdiff hK, ?_, K₂_cpct.diff U'_op, subset_union_left,
-    ?_, by gcongr, ?_, by grind, ?_, diff_subset⟩
+    ?_, by gcongr, ?_, by grind, ?_, sdiff_subset⟩
   · exact K₁_cpct.union (K₂_cpct.closure_of_subset inter_subset_left)
   · gcongr; grw [← hU'U]
     gcongr
@@ -178,8 +178,8 @@ theorem set_juggling {X : Type*} [TopologicalSpace X] [NormalSpace X] [T2Space X
   · rw [union_assoc]
     congr
     apply subset_antisymm
-    · exact union_subset (K₂_cpct.isClosed.closure_subset_iff.mpr inter_subset_left) diff_subset
-    · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_diff K₂ U').symm
+    · exact union_subset (K₂_cpct.isClosed.closure_subset_iff.mpr inter_subset_left) sdiff_subset
+    · calc K₂ = K₂ ∩ U' ∪ K₂ \ U' := (inter_union_sdiff K₂ U').symm
         _     ⊆ closure (K₂ ∩ U') ∪ K₂ \ U' := union_subset_union_left (K₂ \ U') subset_closure
   · rw [union_comm]
 
@@ -366,7 +366,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
         · rintro (rfl : t = 0)
           exact (lt_irrefl _ ((T_nonneg i.toNat).trans_lt ht)).elim
         · simpa only [mul_sub, neg_mul]
-            using hP₂ ((2 : ℝ) ^ (i.toNat + 1)) (-(2 : ℝ) ^ (i.toNat + 1) * T i.toNat)
+            using! hP₂ ((2 : ℝ) ^ (i.toNat + 1)) (-(2 : ℝ) ^ (i.toNat + 1) * T i.toNat)
               (t, x) (↿F') (h₂F' _)
     · intro hi x t ht
       rw [i.toNat_succ hi] at ht ⊢

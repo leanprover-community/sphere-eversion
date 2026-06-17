@@ -226,7 +226,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hyq' : (y, q) ∈ W' ⁻¹' V := inter_subset_right hyq
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩,
     ((smooth_barycentric ι ℝ F hι).mono inter_subset_left).of_le le_top⟩, ?_, ?_, ?_⟩
-  · simpa [V] using hyq'
+  · simpa [V] using! hyq'
   · simp [hq]
   · simp only [hq, evalBarycentricCoords_apply_of_mem_bases, AffineBasis.coords_apply]
     exact AffineBasis.linear_combination_coord_eq_self _ y
@@ -255,7 +255,7 @@ theorem surroundingPts_evalBarycentricCoords_iff (q : F) (v : ι → F)
   refine ⟨hv.1, h, hv', ?_⟩
   simp_rw [← Finset.univ.affineCombination_eq_linear_combination v _ hv',
     evalBarycentricCoords_apply_of_mem_bases ι ℝ F q hv]
-  convert AffineBasis.affineCombination_coord_eq_self _ q
+  convert! AffineBasis.affineCombination_coord_eq_self _ q
   rfl
 
 end SurroundingPoints
@@ -356,7 +356,7 @@ theorem zero_vadd : (0 : F) +ᵥ γ = γ := by
 
 theorem vadd_surrounds : γ.Surrounds x ↔ (y +ᵥ γ).Surrounds (y + x) := by
   rw [add_comm]
-  convert affineEquiv_surrounds_iff (AffineEquiv.vaddConst ℝ y) using 2
+  convert! affineEquiv_surrounds_iff (AffineEquiv.vaddConst ℝ y) using 2
   ext u
   simp [add_comm y]
 
@@ -383,7 +383,7 @@ theorem Surrounds.mono (h : γ.Surrounds x) (h2 : range γ ⊆ range γ') : γ'.
 protected theorem Surrounds.reparam (h : γ.Surrounds x) {φ : EquivariantMap} (hφ : Continuous φ) :
     (γ.reparam φ).Surrounds x := by
   refine h.mono ?_
-  convert subset_of_eq (range_comp γ φ).symm
+  convert! subset_of_eq (range_comp γ φ).symm
   rw [(φ.surjective hφ).range_eq, image_univ]
 
 /-- This is only a stepping stone potentially useful for `SurroundingFamily.surrounds_of_close`,
@@ -878,7 +878,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
   have hV₀L₁ : Disjoint (closure V₀) L₁ := disjoint_sdiff_self_right.mono hVU₀ Subset.rfl
   obtain ⟨V₂, hV₂, hLV₂, h2V₂⟩ :=
     normal_exists_closure_subset hL₁ (isClosed_closure.isOpen_compl.inter hU₁)
-      (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| diff_subset.trans hKU₁)
+      (subset_inter (subset_compl_iff_disjoint_left.mpr hV₀L₁) <| sdiff_subset.trans hKU₁)
   obtain ⟨V₁, hV₁, hLV₁, hV₁₂⟩ := normal_exists_closure_subset hL₁ hV₂ hLV₂
   rw [subset_inter_iff, subset_compl_iff_disjoint_left] at h2V₂
   rcases h2V₂ with ⟨hV₀₂, hV₂U₁⟩
@@ -888,7 +888,7 @@ theorem extend_loops {U₀ U₁ K₀ K₁ : Set E} (hU₀ : IsOpen U₀) (hU₁ 
     rw [← subset_compl_iff_disjoint_left, compl_compl]; exact hV₁₂
   refine ⟨V₀ ∪ U₁ ∩ U₀ ∪ V₁, ((hV₀.union <| hU₁.inter hU₀).union hV₁).mem_nhdsSet.mpr ?_, ?_⟩
   · refine union_subset (hKV₀.trans <| subset_union_left.trans <| subset_union_left) ?_
-    rw [← inter_union_diff K₁];
+    rw [← inter_union_sdiff K₁];
     exact union_subset_union ((inter_subset_inter_left _ hKU₁).trans <| subset_union_right) hLV₁
   obtain ⟨ρ, h0ρ, h1ρ, -⟩ :=
     exists_continuous_zero_one_of_isClosed (isClosed_closure.union hV₂.isClosed_compl)

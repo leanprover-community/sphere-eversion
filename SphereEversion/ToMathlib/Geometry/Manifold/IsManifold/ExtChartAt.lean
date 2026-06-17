@@ -39,12 +39,12 @@ theorem nhds_hasBasis_balls_of_open_cov [I.Boundaryless] (x : M) {ι : Type*} {s
     · exact ((extChartAt I x).mapsTo.mono inter_subset_right Subset.rfl).image_subset
     · suffices m ⊆ s j by
         refine Subset.trans ?_ this
-        convert monotone_image (f := (extChartAt I x).symm) hr₁
+        convert! monotone_image (f := (extChartAt I x).symm) hr₁
         exact (PartialEquiv.symm_image_image_of_subset_source _ inter_subset_right).symm
       exact inter_subset_left.trans inter_subset_left
     · suffices m ⊆ n by
         refine Subset.trans ?_ this
-        convert monotone_image (f := (extChartAt I x).symm) hr₁
+        convert! monotone_image (f := (extChartAt I x).symm) hr₁
         exact (PartialEquiv.symm_image_image_of_subset_source _ inter_subset_right).symm
       exact inter_subset_left.trans inter_subset_right
   · rintro ⟨r, ⟨hr₀, hr₁, -⟩, hr₂⟩

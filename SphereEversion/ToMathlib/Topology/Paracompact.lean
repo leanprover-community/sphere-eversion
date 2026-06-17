@@ -24,7 +24,7 @@ theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X]
   have hC' : (⋃ n, C n) = univ := by
     refine Set.univ_subset_iff.mp fun x _ ↦ mem_iUnion.mpr ⟨K'.find x, ?_⟩
     simpa only [K'.find_shiftr] using
-      diff_subset_diff_right interior_subset (K'.shiftr.mem_diff_shiftr_find x)
+      sdiff_subset_sdiff_right interior_subset (K'.shiftr.mem_sdiff_shiftr_find x)
   have hU : ∀ n, IsOpen (U n) := fun n ↦
     isOpen_interior.sdiff <| IsCompact.isClosed <| K.isCompact _
   have hU' : ∀ n, {m | (U m ∩ U n).Nonempty}.Finite := fun n ↦ by
@@ -35,9 +35,9 @@ theorem exists_countable_locallyFinite_cover {ι X : Type*} [TopologicalSpace X]
       ⟨this hx₄ hx₁, this hx₂ hx₃⟩
     intro a b ha hb
     by_contra hab
-    replace hab : b + 1 ≤ a := by simpa using hab
+    replace hab : b + 1 ≤ a := by lia
     exact Set.Nonempty.ne_empty (⟨x, interior_subset hb, ha⟩ : (K b.succ \ K a).Nonempty)
-      (Set.diff_eq_empty.mpr (K.subset hab))
+      (Set.sdiff_eq_empty.mpr (K.subset hab))
   have hU'' : ∀ n x, x ∈ C n → U n ∈ 𝓝 x := fun n x hx ↦
     mem_nhds_iff.mpr ⟨U n, Subset.rfl, hU n, hCU n hx⟩
   have : ∀ (n) (x : C n), ∃ i r, ↑x ∈ W i r ∧ B i r ⊆ U n ∧ p i r := fun n ⟨x, hx⟩ ↦ by

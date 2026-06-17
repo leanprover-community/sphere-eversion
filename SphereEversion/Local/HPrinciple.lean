@@ -372,13 +372,12 @@ theorem improveStep_part_hol {N : ℝ} (hN : N ≠ 0) :
     rcases Submodule.mem_span_singleton.mp hu with ⟨l, rfl⟩
     rw [(D 𝓕'.f x).map_smul, (𝓕'.φ x).map_smul]
     apply congr_arg
-    erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_v, ContinuousLinearMap.add_apply,
-         L.p.update_v]
+    erw [fderiv_𝓕', add_apply, L.p.update_v, add_apply, L.p.update_v]
     rfl
   · intro u hu
     have hu_ker := L.hEp hu
-    erw [fderiv_𝓕', ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker,
-      ContinuousLinearMap.add_apply, L.p.update_ker_pi _ _ hu_ker, hx u hu]
+    erw [fderiv_𝓕', add_apply, L.p.update_ker_pi _ _ hu_ker,
+      add_apply, L.p.update_ker_pi _ _ hu_ker, hx u hu]
 
 theorem improveStep_formalSol : ∀ᶠ N in atTop, ∀ t, (L.improveStep h N t).IsFormalSol R := by
   set γ := L.loop h
@@ -486,7 +485,7 @@ theorem RelLoc.FormalSol.improve (𝓕 : FormalSol R) (h_hol : ∀ᶠ x near L.C
       { L with
         E' := E' k.castSucc
         p := e.dualPair k
-        hEp := by simpa only [E', Module.Basis.dualPair] using e.flag_le_ker_dual k }
+        hEp := by simpa only [E', Module.Basis.dualPair] using! e.flag_le_ker_dual k }
     set H₁ : FormalSol R := (hH_sol 1).formalSol
     have h_span : E' k.succ = S.p.spanV ⊔ S.E' := e.flag_succ k
     have acc : S.Accepts R H₁ :=

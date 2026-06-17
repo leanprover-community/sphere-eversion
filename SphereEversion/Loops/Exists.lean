@@ -183,7 +183,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅C⟩ :=
     exists_smooth_and_eqOn hγ₄ hcε₂.fst' (fun x ↦ hε₂) hC ⟨U, hUC, h3γ₄⟩
   let γ : E → ℝ → Loop F := fun x t ↦
-    ⟨fun s ↦ γ₅ (x, smoothTransition t, fract s), fun s ↦ by dsimp; rw [fract_add_one s]⟩
+    ⟨fun s ↦ γ₅ (x, smoothTransition t, fract s), fun s ↦ by rw [fract_add_one s]⟩
   have hγ : 𝒞 ∞ ↿γ := by
     rw [contDiff_iff_contDiffAt]
     rintro ⟨x, t, s⟩; by_cases hs : fract s = 0

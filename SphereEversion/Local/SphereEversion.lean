@@ -121,7 +121,7 @@ theorem loc_immersion_rel_open_aux {x₀ : E} {y₀ : F} {φ₀ : E →L[ℝ] F}
     constructor
     · change ⟪x₀, x₀⟫ ≠ 0
       apply inner_self_eq_zero.not.mpr x₀_ne
-    · change Injective (φ₀ ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E) ∘ (orthogonalProjection (ℝ ∙ x₀)ᗮ) ∘
+    · change Injective (φ₀ ∘ (Subtype.val : (ℝ ∙ x₀)ᗮ → E) ∘ (orthogonalProjectionOnto (ℝ ∙ x₀)ᗮ) ∘
         (Subtype.val : (ℝ ∙ x₀)ᗮ → E))
       erw [orthogonalProjection_comp_coe, comp_id]
       exact injOn_iff_injective.mp H
@@ -220,7 +220,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
         erw [inf_left_right_swap, inf_comm, ← inf_assoc, p'.inf_eq_bot, bot_inf_eq]
       have eq₃ : dim (span ℝ {v'}) = 1 := finrank_span_singleton p'.v_ne_zero
       rw [← hv', eq₁, eq₃, eq₂] at eq
-      simpa only [finrank_bot] using eq.symm
+      simpa only [finrank_bot] using! eq.symm
     have : dim E = n + 1 := Fact.out
     linarith [finrank_map_le Φ (p.π.ker ⊓ (ℝ ∙ x)ᗮ)]
   ext w
@@ -230,8 +230,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   let p'' : DualPair (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩
   have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
-    simp only [p', j, DualPair.update, restrict_apply, ContinuousLinearMap.add_apply, p'',
-      ContinuousLinearMap.coe_comp', coe_subtypeL, Submodule.coe_subtype, comp_apply]
+    simp [p', j, DualPair.update, p'']
   have eq' : (p''.π.ker).map (φ.comp j : _ →ₛₗ[.id ℝ] F) =
       (p.π.ker ⊓ (ℝ ∙ x)ᗮ).map (φ : E →ₛₗ[.id ℝ] F) := by
     have : (p''.π.ker).map (j : _ →ₛₗ[.id ℝ] _) = p.π.ker ⊓ (ℝ ∙ x)ᗮ := by
@@ -253,7 +252,7 @@ end AssumeFiniteDimensional
 /-- The main ingredient of the linear map in the formal eversion of the sphere. -/
 def locFormalEversionAuxφ [Fact (dim E = 3)] (ω : Orientation ℝ E (Fin 3)) (t : ℝ) (x : E) :
     E →L[ℝ] E :=
-  ω.rot (t, x) - (2 * t) • Submodule.subtypeL (ℝ ∙ x) ∘L orthogonalProjection (ℝ ∙ x)
+  ω.rot (t, x) - (2 * t) • Submodule.subtypeL (ℝ ∙ x) ∘L orthogonalProjectionOnto (ℝ ∙ x)
 
 section AssumeFiniteDimensional
 local notation "∞" => ((⊤ : ℕ∞) : WithTop ℕ∞)
@@ -333,10 +332,8 @@ def locFormalEversion : HtpyFormalSol (immersionSphereRel E E) :=
       have h3x : x ≠ 0 := by rintro rfl; apply hx; exact mem_ball_self (by norm_num)
       refine (EqOn.injOn_iff ?_).mpr (ω.injOn_rot_of_ne (smoothStep t) h3x)
       intro v hv
-      simp_rw [locFormalEversionAuxφ, ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
-        ContinuousLinearMap.comp_apply,
-        orthogonalProjection_mem_subspace_orthogonalComplement_eq_zero hv, _root_.map_zero,
-        smul_zero, sub_zero] }
+      simp_rw [locFormalEversionAuxφ, sub_apply, smul_apply, ContinuousLinearMap.comp_apply,
+        orthogonalProjectionOnto_apply_of_mem_orthogonal hv, _root_.map_zero, smul_zero, sub_zero] }
 
 @[simp]
 theorem locFormalEversion_f (t : ℝ) :
@@ -346,7 +343,7 @@ theorem locFormalEversion_f (t : ℝ) :
 theorem locFormalEversion_φ (t : ℝ) (x : E) (v : E) :
     (locFormalEversion ω t).φ x v =
       smoothStep (‖x‖ ^ 2) •
-        (ω.rot (smoothStep t, x) v - (2 * smoothStep t) • orthogonalProjection (ℝ ∙ x) v) :=
+        (ω.rot (smoothStep t, x) v - (2 * smoothStep t) • orthogonalProjectionOnto (ℝ ∙ x) v) :=
   rfl
 
 theorem locFormalEversion_zero (x : E) : (locFormalEversion ω 0).f x = x := by
@@ -368,11 +365,11 @@ theorem locFormalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) {x : E} (hx : smoot
     locFormalEversion_φ, smoothStep.of_gt ht, hx]
   intro v
   have : (fun x : E ↦ ((1 : ℝ) - 2) • x) = fun x ↦ -x := by ext x; norm_num
-  simp only [mul_one, this, coe_orthogonalProjection_apply, one_smul]
+  simp only [mul_one, this, coe_orthogonalProjectionOnto_apply, one_smul]
   obtain ⟨v', hv', v, hv, rfl⟩ := Submodule.exists_add_mem_mem_orthogonal (K := ℝ ∙ x) v
   simp_rw [ContinuousLinearMap.map_add, ω.rot_one _ hv, ω.rot_eq_of_mem_span (1, x) hv']
   rw [fderiv_fun_neg, fderiv_fun_id]
-  simp only [ContinuousLinearMap.neg_apply, ContinuousLinearMap.coe_id', id_eq, add_zero,
+  simp only [neg_apply, ContinuousLinearMap.coe_id', id_eq, add_zero,
     starProjection_eq_self_iff.mpr hv', two_smul, add_sub_add_left_eq_sub,
     (Submodule.starProjection_apply_eq_zero_iff _).mpr hv]
   abel

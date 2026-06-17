@@ -89,7 +89,7 @@ variable {I M V}
 
 instance : DFunLike (OneJetEuclSec I M V) M fun _  ↦ J¹[𝕜, E, I, M, V] where
   coe := OneJetEuclSec.toFun
-  coe_injective' := by
+  coe_injective := by
     intro S T h
     ext x <;> rw [h]
 
@@ -190,7 +190,7 @@ structure FamilyOneJetEuclSec where
 
 instance : FunLike (FamilyOneJetEuclSec I M V J N) (N × M) J¹[ℝ, E, I, M, V] where
   coe := FamilyOneJetEuclSec.toFun
-  coe_injective' := by
+  coe_injective := by
     intro S T h
     ext x <;> rw [h]
 
@@ -230,6 +230,6 @@ def familyTwist (s : OneJetEuclSec I M V) (i : N × M → V →L[ℝ] V')
     have : ContMDiffAt (J.prod I) _ ∞ (fun x : N × M  ↦ _) x₀ := s.contMDiff.comp contMDiff_snd x₀
     rw [contMDiffAt_one_jet_eucl_bundle'] at this
     refine (hi x₀).clm_comp ?_
-    convert this.2 <;> simp [s.is_sec]
+    convert! this.2 <;> simp [s.is_sec]
 
 end familyTwist

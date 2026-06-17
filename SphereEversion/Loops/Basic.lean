@@ -106,7 +106,7 @@ theorem range_eq_image (γ : Loop X) : range γ = γ '' I := by
 /-- Transforming a loop by applying function `f`. -/
 @[simps]
 def transform (γ : Loop X) (f : X → X') : Loop X' :=
-  ⟨fun t ↦ f (γ t), fun t ↦ by dsimp only; rw [γ.per]⟩
+  ⟨fun t ↦ f (γ t), fun t ↦ by rw [γ.per]⟩
 
 /-- Adding two loops pointwise. -/
 @[simps]
