@@ -251,12 +251,11 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
     OpenPartialHomeomorph.prod_toPartialHomeomorph,
     trivializationAt_oneJetBundle_source,
     PartialEquiv.prod_source,
-    Set.preimage_inter]
-  simp_rw [prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
+    Set.preimage_inter,
+    prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
     subset_def, mem_preimage]
   intro x hx
-  rwa [Trivialization.coe_fst]
-  rwa [trivializationAt_oneJetBundle_source, mem_preimage, ← Set.prod_eq]
+  simpa
 
 section
 
