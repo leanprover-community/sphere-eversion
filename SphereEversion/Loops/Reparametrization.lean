@@ -307,9 +307,7 @@ theorem localCenteringDensity_integral_eq_one (hy : y ∈ γ.localCenteringDensi
       smul_eq_mul, mul_one]
     rw [evalBarycentricCoords_apply_of_mem_bases ι ℝ F (g y) h]
     simp_rw [AffineBasis.coords_apply, AffineBasis.sum_coord_apply_eq_one]
-  · simp_rw [← smul_eq_mul]
-    refine fun i hi ↦ (Continuous.const_smul ?_ _).intervalIntegrable 0 1
-    exact contDiff_deltaMollifier.continuous
+  · exact fun i hi ↦ Continuous.intervalIntegrable (by fun_prop) 0 1
 
 @[simp]
 theorem localCenteringDensity_average (hy : y ∈ γ.localCenteringDensityNhd x) :
