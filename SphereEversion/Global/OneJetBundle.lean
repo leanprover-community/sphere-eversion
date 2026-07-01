@@ -241,22 +241,21 @@ theorem oneJetBundle_chart_source (x₀ : J¹MM') :
   simp_rw [
     OpenPartialHomeomorph.trans_toPartialEquiv,
     PartialEquiv.trans_source,
-    OpenPartialHomeomorph.prod_toPartialEquiv,
+    OpenPartialHomeomorph.prod_toPartialHomeomorph,
     PartialEquiv.prod_source,
     OpenPartialHomeomorph.coe_toPartialEquiv,
     Trivialization.coe_coe,
     OpenPartialHomeomorph.refl_partialEquiv,
     PartialEquiv.refl_source,
     prodChartedSpace_chartAt,
-    OpenPartialHomeomorph.prod_toPartialEquiv,
+    OpenPartialHomeomorph.prod_toPartialHomeomorph,
     trivializationAt_oneJetBundle_source,
     PartialEquiv.prod_source,
-    Set.preimage_inter]
-  simp_rw [prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
+    Set.preimage_inter,
+    prod_univ, ← preimage_inter, ← Set.prod_eq, preimage_preimage, inter_eq_left,
     subset_def, mem_preimage]
   intro x hx
-  rwa [Trivialization.coe_fst]
-  rwa [trivializationAt_oneJetBundle_source, mem_preimage, ← Set.prod_eq]
+  simpa
 
 section
 
@@ -309,7 +308,7 @@ theorem oneJetBundle_chart_target (x₀ : J¹MM') :
     (chartAt HJ x₀).target = Prod.fst ⁻¹' (chartAt (ModelProd H H') x₀.proj).target := by
   rw [FiberBundle.chartedSpace_chartAt]
   simp only [prodChartedSpace_chartAt,
-    OpenPartialHomeomorph.trans_toPartialEquiv, OpenPartialHomeomorph.prod_toPartialEquiv,
+    OpenPartialHomeomorph.trans_toPartialEquiv, OpenPartialHomeomorph.prod_toPartialHomeomorph,
     OpenPartialHomeomorph.refl_partialEquiv, PartialEquiv.trans_target, PartialEquiv.prod_target,
     PartialEquiv.refl_target]
   erw [hom_trivializationAt_target]

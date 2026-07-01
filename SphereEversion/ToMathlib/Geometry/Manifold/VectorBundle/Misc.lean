@@ -161,12 +161,17 @@ variable [TopologicalSpace B'] [TopologicalSpace (TotalSpace F E)] [Nontrivially
 
 namespace Trivialization
 
+-- Pre-existing defeq abuse: identifying the fibers `E (f x)` and `(⇑f *ᵖ E) x`
 set_option backward.isDefEq.respectTransparency false in
 theorem pullback_symmL (e : Trivialization F (π F E)) [e.IsLinear 𝕜] (x : B') :
     (e.pullback f).symmL 𝕜 x = e.symmL 𝕜 (f x) := by
   ext y
-  simp only [Trivialization.symmL_apply, pullback_symm]
-  rfl
+  by_cases hx : f x ∈ e.baseSet
+  · rw [Trivialization.symmL_apply _ ‹_›]
+    erw [Trivialization.symmL_apply _ hx]
+    simp only [pullback_symm]
+  · erw [Trivialization.symmL_apply_of_notMem _ hx]
+    simp [hx]
 
 end Trivialization
 
