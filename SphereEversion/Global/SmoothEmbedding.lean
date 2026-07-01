@@ -86,12 +86,12 @@ variable [IsManifold I ∞ M] [IsManifold I' ∞ M']
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
-def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
-  have h₁ : MDifferentiableAt I' I f.invFun (f x) :=
+def fderiv (x : M) : TangentSpace% x ≃L[𝕜] TangentSpace% (f x) :=
+  have h₁ : MDiffAt f.invFun (f x) :=
     ((f.contMDiffOn_inv (f x)
     (mem_range_self x)).mdifferentiableWithinAt (by simp)).mdifferentiableAt
     (f.isOpenMap.range_mem_nhds x)
-  have h₂ : MDifferentiableAt I I' f x := f.contMDiff_to.mdifferentiableAt (by simp)
+  have h₂ : MDiffAt f x := f.contMDiff_to.mdifferentiableAt (by simp)
   ContinuousLinearEquiv.equivOfInverse (mfderiv% f x) (mfderiv% f.invFun (f x))
     (by
       intro v
@@ -110,19 +110,19 @@ def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem fderiv_coe (x : M) :
-    (f.fderiv x : TangentSpace I x →L[𝕜] TangentSpace I' (f x)) = mfderiv% f x := by ext; rfl
+    (f.fderiv x : TangentSpace% x →L[𝕜] TangentSpace% (f x)) = mfderiv% f x := by ext; rfl
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
 theorem fderiv_symm_coe (x : M) :
-    ((f.fderiv x).symm : TangentSpace I' (f x) →L[𝕜] TangentSpace I x) =
+    ((f.fderiv x).symm : TangentSpace% (f x) →L[𝕜] TangentSpace% x) =
       mfderiv% f.invFun (f x) := by ext; rfl
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem fderiv_symm_coe' {x : M'} (hx : x ∈ range f) :
     ((f.fderiv (f.invFun x)).symm :
-        TangentSpace I' (f (f.invFun x)) →L[𝕜] TangentSpace I (f.invFun x)) =
-      (mfderiv% f.invFun x : TangentSpace I' x →L[𝕜] TangentSpace I (f.invFun x)) :=
+        TangentSpace% (f (f.invFun x)) →L[𝕜] TangentSpace% (f.invFun x)) =
+      (mfderiv% f.invFun x : TangentSpace% x →L[𝕜] TangentSpace% (f.invFun x)) :=
   by rw [fderiv_symm_coe, f.right_inv hx]
 
 end

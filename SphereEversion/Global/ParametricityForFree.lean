@@ -50,22 +50,22 @@ Porting note: the next statement has huge elaboration issue because of defEq abu
 We force our way using hard type ascription, ie. using `id`.
 The following commented out variables and check show the issue.
 variable {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
-    {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}(q : DualPair <| TangentSpace I σ.1.1.2)
+    {p : DualPair <| TangentSpace% σ.1.1}(q : DualPair <| TangentSpace% σ.1.1.2)
 
 #check  p.v
-#check (p.v - (id ((0 : EP), (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1))
+#check (p.v - (id ((0 : EP), (q.v : E)) : TangentSpace% σ.proj.1))
 #check (R.relativize IP P).slice σ p
-#check (R.slice (bundleSnd σ) q : Set <| TangentSpace I' σ.proj.2) -/
+#check (R.slice (bundleSnd σ) q : Set <| TangentSpace% σ.proj.2) -/
 
 set_option backward.isDefEq.respectTransparency false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
-    {p : DualPair <| TangentSpace (IP.prod I) σ.1.1} (q : DualPair <| TangentSpace I σ.1.1.2)
+    {p : DualPair <| TangentSpace% σ.1.1} (q : DualPair <| TangentSpace% σ.1.1.2)
     (hpq : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = q.π) :
     (R.relativize IP P).slice σ p =
-      σ.2 (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1)) +ᵥ
-      (id (R.slice (bundleSnd σ) q) : Set <| TangentSpace I' σ.proj.2) := by
-  set z := (p.v - (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1))
+      σ.2 (p.v - (id (0, (q.v : E)) : TangentSpace% σ.proj.1)) +ᵥ
+      (id (R.slice (bundleSnd σ) q) : Set <| TangentSpace% σ.proj.2) := by
+  set z := (p.v - (id (0, (q.v : E)) : TangentSpace% σ.proj.1))
   have h2pq : ∀ x : E, p.π ((0 : EP), x) = q.π x := fun x ↦
     congr_arg (fun f : E →L[ℝ] ℝ ↦ f x) hpq
   ext1 w
@@ -76,7 +76,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
     erw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
          ← ContinuousLinearMap.map_neg, neg_sub]
     obtain ⟨u, hu, t, rfl⟩ := q.decomp x
-    have hv : (id (0, (q.v : E)) : TangentSpace (IP.prod I) σ.proj.1) - p.v ∈ p.π.ker := by
+    have hv : (id (0, (q.v : E)) : TangentSpace% σ.proj.1) - p.v ∈ p.π.ker := by
       simp [LinearMap.mem_ker, map_sub, p.pairing, h2pq, q.pairing, sub_self]
     have hup : ((0 : EP), u) ∈ p.π.ker := (h2pq u).trans hu
     erw [q.update_apply _ hu, ← Prod.zero_mk_add_zero_mk, map_add, p.update_ker_pi _ _ hup, ←
@@ -89,7 +89,7 @@ theorem relativize_slice {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] [IsManifold IP ∞ P] in
 theorem relativize_slice_eq_univ {σ : OneJetBundle (IP.prod I) (P × M) I' M'}
-    {p : DualPair <| TangentSpace (IP.prod I) σ.1.1}
+    {p : DualPair <| TangentSpace% σ.1.1}
     (hp : p.π.comp (ContinuousLinearMap.inr ℝ EP E) = 0) :
     ((R.relativize IP P).slice σ p).Nonempty ↔ (R.relativize IP P).slice σ p = univ := by
   rcases σ with ⟨⟨⟨q, m⟩,m'⟩, φ⟩
@@ -123,7 +123,7 @@ theorem RelMfld.Ample.relativize (hR : R.Ample) : (R.relativize IP P).Ample := b
       PreconnectedSpace.connectedComponent_eq_univ, convexHull_univ]
   obtain ⟨u', hu'⟩ := ContinuousLinearMap.exists_ne_zero h
   let u := (p2 u')⁻¹ • u'
-  let q : DualPair (TangentSpace I σ.1.1.2) :=
+  let q : DualPair (TangentSpace% σ.1.1.2) :=
     ⟨p2, u, by erw [p2.map_smul, smul_eq_mul, inv_mul_cancel₀ hu']⟩
   rw [relativize_slice q rfl]
   exact (hR q).vadd

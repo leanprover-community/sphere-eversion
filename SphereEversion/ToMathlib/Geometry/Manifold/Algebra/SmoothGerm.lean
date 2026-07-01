@@ -188,9 +188,9 @@ protected nonrec def ContMDiffAt {x : M} (φ : Germ (𝓝 x) F) (n : WithTop ℕ
 
 -- currently unused
 nonrec def mfderiv {x : M} (φ : Germ (𝓝 x) N) :
-    TangentSpace I x →L[ℝ] TangentSpace IG φ.value :=
+    TangentSpace% x →L[ℝ] TangentSpace% φ.value :=
   @Quotient.hrecOn _ (germSetoid (𝓝 x) N)
-    (fun φ : Germ (𝓝 x) N ↦ TangentSpace I x →L[ℝ] TangentSpace IG φ.value) φ
+    (fun φ : Germ (𝓝 x) N ↦ TangentSpace% x →L[ℝ] TangentSpace% φ.value) φ
     (fun f ↦ mfderiv% f x) fun _f _g hfg ↦ heq_of_eq (EventuallyEq.mfderiv_eq hfg : _)
 
 variable {I}

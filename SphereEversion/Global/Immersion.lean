@@ -72,8 +72,8 @@ theorem immersionRel_open [FiniteDimensional ℝ E] : IsOpen (immersionRel I M I
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 @[simp]
-theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace I m}
-    {φ : TangentSpace I m →L[ℝ] TangentSpace I' m'} (hφ : Injective φ) :
+theorem immersionRel_slice_eq {m : M} {m' : M'} {p : DualPair <| TangentSpace% m}
+    {φ : TangentSpace% m →L[ℝ] TangentSpace% m'} (hφ : Injective φ) :
     (immersionRel I M I' M').slice ⟨(m, m'), φ⟩ p =
       (((p.π.ker).map (φ : TM m →ₛₗ[.id ℝ] TM' m')): Set <| TM' m')ᶜ :=
   Set.ext_iff.mpr fun _ ↦ p.injective_update_iff hφ
@@ -83,9 +83,9 @@ variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ E']
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel I M I' M').Ample := by
   rw [RelMfld.ample_iff]
-  rintro ⟨⟨m, m'⟩, φ : TangentSpace I m →L[ℝ] TangentSpace I' m'⟩ (p : DualPair (TangentSpace I m))
+  rintro ⟨⟨m, m'⟩, φ : TangentSpace% m →L[ℝ] TangentSpace% m'⟩ (p : DualPair (TangentSpace% m))
     (hφ : Injective φ)
-  haveI : FiniteDimensional ℝ (TangentSpace I m) := (by infer_instance : FiniteDimensional ℝ E)
+  haveI : FiniteDimensional ℝ (TangentSpace% m) := (by infer_instance : FiniteDimensional ℝ E)
   have hcodim := one_lt_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.toLinearMap
   rw [immersionRel_slice_eq I I' hφ]
   exact AmpleSet.of_one_lt_codim hcodim

@@ -47,7 +47,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 /-- A section of a 1-jet bundle seen as a bundle over the source manifold. -/
 @[ext] structure OneJetSec where
   bs : M → M'
-  ϕ : ∀ x : M, TangentSpace I x →L[𝕜] TangentSpace I' (bs x)
+  ϕ : ∀ x : M, TangentSpace% x →L[𝕜] TangentSpace% (bs x)
   contMDiff' : ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
     fun x ↦ OneJetBundle.mk x (bs x) (ϕ x)
 
@@ -176,7 +176,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {H : Type*} [Top
   in such a way that the function is smooth as a function of all arguments. -/
 @[ext] structure FamilyOneJetSec where
   bs : N → M → M'
-  ϕ : ∀ (n : N) (m : M), TangentSpace I m →L[ℝ] TangentSpace I' (bs n m)
+  ϕ : ∀ (n : N) (m : M), TangentSpace% m →L[ℝ] TangentSpace% (bs n m)
   contMDiff' :
     ContMDiff (J.prod I) ((I.prod I').prod 𝓘(ℝ, E →L[ℝ] E')) ∞ fun p : N × M ↦
       OneJetBundle.mk p.2 (bs p.1 p.2) (ϕ p.1 p.2)
