@@ -110,10 +110,6 @@ variable {H₁ M₁ H₂ M₂ : Type*}
   [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
   [TopologicalSpace M₂] [ChartedSpace H₂ M₂] [IsManifold I₂ ∞ M₂]
 
-@[inherit_doc] local notation "𝓒" => ContMDiff (I₁.prod I₂) 𝓘(ℝ, F)
-
-@[inherit_doc] local notation "𝓒_on" => ContMDiffOn (I₁.prod I₂) 𝓘(ℝ, F)
-
 omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂]
   [IsManifold I₁ ∞ M₁] [IsManifold I₂ ∞ M₂] in
 theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
@@ -134,8 +130,8 @@ omit [FiniteDimensional ℝ E₂] [IsManifold I₂ ∞ M₂] in
 theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [SigmaCompactSpace M₁] [T2Space M₁]
     (hP : ∀ x, Convex ℝ {f | P x f}) {n : ℕ∞}
     (hP' : ∀ x : M₁, ∃ U ∈ 𝓝 x, ∃ f : M₁ → M₂ → F,
-      𝓒_on n (uncurry f) (U ×ˢ (univ : Set M₂)) ∧ ∀ y ∈ U, P y (f y)) :
-    ∃ f : M₁ → M₂ → F, 𝓒 n (uncurry f) ∧ ∀ x, P x (f x) := by
+      CMDiff[U ×ˢ (univ : Set M₂)] n (uncurry f) ∧ ∀ y ∈ U, P y (f y)) :
+    ∃ f : M₁ → M₂ → F, CMDiff n (uncurry f) ∧ ∀ x, P x (f x) := by
   let PP : (Σ x : M₁, Germ (𝓝 x) (M₂ → F)) → Prop := fun p ↦
     p.2.ContMDiffAtProd I₁ I₂ n ∧ P p.1 p.2.value
   have hPP : ∀ x : M₁, ReallyConvex (smoothGerm I₁ x) {φ | PP ⟨x, φ⟩} := fun x ↦ by

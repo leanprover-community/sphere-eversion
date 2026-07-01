@@ -337,12 +337,12 @@ theorem contMDiff_oneJetBundle_proj :
 
 theorem ContMDiff.oneJetBundle_proj {f : N → J¹MM'}
     (hf : ContMDiff J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f) :
-    ContMDiff J (I.prod I') ∞ fun x ↦ (f x).1 :=
+    CMDiff ∞ fun x ↦ (f x).1 :=
   contMDiff_oneJetBundle_proj.comp hf
 
 theorem ContMDiffAt.oneJetBundle_proj {f : N → J¹MM'} {x₀ : N}
     (hf : ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f x₀) :
-    ContMDiffAt J (I.prod I') ∞ (fun x ↦ (f x).1) x₀ :=
+    CMDiffAt ∞ (fun x ↦ (f x).1) x₀ :=
   (contMDiff_oneJetBundle_proj _).comp x₀ hf
 
 /-- The constructor of `OneJetBundle`, in case `Sigma.mk` will not give the right type. -/
@@ -365,11 +365,10 @@ theorem oneJetBundle_mk_snd {x : M} {y : M'} {f : OneJetSpace I I' (x, y)} :
 set_option backward.isDefEq.respectTransparency false in
 theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ f x₀ ↔
-      CMDiffAt ∞ (fun x ↦ (f x).1.1) x₀ ∧
-        CMDiffAt ∞ (fun x ↦ (f x).1.2) x₀ ∧
-          ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞
-            (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2)
-              x₀) x₀ := by
+      CMDiffAt ∞ (fun x ↦ (f x).1.1) x₀ ∧ CMDiffAt ∞ (fun x ↦ (f x).1.2) x₀ ∧
+        CMDiffAt ∞
+          (inTangentCoordinates I I' (fun x ↦ (f x).1.1) (fun x ↦ (f x).1.2) (fun x ↦ (f x).2) x₀)
+          x₀ := by
   simp_rw [Bundle.contMDiffAt_totalSpace, contMDiffAt_prod_iff, and_assoc,
     oneJetBundle_trivializationAt]
   rfl
@@ -377,13 +376,12 @@ theorem contMDiffAt_oneJetBundle {f : N → J¹MM'} {x₀ : N} :
 theorem contMDiffAt_oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
         (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ ↔
-      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧
-        ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
+      CMDiffAt ∞ f x₀ ∧ CMDiffAt ∞ g x₀ ∧ CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀ :=
   contMDiffAt_oneJetBundle
 
 theorem ContMDiffAt.oneJetBundle_mk {f : N → M} {g : N → M'} {ϕ : N → E →L[𝕜] E'} {x₀ : N}
     (hf : CMDiffAt ∞ f x₀) (hg : CMDiffAt ∞ g x₀)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀) :
+    (hϕ : CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ x₀) x₀) :
     ContMDiffAt J ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞
       (fun x ↦ OneJetBundle.mk (f x) (g x) (ϕ x) : N → J¹MM') x₀ :=
   contMDiffAt_oneJetBundle.mpr ⟨hf, hg, hϕ⟩
@@ -421,9 +419,9 @@ theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h :
 
 theorem ContMDiffAt.clm_comp_inTangentCoordinates {f : N → M} {g : N → M'} {h : N → N'}
     {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {n : N} (hg : ContinuousAt g n)
-    (hϕ' : ContMDiffAt J 𝓘(𝕜, E' →L[𝕜] F') ∞ (inTangentCoordinates I' J' g h ϕ' n) n)
-    (hϕ : ContMDiffAt J 𝓘(𝕜, E →L[𝕜] E') ∞ (inTangentCoordinates I I' f g ϕ n) n) :
-    ContMDiffAt J 𝓘(𝕜, E →L[𝕜] F') ∞ (inTangentCoordinates I J' f h (fun n ↦ ϕ' n ∘L ϕ n) n) n :=
+    (hϕ' : CMDiffAt ∞ (inTangentCoordinates I' J' g h ϕ' n) n)
+    (hϕ : CMDiffAt ∞ (inTangentCoordinates I I' f g ϕ n) n) :
+    CMDiffAt ∞ (inTangentCoordinates I J' f h (fun n ↦ ϕ' n ∘L ϕ n) n) n :=
   (hϕ'.clm_comp hϕ).congr_of_eventuallyEq hg.inTangentCoordinates_comp
 
 variable (I')
@@ -518,13 +516,11 @@ theorem OneJetBundle.map_id (x : J¹MM') :
 
 theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N'} {x₀ : M''}
     {Dfinv : ∀ (z : M'') (x : M), TangentSpace% (f z x) →L[𝕜] TangentSpace% x} {k : M'' → J¹MM'}
-    (hf : ContMDiffAt (I''.prod I) J ∞ f.uncurry (x₀, (k x₀).1.1))
-    (hg : ContMDiffAt (I''.prod I') J' ∞ g.uncurry (x₀, (k x₀).1.2))
+    (hf : CMDiffAt ∞ f.uncurry (x₀, (k x₀).1.1))
+    (hg : CMDiffAt ∞ g.uncurry (x₀, (k x₀).1.2))
     (hDfinv :
-      ContMDiffAt I'' 𝓘(𝕜, F →L[𝕜] E) ∞
-        (inTangentCoordinates J I (fun x ↦ f x (k x).1.1) (fun x ↦ (k x).1.1)
-          (fun x ↦ Dfinv x (k x).1.1) x₀)
-        x₀)
+      CMDiffAt ∞ (inTangentCoordinates J I (fun x ↦ f x (k x).1.1) (fun x ↦ (k x).1.1)
+        (fun x ↦ Dfinv x (k x).1.1) x₀) x₀)
     (hk : ContMDiffAt I'' ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ k x₀) :
     ContMDiffAt I'' ((J.prod J').prod 𝓘(𝕜, F →L[𝕜] F')) ∞
       (fun z ↦ OneJetBundle.map I' J' (f z) (g z) (Dfinv z) (k z)) x₀ := by
@@ -532,7 +528,7 @@ theorem ContMDiffAt.oneJetBundle_map {f : M'' → M → N} {g : M'' → M' → N
   refine ContMDiffAt.oneJet_comp _ _ ?_ ?_
   · refine ContMDiffAt.oneJet_comp _ _ ?_ ?_
     · refine hk.2.1.oneJetBundle_mk (hg.comp x₀ (contMDiffAt_id.prodMk hk.2.1)) ?_
-      exact ContMDiffAt.mfderiv g (fun x ↦ (k x).1.2) hg hk.2.1 le_rfl
+      exact hg.mfderiv g (fun x ↦ (k x).1.2) hk.2.1 le_rfl
     · exact hk.1.oneJetBundle_mk hk.2.1 hk.2.2
   apply (hf.comp x₀ (contMDiffAt_id.prodMk hk.1)).oneJetBundle_mk hk.1
   apply hDfinv
@@ -554,9 +550,9 @@ theorem mapLeft_eq_map (f : M → N) (Dfinv : ∀ x : M, TangentSpace% (f x) →
 
 theorem ContMDiffAt.mapLeft {f : N' → M → N} {x₀ : N'}
     {Dfinv : ∀ (z : N') (x : M), TangentSpace% (f z x) →L[𝕜] TangentSpace% x} {g : N' → J¹MM'}
-    (hf : ContMDiffAt (J'.prod I) J ∞ f.uncurry (x₀, (g x₀).1.1))
+    (hf : CMDiffAt ∞ f.uncurry (x₀, (g x₀).1.1))
     (hDfinv :
-      ContMDiffAt J' 𝓘(𝕜, F →L[𝕜] E) ∞
+      CMDiffAt ∞
         (inTangentCoordinates J I (fun x ↦ f x (g x).1.1) (fun x ↦ (g x).1.1)
           (fun x ↦ Dfinv x (g x).1.1) x₀)
         x₀)

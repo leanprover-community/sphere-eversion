@@ -86,7 +86,7 @@ variable [IsManifold I ∞ M] [IsManifold I' ∞ M']
 
 /- Note that we are slightly abusing the fact that `TangentSpace I x` and
 `TangentSpace I (f.invFun (f x))` are both definitionally `E` below. -/
-def fderiv (x : M) : TangentSpace% x ≃L[𝕜] TangentSpace% (f x) :=
+def fderiv (x : M) : TangentSpace I x ≃L[𝕜] TangentSpace I' (f x) :=
   have h₁ : MDiffAt f.invFun (f x) :=
     ((f.contMDiffOn_inv (f x)
     (mem_range_self x)).mdifferentiableWithinAt (by simp)).mdifferentiableAt
@@ -419,8 +419,8 @@ open Function
 
 /-- This is lemma `lem:smooth_updating` in the blueprint. -/
 theorem contMDiff_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M} {K : Set X}
-    (hK : IsClosed (φ '' K)) (hf : ContMDiff (IM'.prod IM) IN ∞ (uncurry f))
-    (hg : ContMDiff (IM'.prod IX) IY ∞ (uncurry g)) (hk : CMDiff ∞ k)
+    (hK : IsClosed (φ '' K)) (hf : CMDiff ∞ (uncurry f))
+    (hg : CMDiff ∞ (uncurry g)) (hk : CMDiff ∞ k)
     (hg' : ∀ y x, x ∉ K → f y (φ x) = ψ (g y x)) :
     CMDiff ∞ fun x ↦ update φ ψ (f x) (g x) (k x) := by
   have hK' : ∀ x, k x ∉ φ '' K → update φ ψ (f x) (g x) (k x) = f x (k x) := fun x hx ↦

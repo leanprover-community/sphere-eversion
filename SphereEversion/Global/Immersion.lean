@@ -142,7 +142,7 @@ theorem immersion_antipodal_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
     -- The other direction elaborates much worse.
     (contDiff_neg.contMDiff).comp (contMDiff_coe_sphere.of_le le_top)
   diff_injective x := by
-    change Injective (mfderiv (𝓡 n) 𝓘(ℝ, E) (-fun x : sphere (0 : E) 1 ↦ (x : E)) x)
+    change Injective (mfderiv% (-fun x : sphere (0 : E) 1 ↦ (x : E)) x)
     rw [mfderiv_neg]
     exact neg_injective.comp (mfderiv_coe_sphere_injective x)
 
@@ -168,8 +168,7 @@ variable (ω : Orientation ℝ E (Fin 3))
 
 -- this result holds mutatis mutandis in `ℝ^n`
 theorem smooth_bs :
-    ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞
-      fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
+    CMDiff ∞ fun p : ℝ × (sphere (0 : E) 1) ↦ (1 - p.1) • (p.2 : E) + p.1 • -(p.2: E) := by
   refine (ContMDiff.smul (I := 𝓘(ℝ)) ?_ ?_).add (contMDiff_fst.smul ?_)
   · exact (contDiff_const.sub contDiff_id).contMDiff.comp contMDiff_fst
   · exact (contMDiff_coe_sphere.of_le le_top).comp contMDiff_snd
@@ -181,6 +180,8 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
       (fun p : ℝ × 𝕊² ↦ ω.rot (p.1, p.2))
       (by
         intro p
+        -- Note: elaborators would infer another model on the domain, namely `𝓘(ℝ, ℝ).prod 𝓘(ℝ, E)`
+        -- In any case, this should not work, as we have a product of normed spaces?
         have : ContMDiffAt 𝓘(ℝ, ℝ × E) 𝓘(ℝ, E →L[ℝ] E) ∞ ω.rot (p.1, p.2) := by
           refine ((ω.contDiff_rot ?_).of_le le_top).contMDiffAt
           exact ne_zero_of_mem_unit_sphere p.2
@@ -209,9 +210,9 @@ theorem formalEversionHolAtZero {t : ℝ} (ht : t < 1 / 4) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x
   change
-    mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ ((1 : ℝ) - smoothStep t) • (y : E) +
+    mfderiv% (fun y : 𝕊² ↦ ((1 : ℝ) - smoothStep t) • (y : E) +
       smoothStep t • -(y : E)) x =
-      (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ (y : E)) x)
+      (ω.rot (smoothStep t, x)).comp (mfderiv% (fun y : 𝕊² ↦ (y : E)) x)
   simp_rw [smoothStep.of_lt ht, ω.rot_zero, ContinuousLinearMap.id_comp]
   congr with y
   simp [smoothStep.of_lt ht]
@@ -221,10 +222,10 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x
   change
-    mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ ((1 : ℝ) - smoothStep t) • (y : E) +
+    mfderiv% (fun y : 𝕊² ↦ ((1 : ℝ) - smoothStep t) • (y : E) +
       smoothStep t • -(y : E)) x =
-      (ω.rot (smoothStep t, x)).comp (mfderiv (𝓡 2) 𝓘(ℝ, E) (fun y : 𝕊² ↦ (y : E)) x)
-  trans mfderiv (𝓡 2) 𝓘(ℝ, E) (-fun y : 𝕊² ↦ (y : E)) x
+      (ω.rot (smoothStep t, x)).comp (mfderiv% (fun y : 𝕊² ↦ (y : E)) x)
+  trans mfderiv% (-fun y : 𝕊² ↦ (y : E)) x
   · congr 2 with y
     simp [smoothStep.of_gt ht]
   ext v
@@ -285,13 +286,13 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
 lemma ContMDiff.prod_left {n : ℕ∞} (x : M) :
-    ContMDiff I' (I.prod I') n fun p : M' ↦ (⟨x, p⟩ : M × M') := by
+    CMDiff n fun p : M' ↦ (⟨x, p⟩ : M × M') := by
   rw [contMDiff_prod_iff]
   exact ⟨contMDiff_const, contMDiff_id⟩
 
 -- move to Mathlib.Geometry.Manifold.ContMDiff.Product
 theorem ContMDiff.uncurry_left {n : ℕ∞} {f : M → M' → P}
-    (hf : ContMDiff (I.prod I') IP n ↿f) (x : M) : CMDiff n (f x) := by
+    (hf : CMDiff n ↿f) (x : M) : CMDiff n (f x) := by
   have : f x = (uncurry f) ∘ fun p : M' ↦ ⟨x, p⟩ := by ext; simp
   -- or just `apply hf.comp (ContMDiff.prod_left I I' x)`
   rw [this]; exact hf.comp (ContMDiff.prod_left I I' x)
@@ -300,8 +301,7 @@ end helper
 
 theorem sphere_eversion :
     ∃ f : ℝ → 𝕊² → E,
-      ContMDiff (𝓘(ℝ, ℝ).prod (𝓡 2)) 𝓘(ℝ, E) ∞ ↿f ∧
-        (f 0 = fun x : 𝕊² ↦ (x : E)) ∧ (f 1 = fun x : 𝕊² ↦ -(x : E)) ∧
+      CMDiff ∞ ↿f ∧ (f 0 = fun x : 𝕊² ↦ (x : E)) ∧ (f 1 = fun x : 𝕊² ↦ -(x : E)) ∧
         ∀ t, Immersion (𝓡 2) 𝓘(ℝ, E) (f t) ∞ := by
   classical
   let ω : Orientation ℝ E (Fin 3) :=

@@ -224,7 +224,7 @@ protected theorem contMDiff (S : FamilyOneJetSec I M I' M' J N) :
   S.contMDiff'
 
 theorem contMDiff_bs (S : FamilyOneJetSec I M I' M' J N) :
-    ContMDiff (J.prod I) I' ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
+    CMDiff ∞ fun p : N × M ↦ S.bs p.1 p.2 :=
   contMDiff_oneJetBundle_proj.snd.comp S.contMDiff
 
 theorem contMDiff_coe_bs (S : FamilyOneJetSec I M I' M' J N) {p : N} : CMDiff ∞ (S.bs p) :=
@@ -244,14 +244,12 @@ def reindex (S : FamilyOneJetSec I M I' M' J' N') (f : C^∞⟮J, N; J', N'⟯) 
 def uncurry (S : FamilyOneJetSec I M I' M' IP P) : OneJetSec (IP.prod I) (P × M) I' M' where
   bs p := S.bs p.1 p.2
   ϕ p :=
-    (mfderiv (IP.prod I) I' (fun z : P × M ↦ S.bs z.1 p.2) p) +
-      S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I Prod.snd p
+    (mfderiv% (fun z : P × M ↦ S.bs z.1 p.2) p) + S.ϕ p.1 p.2 ∘L mfderiv (IP.prod I) I Prod.snd p
   contMDiff' := by
     refine ContMDiff.oneJet_add ?_ ?_
     · intro y
       refine contMDiffAt_id.oneJetBundle_mk (S.contMDiff_bs y) ?_
-      have : ContMDiffAt ((IP.prod I).prod (IP.prod I)) I' ∞
-          (Function.uncurry fun x z : P × M ↦ S.bs z.1 x.2) (y, y) :=
+      have : CMDiffAt ∞ (Function.uncurry fun x z : P × M ↦ S.bs z.1 x.2) (y, y) :=
         S.contMDiff_bs.comp (contMDiff_snd.fst.prodMk contMDiff_fst.snd) (y, y)
       apply ContMDiffAt.mfderiv (fun x z : P × M ↦ S.bs z.1 x.2) id this contMDiffAt_id
         (mod_cast le_top)
