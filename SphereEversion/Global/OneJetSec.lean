@@ -110,6 +110,7 @@ theorem isHolonomicAt_iff {F : OneJetSec I M I' M'} {x : M} :
   simp_rw [IsHolonomicAt, oneJetExt, Bundle.TotalSpace.ext_iff, heq_iff_eq, F.fst_eq,
     oneJetBundle_mk_fst, true_and, oneJetBundle_mk_snd]
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem isHolonomicAt_congr {F F' : OneJetSec I M I' M'} {x : M} (h : F =ᶠ[𝓝 x] F') :
     F.IsHolonomicAt x ↔ F'.IsHolonomicAt x := by
   simp_rw [IsHolonomicAt]
@@ -133,7 +134,7 @@ end OneJetSec
 def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop :=
   Quotient.liftOn' φ (fun F ↦ mfderiv% (fun x' ↦ (F x').1.2) x = (F x).2)
     (by
-      letI : Setoid (M → OneJetBundle I M I' M') := (𝓝 x).germSetoid (OneJetBundle I M I' M')
+      let : Setoid (M → OneJetBundle I M I' M') := (𝓝 x).germSetoid (OneJetBundle I M I' M')
       have key :
         ∀ f g,
           f ≈ g →

@@ -155,7 +155,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   let U₁ : Set ℝ := Iio (4⁻¹ : ℝ) ∪ Ioi (3 / 4)
   let U : Set (E × ℝ × ℝ) := (fun x ↦ x.2.1) ⁻¹' Iio (4⁻¹ : ℝ) ∪ (fun x ↦ fract x.2.2) ⁻¹' U₁
   have hUC : U ∈ 𝓝ˢ C := by
-    haveI hU : IsOpen U := by
+    have hU : IsOpen U := by
       refine (isOpen_Iio.preimage continuous_snd.fst).union ?_
       refine ((isOpen_Iio.union isOpen_Ioi).preimage_fract ?_).preimage continuous_snd.snd
       exact fun _ ↦ Or.inr (show (3 / 4 : ℝ) < 1 by norm_num)

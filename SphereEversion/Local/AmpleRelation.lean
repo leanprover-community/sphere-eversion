@@ -86,7 +86,7 @@ theorem slice_of_ker_eq_ker {θ : OneJet E F} {p p' : DualPair E} (hpp' : p.π =
     congr 2
     abel
   ext w
-  simp only [slice, mem_setOf_eq, map_sub, vadd_eq_add, mem_vadd_set_iff_neg_vadd_mem, key]
+  simp only [slice, mem_ofPred_eq, map_sub, vadd_eq_add, mem_vadd_set_iff_neg_vadd_mem, key]
   have : -(φ p.v - φ p'.v) + w + (φ p.v - φ p'.v) = w := by abel
   rw [this]
 

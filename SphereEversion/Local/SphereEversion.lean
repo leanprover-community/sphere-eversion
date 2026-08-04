@@ -228,7 +228,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
   rw [injOn_iff_injective]
   let j := (ℝ ∙ x)ᗮ.subtypeL
   let p'' : DualPair (ℝ ∙ x)ᗮ := ⟨p.π.comp j, ⟨v', v'_in⟩, hπv'⟩
-  have eq : ((ℝ ∙ x)ᗮ : Set E).restrict (p'.update φ w) = p''.update (φ.comp j) w := by
+  have eq : ((ℝ ∙ x)ᗮ : Set E).domRestrict (p'.update φ w) = p''.update (φ.comp j) w := by
     ext z
     simp [p', j, DualPair.update, p'']
   have eq' : (p''.π.ker).map (φ.comp j : _ →ₛₗ[.id ℝ] F) =
@@ -244,7 +244,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
     erw [← this, map_comp]
   rw [eq, p''.injective_update_iff, mem_compl_iff, eq']
   · exact Iff.rfl
-  rw [← show ((ℝ ∙ x)ᗮ : Set E).restrict φ = φ.comp j by ext; rfl]
+  rw [← show ((ℝ ∙ x)ᗮ : Set E).domRestrict φ = φ.comp j by ext; rfl]
   exact hφ.injective
 
 end AssumeFiniteDimensional
@@ -415,7 +415,7 @@ theorem sphere_eversion_of_loc [Fact (dim E = 3)] :
   classical
   borelize E
   have rankE : (dim E = 3) := Fact.out
-  haveI : FiniteDimensional ℝ E := FiniteDimensional.of_finrank_eq_succ rankE
+  have : FiniteDimensional ℝ E := FiniteDimensional.of_finrank_eq_succ rankE
   let ω : Orientation ℝ E (Fin 3) :=
     ((stdOrthonormalBasis _ _).reindex <| finCongr rankE).toBasis.orientation
   have is_closed_pair : IsClosed ({0, 1} : Set ℝ) := (by simp : ({0, 1} : Set ℝ).Finite).isClosed

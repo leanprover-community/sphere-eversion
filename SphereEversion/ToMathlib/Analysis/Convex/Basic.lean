@@ -90,7 +90,7 @@ theorem Subsingleton.reallyConvex [Subsingleton 𝕜] : ReallyConvex 𝕜 s := b
   · exact reallyConvex_empty
   · refine Or.inr fun w _ _ _ ↦ ?_
     convert hz
-    haveI := Module.subsingleton 𝕜 E
+    have := Module.subsingleton 𝕜 E
     exact Subsingleton.elim ..
 
 theorem reallyConvex_iff_hull [Nontrivial 𝕜] : ReallyConvex 𝕜 s ↔ reallyConvexHull 𝕜 s ⊆ s := by
@@ -108,6 +108,7 @@ theorem ReallyConvex.sum_mem [Nontrivial 𝕜] [IsOrderedRing 𝕜]
     ∑ i ∈ t, w i • z i ∈ s :=
   reallyConvex_iff_hull.mp hs (sum_mem_reallyConvexHull h₀ h₁ hz)
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem ReallyConvex.finsum_mem [Nontrivial 𝕜] [IsOrderedRing 𝕜]
     (hs : ReallyConvex 𝕜 s) {ι : Type*} {w : ι → 𝕜} {z : ι → E}
     (h₀ : ∀ i, 0 ≤ w i) (h₁ : ∑ᶠ i, w i = 1) (hz : ∀ i ∈ support w, z i ∈ s) :
@@ -141,7 +142,7 @@ theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set 
     ReallyConvex 𝕜 (f ⁻¹' s) := by
   -- this proof would be easier by casing on `s = ∅`, and
   cases subsingleton_or_nontrivial 𝕜'
-  · haveI : Subsingleton E' := Module.subsingleton 𝕜' E'
+  · have : Subsingleton E' := Module.subsingleton 𝕜' E'
     refine Subsingleton.set_cases ?_ ?_ s
     · simp_rw [preimage_empty, reallyConvex_empty]
     · simp_rw [preimage_univ, reallyConvex_univ]

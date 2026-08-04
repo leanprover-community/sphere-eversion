@@ -153,10 +153,10 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
       basis.coord_apply_combination_of_mem (Finset.mem_univ i) w_sum]
     exact w_pos i
   · rintro ⟨b, h₀, h₁, h₂, h₃⟩
-    haveI : Fintype b := (finite_set_of_fin_dim_affineIndependent ℝ h₁).fintype
+    have : Fintype b := (finite_set_of_fin_dim_affineIndependent ℝ h₁).fintype
     have hb : Fintype.card b = d + 1 := by
       rw [← h₁.affineSpan_eq_top_iff_card_eq_finrank_add_one, Subtype.range_coe_subtype,
-        setOf_mem_eq, h₂]
+        ofPred_mem_eq, h₂]
     let p := ((↑) : _ → F) ∘ (Fintype.equivFinOfCardEq hb).symm
     have hp : b = range p := by
       ext x
@@ -166,7 +166,7 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
     replace h₁ : AffineIndependent ℝ p :=
       h₁.comp_embedding (Fintype.equivFinOfCardEq hb).symm.toEmbedding
     let basis : AffineBasis ι ℝ F := ⟨_, h₁, h₂⟩
-    erw [basis.interior_convexHull, mem_setOf_eq] at h₃
+    erw [basis.interior_convexHull, mem_ofPred_eq] at h₃
     refine ⟨p, fun i ↦ basis.coord i f, ⟨h₁, h₃, ?_, ?_⟩, fun i ↦ h₀ (mem_range_self i)⟩
     · exact basis.sum_coord_apply_eq_one f
     · erw [← Finset.univ.affineCombination_eq_linear_combination p _
@@ -216,7 +216,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hxp : W' (x, p) ∈ V := by simp [W', V, hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
-    exact isOpen_univ.prod isOpen_setOf_affineIndependent
+    exact isOpen_univ.prod isOpen_setOfPred_affineIndependent
   have hU₂ : IsOpen U := hW'.isOpen_inter_preimage hA hV
   have hU₃ : U ∈ 𝓝 (x, p) :=
     mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, Set.mem_inter (by simp [hp, A]) (mem_preimage.mpr hxp)⟩
@@ -238,7 +238,7 @@ theorem smooth_surroundingPts [FiniteDimensional ℝ F] {x : F} {p : ι → F} {
         SmoothAt' (uncurry W) yq ∧ SurroundingPts yq.1 yq.2 (W yq.1 yq.2) := by
   refine Exists.imp (fun W hW ↦ ?_) (smooth_surrounding h)
   rw [nhds_prod_eq] at hW ⊢
-  have := (IsOpen.eventually_mem isOpen_setOf_affineIndependent h.indep).prod_inr (𝓝 x)
+  have := (IsOpen.eventually_mem isOpen_setOfPred_affineIndependent h.indep).prod_inr (𝓝 x)
   filter_upwards [hW, this]; rintro ⟨y, q⟩ ⟨hW, h2W, h3W, hq⟩ h2q
   exact ⟨hW, h2q, h2W, h3W, hq⟩
 
@@ -283,7 +283,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
   have hV' : V ∈ 𝓝 (W' (q, v)) := (isOpen_set_pi finite_univ fun _ _ ↦ isOpen_Ioi).mem_nhds hxp
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
-    exact isOpen_univ.prod isOpen_setOf_affineIndependent
+    exact isOpen_univ.prod isOpen_setOfPred_affineIndependent
   have hW' : ContinuousAt W' (q, v) :=
     (smooth_barycentric ι ℝ F hι (n := 0)).continuousOn.continuousAt
       (mem_nhds_iff.mpr ⟨A, Subset.rfl, hA, hqv⟩)
@@ -937,7 +937,7 @@ def ContinuousGerm {x : E} (φ : Germ (𝓝 x) (ℝ → Loop F)) : Prop :=
       rw [nhds_prod_eq]
       apply mem_of_superset (Filter.prod_mem_prod h univ_mem)
       rintro ⟨x', p⟩ ⟨hx' : γ x' = γ' x', -⟩
-      simp only [mem_setOf_eq, hx'])
+      simp only [mem_ofPred_eq, hx'])
 
 variable (g b Ω)
 omit [NormedSpace ℝ E]

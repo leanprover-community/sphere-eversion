@@ -93,6 +93,7 @@ theorem inductive_construction {X Y : Type*} [TopologicalSpace X] {N : ℕ} {U :
     convert (h₁f _ _ hn₀' x) using 1
     exact Germ.coe_eq.mpr hn₀.symm
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem inductive_construction_of_loc' {X Y : Type*} [EMetricSpace X] [LocallyCompactSpace X]
     [SecondCountableTopology X] (P₀ P₀' P₁ : ∀ x : X, Germ (𝓝 x) Y → Prop) {f₀ : X → Y}
     (hP₀f₀ : ∀ x, P₀ x f₀ ∧ P₀' x f₀)
