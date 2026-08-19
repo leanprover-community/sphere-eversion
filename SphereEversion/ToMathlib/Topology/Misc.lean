@@ -65,7 +65,7 @@ instance : ProperlyDiscontinuousVAdd ℤ ℝ :=
   ⟨fun {K L} hK hL ↦ by
     rcases eq_empty_or_nonempty K with (rfl | hK') <;>
         rcases eq_empty_or_nonempty L with (rfl | hL') <;>
-      try simp only [image_empty, inter_self, setOf_false, finite_empty, empty_inter, inter_empty,
+      try simp only [image_empty, inter_self, ofPred_false, finite_empty, empty_inter, inter_empty,
         Set.not_nonempty_empty, image_inter_nonempty_iff]
     have hSK := (hK.isLUB_sSup hK').1
     have hIK := (hK.isGLB_sInf hK').1
@@ -145,7 +145,7 @@ theorem IsOpen.preimage_fract' {s : Set ℝ} (hs : IsOpen s) (h2s : 0 ∈ s → 
     rintro x ⟨hx, hx'⟩
     obtain (hx'' | hx'') := le_or_gt (n : ℝ) x
     · apply hδ
-      rw [mem_setOf_eq, abs_eq_self.mpr (fract_nonneg x)]
+      rw [mem_ofPred_eq, abs_eq_self.mpr (fract_nonneg x)]
       exact fract_lt hx'' hx'
     · apply hε'
       exact ⟨one_sub_lt_fract (by linarith [min_le_right ε (1 / 2)]) (by linarith) hx'',
@@ -301,13 +301,13 @@ theorem decode₂_locallyFinite {ι} [Encodable ι] {s : ι → Set α} (hs : Lo
   have :
       encode ⁻¹' {i : ℕ | ((s <$> decode₂ ι i).getD ∅ ∩ U).Nonempty} =
       {i : ι | (s i ∩ U).Nonempty} := by
-    simp_rw [preimage_setOf_eq, decode₂_encode, map_eq_map, map_some, getD_some]
+    simp_rw [preimage_ofPred_eq, decode₂_encode, map_eq_map, map_some, getD_some]
   rw [← this] at hU
   refine finite_of_finite_preimage hU ?_
   intro n hn
   rw [← decode₂_ne_none_iff]
   intro h
-  simp_rw [mem_setOf_eq, h, map_eq_map, map_none, getD_none, empty_inter] at hn
+  simp_rw [mem_ofPred_eq, h, map_eq_map, map_none, getD_none, empty_inter] at hn
   exact (not_nonempty_empty hn).elim
 
 variable {X : Type*} [EMetricSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
@@ -327,7 +327,7 @@ theorem exists_locallyFinite_subcover_of_locally {C : Set X} (hC : IsClosed C) {
     precise_refinement_set hC (fun x : s ↦ interior (V x)) (fun x ↦ isOpen_interior) this
   obtain ⟨K, hCK, hK, hKW⟩ :=
     exists_subset_iUnion_closed_subset hC (fun x : s ↦ hW x) (fun x _ ↦ hlW.point_finite x) hUW
-  haveI : Encodable s := hs.toEncodable
+  have : Encodable s := hs.toEncodable
   let K' : ℕ → Set X := fun n ↦ (K <$> decode₂ s n).getD ∅
   let W' : ℕ → Set X := fun n ↦ (W <$> decode₂ s n).getD ∅
   refine ⟨K', W', ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -430,7 +430,7 @@ theorem image_coe_eq_iff_eq_univ {s : Set α} {t : Set s} : ((↑) : s → α) '
   convert coe_injective.image_injective.eq_iff; rw [coe_image_univ]
 
 theorem preimage_coe_eq_univ {s t : Set α} : ((↑) : s → α) ⁻¹' t = univ ↔ s ⊆ t := by
-  simp only [preimage_eq_univ_iff, range_coe_subtype, setOf_mem_eq]
+  simp
 
 end Subtype
 
@@ -462,7 +462,7 @@ theorem point_finite_of_locallyFinite_coe_preimage {ι X : Type*} [TopologicalSp
   by_cases hx : x ∈ s
   · exact hf.point_finite ⟨x, hx⟩
   · have : ∀ i, x ∉ f i := fun i hxf ↦ hx (hfs i hxf)
-    simp only [this, setOf_false, finite_empty]
+    simp [this]
 
 end ParacompactSpace
 

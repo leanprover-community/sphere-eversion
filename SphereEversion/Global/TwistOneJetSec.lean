@@ -208,6 +208,7 @@ theorem FamilyOneJetEuclSec.contMDiff (s : FamilyOneJetEuclSec I M V J N) :
 
 variable {V'}
 
+set_option backward.isDefEq.respectTransparency.types false in
 def familyJoin {f : N × M → V} (hf : CMDiff ∞ f)
     (s : FamilyOneJetEuclSec I M V J N) : FamilyOneJetSec I M 𝓘(ℝ, V) V J N
     where

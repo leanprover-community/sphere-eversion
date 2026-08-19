@@ -255,7 +255,7 @@ def ContMDiffAtProd {x : M₁} (φ : Germ (𝓝 x) (M₂ → F)) (n : ℕ∞) : 
           rw [← nhds_prod_eq] at h
           apply mem_of_superset h
           rintro ⟨x', y'⟩ ⟨hx' : f x' = g x', -⟩
-          simp only [mem_setOf_eq, uncurry_apply_pair]
+          simp only [mem_ofPred_eq, uncurry_apply_pair]
           apply congr_fun
         exacts [hx'.symm, hx']
 
@@ -273,7 +273,7 @@ quotient.lift_on' φ (λ f, ∀ y ∈ h⁻¹' {x}, ContMDiffAt I₄ I₃ n (g �
     rw ← nhds_prod_eq at h,
     apply mem_of_superset h,
     rintros ⟨x', y'⟩ ⟨(hx' : f x' = g x'), -⟩,
-    simp only [mem_setOf_eq, uncurry_apply_pair],
+    simp only [mem_ofPred_eq, uncurry_apply_pair],
     apply congr_fun, },
   exacts [hx'.symm, hx']
 end)

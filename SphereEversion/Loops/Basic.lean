@@ -378,6 +378,7 @@ theorem ContDiff.partial_loop {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 
 
 variable [FiniteDimensional ℝ F]
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ Loop.support γ := by
   unfold Loop.support
   erw [closure_compl, closure_compl]

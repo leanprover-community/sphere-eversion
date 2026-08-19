@@ -64,7 +64,6 @@ theorem Set.countable_iff_exists_nonempty_indexType_equiv {α : Type*} {s : Set 
   · refine ⟨fun hh ↦ ⟨0, ?_⟩, ?_⟩
     · simp only [indexType_zero]
       obtain ⟨_i⟩ := Set.countable_infinite_iff_nonempty_denumerable.mp ⟨hh, h⟩
-      haveI := _i
       exact ⟨(Denumerable.eqv s).symm⟩
     · rintro ⟨n, ⟨fn⟩⟩
       have hn : n = 0 := by

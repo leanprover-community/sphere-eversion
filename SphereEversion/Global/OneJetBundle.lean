@@ -402,6 +402,7 @@ theorem ContMDiff.oneJetExt {f : M → M'} (hf : CMDiff ∞ f) :
     ContMDiff I ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ (oneJetExt I I' f) :=
   fun x ↦ ((hf x).contMDiffAt univ_mem).oneJetExt
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem ContinuousAt.inTangentCoordinates_comp {f : N → M} {g : N → M'} {h : N → N'}
     {ϕ' : N → E' →L[𝕜] F'} {ϕ : N → E →L[𝕜] E'} {x₀ : N} (hg : ContinuousAt g x₀) :
     inTangentCoordinates I J' f h (fun x ↦ ϕ' x ∘L ϕ x) x₀ =ᶠ[𝓝 x₀] fun x ↦
@@ -428,6 +429,7 @@ variable (I')
 
 variable [IsManifold J ∞ N]
 
+set_option backward.isDefEq.respectTransparency.types false in
 omit [IsManifold J' ∞ N'] in
 theorem ContMDiffAt.oneJet_comp {f1 : N' → M} (f2 : N' → M') {f3 : N' → N} {x₀ : N'}
     {h : ∀ x : N', OneJetSpace I' J (f2 x, f3 x)} {g : ∀ x : N', OneJetSpace I I' (f1 x, f2 x)}
@@ -602,6 +604,7 @@ theorem partialEquiv_eq_equiv {α β} {f : PartialEquiv α β} {e : α ≃ β} (
 
 @[inherit_doc] local notation "𝓜" => ModelProd (ModelProd H H') (E →L[𝕜] E')
 
+set_option backward.isDefEq.respectTransparency.types false in
 /-- In the `OneJetBundle` to the model space, the charts are just the canonical identification
 between a product type and a bundle total space type, a.k.a. `Bundle.TotalSpace.toProd`. -/
 @[simp, mfld_simps]
@@ -620,6 +623,7 @@ theorem oneJetBundle_model_space_chartAt (p : OneJetBundle I H I' H') :
       OpenPartialHomeomorph.refl_prod_refl]
     rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[simp, mfld_simps]
 theorem oneJetBundle_model_space_coe_chartAt (p : OneJetBundle I H I' H') :
     ⇑(chartAt 𝓜 p) = Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E') := by

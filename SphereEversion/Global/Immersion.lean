@@ -85,7 +85,7 @@ theorem immersionRel_ample (h : finrank ℝ E < finrank ℝ E') : (immersionRel 
   rw [RelMfld.ample_iff]
   rintro ⟨⟨m, m'⟩, φ : TangentSpace% m →L[ℝ] TangentSpace% m'⟩ (p : DualPair (TangentSpace% m))
     (hφ : Injective φ)
-  haveI : FiniteDimensional ℝ (TangentSpace% m) := (by infer_instance : FiniteDimensional ℝ E)
+  have : FiniteDimensional ℝ (TangentSpace% m) := inferInstanceAs <| FiniteDimensional ℝ E
   have hcodim := one_lt_rank_of_rank_lt_rank p.ker_pi_ne_top h φ.toLinearMap
   rw [immersionRel_slice_eq I I' hφ]
   exact AmpleSet.of_one_lt_codim hcodim
@@ -132,7 +132,7 @@ variable {n : ℕ} (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 theorem immersion_inclusion_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
     (fun x : sphere (0 : E) 1 ↦ (x : E)) ∞ where
   contMDiff := contMDiff_coe_sphere.of_le le_top
-  diff_injective := mfderiv_coe_sphere_injective
+  diff_injective := injective_mvfderiv_subtypeVal_sphere
 
 /-- The antipodal map on `𝕊^n ⊆ ℝ^{n+1}` is an immersion. -/
 theorem immersion_antipodal_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
@@ -144,7 +144,7 @@ theorem immersion_antipodal_sphere : Immersion (𝓡 n) 𝓘(ℝ, E)
   diff_injective x := by
     change Injective (mfderiv% (-fun x : sphere (0 : E) 1 ↦ (x : E)) x)
     rw [mfderiv_neg]
-    exact neg_injective.comp (mfderiv_coe_sphere_injective x)
+    exact neg_injective.comp (injective_mvfderiv_subtypeVal_sphere x)
 
 end sanitycheck
 
@@ -191,7 +191,7 @@ def formalEversionAux : FamilyOneJetSec (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ,
 /-- A formal eversion of a two-sphere into its ambient Euclidean space. -/
 def formalEversionAux2 : HtpyFormalSol 𝓡_imm :=
   { formalEversionAux E ω with
-    is_sol' := fun t x ↦ (ω.isometry_rot t x).injective.comp (mfderiv_coe_sphere_injective x) }
+    is_sol' t x := (ω.isometry_rot t x).injective.comp (injective_mvfderiv_subtypeVal_sphere x) }
 
 def formalEversion : HtpyFormalSol 𝓡_imm :=
   (formalEversionAux2 E ω).reindex ⟨smoothStep, contMDiff_iff_contDiff.mpr smoothStep.smooth⟩
@@ -206,6 +206,7 @@ theorem formalEversion_zero (x : 𝕊²) : (formalEversion E ω 0).bs x = x := b
 
 theorem formalEversion_one (x : 𝕊²) : (formalEversion E ω 1).bs x = -x := by simp
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem formalEversionHolAtZero {t : ℝ} (ht : t < 1 / 4) :
     (formalEversion E ω t).toOneJetSec.IsHolonomic := by
   intro x
@@ -232,7 +233,7 @@ theorem formalEversionHolAtOne {t : ℝ} (ht : 3 / 4 < t) :
   erw [mfderiv_neg, ContinuousLinearMap.coe_comp, Function.comp_apply, _root_.neg_apply,
     smoothStep.of_gt ht]
   rw [ω.rot_one]; · rfl
-  rw [← range_mfderiv_coe_sphere (n := 2) x]
+  rw [← range_mvfderiv_subtypeVal (n := 2) x]
   exact LinearMap.mem_range_self ..
 
 theorem formalEversion_hol_near_zero_one :
@@ -308,13 +309,13 @@ theorem sphere_eversion :
     ((stdOrthonormalBasis _ _).reindex <|
           finCongr (Fact.out : finrank ℝ E = 3)).toBasis.orientation
   have rankE : finrank ℝ E = 3 := Fact.out
-  haveI : FiniteDimensional ℝ E := FiniteDimensional.of_finrank_eq_succ rankE
+  have : FiniteDimensional ℝ E := FiniteDimensional.of_finrank_eq_succ rankE
   have ineq_rank : finrank ℝ (EuclideanSpace ℝ (Fin 2)) < finrank ℝ E := by simp [rankE]
   let ε : 𝕊² → ℝ := fun _ ↦ 1
   have hε_pos : ∀ x, 0 < ε x := fun _ ↦ zero_lt_one
   have hε_cont : Continuous ε := continuous_const
-  haveI : Nontrivial E := nontrivial_of_finrank_eq_succ (Fact.out : finrank ℝ E = 3)
-  haveI : Nonempty (sphere 0 1 : Set E) :=
+  have : Nontrivial E := nontrivial_of_finrank_eq_succ (Fact.out : finrank ℝ E = 3)
+  have : Nonempty (sphere 0 1 : Set E) :=
     (NormedSpace.sphere_nonempty.mpr zero_le_one).to_subtype
   rcases(immersionRel_satisfiesHPrincipleWith (𝓡 2) 𝕊² 𝓘(ℝ, E) E 𝓘(ℝ, ℝ) ℝ ineq_rank
           ((Finite.isClosed (by simp : ({0, 1} : Set ℝ).Finite)).prod isClosed_univ) hε_pos

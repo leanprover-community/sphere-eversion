@@ -131,6 +131,7 @@ variable {B F B' K : Type*} {E : B → Type*} {f : K} [TopologicalSpace B']
 namespace Trivialization
 
 -- attribute [simps base_set] trivialization.pullback
+set_option backward.isDefEq.respectTransparency.types false in
 theorem pullback_symm (e : Trivialization F (π F E)) (x : B') :
     (e.pullback f).symm x = e.symm (f x) := by
   ext y

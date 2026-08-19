@@ -177,7 +177,7 @@ def RelMfld.slice (R : RelMfld I M I' M') (σ : OneJetBundle I M I' M') (p : Dua
   {w : TM' σ.1.2 | OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R}
 
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
-/-- For some reason `rw [mem_setOf_eq]` fails after unfolding `slice`,
+/-- For some reason `rw [mem_ofPred_eq]` fails after unfolding `slice`,
 but rewriting with this lemma works. -/
 theorem mem_slice {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'} {p : DualPair <| TM σ.1.1}
     {w : TM' σ.1.2} : w ∈ R.slice σ p ↔ OneJetBundle.mk σ.1.1 σ.1.2 (p.update σ.2 w) ∈ R :=
@@ -198,6 +198,7 @@ theorem slice_mk_update {R : RelMfld I M I' M'} {σ : OneJetBundle I M I' M'}
 def RelMfld.Ample (R : RelMfld I M I' M') : Prop :=
   ∀ ⦃σ : OneJetBundle I M I' M'⦄ (p : DualPair <| TM σ.1.1), AmpleSet (R.slice σ p)
 
+set_option backward.isDefEq.respectTransparency.types false in
 omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem RelMfld.ample_iff (R : RelMfld I M I' M') :
     R.Ample ↔
@@ -349,8 +350,7 @@ def RelMfld.SatisfiesHPrinciple (R : RelMfld I M IX X) (C : Set M) (ε : M → �
 theorem RelMfld.satisfiesHPrinciple_of_weak [FiniteDimensional ℝ E] [T2Space M]
     [SigmaCompactSpace M] {R : RelMfld I M IX X} {ε : M → ℝ} {C : Set M} (hC : IsClosed C)
     (h : ∀ A : Set M, IsClosed A → R.SatisfiesHPrincipleWeak A ε) : R.SatisfiesHPrinciple C ε := by
-  haveI := Manifold.metrizableSpace I M
-  letI : MetricSpace M := TopologicalSpace.metrizableSpaceMetric M
+  have := Manifold.metrizableSpace I M
   intro 𝓕₀ h𝓕₀
   obtain ⟨C', hCC', hC', h𝓕₀C'⟩ := h𝓕₀.closed_neighborhood hC
   obtain ⟨𝓕, h1, h2, h3, h4⟩ := h C' hC' 𝓕₀ h𝓕₀C'
@@ -480,6 +480,7 @@ theorem OpenSmoothEmbedding.smooth_transfer :
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=
   (OpenSmoothEmbedding.smooth_transfer _ _).continuous
 
+set_option backward.isDefEq.respectTransparency.types false in
 omit [IsManifold IX ∞ X] [IsManifold IM ∞ M]
   [IsManifold IY ∞ Y] [IsManifold IN ∞ N] in
 theorem OpenSmoothEmbedding.range_transfer :
@@ -706,6 +707,7 @@ theorem Jupdate_bs (F : OneJetSec IM M IN N) (G : HtpyOneJetSec IX X IY Y) (t : 
       if x ∈ range φ then _ else _
   split_ifs <;> rfl
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem Jupdate_localize {F : OneJetSec IM M IN N} {G : HtpyOneJetSec IX X IY Y} (hK : IsCompact K)
     (hFG : ∀ t, ∀ x ∉ K, F (φ x) = (OneJetBundle.embedding φ ψ) (G t x)) (t : ℝ)
     (rg : range ((φ.Jupdate ψ F G hK hFG t).bs ∘ φ) ⊆ range ψ) (x : X) :

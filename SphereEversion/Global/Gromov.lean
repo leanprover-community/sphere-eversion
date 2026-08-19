@@ -29,12 +29,13 @@ variable {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM] [FiniteDimens
 
 @[inherit_doc] local notation "J¹" => OneJetBundle IM M IX X
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R) (hA : IsClosed A)
     (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) : R.SatisfiesHPrinciple A δ := by
   borelize EX
-  letI := manifoldMetric IM M
-  haveI := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
-  haveI := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
+  let := manifoldMetric IM M
+  have := Manifold.locallyCompact_of_finiteDimensional (M := M) (I := IM)
+  have := Manifold.locallyCompact_of_finiteDimensional (M := X) (I := IX)
   refine RelMfld.satisfiesHPrinciple_of_weak hA fun A hA 𝓕₀ h𝓕₀ ↦ ?_
   obtain (hM | hM) := isEmpty_or_nonempty M
   · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro
@@ -201,13 +202,11 @@ variable {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [FiniteDimens
   {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
   [IsManifold I' ∞ M'] [SigmaCompactSpace M'] [T2Space M']
 
-/-
-Since every (σ-compact) manifold is metrizable, the metric space assumption can be removed.
--/
+/- Since every (σ-compact) manifold is metrizable, the metric space assumption can be removed. -/
 /-- Gromov's Theorem without metric space assumption -/
 theorem RelMfld.Ample.satisfiesHPrincipleWith' {R : RelMfld IM M I' M'} (hRample : R.Ample)
     (hRopen : IsOpen R) (hC : IsClosed C) (hδ_pos : ∀ x, 0 < δ x) (hδ_cont : Continuous δ) :
     letI := manifoldMetric I' M'
     R.SatisfiesHPrincipleWith IP C δ := by
-  letI := manifoldMetric I' M'
+  let := manifoldMetric I' M'
   apply RelMfld.Ample.satisfiesHPrincipleWith <;> assumption

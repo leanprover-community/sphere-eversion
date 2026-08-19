@@ -125,7 +125,7 @@ theorem ContDiff.periodize {f : ℝ → E} {n : ℕ∞} (h : ContDiff ℝ n f) (
     refine (ProperlyDiscontinuousVAdd.finite_disjoint_inter_image
       (isCompact_Icc : IsCompact <| Icc (y - 1) (y + 1)) h').subset ?_
     intro i hi
-    rw [mem_setOf_eq]
+    rw [mem_ofPred_eq]
     apply Nonempty.mono _ hi
     gcongr
     · rw [show (e i : ℝ → ℝ) = VAdd.vadd i by ext x; exact add_comm x i]

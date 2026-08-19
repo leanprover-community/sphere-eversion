@@ -112,6 +112,7 @@ variable {H₁ M₁ H₂ M₂ : Type*}
 
 omit [FiniteDimensional ℝ E₁] [FiniteDimensional ℝ E₂]
   [IsManifold I₁ ∞ M₁] [IsManifold I₂ ∞ M₂] in
+set_option backward.isDefEq.respectTransparency.types false in
 theorem reallyConvex_contMDiffAtProd {x : M₁} (n : ℕ∞) :
     ReallyConvex (smoothGerm I₁ x) {φ : Germ (𝓝 x) (M₂ → F) | φ.ContMDiffAtProd I₁ I₂ n} := by
   classical
