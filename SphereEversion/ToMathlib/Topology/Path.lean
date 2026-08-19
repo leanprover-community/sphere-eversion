@@ -62,11 +62,11 @@ theorem strans_zero (γ γ' : Path x x) : γ.strans γ' 0 = γ' := by
 @[simp]
 theorem strans_one {x : X} (γ γ' : Path x x) : γ.strans γ' 1 = γ := by
   ext t
-  simp only [strans, unitInterval.le_one', Path.coe_mk_mk, if_pos, div_one, extend_extends',
+  simp only [strans, unitInterval.le_one', Path.coe_mk_mk, ite_eq_left, div_one, extend_extends',
     Icc.coe_one]
 
 theorem strans_self {x : X} (γ γ' : Path x x) (t₀ : I) : γ.strans γ' t₀ t₀ = x := by
-  simp only [strans, Path.coe_mk_mk, extend_div_self, if_pos, le_rfl]
+  simp only [strans, Path.coe_mk_mk, extend_div_self, ite_eq_left, le_rfl]
 
 @[simp]
 theorem refl_strans_refl {x : X} {t₀ : I} : (refl x).strans (refl x) t₀ = refl x := by
@@ -95,8 +95,8 @@ theorem range_strans_subset {x : X} {γ γ' : Path x x} {t₀ : I} :
     range (γ.strans γ' t₀) ⊆ range γ ∪ range γ' := by
   rintro _ ⟨t, rfl⟩
   by_cases h : t ≤ t₀
-  · rw [strans_def, dif_pos h]; exact Or.inl (mem_range_self _)
-  · rw [strans_def, dif_neg h]; exact Or.inr (mem_range_self _)
+  · rw [strans_def, dite_eq_left h]; exact Or.inl (mem_range_self _)
+  · rw [strans_def, dite_eq_right h]; exact Or.inr (mem_range_self _)
 
 theorem Continuous.path_strans {X Y : Type*} [UniformSpace X]
     [LocallyCompactSpace X] [UniformSpace Y] {f : X → Y} {t : X → I} {s : X → I}

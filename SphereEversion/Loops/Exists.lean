@@ -127,9 +127,9 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   have h2f : ∀ x : E, Continuous (f x) := fun x ↦ h1f.comp₂ continuous_const continuous_id
   have h3f : ∀ {x y}, 0 < f x y := by
     intro x y; by_cases hΩ : Ωᶜ.Nonempty
-    · simp_rw [f, if_pos hΩ, ← hΩ_op.isClosed_compl.notMem_iff_infDist_pos hΩ, notMem_compl_iff,
-        hγ₃.val_in (mem_univ _)]
-    · simp_rw [f, if_neg hΩ, zero_lt_one]
+    · simp_rw [f, ite_eq_left hΩ, ← hΩ_op.isClosed_compl.notMem_iff_infDist_pos hΩ,
+        notMem_compl_iff, hγ₃.val_in (mem_univ _)]
+    · simp_rw [f, ite_eq_right hΩ, zero_lt_one]
   let ε₂ : E → ℝ := fun x ↦ min (min ε₀ (ε₁ x)) (sInf (f x '' I ×ˢ I))
   have hcε₂ : Continuous ε₂ := (continuous_const.min hcε₁).min (hI.continuous_sInf h1f)
   have hε₂ : ∀ {x}, 0 < ε₂ x := fun {x} ↦
@@ -227,7 +227,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
       refine (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le ?_ ?_)
       · exact (isCompact_Icc.prod isCompact_Icc).bddBelow_image (h2f x).continuousOn
       · rw [← hγ₃.projI]
-        simp_rw [f, if_pos hΩ]
+        simp_rw [f, ite_eq_left hΩ]
         apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
   · refine eventually_of_mem (Filter.inter_mem hV hγ₂₁) fun x hx t s ↦ ?_
     refine (closedBall_subset_ball ?_).trans (hΩ x hx.1)
