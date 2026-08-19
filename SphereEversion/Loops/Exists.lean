@@ -124,23 +124,21 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
   let f : E → ℝ × ℝ → ℝ := fun x y ↦ if Ωᶜ.Nonempty then infDist (x, γ₃ x y.1 y.2) (Ωᶜ) else 1
   have hI : IsCompact (I ×ˢ I) := isCompact_Icc.prod isCompact_Icc
   have h1f : Continuous ↿f := (continuous_fst.prodMk hγ₃.cont).infDist.if_const _ continuous_const
-  have h2f : ∀ x : E, Continuous (f x) := fun x ↦ h1f.comp₂ continuous_const continuous_id
-  have h3f : ∀ {x y}, 0 < f x y := by
-    intro x y; by_cases hΩ : Ωᶜ.Nonempty
+  have h3f {x y} : 0 < f x y := by
+    by_cases hΩ : Ωᶜ.Nonempty
     · simp_rw [f, ite_eq_left hΩ, ← hΩ_op.isClosed_compl.notMem_iff_infDist_pos hΩ,
         notMem_compl_iff, hγ₃.val_in (mem_univ _)]
     · simp_rw [f, ite_eq_right hΩ, zero_lt_one]
   let ε₂ : E → ℝ := fun x ↦ min (min ε₀ (ε₁ x)) (sInf (f x '' I ×ˢ I))
-  have hcε₂ : Continuous ε₂ := (continuous_const.min hcε₁).min (hI.continuous_sInf h1f)
+  have hcε₂ : Continuous ε₂ := by
+    have := hI.continuous_sInf h1f; unfold ε₂; fun_prop
   have hε₂ : ∀ {x}, 0 < ε₂ x := fun {x} ↦
     lt_min (lt_min hε₀ (hε₁ x))
       ((hI.lt_sInf_iff_of_continuous
-            ((nonempty_Icc.mpr zero_le_one).prod (nonempty_Icc.mpr zero_le_one))
-            (h2f x).continuousOn _).mpr
+          ((nonempty_Icc.mpr zero_le_one).prod (nonempty_Icc.mpr zero_le_one)) (by fun_prop) _).mpr
         fun x _ ↦ h3f)
   let γ₄ := ↿γ₃
   have h0γ₄ : ∀ x t s, γ₄ (x, t, s) = γ₃ x t s := fun x t s ↦ rfl
-  have hγ₄ : Continuous γ₄ := hγ₃.cont
   let C₁ : Set ℝ := Iic (5⁻¹ : ℝ) ∪ Ici (4 / 5)
   have h0C₁ : (0 : ℝ) ∈ C₁ := Or.inl (by rw [mem_Iic]; norm_num1)
   have h2C₁ : ∀ (s : ℝ) (hs : fract s = 0), fract ⁻¹' C₁ ∈ 𝓝 s := by
@@ -181,7 +179,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
       exact Or.imp le_of_lt le_of_lt hs
   have h3γ₄ : ContDiffOn ℝ ∞ γ₄ U := hb.fst'.contDiffOn.congr h2γ₄
   obtain ⟨γ₅, hγ₅, hγ₅₄, hγ₅C⟩ :=
-    exists_smooth_and_eqOn hγ₄ hcε₂.fst' (fun x ↦ hε₂) hC ⟨U, hUC, h3γ₄⟩
+    exists_smooth_and_eqOn hγ₃.cont hcε₂.fst' (fun x ↦ hε₂) hC ⟨U, hUC, h3γ₄⟩
   let γ : E → ℝ → Loop F := fun x t ↦
     ⟨fun s ↦ γ₅ (x, smoothTransition t, fract s), fun s ↦ by rw [fract_add_one s]⟩
   have hγ : 𝒞 ∞ ↿γ := by
@@ -225,7 +223,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     · exact (x, γ₃ x (smoothTransition t) (fract s))
     · rw [dist_comm, dist_prod_same_left]
       refine (hγ₅₄ (x, _, fract s)).trans_le ((min_le_right _ _).trans <| csInf_le ?_ ?_)
-      · exact (isCompact_Icc.prod isCompact_Icc).bddBelow_image (h2f x).continuousOn
+      · exact (isCompact_Icc.prod isCompact_Icc).bddBelow_image (by fun_prop)
       · rw [← hγ₃.projI]
         simp_rw [f, ite_eq_left hΩ]
         apply mem_image_of_mem _ (mk_mem_prod projI_mem_Icc (unitInterval.fract_mem s))
@@ -233,7 +231,7 @@ theorem exist_loops_aux2 [FiniteDimensional ℝ E] (hK : IsCompact K) (hΩ_op : 
     refine (closedBall_subset_ball ?_).trans (hΩ x hx.1)
     refine (dist_triangle ..).trans_lt (add_lt_add_of_le_of_lt
       ((hγ₅₄ (x, _, fract s)).le.trans <| (min_le_left _ _).trans <| min_le_left ..) ?_)
-    simp_rw [γ₄, γ₃, HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
+    simp_rw [γ₃, HasUncurry.uncurry, Loop.reparam_apply, show γ₂ x = γ₁ x from hx.2]
     exact h2γ₁ x hx.1 ..
 
 variable (g b Ω U K)
