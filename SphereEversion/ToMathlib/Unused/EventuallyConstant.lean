@@ -6,7 +6,7 @@ Authors: Floris van Doorn
 ! This file was ported from Lean 3 source module to_mathlib.unused.eventually_constant
 -/
 import Mathlib.Data.Nat.Lattice
-import Mathlib.Topology.Separation.Basic
+import Mathlib.Topology.Separation.Hausdorff
 
 /-!
 # Eventually constant sequences
@@ -33,11 +33,11 @@ def unionElim [DecidablePred (· ∈ s)] (f : s → β) (g : t → β) (x : s �
 
 theorem unionElim_eq_left [DecidablePred (· ∈ s)] (hx : x ∈ s) :
     unionElim f g ⟨x, mem_union_left _ hx⟩ = f ⟨x, hx⟩ :=
-  dif_pos hx
+  dite_eq_left hx
 
 theorem unionElim_eq_right [DecidablePred (· ∈ s)] (h1x : x ∈ s ∪ t) (h2x : x ∉ s) :
     unionElim f g ⟨x, h1x⟩ = g ⟨x, h1x.resolve_left h2x⟩ :=
-  dif_neg h2x
+  dite_eq_right h2x
 
 theorem unionElim_eq_right_of_eq [DecidablePred (· ∈ s)] (hxt : x ∈ t)
     (hfg : ∀ (x) (hxs : x ∈ s) (hxt : x ∈ t), f ⟨x, hxs⟩ = g ⟨x, hxt⟩) :
@@ -45,7 +45,7 @@ theorem unionElim_eq_right_of_eq [DecidablePred (· ∈ s)] (hxt : x ∈ t)
   if hxs : x ∈ s then (unionElim_eq_left hxs).trans (hfg x hxs hxt) else unionElim_eq_right _ hxs _
 
 theorem unionElim_restrict [DecidablePred (· ∈ s)] (f : α → β) :
-    unionElim (s.restrict f) (t.restrict f) = (s ∪ t).restrict f := by
+    unionElim (s.domRestrict f) (t.domRestrict f) = (s ∪ t).domRestrict f := by
   ext ⟨x, hx⟩
   --cases (mem_union _ _ _).mp hx <;> simp [union_elim_eq_left, union_elim_eq_right_of_eq, h]
 
@@ -63,16 +63,18 @@ variable {α β γ : Type*} {g : α → β} {f : Filter α} {x : α} {y : β}
 def EventuallyConstant (g : α → β) (f : Filter α) : Prop :=
   ∃ y : β, ∀ᶠ x in f, g x = y
 
-theorem eventuallyConstant_iff_tendsto : EventuallyConstant g f ↔ ∃ x : β, Tendsto g f (pure x) := by simp_rw [EventuallyConstant, tendsto_pure]
+theorem eventuallyConstant_iff_tendsto :
+    EventuallyConstant g f ↔ ∃ x : β, Tendsto g f (pure x) := by
+  simp_rw [EventuallyConstant, tendsto_pure]
 
 theorem EventuallyConstant.nonempty (h : EventuallyConstant g f) : Nonempty β :=
   nonempty_of_exists h
 
 theorem eventuallyConstant_const (y₀ : β) : EventuallyConstant (fun _ ↦ y₀) f :=
-  ⟨y₀, eventually_of_forall fun _ ↦ rfl⟩
+  ⟨y₀, Eventually.of_forall fun _ ↦ rfl⟩
 
 theorem eventuallyConstant_of_unique [Unique β] : EventuallyConstant g f :=
-  ⟨default, eventually_of_forall fun _ ↦ Unique.uniq _ _⟩
+  ⟨default, Eventually.of_forall fun _ ↦ Unique.uniq _ _⟩
 
 theorem eventuallyConstant_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ i, ∀ j, i ≤ j → g j = g i) ↔ EventuallyConstant g atTop := by
@@ -86,12 +88,17 @@ theorem eventuallyConstant_atTop_nat {g : ℕ → α} :
   rw [← eventuallyConstant_atTop]
   apply exists_congr; intro n
   constructor
-  · intro h m hm; induction' hm with m hm ih; rfl; rw [Nat.succ_eq_add_one, h m hm, ih]
+  · intro h m hm
+    induction hm with
+    | refl => rfl
+    | step hm ih =>
+      rename_i m0
+      rw [Nat.succ_eq_add_one, h m0 hm, ih]
   · intro h m hm; rw [h m hm, h (m + 1) hm.step]
 
 theorem EventuallyConstant.compose (h : EventuallyConstant g f) (g' : β → γ) :
     EventuallyConstant (g' ∘ g) f := by
-  cases' h with y hy;
+  obtain ⟨y, hy⟩ := h
   exact ⟨g' y, hy.mono fun x ↦ congr_arg g'⟩
 
 theorem EventuallyConstant.apply {ι : Type*} {p : ι → Type*} {g : α → ∀ x, p x}
@@ -137,7 +144,7 @@ theorem EventuallyConstant.tendsto [Nonempty β] (h : EventuallyConstant g f) :
 theorem eventualValue_compose [f.NeBot] (h : EventuallyConstant g f) (g' : β → γ) :
     @eventualValue _ _ (h.compose g').nonempty (g' ∘ g) f =
       g' (@eventualValue _ _ h.nonempty g f) :=
-  (eventualValue_unique <| (eventually_eq_eventualValue h).mono fun x ↦ congr_arg g').symm
+  (eventualValue_unique <| (eventually_eq_eventualValue h).mono fun _x ↦ congr_arg g').symm
 
 theorem eventualValue_apply {ι : Type*} {p : ι → Type*} [f.NeBot] {g : α → ∀ x, p x}
     (h : EventuallyConstant g f) (i : ι) :
@@ -184,11 +191,11 @@ section EventuallyConstantOn
   `g` restricted to `O` is eventually constant.
 -/
 def EventuallyConstantOn (g : α → β → γ) (f : Filter α) (O : Set β) : Prop :=
-  EventuallyConstant (fun n ↦ O.restrict (g n)) f
+  EventuallyConstant (fun n ↦ O.domRestrict (g n)) f
 
 theorem EventuallyConstantOn.eventuallyConstant (hg : EventuallyConstantOn g f O) (hx : x ∈ O) :
     EventuallyConstant (fun n ↦ g n x) f := by
-  cases' hg with y hg;
+  obtain ⟨y, hg⟩ := hg
   exact ⟨y ⟨x, hx⟩, hg.mono fun n hn ↦ (Function.funext_iff.mp hn ⟨x, hx⟩ : _)⟩
 
 theorem EventuallyConstantOn.nonempty (hg : EventuallyConstantOn g f O) (hx : x ∈ O) : Nonempty γ :=
@@ -196,11 +203,11 @@ theorem EventuallyConstantOn.nonempty (hg : EventuallyConstantOn g f O) (hx : x 
 
 theorem eventuallyConstantOn_atTop [SemilatticeSup α] [Nonempty α] :
     (∃ x, ∀ x', x ≤ x' → ∀ y ∈ O, g x' y = g x y) ↔ EventuallyConstantOn g atTop O := by
-  simp_rw [EventuallyConstantOn, ← eventuallyConstant_atTop, restrict_eq_restrict_iff, eq_on]
+  simp_rw [EventuallyConstantOn, ← eventuallyConstant_atTop, domRestrict_eq_domRestrict_iff, EqOn]
 
 theorem EventuallyConstantOn.exists_eventualValue_eq [f.NeBot] (hg : EventuallyConstantOn g f O) :
     ∃ i, ∀ (x) (hx : x ∈ O), @eventualValue _ _ (hg.nonempty hx) (fun n ↦ g n x) f = g i x := by
-  simpa only [@eq_restrict_iff β fun _ ↦ γ, eventualValue_apply hg] using
+  simpa only [@eq_domRestrict_iff β fun _ ↦ γ, eventualValue_apply hg] using
     hg.exists_eventualValue_eq
 
 -- lemma EventuallyConstantOn.exists_eventualValue_eq [f.NeBot] (h : EventuallyConstant g f) :
