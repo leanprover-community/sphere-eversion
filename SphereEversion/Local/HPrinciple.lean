@@ -315,9 +315,9 @@ theorem bu_lt {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (t : ℝ) (
   calc
     ‖(smoothStep t * L.ρ x) • v‖ = |smoothStep t| * |L.ρ x| * ‖v‖ := by
       rw [norm_smul, Real.norm_eq_abs, abs_mul]
-    _ ≤ ‖v‖ :=
-      (mul_le_of_le_one_left (norm_nonneg _)
-        (mul_le_one₀ (smoothStep.abs_le t) (abs_nonneg _) (L.ρ_le x)))
+    _ ≤ ‖v‖ := by
+      apply mul_le_of_le_one_left (norm_nonneg _)
+      exact Bound.mul_le_one (smoothStep.abs_le t) (L.ρ_le x) (by grind)
     _ < ε := hv
 
 theorem improveStep_c0_close {ε : ℝ} (ε_pos : 0 < ε) :

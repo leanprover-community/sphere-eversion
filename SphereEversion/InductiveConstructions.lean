@@ -346,7 +346,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
       · have hp : ∀ᶠ p : ℝ × X in 𝓝 (t, x), p.1 ≤ T i.toNat :=
           continuousAt_fst (p := (t, x)) (Iic_mem_nhds ht)
         apply Quotient.sound
-        exact hp.mono fun p hp ↦ if_pos hp
+        exact hp.mono fun p hp ↦ ite_eq_left hp
     have loc₂ : ∀ p : ℝ × X, p.1 > T i.toNat →
         (F'' : Germ (𝓝 p) Y) = fun p : ℝ × X ↦
           F' ((2 : ℝ) ^ (i.toNat + 1) * (p.1 - T i.toNat)) p.2 := fun (t, x) ht ↦ by
@@ -355,7 +355,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
         apply mem_of_superset (prod_mem_nhds (Ioi_mem_nhds ht) univ_mem)
         rintro ⟨t', x'⟩ ⟨ht', -⟩
         simpa using ht'
-      exact hp.mono fun q hq ↦ if_neg hq
+      exact hp.mono fun q hq ↦ ite_eq_right hq
     refine ⟨F'', ?_, ?_, ?_, ?_⟩
     · intro p
       by_cases! ht : p.1 ≤ T i.toNat
@@ -373,7 +373,7 @@ theorem inductive_htpy_construction' {X Y : Type*} [TopologicalSpace X] {N : ℕ
       rw [i.toNat_succ hi] at ht ⊢
       have h₂t : ¬t ≤ T i.toNat := ((T_lt_succ i.toNat).trans_le ht).not_ge
       dsimp only [F'']
-      rw [if_neg h₂t, if_neg]
+      rw [ite_eq_right h₂t, ite_eq_right]
       · rw [hfutur_F'.self_of_nhdsSet, mul_T_succ_sub]
         conv =>
           rw [mem_Ici]

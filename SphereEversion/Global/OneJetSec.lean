@@ -148,7 +148,8 @@ def IsHolonomicGerm {x : M} (φ : Germ (𝓝 x) (OneJetBundle I M I' M')) : Prop
         intro f g hfg hf
         have hfg' : (fun x' ↦ (f x').1.2) =ᶠ[𝓝 x] fun x' ↦ (g x').1.2 :=
           hfg.fun_comp fun s ↦ s.1.2
-        rw [← hfg'.mfderiv_eq, hf, hfg.self_of_nhds]
+        rw [hfg'.symm.mfderiv_eq, hf, hfg.self_of_nhds]
+        rfl
       exact fun f g H ↦ propext ⟨key f g H, key g f H.symm⟩)
 
 /-- The one-jet extension of a function, seen as a section of the 1-jet bundle. -/

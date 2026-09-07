@@ -1,5 +1,5 @@
 import Mathlib.Topology.Separation.Hausdorff
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Order.Interval.Finset.Nat
 
 open scoped Topology
