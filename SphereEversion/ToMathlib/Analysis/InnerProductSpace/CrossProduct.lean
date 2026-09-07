@@ -11,7 +11,7 @@ public import Mathlib.LinearAlgebra.Alternating.Curry
 
 /-! # The cross-product on an oriented real inner product space of dimension three -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -38,7 +38,6 @@ variable [Fact (finrank ℝ E = 3)] (ω : Orientation ℝ E (Fin 3))
 `E` with its dual.  Effectively, the Hodge star operation.  (Under appropriate hypotheses it turns
 out that the image of this map is in `𝔰𝔬(E)`, the skew-symmetric operators, which can be identified
 with `Λ²E`.) -/
-@[no_expose]
 def crossProduct : E →ₗ[ℝ] E →ₗ[ℝ] E := by
   let z : AlternatingMap ℝ E ℝ (Fin 0) ≃ₗ[ℝ] ℝ :=
     AlternatingMap.constLinearEquivOfIsEmpty.symm
@@ -79,7 +78,7 @@ def crossProduct' : E →L[ℝ] E →L[ℝ] E :=
 @[simp]
 theorem crossProduct'_apply (v : E) :
     ω.crossProduct' v = LinearMap.toContinuousLinearMap (ω.crossProduct v) :=
-  rfl
+  (rfl)
 
 theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖ * ‖v‖ := by
   classical

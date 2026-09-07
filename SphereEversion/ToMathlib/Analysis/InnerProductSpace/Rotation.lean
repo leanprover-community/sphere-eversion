@@ -53,7 +53,7 @@ theorem rot_eq_aux : ω.rot = ω.rotAux := by
   ext1 p
   dsimp [rot, rotAux]
   rw [id_eq_sum_starProjection_self_orthogonalComplement (K := ℝ ∙ p.2)]
-  simp only [smul_add, sub_smul, one_smul, starProjection]
+  simp only [smul_add, sub_smul, one_smul, starProjection, crossProduct'_apply]
   abel
 
 /-- The map `rot` is smooth on `ℝ × (E \ {0})`. -/
