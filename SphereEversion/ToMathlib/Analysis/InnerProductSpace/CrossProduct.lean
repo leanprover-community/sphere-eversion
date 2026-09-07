@@ -38,6 +38,7 @@ variable [Fact (finrank ℝ E = 3)] (ω : Orientation ℝ E (Fin 3))
 `E` with its dual.  Effectively, the Hodge star operation.  (Under appropriate hypotheses it turns
 out that the image of this map is in `𝔰𝔬(E)`, the skew-symmetric operators, which can be identified
 with `Λ²E`.) -/
+@[no_expose]
 def crossProduct : E →ₗ[ℝ] E →ₗ[ℝ] E := by
   let z : AlternatingMap ℝ E ℝ (Fin 0) ≃ₗ[ℝ] ℝ :=
     AlternatingMap.constLinearEquivOfIsEmpty.symm
