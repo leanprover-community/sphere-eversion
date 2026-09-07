@@ -3,7 +3,7 @@ module
 public import SphereEversion.ToMathlib.Partition
 public import Mathlib.Geometry.Manifold.Notation
 
-@[expose] public section
+public section
 
 noncomputable section
 

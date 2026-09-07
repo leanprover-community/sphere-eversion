@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Topology.Algebra.Module.Equiv
 
-@[expose] public section
+public section
 
 namespace ContinuousLinearMap
 

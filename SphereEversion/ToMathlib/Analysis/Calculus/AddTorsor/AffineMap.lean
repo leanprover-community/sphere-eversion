@@ -10,7 +10,7 @@ TODO Generalise these lemmas appropriately.
 
 -/
 
-@[expose] public section
+public section
 
 
 open Set Function Metric AffineMap

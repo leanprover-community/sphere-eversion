@@ -2,7 +2,7 @@ module
 
 public import SphereEversion.Global.Immersion
 
-@[expose] public section
+public section
 
 open Metric FiniteDimensional Set ModelWithCorners
 

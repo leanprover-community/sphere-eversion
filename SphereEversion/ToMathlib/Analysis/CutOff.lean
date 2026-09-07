@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
 
-@[expose] public section
+public section
 
 open Set Filter
 

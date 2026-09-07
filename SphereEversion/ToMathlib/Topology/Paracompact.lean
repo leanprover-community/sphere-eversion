@@ -4,7 +4,7 @@ public import Mathlib.Topology.Separation.Hausdorff
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 
-@[expose] public section
+public section
 
 open scoped Topology
 

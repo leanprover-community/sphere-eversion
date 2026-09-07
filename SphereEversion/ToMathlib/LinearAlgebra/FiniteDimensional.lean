@@ -2,7 +2,7 @@ module
 
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 
-@[expose] public section
+public section
 
 open Module Submodule
 

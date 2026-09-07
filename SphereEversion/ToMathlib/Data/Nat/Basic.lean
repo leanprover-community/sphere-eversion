@@ -4,7 +4,7 @@ public import Mathlib.Data.Nat.Notation
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.Choose
 
-@[expose] public section
+public section
 
 -- The next lemma won't be used, it's a warming up exercise for the one below.
 -- It could go to mathlib.

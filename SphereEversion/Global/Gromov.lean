@@ -11,7 +11,7 @@ public import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 We prove the h-principle for open and ample first order differential relations.
 -/
 
-@[expose] public section
+public section
 
 
 noncomputable section

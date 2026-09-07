@@ -5,7 +5,7 @@ public import Mathlib.LinearAlgebra.Span.Defs
 
 /-! Note: some results should go to `LinearAlgebra.Span`. -/
 
-@[expose] public section
+public section
 
 
 open Submodule Function

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
-@[expose] public section
+public section
 
 variable (X : Type*) [TopologicalSpace X]
 

@@ -3,7 +3,7 @@ module
 public import SphereEversion.Global.Localisation
 public import SphereEversion.Local.HPrinciple
 
-@[expose] public section
+public section
 
 noncomputable section
 

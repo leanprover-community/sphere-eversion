@@ -14,7 +14,7 @@ public import Mathlib.Topology.VectorBundle.Hom
 # Various operations on and properties of smooth vector bundles
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

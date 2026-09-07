@@ -4,7 +4,7 @@ public import SphereEversion.Loops.Reparametrization
 public import SphereEversion.ToMathlib.Analysis.CutOff
 public import Mathlib.Topology.MetricSpace.HausdorffDistance
 
-@[expose] public section
+public section
 
 noncomputable section
 

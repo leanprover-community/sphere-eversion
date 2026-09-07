@@ -20,7 +20,6 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 
 @[expose] public section
 
-
 noncomputable section
 
 open Set Function

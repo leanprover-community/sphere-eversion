@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 
-@[expose] public section
+public section
 
 open scoped Topology ContDiff
 

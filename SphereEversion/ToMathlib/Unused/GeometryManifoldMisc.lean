@@ -4,7 +4,7 @@ public import Mathlib.Geometry.Manifold.VectorBundle.Tangent
 public import Mathlib.Geometry.Manifold.MFDeriv.Defs
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 
-@[expose] public section
+public section
 
 open Bundle Set Function Filter ContinuousLinearMap
 

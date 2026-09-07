@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Filter.Basic
 
-@[expose] public section
+public section
 
 theorem Filter.EventuallyEq.eventuallyEq_ite {X Y : Type*} {l : Filter X} {f g : X → Y}
     {P : X → Prop} [DecidablePred P] (h : f =ᶠ[l] g) :

@@ -5,7 +5,7 @@ public import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import SphereEversion.ToMathlib.Analysis.Calculus
 
-@[expose] public section
+public section
 
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
 open scoped Topology

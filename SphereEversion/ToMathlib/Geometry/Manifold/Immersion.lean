@@ -36,7 +36,7 @@ manifold, immersion
 
 -/
 
-@[expose] public section
+public section
 noncomputable section
 
 open Set Function
