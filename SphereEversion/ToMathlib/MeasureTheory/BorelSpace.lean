@@ -1,4 +1,8 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+
+@[expose] public section
 
 variable (X : Type*) [TopologicalSpace X]
 

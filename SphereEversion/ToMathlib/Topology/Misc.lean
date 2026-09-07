@@ -1,9 +1,13 @@
-import Mathlib.Algebra.Ring.Periodic
-import Mathlib.Analysis.Normed.Affine.Convex
-import Mathlib.Tactic.Cases
-import Mathlib.Topology.Algebra.Order.Floor
-import Mathlib.Topology.EMetricSpace.Paracompact
-import Mathlib.Topology.ShrinkingLemma
+module
+
+public import Mathlib.Algebra.Ring.Periodic
+public import Mathlib.Analysis.Normed.Affine.Convex
+public import Mathlib.Tactic.Cases
+public import Mathlib.Topology.Algebra.Order.Floor
+public import Mathlib.Topology.EMetricSpace.Paracompact
+public import Mathlib.Topology.ShrinkingLemma
+
+@[expose] public section
 
 noncomputable section
 

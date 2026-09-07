@@ -1,11 +1,13 @@
-import Mathlib.Analysis.Asymptotics.Lemmas
-import Mathlib.LinearAlgebra.Dual.Lemmas
-import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
-import SphereEversion.ToMathlib.Algebra.Ring.Periodic
-import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
-import SphereEversion.Loops.Basic
-import SphereEversion.Local.DualPair
+module
+
+public import Mathlib.Analysis.Asymptotics.Lemmas
+public import Mathlib.LinearAlgebra.Dual.Lemmas
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
+public import SphereEversion.ToMathlib.Algebra.Ring.Periodic
+public import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
+public import SphereEversion.Loops.Basic
+public import SphereEversion.Local.DualPair
 
 /-! # Theillière's corrugation operation
 
@@ -29,6 +31,8 @@ The main definition is `corrugation`. The main results are:
 * `corrugation.c0_small_on` saying that corrugations are C⁰-small
 
 -/
+
+@[expose] public section
 
 noncomputable section
 

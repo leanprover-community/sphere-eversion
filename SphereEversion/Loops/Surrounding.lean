@@ -1,10 +1,12 @@
-import SphereEversion.InductiveConstructions
-import SphereEversion.Loops.Basic
-import SphereEversion.ToMathlib.ExistsOfConvex
-import SphereEversion.ToMathlib.SmoothBarycentric
-import SphereEversion.ToMathlib.Topology.Path
-import Mathlib.Analysis.Convex.Caratheodory
-import Mathlib.Analysis.Normed.Module.FiniteDimension
+module
+
+public import SphereEversion.InductiveConstructions
+public import SphereEversion.Loops.Basic
+public import SphereEversion.ToMathlib.ExistsOfConvex
+public import SphereEversion.ToMathlib.SmoothBarycentric
+public import SphereEversion.ToMathlib.Topology.Path
+public import Mathlib.Analysis.Convex.Caratheodory
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
 # Surrounding families of loops
@@ -30,6 +32,8 @@ The key results are:
  * `extend_loops`
  * `exists_surrounding_loops`
 -/
+
+@[expose] public section
 
 -- to obtain that normed spaces are locally connected
 open Set Function Module Int Prod Path Filter

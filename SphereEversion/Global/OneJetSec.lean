@@ -5,10 +5,12 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_sec
 -/
-import Mathlib.Order.Filter.Germ.Basic
-import Mathlib.Geometry.Manifold.Notation
-import SphereEversion.ToMathlib.Topology.Algebra.Module
-import SphereEversion.Global.OneJetBundle
+module
+
+public import Mathlib.Order.Filter.Germ.Basic
+public import Mathlib.Geometry.Manifold.Notation
+public import SphereEversion.ToMathlib.Topology.Algebra.Module
+public import SphereEversion.Global.OneJetBundle
 
 /-!
 # Sections of 1-jet bundles
@@ -22,6 +24,8 @@ In this file we consider two manifolds `M` and `M'` with models `I` and `I'`
 
 * `OneJetSet I M I' M'`: smooth sections of `OneJetBundle I M I' M' → M`
 -/
+
+@[expose] public section
 
 
 noncomputable section

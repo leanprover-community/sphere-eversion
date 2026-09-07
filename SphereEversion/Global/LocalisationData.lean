@@ -1,5 +1,9 @@
-import Mathlib.Topology.MetricSpace.PartitionOfUnity
-import SphereEversion.Global.SmoothEmbedding
+module
+
+public import Mathlib.Topology.MetricSpace.PartitionOfUnity
+public import SphereEversion.Global.SmoothEmbedding
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib.Geometry.Manifold.PartitionOfUnity
+module
+
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+
+@[expose] public section
 
 open Set Filter
 

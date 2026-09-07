@@ -1,7 +1,11 @@
-import Mathlib.Analysis.Calculus.AddTorsor.Coord
-import Mathlib.Analysis.Matrix.Normed
-import Mathlib.LinearAlgebra.AffineSpace.Matrix
-import Mathlib.Tactic.Cases
+module
+
+public import Mathlib.Analysis.Calculus.AddTorsor.Coord
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.LinearAlgebra.AffineSpace.Matrix
+public import Mathlib.Tactic.Cases
+
+@[expose] public section
 
 noncomputable section
 

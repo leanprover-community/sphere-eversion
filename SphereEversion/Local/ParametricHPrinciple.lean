@@ -1,5 +1,7 @@
-import SphereEversion.Local.HPrinciple
-import SphereEversion.ToMathlib.Topology.Algebra.Module
+module
+
+public import SphereEversion.Local.HPrinciple
+public import SphereEversion.ToMathlib.Topology.Algebra.Module
 
 /-!
 In this file we prove the parametric version of the local h-principle.
@@ -13,6 +15,8 @@ The parametric h-principle states the following: Suppose that `R` is a local rel
 then there exists a homotopy `𝓕 : ℝ × P → J¹(E, F)` between `𝓕` and a solution that is holonomic
 near `K`, that agrees with `𝓕₀` near `C` and is everywhere `ε`-close to `𝓕₀`
 -/
+
+@[expose] public section
 
 noncomputable section
 

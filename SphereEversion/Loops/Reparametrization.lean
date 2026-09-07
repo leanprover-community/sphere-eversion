@@ -1,11 +1,13 @@
-import Mathlib.Analysis.Calculus.BumpFunction.Convolution
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
-import SphereEversion.Loops.Surrounding
-import SphereEversion.Loops.DeltaMollifier
-import SphereEversion.ToMathlib.ExistsOfConvex
-import SphereEversion.ToMathlib.Analysis.ContDiff
+module
+
+public import Mathlib.Analysis.Calculus.BumpFunction.Convolution
+public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
+public import SphereEversion.Loops.Surrounding
+public import SphereEversion.Loops.DeltaMollifier
+public import SphereEversion.ToMathlib.ExistsOfConvex
+public import SphereEversion.ToMathlib.Analysis.ContDiff
 
 /-!
 # The reparametrization lemma
@@ -44,6 +46,8 @@ of unity to globalise all the local solutions into the required family: `φ : E 
 The key ingredients are theories of calculus, convex hulls, barycentric coordinates,
 existence of delta mollifiers, partitions of unity, and the inverse function theorem.
 -/
+
+@[expose] public section
 
 
 noncomputable section

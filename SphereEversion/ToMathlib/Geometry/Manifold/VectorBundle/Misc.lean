@@ -5,12 +5,16 @@ Authors: Floris van Doorn
 
 ! This file was ported from Lean 3 source module to_mathlib.geometry.manifold.vector_bundle.misc
 -/
-import Mathlib.Geometry.Manifold.VectorBundle.Basic
-import Mathlib.Topology.VectorBundle.Hom
+module
+
+public import Mathlib.Geometry.Manifold.VectorBundle.Basic
+public import Mathlib.Topology.VectorBundle.Hom
 
 /-!
 # Various operations on and properties of smooth vector bundles
 -/
+
+@[expose] public section
 
 noncomputable section
 

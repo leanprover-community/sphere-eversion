@@ -1,7 +1,9 @@
-import Mathlib.Analysis.Convex.AmpleSet
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
-import SphereEversion.Local.ParametricHPrinciple
+module
+
+public import Mathlib.Analysis.Convex.AmpleSet
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
+public import SphereEversion.Local.ParametricHPrinciple
 
 /-!
 This is file proves the existence of a sphere eversion from the local verson of the h-principle.
@@ -19,6 +21,8 @@ See `loc_formal_eversion` for the choice and constaints of the solution.
 Finally, we obtain the existence of sphere eversion from the parametric local h-principle,
 proven in `Local/ParametricHPrinciple`.
 -/
+
+@[expose] public section
 
 
 noncomputable section

@@ -1,5 +1,7 @@
-import Mathlib.Topology.MetricSpace.HausdorffDistance
-import SphereEversion.Local.OneJet
+module
+
+public import Mathlib.Topology.MetricSpace.HausdorffDistance
+public import SphereEversion.Local.OneJet
 
 /-!
 # Local partial differential relations and their formal solutions
@@ -14,6 +16,8 @@ solutions of `R`, and its formal counterpart `FormalSol R`.
 The h-principle question is whether we can deform any formal solution into a solution.
 The type of deformations is `HtpyJetSet E F` (homotopies of 1-jet sections).
 -/
+
+@[expose] public section
 
 
 noncomputable section

@@ -1,4 +1,6 @@
-import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
+module
+
+public import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
 
 /-!
 
@@ -7,6 +9,8 @@ import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
 TODO Generalise these lemmas appropriately.
 
 -/
+
+@[expose] public section
 
 
 open Set Function Metric AffineMap

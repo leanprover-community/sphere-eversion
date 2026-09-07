@@ -1,4 +1,8 @@
-import Mathlib.Geometry.Manifold.IsManifold.ExtChartAt
+module
+
+public import Mathlib.Geometry.Manifold.IsManifold.ExtChartAt
+
+@[expose] public section
 
 open scoped Topology
 

@@ -1,8 +1,10 @@
-import Mathlib.LinearAlgebra.Basis.Flag
-import Mathlib.LinearAlgebra.FreeModule.PID
-import SphereEversion.Loops.Exists
-import SphereEversion.Local.Corrugation
-import SphereEversion.Local.AmpleRelation
+module
+
+public import Mathlib.LinearAlgebra.Basis.Flag
+public import Mathlib.LinearAlgebra.FreeModule.PID
+public import SphereEversion.Loops.Exists
+public import SphereEversion.Local.Corrugation
+public import SphereEversion.Local.AmpleRelation
 
 /-!
 # Local h-principle for open and ample relations
@@ -49,6 +51,8 @@ to record those conclusion but this isn't needed (at least in that Chapter) sinc
 need to access its components only once.
 
 -/
+
+@[expose] public section
 
 
 noncomputable section

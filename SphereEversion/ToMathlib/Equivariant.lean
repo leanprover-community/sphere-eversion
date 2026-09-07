@@ -1,5 +1,9 @@
-import Mathlib.Topology.Algebra.Order.Floor
-import SphereEversion.ToMathlib.Topology.Misc
+module
+
+public import Mathlib.Topology.Algebra.Order.Floor
+public import SphereEversion.ToMathlib.Topology.Misc
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
-import SphereEversion.Notations
-import SphereEversion.ToMathlib.Equivariant
-import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
+module
+
+public import SphereEversion.Notations
+public import SphereEversion.ToMathlib.Equivariant
+public import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 
 /-!
 # Basic definitions and properties of loops
 -/
+
+@[expose] public section
 
 open Set Function FiniteDimensional Int TopologicalSpace
 

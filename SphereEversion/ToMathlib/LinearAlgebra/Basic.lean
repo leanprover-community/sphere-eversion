@@ -1,7 +1,11 @@
-import Mathlib.Algebra.Module.Submodule.Ker
-import Mathlib.LinearAlgebra.Span.Defs
+module
+
+public import Mathlib.Algebra.Module.Submodule.Ker
+public import Mathlib.LinearAlgebra.Span.Defs
 
 /-! Note: some results should go to `LinearAlgebra.Span`. -/
+
+@[expose] public section
 
 
 open Submodule Function

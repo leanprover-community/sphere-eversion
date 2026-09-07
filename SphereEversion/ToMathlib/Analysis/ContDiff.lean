@@ -1,10 +1,14 @@
-import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Analysis.InnerProductSpace.Dual
-import SphereEversion.ToMathlib.Analysis.Calculus
-import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
+module
+
+public import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.InnerProductSpace.Calculus
+public import Mathlib.Analysis.InnerProductSpace.Dual
+public import SphereEversion.ToMathlib.Analysis.Calculus
+public import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
+
+@[expose] public section
 
 noncomputable section
 

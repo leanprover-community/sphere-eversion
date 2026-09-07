@@ -5,12 +5,16 @@ Authors: Heather Macbeth
 
 ! This file was ported from Lean 3 source module to_mathlib.analysis.inner_product_space.rotation
 -/
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import SphereEversion.ToMathlib.Analysis.ContDiff
-import SphereEversion.ToMathlib.LinearAlgebra.Basic
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import SphereEversion.ToMathlib.Analysis.ContDiff
+public import SphereEversion.ToMathlib.LinearAlgebra.Basic
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
 
 /-! # Rotation about an axis, considered as a function in that axis -/
+
+@[expose] public section
 
 noncomputable section
 

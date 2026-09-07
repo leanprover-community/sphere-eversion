@@ -1,14 +1,18 @@
-import Mathlib.Analysis.Normed.Order.Lattice
-import Mathlib.Geometry.Manifold.ContMDiff.Atlas
-import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
-import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
-import Mathlib.Geometry.Manifold.Notation
-import SphereEversion.Indexing
-import SphereEversion.Notations
-import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
-import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.ExtChartAt
-import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Topology.Paracompact
+module
+
+public import Mathlib.Analysis.Normed.Order.Lattice
+public import Mathlib.Geometry.Manifold.ContMDiff.Atlas
+public import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
+public import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
+public import Mathlib.Geometry.Manifold.Notation
+public import SphereEversion.Indexing
+public import SphereEversion.Notations
+public import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
+public import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.ExtChartAt
+public import SphereEversion.ToMathlib.Topology.Misc
+public import SphereEversion.ToMathlib.Topology.Paracompact
+
+@[expose] public section
 
 noncomputable section
 

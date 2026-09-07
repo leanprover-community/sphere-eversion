@@ -1,4 +1,8 @@
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+module
+
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+
+@[expose] public section
 
 open Module Submodule
 

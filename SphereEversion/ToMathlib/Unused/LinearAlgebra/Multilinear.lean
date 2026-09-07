@@ -1,4 +1,8 @@
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+module
+
+public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+
+@[expose] public section
 
 /-
 Multilinear map stuff that was meant as preliminaries for smooth functions gluing.

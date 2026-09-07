@@ -1,5 +1,7 @@
-import SphereEversion.Local.AmpleRelation
-import SphereEversion.Global.Relation
+module
+
+public import SphereEversion.Local.AmpleRelation
+public import SphereEversion.Global.Relation
 
 /-! # Link with the local story
 
@@ -7,6 +9,8 @@ This file bridges the gap between Chapter 2 and Chapter 3. It builds on
 `SmoothEmbedding.lean` but goes all the way to vector spaces (the previous file
 is about embedding any manifold into another one).
 -/
+
+@[expose] public section
 
 
 noncomputable section

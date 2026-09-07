@@ -1,6 +1,8 @@
-import Mathlib.Analysis.Normed.Order.Lattice
-import Mathlib.Algebra.Ring.Periodic
-import Mathlib.Topology.Separation.Hausdorff
+module
+
+public import Mathlib.Analysis.Normed.Order.Lattice
+public import Mathlib.Algebra.Ring.Periodic
+public import Mathlib.Topology.Separation.Hausdorff
 
 -- TODO: the file this references doesn't exist in mathlib any more; rename this one appropriately!
 
@@ -20,6 +22,8 @@ Patrick is not sure this is the optimal version.
 
 In the first part, generalize many lemmas to any period and add to `Algebra.Ring.Periodic.lean`?
 -/
+
+@[expose] public section
 
 
 noncomputable section

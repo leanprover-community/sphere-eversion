@@ -1,10 +1,12 @@
-import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
-import Mathlib.Analysis.Complex.Norm
-import Mathlib.Analysis.Normed.Module.Completion
-import Mathlib.LinearAlgebra.Dual.Lemmas
-import SphereEversion.Notations
-import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
-import SphereEversion.ToMathlib.LinearAlgebra.Basic
+module
+
+public import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
+public import Mathlib.Analysis.Complex.Norm
+public import Mathlib.Analysis.Normed.Module.Completion
+public import Mathlib.LinearAlgebra.Dual.Lemmas
+public import SphereEversion.Notations
+public import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
+public import SphereEversion.ToMathlib.LinearAlgebra.Basic
 
 /-! # Dual pairs
 
@@ -27,6 +29,8 @@ This is crucial in order to apply convex integration to immersions.
 
 Then we prove continuity and smoothness lemmas for this operation.
 -/
+
+@[expose] public section
 
 
 noncomputable section

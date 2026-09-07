@@ -1,6 +1,10 @@
-import Mathlib.Geometry.Manifold.VectorBundle.Tangent
-import Mathlib.Geometry.Manifold.MFDeriv.Defs
-import Mathlib.Analysis.Calculus.ContDiff.Defs
+module
+
+public import Mathlib.Geometry.Manifold.VectorBundle.Tangent
+public import Mathlib.Geometry.Manifold.MFDeriv.Defs
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+
+@[expose] public section
 
 open Bundle Set Function Filter ContinuousLinearMap
 

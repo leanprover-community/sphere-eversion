@@ -1,5 +1,9 @@
-import Mathlib.Analysis.InnerProductSpace.EuclideanDist
-import Mathlib.Topology.OpenPartialHomeomorph.Constructions
+module
+
+public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+public import Mathlib.Topology.OpenPartialHomeomorph.Constructions
+
+@[expose] public section
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 

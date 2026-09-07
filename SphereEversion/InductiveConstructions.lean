@@ -1,9 +1,13 @@
-import Mathlib.Topology.Germ
-import Mathlib.Analysis.Complex.Norm
-import Mathlib.Analysis.RCLike.Basic
-import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.Indexing
-import SphereEversion.Notations
+module
+
+public import Mathlib.Topology.Germ
+public import Mathlib.Analysis.Complex.Norm
+public import Mathlib.Analysis.RCLike.Basic
+public import SphereEversion.ToMathlib.Topology.Misc
+public import SphereEversion.Indexing
+public import SphereEversion.Notations
+
+@[expose] public section
 
 -- set_option trace.filter_inst_type true
 

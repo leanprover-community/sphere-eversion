@@ -1,6 +1,10 @@
-import Mathlib.Analysis.Normed.Module.Completion
-import Mathlib.Analysis.SpecialFunctions.SmoothTransition
-import SphereEversion.ToMathlib.Topology.Misc
+module
+
+public import Mathlib.Analysis.Normed.Module.Completion
+public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+public import SphereEversion.ToMathlib.Topology.Misc
+
+@[expose] public section
 
 noncomputable section
 
