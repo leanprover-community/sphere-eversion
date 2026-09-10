@@ -5,14 +5,18 @@ Authors: Floris van Doorn
 
 ! This file was ported from Lean 3 source module to_mathlib.unused.eventually_constant
 -/
-import Mathlib.Data.Nat.Lattice
-import Mathlib.Topology.Separation.Hausdorff
+module
+
+public import Mathlib.Data.Nat.Lattice
+public import Mathlib.Topology.Separation.Hausdorff
 
 /-!
 # Eventually constant sequences
 
 Related: `monotonic_sequence_limit_index`
 -/
+
+@[expose] public section
 
 
 -- in mathlib, this should probably import

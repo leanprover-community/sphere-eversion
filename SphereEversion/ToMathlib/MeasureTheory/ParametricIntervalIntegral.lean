@@ -1,7 +1,11 @@
-import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import SphereEversion.ToMathlib.Analysis.Calculus
+module
+
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import SphereEversion.ToMathlib.Analysis.Calculus
+
+public section
 
 open TopologicalSpace MeasureTheory Filter FirstCountableTopology Metric Set Function
 open scoped Topology

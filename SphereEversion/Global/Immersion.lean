@@ -1,10 +1,14 @@
-import Mathlib.Analysis.Convex.AmpleSet
-import Mathlib.Geometry.Manifold.Instances.Sphere
-import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
-import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
-import SphereEversion.Global.Gromov
-import SphereEversion.Global.TwistOneJetSec
+module
+
+public import Mathlib.Analysis.Convex.AmpleSet
+public import Mathlib.Geometry.Manifold.Instances.Sphere
+public import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
+public import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
+public import SphereEversion.Global.Gromov
+public import SphereEversion.Global.TwistOneJetSec
+
+@[expose] public section
 
 -- set_option trace.filter_inst_type true
 noncomputable section

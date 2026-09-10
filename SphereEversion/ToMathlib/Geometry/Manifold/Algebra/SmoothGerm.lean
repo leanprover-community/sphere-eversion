@@ -3,19 +3,22 @@ Copyright (c) 2023 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
+module
 
-import Mathlib.Algebra.Ring.Subring.Order
-import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
-import Mathlib.Geometry.Manifold.MFDeriv.Basic
-import Mathlib.Geometry.Manifold.Notation
-import Mathlib.Order.Filter.Ring
-import Mathlib.Tactic.Cases
-import Mathlib.Topology.Germ
+public import Mathlib.Algebra.Ring.Subring.Order
+public import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
+public import Mathlib.Geometry.Manifold.MFDeriv.Basic
+public import Mathlib.Geometry.Manifold.Notation
+public import Mathlib.Order.Filter.Ring
+public import Mathlib.Tactic.Cases
+public import Mathlib.Topology.Germ
 
 /-!
 ## Germs of smooth functions
 under construction: might need further refactoring to be usable!
 -/
+
+@[expose] public section
 
 -- TODO: please confirm authorship and copyright are appropriate
 

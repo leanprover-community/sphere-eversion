@@ -1,6 +1,10 @@
-import SphereEversion.Loops.Reparametrization
-import SphereEversion.ToMathlib.Analysis.CutOff
-import Mathlib.Topology.MetricSpace.HausdorffDistance
+module
+
+public import SphereEversion.Loops.Reparametrization
+public import SphereEversion.ToMathlib.Analysis.CutOff
+public import Mathlib.Topology.MetricSpace.HausdorffDistance
+
+public section
 
 noncomputable section
 

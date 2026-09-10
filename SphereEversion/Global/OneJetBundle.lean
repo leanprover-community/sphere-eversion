@@ -5,16 +5,18 @@ Authors: Patrick Massot, Floris van Doorn
 
 ! This file was ported from Lean 3 source module global.one_jet_bundle
 -/
-import Mathlib.Tactic.Common
+module
 
-import Mathlib.Analysis.Normed.Module.Completion
-import Mathlib.Geometry.Manifold.Algebra.Monoid
-import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
-import Mathlib.Geometry.Manifold.Notation
-import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
-import Mathlib.Geometry.Manifold.VectorBundle.Hom
-import Mathlib.Geometry.Manifold.VectorBundle.Pullback
-import Mathlib.Tactic.Monotonicity.Lemmas
+public import Mathlib.Tactic.Common
+
+public import Mathlib.Analysis.Normed.Module.Completion
+public import Mathlib.Geometry.Manifold.Algebra.Monoid
+public import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
+public import Mathlib.Geometry.Manifold.Notation
+public import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
+public import Mathlib.Geometry.Manifold.VectorBundle.Hom
+public import Mathlib.Geometry.Manifold.VectorBundle.Pullback
+public import Mathlib.Tactic.Monotonicity.Lemmas
 
 /-!
 # 1-jet bundles
@@ -30,6 +32,8 @@ We prove
 * If `x ↦ (f₁ x, f₂ x, ϕ₁ x) : N → J¹(M₁, M₂)` and `x ↦ (f₂ x, f₃ x, ϕ₂ x) : N → J¹(M₂, M₃)`
   are smooth, then so is `x ↦ (f₁ x, f₃ x, ϕ₂ x ∘ ϕ₁ x) : N → J¹(M₁, M₃)`.
 -/
+
+@[expose] public section
 
 
 noncomputable section

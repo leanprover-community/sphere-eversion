@@ -1,4 +1,8 @@
-import Mathlib.Analysis.Calculus.ContDiff.Basic
+module
+
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+
+public section
 
 open scoped Topology ContDiff
 

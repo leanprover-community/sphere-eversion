@@ -1,5 +1,9 @@
-import SphereEversion.Global.Relation
-import Mathlib.Analysis.Convex.AmpleSet
+module
+
+public import SphereEversion.Global.Relation
+public import Mathlib.Analysis.Convex.AmpleSet
+
+@[expose] public section
 
 noncomputable section
 

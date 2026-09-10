@@ -1,11 +1,13 @@
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.Analysis.Convolution
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
-import Mathlib.MeasureTheory.Measure.Haar.Unique
-import Mathlib.Analysis.Calculus.BumpFunction.Normed
-import SphereEversion.ToMathlib.Algebra.Ring.Periodic
-import SphereEversion.ToMathlib.Analysis.ContDiff
-import SphereEversion.Loops.Basic
+module
+
+public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+public import Mathlib.Analysis.Convolution
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
+public import Mathlib.MeasureTheory.Measure.Haar.Unique
+public import Mathlib.Analysis.Calculus.BumpFunction.Normed
+public import SphereEversion.ToMathlib.Algebra.Ring.Periodic
+public import SphereEversion.ToMathlib.Analysis.ContDiff
+public import SphereEversion.Loops.Basic
 
 /-!
 # Delta mollifiers
@@ -25,6 +27,8 @@ packages this into the precise form required for the proof of the reparametrizat
 The key ingredients are the existence of smooth "bump functions" and a powerful theory of
 convolutions.
 -/
+
+@[expose] public section
 
 
 noncomputable section

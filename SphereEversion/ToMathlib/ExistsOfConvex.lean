@@ -1,5 +1,9 @@
-import SphereEversion.ToMathlib.Partition
-import Mathlib.Geometry.Manifold.Notation
+module
+
+public import SphereEversion.ToMathlib.Partition
+public import Mathlib.Geometry.Manifold.Notation
+
+public section
 
 noncomputable section
 

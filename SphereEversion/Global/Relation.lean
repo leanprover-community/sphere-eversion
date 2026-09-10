@@ -1,8 +1,10 @@
-import Mathlib.Geometry.Manifold.Metrizable
-import SphereEversion.Local.DualPair
-import SphereEversion.Global.OneJetSec
-import SphereEversion.Global.SmoothEmbedding
-import Mathlib.Analysis.Convex.AmpleSet
+module
+
+public import Mathlib.Geometry.Manifold.Metrizable
+public import SphereEversion.Local.DualPair
+public import SphereEversion.Global.OneJetSec
+public import SphereEversion.Global.SmoothEmbedding
+public import Mathlib.Analysis.Convex.AmpleSet
 
 /-!
 # First order partial differential relations for maps between manifolds
@@ -16,6 +18,7 @@ for maps from `M` to `M'` is a set in the 1-jet bundle J¹(M, M'), also known as
 `OneJetBundle I M I' M'`.
 -/
 
+@[expose] public section
 
 noncomputable section
 

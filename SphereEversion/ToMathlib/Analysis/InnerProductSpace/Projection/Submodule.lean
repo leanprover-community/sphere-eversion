@@ -1,4 +1,8 @@
-import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
+
+@[expose] public section
 
 noncomputable section
 

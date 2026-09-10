@@ -1,6 +1,10 @@
-import Mathlib.Topology.Separation.Hausdorff
-import Mathlib.Basic.Real.Basic
-import Mathlib.Order.Interval.Finset.Nat
+module
+
+public import Mathlib.Topology.Separation.Hausdorff
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.Interval.Finset.Nat
+
+public section
 
 open scoped Topology
 

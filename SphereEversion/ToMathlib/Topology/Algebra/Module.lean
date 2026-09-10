@@ -1,4 +1,8 @@
-import Mathlib.Topology.Algebra.Module.Equiv
+module
+
+public import Mathlib.Topology.Algebra.Module.Equiv
+
+public section
 
 namespace ContinuousLinearMap
 

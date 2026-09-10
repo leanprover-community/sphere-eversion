@@ -3,11 +3,15 @@ Copyright (c) 2022 Heather Macbeth. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Heather Macbeth
 -/
-import Mathlib.Analysis.InnerProductSpace.Dual
-import Mathlib.Analysis.InnerProductSpace.Orientation
-import Mathlib.LinearAlgebra.Alternating.Curry
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Dual
+public import Mathlib.Analysis.InnerProductSpace.Orientation
+public import Mathlib.LinearAlgebra.Alternating.Curry
 
 /-! # The cross-product on an oriented real inner product space of dimension three -/
+
+public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ def crossProduct' : E →L[ℝ] E →L[ℝ] E :=
 @[simp]
 theorem crossProduct'_apply (v : E) :
     ω.crossProduct' v = LinearMap.toContinuousLinearMap (ω.crossProduct v) :=
-  rfl
+  (rfl)
 
 theorem norm_crossProduct (u : E) (v : (ℝ ∙ u)ᗮ) : ‖u×₃v‖ = ‖u‖ * ‖v‖ := by
   classical

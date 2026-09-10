@@ -3,9 +3,11 @@ Copyright (c) 2021 Patrick Massot. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Massot
 -/
-import Mathlib.Analysis.Convex.AmpleSet
-import SphereEversion.Local.DualPair
-import SphereEversion.Local.Relation
+module
+
+public import Mathlib.Analysis.Convex.AmpleSet
+public import SphereEversion.Local.DualPair
+public import SphereEversion.Local.Relation
 
 /-! # Slices of first order relations
 
@@ -26,6 +28,8 @@ order relations: a relation is ample if all its slices are ample sets.
 
 At the end of the file we consider 1-jet sections and slices corresponding to points in their image.
 -/
+
+@[expose] public section
 
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]

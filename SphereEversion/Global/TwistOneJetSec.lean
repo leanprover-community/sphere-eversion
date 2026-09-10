@@ -5,7 +5,11 @@ Authors: Heather Macbeth
 
 ! This file was ported from Lean 3 source module global.twist_one_jet_sec
 -/
-import SphereEversion.Global.OneJetSec
+module
+
+public import SphereEversion.Global.OneJetSec
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib.Geometry.Manifold.Metrizable
+module
+
+public import Mathlib.Geometry.Manifold.Metrizable
+
+@[expose] public section
 
 noncomputable section
 

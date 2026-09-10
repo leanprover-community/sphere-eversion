@@ -1,6 +1,10 @@
-import Mathlib.Geometry.Manifold.PartitionOfUnity
-import SphereEversion.ToMathlib.Analysis.Convex.Basic
-import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+module
+
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+public import SphereEversion.ToMathlib.Analysis.Convex.Basic
+public import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+
+@[expose] public section
 
 noncomputable section
 

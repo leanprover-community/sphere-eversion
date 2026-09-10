@@ -1,6 +1,8 @@
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.SpecialFunctions.SmoothTransition
-import SphereEversion.Notations
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+public import SphereEversion.Notations
 
 /-! # Spaces of 1-jets and their sections
 
@@ -21,6 +23,8 @@ homotopies we will construct will be constant for `t ≤ 0` and `t ≥ 1`. It lo
 more smoothness constraints at `t = 0` and `t = 1` (requiring flat functions), but this is needed
 for smooth concatenations anyway.
  -/
+
+@[expose] public section
 
 
 noncomputable section

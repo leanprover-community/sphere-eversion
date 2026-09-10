@@ -1,5 +1,9 @@
-import SphereEversion.Global.Localisation
-import SphereEversion.Local.HPrinciple
+module
+
+public import SphereEversion.Global.Localisation
+public import SphereEversion.Local.HPrinciple
+
+public section
 
 noncomputable section
 

@@ -1,13 +1,17 @@
-import SphereEversion.Global.LocalisationData
-import SphereEversion.Global.LocalizedConstruction
-import SphereEversion.Global.ParametricityForFree
-import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
+module
+
+public import SphereEversion.Global.LocalisationData
+public import SphereEversion.Global.LocalizedConstruction
+public import SphereEversion.Global.ParametricityForFree
+public import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
 
 /-!
 # Gromov's theorem
 
 We prove the h-principle for open and ample first order differential relations.
 -/
+
+public section
 
 
 noncomputable section

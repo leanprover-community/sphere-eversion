@@ -1,6 +1,10 @@
-import Mathlib.Analysis.Convex.Combination
-import Mathlib.Algebra.Module.BigOperators
-import Mathlib.Algebra.Order.Hom.Ring
+module
+
+public import Mathlib.Analysis.Convex.Combination
+public import Mathlib.Algebra.Module.BigOperators
+public import Mathlib.Algebra.Order.Hom.Ring
+
+@[expose] public section
 
 open Function Set
 

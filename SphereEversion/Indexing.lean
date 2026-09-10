@@ -1,9 +1,11 @@
-import Mathlib.Order.Interval.Finset.Fin
-import Mathlib.Data.Fin.SuccPredOrder
-import Mathlib.Data.Nat.SuccPred
-import Mathlib.SetTheory.Cardinal.Basic
-import Mathlib.Tactic.Cases
-import SphereEversion.ToMathlib.Data.Nat.Basic
+module
+
+public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Data.Fin.SuccPredOrder
+public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.SetTheory.Cardinal.Basic
+public import Mathlib.Tactic.Cases
+public import SphereEversion.ToMathlib.Data.Nat.Basic
 /-!
 # Indexing types
 
@@ -11,6 +13,8 @@ This file introduces `IndexType : ℕ → Type` such that `IndexType 0 = ℕ` an
 `IndexType (N+1) = Fin (N+1)`. Each `IndexType N` has a total order and and inductive principle
 together with supporting lemmas.
 -/
+
+@[expose] public section
 
 
 open Fin Set

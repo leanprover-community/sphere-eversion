@@ -1,4 +1,8 @@
-import SphereEversion.Global.Immersion
+module
+
+public import SphereEversion.Global.Immersion
+
+public section
 
 open Metric FiniteDimensional Set ModelWithCorners
 
