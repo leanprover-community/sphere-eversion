@@ -196,11 +196,11 @@ theorem ChartPair.mkHtpy_congr (F : FormalSol R) {𝓕 : (R.localize p.φ p.ψ).
     {t t' : ℝ} (h : 𝓕 t = 𝓕 t') : p.mkHtpy F 𝓕 t = p.mkHtpy F 𝓕 t' := by
   unfold ChartPair.mkHtpy
   by_cases hF : p.compat' F 𝓕
-  · simp only [dif_pos hF]
+  · simp only [dite_eq_left hF]
     apply FormalSol.coe_inj fun x ↦ ?_
     rw [p.φ.updateFormalSol_apply, p.φ.updateFormalSol_apply,
       RelLoc.HtpyFormalSol.unloc_congr' p h]
-  · simp only [dif_neg hF]; rfl
+  · simp only [dite_eq_right hF]; rfl
 
 theorem ChartPair.mkHtpy_eq_self (F : FormalSol R) (𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol)
     {t m} (hm : ∀ hF : range (F.bs ∘ p.φ) ⊆ range p.ψ, ∀ x ∈ p.K₁,
@@ -250,7 +250,7 @@ theorem ChartPair.mkHtpy_eq_of_forall {F : FormalSol R}
 theorem ChartPair.mkHtpy_localize {F : FormalSol R} {𝓕 : (R.localize p.φ p.ψ).relLoc.HtpyFormalSol}
     {t e} (h : p.compat' F 𝓕) (rg : range ((p.mkHtpy F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ) :
     (p.mkHtpy F 𝓕 t).toOneJetSec.localize p.φ p.ψ rg e = (𝓕 t).unloc e := by
-  simp_rw [ChartPair.mkHtpy, dif_pos h] at rg ⊢
+  simp_rw [ChartPair.mkHtpy, dite_eq_left h] at rg ⊢
   exact p.φ.Jupdate_localize p.ψ p.hK₁ (p.mkHtpy_aux h) t rg e
 
 theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
@@ -259,7 +259,7 @@ theorem ChartPair.mkHtpy_isHolonomicAt_iff {F : FormalSol R}
   have rg : range ((p.mkHtpy F 𝓕 t).bs ∘ p.φ) ⊆ range p.ψ := by
     rintro - ⟨e, rfl⟩
     dsimp only [ChartPair.mkHtpy]
-    simp only [dif_pos h]
+    simp only [dite_eq_left h]
     rw [p.φ.updateFormalSol_bs p.ψ p.hK₁]
     simp only [Function.comp_apply, OpenSmoothEmbedding.update_apply_embedding, mem_range_self]
   rw [← isHolonomicAt_localize_iff _ p.φ p.ψ rg e, ← JetSec.unloc_hol_at_iff]
@@ -278,7 +278,7 @@ theorem ChartPair.dist_update' [FiniteDimensional ℝ E'] {δ : M → ℝ} (hδ_
     intro 𝓕 h𝓕 t e
     change (p.mkHtpy F 𝓕 t (p.φ e)).1.2 = p.φ.update p.ψ bsF (fun e ↦ (𝓕.unloc p t).bs e) (p.φ e)
     dsimp only [ChartPair.mkHtpy]
-    rw [dif_pos h𝓕, OpenSmoothEmbedding.updateFormalSol_apply]
+    rw [dite_eq_left h𝓕, OpenSmoothEmbedding.updateFormalSol_apply]
     simp_rw [OpenSmoothEmbedding.update_apply_embedding, OneJetBundle.embedding_toFun,
       OpenSmoothEmbedding.transfer_proj_snd]
     rfl

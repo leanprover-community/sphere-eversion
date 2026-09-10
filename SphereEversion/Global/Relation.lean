@@ -474,7 +474,10 @@ theorem OpenSmoothEmbedding.smooth_transfer :
     ContMDiffAt.mfderiv (fun _ ↦ φ.invFun) (fun x : OneJetBundle IX X IY Y ↦ φ x.1.1)
       ((φ.contMDiffAt_inv <| _).comp (x, φ x.1.1) contMDiffAt_snd)
       (φ.contMDiff_to.contMDiffAt.comp x (contMDiff_oneJetBundle_proj.fst x)) (mod_cast le_top)
-  · simp only [left_inv] at this; exact this
+  · convert this
+    · simp
+    · simp
+      rfl
   exact mem_range_self _
 
 theorem OneJetBundle.continuous_transfer : Continuous (φ.transfer ψ) :=

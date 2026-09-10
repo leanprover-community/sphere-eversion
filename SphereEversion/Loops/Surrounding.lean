@@ -153,7 +153,7 @@ theorem surrounded_iff_mem_interior_convexHull_aff_basis [FiniteDimensional ℝ 
       basis.coord_apply_combination_of_mem (Finset.mem_univ i) w_sum]
     exact w_pos i
   · rintro ⟨b, h₀, h₁, h₂, h₃⟩
-    have : Fintype b := (finite_set_of_fin_dim_affineIndependent ℝ h₁).fintype
+    have : Fintype b := ((finiteDimensional_iff_setFinite ℝ h₁).mp (by infer_instance)).fintype
     have hb : Fintype.card b = d + 1 := by
       rw [← h₁.affineSpan_eq_top_iff_card_eq_finrank_add_one, Subtype.range_coe_subtype,
         ofPred_mem_eq, h₂]
@@ -184,7 +184,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
     exact hsf
   have htne : (t : Set F).Nonempty := convexHull_nonempty_iff.mp ⟨f, hf⟩
   obtain ⟨b, hb₁, hb₂, hb₃, hb₄⟩ := hs.exists_between_affineIndependent_span_eq_top hts htne hai
-  have hb₀ : b.Finite := finite_set_of_fin_dim_affineIndependent ℝ hb₃
+  have hb₀ : b.Finite := ((finiteDimensional_iff_setFinite ℝ hb₃).mp (by infer_instance))
   obtain ⟨c, hc⟩ := interior_convexHull_nonempty_iff_affineSpan_eq_top.mpr hb₄
   rw [← hs.interior_eq] at hb₂
   obtain ⟨ε, hε, hcs⟩ :=
@@ -193,7 +193,7 @@ theorem surrounded_of_convexHull [FiniteDimensional ℝ F] {f : F} {s : Set F} (
   rw [AffineMap.image_convexHull] at hbε
   let t : Units ℝ := Units.mk0 ε (by linarith)
   refine ⟨AffineMap.homothety c (t : ℝ) '' b, hcs, ?_, ?_, hbε (convexHull_mono hb₁ hf)⟩
-  · rw [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]; assumption
+  · rwa [(AffineEquiv.homothetyUnitsMulHom c t).affineIndependent_set_of_eq_iff]
   · exact (AffineEquiv.homothetyUnitsMulHom c t).span_eq_top_iff.mp hb₄
 
 /- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/

@@ -251,7 +251,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     obtain ⟨t, x⟩ := p
     replace hp : t < 1 / 2 := (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
-    rw [if_pos hp.le]
+    rw [ite_eq_left hp.le]
     rfl
   · apply (hf (1 / 2, x₀)).congr_of_eventuallyEq
     have : (Ioo (3 / 8) (5 / 8) : Set ℝ) ×ˢ univ ∈ 𝓝 (1 / (2 : ℝ), x₀) := by
@@ -273,7 +273,7 @@ theorem htpy_jet_sec_comp_aux {f g : ℝ → E → F} (hf : 𝒞 ∞ ↿f) (hg :
     obtain ⟨t, x⟩ := p
     replace hp : ¬t ≤ 1 / 2 := by push Not; exact (prodMk_mem_set_prod_eq.mp hp).1
     change ite (t ≤ 1 / 2) (f (smoothStep (2 * t)) x) (g (smoothStep (2 * t - 1)) x) = _
-    rw [if_neg hp]
+    rw [ite_eq_right hp]
     rfl
 
 /-- Concatenation of homotopies of formal solution. The result depend on our choice of
@@ -287,7 +287,7 @@ def HtpyJetSec.comp (𝓕 𝓖 : HtpyJetSec E F) (h : 𝓕 1 = 𝓖 0) : HtpyJet
 @[simp]
 theorem HtpyJetSec.comp_of_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht : t ≤ 1 / 2) :
     𝓕.comp 𝓖 h t = 𝓕 (smoothStep <| 2 * t) := by
-  ext x : 2 <;> · dsimp [HtpyJetSec.comp]; exact if_pos ht
+  ext x : 2 <;> · dsimp [HtpyJetSec.comp]; exact ite_eq_left ht
 
 theorem HtpyJetSec.comp_le_0 (𝓕 𝓖 : HtpyJetSec E F) (h) :
     ∀ᶠ t near Iic 0, 𝓕.comp 𝓖 h t = 𝓕 0 := by
@@ -310,7 +310,7 @@ theorem HtpyJetSec.comp_0 (𝓕 𝓖 : HtpyJetSec E F) (h) : 𝓕.comp 𝓖 h 0 
 theorem HtpyJetSec.comp_of_not_le (𝓕 𝓖 : HtpyJetSec E F) (h) {t : ℝ} (ht : ¬t ≤ 1 / 2) :
     𝓕.comp 𝓖 h t = 𝓖 (smoothStep <| 2 * t - 1) := by
   rw [one_div] at ht
-  ext x : 2 <;> simp [comp, if_neg ht] <;> rfl
+  ext x : 2 <;> simp [comp, ite_eq_right ht] <;> rfl
 
 theorem HtpyJetSec.comp_ge_1 (𝓕 𝓖 : HtpyJetSec E F) (h) : ∀ᶠ t near Ici 1, 𝓕.comp 𝓖 h t = 𝓖 1 := by
   have : Ioi (7 / 8 : ℝ) ∈ 𝓝ˢ (Ici (1 : ℝ)) :=

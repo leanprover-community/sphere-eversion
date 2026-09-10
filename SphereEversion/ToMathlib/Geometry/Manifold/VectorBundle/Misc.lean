@@ -81,7 +81,7 @@ theorem trivialization_continuousLinearMapAt (x : B) :
     (Trivial.trivialization B F).continuousLinearMapAt 𝕜 x = ContinuousLinearMap.id 𝕜 F := by
   ext v
   simp_rw [Trivialization.continuousLinearMapAt_apply, Trivialization.coe_linearMapAt]
-  rw [if_pos]
+  rw [ite_eq_left]
   exacts [rfl, mem_univ _]
 
 end Bundle.Trivial
@@ -138,7 +138,7 @@ theorem pullback_symm (e : Trivialization F (π F E)) (x : B') :
   simp_rw [Trivialization.symm, Pretrivialization.symm]
   congr; ext (hx : f x ∈ e.toPretrivialization.baseSet)
   change cast _ (e.symm (f x) y) = cast _ (e.toOpenPartialHomeomorph.symm (f x, y)).2
-  simp_rw [Trivialization.symm, Pretrivialization.symm, dif_pos hx, cast_cast]
+  simp_rw [Trivialization.symm, Pretrivialization.symm, dite_eq_left hx, cast_cast]
   rfl
 
 end Trivialization

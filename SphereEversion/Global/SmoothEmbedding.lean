@@ -397,11 +397,11 @@ def update (m : M) : N :=
 end
 
 @[simp]
-theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m = f m := if_neg hm
+theorem update_of_nmem_range {m : M} (hm : m ∉ range φ) : update φ ψ f g m = f m := ite_eq_right hm
 
 @[simp]
 theorem update_of_mem_range {m : M} (hm : m ∈ range φ) : update φ ψ f g m = ψ (g (φ.invFun m)) :=
-  if_pos hm
+  ite_eq_left hm
 
 theorem update_apply_embedding (x : X) : update φ ψ f g (φ x) = ψ (g x) := by simp
 
@@ -413,7 +413,7 @@ theorem nice_update_of_eq_outside_compact_aux {K : Set X} (g : X → Y)
   · obtain ⟨x, rfl⟩ := hm'
     replace hm : x ∉ K := by contrapose! hm; exact mem_image_of_mem φ hm
     simp [hg x hm]
-  · exact if_neg hm'
+  · exact ite_eq_right hm'
 
 open Function
 
@@ -433,7 +433,7 @@ theorem contMDiff_update (f : M' → M → N) (g : M' → X → Y) {k : M' → M
     rw [← compl_subset_iff_union, compl_compl]
     exact image_subset_range φ K
   have h₄ (x) : k x ∈ U → update φ ψ (f x) (g x) (k x) = (ψ ∘ g x ∘ φ.invFun) (k x) :=
-    fun hm ↦ if_pos hm
+    fun hm ↦ ite_eq_left hm
   by_cases hx : k x ∈ U
   · exact ⟨k ⁻¹' U, φ.isOpen_range.preimage hk.continuous, hx,
       (contMDiffOn_congr h₄).mpr <| ψ.contMDiff_to.comp_contMDiffOn <| hg.comp_contMDiffOn

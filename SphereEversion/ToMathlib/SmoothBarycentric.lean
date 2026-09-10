@@ -41,12 +41,12 @@ def evalBarycentricCoords [DecidablePred (· ∈ affineBases ι R P)] (p : P) (v
 theorem evalBarycentricCoords_apply_of_mem_bases [DecidablePred (· ∈ affineBases ι R P)] (p : P)
     {v : ι → P} (h : v ∈ affineBases ι R P) :
     evalBarycentricCoords ι R P p v = (AffineBasis.mk v h.1 h.2).coords p :=
-  dif_pos h
+  dite_eq_left h
 
 @[simp]
 theorem evalBarycentricCoords_apply_of_not_mem_bases [DecidablePred (· ∈ affineBases ι R P)] (p : P)
     {v : ι → P} (h : v ∉ affineBases ι R P) : evalBarycentricCoords ι R P p v = 0 :=
-  dif_neg h
+  dite_eq_right h
 
 variable {ι R P}
 
@@ -56,7 +56,7 @@ theorem evalBarycentricCoords_eq_det [Fintype ι] [DecidableEq ι] (S : Type*) [
       (b.toMatrix v).det⁻¹ • (b.toMatrix v)ᵀ.cramer (b.coords p) := by
   ext i
   by_cases h : v ∈ affineBases ι S P
-  · simp only [evalBarycentricCoords, h, dif_pos, smul_eq_mul, Pi.smul_apply,
+  · simp only [evalBarycentricCoords, h, dite_eq_left, smul_eq_mul, Pi.smul_apply,
       AffineBasis.coords_apply]
     erw [← b.det_smul_coords_eq_cramer_coords ⟨v, h.1, h.2⟩ p]
     simp only [Pi.smul_apply, AffineBasis.coords_apply, smul_eq_mul]
@@ -64,7 +64,7 @@ theorem evalBarycentricCoords_eq_det [Fintype ι] [DecidableEq ι] (S : Type*) [
     rw [Matrix.isUnit_iff_isUnit_det] at hu
     erw [← mul_assoc, ← Ring.inverse_eq_inv, Ring.inverse_mul_cancel _ hu, one_mul]
   · simp only [evalBarycentricCoords, h, smul_eq_mul, Pi.zero_apply, inv_eq_zero,
-      dif_neg, not_false_iff, zero_eq_mul, Pi.smul_apply]
+      dite_eq_right, not_false_iff, zero_eq_mul, Pi.smul_apply]
     left
     rwa [mem_affineBases_iff ι S P b v, Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero,
       Classical.not_not] at h
@@ -144,9 +144,9 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
     by_cases hij : j = i
-    · simp only [hij, if_true]
+    · simp only [hij, ite_true]
       exact (smooth_barycentric_coord b j').fst'.of_le le_top
-    · simp only [hij, if_false]
+    · simp only [hij, ite_false]
       exact ((smooth_barycentric_coord b j').of_le le_top).comp (contDiff_pi.mp contDiff_snd j)
 
 end smooth_barycentric

@@ -185,7 +185,7 @@ open scoped Classical in
 theorem isOpen_slice_of_isOpen_over {Ω : Set (α × β)} {x₀ : α}
     (hΩ_op : ∃ U ∈ 𝓝 x₀, IsOpen (Ω ∩ Prod.fst ⁻¹' U)) : IsOpen (Prod.mk x₀ ⁻¹' Ω) := by
   rcases hΩ_op with ⟨U, hU, hU_op⟩; convert hU_op.preimage (Continuous.prodMk_right x₀) using 1
-  simp_rw [preimage_inter, preimage_preimage, preimage_const, mem_of_mem_nhds hU, if_pos,
+  simp_rw [preimage_inter, preimage_preimage, preimage_const, mem_of_mem_nhds hU, ite_eq_left,
     inter_univ]
 
 end
@@ -411,9 +411,9 @@ theorem cover_nat_nhdsWithin' {α} [TopologicalSpace α] [SecondCountableTopolog
     {f : ∀ x ∈ s, Set α} (hf : ∀ (x) (hx : x ∈ s), f x hx ∈ 𝓝[s] x) (hs : s.Nonempty) :
     ∃ (x : ℕ → α) (hx : range x ⊆ s), s ⊆ ⋃ n, f (x n) (range_subset_iff.mp hx n) := by
   let g x := if hx : x ∈ s then f x hx else ∅
-  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [g, dif_pos hx]; exact hf x hx
+  have hg : ∀ x ∈ s, g x ∈ 𝓝[s] x := fun x hx ↦ by simp_rw [g, dite_eq_left hx]; exact hf x hx
   obtain ⟨x, hx, h⟩ := TopologicalSpace.cover_nat_nhdsWithin hg hs
-  simp_rw [g, dif_pos (range_subset_iff.mp hx _)] at h
+  simp_rw [g, dite_eq_left (range_subset_iff.mp hx _)] at h
   exact ⟨x, hx, h⟩
 
 end TopologicalSpace
