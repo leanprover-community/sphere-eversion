@@ -128,7 +128,8 @@ theorem ReallyConvex.add_mem [IsOrderedRing 𝕜] (hs : ReallyConvex 𝕜 s) {w�
     w₁ • z₁ + w₂ • z₂ ∈ s := by
   cases subsingleton_or_nontrivial 𝕜
   · have := Module.subsingleton 𝕜 E
-    rwa [Subsingleton.mem_iff_nonempty] at hz₁ ⊢
+    rw [Subsingleton.mem_iff_nonempty] at hz₁ ⊢
+    assumption
   suffices ∑ b : Bool, cond b w₁ w₂ • cond b z₁ z₂ ∈ s by simpa using this
   apply hs.sum_mem <;> simp [*]
 
