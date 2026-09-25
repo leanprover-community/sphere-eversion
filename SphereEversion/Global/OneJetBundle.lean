@@ -179,7 +179,10 @@ instance : ContMDiffVectorBundle ∞ (E →L[𝕜] E')
 set_option backward.isDefEq.respectTransparency false in
 instance : ChartedSpace HJ J¹MM' := by
   delta OneJetSpace OneJetBundle
-  infer_instance
+  -- `infer_instance` does not close this goal: lining it up with `FiberBundle.chartedSpace` means
+  -- unfolding the `TopologicalSpace J¹MM'` instance above, which unification during instance
+  -- synthesis will not do. Naming the instance elaborates at default transparency instead.
+  exact FiberBundle.chartedSpace ..
 
 set_option backward.isDefEq.respectTransparency false in
 instance : IsManifold ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ J¹MM' := by
