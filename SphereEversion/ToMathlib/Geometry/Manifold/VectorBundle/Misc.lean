@@ -121,12 +121,26 @@ end Hom
 
 section Pullback
 
-/-- We need some instances like this to work with negation on pullbacks -/
 instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', AddCommGroup (E x')] :
-    AddCommGroup ((f *ᵖ E) x) := by delta Bundle.Pullback; infer_instance
+    AddCommGroup ((f *ᵖ E) x) :=
+  inferInstanceAs <| AddCommGroup (E (f x))
 
-instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', Zero (E x')] : Zero ((f *ᵖ E) x) := by
-  delta Bundle.Pullback; infer_instance
+instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', Zero (E x')] : Zero ((f *ᵖ E) x) :=
+  inferInstanceAs <| Zero (E (f x))
+
+instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', TopologicalSpace (E x')]
+    [∀ x', AddCommMonoid (E x')] [∀ x', ContinuousAdd (E x')] : ContinuousAdd ((f *ᵖ E) x) :=
+  inferInstanceAs <| ContinuousAdd (E (f x))
+
+instance {B B'} {E : B → Type*} {f : B' → B} {x : B'} [∀ x', TopologicalSpace (E x')]
+    [∀ x', AddCommGroup (E x')] [∀ x', IsTopologicalAddGroup (E x')] :
+    IsTopologicalAddGroup ((f *ᵖ E) x) :=
+  inferInstanceAs <| IsTopologicalAddGroup (E (f x))
+
+instance {R B B'} [Semiring R] [TopologicalSpace R] {E : B → Type*} {f : B' → B} {x : B'}
+    [∀ x', TopologicalSpace (E x')] [∀ x', AddCommMonoid (E x')] [∀ x', Module R (E x')]
+    [∀ x', ContinuousSMul R (E x')] : ContinuousSMul R ((f *ᵖ E) x) :=
+  inferInstanceAs <| ContinuousSMul R (E (f x))
 
 variable {B F B' K : Type*} {E : B → Type*} {f : K} [TopologicalSpace B']
   [TopologicalSpace (TotalSpace F E)] [TopologicalSpace F] [TopologicalSpace B] [∀ b, Zero (E b)]
