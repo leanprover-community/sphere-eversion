@@ -156,6 +156,7 @@ instance (x : M × M') : Module 𝕜 (FJ¹MM' x) :=
 end
 
 set_option backward.isDefEq.respectTransparency false in
+set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in
 instance : TopologicalSpace J¹MM' := by
   delta OneJetSpace OneJetBundle
   infer_instance
@@ -177,6 +178,7 @@ instance : ContMDiffVectorBundle ∞ (E →L[𝕜] E')
   infer_instance
 
 set_option backward.isDefEq.respectTransparency false in
+set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in
 instance : ChartedSpace HJ J¹MM' := by
   delta OneJetSpace OneJetBundle
   infer_instance
@@ -641,11 +643,10 @@ theorem oneJetBundle_model_space_coe_chartAt (p : OneJetBundle I H I' H') :
 theorem oneJetBundle_model_space_coe_chartAt_symm (p : OneJetBundle I H I' H') :
     ((chartAt 𝓜 p).symm : 𝓜 → OneJetBundle I H I' H') =
       (Bundle.TotalSpace.toProd (H × H') (E →L[𝕜] E')).symm := by
-  ext x
+  ext x <;> rw [← OpenPartialHomeomorph.coe_toPartialEquiv_symm, oneJetBundle_model_space_chartAt]
   · rfl
   · rfl
-  · rw [← OpenPartialHomeomorph.coe_toPartialEquiv_symm, oneJetBundle_model_space_chartAt]
-    rfl
+  · rfl
 
 variable (I I')
 
