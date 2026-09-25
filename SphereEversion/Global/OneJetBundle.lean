@@ -155,8 +155,6 @@ instance (x : M × M') : Module 𝕜 (FJ¹MM' x) :=
 
 end
 
-set_option backward.isDefEq.respectTransparency false in
-set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in
 instance : TopologicalSpace J¹MM' := by
   delta OneJetSpace OneJetBundle
   infer_instance
@@ -181,10 +179,11 @@ set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in
 instance : ChartedSpace HJ J¹MM' := by
   delta OneJetSpace OneJetBundle
-  -- `infer_instance` does not close this goal: lining it up with `FiberBundle.chartedSpace` means
-  -- unfolding the `TopologicalSpace J¹MM'` instance above, which unification during instance
-  -- synthesis will not do. Naming the instance elaborates at default transparency instead.
-  exact FiberBundle.chartedSpace ..
+  -- Making `FiberBundle.chartedSpace` apply here means unfolding the `TopologicalSpace J¹MM'`
+  -- instance above, which unification during instance synthesis will not do.
+  -- One potential fix is naming the instance:
+  -- exact FiberBundle.chartedSpace ..
+  infer_instance
 
 set_option backward.isDefEq.respectTransparency false in
 instance : IsManifold ((I.prod I').prod 𝓘(𝕜, E →L[𝕜] E')) ∞ J¹MM' := by
