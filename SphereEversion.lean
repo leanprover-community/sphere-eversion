@@ -1,60 +1,62 @@
-import SphereEversion.Global.Gromov
-import SphereEversion.Global.Immersion
-import SphereEversion.Global.Localisation
-import SphereEversion.Global.LocalisationData
-import SphereEversion.Global.LocalizedConstruction
-import SphereEversion.Global.OneJetBundle
-import SphereEversion.Global.OneJetSec
-import SphereEversion.Global.ParametricityForFree
-import SphereEversion.Global.Relation
-import SphereEversion.Global.SmoothEmbedding
-import SphereEversion.Global.TwistOneJetSec
-import SphereEversion.Indexing
-import SphereEversion.InductiveConstructions
-import SphereEversion.Local.AmpleRelation
-import SphereEversion.Local.Corrugation
-import SphereEversion.Local.DualPair
-import SphereEversion.Local.HPrinciple
-import SphereEversion.Local.OneJet
-import SphereEversion.Local.ParametricHPrinciple
-import SphereEversion.Local.Relation
-import SphereEversion.Local.SphereEversion
-import SphereEversion.Loops.Basic
-import SphereEversion.Loops.DeltaMollifier
-import SphereEversion.Loops.Exists
-import SphereEversion.Loops.Reparametrization
-import SphereEversion.Loops.Surrounding
-import SphereEversion.Main
-import SphereEversion.Notations
-import SphereEversion.ToMathlib.Algebra.Ring.Periodic
-import SphereEversion.ToMathlib.Analysis.Calculus
-import SphereEversion.ToMathlib.Analysis.Calculus.AddTorsor.AffineMap
-import SphereEversion.ToMathlib.Analysis.ContDiff
-import SphereEversion.ToMathlib.Analysis.Convex.Basic
-import SphereEversion.ToMathlib.Analysis.CutOff
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Projection.Submodule
-import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
-import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
-import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
-import SphereEversion.ToMathlib.Data.Nat.Basic
-import SphereEversion.ToMathlib.Equivariant
-import SphereEversion.ToMathlib.ExistsOfConvex
-import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
-import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
-import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.ExtChartAt
-import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
-import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
-import SphereEversion.ToMathlib.LinearAlgebra.Basic
-import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
-import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
-import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
-import SphereEversion.ToMathlib.Order.Filter.Basic
-import SphereEversion.ToMathlib.Partition
-import SphereEversion.ToMathlib.SmoothBarycentric
-import SphereEversion.ToMathlib.Topology.Algebra.Module
-import SphereEversion.ToMathlib.Topology.Misc
-import SphereEversion.ToMathlib.Topology.Paracompact
-import SphereEversion.ToMathlib.Topology.Path
-import SphereEversion.ToMathlib.Unused.Fin
+module
+
+public import SphereEversion.Global.Gromov
+public import SphereEversion.Global.Immersion
+public import SphereEversion.Global.Localisation
+public import SphereEversion.Global.LocalisationData
+public import SphereEversion.Global.LocalizedConstruction
+public import SphereEversion.Global.OneJetBundle
+public import SphereEversion.Global.OneJetSec
+public import SphereEversion.Global.ParametricityForFree
+public import SphereEversion.Global.Relation
+public import SphereEversion.Global.SmoothEmbedding
+public import SphereEversion.Global.TwistOneJetSec
+public import SphereEversion.Indexing
+public import SphereEversion.InductiveConstructions
+public import SphereEversion.Local.AmpleRelation
+public import SphereEversion.Local.Corrugation
+public import SphereEversion.Local.DualPair
+public import SphereEversion.Local.HPrinciple
+public import SphereEversion.Local.OneJet
+public import SphereEversion.Local.ParametricHPrinciple
+public import SphereEversion.Local.Relation
+public import SphereEversion.Local.SphereEversion
+public import SphereEversion.Loops.Basic
+public import SphereEversion.Loops.DeltaMollifier
+public import SphereEversion.Loops.Exists
+public import SphereEversion.Loops.Reparametrization
+public import SphereEversion.Loops.Surrounding
+public import SphereEversion.Main
+public import SphereEversion.Notations
+public import SphereEversion.ToMathlib.Algebra.Ring.Periodic
+public import SphereEversion.ToMathlib.Analysis.Calculus
+public import SphereEversion.ToMathlib.Analysis.Calculus.AddTorsor.AffineMap
+public import SphereEversion.ToMathlib.Analysis.ContDiff
+public import SphereEversion.ToMathlib.Analysis.Convex.Basic
+public import SphereEversion.ToMathlib.Analysis.CutOff
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Dual
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Projection.Submodule
+public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.Rotation
+public import SphereEversion.ToMathlib.Analysis.NormedSpace.Misc
+public import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
+public import SphereEversion.ToMathlib.Data.Nat.Basic
+public import SphereEversion.ToMathlib.Equivariant
+public import SphereEversion.ToMathlib.ExistsOfConvex
+public import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+public import SphereEversion.ToMathlib.Geometry.Manifold.Immersion
+public import SphereEversion.ToMathlib.Geometry.Manifold.IsManifold.ExtChartAt
+public import SphereEversion.ToMathlib.Geometry.Manifold.Metrizable
+public import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
+public import SphereEversion.ToMathlib.LinearAlgebra.Basic
+public import SphereEversion.ToMathlib.LinearAlgebra.FiniteDimensional
+public import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
+public import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
+public import SphereEversion.ToMathlib.Order.Filter.Basic
+public import SphereEversion.ToMathlib.Partition
+public import SphereEversion.ToMathlib.SmoothBarycentric
+public import SphereEversion.ToMathlib.Topology.Algebra.Module
+public import SphereEversion.ToMathlib.Topology.Misc
+public import SphereEversion.ToMathlib.Topology.Paracompact
+public import SphereEversion.ToMathlib.Topology.Path
+public import SphereEversion.ToMathlib.Unused.Fin
