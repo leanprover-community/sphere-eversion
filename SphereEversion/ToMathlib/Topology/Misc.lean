@@ -5,16 +5,7 @@ public import Mathlib.Tactic.Cases
 public import Mathlib.Topology.Algebra.Order.Floor
 public import Mathlib.Topology.EMetricSpace.Paracompact
 public import Mathlib.Topology.ShrinkingLemma
-public import Mathlib.Algebra.Order.BigOperators.Expect
-public import Mathlib.Algebra.Order.Field.Power
-public import Mathlib.Analysis.LocallyConvex.WithSeminorms
 public import Mathlib.Analysis.Normed.Module.Convex
-public import Mathlib.Analysis.Normed.Order.Lattice
-public import Mathlib.Data.Nat.Totient
-public import Mathlib.Data.Sym.Sym2
-public import Mathlib.Logic.Equiv.PartialEquiv
-public import Mathlib.Tactic.ContinuousFunctionalCalculus
-public import Mathlib.Tactic.NormNum.GCD
 
 @[expose] public section
 
