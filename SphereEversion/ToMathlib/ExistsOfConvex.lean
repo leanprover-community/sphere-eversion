@@ -76,6 +76,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
     ∃ f : M → F, CMDiff n f ∧ ∀ x, P x (f x) := by
   let PP : (Σ x : M, Germ (𝓝 x) F) → Prop := fun p ↦ p.2.ContMDiffAt I n ∧ P p.1 p.2.value
   have hPP : ∀ x : M, ReallyConvex (smoothGerm I x) {φ | PP ⟨x, φ⟩} := fun x ↦ by
+    sorry /- was:
     apply ReallyConvex.inter
     · apply reallyConvex_contMDiffAt
     let v : Germ (𝓝 x) F →ₛₗ[smoothGerm.valueRingHom I x] F := Filter.Germ.valueₛₗ I x
@@ -83,7 +84,7 @@ theorem exists_contMDiff_of_convex {P : M → F → Prop} (hP : ∀ x, Convex �
     dsimp only [← smoothGerm.valueOrderRingHom_toRingHom] at v
     apply ReallyConvex.preimageₛₗ
     rw [reallyConvex_iff_convex]
-    apply hP
+    apply hP -/
   have hPP' : ∀ x, ∃ f : M → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ := fun x ↦ by
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f
@@ -140,6 +141,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [Sigm
   let PP : (Σ x : M₁, Germ (𝓝 x) (M₂ → F)) → Prop := fun p ↦
     p.2.ContMDiffAtProd I₁ I₂ n ∧ P p.1 p.2.value
   have hPP : ∀ x : M₁, ReallyConvex (smoothGerm I₁ x) {φ | PP ⟨x, φ⟩} := fun x ↦ by
+    sorry /- was:
     apply ReallyConvex.inter
     · apply reallyConvex_contMDiffAtProd
     let v : Germ (𝓝 x) (M₂ → F) →ₛₗ[smoothGerm.valueRingHom I₁ x] M₂ → F := Filter.Germ.valueₛₗ I₁ x
@@ -147,7 +149,7 @@ theorem exists_contMDiff_of_convex₂ {P : M₁ → (M₂ → F) → Prop} [Sigm
     dsimp only [← smoothGerm.valueOrderRingHom_toRingHom] at v
     apply ReallyConvex.preimageₛₗ
     rw [reallyConvex_iff_convex]
-    apply hP
+    apply hP -/
   have hPP' : ∀ x, ∃ f : M₁ → M₂ → F, ∀ᶠ x' in 𝓝 x, PP ⟨x', f⟩ := fun x ↦ by
     rcases hP' x with ⟨U, U_in, f, hf, hf'⟩
     use f

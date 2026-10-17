@@ -194,7 +194,7 @@ theorem loc_immersion_rel_ample (n : ℕ) [Fact (dim E = n + 1)] (h : finrank �
       rw [← toDual_symm_apply]
       change ¬⟪u, pr[x]ᗮ u⟫ = 0
       rw [inner_projection_self_eq_zero_iff.not]
-      contrapose! H
+      contrapose H
       rw [orthogonal_orthogonal] at H
       rw [← orthogonal_span_toDual_symm, spanOrthogonal, spanLine,
           span_singleton_eq_span_singleton_of_ne u_ne H]
