@@ -216,7 +216,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hι : Fintype.card ι = d + 1 := Fintype.card_fin _
   have hp : p ∈ affineBases ι ℝ F := h.mem_affineBases
   have hV : IsOpen V := isOpen_set_pi finite_univ fun _ _ ↦ isOpen_Ioi
-  have hW' : ContinuousOn W' A := (smooth_barycentric ι ℝ F hι (n := 0)).continuousOn
+  have hW' : ContinuousOn W' A := (contDiff_barycentric ι ℝ F hι (n := 0)).continuousOn
   have hxp : W' (x, p) ∈ V := by simp [W', V, hp, h.coord_eq_w, h.w_pos]
   have hA : IsOpen A := by
     simp only [A, affineBases_findim ι ℝ F hι]
@@ -229,7 +229,7 @@ theorem smooth_surrounding [FiniteDimensional ℝ F] {x : F} {p : ι → F} {w :
   have hq : q ∈ affineBases ι ℝ F := by simpa [A] using inter_subset_left hyq
   have hyq' : (y, q) ∈ W' ⁻¹' V := inter_subset_right hyq
   refine ⟨⟨U, mem_nhds_iff.mpr ⟨U, le_refl U, hU₂, hyq⟩,
-    ((smooth_barycentric ι ℝ F hι).mono inter_subset_left).of_le le_top⟩, ?_, ?_, ?_⟩
+    ((contDiff_barycentric ι ℝ F hι).mono inter_subset_left).of_le le_top⟩, ?_, ?_, ?_⟩
   · simpa [V] using! hyq'
   · simp [hq]
   · simp only [hq, evalBarycentricCoords_apply_of_mem_bases, AffineBasis.coords_apply]
@@ -289,7 +289,7 @@ theorem eventually_surroundingPts_of_tendsto_of_tendsto {l : Filter X} {m : Filt
     simp only [A, affineBases_findim ι ℝ F hι]
     exact isOpen_univ.prod isOpen_setOfPred_affineIndependent
   have hW' : ContinuousAt W' (q, v) :=
-    (smooth_barycentric ι ℝ F hι (n := 0)).continuousOn.continuousAt
+    (contDiff_barycentric ι ℝ F hι (n := 0)).continuousOn.continuousAt
       (mem_nhds_iff.mpr ⟨A, Subset.rfl, hA, hqv⟩)
   have hS : S ∈ 𝓝 (q, v) := hW'.preimage_mem_nhds hV'
   obtain ⟨n₁, hn₁, n₂, hn₂, hS'⟩ := mem_nhds_prod_iff.mp hS

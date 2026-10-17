@@ -81,7 +81,7 @@ variable (ι k : Type*) [Fintype ι] [DecidableEq ι] [NontriviallyNormedField k
 
 attribute [instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-theorem smooth_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
+theorem contDiff_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k → k) := by
   suffices ∀ n : ℕ, ContDiff k m (det : Matrix (Fin n) (Fin n) k → k) by
     have h : (det : Matrix ι ι k → k) = det ∘ reindex (Fintype.equivFin ι) (Fintype.equivFin ι) :=
   by ext; simp
@@ -107,7 +107,7 @@ theorem smooth_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k →
 
 end Matrix
 
-section smooth_barycentric
+section contDiff_barycentric
 
 variable (ι 𝕜 F : Type*)
 
@@ -119,7 +119,7 @@ variable [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 -- and prove that barycentric coordinates give a continuous affine equivalence to
 -- `{ f : ι →₀ 𝕜 | f.sum = 1 }`.
 -- This should obviate the need for the finite-dimensionality assumption.
-theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
+theorem contDiff_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [FiniteDimensional 𝕜 F]
     (h : Fintype.card ι = Module.finrank 𝕜 F + 1) {n : WithTop ℕ∞} :
     ContDiffOn 𝕜 n (uncurry (evalBarycentricCoords ι 𝕜 F)) (@univ F ×ˢ affineBases ι 𝕜 F) := by
   classical
@@ -135,15 +135,15 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
   simp only [Matrix.cramer_transpose_apply]
   have hcont : ContDiff 𝕜 n fun x : ι → F ↦ b.toMatrix x :=
     contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦
-      ((smooth_barycentric_coord b j').of_le le_top).comp (contDiff_apply 𝕜 F j)
+      ((smooth_barycentric_coord b j').of_le le_top).comp (contDiff_apply 𝕜 _ j)
   have h_snd : ContDiff 𝕜 n fun x : F × (ι → F) ↦ b.toMatrix x.snd := hcont.comp contDiff_snd
   apply ContDiffOn.mul
-  · apply ((Matrix.smooth_det ι 𝕜 n).comp h_snd).contDiffOn.inv
+  · apply ((Matrix.contDiff_det ι 𝕜 n).comp h_snd).contDiffOn.inv
     rintro ⟨p, v⟩ hpv
     have hv : IsUnit (b.toMatrix v) := by simpa [mem_affineBases_iff ι 𝕜 F b v] using hpv
     rw [← isUnit_iff_ne_zero, comp_apply, ← Matrix.isUnit_iff_isUnit_det]
     exact hv
-  · refine ((Matrix.smooth_det ι 𝕜 n).comp ?_).contDiffOn
+  · refine ((Matrix.contDiff_det ι 𝕜 n).comp ?_).contDiffOn
     refine contDiff_pi.mpr fun j ↦ contDiff_pi.mpr fun j' ↦ ?_
     simp only [Matrix.updateRow_apply]
     simp only [AffineBasis.toMatrix_apply, AffineBasis.coords_apply]
@@ -153,4 +153,4 @@ theorem smooth_barycentric [DecidablePred (· ∈ affineBases ι 𝕜 F)] [Finit
     · simp only [hij, ite_false]
       exact ((smooth_barycentric_coord b j').of_le le_top).comp (contDiff_pi.mp contDiff_snd j)
 
-end smooth_barycentric
+end contDiff_barycentric
