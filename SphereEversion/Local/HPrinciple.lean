@@ -54,11 +54,9 @@ need to access its components only once.
 
 @[expose] public section
 
-
 noncomputable section
 
-open scoped unitInterval Filter Topology ContDiff
-
+open scoped unitInterval Topology ContDiff
 open Filter Set RelLoc
 
 open LinearMap (ker)
@@ -163,7 +161,6 @@ theorem Accepts.rel {L : StepLandscape E} {𝓕 : JetSec E F} (h : L.Accepts R �
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
 
-open scoped Borelize
 variable (L : StepLandscape E) {𝓕 : FormalSol R} (h : L.Accepts R 𝓕)
 -- Porting note: the elaboration smiley below was not necessary in Lean 3.
 /-- The loop family to use in some landscape to improve a formal solution. -/

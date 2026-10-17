@@ -7,7 +7,7 @@ public import SphereEversion.ToMathlib.Topology.Misc
 
 noncomputable section
 
-open Set Function FiniteDimensional Prod Int
+open Set Function Int
 
 open scoped Topology unitInterval
 

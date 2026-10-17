@@ -45,8 +45,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {H : Type*} [NormedAddCommGroup H] [NormedSpace ℝ H] [FiniteDimensional ℝ H]
   {π : E →L[ℝ] ℝ} (N : ℝ) (γ : E → Loop F)
 
-open scoped Borelize
-
 /-- Theillière's corrugations. -/
 def corrugation (π : E →L[ℝ] ℝ) (N : ℝ) (γ : E → Loop F) : E → F := fun x ↦
   (1 / N) • ∫ t in (0)..N * π x, γ x t - (γ x).average
