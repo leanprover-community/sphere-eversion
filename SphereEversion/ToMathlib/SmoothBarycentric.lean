@@ -3,9 +3,11 @@ module
 public import Mathlib.Analysis.Calculus.AddTorsor.Coord
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.LinearAlgebra.AffineSpace.Matrix
-public import Mathlib.Tactic.Cases
 
-@[expose] public section
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
+
+public section
 
 noncomputable section
 
@@ -18,7 +20,7 @@ section BarycentricDet
 variable (ι R k P : Type*) {M : Type*} [Ring R] [AddCommGroup M] [Module R M] [AffineSpace M P]
 
 /-- The set of affine bases for an affine space. -/
-def affineBases : Set (ι → P) :=
+@[expose] def affineBases : Set (ι → P) :=
   {v | AffineIndependent R v ∧ affineSpan R (range v) = ⊤}
 
 theorem affineBases_findim [Fintype ι] [Field k] [Module k M] [FiniteDimensional k M]
@@ -87,7 +89,7 @@ theorem contDiff_det (m : WithTop ℕ∞) : ContDiff k m (det : Matrix ι ι k �
   by ext; simp
     rw [h]
     apply (this (Fintype.card ι)).comp
-    exact contDiff_pi.mpr fun i ↦ contDiff_pi.mpr fun j ↦ contDiff_apply_apply _ _ _ _
+    exact contDiff_pi.mpr fun i ↦ contDiff_pi.mpr fun j ↦ contDiff_apply_apply ..
   intro n
   induction n with
   | zero =>

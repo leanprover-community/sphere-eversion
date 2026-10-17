@@ -1,11 +1,11 @@
 module
 
 public import Mathlib.Order.Interval.Finset.Fin
-public import Mathlib.Data.Fin.SuccPredOrder
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Fin
+public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.SetTheory.Cardinal.Basic
-public import Mathlib.Tactic.Cases
 public import SphereEversion.ToMathlib.Data.Nat.Basic
+
 /-!
 # Indexing types
 

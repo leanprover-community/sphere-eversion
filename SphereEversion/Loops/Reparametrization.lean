@@ -254,7 +254,7 @@ theorem localCenteringDensity_pos (hy : y ∈ γ.localCenteringDensityNhd x) (t 
   obtain ⟨w, hw⟩ := γ.approxSurroundingPointsAt_of_localCenteringDensityNhd x y hy
   convert! hw.w_pos i
   rw [← hw.coord_eq_w]
-  simp [evalBarycentricCoords, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
+  simp [γ.approxSurroundingPointsAt_mem_affineBases x y hy]
 
 theorem localCenteringDensity_periodic : Periodic (γ.localCenteringDensity x y) 1 :=
   Finset.univ.periodic_sum fun _ _ ↦ Periodic.smul deltaMollifier_periodic _

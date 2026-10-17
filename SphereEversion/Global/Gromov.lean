@@ -44,10 +44,7 @@ theorem RelMfld.Ample.satisfiesHPrinciple (hRample : R.Ample) (hRopen : IsOpen R
   obtain (hM | hM) := isEmpty_or_nonempty M
   · refine ⟨emptyHtpyFormalSol R, ?_, ?_, ?_, ?_⟩ <;> intro
     all_goals try intro
-    all_goals
-      first
-      | exact empty_htpy_formal_sol_eq
-      | exact (IsEmpty.false ‹M›).elim
+    all_goals exact (IsEmpty.false ‹M›).elim
   obtain (hX | hX) := isEmpty_or_nonempty X
   · exfalso
     inhabit M

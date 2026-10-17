@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Topology.Algebra.Module.Equiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 
 public section
 
