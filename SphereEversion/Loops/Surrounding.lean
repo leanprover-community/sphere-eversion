@@ -7,6 +7,7 @@ public import SphereEversion.ToMathlib.SmoothBarycentric
 public import SphereEversion.ToMathlib.Topology.Path
 public import Mathlib.Analysis.Convex.Caratheodory
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 /-!
 # Surrounding families of loops

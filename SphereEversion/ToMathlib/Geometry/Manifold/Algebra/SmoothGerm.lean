@@ -9,8 +9,6 @@ public import Mathlib.Algebra.Ring.Subring.Order
 public import Mathlib.Geometry.Manifold.Algebra.SmoothFunctions
 public import Mathlib.Geometry.Manifold.MFDeriv.Basic
 public import Mathlib.Geometry.Manifold.Notation
-public import Mathlib.Order.Filter.Ring
-public import Mathlib.Tactic.Cases
 public import Mathlib.Topology.Germ
 
 /-!

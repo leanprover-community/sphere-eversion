@@ -1,8 +1,6 @@
 module
 
 public import Mathlib.Topology.Germ
-public import Mathlib.Analysis.Complex.Norm
-public import Mathlib.Analysis.RCLike.Basic
 public import SphereEversion.ToMathlib.Topology.Misc
 public import SphereEversion.Indexing
 public import SphereEversion.Notations

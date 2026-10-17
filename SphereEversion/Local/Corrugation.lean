@@ -1,13 +1,12 @@
 module
 
 public import Mathlib.Analysis.Asymptotics.Lemmas
-public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 public import SphereEversion.ToMathlib.Algebra.Ring.Periodic
-public import SphereEversion.ToMathlib.MeasureTheory.BorelSpace
 public import SphereEversion.Loops.Basic
 public import SphereEversion.Local.DualPair
+public import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
 
 /-! # Theillière's corrugation operation
 

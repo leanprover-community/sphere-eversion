@@ -9,7 +9,6 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import SphereEversion.ToMathlib.Analysis.ContDiff
-public import SphereEversion.ToMathlib.LinearAlgebra.Basic
 public import SphereEversion.ToMathlib.Analysis.InnerProductSpace.CrossProduct
 
 /-! # Rotation about an axis, considered as a function in that axis -/

@@ -3,10 +3,8 @@ module
 public import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Analysis.Normed.Module.Completion
-public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import SphereEversion.Notations
-public import SphereEversion.ToMathlib.Analysis.NormedSpace.OperatorNorm.Prod
-public import SphereEversion.ToMathlib.LinearAlgebra.Basic
+public import Mathlib.Analysis.Complex.Order
 
 /-! # Dual pairs
 

@@ -16,7 +16,6 @@ public import Mathlib.Geometry.Manifold.Notation
 public import SphereEversion.ToMathlib.Geometry.Manifold.VectorBundle.Misc
 public import Mathlib.Geometry.Manifold.VectorBundle.Hom
 public import Mathlib.Geometry.Manifold.VectorBundle.Pullback
-public import Mathlib.Tactic.Monotonicity.Lemmas
 
 /-!
 # 1-jet bundles

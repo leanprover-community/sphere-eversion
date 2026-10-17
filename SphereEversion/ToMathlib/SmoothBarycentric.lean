@@ -4,7 +4,6 @@ public import Mathlib.Analysis.Calculus.AddTorsor.Coord
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.LinearAlgebra.AffineSpace.Matrix
 
-import Mathlib.Analysis.Calculus.ContDiff.Operations
 import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 public section

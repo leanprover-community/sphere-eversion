@@ -3,6 +3,7 @@ module
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
 public import SphereEversion.ToMathlib.Analysis.Convex.Basic
 public import SphereEversion.ToMathlib.Geometry.Manifold.Algebra.SmoothGerm
+public import Mathlib.Order.Filter.Ring
 
 @[expose] public section
 

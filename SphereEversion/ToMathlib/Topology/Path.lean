@@ -1,8 +1,7 @@
 module
 
-public import Mathlib.Analysis.Normed.Field.Basic
 public import Mathlib.Analysis.Normed.Order.Lattice
-public import Mathlib.Topology.Connected.PathConnected
+public import Mathlib.Topology.Path
 
 @[expose] public section
 
