@@ -382,22 +382,42 @@ theorem ContDiff.partial_loop {γ : E → Loop F} {n : ℕ∞} (hγ_diff : 𝒞 
 
 variable [FiniteDimensional ℝ F]
 
+
+
+#click_suggestions
 set_option backward.isDefEq.respectTransparency.types false in
 theorem Loop.support_diff {γ : E → Loop F} : Loop.support (Loop.diff γ) ⊆ Loop.support γ := by
   unfold Loop.support
-  erw [closure_compl, closure_compl]
-  rw [compl_subset_compl]
-  intro x hx
-  rw [mem_interior_iff_mem_nhds] at *
-  rcases mem_nhds_iff.mp hx with ⟨U, hU, U_op, hxU⟩
-  apply Filter.mem_of_superset (U_op.mem_nhds hxU) fun y hy ↦ ?_
-  have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
-    fun t ↦ Filter.mem_of_superset (U_op.mem_nhds hy)
-      (fun z hz ↦ Loop.isConst_iff_forall_avg.mp (hU hz) t)
-  have : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E ↦ (γ z).average) y := fun t ↦ (Hy t).fderiv_eq
-  intro t s
-  simp only [this]
+  gcongr
+  intro hx
+  sorry
+  -- have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
+  --   fun t ↦ Filter.mem_of_superset (U_op.mem_nhds hy)
+  --     (fun z hz ↦ Loop.isConst_iff_forall_avg.mp (hU hz) t)
+  -- have (y) : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E ↦ (γ z).average) y := fun t ↦ (Hy t).fderiv_eq
+  -- intro y s
+  -- trans 0
+  -- sorry
+  -- sorry
+  -- --suffices ∀()
+  -- --intro s t
+  -- unfold IsConst at hx ⊢
+  --change closure {x | (diff γ x).IsConst}ᶜ ⊆ closure {x | (γ x).IsConst}ᶜ
+  --rw [Set.compl_def]
+  --rw [closure_compl]
 
+  --, closure_compl]
+  --rw [compl_subset_compl]
+  --intro x hx
+  --rw [mem_interior_iff_mem_nhds] at *
+  -- rcases mem_nhds_iff.mp hx with ⟨U, hU, U_op, hxU⟩
+  -- --apply Filter.mem_of_superset (U_op.mem_nhds hxU) fun y hy ↦ ?_
+  -- have Hy : ∀ t, (fun z ↦ γ z t) =ᶠ[𝓝 y] fun z ↦ (γ z).average :=
+  --   fun t ↦ Filter.mem_of_superset (U_op.mem_nhds hy)
+  --     (fun z hz ↦ Loop.isConst_iff_forall_avg.mp (hU hz) t)
+  -- have : ∀ t : ℝ, Loop.diff γ y t = D (fun z : E ↦ (γ z).average) y := fun t ↦ (Hy t).fderiv_eq
+  -- intro t s
+  -- simp only [this]
 
 variable [FiniteDimensional ℝ E]
 

@@ -158,7 +158,7 @@ theorem ReallyConvex.preimageₛₗ (f : E →ₛₗ[σ.toRingHom] E') {s : Set 
     apply hs.finsum_mem
     · intro i; rw [← map_zero σ]; apply σ.monotone'; apply hw
     · rw [← map_finsum _ h4w, h3w, map_one]
-    · intro i hi; apply h2w; rw [mem_support] at hi ⊢; contrapose! hi; rw [hi, map_zero]
+    · intro i hi; apply h2w; rw [mem_support] at hi ⊢; contrapose hi; rw [hi, map_zero]
 
 theorem ReallyConvex.preimage [IsOrderedRing 𝕜]
     (f : E →ₗ[𝕜] E₂) {s : Set E₂} (hs : ReallyConvex 𝕜 s) :

@@ -50,8 +50,7 @@ omit [IsManifold I ∞ M] [IsManifold I' ∞ M'] in
 theorem iUnion_succ' {β : Type*} (s : ld.ι → Set β) (i : IndexType ld.N) :
     (⋃ j ≤ i, s j) = (⋃ j < i, s j) ∪ s i := by
   simp only [(fun _ ↦ le_iff_lt_or_eq : ∀ j, j ≤ i ↔ j < i ∨ j = i)]
-  erw [biUnion_union, biUnion_singleton]
-  rfl
+  simp_rw [iUnion_or, iUnion_union_distrib, iUnion_iUnion_eq_left]
 
 open Filter
 
