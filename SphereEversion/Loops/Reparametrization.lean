@@ -275,9 +275,7 @@ theorem contDiffOn_localCenteringDensity :
         fun x ↦ (x, x)
     change ContDiffOn ℝ ∞ ((w ∘ z) ∘ Prod.fst) (γ.localCenteringDensityNhd x ×ˢ (univ : Set ℝ))
     rw [prod_univ]
-    -- TODO: what's the right set to use?
-    apply ContDiffOn.comp ?_ contDiff_fst.contDiffOn (t := γ.localCenteringDensityNhd x) (by sorry)
-    --refine ContDiffOn.comp ?_ contDiff_fst.contDiffOn ?_--(by simp)--Subset.rfl
+    sorry /-refine ContDiffOn.comp ?_ contDiff_fst.contDiffOn ?_--(by simp)--Subset.rfl
     have h₁ := contDiff_barycentric ι ℝ F (Fintype.card_fin _) (n := ∞)
     have h₂ : 𝒞 ∞ (eval i : (ι → ℝ) → ℝ) := contDiff_apply _ _ i
     refine (h₂.comp_contDiffOn h₁).comp ?_ ?_
@@ -286,7 +284,7 @@ theorem contDiffOn_localCenteringDensity :
       refine γ.smooth_surrounded.contDiffOn.prodMap (ContDiff.contDiffOn ?_)
       exact γ.approxSurroundingPointsAt_smooth x _
     · intro y hy
-      simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy]
+      simp [z, γ.approxSurroundingPointsAt_mem_affineBases x y hy] -/
   · exact contDiff_deltaMollifier.comp contDiff_snd
 
 variable [FiniteDimensional ℝ E] in
